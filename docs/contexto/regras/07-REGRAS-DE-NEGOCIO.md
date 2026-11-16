@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2b50f152e4` · branch `main` · 2026-11-16 16:17 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4911958f73` · branch `main` · 2026-11-16 16:53 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5009,7 +5009,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (7559 testes em 599 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (7781 testes em 610 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5024,6 +5024,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/lib/__tests__/masks.test.ts` | 71 | maskCPF · formats 11 digits as 000.000.000-00 · strips non-digits before formatting · slices at 14 characters … |
 | `src/hooks/__tests__/useNovasTabelas.test.ts` | 67 | useBatidasPonto · is disabled and returns empty when no colaboradorId · calls batidasPontoService.listar with colaboradorId · returns batidas data … |
 | `src/calculators/__tests__/beneficios.test.ts` | 65 | calcularDecimo13 · parcela 1 returns half the proportional value with no deductions · parcela 2 deducts INSS and IRRF · proportional: 6 months = 50% of salary … |
+| `src/components/__tests__/AprovacaoGestor.test.ts` | 64 | situacaoAprovacao — espelho da função SQL · sem versão da avaliação do gestor ⇒ em_preparacao · com versão e SEM decisão ⇒ aguardando_gestor · decisão de OUTRA versão ⇒ volta a aguardar o gestor (aprovação INVALIDADA) … |
 | `src/calculators/__tests__/scenarios.test.ts` | 62 | Simulação — INSS (progressivo 2026, teto R$ 8.475,55) · zero e negativos retornam 0 · NaN não propaga (robustez) · piso (salário mínimo 1518) => 113,85 … |
 | `src/services/__tests__/afastamentoService.test.ts` | 62 | afastamentoService.listar · returns data and total from supabase · returns empty data when supabase returns null · filters by empresa_id from options.empresaId … |
 | `src/services/__tests__/cnabService.test.ts` | 56 | cnabService.getConfig · returns config when found · returns null when config not found · throws on DB error … |
@@ -5042,7 +5043,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/schemas/esocial/__tests__/helpers.test.ts` | 39 | required · adds no error for a non-empty string · adds error for empty string · adds error for null … |
 | `src/schemas/esocial/__tests__/naoPeriodicosValidators.test.ts` | 39 | validarS2190 · returns valid for complete data · errors when cpfTrab is missing · errors when dtAdm is missing … |
 | `src/services/tabelas/__tests__/rhService.test.ts` | 38 | configAfastamentosService · obter calls from config_afastamentos · obter throws on error · salvar calls upsert … |
+| `src/components/__tests__/PdiDerivacoes.test.tsx` | 37 | pdiComum — categoria de status · mapeia os status reais do banco · trata o status como texto livre (caixa/espaços/acento) · status vazio conta como pendente e desconhecido cai em andamento … |
 | `src/components/__tests__/AprovacaoLocal.test.ts` | 35 | chaveLocal / estado vazio · normaliza ids nulos e monta a chave colaborador x ciclo · estadoLocalVazio nao traz decisao nem historico · ler/gravar/limpar … |
+| `src/components/__tests__/Motor360.test.tsx` | 35 | 360 · pesos aprovados · são exatamente Gestor 60 · Pares 25 · Auto 10 · Subordinados 5 · somam 100% e estão centralizados (nenhum número solto no motor) · 360 · cálculo ponderado … |
 | `src/services/__tests__/canalContabilidadeService.test.ts` | 35 | canalContabilidadeService.listContatos · returns contacts ordered by nome · returns empty array when data is null · throws on DB error … |
 | `src/services/__tests__/beneficioService.test.ts` | 34 | beneficioService.listar · returns data and total without filters · returns empty data when null · applies empresa_id filter when provided in filters … |
 | `src/components/__tests__/StatusFeedback.test.tsx` | 33 | status — estados e leitura · reconhece os três estados e isola qualquer outro valor · a coluna é texto livre: o código não assume o valor do banco · status — transições permitidas e proibidas … |
@@ -5080,6 +5083,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `supabase/functions/external-db-bridge/validation.test.ts` | 25 | tabela: injeção rejeitada · tabela: nomes legítimos aceitos · denylist: tabelas sensíveis presentes · colunas: injeção/subquery rejeitada … |
 | `src/hooks/__tests__/validators.test.ts` | 24 | required · rejeita null, undefined e string vazia · aceita valores presentes, incluindo 0 e false · isValidEmail … |
 | `src/utils/__tests__/esocialXmlGenerator.test.ts` | 24 | gerarXmlESocial · returns valid XML declaration · wraps output in eSocial root element · uses testing environment by default (tpAmb=2) … |
+| `src/components/__tests__/AuditoriaDerivacoes.test.tsx` | 23 | auditoria · normalização tolerante · aceita registro sem os campos opcionais · ignora data inválida sem quebrar · auditoria · títulos legíveis por módulo e ação … |
 | `src/components/__tests__/CardProgramacao.test.tsx` | 23 | CardProgramacao · renders colaborador name · renders dias previstos · renders status badge for rascunho … |
 | `src/components/__tests__/NineBoxElegibilidade.test.tsx` | 23 | etapa 1 · identificação de suspeita (isolada) · a PRIMEIRA ocorrência nunca é sinalizada; as repetições são · não muta a lista recebida (função pura) · avaliadores diferentes com as MESMAS notas não se sinalizam … |
 | `src/components/__tests__/CNABDialog.test.tsx` | 22 | CNABDialog · renders Exportar Bancário trigger button · renders Pagamento de Salários dialog title · renders Código do Banco label … |
@@ -5103,6 +5107,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/jornadaHorariosService.test.ts` | 20 | jornadaHorariosService.listar · returns horarios for jornada · returns empty array when data is null · filters by jornada_id … |
 | `src/components/__tests__/FeriasForm.test.tsx` | 19 | FeriasForm · não renderiza quando fechado · lista só colaboradores não desligados · envia a solicitação com datas e valores calculados e fecha o diálogo … |
 | `src/components/__tests__/LayoutPrimitives.test.tsx` | 19 | PageContainer · renders children · renders title when provided · renders description when provided … |
+| `src/components/__tests__/PendenciasAprovacao.test.tsx` | 19 | fila de aprovação — controles padronizados por vínculo · registro REAL com vínculo provado: Ver, Devolver e Aprovar habilitados (nesta ordem) · registro REAL SEM o vínculo: os controles continuam VISÍVEIS, porém desabilitados · registro REAL com vínculo não avaliável ( … |
 | `src/components/__tests__/PontoClockRegister.test.tsx` | 19 | PontoClockRegister · renders Registrar Ponto title · renders Entrada button · renders Saída Almoço button … |
 | `src/services/__tests__/pontoOfflineService.test.ts` | 19 | pontoOfflineService.generateIntegrityHash · returns a non-empty string · is deterministic for the same input · differs for different inputs … |
 | `src/services/tabelas/__tests__/viewsService.test.ts` | 19 | viewsService · alertasRH queries vw_alertas_rh and returns array · alertasRH distinguishes schema failure from an empty result · kpiTurnover queries vw_kpi_turnover … |
@@ -5168,6 +5173,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/ESocialSSTandTSVTermino.test.tsx` | 13 | S2210SST · renders CPF do trabalhador · renders nome do trabalhador · renders data do acidente … |
 | `src/components/__tests__/ESocialTSVComponents.test.tsx` | 13 | S2300TSVInicio · renders trabalhador name · renders CPF · renders data de início … |
 | `src/components/__tests__/EntityPageContainer.test.tsx` | 13 | EntityPageContainer · renders page title and description · shows TableSkeleton when isLoading=true · shows SyncErrorState when error is present … |
+| `src/components/__tests__/MetasEtiquetas.test.tsx` | 13 | metasComum — tom do TIPO da meta · mapeia cada tipo real para o tom da sua família de cor · trata o tipo como texto livre: caixa/espaços não mudam o tom · joga o composto  … |
 | `src/components/__tests__/NewLoanDialog.test.tsx` | 13 | NewLoanDialog · renders Novo Empréstimo trigger button · renders Registrar Empréstimo Consignado title · renders Compliance L10.820 badge … |
 | `src/components/__tests__/desligamento-badges.test.tsx` | 13 | StatusBadge · renders  · renders  · renders  … |
 | `src/services/__tests__/empresaService.test.ts` | 13 | empresaService.listar · returns data and total from supabase · returns empty data with total 0 when supabase returns null · adds or() filter when search is provided … |
@@ -5180,6 +5186,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/DesligamentoBadges.test.tsx` | 12 | StatusBadge · renders Pendente for pendente status · renders Em Andamento for em_andamento · renders Concluído for concluido … |
 | `src/components/__tests__/ESocialPagamentosAndSST.test.tsx` | 12 | S1210Pagamentos · renders Rendimentos Pagos label · renders payment dates · renders perApur for competência … |
 | `src/components/__tests__/ESocialSemDadosFicticios.test.tsx` | 12 | eSocial sem dados fictícios · conciliação não exibe valores monetários · conciliação não renderiza tabela de rubricas · conciliação não agenda timers ao montar (sem atualização simulada) … |
+| `src/components/__tests__/EscritaOperacional.test.ts` | 12 | escritaOperacional.idFicticio · reconhece identificadores de demonstração · não trata vazio/nulo como fictício · escritaOperacional.camposFicticios … |
 | `src/components/__tests__/FolhaESocialSync.test.tsx` | 12 | FolhaESocialSync · renders Integração eSocial title · renders refresh button · renders Progresso Geral de Transmissão label … |
 | `src/components/__tests__/MedidasDisciplinares.test.tsx` | 12 | MedidasKPIs · renders Total Registros label · renders all KPI labels · renders stat values … |
 | `src/components/__tests__/MobileQuickActions.test.tsx` | 12 | MobileQuickActions · renders nothing when open=false · renders Ações Rápidas heading when open=true · renders all 10 quick action labels … |
@@ -5306,14 +5313,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/LoginForm.test.tsx` | 9 | LoginForm · renders email and password fields · renders submit button · does not render forgot password button when handler not provided … |
 | `src/components/__tests__/LogsIntegracoesTab.test.tsx` | 9 | LogsIntegracoesTab · shows spinner when loading · renders Logs de Integrações title · renders subtitle with record count … |
 | `src/components/__tests__/MedidaWorkflowTimeline.test.tsx` | 9 | MedidaWorkflowTimeline · shows loading state when isLoading is true · shows empty state when no log entries · renders log entries when data is available … |
-| `src/components/__tests__/MedidasKPIs.test.tsx` | 9 | MedidasKPIs · renders Total Registros label · renders Adv. Verbais label · renders Adv. Escritas label … |
-| `src/components/__tests__/MedidasTable.test.tsx` | 9 | MedidasTable · renders table column header Colaborador · renders table column header Tipo · renders table column header Status … |
-| `src/components/__tests__/MetricCard.test.tsx` | 9 | MetricCard · renders title · renders string value directly · renders AnimatedNumber when rawValue is provided … |
-| `src/components/__tests__/MetricasFolhaDashboard.test.tsx` | 9 | MetricasFolhaDashboard · shows loading state · shows error state when query fails · renders Idempotência KPI when data is available … |
-| `src/components/__tests__/MiniSparkline.test.tsx` | 9 | MiniSparkline · returns null when data has fewer than 2 points · returns null when data is empty · renders SVG when data has 2+ points … |
-| `src/components/__tests__/NewAdvanceDialog.test.tsx` | 9 | NewAdvanceDialog · renders Novo Adiantamento trigger button · renders Solicitar Adiantamento Salarial title · renders Colaborador label … |
-| `src/components/__tests__/NotificationBell.test.tsx` | 9 | NotificationBell · renders bell button with Notificações aria-label · renders Notificações heading in popover · renders empty state message … |
-| … +299 linhas — lista completa em `context.json` | | |
+| … +310 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

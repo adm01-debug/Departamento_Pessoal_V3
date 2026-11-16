@@ -3,11 +3,11 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1580)",
+   "TypeScript (1591)",
    "SQL (902)",
-   "Markdown (319)",
+   "Markdown (329)",
    "JavaScript (126)",
-   "JSON (62)",
+   "JSON (63)",
    "Shell (57)",
    "YAML (56)",
    "Python (5)"
@@ -1543,7 +1543,7 @@
  "docs_em_subpastas": [
   {
    "pasta": "docs/auditoria",
-   "arquivos_md": 51
+   "arquivos_md": 61
   },
   {
    "pasta": "docs/_archive",

@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (519)",
+   "co-localizado (__tests__) (530)",
    "co-localizado (*.test) (70)",
    "e2e/ (27)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "test: resgata 11 suítes de testes de Avaliação/Desempenho da branch muri (+194 casos) (#600)",
+   "docs(auditoria): publica o plano de resgate por área da branch muri (#597)",
    "fix(docs): redige o user_id e o e-mail pessoais publicados no #595 (#599)",
    "fix(docs): corrige as fixtures de conclusão e a alegação do Q8a do ninebox (#598)",
-   "docs(auditoria): classifica as dez migrations órfãs da muri contra o banco real (#596)",
-   "docs: resgata a documentação operacional do ninebox e das capas de treinamento (#595)",
-   "chore(banco): resgata os rollbacks das dez migrations ninebox já aplicadas em produção (#594)"
+   "docs(auditoria): classifica as dez migrations órfãs da muri contra o banco real (#596)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

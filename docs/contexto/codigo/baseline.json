@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2b50f152e4089b3219db227f2fb11792af3ffff6",
+  "commit": "4911958f73da548907d2c9145bb816023df21df4",
   "branch": "main",
-  "data_commit": "2026-11-16T13:05:28-03:00",
+  "data_commit": "2026-11-16T13:53:08-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "4911958",
+    "data": "2026-11-16",
+    "assunto": "test: resgata 11 suítes de testes de Avaliação/Desempenho da branch muri (+194 casos) (#600)"
+   },
+   {
+    "sha": "792eeb5",
+    "data": "2026-11-16",
+    "assunto": "docs(auditoria): publica o plano de resgate por área da branch muri (#597)"
+   },
    {
     "sha": "2b50f15",
     "data": "2026-11-16",
@@ -121,23 +131,13 @@
     "sha": "49707f1",
     "data": "2026-11-15",
     "assunto": "chore(docs): painel de prontidao deixa de pedir ao dono a #557 ja mergeada (#573)"
-   },
-   {
-    "sha": "044d520",
-    "data": "2026-11-15",
-    "assunto": "feat: área Avaliação/NineBox da muri (#546) na main, com CI verde — substitui a #564 (#569)"
-   },
-   {
-    "sha": "44cf65f",
-    "data": "2026-11-15",
-    "assunto": "chore: resgata melhorias de PRs fechadas sem merge (#570)"
    }
   ],
-  "arquivos_mudados_7d": 776,
+  "arquivos_mudados_7d": 799,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 295
+    "mudancas": 306
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -145,7 +145,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 95
+    "mudancas": 94
    },
    {
     "pasta": "src/components/avaliacao",
@@ -157,7 +157,7 @@
    },
    {
     "pasta": "supabase/functions/_shared",
-    "mudancas": 47
+    "mudancas": 46
    },
    {
     "pasta": "src/utils/__tests__",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "CLAUDE.md",
-    "mudancas": 14
+    "mudancas": 13
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -290,22 +290,22 @@
     "mudancas": 6
    },
    {
-    "arquivo": "src/calculators/impostos.ts",
-    "mudancas": 6
+    "arquivo": ".github/workflows/ci.yml",
+    "mudancas": 5
    },
    {
-    "arquivo": "src/services/cnabService.ts",
-    "mudancas": 6
+    "arquivo": "RELATORIO_CI.md",
+    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 231
+    "commits": 232
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 47
+    "commits": 46
    },
    {
     "autor": "dependabot[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3149,
-  "arquivos_codigo": 1710,
-  "linhas_codigo": 320952,
+  "arquivos_total": 3171,
+  "arquivos_codigo": 1721,
+  "linhas_codigo": 323925,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -336,10 +336,10 @@
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 641,
+  "testes": 652,
   "workflows": 21,
   "scripts": 115,
-  "docs_md": 319
+  "docs_md": 329
  },
  "por_pasta": {
   "capacitor.config.ts": {
@@ -631,8 +631,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 703,
-   "linhas": 108611
+   "arquivos": 714,
+   "linhas": 111568
   },
   "src/constants": {
    "arquivos": 6,
@@ -688,7 +688,7 @@
   },
   "src/setupTests.ts": {
    "arquivos": 1,
-   "linhas": 47
+   "linhas": 63
   },
   "src/test": {
    "arquivos": 6,

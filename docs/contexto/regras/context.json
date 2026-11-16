@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "2b50f152e4089b3219db227f2fb11792af3ffff6",
+  "sha": "4911958f73da548907d2c9145bb816023df21df4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-16 16:17 UTC",
-  "files_total": 3170,
-  "code_files": 2610,
-  "code_lines": 383825
+  "generated_at": "2026-11-16 16:53 UTC",
+  "files_total": 3192,
+  "code_files": 2621,
+  "code_lines": 386798
  },
  "version": "1.3.2",
- "facts_hash": "c2542b0affd5dea2",
+ "facts_hash": "b5c0dbf3b5353f71",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -385,8 +385,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 902,
-   ".ts": 793,
-   ".tsx": 787,
+   ".tsx": 796,
+   ".ts": 795,
    ".mjs": 100,
    ".js": 15,
    ".cjs": 11,
@@ -99229,7 +99229,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 703,
+  "components_count": 714,
   "hooks": [
    {
     "name": "useContacts",
@@ -100583,7 +100583,7 @@
   {
    "module": "src",
    "files": 4,
-   "lines": 761,
+   "lines": 777,
    "tables": [],
    "exports": [
     "App.tsx: App"
@@ -100682,8 +100682,8 @@
   },
   {
    "module": "src/components",
-   "files": 703,
-   "lines": 108611,
+   "files": 714,
+   "lines": 111568,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -100784,9 +100784,9 @@
     "index.ts: V25: Components Export - active modules only",
     "AcoesFeedback.test.ts: Ações de feedback — camada de decisão dos controles (pura). Garante as regras pedidas: RH também gerencia (admin+rh), Validação de Potencial EXCLUSIVA do RH e situação da validação comparada com a versão canônica vinda do banco.",
     "CriacaoFeedbackIntegracao.test.ts: Integração local da criação — a ponte entre o formulário existente e a RPC auditada. Cobre idempotência (mesma tentativa × operação nova), preservação de TODOS os campos, validações e payload da RPC. Sem rede, sem banco.",
+    "EscritaOperacional.test.ts: Guarda de escrita operacional — impede gravação a partir de dados fictícios. Cobre as duas regras: identificador `mock-*` e ambiente de demonstração.",
     "FeedbackAcoesRodape.test.tsx: CONTROLES FUNCIONAIS DO MODAL (rodapé) — testes de integração local. O serviço é mockado (nenhuma rede): o que se verifica aqui é a INTERFACE — quais controles aparecem por status/papel, obrigatoriedade da justificativa, bloqueio durante a operação, erro real, idempotência do reenvio, invalidação de …",
-    "UnifiedAuditSection.test.tsx: Testes de integração da UI de busca unificada de auditoria. Cobre: 1. Lazy-loading: a RPC search_audit_unified só é chamada após o clique em \"Buscar\". 2. Limite fixo de 100 eventos por chamada (contrato da RPC). 3. Filtro por tabela de origem propagado corretamente à RPC (_source_table). 4. Filtro v …",
-    "useHistoricoFeedback.ts: ============================================================================ PONTE ÚNICA CARD ↔ MODAL PARA O HISTÓRICO. • Registro real/`demo-*` → RPC autorizada `listar_historico_feedback`. • Registro da vitrine (`mock-*`) → trilha local, sem rede/Supabase. O card e o modal usam ESTA MESMA query (m …"
+    "UnifiedAuditSection.test.tsx: Testes de integração da UI de busca unificada de auditoria. Cobre: 1. Lazy-loading: a RPC search_audit_unified só é chamada após o clique em \"Buscar\". 2. Limite fixo de 100 eventos por chamada (contrato da RPC). 3. Filtro por tabela de origem propagado corretamente à RPC (_source_table). 4. Filtro v …"
    ],
    "deps": [
     "@dnd-kit/core",
@@ -100850,10 +100850,14 @@
     "src/components/__tests__/AnalyticsSection.test.tsx",
     "src/components/__tests__/AnimatedNumber.test.tsx",
     "src/components/__tests__/AnotacoesTab.test.tsx",
+    "src/components/__tests__/AprovacaoGestor.test.ts",
     "src/components/__tests__/AprovacaoLocal.test.ts",
     "src/components/__tests__/AquisitivosTab.test.tsx",
     "src/components/__tests__/AssinarAvisoDialog.test.tsx",
     "src/components/__tests__/AssinarEspelhoDialog.test.tsx",
+    "src/components/__tests__/AuditoriaChips.test.tsx",
+    "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "src/components/__tests__/AuditoriaDetalheDialog.test.tsx",
     "src/components/__tests__/AuditoriaFeedback.test.tsx",
     "src/components/__tests__/BarChartWidget.test.tsx",
     "src/components/__tests__/BeneficioHistorico.test.tsx",
@@ -100906,11 +100910,7 @@
     "src/components/__tests__/ESocialDesligamentoCDP.test.tsx",
     "src/components/__tests__/ESocialEventComponents.test.tsx",
     "src/components/__tests__/ESocialEventViewer.test.tsx",
-    "src/components/__tests__/ESocialNaoPeriodicos.test.tsx",
-    "src/components/__tests__/ESocialPagamentosAndSST.test.tsx",
-    "src/components/__tests__/ESocialPeriodicos.test.tsx",
-    "src/components/__tests__/ESocialSSTandTSVTermino.test.tsx",
-    "src/components/__tests__/ESocialSemDadosFicticios.test.tsx"
+    "src/components/__tests__/ESocialNaoPeriodicos.test.tsx"
    ]
   },
   {
@@ -159470,6 +159470,262 @@
     "name": "renders conteudo when present"
    },
    {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "situacaoAprovacao — espelho da função SQL"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "sem versão da avaliação do gestor ⇒ em_preparacao"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "com versão e SEM decisão ⇒ aguardando_gestor"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "decisão de OUTRA versão ⇒ volta a aguardar o gestor (aprovação INVALIDADA)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "decisão devolvido na MESMA versão ⇒ devolvida"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "aprovado + validação vigente ⇒ concluida_validada"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "aprovado SEM validação ⇒ aprovada_gestor (falta o RH validar o Potencial)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "decisão SEM gestor identificado NÃO é aprovação (sem_gestor prevalece)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "decisão SEM a avaliação do GESTOR concluída NÃO é aprovação"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "SEM vínculo e SEM decisão ⇒ sem_gestor (pendência de ATRIBUIÇÃO, não de aprovação)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "normaliza o status cru e não inventa valor desconhecido"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "todo status tem rótulo e tom (badge nunca fica sem classe)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "permissões e justificativa de devolução"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "enviar é de RH/admin; decidir é SÓ do gestor"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "a devolução exige justificativa com o MESMO mínimo do SQL (10 caracteres)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "derivarPendencias — fila de aprovação"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "usa a avaliação do GESTOR como âncora e ignora Par/Auto/Subordinado"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "a pendência APARECE sem a avaliação do gestor, mas a decisão fica BLOQUEADA"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "PAR concluído SEM gestor vinculado: a pendência aparece e a aprovação é BLOQUEADA"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "PAR sem gestor vinculado + gestor fora de escopo: bloqueado com motivo (não inventa vínculo)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "RH/admin NÃO decidem mesmo COM gestor vinculado (a aprovação é do gestor)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "gestor vinculado a OUTRO colaborador não decide (fora de escopo)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "decisão SEM gestor e SEM avaliação do gestor NÃO libera o RH"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "decisão de outra versão é INVALIDADA e a linha volta a aguardar o gestor"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "aprovado na mesma versão + validação vigente ⇒ concluida_validada (Nine-Box classifica)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "validação ancorada na versão do GESTOR (não na do conjunto) ⇒ concluida_validada"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "tela MISTA: grupo UUID usa estado REAL e grupo mock usa estado local"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "exceção CONFIRMADA pelo servidor autoriza a decisão sem inventar gestor"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "exceção autorizada: depois da decisão avança para aprovada/validada"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "exceção NÃO dispensa a avaliação obrigatória do gestor"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "sem vínculo e sem confirmação do servidor continua bloqueado"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "derivarPendencias reconhece a autorização excepcional somente no grupo REAL"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "devolvido com justificativa registrada aparece na linha"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "no modo REAL a versão vem do banco: sem versão não existe fila de envio"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "NUNCA mistura categoria (tipo) com status de aprovação"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "derivarPendencias — vínculo do gestor responsável e origem da linha"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "atribui a pendência ao SUPERVISOR do avaliado, não a quem preencheu o registro"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "não oferece a decisão a gestor SEM vínculo com o avaliado (fail-closed)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "sem "
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "sem supervisor, o PRÓPRIO avaliado é o responsável (espelho de "
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "ambiente sem vínculo algum (vitrine): mantém o rótulo e não julga responsabilidade"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "consolida as QUATRO categorias na mesma linha (gestor + opcionais)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "a PRIMEIRA avaliação de QUALQUER categoria já cria a pendência"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "quando o GESTOR entra no conjunto, a MESMA linha fica pronta para aprovar"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "marca "
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "estadoAprovacao — regra única de estado (§5 do pedido)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "1) pendência = existe versão e NÃO existe decisão (mesmo com status concluido)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "2/3) só o gestor RESPONSÁVEL pode decidir — e só com pendência"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "4) o rótulo/tom do selo vêm do MESMO status derivado"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "5) a pendência desaparece quando existe decisão para a versão vigente"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "6) o RH NÃO valida Potencial no fluxo novo (aprovação do gestor é final)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "7) o Nine-Box é elegível na aprovação VIGENTE, sem validação posterior"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "sem fluxo iniciado: em preparação, sem pendência e sem validação possível"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "a fila carrega EXATAMENTE a mesma instância usada pelo modal"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "ordenação e contadores da subaba"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "a fila coloca o que exige ação primeiro (aguardando → devolvida → concluída)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "o contador da subaba conta SÓ o que aguarda o gestor"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "consolidação automática ao salvar (qualquer categoria, idempotente)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "T1–T4: gestor, par, auto e subordinado criam pendência sem clique do RH"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "T5: avaliações adicionais ATUALIZAM a mesma linha (nunca duplicam)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "T6: cada ciclo tem a SUA linha (nunca por nome, sempre por id)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "T16: a versão consolidada muda quando o CONTEÚDO muda (invalida decisões)"
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "T10: colaborador sem gestor fica em "
+   },
+   {
+    "file": "src/components/__tests__/AprovacaoGestor.test.ts",
+    "name": "avaliação CANCELADA não é fonte (mas o registro é preservado)"
+   },
+   {
     "file": "src/components/__tests__/AprovacaoLocal.test.ts",
     "name": "chaveLocal / estado vazio"
    },
@@ -159712,6 +159968,126 @@
    {
     "file": "src/components/__tests__/AssinarEspelhoDialog.test.tsx",
     "name": "renders custom trigger when trigger prop provided"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaChips.test.tsx",
+    "name": "AuditoriaChips — a cor da categoria vale mesmo SEM seleção"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaChips.test.tsx",
+    "name": "todos os chips nascem com a cor própria (borda, fundo, texto, bolinha e contador)"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaChips.test.tsx",
+    "name": "não sobra o cinza neutro do estado inativo antigo"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaChips.test.tsx",
+    "name": "o chip SELECIONADO mantém a cor-base e ganha mais contraste + glow"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaChips.test.tsx",
+    "name": "o clique continua entregando o valor do módulo (nenhuma lógica mudou)"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "auditoria · normalização tolerante"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "aceita registro sem os campos opcionais"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "ignora data inválida sem quebrar"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "auditoria · títulos legíveis por módulo e ação"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "feedback registrado traz avaliado, tipo e nota real"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "meta atualizada mostra a transição de progresso"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "PDI, ciclo e competência têm títulos próprios"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "tabela fora da lista cai em "
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "evento sem autor é identificado como Sistema"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "auditoria · agrupamento por dia"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "cria "
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "usa a data REAL do registro (não o texto exibido)"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "auditoria · filtros funcionais"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "busca encontra evento, colaborador e registro"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "filtra por módulo, ação, responsável, origem e período"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "filtros adicionais usam colunas reais (registro e campo alterado)"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "contadores por módulo ignoram o próprio filtro de módulo"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "contadores respeitam os demais filtros"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "opções saem dos registros reais"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "conta filtros ativos para o botão Limpar"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "texto consultável inclui o payload (busca por dado do registro)"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "auditoria · exportação"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+    "name": "projeta as colunas legíveis do CSV a partir dos dados reais"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDetalheDialog.test.tsx",
+    "name": "AuditoriaDetalheDialog — copiar ID do registro"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaDetalheDialog.test.tsx",
+    "name": "mostra o botão de copiar junto do ID e copia o valor real"
    },
    {
     "file": "src/components/__tests__/AuditoriaFeedback.test.tsx",
@@ -162708,6 +163084,54 @@
    {
     "file": "src/components/__tests__/EpiKPIs.test.tsx",
     "name": "does not show NR-6 alert when semCA is 0"
+   },
+   {
+    "file": "src/components/__tests__/EscritaOperacional.test.ts",
+    "name": "escritaOperacional.idFicticio"
+   },
+   {
+    "file": "src/components/__tests__/EscritaOperacional.test.ts",
+    "name": "reconhece identificadores de demonstração"
+   },
+   {
+    "file": "src/components/__tests__/EscritaOperacional.test.ts",
+    "name": "não trata vazio/nulo como fictício"
+   },
+   {
+    "file": "src/components/__tests__/EscritaOperacional.test.ts",
+    "name": "escritaOperacional.camposFicticios"
+   },
+   {
+    "file": "src/components/__tests__/EscritaOperacional.test.ts",
+    "name": "aponta os campos ofensivos"
+   },
+   {
+    "file": "src/components/__tests__/EscritaOperacional.test.ts",
+    "name": "devolve lista vazia quando todos os ids são reais"
+   },
+   {
+    "file": "src/components/__tests__/EscritaOperacional.test.ts",
+    "name": "escritaOperacional.exigirEscritaOperacional"
+   },
+   {
+    "file": "src/components/__tests__/EscritaOperacional.test.ts",
+    "name": "libera ids reais"
+   },
+   {
+    "file": "src/components/__tests__/EscritaOperacional.test.ts",
+    "name": "bloqueia identificador fictício e diz em QUAL campo"
+   },
+   {
+    "file": "src/components/__tests__/EscritaOperacional.test.ts",
+    "name": "NÃO bloqueia ids reais quando a vitrine está ligada (tela mista)"
+   },
+   {
+    "file": "src/components/__tests__/EscritaOperacional.test.ts",
+    "name": "bloqueia registro criado na vitrine ("
+   },
+   {
+    "file": "src/components/__tests__/EscritaOperacional.test.ts",
+    "name": "a guarda de dado fictício não acusa campo vazio"
    },
    {
     "file": "src/components/__tests__/EstagiarioTab.test.tsx",
@@ -166070,6 +166494,90 @@
     "name": "shows "
    },
    {
+    "file": "src/components/__tests__/MetasEtiquetas.test.tsx",
+    "name": "metasComum — tom do TIPO da meta"
+   },
+   {
+    "file": "src/components/__tests__/MetasEtiquetas.test.tsx",
+    "name": "mapeia cada tipo real para o tom da sua família de cor"
+   },
+   {
+    "file": "src/components/__tests__/MetasEtiquetas.test.tsx",
+    "name": "trata o tipo como texto livre: caixa/espaços não mudam o tom"
+   },
+   {
+    "file": "src/components/__tests__/MetasEtiquetas.test.tsx",
+    "name": "joga o composto "
+   },
+   {
+    "file": "src/components/__tests__/MetasEtiquetas.test.tsx",
+    "name": "cai no tom NEUTRO sem valor utilizável ou com valor desconhecido"
+   },
+   {
+    "file": "src/components/__tests__/MetasEtiquetas.test.tsx",
+    "name": "usa uma cor do sistema por família (sem cor solta)"
+   },
+   {
+    "file": "src/components/__tests__/MetasEtiquetas.test.tsx",
+    "name": "metasComum — pele do STATUS da meta"
+   },
+   {
+    "file": "src/components/__tests__/MetasEtiquetas.test.tsx",
+    "name": "cobre as quatro situações derivadas com cores semânticas distintas"
+   },
+   {
+    "file": "src/components/__tests__/MetasEtiquetas.test.tsx",
+    "name": "dá ao status MAIS intensidade que ao tipo (20 %/45 % contra 10 %/25 %)"
+   },
+   {
+    "file": "src/components/__tests__/MetasEtiquetas.test.tsx",
+    "name": "MetaCard — padronização das etiquetas"
+   },
+   {
+    "file": "src/components/__tests__/MetasEtiquetas.test.tsx",
+    "name": "aplica a MESMA base geométrica no tipo e na situação"
+   },
+   {
+    "file": "src/components/__tests__/MetasEtiquetas.test.tsx",
+    "name": "usa o tom neutro na etiqueta de tipo sem valor utilizável"
+   },
+   {
+    "file": "src/components/__tests__/MetasEtiquetas.test.tsx",
+    "name": "pinta o status ATRASADA com o vermelho do sistema"
+   },
+   {
+    "file": "src/components/__tests__/MetasFiltrosLimpar.test.tsx",
+    "name": "MetasFiltros — botão "
+   },
+   {
+    "file": "src/components/__tests__/MetasFiltrosLimpar.test.tsx",
+    "name": "fica OCULTO quando nenhum filtro está ativo"
+   },
+   {
+    "file": "src/components/__tests__/MetasFiltrosLimpar.test.tsx",
+    "name": "fica OCULTO quando só a ORDENAÇÃO foi alterada (ordenar não é filtrar)"
+   },
+   {
+    "file": "src/components/__tests__/MetasFiltrosLimpar.test.tsx",
+    "name": "fica OCULTO quando a busca só tem espaços"
+   },
+   {
+    "file": "src/components/__tests__/MetasFiltrosLimpar.test.tsx",
+    "name": "fica VISÍVEL com vários filtros combinados"
+   },
+   {
+    "file": "src/components/__tests__/MetasFiltrosLimpar.test.tsx",
+    "name": "SOME quando os filtros voltam ao padrão (re-render)"
+   },
+   {
+    "file": "src/components/__tests__/MetasFiltrosLimpar.test.tsx",
+    "name": "aciona "
+   },
+   {
+    "file": "src/components/__tests__/MetasFiltrosLimpar.test.tsx",
+    "name": "vem logo depois de "
+   },
+   {
     "file": "src/components/__tests__/MetricCard.test.tsx",
     "name": "MetricCard"
    },
@@ -166312,6 +166820,146 @@
    {
     "file": "src/components/__tests__/MorningBriefing.test.tsx",
     "name": "renders admissoes previstas section"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "360 · pesos aprovados"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "são exatamente Gestor 60 · Pares 25 · Auto 10 · Subordinados 5"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "somam 100% e estão centralizados (nenhum número solto no motor)"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "360 · cálculo ponderado"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "reproduz o exemplo do documento: 4,26"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "redistribui proporcionalmente quando falta uma categoria (sem subordinados)"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "com apenas o gestor, ele responde por 100% do desempenho"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "não arredonda durante o cálculo"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "360 · gestor obrigatório (sem redistribuir os 60%)"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "ausência do gestor impede a classificação mesmo com todas as outras notas"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "gestor pendente não classifica"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "gestor cancelado não classifica"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "nota do gestor fora da escala não classifica"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "sem colaborador e sem ciclo a classificação é recusada"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "360 · potencial exclusivo do gestor + validação do RH"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "potencial ausente bloqueia (as outras categorias não o substituem)"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "potencial válido classifica SEM validação posterior do RH"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "snapshot aprovado é a fonte oficial e não exige feedback de gestor"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "snapshot aprovado inválido bloqueia com motivo explícito"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "validação de outra empresa, ciclo ou colaborador não vale (isolamento)"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "potencial validado classifica e guarda quem validou"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "a versão canônica vem do BANCO — o front apenas compara"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "mudança de versão (nota, updated_at ou REABERTURA) invalida a aprovação anterior"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "reabertura é barrada pelo gate de aprovação, não pelo motor"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "versão vazia (banco não devolveu) nunca autoriza"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "aprovação repetida da MESMA versão continua válida (idempotência por versão)"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "360 · nove quadrantes, limiares e rastreabilidade"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "cobre os nove quadrantes preservando a nomenclatura aprovada"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "preserva os limiares atuais (1,5 / 3,5) nas fronteiras"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "a classificação é determinística (mesma entrada, mesmo resultado)"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "leva a metodologia usada junto do resultado (histórico explicável)"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "propaga o sinal de substituição de avaliação concluída (não silenciosa)"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "categoriasDisponiveis descarta fora da escala e status não concluído"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "pesosEfetivos devolve null sem categorias disponíveis (nada de nota fictícia)"
+   },
+   {
+    "file": "src/components/__tests__/Motor360.test.tsx",
+    "name": "todo motivo de não classificação tem texto de pendência"
    },
    {
     "file": "src/components/__tests__/NewAdvanceDialog.test.tsx",
@@ -167486,6 +168134,22 @@
     "name": "renders sub-departamento node name"
    },
    {
+    "file": "src/components/__tests__/OrigemHomologacao.test.tsx",
+    "name": "OrigemHomologacao"
+   },
+   {
+    "file": "src/components/__tests__/OrigemHomologacao.test.tsx",
+    "name": "lista UUID REAL e mock DEMONSTRAÇÃO, com status e ID visíveis"
+   },
+   {
+    "file": "src/components/__tests__/OrigemHomologacao.test.tsx",
+    "name": "fora do flag de homologação não renderiza nada"
+   },
+   {
+    "file": "src/components/__tests__/OrigemHomologacao.test.tsx",
+    "name": "não renderiza fora da aba Feedbacks"
+   },
+   {
     "file": "src/components/__tests__/PCDTab.test.tsx",
     "name": "PCDTab"
    },
@@ -167688,6 +168352,230 @@
    {
     "file": "src/components/__tests__/PapeisAvaliacao.test.ts",
     "name": "sem "
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "pdiComum — categoria de status"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "mapeia os status reais do banco"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "trata o status como texto livre (caixa/espaços/acento)"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "status vazio conta como pendente e desconhecido cai em andamento"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "humaniza o rótulo do status cru"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "pdiComum — derivação do registro"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "resolve colaborador, cargo, departamento e foto pela lista da página"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "sem a lista de colaboradores, cargo/departamento/foto ficam nulos (nada inventado)"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "usa o colaborador da própria relação quando a lista não traz o id"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "não deixa título nem colaborador vazios na tela"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "pdiComum — prazo (regra existente de atraso)"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "prazo futuro e plano aberto = em dia, com dias restantes"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "prazo passado e plano NÃO concluído = vencido (estaAtrasado)"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "prazo passado com plano CONCLUÍDO não é atraso — é conclusão"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "sem prazo: nem atraso nem contagem"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "cobre hoje/amanhã/1 dia de atraso e prazo inválido"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "pdiComum — progresso indisponível (nada de percentual falso)"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "declara que a tabela consultada não tem progresso"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "ignora a coluna "
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "pdiComum — contadores das pílulas"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "conta cada plano em uma só categoria, com "
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "devolve as quatro chaves zeradas com a lista vazia"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "mantém as quatro pílulas na ordem da referência"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "pdiComum — conjunto "
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "junta vencidos e pendentes SEM repetir (vencido+pendente conta uma vez)"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "concluído com prazo vencido NÃO entra em atenção"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "sem um único critério, o resumo é zero (o banner não aparece)"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "pdiComum — facetas dos filtros"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "competências: únicas, sem vazios, em ordem alfabética"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "colaboradores: únicos por id, ordenados por nome"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "pdiComum — ordenação"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "por prazo: menor primeiro (sem prazo vai para o fim)"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "por data de criação: mais recentes e mais antigos"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "pdiComum — busca"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "acha por título, por colaborador e por competência"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "acha pela ação de desenvolvimento e pelos comentários"
+   },
+   {
+    "file": "src/components/__tests__/PdiDerivacoes.test.tsx",
+    "name": "termo vazio ou só espaços não recorta nada"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "fila de aprovação — controles padronizados por vínculo"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "registro REAL com vínculo provado: Ver, Devolver e Aprovar habilitados (nesta ordem)"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "registro REAL SEM o vínculo: os controles continuam VISÍVEIS, porém desabilitados"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "registro REAL com vínculo não avaliável ("
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "registro DEMONSTRATIVO ("
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "registro criado na vitrine ("
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "registro DEMONSTRATIVO com vínculo DESMENTIDO: visível e desabilitado"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "fila de aprovação — ações por papel e por etapa"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "o RH NÃO vê aprovar nem devolver (decisão exclusiva do gestor responsável)"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "RH com o gestor identificado pode ENVIAR ao gestor"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "sem gestor identificado o RH NÃO envia (impedimento explícito no title)"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "aprovada pelo gestor: NÃO existe terceira validação do RH"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "T10: sem a avaliação do Gestor a pendência aparece e a decisão fica BLOQUEADA"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "mostra a prévia dos textos da AVALIAÇÃO DO GESTOR na fila"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "expõe os três campos de Par/Auto/Subordinado na fila (sem filtro por tipo)"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "campos vazios continuam com os três rótulos e usam "
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "vários relatos preservam autoria e não são misturados nem reduzidos ao último"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "texto longo mantém o valor completo no title (tooltip) sem estourar o card"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+    "name": "nenhum botão obrigatório desaparece quando muda o status"
    },
    {
     "file": "src/components/__tests__/PerformanceAuditTimeline.test.tsx",
@@ -248487,7 +249375,7 @@
   },
   "src/setupTests.ts": {
    "path": "src/setupTests.ts",
-   "lines": 47
+   "lines": 63
   },
   "src/vite-env.d.ts": {
    "path": "src/vite-env.d.ts",
@@ -249654,6 +250542,81 @@
     "renders conteudo when present"
    ]
   },
+  "src/components/__tests__/AprovacaoGestor.test.ts": {
+   "path": "src/components/__tests__/AprovacaoGestor.test.ts",
+   "lines": 929,
+   "is_test": true,
+   "rule_comments": [
+    "real (é a mesma regra aplicada aos dados de demonstração, SEM fixture",
+    "Validação gravada na versão do CONJUNTO não casa com a âncora canônica."
+   ],
+   "tests": [
+    "situacaoAprovacao — espelho da função SQL",
+    "sem versão da avaliação do gestor ⇒ em_preparacao",
+    "com versão e SEM decisão ⇒ aguardando_gestor",
+    "decisão de OUTRA versão ⇒ volta a aguardar o gestor (aprovação INVALIDADA)",
+    "decisão devolvido na MESMA versão ⇒ devolvida",
+    "aprovado + validação vigente ⇒ concluida_validada",
+    "aprovado SEM validação ⇒ aprovada_gestor (falta o RH validar o Potencial)",
+    "decisão SEM gestor identificado NÃO é aprovação (sem_gestor prevalece)",
+    "decisão SEM a avaliação do GESTOR concluída NÃO é aprovação",
+    "SEM vínculo e SEM decisão ⇒ sem_gestor (pendência de ATRIBUIÇÃO, não de aprovação)",
+    "normaliza o status cru e não inventa valor desconhecido",
+    "todo status tem rótulo e tom (badge nunca fica sem classe)",
+    "permissões e justificativa de devolução",
+    "enviar é de RH/admin; decidir é SÓ do gestor",
+    "a devolução exige justificativa com o MESMO mínimo do SQL (10 caracteres)",
+    "derivarPendencias — fila de aprovação",
+    "usa a avaliação do GESTOR como âncora e ignora Par/Auto/Subordinado",
+    "a pendência APARECE sem a avaliação do gestor, mas a decisão fica BLOQUEADA",
+    "PAR concluído SEM gestor vinculado: a pendência aparece e a aprovação é BLOQUEADA",
+    "PAR sem gestor vinculado + gestor fora de escopo: bloqueado com motivo (não inventa vínculo)",
+    "RH/admin NÃO decidem mesmo COM gestor vinculado (a aprovação é do gestor)",
+    "gestor vinculado a OUTRO colaborador não decide (fora de escopo)",
+    "decisão SEM gestor e SEM avaliação do gestor NÃO libera o RH",
+    "decisão de outra versão é INVALIDADA e a linha volta a aguardar o gestor",
+    "aprovado na mesma versão + validação vigente ⇒ concluida_validada (Nine-Box classifica)",
+    "validação ancorada na versão do GESTOR (não na do conjunto) ⇒ concluida_validada",
+    "tela MISTA: grupo UUID usa estado REAL e grupo mock usa estado local",
+    "exceção CONFIRMADA pelo servidor autoriza a decisão sem inventar gestor",
+    "exceção autorizada: depois da decisão avança para aprovada/validada",
+    "exceção NÃO dispensa a avaliação obrigatória do gestor",
+    "sem vínculo e sem confirmação do servidor continua bloqueado",
+    "derivarPendencias reconhece a autorização excepcional somente no grupo REAL",
+    "devolvido com justificativa registrada aparece na linha",
+    "no modo REAL a versão vem do banco: sem versão não existe fila de envio",
+    "NUNCA mistura categoria (tipo) com status de aprovação",
+    "derivarPendencias — vínculo do gestor responsável e origem da linha",
+    "atribui a pendência ao SUPERVISOR do avaliado, não a quem preencheu o registro",
+    "não oferece a decisão a gestor SEM vínculo com o avaliado (fail-closed)",
+    "sem ",
+    "sem supervisor, o PRÓPRIO avaliado é o responsável (espelho de ",
+    "ambiente sem vínculo algum (vitrine): mantém o rótulo e não julga responsabilidade",
+    "consolida as QUATRO categorias na mesma linha (gestor + opcionais)",
+    "a PRIMEIRA avaliação de QUALQUER categoria já cria a pendência",
+    "quando o GESTOR entra no conjunto, a MESMA linha fica pronta para aprovar",
+    "marca ",
+    "estadoAprovacao — regra única de estado (§5 do pedido)",
+    "1) pendência = existe versão e NÃO existe decisão (mesmo com status concluido)",
+    "2/3) só o gestor RESPONSÁVEL pode decidir — e só com pendência",
+    "4) o rótulo/tom do selo vêm do MESMO status derivado",
+    "5) a pendência desaparece quando existe decisão para a versão vigente",
+    "6) o RH NÃO valida Potencial no fluxo novo (aprovação do gestor é final)",
+    "7) o Nine-Box é elegível na aprovação VIGENTE, sem validação posterior",
+    "sem fluxo iniciado: em preparação, sem pendência e sem validação possível",
+    "a fila carrega EXATAMENTE a mesma instância usada pelo modal",
+    "ordenação e contadores da subaba",
+    "a fila coloca o que exige ação primeiro (aguardando → devolvida → concluída)",
+    "o contador da subaba conta SÓ o que aguarda o gestor",
+    "consolidação automática ao salvar (qualquer categoria, idempotente)",
+    "T1–T4: gestor, par, auto e subordinado criam pendência sem clique do RH",
+    "T5: avaliações adicionais ATUALIZAM a mesma linha (nunca duplicam)",
+    "T6: cada ciclo tem a SUA linha (nunca por nome, sempre por id)",
+    "T16: a versão consolidada muda quando o CONTEÚDO muda (invalida decisões)",
+    "T10: colaborador sem gestor fica em ",
+    "avaliação CANCELADA não é fonte (mas o registro é preservado)"
+   ]
+  },
   "src/components/__tests__/AprovacaoLocal.test.ts": {
    "path": "src/components/__tests__/AprovacaoLocal.test.ts",
    "lines": 416,
@@ -249751,6 +250714,76 @@
     "renders Assinar agora button",
     "renders Cancelar button",
     "renders custom trigger when trigger prop provided"
+   ]
+  },
+  "src/components/__tests__/AuditoriaChips.test.tsx": {
+   "path": "src/components/__tests__/AuditoriaChips.test.tsx",
+   "lines": 188,
+   "is_test": true,
+   "rule_comments": [
+    "* O que se prova é a regra visual pedida: cada chip mantém a cor da SUA",
+    "Borda/fundo/texto tingidos: o chip não pode parecer \"apagado\"/neutro."
+   ],
+   "tests": [
+    "AuditoriaChips — a cor da categoria vale mesmo SEM seleção",
+    "todos os chips nascem com a cor própria (borda, fundo, texto, bolinha e contador)",
+    "não sobra o cinza neutro do estado inativo antigo",
+    "o chip SELECIONADO mantém a cor-base e ganha mais contraste + glow",
+    "o clique continua entregando o valor do módulo (nenhuma lógica mudou)"
+   ]
+  },
+  "src/components/__tests__/AuditoriaDerivacoes.test.tsx": {
+   "path": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+   "lines": 288,
+   "is_test": true,
+   "params": [
+    {
+     "name": "GESTOR",
+     "value": "'gestor.regional@empresa.com.br'"
+    }
+   ],
+   "temporal": [
+    "[normalizarEvento(log({ id: 'z', created_at: subDays(AGORA, 2).toISOString() }))],",
+    "created_at: subHours(AGORA, 2).toISOString(),",
+    "log({ id: 'p1', tabela: 'pdis', acao: 'UPDATE', user_email: null, created_at: subDays(AGORA, 1).toISOString() })",
+    "normalizarEvento(log({ id: 'a1', created_at: subDays(AGORA, 5).toISOString() })),",
+    "normalizarEvento(log({ id: 'h1', created_at: subHours(AGORA, 1).toISOString() })),",
+    "normalizarEvento(log({ id: 'h2', created_at: subHours(AGORA, 3).toISOString() })),",
+    "normalizarEvento(log({ id: 'o1', created_at: subDays(AGORA, 1).toISOString() })),"
+   ],
+   "tests": [
+    "auditoria · normalização tolerante",
+    "aceita registro sem os campos opcionais",
+    "ignora data inválida sem quebrar",
+    "auditoria · títulos legíveis por módulo e ação",
+    "feedback registrado traz avaliado, tipo e nota real",
+    "meta atualizada mostra a transição de progresso",
+    "PDI, ciclo e competência têm títulos próprios",
+    "tabela fora da lista cai em ",
+    "evento sem autor é identificado como Sistema",
+    "auditoria · agrupamento por dia",
+    "cria ",
+    "usa a data REAL do registro (não o texto exibido)",
+    "auditoria · filtros funcionais",
+    "busca encontra evento, colaborador e registro",
+    "filtra por módulo, ação, responsável, origem e período",
+    "filtros adicionais usam colunas reais (registro e campo alterado)",
+    "contadores por módulo ignoram o próprio filtro de módulo",
+    "contadores respeitam os demais filtros",
+    "opções saem dos registros reais",
+    "conta filtros ativos para o botão Limpar",
+    "texto consultável inclui o payload (busca por dado do registro)",
+    "auditoria · exportação",
+    "projeta as colunas legíveis do CSV a partir dos dados reais"
+   ]
+  },
+  "src/components/__tests__/AuditoriaDetalheDialog.test.tsx": {
+   "path": "src/components/__tests__/AuditoriaDetalheDialog.test.tsx",
+   "lines": 46,
+   "is_test": true,
+   "tests": [
+    "AuditoriaDetalheDialog — copiar ID do registro",
+    "mostra o botão de copiar junto do ID e copia o valor real"
    ]
   },
   "src/components/__tests__/AuditoriaFeedback.test.tsx": {
@@ -251048,6 +252081,29 @@
     "renders Irregulares label",
     "shows NR-6 alert when semCA > 0",
     "does not show NR-6 alert when semCA is 0"
+   ]
+  },
+  "src/components/__tests__/EscritaOperacional.test.ts": {
+   "path": "src/components/__tests__/EscritaOperacional.test.ts",
+   "lines": 106,
+   "is_test": true,
+   "rule_comments": [
+    "A demonstração é apenas visual: quem protege o banco é o ID fictício."
+   ],
+   "doc": "Guarda de escrita operacional — impede gravação a partir de dados fictícios. Cobre as duas regras: identificador `mock-*` e ambiente de demonstração.",
+   "tests": [
+    "escritaOperacional.idFicticio",
+    "reconhece identificadores de demonstração",
+    "não trata vazio/nulo como fictício",
+    "escritaOperacional.camposFicticios",
+    "aponta os campos ofensivos",
+    "devolve lista vazia quando todos os ids são reais",
+    "escritaOperacional.exigirEscritaOperacional",
+    "libera ids reais",
+    "bloqueia identificador fictício e diz em QUAL campo",
+    "NÃO bloqueia ids reais quando a vitrine está ligada (tela mista)",
+    "bloqueia registro criado na vitrine (",
+    "a guarda de dado fictício não acusa campo vazio"
    ]
   },
   "src/components/__tests__/EstagiarioTab.test.tsx": {
@@ -252484,6 +253540,47 @@
     "shows "
    ]
   },
+  "src/components/__tests__/MetasEtiquetas.test.tsx": {
+   "path": "src/components/__tests__/MetasEtiquetas.test.tsx",
+   "lines": 132,
+   "is_test": true,
+   "rule_comments": [
+    "Concluída NÃO pode repetir o verde de \"Em dia\": dividem a mesma posição."
+   ],
+   "tests": [
+    "metasComum — tom do TIPO da meta",
+    "mapeia cada tipo real para o tom da sua família de cor",
+    "trata o tipo como texto livre: caixa/espaços não mudam o tom",
+    "joga o composto ",
+    "cai no tom NEUTRO sem valor utilizável ou com valor desconhecido",
+    "usa uma cor do sistema por família (sem cor solta)",
+    "metasComum — pele do STATUS da meta",
+    "cobre as quatro situações derivadas com cores semânticas distintas",
+    "dá ao status MAIS intensidade que ao tipo (20 %/45 % contra 10 %/25 %)",
+    "MetaCard — padronização das etiquetas",
+    "aplica a MESMA base geométrica no tipo e na situação",
+    "usa o tom neutro na etiqueta de tipo sem valor utilizável",
+    "pinta o status ATRASADA com o vermelho do sistema"
+   ]
+  },
+  "src/components/__tests__/MetasFiltrosLimpar.test.tsx": {
+   "path": "src/components/__tests__/MetasFiltrosLimpar.test.tsx",
+   "lines": 104,
+   "is_test": true,
+   "rule_comments": [
+    "da ordem de cliques na UI. Cobre também a regra de que a ORDENAÇÃO isolada"
+   ],
+   "tests": [
+    "MetasFiltros — botão ",
+    "fica OCULTO quando nenhum filtro está ativo",
+    "fica OCULTO quando só a ORDENAÇÃO foi alterada (ordenar não é filtrar)",
+    "fica OCULTO quando a busca só tem espaços",
+    "fica VISÍVEL com vários filtros combinados",
+    "SOME quando os filtros voltam ao padrão (re-render)",
+    "aciona ",
+    "vem logo depois de "
+   ]
+  },
   "src/components/__tests__/MetricCard.test.tsx": {
    "path": "src/components/__tests__/MetricCard.test.tsx",
    "lines": 112,
@@ -252585,6 +253682,72 @@
     "renders eSocial conformidade badge",
     "renders em ferias badge when there are ferias",
     "renders admissoes previstas section"
+   ]
+  },
+  "src/components/__tests__/Motor360.test.tsx": {
+   "path": "src/components/__tests__/Motor360.test.tsx",
+   "lines": 400,
+   "is_test": true,
+   "params": [
+    {
+     "name": "EMPRESA",
+     "value": "'empresa-a'"
+    },
+    {
+     "name": "CICLO",
+     "value": "'ciclo-3'"
+    },
+    {
+     "name": "COLAB",
+     "value": "'col-1'"
+    }
+   ],
+   "rule_comments": [
+    "obrigatório, potencial exclusivo do gestor com validação do RH vinculada à"
+   ],
+   "calc_fns": [
+    {
+     "name": "validacao",
+     "params": "parcial: Partial<ValidacaoPotencial> = {}",
+     "body": "versaoAvaliacao: VERSOES.versaoGestor, validadoPor: RH, validadoEm: '2026-09-21T09:00:00', empresaId: EMPRESA, cicloId: CICLO, colaboradorId: COLAB, feedbackId: 'fb-gestor', ...parcial,"
+    }
+   ],
+   "tests": [
+    "360 · pesos aprovados",
+    "são exatamente Gestor 60 · Pares 25 · Auto 10 · Subordinados 5",
+    "somam 100% e estão centralizados (nenhum número solto no motor)",
+    "360 · cálculo ponderado",
+    "reproduz o exemplo do documento: 4,26",
+    "redistribui proporcionalmente quando falta uma categoria (sem subordinados)",
+    "com apenas o gestor, ele responde por 100% do desempenho",
+    "não arredonda durante o cálculo",
+    "360 · gestor obrigatório (sem redistribuir os 60%)",
+    "ausência do gestor impede a classificação mesmo com todas as outras notas",
+    "gestor pendente não classifica",
+    "gestor cancelado não classifica",
+    "nota do gestor fora da escala não classifica",
+    "sem colaborador e sem ciclo a classificação é recusada",
+    "360 · potencial exclusivo do gestor + validação do RH",
+    "potencial ausente bloqueia (as outras categorias não o substituem)",
+    "potencial válido classifica SEM validação posterior do RH",
+    "snapshot aprovado é a fonte oficial e não exige feedback de gestor",
+    "snapshot aprovado inválido bloqueia com motivo explícito",
+    "validação de outra empresa, ciclo ou colaborador não vale (isolamento)",
+    "potencial validado classifica e guarda quem validou",
+    "a versão canônica vem do BANCO — o front apenas compara",
+    "mudança de versão (nota, updated_at ou REABERTURA) invalida a aprovação anterior",
+    "reabertura é barrada pelo gate de aprovação, não pelo motor",
+    "versão vazia (banco não devolveu) nunca autoriza",
+    "aprovação repetida da MESMA versão continua válida (idempotência por versão)",
+    "360 · nove quadrantes, limiares e rastreabilidade",
+    "cobre os nove quadrantes preservando a nomenclatura aprovada",
+    "preserva os limiares atuais (1,5 / 3,5) nas fronteiras",
+    "a classificação é determinística (mesma entrada, mesmo resultado)",
+    "leva a metodologia usada junto do resultado (histórico explicável)",
+    "propaga o sinal de substituição de avaliação concluída (não silenciosa)",
+    "categoriasDisponiveis descarta fora da escala e status não concluído",
+    "pesosEfetivos devolve null sem categorias disponíveis (nada de nota fictícia)",
+    "todo motivo de não classificação tem texto de pendência"
    ]
   },
   "src/components/__tests__/NewAdvanceDialog.test.tsx": {
@@ -253097,6 +254260,17 @@
     "renders sub-departamento node name"
    ]
   },
+  "src/components/__tests__/OrigemHomologacao.test.tsx": {
+   "path": "src/components/__tests__/OrigemHomologacao.test.tsx",
+   "lines": 60,
+   "is_test": true,
+   "tests": [
+    "OrigemHomologacao",
+    "lista UUID REAL e mock DEMONSTRAÇÃO, com status e ID visíveis",
+    "fora do flag de homologação não renderiza nada",
+    "não renderiza fora da aba Feedbacks"
+   ]
+  },
   "src/components/__tests__/PCDTab.test.tsx": {
    "path": "src/components/__tests__/PCDTab.test.tsx",
    "lines": 59,
@@ -253184,6 +254358,86 @@
     "perfil das ações de status com vínculo provado",
     "admin+gestor RESPONSÁVEL opera como gestor (concluir); sem vínculo, segue admin_rh",
     "sem "
+   ]
+  },
+  "src/components/__tests__/PdiDerivacoes.test.tsx": {
+   "path": "src/components/__tests__/PdiDerivacoes.test.tsx",
+   "lines": 298,
+   "is_test": true,
+   "rule_comments": [
+    "• a regra de ATRASO é a existente (`estaAtrasado`): prazo passado E plano",
+    "não concluído — concluído com prazo passado NÃO é atraso;",
+    "* PDI mínimo com os campos que a aba consome. */"
+   ],
+   "tests": [
+    "pdiComum — categoria de status",
+    "mapeia os status reais do banco",
+    "trata o status como texto livre (caixa/espaços/acento)",
+    "status vazio conta como pendente e desconhecido cai em andamento",
+    "humaniza o rótulo do status cru",
+    "pdiComum — derivação do registro",
+    "resolve colaborador, cargo, departamento e foto pela lista da página",
+    "sem a lista de colaboradores, cargo/departamento/foto ficam nulos (nada inventado)",
+    "usa o colaborador da própria relação quando a lista não traz o id",
+    "não deixa título nem colaborador vazios na tela",
+    "pdiComum — prazo (regra existente de atraso)",
+    "prazo futuro e plano aberto = em dia, com dias restantes",
+    "prazo passado e plano NÃO concluído = vencido (estaAtrasado)",
+    "prazo passado com plano CONCLUÍDO não é atraso — é conclusão",
+    "sem prazo: nem atraso nem contagem",
+    "cobre hoje/amanhã/1 dia de atraso e prazo inválido",
+    "pdiComum — progresso indisponível (nada de percentual falso)",
+    "declara que a tabela consultada não tem progresso",
+    "ignora a coluna ",
+    "pdiComum — contadores das pílulas",
+    "conta cada plano em uma só categoria, com ",
+    "devolve as quatro chaves zeradas com a lista vazia",
+    "mantém as quatro pílulas na ordem da referência",
+    "pdiComum — conjunto ",
+    "junta vencidos e pendentes SEM repetir (vencido+pendente conta uma vez)",
+    "concluído com prazo vencido NÃO entra em atenção",
+    "sem um único critério, o resumo é zero (o banner não aparece)",
+    "pdiComum — facetas dos filtros",
+    "competências: únicas, sem vazios, em ordem alfabética",
+    "colaboradores: únicos por id, ordenados por nome",
+    "pdiComum — ordenação",
+    "por prazo: menor primeiro (sem prazo vai para o fim)",
+    "por data de criação: mais recentes e mais antigos",
+    "pdiComum — busca",
+    "acha por título, por colaborador e por competência",
+    "acha pela ação de desenvolvimento e pelos comentários",
+    "termo vazio ou só espaços não recorta nada"
+   ]
+  },
+  "src/components/__tests__/PendenciasAprovacao.test.tsx": {
+   "path": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+   "lines": 406,
+   "is_test": true,
+   "rule_comments": [
+    "* O que esta suíte fixa (regra de 19/10/2026, ajustada em 20/10/2026):",
+    "• RH/admin NÃO recebem Aprovar/Devolver — a etapa do gestor é somente leitura;",
+    "• A aprovação do gestor é a decisão final; o controle legado de validação"
+   ],
+   "tests": [
+    "fila de aprovação — controles padronizados por vínculo",
+    "registro REAL com vínculo provado: Ver, Devolver e Aprovar habilitados (nesta ordem)",
+    "registro REAL SEM o vínculo: os controles continuam VISÍVEIS, porém desabilitados",
+    "registro REAL com vínculo não avaliável (",
+    "registro DEMONSTRATIVO (",
+    "registro criado na vitrine (",
+    "registro DEMONSTRATIVO com vínculo DESMENTIDO: visível e desabilitado",
+    "fila de aprovação — ações por papel e por etapa",
+    "o RH NÃO vê aprovar nem devolver (decisão exclusiva do gestor responsável)",
+    "RH com o gestor identificado pode ENVIAR ao gestor",
+    "sem gestor identificado o RH NÃO envia (impedimento explícito no title)",
+    "aprovada pelo gestor: NÃO existe terceira validação do RH",
+    "T10: sem a avaliação do Gestor a pendência aparece e a decisão fica BLOQUEADA",
+    "mostra a prévia dos textos da AVALIAÇÃO DO GESTOR na fila",
+    "expõe os três campos de Par/Auto/Subordinado na fila (sem filtro por tipo)",
+    "campos vazios continuam com os três rótulos e usam ",
+    "vários relatos preservam autoria e não são misturados nem reduzidos ao último",
+    "texto longo mantém o valor completo no title (tooltip) sem estourar o card",
+    "nenhum botão obrigatório desaparece quando muda o status"
    ]
   },
   "src/components/__tests__/PerformanceAuditTimeline.test.tsx": {
@@ -300923,10 +302177,49 @@
   }
  },
  "git": {
-  "sha": "2b50f152e4089b3219db227f2fb11792af3ffff6",
+  "sha": "4911958f73da548907d2c9145bb816023df21df4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "4911958",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "test: resgata 11 suítes de testes de Avaliação/Desempenho da branch muri (+194 casos) (#600)",
+    "files": [
+     "src/components/__tests__/AprovacaoGestor.test.ts",
+     "src/components/__tests__/AuditoriaChips.test.tsx",
+     "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+     "src/components/__tests__/AuditoriaDetalheDialog.test.tsx",
+     "src/components/__tests__/EscritaOperacional.test.ts",
+     "src/components/__tests__/MetasEtiquetas.test.tsx",
+     "src/components/__tests__/MetasFiltrosLimpar.test.tsx",
+     "src/components/__tests__/Motor360.test.tsx",
+     "src/components/__tests__/OrigemHomologacao.test.tsx",
+     "src/components/__tests__/PdiDerivacoes.test.tsx",
+     "src/components/__tests__/PendenciasAprovacao.test.tsx",
+     "src/setupTests.ts"
+    ]
+   },
+   {
+    "sha": "792eeb5",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "docs(auditoria): publica o plano de resgate por área da branch muri (#597)",
+    "files": [
+     "docs/auditoria/PLANO_RESGATE_POR_AREA_2026-11-16.json",
+     "docs/auditoria/PLANO_RESGATE_POR_AREA_2026-11-16.md",
+     "docs/auditoria/resgate/admissoes-onboarding-e-kanban.md",
+     "docs/auditoria/resgate/camada-de-aplicacao-de-training-images-edge-func.md",
+     "docs/auditoria/resgate/desligamentos-organograma-e-dashboards.md",
+     "docs/auditoria/resgate/documentacao.md",
+     "docs/auditoria/resgate/dossie-do-colaborador.md",
+     "docs/auditoria/resgate/hooks-services-e-lib.md",
+     "docs/auditoria/resgate/premiacoes-e-simulador-de-roi.md",
+     "docs/auditoria/resgate/recrutamento-e-selecao.md",
+     "docs/auditoria/resgate/ui-de-treinamentos-src-components-treinamentos-s.md"
+    ]
+   },
    {
     "sha": "2b50f15",
     "date": "2026-11-16",
@@ -301433,27 +302726,6 @@
     "files": [
      ".github/workflows/contexto.yml"
     ]
-   },
-   {
-    "sha": "1937631",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "chore(db): revoga DML de anon/authenticated nas dp_audit_log* (menor privilégio) (#563)",
-    "files": [
-     "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.sql",
-     "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.verify.sql"
-    ]
-   },
-   {
-    "sha": "1241a00",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "Segurança: escrita de RH exige papel em 9 tabelas; colaborador não aprova o próprio ponto (#530)",
-    "files": [
-     "scripts/audit-rls-least-privilege.mjs",
-     "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
-     "supabase/migrations/20261114000600_rls_escrita_por_papel.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -301530,11 +302802,11 @@
     2
    ],
    [
-    "docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql",
+    "src/components/__tests__/AprovacaoGestor.test.ts",
     1
    ],
    [
-    "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
+    "src/components/__tests__/AuditoriaChips.test.tsx",
     1
    ]
   ]

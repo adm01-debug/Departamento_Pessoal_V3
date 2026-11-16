@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 641,
+ "total": 652,
  "por_tipo": {
   "contrato": 4,
   "e2e": 30,
   "pytest": 2,
-  "unit": 603
+  "unit": 614
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 519
+   "arquivos": 530
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -711,6 +711,15 @@
    "casos": 7
   },
   {
+   "arquivo": "src/components/__tests__/AprovacaoGestor.test.ts",
+   "tipo": "unit",
+   "linhas": 929,
+   "testa": [
+    "src/components/avaliacao/aprovacaoGestor.ts"
+   ],
+   "casos": 58
+  },
+  {
    "arquivo": "src/components/__tests__/AprovacaoLocal.test.ts",
    "tipo": "unit",
    "linhas": 416,
@@ -758,6 +767,34 @@
     "src/components/ponto/AssinarEspelhoDialog.tsx"
    ],
    "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/AuditoriaChips.test.tsx",
+   "tipo": "unit",
+   "linhas": 188,
+   "testa": [
+    "src/components/avaliacao/AuditoriaChips.tsx"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
+   "tipo": "unit",
+   "linhas": 288,
+   "testa": [
+    "src/components/avaliacao/auditoriaComum.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/components/__tests__/AuditoriaDetalheDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 46,
+   "testa": [
+    "src/components/avaliacao/AuditoriaDetalheDialog.tsx",
+    "src/components/avaliacao/auditoriaComum.ts"
+   ],
+   "casos": 1
   },
   {
    "arquivo": "src/components/__tests__/AuditoriaFeedback.test.tsx",
@@ -1315,6 +1352,15 @@
     "src/components/epis/EpiKPIs.tsx"
    ],
    "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/EscritaOperacional.test.ts",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "src/components/avaliacao/escritaOperacional.ts"
+   ],
+   "casos": 9
   },
   {
    "arquivo": "src/components/__tests__/ESocialAlteracaoComponents.test.tsx",
@@ -2173,6 +2219,26 @@
    "casos": 8
   },
   {
+   "arquivo": "src/components/__tests__/MetasEtiquetas.test.tsx",
+   "tipo": "unit",
+   "linhas": 132,
+   "testa": [
+    "src/components/avaliacao/MetaCard.tsx",
+    "src/components/avaliacao/metasComum.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/components/__tests__/MetasFiltrosLimpar.test.tsx",
+   "tipo": "unit",
+   "linhas": 104,
+   "testa": [
+    "src/components/avaliacao/MetasFiltros.tsx",
+    "src/components/avaliacao/metasComum.ts"
+   ],
+   "casos": 7
+  },
+  {
    "arquivo": "src/components/__tests__/MetricasFolhaDashboard.test.tsx",
    "tipo": "unit",
    "linhas": 87,
@@ -2237,6 +2303,16 @@
     "src/components/dashboard/MorningBriefing.tsx"
    ],
    "casos": 10
+  },
+  {
+   "arquivo": "src/components/__tests__/Motor360.test.tsx",
+   "tipo": "unit",
+   "linhas": 400,
+   "testa": [
+    "src/components/avaliacao/motorAvaliacao360.ts",
+    "src/components/avaliacao/nineBoxComum.ts"
+   ],
+   "casos": 30
   },
   {
    "arquivo": "src/components/__tests__/NewAdvanceDialog.test.tsx",
@@ -2460,6 +2536,15 @@
    "casos": 6
   },
   {
+   "arquivo": "src/components/__tests__/OrigemHomologacao.test.tsx",
+   "tipo": "unit",
+   "linhas": 60,
+   "testa": [
+    "src/components/avaliacao/OrigemHomologacao.tsx"
+   ],
+   "casos": 3
+  },
+  {
    "arquivo": "src/components/__tests__/PagamentoBancarioWizard.test.tsx",
    "tipo": "unit",
    "linhas": 105,
@@ -2506,6 +2591,25 @@
     "src/hooks/useColaboradorDetalhes.ts"
    ],
    "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/PdiDerivacoes.test.tsx",
+   "tipo": "unit",
+   "linhas": 298,
+   "testa": [
+    "src/components/avaliacao/pdiComum.ts"
+   ],
+   "casos": 28
+  },
+  {
+   "arquivo": "src/components/__tests__/PendenciasAprovacao.test.tsx",
+   "tipo": "unit",
+   "linhas": 406,
+   "testa": [
+    "src/components/avaliacao/PendenciasAprovacao.tsx",
+    "src/components/avaliacao/aprovacaoGestor.ts"
+   ],
+   "casos": 20
   },
   {
    "arquivo": "src/components/__tests__/PerformanceAuditTimeline.test.tsx",
@@ -5925,40 +6029,51 @@
   "src/components/afastamentos/AfastamentoTimeline.tsx": 1,
   "src/components/auth/LoginForm.tsx": 1,
   "src/components/avaliacao/AnaliticosDesempenho.tsx": 1,
+  "src/components/avaliacao/AuditoriaChips.tsx": 1,
+  "src/components/avaliacao/AuditoriaDetalheDialog.tsx": 1,
   "src/components/avaliacao/CicloAtivoPanel.tsx": 1,
   "src/components/avaliacao/FeedbackAcoesRodape.tsx": 1,
   "src/components/avaliacao/FeedbackCard.tsx": 2,
   "src/components/avaliacao/FeedbackDetalheDialog.tsx": 2,
   "src/components/avaliacao/FeedbacksTimeline.tsx": 1,
   "src/components/avaliacao/HistoricoFeedbackDialog.tsx": 1,
+  "src/components/avaliacao/MetaCard.tsx": 1,
+  "src/components/avaliacao/MetasFiltros.tsx": 1,
   "src/components/avaliacao/NineBoxFocoBanner.tsx": 1,
   "src/components/avaliacao/NineBoxMatrix.tsx": 1,
   "src/components/avaliacao/NineBoxQuadrante.tsx": 1,
   "src/components/avaliacao/NineBoxQuadranteDialog.tsx": 1,
   "src/components/avaliacao/NovoFeedbackDialog.tsx": 1,
+  "src/components/avaliacao/OrigemHomologacao.tsx": 1,
+  "src/components/avaliacao/PendenciasAprovacao.tsx": 1,
   "src/components/avaliacao/PerformanceAuditTimeline.tsx": 2,
   "src/components/avaliacao/PerformanceDashboard.tsx": 1,
   "src/components/avaliacao/TodosCiclosTable.tsx": 1,
   "src/components/avaliacao/acoesFeedback.ts": 2,
   "src/components/avaliacao/animacaoFeedbacks.ts": 1,
-  "src/components/avaliacao/aprovacaoGestor.ts": 4,
+  "src/components/avaliacao/aprovacaoGestor.ts": 6,
   "src/components/avaliacao/aprovacaoLocal.ts": 2,
+  "src/components/avaliacao/auditoriaComum.ts": 2,
   "src/components/avaliacao/auditoriaFeedback.ts": 1,
   "src/components/avaliacao/barraProgresso.tsx": 1,
   "src/components/avaliacao/barraProgressoAnim.ts": 1,
   "src/components/avaliacao/criacaoFeedback.ts": 1,
   "src/components/avaliacao/desempenhoDemoStore.ts": 2,
   "src/components/avaliacao/edicaoFeedback.ts": 1,
+  "src/components/avaliacao/escritaOperacional.ts": 1,
   "src/components/avaliacao/execucaoFeedback.ts": 1,
   "src/components/avaliacao/feedbackCanonico.ts": 4,
   "src/components/avaliacao/feedbacksComum.ts": 5,
   "src/components/avaliacao/historicoFeedback.ts": 1,
+  "src/components/avaliacao/metasComum.ts": 2,
+  "src/components/avaliacao/motorAvaliacao360.ts": 1,
   "src/components/avaliacao/nineBox360.ts": 1,
-  "src/components/avaliacao/nineBoxComum.ts": 7,
+  "src/components/avaliacao/nineBoxComum.ts": 8,
   "src/components/avaliacao/nineBoxConsolidacao.ts": 3,
   "src/components/avaliacao/nineBoxMock.ts": 1,
   "src/components/avaliacao/nineBoxModo.ts": 2,
   "src/components/avaliacao/papeisAvaliacao.ts": 1,
+  "src/components/avaliacao/pdiComum.ts": 1,
   "src/components/avaliacao/servicoDemo.ts": 1,
   "src/components/avaliacao/statusFeedback.ts": 1,
   "src/components/beneficios/BeneficioHistorico.tsx": 1,
