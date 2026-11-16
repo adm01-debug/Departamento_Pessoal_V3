@@ -134,39 +134,33 @@ jobs:
           # Versões já presentes no ledger do canônico são puladas: um
           # re-dispatch do mesmo lote não pode re-executar as migrações.
           applied="$(psql "$SUPABASE_DB_URL" -X -At -c "SELECT version FROM supabase_migrations.schema_migrations")"
+          # LOTE ATUAL: NineBox / Gestao de Desempenho (14 arquivos). O lote
+          # anterior (32 arquivos, 20261015160000 a 20261116000000) saiu daqui
+          # porque suas 32 versoes ja estao no ledger canonico -- conferido por
+          # consulta antes da troca, nenhuma pendente.
+          # ORDEM IMPORTA, e o timestamp ja a garante (o psql recebe os \i na
+          # ordem do glob, que e a ordem de versao):
+          #  - 20261115150000 canoniza as 4 funcoes endurecidas em producao e
+          #    por isso roda DEPOIS das migrations do lote que as sobrescrevem;
+          #  - 20261115160000 converte as 4 notas da consolidacao para
+          #    numeric(4,3), que e o que o sidecar da 20261021090000 exige no
+          #    step "Verificar sidecars" -- rodado apos o COMMIT do lote.
           for migration in \
-            20261015160000_ci_auditor_readonly_role.sql \
-            20261015170000_ci_auditor_revoke_public_secdef.sql \
-            20261018120000_onda4d_review243.sql \
-            20261018130000_onda4e_objetos_ausentes.sql \
-            20261018140000_onda5_ponto_cols.sql \
-            20261018150000_onda5_rescisao_detalhes_calculo.sql \
-            20261018160000_dedup_idempotency_anomalies_job.sql \
-            20261018170000_default_privs_revoke_execute_public.sql \
-            20261018200000_qa2_pix_lote_idempotente.sql \
-            20261019000000_qa3_db_fixes.sql \
-            20261020000000_colaboradores_metadata.sql \
-            20261021000000_ledger_reconcile_secdef_defaults.sql \
-            20261021010000_default_privs_for_role.sql \
-            20261022000000_qa5_db_fixes.sql \
-            20261023000000_qa_r3_fixes.sql \
-            20261024000000_qa_r4_fixes.sql \
-            20261027000000_revoke_orphan_secdef.sql \
-            20261027120000_qa_r5_fixes.sql \
-            20261028120000_qa_r5_review_fixes.sql \
-            20261028130000_revoke_orphan_secdef_v2.sql \
-            20261029000000_gaps_v2_verificacao.sql \
-            20261029120000_whatsapp_pending_trigger_retire.sql \
-            20261109000000_configuracoes_ponto_insert_policy.sql \
-            20261111000000_ferias_art145_antecipacao_oj123.sql \
-            20261112000000_rv02_drop_inert_token_policies.sql \
-            20261112010000_configuracoes_ponto_corrige_policies_prod.sql \
-            20261113000000_remediate_rv04_missing_rpcs.sql \
-            20261114000000_remediate_ferias_art145_11_20.sql \
-                        20261116000000_remediate_rbac_e2e_remove_admin.sql \
-                                    20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.sql \
-                                    20261114000200_planos_saude_updated_at.sql \
-                                    20261114000800_contas_bancarias_decrypted_security_invoker.sql
+            20261015090000_ninebox_finalizacao_e_potencial.sql \
+            20261016090000_ninebox_revoga_insert_direto.sql \
+            20261017090000_ninebox_aprovacao_gestor.sql \
+            20261018090000_ninebox_conclusao_gestor.sql \
+            20261020090000_ninebox_edicao_feedback.sql \
+            20261021090000_ninebox_aprovacao_confirmada.sql \
+            20261022090000_ninebox_conclusao_feedback_autorizada.sql \
+            20261025090000_ninebox_aprovacao_autoria.sql \
+            20261027090000_ninebox_reconciliacao_incremental.sql \
+            20261028090000_ninebox_justificativa_historico.sql \
+            20261115120000_ninebox_rls_leitura_gestor_avaliador.sql \
+            20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql \
+            20261115150000_ninebox_canoniza_funcoes_do_canonico.sql \
+            20261115160000_ninebox_consolidacoes_nota_numeric_4_3.sql \
+            20261115170000_ninebox_repoe_revogacao_versao_consolidada.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -280,7 +274,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 30 &&
+              Number(r.ledger_count) === 15 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
