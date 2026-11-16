@@ -421,6 +421,19 @@ export async function listarIdentidadesGenero(): Promise<Tables<'identidades_gen
   return data || [];
 }
 
+// Dossiê → Timeline/Próximos Eventos: férias de UM colaborador.
+export async function listarFeriasColaborador(colaboradorId: string, empresaId: string) {
+  if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+  const { data, error } = await supabase
+    .from('ferias')
+    .select('id, data_inicio, data_fim, dias_gozo, status')
+    .eq('colaborador_id', colaboradorId)
+    .eq('empresa_id', empresaId)
+    .order('data_inicio', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
 export async function listarTiposAdmissao(): Promise<Tables<'tipos_admissao'>[]> {
   const { data, error } = await supabase.from('tipos_admissao').select('*').order('nome');
   if (error) throw error;

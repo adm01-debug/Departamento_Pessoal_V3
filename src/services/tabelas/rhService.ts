@@ -164,6 +164,20 @@ export const onboardingService = {
     if (error) throw error;
     return data || [];
   },
+  // Dossiê → Desenvolvimento: o onboarding de UM colaborador. `listarColaboradores`
+  // acima só recorta por empresa, não por colaborador.
+  buscarPorColaborador: async (colaboradorId: string, empresaId: string): Promise<OnboardingColaboradorRow | null> => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await supabase
+      .from('onboarding_colaborador')
+      .select('*')
+      .eq('colaborador_id', colaboradorId)
+      .eq('empresa_id', empresaId)
+      .order('created_at', { ascending: false })
+      .limit(1);
+    if (error) throw error;
+    return data?.[0] ?? null;
+  },
   iniciarOnboarding: async (d: TablesInsert<'onboarding_colaborador'>): Promise<OnboardingColaboradorRow | null> => {
     validateInput(onboardingColaboradorSchema, d, 'onboarding.iniciarOnboarding');
     const { data, error } = await supabase
@@ -221,5 +235,16 @@ export const treinamentoParticipantesService = {
       .eq('id', id)
       .eq('treinamento_id', treinamentoId);
     if (error) throw error;
+  },
+  // Dossiê → Desenvolvimento: treinamentos de UM colaborador. `listar` acima só
+  // filtra por turma (`treinamento_id`), não por colaborador.
+  listarPorColaborador: async (colaboradorId: string): Promise<TreinamentoParticipanteRow[]> => {
+    const { data, error } = await supabase
+      .from('treinamento_participantes')
+      .select('*, treinamento:treinamentos(nome, descricao, data, carga_horaria)')
+      .eq('colaborador_id', colaboradorId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data as unknown as TreinamentoParticipanteRow[]) || [];
   },
 };

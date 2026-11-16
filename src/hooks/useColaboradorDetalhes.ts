@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEmpresas } from './useEmpresas';
 import * as service from '@/services/colaboradorDetalhesService';
+import { mockOr, getMockFerias } from '@/mocks/colaboradoresMock';
 import type { Updatable, Insertable } from '@/integrations/supabase/database.types';
 
 // Dependentes
@@ -216,6 +217,18 @@ export function useExcluirAnotacao(colaboradorId: string) {
 }
 
 // Períodos Aquisitivos
+// `empresaId` vem por parâmetro (e não de `useEmpresas` como os hooks acima)
+// porque os consumidores — useProximosEventos e useHistoricoColaborador — já
+// resolveram a empresa e precisam passá-la adiante.
+export function useFeriasResumoColaborador(colaboradorId: string, empresaId?: string) {
+  return useQuery({
+    queryKey: ['ferias-resumo-colaborador', colaboradorId, empresaId],
+    queryFn: async () =>
+      mockOr(getMockFerias(colaboradorId)) ?? service.listarFeriasColaborador(colaboradorId, empresaId!),
+    enabled: !!colaboradorId && !!empresaId,
+  });
+}
+
 export function usePeriodosAquisitivos(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({

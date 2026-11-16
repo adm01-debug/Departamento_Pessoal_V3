@@ -52,6 +52,12 @@ export default function OnboardingPage() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['onboarding-list'] });
+      // O dossiê (Timeline e card de Desenvolvimento) lê por outras chaves.
+      // Sem invalidá-las, o staleTime de 5 min de queryClient.ts e o
+      // refetchOnWindowFocus desligado deixam a tarefa como pendente lá mesmo
+      // depois de concluída aqui.
+      qc.invalidateQueries({ queryKey: ['onboarding-tarefas-colaborador'] });
+      qc.invalidateQueries({ queryKey: ['onboarding-colaborador'] });
       toast.success('Tarefa concluída!');
     },
   });

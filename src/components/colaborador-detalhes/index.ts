@@ -14,4 +14,5 @@ export { EstagiarioTab } from './EstagiarioTab';
 export { HistoricoContratosTab } from './HistoricoContratosTab';
 export { BeneficiosTab } from './BeneficiosTab';
 export { ColaboradorHistory } from '../colaboradores/ColaboradorHistory';
+export { HistoricoColaborador } from './historico/HistoricoColaborador';
 export { ColaboradorDocuments } from './ColaboradorDocuments';
