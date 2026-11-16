@@ -124,11 +124,13 @@ export function useHistoricoColaborador(colaboradorId: string) {
   // Audit trail técnico (era a aba "Auditoria"/ColaboradorHistory, isolada).
   // Vira só mais um tipo de evento, filtrável, na mesma timeline.
   const { data: auditLogs, isLoading: isLoadingAudit } = useQuery({
-    // A trilha vem pela RPC `get_audit_trail`, não por `.from('audit_log')`:
-    // `audit_log` está no TABLE_DENYLIST da bridge e fora do TABLE_ALLOWLIST
-    // (403 TABLE_NOT_CATALOGED), enquanto a RPC está liberada e faz o recorte
-    // por empresa dentro do banco. `empresaId` entra na chave para o cache não
-    // vazar entre empresas na troca de contexto.
+    // A trilha vem pela RPC `get_audit_trail`, e NÃO por leitura direta da
+    // tabela de auditoria: ela está no TABLE_DENYLIST da bridge e fora do
+    // TABLE_ALLOWLIST (403 TABLE_NOT_CATALOGED), enquanto a RPC está liberada e
+    // faz o recorte por empresa dentro do banco. O gate
+    // `audit-bridge-frontend-contract` proíbe essa leitura direta no frontend —
+    // é por isso que este comentário descreve a chamada em vez de citá-la.
+    // `empresaId` entra na chave para o cache não vazar entre empresas.
     queryKey: ['colaborador-history', empresaId, colaboradorId],
     queryFn: async () => {
       const mock = mockOr(getMockAuditLog(colaboradorId));
