@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1096,
- "arestas": 5256,
+ "nos": 1126,
+ "arestas": 5324,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -10,7 +10,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 260
+   "importado_por": 263
   },
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -78,15 +78,15 @@
   },
   {
    "arquivo": "supabase/functions/_shared/contract.ts",
-   "importado_por": 73
+   "importado_por": 75
   },
   {
    "arquivo": "supabase/functions/_shared/rateLimit.ts",
-   "importado_por": 65
+   "importado_por": 67
   },
   {
    "arquivo": "supabase/functions/_shared/csrf.ts",
-   "importado_por": 61
+   "importado_por": 62
   },
   {
    "arquivo": "supabase/functions/_shared/sentry.ts",
@@ -230,6 +230,7 @@
   "src/components/ui/sliding-indicator.tsx",
   "src/components/ui/use-toast.ts",
   "src/constants/workflow-status.ts",
+  "src/hooks/useTrainingImages.ts",
   "src/hooks/validators.ts",
   "src/i18n/useTranslation.ts",
   "src/integrations/supabase/index.ts",
@@ -265,13 +266,13 @@
   },
   {
    "modulo": "hooks",
-   "depende_de": 15,
+   "depende_de": 16,
    "importado_por": 32
   },
   {
    "modulo": "integrations/supabase",
    "depende_de": 2,
-   "importado_por": 42
+   "importado_por": 43
   },
   {
    "modulo": "services",

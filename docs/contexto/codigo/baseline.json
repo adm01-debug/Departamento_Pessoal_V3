@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "800125221d33cb158c990df02ce43195007f0aef",
+  "commit": "935356c8ab1524aed25eaac10ccfa049ff67c187",
   "branch": "main",
-  "data_commit": "2026-11-16T16:16:09-03:00",
+  "data_commit": "2026-11-16T18:01:05-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "935356c",
+    "data": "2026-11-16",
+    "assunto": "feat(treinamentos): recupera a camada de aplicação das capas de treinamento (branch muri) (#593)"
+   },
    {
     "sha": "8001252",
     "data": "2026-11-16",
@@ -126,14 +131,9 @@
     "sha": "9ecaf8a",
     "data": "2026-11-16",
     "assunto": "chore(ninebox): canoniza no repo as 4 funcoes endurecidas em producao (#577)"
-   },
-   {
-    "sha": "6450ca8",
-    "data": "2026-11-15",
-    "assunto": "fix(ninebox): policy de leitura volta a valer somente para authenticated (#574)"
    }
   ],
-  "arquivos_mudados_7d": 835,
+  "arquivos_mudados_7d": 891,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -145,7 +145,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 93
+    "mudancas": 92
    },
    {
     "pasta": "src/components/avaliacao",
@@ -157,7 +157,7 @@
    },
    {
     "pasta": "supabase/functions/_shared",
-    "mudancas": 46
+    "mudancas": 60
    },
    {
     "pasta": "src/utils/__tests__",
@@ -177,7 +177,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 29
+    "mudancas": 28
    },
    {
     "pasta": "src/components/esocial",
@@ -185,7 +185,7 @@
    },
    {
     "pasta": "supabase/functions/external-db-bridge",
-    "mudancas": 27
+    "mudancas": 28
    },
    {
     "pasta": "src/components/ferias",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 29
+    "mudancas": 28
    },
    {
     "arquivo": "package.json",
@@ -234,6 +234,10 @@
     "mudancas": 9
    },
    {
+    "arquivo": "deno.lock",
+    "mudancas": 8
+   },
+   {
     "arquivo": "supabase/functions/calcular-folha/index.ts",
     "mudancas": 8
    },
@@ -242,11 +246,11 @@
     "mudancas": 7
    },
    {
-    "arquivo": "deno.lock",
+    "arquivo": "e2e/auth.setup.ts",
     "mudancas": 7
    },
    {
-    "arquivo": "e2e/auth.setup.ts",
+    "arquivo": "scripts/automation.config.json",
     "mudancas": 7
    },
    {
@@ -271,10 +275,6 @@
    },
    {
     "arquivo": "infra/github/action-pins.json",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "scripts/automation.config.json",
     "mudancas": 6
    },
    {
@@ -318,24 +318,24 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3197,
-  "arquivos_codigo": 1747,
-  "linhas_codigo": 328110,
+  "arquivos_total": 3253,
+  "arquivos_codigo": 1787,
+  "linhas_codigo": 336524,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 94,
-  "modulos": 79,
+  "modulos": 80,
   "componentes": 508,
-  "hooks": 109,
-  "edge_functions": 65,
+  "hooks": 110,
+  "edge_functions": 67,
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 653,
+  "testes": 663,
   "workflows": 21,
-  "scripts": 115,
-  "docs_md": 329
+  "scripts": 132,
+  "docs_md": 332
  },
  "por_pasta": {
   "capacitor.config.ts": {
@@ -355,8 +355,8 @@
    "linhas": 257
   },
   "e2e/authenticated": {
-   "arquivos": 15,
-   "linhas": 816
+   "arquivos": 16,
+   "linhas": 863
   },
   "e2e/authenticated-non-admin": {
    "arquivos": 1,
@@ -602,6 +602,14 @@
    "arquivos": 19,
    "linhas": 2169
   },
+  "scripts/training-images-homolog": {
+   "arquivos": 1,
+   "linhas": 452
+  },
+  "scripts/training-images-local": {
+   "arquivos": 3,
+   "linhas": 1907
+  },
   "scripts/update-workflows-status.mjs": {
    "arquivos": 1,
    "linhas": 68
@@ -643,8 +651,8 @@
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 185,
-   "linhas": 21192
+   "arquivos": 186,
+   "linhas": 21251
   },
   "src/i18n": {
    "arquivos": 2,
@@ -679,8 +687,8 @@
    "linhas": 8725
   },
   "src/services": {
-   "arquivos": 163,
-   "linhas": 34958
+   "arquivos": 182,
+   "linhas": 38327
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -707,8 +715,8 @@
    "linhas": 9
   },
   "supabase/functions": {
-   "arquivos": 173,
-   "linhas": 24545
+   "arquivos": 188,
+   "linhas": 27125
   },
   "supabase/tests": {
    "arquivos": 2,
@@ -809,6 +817,10 @@
    "linhas": 846
   },
   {
+   "arquivo": "scripts/training-images-local/edge-http-test.mjs",
+   "linhas": 830
+  },
+  {
    "arquivo": "src/components/workflows/WorkflowDesigner.tsx",
    "linhas": 824
   },
@@ -831,19 +843,15 @@
   {
    "arquivo": "src/pages/ESocialPage.tsx",
    "linhas": 788
-  },
-  {
-   "arquivo": "src/components/dashboard/AnalyticsSection.tsx",
-   "linhas": 778
   }
  ],
  "qualidade": {
   "any": 170,
-  "console_log": 292,
+  "console_log": 395,
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 18,
-  "arquivos_acima_500_linhas": 83
+  "arquivos_acima_500_linhas": 86
  },
  "todos": [
   {
@@ -974,6 +982,8 @@
    "pix-lote",
    "relatorio",
    "tabelas-dominio",
+   "training-image-dispatch",
+   "training-image-generate",
    "warmup"
   ],
   "edges_chamadas_sem_pasta": [],

@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `800125221d` · branch `main` · 2026-11-16 19:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `935356c8ab` · branch `main` · 2026-11-16 21:02 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 302 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 312 arquivo(s)
 
 - `docs/ninebox-pre-aplicacao.sql`
 - `docs/ninebox-verificacao-truncate.sql`
@@ -345,11 +345,19 @@
 - `scripts/simulacao/verify_bridge_contract.cjs`
 - `scripts/supabase_snapshot/snapshot.py`
 - `scripts/tests/audit-edge-authz.test.mjs`
+- `scripts/training-images-homolog/homolog.mjs`
+- `scripts/training-images-homolog/scheduler-enable.sql`
+- `scripts/training-images-local/autoqueue.test.sql`
+- `scripts/training-images-local/bootstrap.sql`
+- `scripts/training-images-local/edge-http-test.mjs`
+- `scripts/training-images-local/rls.test.sql`
 - `src/hooks/__tests__/useBruteForceProtection.test.ts`
 - `src/hooks/useBruteForceProtection.ts`
 - `src/services/__tests__/rescisaoService.test.ts`
 - `src/services/esocialService.ts`
 - `src/services/rescisaoService.ts`
+- `src/services/trainingImages/__tests__/guardrails.test.ts`
+- `src/services/trainingImages/__tests__/migration.test.ts`
 - `src/tests/rpc-permissions.test.ts`
 - `supabase/baseline/20260831_canonical/canonical_auth_schema.sql`
 - `supabase/baseline/20260831_canonical/canonical_storage_schema.sql`
@@ -420,6 +428,8 @@
 - `supabase/functions/relatorio/index.ts`
 - `supabase/functions/sincronizar-bitrix/index.ts`
 - `supabase/functions/tabelas-dominio/index.ts`
+- `supabase/functions/training-image-dispatch/index.ts`
+- `supabase/functions/training-image-generate/index.ts`
 - `supabase/functions/upload-certificado/index.ts`
 - `supabase/functions/validar-biometria/index.ts`
 - `supabase/functions/warmup/index.ts`
@@ -462,17 +472,7 @@
 - `supabase/migrations/20260712215808_8c16ff4b-eb80-4fbb-a8c6-c15c62ed93c7.sql`
 - `supabase/migrations/20260712215942_0c45a861-8424-4178-936a-cae1ebe129b2.sql`
 - `supabase/migrations/20260712220248_803bf461-91a3-4d53-abd6-41fb5b5f0892.sql`
-- `supabase/migrations/20260712222252_1d964bbd-0cff-41f7-9bcb-496036476e63.sql`
-- `supabase/migrations/20260712222525_efdf4704-8024-4e4a-8fd4-414856e9b4fe.sql`
-- `supabase/migrations/20260712222818_0ca2a3f1-2171-4072-bfce-14a5714f35e9.sql`
-- `supabase/migrations/20260712223051_0c34a43a-072a-4c06-8ff7-f2ac782d9041.sql`
-- `supabase/migrations/20260712232544_936c8e57-5bce-4539-80fa-e174ecf3ac9b.sql`
-- `supabase/migrations/20260713105424_c760e8ed-e7ec-4790-ad43-ceadf29673fc.sql`
-- `supabase/migrations/20260713105603_64ab5dcc-be95-4d7c-9c96-860adf72e2da.sql`
-- `supabase/migrations/20260713124616_7ca546cf-4cfa-4fc5-b42e-3a06d1367387.sql`
-- `supabase/migrations/20260713124728_fc2bfdf0-5cb2-4318-b4d4-e4b1130bb95b.sql`
-- `supabase/migrations/20260713124926_a1152a5e-9744-4462-9fc2-f423c57445bb.sql`
-- … +152 (lista completa em `context.json`)
+- … +162 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 

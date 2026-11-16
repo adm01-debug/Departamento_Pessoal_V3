@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 109,
+ "total": 110,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -2836,6 +2836,24 @@
    "usado_por_arquivos": [
     "src/pages/EmpresasPage.tsx"
    ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useTrainingImages.ts",
+   "hooks_exportados": [
+    "useTrainingImages"
+   ],
+   "linhas": 59,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
    "coberto_por_testes": 1
   },
   {

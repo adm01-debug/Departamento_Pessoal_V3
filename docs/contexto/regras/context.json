@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "800125221d33cb158c990df02ce43195007f0aef",
+  "sha": "935356c8ab1524aed25eaac10ccfa049ff67c187",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-16 19:16 UTC",
-  "files_total": 3218,
-  "code_files": 2647,
-  "code_lines": 390983
+  "generated_at": "2026-11-16 21:02 UTC",
+  "files_total": 3274,
+  "code_files": 2700,
+  "code_lines": 401166
  },
  "version": "1.3.2",
- "facts_hash": "ecc834cc4fa789ba",
+ "facts_hash": "64bdd93e347254b3",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,10 +384,10 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 902,
+   ".sql": 915,
+   ".ts": 843,
    ".tsx": 811,
-   ".ts": 806,
-   ".mjs": 100,
+   ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
    ".py": 5
@@ -97898,6 +97898,73 @@
     "idempotency": false
    },
    {
+    "name": "training-image-dispatch",
+    "file": "supabase/functions/training-image-dispatch/index.ts",
+    "methods": [
+     "POST?"
+    ],
+    "auth": "service_role (ignora RLS) + valida JWT do usuário",
+    "tables": [
+     "catalogo_cursos",
+     "training_images",
+     "trilhas_aprendizado",
+     "trilhas_cursos"
+    ],
+    "env": [
+     "OPENAI_API_KEY",
+     "SUPABASE_SERVICE_ROLE_KEY",
+     "SUPABASE_URL",
+     "TRAINING_IMAGE_AUTOQUEUE_ENABLED",
+     "TRAINING_IMAGE_DISPATCH_SECRET",
+     "TRAINING_IMAGE_GENERATION_ENABLED",
+     "TRAINING_IMAGE_MODEL",
+     "TRAINING_IMAGE_QUALITY",
+     "TRAINING_IMAGE_SIZE"
+    ],
+    "external": [],
+    "invokes": [],
+    "doc": "",
+    "errors": [],
+    "side_effects": [],
+    "webhook_events": [],
+    "idempotency": true
+   },
+   {
+    "name": "training-image-generate",
+    "file": "supabase/functions/training-image-generate/index.ts",
+    "methods": [
+     "POST?"
+    ],
+    "auth": "service_role (ignora RLS) + valida JWT do usuário",
+    "tables": [
+     "catalogo_cursos",
+     "training_images",
+     "trilhas_aprendizado",
+     "trilhas_cursos",
+     "user_empresas",
+     "user_roles"
+    ],
+    "env": [
+     "OPENAI_API_KEY",
+     "SUPABASE_ANON_KEY",
+     "SUPABASE_SERVICE_ROLE_KEY",
+     "SUPABASE_URL",
+     "TRAINING_IMAGE_ALLOWED_CONTENT_ID",
+     "TRAINING_IMAGE_ALLOWED_EMPRESA_ID",
+     "TRAINING_IMAGE_GENERATION_ENABLED",
+     "TRAINING_IMAGE_MODEL",
+     "TRAINING_IMAGE_QUALITY",
+     "TRAINING_IMAGE_SIZE"
+    ],
+    "external": [],
+    "invokes": [],
+    "doc": "",
+    "errors": [],
+    "side_effects": [],
+    "webhook_events": [],
+    "idempotency": true
+   },
+   {
     "name": "upload-certificado",
     "file": "supabase/functions/upload-certificado/index.ts",
     "methods": [
@@ -100081,6 +100148,10 @@
     "file": "src/hooks/useTodasEmpresas.ts"
    },
    {
+    "name": "useTrainingImages",
+    "file": "src/hooks/useTrainingImages.ts"
+   },
+   {
     "name": "useTranslation",
     "file": "src/hooks/useTranslation.ts"
    },
@@ -100371,8 +100442,8 @@
   },
   {
    "module": "e2e",
-   "files": 27,
-   "lines": 1702,
+   "files": 28,
+   "lines": 1749,
    "tables": [
     "colaboradores",
     "empresas",
@@ -100405,6 +100476,7 @@
     "e2e/authenticated/ponto-afdt-espelho.spec.ts",
     "e2e/authenticated/post-cutover-smoke.spec.ts",
     "e2e/authenticated/session-expiration.spec.ts",
+    "e2e/authenticated/training-images-homolog.spec.ts",
     "e2e/authenticated-non-admin/rbac-admin-blocked.spec.ts",
     "e2e/cleanup/logout.spec.ts",
     "e2e/cleanup/seed-cleanup.spec.ts",
@@ -100432,8 +100504,8 @@
   },
   {
    "module": "scripts",
-   "files": 131,
-   "lines": 29965,
+   "files": 148,
+   "lines": 34093,
    "tables": [
     "a",
     "anexos",
@@ -100552,7 +100624,8 @@
     "src/routes",
     "src/types",
     "src/utils",
-    "src/views"
+    "src/views",
+    "supabase/functions"
    ],
    "file_list": [
     "scripts/audit-bridge-frontend-contract.mjs",
@@ -101071,8 +101144,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 185,
-   "lines": 21192,
+   "files": 186,
+   "lines": 21251,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101775,8 +101848,8 @@
   },
   {
    "module": "src/services",
-   "files": 163,
-   "lines": 34958,
+   "files": 182,
+   "lines": 38327,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -101938,6 +102011,7 @@
     "times",
     "tipos_admissao",
     "tipos_estabilidade",
+    "training_images",
     "transferencias",
     "treinamento_certificados",
     "treinamento_feedback",
@@ -102030,11 +102104,15 @@
    ],
    "deps": [
     "@supabase/supabase-js",
+    "@tanstack/react-query",
     "crypto-js",
     "date-fns",
     "dompurify",
     "jspdf",
     "jspdf-autotable",
+    "node:crypto",
+    "node:fs",
+    "node:path",
     "papaparse",
     "sonner",
     "vitest",
@@ -102043,13 +102121,15 @@
    "imports_modules": [
     "src/calculators",
     "src/components",
+    "src/hooks",
     "src/integrations",
     "src/lib",
     "src/mocks",
     "src/schemas",
     "src/test",
     "src/types",
-    "src/utils"
+    "src/utils",
+    "supabase/functions"
    ],
    "file_list": [
     "src/services/admissaoService.ts",
@@ -102402,8 +102482,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 173,
-   "lines": 24545,
+   "files": 188,
+   "lines": 27125,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -102424,6 +102504,7 @@
     "bitrix24_config",
     "bitrix24_sync_logs",
     "blocked_ips",
+    "catalogo_cursos",
     "certificados_digitais",
     "cnab_itens",
     "cnab_remessas",
@@ -102489,6 +102570,9 @@
     "sst_ordens_servico",
     "sst_programas",
     "sst_riscos_ambientais",
+    "training_images",
+    "trilhas_aprendizado",
+    "trilhas_cursos",
     "user_empresas",
     "user_roles",
     "user_sessions",
@@ -102517,7 +102601,7 @@
     "logger.ts: LogLevel, log",
     "monitor.ts: withMonitoring",
     "outboundDelivery.ts: normalizarTelefone, sanitizarErro, ResendResult, remetenteEmail, sendEmailResend, EvolutionResult",
-    "rateLimit.ts: RateLimitOptions, RateLimitResult, RateLimitRpcClient, checkRateLimit, rateLimitResponse",
+    "rateLimit.ts: RateLimitOptions, RateLimitResult, RateLimitRpcClient, checkRateLimit, rateLimitResponse, RateLimitDuploRpcClient",
     "resendDelivery.ts: resendDeliveryId",
     "rpc-error-logging.ts: PostgRESTRpcError, RpcErrorContext, logRpcError",
     "safe-fetch.ts: SafeFetchOptions, FetchTimeoutError, FetchNetworkError, safeFetch, safeGet, safePost",
@@ -102526,22 +102610,22 @@
     "trace.ts: TraceContext, getOrCreateTraceId, getTraceContext",
     "colaborador.ts: colaboradorSchema",
     "common.ts: uuidPg, metricasSchema, webhookSchema, healthcheckSchema, cepSchema, cnpjSchema",
+    "allowlist.ts: ALLOWLIST_EMPRESA_ENV, ALLOWLIST_CONTENT_ENV, EntradaAllowlist, ConfigAllowlist, ResultadoAllowlist, validarAllowlist",
+    "briefing.ts: PROMPT_VERSION, DESCRICAO_MAX, NOME_MAX, BriefingVisual, sanearTexto, paletaPorCategoria",
+    "estadoCapa.ts: EntradaCapa, StatusCapa, EstadoCapa, consultarEstadoDaCapa, marcarResultadoDesconhecido",
+    "hash.ts: sha256Hex",
+    "imageValidation.ts: LIMITE_BYTES_IMAGEM, MINIMO_BYTES_IMAGEM, MimeImagem, ImagemValidada, detectarMimeImagem, decodificarBase64",
+    "openaiProvider.ts: OPENAI_IMAGES_ENDPOINT, OPENAI_MODELO_PADRAO, OPENAI_TAMANHO_PADRAO, OPENAI_QUALIDADE_PADRAO, OPENAI_TIMEOUT_PADRAO_MS, OpenAITrainingImageProviderOptions",
+    "pipeline.ts: EntradaGeracaoCapa, DepsPipelineCapa, TENTATIVAS_MAX_PIPELINE, resultadoDesconhecido, hashConteudoServidor, operationIdDe",
+    "quotas.ts: JANELA_QUOTA_SEG, LIMITE_EMPRESA_PADRAO, LIMITE_USUARIO_PADRAO, STALE_AFTER_MS, STALE_FILA_MINUTOS, chaveEmpresa",
+    "simulatedProvider.ts: FIXTURE_PNG_BASE64, FalhaSimulada, ProvedorSimuladoOptions, ProvedorSimulado, criarProvedorSimulado",
+    "storagePath.ts: TRAINING_IMAGES_BUCKET, PASTA_POR_TIPO, segmentoSeguro, montarCaminhoImagem, validarCaminhoDaEmpresa",
+    "supabaseDeps.ts: TrainingAdminClient, carregarConteudoTreinamento, criarDepsSupabase",
+    "types.ts: TrainingContentType, TRAINING_CONTENT_TYPES, TrainingImageArtDirection, TrainingImageRequest, GeneratedTrainingImage, TrainingImageProvider",
+    "uuid.ts: UUID_RE, isUuid",
     "deliveryStatus.ts: AlertEmailDeliveryStatus, alertDeliveryHttpStatus, ALERT_EMAIL_UNAVAILABLE_MESSAGE",
     "govbrIdentity.ts: GovbrLookups, Resolucao, cpfDoSub, sha256Hex, resolverLogin, validarVinculo",
-    "lockoutContract.ts: LockoutState, parseLockoutState",
-    "backupAudit.ts: BACKUP_AUDIT_READ_ACTIONS",
-    "backupSnapshot.ts: BACKUP_PAGE_SIZE, BACKUP_TABLE_ROW_LIMIT, BackupTableQueryResult, BackupSnapshotErrorCode, BackupSnapshotError, requireCompleteBackupTable",
-    "config.ts: config, rateLimits, validation",
-    "config.ts: config, rateLimits, validation",
-    "config.ts: config, rateLimits, validation",
-    "config.ts: config, rateLimits, validation",
-    "config.ts: config, rateLimits, validation",
-    "motor.ts: trunc2, calcularAvos, normalizarTipoRescisao, RescisaoMotorParams, calcularRescisaoMotor",
-    "admissaoLink.ts: TokenRow, normalizarEmail, validarToken, montarLinkAdmissao",
-    "config.ts: config, rateLimits, validation",
-    "s2299.ts: XmlEscape, montarS2299",
-    "transmissionStatus.ts: transmissionHttpStatus, assertSandboxAmbiente",
-    "signer.ts: assinarXmlSandboxNaoHomologado"
+    "lockoutContract.ts: LockoutState, parseLockoutState"
    ],
    "docs": [
     "index.ts: Remediação de auditoria (achado E3 / CRÍTICO): • JWT obrigatório (antes: sem autenticação alguma, service_role exposto) • Bucket restrito a uma allowlist de documentos (antes: qualquer bucket) • Remove o parâmetro `fileUrl` livre (antes: SSRF — URL arbitrária repassada como image_url para o gateway …",
@@ -102599,6 +102683,19 @@
     "supabase/functions/_shared/trace.ts",
     "supabase/functions/_shared/schemas/colaborador.ts",
     "supabase/functions/_shared/schemas/common.ts",
+    "supabase/functions/_shared/trainingImages/allowlist.ts",
+    "supabase/functions/_shared/trainingImages/briefing.ts",
+    "supabase/functions/_shared/trainingImages/estadoCapa.ts",
+    "supabase/functions/_shared/trainingImages/hash.ts",
+    "supabase/functions/_shared/trainingImages/imageValidation.ts",
+    "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "supabase/functions/_shared/trainingImages/pipeline.ts",
+    "supabase/functions/_shared/trainingImages/quotas.ts",
+    "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
+    "supabase/functions/_shared/trainingImages/storagePath.ts",
+    "supabase/functions/_shared/trainingImages/supabaseDeps.ts",
+    "supabase/functions/_shared/trainingImages/types.ts",
+    "supabase/functions/_shared/trainingImages/uuid.ts",
     "supabase/functions/adiantamento-salarial/index.ts",
     "supabase/functions/admissao-publica/index.ts",
     "supabase/functions/alertas-dp/deliveryStatus.test.ts",
@@ -102627,20 +102724,7 @@
     "supabase/functions/calcular-ferias/index.ts",
     "supabase/functions/calcular-folha/config.ts",
     "supabase/functions/calcular-folha/e2e_concorrencia.test.ts",
-    "supabase/functions/calcular-folha/index.test.ts",
-    "supabase/functions/calcular-folha/index.ts",
-    "supabase/functions/calcular-provisoes/index.ts",
-    "supabase/functions/calcular-rescisao/config.ts",
-    "supabase/functions/calcular-rescisao/index.ts",
-    "supabase/functions/calcular-rescisao/motor.test.ts",
-    "supabase/functions/calcular-rescisao/motor.ts",
-    "supabase/functions/cnab-remessa/index.ts",
-    "supabase/functions/consultarCEP/index.ts",
-    "supabase/functions/consultarCNPJ/index.ts",
-    "supabase/functions/criptografia/index.ts",
-    "supabase/functions/dctfweb/index.ts",
-    "supabase/functions/distribuir-holerites/index.ts",
-    "supabase/functions/emprestimo-consignado/index.ts"
+    "supabase/functions/calcular-folha/index.test.ts"
    ]
   },
   {
@@ -103271,7 +103355,8 @@
    },
    "catalogo_cursos": {
     "select": [
-     "src/services/catalogoCursoService.ts"
+     "src/services/catalogoCursoService.ts",
+     "supabase/functions/_shared/trainingImages/supabaseDeps.ts"
     ],
     "insert": [
      "src/services/catalogoCursoService.ts"
@@ -105672,6 +105757,16 @@
      "scripts/ai-context/gerar.unit.mjs"
     ]
    },
+   "training_images": {
+    "select": [
+     "src/services/trainingImages/service.ts",
+     "supabase/functions/_shared/trainingImages/estadoCapa.ts"
+    ],
+    "update": [
+     "supabase/functions/_shared/trainingImages/estadoCapa.ts",
+     "supabase/functions/_shared/trainingImages/supabaseDeps.ts"
+    ]
+   },
    "transferencias": {
     "select": [
      "src/pages/MovimentacoesPage.tsx",
@@ -105737,7 +105832,8 @@
    },
    "trilhas_aprendizado": {
     "select": [
-     "src/services/catalogoCursoService.ts"
+     "src/services/catalogoCursoService.ts",
+     "supabase/functions/_shared/trainingImages/supabaseDeps.ts"
     ],
     "insert": [
      "src/services/catalogoCursoService.ts"
@@ -105748,7 +105844,8 @@
    },
    "trilhas_cursos": {
     "select": [
-     "src/services/catalogoCursoService.ts"
+     "src/services/catalogoCursoService.ts",
+     "supabase/functions/_shared/trainingImages/supabaseDeps.ts"
     ],
     "insert": [
      "src/services/catalogoCursoService.ts"
@@ -105787,7 +105884,8 @@
      "supabase/functions/gerar-pgr/index.ts",
      "supabase/functions/notificacao/index.ts",
      "supabase/functions/parse-afdt/index.ts",
-     "supabase/functions/processar-ponto-offline/index.ts"
+     "supabase/functions/processar-ponto-offline/index.ts",
+     "supabase/functions/training-image-generate/index.ts"
     ]
    },
    "user_mfa": {
@@ -105812,7 +105910,8 @@
      "scripts/e2e/verify-seed.mjs",
      "supabase/functions/alertas-dp/index.ts",
      "supabase/functions/backup/index.ts",
-     "supabase/functions/limpeza/index.ts"
+     "supabase/functions/limpeza/index.ts",
+     "supabase/functions/training-image-generate/index.ts"
     ]
    },
    "user_sessions": {
@@ -106311,8 +106410,14 @@
     "nome"
    ],
    "catalogo_cursos": [
+    "carga_horaria",
+    "categoria",
+    "descricao",
     "empresa_id",
-    "id"
+    "id",
+    "modalidade",
+    "nome",
+    "obrigatorio"
    ],
    "centros_custo": [
     "empresa_id",
@@ -107325,6 +107430,19 @@
     "nome",
     "valor_padrao"
    ],
+   "training_images": [
+    "attempts",
+    "content_hash",
+    "content_id",
+    "content_type",
+    "empresa_id",
+    "id",
+    "last_error",
+    "requested_at",
+    "source_content_id",
+    "status",
+    "storage_path"
+   ],
    "transferencias": [
     "colaborador_id",
     "data_vigencia",
@@ -107351,11 +107469,15 @@
     "ponto_id"
    ],
    "trilhas_aprendizado": [
+    "descricao",
     "empresa_id",
-    "id"
+    "id",
+    "nivel",
+    "nome"
    ],
    "trilhas_cursos": [
     "id",
+    "ordem",
     "trilha_id"
    ],
    "turnos": [
@@ -107604,6 +107726,9 @@
     "supabase/functions/_shared/aiProvider.test.ts",
     "supabase/functions/_shared/aiProvider.ts"
    ],
+   "DENO_BIN": [
+    "scripts/training-images-local/edge-http-test.mjs"
+   ],
    "DEV": [
     "src/App.tsx",
     "src/components/RouteErrorBoundary.tsx",
@@ -107712,6 +107837,9 @@
    ],
    "E2E_TOTP_SECRET": [
     "e2e/auth.setup.ts"
+   ],
+   "E2E_TRAINING_IMAGES_HOMOLOG": [
+    "e2e/authenticated/training-images-homolog.spec.ts"
    ],
    "E2E_USER_EMAIL": [
     "e2e/auth.setup.ts",
@@ -107838,6 +107966,21 @@
    "GRAPHIFY_FIXTURE_SECRET": [
     "scripts/graphify-local.unit.mjs"
    ],
+   "HOMOLOG_CLEANUP": [
+    "scripts/training-images-homolog/homolog.mjs"
+   ],
+   "HOMOLOG_CONFIRM": [
+    "scripts/training-images-homolog/homolog.mjs"
+   ],
+   "HOMOLOG_CRON_SECRET": [
+    "scripts/training-images-homolog/homolog.mjs"
+   ],
+   "HOMOLOG_PASSWORD": [
+    "scripts/training-images-homolog/homolog.mjs"
+   ],
+   "HOMOLOG_PROJECT_REF": [
+    "scripts/training-images-homolog/homolog.mjs"
+   ],
    "INVENTARIO_PERMITIR_OUTRO_PROJETO": [
     "scripts/inventario/gerar-banco.mjs"
    ],
@@ -107872,7 +108015,9 @@
     "scripts/maintenance/maintenance.unit.mjs"
    ],
    "OPENAI_API_KEY": [
-    "supabase/functions/alertas-preditivos/index.ts"
+    "supabase/functions/alertas-preditivos/index.ts",
+    "supabase/functions/training-image-dispatch/index.ts",
+    "supabase/functions/training-image-generate/index.ts"
    ],
    "PATH": [
     "scripts/graphify-local.unit.mjs",
@@ -107881,6 +108026,9 @@
    ],
    "PERIMETER_SNAPSHOT_PATH": [
     "scripts/ci/github-settings-guard.mjs"
+   ],
+   "PGDATABASE_LOCAL": [
+    "scripts/training-images-local/pipeline-e2e.ts"
    ],
    "PGDUMP": [
     "scripts/supabase_snapshot/snapshot.py"
@@ -107898,6 +108046,13 @@
     "scripts/audit-secdef-authz.mjs",
     "scripts/autofix/regras/dados.mjs",
     "scripts/smoke-hash-triggers.mjs"
+   ],
+   "PGPORT_LOCAL": [
+    "scripts/training-images-local/pipeline-e2e.ts"
+   ],
+   "PG_BIN": [
+    "scripts/training-images-local/pipeline-e2e.ts",
+    "scripts/training-images-local/run-tests.mjs"
    ],
    "PIX_APROVACAO_DUPLA_CENTAVOS": [
     "supabase/functions/pix-lote/index.ts"
@@ -107999,6 +108154,7 @@
     "e2e/cleanup/seed-cleanup.spec.ts",
     "scripts/e2e/ensure-fixtures.mjs",
     "scripts/e2e/seed.mjs",
+    "scripts/training-images-homolog/homolog.mjs",
     "src/tests/validateBridgeContract.ts",
     "supabase/functions/OCR/index.ts",
     "supabase/functions/adiantamento-salarial/index.ts",
@@ -108054,6 +108210,7 @@
     "supabase/functions/reabrir-folha/index.ts",
     "supabase/functions/relatorio/index.ts",
     "supabase/functions/sincronizar-bitrix/index.ts",
+    "supabase/functions/training-image-generate/index.ts",
     "supabase/functions/upload-certificado/index.ts",
     "supabase/functions/validar-biometria/index.ts",
     "supabase/functions/warmup/index.ts",
@@ -108093,6 +108250,7 @@
     "scripts/e2e/verify-seed.mjs",
     "scripts/provision-e2e-users.mjs",
     "scripts/tests/audit-edge-authz.test.mjs",
+    "scripts/training-images-homolog/homolog.mjs",
     "supabase/functions/OCR/index.ts",
     "supabase/functions/_shared/monitor.ts",
     "supabase/functions/adiantamento-salarial/index.ts",
@@ -108154,6 +108312,8 @@
     "supabase/functions/relatorio/index.ts",
     "supabase/functions/sincronizar-bitrix/index.ts",
     "supabase/functions/tabelas-dominio/index.ts",
+    "supabase/functions/training-image-dispatch/index.ts",
+    "supabase/functions/training-image-generate/index.ts",
     "supabase/functions/upload-certificado/index.ts",
     "supabase/functions/validar-biometria/index.ts",
     "supabase/functions/warmup/index.ts",
@@ -108170,6 +108330,7 @@
     "scripts/e2e/seed.mjs",
     "scripts/e2e/verify-seed.mjs",
     "scripts/provision-e2e-users.mjs",
+    "scripts/training-images-homolog/homolog.mjs",
     "src/tests/validateBridgeContract.ts",
     "supabase/functions/OCR/index.ts",
     "supabase/functions/_shared/contract.ts",
@@ -108234,6 +108395,8 @@
     "supabase/functions/relatorio/index.ts",
     "supabase/functions/sincronizar-bitrix/index.ts",
     "supabase/functions/tabelas-dominio/index.ts",
+    "supabase/functions/training-image-dispatch/index.ts",
+    "supabase/functions/training-image-generate/index.ts",
     "supabase/functions/upload-certificado/index.ts",
     "supabase/functions/validar-biometria/index.ts",
     "supabase/functions/warmup/index.ts",
@@ -108251,6 +108414,34 @@
    ],
    "TEST_SUPABASE_URL": [
     "supabase/tests/migration_consistency.test.ts"
+   ],
+   "TRAINING_IMAGE_ALLOWED_CONTENT_ID": [
+    "supabase/functions/training-image-generate/index.ts"
+   ],
+   "TRAINING_IMAGE_ALLOWED_EMPRESA_ID": [
+    "supabase/functions/training-image-generate/index.ts"
+   ],
+   "TRAINING_IMAGE_AUTOQUEUE_ENABLED": [
+    "supabase/functions/training-image-dispatch/index.ts"
+   ],
+   "TRAINING_IMAGE_DISPATCH_SECRET": [
+    "supabase/functions/training-image-dispatch/index.ts"
+   ],
+   "TRAINING_IMAGE_GENERATION_ENABLED": [
+    "supabase/functions/training-image-dispatch/index.ts",
+    "supabase/functions/training-image-generate/index.ts"
+   ],
+   "TRAINING_IMAGE_MODEL": [
+    "supabase/functions/training-image-dispatch/index.ts",
+    "supabase/functions/training-image-generate/index.ts"
+   ],
+   "TRAINING_IMAGE_QUALITY": [
+    "supabase/functions/training-image-dispatch/index.ts",
+    "supabase/functions/training-image-generate/index.ts"
+   ],
+   "TRAINING_IMAGE_SIZE": [
+    "supabase/functions/training-image-dispatch/index.ts",
+    "supabase/functions/training-image-generate/index.ts"
    ],
    "TURNSTILE_SECRET_KEY": [
     "supabase/functions/auth-login/index.ts"
@@ -108368,6 +108559,9 @@
     "src/services/assistenteIAService.ts",
     "src/tests/rpc-permissions.test.ts"
    ],
+   "VITE_TRAINING_IMAGES": [
+    "src/services/trainingImages/config.ts"
+   ],
    "VITE_VAPID_PUBLIC_KEY": [
     "src/services/pushNotificationService.ts"
    ],
@@ -108458,6 +108652,13 @@
    "claim_due_report_schedules": [
     "supabase/functions/processar-agendamentos/index.ts"
    ],
+   "claim_training_image": [
+    "supabase/functions/_shared/trainingImages/supabaseDeps.ts"
+   ],
+   "claim_training_image_requests": [
+    "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "supabase/functions/training-image-dispatch/index.ts"
+   ],
    "clinicas_proximas": [
     "src/pages/AdminAgendamentoExamesPage.tsx"
    ],
@@ -108512,6 +108713,9 @@
    "edge_rate_limit_check": [
     "supabase/functions/_shared/rateLimit.ts"
    ],
+   "edge_rate_limit_check_dual": [
+    "supabase/functions/_shared/rateLimit.ts"
+   ],
    "editar_feedback_seguro": [
     "src/services/avaliacaoService.ts"
    ],
@@ -108535,6 +108739,9 @@
    ],
    "finish_report_schedule_claim": [
     "supabase/functions/processar-agendamentos/index.ts"
+   ],
+   "finish_training_image_request": [
+    "supabase/functions/training-image-dispatch/index.ts"
    ],
    "fixture_rpc": [
     "scripts/ai-context/gerar.unit.mjs",
@@ -109093,6 +109300,10 @@
    },
    {
     "file": "src/services/tabelasReferenciaService.ts",
+    "count": 1
+   },
+   {
+    "file": "src/services/trainingImages/storage.ts",
     "count": 1
    },
    {
@@ -109864,7 +110075,6 @@
    "tipos_visto",
    "training_image_requests",
    "training_image_settings",
-   "training_images",
    "trct",
    "treinamento_feedbacks",
    "treinamentos_avaliacoes",
@@ -111843,6 +112053,26 @@
     "values": "select | export | print | download"
    },
    {
+    "file": "src/services/trainingImages/config.ts",
+    "name": "TRAINING_IMAGES_MIME_TYPES",
+    "values": "'image/webp', 'image/png', 'image/jpeg'"
+   },
+   {
+    "file": "src/services/trainingImages/types.ts",
+    "name": "TrainingContentType",
+    "values": "course | learning_path | training_session | certificate"
+   },
+   {
+    "file": "src/services/trainingImages/types.ts",
+    "name": "TrainingCoverFormat",
+    "values": "quadrada | faixa | miniatura"
+   },
+   {
+    "file": "src/services/trainingImages/types.ts",
+    "name": "TrainingImageStatus",
+    "values": "pending | processing | succeeded | failed | disabled"
+   },
+   {
     "file": "src/types/pcs.ts",
     "name": "PcsAderencia",
     "values": "abaixo_mercado | alinhado | acima_mercado | sem_referencia"
@@ -111886,6 +112116,26 @@
     "file": "supabase/functions/_shared/logger.ts",
     "name": "LogLevel",
     "values": "debug | info | warn | error | fatal"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/estadoCapa.ts",
+    "name": "StatusCapa",
+    "values": "pending | processing | succeeded | failed | disabled"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/imageValidation.ts",
+    "name": "MimeImagem",
+    "values": "image/webp | image/png | image/jpeg"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
+    "name": "FalhaSimulada",
+    "values": "timeout | rate_limit | http_permanente | imagem_invalida | sem_imagem"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/types.ts",
+    "name": "TrainingContentType",
+    "values": "course | learning_path | training_session | certificate"
    },
    {
     "file": "supabase/functions/alertas-dp/deliveryStatus.ts",
@@ -112269,6 +112519,14 @@
    {
     "file": "scripts/supabase_snapshot/test_snapshot.py",
     "msg": "view sem permissão na fixture"
+   },
+   {
+    "file": "scripts/training-images-local/edge-http-test.mjs",
+    "msg": "No Windows, defina DENO_BIN com o caminho do executável do deno — o fallback por npx não roda sem shell."
+   },
+   {
+    "file": "scripts/training-images-local/pipeline-e2e.ts",
+    "msg": "storage local indisponível"
    },
    {
     "file": "src/main.tsx",
@@ -114859,6 +115117,30 @@
     "msg": "treinamento_id obrigatório para isolamento de tenant"
    },
    {
+    "file": "src/services/trainingImages/paths.ts",
+    "msg": "content_id inválido para o caminho da imagem"
+   },
+   {
+    "file": "src/services/trainingImages/paths.ts",
+    "msg": "empresa_id inválido para o caminho da imagem"
+   },
+   {
+    "file": "src/services/trainingImages/paths.ts",
+    "msg": "extensão inválida para o caminho da imagem"
+   },
+   {
+    "file": "src/services/trainingImages/storage.ts",
+    "msg": "Arquivo de imagem vazio."
+   },
+   {
+    "file": "src/services/trainingImages/storage.ts",
+    "msg": "Formato de imagem não suportado: use ${TRAINING_IMAGES_MIME_TYPES.join("
+   },
+   {
+    "file": "src/services/trainingImages/storage.ts",
+    "msg": "Imagem acima do limite de 5 MB."
+   },
+   {
     "file": "src/utils/desligamentoExcel.ts",
     "msg": "Nenhum desligamento para exportar"
    },
@@ -114913,6 +115195,94 @@
    {
     "file": "supabase/functions/_shared/inss.ts",
     "msg": "Tabela INSS não homologada para a referência ${referencia}"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/imageValidation.ts",
+    "msg": "base64 inválido na resposta do provedor"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/imageValidation.ts",
+    "msg": "formato de imagem não suportado"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/imageValidation.ts",
+    "msg": "imagem acima do limite de 5 MB"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/imageValidation.ts",
+    "msg": "imagem menor que o mínimo aceitável"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/imageValidation.ts",
+    "msg": "não foi possível decodificar a imagem"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/imageValidation.ts",
+    "msg": "resposta sem imagem em base64"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "msg": "OPENAI_API_KEY ausente no ambiente da função"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "msg": "falha ao baixar a imagem gerada"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "msg": "não foi possível baixar a imagem gerada"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "msg": "output_format não suportado: ${outputFormat}"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "msg": "quality não suportada: ${quality}"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "msg": "resposta não é JSON válido"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "msg": "resposta sem imagem"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "msg": "resposta sem imagem em base64"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "msg": "size não suportado: ${size}"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
+    "msg": "credencial da OpenAI recusada"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
+    "msg": "limite de uso da API atingido"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
+    "msg": "resposta sem imagem"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
+    "msg": "tempo limite na geração da imagem"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/storagePath.ts",
+    "msg": "content_id inválido para o caminho da imagem"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/storagePath.ts",
+    "msg": "empresa_id inválido para o caminho da imagem"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/storagePath.ts",
+    "msg": "extensão inválida para o caminho da imagem"
    },
    {
     "file": "supabase/functions/assistente-ia/index.ts",
@@ -117299,6 +117669,10 @@
     "text": "Only attempt if authenticated AND has empresaAtual (empresaId required by metricas)"
    },
    {
+    "file": "src/hooks/useTrainingImages.ts",
+    "text": "* Invalida apenas as capas da empresa informada. Chamar quando uma geração"
+   },
+   {
     "file": "src/hooks/useWebhooksAvancados.ts",
     "text": "dentro de `filters`) e dentro de `filters` apenas quando definido."
    },
@@ -117923,6 +118297,110 @@
     "text": "').limit(limit);"
    },
    {
+    "file": "src/services/trainingImages/briefing.ts",
+    "text": "* PRIVACIDADE: recebe apenas dados de catálogo. Quem chama não deve passar"
+   },
+   {
+    "file": "src/services/trainingImages/briefing.ts",
+    "text": "* Limite do texto de descrição considerado no briefing. */"
+   },
+   {
+    "file": "src/services/trainingImages/briefing.ts",
+    "text": "* Limite do nome considerado no briefing. */"
+   },
+   {
+    "file": "src/services/trainingImages/briefing.ts",
+    "text": "* Cena principal (o que deve aparecer). */"
+   },
+   {
+    "file": "src/services/trainingImages/briefing.ts",
+    "text": "* Léxico de ENRIQUECIMENTO (não de permissão): qualquer assunto fora daqui"
+   },
+   {
+    "file": "src/services/trainingImages/config.ts",
+    "text": "Function autenticada. O interruptor serve apenas para o frontend LER as capas"
+   },
+   {
+    "file": "src/services/trainingImages/config.ts",
+    "text": "* ⚠ ESTA FLAG NÃO É SEGURANÇA. Ela controla apenas a leitura no cliente; quem"
+   },
+   {
+    "file": "src/services/trainingImages/config.ts",
+    "text": "somente no ambiente da Edge Function e NUNCA aparece em `VITE_*`."
+   },
+   {
+    "file": "src/services/trainingImages/provider.ts",
+    "text": "* ⚠ SEPARAÇÃO FRONTEND/BACKEND (regra de arquitetura)"
+   },
+   {
+    "file": "src/services/trainingImages/provider.ts",
+    "text": "Este módulo roda no NAVEGADOR. Nenhum adaptador real deve ser importado"
+   },
+   {
+    "file": "src/services/trainingImages/provider.ts",
+    "text": "4. ligar `VITE_TRAINING_IMAGES=true` (somente leitura de capas)."
+   },
+   {
+    "file": "src/services/trainingImages/provider.ts",
+    "text": "rate limit e 5xx."
+   },
+   {
+    "file": "src/services/trainingImages/provider.ts",
+    "text": "* `true` somente quando um adaptador real, explicitamente, se declarou pronto. */"
+   },
+   {
+    "file": "src/services/trainingImages/request.ts",
+    "text": "entrega apenas os dados reais do registro; este módulo:"
+   },
+   {
+    "file": "src/services/trainingImages/request.ts",
+    "text": "1. sanea o texto (sem delimitadores de injeção, com limite de tamanho);"
+   },
+   {
+    "file": "src/services/trainingImages/request.ts",
+    "text": "* PRIVACIDADE: o pedido carrega SOMENTE dados de catálogo. Nenhum nome de"
+   },
+   {
+    "file": "src/services/trainingImages/request.ts",
+    "text": "para cá — inclusive nas turmas, que herdam apenas a identidade do CURSO."
+   },
+   {
+    "file": "src/services/trainingImages/service.ts",
+    "text": "• limite de tentativas por conteúdo impede repetição ilimitada em erro;"
+   },
+   {
+    "file": "src/services/trainingImages/service.ts",
+    "text": "* Limite de chaves no controle em memória (evita crescimento indefinido). */"
+   },
+   {
+    "file": "src/services/trainingImages/service.ts",
+    "text": "* Garante que o controle em memória não cresça sem limite. */"
+   },
+   {
+    "file": "src/services/trainingImages/service.ts",
+    "text": "Defesa em profundidade: o adaptador não pode devolver caminho de outra empresa."
+   },
+   {
+    "file": "src/services/trainingImages/storage.ts",
+    "text": "com service role. Aqui ficam o helper e a validação de caminho."
+   },
+   {
+    "file": "src/services/trainingImages/storage.ts",
+    "text": "não deve chamar esta função — as políticas de Storage só aceitam escrita de"
+   },
+   {
+    "file": "src/services/trainingImages/types.ts",
+    "text": "• A solicitação de geração carrega apenas dados do CADASTRO (nome, descrição,"
+   },
+   {
+    "file": "src/services/trainingImages/types.ts",
+    "text": "* Lista canônica (usada em validação, testes e no CHECK da migration). */"
+   },
+   {
+    "file": "src/services/trainingImages/types.ts",
+    "text": "* Nomes dos cursos vinculados (apenas trilhas). */"
+   },
+   {
     "file": "src/types/pcs.ts",
     "text": "por isso precisa de validação em runtime antes do uso."
    },
@@ -118195,6 +118673,22 @@
     "text": "Reserve this first. A request rejected for a full burst must not consume"
    },
    {
+    "file": "supabase/functions/_shared/rateLimit.ts",
+    "text": "─── Rate limit duplo (empresa + usuário) ────────────────────────────────────"
+   },
+   {
+    "file": "supabase/functions/_shared/rateLimit.ts",
+    "text": "* Cliente mínimo da RPC dual — mesma razão de tipagem estrutural do simples. */"
+   },
+   {
+    "file": "supabase/functions/_shared/rateLimit.ts",
+    "text": "* Fallback em memória do duplo: limite reduzido, nunca fail-open. */"
+   },
+   {
+    "file": "supabase/functions/_shared/rateLimit.ts",
+    "text": "Sem usuário confiável: aplica apenas o balde da empresa (nunca inventa)."
+   },
+   {
     "file": "supabase/functions/_shared/safe-fetch.ts",
     "text": "endpoint configurado que redireciona para host externo não pode capturar"
    },
@@ -118217,6 +118711,94 @@
    {
     "file": "supabase/functions/_shared/schemas/common.ts",
     "text": "Deno não pode importar diretamente do src/ (formato diferente de módulo)."
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/allowlist.ts",
+    "text": "* Valida a allowlist SEM confiar apenas no corpo: os IDs permitidos vêm do"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/briefing.ts",
+    "text": "* Limite do texto de descrição considerado no briefing. */"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/briefing.ts",
+    "text": "* Limite do nome considerado no briefing. */"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/briefing.ts",
+    "text": "* Cena principal (o que deve aparecer). */"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/briefing.ts",
+    "text": "* Léxico de ENRIQUECIMENTO (não de permissão): qualquer assunto fora daqui"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/briefing.ts",
+    "text": "* Prompt final enviado ao provedor. Construído APENAS no backend, a partir do"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/imageValidation.ts",
+    "text": "VALIDAÇÃO DA IMAGEM GERADA — sem confiar no provedor."
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/imageValidation.ts",
+    "text": "(quando um proxy intercepta) ou acima do limite do bucket. Antes de qualquer"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/imageValidation.ts",
+    "text": "bytes), o tamanho mínimo/máximo e devolve o MIME correto."
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/imageValidation.ts",
+    "text": "* Limite do bucket `training-images` (5 MB). */"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "text": "ADAPTADOR OPENAI — executa SOMENTE no backend (Edge Function)."
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/pipeline.ts",
+    "text": "5. chama o provedor apenas se reclamou o trabalho;"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/pipeline.ts",
+    "text": "quando há trabalho em andamento ou quando o limite de tentativas acabou;"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/pipeline.ts",
+    "text": "* Hash canônico do conteúdo — MESMA regra do cliente (`hashConteudo`). */"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/quotas.ts",
+    "text": "Mudar um limite aqui reflete nos dois caminhos (Edge Function de geração e"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/quotas.ts",
+    "text": "Maior que o wall clock máximo da plataforma (400 s) + timeout do provedor"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
+    "text": "PROVEDOR SIMULADO — **SOMENTE TESTES**. Nunca importar na Edge Function."
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
+    "text": "o fluxo inteiro — claim atômico, validação, upload, status e leitura — sem"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/supabaseDeps.ts",
+    "text": "* Nenhuma regra de negócio aqui: apenas leitura escopada por empresa, claim"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/supabaseDeps.ts",
+    "text": "Somente colunas existentes: `trilhas_aprendizado` tem `nome` (não `titulo`)."
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/uuid.ts",
+    "text": "válidos para o Postgres, mas não seguem a variante RFC. A validação continua"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/uuid.ts",
+    "text": "sendo apenas de FORMATO; autorização, tenant e allowlist são verificados"
    },
    {
     "file": "supabase/functions/adiantamento-salarial/index.ts",
@@ -119033,6 +119615,26 @@
    {
     "file": "supabase/functions/tabelas-dominio/index.ts",
     "text": "no-store: resposta autenticada não pode ser replayada por cache"
+   },
+   {
+    "file": "supabase/functions/training-image-dispatch/index.ts",
+    "text": "── Idempotência ANTES de quota/provedor (mesma regra da geração manual)."
+   },
+   {
+    "file": "supabase/functions/training-image-dispatch/index.ts",
+    "text": "Todo trabalho automático passa pelo MESMO rate limit da geração manual:"
+   },
+   {
+    "file": "supabase/functions/training-image-generate/index.ts",
+    "text": "no backend: a chave da OpenAI existe apenas aqui (`Deno.env`), nunca no"
+   },
+   {
+    "file": "supabase/functions/training-image-generate/index.ts",
+    "text": "6. Rate limit por usuário (proteção de custo)."
+   },
+   {
+    "file": "supabase/functions/training-image-generate/index.ts",
+    "text": "── Rate limit DUPLO (empresa + usuário), atômico e persistente."
    },
    {
     "file": "supabase/functions/webhook/webhook_test.ts",
@@ -143400,6 +144002,56 @@
     "value": "1000"
    },
    {
+    "file": "src/services/trainingImages/briefing.ts",
+    "name": "PROMPT_VERSION",
+    "value": "'v2'"
+   },
+   {
+    "file": "src/services/trainingImages/briefing.ts",
+    "name": "DESCRICAO_MAX",
+    "value": "400"
+   },
+   {
+    "file": "src/services/trainingImages/briefing.ts",
+    "name": "NOME_MAX",
+    "value": "120"
+   },
+   {
+    "file": "src/services/trainingImages/config.ts",
+    "name": "TRAINING_IMAGES_LIMITE_BYTES",
+    "value": "5"
+   },
+   {
+    "file": "src/services/trainingImages/config.ts",
+    "name": "TRAINING_IMAGES_STALE_MS",
+    "value": "15"
+   },
+   {
+    "file": "src/services/trainingImages/config.ts",
+    "name": "TRAINING_IMAGES_GC_MS",
+    "value": "30"
+   },
+   {
+    "file": "src/services/trainingImages/paths.ts",
+    "name": "TRAINING_IMAGES_BUCKET",
+    "value": "'training-images'"
+   },
+   {
+    "file": "src/services/trainingImages/paths.ts",
+    "name": "EXTENSAO_PADRAO",
+    "value": "'webp'"
+   },
+   {
+    "file": "src/services/trainingImages/service.ts",
+    "name": "TENTATIVAS_MAX",
+    "value": "3"
+   },
+   {
+    "file": "src/services/trainingImages/service.ts",
+    "name": "CONTROLE_MAX",
+    "value": "500"
+   },
+   {
     "file": "src/utils/format.ts",
     "name": "LOCALE_BR",
     "value": "'pt-BR'"
@@ -143513,6 +144165,96 @@
     "file": "supabase/functions/_shared/safe-fetch.ts",
     "name": "MAX_REDIRECTS",
     "value": "5"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/allowlist.ts",
+    "name": "ALLOWLIST_EMPRESA_ENV",
+    "value": "'TRAINING_IMAGE_ALLOWED_EMPRESA_ID'"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/allowlist.ts",
+    "name": "ALLOWLIST_CONTENT_ENV",
+    "value": "'TRAINING_IMAGE_ALLOWED_CONTENT_ID'"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/briefing.ts",
+    "name": "PROMPT_VERSION",
+    "value": "'v2'"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/briefing.ts",
+    "name": "DESCRICAO_MAX",
+    "value": "400"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/briefing.ts",
+    "name": "NOME_MAX",
+    "value": "120"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/imageValidation.ts",
+    "name": "LIMITE_BYTES_IMAGEM",
+    "value": "5"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/imageValidation.ts",
+    "name": "MINIMO_BYTES_IMAGEM",
+    "value": "64"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "name": "OPENAI_MODELO_PADRAO",
+    "value": "'gpt-image-2.5-flare'"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "name": "OPENAI_TAMANHO_PADRAO",
+    "value": "'1536x864'"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "name": "OPENAI_QUALIDADE_PADRAO",
+    "value": "'medium'"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "name": "OPENAI_TIMEOUT_PADRAO_MS",
+    "value": "90"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/pipeline.ts",
+    "name": "TENTATIVAS_MAX_PIPELINE",
+    "value": "3"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/quotas.ts",
+    "name": "JANELA_QUOTA_SEG",
+    "value": "60"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/quotas.ts",
+    "name": "LIMITE_EMPRESA_PADRAO",
+    "value": "20"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/quotas.ts",
+    "name": "LIMITE_USUARIO_PADRAO",
+    "value": "5"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/quotas.ts",
+    "name": "STALE_AFTER_MS",
+    "value": "10"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/quotas.ts",
+    "name": "STALE_FILA_MINUTOS",
+    "value": "30"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/storagePath.ts",
+    "name": "TRAINING_IMAGES_BUCKET",
+    "value": "'training-images'"
    },
    {
     "file": "supabase/functions/admissao-publica/index.ts",
@@ -143883,6 +144625,16 @@
     "file": "supabase/functions/tabelas-dominio/index.ts",
     "name": "CACHE_TTL_MS",
     "value": "5"
+   },
+   {
+    "file": "supabase/functions/training-image-dispatch/index.ts",
+    "name": "BATCH_PADRAO",
+    "value": "2"
+   },
+   {
+    "file": "supabase/functions/training-image-dispatch/index.ts",
+    "name": "RETRY_QUOTA_SEG",
+    "value": "300"
    },
    {
     "file": "supabase/functions/webhook/index.ts",
@@ -151801,6 +152553,36 @@
     "kind": "escreve"
    },
    {
+    "file": "src/services/trainingImages/briefing.ts",
+    "field": "tipo",
+    "value": "course",
+    "kind": "compara"
+   },
+   {
+    "file": "src/services/trainingImages/briefing.ts",
+    "field": "tipo",
+    "value": "learning_path",
+    "kind": "compara"
+   },
+   {
+    "file": "src/services/trainingImages/briefing.ts",
+    "field": "tipo",
+    "value": "training_session",
+    "kind": "compara"
+   },
+   {
+    "file": "src/services/trainingImages/briefing.ts",
+    "field": "tipo",
+    "value": "certificate",
+    "kind": "compara"
+   },
+   {
+    "file": "src/services/trainingImages/service.ts",
+    "field": "status",
+    "value": "succeeded",
+    "kind": "filtra"
+   },
+   {
     "file": "src/types/entities.ts",
     "field": "status",
     "value": "ativo",
@@ -152243,6 +153025,102 @@
     "field": "status",
     "value": "fulfilled",
     "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/briefing.ts",
+    "field": "tipo",
+    "value": "course",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/briefing.ts",
+    "field": "tipo",
+    "value": "learning_path",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/briefing.ts",
+    "field": "tipo",
+    "value": "training_session",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/briefing.ts",
+    "field": "tipo",
+    "value": "certificate",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/estadoCapa.ts",
+    "field": "status",
+    "value": "failed",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/estadoCapa.ts",
+    "field": "status",
+    "value": "pending",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/estadoCapa.ts",
+    "field": "status",
+    "value": "processing",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/estadoCapa.ts",
+    "field": "status",
+    "value": "succeeded",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/estadoCapa.ts",
+    "field": "status",
+    "value": "failed",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/estadoCapa.ts",
+    "field": "status",
+    "value": "failed",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/pipeline.ts",
+    "field": "status",
+    "value": "number",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/pipeline.ts",
+    "field": "status",
+    "value": "processing",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/pipeline.ts",
+    "field": "status",
+    "value": "pending",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/pipeline.ts",
+    "field": "status",
+    "value": "succeeded",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/supabaseDeps.ts",
+    "field": "status",
+    "value": "succeeded",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/supabaseDeps.ts",
+    "field": "status",
+    "value": "failed",
+    "kind": "escreve"
    },
    {
     "file": "supabase/functions/adiantamento-salarial/index.ts",
@@ -153799,6 +154677,42 @@
     "kind": "compara"
    },
    {
+    "file": "supabase/functions/training-image-dispatch/index.ts",
+    "field": "status",
+    "value": "done",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/training-image-dispatch/index.ts",
+    "field": "status",
+    "value": "done",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/training-image-dispatch/index.ts",
+    "field": "status",
+    "value": "done",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/training-image-dispatch/index.ts",
+    "field": "status",
+    "value": "pending",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/training-image-dispatch/index.ts",
+    "field": "status",
+    "value": "processing",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/training-image-generate/index.ts",
+    "field": "status",
+    "value": "succeeded",
+    "kind": "escreve"
+   },
+   {
     "file": "supabase/functions/upload-certificado/index.ts",
     "field": "step",
     "value": "encrypt_senha",
@@ -154731,6 +155645,12 @@
     "body": "const components = [ navigator.userAgent, navigator.language, `${screen.width}x${screen.height}x${screen.colorDepth}`, Intl.DateTimeFormat().resolvedOptions().timeZone, navigator.hardwareConcurrency?.toString() || '', ]; let hash = 0; const str = components.join('|'); for (let i = 0; i < str.length; i++) { hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0; } return hash.toString(36);"
    },
    {
+    "file": "src/hooks/useTrainingImages.ts",
+    "name": "invalidarCapasDeTreinamento",
+    "params": "queryClient: QueryClient, empresaId?: string | null",
+    "body": "return queryClient.invalidateQueries({ queryKey: trainingImagesQueryKey(empresaId) });"
+   },
+   {
     "file": "src/hooks/ferias/useProgramacaoFerias.ts",
     "name": "invalidate",
     "params": "",
@@ -155433,6 +156353,24 @@
     "body": "const config = etapa.config ?? {}; const slaHoras = config.sla_horas ?? 48; const started = execucao.sla_iniciado_em ?? execucao.updated_at; const deadlineMs = new Date(started).getTime() + slaHoras * 60 * 60 * 1000; const nowMs = Date.now(); const hoursRemaining = (deadlineMs - nowMs) / (60 * 60 * 1000); return { expired: nowMs > deadlineMs, hoursRemaining: Math.round(hoursRemaining * 10) / 10, deadlineUtc: new Date(deadlineMs).toISOString(), };"
    },
    {
+    "file": "src/services/trainingImages/paths.ts",
+    "name": "validarCaminhoDaEmpresa",
+    "params": "caminho: string | null | undefined, empresaId: string | null | undefined",
+    "body": "if (!caminho || !empresaId) return false; if (!segmentoSeguro(empresaId)) return false; // Recusa navegação de diretório e segmentos vazios. if (caminho.includes('..') || caminho.includes('//') || caminho.startsWith('/')) return false; return empresaDoCaminho(caminho) === empresaId;"
+   },
+   {
+    "file": "src/services/trainingImages/provider.ts",
+    "name": "generate",
+    "params": "",
+    "body": "throw new TrainingImageIntegrationDisabledError();"
+   },
+   {
+    "file": "src/services/trainingImages/storage.ts",
+    "name": "validarArquivoDeCapa",
+    "params": "arquivo: { mimeType?: string | null; tamanho: number }",
+    "body": "const mime = String(arquivo.mimeType ?? '').toLowerCase(); if (!TRAINING_IMAGES_MIME_TYPES.includes(mime as (typeof TRAINING_IMAGES_MIME_TYPES)[number])) { throw new Error(`Formato de imagem não suportado: use ${TRAINING_IMAGES_MIME_TYPES.join(', ')}.`); } if (!Number.isFinite(arquivo.tamanho) || arquivo.tamanho <= 0) { throw new Error('Arquivo de imagem vazio.'); } if (arquivo.tamanho > TRAINING_IMAGES_LIMITE_BYTES) { throw new Error('Imagem acima do limite de 5 MB.'); }"
+   },
+   {
     "file": "src/utils/afastamentoPDF.ts",
     "name": "gerarAfastamentosPDF",
     "params": "titulo: string, dados: AfastamentoPDFData[], filtros: { cid?: string; status?: string; tipo?: string } = {}",
@@ -155637,6 +156575,42 @@
     "body": "return LEVEL_RANK[level] >= LEVEL_RANK[MIN_LEVEL];"
    },
    {
+    "file": "supabase/functions/_shared/trainingImages/allowlist.ts",
+    "name": "validarAllowlist",
+    "params": "entrada: EntradaAllowlist, config: ConfigAllowlist",
+    "body": "const empresaPermitida = normalizar(config.empresaId); const conteudoPermitido = normalizar(config.contentId); if (!isUuid(empresaPermitida) || !isUuid(conteudoPermitido)) { return { ok: false, status: 503, motivo: 'allowlist_nao_configurada', detalhe: `${ALLOWLIST_EMPRESA_ENV} e ${ALLOWLIST_CONTENT_ENV} são obrigatórios e devem ser UUIDs válidos quando a geração está habilitada.`, }; } const empresaSolicitada = normalizar(entrada.empresaId); const conteudoSolicitado = normalizar(entrada.content …"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/imageValidation.ts",
+    "name": "validarImagemGerada",
+    "params": "bytes: Uint8Array",
+    "body": "if (bytes.length < MINIMO_BYTES_IMAGEM) { throw new TrainingImageProviderError('imagem menor que o mínimo aceitável', { code: 'imagem_muito_pequena', retryable: false, }); } if (bytes.length > LIMITE_BYTES_IMAGEM) { throw new TrainingImageProviderError('imagem acima do limite de 5 MB', { code: 'imagem_muito_grande', retryable: false, }); } const mimeType = detectarMimeImagem(bytes); if (!mimeType) { throw new TrainingImageProviderError('formato de imagem não suportado', { code: 'formato_invalido …"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "name": "generate",
+    "params": "request: TrainingImageRequest",
+    "body": "if (!apiKey) { throw new TrainingImageProviderError('OPENAI_API_KEY ausente no ambiente da função', { code: 'sem_chave', retryable: false, }); } const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), timeoutMs); let resposta: Response; try { resposta = await fetchImpl(endpoint, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json', 'X-Client-Request-Id': request.operationId, }, body: JSON.stringify({ model, prompt …"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/pipeline.ts",
+    "name": "gerarCapaDeTreinamento",
+    "params": "entrada: EntradaGeracaoCapa, deps: DepsPipelineCapa",
+    "body": "if (!entrada.empresaId || !entrada.contentId || !TRAINING_CONTENT_TYPES.includes(entrada.contentType)) { return { gerado: false, motivo: 'conteudo_inexistente' }; } const conteudo = await deps.carregarConteudo(entrada); if (!conteudo) return { gerado: false, motivo: 'conteudo_inexistente' }; // Defesa extra: o registro carregado tem de ser da empresa pedida. if (conteudo.empresaId !== entrada.empresaId) return { gerado: false, motivo: 'conteudo_inexistente' }; const briefing = montarBriefingVisu …"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
+    "name": "generate",
+    "params": "request: TrainingImageRequest",
+    "body": "chamadas += 1; ultimoPedido = request; if (options.atrasoMs) { await new Promise((resolve) => setTimeout(resolve, options.atrasoMs)); } if (options.falha === 'timeout') { throw new TrainingImageProviderError('tempo limite na geração da imagem', { code: 'timeout', retryable: true, }); } if (options.falha === 'rate_limit') { throw new TrainingImageProviderError('limite de uso da API atingido', { code: 'rate_limit', retryable: true, status: 429, }); } if (options.falha === 'http_permanente') { thro …"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/storagePath.ts",
+    "name": "validarCaminhoDaEmpresa",
+    "params": "caminho: unknown, empresaId: unknown",
+    "body": "if (typeof caminho !== 'string' || typeof empresaId !== 'string') return false; if (!segmentoSeguro(empresaId)) return false; if (caminho.includes('..') || caminho.includes('//') || caminho.startsWith('/')) return false; return caminho.split('/')[0] === empresaId;"
+   },
+   {
     "file": "supabase/functions/auth-gov-br/govbrIdentity.ts",
     "name": "validarVinculo",
     "params": "userId: string, sub: string, cpf: string, db: GovbrLookups,",
@@ -155809,6 +156783,12 @@
     "name": "validateWindow",
     "params": "dataInicio: string, dataFim: string",
     "body": "const ini = new Date(dataInicio + 'T00:00:00Z').getTime(); const fim = new Date(dataFim + 'T00:00:00Z').getTime(); if (!Number.isFinite(ini) || !Number.isFinite(fim)) { return createErrorResponse('Datas inválidas', 422, 'INVALID_DATES'); } if (fim < ini) { return createErrorResponse('dataFim < dataInicio', 422, 'INVALID_WINDOW'); } const days = (fim - ini) / 86_400_000; if (days > MAX_WINDOW_DAYS) { return createErrorResponse( `Janela máxima ${MAX_WINDOW_DAYS} dias`, 422, 'WINDOW_TOO_LARGE', ); …"
+   },
+   {
+    "file": "supabase/functions/training-image-dispatch/index.ts",
+    "name": "iguaisEmTempoConstante",
+    "params": "a: string, b: string",
+    "body": "const enc = new TextEncoder(); const chave = await crypto.subtle.importKey( 'raw', enc.encode('dp-training-image-dispatch-comparison'), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'] ); const assinaturaA = new Uint8Array(await crypto.subtle.sign('HMAC', chave, enc.encode(a))); const assinaturaB = new Uint8Array(await crypto.subtle.sign('HMAC', chave, enc.encode(b))); let diff = 0; for (let i = 0; i < assinaturaA.length; i += 1) diff |= assinaturaA[i] ^ assinaturaB[i]; return diff === 0;"
    },
    {
     "file": "supabase/functions/webhook/webhook_test.ts",
@@ -156115,6 +157095,14 @@
     "line": "const hoursRemaining = (deadlineMs - nowMs) / (60 * 60 * 1000);"
    },
    {
+    "file": "src/services/trainingImages/config.ts",
+    "line": "export const TRAINING_IMAGES_GC_MS = 30 * 60 * 1000;"
+   },
+   {
+    "file": "src/services/trainingImages/config.ts",
+    "line": "export const TRAINING_IMAGES_STALE_MS = 15 * 60 * 1000;"
+   },
+   {
     "file": "src/utils/comunicadoFeriasColetivasPDF.ts",
     "line": "const dataLimite = subDays(new Date(coletiva.data_inicio), 15);"
    },
@@ -156181,6 +157169,10 @@
    {
     "file": "supabase/functions/_shared/idempotency.ts",
     "line": "const IN_PROGRESS_TTL_MS = 5 * 60 * 1000;"
+   },
+   {
+    "file": "supabase/functions/_shared/trainingImages/quotas.ts",
+    "line": "export const STALE_AFTER_MS = 10 * 60 * 1000;"
    },
    {
     "file": "supabase/functions/alertas-dp/index.ts",
@@ -157897,6 +158889,14 @@
    {
     "file": "e2e/authenticated/session-expiration.spec.ts",
     "name": "token corrompido é tratado como sessão inválida"
+   },
+   {
+    "file": "e2e/authenticated/training-images-homolog.spec.ts",
+    "name": "TrainingCover — capa real (homologação)"
+   },
+   {
+    "file": "e2e/authenticated/training-images-homolog.spec.ts",
+    "name": "renderiza a capa do Storage privado em vez do fallback"
    },
    {
     "file": "e2e/authenticated-non-admin/rbac-admin-blocked.spec.ts",
@@ -185913,6 +186913,726 @@
    {
     "file": "src/services/tabelas/__tests__/viewsService.test.ts",
     "name": "saldoCompensacaoMensal queries vw_saldo_compensacao_mensal"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/allowlist.test.ts",
+    "name": "allowlist temporária de geração de imagem"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/allowlist.test.ts",
+    "name": "aceita empresa e curso exatamente autorizados"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/allowlist.test.ts",
+    "name": "aceita o UUID de seed do curso (sem bits de variante RFC)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/allowlist.test.ts",
+    "name": "normaliza espaços e caixa"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/allowlist.test.ts",
+    "name": "recusa empresa diferente com 403"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/allowlist.test.ts",
+    "name": "recusa curso diferente com 403"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/allowlist.test.ts",
+    "name": "bloqueia quando a empresa permitida está ausente"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/allowlist.test.ts",
+    "name": "bloqueia quando o curso permitido está ausente"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/allowlist.test.ts",
+    "name": "bloqueia quando ambas as variáveis estão ausentes"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/allowlist.test.ts",
+    "name": "bloqueia configuração com UUID inválido"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/allowlist.test.ts",
+    "name": "ordem de segurança da allowlist no handler"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/allowlist.test.ts",
+    "name": "preserva JWT, vínculo e papel antes da allowlist"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/allowlist.test.ts",
+    "name": "aplica a allowlist antes de idempotência, quota, claim e provedor"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/allowlist.test.ts",
+    "name": "lê as duas variáveis server-side e não aceita override do corpo"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "briefing por assunto"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "panificação → padaria, fermentação e pães"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "segurança do trabalho → proteção e ambiente sinalizado"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "programação/tecnologia → software e ambiente técnico"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "primeiros socorros → emergência e prática segura"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "assunto NOVO funciona sem estar no léxico"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "sem categoria e sem descrição não quebra e usa fallback neutro"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "mesmo cadastro → mesmo briefing (capas estáveis)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "saneamento e resistência a injeção de prompt"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "remove delimitadores e caracteres de controle"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "marca os dados do cadastro como contexto e proíbe comandos"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "limita o tamanho do texto enviado"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "hash de conteúdo e idempotência"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "hash é estável e muda quando o cadastro é editado"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "operationId muda por empresa, tipo, id e hash (isolamento + versionamento)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "o pedido carrega versão do template e os identificadores de operação"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "paleta por categoria"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/briefing.test.ts",
+    "name": "usa famílias existentes e nunca inventa cor para categoria desconhecida"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "nenhuma conexão com a OpenAI nesta fase"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "não há endpoint, SDK ou chave da OpenAI no código do frontend"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "não há chamada de rede no módulo de provedor nem no serviço de solicitação"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": ".env.example expõe apenas a flag de LEITURA, nunca uma chave de cliente"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "separação frontend × backend (Fase 3A)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "o frontend não importa o adaptador nem a função"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "a função exige autenticação, vínculo com a empresa e papel autorizado"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "a geração é desativada por padrão e a chave só existe no backend"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "o adaptador não lê ambiente nem segredo por conta própria"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "o provedor simulado se declara apenas para testes"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "a função consulta apenas colunas existentes em trilhas_aprendizado"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "worker automático e quota multiempresa (Fase 3A.2)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "exige credencial de agendador/service role (nunca o navegador)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "fica DESLIGADO por padrão e responde 503 antes de reivindicar a fila"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "consome a fila persistente e fecha cada requisição"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "aplica o MESMO rate limit e a MESMA idempotência da geração manual"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "não repete chamada paga na recuperação de item interrompido"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "não importa o provedor simulado nem expõe segredo na resposta"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "o frontend não chama o worker (fila é server-side)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/guardrails.test.ts",
+    "name": "a geração manual usa quota por empresa E por usuário"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/hash.test.ts",
+    "name": "sha256Hex — vetores conhecidos"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/hash.test.ts",
+    "name": "codifica corretamente os vetores canônicos"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/hash.test.ts",
+    "name": "confere com o crypto do Node em UTF-8 (acentos, emoji, textos longos)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/hash.test.ts",
+    "name": "aceita bytes e produz o mesmo resultado da string UTF-8"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/hash.test.ts",
+    "name": "altera o resultado com qualquer mudança de conteúdo"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/hash.test.ts",
+    "name": "paridade cliente × backend"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/hash.test.ts",
+    "name": "produz exatamente o mesmo hexadecimal nos dois lados"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "migration — bucket e Storage"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "cria o bucket privado com limite e MIME allowlist"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "leitura de objeto exige vínculo com a empresa do caminho"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "escrita de objeto exige admin E vínculo com a empresa"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "migration — tabela training_images"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "tem os campos de referência, estado e controle de custo"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "garante uma única capa por conteúdo e caminho dentro do tenant"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "limita estados, tipos e tentativas no banco"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "ativa RLS, limita leitura ao tenant e bloqueia escrita do cliente"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "mantém trigger de updated_at e índices de tenant/status"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "migration — reivindicação atômica e autorização do backend"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "define a função como SECURITY DEFINER com search_path fixo"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "valida a posse do conteúdo usando as relações REAIS do schema"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "reivindica em UMA instrução com ON CONFLICT (proteção real de concorrência)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "separa tentativas de processamento, sucessos, falhas e incerteza"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "impede reconciliação sem operador, notas e estado de incerteza"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "restringe a execução ao service role"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "migration — não destrutiva"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "não apaga nem altera registros de tabelas existentes"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "migration — fila automática (desligada por padrão)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "cria a flag de servidor DESLIGADA e inacessível ao navegador"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "enfileira por TRIGGER após INSERT de curso e de trilha"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "nunca bloqueia o cadastro (erro vira WARNING)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "reivindica lote com FOR UPDATE SKIP LOCKED e recupera trabalho travado"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "registra responsável e adiamento sem loop de retentativa"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "oferece backfill idempotente para conteúdo sem capa"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "não agenda nada automaticamente nesta fase"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "migration — rate limit duplo (empresa + usuário)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "verifica os dois baldes em uma única função"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "adquire advisory locks em ordem determinística (sem deadlock)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "só consome quota quando AMBOS permitem"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "permite modo empresa-only (worker sem usuário confiável)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/migration.test.ts",
+    "name": "é exclusivo do backend"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "configuração e chave"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "sem chave não se declara configurado e não chama fetch"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "recusa parâmetros fora do contrato antes de qualquer chamada"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "requisição e resposta"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "envia endpoint, autenticação, idempotência e parâmetros oficiais"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "não usa fetch global quando um fetchImpl é injetado"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "aceita URL temporária do provedor e baixa os bytes"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "classificação de erros HTTP"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "401/403 → permanente (não repete)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "400 → permanente, com mensagem sanitizada"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "404 → modelo indisponível (permanente)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "429 → recuperável e respeita Retry-After"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "500 → recuperável"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "timeout → recuperável, sem vazar detalhe"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "proteção contra respostas inesperadas"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "JSON inválido"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "data ausente ou vazia"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "base64 inválido"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "bytes que não são imagem"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+    "name": "imagem acima de 5 MB"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/parity.test.ts",
+    "name": "paridade do briefing"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/parity.test.ts",
+    "name": "cliente e backend geram o MESMO briefing para os mesmos dados"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/parity.test.ts",
+    "name": "o prompt do backend não contém delimitadores injetados e marca contexto"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/parity.test.ts",
+    "name": "paridade do hash e da operação"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/parity.test.ts",
+    "name": "contentHash do cliente é igual ao do backend"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/parity.test.ts",
+    "name": "operationId do cliente é igual ao do backend"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/parity.test.ts",
+    "name": "o pedido do cliente usa a mesma versão de prompt do backend"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "fluxo completo (provedor simulado)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "gera, valida, sobe e marca succeeded"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "envia ao provedor o briefing reconstruído no servidor e os identificadores"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "concorrência e idempotência"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "duas solicitações simultâneas geram UMA imagem"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "solicitação já concluída devolve ja_processado sem chamar o provedor"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "conteúdo editado (hash novo) libera nova geração"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "trabalho interrompido segue reivindicável quando o claim libera"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "respeita o limite de tentativas do claim"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "autorização e isolamento"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "conteúdo inexistente → conteudo_inexistente (sem distinguir outra empresa)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "registro carregado de OUTRA empresa é recusado mesmo com UUID válido"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "entrada inválida não toca no banco nem no provedor"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "falhas sem quebrar o cadastro"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "provedor desativado marca failed imediatamente (sem linha pendente)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "timeout NÃO é reenviado automaticamente (resultado pago desconhecido)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "429 (resultado conhecido) continua retentável e não esgota tentativas"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "falha permanente do provedor esgota tentativas e não repete"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "imagem inválida (HTML no lugar da imagem) não sobe para o Storage"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "falha no upload mantém o registro como failed e não marca succeeded"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "falha no upload não gera nova cobrança: próxima tentativa é recusada"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/pipeline.test.ts",
+    "name": "falha ao gravar o sucesso devolve falha_no_registro"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "caminhos do bucket training-images"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "monta o caminho canônico por tipos de conteúdo"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "recusa identificadores que quebrariam o escopo do tenant"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "valida o caminho contra a empresa (isolamento multiempresa)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "provedor desativado (estado desta fase)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "começa desativado e não se declara configurado"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "solicitar geração devolve integracao_desativada sem chamar provedor nem rede"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "não cria trabalho pendente: chamadas repetidas respondem na hora, sem estado"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "recusa identificadores vazios antes de qualquer decisão de provedor"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "recusa tipo de conteúdo fora do contrato"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "controle de duplicidade e custo (com provedor fake)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "duas solicitações simultâneas do mesmo conteúdo chamam o provedor UMA vez"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "não compartilha a geração entre empresas diferentes"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "rejeita caminho devolvido fora do tenant"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "para de tentar depois do limite, evitando repetição ilimitada"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "solicitação derivada do cadastro (sem prompt do usuário)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "leva apenas dados de catálogo e uma direção de arte determinística"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "mesma entrada → mesma direção de arte (capas estáveis)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "mapeia assuntos diferentes para famílias do Design System"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "herança de capa (turma/certificado usam o curso)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "a turma sem capa própria recebe a capa do curso"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "a capa própria tem prioridade sobre a herdada"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "certificado herda a capa do curso"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "sem capa e sem origem devolve null (fallback visual)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "leitura das capas por empresa"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "desligada por padrão: nenhuma consulta é disparada"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "com a flag ligada e tabela ausente/erro, devolve mapa vazio sem lançar"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "com a flag ligada, monta o mapa e descarta linhas de outra empresa"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "erros do provedor: classificação e mensagem segura"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "erro permanente esgota as tentativas e não repete"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "erro transitório consome uma tentativa por chamada"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "mensagem de erro nunca carrega chave, token ou URL"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "upload de capa (validação de arquivo)"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "aceita webp/png/jpeg dentro do limite"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "recusa formato não suportado, arquivo vazio e excesso de tamanho"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "URL assinada e cache"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "não assina caminho de OUTRA empresa"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "assina caminho da própria empresa"
+   },
+   {
+    "file": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+    "name": "a chave de cache inclui a empresa e a invalidação usa a mesma chave"
    },
    {
     "file": "src/test/securityHeadersParity.test.ts",
@@ -217685,6 +219405,22 @@
      "premiacao_critica": [
       "escreve:src/services/premiacoesService.ts"
      ],
+     "course": [
+      "compara:src/services/trainingImages/briefing.ts",
+      "compara:supabase/functions/_shared/trainingImages/briefing.ts"
+     ],
+     "learning_path": [
+      "compara:src/services/trainingImages/briefing.ts",
+      "compara:supabase/functions/_shared/trainingImages/briefing.ts"
+     ],
+     "training_session": [
+      "compara:src/services/trainingImages/briefing.ts",
+      "compara:supabase/functions/_shared/trainingImages/briefing.ts"
+     ],
+     "certificate": [
+      "compara:src/services/trainingImages/briefing.ts",
+      "compara:supabase/functions/_shared/trainingImages/briefing.ts"
+     ],
      "S-1000": [
       "compara:src/utils/esocialXmlGenerator.ts",
       "compara:supabase/functions/enviar-esocial/index.ts"
@@ -218247,6 +219983,9 @@
       "compara:src/components/folha/DistribuirHoleritesButton.tsx"
      ],
      "pending": [
+      "compara:supabase/functions/_shared/trainingImages/estadoCapa.ts",
+      "compara:supabase/functions/_shared/trainingImages/pipeline.ts",
+      "compara:supabase/functions/training-image-dispatch/index.ts",
       "escreve:src/components/folha/FolhaESocialSync.tsx"
      ],
      "accepted": [
@@ -218570,19 +220309,37 @@
      "aprovado_financeiro": [
       "compara:src/services/premiacoesService.ts"
      ],
+     "succeeded": [
+      "compara:supabase/functions/_shared/trainingImages/estadoCapa.ts",
+      "compara:supabase/functions/_shared/trainingImages/pipeline.ts",
+      "escreve:supabase/functions/_shared/trainingImages/supabaseDeps.ts",
+      "escreve:supabase/functions/training-image-generate/index.ts",
+      "filtra:src/services/trainingImages/service.ts"
+     ],
      "in_progress": [
       "compara:supabase/functions/_shared/idempotency.ts",
       "escreve:supabase/functions/_shared/idempotency.ts"
      ],
      "failed": [
+      "compara:supabase/functions/_shared/trainingImages/estadoCapa.ts",
       "escreve:supabase/functions/_shared/idempotency.ts",
       "escreve:supabase/functions/_shared/outboundDelivery.ts",
+      "escreve:supabase/functions/_shared/trainingImages/estadoCapa.ts",
+      "escreve:supabase/functions/_shared/trainingImages/supabaseDeps.ts",
       "escreve:supabase/functions/webhook/index.ts",
       "escreve:supabase/functions/whatsapp-send/index.ts"
      ],
      "completed": [
       "compara:supabase/functions/_shared/idempotency.ts",
       "filtra:supabase/functions/_shared/idempotency.ts"
+     ],
+     "processing": [
+      "compara:supabase/functions/_shared/trainingImages/estadoCapa.ts",
+      "compara:supabase/functions/_shared/trainingImages/pipeline.ts",
+      "compara:supabase/functions/training-image-dispatch/index.ts"
+     ],
+     "number": [
+      "compara:supabase/functions/_shared/trainingImages/pipeline.ts"
      ],
      "not_needed": [
       "compara:supabase/functions/alertas-dp/deliveryStatus.ts"
@@ -218640,6 +220397,9 @@
      ],
      "Ativo": [
       "escreve:supabase/functions/sincronizar-bitrix/index.ts"
+     ],
+     "done": [
+      "escreve:supabase/functions/training-image-dispatch/index.ts"
      ],
      "active": [
       "escreve:supabase/functions/webhook/contract_test.ts"
@@ -226172,11 +227932,19 @@
    "scripts/simulacao/verify_bridge_contract.cjs",
    "scripts/supabase_snapshot/snapshot.py",
    "scripts/tests/audit-edge-authz.test.mjs",
+   "scripts/training-images-homolog/homolog.mjs",
+   "scripts/training-images-homolog/scheduler-enable.sql",
+   "scripts/training-images-local/autoqueue.test.sql",
+   "scripts/training-images-local/bootstrap.sql",
+   "scripts/training-images-local/edge-http-test.mjs",
+   "scripts/training-images-local/rls.test.sql",
    "src/hooks/__tests__/useBruteForceProtection.test.ts",
    "src/hooks/useBruteForceProtection.ts",
    "src/services/__tests__/rescisaoService.test.ts",
    "src/services/esocialService.ts",
    "src/services/rescisaoService.ts",
+   "src/services/trainingImages/__tests__/guardrails.test.ts",
+   "src/services/trainingImages/__tests__/migration.test.ts",
    "src/tests/rpc-permissions.test.ts",
    "supabase/baseline/20260831_canonical/canonical_auth_schema.sql",
    "supabase/baseline/20260831_canonical/canonical_storage_schema.sql",
@@ -226247,6 +228015,8 @@
    "supabase/functions/relatorio/index.ts",
    "supabase/functions/sincronizar-bitrix/index.ts",
    "supabase/functions/tabelas-dominio/index.ts",
+   "supabase/functions/training-image-dispatch/index.ts",
+   "supabase/functions/training-image-generate/index.ts",
    "supabase/functions/upload-certificado/index.ts",
    "supabase/functions/validar-biometria/index.ts",
    "supabase/functions/warmup/index.ts",
@@ -243007,6 +244777,13 @@
    },
    {
     "kind": "status",
+    "msg": "valor `number` para `status` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "compara:supabase/functions/_shared/trainingImages/pipeline.ts"
+    ]
+   },
+   {
+    "kind": "status",
     "msg": "valor `sem_colaboradores` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "escreve:supabase/functions/alertas-preditivos/index.ts"
@@ -243486,6 +245263,13 @@
     "msg": "1 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
     "where": [
      "src/services/tabelasReferenciaService.ts"
+    ]
+   },
+   {
+    "kind": "dinâmico",
+    "msg": "1 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
+    "where": [
+     "src/services/trainingImages/storage.ts"
     ]
    },
    {
@@ -245723,6 +247507,21 @@
     "Expiração de sessão",
     "rota protegida redireciona para /login após limpar sessão",
     "token corrompido é tratado como sessão inválida"
+   ]
+  },
+  "e2e/authenticated/training-images-homolog.spec.ts": {
+   "path": "e2e/authenticated/training-images-homolog.spec.ts",
+   "lines": 47,
+   "is_test": true,
+   "env": [
+    "E2E_TRAINING_IMAGES_HOMOLOG"
+   ],
+   "temporal": [
+    "await expect(capa).toBeVisible({ timeout: 20_000 });"
+   ],
+   "tests": [
+    "TrainingCover — capa real (homologação)",
+    "renderiza a capa do Storage privado em vez do fallback"
    ]
   },
   "e2e/authenticated-non-admin/rbac-admin-blocked.spec.ts": {
@@ -249408,6 +251207,291 @@
     "Job é required — verifica if: de nível (4 espaços), coletando blocos multi-linha"
    ],
    "doc": "E96/W97 — Contrato dos workflows GitHub Actions. Roda em security-config. Valida invariantes que, se violados, causam falhas silenciosas ou custos ocultos."
+  },
+  "scripts/training-images-homolog/homolog.mjs": {
+   "path": "scripts/training-images-homolog/homolog.mjs",
+   "lines": 452,
+   "env": [
+    "HOMOLOG_CLEANUP",
+    "HOMOLOG_CONFIRM",
+    "HOMOLOG_CRON_SECRET",
+    "HOMOLOG_PASSWORD",
+    "HOMOLOG_PROJECT_REF",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "params": [
+    {
+     "name": "EMPRESA_A",
+     "value": "'d0000001-0000-4000-8000-000000000001'"
+    },
+    {
+     "name": "EMPRESA_B",
+     "value": "'d0000002-0000-4000-8000-000000000002'"
+    },
+    {
+     "name": "CURSO_A",
+     "value": "'d0000010-0000-4000-8000-000000000010'"
+    },
+    {
+     "name": "CURSO_A2",
+     "value": "'d0000011-0000-4000-8000-000000000011'"
+    },
+    {
+     "name": "CURSO_B",
+     "value": "'d0000012-0000-4000-8000-000000000012'"
+    },
+    {
+     "name": "CURSO_ANTIGO",
+     "value": "'d0000013-0000-4000-8000-000000000013'"
+    },
+    {
+     "name": "TRILHA_A",
+     "value": "'d0000014-0000-4000-8000-000000000014'"
+    },
+    {
+     "name": "IMAGEM_A",
+     "value": "'d0000020-0000-4000-8000-000000000020'"
+    },
+    {
+     "name": "EMAIL_A",
+     "value": "'homolog.a@exemplo.local'"
+    },
+    {
+     "name": "EMAIL_B",
+     "value": "'homolog.b@exemplo.local'"
+    }
+   ],
+   "doc": "!/usr/bin/env node",
+   "temporal": [
+    "body: JSON.stringify({ expiresIn: 600 }),"
+   ],
+   "uses_service_role": true
+  },
+  "scripts/training-images-homolog/scheduler-disable.sql": {
+   "path": "scripts/training-images-homolog/scheduler-disable.sql",
+   "lines": 13
+  },
+  "scripts/training-images-homolog/scheduler-enable.sql": {
+   "path": "scripts/training-images-homolog/scheduler-enable.sql",
+   "lines": 100,
+   "uses_service_role": true
+  },
+  "scripts/training-images-homolog/scheduler-status.sql": {
+   "path": "scripts/training-images-homolog/scheduler-status.sql",
+   "lines": 30
+  },
+  "scripts/training-images-local/autoqueue.test.sql": {
+   "path": "scripts/training-images-local/autoqueue.test.sql",
+   "lines": 315,
+   "is_test": true,
+   "temporal": [
+    "SET started_at = now() - interval '31 minutes'",
+    "SET status = 'processing', attempts = 5, started_at = now() - interval '1 hour'",
+    "UPDATE public.training_image_requests SET available_at = now() - interval '1 second'"
+   ],
+   "uses_service_role": true
+  },
+  "scripts/training-images-local/bootstrap.sql": {
+   "path": "scripts/training-images-local/bootstrap.sql",
+   "lines": 216,
+   "uses_service_role": true
+  },
+  "scripts/training-images-local/claim.test.sql": {
+   "path": "scripts/training-images-local/claim.test.sql",
+   "lines": 479,
+   "is_test": true,
+   "temporal": [
+    "SET status = 'processing', requested_at = now() - interval '11 minutes'"
+   ]
+  },
+  "scripts/training-images-local/concurrency-autoqueue.sql": {
+   "path": "scripts/training-images-local/concurrency-autoqueue.sql",
+   "lines": 15
+  },
+  "scripts/training-images-local/concurrency-claim.sql": {
+   "path": "scripts/training-images-local/concurrency-claim.sql",
+   "lines": 23
+  },
+  "scripts/training-images-local/concurrency-dual.sql": {
+   "path": "scripts/training-images-local/concurrency-dual.sql",
+   "lines": 18
+  },
+  "scripts/training-images-local/concurrency-rate-limit.sql": {
+   "path": "scripts/training-images-local/concurrency-rate-limit.sql",
+   "lines": 15
+  },
+  "scripts/training-images-local/edge-http-test.mjs": {
+   "path": "scripts/training-images-local/edge-http-test.mjs",
+   "lines": 830,
+   "env": [
+    "DENO_BIN"
+   ],
+   "errors": [
+    "No Windows, defina DENO_BIN com o caminho do executável do deno — o fallback por npx não roda sem shell."
+   ],
+   "params": [
+    {
+     "name": "FUNCAO",
+     "value": "'http://127.0.0.1:8000'"
+    },
+    {
+     "name": "STUB_PORTA",
+     "value": "54321"
+    },
+    {
+     "name": "ORIGEM",
+     "value": "'http://localhost:5173'"
+    },
+    {
+     "name": "USUARIO",
+     "value": "'11111111-1111-4111-8111-111111111111'"
+    },
+    {
+     "name": "EMPRESA",
+     "value": "'66104399-aba8-4105-bbd3-9bf67820c1d0'"
+    },
+    {
+     "name": "CURSO",
+     "value": "'aaaa1111-1111-1111-1111-111111111111'"
+    },
+    {
+     "name": "OUTRA_EMPRESA",
+     "value": "'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'"
+    },
+    {
+     "name": "OUTRO_CURSO",
+     "value": "'a0000003-0000-4000-8000-000000000003'"
+    },
+    {
+     "name": "TRILHA",
+     "value": "'a0000002-0000-4000-8000-000000000002'"
+    },
+    {
+     "name": "DISPATCH",
+     "value": "'supabase/functions/training-image-dispatch/index.ts'"
+    }
+   ],
+   "rule_comments": [
+    "• validação de corpo (400/422);",
+    "reais; o stub cobre apenas o contrato HTTP da função.",
+    "── Fase D: idempotência x quota (solicitação duplicada não gasta o limite) ─",
+    "F4 — sem requested_by: aplica SOMENTE o teto da empresa (não inventa usuário)."
+   ],
+   "doc": "!/usr/bin/env node",
+   "uses_service_role": true
+  },
+  "scripts/training-images-local/pipeline-e2e.ts": {
+   "path": "scripts/training-images-local/pipeline-e2e.ts",
+   "lines": 564,
+   "env": [
+    "PGDATABASE_LOCAL",
+    "PGPORT_LOCAL",
+    "PG_BIN"
+   ],
+   "errors": [
+    "storage local indisponível"
+   ],
+   "params": [
+    {
+     "name": "EMPRESA_A",
+     "value": "'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'"
+    },
+    {
+     "name": "EMPRESA_B",
+     "value": "'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'"
+    },
+    {
+     "name": "CURSO_A",
+     "value": "'a0000001-0000-4000-8000-000000000001'"
+    },
+    {
+     "name": "CURSO_B",
+     "value": "'b0000001-0000-4000-8000-000000000001'"
+    },
+    {
+     "name": "TRILHA_A",
+     "value": "'a0000002-0000-4000-8000-000000000002'"
+    },
+    {
+     "name": "TURMA_A",
+     "value": "'a0000003-0000-4000-8000-000000000003'"
+    },
+    {
+     "name": "CERT_A",
+     "value": "'a0000004-0000-4000-8000-000000000004'"
+    },
+    {
+     "name": "CURSO_OFF",
+     "value": "'a0000020-0000-4000-8000-000000000020'"
+    },
+    {
+     "name": "CURSO_ON",
+     "value": "'a0000021-0000-4000-8000-000000000021'"
+    },
+    {
+     "name": "TRILHA_AUTO",
+     "value": "'a0000022-0000-4000-8000-000000000022'"
+    },
+    {
+     "name": "CURSO_ANTIGO",
+     "value": "'a0000023-0000-4000-8000-000000000023'"
+    },
+    {
+     "name": "TRILHA_ANTIGA",
+     "value": "'a0000024-0000-4000-8000-000000000024'"
+    }
+   ],
+   "rule_comments": [
+    "indisponível nesta máquina). O caminho/limite/mime do bucket são validados",
+    "1024 * 1024, 'arquivo dentro do limite de 5 MB');"
+   ]
+  },
+  "scripts/training-images-local/rate-limit.test.sql": {
+   "path": "scripts/training-images-local/rate-limit.test.sql",
+   "lines": 221,
+   "is_test": true
+  },
+  "scripts/training-images-local/rls.test.sql": {
+   "path": "scripts/training-images-local/rls.test.sql",
+   "lines": 275,
+   "is_test": true,
+   "uses_service_role": true
+  },
+  "scripts/training-images-local/run-tests.mjs": {
+   "path": "scripts/training-images-local/run-tests.mjs",
+   "lines": 513,
+   "env": [
+    "PG_BIN"
+   ],
+   "params": [
+    {
+     "name": "EMPRESA_A",
+     "value": "'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'"
+    },
+    {
+     "name": "EMPRESA_B",
+     "value": "'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'"
+    },
+    {
+     "name": "CURSO_A",
+     "value": "'a0000001-0000-4000-8000-000000000001'"
+    },
+    {
+     "name": "CURSO_B",
+     "value": "'b0000001-0000-4000-8000-000000000001'"
+    }
+   ],
+   "rule_comments": [
+    "VALIDAÇÃO LOCAL DA INFRAESTRUTURA DE IMAGENS DE TREINAMENTO",
+    "• bootstrap.sql + seed.sql (schema mínimo + 2 empresas fictícias)"
+   ],
+   "doc": "!/usr/bin/env node"
+  },
+  "scripts/training-images-local/seed.sql": {
+   "path": "scripts/training-images-local/seed.sql",
+   "lines": 49
   },
   "src/App.tsx": {
    "path": "src/App.tsx",
@@ -269874,6 +271958,28 @@
     "useTodasEmpresas"
    ]
   },
+  "src/hooks/useTrainingImages.ts": {
+   "path": "src/hooks/useTrainingImages.ts",
+   "lines": 59,
+   "exports": [
+    "function trainingImagesQueryKey",
+    "function invalidarCapasDeTreinamento",
+    "function useTrainingImages"
+   ],
+   "rule_comments": [
+    "* Invalida apenas as capas da empresa informada. Chamar quando uma geração"
+   ],
+   "hooks": [
+    "useTrainingImages"
+   ],
+   "calc_fns": [
+    {
+     "name": "invalidarCapasDeTreinamento",
+     "params": "queryClient: QueryClient, empresaId?: string | null",
+     "body": "return queryClient.invalidateQueries({ queryKey: trainingImagesQueryKey(empresaId) });"
+    }
+   ]
+  },
   "src/hooks/useTranslation.ts": {
    "path": "src/hooks/useTranslation.ts",
    "lines": 221,
@@ -289358,6 +291464,649 @@
     "saldoCompensacaoMensal queries vw_saldo_compensacao_mensal"
    ]
   },
+  "src/services/trainingImages/briefing.ts": {
+   "path": "src/services/trainingImages/briefing.ts",
+   "lines": 240,
+   "exports": [
+    "const PROMPT_VERSION",
+    "const DESCRICAO_MAX",
+    "const NOME_MAX",
+    "interface BriefingVisual",
+    "function sanearTexto",
+    "function paletaPorCategoria",
+    "interface EntradaBriefing",
+    "function montarBriefingVisual"
+   ],
+   "params": [
+    {
+     "name": "PROMPT_VERSION",
+     "value": "'v2'"
+    },
+    {
+     "name": "DESCRICAO_MAX",
+     "value": "400"
+    },
+    {
+     "name": "NOME_MAX",
+     "value": "120"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "course",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "learning_path",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "training_session",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "certificate",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "* PRIVACIDADE: recebe apenas dados de catálogo. Quem chama não deve passar",
+    "* Limite do texto de descrição considerado no briefing. */",
+    "* Limite do nome considerado no briefing. */",
+    "* Cena principal (o que deve aparecer). */",
+    "* Léxico de ENRIQUECIMENTO (não de permissão): qualquer assunto fora daqui"
+   ]
+  },
+  "src/services/trainingImages/config.ts": {
+   "path": "src/services/trainingImages/config.ts",
+   "lines": 46,
+   "exports": [
+    "const TRAINING_IMAGES_LIMITE_BYTES",
+    "const TRAINING_IMAGES_MIME_TYPES",
+    "const TRAINING_IMAGES_URL_EXPIRA_SEGUNDOS",
+    "const TRAINING_IMAGES_STALE_MS",
+    "const TRAINING_IMAGES_GC_MS",
+    "function imagensDeTreinamentoHabilitadas"
+   ],
+   "env": [
+    "VITE_TRAINING_IMAGES"
+   ],
+   "enums": [
+    {
+     "name": "TRAINING_IMAGES_MIME_TYPES",
+     "values": "'image/webp', 'image/png', 'image/jpeg'"
+    }
+   ],
+   "params": [
+    {
+     "name": "TRAINING_IMAGES_LIMITE_BYTES",
+     "value": "5"
+    },
+    {
+     "name": "TRAINING_IMAGES_STALE_MS",
+     "value": "15"
+    },
+    {
+     "name": "TRAINING_IMAGES_GC_MS",
+     "value": "30"
+    }
+   ],
+   "rule_comments": [
+    "Function autenticada. O interruptor serve apenas para o frontend LER as capas",
+    "* ⚠ ESTA FLAG NÃO É SEGURANÇA. Ela controla apenas a leitura no cliente; quem",
+    "somente no ambiente da Edge Function e NUNCA aparece em `VITE_*`."
+   ],
+   "temporal": [
+    "export const TRAINING_IMAGES_GC_MS = 30 * 60 * 1000;",
+    "export const TRAINING_IMAGES_STALE_MS = 15 * 60 * 1000;"
+   ]
+  },
+  "src/services/trainingImages/hash.ts": {
+   "path": "src/services/trainingImages/hash.ts",
+   "lines": 111,
+   "exports": [
+    "function sha256Hex"
+   ]
+  },
+  "src/services/trainingImages/index.ts": {
+   "path": "src/services/trainingImages/index.ts",
+   "lines": 87
+  },
+  "src/services/trainingImages/paths.ts": {
+   "path": "src/services/trainingImages/paths.ts",
+   "lines": 97,
+   "exports": [
+    "const TRAINING_IMAGES_BUCKET",
+    "const PASTA_POR_TIPO",
+    "const EXTENSAO_PADRAO",
+    "function segmentoSeguro",
+    "interface CaminhoImagemInput",
+    "function montarCaminhoImagem",
+    "function empresaDoCaminho",
+    "function validarCaminhoDaEmpresa",
+    "function chaveConteudo"
+   ],
+   "errors": [
+    "content_id inválido para o caminho da imagem",
+    "empresa_id inválido para o caminho da imagem",
+    "extensão inválida para o caminho da imagem"
+   ],
+   "params": [
+    {
+     "name": "TRAINING_IMAGES_BUCKET",
+     "value": "'training-images'"
+    },
+    {
+     "name": "EXTENSAO_PADRAO",
+     "value": "'webp'"
+    }
+   ],
+   "calc_fns": [
+    {
+     "name": "validarCaminhoDaEmpresa",
+     "params": "caminho: string | null | undefined, empresaId: string | null | undefined",
+     "body": "if (!caminho || !empresaId) return false; if (!segmentoSeguro(empresaId)) return false; // Recusa navegação de diretório e segmentos vazios. if (caminho.includes('..') || caminho.includes('//') || caminho.startsWith('/')) return false; return empresaDoCaminho(caminho) === empresaId;"
+    }
+   ]
+  },
+  "src/services/trainingImages/provider.ts": {
+   "path": "src/services/trainingImages/provider.ts",
+   "lines": 83,
+   "exports": [
+    "class TrainingImageIntegrationDisabledError",
+    "class TrainingImageProviderError",
+    "const trainingImageProviderDesativado",
+    "function definirTrainingImageProvider",
+    "function obterTrainingImageProvider",
+    "function integracaoDeImagensAtiva"
+   ],
+   "rule_comments": [
+    "* ⚠ SEPARAÇÃO FRONTEND/BACKEND (regra de arquitetura)",
+    "Este módulo roda no NAVEGADOR. Nenhum adaptador real deve ser importado",
+    "4. ligar `VITE_TRAINING_IMAGES=true` (somente leitura de capas).",
+    "rate limit e 5xx.",
+    "* `true` somente quando um adaptador real, explicitamente, se declarou pronto. */"
+   ],
+   "calc_fns": [
+    {
+     "name": "generate",
+     "params": "",
+     "body": "throw new TrainingImageIntegrationDisabledError();"
+    }
+   ]
+  },
+  "src/services/trainingImages/request.ts": {
+   "path": "src/services/trainingImages/request.ts",
+   "lines": 117,
+   "exports": [
+    "interface EntradaSolicitacaoImagem",
+    "function hashConteudo",
+    "function montarOperationId",
+    "function montarSolicitacaoImagem"
+   ],
+   "rule_comments": [
+    "entrega apenas os dados reais do registro; este módulo:",
+    "1. sanea o texto (sem delimitadores de injeção, com limite de tamanho);",
+    "* PRIVACIDADE: o pedido carrega SOMENTE dados de catálogo. Nenhum nome de",
+    "para cá — inclusive nas turmas, que herdam apenas a identidade do CURSO."
+   ]
+  },
+  "src/services/trainingImages/service.ts": {
+   "path": "src/services/trainingImages/service.ts",
+   "lines": 223,
+   "exports": [
+    "const TENTATIVAS_MAX",
+    "const MAPA_IMAGENS_VAZIO",
+    "function mensagemSeguraDoErro",
+    "function limparControleDeGeracao",
+    "function resolverImagemDoMapa",
+    "function carregarImagensDaEmpresa",
+    "function solicitarGeracaoImagem"
+   ],
+   "tables": [
+    {
+     "table": "training_images",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "training_images": [
+     "content_id",
+     "content_type",
+     "empresa_id",
+     "source_content_id",
+     "status",
+     "storage_path"
+    ]
+   },
+   "params": [
+    {
+     "name": "TENTATIVAS_MAX",
+     "value": "3"
+    },
+    {
+     "name": "CONTROLE_MAX",
+     "value": "500"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "succeeded",
+     "kind": "filtra"
+    }
+   ],
+   "rule_comments": [
+    "• limite de tentativas por conteúdo impede repetição ilimitada em erro;",
+    "* Limite de chaves no controle em memória (evita crescimento indefinido). */",
+    "* Garante que o controle em memória não cresça sem limite. */",
+    "Defesa em profundidade: o adaptador não pode devolver caminho de outra empresa."
+   ]
+  },
+  "src/services/trainingImages/storage.ts": {
+   "path": "src/services/trainingImages/storage.ts",
+   "lines": 117,
+   "exports": [
+    "interface UploadImagemTreinamento",
+    "function validarArquivoDeCapa",
+    "function enviarImagemGerada",
+    "function urlAssinadaDoCaminho",
+    "function assinarCaminhosDaEmpresa"
+   ],
+   "dyn_from": 1,
+   "errors": [
+    "Arquivo de imagem vazio.",
+    "Formato de imagem não suportado: use ${TRAINING_IMAGES_MIME_TYPES.join(",
+    "Imagem acima do limite de 5 MB."
+   ],
+   "rule_comments": [
+    "com service role. Aqui ficam o helper e a validação de caminho.",
+    "não deve chamar esta função — as políticas de Storage só aceitam escrita de"
+   ],
+   "calc_fns": [
+    {
+     "name": "validarArquivoDeCapa",
+     "params": "arquivo: { mimeType?: string | null; tamanho: number }",
+     "body": "const mime = String(arquivo.mimeType ?? '').toLowerCase(); if (!TRAINING_IMAGES_MIME_TYPES.includes(mime as (typeof TRAINING_IMAGES_MIME_TYPES)[number])) { throw new Error(`Formato de imagem não suportado: use ${TRAINING_IMAGES_MIME_TYPES.join(', ')}.`); } if (!Number.isFinite(arquivo.tamanho) || arquivo.tamanho <= 0) { throw new Error('Arquivo de imagem vazio.'); } if (arquivo.tamanho > TRAINING_IMAGES_LIMITE_BYTES) { throw new Error('Imagem acima do limite de 5 MB.'); }"
+    }
+   ]
+  },
+  "src/services/trainingImages/types.ts": {
+   "path": "src/services/trainingImages/types.ts",
+   "lines": 158,
+   "exports": [
+    "type TrainingContentType",
+    "const TRAINING_CONTENT_TYPES",
+    "type TrainingCoverFormat",
+    "type TrainingImageStatus",
+    "interface TrainingImageArtDirection",
+    "interface TrainingImageRequest",
+    "interface GeneratedTrainingImage",
+    "interface TrainingImageProvider",
+    "interface TrainingImageRecord",
+    "type TrainingImageRequestResult",
+    "type TrainingImageMap"
+   ],
+   "enums": [
+    {
+     "name": "TrainingContentType",
+     "values": "course | learning_path | training_session | certificate"
+    },
+    {
+     "name": "TrainingCoverFormat",
+     "values": "quadrada | faixa | miniatura"
+    },
+    {
+     "name": "TrainingImageStatus",
+     "values": "pending | processing | succeeded | failed | disabled"
+    }
+   ],
+   "rule_comments": [
+    "• A solicitação de geração carrega apenas dados do CADASTRO (nome, descrição,",
+    "* Lista canônica (usada em validação, testes e no CHECK da migration). */",
+    "* Nomes dos cursos vinculados (apenas trilhas). */"
+   ]
+  },
+  "src/services/trainingImages/__tests__/allowlist.test.ts": {
+   "path": "src/services/trainingImages/__tests__/allowlist.test.ts",
+   "lines": 110,
+   "is_test": true,
+   "params": [
+    {
+     "name": "EMPRESA",
+     "value": "'66104399-aba8-4105-bbd3-9bf67820c1d0'"
+    },
+    {
+     "name": "CURSO",
+     "value": "'aaaa1111-1111-1111-1111-111111111111'"
+    },
+    {
+     "name": "OUTRA_EMPRESA",
+     "value": "'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'"
+    },
+    {
+     "name": "OUTRO_CURSO",
+     "value": "'a0000003-0000-4000-8000-000000000003'"
+    }
+   ],
+   "tests": [
+    "allowlist temporária de geração de imagem",
+    "aceita empresa e curso exatamente autorizados",
+    "aceita o UUID de seed do curso (sem bits de variante RFC)",
+    "normaliza espaços e caixa",
+    "recusa empresa diferente com 403",
+    "recusa curso diferente com 403",
+    "bloqueia quando a empresa permitida está ausente",
+    "bloqueia quando o curso permitido está ausente",
+    "bloqueia quando ambas as variáveis estão ausentes",
+    "bloqueia configuração com UUID inválido",
+    "ordem de segurança da allowlist no handler",
+    "preserva JWT, vínculo e papel antes da allowlist",
+    "aplica a allowlist antes de idempotência, quota, claim e provedor",
+    "lê as duas variáveis server-side e não aceita override do corpo"
+   ]
+  },
+  "src/services/trainingImages/__tests__/briefing.test.ts": {
+   "path": "src/services/trainingImages/__tests__/briefing.test.ts",
+   "lines": 146,
+   "is_test": true,
+   "params": [
+    {
+     "name": "EMPRESA",
+     "value": "'empresa-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'"
+    },
+    {
+     "name": "CURSO",
+     "value": "'11111111-1111-4111-8111-111111111111'"
+    }
+   ],
+   "tests": [
+    "briefing por assunto",
+    "panificação → padaria, fermentação e pães",
+    "segurança do trabalho → proteção e ambiente sinalizado",
+    "programação/tecnologia → software e ambiente técnico",
+    "primeiros socorros → emergência e prática segura",
+    "assunto NOVO funciona sem estar no léxico",
+    "sem categoria e sem descrição não quebra e usa fallback neutro",
+    "mesmo cadastro → mesmo briefing (capas estáveis)",
+    "saneamento e resistência a injeção de prompt",
+    "remove delimitadores e caracteres de controle",
+    "marca os dados do cadastro como contexto e proíbe comandos",
+    "limita o tamanho do texto enviado",
+    "hash de conteúdo e idempotência",
+    "hash é estável e muda quando o cadastro é editado",
+    "operationId muda por empresa, tipo, id e hash (isolamento + versionamento)",
+    "o pedido carrega versão do template e os identificadores de operação",
+    "paleta por categoria",
+    "usa famílias existentes e nunca inventa cor para categoria desconhecida"
+   ]
+  },
+  "src/services/trainingImages/__tests__/guardrails.test.ts": {
+   "path": "src/services/trainingImages/__tests__/guardrails.test.ts",
+   "lines": 201,
+   "is_test": true,
+   "rpc": [
+    "claim_training_image_requests"
+   ],
+   "rule_comments": [
+    "GUARDRAILS — a Fase 2 NÃO conecta a OpenAI e o frontend não pode carregar",
+    "* Remove comentários: a documentação PODE citar a chave; o código não pode lê-la. */"
+   ],
+   "tests": [
+    "nenhuma conexão com a OpenAI nesta fase",
+    "não há endpoint, SDK ou chave da OpenAI no código do frontend",
+    "não há chamada de rede no módulo de provedor nem no serviço de solicitação",
+    ".env.example expõe apenas a flag de LEITURA, nunca uma chave de cliente",
+    "separação frontend × backend (Fase 3A)",
+    "o frontend não importa o adaptador nem a função",
+    "a função exige autenticação, vínculo com a empresa e papel autorizado",
+    "a geração é desativada por padrão e a chave só existe no backend",
+    "o adaptador não lê ambiente nem segredo por conta própria",
+    "o provedor simulado se declara apenas para testes",
+    "a função consulta apenas colunas existentes em trilhas_aprendizado",
+    "worker automático e quota multiempresa (Fase 3A.2)",
+    "exige credencial de agendador/service role (nunca o navegador)",
+    "fica DESLIGADO por padrão e responde 503 antes de reivindicar a fila",
+    "consome a fila persistente e fecha cada requisição",
+    "aplica o MESMO rate limit e a MESMA idempotência da geração manual",
+    "não repete chamada paga na recuperação de item interrompido",
+    "não importa o provedor simulado nem expõe segredo na resposta",
+    "o frontend não chama o worker (fila é server-side)",
+    "a geração manual usa quota por empresa E por usuário"
+   ],
+   "uses_service_role": true
+  },
+  "src/services/trainingImages/__tests__/hash.test.ts": {
+   "path": "src/services/trainingImages/__tests__/hash.test.ts",
+   "lines": 58,
+   "is_test": true,
+   "tests": [
+    "sha256Hex — vetores conhecidos",
+    "codifica corretamente os vetores canônicos",
+    "confere com o crypto do Node em UTF-8 (acentos, emoji, textos longos)",
+    "aceita bytes e produz o mesmo resultado da string UTF-8",
+    "altera o resultado com qualquer mudança de conteúdo",
+    "paridade cliente × backend",
+    "produz exatamente o mesmo hexadecimal nos dois lados"
+   ]
+  },
+  "src/services/trainingImages/__tests__/migration.test.ts": {
+   "path": "src/services/trainingImages/__tests__/migration.test.ts",
+   "lines": 293,
+   "is_test": true,
+   "rule_comments": [
+    "leitura por tenant, validação de posse no SQL e reivindicação atômica."
+   ],
+   "temporal": [
+    "expect(AUTOQUEUE).toMatch(/interval '30 minutes'/);"
+   ],
+   "tests": [
+    "migration — bucket e Storage",
+    "cria o bucket privado com limite e MIME allowlist",
+    "leitura de objeto exige vínculo com a empresa do caminho",
+    "escrita de objeto exige admin E vínculo com a empresa",
+    "migration — tabela training_images",
+    "tem os campos de referência, estado e controle de custo",
+    "garante uma única capa por conteúdo e caminho dentro do tenant",
+    "limita estados, tipos e tentativas no banco",
+    "ativa RLS, limita leitura ao tenant e bloqueia escrita do cliente",
+    "mantém trigger de updated_at e índices de tenant/status",
+    "migration — reivindicação atômica e autorização do backend",
+    "define a função como SECURITY DEFINER com search_path fixo",
+    "valida a posse do conteúdo usando as relações REAIS do schema",
+    "reivindica em UMA instrução com ON CONFLICT (proteção real de concorrência)",
+    "separa tentativas de processamento, sucessos, falhas e incerteza",
+    "impede reconciliação sem operador, notas e estado de incerteza",
+    "restringe a execução ao service role",
+    "migration — não destrutiva",
+    "não apaga nem altera registros de tabelas existentes",
+    "migration — fila automática (desligada por padrão)",
+    "cria a flag de servidor DESLIGADA e inacessível ao navegador",
+    "enfileira por TRIGGER após INSERT de curso e de trilha",
+    "nunca bloqueia o cadastro (erro vira WARNING)",
+    "reivindica lote com FOR UPDATE SKIP LOCKED e recupera trabalho travado",
+    "registra responsável e adiamento sem loop de retentativa",
+    "oferece backfill idempotente para conteúdo sem capa",
+    "não agenda nada automaticamente nesta fase",
+    "migration — rate limit duplo (empresa + usuário)",
+    "verifica os dois baldes em uma única função",
+    "adquire advisory locks em ordem determinística (sem deadlock)",
+    "só consome quota quando AMBOS permitem",
+    "permite modo empresa-only (worker sem usuário confiável)",
+    "é exclusivo do backend"
+   ],
+   "uses_service_role": true
+  },
+  "src/services/trainingImages/__tests__/openaiProvider.test.ts": {
+   "path": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+   "lines": 240,
+   "is_test": true,
+   "errors": [
+    "deveria ter lançado"
+   ],
+   "tests": [
+    "configuração e chave",
+    "sem chave não se declara configurado e não chama fetch",
+    "recusa parâmetros fora do contrato antes de qualquer chamada",
+    "requisição e resposta",
+    "envia endpoint, autenticação, idempotência e parâmetros oficiais",
+    "não usa fetch global quando um fetchImpl é injetado",
+    "aceita URL temporária do provedor e baixa os bytes",
+    "classificação de erros HTTP",
+    "401/403 → permanente (não repete)",
+    "400 → permanente, com mensagem sanitizada",
+    "404 → modelo indisponível (permanente)",
+    "429 → recuperável e respeita Retry-After",
+    "500 → recuperável",
+    "timeout → recuperável, sem vazar detalhe",
+    "proteção contra respostas inesperadas",
+    "JSON inválido",
+    "data ausente ou vazia",
+    "base64 inválido",
+    "bytes que não são imagem",
+    "imagem acima de 5 MB"
+   ]
+  },
+  "src/services/trainingImages/__tests__/parity.test.ts": {
+   "path": "src/services/trainingImages/__tests__/parity.test.ts",
+   "lines": 177,
+   "is_test": true,
+   "params": [
+    {
+     "name": "EMPRESA",
+     "value": "'empresa-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'"
+    },
+    {
+     "name": "CURSO",
+     "value": "'11111111-1111-4111-8111-111111111111'"
+    }
+   ],
+   "tests": [
+    "paridade do briefing",
+    "cliente e backend geram o MESMO briefing para os mesmos dados",
+    "o prompt do backend não contém delimitadores injetados e marca contexto",
+    "paridade do hash e da operação",
+    "contentHash do cliente é igual ao do backend",
+    "operationId do cliente é igual ao do backend",
+    "o pedido do cliente usa a mesma versão de prompt do backend"
+   ]
+  },
+  "src/services/trainingImages/__tests__/pipeline.test.ts": {
+   "path": "src/services/trainingImages/__tests__/pipeline.test.ts",
+   "lines": 397,
+   "is_test": true,
+   "errors": [
+    "storage indisponível",
+    "update falhou"
+   ],
+   "params": [
+    {
+     "name": "EMPRESA",
+     "value": "'empresa-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'"
+    },
+    {
+     "name": "OUTRA_EMPRESA",
+     "value": "'empresa-bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'"
+    },
+    {
+     "name": "CURSO",
+     "value": "'11111111-1111-4111-8111-111111111111'"
+    }
+   ],
+   "rule_comments": [
+    "tentativas. Testamos concorrência, idempotência e limite sem Postgres e sem",
+    "tempo limite/);"
+   ],
+   "tests": [
+    "fluxo completo (provedor simulado)",
+    "gera, valida, sobe e marca succeeded",
+    "envia ao provedor o briefing reconstruído no servidor e os identificadores",
+    "concorrência e idempotência",
+    "duas solicitações simultâneas geram UMA imagem",
+    "solicitação já concluída devolve ja_processado sem chamar o provedor",
+    "conteúdo editado (hash novo) libera nova geração",
+    "trabalho interrompido segue reivindicável quando o claim libera",
+    "respeita o limite de tentativas do claim",
+    "autorização e isolamento",
+    "conteúdo inexistente → conteudo_inexistente (sem distinguir outra empresa)",
+    "registro carregado de OUTRA empresa é recusado mesmo com UUID válido",
+    "entrada inválida não toca no banco nem no provedor",
+    "falhas sem quebrar o cadastro",
+    "provedor desativado marca failed imediatamente (sem linha pendente)",
+    "timeout NÃO é reenviado automaticamente (resultado pago desconhecido)",
+    "429 (resultado conhecido) continua retentável e não esgota tentativas",
+    "falha permanente do provedor esgota tentativas e não repete",
+    "imagem inválida (HTML no lugar da imagem) não sobe para o Storage",
+    "falha no upload mantém o registro como failed e não marca succeeded",
+    "falha no upload não gera nova cobrança: próxima tentativa é recusada",
+    "falha ao gravar o sucesso devolve falha_no_registro"
+   ]
+  },
+  "src/services/trainingImages/__tests__/trainingImages.test.ts": {
+   "path": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+   "lines": 468,
+   "is_test": true,
+   "errors": [
+    "conteúdo bloqueado pela moderação",
+    "falha simulada",
+    "timeout"
+   ],
+   "params": [
+    {
+     "name": "EMPRESA_A",
+     "value": "'empresa-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'"
+    },
+    {
+     "name": "EMPRESA_B",
+     "value": "'empresa-bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'"
+    }
+   ],
+   "tests": [
+    "caminhos do bucket training-images",
+    "monta o caminho canônico por tipos de conteúdo",
+    "recusa identificadores que quebrariam o escopo do tenant",
+    "valida o caminho contra a empresa (isolamento multiempresa)",
+    "provedor desativado (estado desta fase)",
+    "começa desativado e não se declara configurado",
+    "solicitar geração devolve integracao_desativada sem chamar provedor nem rede",
+    "não cria trabalho pendente: chamadas repetidas respondem na hora, sem estado",
+    "recusa identificadores vazios antes de qualquer decisão de provedor",
+    "recusa tipo de conteúdo fora do contrato",
+    "controle de duplicidade e custo (com provedor fake)",
+    "duas solicitações simultâneas do mesmo conteúdo chamam o provedor UMA vez",
+    "não compartilha a geração entre empresas diferentes",
+    "rejeita caminho devolvido fora do tenant",
+    "para de tentar depois do limite, evitando repetição ilimitada",
+    "solicitação derivada do cadastro (sem prompt do usuário)",
+    "leva apenas dados de catálogo e uma direção de arte determinística",
+    "mesma entrada → mesma direção de arte (capas estáveis)",
+    "mapeia assuntos diferentes para famílias do Design System",
+    "herança de capa (turma/certificado usam o curso)",
+    "a turma sem capa própria recebe a capa do curso",
+    "a capa própria tem prioridade sobre a herdada",
+    "certificado herda a capa do curso",
+    "sem capa e sem origem devolve null (fallback visual)",
+    "leitura das capas por empresa",
+    "desligada por padrão: nenhuma consulta é disparada",
+    "com a flag ligada e tabela ausente/erro, devolve mapa vazio sem lançar",
+    "com a flag ligada, monta o mapa e descarta linhas de outra empresa",
+    "erros do provedor: classificação e mensagem segura",
+    "erro permanente esgota as tentativas e não repete",
+    "erro transitório consome uma tentativa por chamada",
+    "mensagem de erro nunca carrega chave, token ou URL",
+    "upload de capa (validação de arquivo)",
+    "aceita webp/png/jpeg dentro do limite",
+    "recusa formato não suportado, arquivo vazio e excesso de tamanho",
+    "URL assinada e cache",
+    "não assina caminho de OUTRA empresa",
+    "assina caminho da própria empresa",
+    "a chave de cache inclui a empresa e a invalidação usa a mesma chave"
+   ]
+  },
   "src/test/chain.ts": {
    "path": "src/test/chain.ts",
    "lines": 77,
@@ -292364,16 +295113,22 @@
   },
   "supabase/functions/_shared/rateLimit.ts": {
    "path": "supabase/functions/_shared/rateLimit.ts",
-   "lines": 211,
+   "lines": 437,
    "exports": [
     "interface RateLimitOptions",
     "interface RateLimitResult",
     "interface RateLimitRpcClient",
     "function checkRateLimit",
-    "function rateLimitResponse"
+    "function rateLimitResponse",
+    "interface RateLimitDuploRpcClient",
+    "interface RateLimitDuploOptions",
+    "interface RateLimitDuploResult",
+    "function checkRateLimitDuplo",
+    "function rateLimitDuploResponse"
    ],
    "rpc": [
-    "edge_rate_limit_check"
+    "edge_rate_limit_check",
+    "edge_rate_limit_check_dual"
    ],
    "params": [
     {
@@ -292387,7 +295142,11 @@
     "Deve incluir namespacing (ex: `esocial:<userId>`)",
     "DB deixe todos os endpoints sem proteção (fail-closed com limite reduzido).",
     "usa 50% do limite normal em modo degradado",
-    "Reserve this first. A request rejected for a full burst must not consume"
+    "Reserve this first. A request rejected for a full burst must not consume",
+    "─── Rate limit duplo (empresa + usuário) ────────────────────────────────────",
+    "* Cliente mínimo da RPC dual — mesma razão de tipagem estrutural do simples. */",
+    "* Fallback em memória do duplo: limite reduzido, nunca fail-open. */",
+    "Sem usuário confiável: aplica apenas o balde da empresa (nunca inventa)."
    ],
    "doc": "Helper de rate limit atômico para edge functions sensíveis. Uso: const rl = await checkRateLimit(admin, { key: `esocial:${userId}`, limit: 30, windowSec: 60 }); if (!rl.allowed) return rateLimitResponse(rl); A tabela `public.rate_limits` é acessada via RPC `edge_rate_limit_check`, que usa pg_advisor …",
    "percents": [
@@ -292614,6 +295373,557 @@
     "Deno não pode importar diretamente do src/ (formato diferente de módulo)."
    ],
    "doc": "@fileoverview Schemas canônicos para Edge Functions e bridge. CANONICO: src/schemas/common.ts ATENÇÃO: ao editar este arquivo, sincronize com src/schemas/common.ts. Deno não pode importar diretamente do src/ (formato diferente de módulo). Manter manualmente em sincronia — usar grep para comparar per …"
+  },
+  "supabase/functions/_shared/trainingImages/allowlist.ts": {
+   "path": "supabase/functions/_shared/trainingImages/allowlist.ts",
+   "lines": 83,
+   "exports": [
+    "const ALLOWLIST_EMPRESA_ENV",
+    "const ALLOWLIST_CONTENT_ENV",
+    "interface EntradaAllowlist",
+    "interface ConfigAllowlist",
+    "type ResultadoAllowlist",
+    "function validarAllowlist"
+   ],
+   "params": [
+    {
+     "name": "ALLOWLIST_EMPRESA_ENV",
+     "value": "'TRAINING_IMAGE_ALLOWED_EMPRESA_ID'"
+    },
+    {
+     "name": "ALLOWLIST_CONTENT_ENV",
+     "value": "'TRAINING_IMAGE_ALLOWED_CONTENT_ID'"
+    }
+   ],
+   "rule_comments": [
+    "* Valida a allowlist SEM confiar apenas no corpo: os IDs permitidos vêm do"
+   ],
+   "calc_fns": [
+    {
+     "name": "validarAllowlist",
+     "params": "entrada: EntradaAllowlist, config: ConfigAllowlist",
+     "body": "const empresaPermitida = normalizar(config.empresaId); const conteudoPermitido = normalizar(config.contentId); if (!isUuid(empresaPermitida) || !isUuid(conteudoPermitido)) { return { ok: false, status: 503, motivo: 'allowlist_nao_configurada', detalhe: `${ALLOWLIST_EMPRESA_ENV} e ${ALLOWLIST_CONTENT_ENV} são obrigatórios e devem ser UUIDs válidos quando a geração está habilitada.`, }; } const empresaSolicitada = normalizar(entrada.empresaId); const conteudoSolicitado = normalizar(entrada.content …"
+    }
+   ]
+  },
+  "supabase/functions/_shared/trainingImages/briefing.ts": {
+   "path": "supabase/functions/_shared/trainingImages/briefing.ts",
+   "lines": 248,
+   "exports": [
+    "const PROMPT_VERSION",
+    "const DESCRICAO_MAX",
+    "const NOME_MAX",
+    "interface BriefingVisual",
+    "function sanearTexto",
+    "function paletaPorCategoria",
+    "interface EntradaBriefing",
+    "function montarBriefingVisual",
+    "function montarPromptDeImagem"
+   ],
+   "params": [
+    {
+     "name": "PROMPT_VERSION",
+     "value": "'v2'"
+    },
+    {
+     "name": "DESCRICAO_MAX",
+     "value": "400"
+    },
+    {
+     "name": "NOME_MAX",
+     "value": "120"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "course",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "learning_path",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "training_session",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "certificate",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "* Limite do texto de descrição considerado no briefing. */",
+    "* Limite do nome considerado no briefing. */",
+    "* Cena principal (o que deve aparecer). */",
+    "* Léxico de ENRIQUECIMENTO (não de permissão): qualquer assunto fora daqui",
+    "* Prompt final enviado ao provedor. Construído APENAS no backend, a partir do"
+   ],
+   "doc": "============================================================================ BRIEFING VISUAL — CÓPIA DO BACKEND (edge function), idêntica à do cliente. O backend NUNCA confia em prompt vindo do navegador: ele reconstrói o briefing a partir dos dados reais do cadastro no banco, com as MESMAS regras d …"
+  },
+  "supabase/functions/_shared/trainingImages/estadoCapa.ts": {
+   "path": "supabase/functions/_shared/trainingImages/estadoCapa.ts",
+   "lines": 105,
+   "exports": [
+    "interface EntradaCapa",
+    "type StatusCapa",
+    "interface EstadoCapa",
+    "function consultarEstadoDaCapa",
+    "function marcarResultadoDesconhecido"
+   ],
+   "tables": [
+    {
+     "table": "training_images",
+     "op": "select"
+    },
+    {
+     "table": "training_images",
+     "op": "update"
+    }
+   ],
+   "table_cols": {
+    "training_images": [
+     "attempts",
+     "content_hash",
+     "content_id",
+     "content_type",
+     "empresa_id",
+     "id",
+     "last_error",
+     "requested_at",
+     "status"
+    ]
+   },
+   "enums": [
+    {
+     "name": "StatusCapa",
+     "values": "pending | processing | succeeded | failed | disabled"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "failed",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "pending",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "processing",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "succeeded",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "failed",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "failed",
+     "kind": "compara"
+    }
+   ]
+  },
+  "supabase/functions/_shared/trainingImages/hash.ts": {
+   "path": "supabase/functions/_shared/trainingImages/hash.ts",
+   "lines": 109,
+   "exports": [
+    "function sha256Hex"
+   ]
+  },
+  "supabase/functions/_shared/trainingImages/imageValidation.ts": {
+   "path": "supabase/functions/_shared/trainingImages/imageValidation.ts",
+   "lines": 117,
+   "exports": [
+    "const LIMITE_BYTES_IMAGEM",
+    "const MINIMO_BYTES_IMAGEM",
+    "type MimeImagem",
+    "interface ImagemValidada",
+    "function detectarMimeImagem",
+    "function decodificarBase64",
+    "function validarImagemGerada",
+    "function mensagemSegura"
+   ],
+   "errors": [
+    "base64 inválido na resposta do provedor",
+    "formato de imagem não suportado",
+    "imagem acima do limite de 5 MB",
+    "imagem menor que o mínimo aceitável",
+    "não foi possível decodificar a imagem",
+    "resposta sem imagem em base64"
+   ],
+   "enums": [
+    {
+     "name": "MimeImagem",
+     "values": "image/webp | image/png | image/jpeg"
+    }
+   ],
+   "params": [
+    {
+     "name": "LIMITE_BYTES_IMAGEM",
+     "value": "5"
+    },
+    {
+     "name": "MINIMO_BYTES_IMAGEM",
+     "value": "64"
+    }
+   ],
+   "rule_comments": [
+    "VALIDAÇÃO DA IMAGEM GERADA — sem confiar no provedor.",
+    "(quando um proxy intercepta) ou acima do limite do bucket. Antes de qualquer",
+    "bytes), o tamanho mínimo/máximo e devolve o MIME correto.",
+    "* Limite do bucket `training-images` (5 MB). */"
+   ],
+   "doc": "============================================================================ VALIDAÇÃO DA IMAGEM GERADA — sem confiar no provedor. Uma resposta da API pode vir truncada, com outro formato, com HTML de erro (quando um proxy intercepta) ou acima do limite do bucket. Antes de qualquer upload: decodific …",
+   "calc_fns": [
+    {
+     "name": "validarImagemGerada",
+     "params": "bytes: Uint8Array",
+     "body": "if (bytes.length < MINIMO_BYTES_IMAGEM) { throw new TrainingImageProviderError('imagem menor que o mínimo aceitável', { code: 'imagem_muito_pequena', retryable: false, }); } if (bytes.length > LIMITE_BYTES_IMAGEM) { throw new TrainingImageProviderError('imagem acima do limite de 5 MB', { code: 'imagem_muito_grande', retryable: false, }); } const mimeType = detectarMimeImagem(bytes); if (!mimeType) { throw new TrainingImageProviderError('formato de imagem não suportado', { code: 'formato_invalido …"
+    }
+   ]
+  },
+  "supabase/functions/_shared/trainingImages/openaiProvider.ts": {
+   "path": "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+   "lines": 246,
+   "exports": [
+    "const OPENAI_IMAGES_ENDPOINT",
+    "const OPENAI_MODELO_PADRAO",
+    "const OPENAI_TAMANHO_PADRAO",
+    "const OPENAI_QUALIDADE_PADRAO",
+    "const OPENAI_TIMEOUT_PADRAO_MS",
+    "interface OpenAITrainingImageProviderOptions",
+    "function criarOpenAITrainingImageProvider"
+   ],
+   "errors": [
+    "OPENAI_API_KEY ausente no ambiente da função",
+    "falha ao baixar a imagem gerada",
+    "não foi possível baixar a imagem gerada",
+    "output_format não suportado: ${outputFormat}",
+    "quality não suportada: ${quality}",
+    "resposta não é JSON válido",
+    "resposta sem imagem",
+    "resposta sem imagem em base64",
+    "size não suportado: ${size}"
+   ],
+   "params": [
+    {
+     "name": "OPENAI_MODELO_PADRAO",
+     "value": "'gpt-image-2.5-flare'"
+    },
+    {
+     "name": "OPENAI_TAMANHO_PADRAO",
+     "value": "'1536x864'"
+    },
+    {
+     "name": "OPENAI_QUALIDADE_PADRAO",
+     "value": "'medium'"
+    },
+    {
+     "name": "OPENAI_TIMEOUT_PADRAO_MS",
+     "value": "90"
+    }
+   ],
+   "rule_comments": [
+    "ADAPTADOR OPENAI — executa SOMENTE no backend (Edge Function)."
+   ],
+   "calc_fns": [
+    {
+     "name": "generate",
+     "params": "request: TrainingImageRequest",
+     "body": "if (!apiKey) { throw new TrainingImageProviderError('OPENAI_API_KEY ausente no ambiente da função', { code: 'sem_chave', retryable: false, }); } const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), timeoutMs); let resposta: Response; try { resposta = await fetchImpl(endpoint, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json', 'X-Client-Request-Id': request.operationId, }, body: JSON.stringify({ model, prompt …"
+    }
+   ]
+  },
+  "supabase/functions/_shared/trainingImages/pipeline.ts": {
+   "path": "supabase/functions/_shared/trainingImages/pipeline.ts",
+   "lines": 293,
+   "exports": [
+    "interface EntradaGeracaoCapa",
+    "interface DepsPipelineCapa",
+    "const TENTATIVAS_MAX_PIPELINE",
+    "function resultadoDesconhecido",
+    "function hashConteudoServidor",
+    "function operationIdDe",
+    "function gerarCapaDeTreinamento"
+   ],
+   "params": [
+    {
+     "name": "TENTATIVAS_MAX_PIPELINE",
+     "value": "3"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "number",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "processing",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "pending",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "succeeded",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "5. chama o provedor apenas se reclamou o trabalho;",
+    "quando há trabalho em andamento ou quando o limite de tentativas acabou;",
+    "* Hash canônico do conteúdo — MESMA regra do cliente (`hashConteudo`). */"
+   ],
+   "calc_fns": [
+    {
+     "name": "gerarCapaDeTreinamento",
+     "params": "entrada: EntradaGeracaoCapa, deps: DepsPipelineCapa",
+     "body": "if (!entrada.empresaId || !entrada.contentId || !TRAINING_CONTENT_TYPES.includes(entrada.contentType)) { return { gerado: false, motivo: 'conteudo_inexistente' }; } const conteudo = await deps.carregarConteudo(entrada); if (!conteudo) return { gerado: false, motivo: 'conteudo_inexistente' }; // Defesa extra: o registro carregado tem de ser da empresa pedida. if (conteudo.empresaId !== entrada.empresaId) return { gerado: false, motivo: 'conteudo_inexistente' }; const briefing = montarBriefingVisu …"
+    }
+   ]
+  },
+  "supabase/functions/_shared/trainingImages/quotas.ts": {
+   "path": "supabase/functions/_shared/trainingImages/quotas.ts",
+   "lines": 36,
+   "exports": [
+    "const JANELA_QUOTA_SEG",
+    "const LIMITE_EMPRESA_PADRAO",
+    "const LIMITE_USUARIO_PADRAO",
+    "const STALE_AFTER_MS",
+    "const STALE_FILA_MINUTOS",
+    "function chaveEmpresa",
+    "function chaveUsuario",
+    "function envNumero"
+   ],
+   "params": [
+    {
+     "name": "JANELA_QUOTA_SEG",
+     "value": "60"
+    },
+    {
+     "name": "LIMITE_EMPRESA_PADRAO",
+     "value": "20"
+    },
+    {
+     "name": "LIMITE_USUARIO_PADRAO",
+     "value": "5"
+    },
+    {
+     "name": "STALE_AFTER_MS",
+     "value": "10"
+    },
+    {
+     "name": "STALE_FILA_MINUTOS",
+     "value": "30"
+    }
+   ],
+   "rule_comments": [
+    "Mudar um limite aqui reflete nos dois caminhos (Edge Function de geração e",
+    "Maior que o wall clock máximo da plataforma (400 s) + timeout do provedor"
+   ],
+   "doc": "============================================================================ CONSTANTES E CHAVES DE QUOTA — fonte única para geração manual e automática ============================================================================ Mudar um limite aqui reflete nos dois caminhos (Edge Function de geraç …",
+   "temporal": [
+    "export const STALE_AFTER_MS = 10 * 60 * 1000;"
+   ]
+  },
+  "supabase/functions/_shared/trainingImages/simulatedProvider.ts": {
+   "path": "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
+   "lines": 113,
+   "exports": [
+    "const FIXTURE_PNG_BASE64",
+    "type FalhaSimulada",
+    "interface ProvedorSimuladoOptions",
+    "interface ProvedorSimulado",
+    "function criarProvedorSimulado"
+   ],
+   "errors": [
+    "credencial da OpenAI recusada",
+    "limite de uso da API atingido",
+    "resposta sem imagem",
+    "tempo limite na geração da imagem"
+   ],
+   "enums": [
+    {
+     "name": "FalhaSimulada",
+     "values": "timeout | rate_limit | http_permanente | imagem_invalida | sem_imagem"
+    }
+   ],
+   "rule_comments": [
+    "PROVEDOR SIMULADO — **SOMENTE TESTES**. Nunca importar na Edge Function.",
+    "o fluxo inteiro — claim atômico, validação, upload, status e leitura — sem"
+   ],
+   "calc_fns": [
+    {
+     "name": "generate",
+     "params": "request: TrainingImageRequest",
+     "body": "chamadas += 1; ultimoPedido = request; if (options.atrasoMs) { await new Promise((resolve) => setTimeout(resolve, options.atrasoMs)); } if (options.falha === 'timeout') { throw new TrainingImageProviderError('tempo limite na geração da imagem', { code: 'timeout', retryable: true, }); } if (options.falha === 'rate_limit') { throw new TrainingImageProviderError('limite de uso da API atingido', { code: 'rate_limit', retryable: true, status: 429, }); } if (options.falha === 'http_permanente') { thro …"
+    }
+   ]
+  },
+  "supabase/functions/_shared/trainingImages/storagePath.ts": {
+   "path": "supabase/functions/_shared/trainingImages/storagePath.ts",
+   "lines": 49,
+   "exports": [
+    "const TRAINING_IMAGES_BUCKET",
+    "const PASTA_POR_TIPO",
+    "function segmentoSeguro",
+    "function montarCaminhoImagem",
+    "function validarCaminhoDaEmpresa"
+   ],
+   "errors": [
+    "content_id inválido para o caminho da imagem",
+    "empresa_id inválido para o caminho da imagem",
+    "extensão inválida para o caminho da imagem"
+   ],
+   "params": [
+    {
+     "name": "TRAINING_IMAGES_BUCKET",
+     "value": "'training-images'"
+    }
+   ],
+   "doc": "============================================================================ CAMINHOS NO STORAGE — CÓPIA DO BACKEND (mesma estrutura do cliente). training-images/<empresa_id>/<pasta>/<content_id>/cover.<ext> O primeiro segmento é o tenant: é o que as políticas de Storage usam. Toda escrita do backen …",
+   "calc_fns": [
+    {
+     "name": "validarCaminhoDaEmpresa",
+     "params": "caminho: unknown, empresaId: unknown",
+     "body": "if (typeof caminho !== 'string' || typeof empresaId !== 'string') return false; if (!segmentoSeguro(empresaId)) return false; if (caminho.includes('..') || caminho.includes('//') || caminho.startsWith('/')) return false; return caminho.split('/')[0] === empresaId;"
+    }
+   ]
+  },
+  "supabase/functions/_shared/trainingImages/supabaseDeps.ts": {
+   "path": "supabase/functions/_shared/trainingImages/supabaseDeps.ts",
+   "lines": 197,
+   "exports": [
+    "type TrainingAdminClient",
+    "function carregarConteudoTreinamento",
+    "function criarDepsSupabase"
+   ],
+   "tables": [
+    {
+     "table": "catalogo_cursos",
+     "op": "select"
+    },
+    {
+     "table": "trilhas_aprendizado",
+     "op": "select"
+    },
+    {
+     "table": "trilhas_cursos",
+     "op": "select"
+    },
+    {
+     "table": "training_images",
+     "op": "update"
+    },
+    {
+     "table": "training_images",
+     "op": "update"
+    },
+    {
+     "table": "training_images",
+     "op": "update"
+    }
+   ],
+   "table_cols": {
+    "catalogo_cursos": [
+     "carga_horaria",
+     "categoria",
+     "descricao",
+     "empresa_id",
+     "id",
+     "modalidade",
+     "nome",
+     "obrigatorio"
+    ],
+    "trilhas_aprendizado": [
+     "descricao",
+     "empresa_id",
+     "id",
+     "nivel",
+     "nome"
+    ],
+    "trilhas_cursos": [
+     "ordem",
+     "trilha_id"
+    ],
+    "training_images": [
+     "id"
+    ]
+   },
+   "rpc": [
+    "claim_training_image"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "succeeded",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "failed",
+     "kind": "escreve"
+    }
+   ],
+   "rule_comments": [
+    "* Nenhuma regra de negócio aqui: apenas leitura escopada por empresa, claim",
+    "Somente colunas existentes: `trilhas_aprendizado` tem `nome` (não `titulo`)."
+   ]
+  },
+  "supabase/functions/_shared/trainingImages/types.ts": {
+   "path": "supabase/functions/_shared/trainingImages/types.ts",
+   "lines": 139,
+   "exports": [
+    "type TrainingContentType",
+    "const TRAINING_CONTENT_TYPES",
+    "interface TrainingImageArtDirection",
+    "interface TrainingImageRequest",
+    "interface GeneratedTrainingImage",
+    "interface TrainingImageProvider",
+    "class TrainingImageProviderError",
+    "interface ConteudoTreinamento",
+    "interface ClaimTrainingImageResult",
+    "type TrainingImagePipelineResult"
+   ],
+   "enums": [
+    {
+     "name": "TrainingContentType",
+     "values": "course | learning_path | training_session | certificate"
+    }
+   ],
+   "doc": "============================================================================ CONTRATOS DO BACKEND (edge function) — espelham a camada do cliente. O frontend NUNCA importa este arquivo. O adaptador da OpenAI implementa `TrainingImageProvider` exatamente como na Fase 2, mas devolvendo os BYTES da imag …"
+  },
+  "supabase/functions/_shared/trainingImages/uuid.ts": {
+   "path": "supabase/functions/_shared/trainingImages/uuid.ts",
+   "lines": 16,
+   "exports": [
+    "const UUID_RE",
+    "function isUuid"
+   ],
+   "rule_comments": [
+    "válidos para o Postgres, mas não seguem a variante RFC. A validação continua",
+    "sendo apenas de FORMATO; autorização, tenant e allowlist são verificados"
+   ],
+   "doc": "UUID no formato lexical aceito pelo PostgreSQL (8-4-4-4-12 hex). Não exigimos bits de versão/variante RFC 4122 porque o banco contém IDs de demonstração/seed (ex.: `aaaa1111-1111-1111-1111-111111111111`) que são UUIDs válidos para o Postgres, mas não seguem a variante RFC. A validação continua sendo …"
   },
   "supabase/functions/adiantamento-salarial/index.ts": {
    "path": "supabase/functions/adiantamento-salarial/index.ts",
@@ -296025,7 +299335,7 @@
   },
   "supabase/functions/external-db-bridge/tableCatalog.ts": {
    "path": "supabase/functions/external-db-bridge/tableCatalog.ts",
-   "lines": 106,
+   "lines": 107,
    "exports": [
     "const TABLE_ALLOWLIST"
    ],
@@ -299302,6 +302612,123 @@
    ],
    "webhook_events": [
     "string"
+   ],
+   "uses_service_role": true
+  },
+  "supabase/functions/training-image-dispatch/index.ts": {
+   "path": "supabase/functions/training-image-dispatch/index.ts",
+   "lines": 310,
+   "rpc": [
+    "claim_training_image_requests",
+    "finish_training_image_request"
+   ],
+   "env": [
+    "OPENAI_API_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "TRAINING_IMAGE_AUTOQUEUE_ENABLED",
+    "TRAINING_IMAGE_DISPATCH_SECRET",
+    "TRAINING_IMAGE_GENERATION_ENABLED",
+    "TRAINING_IMAGE_MODEL",
+    "TRAINING_IMAGE_QUALITY",
+    "TRAINING_IMAGE_SIZE"
+   ],
+   "params": [
+    {
+     "name": "BATCH_PADRAO",
+     "value": "2"
+    },
+    {
+     "name": "RETRY_QUOTA_SEG",
+     "value": "300"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "done",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "done",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "done",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "pending",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "processing",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "── Idempotência ANTES de quota/provedor (mesma regra da geração manual).",
+    "Todo trabalho automático passa pelo MESMO rate limit da geração manual:"
+   ],
+   "calc_fns": [
+    {
+     "name": "iguaisEmTempoConstante",
+     "params": "a: string, b: string",
+     "body": "const enc = new TextEncoder(); const chave = await crypto.subtle.importKey( 'raw', enc.encode('dp-training-image-dispatch-comparison'), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'] ); const assinaturaA = new Uint8Array(await crypto.subtle.sign('HMAC', chave, enc.encode(a))); const assinaturaB = new Uint8Array(await crypto.subtle.sign('HMAC', chave, enc.encode(b))); let diff = 0; for (let i = 0; i < assinaturaA.length; i += 1) diff |= assinaturaA[i] ^ assinaturaB[i]; return diff === 0;"
+    }
+   ],
+   "uses_service_role": true
+  },
+  "supabase/functions/training-image-generate/index.ts": {
+   "path": "supabase/functions/training-image-generate/index.ts",
+   "lines": 292,
+   "tables": [
+    {
+     "table": "user_empresas",
+     "op": "select"
+    },
+    {
+     "table": "user_roles",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "user_empresas": [
+     "empresa_id",
+     "user_id"
+    ],
+    "user_roles": [
+     "role",
+     "user_id"
+    ]
+   },
+   "env": [
+    "OPENAI_API_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "TRAINING_IMAGE_ALLOWED_CONTENT_ID",
+    "TRAINING_IMAGE_ALLOWED_EMPRESA_ID",
+    "TRAINING_IMAGE_GENERATION_ENABLED",
+    "TRAINING_IMAGE_MODEL",
+    "TRAINING_IMAGE_QUALITY",
+    "TRAINING_IMAGE_SIZE"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "succeeded",
+     "kind": "escreve"
+    }
+   ],
+   "rule_comments": [
+    "no backend: a chave da OpenAI existe apenas aqui (`Deno.env`), nunca no",
+    "6. Rate limit por usuário (proteção de custo).",
+    "── Rate limit DUPLO (empresa + usuário), atômico e persistente."
    ],
    "uses_service_role": true
   },
@@ -303827,10 +307254,79 @@
   }
  },
  "git": {
-  "sha": "800125221d33cb158c990df02ce43195007f0aef",
+  "sha": "935356c8ab1524aed25eaac10ccfa049ff67c187",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "935356c",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "feat(treinamentos): recupera a camada de aplicação das capas de treinamento (branch muri) (#593)",
+    "files": [
+     ".env.example",
+     "deno.lock",
+     "e2e/authenticated/training-images-homolog.spec.ts",
+     "scripts/automation.config.json",
+     "scripts/training-images-homolog/README.md",
+     "scripts/training-images-homolog/homolog.mjs",
+     "scripts/training-images-homolog/scheduler-disable.sql",
+     "scripts/training-images-homolog/scheduler-enable.sql",
+     "scripts/training-images-homolog/scheduler-status.sql",
+     "scripts/training-images-local/autoqueue.test.sql",
+     "scripts/training-images-local/bootstrap.sql",
+     "scripts/training-images-local/claim.test.sql",
+     "scripts/training-images-local/concurrency-autoqueue.sql",
+     "scripts/training-images-local/concurrency-claim.sql",
+     "scripts/training-images-local/concurrency-dual.sql",
+     "scripts/training-images-local/concurrency-rate-limit.sql",
+     "scripts/training-images-local/edge-http-test.mjs",
+     "scripts/training-images-local/pipeline-e2e.ts",
+     "scripts/training-images-local/rate-limit.test.sql",
+     "scripts/training-images-local/rls.test.sql",
+     "scripts/training-images-local/run-tests.mjs",
+     "scripts/training-images-local/seed.sql",
+     "src/hooks/useTrainingImages.ts",
+     "src/services/trainingImages/__tests__/allowlist.test.ts",
+     "src/services/trainingImages/__tests__/briefing.test.ts",
+     "src/services/trainingImages/__tests__/guardrails.test.ts",
+     "src/services/trainingImages/__tests__/hash.test.ts",
+     "src/services/trainingImages/__tests__/migration.test.ts",
+     "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+     "src/services/trainingImages/__tests__/parity.test.ts",
+     "src/services/trainingImages/__tests__/pipeline.test.ts",
+     "src/services/trainingImages/__tests__/trainingImages.test.ts",
+     "src/services/trainingImages/briefing.ts",
+     "src/services/trainingImages/config.ts",
+     "src/services/trainingImages/hash.ts",
+     "src/services/trainingImages/index.ts",
+     "src/services/trainingImages/paths.ts",
+     "src/services/trainingImages/provider.ts",
+     "src/services/trainingImages/request.ts",
+     "src/services/trainingImages/service.ts",
+     "src/services/trainingImages/storage.ts",
+     "src/services/trainingImages/types.ts",
+     "supabase/functions/_shared/rateLimit.ts",
+     "supabase/functions/_shared/trainingImages/allowlist.ts",
+     "supabase/functions/_shared/trainingImages/briefing.ts",
+     "supabase/functions/_shared/trainingImages/estadoCapa.ts",
+     "supabase/functions/_shared/trainingImages/hash.ts",
+     "supabase/functions/_shared/trainingImages/imageValidation.ts",
+     "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+     "supabase/functions/_shared/trainingImages/pipeline.ts",
+     "supabase/functions/_shared/trainingImages/quotas.ts",
+     "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
+     "supabase/functions/_shared/trainingImages/storagePath.ts",
+     "supabase/functions/_shared/trainingImages/supabaseDeps.ts",
+     "supabase/functions/_shared/trainingImages/types.ts",
+     "supabase/functions/_shared/trainingImages/uuid.ts",
+     "supabase/functions/external-db-bridge/tableCatalog.ts",
+     "supabase/functions/training-image-dispatch/README.md",
+     "supabase/functions/training-image-dispatch/index.ts",
+     "supabase/functions/training-image-generate/README.md",
+     "supabase/functions/training-image-generate/index.ts"
+    ]
+   },
    {
     "sha": "8001252",
     "date": "2026-11-16",
@@ -304402,18 +307898,6 @@
      "scripts/capacitor-build.sh",
      "scripts/tests/migrations-p1-rotinas-agendadas.sh"
     ]
-   },
-   {
-    "sha": "eb2efe5",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "fix(sync): autocommit rev3 — índice devolvido em SIGTERM, gitleaks só nas linhas adicionadas e bateria de 53 cenários (#565)",
-    "files": [
-     "scripts/automation.config.json",
-     "scripts/sync/README.md",
-     "scripts/sync/autocommit-local.sh",
-     "scripts/tests/autocommit-lab.test.sh"
-    ]
    }
   ],
   "hot_files": [
@@ -304428,6 +307912,14 @@
    [
     ".github/workflows/canonical-migrations.yml",
     3
+   ],
+   [
+    "scripts/automation.config.json",
+    2
+   ],
+   [
+    "supabase/functions/external-db-bridge/tableCatalog.ts",
+    2
    ],
    [
     "src/pages/ColaboradorDetalhesPage.tsx",
@@ -304488,14 +307980,6 @@
    [
     "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.verify.sql",
     2
-   ],
-   [
-    "scripts/automation.config.json",
-    2
-   ],
-   [
-    "src/components/admissoes/OnboardingPageContent.tsx",
-    1
    ]
   ]
  }

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 115,
+ "total": 132,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -1267,6 +1267,176 @@
    "arquivo": "scripts/sync/sync-github.sh",
    "descricao": "Mantém o repositório local atualizado com o GitHub, com segurança.   sync-github.sh [--repo <caminho>] [--dry-run] [--quiet]",
    "linhas": 149,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-homolog/homolog.mjs",
+   "descricao": "* =============================================================================",
+   "linhas": 452,
+   "env": [
+    "HOMOLOG_CLEANUP",
+    "HOMOLOG_CONFIRM",
+    "HOMOLOG_CRON_SECRET",
+    "HOMOLOG_PASSWORD",
+    "HOMOLOG_PROJECT_REF",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-homolog/scheduler-disable.sql",
+   "descricao": null,
+   "linhas": 13,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-homolog/scheduler-enable.sql",
+   "descricao": null,
+   "linhas": 100,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-homolog/scheduler-status.sql",
+   "descricao": null,
+   "linhas": 30,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-local/autoqueue.test.sql",
+   "descricao": null,
+   "linhas": 315,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-local/bootstrap.sql",
+   "descricao": null,
+   "linhas": 216,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-local/claim.test.sql",
+   "descricao": null,
+   "linhas": 479,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-local/concurrency-autoqueue.sql",
+   "descricao": null,
+   "linhas": 15,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-local/concurrency-claim.sql",
+   "descricao": null,
+   "linhas": 23,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-local/concurrency-dual.sql",
+   "descricao": null,
+   "linhas": 18,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-local/concurrency-rate-limit.sql",
+   "descricao": null,
+   "linhas": 15,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-local/edge-http-test.mjs",
+   "descricao": "* =============================================================================",
+   "linhas": 830,
+   "env": [
+    "DENO_BIN"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-local/pipeline-e2e.ts",
+   "descricao": "* =============================================================================",
+   "linhas": 564,
+   "env": [
+    "PGDATABASE_LOCAL",
+    "PGPORT_LOCAL",
+    "PG_BIN"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-local/rate-limit.test.sql",
+   "descricao": null,
+   "linhas": 221,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-local/rls.test.sql",
+   "descricao": null,
+   "linhas": 275,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-local/run-tests.mjs",
+   "descricao": "* =============================================================================",
+   "linhas": 513,
+   "env": [
+    "PG_BIN"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/training-images-local/seed.sql",
+   "descricao": null,
+   "linhas": 49,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

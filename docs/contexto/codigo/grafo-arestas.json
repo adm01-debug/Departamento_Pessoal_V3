@@ -50,6 +50,11 @@
   "scripts/simulacao/verify_rescisao_fix.cjs": [
    "scripts/simulacao/_lib/ts-require.cjs"
   ],
+  "scripts/training-images-local/pipeline-e2e.ts": [
+   "supabase/functions/_shared/trainingImages/pipeline.ts",
+   "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
+   "supabase/functions/_shared/trainingImages/types.ts"
+  ],
   "src/App.tsx": [
    "src/components/AdminRoute.tsx",
    "src/components/ProtectedRoute.tsx",
@@ -3787,6 +3792,9 @@
    "src/services/empresaService.ts",
    "src/types/entities.ts"
   ],
+  "src/hooks/useTrainingImages.ts": [
+   "src/services/trainingImages/index.ts"
+  ],
   "src/hooks/useValeTransporte.ts": [
    "src/services/calculoBeneficiosService.ts"
   ],
@@ -6302,6 +6310,46 @@
   "src/services/timelineService.ts": [
    "src/integrations/supabase/client.ts"
   ],
+  "src/services/trainingImages/briefing.ts": [
+   "src/services/trainingImages/types.ts"
+  ],
+  "src/services/trainingImages/index.ts": [
+   "src/services/trainingImages/briefing.ts",
+   "src/services/trainingImages/config.ts",
+   "src/services/trainingImages/hash.ts",
+   "src/services/trainingImages/paths.ts",
+   "src/services/trainingImages/provider.ts",
+   "src/services/trainingImages/request.ts",
+   "src/services/trainingImages/service.ts",
+   "src/services/trainingImages/storage.ts",
+   "src/services/trainingImages/types.ts"
+  ],
+  "src/services/trainingImages/paths.ts": [
+   "src/services/trainingImages/types.ts"
+  ],
+  "src/services/trainingImages/provider.ts": [
+   "src/services/trainingImages/types.ts"
+  ],
+  "src/services/trainingImages/request.ts": [
+   "src/services/trainingImages/briefing.ts",
+   "src/services/trainingImages/hash.ts",
+   "src/services/trainingImages/types.ts"
+  ],
+  "src/services/trainingImages/service.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/services/trainingImages/config.ts",
+   "src/services/trainingImages/paths.ts",
+   "src/services/trainingImages/provider.ts",
+   "src/services/trainingImages/request.ts",
+   "src/services/trainingImages/storage.ts",
+   "src/services/trainingImages/types.ts"
+  ],
+  "src/services/trainingImages/storage.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/services/trainingImages/config.ts",
+   "src/services/trainingImages/paths.ts",
+   "src/services/trainingImages/types.ts"
+  ],
   "src/services/turnoService.ts": [
    "src/integrations/supabase/client.ts",
    "src/integrations/supabase/database.types.ts",
@@ -6441,6 +6489,44 @@
   ],
   "supabase/functions/_shared/safe-fetch.ts": [
    "supabase/functions/_shared/ssrf-guard.ts"
+  ],
+  "supabase/functions/_shared/trainingImages/allowlist.ts": [
+   "supabase/functions/_shared/trainingImages/uuid.ts"
+  ],
+  "supabase/functions/_shared/trainingImages/briefing.ts": [
+   "supabase/functions/_shared/trainingImages/types.ts"
+  ],
+  "supabase/functions/_shared/trainingImages/estadoCapa.ts": [
+   "supabase/functions/_shared/trainingImages/pipeline.ts",
+   "supabase/functions/_shared/trainingImages/quotas.ts",
+   "supabase/functions/_shared/trainingImages/supabaseDeps.ts",
+   "supabase/functions/_shared/trainingImages/types.ts"
+  ],
+  "supabase/functions/_shared/trainingImages/imageValidation.ts": [
+   "supabase/functions/_shared/trainingImages/types.ts"
+  ],
+  "supabase/functions/_shared/trainingImages/openaiProvider.ts": [
+   "supabase/functions/_shared/trainingImages/briefing.ts",
+   "supabase/functions/_shared/trainingImages/imageValidation.ts",
+   "supabase/functions/_shared/trainingImages/types.ts"
+  ],
+  "supabase/functions/_shared/trainingImages/pipeline.ts": [
+   "supabase/functions/_shared/trainingImages/briefing.ts",
+   "supabase/functions/_shared/trainingImages/hash.ts",
+   "supabase/functions/_shared/trainingImages/imageValidation.ts",
+   "supabase/functions/_shared/trainingImages/types.ts"
+  ],
+  "supabase/functions/_shared/trainingImages/simulatedProvider.ts": [
+   "supabase/functions/_shared/trainingImages/imageValidation.ts",
+   "supabase/functions/_shared/trainingImages/types.ts"
+  ],
+  "supabase/functions/_shared/trainingImages/storagePath.ts": [
+   "supabase/functions/_shared/trainingImages/types.ts"
+  ],
+  "supabase/functions/_shared/trainingImages/supabaseDeps.ts": [
+   "supabase/functions/_shared/trainingImages/pipeline.ts",
+   "supabase/functions/_shared/trainingImages/storagePath.ts",
+   "supabase/functions/_shared/trainingImages/types.ts"
   ],
   "supabase/functions/adiantamento-salarial/index.ts": [
    "supabase/functions/_shared/authz.ts",
@@ -6928,6 +7014,28 @@
    "supabase/functions/_shared/clientIp.ts",
    "supabase/functions/_shared/contract.ts",
    "supabase/functions/_shared/rateLimit.ts"
+  ],
+  "supabase/functions/training-image-dispatch/index.ts": [
+   "supabase/functions/_shared/contract.ts",
+   "supabase/functions/_shared/rateLimit.ts",
+   "supabase/functions/_shared/trainingImages/estadoCapa.ts",
+   "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+   "supabase/functions/_shared/trainingImages/pipeline.ts",
+   "supabase/functions/_shared/trainingImages/quotas.ts",
+   "supabase/functions/_shared/trainingImages/supabaseDeps.ts"
+  ],
+  "supabase/functions/training-image-generate/index.ts": [
+   "supabase/functions/_shared/contract.ts",
+   "supabase/functions/_shared/csrf.ts",
+   "supabase/functions/_shared/rateLimit.ts",
+   "supabase/functions/_shared/trainingImages/allowlist.ts",
+   "supabase/functions/_shared/trainingImages/estadoCapa.ts",
+   "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+   "supabase/functions/_shared/trainingImages/pipeline.ts",
+   "supabase/functions/_shared/trainingImages/quotas.ts",
+   "supabase/functions/_shared/trainingImages/supabaseDeps.ts",
+   "supabase/functions/_shared/trainingImages/types.ts",
+   "supabase/functions/_shared/trainingImages/uuid.ts"
   ],
   "supabase/functions/upload-certificado/index.ts": [
    "supabase/functions/_shared/aal2.ts",

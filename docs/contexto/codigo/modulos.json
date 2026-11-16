@@ -5900,9 +5900,9 @@
   },
   {
    "modulo": "hooks",
-   "arquivos": 86,
+   "arquivos": 87,
    "testes": 0,
-   "linhas": 8271,
+   "linhas": 8330,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6078,6 +6078,7 @@
     "useTiposEstabilidade",
     "useToast",
     "useTodasEmpresas",
+    "useTrainingImages",
     "useTranslation",
     "useTreinamentosColaborador",
     "useValeTransporte",
@@ -6415,6 +6416,7 @@
     "useVincularDependenteBeneficio",
     "useToast",
     "useTodasEmpresas",
+    "useTrainingImages",
     "useTranslation",
     "useValeTransporte",
     "useWebhookLogs",
@@ -6563,6 +6565,7 @@
     "times",
     "tipos_admissao",
     "tipos_estabilidade",
+    "training_images",
     "transferencias",
     "treinamento_certificados",
     "treinamento_feedback",
@@ -6653,7 +6656,8 @@
     "VITE_NINEBOX_MODO_REAL",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_TRAINING_IMAGES"
    ],
    "flags": [],
    "papeis": [
@@ -6753,6 +6757,7 @@
     "services",
     "services/folha",
     "services/tabelas",
+    "services/trainingImages",
     "types",
     "utils",
     "utils/importacao"
@@ -7044,6 +7049,7 @@
     "services",
     "services/folha",
     "services/tabelas",
+    "services/trainingImages",
     "types",
     "utils",
     "utils/folha"
@@ -9316,6 +9322,52 @@
     "utils"
    ],
    "pacotes_externos": []
+  },
+  {
+   "modulo": "services/trainingImages",
+   "arquivos": 10,
+   "testes": 9,
+   "linhas": 1279,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 0,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [
+    "training_images"
+   ],
+   "rpcs": [
+    "log_frontend_error"
+   ],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "DEV",
+    "VITE_SUPABASE_FUNCTIONS_BASE",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL",
+    "VITE_TRAINING_IMAGES"
+   ],
+   "flags": [],
+   "papeis": [],
+   "diretos": {
+    "edges": [],
+    "tabelas": [
+     "training_images"
+    ],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "hooks"
+   ],
+   "depende_de_modulos": [
+    "integrations/supabase"
+   ],
+   "pacotes_externos": [
+    "@supabase/supabase-js"
+   ]
   },
   {
    "modulo": "test",

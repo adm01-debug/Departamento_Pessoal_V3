@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `800125221d` · branch `main` · 2026-11-16 19:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `935356c8ab` · branch `main` · 2026-11-16 21:02 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1544,6 +1544,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `aviso` | escreve | `src/pages/ComunicacaoInternaPage.tsx` |
 | `tipo` | `cancelado` | compara | `src/components/avaliacao/historicoFeedback.ts` |
 | `tipo` | `cancelar` | compara, escreve | `src/pages/AdminAgendamentoExamesPage.tsx` |
+| `tipo` | `certificate` | compara | `src/services/trainingImages/briefing.ts`<br>`supabase/functions/_shared/trainingImages/briefing.ts` |
 | `tipo` | `clima` | escreve | `src/pages/PesquisasClimaPage.tsx` |
 | `tipo` | `cnpj` | compara | `supabase/functions/pix-lote/index.ts` |
 | `tipo` | `colaboradores` | compara | `supabase/functions/relatorio/index.ts` |
@@ -1551,6 +1552,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `comprovante_endereco` | escreve | `src/components/admissoes/DetalhesAdmissaoDialog.tsx` |
 | `tipo` | `contrato_assinado` | escreve | `src/components/admissoes/DetalhesAdmissaoDialog.tsx` |
 | `tipo` | `contrato_vencendo` | compara, escreve, filtra | `src/hooks/useNotificacoes.ts` |
+| `tipo` | `course` | compara | `src/services/trainingImages/briefing.ts`<br>`supabase/functions/_shared/trainingImages/briefing.ts` |
 | `tipo` | `cpf` | compara | `supabase/functions/pix-lote/index.ts` |
 | `tipo` | `credito` | compara, escreve, filtra | `src/pages/BancoHorasPage.tsx`<br>`src/pages/DashboardPage.tsx`<br>`src/pages/PontoPage.tsx`<br>`src/services/bancoHorasService.ts`<br>`supabase/functions/processar-ponto/index.ts` |
 | `tipo` | `ctps` | escreve | `src/components/admissoes/DetalhesAdmissaoDialog.tsx` |
@@ -1602,6 +1604,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `injustificada` | compara, escreve | `src/pages/FaltasPage.tsx` |
 | `tipo` | `justa_causa` | compara, escreve | `src/components/desligamentos/TurnoverChart.tsx`<br>`src/components/medidas-disciplinares/MedidasGravityScale.tsx`<br>`src/pages/CalculadoraRescisaoPage.tsx`<br>`src/pages/MedidasDisciplinaresPage.tsx`<br>`src/utils/rescisaoCalc.ts`<br>… +1 |
 | `tipo` | `justificada` | compara | `src/pages/FaltasPage.tsx` |
+| `tipo` | `learning_path` | compara | `src/services/trainingImages/briefing.ts`<br>`supabase/functions/_shared/trainingImages/briefing.ts` |
 | `tipo` | `liquido_negativo` | escreve | `src/utils/folha/validadorFolha.ts` |
 | `tipo` | `lista_colaboradores` | compara | `supabase/functions/enviar-relatorio/index.ts` |
 | `tipo` | `ltcat` | escreve | `src/components/sst/GerarLtcatOsButton.tsx` |
@@ -1647,6 +1650,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `textarea` | escreve | `src/mocks/colaboradoresMock.ts` |
 | `tipo` | `texto` | escreve | `src/components/settings/CamposCustomizadosTab.tsx` |
 | `tipo` | `todos` | escreve | `src/pages/ObrigacoesFiscaisPage.tsx` |
+| `tipo` | `training_session` | compara | `src/services/trainingImages/briefing.ts`<br>`supabase/functions/_shared/trainingImages/briefing.ts` |
 | `tipo` | `transporte` | compara, escreve | `src/mocks/colaboradoresMock.ts`<br>`src/services/calculoBeneficiosService.ts` |
 | `tipo` | `turnover` | compara, escreve | `supabase/functions/alertas-preditivos/index.ts` |
 | `tipo` | `variacao_salarial` | escreve | `src/utils/folha/validadorFolha.ts` |
@@ -1704,6 +1708,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `descontada` | escreve | `src/pages/FaltasPage.tsx` |
 | `status` | `desligado` | compara, escreve, filtra | `src/components/ferias/FeriasForm.tsx`<br>`src/mocks/colaboradoresMock.ts`<br>`src/services/colaboradorService.ts`<br>`src/services/departamentoService.ts`<br>`supabase/functions/metricas/index.ts` |
 | `status` | `devolvida` | compara | `src/components/avaliacao/feedbackCanonico.ts`<br>`src/pages/AvaliacaoPage.tsx` |
+| `status` | `done` | escreve | `supabase/functions/training-image-dispatch/index.ts` |
 | `status` | `duplicado` | compara | `src/pages/ImportacaoPage.tsx` |
 | `status` | `efetivado` | compara | `src/hooks/useProximosEventos.ts` |
 | `status` | `em_analise` | compara, escreve | `src/components/dashboard/AnalyticsSection.tsx`<br>`src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/pages/SegurosVidaPage.tsx` |
@@ -1722,12 +1727,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `error` | compara, escreve | `src/components/folha/FolhaESocialSync.tsx`<br>`src/pages/ContratacaoPage.tsx`<br>`supabase/functions/external-db-bridge/index.ts` |
 | `status` | `excellent` | escreve | `src/components/dashboard/WorkforceHealthScore.tsx` |
 | `status` | `excluido` | compara, escreve, filtra | `src/pages/PlanosSaudePage.tsx`<br>`src/services/calculoBeneficiosService.ts`<br>`src/services/tabelas/beneficiosService.ts` |
-| `status` | `expirado` | compara | `src/hooks/useAssinaturas.ts` |
-| `status` | `fail` | compara, escreve | `src/pages/AdminDiagnosticoMigracaoPage.tsx` |
-| `status` | `failed` | escreve | `supabase/functions/_shared/idempotency.ts`<br>`supabase/functions/_shared/outboundDelivery.ts`<br>`supabase/functions/webhook/index.ts`<br>`supabase/functions/whatsapp-send/index.ts` |
-| `status` | `falha` | escreve | `supabase/functions/processar-agendamentos/filaNotificacoes.ts` |
-| `status` | `falhou` | compara | `src/components/folha/DistribuirHoleritesButton.tsx` |
-| … +138 linhas — lista completa em `context.json` | | | |
+| … +146 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -1864,6 +1864,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | DespesaTipo | reembolso \| adiantamento \| despesa_viagem \| material \| alimentacao \| transporte \| outro | `src/services/despesaService.ts` |
 | LogLevel | info \| warn \| error \| fatal | `src/services/loggerService.ts` |
 | PiiAcao | select \| export \| print \| download | `src/services/piiAccessLogService.ts` |
+| TRAINING_IMAGES_MIME_TYPES | 'image/webp', 'image/png', 'image/jpeg' | `src/services/trainingImages/config.ts` |
+| TrainingContentType | course \| learning_path \| training_session \| certificate | `src/services/trainingImages/types.ts` |
+| TrainingCoverFormat | quadrada \| faixa \| miniatura | `src/services/trainingImages/types.ts` |
+| TrainingImageStatus | pending \| processing \| succeeded \| failed \| disabled | `src/services/trainingImages/types.ts` |
 | PcsAderencia | abaixo_mercado \| alinhado \| acima_mercado \| sem_referencia | `src/types/pcs.ts` |
 | PcsSituacao | abaixo_faixa \| dentro_faixa \| acima_faixa | `src/types/pcs.ts` |
 | PCS_STATUS | 'rascunho', 'em_avaliacao', 'ativo', 'arquivado' | `src/types/pcs.ts` |
@@ -1873,6 +1877,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | TEMPLATE_SAMPLE_ROW | 'João Silva', '123.456.789-00', 'joao@email.com', '(11)99999-9999', 'Analista', 'TI', '5000', '01/03/2024', '15/06/1990', '123.45678.90-1', '12.345.678-9', | `src/utils/importacao/columnMap.ts` |
 | IdempotencyReason | NEW \| REPLAY \| KEY_INVALID \| KEY_REUSE \| IN_PROGRESS \| INDETERMINATE \| PREVIOUS_FAILURE \| STORE_ERROR | `supabase/functions/_shared/idempotency.ts` |
 | LogLevel | debug \| info \| warn \| error \| fatal | `supabase/functions/_shared/logger.ts` |
+| StatusCapa | pending \| processing \| succeeded \| failed \| disabled | `supabase/functions/_shared/trainingImages/estadoCapa.ts` |
+| MimeImagem | image/webp \| image/png \| image/jpeg | `supabase/functions/_shared/trainingImages/imageValidation.ts` |
+| FalhaSimulada | timeout \| rate_limit \| http_permanente \| imagem_invalida \| sem_imagem | `supabase/functions/_shared/trainingImages/simulatedProvider.ts` |
+| TrainingContentType | course \| learning_path \| training_session \| certificate | `supabase/functions/_shared/trainingImages/types.ts` |
 | AlertEmailDeliveryStatus | accepted \| not_configured \| no_recipients \| rejected \| not_needed | `supabase/functions/alertas-dp/deliveryStatus.ts` |
 | BACKUP_AUDIT_READ_ACTIONS | 'BACKUP_CREATED', 'BACKUP_RUN' | `supabase/functions/backup-automatico/backupAudit.ts` |
 | BackupSnapshotErrorCode | BACKUP_TABLE_QUERY_FAILED \| BACKUP_INCOMPLETE | `supabase/functions/backup-automatico/backupSnapshot.ts` |
@@ -3097,6 +3105,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   const components = [ navigator.userAgent, navigator.language, `${screen.width}x${screen.height}x${screen.colorDepth}`, Intl.DateTimeFormat().resolvedOptions().timeZone, navigator.hardwareConcurrency?.toString() || '', ]; let hash = 0; const str = components.join('|'); for (let i = 0; i < str.length; i++) { hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0; } return hash.toString(36);
   ```
+- **invalidarCapasDeTreinamento(queryClient: QueryClient, empresaId?: string | null)** — `src/hooks/useTrainingImages.ts`
+  ```
+  return queryClient.invalidateQueries({ queryKey: trainingImagesQueryKey(empresaId) });
+  ```
 - **invalidate()** — `src/hooks/ferias/useProgramacaoFerias.ts`
   ```
   qc.invalidateQueries({ queryKey: ['ferias-programacao', empresaId, ano] });
@@ -3565,6 +3577,18 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   const config = etapa.config ?? {}; const slaHoras = config.sla_horas ?? 48; const started = execucao.sla_iniciado_em ?? execucao.updated_at; const deadlineMs = new Date(started).getTime() + slaHoras * 60 * 60 * 1000; const nowMs = Date.now(); const hoursRemaining = (deadlineMs - nowMs) / (60 * 60 * 1000); return { expired: nowMs > deadlineMs, hoursRemaining: Math.round(hoursRemaining * 10) / 10, deadlineUtc: new Date(deadlineMs).toISOString(), };
   ```
+- **validarCaminhoDaEmpresa(caminho: string | null | undefined, empresaId: string | null | undefined)** — `src/services/trainingImages/paths.ts`
+  ```
+  if (!caminho || !empresaId) return false; if (!segmentoSeguro(empresaId)) return false; // Recusa navegação de diretório e segmentos vazios. if (caminho.includes('..') || caminho.includes('//') || caminho.startsWith('/')) return false; return empresaDoCaminho(caminho) === empresaId;
+  ```
+- **generate()** — `src/services/trainingImages/provider.ts`
+  ```
+  throw new TrainingImageIntegrationDisabledError();
+  ```
+- **validarArquivoDeCapa(arquivo: { mimeType?: string | null; tamanho: number })** — `src/services/trainingImages/storage.ts`
+  ```
+  const mime = String(arquivo.mimeType ?? '').toLowerCase(); if (!TRAINING_IMAGES_MIME_TYPES.includes(mime as (typeof TRAINING_IMAGES_MIME_TYPES)[number])) { throw new Error(`Formato de imagem não suportado: use ${TRAINING_IMAGES_MIME_TYPES.join(', ')}.`); } if (!Number.isFinite(arquivo.tamanho) || arquivo.tamanho <= 0) { throw new Error('Arquivo de imagem vazio.'); } if (arquivo.tamanho > TRAINING_IMAGES_LIMITE_BYTES) { throw new Error('Imagem acima do limite de 5 MB.'); }
+  ```
 - **gerarAfastamentosPDF(titulo: string, dados: AfastamentoPDFData[], filtros: { cid?: string; status?: string; tipo?: string } = {})** — `src/utils/afastamentoPDF.ts`
   ```
   try { const { default: jsPDF } = await import('jspdf'); const { default: autoTable } = await import('jspdf-autotable'); const doc = new jsPDF(); const pageWidth = doc.internal.pageSize.getWidth(); // Cabeçalho Profissional doc.setFillColor(240, 240, 240); doc.rect(0, 0, pageWidth, 40, 'F'); doc.setFontSize(22); doc.setTextColor(40, 40, 40); doc.setFont('helvetica', 'bold'); doc.text('ERP DP - Módulo de Afastamentos', 14, 20); doc.setFontSize(14); doc.setTextColor(100, 100, 100); doc.setFont('hel …
@@ -3701,6 +3725,30 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   return LEVEL_RANK[level] >= LEVEL_RANK[MIN_LEVEL];
   ```
+- **validarAllowlist(entrada: EntradaAllowlist, config: ConfigAllowlist)** — `supabase/functions/_shared/trainingImages/allowlist.ts`
+  ```
+  const empresaPermitida = normalizar(config.empresaId); const conteudoPermitido = normalizar(config.contentId); if (!isUuid(empresaPermitida) || !isUuid(conteudoPermitido)) { return { ok: false, status: 503, motivo: 'allowlist_nao_configurada', detalhe: `${ALLOWLIST_EMPRESA_ENV} e ${ALLOWLIST_CONTENT_ENV} são obrigatórios e devem ser UUIDs válidos quando a geração está habilitada.`, }; } const empresaSolicitada = normalizar(entrada.empresaId); const conteudoSolicitado = normalizar(entrada.content …
+  ```
+- **validarImagemGerada(bytes: Uint8Array)** — `supabase/functions/_shared/trainingImages/imageValidation.ts`
+  ```
+  if (bytes.length < MINIMO_BYTES_IMAGEM) { throw new TrainingImageProviderError('imagem menor que o mínimo aceitável', { code: 'imagem_muito_pequena', retryable: false, }); } if (bytes.length > LIMITE_BYTES_IMAGEM) { throw new TrainingImageProviderError('imagem acima do limite de 5 MB', { code: 'imagem_muito_grande', retryable: false, }); } const mimeType = detectarMimeImagem(bytes); if (!mimeType) { throw new TrainingImageProviderError('formato de imagem não suportado', { code: 'formato_invalido …
+  ```
+- **generate(request: TrainingImageRequest)** — `supabase/functions/_shared/trainingImages/openaiProvider.ts`
+  ```
+  if (!apiKey) { throw new TrainingImageProviderError('OPENAI_API_KEY ausente no ambiente da função', { code: 'sem_chave', retryable: false, }); } const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), timeoutMs); let resposta: Response; try { resposta = await fetchImpl(endpoint, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json', 'X-Client-Request-Id': request.operationId, }, body: JSON.stringify({ model, prompt …
+  ```
+- **gerarCapaDeTreinamento(entrada: EntradaGeracaoCapa, deps: DepsPipelineCapa)** — `supabase/functions/_shared/trainingImages/pipeline.ts`
+  ```
+  if (!entrada.empresaId || !entrada.contentId || !TRAINING_CONTENT_TYPES.includes(entrada.contentType)) { return { gerado: false, motivo: 'conteudo_inexistente' }; } const conteudo = await deps.carregarConteudo(entrada); if (!conteudo) return { gerado: false, motivo: 'conteudo_inexistente' }; // Defesa extra: o registro carregado tem de ser da empresa pedida. if (conteudo.empresaId !== entrada.empresaId) return { gerado: false, motivo: 'conteudo_inexistente' }; const briefing = montarBriefingVisu …
+  ```
+- **generate(request: TrainingImageRequest)** — `supabase/functions/_shared/trainingImages/simulatedProvider.ts`
+  ```
+  chamadas += 1; ultimoPedido = request; if (options.atrasoMs) { await new Promise((resolve) => setTimeout(resolve, options.atrasoMs)); } if (options.falha === 'timeout') { throw new TrainingImageProviderError('tempo limite na geração da imagem', { code: 'timeout', retryable: true, }); } if (options.falha === 'rate_limit') { throw new TrainingImageProviderError('limite de uso da API atingido', { code: 'rate_limit', retryable: true, status: 429, }); } if (options.falha === 'http_permanente') { thro …
+  ```
+- **validarCaminhoDaEmpresa(caminho: unknown, empresaId: unknown)** — `supabase/functions/_shared/trainingImages/storagePath.ts`
+  ```
+  if (typeof caminho !== 'string' || typeof empresaId !== 'string') return false; if (!segmentoSeguro(empresaId)) return false; if (caminho.includes('..') || caminho.includes('//') || caminho.startsWith('/')) return false; return caminho.split('/')[0] === empresaId;
+  ```
 - **validarVinculo(userId: string, sub: string, cpf: string, db: GovbrLookups,)** — `supabase/functions/auth-gov-br/govbrIdentity.ts`
   ```
   const outros = unicos(await db.profilesPorGovbrUid(sub)).filter((id) => id !== userId); if (outros.length > 0) { return { ok: false, status: 409, erro: 'Esta conta gov.br já está vinculada a outro usuário.' }; } const hashes = unicos(await db.cpfHashesDoUsuario(userId)); if (hashes.length > 0 && !hashes.includes(await sha256Hex(cpf))) { return { ok: false, status: 403, erro: 'O CPF do gov.br não confere com o CPF do seu cadastro.' }; } return { ok: true, userId };
@@ -3816,6 +3864,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 - **validateWindow(dataInicio: string, dataFim: string)** — `supabase/functions/relatorio/index.ts`
   ```
   const ini = new Date(dataInicio + 'T00:00:00Z').getTime(); const fim = new Date(dataFim + 'T00:00:00Z').getTime(); if (!Number.isFinite(ini) || !Number.isFinite(fim)) { return createErrorResponse('Datas inválidas', 422, 'INVALID_DATES'); } if (fim < ini) { return createErrorResponse('dataFim < dataInicio', 422, 'INVALID_WINDOW'); } const days = (fim - ini) / 86_400_000; if (days > MAX_WINDOW_DAYS) { return createErrorResponse( `Janela máxima ${MAX_WINDOW_DAYS} dias`, 422, 'WINDOW_TOO_LARGE', ); …
+  ```
+- **iguaisEmTempoConstante(a: string, b: string)** — `supabase/functions/training-image-dispatch/index.ts`
+  ```
+  const enc = new TextEncoder(); const chave = await crypto.subtle.importKey( 'raw', enc.encode('dp-training-image-dispatch-comparison'), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'] ); const assinaturaA = new Uint8Array(await crypto.subtle.sign('HMAC', chave, enc.encode(a))); const assinaturaB = new Uint8Array(await crypto.subtle.sign('HMAC', chave, enc.encode(b))); let diff = 0; for (let i = 0; i < assinaturaA.length; i += 1) diff |= assinaturaA[i] ^ assinaturaB[i]; return diff === 0;
   ```
 - **generateSignature(payload: string, secret: string)** — `supabase/functions/webhook/webhook_test.ts`
   ```
@@ -4265,6 +4317,16 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `MAX_ROWS` | `500` | `src/services/pcsService.ts` |
 | `PERIODO_SEM_DATA` | `'sem-data'` | `src/services/premiacoesService.ts` |
 | `PAGE` | `1000` | `src/services/premiacoesService.ts` |
+| `PROMPT_VERSION` | `'v2'` | `src/services/trainingImages/briefing.ts` |
+| `DESCRICAO_MAX` | `400` | `src/services/trainingImages/briefing.ts` |
+| `NOME_MAX` | `120` | `src/services/trainingImages/briefing.ts` |
+| `TRAINING_IMAGES_LIMITE_BYTES` | `5` | `src/services/trainingImages/config.ts` |
+| `TRAINING_IMAGES_STALE_MS` | `15` | `src/services/trainingImages/config.ts` |
+| `TRAINING_IMAGES_GC_MS` | `30` | `src/services/trainingImages/config.ts` |
+| `TRAINING_IMAGES_BUCKET` | `'training-images'` | `src/services/trainingImages/paths.ts` |
+| `EXTENSAO_PADRAO` | `'webp'` | `src/services/trainingImages/paths.ts` |
+| `TENTATIVAS_MAX` | `3` | `src/services/trainingImages/service.ts` |
+| `CONTROLE_MAX` | `500` | `src/services/trainingImages/service.ts` |
 | `LOCALE_BR` | `'pt-BR'` | `src/utils/format.ts` |
 | `TZ_BR` | `'America/Sao_Paulo'` | `src/utils/format.ts` |
 | `DEFAULT_FALLBACK` | `'—'` | `src/utils/format.ts` |
@@ -4288,6 +4350,24 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `DEDUCAO_DEPENDENTE_IRRF` | `189.59` | `supabase/functions/_shared/irrf.ts` |
 | `MEM_LIMIT_FRACTION` | `0.5` | `supabase/functions/_shared/rateLimit.ts` |
 | `MAX_REDIRECTS` | `5` | `supabase/functions/_shared/safe-fetch.ts` |
+| `ALLOWLIST_EMPRESA_ENV` | `'TRAINING_IMAGE_ALLOWED_EMPRESA_ID'` | `supabase/functions/_shared/trainingImages/allowlist.ts` |
+| `ALLOWLIST_CONTENT_ENV` | `'TRAINING_IMAGE_ALLOWED_CONTENT_ID'` | `supabase/functions/_shared/trainingImages/allowlist.ts` |
+| `PROMPT_VERSION` | `'v2'` | `supabase/functions/_shared/trainingImages/briefing.ts` |
+| `DESCRICAO_MAX` | `400` | `supabase/functions/_shared/trainingImages/briefing.ts` |
+| `NOME_MAX` | `120` | `supabase/functions/_shared/trainingImages/briefing.ts` |
+| `LIMITE_BYTES_IMAGEM` | `5` | `supabase/functions/_shared/trainingImages/imageValidation.ts` |
+| `MINIMO_BYTES_IMAGEM` | `64` | `supabase/functions/_shared/trainingImages/imageValidation.ts` |
+| `OPENAI_MODELO_PADRAO` | `'gpt-image-2.5-flare'` | `supabase/functions/_shared/trainingImages/openaiProvider.ts` |
+| `OPENAI_TAMANHO_PADRAO` | `'1536x864'` | `supabase/functions/_shared/trainingImages/openaiProvider.ts` |
+| `OPENAI_QUALIDADE_PADRAO` | `'medium'` | `supabase/functions/_shared/trainingImages/openaiProvider.ts` |
+| `OPENAI_TIMEOUT_PADRAO_MS` | `90` | `supabase/functions/_shared/trainingImages/openaiProvider.ts` |
+| `TENTATIVAS_MAX_PIPELINE` | `3` | `supabase/functions/_shared/trainingImages/pipeline.ts` |
+| `JANELA_QUOTA_SEG` | `60` | `supabase/functions/_shared/trainingImages/quotas.ts` |
+| `LIMITE_EMPRESA_PADRAO` | `20` | `supabase/functions/_shared/trainingImages/quotas.ts` |
+| `LIMITE_USUARIO_PADRAO` | `5` | `supabase/functions/_shared/trainingImages/quotas.ts` |
+| `STALE_AFTER_MS` | `10` | `supabase/functions/_shared/trainingImages/quotas.ts` |
+| `STALE_FILA_MINUTOS` | `30` | `supabase/functions/_shared/trainingImages/quotas.ts` |
+| `TRAINING_IMAGES_BUCKET` | `'training-images'` | `supabase/functions/_shared/trainingImages/storagePath.ts` |
 | `BUCKET` | `'documentos'` | `supabase/functions/admissao-publica/index.ts` |
 | `MAX_FILE_BYTES` | `10` | `supabase/functions/admissao-publica/index.ts` |
 | `ALERT_EMAIL_UNAVAILABLE_MESSAGE` | `"O provedor de e-mail não está disponível para os alertas."` | `supabase/functions/alertas-dp/deliveryStatus.ts` |
@@ -4362,6 +4442,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `MAX_ROWS` | `10` | `supabase/functions/relatorio/index.ts` |
 | `MAX_WINDOW_DAYS` | `366` | `supabase/functions/relatorio/index.ts` |
 | `CACHE_TTL_MS` | `5` | `supabase/functions/tabelas-dominio/index.ts` |
+| `BATCH_PADRAO` | `2` | `supabase/functions/training-image-dispatch/index.ts` |
+| `RETRY_QUOTA_SEG` | `300` | `supabase/functions/training-image-dispatch/index.ts` |
 | `MAX_PAYLOAD_BYTES` | `1` | `supabase/functions/webhook/index.ts` |
 | `REPLAY_TTL_SECONDS` | `300` | `supabase/functions/webhook/index.ts` |
 | `IP_RATE_LIMIT` | `60` | `supabase/functions/webhook/index.ts` |
@@ -4445,6 +4527,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `async signedUrlAnexoContestacao(path: string, expiresIn = 3600): Promise<string> {` | `src/services/medidasDisciplinaresService.ts` |
 | `const deadlineMs = new Date(started).getTime() + slaHoras * 60 * 60 * 1000;` | `src/services/workflowService.ts` |
 | `const hoursRemaining = (deadlineMs - nowMs) / (60 * 60 * 1000);` | `src/services/workflowService.ts` |
+| `export const TRAINING_IMAGES_GC_MS = 30 * 60 * 1000;` | `src/services/trainingImages/config.ts` |
+| `export const TRAINING_IMAGES_STALE_MS = 15 * 60 * 1000;` | `src/services/trainingImages/config.ts` |
 | `const dataLimite = subDays(new Date(coletiva.data_inicio), 15);` | `src/utils/comunicadoFeriasColetivasPDF.ts` |
 | `const DIA_MS = 1000 * 60 * 60 * 24;` | `src/utils/rescisaoCalc.ts` |
 | `SET idle_in_transaction_session_timeout = 0;` | `supabase/baseline/20260831_canonical/canonical_auth_schema.sql` |
@@ -4462,6 +4546,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `SET statement_timeout = 0;` | `supabase/baseline/20260831_canonical/canonical_storage_schema.sql` |
 | `const DEFAULT_TTL_MS = 5 * 60 * 1000; // 5 min` | `supabase/functions/_shared/cache.ts` |
 | `const IN_PROGRESS_TTL_MS = 5 * 60 * 1000;` | `supabase/functions/_shared/idempotency.ts` |
+| `export const STALE_AFTER_MS = 10 * 60 * 1000;` | `supabase/functions/_shared/trainingImages/quotas.ts` |
 | `const MES_MS = 1000 * 60 * 60 * 24 * 30;` | `supabase/functions/alertas-dp/index.ts` |
 | `const em7dias = new Date(hoje.getTime() + 7 * 24 * 60 * 60 * 1000)` | `supabase/functions/alertas-dp/index.ts` |
 | `const em83dias = new Date(hoje.getTime() - 83 * 24 * 60 * 60 * 1000)` | `supabase/functions/alertas-dp/index.ts` |
@@ -4769,6 +4854,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | statement timeout simulado | `scripts/supabase_snapshot/test_snapshot.py` |
 | view removida depois da consulta ao catálogo | `scripts/supabase_snapshot/test_snapshot.py` |
 | view sem permissão na fixture | `scripts/supabase_snapshot/test_snapshot.py` |
+| No Windows, defina DENO_BIN com o caminho do executável do deno — o fallback por npx não roda sem shell. | `scripts/training-images-local/edge-http-test.mjs` |
+| storage local indisponível | `scripts/training-images-local/pipeline-e2e.ts` |
 | );   banner.style.cssText =      | `src/main.tsx` |
 | [BOOT] Variáveis Supabase ausentes — inicialização abortada. | `src/main.tsx` |
 | Bridge instável | `src/components/admin/HealthTrendCard.tsx` |
@@ -4978,9 +5065,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Selecione uma empresa | `src/hooks/usePcs.ts` |
 | Selecione uma empresa antes de criar o plano | `src/hooks/usePcs.ts` |
 | Não foi possível atualizar a pendência. | `src/hooks/usePendencias.ts` |
-| Atenção: Falha na validação biométrica! | `src/hooks/usePonto.ts` |
-| Falha na validação biométrica. O registro de ponto não será validado. | `src/hooks/usePonto.ts` |
-| … +582 linhas — lista completa em `context.json` | |
+| … +612 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5051,7 +5136,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (7793 testes em 611 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (7975 testes em 621 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5085,6 +5170,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/calculators/__tests__/calculatorExtra.test.ts` | 39 | calcularAvisoPrevioIndenizado · 30 dias para menos de 1 ano de serviço · incrementa 3 dias por ano de serviço (1 ano → 33 dias) · incrementa 3 dias por ano de serviço (5 anos → 45 dias) … |
 | `src/schemas/esocial/__tests__/helpers.test.ts` | 39 | required · adds no error for a non-empty string · adds error for empty string · adds error for null … |
 | `src/schemas/esocial/__tests__/naoPeriodicosValidators.test.ts` | 39 | validarS2190 · returns valid for complete data · errors when cpfTrab is missing · errors when dtAdm is missing … |
+| `src/services/trainingImages/__tests__/trainingImages.test.ts` | 39 | caminhos do bucket training-images · monta o caminho canônico por tipos de conteúdo · recusa identificadores que quebrariam o escopo do tenant · valida o caminho contra a empresa (isolamento multiempresa) … |
 | `src/components/__tests__/PdiDerivacoes.test.tsx` | 37 | pdiComum — categoria de status · mapeia os status reais do banco · trata o status como texto livre (caixa/espaços/acento) · status vazio conta como pendente e desconhecido cai em andamento … |
 | `src/components/__tests__/AprovacaoLocal.test.ts` | 35 | chaveLocal / estado vazio · normaliza ids nulos e monta a chave colaborador x ciclo · estadoLocalVazio nao traz decisao nem historico · ler/gravar/limpar … |
 | `src/components/__tests__/Motor360.test.tsx` | 35 | 360 · pesos aprovados · são exatamente Gestor 60 · Pares 25 · Auto 10 · Subordinados 5 · somam 100% e estão centralizados (nenhum número solto no motor) · 360 · cálculo ponderado … |
@@ -5092,6 +5178,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/beneficioService.test.ts` | 34 | beneficioService.listar · returns data and total without filters · returns empty data when null · applies empresa_id filter when provided in filters … |
 | `src/components/__tests__/StatusFeedback.test.tsx` | 33 | status — estados e leitura · reconhece os três estados e isola qualquer outro valor · a coluna é texto livre: o código não assume o valor do banco · status — transições permitidas e proibidas … |
 | `src/services/__tests__/integracaoService.test.ts` | 33 | cnabService.getConfig · returns config when found · returns null when no config exists · queries cnab_configuracoes with limit 1 … |
+| `src/services/trainingImages/__tests__/migration.test.ts` | 33 | migration — bucket e Storage · cria o bucket privado com limite e MIME allowlist · leitura de objeto exige vínculo com a empresa do caminho · escrita de objeto exige admin E vínculo com a empresa … |
 | `src/utils/importacao/__tests__/validators.test.ts` | 33 | validarCPF · returns true for valid CPF · returns false for CPFs with all same digits · returns false for CPF with wrong check digits … |
 | `src/components/__tests__/AcoesFeedback.test.ts` | 32 | perfilOperador (app_role real: admin\|gestor\|rh\|user) · mapeia os papéis administrativos e operacionais · papel ausente/desconhecido não vira permissão · podeValidarPotencial — exclusivo do RH … |
 | `src/components/__tests__/FeedbacksDerivacoes.test.tsx` | 31 | feedbacksComum — tipo do feedback (texto livre) · normaliza os quatro tipos reais, aceitando caixa e rótulo por extenso · cai em gestor sem valor utilizável (nunca inventa categoria) · agrupa subordinado no chip de Gestor … |
@@ -5135,6 +5222,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/schemas/__tests__/validate.test.ts` | 22 | validateInput · rejeita payload vazio · aceita payload parcial válido (update) · rejeita valor fora de domínio mesmo em payload parcial … |
 | `src/services/__tests__/faltasService.test.ts` | 22 | faltasService.listar · returns all faltas without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/rescisaoService.test.ts` | 22 | rescisaoService · validarTransicao · should block jumping more than one stage · should block homologation if status is not calculado … |
+| `src/services/trainingImages/__tests__/pipeline.test.ts` | 22 | fluxo completo (provedor simulado) · gera, valida, sobe e marca succeeded · envia ao provedor o briefing reconstruído no servidor e os identificadores · concorrência e idempotência … |
 | `src/utils/__tests__/safeUrl.test.ts` | 22 | isAllowedUrl · allows known supabase host · blocks non-canonical Supabase hosts · allows lovable.app subdomain … |
 | `scripts/autofix/regras/dados.test.mjs` | 21 | tokenizador: comentário de bloco aninhado e dollar-quote aninhado · tokenizador: em E · CREATE POLICY  · DO que só VERIFICA (cita pg_class e  … |
 | `src/components/__tests__/PortalDocumentosTab.test.tsx` | 21 | PortalDocumentosTab · renders Gestão de Documentos title · renders Enviar Novo button · shows loading spinner when loading … |
@@ -5147,6 +5235,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/contratacaoService.test.ts` | 20 | contratacaoService.validarDocumento · updates admissao document status and logs audit · sets document flag false when status is rejeitado · throws for a document type the admission checklist does not send … |
 | `src/services/__tests__/desligamentoService.test.ts` | 20 | desligamentoService · listar · should call select with colaborador join · should apply limit of 500 … |
 | `src/services/__tests__/jornadaHorariosService.test.ts` | 20 | jornadaHorariosService.listar · returns horarios for jornada · returns empty array when data is null · filters by jornada_id … |
+| `src/services/trainingImages/__tests__/guardrails.test.ts` | 20 | nenhuma conexão com a OpenAI nesta fase · não há endpoint, SDK ou chave da OpenAI no código do frontend · não há chamada de rede no módulo de provedor nem no serviço de solicitação · .env.example expõe apenas a flag de LEITURA, nunca uma chave de cliente … |
+| `src/services/trainingImages/__tests__/openaiProvider.test.ts` | 20 | configuração e chave · sem chave não se declara configurado e não chama fetch · recusa parâmetros fora do contrato antes de qualquer chamada · requisição e resposta … |
 | `src/components/__tests__/FeriasForm.test.tsx` | 19 | FeriasForm · não renderiza quando fechado · lista só colaboradores não desligados · envia a solicitação com datas e valores calculados e fecha o diálogo … |
 | `src/components/__tests__/LayoutPrimitives.test.tsx` | 19 | PageContainer · renders children · renders title when provided · renders description when provided … |
 | `src/components/__tests__/PendenciasAprovacao.test.tsx` | 19 | fila de aprovação — controles padronizados por vínculo · registro REAL com vínculo provado: Ver, Devolver e Aprovar habilitados (nesta ordem) · registro REAL SEM o vínculo: os controles continuam VISÍVEIS, porém desabilitados · registro REAL com vínculo não avaliável ( … |
@@ -5160,6 +5250,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/constants/__tests__/regimes.test.ts` | 18 | REGIMES_TRIBUTARIOS · defines all 4 regime types · each regime has required fields · simples_nacional does NOT collect INSS patronal … |
 | `src/hooks/ferias/__tests__/useProgramacaoFerias.test.ts` | 18 | useProgramacaoFerias · uses ferias-programacao queryKey with ano and filters · is enabled when empresaId is present · returns data from query … |
 | `src/services/__tests__/baseService.test.ts` | 18 | BaseService.listar · returns data and total from supabase · returns empty data with total 0 when supabase returns null · queries page 2 with correct range offset … |
+| `src/services/trainingImages/__tests__/briefing.test.ts` | 18 | briefing por assunto · panificação → padaria, fermentação e pães · segurança do trabalho → proteção e ambiente sinalizado · programação/tecnologia → software e ambiente técnico … |
 | `src/utils/__tests__/uploadValidation.test.ts` | 18 | validateUploadFile · accepts a valid PDF file · accepts a valid JPEG image · throws when file exceeds size limit … |
 | `scripts/tests/inventario-banco.test.mjs` | 17 | banco.sql tem as secoes esperadas e cada uma devolve a coluna j · banco.sql so le: nenhum comando de escrita e nada do command do cron · banco.sql: nome de tabela entra escapado na regex de citada_no_banco · banco.sql: count(*) exato so sem RLS no caminho (tabela sem RLS ou papel que ignora RLS) … |
 | `src/components/__tests__/ESocialAlteracaoComponents.test.tsx` | 17 | S2205AlteracaoCadastral · renders trabalhador name · renders CPF · renders data de alteração … |
@@ -5207,6 +5298,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/lib/__tests__/circuitBreaker.test.ts` | 14 | CircuitBreaker · starts in CLOSED state · executes fn and returns its result when CLOSED · propagates errors thrown by fn when CLOSED … |
 | `src/lib/__tests__/retry.test.ts` | 14 | retryWithIdempotency · retorna na primeira tentativa sem retry · repassa idempotencyKey no resultado · faz retry em erro 5xx e devolve o sucesso seguinte … |
 | `src/services/__tests__/documentoService.test.ts` | 14 | documentoService.listarDocumentos · returns documents without filters · returns empty array when data is null · filters by empresa_id when provided … |
+| `src/services/trainingImages/__tests__/allowlist.test.ts` | 14 | allowlist temporária de geração de imagem · aceita empresa e curso exatamente autorizados · aceita o UUID de seed do curso (sem bits de variante RFC) · normaliza espaços e caixa … |
 | `src/utils/__tests__/comunicadoFeriasColetivasPDF.test.ts` | 14 | gerarComunicadoMTE · returns a Blob · returns Uint8Array bytes · returns a hash string … |
 | `src/utils/folha/__tests__/pontoIntegracaoUtils.test.ts` | 14 | pontoIntegracaoUtils.intervalToDecimal · returns 0 for null · returns 0 for undefined · returns 0 for empty string … |
 | `src/components/__tests__/AuditoriaFeedback.test.tsx` | 13 | auditoria — diff de campos · detecta somente os campos que mudaram · ignora campos de ruído (updated_at) e ordena o resultado · campo criado do zero também aparece … |
@@ -5348,14 +5440,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/FolhaValidationAlerts.test.tsx` | 9 | FolhaValidationAlerts · renders Audit Smart Validation title · renders score badge · does not claim eSocial S-1010 sync it never checked … |
 | `src/components/__tests__/GerarAEJDialog.test.tsx` | 9 | GerarAEJDialog · renders Gerar AEJ trigger button · renders dialog title · renders dialog description … |
 | `src/components/__tests__/GuidedTour.test.tsx` | 9 | GuidedTour · renders nothing before 2s when localStorage empty · renders tour card after 2s on first visit · shows first step title Sidebar de Navegação … |
-| `src/components/__tests__/HealthTrendCard.test.tsx` | 9 | HealthTrendCard · renders Saúde da bridge title · renders Status stat label · renders Latência stat label … |
-| `src/components/__tests__/HistoricoContratosTab.test.tsx` | 9 | HistoricoContratosTab · shows loading state · renders Histórico de Contratos title · renders Nova Alteração button … |
-| `src/components/__tests__/HistoricoSalarialTab.test.tsx` | 9 | HistoricoSalarialTab · shows spinner when loading · renders Histórico Salarial title · renders Nova Alteração button … |
-| `src/components/__tests__/ImportarAFDTDialog.test.tsx` | 9 | ImportarAFDTDialog · renders Importar AFDT/ACJEF trigger button · renders dialog title · renders dialog description with Portaria MTP 671 … |
-| `src/components/__tests__/LoginForm.test.tsx` | 9 | LoginForm · renders email and password fields · renders submit button · does not render forgot password button when handler not provided … |
-| `src/components/__tests__/LogsIntegracoesTab.test.tsx` | 9 | LogsIntegracoesTab · shows spinner when loading · renders Logs de Integrações title · renders subtitle with record count … |
-| `src/components/__tests__/MedidaWorkflowTimeline.test.tsx` | 9 | MedidaWorkflowTimeline · shows loading state when isLoading is true · shows empty state when no log entries · renders log entries when data is available … |
-| … +311 linhas — lista completa em `context.json` | | |
+| … +321 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -5723,4 +5808,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | • `concluido` — plano encerrado com sucesso (o prazo não importa mais); | `src/components/avaliacao/pdiComum.ts` |
 | • `vencido`   — prazo passado e plano não concluído (regra de `estaAtrasado`); | `src/components/avaliacao/pdiComum.ts` |
 | • `em_dia`    — prazo futuro (ou ausente) e plano em aberto. | `src/components/avaliacao/pdiComum.ts` |
-| … +557 linhas — lista completa em `context.json` | |
+| … +615 linhas — lista completa em `context.json` | |

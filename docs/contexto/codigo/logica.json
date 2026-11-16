@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 163,
+ "total": 173,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
@@ -9,7 +9,7 @@
   "providers": 1,
   "python": 3,
   "schemas": 25,
-  "services": 83,
+  "services": 93,
   "utils": 34
  },
  "arquivos": [
@@ -350,7 +350,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 238,
+   "usado_por": 240,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -386,10 +386,11 @@
     "services",
     "services/folha",
     "services/tabelas",
+    "services/trainingImages",
     "utils",
     "utils/folha"
    ],
-   "coberto_por_testes": 22,
+   "coberto_por_testes": 23,
    "orfao": false
   },
   {
@@ -4245,6 +4246,337 @@
    "usado_por": 1,
    "usado_por_modulos": [
     "hooks"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/trainingImages/briefing.ts",
+   "camada": "services",
+   "exports": [
+    "BriefingVisual",
+    "DESCRICAO_MAX",
+    "EntradaBriefing",
+    "NOME_MAX",
+    "PROMPT_VERSION",
+    "montarBriefingVisual",
+    "paletaPorCategoria",
+    "sanearTexto"
+   ],
+   "export_default": null,
+   "linhas": 240,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "services/trainingImages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/trainingImages/config.ts",
+   "camada": "services",
+   "exports": [
+    "TRAINING_IMAGES_GC_MS",
+    "TRAINING_IMAGES_LIMITE_BYTES",
+    "TRAINING_IMAGES_MIME_TYPES",
+    "TRAINING_IMAGES_STALE_MS",
+    "TRAINING_IMAGES_URL_EXPIRA_SEGUNDOS",
+    "imagensDeTreinamentoHabilitadas"
+   ],
+   "export_default": null,
+   "linhas": 46,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "VITE_TRAINING_IMAGES"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "services/trainingImages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/trainingImages/hash.ts",
+   "camada": "services",
+   "exports": [
+    "sha256Hex"
+   ],
+   "export_default": null,
+   "linhas": 111,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "services/trainingImages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/trainingImages/index.ts",
+   "camada": "services",
+   "exports": [
+    "DESCRICAO_MAX",
+    "EXTENSAO_PADRAO",
+    "MAPA_IMAGENS_VAZIO",
+    "NOME_MAX",
+    "PASTA_POR_TIPO",
+    "PROMPT_VERSION",
+    "TENTATIVAS_MAX",
+    "TRAINING_CONTENT_TYPES",
+    "TRAINING_IMAGES_BUCKET",
+    "TRAINING_IMAGES_GC_MS",
+    "TRAINING_IMAGES_LIMITE_BYTES",
+    "TRAINING_IMAGES_MIME_TYPES",
+    "TRAINING_IMAGES_STALE_MS",
+    "TRAINING_IMAGES_URL_EXPIRA_SEGUNDOS",
+    "TrainingImageIntegrationDisabledError",
+    "TrainingImageProviderError",
+    "assinarCaminhosDaEmpresa",
+    "carregarImagensDaEmpresa",
+    "chaveConteudo",
+    "definirTrainingImageProvider",
+    "empresaDoCaminho",
+    "enviarImagemGerada",
+    "hashConteudo",
+    "imagensDeTreinamentoHabilitadas",
+    "integracaoDeImagensAtiva",
+    "limparControleDeGeracao",
+    "mensagemSeguraDoErro",
+    "montarBriefingVisual",
+    "montarCaminhoImagem",
+    "montarOperationId",
+    "montarSolicitacaoImagem",
+    "obterTrainingImageProvider",
+    "paletaPorCategoria",
+    "resolverImagemDoMapa",
+    "sanearTexto",
+    "segmentoSeguro",
+    "sha256Hex",
+    "solicitarGeracaoImagem",
+    "trainingImageProviderDesativado",
+    "urlAssinadaDoCaminho",
+    "validarArquivoDeCapa",
+    "validarCaminhoDaEmpresa"
+   ],
+   "export_default": null,
+   "linhas": 87,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "hooks"
+   ],
+   "coberto_por_testes": 4,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/trainingImages/paths.ts",
+   "camada": "services",
+   "exports": [
+    "CaminhoImagemInput",
+    "EXTENSAO_PADRAO",
+    "PASTA_POR_TIPO",
+    "TRAINING_IMAGES_BUCKET",
+    "chaveConteudo",
+    "empresaDoCaminho",
+    "montarCaminhoImagem",
+    "segmentoSeguro",
+    "validarCaminhoDaEmpresa"
+   ],
+   "export_default": null,
+   "linhas": 97,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "services/trainingImages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/trainingImages/provider.ts",
+   "camada": "services",
+   "exports": [
+    "TrainingImageIntegrationDisabledError",
+    "TrainingImageProviderError",
+    "definirTrainingImageProvider",
+    "integracaoDeImagensAtiva",
+    "obterTrainingImageProvider",
+    "trainingImageProviderDesativado"
+   ],
+   "export_default": null,
+   "linhas": 83,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "services/trainingImages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/trainingImages/request.ts",
+   "camada": "services",
+   "exports": [
+    "DESCRICAO_MAX",
+    "EntradaSolicitacaoImagem",
+    "NOME_MAX",
+    "PROMPT_VERSION",
+    "hashConteudo",
+    "montarBriefingVisual",
+    "montarOperationId",
+    "montarSolicitacaoImagem",
+    "paletaPorCategoria",
+    "sanearTexto"
+   ],
+   "export_default": null,
+   "linhas": 117,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "services/trainingImages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/trainingImages/service.ts",
+   "camada": "services",
+   "exports": [
+    "MAPA_IMAGENS_VAZIO",
+    "TENTATIVAS_MAX",
+    "carregarImagensDaEmpresa",
+    "limparControleDeGeracao",
+    "mensagemSeguraDoErro",
+    "resolverImagemDoMapa",
+    "solicitarGeracaoImagem"
+   ],
+   "export_default": null,
+   "linhas": 223,
+   "tabelas": [
+    "training_images"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@supabase/supabase-js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services/trainingImages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/trainingImages/storage.ts",
+   "camada": "services",
+   "exports": [
+    "UploadImagemTreinamento",
+    "assinarCaminhosDaEmpresa",
+    "enviarImagemGerada",
+    "urlAssinadaDoCaminho",
+    "validarArquivoDeCapa"
+   ],
+   "export_default": null,
+   "linhas": 117,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "services/trainingImages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/trainingImages/types.ts",
+   "camada": "services",
+   "exports": [
+    "GeneratedTrainingImage",
+    "TRAINING_CONTENT_TYPES",
+    "TrainingContentType",
+    "TrainingCoverFormat",
+    "TrainingImageArtDirection",
+    "TrainingImageMap",
+    "TrainingImageProvider",
+    "TrainingImageRecord",
+    "TrainingImageRequest",
+    "TrainingImageRequestResult",
+    "TrainingImageStatus"
+   ],
+   "export_default": null,
+   "linhas": 158,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 7,
+   "usado_por_modulos": [
+    "services/trainingImages"
    ],
    "coberto_por_testes": 0,
    "orfao": false

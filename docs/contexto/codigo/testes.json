@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 653,
+ "total": 663,
  "por_tipo": {
   "contrato": 4,
-  "e2e": 30,
+  "e2e": 31,
   "pytest": 2,
-  "unit": 615
+  "unit": 624
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 531
+   "arquivos": 540
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -23,7 +23,7 @@
   },
   {
    "padrao": "e2e/",
-   "arquivos": 27
+   "arquivos": 28
   },
   {
    "padrao": "outro",
@@ -154,6 +154,13 @@
    "arquivo": "e2e/authenticated/session-expiration.spec.ts",
    "tipo": "e2e",
    "linhas": 50,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "e2e/authenticated/training-images-homolog.spec.ts",
+   "tipo": "e2e",
+   "linhas": 47,
    "testa": [],
    "casos": 2
   },
@@ -5214,6 +5221,93 @@
    "casos": 18
   },
   {
+   "arquivo": "src/services/trainingImages/__tests__/allowlist.test.ts",
+   "tipo": "unit",
+   "linhas": 110,
+   "testa": [
+    "supabase/functions/_shared/trainingImages/allowlist.ts",
+    "supabase/functions/_shared/trainingImages/uuid.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/services/trainingImages/__tests__/briefing.test.ts",
+   "tipo": "unit",
+   "linhas": 146,
+   "testa": [
+    "src/services/trainingImages/index.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/services/trainingImages/__tests__/guardrails.test.ts",
+   "tipo": "unit",
+   "linhas": 201,
+   "testa": [],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/services/trainingImages/__tests__/hash.test.ts",
+   "tipo": "unit",
+   "linhas": 58,
+   "testa": [
+    "src/services/trainingImages/index.ts",
+    "supabase/functions/_shared/trainingImages/hash.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/services/trainingImages/__tests__/migration.test.ts",
+   "tipo": "unit",
+   "linhas": 293,
+   "testa": [],
+   "casos": 27
+  },
+  {
+   "arquivo": "src/services/trainingImages/__tests__/openaiProvider.test.ts",
+   "tipo": "unit",
+   "linhas": 240,
+   "testa": [
+    "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+    "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
+    "supabase/functions/_shared/trainingImages/types.ts"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/services/trainingImages/__tests__/parity.test.ts",
+   "tipo": "unit",
+   "linhas": 177,
+   "testa": [
+    "src/services/trainingImages/index.ts",
+    "supabase/functions/_shared/trainingImages/briefing.ts",
+    "supabase/functions/_shared/trainingImages/pipeline.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/services/trainingImages/__tests__/pipeline.test.ts",
+   "tipo": "unit",
+   "linhas": 397,
+   "testa": [
+    "supabase/functions/_shared/trainingImages/pipeline.ts",
+    "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
+    "supabase/functions/_shared/trainingImages/types.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/services/trainingImages/__tests__/trainingImages.test.ts",
+   "tipo": "unit",
+   "linhas": 468,
+   "testa": [
+    "src/hooks/useTrainingImages.ts",
+    "src/integrations/supabase/client.ts",
+    "src/services/trainingImages/index.ts"
+   ],
+   "casos": 30
+  },
+  {
    "arquivo": "src/test/chain.ts",
    "tipo": "unit",
    "linhas": 77,
@@ -6397,12 +6491,13 @@
   "src/hooks/useTabelasReferencia.ts": 4,
   "src/hooks/useToast.ts": 1,
   "src/hooks/useTodasEmpresas.ts": 1,
+  "src/hooks/useTrainingImages.ts": 1,
   "src/hooks/useTranslation.ts": 1,
   "src/hooks/useValeTransporte.ts": 1,
   "src/hooks/useWebhooksAvancados.ts": 2,
   "src/hooks/validators.ts": 1,
   "src/integrations/lovable/index.ts": 1,
-  "src/integrations/supabase/client.ts": 22,
+  "src/integrations/supabase/client.ts": 23,
   "src/integrations/supabase/database.types.ts": 10,
   "src/integrations/supabase/previewAuthStorage.ts": 1,
   "src/integrations/supabase/types.ts": 13,
@@ -6517,6 +6612,7 @@
   "src/services/tabelas/rhService.ts": 1,
   "src/services/tabelas/viewsService.ts": 1,
   "src/services/tabelasReferenciaService.ts": 1,
+  "src/services/trainingImages/index.ts": 4,
   "src/services/turnoService.ts": 1,
   "src/services/webhookService.ts": 1,
   "src/services/whatsappService.ts": 1,
@@ -6573,6 +6669,14 @@
   "supabase/functions/_shared/resendDelivery.ts": 1,
   "supabase/functions/_shared/schemas/common.ts": 1,
   "supabase/functions/_shared/ssrf-guard.ts": 1,
+  "supabase/functions/_shared/trainingImages/allowlist.ts": 1,
+  "supabase/functions/_shared/trainingImages/briefing.ts": 1,
+  "supabase/functions/_shared/trainingImages/hash.ts": 1,
+  "supabase/functions/_shared/trainingImages/openaiProvider.ts": 1,
+  "supabase/functions/_shared/trainingImages/pipeline.ts": 2,
+  "supabase/functions/_shared/trainingImages/simulatedProvider.ts": 2,
+  "supabase/functions/_shared/trainingImages/types.ts": 2,
+  "supabase/functions/_shared/trainingImages/uuid.ts": 1,
   "supabase/functions/alertas-dp/deliveryStatus.ts": 1,
   "supabase/functions/auth-gov-br/govbrIdentity.ts": 1,
   "supabase/functions/auth-login/lockoutContract.ts": 1,
@@ -6745,6 +6849,8 @@
    "relatorio",
    "sincronizar-bitrix",
    "tabelas-dominio",
+   "training-image-dispatch",
+   "training-image-generate",
    "validar-biometria",
    "warmup",
    "whatsapp-send"
@@ -6754,6 +6860,15 @@
    "src/services/tabelas/index.ts",
    "src/services/tabelasComplementaresService.ts",
    "src/services/timelineService.ts",
+   "src/services/trainingImages/briefing.ts",
+   "src/services/trainingImages/config.ts",
+   "src/services/trainingImages/hash.ts",
+   "src/services/trainingImages/paths.ts",
+   "src/services/trainingImages/provider.ts",
+   "src/services/trainingImages/request.ts",
+   "src/services/trainingImages/service.ts",
+   "src/services/trainingImages/storage.ts",
+   "src/services/trainingImages/types.ts",
    "src/services/vinculoService.ts"
   ]
  }

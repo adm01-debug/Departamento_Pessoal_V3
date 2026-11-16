@@ -3,10 +3,10 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1617)",
-   "SQL (902)",
-   "Markdown (329)",
-   "JavaScript (126)",
+   "TypeScript (1654)",
+   "SQL (915)",
+   "Markdown (332)",
+   "JavaScript (129)",
    "JSON (63)",
    "Shell (57)",
    "YAML (56)",
@@ -1593,7 +1593,8 @@
    "VITE_SENTRY_RELEASE",
    "VITE_SUPABASE_FUNCTIONS_BASE",
    "VITE_SUPABASE_PUBLISHABLE_KEY",
-   "VITE_SUPABASE_URL"
+   "VITE_SUPABASE_URL",
+   "VITE_TRAINING_IMAGES"
   ],
   "usadas_no_front": [
    "CI",
@@ -1619,7 +1620,8 @@
    "VITE_SENTRY_RELEASE",
    "VITE_SUPABASE_FUNCTIONS_BASE",
    "VITE_SUPABASE_PUBLISHABLE_KEY",
-   "VITE_SUPABASE_URL"
+   "VITE_SUPABASE_URL",
+   "VITE_TRAINING_IMAGES"
   ],
   "usadas_nas_edges": [
    "AI_GATEWAY_API_KEY",
@@ -1671,6 +1673,14 @@
    "SUPABASE_PUBLISHABLE_KEY",
    "SUPABASE_SERVICE_ROLE_KEY",
    "SUPABASE_URL",
+   "TRAINING_IMAGE_ALLOWED_CONTENT_ID",
+   "TRAINING_IMAGE_ALLOWED_EMPRESA_ID",
+   "TRAINING_IMAGE_AUTOQUEUE_ENABLED",
+   "TRAINING_IMAGE_DISPATCH_SECRET",
+   "TRAINING_IMAGE_GENERATION_ENABLED",
+   "TRAINING_IMAGE_MODEL",
+   "TRAINING_IMAGE_QUALITY",
+   "TRAINING_IMAGE_SIZE",
    "TURNSTILE_SECRET_KEY",
    "WEBHOOK_REQUIRE_TIMESTAMP",
    "WEBHOOK_SECRET"
@@ -1848,6 +1858,14 @@
     "arquivos": 4
    },
    {
+    "host": "api.openai.com",
+    "arquivos": 3
+   },
+   {
+    "host": "example.test",
+    "arquivos": 3
+   },
+   {
     "host": "api.deepseek.com",
     "arquivos": 2
    },
@@ -1857,10 +1875,6 @@
    },
    {
     "host": "example.invalid",
-    "arquivos": 2
-   },
-   {
-    "host": "example.test",
     "arquivos": 2
    },
    {
@@ -1904,7 +1918,7 @@
     "arquivos": 1
    },
    {
-    "host": "api.openai.com",
+    "host": "api.exemplo.com",
     "arquivos": 1
    },
    {
@@ -1933,6 +1947,10 @@
    },
    {
     "host": "bitrix.test",
+    "arquivos": 1
+   },
+   {
+    "host": "cdn.example.test",
     "arquivos": 1
    },
    {
@@ -1977,6 +1995,10 @@
    },
    {
     "host": "hook.io",
+    "arquivos": 1
+   },
+   {
+    "host": "invasor.example",
     "arquivos": 1
    },
    {
@@ -2059,6 +2081,7 @@
    "SENTRY_ENVIRONMENT",
    "SENTRY_RELEASE",
    "SLACK_WEBHOOK_URL",
+   "TRAINING_IMAGE_DISPATCH_SECRET",
    "TURNSTILE_SECRET_KEY",
    "VITE_AUTH_GOOGLE_ENABLED",
    "VITE_SENTRY_DSN",
@@ -2097,11 +2120,11 @@
    },
    {
     "papel": "admin",
-    "ocorrencias": 21
+    "ocorrencias": 23
    },
    {
     "papel": "user",
-    "ocorrencias": 20
+    "ocorrencias": 21
    },
    {
     "papel": "alert",
@@ -2173,6 +2196,10 @@
    },
    {
     "papel": "assistant",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "authenticated",
     "ocorrencias": 1
    },
    {

@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `800125221d` · branch `main` · 2026-11-16 19:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `935356c8ab` · branch `main` · 2026-11-16 21:02 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
 | `pcs_grades` | Transactionally generated salary ranges for a PCS plan. | 11 colunas | migration |
 | `pcs_pesquisa_salarial` | Tenant-scoped external salary benchmark observations. | 14 colunas | migration |
-| … +313 linhas — lista completa em `context.json` | | | |
+| … +321 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -385,6 +385,7 @@
 | status | valor `inscrito` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/pages/TreinamentosPage.tsx` |
 | status | valor `completo` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/services/backupService.ts` |
 | status | valor `aprovado_financeiro` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/premiacoesService.ts` |
+| status | valor `number` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/_shared/trainingImages/pipeline.ts` |
 | status | valor `sem_colaboradores` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/alertas-preditivos/index.ts` |
 | status | valor `simulado` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/enviar-esocial/index.ts` |
 | status | valor `very_slow` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/external-db-bridge/index.ts` |
@@ -457,6 +458,7 @@
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/services/backupService.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/services/baseService.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/services/tabelasReferenciaService.ts` |
+| dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/services/trainingImages/storage.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/admissao-publica/index.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/backup/index.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/backup-automatico/index.ts` |
@@ -644,9 +646,7 @@
 | segurança | função `trg_medida_aplicada_integrar` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_medida_contestacao_notify` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_medida_contestacao_notify_after` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `trg_medida_esocial_on_aplicada` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `update_extintor_status_vencimento` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +36 linhas — lista completa em `context.json` | | |
+| … +38 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 

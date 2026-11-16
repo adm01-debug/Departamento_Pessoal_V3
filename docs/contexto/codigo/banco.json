@@ -7,7 +7,9 @@
   "supabase/migrations"
  ],
  "migrations": 849,
- "seeds": [],
+ "seeds": [
+  "scripts/training-images-local/seed.sql"
+ ],
  "avisos": [
   "181 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
  ],
@@ -11704,7 +11706,9 @@
     "so_no_types": []
    },
    "usada_no_front": 1,
-   "usada_em_edges": [],
+   "usada_em_edges": [
+    "trainingImages"
+   ],
    "triggers": [
     "enqueue_training_image_course"
    ],
@@ -57961,14 +57965,16 @@
     "empresa_id->empresas"
    ],
    "criada_em": "20261023120000_training_images_infrastructure.sql",
-   "usada_no_front": 0,
-   "usada_em_edges": [],
+   "usada_no_front": 1,
+   "usada_em_edges": [
+    "trainingImages"
+   ],
    "triggers": [
     "track_training_images_outcomes",
     "update_training_images_updated_at"
    ],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "transferencias": {
    "colunas": {
@@ -59382,7 +59388,9 @@
     "so_no_types": []
    },
    "usada_no_front": 1,
-   "usada_em_edges": [],
+   "usada_em_edges": [
+    "trainingImages"
+   ],
    "triggers": [
     "enqueue_training_image_learning_path",
     "set_timestamp_trilhas"
@@ -59473,7 +59481,9 @@
     "so_no_types": []
    },
    "usada_no_front": 1,
-   "usada_em_edges": [],
+   "usada_em_edges": [
+    "trainingImages"
+   ],
    "triggers": [],
    "sem_rls": false,
    "nao_usada": false
@@ -59826,7 +59836,8 @@
     "gerar-pgr",
     "notificacao",
     "parse-afdt",
-    "processar-ponto-offline"
+    "processar-ponto-offline",
+    "training-image-generate"
    ],
    "triggers": [],
    "sem_rls": false,
@@ -60052,7 +60063,8 @@
    "usada_em_edges": [
     "alertas-dp",
     "backup",
-    "limpeza"
+    "limpeza",
+    "training-image-generate"
    ],
    "triggers": [],
    "sem_rls": false,
@@ -63041,6 +63053,16 @@
    "usada_em": 1
   },
   {
+   "nome": "claim_training_image",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "claim_training_image_requests",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
    "nome": "clinicas_proximas",
    "definida": true,
    "usada_em": 1
@@ -63121,6 +63143,11 @@
    "usada_em": 1
   },
   {
+   "nome": "edge_rate_limit_check_dual",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
    "nome": "editar_feedback_seguro",
    "definida": true,
    "usada_em": 1
@@ -63147,6 +63174,11 @@
   },
   {
    "nome": "finish_report_schedule_claim",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "finish_training_image_request",
    "definida": true,
    "usada_em": 1
   },

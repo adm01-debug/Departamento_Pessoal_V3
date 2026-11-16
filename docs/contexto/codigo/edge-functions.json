@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "pasta": "supabase/functions",
- "total": 65,
+ "total": 67,
  "verify_jwt_false": [
   "admissao-publica",
   "auth-gov-br",
@@ -48,7 +48,20 @@
   "supabase/functions/_shared/sentry.ts",
   "supabase/functions/_shared/ssrf-guard.test.ts",
   "supabase/functions/_shared/ssrf-guard.ts",
-  "supabase/functions/_shared/trace.ts"
+  "supabase/functions/_shared/trace.ts",
+  "supabase/functions/_shared/trainingImages/allowlist.ts",
+  "supabase/functions/_shared/trainingImages/briefing.ts",
+  "supabase/functions/_shared/trainingImages/estadoCapa.ts",
+  "supabase/functions/_shared/trainingImages/hash.ts",
+  "supabase/functions/_shared/trainingImages/imageValidation.ts",
+  "supabase/functions/_shared/trainingImages/openaiProvider.ts",
+  "supabase/functions/_shared/trainingImages/pipeline.ts",
+  "supabase/functions/_shared/trainingImages/quotas.ts",
+  "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
+  "supabase/functions/_shared/trainingImages/storagePath.ts",
+  "supabase/functions/_shared/trainingImages/supabaseDeps.ts",
+  "supabase/functions/_shared/trainingImages/types.ts",
+  "supabase/functions/_shared/trainingImages/uuid.ts"
  ],
  "edges": [
   {
@@ -1227,7 +1240,7 @@
    "nome": "external-db-bridge",
    "entrada": "supabase/functions/external-db-bridge/index.ts",
    "arquivos": 6,
-   "linhas": 1510,
+   "linhas": 1511,
    "verify_jwt": true,
    "metodos": [
     "POST"
@@ -2457,6 +2470,97 @@
     "clientIp.ts",
     "contract.ts",
     "rateLimit.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "training-image-dispatch",
+   "entrada": "supabase/functions/training-image-dispatch/index.ts",
+   "arquivos": 1,
+   "linhas": 310,
+   "verify_jwt": true,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [],
+   "rpcs": [
+    "claim_training_image_requests",
+    "finish_training_image_request"
+   ],
+   "env": [
+    "OPENAI_API_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "TRAINING_IMAGE_AUTOQUEUE_ENABLED",
+    "TRAINING_IMAGE_DISPATCH_SECRET",
+    "TRAINING_IMAGE_GENERATION_ENABLED",
+    "TRAINING_IMAGE_MODEL",
+    "TRAINING_IMAGE_QUALITY",
+    "TRAINING_IMAGE_SIZE"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contract.ts",
+    "estadoCapa.ts",
+    "openaiProvider.ts",
+    "pipeline.ts",
+    "quotas.ts",
+    "rateLimit.ts",
+    "supabaseDeps.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "training-image-generate",
+   "entrada": "supabase/functions/training-image-generate/index.ts",
+   "arquivos": 1,
+   "linhas": 292,
+   "verify_jwt": true,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [
+    "user_empresas",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "env": [
+    "OPENAI_API_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "TRAINING_IMAGE_ALLOWED_CONTENT_ID",
+    "TRAINING_IMAGE_ALLOWED_EMPRESA_ID",
+    "TRAINING_IMAGE_GENERATION_ENABLED",
+    "TRAINING_IMAGE_MODEL",
+    "TRAINING_IMAGE_QUALITY",
+    "TRAINING_IMAGE_SIZE"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "allowlist.ts",
+    "contract.ts",
+    "csrf.ts",
+    "estadoCapa.ts",
+    "openaiProvider.ts",
+    "pipeline.ts",
+    "quotas.ts",
+    "rateLimit.ts",
+    "supabaseDeps.ts",
+    "types.ts",
+    "uuid.ts"
    ],
    "chamada_pelo_front": [],
    "chamada_por_edges": [],
