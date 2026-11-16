@@ -21,10 +21,22 @@ import {
   getMockCompetencias,
 } from '@/mocks/colaboradoresMock';
 
+// REGRA DE CACHE DESTE ARQUIVO: cada leitura vive DENTRO da família que os
+// writers do app já invalidam (o React Query casa por PREFIXO), e os segmentos
+// extras mantêm a entrada distinta. Chave irmã — 'metas-colaborador' em vez de
+// ['metas_okrs', 'colaborador', ...] — fica fora de QUALQUER invalidação
+// existente e serve dado velho por 5 min (staleTime de queryClient.ts, com
+// refetchOnWindowFocus desligado).
+//
+// Famílias usadas aqui: ['metas_okrs'], ['pdis'], ['feedbacks_360'],
+// ['treinamento_certificados'] e ['treinamentos'].
+//
+// 'competencias-colaborador' não tem família: nenhuma mutation do app escreve
+// em competências do colaborador, então não há invalidação para acompanhar.
 export function useMetasColaborador(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
-    queryKey: ['metas-colaborador', colaboradorId, empresaAtual?.id],
+    queryKey: ['metas_okrs', 'colaborador', colaboradorId, empresaAtual?.id],
     queryFn: async () =>
       mockOr(getMockMetas(colaboradorId)) ?? avaliacaoService.listarMetas(empresaAtual!.id, colaboradorId),
     enabled: !!colaboradorId && !!empresaAtual?.id,
@@ -34,7 +46,7 @@ export function useMetasColaborador(colaboradorId: string) {
 export function usePDIsColaborador(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
-    queryKey: ['pdis-colaborador', colaboradorId, empresaAtual?.id],
+    queryKey: ['pdis', 'colaborador', colaboradorId, empresaAtual?.id],
     queryFn: async () =>
       mockOr(getMockPDIs(colaboradorId)) ?? avaliacaoService.listarPDIs(empresaAtual!.id, colaboradorId),
     enabled: !!colaboradorId && !!empresaAtual?.id,
@@ -44,7 +56,7 @@ export function usePDIsColaborador(colaboradorId: string) {
 export function useFeedbacksColaborador(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
-    queryKey: ['feedbacks-colaborador', colaboradorId, empresaAtual?.id],
+    queryKey: ['feedbacks_360', 'colaborador', colaboradorId, empresaAtual?.id],
     queryFn: async () =>
       mockOr(getMockFeedbacks(colaboradorId)) ?? avaliacaoService.listarFeedbacks(empresaAtual!.id, colaboradorId),
     enabled: !!colaboradorId && !!empresaAtual?.id,
@@ -54,7 +66,7 @@ export function useFeedbacksColaborador(colaboradorId: string) {
 export function useCertificadosColaborador(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
-    queryKey: ['certificados-colaborador', colaboradorId, empresaAtual?.id],
+    queryKey: ['treinamento_certificados', 'colaborador', colaboradorId, empresaAtual?.id],
     queryFn: async () =>
       mockOr(getMockCertificados(colaboradorId)) ??
       catalogoCursoService.listarCertificados(empresaAtual!.id, colaboradorId),
@@ -76,7 +88,7 @@ export function useCompetenciasColaborador(colaboradorId: string) {
 
 export function useTreinamentosColaborador(colaboradorId: string) {
   return useQuery({
-    queryKey: ['treinamentos-colaborador', colaboradorId],
+    queryKey: ['treinamentos', 'colaborador', colaboradorId],
     queryFn: async () =>
       mockOr(getMockTreinamentos(colaboradorId)) ?? treinamentoParticipantesService.listarPorColaborador(colaboradorId),
     enabled: !!colaboradorId,
