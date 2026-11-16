@@ -4,10 +4,10 @@
  "stack": {
   "linguagens": [
    "TypeScript (1580)",
-   "SQL (895)",
-   "Markdown (295)",
+   "SQL (902)",
+   "Markdown (319)",
    "JavaScript (126)",
-   "JSON (61)",
+   "JSON (62)",
    "Shell (57)",
    "YAML (56)",
    "Python (5)"
@@ -1135,6 +1135,11 @@
    "linhas": 157
   },
   {
+   "arquivo": "docs/CICLOS-PERSISTENCIA-E-EXCLUSAO.md",
+   "titulo": "Ciclos de avaliação — persistência real e exclusão segura",
+   "linhas": 65
+  },
+  {
    "arquivo": "docs/CODE_REVIEW.md",
    "titulo": "Protocolo de Code Review e Excelência Técnica",
    "linhas": 24
@@ -1168,6 +1173,11 @@
    "arquivo": "docs/DESENVOLVIMENTO.md",
    "titulo": "Guia de Desenvolvimento",
    "linhas": 36
+  },
+  {
+   "arquivo": "docs/DESIGN-SYSTEM-TIPOGRAFIA.md",
+   "titulo": "Design System — Tipografia oficial",
+   "linhas": 132
   },
   {
    "arquivo": "docs/DEVELOPMENT.md",
@@ -1235,6 +1245,11 @@
    "linhas": 33
   },
   {
+   "arquivo": "docs/HOMOLOGACAO-CANCELAMENTO-REAL.md",
+   "titulo": "Homologação — cancelamento de feedback REAL",
+   "linhas": 125
+  },
+  {
    "arquivo": "docs/HOOKS.md",
    "titulo": "Custom Hooks",
    "linhas": 20
@@ -1285,6 +1300,26 @@
    "linhas": 256
   },
   {
+   "arquivo": "docs/NINEBOX-CONCLUSAO-FEEDBACK.md",
+   "titulo": "Conclusão de feedback — correção definitiva (2026-10-20)",
+   "linhas": 84
+  },
+  {
+   "arquivo": "docs/NINEBOX-ESTABILIZACAO-PRODUCAO.md",
+   "titulo": "Nine-Box — estabilização e reconciliação com o Supabase principal",
+   "linhas": 309
+  },
+  {
+   "arquivo": "docs/NINEBOX-OPERACAO-DEFINITIVA.md",
+   "titulo": "Operação Nine-Box — implementação e evidências (2026-10-20)",
+   "linhas": 227
+  },
+  {
+   "arquivo": "docs/ONBOARDING_MODELO_B_DEPRECATED.md",
+   "titulo": "MODELO B DE ONBOARDING — DEPRECATED",
+   "linhas": 133
+  },
+  {
    "arquivo": "docs/P2-037_TABELAS_DUPLICADAS_ANALISE.md",
    "titulo": "P2-037: Consolidação de Tabelas Duplicadas — Análise e Runbook",
    "linhas": 53
@@ -1333,6 +1368,11 @@
    "arquivo": "docs/README_FINAL.md",
    "titulo": "README_FINAL",
    "linhas": 33
+  },
+  {
+   "arquivo": "docs/RECUPERACAO-FEEDBACKS.md",
+   "titulo": "Recuperação — feedbacks do ciclo TESTE DEFINITIVO",
+   "linhas": 116
   },
   {
    "arquivo": "docs/RELATORIOS.md",
@@ -1430,15 +1470,80 @@
    "linhas": 26
   },
   {
+   "arquivo": "docs/ninebox-aprovacao-gestor-implantacao.md",
+   "titulo": "Aprovação do gestor — implantação para a conta Abner",
+   "linhas": 432
+  },
+  {
+   "arquivo": "docs/ninebox-aprovacao-gestor-ui.md",
+   "titulo": "Nine-Box — Aprovação do gestor na interface (subaba \"Aguardando gestor\")",
+   "linhas": 100
+  },
+  {
+   "arquivo": "docs/ninebox-homologacao-aprovacao-real.md",
+   "titulo": "Homologação REAL da Aprovação do Gestor — runbook de implantação",
+   "linhas": 207
+  },
+  {
+   "arquivo": "docs/ninebox-homologacao-funcional.md",
+   "titulo": "Nine-Box — Roteiro de homologação funcional (v2 — corrigido)",
+   "linhas": 515
+  },
+  {
+   "arquivo": "docs/ninebox-homologacao.md",
+   "titulo": "Nine-Box — Roteiro de homologação (ambiente isolado)",
+   "linhas": 290
+  },
+  {
+   "arquivo": "docs/ninebox-implantacao-minima.md",
+   "titulo": "Nine-Box · Implantação mínima no Supabase atual (sem Docker, sem segundo projeto)",
+   "linhas": 238
+  },
+  {
+   "arquivo": "docs/ninebox-mapa-fontes.md",
+   "titulo": "Nine-Box — MAPA DEFINITIVO DAS FONTES DE DADOS E CONSISTÊNCIA",
+   "linhas": 158
+  },
+  {
+   "arquivo": "docs/ninebox-plano-finalizacao.md",
+   "titulo": "Nine-Box — Plano de ativação segura da finalização de feedbacks",
+   "linhas": 598
+  },
+  {
+   "arquivo": "docs/ninebox-proposta-controles-feedback.md",
+   "titulo": "Nine-Box · Proposta localizada dos controles de feedback (aguardando aprovação)",
+   "linhas": 176
+  },
+  {
    "arquivo": "docs/prod-readiness.md",
    "titulo": "Prontidão para produção — Departamento Pessoal V3",
    "linhas": 853
+  },
+  {
+   "arquivo": "docs/treinamentos-imagens-fase3a2.md",
+   "titulo": "Fase 3A.2 — finalização da integração do Hub de imagens",
+   "linhas": 211
+  },
+  {
+   "arquivo": "docs/treinamentos-imagens-fase3b-prep.md",
+   "titulo": "Fase 3B — preparação final (relatório)",
+   "linhas": 133
+  },
+  {
+   "arquivo": "docs/treinamentos-imagens-homologacao.md",
+   "titulo": "Homologação isolada — Hub de imagens (alternativa ao Docker)",
+   "linhas": 233
+  },
+  {
+   "arquivo": "docs/treinamentos-imagens.md",
+   "titulo": "Imagens do Hub de Treinamentos — Fase 2 (auditoria) + preparação da Fase 3",
+   "linhas": 426
   }
  ],
  "docs_em_subpastas": [
   {
    "pasta": "docs/auditoria",
-   "arquivos_md": 49
+   "arquivos_md": 51
   },
   {
    "pasta": "docs/_archive",
@@ -1466,6 +1571,10 @@
   },
   {
    "pasta": "docs/contratos",
+   "arquivos_md": 1
+  },
+  {
+   "pasta": "docs/protegido",
    "arquivos_md": 1
   },
   {

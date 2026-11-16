@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3dcc001c2ba24fa4ed917cb9f18e4636bb423a2b",
+  "sha": "2b50f152e4089b3219db227f2fb11792af3ffff6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-16 15:16 UTC",
-  "files_total": 3138,
-  "code_files": 2603,
-  "code_lines": 381739
+  "generated_at": "2026-11-16 16:17 UTC",
+  "files_total": 3170,
+  "code_files": 2610,
+  "code_lines": 383825
  },
  "version": "1.3.2",
- "facts_hash": "f300170d1f000f9c",
+ "facts_hash": "c2542b0affd5dea2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 895,
+   ".sql": 902,
    ".ts": 793,
    ".tsx": 787,
    ".mjs": 100,
@@ -70955,6 +70955,7 @@
    }
   },
   "sources": [
+   "docs/ninebox-divergencias-migrations.sql",
    "scripts/db/schema-inventory.sql",
    "supabase/baseline/20260831_canonical/canonical_auth_schema.sql",
    "supabase/baseline/20260831_canonical/canonical_cron_data.sql",
@@ -100290,6 +100291,25 @@
     "vite.config.pwa.ts",
     "vite.config.ts",
     "vitest.config.ts"
+   ]
+  },
+  {
+   "module": "docs",
+   "files": 7,
+   "lines": 2086,
+   "tables": [],
+   "exports": [],
+   "docs": [],
+   "deps": [],
+   "imports_modules": [],
+   "file_list": [
+    "docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql",
+    "docs/ninebox-auditoria-banco.sql",
+    "docs/ninebox-divergencias-migrations.sql",
+    "docs/ninebox-pre-aplicacao.sql",
+    "docs/ninebox-testes-seguranca.sql",
+    "docs/ninebox-validacao-banco.sql",
+    "docs/ninebox-verificacao-truncate.sql"
    ]
   },
   {
@@ -224462,6 +224482,8 @@
    }
   ],
   "service_role_files": [
+   "docs/ninebox-pre-aplicacao.sql",
+   "docs/ninebox-verificacao-truncate.sql",
    "e2e/cleanup/seed-cleanup.spec.ts",
    "scripts/ai-context/cenarios.mjs",
    "scripts/ai-context/gerar.unit.mjs",
@@ -243700,6 +243722,49 @@
     "regra do time: só subir, nunca baixar (ratchet)."
    ],
    "doc": "/ <reference types=\"vitest\" />"
+  },
+  "docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql": {
+   "path": "docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql",
+   "lines": 155
+  },
+  "docs/ninebox-auditoria-banco.sql": {
+   "path": "docs/ninebox-auditoria-banco.sql",
+   "lines": 349,
+   "rule_comments": [
+    "*SOMENTE LEITURA** (v2, revisado)",
+    "from public.vw_matriz_nine_box limit 1;"
+   ]
+  },
+  "docs/ninebox-divergencias-migrations.sql": {
+   "path": "docs/ninebox-divergencias-migrations.sql",
+   "lines": 79
+  },
+  "docs/ninebox-pre-aplicacao.sql": {
+   "path": "docs/ninebox-pre-aplicacao.sql",
+   "lines": 384,
+   "uses_service_role": true
+  },
+  "docs/ninebox-testes-seguranca.sql": {
+   "path": "docs/ninebox-testes-seguranca.sql",
+   "lines": 521,
+   "rule_comments": [
+    ") filter (where not ok) as falhas` deve dar 0."
+   ]
+  },
+  "docs/ninebox-validacao-banco.sql": {
+   "path": "docs/ninebox-validacao-banco.sql",
+   "lines": 272,
+   "rule_comments": [
+    "*SOMENTE LEITURA**"
+   ]
+  },
+  "docs/ninebox-verificacao-truncate.sql": {
+   "path": "docs/ninebox-verificacao-truncate.sql",
+   "lines": 326,
+   "rule_comments": [
+    "*ACEITE** (invariantes, `falhas` deve ser 0)."
+   ],
+   "uses_service_role": true
   },
   "e2e/auth-non-admin.setup.ts": {
    "path": "e2e/auth-non-admin.setup.ts",
@@ -300858,10 +300923,82 @@
   }
  },
  "git": {
-  "sha": "3dcc001c2ba24fa4ed917cb9f18e4636bb423a2b",
+  "sha": "2b50f152e4089b3219db227f2fb11792af3ffff6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "2b50f15",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "fix(docs): redige o user_id e o e-mail pessoais publicados no #595 (#599)",
+    "files": [
+     "docs/HOMOLOGACAO-CANCELAMENTO-REAL.md",
+     "docs/NINEBOX-OPERACAO-DEFINITIVA.md",
+     "docs/RECUPERACAO-FEEDBACKS.md",
+     "docs/ninebox-aprovacao-gestor-implantacao.md",
+     "docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql",
+     "docs/ninebox-homologacao-aprovacao-real.md"
+    ]
+   },
+   {
+    "sha": "5f74d3f",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "fix(docs): corrige as fixtures de conclusão e a alegação do Q8a do ninebox (#598)",
+    "files": [
+     "docs/ninebox-auditoria-banco.sql",
+     "docs/ninebox-testes-seguranca.sql"
+    ]
+   },
+   {
+    "sha": "c2102ad",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "docs(auditoria): classifica as dez migrations órfãs da muri contra o banco real (#596)",
+    "files": [
+     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md"
+    ]
+   },
+   {
+    "sha": "f732746",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "docs: resgata a documentação operacional do ninebox e das capas de treinamento (#595)",
+    "files": [
+     "docs/CICLOS-PERSISTENCIA-E-EXCLUSAO.md",
+     "docs/DESIGN-SYSTEM-TIPOGRAFIA.md",
+     "docs/HOMOLOGACAO-CANCELAMENTO-REAL.md",
+     "docs/NINEBOX-CONCLUSAO-FEEDBACK.md",
+     "docs/NINEBOX-ESTABILIZACAO-PRODUCAO.md",
+     "docs/NINEBOX-OPERACAO-DEFINITIVA.md",
+     "docs/ONBOARDING_MODELO_B_DEPRECATED.md",
+     "docs/RECUPERACAO-FEEDBACKS.md",
+     "docs/auditoria/RESGATE_BRANCH_MURI_2026-11-16.md",
+     "docs/ninebox-aprovacao-gestor-implantacao.md",
+     "docs/ninebox-aprovacao-gestor-ui.md",
+     "docs/ninebox-aprovacao-gestor-vinculo-abner.sql",
+     "docs/ninebox-auditoria-banco.sql",
+     "docs/ninebox-divergencias-migrations.sql",
+     "docs/ninebox-homologacao-aprovacao-real.md",
+     "docs/ninebox-homologacao-funcional.md",
+     "docs/ninebox-homologacao.md",
+     "docs/ninebox-implantacao-minima.md",
+     "docs/ninebox-mapa-fontes.md",
+     "docs/ninebox-plano-finalizacao.md",
+     "docs/ninebox-pre-aplicacao.sql",
+     "docs/ninebox-proposta-controles-feedback.md",
+     "docs/ninebox-testes-seguranca.sql",
+     "docs/ninebox-validacao-banco.sql",
+     "docs/ninebox-verificacao-truncate.sql",
+     "docs/protegido/DESEMPENHO-LAYOUT-PROTEGIDO.md",
+     "docs/protegido/desempenho-layout.baseline.json",
+     "docs/treinamentos-imagens-fase3a2.md",
+     "docs/treinamentos-imagens-fase3b-prep.md",
+     "docs/treinamentos-imagens-homologacao.md",
+     "docs/treinamentos-imagens.md"
+    ]
+   },
    {
     "sha": "3dcc001",
     "date": "2026-11-16",
@@ -301317,45 +301454,6 @@
      "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
      "supabase/migrations/20261114000600_rls_escrita_por_papel.verify.sql"
     ]
-   },
-   {
-    "sha": "7aa798f",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "Pensões: recria a coluna empresa_id que falta no banco de produção (#529)",
-    "files": [
-     "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql",
-     "supabase/migrations/20261114000500_pensoes_empresa_id_drift.verify.sql"
-    ]
-   },
-   {
-    "sha": "b93ea48",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "fix(db): adiciona updated_at em 15 tabelas cujo trigger exige a coluna (#528)",
-    "files": [
-     "supabase/migrations/20261114000400_adiciona_updated_at_faltante.sql",
-     "supabase/migrations/20261114000400_adiciona_updated_at_faltante.verify.sql"
-    ]
-   },
-   {
-    "sha": "7264f0d",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "fix(db): certificado de treinamento não lê catalogo_cursos.metadata (#499)",
-    "files": [
-     "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.sql",
-     "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.verify.sql"
-    ]
-   },
-   {
-    "sha": "bb9a156",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "chore: relatório de auditoria técnica 10/10 (squash)",
-    "files": [
-     "AUDITORIA_10_10.md"
-    ]
    }
   ],
   "hot_files": [
@@ -301370,6 +301468,34 @@
    [
     ".github/workflows/canonical-migrations.yml",
     3
+   ],
+   [
+    "docs/HOMOLOGACAO-CANCELAMENTO-REAL.md",
+    2
+   ],
+   [
+    "docs/NINEBOX-OPERACAO-DEFINITIVA.md",
+    2
+   ],
+   [
+    "docs/RECUPERACAO-FEEDBACKS.md",
+    2
+   ],
+   [
+    "docs/ninebox-aprovacao-gestor-implantacao.md",
+    2
+   ],
+   [
+    "docs/ninebox-homologacao-aprovacao-real.md",
+    2
+   ],
+   [
+    "docs/ninebox-auditoria-banco.sql",
+    2
+   ],
+   [
+    "docs/ninebox-testes-seguranca.sql",
+    2
    ],
    [
     "scripts/.types-drift-baseline.json",
@@ -301404,39 +301530,11 @@
     2
    ],
    [
-    "supabase/rollback/20261015090000_ninebox_finalizacao_e_potencial.rollback-operacional.sql",
+    "docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql",
     1
    ],
    [
-    "supabase/rollback/20261015090000_ninebox_finalizacao_e_potencial.rollback-seguranca.sql",
-    1
-   ],
-   [
-    "supabase/rollback/20261016090000_revoga_insert_direto_rollback.sql",
-    1
-   ],
-   [
-    "supabase/rollback/20261017090000_ninebox_aprovacao_gestor_rollback.sql",
-    1
-   ],
-   [
-    "supabase/rollback/20261020090000_ninebox_edicao_feedback_rollback.sql",
-    1
-   ],
-   [
-    "supabase/rollback/20261021090000_ninebox_aprovacao_confirmada_rollback.sql",
-    1
-   ],
-   [
-    "supabase/rollback/20261022090000_ninebox_conclusao_feedback_autorizada_rollback.sql",
-    1
-   ],
-   [
-    "supabase/rollback/20261025090000_ninebox_aprovacao_autoria_rollback.sql",
-    1
-   ],
-   [
-    "supabase/rollback/20261027090000_ninebox_reconciliacao_incremental_rollback.sql",
+    "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
     1
    ]
   ]

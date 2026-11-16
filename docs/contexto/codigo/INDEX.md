@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3dcc001c2ba24fa4ed917cb9f18e4636bb423a2b` (2026-11-16T12:15:08-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2b50f152e4089b3219db227f2fb11792af3ffff6` (2026-11-16T13:05:28-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1580), SQL (895), Markdown (295), JavaScript (126), JSON (61), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1580), SQL (902), Markdown (319), JavaScript (126), JSON (62), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3117 |
+| arquivos_total | 3149 |
 | arquivos_codigo | 1710 |
 | linhas_codigo | 320952 |
 | rotas | 116 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 641 |
 | workflows | 21 |
 | scripts | 115 |
-| docs_md | 295 |
+| docs_md | 319 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
@@ -62,7 +62,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/autofix (10), scripts/ci (9)
-- docs: docs (74), (raiz) (32), .github (1)
+- docs: docs (95), (raiz) (32), .github (1)
 - nomenclatura: {"componentes":"PascalCase (86%)","hooks":"use + PascalCase","servicos":"camelCase (98%)","edge_functions":"kebab-case (68%)","tabelas":"snake_case (84%)"}
 - instruções para agentes no repo: .claude/CLAUDE.md, AGENTS.md, CLAUDE.md
 
@@ -388,27 +388,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 23712 nós · 50884 arestas · 2243 comunidades · grafo do commit `3dcc001c`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), button.tsx (436), lucide-react (413), @tanstack/react-query (388), useEmpresas (322), cn (291), vitest (228), contract.ts (197), nineBoxComum.ts (181), ESocialPage.tsx (167), react (160)
+- 24078 nós · 51410 arestas · 2267 comunidades · grafo do commit `2b50f152`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), lucide-react (453), useEmpresas (346), button.tsx (341), App.tsx (318), @tanstack/react-query (318), cn (307), vitest (262), FeedbackAcoesRodape.tsx (188), contract.ts (186), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (34)
+- .github/workflows/canonical-migrations.yml (31)
 - package.json (21)
 - package-lock.json (19)
-- CLAUDE.md (15)
+- CLAUDE.md (14)
 - PENDENCIAS.md (13)
 - scripts/canonical-invariants.sql (11)
 - inventario/estado/rotas.json (10)
 - scripts/sync/autocommit-local.sh (10)
 - docs/prod-readiness.md (9)
-- deno.lock (8)
 - supabase/functions/calcular-folha/index.ts (8)
 - supabase/functions/external-db-bridge/index.ts (8)
-- .github/workflows/canonical-edge-functions.yml (7)
 - AGENTS.md (7)
+- deno.lock (7)
 - e2e/auth.setup.ts (7)
+- scripts/sync/mirror-github.sh (7)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -557,6 +557,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/CALCULO_RESCISAO.md` — Cálculo de Rescisão Trabalhista (44 linhas)
 - `docs/CHANGELOG.md` — Changelog (24 linhas)
 - `docs/CHANGELOG_QA_V8.1.md` — CHANGELOG - Análise QA V8.1 (157 linhas)
+- `docs/CICLOS-PERSISTENCIA-E-EXCLUSAO.md` — Ciclos de avaliação — persistência real e exclusão segura (65 linhas)
 - `docs/CODE_REVIEW.md` — Protocolo de Code Review e Excelência Técnica (24 linhas)
 - `docs/COMPONENTES.md` — Documentação de Componentes (39 linhas)
 - `docs/COMPONENTS.md` — Components (19 linhas)
@@ -564,6 +565,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/CUTOVER_VALIDACAO.md` — Checklist de Validação Pós-Cutover (62 linhas)
 - `docs/DATABASE.md` — DATABASE (33 linhas)
 - `docs/DESENVOLVIMENTO.md` — Guia de Desenvolvimento (36 linhas)
+- `docs/DESIGN-SYSTEM-TIPOGRAFIA.md` — Design System — Tipografia oficial (132 linhas)
 - `docs/DEVELOPMENT.md` — Guia de Desenvolvimento (52 linhas)
 - `docs/E2E_TESTING.md` — Testes End-to-End (E2E) — Playwright (119 linhas)
 - `docs/ENVIRONMENT.md` — 🔑 ENVIRONMENT.md (24 linhas)
@@ -577,6 +579,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/FOLHA.md` — Folha de Pagamento (26 linhas)
 - `docs/GLOSSARY.md` — Glossário (28 linhas)
 - `docs/GUIAS_IMPOSTOS.md` — Guias e Impostos (33 linhas)
+- `docs/HOMOLOGACAO-CANCELAMENTO-REAL.md` — Homologação — cancelamento de feedback REAL (125 linhas)
 - `docs/HOOKS.md` — Custom Hooks (20 linhas)
 - `docs/INDEX.md` — Central de Documentação — Sistema DP (45 linhas)
 - `docs/INTEGRACOES.md` — Integracoes Externas - Sistema DP V18 (25 linhas)
@@ -587,6 +590,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/MAPA_API.md` — Mapa de API — E-094 (55 linhas)
 - `docs/MIGRATION.md` — 🔄 MIGRATION.md - Guia de Migração (22 linhas)
 - `docs/MONITORING.md` — 📊 Monitoring & Observability — Departamento Pessoal v2 (256 linhas)
+- `docs/NINEBOX-CONCLUSAO-FEEDBACK.md` — Conclusão de feedback — correção definitiva (2026-10-20) (84 linhas)
+- `docs/NINEBOX-ESTABILIZACAO-PRODUCAO.md` — Nine-Box — estabilização e reconciliação com o Supabase principal (309 linhas)
+- `docs/NINEBOX-OPERACAO-DEFINITIVA.md` — Operação Nine-Box — implementação e evidências (2026-10-20) (227 linhas)
+- `docs/ONBOARDING_MODELO_B_DEPRECATED.md` — MODELO B DE ONBOARDING — DEPRECATED (133 linhas)
 - `docs/P2-037_TABELAS_DUPLICADAS_ANALISE.md` — P2-037: Consolidação de Tabelas Duplicadas — Análise e Runbook (53 linhas)
 - `docs/PERFORMANCE.md` — ⚡ PERFORMANCE.md - Guia de Performance (27 linhas)
 - `docs/PONTO.md` — ⏰ PONTO.md - Guia de Ponto (23 linhas)
@@ -597,6 +604,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/QA_FINAL_REPORT_V8.5.md` — 🏆 RELATÓRIO FINAL QA V8.5 - MISSÃO COMPLETA (176 linhas)
 - `docs/README.md` — Sistema Departamento Pessoal (30 linhas)
 - `docs/README_FINAL.md` — README_FINAL (33 linhas)
+- `docs/RECUPERACAO-FEEDBACKS.md` — Recuperação — feedbacks do ciclo TESTE DEFINITIVO (116 linhas)
 - `docs/RELATORIOS.md` — 📊 RELATORIOS.md - Guia de Relatórios (26 linhas)
 - `docs/RELEASE_NOTES.md` — Release Notes (27 linhas)
 - `docs/RESCISAO.md` — Rescisão (33 linhas)
@@ -616,11 +624,28 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/V17_INDEX.md` — 📚 V17 - ÍNDICE DE DOCUMENTAÇÃO (48 linhas)
 - `docs/VISAO_FUTURA.md` — Visão futura — E-100 (59 linhas)
 - `docs/WORKFLOWS.md` — 🔄 WORKFLOWS.md - Fluxos de Trabalho (26 linhas)
+- `docs/ninebox-aprovacao-gestor-implantacao.md` — Aprovação do gestor — implantação para a conta Abner (432 linhas)
+- `docs/ninebox-aprovacao-gestor-ui.md` — Nine-Box — Aprovação do gestor na interface (subaba "Aguardando gestor") (100 linhas)
+- `docs/ninebox-homologacao-aprovacao-real.md` — Homologação REAL da Aprovação do Gestor — runbook de implantação (207 linhas)
+- `docs/ninebox-homologacao-funcional.md` — Nine-Box — Roteiro de homologação funcional (v2 — corrigido) (515 linhas)
+- `docs/ninebox-homologacao.md` — Nine-Box — Roteiro de homologação (ambiente isolado) (290 linhas)
+- `docs/ninebox-implantacao-minima.md` — Nine-Box · Implantação mínima no Supabase atual (sem Docker, sem segundo projeto) (238 linhas)
+- `docs/ninebox-mapa-fontes.md` — Nine-Box — MAPA DEFINITIVO DAS FONTES DE DADOS E CONSISTÊNCIA (158 linhas)
+- `docs/ninebox-plano-finalizacao.md` — Nine-Box — Plano de ativação segura da finalização de feedbacks (598 linhas)
+- `docs/ninebox-proposta-controles-feedback.md` — Nine-Box · Proposta localizada dos controles de feedback (aguardando aprovação) (176 linhas)
 - `docs/prod-readiness.md` — Prontidão para produção — Departamento Pessoal V3 (853 linhas)
-- subpastas de docs/: docs/auditoria (49), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/seguranca (1)
+- `docs/treinamentos-imagens-fase3a2.md` — Fase 3A.2 — finalização da integração do Hub de imagens (211 linhas)
+- `docs/treinamentos-imagens-fase3b-prep.md` — Fase 3B — preparação final (relatório) (133 linhas)
+- `docs/treinamentos-imagens-homologacao.md` — Homologação isolada — Hub de imagens (alternativa ao Docker) (233 linhas)
+- `docs/treinamentos-imagens.md` — Imagens do Hub de Treinamentos — Fase 2 (auditoria) + preparação da Fase 3 (426 linhas)
+- subpastas de docs/: docs/auditoria (51), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/protegido (1), docs/seguranca (1)
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-16 `2b50f15` fix(docs): redige o user_id e o e-mail pessoais publicados no #595 (#599)
+- 2026-11-16 `5f74d3f` fix(docs): corrige as fixtures de conclusão e a alegação do Q8a do ninebox (#598)
+- 2026-11-16 `c2102ad` docs(auditoria): classifica as dez migrations órfãs da muri contra o banco real (#596)
+- 2026-11-16 `f732746` docs: resgata a documentação operacional do ninebox e das capas de treinamento (#595)
 - 2026-11-16 `3dcc001` chore(banco): resgata os rollbacks das dez migrations ninebox já aplicadas em produção (#594)
 - 2026-11-16 `a054841` chore(deps): jsdom sai de dependencies e vira devDependency (#591)
 - 2026-11-16 `2ccd3e8` docs(auditoria): mede as versões do ledger sem arquivo e registra por que **não** canonizar (#590)
@@ -632,10 +657,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-16 `2357a56` build(deps-dev): bump the testing group with 2 updates (#585)
 - 2026-11-16 `81e86aa` infra(banco): sidecars rodam no FIM da transacao, nao no meio do lote (#583)
 - 2026-11-16 `9d8ff76` chore: resgata da branch `muri` as 3 migrations que rodam em produção e não existiam na main (#582)
-- 2026-11-16 `284f005` chore(docs): resgata da branch do #557 a prova de navegador que fechou o B23 (#584)
-- 2026-11-16 `efe96e8` infra(banco): lista fechada do canonical-migrations passa a ser o lote NineBox (#578)
-- 2026-11-16 `de3bf3b` fix(ninebox): converte as 4 notas da consolidação para numeric(4,3) — sem isso o lote grava e o deploy falha (#575)
-- 2026-11-16 `8f3efc6` chore: inventario do estado real [auto] (#581)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -34,7 +34,7 @@
    "scripts/ci (9)"
   ],
   "docs": [
-   "docs (74)",
+   "docs (95)",
    "(raiz) (32)",
    ".github (1)"
   ]
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
-   "chore(banco): resgata os rollbacks das dez migrations ninebox já aplicadas em produção (#594)",
-   "chore(deps): jsdom sai de dependencies e vira devDependency (#591)",
-   "docs(auditoria): mede as versões do ledger sem arquivo e registra por que **não** canonizar (#590)",
-   "fix(provisões): encargos da provisão seguem o regime tributário e a competência guarda o contrato (#576)",
-   "build(deps): bump the minor-patch group with 11 updates (#586)"
+   "fix(docs): redige o user_id e o e-mail pessoais publicados no #595 (#599)",
+   "fix(docs): corrige as fixtures de conclusão e a alegação do Q8a do ninebox (#598)",
+   "docs(auditoria): classifica as dez migrations órfãs da muri contra o banco real (#596)",
+   "docs: resgata a documentação operacional do ninebox e das capas de treinamento (#595)",
+   "chore(banco): resgata os rollbacks das dez migrations ninebox já aplicadas em produção (#594)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

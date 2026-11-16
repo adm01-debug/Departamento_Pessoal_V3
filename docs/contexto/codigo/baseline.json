@@ -2,11 +2,31 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3dcc001c2ba24fa4ed917cb9f18e4636bb423a2b",
+  "commit": "2b50f152e4089b3219db227f2fb11792af3ffff6",
   "branch": "main",
-  "data_commit": "2026-11-16T12:15:08-03:00",
+  "data_commit": "2026-11-16T13:05:28-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2b50f15",
+    "data": "2026-11-16",
+    "assunto": "fix(docs): redige o user_id e o e-mail pessoais publicados no #595 (#599)"
+   },
+   {
+    "sha": "5f74d3f",
+    "data": "2026-11-16",
+    "assunto": "fix(docs): corrige as fixtures de conclusão e a alegação do Q8a do ninebox (#598)"
+   },
+   {
+    "sha": "c2102ad",
+    "data": "2026-11-16",
+    "assunto": "docs(auditoria): classifica as dez migrations órfãs da muri contra o banco real (#596)"
+   },
+   {
+    "sha": "f732746",
+    "data": "2026-11-16",
+    "assunto": "docs: resgata a documentação operacional do ninebox e das capas de treinamento (#595)"
+   },
    {
     "sha": "3dcc001",
     "data": "2026-11-16",
@@ -111,29 +131,9 @@
     "sha": "44cf65f",
     "data": "2026-11-15",
     "assunto": "chore: resgata melhorias de PRs fechadas sem merge (#570)"
-   },
-   {
-    "sha": "eb2efe5",
-    "data": "2026-11-14",
-    "assunto": "fix(sync): autocommit rev3 — índice devolvido em SIGTERM, gitleaks só nas linhas adicionadas e bateria de 53 cenários (#"
-   },
-   {
-    "sha": "b4308c5",
-    "data": "2026-11-14",
-    "assunto": "build(deps): bump glob 14.0.6 e @sentry/vite-plugin 11.12.0 (#568)"
-   },
-   {
-    "sha": "311ee8a",
-    "data": "2026-11-14",
-    "assunto": "chore: contexto agendado de 10 min para 1x/hora (#566)"
-   },
-   {
-    "sha": "1937631",
-    "data": "2026-11-14",
-    "assunto": "chore(db): revoga DML de anon/authenticated nas dp_audit_log* (menor privilégio) (#563)"
    }
   ],
-  "arquivos_mudados_7d": 808,
+  "arquivos_mudados_7d": 776,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -157,7 +157,7 @@
    },
    {
     "pasta": "supabase/functions/_shared",
-    "mudancas": 48
+    "mudancas": 47
    },
    {
     "pasta": "src/utils/__tests__",
@@ -169,18 +169,18 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 34
+    "mudancas": 31
    },
    {
     "pasta": "src/components/folha",
     "mudancas": 31
    },
    {
-    "pasta": "supabase/functions/external-db-bridge",
-    "mudancas": 30
+    "pasta": "src/components/esocial",
+    "mudancas": 28
    },
    {
-    "pasta": "src/components/esocial",
+    "pasta": "supabase/functions/external-db-bridge",
     "mudancas": 28
    },
    {
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 34
+    "mudancas": 31
    },
    {
     "arquivo": "package.json",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "CLAUDE.md",
-    "mudancas": 15
+    "mudancas": 14
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -234,10 +234,6 @@
     "mudancas": 9
    },
    {
-    "arquivo": "deno.lock",
-    "mudancas": 8
-   },
-   {
     "arquivo": "supabase/functions/calcular-folha/index.ts",
     "mudancas": 8
    },
@@ -246,19 +242,15 @@
     "mudancas": 8
    },
    {
-    "arquivo": ".github/workflows/canonical-edge-functions.yml",
-    "mudancas": 7
-   },
-   {
     "arquivo": "AGENTS.md",
     "mudancas": 7
    },
    {
-    "arquivo": "e2e/auth.setup.ts",
+    "arquivo": "deno.lock",
     "mudancas": 7
    },
    {
-    "arquivo": "infra/github/action-pins.json",
+    "arquivo": "e2e/auth.setup.ts",
     "mudancas": 7
    },
    {
@@ -270,11 +262,15 @@
     "mudancas": 7
    },
    {
-    "arquivo": ".github/workflows/ci.yml",
+    "arquivo": ".github/workflows/canonical-edge-functions.yml",
     "mudancas": 6
    },
    {
     "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "infra/github/action-pins.json",
     "mudancas": 6
    },
    {
@@ -296,16 +292,20 @@
    {
     "arquivo": "src/calculators/impostos.ts",
     "mudancas": 6
+   },
+   {
+    "arquivo": "src/services/cnabService.ts",
+    "mudancas": 6
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 227
+    "commits": 231
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 51
+    "commits": 47
    },
    {
     "autor": "dependabot[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3117,
+  "arquivos_total": 3149,
   "arquivos_codigo": 1710,
   "linhas_codigo": 320952,
   "rotas": 116,
@@ -339,7 +339,7 @@
   "testes": 641,
   "workflows": 21,
   "scripts": 115,
-  "docs_md": 295
+  "docs_md": 319
  },
  "por_pasta": {
   "capacitor.config.ts": {
