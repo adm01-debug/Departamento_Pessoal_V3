@@ -11,7 +11,14 @@ import { toast } from 'sonner';
 import { usePeriodoExperiencia, useSalvarPeriodoExperiencia } from '@/hooks/useColaboradorDetalhes';
 import type { Tables } from '@/integrations/supabase/database.types';
 
-export function ExperienciaTab({ colaboradorId }: { colaboradorId: string }) {
+export function ExperienciaTab({
+  colaboradorId,
+  /** Ver FormacaoTab: embutido em diálogo com título próprio. */
+  hideHeader = false,
+}: {
+  colaboradorId: string;
+  hideHeader?: boolean;
+}) {
   const { data, isLoading } = usePeriodoExperiencia(colaboradorId);
   const salvar = useSalvarPeriodoExperiencia();
   const [editing, setEditing] = useState(false);
@@ -53,9 +60,9 @@ export function ExperienciaTab({ colaboradorId }: { colaboradorId: string }) {
   const showForm = !data || editing;
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg">Período de Experiência</CardTitle>
+    <Card className={hideHeader ? 'border-0 bg-transparent shadow-none' : undefined}>
+      <CardHeader className={`flex flex-row items-center ${hideHeader ? 'justify-end px-0 pt-0' : 'justify-between'}`}>
+        {!hideHeader && <CardTitle className="text-lg">Período de Experiência</CardTitle>}
         {data && !editing && (
           <Button variant="outline" size="sm" onClick={() => startEdit(data)}>
             <Edit2 className="mr-1 h-4 w-4" />

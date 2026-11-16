@@ -1,5 +1,5 @@
 import type { MedidaDisciplinarInsert } from '@/types/medidasDisciplinares';
-import type { TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
+import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEmpresas } from './useEmpresas';
 import { batidasPontoService } from '@/services/batidasPontoService';
@@ -8,6 +8,9 @@ import { medidasDisciplinaresService } from '@/services/medidasDisciplinaresServ
 import { episService, episEntregasService } from '@/services/episService';
 import { jornadaHorariosService } from '@/services/jornadaHorariosService';
 import { bancoHorasConfigService } from '@/services/bancoHorasConfigService';
+import { bancoHorasService } from '@/services/bancoHorasService';
+import { pontoService } from '@/services/pontoService';
+import { mockOr, getMockSaldoBancoHoras, getMockRegistrosPontoSemana } from '@/mocks/colaboradoresMock';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 
@@ -287,5 +290,32 @@ export function useSalvarBancoHorasConfig() {
       toast.success('Configuração salva');
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
+  });
+}
+
+// === SALDO DO BANCO DE HORAS (Dossiê → Jornada & Ponto) ===
+// Chave dentro da família `banco_horas` já usada pelas leituras da área
+// (useBancoHoras), e não uma chave própria: assim qualquer writer que
+// invalide ['banco_horas'] também derruba este saldo.
+export function useSaldoBancoHoras(colaboradorId: string) {
+  const { empresaAtual } = useEmpresas();
+  return useQuery({
+    queryKey: ['banco_horas', 'saldo', colaboradorId, empresaAtual?.id],
+    queryFn: async () =>
+      mockOr(getMockSaldoBancoHoras(colaboradorId)) ?? bancoHorasService.getSaldo(colaboradorId, empresaAtual!.id),
+    enabled: !!colaboradorId && !!empresaAtual?.id,
+  });
+}
+
+// === REGISTROS DE PONTO DA SEMANA (Dossiê → Jornada & Ponto) ===
+// Família ['registros-ponto'], que os writers de ponto já invalidam — bater
+// ponto atualiza este resumo sem esperar os 5 min de staleTime.
+export function useRegistrosPontoSemana(colaboradorId: string) {
+  return useQuery({
+    queryKey: ['registros-ponto', 'semana', colaboradorId],
+    queryFn: async () =>
+      (mockOr(getMockRegistrosPontoSemana(colaboradorId)) as Tables<'registros_ponto'>[] | undefined) ??
+      pontoService.buscarRegistrosSemana(colaboradorId),
+    enabled: !!colaboradorId,
   });
 }

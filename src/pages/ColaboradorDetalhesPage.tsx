@@ -29,6 +29,7 @@ import {
   User as UserIcon,
   Gift,
   GitCommitVertical,
+  Clock,
 } from 'lucide-react';
 import {
   DependentesTab,
@@ -49,6 +50,11 @@ import {
   HistoricoColaborador,
   BeneficiosTab,
   ColaboradorDocuments,
+  TrabalhoHierarquiaTab,
+  JornadaPontoTab,
+  FeriasResumoTab,
+  DesenvolvimentoResumoTab,
+  DocumentosComplianceResumoTab,
 } from '@/components/colaborador-detalhes';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -66,9 +72,10 @@ export default function ColaboradorDetalhesPage() {
   const { empresaAtual } = useEmpresas();
   const [activeMainTab, setActiveMainTab] = useState('geral');
   const [activePessoalTab, setActivePessoalTab] = useState('dependentes');
-  const [activeProfissionalTab, setActiveProfissionalTab] = useState('historico');
+  const [activeProfissionalTab, setActiveProfissionalTab] = useState('trabalho');
   const [activeFinanceiroTab, setActiveFinanceiroTab] = useState('contas');
-  const [activeDocumentosTab, setActiveDocumentosTab] = useState('pessoais');
+  const [activeDocumentosTab, setActiveDocumentosTab] = useState('compliance');
+  const [activeJornadaTab, setActiveJornadaTab] = useState('ponto');
 
   const { data: colaborador, isLoading } = useQuery({
     queryKey: ['colaborador', id, empresaAtual?.id],
@@ -206,6 +213,9 @@ export default function ColaboradorDetalhesPage() {
             </TabsTrigger>
             <TabsTrigger value="profissional" className="rounded-lg font-body px-6 gap-2">
               <Briefcase className="h-4 w-4" /> Carreira
+            </TabsTrigger>
+            <TabsTrigger value="jornada" className="rounded-lg font-body px-6 gap-2">
+              <Clock className="h-4 w-4" /> Jornada & Ponto
             </TabsTrigger>
             <TabsTrigger value="financeiro" className="rounded-lg font-body px-6 gap-2">
               <Landmark className="h-4 w-4" /> Financeiro
@@ -346,6 +356,12 @@ export default function ColaboradorDetalhesPage() {
             <Tabs value={activeProfissionalTab} onValueChange={setActiveProfissionalTab} className="space-y-4">
               <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
                 <TabsTrigger
+                  value="trabalho"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Trabalho &amp; Hierarquia
+                </TabsTrigger>
+                <TabsTrigger
                   value="historico"
                   className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
                 >
@@ -370,12 +386,21 @@ export default function ColaboradorDetalhesPage() {
                   Formação
                 </TabsTrigger>
                 <TabsTrigger
+                  value="desenvolvimento"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Desenvolvimento
+                </TabsTrigger>
+                <TabsTrigger
                   value="aso"
                   className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
                 >
                   ASO / Exames
                 </TabsTrigger>
               </TabsList>
+              <TabsContent value="trabalho">
+                {activeProfissionalTab === 'trabalho' && <TrabalhoHierarquiaTab colaboradorId={id!} />}
+              </TabsContent>
               <TabsContent value="historico">
                 {activeProfissionalTab === 'historico' && <HistoricoSalarialTab colaboradorId={id!} />}
               </TabsContent>
@@ -388,7 +413,35 @@ export default function ColaboradorDetalhesPage() {
               <TabsContent value="formacao">
                 {activeProfissionalTab === 'formacao' && <FormacaoTab colaboradorId={id!} />}
               </TabsContent>
+              <TabsContent value="desenvolvimento">
+                {activeProfissionalTab === 'desenvolvimento' && <DesenvolvimentoResumoTab colaboradorId={id!} />}
+              </TabsContent>
               <TabsContent value="aso">{activeProfissionalTab === 'aso' && <ASOTab colaboradorId={id!} />}</TabsContent>
+            </Tabs>
+          </TabsContent>
+
+          <TabsContent value="jornada">
+            <Tabs value={activeJornadaTab} onValueChange={setActiveJornadaTab} className="space-y-4">
+              <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
+                <TabsTrigger
+                  value="ponto"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Jornada &amp; Ponto
+                </TabsTrigger>
+                <TabsTrigger
+                  value="ferias"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Férias &amp; Afastamentos
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="ponto">
+                {activeJornadaTab === 'ponto' && <JornadaPontoTab colaboradorId={id!} />}
+              </TabsContent>
+              <TabsContent value="ferias">
+                {activeJornadaTab === 'ferias' && <FeriasResumoTab colaboradorId={id!} />}
+              </TabsContent>
             </Tabs>
           </TabsContent>
 
@@ -421,6 +474,12 @@ export default function ColaboradorDetalhesPage() {
             <Tabs value={activeDocumentosTab} onValueChange={setActiveDocumentosTab} className="space-y-4">
               <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start">
                 <TabsTrigger
+                  value="compliance"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Compliance
+                </TabsTrigger>
+                <TabsTrigger
                   value="pessoais"
                   className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
                 >
@@ -439,6 +498,9 @@ export default function ColaboradorDetalhesPage() {
                   Dados Estagiário
                 </TabsTrigger>
               </TabsList>
+              <TabsContent value="compliance">
+                {activeDocumentosTab === 'compliance' && <DocumentosComplianceResumoTab colaboradorId={id!} />}
+              </TabsContent>
               <TabsContent value="pessoais">
                 {activeDocumentosTab === 'pessoais' && (
                   <div className="space-y-8">
