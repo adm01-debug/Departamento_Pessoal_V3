@@ -11,7 +11,14 @@ name: Canonical database — read-only security probes
 
 on:
   schedule:
-    - cron: '23 6 * * *'
+    # SEMANAL, nao diario (medido em 16/11/2026): com `environment: production`
+    # cada run espera aprovacao manual, e o agendamento diario fazia a fila
+    # crescer sem ninguem aprovar -- nos 15 ultimos runs a duracao mediana foi
+    # de 5411s e a maxima de 318948s (3,7 dias), com 5 cancelled, 5 failure e
+    # 5 success. Diario sem aprovar e o pior dos mundos: o probe nao roda E
+    # entope a aba Actions. Terca de manha (UTC) preserva a prova de seguranca
+    # do banco com uma fila que cabe na semana.
+    - cron: '23 6 * * 2'
   workflow_call:
   workflow_dispatch:
     inputs:
