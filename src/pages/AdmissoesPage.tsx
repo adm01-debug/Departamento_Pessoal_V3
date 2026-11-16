@@ -7,9 +7,20 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { NovaAdmissaoDialog } from '@/components/admissoes/NovaAdmissaoDialog';
 import { DetalhesAdmissaoDialog } from '@/components/admissoes/DetalhesAdmissaoDialog';
-import { UserPlus, ExternalLink, LayoutDashboard, List, History, Rocket, Kanban } from 'lucide-react';
+import {
+  UserPlus,
+  ExternalLink,
+  LayoutDashboard,
+  List,
+  History,
+  Rocket,
+  Kanban,
+  AlertTriangle,
+} from 'lucide-react';
 import { AdmissoesKanban } from '@/components/admissoes/AdmissoesKanban';
 import { useNavigate } from 'react-router-dom';
+import { useEmpresas } from '@/hooks/useEmpresas';
+import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { contratacaoService } from '@/services/contratacaoService';
@@ -22,7 +33,14 @@ import type { Tables } from '@/integrations/supabase/types';
 export default function AdmissoesPage() {
   const navigate = useNavigate();
 
-  const { admissoes, isLoading } = useAdmissoes();
+  const { admissoes, isLoading, error, refetch } = useAdmissoes();
+  // Sem empresa selecionada a query de admissões fica DESABILITADA
+  // (`enabled: !!empresaId` no hook) e, no react-query v5, `isLoading` é false:
+  // sem este aviso a tela cairia no vazio em vez de pedir a empresa.
+  const { empresaAtual, loadingEmpresas } = useEmpresas();
+  const semEmpresa = !loadingEmpresas && !empresaAtual?.id;
+  /** Falha na consulta ou falta de empresa: nenhuma aba de dados pode afirmar saúde. */
+  const dadosIndisponiveis = !!error || semEmpresa;
   // Aba ativa em estado próprio: é o que dá destino aos botões "Resolver agora"
   // dos modais do dashboard (`onAbrirAba`).
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -133,24 +151,61 @@ export default function AdmissoesPage() {
             </TabsTrigger>
           </TabsList>
 
+          {dadosIndisponiveis && (
+            <div
+              role={semEmpresa ? 'status' : 'alert'}
+              className={cn(
+                'flex flex-col items-center gap-3 rounded-2xl border p-8 text-center',
+                semEmpresa ? 'border-border/40' : 'border-destructive/20'
+              )}
+            >
+              <AlertTriangle
+                className={cn('h-6 w-6', semEmpresa ? 'text-muted-foreground' : 'text-destructive')}
+              />
+              <p className="text-sm text-muted-foreground">
+                {semEmpresa
+                  ? 'Selecione uma empresa para carregar as admissões.'
+                  : 'Falha ao carregar as admissões. Nenhum número desta tela está disponível.'}
+              </p>
+              {!semEmpresa && (
+                <Button variant="outline" size="sm" onClick={() => void refetch()}>
+                  Tentar novamente
+                </Button>
+              )}
+            </div>
+          )}
+
           <TabsContent value="kanban" className="space-y-4">
-            {isLoading ? (
-              <div className="flex justify-center p-12">
-                <Spinner size="lg" />
-              </div>
-            ) : (
-              <AdmissoesKanban admissoes={admissoes} />
-            )}
+            {!dadosIndisponiveis &&
+              (isLoading ? (
+                <div className="flex justify-center p-12">
+                  <Spinner size="lg" />
+                </div>
+              ) : (
+                <AdmissoesKanban
+                  admissoes={admissoes}
+                  isActive={activeTab === 'kanban'}
+                  sendingLink={sendingLink}
+                  onEnviarLink={handleEnviarLink}
+                  onEnviarWhatsApp={handleEnviarWhatsApp}
+                  onOpenDetalhes={(admissao) => {
+                    // Mesmos DOIS estados do resto da página (ver `admissaoDoModal`).
+                    setSelectedAdmissao(admissao);
+                    setAdmissaoDoModal(admissao);
+                  }}
+                />
+              ))}
           </TabsContent>
 
           <TabsContent value="dashboard" className="space-y-6">
-            {isLoading ? (
-              <div className="flex justify-center p-12">
-                <Spinner size="lg" />
-              </div>
-            ) : (
-              <AdmissoesDashboard admissoes={admissoes || []} onAbrirAba={setActiveTab} />
-            )}
+            {!dadosIndisponiveis &&
+              (isLoading ? (
+                <div className="flex justify-center p-12">
+                  <Spinner size="lg" />
+                </div>
+              ) : (
+                <AdmissoesDashboard admissoes={admissoes || []} onAbrirAba={setActiveTab} />
+              ))}
           </TabsContent>
 
           <TabsContent value="onboarding" className="space-y-6">
@@ -158,19 +213,21 @@ export default function AdmissoesPage() {
           </TabsContent>
 
           <TabsContent value="gestao" className="space-y-6">
-            <GestaoCandidatos
-              admissoes={admissoes}
-              isLoading={isLoading}
-              sendingLink={sendingLink}
-              onEnviarLink={handleEnviarLink}
-              onEnviarWhatsApp={handleEnviarWhatsApp}
-              onOpenDetalhes={(admissao) => {
-                // Abrir guarda a admissão nos DOIS estados (o `open` e o
-                // conteúdo do modal). Ver `admissaoDoModal`.
-                setSelectedAdmissao(admissao);
-                setAdmissaoDoModal(admissao);
-              }}
-            />
+            {!dadosIndisponiveis && (
+              <GestaoCandidatos
+                admissoes={admissoes}
+                isLoading={isLoading}
+                sendingLink={sendingLink}
+                onEnviarLink={handleEnviarLink}
+                onEnviarWhatsApp={handleEnviarWhatsApp}
+                onOpenDetalhes={(admissao) => {
+                  // Abrir guarda a admissão nos DOIS estados (o `open` e o
+                  // conteúdo do modal). Ver `admissaoDoModal`.
+                  setSelectedAdmissao(admissao);
+                  setAdmissaoDoModal(admissao);
+                }}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="auditoria">
