@@ -259,8 +259,16 @@ order by 4 desc;
 -- ─────────────────────────────────────────────────────────────────────────────
 -- Q8 · Divergências relevantes + resumo executivo (somente agregados)
 -- ─────────────────────────────────────────────────────────────────────────────
--- Q8a · Reclassificação oficial em SQL — MESMA regra do app: 1 colaborador por
---        ciclo, registro mais recente, faixas ≤1,5 / ≤3,5 / >3,5
+-- Q8a · SIMULAÇÃO de reclassificação — NÃO é a regra do app.
+--        Aplica só as faixas (≤1,5 / ≤3,5 / >3,5) sobre 1 registro por
+--        colaborador/ciclo, o mais recente. O caminho real da tela
+--        (src/components/avaliacao/NineBoxTab.tsx → consolidarNineBox360 em
+--        src/components/avaliacao/nineBox360.ts) exige ainda a APROVAÇÃO
+--        VIGENTE da versão consolidada e as demais condições do motor 360.
+--        Logo, um feedback pendente ou cancelado com notas entre 1 e 5 aparece
+--        aqui e NÃO aparece na tela: a divergência contra o KPI é esperada e
+--        não indica defeito. Para conferir o KPI de verdade, use a tela ou
+--        reproduza a elegibilidade completa — o que este bloco não faz.
 with ultimo as (
   select distinct on (f.empresa_id, f.ciclo_id, f.avaliado_id)
     f.empresa_id, f.ciclo_id, f.avaliado_id,
@@ -285,6 +293,7 @@ from faixas
 group by 1,2,3,4,5
 order by 1,2,3,4,5;
 
+-- (Q8b herda a mesma ressalva de elegibilidade do Q8a acima.)
 -- Q8b · Classificáveis × fora da matriz, por ciclo (para comparar com o KPI da tela)
 with ultimo as (
   select distinct on (f.empresa_id, f.ciclo_id, f.avaliado_id)

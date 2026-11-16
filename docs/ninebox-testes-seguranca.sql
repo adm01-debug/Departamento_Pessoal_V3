@@ -12,8 +12,16 @@
 --
 -- ANTES DE RODAR: substitua os marcadores abaixo.
 --   :empresa_a   :empresa_b   :usuario_rh   :usuario_admin
---   :usuario_gestor   :usuario_user   :colaborador_a   :ciclo_a
+--   :usuario_gestor   :usuario_user   :colaborador_a   :avaliador_a   :ciclo_a
 -- Os valores saem de Q1/Q2b/Q13 do `ninebox-validacao-banco.sql`.
+--
+-- :avaliador_a tem de ser um colaborador da :empresa_a DIFERENTE do
+-- :colaborador_a. Sem ele, `finalizar_feedback(..., 'concluir', ...)` recusa
+-- com `avaliador_ausente` (ver
+-- supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql:556)
+-- e, como tudo roda em uma transação, o primeiro caso de conclusão aborta o
+-- restante da suíte. O caso que TESTA a recusa usa `v_sem_avaliador`, de
+-- propósito — não confundir os dois.
 --
 -- COMO LER O RESULTADO: cada caso devolve uma linha `caso | esperado | obtido |
 -- ok`. Ao final, `select count(*) filter (where not ok) as falhas` deve dar 0.
@@ -215,7 +223,7 @@ begin
   perform set_config('request.jwt.claims', json_build_object('sub', '{{usuario_rh}}')::text, true);
 
   v_json := public.criar_feedback_seguro('{{empresa_a}}', '{{colaborador_a}}', '{{ciclo_a}}',
-            'gestor', 4.5, 4, null, null, null, null, 'teste-versao-criar-1');
+            'gestor', 4.5, 4, '{{avaliador_a}}', null, null, null, 'teste-versao-criar-1');
   v_id := (v_json ->> 'feedback_id')::uuid;
 
   perform public.finalizar_feedback(v_id, 'concluir', null, 'teste-versao-concluir-1');
@@ -302,7 +310,7 @@ begin
   perform set_config('request.jwt.claims', json_build_object('sub', '{{usuario_rh}}')::text, true);
 
   v_json := public.criar_feedback_seguro('{{empresa_a}}', '{{colaborador_a}}', '{{ciclo_a}}',
-            'gestor', 4.5, 4, null, null, null, null, 'teste-audit-1');
+            'gestor', 4.5, 4, '{{avaliador_a}}', null, null, null, 'teste-audit-1');
   v_id := (v_json ->> 'feedback_id')::uuid;
   perform public.finalizar_feedback(v_id, 'concluir', null, 'teste-audit-2');
   perform public.validar_potencial_avaliacao(v_id, 'teste-audit-3', null);
@@ -338,11 +346,11 @@ begin
   perform set_config('request.jwt.claims', json_build_object('sub', '{{usuario_rh}}')::text, true);
 
   v_json := public.criar_feedback_seguro('{{empresa_a}}', '{{colaborador_a}}', '{{ciclo_a}}',
-            'gestor', 4.5, null, null, null, null, null, 'teste-cat-gestor-1');
+            'gestor', 4.5, null, '{{avaliador_a}}', null, null, null, 'teste-cat-gestor-1');
   v_gestor := (v_json ->> 'feedback_id')::uuid;
 
   v_json := public.criar_feedback_seguro('{{empresa_a}}', '{{colaborador_a}}', '{{ciclo_a}}',
-            'par', 4.5, null, null, null, null, null, 'teste-cat-par-1');
+            'par', 4.5, null, '{{avaliador_a}}', null, null, null, 'teste-cat-par-1');
   v_par := (v_json ->> 'feedback_id')::uuid;
 
   insert into _res values (
@@ -380,7 +388,7 @@ begin
   perform set_config('request.jwt.claims', json_build_object('sub', '{{usuario_rh}}')::text, true);
 
   v_json := public.criar_feedback_seguro('{{empresa_a}}', '{{colaborador_a}}', '{{ciclo_a}}',
-            'gestor', 4.5, 4, null, null, null, null, 'teste-rev-1');
+            'gestor', 4.5, 4, '{{avaliador_a}}', null, null, null, 'teste-rev-1');
   v_id := (v_json ->> 'feedback_id')::uuid;
 
   perform public.finalizar_feedback(v_id, 'concluir', null, 'teste-rev-2');
@@ -419,7 +427,7 @@ begin
   perform set_config('request.jwt.claims', json_build_object('sub', '{{usuario_rh}}')::text, true);
 
   v_json := public.criar_feedback_seguro('{{empresa_a}}', '{{colaborador_a}}', '{{ciclo_a}}',
-            'gestor', 4.5, 4, null, null, null, null, 'teste-cascade-1');
+            'gestor', 4.5, 4, '{{avaliador_a}}', null, null, null, 'teste-cascade-1');
   v_id := (v_json ->> 'feedback_id')::uuid;
   perform public.finalizar_feedback(v_id, 'concluir', null, 'teste-cascade-2');
   perform public.validar_potencial_avaliacao(v_id, 'teste-cascade-3', null);
