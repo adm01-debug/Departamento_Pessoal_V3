@@ -86,11 +86,16 @@ que já existem, e a comparação derruba a recomendação anterior:
     `20261107203000` está no ledger, incluir o arquivo na lista fechada
     imprimiria `skip` e não executaria SQL nenhum.
 
-  O motivo para não canonizá-la é outro, e menor: o arquivo não teria efeito e
-  colocaria no repositório, como histórico reproduzível, um DDL que está
-  **revertido** em produção — material para o próximo leitor rodar à mão e
-  reabrir a policy fora do fluxo. Para não perder o conteúdo, o SQL dela está
-  transcrito no apêndice deste documento.
+  **Restaurar este arquivo é escolha, não erro.** A favor: é o único das 272
+  cujo conteúdo não existe em arquivo nenhum, e restaurá-lo sob o timestamp
+  original recuperaria 1 das 272 na paridade ledger↔repositório sem tocar em
+  policy — os dois filtros acima garantem isso. Contra: o arquivo não teria
+  efeito em nenhum fluxo e colocaria no repositório, como histórico
+  reproduzível, um DDL que está **revertido** em produção — material para
+  alguém rodar à mão fora do fluxo. Esta auditoria escolheu **não** criar o
+  arquivo e transcrever o SQL no apêndice, porque preserva o conteúdo sem
+  acrescentar arquivo inócuo; criar o arquivo seria defensável e é decisão do
+  dono, em PR própria, não desta.
 
 Ou seja: o trabalho destas 8 **não está perdido** — está na `main`, sob outro
 timestamp, em 7 casos, e foi deliberadamente substituído no 8º.
