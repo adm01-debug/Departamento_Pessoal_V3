@@ -52,9 +52,9 @@ select
   'Q1' as bloco,
   case
     when to_regclass('public.vw_matriz_nine_box') is null then 'INEXISTENTE'
-    when pg_get_viewdef('public.vw_matriz_nine_box'::regclass, true) ilike '%feedbacks_360%'
+    when pg_get_viewdef(to_regclass('public.vw_matriz_nine_box'), true) ilike '%feedbacks_360%'
       then 'EXISTENTE · definicao ANTERIOR (agrega feedbacks_360)'
-    when pg_get_viewdef('public.vw_matriz_nine_box'::regclass, true) ilike '%avaliacoes%'
+    when pg_get_viewdef(to_regclass('public.vw_matriz_nine_box'), true) ilike '%avaliacoes%'
       then 'EXISTENTE · definicao REESCRITA (aponta para avaliacoes)'
     else 'EXISTENTE · definicao DESCONHECIDA'
   end as estado_da_view;
@@ -64,7 +64,7 @@ select
   'Q1b' as bloco,
   c.relname                        as objeto,
   c.relkind                        as tipo,           -- 'v' = view
-  v.security_invoker,
+  coalesce('security_invoker=true' = any (c.reloptions), false) as security_invoker,
   pg_get_userbyid(c.relowner)      as proprietario,
   obj_description(c.oid, 'pg_class') as comentario
 from pg_class c
@@ -78,7 +78,7 @@ where c.relnamespace = 'public'::regnamespace
 select
   'Q1c' as bloco,
   c.relname as view_relacionada,
-  v.security_invoker
+  coalesce('security_invoker=true' = any (c.reloptions), false) as security_invoker
 from pg_class c
 left join pg_views v on v.schemaname = 'public' and v.viewname = c.relname
 where c.relnamespace = 'public'::regnamespace
@@ -96,7 +96,7 @@ select
   case
     when to_regclass('public.vw_matriz_nine_box') is null
       then '(view inexistente — nada a mostrar)'
-    else pg_get_viewdef('public.vw_matriz_nine_box'::regclass, true)
+    else pg_get_viewdef(to_regclass('public.vw_matriz_nine_box'), true)
   end as definicao_implantada;
 
 -- ─────────────────────────────────────────────────────────────────────────────

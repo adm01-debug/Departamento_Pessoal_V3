@@ -89,7 +89,7 @@ where table_schema = 'public' and table_name = 'feedbacks_360'
 order by grantee, privilege_type;
 
 -- Q5b · Policies de `feedbacks_360` (nome, comando, papéis, expressão)
-select 'Q5b' as bloco, pol.polname as policy, pol.cmd as comando,
+select 'Q5b' as bloco, pol.polname as policy, pol.polcmd as comando,
        coalesce(array_to_string(pol.polroles::regrole[], ', '), 'PUBLIC') as papeis,
        pg_get_expr(pol.polqual, pol.polrelid) as usando,
        pg_get_expr(pol.polwithcheck, pol.polrelid) as com_check
@@ -155,7 +155,7 @@ where n.nspname = 'public' and c.relname = 'feedbacks_360';
 -- Q10 · QUAL POLICY CONTROLA CADA OPERAÇÃO (e se fecha por empresa)
 -- ─────────────────────────────────────────────────────────────────────────────
 select 'Q10' as bloco, pol.polname as policy,
-       case pol.cmd when 'r' then 'SELECT' when 'a' then 'INSERT'
+       case pol.polcmd when 'r' then 'SELECT' when 'a' then 'INSERT'
                     when 'w' then 'UPDATE' when 'd' then 'DELETE' else 'TODAS' end as comando,
        coalesce(array_to_string(pol.polroles::regrole[], ', '), 'PUBLIC') as papeis,
        (coalesce(pg_get_expr(pol.polqual, pol.polrelid), '') || ' ' ||
@@ -179,7 +179,7 @@ select 'Q11' as bloco,
   exists (select 1 from pg_policy pol
             join pg_class c on c.oid = pol.polrelid
             join pg_namespace n on n.oid = c.relnamespace
-           where n.nspname = 'public' and c.relname = 'feedbacks_360' and pol.cmd = 'd')      as policy_delete_existe,
+           where n.nspname = 'public' and c.relname = 'feedbacks_360' and pol.polcmd = 'd')      as policy_delete_existe,
   exists (select 1 from information_schema.role_table_grants
            where table_schema = 'public' and table_name = 'feedbacks_360'
              and privilege_type = 'INSERT' and grantee in ('authenticated','anon','public')) as insert_aberto,
@@ -194,7 +194,7 @@ select 'Q11' as bloco,
 -- Q12 · POLICIES SEM FILTRO DE EMPRESA nas tabelas do módulo (risco de vazamento)
 -- ─────────────────────────────────────────────────────────────────────────────
 select 'Q12' as bloco, c.relname as tabela, pol.polname as policy,
-       case pol.cmd when 'r' then 'SELECT' when 'a' then 'INSERT'
+       case pol.polcmd when 'r' then 'SELECT' when 'a' then 'INSERT'
                     when 'w' then 'UPDATE' when 'd' then 'DELETE' else 'TODAS' end as comando,
        coalesce(pg_get_expr(pol.polqual, pol.polrelid), '(sem USING)') as usando
 from pg_policy pol
@@ -249,7 +249,7 @@ order by grantee, privilege_type;
 
 -- Q15b · Policies de `user_roles` (se não permitirem auto-leitura, o helper é obrigatório)
 select 'Q15b' as bloco, pol.polname as policy,
-       case pol.cmd when 'r' then 'SELECT' when 'a' then 'INSERT'
+       case pol.polcmd when 'r' then 'SELECT' when 'a' then 'INSERT'
                     when 'w' then 'UPDATE' when 'd' then 'DELETE' else 'TODAS' end as comando,
        coalesce(array_to_string(pol.polroles::regrole[], ', '), 'PUBLIC') as papeis,
        pg_get_expr(pol.polqual, pol.polrelid) as usando

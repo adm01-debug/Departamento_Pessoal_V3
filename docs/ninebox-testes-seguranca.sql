@@ -22,6 +22,10 @@
 begin;
 
 create temporary table _res (caso text, esperado text, obtido text, ok boolean) on commit drop;
+-- A tabela de resultados pertence ao papel que a criou. Sem esta concessao, o
+-- primeiro insert apos `set local role authenticated` falha com
+-- "permission denied for table _res" e aborta a transacao inteira.
+grant insert, select on _res to authenticated;
 
 -- Helper de teste: roda um SELECT contando linhas sob um papel/usuário.
 create or replace function pg_temp.conta_como(p_usuario uuid, p_sql text)

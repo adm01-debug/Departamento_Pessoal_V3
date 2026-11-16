@@ -60,12 +60,12 @@ from (values
 ) as t(funcao);
 
 -- D5 · A policy que a implantação substitui tem o MESMO nome (substituição limpa)?
-select 'D5' as bloco, pol.polname as policy, pol.cmd as comando
+select 'D5' as bloco, pol.polname as policy, pol.polcmd as comando
 from pg_policy pol
 join pg_class c on c.oid = pol.polrelid
 join pg_namespace n on n.oid = c.relnamespace
 where n.nspname = 'public' and c.relname = 'feedbacks_360'
-order by pol.cmd, pol.polname;
+order by pol.polcmd, pol.polname;
 
 -- D6 · Colunas que o Nine-Box grava/lê (se faltar alguma, PARE)
 select 'D6' as bloco, column_name, data_type

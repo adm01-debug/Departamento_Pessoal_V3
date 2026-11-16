@@ -1,3 +1,11 @@
+> **Nota de resgate (2026-11-16).** Este documento descreve aplicação de DDL
+> pelo SQL Editor do Supabase ou por `psql`. Esse caminho **não é mais
+> permitido**: desde o `AGENTS.md` deste repositório, DDL em produção só vai
+> pelo `canonical-migrations.yml` (`validate` → `apply` → `verify`, a partir da
+> `main`, com sidecar `.verify.sql`). As instruções abaixo ficam como registro
+> histórico do que foi feito à época; para aplicar qualquer coisa hoje, use o
+> workflow canônico.
+
 # Nine-Box · Implantação mínima no Supabase atual (sem Docker, sem segundo projeto)
 
 Documento de decisão. **Nada foi executado.** Responde às entregas pedidas e

@@ -221,5 +221,9 @@ texto atual, preservando a intenção original de cada âncora:
 | `src/components/avaliacao/PdiTab.tsx`       | `componente`     | ganhou a prop `onExcluir` (excluir PDI)                                 |
 | `src/components/avaliacao/MetasOKRsTab.tsx` | `componente`     | ganhou a prop `onExcluir` (excluir meta/OKR)                            |
 
-Com o baseline nesse estado, `node scripts/verificar-layout-protegido.mjs`
-passa na `main` — e volta a reprovar se alguém alterar o contrato visual.
+O resultado acima foi obtido rodando `scripts/verificar-layout-protegido.mjs`
+da branch `muri` contra esta árvore, fora do repositório. **O script em si ainda
+não está na `main`**, e não há `verificar:layout` no `package.json`: por ora este
+baseline é inventário conferido, não proteção automatizada. Com o baseline neste
+estado, o verificador passa quando for trazido — e volta a reprovar se alguém
+alterar o contrato visual.

@@ -1,3 +1,10 @@
+> **Nota de resgate (2026-11-16).** Este roteiro depende de
+> `scripts/training-images-homolog/homolog.mjs`, `scheduler-enable.sql`,
+> `scheduler-disable.sql` e `scheduler-status.sql`, que **não estão nesta
+> alteração**: vêm na recuperação da camada de aplicação das capas. Até esses
+> arquivos chegarem à `main`, o procedimento abaixo é histórico, não
+> reproduzível.
+
 # Homologação isolada — Hub de imagens (alternativa ao Docker)
 
 Status: **procedimento preparado, NÃO executado**. Nenhum projeto Supabase foi

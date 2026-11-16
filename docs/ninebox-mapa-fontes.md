@@ -85,7 +85,7 @@
 
 ```sql
 -- Q1: a view existe e está válida?
-select c.relname, c.relkind, v.security_invoker
+select c.relname, c.relkind, coalesce('security_invoker=true' = any (c.reloptions), false) as security_invoker
 from pg_class c left join pg_views v on v.viewname = c.relname
 where c.relname = 'vw_matriz_nine_box';
 
