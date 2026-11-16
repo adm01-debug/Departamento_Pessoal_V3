@@ -67,8 +67,15 @@ describe('NineBoxQuadranteDialog — coreografia "Pendências"', () => {
     expect(container.querySelector('.bg-black\\/60')).toBeTruthy();
     expect(container.querySelector('.backdrop-blur-sm')).toBeTruthy();
     // Casca: a caixa que nasce quadrada e estica, ancorada no TOPO.
-    const shell = container.querySelector('div[style*="transform-origin: top center"]') as HTMLElement;
+    // Procura pela PROPRIEDADE, nao pela string: o jsdom 31 normalizou a
+    // serializacao de `transform-origin` para a ordem canonica x-y, entao o
+    // mesmo style que o jsdom 30 escrevia como "top center" agora sai como
+    // "center top". O navegador aceita as duas ordens e o componente nao
+    // mudou (NineBoxQuadranteDialog.tsx:109 segue `transformOrigin: 'top
+    // center'`); era a leitura por substring aqui que estava fragil.
+    const shell = container.querySelector('div[style*="transform-origin"]') as HTMLElement;
     expect(shell).toBeTruthy();
+    expect(shell.style.transformOrigin.split(' ').sort().join(' ')).toBe('center top');
     // Largura que esta janela já usava (`DialogContent className="max-w-lg"`).
     expect(shell.className).toContain('max-w-lg');
     // Contêiner da cascata com `display: contents` — não cria caixa, então o
