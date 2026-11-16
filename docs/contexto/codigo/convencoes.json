@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(ninebox): converte as 4 notas da consolidação para numeric(4,3) — sem isso o lote grava e o deploy falha (#575)",
    "chore: inventario do estado real [auto] (#581)",
    "chore(ninebox): canoniza no repo as 4 funcoes endurecidas em producao (#577)",
    "fix(ninebox): policy de leitura volta a valer somente para authenticated (#574)",
-   "test(ferias): resgata as 2 assercoes extras do sidecar do feriado de 20/11 (#572)",
-   "chore(docs): painel de prontidao deixa de pedir ao dono a #557 ja mergeada (#573)"
+   "test(ferias): resgata as 2 assercoes extras do sidecar do feriado de 20/11 (#572)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

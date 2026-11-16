@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8f3efc6caa` · branch `main` · 2026-11-16 11:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `de3bf3ba77` · branch `main` · 2026-11-16 11:29 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -900,7 +900,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | public | insert | `feedbacks_360` |
 | revoke | public | truncate | `feedbacks_360`, `feedbacks_360` |
 | revoke | public, anon | all | `versao_avaliacao_feedback`, `vw_feedbacks_360_versao`, `pode_gerir_avaliacoes`, `pode_validar_potencial`, `finalizar_feedback`, `validar_potencial_avaliacao`, `criar_feedback_seguro`, `decidir_aprovacao_gestor`, `colaborador_id_do_usuario`, `pode_aprovar_colaborador`, `enviar_avaliacao_ao_gestor`, `situacao_aprovacao`, `versao_consolidada_avaliacao`, `trg_feedbacks_360_consolidacao`, `validar_potencial_avaliacao` … +18 |
-| revoke | public, anon, authenticated | all | `sincronizar_consolidacao_avaliacao`, `feedbacks_360_consolidacoes`, `feedbacks_360_aprovacoes_gestor`, `finalizar_feedback_base`, `sincronizar_consolidacao_avaliacao` |
+| revoke | public, anon, authenticated | all | `sincronizar_consolidacao_avaliacao`, `feedbacks_360_consolidacoes`, `feedbacks_360_aprovacoes_gestor`, `finalizar_feedback_base`, `sincronizar_consolidacao_avaliacao`, `versao_consolidada_avaliacao` |
 | revoke | service_role | delete | `pii_access_logs` |
 
 ## Riscos de acesso detectados

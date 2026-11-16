@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8f3efc6caa7604dc16c7960f1206d0cf0239f58e",
+  "commit": "de3bf3ba776a4cd7f2e5890c526de88b28d06c87",
   "branch": "main",
-  "data_commit": "2026-11-16T10:37:05Z",
+  "data_commit": "2026-11-16T11:29:16Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "de3bf3b",
+    "data": "2026-11-16",
+    "assunto": "fix(ninebox): converte as 4 notas da consolidação para numeric(4,3) — sem isso o lote grava e o deploy falha (#575)"
+   },
    {
     "sha": "8f3efc6",
     "data": "2026-11-16",
@@ -126,14 +131,9 @@
     "sha": "f5c370c",
     "data": "2026-11-13",
     "assunto": "chore(canonical): adiciona as migrations #464/#468/#498 ao lote fechado do canônico (#555)"
-   },
-   {
-    "sha": "a49f33e",
-    "data": "2026-11-13",
-    "assunto": "fix(logs): não silenciar console.warn em produção (#554)"
    }
   ],
-  "arquivos_mudados_7d": 780,
+  "arquivos_mudados_7d": 784,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/avaliacao",
@@ -199,38 +199,26 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 39
+    "mudancas": 38
    },
    {
     "arquivo": "package.json",
-    "mudancas": 21
-   },
-   {
-    "arquivo": "CLAUDE.md",
     "mudancas": 20
    },
    {
-    "arquivo": "package-lock.json",
+    "arquivo": "CLAUDE.md",
     "mudancas": 19
+   },
+   {
+    "arquivo": "package-lock.json",
+    "mudancas": 18
    },
    {
     "arquivo": "PENDENCIAS.md",
     "mudancas": 13
    },
    {
-    "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "AGENTS.md",
-    "mudancas": 10
-   },
-   {
     "arquivo": "deno.lock",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "infra/github/action-pins.json",
     "mudancas": 10
    },
    {
@@ -242,12 +230,24 @@
     "mudancas": 10
    },
    {
-    "arquivo": ".github/workflows/canonical-edge-functions.yml",
+    "arquivo": ".github/workflows/ci.yml",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "AGENTS.md",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "infra/github/action-pins.json",
     "mudancas": 9
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 9
+   },
+   {
+    "arquivo": ".github/workflows/canonical-edge-functions.yml",
+    "mudancas": 8
    },
    {
     "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
@@ -270,18 +270,6 @@
     "mudancas": 8
    },
    {
-    "arquivo": ".github/workflows/canonical-probes.yml",
-    "mudancas": 7
-   },
-   {
-    "arquivo": ".github/workflows/e2e.yml",
-    "mudancas": 7
-   },
-   {
-    "arquivo": ".github/workflows/security.yml",
-    "mudancas": 7
-   },
-   {
     "arquivo": "e2e/auth.setup.ts",
     "mudancas": 7
    },
@@ -296,12 +284,24 @@
    {
     "arquivo": "src/services/edgeFunctionsService.ts",
     "mudancas": 7
+   },
+   {
+    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
+    "mudancas": 7
+   },
+   {
+    "arquivo": ".github/workflows/canonical-probes.yml",
+    "mudancas": 6
+   },
+   {
+    "arquivo": ".github/workflows/e2e.yml",
+    "mudancas": 6
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 218
+    "commits": 219
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3093,
+  "arquivos_total": 3097,
   "arquivos_codigo": 1710,
   "linhas_codigo": 320771,
   "rotas": 116,
@@ -334,7 +334,7 @@
   "hooks": 106,
   "edge_functions": 65,
   "tabelas": 421,
-  "migrations": 837,
+  "migrations": 841,
   "cron_jobs": 41,
   "testes": 641,
   "workflows": 21,
