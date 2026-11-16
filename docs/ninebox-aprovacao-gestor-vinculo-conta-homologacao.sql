@@ -1,0 +1,154 @@
+-- ============================================================================
+-- HOMOLOGAÇÃO · HABILITAR A CONTA ABNER COMO GESTORA — ⚠️ NÃO EXECUTADO
+-- ----------------------------------------------------------------------------
+-- Conta: <e-mail da conta de homologacao>  ·  user_id <user_id da conta de homologacao>
+--
+-- ── BLOQUEIO COMPROVADO (leitura real, 19/10/2026) ─────────────────────────
+--   • user_roles da conta ................................ admin + gestor   OK
+--     (`get_user_roles` devolve app_role[] → o front lê os DOIS papéis)
+--   • colaboradores.user_id = <user_id da conta de homologacao> ................. 0 linhas         ✗
+--   • colaboradores.supervisor_id (empresa 66104399-…) ... 0 de 14          ✗
+--   • feedbacks_360_consolidacoes / _aprovacoes_gestor ... 404 (migration)   ✗
+--   • RPCs pode_aprovar_colaborador / situacao_aprovacao .. 404 (migration)  ✗
+--
+-- A aprovação real exige, NO SERVIDOR (migration 20261017090000, §0):
+--
+--   pode_aprovar_colaborador(p_colaborador_id) =
+--     EXISTS (colaboradores alvo JOIN colaboradores gestor
+--               ON gestor.user_id = auth.uid() AND gestor.empresa_id = alvo.empresa_id
+--              WHERE alvo.id = p AND alvo.supervisor_id = gestor.id)
+--     AND EXISTS (user_roles WHERE user_id = auth.uid() AND role = 'gestor')
+--
+-- Ou seja: papel `gestor` + uma LINHA de colaborador vinculada à conta
+-- (`user_id`) + ser `supervisor_id` do AVALIADO. Autoaprovação NÃO existe
+-- (o avaliado precisa apontar para o colaborador gestor) e o papel `admin` NÃO
+-- substitui esse vínculo.
+--
+-- ── O QUE ESTE SCRIPT FAZ (mínimo; não cria colaborador nem avaliação) ──────
+--   PASSO 1 — vincula a conta gestora de teste ao COLABORADOR GESTOR existente
+--             (`user_id`), uma linha, com guarda para não sobrescrever vínculo.
+--   PASSO 2 — aponta o `supervisor_id` do AVALIADO escolhido para esse
+--             colaborador gestor (uma linha). Sem este passo, a aprovação
+--             permanece FALSE — é a regra estrita do servidor.
+--   (Opcional) 2b — se a avaliação de homologação precisar ser de OUTRA pessoa,
+--             repita o PASSO 2 para esse avaliado.
+--
+-- ── PRÉ-REQUISITOS (ordem) ──────────────────────────────────────────────────
+--   1. 20261015090000_ninebox_finalizacao_e_potencial.sql   (aplicada ✅)
+--   2. 20261017090000_ninebox_aprovacao_gestor.sql          (PENDENTE ✗)
+--      → tabelas de consolidação/aprovações + trigger de encaminhamento
+--        automático + pode_aprovar_colaborador / situacao_aprovacao /
+--        decidir_aprovacao_gestor (+ privilégios e auditoria)
+--   3. 20261018090000_ninebox_conclusao_gestor.sql          (opcional)
+--   Depois: PASSO 1 (vínculo) e PASSO 2 (atribuição).
+-- ============================================================================
+
+-- begin;
+
+-- ── 0 · CONFERÊNCIA (só leitura) ────────────────────────────────────────────
+select c.id, c.nome_completo, c.empresa_id, c.user_id, c.supervisor_id, c.cpf
+  from public.colaboradores c
+ where c.cpf = '00000000000';                      -- descartável (CPF sentinela)
+
+-- Candidatos a AVALIADO (avaliação do gestor concluída, sem vínculo):
+-- select f.id as feedback_id, f.empresa_id, f.ciclo_id, f.avaliado_id,
+--        a.nome_completo as avaliado, a.supervisor_id
+--   from public.feedbacks_360 f
+--   join public.colaboradores a on a.id = f.avaliado_id
+--  where lower(f.tipo) = 'gestor' and lower(f.status) = 'concluido'
+--  order by f.updated_at desc;
+
+-- ── 1 · VÍNCULO DA CONTA (uma linha, o descartável) ────────────────────────
+-- update public.colaboradores
+--    set user_id = '<user_id da conta de homologacao>'
+--  where cpf = '00000000000'                                  -- o descartável
+--    and empresa_id = '66104399-aba8-4105-bbd3-9bf67820c1d0'  -- empresa da conta
+--    and user_id is null;                                     -- guarda: não sobrescreve vínculo existente
+
+-- ── 1b · PROVA DO VÍNCULO (deve voltar 1 linha com o user_id acima) ────────
+-- select id, nome_completo, user_id, supervisor_id
+--   from public.colaboradores
+--  where user_id = '<user_id da conta de homologacao>';
+
+-- ── 2 · ATRIBUIÇÃO DO AVALIADO (uma linha, sem autoaprovação) ──────────────
+-- O colaborador do PASSO 1 é o GESTOR. A avaliação precisa pertencer a OUTRA
+-- pessoa (o AVALIADO), e o `supervisor_id` dessa pessoa deve apontar para o
+-- colaborador gestor. Sem isso `pode_aprovar_colaborador` retorna FALSE.
+--
+-- update public.colaboradores
+--    set supervisor_id = '0f303507-5b13-4ca2-aa76-16122b5b37e9'
+--  where id = '<UUID_DO_AVALIADO_ESCOLHIDO>'
+--    and empresa_id = '66104399-aba8-4105-bbd3-9bf67820c1d0'
+--    and supervisor_id is distinct from '0f303507-5b13-4ca2-aa76-16122b5b37e9';
+--
+-- 2b · Se houver mais de um avaliado na homologação, repita o UPDATE acima
+--      apenas para os avaliados escolhidos (uma linha por avaliado).
+
+-- ── 1c · PROVA DA AUTORIZAÇÃO (na sessão autenticada da conta gestora) ─────
+--   select public.pode_aprovar_colaborador('<UUID_DO_AVALIADO_ESCOLHIDO>');
+--     -- esperado: TRUE  (o avaliado aponta para o colaborador gestor vinculado)
+--   select public.pode_aprovar_colaborador('<OUTRO_COLABORADOR>');
+--     -- esperado: FALSE (fora do time da conta)
+--   select public.pode_aprovar_colaborador('0f303507-5b13-4ca2-aa76-16122b5b37e9');
+--     -- esperado: FALSE (é o próprio gestor; autoaprovação não é permitida)
+
+-- ── 3 · ESCOPO DE VISÃO DO GESTOR (RLS) — PREPARADO, NÃO APLICADO ─────────
+-- Hoje `feedbacks_360_select` é por EMPRESA:
+--   using (empresa_id in (select public.get_user_empresas(auth.uid())))
+-- Para uma conta admin+gestor isso é legítimo (o `admin` tem visão da empresa).
+-- Se você quiser que uma conta SÓ `gestor` veja apenas o time dela (e não
+-- avaliações de terceiros), esta é a alteração aditiva — mesma semântica de
+-- `pode_aprovar_colaborador`, sem tocar em admin/rh:
+--
+-- drop policy if exists "feedbacks_360_select" on public.feedbacks_360;
+-- create policy "feedbacks_360_select" on public.feedbacks_360
+--   for select to authenticated
+--   using (
+--     empresa_id in (select public.get_user_empresas(auth.uid()))
+--     and (
+--       public.pode_gerir_avaliacoes()                       -- admin/rh: empresa
+--       or exists (                                          -- gestor: só o time
+--         select 1
+--           from public.colaboradores alvo
+--           join public.colaboradores gestor
+--             on gestor.user_id = auth.uid() and gestor.empresa_id = alvo.empresa_id
+--          where alvo.id = feedbacks_360.avaliado_id
+--            and (alvo.supervisor_id = gestor.id or alvo.id = gestor.id)
+--       )
+--       or feedbacks_360.avaliador_id = (select c.id from public.colaboradores c
+--                                          where c.user_id = auth.uid()
+--                                            and c.empresa_id = feedbacks_360.empresa_id limit 1)
+--     )
+--   );
+--
+-- ⚠️ Aplicar essa policy só DEPOIS de validar com o RH: ela reduz a leitura do
+-- gestor de "empresa" para "seu time + avaliações que ele mesmo escreveu".
+
+-- ── 4 · O QUE NÃO É ALTERADO ───────────────────────────────────────────────
+--   • `user_roles` da conta (admin + gestor) — intocado; o admin continua.
+--   • Nenhum colaborador é criado; nenhuma avaliação é criada.
+--   • Nenhuma outra conta/perfil é vinculada.
+--   • A conta de RH (`rh.ninebox.teste@promobrindes.com.br`, user_id
+--     60767f3f-bb08-4917-9d74-17ce19ef8adb) não precisa de vínculo: a validação
+--     do Potencial exige SOMENTE o papel `rh`.
+
+-- commit;
+
+-- ============================================================================
+-- ROLLBACK (desfaz exatamente o que foi feito)
+-- ============================================================================
+-- begin;
+--   -- PASSO 2b (somente se aplicado)
+--   update public.colaboradores set supervisor_id = null
+--    where id = '<UUID_DO_AVALIADO_ESCOLHIDO>'
+--      and supervisor_id = '0f303507-5b13-4ca2-aa76-16122b5b37e9';
+--   -- PASSO 1
+--   update public.colaboradores set user_id = null
+--    where id = '0f303507-5b13-4ca2-aa76-16122b5b37e9'
+--      and user_id = '<user_id da conta de homologacao>';
+--   -- PASSO 3 (somente se aplicado): recriar a policy original por empresa
+--   -- drop policy if exists "feedbacks_360_select" on public.feedbacks_360;
+--   -- create policy "feedbacks_360_select" on public.feedbacks_360
+--   --   for select to authenticated
+--   --   using (empresa_id in (select public.get_user_empresas(auth.uid())));
+-- commit;
