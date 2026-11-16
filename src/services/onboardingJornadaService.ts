@@ -28,6 +28,7 @@
  * A MESMA ordem alimenta card, detalhe, filtros e risco.
  */
 import { supabase } from '@/integrations/supabase/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { formatDateLocalISO } from '@/utils/dateLocal';
 import {
   ordenarTarefas,
@@ -342,14 +343,45 @@ export async function buscarJornadaDoColaborador(
   empresaId: string
 ): Promise<JornadaCompat | null> {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-  const { data: colaborador, error: erroColaborador } = await supabase
+  // `colaboradores.metadata` (jsonb) EXISTE em produção mas está fora dos tipos
+  // gerados — mesmo motivo pelo qual `admissaoService.concluir` grava nela com
+  // `as never`. O cast é só para a leitura desta coluna.
+  const { data: colaborador, error: erroColaborador } = await (supabase as unknown as SupabaseClient)
     .from('colaboradores')
-    .select('cpf')
+    .select('cpf, metadata')
     .eq('id', colaboradorId)
     .eq('empresa_id', empresaId)
     .maybeSingle();
   if (erroColaborador) throw erroColaborador;
-  const digitos = (colaborador?.cpf ?? '').replace(/\D/g, '');
+
+  // VÍNCULO EXPLÍCITO PRIMEIRO. `admissaoService.concluir` grava
+  // `colaboradores.metadata.admissao_id` como identidade imutável da origem, e o
+  // próprio serviço documenta que colaborador pré-existente com o MESMO CPF não
+  // é vínculo válido. Ir direto ao CPF contradizia essa regra: outra admissão
+  // para o mesmo CPF na mesma empresa — inclusive uma tentativa cancelada —
+  // sequestrava a jornada, e o dossiê cobrava tarefas do processo errado.
+  // O CPF segue como fallback para registros legados, criados antes de
+  // `metadata.admissao_id` existir.
+  const linha = colaborador as { cpf?: string | null; metadata?: { admissao_id?: unknown } | null } | null;
+  const admissaoVinculada = linha?.metadata?.admissao_id;
+  if (typeof admissaoVinculada === 'string' && admissaoVinculada) {
+    const { data: porVinculo, error: erroVinculo } = await supabase
+      .from('admissoes')
+      .select('id, nome, created_at')
+      .eq('id', admissaoVinculada)
+      .eq('empresa_id', empresaId)
+      .maybeSingle();
+    if (erroVinculo) throw erroVinculo;
+    if (porVinculo) {
+      return {
+        id: String(porVinculo.id),
+        titulo: porVinculo.nome ?? undefined,
+        fonte: 'jornada',
+        data_inicio: porVinculo.created_at ? dataIso(new Date(porVinculo.created_at)) : undefined,
+      };
+    }
+  }
+  const digitos = (linha?.cpf ?? '').replace(/\D/g, '');
   if (digitos.length !== 11) return null;
 
   // `colaboradores.cpf` guarda só dígitos (CPFInput limpa a máscara), mas

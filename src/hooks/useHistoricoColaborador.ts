@@ -26,6 +26,7 @@ import {
 } from './useDesenvolvimentoColaborador';
 import { useEmpresas } from './useEmpresas';
 import { vinculoService } from '@/services/vinculoService';
+import { catalogoCursoService } from '@/services/catalogoCursoService';
 // EVENTOS DA JORNADA (FASE 10) — derivados do domínio canônico do onboarding.
 import {
   eventosLegiveisDaJornada,
@@ -177,6 +178,23 @@ export function useHistoricoColaborador(colaboradorId: string) {
     enabled: !!colaboradorId && !!empresaId,
   });
 
+  // CAPACITACOES - fonte REAL. `treinamento_participantes` (lido por
+  // useTreinamentosColaborador) nao tem nenhum writer no app e esta com 0
+  // linhas em producao; o fluxo operacional da aba Inscricoes grava em
+  // `inscricoes_cursos` (2 linhas hoje). Sem esta leitura os eventos de
+  // treinamento da Timeline eram garantidamente vazios.
+  // Chave dentro da familia ['inscricoes_cursos'], que TreinamentosPage ja
+  // invalida em 3 pontos.
+  const {
+    data: inscricoesCursos,
+    isLoading: isLoadingCursos,
+    isError: isErroCursos,
+  } = useQuery({
+    queryKey: ['inscricoes_cursos', 'colaborador', colaboradorId, empresaId],
+    queryFn: () => catalogoCursoService.listarInscricoesPorColaborador(colaboradorId, empresaId!),
+    enabled: !!colaboradorId && !!empresaId,
+  });
+
   const {
     data: vinculos,
     isLoading: isLoadingVinculos,
@@ -233,6 +251,7 @@ export function useHistoricoColaborador(colaboradorId: string) {
     isLoadingMedidas ||
     isLoadingDesligamentos ||
     isLoadingVinculos ||
+    isLoadingCursos ||
     isLoadingAudit;
 
   // A Timeline agrega 15 consultas independentes. Sem agregar o erro, uma fonte
@@ -255,6 +274,7 @@ export function useHistoricoColaborador(colaboradorId: string) {
     isErroMedidas ||
     isErroDesligamentos ||
     isErroVinculos ||
+    isErroCursos ||
     isErroAudit;
 
   const events = useMemo<TimelineEvent[]>(() => {
@@ -454,6 +474,37 @@ export function useHistoricoColaborador(colaboradorId: string) {
       });
     }
 
+    // Capacitacoes registradas pela aba Inscricoes. So as CONCLUIDAS entram
+    // como evento, datadas pela conclusao; inscricao em andamento nao e um
+    // fato da vida do colaborador ainda. O status e TEXT livre, entao a
+    // comparacao normaliza caixa e acento.
+    for (const i of (inscricoesCursos as
+      | {
+          id: string;
+          status?: string | null;
+          data_conclusao?: string | null;
+          nota?: number | null;
+          curso?: { nome?: string | null; carga_horaria?: number | null } | null;
+        }[]
+      | undefined) || []) {
+      const chave = String(i.status ?? '')
+        .trim()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+      if (chave !== 'concluido' && chave !== 'concluida') continue;
+      if (!i.data_conclusao) continue;
+      out.push({
+        id: `curso-${i.id}`,
+        date: i.data_conclusao,
+        type: 'treinamento',
+        title: `Curso concluido: ${i.curso?.nome ?? '-'}`,
+        description: i.nota != null ? `Nota: ${i.nota}` : undefined,
+        secondary: i.curso?.carga_horaria ? `Carga horaria: ${i.curso.carga_horaria}h` : undefined,
+        source: 'inscricoes_cursos',
+      });
+    }
+
     for (const f of (feedbacks as
       | { id: string; created_at: string; performance?: string | number; nota_geral?: number; status?: string }[]
       | undefined) || []) {
@@ -576,6 +627,7 @@ export function useHistoricoColaborador(colaboradorId: string) {
     ferias,
     afastamentos,
     treinamentos,
+    inscricoesCursos,
     feedbacks,
     registroJornada,
     tarefasJornada,

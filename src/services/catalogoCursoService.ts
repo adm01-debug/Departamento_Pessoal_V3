@@ -99,6 +99,26 @@ export const catalogoCursoService = {
     const { error } = await supabase.from('trilhas_aprendizado').delete().eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   },
+  /**
+   * Inscrições de UM colaborador, para o histórico do dossiê.
+   *
+   * `listarInscricoes` acima recorta por empresa (e opcionalmente por curso),
+   * não por colaborador. Esta é a fonte REAL das capacitações: o fluxo
+   * operacional da aba Inscrições grava status/`data_conclusao` aqui
+   * (TreinamentosPage.tsx), enquanto `treinamento_participantes` não tem
+   * nenhum writer no app — e em produção está com 0 linhas.
+   */
+  async listarInscricoesPorColaborador(colaboradorId: string, empresaId: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await supabase
+      .from('inscricoes_cursos')
+      .select('id, status, data_inicio, data_conclusao, nota, curso:catalogo_cursos(nome, carga_horaria)')
+      .eq('colaborador_id', colaboradorId)
+      .eq('empresa_id', empresaId)
+      .order('data_conclusao', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
   async listarInscricoes(empresaId: string, cursoId?: string): Promise<InscricaoComJoins[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let q = supabase
