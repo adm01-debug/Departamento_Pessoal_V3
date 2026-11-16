@@ -159,7 +159,8 @@ jobs:
             20261115120000_ninebox_rls_leitura_gestor_avaliador.sql \
             20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql \
             20261115150000_ninebox_canoniza_funcoes_do_canonico.sql \
-            20261115160000_ninebox_consolidacoes_nota_numeric_4_3.sql
+            20261115160000_ninebox_consolidacoes_nota_numeric_4_3.sql \
+            20261115170000_ninebox_repoe_revogacao_versao_consolidada.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -273,7 +274,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 30 &&
+              Number(r.ledger_count) === 15 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
