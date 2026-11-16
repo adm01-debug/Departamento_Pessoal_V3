@@ -63,6 +63,9 @@
   "rubricas",
   "sst_epis",
   "sst_exames",
+  "training_image_requests",
+  "training_image_settings",
+  "training_images",
   "trct",
   "treinamentos_avaliacoes",
   "treinamentos_certificados"
