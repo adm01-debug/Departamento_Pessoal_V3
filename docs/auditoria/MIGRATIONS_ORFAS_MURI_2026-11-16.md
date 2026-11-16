@@ -5,25 +5,30 @@ estão no ledger** `supabase_migrations.schema_migrations` do projeto canônico
 `frjbfeamybqsejlvmqbl` (conferido por consulta direta: zero linhas para estas
 versões).
 
+> **Revisado em 2026-11-16.** A primeira versão deste documento recomendava
+> aplicar a migration `20261005020000`. Essa recomendação foi **retirada**: a
+> conferência de procedência mostrou que os dados que ela converteria são do
+> seed placeholder, não histórico real. Ver a seção 9.
+
 O nome delas sugere correção urgente — três se chamam `p0_`. A conferência
-objeto por objeto contra o banco real mostra o contrário: **sete não devem ser
-aplicadas**, e **duas delas causariam regressão de segurança**. Uma única tem
+objeto por objeto contra o banco real mostra o contrário: **oito não devem ser
+aplicadas**, e **duas delas causariam regressão de segurança**. Nenhuma tem
 valor de negócio imediato.
 
 Resumo:
 
-| versão           | arquivo                                  | veredito                                  |
-| ---------------- | ---------------------------------------- | ----------------------------------------- |
-| `20260819000000` | `p0_fix_user_empresa_id_rls`             | **obsoleta e perigosa**                   |
-| `20260820000000` | `p0_fix_auditoria_rpc`                   | **obsoleta e perigosa**                   |
-| `20260821000000` | `p0_rls_dashboard_audit`                 | **obsoleta** (desfaria duas remediações)  |
-| `20260925120000` | `document_upload_storage_columns`        | falta, mas sem consumidor na `main`       |
-| `20260925130000` | `storage_documentos_delete_tenant_scope` | falta, e **amplia** acesso                |
-| `20260929120000` | `colaborador_lotacoes`                   | falta, sem consumidor na `main`           |
-| `20261005000000` | `onboarding_kits_rls_additive`           | redundante (falta só um índice)           |
-| `20261005010000` | `onboarding_audit_trigger`               | falta, valor baixo                        |
-| `20261005020000` | `onboarding_modelo_b_convergencia`       | **falta, e é a única com valor imediato** |
-| `20261026090000` | `ciclos_exclusao_autorizada`             | **já está em produção**                   |
+| versão           | arquivo                                  | veredito                                 |
+| ---------------- | ---------------------------------------- | ---------------------------------------- |
+| `20260819000000` | `p0_fix_user_empresa_id_rls`             | **obsoleta e perigosa**                  |
+| `20260820000000` | `p0_fix_auditoria_rpc`                   | **obsoleta e perigosa**                  |
+| `20260821000000` | `p0_rls_dashboard_audit`                 | **obsoleta** (desfaria duas remediações) |
+| `20260925120000` | `document_upload_storage_columns`        | falta, mas sem consumidor na `main`      |
+| `20260925130000` | `storage_documentos_delete_tenant_scope` | falta, e **amplia** acesso               |
+| `20260929120000` | `colaborador_lotacoes`                   | falta, sem consumidor na `main`          |
+| `20261005000000` | `onboarding_kits_rls_additive`           | redundante (falta só um índice)          |
+| `20261005010000` | `onboarding_audit_trigger`               | falta, valor baixo                       |
+| `20261005020000` | `onboarding_modelo_b_convergencia`       | **não aplicar** — os dados são do seed   |
+| `20261026090000` | `ciclos_exclusao_autorizada`             | **já está em produção**                  |
 
 ---
 
@@ -180,34 +185,47 @@ para trilha confiável: `authenticated` tem INSERT, e há duas rotinas de expurg
 **Decisão do dono.** Tecnicamente aplicável, mas entrega menos garantia do que
 o nome promete.
 
-## 9. `20261005020000_onboarding_modelo_b_convergencia` — a única com valor imediato
+## 9. `20261005020000_onboarding_modelo_b_convergencia` — não aplicar: é seed
 
-Esta é a que importa para o negócio. Dados reais, conferidos agora em produção:
+**Correção.** A primeira versão desta auditoria recomendava aplicar esta
+migration, tratando as linhas do modelo legado como histórico real de
+colaboradores. **Estava errado.**
+
+A migration copia linhas de `onboarding_colaborador` / `onboarding_tarefas` para
+o modelo canônico, casando pelo CPF. As contagens em produção são:
 
 | tabela                                          | linhas |
 | ----------------------------------------------- | ------ |
-| `public.onboarding_colaborador` (modelo legado) | **6**  |
-| `public.onboarding_tarefas` (modelo legado)     | **27** |
+| `public.onboarding_colaborador` (modelo legado) | 6      |
+| `public.onboarding_tarefas` (modelo legado)     | 27     |
 | `public.tarefas_onboarding` (modelo canônico)   | 24     |
 
-O modelo legado tem 6 onboardings e 27 tarefas **com data de conclusão e
-categorias que não existem no modelo canônico**. E a `main` não tem nenhuma tela
-que leia esse modelo: as únicas referências são o catálogo genérico de tabelas
-(`src/services/tabelas/rhService.ts`,
-`supabase/functions/external-db-bridge/tableCatalog.ts`) e os tipos gerados. Quem
-lia era a `muri` (`src/services/onboardingJornadaService.ts`,
-`src/hooks/useDesenvolvimentoColaborador.ts`).
+O que a contagem não mostra, e a procedência mostra: **as seis linhas são do
+seed**. Todas têm `colaborador_id` na faixa
+`11110000-0000-0000-0000-00000000000X`, que
+`supabase/migrations/20260730000000_seed_admissao_onboarding_desligamento_avaliacao.sql`
+declara no próprio cabeçalho como "Seed v4 — placeholder explícito" e
+"fake-colab: 11110000-0000-0000-0000-000000000001 a ...012". Conferido no banco:
 
-**Efeito prático: o histórico de onboarding de 6 colaboradores está no banco e
-invisível no sistema hoje.**
+| `colaborador_id`  | status       | progresso | início     |
+| ----------------- | ------------ | --------- | ---------- |
+| `...000000000006` | concluido    | 100       | 2024-08-05 |
+| `...000000000007` | em_andamento | 71        | 2024-09-02 |
+| `...000000000001` | em_andamento | 43        | 2025-01-06 |
+| `...000000000002` | em_andamento | 57        | 2025-01-06 |
+| `...000000000003` | em_andamento | 86        | 2025-01-13 |
+| `...000000000008` | em_andamento | 60        | 2025-01-13 |
 
-A migration é aditiva e idempotente: só faz `INSERT` no modelo canônico, casando
-pelo CPF, e só quando ainda não existe tarefa de mesmo título na mesma admissão.
-Não apaga, não altera schema, não dá `DROP`. Rodar duas vezes não duplica.
+E `public.colaboradores` tem 12 registros nessa mesma faixa de ids fictícios: o
+conjunto inteiro dessa empresa é demonstração.
 
-**Recomendação: aplicar**, pelo `canonical-migrations.yml`, depois de rodar a
-conferência descrita em `docs/ONBOARDING_MODELO_B_DEPRECATED.md`. É DDL/DML em
-produção, logo depende de autorização explícita do dono.
+**Não há histórico real de onboarding a recuperar.** Aplicar a migration
+copiaria 27 tarefas fictícias, com datas de conclusão inventadas, para o modelo
+canônico — o mesmo tipo de dado falso em tela que a `main` vem removendo.
+
+Fica registrado o erro de método: **contar linhas em produção não prova que o
+dado é real.** Recomendação de convergência de dados exige conferir a
+procedência dos registros antes de olhar o volume.
 
 ## 10. `20261026090000_ciclos_exclusao_autorizada` — já está em produção
 
@@ -233,8 +251,8 @@ existem. **Nada a fazer** — o arquivo da `muri` é duplicata de versão anteri
 
 1. **Descartar** `20260819000000`, `20260820000000`, `20260821000000` e
    `20261026090000`. As três primeiras são regressão; a quarta é duplicata.
-2. **Aplicar, com autorização do dono**, `20261005020000` — é a que devolve
-   dado real ao sistema.
+2. **Descartar também** `20261005020000`: as linhas que ela converteria são do
+   seed placeholder, não histórico real (seção 9).
 3. **Aproveitar só o índice** de `20261005000000`.
 4. **Guardar para a recuperação das áreas** `20260925120000`, `20260925130000`
    e `20260929120000`: cada uma entra na mesma PR da tela que a consome.
