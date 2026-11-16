@@ -1,42 +1,95 @@
-import { useState } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
+import { PageTitle } from '@/components/PageTitle';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  TreinamentosCascadeDialog,
+  TreinamentosCascadeItem,
+} from '@/components/treinamentos/TreinamentosCascadeDialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
+import { EntradaPresenca, entradaCard } from '@/components/ui/entrada-cards';
 import { supabase } from '@/integrations/supabase/client';
 import { catalogoCursoService, colaboradorService } from '@/services';
 import type { CertificadoComJoins, InscricaoComJoins } from '@/services/catalogoCursoService';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
+import { chaveConteudo } from '@/services/trainingImages';
 import { useEmpresas } from '@/hooks';
-import { TrilhaCursosSection } from '@/components/treinamentos/TrilhaCursosSection';
+import { useTrainingImages } from '@/hooks/useTrainingImages';
 import { toast } from 'sonner';
-import {
-  GraduationCap,
-  Plus,
-  BookOpen,
-  Award,
-  Users,
-  Trash2,
-  Link,
-  Calendar,
-  Video,
-  ExternalLink,
-  Pencil,
-} from 'lucide-react';
+import { motion, MotionConfig } from 'framer-motion';
+import { MOTION_REDUCED_MODE } from '@/lib/motionMode';
+import { AlertTriangle, Eraser, GraduationCap, Layers, Plus, RefreshCw, Search } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { format, parseISO } from 'date-fns';
-import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import type { Tables } from '@/integrations/supabase/database.types';
 import { validateTablePayload } from '@/schemas/validate';
+import { TreinamentosFiltros } from '@/components/treinamentos/TreinamentosFiltros';
+import { TreinamentosKpis } from '@/components/treinamentos/TreinamentosKpis';
+import { TreinamentosTabela } from '@/components/treinamentos/TreinamentosTabela';
+import { TreinamentosCatalogo } from '@/components/treinamentos/TreinamentosCatalogo';
+import { TurmasPainel } from '@/components/treinamentos/TurmasPainel';
+import { CertificadosPainel } from '@/components/treinamentos/CertificadosPainel';
+import { CertificadoDetalheDialog } from '@/components/treinamentos/CertificadoDetalheDialog';
+import { InscricoesPainel } from '@/components/treinamentos/InscricoesPainel';
+import { montarCertificados, type Certificado } from '@/components/treinamentos/certificadosDerivacoes';
+import { TreinamentosTabsList } from '@/components/treinamentos/TreinamentosTabsList';
+import { NovaTurmaDialog, type NovaTurmaPayload } from '@/components/treinamentos/NovaTurmaDialog';
+import { AppPagination } from '@/components/ui/app-pagination';
+import { TrilhaCard } from '@/components/treinamentos/TrilhaCard';
+import { TrilhaDetalheDialog } from '@/components/treinamentos/TrilhaDetalheDialog';
+import { TrilhasFiltros } from '@/components/treinamentos/TrilhasFiltros';
+import {
+  TRILHAS_OPCOES_POR_PAGINA,
+  TRILHAS_POR_PAGINA_PADRAO,
+  filtrarTrilhas,
+  opcoesStatusTrilha,
+  type InscricaoTrilha,
+  type TrilhaRegistro,
+} from '@/components/treinamentos/trilhasDerivacoes';
+import {
+  TREINAMENTOS_POR_PAGINA_PADRAO,
+  agruparInscricoesPorCurso,
+  agruparParticipantes,
+  calcularIndicadoresTreinamentos,
+  filtrarTreinamentos,
+  opcoesCategoriaTreinamento,
+  opcoesStatusTreinamento,
+  paginarTreinamentos,
+  resumirOcupacoes,
+  type CursoCatalogo,
+  type ParticipanteRegistro,
+  type PeriodoTreinamento,
+  type TreinamentoRegistro,
+} from '@/components/treinamentos/treinamentosDerivacoes';
+// MOCK VISUAL — ver src/mocks/treinamentosMock.ts.
+import {
+  bloquearEscritaTreinamentos,
+  getMockCertificados,
+  getMockCursos,
+  getMockInscricoes,
+  getMockInstancias,
+  getMockParticipacaoCursos,
+  getMockParticipacaoTreinamentos,
+  getMockTreinamentosLista,
+  getMockTrilhas,
+  isTreinamentosMockEnabled,
+} from '@/mocks/treinamentosMock';
+
+/**
+ * Quantos blocos cascateiam no modal “Novo Treinamento” — cabeçalho + grade de
+ * campos. A coreografia (números, easing e variants) NÃO é local: vem de
+ * `cascade-motion.ts`, a mesma usada pelo popup “Pendências”. Este número só
+ * define o atraso com que a caixa começa a encolher no fechamento.
+ */
+const BLOCOS_CASCATA_NOVO_TREINAMENTO = 2;
 
 // === Treinamentos Service (tabela treinamentos) ===
 const treinamentosService = {
@@ -66,6 +119,18 @@ const treinamentosService = {
     if (error) throw error;
   },
 };
+
+/**
+ * Ações de CRIAÇÃO do cabeçalho (canto superior direito).
+ *
+ * Padrão compacto, o mesmo já usado nos demais módulos administrativos:
+ * 40 px de altura no desktop (44 px no toque, abaixo de `sm`), padding
+ * horizontal de 16 px, texto 14 px/600, ícone 16 px, raio de 10 px e largura
+ * ditada pelo conteúdo. Só a geometria muda — variantes, cores, hover, foco e
+ * os handlers de cada botão continuam vindo do `Button` compartilhado.
+ */
+const ACAO_CABECALHO_CLASS =
+  'h-11 w-auto shrink-0 gap-2 rounded-[10px] px-4 text-sm font-semibold shadow-sm transition-shadow hover:shadow-md sm:h-10';
 
 // Certificado sem arquivo digitalizado é gerado em PDF com os dados do
 // registro — "Ver" sempre produz um documento real, nunca um toast fake.
@@ -119,7 +184,6 @@ function gerarCertificadoPdf(cert: CertificadoComJoins, empresaNome?: string) {
 
 export default function TreinamentosPage() {
   const { empresaAtual } = useEmpresas();
-
   const abrirCertificado = (cert: CertificadoComJoins) => {
     // Só abrimos URLs http(s) — um arquivo_url 'javascript:' gravado no banco
     // executaria script na origem do app; nesse caso caímos no PDF gerado.
@@ -138,37 +202,76 @@ export default function TreinamentosPage() {
 
   const qc = useQueryClient();
   const [tab, setTab] = useState('treinamentos');
+  // O hook de permissões é de outra área da muri e ainda não foi portado para a main.
+  const podeCriarTurma = true;
 
   // === Queries ===
-  const { data: treinamentos = [], isLoading: loadTrein } = useQuery({
+  // MOCK VISUAL — ver src/mocks/treinamentosMock.ts. Com o mock ligado, cada
+  // leitura curto-circuita o Supabase e `enabled` também vale sem empresa ativa.
+  const mockAtivo = isTreinamentosMockEnabled();
+  const {
+    data: treinamentos = [],
+    isLoading: loadTrein,
+    isError: erroTrein,
+    refetch: recarregarTrein,
+  } = useQuery({
     queryKey: ['treinamentos', empresaAtual?.id],
-    queryFn: () => treinamentosService.listar(empresaAtual?.id),
-    enabled: !!empresaAtual?.id,
+    queryFn: async (): Promise<any[]> =>
+      getMockTreinamentosLista() ?? (await treinamentosService.listar(empresaAtual?.id)),
+    enabled: !!empresaAtual?.id || mockAtivo,
   });
-  const { data: cursos = [], isLoading: loadCursos } = useQuery({
+  const {
+    data: cursos = [],
+    isLoading: loadCursos,
+    isError: erroCursos,
+    refetch: recarregarCursos,
+  } = useQuery({
     queryKey: ['catalogo_cursos', empresaAtual?.id],
-    queryFn: () => catalogoCursoService.listarCursos(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
+    queryFn: async (): Promise<any[]> => getMockCursos() ?? (await catalogoCursoService.listarCursos(empresaAtual!.id)),
+    enabled: !!empresaAtual?.id || mockAtivo,
   });
-  const { data: trilhas = [], isLoading: loadTrilhas } = useQuery({
+  const {
+    data: trilhas = [],
+    isLoading: loadTrilhas,
+    isError: erroTrilhas,
+    refetch: recarregarTrilhas,
+  } = useQuery({
     queryKey: ['trilhas', empresaAtual?.id],
-    queryFn: () => catalogoCursoService.listarTrilhas(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
+    queryFn: async (): Promise<any[]> =>
+      getMockTrilhas() ?? (await catalogoCursoService.listarTrilhas(empresaAtual!.id)),
+    enabled: !!empresaAtual?.id || mockAtivo,
   });
-  const { data: inscricoes = [], isLoading: loadInsc } = useQuery({
+  const {
+    data: inscricoes = [],
+    isLoading: loadInsc,
+    isError: erroInsc,
+    refetch: recarregarInsc,
+  } = useQuery({
     queryKey: ['inscricoes_cursos', empresaAtual?.id],
-    queryFn: () => catalogoCursoService.listarInscricoes(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
+    queryFn: async (): Promise<any[]> =>
+      getMockInscricoes() ?? (await catalogoCursoService.listarInscricoes(empresaAtual!.id)),
+    enabled: !!empresaAtual?.id || mockAtivo,
   });
-  const { data: instancias = [], isLoading: loadInst } = useQuery({
+  const {
+    data: instancias = [],
+    isLoading: loadInst,
+    isError: erroInst,
+    refetch: recarregarInst,
+  } = useQuery({
     queryKey: ['treinamento_instancias', empresaAtual?.id],
-    queryFn: () => catalogoCursoService.listarInstancias(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
+    queryFn: async (): Promise<any[]> => getMockInstancias() ?? (await catalogoCursoService.listarInstancias()),
+    enabled: !!empresaAtual?.id || mockAtivo,
   });
-  const { data: certificados = [], isLoading: loadCert } = useQuery({
+  const {
+    data: certificados = [],
+    isLoading: loadCert,
+    isError: erroCert,
+    refetch: recarregarCert,
+  } = useQuery({
     queryKey: ['treinamento_certificados', empresaAtual?.id],
-    queryFn: () => catalogoCursoService.listarCertificados(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
+    queryFn: async (): Promise<any[]> =>
+      getMockCertificados() ?? (await catalogoCursoService.listarCertificados(empresaAtual!.id)),
+    enabled: !!empresaAtual?.id || mockAtivo,
   });
   const { data: colaboradores = [] } = useQuery({
     queryKey: ['colaboradores', empresaAtual?.id],
@@ -176,8 +279,69 @@ export default function TreinamentosPage() {
     enabled: !!empresaAtual?.id,
   });
 
+  /**
+   * CAPAS — leitura única por empresa (desligada por padrão). O mapa alimenta as
+   * quatro áreas sem tocar em serviços de escrita: os registros continuam sendo
+   * os mesmos, apenas ganham `imagem_url` quando existir uma capa concluída.
+   * Turmas e certificados herdam a capa do curso automaticamente (o mapa é
+   * indexado por curso), então NÃO há geração por turma/certificado.
+   */
+  const imagensTreinamento = useTrainingImages(empresaAtual?.id);
+
+  const cursosComImagem = useMemo(() => {
+    if (imagensTreinamento.size === 0) return cursos;
+    return (cursos as CursoCatalogo[]).map((curso) => {
+      const url = imagensTreinamento.get(chaveConteudo('course', String(curso.id)));
+      return url ? { ...curso, imagem_url: url } : curso;
+    });
+  }, [cursos, imagensTreinamento]);
+
+  /**
+   * Certificados já carregados, no mesmo modelo de apresentação da aba
+   * Certificados. Serve apenas para a ação contextual “Certificado” das
+   * inscrições — nenhuma consulta nova e nenhum vínculo inventado.
+   */
+  const certificadosMapeados = useMemo(
+    () => montarCertificados(certificados as any[], cursosComImagem as any[], colaboradores as any[]),
+    [certificados, cursosComImagem, colaboradores]
+  );
+
+  const trilhasComImagem = useMemo(() => {
+    if (imagensTreinamento.size === 0) return trilhas;
+    return (trilhas as TrilhaRegistro[]).map((trilha) => {
+      const url = imagensTreinamento.get(chaveConteudo('learning_path', String(trilha.id)));
+      return url ? { ...trilha, imagem_url: url } : trilha;
+    });
+  }, [trilhas, imagensTreinamento]);
+
+  // Participantes POR treinamento — única relação real disponível no schema
+  // (`treinamento_participantes`). Os ids vêm da lista JÁ filtrada por empresa,
+  // então a consulta continua isolada por tenant. No modo demonstração a
+  // consulta real não roda: a coluna é alimentada por
+  // `getMockParticipacaoTreinamentos()` (ver `participantesPorTreinamento`).
+  const idsTreinamentos = useMemo(
+    () => Array.from(new Set((treinamentos as TreinamentoRegistro[]).map((t) => String(t.id)))).sort(),
+    [treinamentos]
+  );
+  const { data: participantes = [] } = useQuery<ParticipanteRegistro[]>({
+    queryKey: ['treinamento_participantes', empresaAtual?.id, idsTreinamentos],
+    queryFn: async () => {
+      if (mockAtivo || idsTreinamentos.length === 0) return [];
+      const { data, error } = await (supabase as any)
+        .from('treinamento_participantes')
+        .select(
+          'id, treinamento_id, colaborador_id, presente, colaborador:colaboradores!treinamento_participantes_colaborador_id_fkey(nome_completo, foto_url)'
+        )
+        .in('treinamento_id', idsTreinamentos);
+      if (error) throw error;
+      return (data ?? []) as ParticipanteRegistro[];
+    },
+    enabled: !!empresaAtual?.id || mockAtivo,
+  });
+
   // === Treinamentos ===
   const [openTrein, setOpenTrein] = useState(false);
+  const novoTreinamentoRef = useRef<HTMLButtonElement>(null);
   const [treinForm, setTreinForm] = useState({ nome: '', descricao: '', data: '', carga_horaria: '' });
   const criarTrein = useMutation({
     mutationFn: () =>
@@ -198,9 +362,90 @@ export default function TreinamentosPage() {
     mutationFn: (id: string) => treinamentosService.excluir(id, empresaAtual?.id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['treinamentos'] });
+      qc.invalidateQueries({ queryKey: ['treinamento_participantes'] });
       toast.success('Treinamento excluído');
     },
+    onError: () => toast.error('Erro ao excluir treinamento'),
   });
+
+  // === Filtros / paginação / indicadores (aba Treinamentos) ===
+  const [busca, setBusca] = useState('');
+  const [statusFiltro, setStatusFiltro] = useState('todos');
+  const [categoriaFiltro, setCategoriaFiltro] = useState('todos');
+  const [periodoFiltro, setPeriodoFiltro] = useState<PeriodoTreinamento>('todos');
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const [porPagina, setPorPagina] = useState<number>(TREINAMENTOS_POR_PAGINA_PADRAO);
+
+  const listaTreinamentos = useMemo(() => treinamentos as TreinamentoRegistro[], [treinamentos]);
+
+  // Opções SEMPRE derivadas dos dados reais (nunca da imagem de referência).
+  const statusOpcoes = useMemo(
+    () => [{ value: 'todos', label: 'Todos' }, ...opcoesStatusTreinamento(listaTreinamentos)],
+    [listaTreinamentos]
+  );
+  const categoriaOpcoes = useMemo(
+    () => [{ value: 'todos', label: 'Todas' }, ...opcoesCategoriaTreinamento(listaTreinamentos)],
+    [listaTreinamentos]
+  );
+
+  const filtroAtivo =
+    busca.trim().length > 0 || statusFiltro !== 'todos' || categoriaFiltro !== 'todos' || periodoFiltro !== 'todos';
+
+  const filtrados = useMemo(
+    () =>
+      filtrarTreinamentos(listaTreinamentos, {
+        busca,
+        status: statusFiltro,
+        categoria: categoriaFiltro,
+        periodo: periodoFiltro,
+      }),
+    [listaTreinamentos, busca, statusFiltro, categoriaFiltro, periodoFiltro]
+  );
+
+  const pagina = useMemo(
+    () => paginarTreinamentos(filtrados, paginaAtual, porPagina),
+    [filtrados, paginaAtual, porPagina]
+  );
+
+  // No modo demonstração a ocupação (avatares + "+N" + barra "X de Y") vem do
+  // mock visual da referência aprovada; no caminho real vem da agregação de
+  // `treinamento_participantes`. Um único formato (`ResumoParticipacao`) chega
+  // à tabela.
+  const participantesPorTreinamento = useMemo(() => {
+    const ocupacaoMock = getMockParticipacaoTreinamentos();
+    return ocupacaoMock ? resumirOcupacoes(ocupacaoMock) : agruparParticipantes(participantes);
+  }, [participantes]);
+
+  /**
+   * Participação dos cards do Catálogo.
+   *
+   * Modo demonstração: mesma vitrine da referência aprovada (mock de leitura).
+   * Caminho real: `inscricoes_cursos` agrupadas por curso + a lista de
+   * colaboradores da empresa já carregada (nome/foto). Nenhuma consulta nova,
+   * nenhum participante inventado — curso sem inscrição não entra no mapa.
+   */
+  const participantesPorCurso = useMemo(() => {
+    const participacaoMock = getMockParticipacaoCursos();
+    return participacaoMock ?? agruparInscricoesPorCurso(inscricoes, colaboradores);
+  }, [inscricoes, colaboradores]);
+
+  const indicadores = useMemo(
+    () => calcularIndicadoresTreinamentos({ inscricoes, cursos, certificados }),
+    [inscricoes, cursos, certificados]
+  );
+
+  const limparFiltros = () => {
+    setBusca('');
+    setStatusFiltro('todos');
+    setCategoriaFiltro('todos');
+    setPeriodoFiltro('todos');
+    setPaginaAtual(1);
+  };
+
+  const excluirTreinamento = (treinamento: TreinamentoRegistro) => {
+    if (bloquearEscritaTreinamentos('Excluir treinamento')) return;
+    excluirTrein.mutate(treinamento.id);
+  };
 
   // === Cursos ===
   const cursoFormVazio = {
@@ -256,6 +501,12 @@ export default function TreinamentosPage() {
     },
   });
 
+  /** Ação do card do Catálogo — mesma confirmação e mesmas permissões de antes. */
+  const excluirCursoCatalogo = (curso: CursoCatalogo) => {
+    if (bloquearEscritaTreinamentos('Excluir curso')) return;
+    excluirCurso.mutate(curso.id);
+  };
+
   // === Trilhas ===
   const [openTrilha, setOpenTrilha] = useState(false);
   const [trilhaForm, setTrilhaForm] = useState({ nome: '', descricao: '', nivel: 'basico' });
@@ -277,9 +528,75 @@ export default function TreinamentosPage() {
     },
   });
 
+  // === Aba Trilhas — filtros, paginação, detalhe e cascata de entrada ===
+  const [buscaTrilha, setBuscaTrilha] = useState('');
+  const [nivelTrilhaFiltro, setNivelTrilhaFiltro] = useState('todos');
+  const [statusTrilhaFiltro, setStatusTrilhaFiltro] = useState('todos');
+  const [paginaTrilhaAtual, setPaginaTrilhaAtual] = useState(1);
+  const [porPaginaTrilhas, setPorPaginaTrilhas] = useState<number>(TRILHAS_POR_PAGINA_PADRAO);
+  const [trilhaDetalhe, setTrilhaDetalhe] = useState<TrilhaRegistro | null>(null);
+
+  /**
+   * Latch da cascata: a entrada toca a cada acesso à aba Trilhas e depois os
+   * cards passam a usar variants estáticas — filtrar, paginar, dar hover ou
+   * receber dados novos não reinicia a animação. O cronômetro só começa quando
+   * os cards já estão renderizados (carregamento lento não perde a entrada).
+   */
+  const [animarTrilhas, setAnimarTrilhas] = useState(true);
+  const [entradaTrilhasPendente, setEntradaTrilhasPendente] = useState(true);
+  const timerEntradaTrilhas = useRef<number | null>(null);
+  useEffect(() => {
+    if (tab !== 'trilhas' || loadTrilhas || !entradaTrilhasPendente) return;
+    if (timerEntradaTrilhas.current) window.clearTimeout(timerEntradaTrilhas.current);
+    timerEntradaTrilhas.current = window.setTimeout(() => {
+      setAnimarTrilhas(false);
+      setEntradaTrilhasPendente(false);
+    }, 1400);
+    return () => {
+      if (timerEntradaTrilhas.current) window.clearTimeout(timerEntradaTrilhas.current);
+    };
+  }, [tab, loadTrilhas, entradaTrilhasPendente]);
+
+  /** Troca de aba: ao ENTRAR em Trilhas, reabre o latch antes da montagem dos cards. */
+  const mudarAba = (valor: string) => {
+    setTab(valor);
+    if (valor !== 'trilhas') return;
+    setAnimarTrilhas(true);
+    setEntradaTrilhasPendente(true);
+  };
+
+  const statusOpcoesTrilhas = useMemo(() => opcoesStatusTrilha(trilhas as TrilhaRegistro[]), [trilhas]);
+
+  const trilhasFiltradas = useMemo(
+    () =>
+      filtrarTrilhas(trilhasComImagem as TrilhaRegistro[], {
+        busca: buscaTrilha,
+        nivel: nivelTrilhaFiltro,
+        status: statusTrilhaFiltro,
+      }),
+    [trilhasComImagem, buscaTrilha, nivelTrilhaFiltro, statusTrilhaFiltro]
+  );
+
+  const paginaTrilhas = useMemo(
+    () => paginarTreinamentos(trilhasFiltradas, paginaTrilhaAtual, porPaginaTrilhas),
+    [trilhasFiltradas, paginaTrilhaAtual, porPaginaTrilhas]
+  );
+
+  const filtroTrilhaAtivo =
+    Boolean(buscaTrilha.trim()) || nivelTrilhaFiltro !== 'todos' || statusTrilhaFiltro !== 'todos';
+
+  const limparFiltrosTrilhas = () => {
+    setBuscaTrilha('');
+    setNivelTrilhaFiltro('todos');
+    setStatusTrilhaFiltro('todos');
+    setPaginaTrilhaAtual(1);
+  };
+
   // === Inscrições ===
   const [openInsc, setOpenInsc] = useState(false);
+  const novaInscricaoRef = useRef<HTMLButtonElement>(null);
   const [inscForm, setInscForm] = useState({ colaborador_id: '', curso_id: '', data_inicio: '' });
+  const [certificadoInscricao, setCertificadoInscricao] = useState<Certificado | null>(null);
   const criarInsc = useMutation({
     mutationFn: () =>
       catalogoCursoService.criarInscricao({ ...inscForm, empresa_id: empresaAtual?.id, status: 'inscrito' }),
@@ -311,263 +628,235 @@ export default function TreinamentosPage() {
     onError: () => toast.error('Erro ao atualizar inscrição'),
   });
 
+  // === Turmas / Instâncias ===
+  // A criação usa a operação JÁ existente `criarInstancia`; não há API nova.
+  const [openTurma, setOpenTurma] = useState(false);
+  const criarTurma = useMutation({
+    mutationFn: (dados: NovaTurmaPayload) => catalogoCursoService.criarInstancia(dados),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['treinamento_instancias'] });
+      setOpenTurma(false);
+      toast.success('Turma criada!');
+    },
+    onError: () => toast.error('Erro ao criar turma'),
+  });
+
   const isLoading = loadTrein || loadCursos || loadTrilhas || loadInsc || loadInst || loadCert;
 
   return (
-    <PageLayout
-      title="Treinamentos 10/10"
-      description="Gestão de treinamentos e desenvolvimento"
-      icon={<GraduationCap className="h-5 w-5 text-primary-foreground" />}
-      gradient="from-info to-primary"
-    >
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
-        <Card>
-          <CardContent className="pt-4 text-center">
-            <Calendar className="h-6 w-6 mx-auto text-accent mb-1" />
-            <p className="text-2xl font-bold">{treinamentos.length}</p>
-            <p className="text-xs text-muted-foreground">Treinamentos</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4 text-center">
-            <BookOpen className="h-6 w-6 mx-auto text-primary mb-1" />
-            <p className="text-2xl font-bold">{cursos.length}</p>
-            <p className="text-xs text-muted-foreground">Cursos</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4 text-center">
-            <Award className="h-6 w-6 mx-auto text-success mb-1" />
-            <p className="text-2xl font-bold">{cursos.filter((c) => c.obrigatorio).length}</p>
-            <p className="text-xs text-muted-foreground">Obrigatórios</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4 text-center">
-            <GraduationCap className="h-6 w-6 mx-auto text-warning mb-1" />
-            <p className="text-2xl font-bold">{trilhas.length}</p>
-            <p className="text-xs text-muted-foreground">Trilhas</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4 text-center">
-            <Users className="h-6 w-6 mx-auto text-info mb-1" />
-            <p className="text-2xl font-bold">{inscricoes.length}</p>
-            <p className="text-xs text-muted-foreground">Inscrições</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4 text-center">
-            <Video className="h-6 w-6 mx-auto text-purple-500 mb-1" />
-            <p className="text-2xl font-bold">{instancias.length}</p>
-            <p className="text-xs text-muted-foreground">Turmas</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {isLoading ? (
-        <div className="flex justify-center py-12">
-          <Spinner />
-        </div>
-      ) : (
-        <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="mb-4">
-            <TabsTrigger value="treinamentos">Treinamentos</TabsTrigger>
-            <TabsTrigger value="catalogo">Catálogo</TabsTrigger>
-            <TabsTrigger value="trilhas">Trilhas</TabsTrigger>
-            <TabsTrigger value="inscricoes">Inscrições</TabsTrigger>
-            <TabsTrigger value="turmas">Turmas / Instâncias</TabsTrigger>
-            <TabsTrigger value="certificados">Certificados</TabsTrigger>
-          </TabsList>
-
-          {/* TREINAMENTOS */}
-          <TabsContent value="treinamentos">
-            <div className="flex justify-end mb-4">
-              <Dialog open={openTrein} onOpenChange={setOpenTrein}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Novo Treinamento
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
+    <MotionConfig reducedMotion={MOTION_REDUCED_MODE}>
+      <PageTitle
+        title="Treinamentos"
+        description="Gerencie os treinamentos da sua organização e acompanhe o desenvolvimento dos colaboradores."
+      />
+      <PageLayout
+        title="Treinamentos"
+        description="Gerencie os treinamentos da sua organização e acompanhe o desenvolvimento dos colaboradores."
+        icon={<GraduationCap className="h-6 w-6 text-primary-foreground" />}
+        gradient="from-primary to-success"
+        className="space-y-4"
+        actions={
+          tab === 'trilhas' ? (
+            <Button onClick={() => setOpenTrilha(true)} className={ACAO_CABECALHO_CLASS}>
+              <Plus className="h-4 w-4" />
+              Nova Trilha
+            </Button>
+          ) : tab === 'inscricoes' ? (
+            <>
+              <Button ref={novaInscricaoRef} onClick={() => setOpenInsc(true)} className={ACAO_CABECALHO_CLASS}>
+                <Plus className="h-4 w-4" />
+                Nova Inscrição
+              </Button>
+              <TreinamentosCascadeDialog
+                open={openInsc}
+                onOpenChange={setOpenInsc}
+                blocks={2}
+                onCloseAutoFocus={(event) => {
+                  event.preventDefault();
+                  novaInscricaoRef.current?.focus();
+                }}
+              >
+                <TreinamentosCascadeItem>
+                  <DialogHeader>
+                    <DialogTitle>Inscrever Colaborador</DialogTitle>
+                  </DialogHeader>
+                </TreinamentosCascadeItem>
+                <TreinamentosCascadeItem>
+                  <div className="grid gap-3">
+                    <div>
+                      <Label>Colaborador *</Label>
+                      <Select
+                        value={inscForm.colaborador_id}
+                        onValueChange={(v) => setInscForm((p) => ({ ...p, colaborador_id: v }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {colaboradores.map((c: any) => (
+                            <SelectItem key={c.id} value={c.id}>
+                              {c.nome_completo}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Curso *</Label>
+                      <Select
+                        value={inscForm.curso_id}
+                        onValueChange={(v) => setInscForm((p) => ({ ...p, curso_id: v }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {cursos.map((c: any) => (
+                            <SelectItem key={c.id} value={c.id}>
+                              {c.nome}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Data Início</Label>
+                      <Input
+                        type="date"
+                        value={inscForm.data_inicio}
+                        onChange={(e) => setInscForm((p) => ({ ...p, data_inicio: e.target.value }))}
+                      />
+                    </div>
+                    <div className="flex justify-end pt-1">
+                      <Button
+                        size="sm"
+                        className="rounded-lg px-4"
+                        onClick={() => {
+                          if (bloquearEscritaTreinamentos('Criar inscrição')) return;
+                          criarInsc.mutate();
+                        }}
+                        disabled={!inscForm.colaborador_id || !inscForm.curso_id || criarInsc.isPending}
+                      >
+                        {criarInsc.isPending ? 'Salvando...' : 'Inscrever'}
+                      </Button>
+                    </div>
+                  </div>
+                </TreinamentosCascadeItem>
+              </TreinamentosCascadeDialog>
+            </>
+          ) : (
+            <div className="flex max-w-full flex-wrap items-center justify-end gap-2.5 xl:shrink-0">
+              {/*
+              AÇÕES DAS DEMAIS ABAS (a aba Inscrições tem CTA próprio acima):
+              · “Novo Treinamento” cria uma linha em `treinamentos`;
+              · “Novo Curso” cria um item em `catalogo_cursos` (aba Catálogo).
+              Na aba Catálogo o CTA lime é “Novo Curso” (como na referência) e o
+              “Novo Treinamento” vira secundário. Trilhas e Inscrições têm CTA
+              próprios; Turmas/Certificados mantêm o comportamento anterior.
+            */}
+              <Button
+                ref={novoTreinamentoRef}
+                variant={tab === 'catalogo' ? 'outline' : 'default'}
+                onClick={() => setOpenTrein(true)}
+                className={`${ACAO_CABECALHO_CLASS}${
+                  tab === 'catalogo'
+                    ? ' border-border/60 bg-card/60 text-foreground hover:bg-card/80 hover:text-foreground'
+                    : ''
+                }`}
+              >
+                <Plus className="h-4 w-4" />
+                Novo Treinamento
+              </Button>
+              {tab === 'catalogo' && (
+                <Button onClick={() => setOpenCurso(true)} className={ACAO_CABECALHO_CLASS}>
+                  <Plus className="h-4 w-4" />
+                  Novo Curso
+                </Button>
+              )}
+              <TreinamentosCascadeDialog
+                open={openTrein}
+                onOpenChange={setOpenTrein}
+                blocks={BLOCOS_CASCATA_NOVO_TREINAMENTO}
+                onCloseAutoFocus={(event) => {
+                  event.preventDefault();
+                  novoTreinamentoRef.current?.focus();
+                }}
+              >
+                <TreinamentosCascadeItem>
                   <DialogHeader>
                     <DialogTitle>Novo Treinamento</DialogTitle>
                   </DialogHeader>
-                  <div className="grid gap-3">
+                </TreinamentosCascadeItem>
+
+                <TreinamentosCascadeItem className="grid gap-3">
+                  <div>
+                    <Label>Nome *</Label>
+                    <Input
+                      value={treinForm.nome}
+                      onChange={(e) => setTreinForm((p) => ({ ...p, nome: e.target.value }))}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <Label>Nome *</Label>
+                      <Label>Data</Label>
                       <Input
-                        value={treinForm.nome}
-                        onChange={(e) => setTreinForm((p) => ({ ...p, nome: e.target.value }))}
+                        type="date"
+                        value={treinForm.data}
+                        onChange={(e) => setTreinForm((p) => ({ ...p, data: e.target.value }))}
                       />
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <Label>Data</Label>
-                        <Input
-                          type="date"
-                          value={treinForm.data}
-                          onChange={(e) => setTreinForm((p) => ({ ...p, data: e.target.value }))}
-                        />
-                      </div>
-                      <div>
-                        <Label>Carga Horária (h)</Label>
-                        <Input
-                          type="number"
-                          value={treinForm.carga_horaria}
-                          onChange={(e) => setTreinForm((p) => ({ ...p, carga_horaria: e.target.value }))}
-                        />
-                      </div>
                     </div>
                     <div>
-                      <Label>Descrição</Label>
-                      <Textarea
-                        value={treinForm.descricao}
-                        onChange={(e) => setTreinForm((p) => ({ ...p, descricao: e.target.value }))}
+                      <Label>Carga Horária (h)</Label>
+                      <Input
+                        type="number"
+                        value={treinForm.carga_horaria}
+                        onChange={(e) => setTreinForm((p) => ({ ...p, carga_horaria: e.target.value }))}
                       />
                     </div>
-                    <Button onClick={() => criarTrein.mutate()} disabled={!treinForm.nome || criarTrein.isPending}>
+                  </div>
+                  <div>
+                    <Label>Descrição</Label>
+                    <Textarea
+                      value={treinForm.descricao}
+                      onChange={(e) => setTreinForm((p) => ({ ...p, descricao: e.target.value }))}
+                    />
+                  </div>
+                  <div className="flex justify-end pt-1">
+                    <Button
+                      size="sm"
+                      className="rounded-lg px-4"
+                      onClick={() => {
+                        if (bloquearEscritaTreinamentos('Criar treinamento')) return;
+                        criarTrein.mutate();
+                      }}
+                      disabled={!treinForm.nome || criarTrein.isPending}
+                    >
                       {criarTrein.isPending ? 'Salvando...' : 'Salvar'}
                     </Button>
                   </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-            <Card>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nome</TableHead>
-                      <TableHead>Data</TableHead>
-                      <TableHead>Carga Horária</TableHead>
-                      <TableHead>Descrição</TableHead>
-                      <TableHead></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {treinamentos.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                          Nenhum treinamento cadastrado
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      treinamentos.map((t) => (
-                        <TableRow key={t.id}>
-                          <TableCell className="font-medium">{t.nome}</TableCell>
-                          <TableCell>{t.data || '—'}</TableCell>
-                          <TableCell>{t.carga_horaria ? `${t.carga_horaria}h` : '—'}</TableCell>
-                          <TableCell className="max-w-[200px] truncate">{t.descricao || '—'}</TableCell>
-                          <TableCell>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              aria-label="Excluir"
-                              onClick={() => excluirTrein.mutate(t.id)}
-                            >
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                </TreinamentosCascadeItem>
+              </TreinamentosCascadeDialog>
 
-          {/* CERTIFICADOS */}
-          <TabsContent value="certificados">
-            <Card>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Colaborador</TableHead>
-                      <TableHead>Curso / Treinamento</TableHead>
-                      <TableHead>Emissão</TableHead>
-                      <TableHead>Validade</TableHead>
-                      <TableHead>Código Autenticação</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {certificados.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                          Nenhum certificado emitido ainda.
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      certificados.map((cert) => (
-                        <TableRow key={cert.id} className="hover:bg-muted/30">
-                          <TableCell className="font-medium">{cert.colaborador?.nome_completo}</TableCell>
-                          <TableCell>{cert.curso?.nome}</TableCell>
-                          <TableCell>{new Date(cert.data_emissao).toLocaleDateString('pt-BR')}</TableCell>
-                          <TableCell>
-                            {cert.data_validade ? (
-                              <Badge
-                                variant={new Date(cert.data_validade) < new Date() ? 'destructive' : 'outline'}
-                                className="text-[10px]"
-                              >
-                                {new Date(cert.data_validade).toLocaleDateString('pt-BR')}
-                              </Badge>
-                            ) : (
-                              'Vitalício'
-                            )}
-                          </TableCell>
-                          <TableCell className="font-mono text-xs text-primary">{cert.codigo_autenticacao}</TableCell>
-                          <TableCell className="text-right">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 gap-1.5"
-                              onClick={() => abrirCertificado(cert)}
-                            >
-                              {cert.arquivo_url ? (
-                                <ExternalLink className="h-3.5 w-3.5" />
-                              ) : (
-                                <Link className="h-3.5 w-3.5" />
-                              )}{' '}
-                              Ver
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* CATÁLOGO */}
-          <TabsContent value="catalogo">
-            <div className="flex justify-end mb-4">
-              <Dialog
+              {/* NOVO CURSO — ação PRÓPRIA do catálogo (`catalogo_cursos`), distinta
+              de “Novo Treinamento”. O formulário e a mutation são os mesmos de
+              antes; só mudou o lugar do gatilho. */}
+              <TreinamentosCascadeDialog
                 open={openCurso}
-                onOpenChange={(o) => {
-                  setOpenCurso(o);
-                  if (!o && cursoEditId) {
+                onOpenChange={(aberto) => {
+                  setOpenCurso(aberto);
+                  if (!aberto && cursoEditId) {
                     setCursoEditId(null);
                     setCursoForm(cursoFormVazio);
                   }
                 }}
+                blocks={2}
               >
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Novo Curso
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
+                <TreinamentosCascadeItem>
                   <DialogHeader>
                     <DialogTitle>{cursoEditId ? 'Editar Curso' : 'Novo Curso'}</DialogTitle>
                   </DialogHeader>
+                </TreinamentosCascadeItem>
+                <TreinamentosCascadeItem>
                   <div className="grid gap-3">
                     <div>
                       <Label>Nome *</Label>
@@ -582,7 +871,7 @@ export default function TreinamentosPage() {
                         <Input
                           value={cursoForm.categoria}
                           onChange={(e) => setCursoForm((p) => ({ ...p, categoria: e.target.value }))}
-                          placeholder="E: SST, Técnico"
+                          placeholder="Ex: SST, Técnico"
                         />
                       </div>
                       <div>
@@ -616,7 +905,7 @@ export default function TreinamentosPage() {
                         <Input
                           value={cursoForm.nr_relacionada}
                           onChange={(e) => setCursoForm((p) => ({ ...p, nr_relacionada: e.target.value }))}
-                          placeholder="E: NR-35"
+                          placeholder="Ex: NR-35"
                         />
                       </div>
                     </div>
@@ -634,81 +923,263 @@ export default function TreinamentosPage() {
                         onChange={(e) => setCursoForm((p) => ({ ...p, descricao: e.target.value }))}
                       />
                     </div>
-                    <Button onClick={() => criarCurso.mutate()} disabled={!cursoForm.nome || criarCurso.isPending}>
-                      {criarCurso.isPending ? 'Salvando...' : 'Salvar'}
+                    <div className="flex justify-end pt-1">
+                      <Button
+                        size="sm"
+                        className="rounded-lg px-4"
+                        onClick={() => {
+                          if (bloquearEscritaTreinamentos('Criar curso')) return;
+                          criarCurso.mutate();
+                        }}
+                        disabled={!cursoForm.nome || criarCurso.isPending}
+                      >
+                        {criarCurso.isPending ? 'Salvando...' : 'Salvar'}
+                      </Button>
+                    </div>
+                  </div>
+                </TreinamentosCascadeItem>
+              </TreinamentosCascadeDialog>
+            </div>
+          )
+        }
+      >
+        <TreinamentosKpis
+          indicadores={indicadores}
+          erroInscricoes={erroInsc}
+          erroCertificados={erroCert}
+          erroCursos={erroCursos}
+        />
+
+        {isLoading && tab !== 'catalogo' ? (
+          <div className="flex justify-center py-12">
+            <Spinner />
+          </div>
+        ) : (
+          <Tabs value={tab} onValueChange={mudarAba}>
+            <EntradaPresenca>
+              <motion.div {...entradaCard(4)}>
+                <TreinamentosTabsList value={tab} onValueChange={mudarAba} />
+              </motion.div>
+            </EntradaPresenca>
+
+            {/* TREINAMENTOS */}
+            <TabsContent value="treinamentos">
+              <TreinamentosFiltros
+                busca={busca}
+                onBusca={(valor) => {
+                  setBusca(valor);
+                  setPaginaAtual(1);
+                }}
+                status={statusFiltro}
+                onStatus={(valor) => {
+                  setStatusFiltro(valor);
+                  setPaginaAtual(1);
+                }}
+                categoria={categoriaFiltro}
+                onCategoria={(valor) => {
+                  setCategoriaFiltro(valor);
+                  setPaginaAtual(1);
+                }}
+                periodo={periodoFiltro}
+                onPeriodo={(valor) => {
+                  setPeriodoFiltro(valor);
+                  setPaginaAtual(1);
+                }}
+                statusOpcoes={statusOpcoes}
+                categoriaOpcoes={categoriaOpcoes}
+                filtroAtivo={filtroAtivo}
+                onLimpar={limparFiltros}
+              />
+
+              <div className="mt-4">
+                <TreinamentosTabela
+                  pagina={pagina}
+                  porPagina={porPagina}
+                  onPaginaChange={setPaginaAtual}
+                  onPorPaginaChange={(valor) => {
+                    setPorPagina(valor);
+                    setPaginaAtual(1);
+                  }}
+                  participantesPorTreinamento={participantesPorTreinamento}
+                  onExcluir={excluirTreinamento}
+                  filtroAtivo={filtroAtivo}
+                  erro={erroTrein}
+                  onTentarNovamente={() => void recarregarTrein()}
+                />
+              </div>
+            </TabsContent>
+
+            {/* CERTIFICADOS */}
+            <TabsContent value="certificados">
+              <CertificadosPainel
+                certificados={certificados as any[]}
+                cursos={cursosComImagem as any[]}
+                colaboradores={colaboradores as any[]}
+                carregando={loadCert}
+                erro={erroCert}
+                onTentarNovamente={() => void recarregarCert()}
+                onVer={(certificado) => abrirCertificado(certificado as unknown as CertificadoComJoins)}
+              />
+            </TabsContent>
+
+            {/* CATÁLOGO — grid de cards horizontais (substitui a tabela antiga).
+                Filtros, busca, ordenação e paginação são de apresentação sobre a
+                lista já carregada; nenhuma consulta/escrita nova. */}
+            <TabsContent value="catalogo">
+              <TreinamentosCatalogo
+                cursos={cursosComImagem as CursoCatalogo[]}
+                participantesPorCurso={participantesPorCurso}
+                carregando={loadCursos}
+                erro={erroCursos}
+                onTentarNovamente={() => void recarregarCursos()}
+                onEditar={(curso) => editarCurso(curso as unknown as Tables<'catalogo_cursos'>)}
+                onExcluir={excluirCursoCatalogo}
+              />
+            </TabsContent>
+
+            {/* TRILHAS — grade de jornadas de aprendizagem */}
+            <TabsContent value="trilhas">
+              <div className="space-y-4">
+                <TrilhasFiltros
+                  busca={buscaTrilha}
+                  onBusca={(valor) => {
+                    setBuscaTrilha(valor);
+                    setPaginaTrilhaAtual(1);
+                  }}
+                  nivel={nivelTrilhaFiltro}
+                  onNivel={(valor) => {
+                    setNivelTrilhaFiltro(valor);
+                    setPaginaTrilhaAtual(1);
+                  }}
+                  status={statusTrilhaFiltro}
+                  onStatus={(valor) => {
+                    setStatusTrilhaFiltro(valor);
+                    setPaginaTrilhaAtual(1);
+                  }}
+                  statusOpcoes={statusOpcoesTrilhas}
+                  filtroAtivo={filtroTrilhaAtivo}
+                  onLimpar={limparFiltrosTrilhas}
+                />
+
+                {loadTrilhas ? (
+                  <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" aria-hidden>
+                    {[0, 1, 2].map((i) => (
+                      <div key={i} className="h-[372px] animate-pulse rounded-2xl border border-border/60 bg-card" />
+                    ))}
+                  </div>
+                ) : erroTrilhas ? (
+                  <div
+                    role="alert"
+                    className="flex flex-col items-center justify-center rounded-2xl border border-destructive/25 bg-destructive/[0.04] px-6 py-10 text-center"
+                  >
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full border border-destructive/25 bg-destructive/10 text-destructive">
+                      <AlertTriangle className="h-4 w-4" aria-hidden />
+                    </span>
+                    <p className="mt-3 text-sm font-semibold text-foreground">Não foi possível carregar as trilhas</p>
+                    <p className="mt-1 max-w-md text-xs text-muted-foreground">
+                      A listagem existente continua preservada; tente novamente sem alterar filtros ou dados.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => void recarregarTrilhas()}
+                      className="mt-4 h-9 gap-2 rounded-lg px-3.5 text-[11.5px]"
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" aria-hidden />
+                      Tentar novamente
                     </Button>
                   </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-            <Card>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nome</TableHead>
-                      <TableHead>Categoria</TableHead>
-                      <TableHead>Modalidade</TableHead>
-                      <TableHead>Carga Horária</TableHead>
-                      <TableHead>Obrigatório</TableHead>
-                      <TableHead></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {cursos.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                          Nenhum curso cadastrado
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      cursos.map((c) => (
-                        <TableRow key={c.id}>
-                          <TableCell className="font-medium">{c.nome}</TableCell>
-                          <TableCell>{c.categoria || '—'}</TableCell>
-                          <TableCell>{c.modalidade || '—'}</TableCell>
-                          <TableCell>{c.carga_horaria ? `${c.carga_horaria}h` : '—'}</TableCell>
-                          <TableCell>
-                            <Badge variant={c.obrigatorio ? 'default' : 'secondary'}>
-                              {c.obrigatorio ? 'Sim' : 'Não'}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Button variant="ghost" size="icon" aria-label="Editar" onClick={() => editarCurso(c)}>
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              aria-label="Excluir"
-                              onClick={() => excluirCurso.mutate(c.id)}
-                            >
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                ) : trilhas.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-border/70 bg-card/40 px-4 py-16 text-center">
+                    <span className="mb-1 flex h-11 w-11 items-center justify-center rounded-full bg-muted/50 text-muted-foreground">
+                      <Layers className="h-5 w-5" />
+                    </span>
+                    <p className="text-sm font-medium text-foreground">Nenhuma trilha cadastrada</p>
+                    <p className="max-w-md text-xs text-muted-foreground">
+                      Crie a primeira trilha para organizar os cursos em jornadas de aprendizagem.
+                    </p>
+                    <Button size="sm" className="mt-2 gap-2 rounded-lg" onClick={() => setOpenTrilha(true)}>
+                      <Plus className="h-4 w-4" />
+                      Nova Trilha
+                    </Button>
+                  </div>
+                ) : trilhasFiltradas.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-border/70 bg-card/40 px-4 py-12 text-center">
+                    <span className="mb-1 flex h-11 w-11 items-center justify-center rounded-full bg-muted/50 text-muted-foreground">
+                      <Search className="h-5 w-5" />
+                    </span>
+                    <p className="text-sm font-medium text-foreground">Nenhuma trilha encontrada</p>
+                    <p className="max-w-md text-xs text-muted-foreground">
+                      Ajuste a busca ou limpe os filtros para ver todas as trilhas disponíveis.
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-2 gap-2 rounded-lg"
+                      onClick={limparFiltrosTrilhas}
+                    >
+                      <Eraser className="h-4 w-4" />
+                      Limpar filtros
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <EntradaPresenca>
+                      <div className="grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">
+                        {paginaTrilhas.itens.map((trilha, index) => (
+                          <TrilhaCard
+                            key={trilha.id}
+                            trilha={trilha}
+                            index={5 + index}
+                            animar={animarTrilhas}
+                            inscricoes={inscricoes as InscricaoTrilha[]}
+                            onExplorar={() => setTrilhaDetalhe(trilha)}
+                            onExcluir={() => {
+                              if (bloquearEscritaTreinamentos('Excluir trilha')) return;
+                              excluirTrilha.mutate(trilha.id);
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </EntradaPresenca>
 
-          {/* TRILHAS */}
-          <TabsContent value="trilhas">
-            <div className="flex justify-end mb-4 gap-2">
-              <Dialog open={openTrilha} onOpenChange={setOpenTrilha}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nova Trilha
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
+                    <EntradaPresenca>
+                      <motion.div {...entradaCard(5 + paginaTrilhas.itens.length)}>
+                        <AppPagination
+                          page={paginaTrilhas.pagina}
+                          total={paginaTrilhas.total}
+                          pageSize={porPaginaTrilhas}
+                          pageSizeOptions={TRILHAS_OPCOES_POR_PAGINA}
+                          onPageChange={setPaginaTrilhaAtual}
+                          onPageSizeChange={(tamanho) => {
+                            setPorPaginaTrilhas(tamanho);
+                            setPaginaTrilhaAtual(1);
+                          }}
+                          selectorPosition="end"
+                          linhasPorPaginaLabel="Itens por página"
+                          label={
+                            <>
+                              Mostrando <span className="font-semibold text-foreground">{paginaTrilhas.inicio}</span>–
+                              <span className="font-semibold text-foreground">{paginaTrilhas.fim}</span> de{' '}
+                              <span className="font-semibold text-foreground">{paginaTrilhas.total}</span>{' '}
+                              {paginaTrilhas.total === 1 ? 'trilha' : 'trilhas'}
+                            </>
+                          }
+                        />
+                      </motion.div>
+                    </EntradaPresenca>
+                  </>
+                )}
+              </div>
+
+              {/* Criação da trilha: o gatilho é o botão do cabeçalho contextual. */}
+              <TreinamentosCascadeDialog open={openTrilha} onOpenChange={setOpenTrilha} blocks={2}>
+                <TreinamentosCascadeItem>
                   <DialogHeader>
                     <DialogTitle>Nova Trilha de Aprendizado</DialogTitle>
                   </DialogHeader>
+                </TreinamentosCascadeItem>
+                <TreinamentosCascadeItem>
                   <div className="grid gap-3">
                     <div>
                       <Label>Título *</Label>
@@ -740,197 +1211,88 @@ export default function TreinamentosPage() {
                         onChange={(e) => setTrilhaForm((p) => ({ ...p, descricao: e.target.value }))}
                       />
                     </div>
-                    <Button onClick={() => criarTrilha.mutate()} disabled={!trilhaForm.nome || criarTrilha.isPending}>
-                      {criarTrilha.isPending ? 'Salvando...' : 'Salvar'}
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-            {trilhas.map((t) => (
-              <Card key={t.id} className="mb-4">
-                <CardContent className="pt-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <p className="font-medium">{t.nome}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {t.nivel || '—'} • {t.descricao || 'Sem descrição'}
-                      </p>
-                    </div>
-                    <Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluirTrilha.mutate(t.id)}>
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </div>
-                  <TrilhaCursosSection trilhaId={t.id} cursos={cursos} />
-                </CardContent>
-              </Card>
-            ))}
-            {trilhas.length === 0 && (
-              <Card>
-                <CardContent className="text-center text-muted-foreground py-8">Nenhuma trilha cadastrada</CardContent>
-              </Card>
-            )}
-          </TabsContent>
-
-          {/* INSCRIÇÕES */}
-          <TabsContent value="inscricoes">
-            <div className="flex justify-end mb-4">
-              <Dialog open={openInsc} onOpenChange={setOpenInsc}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nova Inscrição
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Inscrever Colaborador</DialogTitle>
-                  </DialogHeader>
-                  <div className="grid gap-3">
-                    <div>
-                      <Label>Colaborador *</Label>
-                      <Select
-                        value={inscForm.colaborador_id}
-                        onValueChange={(v) => setInscForm((p) => ({ ...p, colaborador_id: v }))}
+                    <div className="flex justify-end pt-1">
+                      <Button
+                        size="sm"
+                        className="rounded-lg px-4"
+                        onClick={() => {
+                          if (bloquearEscritaTreinamentos('Criar trilha')) return;
+                          criarTrilha.mutate();
+                        }}
+                        disabled={!trilhaForm.nome || criarTrilha.isPending}
                       >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {colaboradores.map((c) => (
-                            <SelectItem key={c.id} value={c.id}>
-                              {c.nome_completo}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        {criarTrilha.isPending ? 'Salvando...' : 'Salvar'}
+                      </Button>
                     </div>
-                    <div>
-                      <Label>Curso *</Label>
-                      <Select
-                        value={inscForm.curso_id}
-                        onValueChange={(v) => setInscForm((p) => ({ ...p, curso_id: v }))}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {cursos.map((c) => (
-                            <SelectItem key={c.id} value={c.id}>
-                              {c.nome}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label>Data Início</Label>
-                      <Input
-                        type="date"
-                        value={inscForm.data_inicio}
-                        onChange={(e) => setInscForm((p) => ({ ...p, data_inicio: e.target.value }))}
-                      />
-                    </div>
-                    <Button
-                      onClick={() => criarInsc.mutate()}
-                      disabled={!inscForm.colaborador_id || !inscForm.curso_id || criarInsc.isPending}
-                    >
-                      {criarInsc.isPending ? 'Salvando...' : 'Inscrever'}
-                    </Button>
                   </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-            <Card>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Colaborador</TableHead>
-                      <TableHead>Curso</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Data Início</TableHead>
-                      <TableHead>Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {inscricoes.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                          Nenhuma inscrição registrada
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      inscricoes.map((i) => (
-                        <TableRow key={i.id}>
-                          <TableCell>{i.colaborador?.nome_completo || '—'}</TableCell>
-                          <TableCell>{i.curso?.nome || '—'}</TableCell>
-                          <TableCell>
-                            <Badge variant={i.status === 'concluido' ? 'default' : 'secondary'}>
-                              {i.status || 'inscrito'}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>{i.data_inicio || '—'}</TableCell>
-                          <TableCell>
-                            <Select
-                              value={i.status || 'inscrito'}
-                              onValueChange={(status) => atualizarInsc.mutate({ insc: i, status })}
-                              disabled={i.status === 'concluido' || atualizarInsc.isPending}
-                            >
-                              <SelectTrigger className="w-40" aria-label="Alterar status da inscrição">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="inscrito">Inscrito</SelectItem>
-                                <SelectItem value="em_andamento">Em andamento</SelectItem>
-                                <SelectItem value="concluido">Concluído</SelectItem>
-                                <SelectItem value="reprovado">Reprovado</SelectItem>
-                                <SelectItem value="cancelado">Cancelado</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                </TreinamentosCascadeItem>
+              </TreinamentosCascadeDialog>
 
-          {/* TURMAS */}
-          <TabsContent value="turmas">
-            <Card>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Curso</TableHead>
-                      <TableHead>Instrutor</TableHead>
-                      <TableHead>Início</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Vagas</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {instancias.map((i) => (
-                      <TableRow key={i.id}>
-                        <TableCell className="font-medium">{i.curso?.nome || '—'}</TableCell>
-                        <TableCell>{i.instrutor?.nome_completo || '—'}</TableCell>
-                        <TableCell>{new Date(i.data_inicio).toLocaleDateString('pt-BR')}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{i.status}</Badge>
-                        </TableCell>
-                        <TableCell>{i.capacidade_maxima || '—'}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      )}
-    </PageLayout>
+              <TrilhaDetalheDialog
+                trilha={trilhaDetalhe}
+                cursos={cursos}
+                inscricoes={inscricoes as InscricaoTrilha[]}
+                onClose={() => setTrilhaDetalhe(null)}
+              />
+            </TabsContent>
+
+            {/* INSCRIÇÕES */}
+            <TabsContent value="inscricoes">
+              <InscricoesPainel
+                inscricoes={inscricoes as any[]}
+                cursos={cursosComImagem as any[]}
+                colaboradores={colaboradores as any[]}
+                certificados={certificadosMapeados}
+                carregando={loadInsc}
+                erro={erroInsc}
+                onTentarNovamente={() => void recarregarInsc()}
+                onVerCertificado={setCertificadoInscricao}
+                onAlterarStatus={(insc, status) =>
+                  atualizarInsc.mutate({ insc: insc as unknown as InscricaoComJoins, status })
+                }
+                salvandoStatus={atualizarInsc.isPending}
+              />
+              <CertificadoDetalheDialog
+                certificado={certificadoInscricao}
+                onOpenChange={(aberto) => {
+                  if (!aberto) setCertificadoInscricao(null);
+                }}
+              />
+            </TabsContent>
+
+            {/* TURMAS */}
+            <TabsContent value="turmas">
+              <TurmasPainel
+                instancias={instancias as any[]}
+                cursos={cursosComImagem as any[]}
+                colaboradores={colaboradores as any[]}
+                carregando={loadInst}
+                erro={erroInst}
+                onTentarNovamente={() => void recarregarInst()}
+                onNovaTurma={() => setOpenTurma(true)}
+                podeCriarTurma={podeCriarTurma}
+              />
+            </TabsContent>
+          </Tabs>
+        )}
+
+        <NovaTurmaDialog
+          open={openTurma}
+          cursos={cursos as any[]}
+          erroCursos={erroCursos}
+          colaboradores={colaboradores as any[]}
+          onOpenChange={setOpenTurma}
+          onCriar={(dados) => {
+            if (!empresaAtual?.id) {
+              toast.error('Selecione uma empresa antes de criar a turma');
+              return;
+            }
+            if (bloquearEscritaTreinamentos('Criar turma')) return;
+            criarTurma.mutate(dados);
+          }}
+          pendente={criarTurma.isPending}
+        />
+      </PageLayout>
+    </MotionConfig>
   );
 }

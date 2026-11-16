@@ -108,17 +108,21 @@ export default tseslint.config(
     },
   },
   {
-    // Área Avaliação/NineBox portada da branch `muri` (W1). O código original
-    // da muri era escrito sem o ratchet `no-explicit-any`; manter a regra aqui
-    // importaria ~108 warnings novos e quebraria `lint:ci` (orçamento 1). A
-    // dívida fica medida: `scripts/ratchet-any.mjs` segue vigente para `components`
-    // e `pages` e reprova qualquer subida fora destes arquivos.
+    // Áreas portadas da branch `muri`: Avaliação/NineBox (W1) e UI de
+    // treinamentos (W2). O código original da muri era escrito sem o ratchet
+    // `no-explicit-any`; manter a regra aqui importaria ~108 + ~23 warnings
+    // novos e quebraria `lint:ci` (orçamento 1). A dívida fica medida:
+    // `scripts/ratchet-any.mjs` segue vigente para `components` e `pages` e
+    // reprova qualquer subida fora destes arquivos.
     files: [
       "src/components/avaliacao/**/*.{ts,tsx}",
       "src/components/animate-ui/**/*.{ts,tsx}",
+      "src/components/treinamentos/**/*.{ts,tsx}",
       "src/pages/AvaliacaoPage.tsx",
+      "src/pages/TreinamentosPage.tsx",
       "src/services/avaliacaoService.ts",
       "src/mocks/colaboradoresMock.ts",
+      "src/mocks/treinamentosMock.ts",
     ],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
