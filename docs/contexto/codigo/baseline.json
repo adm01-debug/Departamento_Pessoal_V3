@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "81e86aabd815c7566951af613bda78e736b3fe4b",
+  "commit": "2357a5622885d5a2ea1aca99ca932696bb0dd05f",
   "branch": "main",
-  "data_commit": "2026-11-16T12:23:37Z",
+  "data_commit": "2026-11-16T12:55:14Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2357a56",
+    "data": "2026-11-16",
+    "assunto": "build(deps-dev): bump the testing group with 2 updates (#585)"
+   },
    {
     "sha": "81e86aa",
     "data": "2026-11-16",
@@ -126,11 +131,6 @@
     "sha": "1ad509d",
     "data": "2026-11-13",
     "assunto": "infra: libera Google Fonts no connect-src da CSP (SW re-busca as fontes) (#557)"
-   },
-   {
-    "sha": "3232ef1",
-    "data": "2026-11-13",
-    "assunto": "docs: prod-readiness fecha a rodada (main 5bbf7eb) (#559)"
    }
   ],
   "arquivos_mudados_7d": 791,
@@ -160,15 +160,19 @@
     "mudancas": 22
    },
    {
+    "pasta": "package.json",
+    "mudancas": 19
+   },
+   {
     "pasta": "supabase/functions/_shared",
     "mudancas": 19
    },
    {
-    "pasta": "package.json",
-    "mudancas": 18
+    "pasta": "CLAUDE.md",
+    "mudancas": 16
    },
    {
-    "pasta": "CLAUDE.md",
+    "pasta": "package-lock.json",
     "mudancas": 16
    },
    {
@@ -178,10 +182,6 @@
    {
     "pasta": "src/pages/__tests__",
     "mudancas": 16
-   },
-   {
-    "pasta": "package-lock.json",
-    "mudancas": 15
    },
    {
     "pasta": "PENDENCIAS.md",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 39
+    "mudancas": 38
    },
    {
     "arquivo": "package.json",
-    "mudancas": 19
+    "mudancas": 20
    },
    {
     "arquivo": "CLAUDE.md",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 16
+    "mudancas": 17
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -238,10 +238,6 @@
     "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 8
-   },
-   {
     "arquivo": "AGENTS.md",
     "mudancas": 8
    },
@@ -263,6 +259,10 @@
    },
    {
     "arquivo": ".github/workflows/canonical-edge-functions.yml",
+    "mudancas": 7
+   },
+   {
+    "arquivo": ".github/workflows/ci.yml",
     "mudancas": 7
    },
    {
@@ -290,11 +290,11 @@
     "mudancas": 7
    },
    {
-    "arquivo": ".github/workflows/security.yml",
+    "arquivo": "scripts/automation.config.json",
     "mudancas": 6
    },
    {
-    "arquivo": "scripts/automation.config.json",
+    "arquivo": "scripts/sync/README.md",
     "mudancas": 6
    }
   ],
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 12
+    "commits": 13
    },
    {
     "autor": "github-actions[bot]",

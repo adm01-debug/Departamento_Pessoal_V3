@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `81e86aabd815c7566951af613bda78e736b3fe4b` (2026-11-16T12:23:37Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2357a5622885d5a2ea1aca99ca932696bb0dd05f` (2026-11-16T12:55:14Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -388,27 +388,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 23654 nós · 50842 arestas · 2227 comunidades · grafo do commit `81e86aab`
+- 23654 nós · 50842 arestas · 2227 comunidades · grafo do commit `2357a562`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), react (458), useEmpresas (422), lucide-react (373), cn (363), @tanstack/react-query (343), vitest (328), App.tsx (247), nineBoxComum.ts (183), rateLimit.ts (160), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (39)
-- package.json (19)
+- .github/workflows/canonical-migrations.yml (38)
+- package.json (20)
 - CLAUDE.md (18)
-- package-lock.json (16)
+- package-lock.json (17)
 - PENDENCIAS.md (13)
 - deno.lock (10)
 - inventario/estado/rotas.json (10)
 - scripts/canonical-invariants.sql (10)
 - scripts/sync/autocommit-local.sh (10)
 - docs/prod-readiness.md (9)
-- .github/workflows/ci.yml (8)
 - AGENTS.md (8)
 - infra/github/action-pins.json (8)
 - src/integrations/supabase/types.ts (8)
 - supabase/functions/calcular-folha/index.ts (8)
+- supabase/functions/external-db-bridge/index.ts (8)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -621,6 +621,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-16 `2357a56` build(deps-dev): bump the testing group with 2 updates (#585)
 - 2026-11-16 `81e86aa` infra(banco): sidecars rodam no FIM da transacao, nao no meio do lote (#583)
 - 2026-11-16 `9d8ff76` chore: resgata da branch `muri` as 3 migrations que rodam em produção e não existiam na main (#582)
 - 2026-11-16 `284f005` chore(docs): resgata da branch do #557 a prova de navegador que fechou o B23 (#584)
@@ -635,7 +636,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-15 `44cf65f` chore: resgata melhorias de PRs fechadas sem merge (#570)
 - 2026-11-14 `eb2efe5` fix(sync): autocommit rev3 — índice devolvido em SIGTERM, gitleaks só nas linhas adicionadas e bateria de 53 cenários (#
 - 2026-11-14 `b4308c5` build(deps): bump glob 14.0.6 e @sentry/vite-plugin 11.12.0 (#568)
-- 2026-11-14 `311ee8a` chore: contexto agendado de 10 min para 1x/hora (#566)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
