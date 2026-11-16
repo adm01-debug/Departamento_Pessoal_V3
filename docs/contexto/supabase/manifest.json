@@ -1,13 +1,7 @@
 {
-  "carried": [
-    "columns"
-  ],
+  "carried": [],
   "entrada": "README.md",
   "erros": [
-    {
-      "error": "canceling statement due to lock timeout",
-      "section": "columns"
-    },
     {
       "error": "cron.job filtrado pelo RLS do pg_cron para este papel (sem BYPASSRLS): lista de jobs não verificável",
       "section": "cron"
@@ -33,7 +27,7 @@
       "section": "db_stats.auth"
     }
   ],
-  "gerado_em": "2026-11-16T12:29:17Z",
+  "gerado_em": "2026-11-16T13:34:47Z",
   "gerador": "scripts/supabase_snapshot/snapshot.py",
   "produtor": "supabase-snapshot"
 }

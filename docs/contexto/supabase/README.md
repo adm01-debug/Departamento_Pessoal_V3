@@ -24,7 +24,7 @@ Gerado automaticamente a cada 10 min pelo workflow `contexto` (job `banco`). **N
 | views | 53 |
 | functions | 402 |
 | triggers | 439 |
-| policies (RLS) | 646 |
+| policies (RLS) | 645 |
 | índices | 1310 |
 | tipos/enums | 19 |
 | extensões | 8 |
@@ -35,7 +35,7 @@ Gerado automaticamente a cada 10 min pelo workflow `contexto` (job `banco`). **N
 | edge functions | n/d |
 | webhooks | 0 |
 | lints ALTA | 3 |
-| lints total | 543 |
+| lints total | 542 |
 
 ## Estado das fontes do mapa de referências
 
@@ -91,11 +91,8 @@ Cada fonte é atualizada independentemente; referências anteriores não comprov
 
 ## ⚠️ Problemas na última coleta
 
-Seções reaproveitadas da coleta anterior: `columns`.
-
 | seção | erro |
 |---|---|
-| columns | canceling statement due to lock timeout |
 | cron | cron.job filtrado pelo RLS do pg_cron para este papel (sem BYPASSRLS): lista de jobs não verificável |
 | migrations | permission denied for schema supabase_migrations |
 | storage | permission denied for schema storage |

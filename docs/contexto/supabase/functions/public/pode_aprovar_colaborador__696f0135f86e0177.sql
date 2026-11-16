@@ -23,8 +23,7 @@ AS $function$
               AND gestor.id <> alvo.id
          )
          OR (
-           auth.uid() = '2a1f0c4f-7587-49a7-81aa-e7e35cf0848d'::uuid
-           AND EXISTS (
+           EXISTS (
              SELECT 1 FROM public.ninebox_permissoes_homologacao h
               WHERE h.user_id = auth.uid()
                 AND h.habilitado = true

@@ -2,9 +2,7 @@
   "api": {
     "enabled": false
   },
-  "carried": [
-    "columns"
-  ],
+  "carried": [],
   "db": {
     "columns": [
       {
@@ -25485,7 +25483,7 @@
         "position": 14,
         "schema": "public",
         "table": "feedbacks_360_consolidacoes",
-        "type": "numeric"
+        "type": "numeric(4,3)"
       },
       {
         "comment": "Potencial proposto pelo RH na avaliação consolidada (1–5).",
@@ -25498,7 +25496,7 @@
         "position": 15,
         "schema": "public",
         "table": "feedbacks_360_consolidacoes",
-        "type": "numeric"
+        "type": "numeric(4,3)"
       },
       {
         "comment": "Snapshot do Desempenho confirmado pelo gestor na aprovação vigente.",
@@ -25511,7 +25509,7 @@
         "position": 16,
         "schema": "public",
         "table": "feedbacks_360_consolidacoes",
-        "type": "numeric"
+        "type": "numeric(4,3)"
       },
       {
         "comment": "Snapshot do Potencial confirmado pelo gestor na aprovação vigente.",
@@ -25524,7 +25522,7 @@
         "position": 17,
         "schema": "public",
         "table": "feedbacks_360_consolidacoes",
-        "type": "numeric"
+        "type": "numeric(4,3)"
       },
       {
         "comment": null,
@@ -89224,7 +89222,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "a345238b50e72a39",
+        "definition_sha": "7637eb00d7a88e3c",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
@@ -90084,7 +90082,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "fe496142fc581539",
+        "definition_sha": "c864d5054c1b671b",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -90778,7 +90776,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "4dcbb7af715edb06",
+        "definition_sha": "5585181ab5817b5e",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -90874,7 +90872,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "978021053667420e",
+        "definition_sha": "be2f7661ad54eb3a",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -92109,7 +92107,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "606e711e0f82a384",
+        "definition_sha": "f8d8c099ddb3a26f",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -93047,7 +93045,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "7948cf1d50835714",
+        "definition_sha": "bf2b2e2f06128bc8",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -93260,7 +93258,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "29df080d5639274b",
+        "definition_sha": "8cae260c77a15f1c",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -97135,7 +97133,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "14ca2d076d81006a",
+        "definition_sha": "f1d973a044c10be6",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -98637,7 +98635,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "ac05fc9272328bfd",
+        "definition_sha": "5865d876064a9d61",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -98679,7 +98677,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "f4524929b668e8a0",
+        "definition_sha": "47ee5d4b1c39930a",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -98720,7 +98718,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "fb72bc14d8193ad2",
+        "definition_sha": "3c36e23137541613",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -98769,7 +98767,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "6d49eb1e3d9eec58",
+        "definition_sha": "4a8b2e959dc55ada",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -98860,7 +98858,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "becdf08b7d7ce759",
+        "definition_sha": "7e22e22fa4e86858",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -99318,7 +99316,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "dd9d3d7863557fdf",
+        "definition_sha": "816d952cc958c06c",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -102378,7 +102376,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "3fe143427b615b43",
+        "definition_sha": "510cf800b4fa99ad",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -102449,7 +102447,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "a5db43c1f2513bef",
+        "definition_sha": "63fd73b8c68ff723",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -103037,7 +103035,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "00252efbfd2fe08f",
+        "definition_sha": "012f2f892525007f",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": true,
         "is_trigger_fn": true,
@@ -103111,7 +103109,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "2ca1863bc4f1600f",
+        "definition_sha": "bb07deb23eae8b92",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": true,
         "is_trigger_fn": true,
@@ -103500,7 +103498,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "9d2814c6a0a98e1b",
+        "definition_sha": "b980074a8c4aaaac",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
@@ -104920,7 +104918,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "bcd7be31fec1e6d7",
+        "definition_sha": "c40b533ab2bdc546",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -105312,7 +105310,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "8c34a1621616e32a",
+        "definition_sha": "5a006f424a6fc42d",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -105379,7 +105377,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "3a53c61c272dc77b",
+        "definition_sha": "6e399624c1dfc940",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -109562,13 +109560,13 @@
         },
         {
           "grantee": "anon",
-          "privileges": "INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, UPDATE",
+          "privileges": "MAINTAIN, REFERENCES, SELECT, TRIGGER",
           "schema": "public",
           "table": "feedbacks_360"
         },
         {
           "grantee": "authenticated",
-          "privileges": "INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER",
+          "privileges": "MAINTAIN, REFERENCES, SELECT, TRIGGER",
           "schema": "public",
           "table": "feedbacks_360"
         },
@@ -136050,12 +136048,6 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.feedbacks_360.feedbacks_360_insert",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.feedbacks_360.feedbacks_360_select",
         "severity": "BAIXA"
       },
@@ -140845,18 +140837,6 @@
         "with_check": null
       },
       {
-        "cmd": "INSERT",
-        "name": "feedbacks_360_insert",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "authenticated"
-        ],
-        "schema": "public",
-        "table": "feedbacks_360",
-        "using": null,
-        "with_check": "(pode_gerir_avaliacoes() AND (empresa_id IS NOT NULL) AND (empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas)))"
-      },
-      {
         "cmd": "SELECT",
         "name": "feedbacks_360_select",
         "permissive": "PERMISSIVE",
@@ -140865,7 +140845,7 @@
         ],
         "schema": "public",
         "table": "feedbacks_360",
-        "using": "(pode_gerir_avaliacoes() AND (empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas)))",
+        "using": "((empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas)) AND (pode_gerir_avaliacoes() OR pode_aprovar_colaborador(avaliado_id) OR (avaliador_id IN ( SELECT c.id\n   FROM colaboradores c\n  WHERE ((c.user_id = auth.uid()) AND (c.empresa_id = feedbacks_360.empresa_id))))))",
         "with_check": null
       },
       {
@@ -148576,7 +148556,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Criacao EXCLUSIVAMENTE pela RPC public.criar_feedback_seguro (feedback + auditoria na mesma transacao). INSERT direto revogado; correcao por CANCELAMENTO auditado, nunca DELETE.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -154519,7 +154499,7 @@
         "timing": "AFTER"
       },
       {
-        "definition": "CREATE TRIGGER trg_feedbacks_360_consolidacao AFTER INSERT OR DELETE OR UPDATE ON feedbacks_360 FOR EACH ROW EXECUTE FUNCTION trg_feedbacks_360_consolidacao()",
+        "definition": "CREATE TRIGGER trg_feedbacks_360_consolidacao AFTER INSERT OR DELETE OR UPDATE OF status, tipo, nota_geral, potencial, avaliado_id, avaliador_id, ciclo_id, updated_at ON feedbacks_360 FOR EACH ROW EXECUTE FUNCTION trg_feedbacks_360_consolidacao()",
         "events": "INSERT OR DELETE OR UPDATE",
         "function": "public.trg_feedbacks_360_consolidacao",
         "level": "ROW",
@@ -158214,10 +158194,6 @@
     "webhooks": []
   },
   "errors": [
-    {
-      "error": "canceling statement due to lock timeout",
-      "section": "columns"
-    },
     {
       "error": "cron.job filtrado pelo RLS do pg_cron para este papel (sem BYPASSRLS): lista de jobs não verificável",
       "section": "cron"

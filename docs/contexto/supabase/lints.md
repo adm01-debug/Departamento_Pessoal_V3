@@ -214,7 +214,6 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | BAIXA | policy_auth_fn_not_wrapped | public.faltas.faltas_select | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.faltas.faltas_tenant_select | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.faltas.faltas_update | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
-| BAIXA | policy_auth_fn_not_wrapped | public.feedbacks_360.feedbacks_360_insert | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.feedbacks_360.feedbacks_360_select | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.feedbacks_360_aprovacoes_gestor.fag_select | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.feedbacks_360_consolidacoes.fcs_select | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |

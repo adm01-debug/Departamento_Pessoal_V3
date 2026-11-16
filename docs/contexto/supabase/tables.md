@@ -148,7 +148,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.faixas_inss](tables/public/faixas_inss.md) | table | sim | 1 | 4 | não | Faixas da tabela INSS. Carga via importação de domínio. |
 | [public.faixas_irrf](tables/public/faixas_irrf.md) | table | sim | 1 | 4 | não | Faixas da tabela IRRF. Carga via importação de domínio. |
 | [public.faltas](tables/public/faltas.md) | table | sim | 5 | 26 | não |  |
-| [public.feedbacks_360](tables/public/feedbacks_360.md) | table | sim | 2 | 16 | não |  |
+| [public.feedbacks_360](tables/public/feedbacks_360.md) | table | sim | 1 | 16 | não | Criacao EXCLUSIVAMENTE pela RPC public.criar_feedback_seguro (feedback + auditoria na mesma transacao). INSERT direto revogado; correcao por CANCELAMENTO auditado, nunca DELETE. |
 | [public.feedbacks_360_aprovacoes_gestor](tables/public/feedbacks_360_aprovacoes_gestor.md) | table | sim | 1 | 14 | não | Historico append-only das decisoes do GESTOR, ancoradas na versao canonica da avaliacao do gestor. |
 | [public.feedbacks_360_consolidacoes](tables/public/feedbacks_360_consolidacoes.md) | table | sim | 1 | 21 | não |  |
 | [public.feedbacks_360_operacoes](tables/public/feedbacks_360_operacoes.md) | table | sim | 1 | 7 | não |  |

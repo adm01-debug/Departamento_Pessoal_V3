@@ -29,10 +29,10 @@
 | 11 | `gestor_responsavel_user_id` | `uuid` | sim |  |  |  |
 | 12 | `revisao` | `integer` | não | `0` |  |  |
 | 13 | `atualizado_por` | `uuid` | sim |  |  |  |
-| 14 | `desempenho_proposto` | `numeric` | sim |  |  | Desempenho proposto pelo RH na avaliação consolidada (1–5). |
-| 15 | `potencial_proposto` | `numeric` | sim |  |  | Potencial proposto pelo RH na avaliação consolidada (1–5). |
-| 16 | `desempenho_aprovado` | `numeric` | sim |  |  | Snapshot do Desempenho confirmado pelo gestor na aprovação vigente. |
-| 17 | `potencial_aprovado` | `numeric` | sim |  |  | Snapshot do Potencial confirmado pelo gestor na aprovação vigente. |
+| 14 | `desempenho_proposto` | `numeric(4,3)` | sim |  |  | Desempenho proposto pelo RH na avaliação consolidada (1–5). |
+| 15 | `potencial_proposto` | `numeric(4,3)` | sim |  |  | Potencial proposto pelo RH na avaliação consolidada (1–5). |
+| 16 | `desempenho_aprovado` | `numeric(4,3)` | sim |  |  | Snapshot do Desempenho confirmado pelo gestor na aprovação vigente. |
+| 17 | `potencial_aprovado` | `numeric(4,3)` | sim |  |  | Snapshot do Potencial confirmado pelo gestor na aprovação vigente. |
 | 18 | `aprovado_por` | `uuid` | sim |  |  |  |
 | 19 | `aprovado_em` | `timestamp with time zone` | sim |  |  |  |
 | 20 | `aprovacao_id` | `uuid` | sim |  |  | Linha de feedbacks_360_aprovacoes_gestor que produziu o snapshot vigente. |

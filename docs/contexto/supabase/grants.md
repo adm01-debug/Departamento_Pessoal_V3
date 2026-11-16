@@ -583,8 +583,8 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.faltas | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.faltas | dp_mcp_role | SELECT |
 | public.faltas | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.feedbacks_360 | anon | INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, UPDATE |
-| public.feedbacks_360 | authenticated | INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER |
+| public.feedbacks_360 | anon | MAINTAIN, REFERENCES, SELECT, TRIGGER |
+| public.feedbacks_360 | authenticated | MAINTAIN, REFERENCES, SELECT, TRIGGER |
 | public.feedbacks_360 | dp_mcp_role | SELECT |
 | public.feedbacks_360 | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.feedbacks_360_aprovacoes_gestor | authenticated | SELECT |

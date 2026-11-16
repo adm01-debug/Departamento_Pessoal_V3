@@ -2,6 +2,17 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-16 13:34 UTC
+
+- **colunas** alterado (4): `public.feedbacks_360_consolidacoes.desempenho_aprovado`, `public.feedbacks_360_consolidacoes.desempenho_proposto`, `public.feedbacks_360_consolidacoes.potencial_aprovado`, `public.feedbacks_360_consolidacoes.potencial_proposto`
+- **functions** alterado (22): `public.bloquear_exclusao_ciclo_com_dependencias()`, `public.colaborador_id_do_usuario(p_empresa_id uuid)`, `public.criar_feedback_seguro(p_empresa_id uuid, p_avaliado_id uuid, p_ciclo_id uuid, p_tipo text, p_nota_geral numeric, p_potencial numeric, p_avaliador_id uuid, p_pontos_fortes text, p_pontos_melhoria text, p_comentarios text, p_idempotencia text)`, `public.decidir_aprovacao_gestor(p_colaborador_id uuid, p_ciclo_id uuid, p_decisao text, p_justificativa text, p_idempotencia text)`, `public.editar_feedback_seguro(p_feedback_id uuid, p_avaliado_id uuid, p_avaliador_id uuid, p_ciclo_id uuid, p_tipo text, p_nota numeric, p_potencial numeric, p_pontos_fortes text, p_pontos_melhoria text, p_comentarios text, p_idempotencia text)`, `public.enviar_avaliacao_ao_gestor(p_colaborador_id uuid, p_ciclo_id uuid, p_idempotencia text)`, `public.finalizar_feedback(p_feedback_id uuid, p_acao text, p_motivo text, p_idempotencia text)`, `public.listar_historico_feedback(p_feedback_id uuid)`, `public.pode_aprovar_colaborador(p_colaborador_id uuid)`, `public.pode_editar_colaborador(p_colaborador_id uuid)`, `public.pode_editar_feedback(p_feedback_id uuid)`, `public.pode_finalizar_feedback(p_feedback_id uuid)`, `public.pode_gerir_avaliacoes()`, `public.pode_validar_potencial()`, `public.sincronizar_consolidacao_avaliacao(p_colaborador_id uuid, p_ciclo_id uuid, p_por uuid)`, `public.situacao_aprovacao(p_colaborador_id uuid, p_ciclo_id uuid)`, `public.tg_audit_log_enriquecer_feedback()`, `public.tg_feedbacks_360_revisao()`, `public.trg_feedbacks_360_consolidacao()`, `public.validar_potencial_avaliacao(p_feedback_id uuid, p_idempotencia text, p_observacao text)`, `public.versao_avaliacao_feedback(p_feedback_id uuid)`, `public.versao_consolidada_avaliacao(p_colaborador_id uuid, p_ciclo_id uuid)`
+- **grants** alterado (2): `public.feedbacks_360:anon`, `public.feedbacks_360:authenticated`
+- **lints** removido (1): `policy_auth_fn_not_wrapped:public.feedbacks_360.feedbacks_360_insert`
+- **policies (RLS)** removido (1): `public.feedbacks_360.feedbacks_360_insert`
+- **policies (RLS)** alterado (1): `public.feedbacks_360.feedbacks_360_select`
+- **tabelas** alterado (1): `public.feedbacks_360`
+- **triggers** alterado (1): `public.feedbacks_360.trg_feedbacks_360_consolidacao`
+
 ## 2026-11-16 12:29 UTC
 
 - **functions** alterado (8): `public.edge_rate_limit_check_dual(p_empresa_key text, p_empresa_limit integer, p_usuario_key text, p_usuario_limit integer, p_window_sec integer, p_now bigint)`, `public.enqueue_training_image_request()`, `public.is_admin(_user_id uuid)`, `public.set_training_image_autoqueue(p_enabled boolean)`, `public.training_images_track_outcomes()`, `public.update_updated_at_column()`, `public.user_belongs_to_empresa(_user_id uuid, _empresa_id uuid)`, `public.versao_consolidada_avaliacao(p_colaborador_id uuid, p_ciclo_id uuid)`

@@ -24,17 +24,19 @@ begin
   if v_empresa is null then raise exception 'colaborador_inexistente'; end if;
   if v_empresa not in (select public.get_user_empresas(v_uid)) then raise exception 'nao_autorizado'; end if;
 
-  -- SEM GESTOR NÃO SE "ENVIA": a pendência é de ATRIBUIÇÃO (o trigger já grava
-  -- `sem_gestor`). Inventar destinatário aqui faria o RH acreditar no envio.
+  -- SEM GESTOR NAO SE "ENVIA": a pendencia e de ATRIBUICAO (o trigger ja grava
+  -- `sem_gestor`). Inventar destinatario aqui faria o RH acreditar no envio.
   if v_supervisor is null then raise exception 'gestor_nao_atribuido'; end if;
+  -- (1) o supervisor tem de ser da MESMA empresa do avaliado.
   select u.user_id into v_supervisor_uid from public.colaboradores u
    where u.id = v_supervisor and u.empresa_id = v_empresa;
+  -- (2) e tem de ter conta e papel de gestor, senao a avaliacao fica presa.
   if v_supervisor_uid is null or not exists (
     select 1 from public.user_roles ur
      where ur.user_id = v_supervisor_uid and ur.role::text = 'gestor'
   ) then raise exception 'gestor_sem_conta_ou_papel'; end if;
 
-  -- A avaliação do GESTOR é obrigatória e precisa estar concluída.
+  -- A avaliacao do GESTOR e obrigatoria e precisa estar concluida.
   select f.id into v_gestor
     from public.feedbacks_360 f
    where f.empresa_id = v_empresa and f.ciclo_id = p_ciclo_id
@@ -47,6 +49,7 @@ begin
 
   v_chave := 'enviar_gestor:' || p_colaborador_id::text || ':' || p_ciclo_id::text || ':' || p_idempotencia;
 
+  -- (3) aprovacao ja registrada nao reabre o fluxo.
   if public.situacao_aprovacao(p_colaborador_id, p_ciclo_id)
      in ('aprovada_gestor','concluida_validada') then
     raise exception 'aprovacao_ja_registrada';
@@ -74,8 +77,8 @@ begin
 
   v_result := jsonb_build_object('ok', true, 'status', 'aguardando_gestor');
 
-  -- Idempotência por OPERAÇÃO (mesma trilha do restante do fluxo): reenviar o
-  -- MESMO envio não republica nada; a linha fica auditável com rótulo próprio.
+  -- Idempotencia por OPERACAO (mesma trilha do restante do fluxo): reenviar o
+  -- MESMO envio nao republica nada; a linha fica auditavel com rotulo proprio.
   insert into public.feedbacks_360_operacoes
     (idempotency_key, feedback_id, empresa_id, operacao, hash_parametros, resultado)
   values (v_chave, v_gestor, v_empresa, 'enviar_avaliacao_ao_gestor',

@@ -1,12 +1,14 @@
 # public.feedbacks_360
 
+> Criacao EXCLUSIVAMENTE pela RPC public.criar_feedback_seguro (feedback + auditoria na mesma transacao). INSERT direto revogado; correcao por CANCELAMENTO auditado, nunca DELETE.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 1 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -70,16 +72,6 @@
 
 ## Policies (RLS)
 
-### `feedbacks_360_insert`
-
-| campo | valor |
-|---|---|
-| comando | INSERT |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING |  |
-| WITH CHECK | `(pode_gerir_avaliacoes() AND (empresa_id IS NOT NULL) AND (empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas)))` |
-
 ### `feedbacks_360_select`
 
 | campo | valor |
@@ -87,7 +79,7 @@
 | comando | SELECT |
 | tipo | PERMISSIVE |
 | roles | authenticated |
-| USING | `(pode_gerir_avaliacoes() AND (empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas)))` |
+| USING | `((empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas)) AND (pode_gerir_avaliacoes() OR pode_aprovar_colaborador(avaliado_id) OR (avaliador_id IN ( SELECT c.id    FROM colaboradores c   WHERE ((c.user_id = auth.uid()) AND (c.empresa_id = feedbacks_360.empresa_id))))))` |
 | WITH CHECK |  |
 
 
@@ -103,7 +95,7 @@
 
 | role | privilégios |
 |---|---|
-| anon | INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, UPDATE |
-| authenticated | INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER |
+| anon | MAINTAIN, REFERENCES, SELECT, TRIGGER |
+| authenticated | MAINTAIN, REFERENCES, SELECT, TRIGGER |
 | dp_mcp_role | SELECT |
 | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
