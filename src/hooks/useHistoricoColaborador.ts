@@ -42,9 +42,13 @@ function formatCurrency(v: number | null | undefined): string {
 
 function formatDateBR(iso: string | null | undefined): string {
   if (!iso) return '—';
-  const [y, m, d] = iso.slice(0, 10).split('-');
-  if (!y || !m || !d) return iso;
-  return `${d}/${m}/${y}`;
+  // Formata pelo dia LOCAL. Antes era `iso.slice(0, 10)`, que devolve o dia em
+  // UTC: seguro para coluna `date`, errado para `timestamptz`. Em vez de
+  // auditar a origem de cada chamada, o formatador passou a ser robusto aos
+  // dois — data sem horário continua com o mesmo resultado.
+  const data = dataLocalDoEvento(iso);
+  if (Number.isNaN(data.getTime())) return iso;
+  return new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(data);
 }
 
 export function useHistoricoColaborador(colaboradorId: string) {

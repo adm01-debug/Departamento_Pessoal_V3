@@ -377,7 +377,13 @@ export async function buscarJornadaDoColaborador(
     id: String(admissao.id),
     titulo: admissao.nome ?? undefined,
     fonte: 'jornada',
-    data_inicio: admissao.created_at ? admissao.created_at.slice(0, 10) : undefined,
+    // Data LOCAL, pelo mesmo `dataIso` que `concluida_em` já usa. `slice(0, 10)`
+    // devolvia o dia em UTC: em America/Sao_Paulo uma admissão criada às
+    // 01:00 UTC de 17/11 é 16/11 às 22h local, e a Timeline exibia "jornada
+    // iniciada" em 17/11. Aqui o conserto TEM que ser na origem: truncar o
+    // timestamp joga a hora fora, e nem `dataLocalDoEvento` recupera a data
+    // certa depois disso.
+    data_inicio: admissao.created_at ? dataIso(new Date(admissao.created_at)) : undefined,
   };
 }
 

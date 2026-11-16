@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ColaboradorStatus } from '@/components/ui/status-badge';
+import { dataLocalDoEvento } from './eventDate';
 
 const TIPO_CONTRATO_LABEL: Record<string, string> = {
   clt: 'CLT',
@@ -35,9 +36,12 @@ function formatTempoCasa(dataAdmissao?: string | null): string | null {
 
 function formatDateBR(iso?: string | null): string | null {
   if (!iso) return null;
-  const [y, m, d] = iso.slice(0, 10).split('-');
-  if (!y || !m || !d) return null;
-  return `${d}/${m}/${y}`;
+  // Dia LOCAL. `ultimaMovimentacao` vem de `allEvents[0].date`, que PODE ser
+  // um timestamp (auditoria, feedbacks) — com `slice(0, 10)` a "última
+  // movimentação" mostrava o dia em UTC.
+  const data = dataLocalDoEvento(iso);
+  if (Number.isNaN(data.getTime())) return null;
+  return new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(data);
 }
 
 interface JourneySummaryProps {
