@@ -4,7 +4,7 @@
  "stack": {
   "linguagens": [
    "TypeScript (1580)",
-   "SQL (877)",
+   "SQL (883)",
    "Markdown (293)",
    "JavaScript (126)",
    "JSON (61)",
@@ -2211,7 +2211,8 @@
    }
   ],
   "tabelas_de_flag": [
-   "portal_notificacoes_settings"
+   "portal_notificacoes_settings",
+   "training_image_settings"
   ]
  },
  "providers": {

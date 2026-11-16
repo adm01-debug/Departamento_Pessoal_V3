@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `efe96e88d9` · branch `main` · 2026-11-16 11:37 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9d8ff76beb` · branch `main` · 2026-11-16 12:02 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -311,7 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `vinculos` | tenant_vinculos | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `ferias_aprovacoes` | tenant_ferias_aprovacoes | ALL | authenticated | permissive | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `ferias_arquivos` | tenant_ferias_arquivos | ALL | authenticated | permissive | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| … +856 linhas — lista completa em `context.json` | | | | | | |
+| … +861 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `desligamentos` | `total_descontos` | default 0 |
 | `desligamentos` | `valor_liquido` | default 0 |
 | `desligamentos` | `checklist_comunicacao` | default false |
-| … +4368 linhas — lista completa em `context.json` | | |
+| … +4398 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -699,6 +699,11 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_pix_itens_encrypt | BEFORE INSERT OR UPDATE | `pix_itens` | `encrypt_pix_itens_fields` |  |
 | trg_feedbacks_360_revisao | BEFORE UPDATE | `feedbacks_360` | `tg_feedbacks_360_revisao` |  |
 | trg_feedbacks_360_consolidacao | AFTER INSERT OR UPDATE OF STATUS, TIPO, NOTA_GERAL, POTENCIAL, AVALIADO_ID, AVALIADOR_ID, CICLO_ID, UPDATED_AT OR DELETE | `feedbacks_360` | `trg_feedbacks_360_consolidacao` |  |
+| update_training_images_updated_at | BEFORE UPDATE | `training_images` | `update_updated_at_column` |  |
+| track_training_images_outcomes | BEFORE UPDATE | `training_images` | `training_images_track_outcomes` |  |
+| update_training_image_settings_updated_at | BEFORE UPDATE | `training_image_settings` | `update_updated_at_column` |  |
+| enqueue_training_image_course | AFTER INSERT | `catalogo_cursos` | `enqueue_training_image_request` |  |
+| enqueue_training_image_learning_path | AFTER INSERT | `trilhas_aprendizado` | `enqueue_training_image_request` |  |
 | ciclos_bloqueio_exclusao_com_dependencias | BEFORE DELETE | `ciclos_avaliacao` | `bloquear_exclusao_ciclo_com_dependencias` |  |
 | trg_audit_log_enriquecer_feedback | BEFORE INSERT | `audit_log` | `tg_audit_log_enriquecer_feedback` |  |
 | trg_faltas_sync_faltas_periodo | AFTER INSERT OR UPDATE OR DELETE | `faltas` | `fn_faltas_sync_faltas_periodo` |  |
@@ -918,12 +923,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_fwd_audit_unified | AFTER INSERT | `auditoria_contratual` | `fwd_to_audit_unified` |  |
 | trg_fwd_audit_unified | AFTER INSERT | `auditoria_logs` | `fwd_to_audit_unified` |  |
 | trg_fwd_audit_unified | AFTER INSERT | `ferias_audit_log` | `fwd_to_audit_unified` |  |
-| trg_fwd_audit_unified | AFTER INSERT | `folha_auditoria` | `fwd_to_audit_unified` |  |
-| trg_fwd_audit_unified | AFTER INSERT | `folha_eventos_auditoria` | `fwd_to_audit_unified` |  |
-| trg_fwd_audit_unified | AFTER INSERT | `ponto_auditoria` | `fwd_to_audit_unified` |  |
-| trg_fwd_audit_unified | AFTER INSERT | `ponto_auditoria_fraude` | `fwd_to_audit_unified` |  |
-| trg_fwd_audit_unified | AFTER INSERT | `premiacoes_auditoria` | `fwd_to_audit_unified` |  |
-| … +159 linhas — lista completa em `context.json` | | | | |
+| … +164 linhas — lista completa em `context.json` | | | | |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -1026,6 +1026,21 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `decrypt_dados_bancarios_tenant` | Acesso negado. | `supabase/migrations/20261019000000_qa3_db_fixes.sql` |
 | `decrypt_dados_bancarios_tenant` | Acesso negado. | `supabase/migrations/20261019000000_qa3_db_fixes.sql` |
 | `ponto_espelhos_assinados_guard_update` | Trilha de auditoria é append-only. UPDATE/DELETE não são permitidos em %. | `supabase/migrations/20261023000000_qa_r3_fixes.sql` |
+| `claim_training_image` | identificadores_obrigatorios | `supabase/migrations/20261023120000_training_images_infrastructure.sql` |
+| `claim_training_image` | tipo_de_conteudo_invalido | `supabase/migrations/20261023120000_training_images_infrastructure.sql` |
+| `claim_training_image` | content_hash_invalido | `supabase/migrations/20261023120000_training_images_infrastructure.sql` |
+| `claim_training_image` | conteudo_nao_pertence_a_empresa | `supabase/migrations/20261023120000_training_images_infrastructure.sql` |
+| `reconcile_training_image` | decisao_invalida | `supabase/migrations/20261023120000_training_images_infrastructure.sql` |
+| `reconcile_training_image` | operador_obrigatorio | `supabase/migrations/20261023120000_training_images_infrastructure.sql` |
+| `reconcile_training_image` | notas_obrigatorias | `supabase/migrations/20261023120000_training_images_infrastructure.sql` |
+| `reconcile_training_image` | registro_inexistente | `supabase/migrations/20261023120000_training_images_infrastructure.sql` |
+| `reconcile_training_image` | registro_nao_esta_em_estado_desconhecido | `supabase/migrations/20261023120000_training_images_infrastructure.sql` |
+| `finish_training_image_request` | status_invalido | `supabase/migrations/20261023130000_training_image_autoqueue.sql` |
+| `finish_training_image_request` | requisicao_inexistente | `supabase/migrations/20261023130000_training_image_autoqueue.sql` |
+| `edge_rate_limit_check_dual` | chave_empresa_obrigatoria | `supabase/migrations/20261023140000_edge_rate_limit_dual.sql` |
+| `edge_rate_limit_check_dual` | limite_empresa_invalido | `supabase/migrations/20261023140000_edge_rate_limit_dual.sql` |
+| `edge_rate_limit_check_dual` | janela_invalida | `supabase/migrations/20261023140000_edge_rate_limit_dual.sql` |
+| `edge_rate_limit_check_dual` | limite_usuario_invalido | `supabase/migrations/20261023140000_edge_rate_limit_dual.sql` |
 | `editar_feedback_seguro` | nao_autenticado | `supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql` |
 | `editar_feedback_seguro` | idempotencia_ausente | `supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql` |
 | `editar_feedback_seguro` | perfil_nao_autorizado | `supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql` |
@@ -1214,22 +1229,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `medida_gerar_link_ciencia` | Medida não encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_gerar_link_ciencia` | Acesso negado à empresa | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_gerar_link_ciencia` | Medida deve estar aplicada/aprovada para gerar ciência | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_registrar_ciencia_publica` | Ação inválida | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_registrar_ciencia_publica` | rate_limit_exceeded | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_rejeitar` | não autenticado | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_rejeitar` | motivo da rejeição obrigatório (mín. 5 caracteres) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_rejeitar` | medida não encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_rejeitar` | acesso negado | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_rejeitar` | só é possível rejeitar medidas em fluxo de aprovação | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_responder_contestacao` | not_authenticated | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_responder_contestacao` | resposta_minimo_10_chars | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_responder_contestacao` | medida_nao_encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_responder_contestacao` | apenas_rh_ou_admin_pode_responder | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_responder_contestacao` | medida_nao_esta_contestada | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_verificar_ciencia_hash` | rate_limit_exceeded | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medidas_analytics_reincidencia` | not_authenticated | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medidas_analytics_reincidencia` | forbidden | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +126 linhas — lista completa em `context.json` | | |
+| … +141 linhas — lista completa em `context.json` | | |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -1400,6 +1400,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `report_dispatch_attempts` | `status` | `accepted`, `prepared` | `prepared` |
 | `feedbacks_360_consolidacoes` | `status` | `aguardando_gestor`, `aguardando_rh`, `aprovada_gestor`, `concluida_validada`, `devolvida`, `em_preparacao`, `sem_gestor` | `em_preparacao` |
 | `health_checks` | `status` | **livre (sem enum/CHECK)** |  |
+| `training_images` | `status` | `disabled`, `failed`, `pending`, `processing`, `succeeded` | `disabled` |
+| `training_image_requests` | `status` | `done`, `failed`, `processing`, `queued`, `skipped` | `queued` |
 | `afd_geracoes` | `status` | **livre (sem enum/CHECK)** | `gerado` |
 
 ### E.2 Mapas de transição declarados no código
@@ -4521,6 +4523,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `AND created_at > now() - interval '10 minutes';` | `supabase/migrations/20261006100000_fix_wave7_contrato_rpcs_regression.sql` |
 | `DELETE FROM public.logs_sistema WHERE created_at < now() - interval '30 days';` | `supabase/migrations/20261013130000_fix_broken_cron_jobs.sql` |
 | `v_fim := (v_inicio + interval '1 month' - interval '1 day')::date;` | `supabase/migrations/20261022000000_qa5_db_fixes.sql` |
+| `p_stale_after interval DEFAULT interval '10 minutes'` | `supabase/migrations/20261023120000_training_images_infrastructure.sql` |
+| `AND r.started_at < now() - interval '30 minutes'` | `supabase/migrations/20261023130000_training_image_autoqueue.sql` |
 | `WHERE scan_at < now() - interval '180 days';` | `supabase/migrations/20261024000000_qa_r4_fixes.sql` |
 | `CASE WHEN _validade_meses > 0 THEN (CURRENT_DATE + (_validade_meses * interval '1 month'))::DATE ELSE NULL END` | `supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.sql` |
 | `v_fim := (v_inicio + interval '1 month' - interval '1 day')::date;` | `supabase/rebaseline/20260902_secdef_authz_remediation.sql` |

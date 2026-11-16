@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "efe96e88d9bed6f41180382f57f735a712857607",
+  "commit": "9d8ff76beb4822b5998daba8a51e704258ea45b9",
   "branch": "main",
-  "data_commit": "2026-11-16T11:36:34Z",
+  "data_commit": "2026-11-16T12:01:53Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "9d8ff76",
+    "data": "2026-11-16",
+    "assunto": "chore: resgata da branch `muri` as 3 migrations que rodam em produção e não existiam na main (#582)"
+   },
+   {
+    "sha": "284f005",
+    "data": "2026-11-16",
+    "assunto": "chore(docs): resgata da branch do #557 a prova de navegador que fechou o B23 (#584)"
+   },
    {
     "sha": "efe96e8",
     "data": "2026-11-16",
@@ -121,19 +131,9 @@
     "sha": "a033ee8",
     "data": "2026-11-13",
     "assunto": "fix(sync): autocommit preserva o índice do usuário e varre resolução de merge (#549)"
-   },
-   {
-    "sha": "5bbf7eb",
-    "data": "2026-11-13",
-    "assunto": "chore: regenera inventario/estado/rotas.json com o gerador atual (#558)"
-   },
-   {
-    "sha": "9d2fda9",
-    "data": "2026-11-13",
-    "assunto": "fix: libera frame-src do Storage na CSP do index.html (preview de PDF) (#556)"
    }
   ],
-  "arquivos_mudados_7d": 784,
+  "arquivos_mudados_7d": 791,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/avaliacao",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 39
+    "mudancas": 38
    },
    {
     "arquivo": "package.json",
-    "mudancas": 20
+    "mudancas": 19
    },
    {
     "arquivo": "CLAUDE.md",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 18
+    "mudancas": 17
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -234,15 +234,11 @@
     "mudancas": 10
    },
    {
+    "arquivo": "docs/prod-readiness.md",
+    "mudancas": 9
+   },
+   {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "infra/github/action-pins.json",
-    "mudancas": 9
-   },
-   {
-    "arquivo": ".github/workflows/canonical-edge-functions.yml",
     "mudancas": 8
    },
    {
@@ -250,11 +246,7 @@
     "mudancas": 8
    },
    {
-    "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
-    "mudancas": 8
-   },
-   {
-    "arquivo": "docs/prod-readiness.md",
+    "arquivo": "infra/github/action-pins.json",
     "mudancas": 8
    },
    {
@@ -268,6 +260,14 @@
    {
     "arquivo": "supabase/functions/external-db-bridge/index.ts",
     "mudancas": 8
+   },
+   {
+    "arquivo": ".github/workflows/canonical-edge-functions.yml",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+    "mudancas": 7
    },
    {
     "arquivo": "e2e/auth.setup.ts",
@@ -290,18 +290,18 @@
     "mudancas": 7
    },
    {
-    "arquivo": ".github/workflows/canonical-probes.yml",
+    "arquivo": ".github/workflows/security.yml",
     "mudancas": 6
    },
    {
-    "arquivo": ".github/workflows/e2e.yml",
+    "arquivo": "scripts/automation.config.json",
     "mudancas": 6
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 220
+    "commits": 222
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3097,
+  "arquivos_total": 3103,
   "arquivos_codigo": 1710,
   "linhas_codigo": 320771,
   "rotas": 116,
@@ -333,8 +333,8 @@
   "componentes": 495,
   "hooks": 106,
   "edge_functions": 65,
-  "tabelas": 421,
-  "migrations": 841,
+  "tabelas": 424,
+  "migrations": 847,
   "cron_jobs": 41,
   "testes": 641,
   "workflows": 21,

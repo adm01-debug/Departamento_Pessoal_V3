@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `efe96e88d9` · branch `main` · 2026-11-16 11:37 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9d8ff76beb` · branch `main` · 2026-11-16 12:02 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
 | `pcs_grades` | Transactionally generated salary ranges for a PCS plan. | 11 colunas | migration |
 | `pcs_pesquisa_salarial` | Tenant-scoped external salary benchmark observations. | 14 colunas | migration |
-| … +299 linhas — lista completa em `context.json` | | | |
+| … +302 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -408,11 +408,9 @@
 | status | valor `already_sent` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/esocialService.ts` |
 | status | valor `not_recorded` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/esocialService.ts` |
 | status | valor `idle` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/migrations/20260726120000_p4_068_connection_pooling.sql` |
-| status | valor `succeeded` para `last_status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/AdminOperacaoPage.tsx` |
 | status | valor `upload` para `step` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/ImportacaoPage.tsx`<br>`escreve:supabase/functions/gerar-contrato-pdf/index.ts`<br>`escreve:supabase/functions/gerar-medida-disciplinar-pdf/index.ts` |
 | status | valor `preview` para `step` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/ImportacaoPage.tsx` |
 | status | valor `importing` para `step` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/ImportacaoPage.tsx` |
-| status | valor `done` para `step` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/ImportacaoPage.tsx` |
 | status | valor `pin` para `step` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/PontoKioskPage.tsx` |
 | status | valor `segundo_fator` para `step` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/PontoKioskPage.tsx` |
 | status | valor `action` para `step` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/PontoKioskPage.tsx` |
@@ -646,7 +644,9 @@
 | segurança | função `verificar_espelho_ponto` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `create_entity_version` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20240101000000_crud_improvements.sql` |
 | segurança | função `get_default_filter` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20240101000000_crud_improvements.sql` |
-| … +30 linhas — lista completa em `context.json` | | |
+| segurança | função `check_login_lock` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `record_failed_login` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| … +28 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 
@@ -759,7 +759,7 @@
 - `mv_refresh_log.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `health_checks.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `afd_geracoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- 399/464 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …
+- 399/467 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …
 
 ## Regras manuais presentes
 

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "efe96e88d9bed6f41180382f57f735a712857607",
+  "sha": "9d8ff76beb4822b5998daba8a51e704258ea45b9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-16 11:37 UTC",
-  "files_total": 3118,
-  "code_files": 2585,
-  "code_lines": 378193
+  "generated_at": "2026-11-16 12:02 UTC",
+  "files_total": 3124,
+  "code_files": 2591,
+  "code_lines": 379340
  },
  "version": "1.3.2",
- "facts_hash": "990bb31c94b81a79",
+ "facts_hash": "f579b999af5efbe9",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 877,
+   ".sql": 883,
    ".ts": 793,
    ".tsx": 787,
    ".mjs": 100,
@@ -41166,6 +41166,317 @@
     "comment": "Registro opcional de execuções de healthcheck (healthcheck/metrics).",
     "origin": "migration"
    },
+   "training_images": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "uuid PRIMARY KEY DEFAULT gen_random_uuid()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "empresa_id",
+      "type": "uuid NOT NULL REFERENCES public.empresas(id) ON DELETE CASCADE",
+      "fk": "empresas.id ON DELETE CASCADE",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "content_type",
+      "type": "text NOT NULL CHECK (content_type IN ('course', 'learning_path', 'training_session', 'certificate'))",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "content_id",
+      "type": "uuid NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "source_content_id",
+      "type": "uuid",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "storage_path",
+      "type": "text NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "content_hash",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "status",
+      "type": "text NOT NULL DEFAULT 'disabled' CHECK (status IN ('pending', 'processing', 'succeeded', 'failed', 'disabled'))",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "provider",
+      "type": "text NOT NULL DEFAULT 'disabled'",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "model",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "attempts",
+      "type": "integer NOT NULL DEFAULT 0 CHECK (attempts >= 0 AND attempts <= 5)",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "generations",
+      "type": "integer NOT NULL DEFAULT 0 CHECK (generations >= 0)",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "failures",
+      "type": "integer NOT NULL DEFAULT 0 CHECK (failures >= 0)",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "unknown_outcomes",
+      "type": "integer NOT NULL DEFAULT 0 CHECK (unknown_outcomes >= 0)",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "last_attempt_at",
+      "type": "timestamptz",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "operation_id",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "reconciled_at",
+      "type": "timestamptz",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "reconciled_by",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "reconciliation_notes",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "last_error",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "prompt_version",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "requested_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "completed_at",
+      "type": "timestamptz",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "created_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+     }
+    ],
+    "constraints": [
+     "CONSTRAINT training_images_conteudo_unico UNIQUE (empresa_id, content_type, content_id)",
+     "CONSTRAINT training_images_caminho_unico UNIQUE (empresa_id, storage_path)",
+     "CONSTRAINT training_images_hash_valido CHECK (content_hash IS NULL OR char_length(content_hash) BETWEEN 8 AND 128)",
+     "CONSTRAINT training_images_caminho_tenant CHECK (storage_path LIKE empresa_id::text || '/%')"
+    ],
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql",
+    "comment": "Capa de um conteúdo de treinamento. Uma linha por conteúdo; storage_path aponta para o bucket privado training-images.",
+    "origin": "migration"
+   },
+   "training_image_settings": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "boolean PRIMARY KEY DEFAULT true CHECK (id)",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+     },
+     {
+      "name": "autoqueue_enabled",
+      "type": "boolean NOT NULL DEFAULT false",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+     }
+    ],
+    "constraints": [],
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+    "comment": "Flags de servidor da integração de imagens. autoqueue_enabled=false por padrão: nenhum cadastro enfileira geração.",
+    "origin": "migration"
+   },
+   "training_image_requests": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "uuid PRIMARY KEY DEFAULT gen_random_uuid()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+     },
+     {
+      "name": "empresa_id",
+      "type": "uuid NOT NULL REFERENCES public.empresas(id) ON DELETE CASCADE",
+      "fk": "empresas.id ON DELETE CASCADE",
+      "generated": "",
+      "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+     },
+     {
+      "name": "content_type",
+      "type": "text NOT NULL CHECK (content_type IN ('course', 'learning_path'))",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+     },
+     {
+      "name": "content_id",
+      "type": "uuid NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+     },
+     {
+      "name": "requested_by",
+      "type": "uuid",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+     },
+     {
+      "name": "status",
+      "type": "text NOT NULL DEFAULT 'queued' CHECK (status IN ('queued', 'processing', 'done', 'skipped', 'failed'))",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+     },
+     {
+      "name": "attempts",
+      "type": "integer NOT NULL DEFAULT 0 CHECK (attempts >= 0 AND attempts <= 5)",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+     },
+     {
+      "name": "last_error",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+     },
+     {
+      "name": "requested_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+     },
+     {
+      "name": "available_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+     },
+     {
+      "name": "started_at",
+      "type": "timestamptz",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+     },
+     {
+      "name": "finished_at",
+      "type": "timestamptz",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+     }
+    ],
+    "constraints": [
+     "CONSTRAINT training_image_requests_unico UNIQUE (empresa_id, content_type, content_id)"
+    ],
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+    "comment": "Fila persistente de geração automática. Uma linha por conteúdo; reivindicada com FOR UPDATE SKIP LOCKED pelo worker.",
+    "origin": "migration"
+   },
    "afd_geracoes": {
     "columns": [
      {
@@ -49685,6 +49996,56 @@
     "src": "supabase/migrations/20261018130000_onda4e_objetos_ausentes.sql"
    },
    {
+    "name": "training_images_select_authenticated",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'training-images' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
+    "check": "",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "name": "training_images_insert_admin",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'training-images' AND public.is_admin(auth.uid()) AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "name": "training_images_update_admin",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'training-images' AND public.is_admin(auth.uid()) AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
+    "check": "",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "name": "training_images_delete_admin",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'training-images' AND public.is_admin(auth.uid()) AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
+    "check": "",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "name": "training_images_select_tenant",
+    "table": "training_images",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.user_belongs_to_empresa(auth.uid(), empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
     "name": "contas_bancarias_rh_manage",
     "table": "contas_bancarias",
     "cmd": "ALL",
@@ -53549,6 +53910,51 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql"
+   },
+   {
+    "name": "update_training_images_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "training_images",
+    "function": "update_updated_at_column",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "name": "track_training_images_outcomes",
+    "when": "BEFORE UPDATE",
+    "table": "training_images",
+    "function": "training_images_track_outcomes",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "name": "update_training_image_settings_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "training_image_settings",
+    "function": "update_updated_at_column",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "name": "enqueue_training_image_course",
+    "when": "AFTER INSERT",
+    "table": "catalogo_cursos",
+    "function": "enqueue_training_image_request",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "name": "enqueue_training_image_learning_path",
+    "when": "AFTER INSERT",
+    "table": "trilhas_aprendizado",
+    "function": "enqueue_training_image_request",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
    },
    {
     "name": "ciclos_bloqueio_exclusao_com_dependencias",
@@ -63954,6 +64360,166 @@
      "OLD"
     ]
    },
+   "training_images_track_outcomes": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF NEW.status = 'succeeded' AND OLD.status IS DISTINCT FROM 'succeeded' THEN NEW.generations := OLD.generations + 1; ELSIF NEW.status = 'failed' AND OLD.status IS DISTINCT FROM 'failed' THEN IF coalesce(NEW.last_error, '') LIKE 'resultado_desconhecido%' THEN NEW.unknown_outcomes := OLD.unknown_outcomes + 1; ELSE NEW.failures := OLD.failures + 1; END IF; END IF; IF NEW.status IN ('pending', 'processing') AND OLD.status IS DISTINCT FROM NEW.status THEN NEW.last_attempt_at := now(); END IF; RETURN NEW; END",
+    "raises": [],
+    "tables": [
+     "NEW"
+    ]
+   },
+   "claim_training_image": {
+    "args": "p_empresa_id uuid, p_content_type text, p_content_id uuid, p_content_hash text, p_prompt_version text DEFAULT NULL, p_max_attempts integer DEFAULT 3, p_stale_after interval DEFAULT interval '10 minute …",
+    "returns": "TABLE (reclamado boolean, id uuid, status text, attempts integer)",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_ok boolean := false; v_pasta text; v_linha public.training_images; v_max integer := least(greatest(coalesce(p_max_attempts, 3), 1), 5); BEGIN IF p_empresa_id IS NULL OR p_content_id IS NULL THEN RAISE EXCEPTION 'identificadores_obrigatorios'; END IF; IF p_content_type NOT IN ('course', 'learning_path', 'training_session', 'certificate') THEN RAISE EXCEPTION 'tipo_de_conteudo_invalido'; END IF; IF p_content_hash IS NULL OR char_length(p_content_hash) < 8 THEN RAISE EXCEPTION 'content_hash_invalido'; END IF; IF p_content_type = 'course' THEN SELECT EXISTS ( SELECT 1 FROM public.catalogo_cursos c WHERE c.id = p_content_id AND c.empresa_id = p_empresa_id ) INTO v_ok; v_pasta := 'course …",
+    "raises": [
+     "identificadores_obrigatorios",
+     "tipo_de_conteudo_invalido",
+     "content_hash_invalido",
+     "conteudo_nao_pertence_a_empresa"
+    ],
+    "tables": [
+     "SET",
+     "catalogo_cursos",
+     "colaboradores",
+     "excluded",
+     "training_images",
+     "treinamento_certificados",
+     "treinamento_instancias",
+     "trilhas_aprendizado",
+     "v_linha",
+     "v_ok"
+    ]
+   },
+   "reconcile_training_image": {
+    "args": "p_empresa_id uuid, p_content_type text, p_content_id uuid, p_decision text, p_operator text, p_notes text",
+    "returns": "public.training_images",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_linha public.training_images; BEGIN IF p_decision NOT IN ('confirmar_nao_gerado', 'manter_bloqueado') THEN RAISE EXCEPTION 'decisao_invalida'; END IF; IF coalesce(trim(p_operator), '') = '' THEN RAISE EXCEPTION 'operador_obrigatorio'; END IF; IF coalesce(trim(p_notes), '') = '' THEN RAISE EXCEPTION 'notas_obrigatorias'; END IF; SELECT * INTO v_linha FROM public.training_images ti WHERE ti.empresa_id = p_empresa_id AND ti.content_type = p_content_type AND ti.content_id = p_content_id FOR UPDATE; IF NOT FOUND THEN RAISE EXCEPTION 'registro_inexistente'; END IF; IF v_linha.status <> 'failed' OR coalesce(v_linha.last_error, '') NOT LIKE 'resultado_desconhecido%' THEN RAISE EXCEPTION 'r …",
+    "raises": [
+     "decisao_invalida",
+     "operador_obrigatorio",
+     "notas_obrigatorias",
+     "registro_inexistente",
+     "registro_nao_esta_em_estado_desconhecido"
+    ],
+    "tables": [
+     "training_images",
+     "v_linha"
+    ]
+   },
+   "enqueue_training_image_request": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_enabled boolean; BEGIN SELECT autoqueue_enabled INTO v_enabled FROM public.training_image_settings WHERE id = true; IF coalesce(v_enabled, false) IS NOT TRUE THEN RETURN NEW; END IF; IF NEW.empresa_id IS NULL THEN RETURN NEW; END IF; INSERT INTO public.training_image_requests (empresa_id, content_type, content_id, requested_by) VALUES (NEW.empresa_id, TG_ARGV[0], NEW.id, auth.uid()) ON CONFLICT (empresa_id, content_type, content_id) DO NOTHING; RETURN NEW; EXCEPTION WHEN OTHERS THEN RAISE WARNING 'training_image autoqueue ignorado: %', SQLERRM; RETURN NEW; END",
+    "raises": [],
+    "tables": [
+     "training_image_requests",
+     "training_image_settings",
+     "v_enabled"
+    ]
+   },
+   "claim_training_image_requests": {
+    "args": "p_limit integer DEFAULT 5",
+    "returns": "SETOF public.training_image_requests",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_limit integer := least(greatest(coalesce(p_limit, 5), 1), 20); BEGIN RETURN QUERY WITH alvo AS ( SELECT r.id FROM public.training_image_requests r WHERE (r.status = 'queued' AND r.available_at <= now()) OR ( r.status = 'processing' AND r.started_at < now() - interval '30 minutes' AND r.attempts < 5 ) ORDER BY r.available_at, r.requested_at FOR UPDATE SKIP LOCKED LIMIT v_limit ) UPDATE public.training_image_requests r SET status = 'processing', attempts = r.attempts + 1, started_at = now(), available_at = now(), finished_at = NULL, last_error = NULL FROM alvo WHERE r.id = alvo.id RETURNING r.*; END",
+    "raises": [],
+    "tables": [
+     "SKIP",
+     "alvo",
+     "training_image_requests"
+    ]
+   },
+   "finish_training_image_request": {
+    "args": "p_id uuid, p_status text, p_error text DEFAULT NULL, p_retry_after_seconds integer DEFAULT NULL",
+    "returns": "public.training_image_requests",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_linha public.training_image_requests; BEGIN IF p_status NOT IN ('done', 'skipped', 'failed', 'queued') THEN RAISE EXCEPTION 'status_invalido'; END IF; UPDATE public.training_image_requests SET status = p_status, last_error = left(coalesce(p_error, ''), 500), finished_at = CASE WHEN p_status IN ('done', 'skipped', 'failed') THEN now() ELSE NULL END, available_at = CASE WHEN p_status = 'queued' THEN now() + make_interval(secs => greatest(coalesce(p_retry_after_seconds, 300), 30)) ELSE now() END WHERE id = p_id RETURNING * INTO v_linha; IF NOT FOUND THEN RAISE EXCEPTION 'requisicao_inexistente'; END IF; RETURN v_linha; END",
+    "raises": [
+     "status_invalido",
+     "requisicao_inexistente"
+    ],
+    "tables": [
+     "training_image_requests",
+     "v_linha"
+    ]
+   },
+   "set_training_image_autoqueue": {
+    "args": "p_enabled boolean",
+    "returns": "public.training_image_settings",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_linha public.training_image_settings; BEGIN INSERT INTO public.training_image_settings (id, autoqueue_enabled) VALUES (true, coalesce(p_enabled, false)) ON CONFLICT (id) DO UPDATE SET autoqueue_enabled = excluded.autoqueue_enabled, updated_at = now() RETURNING * INTO v_linha; RETURN v_linha; END",
+    "raises": [],
+    "tables": [
+     "SET",
+     "training_image_settings",
+     "v_linha"
+    ]
+   },
+   "backfill_training_image_requests": {
+    "args": "p_limit integer DEFAULT 50",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_limit integer := least(greatest(coalesce(p_limit, 50), 1), 500); v_inseridos integer; BEGIN WITH candidatos AS ( SELECT c.empresa_id, 'course'::text AS content_type, c.id AS content_id FROM public.catalogo_cursos c WHERE c.empresa_id IS NOT NULL AND NOT EXISTS ( SELECT 1 FROM public.training_images ti WHERE ti.empresa_id = c.empresa_id AND ti.content_type = 'course' AND ti.content_id = c.id AND ti.status IN ('succeeded', 'pending', 'processing') ) AND NOT EXISTS ( SELECT 1 FROM public.training_image_requests r WHERE r.empresa_id = c.empresa_id AND r.content_type = 'course' AND r.content_id = c.id ) UNION ALL SELECT t.empresa_id, 'learning_path'::text, t.id FROM public.trilhas_apren …",
+    "raises": [],
+    "tables": [
+     "alvo",
+     "candidatos",
+     "catalogo_cursos",
+     "training_image_requests",
+     "training_images",
+     "trilhas_aprendizado"
+    ]
+   },
+   "edge_rate_limit_check_dual": {
+    "args": "p_empresa_key text, p_empresa_limit int, p_usuario_key text, p_usuario_limit int, p_window_sec int, p_now bigint",
+    "returns": "jsonb",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_window_start bigint; v_empresa_count bigint; v_usuario_count bigint; v_empresa_remaining int; v_usuario_remaining int; v_reason text; v_tem_usuario boolean; BEGIN IF coalesce(trim(p_empresa_key), '') = '' THEN RAISE EXCEPTION 'chave_empresa_obrigatoria'; END IF; IF p_empresa_limit < 1 THEN RAISE EXCEPTION 'limite_empresa_invalido'; END IF; IF p_window_sec < 1 THEN RAISE EXCEPTION 'janela_invalida'; END IF; v_tem_usuario := p_usuario_key IS NOT NULL AND trim(p_usuario_key) <> '' AND coalesce(p_usuario_limit, 0) >= 1; IF NOT v_tem_usuario AND p_usuario_key IS NOT NULL AND trim(p_usuario_key) <> '' AND coalesce(p_usuario_limit, 0) < 1 THEN RAISE EXCEPTION 'limite_usuario_invalido'; EN …",
+    "raises": [
+     "chave_empresa_obrigatoria",
+     "limite_empresa_invalido",
+     "janela_invalida",
+     "limite_usuario_invalido"
+    ],
+    "tables": [
+     "rate_limits",
+     "v_empresa_count",
+     "v_usuario_count"
+    ]
+   },
    "pode_editar_colaborador": {
     "args": "p_colaborador_id uuid",
     "returns": "boolean",
@@ -70048,6 +70614,46 @@
     "src": "supabase/migrations/20261022000000_qa5_db_fixes.sql"
    },
    {
+    "name": "idx_training_images_empresa",
+    "table": "training_images",
+    "columns": "empresa_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "name": "idx_training_images_status",
+    "table": "training_images",
+    "columns": "empresa_id, status",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "name": "idx_training_images_origem",
+    "table": "training_images",
+    "columns": "source_content_id",
+    "unique": false,
+    "where": "WHERE source_content_id IS NOT NULL",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "name": "idx_training_image_requests_status",
+    "table": "training_image_requests",
+    "columns": "status, available_at, requested_at",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "name": "idx_training_image_requests_empresa",
+    "table": "training_image_requests",
+    "columns": "empresa_id, content_type",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
     "name": "idx_sec_policy_regressions_scan_at",
     "table": "sec_policy_regressions",
     "columns": "scan_at DESC",
@@ -71397,6 +72003,12 @@
    "supabase/migrations/20261022090000_ninebox_conclusao_feedback_autorizada.sql",
    "supabase/migrations/20261022090000_ninebox_conclusao_feedback_autorizada.verify.sql",
    "supabase/migrations/20261023000000_qa_r3_fixes.sql",
+   "supabase/migrations/20261023120000_training_images_infrastructure.sql",
+   "supabase/migrations/20261023120000_training_images_infrastructure.verify.sql",
+   "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+   "supabase/migrations/20261023130000_training_image_autoqueue.verify.sql",
+   "supabase/migrations/20261023140000_edge_rate_limit_dual.sql",
+   "supabase/migrations/20261023140000_edge_rate_limit_dual.verify.sql",
    "supabase/migrations/20261024000000_qa_r4_fixes.sql",
    "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql",
    "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.verify.sql",
@@ -71919,6 +72531,9 @@
    "feedbacks_360_consolidacoes": "enabled",
    "feedbacks_360_aprovacoes_gestor": "enabled",
    "health_checks": "enabled",
+   "training_images": "enabled",
+   "training_image_settings": "enabled",
+   "training_image_requests": "enabled",
    "afd_geracoes": "enabled"
   },
   "grants": [
@@ -82580,6 +83195,230 @@
    },
    {
     "kind": "revoke",
+    "privs": "insert, update, delete",
+    "object": "training_images",
+    "objkind": "table",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "training_images",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "claim_training_image",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "claim_training_image",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "claim_training_image",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "training_images",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "reconcile_training_image",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "reconcile_training_image",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "reconcile_training_image",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "training_image_settings",
+    "objkind": "table",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "training_image_settings",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "training_image_requests",
+    "objkind": "table",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "training_image_requests",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "claim_training_image_requests",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "claim_training_image_requests",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "claim_training_image_requests",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "finish_training_image_request",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "finish_training_image_request",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "finish_training_image_request",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "set_training_image_autoqueue",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "set_training_image_autoqueue",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "set_training_image_autoqueue",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "backfill_training_image_requests",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "backfill_training_image_requests",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "backfill_training_image_requests",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "edge_rate_limit_check_dual",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "edge_rate_limit_check_dual",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "edge_rate_limit_check_dual",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql"
+   },
+   {
+    "kind": "revoke",
     "privs": "all",
     "object": "sec_audit_policies",
     "objkind": "function",
@@ -84240,6 +85079,81 @@
     "function": "ponto_espelhos_assinados_guard_update",
     "msg": "Trilha de auditoria é append-only. UPDATE/DELETE não são permitidos em %.",
     "src": "supabase/migrations/20261023000000_qa_r3_fixes.sql"
+   },
+   {
+    "function": "claim_training_image",
+    "msg": "identificadores_obrigatorios",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "claim_training_image",
+    "msg": "tipo_de_conteudo_invalido",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "claim_training_image",
+    "msg": "content_hash_invalido",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "claim_training_image",
+    "msg": "conteudo_nao_pertence_a_empresa",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "reconcile_training_image",
+    "msg": "decisao_invalida",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "reconcile_training_image",
+    "msg": "operador_obrigatorio",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "reconcile_training_image",
+    "msg": "notas_obrigatorias",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "reconcile_training_image",
+    "msg": "registro_inexistente",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "reconcile_training_image",
+    "msg": "registro_nao_esta_em_estado_desconhecido",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "finish_training_image_request",
+    "msg": "status_invalido",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "function": "finish_training_image_request",
+    "msg": "requisicao_inexistente",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "function": "edge_rate_limit_check_dual",
+    "msg": "chave_empresa_obrigatoria",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql"
+   },
+   {
+    "function": "edge_rate_limit_check_dual",
+    "msg": "limite_empresa_invalido",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql"
+   },
+   {
+    "function": "edge_rate_limit_check_dual",
+    "msg": "janela_invalida",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql"
+   },
+   {
+    "function": "edge_rate_limit_check_dual",
+    "msg": "limite_usuario_invalido",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql"
    },
    {
     "function": "editar_feedback_seguro",
@@ -86181,6 +87095,15 @@
    "column:feedbacks_360_consolidacoes.aprovacao_id": "Linha de feedbacks_360_aprovacoes_gestor que produziu o snapshot vigente.",
    "column:feedbacks_360_consolidacoes.snapshot_aprovado": "Cópia imutável dos valores/categorias confirmados na aprovação.",
    "column:ponto_espelhos_assinados.revogado_em": "Flag de revogação (a trilha completa fica em ponto_espelhos_revogacoes). ",
+   "table:training_images": "Capa de um conteúdo de treinamento. Uma linha por conteúdo; storage_path aponta para o bucket privado training-images.",
+   "column:training_images.status": "disabled = integração de geração desligada; pending/processing/succeeded/failed só existem com provedor configurado.",
+   "column:training_images.source_content_id": "Curso de origem quando a capa é herdada por turma/certificado (evita geração duplicada).",
+   "column:training_images.attempts": "Tentativas de processamento da versão atual (content_hash). Reinicia quando o conteúdo é editado.",
+   "column:training_images.generations": "Quantidade de capas concluídas com sucesso (histórico, nunca reduz).",
+   "column:training_images.unknown_outcomes": "Resultados pagos desconhecidos (timeout/rede/5xx). Exige reconciliação manual; NÃO é retentado automaticamente.",
+   "column:training_images.operation_id": "Identificador estável da operação no provedor (rastreabilidade/suporte). Não impede cobrança duplicada por si só.",
+   "table:training_image_settings": "Flags de servidor da integração de imagens. autoqueue_enabled=false por padrão: nenhum cadastro enfileira geração.",
+   "table:training_image_requests": "Fila persistente de geração automática. Uma linha por conteúdo; reivindicada com FOR UPDATE SKIP LOCKED pelo worker.",
    "column:audit_log.justificativa": "Justificativa/motivo integral da operação auditada (cancelamento, reabertura, devolução etc.).",
    "column:audit_log.status_anterior": "Status do registro antes da operação; nulo quando a operação não é uma transição de status.",
    "column:audit_log.status_posterior": "Status do registro depois da operação; nulo quando a operação não é uma transição de status."
@@ -101601,8 +102524,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 841,
-   "lines": 76084,
+   "files": 847,
+   "lines": 77231,
    "tables": [
     "profiles",
     "user_roles"
@@ -108257,6 +109180,8 @@
     "pcs_avaliacoes_cargo",
     "pcs_grades",
     "pcs_pesquisa_salarial",
+    "training_images",
+    "training_image_requests",
     "afd_geracoes"
    ],
    "afdt_importacoes": [
@@ -108717,6 +109642,9 @@
    "tipos_pagamento",
    "tipos_salario",
    "tipos_visto",
+   "training_image_requests",
+   "training_image_settings",
+   "training_images",
    "trct",
    "treinamento_feedbacks",
    "treinamentos_avaliacoes",
@@ -141012,6 +141940,156 @@
     "rule": "default now()"
    },
    {
+    "table": "training_images",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "training_images",
+    "column": "empresa_id",
+    "rule": "obrigatório; FK → empresas.id ON DELETE CASCADE"
+   },
+   {
+    "table": "training_images",
+    "column": "content_type",
+    "rule": "obrigatório; CHECK content_type IN ('course', 'learning_path', 'training_session', 'certificate')"
+   },
+   {
+    "table": "training_images",
+    "column": "content_id",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "training_images",
+    "column": "storage_path",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "training_images",
+    "column": "status",
+    "rule": "default 'disabled'; CHECK status IN ('pending', 'processing', 'succeeded', 'failed', 'disabled')"
+   },
+   {
+    "table": "training_images",
+    "column": "provider",
+    "rule": "default 'disabled'"
+   },
+   {
+    "table": "training_images",
+    "column": "attempts",
+    "rule": "default 0; CHECK attempts >= 0 AND attempts <= 5"
+   },
+   {
+    "table": "training_images",
+    "column": "generations",
+    "rule": "default 0; CHECK generations >= 0"
+   },
+   {
+    "table": "training_images",
+    "column": "failures",
+    "rule": "default 0; CHECK failures >= 0"
+   },
+   {
+    "table": "training_images",
+    "column": "unknown_outcomes",
+    "rule": "default 0; CHECK unknown_outcomes >= 0"
+   },
+   {
+    "table": "training_images",
+    "column": "requested_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "training_images",
+    "column": "created_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "training_images",
+    "column": "updated_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "training_images",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT training_images_conteudo_unico UNIQUE (empresa_id, content_type, content_id)"
+   },
+   {
+    "table": "training_images",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT training_images_caminho_unico UNIQUE (empresa_id, storage_path)"
+   },
+   {
+    "table": "training_images",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT training_images_hash_valido CHECK (content_hash IS NULL OR char_length(content_hash) BETWEEN 8 AND 128)"
+   },
+   {
+    "table": "training_images",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT training_images_caminho_tenant CHECK (storage_path LIKE empresa_id::text || '/%')"
+   },
+   {
+    "table": "training_image_settings",
+    "column": "id",
+    "rule": "PK; default true; CHECK id"
+   },
+   {
+    "table": "training_image_settings",
+    "column": "autoqueue_enabled",
+    "rule": "default false"
+   },
+   {
+    "table": "training_image_settings",
+    "column": "updated_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "training_image_requests",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "training_image_requests",
+    "column": "empresa_id",
+    "rule": "obrigatório; FK → empresas.id ON DELETE CASCADE"
+   },
+   {
+    "table": "training_image_requests",
+    "column": "content_type",
+    "rule": "obrigatório; CHECK content_type IN ('course', 'learning_path')"
+   },
+   {
+    "table": "training_image_requests",
+    "column": "content_id",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "training_image_requests",
+    "column": "status",
+    "rule": "default 'queued'; CHECK status IN ('queued', 'processing', 'done', 'skipped', 'failed')"
+   },
+   {
+    "table": "training_image_requests",
+    "column": "attempts",
+    "rule": "default 0; CHECK attempts >= 0 AND attempts <= 5"
+   },
+   {
+    "table": "training_image_requests",
+    "column": "requested_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "training_image_requests",
+    "column": "available_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "training_image_requests",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT training_image_requests_unico UNIQUE (empresa_id, content_type, content_id)"
+   },
+   {
     "table": "afd_geracoes",
     "column": "id",
     "rule": "PK; default gen_random_uuid()"
@@ -154740,6 +155818,14 @@
    {
     "file": "supabase/migrations/20261022000000_qa5_db_fixes.sql",
     "line": "v_fim := (v_inicio + interval '1 month' - interval '1 day')::date;"
+   },
+   {
+    "file": "supabase/migrations/20261023120000_training_images_infrastructure.sql",
+    "line": "p_stale_after interval DEFAULT interval '10 minutes'"
+   },
+   {
+    "file": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+    "line": "AND r.started_at < now() - interval '30 minutes'"
    },
    {
     "file": "supabase/migrations/20261024000000_qa_r4_fixes.sql",
@@ -194640,6 +195726,56 @@
     "src": "supabase/migrations/20261018130000_onda4e_objetos_ausentes.sql"
    },
    {
+    "name": "training_images_select_authenticated",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'training-images' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
+    "check": "",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "name": "training_images_insert_admin",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'training-images' AND public.is_admin(auth.uid()) AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "name": "training_images_update_admin",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'training-images' AND public.is_admin(auth.uid()) AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
+    "check": "",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "name": "training_images_delete_admin",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'training-images' AND public.is_admin(auth.uid()) AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
+    "check": "",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "name": "training_images_select_tenant",
+    "table": "training_images",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.user_belongs_to_empresa(auth.uid(), empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
     "name": "contas_bancarias_rh_manage",
     "table": "contas_bancarias",
     "cmd": "ALL",
@@ -198504,6 +199640,51 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql"
+   },
+   {
+    "name": "update_training_images_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "training_images",
+    "function": "update_updated_at_column",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "name": "track_training_images_outcomes",
+    "when": "BEFORE UPDATE",
+    "table": "training_images",
+    "function": "training_images_track_outcomes",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "name": "update_training_image_settings_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "training_image_settings",
+    "function": "update_updated_at_column",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "name": "enqueue_training_image_course",
+    "when": "AFTER INSERT",
+    "table": "catalogo_cursos",
+    "function": "enqueue_training_image_request",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "name": "enqueue_training_image_learning_path",
+    "when": "AFTER INSERT",
+    "table": "trilhas_aprendizado",
+    "function": "enqueue_training_image_request",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
    },
    {
     "name": "ciclos_bloqueio_exclusao_com_dependencias",
@@ -208909,6 +210090,166 @@
      "OLD"
     ]
    },
+   "training_images_track_outcomes": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF NEW.status = 'succeeded' AND OLD.status IS DISTINCT FROM 'succeeded' THEN NEW.generations := OLD.generations + 1; ELSIF NEW.status = 'failed' AND OLD.status IS DISTINCT FROM 'failed' THEN IF coalesce(NEW.last_error, '') LIKE 'resultado_desconhecido%' THEN NEW.unknown_outcomes := OLD.unknown_outcomes + 1; ELSE NEW.failures := OLD.failures + 1; END IF; END IF; IF NEW.status IN ('pending', 'processing') AND OLD.status IS DISTINCT FROM NEW.status THEN NEW.last_attempt_at := now(); END IF; RETURN NEW; END",
+    "raises": [],
+    "tables": [
+     "NEW"
+    ]
+   },
+   "claim_training_image": {
+    "args": "p_empresa_id uuid, p_content_type text, p_content_id uuid, p_content_hash text, p_prompt_version text DEFAULT NULL, p_max_attempts integer DEFAULT 3, p_stale_after interval DEFAULT interval '10 minute …",
+    "returns": "TABLE (reclamado boolean, id uuid, status text, attempts integer)",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_ok boolean := false; v_pasta text; v_linha public.training_images; v_max integer := least(greatest(coalesce(p_max_attempts, 3), 1), 5); BEGIN IF p_empresa_id IS NULL OR p_content_id IS NULL THEN RAISE EXCEPTION 'identificadores_obrigatorios'; END IF; IF p_content_type NOT IN ('course', 'learning_path', 'training_session', 'certificate') THEN RAISE EXCEPTION 'tipo_de_conteudo_invalido'; END IF; IF p_content_hash IS NULL OR char_length(p_content_hash) < 8 THEN RAISE EXCEPTION 'content_hash_invalido'; END IF; IF p_content_type = 'course' THEN SELECT EXISTS ( SELECT 1 FROM public.catalogo_cursos c WHERE c.id = p_content_id AND c.empresa_id = p_empresa_id ) INTO v_ok; v_pasta := 'course …",
+    "raises": [
+     "identificadores_obrigatorios",
+     "tipo_de_conteudo_invalido",
+     "content_hash_invalido",
+     "conteudo_nao_pertence_a_empresa"
+    ],
+    "tables": [
+     "SET",
+     "catalogo_cursos",
+     "colaboradores",
+     "excluded",
+     "training_images",
+     "treinamento_certificados",
+     "treinamento_instancias",
+     "trilhas_aprendizado",
+     "v_linha",
+     "v_ok"
+    ]
+   },
+   "reconcile_training_image": {
+    "args": "p_empresa_id uuid, p_content_type text, p_content_id uuid, p_decision text, p_operator text, p_notes text",
+    "returns": "public.training_images",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_linha public.training_images; BEGIN IF p_decision NOT IN ('confirmar_nao_gerado', 'manter_bloqueado') THEN RAISE EXCEPTION 'decisao_invalida'; END IF; IF coalesce(trim(p_operator), '') = '' THEN RAISE EXCEPTION 'operador_obrigatorio'; END IF; IF coalesce(trim(p_notes), '') = '' THEN RAISE EXCEPTION 'notas_obrigatorias'; END IF; SELECT * INTO v_linha FROM public.training_images ti WHERE ti.empresa_id = p_empresa_id AND ti.content_type = p_content_type AND ti.content_id = p_content_id FOR UPDATE; IF NOT FOUND THEN RAISE EXCEPTION 'registro_inexistente'; END IF; IF v_linha.status <> 'failed' OR coalesce(v_linha.last_error, '') NOT LIKE 'resultado_desconhecido%' THEN RAISE EXCEPTION 'r …",
+    "raises": [
+     "decisao_invalida",
+     "operador_obrigatorio",
+     "notas_obrigatorias",
+     "registro_inexistente",
+     "registro_nao_esta_em_estado_desconhecido"
+    ],
+    "tables": [
+     "training_images",
+     "v_linha"
+    ]
+   },
+   "enqueue_training_image_request": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_enabled boolean; BEGIN SELECT autoqueue_enabled INTO v_enabled FROM public.training_image_settings WHERE id = true; IF coalesce(v_enabled, false) IS NOT TRUE THEN RETURN NEW; END IF; IF NEW.empresa_id IS NULL THEN RETURN NEW; END IF; INSERT INTO public.training_image_requests (empresa_id, content_type, content_id, requested_by) VALUES (NEW.empresa_id, TG_ARGV[0], NEW.id, auth.uid()) ON CONFLICT (empresa_id, content_type, content_id) DO NOTHING; RETURN NEW; EXCEPTION WHEN OTHERS THEN RAISE WARNING 'training_image autoqueue ignorado: %', SQLERRM; RETURN NEW; END",
+    "raises": [],
+    "tables": [
+     "training_image_requests",
+     "training_image_settings",
+     "v_enabled"
+    ]
+   },
+   "claim_training_image_requests": {
+    "args": "p_limit integer DEFAULT 5",
+    "returns": "SETOF public.training_image_requests",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_limit integer := least(greatest(coalesce(p_limit, 5), 1), 20); BEGIN RETURN QUERY WITH alvo AS ( SELECT r.id FROM public.training_image_requests r WHERE (r.status = 'queued' AND r.available_at <= now()) OR ( r.status = 'processing' AND r.started_at < now() - interval '30 minutes' AND r.attempts < 5 ) ORDER BY r.available_at, r.requested_at FOR UPDATE SKIP LOCKED LIMIT v_limit ) UPDATE public.training_image_requests r SET status = 'processing', attempts = r.attempts + 1, started_at = now(), available_at = now(), finished_at = NULL, last_error = NULL FROM alvo WHERE r.id = alvo.id RETURNING r.*; END",
+    "raises": [],
+    "tables": [
+     "SKIP",
+     "alvo",
+     "training_image_requests"
+    ]
+   },
+   "finish_training_image_request": {
+    "args": "p_id uuid, p_status text, p_error text DEFAULT NULL, p_retry_after_seconds integer DEFAULT NULL",
+    "returns": "public.training_image_requests",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_linha public.training_image_requests; BEGIN IF p_status NOT IN ('done', 'skipped', 'failed', 'queued') THEN RAISE EXCEPTION 'status_invalido'; END IF; UPDATE public.training_image_requests SET status = p_status, last_error = left(coalesce(p_error, ''), 500), finished_at = CASE WHEN p_status IN ('done', 'skipped', 'failed') THEN now() ELSE NULL END, available_at = CASE WHEN p_status = 'queued' THEN now() + make_interval(secs => greatest(coalesce(p_retry_after_seconds, 300), 30)) ELSE now() END WHERE id = p_id RETURNING * INTO v_linha; IF NOT FOUND THEN RAISE EXCEPTION 'requisicao_inexistente'; END IF; RETURN v_linha; END",
+    "raises": [
+     "status_invalido",
+     "requisicao_inexistente"
+    ],
+    "tables": [
+     "training_image_requests",
+     "v_linha"
+    ]
+   },
+   "set_training_image_autoqueue": {
+    "args": "p_enabled boolean",
+    "returns": "public.training_image_settings",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_linha public.training_image_settings; BEGIN INSERT INTO public.training_image_settings (id, autoqueue_enabled) VALUES (true, coalesce(p_enabled, false)) ON CONFLICT (id) DO UPDATE SET autoqueue_enabled = excluded.autoqueue_enabled, updated_at = now() RETURNING * INTO v_linha; RETURN v_linha; END",
+    "raises": [],
+    "tables": [
+     "SET",
+     "training_image_settings",
+     "v_linha"
+    ]
+   },
+   "backfill_training_image_requests": {
+    "args": "p_limit integer DEFAULT 50",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_limit integer := least(greatest(coalesce(p_limit, 50), 1), 500); v_inseridos integer; BEGIN WITH candidatos AS ( SELECT c.empresa_id, 'course'::text AS content_type, c.id AS content_id FROM public.catalogo_cursos c WHERE c.empresa_id IS NOT NULL AND NOT EXISTS ( SELECT 1 FROM public.training_images ti WHERE ti.empresa_id = c.empresa_id AND ti.content_type = 'course' AND ti.content_id = c.id AND ti.status IN ('succeeded', 'pending', 'processing') ) AND NOT EXISTS ( SELECT 1 FROM public.training_image_requests r WHERE r.empresa_id = c.empresa_id AND r.content_type = 'course' AND r.content_id = c.id ) UNION ALL SELECT t.empresa_id, 'learning_path'::text, t.id FROM public.trilhas_apren …",
+    "raises": [],
+    "tables": [
+     "alvo",
+     "candidatos",
+     "catalogo_cursos",
+     "training_image_requests",
+     "training_images",
+     "trilhas_aprendizado"
+    ]
+   },
+   "edge_rate_limit_check_dual": {
+    "args": "p_empresa_key text, p_empresa_limit int, p_usuario_key text, p_usuario_limit int, p_window_sec int, p_now bigint",
+    "returns": "jsonb",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_window_start bigint; v_empresa_count bigint; v_usuario_count bigint; v_empresa_remaining int; v_usuario_remaining int; v_reason text; v_tem_usuario boolean; BEGIN IF coalesce(trim(p_empresa_key), '') = '' THEN RAISE EXCEPTION 'chave_empresa_obrigatoria'; END IF; IF p_empresa_limit < 1 THEN RAISE EXCEPTION 'limite_empresa_invalido'; END IF; IF p_window_sec < 1 THEN RAISE EXCEPTION 'janela_invalida'; END IF; v_tem_usuario := p_usuario_key IS NOT NULL AND trim(p_usuario_key) <> '' AND coalesce(p_usuario_limit, 0) >= 1; IF NOT v_tem_usuario AND p_usuario_key IS NOT NULL AND trim(p_usuario_key) <> '' AND coalesce(p_usuario_limit, 0) < 1 THEN RAISE EXCEPTION 'limite_usuario_invalido'; EN …",
+    "raises": [
+     "chave_empresa_obrigatoria",
+     "limite_empresa_invalido",
+     "janela_invalida",
+     "limite_usuario_invalido"
+    ],
+    "tables": [
+     "rate_limits",
+     "v_empresa_count",
+     "v_usuario_count"
+    ]
+   },
    "pode_editar_colaborador": {
     "args": "p_colaborador_id uuid",
     "returns": "boolean",
@@ -209878,6 +211219,81 @@
     "function": "ponto_espelhos_assinados_guard_update",
     "msg": "Trilha de auditoria é append-only. UPDATE/DELETE não são permitidos em %.",
     "src": "supabase/migrations/20261023000000_qa_r3_fixes.sql"
+   },
+   {
+    "function": "claim_training_image",
+    "msg": "identificadores_obrigatorios",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "claim_training_image",
+    "msg": "tipo_de_conteudo_invalido",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "claim_training_image",
+    "msg": "content_hash_invalido",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "claim_training_image",
+    "msg": "conteudo_nao_pertence_a_empresa",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "reconcile_training_image",
+    "msg": "decisao_invalida",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "reconcile_training_image",
+    "msg": "operador_obrigatorio",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "reconcile_training_image",
+    "msg": "notas_obrigatorias",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "reconcile_training_image",
+    "msg": "registro_inexistente",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "reconcile_training_image",
+    "msg": "registro_nao_esta_em_estado_desconhecido",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "function": "finish_training_image_request",
+    "msg": "status_invalido",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "function": "finish_training_image_request",
+    "msg": "requisicao_inexistente",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "function": "edge_rate_limit_check_dual",
+    "msg": "chave_empresa_obrigatoria",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql"
+   },
+   {
+    "function": "edge_rate_limit_check_dual",
+    "msg": "limite_empresa_invalido",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql"
+   },
+   {
+    "function": "edge_rate_limit_check_dual",
+    "msg": "janela_invalida",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql"
+   },
+   {
+    "function": "edge_rate_limit_check_dual",
+    "msg": "limite_usuario_invalido",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql"
    },
    {
     "function": "editar_feedback_seguro",
@@ -213865,6 +215281,34 @@
      "allowed": [],
      "default": "",
      "type": "text"
+    },
+    {
+     "table": "training_images",
+     "column": "status",
+     "enum": "",
+     "allowed": [
+      "disabled",
+      "failed",
+      "pending",
+      "processing",
+      "succeeded"
+     ],
+     "default": "disabled",
+     "type": "text NOT NULL DEFAULT 'disabled' CHECK (status IN ('pending', 'processing', 'succeeded', 'failed', 'disabled'))"
+    },
+    {
+     "table": "training_image_requests",
+     "column": "status",
+     "enum": "",
+     "allowed": [
+      "done",
+      "failed",
+      "processing",
+      "queued",
+      "skipped"
+     ],
+     "default": "queued",
+     "type": "text NOT NULL DEFAULT 'queued' CHECK (status IN ('queued', 'processing', 'done', 'skipped', 'failed'))"
     },
     {
      "table": "afd_geracoes",
@@ -221984,7 +223428,8 @@
      "authenticated: bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "authenticated: bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "authenticated: bucket_id = 'comprovantes-despesas' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-     "service_role: bucket_id = 'backups'"
+     "service_role: bucket_id = 'backups'",
+     "authenticated: bucket_id = 'training-images' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)"
     ],
     "INSERT": [
      "authenticated: ((\"bucket_id\" = 'comprovantes-despesas'::\"text\") AND (\"owner\" = \"auth\".\"uid\"()) AND \"public\".\"user_belongs_to_empresa\"(\"auth\"",
@@ -222014,6 +223459,7 @@
      "authenticated: bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "authenticated: bucket_id = 'comprovantes-despesas' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "service_role: bucket_id = 'backups'",
+     "authenticated: bucket_id = 'training-images' AND public.is_admin(auth.uid()) AND public.user_belongs_to_empresa(auth.uid(), ((storage.folder",
      "authenticated: bucket_id = 'avatars' AND owner = auth.uid() AND (storage.foldername(name))[1] = auth.uid()::text"
     ],
     "UPDATE": [
@@ -222030,6 +223476,7 @@
      "authenticated: bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "authenticated: bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "service_role: bucket_id = 'backups'",
+     "authenticated: bucket_id = 'training-images' AND public.is_admin(auth.uid()) AND public.user_belongs_to_empresa(auth.uid(), ((storage.folder",
      "authenticated: bucket_id = 'avatars' AND owner = auth.uid() AND (storage.foldername(name))[1] = auth.uid()::text"
     ],
     "DELETE": [
@@ -222051,6 +223498,7 @@
      "authenticated: bucket_id = 'medidas-disciplinares' AND (storage.foldername(name))[1]::uuid IN (SELECT get_user_empresas(auth.uid()))",
      "authenticated: bucket_id = 'medidas-contestacoes' AND (storage.foldername(name))[1]::uuid IN ( SELECT ue.empresa_id FROM public.user_empresa",
      "service_role: bucket_id = 'backups'",
+     "authenticated: bucket_id = 'training-images' AND public.is_admin(auth.uid()) AND public.user_belongs_to_empresa(auth.uid(), ((storage.folder",
      "authenticated: bucket_id = 'avatars' AND owner = auth.uid() AND (storage.foldername(name))[1] = auth.uid()::text"
     ]
    },
@@ -222230,6 +223678,29 @@
     "rls": "enabled",
     "SELECT": [
      "authenticated: true"
+    ],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
+   },
+   "training_image_requests": {
+    "rls": "enabled",
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
+   },
+   "training_image_settings": {
+    "rls": "enabled",
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
+   },
+   "training_images": {
+    "rls": "enabled",
+    "SELECT": [
+     "authenticated: public.user_belongs_to_empresa(auth.uid(), empresa_id)"
     ],
     "INSERT": [],
     "UPDATE": [],
@@ -223298,6 +224769,12 @@
    "supabase/migrations/20261018130000_onda4e_objetos_ausentes.sql",
    "supabase/migrations/20261022000000_qa5_db_fixes.sql",
    "supabase/migrations/20261022090000_ninebox_conclusao_feedback_autorizada.sql",
+   "supabase/migrations/20261023120000_training_images_infrastructure.sql",
+   "supabase/migrations/20261023120000_training_images_infrastructure.verify.sql",
+   "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+   "supabase/migrations/20261023130000_training_image_autoqueue.verify.sql",
+   "supabase/migrations/20261023140000_edge_rate_limit_dual.sql",
+   "supabase/migrations/20261023140000_edge_rate_limit_dual.verify.sql",
    "supabase/migrations/20261024000000_qa_r4_fixes.sql",
    "supabase/migrations/20261028220000_pagar_desligamento_transacional.sql",
    "supabase/migrations/20261029000000_gaps_v2_verificacao.sql",
@@ -223340,6 +224817,7 @@
    "associar_pis_colaborador_afdt",
    "audit_delete_operation",
    "auto_vincular_admins_empresa",
+   "backfill_training_image_requests",
    "bloquear_exclusao_ciclo_com_dependencias",
    "calcular_prazo_cat",
    "candidatura_na_minha_empresa",
@@ -223352,6 +224830,8 @@
    "check_rate_limit",
    "claim_admission_esocial_event",
    "claim_due_report_schedules",
+   "claim_training_image",
+   "claim_training_image_requests",
    "clean_idle_connections",
    "cleanup_ciencia_rate_limits",
    "cleanup_expired_login_attempts",
@@ -223404,6 +224884,7 @@
    "dp_run_retention",
    "dp_track_pii_access",
    "edge_rate_limit_check",
+   "edge_rate_limit_check_dual",
    "editar_feedback_seguro",
    "empresa_do_colaborador",
    "encrypt_contas_bancarias_fields",
@@ -223426,9 +224907,11 @@
    "enforce_log_retention",
    "enforce_medida_disciplinar_hash",
    "enforce_report_schedule_authorship",
+   "enqueue_training_image_request",
    "enviar_avaliacao_ao_gestor",
    "finalizar_feedback",
    "finish_report_schedule_claim",
+   "finish_training_image_request",
    "fn_alert_pii_access_anomaly",
    "fn_alert_severe_disciplinary_measure",
    "fn_atualizar_status_ferias_diario",
@@ -223549,6 +225032,7 @@
    "purge_old_records",
    "purge_pii_access_logs",
    "purge_rate_limits",
+   "reconcile_training_image",
    "reconciliar_afdt",
    "reconciliar_ferias_folha_batch",
    "record_backup_run",
@@ -223585,6 +225069,7 @@
    "sec_verify_seals_admin",
    "sec_verify_seals_scan",
    "set_own_default_empresa",
+   "set_training_image_autoqueue",
    "sincronizar_consolidacao_avaliacao",
    "situacao_aprovacao",
    "solicitar_adiantamento_13_ferias",
@@ -223600,6 +225085,7 @@
    "storage_user_is_path_colaborador",
    "sugerir_proxima_medida",
    "tg_audit_log_enriquecer_feedback",
+   "training_images_track_outcomes",
    "trg_audit_status_change",
    "trg_contab_msg_bump_thread",
    "trg_contrato_token_auditar",
@@ -234292,6 +235778,230 @@
    },
    {
     "kind": "revoke",
+    "privs": "insert, update, delete",
+    "object": "training_images",
+    "objkind": "table",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "training_images",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "claim_training_image",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "claim_training_image",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "claim_training_image",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "training_images",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "reconcile_training_image",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "reconcile_training_image",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "reconcile_training_image",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023120000_training_images_infrastructure.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "training_image_settings",
+    "objkind": "table",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "training_image_settings",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "training_image_requests",
+    "objkind": "table",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "training_image_requests",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "claim_training_image_requests",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "claim_training_image_requests",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "claim_training_image_requests",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "finish_training_image_request",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "finish_training_image_request",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "finish_training_image_request",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "set_training_image_autoqueue",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "set_training_image_autoqueue",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "set_training_image_autoqueue",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "backfill_training_image_requests",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "backfill_training_image_requests",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "backfill_training_image_requests",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023130000_training_image_autoqueue.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "edge_rate_limit_check_dual",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "edge_rate_limit_check_dual",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "edge_rate_limit_check_dual",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql"
+   },
+   {
+    "kind": "revoke",
     "privs": "all",
     "object": "sec_audit_policies",
     "objkind": "function",
@@ -236047,10 +237757,12 @@
    "feedbacks_360_validacoes_potencial",
    "feedbacks_360_consolidacoes",
    "feedbacks_360_aprovacoes_gestor",
+   "training_images",
+   "training_image_requests",
    "afd_geracoes"
   ],
   "tenant_missing": [],
-  "tenant_cov": 0.44,
+  "tenant_cov": 0.45,
   "soft_delete": [
    [
     "auth.oauth_clients",
@@ -237910,6 +239622,14 @@
    "health_checks": [
     "created_at"
    ],
+   "training_images": [
+    "created_at",
+    "updated_at"
+   ],
+   "training_image_settings": [
+    "updated_at"
+   ],
+   "training_image_requests": [],
    "afd_geracoes": [
     "created_at"
    ],
@@ -239618,13 +241338,6 @@
    },
    {
     "kind": "status",
-    "msg": "valor `succeeded` para `last_status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/pages/AdminOperacaoPage.tsx"
-    ]
-   },
-   {
-    "kind": "status",
     "msg": "valor `upload` para `step` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/pages/ImportacaoPage.tsx",
@@ -239642,13 +241355,6 @@
    {
     "kind": "status",
     "msg": "valor `importing` para `step` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/pages/ImportacaoPage.tsx"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `done` para `step` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/pages/ImportacaoPage.tsx"
     ]
@@ -241582,7 +243288,7 @@
    "`mv_refresh_log.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`health_checks.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`afd_geracoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "399/464 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …"
+   "399/467 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …"
   ]
  },
  "manual": [],
@@ -298353,6 +300059,42 @@
    "path": "supabase/migrations/20261023000000_qa_r3_fixes.sql",
    "lines": 58
   },
+  "supabase/migrations/20261023120000_training_images_infrastructure.sql": {
+   "path": "supabase/migrations/20261023120000_training_images_infrastructure.sql",
+   "lines": 454,
+   "temporal": [
+    "p_stale_after interval DEFAULT interval '10 minutes'"
+   ],
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261023120000_training_images_infrastructure.verify.sql": {
+   "path": "supabase/migrations/20261023120000_training_images_infrastructure.verify.sql",
+   "lines": 86,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261023130000_training_image_autoqueue.sql": {
+   "path": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+   "lines": 354,
+   "temporal": [
+    "AND r.started_at < now() - interval '30 minutes'"
+   ],
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261023130000_training_image_autoqueue.verify.sql": {
+   "path": "supabase/migrations/20261023130000_training_image_autoqueue.verify.sql",
+   "lines": 74,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261023140000_edge_rate_limit_dual.sql": {
+   "path": "supabase/migrations/20261023140000_edge_rate_limit_dual.sql",
+   "lines": 151,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261023140000_edge_rate_limit_dual.verify.sql": {
+   "path": "supabase/migrations/20261023140000_edge_rate_limit_dual.verify.sql",
+   "lines": 28,
+   "uses_service_role": true
+  },
   "supabase/migrations/20261024000000_qa_r4_fixes.sql": {
    "path": "supabase/migrations/20261024000000_qa_r4_fixes.sql",
    "lines": 648,
@@ -298818,10 +300560,34 @@
   }
  },
  "git": {
-  "sha": "efe96e88d9bed6f41180382f57f735a712857607",
+  "sha": "9d8ff76beb4822b5998daba8a51e704258ea45b9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "9d8ff76",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "chore: resgata da branch `muri` as 3 migrations que rodam em produção e não existiam na main (#582)",
+    "files": [
+     "scripts/.types-drift-baseline.json",
+     "supabase/migrations/20261023120000_training_images_infrastructure.sql",
+     "supabase/migrations/20261023120000_training_images_infrastructure.verify.sql",
+     "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+     "supabase/migrations/20261023130000_training_image_autoqueue.verify.sql",
+     "supabase/migrations/20261023140000_edge_rate_limit_dual.sql",
+     "supabase/migrations/20261023140000_edge_rate_limit_dual.verify.sql"
+    ]
+   },
+   {
+    "sha": "284f005",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "chore(docs): resgata da branch do #557 a prova de navegador que fechou o B23 (#584)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
    {
     "sha": "efe96e8",
     "date": "2026-11-16",
@@ -299272,34 +301038,15 @@
      "src/test/securityHeadersParity.test.ts",
      "vercel.json"
     ]
-   },
-   {
-    "sha": "2fbfb51",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "Seguros de Vida: permitir editar apólices (#521)",
-    "files": [
-     "src/pages/SegurosVidaPage.tsx",
-     "src/pages/__tests__/SegurosVidaPage.test.tsx"
-    ]
-   },
-   {
-    "sha": "daa557e",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: treinamentos permite alterar status da inscrição e editar curso (#492)",
-    "files": [
-     "src/pages/TreinamentosPage.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
-    "inventario/estado/rotas.json",
-    3
+    "docs/prod-readiness.md",
+    4
    ],
    [
-    "docs/prod-readiness.md",
+    "inventario/estado/rotas.json",
     3
    ],
    [
@@ -299331,6 +301078,34 @@
     2
    ],
    [
+    "scripts/.types-drift-baseline.json",
+    1
+   ],
+   [
+    "supabase/migrations/20261023120000_training_images_infrastructure.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261023120000_training_images_infrastructure.verify.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261023130000_training_image_autoqueue.verify.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261023140000_edge_rate_limit_dual.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261023140000_edge_rate_limit_dual.verify.sql",
+    1
+   ],
+   [
     "scripts/canonical-invariants.sql",
     1
    ],
@@ -299344,34 +301119,6 @@
    ],
    [
     "supabase/migrations/20261115170000_ninebox_repoe_revogacao_versao_consolidada.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261115170000_ninebox_repoe_revogacao_versao_consolidada.verify.sql",
-    1
-   ],
-   [
-    "inventario/estado/banco.json",
-    1
-   ],
-   [
-    "inventario/estado/edges.json",
-    1
-   ],
-   [
-    "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql",
-    1
-   ],
-   [
-    "eslint.config.js",
     1
    ]
   ]

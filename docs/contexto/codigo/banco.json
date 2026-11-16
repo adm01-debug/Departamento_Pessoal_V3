@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 841,
+ "migrations": 847,
  "seeds": [],
  "avisos": [
   "181 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -252,6 +252,7 @@
   "audit_log_append_only",
   "audit_log_unified_default_source",
   "auto_vincular_admins_empresa",
+  "backfill_training_image_requests",
   "bloquear_aprovacao_ponto_sem_rh",
   "bloquear_exclusao_ciclo_com_dependencias",
   "calcular_dias_direito_ferias",
@@ -269,6 +270,8 @@
   "check_rate_limit",
   "claim_admission_esocial_event",
   "claim_due_report_schedules",
+  "claim_training_image",
+  "claim_training_image_requests",
   "cleanup_expired_login_attempts",
   "cleanup_expired_rate_limit_logs",
   "cleanup_expired_rate_limits",
@@ -328,6 +331,7 @@
   "dp_table_template",
   "dp_track_pii_access",
   "edge_rate_limit_check",
+  "edge_rate_limit_check_dual",
   "editar_feedback_seguro",
   "eh_dia_util_br",
   "eh_dia_valido_inicio_ferias",
@@ -352,6 +356,7 @@
   "enforce_log_retention",
   "enforce_medida_disciplinar_hash",
   "enforce_report_schedule_authorship",
+  "enqueue_training_image_request",
   "ensure_single_default_filter",
   "enviar_avaliacao_ao_gestor",
   "fill_recrutamento_child_empresa",
@@ -359,6 +364,7 @@
   "fill_treinamento_instancias_empresa",
   "finalizar_feedback",
   "finish_report_schedule_claim",
+  "finish_training_image_request",
   "fn_alert_pii_access_anomaly",
   "fn_alert_severe_disciplinary_measure",
   "fn_atualizar_status_ferias_diario",
@@ -529,6 +535,7 @@
   "purge_old_records",
   "purge_pii_access_logs",
   "purge_rate_limits",
+  "reconcile_training_image",
   "reconciliar_afdt",
   "reconciliar_ferias_folha_batch",
   "record_backup_run",
@@ -567,6 +574,7 @@
   "sec_verify_seals_scan",
   "set_own_default_empresa",
   "set_provisoes_folha_total",
+  "set_training_image_autoqueue",
   "set_updated_at_sst_cat",
   "sincronizar_consolidacao_avaliacao",
   "situacao_aprovacao",
@@ -586,6 +594,7 @@
   "tg_audit_log_enriquecer_feedback",
   "tg_catalogo_infracoes_updated_at",
   "tg_feedbacks_360_revisao",
+  "training_images_track_outcomes",
   "trg_ajuste_ponto_status_transition",
   "trg_audit_status_change",
   "trg_ciclos_status_transition",
@@ -1128,6 +1137,13 @@
    "evento": "update",
    "tabela": "cargos",
    "funcao": "increment_version"
+  },
+  {
+   "nome": "enqueue_training_image_course",
+   "quando": "after",
+   "evento": "insert",
+   "tabela": "catalogo_cursos",
+   "funcao": "enqueue_training_image_request"
   },
   {
    "nome": "trg_catalogo_infracoes_updated_at",
@@ -2670,6 +2686,27 @@
    "funcao": "update_updated_at_column"
   },
   {
+   "nome": "update_training_image_settings_updated_at",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "training_image_settings",
+   "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "track_training_images_outcomes",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "training_images",
+   "funcao": "training_images_track_outcomes"
+  },
+  {
+   "nome": "update_training_images_updated_at",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "training_images",
+   "funcao": "update_updated_at_column"
+  },
+  {
    "nome": "set_timestamp_instancias",
    "quando": "before",
    "evento": "update",
@@ -2689,6 +2726,13 @@
    "evento": "update",
    "tabela": "treinamentos_certificados",
    "funcao": "update_treinamentos_certificados_updated_at"
+  },
+  {
+   "nome": "enqueue_training_image_learning_path",
+   "quando": "after",
+   "evento": "insert",
+   "tabela": "trilhas_aprendizado",
+   "funcao": "enqueue_training_image_request"
   },
   {
    "nome": "set_timestamp_trilhas",
@@ -3049,6 +3093,11 @@
    "nome": "sst-programas",
    "criado_em_sql": false,
    "usado_em": 3
+  },
+  {
+   "nome": "training-images",
+   "criado_em_sql": true,
+   "usado_em": 0
   }
  ],
  "tabelas": {
@@ -11656,7 +11705,9 @@
    },
    "usada_no_front": 1,
    "usada_em_edges": [],
-   "triggers": [],
+   "triggers": [
+    "enqueue_training_image_course"
+   ],
    "sem_rls": false,
    "nao_usada": false
   },
@@ -56382,6 +56433,30 @@
      "tipo": "permissive"
     },
     {
+     "nome": "training_images_delete_admin",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "training_images_insert_admin",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "training_images_select_authenticated",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "training_images_update_admin",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "Upload de currículos por usuários autenticados",
      "comando": "insert",
      "para": "authenticated",
@@ -57428,6 +57503,371 @@
    "usada_no_front": 0,
    "usada_em_edges": [],
    "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "training_image_requests": {
+   "colunas": {
+    "attempts": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "available_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "content_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "content_type": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "empresa_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "empresas"
+    },
+    "finished_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "last_error": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "requested_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "requested_by": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "started_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "status": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'queued'",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [],
+   "indices": [
+    {
+     "nome": "idx_training_image_requests_empresa",
+     "colunas": "empresa_id, content_type",
+     "unico": false
+    },
+    {
+     "nome": "idx_training_image_requests_status",
+     "colunas": "status, available_at, requested_at",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "empresa_id->empresas"
+   ],
+   "criada_em": "20261023130000_training_image_autoqueue.sql",
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "training_image_settings": {
+   "colunas": {
+    "autoqueue_enabled": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "false",
+     "ref": null
+    },
+    "id": {
+     "tipo": "boolean",
+     "nn": false,
+     "pk": true,
+     "default": "true",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [],
+   "indices": [],
+   "fks": [],
+   "criada_em": "20261023130000_training_image_autoqueue.sql",
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [
+    "update_training_image_settings_updated_at"
+   ],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "training_images": {
+   "colunas": {
+    "attempts": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "completed_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "content_hash": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "content_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "content_type": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "empresa_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "empresas"
+    },
+    "failures": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "generations": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "last_attempt_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "last_error": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "model": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "operation_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "prompt_version": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "provider": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'disabled'",
+     "ref": null
+    },
+    "reconciled_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "reconciled_by": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "reconciliation_notes": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "requested_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "source_content_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "status": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'disabled'",
+     "ref": null
+    },
+    "storage_path": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "unknown_outcomes": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "training_images_select_tenant",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_training_images_empresa",
+     "colunas": "empresa_id",
+     "unico": false
+    },
+    {
+     "nome": "idx_training_images_origem",
+     "colunas": "source_content_id",
+     "unico": false
+    },
+    {
+     "nome": "idx_training_images_status",
+     "colunas": "empresa_id, status",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "empresa_id->empresas"
+   ],
+   "criada_em": "20261023120000_training_images_infrastructure.sql",
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [
+    "track_training_images_outcomes",
+    "update_training_images_updated_at"
+   ],
    "sem_rls": false,
    "nao_usada": true
   },
@@ -58845,6 +59285,7 @@
    "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [
+    "enqueue_training_image_learning_path",
     "set_timestamp_trilhas"
    ],
    "sem_rls": false,
