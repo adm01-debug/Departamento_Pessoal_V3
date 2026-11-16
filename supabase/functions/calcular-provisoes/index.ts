@@ -2,7 +2,7 @@
 // • JWT + CSRF fail-closed + tenant scope
 // • Zod strict (competência AAAA-MM, não-futura, ≤ 60 meses passados)
 // • BigInt centavos (zero drift)
-// • Férias = (salário × 4/3) / 12 + encargos ~35.8%; 13º = salário / 12 + encargos
+// • Férias = (salário × 4/3) / 12 + encargos por regime tributário; 13º = salário / 12 + encargos
 // • Filtra colaboradores ativos e admitidos até último dia da competência
 // • Cap 10.000 colaboradores/execução
 // • Substituição + auditoria atômicas por RPC transacional
@@ -26,6 +26,32 @@ const INSS_PATRONAL_BPS = 200n;  // 20%
 const RAT_MEDIO_BPS = 30n;       // 3% (src/calculators/tabelas.ts::ENCARGOS_PADRAO.rat)
 const TERCEIROS_BPS = 58n;       // 5.8%
 const FGTS_BPS = 80n;            // 8%
+
+type AliquotaVigente = {
+  encargos_aliquota_bps: number;
+  regime_tributario: string | null;
+  simples_anexo: string | null;
+};
+
+// Encargos patronais por regime tributário da empresa. Espelho manual de
+// src/calculators/tabelas.ts::aliquotaEncargosProvisao (edge não pode importar
+// de src/). Simples Nacional recolhe CPP e Terceiros dentro do DAS
+// (LC 123/2006, art. 13, §3º) — sobre a folha incide só o FGTS; no Anexo IV
+// (art. 18, §5º-C) a CPP e o RAT/FAP ficam fora do DAS. Regime ausente ou
+// desconhecido mantém a alíquota cheia para não subestimar o passivo.
+function encargosPatronaisBps(regime: string | null, simplesAnexo: string | null): bigint {
+  const cheia = INSS_PATRONAL_BPS + RAT_MEDIO_BPS + TERCEIROS_BPS;
+  if (regime !== 'simples_nacional') return cheia;
+  // Anexo IV: CPP e RAT/FAP ficam FORA do DAS (art. 18, §5º-C).
+  if (simplesAnexo === 'IV') return INSS_PATRONAL_BPS + RAT_MEDIO_BPS;
+  // Anexo NÃO identificado: `empresas.simples_anexo` é nullable
+  // (20260912208000_p1_company_payroll_tax_contract.sql:20,77-85) e a tela de
+  // configuração permite salvar sem ele. Sem saber o anexo não é possível
+  // afirmar que a CPP está no DAS, então mantém a alíquota cheia — reduzir
+  // aqui subestimaria o passivo de uma empresa do Anexo IV mal cadastrada.
+  if (!simplesAnexo) return cheia;
+  return 0n;
+}
 
 const BodySchema = z.object({
   empresa_id: z.string().uuid(),
@@ -119,6 +145,43 @@ serve(async (req: Request): Promise<Response> => {
     const dataLimite = ultimoDiaCompetencia(competencia);
     const startTime = Date.now();
 
+    // Regime tributário da empresa define a alíquota de encargos da provisão.
+    const { data: empresa, error: empresaErr } = await supabase
+      .from('empresas')
+      .select('regime_tributario, simples_anexo')
+      .eq('id', empresa_id)
+      .maybeSingle<{ regime_tributario: string | null; simples_anexo: string | null }>();
+    if (empresaErr) throw empresaErr;
+    // A aliquota da competencia vive em tabela propria
+    // (`provisoes_competencia_tributaria`, migration 20261116120000), NAO nas
+    // linhas de provisao: a substituicao com lote vazio apaga as linhas e o
+    // contrato tributario precisa sobreviver a isso. Sem essa fonte, mudar o
+    // regime da empresa (ou corrigir o anexo do Simples) reescreveria o passivo
+    // de meses fechados com uma aliquota que nao era a vigente neles -- dinheiro
+    // de competencia encerrada nao pode mudar por efeito colateral de uma
+    // edicao de cadastro. A tabela e escrita so pela RPC e lida so pela propria
+    // empresa; audit_log nao serve (qualquer `authenticated` insere nele, e a
+    // retencao apaga eventos com 180 dias).
+    const { data: aplicada, error: aplicadaErr } = await supabase
+      .from('provisoes_competencia_tributaria')
+      .select('encargos_aliquota_bps, regime_tributario, simples_anexo')
+      .eq('empresa_id', empresa_id)
+      .eq('competencia', `${competencia}-01`)
+      .maybeSingle<AliquotaVigente>();
+    if (aplicadaErr) throw aplicadaErr;
+
+    const aliquotaOrigem = aplicada ? 'competencia' : 'cadastro';
+    const patronaisBps = aplicada
+      ? BigInt(aplicada.encargos_aliquota_bps)
+      : encargosPatronaisBps(empresa?.regime_tributario ?? null, empresa?.simples_anexo ?? null);
+    const regimeAplicado = aplicada ? aplicada.regime_tributario : (empresa?.regime_tributario ?? null);
+    const anexoAplicado = aplicada ? aplicada.simples_anexo : (empresa?.simples_anexo ?? null);
+    const contratoTributario = {
+      encargos_aliquota_bps: Number(patronaisBps),
+      regime_tributario: regimeAplicado,
+      simples_anexo: anexoAplicado,
+    };
+
     // Contagem prévia
     const { count: total, error: countErr } = await supabase
       .from('colaboradores')
@@ -148,7 +211,16 @@ serve(async (req: Request): Promise<Response> => {
       .single();
 
     // Chunked fetch + agregação em BigInt
-    type Prov = { colaborador_id: string; tipo: string; valor_principal: number; encargos_inss: number; encargos_fgts: number };
+    type Prov = {
+      colaborador_id: string;
+      tipo: string;
+      valor_principal: number;
+      encargos_inss: number;
+      encargos_fgts: number;
+      encargos_aliquota_bps: number;
+      regime_tributario: string | null;
+      simples_anexo: string | null;
+    };
     const provisoes: Prov[] = [];
     let totalPrincipalCents = 0n;
     let totalEncargosCents = 0n;
@@ -170,7 +242,7 @@ serve(async (req: Request): Promise<Response> => {
 
         // Provisão de Férias: (salário × 4/3) / 12 = salário × 4/36
         const feriasCents = (salarioCents * 4n) / 36n;
-        const feriasINSSCents = (feriasCents * (INSS_PATRONAL_BPS + RAT_MEDIO_BPS + TERCEIROS_BPS)) / 1000n;
+        const feriasINSSCents = (feriasCents * patronaisBps) / 1000n;
         const feriasFGTSCents = (feriasCents * FGTS_BPS) / 1000n;
 
         provisoes.push({
@@ -179,13 +251,14 @@ serve(async (req: Request): Promise<Response> => {
           valor_principal: centsToReais(feriasCents),
           encargos_inss: centsToReais(feriasINSSCents),
           encargos_fgts: centsToReais(feriasFGTSCents),
+          ...contratoTributario,
         });
         totalPrincipalCents += feriasCents;
         totalEncargosCents += feriasINSSCents + feriasFGTSCents;
 
         // Provisão 13º: salário / 12
         const decimoCents = salarioCents / 12n;
-        const decimoINSSCents = (decimoCents * (INSS_PATRONAL_BPS + RAT_MEDIO_BPS + TERCEIROS_BPS)) / 1000n;
+        const decimoINSSCents = (decimoCents * patronaisBps) / 1000n;
         const decimoFGTSCents = (decimoCents * FGTS_BPS) / 1000n;
 
         provisoes.push({
@@ -194,6 +267,7 @@ serve(async (req: Request): Promise<Response> => {
           valor_principal: centsToReais(decimoCents),
           encargos_inss: centsToReais(decimoINSSCents),
           encargos_fgts: centsToReais(decimoFGTSCents),
+          ...contratoTributario,
         });
         totalPrincipalCents += decimoCents;
         totalEncargosCents += decimoINSSCents + decimoFGTSCents;
@@ -208,6 +282,8 @@ serve(async (req: Request): Promise<Response> => {
       total_principal: centsToReais(totalPrincipalCents),
       total_encargos: centsToReais(totalEncargosCents),
       total_provisionado: centsToReais(totalCents),
+      ...contratoTributario,
+      aliquota_origem: aliquotaOrigem,
       calculado_em: new Date().toISOString(),
     };
     const hash = await sha256Hex(JSON.stringify(consolidado));
@@ -225,7 +301,21 @@ serve(async (req: Request): Promise<Response> => {
         p_audit_data: { ...consolidado, hash_sha256: hash },
       },
     );
-    if (replaceError) throw replaceError;
+    if (replaceError) {
+      // A RPC recusa com 40001 quando outra execucao gravou esta competencia
+      // entre a leitura da aliquota (acima, fora da transacao) e o COMMIT.
+      // Nao e erro do pedido: refazer uma vez basta, porque na segunda passada
+      // a competencia JA tem aliquota gravada e o caminho de reaproveitamento
+      // acima converge para ela. Sem retry, o usuario veria 500 numa corrida.
+      const corrida = (replaceError as { code?: string }).code === '40001';
+      if (!corrida) throw replaceError;
+      captureException(replaceError, { fn: 'calcular-provisoes', nota: 'corrida de aliquota, refazendo' });
+      return json(req, {
+        success: false,
+        error: 'Outro cálculo desta competência terminou primeiro. Rode novamente para usar a alíquota já registrada.',
+        code: 'CONFLICT',
+      }, 409);
+    }
     if (replacedCount !== provisoes.length) {
       throw new Error('Quantidade persistida diverge da quantidade calculada');
     }
