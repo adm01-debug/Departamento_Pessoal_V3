@@ -1006,6 +1006,7 @@ Uso e tamanho em `stats.md`.
 | public.provisao_auditoria | provisao_auditoria_pkey | btree | id | sim | sim |  |
 | public.provisao_logs | idx_provisao_logs_usuario_id | btree | usuario_id | não | sim |  |
 | public.provisao_logs | provisao_logs_pkey | btree | id | sim | sim |  |
+| public.provisoes_competencia_tributaria | provisoes_competencia_tributaria_pkey | btree | empresa_id, competencia | sim | sim |  |
 | public.provisoes_folha | idx_provisoes_folha_colaborador_id | btree | colaborador_id | não | sim |  |
 | public.provisoes_folha | idx_provisoes_folha_empresa_id | btree | empresa_id | não | sim |  |
 | public.provisoes_folha | provisoes_folha_empresa_colaborador_competencia_key | btree | empresa_id, colaborador_id, competencia | sim | sim |  |

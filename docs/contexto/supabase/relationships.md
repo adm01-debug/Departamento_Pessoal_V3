@@ -415,6 +415,7 @@
 | public.prorrogacoes_afastamento | afastamento_id | public.afastamentos | id | CASCADE | NO ACTION |
 | public.provisao_auditoria | usuario_id | auth.users | id | SET NULL | NO ACTION |
 | public.provisao_logs | usuario_id | auth.users | id | SET NULL | NO ACTION |
+| public.provisoes_competencia_tributaria | empresa_id | public.empresas | id | CASCADE | NO ACTION |
 | public.provisoes_folha | colaborador_id | public.colaboradores | id | CASCADE | NO ACTION |
 | public.provisoes_folha | empresa_id | public.empresas | id | CASCADE | NO ACTION |
 | public.provisoes_mensais | colaborador_id | public.colaboradores | id | CASCADE | NO ACTION |

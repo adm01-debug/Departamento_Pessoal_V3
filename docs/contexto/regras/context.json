@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "4fc0347d4cae05b56b112c130c2d0541cab5ebba",
+  "sha": "2ccd3e86f0101d8bfc59846aee837b5ff85a5ca6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-16 14:06 UTC",
-  "files_total": 3126,
+  "generated_at": "2026-11-16 14:29 UTC",
+  "files_total": 3127,
   "code_files": 2593,
   "code_lines": 380109
  },
@@ -300880,10 +300880,19 @@
   }
  },
  "git": {
-  "sha": "4fc0347d4cae05b56b112c130c2d0541cab5ebba",
+  "sha": "2ccd3e86f0101d8bfc59846aee837b5ff85a5ca6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "2ccd3e8",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "docs(auditoria): mede as versões do ledger sem arquivo e registra por que **não** canonizar (#590)",
+    "files": [
+     "docs/auditoria/LEDGER_VERSOES_SEM_ARQUIVO_2026-11-16.md"
+    ]
+   },
    {
     "sha": "4fc0347",
     "date": "2026-11-16",
@@ -301358,16 +301367,6 @@
     "files": [
      "scripts/sync/autocommit-local.sh"
     ]
-   },
-   {
-    "sha": "1ad509d",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "infra: libera Google Fonts no connect-src da CSP (SW re-busca as fontes) (#557)",
-    "files": [
-     "nginx.conf",
-     "vercel.json"
-    ]
    }
   ],
   "hot_files": [
@@ -301420,6 +301419,10 @@
     2
    ],
    [
+    "docs/auditoria/LEDGER_VERSOES_SEM_ARQUIVO_2026-11-16.md",
+    1
+   ],
+   [
     "src/calculators/__tests__/tabelas.test.ts",
     1
    ],
@@ -301445,10 +301448,6 @@
    ],
    [
     "inventario/ia/INDEX.md",
-    1
-   ],
-   [
-    "inventario/ia/ferramentas.json",
     1
    ]
   ]

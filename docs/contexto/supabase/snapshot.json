@@ -45572,6 +45572,97 @@
       },
       {
         "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
+        "table": "provisoes_competencia_tributaria",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "competencia",
+        "nullable": false,
+        "position": 2,
+        "schema": "public",
+        "table": "provisoes_competencia_tributaria",
+        "type": "date"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "encargos_aliquota_bps",
+        "nullable": false,
+        "position": 3,
+        "schema": "public",
+        "table": "provisoes_competencia_tributaria",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": true,
+        "name": "regime_tributario",
+        "nullable": true,
+        "position": 4,
+        "schema": "public",
+        "table": "provisoes_competencia_tributaria",
+        "type": "regime_tributario"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "simples_anexo",
+        "nullable": true,
+        "position": 5,
+        "schema": "public",
+        "table": "provisoes_competencia_tributaria",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "registrado_em",
+        "nullable": false,
+        "position": 6,
+        "schema": "public",
+        "table": "provisoes_competencia_tributaria",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "registrado_por",
+        "nullable": true,
+        "position": 7,
+        "schema": "public",
+        "table": "provisoes_competencia_tributaria",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -45842,6 +45933,45 @@
         "schema": "public",
         "table": "provisoes_mensais",
         "type": "uuid"
+      },
+      {
+        "comment": "Aliquota de encargos patronais aplicada a ESTA linha, em bps (358 = 35,8%). Gravada pelo calculo; o recalculo da mesma competencia a reaproveita.",
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "encargos_aliquota_bps",
+        "nullable": false,
+        "position": 13,
+        "schema": "public",
+        "table": "provisoes_mensais",
+        "type": "integer"
+      },
+      {
+        "comment": "Retrato do regime tributario da empresa no momento do calculo desta linha.",
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": true,
+        "name": "regime_tributario",
+        "nullable": true,
+        "position": 14,
+        "schema": "public",
+        "table": "provisoes_mensais",
+        "type": "regime_tributario"
+      },
+      {
+        "comment": "Retrato do anexo do Simples no momento do calculo desta linha; nulo fora do Simples ou quando o cadastro nao informa.",
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "simples_anexo",
+        "nullable": true,
+        "position": 15,
+        "schema": "public",
+        "table": "provisoes_mensais",
+        "type": "text"
       },
       {
         "comment": null,
@@ -82131,6 +82261,60 @@
       },
       {
         "columns": [
+          "encargos_aliquota_bps"
+        ],
+        "deferrable": false,
+        "definition": "CHECK (encargos_aliquota_bps >= 0 AND encargos_aliquota_bps <= 1000)",
+        "name": "provisoes_competencia_tributaria_bps_faixa",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "provisoes_competencia_tributaria",
+        "type": "CHECK",
+        "validated": true
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (empresa_id) REFERENCES empresas(id) ON DELETE CASCADE",
+        "name": "provisoes_competencia_tributaria_empresa_id_fkey",
+        "on_delete": "CASCADE",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "empresas",
+        "schema": "public",
+        "table": "provisoes_competencia_tributaria",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "empresa_id",
+          "competencia"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (empresa_id, competencia)",
+        "name": "provisoes_competencia_tributaria_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "provisoes_competencia_tributaria",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
           "colaborador_id"
         ],
         "deferrable": false,
@@ -82239,6 +82423,23 @@
         "schema": "public",
         "table": "provisoes_mensais",
         "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "encargos_aliquota_bps"
+        ],
+        "deferrable": false,
+        "definition": "CHECK (encargos_aliquota_bps IS NULL OR encargos_aliquota_bps >= 0 AND encargos_aliquota_bps <= 1000)",
+        "name": "provisoes_mensais_encargos_aliquota_bps_faixa",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "provisoes_mensais",
+        "type": "CHECK",
         "validated": true
       },
       {
@@ -95707,7 +95908,7 @@
               "hits": 2
             }
           ],
-          "code_total_files": 74,
+          "code_total_files": 75,
           "cron": [],
           "db": [
             "public.aplicar_medida_folha_ponto",
@@ -96856,7 +97057,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 75,
+          "code_total_files": 76,
           "cron": [],
           "db": [
             "public.admin_associar_usuario_empresa",
@@ -101399,7 +101600,7 @@
           "search_path=pg_catalog, public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "c30278eeabcf5150",
+        "definition_sha": "ff48db5910cca556",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -112893,6 +113094,24 @@
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "provisao_logs"
+        },
+        {
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "provisoes_competencia_tributaria"
+        },
+        {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "provisoes_competencia_tributaria"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "provisoes_competencia_tributaria"
         },
         {
           "grantee": "anon",
@@ -130422,6 +130641,21 @@
       },
       {
         "columns": [
+          "empresa_id",
+          "competencia"
+        ],
+        "definition": "CREATE UNIQUE INDEX provisoes_competencia_tributaria_pkey ON public.provisoes_competencia_tributaria USING btree (empresa_id, competencia)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "provisoes_competencia_tributaria_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "provisoes_competencia_tributaria"
+      },
+      {
+        "columns": [
           "colaborador_id"
         ],
         "definition": "CREATE INDEX idx_provisoes_folha_colaborador_id ON public.provisoes_folha USING btree (colaborador_id)",
@@ -136990,6 +137224,12 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.provisoes_competencia_tributaria.provisoes_competencia_tributaria_tenant_select",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.provisoes_mensais.Provisoes scoped by empresa",
         "severity": "BAIXA"
       },
@@ -143454,6 +143694,18 @@
       },
       {
         "cmd": "SELECT",
+        "name": "provisoes_competencia_tributaria_tenant_select",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "provisoes_competencia_tributaria",
+        "using": "((empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas)) OR is_admin(auth.uid()))",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
         "name": "provisoes_folha_rh_read",
         "permissive": "PERMISSIVE",
         "roles": [
@@ -145814,11 +146066,6 @@
           "publication": "supabase_realtime",
           "schema": "public",
           "table": "security_alerts"
-        },
-        {
-          "publication": "supabase_realtime_messages_publication",
-          "schema": "realtime",
-          "table": "messages_2026_11_12"
         },
         {
           "publication": "supabase_realtime_messages_publication",
@@ -150691,6 +150938,21 @@
         "is_partition": false,
         "kind": "table",
         "name": "provisao_logs",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
+        "comment": "Contrato tributario da competencia: aliquota de encargos (bps) e retrato do regime usados no calculo daquele mes. Sobrevive a substituicao com lote vazio, que apaga as linhas de provisoes_mensais. Escrita exclusiva de replace_monthly_provisions.",
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "provisoes_competencia_tributaria",
         "owner": "postgres",
         "parent": null,
         "partition_bound": null,

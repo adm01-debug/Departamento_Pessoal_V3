@@ -2,6 +2,18 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-16 14:29 UTC
+
+- **colunas** adicionado (10): `public.provisoes_competencia_tributaria.competencia`, `public.provisoes_competencia_tributaria.empresa_id`, `public.provisoes_competencia_tributaria.encargos_aliquota_bps`, `public.provisoes_competencia_tributaria.regime_tributario`, `public.provisoes_competencia_tributaria.registrado_em`, `public.provisoes_competencia_tributaria.registrado_por`, `public.provisoes_competencia_tributaria.simples_anexo`, `public.provisoes_mensais.encargos_aliquota_bps`, `public.provisoes_mensais.regime_tributario`, `public.provisoes_mensais.simples_anexo`
+- **constraints** adicionado (4): `public.provisoes_competencia_tributaria.provisoes_competencia_tributaria_bps_faixa`, `public.provisoes_competencia_tributaria.provisoes_competencia_tributaria_empresa_id_fkey`, `public.provisoes_competencia_tributaria.provisoes_competencia_tributaria_pkey`, `public.provisoes_mensais.provisoes_mensais_encargos_aliquota_bps_faixa`
+- **functions** alterado (3): `public.get_user_empresas(_user_id uuid)`, `public.is_admin(_user_id uuid)`, `public.replace_monthly_provisions(p_empresa_id uuid, p_competencia text, p_rows jsonb, p_user_id uuid, p_audit_data jsonb)`
+- **grants** adicionado (3): `public.provisoes_competencia_tributaria:authenticated`, `public.provisoes_competencia_tributaria:dp_mcp_role`, `public.provisoes_competencia_tributaria:service_role`
+- **indexes** adicionado (1): `public.provisoes_competencia_tributaria_pkey`
+- **lints** adicionado (1): `policy_auth_fn_not_wrapped:public.provisoes_competencia_tributaria.provisoes_competencia_tributaria_tenant_select`
+- **policies (RLS)** adicionado (1): `public.provisoes_competencia_tributaria.provisoes_competencia_tributaria_tenant_select`
+- **realtime** removido (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_12`
+- **tabelas** adicionado (1): `public.provisoes_competencia_tributaria`
+
 ## 2026-11-16 13:34 UTC
 
 - **colunas** alterado (4): `public.feedbacks_360_consolidacoes.desempenho_aprovado`, `public.feedbacks_360_consolidacoes.desempenho_proposto`, `public.feedbacks_360_consolidacoes.potencial_aprovado`, `public.feedbacks_360_consolidacoes.potencial_proposto`

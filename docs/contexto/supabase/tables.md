@@ -291,8 +291,9 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.prorrogacoes_afastamento](tables/public/prorrogacoes_afastamento.md) | table | sim | 2 | 10 | não |  |
 | [public.provisao_auditoria](tables/public/provisao_auditoria.md) | table | sim | 1 | 8 | não |  |
 | [public.provisao_logs](tables/public/provisao_logs.md) | table | sim | 2 | 12 | não |  |
+| [public.provisoes_competencia_tributaria](tables/public/provisoes_competencia_tributaria.md) | table | sim | 1 | 7 | não | Contrato tributario da competencia: aliquota de encargos (bps) e retrato do regime usados no calculo daquele mes. Sobrevive a substituicao com lote vazio, que apaga as linhas de provisoes_mensais. Escrita exclusiva de replace_monthly_provisions. |
 | [public.provisoes_folha](tables/public/provisoes_folha.md) | table | sim | 1 | 9 | não |  |
-| [public.provisoes_mensais](tables/public/provisoes_mensais.md) | table | sim | 8 | 12 | não |  |
+| [public.provisoes_mensais](tables/public/provisoes_mensais.md) | table | sim | 8 | 15 | não |  |
 | [public.push_subscriptions](tables/public/push_subscriptions.md) | table | sim | 2 | 7 | não |  |
 | [public.query_telemetry](tables/public/query_telemetry.md) | table | sim | 3 | 15 | não |  |
 | [public.rate_limit_config](tables/public/rate_limit_config.md) | table | sim | 1 | 8 | não |  |

@@ -28,6 +28,9 @@
 | 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
 | 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 | 12 | `log_id` | `uuid` | sim |  |  |  |
+| 13 | `encargos_aliquota_bps` | `integer` | não |  |  | Aliquota de encargos patronais aplicada a ESTA linha, em bps (358 = 35,8%). Gravada pelo calculo; o recalculo da mesma competencia a reaproveita. |
+| 14 | `regime_tributario` | `regime_tributario` | sim |  |  | Retrato do regime tributario da empresa no momento do calculo desta linha. |
+| 15 | `simples_anexo` | `text` | sim |  |  | Retrato do anexo do Simples no momento do calculo desta linha; nulo fora do Simples ou quando o cadastro nao informa. |
 
 
 ## Constraints
@@ -36,6 +39,7 @@
 |---|---|---|---|---|---|
 | provisoes_mensais_colaborador_id_fkey | FOREIGN KEY | `FOREIGN KEY (colaborador_id) REFERENCES colaboradores(id) ON DELETE CASCADE` | CASCADE | NO ACTION | sim |
 | provisoes_mensais_empresa_id_fkey | FOREIGN KEY | `FOREIGN KEY (empresa_id) REFERENCES empresas(id) ON DELETE CASCADE` | CASCADE | NO ACTION | sim |
+| provisoes_mensais_encargos_aliquota_bps_faixa | CHECK | `CHECK (encargos_aliquota_bps IS NULL OR encargos_aliquota_bps >= 0 AND encargos_aliquota_bps <= 1000)` |  |  | sim |
 | provisoes_mensais_log_id_fkey | FOREIGN KEY | `FOREIGN KEY (log_id) REFERENCES provisao_logs(id)` | NO ACTION | NO ACTION | sim |
 | provisoes_mensais_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
 | provisoes_mensais_tipo_check | CHECK | `CHECK (tipo = ANY (ARRAY['ferias'::text, '13_salario'::text]))` |  |  | sim |

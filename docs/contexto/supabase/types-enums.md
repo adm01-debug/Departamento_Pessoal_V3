@@ -11,7 +11,7 @@
 | public.estado_civil | enum | solteiro, casado, divorciado, viuvo, separado, uniao_estavel | public.colaboradores.estado_civil |
 | public.etapa_admissao | enum | solicitacao, documentos, validacao, pendente, exame, contrato, assinatura, esocial, concluida, cancelada | public.admissoes.etapa |
 | public.programacao_ferias_status | enum | rascunho, sugerido_gestor, aprovado_gestor, aprovado_rh, convertido, rejeitado, cancelado | public.ferias_programacao.status |
-| public.regime_tributario | enum | simples_nacional, lucro_presumido, lucro_real, mei | public.empresas.regime_tributario |
+| public.regime_tributario | enum | simples_nacional, lucro_presumido, lucro_real, mei | public.empresas.regime_tributario, public.provisoes_competencia_tributaria.regime_tributario, public.provisoes_mensais.regime_tributario |
 | public.sexo | enum | masculino, feminino | public.colaboradores.sexo |
 | public.status_afastamento | enum | ativo, encerrado, cancelado, prorrogado | public.afastamentos.status |
 | public.status_colaborador | enum | ativo, ferias, afastado, desligado, pendente | public.colaboradores.status, public.vw_cadastro_incompleto.status, public.vw_colaboradores_completo.status |

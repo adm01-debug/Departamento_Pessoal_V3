@@ -1139,6 +1139,9 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.provisao_logs | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.provisao_logs | dp_mcp_role | SELECT |
 | public.provisao_logs | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.provisoes_competencia_tributaria | authenticated | SELECT |
+| public.provisoes_competencia_tributaria | dp_mcp_role | SELECT |
+| public.provisoes_competencia_tributaria | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.provisoes_folha | anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.provisoes_folha | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.provisoes_folha | dp_mcp_role | SELECT |

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4fc0347d4cae05b56b112c130c2d0541cab5ebba",
+  "commit": "2ccd3e86f0101d8bfc59846aee837b5ff85a5ca6",
   "branch": "main",
-  "data_commit": "2026-11-16T11:05:47-03:00",
+  "data_commit": "2026-11-16T14:26:50Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2ccd3e8",
+    "data": "2026-11-16",
+    "assunto": "docs(auditoria): mede as versões do ledger sem arquivo e registra por que **não** canonizar (#590)"
+   },
    {
     "sha": "4fc0347",
     "data": "2026-11-16",
@@ -126,14 +131,9 @@
     "sha": "7aa798f",
     "data": "2026-11-14",
     "assunto": "Pensões: recria a coluna empresa_id que falta no banco de produção (#529)"
-   },
-   {
-    "sha": "b93ea48",
-    "data": "2026-11-14",
-    "assunto": "fix(db): adiciona updated_at em 15 tabelas cujo trigger exige a coluna (#528)"
    }
   ],
-  "arquivos_mudados_7d": 796,
+  "arquivos_mudados_7d": 797,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -161,7 +161,7 @@
    },
    {
     "pasta": "src/utils/__tests__",
-    "mudancas": 40
+    "mudancas": 39
    },
    {
     "pasta": "src/components/layout",
@@ -169,7 +169,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 35
+    "mudancas": 34
    },
    {
     "pasta": "src/components/folha",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 35
+    "mudancas": 34
    },
    {
     "arquivo": "package.json",
@@ -230,12 +230,12 @@
     "mudancas": 10
    },
    {
-    "arquivo": "deno.lock",
+    "arquivo": "docs/prod-readiness.md",
     "mudancas": 9
    },
    {
-    "arquivo": "docs/prod-readiness.md",
-    "mudancas": 9
+    "arquivo": "deno.lock",
+    "mudancas": 8
    },
    {
     "arquivo": "infra/github/action-pins.json",
@@ -270,14 +270,6 @@
     "mudancas": 7
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "src/services/edgeFunctionsService.ts",
-    "mudancas": 7
-   },
-   {
     "arquivo": "supabase/functions/external-db-bridge/validation.ts",
     "mudancas": 7
    },
@@ -296,16 +288,24 @@
    {
     "arquivo": "scripts/sync/run-all.sh",
     "mudancas": 6
+   },
+   {
+    "arquivo": "scripts/sync/sync-github.sh",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "src/calculators/impostos.ts",
+    "mudancas": 6
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 225
+    "commits": 226
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 53
+    "commits": 52
    },
    {
     "autor": "dependabot[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3105,
+  "arquivos_total": 3106,
   "arquivos_codigo": 1710,
   "linhas_codigo": 320952,
   "rotas": 116,
@@ -339,7 +339,7 @@
   "testes": 641,
   "workflows": 21,
   "scripts": 115,
-  "docs_md": 293
+  "docs_md": 294
  },
  "por_pasta": {
   "capacitor.config.ts": {

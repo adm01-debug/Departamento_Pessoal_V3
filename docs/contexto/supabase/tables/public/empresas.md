@@ -178,6 +178,7 @@
 | public.planos_saude | planos_saude_empresa_id_fkey | empresa_id | NO ACTION |
 | public.premiacoes_campanhas | premiacoes_campanhas_empresa_id_fkey | empresa_id | CASCADE |
 | public.premiacoes_cenarios_simulacao | premiacoes_cenarios_simulacao_empresa_id_fkey | empresa_id | NO ACTION |
+| public.provisoes_competencia_tributaria | provisoes_competencia_tributaria_empresa_id_fkey | empresa_id | CASCADE |
 | public.provisoes_folha | provisoes_folha_empresa_id_fkey | empresa_id | CASCADE |
 | public.provisoes_mensais | provisoes_mensais_empresa_id_fkey | empresa_id | CASCADE |
 | public.registros_ponto | registros_ponto_empresa_id_fkey | empresa_id | NO ACTION |
