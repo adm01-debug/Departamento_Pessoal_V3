@@ -18,7 +18,7 @@ Nenhum dos 6 feedbacks referencia `79bbf408-...`. Portanto, eles não foram
 apagados: estão preservados e aparecem na interface quando o ciclo correto é
 selecionado.
 
-Validação no navegador autenticado (`ti@promobrindes.com.br`):
+Validação no navegador autenticado (`<e-mail da conta de homologacao>`):
 
 | Ciclo selecionado         | Cards exibidos |
 | ------------------------- | -------------: |
@@ -28,7 +28,7 @@ Validação no navegador autenticado (`ti@promobrindes.com.br`):
 
 ## Armazenamento demonstrativo
 
-A cópia do `localStorage` do perfil usado pela conta `ti@promobrindes.com.br`
+A cópia do `localStorage` do perfil usado pela conta `<e-mail da conta de homologacao>`
 continha:
 
 - `dp-desempenho-demo-registros`: nenhum feedback completo em `criados`; havia
@@ -92,7 +92,7 @@ tocar nos 6 feedbacks existentes.
 - Troca de ciclo: `TESTE DEFINITIVO` = 0, `CICLO APENAS DE TESTE` = 1,
   `HOMOLOG-NB` = 5.
 - Logout/login nominal não foi executado porque a senha da conta
-  `ti@promobrindes.com.br` não está disponível nesta sessão. A leitura é
+  `<e-mail da conta de homologacao>` não está disponível nesta sessão. A leitura é
   integralmente do Supabase; a nova sessão com a cópia autenticada confirmou os
   mesmos 5 registros.
 

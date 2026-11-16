@@ -1,12 +1,12 @@
 -- ============================================================================
 -- HOMOLOGAÇÃO · HABILITAR A CONTA ABNER COMO GESTORA — ⚠️ NÃO EXECUTADO
 -- ----------------------------------------------------------------------------
--- Conta: ti@promobrindes.com.br  ·  user_id 2a1f0c4f-7587-49a7-81aa-e7e35cf0848d
+-- Conta: <e-mail da conta de homologacao>  ·  user_id <user_id da conta de homologacao>
 --
 -- ── BLOQUEIO COMPROVADO (leitura real, 19/10/2026) ─────────────────────────
 --   • user_roles da conta ................................ admin + gestor   OK
 --     (`get_user_roles` devolve app_role[] → o front lê os DOIS papéis)
---   • colaboradores.user_id = 2a1f0c4f-… ................. 0 linhas         ✗
+--   • colaboradores.user_id = <user_id da conta de homologacao> ................. 0 linhas         ✗
 --   • colaboradores.supervisor_id (empresa 66104399-…) ... 0 de 14          ✗
 --   • feedbacks_360_consolidacoes / _aprovacoes_gestor ... 404 (migration)   ✗
 --   • RPCs pode_aprovar_colaborador / situacao_aprovacao .. 404 (migration)  ✗
@@ -60,7 +60,7 @@ select c.id, c.nome_completo, c.empresa_id, c.user_id, c.supervisor_id, c.cpf
 
 -- ── 1 · VÍNCULO DA CONTA (uma linha, o descartável) ────────────────────────
 -- update public.colaboradores
---    set user_id = '2a1f0c4f-7587-49a7-81aa-e7e35cf0848d'
+--    set user_id = '<user_id da conta de homologacao>'
 --  where cpf = '00000000000'                                  -- o descartável
 --    and empresa_id = '66104399-aba8-4105-bbd3-9bf67820c1d0'  -- empresa da conta
 --    and user_id is null;                                     -- guarda: não sobrescreve vínculo existente
@@ -68,7 +68,7 @@ select c.id, c.nome_completo, c.empresa_id, c.user_id, c.supervisor_id, c.cpf
 -- ── 1b · PROVA DO VÍNCULO (deve voltar 1 linha com o user_id acima) ────────
 -- select id, nome_completo, user_id, supervisor_id
 --   from public.colaboradores
---  where user_id = '2a1f0c4f-7587-49a7-81aa-e7e35cf0848d';
+--  where user_id = '<user_id da conta de homologacao>';
 
 -- ── 2 · ATRIBUIÇÃO DO AVALIADO (uma linha, sem autoaprovação) ──────────────
 -- O colaborador do PASSO 1 é o GESTOR. A avaliação precisa pertencer a OUTRA
@@ -145,7 +145,7 @@ select c.id, c.nome_completo, c.empresa_id, c.user_id, c.supervisor_id, c.cpf
 --   -- PASSO 1
 --   update public.colaboradores set user_id = null
 --    where id = '0f303507-5b13-4ca2-aa76-16122b5b37e9'
---      and user_id = '2a1f0c4f-7587-49a7-81aa-e7e35cf0848d';
+--      and user_id = '<user_id da conta de homologacao>';
 --   -- PASSO 3 (somente se aplicado): recriar a policy original por empresa
 --   -- drop policy if exists "feedbacks_360_select" on public.feedbacks_360;
 --   -- create policy "feedbacks_360_select" on public.feedbacks_360
