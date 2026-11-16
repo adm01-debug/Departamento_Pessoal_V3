@@ -45,7 +45,6 @@ import {
   FileText,
   Gauge,
   ListTodo,
-  type LucideIcon,
   PieChart,
   ShieldAlert,
   ShieldCheck,
@@ -53,8 +52,6 @@ import {
   UserPlus,
   Zap,
 } from 'lucide-react';
-// MOCK VISUAL — ver src/mocks/admissoesMock.ts
-import { isAdmissoesMockEnabled, MOCK_TEMPO_MEDIO_ADMISSAO } from '@/mocks/admissoesMock';
 // Fonte única dos rótulos/selos de etapa, do checklist e das tintas de tom —
 // o mesmo módulo que os modais de detalhe leem, para que card e modal nunca
 // mostrem rótulo ou cor diferentes para a mesma informação.
@@ -65,7 +62,6 @@ import {
   ETAPA_LABELS,
   TONE_CHIP,
   TONE_TEXT,
-  type CampoChecklist,
   type Tone,
 } from './admissoesComum';
 // Modais dos quatro widgets (mesma base/coreografia do popup de Pendências da
@@ -91,6 +87,8 @@ type AdmissaoLike = {
   etapa?: string | null;
   data_prevista?: string | null;
   created_at?: string | null;
+  /** Última escrita na admissão — a conclusão, nas que estão `concluida`. */
+  updated_at?: string | null;
   /** Texto registrado pelo RH na admissão (andamento/pendência). */
   observacoes?: string | null;
   /** Situação e protocolo da transmissão do S-2200. */
@@ -109,6 +107,18 @@ type AdmissaoLike = {
 };
 
 const DIA_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Tom do KPI → degradê do `MetricCard` (a prop `gradient` é obrigatória e é o
+ * que pinta ícone, borda superior e fundo do card).
+ */
+const TONE_GRADIENT: Record<Tone, string> = {
+  primary: 'from-primary to-primary-glow',
+  info: 'from-info to-info/70',
+  success: 'from-success to-success/70',
+  warning: 'from-warning to-warning/70',
+  destructive: 'from-destructive to-destructive/70',
+};
 
 /* ─── Derivações puras (mesma entrada → mesma saída) ──────────────────────── */
 
@@ -525,13 +535,8 @@ const PERIODOS_FUNIL = [
   { value: '0', label: 'Todo o período' },
 ];
 
-/** Série usada fora do modo demonstrativo (não há histórico real de tempo médio). */
-const TEMPO_MEDIO_FALLBACK = [
-  { month: 'Jan', days: 12 },
-  { month: 'Fev', days: 10 },
-  { month: 'Mar', days: 15 },
-  { month: 'Abr', days: 9 },
-];
+/** Rótulo curto do mês (eixo X do gráfico de tempo médio). */
+const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
 /**
  * Altura fixa dos quatro widgets: as listas internas rolam (`overflow-y-auto`
@@ -664,8 +669,6 @@ export function AdmissoesDashboard({
    */
   onAbrirAba?: (aba: AbaAdmissoes) => void;
 }) {
-  // MOCK VISUAL — ver src/mocks/admissoesMock.ts (dev + VITE_ADMISSOES_MOCK=true).
-  const mockAtivo = isAdmissoesMockEnabled();
   const navigate = useNavigate();
   const [periodoTempo, setPeriodoTempo] = useState('12');
   const [periodoFunil, setPeriodoFunil] = useState('6');
@@ -874,14 +877,34 @@ export function AdmissoesDashboard({
     };
   }, [lista, agora, hoje]);
 
-  /** Série do gráfico de tempo médio, recortada pelo seletor de período. */
+  /**
+   * Série do gráfico de tempo médio, CALCULADA do banco e recortada pelo
+   * seletor de período: dias entre a abertura (`created_at`) e a conclusão
+   * (`updated_at`) de cada admissão concluída, agrupados pelo mês da conclusão
+   * (mesma régua de `OnboardingDashboard`). Sem nenhuma admissão concluída com
+   * as duas datas a série fica VAZIA e o card mostra o estado vazio — nunca um
+   * número inventado.
+   */
   const serieTempo = useMemo(() => {
-    // MOCK VISUAL — com o modo demonstrativo ligado usa a série de 12 meses de
-    // src/mocks/admissoesMock.ts (o payload real não traz histórico de tempo médio).
-    const base = mockAtivo ? MOCK_TEMPO_MEDIO_ADMISSAO : TEMPO_MEDIO_FALLBACK;
+    const porMes = new Map<number, { soma: number; n: number }>();
+    for (const a of lista) {
+      const conclusao = a.updated_at;
+      if (a.etapa !== 'concluida' || !a.created_at || !conclusao) continue;
+      const inicio = new Date(a.created_at).getTime();
+      const fim = new Date(conclusao).getTime();
+      if (!Number.isFinite(inicio) || !Number.isFinite(fim) || fim < inicio) continue;
+      const mes = new Date(conclusao).getMonth();
+      const acumulado = porMes.get(mes) ?? { soma: 0, n: 0 };
+      acumulado.soma += (fim - inicio) / DIA_MS;
+      acumulado.n += 1;
+      porMes.set(mes, acumulado);
+    }
+    const serie = [...porMes.entries()]
+      .sort(([a], [b]) => a - b)
+      .map(([mes, { soma, n }]) => ({ month: MESES[mes], days: Math.round((soma / n) * 10) / 10 }));
     const meses = Number(periodoTempo);
-    return meses > 0 ? base.slice(-meses) : base;
-  }, [mockAtivo, periodoTempo]);
+    return meses > 0 ? serie.slice(-meses) : serie;
+  }, [lista, periodoTempo]);
 
   /** Funil recortado pelo período escolhido no cabeçalho do painel. */
   const funil = useMemo(
@@ -920,11 +943,8 @@ export function AdmissoesDashboard({
           A entrada em cascata vem do próprio `MetricCard` (o `index` alimenta o
           `custom` do `cardVariants`, o mesmo do Dashboard Executivo): aqui o
           `index` do `.map` já entrega 0-3, os quatro primeiros da fila.
-          `vividRed`: pede ao `MetricCard` a variante VIBRANTE do vermelho
-          (`--destructive-vivid`, ver `src/index.css`) — o `--destructive` do
-          tema é um vinho escuro que desaparece no navy. Vale para o chip do KPI
-          "Canceladas" e para o selo de tendência negativa; é a flag que mantém
-          o vermelho legível sem tocar no vermelho do Dashboard Executivo. */}
+          O tom de cada KPI vira o `gradient` do card (`TONE_GRADIENT`), a única
+          prop de cor que o `MetricCard` do app aceita. */}
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {stats.kpis.map((kpi, index) => (
             <MetricCard
@@ -933,11 +953,9 @@ export function AdmissoesDashboard({
               title={kpi.label}
               value={String(kpi.valor)}
               icon={kpi.icon}
-              tone={kpi.tone}
-              vividRed
+              gradient={TONE_GRADIENT[kpi.tone]}
               trend={kpi.trend}
               description={kpi.trend ? undefined : kpi.descricao}
-              className="rounded-2xl border-border/40 shadow-elevated"
             />
           ))}
         </div>
@@ -959,83 +977,87 @@ export function AdmissoesDashboard({
               />
             }
           >
-            {/* Sem cartão flutuante e sem rodapé de média: o gráfico ocupa a
-              altura inteira do miolo (`flex-1`) e centraliza a série. */}
-            <div className="relative mt-1 min-h-[188px] w-full flex-1">
-              {/* `AnimatePresence` local (sem props): mesma técnica do card
-                  "Visão Geral da Empresa" (`HeadcountOverviewCard.tsx`) — blinda o
-                  `motion.rect` do clip-path abaixo contra o `initial={false}` de
-                  `PageTransition.tsx`, que se propagaria por contexto e bloquearia
-                  a animação de entrada quando /admissoes é a primeira rota da
-                  sessão (login novo, F5, restart). */}
-              <AnimatePresence>
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={serieTempo} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="adm-tempo-fill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.32} />
-                        <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                      </linearGradient>
-                      {/* Clip-path animado (Framer Motion, não a animação nativa do
-                        Recharts): a linha e a área ficam escondidas além do limite
-                        direito deste retângulo, que cresce de 0 a 100% da largura —
-                        revelando o desenho da esquerda pra direita. Mesma técnica,
-                        mesma duração (2.5s) e mesmo easing (`easeInOut`) do card
-                        "Visão Geral da Empresa" (`HeadcountOverviewCard.tsx`). */}
-                      <clipPath id="adm-tempo-reveal-clip">
-                        <motion.rect
-                          key={serieTempo.length}
-                          x="0"
-                          y="0"
-                          height="100%"
-                          initial={{ width: 0 }}
-                          animate={{ width: '100%' }}
-                          transition={{ duration: 2.5, ease: 'easeInOut' }}
-                        />
-                      </clipPath>
-                    </defs>
-                    <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="hsl(var(--border))" />
-                    <XAxis
-                      dataKey="month"
-                      tickLine={false}
-                      axisLine={false}
-                      dy={4}
-                      tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
-                    />
-                    <YAxis
-                      tickLine={false}
-                      axisLine={false}
-                      width={34}
-                      allowDecimals={false}
-                      tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
-                    />
-                    <Tooltip
-                      cursor={{ stroke: 'hsl(var(--primary))', strokeDasharray: '4 4' }}
-                      contentStyle={{
-                        background: 'hsl(var(--popover))',
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: 12,
-                        fontSize: 12,
-                        color: 'hsl(var(--popover-foreground))',
-                      }}
-                      formatter={(value) => [`${value} dias`, 'Tempo médio']}
-                      labelFormatter={(label) => `Mês: ${label}`}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="days"
-                      stroke="hsl(var(--primary))"
-                      strokeWidth={2}
-                      fill="url(#adm-tempo-fill)"
-                      dot={{ r: 2.5, fill: 'hsl(var(--primary))', strokeWidth: 0 }}
-                      activeDot={{ r: 4, stroke: 'hsl(var(--card))', strokeWidth: 2 }}
-                      isAnimationActive={false}
-                      clipPath="url(#adm-tempo-reveal-clip)"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </AnimatePresence>
-            </div>
+            {serieTempo.length === 0 ? (
+              <PanelEmpty>Nenhuma admissão concluída no período — sem tempo médio a exibir.</PanelEmpty>
+            ) : (
+              /* Sem cartão flutuante e sem rodapé de média: o gráfico ocupa a
+                 altura inteira do miolo (`flex-1`) e centraliza a série. */
+              <div className="relative mt-1 min-h-[188px] w-full flex-1">
+                {/* `AnimatePresence` local (sem props): mesma técnica do card
+                    "Visão Geral da Empresa" (`HeadcountOverviewCard.tsx`) — blinda o
+                    `motion.rect` do clip-path abaixo contra o `initial={false}` de
+                    `PageTransition.tsx`, que se propagaria por contexto e bloquearia
+                    a animação de entrada quando /admissoes é a primeira rota da
+                    sessão (login novo, F5, restart). */}
+                <AnimatePresence>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={serieTempo} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="adm-tempo-fill" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.32} />
+                          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                        </linearGradient>
+                        {/* Clip-path animado (Framer Motion, não a animação nativa do
+                          Recharts): a linha e a área ficam escondidas além do limite
+                          direito deste retângulo, que cresce de 0 a 100% da largura —
+                          revelando o desenho da esquerda pra direita. Mesma técnica,
+                          mesma duração (2.5s) e mesmo easing (`easeInOut`) do card
+                          "Visão Geral da Empresa" (`HeadcountOverviewCard.tsx`). */}
+                        <clipPath id="adm-tempo-reveal-clip">
+                          <motion.rect
+                            key={serieTempo.length}
+                            x="0"
+                            y="0"
+                            height="100%"
+                            initial={{ width: 0 }}
+                            animate={{ width: '100%' }}
+                            transition={{ duration: 2.5, ease: 'easeInOut' }}
+                          />
+                        </clipPath>
+                      </defs>
+                      <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="hsl(var(--border))" />
+                      <XAxis
+                        dataKey="month"
+                        tickLine={false}
+                        axisLine={false}
+                        dy={4}
+                        tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                      />
+                      <YAxis
+                        tickLine={false}
+                        axisLine={false}
+                        width={34}
+                        allowDecimals={false}
+                        tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                      />
+                      <Tooltip
+                        cursor={{ stroke: 'hsl(var(--primary))', strokeDasharray: '4 4' }}
+                        contentStyle={{
+                          background: 'hsl(var(--popover))',
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: 12,
+                          fontSize: 12,
+                          color: 'hsl(var(--popover-foreground))',
+                        }}
+                        formatter={(value) => [`${value} dias`, 'Tempo médio']}
+                        labelFormatter={(label) => `Mês: ${label}`}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="days"
+                        stroke="hsl(var(--primary))"
+                        strokeWidth={2}
+                        fill="url(#adm-tempo-fill)"
+                        dot={{ r: 2.5, fill: 'hsl(var(--primary))', strokeWidth: 0 }}
+                        activeDot={{ r: 4, stroke: 'hsl(var(--card))', strokeWidth: 2 }}
+                        isAnimationActive={false}
+                        clipPath="url(#adm-tempo-reveal-clip)"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </AnimatePresence>
+              </div>
+            )}
           </PanelCard>
 
           <PanelCard

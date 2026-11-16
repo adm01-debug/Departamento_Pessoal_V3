@@ -76,6 +76,7 @@ import { cn } from '@/lib/utils';
 import { formatCurrency, formatDate } from '@/utils/format';
 import { ETAPA_BADGE } from './admissoesComum';
 import { AppPagination } from '@/components/ui/app-pagination';
+import type { LooseRow } from '@/types/db';
 import {
   DIA_MS,
   dataValida,
@@ -140,6 +141,17 @@ const ORDENACOES: readonly { value: string; label: string }[] = [
 /** Idade máxima da cascata de entrada (mesma trava do restante do módulo). */
 const MAX_STAGGER = 5;
 
+/**
+ * Tom do KPI → degradê do `MetricCard` (a prop `gradient` é obrigatória e é o
+ * que pinta ícone, borda superior e fundo do card).
+ */
+const TONE_GRADIENT: Record<'primary' | 'info' | 'success' | 'destructive', string> = {
+  primary: 'from-primary to-primary-glow',
+  info: 'from-info to-info/70',
+  success: 'from-success to-success/70',
+  destructive: 'from-destructive to-destructive/70',
+};
+
 /* ─── Orquestração da ENTRADA em ONDAS (overlap suave) ──────────────────────
  * A animação VISUAL de cada peça continua sendo a MESMA `cardVariants` dos KPI
  * Cards do Dashboard Executivo (opacity 0→1, y 20→0, 0.4s, `[0.25, 0.46, 0.45,
@@ -201,7 +213,8 @@ const PADRAO_POR_MODO: Record<GestaoVisualizacao, number> = {
 
 /** Props do componente: dados + os três handlers que a página já possuía. */
 export interface GestaoCandidatosProps {
-  admissoes: AdmissaoLike[];
+  /** Linhas de `admissoes` como vêm do banco (`metadata` é `Json`). */
+  admissoes: LooseRow<'admissoes'>[];
   isLoading: boolean;
   sendingLink: string | null;
   onEnviarLink: (admissao: any) => void | Promise<void>;
@@ -650,9 +663,6 @@ const HEAD_CLASS = 'h-11 text-[11px] font-semibold uppercase tracking-wide text-
 function TabelaCandidatos({
   itens,
   hoje,
-  selecionados,
-  onToggleTodos,
-  onToggleLinha,
   chaveCascata,
   sendingLink,
   onEnviarLink,
@@ -661,29 +671,14 @@ function TabelaCandidatos({
 }: {
   itens: AdmissaoLike[];
   hoje: number;
-  selecionados: Set<string>;
-  onToggleTodos: (marcar: boolean) => void;
-  onToggleLinha: (id: string, marcar: boolean) => void;
   /** Muda quando a LISTA muda de identidade (página/ordenação/filtros). É o
    *  `key` do `<tbody>`, então reativa a cascata de entrada das linhas. */
   chaveCascata: string;
 } & Omit<AcoesProps, 'admissao'>) {
-  const idsPagina = itens.map(chaveDe);
-  const todosMarcados = idsPagina.length > 0 && idsPagina.every((id) => selecionados.has(id));
-  const algumMarcado = idsPagina.some((id) => selecionados.has(id));
-  const cabecalho: boolean | 'indeterminate' = todosMarcados ? true : algumMarcado ? 'indeterminate' : false;
-
   return (
     <Table>
       <TableHeader>
         <TableRow className="border-border/30 bg-muted/40 hover:bg-muted/40">
-          <TableHead className="h-11 w-10 pr-0">
-            <Checkbox
-              checked={cabecalho}
-              onCheckedChange={(v) => onToggleTodos(v === true)}
-              aria-label="Selecionar todos os candidatos da página"
-            />
-          </TableHead>
           <TableHead className={HEAD_CLASS}>Candidato</TableHead>
           <TableHead className={HEAD_CLASS}>Cargo</TableHead>
           <TableHead className={HEAD_CLASS}>Departamento</TableHead>
@@ -702,27 +697,14 @@ function TabelaCandidatos({
           aqui só passamos o `key` da cascata, o índice e o visual desta tela. */}
       <CascadeTableBody cascadeKey={chaveCascata}>
         {itens.map((a, i) => {
-          const id = chaveDe(a);
-          const marcado = selecionados.has(id);
           return (
             <CascadeTableRow
-              key={id}
+              key={chaveDe(a)}
               index={i}
-              data-state={marcado ? 'selected' : undefined}
               // Classes BASE do `TableRow` (ui/table) + ajustes desta tela.
               // (O `origin-center` do mecanismo fica no componente compartilhado.)
-              className={cn(
-                'border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted',
-                'border-border/20 hover:bg-muted/30'
-              )}
+              className="border-b border-border/20 transition-colors hover:bg-muted/30"
             >
-              <TableCell className="py-3 pr-0">
-                <Checkbox
-                  checked={marcado}
-                  onCheckedChange={(v) => onToggleLinha(id, v === true)}
-                  aria-label={`Selecionar ${a.nome ?? 'candidato'}`}
-                />
-              </TableCell>
               <TableCell className="py-3">
                 <div className="flex items-center gap-2.5">
                   <CandidatoAvatar nome={a.nome} />
@@ -1126,7 +1108,7 @@ export function GestaoCandidatos({
   onEnviarWhatsApp,
   onOpenDetalhes,
 }: GestaoCandidatosProps) {
-  const lista = admissoes;
+  const lista = admissoes as unknown as AdmissaoLike[];
   // Referência temporal única da tela (mesmo padrão do Dashboard de Admissões):
   // `agora` é memoizada e tudo que depende de "agora" lê dela — nada de
   // `Date.now()` no meio do render.
@@ -1146,12 +1128,11 @@ export function GestaoCandidatos({
   const [somenteAtrasados, setSomenteAtrasados] = useState(false);
   const [maisFiltros, setMaisFiltros] = useState(false);
 
-  // Visualização / ordenação / paginação / seleção
+  // Visualização / ordenação / paginação
   const [visualizacao, setVisualizacao] = useState<GestaoVisualizacao>('tabela');
   const [ordenacao, setOrdenacao] = useState('recentes');
   const [pagina, setPagina] = useState(1);
   const [porPagina, setPorPagina] = useState<number>(PADRAO_POR_MODO.tabela);
-  const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
 
   /* Opções dos selects (derivadas dos próprios dados; `todos` = sem filtro). */
   const opcoesDepartamento = useMemo(
@@ -1327,25 +1308,6 @@ export function GestaoCandidatos({
     setPagina(1);
   };
 
-  const toggleLinha = (id: string, marcar: boolean) =>
-    setSelecionados((prev) => {
-      const proximo = new Set(prev);
-      if (marcar) proximo.add(id);
-      else proximo.delete(id);
-      return proximo;
-    });
-
-  const toggleTodos = (marcar: boolean) =>
-    setSelecionados((prev) => {
-      const proximo = new Set(prev);
-      visiveis.forEach((a) => {
-        const id = chaveDe(a);
-        if (marcar) proximo.add(id);
-        else proximo.delete(id);
-      });
-      return proximo;
-    });
-
   const limparFiltros = () => {
     setBusca('');
     setEtapa('todos');
@@ -1447,11 +1409,9 @@ export function GestaoCandidatos({
             title={kpi.label}
             value={String(kpi.valor)}
             icon={kpi.icon}
-            tone={kpi.tone}
-            vividRed
+            gradient={TONE_GRADIENT[kpi.tone]}
             trend={kpi.trend}
             description={kpi.trend ? undefined : kpi.descricao}
-            className="rounded-2xl border-border/40 shadow-elevated"
           />
         ))}
       </div>
@@ -1783,9 +1743,6 @@ export function GestaoCandidatos({
                   <TabelaCandidatos
                     itens={visiveis}
                     hoje={hoje}
-                    selecionados={selecionados}
-                    onToggleTodos={toggleTodos}
-                    onToggleLinha={toggleLinha}
                     chaveCascata={cascataChave}
                     {...acoes}
                   />

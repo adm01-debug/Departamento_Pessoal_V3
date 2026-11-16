@@ -257,7 +257,10 @@ export function DraggableCard({
   cardIndex: number;
   acoes?: KanbanAcoes;
 }) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: item.id });
+  // Etapas terminais não saem da coluna: concluída já criou colaborador e
+  // cancelada é definitiva — arrastar de volta deixaria o vínculo divergente.
+  const terminal = item.etapa === 'concluida' || item.etapa === 'cancelada';
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: item.id, disabled: terminal });
   const estilo: VarsCard = { '--card-index': cardIndex };
   return (
     <div className="kanban-card" style={estilo}>
