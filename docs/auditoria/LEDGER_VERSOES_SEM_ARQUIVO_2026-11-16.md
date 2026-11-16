@@ -86,16 +86,18 @@ que já existem, e a comparação derruba a recomendação anterior:
     `20261107203000` está no ledger, incluir o arquivo na lista fechada
     imprimiria `skip` e não executaria SQL nenhum.
 
-  **Restaurar este arquivo é escolha, não erro.** A favor: é o único das 272
-  cujo conteúdo não existe em arquivo nenhum, e restaurá-lo sob o timestamp
-  original recuperaria 1 das 272 na paridade ledger↔repositório sem tocar em
-  policy — os dois filtros acima garantem isso. Contra: o arquivo não teria
-  efeito em nenhum fluxo e colocaria no repositório, como histórico
-  reproduzível, um DDL que está **revertido** em produção — material para
-  alguém rodar à mão fora do fluxo. Esta auditoria escolheu **não** criar o
-  arquivo e transcrever o SQL no apêndice, porque preserva o conteúdo sem
-  acrescentar arquivo inócuo; criar o arquivo seria defensável e é decisão do
-  dono, em PR própria, não desta.
+  **E o SQL dela também já está no repositório** — não num arquivo homônimo,
+  mas dentro de `20260719120000_rls_fix_public_access_batch2.sql:161-165`, com
+  o mesmo `DROP POLICY IF EXISTS` + `CREATE POLICY … FOR ALL TO authenticated`
+  e as mesmas condições `public.rls_tenant_or_admin(empresa_id)`. A versão
+  `20261107203000` foi uma **re-execução** daquele bloco para corrigir drift
+  (o próprio comentário dela diz isso), não uma alteração nova.
+
+  Restaurar o arquivo dela seria escolha, não erro: recuperaria 1 das 272 na
+  paridade ledger↔repositório sem tocar em policy, porque os dois filtros acima
+  impedem a execução. Esta auditoria escolheu **não** criar o arquivo, porque
+  o conteúdo já está versionado no batch de julho e o arquivo novo não teria
+  efeito nenhum. Criar seria defensável e é decisão do dono, em PR própria.
 
 Ou seja: o trabalho destas 8 **não está perdido** — está na `main`, sob outro
 timestamp, em 7 casos, e foi deliberadamente substituído no 8º.
@@ -230,23 +232,20 @@ SELECT (SELECT count(*) FROM supabase_migrations.schema_migrations m
 '
 ```
 
-## Apêndice — SQL da `20261107203000`, recuperado do ledger
+## Apêndice — onde está o SQL da `20261107203000`
 
-Transcrito aqui, e **não** em `supabase/migrations/`, pelo motivo da seção
-anterior: é o único das 272 cujo conteúdo não existe em nenhum arquivo do
-repositório, e o DDL está revertido em produção.
+Esta era a única das 272 **sem arquivo de mesmo nome**, e por isso a candidata
+mais forte a canonização. O SQL dela, porém, já está versionado:
+`supabase/migrations/20260719120000_rls_fix_public_access_batch2.sql:161-165`
+traz o mesmo `DROP POLICY IF EXISTS "configuracoes_ponto_tenant_manage"` e o
+mesmo `CREATE POLICY … FOR ALL TO authenticated` com
+`public.rls_tenant_or_admin(empresa_id)` no `USING` e no `WITH CHECK`.
 
-```sql
--- audit-migration-style: allow-silent-drop policy ausente no banco por drift; recriada logo abaixo
-DROP POLICY IF EXISTS "configuracoes_ponto_tenant_manage" ON public.configuracoes_ponto;
+Ou seja: **as 8 versões com `statements` têm todas o conteúdo já no
+repositório** — 7 em arquivos homônimos com outro timestamp, e esta dentro do
+batch de julho. Nenhuma recuperação a fazer.
 
-CREATE POLICY "configuracoes_ponto_tenant_manage"
-  ON public.configuracoes_ponto FOR ALL TO authenticated
-  USING (public.rls_tenant_or_admin(empresa_id))
-  WITH CHECK (public.rls_tenant_or_admin(empresa_id));
-```
-
-Estado vigente no canônico, que **substitui** o acima (conferido em
+Estado vigente no canônico, que **substitui** essa policy (conferido em
 `pg_policy`): `SELECT` por `pertence_a_empresa(empresa_id)`; `INSERT` e
 `UPDATE` por `pode_gerir_config_ponto(empresa_id)`, mais o `INSERT` de admin/RH
 por `pertence_a_empresa(empresa_id) AND has_role(...)`.
