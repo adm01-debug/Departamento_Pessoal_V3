@@ -62,9 +62,19 @@ export function useProximosEventos(colaboradorId: string, empresaId?: string) {
   // A coluna real é `data_limite_concessao` (conferido em periodos_aquisitivos no
   // projeto canônico); não existe `fim_concessivo`. Com o nome errado a condição
   // era sempre falsa e NENHUM vencimento de férias aparecia aqui.
-  for (const p of (periodosAquisitivos as { data_limite_concessao?: string; status?: string }[] | undefined) || []) {
+  //
+  // Com a condição finalmente viva, o recorte de status precisa ser o real:
+  // `listarPeriodosAquisitivos` devolve TODOS os períodos e o CHECK da tabela
+  // admite ('em_aquisicao','adquirido','vencido','gozado','pago'). Alertar sobre
+  // período já `gozado`/`pago` (obrigação cumprida), já `vencido` (prazo
+  // passou) ou com `perdeu_direito` (não há férias a conceder) mostraria ao RH
+  // obrigação inexistente — e ocuparia as 3 vagas do card, escondendo prazo
+  // real. Mesmo critério da seleção operacional em FeriasForm.tsx:95-97.
+  const PERIODO_ENCERRADO = ['gozado', 'pago', 'vencido'];
+  for (const p of (periodosAquisitivos as
+    { data_limite_concessao?: string; status?: string; perdeu_direito?: boolean }[] | undefined) || []) {
     const prazo = p.data_limite_concessao;
-    if (prazo && prazo >= hoje && p.status !== 'vencido') {
+    if (prazo && prazo >= hoje && !PERIODO_ENCERRADO.includes(p.status ?? '') && !p.perdeu_direito) {
       eventos.push({
         data: prazo,
         tipo: 'ferias_vencimento',
@@ -88,8 +98,12 @@ export function useProximosEventos(colaboradorId: string, empresaId?: string) {
     }
   }
 
-  for (const a of (asos as { data_validade?: string }[] | undefined) || []) {
-    if (a.data_validade && a.data_validade >= hoje) {
+  // `listarASOs` devolve todos os status e o cancelamento
+  // (AdminAsoWorkflowPage.tsx) grava o status e o motivo SEM limpar
+  // `data_validade` — um ASO cancelado seguiria aparecendo como exame a vencer
+  // e ocuparia vaga no card, escondendo o prazo de um documento válido.
+  for (const a of (asos as { data_validade?: string; status?: string }[] | undefined) || []) {
+    if (a.data_validade && a.data_validade >= hoje && a.status !== 'cancelado') {
       eventos.push({
         data: a.data_validade,
         tipo: 'aso',
