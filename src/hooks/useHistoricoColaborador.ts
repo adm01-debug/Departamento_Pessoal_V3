@@ -14,6 +14,7 @@ import { colaboradorService } from '@/services';
 import * as service from '@/services/colaboradorDetalhesService';
 import * as timelineService from '@/services/timelineService';
 import { auditoriaService } from '@/services/auditoriaService';
+import { statusCanonico } from '@/components/avaliacao/feedbackCanonico';
 import { useHistoricoContratos } from './useHistoricoContratos';
 import { useCriarRegistroSalarial, useHistoricoSalarial } from './useColaboradorDetalhes';
 import { useMedidasDisciplinaresColaborador } from './useNovasTabelas';
@@ -444,20 +445,16 @@ export function useHistoricoColaborador(colaboradorId: string) {
       | { id: string; created_at: string; performance?: string | number; nota_geral?: number; status?: string }[]
       | undefined) || []) {
       const notaLabel = f.nota_geral != null ? `Nota geral: ${f.nota_geral}` : undefined;
-      // `feedbacks_360.status` é TEXT livre (default 'pendente') e registros
-      // históricos trazem variações de caixa/acento — a normalização segue a de
-      // edicaoFeedback.ts. `listarFeedbacks` NÃO filtra status, então rotular
-      // tudo como "concluído" mostrava avaliação recém-criada como finalizada.
-      const statusKey = String(f.status ?? '')
-        .trim()
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '');
-      const tituloFeedback = ['concluido', 'concluida'].includes(statusKey)
-        ? 'Feedback 360 concluído'
-        : ['cancelado', 'cancelada', 'cancel'].includes(statusKey)
-          ? 'Feedback 360 cancelado'
-          : 'Feedback 360 pendente';
+      // `listarFeedbacks` NÃO filtra status e `feedbacks_360.status` é TEXT
+      // livre (default 'pendente'), então rotular tudo como "concluído"
+      // mostrava avaliação recém-criada como finalizada. O rótulo vem de
+      // `statusCanonico`, o MESMO normalizador que a área de Avaliações usa:
+      // ele reconhece as 7 variações de conclusão ('finalizado', 'aprovada',
+      // 'validado'...), as de revisão e cancelamento, e preserva o texto
+      // original quando o status é desconhecido, em vez de inventar um estado.
+      // Normalizar aqui por conta própria faria a Timeline contradizer a tela
+      // de Avaliações para o MESMO registro.
+      const tituloFeedback = `Feedback 360 — ${statusCanonico(f.status).rotulo}`;
       out.push({
         id: `avaliacao-${f.id}`,
         date: f.created_at,
