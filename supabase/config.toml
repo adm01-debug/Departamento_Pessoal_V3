@@ -52,3 +52,12 @@ verify_jwt = false
 # (E-030: sem secret configurado → 503, nunca aceita sem verificar).
 [functions.webhook]
 verify_jwt = false
+
+# training-image-dispatch: worker da fila de capas de treinamento, chamado por
+# agendador (pg_cron/externo) sem JWT de usuário. Autenticação própria
+# fail-closed: Authorization Bearer com a service role OU X-Cron-Secret
+# (TRAINING_IMAGE_DISPATCH_SECRET), comparados em tempo constante; sem nenhum
+# dos dois → 401. Geração desligada por padrão (TRAINING_IMAGE_AUTOQUEUE_ENABLED
+# e TRAINING_IMAGE_GENERATION_ENABLED), logo custo zero até ser habilitada.
+[functions.training-image-dispatch]
+verify_jwt = false
