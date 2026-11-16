@@ -12,6 +12,8 @@ interface HistorySidebarProps {
   allEvents: TimelineEvent[];
   proximosEventos: ProximoEvento[];
   onVerTodosProximosEventos?: () => void;
+  /** Alguma fonte de próximos eventos falhou: a lista não é completa. */
+  proximosEventosIndisponiveis?: boolean;
   /** Índice do primeiro card da sidebar na cascata — continua o stagger que
       começa no toolbar/timeline (ver HistoricoColaborador.tsx). */
   baseIndex: number;
@@ -22,6 +24,7 @@ export function HistorySidebar({
   allEvents,
   proximosEventos,
   onVerTodosProximosEventos,
+  proximosEventosIndisponiveis,
   baseIndex,
 }: HistorySidebarProps) {
   const latestEvent = allEvents[0];
@@ -39,7 +42,11 @@ export function HistorySidebar({
         <EventTypesSummary events={allEvents} />
       </motion.div>
       <motion.div variants={cardVariants} initial="hidden" animate="visible" custom={baseIndex + 2}>
-        <UpcomingEvents eventos={proximosEventos} onVerTodos={onVerTodosProximosEventos} />
+        <UpcomingEvents
+          eventos={proximosEventos}
+          onVerTodos={onVerTodosProximosEventos}
+          indisponivel={proximosEventosIndisponiveis}
+        />
       </motion.div>
       <motion.div variants={cardVariants} initial="hidden" animate="visible" custom={baseIndex + 3}>
         <LastUpdate latestEvent={latestEvent} />

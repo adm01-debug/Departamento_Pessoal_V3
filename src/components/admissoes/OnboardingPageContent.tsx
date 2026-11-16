@@ -47,6 +47,9 @@ export default function OnboardingPageContent() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['onboarding-list'] });
+      // Mesmas chaves do dossiê — ver OnboardingPage.tsx.
+      queryClient.invalidateQueries({ queryKey: ['onboarding-tarefas-colaborador'] });
+      queryClient.invalidateQueries({ queryKey: ['onboarding-colaborador'] });
       toast.success('Tarefa concluída!');
     },
   });

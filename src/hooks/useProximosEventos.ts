@@ -35,13 +35,31 @@ function countdownBadge(dataEvento: string, hoje: string): { label: string; tone
   return { label, tone: 'info' };
 }
 
-export function useProximosEventos(colaboradorId: string, empresaId?: string) {
-  const { data: periodoExperiencia } = usePeriodoExperiencia(colaboradorId);
-  const { data: periodosAquisitivos } = usePeriodosAquisitivos(colaboradorId);
-  const { data: ferias } = useFeriasResumoColaborador(colaboradorId, empresaId);
-  const { data: asos } = useASOs(colaboradorId);
-  const { data: documentosPessoais } = useDocumentosPessoais(colaboradorId);
+export interface ProximosEventosResultado {
+  eventos: ProximoEvento[];
+  isLoading: boolean;
+  /**
+   * Alguma das 6 fontes falhou. A lista devolvida continua válida para o que
+   * carregou, mas NÃO é completa — o card precisa distinguir "não há eventos"
+   * de "não foi possível carregar". O aviso de `useHistoricoColaborador` não
+   * cobre estas consultas: são outro conjunto, em outro hook.
+   */
+  isError: boolean;
+}
+
+export function useProximosEventos(colaboradorId: string, empresaId?: string): ProximosEventosResultado {
+  const expQ = usePeriodoExperiencia(colaboradorId);
+  const periodosQ = usePeriodosAquisitivos(colaboradorId);
+  const feriasQ = useFeriasResumoColaborador(colaboradorId, empresaId);
+  const asosQ = useASOs(colaboradorId);
+  const docsQ = useDocumentosPessoais(colaboradorId);
   const onboarding = useOnboardingColaborador(colaboradorId);
+
+  const periodoExperiencia = expQ.data;
+  const periodosAquisitivos = periodosQ.data;
+  const ferias = feriasQ.data;
+  const asos = asosQ.data;
+  const documentosPessoais = docsQ.data;
 
   const hoje = todayLocalISO();
   const eventos: ProximoEvento[] = [];
@@ -140,5 +158,17 @@ export function useProximosEventos(colaboradorId: string, empresaId?: string) {
   }
 
   eventos.sort((a, b) => a.data.localeCompare(b.data));
-  return eventos;
+
+  return {
+    eventos,
+    isLoading:
+      expQ.isLoading ||
+      periodosQ.isLoading ||
+      feriasQ.isLoading ||
+      asosQ.isLoading ||
+      docsQ.isLoading ||
+      onboarding.isLoading,
+    isError:
+      expQ.isError || periodosQ.isError || feriasQ.isError || asosQ.isError || docsQ.isError || onboarding.isError,
+  };
 }

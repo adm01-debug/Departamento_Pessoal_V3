@@ -466,7 +466,11 @@ export default function ColaboradorDetalhesPage() {
 
           <TabsContent value="timeline">
             {activeMainTab === 'timeline' && (
-              <HistoricoColaborador colaboradorId={id!} proximosEventos={proximosEventos} />
+              <HistoricoColaborador
+                colaboradorId={id!}
+                proximosEventos={proximosEventos.eventos}
+                proximosEventosIndisponiveis={proximosEventos.isError}
+              />
             )}
           </TabsContent>
         </Tabs>

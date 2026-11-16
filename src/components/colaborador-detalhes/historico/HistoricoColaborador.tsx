@@ -18,6 +18,7 @@ interface HistoricoColaboradorProps {
   colaboradorId: string;
   proximosEventos: ProximoEvento[];
   onVerTodosProximosEventos?: () => void;
+  proximosEventosIndisponiveis?: boolean;
 }
 
 function normalize(text: string): string {
@@ -31,6 +32,7 @@ export function HistoricoColaborador({
   colaboradorId,
   proximosEventos,
   onVerTodosProximosEventos,
+  proximosEventosIndisponiveis,
 }: HistoricoColaboradorProps) {
   const { events, isLoading, isError, colaborador, criarSalario, criandoSalario, criarContrato } =
     useHistoricoColaborador(colaboradorId);
@@ -161,6 +163,7 @@ export function HistoricoColaborador({
             allEvents={events}
             proximosEventos={proximosEventos}
             onVerTodosProximosEventos={onVerTodosProximosEventos}
+            proximosEventosIndisponiveis={proximosEventosIndisponiveis}
             baseIndex={2}
           />
         </div>

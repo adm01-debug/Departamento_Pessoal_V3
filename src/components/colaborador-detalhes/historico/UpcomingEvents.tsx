@@ -9,12 +9,14 @@ interface UpcomingEventsProps {
   /** Ausente enquanto o diálogo da lista completa (aba Resumo) não existir:
    * sem handler o "Ver todos" não é renderizado, em vez de virar botão morto. */
   onVerTodos?: () => void;
+  /** Alguma fonte de próximos eventos falhou: a lista não é completa. */
+  indisponivel?: boolean;
 }
 
 // Reaproveita os mesmos "Próximos Eventos" já calculados em
 // useProximosEventos.ts (ver ColaboradorDetalhesPage.tsx, aba "Geral") — sem
 // nenhuma query nova, sem inventar eventos futuros.
-export function UpcomingEvents({ eventos, onVerTodos }: UpcomingEventsProps) {
+export function UpcomingEvents({ eventos, onVerTodos, indisponivel }: UpcomingEventsProps) {
   const preview = eventos.slice(0, 3);
 
   return (
@@ -23,6 +25,7 @@ export function UpcomingEvents({ eventos, onVerTodos }: UpcomingEventsProps) {
         <CardTitle className="flex items-center gap-2.5 text-base font-semibold">
           <CalendarClock className="h-5 w-5 text-primary" /> Próximos eventos
         </CardTitle>
+        {indisponivel && eventos.length > 0 && <span className="text-xs text-muted-foreground">lista incompleta</span>}
         {eventos.length > 0 && onVerTodos && (
           <Button variant="link" size="sm" className="h-auto p-0 text-xs" onClick={onVerTodos}>
             Ver todos
@@ -31,10 +34,17 @@ export function UpcomingEvents({ eventos, onVerTodos }: UpcomingEventsProps) {
       </CardHeader>
       <CardContent className="pt-0">
         {preview.length === 0 ? (
+          // "Não há eventos" e "não deu para carregar" são afirmações
+          // diferentes: dizer a primeira quando uma fonte falhou esconderia um
+          // vencimento real do RH.
           <div className="py-2">
-            <p className="text-xs font-medium text-foreground">Não há eventos futuros</p>
+            <p className="text-xs font-medium text-foreground">
+              {indisponivel ? 'Não foi possível carregar os próximos eventos' : 'Não há eventos futuros'}
+            </p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              O colaborador não possui eventos agendados no momento.
+              {indisponivel
+                ? 'Uma das fontes não respondeu. Recarregue a página — pode haver vencimentos não listados aqui.'
+                : 'O colaborador não possui eventos agendados no momento.'}
             </p>
           </div>
         ) : (
