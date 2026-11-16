@@ -22,26 +22,47 @@ a decisão que decorre disso.
 | versões em formato legado (não `YYYYMMDDHHMMSS`) | 58 |
 | versões datadas avaliadas | 1007 |
 | versões datadas com outra versão no mesmo minuto, a ≤ 10 s | 639 |
-| **versões com `statements` NULL** | **978** |
-| versões com `statements` array vazio | 40 |
-| versões com `statements` preenchido | **61** |
+| versões com `statements` NULL (ledger inteiro) | 978 |
+| versões com `statements` array vazio (ledger inteiro) | 40 |
+| versões com `statements` preenchido (ledger inteiro) | 61 |
+| **das 272 sem arquivo: com `statements` preenchido** | **8** |
+| **das 272 sem arquivo: sem fonte (`statements` NULL ou vazio)** | **264** |
 
-## O fato que decide: o conteúdo não existe
+## 8 são recuperáveis; 264 não têm fonte
 
-**978 das 1079 versões do ledger têm `statements` NULL** e outras 40 têm array
-vazio. Só **61** guardam o SQL que foi executado — provavelmente as que
-passaram por `canonical-migrations.yml`, que grava `statements` no INSERT do
-ledger.
+A primeira versão deste documento media `statements` no ledger **inteiro** e
+concluía que o conteúdo das 272 era irrecuperável. Isso estava errado: a
+contagem global não diz nada sobre o subconjunto. Cruzando as duas listas
+versão por versão:
 
-Ou seja: para a esmagadora maioria das versões sem arquivo, **o SQL não está em
-lugar nenhum** — nem no repositório, nem em nenhuma das 21 branches auditadas em
-16/11/2026 (todas conferidas arquivo por arquivo, com normalização de CRLF),
-nem na própria linha do ledger.
+- **8 das 272** têm o SQL autêntico gravado em `statements` — são
+  **recuperáveis**, e o conteúdo vem do registro da própria execução, não de
+  reconstrução;
+- **264 das 272** têm `statements` NULL ou array vazio — para elas o SQL não
+  está no repositório, não está em nenhuma das 21 branches auditadas em
+  16/11/2026 (conferidas arquivo por arquivo, com normalização de CRLF) e não
+  está na própria linha do ledger.
 
-**É por isso que não se canoniza**: não por serem duplicatas, mas porque **não
-existe fonte para o conteúdo**. Criar arquivo aqui seria inventar SQL e
-registrá-lo como histórico oficial do banco, o que é pior do que a ausência —
-o próximo agente leria aquilo como verdade (`AGENTS.md` §2.3).
+As 8 recuperáveis, todas de hardening P0/P1:
+
+| versão | `name` no ledger | bytes de SQL |
+| --- | --- | --- |
+| `20260912142449` | `p0_hash_trigger_search_path` | 2009 |
+| `20260912142506` | `p0_auth_lockout_contract` | 4292 |
+| `20260912142520` | `p0_payroll_upsert_contract` | 3225 |
+| `20260912143019` | `p0_views_revoke_public` | 2415 |
+| `20260912143239` | `p0_secdef_search_path` | 1969 |
+| `20260912143344` | `p1_function_search_path` | 1344 |
+| `20260912144208` | `p0_pgcrypto_routine_search_path` | 1719 |
+| `20261107203000` | `fix_rls_insert_configuracoes_ponto` | 1117 |
+
+Essas 8 **devem** ser canonizadas, a partir do `statements`, sem reaplicar DDL
+(já estão no ledger).
+
+Para as **264**, não se canoniza: **não existe fonte para o conteúdo**. Criar
+arquivo aqui seria inventar SQL e registrá-lo como histórico oficial do banco,
+o que é pior do que a ausência — o próximo agente leria aquilo como verdade
+(`AGENTS.md` §2.3).
 
 ## Hipótese dos pares — NÃO VERIFICADA
 
@@ -57,10 +78,14 @@ alteração, salvando **um** arquivo. O que apoia:
 **NÃO VERIFICADO, e o motivo:** proximidade de timestamp **não é** igualdade de
 SQL, e os três pares provam apenas que existe arquivo para uma das duas versões
 — não que as duas descrevem a mesma mudança. Verificar exigiria comparar o SQL
-de cada versão sem arquivo, e esse SQL não está disponível (`statements` NULL em
-978 de 1079). Portanto **não se pode afirmar** que nenhuma das 272 contém uma
-alteração distinta; o que se pode afirmar é que o conteúdo delas é
-**irrecuperável** a partir de qualquer fonte deste repositório ou do ledger.
+de cada versão sem arquivo, e esse SQL não está disponível para **264** delas.
+Portanto **não se pode afirmar** que nenhuma das 272 contém uma alteração
+distinta. O que se pode afirmar, versão por versão, é: 8 têm SQL autêntico no
+ledger e são recuperáveis; 264 não têm fonte em nenhum lugar conhecido.
+
+As 8 recuperáveis, aliás, **derrubam** a hipótese na forma categórica: elas são
+migrations P0/P1 de hardening com `name` próprio e SQL distinto, não duplicatas
+de uma irmã.
 
 ## Lacuna real de detecção — leia antes de desconectar o `Supabase Preview`
 
@@ -126,6 +151,15 @@ SELECT count(*) FILTER (
                    AND abs(b.seg - t.seg) <= 10) > 0
        ) AS com_vizinha
   FROM t;
+```
+
+```sql
+-- 2b. as versões que TÊM o SQL gravado (lista curta, hoje 61). Cruzando esta
+--     lista com os arquivos do repositório sai, sem mandar 807 valores ao
+--     banco, quais das faltantes são recuperáveis.
+SELECT string_agg(version, ',' ORDER BY version) AS versoes_com_sql
+  FROM supabase_migrations.schema_migrations
+ WHERE statements IS NOT NULL AND cardinality(statements) > 0;
 ```
 
 ```sh
