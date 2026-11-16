@@ -17,6 +17,7 @@ import { maskCpfDisplay, maskPisDisplay } from '@/utils/piiMask';
 import { safeHref } from '@/utils/safeUrl';
 import { safeErrorMessage } from '@/utils/safeError';
 import { cardVariants } from '@/components/dashboard/MetricCard';
+import { FalhaConsulta } from '../FalhaConsulta';
 
 const MotionCard = motion.create(Card);
 
@@ -45,7 +46,7 @@ const TIPOS = [
  * tabela ainda não tem em produção (storage_path/mime_type) — ver a issue de
  * DDL ligada a esta PR. */
 export function DocumentosPessoaisCard({ colaboradorId }: { colaboradorId: string }) {
-  const { data, isLoading } = useDocumentosPessoais(colaboradorId);
+  const { data, isLoading, isError } = useDocumentosPessoais(colaboradorId);
   const criar = useCriarDocumentoPessoal();
   const excluir = useExcluirDocumentoPessoal(colaboradorId);
   const { empresaAtualId } = useEmpresas();
@@ -203,6 +204,8 @@ export function DocumentosPessoaisCard({ colaboradorId }: { colaboradorId: strin
           <div className="flex justify-center py-4">
             <Spinner />
           </div>
+        ) : isError ? (
+          <FalhaConsulta o="os documentos pessoais" />
         ) : !data?.length ? (
           <p className="text-xs text-muted-foreground py-1">Nenhum documento cadastrado.</p>
         ) : (

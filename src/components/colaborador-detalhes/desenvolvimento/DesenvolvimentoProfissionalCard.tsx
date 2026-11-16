@@ -6,6 +6,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { cardVariants } from '@/components/dashboard/MetricCard';
 import { useFeedbacksColaborador, usePDIsColaborador, useMetasColaborador, useCompetenciasColaborador } from '@/hooks';
 import { formatDate } from '@/utils/format';
+import { FalhaConsulta } from '../FalhaConsulta';
 
 const MotionCard = motion.create(Card);
 
@@ -65,12 +66,21 @@ function Modulo({
  * Competências (mesmos dados dos antigos blocos empilhados de
  * DesenvolvimentoResumoTab) em 4 módulos compactos lado a lado. */
 export function DesenvolvimentoProfissionalCard({ colaboradorId }: { colaboradorId: string }) {
-  const { data: feedbacks, isLoading: isLoadingFeedback } = useFeedbacksColaborador(colaboradorId);
-  const { data: pdis, isLoading: isLoadingPDI } = usePDIsColaborador(colaboradorId);
-  const { data: metas, isLoading: isLoadingMetas } = useMetasColaborador(colaboradorId);
-  const { data: competencias, isLoading: isLoadingCompetencias } = useCompetenciasColaborador(colaboradorId);
+  const {
+    data: feedbacks,
+    isLoading: isLoadingFeedback,
+    isError: erroFeedback,
+  } = useFeedbacksColaborador(colaboradorId);
+  const { data: pdis, isLoading: isLoadingPDI, isError: erroPDI } = usePDIsColaborador(colaboradorId);
+  const { data: metas, isLoading: isLoadingMetas, isError: erroMetas } = useMetasColaborador(colaboradorId);
+  const {
+    data: competencias,
+    isLoading: isLoadingCompetencias,
+    isError: erroCompetencias,
+  } = useCompetenciasColaborador(colaboradorId);
 
   const isLoading = isLoadingFeedback || isLoadingPDI || isLoadingMetas || isLoadingCompetencias;
+  const isError = erroFeedback || erroPDI || erroMetas || erroCompetencias;
   const feedback = feedbacks?.[0];
   const pdi = pdis?.[0];
   const listaMetas = metas ?? [];
@@ -103,6 +113,8 @@ export function DesenvolvimentoProfissionalCard({ colaboradorId }: { colaborador
           <div className="flex justify-center py-4">
             <Spinner />
           </div>
+        ) : isError ? (
+          <FalhaConsulta o="o desenvolvimento profissional" />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <Modulo icon={Users} iconClassName="bg-primary/10 text-primary" titulo="Feedback 360">

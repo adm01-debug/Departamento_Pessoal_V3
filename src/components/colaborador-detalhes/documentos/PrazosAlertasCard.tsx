@@ -9,6 +9,7 @@ import { cardVariants } from '@/components/dashboard/MetricCard';
 import { cn } from '@/lib/utils';
 import { PrazosAlertasDialog } from './PrazosAlertasDialog';
 import { dataLocalDoEvento } from '../historico/eventDate';
+import { FalhaConsulta } from '../FalhaConsulta';
 
 const MotionCard = motion.create(Card);
 
@@ -29,10 +30,19 @@ interface AlertaValidade {
  * resumo final "tudo certo". */
 export function PrazosAlertasCard({ colaboradorId }: { colaboradorId: string }) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { data: docsPessoais, isLoading: isLoadingPessoais } = useDocumentosPessoais(colaboradorId);
-  const { documentos: docsDigitais, isLoading: isLoadingDigitais } = useDocumentos(colaboradorId);
+  const {
+    data: docsPessoais,
+    isLoading: isLoadingPessoais,
+    isError: erroPessoais,
+  } = useDocumentosPessoais(colaboradorId);
+  const {
+    documentos: docsDigitais,
+    isLoading: isLoadingDigitais,
+    isError: erroDigitais,
+  } = useDocumentos(colaboradorId);
 
   const isLoading = isLoadingPessoais || isLoadingDigitais;
+  const isError = erroPessoais || erroDigitais;
 
   // Meia-noite LOCAL dos dois lados — ver dataLocalDoEvento: comparar uma
   // data `yyyy-MM-dd` (lida como UTC) com o instante de agora errava o
@@ -97,6 +107,8 @@ export function PrazosAlertasCard({ colaboradorId }: { colaboradorId: string }) 
           <div className="flex justify-center py-4">
             <Spinner />
           </div>
+        ) : isError ? (
+          <FalhaConsulta o="os prazos e alertas" />
         ) : (
           <div className="mt-2 flex-1 min-h-0 flex flex-col overflow-y-auto">
             {alertas.length === 0 ? (

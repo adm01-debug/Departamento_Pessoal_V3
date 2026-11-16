@@ -35,6 +35,7 @@ import { usePeriodosAquisitivos } from '@/hooks/useColaboradorDetalhes';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { todayLocalISO, formatDateLocalISO } from '@/utils/dateLocal';
 import { cn } from '@/lib/utils';
+import { FalhaConsulta } from './FalhaConsulta';
 
 const STATUS_LABEL: Record<string, string> = {
   pendente: 'Pendente',
@@ -400,9 +401,21 @@ export function FeriasResumoTab({
   onVerTodosMarcos?: () => void;
 }) {
   const { empresaAtual } = useEmpresas();
-  const { data: feriasData, isLoading: isLoadingFerias } = useFeriasResumoColaborador(colaboradorId, empresaAtual?.id);
-  const { data: periodosData, isLoading: isLoadingPeriodos } = usePeriodosAquisitivos(colaboradorId);
-  const { data: afastamentosData, isLoading: isLoadingAfastamentos } = useAfastamentosRecentes(colaboradorId, 365);
+  const {
+    data: feriasData,
+    isLoading: isLoadingFerias,
+    isError: erroFerias,
+  } = useFeriasResumoColaborador(colaboradorId, empresaAtual?.id);
+  const {
+    data: periodosData,
+    isLoading: isLoadingPeriodos,
+    isError: erroPeriodos,
+  } = usePeriodosAquisitivos(colaboradorId);
+  const {
+    data: afastamentosData,
+    isLoading: isLoadingAfastamentos,
+    isError: erroAfastamentos,
+  } = useAfastamentosRecentes(colaboradorId, 365);
   const [mesAtual, setMesAtual] = useState(new Date());
   const [historicoDialogOpen, setHistoricoDialogOpen] = useState(false);
 
@@ -412,6 +425,13 @@ export function FeriasResumoTab({
         <Spinner />
       </div>
     );
+  }
+
+  // Sem este corte, uma consulta de afastamentos fora do ar faz o KPI
+  // "Situação atual" pintar de verde "Sem afastamentos ativos" para alguém que
+  // está afastado pelo INSS — e o saldo de férias contar sobre lista vazia.
+  if (erroFerias || erroPeriodos || erroAfastamentos) {
+    return <FalhaConsulta o="as férias e os afastamentos" />;
   }
 
   const lista = (feriasData ?? []) as FeriasRow[];

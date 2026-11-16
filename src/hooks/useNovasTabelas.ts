@@ -60,7 +60,10 @@ export function useFaltas() {
 export function useFaltasColaborador(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
-    queryKey: ['faltas-colaborador', colaboradorId, empresaAtual?.id],
+    // Família ['faltas'], que os writers de falta invalidam. A chave irmã
+    // 'faltas-colaborador' NÃO casa por prefixo: o React Query compara
+    // segmento a segmento e o primeiro já difere.
+    queryKey: ['faltas', 'colaborador', colaboradorId, empresaAtual?.id],
     queryFn: () => faltasService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });
@@ -217,7 +220,8 @@ export function useEpisEntregas() {
 export function useEpisEntregasColaborador(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
-    queryKey: ['epis-entregas-colaborador', colaboradorId, empresaAtual?.id],
+    // Família ['epis-entregas'] — ver o comentário em useFaltasColaborador.
+    queryKey: ['epis-entregas', 'colaborador', colaboradorId, empresaAtual?.id],
     queryFn: () => episEntregasService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });

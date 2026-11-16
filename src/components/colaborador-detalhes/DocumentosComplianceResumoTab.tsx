@@ -13,6 +13,7 @@ import { DocumentosDigitaisCard } from './documentos/DocumentosDigitaisCard';
 import { StatusComplianceCard } from './documentos/StatusComplianceCard';
 import { AnotacoesInternasCard } from './documentos/AnotacoesInternasCard';
 import { PrazosAlertasCard } from './documentos/PrazosAlertasCard';
+import { FalhaConsulta } from './FalhaConsulta';
 
 const MotionCard = motion.create(Card);
 const DIAS_ALERTA_VALIDADE = 60;
@@ -59,18 +60,39 @@ function KpiCard({
  * Prazos), sem nenhuma métrica nova: contagens e cálculos derivados do que já
  * existe (mesma lógica de vencimento de PrazosAlertasCard). */
 function DocumentosKpiRow({ colaboradorId }: { colaboradorId: string }) {
-  const { data: docsPessoais, isLoading: isLoadingPessoais } = useDocumentosPessoais(colaboradorId);
-  const { documentos: docsDigitais, isLoading: isLoadingDigitais } = useDocumentos(colaboradorId);
-  const { data: medidas, isLoading: isLoadingMedidas } = useMedidasDisciplinaresColaborador(colaboradorId);
-  const { data: consentimentos, isLoading: isLoadingConsentimentos } = useConsentimentosColaborador(colaboradorId);
+  const {
+    data: docsPessoais,
+    isLoading: isLoadingPessoais,
+    isError: erroPessoais,
+  } = useDocumentosPessoais(colaboradorId);
+  const {
+    documentos: docsDigitais,
+    isLoading: isLoadingDigitais,
+    isError: erroDigitais,
+  } = useDocumentos(colaboradorId);
+  const {
+    data: medidas,
+    isLoading: isLoadingMedidas,
+    isError: erroMedidas,
+  } = useMedidasDisciplinaresColaborador(colaboradorId);
+  const {
+    data: consentimentos,
+    isLoading: isLoadingConsentimentos,
+    isError: erroConsentimentos,
+  } = useConsentimentosColaborador(colaboradorId);
 
   const isLoading = isLoadingPessoais || isLoadingDigitais || isLoadingMedidas || isLoadingConsentimentos;
+  const isError = erroPessoais || erroDigitais || erroMedidas || erroConsentimentos;
   if (isLoading)
     return (
       <div className="flex items-center justify-center h-20">
         <Spinner />
       </div>
     );
+  // Com alguma fonte fora do ar, os KPIs abaixo contariam zero pendência e
+  // exibiriam "Tudo em dia" — a afirmação mais perigosa que esta tela pode
+  // fazer, porque é a que o RH usa para parar de olhar.
+  if (isError) return <FalhaConsulta o="o panorama de documentos e compliance" />;
 
   const listaPessoais = docsPessoais ?? [];
   const listaDigitais = docsDigitais ?? [];

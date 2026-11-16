@@ -15,6 +15,7 @@ import { useAnotacoes, useCriarAnotacao } from '@/hooks';
 import { cardVariants } from '@/components/dashboard/MetricCard';
 import { AnotacoesInternasDialog } from './AnotacoesInternasDialog';
 import { dataLocalDoEvento } from '../historico/eventDate';
+import { FalhaConsulta } from '../FalhaConsulta';
 
 const MotionCard = motion.create(Card);
 
@@ -36,7 +37,7 @@ export function AnotacoesInternasCard({ colaboradorId }: { colaboradorId: string
   const [dialogOpen, setDialogOpen] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState({ titulo: '', tipo: 'geral', conteudo: '' });
-  const { data, isLoading } = useAnotacoes(colaboradorId);
+  const { data, isLoading, isError } = useAnotacoes(colaboradorId);
   const criarAnotacao = useCriarAnotacao();
   const todas = data ?? [];
   const recentes = todas.slice(0, 8);
@@ -146,6 +147,8 @@ export function AnotacoesInternasCard({ colaboradorId }: { colaboradorId: string
           <div className="flex justify-center py-4">
             <Spinner />
           </div>
+        ) : isError ? (
+          <FalhaConsulta o="as anotações internas" />
         ) : !recentes.length ? (
           <p className="text-xs text-muted-foreground py-1 mt-2">Nenhuma anotação registrada.</p>
         ) : (

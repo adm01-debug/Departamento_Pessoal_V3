@@ -325,26 +325,15 @@ export function TrabalhoHierarquiaTab({ colaboradorId }: { colaboradorId: string
     enabled: !!supervisorId && !!empresaId,
   });
 
-  // Mesma query key usada nas demais páginas de listagem (Movimentações,
-  // Avaliação, Controle de Acesso, ...) — reaproveita o cache da empresa
-  // inteira só pra filtrar quem tem `supervisor_id` = este colaborador.
-  const { data: todosColaboradores } = useQuery({
-    queryKey: ['colaboradores', empresaId],
-    queryFn: () => colaboradorService.list(empresaId!),
-    enabled: !!empresaId,
+  // Consulta dedicada em vez de filtrar a listagem inteira no cliente: o
+  // `list()` traz um conjunto fixo e enxuto de colunas que NÃO inclui
+  // `supervisor_id`, então o filtro antigo casava zero linhas sempre.
+  // Chave na família ['colaboradores'], que os writers já invalidam.
+  const { data: subordinados, isError: erroSubordinados } = useQuery({
+    queryKey: ['colaboradores', 'subordinados', colaboradorId, empresaId],
+    queryFn: () => colaboradorService.listarSubordinados(colaboradorId, empresaId!),
+    enabled: !!colaboradorId && !!empresaId,
   });
-  const subordinados =
-    (
-      todosColaboradores as unknown as
-        | {
-            id: string;
-            nome_completo: string;
-            cargo?: string | null;
-            foto_url?: string | null;
-            supervisor_id?: string | null;
-          }[]
-        | undefined
-    )?.filter((c) => c.supervisor_id === colaboradorId) ?? [];
 
   const { data: vinculos, isLoading: isLoadingVinculos } = useVinculosColaborador(colaboradorId);
 
@@ -524,8 +513,12 @@ export function TrabalhoHierarquiaTab({ colaboradorId }: { colaboradorId: string
                     <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center shrink-0 border border-border/30">
                       <Users className="h-4 w-4 text-muted-foreground/60" />
                     </div>
-                    <p className="text-sm font-semibold break-words">Nenhum colaborador</p>
-                    <p className="text-xs text-muted-foreground">Não lidera pessoas</p>
+                    <p className="text-sm font-semibold break-words">
+                      {erroSubordinados ? 'Não foi possível carregar' : 'Nenhum colaborador'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {erroSubordinados ? 'A consulta falhou — recarregue a página' : 'Não lidera pessoas'}
+                    </p>
                   </div>
                 ) : (
                   <Popover>

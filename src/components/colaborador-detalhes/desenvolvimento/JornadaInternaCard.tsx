@@ -10,6 +10,7 @@ import { cardVariants } from '@/components/dashboard/MetricCard';
 import { useOnboardingColaborador, usePeriodoExperiencia } from '@/hooks';
 import { formatDate } from '@/utils/format';
 import { ExperienciaTab } from '../ExperienciaTab';
+import { FalhaConsulta } from '../FalhaConsulta';
 
 const MotionCard = motion.create(Card);
 
@@ -76,10 +77,12 @@ const PERIODO_STATUS: Record<string, { label: string; variant: 'success' | 'warn
  * reaproveitada num dialog. */
 export function JornadaInternaCard({ colaboradorId }: { colaboradorId: string }) {
   const onboarding = useOnboardingColaborador(colaboradorId);
-  const { data: periodo, isLoading: isLoadingPeriodo } = usePeriodoExperiencia(colaboradorId);
+  const { data: periodo, isLoading: isLoadingPeriodo, isError: erroPeriodo } = usePeriodoExperiencia(colaboradorId);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const isLoading = onboarding.isLoading || isLoadingPeriodo;
+  // o hook de onboarding já agrega o erro das duas consultas dele
+  const isError = onboarding.isError || erroPeriodo;
 
   const onboardingConcluido = onboarding.progresso === 100;
   const ultimaTarefaConcluida = onboarding.concluidas
@@ -126,6 +129,8 @@ export function JornadaInternaCard({ colaboradorId }: { colaboradorId: string })
           <div className="flex justify-center py-4">
             <Spinner />
           </div>
+        ) : isError ? (
+          <FalhaConsulta o="a jornada interna" />
         ) : (
           <div className="space-y-2 flex-1 overflow-y-auto pr-1 -mr-1">
             <MarcoLinha

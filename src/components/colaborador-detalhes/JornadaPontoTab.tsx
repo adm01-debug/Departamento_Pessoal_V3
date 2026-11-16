@@ -18,6 +18,7 @@ import { PontoWeekSummary } from '@/components/ponto/PontoWeekSummary';
 import { PontoOcorrenciasCard } from '@/components/ponto/PontoOcorrenciasCard';
 import { PontoAjustesCard } from '@/components/ponto/PontoAjustesCard';
 import { EditarJornadaDialog } from '@/components/colaborador-detalhes/EditarJornadaDialog';
+import { FalhaConsulta } from './FalhaConsulta';
 
 /** Saldo do banco de horas em "±Xh MMm", ex.: 4.5 -> "+4h30". */
 function formatSaldoHoras(saldo: number): string {
@@ -60,9 +61,13 @@ export function JornadaPontoTab({ colaboradorId }: { colaboradorId: string }) {
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 
-  const { data: registrosSemana, isLoading: isLoadingSemana } = useRegistrosPontoSemana(colaboradorId);
-  const { data: saldoBancoHoras, isLoading: isLoadingSaldo } = useSaldoBancoHoras(colaboradorId);
-  const { data: faltas, isLoading: isLoadingFaltas } = useFaltasColaborador(colaboradorId);
+  const {
+    data: registrosSemana,
+    isLoading: isLoadingSemana,
+    isError: erroSemana,
+  } = useRegistrosPontoSemana(colaboradorId);
+  const { data: saldoBancoHoras, isLoading: isLoadingSaldo, isError: erroSaldo } = useSaldoBancoHoras(colaboradorId);
+  const { data: faltas, isLoading: isLoadingFaltas, isError: erroFaltas } = useFaltasColaborador(colaboradorId);
   const { solicitacoes, isLoading: isLoadingAjustes } = usePontoMelhorado(empresaAtual?.id, colaboradorId);
 
   const ajustesPendentes = (solicitacoes || []).filter((s: { status?: string | null }) => s.status === 'enviado');
@@ -79,6 +84,11 @@ export function JornadaPontoTab({ colaboradorId }: { colaboradorId: string }) {
         <Spinner />
       </div>
     );
+
+  // Saldo de banco de horas e lista de ocorrências viram 0/vazio quando a
+  // consulta falha — e "+0h" em verde, sem nenhuma ocorrência, é lido pelo RH
+  // como "está tudo certo".
+  if (erroSemana || erroSaldo || erroFaltas) return <FalhaConsulta o="a jornada e o ponto" />;
 
   const kpis: {
     label: string;

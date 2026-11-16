@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { GraduationCap, Edit, Plus, Award, Landmark, Calendar, MoreHorizontal } from 'lucide-react';
+import { GraduationCap, Edit, Plus, Award, Landmark, Calendar } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -8,12 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AnimatedCascadeDialog } from '@/components/ui/animated-cascade-dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { cardVariants } from '@/components/dashboard/MetricCard';
 import { useFormacoes, useCertificadosColaborador, useCriarFormacao } from '@/hooks';
 import { toast } from 'sonner';
@@ -129,16 +123,14 @@ function Registro({
   subtitulo,
   instituicao,
   ano,
-  comAcoes,
 }: {
   titulo: string;
   subtitulo?: string | null;
   instituicao?: string | null;
   ano?: string | number | null;
-  comAcoes?: boolean;
 }) {
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)_130px_70px_28px] items-center gap-3 rounded-xl border-2 border-border/60 p-3 mb-2 last:mb-0">
+    <div className="grid grid-cols-[minmax(0,1fr)_130px_70px] items-center gap-3 rounded-xl border-2 border-border/60 p-3 mb-2 last:mb-0">
       <div className="min-w-0">
         <p className="text-xs font-medium truncate">{titulo}</p>
         {subtitulo && <p className="text-[11px] text-muted-foreground truncate mt-0.5">{subtitulo}</p>}
@@ -157,18 +149,6 @@ function Registro({
           </>
         )}
       </span>
-      {comAcoes && (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-6 w-6 rounded-lg justify-self-end" aria-label="Mais ações">
-              <MoreHorizontal className="h-3.5 w-3.5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem disabled>Nenhuma ação disponível</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
     </div>
   );
 }
@@ -246,7 +226,7 @@ export function FormacaoQualificacoesCard({
               className="h-7 px-3 text-[11px] rounded-xl border-primary/40 bg-transparent text-primary hover:bg-primary/5 hover:text-primary"
               onClick={() => setEditDialogOpen(true)}
             >
-              <Edit className="h-3 w-3 mr-1" /> Editar
+              <Edit className="h-3 w-3 mr-1" /> Gerenciar
             </Button>
             <Button size="sm" className="h-7 px-3 text-[11px]" onClick={() => setAddDialogOpen(true)}>
               <Plus className="mr-1 h-3 w-3" />
@@ -294,7 +274,6 @@ export function FormacaoQualificacoesCard({
                       titulo={c.curso?.nome ?? 'Curso'}
                       subtitulo={c.curso?.carga_horaria ? `${c.curso.carga_horaria}h` : undefined}
                       ano={c.data_emissao ? String(c.data_emissao).slice(0, 4) : undefined}
-                      comAcoes
                     />
                   ))
                 )}
@@ -307,7 +286,7 @@ export function FormacaoQualificacoesCard({
       <AnimatedCascadeDialog
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
-        title="Editar Formação Acadêmica"
+        title="Formação Acadêmica"
         titleIcon={Edit}
         emptyMessage="Nenhuma formação cadastrada."
         items={[<FormacaoTab key="formacao" colaboradorId={colaboradorId} hideHeader />]}

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { BookOpen, Calendar, CheckCircle2, ChevronRight, Clock, MoreHorizontal, Plus } from 'lucide-react';
+import { BookOpen, Calendar, CheckCircle2, ChevronRight, Clock, Plus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,52 +11,55 @@ import { AnimatedCascadeDialog } from '@/components/ui/animated-cascade-dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { cardVariants } from '@/components/dashboard/MetricCard';
-import { useTreinamentosColaborador, useEmpresas } from '@/hooks';
+import { useEmpresas } from '@/hooks';
 import { catalogoCursoService } from '@/services';
 import { formatDate } from '@/utils/format';
 import { toast } from 'sonner';
 import { mockOr, getMockCursos } from '@/mocks/colaboradoresMock';
-import type { TreinamentoParticipanteComTurma } from '@/services/tabelas/rhService';
 
 const MotionCard = motion.create(Card);
 
-function TreinamentoLinha({ t }: { t: TreinamentoParticipanteComTurma }) {
-  const nome = t.treinamento?.nome ?? 'Treinamento';
-  const descricao = t.treinamento?.descricao;
-  const cargaHoraria = t.treinamento?.carga_horaria;
-  const data = t.treinamento?.data ?? t.created_at;
+/** Status gravados em `inscricoes_cursos` (conferidos no projeto canônico). */
+const STATUS_INSCRICAO: Record<string, { rotulo: string; variant: 'success' | 'warning' | 'info' | 'secondary' }> = {
+  inscrito: { rotulo: 'Inscrito', variant: 'info' },
+  em_andamento: { rotulo: 'Em andamento', variant: 'warning' },
+  concluido: { rotulo: 'Concluído', variant: 'success' },
+  concluida: { rotulo: 'Concluído', variant: 'success' },
+  cancelado: { rotulo: 'Cancelado', variant: 'secondary' },
+};
+
+export interface InscricaoCursoLinha {
+  id: string;
+  status: string | null;
+  data_inicio: string | null;
+  data_conclusao: string | null;
+  nota: number | null;
+  curso: { nome: string | null; carga_horaria: number | null } | null;
+}
+
+function TreinamentoLinha({ t }: { t: InscricaoCursoLinha }) {
+  const nome = t.curso?.nome ?? 'Curso';
+  const cargaHoraria = t.curso?.carga_horaria;
+  const chave = (t.status ?? '').toLowerCase();
+  const concluido = chave === 'concluido' || chave === 'concluida';
+  const status = STATUS_INSCRICAO[chave] ?? { rotulo: t.status ?? '—', variant: 'secondary' as const };
+  const data = t.data_conclusao ?? t.data_inicio;
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)_28px_96px_100px_24px] items-center gap-2.5 rounded-xl border-2 border-border/80 p-3 mb-2 last:mb-0">
+    <div className="grid grid-cols-[minmax(0,1fr)_28px_96px_110px] items-center gap-2.5 rounded-xl border-2 border-border/80 p-3 mb-2 last:mb-0">
       <div className="min-w-0">
         <p className="text-[11px] font-medium leading-tight">{nome}</p>
-        {descricao && <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">{descricao}</p>}
+        {t.nota != null && <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">Nota {t.nota}</p>}
       </div>
       <span className="text-[11px] text-muted-foreground">{cargaHoraria != null ? `${cargaHoraria}h` : ''}</span>
       <span className="flex items-center gap-1 text-[11px] text-muted-foreground truncate">
-        <Calendar className="h-3 w-3 shrink-0" /> {t.presente ? formatDate(data) : 'Em andamento'}
+        <Calendar className="h-3 w-3 shrink-0" /> {data ? formatDate(data) : '—'}
       </span>
-      <Badge variant={t.presente ? 'success' : 'warning'} size="sm" className="gap-1 justify-self-start">
-        {t.presente ? <CheckCircle2 className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
-        {t.presente ? 'Concluído' : 'Pendente'}
+      <Badge variant={status.variant} size="sm" className="gap-1 justify-self-start">
+        {concluido ? <CheckCircle2 className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+        {status.rotulo}
       </Badge>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-6 w-6 rounded-lg justify-self-end" aria-label="Mais ações">
-            <MoreHorizontal className="h-3.5 w-3.5" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem disabled>Nenhuma ação disponível</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
     </div>
   );
 }
@@ -90,9 +93,10 @@ function AdicionarTreinamentoDialog({
         status: 'inscrito',
       }),
     onSuccess: () => {
-      // useTreinamentosColaborador lê ['treinamentos', 'colaborador', id]:
-      // invalidar 'treinamentos-colaborador' não derrubava nada.
-      qc.invalidateQueries({ queryKey: ['treinamentos'] });
+      // A inscrição é gravada em `inscricoes_cursos`; invalidar ['treinamentos']
+      // derrubava a lista de `treinamento_participantes`, que é outra tabela —
+      // o item recém-criado nunca aparecia.
+      qc.invalidateQueries({ queryKey: ['inscricoes_cursos'] });
       toast.success('Inscrição realizada!');
       setForm({ curso_id: '', data_inicio: '' });
       onOpenChange(false);
@@ -153,7 +157,18 @@ function AdicionarTreinamentoDialog({
  * HoleritesPreviewCard). O menu fica desabilitado: não existe hoje nenhuma
  * ação de edição/exclusão para inscrição em treinamento nesta tela. */
 export function TreinamentosCard({ colaboradorId }: { colaboradorId: string }) {
-  const { data: treinamentos, isLoading } = useTreinamentosColaborador(colaboradorId);
+  const { empresaAtual } = useEmpresas();
+  const {
+    data: treinamentos,
+    isLoading,
+    isError,
+  } = useQuery({
+    // Mesma tabela em que o diálogo "Adicionar" grava, e família que os
+    // writers de inscrição já invalidam.
+    queryKey: ['inscricoes_cursos', 'colaborador', colaboradorId, empresaAtual?.id],
+    queryFn: () => catalogoCursoService.listarInscricoesPorColaborador(colaboradorId, empresaAtual!.id),
+    enabled: !!colaboradorId && !!empresaAtual?.id,
+  });
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -184,6 +199,10 @@ export function TreinamentosCard({ colaboradorId }: { colaboradorId: string }) {
           <div className="flex justify-center py-4">
             <Spinner />
           </div>
+        ) : isError ? (
+          // "Não há treinamento" e "não deu para carregar" são afirmações
+          // diferentes — mesmo critério de UpcomingEvents.tsx.
+          <p className="text-xs text-destructive py-1">Não foi possível carregar os treinamentos.</p>
         ) : !treinamentos?.length ? (
           <p className="text-xs text-muted-foreground py-1">Nenhum treinamento registrado.</p>
         ) : (

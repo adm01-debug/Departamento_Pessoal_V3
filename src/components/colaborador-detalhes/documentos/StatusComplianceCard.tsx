@@ -10,6 +10,7 @@ import { cardVariants } from '@/components/dashboard/MetricCard';
 import { cn } from '@/lib/utils';
 import { StatusComplianceDialog, type ComplianceSecao } from './StatusComplianceDialog';
 import { dataLocalDoEvento } from '../historico/eventDate';
+import { FalhaConsulta } from '../FalhaConsulta';
 
 const MotionCard = motion.create(Card);
 
@@ -61,12 +62,25 @@ function LinhaCompliance({
  * o quê, quando e por que importa — sem duplicar a sub-aba "Compliance". */
 export function StatusComplianceCard({ colaboradorId }: { colaboradorId: string }) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { data: medidas, isLoading: isLoadingMedidas } = useMedidasDisciplinaresColaborador(colaboradorId);
-  const { data: consentimentos, isLoading: isLoadingConsentimentos } = useConsentimentosColaborador(colaboradorId);
-  const { data: treinamentos, isLoading: isLoadingTreinamentos } = useTreinamentosColaborador(colaboradorId);
-  const { data: episEntregas, isLoading: isLoadingEpis } = useEpisEntregasColaborador(colaboradorId);
+  const {
+    data: medidas,
+    isLoading: isLoadingMedidas,
+    isError: erroMedidas,
+  } = useMedidasDisciplinaresColaborador(colaboradorId);
+  const {
+    data: consentimentos,
+    isLoading: isLoadingConsentimentos,
+    isError: erroConsentimentos,
+  } = useConsentimentosColaborador(colaboradorId);
+  const {
+    data: treinamentos,
+    isLoading: isLoadingTreinamentos,
+    isError: erroTreinamentos,
+  } = useTreinamentosColaborador(colaboradorId);
+  const { data: episEntregas, isLoading: isLoadingEpis, isError: erroEpis } = useEpisEntregasColaborador(colaboradorId);
 
   const isLoading = isLoadingMedidas || isLoadingConsentimentos || isLoadingTreinamentos || isLoadingEpis;
+  const isError = erroMedidas || erroConsentimentos || erroTreinamentos || erroEpis;
   const listaMedidas = medidas ?? [];
   const listaConsentimentos = consentimentos ?? [];
   const listaTreinamentos = treinamentos ?? [];
@@ -172,6 +186,8 @@ export function StatusComplianceCard({ colaboradorId }: { colaboradorId: string 
           <div className="flex justify-center py-4">
             <Spinner />
           </div>
+        ) : isError ? (
+          <FalhaConsulta o="o status de compliance" />
         ) : (
           <div className="mt-2 flex-1 min-h-0 overflow-y-auto">
             <LinhaCompliance

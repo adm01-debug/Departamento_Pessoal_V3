@@ -146,6 +146,25 @@ class ColaboradorService extends BaseService<Colaborador> {
     return (await this.listar({ filters: { empresaId }, pageSize: 1000 })).data;
   }
 
+  /**
+   * Subordinados diretos de um gestor (Dossiê → Trabalho & Hierarquia).
+   *
+   * Consulta própria porque `list()` seleciona um conjunto fixo e enxuto de
+   * colunas (ver `columns` em `listar`) que NÃO inclui `supervisor_id` nem
+   * `cargo`: filtrar a lista inteira no cliente por `supervisor_id` devolvia
+   * sempre zero. Aqui o filtro é no banco, trazendo só as linhas do gestor.
+   */
+  async listarSubordinados(supervisorId: string, empresaId: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await this.getQuery()
+      .select('id, nome_completo, cargo, foto_url')
+      .eq('empresa_id', empresaId)
+      .eq('supervisor_id', supervisorId)
+      .order('nome_completo');
+    if (error) throw error;
+    return (data ?? []) as { id: string; nome_completo: string; cargo: string | null; foto_url: string | null }[];
+  }
+
   async getById(id: string, empresaId: string) {
     return this.buscarPorId(id, empresaId);
   }
