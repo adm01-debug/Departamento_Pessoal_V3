@@ -12,8 +12,24 @@
 -- A SOLUCAO: a linha de provisao guarda a aliquota aplicada (em bps) e o
 -- retrato do regime que a originou. O recalculo de uma competencia que JA tem
 -- linhas reaproveita a aliquota gravada em vez de reconsultar o cadastro
--- (supabase/functions/calcular-provisoes/index.ts). Nenhuma tabela nova,
--- nenhum registro de vigencia: o proprio lancamento e a prova do que foi usado.
+-- (supabase/functions/calcular-provisoes/index.ts).
+--
+-- POR QUE UMA TABELA PROPRIA, E NAO SO A LINHA DE PROVISAO
+-- A substituicao com lote vazio -- legitima, quando todo salario elegivel e
+-- zero -- apaga as linhas da competencia e, com elas, apagaria a unica copia
+-- da aliquota daquele mes. Restaurados os salarios depois de uma mudanca de
+-- regime, o recalculo cairia no cadastro de hoje. Por isso o contrato
+-- tributario da competencia vive em
+-- `provisoes_competencia_tributaria`, que a substituicao NAO apaga.
+--
+-- E por que NAO o audit_log, que ja grava o consolidado: `authenticated` tem
+-- GRANT INSERT nele e a policy de insercao exige apenas `user_id =
+-- auth.uid()`, sem restringir `tabela`, `acao` ou `empresa_id` -- qualquer
+-- usuario logado forjaria um PROVISOES_CALC com aliquota 0 para outra empresa
+-- e o proximo calculo legitimo do RH o adotaria. Alem disso os jobs de
+-- retencao (`lovable-audit-retention-daily`, 180 dias;
+-- `audit_log_monthly_purge`, 365) removem eventos antigos, enquanto a edge
+-- permite recalcular 60 meses. Auditoria nao e fonte financeira.
 --
 -- `provisoes_mensais` tem 0 linhas no canonico hoje (medido antes desta
 -- migration), entao nao ha historico para preencher e a coluna pode nascer
@@ -65,6 +81,55 @@ begin
   end if;
 end $$;
 
+-- CONTRATO TRIBUTARIO DA COMPETENCIA
+-- Uma linha por (empresa, competencia): a aliquota que aquele mes usa e o
+-- retrato do regime que a originou. Escrita SO pela RPC (SECURITY DEFINER);
+-- `authenticated` apenas le, e so da propria empresa.
+create table if not exists public.provisoes_competencia_tributaria (
+  empresa_id uuid not null references public.empresas(id) on delete cascade,
+  competencia date not null,
+  encargos_aliquota_bps integer not null,
+  regime_tributario public.regime_tributario,
+  simples_anexo text,
+  registrado_em timestamptz not null default now(),
+  registrado_por uuid,
+  constraint provisoes_competencia_tributaria_pkey
+    primary key (empresa_id, competencia),
+  constraint provisoes_competencia_tributaria_bps_faixa
+    check (encargos_aliquota_bps >= 0 and encargos_aliquota_bps <= 1000)
+);
+
+comment on table public.provisoes_competencia_tributaria is
+  'Contrato tributario da competencia: aliquota de encargos (bps) e retrato do regime usados no calculo daquele mes. Sobrevive a substituicao com lote vazio, que apaga as linhas de provisoes_mensais. Escrita exclusiva de replace_monthly_provisions.';
+
+alter table public.provisoes_competencia_tributaria enable row level security;
+
+-- Leitura por empresa, o mesmo padrao de provisoes_mensais
+-- (`provisoes_mensais_tenant_select`). Nenhuma policy de INSERT, UPDATE ou
+-- DELETE: com RLS ligada e sem policy, a escrita por `authenticated` e
+-- negada mesmo que um GRANT vaze -- e o REVOKE abaixo fecha o GRANT.
+do $$
+begin
+  if not exists (
+    select 1 from pg_policy
+     where polrelid = 'public.provisoes_competencia_tributaria'::regclass
+       and polname = 'provisoes_competencia_tributaria_tenant_select'
+  ) then
+    create policy provisoes_competencia_tributaria_tenant_select
+      on public.provisoes_competencia_tributaria
+      for select to authenticated
+      using (empresa_id in (select public.get_user_empresas(auth.uid()))
+             or public.is_admin(auth.uid()));
+  end if;
+end $$;
+
+-- GRANT explicito: o banco tem tabelas com INSERT/UPDATE/DELETE concedidos a
+-- anon e authenticated por heranca de `grant all` antigo (audit_log e uma
+-- delas). Esta nasce fechada.
+revoke all on public.provisoes_competencia_tributaria from anon;
+revoke all on public.provisoes_competencia_tributaria from authenticated;
+grant select on public.provisoes_competencia_tributaria to authenticated;
+
 -- A RPC transacional passa a exigir e persistir os 3 campos. Mantem
 -- SECURITY DEFINER, o mesmo search_path e os mesmos grants (CREATE OR REPLACE
 -- preserva a ACL: hoje EXECUTE so de postgres, service_role e dp_mcp_role).
@@ -86,6 +151,8 @@ DECLARE
   v_bps_recebido integer;
   v_bps_vigente integer;
   v_aliquotas integer;
+  v_regime_recebido text;
+  v_anexo_recebido text;
 BEGIN
   -- IS DISTINCT FROM, nao <>, e NULL explicito em p_competencia (achado da
   -- revisao desta PR): com p_rows = NULL SQL, jsonb_typeof(NULL) e NULL e
@@ -151,9 +218,13 @@ BEGIN
   -- O contrato historico desta funcao e substituicao: com [], o DELETE zera a
   -- competencia e a auditoria e gravada. Exigir exatamente 1 aliquota
   -- devolveria 500 e, pior, deixaria o passivo antigo de pe.
+  -- min() em vez do primeiro elemento: deterministico e sem ORDER BY. Como
+  -- todas as linhas do lote vem do mesmo retrato de cadastro, min() e o valor.
   SELECT count(DISTINCT (item->>'encargos_aliquota_bps')::integer),
-         min((item->>'encargos_aliquota_bps')::integer)
-    INTO STRICT v_aliquotas, v_bps_recebido
+         min((item->>'encargos_aliquota_bps')::integer),
+         min(item->>'regime_tributario'),
+         min(item->>'simples_anexo')
+    INTO STRICT v_aliquotas, v_bps_recebido, v_regime_recebido, v_anexo_recebido
     FROM jsonb_array_elements(p_rows) AS item;
   IF v_aliquotas > 1 THEN
     RAISE EXCEPTION 'monthly provision batch carries % distinct tax rates', v_aliquotas;
@@ -183,11 +254,12 @@ BEGIN
   -- porque os valores de encargo que vieram foram calculados com a outra.
   -- ERRCODE 40001 diz "refaca": a edge recalcula e, na segunda passada, le a
   -- aliquota ja gravada e converge.
-  SELECT pm.encargos_aliquota_bps INTO v_bps_vigente
-    FROM public.provisoes_mensais pm
-   WHERE pm.empresa_id = p_empresa_id
-     AND pm.competencia = competence_date
-   LIMIT 1;
+  -- A fonte e o CONTRATO da competencia, nao as linhas: linha some com a
+  -- substituicao vazia, contrato nao.
+  SELECT t.encargos_aliquota_bps INTO v_bps_vigente
+    FROM public.provisoes_competencia_tributaria t
+   WHERE t.empresa_id = p_empresa_id
+     AND t.competencia = competence_date;
   -- v_bps_recebido e NULL quando o lote e vazio: nesse caso nao ha aliquota
   -- nova para conflitar com a gravada, e a substituicao vazia segue valendo.
   IF v_bps_vigente IS NOT NULL AND v_bps_recebido IS NOT NULL
@@ -220,6 +292,22 @@ BEGIN
 
   IF inserted_count <> jsonb_array_length(p_rows) THEN
     RAISE EXCEPTION 'monthly provision replacement row count mismatch';
+  END IF;
+
+  -- Registra o contrato da competencia na primeira vez que ela e calculada.
+  -- DO NOTHING, nao DO UPDATE: se a linha existe, a revalidacao sob o lock JA
+  -- provou que a aliquota e a mesma, e o registro original (com quem e quando)
+  -- e o que vale. Lote vazio nao chega aqui (v_bps_recebido e NULL), e por isso
+  -- a substituicao vazia apaga o passivo sem apagar o contrato.
+  IF v_bps_recebido IS NOT NULL THEN
+    INSERT INTO public.provisoes_competencia_tributaria (
+      empresa_id, competencia, encargos_aliquota_bps,
+      regime_tributario, simples_anexo, registrado_por
+    ) VALUES (
+      p_empresa_id, competence_date, v_bps_recebido,
+      v_regime_recebido::public.regime_tributario, v_anexo_recebido, p_user_id
+    )
+    ON CONFLICT (empresa_id, competencia) DO NOTHING;
   END IF;
 
   INSERT INTO public.audit_log (
@@ -256,6 +344,34 @@ begin
        and convalidated
   ) then
     raise exception 'CHECK da faixa de encargos_aliquota_bps ausente ou nao validado';
+  end if;
+
+  -- Tabela do contrato: existe, RLS ligada, policy de leitura por empresa e
+  -- nenhuma escrita concedida a anon ou authenticated.
+  if not exists (
+    select 1 from pg_class c join pg_namespace n on n.oid = c.relnamespace
+     where n.nspname = 'public'
+       and c.relname = 'provisoes_competencia_tributaria'
+       and c.relrowsecurity
+  ) then
+    raise exception 'provisoes_competencia_tributaria ausente ou sem RLS';
+  end if;
+
+  if not exists (
+    select 1 from pg_policy
+     where polrelid = 'public.provisoes_competencia_tributaria'::regclass
+       and polname = 'provisoes_competencia_tributaria_tenant_select'
+       and polcmd = 'r'
+  ) then
+    raise exception 'policy de leitura por empresa ausente em provisoes_competencia_tributaria';
+  end if;
+
+  if has_table_privilege('authenticated', 'public.provisoes_competencia_tributaria', 'INSERT')
+     or has_table_privilege('authenticated', 'public.provisoes_competencia_tributaria', 'UPDATE')
+     or has_table_privilege('authenticated', 'public.provisoes_competencia_tributaria', 'DELETE')
+     or has_table_privilege('anon', 'public.provisoes_competencia_tributaria', 'SELECT')
+     or has_table_privilege('anon', 'public.provisoes_competencia_tributaria', 'INSERT') then
+    raise exception 'provisoes_competencia_tributaria com grant de escrita para anon ou authenticated';
   end if;
 
   if not exists (

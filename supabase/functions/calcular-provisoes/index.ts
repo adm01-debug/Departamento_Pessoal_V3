@@ -152,58 +152,30 @@ serve(async (req: Request): Promise<Response> => {
       .eq('id', empresa_id)
       .maybeSingle<{ regime_tributario: string | null; simples_anexo: string | null }>();
     if (empresaErr) throw empresaErr;
-    // Competencia que JA tem linhas manda: o recalculo reaproveita a aliquota
-    // GRAVADA naquele mes (20261116120000) em vez de reconsultar o cadastro.
-    // Sem isto, mudar o regime da empresa (ou corrigir o anexo do Simples)
-    // reescreveria o passivo de meses fechados com uma aliquota que nao era a
-    // vigente neles — dinheiro de competencia encerrada nao pode mudar por
-    // efeito colateral de uma edicao de cadastro.
+    // A aliquota da competencia vive em tabela propria
+    // (`provisoes_competencia_tributaria`, migration 20261116120000), NAO nas
+    // linhas de provisao: a substituicao com lote vazio apaga as linhas e o
+    // contrato tributario precisa sobreviver a isso. Sem essa fonte, mudar o
+    // regime da empresa (ou corrigir o anexo do Simples) reescreveria o passivo
+    // de meses fechados com uma aliquota que nao era a vigente neles -- dinheiro
+    // de competencia encerrada nao pode mudar por efeito colateral de uma
+    // edicao de cadastro. A tabela e escrita so pela RPC e lida so pela propria
+    // empresa; audit_log nao serve (qualquer `authenticated` insere nele, e a
+    // retencao apaga eventos com 180 dias).
     const { data: aplicada, error: aplicadaErr } = await supabase
-      .from('provisoes_mensais')
+      .from('provisoes_competencia_tributaria')
       .select('encargos_aliquota_bps, regime_tributario, simples_anexo')
       .eq('empresa_id', empresa_id)
       .eq('competencia', `${competencia}-01`)
-      .not('encargos_aliquota_bps', 'is', null)
-      .limit(1)
       .maybeSingle<AliquotaVigente>();
     if (aplicadaErr) throw aplicadaErr;
 
-    // Competencia zerada perde a aliquota com as linhas: quando todo salario
-    // elegivel e zero a edge chama a RPC com [], o DELETE apaga a competencia
-    // e com ela a unica copia do contrato tributario daquele mes. A auditoria
-    // do calculo anterior sobrevive ao DELETE e carrega os tres campos, entao
-    // ela e a segunda fonte — antes de cair no cadastro de hoje.
-    let auditado: AliquotaVigente | null = null;
-    if (!aplicada) {
-      const { data: auditoria, error: auditoriaErr } = await supabase
-        .from('audit_log')
-        .select('dados_novos')
-        .eq('tabela', 'provisoes_mensais')
-        .eq('acao', 'PROVISOES_CALC')
-        .eq('dados_novos->>empresa_id', empresa_id)
-        .eq('dados_novos->>competencia', competencia)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle<{ dados_novos: Record<string, unknown> | null }>();
-      if (auditoriaErr) throw auditoriaErr;
-      const dados = auditoria?.dados_novos ?? null;
-      const bps = Number(dados?.encargos_aliquota_bps);
-      if (dados && Number.isInteger(bps) && bps >= 0 && bps <= 1000) {
-        auditado = {
-          encargos_aliquota_bps: bps,
-          regime_tributario: (dados.regime_tributario as string | null) ?? null,
-          simples_anexo: (dados.simples_anexo as string | null) ?? null,
-        };
-      }
-    }
-
-    const vigente: AliquotaVigente | null = aplicada ?? auditado;
-    const aliquotaOrigem = aplicada ? 'competencia' : auditado ? 'auditoria' : 'cadastro';
-    const patronaisBps = vigente
-      ? BigInt(vigente.encargos_aliquota_bps)
+    const aliquotaOrigem = aplicada ? 'competencia' : 'cadastro';
+    const patronaisBps = aplicada
+      ? BigInt(aplicada.encargos_aliquota_bps)
       : encargosPatronaisBps(empresa?.regime_tributario ?? null, empresa?.simples_anexo ?? null);
-    const regimeAplicado = vigente ? vigente.regime_tributario : (empresa?.regime_tributario ?? null);
-    const anexoAplicado = vigente ? vigente.simples_anexo : (empresa?.simples_anexo ?? null);
+    const regimeAplicado = aplicada ? aplicada.regime_tributario : (empresa?.regime_tributario ?? null);
+    const anexoAplicado = aplicada ? aplicada.simples_anexo : (empresa?.simples_anexo ?? null);
     const contratoTributario = {
       encargos_aliquota_bps: Number(patronaisBps),
       regime_tributario: regimeAplicado,
