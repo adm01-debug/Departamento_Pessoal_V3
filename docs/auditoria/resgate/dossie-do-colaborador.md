@@ -77,6 +77,16 @@ O dossiê da main tem 7 abas e 462 linhas de página; o da muri tem 9 abas e 104
 
 ## Aba Trabalho & Hierarquia + recontratação
 
+> **Bloqueio não registrado na primeira versão deste plano.** Esta aba usa
+> `useLotacaoPrincipal`, cujo serviço consulta `public.colaborador_lotacoes` —
+> tabela que **não existe no banco de produção** (conferido: zero linhas em
+> `information_schema.tables`). A criação dela depende da migration
+> `20260929120000_colaborador_lotacoes`, classificada em
+> `docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md` como "falta, sem
+> consumidor na main" e que exige autorização do dono por ser DDL em produção.
+> Logo este grupo **não é adição sem risco**: ou entra junto com essa migration,
+> ou entra com a lotação principal desligada. Decidir antes de começar.
+
 `RECUPERAR` · esforço medio · 4 arquivos
 
 **Valor para o negócio.** Mostra onde o colaborador está de fato alocado (cargo, CBO, local de trabalho, centro de custo, time, gestor, lotação principal) e todo o histórico de vínculos com a empresa. Permite recontratar um desligado sem recadastrar tudo — ganho direto de tempo no RH e fim do risco de cadastro duplicado da mesma pessoa.
