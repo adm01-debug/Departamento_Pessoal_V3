@@ -11,6 +11,24 @@ SELECT CASE WHEN (
        OR (a.attname = 'simples_anexo'         AND format_type(a.atttypid, a.atttypmod) = 'text'))
 ) = 3 THEN 'ok' ELSE 'FALHOU' END;
 
+-- 1b. encargos_aliquota_bps e NOT NULL: a garantia no nivel do banco de que
+--     nenhum lancamento nasce sem a prova da aliquota.
+SELECT CASE WHEN (
+  SELECT a.attnotnull FROM pg_attribute a
+   WHERE a.attrelid = 'public.provisoes_mensais'::regclass
+     AND a.attname = 'encargos_aliquota_bps'
+) THEN 'ok' ELSE 'FALHOU' END;
+
+-- 1c. A RPC revalida a aliquota DEPOIS do advisory lock (corrida entre dois
+--     calculos concorrentes) e recusa lote com mais de uma aliquota.
+SELECT CASE WHEN (
+  SELECT bool_and(p.prosrc LIKE '%changed under lock%'
+              AND p.prosrc LIKE '%distinct tax rates%'
+              AND p.prosrc LIKE '%IS DISTINCT FROM%')
+    FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+   WHERE n.nspname = 'public' AND p.proname = 'replace_monthly_provisions'
+) THEN 'ok' ELSE 'FALHOU' END;
+
 -- 2. O CHECK da faixa existe e esta VALIDADO (um check NOT VALID nao protege
 --    as linhas que ja estao la).
 SELECT CASE WHEN EXISTS (

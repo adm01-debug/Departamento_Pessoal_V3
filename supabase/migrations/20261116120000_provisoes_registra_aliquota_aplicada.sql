@@ -24,6 +24,25 @@ alter table public.provisoes_mensais
   add column if not exists regime_tributario public.regime_tributario,
   add column if not exists simples_anexo text;
 
+-- A coluna nasce NOT NULL: provisoes_mensais tem 0 linhas no canonico, entao o
+-- ALTER e instantaneo e nao ha historico para preencher. Esta e a garantia no
+-- nivel do BANCO de que nenhum lancamento nasce sem a prova da aliquota --
+-- mais forte do que qualquer validacao na RPC, que uma chamada futura poderia
+-- contornar.
+do $$
+begin
+  if exists (
+    select 1 from pg_attribute
+     where attrelid = 'public.provisoes_mensais'::regclass
+       and attname = 'encargos_aliquota_bps' and not attnotnull
+  ) then
+    if exists (select 1 from public.provisoes_mensais where encargos_aliquota_bps is null) then
+      raise exception 'ha linha em provisoes_mensais sem encargos_aliquota_bps: preencha antes de exigir NOT NULL';
+    end if;
+    alter table public.provisoes_mensais alter column encargos_aliquota_bps set not null;
+  end if;
+end $$;
+
 comment on column public.provisoes_mensais.encargos_aliquota_bps is
   'Aliquota de encargos patronais aplicada a ESTA linha, em bps (358 = 35,8%). Gravada pelo calculo; o recalculo da mesma competencia a reaproveita.';
 comment on column public.provisoes_mensais.regime_tributario is
@@ -64,6 +83,8 @@ as $function$
 DECLARE
   inserted_count integer;
   competence_date date;
+  v_bps_recebido integer;
+  v_bps_vigente integer;
 BEGIN
   IF p_empresa_id IS NULL OR p_user_id IS NULL
      OR p_competencia !~ '^\d{4}-(0[1-9]|1[0-2])$'
@@ -98,7 +119,11 @@ BEGIN
   IF EXISTS (
     SELECT 1
     FROM jsonb_array_elements(p_rows) AS row_data(item)
-    WHERE jsonb_typeof(item->'encargos_aliquota_bps') <> 'number'
+    -- IS DISTINCT FROM, nao <>: com a chave AUSENTE, item->'...' e SQL NULL,
+    -- jsonb_typeof(NULL) e NULL, e NULL <> 'number' tambem e NULL -- o WHERE
+    -- nao pegava a linha e a RPC gravava provisao sem aliquota. Achado da
+    -- revisao desta PR.
+    WHERE jsonb_typeof(item->'encargos_aliquota_bps') IS DISTINCT FROM 'number'
        OR (item->>'encargos_aliquota_bps')::numeric <> trunc((item->>'encargos_aliquota_bps')::numeric)
        OR (item->>'encargos_aliquota_bps')::numeric < 0
        OR (item->>'encargos_aliquota_bps')::numeric > 1000
@@ -108,6 +133,16 @@ BEGIN
            AND jsonb_typeof(item->'simples_anexo') NOT IN ('string','null'))
   ) THEN
     RAISE EXCEPTION 'invalid monthly provision tax contract';
+  END IF;
+
+  -- O lote e de UMA competencia e por isso tem UMA aliquota: se vierem
+  -- valores diferentes na mesma chamada, o lote esta incoerente.
+  SELECT count(DISTINCT (item->>'encargos_aliquota_bps')::integer),
+         min((item->>'encargos_aliquota_bps')::integer)
+    INTO STRICT inserted_count, v_bps_recebido
+    FROM jsonb_array_elements(p_rows) AS item;
+  IF inserted_count <> 1 THEN
+    RAISE EXCEPTION 'monthly provision batch carries % distinct tax rates', inserted_count;
   END IF;
 
   IF EXISTS (
@@ -124,6 +159,25 @@ BEGIN
   -- Serialize recalculations for the same tenant/month. If any row or the
   -- mandatory audit insert fails, PostgreSQL rolls back the deletion too.
   PERFORM pg_advisory_xact_lock(hashtextextended(p_empresa_id::text || ':' || p_competencia, 0));
+
+  -- REVALIDACAO DEPOIS DO LOCK (achado da revisao desta PR): a edge escolhe a
+  -- aliquota numa consulta HTTP ANTERIOR, fora desta transacao. Dois calculos
+  -- concorrentes podiam ambos ver a competencia vazia, escolher do cadastro e
+  -- o segundo sobrescrever o passivo do primeiro com outra aliquota. Aqui,
+  -- JA sob o lock, se a competencia tem aliquota gravada e ela diverge da
+  -- recebida, a gravacao e RECUSADA -- nao basta trocar a aliquota da linha,
+  -- porque os valores de encargo que vieram foram calculados com a outra.
+  -- ERRCODE 40001 diz "refaca": a edge recalcula e, na segunda passada, le a
+  -- aliquota ja gravada e converge.
+  SELECT pm.encargos_aliquota_bps INTO v_bps_vigente
+    FROM public.provisoes_mensais pm
+   WHERE pm.empresa_id = p_empresa_id
+     AND pm.competencia = competence_date
+   LIMIT 1;
+  IF v_bps_vigente IS NOT NULL AND v_bps_vigente <> v_bps_recebido THEN
+    RAISE EXCEPTION 'monthly provision tax rate changed under lock: stored % bps, received % bps', v_bps_vigente, v_bps_recebido
+      USING ERRCODE = '40001';
+  END IF;
 
   DELETE FROM public.provisoes_mensais
   WHERE empresa_id = p_empresa_id AND competencia = competence_date;

@@ -293,7 +293,21 @@ serve(async (req: Request): Promise<Response> => {
         p_audit_data: { ...consolidado, hash_sha256: hash },
       },
     );
-    if (replaceError) throw replaceError;
+    if (replaceError) {
+      // A RPC recusa com 40001 quando outra execucao gravou esta competencia
+      // entre a leitura da aliquota (acima, fora da transacao) e o COMMIT.
+      // Nao e erro do pedido: refazer uma vez basta, porque na segunda passada
+      // a competencia JA tem aliquota gravada e o caminho de reaproveitamento
+      // acima converge para ela. Sem retry, o usuario veria 500 numa corrida.
+      const corrida = (replaceError as { code?: string }).code === '40001';
+      if (!corrida) throw replaceError;
+      captureException(replaceError, { fn: 'calcular-provisoes', nota: 'corrida de aliquota, refazendo' });
+      return json(req, {
+        success: false,
+        error: 'Outro cálculo desta competência terminou primeiro. Rode novamente para usar a alíquota já registrada.',
+        code: 'CONFLICT',
+      }, 409);
+    }
     if (replacedCount !== provisoes.length) {
       throw new Error('Quantidade persistida diverge da quantidade calculada');
     }
