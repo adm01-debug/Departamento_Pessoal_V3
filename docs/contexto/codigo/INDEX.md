@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `de3bf3ba776a4cd7f2e5890c526de88b28d06c87` (2026-11-16T11:29:16Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `efe96e88d9bed6f41180382f57f735a712857607` (2026-11-16T11:36:34Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -388,25 +388,25 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 23610 nós · 50793 arestas · 2185 comunidades · grafo do commit `de3bf3ba`
+- 23610 nós · 50793 arestas · 2185 comunidades · grafo do commit `efe96e88`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), lucide-react (461), cn (375), useEmpresas (351), client.ts (329), App.tsx (301), vitest (291), framer-motion (229), "public"."empresas" (159), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (38)
+- .github/workflows/canonical-migrations.yml (39)
 - package.json (20)
-- CLAUDE.md (19)
+- CLAUDE.md (18)
 - package-lock.json (18)
 - PENDENCIAS.md (13)
 - deno.lock (10)
 - inventario/estado/rotas.json (10)
+- scripts/canonical-invariants.sql (10)
 - scripts/sync/autocommit-local.sh (10)
 - .github/workflows/ci.yml (9)
-- AGENTS.md (9)
 - infra/github/action-pins.json (9)
-- scripts/canonical-invariants.sql (9)
 - .github/workflows/canonical-edge-functions.yml (8)
+- AGENTS.md (8)
 - docs/auditoria/estado/WORKFLOWS_STATUS.md (8)
 - docs/prod-readiness.md (8)
 
@@ -621,6 +621,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-16 `efe96e8` infra(banco): lista fechada do canonical-migrations passa a ser o lote NineBox (#578)
 - 2026-11-16 `de3bf3b` fix(ninebox): converte as 4 notas da consolidação para numeric(4,3) — sem isso o lote grava e o deploy falha (#575)
 - 2026-11-16 `8f3efc6` chore: inventario do estado real [auto] (#581)
 - 2026-11-16 `9ecaf8a` chore(ninebox): canoniza no repo as 4 funcoes endurecidas em producao (#577)
@@ -635,7 +636,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-14 `1937631` chore(db): revoga DML de anon/authenticated nas dp_audit_log* (menor privilégio) (#563)
 - 2026-11-14 `1241a00` Segurança: escrita de RH exige papel em 9 tabelas; colaborador não aprova o próprio ponto (#530)
 - 2026-11-14 `7aa798f` Pensões: recria a coluna empresa_id que falta no banco de produção (#529)
-- 2026-11-14 `b93ea48` fix(db): adiciona updated_at em 15 tabelas cujo trigger exige a coluna (#528)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

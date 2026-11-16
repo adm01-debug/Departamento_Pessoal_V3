@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "de3bf3ba776a4cd7f2e5890c526de88b28d06c87",
+  "sha": "efe96e88d9bed6f41180382f57f735a712857607",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-16 11:29 UTC",
+  "generated_at": "2026-11-16 11:37 UTC",
   "files_total": 3118,
   "code_files": 2585,
   "code_lines": 378193
@@ -298818,10 +298818,20 @@
   }
  },
  "git": {
-  "sha": "de3bf3ba776a4cd7f2e5890c526de88b28d06c87",
+  "sha": "efe96e88d9bed6f41180382f57f735a712857607",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "efe96e8",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "infra(banco): lista fechada do canonical-migrations passa a ser o lote NineBox (#578)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql"
+    ]
+   },
    {
     "sha": "de3bf3b",
     "date": "2026-11-16",
@@ -299281,31 +299291,12 @@
     "files": [
      "src/pages/TreinamentosPage.tsx"
     ]
-   },
-   {
-    "sha": "c9caf7f",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: benefícios, planos de saúde e VT/VA passam a ser editáveis e links que davam 404 foram corrigidos (#484)",
-    "files": [
-     "inventario/estado/rotas.json",
-     "src/App.tsx",
-     "src/components/portal/PortalOverviewTab.tsx",
-     "src/pages/AdmissoesPage.tsx",
-     "src/pages/BeneficioFormPage.tsx",
-     "src/pages/BeneficiosPage.tsx",
-     "src/pages/DashboardExecutivoPage.tsx",
-     "src/pages/PlanosSaudePage.tsx",
-     "src/pages/ValesPage.tsx",
-     "src/pages/__tests__/PlanosSaudePage.test.tsx",
-     "src/pages/__tests__/ValesPage.test.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "inventario/estado/rotas.json",
-    4
+    3
    ],
    [
     "docs/prod-readiness.md",
@@ -299316,15 +299307,15 @@
     3
    ],
    [
+    ".github/workflows/canonical-migrations.yml",
+    2
+   ],
+   [
     "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.sql",
     2
    ],
    [
     "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.verify.sql",
-    2
-   ],
-   [
-    "src/App.tsx",
     2
    ],
    [
@@ -299338,6 +299329,10 @@
    [
     "vercel.json",
     2
+   ],
+   [
+    "scripts/canonical-invariants.sql",
+    1
    ],
    [
     "supabase/migrations/20261115160000_ninebox_consolidacoes_nota_numeric_4_3.sql",
@@ -299377,10 +299372,6 @@
    ],
    [
     "eslint.config.js",
-    1
-   ],
-   [
-    "scripts/.bundle-budget.json",
     1
    ]
   ]

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "de3bf3ba776a4cd7f2e5890c526de88b28d06c87",
+  "commit": "efe96e88d9bed6f41180382f57f735a712857607",
   "branch": "main",
-  "data_commit": "2026-11-16T11:29:16Z",
+  "data_commit": "2026-11-16T11:36:34Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "efe96e8",
+    "data": "2026-11-16",
+    "assunto": "infra(banco): lista fechada do canonical-migrations passa a ser o lote NineBox (#578)"
+   },
    {
     "sha": "de3bf3b",
     "data": "2026-11-16",
@@ -126,11 +131,6 @@
     "sha": "9d2fda9",
     "data": "2026-11-13",
     "assunto": "fix: libera frame-src do Storage na CSP do index.html (preview de PDF) (#556)"
-   },
-   {
-    "sha": "f5c370c",
-    "data": "2026-11-13",
-    "assunto": "chore(canonical): adiciona as migrations #464/#468/#498 ao lote fechado do canônico (#555)"
    }
   ],
   "arquivos_mudados_7d": 784,
@@ -145,7 +145,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 34
+    "mudancas": 35
    },
    {
     "pasta": "src/components/ui",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 38
+    "mudancas": 39
    },
    {
     "arquivo": "package.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "CLAUDE.md",
-    "mudancas": 19
+    "mudancas": 18
    },
    {
     "arquivo": "package-lock.json",
@@ -226,6 +226,10 @@
     "mudancas": 10
    },
    {
+    "arquivo": "scripts/canonical-invariants.sql",
+    "mudancas": 10
+   },
+   {
     "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 10
    },
@@ -234,19 +238,15 @@
     "mudancas": 9
    },
    {
-    "arquivo": "AGENTS.md",
-    "mudancas": 9
-   },
-   {
     "arquivo": "infra/github/action-pins.json",
     "mudancas": 9
    },
    {
-    "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 9
+    "arquivo": ".github/workflows/canonical-edge-functions.yml",
+    "mudancas": 8
    },
    {
-    "arquivo": ".github/workflows/canonical-edge-functions.yml",
+    "arquivo": "AGENTS.md",
     "mudancas": 8
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 219
+    "commits": 220
    },
    {
     "autor": "devin-ai-integration[bot]",
