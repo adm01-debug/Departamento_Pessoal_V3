@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9ecaf8a95851077087a0ea3e4dc025f8099af586",
+  "commit": "8f3efc6caa7604dc16c7960f1206d0cf0239f58e",
   "branch": "main",
-  "data_commit": "2026-11-16T07:29:02-03:00",
+  "data_commit": "2026-11-16T10:37:05Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "8f3efc6",
+    "data": "2026-11-16",
+    "assunto": "chore: inventario do estado real [auto] (#581)"
+   },
    {
     "sha": "9ecaf8a",
     "data": "2026-11-16",
@@ -126,14 +131,9 @@
     "sha": "a49f33e",
     "data": "2026-11-13",
     "assunto": "fix(logs): não silenciar console.warn em produção (#554)"
-   },
-   {
-    "sha": "69cf8aa",
-    "data": "2026-11-13",
-    "assunto": "infra: troca routes legado por rewrites no vercel.json para aplicar security headers em produção (#553)"
    }
   ],
-  "arquivos_mudados_7d": 778,
+  "arquivos_mudados_7d": 780,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/avaliacao",
@@ -202,12 +202,12 @@
     "mudancas": 39
    },
    {
-    "arquivo": "CLAUDE.md",
+    "arquivo": "package.json",
     "mudancas": 21
    },
    {
-    "arquivo": "package.json",
-    "mudancas": 21
+    "arquivo": "CLAUDE.md",
+    "mudancas": 20
    },
    {
     "arquivo": "package-lock.json",
@@ -219,7 +219,7 @@
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 11
+    "mudancas": 10
    },
    {
     "arquivo": "AGENTS.md",
@@ -234,6 +234,10 @@
     "mudancas": 10
    },
    {
+    "arquivo": "inventario/estado/rotas.json",
+    "mudancas": 10
+   },
+   {
     "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 10
    },
@@ -242,20 +246,8 @@
     "mudancas": 9
    },
    {
-    "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 9
-   },
-   {
     "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 9
-   },
-   {
-    "arquivo": ".github/workflows/canonical-probes.yml",
-    "mudancas": 8
-   },
-   {
-    "arquivo": ".github/workflows/e2e.yml",
-    "mudancas": 8
    },
    {
     "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
@@ -278,7 +270,11 @@
     "mudancas": 8
    },
    {
-    "arquivo": ".github/workflows/canonical-sql-diag.yml",
+    "arquivo": ".github/workflows/canonical-probes.yml",
+    "mudancas": 7
+   },
+   {
+    "arquivo": ".github/workflows/e2e.yml",
     "mudancas": 7
    },
    {
@@ -295,6 +291,10 @@
    },
    {
     "arquivo": "src/services/cnabService.ts",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "src/services/edgeFunctionsService.ts",
     "mudancas": 7
    }
   ],
@@ -313,7 +313,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 5
+    "commits": 6
    },
    {
     "autor": "Claude",

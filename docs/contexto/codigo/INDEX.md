@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9ecaf8a95851077087a0ea3e4dc025f8099af586` (2026-11-16T07:29:02-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8f3efc6caa7604dc16c7960f1206d0cf0239f58e` (2026-11-16T10:37:05Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -388,27 +388,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 23605 nós · 50793 arestas · 2180 comunidades · grafo do commit `9ecaf8a9`
+- 23605 nós · 50793 arestas · 2180 comunidades · grafo do commit `8f3efc6c`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), lucide-react (461), cn (375), useEmpresas (351), client.ts (329), App.tsx (301), vitest (291), framer-motion (229), "public"."empresas" (159), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/canonical-migrations.yml (39)
-- CLAUDE.md (21)
 - package.json (21)
+- CLAUDE.md (20)
 - package-lock.json (19)
 - PENDENCIAS.md (13)
-- .github/workflows/ci.yml (11)
+- .github/workflows/ci.yml (10)
 - AGENTS.md (10)
 - deno.lock (10)
 - infra/github/action-pins.json (10)
+- inventario/estado/rotas.json (10)
 - scripts/sync/autocommit-local.sh (10)
 - .github/workflows/canonical-edge-functions.yml (9)
-- inventario/estado/rotas.json (9)
 - scripts/canonical-invariants.sql (9)
-- .github/workflows/canonical-probes.yml (8)
-- .github/workflows/e2e.yml (8)
+- docs/auditoria/estado/WORKFLOWS_STATUS.md (8)
+- docs/prod-readiness.md (8)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -621,6 +621,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-16 `8f3efc6` chore: inventario do estado real [auto] (#581)
 - 2026-11-16 `9ecaf8a` chore(ninebox): canoniza no repo as 4 funcoes endurecidas em producao (#577)
 - 2026-11-15 `6450ca8` fix(ninebox): policy de leitura volta a valer somente para authenticated (#574)
 - 2026-11-15 `1392114` test(ferias): resgata as 2 assercoes extras do sidecar do feriado de 20/11 (#572)
@@ -635,7 +636,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-14 `7aa798f` Pensões: recria a coluna empresa_id que falta no banco de produção (#529)
 - 2026-11-14 `b93ea48` fix(db): adiciona updated_at em 15 tabelas cujo trigger exige a coluna (#528)
 - 2026-11-14 `7264f0d` fix(db): certificado de treinamento não lê catalogo_cursos.metadata (#499)
-- 2026-11-14 `bb9a156` chore: relatório de auditoria técnica 10/10 (squash)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

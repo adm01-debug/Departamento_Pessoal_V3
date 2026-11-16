@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-16 11:16 UTC
+
+- **functions** alterado (9): `public.decidir_aprovacao_gestor(p_colaborador_id uuid, p_ciclo_id uuid, p_decisao text, p_justificativa text, p_idempotencia text)`, `public.enviar_avaliacao_ao_gestor(p_colaborador_id uuid, p_ciclo_id uuid, p_idempotencia text)`, `public.finalizar_feedback_base(p_feedback_id uuid, p_acao text, p_motivo text, p_idempotencia text)`, `public.get_user_empresas(_user_id uuid)`, `public.pode_aprovar_colaborador(p_colaborador_id uuid)`, `public.sincronizar_consolidacao_avaliacao(p_colaborador_id uuid, p_ciclo_id uuid, p_por uuid)`, `public.situacao_aprovacao(p_colaborador_id uuid, p_ciclo_id uuid)`, `public.versao_avaliacao_feedback(p_feedback_id uuid)`, `public.versao_consolidada_avaliacao(p_colaborador_id uuid, p_ciclo_id uuid)`
+- **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_19`
+
 ## 2026-11-15 18:15 UTC
 
 - **functions** alterado (1): `public.eh_feriado_fixo_br(p_data date)`

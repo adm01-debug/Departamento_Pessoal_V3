@@ -90851,9 +90851,17 @@
             {
               "file": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.verify.sql",
               "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.verify.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 5,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -93010,9 +93018,13 @@
             {
               "file": "supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.verify.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 4,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -93266,9 +93278,17 @@
             {
               "file": "supabase/migrations/20261028090000_ninebox_justificativa_historico.verify.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.verify.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 5,
           "cron": [],
           "db": [
             "public.finalizar_feedback"
@@ -95677,7 +95697,7 @@
               "hits": 2
             }
           ],
-          "code_total_files": 73,
+          "code_total_files": 74,
           "cron": [],
           "db": [
             "public.aplicar_medida_folha_ponto",
@@ -98580,9 +98600,17 @@
             {
               "file": "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.sql",
               "hits": 4
+            },
+            {
+              "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
+              "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.verify.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 14,
+          "code_total_files": 16,
           "cron": [],
           "db": [
             "public.decidir_aprovacao_gestor",
@@ -102309,9 +102337,17 @@
             {
               "file": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.verify.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
+              "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.verify.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 5,
+          "code_total_files": 7,
           "cron": [],
           "db": [
             "public.decidir_aprovacao_gestor",
@@ -102371,9 +102407,17 @@
             {
               "file": "supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql",
               "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
+              "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.verify.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 7,
+          "code_total_files": 9,
           "cron": [],
           "db": [
             "public.decidir_aprovacao_gestor",
@@ -105224,9 +105268,13 @@
             {
               "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
+              "hits": 3
             }
           ],
-          "code_total_files": 8,
+          "code_total_files": 9,
           "cron": [],
           "db": [
             "public.editar_feedback_seguro",
@@ -105285,9 +105333,13 @@
             {
               "file": "supabase/migrations/20261027000000_revoke_orphan_secdef.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
+              "hits": 7
             }
           ],
-          "code_total_files": 6,
+          "code_total_files": 7,
           "cron": [],
           "db": [
             "public.decidir_aprovacao_gestor",
@@ -145792,6 +145844,11 @@
           "publication": "supabase_realtime_messages_publication",
           "schema": "realtime",
           "table": "messages_2026_11_18"
+        },
+        {
+          "publication": "supabase_realtime_messages_publication",
+          "schema": "realtime",
+          "table": "messages_2026_11_19"
         }
       ]
     },

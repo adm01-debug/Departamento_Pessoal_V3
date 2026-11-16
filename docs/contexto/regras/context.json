@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "9ecaf8a95851077087a0ea3e4dc025f8099af586",
+  "sha": "8f3efc6caa7604dc16c7960f1206d0cf0239f58e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-16 10:29 UTC",
+  "generated_at": "2026-11-16 11:16 UTC",
   "files_total": 3114,
   "code_files": 2581,
   "code_lines": 377947
@@ -298782,10 +298782,21 @@
   }
  },
  "git": {
-  "sha": "9ecaf8a95851077087a0ea3e4dc025f8099af586",
+  "sha": "8f3efc6caa7604dc16c7960f1206d0cf0239f58e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "8f3efc6",
+    "date": "2026-11-16",
+    "author": "github-actions[bot]",
+    "subject": "chore: inventario do estado real [auto] (#581)",
+    "files": [
+     "inventario/estado/banco.json",
+     "inventario/estado/edges.json",
+     "inventario/estado/rotas.json"
+    ]
+   },
    {
     "sha": "9ecaf8a",
     "date": "2026-11-16",
@@ -299251,25 +299262,15 @@
      "supabase/migrations/20261114000200_planos_saude_updated_at.sql",
      "supabase/migrations/20261114000200_planos_saude_updated_at.verify.sql"
     ]
-   },
-   {
-    "sha": "2f13bbb",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: alerta diário de pagamento de férias (Art. 145) não abortar por usuário apagado do Auth (#468)",
-    "files": [
-     "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.sql",
-     "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.verify.sql"
-    ]
    }
   ],
   "hot_files": [
    [
-    "docs/prod-readiness.md",
-    3
+    "inventario/estado/rotas.json",
+    4
    ],
    [
-    "inventario/estado/rotas.json",
+    "docs/prod-readiness.md",
     3
    ],
    [
@@ -299299,6 +299300,14 @@
    [
     "vercel.json",
     2
+   ],
+   [
+    "inventario/estado/banco.json",
+    1
+   ],
+   [
+    "inventario/estado/edges.json",
+    1
    ],
    [
     "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
@@ -299334,14 +299343,6 @@
    ],
    [
     "src/components/__tests__/CriacaoFeedbackIntegracao.test.ts",
-    1
-   ],
-   [
-    "src/components/__tests__/DesempenhoBarrasProgresso.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/DesempenhoEntradaCascade.test.tsx",
     1
    ]
   ]
