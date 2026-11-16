@@ -3949,7 +3949,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 7,
+   "usada_no_front": 8,
    "usada_em_edges": [
     "enviar-email-admissao",
     "gerar-contrato-pdf"
@@ -4548,7 +4548,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 4,
+   "usada_no_front": 5,
    "usada_em_edges": [
     "alertas-preditivos",
     "enviar-relatorio"
@@ -15404,7 +15404,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 43,
+   "usada_no_front": 44,
    "usada_em_edges": [
     "adiantamento-salarial",
     "alertas-dp",
@@ -21493,7 +21493,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 5,
+   "usada_no_front": 6,
    "usada_em_edges": [
     "alertas-preditivos",
     "pagar-desligamento"
@@ -28229,7 +28229,7 @@
     "valor_total": "number",
     "vender_abono": "boolean | null"
    },
-   "usada_no_front": 8,
+   "usada_no_front": 9,
    "usada_em_edges": [
     "calcular-ferias",
     "enviar-relatorio"
@@ -33797,7 +33797,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 1,
+   "usada_no_front": 2,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,
@@ -40875,11 +40875,11 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 0,
+   "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": true,
-   "nao_usada": true
+   "nao_usada": false
   },
   "onboarding_tarefas": {
    "colunas": {
@@ -47758,7 +47758,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 4,
+   "usada_no_front": 5,
    "usada_em_edges": [
     "auth-gov-br"
    ],
@@ -47982,7 +47982,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 1,
+   "usada_no_front": 2,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,
@@ -56667,7 +56667,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 2,
+   "usada_no_front": 3,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,
@@ -58051,7 +58051,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 1,
+   "usada_no_front": 2,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,

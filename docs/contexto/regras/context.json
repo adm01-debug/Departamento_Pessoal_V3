@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "85f22ec74de17b441a91f4792de27ccb28d953fe",
+  "sha": "800125221d33cb158c990df02ce43195007f0aef",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-16 17:23 UTC",
-  "files_total": 3192,
-  "code_files": 2621,
-  "code_lines": 386798
+  "generated_at": "2026-11-16 19:16 UTC",
+  "files_total": 3218,
+  "code_files": 2647,
+  "code_lines": 390983
  },
  "version": "1.3.2",
- "facts_hash": "b5c0dbf3b5353f71",
+ "facts_hash": "ecc834cc4fa789ba",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -385,8 +385,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 902,
-   ".tsx": 796,
-   ".ts": 795,
+   ".tsx": 811,
+   ".ts": 806,
    ".mjs": 100,
    ".js": 15,
    ".cjs": 11,
@@ -88137,7 +88137,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 180
+    "deps_count": 181
    },
    {
     "path": "",
@@ -88489,7 +88489,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 188
+    "deps_count": 189
    },
    {
     "path": "",
@@ -88653,7 +88653,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 184
+    "deps_count": 185
    },
    {
     "path": "",
@@ -88840,13 +88840,14 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 183
+    "deps_count": 184
    },
    {
     "path": "",
     "file": "src/pages/ColaboradorDetalhesPage.tsx",
     "component": "ColaboradorDetalhesPage",
     "tables_transitive": [
+     "admissoes",
      "afastamentos",
      "anotacoes_colaborador",
      "asos",
@@ -88881,6 +88882,7 @@
      "deficiencias",
      "dependentes",
      "dependentes_beneficios",
+     "desligamentos",
      "despesas",
      "despesas_aprovacoes_log",
      "documentos",
@@ -88901,10 +88903,13 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
@@ -88912,12 +88917,19 @@
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
      "medidas_disciplinares_workflow_log",
      "metas_okrs",
      "notificacoes",
+     "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -88929,18 +88941,23 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
+     "promocoes",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_beneficio",
      "tipos_estabilidade",
+     "transferencias",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -88991,7 +89008,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 175
+    "deps_count": 208
    },
    {
     "path": "",
@@ -89158,7 +89175,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 207
+    "deps_count": 208
    },
    {
     "path": "",
@@ -89346,7 +89363,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 187
+    "deps_count": 188
    },
    {
     "path": "",
@@ -89508,7 +89525,7 @@
      "set_own_default_empresa",
      "sugerir_proxima_medida"
     ],
-    "deps_count": 186
+    "deps_count": 187
    },
    {
     "path": "",
@@ -89887,7 +89904,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 194
+    "deps_count": 195
    },
    {
     "path": "",
@@ -90051,7 +90068,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 187
+    "deps_count": 188
    },
    {
     "path": "",
@@ -90281,7 +90298,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 195
+    "deps_count": 196
    },
    {
     "path": "",
@@ -90490,7 +90507,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 197
+    "deps_count": 198
    },
    {
     "path": "",
@@ -90782,7 +90799,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 203
+    "deps_count": 204
    },
    {
     "path": "",
@@ -91135,7 +91152,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 184
+    "deps_count": 185
    },
    {
     "path": "",
@@ -91300,7 +91317,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 202
+    "deps_count": 203
    },
    {
     "path": "",
@@ -91465,7 +91482,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 196
+    "deps_count": 197
    },
    {
     "path": "",
@@ -92288,7 +92305,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 184
+    "deps_count": 185
    },
    {
     "path": "",
@@ -92452,7 +92469,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 195
+    "deps_count": 196
    },
    {
     "path": "",
@@ -92640,7 +92657,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 182
+    "deps_count": 183
    },
    {
     "path": "",
@@ -92806,7 +92823,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 212
+    "deps_count": 213
    },
    {
     "path": "",
@@ -92969,7 +92986,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 196
+    "deps_count": 197
    },
    {
     "path": "",
@@ -93199,7 +93216,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 197
+    "deps_count": 198
    },
    {
     "path": "",
@@ -93442,7 +93459,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 196
+    "deps_count": 197
    },
    {
     "path": "",
@@ -93634,7 +93651,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 185
+    "deps_count": 186
    },
    {
     "path": "",
@@ -93877,7 +93894,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 195
+    "deps_count": 196
    },
    {
     "path": "",
@@ -94072,7 +94089,7 @@
      "validar_potencial_avaliacao",
      "verificar_espelho_ponto"
     ],
-    "deps_count": 220
+    "deps_count": 221
    },
    {
     "path": "",
@@ -94370,7 +94387,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 197
+    "deps_count": 198
    },
    {
     "path": "",
@@ -94692,7 +94709,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 189
+    "deps_count": 190
    },
    {
     "path": "",
@@ -94887,7 +94904,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 185
+    "deps_count": 186
    },
    {
     "path": "",
@@ -95157,7 +95174,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 197
+    "deps_count": 198
    },
    {
     "path": "",
@@ -95322,7 +95339,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 182
+    "deps_count": 183
    },
    {
     "path": "",
@@ -95486,7 +95503,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 184
+    "deps_count": 185
    },
    {
     "path": "",
@@ -95651,7 +95668,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 197
+    "deps_count": 198
    },
    {
     "path": "",
@@ -95816,7 +95833,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 183
+    "deps_count": 184
    },
    {
     "path": "",
@@ -96005,7 +96022,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 185
+    "deps_count": 186
    },
    {
     "path": "",
@@ -96207,7 +96224,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 194
+    "deps_count": 195
    },
    {
     "path": "/auth/callback",
@@ -99229,7 +99246,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 714,
+  "components_count": 733,
   "hooks": [
    {
     "name": "useContacts",
@@ -99456,6 +99473,10 @@
     "file": "src/hooks/useColaboradorDetalhes.ts"
    },
    {
+    "name": "useFeriasResumoColaborador",
+    "file": "src/hooks/useColaboradorDetalhes.ts"
+   },
+   {
     "name": "usePeriodosAquisitivos",
     "file": "src/hooks/useColaboradorDetalhes.ts"
    },
@@ -99548,6 +99569,34 @@
     "file": "src/hooks/useDepartamentos.ts"
    },
    {
+    "name": "useMetasColaborador",
+    "file": "src/hooks/useDesenvolvimentoColaborador.ts"
+   },
+   {
+    "name": "usePDIsColaborador",
+    "file": "src/hooks/useDesenvolvimentoColaborador.ts"
+   },
+   {
+    "name": "useFeedbacksColaborador",
+    "file": "src/hooks/useDesenvolvimentoColaborador.ts"
+   },
+   {
+    "name": "useCertificadosColaborador",
+    "file": "src/hooks/useDesenvolvimentoColaborador.ts"
+   },
+   {
+    "name": "useCompetenciasColaborador",
+    "file": "src/hooks/useDesenvolvimentoColaborador.ts"
+   },
+   {
+    "name": "useTreinamentosColaborador",
+    "file": "src/hooks/useDesenvolvimentoColaborador.ts"
+   },
+   {
+    "name": "useOnboardingColaborador",
+    "file": "src/hooks/useDesenvolvimentoColaborador.ts"
+   },
+   {
     "name": "useDesligamentos",
     "file": "src/hooks/useDesligamentos.ts"
    },
@@ -99614,6 +99663,10 @@
    {
     "name": "useGrupo",
     "file": "src/hooks/useGrupo.ts"
+   },
+   {
+    "name": "useHistoricoColaborador",
+    "file": "src/hooks/useHistoricoColaborador.ts"
    },
    {
     "name": "useHistoricoContratos",
@@ -99834,6 +99887,10 @@
    {
     "name": "usePontosAbertos",
     "file": "src/hooks/usePontosAbertos.ts"
+   },
+   {
+    "name": "useProximosEventos",
+    "file": "src/hooks/useProximosEventos.ts"
    },
    {
     "name": "useRealTimeSubscription",
@@ -100682,8 +100739,8 @@
   },
   {
    "module": "src/components",
-   "files": 714,
-   "lines": 111568,
+   "files": 733,
+   "lines": 113897,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -100757,6 +100814,9 @@
     "NovaAdmissaoDialog.tsx: NovaAdmissaoDialog",
     "OnboardingDashboard.tsx: OnboardingDashboard",
     "OnboardingPageContent.tsx: OnboardingPageContent",
+    "admissoesComum.ts: Tone, TONE_CHIP, TONE_TEXT, ToneSelo, TONE_BADGE, ETAPA_LABELS",
+    "admissoesDerivacoes.ts: AdmissaoLike, DIA_MS, dataValida, inicioDoDia, iniciais, percentual",
+    "onboardingDerivacoes.ts: TarefaOnboarding, ColaboradorOnboarding, ProgressoOnboarding, progressoOnboarding, prazoDaTarefa, ordenarTarefas",
     "AfastamentoDocumentManager.tsx: AfastamentoDocumentManager",
     "AfastamentoForm.tsx: AfastamentoForm",
     "AfastamentoStats.tsx: AfastamentoStats",
@@ -100775,10 +100835,7 @@
     "CicloAtivoPanel.tsx: CicloAtivoPanel",
     "ColoredFilterChip.tsx: ColoredFilterChip",
     "DialogoDevolucao.tsx: DialogoDevolucaoProps, DialogoDevolucao",
-    "EstrelasNota.tsx: EstrelasNota",
-    "FeedbackAcoesRodape.tsx: ServicoAcoes, ContextoAcoes, PreviewAcoes, FeedbackAcoesRodape",
-    "FeedbackCard.tsx: FeedbackCardProps, FeedbackCard",
-    "FeedbackDetalheDialog.tsx: FeedbackDetalheDialogProps, FeedbackDetalheDialog"
+    "EstrelasNota.tsx: EstrelasNota"
    ],
    "docs": [
     "index.ts: V25: Components Export - active modules only",
@@ -101014,8 +101071,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 182,
-   "lines": 20170,
+   "files": 185,
+   "lines": 21192,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101079,6 +101136,7 @@
     "useDataAccessLog.ts: useDataAccessLog",
     "useDebounce.ts: useDebounce",
     "useDepartamentos.ts: useDepartamentos",
+    "useDesenvolvimentoColaborador.ts: useMetasColaborador, usePDIsColaborador, useFeedbacksColaborador, useCertificadosColaborador, useCompetenciasColaborador, useTreinamentosColaborador",
     "useDesligamentos.ts: useDesligamentos",
     "useDocumentOCR.ts: OCRResult, useDocumentOCR",
     "useDocumentos.ts: useDocumentos",
@@ -101090,16 +101148,15 @@
     "useFerias.ts: useFerias",
     "useFeriasAprovacao.ts: useFeriasAprovacao",
     "useFolha.ts: useFolha",
-    "useFolhaAuditoria.ts: AuditoriaEvento, AuditoriaSeveridade, FolhaAuditoria, useFolhaAuditoria",
-    "useFormGuard.ts: useFormGuard"
+    "useFolhaAuditoria.ts: AuditoriaEvento, AuditoriaSeveridade, FolhaAuditoria, useFolhaAuditoria"
    ],
    "docs": [
     "useAuth.ts: V19: useAuth hook - Re-export do context",
+    "useDesenvolvimentoColaborador.ts: PARTE G — Dossiê do Colaborador, aba Desenvolvimento (+ Onboarding). Hooks finos por colaborador_id sobre services já existentes (avaliacaoService, catalogoCursoService, rhService), sem duplicar lógica.",
     "useEmpresas.ts: @fileoverview Hook para gerenciamento de empresas @module hooks/useEmpresas",
     "useGrupo.ts: @fileoverview Hook de contexto de GRUPO empresarial. Holding única com várias CNPJs. Expõe lista completa de empresas no escopo do usuário (via RLS / get_user_scope_empresas) e helpers agregados (cor, regime, ordem) usados por dashboards consolidados. Performance: agrega em maps Record<id, X> para O …",
-    "useMediaQuery.ts: V15-137: src/hooks/useMediaQuery.ts",
-    "useMountEffects.ts: useOnMount: Hook para efeitos que devem executar apenas no mount P1-022: React Compiler readiness - elimina eslint-disable set-state-in-effect Uso: // ANTES (viola exhaustive-deps) useEffect(() => { setData(fetchData()); }, []); // DEPOIS (React Compiler safe) useOnMount(() => { setData(fetchData()) …",
-    "useNotificacoes.ts: @fileoverview Hook para gerenciamento de notificações @module hooks/useNotificacoes"
+    "useHistoricoColaborador.ts: Histórico do Colaborador — substitui useTimelineFuncional.ts. Agrega os MESMOS ~13 sub-recursos de antes (vínculos, histórico salarial, contratos, cargo, promoções, transferências, férias, afastamentos, treinamentos, feedbacks 360, onboarding, medidas disciplinares, desligamentos) MAIS o audit_log ( …",
+    "useMediaQuery.ts: V15-137: src/hooks/useMediaQuery.ts"
    ],
    "deps": [
     "@supabase/supabase-js",
@@ -101120,6 +101177,7 @@
     "src/contexts",
     "src/integrations",
     "src/lib",
+    "src/mocks",
     "src/schemas",
     "src/services",
     "src/test",
@@ -101156,6 +101214,7 @@
     "src/hooks/useDataAccessLog.ts",
     "src/hooks/useDebounce.ts",
     "src/hooks/useDepartamentos.ts",
+    "src/hooks/useDesenvolvimentoColaborador.ts",
     "src/hooks/useDesligamentos.ts",
     "src/hooks/useDocumentOCR.ts",
     "src/hooks/useDocumentos.ts",
@@ -101171,6 +101230,7 @@
     "src/hooks/useFormGuard.ts",
     "src/hooks/useGenericCrud.ts",
     "src/hooks/useGrupo.ts",
+    "src/hooks/useHistoricoColaborador.ts",
     "src/hooks/useHistoricoContratos.ts",
     "src/hooks/useHorasExtras.ts",
     "src/hooks/useIdempotencyKey.ts",
@@ -101194,6 +101254,7 @@
     "src/hooks/usePontoMelhorado.ts",
     "src/hooks/usePontoOffline.ts",
     "src/hooks/usePontosAbertos.ts",
+    "src/hooks/useProximosEventos.ts",
     "src/hooks/useRealTimeSubscription.ts",
     "src/hooks/useRealtimeDashboard.ts",
     "src/hooks/useSecureVisibility.ts",
@@ -101203,10 +101264,7 @@
     "src/hooks/useSyncedState.ts",
     "src/hooks/useSystemHealth.ts",
     "src/hooks/useSystemHealthHistory.ts",
-    "src/hooks/useTabelasReferencia.ts",
-    "src/hooks/useToast.ts",
-    "src/hooks/useTodasEmpresas.ts",
-    "src/hooks/useTranslation.ts"
+    "src/hooks/useTabelasReferencia.ts"
    ]
   },
   {
@@ -101355,7 +101413,7 @@
   {
    "module": "src/pages",
    "files": 131,
-   "lines": 46511,
+   "lines": 46535,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -101717,8 +101775,8 @@
   },
   {
    "module": "src/services",
-   "files": 160,
-   "lines": 34201,
+   "files": 163,
+   "lines": 34958,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -101833,6 +101891,7 @@
     "notificacoes",
     "notificacoes_admissao",
     "onboarding_colaborador",
+    "onboarding_kits",
     "onboarding_tarefas",
     "onboarding_template_tarefas",
     "onboarding_templates",
@@ -101858,6 +101917,8 @@
     "premiacoes_pagamentos",
     "premiacoes_regras",
     "premiacoes_roi_cenarios",
+    "profiles",
+    "promocoes",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
     "push_subscriptions",
@@ -101873,9 +101934,11 @@
     "security_alerts",
     "seguros_colaboradores",
     "solicitacoes_hora_extra",
+    "tarefas_onboarding",
     "times",
     "tipos_admissao",
     "tipos_estabilidade",
+    "transferencias",
     "treinamento_certificados",
     "treinamento_feedback",
     "treinamento_instancias",
@@ -101982,6 +102045,7 @@
     "src/components",
     "src/integrations",
     "src/lib",
+    "src/mocks",
     "src/schemas",
     "src/test",
     "src/types",
@@ -102038,6 +102102,7 @@
     "src/services/loggerService.ts",
     "src/services/medidasDisciplinaresService.ts",
     "src/services/notificacoesService.ts",
+    "src/services/onboardingJornadaService.ts",
     "src/services/pcsService.ts",
     "src/services/pesquisaService.ts",
     "src/services/piiAccessLogService.ts",
@@ -102055,7 +102120,9 @@
     "src/services/securityService.ts",
     "src/services/tabelasComplementaresService.ts",
     "src/services/tabelasReferenciaService.ts",
+    "src/services/timelineService.ts",
     "src/services/turnoService.ts",
+    "src/services/vinculoService.ts",
     "src/services/webhookService.ts",
     "src/services/whatsappService.ts",
     "src/services/workflowService.ts",
@@ -102064,10 +102131,7 @@
     "src/services/__tests__/assistenteIAService.test.ts",
     "src/services/__tests__/auditoriaService.test.ts",
     "src/services/__tests__/authService.test.ts",
-    "src/services/__tests__/avaliacaoService.test.ts",
-    "src/services/__tests__/backupService.test.ts",
-    "src/services/__tests__/bancoHorasConfigService.test.ts",
-    "src/services/__tests__/bancoHorasService.test.ts"
+    "src/services/__tests__/avaliacaoService.test.ts"
    ]
   },
   {
@@ -102128,8 +102192,8 @@
   },
   {
    "module": "src/types",
-   "files": 12,
-   "lines": 801,
+   "files": 13,
+   "lines": 854,
    "tables": [],
    "exports": [
     "afastamentos.ts: AfastamentoRow, AfastamentoInsert, AfastamentoUpdate, ConfigAfastamentoRow, DocumentoAfastamentoRow, ProrrogacaoAfastamentoRow",
@@ -102143,6 +102207,7 @@
     "queryBuilder.ts: LooseQueryResponse, LooseQueryBuilder",
     "recrutamento.ts: VagaRow, CandidatoRow, CandidaturaRow, VagaResumo, CandidaturaComRelacoes",
     "result.ts: Result, Ok, Err, toResult",
+    "timelineEvent.ts: TimelineEventType, TimelineAuditFieldChange, TimelineAuditDetail, TimelineEvent",
     "uiRecord.ts: UiRecord"
    ],
    "docs": [
@@ -102150,7 +102215,8 @@
     "db.ts: Aliases ergonômicos para linhas do banco. Objetivo: eliminar `useState` sem tipo em componentes que armazenam registros do Supabase, restaurando type-safety sem exigir refatoração de cada consumo. Uso: const [selecionado, setSelecionado] = useState<Row<'admissoes'> | null>(null); const [linhas, setL …",
     "index.ts: V25: Types Index - Active exports only",
     "pcs.ts: @fileoverview Tipos do módulo PCS (Plano de Cargos e Salários). Todos derivados do schema real — nada de tipagem solta, nada de shape inventado.",
-    "result.ts: Compatibility shim: Result type now passes through values directly. Services throw on error; consumers await values directly."
+    "result.ts: Compatibility shim: Result type now passes through values directly. Services throw on error; consumers await values directly.",
+    "timelineEvent.ts: Histórico do Colaborador — camada de normalização de leitura. Junta eventos vindos de múltiplas tabelas/queries já existentes (vínculos, histórico salarial, contratos, cargo, promoções, transferências, férias, afastamentos, treinamentos, feedbacks 360, onboarding, medidas disciplinares, desligamento …"
    ],
    "deps": [
     "@supabase/supabase-js"
@@ -102170,6 +102236,7 @@
     "src/types/queryBuilder.ts",
     "src/types/recrutamento.ts",
     "src/types/result.ts",
+    "src/types/timelineEvent.ts",
     "src/types/uiRecord.ts"
    ]
   },
@@ -102809,6 +102876,7 @@
      "src/pages/OnboardingPage.tsx",
      "src/pages/RelatoriosPage.tsx",
      "src/services/contratacaoService.ts",
+     "src/services/onboardingJornadaService.ts",
      "supabase/functions/enviar-email-admissao/index.ts"
     ],
     "update": [
@@ -102833,6 +102901,7 @@
      "src/hooks/useExecutiveDashboard.ts",
      "src/pages/DashboardPage.tsx",
      "src/services/afastamentoService.ts",
+     "src/services/timelineService.ts",
      "supabase/functions/alertas-preditivos/index.ts",
      "supabase/functions/enviar-relatorio/index.ts"
     ],
@@ -103365,6 +103434,7 @@
      "src/services/departamentoService.ts",
      "src/services/folhaPagamentoService.ts",
      "src/services/notificacoesService.ts",
+     "src/services/onboardingJornadaService.ts",
      "src/services/pontoService.ts",
      "supabase/functions/adiantamento-salarial/index.ts",
      "supabase/functions/alertas-dp/index.ts",
@@ -103752,6 +103822,7 @@
      "src/pages/RelatoriosPage.tsx",
      "src/services/__tests__/rescisaoSecurity.test.ts",
      "src/services/rescisaoService.ts",
+     "src/services/timelineService.ts",
      "supabase/functions/alertas-preditivos/index.ts",
      "supabase/functions/pagar-desligamento/index.ts"
     ],
@@ -104144,6 +104215,7 @@
      "src/pages/PassivoTrabalhistaPage.tsx",
      "src/pages/PortalPage.tsx",
      "src/pages/RelatoriosPage.tsx",
+     "src/services/colaboradorDetalhesService.ts",
      "supabase/functions/enviar-relatorio/index.ts",
      "supabase/tests/ferias_embed_test.ts"
     ],
@@ -104383,7 +104455,8 @@
    },
    "historico_cargo": {
     "select": [
-     "src/services/tabelas/rhService.ts"
+     "src/services/tabelas/rhService.ts",
+     "src/services/timelineService.ts"
     ]
    },
    "historico_contratos": {
@@ -104733,6 +104806,17 @@
      "src/services/tabelas/rhService.ts"
     ]
    },
+   "onboarding_kits": {
+    "select": [
+     "src/services/onboardingJornadaService.ts"
+    ],
+    "insert": [
+     "src/services/onboardingJornadaService.ts"
+    ],
+    "update": [
+     "src/services/onboardingJornadaService.ts"
+    ]
+   },
    "onboarding_tarefas": {
     "select": [
      "src/services/tabelas/rhService.ts"
@@ -105063,6 +105147,7 @@
     "select": [
      "src/pages/PerfilPage.tsx",
      "src/pages/PortalPage.tsx",
+     "src/services/onboardingJornadaService.ts",
      "supabase/functions/auth-gov-br/index.ts",
      "supabase/migrations/20261005140000_admin_list_profiles_rpc.sql"
     ],
@@ -105087,7 +105172,8 @@
    },
    "promocoes": {
     "select": [
-     "src/pages/MovimentacoesPage.tsx"
+     "src/pages/MovimentacoesPage.tsx",
+     "src/services/timelineService.ts"
     ],
     "update": [
      "src/pages/MovimentacoesPage.tsx"
@@ -105525,6 +105611,12 @@
     "ref": [
      "src/components/admissoes/OnboardingPageContent.tsx",
      "src/pages/OnboardingPage.tsx"
+    ],
+    "update": [
+     "src/services/onboardingJornadaService.ts"
+    ],
+    "select": [
+     "src/services/onboardingJornadaService.ts"
     ]
    },
    "times": {
@@ -105582,7 +105674,8 @@
    },
    "transferencias": {
     "select": [
-     "src/pages/MovimentacoesPage.tsx"
+     "src/pages/MovimentacoesPage.tsx",
+     "src/services/timelineService.ts"
     ],
     "update": [
      "src/pages/MovimentacoesPage.tsx"
@@ -106054,6 +106147,8 @@
    ],
    "admissoes": [
     "cargo",
+    "cpf",
+    "created_at",
     "data_prevista",
     "departamento",
     "email",
@@ -106065,6 +106160,7 @@
     "colaborador_id",
     "data_fim",
     "data_fim_prevista",
+    "data_fim_real",
     "data_inicio",
     "empresa_id",
     "id",
@@ -106676,7 +106772,12 @@
     "id"
    ],
    "historico_cargo": [
-    "colaborador_id"
+    "cargo_anterior",
+    "cargo_novo",
+    "colaborador_id",
+    "data_alteracao",
+    "id",
+    "motivo"
    ],
    "historico_contratos": [
     "colaborador_id",
@@ -106720,8 +106821,13 @@
     "status"
    ],
    "inscricoes_cursos": [
+    "colaborador_id",
+    "data_conclusao",
+    "data_inicio",
     "empresa_id",
-    "id"
+    "id",
+    "nota",
+    "status"
    ],
    "integracoes": [
     "ativo",
@@ -106835,6 +106941,13 @@
    "notificacoes_admissao": [
     "admissao_id"
    ],
+   "onboarding_colaborador": [
+    "colaborador_id",
+    "empresa_id"
+   ],
+   "onboarding_kits": [
+    "id"
+   ],
    "onboarding_tarefas": [
     "onboarding_id"
    ],
@@ -106943,6 +107056,7 @@
    "profiles": [
     "govbr_uid",
     "id",
+    "nome",
     "user_id"
    ],
    "promo_brindes": [
@@ -106953,7 +107067,10 @@
    "promocoes": [
     "colaborador_id",
     "data_vigencia",
-    "id"
+    "id",
+    "motivo",
+    "salario_anterior",
+    "salario_novo"
    ],
    "prorrogacoes_afastamento": [
     "id"
@@ -107181,6 +107298,15 @@
     "nome",
     "pai"
    ],
+   "tarefas_onboarding": [
+    "admissao_id",
+    "concluida",
+    "concluida_em",
+    "created_at",
+    "id",
+    "prazo_dias",
+    "titulo"
+   ],
    "times": [
     "empresa_id",
     "id",
@@ -107202,7 +107328,10 @@
    "transferencias": [
     "colaborador_id",
     "data_vigencia",
-    "id"
+    "departamento_anterior_id",
+    "departamento_novo_id",
+    "id",
+    "motivo"
    ],
    "treinamento_certificados": [
     "id"
@@ -107211,6 +107340,7 @@
     "id"
    ],
    "treinamento_participantes": [
+    "colaborador_id",
     "id",
     "treinamento_id"
    ],
@@ -109670,7 +109800,6 @@
    "oauth_consents",
    "objects",
    "onboarding_documentos_obrigatorios",
-   "onboarding_kits",
    "one_time_tokens",
    "paises",
    "parametros_fiscais",
@@ -111204,6 +111333,46 @@
     "values": "sem_justa_causa | com_justa_causa | justa_causa | pedido_demissao | acordo_mutuo | culpa_reciproca | termino_contrato | falecimento"
    },
    {
+    "file": "src/components/admissoes/admissoesComum.ts",
+    "name": "Tone",
+    "values": "primary | info | success | warning | destructive"
+   },
+   {
+    "file": "src/components/admissoes/admissoesComum.ts",
+    "name": "ToneSelo",
+    "values": "success | warning | destructive"
+   },
+   {
+    "file": "src/components/admissoes/admissoesComum.ts",
+    "name": "CampoChecklist",
+    "values": "checklist_documentos_pessoais | checklist_comprovante_endereco | checklist_foto | checklist_ctps | checklist_exame_admissional | checklist_contrato_assinado | checklist_esocial_enviado"
+   },
+   {
+    "file": "src/components/admissoes/admissoesComum.ts",
+    "name": "ETAPA_FLUXO",
+    "values": "'solicitacao', 'documentos', 'validacao', 'pendente', 'exame', 'contrato', 'assinatura', 'esocial',"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "name": "EstadoMarco",
+    "values": "concluido | atual | pendente"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "name": "TomPrazo",
+    "values": "atraso | hoje | proximo | neutro"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "name": "SituacaoOnboarding",
+    "values": "concluido | em_dia | em_risco | atrasado | sem_proxima_acao | cancelado"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "name": "OrdemOnboarding",
+    "values": "criticos | atrasados | inicio_recente | inicio_antigo | maior_progresso | menor_progresso | nome"
+   },
+   {
     "file": "src/components/avaliacao/AnaliticosDesempenho.tsx",
     "name": "EstadoAnimacaoLegenda",
     "values": "aguardando | animar | final"
@@ -111589,6 +111758,11 @@
     "values": "INFO | AVISO | ERRO | CRITICO"
    },
    {
+    "file": "src/hooks/useProximosEventos.ts",
+    "name": "ProximoEventoBadgeTone",
+    "values": "info | success | warning"
+   },
+   {
     "file": "src/hooks/useTranslation.ts",
     "name": "Locale",
     "values": "pt-BR | en-US | es-ES"
@@ -111682,6 +111856,11 @@
     "file": "src/types/pcs.ts",
     "name": "PCS_STATUS",
     "values": "'rascunho', 'em_avaliacao', 'ativo', 'arquivado'"
+   },
+   {
+    "file": "src/types/timelineEvent.ts",
+    "name": "TimelineEventType",
+    "values": "vinculo | salario | contrato | cargo | promocao | transferencia | ferias | afastamento | treinamento | avaliacao | onboarding | medida_disciplinar | desligamento | auditoria"
    },
    {
     "file": "src/utils/fileSignature.ts",
@@ -112326,6 +112505,30 @@
    {
     "file": "src/components/colaborador-detalhes/PCDTab.tsx",
     "msg": "Tipo de deficiência é obrigatório"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx",
+    "msg": ";\nimport { useHistoricoColaborador } from "
+   },
+   {
+    "file": "src/components/colaborador-detalhes/historico/HistoryCreateContractDialog.tsx",
+    "msg": "Data e motivo são obrigatórios"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/historico/HistoryCreateSalaryDialog.tsx",
+    "msg": "Data de vigência é obrigatória"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/historico/HistoryCreateSalaryDialog.tsx",
+    "msg": "Erro ao registrar alteração"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/historico/HistoryCreateSalaryDialog.tsx",
+    "msg": "Motivo é obrigatório"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/historico/HistoryCreateSalaryDialog.tsx",
+    "msg": "Salário deve ser maior que zero"
    },
    {
     "file": "src/components/dashboard/EventTimeline.tsx",
@@ -114296,6 +114499,18 @@
     "msg": "Falha ao notificar ajuste de ponto"
    },
    {
+    "file": "src/services/onboardingJornadaService.ts",
+    "msg": "Não foi possível criar o perfil de kit."
+   },
+   {
+    "file": "src/services/onboardingJornadaService.ts",
+    "msg": "Perfil de kit não encontrado."
+   },
+   {
+    "file": "src/services/onboardingJornadaService.ts",
+    "msg": "empresa_id obrigatório para isolamento de tenant"
+   },
+   {
     "file": "src/services/pesquisaService.ts",
     "msg": "Acesso negado: pergunta pertence a outro tenant"
    },
@@ -114494,6 +114709,10 @@
    {
     "file": "src/services/tabelasReferenciaService.ts",
     "msg": "ferias_id obrigatório para isolamento de tenant"
+   },
+   {
+    "file": "src/services/timelineService.ts",
+    "msg": "empresa_id obrigatório para isolamento de tenant"
    },
    {
     "file": "src/services/turnoService.ts",
@@ -115582,6 +115801,74 @@
    {
     "file": "src/components/admin/UnifiedAuditSection.tsx",
     "text": "Limite máximo de eventos por chamada (espelha o teto da RPC search_audit_unified)."
+   },
+   {
+    "file": "src/components/admissoes/admissoesDerivacoes.ts",
+    "text": "(aba \"Dashboard\"): prazo, progresso e iniciais do avatar. A aba \"Gestão de"
+   },
+   {
+    "file": "src/components/admissoes/admissoesDerivacoes.ts",
+    "text": "* Registro mínimo que as telas do módulo leem (admissão real ou fictícia). */"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "text": "admissionAL (prazo da admissão, checklist de documentos, progresso por etapa)."
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "text": "mede risco por prazo de tarefa. Misturar as duas réguas num arquivo só"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "text": "* Dias corridos somados ao `created_at` para achar o prazo da tarefa. */"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "text": "* Prazo de uma tarefa = `created_at` + `prazo_dias`. Devolve `null` quando a"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "text": "*   1. PRAZO (`created_at + prazo_dias`) mais próximo primeiro;"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "text": "2. tarefa sem prazo calculável vai para o FIM;"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "text": "uma segunda regra em outro lugar. Não usa `Array.sort` mutável (copia)."
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "text": "determinística: sempre a de prazo mais próximo."
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "text": "* Pendentes com prazo já vencido — o \"em risco/atrasada\" dos status pills. */"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "text": "* Rótulo humano do prazo: `Atrasado 3d` / `Hoje, 16:00` / `Amanhã, 09:00` /"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "text": "\"hoje/amanhã\"). `null` quando não há prazo calculável."
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "text": "3. `atrasado`           — o prazo da PRÓXIMA ação já venceu (= há pendência"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "text": "vencida; como a próxima ação é a de prazo mais"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "text": "* Antecedência (em dias) que caracteriza \"em risco\" antes do vencimento. */"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "text": "REGRA EXPLÍCITA (PENDÊNCIA 5): admissão cancelada = jornada ENCERRADA sem"
    },
    {
     "file": "src/components/afastamentos/AfastamentoDocumentManager.tsx",
@@ -116716,6 +117003,14 @@
     "text": "* Empacota a operação inteira (validação → destino → idempotência → auditoria)."
    },
    {
+    "file": "src/components/colaborador-detalhes/historico/LastUpdate.tsx",
+    "text": "só auditoria tem — a maioria das origens de negócio não tem \"solicitante\""
+   },
+   {
+    "file": "src/components/colaborador-detalhes/historico/UpcomingEvents.tsx",
+    "text": "vencimento real do RH."
+   },
+   {
     "file": "src/components/dashboard/analytics/widgets.tsx",
     "text": "* Nenhuma lógica alterada — apenas movimentação estrutural."
    },
@@ -116920,6 +117215,14 @@
     "text": "segue lendo conteúdo, apenas sem as ações que exigem cadastro."
    },
    {
+    "file": "src/hooks/useDesenvolvimentoColaborador.ts",
+    "text": "REGRA DE CACHE DESTE ARQUIVO: cada leitura vive DENTRO da família que os"
+   },
+   {
+    "file": "src/hooks/useDesenvolvimentoColaborador.ts",
+    "text": "* COMPAT TEMPORÁRIO (somente LEITURA): se o colaborador não tiver admissão"
+   },
+   {
     "file": "src/hooks/useDesligamentos.ts",
     "text": "dentro de `filters`) e dentro de `filters` apenas quando definido (o"
    },
@@ -116944,6 +117247,22 @@
     "text": "Sem permissão (RLS) ou erro de schema durante migração — degradar sem quebrar UI."
    },
    {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "text": "MESMO limite da aba Histórico (ColaboradorHistory.tsx), que usa esta"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "text": "ignora o limite, então um valor menor aqui truncaria aquela aba."
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "text": "que falha (bridge fora, RPC de auditoria sem permissão) virava lista vazia"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "text": "Substitui o laço antigo que listava apenas as tarefas concluídas do"
+   },
+   {
     "file": "src/hooks/useMediaQuery.ts",
     "text": "Inicializa valor apenas no mount"
    },
@@ -116954,6 +117273,22 @@
    {
     "file": "src/hooks/usePWA.ts",
     "text": "Verifica se já está instalado apenas no mount"
+   },
+   {
+    "file": "src/hooks/useProximosEventos.ts",
+    "text": "era sempre falsa e NENHUM vencimento de férias aparecia aqui."
+   },
+   {
+    "file": "src/hooks/useProximosEventos.ts",
+    "text": "período já `gozado`/`pago` (obrigação cumprida), já `vencido` (prazo"
+   },
+   {
+    "file": "src/hooks/useProximosEventos.ts",
+    "text": "obrigação inexistente — e ocuparia as 3 vagas do card, escondendo prazo"
+   },
+   {
+    "file": "src/hooks/useProximosEventos.ts",
+    "text": "e ocuparia vaga no card, escondendo o prazo de um documento válido."
    },
    {
     "file": "src/hooks/useServerValidation.ts",
@@ -117476,6 +117811,38 @@
     "text": "* Aplica os efeitos da medida (desconto/suspensão) na folha e no ponto. */"
    },
    {
+    "file": "src/services/onboardingJornadaService.ts",
+    "text": "então cada leitura passa por `ordenarTarefas()` (prazo → `created_at` → `id`)."
+   },
+   {
+    "file": "src/services/onboardingJornadaService.ts",
+    "text": "* Criado em (ISO, `onboarding_kits.created_at`). Usado SOMENTE pela ordenação"
+   },
+   {
+    "file": "src/services/onboardingJornadaService.ts",
+    "text": "\"Mais recentes\" da grade — nenhuma regra de negócio depende dele."
+   },
+   {
+    "file": "src/services/onboardingJornadaService.ts",
+    "text": "banco hoje; ele é preenchido apenas pelo overlay de SESSÃO da tela"
+   },
+   {
+    "file": "src/services/onboardingJornadaService.ts",
+    "text": "* ⚠️ Diferente de \"lista vazia\": um erro de query/permissão LANÇA (a tela mostra"
+   },
+   {
+    "file": "src/services/onboardingJornadaService.ts",
+    "text": "gravados de novo: \"1 ação de negócio = 1 evento lógico\"."
+   },
+   {
+    "file": "src/services/onboardingJornadaService.ts",
+    "text": "é vínculo válido. Ir direto ao CPF contradizia essa regra: outra admissão"
+   },
+   {
+    "file": "src/services/onboardingJornadaService.ts",
+    "text": "determinística (`ordenarTarefas`) e o prazo calculado (`created_at +"
+   },
+   {
     "file": "src/services/pcsService.ts",
     "text": "permissão interna. O front apenas orquestra — nunca recalcula faixa salarial."
    },
@@ -117532,6 +117899,14 @@
     "text": "Edge `pagar-desligamento` (CSRF + RH na empresa + rate limit) chama a"
    },
    {
+    "file": "src/services/timelineService.ts",
+    "text": "mínimo, direto pelas colunas reais confirmadas em types.ts."
+   },
+   {
+    "file": "src/services/vinculoService.ts",
+    "text": "uma falha aqui não pode travar a criação/recontratação do colaborador —"
+   },
+   {
     "file": "src/services/folha/calculoLoteService.ts",
     "text": "Cadastros → eventos (mesma regra da edge calcular-folha):"
    },
@@ -117554,6 +117929,10 @@
    {
     "file": "src/types/queryBuilder.ts",
     "text": "* Contrato estrutural mínimo do query builder do PostgREST usado pelo"
+   },
+   {
+    "file": "src/types/timelineEvent.ts",
+    "text": "Não cria tabela nova nem muda regra de negócio — só reformata leitura."
    },
    {
     "file": "src/types/uiRecord.ts",
@@ -142331,6 +142710,31 @@
     "value": "100"
    },
    {
+    "file": "src/components/admissoes/admissoesDerivacoes.ts",
+    "name": "DIA_MS",
+    "value": "24"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "name": "PRAZO_DIAS_PADRAO",
+    "value": "5"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "name": "MARCOS",
+    "value": "4"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "name": "JANELA_RISCO_DIAS",
+    "value": "3"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "name": "ORDEM_ONBOARDING_PADRAO",
+    "value": "'criticos'"
+   },
+   {
     "file": "src/components/afastamentos/AfastamentoDocumentManager.tsx",
     "name": "MAX_FILE_SIZE",
     "value": "10"
@@ -142671,6 +143075,16 @@
     "value": "'historico_feedback'"
    },
    {
+    "file": "src/components/colaborador-detalhes/historico/HistoryEventRow.tsx",
+    "name": "ROW_STAGGER",
+    "value": "0.12"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/historico/HistoryEventRow.tsx",
+    "name": "SUB_STEP",
+    "value": "0.14"
+   },
+   {
     "file": "src/components/ferias/FeriasReconciliacaoHistoricoCard.tsx",
     "name": "SLA_ALERT_THRESHOLD",
     "value": "80"
@@ -142964,6 +143378,11 @@
     "file": "src/services/loggerService.ts",
     "name": "MAX_LOG_TEXT_LENGTH",
     "value": "2"
+   },
+   {
+    "file": "src/services/onboardingJornadaService.ts",
+    "name": "COLUNAS_KIT",
+    "value": "'id, nome, itens, ativo, created_at'"
    },
    {
     "file": "src/services/pcsService.ts",
@@ -143840,6 +144259,18 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "field": "etapa",
+    "value": "cancelada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "field": "etapa",
+    "value": "cancelada",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/afastamentos/AfastamentoTable.tsx",
     "field": "status",
     "value": "encerrado",
@@ -144468,6 +144899,18 @@
     "field": "tipo",
     "value": "Outros",
     "kind": "escreve"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/historico/HistoryEventRow.tsx",
+    "field": "type",
+    "value": "day",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/historico/HistoryEventRow.tsx",
+    "field": "type",
+    "value": "month",
+    "kind": "compara"
    },
    {
     "file": "src/components/contratos/ContratosVencendoPanel.tsx",
@@ -146780,6 +147223,102 @@
     "kind": "escreve"
    },
    {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "vinculo",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "vinculo",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "salario",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "contrato",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "cargo",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "promocao",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "transferencia",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "ferias",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "afastamento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "treinamento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "treinamento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "avaliacao",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "onboarding",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "medida_disciplinar",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "desligamento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "field": "type",
+    "value": "auditoria",
+    "kind": "escreve"
+   },
+   {
     "file": "src/hooks/useImportacaoColaboradores.ts",
     "field": "status",
     "value": "ativo",
@@ -146964,6 +147503,66 @@
     "field": "tipo",
     "value": "entrada",
     "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useProximosEventos.ts",
+    "field": "tipo",
+    "value": "experiencia",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useProximosEventos.ts",
+    "field": "tipo",
+    "value": "ferias_vencimento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useProximosEventos.ts",
+    "field": "tipo",
+    "value": "ferias_inicio",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useProximosEventos.ts",
+    "field": "tipo",
+    "value": "aso",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useProximosEventos.ts",
+    "field": "tipo",
+    "value": "documento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useProximosEventos.ts",
+    "field": "tipo",
+    "value": "onboarding",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useProximosEventos.ts",
+    "field": "status",
+    "value": "concluido",
+    "kind": "compara"
+   },
+   {
+    "file": "src/hooks/useProximosEventos.ts",
+    "field": "status",
+    "value": "efetivado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/hooks/useProximosEventos.ts",
+    "field": "status",
+    "value": "aprovada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/hooks/useProximosEventos.ts",
+    "field": "status",
+    "value": "cancelado",
+    "kind": "compara"
    },
    {
     "file": "src/hooks/useRealTimeSubscription.ts",
@@ -151016,6 +151615,24 @@
     "kind": "compara"
    },
    {
+    "file": "src/services/vinculoService.ts",
+    "field": "tipo",
+    "value": "Admissão",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/services/vinculoService.ts",
+    "field": "status",
+    "value": "ativo",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/services/vinculoService.ts",
+    "field": "status",
+    "value": "encerrado",
+    "kind": "escreve"
+   },
+   {
     "file": "src/services/workflowService.ts",
     "field": "status",
     "value": "pendente",
@@ -153586,6 +154203,18 @@
     "body": "const valorIntegral = (salarioBase / 12) * mesesTrabalhados; if (parcela === 1) { // 1ª Parcela é sempre 50% do valor de direito, sem descontos de INSS/IRRF return Math.trunc((valorIntegral / 2) * 100) / 100; } // 2ª Parcela é o valor integral (sobre o qual incidirão descontos no cálculo principal) return Math.trunc(valorIntegral * 100) / 100;"
    },
    {
+    "file": "src/components/admissoes/admissoesDerivacoes.ts",
+    "name": "dataValida",
+    "params": "valor?: string | null",
+    "body": "if (!valor) return null; const data = new Date(valor); return Number.isNaN(data.getTime()) ? null : data;"
+   },
+   {
+    "file": "src/components/admissoes/admissoesDerivacoes.ts",
+    "name": "progressoValor",
+    "params": "a: AdmissaoLike",
+    "body": "return progressoDaAdmissao(a).valor;"
+   },
+   {
     "file": "src/components/afastamentos/AfastamentoDocumentManager.tsx",
     "name": "validateFile",
     "params": "file: File",
@@ -154088,6 +154717,12 @@
     "name": "invalidate",
     "params": "",
     "body": "qc.invalidateQueries({ queryKey: ['ferias', empresaId] });"
+   },
+   {
+    "file": "src/hooks/useHistoricoColaborador.ts",
+    "name": "formatCurrency",
+    "params": "v: number | null | undefined",
+    "body": "if (v === null || v === undefined) return '—'; return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });"
    },
    {
     "file": "src/hooks/useSecurityMonitor.ts",
@@ -154762,6 +155397,12 @@
     "body": "const { data, error } = await supabase.rpc('aplicar_medida_folha_ponto', { p_medida_id: medidaId, }); if (error) throw error; return data;"
    },
    {
+    "file": "src/services/onboardingJornadaService.ts",
+    "name": "dataValidaIso",
+    "params": "valor?: string | null",
+    "body": "if (!valor) return undefined; const data = new Date(valor); return Number.isNaN(data.getTime()) ? undefined : formatDateLocalISO(data);"
+   },
+   {
     "file": "src/services/pcsService.ts",
     "name": "gerarGrades",
     "params": "planoId: string, numGrades: number, salarioBaseMenor?: number | null",
@@ -155204,6 +155845,10 @@
    {
     "file": "src/components/admin/telemetry/TelemetryCharts.tsx",
     "line": "? 60 * 60 * 1000"
+   },
+   {
+    "file": "src/components/admissoes/admissoesDerivacoes.ts",
+    "line": "export const DIA_MS = 24 * 60 * 60 * 1000;"
    },
    {
     "file": "src/components/afastamentos/AfastamentoTable.tsx",
@@ -156026,6 +156671,22 @@
    {
     "file": "src/components/admissoes/OnboardingDashboard.tsx",
     "line": "transition={{ delay: i * 0.05 }}"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "line": "* (`MARCOS_ONBOARDING`), quem monta o texto é a tela. Com 100% devolve o ÚLTIMO"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "line": "* 1. `concluido` — 100% das tarefas concluídas;"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "line": "* tarefa e 100% dela está concluída. Derivada (não há coluna de status), como"
+   },
+   {
+    "file": "src/components/admissoes/onboardingDerivacoes.ts",
+    "line": "/** Data da última conclusão registrada (para o estado 100% concluído). */"
    },
    {
     "file": "src/components/afastamentos/AfastamentoStats.tsx",
@@ -170926,6 +171587,30 @@
     "name": "nunca ultrapassa o teto de 100 mesmo se resultado exceder (defesa em camadas)"
    },
    {
+    "file": "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx",
+    "name": "HistoricoColaborador"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx",
+    "name": "groups events by year and shows the two most recent years expanded by default"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx",
+    "name": "filters events with the search box (client-side, no new query)"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx",
+    "name": "shows a compact empty state with "
+   },
+   {
+    "file": "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx",
+    "name": "renders the "
+   },
+   {
+    "file": "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx",
+    "name": "shows a compact empty state when there are no events at all"
+   },
+   {
     "file": "src/components/folha/__tests__/folhaDashboardData.test.ts",
     "name": "folhaDashboardData"
    },
@@ -185128,6 +185813,30 @@
    {
     "file": "src/services/tabelas/__tests__/rhService.test.ts",
     "name": "registrarPresenca valida treinamentoId e marca presente"
+   },
+   {
+    "file": "src/services/tabelas/__tests__/rhService.test.ts",
+    "name": "onboardingService.buscarPorColaborador"
+   },
+   {
+    "file": "src/services/tabelas/__tests__/rhService.test.ts",
+    "name": "consulta onboarding_colaborador recortado por colaborador e empresa"
+   },
+   {
+    "file": "src/services/tabelas/__tests__/rhService.test.ts",
+    "name": "devolve null quando o colaborador não tem onboarding"
+   },
+   {
+    "file": "src/services/tabelas/__tests__/rhService.test.ts",
+    "name": "lança quando empresaId falta (guarda de tenant)"
+   },
+   {
+    "file": "src/services/tabelas/__tests__/rhService.test.ts",
+    "name": "treinamentoParticipantesService.listarPorColaborador"
+   },
+   {
+    "file": "src/services/tabelas/__tests__/rhService.test.ts",
+    "name": "consulta treinamento_participantes por colaborador_id com join do treinamento"
    },
    {
     "file": "src/services/tabelas/__tests__/viewsService.test.ts",
@@ -214401,6 +215110,10 @@
     "limit": "50"
    },
    {
+    "file": "src/services/onboardingJornadaService.ts",
+    "limit": "1"
+   },
+   {
     "file": "src/services/pcsService.ts",
     "limit": "100"
    },
@@ -214415,6 +215128,10 @@
    {
     "file": "src/services/securityService.ts",
     "limit": "500"
+   },
+   {
+    "file": "src/services/vinculoService.ts",
+    "limit": "1"
    },
    {
     "file": "src/services/webhookService.ts",
@@ -214435,6 +215152,10 @@
    {
     "file": "src/services/tabelas/adminService.ts",
     "limit": "50"
+   },
+   {
+    "file": "src/services/tabelas/rhService.ts",
+    "limit": "1"
    },
    {
     "file": "supabase/functions/adiantamento-salarial/index.ts",
@@ -216243,6 +216964,12 @@
       "escreve:src/pages/ContratacaoPage.tsx",
       "escreve:src/pages/DashboardPage.tsx"
      ],
+     "day": [
+      "compara:src/components/colaborador-detalhes/historico/HistoryEventRow.tsx"
+     ],
+     "month": [
+      "compara:src/components/colaborador-detalhes/historico/HistoryEventRow.tsx"
+     ],
      "admissao": [
       "escreve:src/components/dashboard/EventTimeline.tsx"
      ],
@@ -216346,6 +217073,56 @@
       "compara:src/components/workflows/WorkflowDesigner.tsx",
       "escreve:src/components/workflows/WorkflowDesigner.tsx"
      ],
+     "vinculo": [
+      "escreve:src/hooks/useHistoricoColaborador.ts"
+     ],
+     "salario": [
+      "escreve:src/hooks/useHistoricoColaborador.ts",
+      "escreve:src/mocks/colaboradoresMock.ts"
+     ],
+     "contrato": [
+      "escreve:src/hooks/useHistoricoColaborador.ts",
+      "escreve:src/mocks/colaboradoresMock.ts"
+     ],
+     "cargo": [
+      "escreve:src/hooks/useHistoricoColaborador.ts"
+     ],
+     "promocao": [
+      "escreve:src/hooks/useHistoricoColaborador.ts"
+     ],
+     "transferencia": [
+      "escreve:src/hooks/useHistoricoColaborador.ts"
+     ],
+     "ferias": [
+      "escreve:src/hooks/useHistoricoColaborador.ts",
+      "escreve:src/mocks/colaboradoresMock.ts"
+     ],
+     "afastamento": [
+      "escreve:src/hooks/useHistoricoColaborador.ts",
+      "escreve:src/mocks/colaboradoresMock.ts"
+     ],
+     "treinamento": [
+      "escreve:src/hooks/useHistoricoColaborador.ts",
+      "escreve:src/mocks/colaboradoresMock.ts"
+     ],
+     "avaliacao": [
+      "escreve:src/hooks/useHistoricoColaborador.ts",
+      "escreve:src/mocks/colaboradoresMock.ts"
+     ],
+     "onboarding": [
+      "escreve:src/hooks/useHistoricoColaborador.ts"
+     ],
+     "medida_disciplinar": [
+      "escreve:src/hooks/useHistoricoColaborador.ts",
+      "escreve:src/mocks/colaboradoresMock.ts"
+     ],
+     "desligamento": [
+      "escreve:src/hooks/useHistoricoColaborador.ts"
+     ],
+     "auditoria": [
+      "escreve:src/hooks/useHistoricoColaborador.ts",
+      "escreve:src/mocks/colaboradoresMock.ts"
+     ],
      "server": [
       "escreve:src/hooks/useServerValidation.ts"
      ],
@@ -216367,30 +217144,6 @@
      ],
      "cardinal": [
       "escreve:src/hooks/useTranslation.ts"
-     ],
-     "salario": [
-      "escreve:src/mocks/colaboradoresMock.ts"
-     ],
-     "contrato": [
-      "escreve:src/mocks/colaboradoresMock.ts"
-     ],
-     "treinamento": [
-      "escreve:src/mocks/colaboradoresMock.ts"
-     ],
-     "avaliacao": [
-      "escreve:src/mocks/colaboradoresMock.ts"
-     ],
-     "ferias": [
-      "escreve:src/mocks/colaboradoresMock.ts"
-     ],
-     "afastamento": [
-      "escreve:src/mocks/colaboradoresMock.ts"
-     ],
-     "medida_disciplinar": [
-      "escreve:src/mocks/colaboradoresMock.ts"
-     ],
-     "auditoria": [
-      "escreve:src/mocks/colaboradoresMock.ts"
      ],
      "magiclink": [
       "escreve:src/pages/AuthCallbackPage.tsx",
@@ -216727,6 +217480,25 @@
       "escreve:src/hooks/useNotificacoes.ts",
       "filtra:src/hooks/useNotificacoes.ts"
      ],
+     "experiencia": [
+      "escreve:src/hooks/useProximosEventos.ts",
+      "escreve:src/mocks/desempenhoMock.ts"
+     ],
+     "ferias_vencimento": [
+      "escreve:src/hooks/useProximosEventos.ts"
+     ],
+     "ferias_inicio": [
+      "escreve:src/hooks/useProximosEventos.ts"
+     ],
+     "aso": [
+      "escreve:src/hooks/useProximosEventos.ts"
+     ],
+     "documento": [
+      "escreve:src/hooks/useProximosEventos.ts"
+     ],
+     "onboarding": [
+      "escreve:src/hooks/useProximosEventos.ts"
+     ],
      "Admissional": [
       "escreve:src/mocks/colaboradoresMock.ts"
      ],
@@ -216771,7 +217543,8 @@
       "escreve:src/mocks/colaboradoresMock.ts"
      ],
      "Admissão": [
-      "escreve:src/mocks/colaboradoresMock.ts"
+      "escreve:src/mocks/colaboradoresMock.ts",
+      "escreve:src/services/vinculoService.ts"
      ],
      "Readmissão": [
       "escreve:src/mocks/colaboradoresMock.ts"
@@ -216780,9 +217553,6 @@
       "escreve:src/mocks/desempenhoMock.ts"
      ],
      "semestral": [
-      "escreve:src/mocks/desempenhoMock.ts"
-     ],
-     "experiencia": [
       "escreve:src/mocks/desempenhoMock.ts"
      ],
      "individual": [
@@ -217156,11 +217926,13 @@
       "compara:src/pages/AfastamentosPage.tsx",
       "escreve:src/mocks/colaboradoresMock.ts",
       "escreve:src/pages/AfastamentosPage.tsx",
-      "escreve:src/services/contratoService.ts"
+      "escreve:src/services/contratoService.ts",
+      "escreve:src/services/vinculoService.ts"
      ],
      "cancelado": [
       "compara:src/components/afastamentos/AfastamentoTable.tsx",
       "compara:src/components/contratos/ContratosVencendoPanel.tsx",
+      "compara:src/hooks/useProximosEventos.ts",
       "compara:src/pages/AdminAgendamentoExamesPage.tsx",
       "escreve:src/components/descontos/EmprestimosTable.tsx",
       "escreve:src/pages/AdminAgendamentoExamesPage.tsx",
@@ -217219,6 +217991,7 @@
       "compara:src/components/desligamentos/DesligamentoKPIs.tsx",
       "compara:src/components/ferias/GerenciamentoPeriodos.tsx",
       "compara:src/components/sst/SSTIncidentesTab.tsx",
+      "compara:src/hooks/useProximosEventos.ts",
       "compara:src/pages/TreinamentosPage.tsx",
       "escreve:src/components/avaliacao/nineBoxMock.ts",
       "escreve:src/components/dashboard/AnalyticsSection.tsx",
@@ -217323,6 +218096,7 @@
       "escreve:src/services/admissaoService.ts",
       "escreve:src/services/contratoService.ts",
       "escreve:src/services/premiacoesService.ts",
+      "escreve:src/services/vinculoService.ts",
       "escreve:src/types/entities.ts",
       "escreve:supabase/functions/emprestimo-consignado/index.ts",
       "escreve:supabase/functions/gerar-ltcat-os/index.ts",
@@ -217366,6 +218140,7 @@
       "compara:src/components/ferias/CalendarioFerias.tsx",
       "compara:src/components/ferias/FeriasDashboard.tsx",
       "compara:src/components/portal/PortalOverviewTab.tsx",
+      "compara:src/hooks/useProximosEventos.ts",
       "compara:src/pages/FeriasPage.tsx",
       "escreve:src/mocks/colaboradoresMock.ts",
       "escreve:src/pages/FaltasPage.tsx",
@@ -217569,6 +218344,9 @@
       "compara:src/hooks/useImportacaoColaboradores.ts",
       "compara:src/pages/ImportacaoPage.tsx",
       "escreve:src/utils/importacao/parser.ts"
+     ],
+     "efetivado": [
+      "compara:src/hooks/useProximosEventos.ts"
      ],
      "SUBSCRIBED": [
       "compara:src/hooks/useRealTimeSubscription.ts"
@@ -217888,6 +218666,7 @@
       "compara:src/components/admissoes/AdmissoesKanban.tsx",
       "compara:src/components/admissoes/DetalhesAdmissaoDialog.tsx",
       "compara:src/components/admissoes/OnboardingDashboard.tsx",
+      "compara:src/components/admissoes/onboardingDerivacoes.ts",
       "compara:src/services/admissaoService.ts",
       "escreve:src/services/admissaoService.ts"
      ],
@@ -242049,6 +242828,13 @@
    },
    {
     "kind": "status",
+    "msg": "valor `efetivado` para `status` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "compara:src/hooks/useProximosEventos.ts"
+    ]
+   },
+   {
+    "kind": "status",
     "msg": "valor `SUBSCRIBED` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/hooks/useRealTimeSubscription.ts"
@@ -242338,13 +243124,6 @@
     "msg": "valor `juridico` para `etapa` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/services/rescisaoService.ts"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `atual` para `estado` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/components/avaliacao/CicloAtivoPanel.tsx"
     ]
    },
    {
@@ -255845,7 +256624,7 @@
   },
   "src/components/admissoes/OnboardingPageContent.tsx": {
    "path": "src/components/admissoes/OnboardingPageContent.tsx",
-   "lines": 160,
+   "lines": 163,
    "exports": [
     "function OnboardingPageContent"
    ],
@@ -255858,6 +256637,191 @@
      "table": "tarefas_onboarding",
      "op": "ref"
     }
+   ]
+  },
+  "src/components/admissoes/admissoesComum.ts": {
+   "path": "src/components/admissoes/admissoesComum.ts",
+   "lines": 158,
+   "exports": [
+    "type Tone",
+    "const TONE_CHIP",
+    "const TONE_TEXT",
+    "type ToneSelo",
+    "const TONE_BADGE",
+    "const ETAPA_LABELS",
+    "const ETAPA_BADGE",
+    "const ETAPA_FLUXO",
+    "type CampoChecklist",
+    "const CHECKLIST_ADMISSAO",
+    "const ETAPA_PROXIMA_ACAO",
+    "function proximaAcaoDaEtapa"
+   ],
+   "enums": [
+    {
+     "name": "Tone",
+     "values": "primary | info | success | warning | destructive"
+    },
+    {
+     "name": "ToneSelo",
+     "values": "success | warning | destructive"
+    },
+    {
+     "name": "CampoChecklist",
+     "values": "checklist_documentos_pessoais | checklist_comprovante_endereco | checklist_foto | checklist_ctps | checklist_exame_admissional | checklist_contrato_assinado | checklist_esocial_enviado"
+    },
+    {
+     "name": "ETAPA_FLUXO",
+     "values": "'solicitacao', 'documentos', 'validacao', 'pendente', 'exame', 'contrato', 'assinatura', 'esocial',"
+    }
+   ]
+  },
+  "src/components/admissoes/admissoesDerivacoes.ts": {
+   "path": "src/components/admissoes/admissoesDerivacoes.ts",
+   "lines": 118,
+   "exports": [
+    "type AdmissaoLike",
+    "const DIA_MS",
+    "function dataValida",
+    "function inicioDoDia",
+    "function iniciais",
+    "function percentual",
+    "function diasAteHoje",
+    "function checklistDaAdmissao",
+    "function progressoDaAdmissao",
+    "function progressoValor"
+   ],
+   "params": [
+    {
+     "name": "DIA_MS",
+     "value": "24"
+    }
+   ],
+   "rule_comments": [
+    "(aba \"Dashboard\"): prazo, progresso e iniciais do avatar. A aba \"Gestão de",
+    "* Registro mínimo que as telas do módulo leem (admissão real ou fictícia). */"
+   ],
+   "calc_fns": [
+    {
+     "name": "dataValida",
+     "params": "valor?: string | null",
+     "body": "if (!valor) return null; const data = new Date(valor); return Number.isNaN(data.getTime()) ? null : data;"
+    },
+    {
+     "name": "progressoValor",
+     "params": "a: AdmissaoLike",
+     "body": "return progressoDaAdmissao(a).valor;"
+    }
+   ],
+   "temporal": [
+    "export const DIA_MS = 24 * 60 * 60 * 1000;"
+   ]
+  },
+  "src/components/admissoes/onboardingDerivacoes.ts": {
+   "path": "src/components/admissoes/onboardingDerivacoes.ts",
+   "lines": 494,
+   "exports": [
+    "interface TarefaOnboarding",
+    "interface ColaboradorOnboarding",
+    "interface ProgressoOnboarding",
+    "function progressoOnboarding",
+    "function prazoDaTarefa",
+    "function ordenarTarefas",
+    "function proximaTarefa",
+    "type EstadoMarco",
+    "function estadosDosMarcos",
+    "function indiceMarco",
+    "interface ResumoOnboarding",
+    "function resumoOnboarding",
+    "type TomPrazo",
+    "interface PrazoFormatado",
+    "function formatarPrazo",
+    "type SituacaoOnboarding",
+    "const JANELA_RISCO_DIAS",
+    "function situacaoOnboarding",
+    "function jornadaCancelada",
+    "interface LinhaOnboarding",
+    "function projetarOnboarding",
+    "function maiorAtrasoEmDias",
+    "interface ResumoGeralOnboarding",
+    "function resumoGeralOnboarding",
+    "function ultimaConclusao",
+    "function concluidoForaDoPrazo",
+    "function jornadaConcluida",
+    "type OrdemOnboarding",
+    "const ORDENS_ONBOARDING",
+    "const ORDEM_ONBOARDING_PADRAO",
+    "function ordenarLinhas"
+   ],
+   "enums": [
+    {
+     "name": "EstadoMarco",
+     "values": "concluido | atual | pendente"
+    },
+    {
+     "name": "TomPrazo",
+     "values": "atraso | hoje | proximo | neutro"
+    },
+    {
+     "name": "SituacaoOnboarding",
+     "values": "concluido | em_dia | em_risco | atrasado | sem_proxima_acao | cancelado"
+    },
+    {
+     "name": "OrdemOnboarding",
+     "values": "criticos | atrasados | inicio_recente | inicio_antigo | maior_progresso | menor_progresso | nome"
+    }
+   ],
+   "params": [
+    {
+     "name": "PRAZO_DIAS_PADRAO",
+     "value": "5"
+    },
+    {
+     "name": "MARCOS",
+     "value": "4"
+    },
+    {
+     "name": "JANELA_RISCO_DIAS",
+     "value": "3"
+    },
+    {
+     "name": "ORDEM_ONBOARDING_PADRAO",
+     "value": "'criticos'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "etapa",
+     "value": "cancelada",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "cancelada",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "admissionAL (prazo da admissão, checklist de documentos, progresso por etapa).",
+    "mede risco por prazo de tarefa. Misturar as duas réguas num arquivo só",
+    "* Dias corridos somados ao `created_at` para achar o prazo da tarefa. */",
+    "* Prazo de uma tarefa = `created_at` + `prazo_dias`. Devolve `null` quando a",
+    "*   1. PRAZO (`created_at + prazo_dias`) mais próximo primeiro;",
+    "2. tarefa sem prazo calculável vai para o FIM;",
+    "uma segunda regra em outro lugar. Não usa `Array.sort` mutável (copia).",
+    "determinística: sempre a de prazo mais próximo.",
+    "* Pendentes com prazo já vencido — o \"em risco/atrasada\" dos status pills. */",
+    "* Rótulo humano do prazo: `Atrasado 3d` / `Hoje, 16:00` / `Amanhã, 09:00` /",
+    "\"hoje/amanhã\"). `null` quando não há prazo calculável.",
+    "3. `atrasado`           — o prazo da PRÓXIMA ação já venceu (= há pendência",
+    "vencida; como a próxima ação é a de prazo mais",
+    "* Antecedência (em dias) que caracteriza \"em risco\" antes do vencimento. */",
+    "REGRA EXPLÍCITA (PENDÊNCIA 5): admissão cancelada = jornada ENCERRADA sem"
+   ],
+   "percents": [
+    "* (`MARCOS_ONBOARDING`), quem monta o texto é a tela. Com 100% devolve o ÚLTIMO",
+    "* 1. `concluido` — 100% das tarefas concluídas;",
+    "* tarefa e 100% dela está concluída. Derivada (não há coluna de status), como",
+    "/** Data da última conclusão registrada (para o estado 100% concluído). */"
    ]
   },
   "src/components/afastamentos/AfastamentoDocumentManager.tsx": {
@@ -259267,7 +260231,172 @@
   },
   "src/components/colaborador-detalhes/index.ts": {
    "path": "src/components/colaborador-detalhes/index.ts",
-   "lines": 18
+   "lines": 19
+  },
+  "src/components/colaborador-detalhes/historico/EventTypesSummary.tsx": {
+   "path": "src/components/colaborador-detalhes/historico/EventTypesSummary.tsx",
+   "lines": 52,
+   "exports": [
+    "function EventTypesSummary"
+   ]
+  },
+  "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx": {
+   "path": "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx",
+   "lines": 193,
+   "exports": [
+    "function HistoricoColaborador"
+   ],
+   "errors": [
+    ";\nimport { useHistoricoColaborador } from "
+   ]
+  },
+  "src/components/colaborador-detalhes/historico/HistoryAuditDetailDialog.tsx": {
+   "path": "src/components/colaborador-detalhes/historico/HistoryAuditDetailDialog.tsx",
+   "lines": 74,
+   "exports": [
+    "function HistoryAuditDetailDialog"
+   ]
+  },
+  "src/components/colaborador-detalhes/historico/HistoryCreateContractDialog.tsx": {
+   "path": "src/components/colaborador-detalhes/historico/HistoryCreateContractDialog.tsx",
+   "lines": 123,
+   "exports": [
+    "function HistoryCreateContractDialog"
+   ],
+   "errors": [
+    "Data e motivo são obrigatórios"
+   ]
+  },
+  "src/components/colaborador-detalhes/historico/HistoryCreateSalaryDialog.tsx": {
+   "path": "src/components/colaborador-detalhes/historico/HistoryCreateSalaryDialog.tsx",
+   "lines": 122,
+   "exports": [
+    "function HistoryCreateSalaryDialog"
+   ],
+   "errors": [
+    "Data de vigência é obrigatória",
+    "Erro ao registrar alteração",
+    "Motivo é obrigatório",
+    "Salário deve ser maior que zero"
+   ]
+  },
+  "src/components/colaborador-detalhes/historico/HistoryEventRow.tsx": {
+   "path": "src/components/colaborador-detalhes/historico/HistoryEventRow.tsx",
+   "lines": 173,
+   "exports": [
+    "function HistoryEventRow"
+   ],
+   "params": [
+    {
+     "name": "ROW_STAGGER",
+     "value": "0.12"
+    },
+    {
+     "name": "SUB_STEP",
+     "value": "0.14"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "type",
+     "value": "day",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "month",
+     "kind": "compara"
+    }
+   ]
+  },
+  "src/components/colaborador-detalhes/historico/HistorySidebar.tsx": {
+   "path": "src/components/colaborador-detalhes/historico/HistorySidebar.tsx",
+   "lines": 57,
+   "exports": [
+    "function HistorySidebar"
+   ]
+  },
+  "src/components/colaborador-detalhes/historico/HistoryTimeline.tsx": {
+   "path": "src/components/colaborador-detalhes/historico/HistoryTimeline.tsx",
+   "lines": 97,
+   "exports": [
+    "function HistoryTimeline"
+   ]
+  },
+  "src/components/colaborador-detalhes/historico/HistoryToolbar.tsx": {
+   "path": "src/components/colaborador-detalhes/historico/HistoryToolbar.tsx",
+   "lines": 145,
+   "exports": [
+    "function HistoryToolbar"
+   ]
+  },
+  "src/components/colaborador-detalhes/historico/HistoryYearGroup.tsx": {
+   "path": "src/components/colaborador-detalhes/historico/HistoryYearGroup.tsx",
+   "lines": 66,
+   "exports": [
+    "function HistoryYearGroup"
+   ]
+  },
+  "src/components/colaborador-detalhes/historico/JourneySummary.tsx": {
+   "path": "src/components/colaborador-detalhes/historico/JourneySummary.tsx",
+   "lines": 87,
+   "exports": [
+    "function JourneySummary"
+   ]
+  },
+  "src/components/colaborador-detalhes/historico/LastUpdate.tsx": {
+   "path": "src/components/colaborador-detalhes/historico/LastUpdate.tsx",
+   "lines": 59,
+   "exports": [
+    "function LastUpdate"
+   ],
+   "rule_comments": [
+    "só auditoria tem — a maioria das origens de negócio não tem \"solicitante\""
+   ]
+  },
+  "src/components/colaborador-detalhes/historico/UpcomingEvents.tsx": {
+   "path": "src/components/colaborador-detalhes/historico/UpcomingEvents.tsx",
+   "lines": 75,
+   "exports": [
+    "function UpcomingEvents"
+   ],
+   "rule_comments": [
+    "vencimento real do RH."
+   ]
+  },
+  "src/components/colaborador-detalhes/historico/eventDate.ts": {
+   "path": "src/components/colaborador-detalhes/historico/eventDate.ts",
+   "lines": 28,
+   "exports": [
+    "function dataLocalDoEvento",
+    "function anoLocalDoEvento"
+   ],
+   "doc": "Leitura de data dos eventos da Timeline, em UM lugar só: a linha que exibe, o filtro de ano e o agrupamento por ano precisam concordar."
+  },
+  "src/components/colaborador-detalhes/historico/eventTypeConfig.tsx": {
+   "path": "src/components/colaborador-detalhes/historico/eventTypeConfig.tsx",
+   "lines": 86,
+   "exports": [
+    "interface EventTypeConfig",
+    "const EVENT_TYPE_CONFIG",
+    "function buildEventTypeColorMap"
+   ]
+  },
+  "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx": {
+   "path": "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx",
+   "lines": 114,
+   "is_test": true,
+   "rule_comments": [
+    "2020 (o ano mais antigo) começa recolhido — o evento dele não deve estar na tela."
+   ],
+   "tests": [
+    "HistoricoColaborador",
+    "groups events by year and shows the two most recent years expanded by default",
+    "filters events with the search box (client-side, no new query)",
+    "shows a compact empty state with ",
+    "renders the ",
+    "shows a compact empty state when there are no events at all"
+   ]
   },
   "src/components/colaboradores/ColaboradorFilters.tsx": {
    "path": "src/components/colaboradores/ColaboradorFilters.tsx",
@@ -259480,7 +260609,7 @@
   },
   "src/components/dashboard/DonutChart.tsx": {
    "path": "src/components/dashboard/DonutChart.tsx",
-   "lines": 98,
+   "lines": 102,
    "exports": [
     "function DonutChart"
    ],
@@ -266599,7 +267728,7 @@
   },
   "src/hooks/useColaboradorDetalhes.ts": {
    "path": "src/hooks/useColaboradorDetalhes.ts",
-   "lines": 296,
+   "lines": 309,
    "exports": [
     "function useDependentes",
     "function useCriarDependente",
@@ -266624,6 +267753,7 @@
     "function useAnotacoes",
     "function useCriarAnotacao",
     "function useExcluirAnotacao",
+    "function useFeriasResumoColaborador",
     "function usePeriodosAquisitivos",
     "function useEtnias",
     "function useIdentidadesGenero",
@@ -266660,6 +267790,7 @@
     "useAnotacoes",
     "useCriarAnotacao",
     "useExcluirAnotacao",
+    "useFeriasResumoColaborador",
     "usePeriodosAquisitivos",
     "useEtnias",
     "useIdentidadesGenero",
@@ -266907,6 +268038,33 @@
    ],
    "hooks": [
     "useDepartamentos"
+   ]
+  },
+  "src/hooks/useDesenvolvimentoColaborador.ts": {
+   "path": "src/hooks/useDesenvolvimentoColaborador.ts",
+   "lines": 171,
+   "exports": [
+    "function useMetasColaborador",
+    "function usePDIsColaborador",
+    "function useFeedbacksColaborador",
+    "function useCertificadosColaborador",
+    "function useCompetenciasColaborador",
+    "function useTreinamentosColaborador",
+    "function useOnboardingColaborador"
+   ],
+   "rule_comments": [
+    "REGRA DE CACHE DESTE ARQUIVO: cada leitura vive DENTRO da família que os",
+    "* COMPAT TEMPORÁRIO (somente LEITURA): se o colaborador não tiver admissão"
+   ],
+   "doc": "PARTE G — Dossiê do Colaborador, aba Desenvolvimento (+ Onboarding). Hooks finos por colaborador_id sobre services já existentes (avaliacaoService, catalogoCursoService, rhService), sem duplicar lógica.",
+   "hooks": [
+    "useMetasColaborador",
+    "usePDIsColaborador",
+    "useFeedbacksColaborador",
+    "useCertificadosColaborador",
+    "useCompetenciasColaborador",
+    "useTreinamentosColaborador",
+    "useOnboardingColaborador"
    ]
   },
   "src/hooks/useDesligamentos.ts": {
@@ -267274,7 +268432,7 @@
   },
   "src/hooks/useFerias.ts": {
    "path": "src/hooks/useFerias.ts",
-   "lines": 120,
+   "lines": 125,
    "exports": [
     "function useFerias"
    ],
@@ -267440,9 +268598,115 @@
     "staleTime: 5 * 60 * 1000,"
    ]
   },
+  "src/hooks/useHistoricoColaborador.ts": {
+   "path": "src/hooks/useHistoricoColaborador.ts",
+   "lines": 652,
+   "exports": [
+    "function useHistoricoColaborador"
+   ],
+   "status_values": [
+    {
+     "field": "type",
+     "value": "vinculo",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "vinculo",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "salario",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "contrato",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "cargo",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "promocao",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "transferencia",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "ferias",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "afastamento",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "treinamento",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "treinamento",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "avaliacao",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "onboarding",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "medida_disciplinar",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "desligamento",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "auditoria",
+     "kind": "escreve"
+    }
+   ],
+   "rule_comments": [
+    "MESMO limite da aba Histórico (ColaboradorHistory.tsx), que usa esta",
+    "ignora o limite, então um valor menor aqui truncaria aquela aba.",
+    "que falha (bridge fora, RPC de auditoria sem permissão) virava lista vazia",
+    "Substitui o laço antigo que listava apenas as tarefas concluídas do"
+   ],
+   "doc": "Histórico do Colaborador — substitui useTimelineFuncional.ts. Agrega os MESMOS ~13 sub-recursos de antes (vínculos, histórico salarial, contratos, cargo, promoções, transferências, férias, afastamentos, treinamentos, feedbacks 360, onboarding, medidas disciplinares, desligamentos) MAIS o audit_log ( …",
+   "hooks": [
+    "useHistoricoColaborador"
+   ],
+   "calc_fns": [
+    {
+     "name": "formatCurrency",
+     "params": "v: number | null | undefined",
+     "body": "if (v === null || v === undefined) return '—'; return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });"
+    }
+   ]
+  },
   "src/hooks/useHistoricoContratos.ts": {
    "path": "src/hooks/useHistoricoContratos.ts",
-   "lines": 49,
+   "lines": 50,
    "exports": [
     "function useHistoricoContratos"
    ],
@@ -267792,7 +269056,7 @@
   },
   "src/hooks/useNovasTabelas.ts": {
    "path": "src/hooks/useNovasTabelas.ts",
-   "lines": 287,
+   "lines": 292,
    "exports": [
     "function useBatidasPonto",
     "function useBatidasPontoDia",
@@ -268135,6 +269399,84 @@
    ],
    "hooks": [
     "usePontosAbertos"
+   ]
+  },
+  "src/hooks/useProximosEventos.ts": {
+   "path": "src/hooks/useProximosEventos.ts",
+   "lines": 175,
+   "exports": [
+    "type ProximoEventoBadgeTone",
+    "interface ProximoEvento",
+    "interface ProximosEventosResultado",
+    "function useProximosEventos"
+   ],
+   "enums": [
+    {
+     "name": "ProximoEventoBadgeTone",
+     "values": "info | success | warning"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "experiencia",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "ferias_vencimento",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "ferias_inicio",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "aso",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "documento",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "onboarding",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "concluido",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "efetivado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aprovada",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "cancelado",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "era sempre falsa e NENHUM vencimento de férias aparecia aqui.",
+    "período já `gozado`/`pago` (obrigação cumprida), já `vencido` (prazo",
+    "obrigação inexistente — e ocuparia as 3 vagas do card, escondendo prazo",
+    "e ocuparia vaga no card, escondendo o prazo de um documento válido."
+   ],
+   "doc": "PARTE J — Dossiê do Colaborador, Resumo → Próximos Eventos reais. Agrega datas futuras já disponíveis em hooks existentes (nenhuma tabela de agenda nova, nenhuma query própria além de reusar hooks já usados nas outras abas do Dossiê).",
+   "hooks": [
+    "useProximosEventos"
    ]
   },
   "src/hooks/useRealTimeSubscription.ts": {
@@ -273781,7 +275123,7 @@
   },
   "src/pages/ColaboradorDetalhesPage.tsx": {
    "path": "src/pages/ColaboradorDetalhesPage.tsx",
-   "lines": 463,
+   "lines": 481,
    "exports": [
     "function ColaboradorDetalhesPage"
    ],
@@ -276053,7 +277395,7 @@
   },
   "src/pages/OnboardingPage.tsx": {
    "path": "src/pages/OnboardingPage.tsx",
-   "lines": 216,
+   "lines": 222,
    "exports": [
     "function OnboardingPage"
    ],
@@ -280454,7 +281796,7 @@
   },
   "src/services/catalogoCursoService.ts": {
    "path": "src/services/catalogoCursoService.ts",
-   "lines": 277,
+   "lines": 297,
    "exports": [
     "type InscricaoComJoins",
     "type CertificadoComJoins",
@@ -280490,6 +281832,10 @@
     {
      "table": "trilhas_aprendizado",
      "op": "delete"
+    },
+    {
+     "table": "inscricoes_cursos",
+     "op": "select"
     },
     {
      "table": "inscricoes_cursos",
@@ -280554,8 +281900,13 @@
      "id"
     ],
     "inscricoes_cursos": [
+     "colaborador_id",
+     "data_conclusao",
+     "data_inicio",
      "empresa_id",
-     "id"
+     "id",
+     "nota",
+     "status"
     ],
     "trilhas_cursos": [
      "id",
@@ -280938,7 +282289,7 @@
   },
   "src/services/colaboradorDetalhesService.ts": {
    "path": "src/services/colaboradorDetalhesService.ts",
-   "lines": 554,
+   "lines": 567,
    "exports": [
     "function listarDependentes",
     "function criarDependente",
@@ -280968,6 +282319,7 @@
     "function criarTime",
     "function listarEtnias",
     "function listarIdentidadesGenero",
+    "function listarFeriasColaborador",
     "function listarTiposAdmissao",
     "function listarTiposEstabilidade",
     "function listarWebhooks",
@@ -281102,6 +282454,10 @@
      "op": "select"
     },
     {
+     "table": "ferias",
+     "op": "select"
+    },
+    {
      "table": "tipos_admissao",
      "op": "select"
     },
@@ -281183,6 +282539,15 @@
     ],
     "periodos_aquisitivos": [
      "colaborador_id"
+    ],
+    "ferias": [
+     "colaborador_id",
+     "data_fim",
+     "data_inicio",
+     "dias_gozo",
+     "empresa_id",
+     "id",
+     "status"
     ],
     "webhooks_config": [
      "empresa_id",
@@ -282922,6 +284287,135 @@
    ],
    "doc": "V22: NotificacoesService - Real implementation"
   },
+  "src/services/onboardingJornadaService.ts": {
+   "path": "src/services/onboardingJornadaService.ts",
+   "lines": 450,
+   "exports": [
+    "interface KitOnboarding",
+    "interface KitOnboardingInput",
+    "function resolverResponsaveis",
+    "function listarJornadas",
+    "function concluirTarefa",
+    "function listarKits",
+    "function criarKit",
+    "function atualizarKit",
+    "function definirAtivoKit",
+    "interface TarefaJornadaCompat",
+    "interface JornadaCompat",
+    "interface EventoJornada",
+    "function eventosLegiveisDaJornada",
+    "function buscarJornadaDoColaborador",
+    "function listarTarefasDaAdmissao"
+   ],
+   "tables": [
+    {
+     "table": "profiles",
+     "op": "select"
+    },
+    {
+     "table": "admissoes",
+     "op": "select"
+    },
+    {
+     "table": "tarefas_onboarding",
+     "op": "update"
+    },
+    {
+     "table": "onboarding_kits",
+     "op": "select"
+    },
+    {
+     "table": "onboarding_kits",
+     "op": "insert,select"
+    },
+    {
+     "table": "onboarding_kits",
+     "op": "select,update"
+    },
+    {
+     "table": "onboarding_kits",
+     "op": "update"
+    },
+    {
+     "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "admissoes",
+     "op": "select"
+    },
+    {
+     "table": "admissoes",
+     "op": "select"
+    },
+    {
+     "table": "tarefas_onboarding",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "profiles": [
+     "nome",
+     "user_id"
+    ],
+    "tarefas_onboarding": [
+     "admissao_id",
+     "concluida",
+     "concluida_em",
+     "created_at",
+     "id",
+     "prazo_dias",
+     "titulo"
+    ],
+    "onboarding_kits": [
+     "id"
+    ],
+    "colaboradores": [
+     "cpf",
+     "empresa_id",
+     "id",
+     "metadata"
+    ],
+    "admissoes": [
+     "cpf",
+     "created_at",
+     "empresa_id",
+     "id",
+     "nome"
+    ]
+   },
+   "errors": [
+    "Não foi possível criar o perfil de kit.",
+    "Perfil de kit não encontrado.",
+    "empresa_id obrigatório para isolamento de tenant"
+   ],
+   "params": [
+    {
+     "name": "COLUNAS_KIT",
+     "value": "'id, nome, itens, ativo, created_at'"
+    }
+   ],
+   "rule_comments": [
+    "então cada leitura passa por `ordenarTarefas()` (prazo → `created_at` → `id`).",
+    "* Criado em (ISO, `onboarding_kits.created_at`). Usado SOMENTE pela ordenação",
+    "\"Mais recentes\" da grade — nenhuma regra de negócio depende dele.",
+    "banco hoje; ele é preenchido apenas pelo overlay de SESSÃO da tela",
+    "* ⚠️ Diferente de \"lista vazia\": um erro de query/permissão LANÇA (a tela mostra",
+    "gravados de novo: \"1 ação de negócio = 1 evento lógico\".",
+    "é vínculo válido. Ir direto ao CPF contradizia essa regra: outra admissão",
+    "determinística (`ordenarTarefas`) e o prazo calculado (`created_at +"
+   ],
+   "calc_fns": [
+    {
+     "name": "dataValidaIso",
+     "params": "valor?: string | null",
+     "body": "if (!valor) return undefined; const data = new Date(valor); return Number.isNaN(data.getTime()) ? undefined : formatDateLocalISO(data);"
+    }
+   ],
+   "pagination": [
+    "1"
+   ]
+  },
   "src/services/pcsService.ts": {
    "path": "src/services/pcsService.ts",
    "lines": 198,
@@ -284020,6 +285514,88 @@
     "ferias_id obrigatório para isolamento de tenant"
    ]
   },
+  "src/services/timelineService.ts": {
+   "path": "src/services/timelineService.ts",
+   "lines": 71,
+   "exports": [
+    "function listarHistoricoCargoTimeline",
+    "function listarPromocoesTimeline",
+    "function listarTransferenciasTimeline",
+    "function listarAfastamentosTimeline",
+    "function listarDesligamentoTimeline"
+   ],
+   "tables": [
+    {
+     "table": "historico_cargo",
+     "op": "select"
+    },
+    {
+     "table": "promocoes",
+     "op": "select"
+    },
+    {
+     "table": "transferencias",
+     "op": "select"
+    },
+    {
+     "table": "afastamentos",
+     "op": "select"
+    },
+    {
+     "table": "desligamentos",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "historico_cargo": [
+     "cargo_anterior",
+     "cargo_novo",
+     "colaborador_id",
+     "data_alteracao",
+     "id",
+     "motivo"
+    ],
+    "promocoes": [
+     "colaborador_id",
+     "data_vigencia",
+     "id",
+     "motivo",
+     "salario_anterior",
+     "salario_novo"
+    ],
+    "transferencias": [
+     "colaborador_id",
+     "data_vigencia",
+     "departamento_anterior_id",
+     "departamento_novo_id",
+     "id",
+     "motivo"
+    ],
+    "afastamentos": [
+     "colaborador_id",
+     "data_fim_real",
+     "data_inicio",
+     "empresa_id",
+     "id",
+     "status",
+     "tipo"
+    ],
+    "desligamentos": [
+     "colaborador_id",
+     "data_desligamento",
+     "empresa_id",
+     "id",
+     "motivo",
+     "status"
+    ]
+   },
+   "errors": [
+    "empresa_id obrigatório para isolamento de tenant"
+   ],
+   "rule_comments": [
+    "mínimo, direto pelas colunas reais confirmadas em types.ts."
+   ]
+  },
   "src/services/turnoService.ts": {
    "path": "src/services/turnoService.ts",
    "lines": 83,
@@ -284070,6 +285646,38 @@
     "Nenhum registro de escala foi retornado.",
     "Nenhum registro de turno foi retornado.",
     "empresa_id obrigatório para isolamento de tenant"
+   ]
+  },
+  "src/services/vinculoService.ts": {
+   "path": "src/services/vinculoService.ts",
+   "lines": 133,
+   "exports": [
+    "interface VinculoRow",
+    "interface VinculosResumo",
+    "const vinculoService"
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "Admissão",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "ativo",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "encerrado",
+     "kind": "escreve"
+    }
+   ],
+   "rule_comments": [
+    "uma falha aqui não pode travar a criação/recontratação do colaborador —"
+   ],
+   "pagination": [
+    "1"
    ]
   },
   "src/services/webhookService.ts": {
@@ -287344,7 +288952,7 @@
   },
   "src/services/tabelas/rhService.ts": {
    "path": "src/services/tabelas/rhService.ts",
-   "lines": 226,
+   "lines": 251,
    "exports": [
     "const configAfastamentosService",
     "const feriasSolicitacoesService",
@@ -287418,6 +289026,10 @@
     },
     {
      "table": "onboarding_colaborador",
+     "op": "select"
+    },
+    {
+     "table": "onboarding_colaborador",
      "op": "insert,select"
     },
     {
@@ -287435,6 +289047,10 @@
     {
      "table": "treinamento_participantes",
      "op": "update"
+    },
+    {
+     "table": "treinamento_participantes",
+     "op": "select"
     }
    ],
    "table_cols": {
@@ -287451,10 +289067,15 @@
     "onboarding_template_tarefas": [
      "template_id"
     ],
+    "onboarding_colaborador": [
+     "colaborador_id",
+     "empresa_id"
+    ],
     "onboarding_tarefas": [
      "onboarding_id"
     ],
     "treinamento_participantes": [
+     "colaborador_id",
      "id",
      "treinamento_id"
     ]
@@ -287463,6 +289084,9 @@
     "empresa_id obrigatório para isolamento de tenant",
     "onboarding_id obrigatório para isolamento de tenant",
     "treinamento_id obrigatório para isolamento de tenant"
+   ],
+   "pagination": [
+    "1"
    ]
   },
   "src/services/tabelas/viewsService.ts": {
@@ -287659,7 +289283,7 @@
   },
   "src/services/tabelas/__tests__/rhService.test.ts": {
    "path": "src/services/tabelas/__tests__/rhService.test.ts",
-   "lines": 366,
+   "lines": 411,
    "is_test": true,
    "tests": [
     "configAfastamentosService",
@@ -287699,7 +289323,13 @@
     "concluirTarefa valida onboardingId e marca concluída",
     "treinamentoParticipantesService",
     "listar filtra por treinamento e retorna [] quando nulo",
-    "registrarPresenca valida treinamentoId e marca presente"
+    "registrarPresenca valida treinamentoId e marca presente",
+    "onboardingService.buscarPorColaborador",
+    "consulta onboarding_colaborador recortado por colaborador e empresa",
+    "devolve null quando o colaborador não tem onboarding",
+    "lança quando empresaId falta (guarda de tenant)",
+    "treinamentoParticipantesService.listarPorColaborador",
+    "consulta treinamento_participantes por colaborador_id com join do treinamento"
    ]
   },
   "src/services/tabelas/__tests__/viewsService.test.ts": {
@@ -288105,6 +289735,26 @@
     "const toResult"
    ],
    "doc": "Compatibility shim: Result type now passes through values directly. Services throw on error; consumers await values directly."
+  },
+  "src/types/timelineEvent.ts": {
+   "path": "src/types/timelineEvent.ts",
+   "lines": 53,
+   "exports": [
+    "type TimelineEventType",
+    "interface TimelineAuditFieldChange",
+    "interface TimelineAuditDetail",
+    "interface TimelineEvent"
+   ],
+   "enums": [
+    {
+     "name": "TimelineEventType",
+     "values": "vinculo | salario | contrato | cargo | promocao | transferencia | ferias | afastamento | treinamento | avaliacao | onboarding | medida_disciplinar | desligamento | auditoria"
+    }
+   ],
+   "rule_comments": [
+    "Não cria tabela nova nem muda regra de negócio — só reformata leitura."
+   ],
+   "doc": "Histórico do Colaborador — camada de normalização de leitura. Junta eventos vindos de múltiplas tabelas/queries já existentes (vínculos, histórico salarial, contratos, cargo, promoções, transferências, férias, afastamentos, treinamentos, feedbacks 360, onboarding, medidas disciplinares, desligamento …"
   },
   "src/types/uiRecord.ts": {
    "path": "src/types/uiRecord.ts",
@@ -302177,10 +303827,57 @@
   }
  },
  "git": {
-  "sha": "85f22ec74de17b441a91f4792de27ccb28d953fe",
+  "sha": "800125221d33cb158c990df02ce43195007f0aef",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "8001252",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "feat(dossie): resgata a Timeline do colaborador da branch muri (#602)",
+    "files": [
+     "src/components/admissoes/OnboardingPageContent.tsx",
+     "src/components/admissoes/admissoesComum.ts",
+     "src/components/admissoes/admissoesDerivacoes.ts",
+     "src/components/admissoes/onboardingDerivacoes.ts",
+     "src/components/colaborador-detalhes/historico/EventTypesSummary.tsx",
+     "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx",
+     "src/components/colaborador-detalhes/historico/HistoryAuditDetailDialog.tsx",
+     "src/components/colaborador-detalhes/historico/HistoryCreateContractDialog.tsx",
+     "src/components/colaborador-detalhes/historico/HistoryCreateSalaryDialog.tsx",
+     "src/components/colaborador-detalhes/historico/HistoryEventRow.tsx",
+     "src/components/colaborador-detalhes/historico/HistorySidebar.tsx",
+     "src/components/colaborador-detalhes/historico/HistoryTimeline.tsx",
+     "src/components/colaborador-detalhes/historico/HistoryToolbar.tsx",
+     "src/components/colaborador-detalhes/historico/HistoryYearGroup.tsx",
+     "src/components/colaborador-detalhes/historico/JourneySummary.tsx",
+     "src/components/colaborador-detalhes/historico/LastUpdate.tsx",
+     "src/components/colaborador-detalhes/historico/UpcomingEvents.tsx",
+     "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx",
+     "src/components/colaborador-detalhes/historico/eventDate.ts",
+     "src/components/colaborador-detalhes/historico/eventTypeConfig.tsx",
+     "src/components/colaborador-detalhes/index.ts",
+     "src/components/dashboard/DonutChart.tsx",
+     "src/hooks/useColaboradorDetalhes.ts",
+     "src/hooks/useDesenvolvimentoColaborador.ts",
+     "src/hooks/useFerias.ts",
+     "src/hooks/useHistoricoColaborador.ts",
+     "src/hooks/useHistoricoContratos.ts",
+     "src/hooks/useNovasTabelas.ts",
+     "src/hooks/useProximosEventos.ts",
+     "src/pages/ColaboradorDetalhesPage.tsx",
+     "src/pages/OnboardingPage.tsx",
+     "src/services/catalogoCursoService.ts",
+     "src/services/colaboradorDetalhesService.ts",
+     "src/services/onboardingJornadaService.ts",
+     "src/services/tabelas/__tests__/rhService.test.ts",
+     "src/services/tabelas/rhService.ts",
+     "src/services/timelineService.ts",
+     "src/services/vinculoService.ts",
+     "src/types/timelineEvent.ts"
+    ]
+   },
    {
     "sha": "85f22ec",
     "date": "2026-11-16",
@@ -302717,30 +304414,24 @@
      "scripts/sync/autocommit-local.sh",
      "scripts/tests/autocommit-lab.test.sh"
     ]
-   },
-   {
-    "sha": "b4308c5",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "build(deps): bump glob 14.0.6 e @sentry/vite-plugin 11.12.0 (#568)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "package-lock.json",
-    5
+    4
    ],
    [
     "package.json",
-    5
+    4
    ],
    [
     ".github/workflows/canonical-migrations.yml",
     3
+   ],
+   [
+    "src/pages/ColaboradorDetalhesPage.tsx",
+    2
    ],
    [
     "docs/HOMOLOGACAO-CANCELAMENTO-REAL.md",
@@ -302803,11 +304494,7 @@
     2
    ],
    [
-    "src/components/dashboard/analytics/widgets.tsx",
-    1
-   ],
-   [
-    "src/pages/ColaboradorDetalhesPage.tsx",
+    "src/components/admissoes/OnboardingPageContent.tsx",
     1
    ]
   ]

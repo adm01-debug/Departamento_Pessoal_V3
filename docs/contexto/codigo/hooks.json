@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 106,
+ "total": 109,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -1087,6 +1087,7 @@
     "useExcluirDependente",
     "useExcluirFormacao",
     "useFeriasColetivas",
+    "useFeriasResumoColaborador",
     "useFormacoes",
     "useHistoricoSalarial",
     "useIdentidadesGenero",
@@ -1100,7 +1101,7 @@
     "useTiposEstabilidade",
     "useWebhooks"
    ],
-   "linhas": 296,
+   "linhas": 309,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -1112,7 +1113,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 11,
+   "usado_por": 13,
    "usado_por_arquivos": [
     "src/components/colaborador-detalhes/ASOTab.tsx",
     "src/components/colaborador-detalhes/AnotacoesTab.tsx",
@@ -1124,7 +1125,9 @@
     "src/components/colaborador-detalhes/FormacaoTab.tsx",
     "src/components/colaborador-detalhes/HistoricoSalarialTab.tsx",
     "src/components/colaborador-detalhes/PCDTab.tsx",
-    "src/hooks/index.ts"
+    "src/hooks/index.ts",
+    "src/hooks/useHistoricoColaborador.ts",
+    "src/hooks/useProximosEventos.ts"
    ],
    "coberto_por_testes": 11
   },
@@ -1424,6 +1427,34 @@
    "coberto_por_testes": 3
   },
   {
+   "arquivo": "src/hooks/useDesenvolvimentoColaborador.ts",
+   "hooks_exportados": [
+    "useCertificadosColaborador",
+    "useCompetenciasColaborador",
+    "useFeedbacksColaborador",
+    "useMetasColaborador",
+    "useOnboardingColaborador",
+    "usePDIsColaborador",
+    "useTreinamentosColaborador"
+   ],
+   "linhas": 171,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/hooks/useHistoricoColaborador.ts",
+    "src/hooks/useProximosEventos.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
    "arquivo": "src/hooks/useDesligamentos.ts",
    "hooks_exportados": [
     "useDesligamentos"
@@ -1517,7 +1548,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 108,
+   "usado_por": 110,
    "usado_por_arquivos": [
     "src/components/admissoes/AdmissoesKanban.tsx",
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
@@ -1664,7 +1695,7 @@
    "hooks_exportados": [
     "useFerias"
    ],
-   "linhas": 120,
+   "linhas": 125,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -1830,11 +1861,39 @@
    "coberto_por_testes": 3
   },
   {
+   "arquivo": "src/hooks/useHistoricoColaborador.ts",
+   "hooks_exportados": [
+    "useHistoricoColaborador"
+   ],
+   "linhas": 652,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCriarRegistroSalarial",
+    "useEmpresas",
+    "useFeedbacksColaborador",
+    "useHistoricoContratos",
+    "useHistoricoSalarial",
+    "useMedidasDisciplinaresColaborador",
+    "useOnboardingColaborador",
+    "useQuery",
+    "useTreinamentosColaborador"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
    "arquivo": "src/hooks/useHistoricoContratos.ts",
    "hooks_exportados": [
     "useHistoricoContratos"
    ],
-   "linhas": 49,
+   "linhas": 50,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -1846,10 +1905,11 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_arquivos": [
     "src/components/colaborador-detalhes/HistoricoContratosTab.tsx",
-    "src/hooks/index.ts"
+    "src/hooks/index.ts",
+    "src/hooks/useHistoricoColaborador.ts"
    ],
    "coberto_por_testes": 2
   },
@@ -2101,7 +2161,7 @@
     "useSalvarBancoHorasConfig",
     "useSalvarGradeHorarios"
    ],
-   "linhas": 287,
+   "linhas": 292,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -2113,9 +2173,10 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_arquivos": [
     "src/hooks/index.ts",
+    "src/hooks/useHistoricoColaborador.ts",
     "src/pages/JornadasPage.tsx"
    ],
    "coberto_por_testes": 1
@@ -2418,6 +2479,34 @@
    "coberto_por_testes": 1
   },
   {
+   "arquivo": "src/hooks/useProximosEventos.ts",
+   "hooks_exportados": [
+    "useProximosEventos"
+   ],
+   "linhas": 175,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useASOs",
+    "useDocumentosPessoais",
+    "useFeriasResumoColaborador",
+    "useOnboardingColaborador",
+    "usePeriodoExperiencia",
+    "usePeriodosAquisitivos"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx",
+    "src/components/colaborador-detalhes/historico/HistorySidebar.tsx",
+    "src/components/colaborador-detalhes/historico/UpcomingEvents.tsx",
+    "src/pages/ColaboradorDetalhesPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
    "arquivo": "src/hooks/usePWA.ts",
    "hooks_exportados": [
     "usePWA"
@@ -2697,12 +2786,13 @@
     "useResultQuery"
    ],
    "canais_realtime": [],
-   "usado_por": 4,
+   "usado_por": 5,
    "usado_por_arquivos": [
     "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
     "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
     "src/components/colaborador-detalhes/EstagiarioTab.tsx",
-    "src/hooks/index.ts"
+    "src/hooks/index.ts",
+    "src/hooks/useProximosEventos.ts"
    ],
    "coberto_por_testes": 4
   },

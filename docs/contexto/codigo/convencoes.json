@@ -7,22 +7,22 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (377)",
+   "src/components (390)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
   "hooks": [
-   "src/hooks (88)",
+   "src/hooks (91)",
    "src/components (8)",
    "src/contexts (4)"
   ],
   "servicos_logica": [
-   "src/services (80)",
+   "src/services (83)",
    "src/utils (34)",
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (530)",
+   "co-localizado (__tests__) (531)",
    "co-localizado (*.test) (70)",
    "e2e/ (27)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 23,
  "extensao_componentes": [
-  ".tsx (495)"
+  ".tsx (508)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(dossie): resgata a Timeline do colaborador da branch muri (#602)",
    "fix: botão \"Editar Perfil\" do colaborador caía em 404 (#601)",
    "test: resgata 11 suítes de testes de Avaliação/Desempenho da branch muri (+194 casos) (#600)",
    "docs(auditoria): publica o plano de resgate por área da branch muri (#597)",
-   "fix(docs): redige o user_id e o e-mail pessoais publicados no #595 (#599)",
-   "fix(docs): corrige as fixtures de conclusão e a alegação do Q8a do ninebox (#598)"
+   "fix(docs): redige o user_id e o e-mail pessoais publicados no #595 (#599)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

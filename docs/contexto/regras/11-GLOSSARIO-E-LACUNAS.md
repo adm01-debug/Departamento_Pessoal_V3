@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `85f22ec74d` · branch `main` · 2026-11-16 17:23 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `800125221d` · branch `main` · 2026-11-16 19:16 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
 | `pcs_grades` | Transactionally generated salary ranges for a PCS plan. | 11 colunas | migration |
 | `pcs_pesquisa_salarial` | Tenant-scoped external salary benchmark observations. | 14 colunas | migration |
-| … +303 linhas — lista completa em `context.json` | | | |
+| … +313 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -362,6 +362,7 @@
 | status | valor `em_investigacao` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/sst/SSTIncidentesTab.tsx` |
 | status | valor `expirado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/useAssinaturas.ts` |
 | status | valor `valido` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/useImportacaoColaboradores.ts`<br>`compara:src/pages/ImportacaoPage.tsx`<br>`escreve:src/utils/importacao/parser.ts` |
+| status | valor `efetivado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/useProximosEventos.ts` |
 | status | valor `SUBSCRIBED` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/useRealTimeSubscription.ts` |
 | status | valor `CHANNEL_ERROR` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/useRealTimeSubscription.ts` |
 | status | valor `all` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/ferias/useProgramacaoFerias.ts`<br>`compara:src/pages/ColaboradoresPage.tsx`<br>`compara:src/services/colaboradorService.ts`<br>`compara:src/services/feriasService.ts` |
@@ -401,7 +402,6 @@
 | status | valor `finalizado` para `etapa` usado no código não existe em nenhum enum do banco/TS | `escreve:src/services/rescisaoService.ts` |
 | status | valor `financeiro` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/rescisaoService.ts` |
 | status | valor `juridico` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/rescisaoService.ts` |
-| status | valor `atual` para `estado` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/CicloAtivoPanel.tsx` |
 | status | valor `futura` para `estado` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/CicloAtivoPanel.tsx` |
 | status | valor `animando` para `fase` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/avaliacao/PerformanceAuditTimeline.tsx` |
 | status | valor `recolhido` para `fase` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/PerformanceAuditTimeline.tsx` |

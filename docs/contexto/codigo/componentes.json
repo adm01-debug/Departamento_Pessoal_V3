@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 495,
+ "total": 508,
  "orfaos": 29,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -337,7 +337,7 @@
     "OnboardingPageContent"
    ],
    "export_default": "OnboardingPageContent",
-   "linhas": 160,
+   "linhas": 163,
    "dominio": "components/admissoes",
    "hooks_locais": [],
    "tabelas": [
@@ -1548,6 +1548,190 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/colaborador-detalhes/historico/EventTypesSummary.tsx",
+   "exports": [
+    "EventTypesSummary"
+   ],
+   "export_default": null,
+   "linhas": 52,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx",
+   "exports": [
+    "HistoricoColaborador"
+   ],
+   "export_default": null,
+   "linhas": 193,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useHistoricoColaborador"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/historico/HistoryAuditDetailDialog.tsx",
+   "exports": [
+    "HistoryAuditDetailDialog"
+   ],
+   "export_default": null,
+   "linhas": 74,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/historico/HistoryCreateContractDialog.tsx",
+   "exports": [
+    "HistoryCreateContractDialog"
+   ],
+   "export_default": null,
+   "linhas": 123,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/historico/HistoryCreateSalaryDialog.tsx",
+   "exports": [
+    "HistoryCreateSalaryDialog"
+   ],
+   "export_default": null,
+   "linhas": 122,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/historico/HistoryEventRow.tsx",
+   "exports": [
+    "HistoryEventRow"
+   ],
+   "export_default": null,
+   "linhas": 173,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/historico/HistorySidebar.tsx",
+   "exports": [
+    "HistorySidebar"
+   ],
+   "export_default": null,
+   "linhas": 57,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/historico/HistoryTimeline.tsx",
+   "exports": [
+    "HistoryTimeline"
+   ],
+   "export_default": null,
+   "linhas": 97,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/historico/HistoryToolbar.tsx",
+   "exports": [
+    "HistoryToolbar"
+   ],
+   "export_default": null,
+   "linhas": 145,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/historico/HistoryYearGroup.tsx",
+   "exports": [
+    "HistoryYearGroup"
+   ],
+   "export_default": null,
+   "linhas": 66,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/historico/JourneySummary.tsx",
+   "exports": [
+    "JourneySummary"
+   ],
+   "export_default": null,
+   "linhas": 87,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/historico/LastUpdate.tsx",
+   "exports": [
+    "LastUpdate"
+   ],
+   "export_default": null,
+   "linhas": 59,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/historico/UpcomingEvents.tsx",
+   "exports": [
+    "UpcomingEvents"
+   ],
+   "export_default": null,
+   "linhas": 75,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/colaborador-detalhes/HistoricoContratosTab.tsx",
    "exports": [
     "HistoricoContratosTab"
@@ -1740,7 +1924,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -1818,12 +2002,12 @@
     "DonutChart"
    ],
    "export_default": null,
-   "linhas": 98,
+   "linhas": 102,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -1856,7 +2040,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 5,
    "orfao": false
   },
   {
@@ -5044,7 +5228,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 10,
+   "usado_por": 11,
    "orfao": false
   },
   {
@@ -5123,7 +5307,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 196,
+   "usado_por": 200,
    "orfao": false
   },
   {
@@ -5138,7 +5322,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 285,
+   "usado_por": 291,
    "orfao": false
   },
   {
@@ -5173,7 +5357,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 255,
+   "usado_por": 259,
    "orfao": false
   },
   {
@@ -5236,7 +5420,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 13,
+   "usado_por": 14,
    "orfao": false
   },
   {
@@ -5405,7 +5589,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 140,
+   "usado_por": 143,
    "orfao": false
   },
   {
@@ -5427,7 +5611,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 19,
+   "usado_por": 21,
    "orfao": false
   },
   {
@@ -5541,7 +5725,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 147,
+   "usado_por": 150,
    "orfao": false
   },
   {
@@ -5638,7 +5822,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 13,
+   "usado_por": 14,
    "orfao": false
   },
   {
@@ -5718,7 +5902,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 105,
+   "usado_por": 107,
    "orfao": false
   },
   {
@@ -5882,7 +6066,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 93,
+   "usado_por": 94,
    "orfao": false
   },
   {
@@ -5912,7 +6096,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 11,
+   "usado_por": 12,
    "orfao": false
   },
   {
@@ -5992,7 +6176,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 47,
+   "usado_por": 48,
    "orfao": false
   },
   {
@@ -6754,13 +6938,14 @@
     "ColaboradorDetalhesPage"
    ],
    "export_default": "ColaboradorDetalhesPage",
-   "linhas": 463,
+   "linhas": 481,
    "dominio": "pages",
    "hooks_locais": [
     "useDataAccessLog",
     "useEmpresas",
     "usePDFExport",
-    "usePiiMask"
+    "usePiiMask",
+    "useProximosEventos"
    ],
    "tabelas": [],
    "edges": [],
@@ -7648,7 +7833,7 @@
     "OnboardingPage"
    ],
    "export_default": "OnboardingPage",
-   "linhas": 216,
+   "linhas": 222,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [

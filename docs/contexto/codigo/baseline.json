@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "85f22ec74de17b441a91f4792de27ccb28d953fe",
+  "commit": "800125221d33cb158c990df02ce43195007f0aef",
   "branch": "main",
-  "data_commit": "2026-11-16T14:22:19-03:00",
+  "data_commit": "2026-11-16T16:16:09-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "8001252",
+    "data": "2026-11-16",
+    "assunto": "feat(dossie): resgata a Timeline do colaborador da branch muri (#602)"
+   },
    {
     "sha": "85f22ec",
     "data": "2026-11-16",
@@ -126,14 +131,9 @@
     "sha": "6450ca8",
     "data": "2026-11-15",
     "assunto": "fix(ninebox): policy de leitura volta a valer somente para authenticated (#574)"
-   },
-   {
-    "sha": "1392114",
-    "data": "2026-11-15",
-    "assunto": "test(ferias): resgata as 2 assercoes extras do sidecar do feriado de 20/11 (#572)"
    }
   ],
-  "arquivos_mudados_7d": 800,
+  "arquivos_mudados_7d": 835,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -168,12 +168,16 @@
     "mudancas": 36
    },
    {
+    "pasta": "src/components/colaborador-detalhes",
+    "mudancas": 34
+   },
+   {
     "pasta": "src/components/folha",
     "mudancas": 31
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 30
+    "mudancas": 29
    },
    {
     "pasta": "src/components/esocial",
@@ -181,7 +185,7 @@
    },
    {
     "pasta": "supabase/functions/external-db-bridge",
-    "mudancas": 28
+    "mudancas": 27
    },
    {
     "pasta": "src/components/ferias",
@@ -190,16 +194,12 @@
    {
     "pasta": "src/components/ponto",
     "mudancas": 25
-   },
-   {
-    "pasta": "docs/_archive/infra-experimental",
-    "mudancas": 22
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 30
+    "mudancas": 29
    },
    {
     "arquivo": "package.json",
@@ -210,12 +210,12 @@
     "mudancas": 19
    },
    {
-    "arquivo": "CLAUDE.md",
+    "arquivo": "PENDENCIAS.md",
     "mudancas": 13
    },
    {
-    "arquivo": "PENDENCIAS.md",
-    "mudancas": 13
+    "arquivo": "CLAUDE.md",
+    "mudancas": 12
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -238,10 +238,6 @@
     "mudancas": 8
    },
    {
-    "arquivo": "supabase/functions/external-db-bridge/index.ts",
-    "mudancas": 8
-   },
-   {
     "arquivo": "AGENTS.md",
     "mudancas": 7
    },
@@ -255,6 +251,10 @@
    },
    {
     "arquivo": "scripts/sync/mirror-github.sh",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "supabase/functions/external-db-bridge/index.ts",
     "mudancas": 7
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 233
+    "commits": 234
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 46
+    "commits": 45
    },
    {
     "autor": "dependabot[bot]",
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3171,
-  "arquivos_codigo": 1721,
-  "linhas_codigo": 323925,
+  "arquivos_total": 3197,
+  "arquivos_codigo": 1747,
+  "linhas_codigo": 328110,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 94,
   "modulos": 79,
-  "componentes": 495,
-  "hooks": 106,
+  "componentes": 508,
+  "hooks": 109,
   "edge_functions": 65,
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 652,
+  "testes": 653,
   "workflows": 21,
   "scripts": 115,
   "docs_md": 329
@@ -627,8 +627,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 714,
-   "linhas": 111568
+   "arquivos": 733,
+   "linhas": 113897
   },
   "src/constants": {
    "arquivos": 6,
@@ -643,8 +643,8 @@
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 182,
-   "linhas": 20170
+   "arquivos": 185,
+   "linhas": 21192
   },
   "src/i18n": {
    "arquivos": 2,
@@ -668,7 +668,7 @@
   },
   "src/pages": {
    "arquivos": 131,
-   "linhas": 46511
+   "linhas": 46535
   },
   "src/providers": {
    "arquivos": 4,
@@ -679,8 +679,8 @@
    "linhas": 8725
   },
   "src/services": {
-   "arquivos": 160,
-   "linhas": 34201
+   "arquivos": 163,
+   "linhas": 34958
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -695,8 +695,8 @@
    "linhas": 276
   },
   "src/types": {
-   "arquivos": 12,
-   "linhas": 801
+   "arquivos": 13,
+   "linhas": 854
   },
   "src/utils": {
    "arquivos": 68,
@@ -843,7 +843,7 @@
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 18,
-  "arquivos_acima_500_linhas": 82
+  "arquivos_acima_500_linhas": 83
  },
  "todos": [
   {

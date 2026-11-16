@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 652,
+ "total": 653,
  "por_tipo": {
   "contrato": 4,
   "e2e": 30,
   "pytest": 2,
-  "unit": 614
+  "unit": 615
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 530
+   "arquivos": 531
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -3118,6 +3118,16 @@
    "casos": 7
   },
   {
+   "arquivo": "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx",
+   "tipo": "unit",
+   "linhas": 114,
+   "testa": [
+    "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx",
+    "src/types/timelineEvent.ts"
+   ],
+   "casos": 5
+  },
+  {
    "arquivo": "src/components/folha/__tests__/folhaDashboardData.test.ts",
    "tipo": "unit",
    "linhas": 36,
@@ -5188,11 +5198,11 @@
   {
    "arquivo": "src/services/tabelas/__tests__/rhService.test.ts",
    "tipo": "unit",
-   "linhas": 366,
+   "linhas": 411,
    "testa": [
     "src/services/tabelas/rhService.ts"
    ],
-   "casos": 27
+   "casos": 31
   },
   {
    "arquivo": "src/services/tabelas/__tests__/viewsService.test.ts",
@@ -6094,6 +6104,7 @@
   "src/components/colaborador-detalhes/HistoricoContratosTab.tsx": 1,
   "src/components/colaborador-detalhes/HistoricoSalarialTab.tsx": 1,
   "src/components/colaborador-detalhes/PCDTab.tsx": 1,
+  "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx": 1,
   "src/components/colaboradores/ColaboradorFilters.tsx": 1,
   "src/components/colaboradores/ColaboradorHistory.tsx": 1,
   "src/components/contratacao/TokenInput.tsx": 1,
@@ -6514,6 +6525,7 @@
   "src/types/entities.ts": 6,
   "src/types/medidasDisciplinares.ts": 6,
   "src/types/pcs.ts": 1,
+  "src/types/timelineEvent.ts": 1,
   "src/utils/afastamentoPDF.ts": 1,
   "src/utils/auditLogger.ts": 2,
   "src/utils/avisoFeriasPDF.ts": 1,
@@ -6688,6 +6700,9 @@
    "src/components/ui/form.tsx",
    "src/components/ui/sidebar.tsx",
    "src/components/ui/use-toast.ts",
+   "src/hooks/useDesenvolvimentoColaborador.ts",
+   "src/hooks/useHistoricoColaborador.ts",
+   "src/hooks/useProximosEventos.ts",
    "src/i18n/useTranslation.ts",
    "src/lib/motionMode.ts",
    "src/providers/index.ts",
@@ -6735,8 +6750,11 @@
    "whatsapp-send"
   ],
   "servicos": [
+   "src/services/onboardingJornadaService.ts",
    "src/services/tabelas/index.ts",
-   "src/services/tabelasComplementaresService.ts"
+   "src/services/tabelasComplementaresService.ts",
+   "src/services/timelineService.ts",
+   "src/services/vinculoService.ts"
   ]
  }
 }
