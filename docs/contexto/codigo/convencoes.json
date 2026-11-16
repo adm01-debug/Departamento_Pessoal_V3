@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(test): asserção da casca do NineBox deixa de depender da ordem do transform-origin (#588)",
    "build(deps-dev): bump the testing group with 2 updates (#585)",
    "infra(banco): sidecars rodam no FIM da transacao, nao no meio do lote (#583)",
    "chore: resgata da branch `muri` as 3 migrations que rodam em produção e não existiam na main (#582)",
-   "chore(docs): resgata da branch do #557 a prova de navegador que fechou o B23 (#584)",
-   "infra(banco): lista fechada do canonical-migrations passa a ser o lote NineBox (#578)"
+   "chore(docs): resgata da branch do #557 a prova de navegador que fechou o B23 (#584)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

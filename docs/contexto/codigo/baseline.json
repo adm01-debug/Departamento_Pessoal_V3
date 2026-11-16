@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2357a5622885d5a2ea1aca99ca932696bb0dd05f",
+  "commit": "1bc67e6b2effc63afa2901a99f0369f77d20c1a4",
   "branch": "main",
-  "data_commit": "2026-11-16T12:55:14Z",
+  "data_commit": "2026-11-16T13:08:52Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1bc67e6",
+    "data": "2026-11-16",
+    "assunto": "fix(test): asserção da casca do NineBox deixa de depender da ordem do transform-origin (#588)"
+   },
    {
     "sha": "2357a56",
     "data": "2026-11-16",
@@ -126,11 +131,6 @@
     "sha": "840dbdb",
     "data": "2026-11-13",
     "assunto": "fix(sync): exceção só para workflows e backup do índice com falha fechada (#560)"
-   },
-   {
-    "sha": "1ad509d",
-    "data": "2026-11-13",
-    "assunto": "infra: libera Google Fonts no connect-src da CSP (SW re-busca as fontes) (#557)"
    }
   ],
   "arquivos_mudados_7d": 791,
@@ -141,7 +141,7 @@
    },
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 71
+    "mudancas": 72
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 38
+    "mudancas": 37
    },
    {
     "arquivo": "package.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "CLAUDE.md",
-    "mudancas": 18
+    "mudancas": 17
    },
    {
     "arquivo": "package-lock.json",
@@ -238,10 +238,6 @@
     "mudancas": 9
    },
    {
-    "arquivo": "AGENTS.md",
-    "mudancas": 8
-   },
-   {
     "arquivo": "infra/github/action-pins.json",
     "mudancas": 8
    },
@@ -266,7 +262,7 @@
     "mudancas": 7
    },
    {
-    "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+    "arquivo": "AGENTS.md",
     "mudancas": 7
    },
    {
@@ -290,6 +286,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+    "mudancas": 6
+   },
+   {
     "arquivo": "scripts/automation.config.json",
     "mudancas": 6
    },
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 223
+    "commits": 224
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 3103,
   "arquivos_codigo": 1710,
-  "linhas_codigo": 320771,
+  "linhas_codigo": 320778,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -632,7 +632,7 @@
   },
   "src/components": {
    "arquivos": 703,
-   "linhas": 108604
+   "linhas": 108611
   },
   "src/constants": {
    "arquivos": 6,

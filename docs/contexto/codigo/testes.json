@@ -2330,7 +2330,7 @@
   {
    "arquivo": "src/components/__tests__/NineBoxQuadranteDialog.test.tsx",
    "tipo": "unit",
-   "linhas": 123,
+   "linhas": 130,
    "testa": [
     "src/components/avaliacao/NineBoxQuadranteDialog.tsx",
     "src/components/avaliacao/nineBoxComum.ts"
