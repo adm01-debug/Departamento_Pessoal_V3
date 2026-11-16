@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { subDays, subHours } from 'date-fns';
 import {
   FILTROS_VAZIOS,
@@ -25,7 +25,22 @@ import {
  * ============================================================================
  */
 
-const AGORA = new Date();
+// Relógio congelado. `agruparPorDia` rotula via `isToday`/`isYesterday`, que leem o
+// relógio REAL (o parâmetro `agora` não alcança essas chamadas). Sem congelar, o
+// teste falha de madrugada — à 00h30 o evento de 3h atrás cai em "Ontem" e saem 2
+// grupos em vez de 3 — e a chave de dia LOCAL divergiria de um `toISOString()` UTC
+// em qualquer fuso negativo. 20/03/2026 ao meio-dia LOCAL: nenhum fuso troca
+// horário de verão entre 15 e 20/03/2026, e "março" prova que o rótulo aceita
+// cedilha (um \w+ não aceitaria).
+const AGORA = new Date(2026, 2, 20, 12, 0, 0);
+
+beforeAll(() => {
+  vi.useFakeTimers({ toFake: ['Date'] });
+  vi.setSystemTime(AGORA);
+});
+afterAll(() => {
+  vi.useRealTimers();
+});
 const RH = 'rh.promobrindes@empresa.com.br';
 const GESTOR = 'gestor.regional@empresa.com.br';
 
@@ -153,8 +168,8 @@ describe('auditoria · agrupamento por dia', () => {
     expect(grupos[0].total).toBe(2);
     expect(grupos[1].rotulo).toBe('Ontem');
     expect(grupos[1].total).toBe(1);
-    expect(grupos[2].rotulo).toMatch(/\d{2} de \w+ de \d{4}/);
-    expect(grupos[2].detalhe).toContain('de');
+    expect(grupos[2].rotulo).toBe('15 de março de 2026');
+    expect(grupos[2].detalhe).toBe('domingo, 15 de março de 2026');
   });
 
   it('usa a data REAL do registro (não o texto exibido)', () => {
@@ -162,7 +177,8 @@ describe('auditoria · agrupamento por dia', () => {
       [normalizarEvento(log({ id: 'z', created_at: subDays(AGORA, 2).toISOString() }))],
       AGORA
     );
-    expect(grupos[0].chave).toBe(new Date(subDays(AGORA, 2)).toISOString().slice(0, 10));
+    // Dia LOCAL (como `format` devolve), não o dia UTC de `toISOString()`.
+    expect(grupos[0].chave).toBe('2026-03-18');
   });
 });
 
