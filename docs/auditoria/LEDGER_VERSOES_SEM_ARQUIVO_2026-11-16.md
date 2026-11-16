@@ -14,19 +14,19 @@ a decisão que decorre disso.
 
 ## Os números medidos
 
-| medição no canônico `frjbfeamybqsejlvmqbl` | valor |
-| --- | --- |
-| versões no `supabase_migrations.schema_migrations` | **1079** |
-| arquivos de migration distintos em `supabase/migrations/` | **807** |
-| diferença líquida | **272** |
-| versões em formato legado (não `YYYYMMDDHHMMSS`) | 58 |
-| versões datadas avaliadas | 1007 |
-| versões datadas com outra versão no mesmo minuto, a ≤ 10 s | 639 |
-| versões com `statements` NULL (ledger inteiro) | 978 |
-| versões com `statements` array vazio (ledger inteiro) | 40 |
-| versões com `statements` preenchido (ledger inteiro) | 61 |
-| **das 272 sem arquivo: com `statements` preenchido** | **8** |
-| **das 272 sem arquivo: sem fonte (`statements` NULL ou vazio)** | **264** |
+| medição no canônico `frjbfeamybqsejlvmqbl`                      | valor    |
+| --------------------------------------------------------------- | -------- |
+| versões no `supabase_migrations.schema_migrations`              | **1079** |
+| arquivos de migration distintos em `supabase/migrations/`       | **807**  |
+| diferença líquida                                               | **272**  |
+| versões em formato legado (não `YYYYMMDDHHMMSS`)                | 58       |
+| versões datadas avaliadas                                       | 1007     |
+| versões datadas com outra versão no mesmo minuto, a ≤ 10 s      | 639      |
+| versões com `statements` NULL (ledger inteiro)                  | 978      |
+| versões com `statements` array vazio (ledger inteiro)           | 40       |
+| versões com `statements` preenchido (ledger inteiro)            | 61       |
+| **das 272 sem arquivo: com `statements` preenchido**            | **8**    |
+| **das 272 sem arquivo: sem fonte (`statements` NULL ou vazio)** | **264**  |
 
 ## 8 são recuperáveis; 264 não têm fonte
 
@@ -45,19 +45,41 @@ versão por versão:
 
 As 8 recuperáveis, todas de hardening P0/P1:
 
-| versão | `name` no ledger | bytes de SQL |
-| --- | --- | --- |
-| `20260912142449` | `p0_hash_trigger_search_path` | 2009 |
-| `20260912142506` | `p0_auth_lockout_contract` | 4292 |
-| `20260912142520` | `p0_payroll_upsert_contract` | 3225 |
-| `20260912143019` | `p0_views_revoke_public` | 2415 |
-| `20260912143239` | `p0_secdef_search_path` | 1969 |
-| `20260912143344` | `p1_function_search_path` | 1344 |
-| `20260912144208` | `p0_pgcrypto_routine_search_path` | 1719 |
-| `20261107203000` | `fix_rls_insert_configuracoes_ponto` | 1117 |
+| versão           | `name` no ledger                     | bytes de SQL |
+| ---------------- | ------------------------------------ | ------------ |
+| versão           | `name`                               | bytes        | arquivo homônimo no repo | comparação do SQL                                                                                            |
+| ---              | ---                                  | ---          | ---                      | ---                                                                                                          |
+| `20260912142449` | `p0_hash_trigger_search_path`        | 2009         | `20260911190000_…`       | mesmas 13 funções `enforce_*_hash`, mesmo `search_path TO public, extensions, pg_catalog` — **mesmo efeito** |
+| `20260912142506` | `p0_auth_lockout_contract`           | 4292         | `20260911191000_…`       | **md5 idêntico** sem comentários (3486 chars dos dois lados)                                                 |
+| `20260912142520` | `p0_payroll_upsert_contract`         | 3225         | `20260911195000_…`       | **md5 idêntico** sem comentários (2609 chars dos dois lados)                                                 |
+| `20260912143019` | `p0_views_revoke_public`             | 2415         | `20260911192000_…`       | mesmas 42 views, mesmo `security_invoker` + `REVOKE … FROM PUBLIC, anon` — **mesmo efeito**                  |
+| `20260912143239` | `p0_secdef_search_path`              | 1969         | `20260912150000_…`       | mesmas 18 rotinas, mesmo `search_path = pg_catalog, public, extensions` — **mesmo efeito**                   |
+| `20260912143344` | `p1_function_search_path`            | 1344         | `20260912151000_…`       | o arquivo do repo cobre as **mesmas 9 rotinas + `dp_mig_set_search_path`** — **superconjunto**               |
+| `20260912144208` | `p0_pgcrypto_routine_search_path`    | 1719         | `20260912152000_…`       | o arquivo do repo cobre as **mesmas 14 rotinas + `dp_mig_set_search_path`** — **superconjunto**              |
+| `20261107203000` | `fix_rls_insert_configuracoes_ponto` | 1117         | **nenhum**               | única sem homônimo, e **obsoleta** — ver abaixo                                                              |
 
-Essas 8 **devem** ser canonizadas, a partir do `statements`, sem reaplicar DDL
-(já estão no ledger).
+**Conclusão, corrigida: nenhuma das 8 deve ser canonizada.** Ter `name` próprio e
+SQL no ledger não prova conteúdo distinto — foi preciso comparar com as fontes
+que já existem, e a comparação derruba a recomendação anterior:
+
+- **7 das 8** têm arquivo de mesmo nome e outro timestamp em
+  `supabase/migrations/`. Duas são md5-idênticas a menos de comentário; nas
+  outras cinco a lista de objetos e o `search_path` alvo coincidem, e em duas o
+  arquivo do repo cobre **uma rotina a mais** que a versão do ledger. Criar
+  arquivo novo para elas acrescentaria uma **segunda execução da mesma mudança**
+  ao histórico reproduzível, sem recuperar nada.
+- **A 8ª (`20261107203000`) é a única sem homônimo, e canonizá-la seria uma
+  regressão de acesso.** Ela faz
+  `CREATE POLICY "configuracoes_ponto_tenant_manage" … FOR ALL TO authenticated`,
+  e `20261112010000_configuracoes_ponto_corrige_policies_prod.sql:12` **dropa
+  essa policy de propósito**, trocando-a pelo conjunto restrito
+  (`pertence_a_empresa` para leitura, `pode_gerir_config_ponto` para
+  inserir/alterar). Conferido no canônico: a policy `FOR ALL` **não existe**
+  hoje; existem as 4 policies da migration posterior. Reaplicar a 8ª
+  reintroduziria o `FOR ALL` que foi removido.
+
+Ou seja: o trabalho destas 8 **não está perdido** — está na `main`, sob outro
+timestamp, em 7 casos, e foi deliberadamente substituído no 8º.
 
 Para as **264**, não se canoniza: **não existe fonte para o conteúdo**. Criar
 arquivo aqui seria inventar SQL e registrá-lo como histórico oficial do banco,
@@ -83,9 +105,11 @@ Portanto **não se pode afirmar** que nenhuma das 272 contém uma alteração
 distinta. O que se pode afirmar, versão por versão, é: 8 têm SQL autêntico no
 ledger e são recuperáveis; 264 não têm fonte em nenhum lugar conhecido.
 
-As 8 recuperáveis, aliás, **derrubam** a hipótese na forma categórica: elas são
-migrations P0/P1 de hardening com `name` próprio e SQL distinto, não duplicatas
-de uma irmã.
+Sobre as 8 com `statements`: a comparação acima mostra que elas **não** são
+alteração distinta — 7 já estão na `main` sob outro timestamp e a 8ª foi
+substituída de propósito. Isso não confirma a hipótese dos pares para as outras
+264 (que seguem sem fonte, e portanto sem como comparar), mas remove o único
+contraexemplo que este documento achava ter.
 
 ## Lacuna real de detecção — leia antes de desconectar o `Supabase Preview`
 
