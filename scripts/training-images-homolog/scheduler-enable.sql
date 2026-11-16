@@ -6,6 +6,11 @@
 --   • segredos no Vault:
 --       training_image_dispatch_url    = https://<ref>.supabase.co/functions/v1/training-image-dispatch
 --       training_image_dispatch_secret = <mesmo valor de TRAINING_IMAGE_DISPATCH_SECRET>
+--       training_image_dispatch_bearer = <service role key do projeto>
+--   • o worker NÃO está na allowlist de verify_jwt=false (deny-by-default do
+--     supabase/config.toml), então o gateway exige Authorization: é esse o papel
+--     do segredo _bearer. O X-Cron-Secret continua sendo o fator próprio da
+--     função, verificado em tempo constante depois do gateway.
 --   • Edge Function publicada com as flags DESLIGADAS (o worker responde 503 e
 --     preserva a fila; agendar com flags desligadas é seguro).
 --
@@ -28,6 +33,9 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM vault.decrypted_secrets WHERE name = 'training_image_dispatch_secret') THEN
     RAISE EXCEPTION 'segredo_training_image_dispatch_secret_ausente';
   END IF;
+  IF NOT EXISTS (SELECT 1 FROM vault.decrypted_secrets WHERE name = 'training_image_dispatch_bearer') THEN
+    RAISE EXCEPTION 'segredo_training_image_dispatch_bearer_ausente';
+  END IF;
 END $$;
 
 CREATE OR REPLACE FUNCTION public.dispatch_training_image_worker()
@@ -39,6 +47,7 @@ AS $$
 DECLARE
   v_url     text;
   v_secret  text;
+  v_bearer  text;
   v_request bigint;
 BEGIN
   SELECT decrypted_secret INTO v_url
@@ -49,7 +58,11 @@ BEGIN
   FROM vault.decrypted_secrets
   WHERE name = 'training_image_dispatch_secret';
 
-  IF coalesce(v_url, '') = '' OR coalesce(v_secret, '') = '' THEN
+  SELECT decrypted_secret INTO v_bearer
+  FROM vault.decrypted_secrets
+  WHERE name = 'training_image_dispatch_bearer';
+
+  IF coalesce(v_url, '') = '' OR coalesce(v_secret, '') = '' OR coalesce(v_bearer, '') = '' THEN
     RAISE EXCEPTION 'segredos_do_worker_ausentes';
   END IF;
 
@@ -57,6 +70,7 @@ BEGIN
     url := v_url,
     headers := jsonb_build_object(
       'Content-Type', 'application/json',
+      'Authorization', 'Bearer ' || v_bearer,
       'X-Cron-Secret', v_secret
     ),
     body := '{}'::jsonb

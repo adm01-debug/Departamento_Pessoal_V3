@@ -12,8 +12,10 @@
  *   • o `claim_training_image` continua sendo a última barreira de custo.
  *
  * SEGURANÇA
- *   • NÃO é chamável pelo navegador: exige `X-Cron-Secret` (segredo do
- *     agendador) ou o service role key no Authorization;
+ *   • NÃO é chamável pelo navegador: a função fica fora da allowlist de
+ *     `verify_jwt = false` do `supabase/config.toml`, então o gateway já exige
+ *     Authorization; a função ainda valida, em tempo constante, o service role
+ *     key no Authorization OU o `X-Cron-Secret` do agendador;
  *   • NUNCA expõe chave/segredo na resposta;
  *   • desligado por padrão: `TRAINING_IMAGE_AUTOQUEUE_ENABLED` E
  *     `TRAINING_IMAGE_GENERATION_ENABLED` precisam ser "true" + OPENAI_API_KEY.

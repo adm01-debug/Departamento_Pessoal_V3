@@ -240,7 +240,7 @@ Deno.serve(async (req) => {
       usuarioLimit: envNumero('TRAINING_IMAGE_RATE_LIMIT', LIMITE_USUARIO_PADRAO),
       windowSec: JANELA_QUOTA_SEG,
     });
-    if (!rateLimit.allowed) return rateLimitDuploResponse(rateLimit);
+    if (!rateLimit.allowed) return rateLimitDuploResponse(rateLimit, req);
 
     const provider = criarOpenAITrainingImageProvider({
       apiKey,
