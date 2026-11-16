@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "build(deps): bump jsdom from 30.1.3 to 31.0.0 (#587)",
    "fix(test): asserção da casca do NineBox deixa de depender da ordem do transform-origin (#588)",
    "build(deps-dev): bump the testing group with 2 updates (#585)",
    "infra(banco): sidecars rodam no FIM da transacao, nao no meio do lote (#583)",
-   "chore: resgata da branch `muri` as 3 migrations que rodam em produção e não existiam na main (#582)",
-   "chore(docs): resgata da branch do #557 a prova de navegador que fechou o B23 (#584)"
+   "chore: resgata da branch `muri` as 3 migrations que rodam em produção e não existiam na main (#582)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

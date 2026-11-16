@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1bc67e6b2effc63afa2901a99f0369f77d20c1a4",
+  "commit": "181fcb712e621e50ece056fb0e515568cc744deb",
   "branch": "main",
-  "data_commit": "2026-11-16T13:08:52Z",
+  "data_commit": "2026-11-16T10:23:26-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "181fcb7",
+    "data": "2026-11-16",
+    "assunto": "build(deps): bump jsdom from 30.1.3 to 31.0.0 (#587)"
+   },
    {
     "sha": "1bc67e6",
     "data": "2026-11-16",
@@ -126,91 +131,86 @@
     "sha": "10f6d9f",
     "data": "2026-11-13",
     "assunto": "docs(prod-readiness): registra fechamento da rodada no main 840dbdb (#557/#560) (#561)"
-   },
-   {
-    "sha": "840dbdb",
-    "data": "2026-11-13",
-    "assunto": "fix(sync): exceção só para workflows e backup do índice com falha fechada (#560)"
    }
   ],
   "arquivos_mudados_7d": 791,
   "pastas_mais_mudadas_30d": [
    {
-    "pasta": "src/components/avaliacao",
-    "mudancas": 82
+    "pasta": "src/components/__tests__",
+    "mudancas": 295
    },
    {
-    "pasta": "src/components/__tests__",
-    "mudancas": 72
+    "pasta": "src/services/__tests__",
+    "mudancas": 97
+   },
+   {
+    "pasta": "src/hooks/__tests__",
+    "mudancas": 95
+   },
+   {
+    "pasta": "src/components/avaliacao",
+    "mudancas": 85
+   },
+   {
+    "pasta": "src/components/ui",
+    "mudancas": 84
+   },
+   {
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 48
+   },
+   {
+    "pasta": "src/utils/__tests__",
+    "mudancas": 40
+   },
+   {
+    "pasta": "src/components/layout",
+    "mudancas": 37
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 36
    },
    {
-    "pasta": "src/components/ui",
-    "mudancas": 26
-   },
-   {
-    "pasta": "src/services/__tests__",
-    "mudancas": 22
+    "pasta": "src/components/folha",
+    "mudancas": 31
    },
    {
     "pasta": "supabase/functions/external-db-bridge",
+    "mudancas": 30
+   },
+   {
+    "pasta": "src/components/esocial",
+    "mudancas": 28
+   },
+   {
+    "pasta": "src/components/ferias",
+    "mudancas": 25
+   },
+   {
+    "pasta": "src/components/ponto",
+    "mudancas": 25
+   },
+   {
+    "pasta": "docs/_archive/infra-experimental",
     "mudancas": 22
-   },
-   {
-    "pasta": "package.json",
-    "mudancas": 19
-   },
-   {
-    "pasta": "supabase/functions/_shared",
-    "mudancas": 19
-   },
-   {
-    "pasta": "CLAUDE.md",
-    "mudancas": 16
-   },
-   {
-    "pasta": "package-lock.json",
-    "mudancas": 16
-   },
-   {
-    "pasta": "scripts/autofix/regras",
-    "mudancas": 16
-   },
-   {
-    "pasta": "src/pages/__tests__",
-    "mudancas": 16
-   },
-   {
-    "pasta": "PENDENCIAS.md",
-    "mudancas": 13
-   },
-   {
-    "pasta": "src/integrations/supabase",
-    "mudancas": 13
-   },
-   {
-    "pasta": "src/components/folha",
-    "mudancas": 11
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 37
+    "mudancas": 36
    },
    {
     "arquivo": "package.json",
-    "mudancas": 20
-   },
-   {
-    "arquivo": "CLAUDE.md",
-    "mudancas": 17
+    "mudancas": 21
    },
    {
     "arquivo": "package-lock.json",
+    "mudancas": 18
+   },
+   {
+    "arquivo": "CLAUDE.md",
     "mudancas": 17
    },
    {
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 13
+    "commits": 14
    },
    {
     "autor": "github-actions[bot]",

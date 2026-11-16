@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1bc67e6b2effc63afa2901a99f0369f77d20c1a4` (2026-11-16T13:08:52Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `181fcb712e621e50ece056fb0e515568cc744deb` (2026-11-16T10:23:26-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -388,16 +388,16 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 23654 nós · 50842 arestas · 2227 comunidades · grafo do commit `1bc67e6b`
+- 23654 nós · 50842 arestas · 2227 comunidades · grafo do commit `181fcb71`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), react (458), useEmpresas (422), lucide-react (373), cn (363), @tanstack/react-query (343), vitest (328), App.tsx (247), nineBoxComum.ts (183), rateLimit.ts (160), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (37)
-- package.json (20)
+- .github/workflows/canonical-migrations.yml (36)
+- package.json (21)
+- package-lock.json (18)
 - CLAUDE.md (17)
-- package-lock.json (17)
 - PENDENCIAS.md (13)
 - deno.lock (10)
 - inventario/estado/rotas.json (10)
@@ -621,6 +621,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-16 `181fcb7` build(deps): bump jsdom from 30.1.3 to 31.0.0 (#587)
 - 2026-11-16 `1bc67e6` fix(test): asserção da casca do NineBox deixa de depender da ordem do transform-origin (#588)
 - 2026-11-16 `2357a56` build(deps-dev): bump the testing group with 2 updates (#585)
 - 2026-11-16 `81e86aa` infra(banco): sidecars rodam no FIM da transacao, nao no meio do lote (#583)
@@ -635,7 +636,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-15 `49707f1` chore(docs): painel de prontidao deixa de pedir ao dono a #557 ja mergeada (#573)
 - 2026-11-15 `044d520` feat: área Avaliação/NineBox da muri (#546) na main, com CI verde — substitui a #564 (#569)
 - 2026-11-15 `44cf65f` chore: resgata melhorias de PRs fechadas sem merge (#570)
-- 2026-11-14 `eb2efe5` fix(sync): autocommit rev3 — índice devolvido em SIGTERM, gitleaks só nas linhas adicionadas e bateria de 53 cenários (#
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
