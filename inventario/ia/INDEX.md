@@ -426,7 +426,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 
 - `canonical-edge-functions.yml` — Canonical Supabase — Edge Functions (pull_request, push, workflow_dispatch)
 - `canonical-migrations.yml` — Canonical database — scoped migrations (workflow_dispatch)
-- `canonical-probes.yml` — Canonical database — read-only security probes (schedule, workflow_call, workflow_dispatch; cron 23 6 * * *)
+- `canonical-probes.yml` — Canonical database — read-only security probes (schedule, workflow_call, workflow_dispatch; cron 23 6 * * 2)
 - `canonical-sql-diag.yml` — Canonical database — read-only SQL diagnostic (workflow_dispatch)
 - `ci.yml` — Continuous Integration & Delivery (pull_request, push, workflow_dispatch)
 - `contexto.yml` — Contexto para agentes de IA (10 min) (push, schedule, workflow_dispatch; cron 3-59/10 * * * *)
