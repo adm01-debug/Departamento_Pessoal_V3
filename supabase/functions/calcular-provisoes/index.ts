@@ -146,10 +146,33 @@ serve(async (req: Request): Promise<Response> => {
       .eq('id', empresa_id)
       .maybeSingle<{ regime_tributario: string | null; simples_anexo: string | null }>();
     if (empresaErr) throw empresaErr;
-    const patronaisBps = encargosPatronaisBps(
-      empresa?.regime_tributario ?? null,
-      empresa?.simples_anexo ?? null,
-    );
+    // Competencia que JA tem linhas manda: o recalculo reaproveita a aliquota
+    // GRAVADA naquele mes (20261116120000) em vez de reconsultar o cadastro.
+    // Sem isto, mudar o regime da empresa (ou corrigir o anexo do Simples)
+    // reescreveria o passivo de meses fechados com uma aliquota que nao era a
+    // vigente neles — dinheiro de competencia encerrada nao pode mudar por
+    // efeito colateral de uma edicao de cadastro.
+    const { data: aplicada, error: aplicadaErr } = await supabase
+      .from('provisoes_mensais')
+      .select('encargos_aliquota_bps, regime_tributario, simples_anexo')
+      .eq('empresa_id', empresa_id)
+      .eq('competencia', `${competencia}-01`)
+      .not('encargos_aliquota_bps', 'is', null)
+      .limit(1)
+      .maybeSingle<{ encargos_aliquota_bps: number; regime_tributario: string | null; simples_anexo: string | null }>();
+    if (aplicadaErr) throw aplicadaErr;
+
+    const aliquotaOrigem = aplicada ? 'competencia' : 'cadastro';
+    const patronaisBps = aplicada
+      ? BigInt(aplicada.encargos_aliquota_bps)
+      : encargosPatronaisBps(empresa?.regime_tributario ?? null, empresa?.simples_anexo ?? null);
+    const regimeAplicado = aplicada ? aplicada.regime_tributario : (empresa?.regime_tributario ?? null);
+    const anexoAplicado = aplicada ? aplicada.simples_anexo : (empresa?.simples_anexo ?? null);
+    const contratoTributario = {
+      encargos_aliquota_bps: Number(patronaisBps),
+      regime_tributario: regimeAplicado,
+      simples_anexo: anexoAplicado,
+    };
 
     // Contagem prévia
     const { count: total, error: countErr } = await supabase
@@ -180,7 +203,16 @@ serve(async (req: Request): Promise<Response> => {
       .single();
 
     // Chunked fetch + agregação em BigInt
-    type Prov = { colaborador_id: string; tipo: string; valor_principal: number; encargos_inss: number; encargos_fgts: number };
+    type Prov = {
+      colaborador_id: string;
+      tipo: string;
+      valor_principal: number;
+      encargos_inss: number;
+      encargos_fgts: number;
+      encargos_aliquota_bps: number;
+      regime_tributario: string | null;
+      simples_anexo: string | null;
+    };
     const provisoes: Prov[] = [];
     let totalPrincipalCents = 0n;
     let totalEncargosCents = 0n;
@@ -211,6 +243,7 @@ serve(async (req: Request): Promise<Response> => {
           valor_principal: centsToReais(feriasCents),
           encargos_inss: centsToReais(feriasINSSCents),
           encargos_fgts: centsToReais(feriasFGTSCents),
+          ...contratoTributario,
         });
         totalPrincipalCents += feriasCents;
         totalEncargosCents += feriasINSSCents + feriasFGTSCents;
@@ -226,6 +259,7 @@ serve(async (req: Request): Promise<Response> => {
           valor_principal: centsToReais(decimoCents),
           encargos_inss: centsToReais(decimoINSSCents),
           encargos_fgts: centsToReais(decimoFGTSCents),
+          ...contratoTributario,
         });
         totalPrincipalCents += decimoCents;
         totalEncargosCents += decimoINSSCents + decimoFGTSCents;
@@ -240,6 +274,8 @@ serve(async (req: Request): Promise<Response> => {
       total_principal: centsToReais(totalPrincipalCents),
       total_encargos: centsToReais(totalEncargosCents),
       total_provisionado: centsToReais(totalCents),
+      ...contratoTributario,
+      aliquota_origem: aliquotaOrigem,
       calculado_em: new Date().toISOString(),
     };
     const hash = await sha256Hex(JSON.stringify(consolidado));
