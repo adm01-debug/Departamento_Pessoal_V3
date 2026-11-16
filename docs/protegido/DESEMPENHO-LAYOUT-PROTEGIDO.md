@@ -201,3 +201,25 @@ Nenhuma destas foi alterada — são o motivo de a área continuar operando:
 - Consultas, hooks e `mesclar(mock, real)` da `AvaliacaoPage` (mocks continuam
   visíveis e **nunca** são gravados — a guarda de ID fictício `mock-*` segue);
 - Mocks/fixtures e flags de ambiente **inalterados**.
+
+---
+
+## Nota de resgate (2026-11-16)
+
+Este baseline foi congelado na branch `muri` em 2026-10-21 e só chegou à `main`
+agora. Ao rodar o verificador contra a `main` atual, **118 das 121 âncoras
+visuais continuavam intactas** — o layout aprovado sobreviveu aos três meses de
+correções funcionais.
+
+As três que divergiram **não são regressão de layout**: são assinaturas que a
+`main` ampliou para ganhar funcionalidade. O baseline foi atualizado para o
+texto atual, preservando a intenção original de cada âncora:
+
+| arquivo                                     | âncora           | o que mudou na `main`                                                   |
+| ------------------------------------------- | ---------------- | ----------------------------------------------------------------------- |
+| `src/components/avaliacao/FeedbackCard.tsx` | `somente-edicao` | passou a oferecer a ação `ver` quando recebe `onVer`, mantendo `editar` |
+| `src/components/avaliacao/PdiTab.tsx`       | `componente`     | ganhou a prop `onExcluir` (excluir PDI)                                 |
+| `src/components/avaliacao/MetasOKRsTab.tsx` | `componente`     | ganhou a prop `onExcluir` (excluir meta/OKR)                            |
+
+Com o baseline nesse estado, `node scripts/verificar-layout-protegido.mjs`
+passa na `main` — e volta a reprovar se alguém alterar o contrato visual.

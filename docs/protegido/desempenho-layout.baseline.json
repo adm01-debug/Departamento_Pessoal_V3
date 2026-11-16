@@ -23,7 +23,7 @@
         },
         {
           "id": "somente-edicao",
-          "trecho": "acoes={['editar']}"
+          "trecho": "acoes={onVer ? ['ver', 'editar'] : ['editar']}"
         },
         {
           "id": "acao-editar",
@@ -391,7 +391,7 @@
       "ancoras": [
         {
           "id": "componente",
-          "trecho": "export function PdiTab({ pdis, colaboradores = [] }: PdiTabProps) {"
+          "trecho": "export function PdiTab({ pdis, colaboradores = [], onExcluir }: PdiTabProps) {"
         }
       ]
     },
@@ -401,7 +401,7 @@
       "ancoras": [
         {
           "id": "componente",
-          "trecho": "export function MetasOKRsTab({ metas, ciclos = [], colaboradores = [], onAbrirCiclo }: MetasOKRsTabProps) {"
+          "trecho": "export function MetasOKRsTab({ metas, ciclos = [], colaboradores = [], onAbrirCiclo, onExcluir }: MetasOKRsTabProps) {"
         }
       ]
     },
