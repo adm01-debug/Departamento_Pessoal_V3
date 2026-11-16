@@ -102,7 +102,7 @@ export default function ColaboradorDetalhesPage() {
               variant="outline"
               size="sm"
               className="rounded-xl border-primary/30 text-primary hover:bg-primary/5"
-              onClick={() => navigate(`/colaboradores/${id}/editar`)}
+              onClick={() => navigate(`/colaboradores/editar/${id}`)}
             >
               <Edit className="h-4 w-4 mr-1.5" /> Editar Perfil
             </Button>
