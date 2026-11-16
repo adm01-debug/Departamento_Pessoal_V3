@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3482e1821f03838d67c30dfa1dc75ec5accc3c16",
+  "commit": "e64be5e74c1bcd9156d9595ec0ae41934e81657f",
   "branch": "main",
-  "data_commit": "2026-11-16T10:33:04-03:00",
+  "data_commit": "2026-11-16T13:48:45Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "e64be5e",
+    "data": "2026-11-16",
+    "assunto": "build(deps): bump the minor-patch group with 11 updates (#586)"
+   },
    {
     "sha": "3482e18",
     "data": "2026-11-16",
@@ -126,11 +131,6 @@
     "sha": "7264f0d",
     "data": "2026-11-14",
     "assunto": "fix(db): certificado de treinamento não lê catalogo_cursos.metadata (#499)"
-   },
-   {
-    "sha": "bb9a156",
-    "data": "2026-11-14",
-    "assunto": "chore: relatório de auditoria técnica 10/10 (squash)"
    }
   ],
   "arquivos_mudados_7d": 793,
@@ -169,7 +169,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 35
+    "mudancas": 34
    },
    {
     "pasta": "src/components/folha",
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 35
+    "mudancas": 34
    },
    {
     "arquivo": "package.json",
-    "mudancas": 20
+    "mudancas": 21
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 17
+    "mudancas": 18
    },
    {
     "arquivo": "CLAUDE.md",
@@ -216,10 +216,6 @@
    {
     "arquivo": "PENDENCIAS.md",
     "mudancas": 13
-   },
-   {
-    "arquivo": "deno.lock",
-    "mudancas": 10
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -234,15 +230,15 @@
     "mudancas": 10
    },
    {
+    "arquivo": "deno.lock",
+    "mudancas": 9
+   },
+   {
     "arquivo": "docs/prod-readiness.md",
     "mudancas": 9
    },
    {
     "arquivo": "infra/github/action-pins.json",
-    "mudancas": 8
-   },
-   {
-    "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 8
    },
    {
@@ -274,6 +270,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 7
+   },
+   {
     "arquivo": "src/services/cnabService.ts",
     "mudancas": 7
    },
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 225
+    "commits": 224
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 14
+    "commits": 15
    },
    {
     "autor": "github-actions[bot]",

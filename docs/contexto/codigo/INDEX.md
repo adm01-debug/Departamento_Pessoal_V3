@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3482e1821f03838d67c30dfa1dc75ec5accc3c16` (2026-11-16T10:33:04-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e64be5e74c1bcd9156d9595ec0ae41934e81657f` (2026-11-16T13:48:45Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -388,27 +388,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 23654 nós · 50842 arestas · 2227 comunidades · grafo do commit `3482e182`
+- 23654 nós · 50842 arestas · 2227 comunidades · grafo do commit `e64be5e7`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), react (458), useEmpresas (422), lucide-react (373), cn (363), @tanstack/react-query (343), vitest (328), App.tsx (247), nineBoxComum.ts (183), rateLimit.ts (160), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (35)
-- package.json (20)
-- package-lock.json (17)
+- .github/workflows/canonical-migrations.yml (34)
+- package.json (21)
+- package-lock.json (18)
 - CLAUDE.md (16)
 - PENDENCIAS.md (13)
-- deno.lock (10)
 - inventario/estado/rotas.json (10)
 - scripts/canonical-invariants.sql (10)
 - scripts/sync/autocommit-local.sh (10)
+- deno.lock (9)
 - docs/prod-readiness.md (9)
 - infra/github/action-pins.json (8)
-- src/integrations/supabase/types.ts (8)
 - supabase/functions/calcular-folha/index.ts (8)
 - supabase/functions/external-db-bridge/index.ts (8)
 - .github/workflows/canonical-edge-functions.yml (7)
+- .github/workflows/ci.yml (7)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -621,6 +621,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-16 `e64be5e` build(deps): bump the minor-patch group with 11 updates (#586)
 - 2026-11-16 `3482e18` infra(ci): probes de segurança do canônico passam de diários a semanais — a fila chegava a 3,7 dias (#589)
 - 2026-11-16 `181fcb7` build(deps): bump jsdom from 30.1.3 to 31.0.0 (#587)
 - 2026-11-16 `1bc67e6` fix(test): asserção da casca do NineBox deixa de depender da ordem do transform-origin (#588)
@@ -635,7 +636,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-15 `6450ca8` fix(ninebox): policy de leitura volta a valer somente para authenticated (#574)
 - 2026-11-15 `1392114` test(ferias): resgata as 2 assercoes extras do sidecar do feriado de 20/11 (#572)
 - 2026-11-15 `49707f1` chore(docs): painel de prontidao deixa de pedir ao dono a #557 ja mergeada (#573)
-- 2026-11-15 `044d520` feat: área Avaliação/NineBox da muri (#546) na main, com CI verde — substitui a #564 (#569)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
