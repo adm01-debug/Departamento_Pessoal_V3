@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2ccd3e86f0101d8bfc59846aee837b5ff85a5ca6",
+  "commit": "a054841a35af7db512a8516b8c2831697107e64f",
   "branch": "main",
-  "data_commit": "2026-11-16T14:26:50Z",
+  "data_commit": "2026-11-16T14:34:37Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "a054841",
+    "data": "2026-11-16",
+    "assunto": "chore(deps): jsdom sai de dependencies e vira devDependency (#591)"
+   },
    {
     "sha": "2ccd3e8",
     "data": "2026-11-16",
@@ -126,11 +131,6 @@
     "sha": "1241a00",
     "data": "2026-11-14",
     "assunto": "Segurança: escrita de RH exige papel em 9 tabelas; colaborador não aprova o próprio ponto (#530)"
-   },
-   {
-    "sha": "7aa798f",
-    "data": "2026-11-14",
-    "assunto": "Pensões: recria a coluna empresa_id que falta no banco de produção (#529)"
    }
   ],
   "arquivos_mudados_7d": 797,
@@ -207,11 +207,11 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 18
+    "mudancas": 19
    },
    {
     "arquivo": "CLAUDE.md",
-    "mudancas": 16
+    "mudancas": 15
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -238,10 +238,6 @@
     "mudancas": 8
    },
    {
-    "arquivo": "infra/github/action-pins.json",
-    "mudancas": 8
-   },
-   {
     "arquivo": "supabase/functions/calcular-folha/index.ts",
     "mudancas": 8
    },
@@ -254,15 +250,15 @@
     "mudancas": 7
    },
    {
-    "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 7
-   },
-   {
     "arquivo": "AGENTS.md",
     "mudancas": 7
    },
    {
     "arquivo": "e2e/auth.setup.ts",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "infra/github/action-pins.json",
     "mudancas": 7
    },
    {
@@ -272,6 +268,10 @@
    {
     "arquivo": "supabase/functions/external-db-bridge/validation.ts",
     "mudancas": 7
+   },
+   {
+    "arquivo": ".github/workflows/ci.yml",
+    "mudancas": 6
    },
    {
     "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 226
+    "commits": 227
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 52
+    "commits": 51
    },
    {
     "autor": "dependabot[bot]",

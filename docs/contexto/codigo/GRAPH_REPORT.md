@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2ccd3e86`
+- Built from commit: `a054841a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -135,6 +135,7 @@
 - 📋 PLANO COMPLETO DE MELHORIAS - DEPARTAMENTO PESSOAL V2
 - trabalhistas.ts
 - public.medidas_disciplinares
+- devDependencies
 - "public"."ferias"
 - github-settings-guard.mjs
 - .collect
@@ -143,7 +144,6 @@
 - "public"."departamentos"
 - Arquitetura e Fluxo de Dados - RH ERP
 - processar-agendamentos/index.ts
-- devDependencies
 - 20260912202000_p1_pcs_contract.sql
 - gerar-banco.mjs
 - entities.ts
@@ -1999,7 +1999,7 @@ Nodes (63): engines, node, npm, homepage, name, packageManager, private, type (+
 
 ### Community 52 - "dependencies"
 Cohesion: 0.03
-Nodes (63): dependencies, class-variance-authority, clsx, cmdk, crypto-js, date-fns, decimal.js, @dnd-kit/core (+55 more)
+Nodes (62): dependencies, class-variance-authority, clsx, cmdk, crypto-js, date-fns, decimal.js, @dnd-kit/core (+54 more)
 
 ### Community 53 - "src/schemas/common.ts"
 Cohesion: 0.05
@@ -2279,19 +2279,23 @@ Nodes (31): 1.2 Achados de cálculo (formato oficial), QA-FIX-001: src/lib/calcu
 Cohesion: 0.06
 Nodes (36): heatmap, por_colaborador, por_gestor, por_setor, resumo, idx_med_integ_medida, idx_med_integ_pendentes, idx_medida_contest_anexos_empresa (+28 more)
 
-### Community 119 - ""public"."ferias""
+### Community 119 - "devDependencies"
+Cohesion: 0.06
+Nodes (36): devDependencies, autoprefixer, babel-plugin-react-compiler, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals (+28 more)
+
+### Community 120 - ""public"."ferias""
 Cohesion: 0.06
 Nodes (36): "public"."ferias_aprovacoes", "public"."ferias_aprovacoes_log", "public"."ferias_arquivos", idx_ferias_adiant13_empresa, idx_ferias_aprovacoes_ferias_id, idx_ferias_aprovacoes_log_aprovador_id, idx_ferias_aprovacoes_log_ferias_id, idx_ferias_arquivos_ferias_id (+28 more)
 
-### Community 120 - "github-settings-guard.mjs"
+### Community 121 - "github-settings-guard.mjs"
 Cohesion: 0.12
 Nodes (32): abrirOuAtualizarIssue(), ADMIN_TOKEN_DEDICADO, assinaturaDe(), baseline, checarActions(), checarBranchProtection(), checarEnvironments(), checarRepo() (+24 more)
 
-### Community 121 - ".collect"
+### Community 122 - ".collect"
 Cohesion: 0.17
 Nodes (8): function(), migration(), 24 sequências: seção × histórico/SQL disponível × repetição × recuperação., SnapshotFailureMatrixTests, SnapshotFixture, SnapshotHeartbeatTests, SnapshotSQLRecoveryTests, structural_records()
 
-### Community 122 - "hooks/index.ts"
+### Community 123 - "hooks/index.ts"
 Cohesion: 0.14
 Nodes (30): {
   mockListarBatidas,
@@ -2322,25 +2326,21 @@ Nodes (30): {
   mockToastError,
 }, { mockWebhookService }, DataRecord, useAtualizarEpi(), useAtualizarFalta(), useAtualizarMedidaDisciplinar(), useBancoHorasConfig(), useBatidasPonto() (+22 more)
 
-### Community 123 - ""public"."departamentos""
-Cohesion: 0.06
-Nodes (36): idx_beneficio_regras_elegibilidade_beneficio_id, idx_beneficio_regras_elegibilidade_cargo_id, idx_beneficio_regras_elegibilidade_departamento_id, idx_beneficio_regras_elegibilidade_empresa_id, idx_cargo_faixas_salariais_cargo_id, idx_cargos_departamento_id, idx_cargos_empresa_id, idx_departamentos_departamento_pai_id (+28 more)
-
 ### Community 124 - ""public"."departamentos""
 Cohesion: 0.06
 Nodes (36): idx_beneficio_regras_elegibilidade_beneficio_id, idx_beneficio_regras_elegibilidade_cargo_id, idx_beneficio_regras_elegibilidade_departamento_id, idx_beneficio_regras_elegibilidade_empresa_id, idx_cargo_faixas_salariais_cargo_id, idx_cargos_departamento_id, idx_cargos_empresa_id, idx_departamentos_departamento_pai_id (+28 more)
 
-### Community 125 - "Arquitetura e Fluxo de Dados - RH ERP"
+### Community 125 - ""public"."departamentos""
+Cohesion: 0.06
+Nodes (36): idx_beneficio_regras_elegibilidade_beneficio_id, idx_beneficio_regras_elegibilidade_cargo_id, idx_beneficio_regras_elegibilidade_departamento_id, idx_beneficio_regras_elegibilidade_empresa_id, idx_cargo_faixas_salariais_cargo_id, idx_cargos_departamento_id, idx_cargos_empresa_id, idx_departamentos_departamento_pai_id (+28 more)
+
+### Community 126 - "Arquitetura e Fluxo de Dados - RH ERP"
 Cohesion: 0.06
 Nodes (31): 1. Visão Geral da Arquitetura, 2. Diagrama de Sequência: Fluxo de Dados, 3. Estrutura de Pastas, 4. Contrato da Edge Function `external-db-bridge`, 5. Diretrizes para Desenvolvedores, 6. Padrões Obrigatórios (External DB Bridge), 7. Scripts de Validação, Arquitetura e Fluxo de Dados - RH ERP (+23 more)
 
-### Community 126 - "processar-agendamentos/index.ts"
+### Community 127 - "processar-agendamentos/index.ts"
 Cohesion: 0.09
 Nodes (32): 3. Achados que impedem encerrar o plano, RV-01 — P0: tenant ainda derivado de metadata controlável pelo usuário, RV-02 — P0: tokens públicos enumeráveis e falso negativo na allowlist do auditor, RV-03 — P0: policies permissivas preservam leituras amplas, RV-04 — P1: callers atuais dependem de RPCs não implantadas, RV-05 — P0/P1: Auth ainda não tem cadeia completa de proteção, RV-06 — P1: fechamento de views deixou uma regressão funcional, RV-07 — P1: provisões e cálculo em lote continuam incompatíveis com o catálogo (+24 more)
-
-### Community 127 - "devDependencies"
-Cohesion: 0.06
-Nodes (35): devDependencies, autoprefixer, babel-plugin-react-compiler, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals (+27 more)
 
 ### Community 128 - "20260912202000_p1_pcs_contract.sql"
 Cohesion: 0.09
@@ -6673,7 +6673,7 @@ _Questions this graph is uniquely positioned to answer:_
   _High betweenness centrality (0.076) - this node is a cross-community bridge._
 - **Why does `"public"."medida_gerar_link_ciencia"()` connect `public.medidas_disciplinares` to `"public"."colaboradores"`, `20260831_corrected_public.sql`, `"public"."user_empresas"`, `cenarios.mjs`?**
   _High betweenness centrality (0.076) - this node is a cross-community bridge._
-- **Why does `vitest` connect `react` to `@tanstack/react-query`, `useSecurityMonitor.ts`, `lucide-react`, `cn`, `App.tsx`, `framer-motion`, `useEmpresas`, `nineBoxComum.ts`, `FeedbackAcoesRodape.tsx`, `useNotificacoes.test.ts`, `entradaCard`, `retry.ts`, `adminCatEdicao.ts`, `SegurosVidaPage.test.tsx`, `avaliacaoService.test.ts`, `catalogoCursoService.test.ts`, `comunicacaoService.test.ts`, `intervaloService.test.ts`, `FolhaPagamentoPage.tsx`, `medidasDisciplinaresService.test.ts`, `avisoFeriasPDF.ts`, `safeUrl.test.ts`, `ref_node_fs`, `BaseService`, `AvaliacaoPage.tsx`, `makeChain`, `FeedbackDetalheDialog.tsx`, `PerformanceAuditTimeline.tsx`, `deepChain`, `colaboradorDetalhesService.ts`, `tabelas/index.ts`, `AdminRoute`, `tabelasReferenciaService.ts`, `empresaMock.ts`, `useColaboradorDetalhes.ts`, `package.json`, `src/schemas/common.ts`, `ESocialPage.tsx`, `feedbacksComum.ts`, `ESocialEventViewer.tsx`, `reportScheduleContract.ts`, `queryClient.ts`, `esocialXmlGenerator.ts`, `sanitizeHtml.ts`, `useTabelasReferencia.ts`, `errors/index.ts`, `pcs.ts`, `ContratosVencendoPanel.tsx`, `desligamentoExcel.ts`, `workflowService.ts`, `esocialService.ts`, `feriasService.ts`, `afastamentoService.ts`, `AdminDiagnosticoMigracaoPage.tsx`, `auditHelper.ts`, `trabalhistas.ts`, `hooks/index.ts`, `HistoricoSimulacoesDialog.test.tsx`, `ConfigPanels.test.tsx`, `PontoGeoAnalytics.tsx`, `useOrganograma.test.ts`, `hooks/__tests__/validators.test.ts`, `folhaResumo.ts`, `encryptionService.test.ts`, `entities.ts`, `pushNotificationService.test.ts`, `workflow-status.ts`, `FeedbacksTimeline.tsx`, `masks.ts`, `backupService.ts`, `@supabase/supabase-js`, `tabelas.ts`, `PortalDocumentosTab.test.tsx`, `ACHADOS POR MÓDULO (escrita incremental)`, `useToast.ts`, `useGrupo.ts`, `esocial/index.ts`, `recrutamentoService.ts`, `useOnMount`, `useNow`, `LoginPage`, `1. Achados prioritários confirmados`, `PensoesPage.test.tsx`, `admissaoService`, `AdminOperacaoPage.tsx`, `useGerarComunicadoColetivas.ts`, `calculoLoteService.ts`, `contratacaoService.xss.test.ts`, `FeriasForm.test.tsx`, `Container.tsx`, `DarfTab.tsx`, `ordenarEtapas.test.ts`, `criacaoFeedback.ts`, `LayoutGridSection.test.tsx`, `AuthProvider`, `calculoBeneficiosService.ts`, `episService.ts`, `passwordPolicy.ts`, `useAssinaturaDigital.test.ts`, `naoPeriodicosValidators.ts`, `PARTE 2 — Itens ainda ABERTOS (ou DOC_DESATUALIZADA) das auditorias/relatórios de apoio`, `rescisao.ts`, `LayoutPrimitives.test.tsx`, `whatsappService.ts`, `3. Achados graves`, `secureJsonParse`, `folhaCalc.ts`, `rescisaoCalc.ts`, `assistenteIAService.ts`, `faltasService.ts`, `useBackGesture.test.ts`, `loggerService.test.ts`, `FASE 2 — Camada de Services (Etapas 4-12)`, `WorkflowDesigner.tsx`, `usePontosAbertos.test.ts`, `Simulação Exaustiva — Fluxo de Folha de Pagamento`, `FolhaDashboard.tsx`, `NotificationItem.tsx`, `useExecutiveDashboard.test.ts`, `sstValidators.ts`, `clientBridge.test.ts`, `logExecucao.ts`, `useDocumentOCR.test.ts`, `useExcelExport.test.ts`, `useGenericCrud.test.ts`, `useSystemHealth.test.ts`, `previewAuthStorage.test.ts`, `validadorFolha.test.ts`, `rescisaoPDF.test.ts`, `regrasSolicitacaoFerias.ts`, `pesquisaService.test.ts`, `notificacoesService.ts`, `reciboAssinaturaPdf.ts`, `FeriasReconciliacaoCard.tsx`, `rubricaValidator.ts`, `hooks/useTranslation.ts`, `canalContabilidadeService.test.ts`, `turnoService.test.ts`, `📋 IMPLEMENTATION NOTES — Commits de Referência (2026-07-23/24)`?**
+- **Why does `vitest` connect `react` to `@tanstack/react-query`, `useSecurityMonitor.ts`, `lucide-react`, `cn`, `App.tsx`, `framer-motion`, `useEmpresas`, `nineBoxComum.ts`, `FeedbackAcoesRodape.tsx`, `useNotificacoes.test.ts`, `entradaCard`, `retry.ts`, `adminCatEdicao.ts`, `SegurosVidaPage.test.tsx`, `avaliacaoService.test.ts`, `catalogoCursoService.test.ts`, `comunicacaoService.test.ts`, `intervaloService.test.ts`, `FolhaPagamentoPage.tsx`, `medidasDisciplinaresService.test.ts`, `avisoFeriasPDF.ts`, `safeUrl.test.ts`, `ref_node_fs`, `BaseService`, `AvaliacaoPage.tsx`, `makeChain`, `FeedbackDetalheDialog.tsx`, `PerformanceAuditTimeline.tsx`, `deepChain`, `colaboradorDetalhesService.ts`, `tabelas/index.ts`, `AdminRoute`, `tabelasReferenciaService.ts`, `empresaMock.ts`, `useColaboradorDetalhes.ts`, `package.json`, `src/schemas/common.ts`, `ESocialPage.tsx`, `feedbacksComum.ts`, `ESocialEventViewer.tsx`, `reportScheduleContract.ts`, `queryClient.ts`, `esocialXmlGenerator.ts`, `sanitizeHtml.ts`, `useTabelasReferencia.ts`, `errors/index.ts`, `pcs.ts`, `ContratosVencendoPanel.tsx`, `desligamentoExcel.ts`, `workflowService.ts`, `esocialService.ts`, `feriasService.ts`, `afastamentoService.ts`, `AdminDiagnosticoMigracaoPage.tsx`, `auditHelper.ts`, `trabalhistas.ts`, `HistoricoSimulacoesDialog.test.tsx`, `hooks/index.ts`, `ConfigPanels.test.tsx`, `PontoGeoAnalytics.tsx`, `useOrganograma.test.ts`, `hooks/__tests__/validators.test.ts`, `folhaResumo.ts`, `encryptionService.test.ts`, `entities.ts`, `pushNotificationService.test.ts`, `workflow-status.ts`, `FeedbacksTimeline.tsx`, `masks.ts`, `backupService.ts`, `@supabase/supabase-js`, `tabelas.ts`, `PortalDocumentosTab.test.tsx`, `ACHADOS POR MÓDULO (escrita incremental)`, `useToast.ts`, `useGrupo.ts`, `esocial/index.ts`, `recrutamentoService.ts`, `useOnMount`, `useNow`, `LoginPage`, `1. Achados prioritários confirmados`, `PensoesPage.test.tsx`, `admissaoService`, `AdminOperacaoPage.tsx`, `useGerarComunicadoColetivas.ts`, `calculoLoteService.ts`, `contratacaoService.xss.test.ts`, `FeriasForm.test.tsx`, `Container.tsx`, `DarfTab.tsx`, `ordenarEtapas.test.ts`, `criacaoFeedback.ts`, `LayoutGridSection.test.tsx`, `AuthProvider`, `calculoBeneficiosService.ts`, `episService.ts`, `passwordPolicy.ts`, `useAssinaturaDigital.test.ts`, `naoPeriodicosValidators.ts`, `PARTE 2 — Itens ainda ABERTOS (ou DOC_DESATUALIZADA) das auditorias/relatórios de apoio`, `rescisao.ts`, `LayoutPrimitives.test.tsx`, `whatsappService.ts`, `3. Achados graves`, `secureJsonParse`, `folhaCalc.ts`, `rescisaoCalc.ts`, `assistenteIAService.ts`, `faltasService.ts`, `useBackGesture.test.ts`, `loggerService.test.ts`, `FASE 2 — Camada de Services (Etapas 4-12)`, `WorkflowDesigner.tsx`, `usePontosAbertos.test.ts`, `Simulação Exaustiva — Fluxo de Folha de Pagamento`, `FolhaDashboard.tsx`, `NotificationItem.tsx`, `useExecutiveDashboard.test.ts`, `sstValidators.ts`, `clientBridge.test.ts`, `logExecucao.ts`, `useDocumentOCR.test.ts`, `useExcelExport.test.ts`, `useGenericCrud.test.ts`, `useSystemHealth.test.ts`, `previewAuthStorage.test.ts`, `validadorFolha.test.ts`, `rescisaoPDF.test.ts`, `regrasSolicitacaoFerias.ts`, `pesquisaService.test.ts`, `notificacoesService.ts`, `reciboAssinaturaPdf.ts`, `FeriasReconciliacaoCard.tsx`, `rubricaValidator.ts`, `hooks/useTranslation.ts`, `canalContabilidadeService.test.ts`, `turnoService.test.ts`, `📋 IMPLEMENTATION NOTES — Commits de Referência (2026-07-23/24)`?**
   _High betweenness centrality (0.073) - this node is a cross-community bridge._
 - **What connects `session-start.sh script`, `PATH`, `capacitorConfig` to the rest of the system?**
   _6643 weakly-connected nodes found - possible documentation gaps or missing edges._

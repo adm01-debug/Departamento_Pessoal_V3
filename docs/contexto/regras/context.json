@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "2ccd3e86f0101d8bfc59846aee837b5ff85a5ca6",
+  "sha": "a054841a35af7db512a8516b8c2831697107e64f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-16 14:29 UTC",
+  "generated_at": "2026-11-16 14:35 UTC",
   "files_total": 3127,
   "code_files": 2593,
   "code_lines": 380109
@@ -300880,10 +300880,20 @@
   }
  },
  "git": {
-  "sha": "2ccd3e86f0101d8bfc59846aee837b5ff85a5ca6",
+  "sha": "a054841a35af7db512a8516b8c2831697107e64f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "a054841",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "chore(deps): jsdom sai de dependencies e vira devDependency (#591)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "2ccd3e8",
     "date": "2026-11-16",
@@ -301358,25 +301368,16 @@
     "files": [
      "docs/prod-readiness.md"
     ]
-   },
-   {
-    "sha": "840dbdb",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix(sync): exceção só para workflows e backup do índice com falha fechada (#560)",
-    "files": [
-     "scripts/sync/autocommit-local.sh"
-    ]
    }
   ],
   "hot_files": [
    [
     "package-lock.json",
-    4
+    5
    ],
    [
     "package.json",
-    4
+    5
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -301415,10 +301416,6 @@
     2
    ],
    [
-    "scripts/sync/autocommit-local.sh",
-    2
-   ],
-   [
     "docs/auditoria/LEDGER_VERSOES_SEM_ARQUIVO_2026-11-16.md",
     1
    ],
@@ -301448,6 +301445,10 @@
    ],
    [
     "inventario/ia/INDEX.md",
+    1
+   ],
+   [
+    "inventario/ia/ferramentas.json",
     1
    ]
   ]

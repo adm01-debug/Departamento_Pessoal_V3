@@ -123,8 +123,8 @@
    "typecheck:edge": "bash scripts/typecheck-edge.sh",
    "typecheck:tests": "tsc --noEmit -p tsconfig.tests.json"
   },
-  "dependencias": 62,
-  "dev_dependencias": 34,
+  "dependencias": 61,
+  "dev_dependencias": 35,
   "principais": {
    "@supabase/supabase-js": "^2.119.0",
    "@tanstack/react-query": "^5.105.3",

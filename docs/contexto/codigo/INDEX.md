@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2ccd3e86f0101d8bfc59846aee837b5ff85a5ca6` (2026-11-16T14:26:50Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a054841a35af7db512a8516b8c2831697107e64f` (2026-11-16T14:34:37Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -388,7 +388,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 23679 nós · 50865 arestas · 2163 comunidades · grafo do commit `2ccd3e86`
+- 23679 nós · 50865 arestas · 2163 comunidades · grafo do commit `a054841a`
 - comunidades maiores: react (553), @tanstack/react-query (511), 20260831_corrected_public.sql (493), canonical_schema.sql (475), lucide-react (464), cn (344), App.tsx (257), framer-motion (231), useEmpresas (223), nineBoxComum.ts (181), FeedbackAcoesRodape.tsx (167), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -396,19 +396,19 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/canonical-migrations.yml (34)
 - package.json (21)
-- package-lock.json (18)
-- CLAUDE.md (16)
+- package-lock.json (19)
+- CLAUDE.md (15)
 - PENDENCIAS.md (13)
 - scripts/canonical-invariants.sql (11)
 - inventario/estado/rotas.json (10)
 - scripts/sync/autocommit-local.sh (10)
 - docs/prod-readiness.md (9)
 - deno.lock (8)
-- infra/github/action-pins.json (8)
 - supabase/functions/calcular-folha/index.ts (8)
 - supabase/functions/external-db-bridge/index.ts (8)
 - .github/workflows/canonical-edge-functions.yml (7)
-- .github/workflows/ci.yml (7)
+- AGENTS.md (7)
+- e2e/auth.setup.ts (7)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -621,6 +621,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-16 `a054841` chore(deps): jsdom sai de dependencies e vira devDependency (#591)
 - 2026-11-16 `2ccd3e8` docs(auditoria): mede as versões do ledger sem arquivo e registra por que **não** canonizar (#590)
 - 2026-11-16 `4fc0347` fix(provisões): encargos da provisão seguem o regime tributário e a competência guarda o contrato (#576)
 - 2026-11-16 `e64be5e` build(deps): bump the minor-patch group with 11 updates (#586)
@@ -635,7 +636,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-16 `de3bf3b` fix(ninebox): converte as 4 notas da consolidação para numeric(4,3) — sem isso o lote grava e o deploy falha (#575)
 - 2026-11-16 `8f3efc6` chore: inventario do estado real [auto] (#581)
 - 2026-11-16 `9ecaf8a` chore(ninebox): canoniza no repo as 4 funcoes endurecidas em producao (#577)
-- 2026-11-15 `6450ca8` fix(ninebox): policy de leitura volta a valer somente para authenticated (#574)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
