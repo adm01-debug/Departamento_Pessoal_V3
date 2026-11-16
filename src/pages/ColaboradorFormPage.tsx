@@ -133,6 +133,11 @@ export default function ColaboradorFormPage() {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['colaboradores'] });
+      // ['colaboradores'] (plural) NÃO casa com ['colaborador', id, empresaId]:
+      // o React Query compara segmento a segmento e o primeiro já difere. Sem
+      // esta linha, o dossiê do colaborador seguia mostrando o dado antigo por
+      // até 5 minutos (staleTime) depois de uma edição.
+      queryClient.invalidateQueries({ queryKey: ['colaborador'] });
       success(isEditing ? 'Colaborador atualizado!' : 'Colaborador criado!');
       navigate('/colaboradores');
     },
