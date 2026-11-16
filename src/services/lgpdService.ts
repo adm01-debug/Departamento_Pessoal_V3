@@ -10,7 +10,9 @@ export type LgpdSolicitacaoComColaborador = Tables<'lgpd_solicitacoes'> & {
 };
 
 export const lgpdService = {
-  async listarConsentimentos(empresaId: string): Promise<LgpdConsentimentoComColaborador[]> {
+  /** `colaboradorId` opcional: o Dossiê pede só os consentimentos de um
+   * colaborador, em vez de trazer os da empresa inteira para filtrar na tela. */
+  async listarConsentimentos(empresaId: string, colaboradorId?: string): Promise<LgpdConsentimentoComColaborador[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     let q = supabase
@@ -18,6 +20,7 @@ export const lgpdService = {
       .select('*, colaborador:colaboradores(nome_completo)')
       .order('created_at', { ascending: false });
     q = q.eq('empresa_id', empresaId);
+    if (colaboradorId) q = q.eq('colaborador_id', colaboradorId);
     const { data, error } = await q;
     if (error) throw error;
     return (data as LgpdConsentimentoComColaborador[] | null) || [];

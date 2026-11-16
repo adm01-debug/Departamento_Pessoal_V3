@@ -54,6 +54,20 @@ export interface Colaborador {
   status: 'ativo' | 'afastado' | 'desligado';
   departamento?: string;
   cargo?: string;
+  /** Colunas reais de `colaboradores` que a aba Trabalho & Hierarquia lê.
+   * Opcionais porque `buscarPorId` as traz, mas listagens enxutas não. */
+  cargo_id?: string | null;
+  cbo?: string | null;
+  centro_custo?: string | null;
+  centro_custo_id?: string | null;
+  local_trabalho?: string | null;
+  local_trabalho_id?: string | null;
+  time_id?: string | null;
+  supervisor_id?: string | null;
+  tipo_contrato?: string | null;
+  jornada_semanal?: number | null;
+  horario_entrada?: string | null;
+  horario_saida?: string | null;
   empresa_id: string;
   version?: number;
   created_at?: string;

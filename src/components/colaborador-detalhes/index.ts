@@ -16,3 +16,8 @@ export { BeneficiosTab } from './BeneficiosTab';
 export { ColaboradorHistory } from '../colaboradores/ColaboradorHistory';
 export { HistoricoColaborador } from './historico/HistoricoColaborador';
 export { ColaboradorDocuments } from './ColaboradorDocuments';
+export { TrabalhoHierarquiaTab } from './TrabalhoHierarquiaTab';
+export { JornadaPontoTab } from './JornadaPontoTab';
+export { FeriasResumoTab } from './FeriasResumoTab';
+export { DesenvolvimentoResumoTab } from './DesenvolvimentoResumoTab';
+export { DocumentosComplianceResumoTab } from './DocumentosComplianceResumoTab';

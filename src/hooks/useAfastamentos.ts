@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { useGenericCrud } from './useGenericCrud';
 import { safeErrorMessage } from '@/utils/safeError';
 import type { ProrrogacaoAfastamentoInsert, AfastamentoCrudItem } from '@/types/afastamentos';
+import { mockOr, getMockAfastamentos } from '@/mocks/colaboradoresMock';
 
 // P2-051 (batch 2026-07-26): filtros tipados para o useGenericCrud.
 // Cada chave é opcional e aceita string (filtro livre, id, status, etc.).
@@ -130,4 +131,19 @@ export function useDocumentosAfastamento(afastamentoId?: string) {
     isUploading: uploadMutation.isPending,
     excluir: excluirMutation.mutateAsync,
   };
+}
+
+/**
+ * Afastamentos recentes de um colaborador (Dossiê → Férias & Afastamentos).
+ * Chave na família ['afastamentos'], que os writers da área já invalidam.
+ */
+export function useAfastamentosRecentes(colaboradorId: string, dias: number = 60) {
+  const { empresaAtual } = useEmpresas();
+  return useQuery({
+    queryKey: ['afastamentos', 'recentes', colaboradorId, empresaAtual?.id, dias],
+    queryFn: async () =>
+      mockOr(getMockAfastamentos(colaboradorId)) ??
+      afastamentoService.listarHistoricoRecente(colaboradorId, empresaAtual!.id, dias),
+    enabled: !!colaboradorId && !!empresaAtual?.id,
+  });
 }

@@ -23,7 +23,15 @@ const ESCOLARIDADES = [
   'Doutorado',
 ];
 
-export function FormacaoTab({ colaboradorId }: { colaboradorId: string }) {
+export function FormacaoTab({
+  colaboradorId,
+  /** Embutido num diálogo que já tem título próprio (Dossiê → Desenvolvimento):
+   * esconde o título e o enquadramento do Card, mantendo as ações. */
+  hideHeader = false,
+}: {
+  colaboradorId: string;
+  hideHeader?: boolean;
+}) {
   const { data, isLoading } = useFormacoes(colaboradorId);
   const criar = useCriarFormacao();
   const excluir = useExcluirFormacao(colaboradorId);
@@ -50,9 +58,9 @@ export function FormacaoTab({ colaboradorId }: { colaboradorId: string }) {
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg">Formação Acadêmica</CardTitle>
+    <Card className={hideHeader ? 'border-0 bg-transparent shadow-none' : undefined}>
+      <CardHeader className={`flex flex-row items-center ${hideHeader ? 'justify-end px-0 pt-0' : 'justify-between'}`}>
+        {!hideHeader && <CardTitle className="text-lg">Formação Acadêmica</CardTitle>}
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="sm">
