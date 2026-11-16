@@ -67,8 +67,8 @@ que já existem, e a comparação derruba a recomendação anterior:
   arquivo do repo cobre **uma rotina a mais** que a versão do ledger. Criar
   arquivo novo para elas acrescentaria uma **segunda execução da mesma mudança**
   ao histórico reproduzível, sem recuperar nada.
-- **A 8ª (`20261107203000`) é a única sem homônimo, e o risco dela depende de
-  COMO a migration é executada.** Ela faz
+- **A 8ª (`20261107203000`) é a única sem homônimo. Não é risco de acesso — é
+  ruído de histórico.** Ela faz
   `CREATE POLICY "configuracoes_ponto_tenant_manage" … FOR ALL TO authenticated`,
   e duas migrations posteriores removem essa policy:
   `20261109000000_configuracoes_ponto_insert_policy.sql:9` e
@@ -76,17 +76,21 @@ que já existem, e a comparação derruba a recomendação anterior:
   substitui pelo conjunto restrito (`pertence_a_empresa` para leitura,
   `pode_gerir_config_ponto` para inserir/alterar). Conferido em `pg_policy` no
   canônico: a `FOR ALL` **não existe** hoje; existem as 4 policies da migration
-  posterior. Daí a distinção:
-  - num **replay cronológico a partir do zero**, restaurar o arquivo sob o
-    timestamp original `20261107203000` é **inofensivo** — as duas migrations de
-    novembro rodam depois e o estado final continua restrito;
-  - mas **não é assim que este repositório aplica DDL**. O
-    `canonical-migrations.yml` executa **só os arquivos da lista fechada**,
-    contra o banco como ele está hoje. Nesse modelo, canonizar a 8ª e incluí-la
-    na lista reintroduz a policy `FOR ALL` que foi removida de propósito.
+  posterior. Restaurar o arquivo **não reabriria** esse acesso, por dois
+  motivos independentes:
+  - num replay cronológico a partir do zero, as duas migrations de novembro
+    rodam depois e o estado final continua restrito;
+  - no `canonical-migrations.yml`, o step de stage lê o ledger e **pula versão
+    já registrada** (`.github/workflows/canonical-migrations.yml:136-150`:
+    `skip … versão $version já registrada no ledger canônico`). Como
+    `20261107203000` está no ledger, incluir o arquivo na lista fechada
+    imprimiria `skip` e não executaria SQL nenhum.
 
-  Como o único uso real do arquivo seria a aplicação isolada, canonizá-lo
-  carrega risco de acesso sem nenhum ganho — o estado correto já está no banco.
+  O motivo para não canonizá-la é outro, e menor: o arquivo não teria efeito e
+  colocaria no repositório, como histórico reproduzível, um DDL que está
+  **revertido** em produção — material para o próximo leitor rodar à mão e
+  reabrir a policy fora do fluxo. Para não perder o conteúdo, o SQL dela está
+  transcrito no apêndice deste documento.
 
 Ou seja: o trabalho destas 8 **não está perdido** — está na `main`, sob outro
 timestamp, em 7 casos, e foi deliberadamente substituído no 8º.
@@ -220,3 +224,24 @@ SELECT (SELECT count(*) FROM supabase_migrations.schema_migrations m
          WHERE m.version IS NULL)                      AS arquivo_sem_ledger;`);
 '
 ```
+
+## Apêndice — SQL da `20261107203000`, recuperado do ledger
+
+Transcrito aqui, e **não** em `supabase/migrations/`, pelo motivo da seção
+anterior: é o único das 272 cujo conteúdo não existe em nenhum arquivo do
+repositório, e o DDL está revertido em produção.
+
+```sql
+-- audit-migration-style: allow-silent-drop policy ausente no banco por drift; recriada logo abaixo
+DROP POLICY IF EXISTS "configuracoes_ponto_tenant_manage" ON public.configuracoes_ponto;
+
+CREATE POLICY "configuracoes_ponto_tenant_manage"
+  ON public.configuracoes_ponto FOR ALL TO authenticated
+  USING (public.rls_tenant_or_admin(empresa_id))
+  WITH CHECK (public.rls_tenant_or_admin(empresa_id));
+```
+
+Estado vigente no canônico, que **substitui** o acima (conferido em
+`pg_policy`): `SELECT` por `pertence_a_empresa(empresa_id)`; `INSERT` e
+`UPDATE` por `pode_gerir_config_ponto(empresa_id)`, mais o `INSERT` de admin/RH
+por `pertence_a_empresa(empresa_id) AND has_role(...)`.
