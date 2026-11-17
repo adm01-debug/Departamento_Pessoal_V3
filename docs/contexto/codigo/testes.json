@@ -2508,11 +2508,11 @@
   {
    "arquivo": "src/components/__tests__/NovoDesligamentoDialog.test.tsx",
    "tipo": "unit",
-   "linhas": 120,
+   "linhas": 169,
    "testa": [
     "src/components/desligamentos/NovoDesligamentoDialog.tsx"
    ],
-   "casos": 8
+   "casos": 11
   },
   {
    "arquivo": "src/components/__tests__/ObrigacoesKPIs.test.tsx",

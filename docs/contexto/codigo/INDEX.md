@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d15194a48c79dd2677bd2609a9537cb4d9485fd5` (2026-11-17T08:37:48-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9de335ff8f9155e265376c1aaa904a316f0fa643` (2026-11-17T09:08:36-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3449 |
 | arquivos_codigo | 1983 |
-| linhas_codigo | 389764 |
+| linhas_codigo | 389823 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -394,13 +394,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 26537 nós · 59567 arestas · 2322 comunidades · grafo do commit `d15194a4`
-- comunidades maiores: cn (533), 20260831_corrected_public.sql (493), client.ts (475), canonical_schema.sql (475), button.tsx (448), useEmpresas (356), vitest (330), FeedbackAcoesRodape.tsx (206), contract.ts (195), react (191), colaboradoresMock.ts (160), "public"."empresas" (159)
+- 26538 nós · 59568 arestas · 2285 comunidades · grafo do commit `9de335ff`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), useEmpresas (437), cn (365), lucide-react (333), button.tsx (333), App.tsx (333), vitest (315), client.ts (193), services/index.ts (170), FeedbackAcoesRodape.tsx (162), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), entradaCard() (src/components/ui/entrada-cards.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (23)
+- .github/workflows/canonical-migrations.yml (22)
 - package.json (20)
 - package-lock.json (19)
 - inventario/estado/rotas.json (17)
@@ -648,6 +648,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `9de335f` fix(desligamentos): "Novo Desligamento" volta a listar colaboradores (#617)
 - 2026-11-17 `d15194a` fix(docs): redige o user_id, o e-mail e o primeiro nome de pessoa que o #599 deixou passar (#615)
 - 2026-11-17 `d63d655` feat: resgata da muri o dossiê do colaborador — holerites, SST, campos personalizados e recontratação (#613)
 - 2026-11-17 `0a74847` feat: resgata da muri 6 grupos de hooks/services com consumidor vivo (#612)
@@ -662,7 +663,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-16 `8001252` feat(dossie): resgata a Timeline do colaborador da branch muri (#602)
 - 2026-11-16 `85f22ec` fix: botão "Editar Perfil" do colaborador caía em 404 (#601)
 - 2026-11-16 `4911958` test: resgata 11 suítes de testes de Avaliação/Desempenho da branch muri (+194 casos) (#600)
-- 2026-11-16 `792eeb5` docs(auditoria): publica o plano de resgate por área da branch muri (#597)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

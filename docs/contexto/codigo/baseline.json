@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d15194a48c79dd2677bd2609a9537cb4d9485fd5",
+  "commit": "9de335ff8f9155e265376c1aaa904a316f0fa643",
   "branch": "main",
-  "data_commit": "2026-11-17T08:37:48-03:00",
+  "data_commit": "2026-11-17T09:08:36-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "9de335f",
+    "data": "2026-11-17",
+    "assunto": "fix(desligamentos): \"Novo Desligamento\" volta a listar colaboradores (#617)"
+   },
    {
     "sha": "d15194a",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "e64be5e",
     "data": "2026-11-16",
     "assunto": "build(deps): bump the minor-patch group with 11 updates (#586)"
-   },
-   {
-    "sha": "3482e18",
-    "data": "2026-11-16",
-    "assunto": "infra(ci): probes de segurança do canônico passam de diários a semanais — a fila chegava a 3,7 dias (#589)"
    }
   ],
-  "arquivos_mudados_7d": 1103,
+  "arquivos_mudados_7d": 1105,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 319
+    "mudancas": 320
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 23
+    "mudancas": 22
    },
    {
     "arquivo": "package.json",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3449,
   "arquivos_codigo": 1983,
-  "linhas_codigo": 389764,
+  "linhas_codigo": 389823,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -636,7 +636,7 @@
   },
   "src/components": {
    "arquivos": 906,
-   "linhas": 160034
+   "linhas": 160093
   },
   "src/constants": {
    "arquivos": 6,

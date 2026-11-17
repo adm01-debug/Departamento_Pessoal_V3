@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d15194a48c79dd2677bd2609a9537cb4d9485fd5",
+  "sha": "9de335ff8f9155e265376c1aaa904a316f0fa643",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 11:38 UTC",
+  "generated_at": "2026-11-17 12:09 UTC",
   "files_total": 3470,
   "code_files": 2896,
-  "code_lines": 454406
+  "code_lines": 454465
  },
  "version": "1.3.2",
- "facts_hash": "340df681925994b7",
+ "facts_hash": "529db24834d3c5e2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -101534,7 +101534,7 @@
   {
    "module": "src/components",
    "files": 906,
-   "lines": 160034,
+   "lines": 160093,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -173932,6 +173932,18 @@
    {
     "file": "src/components/__tests__/NovoDesligamentoDialog.test.tsx",
     "name": "renders Registrar Desligamento button"
+   },
+   {
+    "file": "src/components/__tests__/NovoDesligamentoDialog.test.tsx",
+    "name": "carrega os colaboradores quando abre (lista vinda do banco na tela)"
+   },
+   {
+    "file": "src/components/__tests__/NovoDesligamentoDialog.test.tsx",
+    "name": "nao consulta o banco enquanto esta fechado"
+   },
+   {
+    "file": "src/components/__tests__/NovoDesligamentoDialog.test.tsx",
+    "name": "carrega ao passar de fechado para aberto"
    },
    {
     "file": "src/components/__tests__/ObrigacoesKPIs.test.tsx",
@@ -264593,7 +264605,7 @@
   },
   "src/components/__tests__/NovoDesligamentoDialog.test.tsx": {
    "path": "src/components/__tests__/NovoDesligamentoDialog.test.tsx",
-   "lines": 120,
+   "lines": 169,
    "is_test": true,
    "tests": [
     "NovoDesligamentoDialog",
@@ -264604,7 +264616,10 @@
     "renders Tipo de Rescisão * label",
     "renders Sem Justa Causa select option",
     "renders Motivo label",
-    "renders Registrar Desligamento button"
+    "renders Registrar Desligamento button",
+    "carrega os colaboradores quando abre (lista vinda do banco na tela)",
+    "nao consulta o banco enquanto esta fechado",
+    "carrega ao passar de fechado para aberto"
    ]
   },
   "src/components/__tests__/ObrigacoesKPIs.test.tsx": {
@@ -272193,7 +272208,7 @@
   },
   "src/components/desligamentos/NovoDesligamentoDialog.tsx": {
    "path": "src/components/desligamentos/NovoDesligamentoDialog.tsx",
-   "lines": 274,
+   "lines": 284,
    "exports": [
     "function NovoDesligamentoDialog"
    ],
@@ -320401,10 +320416,20 @@
   }
  },
  "git": {
-  "sha": "d15194a48c79dd2677bd2609a9537cb4d9485fd5",
+  "sha": "9de335ff8f9155e265376c1aaa904a316f0fa643",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "9de335f",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix(desligamentos): \"Novo Desligamento\" volta a listar colaboradores (#617)",
+    "files": [
+     "src/components/__tests__/NovoDesligamentoDialog.test.tsx",
+     "src/components/desligamentos/NovoDesligamentoDialog.tsx"
+    ]
+   },
    {
     "sha": "d15194a",
     "date": "2026-11-17",
@@ -321145,21 +321170,6 @@
     "subject": "infra(banco): sidecars rodam no FIM da transacao, nao no meio do lote (#583)",
     "files": [
      ".github/workflows/canonical-migrations.yml"
-    ]
-   },
-   {
-    "sha": "9d8ff76",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "chore: resgata da branch `muri` as 3 migrations que rodam em produção e não existiam na main (#582)",
-    "files": [
-     "scripts/.types-drift-baseline.json",
-     "supabase/migrations/20261023120000_training_images_infrastructure.sql",
-     "supabase/migrations/20261023120000_training_images_infrastructure.verify.sql",
-     "supabase/migrations/20261023130000_training_image_autoqueue.sql",
-     "supabase/migrations/20261023130000_training_image_autoqueue.verify.sql",
-     "supabase/migrations/20261023140000_edge_rate_limit_dual.sql",
-     "supabase/migrations/20261023140000_edge_rate_limit_dual.verify.sql"
     ]
    }
   ],

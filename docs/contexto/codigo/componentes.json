@@ -2835,7 +2835,7 @@
     "NovoDesligamentoDialog"
    ],
    "export_default": null,
-   "linhas": 274,
+   "linhas": 284,
    "dominio": "components/desligamentos",
    "hooks_locais": [
     "useEmpresas"
