@@ -324,4 +324,20 @@ describe('OrganogramaToolbar', () => {
       expect(declarados, `boxShadow.${token} não existe no tema`).toContain(token);
     }
   });
+
+  it('a toolbar quebra em linhas em tela estreita, em vez de empurrar as acoes para fora', () => {
+    // Em 360–390px a busca (minimo de 220px) mais os dois botoes `shrink-0`
+    // passavam da largura da tela: as acoes saiam da area visivel e o `main`
+    // ganhava rolagem horizontal.
+    const { container } = render(
+      <OrganogramaToolbar search="" onSearchChange={vi.fn()} onExpandAll={vi.fn()} onCollapseAll={vi.fn()} />
+    );
+    const raiz = container.firstElementChild as HTMLElement;
+    expect(raiz.className).toContain('flex-wrap');
+    // Altura minima, nao fixa: a segunda linha nao fica cortada.
+    expect(raiz.className).toContain('min-h-11');
+    expect(raiz.className).not.toMatch(/(?:^|\s)h-11(?:\s|$)/);
+    // O minimo de 220px da busca vale a partir de `sm`.
+    expect(container.innerHTML).toContain('sm:min-w-[220px]');
+  });
 });

@@ -139,14 +139,20 @@ export function OrganogramaToolbar({
   const motivoDesabilitado = acoesDesabilitadas
     ? 'Durante a busca o resultado ja aparece expandido. Limpe a busca para expandir ou recolher a arvore.'
     : undefined;
+  // `flex-wrap` + `min-h-11` no lugar de `h-11`: em 360–390px a busca (minimo de
+  // 220px) mais os dois botoes `shrink-0` passavam da largura da tela e as acoes
+  // ficavam fora da area visivel, com rolagem horizontal no `main`. Com a quebra
+  // permitida os botoes descem para uma segunda linha e a altura acompanha, em vez
+  // de cortar. O `flex-wrap` do cabecalho da pagina so movia a toolbar inteira; a
+  // reorganizacao tem de ser aqui.
   return (
-    <div className="flex items-center gap-2 h-11 flex-1 min-w-[280px]">
+    <div className="flex min-h-11 flex-1 flex-wrap items-center gap-2 min-w-0 sm:min-w-[280px]">
       <motion.div
         custom={HEADER_REVEAL.busca}
         variants={cardVariants}
         initial="hidden"
         animate="visible"
-        className="relative flex-1 min-w-[220px]"
+        className="relative flex-1 min-w-[160px] sm:min-w-[220px]"
       >
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
         <Input
