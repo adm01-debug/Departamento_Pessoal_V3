@@ -24,7 +24,6 @@ import { useEmpresas } from '@/hooks/useEmpresas';
 import { exportarDesligamentosExcel } from '@/utils/desligamentoExcel';
 import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PontoAuditTimeline } from '@/components/ponto/PontoAuditTimeline';
 import { loggerService } from '@/services/loggerService';
 import {
   DesligamentoKPIs,
@@ -34,6 +33,7 @@ import {
   DesligamentoDetailSheet,
   NovoDesligamentoDialog,
   TurnoverChart,
+  TrilhaAuditoriaDesligamentos,
 } from '@/components/desligamentos';
 export default function DesligamentosPage() {
   const { desligamentos, isLoading } = useDesligamentos();
@@ -355,7 +355,11 @@ export default function DesligamentosPage() {
           </TabsContent>
 
           <TabsContent value="auditoria">
-            <PontoAuditTimeline filterTabela="desligamentos" />
+            {/* Trilha da PROPRIA area, em vez da timeline generica de Ponto:
+                filtros por periodo/usuario/categoria/nivel, resumo em linguagem
+                humana e exportacao. PontoAuditTimeline segue servindo a area de
+                Ponto, intocada. */}
+            <TrilhaAuditoriaDesligamentos />
           </TabsContent>
         </Tabs>
 
