@@ -497,7 +497,7 @@ export default function ProvisoesPage() {
                             {log.duracao_ms ? `${log.duracao_ms}ms` : '-'}
                           </TableCell>
                           <TableCell className="font-medium">{log.total_colaboradores || 0}</TableCell>
-                          <TableCell className="text-right font-mono font-bold text-primary">
+                          <TableCell className="text-right text-numeric font-bold text-primary">
                             {formatCurrency(log.valor_total_provisionado || 0)}
                           </TableCell>
                         </TableRow>

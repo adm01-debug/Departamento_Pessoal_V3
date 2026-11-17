@@ -4694,7 +4694,7 @@
       "componente": "ColaboradorDetalhesPage",
       "urls": ["/colaboradores/:id"],
       "menu": [],
-      "arquivos_lidos": 201,
+      "arquivos_lidos": 202,
       "hooks": [
         {
           "nome": "useAfastamentosRecentes",

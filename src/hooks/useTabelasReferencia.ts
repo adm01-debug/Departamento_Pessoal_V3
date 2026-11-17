@@ -95,7 +95,13 @@ export function useCriarContaBancaria() {
   const { empresaAtual } = useEmpresas();
   return useMutation({
     mutationFn: async (data: Insertable<'contas_bancarias'>) => {
-      return await service.criarContaBancaria(data, empresaAtual!.id);
+      // `empresa_id` vem SEMPRE do contexto, nunca de campo do formulario. Sem
+      // empresa selecionada, `empresaAtual!.id` estourava TypeError no
+      // navegador; agora a mensagem diz o que fazer.
+      if (!empresaAtual?.id) {
+        throw new Error('Nenhuma empresa selecionada. Selecione uma empresa antes de cadastrar uma conta bancária.');
+      }
+      return await service.criarContaBancaria(data, empresaAtual.id);
     },
     onSuccess: (_data: unknown, vars: Insertable<'contas_bancarias'>) =>
       qc.invalidateQueries({ queryKey: ['contas-bancarias', vars.colaborador_id] }),

@@ -3,8 +3,8 @@ import { MainLayout } from '@/components/layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { AdminRoute } from '@/components/AdminRoute';
 import { PermissionRoute } from '@/components/PermissionRoute';
-import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
-import { lazy, Suspense } from 'react';
+import { RouteErrorBoundary, clearChunkReloadGuard } from '@/components/RouteErrorBoundary';
+import { lazy, Suspense, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSessionTimeout } from '@/hooks/useSessionTimeout';
 import { useSecureVisibility } from '@/hooks/useSecureVisibility';
@@ -160,11 +160,20 @@ function PageLoader() {
   );
 }
 
+function RotaCarregada({ children }: { children: React.ReactNode }) {
+  // Chunk carregado: libera o guard de reload para que uma falha futura (outro
+  // deploy, outra rota) ainda consiga se auto-recuperar uma vez.
+  useEffect(() => clearChunkReloadGuard(), []);
+  return <>{children}</>;
+}
+
 function LazyPage({ Component }: { Component: React.LazyExoticComponent<() => React.ReactElement | null> }) {
   return (
     <RouteErrorBoundary>
       <Suspense fallback={<PageLoader />}>
-        <Component />
+        <RotaCarregada>
+          <Component />
+        </RotaCarregada>
       </Suspense>
     </RouteErrorBoundary>
   );
