@@ -16,7 +16,7 @@
  * automaticamente em cada deploy — evita servir assets desatualizados.
  */
 
-const CACHE_VERSION = 'v3';          // Bumpar em cada deploy para bustar cache antigo (v3: E-037)
+const CACHE_VERSION = 'v4';          // Bumpar em cada deploy para bustar cache antigo (v4: purga cache envenenado com HTML)
 const CORE_CACHE = `bombon-dp-${CACHE_VERSION}`;
 const IMAGE_CACHE = `bombon-dp-images-${CACHE_VERSION}`;
 
@@ -37,14 +37,36 @@ async function openCache(name) {
   }
 }
 
+// A SPA da Vercel reescreve QUALQUER caminho sem arquivo correspondente para
+// `/index.html`, com status 200. Depois de um deploy, o hash dos assets muda e
+// os antigos deixam de existir: a requisição de `/assets/index-ABC123.js` passa
+// a responder 200 `text/html`. Sem esta checagem o SW gravava esse HTML no
+// cache SOB A URL DO .js — a partir daí o browser recusava o módulo por MIME
+// ("Expected a JavaScript-or-Wasm module script") e o app não dava boot nem
+// com a rede perfeita, porque o cache envenenado respondia antes dela.
+function respostaCompativel(request, response) {
+  if (!response) return false;
+  const url = new URL(request.url);
+  if (!/\.(?:js|mjs|css|woff2?)$/i.test(url.pathname)) return true;
+  const tipo = response.headers.get('content-type') || '';
+  return !/text\/html/i.test(tipo);
+}
+
 // Stale-While-Revalidate: responde do cache IMEDIATAMENTE,
 // busca fresco em background e atualiza cache.
 async function staleWhileRevalidate(request, cacheName) {
   const cache = await openCache(cacheName);
   const cachedResponse = await cache?.match(request);
 
+  // Entrada envenenada de uma versão anterior do SW: descarta e vai à rede.
+  const cacheUtilizavel = respostaCompativel(request, cachedResponse) ? cachedResponse : undefined;
+  if (cachedResponse && !cacheUtilizavel) {
+    cache?.delete(request);
+  }
+
   const fetchPromise = safeFetch(request).then((networkResponse) => {
-    if (networkResponse.ok) {
+    // Só entra no cache o que realmente é do tipo pedido.
+    if (networkResponse.ok && respostaCompativel(request, networkResponse)) {
       cache?.put(request, networkResponse.clone());
     }
     return networkResponse;
@@ -52,7 +74,27 @@ async function staleWhileRevalidate(request, cacheName) {
 
   // Responde do cache se disponível; senão espera network.
   // Se ambos falharem retorna null → quem chamou deve handlear.
-  return cachedResponse || fetchPromise;
+  return cacheUtilizavel || fetchPromise;
+}
+
+// Network-First: a rede manda; o cache é só rede-fora.
+//
+// A navegação NÃO pode ser stale-while-revalidate: o HTML servido do cache
+// aponta para os assets do deploy ANTIGO, que já não existem no servidor. O
+// usuário via a casca da versão velha com todos os scripts quebrados, e a
+// revalidação em background só consertava no carregamento seguinte.
+async function networkFirst(request, cacheName) {
+  const cache = await openCache(cacheName);
+  try {
+    const networkResponse = await safeFetch(request);
+    if (networkResponse.ok) {
+      cache?.put(request, networkResponse.clone());
+      return networkResponse;
+    }
+    return (await cache?.match(request)) || networkResponse;
+  } catch {
+    return (await cache?.match(request)) || null;
+  }
 }
 
 // Gzipbomb-safe fetch wrapper: lê apenas os primeiros 4MB antes de entregar ao SW.
@@ -170,12 +212,11 @@ self.addEventListener('fetch', (event) => {
     return; // network-only: resposta nunca passa pelo Cache Storage
   }
 
-  // Navegação (HTML público): StaleWhileRevalidate
+  // Navegação (HTML público): NetworkFirst — ver `networkFirst`. O HTML aponta
+  // para assets com hash; servi-lo do cache depois de um deploy entrega uma
+  // casca cujos scripts já não existem no servidor.
   if (request.mode === 'navigate') {
-    event.respondWith(
-      staleWhileRevalidate(request, CORE_CACHE)
-        .then((r) => r || caches.match('/index.html'))
-    );
+    event.respondWith(networkFirst(request, CORE_CACHE).then((r) => r || caches.match('/index.html')));
     return;
   }
 
