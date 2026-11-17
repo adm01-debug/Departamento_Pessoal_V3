@@ -23,7 +23,7 @@
   ],
   "testes": [
    "co-localizado (__tests__) (631)",
-   "co-localizado (*.test) (70)",
+   "co-localizado (*.test) (71)",
    "e2e/ (28)"
   ],
   "edge_functions": "supabase/functions",
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra(storage): policies de tenant para documentos, documentos-colaboradores e afastamentos (#644)",
    "feat(permissions): seed da matriz de permissões por papel (#642)",
    "fix(colaborador): \"Próximos Eventos\" lê o dado real e os atalhos levam ao lugar certo (#641)",
    "infra(migrations): troca o LOTE ATUAL para as 4 migrations da #628 (#637)",
-   "feat(colaboradores): liga os chips de filtro ativo resgatados da muri (#640)",
-   "feat(colaborador): resgata o painel de Pendências da muri, tipado (#639)"
+   "feat(colaboradores): liga os chips de filtro ativo resgatados da muri (#640)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

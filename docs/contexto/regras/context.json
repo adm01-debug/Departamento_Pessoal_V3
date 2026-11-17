@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "f26f689e98f679a4f17290632fd2d85e0433db37",
+  "sha": "308430455615e4a48036d4371f099af86684e7fd",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 19:49 UTC",
-  "files_total": 3540,
-  "code_files": 2966,
-  "code_lines": 469474
+  "generated_at": "2026-11-17 20:11 UTC",
+  "files_total": 3543,
+  "code_files": 2969,
+  "code_lines": 469898
  },
  "version": "1.3.2",
- "facts_hash": "1f4c70a3da28f0a1",
+ "facts_hash": "9acc91b56e466b2d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -385,8 +385,8 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 986,
-   ".sql": 925,
-   ".ts": 924,
+   ".sql": 927,
+   ".ts": 925,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -47315,86 +47315,6 @@
     "src": "supabase/migrations/20260724140001_t007_backup_logs_rls.sql"
    },
    {
-    "name": "afastamentos_select_authenticated",
-    "table": "storage.objects",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "check": "",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
-    "name": "afastamentos_insert_authenticated",
-    "table": "storage.objects",
-    "cmd": "INSERT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "",
-    "check": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
-    "name": "afastamentos_update_authenticated",
-    "table": "storage.objects",
-    "cmd": "UPDATE",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "check": "",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
-    "name": "documentos_select_authenticated",
-    "table": "storage.objects",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "check": "",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
-    "name": "documentos_insert_authenticated",
-    "table": "storage.objects",
-    "cmd": "INSERT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "",
-    "check": "bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
-    "name": "documentos_update_authenticated",
-    "table": "storage.objects",
-    "cmd": "UPDATE",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "check": "",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
-    "name": "docs_colab_select_authenticated",
-    "table": "storage.objects",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "check": "",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
-    "name": "docs_colab_insert_authenticated",
-    "table": "storage.objects",
-    "cmd": "INSERT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "",
-    "check": "bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
     "name": "comprovantes_despesas_select",
     "table": "storage.objects",
     "cmd": "SELECT",
@@ -50413,6 +50333,86 @@
     "using": "bucket_id = 'documentos-colaboradores' AND public.pode_gerir_rh(public.storage_path_empresa_id(name))",
     "check": "",
     "src": "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.sql"
+   },
+   {
+    "name": "documentos_select_authenticated",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
+   },
+   {
+    "name": "documentos_insert_authenticated",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
+   },
+   {
+    "name": "documentos_update_authenticated",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
+   },
+   {
+    "name": "docs_colab_select_authenticated",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
+   },
+   {
+    "name": "docs_colab_insert_authenticated",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
+   },
+   {
+    "name": "afastamentos_select_authenticated",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
+   },
+   {
+    "name": "afastamentos_insert_authenticated",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
+   },
+   {
+    "name": "afastamentos_update_authenticated",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
    },
    {
     "name": "Acesso aos itens via folha",
@@ -71834,6 +71834,8 @@
    "supabase/migrations/20261117170300_documentos_colunas_storage.verify.sql",
    "supabase/migrations/20261117190000_permissions_matriz_seed.sql",
    "supabase/migrations/20261117190000_permissions_matriz_seed.verify.sql",
+   "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql",
+   "supabase/migrations/20261117193000_storage_documentos_tenant_scope.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -103502,8 +103504,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 859,
-   "lines": 78263,
+   "files": 861,
+   "lines": 78465,
    "tables": [
     "profiles",
     "user_roles"
@@ -103658,18 +103660,22 @@
   },
   {
    "module": "supabase/tests",
-   "files": 4,
-   "lines": 686,
+   "files": 5,
+   "lines": 908,
    "tables": [
     "audit_log",
     "batidas_ponto",
     "colaboradores",
+    "empresas",
     "ferias",
-    "idempotency_keys"
+    "idempotency_keys",
+    "user_empresas",
+    "user_roles"
    ],
    "exports": [],
    "docs": [
-    "migration_consistency.test.ts: Suíte de testes de consistência de migrações + simulação de cenários --------------------------------------------------------------------- Valida invariantes críticas pós-migrations (idx parciais, particionamento, hardening de funções, rate-limit do scanner) executando cenários reais: A) Concorrênci …"
+    "migration_consistency.test.ts: Suíte de testes de consistência de migrações + simulação de cenários --------------------------------------------------------------------- Valida invariantes críticas pós-migrations (idx parciais, particionamento, hardening de funções, rate-limit do scanner) executando cenários reais: A) Concorrênci …",
+    "storage_documentos_tenant_isolation.test.ts: Teste de isolamento multi-tenant nas policies REAIS do Storage (não é simulação de frontend — cada asserção abaixo bate direto no endpoint de Storage do Supabase, autenticado como o usuário de teste, e depende de RLS real em storage.objects para passar ou falhar). Resgatado da branch `muri`. O comen …"
    ],
    "deps": [
     "https:"
@@ -103678,6 +103684,7 @@
    "file_list": [
     "supabase/tests/ferias_embed_test.ts",
     "supabase/tests/migration_consistency.test.ts",
+    "supabase/tests/storage_documentos_tenant_isolation.test.ts",
     "supabase/tests/plano100/00_setup_stubs.sql",
     "supabase/tests/plano100/20_asserts.sql"
    ]
@@ -104823,15 +104830,20 @@
      "supabase/functions/gerar-afd/index.ts",
      "supabase/functions/gerar-ltcat-os/index.ts",
      "supabase/functions/gerar-medida-disciplinar-pdf/index.ts",
-     "supabase/functions/gerar-pgr/index.ts"
+     "supabase/functions/gerar-pgr/index.ts",
+     "supabase/tests/storage_documentos_tenant_isolation.test.ts"
     ],
     "insert": [
      "scripts/e2e/seed.mjs",
-     "src/hooks/useEmpresas.ts"
+     "src/hooks/useEmpresas.ts",
+     "supabase/tests/storage_documentos_tenant_isolation.test.ts"
     ],
     "update": [
      "src/components/settings/InlineTabs.tsx",
      "src/hooks/useEmpresas.ts"
+    ],
+    "delete": [
+     "supabase/tests/storage_documentos_tenant_isolation.test.ts"
     ]
    },
    "emprestimos_consignados": {
@@ -106678,6 +106690,9 @@
      "supabase/functions/parse-afdt/index.ts",
      "supabase/functions/processar-ponto-offline/index.ts",
      "supabase/functions/training-image-generate/index.ts"
+    ],
+    "insert": [
+     "supabase/tests/storage_documentos_tenant_isolation.test.ts"
     ]
    },
    "user_mfa": {
@@ -106704,6 +106719,9 @@
      "supabase/functions/backup/index.ts",
      "supabase/functions/limpeza/index.ts",
      "supabase/functions/training-image-generate/index.ts"
+    ],
+    "insert": [
+     "supabase/tests/storage_documentos_tenant_isolation.test.ts"
     ]
    },
    "user_sessions": {
@@ -109224,16 +109242,19 @@
     "supabase/tests/ferias_embed_test.ts"
    ],
    "TEST_ANON_KEY": [
-    "supabase/tests/migration_consistency.test.ts"
+    "supabase/tests/migration_consistency.test.ts",
+    "supabase/tests/storage_documentos_tenant_isolation.test.ts"
    ],
    "TEST_EMPRESA_ID": [
     "supabase/tests/migration_consistency.test.ts"
    ],
    "TEST_SERVICE_ROLE_KEY": [
-    "supabase/tests/migration_consistency.test.ts"
+    "supabase/tests/migration_consistency.test.ts",
+    "supabase/tests/storage_documentos_tenant_isolation.test.ts"
    ],
    "TEST_SUPABASE_URL": [
-    "supabase/tests/migration_consistency.test.ts"
+    "supabase/tests/migration_consistency.test.ts",
+    "supabase/tests/storage_documentos_tenant_isolation.test.ts"
    ],
    "TRAINING_IMAGE_ALLOWED_CONTENT_ID": [
     "supabase/functions/training-image-generate/index.ts"
@@ -206336,86 +206357,6 @@
     "src": "supabase/migrations/20260724140001_t007_backup_logs_rls.sql"
    },
    {
-    "name": "afastamentos_select_authenticated",
-    "table": "storage.objects",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "check": "",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
-    "name": "afastamentos_insert_authenticated",
-    "table": "storage.objects",
-    "cmd": "INSERT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "",
-    "check": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
-    "name": "afastamentos_update_authenticated",
-    "table": "storage.objects",
-    "cmd": "UPDATE",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "check": "",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
-    "name": "documentos_select_authenticated",
-    "table": "storage.objects",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "check": "",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
-    "name": "documentos_insert_authenticated",
-    "table": "storage.objects",
-    "cmd": "INSERT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "",
-    "check": "bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
-    "name": "documentos_update_authenticated",
-    "table": "storage.objects",
-    "cmd": "UPDATE",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "check": "",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
-    "name": "docs_colab_select_authenticated",
-    "table": "storage.objects",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "check": "",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
-    "name": "docs_colab_insert_authenticated",
-    "table": "storage.objects",
-    "cmd": "INSERT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "",
-    "check": "bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-    "src": "supabase/migrations/20260724150000_t008_storage_tenant_path_scope.sql"
-   },
-   {
     "name": "comprovantes_despesas_select",
     "table": "storage.objects",
     "cmd": "SELECT",
@@ -209434,6 +209375,86 @@
     "using": "bucket_id = 'documentos-colaboradores' AND public.pode_gerir_rh(public.storage_path_empresa_id(name))",
     "check": "",
     "src": "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.sql"
+   },
+   {
+    "name": "documentos_select_authenticated",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
+   },
+   {
+    "name": "documentos_insert_authenticated",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
+   },
+   {
+    "name": "documentos_update_authenticated",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
+   },
+   {
+    "name": "docs_colab_select_authenticated",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
+   },
+   {
+    "name": "docs_colab_insert_authenticated",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
+   },
+   {
+    "name": "afastamentos_select_authenticated",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
+   },
+   {
+    "name": "afastamentos_insert_authenticated",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
+   },
+   {
+    "name": "afastamentos_update_authenticated",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
    },
    {
     "name": "Acesso aos itens via folha",
@@ -236960,12 +236981,12 @@
      "authenticated: bucket_id = 'medidas-disciplinares' AND (storage.foldername(name))[1]::uuid IN (SELECT get_user_empresas(auth.uid()))",
      "authenticated: bucket_id = 'medidas-contestacoes' AND (storage.foldername(name))[1]::uuid IN ( SELECT ue.empresa_id FROM public.user_empresa",
      "authenticated: bucket_id = 'contratos-trabalho' AND public.user_belongs_to_empresa( auth.uid(), NULLIF(split_part(name, '/', 1), '')::uuid )",
-     "authenticated: bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-     "authenticated: bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-     "authenticated: bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "authenticated: bucket_id = 'comprovantes-despesas' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "service_role: bucket_id = 'backups'",
-     "authenticated: bucket_id = 'training-images' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)"
+     "authenticated: bucket_id = 'training-images' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
+     "authenticated: bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))"
     ],
     "INSERT": [
      "authenticated: ((\"bucket_id\" = 'comprovantes-despesas'::\"text\") AND (\"owner\" = \"auth\".\"uid\"()) AND \"public\".\"user_belongs_to_empresa\"(\"auth\"",
@@ -236990,12 +237011,12 @@
      "authenticated: bucket_id = 'medidas-disciplinares' AND (storage.foldername(name))[1]::uuid IN (SELECT get_user_empresas(auth.uid()))",
      "authenticated: bucket_id = 'medidas-contestacoes' AND (storage.foldername(name))[1]::uuid IN ( SELECT ue.empresa_id FROM public.user_empresa",
      "authenticated: bucket_id = 'contratos-trabalho' AND public.user_belongs_to_empresa( auth.uid(), NULLIF(split_part(name, '/', 1), '')::uuid )",
-     "authenticated: bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-     "authenticated: bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-     "authenticated: bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "authenticated: bucket_id = 'comprovantes-despesas' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "service_role: bucket_id = 'backups'",
      "authenticated: bucket_id = 'training-images' AND public.is_admin(auth.uid()) AND public.user_belongs_to_empresa(auth.uid(), ((storage.folder",
+     "authenticated: bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
      "authenticated: bucket_id = 'avatars' AND owner = auth.uid() AND (storage.foldername(name))[1] = auth.uid()::text"
     ],
     "UPDATE": [
@@ -237009,10 +237030,10 @@
      "authenticated: bucket_id = 'ferias-avisos' AND (public.has_role(auth.uid(),'admin') OR public.has_role(auth.uid(),'rh'))",
      "authenticated: bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uu",
      "authenticated: bucket_id = 'medidas-disciplinares' AND (storage.foldername(name))[1]::uuid IN (SELECT get_user_empresas(auth.uid()))",
-     "authenticated: bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
-     "authenticated: bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "service_role: bucket_id = 'backups'",
      "authenticated: bucket_id = 'training-images' AND public.is_admin(auth.uid()) AND public.user_belongs_to_empresa(auth.uid(), ((storage.folder",
+     "authenticated: bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
      "authenticated: bucket_id = 'avatars' AND owner = auth.uid() AND (storage.foldername(name))[1] = auth.uid()::text"
     ],
     "DELETE": [
@@ -238329,6 +238350,7 @@
    "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.sql",
    "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql",
    "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.verify.sql",
+   "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -238338,7 +238360,8 @@
    "supabase/tests/ferias_embed_test.ts",
    "supabase/tests/migration_consistency.test.ts",
    "supabase/tests/plano100/00_setup_stubs.sql",
-   "supabase/tests/plano100/20_asserts.sql"
+   "supabase/tests/plano100/20_asserts.sql",
+   "supabase/tests/storage_documentos_tenant_isolation.test.ts"
   ],
   "security_definer_fns": [
    "_admissao_token_row",
@@ -324436,6 +324459,15 @@
    "path": "supabase/migrations/20261117190000_permissions_matriz_seed.verify.sql",
    "lines": 46
   },
+  "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql": {
+   "path": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql",
+   "lines": 130,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261117193000_storage_documentos_tenant_scope.verify.sql": {
+   "path": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.verify.sql",
+   "lines": 72
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -324687,6 +324719,54 @@
    "doc": "Suíte de testes de consistência de migrações + simulação de cenários --------------------------------------------------------------------- Valida invariantes críticas pós-migrations (idx parciais, particionamento, hardening de funções, rate-limit do scanner) executando cenários reais: A) Concorrênci …",
    "uses_service_role": true
   },
+  "supabase/tests/storage_documentos_tenant_isolation.test.ts": {
+   "path": "supabase/tests/storage_documentos_tenant_isolation.test.ts",
+   "lines": 222,
+   "is_test": true,
+   "tables": [
+    {
+     "table": "empresas",
+     "op": "insert,select"
+    },
+    {
+     "table": "empresas",
+     "op": "insert,select"
+    },
+    {
+     "table": "user_empresas",
+     "op": "insert"
+    },
+    {
+     "table": "user_roles",
+     "op": "insert"
+    },
+    {
+     "table": "empresas",
+     "op": "delete"
+    },
+    {
+     "table": "empresas",
+     "op": "delete"
+    }
+   ],
+   "table_cols": {
+    "empresas": [
+     "id"
+    ]
+   },
+   "env": [
+    "TEST_ANON_KEY",
+    "TEST_SERVICE_ROLE_KEY",
+    "TEST_SUPABASE_URL"
+   ],
+   "rule_comments": [
+    "SOMENTE à empresa A, com role 'rh' (global, mas a policy exige também",
+    "Vínculo SOMENTE com a empresa A (é exatamente isso que a policy de",
+    "Regra a preservar: role rh/admin pode apagar — mas SÓ dentro da própria empresa."
+   ],
+   "doc": "Teste de isolamento multi-tenant nas policies REAIS do Storage (não é simulação de frontend — cada asserção abaixo bate direto no endpoint de Storage do Supabase, autenticado como o usuário de teste, e depende de RLS real em storage.objects para passar ou falhar). Resgatado da branch `muri`. O comen …",
+   "uses_service_role": true
+  },
   "supabase/tests/plano100/00_setup_stubs.sql": {
    "path": "supabase/tests/plano100/00_setup_stubs.sql",
    "lines": 96,
@@ -324706,10 +324786,22 @@
   }
  },
  "git": {
-  "sha": "f26f689e98f679a4f17290632fd2d85e0433db37",
+  "sha": "308430455615e4a48036d4371f099af86684e7fd",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "3084304",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "infra(storage): policies de tenant para documentos, documentos-colaboradores e afastamentos (#644)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql",
+     "supabase/migrations/20261117193000_storage_documentos_tenant_scope.verify.sql",
+     "supabase/tests/storage_documentos_tenant_isolation.test.ts"
+    ]
+   },
    {
     "sha": "f26f689",
     "date": "2026-11-17",
@@ -325220,68 +325312,16 @@
      "src/pages/PremiacoesPage.tsx",
      "src/pages/__tests__/PremiacoesPage.test.tsx"
     ]
-   },
-   {
-    "sha": "182d5f9",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(recrutamento): resgata Recrutamento e seleção da muri preservando a máscara de PII e as 3 entregas da main (#610)",
-    "files": [
-     "inventario/estado/rotas.json",
-     "scripts/.bundle-budget.json",
-     "src/components/recrutamento/AnalyticsAtencao.tsx",
-     "src/components/recrutamento/AnalyticsEvolucao.tsx",
-     "src/components/recrutamento/AnalyticsFunil.tsx",
-     "src/components/recrutamento/AnalyticsIndicadores.tsx",
-     "src/components/recrutamento/AnalyticsOrigens.tsx",
-     "src/components/recrutamento/AnalyticsPainel.tsx",
-     "src/components/recrutamento/AnalyticsRecrutamento.tsx",
-     "src/components/recrutamento/AnalyticsTempo.tsx",
-     "src/components/recrutamento/AnalyticsVagas.tsx",
-     "src/components/recrutamento/CandidatoDetalhesDialog.tsx",
-     "src/components/recrutamento/CandidatoTimeline.tsx",
-     "src/components/recrutamento/CandidatosPainel.tsx",
-     "src/components/recrutamento/PipelineBoard.tsx",
-     "src/components/recrutamento/PipelineCard.tsx",
-     "src/components/recrutamento/PipelineColumn.tsx",
-     "src/components/recrutamento/TabelaCandidatos.tsx",
-     "src/components/recrutamento/VagaCard.tsx",
-     "src/components/recrutamento/VagasPainel.tsx",
-     "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
-     "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
-     "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
-     "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
-     "src/components/recrutamento/__tests__/VagaCard.test.tsx",
-     "src/components/recrutamento/__tests__/VagasPainel.test.tsx",
-     "src/components/recrutamento/__tests__/analyticsComum.test.ts",
-     "src/components/recrutamento/__tests__/candidatosComum.test.ts",
-     "src/components/recrutamento/__tests__/candidatosFixture.ts",
-     "src/components/recrutamento/__tests__/competenciasComum.test.ts",
-     "src/components/recrutamento/__tests__/pipelineDragDrop.test.ts",
-     "src/components/recrutamento/__tests__/pipelineEtapas.test.ts",
-     "src/components/recrutamento/__tests__/vagasComum.test.ts",
-     "src/components/recrutamento/__tests__/vagasGradients.test.ts",
-     "src/components/recrutamento/analyticsComum.ts",
-     "src/components/recrutamento/candidatosComum.ts",
-     "src/components/recrutamento/competenciasComum.ts",
-     "src/components/recrutamento/pipelineDragDrop.ts",
-     "src/components/recrutamento/pipelineEtapas.ts",
-     "src/components/recrutamento/pipelineVisual.ts",
-     "src/components/recrutamento/vagasComum.ts",
-     "src/components/recrutamento/vagasGradients.ts",
-     "src/pages/RecrutamentoPage.tsx",
-     "src/types/recrutamento.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    12
+    11
    ],
    [
     "inventario/estado/rotas.json",
-    7
+    6
    ],
    [
     "src/pages/ColaboradoresPage.tsx",
@@ -325294,6 +325334,10 @@
    [
     "src/index.css",
     3
+   ],
+   [
+    ".github/workflows/canonical-migrations.yml",
+    2
    ],
    [
     "src/components/colaboradores/ColaboradorFilters.tsx",
@@ -325328,6 +325372,18 @@
     2
    ],
    [
+    "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261117193000_storage_documentos_tenant_scope.verify.sql",
+    1
+   ],
+   [
+    "supabase/tests/storage_documentos_tenant_isolation.test.ts",
+    1
+   ],
+   [
     "supabase/migrations/20261117190000_permissions_matriz_seed.sql",
     1
    ],
@@ -325337,22 +325393,6 @@
    ],
    [
     "src/components/__tests__/ProximosEventosDialog.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/destinosDossie.test.ts",
-    1
-   ],
-   [
-    "src/components/colaborador-detalhes/ProximosEventosDialog.tsx",
-    1
-   ],
-   [
-    "src/components/colaborador-detalhes/destinosDossie.ts",
-    1
-   ],
-   [
-    ".github/workflows/canonical-migrations.yml",
     1
    ]
   ]

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f26f689e98f679a4f17290632fd2d85e0433db37",
+  "commit": "308430455615e4a48036d4371f099af86684e7fd",
   "branch": "main",
-  "data_commit": "2026-11-17T16:45:15-03:00",
+  "data_commit": "2026-11-17T17:02:41-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "3084304",
+    "data": "2026-11-17",
+    "assunto": "infra(storage): policies de tenant para documentos, documentos-colaboradores e afastamentos (#644)"
+   },
    {
     "sha": "f26f689",
     "data": "2026-11-17",
@@ -126,14 +131,9 @@
     "sha": "7b17d30",
     "data": "2026-11-17",
     "assunto": "feat: resgata da muri o organograma navegável — busca que filtra, expandir/recolher e níveis (#616)"
-   },
-   {
-    "sha": "9de335f",
-    "data": "2026-11-17",
-    "assunto": "fix(desligamentos): \"Novo Desligamento\" volta a listar colaboradores (#617)"
    }
   ],
-  "arquivos_mudados_7d": 1083,
+  "arquivos_mudados_7d": 1086,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -198,12 +198,12 @@
   ],
   "arquivos_mais_mudados_90d": [
    {
-    "arquivo": "inventario/estado/rotas.json",
+    "arquivo": ".github/workflows/canonical-migrations.yml",
     "mudancas": 21
    },
    {
-    "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 20
+    "arquivo": "inventario/estado/rotas.json",
+    "mudancas": 21
    },
    {
     "arquivo": "package.json",
@@ -290,22 +290,22 @@
     "mudancas": 6
    },
    {
-    "arquivo": "supabase/functions/calcular-folha/index.ts",
-    "mudancas": 6
+    "arquivo": ".github/workflows/ci.yml",
+    "mudancas": 5
    },
    {
-    "arquivo": ".github/workflows/ci.yml",
+    "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
     "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 259
+    "commits": 260
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 25
+    "commits": 24
    },
    {
     "autor": "dependabot[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3519,
-  "arquivos_codigo": 2043,
-  "linhas_codigo": 404379,
+  "arquivos_total": 3522,
+  "arquivos_codigo": 2044,
+  "linhas_codigo": 404601,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -330,9 +330,9 @@
   "hooks": 116,
   "edge_functions": 67,
   "tabelas": 425,
-  "migrations": 859,
+  "migrations": 861,
   "cron_jobs": 41,
-  "testes": 754,
+  "testes": 755,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -719,8 +719,8 @@
    "linhas": 27125
   },
   "supabase/tests": {
-   "arquivos": 2,
-   "linhas": 282
+   "arquivos": 3,
+   "linhas": 504
   },
   "tailwind.config.js": {
    "arquivos": 1,

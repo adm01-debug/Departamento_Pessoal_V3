@@ -5,12 +5,12 @@
   "vitest",
   "playwright"
  ],
- "total": 754,
+ "total": 755,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 715
+  "unit": 716
  },
  "onde_ficam": [
   {
@@ -19,7 +19,7 @@
   },
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 70
+   "arquivos": 71
   },
   {
    "padrao": "e2e/",
@@ -6969,6 +6969,13 @@
    "linhas": 218,
    "testa": [],
    "casos": 7
+  },
+  {
+   "arquivo": "supabase/tests/storage_documentos_tenant_isolation.test.ts",
+   "tipo": "unit",
+   "linhas": 222,
+   "testa": [],
+   "casos": 5
   }
  ],
  "sql": [

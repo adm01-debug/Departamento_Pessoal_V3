@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f26f689e98` · branch `main` · 2026-11-17 19:49 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3084304556` · branch `main` · 2026-11-17 20:11 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 312 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 314 arquivo(s)
 
 - `docs/ninebox-pre-aplicacao.sql`
 - `docs/ninebox-verificacao-truncate.sql`
@@ -472,7 +472,7 @@
 - `supabase/migrations/20260712215808_8c16ff4b-eb80-4fbb-a8c6-c15c62ed93c7.sql`
 - `supabase/migrations/20260712215942_0c45a861-8424-4178-936a-cae1ebe129b2.sql`
 - `supabase/migrations/20260712220248_803bf461-91a3-4d53-abd6-41fb5b5f0892.sql`
-- … +162 (lista completa em `context.json`)
+- … +164 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
