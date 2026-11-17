@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calcularRescisao, fmt } from '../rescisaoCalc';
+import { aliquotaEfetiva, calcularRescisao, fmt } from '../rescisaoCalc';
 import { calcularINSS as calcINSS, calcularIRRF as calcIRRF } from '@/calculators/impostos';
 
 // ═══════════════════════════════════════════════════════
@@ -868,5 +868,64 @@ describe('calcularRescisao — Normalização de tipos', () => {
     const fim = await calcularRescisao({ ...base, tipo: 'fim_contrato', terminoIniciativa: 'natural' });
     const termino = await calcularRescisao({ ...base, tipo: 'termino_contrato', terminoIniciativa: 'natural' });
     expect(fim.totalLiquido).toBe(termino.totalLiquido);
+  });
+});
+
+// ═══════════════════════════════════════════════════════
+// Memória de cálculo (basesCalculo) — a base vem do motor, não da tela
+// ═══════════════════════════════════════════════════════
+describe('calcularRescisao — basesCalculo', () => {
+  const base = {
+    salario: 5000,
+    dataAdmissao: '2020-03-15',
+    dataDesligamento: '2026-03-22',
+    tipo: 'sem_justa_causa',
+    avisoTrabalhado: false,
+    feriasVencidas: false,
+    saldoFGTS: 15000,
+  };
+
+  it('INSS e IRRF saem em DUAS parcelas, cada uma com sua própria base', async () => {
+    const r = await calcularRescisao(base);
+    const linhas = r.basesCalculo ?? [];
+
+    const inssSaldo = linhas.find((l) => l.descricao === 'INSS sobre o saldo de salário')!;
+    const inss13 = linhas.find((l) => l.descricao === 'INSS sobre o 13º')!;
+    expect(inssSaldo.base).toBe(r.saldoSalario);
+    expect(inss13.base).toBe(r.decimoTerceiro);
+    // Somadas, reproduzem o INSS que o motor devolve.
+    expect(Math.round((inssSaldo.encargo + inss13.encargo) * 100) / 100).toBe(r.inss);
+
+    const irrfSaldo = linhas.find((l) => l.descricao === 'IRRF sobre o saldo de salário')!;
+    const irrf13 = linhas.find((l) => l.descricao === 'IRRF sobre o 13º')!;
+    expect(irrfSaldo.base).toBe(r.saldoSalario);
+    expect(irrf13.base).toBe(r.decimoTerceiro);
+    expect(Math.round((irrfSaldo.encargo + irrf13.encargo) * 100) / 100).toBe(r.irrf);
+  });
+
+  it('a base do FGTS da rescisão é saldo + aviso indenizado + 13º', async () => {
+    const r = await calcularRescisao(base);
+    const fgts = (r.basesCalculo ?? []).find((l) => l.descricao === 'FGTS da rescisão (8%)')!;
+    expect(fgts.base).toBe(Math.trunc((r.saldoSalario + r.avisoIndenizado + r.decimoTerceiro) * 100) / 100);
+    expect(fgts.encargo).toBe(r.fgtsRescisao);
+  });
+
+  it('a base da multa do FGTS SOMA o FGTS da rescisão ao saldo informado', async () => {
+    const r = await calcularRescisao(base);
+    const multa = (r.basesCalculo ?? []).find((l) => l.descricao === 'Multa do FGTS')!;
+    // O erro clássico é usar só `saldoFGTS`: a alíquota efetiva sairia acima
+    // dos 40% legais.
+    expect(multa.base).toBe(Math.trunc((15000 + r.fgtsRescisao) * 100) / 100);
+    expect(multa.base).toBeGreaterThan(15000);
+    expect(multa.encargo).toBe(r.multaFGTS);
+    expect(aliquotaEfetiva(multa)).toBeCloseTo(40, 1);
+  });
+
+  it('alíquota efetiva é 0 quando não há base (ex.: justa causa, sem multa)', async () => {
+    const r = await calcularRescisao({ ...base, tipo: 'justa_causa' });
+    const multa = (r.basesCalculo ?? []).find((l) => l.descricao === 'Multa do FGTS')!;
+    expect(multa.encargo).toBe(0);
+    expect(aliquotaEfetiva(multa)).toBe(0);
+    expect(aliquotaEfetiva({ descricao: 'x', base: 0, encargo: 0 })).toBe(0);
   });
 });
