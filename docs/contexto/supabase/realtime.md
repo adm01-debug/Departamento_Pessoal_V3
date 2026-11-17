@@ -13,7 +13,6 @@
 |---|---|---|
 | supabase_realtime | public.afdt_divergencias | default |
 | supabase_realtime | public.security_alerts | default |
-| supabase_realtime_messages_publication | realtime.messages_2026_11_13 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_14 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_15 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_16 |  |
