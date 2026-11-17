@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render as rtlRender, screen } from '@testing-library/react';
+import { render as rtlRender, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import userEvent from '@testing-library/user-event';
 
@@ -199,6 +199,20 @@ describe('CamposCustomizadosTab', () => {
 
     expect(screen.getByLabelText(/Matrícula interna/i)).toHaveValue('');
     expect(screen.getByRole('button', { name: 'Salvar' })).toBeDisabled();
+  });
+
+  it('limpa o valor de campo de selecao OPCIONAL (trocar dava, remover nao)', async () => {
+    const mutateAsync = vi.fn(() => Promise.resolve(null));
+    mockCampos({ data: [CAMPO_SELECAO] });
+    mockValores({ data: [{ campo_customizado_id: CAMPO_SELECAO.id, valor: 'Sim' }] });
+    mockSalvar(mutateAsync);
+    render(<CamposCustomizadosTab colaboradorId="col-1" />);
+
+    await userEvent.click(await screen.findByRole('button', { name: /Limpar/i }));
+    await userEvent.click(screen.getByRole('button', { name: 'Salvar' }));
+
+    await waitFor(() => expect(mutateAsync).toHaveBeenCalledTimes(1));
+    expect(mutateAsync).toHaveBeenCalledWith({ campoId: CAMPO_SELECAO.id, valor: '' });
   });
 
   it('expõe estado de erro quando o salvamento falha', async () => {

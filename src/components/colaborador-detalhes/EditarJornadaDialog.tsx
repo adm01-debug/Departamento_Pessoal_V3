@@ -49,7 +49,10 @@ export function EditarJornadaDialog({
 }: EditarJornadaDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm">
+      {/* max-h/overflow: com jornada contratual E escala do dia o conteudo passa
+          da altura de um notebook, e o DialogContent e `fixed` centrado, sem
+          rolagem propria — os botoes de salvar/remover saiam da tela. */}
+      <DialogContent className="max-w-sm max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Editar Jornada</DialogTitle>
         </DialogHeader>

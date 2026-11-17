@@ -168,18 +168,36 @@ export function CamposCustomizadosTab({ colaboradorId }: { colaboradorId: string
                     />
                   </div>
                 ) : campo.tipo === 'selecao' ? (
-                  <Select value={valorAtual(campo.id)} onValueChange={(v) => editar(campo.id, v)}>
-                    <SelectTrigger id={`campo-${campo.id}`}>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {lerOpcoes(campo.opcoes).map((o) => (
-                        <SelectItem key={o} value={o}>
-                          {o}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex items-center gap-2">
+                    <Select value={valorAtual(campo.id)} onValueChange={(v) => editar(campo.id, v)}>
+                      <SelectTrigger id={`campo-${campo.id}`} className="flex-1">
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {lerOpcoes(campo.opcoes).map((o) => (
+                          <SelectItem key={o} value={o}>
+                            {o}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {/* Radix Select nao desseleciona e as opcoes vindas de
+                        `lerOpcoes` nunca sao vazias: sem este botao, uma opcao
+                        salva por engano em campo OPCIONAL nao tinha como sair —
+                        dava para trocar, nunca para remover. Campo obrigatorio
+                        nao oferece (a validacao de salvar ja barra vazio). */}
+                    {!campo.obrigatorio && valorAtual(campo.id) !== '' && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => editar(campo.id, '')}
+                        aria-label={`Limpar ${campo.nome}`}
+                      >
+                        Limpar
+                      </Button>
+                    )}
+                  </div>
                 ) : (
                   <Input
                     id={`campo-${campo.id}`}
