@@ -67,6 +67,7 @@ import {
 import { RecontratarColaboradorDialog } from '@/components/colaboradores/RecontratarColaboradorDialog';
 import { PendenciasDialog, type PendenciaItem } from '@/components/colaborador-detalhes/PendenciasDialog';
 import { ProximosEventosDialog, type EventoDetalhado } from '@/components/colaborador-detalhes/ProximosEventosDialog';
+import { AfastamentosTab } from '@/components/colaborador-detalhes/AfastamentosTab';
 import { destinoPendencia, destinoEvento, type DestinoDossie } from '@/components/colaborador-detalhes/destinosDossie';
 import { format } from 'date-fns';
 import { parseDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
@@ -607,7 +608,15 @@ export default function ColaboradorDetalhesPage() {
                 {activeJornadaTab === 'ponto' && <JornadaPontoTab colaboradorId={id!} />}
               </TabsContent>
               <TabsContent value="ferias">
-                {activeJornadaTab === 'ferias' && <FeriasResumoTab colaboradorId={id!} />}
+                {activeJornadaTab === 'ferias' && (
+                  <div className="space-y-8">
+                    <FeriasResumoTab colaboradorId={id!} />
+                    {/* A sub-aba se chama "Ferias & Afastamentos" e mostrava SO
+                        ferias — o rotulo prometia afastamento e a tela nao
+                        entregava nenhum. Componente resgatado da `muri`. */}
+                    <AfastamentosTab colaboradorId={id!} />
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
           </TabsContent>
