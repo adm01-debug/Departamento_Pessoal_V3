@@ -14,6 +14,11 @@ import { toast } from 'sonner';
 import { useDocumentos } from '@/hooks';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { safeHref } from '@/utils/safeUrl';
+import { safeErrorMessage } from '@/utils/safeError';
+import { FileUploadField } from './FileUploadField';
+import { uploadDocumentFile, removeDocumentFile, resolveDocumentUrl } from '@/services/documentUploadService';
+
+const BUCKET = 'documentos';
 import { cardVariants } from '@/components/dashboard/MetricCard';
 import { FileTypeIcon } from './FileTypeIcon';
 import { dataLocalDoEvento } from '../historico/eventDate';
@@ -37,11 +42,12 @@ const TIPOS = [
  * layout denso pra ficar logo abaixo de "Documentos Pessoais" na coluna
  * esquerda do dashboard de "Documentos & Compliance".
  *
- * O documento é referenciado por `documentos.url`. O envio de arquivo para o
- * bucket privado `documentos` depende de colunas que a tabela ainda não tem
- * em produção (storage_path/nome_arquivo/tamanho/mime_type) — ver a issue de
- * DDL ligada a esta PR; até lá o card não oferece upload, em vez de gravar
- * campos que o banco rejeitaria. */
+ * O arquivo vai para o bucket privado `documentos` e só o `storage_path`
+ * fica salvo — a URL de leitura é assinada na hora de abrir, então não existe
+ * link permanente para documento de colaborador. As colunas que faltavam
+ * (storage_path/nome_arquivo/tamanho/mime_type) e as policies do bucket foram
+ * aplicadas em produção em 17/11/2026; linha antiga com `url` continua
+ * abrindo pelo caminho legado (ver `resolveDocumentUrl`). */
 export function DocumentosDigitaisCard({ colaboradorId }: { colaboradorId: string }) {
   const { documentos, isLoading, criarDocumento, excluirDocumento } = useDocumentos(colaboradorId);
   const { empresaAtualId } = useEmpresas();
@@ -51,8 +57,13 @@ export function DocumentosDigitaisCard({ colaboradorId }: { colaboradorId: strin
   hojeLocal.setHours(0, 0, 0, 0);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ nome: '', tipo: 'Outros', observacoes: '', data_validade: '', url: '' });
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
-  const resetForm = () => setForm({ nome: '', tipo: 'Outros', observacoes: '', data_validade: '', url: '' });
+  const resetForm = () => {
+    setFile(null);
+    setForm({ nome: '', tipo: 'Outros', observacoes: '', data_validade: '', url: '' });
+  };
 
   const handleSubmit = async () => {
     if (!form.nome) {
@@ -64,29 +75,64 @@ export function DocumentosDigitaisCard({ colaboradorId }: { colaboradorId: strin
       return;
     }
 
+    let enviado: Awaited<ReturnType<typeof uploadDocumentFile>> | null = null;
     try {
-      await criarDocumento.mutateAsync({ ...form, colaborador_id: colaboradorId });
+      if (file) {
+        setUploading(true);
+        enviado = await uploadDocumentFile(file, {
+          bucket: BUCKET,
+          empresaId: empresaAtualId,
+          colaboradorId,
+          categoria: 'documentos-digitais',
+        });
+        setUploading(false);
+      }
+
+      await criarDocumento.mutateAsync({
+        ...form,
+        data_validade: form.data_validade.trim() === '' ? null : form.data_validade,
+        colaborador_id: colaboradorId,
+        ...(enviado
+          ? {
+              storage_path: enviado.storage_path,
+              nome_arquivo: enviado.nome_arquivo,
+              tamanho: enviado.tamanho,
+              mime_type: enviado.mime_type,
+            }
+          : {}),
+      });
       setOpen(false);
       resetForm();
-    } catch {
-      // criarDocumento já mostra o toast de erro
+    } catch (e) {
+      setUploading(false);
+      // Arquivo subiu e a linha nao entrou: sem rollback o objeto fica orfao.
+      if (enviado) await removeDocumentFile(BUCKET, enviado.storage_path).catch(() => {});
+      toast.error(safeErrorMessage(e, 'Erro ao salvar documento.'));
     }
   };
 
-  const handleAbrir = (doc: { url: string | null }) => {
-    if (!doc.url) {
-      toast.error('Arquivo não encontrado.');
-      return;
+  const handleAbrir = async (doc: { storage_path?: string | null; url: string | null }) => {
+    try {
+      const url = await resolveDocumentUrl({ storage_path: doc.storage_path, url: doc.url }, BUCKET);
+      if (!url) {
+        toast.error('Arquivo não encontrado.');
+        return;
+      }
+      window.open(safeHref(url), '_blank', 'noopener');
+    } catch (e) {
+      toast.error(safeErrorMessage(e, 'Não foi possível abrir o arquivo.'));
     }
-    window.open(safeHref(doc.url), '_blank', 'noopener');
   };
 
-  const handleExcluir = async (doc: { id: string }) => {
+  const handleExcluir = async (doc: { id: string; storage_path?: string | null }) => {
     if (!confirm('Tem certeza que deseja excluir este documento permanentemente?')) return;
     try {
+      // Arquivo primeiro: Storage recusou, a linha fica — melhor documento
+      // visivel que objeto orfao com PII.
+      if (doc.storage_path) await removeDocumentFile(BUCKET, doc.storage_path);
       await excluirDocumento.mutateAsync(doc.id);
-    } catch {
-      // excluirDocumento já mostra o toast de erro
+    } catch (e) {
+      toast.error(safeErrorMessage(e, 'Erro ao excluir documento.'));
     }
   };
 
@@ -154,11 +200,12 @@ export function DocumentosDigitaisCard({ colaboradorId }: { colaboradorId: strin
               />
             </div>,
             <div key="arquivo" className="space-y-1">
-              <Label>Link do arquivo (opcional)</Label>
-              <Input
-                placeholder="https://..."
-                value={form.url}
-                onChange={(e) => setForm((f) => ({ ...f, url: e.target.value }))}
+              <Label>Arquivo (opcional)</Label>
+              <FileUploadField
+                file={file}
+                onFileChange={setFile}
+                uploading={uploading}
+                disabled={criarDocumento.isPending}
               />
             </div>,
             <div key="observacoes" className="space-y-1">
@@ -234,7 +281,7 @@ export function DocumentosDigitaisCard({ colaboradorId }: { colaboradorId: strin
                     </TableCell>
                     <TableCell className="px-2 py-2.5 text-right">
                       <div className="flex justify-end gap-0.5">
-                        {doc.url && (
+                        {(doc.storage_path || doc.url) && (
                           <Button
                             variant="ghost"
                             size="icon"
