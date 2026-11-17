@@ -11,8 +11,22 @@ vi.mock('framer-motion', () => ({
 import { PontoWeekSummary } from '../ponto/PontoWeekSummary';
 
 const REGISTROS = [
-  { id: 'r1', data: '2025-07-14', horas_trabalhadas: '08:00', horas_extras: '00:30', atraso_minutos: 0 },
-  { id: 'r2', data: '2025-07-15', horas_trabalhadas: '07:45', horas_extras: null, atraso_minutos: 15 },
+  {
+    id: 'r1',
+    data: '2025-07-14',
+    horas_trabalhadas: '08:00',
+    horas_extras: '00:30',
+    atraso_minutos: 0,
+    horas_falta: '00:00:00',
+  },
+  {
+    id: 'r2',
+    data: '2025-07-15',
+    horas_trabalhadas: '07:45',
+    horas_extras: null,
+    atraso_minutos: 15,
+    horas_falta: null,
+  },
 ];
 
 describe('PontoWeekSummary', () => {
@@ -49,9 +63,35 @@ describe('PontoWeekSummary', () => {
       horas_trabalhadas: '08:00',
       horas_extras: null,
       atraso_minutos: 0,
+      horas_falta: null,
     }));
     render(<PontoWeekSummary registrosSemana={many} />);
     const rows = screen.getAllByText('08:00');
     expect(rows.length).toBe(7);
+  });
+});
+
+describe('PontoWeekSummary — débito de horas', () => {
+  it('mostra o débito do dia (`horas_falta`), que antes não aparecia em lugar nenhum', () => {
+    render(
+      <PontoWeekSummary
+        registrosSemana={[
+          {
+            id: 'r3',
+            data: '2025-07-16',
+            horas_trabalhadas: '06:00',
+            horas_extras: null,
+            atraso_minutos: 0,
+            horas_falta: '02:00:00',
+          },
+        ]}
+      />
+    );
+    expect(screen.getByText('-02:00')).toBeInTheDocument();
+  });
+
+  it('não mostra badge de débito quando a falta é zero ou nula', () => {
+    render(<PontoWeekSummary registrosSemana={REGISTROS} />);
+    expect(screen.queryByText('-00:00')).toBeNull();
   });
 });

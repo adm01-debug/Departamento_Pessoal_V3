@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 interface PontoWeekSummaryProps {
   registrosSemana: Pick<
     Tables<'registros_ponto'>,
-    'id' | 'data' | 'horas_trabalhadas' | 'horas_extras' | 'atraso_minutos'
+    'id' | 'data' | 'horas_trabalhadas' | 'horas_extras' | 'atraso_minutos' | 'horas_falta'
   >[];
 }
 
@@ -57,6 +57,14 @@ export function PontoWeekSummary({ registrosSemana }: PontoWeekSummaryProps) {
                     {(r.atraso_minutos ?? 0) > 0 && (
                       <Badge variant="destructive" className="text-[10px] h-5 px-1.5">
                         {r.atraso_minutos}m
+                      </Badge>
+                    )}
+                    {/* `horas_falta` é gravada pelo cálculo do ponto e não
+                        aparecia aqui: um dia com 2h de débito mostrava só as
+                        horas trabalhadas, sem sinal nenhum de que faltou. */}
+                    {r.horas_falta && formatInterval(r.horas_falta) !== '00:00' && (
+                      <Badge variant="destructive" className="text-[10px] h-5 px-1.5">
+                        -{formatInterval(r.horas_falta)}
                       </Badge>
                     )}
                   </div>
