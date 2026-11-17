@@ -108,6 +108,20 @@ export async function criarContatoEmergencia(
   return data;
 }
 
+export async function atualizarContatoEmergencia(
+  id: string,
+  dados: Updatable<'contatos_emergencia'>,
+  colaboradorId: string
+): Promise<void> {
+  validateInput(contatoEmergenciaSchema, dados, 'atualizarContatoEmergencia');
+  const { error } = await supabase
+    .from('contatos_emergencia')
+    .update(validateTablePayload('contatos_emergencia', dados, 'colaboradorDetalhesService:contatos_emergencia'))
+    .eq('id', id)
+    .eq('colaborador_id', colaboradorId);
+  if (error) throw error;
+}
+
 export async function excluirContatoEmergencia(colaboradorId: string, id: string) {
   const { error } = await supabase
     .from('contatos_emergencia')
@@ -207,6 +221,23 @@ export async function excluirFormacao(colaboradorId: string, id: string) {
     .eq('id', id)
     .eq('colaborador_id', colaboradorId);
   if (error) throw error;
+}
+
+export async function atualizarFormacao(
+  colaboradorId: string,
+  id: string,
+  dados: Updatable<'formacoes_academicas'>
+): Promise<Tables<'formacoes_academicas'> | null> {
+  validateInput(formacaoSchema, dados, 'atualizarFormacao');
+  const { data, error } = await supabase
+    .from('formacoes_academicas')
+    .update(validateTablePayload('formacoes_academicas', dados, 'colaboradorDetalhesService:formacoes_academicas'))
+    .eq('id', id)
+    .eq('colaborador_id', colaboradorId)
+    .select()
+    .maybeSingle();
+  if (error) throw error;
+  return data;
 }
 
 // =============================================
@@ -419,6 +450,66 @@ export async function listarIdentidadesGenero(): Promise<Tables<'identidades_gen
   const { data, error } = await supabase.from('identidades_genero').select('*').order('nome');
   if (error) throw error;
   return data || [];
+}
+
+// =============================================
+// Holerites — resumo por colaborador (aba Financeiro do dossiê)
+// =============================================
+/** Linha do holerite já normalizada para a UI: `competencia` vem do join com
+ *  `folhas_pagamento` e `total_liquido` renomeia a coluna `liquido`. */
+export interface HoleriteResumoColaborador {
+  id: string;
+  competencia: string;
+  total_liquido: number;
+  total_proventos: number;
+  total_descontos: number;
+  assinado: boolean | null;
+  created_at: string;
+  colaborador_nome: string;
+  colaborador_cpf: string;
+  colaborador_cargo: string;
+  salario_base: number;
+  valor_inss: number | null;
+  valor_irrf: number | null;
+  valor_fgts: number | null;
+}
+
+// `holerites` não tem `empresa_id`: o isolamento fica na RLS da tabela
+// (policy `holerites_rh_manage`: colaborador_id → colaboradores.empresa_id +
+// pode_gerir_rh; e `holerites_self_read` para o próprio colaborador), mesmo
+// caminho já usado em src/pages/PortalPage.tsx. Não toca a geração do holerite.
+export async function listarHoleritesColaborador(
+  colaboradorId: string,
+  limite: number = 12
+): Promise<HoleriteResumoColaborador[]> {
+  const { data, error } = await supabase
+    .from('holerites')
+    .select(
+      `id, liquido, total_proventos, total_descontos, assinado, created_at,
+       colaborador_nome, colaborador_cpf, colaborador_cargo,
+       salario_base, valor_inss, valor_irrf, valor_fgts,
+       folha:folhas_pagamento!holerites_folha_id_fkey(competencia)`
+    )
+    .eq('colaborador_id', colaboradorId)
+    .order('created_at', { ascending: false })
+    .limit(limite);
+  if (error) throw error;
+  return (data || []).map((h) => ({
+    id: h.id,
+    competencia: h.folha?.competencia ?? '—',
+    total_liquido: h.liquido,
+    total_proventos: h.total_proventos,
+    total_descontos: h.total_descontos,
+    assinado: h.assinado,
+    created_at: h.created_at,
+    colaborador_nome: h.colaborador_nome,
+    colaborador_cpf: h.colaborador_cpf,
+    colaborador_cargo: h.colaborador_cargo,
+    salario_base: h.salario_base,
+    valor_inss: h.valor_inss,
+    valor_irrf: h.valor_irrf,
+    valor_fgts: h.valor_fgts,
+  }));
 }
 
 // Dossiê → Timeline/Próximos Eventos: férias de UM colaborador.

@@ -182,6 +182,7 @@ export function JornadaPontoTab({ colaboradorId }: { colaboradorId: string }) {
         onOpenChange={setEditarJornadaAberto}
         jornada={jornadaColaborador ?? null}
         empresaId={empresaAtual?.id || ''}
+        colaboradorId={colaboradorId}
       />
 
       {isLoadingSemana ? <Spinner /> : <PontoTodayCard registroHoje={registroHoje} />}

@@ -1,18 +1,9 @@
 import { BaseService } from './baseService';
 import { loggerService } from './loggerService';
+import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
 import { mockOr, getMockVinculosPorColaborador, getMockVinculosResumo } from '@/mocks/colaboradoresMock';
 
-export interface VinculoRow {
-  id: string;
-  colaborador_id: string;
-  tipo: string;
-  categoria: string | null;
-  data_inicio: string;
-  data_fim: string | null;
-  matricula: string | null;
-  status: string | null;
-  created_at: string;
-}
+export type VinculoRow = Tables<'vinculos'>;
 
 export interface VinculosResumo {
   quantidadePassagens: number;
@@ -22,8 +13,8 @@ export interface VinculosResumo {
 }
 
 // `vinculos` não tem `empresa_id` própria — o isolamento de tenant é feito
-// pela RLS via join com `colaboradores` (ver policy `vinculos_tenant_all`).
-class VinculoService extends BaseService<VinculoRow, Record<string, unknown>, Record<string, unknown>, false> {
+// pela RLS via join com `colaboradores` (policy `tenant_vinculos`, authenticated/ALL).
+class VinculoService extends BaseService<VinculoRow, Insertable<'vinculos'>, Updatable<'vinculos'>, false> {
   constructor() {
     super('vinculos', { requireEmpresaId: false });
   }

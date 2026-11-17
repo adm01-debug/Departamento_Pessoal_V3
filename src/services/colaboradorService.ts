@@ -5,6 +5,7 @@ import { colaboradorSchema } from '@/schemas/colaborador';
 import { validateInput } from '@/schemas/validate';
 import { supabase } from '@/integrations/supabase/client';
 import { registrarAcessoPII } from './piiAccessLogService';
+import { vinculoService } from './vinculoService';
 
 // Teto da external-db-bridge (MAX_LIMIT em supabase/functions/external-db-bridge/index.ts).
 const MAX_LINHAS_OPCOES_FILTRO = 1000;
@@ -220,6 +221,32 @@ class ColaboradorService extends BaseService<Colaborador> {
     } catch (e) {
       throw this.mapDuplicidadeError(e);
     }
+  }
+
+  /**
+   * Recontratação: reaproveita o MESMO colaborador.id (CPF é UNIQUE por empresa
+   * -- `colaboradores_empresa_cpf_key` -- então não há como criar um segundo
+   * registro para a mesma pessoa). Atualiza o colaborador com os dados
+   * profissionais aprovados no fluxo e registra uma NOVA linha em `vinculos`
+   * (nunca sobrescreve/apaga vínculos anteriores).
+   */
+  async recontratar(
+    id: string,
+    dados: { data_admissao: string; cargo?: string; departamento?: string; salario_base?: number },
+    empresaId: string
+  ): Promise<Colaborador> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    if (!dados.data_admissao) throw new Error('Nova data de admissão é obrigatória para recontratação');
+
+    const atualizado = await this.atualizar(
+      id,
+      { ...dados, status: 'ativo', data_desligamento: null } as Record<string, unknown>,
+      empresaId
+    );
+
+    await vinculoService.criarVinculoInicial(id, dados.data_admissao, 'Readmissão');
+
+    return atualizado;
   }
 
   // Alias for backward compatibility

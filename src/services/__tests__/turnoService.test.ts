@@ -62,6 +62,18 @@ function setupDeleteChain(error: { message: string; code?: string } | null = nul
   return { deleteFn, eqFn };
 }
 
+// select → eq → eq → order → limit → maybeSingle
+function setupSingleChain(data: unknown, error: { message: string; code?: string } | null = null) {
+  const maybeSingle = vi.fn().mockResolvedValue({ data, error });
+  const chain: Record<string, unknown> = {};
+  chain.eq = vi.fn().mockReturnValue(chain);
+  chain.order = vi.fn().mockReturnValue(chain);
+  chain.limit = vi.fn().mockReturnValue({ maybeSingle });
+  const selectFn = vi.fn().mockReturnValue(chain);
+  mockFrom.mockReturnValue({ select: selectFn });
+  return { selectFn, chain, maybeSingle };
+}
+
 // ─── listarTurnos ─────────────────────────────────────────────────────────────
 
 describe('turnoService.listarTurnos', () => {
@@ -255,5 +267,110 @@ describe('turnoService.excluirEscala', () => {
   it('throws on DB error', async () => {
     setupDeleteChain({ message: 'fail' });
     await expect(turnoService.excluirEscala('e1', EMPRESA_ID)).rejects.toBeDefined();
+  });
+});
+
+// ─── buscarEscalaAtual ────────────────────────────────────────────────────────
+
+describe('turnoService.buscarEscalaAtual', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns the most recent escala for the colaborador', async () => {
+    const escala = { id: 'e1', data: '2026-07-24', turno: { nome: 'Manhã' } };
+    setupSingleChain(escala);
+    const result = await turnoService.buscarEscalaAtual('col-1', EMPRESA_ID);
+    expect(result).toEqual(escala);
+  });
+
+  it('filters by colaborador_id and empresa_id', async () => {
+    const { chain } = setupSingleChain(null);
+    await turnoService.buscarEscalaAtual('col-1', EMPRESA_ID);
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+  });
+
+  it('returns null when there is no escala registered', async () => {
+    setupSingleChain(null);
+    const result = await turnoService.buscarEscalaAtual('col-1', EMPRESA_ID);
+    expect(result).toBeNull();
+  });
+
+  it('throws when empresaId is missing', async () => {
+    await expect(turnoService.buscarEscalaAtual('col-1', '')).rejects.toThrow('empresa_id obrigatório');
+  });
+
+  it('throws on DB error', async () => {
+    setupSingleChain(null, { message: 'fail' });
+    await expect(turnoService.buscarEscalaAtual('col-1', EMPRESA_ID)).rejects.toBeDefined();
+  });
+});
+
+// ─── obterEscalaDoDia ─────────────────────────────────────────────────────────
+
+describe('turnoService.obterEscalaDoDia', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns the escala for the colaborador on the given date', async () => {
+    const escala = {
+      id: 'e1',
+      turno_id: 't1',
+      turno: { nome: 'Comercial', horario_inicio: '08:00', horario_fim: '17:00' },
+    };
+    setupSingleChain(escala);
+    const result = await turnoService.obterEscalaDoDia('col-1', EMPRESA_ID, '2026-09-23');
+    expect(result).toEqual(escala);
+  });
+
+  it('filters by colaborador_id, empresa_id and the exact date', async () => {
+    const { chain } = setupSingleChain(null);
+    await turnoService.obterEscalaDoDia('col-1', EMPRESA_ID, '2026-09-23');
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+    expect(chain.eq).toHaveBeenCalledWith('data', '2026-09-23');
+  });
+
+  it('returns null when there is no escala for that date', async () => {
+    setupSingleChain(null);
+    const result = await turnoService.obterEscalaDoDia('col-1', EMPRESA_ID, '2026-09-23');
+    expect(result).toBeNull();
+  });
+
+  it('throws when empresaId is missing', async () => {
+    await expect(turnoService.obterEscalaDoDia('col-1', '', '2026-09-23')).rejects.toThrow('empresa_id obrigatório');
+  });
+
+  it('throws on DB error', async () => {
+    setupSingleChain(null, { message: 'fail' });
+    await expect(turnoService.obterEscalaDoDia('col-1', EMPRESA_ID, '2026-09-23')).rejects.toBeDefined();
+  });
+});
+
+// ─── atualizarEscala ──────────────────────────────────────────────────────────
+
+describe('turnoService.atualizarEscala', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('updates only turno_id and returns the escala', async () => {
+    const updated = { id: 'e1', turno_id: 't2' };
+    const { updateFn, eqFn } = setupUpdateChain(updated);
+    const result = await turnoService.atualizarEscala('e1', { turno_id: 't2' }, EMPRESA_ID);
+    expect(updateFn).toHaveBeenCalledWith({ turno_id: 't2' });
+    expect(eqFn).toHaveBeenCalledWith('id', 'e1');
+    expect(result).toEqual(updated);
+  });
+
+  it('throws when data is null', async () => {
+    setupUpdateChain(null);
+    await expect(turnoService.atualizarEscala('e1', { turno_id: 't2' }, EMPRESA_ID)).rejects.toThrow();
+  });
+
+  it('throws when empresaId is missing', async () => {
+    await expect(turnoService.atualizarEscala('e1', { turno_id: 't2' }, '')).rejects.toThrow('empresa_id obrigatório');
   });
 });

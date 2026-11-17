@@ -58,6 +58,15 @@ export function useCriarContatoEmergencia() {
   });
 }
 
+export function useAtualizarContatoEmergencia(colaboradorId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, dados }: { id: string; dados: Updatable<'contatos_emergencia'> }) =>
+      service.atualizarContatoEmergencia(id, dados, colaboradorId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['contatos-emergencia', colaboradorId] }),
+  });
+}
+
 export function useExcluirContatoEmergencia(colaboradorId: string) {
   const qc = useQueryClient();
   return useMutation({
@@ -116,6 +125,15 @@ export function useCriarFormacao() {
   return useMutation({
     mutationFn: service.criarFormacao,
     onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['formacoes', vars.colaborador_id] }),
+  });
+}
+
+export function useAtualizarFormacao(colaboradorId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, dados }: { id: string; dados: Updatable<'formacoes_academicas'> }) =>
+      service.atualizarFormacao(colaboradorId, id, dados),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['formacoes', colaboradorId] }),
   });
 }
 
@@ -229,6 +247,15 @@ export function useFeriasResumoColaborador(colaboradorId: string, empresaId?: st
   });
 }
 
+// Holerites — dossiê do colaborador
+export function useHoleritesColaborador(colaboradorId: string) {
+  return useQuery({
+    queryKey: ['holerites-colaborador', colaboradorId],
+    queryFn: () => service.listarHoleritesColaborador(colaboradorId),
+    enabled: !!colaboradorId,
+  });
+}
+
 export function usePeriodosAquisitivos(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
@@ -304,5 +331,22 @@ export function useCamposCustomizados(empresaId?: string) {
     queryKey: ['campos-customizados', empresaId],
     queryFn: () => service.listarCamposCustomizados(empresaId!),
     enabled: !!empresaId,
+  });
+}
+
+export function useValoresCamposCustomizados(colaboradorId?: string) {
+  return useQuery({
+    queryKey: ['valores-campos-customizados', colaboradorId],
+    queryFn: () => service.obterValoresCamposCustomizados(colaboradorId!),
+    enabled: !!colaboradorId,
+  });
+}
+
+export function useSalvarValorCampoCustomizado(colaboradorId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ campoId, valor }: { campoId: string; valor: string }) =>
+      service.salvarValorCampoCustomizado(campoId, colaboradorId, valor),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['valores-campos-customizados', colaboradorId] }),
   });
 }
