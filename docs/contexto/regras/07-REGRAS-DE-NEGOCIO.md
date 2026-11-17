@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3c53e8baae` · branch `main` · 2026-11-17 19:13 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ec1a7343a6` · branch `main` · 2026-11-17 19:28 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1535,7 +1535,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `alta` | compara | `src/components/dashboard/analytics/widgets.tsx` |
 | `tipo` | `anual` | escreve | `src/mocks/desempenhoMock.ts` |
 | `tipo` | `aprovacao` | escreve | `src/components/premiacoes/premiacoesComum.ts` |
-| `tipo` | `aso` | escreve | `src/hooks/useProximosEventos.ts` |
+| `tipo` | `aso` | compara, escreve | `src/components/colaborador-detalhes/destinosDossie.ts`<br>`src/hooks/useProximosEventos.ts` |
 | `tipo` | `assinaturas` | compara, escreve | `src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/pages/DashboardExecutivoPage.tsx`<br>`src/pages/DashboardPage.tsx` |
 | `tipo` | `atestado_medico` | compara | `src/pages/FaltasPage.tsx` |
 | `tipo` | `atraso` | compara, escreve | `src/components/ponto/PontoOcorrenciasCard.tsx` |
@@ -1570,7 +1570,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `desistencia` | escreve | `src/components/recrutamento/analyticsComum.ts` |
 | `tipo` | `detalhes` | compara, escreve | `src/components/premiacoes/PagamentosTab.tsx`<br>`src/components/premiacoes/PagamentosTabela.tsx`<br>`src/components/premiacoes/pagamentosComum.ts` |
 | `tipo` | `divergencia_esocial` | escreve | `src/utils/folha/validadorFolha.ts` |
-| `tipo` | `documento` | escreve | `src/hooks/useProximosEventos.ts` |
+| `tipo` | `documento` | compara, escreve | `src/components/colaborador-detalhes/destinosDossie.ts`<br>`src/hooks/useProximosEventos.ts` |
 | `tipo` | `documento_vencendo` | compara, escreve, filtra | `src/hooks/useNotificacoes.ts` |
 | `tipo` | `elogio` | escreve | `src/mocks/colaboradoresMock.ts` |
 | `tipo` | `email` | compara, escreve | `supabase/functions/enviar-email-admissao/index.ts`<br>`supabase/functions/notificacao/index.ts`<br>`supabase/functions/pix-lote/index.ts`<br>`supabase/functions/processar-agendamentos/filaNotificacoes.ts` |
@@ -1580,7 +1580,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `evp` | compara | `supabase/functions/pix-lote/index.ts` |
 | `tipo` | `exame` | escreve | `src/components/dashboard/MorningBriefing.tsx` |
 | `tipo` | `excessive_overtime` | escreve | `src/components/ponto/PontoInconsistencyPanel.tsx` |
-| `tipo` | `experiencia` | escreve | `src/hooks/useProximosEventos.ts`<br>`src/mocks/desempenhoMock.ts` |
+| `tipo` | `experiencia` | compara, escreve | `src/components/colaborador-detalhes/destinosDossie.ts`<br>`src/hooks/useProximosEventos.ts`<br>`src/mocks/desempenhoMock.ts` |
 | `tipo` | `falecimento` | compara | `src/pages/CalculadoraRescisaoPage.tsx` |
 | `tipo` | `falta` | escreve | `src/components/ponto/PontoOcorrenciasCard.tsx` |
 | `tipo` | `falta_informacao` | escreve | `src/utils/folha/validadorFolha.ts` |
@@ -1588,11 +1588,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `feedback` | escreve | `src/mocks/colaboradoresMock.ts` |
 | `tipo` | `ferias` | compara, escreve | `src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/hooks/usePendencias.ts`<br>`src/pages/DashboardExecutivoPage.tsx`<br>`src/pages/DashboardPage.tsx`<br>`src/pages/ProvisoesPage.tsx`<br>… +3 |
 | `tipo` | `ferias_aprovada` | escreve | `src/hooks/useFeriasAprovacao.ts` |
-| `tipo` | `ferias_inicio` | escreve | `src/hooks/useProximosEventos.ts` |
+| `tipo` | `ferias_inicio` | compara, escreve | `src/components/colaborador-detalhes/destinosDossie.ts`<br>`src/hooks/useProximosEventos.ts` |
 | `tipo` | `ferias_proximas` | compara | `supabase/functions/enviar-relatorio/index.ts` |
 | `tipo` | `ferias_rejeitada` | escreve | `src/hooks/useFeriasAprovacao.ts` |
 | `tipo` | `ferias_vencendo` | compara, escreve, filtra | `src/hooks/useNotificacoes.ts` |
-| `tipo` | `ferias_vencimento` | escreve | `src/hooks/useProximosEventos.ts` |
+| `tipo` | `ferias_vencimento` | compara, escreve | `src/components/colaborador-detalhes/destinosDossie.ts`<br>`src/hooks/useProximosEventos.ts` |
 | `tipo` | `fgts` | compara, escreve | `src/pages/ObrigacoesFiscaisPage.tsx` |
 | `tipo` | `fim_contrato` | compara | `src/components/desligamentos/desligamentosDerivacoes.ts`<br>`src/utils/rescisaoCalc.ts`<br>`supabase/functions/calcular-rescisao/motor.ts` |
 | `tipo` | `fixo` | escreve | `src/components/workflows/WorkflowDesigner.tsx` |
@@ -1622,7 +1622,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `meta` | compara, escreve | `src/pages/AvaliacaoPage.tsx` |
 | `tipo` | `moeda` | escreve | `src/components/premiacoes/RewardsSimulator.tsx` |
 | `tipo` | `numero` | compara, escreve | `src/components/colaborador-detalhes/CamposCustomizadosTab.tsx`<br>`src/components/premiacoes/RewardsSimulator.tsx` |
-| `tipo` | `onboarding` | escreve | `src/hooks/useProximosEventos.ts` |
+| `tipo` | `onboarding` | compara, escreve | `src/components/colaborador-detalhes/destinosDossie.ts`<br>`src/hooks/useProximosEventos.ts` |
 | `tipo` | `oportunidade` | escreve | `src/components/avaliacao/nineBoxComum.ts` |
 | `tipo` | `os` | compara, escreve | `src/components/sst/GerarLtcatOsButton.tsx`<br>`supabase/functions/gerar-ltcat-os/index.ts` |
 | `tipo` | `padrao` | escreve | `src/pages/JornadasPage.tsx` |
@@ -1819,6 +1819,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | ImpedimentoCancelamento | motivo_ausente \| motivo_curto | `src/components/avaliacao/statusFeedback.ts` |
 | ImpedimentoReabertura | justificativa_ausente \| justificativa_curta | `src/components/avaliacao/statusFeedback.ts` |
 | MotivoChaveInvalida | operacao_ausente \| operacao_sem_idempotencia \| feedback_ausente \| id_operacao_ausente | `src/components/avaliacao/statusFeedback.ts` |
+| AbaPrincipal | geral \| pessoal \| profissional \| jornada \| financeiro \| documentos \| beneficios \| historico \| timeline | `src/components/colaborador-detalhes/destinosDossie.ts` |
 | ColaboradorViewMode | tabela \| diretorio | `src/components/colaboradores/ColaboradorViewSwitcher.tsx` |
 | MetricTone | primary \| warning \| destructive \| muted \| info \| accent \| success | `src/components/dashboard/MetricCard.tsx` |
 | Tone | primary \| info \| success \| warning \| destructive | `src/components/desligamentos/desligamentosComum.ts` |
@@ -5414,7 +5415,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9133 testes em 709 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9152 testes em 711 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5599,6 +5600,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/ExecucaoFeedback.test.ts` | 14 | resolverDestinoAcao — escolha POR REGISTRO · UUID real usa o serviço real mesmo com serviço demonstrativo disponível · %s usa o serviço demonstrativo · registro demonstrativo sem serviço local fica indisponível (não cai na RPC) … |
 | `src/components/__tests__/OrganogramaToolbar.test.tsx` | 14 | OrganogramaToolbar · destaca  · mantém os ícones e os rótulos das duas ações · dispara as ações de expandir e recolher … |
 | `src/components/__tests__/SidebarFooter.test.tsx` | 14 | SidebarFooter — expanded · renders user initials · renders user name · renders user email … |
+| `src/components/__tests__/destinosDossie.test.ts` | 14 | destinoPendencia · ajuste de ponto vai para Jornada > Ponto · onboarding atrasado vai para Profissional > Desenvolvimento, não Trabalho · ASO vencido fica no dossiê, em Profissional > ASO … |
 | `src/components/__tests__/layout.test.tsx` | 14 | PageHeader · renders title · renders description when provided · does not render description when omitted … |
 | `src/components/__tests__/trilhaReveal.test.ts` | 14 | trilhaReveal — preset do Organograma · reusa curva e deslocamento do Organograma (só o ritmo é local) · usa a calibração local de ritmo (700ms por bloco, 150ms de passo) · o passo é menor que a duração: há SOBREPOSIÇÃO entre os eventos … |
 | `src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx` | 14 | SSTResumoTab · mostra skeleton enquanto qualquer consulta carrega, sem estado vazio · sem nenhum registro mostra o vazio honesto, não conformidade · consulta ainda não resolvida (hook desabilitado) não vira  … |
@@ -5717,8 +5719,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/tabelas/__tests__/pontoService.test.ts` | 10 | ajustesPontoService · listar queries ajustes_ponto · listar returns [] when data is null · criar calls insert on ajustes_ponto … |
 | `src/test/securityHeadersParity.test.ts` | 10 | paridade de security headers vercel.json x nginx.conf · nginx.conf serve exatamente os headers globais do vercel.json · vercel.json aplica os headers em produção · não usa  … |
 | `src/utils/__tests__/avisoFeriasPDF.test.ts` | 10 | gerarAvisoFeriasPDF · returns a Blob · returns a Uint8Array bytes · returns a sha256 hash string … |
-| `src/utils/__tests__/calculoFerias.test.ts` | 10 | calculoFerias · deve calcular férias simples (30 dias) sem abono · deve calcular férias com abono pecuniário (20 dias férias + 10 dias abono) · deve limitar o abono pecuniário a no máximo 10 dias … |
-| … +409 linhas — lista completa em `context.json` | | |
+| … +411 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

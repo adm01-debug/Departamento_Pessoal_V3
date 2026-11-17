@@ -2438,11 +2438,12 @@
     "usePontoMelhorado"
    ],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_arquivos": [
+    "src/components/colaborador-detalhes/destinosDossie.ts",
     "src/pages/ColaboradorDetalhesPage.tsx"
    ],
-   "coberto_por_testes": 1
+   "coberto_por_testes": 2
   },
   {
    "arquivo": "src/hooks/usePeriodosAquisitivos.ts",
@@ -2630,8 +2631,9 @@
     "usePeriodosAquisitivos"
    ],
    "canais_realtime": [],
-   "usado_por": 4,
+   "usado_por": 5,
    "usado_por_arquivos": [
+    "src/components/colaborador-detalhes/ProximosEventosDialog.tsx",
     "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx",
     "src/components/colaborador-detalhes/historico/HistorySidebar.tsx",
     "src/components/colaborador-detalhes/historico/UpcomingEvents.tsx",

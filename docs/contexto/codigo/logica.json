@@ -5054,7 +5054,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 57,
+   "usado_por": 58,
    "usado_por_modulos": [
     "components/admissoes",
     "components/colaborador-detalhes",

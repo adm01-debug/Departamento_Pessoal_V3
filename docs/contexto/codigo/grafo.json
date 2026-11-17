@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1289,
- "arestas": 6335,
+ "nos": 1291,
+ "arestas": 6342,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -22,7 +22,7 @@
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 219
+   "importado_por": 220
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -86,7 +86,7 @@
   },
   {
    "arquivo": "src/utils/dateLocal.ts",
-   "importado_por": 64
+   "importado_por": 65
   },
   {
    "arquivo": "supabase/functions/_shared/csrf.ts",

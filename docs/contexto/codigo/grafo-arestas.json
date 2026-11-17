@@ -1339,6 +1339,11 @@
    "src/components/ui/animated-cascade-dialog.tsx",
    "src/components/ui/badge.tsx"
   ],
+  "src/components/colaborador-detalhes/ProximosEventosDialog.tsx": [
+   "src/components/ui/animated-cascade-dialog.tsx",
+   "src/components/ui/badge.tsx",
+   "src/hooks/useProximosEventos.ts"
+  ],
   "src/components/colaborador-detalhes/SSTResumoTab.tsx": [
    "src/components/colaborador-detalhes/FalhaConsulta.tsx",
    "src/components/ui/badge.tsx",
@@ -1410,6 +1415,9 @@
    "src/mocks/colaboradoresMock.ts",
    "src/services/index.ts",
    "src/utils/format.ts"
+  ],
+  "src/components/colaborador-detalhes/destinosDossie.ts": [
+   "src/hooks/usePendenciasColaborador.ts"
   ],
   "src/components/colaborador-detalhes/documentos/AnotacoesInternasCard.tsx": [
    "src/components/colaborador-detalhes/FalhaConsulta.tsx",
@@ -5596,6 +5604,8 @@
   "src/pages/ColaboradorDetalhesPage.tsx": [
    "src/components/PageTitle.tsx",
    "src/components/colaborador-detalhes/PendenciasDialog.tsx",
+   "src/components/colaborador-detalhes/ProximosEventosDialog.tsx",
+   "src/components/colaborador-detalhes/destinosDossie.ts",
    "src/components/colaborador-detalhes/index.ts",
    "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
    "src/components/layout/index.ts",
@@ -5611,7 +5621,8 @@
    "src/hooks/usePendenciasColaborador.ts",
    "src/hooks/usePiiMask.ts",
    "src/hooks/useProximosEventos.ts",
-   "src/services/index.ts"
+   "src/services/index.ts",
+   "src/utils/dateLocal.ts"
   ],
   "src/pages/ColaboradorFormPage.tsx": [
    "src/components/PageTitle.tsx",

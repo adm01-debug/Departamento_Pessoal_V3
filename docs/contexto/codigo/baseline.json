@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3c53e8baae52d69c4e0eca59f2a24547d207ea8a",
+  "commit": "ec1a7343a61e82340c69bd6a889007685d5c922d",
   "branch": "main",
-  "data_commit": "2026-11-17T16:11:30-03:00",
+  "data_commit": "2026-11-17T16:26:43-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "ec1a734",
+    "data": "2026-11-17",
+    "assunto": "fix(colaborador): \"Próximos Eventos\" lê o dado real e os atalhos levam ao lugar certo (#641)"
+   },
    {
     "sha": "3c53e8b",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "d15194a",
     "data": "2026-11-17",
     "assunto": "fix(docs): redige o user_id, o e-mail e o primeiro nome de pessoa que o #599 deixou passar (#615)"
-   },
-   {
-    "sha": "d63d655",
-    "data": "2026-11-17",
-    "assunto": "feat: resgata da muri o dossiê do colaborador — holerites, SST, campos personalizados e recontratação (#613)"
    }
   ],
-  "arquivos_mudados_7d": 1133,
+  "arquivos_mudados_7d": 1081,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 354
+    "mudancas": 356
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -157,7 +157,7 @@
    },
    {
     "pasta": "src/components/colaborador-detalhes",
-    "mudancas": 73
+    "mudancas": 75
    },
    {
     "pasta": "src/components/treinamentos",
@@ -198,12 +198,12 @@
   ],
   "arquivos_mais_mudados_90d": [
    {
-    "arquivo": ".github/workflows/canonical-migrations.yml",
+    "arquivo": "inventario/estado/rotas.json",
     "mudancas": 21
    },
    {
-    "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 21
+    "arquivo": ".github/workflows/canonical-migrations.yml",
+    "mudancas": 20
    },
    {
     "arquivo": "package.json",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 11
+    "mudancas": 10
    },
    {
     "arquivo": "scripts/sync/autocommit-local.sh",
@@ -230,15 +230,11 @@
     "mudancas": 8
    },
    {
-    "arquivo": "supabase/functions/calcular-folha/index.ts",
+    "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
     "mudancas": 8
    },
    {
     "arquivo": "AGENTS.md",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "deno.lock",
     "mudancas": 7
    },
    {
@@ -250,15 +246,19 @@
     "mudancas": 7
    },
    {
-    "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
-    "mudancas": 7
-   },
-   {
     "arquivo": "src/pages/ColaboradoresPage.tsx",
     "mudancas": 7
    },
    {
+    "arquivo": "supabase/functions/calcular-folha/index.ts",
+    "mudancas": 7
+   },
+   {
     "arquivo": "CLAUDE.md",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "deno.lock",
     "mudancas": 6
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 257
+    "commits": 258
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 27
+    "commits": 26
    },
    {
     "autor": "dependabot[bot]",
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3513,
-  "arquivos_codigo": 2039,
-  "linhas_codigo": 404008,
+  "arquivos_total": 3517,
+  "arquivos_codigo": 2043,
+  "linhas_codigo": 404379,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
-  "componentes": 627,
+  "componentes": 628,
   "hooks": 116,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 857,
   "cron_jobs": 41,
-  "testes": 752,
+  "testes": 754,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 956,
-   "linhas": 172555
+   "arquivos": 960,
+   "linhas": 172844
   },
   "src/constants": {
    "arquivos": 7,
@@ -676,7 +676,7 @@
   },
   "src/pages": {
    "arquivos": 134,
-   "linhas": 49314
+   "linhas": 49396
   },
   "src/providers": {
    "arquivos": 4,

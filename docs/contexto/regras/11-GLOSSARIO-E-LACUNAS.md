@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3c53e8baae` · branch `main` · 2026-11-17 19:13 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ec1a7343a6` · branch `main` · 2026-11-17 19:28 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
 | `pcs_grades` | Transactionally generated salary ranges for a PCS plan. | 11 colunas | migration |
 | `pcs_pesquisa_salarial` | Tenant-scoped external salary benchmark observations. | 14 colunas | migration |
-| … +385 linhas — lista completa em `context.json` | | | |
+| … +386 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -399,7 +399,6 @@
 | status | valor `processed_v2` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/webhook/index.ts` |
 | status | valor `Etapa` para `etapa` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/desligamentos/trilhaDerivacoes.ts` |
 | status | valor `outras` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/recrutamento/PipelineBoard.tsx`<br>`compara:src/components/recrutamento/vagasComum.ts` |
-| status | valor `financeiro` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/rescisaoService.ts` |
 | status | valor `juridico` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/rescisaoService.ts` |
 | status | valor `animando` para `fase` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/desligamentos/TurnoverChart.tsx`<br>`escreve:src/components/avaliacao/PerformanceAuditTimeline.tsx` |
 | status | valor `recolhido` para `fase` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/PerformanceAuditTimeline.tsx` |
@@ -646,7 +645,8 @@
 | segurança | função `trg_medida_esocial_on_aplicada` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `update_extintor_status_vencimento` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `user_empresa_id` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +35 linhas — lista completa em `context.json` | | |
+| segurança | função `validar_contrato_clt` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| … +34 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 

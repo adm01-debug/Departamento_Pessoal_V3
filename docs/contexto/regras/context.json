@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3c53e8baae52d69c4e0eca59f2a24547d207ea8a",
+  "sha": "ec1a7343a61e82340c69bd6a889007685d5c922d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 19:13 UTC",
-  "files_total": 3534,
-  "code_files": 2960,
-  "code_lines": 468974
+  "generated_at": "2026-11-17 19:28 UTC",
+  "files_total": 3538,
+  "code_files": 2964,
+  "code_lines": 469345
  },
  "version": "1.3.2",
- "facts_hash": "39cb987832b06231",
+ "facts_hash": "8323f102eeebcd8a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,9 +384,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 984,
+   ".tsx": 986,
+   ".ts": 924,
    ".sql": 923,
-   ".ts": 922,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -89120,7 +89120,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 287
+    "deps_count": 289
    },
    {
     "path": "",
@@ -99968,7 +99968,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 956,
+  "components_count": 960,
   "hooks": [
    {
     "name": "useContacts",
@@ -101555,8 +101555,8 @@
   },
   {
    "module": "src/components",
-   "files": 956,
-   "lines": 172555,
+   "files": 960,
+   "lines": 172844,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102245,7 +102245,7 @@
   {
    "module": "src/pages",
    "files": 134,
-   "lines": 49314,
+   "lines": 49396,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -112666,6 +112666,11 @@
     "file": "src/components/avaliacao/statusFeedback.ts",
     "name": "MotivoChaveInvalida",
     "values": "operacao_ausente | operacao_sem_idempotencia | feedback_ausente | id_operacao_ausente"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/destinosDossie.ts",
+    "name": "AbaPrincipal",
+    "values": "geral | pessoal | profissional | jornada | financeiro | documentos | beneficios | historico | timeline"
    },
    {
     "file": "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
@@ -149043,6 +149048,42 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/colaborador-detalhes/destinosDossie.ts",
+    "field": "tipo",
+    "value": "aso",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/destinosDossie.ts",
+    "field": "tipo",
+    "value": "ferias_vencimento",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/destinosDossie.ts",
+    "field": "tipo",
+    "value": "ferias_inicio",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/destinosDossie.ts",
+    "field": "tipo",
+    "value": "onboarding",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/destinosDossie.ts",
+    "field": "tipo",
+    "value": "documento",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/destinosDossie.ts",
+    "field": "tipo",
+    "value": "experiencia",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/colaborador-detalhes/desenvolvimento/TreinamentosCard.tsx",
     "field": "status",
     "value": "inscrito",
@@ -176897,6 +176938,26 @@
     "name": "fail-open: libera acesso se a consulta de AAL falhar"
    },
    {
+    "file": "src/components/__tests__/ProximosEventosDialog.test.tsx",
+    "name": "ProximosEventosDialog"
+   },
+   {
+    "file": "src/components/__tests__/ProximosEventosDialog.test.tsx",
+    "name": "mostra título, categoria, data, quando e contexto"
+   },
+   {
+    "file": "src/components/__tests__/ProximosEventosDialog.test.tsx",
+    "name": "mostra o badge que vem do hook, não um fixo"
+   },
+   {
+    "file": "src/components/__tests__/ProximosEventosDialog.test.tsx",
+    "name": "sem quandoLabel não deixa um separador solto"
+   },
+   {
+    "file": "src/components/__tests__/ProximosEventosDialog.test.tsx",
+    "name": "sem evento mostra a mensagem de vazio"
+   },
+   {
     "file": "src/components/__tests__/QuickActionsGrid.test.tsx",
     "name": "QuickActionsGrid"
    },
@@ -178479,6 +178540,62 @@
    {
     "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
     "name": "sem data de desligamento não há prazo inventado"
+   },
+   {
+    "file": "src/components/__tests__/destinosDossie.test.ts",
+    "name": "destinoPendencia"
+   },
+   {
+    "file": "src/components/__tests__/destinosDossie.test.ts",
+    "name": "ajuste de ponto vai para Jornada > Ponto"
+   },
+   {
+    "file": "src/components/__tests__/destinosDossie.test.ts",
+    "name": "onboarding atrasado vai para Profissional > Desenvolvimento, não Trabalho"
+   },
+   {
+    "file": "src/components/__tests__/destinosDossie.test.ts",
+    "name": "ASO vencido fica no dossiê, em Profissional > ASO"
+   },
+   {
+    "file": "src/components/__tests__/destinosDossie.test.ts",
+    "name": "documento vencido vai para Documentos > Documentos Pessoais, NÃO para a aba Pessoal"
+   },
+   {
+    "file": "src/components/__tests__/destinosDossie.test.ts",
+    "name": "toda chave de pendência tem destino com sub-aba"
+   },
+   {
+    "file": "src/components/__tests__/destinosDossie.test.ts",
+    "name": "destinoEvento"
+   },
+   {
+    "file": "src/components/__tests__/destinosDossie.test.ts",
+    "name": "as duas variantes de férias vão para Jornada > Férias, não Ponto"
+   },
+   {
+    "file": "src/components/__tests__/destinosDossie.test.ts",
+    "name": "ASO vai para Profissional > ASO"
+   },
+   {
+    "file": "src/components/__tests__/destinosDossie.test.ts",
+    "name": "onboarding vai para Profissional > Desenvolvimento"
+   },
+   {
+    "file": "src/components/__tests__/destinosDossie.test.ts",
+    "name": "documento vai para Documentos > Documentos Pessoais"
+   },
+   {
+    "file": "src/components/__tests__/destinosDossie.test.ts",
+    "name": "fim de experiência vai para Profissional > Experiência"
+   },
+   {
+    "file": "src/components/__tests__/destinosDossie.test.ts",
+    "name": "cobre os 6 tipos emitidos pelo hook, sem cair no padrão"
+   },
+   {
+    "file": "src/components/__tests__/destinosDossie.test.ts",
+    "name": "tipo desconhecido não quebra nem manda para lugar aleatório"
    },
    {
     "file": "src/components/__tests__/forms.test.tsx",
@@ -228679,6 +228796,31 @@
       "escreve:src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
       "escreve:src/mocks/colaboradoresMock.ts"
      ],
+     "aso": [
+      "compara:src/components/colaborador-detalhes/destinosDossie.ts",
+      "escreve:src/hooks/useProximosEventos.ts"
+     ],
+     "ferias_vencimento": [
+      "compara:src/components/colaborador-detalhes/destinosDossie.ts",
+      "escreve:src/hooks/useProximosEventos.ts"
+     ],
+     "ferias_inicio": [
+      "compara:src/components/colaborador-detalhes/destinosDossie.ts",
+      "escreve:src/hooks/useProximosEventos.ts"
+     ],
+     "onboarding": [
+      "compara:src/components/colaborador-detalhes/destinosDossie.ts",
+      "escreve:src/hooks/useProximosEventos.ts"
+     ],
+     "documento": [
+      "compara:src/components/colaborador-detalhes/destinosDossie.ts",
+      "escreve:src/hooks/useProximosEventos.ts"
+     ],
+     "experiencia": [
+      "compara:src/components/colaborador-detalhes/destinosDossie.ts",
+      "escreve:src/hooks/useProximosEventos.ts",
+      "escreve:src/mocks/desempenhoMock.ts"
+     ],
      "ponto": [
       "compara:src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
       "compara:supabase/functions/relatorio/index.ts",
@@ -229003,25 +229145,6 @@
       "compara:src/hooks/useNotificacoes.ts",
       "escreve:src/hooks/useNotificacoes.ts",
       "filtra:src/hooks/useNotificacoes.ts"
-     ],
-     "experiencia": [
-      "escreve:src/hooks/useProximosEventos.ts",
-      "escreve:src/mocks/desempenhoMock.ts"
-     ],
-     "ferias_vencimento": [
-      "escreve:src/hooks/useProximosEventos.ts"
-     ],
-     "ferias_inicio": [
-      "escreve:src/hooks/useProximosEventos.ts"
-     ],
-     "aso": [
-      "escreve:src/hooks/useProximosEventos.ts"
-     ],
-     "documento": [
-      "escreve:src/hooks/useProximosEventos.ts"
-     ],
-     "onboarding": [
-      "escreve:src/hooks/useProximosEventos.ts"
      ],
      "Admissional": [
       "escreve:src/mocks/colaboradoresMock.ts"
@@ -254862,13 +254985,6 @@
    },
    {
     "kind": "status",
-    "msg": "valor `financeiro` para `etapa` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/services/rescisaoService.ts"
-    ]
-   },
-   {
-    "kind": "status",
     "msg": "valor `juridico` para `etapa` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/services/rescisaoService.ts"
@@ -268021,6 +268137,18 @@
     "fail-open: libera acesso se a consulta de AAL falhar"
    ]
   },
+  "src/components/__tests__/ProximosEventosDialog.test.tsx": {
+   "path": "src/components/__tests__/ProximosEventosDialog.test.tsx",
+   "lines": 61,
+   "is_test": true,
+   "tests": [
+    "ProximosEventosDialog",
+    "mostra título, categoria, data, quando e contexto",
+    "mostra o badge que vem do hook, não um fixo",
+    "sem quandoLabel não deixa um separador solto",
+    "sem evento mostra a mensagem de vazio"
+   ]
+  },
   "src/components/__tests__/QuickActionsGrid.test.tsx": {
    "path": "src/components/__tests__/QuickActionsGrid.test.tsx",
    "lines": 103,
@@ -268707,6 +268835,27 @@
     "prazo do art. 477 §6º",
     "são 10 dias após a data do desligamento",
     "sem data de desligamento não há prazo inventado"
+   ]
+  },
+  "src/components/__tests__/destinosDossie.test.ts": {
+   "path": "src/components/__tests__/destinosDossie.test.ts",
+   "lines": 91,
+   "is_test": true,
+   "tests": [
+    "destinoPendencia",
+    "ajuste de ponto vai para Jornada > Ponto",
+    "onboarding atrasado vai para Profissional > Desenvolvimento, não Trabalho",
+    "ASO vencido fica no dossiê, em Profissional > ASO",
+    "documento vencido vai para Documentos > Documentos Pessoais, NÃO para a aba Pessoal",
+    "toda chave de pendência tem destino com sub-aba",
+    "destinoEvento",
+    "as duas variantes de férias vão para Jornada > Férias, não Ponto",
+    "ASO vai para Profissional > ASO",
+    "onboarding vai para Profissional > Desenvolvimento",
+    "documento vai para Documentos > Documentos Pessoais",
+    "fim de experiência vai para Profissional > Experiência",
+    "cobre os 6 tipos emitidos pelo hook, sem cair no padrão",
+    "tipo desconhecido não quebra nem manda para lugar aleatório"
    ]
   },
   "src/components/__tests__/forms.test.tsx": {
@@ -273687,6 +273836,14 @@
     "function PendenciasDialog"
    ]
   },
+  "src/components/colaborador-detalhes/ProximosEventosDialog.tsx": {
+   "path": "src/components/colaborador-detalhes/ProximosEventosDialog.tsx",
+   "lines": 62,
+   "exports": [
+    "interface EventoDetalhado",
+    "function ProximosEventosDialog"
+   ]
+  },
   "src/components/colaborador-detalhes/SSTResumoTab.tsx": {
    "path": "src/components/colaborador-detalhes/SSTResumoTab.tsx",
    "lines": 240,
@@ -273716,6 +273873,54 @@
    ],
    "percents": [
     "transition: { delay: i * 0.18, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const },"
+   ]
+  },
+  "src/components/colaborador-detalhes/destinosDossie.ts": {
+   "path": "src/components/colaborador-detalhes/destinosDossie.ts",
+   "lines": 75,
+   "exports": [
+    "type AbaPrincipal",
+    "interface DestinoDossie",
+    "function destinoPendencia",
+    "function destinoEvento"
+   ],
+   "enums": [
+    {
+     "name": "AbaPrincipal",
+     "values": "geral | pessoal | profissional | jornada | financeiro | documentos | beneficios | historico | timeline"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "aso",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "ferias_vencimento",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "ferias_inicio",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "onboarding",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "documento",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "experiencia",
+     "kind": "compara"
+    }
    ]
   },
   "src/components/colaborador-detalhes/index.ts": {
@@ -293892,13 +294097,12 @@
   },
   "src/pages/ColaboradorDetalhesPage.tsx": {
    "path": "src/pages/ColaboradorDetalhesPage.tsx",
-   "lines": 656,
+   "lines": 738,
    "exports": [
     "function ColaboradorDetalhesPage"
    ],
    "navigates": [
-    "/colaboradores/editar/",
-    "/sst"
+    "/colaboradores/editar/"
    ],
    "status_values": [
     {
@@ -324486,10 +324690,23 @@
   }
  },
  "git": {
-  "sha": "3c53e8baae52d69c4e0eca59f2a24547d207ea8a",
+  "sha": "ec1a7343a61e82340c69bd6a889007685d5c922d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "ec1a734",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix(colaborador): \"Próximos Eventos\" lê o dado real e os atalhos levam ao lugar certo (#641)",
+    "files": [
+     "src/components/__tests__/ProximosEventosDialog.test.tsx",
+     "src/components/__tests__/destinosDossie.test.ts",
+     "src/components/colaborador-detalhes/ProximosEventosDialog.tsx",
+     "src/components/colaborador-detalhes/destinosDossie.ts",
+     "src/pages/ColaboradorDetalhesPage.tsx"
+    ]
+   },
    {
     "sha": "3c53e8b",
     "date": "2026-11-17",
@@ -325054,57 +325271,31 @@
      "src/pages/__tests__/OnboardingParidade.test.tsx",
      "src/services/onboardingJornadaService.ts"
     ]
-   },
-   {
-    "sha": "fe455b9",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "feat(admissoes): resgata o núcleo de Admissões da branch muri preservando as 3 correções da main (#608)",
-    "files": [
-     "inventario/estado/rotas.json",
-     "scripts/.bundle-budget.json",
-     "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
-     "src/components/__tests__/NovaAdmissaoDialog.test.tsx",
-     "src/components/admissoes/AdmissoesDashboard.tsx",
-     "src/components/admissoes/AdmissoesKanban.tsx",
-     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-     "src/components/admissoes/GestaoCandidatos.tsx",
-     "src/components/admissoes/KanbanCard.tsx",
-     "src/components/admissoes/KanbanColumn.tsx",
-     "src/components/admissoes/NovaAdmissaoDialog.tsx",
-     "src/components/admissoes/admissoesDashboardModais.tsx",
-     "src/components/admissoes/kanbanComum.ts",
-     "src/components/kanban/__tests__/entradaKanban.test.ts",
-     "src/components/kanban/entradaKanban.ts",
-     "src/hooks/useAdmissaoWorkflow.ts",
-     "src/index.css",
-     "src/pages/AdmissoesPage.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    14
+    13
    ],
    [
     "inventario/estado/rotas.json",
-    9
+    8
    ],
    [
     "src/pages/ColaboradoresPage.tsx",
     5
    ],
    [
+    "src/pages/ColaboradorDetalhesPage.tsx",
+    3
+   ],
+   [
     "src/index.css",
-    4
+    3
    ],
    [
     "src/components/colaboradores/ColaboradorFilters.tsx",
-    2
-   ],
-   [
-    "src/pages/ColaboradorDetalhesPage.tsx",
     2
    ],
    [
@@ -325136,12 +325327,20 @@
     2
    ],
    [
-    "src/components/admissoes/AdmissoesDashboard.tsx",
-    2
+    "src/components/__tests__/ProximosEventosDialog.test.tsx",
+    1
    ],
    [
-    "src/pages/AdmissoesPage.tsx",
-    2
+    "src/components/__tests__/destinosDossie.test.ts",
+    1
+   ],
+   [
+    "src/components/colaborador-detalhes/ProximosEventosDialog.tsx",
+    1
+   ],
+   [
+    "src/components/colaborador-detalhes/destinosDossie.ts",
+    1
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -325153,14 +325352,6 @@
    ],
    [
     "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
-    1
-   ],
-   [
-    "src/components/colaboradores/ColaboradorActiveFilterChips.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/PendenciasDialog.test.tsx",
     1
    ]
   ]
