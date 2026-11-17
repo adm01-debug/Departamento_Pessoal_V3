@@ -1574,9 +1574,10 @@
     "ContasBancariasTab"
    ],
    "export_default": null,
-   "linhas": 214,
+   "linhas": 256,
    "dominio": "components/colaborador-detalhes",
    "hooks_locais": [
+    "useAtualizarContaBancaria",
     "useContasBancarias",
     "useCriarContaBancaria",
     "useExcluirContaBancaria",

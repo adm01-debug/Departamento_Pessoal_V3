@@ -1092,13 +1092,13 @@
   {
    "arquivo": "src/components/__tests__/ContasBancariasTab.test.tsx",
    "tipo": "unit",
-   "linhas": 110,
+   "linhas": 193,
    "testa": [
     "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
     "src/hooks/useTabelasReferencia.ts",
     "src/utils/piiMask.ts"
    ],
-   "casos": 8
+   "casos": 12
   },
   {
    "arquivo": "src/components/__tests__/ContratosAssinaturaKPICard.test.tsx",

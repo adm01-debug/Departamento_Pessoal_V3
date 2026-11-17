@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(colaborador): editar conta bancária, com o dado real só para quem pode vê-lo (#659)",
    "feat(ponto): mostra o débito de horas do dia no card &quot;Últimos 7 dias&quot; (#660)",
    "test(premiacoes): resgata da muri os 29 testes das regras de pagamento e auditoria (#658)",
    "feat(ui): calendário pt-BR com navegação por mês/ano em todo campo de data (#657)",
-   "feat(permissões): controle de acesso por funcionalidade, lendo a matriz do banco (#651)",
-   "feat(colaborador): resumo financeiro no dossiê, com CPF mascarado no PDF (#655)"
+   "feat(permissões): controle de acesso por funcionalidade, lendo a matriz do banco (#651)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

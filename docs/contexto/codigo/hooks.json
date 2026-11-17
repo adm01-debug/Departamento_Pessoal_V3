@@ -2965,7 +2965,7 @@
     "useTiposVisto",
     "useVincularDependenteBeneficio"
    ],
-   "linhas": 271,
+   "linhas": 276,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],

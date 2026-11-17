@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "40b2c41603132356e4bcbcefe7d566e546ae3646",
+  "commit": "c234912b7d03c99b87bcb0f343500ad60e073b62",
   "branch": "main",
-  "data_commit": "2026-11-17T19:38:23-03:00",
+  "data_commit": "2026-11-17T19:54:22-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "c234912",
+    "data": "2026-11-17",
+    "assunto": "feat(colaborador): editar conta bancária, com o dado real só para quem pode vê-lo (#659)"
+   },
    {
     "sha": "40b2c41",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "a588982",
     "data": "2026-11-17",
     "assunto": "fix(colaboradores): liga o selo de recontratacao, que estava invisivel (#635)"
-   },
-   {
-    "sha": "fabf6c7",
-    "data": "2026-11-17",
-    "assunto": "test: resgata da muri os 5 testes que a main não tinha e passam como está (#630)"
    }
   ],
-  "arquivos_mudados_7d": 1091,
+  "arquivos_mudados_7d": 1093,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 369
+    "mudancas": 370
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -157,7 +157,7 @@
    },
    {
     "pasta": "src/components/colaborador-detalhes",
-    "mudancas": 83
+    "mudancas": 84
    },
    {
     "pasta": "src/components/treinamentos",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 275
+    "commits": 276
    },
    {
     "autor": "dependabot[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 9
+    "commits": 8
    },
    {
     "autor": "github-actions[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3550,
   "arquivos_codigo": 2064,
-  "linhas_codigo": 408342,
+  "linhas_codigo": 408472,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -648,7 +648,7 @@
   },
   "src/components": {
    "arquivos": 970,
-   "linhas": 175462
+   "linhas": 175587
   },
   "src/constants": {
    "arquivos": 7,
@@ -664,7 +664,7 @@
   },
   "src/hooks": {
    "arquivos": 201,
-   "linhas": 23488
+   "linhas": 23493
   },
   "src/i18n": {
    "arquivos": 2,
