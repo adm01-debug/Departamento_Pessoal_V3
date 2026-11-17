@@ -7,7 +7,7 @@
     "itens_de_menu": 91,
     "urls_admin": 23,
     "urls_publicas": 7,
-    "hooks_distintos": 148,
+    "hooks_distintos": 149,
     "problemas": 0
   },
   "urls": [
@@ -4694,7 +4694,7 @@
       "componente": "ColaboradorDetalhesPage",
       "urls": ["/colaboradores/:id"],
       "menu": [],
-      "arquivos_lidos": 197,
+      "arquivos_lidos": 201,
       "hooks": [
         {
           "nome": "useAfastamentosRecentes",
@@ -4911,6 +4911,10 @@
         {
           "nome": "usePDFExport",
           "arquivo": "src/hooks/usePDFExport.ts"
+        },
+        {
+          "nome": "usePendenciasColaborador",
+          "arquivo": "src/hooks/usePendenciasColaborador.ts"
         },
         {
           "nome": "usePeriodoExperiencia",
@@ -5227,7 +5231,7 @@
           "rotulo": "Colaboradores"
         }
       ],
-      "arquivos_lidos": 25,
+      "arquivos_lidos": 32,
       "hooks": [
         {
           "nome": "useAuth",
@@ -5256,6 +5260,10 @@
         {
           "nome": "usePiiMask",
           "arquivo": "src/hooks/usePiiMask.ts"
+        },
+        {
+          "nome": "useVinculosResumo",
+          "arquivo": "src/hooks/useVinculos.ts"
         }
       ],
       "buckets": [],
@@ -7116,7 +7124,7 @@
           "rotulo": "Dashboard"
         }
       ],
-      "arquivos_lidos": 47,
+      "arquivos_lidos": 49,
       "hooks": [
         {
           "nome": "useAuth",
@@ -7124,6 +7132,10 @@
         },
         {
           "nome": "useEmpresas",
+          "arquivo": "src/hooks/useEmpresas.ts"
+        },
+        {
+          "nome": "useEmpresaStore",
           "arquivo": "src/hooks/useEmpresas.ts"
         },
         {
@@ -7145,6 +7157,10 @@
         {
           "nome": "useRealTimeSubscription",
           "arquivo": "src/hooks/useRealTimeSubscription.ts"
+        },
+        {
+          "nome": "useSystemHealth",
+          "arquivo": "src/hooks/useSystemHealth.ts"
         },
         {
           "nome": "useSystemHealthHistory",
@@ -18662,7 +18678,7 @@
     },
     "useEmpresaStore": {
       "arquivo": "src/hooks/useEmpresas.ts",
-      "telas": ["src/pages/ConfiguracoesPage.tsx"]
+      "telas": ["src/pages/ConfiguracoesPage.tsx", "src/pages/DashboardPage.tsx"]
     },
     "useEmpresas": {
       "arquivo": "src/hooks/useEmpresas.ts",
@@ -19276,6 +19292,10 @@
       "arquivo": "src/hooks/usePendencias.ts",
       "telas": ["src/pages/DashboardExecutivoPage.tsx", "src/pages/DashboardPage.tsx"]
     },
+    "usePendenciasColaborador": {
+      "arquivo": "src/hooks/usePendenciasColaborador.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
+    },
     "usePeriodoExperiencia": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
       "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
@@ -19486,6 +19506,7 @@
         "src/pages/ControleAcessoPage.tsx",
         "src/pages/ConveniosPage.tsx",
         "src/pages/DashboardExecutivoPage.tsx",
+        "src/pages/DashboardPage.tsx",
         "src/pages/DescontosPage.tsx",
         "src/pages/DesligamentosPage.tsx",
         "src/pages/DespesasPage.tsx",
@@ -19581,7 +19602,7 @@
     },
     "useVinculosResumo": {
       "arquivo": "src/hooks/useVinculos.ts",
-      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx", "src/pages/ColaboradoresPage.tsx"]
     }
   },
   "rotas_sem_item_de_menu": {
