@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "308430455615e4a48036d4371f099af86684e7fd",
+  "sha": "65e05a390f161904f4c8dfc27d291e9dd8c675f0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 20:11 UTC",
+  "generated_at": "2026-11-17 20:35 UTC",
   "files_total": 3543,
   "code_files": 2969,
-  "code_lines": 469898
+  "code_lines": 469904
  },
  "version": "1.3.2",
- "facts_hash": "9acc91b56e466b2d",
+ "facts_hash": "5a925bf2ca3f1450",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -103505,7 +103505,7 @@
   {
    "module": "supabase/migrations",
    "files": 861,
-   "lines": 78465,
+   "lines": 78471,
    "tables": [
     "profiles",
     "user_roles"
@@ -324457,7 +324457,7 @@
   },
   "supabase/migrations/20261117190000_permissions_matriz_seed.verify.sql": {
    "path": "supabase/migrations/20261117190000_permissions_matriz_seed.verify.sql",
-   "lines": 46
+   "lines": 52
   },
   "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql": {
    "path": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql",
@@ -324786,10 +324786,20 @@
   }
  },
  "git": {
-  "sha": "308430455615e4a48036d4371f099af86684e7fd",
+  "sha": "65e05a390f161904f4c8dfc27d291e9dd8c675f0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "65e05a3",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix(migrations): corrige os dois sidecars que reprovaram no dry-run (#647)",
+    "files": [
+     "supabase/migrations/20261117190000_permissions_matriz_seed.verify.sql",
+     "supabase/migrations/20261117193000_storage_documentos_tenant_scope.verify.sql"
+    ]
+   },
    {
     "sha": "3084304",
     "date": "2026-11-17",
@@ -325270,61 +325280,19 @@
      "src/services/colaboradorService.ts",
      "src/services/tabelasReferenciaService.ts"
     ]
-   },
-   {
-    "sha": "34959e3",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(premiacoes): resgata o Hub de Premiações e o simulador de ROI da muri sobre o miolo corrigido da main (#611)",
-    "files": [
-     "inventario/estado/rotas.json",
-     "scripts/.bundle-budget.json",
-     "src/components/__tests__/DonutChart.test.tsx",
-     "src/components/__tests__/PremiacoesComum.test.ts",
-     "src/components/__tests__/RewardsApprovalHub.test.tsx",
-     "src/components/__tests__/RewardsSimulator.test.tsx",
-     "src/components/__tests__/SimuladorRoiComum.test.ts",
-     "src/components/dashboard/DonutChart.tsx",
-     "src/components/premiacoes/AuditoriaEventoDialog.tsx",
-     "src/components/premiacoes/AuditoriaTab.tsx",
-     "src/components/premiacoes/CampaignWizard.tsx",
-     "src/components/premiacoes/CampanhaDetalhesDialog.tsx",
-     "src/components/premiacoes/CampanhaLateral.tsx",
-     "src/components/premiacoes/CampanhaTabela.tsx",
-     "src/components/premiacoes/ComparacaoCenarios.tsx",
-     "src/components/premiacoes/IndicadorPremiacoes.tsx",
-     "src/components/premiacoes/PagamentosDialogs.tsx",
-     "src/components/premiacoes/PagamentosFluxo.tsx",
-     "src/components/premiacoes/PagamentosKpis.tsx",
-     "src/components/premiacoes/PagamentosLateral.tsx",
-     "src/components/premiacoes/PagamentosTab.tsx",
-     "src/components/premiacoes/PagamentosTabela.tsx",
-     "src/components/premiacoes/RewardsApprovalHub.tsx",
-     "src/components/premiacoes/RewardsSimulator.tsx",
-     "src/components/premiacoes/ScenarioParameterCard.tsx",
-     "src/components/premiacoes/auditoriaComum.ts",
-     "src/components/premiacoes/auditoriaEntrada.ts",
-     "src/components/premiacoes/pagamentosComum.ts",
-     "src/components/premiacoes/premiacoesComum.ts",
-     "src/components/premiacoes/simuladorEntrada.ts",
-     "src/components/premiacoes/simuladorRoiComum.ts",
-     "src/lib/avatarTons.ts",
-     "src/pages/PremiacoesPage.tsx",
-     "src/pages/__tests__/PremiacoesPage.test.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    11
-   ],
-   [
-    "inventario/estado/rotas.json",
-    6
+    10
    ],
    [
     "src/pages/ColaboradoresPage.tsx",
+    5
+   ],
+   [
+    "inventario/estado/rotas.json",
     5
    ],
    [
@@ -325334,6 +325302,14 @@
    [
     "src/index.css",
     3
+   ],
+   [
+    "supabase/migrations/20261117190000_permissions_matriz_seed.verify.sql",
+    2
+   ],
+   [
+    "supabase/migrations/20261117193000_storage_documentos_tenant_scope.verify.sql",
+    2
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -325376,19 +325352,11 @@
     1
    ],
    [
-    "supabase/migrations/20261117193000_storage_documentos_tenant_scope.verify.sql",
-    1
-   ],
-   [
     "supabase/tests/storage_documentos_tenant_isolation.test.ts",
     1
    ],
    [
     "supabase/migrations/20261117190000_permissions_matriz_seed.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261117190000_permissions_matriz_seed.verify.sql",
     1
    ],
    [

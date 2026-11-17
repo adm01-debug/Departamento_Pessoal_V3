@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(migrations): corrige os dois sidecars que reprovaram no dry-run (#647)",
    "infra(storage): policies de tenant para documentos, documentos-colaboradores e afastamentos (#644)",
    "feat(permissions): seed da matriz de permissões por papel (#642)",
    "fix(colaborador): \"Próximos Eventos\" lê o dado real e os atalhos levam ao lugar certo (#641)",
-   "infra(migrations): troca o LOTE ATUAL para as 4 migrations da #628 (#637)",
-   "feat(colaboradores): liga os chips de filtro ativo resgatados da muri (#640)"
+   "infra(migrations): troca o LOTE ATUAL para as 4 migrations da #628 (#637)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

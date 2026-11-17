@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "308430455615e4a48036d4371f099af86684e7fd",
+  "commit": "65e05a390f161904f4c8dfc27d291e9dd8c675f0",
   "branch": "main",
-  "data_commit": "2026-11-17T17:02:41-03:00",
+  "data_commit": "2026-11-17T17:30:29-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "65e05a3",
+    "data": "2026-11-17",
+    "assunto": "fix(migrations): corrige os dois sidecars que reprovaram no dry-run (#647)"
+   },
    {
     "sha": "3084304",
     "data": "2026-11-17",
@@ -126,11 +131,6 @@
     "sha": "b7ee915",
     "data": "2026-11-17",
     "assunto": "fix(desligamentos): vocabulário alinhado ao banco — 4 de 6 tipos e o status pago não eram reconhecidos (#619)"
-   },
-   {
-    "sha": "7b17d30",
-    "data": "2026-11-17",
-    "assunto": "feat: resgata da muri o organograma navegável — busca que filtra, expandir/recolher e níveis (#616)"
    }
   ],
   "arquivos_mudados_7d": 1086,
@@ -198,12 +198,12 @@
   ],
   "arquivos_mais_mudados_90d": [
    {
-    "arquivo": ".github/workflows/canonical-migrations.yml",
+    "arquivo": "inventario/estado/rotas.json",
     "mudancas": 21
    },
    {
-    "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 21
+    "arquivo": ".github/workflows/canonical-migrations.yml",
+    "mudancas": 20
    },
    {
     "arquivo": "package.json",
@@ -214,15 +214,15 @@
     "mudancas": 14
    },
    {
-    "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 10
-   },
-   {
     "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 10
    },
    {
     "arquivo": "docs/prod-readiness.md",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 9
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 260
+    "commits": 261
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 24
+    "commits": 23
    },
    {
     "autor": "dependabot[bot]",
