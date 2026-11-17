@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7681ca20c2` · branch `main` · 2026-11-17 22:31 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `40b2c41603` · branch `main` · 2026-11-17 22:39 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5418,7 +5418,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9256 testes em 721 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9259 testes em 721 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5707,6 +5707,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/PapeisAvaliacao.test.ts` | 10 | normalização da lista de papéis · aceita a lista do  · capacidades da conta admin+gestor (a conta de homologação) · mantém o admin E o gestor — um não anula o outro … |
 | `src/components/__tests__/PontoAuditTimeline.test.tsx` | 10 | PontoAuditTimeline · renders Trilha de Auditoria title · renders search input · shows empty state when no logs … |
 | `src/components/__tests__/PontoTodayCard.test.tsx` | 10 | PontoTodayCard · renders Hoje title · shows empty state when no registro · renders Progresso da Jornada when registro present … |
+| `src/components/__tests__/PontoWeekSummary.test.tsx` | 10 | PontoWeekSummary · renders Últimos 7 dias title · shows empty state when no registros · renders worked hours for each day … |
 | `src/components/__tests__/RejeitarDialog.test.tsx` | 10 | RejeitarDialog · renders nothing when open=false · renders title  · renders  … |
 | `src/components/__tests__/RelatoriosAgendadosTab.test.tsx` | 10 | RelatoriosAgendadosTab · renders Relatórios Agendados heading · renders Agendar Novo button · shows empty state when no agendamentos … |
 | `src/components/__tests__/RelatoriosExportTab.test.tsx` | 10 | RelatoriosExportTab · renders report titles · renders report descriptions · shows CSV button label when exportFormat is csv … |
@@ -5721,7 +5722,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/hooks/__tests__/useRealTimeSubscription.test.tsx` | 10 | useRealTimeSubscription · does NOT subscribe when empresaId is undefined · does NOT subscribe when empresaId is empty string · creates a channel when empresaId is provided … |
 | `src/hooks/__tests__/useSystemHealth.test.ts` | 10 | useSystemHealth · returns initial status as online · returns initial latency as null · sets latency after health check … |
 | `src/services/__tests__/folhaPagamentoService.test.ts` | 10 | folhaPagamentoService · assinarHolerite · should call upsert with correct data and return hash · fecharFolha … |
-| `src/services/__tests__/loggerService.test.ts` | 10 | loggerService · should buffer info logs and not call supabase rpc immediately · should flush error logs immediately via rpc · should flush warn logs immediately via rpc for security audit … |
 | … +421 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)

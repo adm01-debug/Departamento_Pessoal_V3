@@ -2966,11 +2966,11 @@
   {
    "arquivo": "src/components/__tests__/PontoWeekSummary.test.tsx",
    "tipo": "unit",
-   "linhas": 58,
+   "linhas": 98,
    "testa": [
     "src/components/ponto/PontoWeekSummary.tsx"
    ],
-   "casos": 6
+   "casos": 8
   },
   {
    "arquivo": "src/components/__tests__/PortalDocumentosTab.test.tsx",

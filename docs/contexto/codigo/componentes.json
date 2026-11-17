@@ -5457,7 +5457,7 @@
     "PontoWeekSummary"
    ],
    "export_default": null,
-   "linhas": 79,
+   "linhas": 87,
    "dominio": "components/ponto",
    "hooks_locais": [],
    "tabelas": [],

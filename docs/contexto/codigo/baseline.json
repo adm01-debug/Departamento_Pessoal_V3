@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7681ca20c2992ec6d8d98e1d32a6eaa5a4db0014",
+  "commit": "40b2c41603132356e4bcbcefe7d566e546ae3646",
   "branch": "main",
-  "data_commit": "2026-11-17T19:28:51-03:00",
+  "data_commit": "2026-11-17T19:38:23-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "40b2c41",
+    "data": "2026-11-17",
+    "assunto": "feat(ponto): mostra o débito de horas do dia no card &quot;Últimos 7 dias&quot; (#660)"
+   },
    {
     "sha": "7681ca2",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "fabf6c7",
     "data": "2026-11-17",
     "assunto": "test: resgata da muri os 5 testes que a main não tinha e passam como está (#630)"
-   },
-   {
-    "sha": "1eff3e1",
-    "data": "2026-11-17",
-    "assunto": "infra(banco): resgata da muri 4 migrations que nunca foram aplicadas (#632)"
    }
   ],
-  "arquivos_mudados_7d": 1089,
+  "arquivos_mudados_7d": 1091,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 368
+    "mudancas": 369
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -180,11 +180,11 @@
     "mudancas": 35
    },
    {
-    "pasta": "src/components/dashboard",
-    "mudancas": 32
+    "pasta": "src/components/admissoes",
+    "mudancas": 31
    },
    {
-    "pasta": "src/components/admissoes",
+    "pasta": "src/components/dashboard",
     "mudancas": 31
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 274
+    "commits": 275
    },
    {
     "autor": "dependabot[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 10
+    "commits": 9
    },
    {
     "autor": "github-actions[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3550,
   "arquivos_codigo": 2064,
-  "linhas_codigo": 408294,
+  "linhas_codigo": 408342,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -648,7 +648,7 @@
   },
   "src/components": {
    "arquivos": 970,
-   "linhas": 175414
+   "linhas": 175462
   },
   "src/constants": {
    "arquivos": 7,

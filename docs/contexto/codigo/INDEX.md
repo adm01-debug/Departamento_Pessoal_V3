@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7681ca20c2992ec6d8d98e1d32a6eaa5a4db0014` (2026-11-17T19:28:51-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `40b2c41603132356e4bcbcefe7d566e546ae3646` (2026-11-17T19:38:23-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3550 |
 | arquivos_codigo | 2064 |
-| linhas_codigo | 408294 |
+| linhas_codigo | 408342 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -396,7 +396,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27116 nós · 61312 arestas · 2315 comunidades · grafo do commit `7681ca20`
+- 27116 nós · 61312 arestas · 2315 comunidades · grafo do commit `40b2c416`
 - comunidades maiores: 20260831_corrected_public.sql (493), lucide-react (487), canonical_schema.sql (475), cn (465), button.tsx (411), @tanstack/react-query (351), App.tsx (338), useEmpresas (301), vitest (252), rateLimit.ts (172), FinanceiroResumoCards.tsx (171), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `40b2c41` feat(ponto): mostra o débito de horas do dia no card &quot;Últimos 7 dias&quot; (#660)
 - 2026-11-17 `7681ca2` test(premiacoes): resgata da muri os 29 testes das regras de pagamento e auditoria (#658)
 - 2026-11-17 `39a27a3` feat(ui): calendário pt-BR com navegação por mês/ano em todo campo de data (#657)
 - 2026-11-17 `e968e3e` feat(permissões): controle de acesso por funcionalidade, lendo a matriz do banco (#651)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `a03e498` fix(ui): iniciais do avatar voltam a ter fundo (#649)
 - 2026-11-17 `fc03c4a` chore(inventario): regenera rotas.json, defasado desde a #639 (#648)
 - 2026-11-17 `65e05a3` fix(migrations): corrige os dois sidecars que reprovaram no dry-run (#647)
-- 2026-11-17 `3084304` infra(storage): policies de tenant para documentos, documentos-colaboradores e afastamentos (#644)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
