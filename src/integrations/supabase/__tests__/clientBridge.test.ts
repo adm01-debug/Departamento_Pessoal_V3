@@ -165,3 +165,64 @@ describe('client.ts — callBridge via query builder', () => {
     expect(toast.error).toHaveBeenCalled();
   });
 });
+
+/**
+ * `supabase/functions/_shared/trace.ts:5` diz que o frontend gera o trace_id
+ * via `src/lib/tracing.ts` e o manda NO BODY (o CORS das funções não aceita
+ * header novo), e o schema do bridge declara o campo —
+ * `external-db-bridge/request-schema.ts:49`, com o comentário "era rejeitada
+ * pelo .strict() e o trace_id nunca chegava à telemetria".
+ */
+describe('external-db-bridge — trace_id', () => {
+  let fetchMock: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    sessionStorage.clear();
+    fetchMock = vi.fn(async () => okJson({ data: [] }));
+    vi.stubGlobal('fetch', fetchMock);
+  });
+
+  it('todo request ao bridge leva trace_id no body', async () => {
+    await supabase.from('colaboradores').select('id');
+    const body = lastFetchBody(fetchMock);
+    expect(typeof body.trace_id).toBe('string');
+    expect((body.trace_id as string).length).toBeGreaterThanOrEqual(16);
+  });
+
+  it('o mesmo trace_id na aba inteira — é isso que correlaciona o atendimento', async () => {
+    await supabase.from('colaboradores').select('id');
+    const primeiro = lastFetchBody(fetchMock).trace_id;
+    await supabase.from('empresas').select('id');
+    const segundo = lastFetchBody(fetchMock).trace_id;
+    expect(segundo).toBe(primeiro);
+  });
+
+  it('o trace_id não atropela os campos do request', async () => {
+    await supabase.from('colaboradores').select('id,nome').eq('empresa_id', 'e1').limit(5);
+    const body = lastFetchBody(fetchMock);
+    expect(body.action).toBe('select');
+    expect(body.table).toBe('colaboradores');
+    expect(body.columns).toBe('id,nome');
+    expect(body.limit).toBe(5);
+    expect(body.trace_id).toBeDefined();
+  });
+
+  it('sessionStorage indisponível (aba privada) não derruba a chamada', async () => {
+    const original = Object.getOwnPropertyDescriptor(window, 'sessionStorage');
+    Object.defineProperty(window, 'sessionStorage', {
+      configurable: true,
+      get() {
+        throw new Error('SecurityError: acesso negado');
+      },
+    });
+    try {
+      await supabase.from('colaboradores').select('id');
+      const body = lastFetchBody(fetchMock);
+      // id de uso único em vez de exceção
+      expect(typeof body.trace_id).toBe('string');
+      expect((body.trace_id as string).length).toBeGreaterThanOrEqual(16);
+    } finally {
+      if (original) Object.defineProperty(window, 'sessionStorage', original);
+    }
+  });
+});
