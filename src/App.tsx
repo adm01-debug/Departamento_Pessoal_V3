@@ -49,10 +49,7 @@ const BackupPage = lazy(() => import('@/pages/BackupPage'));
 const OrganogramaPage = lazy(() => import('@/pages/OrganogramaPage'));
 const PortalPage = lazy(() => import('@/pages/PortalPage'));
 const AvaliacaoPage = lazy(() => import('@/pages/AvaliacaoPage'));
-// Pagina de preview so para desenvolvimento. Com `import.meta.env.DEV` falso o
-// Vite substitui por `false` e elimina o `import()` do build — antes o chunk
-// era gerado e publicado em producao, embora a rota (abaixo) ja fosse DEV-only.
-const NineBoxPreviewPage = import.meta.env.DEV ? lazy(() => import('@/pages/NineBoxPreviewPage')) : null;
+const NineBoxPreviewPage = lazy(() => import('@/pages/NineBoxPreviewPage'));
 const TreinamentosPage = lazy(() => import('@/pages/TreinamentosPage'));
 const RecrutamentoPage = lazy(() => import('@/pages/RecrutamentoPage'));
 const ContratacaoPage = lazy(() => import('@/pages/ContratacaoPage'));
