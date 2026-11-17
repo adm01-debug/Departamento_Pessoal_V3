@@ -235,7 +235,7 @@ class ColaboradorService extends BaseService<Colaborador> {
    */
   async recontratar(
     id: string,
-    dados: { data_admissao: string; cargo?: string; departamento?: string; salario_base?: number },
+    dados: { data_admissao: string; cargo?: string; cargo_id?: string; departamento?: string; salario_base?: number },
     empresaId: string
   ): Promise<Colaborador> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');

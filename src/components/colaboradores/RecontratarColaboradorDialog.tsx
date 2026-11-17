@@ -37,6 +37,7 @@ function formatarDataLocal(iso: string | null | undefined): string {
 type RecontratarDados = {
   data_admissao: string;
   cargo?: string;
+  cargo_id?: string;
   departamento?: string;
   salario_base?: number;
 };
@@ -116,6 +117,14 @@ export function RecontratarColaboradorDialog({ colaborador, open, onOpenChange }
     if (!podeConfirmar) return;
     const dados: RecontratarDados = { data_admissao: dataAdmissao };
     if (cargo) dados.cargo = cargo;
+    // Gravar só o texto deixaria `cargo_id` apontando para o cargo ANTIGO, e o
+    // dossiê prioriza o nome que vem dessa referência
+    // (TrabalhoHierarquiaTab: `cargoDetalhe?.nome ?? colaborador?.cargo`) — a
+    // tela mostraria o cargo de antes da recontratação. O trigger do banco
+    // sincroniza `cargo_id` -> `cargo`, nunca o contrário. Mesmo par que a
+    // promoção já grava em MovimentacoesPage.
+    const cargoSelecionado = cargos.find((c) => c.nome === cargo);
+    if (cargoSelecionado) dados.cargo_id = cargoSelecionado.id;
     if (departamento) dados.departamento = departamento;
     if (salarioBase > 0) dados.salario_base = salarioBase;
 

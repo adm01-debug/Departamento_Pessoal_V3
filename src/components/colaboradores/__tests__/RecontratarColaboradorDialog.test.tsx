@@ -127,6 +127,10 @@ describe('RecontratarColaboradorDialog', () => {
       dados: {
         data_admissao: todayLocalISO(),
         cargo: 'Analista Fiscal',
+        // Vai junto com o texto: o dossie prioriza o nome que vem da referencia
+        // (`cargoDetalhe?.nome ?? colaborador?.cargo`), entao gravar so o texto
+        // mostraria o cargo de antes da recontratacao.
+        cargo_id: 'c1',
         departamento: 'Financeiro',
         salario_base: 3500,
       },
