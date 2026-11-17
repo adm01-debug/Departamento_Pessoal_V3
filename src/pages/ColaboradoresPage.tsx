@@ -23,8 +23,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
+import { ColaboradorKpiCards } from '@/components/colaboradores/ColaboradorKpiCards';
 import type { Colaborador } from '@/types/entities';
-import { StatCardSkeleton } from '@/components/ui/module-skeleton';
 import { loggerService } from '@/services/loggerService';
 
 export default function ColaboradoresPage() {
@@ -239,47 +239,16 @@ export default function ColaboradoresPage() {
         </div>
       }
       stats={
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-          {statusOptions.map((opt, i) => {
-            const statusKey = opt.value;
-            const isActive = status === statusKey;
-
-            if (!summary && isLoading) return <StatCardSkeleton key={i} />;
-
-            const count = summary ? (summary as Record<string, number | undefined>)[statusKey] || 0 : 0;
-
-            return (
-              <motion.button
-                key={statusKey}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                onClick={() => setStatus(isActive ? 'all' : statusKey)}
-                className={cn(
-                  'p-4 rounded-2xl border transition-all text-left group relative overflow-hidden',
-                  isActive
-                    ? 'bg-primary/5 border-primary shadow-xs'
-                    : 'bg-card/50 border-border/40 hover:border-primary/20 hover:bg-card'
-                )}
-              >
-                {isActive && (
-                  <motion.div layoutId="active-indicator" className="absolute top-0 left-0 w-[2px] h-full bg-primary" />
-                )}
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
-                  {opt.label}
-                </p>
-                <div className="flex items-end justify-between">
-                  <p className={cn('text-2xl font-display font-bold', isActive ? 'text-primary' : 'text-foreground')}>
-                    {count}
-                  </p>
-                  <Users
-                    className={cn('h-4 w-4 transition-colors', isActive ? 'text-primary' : 'text-muted-foreground/30')}
-                  />
-                </div>
-              </motion.button>
-            );
-          })}
-        </div>
+        <ColaboradorKpiCards
+          statusOptions={statusOptions}
+          activeStatus={status}
+          /* Mesmo comportamento do bloco inline anterior: clicar no KPI já
+             ativo volta o filtro para "all". A decisão fica aqui porque é a
+             página que é dona do estado do filtro. */
+          onToggle={(statusKey) => setStatus(status === statusKey ? 'all' : statusKey)}
+          summary={summary as Record<string, number> | null | undefined}
+          isLoading={isLoading}
+        />
       }
       customFilters={
         <ColaboradorFilters
