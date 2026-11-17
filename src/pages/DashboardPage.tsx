@@ -14,6 +14,7 @@ import { MetricCard } from '@/components/dashboard/MetricCard';
 import { MorningBriefing } from '@/components/dashboard/MorningBriefing';
 import { WorkforceHealthScore } from '@/components/dashboard/WorkforceHealthScore';
 import { QuickActionsGrid } from '@/components/dashboard/QuickActionsGrid';
+import { SystemStatusCard } from '@/components/dashboard/SystemStatusCard';
 import { AnalyticsSection } from '@/components/dashboard/AnalyticsSection';
 import { KPICardSkeleton } from '@/components/ui/module-skeleton';
 import { useRealtimeDashboard } from '@/hooks/useRealtimeDashboard';
@@ -438,6 +439,13 @@ export default function DashboardPage() {
 
       {/* 5. Ações Rápidas — 6 cols compact */}
       <QuickActionsGrid />
+
+      {/* 5b. Status do Sistema — resgatado da branch `muri`. Leitura de saúde
+             (latência, taxa de sucesso, falhas recentes) vinda do mesmo
+             `useSystemHealth` que o Header usa, mais as rotinas de manutenção
+             que já existiam em Configurações → Saúde do Sistema. Nenhuma
+             capacidade nova: é um segundo caminho para as mesmas chamadas. */}
+      <SystemStatusCard />
 
       {/* 6. Analytics — Seções temáticas */}
       <AnalyticsSection
