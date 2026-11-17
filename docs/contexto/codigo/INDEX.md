@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1ddd897012c0ace312845dcbaa77daa03b2e31a6` (2026-11-17T19:54:29-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e555a6312efa6fb571177010d21f0a6de7e5f519` (2026-11-17T20:27:41-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3551 |
 | arquivos_codigo | 2064 |
-| linhas_codigo | 408472 |
+| linhas_codigo | 408597 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27126 nós · 61325 arestas · 2273 comunidades · grafo do commit `1ddd8970`
-- comunidades maiores: lucide-react (555), 20260831_corrected_public.sql (493), @tanstack/react-query (485), canonical_schema.sql (475), button.tsx (429), cn (370), App.tsx (359), vitest (293), useEmpresas (282), contract.ts (163), "public"."empresas" (159), "public"."colaboradores" (155)
+- 27128 nós · 61330 arestas · 2383 comunidades · grafo do commit `e555a631`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), @tanstack/react-query (421), lucide-react (408), cn (361), vitest (258), supabase/types.ts (205), useEmpresas (203), client.ts (175), deepChain (173), "public"."empresas" (159), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `e555a63` feat(rescisao): memória de cálculo com a base e a alíquota efetiva de cada encargo (#663)
 - 2026-11-17 `1ddd897` docs(auditoria): veredito sobre apagar a branch muri, com a triagem dos 111 arquivos (#662)
 - 2026-11-17 `c234912` feat(colaborador): editar conta bancária, com o dado real só para quem pode vê-lo (#659)
 - 2026-11-17 `40b2c41` feat(ponto): mostra o débito de horas do dia no card &quot;Últimos 7 dias&quot; (#660)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `ba993ad` fix(hooks): guardas de empresa em ajuste de ponto e conta bancária (#650)
 - 2026-11-17 `50ae62a` fix(portal): exclusão de documento não apaga a linha quando o storage recusa (#645)
 - 2026-11-17 `65f863a` feat(colaborador): aba de Afastamentos no dossiê, sem dado de saúde (#643)
-- 2026-11-17 `a03e498` fix(ui): iniciais do avatar voltam a ter fundo (#649)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "1ddd897012c0ace312845dcbaa77daa03b2e31a6",
+  "sha": "e555a6312efa6fb571177010d21f0a6de7e5f519",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 23:12 UTC",
+  "generated_at": "2026-11-17 23:29 UTC",
   "files_total": 3564,
   "code_files": 2989,
-  "code_lines": 473757
+  "code_lines": 473882
  },
  "version": "1.3.2",
- "facts_hash": "c8e7016c266abe8a",
+ "facts_hash": "2ed141bb5c505d28",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -102312,7 +102312,7 @@
   {
    "module": "src/pages",
    "files": 134,
-   "lines": 49426,
+   "lines": 49450,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -103152,7 +103152,7 @@
   {
    "module": "src/utils",
    "files": 69,
-   "lines": 8626,
+   "lines": 8727,
    "tables": [
     "folha_itens",
     "rubricas_folha"
@@ -103178,7 +103178,7 @@
     "pgInterval.ts: parsePgIntervalToHours",
     "piiMask.ts: maskCpfDisplay, maskBankAccount, maskPisDisplay, maskEmail, maskGeneric, maskPiiDeep",
     "regrasSolicitacaoFerias.ts: DIAS_AVISO_FERIAS, FeriasLancada, UsoPeriodo, USO_VAZIO, resumirUsoPorPeriodo, validarSaldoFerias",
-    "rescisaoCalc.ts: normalizarTipoRescisao, SeguroDesempregoInfo, RescisaoResult, RescisaoParams, calcularRescisaoCore, calcularRescisao",
+    "rescisaoCalc.ts: normalizarTipoRescisao, SeguroDesempregoInfo, RescisaoResult, LinhaBaseCalculo, aliquotaEfetiva, RescisaoParams",
     "rescisaoPDF.ts: AuditoriaPdf, mapearResultadoDeDesligamento, gerarPDFRescisao",
     "safeError.ts: safeErrorMessage",
     "safeUrl.ts: isAllowedUrl, assertAllowedUrl, safeHref",
@@ -121145,6 +121145,10 @@
    },
    {
     "file": "src/utils/rescisaoCalc.ts",
+    "text": "multa do FGTS incide sobre `saldo informado + FGTS da rescisão`, não só"
+   },
+   {
+    "file": "src/utils/rescisaoCalc.ts",
     "text": "* Contrato a prazo/experiência: data prevista de fim do contrato."
    },
    {
@@ -121158,10 +121162,6 @@
    {
     "file": "src/utils/rescisaoCalc.ts",
     "text": "corridos aplica a multa de 1 salário (art. 477 §8º CLT). */"
-   },
-   {
-    "file": "src/utils/rescisaoCalc.ts",
-    "text": "FAIXAS_SEGURO_DESEMPREGO_2026, mínimo = salário mínimo 2026)."
    },
    {
     "file": "src/utils/rescisaoPDF.ts",
@@ -295003,7 +295003,7 @@
   },
   "src/pages/CalculadoraRescisaoPage.tsx": {
    "path": "src/pages/CalculadoraRescisaoPage.tsx",
-   "lines": 646,
+   "lines": 670,
    "exports": [
     "function CalculadoraRescisaoPage"
    ],
@@ -311605,11 +311605,13 @@
   },
   "src/utils/rescisaoCalc.ts": {
    "path": "src/utils/rescisaoCalc.ts",
-   "lines": 445,
+   "lines": 487,
    "exports": [
     "function normalizarTipoRescisao",
     "interface SeguroDesempregoInfo",
     "interface RescisaoResult",
+    "interface LinhaBaseCalculo",
+    "function aliquotaEfetiva",
     "interface RescisaoParams",
     "function calcularRescisaoCore",
     "function calcularRescisao",
@@ -311760,11 +311762,11 @@
     "- Multa FGTS NÃO integra o total líquido do empregado: é depósito na",
     "Considera a regra da CLT: fração igual ou superior a 15 dias conta como mês integral.",
     "* Anos completos de serviço pela regra do aniversário (Lei 12.506/2011:",
+    "multa do FGTS incide sobre `saldo informado + FGTS da rescisão`, não só",
     "* Contrato a prazo/experiência: data prevista de fim do contrato.",
     "* Quem antecipa o contrato a prazo: 'empregador' (art. 479, provento),",
     "'empregado' (art. 480, desconto) ou 'natural' (fim do prazo, sem indenização). */",
-    "corridos aplica a multa de 1 salário (art. 477 §8º CLT). */",
-    "FAIXAS_SEGURO_DESEMPREGO_2026, mínimo = salário mínimo 2026)."
+    "corridos aplica a multa de 1 salário (art. 477 §8º CLT). */"
    ],
    "calc_fns": [
     {
@@ -312293,7 +312295,7 @@
   },
   "src/utils/__tests__/rescisaoCalc.test.ts": {
    "path": "src/utils/__tests__/rescisaoCalc.test.ts",
-   "lines": 873,
+   "lines": 932,
    "is_test": true,
    "params": [
     {
@@ -325953,10 +325955,21 @@
   }
  },
  "git": {
-  "sha": "1ddd897012c0ace312845dcbaa77daa03b2e31a6",
+  "sha": "e555a6312efa6fb571177010d21f0a6de7e5f519",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "e555a63",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(rescisao): memória de cálculo com a base e a alíquota efetiva de cada encargo (#663)",
+    "files": [
+     "src/pages/CalculadoraRescisaoPage.tsx",
+     "src/utils/__tests__/rescisaoCalc.test.ts",
+     "src/utils/rescisaoCalc.ts"
+    ]
+   },
    {
     "sha": "1ddd897",
     "date": "2026-11-17",
@@ -326318,16 +326331,6 @@
      "src/components/layout/EntityPageContainer.tsx",
      "src/pages/ColaboradoresPage.tsx"
     ]
-   },
-   {
-    "sha": "29dd221",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(dashboard): resgata da muri os atalhos de Workflows e Assistente IA (#633)",
-    "files": [
-     "src/components/__tests__/QuickActionsGrid.test.tsx",
-     "src/components/dashboard/QuickActionsGrid.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -326372,6 +326375,18 @@
     2
    ],
    [
+    "src/pages/CalculadoraRescisaoPage.tsx",
+    1
+   ],
+   [
+    "src/utils/__tests__/rescisaoCalc.test.ts",
+    1
+   ],
+   [
+    "src/utils/rescisaoCalc.ts",
+    1
+   ],
+   [
     "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
     1
    ],
@@ -326397,18 +326412,6 @@
    ],
    [
     "src/components/__tests__/PagamentosComum.test.ts",
-    1
-   ],
-   [
-    "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/FeriasForm.test.tsx",
     1
    ]
   ]

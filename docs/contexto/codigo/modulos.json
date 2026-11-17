@@ -7840,7 +7840,7 @@
    "modulo": "pages",
    "arquivos": 113,
    "testes": 0,
-   "linhas": 45850,
+   "linhas": 45874,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -10141,7 +10141,7 @@
    "modulo": "utils",
    "arquivos": 28,
    "testes": 0,
-   "linhas": 3665,
+   "linhas": 3707,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],

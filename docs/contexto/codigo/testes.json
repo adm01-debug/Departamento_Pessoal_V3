@@ -6535,12 +6535,12 @@
   {
    "arquivo": "src/utils/__tests__/rescisaoCalc.test.ts",
    "tipo": "unit",
-   "linhas": 873,
+   "linhas": 932,
    "testa": [
     "src/calculators/impostos.ts",
     "src/utils/rescisaoCalc.ts"
    ],
-   "casos": 93
+   "casos": 97
   },
   {
    "arquivo": "src/utils/__tests__/rescisaoPDF.test.ts",
