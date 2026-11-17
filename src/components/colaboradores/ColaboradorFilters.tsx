@@ -2,6 +2,7 @@ import type { Cargo, Departamento } from '@/types/entities';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ColaboradorActiveFilterChips, type ActiveFilter } from './ColaboradorActiveFilterChips';
 
 export function ColaboradorFilters({
   onSearchChange,
@@ -11,6 +12,8 @@ export function ColaboradorFilters({
   departamentos = [],
   cargos = [],
   currentFilters,
+  activeFilterChips = [],
+  onClearAllFilters = () => {},
 }: {
   onSearchChange: (v: string) => void;
   onStatusChange: (v: string) => void;
@@ -24,6 +27,9 @@ export function ColaboradorFilters({
     departamento: string;
     cargo: string;
   };
+  /** Chips de filtro ativo. Vazio (o padrao) nao renderiza nada. */
+  activeFilterChips?: ActiveFilter[];
+  onClearAllFilters?: () => void;
 }) {
   return (
     <div className="flex flex-col gap-4 mb-6 bg-card p-4 rounded-2xl border border-border/40 shadow-xs">
@@ -81,6 +87,12 @@ export function ColaboradorFilters({
           </Select>
         </div>
       </div>
+
+      {/* Segunda linha, condicional: chips removiveis dos filtros ativos. Vem da
+          branch `muri`, onde o componente existia e estava plumbado aqui, mas
+          nenhuma pagina passava `activeFilterChips` — entao nunca aparecia. O
+          card pai cresce junto porque isto e so mais um filho do mesmo flex. */}
+      <ColaboradorActiveFilterChips filters={activeFilterChips} onClearAll={onClearAllFilters} />
     </div>
   );
 }

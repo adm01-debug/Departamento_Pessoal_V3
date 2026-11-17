@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { ColaboradorFilters } from '@/components/colaboradores/ColaboradorFilters';
+import type { ActiveFilter } from '@/components/colaboradores/ColaboradorActiveFilterChips';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { ColaboradorStatus } from '@/components/ui/status-badge';
 import { Badge } from '@/components/ui/badge';
@@ -111,6 +112,16 @@ export default function ColaboradoresPage() {
     [setCargo, setPage]
   );
 
+  // Limpa os 4 filtros de uma vez e volta para a primeira pagina (senao o
+  // usuario cairia numa pagina que pode nao existir mais no conjunto sem filtro).
+  const handleClearAllFilters = useCallback(() => {
+    setSearch('');
+    setStatus('all');
+    setDepartamento('all');
+    setCargo('all');
+    setPage(1);
+  }, [setSearch, setStatus, setDepartamento, setCargo, setPage]);
+
   const statusOptions = [
     { value: 'ativo', label: 'Ativos' },
     { value: 'inativo', label: 'Inativos' },
@@ -118,6 +129,27 @@ export default function ColaboradoresPage() {
     { value: 'ferias', label: 'Em Férias' },
     { value: 'afastado', label: 'Afastados' },
   ];
+
+  // Chips de filtro ativo (vem da `muri`). A busca por texto NAO vira chip: o
+  // proprio campo ja tem como limpar, e o texto pode ser longo. 'all' significa
+  // "sem filtro", entao nao gera chip.
+  const activeFilterChips = [
+    status !== 'all' && {
+      key: 'status',
+      label: statusOptions.find((o) => o.value === status)?.label ?? status,
+      onRemove: () => handleStatusChange('all'),
+    },
+    departamento !== 'all' && {
+      key: 'departamento',
+      label: departamento,
+      onRemove: () => handleDeptoChange('all'),
+    },
+    cargo !== 'all' && {
+      key: 'cargo',
+      label: cargo,
+      onRemove: () => handleCargoChange('all'),
+    },
+  ].filter(Boolean) as ActiveFilter[];
 
   const handleExportExcel = async () => {
     if (!empresaAtual?.id) return;
@@ -283,6 +315,8 @@ export default function ColaboradoresPage() {
             departamento,
             cargo,
           }}
+          activeFilterChips={activeFilterChips}
+          onClearAllFilters={handleClearAllFilters}
         />
       }
       /* Contagem de colunas do esqueleto de carregamento. A tabela que desenha
