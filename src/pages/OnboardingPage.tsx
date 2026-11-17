@@ -1,39 +1,38 @@
 /**
  * JORNADA DE ONBOARDING — rota `/onboarding` (item "Onboarding" da sidebar).
  *
- * ⚠️ FONTE ÚNICA DO ONBOARDING (consolidação do módulo de Admissões). A aba
- * "Onboarding" de `AdmissoesPage` deixou de existir: aqui está a ÚNICA tela que
- * lista, filtra, detalha e opera a integração do colaborador. Admissões termina
- * no processo admissionAL (Solicitação → … → Concluída) e aponta para cá; o que
- * acontece DEPOIS da admissão formal é jornada, e jornada só existe aqui.
+ * Tela de acompanhamento da integração: lista, filtra, ordena, pagina, detalha e
+ * opera (concluir tarefa) a jornada do colaborador. Admissões termina no
+ * processo admissional (Solicitação → … → Concluída); o que acontece DEPOIS da
+ * admissão formal é jornada, e é isto aqui.
  *
- * MESMA FONTE DE DADOS das duas telas antigas — nada foi copiado entre bancos:
- * `admissoes` com `tarefas:tarefas_onboarding(*)` (mesma query, mesma chave
- * `['onboarding-list']`, mesmo mock). A régua de negócio (progresso, prazo,
- * risco, situação, marco) fica em `onboardingDerivacoes.ts`, lida UMA vez por
- * lista por `projetarOnboarding` — cards, contadores, filtros e chips leem a
- * MESMA projeção, então nada na tela discorda do card.
+ * FONTE DE DADOS: nada de Supabase direto nesta página — tudo vem de
+ * `useJornadaOnboarding` (hooks) → `onboardingJornadaService` (service), que lê
+ * `admissoes` com `tarefas:tarefas_onboarding(*)` na MESMA chave de cache
+ * `['onboarding-list']` de antes e resolve `tarefas_onboarding.responsavel_id`
+ * em `profiles.nome`. A régua de negócio (progresso, prazo, risco, situação,
+ * marco) fica em `onboardingDerivacoes.ts`, lida UMA vez por lista por
+ * `projetarOnboarding` — cards, contadores, filtros e chips leem a MESMA
+ * projeção, então nada na tela discorda do card.
  *
- * O QUE VEIO DE ADMISSÕES NA CONSOLIDAÇÃO:
- *   • a leitura de situação por colaborador (`situacaoOnboarding`), que antes
- *     vivia implícita no pill do card;
- *   • os TOTAIS da jornada (em andamento / concluídos) — na consolidação
- *     apareciam num bloco de resumo isolado no topo; no redesenho de layout eles
- *     passaram a viver de forma CONTEXTUAL dentro dos próprios tabs
- *     ("Em andamento (n)" / "Concluídos (n)") e dos chips ("Em risco", etc.),
- *     sem área dedicada (ver `resumoGeralOnboarding`).
+ * ERRO DE LEITURA ≠ LISTA VAZIA: a jornada é tela de RH. Quando a consulta
+ * falha, a página mostra o estado de ERRO com "Tentar novamente" e NÃO renderiza
+ * abas, chips, contadores nem "nenhum colaborador" — nenhum número em 0 pode
+ * passar por "nada pendente" (ver `EstadoErroJornada`).
  *
- * O QUE JÁ ERA DAQUI: as abas "Em Andamento"/"Concluídos", a grade de cards
- * (`OnboardingCard`), o detalhe (`OnboardingDetalheDialog`) e "Gestão de Kits".
+ * TOTAIS: os contadores da jornada (em andamento / concluídos) vivem de forma
+ * CONTEXTUAL dentro dos próprios tabs ("Em andamento (n)" / "Concluídos (n)") e
+ * dos chips ("Em risco", etc.), sem bloco de resumo dedicado no topo (ver
+ * `resumoGeralOnboarding`).
  *
- * GESTÃO DE KITS: deixou de ser uma aba do MESMO grupo de status e virou AÇÃO
- * INDEPENDENTE no cabeçalho — ela é ferramenta auxiliar da jornada
- * (equipamentos/kits), não um estado do colaborador. Continua fora de Admissões,
- * como sempre esteve.
+ * GESTÃO DE KITS é AÇÃO INDEPENDENTE do cabeçalho, fora do grupo de tabs de
+ * status: ela é ferramenta auxiliar da jornada (equipamentos/kits), não um
+ * estado do colaborador.
  */
 
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Rocket,
@@ -49,6 +48,7 @@ import {
   ArrowUpDown,
   ArrowLeft,
   Plus,
+  AlertTriangle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { AppPagination } from '@/components/ui/app-pagination';
@@ -66,14 +66,7 @@ import { cn } from '@/lib/utils';
 import { useEmpresas } from '@/hooks/useEmpresas';
 // DOMÍNIO CANÔNICO: a página não fala mais com o Supabase direto — ver
 // `src/services/onboardingJornadaService.ts` e `src/hooks/useJornadaOnboarding.ts`.
-import {
-  useJornadas,
-  useKits,
-  useConcluirTarefa,
-  useCriarKit,
-  useAtualizarKit,
-  jornadaEmModoDemonstracao,
-} from '@/hooks/useJornadaOnboarding';
+import { useJornadas, useKits, useConcluirTarefa, useCriarKit, useAtualizarKit } from '@/hooks/useJornadaOnboarding';
 import { OnboardingCard, type OnboardingAcoes } from '@/components/admissoes/OnboardingCard';
 import { GestaoKits } from '@/components/admissoes/GestaoKits';
 import { OnboardingDetalheDialog } from '@/components/admissoes/OnboardingDetalheDialog';
@@ -158,7 +151,7 @@ const CHIPS_ATIVOS: { value: ChipAtivo; label: string; ponto?: string }[] = [
   { value: 'todos', label: 'Todos' },
   { value: 'em_dia', label: 'Em dia', ponto: 'bg-primary' },
   { value: 'em_risco', label: 'Em risco', ponto: 'bg-warning' },
-  { value: 'atrasado', label: 'Atrasados', ponto: 'bg-destructive-vivid' },
+  { value: 'atrasado', label: 'Atrasados', ponto: 'bg-[hsl(var(--destructive-vivid))]' },
   { value: 'sem_proxima_acao', label: 'Sem próxima ação' },
 ];
 
@@ -167,7 +160,7 @@ const CHIPS_CONCLUIDOS: { value: ChipConcluido; label: string; ponto?: string }[
   { value: 'todos', label: 'Todos' },
   { value: 'mes', label: 'Este mês', ponto: 'bg-primary' },
   { value: 'no_prazo', label: 'No prazo', ponto: 'bg-success' },
-  { value: 'fora_prazo', label: 'Fora do prazo', ponto: 'bg-destructive-vivid' },
+  { value: 'fora_prazo', label: 'Fora do prazo', ponto: 'bg-[hsl(var(--destructive-vivid))]' },
 ];
 
 const PERIODOS_ONBOARDING: { value: PeriodoOnboarding; label: string }[] = [
@@ -273,10 +266,36 @@ function EstadoVazioJornada({
   );
 }
 
+/**
+ * ESTADO DE ERRO DA JORNADA — a leitura de `['onboarding-list']` falhou.
+ *
+ * Substitui a tela inteira (abas, filtros, chips, grade e paginação): sem dado
+ * não existe contador honesto, e "nenhum colaborador em onboarding" ou um total
+ * em 0 seriam uma AFIRMAÇÃO FALSA sobre o RH. Aqui só cabe o que é verdade —
+ * não foi possível carregar — e a ação de tentar de novo (`refetch`).
+ */
+function EstadoErroJornada({ onTentarNovamente }: { onTentarNovamente: () => void }) {
+  return (
+    <motion.div custom={REVELA.cartoes} variants={cardVariants} initial="hidden" animate="visible">
+      <Card
+        data-testid="onboarding-erro"
+        className="rounded-2xl border-2 border-dashed border-[hsl(var(--destructive-vivid)/0.4)] p-12 text-center"
+      >
+        <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-[hsl(var(--destructive-vivid))] opacity-70" />
+        <p className="font-display font-medium text-foreground">Não foi possível carregar a jornada de onboarding</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Os dados não chegaram, então nada aqui pode ser lido como situação real dos colaboradores.
+        </p>
+        <Button variant="outline" size="sm" onClick={onTentarNovamente} className="mt-4 h-9 gap-1.5 rounded-xl text-xs">
+          <RotateCcw className="h-3.5 w-3.5" /> Tentar novamente
+        </Button>
+      </Card>
+    </motion.div>
+  );
+}
+
 export default function OnboardingPage() {
   const [activeTab, setActiveTab] = useState('ativos');
-  // MODO DEMONSTRAÇÃO — ver src/mocks/admissoesMock.ts (dev + VITE_ADMISSOES_MOCK=true).
-  const emDemonstracao = jornadaEmModoDemonstracao();
   const { empresaAtual } = useEmpresas();
   // Deep link `/onboarding?colaborador=<id>` — o atalho contextual de Admissões
   // chega aqui já focado no colaborador certo.
@@ -315,7 +334,10 @@ export default function OnboardingPage() {
   const [ordem, setOrdem] = useState<OrdemOnboarding>(ORDEM_ONBOARDING_PADRAO);
   const [pagina, setPagina] = useState(1);
 
-  const { data: onboarding = [], isLoading } = useJornadas();
+  const qc = useQueryClient();
+  // `isError`/`refetch` são os estados do React Query: a jornada NUNCA desenha
+  // lista, contador ou vazio quando a leitura falhou (ver `EstadoErroJornada`).
+  const { data: onboarding = [], isLoading, isError: jornadaComErro, refetch: recarregarJornada } = useJornadas();
   const { data: kits = [], isError: kitsComErro } = useKits();
   const concluirTarefa = useConcluirTarefa(() => setTarefaConcluindo(null));
   const criarKit = useCriarKit();
@@ -338,17 +360,28 @@ export default function OnboardingPage() {
    */
   const concluir = (tarefaId: string) => {
     setTarefaConcluindo(tarefaId);
-    concluirTarefa.mutate(tarefaId);
+    concluirTarefa.mutate(tarefaId, {
+      onSuccess: () => {
+        // O dossiê (Timeline e card de Desenvolvimento) lê por OUTRAS chaves.
+        // Sem invalidá-las, o staleTime de 5 min de `queryClient.ts` e o
+        // `refetchOnWindowFocus` desligado deixam a tarefa como pendente lá
+        // mesmo depois de concluída aqui.
+        qc.invalidateQueries({ queryKey: ['onboarding-tarefas-colaborador'] });
+        qc.invalidateQueries({ queryKey: ['onboarding-colaborador'] });
+        toast.success('Tarefa concluída!');
+      },
+      onError: () => toast.error('Não foi possível concluir a tarefa.'),
+    });
   };
 
   /**
-   * COMUNICAÇÃO COM O COLABORADOR — HONESTIDADE (correção da auditoria).
+   * COMUNICAÇÃO COM O COLABORADOR — HONESTIDADE.
    *
-   * Não existe NENHUMA infraestrutura de e-mail no projeto (nenhuma edge
-   * function de envio, nenhum provider/Resend/SMTP — auditado). Então a ação
-   * NÃO pode dizer "enviado": ela copia a mensagem de boas-vindas para a área de
-   * transferência, o que é uma ação REAL e verificável pelo usuário, e informa
-   * exatamente o que aconteceu.
+   * O projeto só tem envio de e-mail para o LINK DE PRÉ-ADMISSÃO (edge
+   * `enviar-email-admissao`, via Resend), que é outro fluxo e outro
+   * destinatário. Não existe envio de mensagem de boas-vindas da jornada, então
+   * esta ação NÃO diz "enviado": copia o texto para a área de transferência —
+   * ação REAL e verificável — e informa exatamente o que aconteceu.
    */
   const copiarMensagemBoasVindas = async (colaborador: ColaboradorOnboarding) => {
     const nome = colaborador.nome ?? 'colaborador';
@@ -488,24 +521,16 @@ export default function OnboardingPage() {
    * SALVAR PERFIL DE KIT (criar/editar) — o diálogo devolve o payload e a
    * gravação vai para o serviço canônico (via mutation do hook).
    *
-   * Em MODO DEMONSTRAÇÃO a gravação acontece no estado em memória do mock: o kit
-   * entra na grade até a página recarregar (e o toast diz isso). Antes a escrita
-   * era BLOQUEADA aqui, o que impedia testar o formulário e a imagem.
-   *
    * A IMAGEM não é gravada (não existe coluna): ela é mantida só na SESSÃO, com
    * aviso explícito — nada de persistência fingida.
    */
   const salvarKit = (entrada: KitOnboardingInput) => {
-    // Em demonstração não há empresa real a exigir; no modo real ela é pré-requisito.
-    if (!emDemonstracao && !empresaAtual?.id) {
+    if (!empresaAtual?.id) {
       toast.error('Selecione uma empresa antes de salvar o perfil de kit.');
       return;
     }
-    /** Aviso honesto do que ACABOU de acontecer (demo × imagem de sessão). */
+    /** Aviso honesto do que ACABOU de acontecer com a imagem de sessão. */
     const avisarExtras = () => {
-      if (emDemonstracao) {
-        toast.info('Modo demonstração: o perfil aparece na grade só nesta sessão — nada foi gravado no banco.');
-      }
       if (entrada.imagem_url !== undefined) {
         toast.info('Imagem exibida nesta sessão: a gravação permanente depende de autorização para a coluna no banco.');
       }
@@ -527,7 +552,7 @@ export default function OnboardingPage() {
       return;
     }
     criarKit.mutate(
-      { empresaId: empresaAtual?.id ?? '', entrada },
+      { empresaId: empresaAtual.id, entrada },
       {
         onSuccess: (novoKit) => {
           registrarImagemSessao(novoKit.id, entrada.imagem_url ?? null);
@@ -692,6 +717,16 @@ export default function OnboardingPage() {
                 onEditar={(kit) => setKitEmEdicao({ kit })}
               />
             </AnimatePresence>
+          ) : jornadaComErro ? (
+            <AnimatePresence>
+              <EstadoErroJornada key="jornada-erro" onTentarNovamente={() => void recarregarJornada()} />
+            </AnimatePresence>
+          ) : isLoading ? (
+            // Enquanto a consulta não respondeu nada é afirmado: as abas, os
+            // chips e os contadores (que sairiam todos em 0) ficam fora da tela.
+            <div className="flex justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
           ) : (
             <AnimatePresence>
               <Tabs key="jornada" value={activeTab} onValueChange={trocarAba} className="w-full space-y-3">
@@ -967,11 +1002,7 @@ export default function OnboardingPage() {
                   contexto novo devolve a entrada em cascata (`cardVariants`). */}
                 <AnimatePresence>
                   <TabsContent key="aba-ativos" value="ativos">
-                    {isLoading ? (
-                      <div className="flex justify-center py-20">
-                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                      </div>
-                    ) : baseDaAba.length === 0 ? (
+                    {baseDaAba.length === 0 ? (
                       <EstadoVazioJornada
                         icone={Rocket}
                         titulo="Nenhum onboarding ativo"
@@ -992,8 +1023,8 @@ export default function OnboardingPage() {
                     {concluidos.length === 0 ? (
                       <EstadoVazioJornada
                         icone={CheckCircle2}
-                        titulo="Histórico de Integrações Concluídas"
-                        descricao="Todos os colaboradores recentes já estão 100% integrados."
+                        titulo="Nenhuma integração concluída"
+                        descricao="Quando uma jornada chegar a 100%, ela aparece aqui."
                         tomIcone="text-success"
                       />
                     ) : listaOrdenada.length === 0 ? (

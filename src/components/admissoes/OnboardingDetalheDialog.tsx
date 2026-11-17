@@ -96,7 +96,7 @@ function LinhaTarefa({
             <span
               className={cn(
                 'inline-flex items-center gap-1',
-                !feito && prazo.tom === 'atraso' && 'text-destructive-vivid'
+                !feito && prazo.tom === 'atraso' && 'text-[hsl(var(--destructive-vivid))]'
               )}
             >
               <CalendarClock className="h-3 w-3" /> {prazo.texto}
@@ -135,7 +135,8 @@ export function OnboardingDetalheDialog({
   const progresso = progressoOnboarding(tarefas);
   const hoje = inicioDoDia(new Date());
   const resumo = resumoOnboarding(tarefas, hoje);
-  const corBarra = progresso.valor >= 100 ? 'bg-success' : resumo.atrasadas > 0 ? 'bg-destructive-vivid' : 'bg-primary';
+  const corBarra =
+    progresso.valor >= 100 ? 'bg-success' : resumo.atrasadas > 0 ? 'bg-[hsl(var(--destructive-vivid))]' : 'bg-primary';
 
   return (
     <DialogPrimitive.Root open={open && !!colaborador} onOpenChange={onOpenChange}>
@@ -213,7 +214,7 @@ export function OnboardingDetalheDialog({
                         <Circle className="h-3 w-3" /> {resumo.pendentes} pendente(s)
                       </span>
                       {resumo.atrasadas > 0 && (
-                        <span className="inline-flex items-center gap-1 text-destructive-vivid">
+                        <span className="inline-flex items-center gap-1 text-[hsl(var(--destructive-vivid))]">
                           <CalendarClock className="h-3 w-3" /> {resumo.atrasadas} em risco
                         </span>
                       )}

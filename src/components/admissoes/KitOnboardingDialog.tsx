@@ -7,18 +7,15 @@
  *   • nome do kit
  *   • itens (um por linha → `itens` JSONB)
  *   • status ativo/inativo
- *   • imagem do kit (seleção/prévia/substituição/remoção)
  *
- * IMAGEM — LIMITE HONESTO: `public.onboarding_kits` AINDA NÃO tem coluna de
- * imagem. A área de upload é real (validação + prévia local), mas NADA é enviado
- * ao Storage nem gravado no banco: a imagem vale apenas para a SESSÃO atual.
- * Deixamos o campo `imagem_url` já no payload para o dia em que a persistência
- * for autorizada — sem fingir que a imagem foi salva permanentemente.
+ * SEM CAMPO DE IMAGEM: `public.onboarding_kits` não tem coluna de imagem e o
+ * serviço ignora `imagem_url` na gravação. Um campo cuja imagem desaparece ao
+ * recarregar é pior que campo nenhum, então o formulário não o oferece.
  *
  * Não grava nada por conta própria: só monta o payload e devolve `onSalvar` —
  * quem grava é o serviço (`onboardingJornadaService`), via mutation do hook.
  */
-import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useState } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -26,8 +23,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { ImagePlus, Package, Trash2, X } from 'lucide-react';
-import { validateUploadFile } from '@/utils/uploadValidation';
+import { Package, X } from 'lucide-react';
 import {
   cascadeContainerVariants,
   cascadeItemVariants,
@@ -35,9 +31,6 @@ import {
   cascadeShellVariants,
 } from '@/components/ui/cascade-motion';
 import type { KitOnboarding, KitOnboardingInput } from '@/services/onboardingJornadaService';
-
-/** Limite da imagem do kit (reusa a validação de upload do produto). */
-const MAX_IMAGEM_MB = 5;
 
 /**
  * ANIMAÇÃO DE ENTRADA/SAÍDA — a MESMA da janela "Pendências".
@@ -81,15 +74,6 @@ export function KitOnboardingDialog({ open, onOpenChange, kit, salvando, onSalva
   const [nome, setNome] = useState('');
   const [itens, setItens] = useState('');
   const [ativo, setAtivo] = useState(true);
-  // Imagem: `preview` é o que aparece na tela (URL de objeto recém-criada OU a
-  // imagem de sessão já associada ao kit). NÃO é persistida em lugar nenhum.
-  const [imagemPreview, setImagemPreview] = useState<string | null>(null);
-  const [erroImagem, setErroImagem] = useState<string | null>(null);
-  const inputImagemRef = useRef<HTMLInputElement>(null);
-  // URL de objeto criada por nós (se houver) — é a única revogável.
-  // NÃO revogamos ao fechar: a URL alimenta o overlay de SESSÃO da grade e só é
-  // liberada quando a imagem é trocada/removida ainda dentro do diálogo.
-  const objectUrlRef = useRef<string | null>(null);
 
   // Cada abertura recarrega o formulário do zero (criar) ou do kit (editar).
   useEffect(() => {
@@ -97,51 +81,16 @@ export function KitOnboardingDialog({ open, onOpenChange, kit, salvando, onSalva
     setNome(kit?.nome ?? '');
     setItens(itensParaTexto(kit?.itens ?? []));
     setAtivo(kit?.ativo ?? true);
-    setImagemPreview(kit?.imagem_url ?? null);
-    setErroImagem(null);
-    objectUrlRef.current = null;
   }, [open, kit]);
-
-  const selecionarImagem = (e: ChangeEvent<HTMLInputElement>) => {
-    const arquivo = e.target.files?.[0];
-    e.target.value = '';
-    if (!arquivo) return;
-    try {
-      validateUploadFile(arquivo, { maxSizeMB: MAX_IMAGEM_MB });
-      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
-      const url = URL.createObjectURL(arquivo);
-      objectUrlRef.current = url;
-      setImagemPreview(url);
-      setErroImagem(null);
-    } catch (err) {
-      setErroImagem(err instanceof Error ? err.message : 'Imagem inválida.');
-    }
-  };
-
-  const removerImagem = () => {
-    if (objectUrlRef.current) {
-      URL.revokeObjectURL(objectUrlRef.current);
-      objectUrlRef.current = null;
-    }
-    setImagemPreview(null);
-    setErroImagem(null);
-  };
 
   const lista = textoParaItens(itens);
   const invalido = nome.trim().length === 0 || lista.length === 0;
 
   const salvar = () => {
     if (invalido) return;
-    // `imagem_url` entra no payload quando há imagem OU quando o kit tinha uma e
-    // ela foi removida (`null` sinaliza a remoção). Sem imagem nova e sem imagem
-    // anterior, o campo é OMITIDO — assim o contrato do formulário não muda.
-    const imagemUrl = imagemPreview ?? (kit?.imagem_url ? null : undefined);
-    onSalvar({
-      nome: nome.trim(),
-      itens: lista,
-      ativo,
-      ...(imagemUrl === undefined ? {} : { imagem_url: imagemUrl }),
-    });
+    // `imagem_url` NÃO entra no payload: a coluna não existe e o serviço ignora
+    // o campo, então não há o que enviar.
+    onSalvar({ nome: nome.trim(), itens: lista, ativo });
   };
 
   return (
@@ -221,66 +170,6 @@ export function KitOnboardingDialog({ open, onOpenChange, kit, salvando, onSalva
                       />
                       <p className="text-[11px] text-muted-foreground">
                         {lista.length} item{lista.length === 1 ? '' : 's'} no perfil.
-                      </p>
-                    </div>
-
-                    {/* IMAGEM DO KIT — área real de seleção/prévia/substituição/remoção,
-              porém de SESSÃO: não existe coluna no banco para persistir (aviso
-              explícito logo abaixo, para não fingir gravação permanente). */}
-                    <div className="space-y-1.5">
-                      <Label>Imagem do kit</Label>
-                      {imagemPreview ? (
-                        <div className="overflow-hidden rounded-xl border border-border/40 bg-muted/10">
-                          <img src={imagemPreview} alt="Prévia da imagem do kit" className="h-40 w-full object-cover" />
-                          <div className="flex items-center justify-between gap-2 p-2.5">
-                            <span className="text-[11px] text-muted-foreground">Imagem selecionada</span>
-                            <div className="flex shrink-0 items-center gap-1">
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                className="h-8 rounded-lg px-2.5 text-xs"
-                                onClick={() => inputImagemRef.current?.click()}
-                              >
-                                Substituir
-                              </Button>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 gap-1.5 rounded-lg px-2.5 text-xs text-destructive hover:text-destructive"
-                                onClick={removerImagem}
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                                Remover
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => inputImagemRef.current?.click()}
-                          aria-label="Adicionar imagem do kit"
-                          className="flex w-full flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-border/50 p-5 text-center text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/5"
-                        >
-                          <ImagePlus className="h-5 w-5 opacity-60" />
-                          <span className="text-[11px] font-medium uppercase tracking-wide">Sem imagem</span>
-                          <span className="text-xs">Adicionar imagem</span>
-                        </button>
-                      )}
-                      <input
-                        ref={inputImagemRef}
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={selecionarImagem}
-                        aria-label="Selecionar imagem do kit"
-                      />
-                      {erroImagem && <p className="text-[11px] text-destructive">{erroImagem}</p>}
-                      <p className="text-[11px] text-muted-foreground">
-                        JPG, PNG ou WEBP • até {MAX_IMAGEM_MB}MB. A imagem é exibida nesta sessão; a gravação permanente
-                        depende de uma nova coluna no banco (ainda não existe).
                       </p>
                     </div>
 

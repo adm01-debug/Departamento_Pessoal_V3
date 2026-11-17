@@ -4,15 +4,17 @@
  *
  * Mesma separação de `admissoesComum.ts`: aqui só mora o que é APRESENTAÇÃO
  * (texto de marco, classe de cor, tint de prazo). A matemática fica em
- * `onboardingDerivacoes.ts`. Nada consome estes mapas fora do card/detalhe, então
- * mudar um valor aqui não pode afetar o Dashboard, o Kanban nem os modais de
- * admissão.
+ * `onboardingDerivacoes.ts`. Quem consome: o card, o detalhe e a página da
+ * Jornada (que lê `MARCOS_ONBOARDING` para montar o filtro de etapa) — mudar um
+ * valor aqui não afeta o Dashboard, o Kanban nem os modais de admissão.
  *
  * COR: nenhuma cor nova. A régua horizontal e a barra de progresso usam o
  * `--primary` (o lime da identidade); o verde de "concluído" é o `--success`; o
- * vermelho de atraso é a variante `destructive-vivid` da área (a MESMA dos
- * estados críticos do Kanban — o `--destructive` do tema some no navy). Azul e
- * violeta do avatar saem de `--info`/`--chart-4`, já usados no Assistente IA.
+ * vermelho de atraso é o `--destructive-vivid` (o `--destructive` do tema some
+ * no navy). Esse token NÃO está declarado em `tailwind.config.js`, então aqui
+ * ele é escrito como valor arbitrário (`text-[hsl(var(--destructive-vivid))]`);
+ * a forma curta `text-destructive-vivid` não gera CSS nenhum. Azul e violeta do
+ * avatar saem de `--info`/`--chart-4`, já usados no Assistente IA.
  */
 import type { TomPrazo } from './onboardingDerivacoes';
 
@@ -45,7 +47,7 @@ export function corAvatar(nome?: string | null): string {
 
 /** Tinta do rótulo de prazo por tom (`TomPrazo`). */
 export const TOM_PRAZO: Record<TomPrazo, string> = {
-  atraso: 'text-destructive-vivid',
+  atraso: 'text-[hsl(var(--destructive-vivid))]',
   hoje: 'text-warning',
   proximo: 'text-info',
   neutro: 'text-muted-foreground',
@@ -53,7 +55,7 @@ export const TOM_PRAZO: Record<TomPrazo, string> = {
 
 /** Fundo do selo de prazo por tom (véu translúcido curto). */
 export const TOM_PRAZO_VEU: Record<TomPrazo, string> = {
-  atraso: 'bg-destructive-vivid/10',
+  atraso: 'bg-[hsl(var(--destructive-vivid)/0.1)]',
   hoje: 'bg-warning/10',
   proximo: 'bg-info/10',
   neutro: 'bg-muted/40',

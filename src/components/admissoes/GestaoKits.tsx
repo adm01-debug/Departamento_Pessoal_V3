@@ -1,25 +1,24 @@
 /**
  * GESTÃO DE KITS — grade de perfis de kit da Jornada de Onboarding.
  *
- * Redesenho de APRESENTAÇÃO da grade que antes vivia inline na `OnboardingPage`:
- * cards de kit mais informativos (área de imagem, status, itens detalhados),
- * cabeçalho com busca/filtro/ordenação e um resumo com contagens reais. É uma
- * EVOLUÇÃO da mesma tela — nenhuma regra de negócio nova, nenhuma navegação
- * falsa e NENHUM dado inventado.
+ * Cards de kit informativos (status, itens detalhados), cabeçalho com
+ * busca/filtro/ordenação e um resumo com contagens reais — nenhuma regra de
+ * negócio nova, nenhuma navegação falsa e NENHUM dado inventado.
  *
  * LIMITE HONESTO (sem tocar em backend/banco): o registro real
  * (`public.onboarding_kits`) tem apenas `nome`, `itens`, `ativo` e `created_at`.
- * NÃO existe coluna de imagem nem vínculo kit↔colaborador, então:
- *   • a área de imagem exibe a imagem do kit quando houver (imagem de SESSÃO,
- *     já que não há coluna persistida) ou o estado vazio "Sem imagem";
- *   • não há contagens de colaboradores/recebidos/pendentes nem progresso.
+ * NÃO existe coluna de imagem nem vínculo kit↔colaborador, então não há imagem
+ * do kit, nem contagens de colaboradores/recebidos/pendentes, nem progresso.
  * Essas informações dependem de mudança de schema (autorização separada) —
  * enquanto isso, nada fictício é exibido.
  *
- * TRÊS ESTADOS, distinguidos com honestidade (herdados da tela antiga):
- *   A) há kits           → grade + filtros;
- *   B) não há kits       → "nenhum perfil cadastrado";
- *   C) erro de leitura   → estado de ERRO explícito (NUNCA "nenhum kit").
+ * QUATRO ESTADOS, distinguidos com honestidade:
+ *   A) carregando        → esqueleto da grade (nunca "nenhum kit");
+ *   B) erro de leitura   → estado de ERRO explícito + "Tentar novamente";
+ *   C) não há kits       → "nenhum perfil cadastrado";
+ *   D) há kits           → grade + filtros.
+ * O serviço LANÇA em falha de query/permissão justamente para `isError` chegar
+ * aqui e o RH não ler "nenhum kit cadastrado" quando o problema é de leitura.
  */
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -36,6 +35,7 @@ import {
   Monitor,
   Package,
   Palette,
+  RefreshCw,
   Search,
   Users,
   Wallet,
@@ -45,6 +45,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cardVariants } from '@/components/dashboard/MetricCard';
 import { cn } from '@/lib/utils';
@@ -52,6 +53,9 @@ import type { KitOnboarding } from '@/services/onboardingJornadaService';
 
 /** Mesmo teto de stagger das demais grades do produto. */
 const MAX_STAGGER_INDEX = 5;
+
+/** Cards do esqueleto de carregamento (uma linha da grade em desktop). */
+const CARTOES_ESQUELETO = 3;
 
 /**
  * SLOTS DA CASCATA DE ENTRADA — a animação é a MESMA dos KPI Cards do Dashboard
@@ -93,6 +97,10 @@ interface GestaoKitsProps {
   kits: KitOnboarding[];
   /** Erro de leitura dos kits (`useKits().isError`) — distinto de "lista vazia". */
   isError: boolean;
+  /** Leitura em andamento (`useKits().isLoading`) — distinto de "lista vazia". */
+  isLoading?: boolean;
+  /** `useKits().refetch` — sem ele o estado de erro não oferece a nova tentativa. */
+  onTentarNovamente?: () => void;
   /**
    * Opções REAIS de departamento (derivadas dos colaboradores da empresa pela
    * própria tela). Nunca inventadas aqui.
@@ -206,7 +214,15 @@ function dataDeCriacao(iso: string | null | undefined): string | null {
   return Number.isNaN(data.getTime()) ? null : `Criado em ${data.toLocaleDateString('pt-BR')}`;
 }
 
-export function GestaoKits({ kits, isError, departamentos, onEditar, revealOffset = 0 }: GestaoKitsProps) {
+export function GestaoKits({
+  kits,
+  isError,
+  isLoading = false,
+  onTentarNovamente,
+  departamentos,
+  onEditar,
+  revealOffset = 0,
+}: GestaoKitsProps) {
   const [busca, setBusca] = useState('');
   const [departamento, setDepartamento] = useState(TODOS_DEPARTAMENTOS);
   const [status, setStatus] = useState<StatusKit>('todos');
@@ -246,28 +262,64 @@ export function GestaoKits({ kits, isError, departamentos, onEditar, revealOffse
   const ativos = useMemo(() => kits.filter(estaAtivo).length, [kits]);
   const totalItens = useMemo(() => kits.reduce((soma, kit) => soma + kit.itens.length, 0), [kits]);
 
-  // ── ESTADO C: erro de leitura ≠ "nenhum kit" ──────────────────────────────
+  // ── ESTADO A: leitura em andamento ≠ "nenhum kit" ─────────────────────────
+  if (isLoading) {
+    return (
+      <AnimatePresence>
+        <motion.div custom={revealOffset + SLOT.estadoVazio} variants={cardVariants} initial="hidden" animate="visible">
+          <div data-testid="kits-carregando" className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: CARTOES_ESQUELETO }, (_, indice) => (
+              <Card key={indice} className="rounded-2xl border-border/40 bg-card/50 p-4">
+                <Skeleton className="h-10 w-10 rounded-xl" />
+                <Skeleton className="mt-3 h-5 w-2/3" />
+                <Skeleton className="mt-2 h-3 w-1/3" />
+                <Skeleton className="mt-4 h-3 w-full" />
+                <Skeleton className="mt-2 h-3 w-5/6" />
+              </Card>
+            ))}
+          </div>
+          <p className="sr-only" role="status">
+            Carregando perfis de kit…
+          </p>
+        </motion.div>
+      </AnimatePresence>
+    );
+  }
+
+  // ── ESTADO B: erro de leitura ≠ "nenhum kit" ──────────────────────────────
   if (isError) {
     return (
       <AnimatePresence>
         <motion.div custom={revealOffset + SLOT.estadoVazio} variants={cardVariants} initial="hidden" animate="visible">
           <Card
             data-testid="kits-erro"
-            className="rounded-2xl border-2 border-dashed border-destructive-vivid/50 p-12 text-center text-muted-foreground"
+            role="alert"
+            className="rounded-2xl border-2 border-dashed border-destructive/50 p-12 text-center text-muted-foreground"
           >
-            <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-destructive-vivid opacity-60" />
+            <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-[hsl(var(--destructive-vivid))] opacity-60" />
             <p className="font-display font-medium text-foreground">Não foi possível carregar os perfis de kit</p>
             <p className="text-sm">
               Falha de permissão ou de conexão na leitura de <code>onboarding_kits</code>. Isso NÃO significa que não
               existam perfis cadastrados.
             </p>
+            {onTentarNovamente && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="mx-auto mt-4 h-8 gap-1.5 rounded-lg px-3 text-xs"
+                onClick={onTentarNovamente}
+              >
+                <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
+                Tentar novamente
+              </Button>
+            )}
           </Card>
         </motion.div>
       </AnimatePresence>
     );
   }
 
-  // ── ESTADO B: nenhum perfil cadastrado ────────────────────────────────────
+  // ── ESTADO C: nenhum perfil cadastrado ────────────────────────────────────
   if (kits.length === 0) {
     return (
       <AnimatePresence>
@@ -282,7 +334,7 @@ export function GestaoKits({ kits, isError, departamentos, onEditar, revealOffse
     );
   }
 
-  // ── ESTADO A: busca/filtros + resumo + grade ──────────────────────────────
+  // ── ESTADO D: busca/filtros + resumo + grade ──────────────────────────────
   return (
     <AnimatePresence>
       <div className="space-y-4">
@@ -442,20 +494,17 @@ export function GestaoKits({ kits, isError, departamentos, onEditar, revealOffse
  * ESTRUTURA (fiel à referência de redesign):
  *
  *   CARD (flex-col, h-full)
- *   ├── CARD-CONTENT            → grid `26% | 1fr`, gap 20px, padding 16px
- *   │   ├── KIT-IMAGE           → RETRATO (aspect 77/100), à esquerda, topo alinhado
- *   │   └── KIT-INFO
- *   │       ├── KIT-HEADER      → ícone do kit + nome · subtítulo, status à direita
- *   │       ├── KIT-ITEM-COUNT  → "5 itens" (ÚNICA aparição da contagem)
- *   │       └── ITEMS-LIST      → itens reais em DUAS colunas
- *   └── CARD-FOOTER             → divisória + "Gerenciar kit →" + menu ⋮
+ *   ├── CARD-CONTENT            → padding 16px
+ *   │   ├── KIT-HEADER          → ícone do kit + nome · subtítulo, status à direita
+ *   │   ├── KIT-ITEM-COUNT      → "5 itens" (ÚNICA aparição da contagem)
+ *   │   └── ITEMS-LIST          → itens reais em DUAS colunas
+ *   └── CARD-FOOTER             → divisória + "Gerenciar kit →"
  *
  * DADOS: só o que existe de verdade. O subtítulo usa o departamento REAL
  * inferido pelo nome (mesma regra do filtro) ou, na falta dele, a data real de
  * criação; sem nenhum dos dois, a linha simplesmente não aparece. `onboarding_kits`
- * não tem vínculo kit↔colaborador, então NÃO há contador de colaboradores nem
- * barra de progresso (nada inventado). A imagem é a real quando houver; senão,
- * o estado vazio "Sem imagem" — na MESMA proporção retrato.
+ * não tem vínculo kit↔colaborador nem coluna de imagem, então NÃO há contador de
+ * colaboradores, barra de progresso nem área de imagem (nada inventado).
  */
 function KitOnboardingCard({
   kit,
@@ -476,24 +525,9 @@ function KitOnboardingCard({
 
   return (
     <Card className="flex h-full flex-col overflow-hidden rounded-2xl border-border/40 bg-card/50 transition-colors hover:border-border/70">
-      {/* CARD-CONTENT — duas colunas (grid): imagem retrato (esquerda) | informações (direita).
-          `28.5%` da ÁREA DE CONTEÚDO (já descontado o padding de 16px) = ~26% da
-          largura TOTAL do card, exatamente a proporção da referência (136/519). */}
-      <div className="grid grid-cols-[28.5%_minmax(0,1fr)] items-start gap-5 p-4">
-        {/* KIT-IMAGE — RETRATO: proporção própria (`aspect-[77/100]`), nunca
-            herdada do conteúdo (`items-start`, sem `items-stretch`), para não
-            esticar nem espremer a foto. */}
-        <div className="relative aspect-[77/100] w-full overflow-hidden rounded-xl border border-border/40 bg-muted/30">
-          {kit.imagem_url ? (
-            <img src={kit.imagem_url} alt={`Imagem do kit ${kit.nome}`} className="h-full w-full object-cover" />
-          ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center gap-1">
-              <Package className="h-7 w-7 text-muted-foreground/45" />
-              <span className="text-[9px] uppercase tracking-wide text-muted-foreground/60">Sem imagem</span>
-            </div>
-          )}
-        </div>
-
+      {/* CARD-CONTENT — uma coluna: não há imagem do kit (sem coluna no banco),
+          então a informação real ocupa a largura inteira do card. */}
+      <div className="p-4">
         {/* KIT-INFO — ícone + nome/subtítulo e status no topo; contagem e lista. */}
         <div className="flex min-w-0 flex-col">
           {/* KIT-HEADER — ícone (esquerda) · nome na FRENTE do ícone · status no

@@ -28,6 +28,7 @@
  * A MESMA ordem alimenta card, detalhe, filtros e risco.
  */
 import { supabase } from '@/integrations/supabase/client';
+import { validateTablePayload } from '@/schemas/validate';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { formatDateLocalISO } from '@/utils/dateLocal';
 import {
@@ -164,7 +165,13 @@ export async function listarJornadas(): Promise<ColaboradorOnboarding[]> {
 export async function concluirTarefa(tarefaId: string): Promise<void> {
   const { error } = await supabase
     .from('tarefas_onboarding')
-    .update({ concluida: true, concluida_em: new Date().toISOString() })
+    .update(
+      validateTablePayload(
+        'tarefas_onboarding',
+        { concluida: true, concluida_em: new Date().toISOString() },
+        'onboardingJornadaService:tarefas_onboarding'
+      )
+    )
     .eq('id', tarefaId);
   if (error) throw error;
 }

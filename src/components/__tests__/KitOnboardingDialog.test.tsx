@@ -94,6 +94,12 @@ describe('KitOnboardingDialog — formulário', () => {
     expect(onSalvar).toHaveBeenCalledWith({ nome: 'Kit Dev', itens: ['MacBook', 'Headset'], ativo: false });
   });
 
+  it('não oferece campo de imagem (sem coluna no banco, nada a persistir)', () => {
+    render(<KitOnboardingDialog open onOpenChange={vi.fn()} onSalvar={vi.fn()} />);
+    expect(screen.queryByLabelText('Adicionar imagem do kit')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Selecionar imagem do kit')).not.toBeInTheDocument();
+  });
+
   it('não salva com o formulário inválido (só espaços)', () => {
     const onSalvar = vi.fn();
     render(<KitOnboardingDialog open onOpenChange={vi.fn()} onSalvar={onSalvar} />);

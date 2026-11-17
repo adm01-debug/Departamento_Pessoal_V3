@@ -9,7 +9,7 @@
  * abas e "Gestão de Kits" como ação do cabeçalho.
  */
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 
 // Mock completo (mesma convenção de `OnboardingDashboard.test.tsx`): o
 // componente reaproveita `cardVariants` de `MetricCard`
@@ -523,9 +523,10 @@ describe('Jornada de Onboarding — consolidação (fonte única do onboarding)'
     expect(screen.getByText('Kit Desenvolvedor')).toBeInTheDocument();
     expect(screen.getByText('Kit Administrativo')).toBeInTheDocument();
 
-    // O card NÃO tem mais "Gerenciar kit" nem o segundo ícone — só o lápis edita.
-    expect(screen.queryByRole('button', { name: /Gerenciar Kit Desenvolvedor/ })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Editar Kit Desenvolvedor/ })).toBeInTheDocument();
+    // Cada card tem UMA ação só ("Gerenciar kit"): o menu ⋮ que duplicava a
+    // mesma edição saiu da grade.
+    expect(screen.getAllByRole('button', { name: /Gerenciar kit/ })).toHaveLength(MOCK_KITS.length);
+    expect(screen.queryByRole('button', { name: /Mais ações/ })).not.toBeInTheDocument();
   });
 
   it('a grade de kits cai no estado vazio quando não há perfil cadastrado (nada de kit fictício)', () => {
@@ -557,7 +558,10 @@ describe('Jornada de Onboarding — consolidação (fonte única do onboarding)'
   it('editar um perfil abre o formulário já com o kit carregado', () => {
     montar(MOCK_ONBOARDING);
     fireEvent.click(screen.getByRole('button', { name: /Gestão de Kits/ }));
-    fireEvent.click(screen.getByRole('button', { name: /Editar Kit Desenvolvedor/ }));
+    // A ação do card não traz o nome do kit no rótulo, então o clique é escopado
+    // ao card do "Kit Desenvolvedor" — é isso que prova que o kit CERTO carregou.
+    const cardDev = screen.getByRole('heading', { name: 'Kit Desenvolvedor' }).closest('.flex.h-full');
+    fireEvent.click(within(cardDev as HTMLElement).getByRole('button', { name: /Gerenciar kit/ }));
     expect(screen.getByText('Formulário de kit: Kit Desenvolvedor')).toBeInTheDocument();
   });
 

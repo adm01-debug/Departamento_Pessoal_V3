@@ -56,7 +56,7 @@ import {
 export interface OnboardingAcoes {
   /** Abre o detalhe com a jornada completa (checklist). */
   onVerOnboarding: (colaborador: ColaboradorOnboarding) => void;
-  /** Copia a mensagem de boas-vindas para a área de transferência (não há infra de e-mail: nada de "enviado"). */
+  /** Copia a mensagem de boas-vindas para a área de transferência (ver a doc da ação em `OnboardingPage`). */
   onCopiarMensagemBoasVindas: (colaborador: ColaboradorOnboarding) => void;
   /** Baixa a próxima tarefa pendente (mesma mutation de "Concluir"). */
   onConcluirProxima?: (tarefa: TarefaOnboarding) => void;
@@ -226,7 +226,7 @@ export function OnboardingCard({ colaborador, acoes }: OnboardingCardProps) {
 
   const concluido = progresso.total > 0 && progresso.valor >= 100;
   const emRisco = resumo.atrasadas > 0;
-  const corBarra = concluido ? 'bg-success' : emRisco ? 'bg-destructive-vivid' : 'bg-primary';
+  const corBarra = concluido ? 'bg-success' : emRisco ? 'bg-[hsl(var(--destructive-vivid))]' : 'bg-primary';
   const cargoDepartamento = [colaborador.cargo, colaborador.departamento].filter(Boolean).join(' • ');
 
   return (
@@ -379,7 +379,11 @@ export function OnboardingCard({ colaborador, acoes }: OnboardingCardProps) {
             cor="text-muted-foreground"
           />
           {emRisco && (
-            <StatusPill icon={AlertTriangle} texto={`${resumo.atrasadas} em risco`} cor="text-destructive-vivid" />
+            <StatusPill
+              icon={AlertTriangle}
+              texto={`${resumo.atrasadas} em risco`}
+              cor="text-[hsl(var(--destructive-vivid))]"
+            />
           )}
         </div>
 
@@ -398,5 +402,3 @@ export function OnboardingCard({ colaborador, acoes }: OnboardingCardProps) {
     </Card>
   );
 }
-
-/** Data da última conclusão registrada — vive em `onboardingDerivacoes.ts`. */
