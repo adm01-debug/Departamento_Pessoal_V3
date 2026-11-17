@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "fec359d7f1d8d80c03fb4d6cf6413759085985fa",
+  "sha": "6695a608fa171c802a961f7edcf3ef93dbfd1c6c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 18:06 UTC",
-  "files_total": 3528,
-  "code_files": 2954,
-  "code_lines": 468316
+  "generated_at": "2026-11-17 18:22 UTC",
+  "files_total": 3532,
+  "code_files": 2958,
+  "code_lines": 468793
  },
  "version": "1.3.2",
- "facts_hash": "7d135e231285e55b",
+ "facts_hash": "a5cfefdce55f2f33",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,9 +384,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 980,
+   ".tsx": 982,
    ".sql": 923,
-   ".ts": 920,
+   ".ts": 922,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -89120,7 +89120,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 285
+    "deps_count": 287
    },
    {
     "path": "",
@@ -99968,7 +99968,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 952,
+  "components_count": 954,
   "hooks": [
    {
     "name": "useContacts",
@@ -100645,6 +100645,10 @@
    {
     "name": "usePendencias",
     "file": "src/hooks/usePendencias.ts"
+   },
+   {
+    "name": "usePendenciasColaborador",
+    "file": "src/hooks/usePendenciasColaborador.ts"
    },
    {
     "name": "usePeriodosAquisitivos",
@@ -101551,8 +101555,8 @@
   },
   {
    "module": "src/components",
-   "files": 952,
-   "lines": 172299,
+   "files": 954,
+   "lines": 172417,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101886,8 +101890,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 196,
-   "lines": 22894,
+   "files": 198,
+   "lines": 23184,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102068,6 +102072,7 @@
     "src/hooks/usePWA.ts",
     "src/hooks/usePcs.ts",
     "src/hooks/usePendencias.ts",
+    "src/hooks/usePendenciasColaborador.ts",
     "src/hooks/usePeriodosAquisitivos.ts",
     "src/hooks/usePiiMask.ts",
     "src/hooks/usePonto.ts",
@@ -102081,8 +102086,7 @@
     "src/hooks/useSecureVisibility.ts",
     "src/hooks/useSecurityMonitor.ts",
     "src/hooks/useServerValidation.ts",
-    "src/hooks/useSessionTimeout.ts",
-    "src/hooks/useSyncedState.ts"
+    "src/hooks/useSessionTimeout.ts"
    ]
   },
   {
@@ -102241,7 +102245,7 @@
   {
    "module": "src/pages",
    "files": 134,
-   "lines": 49211,
+   "lines": 49280,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -113089,6 +113093,11 @@
     "values": "'onboarding-kits'"
    },
    {
+    "file": "src/hooks/usePendenciasColaborador.ts",
+    "name": "PendenciaChave",
+    "values": "ponto | onboarding | aso | documentos"
+   },
+   {
     "file": "src/hooks/useProximosEventos.ts",
     "name": "ProximoEventoBadgeTone",
     "values": "info | success | warning"
@@ -119890,6 +119899,14 @@
    {
     "file": "src/hooks/usePWA.ts",
     "text": "Verifica se já está instalado apenas no mount"
+   },
+   {
+    "file": "src/hooks/usePendenciasColaborador.ts",
+    "text": "pendência\" é regra de negócio testável. Aqui ela fica sem JSX e sem"
+   },
+   {
+    "file": "src/hooks/usePendenciasColaborador.ts",
+    "text": "cada linha é tipada pelo que esta regra de fato lê — não pelo schema inteiro."
    },
    {
     "file": "src/hooks/useProximosEventos.ts",
@@ -152644,6 +152661,12 @@
     "kind": "escreve"
    },
    {
+    "file": "src/hooks/usePendenciasColaborador.ts",
+    "field": "status",
+    "value": "enviado",
+    "kind": "compara"
+   },
+   {
     "file": "src/hooks/usePonto.ts",
     "field": "tipo",
     "value": "entrada",
@@ -175960,6 +175983,26 @@
     "name": "nenhum botão obrigatório desaparece quando muda o status"
    },
    {
+    "file": "src/components/__tests__/PendenciasDialog.test.tsx",
+    "name": "PendenciasDialog"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasDialog.test.tsx",
+    "name": "mostra o resumo, o contexto e o detalhe linha a linha"
+   },
+   {
+    "file": "src/components/__tests__/PendenciasDialog.test.tsx",
+    "name": "severidade alta aparece como "
+   },
+   {
+    "file": "src/components/__tests__/PendenciasDialog.test.tsx",
+    "name": "severidade media aparece como "
+   },
+   {
+    "file": "src/components/__tests__/PendenciasDialog.test.tsx",
+    "name": "sem pendências mostra a mensagem de vazio, não uma lista em branco"
+   },
+   {
     "file": "src/components/__tests__/PerformanceAuditTimeline.test.tsx",
     "name": "PerformanceAuditTimeline — grade fixa da trilha"
    },
@@ -184386,6 +184429,46 @@
    {
     "file": "src/hooks/__tests__/usePendencias.test.tsx",
     "name": "isLoading is true initially when empresaId is provided"
+   },
+   {
+    "file": "src/hooks/__tests__/usePendenciasColaborador.test.ts",
+    "name": "usePendenciasColaborador"
+   },
+   {
+    "file": "src/hooks/__tests__/usePendenciasColaborador.test.ts",
+    "name": "sem nada vencido nem pendente, não devolve pendência alguma"
+   },
+   {
+    "file": "src/hooks/__tests__/usePendenciasColaborador.test.ts",
+    "name": "ajuste de ponto só conta quando o status é "
+   },
+   {
+    "file": "src/hooks/__tests__/usePendenciasColaborador.test.ts",
+    "name": "ASO vencido é severidade alta e cita a NR-7"
+   },
+   {
+    "file": "src/hooks/__tests__/usePendenciasColaborador.test.ts",
+    "name": "ASO ainda válido não entra"
+   },
+   {
+    "file": "src/hooks/__tests__/usePendenciasColaborador.test.ts",
+    "name": "ASO sem data de validade não entra (não dá para afirmar que venceu)"
+   },
+   {
+    "file": "src/hooks/__tests__/usePendenciasColaborador.test.ts",
+    "name": "pluraliza documento pessoal corretamente (1 e 2)"
+   },
+   {
+    "file": "src/hooks/__tests__/usePendenciasColaborador.test.ts",
+    "name": "tarefa de onboarding atrasada mostra o prazo em dd/MM/yyyy e o atraso em dias"
+   },
+   {
+    "file": "src/hooks/__tests__/usePendenciasColaborador.test.ts",
+    "name": "as 4 fontes juntas devolvem 4 pendências, ordenadas por fonte"
+   },
+   {
+    "file": "src/hooks/__tests__/usePendenciasColaborador.test.ts",
+    "name": "temAlta é falso quando só há pendência de severidade média"
    },
    {
     "file": "src/hooks/__tests__/usePeriodosAquisitivos.test.ts",
@@ -229320,6 +229403,7 @@
       "compara:src/components/folha/DistribuirHoleritesButton.tsx",
       "compara:src/components/folha/FolhaESocialSync.tsx",
       "compara:src/components/recrutamento/CandidatoTimeline.tsx",
+      "compara:src/hooks/usePendenciasColaborador.ts",
       "compara:src/pages/ContratosGeradosPage.tsx",
       "compara:src/pages/ESocialPage.tsx",
       "compara:src/services/cnabService.ts",
@@ -267488,6 +267572,18 @@
     "nenhum botão obrigatório desaparece quando muda o status"
    ]
   },
+  "src/components/__tests__/PendenciasDialog.test.tsx": {
+   "path": "src/components/__tests__/PendenciasDialog.test.tsx",
+   "lines": 52,
+   "is_test": true,
+   "tests": [
+    "PendenciasDialog",
+    "mostra o resumo, o contexto e o detalhe linha a linha",
+    "severidade alta aparece como ",
+    "severidade media aparece como ",
+    "sem pendências mostra a mensagem de vazio, não uma lista em branco"
+   ]
+  },
   "src/components/__tests__/PerformanceAuditTimeline.test.tsx": {
    "path": "src/components/__tests__/PerformanceAuditTimeline.test.tsx",
    "lines": 167,
@@ -273543,6 +273639,14 @@
    "errors": [
     "Erro ao salvar",
     "Tipo de deficiência é obrigatório"
+   ]
+  },
+  "src/components/colaborador-detalhes/PendenciasDialog.tsx": {
+   "path": "src/components/colaborador-detalhes/PendenciasDialog.tsx",
+   "lines": 66,
+   "exports": [
+    "interface PendenciaItem",
+    "function PendenciasDialog"
    ]
   },
   "src/components/colaborador-detalhes/SSTResumoTab.tsx": {
@@ -287363,6 +287467,35 @@
     "usePendencias"
    ]
   },
+  "src/hooks/usePendenciasColaborador.ts": {
+   "path": "src/hooks/usePendenciasColaborador.ts",
+   "lines": 181,
+   "exports": [
+    "type PendenciaChave",
+    "interface PendenciaColaborador",
+    "function usePendenciasColaborador"
+   ],
+   "enums": [
+    {
+     "name": "PendenciaChave",
+     "values": "ponto | onboarding | aso | documentos"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "enviado",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "pendência\" é regra de negócio testável. Aqui ela fica sem JSX e sem",
+    "cada linha é tipada pelo que esta regra de fato lê — não pelo schema inteiro."
+   ],
+   "hooks": [
+    "usePendenciasColaborador"
+   ]
+  },
   "src/hooks/usePeriodosAquisitivos.ts": {
    "path": "src/hooks/usePeriodosAquisitivos.ts",
    "lines": 26,
@@ -289456,6 +289589,27 @@
     "updateStatus shows success toast on success",
     "updateStatus shows error toast when supabase returns error",
     "isLoading is true initially when empresaId is provided"
+   ]
+  },
+  "src/hooks/__tests__/usePendenciasColaborador.test.ts": {
+   "path": "src/hooks/__tests__/usePendenciasColaborador.test.ts",
+   "lines": 109,
+   "is_test": true,
+   "rule_comments": [
+    "Regra de negócio resgatada da branch `muri`: o que conta como pendência no",
+    "se testa a REGRA, não a consulta."
+   ],
+   "tests": [
+    "usePendenciasColaborador",
+    "sem nada vencido nem pendente, não devolve pendência alguma",
+    "ajuste de ponto só conta quando o status é ",
+    "ASO vencido é severidade alta e cita a NR-7",
+    "ASO ainda válido não entra",
+    "ASO sem data de validade não entra (não dá para afirmar que venceu)",
+    "pluraliza documento pessoal corretamente (1 e 2)",
+    "tarefa de onboarding atrasada mostra o prazo em dd/MM/yyyy e o atraso em dias",
+    "as 4 fontes juntas devolvem 4 pendências, ordenadas por fonte",
+    "temAlta é falso quando só há pendência de severidade média"
    ]
   },
   "src/hooks/__tests__/usePeriodosAquisitivos.test.ts": {
@@ -293692,12 +293846,13 @@
   },
   "src/pages/ColaboradorDetalhesPage.tsx": {
    "path": "src/pages/ColaboradorDetalhesPage.tsx",
-   "lines": 587,
+   "lines": 656,
    "exports": [
     "function ColaboradorDetalhesPage"
    ],
    "navigates": [
-    "/colaboradores/editar/"
+    "/colaboradores/editar/",
+    "/sst"
    ],
    "status_values": [
     {
@@ -324280,10 +324435,24 @@
   }
  },
  "git": {
-  "sha": "fec359d7f1d8d80c03fb4d6cf6413759085985fa",
+  "sha": "6695a608fa171c802a961f7edcf3ef93dbfd1c6c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "6695a60",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(colaborador): resgata o painel de Pendências da muri, tipado (#639)",
+    "files": [
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/PendenciasDialog.test.tsx",
+     "src/components/colaborador-detalhes/PendenciasDialog.tsx",
+     "src/hooks/__tests__/usePendenciasColaborador.test.ts",
+     "src/hooks/usePendenciasColaborador.ts",
+     "src/pages/ColaboradorDetalhesPage.tsx"
+    ]
+   },
    {
     "sha": "fec359d",
     "date": "2026-11-17",
@@ -324931,67 +325100,16 @@
      "src/pages/ColaboradorFormPage.tsx",
      "src/pages/MovimentacoesPage.tsx"
     ]
-   },
-   {
-    "sha": "7a29c0e",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "feat(dossiê): enxerta as 5 abas restantes do dossiê do colaborador (branch muri) (#604)",
-    "files": [
-     "inventario/estado/rotas.json",
-     "src/components/__tests__/PrazosAlertasCard.test.tsx",
-     "src/components/__tests__/StatusComplianceCardErro.test.tsx",
-     "src/components/colaborador-detalhes/DesenvolvimentoResumoTab.tsx",
-     "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
-     "src/components/colaborador-detalhes/EditarJornadaDialog.tsx",
-     "src/components/colaborador-detalhes/ExperienciaTab.tsx",
-     "src/components/colaborador-detalhes/FalhaConsulta.tsx",
-     "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
-     "src/components/colaborador-detalhes/FormacaoTab.tsx",
-     "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
-     "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
-     "src/components/colaborador-detalhes/desenvolvimento/DesenvolvimentoProfissionalCard.tsx",
-     "src/components/colaborador-detalhes/desenvolvimento/FormacaoQualificacoesCard.tsx",
-     "src/components/colaborador-detalhes/desenvolvimento/JornadaInternaCard.tsx",
-     "src/components/colaborador-detalhes/desenvolvimento/TreinamentosCard.tsx",
-     "src/components/colaborador-detalhes/documentos/AnotacoesInternasCard.tsx",
-     "src/components/colaborador-detalhes/documentos/AnotacoesInternasDialog.tsx",
-     "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
-     "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
-     "src/components/colaborador-detalhes/documentos/FileTypeIcon.tsx",
-     "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx",
-     "src/components/colaborador-detalhes/documentos/PrazosAlertasDialog.tsx",
-     "src/components/colaborador-detalhes/documentos/StatusComplianceCard.tsx",
-     "src/components/colaborador-detalhes/documentos/StatusComplianceDialog.tsx",
-     "src/components/colaborador-detalhes/index.ts",
-     "src/components/ponto/PontoAjustesCard.tsx",
-     "src/components/ponto/PontoOcorrenciasCard.tsx",
-     "src/hooks/index.ts",
-     "src/hooks/useAfastamentos.ts",
-     "src/hooks/useComplianceColaborador.ts",
-     "src/hooks/useDesenvolvimentoColaborador.ts",
-     "src/hooks/useDocumentos.ts",
-     "src/hooks/useNovasTabelas.ts",
-     "src/hooks/useVinculos.ts",
-     "src/pages/ColaboradorDetalhesPage.tsx",
-     "src/services/colaboradorService.ts",
-     "src/services/index.ts",
-     "src/services/jornadaService.ts",
-     "src/services/lgpdService.ts",
-     "src/services/tabelas/rhService.ts",
-     "src/types/entities.ts",
-     "src/utils/documentFileType.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    14
+    15
    ],
    [
     "inventario/estado/rotas.json",
-    11
+    10
    ],
    [
     "src/pages/ColaboradoresPage.tsx",
@@ -325002,8 +325120,8 @@
     4
    ],
    [
-    "src/services/colaboradorService.ts",
-    3
+    "src/pages/ColaboradorDetalhesPage.tsx",
+    2
    ],
    [
     "src/components/layout/EntityPageContainer.tsx",
@@ -325030,40 +325148,40 @@
     2
    ],
    [
-    "src/components/colaborador-detalhes/EditarJornadaDialog.tsx",
+    "src/services/colaboradorService.ts",
     2
    ],
    [
-    "src/components/colaborador-detalhes/FormacaoTab.tsx",
+    "src/pages/ColaboradorFormPage.tsx",
     2
    ],
    [
-    "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
+    "src/components/admissoes/AdmissoesDashboard.tsx",
     2
    ],
    [
-    "src/components/colaborador-detalhes/index.ts",
+    "src/pages/AdmissoesPage.tsx",
     2
    ],
    [
-    "src/hooks/index.ts",
+    "src/components/admissoes/AdmissoesKanban.tsx",
     2
    ],
    [
-    "src/hooks/useVinculos.ts",
-    2
+    "src/components/__tests__/PendenciasDialog.test.tsx",
+    1
    ],
    [
-    "src/pages/ColaboradorDetalhesPage.tsx",
-    2
+    "src/components/colaborador-detalhes/PendenciasDialog.tsx",
+    1
    ],
    [
-    "src/services/index.ts",
-    2
+    "src/hooks/__tests__/usePendenciasColaborador.test.ts",
+    1
    ],
    [
-    "src/types/entities.ts",
-    2
+    "src/hooks/usePendenciasColaborador.ts",
+    1
    ]
   ]
  }

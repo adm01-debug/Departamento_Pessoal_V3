@@ -5707,6 +5707,7 @@
     "usePDFExport",
     "usePDIsColaborador",
     "usePWA",
+    "usePendenciasColaborador",
     "usePeriodoExperiencia",
     "usePeriodosAquisitivos",
     "usePiiMask",
@@ -5879,6 +5880,7 @@
     "usePDFExport",
     "usePDIsColaborador",
     "usePWA",
+    "usePendenciasColaborador",
     "usePeriodoExperiencia",
     "usePeriodosAquisitivos",
     "usePiiMask",
@@ -6180,7 +6182,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 335
+   "arquivos_puxados": 337
   },
   {
    "protegida": true,

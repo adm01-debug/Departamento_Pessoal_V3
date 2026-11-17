@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1286,
- "arestas": 6322,
+ "nos": 1288,
+ "arestas": 6331,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -22,7 +22,7 @@
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 217
+   "importado_por": 218
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -86,7 +86,7 @@
   },
   {
    "arquivo": "src/utils/dateLocal.ts",
-   "importado_por": 63
+   "importado_por": 64
   },
   {
    "arquivo": "supabase/functions/_shared/csrf.ts",
@@ -142,7 +142,7 @@
   },
   {
    "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-   "importado_por": 32
+   "importado_por": 33
   },
   {
    "arquivo": "supabase/functions/_shared/authz.ts",

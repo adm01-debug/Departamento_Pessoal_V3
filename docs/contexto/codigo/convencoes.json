@@ -7,12 +7,12 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (507)",
+   "src/components (508)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
   "hooks": [
-   "src/hooks (96)",
+   "src/hooks (97)",
    "src/components (9)",
    "src/contexts (4)"
   ],
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (626)",
+   "co-localizado (__tests__) (628)",
    "co-localizado (*.test) (70)",
    "e2e/ (28)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (625)"
+  ".tsx (626)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(colaborador): resgata o painel de Pendências da muri, tipado (#639)",
    "feat(dashboard): resgata o SystemStatusCard da muri, com os 3 contratos corrigidos (#636)",
    "feat(colaboradores): adota a tabela densa da muri, com máscara de PII (#638)",
    "fix(colaboradores): liga o selo de recontratacao, que estava invisivel (#635)",
-   "test: resgata da muri os 5 testes que a main não tinha e passam como está (#630)",
-   "infra(banco): resgata da muri 4 migrations que nunca foram aplicadas (#632)"
+   "test: resgata da muri os 5 testes que a main não tinha e passam como está (#630)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

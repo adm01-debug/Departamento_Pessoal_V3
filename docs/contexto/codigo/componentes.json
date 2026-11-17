@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 625,
+ "total": 626,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -46,6 +46,7 @@
    "src/components/ui/page-header.tsx"
   ],
   "PendenciaItem": [
+   "src/components/colaborador-detalhes/PendenciasDialog.tsx",
    "src/components/dashboard/analytics/widgets.tsx",
    "src/components/dashboard/AnalyticsSection.tsx"
   ],
@@ -2265,6 +2266,21 @@
     "useSalvarDeficiencia",
     "useSyncedState"
    ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/PendenciasDialog.tsx",
+   "exports": [
+    "PendenciaItem",
+    "PendenciasDialog"
+   ],
+   "export_default": null,
+   "linhas": 66,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -7047,7 +7063,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 13,
+   "usado_por": 14,
    "orfao": false
   },
   {
@@ -7111,7 +7127,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 217,
+   "usado_por": 218,
    "orfao": false
   },
   {
@@ -8764,12 +8780,13 @@
     "ColaboradorDetalhesPage"
    ],
    "export_default": "ColaboradorDetalhesPage",
-   "linhas": 587,
+   "linhas": 656,
    "dominio": "pages",
    "hooks_locais": [
     "useDataAccessLog",
     "useEmpresas",
     "usePDFExport",
+    "usePendenciasColaborador",
     "usePiiMask",
     "useProximosEventos"
    ],

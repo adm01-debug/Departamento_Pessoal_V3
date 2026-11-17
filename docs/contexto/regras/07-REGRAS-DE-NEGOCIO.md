@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fec359d7f1` · branch `main` · 2026-11-17 18:06 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6695a608fa` · branch `main` · 2026-11-17 18:22 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1904,6 +1904,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | AuditoriaSeveridade | INFO \| AVISO \| ERRO \| CRITICO | `src/hooks/useFolhaAuditoria.ts` |
 | CHAVE_JORNADAS | 'onboarding-list' | `src/hooks/useJornadaOnboarding.ts` |
 | CHAVE_KITS | 'onboarding-kits' | `src/hooks/useJornadaOnboarding.ts` |
+| PendenciaChave | ponto \| onboarding \| aso \| documentos | `src/hooks/usePendenciasColaborador.ts` |
 | ProximoEventoBadgeTone | info \| success \| warning | `src/hooks/useProximosEventos.ts` |
 | Locale | pt-BR \| en-US \| es-ES | `src/hooks/useTranslation.ts` |
 | SeveridadePagamento | ok \| atencao \| critico \| violacao_grave | `src/hooks/ferias/useAlertasPagamentoD2.ts` |
@@ -5413,7 +5414,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9113 testes em 706 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9128 testes em 708 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5708,6 +5709,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/hooks/__tests__/useDocumentOCR.test.ts` | 10 | useDocumentOCR · starts with isProcessing false · returns processDocument function · sets isProcessing true during processing … |
 | `src/hooks/__tests__/useFeriasAprovacao.test.ts` | 10 | useFeriasAprovacao · starts with isLoading=false · aprovarGestor calls feriasService.aprovarGestor with id and userId · aprovarGestor shows success toast … |
 | `src/hooks/__tests__/useHorasExtras.test.ts` | 10 | useHorasExtras · returns initial solicitacoes empty array · calls horaExtraService.listar with empresaId · returns solicitacoes from service … |
+| `src/hooks/__tests__/usePendenciasColaborador.test.ts` | 10 | usePendenciasColaborador · sem nada vencido nem pendente, não devolve pendência alguma · ajuste de ponto só conta quando o status é  · ASO vencido é severidade alta e cita a NR-7 … |
 | `src/hooks/__tests__/useRealTimeSubscription.test.tsx` | 10 | useRealTimeSubscription · does NOT subscribe when empresaId is undefined · does NOT subscribe when empresaId is empty string · creates a channel when empresaId is provided … |
 | `src/hooks/__tests__/useSystemHealth.test.ts` | 10 | useSystemHealth · returns initial status as online · returns initial latency as null · sets latency after health check … |
 | `src/services/__tests__/folhaPagamentoService.test.ts` | 10 | folhaPagamentoService · assinarHolerite · should call upsert with correct data and return hash · fecharFolha … |
@@ -5716,8 +5718,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/test/securityHeadersParity.test.ts` | 10 | paridade de security headers vercel.json x nginx.conf · nginx.conf serve exatamente os headers globais do vercel.json · vercel.json aplica os headers em produção · não usa  … |
 | `src/utils/__tests__/avisoFeriasPDF.test.ts` | 10 | gerarAvisoFeriasPDF · returns a Blob · returns a Uint8Array bytes · returns a sha256 hash string … |
 | `src/utils/__tests__/calculoFerias.test.ts` | 10 | calculoFerias · deve calcular férias simples (30 dias) sem abono · deve calcular férias com abono pecuniário (20 dias férias + 10 dias abono) · deve limitar o abono pecuniário a no máximo 10 dias … |
-| `supabase/functions/_shared/idempotency.test.ts` | 10 | idempotency: primeira chamada retorna reason=NEW e id válido · idempotency: 20 requisições concorrentes com MESMA key produzem exatamente 1 NEW · idempotency: reenvio após conclusão retorna REPLAY com mesmo body · idempotency: conclusão 204 sem body continua sendo replay de sucesso … |
-| … +406 linhas — lista completa em `context.json` | | |
+| … +408 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6085,4 +6086,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * Instante do prazo, no fim do dia. Aceita `data_limite` (coluna real) e | `src/components/avaliacao/metasComum.ts` |
 | * ── REGRAS DE NEGÓCIO APLICADAS ──────────────────────────────────────────── | `src/components/avaliacao/motorAvaliacao360.ts` |
 | • POTENCIAL = 100% gestor, com VALIDAÇÃO OBRIGATÓRIA do RH vinculada à versão | `src/components/avaliacao/motorAvaliacao360.ts` |
-| … +879 linhas — lista completa em `context.json` | |
+| … +881 linhas — lista completa em `context.json` | |

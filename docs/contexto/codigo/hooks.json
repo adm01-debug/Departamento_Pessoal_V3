@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 115,
+ "total": 116,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -1165,7 +1165,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 17,
+   "usado_por": 18,
    "usado_por_arquivos": [
     "src/components/colaborador-detalhes/ASOTab.tsx",
     "src/components/colaborador-detalhes/AnotacoesTab.tsx",
@@ -1183,6 +1183,7 @@
     "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
     "src/hooks/index.ts",
     "src/hooks/useHistoricoColaborador.ts",
+    "src/hooks/usePendenciasColaborador.ts",
     "src/hooks/useProximosEventos.ts"
    ],
    "coberto_por_testes": 15
@@ -1525,10 +1526,11 @@
     "useQuery"
    ],
    "canais_realtime": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "usado_por_arquivos": [
     "src/hooks/index.ts",
     "src/hooks/useHistoricoColaborador.ts",
+    "src/hooks/usePendenciasColaborador.ts",
     "src/hooks/useProximosEventos.ts"
    ],
    "coberto_por_testes": 1
@@ -2420,6 +2422,29 @@
    "coberto_por_testes": 1
   },
   {
+   "arquivo": "src/hooks/usePendenciasColaborador.ts",
+   "hooks_exportados": [
+    "usePendenciasColaborador"
+   ],
+   "linhas": 181,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useASOs",
+    "useDocumentosPessoais",
+    "useOnboardingColaborador",
+    "usePontoMelhorado"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/ColaboradorDetalhesPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
    "arquivo": "src/hooks/usePeriodosAquisitivos.ts",
    "hooks_exportados": [
     "usePeriodosAquisitivos"
@@ -2534,10 +2559,11 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_arquivos": [
     "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
-    "src/components/dashboard/AnalyticsSection.tsx"
+    "src/components/dashboard/AnalyticsSection.tsx",
+    "src/hooks/usePendenciasColaborador.ts"
    ],
    "coberto_por_testes": 2
   },
@@ -2921,13 +2947,14 @@
     "useResultQuery"
    ],
    "canais_realtime": [],
-   "usado_por": 6,
+   "usado_por": 7,
    "usado_por_arquivos": [
     "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
     "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
     "src/components/colaborador-detalhes/EstagiarioTab.tsx",
     "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
     "src/hooks/index.ts",
+    "src/hooks/usePendenciasColaborador.ts",
     "src/hooks/useProximosEventos.ts"
    ],
    "coberto_por_testes": 4

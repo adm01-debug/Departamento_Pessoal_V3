@@ -1335,6 +1335,10 @@
    "src/hooks/useColaboradorDetalhes.ts",
    "src/hooks/useSyncedState.ts"
   ],
+  "src/components/colaborador-detalhes/PendenciasDialog.tsx": [
+   "src/components/ui/animated-cascade-dialog.tsx",
+   "src/components/ui/badge.tsx"
+  ],
   "src/components/colaborador-detalhes/SSTResumoTab.tsx": [
    "src/components/colaborador-detalhes/FalhaConsulta.tsx",
    "src/components/ui/badge.tsx",
@@ -4944,6 +4948,13 @@
    "src/schemas/validate.ts",
    "src/services/loggerService.ts"
   ],
+  "src/hooks/usePendenciasColaborador.ts": [
+   "src/hooks/useColaboradorDetalhes.ts",
+   "src/hooks/useDesenvolvimentoColaborador.ts",
+   "src/hooks/usePontoMelhorado.ts",
+   "src/hooks/useTabelasReferencia.ts",
+   "src/utils/dateLocal.ts"
+  ],
   "src/hooks/usePeriodosAquisitivos.ts": [
    "src/integrations/supabase/client.ts"
   ],
@@ -5579,6 +5590,7 @@
   ],
   "src/pages/ColaboradorDetalhesPage.tsx": [
    "src/components/PageTitle.tsx",
+   "src/components/colaborador-detalhes/PendenciasDialog.tsx",
    "src/components/colaborador-detalhes/index.ts",
    "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
    "src/components/layout/index.ts",
@@ -5591,6 +5603,7 @@
    "src/hooks/useDataAccessLog.ts",
    "src/hooks/useEmpresas.ts",
    "src/hooks/usePDFExport.ts",
+   "src/hooks/usePendenciasColaborador.ts",
    "src/hooks/usePiiMask.ts",
    "src/hooks/useProximosEventos.ts",
    "src/services/index.ts"
