@@ -27,6 +27,7 @@ import {
 import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
 import { ColaboradorKpiCards } from '@/components/colaboradores/ColaboradorKpiCards';
 import { ColaboradorDirectoryGrid } from '@/components/colaboradores/ColaboradorDirectoryGrid';
+import { ColaboradorTable, COLABORADOR_TABLE_COLUMNS } from '@/components/colaboradores/ColaboradorTable';
 import { ColaboradorViewSwitcher, type ColaboradorViewMode } from '@/components/colaboradores/ColaboradorViewSwitcher';
 import type { Colaborador } from '@/types/entities';
 import { loggerService } from '@/services/loggerService';
@@ -284,104 +285,21 @@ export default function ColaboradoresPage() {
           }}
         />
       }
-      columns={[
-        { header: 'Colaborador', className: 'pl-6' },
-        { header: 'Identificação', hidden: 'sm' },
-        { header: 'Posição', hidden: 'md' },
-        { header: 'Status' },
-        { header: 'Ações', className: 'pr-6 text-right', width: '120px' },
-      ]}
-      /* Na visão "diretório", a grade de cartões da `muri` substitui só o corpo
-         da listagem: paginação, filtros, KPIs e estados do container seguem os
-         mesmos. Na visão "tabela" (padrão) `renderBody` fica ausente e o
-         container renderiza a tabela por `columns`/`renderRow`, como sempre. */
+      /* Contagem de colunas do esqueleto de carregamento. A tabela que desenha
+         de fato e a `ColaboradorTable`, entao as colunas vem dela — assim o
+         esqueleto nunca fica com numero de colunas diferente do conteudo. */
+      columns={COLABORADOR_TABLE_COLUMNS}
+      /* As DUAS visoes entram por `renderBody`: a grade de cartoes e a tabela
+         densa da `muri` (6 colunas, com Admissao e o selo de recontratacao).
+         A tabela genérica do container nao e mais usada nesta pagina; o resto
+         (paginacao, filtros, KPIs, estados de erro/vazio) segue igual. */
       renderBody={
         viewMode === 'diretorio' ? (
           <ColaboradorDirectoryGrid items={colaboradores} isFetching={isFetching} passagensPorId={passagensPorId} />
-        ) : undefined
+        ) : (
+          <ColaboradorTable items={colaboradores} isFetching={isFetching} passagensPorId={passagensPorId} />
+        )
       }
-      renderRow={(c) => (
-        <TableRow
-          key={c.id}
-          className="hover:bg-primary/5 border-b border-border/10 last:border-0 transition-colors cursor-pointer group"
-          onClick={() => navigate(`/colaboradores/${c.id}`)}
-        >
-          <TableCell className="py-4 pl-6">
-            <div className="flex items-center gap-4">
-              <UserAvatar
-                name={c.nome_completo}
-                size="md"
-                className="rounded-xl shadow-xs group-hover:scale-110 transition-transform"
-              />
-              <div>
-                <p className="font-display font-bold text-base leading-tight group-hover:text-primary transition-colors">
-                  {c.nome_completo}
-                </p>
-                <p className="text-xs text-muted-foreground font-body mt-0.5">
-                  {c.email ? pii.email(c.email) : 'Sem e-mail cadastrado'}
-                </p>
-              </div>
-            </div>
-          </TableCell>
-          <TableCell className="hidden sm:table-cell">
-            <div className="flex flex-col">
-              <span className="font-body font-medium text-sm">CPF: {c.cpf ? pii.cpf(c.cpf) : '—'}</span>
-              <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
-                MAT: {c.matricula || 'N/A'}
-              </span>
-            </div>
-          </TableCell>
-          <TableCell className="hidden md:table-cell">
-            <div className="flex flex-col">
-              <span className="font-body font-medium text-sm">{c.cargo}</span>
-              <span className="text-[10px] text-primary font-bold uppercase tracking-wider">{c.departamento}</span>
-            </div>
-          </TableCell>
-          <TableCell>
-            <div className="flex items-center gap-1.5">
-              <ColaboradorStatus status={c.status} />
-              {/* Recontratação: o mesmo selo que a grade de cartões mostra, para
-                  as duas visões informarem a mesma coisa. Só aparece de 2
-                  passagens para cima — na primeira não há o que sinalizar. */}
-              {(passagensPorId?.[c.id]?.quantidadePassagens ?? 0) >= 2 && (
-                <Badge variant="secondary" className="h-4 px-1.5 py-0 text-[9px] font-normal shrink-0">
-                  {passagensPorId![c.id].quantidadePassagens}ª passagem
-                </Badge>
-              )}
-            </div>
-          </TableCell>
-          <TableCell className="pr-6 text-right">
-            <div className="flex justify-end gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Visualizar"
-                className="h-9 w-9 rounded-xl hover:bg-info/10 text-info"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/colaboradores/${c.id}`);
-                }}
-                title="Ver Perfil"
-              >
-                <Eye className="h-4.5 w-4.5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Editar"
-                className="h-9 w-9 rounded-xl hover:bg-primary/10 text-primary"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/colaboradores/editar/${c.id}`);
-                }}
-                title="Editar"
-              >
-                <Edit className="h-4.5 w-4.5" />
-              </Button>
-            </div>
-          </TableCell>
-        </TableRow>
-      )}
     />
   );
 }
