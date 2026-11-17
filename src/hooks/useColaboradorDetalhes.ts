@@ -328,7 +328,14 @@ export function useCriarFeriasColetivas() {
 // Campos Customizados
 export function useCamposCustomizados(empresaId?: string) {
   return useQuery({
-    queryKey: ['campos-customizados', empresaId],
+    // `ativos` no meio da chave de proposito: `listarCamposCustomizados` filtra
+    // `ativo = true`, enquanto src/components/settings/CamposCustomizadosTab.tsx
+    // consulta a MESMA tabela sem esse filtro. Com a chave identica e staleTime de
+    // 5 min, quem montasse primeiro servia o conjunto errado para a outra tela (o
+    // dossie deixaria preencher campo desativado; as configuracoes parariam de
+    // mostrar os desativados para reativar). O prefixo segue sendo
+    // `campos-customizados`, entao o invalidateQueries daquela tela cobre as duas.
+    queryKey: ['campos-customizados', 'ativos', empresaId],
     queryFn: () => service.listarCamposCustomizados(empresaId!),
     enabled: !!empresaId,
   });

@@ -49,6 +49,13 @@ export function EditarJornadaDialog({
           <DialogTitle>Editar Jornada</DialogTitle>
         </DialogHeader>
 
+        {!jornada && (
+          <p className="text-xs text-muted-foreground">
+            Nenhuma jornada contratual ativa nesta empresa — cadastre uma jornada em Jornadas para editar entrada,
+            saída, intervalo e carga semanal. A escala do dia abaixo pode ser ajustada mesmo assim.
+          </p>
+        )}
+
         {jornada && (
           <EditarJornadaForm
             key={jornada.id}

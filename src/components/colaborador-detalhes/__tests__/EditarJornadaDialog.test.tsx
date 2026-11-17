@@ -229,6 +229,41 @@ describe('EditarJornadaDialog — escala do dia', () => {
     expect(screen.getByRole('button', { name: 'Salvar escala do dia' })).toBeDisabled();
   });
 
+  it('sem jornada contratual explica o vazio e não oferece salvar jornada', async () => {
+    vi.mocked(turnoService.obterEscalaDoDia).mockResolvedValue(null);
+    renderizar();
+
+    expect(await screen.findByText(/Nenhuma jornada contratual ativa nesta empresa/i)).toBeInTheDocument();
+    // Sem jornada não há form contratual — nada de gravar jornada vazia.
+    expect(screen.queryByRole('button', { name: 'Salvar alterações' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Carga semanal (horas)')).not.toBeInTheDocument();
+    // E a escala do dia segue editável.
+    expect(await screen.findByRole('button', { name: 'Salvar escala do dia' })).toBeInTheDocument();
+  });
+
+  it('com jornada contratual mostra o form e não o aviso de vazio', async () => {
+    vi.mocked(turnoService.obterEscalaDoDia).mockResolvedValue(null);
+    render(
+      <EditarJornadaDialog
+        open
+        onOpenChange={vi.fn()}
+        jornada={{
+          id: 'j1',
+          horario_entrada: '08:00:00',
+          horario_saida: '17:00:00',
+          intervalo_minutos: 60,
+          carga_horaria_semanal: 44,
+        }}
+        empresaId="e1"
+        colaboradorId="col-1"
+      />,
+      { wrapper }
+    );
+
+    expect(await screen.findByRole('button', { name: 'Salvar alterações' })).toBeInTheDocument();
+    expect(screen.queryByText(/Nenhuma jornada contratual ativa nesta empresa/i)).not.toBeInTheDocument();
+  });
+
   it('trocar o dia recarrega a escala daquele dia', async () => {
     vi.mocked(turnoService.obterEscalaDoDia).mockResolvedValue(null);
     renderizar();

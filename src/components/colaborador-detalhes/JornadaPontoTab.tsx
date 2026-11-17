@@ -115,7 +115,10 @@ export function JornadaPontoTab({ colaboradorId }: { colaboradorId: string }) {
       icon: Clock,
       tone: 'info' as const,
       loading: isLoadingJornada,
-      onEdit: jornadaColaborador ? () => setEditarJornadaAberto(true) : undefined,
+      // A ação não depende de haver jornada contratual: `obterJornadaColaborador`
+      // devolve null quando a empresa não tem jornada ativa, e sem esta ação o
+      // colaborador ficava sem como criar nem corrigir a escala do dia.
+      onEdit: empresaAtual?.id ? () => setEditarJornadaAberto(true) : undefined,
     },
     {
       label: 'Banco de Horas',
