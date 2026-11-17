@@ -15,8 +15,9 @@ vi.mock('@/components/layout', () => ({
 }));
 vi.mock('@/components/PageTitle', () => ({ PageTitle: () => null }));
 vi.mock('@/components/premiacoes/RewardsSimulator', () => ({ RewardsSimulator: () => null }));
-vi.mock('@/components/premiacoes/RewardsApprovalHub', () => ({ RewardsApprovalHub: () => null }));
 vi.mock('@/components/premiacoes/CampaignWizard', () => ({ CampaignWizard: () => null }));
+vi.mock('@/components/premiacoes/PagamentosTab', () => ({ PagamentosTab: () => null }));
+vi.mock('@/components/premiacoes/AuditoriaTab', () => ({ AuditoriaTab: () => null }));
 vi.mock('@/services/premiacoesService', () => ({
   PERIODO_SEM_DATA: '__sem_data__',
   premiacoesService: {

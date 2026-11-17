@@ -6,6 +6,9 @@ vi.mock('framer-motion', () => ({
     circle: (props: React.ComponentProps<'circle'>) => <circle {...props} />,
   },
   useInView: vi.fn(() => true),
+  // O componente respeita `prefers-reduced-motion`: sem este export o mock
+  // derruba o render antes de qualquer asserção.
+  useReducedMotion: vi.fn(() => false),
 }));
 
 import { DonutChart } from '../dashboard/DonutChart';
