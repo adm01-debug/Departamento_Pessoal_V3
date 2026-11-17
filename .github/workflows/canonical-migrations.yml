@@ -134,13 +134,23 @@ jobs:
           # Versões já presentes no ledger do canônico são puladas: um
           # re-dispatch do mesmo lote não pode re-executar as migrações.
           applied="$(psql "$SUPABASE_DB_URL" -X -At -c "SELECT version FROM supabase_migrations.schema_migrations")"
-          # LOTE ATUAL: provisao mensal grava a aliquota aplicada (1 arquivo).
-          # O lote NineBox (15 arquivos, 20261015090000 a 20261115170000) saiu
-          # daqui porque foi APLICADO no canonico em 16/11/2026 pelo run 43867257841
-          # (job "apply migrations no canonico" = success) -- conferido por consulta
-          # antes da troca: as 15 versoes estao no ledger, nenhuma pendente.
+          # LOTE ATUAL: resgate da branch `muri` (issue #628, PR #632, 4 arquivos)
+          # -- storage de documentos sem policy de DELETE por empresa, onboarding
+          # sem trilha de auditoria, indice de empresa_id em onboarding_kits e
+          # colunas de storage em documentos.
+          # O lote anterior (20261116120000_provisoes_registra_aliquota_aplicada)
+          # saiu daqui porque JA ESTA no ledger canonico -- conferido por consulta
+          # antes da troca (SELECT version FROM supabase_migrations.schema_migrations
+          # WHERE version >= '20261116' devolve 20261116000000 e 20261116120000).
+          # Com ele sozinho na lista, o run 44138619233 (mode=apply, 17/11/2026)
+          # terminou em "Nada a aplicar -- lote ja registrado no ledger canonico":
+          # ou seja, o input `migration_files` do dispatch NAO alimenta
+          # validate/apply, so o passo de verify. E esta lista que decide o lote.
           for migration in \
-            20261116120000_provisoes_registra_aliquota_aplicada.sql
+            20261117170000_storage_documentos_delete_tenant_scope.sql \
+            20261117170100_onboarding_audit_trigger.sql \
+            20261117170200_onboarding_kits_indice_empresa.sql \
+            20261117170300_documentos_colunas_storage.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
