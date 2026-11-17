@@ -23,14 +23,22 @@
     --accent-foreground: 240 20% 10%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
+    /* ─── ADMISSÕES — variante VIBRANTE do vermelho (`destructive-vivid`) ───
+       Membro da mesma família semântica do `--destructive`, consumido SÓ pela
+       área de Admissões (Dashboard, Gestão de Candidatos, Kanban, Onboarding,
+       Auditoria e seus modais). No tema claro ela repete o `--destructive` —
+       que já é vivo e passa AA sobre o branco —, então quem justifica o token
+       é o valor do `.dark`, logo abaixo. */
+    --destructive-vivid: 0 72% 51%;
+    /* ─── ADMISSÕES — acento TURQUESA do board (`aqua`, etapa eSocial) ───
+       Membro novo da mesma família de tokens exclusivos da área de Admissões
+       (como `--destructive-vivid`): o brand/jetons semânticos não têm matiz
+       entre o ciano (`--chart-2`) e o azul (`--info`), e a referência do Kanban
+       pede as duas cores ao mesmo tempo — Validação em ciano e eSocial em
+       turquesa. Valor por tema logo abaixo. */
+    --aqua: 174 72% 36%;
     --success: 142 71% 38%;
     --success-foreground: 0 0% 100%;
-    --destructive-vivid: 0 72% 51%;
-    --aqua: 174 72% 36%;
-    --text-control: 0.8125rem;
-    --text-body-sm: 0.8125rem;
-    --text-label: 0.75rem;
-    --text-badge: 0.625rem;
     --warning: 38 92% 50%;
     --warning-foreground: 240 20% 10%;
     --info: 199 89% 48%;
@@ -65,9 +73,21 @@
     --text-h3: 1.125rem;
     --text-body: 0.875rem;
     --text-caption: 0.75rem;
+    /* `overline` fica no valor que a main já tem aplicado (10px): a muri
+       propunha 11px, e subir aqui deslocaria todo overline já em produção. */
     --text-overline: 0.625rem;
     /* Dado/KPI em destaque: nenhum token existente batia 24px com peso 500. */
     --text-data: 1.5rem;
+    /* Título de card dentro de card de altura fixa: 16px/500. */
+    --text-heading: 1rem;
+    /* Escala semântica COMPLEMENTAR — mesmos pixels já usados nas telas
+       aprovadas, agora com nome. `control` = altura ótima dos controles
+       (Button/Input/Select); `body-sm` = texto secundário; `label` = rótulo de
+       campo; `badge` = selo compacto. Nenhuma delas inventa tamanho novo. */
+    --text-control: 0.8125rem;
+    --text-body-sm: 0.8125rem;
+    --text-label: 0.75rem;
+    --text-badge: 0.625rem;
     --chart-1: 68 100% 48%;
     --chart-2: 142 71% 38%;
     --chart-3: 38 92% 50%;
@@ -120,34 +140,46 @@
   }
 
   .dark {
-    /* ─── DARK MODE (Bombon Dark — Lime Neon) ─── */
-    --background: 240 24% 5%;
-    --foreground: 60 10% 92%;
-    --card: 240 20% 8%;
-    --card-foreground: 60 10% 92%;
-    --popover: 240 20% 8%;
-    --popover-foreground: 60 10% 92%;
+    /* ─── DARK MODE (Bombon Dark — Lime Neon) ───
+       Superfícies (background/card/border/sidebar) retonadas para o azul-marinho
+       exato pedido em 2026-09: #0B131F / #111C2A / #1A2638 (convertido para HSL,
+       já que os tokens do projeto são consumidos via `hsl(var(--x))`). Cores de
+       marca/semânticas (primary lima, success, warning, info, destructive,
+       chart-*) permanecem intocadas — são a identidade do produto, não "chrome". */
+    --background: 216 48% 8%;
+    --foreground: 0 0% 88%;
+    --card: 214 42% 12%;
+    --card-foreground: 0 0% 85%;
+    --popover: 214 42% 12%;
+    --popover-foreground: 0 0% 85%;
     --primary: 68 100% 48%;
     --primary-foreground: 240 20% 6%;
     --primary-glow: 68 100% 60%;
-    --secondary: 240 16% 14%;
-    --secondary-foreground: 60 10% 92%;
-    --muted: 240 16% 14%;
-    --muted-foreground: 240 8% 55%;
-    --accent: 240 16% 14%;
+    --secondary: 216 16% 14%;
+    --secondary-foreground: 0 0% 85%;
+    --muted: 216 16% 14%;
+    --muted-foreground: 0 0% 58%;
+    --accent: 216 16% 14%;
     --accent-foreground: 60 10% 92%;
     --destructive: 0 63% 35%;
     --destructive-foreground: 60 10% 92%;
+    /* Admissões: o `--destructive` deste tema (0 63% 35% ≈ #912121) rende só
+       ~2:1 de contraste sobre o navy do card/fundo — vermelho apagado, ilegível
+       em texto, ícone, número, selo e barra. A variante vibrante (#EF4343,
+       ≈ `red-500` #EF4444) sobe para ~4,5:1 no `--card` e ~4,9:1 no
+       `--background`, mantendo fundo escuro/translúcido (nada de glow nem de
+       fundo cheio). Nenhuma outra área do sistema consome este token. */
+    --destructive-vivid: 0 84% 60%;
+    /* Turquesa do board de Admissões (etapa eSocial) — ver a nota do `:root`. */
+    --aqua: 174 70% 46%;
     --success: 142 76% 40%;
     --success-foreground: 60 10% 92%;
-    --destructive-vivid: 0 84% 60%;
-    --aqua: 174 70% 46%;
     --warning: 38 92% 52%;
     --warning-foreground: 240 20% 6%;
     --info: 199 89% 50%;
     --info-foreground: 60 10% 92%;
-    --border: 240 16% 15%;
-    --input: 240 16% 15%;
+    --border: 216 37% 16%;
+    --input: 216 37% 16%;
     --ring: 68 100% 48%;
     --chart-1: 68 100% 48%;
     --chart-2: 160 60% 45%;
@@ -155,14 +187,16 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
 
+    --data-foreground: 0 0% 95%;
+
     /* Sidebar dark — Bombon style */
-    --sidebar-background: 240 24% 6%;
+    --sidebar-background: 216 48% 7%;
     --sidebar-foreground: 60 10% 92%;
     --sidebar-primary: 68 100% 48%;
     --sidebar-primary-foreground: 240 20% 6%;
-    --sidebar-accent: 240 16% 12%;
+    --sidebar-accent: 216 16% 12%;
     --sidebar-accent-foreground: 60 10% 92%;
-    --sidebar-border: 240 16% 13%;
+    --sidebar-border: 216 37% 14%;
     --sidebar-ring: 68 100% 48%;
 
     /* Tinta do valor numerico em destaque (.text-data). */
@@ -196,14 +230,14 @@
     font-size: var(--text-display-xl);
     line-height: 1.1;
     font-family: 'Outfit', sans-serif;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: -0.03em;
   }
   .text-display {
     font-size: var(--text-display);
     line-height: 1.2;
     font-family: 'Outfit', sans-serif;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: -0.025em;
   }
   .text-h1 {
@@ -228,6 +262,7 @@
     font-size: var(--text-body);
     line-height: 1.5;
     font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
   }
   .text-caption {
     font-size: var(--text-caption);
@@ -264,16 +299,130 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+    font-weight: 500;
+  }
+  .text-heading {
+    font-size: var(--text-heading);
+    line-height: 1.3;
+    font-family: 'Outfit', sans-serif;
     font-weight: 600;
   }
+  .text-data {
+    font-size: 1.5rem;
+    line-height: 1;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    color: hsl(var(--data-foreground));
+    font-variant-numeric: tabular-nums;
+  }
 
-  /* Focus ring - accessible */
+  /* ─── ESCALA SEMÂNTICA COMPLEMENTAR ──────────────────────────────────────
+     Ver `docs/DESIGN-SYSTEM-TIPOGRAFIA.md`. Todas as classes abaixo mantêm a
+     FAMÍLIA OFICIAL (Plus Jakarta Sans, a mesma do corpo) e não mudam os
+     tamanhos já aprovados — servem para eliminar `text-[13px]`/`text-[12px]`
+     soltos e para dar nome ao texto numérico. */
+
+  /** Controles (Button, Input, Select, Textarea) — 13 px, 1.5 de entrelinha. */
+  .text-control {
+    font-size: var(--text-control);
+    line-height: 1.5;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /** Texto secundário — 13 px. */
+  .text-body-sm {
+    font-size: var(--text-body-sm);
+    line-height: 1.45;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /** Rótulo de campo/controle — 12 px, peso 500. */
+  .text-label {
+    font-size: var(--text-label);
+    line-height: 1.4;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 500;
+  }
+
+  /** Selo/badge compacto — 10 px (mesma entrelinha herdada de antes). */
+  .text-badge {
+    font-size: var(--text-badge);
+    line-height: 1.5;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /**
+   * VALOR NUMÉRICO DA INTERFACE (dinheiro, horas, percentuais, contagens).
+   *
+   * A família é a OFICIAL do sistema; o alinhamento vem de `tabular-nums`, não
+   * de uma família monoespaçada. Use esta classe no lugar de `font-mono` em
+   * qualquer número exibido ao usuário. `font-mono` fica reservado a conteúdo
+   * técnico (hash, código, JSON, log, protocolo, atalho de teclado).
+   */
+  .text-numeric {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  /* Focus ring - accessible.
+     `ring-inset` (sem ring-offset): o anel de foco desenha DENTRO da própria
+     caixa do elemento, então nunca é cortado por um ancestral com
+     `overflow-hidden` (cards/dialogs usam isso o tempo todo) nem cria uma
+     segunda borda "vazando" para fora do border-radius do campo. */
   :focus-visible {
-    @apply outline-hidden ring-2 ring-ring ring-offset-2 ring-offset-background;
+    @apply outline-hidden ring-2 ring-ring ring-inset;
+  }
+
+  /* Inputs numéricos: remove os spinners nativos (claros, quebram o dark
+     mode) sem tocar em `appearance` de outros controles (checkbox, radio,
+     select) — escopado só a `input[type="number"]`. Navegação por teclado
+     (setas/incremento) continua funcionando normalmente. */
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
   }
 }
 
 @layer utilities {
+  /**
+   * HUB DE PREMIAÇÕES → AUDITORIA — segunda faixa da barra de filtros.
+   *
+   * Duas áreas com responsabilidades distintas:
+   *   • ESQUERDA  — os 6 chips de categoria (`minmax(0,1fr)`, `min-width: 0`)
+   *                 podem encolher/quebrar DENTRO da própria área;
+   *   • DIREITA   — Ordenar por + Limpar filtros + CSV/PDF mantêm a largura
+   *                 necessária (`auto`) e nunca são empurrados para uma
+   *                 terceira linha.
+   *
+   * Abaixo de 1440 o gap cai para 12px e abaixo de 1280 a faixa passa a uma
+   * coluna (tablet/mobile): aí a reorganização é planejada, não um estouro.
+   */
+  .audit-filter-secondary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+  }
+
+  @media (max-width: 1439px) {
+    .audit-filter-secondary {
+      gap: 12px;
+    }
+  }
+
+  @media (max-width: 1279px) {
+    .audit-filter-secondary {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -283,32 +432,51 @@
     scrollbar-width: none;
   }
 
-  /* Escala de tipografia semântica complementar (mesma família do corpo).
-     Serve para eliminar text-[13px]/text-[12px] soltos e dar nome ao texto
-     de controles, rótulos e badges. */
-  .text-control {
-    font-size: var(--text-control, 0.8125rem);
-    line-height: 1.5;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+  /* ─── Scroll interno das listas de card (cabeçalho fixo no topo) ───
+     Usada por `OnboardingDashboard.tsx` nas três listas de widget — "Ações
+     Prioritárias", "Próximas Admissões" e "SLA & Alertas". O casco do card é
+     `h-[256px]` + `overflow-hidden` e o cabeçalho fica FORA do container com
+     `overflow-y-auto`, então quem rola é só o miolo: o título/subtítulo não
+     saem do topo e o card nunca cresce para acomodar mais itens.
+
+     A barra é a do resto do app (6px, tinta de `--muted-foreground` — regra
+     global mais abaixo neste arquivo), redeclarada aqui de propósito: estas
+     listas são o único lugar onde o scroll é esperado, então o visual não deve
+     depender só da regra global. A diferença é o trilho: aqui ele é
+     transparente em vez de levemente tingido, porque dentro do miolo do card o
+     trilho tingido aparecia como uma faixa opaca de 6px sobre o fundo. Ela só
+     aparece quando há overflow (`overflow-y: auto` no elemento) e nada é
+     reservado antes disso — `scrollbar-gutter` fica de fora de propósito,
+     porque reservar a canaleta sempre tiraria 6px da largura útil das linhas
+     mesmo sem overflow. Como o container é `-mx-2`, a barra cai justamente na
+     faixa de 8px que já sobra fora da área de texto: ela não encosta no texto
+     nem no badge da direita.
+
+     `overscroll-behavior: contain`: no fim da lista a roda do mouse para na
+     lista em vez de continuar rolando a página junto (scroll chaining). */
+  .scroll-interno {
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.35) transparent;
   }
 
-  .text-body-sm {
-    font-size: var(--text-body-sm, 0.8125rem);
-    line-height: 1.45;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+  .scroll-interno::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
   }
 
-  .text-label {
-    font-size: var(--text-label, 0.75rem);
-    line-height: 1.4;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-weight: 500;
+  .scroll-interno::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 9999px;
   }
 
-  .text-badge {
-    font-size: var(--text-badge, 0.625rem);
-    line-height: 1.5;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+  .scroll-interno::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.35);
+    border-radius: 9999px;
+  }
+
+  .scroll-interno::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.55);
   }
 
   /* Glassmorphism */
@@ -324,10 +492,14 @@
      As quatro linhas da árvore — moldura de cada nível (departamento e
      subdepartamento), tronco vertical e ramal horizontal — são desenhadas por
      UM só mecanismo, `border`: uma espessura (`--organograma-line-width`), uma
-     cor opaca (`--organograma-line-color`, sem `/alpha`) e nenhum fundo. Tronco
-     e ramal são caixas do tamanho exato do token e a borda preenche a caixa
-     inteira, então as quatro linhas têm literalmente o mesmo traço: mudar o
-     token muda as quatro juntas. */
+     cor opaca (`--organograma-line-color`, sem `/alpha`) e nenhum fundo. Antes a
+     moldura saía de `border` e o tronco/ramal de `background-color` — duas
+     famílias de pintura para a mesma linha. Tronco e ramal são caixas do
+     tamanho exato do token e a borda preenche a caixa inteira, então as quatro
+     linhas têm literalmente o mesmo traço: mudar o token muda as quatro juntas. */
+  /* Tronco/ramal: nenhum lado desenhado por padrão e nenhum fundo — o lado que
+     existe recebe a espessura do token na regra específica abaixo. `border-box`
+     é o que faz a borda caber DENTRO do tamanho do token. */
   .organograma-line {
     box-sizing: border-box;
     background-color: transparent;
@@ -342,7 +514,9 @@
 
   /* Ramal horizontal: a espessura é a altura da caixa e o traço se centra na
      linha do colaborador (`top-1/2` no componente). O recuo de meia espessura
-     vem do próprio token, via calc(). */
+     vem do próprio token, via calc() — antes era `top-[19px]` fixo, que só
+     acertava porque EmployeeRow media `h-10`: número mágico que sai de sincronia
+     silenciosamente se a altura da row mudar. */
   .organograma-line-horizontal {
     height: var(--organograma-line-width);
     margin-top: calc(var(--organograma-line-width) / -2);
@@ -351,7 +525,8 @@
 
   /* Moldura de um nível (departamento/subdepartamento): as quatro bordas são
      exatamente a mesma linha do tronco e do ramal. A hierarquia raiz ×
-     subdepartamento continua visível pelo preenchimento, não pela linha. */
+     subdepartamento continua visível — só que pelo preenchimento
+     (`bg-muted/15` × `bg-background/70`), não pela linha. */
   .organograma-frame {
     box-sizing: border-box;
     border: var(--organograma-line-width) solid var(--organograma-line-color);
@@ -400,12 +575,124 @@
     @apply transition-transform duration-200 hover:scale-105;
   }
 
+  /* ─── Global Scrollbar Styles ─── */
+  /* Applied to html element for universal coverage */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) hsl(var(--border) / 0.15);
+  }
+
+  /* Webkit browsers (Chrome, Edge, Safari) */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--border) / 0.15);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 3px;
+    border: 0px solid transparent;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  /* Firefox specific */
+  * {
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) hsl(var(--border) / 0.15);
+    scrollbar-width: thin;
+  }
+
   .hover-glow {
     @apply transition-shadow duration-300 hover:shadow-glow;
   }
 
   .hover-lift {
     @apply transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated;
+  }
+}
+
+/* Squash-and-stretch de entrada do Card. Escrita direto aqui (fora de
+   qualquer `@layer`), NÃO registrada em `tailwind.config.js`: `.animate-squash`
+   é uma classe CSS comum, não uma utility do Tailwind — por isso não dá pra
+   usar a variante `motion-safe:` do Tailwind nela (o JIT do Tailwind só sabe
+   prefixar variantes em cima de utilities que ele mesmo reconhece; uma classe
+   escrita à mão fora do seu pipeline não tem esse tratamento, e
+   `motion-safe:animate-squash` no className não geraria NENHUMA regra CSS —
+   ficaria inerte, a animação nunca tocaria pra ninguém). O `@media` abaixo
+   resolve `prefers-reduced-motion` do jeito que já funciona no resto do
+   arquivo: como nenhuma das duas regras está dentro de `@layer`, a de baixo
+   (mesma especificidade) vence a de cima na ordem normal da cascata — sem
+   precisar de nenhum truque de layer desta vez, já que não estamos brigando
+   com nada gerado pelo Tailwind.
+
+   Sem `opacity` em nenhum keyframe (só `transform` anima): não é uma rede de
+   segurança contra "JavaScript falhar" — uma animação CSS declarada direto no
+   `className` do primeiro render não depende de JS pra tocar nem pra
+   terminar, o browser cuida disso sozinho. É só uma escolha estética: o card
+   já nasce visível e "assenta" no lugar, em vez de sofrer fade-in. */
+@keyframes squashInSafe {
+  0% {
+    transform: scale(1.05, 0.95) translateY(12px);
+  }
+  60% {
+    transform: scale(0.98, 1.02) translateY(-3px);
+  }
+  100% {
+    transform: scale(1, 1) translateY(0);
+  }
+}
+
+.animate-squash {
+  /* `backwards`, não `both`: com `both`, o `transform` do último keyframe
+     (`scale(1,1) translateY(0)`) fica preso em prioridade de cascata de
+     "animação" para sempre — mais alta que qualquer `transform` que o
+     Framer Motion tente escrever depois (ex.: `whileHover={{ y: -2 }}` no
+     MetricCard, que usa `motion.create(Card)` direto neste mesmo nó, sem
+     wrapper). Isso trava interações baseadas em transform permanentemente
+     depois da primeira entrada. `backwards` resolve: mantém o estado do
+     keyframe 0% durante o delay (sem "pulo" visual ao iniciar), mas devolve
+     o controle de `transform` ao normal assim que a animação termina de
+     tocar — sem salto perceptível na troca, porque o keyframe final
+     (`scale(1,1) translateY(0)`) já É o "sem transform nenhum" padrão. */
+  animation: squashInSafe 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-squash {
+    animation: none;
+  }
+
+  /* Fechamento (CSS) dos overlays que abrem lista de opções — a ABERTURA e o
+     stagger dos itens são Framer Motion de verdade (`ui/motion-presets.ts`
+     + `useReducedMotion()` em cada primitive: `select.tsx`,
+     `dropdown-menu.tsx`, `popover.tsx`, `command.tsx` — zeram
+     duration/stagger sozinhos via JS, não precisam de regra CSS aqui). Só o
+     FECHAMENTO continua em CSS puro (o wrapper Motion não cobre saída), daí
+     esta regra. Por não estar dentro de nenhum `@layer`, vence a utility
+     `data-[state=closed]:animate-out` gerada pelo Tailwind sem precisar de
+     `!important`. IMPORTANTE: os seletores miram as classes `*-anim`/
+     `*-chevron` (nome próprio, sempre presente), não `.animate-out` — essa
+     nunca aparece "pura" no elemento real, só prefixada por variante
+     (`data-\[state\=closed\]\:animate-out`), então um seletor `.animate-out`
+     aqui nunca bateria com o elemento. */
+  .select-content-anim,
+  .dp-dropdown-anim-content,
+  .dp-dropdown-anim-submenu,
+  .popover-content-anim {
+    animation: none;
+  }
+
+  .select-chevron,
+  .dp-dropdown-anim-chevron {
+    transition: none;
   }
 }
 
@@ -551,3 +838,136 @@
     animation-delay: calc(var(--kanban-index, 0) * 80ms + var(--kanban-footer-delay-reduzido, 620ms));
   }
 }
+
+/* ─── Compare cenários: tabela compacta, sem cards e sem rolagem ───────────
+   A decisão de tipografia usa a largura do CARD (container query): 11px no
+   desktop e 9,5px apenas em cards muito estreitos, mantendo as 4 colunas. */
+.scenario-comparison {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.scenario-comparison__table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+.scenario-comparison__table th {
+  padding: 6px 4px;
+  font-size: 10px;
+  line-height: 1.25;
+}
+.scenario-comparison__table td {
+  padding: 6px 4px;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.scenario-comparison__table th:first-child,
+.scenario-comparison__table td:first-child {
+  padding-left: 0;
+}
+.scenario-comparison__table th:last-child,
+.scenario-comparison__table td:last-child {
+  padding-right: 0;
+}
+@container (max-width: 20rem) {
+  .scenario-comparison__table th {
+    padding: 5px 3px;
+    font-size: 9px;
+  }
+  .scenario-comparison__table td {
+    padding: 6px 3px;
+    font-size: 9.5px;
+  }
+}
+
+/* ─── Simulador ROI: cascata em contêiner estável ──────────────────────────
+   O progresso fica em variáveis CSS no contêiner, fora do ResponsiveContainer.
+   Se o Recharts recriar as paths, as novas herdam o progresso atual. */
+.roi-grafico {
+  --roi-payout-scale: 0;
+  --roi-economia-scale: 0;
+  --roi-rotulos-opacity: 0;
+  /* Evolução temporal (`pathLength=1`): 1 = linha recolhida; 0 = desenhada. */
+  --roi-linha-payout-offset: 1;
+  --roi-linha-economia-offset: 1;
+  --roi-linha-payout-revelado: 0;
+  --roi-linha-economia-revelado: 0;
+}
+
+.roi-grafico [data-testid='roi-bar-payout'] {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scaleY(var(--roi-payout-scale, 1));
+}
+
+.roi-grafico [data-testid='roi-bar-economia'] {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scaleY(var(--roi-economia-scale, 1));
+}
+
+.roi-grafico .recharts-label-list {
+  opacity: var(--roi-rotulos-opacity, 1);
+  transition: opacity 200ms ease-out;
+}
+
+/* ─── Simulador ROI: evolução temporal (desenho das linhas) ────────────────
+   O progresso fica em variáveis do contêiner e cada path usa `pathLength=1`
+   — o dashoffset também é 0..1. Paths recriados pelo Recharts herdam o estado
+   atual e redimensionamentos não exigem remedir comprimento. */
+.roi-grafico .roi-area-payout .recharts-area-curve,
+.roi-grafico .roi-area-economia .recharts-area-curve {
+  stroke-dasharray: 1;
+}
+
+.roi-grafico .roi-area-payout .recharts-area-curve {
+  stroke-dashoffset: var(--roi-linha-payout-offset, 1);
+}
+
+.roi-grafico .roi-area-economia .recharts-area-curve {
+  stroke-dashoffset: var(--roi-linha-economia-offset, 1);
+}
+
+/* O degradê abaixo de cada linha aparece junto com o desenho (recorte
+   horizontal), e não inteiro antes da linha começar. */
+.roi-grafico .roi-area-payout .recharts-area-area {
+  clip-path: inset(0 calc((1 - var(--roi-linha-payout-revelado, 0)) * 100%) 0 0);
+}
+
+.roi-grafico .roi-area-economia .recharts-area-area {
+  clip-path: inset(0 calc((1 - var(--roi-linha-economia-revelado, 0)) * 100%) 0 0);
+}
+
+/* Pontos: aparecem quando a ponta do traço alcança a fração de arco do ponto
+   (`--roi-ponto-fracao`, medida pelo controlador no path real). */
+.roi-grafico .roi-ponto {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+.roi-grafico .roi-ponto-payout {
+  opacity: clamp(0, calc((var(--roi-linha-payout-revelado, 0) - var(--roi-ponto-fracao, 1)) * 100 + 1), 1);
+}
+
+.roi-grafico .roi-ponto-economia {
+  opacity: clamp(0, calc((var(--roi-linha-economia-revelado, 0) - var(--roi-ponto-fracao, 1)) * 100 + 1), 1);
+}
+
+/* ─── Simulador ROI: degradê do preenchimento dos sliders ─────────────────
+   O `roi-slider-gradient` é o Root do Slider dentro do card de parâmetro.
+   O seletor atinge APENAS o Range (Root > Track > Range, todos com
+   data-orientation); trilho, thumb, dimensões e arraste não mudam. O
+   degradê ocupa a largura do preenchimento, acompanhando o valor. */
+.roi-slider-gradient > [data-orientation='horizontal'] > [data-orientation='horizontal'] {
+  background-color: transparent;
+  background-image: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--success)) 100%);
+}
+
+/* O controlador JS anima SEMPRE (entrada automática e botão manual usam a
+   mesma função), inclusive com "movimento reduzido" do sistema — era essa
+   preferência que fazia a entrada automática saltar direto para a altura
+   final e parecer que a animação não existia. Não há override de `transform`
+   aqui para não anular a reprodução manual. */
