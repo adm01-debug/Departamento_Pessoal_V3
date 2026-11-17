@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "cbe13fb60c75aac8269de401fa42b8ab9e42c676",
+  "sha": "3c53e8baae52d69c4e0eca59f2a24547d207ea8a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 18:35 UTC",
+  "generated_at": "2026-11-17 19:13 UTC",
   "files_total": 3534,
   "code_files": 2960,
-  "code_lines": 468965
+  "code_lines": 468974
  },
  "version": "1.3.2",
- "facts_hash": "b4a4891ccb84a026",
+ "facts_hash": "39cb987832b06231",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -101248,7 +101248,7 @@
   {
    "module": "scripts",
    "files": 148,
-   "lines": 34151,
+   "lines": 34160,
    "tables": [
     "a",
     "anexos",
@@ -258087,7 +258087,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 433,
+   "lines": 442,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -324486,10 +324486,20 @@
   }
  },
  "git": {
-  "sha": "cbe13fb60c75aac8269de401fa42b8ab9e42c676",
+  "sha": "3c53e8baae52d69c4e0eca59f2a24547d207ea8a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "3c53e8b",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "infra(migrations): troca o LOTE ATUAL para as 4 migrations da #628 (#637)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql"
+    ]
+   },
    {
     "sha": "cbe13fb",
     "date": "2026-11-17",
@@ -325070,96 +325080,16 @@
      "src/index.css",
      "src/pages/AdmissoesPage.tsx"
     ]
-   },
-   {
-    "sha": "4fe2dcc",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "feat(treinamentos): resgata a UI de treinamentos da branch muri e reenxerta as correções da main (#607)",
-    "files": [
-     "eslint.config.js",
-     "inventario/estado/rotas.json",
-     "scripts/.bundle-budget.json",
-     "src/components/premiacoes/premiacoesEntrada.ts",
-     "src/components/treinamentos/AgendaSemanal.tsx",
-     "src/components/treinamentos/CabecalhoColunaTurma.tsx",
-     "src/components/treinamentos/CalendarioTurmasDialog.tsx",
-     "src/components/treinamentos/CertificadoCard.tsx",
-     "src/components/treinamentos/CertificadoDetalheDialog.tsx",
-     "src/components/treinamentos/CertificadoStatusBadge.tsx",
-     "src/components/treinamentos/CertificadosFiltros.tsx",
-     "src/components/treinamentos/CertificadosPainel.tsx",
-     "src/components/treinamentos/CertificadosSegmentos.tsx",
-     "src/components/treinamentos/InscricaoStatusBadge.tsx",
-     "src/components/treinamentos/InscricoesFiltros.tsx",
-     "src/components/treinamentos/InscricoesPainel.tsx",
-     "src/components/treinamentos/InscricoesSegmentos.tsx",
-     "src/components/treinamentos/MaisTurmasCard.tsx",
-     "src/components/treinamentos/NovaTurmaDialog.tsx",
-     "src/components/treinamentos/TrainingCover.tsx",
-     "src/components/treinamentos/TreinamentoAcoes.tsx",
-     "src/components/treinamentos/TreinamentoBadges.tsx",
-     "src/components/treinamentos/TreinamentoCursoAcoes.tsx",
-     "src/components/treinamentos/TreinamentoCursoCard.tsx",
-     "src/components/treinamentos/TreinamentoParticipantes.tsx",
-     "src/components/treinamentos/TreinamentosCascadeAlertDialog.tsx",
-     "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
-     "src/components/treinamentos/TreinamentosCatalogo.tsx",
-     "src/components/treinamentos/TreinamentosCatalogoFiltros.tsx",
-     "src/components/treinamentos/TreinamentosFiltros.tsx",
-     "src/components/treinamentos/TreinamentosKpis.tsx",
-     "src/components/treinamentos/TreinamentosTabela.tsx",
-     "src/components/treinamentos/TreinamentosTabsList.tsx",
-     "src/components/treinamentos/TrilhaBanner.tsx",
-     "src/components/treinamentos/TrilhaCard.tsx",
-     "src/components/treinamentos/TrilhaCursosSection.tsx",
-     "src/components/treinamentos/TrilhaDetalheDialog.tsx",
-     "src/components/treinamentos/TrilhaSequencia.tsx",
-     "src/components/treinamentos/TrilhasFiltros.tsx",
-     "src/components/treinamentos/TurmaCard.tsx",
-     "src/components/treinamentos/TurmaDetalheDialog.tsx",
-     "src/components/treinamentos/TurmasDoDiaPopover.tsx",
-     "src/components/treinamentos/TurmasFiltros.tsx",
-     "src/components/treinamentos/TurmasPainel.tsx",
-     "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
-     "src/components/treinamentos/__tests__/CabecalhoColunaTurma.test.tsx",
-     "src/components/treinamentos/__tests__/CalendarioTurmasDialog.test.tsx",
-     "src/components/treinamentos/__tests__/CertificadoCard.test.tsx",
-     "src/components/treinamentos/__tests__/InscricoesPainel.test.tsx",
-     "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx",
-     "src/components/treinamentos/__tests__/NovaTurmaDialog.test.tsx",
-     "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
-     "src/components/treinamentos/__tests__/TreinamentoCursoCard.test.tsx",
-     "src/components/treinamentos/__tests__/TreinamentosTabsList.test.tsx",
-     "src/components/treinamentos/__tests__/TrilhaSequencia.test.tsx",
-     "src/components/treinamentos/__tests__/TurmaCard.test.tsx",
-     "src/components/treinamentos/__tests__/TurmasPainel.test.tsx",
-     "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
-     "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
-     "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
-     "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
-     "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
-     "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
-     "src/components/treinamentos/certificadosDerivacoes.ts",
-     "src/components/treinamentos/inscricoesDerivacoes.ts",
-     "src/components/treinamentos/statusTurmaVisual.ts",
-     "src/components/treinamentos/treinamentosDerivacoes.ts",
-     "src/components/treinamentos/treinamentosFiltrosComum.tsx",
-     "src/components/treinamentos/trilhasDerivacoes.ts",
-     "src/components/treinamentos/turmasDerivacoes.ts",
-     "src/mocks/treinamentosMock.ts",
-     "src/pages/TreinamentosPage.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    15
+    14
    ],
    [
     "inventario/estado/rotas.json",
-    10
+    9
    ],
    [
     "src/pages/ColaboradoresPage.tsx",
@@ -325214,6 +325144,14 @@
     2
    ],
    [
+    ".github/workflows/canonical-migrations.yml",
+    1
+   ],
+   [
+    "scripts/canonical-invariants.sql",
+    1
+   ],
+   [
     "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
     1
    ],
@@ -325223,14 +325161,6 @@
    ],
    [
     "src/components/__tests__/PendenciasDialog.test.tsx",
-    1
-   ],
-   [
-    "src/components/colaborador-detalhes/PendenciasDialog.tsx",
-    1
-   ],
-   [
-    "src/hooks/__tests__/usePendenciasColaborador.test.ts",
     1
    ]
   ]

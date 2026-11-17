@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `cbe13fb60c75aac8269de401fa42b8ab9e42c676` (2026-11-17T15:34:56-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3c53e8baae52d69c4e0eca59f2a24547d207ea8a` (2026-11-17T16:11:30-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -396,17 +396,17 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 26956 nós · 60854 arestas · 2315 comunidades · grafo do commit `cbe13fb6`
+- 26956 nós · 60854 arestas · 2315 comunidades · grafo do commit `3c53e8ba`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), useEmpresas (461), button.tsx (441), cn (376), vitest (318), client.ts (282), framer-motion (212), App.tsx (199), "public"."empresas" (159), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
+- .github/workflows/canonical-migrations.yml (21)
 - inventario/estado/rotas.json (21)
-- .github/workflows/canonical-migrations.yml (20)
 - package.json (15)
 - package-lock.json (14)
-- scripts/canonical-invariants.sql (10)
+- scripts/canonical-invariants.sql (11)
 - scripts/sync/autocommit-local.sh (10)
 - docs/prod-readiness.md (9)
 - PENDENCIAS.md (8)
@@ -650,6 +650,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `3c53e8b` infra(migrations): troca o LOTE ATUAL para as 4 migrations da #628 (#637)
 - 2026-11-17 `cbe13fb` feat(colaboradores): liga os chips de filtro ativo resgatados da muri (#640)
 - 2026-11-17 `6695a60` feat(colaborador): resgata o painel de Pendências da muri, tipado (#639)
 - 2026-11-17 `fec359d` feat(dashboard): resgata o SystemStatusCard da muri, com os 3 contratos corrigidos (#636)
@@ -664,7 +665,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `d3a7108` feat(layout): resgata da muri o shell de layout e a entrada de menu que faltava (#626)
 - 2026-11-17 `e0e4448` feat(design): traz o sistema de design da branch muri para a main (#625)
 - 2026-11-17 `e3178c5` fix(deploy): asset inexistente deve dar 404, não a index.html (#623)
-- 2026-11-17 `7381b27` fix(pwa): navegacao ignorava o cache HTTP do browser e servia a casca antiga (#624)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "cbe13fb60c75aac8269de401fa42b8ab9e42c676",
+  "commit": "3c53e8baae52d69c4e0eca59f2a24547d207ea8a",
   "branch": "main",
-  "data_commit": "2026-11-17T15:34:56-03:00",
+  "data_commit": "2026-11-17T16:11:30-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "3c53e8b",
+    "data": "2026-11-17",
+    "assunto": "infra(migrations): troca o LOTE ATUAL para as 4 migrations da #628 (#637)"
+   },
    {
     "sha": "cbe13fb",
     "data": "2026-11-17",
@@ -126,11 +131,6 @@
     "sha": "d63d655",
     "data": "2026-11-17",
     "assunto": "feat: resgata da muri o dossiê do colaborador — holerites, SST, campos personalizados e recontratação (#613)"
-   },
-   {
-    "sha": "0a74847",
-    "data": "2026-11-17",
-    "assunto": "feat: resgata da muri 6 grupos de hooks/services com consumidor vivo (#612)"
    }
   ],
   "arquivos_mudados_7d": 1133,
@@ -198,12 +198,12 @@
   ],
   "arquivos_mais_mudados_90d": [
    {
-    "arquivo": "inventario/estado/rotas.json",
+    "arquivo": ".github/workflows/canonical-migrations.yml",
     "mudancas": 21
    },
    {
-    "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 20
+    "arquivo": "inventario/estado/rotas.json",
+    "mudancas": 21
    },
    {
     "arquivo": "package.json",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 10
+    "mudancas": 11
    },
    {
     "arquivo": "scripts/sync/autocommit-local.sh",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 256
+    "commits": 257
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 28
+    "commits": 27
    },
    {
     "autor": "dependabot[bot]",

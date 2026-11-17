@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra(migrations): troca o LOTE ATUAL para as 4 migrations da #628 (#637)",
    "feat(colaboradores): liga os chips de filtro ativo resgatados da muri (#640)",
    "feat(colaborador): resgata o painel de Pendências da muri, tipado (#639)",
    "feat(dashboard): resgata o SystemStatusCard da muri, com os 3 contratos corrigidos (#636)",
-   "feat(colaboradores): adota a tabela densa da muri, com máscara de PII (#638)",
-   "fix(colaboradores): liga o selo de recontratacao, que estava invisivel (#635)"
+   "feat(colaboradores): adota a tabela densa da muri, com máscara de PII (#638)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
