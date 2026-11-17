@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d63d655084cfba860168d22be14168ae7bfef26d` (2026-11-17T08:17:01-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d15194a48c79dd2677bd2609a9537cb4d9485fd5` (2026-11-17T08:37:48-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -394,7 +394,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 26537 nós · 59567 arestas · 2322 comunidades · grafo do commit `d63d6550`
+- 26537 nós · 59567 arestas · 2322 comunidades · grafo do commit `d15194a4`
 - comunidades maiores: cn (533), 20260831_corrected_public.sql (493), client.ts (475), canonical_schema.sql (475), button.tsx (448), useEmpresas (356), vitest (330), FeedbackAcoesRodape.tsx (206), contract.ts (195), react (191), colaboradoresMock.ts (160), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), entradaCard() (src/components/ui/entrada-cards.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -411,10 +411,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - deno.lock (8)
 - supabase/functions/calcular-folha/index.ts (8)
 - AGENTS.md (7)
-- CLAUDE.md (7)
 - scripts/automation.config.json (7)
 - scripts/sync/mirror-github.sh (7)
 - .github/workflows/canonical-edge-functions.yml (6)
+- CLAUDE.md (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -630,7 +630,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/V17_INDEX.md` — 📚 V17 - ÍNDICE DE DOCUMENTAÇÃO (48 linhas)
 - `docs/VISAO_FUTURA.md` — Visão futura — E-100 (59 linhas)
 - `docs/WORKFLOWS.md` — 🔄 WORKFLOWS.md - Fluxos de Trabalho (26 linhas)
-- `docs/ninebox-aprovacao-gestor-implantacao.md` — Aprovação do gestor — implantação para a conta Abner (432 linhas)
+- `docs/ninebox-aprovacao-gestor-implantacao.md` — Aprovação do gestor — implantação para a conta de homologação (432 linhas)
 - `docs/ninebox-aprovacao-gestor-ui.md` — Nine-Box — Aprovação do gestor na interface (subaba "Aguardando gestor") (100 linhas)
 - `docs/ninebox-homologacao-aprovacao-real.md` — Homologação REAL da Aprovação do Gestor — runbook de implantação (207 linhas)
 - `docs/ninebox-homologacao-funcional.md` — Nine-Box — Roteiro de homologação funcional (v2 — corrigido) (515 linhas)
@@ -648,6 +648,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `d15194a` fix(docs): redige o user_id, o e-mail e o primeiro nome de pessoa que o #599 deixou passar (#615)
 - 2026-11-17 `d63d655` feat: resgata da muri o dossiê do colaborador — holerites, SST, campos personalizados e recontratação (#613)
 - 2026-11-17 `0a74847` feat: resgata da muri 6 grupos de hooks/services com consumidor vivo (#612)
 - 2026-11-17 `34959e3` feat(premiacoes): resgata o Hub de Premiações e o simulador de ROI da muri sobre o miolo corrigido da main (#611)
@@ -662,7 +663,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-16 `85f22ec` fix: botão "Editar Perfil" do colaborador caía em 404 (#601)
 - 2026-11-16 `4911958` test: resgata 11 suítes de testes de Avaliação/Desempenho da branch muri (+194 casos) (#600)
 - 2026-11-16 `792eeb5` docs(auditoria): publica o plano de resgate por área da branch muri (#597)
-- 2026-11-16 `2b50f15` fix(docs): redige o user_id e o e-mail pessoais publicados no #595 (#599)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

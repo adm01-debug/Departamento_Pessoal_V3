@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(docs): redige o user_id, o e-mail e o primeiro nome de pessoa que o #599 deixou passar (#615)",
    "feat: resgata da muri o dossiê do colaborador — holerites, SST, campos personalizados e recontratação (#613)",
    "feat: resgata da muri 6 grupos de hooks/services com consumidor vivo (#612)",
    "feat(premiacoes): resgata o Hub de Premiações e o simulador de ROI da muri sobre o miolo corrigido da main (#611)",
-   "feat(recrutamento): resgata Recrutamento e seleção da muri preservando a máscara de PII e as 3 entregas da main (#610)",
-   "feat(onboarding): resgata a Jornada de Onboarding e a Gestão de Kits da branch muri (#609)"
+   "feat(recrutamento): resgata Recrutamento e seleção da muri preservando a máscara de PII e as 3 entregas da main (#610)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

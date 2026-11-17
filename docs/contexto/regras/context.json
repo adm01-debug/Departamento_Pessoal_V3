@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d63d655084cfba860168d22be14168ae7bfef26d",
+  "sha": "d15194a48c79dd2677bd2609a9537cb4d9485fd5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 11:17 UTC",
+  "generated_at": "2026-11-17 11:38 UTC",
   "files_total": 3470,
   "code_files": 2896,
   "code_lines": 454406
  },
  "version": "1.3.2",
- "facts_hash": "8a3d9d059a06ee4f",
+ "facts_hash": "340df681925994b7",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -174219,7 +174219,7 @@
    },
    {
     "file": "src/components/__tests__/PapeisAvaliacao.test.ts",
-    "name": "capacidades da conta admin+gestor (a conta Abner)"
+    "name": "capacidades da conta admin+gestor (a conta de homologação)"
    },
    {
     "file": "src/components/__tests__/PapeisAvaliacao.test.ts",
@@ -264742,7 +264742,7 @@
    "tests": [
     "normalização da lista de papéis",
     "aceita a lista do ",
-    "capacidades da conta admin+gestor (a conta Abner)",
+    "capacidades da conta admin+gestor (a conta de homologação)",
     "mantém o admin E o gestor — um não anula o outro",
     "a fila e as permissões do módulo refletem as duas capacidades",
     "não abre nada além do que os papéis concedem",
@@ -320401,10 +320401,25 @@
   }
  },
  "git": {
-  "sha": "d63d655084cfba860168d22be14168ae7bfef26d",
+  "sha": "d15194a48c79dd2677bd2609a9537cb4d9485fd5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "d15194a",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix(docs): redige o user_id, o e-mail e o primeiro nome de pessoa que o #599 deixou passar (#615)",
+    "files": [
+     "docs/auditoria/PLANO_RESGATE_POR_AREA_2026-11-16.json",
+     "docs/auditoria/resgate/documentacao.md",
+     "docs/ninebox-aprovacao-gestor-implantacao.md",
+     "docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql",
+     "docs/ninebox-homologacao-aprovacao-real.md",
+     "docs/ninebox-homologacao-funcional.md",
+     "src/components/__tests__/PapeisAvaliacao.test.ts"
+    ]
+   },
    {
     "sha": "d63d655",
     "date": "2026-11-17",
@@ -321146,15 +321161,6 @@
      "supabase/migrations/20261023140000_edge_rate_limit_dual.sql",
      "supabase/migrations/20261023140000_edge_rate_limit_dual.verify.sql"
     ]
-   },
-   {
-    "sha": "284f005",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "chore(docs): resgata da branch do #557 a prova de navegador que fechou o B23 (#584)",
-    "files": [
-     "docs/prod-readiness.md"
-    ]
    }
   ],
   "hot_files": [
@@ -321179,12 +321185,36 @@
     4
    ],
    [
+    "docs/ninebox-aprovacao-gestor-implantacao.md",
+    3
+   ],
+   [
+    "docs/ninebox-homologacao-aprovacao-real.md",
+    3
+   ],
+   [
     "src/components/colaborador-detalhes/index.ts",
     3
    ],
    [
     "src/services/colaboradorService.ts",
     3
+   ],
+   [
+    "docs/auditoria/PLANO_RESGATE_POR_AREA_2026-11-16.json",
+    2
+   ],
+   [
+    "docs/auditoria/resgate/documentacao.md",
+    2
+   ],
+   [
+    "docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql",
+    2
+   ],
+   [
+    "docs/ninebox-homologacao-funcional.md",
+    2
    ],
    [
     "src/components/colaborador-detalhes/EditarJornadaDialog.tsx",
@@ -321212,30 +321242,6 @@
    ],
    [
     "src/services/colaboradorDetalhesService.ts",
-    2
-   ],
-   [
-    "src/services/index.ts",
-    2
-   ],
-   [
-    "src/services/vinculoService.ts",
-    2
-   ],
-   [
-    "src/types/entities.ts",
-    2
-   ],
-   [
-    "src/pages/ColaboradorFormPage.tsx",
-    2
-   ],
-   [
-    "src/components/dashboard/DonutChart.tsx",
-    2
-   ],
-   [
-    "src/components/admissoes/AdmissoesDashboard.tsx",
     2
    ]
   ]

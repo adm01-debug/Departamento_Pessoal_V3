@@ -1,7 +1,7 @@
 # Graph Report - Departamento_Pessoal_V3  (2026-11-17)
 
 ## Corpus Check
-- 3355 files · ~3,185,018 words
+- 3355 files · ~3,185,099 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 37 file(s) not represented in the graph (top: (none) 16, .toml 5, .conf 4)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d63d6550`
+- Built from commit: `d15194a4`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -203,7 +203,7 @@
 - masks.ts
 - "public"."desligamentos"
 - cenarios.mjs
-- Aprovação do gestor — implantação para a conta Abner
+- Aprovação do gestor — implantação para a conta de homologação
 - 20260315193923_b1b7216e-7b7b-4ee9-9652-14599621e2df.sql
 - BLOCO 1: SERVICES CRÍTICOS DE NEGÓCIO (V17-001 a V17-024)
 - Nine-Box — Roteiro de homologação (ambiente isolado)
@@ -2692,9 +2692,9 @@ Nodes (31): idx_desligamentos_colab_status, idx_desligamentos_colaborador_id, id
 Cohesion: 0.07
 Nodes (23): graphify reference: transcribe video and audio, Step 2.5 - Transcribe video / audio files (only if video files detected), base(), comp(), fails, GERADOR, JS, KEEP (+15 more)
 
-### Community 187 - "Aprovação do gestor — implantação para a conta Abner"
+### Community 187 - "Aprovação do gestor — implantação para a conta de homologação"
 Cohesion: 0.07
-Nodes (28): 2. Migration pendente (o bloqueio real), 3. Vínculo necessário para a conta Abner, 4. Procedimento mínimo (após autorização), 5. O que precisa ser autorizado (explicitamente), 7.1 Diagnóstico (leitura no banco em 16/10/2026 — nenhuma escrita), 7.4 Validação no navegador (A/B, mesma sessão), 7.5 O que falta para a APROVAÇÃO REAL (parado, aguardando autorização), 7. Conta com VÁRIOS papéis (causa exata do "tratado só como admin") (+20 more)
+Nodes (28): 2. Migration pendente (o bloqueio real), 3. Vínculo necessário para a conta de homologação, 4. Procedimento mínimo (após autorização), 5. O que precisa ser autorizado (explicitamente), 7.1 Diagnóstico (leitura no banco em 16/10/2026 — nenhuma escrita), 7.4 Validação no navegador (A/B, mesma sessão), 7.5 O que falta para a APROVAÇÃO REAL (parado, aguardando autorização), 7. Conta com VÁRIOS papéis (causa exata do "tratado só como admin") (+20 more)
 
 ### Community 188 - "20260315193923_b1b7216e-7b7b-4ee9-9652-14599621e2df.sql"
 Cohesion: 0.12
