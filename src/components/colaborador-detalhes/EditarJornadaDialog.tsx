@@ -224,7 +224,11 @@ function EscalaDoDiaSection({ colaboradorId, empresaId }: { colaboradorId: strin
         <FalhaConsulta o="a escala deste dia" />
       ) : (
         <EscalaDoDiaFields
-          key={`${data}:${escala.data?.id ?? 'sem-escala'}`}
+          // `colaboradorId` na chave de proposito: navegar para outro colaborador
+          // nao desmonta esta aba, e entre duas pessoas SEM escala no dia a chave
+          // antiga (`data:sem-escala`) era identica — turno e observacoes digitados
+          // para uma seguiam no formulario e seriam gravados para a OUTRA.
+          key={`${colaboradorId}:${empresaId}:${data}:${escala.data?.id ?? 'sem-escala'}`}
           colaboradorId={colaboradorId}
           empresaId={empresaId}
           data={data}

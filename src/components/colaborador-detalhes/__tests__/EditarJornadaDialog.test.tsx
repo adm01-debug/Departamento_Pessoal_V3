@@ -110,9 +110,9 @@ const ESCALA_EXISTENTE: EscalaDoDia = {
   turno: { id: 't1', nome: 'Manhã', horario_inicio: '08:00:00', horario_fim: '17:00:00', cor: null },
 };
 
-function renderizar() {
+function renderizar(colaboradorId = 'col-1') {
   return render(
-    <EditarJornadaDialog open onOpenChange={vi.fn()} jornada={null} empresaId="e1" colaboradorId="col-1" />,
+    <EditarJornadaDialog open onOpenChange={vi.fn()} jornada={null} empresaId="e1" colaboradorId={colaboradorId} />,
     { wrapper }
   );
 }
@@ -142,6 +142,21 @@ describe('EditarJornadaDialog — escala do dia', () => {
     renderizar();
     expect(await screen.findByText(/Não foi possível carregar a escala deste dia/i)).toBeInTheDocument();
     expect(screen.queryByText(/Nenhuma escala registrada neste dia/i)).not.toBeInTheDocument();
+  });
+
+  it('descarta turno e observacoes ao trocar de colaborador sem escala no dia', async () => {
+    // Navegar para outro colaborador nao desmonta a aba. Entre duas pessoas SEM
+    // escala no dia a chave de remontagem era identica (`data:sem-escala`), e o
+    // que foi digitado para uma seria gravado para a OUTRA.
+    vi.mocked(turnoService.obterEscalaDoDia).mockResolvedValue(null);
+    const { rerender } = renderizar();
+
+    await userEvent.type(await screen.findByLabelText('Observações'), 'Do col-1');
+    expect(screen.getByLabelText('Observações')).toHaveValue('Do col-1');
+
+    rerender(<EditarJornadaDialog open onOpenChange={vi.fn()} jornada={null} empresaId="e1" colaboradorId="col-2" />);
+
+    expect(await screen.findByLabelText('Observações')).toHaveValue('');
   });
 
   it('remove a escala do dia quando ja existe uma (criar sem excluir e fluxo pela metade)', async () => {
