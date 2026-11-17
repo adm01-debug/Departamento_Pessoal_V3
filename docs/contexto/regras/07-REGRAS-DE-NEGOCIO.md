@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `93f1a5f2d8` · branch `main` · 2026-11-17 15:23 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e3178c5ff1` · branch `main` · 2026-11-17 15:25 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4404,7 +4404,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 | Constante | Valor | Arquivo |
 |---|---|---|
-| `CACHE_VERSION` | `'v4'` | `public/sw-custom.js` |
+| `CACHE_VERSION` | `'v5'` | `public/sw-custom.js` |
 | `SALARIO_MINIMO_2026` | `1621.0` | `src/calculators/tabelas.ts` |
 | `TETO_INSS_2026` | `8475.55` | `src/calculators/tabelas.ts` |
 | `TETO_INSS_2025` | `8157.41` | `src/calculators/tabelas.ts` |
@@ -5412,7 +5412,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9031 testes em 692 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9036 testes em 692 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5710,12 +5710,12 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/folhaPagamentoService.test.ts` | 10 | folhaPagamentoService · assinarHolerite · should call upsert with correct data and return hash · fecharFolha … |
 | `src/services/__tests__/loggerService.test.ts` | 10 | loggerService · should buffer info logs and not call supabase rpc immediately · should flush error logs immediately via rpc · should flush warn logs immediately via rpc for security audit … |
 | `src/services/tabelas/__tests__/pontoService.test.ts` | 10 | ajustesPontoService · listar queries ajustes_ponto · listar returns [] when data is null · criar calls insert on ajustes_ponto … |
+| `src/test/securityHeadersParity.test.ts` | 10 | paridade de security headers vercel.json x nginx.conf · nginx.conf serve exatamente os headers globais do vercel.json · vercel.json aplica os headers em produção · não usa  … |
 | `src/utils/__tests__/avisoFeriasPDF.test.ts` | 10 | gerarAvisoFeriasPDF · returns a Blob · returns a Uint8Array bytes · returns a sha256 hash string … |
 | `src/utils/__tests__/calculoFerias.test.ts` | 10 | calculoFerias · deve calcular férias simples (30 dias) sem abono · deve calcular férias com abono pecuniário (20 dias férias + 10 dias abono) · deve limitar o abono pecuniário a no máximo 10 dias … |
 | `supabase/functions/_shared/idempotency.test.ts` | 10 | idempotency: primeira chamada retorna reason=NEW e id válido · idempotency: 20 requisições concorrentes com MESMA key produzem exatamente 1 NEW · idempotency: reenvio após conclusão retorna REPLAY com mesmo body · idempotency: conclusão 204 sem body continua sendo replay de sucesso … |
 | `supabase/functions/_shared/rateLimit.test.ts` | 10 | permite quando abaixo do limite e insere marcador · bloqueia quando count >= limit e não insere · isolamento por chave — outra chave não conta contra a atual · ignora rows fora da janela (timestamp < windowStart) … |
 | `src/components/__tests__/ASOTab.test.tsx` | 9 | ASOTab · shows spinner when loading · renders Atestados de Saúde Ocupacional title · renders Novo ASO button … |
-| `src/components/__tests__/AdmissoesKanban.test.tsx` | 9 | AdmissoesKanban · renders Solicitação column label · renders Documentos column label · renders eSocial column label … |
 | … +392 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
@@ -5794,6 +5794,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | regra do time: só subir, nunca baixar (ratchet). | `vitest.config.ts` |
 | Se ambos falharem retorna null → quem chamou deve handlear. | `public/sw-custom.js` |
 | // A navegação NÃO pode ser stale-while-revalidate: o HTML servido do cache | `public/sw-custom.js` |
+| responde antes dela. A regra `no-store` do vercel.json vale para | `public/sw-custom.js` |
 | Gzipbomb-safe fetch wrapper: lê apenas os primeiros 4MB antes de entregar ao SW. | `public/sw-custom.js` |
 | intocada quando está dentro do limite — nunca reconstrói um novo Response | `public/sw-custom.js` |
 | cacheada — o SW apenas observa a resposta passar. | `public/sw-custom.js` |
@@ -6083,5 +6084,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * Instante do prazo, no fim do dia. Aceita `data_limite` (coluna real) e | `src/components/avaliacao/metasComum.ts` |
 | * ── REGRAS DE NEGÓCIO APLICADAS ──────────────────────────────────────────── | `src/components/avaliacao/motorAvaliacao360.ts` |
 | • POTENCIAL = 100% gestor, com VALIDAÇÃO OBRIGATÓRIA do RH vinculada à versão | `src/components/avaliacao/motorAvaliacao360.ts` |
-| exata da avaliação (se a avaliação mudar ou for reaberta, a validação | `src/components/avaliacao/motorAvaliacao360.ts` |
-| … +873 linhas — lista completa em `context.json` | |
+| … +874 linhas — lista completa em `context.json` | |

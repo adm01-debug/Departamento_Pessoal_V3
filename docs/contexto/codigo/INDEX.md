@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `93f1a5f2d8a0cd5d6d80b954b8228156eefb033b` (2026-11-17T12:21:56-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e3178c5ff1d837329e7784b93e21e5fcf0f09fab` (2026-11-17T12:22:13-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3479 |
 | arquivos_codigo | 2013 |
-| linhas_codigo | 400557 |
+| linhas_codigo | 400598 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -395,7 +395,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 26842 nós · 60474 arestas · 2289 comunidades · grafo do commit `93f1a5f2`
+- 26842 nós · 60474 arestas · 2289 comunidades · grafo do commit `e3178c5f`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), lucide-react (474), button.tsx (444), cn (421), useEmpresas (409), vitest (326), client.ts (300), App.tsx (187), colaboradoresMock.ts (165), checkRateLimit (160), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -405,7 +405,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - inventario/estado/rotas.json (19)
 - package.json (19)
 - package-lock.json (18)
-- PENDENCIAS.md (12)
+- PENDENCIAS.md (10)
 - scripts/canonical-invariants.sql (10)
 - scripts/sync/autocommit-local.sh (10)
 - docs/prod-readiness.md (9)
@@ -649,6 +649,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `e3178c5` fix(deploy): asset inexistente deve dar 404, não a index.html (#623)
+- 2026-11-17 `7381b27` fix(pwa): navegacao ignorava o cache HTTP do browser e servia a casca antiga (#624)
 - 2026-11-17 `93f1a5f` feat(dashboard): resgata da muri o MetricCard com tone, tooltip e variante compacta (#618)
 - 2026-11-17 `b25c46e` feat(desligamentos): drawer de rescisão com a UI da muri e o cálculo da main (#621)
 - 2026-11-17 `143c729` fix(pwa): service worker servia HTML no lugar dos assets e travava o app (#622)
@@ -662,8 +664,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `34959e3` feat(premiacoes): resgata o Hub de Premiações e o simulador de ROI da muri sobre o miolo corrigido da main (#611)
 - 2026-11-17 `182d5f9` feat(recrutamento): resgata Recrutamento e seleção da muri preservando a máscara de PII e as 3 entregas da main (#610)
 - 2026-11-16 `576c7f4` feat(onboarding): resgata a Jornada de Onboarding e a Gestão de Kits da branch muri (#609)
-- 2026-11-16 `fe455b9` feat(admissoes): resgata o núcleo de Admissões da branch muri preservando as 3 correções da main (#608)
-- 2026-11-16 `4fe2dcc` feat(treinamentos): resgata a UI de treinamentos da branch muri e reenxerta as correções da main (#607)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

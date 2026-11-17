@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(deploy): asset inexistente deve dar 404, não a index.html (#623)",
+   "fix(pwa): navegacao ignorava o cache HTTP do browser e servia a casca antiga (#624)",
    "feat(dashboard): resgata da muri o MetricCard com tone, tooltip e variante compacta (#618)",
    "feat(desligamentos): drawer de rescisão com a UI da muri e o cálculo da main (#621)",
-   "fix(pwa): service worker servia HTML no lugar dos assets e travava o app (#622)",
-   "feat(desligamentos): Trilha de Auditoria com a camada de dados reescrita para o caminho autorizado (#620)",
-   "fix(desligamentos): vocabulário alinhado ao banco — 4 de 6 tipos e o status pago não eram reconhecidos (#619)"
+   "fix(pwa): service worker servia HTML no lugar dos assets e travava o app (#622)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

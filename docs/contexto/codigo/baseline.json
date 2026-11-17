@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "93f1a5f2d8a0cd5d6d80b954b8228156eefb033b",
+  "commit": "e3178c5ff1d837329e7784b93e21e5fcf0f09fab",
   "branch": "main",
-  "data_commit": "2026-11-17T12:21:56-03:00",
+  "data_commit": "2026-11-17T12:22:13-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "e3178c5",
+    "data": "2026-11-17",
+    "assunto": "fix(deploy): asset inexistente deve dar 404, não a index.html (#623)"
+   },
+   {
+    "sha": "7381b27",
+    "data": "2026-11-17",
+    "assunto": "fix(pwa): navegacao ignorava o cache HTTP do browser e servia a casca antiga (#624)"
+   },
    {
     "sha": "93f1a5f",
     "data": "2026-11-17",
@@ -121,16 +131,6 @@
     "sha": "2b50f15",
     "data": "2026-11-16",
     "assunto": "fix(docs): redige o user_id e o e-mail pessoais publicados no #595 (#599)"
-   },
-   {
-    "sha": "5f74d3f",
-    "data": "2026-11-16",
-    "assunto": "fix(docs): corrige as fixtures de conclusão e a alegação do Q8a do ninebox (#598)"
-   },
-   {
-    "sha": "c2102ad",
-    "data": "2026-11-16",
-    "assunto": "docs(auditoria): classifica as dez migrations órfãs da muri contra o banco real (#596)"
    }
   ],
   "arquivos_mudados_7d": 1162,
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": "PENDENCIAS.md",
-    "mudancas": 12
+    "mudancas": 10
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -258,11 +258,11 @@
     "mudancas": 6
    },
    {
-    "arquivo": "e2e/auth.setup.ts",
+    "arquivo": "infra/github/action-pins.json",
     "mudancas": 6
    },
    {
-    "arquivo": "infra/github/action-pins.json",
+    "arquivo": "nginx.conf",
     "mudancas": 6
    },
    {
@@ -286,11 +286,11 @@
     "mudancas": 6
    },
    {
-    "arquivo": ".github/workflows/canonical-edge-functions.yml",
+    "arquivo": ".github/workflows/ci.yml",
     "mudancas": 5
    },
    {
-    "arquivo": ".github/workflows/ci.yml",
+    "arquivo": "e2e/auth.setup.ts",
     "mudancas": 5
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 241
+    "commits": 243
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 38
+    "commits": 36
    },
    {
     "autor": "dependabot[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3479,
   "arquivos_codigo": 2013,
-  "linhas_codigo": 400557,
+  "linhas_codigo": 400598,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -392,7 +392,7 @@
   },
   "public/sw-custom.js": {
    "arquivos": 1,
-   "linhas": 332
+   "linhas": 338
   },
   "release.config.js": {
    "arquivos": 1,
@@ -600,7 +600,7 @@
   },
   "scripts/tests": {
    "arquivos": 19,
-   "linhas": 2211
+   "linhas": 2227
   },
   "scripts/training-images-homolog": {
    "arquivos": 1,
@@ -696,7 +696,7 @@
   },
   "src/test": {
    "arquivos": 6,
-   "linhas": 482
+   "linhas": 501
   },
   "src/tests": {
    "arquivos": 4,

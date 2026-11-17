@@ -502,7 +502,7 @@
   {
    "arquivo": "scripts/tests/sw-routing.test.mjs",
    "tipo": "unit",
-   "linhas": 198,
+   "linhas": 214,
    "testa": [],
    "casos": 1
   },
@@ -6053,9 +6053,9 @@
   {
    "arquivo": "src/test/securityHeadersParity.test.ts",
    "tipo": "unit",
-   "linhas": 43,
+   "linhas": 62,
    "testa": [],
-   "casos": 3
+   "casos": 8
   },
   {
    "arquivo": "src/test/supabaseMock.ts",
