@@ -13482,7 +13482,7 @@
           "rotulo": "Organograma"
         }
       ],
-      "arquivos_lidos": 27,
+      "arquivos_lidos": 33,
       "hooks": [
         {
           "nome": "useAuth",
@@ -13507,10 +13507,6 @@
         {
           "nome": "useOrganograma",
           "arquivo": "src/hooks/useOrganograma.ts"
-        },
-        {
-          "nome": "usePiiMask",
-          "arquivo": "src/hooks/usePiiMask.ts"
         },
         {
           "nome": "usePWA",
@@ -20080,7 +20076,6 @@
         "src/pages/GeradorDocumentosPage.tsx",
         "src/pages/HoleritesPage.tsx",
         "src/pages/ImportacaoPage.tsx",
-        "src/pages/OrganogramaPage.tsx",
         "src/pages/PensoesPage.tsx",
         "src/pages/PlanosSaudePage.tsx",
         "src/pages/RecrutamentoPage.tsx",
