@@ -11,7 +11,7 @@
  * REGRAS DE NEGÓCIO RESPEITADAS (nenhuma métrica nova foi inventada):
  *  · `status` da campanha é use-restrito aos valores do banco
  *    (rascunho | ativo | suspenso | finalizado — migration 20260520131308).
- *  · Os estágios do pagamento são os MESMOS de `RewardsApprovalHub`
+ *  · Os estágios do pagamento são os MESMOS de `PagamentosTab`
  *    (calculado → revisando → aprovado_gestor → aprovado_rh → aprovado_financeiro
  *    → pago, além de rejeitado/cancelado).
  *  · "Orçamento utilizado" toma como comprometido a soma de `valor_aprovado` e,
@@ -110,7 +110,7 @@ export interface AuditoriaHub {
 
 /* ─── Vocabulário real do domínio ──────────────────────────────────────────── */
 
-/** Estágios que ainda dependem de alguém (espelha `RewardsApprovalHub.stages`). */
+/** Estágios que ainda dependem de alguém (as etapas do fluxo de `PagamentosTab`). */
 export const STATUS_PAGAMENTO_PENDENTE = ['calculado', 'revisando', 'aprovado_gestor', 'aprovado_rh'] as const;
 
 /** Estágios já liquidados pelo financeiro. */
@@ -194,9 +194,11 @@ export const ROTULO_APROVACAO: Record<string, string> = {
 };
 
 /**
- * Rótulo humano de cada estágio do pagamento — os MESMOS estágios/etapas de
- * `RewardsApprovalHub` (lá em `stages`), aqui centralizados para o detalhe e a
- * coluna de conciliação não divergirem do fluxo real.
+ * Rótulo humano de cada estágio do pagamento — os MESMOS estágios/etapas do
+ * fluxo de `PagamentosTab`, aqui centralizados para o detalhe e a coluna de
+ * conciliação não divergirem do fluxo real. Cada status que o serviço grava
+ * precisa de chave aqui: sem ela a tela cai no fallback e mostra a string crua
+ * do banco no selo, no seletor e no diálogo de detalhe.
  */
 export const ROTULO_STATUS_PAGAMENTO: Record<string, string> = {
   calculado: 'Aguardando gestor',
@@ -205,6 +207,7 @@ export const ROTULO_STATUS_PAGAMENTO: Record<string, string> = {
   aprovado_rh: 'Aguardando financeiro',
   aprovado_financeiro: 'Em conciliação',
   pago: 'Pago',
+  divergente_em_revisao: 'Divergência em revisão',
   rejeitado: 'Rejeitado',
   cancelado: 'Cancelado',
 };

@@ -30,7 +30,10 @@
  *
  * ── HONESTIDADE DOS INDICADORES ───────────────────────────────────────────
  *  · Sem payout (0 colaboradores, 0% de bônus ou 0% de meta) não existe ROI:
- *    o KPI e o resumo mostram "—", nunca "0,00x" afirmado como resultado.
+ *    o KPI, o resumo, a linha da comparação e o cartão do cenário salvo mostram
+ *    "—", nunca "0,00x" afirmado como resultado.
+ *  · Se a leitura dos cenários salvos falhar, a tela não afirma "nenhum cenário"
+ *    nem conta zero: mostra a falha com "Tentar novamente" e o contador em "—".
  *  · "Por colaborador" e "custo por retido" só aparecem quando há divisor.
  *  · A visão temporal usa SOMENTE cenários salvos (um ponto na data de
  *    criação) mais a configuração atual. Sem cenário salvo não há evolução a
@@ -145,6 +148,9 @@ const moedaEixo = (v: number) =>
 
 /** Indicador sem divisor válido não é zero: é desconhecido. */
 const ouTraco = (v: number | null, formato: (valor: number) => string) => (v === null ? '—' : formato(v));
+
+/** ROI só é resultado quando houve payout; sem payout é desconhecido, não zero. */
+const roiHonesto = (payout: number, roiBruto: number) => (payout > 0 ? roiBruto : null);
 
 const nomeDoCenario = (s: CenarioROI) => s.nome || 'Cenário';
 
@@ -442,11 +448,18 @@ export function RewardsSimulator() {
   /** Visão analítica da seção "2. Visualize o impacto". */
   const [visao, setVisao] = React.useState<VisaoImpacto>('financeira');
 
-  const { data: scenarios = [] } = useQuery({
+  const {
+    data: scenarios = [],
+    isError: erroCenarios,
+    refetch: recarregarCenarios,
+  } = useQuery({
     queryKey: ['premiacoes_cenarios_roi', empresaId],
     queryFn: () => premiacoesService.listarCenariosROI(empresaId),
     enabled: !!empresaId,
   });
+
+  /** Leitura falhou e nada em cache: a tela não pode afirmar ausência de registro. */
+  const semLeitura = erroCenarios && scenarios.length === 0;
 
   const saveMutation = useMutation({
     mutationFn: (cenario: CenarioROIInput) => premiacoesService.salvarCenarioROI(cenario, empresaId),
@@ -609,7 +622,9 @@ export function RewardsSimulator() {
   const pontosSalvos = serieTemporal.filter((p) => !p.atual);
   /** Sem cenário salvo com data não existe evolução: nada a desenhar. */
   const temHistorico = pontosSalvos.length > 0;
-  const variacaoEconomia = pontosSalvos[0] ? variacaoPercentual(savings, pontosSalvos[0].economia) : null;
+  /** Base declarada da variação: o cenário salvo mais recente (não o mais antigo). */
+  const ultimoSalvo = pontosSalvos[pontosSalvos.length - 1];
+  const variacaoEconomia = ultimoSalvo ? variacaoPercentual(savings, ultimoSalvo.economia) : null;
 
   const dadosFinanceiros = [
     { nome: 'Payout|Investimento', valor: totalBudget, contorno: COR_LINHA_PAYOUT },
@@ -650,12 +665,12 @@ export function RewardsSimulator() {
         ? {
             titulo: 'Resumo temporal',
             linhas: [
-              { cor: 'bg-info', rotulo: 'Cenários salvos', valor: numero(scenarios.length) },
+              { cor: 'bg-info', rotulo: 'Cenários salvos', valor: semLeitura ? '—' : numero(scenarios.length) },
               { cor: 'bg-warning', rotulo: 'Payout atual', valor: moeda(totalBudget) },
               { cor: 'bg-success', rotulo: 'Economia atual', valor: moeda(savings) },
               {
                 cor: variacaoEconomia !== null && variacaoEconomia < 0 ? 'bg-destructive' : 'bg-success',
-                rotulo: 'Variação da economia',
+                rotulo: 'Variação vs. último cenário salvo',
                 valor:
                   variacaoEconomia === null
                     ? '—'
@@ -723,14 +738,17 @@ export function RewardsSimulator() {
     const base = valorBase(linha.chave);
     const ultimo = cenariosSelecionados[cenariosSelecionados.length - 1];
     const variacaoLinha = variacao(ultimo ? valorDoCenario(ultimo, linha.chave) : base, base, linha.tipo);
+    /** A linha ROI segue a regra do KPI: sem payout mostra "—", nunca "0,00x". */
+    const exibir = (valor: number, payout: number) =>
+      linha.chave === 'roi' ? ouTraco(roiHonesto(payout, valor), multiplicador) : linha.formato(valor);
     return {
       chave: linha.chave,
       rotulo: linha.rotulo,
-      base: linha.formato(base),
+      base: exibir(base, totalBudget),
       selecionados: cenariosSelecionados.map((s) => ({
         id: s.id,
         nome: nomeDoCenario(s),
-        valor: linha.formato(valorDoCenario(s, linha.chave)),
+        valor: exibir(valorDoCenario(s, linha.chave), s.resultados.totalBudget ?? 0),
       })),
       variacao: variacaoLinha.texto,
       corVariacao: corDaVariacao(linha.direcao, variacaoLinha.valor),
@@ -1145,9 +1163,24 @@ export function RewardsSimulator() {
                         </DropdownMenuItem>
                       );
                     })}
-                    {scenarios.length === 0 && (
-                      <p className="px-2 py-2 text-[11px] text-muted-foreground">Nenhum cenário salvo ainda.</p>
-                    )}
+                    {scenarios.length === 0 &&
+                      (semLeitura ? (
+                        <div className="px-2 py-2">
+                          <p className="text-[11px] text-muted-foreground">
+                            Não foi possível carregar os cenários salvos.
+                          </p>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-1.5 h-7 w-full rounded-md text-[11px]"
+                            onClick={() => void recarregarCenarios()}
+                          >
+                            Tentar novamente
+                          </Button>
+                        </div>
+                      ) : (
+                        <p className="px-2 py-2 text-[11px] text-muted-foreground">Nenhum cenário salvo ainda.</p>
+                      ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </motion.div>
@@ -1261,7 +1294,7 @@ export function RewardsSimulator() {
                     variant="outline"
                     className="h-4 shrink-0 border-success/25 bg-success/10 px-1.5 text-[8.5px] text-success"
                   >
-                    ROI {multiplicador(s.resultados.roi ?? 0)}
+                    ROI {ouTraco(roiHonesto(s.resultados.totalBudget ?? 0, s.resultados.roi ?? 0), multiplicador)}
                   </Badge>
                 </motion.div>
                 <DropdownMenu>
@@ -1308,8 +1341,26 @@ export function RewardsSimulator() {
                 {...entradaSimulador(3)}
                 className="flex min-h-[88px] flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-border/50 bg-muted/10 p-3 text-center sm:col-span-1 xl:col-span-2"
               >
-                <p className="text-[11px] font-medium">Nenhum cenário salvo ainda</p>
-                <p className="text-[9.5px] text-muted-foreground">Ajuste os parâmetros e clique em “Salvar cenário”.</p>
+                {semLeitura ? (
+                  <>
+                    <p className="text-[11px] font-medium">Não foi possível carregar os cenários salvos</p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-1 h-7 gap-1.5 rounded-lg border-border/50 bg-background px-2.5 text-[11px]"
+                      onClick={() => void recarregarCenarios()}
+                    >
+                      Tentar novamente
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-[11px] font-medium">Nenhum cenário salvo ainda</p>
+                    <p className="text-[9.5px] text-muted-foreground">
+                      Ajuste os parâmetros e clique em “Salvar cenário”.
+                    </p>
+                  </>
+                )}
               </motion.div>
             )}
           </div>

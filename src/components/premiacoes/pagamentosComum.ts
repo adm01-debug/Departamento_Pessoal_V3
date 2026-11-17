@@ -15,7 +15,7 @@
  *   e, fora da cadeia, `rejeitado`.
  * A máquina de estados NÃO muda: `proximoStatusPagamento` devolve exatamente o
  * "próximo passo" que o antigo quadro de aprovação já usava (o MESMO
- * `nextStageMap` de `RewardsApprovalHub`).
+ * `nextStageMap`). As aprovações acontecem de verdade em `PagamentosTab`.
  *
  * ── REGRA Nº 2: AGRUPAMENTO VISUAL = REGRA DE NEGÓCIO ───────────────────────
  * O fluxo horizontal (IMAGEM 4) tem cinco etapas. Cada estado real cai em UMA
@@ -205,10 +205,13 @@ export function etapaAtual(etapas: EtapasContadas): EtapaFluxoPagamento | null {
 /* ─── Valor do pagamento (regra única, usada por todos os números da tela) ─── */
 
 /**
- * Valor "em dinheiro" de um pagamento: o liquidado (`valor_folha_real`, quando
- * já conciliado), senão o aprovado, senão o calculado — a MESMA precedência que
- * a tabela de auditoria já usava (`valor_aprovado || valor_calculado`), apenas
- * estendida ao valor real da folha quando ele existe.
+ * Valor de EXIBIÇÃO/LEITURA de um pagamento (KPIs, donut, ordenação por valor):
+ * o liquidado (`valor_folha_real`, quando a folha já informou), senão o
+ * aprovado, senão o calculado.
+ *
+ * NÃO É o valor a GRAVAR em `valor_aprovado`: a precedência daqui dá
+ * preferência ao valor da FOLHA, que não é um valor aprovado. Quem grava usa
+ * `valorParaGravar`.
  */
 export function valorDoPagamento(p: PagamentoHub): number {
   return numero(p.valor_folha_real) || numero(p.valor_aprovado) || numero(p.valor_calculado);
@@ -582,6 +585,22 @@ export function proximoStatusPagamento(status: string): string | null {
 
 /** Status para onde "Reiniciar fluxo" devolve um pagamento rejeitado. */
 export const STATUS_REINICIO_PAGAMENTO = 'calculado';
+
+/**
+ * Valor que vai para `valor_aprovado` ao mover o pagamento — regra EXATA da
+ * main (`handleApprove` do antigo quadro, hoje `PagamentosTab`):
+ *   · rejeitar ......... 0 (zera o aprovado);
+ *   · reiniciar fluxo .. `valor_calculado`;
+ *   · avançar .......... `valor_aprovado || valor_calculado`.
+ * `valor_folha_real` NUNCA entra: é a leitura da folha, não um valor aprovado —
+ * gravá-lo faria um pagamento com conciliação divergente passar a ter o valor da
+ * FOLHA como valor aprovado.
+ */
+export function valorParaGravar(p: PagamentoHub, proximoStatus: string): number {
+  if (proximoStatus === 'rejeitado') return 0;
+  if (proximoStatus === STATUS_REINICIO_PAGAMENTO) return numero(p.valor_calculado);
+  return numero(p.valor_aprovado) || numero(p.valor_calculado);
+}
 
 /** Rejeição só faz sentido em pagamento que ainda não foi liquidado. */
 export function podeRejeitarPagamento(status: string): boolean {

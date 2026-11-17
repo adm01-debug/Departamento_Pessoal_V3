@@ -36,13 +36,12 @@ function Snapshot({ titulo, dados }: { titulo: string; dados: Record<string, unk
  * ============================================================================
  * AUDITORIA (Hub de Premiações) — DETALHE DO EVENTO.
  *
- * ANIMAÇÃO: a MESMA janela do popup "Pendências" do sistema. A referência
- * (`PendenciasDialog`) usa `AnimatedCascadeDialog`, cuja moldura animada é
- * `CascadeDialogFrame` (`ui/cascade-dialog.tsx`) — o componente compartilhado
- * (véu + casca que abre "de dentro para fora" + cascata dos blocos) que já é
- * consumido por outras janelas grandes, inclusive a "Ver detalhes" da Auditoria
- * de Desempenho. Nada de animação nova: os variants/durações vêm de
- * `ui/cascade-motion.ts`.
+ * ANIMAÇÃO: a moldura compartilhada `CascadeDialogFrame`
+ * (`ui/cascade-dialog.tsx`) — véu + casca que abre "de dentro para fora" +
+ * cascata dos blocos —, já consumida por outras janelas grandes, entre elas a
+ * "Ver detalhes" da Auditoria de Desempenho
+ * (`avaliacao/AuditoriaDetalheDialog.tsx`). Nada de animação nova: os
+ * variants/durações vêm de `ui/cascade-motion.ts`.
  *
  * CONTEÚDO/LAYOUT: inalterados. A caixa mantém `max-w-2xl`, `max-h-[88vh]`,
  * rolagem interna, `bg-card`, `border-border/60` e `sm:rounded-xl`; o corpo

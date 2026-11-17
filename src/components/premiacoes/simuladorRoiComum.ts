@@ -87,6 +87,12 @@ export function variacaoPercentual(atual: number, base: number): number | null {
   return ((atual - base) / Math.abs(base)) * 100;
 }
 
+/**
+ * Rótulo do eixo X com ANO: o histórico guarda cenários indefinidamente e
+ * "12/03" de 2026 e de 2027 seriam dois ticks idênticos num gráfico de dinheiro.
+ */
+const ROTULO_PONTO = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+
 export interface CenarioTemporal {
   id: string;
   configuracoes: ParametrosRoi;
@@ -114,7 +120,7 @@ export function montarSerieTemporal(cenarios: CenarioTemporal[], atual: { metric
     .map((c) => {
       const quando = new Date(c.created_at as string);
       return {
-        rotulo: new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit' }).format(quando),
+        rotulo: ROTULO_PONTO.format(quando),
         criadoEm: c.created_at ?? null,
         quando: quando.getTime(),
         payout: Number(c.resultados?.totalBudget ?? 0),

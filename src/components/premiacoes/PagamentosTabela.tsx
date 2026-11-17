@@ -54,7 +54,6 @@ import {
   proximoStatusPagamento,
   rotuloStatusPagamento,
   ultimoComentario,
-  valorDoPagamento,
   type OrdenacaoPagamento,
   type TipoAcaoPagamento,
 } from './pagamentosComum';
@@ -454,7 +453,10 @@ function LinhaPagamento({ linha, indice, marcada, onAlternarSelecao, onAcaoPrinc
           truncar valor. A HIERARQUIA de cor segue o significado real do número:
           · calculado = neutro legível (ainda não é dinheiro aprovado);
           · aprovado = verde SÓ quando existe valor aprovado de fato;
-          · pago = verde SÓ quando há valor lançado na folha;
+          · pago = verde SÓ quando o pagamento está `pago`; a folha já informou
+            valor mas o pagamento NÃO foi liquidado (divergência em revisão) →
+            tom neutro, senão a linha afirmaria dinheiro pago ao lado do selo de
+            divergência e fora do KPI "Total Pago no Período";
           · ausência de valor continua com o mesmo indicador "—".
           Divergência (logo abaixo, no status) é a única em vermelho. */}
       <div
@@ -479,7 +481,11 @@ function LinhaPagamento({ linha, indice, marcada, onAlternarSelecao, onAcaoPrinc
         className={cn(
           PAD_CELULA_X,
           'text-[13px] font-medium tabular-nums',
-          linha.valor_folha_real ? 'text-success' : 'text-muted-foreground',
+          !linha.valor_folha_real
+            ? 'text-muted-foreground'
+            : linha.status === 'pago'
+              ? 'text-success'
+              : 'text-foreground/70',
           PAD_CELULA
         )}
       >

@@ -759,6 +759,7 @@ export default function PremiacoesPage() {
                 auditoria={auditoriaHub}
                 campanhas={campanhasHub}
                 onNavegar={irParaAba}
+                carregando={loadPagamentos}
                 erro={erroPagamentos}
                 onTentarNovamente={() => void recarregarPagamentos()}
               />

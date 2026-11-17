@@ -69,7 +69,7 @@ describe('métricas por campanha', () => {
         pagamento({ id: 'p1', valor_calculado: 1000, valor_aprovado: 800 }),
         pagamento({ id: 'p2', valor_calculado: 400, valor_aprovado: null }),
       ],
-      HOJE,
+      HOJE
     );
 
     expect(metricas.valorCalculado).toBe(1400);
@@ -87,7 +87,7 @@ describe('métricas por campanha', () => {
         pagamento({ id: 'p2', colaborador_id: 'col-2', colaborador: { nome_completo: 'Bruno Lima' } }),
         pagamento({ id: 'p3', colaborador_id: 'col-1', colaborador: { nome_completo: 'Ana Souza' } }),
       ],
-      HOJE,
+      HOJE
     );
 
     expect(metricas.participantes.total).toBe(2);
@@ -112,7 +112,7 @@ describe('métricas por campanha', () => {
         pagamento({ id: 'p4', status: 'aprovado_financeiro', status_conciliacao: 'divergente' }),
         pagamento({ id: 'p5', status: 'rejeitado' }),
       ],
-      HOJE,
+      HOJE
     );
 
     expect(metricas.pagamentosPendentes).toBe(2);
@@ -146,7 +146,13 @@ describe('situação temporal', () => {
 describe('filtros, contadores e ordenação', () => {
   const metricas = montarMetricas(
     [
-      campanha({ id: 'c1', nome: 'Campanha de Vendas Q3 2026', descricao: 'Aceleração de receita com bônus trimestral.', data_inicio: '2026-07-01', data_fim: '2026-09-30' }),
+      campanha({
+        id: 'c1',
+        nome: 'Campanha de Vendas Q3 2026',
+        descricao: 'Aceleração de receita com bônus trimestral.',
+        data_inicio: '2026-07-01',
+        data_fim: '2026-09-30',
+      }),
       campanha({
         id: 'c2',
         nome: 'Bônus por Meta de Produção',
@@ -179,7 +185,7 @@ describe('filtros, contadores e ordenação', () => {
       pagamento({ id: 'p1', campanha_id: 'c2', colaborador_id: 'col-1', valor_calculado: 500, valor_aprovado: 500 }),
       pagamento({ id: 'p2', campanha_id: 'c2', colaborador_id: 'col-2', valor_calculado: 500, valor_aprovado: null }),
     ],
-    HOJE,
+    HOJE
   );
 
   it('conta por status real e mantém o total', () => {
@@ -193,10 +199,18 @@ describe('filtros, contadores e ordenação', () => {
   });
 
   it('busca por nome e por descrição, ignorando acento e caixa', () => {
-    const porNome = filtrarEOrdenarCampanhas(metricas, { busca: 'BONUS producao', status: 'todos', periodo: 'todos', ordenacao: 'nome' }, HOJE);
+    const porNome = filtrarEOrdenarCampanhas(
+      metricas,
+      { busca: 'BONUS producao', status: 'todos', periodo: 'todos', ordenacao: 'nome' },
+      HOJE
+    );
     expect(porNome.map((m) => m.campanha.id)).toEqual(['c2']);
 
-    const porDescricao = filtrarEOrdenarCampanhas(metricas, { busca: 'trimestral', status: 'todos', periodo: 'todos', ordenacao: 'nome' }, HOJE);
+    const porDescricao = filtrarEOrdenarCampanhas(
+      metricas,
+      { busca: 'trimestral', status: 'todos', periodo: 'todos', ordenacao: 'nome' },
+      HOJE
+    );
     expect(porDescricao.map((m) => m.campanha.id)).toEqual(['c1']);
   });
 
@@ -204,7 +218,7 @@ describe('filtros, contadores e ordenação', () => {
     const ativasNoAno = filtrarEOrdenarCampanhas(
       metricas,
       { busca: '', status: 'ativo', periodo: 'ano_atual', ordenacao: 'inicio_recente' },
-      HOJE,
+      HOJE
     );
     expect(ativasNoAno.map((m) => m.campanha.id)).toEqual(['c2', 'c1']);
 
@@ -212,14 +226,14 @@ describe('filtros, contadores e ordenação', () => {
     const ultimos90 = filtrarEOrdenarCampanhas(
       metricas,
       { busca: '', status: 'todos', periodo: 'ultimos_90', ordenacao: 'inicio_recente' },
-      HOJE,
+      HOJE
     );
     expect(ultimos90.map((m) => m.campanha.id)).toEqual(['c4', 'c2']);
 
     const mesAtual = filtrarEOrdenarCampanhas(
       metricas,
       { busca: '', status: 'todos', periodo: 'mes_atual', ordenacao: 'inicio_recente' },
-      HOJE,
+      HOJE
     );
     expect(mesAtual.map((m) => m.campanha.id)).toEqual(['c4']);
   });
@@ -227,7 +241,7 @@ describe('filtros, contadores e ordenação', () => {
   it('ordena por período, nome, orçamento, participantes e % aprovado', () => {
     const ids = (ordenacao: Parameters<typeof filtrarEOrdenarCampanhas>[1]['ordenacao']) =>
       filtrarEOrdenarCampanhas(metricas, { busca: '', status: 'todos', periodo: 'todos', ordenacao }, HOJE).map(
-        (m) => m.campanha.id,
+        (m) => m.campanha.id
       );
 
     expect(ids('inicio_antigo')).toEqual(['c3', 'c1', 'c2', 'c4']);
@@ -242,9 +256,7 @@ describe('filtros, contadores e ordenação', () => {
 
 describe('variação do total aprovado', () => {
   it('devolve null quando não há base no mês anterior', () => {
-    const pagamentos = [
-      pagamento({ id: 'p1', valor_aprovado: 1000, data_pagamento: '2026-10-05' }),
-    ];
+    const pagamentos = [pagamento({ id: 'p1', valor_aprovado: 1000, data_pagamento: '2026-10-05' })];
     expect(calcularVariacaoMensal(pagamentos, HOJE)).toBeNull();
   });
 
@@ -282,13 +294,19 @@ describe('próximas ações', () => {
       }),
     ],
     [],
-    HOJE,
+    HOJE
   );
 
   const pagamentos = [
     pagamento({ id: 'p1', campanha_id: 'c1', status: 'calculado', updated_at: '2026-10-11T09:00:00.000Z' }),
     pagamento({ id: 'p2', campanha_id: 'c1', status: 'revisando', updated_at: '2026-10-05T09:00:00.000Z' }),
-    pagamento({ id: 'p3', campanha_id: 'c1', status: 'aprovado_financeiro', status_conciliacao: 'divergente', updated_at: '2026-10-14T09:00:00.000Z' }),
+    pagamento({
+      id: 'p3',
+      campanha_id: 'c1',
+      status: 'aprovado_financeiro',
+      status_conciliacao: 'divergente',
+      updated_at: '2026-10-14T09:00:00.000Z',
+    }),
   ];
 
   it('deriva pendências apenas de fatos reais e ordena pelas mais antigas', () => {
@@ -307,7 +325,7 @@ describe('próximas ações', () => {
   it('não cria pendência quando não há rascunho, pagamento pendente ou divergência', () => {
     const vazio = montarAcoesPendentes(
       montarMetricas([campanha({ id: 'c9', status: 'ativo', status_aprovacao: 'aprovado' })], [], HOJE),
-      [],
+      []
     );
     expect(vazio).toEqual([]);
   });
@@ -326,12 +344,26 @@ describe('atividade recente', () => {
   it('ordena do mais recente para o mais antigo, resolve o objeto e o responsável', () => {
     const eventos = montarAtividadeRecente(
       [
-        { id: 'a1', entidade_tipo: 'campanha', entidade_id: 'c1', acao: 'criacao', motivo: 'Campanha criada', created_at: '2026-08-01T10:00:00.000Z' },
-        { id: 'a2', entidade_tipo: 'pagamento', entidade_id: 'p1', acao: 'aprovacao', motivo: 'Pagamento aprovado', created_at: '2026-10-14T10:00:00.000Z' },
+        {
+          id: 'a1',
+          entidade_tipo: 'campanha',
+          entidade_id: 'c1',
+          acao: 'criacao',
+          motivo: 'Campanha criada',
+          created_at: '2026-08-01T10:00:00.000Z',
+        },
+        {
+          id: 'a2',
+          entidade_tipo: 'pagamento',
+          entidade_id: 'p1',
+          acao: 'aprovacao',
+          motivo: 'Pagamento aprovado',
+          created_at: '2026-10-14T10:00:00.000Z',
+        },
       ],
       campanhas,
       pagamentos,
-      4,
+      4
     );
 
     expect(eventos.map((e) => e.id)).toEqual(['a2', 'a1']);
@@ -344,13 +376,27 @@ describe('atividade recente', () => {
   it('respeita o limite e ignora eventos sem data', () => {
     const eventos = montarAtividadeRecente(
       [
-        { id: 'a1', entidade_tipo: 'campanha', entidade_id: 'c1', acao: 'criacao', motivo: 'x', created_at: '2026-08-01T10:00:00.000Z' },
-        { id: 'a2', entidade_tipo: 'campanha', entidade_id: 'c1', acao: 'alteracao', motivo: 'y', created_at: '2026-10-01T10:00:00.000Z' },
+        {
+          id: 'a1',
+          entidade_tipo: 'campanha',
+          entidade_id: 'c1',
+          acao: 'criacao',
+          motivo: 'x',
+          created_at: '2026-08-01T10:00:00.000Z',
+        },
+        {
+          id: 'a2',
+          entidade_tipo: 'campanha',
+          entidade_id: 'c1',
+          acao: 'alteracao',
+          motivo: 'y',
+          created_at: '2026-10-01T10:00:00.000Z',
+        },
         { id: 'a3', entidade_tipo: 'campanha', entidade_id: 'c1', acao: 'alteracao', motivo: 'z', created_at: '' },
       ],
       campanhas,
       pagamentos,
-      1,
+      1
     );
 
     expect(eventos).toHaveLength(1);
@@ -361,10 +407,10 @@ describe('atividade recente', () => {
 describe('paginação local', () => {
   const metricas = montarMetricas(
     Array.from({ length: 9 }, (_, i) =>
-      campanha({ id: `c${i + 1}`, nome: `Campanha ${i + 1}`, data_inicio: `2026-0${(i % 9) + 1}-01` }),
+      campanha({ id: `c${i + 1}`, nome: `Campanha ${i + 1}`, data_inicio: `2026-0${(i % 9) + 1}-01` })
     ),
     [],
-    HOJE,
+    HOJE
   );
 
   it('recorta a página pedida e informa o total de páginas', () => {
@@ -428,4 +474,3 @@ describe('utilitários', () => {
     expect(ROTULO_STATUS_PAGAMENTO.pago).toBe('Pago');
   });
 });
-

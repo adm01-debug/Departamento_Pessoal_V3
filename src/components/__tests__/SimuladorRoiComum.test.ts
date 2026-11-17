@@ -64,10 +64,33 @@ describe('simuladorRoiComum', () => {
       { metricas: atual }
     );
     expect(serie).toHaveLength(3);
-    expect(serie[0].rotulo).toBe('10/09');
-    expect(serie[1].rotulo).toBe('10/10');
+    expect(serie[0].rotulo).toBe('10/09/26');
+    expect(serie[1].rotulo).toBe('10/10/26');
     expect(serie[2]).toMatchObject({ rotulo: 'Agora', atual: true, payout: atual.totalBudget });
     expect(serie[2].resultado).toBeCloseTo(atual.resultadoLiquido, 2);
+  });
+
+  it('distingue no rótulo cenários do mesmo dia/mês em anos diferentes', () => {
+    const serie = montarSerieTemporal(
+      [
+        {
+          id: '2026',
+          configuracoes: BASE,
+          resultados: { totalBudget: 100, savings: 10 },
+          created_at: '2026-03-12T12:00:00.000Z',
+        },
+        {
+          id: '2027',
+          configuracoes: BASE,
+          resultados: { totalBudget: 200, savings: 20 },
+          created_at: '2027-03-12T12:00:00.000Z',
+        },
+      ],
+      { metricas: calcularMetricas(BASE) }
+    );
+    expect(serie[0].rotulo).toBe('12/03/26');
+    expect(serie[1].rotulo).toBe('12/03/27');
+    expect(serie[0].rotulo).not.toBe(serie[1].rotulo);
   });
 
   it('limita a série ao máximo de pontos (9 salvos + Agora)', () => {

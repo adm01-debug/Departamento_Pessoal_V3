@@ -2103,7 +2103,7 @@
           "rotulo": "Admissões"
         }
       ],
-      "arquivos_lidos": 125,
+      "arquivos_lidos": 126,
       "hooks": [
         {
           "nome": "useAdmissaoWorkflow",
@@ -2136,6 +2136,10 @@
         {
           "nome": "useGrupo",
           "arquivo": "src/hooks/useGrupo.ts"
+        },
+        {
+          "nome": "useMovimentoReduzido",
+          "arquivo": "src/lib/motionMode.ts"
         },
         {
           "nome": "useOnMount",
@@ -6879,7 +6883,7 @@
           "rotulo": "Dashboard Executivo"
         }
       ],
-      "arquivos_lidos": 40,
+      "arquivos_lidos": 41,
       "hooks": [
         {
           "nome": "useAuth",
@@ -6900,6 +6904,10 @@
         {
           "nome": "useGrupo",
           "arquivo": "src/hooks/useGrupo.ts"
+        },
+        {
+          "nome": "useMovimentoReduzido",
+          "arquivo": "src/lib/motionMode.ts"
         },
         {
           "nome": "useOnMount",
@@ -7000,7 +7008,7 @@
           "rotulo": "Dashboard"
         }
       ],
-      "arquivos_lidos": 46,
+      "arquivos_lidos": 47,
       "hooks": [
         {
           "nome": "useAuth",
@@ -7009,6 +7017,10 @@
         {
           "nome": "useEmpresas",
           "arquivo": "src/hooks/useEmpresas.ts"
+        },
+        {
+          "nome": "useMovimentoReduzido",
+          "arquivo": "src/lib/motionMode.ts"
         },
         {
           "nome": "usePendencias",
@@ -14580,7 +14592,7 @@
           "rotulo": "Premiações 10/10"
         }
       ],
-      "arquivos_lidos": 160,
+      "arquivos_lidos": 185,
       "hooks": [
         {
           "nome": "useAuth",
@@ -14605,6 +14617,10 @@
         {
           "nome": "useGrupo",
           "arquivo": "src/hooks/useGrupo.ts"
+        },
+        {
+          "nome": "useMovimentoReduzido",
+          "arquivo": "src/lib/motionMode.ts"
         },
         {
           "nome": "useOnMount",
@@ -18766,7 +18782,15 @@
     },
     "useMovimentoReduzido": {
       "arquivo": "src/lib/motionMode.ts",
-      "telas": ["src/pages/AvaliacaoPage.tsx", "src/pages/RecrutamentoPage.tsx", "src/pages/TreinamentosPage.tsx"]
+      "telas": [
+        "src/pages/AdmissoesPage.tsx",
+        "src/pages/AvaliacaoPage.tsx",
+        "src/pages/DashboardExecutivoPage.tsx",
+        "src/pages/DashboardPage.tsx",
+        "src/pages/PremiacoesPage.tsx",
+        "src/pages/RecrutamentoPage.tsx",
+        "src/pages/TreinamentosPage.tsx"
+      ]
     },
     "useNotificacoes": {
       "arquivo": "src/hooks/useNotificacoes.ts",

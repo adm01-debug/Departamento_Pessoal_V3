@@ -35,7 +35,6 @@ import { useMovimentoReduzido } from '@/lib/motionMode';
 import { formatCurrency } from '@/utils/format';
 import type { AuditoriaHub, CampanhaHub, PagamentoHub } from './premiacoesComum';
 import {
-  CATEGORIAS_AUDITORIA,
   FILTROS_AUDITORIA_INICIAIS,
   PERIODOS_AUDITORIA,
   agruparEventosAuditoria,
@@ -192,7 +191,7 @@ function ValorEvento({ evento, compacto = false }: { evento: EventoAuditoria; co
     return (
       <div className={cn('min-w-0', compacto && 'text-right')}>
         <span className="text-[12px] text-muted-foreground">—</span>
-        <p className="mt-0.5 truncate text-[10px] text-muted-foreground">Sem valor financeiro</p>
+        <p className="mt-0.5 truncate text-[10px] text-muted-foreground">Valor não registrado</p>
       </div>
     );
   }
@@ -536,6 +535,15 @@ export function AuditoriaTab({
    * acima da lista e os eventos já lidos continuam visíveis.
    */
   const falhaSemEventos = erro && eventos.length === 0;
+  /**
+   * Os contadores dos chips e as opções dos selects saem de `eventos`: sem
+   * NENHUM evento lido — falha de leitura ou primeira carga em andamento — a
+   * barra de filtros SAI de cena, a mesma regra que a aba Campanhas aplica aos
+   * chips de status. "Pagamentos 0" sobre leitura quebrada é contador inventado
+   * numa tela de conformidade. Com dado em cache (erro depois de uma carga boa)
+   * os contadores continuam válidos e a barra fica.
+   */
+  const ocultarFiltros = falhaSemEventos || (carregando && eventos.length === 0);
   const categorias = useMemo(() => categoriasDisponiveis(eventos), [eventos]);
   const tipos = useMemo(() => tiposEventoDisponiveis(eventos), [eventos]);
   const entidades = useMemo(() => entidadesDisponiveis(eventos), [eventos]);
@@ -630,209 +638,211 @@ export function AuditoriaTab({
             unidade entra com o MESMO `cardVariants` dos KPI Cards do Dashboard
             (fade + y 20 · 0,4s · delay 0,08s por índice). Como o container não
             anima, não existe movimento acumulado nem cascata "toda de uma vez".
-            As seis badges contam como UMA unidade (evita cascata longa). */}
-        <section
-          className="rounded-xl border border-border/40 bg-card/40 p-3 shadow-xs"
-          aria-label="Filtros da auditoria"
-        >
-          <div className="grid min-w-0 gap-2.5 xl:grid-cols-[minmax(0,30%)_minmax(0,1fr)] xl:items-center">
-            <motion.div {...entradaControle(0)} className="relative min-w-0">
-              <Search
-                className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground"
-                aria-hidden="true"
-              />
-              <Input
-                value={filtros.busca}
-                onChange={(event) => atualizar({ busca: event.target.value })}
-                placeholder="Buscar evento, campanha, colaborador ou valor..."
-                aria-label="Buscar evento, campanha, colaborador ou valor"
-                className="h-10 rounded-lg border-border/50 bg-background/70 pl-9 text-[11px]"
-              />
-            </motion.div>
-            <div className="grid min-w-0 flex-1 grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.18fr)_minmax(0,1fr)_minmax(0,1.42fr)]">
-              <Select value={filtros.tipo} onValueChange={(valor) => atualizar({ tipo: valor })}>
-                <MotionSelectTrigger
-                  {...entradaControle(1)}
-                  aria-label="Tipo de evento"
-                  className="h-10 rounded-lg border-border/50 bg-background/70 text-[11px]"
-                >
-                  <SelectValue placeholder="Todos os tipos" />
-                </MotionSelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos os tipos</SelectItem>
-                  {tipos.map((tipo) => (
-                    <SelectItem key={tipo.valor} value={tipo.valor}>
-                      {tipo.rotulo}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select value={filtros.entidade} onValueChange={(valor) => atualizar({ entidade: valor })}>
-                <MotionSelectTrigger
-                  {...entradaControle(2)}
-                  aria-label="Entidade"
-                  className="h-10 rounded-lg border-border/50 bg-background/70 text-[11px]"
-                >
-                  <SelectValue placeholder="Todas as entidades" />
-                </MotionSelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todas">Todas as entidades</SelectItem>
-                  {entidades.map((entidade) => (
-                    <SelectItem key={entidade.valor} value={entidade.valor}>
-                      {entidade.rotulo}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select value={filtros.usuario} onValueChange={(valor) => atualizar({ usuario: valor })}>
-                <MotionSelectTrigger
-                  {...entradaControle(3)}
-                  aria-label="Usuário"
-                  className="h-10 rounded-lg border-border/50 bg-background/70 text-[11px]"
-                >
-                  <SelectValue placeholder="Todos os usuários" />
-                </MotionSelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos os usuários</SelectItem>
-                  {usuarios.map((usuario) => (
-                    <SelectItem key={usuario.valor} value={usuario.valor}>
-                      {usuario.rotulo}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select
-                value={filtros.periodo}
-                onValueChange={(valor) => atualizar({ periodo: valor as FiltrosAuditoria['periodo'] })}
-              >
-                <MotionSelectTrigger
-                  {...entradaControle(4)}
-                  aria-label="Período"
-                  className="h-10 min-w-0 gap-1.5 rounded-lg border-border/50 bg-background/70 text-[10px]"
-                >
-                  <CalendarDays className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
-                  <span className="min-w-0 truncate">{rotuloIntervalo(intervalo)}</span>
-                </MotionSelectTrigger>
-                <SelectContent>
-                  {PERIODOS_AUDITORIA.map((periodo) => (
-                    <SelectItem key={periodo.id} value={periodo.id}>
-                      {periodo.rotulo}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="audit-filter-secondary mt-2.5">
-            <motion.div
-              {...entradaControle(5)}
-              className="flex min-w-0 flex-wrap items-center gap-3 max-[1439px]:gap-px min-[1440px]:gap-1.5 min-[1600px]:gap-2 min-[1800px]:gap-3"
-            >
-              {categorias.map((categoria) => {
-                const ativa = filtros.categoria === categoria.id;
-                const tema = TEMA_CATEGORIA[categoria.id];
-                const glow = GLOW_CATEGORIA[categoria.id];
-                return (
-                  <button
-                    key={categoria.id}
-                    type="button"
-                    aria-pressed={ativa}
-                    data-active={ativa}
-                    data-category={categoria.id}
-                    onClick={() => atualizar({ categoria: categoria.id })}
-                    className={cn(
-                      'inline-flex h-[38px] shrink-0 items-center gap-1.5 rounded-full border px-[15px] text-[10px] font-medium transition-[background-color,border-color,color,box-shadow] duration-200 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background max-[1365px]:gap-0.5 max-[1365px]:px-[3px] max-[1599px]:gap-1 max-[1599px]:px-[8px] min-[1600px]:gap-1 min-[1600px]:px-[14px] min-[1800px]:gap-1.5 min-[1800px]:px-[15px]',
-                      ativa
-                        ? cn(tema.fundoAtivo, BORDA_ATIVA_CATEGORIA[categoria.id], tema.textoAtivo, glow)
-                        : cn(tema.fundo, tema.borda, tema.texto, tema.hoverFundo, tema.hoverBorda, tema.hoverTexto)
-                    )}
+            As badges de categoria contam como UMA unidade (evita cascata longa). */}
+        {!ocultarFiltros && (
+          <section
+            className="rounded-xl border border-border/40 bg-card/40 p-3 shadow-xs"
+            aria-label="Filtros da auditoria"
+          >
+            <div className="grid min-w-0 gap-2.5 xl:grid-cols-[minmax(0,30%)_minmax(0,1fr)] xl:items-center">
+              <motion.div {...entradaControle(0)} className="relative min-w-0">
+                <Search
+                  className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground"
+                  aria-hidden="true"
+                />
+                <Input
+                  value={filtros.busca}
+                  onChange={(event) => atualizar({ busca: event.target.value })}
+                  placeholder="Buscar evento, campanha, colaborador ou valor..."
+                  aria-label="Buscar evento, campanha, colaborador ou valor"
+                  className="h-10 rounded-lg border-border/50 bg-background/70 pl-9 text-[11px]"
+                />
+              </motion.div>
+              <div className="grid min-w-0 flex-1 grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.18fr)_minmax(0,1fr)_minmax(0,1.42fr)]">
+                <Select value={filtros.tipo} onValueChange={(valor) => atualizar({ tipo: valor })}>
+                  <MotionSelectTrigger
+                    {...entradaControle(1)}
+                    aria-label="Tipo de evento"
+                    className="h-10 rounded-lg border-border/50 bg-background/70 text-[11px]"
                   >
-                    <span className={cn('h-2 w-2 shrink-0 rounded-full', tema.ponto)} aria-hidden="true" />
-                    <span className="whitespace-nowrap">{categoria.rotulo}</span>
-                    <span
-                      className={cn(
-                        'inline-flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold tabular-nums transition-colors duration-200',
-                        ativa ? tema.contadorAtivo : tema.contador
-                      )}
-                    >
-                      {contarCategoria(eventos, categoria.id)}
-                    </span>
-                  </button>
-                );
-              })}
-            </motion.div>
-
-            <div className="flex flex-wrap items-center justify-end gap-1 min-[1280px]:flex-nowrap min-[1600px]:gap-2">
-              <motion.div {...entradaControle(6)} className="flex shrink-0 items-center gap-1">
-                <span className="hidden whitespace-nowrap text-[10px] text-muted-foreground min-[1600px]:inline">
-                  Ordenar por
-                </span>
-                <Select
-                  value={filtros.ordem}
-                  onValueChange={(valor) => atualizar({ ordem: valor as FiltrosAuditoria['ordem'] })}
-                >
-                  <SelectTrigger
-                    aria-label="Ordenar por"
-                    className="h-8 shrink-0 gap-1 rounded-lg border-border/40 bg-background/70 px-2 text-[10px] max-[1599px]:w-[118px] max-[1599px]:px-1"
-                  >
-                    <ArrowDownUp className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
-                    <SelectValue />
-                  </SelectTrigger>
+                    <SelectValue placeholder="Todos os tipos" />
+                  </MotionSelectTrigger>
                   <SelectContent>
-                    <SelectItem value="recentes">Mais recentes</SelectItem>
-                    <SelectItem value="antigos">Mais antigos</SelectItem>
+                    <SelectItem value="todos">Todos os tipos</SelectItem>
+                    {tipos.map((tipo) => (
+                      <SelectItem key={tipo.valor} value={tipo.valor}>
+                        {tipo.rotulo}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
-              </motion.div>
-              <MotionButton
-                {...entradaControle(7)}
-                type="button"
-                variant={filtrosAtivos ? 'outline' : 'ghost'}
-                size="sm"
-                aria-label="Limpar filtros"
-                aria-pressed={filtrosAtivos}
-                data-active={filtrosAtivos}
-                className={cn(
-                  'h-8 shrink-0 gap-1.5 px-2 text-[10px] transition-[background-color,border-color,color,box-shadow] duration-200',
-                  filtrosAtivos
-                    ? 'border-primary/40 bg-primary/10 text-primary shadow-[0_0_12px_hsl(var(--primary)/0.14)] hover:border-primary/60 hover:bg-primary/15 hover:shadow-[0_0_16px_hsl(var(--primary)/0.18)]'
-                    : 'text-muted-foreground hover:text-foreground'
-                )}
-                onClick={limpar}
-              >
-                <XIcone className="h-3.5 w-3.5" aria-hidden="true" />
-                <span className="max-[1439px]:hidden">Limpar filtros</span>
-                <span className="max-[1439px]:inline min-[1440px]:hidden">Limpar</span>
-              </MotionButton>
-              <div className="ml-0 flex shrink-0 items-center gap-3 min-[1600px]:ml-2">
-                <MotionButton
-                  {...entradaControle(8)}
-                  type="button"
-                  variant="outline"
-                  className="h-10 shrink-0 gap-1.5 rounded-[10px] border-success/45 bg-success/12 px-4 text-[13px] font-semibold text-success transition-[background-color,border-color,color,box-shadow] duration-200 hover:border-success/65 hover:bg-success/20 hover:shadow-[0_0_12px_hsl(var(--success)/0.14)]"
-                  onClick={() => onExportar('csv')}
+
+                <Select value={filtros.entidade} onValueChange={(valor) => atualizar({ entidade: valor })}>
+                  <MotionSelectTrigger
+                    {...entradaControle(2)}
+                    aria-label="Entidade"
+                    className="h-10 rounded-lg border-border/50 bg-background/70 text-[11px]"
+                  >
+                    <SelectValue placeholder="Todas as entidades" />
+                  </MotionSelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todas">Todas as entidades</SelectItem>
+                    {entidades.map((entidade) => (
+                      <SelectItem key={entidade.valor} value={entidade.valor}>
+                        {entidade.rotulo}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={filtros.usuario} onValueChange={(valor) => atualizar({ usuario: valor })}>
+                  <MotionSelectTrigger
+                    {...entradaControle(3)}
+                    aria-label="Usuário"
+                    className="h-10 rounded-lg border-border/50 bg-background/70 text-[11px]"
+                  >
+                    <SelectValue placeholder="Todos os usuários" />
+                  </MotionSelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todos">Todos os usuários</SelectItem>
+                    {usuarios.map((usuario) => (
+                      <SelectItem key={usuario.valor} value={usuario.valor}>
+                        {usuario.rotulo}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={filtros.periodo}
+                  onValueChange={(valor) => atualizar({ periodo: valor as FiltrosAuditoria['periodo'] })}
                 >
-                  <Download className="h-4 w-4" aria-hidden="true" />
-                  CSV
-                </MotionButton>
-                <MotionButton
-                  {...entradaControle(9)}
-                  type="button"
-                  variant="outline"
-                  className="h-10 shrink-0 gap-1.5 rounded-[10px] border-destructive/45 bg-destructive/12 px-4 text-[13px] font-semibold text-destructive transition-[background-color,border-color,color,box-shadow] duration-200 hover:border-destructive/65 hover:bg-destructive/20 hover:shadow-[0_0_12px_hsl(var(--destructive)/0.14)]"
-                  onClick={() => onExportar('pdf')}
-                >
-                  <FileText className="h-4 w-4" aria-hidden="true" />
-                  PDF
-                </MotionButton>
+                  <MotionSelectTrigger
+                    {...entradaControle(4)}
+                    aria-label="Período"
+                    className="h-10 min-w-0 gap-1.5 rounded-lg border-border/50 bg-background/70 text-[10px]"
+                  >
+                    <CalendarDays className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                    <span className="min-w-0 truncate">{rotuloIntervalo(intervalo)}</span>
+                  </MotionSelectTrigger>
+                  <SelectContent>
+                    {PERIODOS_AUDITORIA.map((periodo) => (
+                      <SelectItem key={periodo.id} value={periodo.id}>
+                        {periodo.rotulo}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-          </div>
-        </section>
+
+            <div className="audit-filter-secondary mt-2.5">
+              <motion.div
+                {...entradaControle(5)}
+                className="flex min-w-0 flex-wrap items-center gap-3 max-[1439px]:gap-px min-[1440px]:gap-1.5 min-[1600px]:gap-2 min-[1800px]:gap-3"
+              >
+                {categorias.map((categoria) => {
+                  const ativa = filtros.categoria === categoria.id;
+                  const tema = TEMA_CATEGORIA[categoria.id];
+                  const glow = GLOW_CATEGORIA[categoria.id];
+                  return (
+                    <button
+                      key={categoria.id}
+                      type="button"
+                      aria-pressed={ativa}
+                      data-active={ativa}
+                      data-category={categoria.id}
+                      onClick={() => atualizar({ categoria: categoria.id })}
+                      className={cn(
+                        'inline-flex h-[38px] shrink-0 items-center gap-1.5 rounded-full border px-[15px] text-[10px] font-medium transition-[background-color,border-color,color,box-shadow] duration-200 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background max-[1365px]:gap-0.5 max-[1365px]:px-[3px] max-[1599px]:gap-1 max-[1599px]:px-[8px] min-[1600px]:gap-1 min-[1600px]:px-[14px] min-[1800px]:gap-1.5 min-[1800px]:px-[15px]',
+                        ativa
+                          ? cn(tema.fundoAtivo, BORDA_ATIVA_CATEGORIA[categoria.id], tema.textoAtivo, glow)
+                          : cn(tema.fundo, tema.borda, tema.texto, tema.hoverFundo, tema.hoverBorda, tema.hoverTexto)
+                      )}
+                    >
+                      <span className={cn('h-2 w-2 shrink-0 rounded-full', tema.ponto)} aria-hidden="true" />
+                      <span className="whitespace-nowrap">{categoria.rotulo}</span>
+                      <span
+                        className={cn(
+                          'inline-flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold tabular-nums transition-colors duration-200',
+                          ativa ? tema.contadorAtivo : tema.contador
+                        )}
+                      >
+                        {contarCategoria(eventos, categoria.id)}
+                      </span>
+                    </button>
+                  );
+                })}
+              </motion.div>
+
+              <div className="flex flex-wrap items-center justify-end gap-1 min-[1280px]:flex-nowrap min-[1600px]:gap-2">
+                <motion.div {...entradaControle(6)} className="flex shrink-0 items-center gap-1">
+                  <span className="hidden whitespace-nowrap text-[10px] text-muted-foreground min-[1600px]:inline">
+                    Ordenar por
+                  </span>
+                  <Select
+                    value={filtros.ordem}
+                    onValueChange={(valor) => atualizar({ ordem: valor as FiltrosAuditoria['ordem'] })}
+                  >
+                    <SelectTrigger
+                      aria-label="Ordenar por"
+                      className="h-8 shrink-0 gap-1 rounded-lg border-border/40 bg-background/70 px-2 text-[10px] max-[1599px]:w-[118px] max-[1599px]:px-1"
+                    >
+                      <ArrowDownUp className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="recentes">Mais recentes</SelectItem>
+                      <SelectItem value="antigos">Mais antigos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </motion.div>
+                <MotionButton
+                  {...entradaControle(7)}
+                  type="button"
+                  variant={filtrosAtivos ? 'outline' : 'ghost'}
+                  size="sm"
+                  aria-label="Limpar filtros"
+                  aria-pressed={filtrosAtivos}
+                  data-active={filtrosAtivos}
+                  className={cn(
+                    'h-8 shrink-0 gap-1.5 px-2 text-[10px] transition-[background-color,border-color,color,box-shadow] duration-200',
+                    filtrosAtivos
+                      ? 'border-primary/40 bg-primary/10 text-primary shadow-[0_0_12px_hsl(var(--primary)/0.14)] hover:border-primary/60 hover:bg-primary/15 hover:shadow-[0_0_16px_hsl(var(--primary)/0.18)]'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                  onClick={limpar}
+                >
+                  <XIcone className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span className="max-[1439px]:hidden">Limpar filtros</span>
+                  <span className="max-[1439px]:inline min-[1440px]:hidden">Limpar</span>
+                </MotionButton>
+                <div className="ml-0 flex shrink-0 items-center gap-3 min-[1600px]:ml-2">
+                  <MotionButton
+                    {...entradaControle(8)}
+                    type="button"
+                    variant="outline"
+                    className="h-10 shrink-0 gap-1.5 rounded-[10px] border-success/45 bg-success/12 px-4 text-[13px] font-semibold text-success transition-[background-color,border-color,color,box-shadow] duration-200 hover:border-success/65 hover:bg-success/20 hover:shadow-[0_0_12px_hsl(var(--success)/0.14)]"
+                    onClick={() => onExportar('csv')}
+                  >
+                    <Download className="h-4 w-4" aria-hidden="true" />
+                    Pagamentos CSV
+                  </MotionButton>
+                  <MotionButton
+                    {...entradaControle(9)}
+                    type="button"
+                    variant="outline"
+                    className="h-10 shrink-0 gap-1.5 rounded-[10px] border-destructive/45 bg-destructive/12 px-4 text-[13px] font-semibold text-destructive transition-[background-color,border-color,color,box-shadow] duration-200 hover:border-destructive/65 hover:bg-destructive/20 hover:shadow-[0_0_12px_hsl(var(--destructive)/0.14)]"
+                    onClick={() => onExportar('pdf')}
+                  >
+                    <FileText className="h-4 w-4" aria-hidden="true" />
+                    Pagamentos PDF
+                  </MotionButton>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {carregando ? (
           <div className="space-y-3" aria-busy="true" aria-label="Carregando auditoria">

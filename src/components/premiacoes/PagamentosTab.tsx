@@ -36,6 +36,7 @@ import { AlertTriangle, CheckCircle2, FilterX, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { EntradaPresenca, entradaCard } from './premiacoesEntrada';
 import { cn } from '@/lib/utils';
@@ -63,7 +64,7 @@ import {
   proximoStatusPagamento,
   rotuloPeriodo,
   STATUS_REINICIO_PAGAMENTO,
-  valorDoPagamento,
+  valorParaGravar,
   ETAPAS_FLUXO,
   ETAPA_PENDENTES,
   type AcaoPagamento,
@@ -90,6 +91,13 @@ interface PagamentosTabProps {
   campanhas: CampanhaHub[];
   /** Navega para outra aba do hub (destino do "Ver todas" da atividade). */
   onNavegar: (aba: string) => void;
+  /**
+   * Leitura dos pagamentos ainda em voo: proíbe exibir R$ 0,00 nos indicadores,
+   * 0 nos contadores do fluxo e "Nenhum pagamento registrado ainda" na tabela
+   * enquanto não se sabe o que existe (as três queries da página são
+   * independentes: as campanhas podem resolver antes dos pagamentos).
+   */
+  carregando?: boolean;
   /** Leitura dos pagamentos falhou: proíbe exibir zero como se fosse dado. */
   erro?: boolean;
   /** Repete a leitura (botão do aviso de falha). */
@@ -104,6 +112,7 @@ export function PagamentosTab({
   auditoria,
   campanhas,
   onNavegar,
+  carregando = false,
   erro = false,
   onTentarNovamente,
 }: PagamentosTabProps) {
@@ -252,8 +261,9 @@ export function PagamentosTab({
         : 'Aprovado via Hub';
     atualizarStatus.mutate({
       id: pagamento.id,
-      // Rejeição zera o valor aprovado (mesma regra do quadro anterior).
-      valor: rejeitando ? 0 : valorDoPagamento(pagamento),
+      // Regra da main: rejeição zera, reinício volta ao `valor_calculado` e o
+      // avanço grava `valor_aprovado || valor_calculado`. Nunca a folha real.
+      valor: valorParaGravar(pagamento, nextStatus),
       status: nextStatus,
       comentario: comentario || comentarioPadrao,
     });
@@ -296,7 +306,7 @@ export function PagamentosTab({
           p.id,
           proximoStatusPagamento(p.status)!,
           empresaAtual.id,
-          valorDoPagamento(p),
+          valorParaGravar(p, proximoStatusPagamento(p.status)!),
           'Aprovação em lote pelo Hub'
         )
       )
@@ -358,14 +368,48 @@ export function PagamentosTab({
         {/* ─── COLUNA PRINCIPAL ─────────────────────────────────────────────── */}
         <div className="flex min-w-0 flex-col gap-3.5">
           {/* 2 · Indicadores financeiros */}
-          <PagamentosKpis kpis={kpis} />
+          {carregando ? (
+            <div
+              className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 xl:grid-cols-4"
+              aria-busy="true"
+              aria-label="Carregando indicadores de pagamento"
+            >
+              {[0, 1, 2, 3].map((cartao) => (
+                <div key={cartao} className="space-y-2 rounded-[14px] border border-border/50 bg-card/60 p-4">
+                  <Skeleton className="h-3 w-24" />
+                  <Skeleton className="h-6 w-32" />
+                  <Skeleton className="h-2.5 w-20" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <PagamentosKpis kpis={kpis} />
+          )}
 
           {/* 3 · Fluxo de pagamento (horizontal, filtrável) */}
-          <PagamentosFluxo
-            etapas={etapas}
-            etapaSelecionada={filtros.etapa}
-            onSelecionar={(etapa: FiltroEtapaFluxo) => atualizarFiltros({ etapa })}
-          />
+          {carregando ? (
+            <div
+              className="flex flex-wrap items-center gap-5 rounded-[14px] border border-border/50 bg-card/60 px-4 py-4"
+              aria-busy="true"
+              aria-label="Carregando fluxo de pagamento"
+            >
+              {ETAPAS_FLUXO.map((etapa) => (
+                <div key={etapa.valor} className="flex items-center gap-2">
+                  <Skeleton className="h-7 w-7 rounded-full" />
+                  <div className="space-y-1.5">
+                    <Skeleton className="h-3 w-24" />
+                    <Skeleton className="h-2.5 w-12" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <PagamentosFluxo
+              etapas={etapas}
+              etapaSelecionada={filtros.etapa}
+              onSelecionar={(etapa: FiltroEtapaFluxo) => atualizarFiltros({ etapa })}
+            />
+          )}
 
           {/* 4 · Barra de filtros */}
           <div className="flex min-h-[64px] min-w-0 flex-wrap items-center gap-3 rounded-[14px] border border-border/50 bg-card/60 px-4 py-3">
@@ -549,24 +593,54 @@ export function PagamentosTab({
               ação principal "Reiniciar fluxo" — a faixa antiga
               "PAGAMENTOS REJEITADOS (AUDITORIA NECESSÁRIA)" foi REMOVIDA da
               renderização, sem perder o dado nem a operação. */}
-          <PagamentosTabela
-            linhas={linhas}
-            total={filtrados.length}
-            pagina={paginaAtual}
-            porPagina={porPagina}
-            onPaginaChange={setPagina}
-            onPageSizeChange={(tamanho) => {
-              setPorPagina(tamanho);
-              setPagina(1);
-            }}
-            ordenacaoAtual={filtros.ordenacao}
-            selecionados={selecionados}
-            onAlternarSelecao={alternarSelecao}
-            onAlternarTodos={alternarTodos}
-            onAcaoPrincipal={executarPrincipal}
-            onAcao={executarAcao}
-            mensagemVazia={mensagemVazia}
-          />
+          {carregando ? (
+            <div
+              className="overflow-hidden rounded-[14px] border border-border/50 bg-card/60"
+              aria-busy="true"
+              aria-label="Carregando pagamentos"
+            >
+              <div className="flex h-[38px] items-center border-b border-border/40 bg-muted/20 px-4">
+                <Skeleton className="h-3 w-40" />
+              </div>
+              <div className="divide-y divide-border/25">
+                {[0, 1, 2, 3, 4, 5].map((linha) => (
+                  <div
+                    key={linha}
+                    className="grid grid-cols-[1.4fr_1.4fr_90px_90px_90px_1fr] items-center gap-3 px-4 py-3"
+                  >
+                    <Skeleton className="h-3 w-28" />
+                    <Skeleton className="h-3 w-24" />
+                    <Skeleton className="h-3 w-16" />
+                    <Skeleton className="h-3 w-16" />
+                    <Skeleton className="h-3 w-16" />
+                    <Skeleton className="h-6 w-24 rounded-full" />
+                  </div>
+                ))}
+              </div>
+              <div className="flex min-h-[44px] items-center border-t border-border/40 px-4">
+                <Skeleton className="h-3 w-48" />
+              </div>
+            </div>
+          ) : (
+            <PagamentosTabela
+              linhas={linhas}
+              total={filtrados.length}
+              pagina={paginaAtual}
+              porPagina={porPagina}
+              onPaginaChange={setPagina}
+              onPageSizeChange={(tamanho) => {
+                setPorPagina(tamanho);
+                setPagina(1);
+              }}
+              ordenacaoAtual={filtros.ordenacao}
+              selecionados={selecionados}
+              onAlternarSelecao={alternarSelecao}
+              onAlternarTodos={alternarTodos}
+              onAcaoPrincipal={executarPrincipal}
+              onAcao={executarAcao}
+              mensagemVazia={mensagemVazia}
+            />
+          )}
         </div>
 
         {/* ─── COLUNA LATERAL ────────────────────────────────────────────────

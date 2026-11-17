@@ -8,7 +8,7 @@
  * consulta nova, sem rota nova e sem formulário de escrita.
  *
  * O rodapé leva à aba Pagamentos, que é onde as aprovações e a conciliação
- * acontecem de verdade (`RewardsApprovalHub`).
+ * acontecem de verdade (`PagamentosTab`).
  * ============================================================================
  */
 import { motion } from 'framer-motion';
