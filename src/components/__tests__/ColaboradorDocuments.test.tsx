@@ -2,6 +2,12 @@ import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
+// O componente passou a ler `empresaAtualId` para montar o caminho do
+// arquivo no Storage (`empresa/colaborador/categoria/uuid.ext`), e
+// `useEmpresas` precisa de QueryClient. O mock canonico do repo fixa o tenant
+// sem montar a arvore de providers.
+vi.mock('@/hooks/useEmpresas', async () => (await import('@/test/empresaMock')).useEmpresasMockModule());
+
 vi.mock('@/hooks/useDocumentos', () => ({
   useDocumentos: vi.fn(() => ({
     documentos: [],
@@ -133,5 +139,19 @@ describe('ColaboradorDocuments', () => {
   it('renders Contrato de Trabalho tipo option', () => {
     render(<ColaboradorDocuments colaboradorId="col-001" />);
     expect(screen.getByText('Contrato de Trabalho')).toBeInTheDocument();
+  });
+
+  // Antes o RH tinha de DIGITAR a URL do arquivo. Estes dois casos travam a
+  // troca: o campo de texto saiu e entrou a area de envio de arquivo.
+  it('oferece envio de arquivo, nao campo de URL', () => {
+    render(<ColaboradorDocuments colaboradorId="col-001" />);
+    expect(screen.getByText('Arquivo (opcional)')).toBeInTheDocument();
+    expect(screen.getByText(/Arraste um arquivo aqui/)).toBeInTheDocument();
+  });
+
+  it('nao existe mais campo para colar link', () => {
+    render(<ColaboradorDocuments colaboradorId="col-001" />);
+    expect(screen.queryByText('URL / Link do Arquivo')).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText('https://...')).not.toBeInTheDocument();
   });
 });

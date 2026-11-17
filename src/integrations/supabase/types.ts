@@ -6776,8 +6776,12 @@ export type Database = {
           data_validade: string | null
           empresa_id: string | null
           id: string
+          mime_type: string | null
           nome: string
+          nome_arquivo: string | null
           observacoes: string | null
+          storage_path: string | null
+          tamanho: number | null
           tipo: string
           updated_at: string
           url: string | null
@@ -6790,8 +6794,12 @@ export type Database = {
           data_validade?: string | null
           empresa_id?: string | null
           id?: string
+          mime_type?: string | null
           nome: string
+          nome_arquivo?: string | null
           observacoes?: string | null
+          storage_path?: string | null
+          tamanho?: number | null
           tipo: string
           updated_at?: string
           url?: string | null
@@ -6804,8 +6812,12 @@ export type Database = {
           data_validade?: string | null
           empresa_id?: string | null
           id?: string
+          mime_type?: string | null
           nome?: string
+          nome_arquivo?: string | null
           observacoes?: string | null
+          storage_path?: string | null
+          tamanho?: number | null
           tipo?: string
           updated_at?: string
           url?: string | null
@@ -7162,8 +7174,10 @@ export type Database = {
           data_emissao: string | null
           data_validade: string | null
           id: string
+          mime_type: string | null
           numero: string | null
           orgao_emissor: string | null
+          storage_path: string | null
           tipo_documento: string
           updated_at: string | null
         }
@@ -7177,8 +7191,10 @@ export type Database = {
           data_emissao?: string | null
           data_validade?: string | null
           id?: string
+          mime_type?: string | null
           numero?: string | null
           orgao_emissor?: string | null
+          storage_path?: string | null
           tipo_documento: string
           updated_at?: string | null
         }
@@ -7192,8 +7208,10 @@ export type Database = {
           data_emissao?: string | null
           data_validade?: string | null
           id?: string
+          mime_type?: string | null
           numero?: string | null
           orgao_emissor?: string | null
+          storage_path?: string | null
           tipo_documento?: string
           updated_at?: string | null
         }
