@@ -1627,6 +1627,18 @@
    "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx",
    "src/components/colaboradores/ColaboradorHistory.tsx"
   ],
+  "src/components/colaboradores/ColaboradorDirectoryGrid.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/spinner.tsx",
+   "src/components/ui/status-badge.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/components/ui/user-avatar.tsx",
+   "src/hooks/usePiiMask.ts",
+   "src/services/vinculoService.ts",
+   "src/types/entities.ts"
+  ],
   "src/components/colaboradores/ColaboradorFilters.tsx": [
    "src/components/ui/input.tsx",
    "src/components/ui/select.tsx",
@@ -1639,6 +1651,15 @@
    "src/components/ui/spinner.tsx",
    "src/hooks/useEmpresas.ts",
    "src/services/auditoriaService.ts"
+  ],
+  "src/components/colaboradores/ColaboradorKpiCards.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/ui/module-skeleton.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/colaboradores/ColaboradorViewSwitcher.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
   ],
   "src/components/colaboradores/RecontratarColaboradorDialog.tsx": [
    "src/components/forms/index.ts",
@@ -5572,11 +5593,13 @@
    "src/services/index.ts"
   ],
   "src/pages/ColaboradoresPage.tsx": [
+   "src/components/colaboradores/ColaboradorDirectoryGrid.tsx",
    "src/components/colaboradores/ColaboradorFilters.tsx",
+   "src/components/colaboradores/ColaboradorKpiCards.tsx",
+   "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
    "src/components/layout/EntityPageContainer.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/dropdown-menu.tsx",
-   "src/components/ui/module-skeleton.tsx",
    "src/components/ui/status-badge.tsx",
    "src/components/ui/table.tsx",
    "src/components/ui/user-avatar.tsx",

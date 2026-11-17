@@ -195,7 +195,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 277,
+   "testes": 279,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -1333,13 +1333,13 @@
   },
   {
    "modulo": "components/colaboradores",
-   "arquivos": 4,
+   "arquivos": 7,
    "testes": 1,
-   "linhas": 534,
+   "linhas": 837,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 3,
+   "componentes": 6,
    "hooks_locais": [
     "useAuth",
     "useCargos",
@@ -1394,9 +1394,11 @@
     "pages"
    ],
    "depende_de_modulos": [
+    "components/dashboard",
     "components/forms",
     "components/ui",
     "hooks",
+    "lib",
     "services",
     "types",
     "utils"
@@ -1405,7 +1407,8 @@
     "@tanstack/react-query",
     "date-fns",
     "framer-motion",
-    "lucide-react"
+    "lucide-react",
+    "react-router-dom"
    ]
   },
   {
@@ -1676,6 +1679,7 @@
    "importado_por_outros_modulos": [
     "components/admissoes",
     "components/colaborador-detalhes",
+    "components/colaboradores",
     "components/folha",
     "components/organograma",
     "components/ponto",
@@ -3224,7 +3228,7 @@
    "modulo": "components/layout",
    "arquivos": 28,
    "testes": 1,
-   "linhas": 3359,
+   "linhas": 3370,
    "itens_menu": [],
    "telas": [
     "/"
@@ -7663,6 +7667,7 @@
     "components/animate-ui",
     "components/avaliacao",
     "components/colaborador-detalhes",
+    "components/colaboradores",
     "components/dashboard",
     "components/desligamentos",
     "components/esocial",
@@ -7783,7 +7788,7 @@
    "modulo": "pages",
    "arquivos": 113,
    "testes": 0,
-   "linhas": 45706,
+   "linhas": 45691,
    "itens_menu": [
     "Admissões",
     "Afastamentos",

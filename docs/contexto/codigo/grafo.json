@@ -1,20 +1,20 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1280,
- "arestas": 6280,
+ "nos": 1283,
+ "arestas": 6297,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 353
+   "importado_por": 355
+  },
+  {
+   "arquivo": "src/lib/utils.ts",
+   "importado_por": 279
   },
   {
    "arquivo": "src/components/ui/card.tsx",
    "importado_por": 278
-  },
-  {
-   "arquivo": "src/lib/utils.ts",
-   "importado_por": 277
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
@@ -22,7 +22,7 @@
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 214
+   "importado_por": 215
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -54,7 +54,7 @@
   },
   {
    "arquivo": "src/components/ui/spinner.tsx",
-   "importado_por": 113
+   "importado_por": 114
   },
   {
    "arquivo": "src/components/ui/table.tsx",
@@ -118,6 +118,10 @@
   },
   {
    "arquivo": "src/components/ui/tooltip.tsx",
+   "importado_por": 39
+  },
+  {
+   "arquivo": "src/hooks/usePiiMask.ts",
    "importado_por": 38
   },
   {
@@ -125,16 +129,16 @@
    "importado_por": 38
   },
   {
-   "arquivo": "src/hooks/usePiiMask.ts",
-   "importado_por": 37
+   "arquivo": "src/types/entities.ts",
+   "importado_por": 36
   },
   {
    "arquivo": "src/components/ui/dropdown-menu.tsx",
    "importado_por": 35
   },
   {
-   "arquivo": "src/types/entities.ts",
-   "importado_por": 35
+   "arquivo": "src/components/dashboard/MetricCard.tsx",
+   "importado_por": 33
   },
   {
    "arquivo": "src/hooks/useColaboradorDetalhes.ts",
@@ -143,10 +147,6 @@
   {
    "arquivo": "supabase/functions/_shared/authz.ts",
    "importado_por": 32
-  },
-  {
-   "arquivo": "src/components/dashboard/MetricCard.tsx",
-   "importado_por": 31
   },
   {
    "arquivo": "src/services/piiAccessLogService.ts",
@@ -282,17 +282,17 @@
   {
    "modulo": "lib",
    "depende_de": 1,
-   "importado_por": 33
+   "importado_por": 34
+  },
+  {
+   "modulo": "components/dashboard",
+   "depende_de": 7,
+   "importado_por": 11
   },
   {
    "modulo": "types",
    "depende_de": 1,
    "importado_por": 17
-  },
-  {
-   "modulo": "components/dashboard",
-   "depende_de": 7,
-   "importado_por": 10
   },
   {
    "modulo": "contexts",
@@ -345,7 +345,7 @@
    "importado_por": 2
   },
   {
-   "modulo": "components/premiacoes",
+   "modulo": "components/colaboradores",
    "depende_de": 8,
    "importado_por": 2
   }

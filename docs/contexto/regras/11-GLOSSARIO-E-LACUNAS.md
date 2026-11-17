@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `29dd221dfd` · branch `main` · 2026-11-17 16:52 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7635f53e14` · branch `main` · 2026-11-17 16:58 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
 | `pcs_grades` | Transactionally generated salary ranges for a PCS plan. | 11 colunas | migration |
 | `pcs_pesquisa_salarial` | Tenant-scoped external salary benchmark observations. | 14 colunas | migration |
-| … +383 linhas — lista completa em `context.json` | | | |
+| … +384 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 

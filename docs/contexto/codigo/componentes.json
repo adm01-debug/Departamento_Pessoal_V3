@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 620,
+ "total": 623,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -2308,6 +2308,22 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/colaboradores/ColaboradorDirectoryGrid.tsx",
+   "exports": [
+    "ColaboradorDirectoryGrid"
+   ],
+   "export_default": null,
+   "linhas": 148,
+   "dominio": "components/colaboradores",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/colaboradores/ColaboradorFilters.tsx",
    "exports": [
     "ColaboradorFilters"
@@ -2335,6 +2351,35 @@
    "tabelas": [],
    "edges": [],
    "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaboradores/ColaboradorKpiCards.tsx",
+   "exports": [
+    "ColaboradorKpiCards"
+   ],
+   "export_default": null,
+   "linhas": 107,
+   "dominio": "components/colaboradores",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
+   "exports": [
+    "ColaboradorViewMode",
+    "ColaboradorViewSwitcher"
+   ],
+   "export_default": null,
+   "linhas": 48,
+   "dominio": "components/colaboradores",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -2588,7 +2633,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 28,
+   "usado_por": 30,
    "orfao": false
   },
   {
@@ -4194,7 +4239,7 @@
     "EntityPageContainer"
    ],
    "export_default": null,
-   "linhas": 155,
+   "linhas": 166,
    "dominio": "components/layout",
    "hooks_locais": [],
    "tabelas": [],
@@ -7032,7 +7077,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 214,
+   "usado_por": 215,
    "orfao": false
   },
   {
@@ -7047,7 +7092,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 353,
+   "usado_por": 355,
    "orfao": false
   },
   {
@@ -7812,7 +7857,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 113,
+   "usado_por": 114,
    "orfao": false
   },
   {
@@ -7842,7 +7887,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 13,
+   "usado_por": 14,
    "orfao": false
   },
   {
@@ -7991,7 +8036,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 38,
+   "usado_por": 39,
    "orfao": false
   },
   {
@@ -8005,7 +8050,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 4,
+   "usado_por": 5,
    "orfao": false
   },
   {
@@ -8705,7 +8750,7 @@
     "ColaboradoresPage"
    ],
    "export_default": "ColaboradoresPage",
-   "linhas": 385,
+   "linhas": 370,
    "dominio": "pages",
    "hooks_locais": [
     "useColaboradores",

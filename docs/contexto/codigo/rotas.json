@@ -5451,6 +5451,7 @@
     "useExcelExport",
     "useGrupo",
     "useGuidedTour",
+    "useInView",
     "useLocation",
     "useMemo",
     "useMutation",
@@ -5550,7 +5551,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 101
+   "arquivos_puxados": 109
   },
   {
    "protegida": true,

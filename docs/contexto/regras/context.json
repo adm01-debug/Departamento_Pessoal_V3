@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "29dd221dfd5b7032cdd115336898db8c6be60ae3",
+  "sha": "7635f53e14552beac7b4a4c891d86516d29e387b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 16:52 UTC",
-  "files_total": 3504,
-  "code_files": 2930,
-  "code_lines": 466084
+  "generated_at": "2026-11-17 16:58 UTC",
+  "files_total": 3509,
+  "code_files": 2935,
+  "code_lines": 466512
  },
  "version": "1.3.2",
- "facts_hash": "988a93024ff794f8",
+ "facts_hash": "e4590f7c357a596f",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 965,
+   ".tsx": 970,
    ".ts": 919,
    ".sql": 915,
    ".mjs": 103,
@@ -89311,7 +89311,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 84
+    "deps_count": 92
    },
    {
     "path": "",
@@ -99950,7 +99950,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 937,
+  "components_count": 942,
   "hooks": [
    {
     "name": "useContacts",
@@ -101533,8 +101533,8 @@
   },
   {
    "module": "src/components",
-   "files": 937,
-   "lines": 170517,
+   "files": 942,
+   "lines": 170960,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101724,9 +101724,11 @@
     "src/components/__tests__/CamposCustomizadosTab.test.tsx",
     "src/components/__tests__/CandidatoTimeline.test.tsx",
     "src/components/__tests__/CardProgramacao.test.tsx",
+    "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx",
     "src/components/__tests__/ColaboradorDocuments.test.tsx",
     "src/components/__tests__/ColaboradorFilters.test.tsx",
     "src/components/__tests__/ColaboradorHistory.test.tsx",
+    "src/components/__tests__/ColaboradorKpiCards.test.tsx",
     "src/components/__tests__/ConfiguracoesGeraisTab.test.tsx",
     "src/components/__tests__/Container.test.tsx",
     "src/components/__tests__/ContasBancariasTab.test.tsx",
@@ -101759,9 +101761,7 @@
     "src/components/__tests__/ESocialAlteracaoComponents.test.tsx",
     "src/components/__tests__/ESocialAuditDialog.test.tsx",
     "src/components/__tests__/ESocialComplianceScore.test.tsx",
-    "src/components/__tests__/ESocialConciliacao.test.tsx",
-    "src/components/__tests__/ESocialDesligamentoCDP.test.tsx",
-    "src/components/__tests__/ESocialEventComponents.test.tsx"
+    "src/components/__tests__/ESocialConciliacao.test.tsx"
    ]
   },
   {
@@ -102220,7 +102220,7 @@
   {
    "module": "src/pages",
    "files": 134,
-   "lines": 49282,
+   "lines": 49267,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -112638,6 +112638,11 @@
     "file": "src/components/avaliacao/statusFeedback.ts",
     "name": "MotivoChaveInvalida",
     "values": "operacao_ausente | operacao_sem_idempotencia | feedback_ausente | id_operacao_ausente"
+   },
+   {
+    "file": "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
+    "name": "ColaboradorViewMode",
+    "values": "tabela | diretorio"
    },
    {
     "file": "src/components/dashboard/MetricCard.tsx",
@@ -146167,6 +146172,11 @@
     "value": "0.14"
    },
    {
+    "file": "src/components/colaboradores/ColaboradorDirectoryGrid.tsx",
+    "name": "DIRECTORY_MAX_STAGGER_INDEX",
+    "value": "5"
+   },
+   {
     "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
     "name": "BASE_CONTEUDO_ABA",
     "value": "4"
@@ -163157,10 +163167,6 @@
     "line": "transition={{ delay: i * 0.1 }}"
    },
    {
-    "file": "src/pages/ColaboradoresPage.tsx",
-    "line": "transition={{ delay: i * 0.1 }}"
-   },
-   {
     "file": "src/pages/ComunicacaoInternaPage.tsx",
     "line": "transition={{ delay: i * 0.03 }}"
    },
@@ -167399,6 +167405,22 @@
     "name": "shows data_inicio_prevista in formatted form"
    },
    {
+    "file": "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx",
+    "name": "ColaboradorDirectoryGrid — máscara de PII"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx",
+    "name": "sem permissão de ver PII, não imprime o e-mail real"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx",
+    "name": "com permissão, mostra o e-mail completo"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx",
+    "name": "o nome não é PII mascarável e aparece nos dois casos"
+   },
+   {
     "file": "src/components/__tests__/ColaboradorDocuments.test.tsx",
     "name": "ColaboradorDocuments"
    },
@@ -167493,6 +167515,30 @@
    {
     "file": "src/components/__tests__/ColaboradorHistory.test.tsx",
     "name": "renders INSERT initial record message"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorKpiCards.test.tsx",
+    "name": "ColaboradorKpiCards"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorKpiCards.test.tsx",
+    "name": "mostra um cartão por status, com a contagem do summary"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorKpiCards.test.tsx",
+    "name": "repassa o status clicado para o onToggle"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorKpiCards.test.tsx",
+    "name": "ao clicar no status já ativo, reporta esse mesmo status e não decide o reset"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorKpiCards.test.tsx",
+    "name": "sem summary e carregando, mostra esqueleto em vez de contagem zero"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorKpiCards.test.tsx",
+    "name": "com summary ausente e já carregado, mostra zero em vez de esqueleto"
    },
    {
     "file": "src/components/__tests__/ConfiguracoesGeraisTab.test.tsx",
@@ -263470,6 +263516,17 @@
     "shows data_inicio_prevista in formatted form"
    ]
   },
+  "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx": {
+   "path": "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx",
+   "lines": 63,
+   "is_test": true,
+   "tests": [
+    "ColaboradorDirectoryGrid — máscara de PII",
+    "sem permissão de ver PII, não imprime o e-mail real",
+    "com permissão, mostra o e-mail completo",
+    "o nome não é PII mascarável e aparece nos dois casos"
+   ]
+  },
   "src/components/__tests__/ColaboradorDocuments.test.tsx": {
    "path": "src/components/__tests__/ColaboradorDocuments.test.tsx",
    "lines": 138,
@@ -263513,6 +263570,19 @@
     "renders user email",
     "renders campo name for changed field",
     "renders INSERT initial record message"
+   ]
+  },
+  "src/components/__tests__/ColaboradorKpiCards.test.tsx": {
+   "path": "src/components/__tests__/ColaboradorKpiCards.test.tsx",
+   "lines": 66,
+   "is_test": true,
+   "tests": [
+    "ColaboradorKpiCards",
+    "mostra um cartão por status, com a contagem do summary",
+    "repassa o status clicado para o onToggle",
+    "ao clicar no status já ativo, reporta esse mesmo status e não decide o reset",
+    "sem summary e carregando, mostra esqueleto em vez de contagem zero",
+    "com summary ausente e já carregado, mostra zero em vez de esqueleto"
    ]
   },
   "src/components/__tests__/ConfiguracoesGeraisTab.test.tsx": {
@@ -273561,6 +273631,23 @@
     "shows a compact empty state when there are no events at all"
    ]
   },
+  "src/components/colaboradores/ColaboradorDirectoryGrid.tsx": {
+   "path": "src/components/colaboradores/ColaboradorDirectoryGrid.tsx",
+   "lines": 148,
+   "exports": [
+    "function ColaboradorDirectoryGrid"
+   ],
+   "navigates": [
+    "/colaboradores/",
+    "/colaboradores/editar/"
+   ],
+   "params": [
+    {
+     "name": "DIRECTORY_MAX_STAGGER_INDEX",
+     "value": "5"
+    }
+   ]
+  },
   "src/components/colaboradores/ColaboradorFilters.tsx": {
    "path": "src/components/colaboradores/ColaboradorFilters.tsx",
    "lines": 87,
@@ -273576,6 +273663,27 @@
    ],
    "percents": [
     "transition={{ delay: index * 0.05 }}"
+   ]
+  },
+  "src/components/colaboradores/ColaboradorKpiCards.tsx": {
+   "path": "src/components/colaboradores/ColaboradorKpiCards.tsx",
+   "lines": 107,
+   "exports": [
+    "function ColaboradorKpiCards"
+   ]
+  },
+  "src/components/colaboradores/ColaboradorViewSwitcher.tsx": {
+   "path": "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
+   "lines": 48,
+   "exports": [
+    "type ColaboradorViewMode",
+    "function ColaboradorViewSwitcher"
+   ],
+   "enums": [
+    {
+     "name": "ColaboradorViewMode",
+     "values": "tabela | diretorio"
+    }
    ]
   },
   "src/components/colaboradores/RecontratarColaboradorDialog.tsx": {
@@ -277050,7 +277158,7 @@
   },
   "src/components/layout/EntityPageContainer.tsx": {
    "path": "src/components/layout/EntityPageContainer.tsx",
-   "lines": 155,
+   "lines": 166,
    "exports": [
     "function EntityPageContainer"
    ]
@@ -293124,7 +293232,7 @@
   },
   "src/pages/ColaboradoresPage.tsx": {
    "path": "src/pages/ColaboradoresPage.tsx",
-   "lines": 385,
+   "lines": 370,
    "exports": [
     "function ColaboradoresPage"
    ],
@@ -293149,9 +293257,6 @@
      "value": "all",
      "kind": "compara"
     }
-   ],
-   "percents": [
-    "transition={{ delay: i * 0.1 }}"
    ]
   },
   "src/pages/ComunicacaoInternaPage.tsx": {
@@ -323631,10 +323736,25 @@
   }
  },
  "git": {
-  "sha": "29dd221dfd5b7032cdd115336898db8c6be60ae3",
+  "sha": "7635f53e14552beac7b4a4c891d86516d29e387b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "7635f53",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(colaboradores): resgata da muri os cartões de KPI do diretório (#631)",
+    "files": [
+     "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx",
+     "src/components/__tests__/ColaboradorKpiCards.test.tsx",
+     "src/components/colaboradores/ColaboradorDirectoryGrid.tsx",
+     "src/components/colaboradores/ColaboradorKpiCards.tsx",
+     "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
+     "src/components/layout/EntityPageContainer.tsx",
+     "src/pages/ColaboradoresPage.tsx"
+    ]
+   },
    {
     "sha": "29dd221",
     "date": "2026-11-17",
@@ -324418,20 +324538,6 @@
      "docs/auditoria/resgate/recrutamento-e-selecao.md",
      "docs/auditoria/resgate/ui-de-treinamentos-src-components-treinamentos-s.md"
     ]
-   },
-   {
-    "sha": "2b50f15",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "fix(docs): redige o user_id e o e-mail pessoais publicados no #595 (#599)",
-    "files": [
-     "docs/HOMOLOGACAO-CANCELAMENTO-REAL.md",
-     "docs/NINEBOX-OPERACAO-DEFINITIVA.md",
-     "docs/RECUPERACAO-FEEDBACKS.md",
-     "docs/ninebox-aprovacao-gestor-implantacao.md",
-     "docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql",
-     "docs/ninebox-homologacao-aprovacao-real.md"
-    ]
    }
   ],
   "hot_files": [
@@ -324458,6 +324564,10 @@
    [
     "src/services/colaboradorService.ts",
     3
+   ],
+   [
+    "src/pages/ColaboradoresPage.tsx",
+    2
    ],
    [
     "src/components/layout/AppSidebar.tsx",
@@ -324488,18 +324598,6 @@
     2
    ],
    [
-    "docs/ninebox-aprovacao-gestor-implantacao.md",
-    2
-   ],
-   [
-    "docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql",
-    2
-   ],
-   [
-    "docs/ninebox-homologacao-aprovacao-real.md",
-    2
-   ],
-   [
     "src/components/colaborador-detalhes/EditarJornadaDialog.tsx",
     2
    ],
@@ -324513,6 +324611,14 @@
    ],
    [
     "src/hooks/index.ts",
+    2
+   ],
+   [
+    "src/hooks/useColaboradorDetalhes.ts",
+    2
+   ],
+   [
+    "src/hooks/useVinculos.ts",
     2
    ]
   ]

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `29dd221dfd` · branch `main` · 2026-11-17 16:52 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7635f53e14` · branch `main` · 2026-11-17 16:58 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1819,6 +1819,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | ImpedimentoCancelamento | motivo_ausente \| motivo_curto | `src/components/avaliacao/statusFeedback.ts` |
 | ImpedimentoReabertura | justificativa_ausente \| justificativa_curta | `src/components/avaliacao/statusFeedback.ts` |
 | MotivoChaveInvalida | operacao_ausente \| operacao_sem_idempotencia \| feedback_ausente \| id_operacao_ausente | `src/components/avaliacao/statusFeedback.ts` |
+| ColaboradorViewMode | tabela \| diretorio | `src/components/colaboradores/ColaboradorViewSwitcher.tsx` |
 | MetricTone | primary \| warning \| destructive \| muted \| info \| accent \| success | `src/components/dashboard/MetricCard.tsx` |
 | Tone | primary \| info \| success \| warning \| destructive | `src/components/desligamentos/desligamentosComum.ts` |
 | EtapaDesligamento | comunicacao \| documentacao \| calculo \| homologacao \| pagamento \| finalizado | `src/components/desligamentos/desligamentosComum.ts` |
@@ -4305,7 +4306,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `* Só um payload 100% UUID vai à RPC real — mesmo com mocks exibidos na tela.` | `src/pages/AvaliacaoPage.tsx` |
 | `transition={{ delay: i * 0.08 }}` | `src/pages/BackupPage.tsx` |
 | `transition={{ delay: i * 0.1 }}` | `src/pages/BackupPage.tsx` |
-| `transition={{ delay: i * 0.1 }}` | `src/pages/ColaboradoresPage.tsx` |
 | `transition={{ delay: i * 0.03 }}` | `src/pages/ComunicacaoInternaPage.tsx` |
 | `transition={{ delay: i * 0.05 }}` | `src/pages/ComunicacaoInternaPage.tsx` |
 | `transition={{ delay: i * 0.05 }}` | `src/pages/DashboardExecutivoPage.tsx` |
@@ -4396,7 +4396,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `const desc = v.valor_mensal ? Number(v.valor_mensal) * 0.2 : 0;` | `supabase/functions/calcular-folha/index.ts` |
 | `const descontoVT = Math.min(Number(v.valor ?? 0), salarioBase * 0.06);` | `supabase/functions/calcular-folha/index.ts` |
 | `const descontoVT = Math.min(Number(vtLegacy.valor_mensal ?? 0), salarioBase * 0.06);` | `supabase/functions/calcular-folha/index.ts` |
-| … +27 linhas — lista completa em `context.json` | |
+| `const fgts = trunc2(baseTributavel * 0.08);` | `supabase/functions/calcular-folha/index.ts` |
+| … +26 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -4527,6 +4528,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `DIAS_ALERTA_VALIDADE` | `60` | `src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx` |
 | `ROW_STAGGER` | `0.12` | `src/components/colaborador-detalhes/historico/HistoryEventRow.tsx` |
 | `SUB_STEP` | `0.14` | `src/components/colaborador-detalhes/historico/HistoryEventRow.tsx` |
+| `DIRECTORY_MAX_STAGGER_INDEX` | `5` | `src/components/colaboradores/ColaboradorDirectoryGrid.tsx` |
 | `BASE_CONTEUDO_ABA` | `4` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
 | `ANDAMENTO_GAP` | `0.22` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
 | `ANDAMENTO_INICIO` | `0.6` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
@@ -4703,8 +4705,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `MONTHS_PER_YEAR` | `12` | `src/utils/pgInterval.ts` |
 | `MASK_CHAR` | `'•'` | `src/utils/piiMask.ts` |
 | `DIAS_AVISO_FERIAS` | `30` | `src/utils/regrasSolicitacaoFerias.ts` |
-| `DIA_MS` | `1000` | `src/utils/rescisaoCalc.ts` |
-| … +110 linhas — lista completa em `context.json` | | |
+| … +111 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5412,7 +5413,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9052 testes em 696 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9062 testes em 698 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5716,7 +5717,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/calculoFerias.test.ts` | 10 | calculoFerias · deve calcular férias simples (30 dias) sem abono · deve calcular férias com abono pecuniário (20 dias férias + 10 dias abono) · deve limitar o abono pecuniário a no máximo 10 dias … |
 | `supabase/functions/_shared/idempotency.test.ts` | 10 | idempotency: primeira chamada retorna reason=NEW e id válido · idempotency: 20 requisições concorrentes com MESMA key produzem exatamente 1 NEW · idempotency: reenvio após conclusão retorna REPLAY com mesmo body · idempotency: conclusão 204 sem body continua sendo replay de sucesso … |
 | `supabase/functions/_shared/rateLimit.test.ts` | 10 | permite quando abaixo do limite e insere marcador · bloqueia quando count >= limit e não insere · isolamento por chave — outra chave não conta contra a atual · ignora rows fora da janela (timestamp < windowStart) … |
-| … +396 linhas — lista completa em `context.json` | | |
+| … +398 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

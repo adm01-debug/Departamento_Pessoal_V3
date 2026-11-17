@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (502)",
+   "src/components (505)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (616)",
+   "co-localizado (__tests__) (618)",
    "co-localizado (*.test) (70)",
    "e2e/ (28)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (620)"
+  ".tsx (623)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(colaboradores): resgata da muri os cartões de KPI do diretório (#631)",
    "feat(dashboard): resgata da muri os atalhos de Workflows e Assistente IA (#633)",
    "fix(menu): da caminho de navegacao a Faltas e Obrigacoes Fiscais (#634)",
    "feat(ui): resgata da muri os primitivos do design system (#627)",
-   "feat(layout): resgata da muri o shell de layout e a entrada de menu que faltava (#626)",
-   "feat(design): traz o sistema de design da branch muri para a main (#625)"
+   "feat(layout): resgata da muri o shell de layout e a entrada de menu que faltava (#626)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

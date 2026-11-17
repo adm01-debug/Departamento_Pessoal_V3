@@ -900,7 +900,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 276,
+   "usado_por": 278,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
@@ -908,6 +908,7 @@
     "components/animate-ui",
     "components/avaliacao",
     "components/colaborador-detalhes",
+    "components/colaboradores",
     "components/dashboard",
     "components/desligamentos",
     "components/esocial",
@@ -4770,8 +4771,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 5,
+   "usado_por": 6,
    "usado_por_modulos": [
+    "components/colaboradores",
     "hooks",
     "services"
    ],
