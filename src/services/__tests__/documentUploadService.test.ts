@@ -35,9 +35,7 @@ describe('documentUploadService', () => {
       expect(meta.nome_arquivo).toBe('contrato.pdf');
       expect(meta.mime_type).toBe('application/pdf');
       expect(meta.tamanho).toBe(1024);
-      expect(meta.storage_path).toMatch(
-        /^empresa-1\/colab-1\/documentos-digitais\/[0-9a-f-]+\.pdf$/
-      );
+      expect(meta.storage_path).toMatch(/^empresa-1\/colab-1\/documentos-digitais\/[0-9a-f-]+\.pdf$/);
       expect(vi.mocked(supabase.storage.from)).toHaveBeenCalledWith('documentos');
     });
 
@@ -125,9 +123,7 @@ describe('documentUploadService', () => {
 
   describe('getDocumentSignedUrl', () => {
     it('devolve a signed URL', async () => {
-      expect(await getDocumentSignedUrl('documentos', 'e1/c1/x/uuid.pdf')).toBe(
-        'https://example.test/signed'
-      );
+      expect(await getDocumentSignedUrl('documentos', 'e1/c1/x/uuid.pdf')).toBe('https://example.test/signed');
     });
 
     it('lança quando não vem signedUrl', async () => {
@@ -140,17 +136,14 @@ describe('documentUploadService', () => {
 
   describe('resolveDocumentUrl', () => {
     it('gera signed URL quando storage_path existe (fluxo novo)', async () => {
-      expect(
-        await resolveDocumentUrl({ storage_path: 'e1/c1/x/uuid.pdf', url: null }, 'documentos')
-      ).toBe('https://example.test/signed');
+      expect(await resolveDocumentUrl({ storage_path: 'e1/c1/x/uuid.pdf', url: null }, 'documentos')).toBe(
+        'https://example.test/signed'
+      );
     });
 
     it('cai pra url legada quando não há storage_path', async () => {
       expect(
-        await resolveDocumentUrl(
-          { storage_path: null, url: 'https://legado.example.com/doc.pdf' },
-          'documentos'
-        )
+        await resolveDocumentUrl({ storage_path: null, url: 'https://legado.example.com/doc.pdf' }, 'documentos')
       ).toBe('https://legado.example.com/doc.pdf');
       expect(vi.mocked(supabase.storage.from)).not.toHaveBeenCalled();
     });

@@ -19,11 +19,7 @@ import { safeErrorMessage } from '@/utils/safeError';
 import { cardVariants } from '@/components/dashboard/MetricCard';
 import { FalhaConsulta } from '../FalhaConsulta';
 import { FileUploadField } from './FileUploadField';
-import {
-  uploadDocumentFile,
-  removeDocumentFile,
-  resolveDocumentUrl,
-} from '@/services/documentUploadService';
+import { uploadDocumentFile, removeDocumentFile, resolveDocumentUrl } from '@/services/documentUploadService';
 
 const BUCKET = 'documentos-colaboradores';
 
@@ -142,10 +138,7 @@ export function DocumentosPessoaisCard({ colaboradorId }: { colaboradorId: strin
 
   const handleAbrir = async (doc: { storage_path?: string | null; arquivo_url: string | null }) => {
     try {
-      const url = await resolveDocumentUrl(
-        { storage_path: doc.storage_path, url: doc.arquivo_url },
-        BUCKET
-      );
+      const url = await resolveDocumentUrl({ storage_path: doc.storage_path, url: doc.arquivo_url }, BUCKET);
       if (!url) {
         toast.error('Arquivo não encontrado.');
         return;
@@ -246,15 +239,15 @@ export function DocumentosPessoaisCard({ colaboradorId }: { colaboradorId: strin
             </div>,
             <div key="arquivo" className="space-y-1">
               <Label>Arquivo (opcional)</Label>
-              <FileUploadField
-                file={file}
-                onFileChange={setFile}
-                uploading={uploading}
-                disabled={criar.isPending}
-              />
+              <FileUploadField file={file} onFileChange={setFile} uploading={uploading} disabled={criar.isPending} />
             </div>,
             <div key="salvar" className="flex justify-end pt-1">
-              <Button size="sm" className="rounded-lg px-4" onClick={handleSubmit} disabled={criar.isPending || uploading}>
+              <Button
+                size="sm"
+                className="rounded-lg px-4"
+                onClick={handleSubmit}
+                disabled={criar.isPending || uploading}
+              >
                 {(criar.isPending || uploading) && <Spinner className="mr-1.5 h-3.5 w-3.5" />}
                 Salvar
               </Button>

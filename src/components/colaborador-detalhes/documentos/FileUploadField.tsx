@@ -32,7 +32,13 @@ function formatSize(bytes: number): string {
  * formulário (ver documentUploadService.ts), pra manter "validar → enviar →
  * salvar metadado" num fluxo só, com possibilidade de rollback. */
 export function FileUploadField({
-  file, onFileChange, maxSizeMB = DEFAULT_MAX_SIZE_MB, accept = DEFAULT_ACCEPT, disabled, uploading, className,
+  file,
+  onFileChange,
+  maxSizeMB = DEFAULT_MAX_SIZE_MB,
+  accept = DEFAULT_ACCEPT,
+  disabled,
+  uploading,
+  className,
 }: FileUploadFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
@@ -69,7 +75,9 @@ export function FileUploadField({
           <FileTypeIcon url={file.name} mimeType={file.type} className="h-6 w-6 shrink-0" />
           <div className="min-w-0 flex-1">
             <p className="text-xs font-medium truncate">{file.name}</p>
-            <p className="text-[11px] text-muted-foreground">{uploading ? 'Enviando arquivo...' : formatSize(file.size)}</p>
+            <p className="text-[11px] text-muted-foreground">
+              {uploading ? 'Enviando arquivo...' : formatSize(file.size)}
+            </p>
           </div>
           {uploading ? (
             <Loader2 className="h-4 w-4 shrink-0 animate-spin text-muted-foreground" />
@@ -94,22 +102,37 @@ export function FileUploadField({
         role="button"
         tabIndex={disabled ? -1 : 0}
         onClick={() => !disabled && inputRef.current?.click()}
-        onKeyDown={e => { if (!disabled && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); inputRef.current?.click(); } }}
-        onDragOver={e => { e.preventDefault(); if (!disabled) setDragActive(true); }}
+        onKeyDown={(e) => {
+          if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          if (!disabled) setDragActive(true);
+        }}
         onDragLeave={() => setDragActive(false)}
         onDrop={handleDrop}
         className={cn(
           'rounded-xl border border-dashed p-5 text-center transition-colors cursor-pointer',
           dragActive ? 'border-primary bg-primary/5' : 'border-border/50 hover:border-primary/40',
           disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
-          className,
+          className
         )}
       >
         <Upload className="h-5 w-5 mx-auto text-muted-foreground mb-1.5" />
         <p className="text-xs font-medium">Arraste um arquivo aqui</p>
         <p className="text-[11px] text-muted-foreground">ou selecione do computador</p>
         <p className="text-[10px] text-muted-foreground mt-2">PDF, JPG, PNG, DOCX, XLSX • até {maxSizeMB}MB</p>
-        <input ref={inputRef} type="file" accept={accept} className="hidden" onChange={handleInputChange} disabled={disabled} />
+        <input
+          ref={inputRef}
+          type="file"
+          accept={accept}
+          className="hidden"
+          onChange={handleInputChange}
+          disabled={disabled}
+        />
       </div>
       {error && <p className="text-[11px] text-destructive mt-1">{error}</p>}
     </div>

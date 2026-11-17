@@ -20,7 +20,7 @@ function extensionOf(fileName: string): string {
  * em lugar nenhum — quem chama recebe só o `storage_path` persistente. */
 export async function uploadDocumentFile(
   file: File,
-  opts: { bucket: string; empresaId: string; colaboradorId: string; categoria: string; maxSizeMB?: number },
+  opts: { bucket: string; empresaId: string; colaboradorId: string; categoria: string; maxSizeMB?: number }
 ): Promise<UploadedFileMeta> {
   validateUploadFile(file, { maxSizeMB: opts.maxSizeMB ?? 10 });
 
@@ -50,7 +50,11 @@ export async function removeDocumentFile(bucket: string, storagePath: string): P
 }
 
 /** Gera uma URL assinada temporária para abrir/baixar um objeto privado. */
-export async function getDocumentSignedUrl(bucket: string, storagePath: string, expiresInSeconds = 60 * 60): Promise<string> {
+export async function getDocumentSignedUrl(
+  bucket: string,
+  storagePath: string,
+  expiresInSeconds = 60 * 60
+): Promise<string> {
   const { data, error } = await supabase.storage.from(bucket).createSignedUrl(storagePath, expiresInSeconds);
   if (error) throw error;
   if (!data?.signedUrl) throw new Error('Não foi possível gerar o link de acesso ao arquivo.');
@@ -65,7 +69,7 @@ export async function getDocumentSignedUrl(bucket: string, storagePath: string, 
 export async function resolveDocumentUrl(
   doc: { storage_path?: string | null; url?: string | null },
   bucket: string,
-  expiresInSeconds = 60 * 60,
+  expiresInSeconds = 60 * 60
 ): Promise<string | null> {
   if (doc.storage_path) return getDocumentSignedUrl(bucket, doc.storage_path, expiresInSeconds);
   if (doc.url) return doc.url;

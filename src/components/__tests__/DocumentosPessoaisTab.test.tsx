@@ -2,6 +2,12 @@ import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
+// O componente passou a ler `empresaAtualId` para montar o caminho do
+// arquivo no Storage (`empresa/colaborador/categoria/uuid.ext`), e
+// `useEmpresas` precisa de QueryClient. O mock canonico do repo fixa o tenant
+// sem montar a arvore de providers.
+vi.mock('@/hooks/useEmpresas', async () => (await import('@/test/empresaMock')).useEmpresasMockModule());
+
 vi.mock('@/hooks/useTabelasReferencia', () => ({
   useDocumentosPessoais: vi.fn(),
   useCriarDocumentoPessoal: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
