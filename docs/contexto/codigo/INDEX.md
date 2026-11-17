@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7635f53e14552beac7b4a4c891d86516d29e387b` (2026-11-17T13:57:02-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1eff3e1b62a3d4e4a60dedf2e09ba2a4d213a1f1` (2026-11-17T14:30:49-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1889), SQL (915), Markdown (332), JavaScript (129), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1889), SQL (923), Markdown (332), JavaScript (129), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3488 |
+| arquivos_total | 3496 |
 | arquivos_codigo | 2022 |
 | linhas_codigo | 401870 |
 | rotas | 116 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 115 |
 | edge_functions | 67 |
 | tabelas | 425 |
-| migrations | 849 |
+| migrations | 857 |
 | cron_jobs | 41 |
 | testes | 741 |
 | workflows | 21 |
@@ -386,7 +386,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - edges_chamadas_sem_pasta: 0
 - tabelas_sem_rls: 15 — ex.: cbo, cnae, config_retencao
 - tabelas_usadas_sem_definicao: 0
-- tabelas_com_drift_migration_vs_types: 81 — ex.: admissao_tokens, admissoes, afastamentos
+- tabelas_com_drift_migration_vs_types: 83 — ex.: admissao_tokens, admissoes, afastamentos
 - rpcs_sem_definicao: 4 — ex.: aplicar_medida_folha_ponto, complete_admission_esocial_event, drenar_fila_limpeza_lgpd
 - componentes_orfaos: 25 — ex.: src/components/admissoes/OnboardingDashboard.tsx, src/components/animate-ui/components/animate/tabs.tsx, src/components/avaliacao/NineBoxMatrix.tsx
 - componentes_com_nome_duplicado: 23 — ex.: AlertasRHWidget, CadastroIncompletoWidget, CamposCustomizadosTab
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 26871 nós · 60605 arestas · 2327 comunidades · grafo do commit `7635f53e`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), lucide-react (457), react (444), @tanstack/react-query (437), cn (396), vitest (278), checkRateLimit (215), useEmpresas (185), nineBoxComum.ts (163), "public"."empresas" (159), training-image-generate/index.ts (158)
+- 26883 nós · 60607 arestas · 2350 comunidades · grafo do commit `1eff3e1b`
+- comunidades maiores: cn (521), 20260831_corrected_public.sql (493), canonical_schema.sql (475), @tanstack/react-query (448), button.tsx (369), lucide-react (366), useEmpresas (320), vitest (269), deepChain (248), services/index.ts (240), react (172), hooks/index.ts (168)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -406,9 +406,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - .github/workflows/canonical-migrations.yml (20)
 - package.json (19)
 - package-lock.json (18)
-- PENDENCIAS.md (10)
 - scripts/canonical-invariants.sql (10)
 - scripts/sync/autocommit-local.sh (10)
+- PENDENCIAS.md (9)
 - docs/prod-readiness.md (9)
 - supabase/functions/calcular-folha/index.ts (8)
 - AGENTS.md (7)
@@ -650,6 +650,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `1eff3e1` infra(banco): resgata da muri 4 migrations que nunca foram aplicadas (#632)
 - 2026-11-17 `7635f53` feat(colaboradores): resgata da muri os cartões de KPI do diretório (#631)
 - 2026-11-17 `29dd221` feat(dashboard): resgata da muri os atalhos de Workflows e Assistente IA (#633)
 - 2026-11-17 `7e12152` fix(menu): da caminho de navegacao a Faltas e Obrigacoes Fiscais (#634)
@@ -664,7 +665,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `cc7b1ac` feat(desligamentos): Trilha de Auditoria com a camada de dados reescrita para o caminho autorizado (#620)
 - 2026-11-17 `b7ee915` fix(desligamentos): vocabulário alinhado ao banco — 4 de 6 tipos e o status pago não eram reconhecidos (#619)
 - 2026-11-17 `7b17d30` feat: resgata da muri o organograma navegável — busca que filtra, expandir/recolher e níveis (#616)
-- 2026-11-17 `9de335f` fix(desligamentos): "Novo Desligamento" volta a listar colaboradores (#617)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

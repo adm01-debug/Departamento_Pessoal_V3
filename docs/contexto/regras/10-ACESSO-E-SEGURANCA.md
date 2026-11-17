@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7635f53e14` · branch `main` · 2026-11-17 16:58 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1eff3e1b62` · branch `main` · 2026-11-17 17:32 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -10,7 +10,7 @@
 - Tabelas de perfil/permissão: `controle_acesso`, `dp_user_roles`, `permissao_perfis`, `permissao_recursos`, `permissions`, `role_permissions`, `user_roles`
 - Colunas de perfil: `auth.users.role` (character varying(255)), `dp_user_roles.role` ("public"."dp_user_role" NOT NULL), `permissao_perfis.is_admin` (boolean DEFAULT false), `permissions.role` ("public"."app_role" NOT NULL), `role_permissions.role` ("text" NOT NULL), `user_roles.role` (public.app_role NOT NULL DEFAULT 'user')
 - Claims do JWT usados em políticas/funções: `role`, `user_metadata`
-- Funções usadas dentro de políticas RLS (a regra real está no corpo delas — veja `06`): `candidatura_na_minha_empresa`, `empresa_do_colaborador`, `foldername`, `get_auth_empresa_id`, `get_user_empresa_ids`, `get_user_empresas`, `get_user_scope_empresas`, `has_role`, `is_admin`, `jwt`, `pertence_a_empresa`, `pode_gerir_avaliacoes`, `pode_gerir_config_ponto`, `pode_gerir_pessoas`, `pode_gerir_rh`, `rls_tenant_or_admin`, `role`, `sou_o_colaborador`, `uid`, `user_belongs_to_empresa`, `user_can_manage_tenant_storage`, `user_empresa_id`
+- Funções usadas dentro de políticas RLS (a regra real está no corpo delas — veja `06`): `candidatura_na_minha_empresa`, `empresa_do_colaborador`, `foldername`, `get_auth_empresa_id`, `get_user_empresa_ids`, `get_user_empresas`, `get_user_scope_empresas`, `has_role`, `is_admin`, `jwt`, `pertence_a_empresa`, `pode_gerir_avaliacoes`, `pode_gerir_config_ponto`, `pode_gerir_pessoas`, `pode_gerir_rh`, `rls_tenant_or_admin`, `role`, `sou_o_colaborador`, `storage_path_empresa_id`, `uid`, `user_belongs_to_empresa`, `user_can_manage_tenant_storage`, `user_empresa_id`
 
 ## Matriz tabela × operação → quem pode (derivada das políticas RLS)
 

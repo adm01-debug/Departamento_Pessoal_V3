@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7635f53e14552beac7b4a4c891d86516d29e387b",
+  "commit": "1eff3e1b62a3d4e4a60dedf2e09ba2a4d213a1f1",
   "branch": "main",
-  "data_commit": "2026-11-17T13:57:02-03:00",
+  "data_commit": "2026-11-17T14:30:49-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1eff3e1",
+    "data": "2026-11-17",
+    "assunto": "infra(banco): resgata da muri 4 migrations que nunca foram aplicadas (#632)"
+   },
    {
     "sha": "7635f53",
     "data": "2026-11-17",
@@ -126,14 +131,9 @@
     "sha": "0b2efa2",
     "data": "2026-11-16",
     "assunto": "fix(dossiê): editar um colaborador passa a atualizar o dossiê dele na hora (#606)"
-   },
-   {
-    "sha": "7a29c0e",
-    "data": "2026-11-16",
-    "assunto": "feat(dossiê): enxerta as 5 abas restantes do dossiê do colaborador (branch muri) (#604)"
    }
   ],
-  "arquivos_mudados_7d": 1199,
+  "arquivos_mudados_7d": 1207,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -214,16 +214,16 @@
     "mudancas": 18
    },
    {
-    "arquivo": "PENDENCIAS.md",
-    "mudancas": 10
-   },
-   {
     "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 10
    },
    {
     "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 10
+   },
+   {
+    "arquivo": "PENDENCIAS.md",
+    "mudancas": 9
    },
    {
     "arquivo": "docs/prod-readiness.md",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 249
+    "commits": 250
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 30
+    "commits": 29
    },
    {
     "autor": "dependabot[bot]",
@@ -318,7 +318,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3488,
+  "arquivos_total": 3496,
   "arquivos_codigo": 2022,
   "linhas_codigo": 401870,
   "rotas": 116,
@@ -330,7 +330,7 @@
   "hooks": 115,
   "edge_functions": 67,
   "tabelas": 425,
-  "migrations": 849,
+  "migrations": 857,
   "cron_jobs": 41,
   "testes": 741,
   "workflows": 21,
@@ -1065,9 +1065,11 @@
    "departamentos",
    "dependentes",
    "documento_templates",
+   "documentos",
    "documentos_admissao",
    "documentos_assinatura",
    "documentos_colaborador",
+   "documentos_pessoais_arquivos",
    "empresas",
    "emprestimos_consignados",
    "epis",

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7635f53e14552beac7b4a4c891d86516d29e387b",
+  "sha": "1eff3e1b62a3d4e4a60dedf2e09ba2a4d213a1f1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 16:58 UTC",
-  "files_total": 3509,
-  "code_files": 2935,
-  "code_lines": 466512
+  "generated_at": "2026-11-17 17:32 UTC",
+  "files_total": 3517,
+  "code_files": 2943,
+  "code_lines": 466827
  },
  "version": "1.3.2",
- "facts_hash": "e4590f7c357a596f",
+ "facts_hash": "1b174d97d2d1cc3b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -385,8 +385,8 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 970,
+   ".sql": 923,
    ".ts": 919,
-   ".sql": 915,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -46065,26 +46065,6 @@
     "src": "supabase/migrations/20260719150000_storage_bucket_security_hardening.sql"
    },
    {
-    "name": "documentos_delete_rh_admin",
-    "table": "storage.objects",
-    "cmd": "DELETE",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin', 'rh') )",
-    "check": "",
-    "src": "supabase/migrations/20260719150000_storage_bucket_security_hardening.sql"
-   },
-   {
-    "name": "docs_colab_delete_rh_admin",
-    "table": "storage.objects",
-    "cmd": "DELETE",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos-colaboradores' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin', 'rh') )",
-    "check": "",
-    "src": "supabase/migrations/20260719150000_storage_bucket_security_hardening.sql"
-   },
-   {
     "name": "comprovantes_despesas_delete",
     "table": "storage.objects",
     "cmd": "DELETE",
@@ -50413,6 +50393,26 @@
     "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid())) AND ( public.pode_gerir_avaliacoes() OR public.pode_aprovar_colaborador(avaliado_id) OR avaliador_id IN ( SELECT c.id FROM public.colaboradores c WHERE c.user_id = auth.uid() AND c.empresa_id = public.feedbacks_360.empresa_id ) )",
     "check": "",
     "src": "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.sql"
+   },
+   {
+    "name": "documentos_delete_rh_admin",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'documentos' AND public.pode_gerir_rh(public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.sql"
+   },
+   {
+    "name": "docs_colab_delete_rh_admin",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'documentos-colaboradores' AND public.pode_gerir_rh(public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.sql"
    },
    {
     "name": "Acesso aos itens via folha",
@@ -70456,6 +70456,14 @@
     "unique": false,
     "where": "WHERE ativo IS TRUE",
     "src": "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql"
+   },
+   {
+    "name": "idx_onboarding_kits_empresa_id",
+    "table": "onboarding_kits",
+    "columns": "empresa_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261117170200_onboarding_kits_indice_empresa.sql"
    }
   ],
   "cron_jobs": [
@@ -71816,6 +71824,14 @@
    "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.verify.sql",
    "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql",
    "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.verify.sql",
+   "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.sql",
+   "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.verify.sql",
+   "supabase/migrations/20261117170100_onboarding_audit_trigger.sql",
+   "supabase/migrations/20261117170100_onboarding_audit_trigger.verify.sql",
+   "supabase/migrations/20261117170200_onboarding_kits_indice_empresa.sql",
+   "supabase/migrations/20261117170200_onboarding_kits_indice_empresa.verify.sql",
+   "supabase/migrations/20261117170300_documentos_colunas_storage.sql",
+   "supabase/migrations/20261117170300_documentos_colunas_storage.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -87138,7 +87154,8 @@
    "column:provisoes_mensais.encargos_aliquota_bps": "Aliquota de encargos patronais aplicada a ESTA linha, em bps (358 = 35,8%). Gravada pelo calculo; o recalculo da mesma competencia a reaproveita.",
    "column:provisoes_mensais.regime_tributario": "Retrato do regime tributario da empresa no momento do calculo desta linha.",
    "column:provisoes_mensais.simples_anexo": "Retrato do anexo do Simples no momento do calculo desta linha; nulo fora do Simples ou quando o cadastro nao informa.",
-   "table:provisoes_competencia_tributaria": "Contrato tributario da competencia: aliquota de encargos (bps) e retrato do regime usados no calculo daquele mes. Sobrevive a substituicao com lote vazio, que apaga as linhas de provisoes_mensais. Escrita exclusiva de replace_monthly_provisions."
+   "table:provisoes_competencia_tributaria": "Contrato tributario da competencia: aliquota de encargos (bps) e retrato do regime usados no calculo daquele mes. Sobrevive a substituicao com lote vazio, que apaga as linhas de provisoes_mensais. Escrita exclusiva de replace_monthly_provisions.",
+   "column:documentos.storage_path": "Caminho do objeto no bucket `documentos`, padrao {empresa_id}/{colaborador_id}/{categoria}/{uuid}.{ext}. Lido por PortalDocumentosTab para remover o arquivo junto com a linha."
   },
   "types_file": "src/integrations/supabase/types.ts"
  },
@@ -103469,8 +103486,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 849,
-   "lines": 77819,
+   "files": 857,
+   "lines": 78134,
    "tables": [
     "profiles",
     "user_roles"
@@ -109979,6 +109996,9 @@
    ],
    "docs-rh": [
     "scripts/ai-context/gerar.unit.mjs"
+   ],
+   "documentos": [
+    "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.sql"
    ],
    "documentos-admissao": [
     "src/hooks/useDocumentOCR.ts"
@@ -204549,26 +204569,6 @@
     "src": "supabase/migrations/20260719150000_storage_bucket_security_hardening.sql"
    },
    {
-    "name": "documentos_delete_rh_admin",
-    "table": "storage.objects",
-    "cmd": "DELETE",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin', 'rh') )",
-    "check": "",
-    "src": "supabase/migrations/20260719150000_storage_bucket_security_hardening.sql"
-   },
-   {
-    "name": "docs_colab_delete_rh_admin",
-    "table": "storage.objects",
-    "cmd": "DELETE",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos-colaboradores' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin', 'rh') )",
-    "check": "",
-    "src": "supabase/migrations/20260719150000_storage_bucket_security_hardening.sql"
-   },
-   {
     "name": "comprovantes_despesas_delete",
     "table": "storage.objects",
     "cmd": "DELETE",
@@ -208897,6 +208897,26 @@
     "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid())) AND ( public.pode_gerir_avaliacoes() OR public.pode_aprovar_colaborador(avaliado_id) OR avaliador_id IN ( SELECT c.id FROM public.colaboradores c WHERE c.user_id = auth.uid() AND c.empresa_id = public.feedbacks_360.empresa_id ) )",
     "check": "",
     "src": "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.sql"
+   },
+   {
+    "name": "documentos_delete_rh_admin",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'documentos' AND public.pode_gerir_rh(public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.sql"
+   },
+   {
+    "name": "docs_colab_delete_rh_admin",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'documentos-colaboradores' AND public.pode_gerir_rh(public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.sql"
    },
    {
     "name": "Acesso aos itens via folha",
@@ -230328,6 +230348,7 @@
    "rls_tenant_or_admin",
    "role",
    "sou_o_colaborador",
+   "storage_path_empresa_id",
    "uid",
    "user_belongs_to_empresa",
    "user_can_manage_tenant_storage",
@@ -236479,14 +236500,14 @@
      "authenticated: bucket_id = 'contabilidade-anexos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "authenticated: bucket_id = 'afastamentos' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin', 'rh') )",
      "authenticated: bucket_id = 'documentos-admissao' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin', 'rh') )",
-     "authenticated: bucket_id = 'documentos' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin', 'rh') )",
-     "authenticated: bucket_id = 'documentos-colaboradores' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin', 'rh'",
      "authenticated: bucket_id = 'comprovantes-despesas' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin', 'rh', '",
      "authenticated: bucket_id = 'ferias-coletivas-comunicados' AND public.has_role(auth.uid(),'admin'::app_role)",
      "authenticated: bucket_id = 'medidas-disciplinares' AND (storage.foldername(name))[1]::uuid IN (SELECT get_user_empresas(auth.uid()))",
      "authenticated: bucket_id = 'medidas-contestacoes' AND (storage.foldername(name))[1]::uuid IN ( SELECT ue.empresa_id FROM public.user_empresa",
      "service_role: bucket_id = 'backups'",
      "authenticated: bucket_id = 'training-images' AND public.is_admin(auth.uid()) AND public.user_belongs_to_empresa(auth.uid(), ((storage.folder",
+     "authenticated: bucket_id = 'documentos' AND public.pode_gerir_rh(public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'documentos-colaboradores' AND public.pode_gerir_rh(public.storage_path_empresa_id(name))",
      "authenticated: bucket_id = 'avatars' AND owner = auth.uid() AND (storage.foldername(name))[1] = auth.uid()::text"
     ]
    },
@@ -323466,6 +323487,41 @@
    "lines": 198,
    "uses_service_role": true
   },
+  "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.sql": {
+   "path": "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.sql",
+   "lines": 50,
+   "storage": [
+    "documentos"
+   ]
+  },
+  "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.verify.sql": {
+   "path": "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.verify.sql",
+   "lines": 47
+  },
+  "supabase/migrations/20261117170100_onboarding_audit_trigger.sql": {
+   "path": "supabase/migrations/20261117170100_onboarding_audit_trigger.sql",
+   "lines": 30
+  },
+  "supabase/migrations/20261117170100_onboarding_audit_trigger.verify.sql": {
+   "path": "supabase/migrations/20261117170100_onboarding_audit_trigger.verify.sql",
+   "lines": 31
+  },
+  "supabase/migrations/20261117170200_onboarding_kits_indice_empresa.sql": {
+   "path": "supabase/migrations/20261117170200_onboarding_kits_indice_empresa.sql",
+   "lines": 31
+  },
+  "supabase/migrations/20261117170200_onboarding_kits_indice_empresa.verify.sql": {
+   "path": "supabase/migrations/20261117170200_onboarding_kits_indice_empresa.verify.sql",
+   "lines": 35
+  },
+  "supabase/migrations/20261117170300_documentos_colunas_storage.sql": {
+   "path": "supabase/migrations/20261117170300_documentos_colunas_storage.sql",
+   "lines": 41
+  },
+  "supabase/migrations/20261117170300_documentos_colunas_storage.verify.sql": {
+   "path": "supabase/migrations/20261117170300_documentos_colunas_storage.verify.sql",
+   "lines": 50
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -323736,10 +323792,26 @@
   }
  },
  "git": {
-  "sha": "7635f53e14552beac7b4a4c891d86516d29e387b",
+  "sha": "1eff3e1b62a3d4e4a60dedf2e09ba2a4d213a1f1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "1eff3e1",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "infra(banco): resgata da muri 4 migrations que nunca foram aplicadas (#632)",
+    "files": [
+     "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.sql",
+     "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.verify.sql",
+     "supabase/migrations/20261117170100_onboarding_audit_trigger.sql",
+     "supabase/migrations/20261117170100_onboarding_audit_trigger.verify.sql",
+     "supabase/migrations/20261117170200_onboarding_kits_indice_empresa.sql",
+     "supabase/migrations/20261117170200_onboarding_kits_indice_empresa.verify.sql",
+     "supabase/migrations/20261117170300_documentos_colunas_storage.sql",
+     "supabase/migrations/20261117170300_documentos_colunas_storage.verify.sql"
+    ]
+   },
    {
     "sha": "7635f53",
     "date": "2026-11-17",
@@ -324519,25 +324591,6 @@
      "src/components/__tests__/PendenciasAprovacao.test.tsx",
      "src/setupTests.ts"
     ]
-   },
-   {
-    "sha": "792eeb5",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "docs(auditoria): publica o plano de resgate por área da branch muri (#597)",
-    "files": [
-     "docs/auditoria/PLANO_RESGATE_POR_AREA_2026-11-16.json",
-     "docs/auditoria/PLANO_RESGATE_POR_AREA_2026-11-16.md",
-     "docs/auditoria/resgate/admissoes-onboarding-e-kanban.md",
-     "docs/auditoria/resgate/camada-de-aplicacao-de-training-images-edge-func.md",
-     "docs/auditoria/resgate/desligamentos-organograma-e-dashboards.md",
-     "docs/auditoria/resgate/documentacao.md",
-     "docs/auditoria/resgate/dossie-do-colaborador.md",
-     "docs/auditoria/resgate/hooks-services-e-lib.md",
-     "docs/auditoria/resgate/premiacoes-e-simulador-de-roi.md",
-     "docs/auditoria/resgate/recrutamento-e-selecao.md",
-     "docs/auditoria/resgate/ui-de-treinamentos-src-components-treinamentos-s.md"
-    ]
    }
   ],
   "hot_files": [
@@ -324590,14 +324643,6 @@
     2
    ],
    [
-    "docs/auditoria/PLANO_RESGATE_POR_AREA_2026-11-16.json",
-    2
-   ],
-   [
-    "docs/auditoria/resgate/documentacao.md",
-    2
-   ],
-   [
     "src/components/colaborador-detalhes/EditarJornadaDialog.tsx",
     2
    ],
@@ -324619,6 +324664,14 @@
    ],
    [
     "src/hooks/useVinculos.ts",
+    2
+   ],
+   [
+    "src/services/colaboradorDetalhesService.ts",
+    2
+   ],
+   [
+    "src/services/index.ts",
     2
    ]
   ]

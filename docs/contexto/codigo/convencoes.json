@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra(banco): resgata da muri 4 migrations que nunca foram aplicadas (#632)",
    "feat(colaboradores): resgata da muri os cartões de KPI do diretório (#631)",
    "feat(dashboard): resgata da muri os atalhos de Workflows e Assistente IA (#633)",
    "fix(menu): da caminho de navegacao a Faltas e Obrigacoes Fiscais (#634)",
-   "feat(ui): resgata da muri os primitivos do design system (#627)",
-   "feat(layout): resgata da muri o shell de layout e a entrada de menu que faltava (#626)"
+   "feat(ui): resgata da muri os primitivos do design system (#627)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 849,
+ "migrations": 857,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -2686,6 +2686,13 @@
    "evento": "update",
    "tabela": "sst_regimento_documentos",
    "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "audit_tarefas_onboarding",
+   "quando": "after",
+   "evento": "insert or update or delete",
+   "tabela": "tarefas_onboarding",
+   "funcao": "log_audit_change"
   },
   {
    "nome": "update_training_image_settings_updated_at",
@@ -22037,6 +22044,13 @@
      "default": "gen_random_uuid()",
      "ref": null
     },
+    "mime_type": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "nome": {
      "tipo": "text",
      "nn": true,
@@ -22044,8 +22058,29 @@
      "default": null,
      "ref": null
     },
+    "nome_arquivo": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "observacoes": {
      "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "storage_path": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "tamanho": {
+     "tipo": "bigint",
      "nn": false,
      "pk": false,
      "default": null,
@@ -22141,7 +22176,12 @@
     "validado_por": "string | null"
    },
    "drift": {
-    "so_na_migration": [],
+    "so_na_migration": [
+     "storage_path",
+     "mime_type",
+     "nome_arquivo",
+     "tamanho"
+    ],
     "so_no_types": []
    },
    "usada_no_front": 2,
@@ -23082,6 +23122,13 @@
      "default": "gen_random_uuid()",
      "ref": null
     },
+    "mime_type": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "numero": {
      "tipo": "text",
      "nn": false,
@@ -23090,6 +23137,13 @@
      "ref": null
     },
     "orgao_emissor": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "storage_path": {
      "tipo": "text",
      "nn": false,
      "pk": false,
@@ -23153,7 +23207,10 @@
     "updated_at": "string | null"
    },
    "drift": {
-    "so_na_migration": [],
+    "so_na_migration": [
+     "storage_path",
+     "mime_type"
+    ],
     "so_no_types": []
    },
    "usada_no_front": 1,
@@ -40862,7 +40919,13 @@
    },
    "rls": false,
    "policies": [],
-   "indices": [],
+   "indices": [
+    {
+     "nome": "idx_onboarding_kits_empresa_id",
+     "colunas": "empresa_id",
+     "unico": false
+    }
+   ],
    "fks": [
     "empresa_id->empresas"
    ],
@@ -56673,7 +56736,9 @@
    },
    "usada_no_front": 1,
    "usada_em_edges": [],
-   "triggers": [],
+   "triggers": [
+    "audit_tarefas_onboarding"
+   ],
    "sem_rls": false,
    "nao_usada": false
   },
