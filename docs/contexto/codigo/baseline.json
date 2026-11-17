@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "65f863a9de8e4f8d18b21a283e0b6602e9a8649c",
+  "commit": "ba993ad1a5c643d72fd2adf40fa56632f4ca2cc3",
   "branch": "main",
-  "data_commit": "2026-11-17T18:06:38-03:00",
+  "data_commit": "2026-11-17T18:06:53-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "ba993ad",
+    "data": "2026-11-17",
+    "assunto": "fix(hooks): guardas de empresa em ajuste de ponto e conta bancária (#650)"
+   },
+   {
+    "sha": "50ae62a",
+    "data": "2026-11-17",
+    "assunto": "fix(portal): exclusão de documento não apaga a linha quando o storage recusa (#645)"
+   },
    {
     "sha": "65f863a",
     "data": "2026-11-17",
@@ -121,27 +131,17 @@
     "sha": "7381b27",
     "data": "2026-11-17",
     "assunto": "fix(pwa): navegacao ignorava o cache HTTP do browser e servia a casca antiga (#624)"
-   },
-   {
-    "sha": "93f1a5f",
-    "data": "2026-11-17",
-    "assunto": "feat(dashboard): resgata da muri o MetricCard com tone, tooltip e variante compacta (#618)"
-   },
-   {
-    "sha": "b25c46e",
-    "data": "2026-11-17",
-    "assunto": "feat(desligamentos): drawer de rescisão com a UI da muri e o cálculo da main (#621)"
    }
   ],
-  "arquivos_mudados_7d": 1074,
+  "arquivos_mudados_7d": 1079,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 357
+    "mudancas": 358
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 108
+    "mudancas": 110
    },
    {
     "pasta": "src/components/ui",
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 18
+    "mudancas": 17
    },
    {
     "arquivo": "package.json",
@@ -230,15 +230,7 @@
     "mudancas": 8
    },
    {
-    "arquivo": "AGENTS.md",
-    "mudancas": 7
-   },
-   {
     "arquivo": "scripts/automation.config.json",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 7
    },
    {
@@ -250,7 +242,7 @@
     "mudancas": 7
    },
    {
-    "arquivo": "CLAUDE.md",
+    "arquivo": "AGENTS.md",
     "mudancas": 6
    },
    {
@@ -262,7 +254,7 @@
     "mudancas": 6
    },
    {
-    "arquivo": "nginx.conf",
+    "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 6
    },
    {
@@ -294,18 +286,26 @@
     "mudancas": 5
    },
    {
+    "arquivo": "CLAUDE.md",
+    "mudancas": 5
+   },
+   {
     "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "nginx.conf",
     "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 264
+    "commits": 266
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 20
+    "commits": 18
    },
    {
     "autor": "dependabot[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3525,
-  "arquivos_codigo": 2047,
-  "linhas_codigo": 404876,
+  "arquivos_total": 3526,
+  "arquivos_codigo": 2048,
+  "linhas_codigo": 404985,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -332,7 +332,7 @@
   "tabelas": 425,
   "migrations": 861,
   "cron_jobs": 41,
-  "testes": 757,
+  "testes": 758,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -636,7 +636,7 @@
   },
   "src/components": {
    "arquivos": 963,
-   "linhas": 173110
+   "linhas": 173137
   },
   "src/constants": {
    "arquivos": 7,
@@ -651,8 +651,8 @@
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 198,
-   "linhas": 23184
+   "arquivos": 199,
+   "linhas": 23266
   },
   "src/i18n": {
    "arquivos": 2,

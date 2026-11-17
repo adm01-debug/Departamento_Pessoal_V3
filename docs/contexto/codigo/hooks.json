@@ -2547,7 +2547,7 @@
    "hooks_exportados": [
     "usePontoMelhorado"
    ],
-   "linhas": 155,
+   "linhas": 164,
    "dominio": "hooks",
    "tabelas": [
     "solicitacoes_ajuste_ponto"
@@ -2936,7 +2936,7 @@
     "useTiposVisto",
     "useVincularDependenteBeneficio"
    ],
-   "linhas": 265,
+   "linhas": 271,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -2959,7 +2959,7 @@
     "src/hooks/usePendenciasColaborador.ts",
     "src/hooks/useProximosEventos.ts"
    ],
-   "coberto_por_testes": 4
+   "coberto_por_testes": 5
   },
   {
    "arquivo": "src/hooks/useToast.ts",

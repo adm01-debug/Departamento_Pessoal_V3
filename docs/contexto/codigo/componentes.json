@@ -5395,7 +5395,7 @@
     "PortalDocumentosTab"
    ],
    "export_default": null,
-   "linhas": 418,
+   "linhas": 429,
    "dominio": "components/portal",
    "hooks_locais": [],
    "tabelas": [

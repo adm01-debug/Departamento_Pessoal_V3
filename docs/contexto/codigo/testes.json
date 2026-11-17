@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 757,
+ "total": 758,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 718
+  "unit": 719
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 633
+   "arquivos": 634
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -2932,13 +2932,13 @@
   {
    "arquivo": "src/components/__tests__/PortalDocumentosTab.test.tsx",
    "tipo": "unit",
-   "linhas": 376,
+   "linhas": 392,
    "testa": [
     "src/components/portal/PortalDocumentosTab.tsx",
     "src/services/documentoService.ts",
     "src/services/index.ts"
    ],
-   "casos": 20
+   "casos": 21
   },
   {
    "arquivo": "src/components/__tests__/PortalFinanceiroTab.test.tsx",
@@ -4279,6 +4279,15 @@
    "casos": 6
   },
   {
+   "arquivo": "src/hooks/__tests__/useCriarContaBancaria.guarda.test.ts",
+   "tipo": "unit",
+   "linhas": 49,
+   "testa": [
+    "src/hooks/useTabelasReferencia.ts"
+   ],
+   "casos": 1
+  },
+  {
    "arquivo": "src/hooks/__tests__/useDataAccessLog.test.ts",
    "tipo": "unit",
    "linhas": 84,
@@ -4686,11 +4695,11 @@
   {
    "arquivo": "src/hooks/__tests__/usePontoMelhorado.test.ts",
    "tipo": "unit",
-   "linhas": 110,
+   "linhas": 128,
    "testa": [
     "src/hooks/usePontoMelhorado.ts"
    ],
-   "casos": 5
+   "casos": 7
   },
   {
    "arquivo": "src/hooks/__tests__/usePontoOffline.test.ts",
@@ -7490,7 +7499,7 @@
   "src/hooks/useSyncedState.ts": 1,
   "src/hooks/useSystemHealth.ts": 1,
   "src/hooks/useSystemHealthHistory.ts": 2,
-  "src/hooks/useTabelasReferencia.ts": 4,
+  "src/hooks/useTabelasReferencia.ts": 5,
   "src/hooks/useToast.ts": 1,
   "src/hooks/useTodasEmpresas.ts": 1,
   "src/hooks/useTrainingImages.ts": 1,

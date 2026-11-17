@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (633)",
+   "co-localizado (__tests__) (634)",
    "co-localizado (*.test) (71)",
    "e2e/ (28)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(hooks): guardas de empresa em ajuste de ponto e conta bancária (#650)",
+   "fix(portal): exclusão de documento não apaga a linha quando o storage recusa (#645)",
    "feat(colaborador): aba de Afastamentos no dossiê, sem dado de saúde (#643)",
    "fix(ui): iniciais do avatar voltam a ter fundo (#649)",
-   "chore(inventario): regenera rotas.json, defasado desde a #639 (#648)",
-   "fix(migrations): corrige os dois sidecars que reprovaram no dry-run (#647)",
-   "infra(storage): policies de tenant para documentos, documentos-colaboradores e afastamentos (#644)"
+   "chore(inventario): regenera rotas.json, defasado desde a #639 (#648)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

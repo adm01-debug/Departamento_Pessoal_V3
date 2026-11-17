@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "65f863a9de8e4f8d18b21a283e0b6602e9a8649c",
+  "sha": "ba993ad1a5c643d72fd2adf40fa56632f4ca2cc3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 21:08 UTC",
-  "files_total": 3546,
-  "code_files": 2972,
-  "code_lines": 470179
+  "generated_at": "2026-11-17 21:11 UTC",
+  "files_total": 3547,
+  "code_files": 2973,
+  "code_lines": 470288
  },
  "version": "1.3.2",
- "facts_hash": "c05dc2e3a0dcbcb2",
+ "facts_hash": "4172bf8d608982a5",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -386,7 +386,7 @@
   "languages": {
    ".tsx": 989,
    ".sql": 927,
-   ".ts": 925,
+   ".ts": 926,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -101577,7 +101577,7 @@
   {
    "module": "src/components",
    "files": 963,
-   "lines": 173110,
+   "lines": 173137,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101911,8 +101911,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 198,
-   "lines": 23184,
+   "files": 199,
+   "lines": 23266,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -114670,6 +114670,10 @@
     "msg": "Falha na validação biométrica. O registro de ponto não será validado."
    },
    {
+    "file": "src/hooks/usePontoMelhorado.ts",
+    "msg": "empresa_id obrigatório para responder solicitação de ajuste."
+   },
+   {
     "file": "src/hooks/usePontoOffline.ts",
     "msg": "${result.errors} batida(s) não puderam ser sincronizadas e permanecem na fila."
    },
@@ -114692,6 +114696,10 @@
    {
     "file": "src/hooks/useServerValidation.ts",
     "msg": "Verifique os campos destacados no formulário."
+   },
+   {
+    "file": "src/hooks/useTabelasReferencia.ts",
+    "msg": "Nenhuma empresa selecionada. Selecione uma empresa antes de cadastrar uma conta bancária."
    },
    {
     "file": "src/hooks/useVinculos.ts",
@@ -176676,6 +176684,10 @@
    },
    {
     "file": "src/components/__tests__/PortalDocumentosTab.test.tsx",
+    "name": "falha ao remover do storage NAO apaga a linha do banco"
+   },
+   {
+    "file": "src/components/__tests__/PortalDocumentosTab.test.tsx",
     "name": "baixar documento faz download do storage e dispara o anchor"
    },
    {
@@ -182803,6 +182815,14 @@
     "name": "exposes refetch function"
    },
    {
+    "file": "src/hooks/__tests__/useCriarContaBancaria.guarda.test.ts",
+    "name": "useCriarContaBancaria sem empresa selecionada"
+   },
+   {
+    "file": "src/hooks/__tests__/useCriarContaBancaria.guarda.test.ts",
+    "name": "falha com mensagem de negocio e NAO chama o servico"
+   },
+   {
     "file": "src/hooks/__tests__/useDataAccessLog.test.ts",
     "name": "useDataAccessLog"
    },
@@ -184817,6 +184837,14 @@
    {
     "file": "src/hooks/__tests__/usePontoMelhorado.test.ts",
     "name": "filters by colaboradorId when provided"
+   },
+   {
+    "file": "src/hooks/__tests__/usePontoMelhorado.test.ts",
+    "name": "sem empresaId a consulta NAO sai e a lista vem vazia"
+   },
+   {
+    "file": "src/hooks/__tests__/usePontoMelhorado.test.ts",
+    "name": "sem empresaId responderSolicitacao falha explicitamente, sem tocar no banco"
    },
    {
     "file": "src/hooks/__tests__/usePontoMelhorado.test.ts",
@@ -268089,7 +268117,7 @@
   },
   "src/components/__tests__/PortalDocumentosTab.test.tsx": {
    "path": "src/components/__tests__/PortalDocumentosTab.test.tsx",
-   "lines": 376,
+   "lines": 392,
    "is_test": true,
    "errors": [
     ", async () => {\n    state.fromInsert.mockResolvedValueOnce({ error: { message: ",
@@ -268111,6 +268139,7 @@
     "arquivo com extensão perigosa é rejeitado antes do upload",
     "erro no storage.upload mostra toast.error",
     "excluir documento remove do storage e chama service.excluir",
+    "falha ao remover do storage NAO apaga a linha do banco",
     "baixar documento faz download do storage e dispara o anchor",
     "erro no download mostra toast.error",
     "contrato não assinado mostra botão Assinar e registra a assinatura",
@@ -279572,7 +279601,7 @@
   },
   "src/components/portal/PortalDocumentosTab.tsx": {
    "path": "src/components/portal/PortalDocumentosTab.tsx",
-   "lines": 418,
+   "lines": 429,
    "exports": [
     "function PortalDocumentosTab"
    ],
@@ -287956,7 +287985,7 @@
   },
   "src/hooks/usePontoMelhorado.ts": {
    "path": "src/hooks/usePontoMelhorado.ts",
-   "lines": 155,
+   "lines": 164,
    "exports": [
     "interface SolicitacaoAjuste",
     "function usePontoMelhorado"
@@ -287980,6 +288009,9 @@
      "empresa_id"
     ]
    },
+   "errors": [
+    "empresa_id obrigatório para responder solicitação de ajuste."
+   ],
    "status_values": [
     {
      "field": "status",
@@ -288428,7 +288460,7 @@
   },
   "src/hooks/useTabelasReferencia.ts": {
    "path": "src/hooks/useTabelasReferencia.ts",
-   "lines": 265,
+   "lines": 271,
    "exports": [
     "const useNacionalidades",
     "const useTiposDesligamento",
@@ -288467,6 +288499,9 @@
     "function useDependentesBeneficios",
     "function useVincularDependenteBeneficio",
     "function useDesvincularDependenteBeneficio"
+   ],
+   "errors": [
+    "Nenhuma empresa selecionada. Selecione uma empresa antes de cadastrar uma conta bancária."
    ],
    "hooks": [
     "useNacionalidades",
@@ -289220,6 +289255,15 @@
     "computes resumo counts correctly",
     "exposes gerarLink mutation",
     "exposes refetch function"
+   ]
+  },
+  "src/hooks/__tests__/useCriarContaBancaria.guarda.test.ts": {
+   "path": "src/hooks/__tests__/useCriarContaBancaria.guarda.test.ts",
+   "lines": 49,
+   "is_test": true,
+   "tests": [
+    "useCriarContaBancaria sem empresa selecionada",
+    "falha com mensagem de negocio e NAO chama o servico"
    ]
   },
   "src/hooks/__tests__/useDataAccessLog.test.ts": {
@@ -290061,13 +290105,15 @@
   },
   "src/hooks/__tests__/usePontoMelhorado.test.ts": {
    "path": "src/hooks/__tests__/usePontoMelhorado.test.ts",
-   "lines": 110,
+   "lines": 128,
    "is_test": true,
    "tests": [
     "usePontoMelhorado",
     "returns empty solicitacoes and isLoading false",
     "queries solicitacoes_ajuste_ponto with empresaId",
     "filters by colaboradorId when provided",
+    "sem empresaId a consulta NAO sai e a lista vem vazia",
+    "sem empresaId responderSolicitacao falha explicitamente, sem tocar no banco",
     "exposes criarSolicitacao and responderSolicitacao mutations",
     "criarSolicitacao calls insert on solicitacoes_ajuste_ponto"
    ]
@@ -324906,10 +324952,32 @@
   }
  },
  "git": {
-  "sha": "65f863a9de8e4f8d18b21a283e0b6602e9a8649c",
+  "sha": "ba993ad1a5c643d72fd2adf40fa56632f4ca2cc3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "ba993ad",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix(hooks): guardas de empresa em ajuste de ponto e conta bancária (#650)",
+    "files": [
+     "src/hooks/__tests__/useCriarContaBancaria.guarda.test.ts",
+     "src/hooks/__tests__/usePontoMelhorado.test.ts",
+     "src/hooks/usePontoMelhorado.ts",
+     "src/hooks/useTabelasReferencia.ts"
+    ]
+   },
+   {
+    "sha": "50ae62a",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix(portal): exclusão de documento não apaga a linha quando o storage recusa (#645)",
+    "files": [
+     "src/components/__tests__/PortalDocumentosTab.test.tsx",
+     "src/components/portal/PortalDocumentosTab.tsx"
+    ]
+   },
    {
     "sha": "65f863a",
     "date": "2026-11-17",
@@ -325286,58 +325354,16 @@
      "src/components/desligamentos/desligamentosDerivacoes.ts",
      "src/components/desligamentos/entradaCards.tsx"
     ]
-   },
-   {
-    "sha": "7b17d30",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat: resgata da muri o organograma navegável — busca que filtra, expandir/recolher e níveis (#616)",
-    "files": [
-     "inventario/estado/rotas.json",
-     "scripts/.bundle-budget.json",
-     "src/components/__tests__/DepartmentRow.test.tsx",
-     "src/components/__tests__/EmployeeRow.test.tsx",
-     "src/components/__tests__/OrganogramaHeaderReveal.test.tsx",
-     "src/components/__tests__/OrganogramaNode.test.tsx",
-     "src/components/__tests__/OrganogramaRevealBlock.test.tsx",
-     "src/components/__tests__/OrganogramaStats.test.tsx",
-     "src/components/__tests__/OrganogramaToolbar.test.tsx",
-     "src/components/organograma/DepartmentRow.tsx",
-     "src/components/organograma/EmployeeRow.tsx",
-     "src/components/organograma/OrganogramaNode.tsx",
-     "src/components/organograma/OrganogramaRevealBlock.tsx",
-     "src/components/organograma/OrganogramaStats.tsx",
-     "src/components/organograma/OrganogramaToolbar.tsx",
-     "src/components/organograma/OrganogramaTree.tsx",
-     "src/components/organograma/organogramaCascade.ts",
-     "src/components/organograma/organogramaHeaderReveal.ts",
-     "src/components/organograma/organogramaReveal.ts",
-     "src/index.css",
-     "src/lib/__tests__/organogramaTree.test.ts",
-     "src/lib/organogramaTree.ts",
-     "src/pages/OrganogramaPage.tsx",
-     "src/pages/__tests__/OrganogramaPage.test.tsx"
-    ]
-   },
-   {
-    "sha": "9de335f",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(desligamentos): \"Novo Desligamento\" volta a listar colaboradores (#617)",
-    "files": [
-     "src/components/__tests__/NovoDesligamentoDialog.test.tsx",
-     "src/components/desligamentos/NovoDesligamentoDialog.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    9
+    8
    ],
    [
     "inventario/estado/rotas.json",
-    5
+    4
    ],
    [
     "src/pages/ColaboradoresPage.tsx",
@@ -325345,10 +325371,6 @@
    ],
    [
     "src/pages/ColaboradorDetalhesPage.tsx",
-    3
-   ],
-   [
-    "src/index.css",
     3
    ],
    [
@@ -325376,6 +325398,10 @@
     2
    ],
    [
+    "src/index.css",
+    2
+   ],
+   [
     "public/sw-custom.js",
     2
    ],
@@ -325388,27 +325414,27 @@
     2
    ],
    [
-    "src/components/__tests__/AfastamentosTab.test.tsx",
+    "src/hooks/__tests__/useCriarContaBancaria.guarda.test.ts",
     1
    ],
    [
-    "src/components/colaborador-detalhes/AfastamentosTab.tsx",
+    "src/hooks/__tests__/usePontoMelhorado.test.ts",
     1
    ],
    [
-    "src/components/ui/__tests__/user-avatar.test.tsx",
+    "src/hooks/usePontoMelhorado.ts",
     1
    ],
    [
-    "src/components/ui/user-avatar.tsx",
+    "src/hooks/useTabelasReferencia.ts",
     1
    ],
    [
-    "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql",
+    "src/components/__tests__/PortalDocumentosTab.test.tsx",
     1
    ],
    [
-    "supabase/tests/storage_documentos_tenant_isolation.test.ts",
+    "src/components/portal/PortalDocumentosTab.tsx",
     1
    ]
   ]

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `65f863a9de8e4f8d18b21a283e0b6602e9a8649c` (2026-11-17T18:06:38-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ba993ad1a5c643d72fd2adf40fa56632f4ca2cc3` (2026-11-17T18:06:53-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1914), SQL (927), Markdown (332), JavaScript (129), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1915), SQL (927), Markdown (332), JavaScript (129), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3525 |
-| arquivos_codigo | 2047 |
-| linhas_codigo | 404876 |
+| arquivos_total | 3526 |
+| arquivos_codigo | 2048 |
+| linhas_codigo | 404985 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 425 |
 | migrations | 861 |
 | cron_jobs | 41 |
-| testes | 757 |
+| testes | 758 |
 | workflows | 21 |
 | scripts | 132 |
 | docs_md | 332 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (511), src/pages (110), src/contexts (3)
 - hooks: src/hooks (97), src/components (9), src/contexts (4)
 - servicos_logica: src/services (94), src/utils (35), src/schemas (25)
-- testes: co-localizado (__tests__) (633), co-localizado (*.test) (71), e2e/ (28)
+- testes: co-localizado (__tests__) (634), co-localizado (*.test) (71), e2e/ (28)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -396,27 +396,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 26993 nós · 60919 arestas · 2289 comunidades · grafo do commit `65f863a9`
-- comunidades maiores: lucide-react (578), @tanstack/react-query (499), 20260831_corrected_public.sql (493), canonical_schema.sql (475), button.tsx (474), cn (297), @testing-library/react (244), vitest (232), react (201), feedbackCanonico.ts (200), ColaboradorDetalhesPage.tsx (188), useEmpresas (176)
+- 26996 nós · 60927 arestas · 2324 comunidades · grafo do commit `ba993ad1`
+- comunidades maiores: useEmpresas (588), lucide-react (522), 20260831_corrected_public.sql (493), canonical_schema.sql (475), cn (407), input.tsx (398), vitest (321), react (218), contract.ts (203), deepChain (175), "public"."empresas" (159), MetricCard.tsx (157)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - inventario/estado/rotas.json (22)
-- .github/workflows/canonical-migrations.yml (18)
+- .github/workflows/canonical-migrations.yml (17)
 - package.json (15)
 - package-lock.json (14)
 - scripts/sync/autocommit-local.sh (10)
 - docs/prod-readiness.md (9)
 - src/pages/ColaboradorDetalhesPage.tsx (9)
 - PENDENCIAS.md (8)
-- AGENTS.md (7)
 - scripts/automation.config.json (7)
-- scripts/canonical-invariants.sql (7)
 - scripts/sync/mirror-github.sh (7)
 - src/pages/ColaboradoresPage.tsx (7)
-- CLAUDE.md (6)
+- AGENTS.md (6)
 - deno.lock (6)
+- infra/github/action-pins.json (6)
+- scripts/canonical-invariants.sql (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -650,6 +650,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `ba993ad` fix(hooks): guardas de empresa em ajuste de ponto e conta bancária (#650)
+- 2026-11-17 `50ae62a` fix(portal): exclusão de documento não apaga a linha quando o storage recusa (#645)
 - 2026-11-17 `65f863a` feat(colaborador): aba de Afastamentos no dossiê, sem dado de saúde (#643)
 - 2026-11-17 `a03e498` fix(ui): iniciais do avatar voltam a ter fundo (#649)
 - 2026-11-17 `fc03c4a` chore(inventario): regenera rotas.json, defasado desde a #639 (#648)
@@ -663,8 +665,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `fec359d` feat(dashboard): resgata o SystemStatusCard da muri, com os 3 contratos corrigidos (#636)
 - 2026-11-17 `8006fcf` feat(colaboradores): adota a tabela densa da muri, com máscara de PII (#638)
 - 2026-11-17 `a588982` fix(colaboradores): liga o selo de recontratacao, que estava invisivel (#635)
-- 2026-11-17 `fabf6c7` test: resgata da muri os 5 testes que a main não tinha e passam como está (#630)
-- 2026-11-17 `1eff3e1` infra(banco): resgata da muri 4 migrations que nunca foram aplicadas (#632)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
