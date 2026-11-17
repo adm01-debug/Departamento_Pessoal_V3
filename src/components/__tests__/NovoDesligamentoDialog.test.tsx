@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('@/hooks/useEmpresas', () => ({
@@ -10,13 +10,25 @@ vi.mock('@tanstack/react-query', () => ({
   useQueryClient: vi.fn(() => ({ invalidateQueries: vi.fn() })),
 }));
 
+// A lista de colaboradores e o unico dado que este dialogo busca. O mock guarda
+// a chamada para os casos de carga ao abrir poderem afirmar se ela aconteceu.
+const { mockOrder, mockColaboradores } = vi.hoisted(() => ({
+  mockOrder: vi.fn(),
+  mockColaboradores: {
+    linhas: [] as { id: string; nome_completo: string; cargo: string | null; salario_base: number | null }[],
+  },
+}));
+
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn(() => ({
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
           eq: vi.fn(() => ({
-            order: vi.fn(() => ({ data: [], error: null })),
+            order: (...args: unknown[]) => {
+              mockOrder(...args);
+              return { data: mockColaboradores.linhas, error: null };
+            },
           })),
         })),
       })),
@@ -77,6 +89,11 @@ vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: unknown, d: st
 import { NovoDesligamentoDialog } from '../desligamentos/NovoDesligamentoDialog';
 
 describe('NovoDesligamentoDialog', () => {
+  beforeEach(() => {
+    mockOrder.mockClear();
+    mockColaboradores.linhas = [];
+  });
+
   it('renders Novo Desligamento title', () => {
     render(<NovoDesligamentoDialog open={true} onClose={vi.fn()} />);
     expect(screen.getByText('Novo Desligamento')).toBeInTheDocument();
@@ -115,5 +132,37 @@ describe('NovoDesligamentoDialog', () => {
   it('renders Registrar Desligamento button', () => {
     render(<NovoDesligamentoDialog open={true} onClose={vi.fn()} />);
     expect(screen.getByText('Registrar Desligamento')).toBeInTheDocument();
+  });
+
+  // Regressao coberta: o dialogo e controlado pelo pai (`open={showNovo}` em
+  // DesligamentosPage), e `onOpenChange` do Radix nao dispara na abertura feita
+  // de fora. Com a carga pendurada nele, o select abria vazio e nao havia quem
+  // desligar.
+  it('carrega os colaboradores quando abre (lista vinda do banco na tela)', async () => {
+    mockColaboradores.linhas = [
+      { id: 'c1', nome_completo: 'Ana Lima', cargo: 'Analista', salario_base: 3000 },
+      { id: 'c2', nome_completo: 'Bruno Alves', cargo: 'Dev', salario_base: 5000 },
+    ];
+
+    render(<NovoDesligamentoDialog open={true} onClose={vi.fn()} />);
+
+    expect(mockOrder).toHaveBeenCalledWith('nome_completo');
+    expect(await screen.findByText(/Ana Lima/)).toBeInTheDocument();
+    expect(screen.getByText(/Bruno Alves/)).toBeInTheDocument();
+  });
+
+  it('nao consulta o banco enquanto esta fechado', () => {
+    render(<NovoDesligamentoDialog open={false} onClose={vi.fn()} />);
+    expect(mockOrder).not.toHaveBeenCalled();
+  });
+
+  it('carrega ao passar de fechado para aberto', async () => {
+    mockColaboradores.linhas = [{ id: 'c1', nome_completo: 'Ana Lima', cargo: 'Analista', salario_base: 3000 }];
+
+    const { rerender } = render(<NovoDesligamentoDialog open={false} onClose={vi.fn()} />);
+    expect(mockOrder).not.toHaveBeenCalled();
+
+    rerender(<NovoDesligamentoDialog open={true} onClose={vi.fn()} />);
+    expect(await screen.findByText(/Ana Lima/)).toBeInTheDocument();
   });
 });
