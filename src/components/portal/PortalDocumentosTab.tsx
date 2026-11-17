@@ -122,13 +122,24 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
       if (!empresaId) throw new Error('Empresa não identificada');
       const path = doc.storage_path || docPath(doc);
       if (path) {
-        await supabase.storage.from(BUCKET).remove([path]);
+        // `.remove()` NAO lanca: devolve { data, error }. O erro estava sendo
+        // descartado e a linha do banco era apagada de todo jeito, então o
+        // usuario lia "Documento removido" com o arquivo intacto no Storage —
+        // registro orfao ao contrario: o arquivo fica sem a linha que o aponta.
+        // Agora o erro aborta a exclusao ANTES de mexer no banco.
+        const { error: erroStorage } = await supabase.storage.from(BUCKET).remove([path]);
+        if (erroStorage) throw erroStorage;
       }
       await documentoService.excluir(doc.id, empresaId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['portal-documentos'] });
       toast.success('Documento removido');
+    },
+    // Sem isto o usuario nao sabia que a exclusao falhou: a mutation morria
+    // calada e a lista continuava igual, sem explicacao.
+    onError: (e: unknown) => {
+      toast.error(safeErrorMessage(e, 'Nao foi possivel remover o documento. O arquivo continua guardado.'));
     },
   });
 
