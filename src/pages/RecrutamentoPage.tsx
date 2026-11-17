@@ -35,7 +35,7 @@ import { CandidatoDetalhesDialog } from '@/components/recrutamento/CandidatoDeta
 import { CandidatosPainel } from '@/components/recrutamento/CandidatosPainel';
 import { PipelineBoard } from '@/components/recrutamento/PipelineBoard';
 import { VagasPainel } from '@/components/recrutamento/VagasPainel';
-import { ETAPAS, filtrarCandidaturas } from '@/components/recrutamento/pipelineEtapas';
+import { ETAPAS, filtrarCandidaturas, normalizarEtapa } from '@/components/recrutamento/pipelineEtapas';
 import type { CandidaturaComRelacoes, VagaRow, CandidatoRow } from '@/types/recrutamento';
 
 const VAGA_FORM_VAZIO = { titulo: '', departamento: '', modalidade: '', quantidade: '1', requisitos: '' };
@@ -62,20 +62,35 @@ export default function RecrutamentoPage() {
   const [candidatoParaVaga, setCandidatoParaVaga] = useState<CandidatoRow | null>(null);
   const [vagaDaCandidatura, setVagaDaCandidatura] = useState('');
 
-  const { data: vagas = [], isLoading: loadVagas } = useQuery({
+  const {
+    data: vagas = [],
+    isLoading: loadVagas,
+    isError: erroVagas,
+    error: falhaVagas,
+    refetch: recarregarVagas,
+  } = useQuery({
     queryKey: ['vagas', empresaAtual?.id],
     queryFn: () => recrutamentoService.listarVagas(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
 
-  const { data: candidaturas = [], isLoading: loadCandidaturas } = useQuery({
+  const {
+    data: candidaturas = [],
+    isLoading: loadCandidaturas,
+    isError: erroCandidaturas,
+    refetch: recarregarCandidaturas,
+  } = useQuery({
     queryKey: ['candidaturas', empresaAtual?.id, selectedVagaId],
     queryFn: () =>
       recrutamentoService.listarCandidaturas(empresaAtual!.id, selectedVagaId === 'all' ? undefined : selectedVagaId),
     enabled: !!empresaAtual?.id,
   });
 
-  const { data: candidatos = [], isLoading: loadCandidatos } = useQuery({
+  const {
+    data: candidatos = [],
+    isLoading: loadCandidatos,
+    error: falhaCandidatos,
+  } = useQuery({
     queryKey: ['candidatos', empresaAtual?.id],
     queryFn: () => recrutamentoService.listarCandidatos(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
@@ -91,6 +106,7 @@ export default function RecrutamentoPage() {
     data: candidaturasTodas = [],
     isLoading: loadCandidaturasTodas,
     isError: erroCandidaturasTodas,
+    error: falhaCandidaturasTodas,
     refetch: recarregarCandidaturasTodas,
   } = useQuery({
     queryKey: ['candidaturas-todas', empresaAtual?.id],
@@ -222,7 +238,14 @@ export default function RecrutamentoPage() {
   const avancarEtapa = () => {
     const cand = selectedCandidatura;
     if (!cand) return;
-    const proxima = ETAPAS[ETAPAS.findIndex((e) => e.id === (cand.etapa || 'triagem')) + 1];
+    // `etapa` no banco usa `teste_tecnico`/`contratacao`: sem normalizar, o
+    // findIndex devolvia -1 e "avançar" jogava o candidato de volta na Triagem.
+    const atual = normalizarEtapa(cand.etapa || 'triagem');
+    if (atual === 'outras') {
+      toast.info('Este candidato está fora das etapas monitoradas — mova-o pelo pipeline antes de avançar.');
+      return;
+    }
+    const proxima = ETAPAS[ETAPAS.findIndex((e) => e.id === atual) + 1];
     if (!proxima) {
       toast.info('Este candidato já está na última etapa do processo.');
       return;
@@ -232,6 +255,16 @@ export default function RecrutamentoPage() {
   };
 
   const isLoading = loadVagas || loadCandidaturas || loadCandidatos || loadCandidaturasTodas;
+
+  /**
+   * Analytics multiplica a MESMA base em funil, conversão, tempo de contratação
+   * e taxa de aceitação: se qualquer uma das três leituras falhou, a aba recebe
+   * a mensagem do erro em vez de apresentar zeros como realidade.
+   */
+  const falhaBaseAnalytics = falhaVagas ?? falhaCandidatos ?? falhaCandidaturasTodas;
+  const erroAnalytics = falhaBaseAnalytics
+    ? safeErrorMessage(falhaBaseAnalytics, 'Não foi possível carregar a base do recrutamento.')
+    : null;
 
   /**
    * Kanban: respeita o filtro de vaga (query) + a busca do topo (client-side).
@@ -412,7 +445,11 @@ export default function RecrutamentoPage() {
                     isActive={activeTab === 'pipeline'}
                     onAbrir={abrirDetalhes}
                     onMoverEtapa={moverEtapa}
+                    erro={erroCandidaturas}
+                    onTentarNovamente={() => void recarregarCandidaturas()}
                     onContatar={(cand) => {
+                      // Abre o e-mail COMPLETO do candidato para quem clicar, sem checar papel;
+                      // herdado da main — fechar isso é decisão do dono.
                       const email = cand.candidato?.email;
                       if (!email) {
                         toast.info('Este candidato não tem e-mail cadastrado.');
@@ -435,6 +472,8 @@ export default function RecrutamentoPage() {
                     onVerAnalises={() => setActiveTab('analytics')}
                     onEditar={abrirEdicaoVaga}
                     onExcluir={(vaga) => setVagaParaExcluir(vaga)}
+                    erro={erroVagas}
+                    onTentarNovamente={() => void recarregarVagas()}
                   />
                 </TabsContent>
 
@@ -539,7 +578,13 @@ export default function RecrutamentoPage() {
 
                 {/* ANALYTICS */}
                 <TabsContent value="analytics" className="mt-0">
-                  <AnalyticsRecrutamento candidaturas={candidaturasTodas} vagas={vagas} candidatos={candidatos} />
+                  <AnalyticsRecrutamento
+                    candidaturas={candidaturasTodas}
+                    vagas={vagas}
+                    candidatos={candidatos}
+                    carregando={loadVagas || loadCandidatos || loadCandidaturasTodas}
+                    erro={erroAnalytics}
+                  />
                 </TabsContent>
               </>
             )}

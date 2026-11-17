@@ -174,8 +174,7 @@ export function VagasPainel({
         </span>
         <p className="text-sm font-medium text-foreground">Não foi possível carregar as vagas</p>
         <p className="mx-auto mt-1 max-w-md text-[11px] leading-relaxed text-muted-foreground">
-          A consulta falhou, então não é possível afirmar quantas vagas existem. Verifique a conexão e tente
-          novamente.
+          A consulta falhou, então não é possível afirmar quantas vagas existem. Verifique a conexão e tente novamente.
         </p>
         {onTentarNovamente ? (
           <Button type="button" variant="outline" size="sm" onClick={onTentarNovamente} className="mt-3 h-8 rounded-lg">

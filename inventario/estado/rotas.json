@@ -15110,7 +15110,7 @@
           "rotulo": "Recrutamento"
         }
       ],
-      "arquivos_lidos": 159,
+      "arquivos_lidos": 185,
       "hooks": [
         {
           "nome": "useAuth",
@@ -15129,12 +15129,20 @@
           "arquivo": "src/hooks/index.ts"
         },
         {
+          "nome": "useEntradaKanbanColuna",
+          "arquivo": "src/components/kanban/entradaKanban.ts"
+        },
+        {
           "nome": "useGenericCrud",
           "arquivo": "src/hooks/useGenericCrud.ts"
         },
         {
           "nome": "useGrupo",
           "arquivo": "src/hooks/useGrupo.ts"
+        },
+        {
+          "nome": "useMovimentoReduzido",
+          "arquivo": "src/lib/motionMode.ts"
         },
         {
           "nome": "useOnMount",
@@ -18494,7 +18502,7 @@
     },
     "useEntradaKanbanColuna": {
       "arquivo": "src/components/kanban/entradaKanban.ts",
-      "telas": ["src/pages/AdmissoesPage.tsx"]
+      "telas": ["src/pages/AdmissoesPage.tsx", "src/pages/RecrutamentoPage.tsx"]
     },
     "useExcelExport": {
       "arquivo": "src/hooks/useExcelExport.ts",
@@ -18758,7 +18766,7 @@
     },
     "useMovimentoReduzido": {
       "arquivo": "src/lib/motionMode.ts",
-      "telas": ["src/pages/AvaliacaoPage.tsx", "src/pages/TreinamentosPage.tsx"]
+      "telas": ["src/pages/AvaliacaoPage.tsx", "src/pages/RecrutamentoPage.tsx", "src/pages/TreinamentosPage.tsx"]
     },
     "useNotificacoes": {
       "arquivo": "src/hooks/useNotificacoes.ts",

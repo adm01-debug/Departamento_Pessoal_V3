@@ -19,6 +19,9 @@
  *     movimentação registrada — e não uma soma de durações históricas.
  *   • A conversão do funil é a razão entre os totais ATUAIS das etapas (foto do
  *     pipeline), a mesma leitura da referência aprovada.
+ *   • `etapa` passa SEMPRE por `normalizarEtapa` (o banco grava `teste_tecnico`
+ *     e `contratacao`). O que não cai nas cinco colunas é contado em
+ *     `foraDasEtapas` e declarado na tela — nunca descartado em silêncio.
  *   • Sem base anterior, a comparação não é exibida (nada de percentual
  *     inventado); com base, a variação é calculada na janela de 45 dias.
  * ============================================================================
@@ -26,7 +29,7 @@
 import { differenceInCalendarDays, format, startOfMonth, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import type { CandidaturaComRelacoes, CandidatoRow, VagaRow } from '@/types/recrutamento';
-import { ETAPAS, type EtapaPipelineId } from './pipelineEtapas';
+import { ETAPAS, normalizarEtapa, type EtapaPipelineId } from './pipelineEtapas';
 
 /** Janela das comparações "vs. período anterior" (e do rótulo exibido). */
 export const JANELA_COMPARACAO_DIAS = 45;
@@ -48,7 +51,7 @@ export interface ItemFunil {
   id: EtapaPipelineId;
   label: string;
   total: number;
-  /** Percentual sobre a ENTRADA do funil (primeira etapa) — leitura de retenção. */
+  /** Participação no volume ATUAL da primeira etapa (foto do pipeline, não coorte). */
   percentual: number;
 }
 
@@ -93,7 +96,8 @@ export interface PontoAtencao {
 export interface DesempenhoVaga {
   id: string;
   titulo: string;
-  status: string;
+  /** Status cru da vaga; `null` quando a coluna não foi preenchida. */
+  status: string | null;
   candidatos: number;
   contratados: number;
   conversao: number;
@@ -116,7 +120,8 @@ export interface TendenciaKpi {
 export interface KpiRecrutamento {
   id: 'vagas' | 'candidatos' | 'processos' | 'conversao';
   label: string;
-  valor: number;
+  /** `null` quando a métrica não tem base — a tela mostra `exibicao` (`—`). */
+  valor: number | null;
   exibicao: string;
   apoio: string;
   tendencia: TendenciaKpi | null;
@@ -125,6 +130,8 @@ export interface KpiRecrutamento {
 export interface AnalyticsRecrutamento {
   referencia: Date;
   totalCandidaturas: number;
+  /** Candidaturas cuja etapa não pertence às cinco colunas monitoradas. */
+  foraDasEtapas: number;
   kpis: KpiRecrutamento[];
   funil: ItemFunil[];
   conversoes: ConversaoFunil[];
@@ -159,9 +166,9 @@ export function formatarNumero(valor: number, casas = 1): string {
   return arredondar(valor, casas).toFixed(casas).replace('.', ',');
 }
 
-/** Etapa final do funil. */
+/** Etapa final do funil (`contratacao` do banco incluída). */
 function ehContratada(candidatura: CandidaturaComRelacoes): boolean {
-  return candidatura.etapa === 'contratado' || candidatura.status === 'contratado';
+  return normalizarEtapa(candidatura.etapa) === 'contratado' || candidatura.status === 'contratado';
 }
 
 /** Desistência/reprovação não contam como processo ativo. */
@@ -202,7 +209,7 @@ export function referenciaDosDados({ candidaturas, vagas, candidatos }: EntradaA
 export function construirFunil(candidaturas: CandidaturaComRelacoes[]): ItemFunil[] {
   const contagem = new Map<string, number>();
   for (const candidatura of candidaturas) {
-    const etapa = candidatura.etapa || 'triagem';
+    const etapa = normalizarEtapa(candidatura.etapa);
     contagem.set(etapa, (contagem.get(etapa) ?? 0) + 1);
   }
   const entrada = contagem.get('triagem') ?? 0;
@@ -215,6 +222,14 @@ export function construirFunil(candidaturas: CandidaturaComRelacoes[]): ItemFuni
       percentual: entrada > 0 ? arredondar((total / entrada) * 100) : 0,
     };
   });
+}
+
+/**
+ * Candidaturas cujo `etapa` não pertence às cinco colunas. O funil não as soma;
+ * a tela DECLARA o número em vez de deixá-las desaparecer da contagem.
+ */
+export function contarForaDasEtapas(candidaturas: CandidaturaComRelacoes[]): number {
+  return candidaturas.filter((candidatura) => normalizarEtapa(candidatura.etapa) === 'outras').length;
 }
 
 export function construirConversoes(funil: ItemFunil[]): ConversaoFunil[] {
@@ -294,12 +309,9 @@ function diasNaEtapa(candidatura: CandidaturaComRelacoes, referencia: Date): num
   return Math.max(0, differenceInCalendarDays(referencia, ultima));
 }
 
-export function construirTempos(
-  candidaturas: CandidaturaComRelacoes[],
-  referencia: Date
-): TempoEtapa[] {
+export function construirTempos(candidaturas: CandidaturaComRelacoes[], referencia: Date): TempoEtapa[] {
   return ETAPAS.map((etapa) => {
-    const naEtapa = candidaturas.filter((candidatura) => (candidatura.etapa || 'triagem') === etapa.id);
+    const naEtapa = candidaturas.filter((candidatura) => normalizarEtapa(candidatura.etapa) === etapa.id);
     const dias = naEtapa.map((candidatura) => diasNaEtapa(candidatura, referencia));
     return {
       id: etapa.id,
@@ -310,10 +322,7 @@ export function construirTempos(
   });
 }
 
-export function construirDesempenhoVagas(
-  vagas: VagaRow[],
-  candidaturas: CandidaturaComRelacoes[]
-): DesempenhoVaga[] {
+export function construirDesempenhoVagas(vagas: VagaRow[], candidaturas: CandidaturaComRelacoes[]): DesempenhoVaga[] {
   return vagas
     .map((vaga) => {
       const daVaga = candidaturas.filter((candidatura) => candidatura.vaga_id === vaga.id);
@@ -321,13 +330,17 @@ export function construirDesempenhoVagas(
       return {
         id: vaga.id,
         titulo: vaga.titulo ?? 'Vaga sem título',
-        status: vaga.status ?? 'aberta',
+        // Coluna nullable: inventar 'aberta' faria o painel pintar "Vaga aberta"
+        // e divergir do KPI, que conta só `status === 'aberta'`.
+        status: vaga.status ?? null,
         candidatos: daVaga.length,
         contratados,
         conversao: daVaga.length > 0 ? arredondar((contratados / daVaga.length) * 100) : 0,
       };
     })
-    .sort((a, b) => b.candidatos - a.candidatos || b.conversao - a.conversao || a.titulo.localeCompare(b.titulo, 'pt-BR'));
+    .sort(
+      (a, b) => b.candidatos - a.candidatos || b.conversao - a.conversao || a.titulo.localeCompare(b.titulo, 'pt-BR')
+    );
 }
 
 /* ─── Pontos de atenção (regras do próprio funil, sem IA) ─────────────────── */
@@ -356,8 +369,7 @@ export function construirPontosDeAtencao({
   if (gargalo && (gargalo.dias ?? 0) > DIAS_ALERTA_ETAPA) {
     const parados = candidaturas.filter(
       (candidatura) =>
-        (candidatura.etapa || 'triagem') === gargalo.id &&
-        diasNaEtapa(candidatura, referencia) > DIAS_ALERTA_ETAPA
+        normalizarEtapa(candidatura.etapa) === gargalo.id && diasNaEtapa(candidatura, referencia) > DIAS_ALERTA_ETAPA
     ).length;
     if (parados > 0) {
       alertas.push({
@@ -429,9 +441,7 @@ export function construirPontosDeAtencao({
       tipo: 'desistencia',
       severidade: 'media',
       titulo: `${desistencias} ${
-        desistencias === 1
-          ? 'desistência ou cancelamento registrado'
-          : 'desistências ou cancelamentos registrados'
+        desistencias === 1 ? 'desistência ou cancelamento registrado' : 'desistências ou cancelamentos registrados'
       }`,
       descricao: 'Contate os candidatos para entender o motivo antes de encerrar o processo.',
     });
@@ -451,7 +461,10 @@ export function construirIndicadores({
 }: EntradaAnalytics & { referencia: Date }): IndicadorGeral[] {
   const contratados = candidaturas.filter(ehContratada);
   const abertas = vagas.filter((vaga) => vaga.status === 'aberta').length;
-  const propostas = candidaturas.filter((candidatura) => candidatura.etapa === 'proposta').length;
+  // Quem já conta como contratado não pode somar de novo no denominador.
+  const emProposta = candidaturas.filter(
+    (candidatura) => normalizarEtapa(candidatura.etapa) === 'proposta' && !ehContratada(candidatura)
+  ).length;
   const desistencias = candidaturas.filter((candidatura) =>
     ['desistente', 'desistiu', 'cancelado'].includes((candidatura.status ?? '').toLowerCase())
   ).length;
@@ -460,9 +473,10 @@ export function construirIndicadores({
     .map((candidatura) => {
       const entrada = dataValida(candidatura.created_at);
       if (!entrada) return null;
-      // Fim do intervalo = movimentação que registrou a contratação. Usar a
-      // referência global faria o número de um contratado antigo crescer para
-      // sempre; sem `updated_at`, a referência é o único fim conhecido.
+      // Fim do intervalo = última atualização registrada no processo (o modelo
+      // não expõe a data da movimentação que mudou a etapa). Usar a referência
+      // global faria um contratado antigo crescer para sempre; sem a última
+      // atualização, a referência é o único fim conhecido.
       const conclusao = dataValida(candidatura.updated_at) ?? referencia;
       return Math.max(0, differenceInCalendarDays(conclusao, entrada));
     })
@@ -472,8 +486,10 @@ export function construirIndicadores({
     : null;
 
   const candidatosPorVaga = abertas > 0 ? candidatos.length / abertas : null;
-  const taxaDesistencia = candidaturas.length > 0 ? arredondar((desistencias / candidaturas.length) * 100) : 0;
-  const basePropostas = propostas + contratados.length;
+  // Sem candidatura na base não existe taxa: `0,0%` afirmaria que ninguém
+  // desistiu de processos que não foram lidos.
+  const taxaDesistencia = candidaturas.length > 0 ? arredondar((desistencias / candidaturas.length) * 100) : null;
+  const basePropostas = emProposta + contratados.length;
   const aceitacao = basePropostas > 0 ? arredondar((contratados.length / basePropostas) * 100) : null;
 
   return [
@@ -492,14 +508,19 @@ export function construirIndicadores({
     {
       id: 'desistencia',
       label: 'Desistências e cancelamentos',
-      valor: formatarPercentual(taxaDesistencia),
-      apoio: `${desistencias} de ${candidaturas.length} processos`,
+      valor: taxaDesistencia === null ? '—' : formatarPercentual(taxaDesistencia),
+      apoio:
+        taxaDesistencia === null
+          ? 'Nenhuma candidatura na base'
+          : `${desistencias} de ${candidaturas.length} processos`,
     },
     {
       id: 'aceitacao',
-      label: 'Taxa de aceitação de proposta',
+      // Não é "aceitação": quem recusou sai da etapa Proposta e desaparece do
+      // denominador. O que o número mede é a foto atual desses dois grupos.
+      label: 'Contratados sobre propostas na base',
       valor: aceitacao === null ? '—' : formatarPercentual(aceitacao),
-      apoio: `${contratados.length} de ${basePropostas} em proposta ou contratados`,
+      apoio: `${contratados.length} de ${basePropostas} (contratados + ${emProposta} em proposta agora)`,
     },
   ];
 }
@@ -554,11 +575,12 @@ function tendenciaDeJanela(
   };
 }
 
+/** Conversão da janela; `null` quando a janela não tem NENHUMA candidatura. */
 function taxaConversaoDaJanela(
   candidaturas: CandidaturaComRelacoes[],
   referencia: Date,
   deslocamento = 0
-): number {
+): number | null {
   const daJanela = candidaturas.filter((candidatura) => {
     const criada = dataValida(candidatura.created_at);
     if (!criada) return false;
@@ -566,7 +588,7 @@ function taxaConversaoDaJanela(
     const inicio = fim - JANELA_COMPARACAO_DIAS * DIA_MS;
     return criada.getTime() >= inicio && criada.getTime() < fim;
   });
-  if (daJanela.length === 0) return 0;
+  if (daJanela.length === 0) return null;
   return arredondar((daJanela.filter(ehContratada).length / daJanela.length) * 100);
 }
 
@@ -579,7 +601,7 @@ export function construirKpis({
   const abertas = vagas.filter((vaga) => vaga.status === 'aberta');
   const contratados = candidaturas.filter(ehContratada).length;
   const processosAtivos = candidaturas.filter((candidatura) => !encerrada(candidatura)).length;
-  const taxa = candidaturas.length > 0 ? arredondar((contratados / candidaturas.length) * 100) : 0;
+  const taxa = candidaturas.length > 0 ? arredondar((contratados / candidaturas.length) * 100) : null;
 
   const dataVaga = (vaga: VagaRow) => dataValida(vaga.data_abertura) ?? dataValida(vaga.created_at);
   const dataCandidato = (candidato: CandidatoRow) => dataValida(candidato.created_at);
@@ -594,9 +616,12 @@ export function construirKpis({
 
   const conversaoAtual = taxaConversaoDaJanela(candidaturas, referencia);
   const conversaoAnterior = taxaConversaoDaJanela(candidaturas, referencia, 1);
-  const variacaoConversao = arredondar(conversaoAtual - conversaoAnterior);
+  // Janela sem amostra não é "0% de conversão": comparar com um período que
+  // não teve candidatura pintaria alta ou queda que nunca aconteceu.
+  const variacaoConversao =
+    conversaoAtual === null || conversaoAnterior === null ? null : arredondar(conversaoAtual - conversaoAnterior);
   const tendenciaConversao: TendenciaKpi | null =
-    conversaoAtual === 0 && conversaoAnterior === 0
+    variacaoConversao === null
       ? null
       : {
           texto: `${variacaoConversao > 0 ? '+' : ''}${formatarNumero(variacaoConversao)} p.p.`,
@@ -649,8 +674,8 @@ export function construirKpis({
       id: 'conversao',
       label: 'Taxa de conversão',
       valor: taxa,
-      exibicao: formatarPercentual(taxa),
-      apoio: `${contratados} de ${candidaturas.length} candidaturas`,
+      exibicao: taxa === null ? '—' : formatarPercentual(taxa),
+      apoio: taxa === null ? 'Nenhuma candidatura na base' : `${contratados} de ${candidaturas.length} candidaturas`,
       tendencia: tendenciaConversao,
     },
   ];
@@ -667,6 +692,7 @@ export function construirAnalytics(entrada: EntradaAnalytics): AnalyticsRecrutam
   return {
     referencia,
     totalCandidaturas: entrada.candidaturas.length,
+    foraDasEtapas: contarForaDasEtapas(entrada.candidaturas),
     kpis: construirKpis({ ...entrada, referencia }),
     funil,
     conversoes,

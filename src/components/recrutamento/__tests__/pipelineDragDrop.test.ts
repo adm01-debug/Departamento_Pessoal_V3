@@ -1,19 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ehEtapaDoPipeline, normalizarEtapa, podeArrastarCandidatura } from '../pipelineDragDrop';
-
-describe('normalizarEtapa', () => {
-  it('aceita somente as cinco etapas do pipeline', () => {
-    expect(normalizarEtapa('entrevista')).toBe('entrevista');
-    expect(normalizarEtapa('contratado')).toBe('contratado');
-  });
-
-  it('cai em triagem para nulo, vazio ou valor desconhecido', () => {
-    expect(normalizarEtapa(null)).toBe('triagem');
-    expect(normalizarEtapa(undefined)).toBe('triagem');
-    expect(normalizarEtapa('')).toBe('triagem');
-    expect(normalizarEtapa('arquivado')).toBe('triagem');
-  });
-});
+import { ehEtapaDoPipeline, podeArrastarCandidatura } from '../pipelineDragDrop';
 
 describe('ehEtapaDoPipeline', () => {
   it('reconhece apenas ids de etapa (o alvo do drop vem da coluna)', () => {

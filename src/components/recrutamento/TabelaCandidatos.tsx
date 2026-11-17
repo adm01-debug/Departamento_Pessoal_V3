@@ -17,7 +17,7 @@ import { entradaCard } from '@/components/ui/entrada-cards';
 import { cn } from '@/lib/utils';
 import { formatCurrency, formatNumber } from '@/utils/format';
 import type { CandidaturaComRelacoes, VagaRow } from '@/types/recrutamento';
-import { ETAPAS, estiloAvatar, iniciaisDoNome } from './pipelineEtapas';
+import { ETAPAS, estiloAvatar, iniciaisDoNome, normalizarEtapa } from './pipelineEtapas';
 import { podeArrastarCandidatura } from './pipelineDragDrop';
 import { badgeEtapa, dadosVagaDaCandidatura, estiloOrigem, rotuloOrigem, ultimaAtividade } from './candidatosComum';
 
@@ -381,7 +381,10 @@ function AcoesCandidato({
 }) {
   const nome = cand.candidato?.nome?.trim() || 'candidato';
   const podeMover = podeArrastarCandidatura(cand.status);
-  const outrasEtapas = ETAPAS.filter((etapa) => etapa.id !== cand.etapa);
+  // Compara pela etapa normalizada: com `teste_tecnico` no banco, o menu
+  // oferecia "Teste Técnico" para quem já está nessa etapa.
+  const etapaAtual = normalizarEtapa(cand.etapa);
+  const outrasEtapas = ETAPAS.filter((etapa) => etapa.id !== etapaAtual);
   const temMenu = podeMover && outrasEtapas.length > 0;
 
   return (

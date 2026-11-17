@@ -64,24 +64,20 @@ export function AnalyticsPainel({
       )}
     >
       {/* Halo discreto no topo direito — profundidade sem “brilho” exagerado. */}
-      <span aria-hidden className={cn('pointer-events-none absolute -right-12 -top-16 h-36 w-36 rounded-full blur-3xl', tons.halo)} />
+      <span
+        aria-hidden
+        className={cn('pointer-events-none absolute -right-12 -top-16 h-36 w-36 rounded-full blur-3xl', tons.halo)}
+      />
       <CardHeader className="relative flex flex-row items-start justify-between gap-2 space-y-0 px-4 pb-2.5 pt-4">
         <div className="flex min-w-0 items-start gap-2.5">
-          <span
-            className={cn(
-              'mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border',
-              tons.chip
-            )}
-          >
+          <span className={cn('mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border', tons.chip)}>
             <Icon className="h-3.5 w-3.5" aria-hidden />
           </span>
           <div className="min-w-0">
             <CardTitle className="font-display text-[13px] font-semibold leading-tight tracking-tight">
               {title}
             </CardTitle>
-            {subtitle && (
-              <CardDescription className="mt-0.5 text-[10.5px] leading-snug">{subtitle}</CardDescription>
-            )}
+            {subtitle && <CardDescription className="mt-0.5 text-[10.5px] leading-snug">{subtitle}</CardDescription>}
           </div>
         </div>
         {action && <div className="shrink-0">{action}</div>}

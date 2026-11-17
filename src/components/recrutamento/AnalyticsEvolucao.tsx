@@ -1,14 +1,5 @@
 import { useMemo, useState } from 'react';
-import {
-  Area,
-  CartesianGrid,
-  ComposedChart,
-  Line,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ChartNoAxesCombined } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { CandidaturaComRelacoes } from '@/types/recrutamento';
@@ -32,15 +23,7 @@ const PERIODOS = [
 
 type ItemTooltip = { name?: string; value?: number | string; color?: string };
 
-function TooltipEvolucao({
-  active,
-  label,
-  payload,
-}: {
-  active?: boolean;
-  label?: string;
-  payload?: ItemTooltip[];
-}) {
+function TooltipEvolucao({ active, label, payload }: { active?: boolean; label?: string; payload?: ItemTooltip[] }) {
   if (!active || !payload || payload.length === 0) return null;
   return (
     <div className="rounded-xl border border-border/60 bg-popover px-3 py-2 text-popover-foreground shadow-xl">

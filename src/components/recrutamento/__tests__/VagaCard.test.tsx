@@ -184,6 +184,25 @@ describe('VagaCard — identidade, funil e ações reais', () => {
     expect(document.querySelector('[data-vaga-funil]')).toHaveTextContent(/1\s*candidato/);
   });
 
+  it('declara as candidaturas fora das etapas monitoradas em vez de sumir com elas', () => {
+    render(
+      <VagaCard
+        resumo={resumo({}, [candidatura('teste_tecnico'), candidatura('em_banco_de_talentos')])}
+        indice={0}
+        onGerenciar={vi.fn()}
+        onEditar={vi.fn()}
+        onVerAnalises={vi.fn()}
+        onExcluir={vi.fn()}
+      />
+    );
+
+    const funil = document.querySelector('[data-vaga-funil]') as HTMLElement;
+    expect(funil).toHaveTextContent(/2\s*candidatos/);
+    // `teste_tecnico` cai na coluna Teste Técnico; o resto é declarado.
+    expect(funil.textContent).toContain('Teste Técnico1');
+    expect(within(funil).getByText('1 candidatura fora das etapas monitoradas')).toBeInTheDocument();
+  });
+
   it('não inventa candidatos quando o funil está vazio', () => {
     render(
       <VagaCard

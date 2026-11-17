@@ -2,12 +2,14 @@ import { describe, expect, it } from 'vitest';
 import {
   ETAPAS,
   contextoDaEtapa,
+  etapaPorId,
   estiloAvatar,
   filtrarCandidaturas,
   formatarDataCurta,
   formatarUltimaAtualizacao,
   habilidadesDaCandidatura,
   iniciaisDoNome,
+  normalizarEtapa,
   statusDoCard,
 } from '../pipelineEtapas';
 import type { CandidaturaComRelacoes } from '@/types/recrutamento';
@@ -63,6 +65,30 @@ describe('pipelineEtapas — configuração e leitura do board', () => {
     ETAPAS.forEach((etapa) => expect(etapa.descricao.length).toBeGreaterThan(8));
   });
 
+  it('normaliza o vocabulário REAL do banco e isola o desconhecido em "outras"', () => {
+    // Medido no projeto canônico: `candidaturas.etapa` grava `teste_tecnico` e
+    // `contratacao`, que não existem no `ETAPAS` da UI.
+    expect(normalizarEtapa('teste_tecnico')).toBe('teste');
+    expect(normalizarEtapa('contratacao')).toBe('contratado');
+    expect(normalizarEtapa('triagem')).toBe('triagem');
+    expect(normalizarEtapa('entrevista')).toBe('entrevista');
+    expect(normalizarEtapa('teste')).toBe('teste');
+    expect(normalizarEtapa('proposta')).toBe('proposta');
+    expect(normalizarEtapa('contratado')).toBe('contratado');
+    expect(normalizarEtapa('onboarding')).toBe('outras');
+    expect(normalizarEtapa(null)).toBe('outras');
+    expect(normalizarEtapa(undefined)).toBe('outras');
+    expect(normalizarEtapa('')).toBe('outras');
+  });
+
+  it('resolve a etapa visual pelos aliases do banco', () => {
+    expect(etapaPorId('teste_tecnico').id).toBe('teste');
+    expect(etapaPorId('contratacao').id).toBe('contratado');
+    expect(statusDoCard(candidatura({ etapa: 'teste_tecnico' })).label).toBe('Pendente');
+    expect(statusDoCard(candidatura({ etapa: 'contratacao' })).label).toBe('Contratado');
+    expect(contextoDaEtapa(candidatura({ etapa: 'teste_tecnico' })).titulo).toBe('Teste técnico');
+  });
+
   it('busca por nome, vaga, origem, formação e requisitos sem acentos', () => {
     const lista = [candidatura()];
     expect(filtrarCandidaturas(lista, 'mariana')).toHaveLength(1);
@@ -71,6 +97,12 @@ describe('pipelineEtapas — configuração e leitura do board', () => {
     expect(filtrarCandidaturas(lista, 'typescript')).toHaveLength(1);
     expect(filtrarCandidaturas(lista, 'inexistente')).toHaveLength(0);
     expect(filtrarCandidaturas(lista, '')).toHaveLength(1);
+  });
+
+  it('não compara o e-mail: a busca não pode confirmar PII que a tela nunca mostra', () => {
+    const lista = [candidatura()];
+    expect(filtrarCandidaturas(lista, 'mariana.alves@email.com')).toHaveLength(0);
+    expect(filtrarCandidaturas(lista, '@email.com')).toHaveLength(0);
   });
 
   it('usa os requisitos da vaga como habilidades e cai para formação/experiência', () => {

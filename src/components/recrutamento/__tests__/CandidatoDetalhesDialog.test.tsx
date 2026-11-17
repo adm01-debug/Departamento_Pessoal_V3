@@ -48,12 +48,7 @@ function montar(
   return render(
     comPapeis(
       papeis,
-      <CandidatoDetalhesDialog
-        open
-        candidatura={candidatura}
-        onClose={onClose}
-        onAvancar={onAvancar}
-      />
+      <CandidatoDetalhesDialog open candidatura={candidatura} onClose={onClose} onAvancar={onAvancar} />
     )
   );
 }

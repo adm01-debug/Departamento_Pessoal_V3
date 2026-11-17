@@ -68,8 +68,18 @@ const ICONE_IDENTIDADE =
 const FUNDO_NEUTRO = false;
 
 export function VagaCard({ resumo, indice, onGerenciar, onEditar, onVerAnalises, onExcluir }: VagaCardProps) {
-  const { vaga, identidade, aberta, fechada, statusRotulo, totalCandidatos, candidatosPorEtapa, temporal, atividade } =
-    resumo;
+  const {
+    vaga,
+    identidade,
+    aberta,
+    fechada,
+    statusRotulo,
+    totalCandidatos,
+    candidatosPorEtapa,
+    foraDoFunil,
+    temporal,
+    atividade,
+  } = resumo;
   const [menuAberto, setMenuAberto] = useState(false);
   const Icone = identidade.icone;
   const requisitos = (vaga.requisitos ?? '')
@@ -274,6 +284,14 @@ export function VagaCard({ resumo, indice, onGerenciar, onEditar, onVerAnalises,
             );
           })}
         </div>
+
+        {/* Soma das colunas < total: o card DECLARA o que ficou fora das cinco
+            etapas monitoradas em vez de deixar a diferença sem explicação. */}
+        {foraDoFunil > 0 ? (
+          <p className="mt-1.5 text-[9px] leading-tight text-foreground/70">
+            {foraDoFunil} {foraDoFunil === 1 ? 'candidatura' : 'candidaturas'} fora das etapas monitoradas
+          </p>
+        ) : null}
       </div>
 
       <div className="mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-border/45 pt-2.5">

@@ -12,14 +12,11 @@ import { cn } from '@/lib/utils';
  * processos concluídos, quantos candidatos por vaga, etc.), para o número não
  * virar um selo solto. O chip do cabeçalho mostra a data de referência da base.
  */
-const META: Record<
-  IndicadorGeral['id'],
-  { icone: LucideIcon; classe: string; dica: string }
-> = {
+const META: Record<IndicadorGeral['id'], { icone: LucideIcon; classe: string; dica: string }> = {
   'tempo-contratacao': {
     icone: Timer,
     classe: 'border-info/25 bg-info/10 text-info',
-    dica: 'Dias entre a entrada na base e a movimentação que registrou a contratação.',
+    dica: 'Dias entre a entrada na base e a última atualização registrada no processo.',
   },
   'candidatos-vaga': {
     icone: Users,
@@ -34,7 +31,9 @@ const META: Record<
   aceitacao: {
     icone: CircleCheck,
     classe: 'border-success/25 bg-success/10 text-success',
-    dica: 'Contratados divididos pelo total de propostas emitidas (Proposta + Contratado).',
+    dica:
+      'Contratados divididos por contratados + quem está na etapa Proposta agora. ' +
+      'Quem recusou sai da etapa e não fica no denominador, então isto não é taxa de aceitação.',
   },
 };
 
@@ -54,7 +53,7 @@ export function AnalyticsIndicadores({
       subtitle="Métricas gerais do recrutamento na base atual"
       tom="primary"
       index={index}
-      action={<ChipContagem>Base: {format(referencia, "dd MMM yyyy", { locale: ptBR })}</ChipContagem>}
+      action={<ChipContagem>Base: {format(referencia, 'dd MMM yyyy', { locale: ptBR })}</ChipContagem>}
     >
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
         {indicadores.map((indicador) => {

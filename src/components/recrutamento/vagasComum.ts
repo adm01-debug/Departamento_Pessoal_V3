@@ -1,7 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 import { BarChart3, Briefcase, Code2, Database, Folder, Users } from 'lucide-react';
 import type { CandidaturaComRelacoes, VagaRow } from '@/types/recrutamento';
-import { ETAPAS, type EtapaPipelineId } from './pipelineEtapas';
+import { ETAPAS, normalizarEtapa, type EtapaPipelineId } from './pipelineEtapas';
 
 /**
  * ============================================================================
@@ -116,6 +116,12 @@ export interface VagaComResumo {
   statusRotulo: string;
   totalCandidatos: number;
   candidatosPorEtapa: Record<EtapaPipelineId, number>;
+  /**
+   * Candidaturas cuja `etapa` não pertence às cinco colunas monitoradas. O funil
+   * nunca as descarta em silêncio: o card declara quantas ficaram de fora, para
+   * que a soma das colunas e `totalCandidatos` nunca divirjam sem explicação.
+   */
+  foraDoFunil: number;
   abertura: Date | null;
   encerramento: Date | null;
   criacao: Date | null;
@@ -180,13 +186,25 @@ function ultimaCandidatura(candidaturas: readonly CandidaturaComRelacoes[]): Dat
   return ultima;
 }
 
-function contarEtapas(candidaturas: readonly CandidaturaComRelacoes[]): Record<EtapaPipelineId, number> {
-  const base = Object.fromEntries(ETAPAS.map((etapa) => [etapa.id, 0])) as Record<EtapaPipelineId, number>;
+interface FunilVaga {
+  porEtapa: Record<EtapaPipelineId, number>;
+  fora: number;
+}
+
+/**
+ * Funil por etapa. A etapa passa por `normalizarEtapa` (o banco grava
+ * `teste_tecnico`/`contratacao`, que os ids da UI não conhecem); o que mesmo
+ * assim não é uma das cinco colunas é somado em `fora`, nunca ignorado.
+ */
+function contarEtapas(candidaturas: readonly CandidaturaComRelacoes[]): FunilVaga {
+  const porEtapa = Object.fromEntries(ETAPAS.map((etapa) => [etapa.id, 0])) as Record<EtapaPipelineId, number>;
+  let fora = 0;
   for (const candidatura of candidaturas) {
-    const etapa = normalizarVaga(candidatura.etapa) as EtapaPipelineId;
-    if (etapa in base) base[etapa] += 1;
+    const etapa = normalizarEtapa(candidatura.etapa);
+    if (etapa === 'outras') fora += 1;
+    else porEtapa[etapa] += 1;
   }
-  return base;
+  return { porEtapa, fora };
 }
 
 /** Monta o resumo de TODAS as vagas (sem filtro), preservando a ordem recebida. */
@@ -204,6 +222,7 @@ export function montarVagasResumo(
 
   return vagas.map((vaga) => {
     const lista = porVaga.get(vaga.id) ?? [];
+    const funil = contarEtapas(lista);
     const status = normalizarVaga(vaga.status);
     const aberta = STATUS_ABERTA.has(status);
     const fechada = STATUS_FECHADA.has(status);
@@ -223,7 +242,8 @@ export function montarVagasResumo(
       fechada,
       statusRotulo: aberta ? 'Aberta' : fechada ? 'Fechada' : vaga.status?.trim() || 'Não informado',
       totalCandidatos: lista.length,
-      candidatosPorEtapa: contarEtapas(lista),
+      candidatosPorEtapa: funil.porEtapa,
+      foraDoFunil: funil.fora,
       abertura,
       encerramento,
       criacao,

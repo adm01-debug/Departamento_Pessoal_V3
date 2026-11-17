@@ -34,8 +34,11 @@ function iconeDaOrigem(origem: string): LucideIcon {
 }
 
 export function AnalyticsOrigens({ origens, index }: { origens: OrigemRanking[]; index: number }) {
-  const totalTop3 = origens.slice(0, 3).reduce((soma, origem) => soma + origem.percentual, 0);
-  const top3 = Math.round(totalTop3 * 10) / 10;
+  // Somar percentuais JÁ arredondados fechava 100,1%: o top-3 sai dos totais.
+  const totalBase = origens.reduce((soma, origem) => soma + origem.total, 0);
+  const quantidadeTop = Math.min(3, origens.length);
+  const totalTop = origens.slice(0, quantidadeTop).reduce((soma, origem) => soma + origem.total, 0);
+  const top = totalBase > 0 ? Math.round((totalTop / totalBase) * 1000) / 10 : 0;
 
   return (
     <AnalyticsPainel
@@ -98,8 +101,8 @@ export function AnalyticsOrigens({ origens, index }: { origens: OrigemRanking[];
 
       {origens.length > 0 && (
         <p className="mt-auto pt-2.5 text-[10px] leading-snug text-muted-foreground">
-          As {Math.min(3, origens.length)} principais origens concentram{' '}
-          <span className="font-semibold text-foreground">{top3.toFixed(1).replace('.', ',')}%</span> da base.
+          {quantidadeTop === 1 ? 'A principal origem concentra ' : `As ${quantidadeTop} principais origens concentram `}
+          <span className="font-semibold text-foreground">{top.toFixed(1).replace('.', ',')}%</span> da base.
         </p>
       )}
     </AnalyticsPainel>

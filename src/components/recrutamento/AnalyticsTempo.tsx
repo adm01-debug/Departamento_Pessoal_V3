@@ -55,7 +55,9 @@ export function AnalyticsTempo({ tempos, index }: { tempos: TempoEtapa[]; index:
                   className="flex min-h-[86px] min-w-0 flex-col items-center justify-center rounded-xl border border-border/40 bg-background/40 px-1.5 py-2 text-center"
                   title={`${tempo.label}: ${tempo.dias ?? '—'} dias (${tempo.amostra} ${tempo.amostra === 1 ? 'candidato' : 'candidatos'})`}
                 >
-                  <span className={cn('flex h-6 w-6 items-center justify-center rounded-md border', tom.chip, tom.borda)}>
+                  <span
+                    className={cn('flex h-6 w-6 items-center justify-center rounded-md border', tom.chip, tom.borda)}
+                  >
                     <Icone className="h-3 w-3" aria-hidden />
                   </span>
                   <span className="mt-1 w-full text-[9px] leading-tight text-muted-foreground">
@@ -97,8 +99,8 @@ export function AnalyticsTempo({ tempos, index }: { tempos: TempoEtapa[]; index:
             {maior?.amostra} {maior?.amostra === 1 ? 'candidato' : 'candidatos'} na etapa.
           </p>
           <p className="mt-1 text-[9px] leading-snug text-muted-foreground/70">
-            {tempos.reduce((soma, tempo) => soma + tempo.amostra, 0)} candidaturas em{' '}
-            {comDias.length} etapas monitoradas.
+            {tempos.reduce((soma, tempo) => soma + tempo.amostra, 0)} candidaturas em {comDias.length} etapas
+            monitoradas.
           </p>
 
           <p className="mt-auto pt-2.5 text-[10px] leading-snug text-muted-foreground">

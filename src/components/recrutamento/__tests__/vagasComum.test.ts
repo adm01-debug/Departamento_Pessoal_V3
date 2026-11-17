@@ -132,6 +132,7 @@ describe('vagasComum — contadores, identidade e datas', () => {
       proposta: 1,
       contratado: 1,
     });
+    expect(resumo.foraDoFunil).toBe(0);
     expect(resumo.temporal).toBe('Aberta há 10 dias');
     expect(resumo.atividade).toBe('Último candidato há 1 dia');
   });
@@ -152,6 +153,27 @@ describe('vagasComum — contadores, identidade e datas', () => {
     )[0];
     expect(semDatas.temporal).toBeNull();
     expect(semDatas.atividade).toBe('Vaga encerrada');
+  });
+
+  it('conta o vocabulário real do banco e declara o que ficou fora do funil', () => {
+    const resumo = montarVagasResumo(
+      [vaga()],
+      [
+        candidatura('vaga-1', 'teste_tecnico'),
+        candidatura('vaga-1', 'contratacao'),
+        candidatura('vaga-1', 'em_banco_de_talentos'),
+      ],
+      REF
+    )[0];
+
+    // `teste_tecnico`/`contratacao` são as etapas gravadas de verdade.
+    expect(resumo.candidatosPorEtapa.teste).toBe(1);
+    expect(resumo.candidatosPorEtapa.contratado).toBe(1);
+    // Nada é descartado em silêncio: soma das colunas + fora = total.
+    expect(resumo.foraDoFunil).toBe(1);
+    expect(Object.values(resumo.candidatosPorEtapa).reduce((a, b) => a + b, 0) + resumo.foraDoFunil).toBe(
+      resumo.totalCandidatos
+    );
   });
 
   it('mantém “Nenhum candidato ainda” quando não há candidaturas', () => {

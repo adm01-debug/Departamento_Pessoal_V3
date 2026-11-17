@@ -36,8 +36,35 @@ export const ETAPAS: readonly EtapaPipeline[] = [
   { id: 'contratado', label: 'Contratado', descricao: 'Processo concluído', token: 'success', icone: ShieldCheck },
 ] as const;
 
+/** Etapa normalizada: uma das cinco colunas ou `'outras'` (fora do funil monitorado). */
+export type EtapaNormalizada = EtapaPipelineId | 'outras';
+
+const IDS_ETAPA = new Set<string>(ETAPAS.map((etapa) => etapa.id));
+
+/**
+ * Vocabulário REAL do banco que não coincide com os ids da UI.
+ * `candidaturas.etapa` grava `teste_tecnico` e `contratacao`; sem este mapa o
+ * funil perdia essas linhas (contratados lia zero com contratação na base).
+ */
+const ALIAS_ETAPA: Readonly<Record<string, EtapaPipelineId>> = {
+  teste_tecnico: 'teste',
+  contratacao: 'contratado',
+};
+
+/**
+ * Normaliza o `etapa` vindo do banco (nullable/texto livre) para uma das cinco
+ * colunas. Valor desconhecido devolve `'outras'` — nunca é silenciosamente
+ * jogado em Triagem: quem conta precisa poder declarar o que ficou de fora.
+ */
+export function normalizarEtapa(valor: string | null | undefined): EtapaNormalizada {
+  const texto = (valor ?? '').trim().toLowerCase();
+  if (IDS_ETAPA.has(texto)) return texto as EtapaPipelineId;
+  return ALIAS_ETAPA[texto] ?? 'outras';
+}
+
 export function etapaPorId(id: string | null | undefined): EtapaPipeline {
-  return ETAPAS.find((etapa) => etapa.id === (id ?? 'triagem')) ?? ETAPAS[0];
+  const normalizada = normalizarEtapa(id);
+  return ETAPAS.find((etapa) => etapa.id === normalizada) ?? ETAPAS[0];
 }
 
 /** Remove acentos e normaliza para busca. */
@@ -49,7 +76,13 @@ export function normalizarBusca(valor: string | null | undefined): string {
     .trim();
 }
 
-/** Busca por candidato, vaga, origem, formação ou habilidades da vaga. */
+/**
+ * Busca por candidato, vaga, origem, formação ou habilidades da vaga.
+ *
+ * O e-mail NÃO entra no texto comparado: a busca está disponível a qualquer
+ * papel e, como o e-mail nunca é renderizado, um termo que casasse com ele
+ * viraria oráculo de PII (digita o endereço, a linha aparece, confirma o dono).
+ */
 export function filtrarCandidaturas(
   candidaturas: readonly CandidaturaComRelacoes[],
   termo: string
@@ -59,7 +92,6 @@ export function filtrarCandidaturas(
   return candidaturas.filter((cand) => {
     const texto = [
       cand.candidato?.nome,
-      cand.candidato?.email,
       cand.candidato?.origem,
       cand.candidato?.formacao,
       cand.vaga?.titulo,

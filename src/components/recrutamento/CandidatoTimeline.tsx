@@ -157,9 +157,7 @@ export function CandidatoTimeline({ candidaturaId }: CandidatoTimelineProps) {
       ) : (
         <div className="flex items-center gap-2.5 rounded-xl border border-dashed border-border/40 bg-background/30 px-3.5 py-3">
           <Clock className="h-4 w-4 shrink-0 text-muted-foreground/50" aria-hidden />
-          <p className="text-[12px] leading-snug text-muted-foreground">
-            Inicie o processo para ver o histórico aqui.
-          </p>
+          <p className="text-[12px] leading-snug text-muted-foreground">Inicie o processo para ver o histórico aqui.</p>
         </div>
       )}
     </div>

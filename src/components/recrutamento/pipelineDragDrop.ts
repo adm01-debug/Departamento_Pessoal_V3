@@ -13,11 +13,6 @@ import { ETAPAS, type EtapaPipelineId } from './pipelineEtapas';
 
 const IDS_ETAPA = new Set<string>(ETAPAS.map((etapa) => etapa.id));
 
-/** Normaliza o `etapa` vindo do banco (nullable/texto livre) para uma das cinco colunas. */
-export function normalizarEtapa(valor: string | null | undefined): EtapaPipelineId {
-  return (valor && IDS_ETAPA.has(valor) ? valor : 'triagem') as EtapaPipelineId;
-}
-
 /** O id é uma das cinco etapas? (usado para validar o alvo do drop). */
 export function ehEtapaDoPipeline(valor: string | null | undefined): valor is EtapaPipelineId {
   return Boolean(valor && IDS_ETAPA.has(valor));

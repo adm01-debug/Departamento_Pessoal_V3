@@ -8,7 +8,8 @@ import { cn } from '@/lib/utils';
  *
  * A barra representa a CONVERSÃO da vaga (contratados ÷ candidaturas), a mesma
  * leitura do percentual à direita; o volume aparece em “N cand.”. O ponto de
- * status diferencia vaga aberta de fechada sem esconder nenhuma delas.
+ * status diferencia vaga aberta, fechada e SEM status (coluna nula) — nenhuma
+ * delas é escondida e nenhuma é apresentada como aberta sem ser.
  */
 function tokenDaConversao(conversao: number): string {
   if (conversao >= 50) return 'success';
@@ -19,7 +20,9 @@ function tokenDaConversao(conversao: number): string {
 
 export function AnalyticsVagas({ vagas, index }: { vagas: DesempenhoVaga[]; index: number }) {
   const totalCandidaturas = vagas.reduce((soma, vaga) => soma + vaga.candidatos, 0);
+  // Mesmo critério do KPI "Vagas abertas": só `status === 'aberta'` conta.
   const abertas = vagas.filter((vaga) => vaga.status === 'aberta').length;
+  const semStatus = vagas.filter((vaga) => vaga.status === null).length;
 
   return (
     <AnalyticsPainel
@@ -28,7 +31,11 @@ export function AnalyticsVagas({ vagas, index }: { vagas: DesempenhoVaga[]; inde
       subtitle="Candidatos e conversão em cada processo"
       tom="success"
       index={index}
-      action={<ChipContagem>{vagas.length} {vagas.length === 1 ? 'vaga' : 'vagas'}</ChipContagem>}
+      action={
+        <ChipContagem>
+          {vagas.length} {vagas.length === 1 ? 'vaga' : 'vagas'}
+        </ChipContagem>
+      }
     >
       {vagas.length === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-border/40 bg-background/30 px-4 py-7 text-center">
@@ -43,13 +50,21 @@ export function AnalyticsVagas({ vagas, index }: { vagas: DesempenhoVaga[]; inde
           {vagas.map((vaga) => {
             const token = tokenDaConversao(vaga.conversao);
             const aberta = vaga.status === 'aberta';
+            const indefinida = vaga.status === null;
             return (
               <li key={vaga.id} className="min-w-0">
                 <div className="flex min-w-0 items-center gap-2">
                   <span
                     aria-hidden
-                    className={cn('h-1.5 w-1.5 shrink-0 rounded-full', aberta ? 'bg-success' : 'bg-muted-foreground/40')}
-                    title={aberta ? 'Vaga aberta' : 'Vaga fechada'}
+                    className={cn(
+                      'h-1.5 w-1.5 shrink-0 rounded-full',
+                      aberta
+                        ? 'bg-success'
+                        : indefinida
+                          ? 'border border-muted-foreground/50 bg-transparent'
+                          : 'bg-muted-foreground/40'
+                    )}
+                    title={aberta ? 'Vaga aberta' : indefinida ? 'Vaga sem status' : 'Vaga fechada'}
                   />
                   <span className="min-w-0 flex-1 truncate text-[11px] text-foreground/85" title={vaga.titulo}>
                     {vaga.titulo}
@@ -82,7 +97,14 @@ export function AnalyticsVagas({ vagas, index }: { vagas: DesempenhoVaga[]; inde
         <p className="mt-auto pt-2.5 text-[10px] leading-snug text-muted-foreground">
           <span className="font-semibold text-foreground">{totalCandidaturas}</span> candidaturas em{' '}
           <span className="font-semibold text-foreground">{vagas.length}</span> vagas ·{' '}
-          <span className="font-semibold text-foreground">{abertas}</span> abertas.
+          <span className="font-semibold text-foreground">{abertas}</span> abertas
+          {semStatus > 0 && (
+            <>
+              {' · '}
+              <span className="font-semibold text-foreground">{semStatus}</span> sem status
+            </>
+          )}
+          .
         </p>
       )}
     </AnalyticsPainel>

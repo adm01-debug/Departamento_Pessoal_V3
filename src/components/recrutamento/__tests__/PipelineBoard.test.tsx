@@ -76,7 +76,6 @@ function renderBoard(overrides: Partial<PipelineBoardProps> = {}) {
     onAbrir: vi.fn(),
     onMoverEtapa: vi.fn(),
     onContatar: vi.fn(),
-    onSimular: vi.fn(),
     ...overrides,
   };
   render(<PipelineBoard {...props} />);
@@ -130,18 +129,66 @@ describe('PipelineBoard — cinco etapas e cards ricos', () => {
     expect(props.onMoverEtapa).toHaveBeenCalledWith('1', 'contratado');
   });
 
-  it('aciona adicionar candidato, arquivadas e contatar pelos controles existentes', async () => {
+  it('contata o candidato pelo menu de ações', async () => {
     const props = renderBoard();
-    const triagem = document.querySelector('[data-pipeline-coluna="triagem"]') as HTMLElement;
-    await userEvent.click(within(triagem).getByRole('button', { name: 'Adicionar candidato' }));
-    expect(props.onSimular).toHaveBeenCalledWith('adicionar candidato em Triagem');
-
-    await userEvent.click(screen.getByRole('button', { name: /Ver etapas arquivadas/i }));
-    expect(props.onSimular).toHaveBeenCalledWith('ver etapas arquivadas');
-
     await userEvent.click(screen.getByRole('button', { name: /Mais ações de Mariana/i }));
     await userEvent.click(await screen.findByRole('menuitem', { name: 'Contatar candidato' }));
     expect(props.onContatar).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
+  });
+
+  it('não oferece inscrição pela coluna: o rodapé só existe em Contratado', () => {
+    renderBoard();
+    expect(screen.queryByRole('button', { name: /Adicionar candidato/i })).toBeNull();
+    expect(screen.queryByRole('button', { name: /etapas arquivadas/i })).toBeNull();
+    const rodapesDeColuna = document.querySelectorAll('[data-pipeline-coluna] .kb-footer');
+    expect(rodapesDeColuna).toHaveLength(1);
+    expect(rodapesDeColuna[0]).toHaveTextContent('Processo concluído');
+    expect(rodapesDeColuna[0].closest('[data-pipeline-coluna]')).toHaveAttribute('data-pipeline-coluna', 'contratado');
+    const triagem = document.querySelector('[data-pipeline-coluna="triagem"]') as HTMLElement;
+    expect(triagem.querySelector('.kb-footer')).toBeNull();
+  });
+
+  it('coloca o vocabulário REAL do banco na coluna certa (teste_tecnico / contratacao)', () => {
+    renderBoard({
+      candidaturas: [
+        candidatura('6', 'Lucas Teste Tecnico', 'teste_tecnico'),
+        candidatura('7', 'Helena Contratacao', 'contratacao'),
+      ],
+    });
+    const teste = document.querySelector('[data-pipeline-coluna="teste"]') as HTMLElement;
+    const contratado = document.querySelector('[data-pipeline-coluna="contratado"]') as HTMLElement;
+    expect(teste.querySelectorAll('[data-candidato-card]')).toHaveLength(1);
+    expect(teste).toHaveTextContent('Lucas Teste Tecnico');
+    expect(contratado.querySelectorAll('[data-candidato-card]')).toHaveLength(1);
+    expect(contratado).toHaveTextContent('Helena Contratacao');
+    expect(document.querySelector('[data-pipeline-fora]')).toBeNull();
+  });
+
+  it('declara no rodapé a candidatura fora das etapas monitoradas, sem descartá-la', () => {
+    renderBoard({
+      candidaturas: [candidatura('8', 'Nina Fora do Funil', 'onboarding')],
+    });
+    document
+      .querySelectorAll('[data-pipeline-coluna]')
+      .forEach((coluna) => expect(coluna.querySelectorAll('[data-candidato-card]')).toHaveLength(0));
+    const footer = document.querySelector('[data-pipeline-footer]');
+    expect(footer).toHaveTextContent('Mostrando 1 candidato');
+    expect(footer).toHaveTextContent('1 candidatura fora das etapas monitoradas');
+  });
+
+  it('mostra a falha de leitura ANTES de qualquer coluna, contagem ou "Solte aqui"', async () => {
+    const onTentarNovamente = vi.fn();
+    renderBoard({ candidaturas: [], erro: true, onTentarNovamente });
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Não foi possível carregar o pipeline');
+    expect(document.querySelectorAll('[data-pipeline-coluna]')).toHaveLength(0);
+    expect(document.querySelector('[data-pipeline-board]')).toBeNull();
+    expect(document.querySelector('[data-pipeline-footer]')).toBeNull();
+    expect(screen.queryByText('Solte aqui')).toBeNull();
+    expect(screen.queryByText(/Mostrando/)).toBeNull();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Tentar novamente' }));
+    expect(onTentarNovamente).toHaveBeenCalledTimes(1);
   });
 
   it('mostra o estado vazio discreto e o rodapé com total/última atualização', () => {
@@ -150,7 +197,7 @@ describe('PipelineBoard — cinco etapas e cards ricos', () => {
     const footer = document.querySelector('[data-pipeline-footer]');
     expect(footer).toHaveTextContent('Mostrando 0 candidatos');
     expect(footer).toHaveTextContent('Última atualização: sem atualizações');
-    expect(footer).toHaveTextContent('Ver etapas arquivadas');
+    expect(document.querySelector('[data-pipeline-fora]')).toBeNull();
   });
 
   it('usa largura/altura de coluna e scroll da referência de Admissão', () => {

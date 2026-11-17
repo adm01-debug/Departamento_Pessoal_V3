@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import {
   FILTROS_CANDIDATOS_PADRAO,
   badgeEtapa,
-  candidatosSemCandidatura,
   contarFiltrosExtras,
   contarSituacoes,
   dadosVagaDaCandidatura,
@@ -18,7 +17,7 @@ import {
   ultimaAtividade,
   vagasComCandidaturas,
 } from '../candidatosComum';
-import { criarCandidato, criarCandidatura, criarVaga } from './candidatosFixture';
+import { criarCandidatura, criarVaga } from './candidatosFixture';
 
 const LISTA = [
   criarCandidatura({ id: '1', status: 'em_andamento', etapa: 'triagem', nota_geral: 4.2 }),
@@ -79,6 +78,35 @@ describe('candidatosComum — situações e contagens', () => {
   });
 });
 
+describe('candidatosComum — vocabulário real de etapa', () => {
+  // O banco grava `teste_tecnico` e `contratacao`; os ids da UI são
+  // `teste`/`contratado`. Sem normalizar, contratados lia zero.
+  const real = (etapa: string | null) => criarCandidatura({ id: `r-${etapa}`, status: 'ativo', etapa });
+
+  it('conta contratação real como contratado', () => {
+    expect(situacaoDaCandidatura(real('contratacao'))).toBe('contratados');
+    expect(contarSituacoes([real('contratacao'), real('teste_tecnico')])).toMatchObject({
+      contratados: 1,
+      em_processo: 1,
+    });
+  });
+
+  it('rotula a etapa pelo id da UI e não chama de “não informada” o que está fora do funil', () => {
+    expect(badgeEtapa(real('teste_tecnico'))).toMatchObject({ label: 'Teste Técnico', etapaId: 'teste' });
+    expect(badgeEtapa(real('em_banco_de_talentos'))).toMatchObject({ label: 'Fora do funil', etapaId: null });
+    expect(badgeEtapa(real(null))).toMatchObject({ label: 'Não informada', etapaId: null });
+  });
+
+  it('filtra pelo id da UI alcançando a etapa gravada no banco', () => {
+    const lista = [real('teste_tecnico'), real('contratacao'), real('triagem')];
+    const filtrar = (etapa: string) =>
+      filtrarCandidaturas(lista, { ...FILTROS_CANDIDATOS_PADRAO, etapa }).map((c) => c.id);
+    expect(filtrar('teste')).toEqual(['r-teste_tecnico']);
+    expect(filtrar('contratado')).toEqual(['r-contratacao']);
+    expect(filtrar('triagem')).toEqual(['r-triagem']);
+  });
+});
+
 describe('candidatosComum — filtros combináveis', () => {
   const filtrar = (patch: Partial<typeof FILTROS_CANDIDATOS_PADRAO> = {}) =>
     filtrarCandidaturas(LISTA, { ...FILTROS_CANDIDATOS_PADRAO, ...patch }).map((c) => c.id);
@@ -95,6 +123,8 @@ describe('candidatosComum — filtros combináveis', () => {
     expect(filtrar({ apenasAvaliados: true })).toEqual(['1', '2', '3']);
     expect(filtrar({ apenasComPretensao: true })).toEqual(['1', '2', '3', '4']);
     expect(filtrar({ busca: 'zzz' })).toEqual([]);
+    // E-mail fora dos campos buscáveis: a busca não confirma PII.
+    expect(filtrar({ busca: 'ana@email.com' })).toEqual([]);
   });
 
   it('ordena por nota, pretensão, nome e data real', () => {
@@ -169,13 +199,5 @@ describe('candidatosComum — vaga, atividade, seleção e paginação', () => {
   it('estilo de origem é determinístico e neutro no desconhecido', () => {
     expect(estiloOrigem('LinkedIn')).toBe(estiloOrigem('linkedin'));
     expect(estiloOrigem('Origem Inédita')).toContain('text-muted-foreground');
-  });
-
-  it('isola o candidato do cadastro que ainda não tem candidatura', () => {
-    const inscrito = criarCandidato({ id: 'pessoa-1' });
-    const avulso = criarCandidato({ id: 'pessoa-99', nome: 'Bruno Lima' });
-    const resultado = candidatosSemCandidatura([inscrito, avulso], [criarCandidatura({ candidato_id: 'pessoa-1' })]);
-    expect(resultado.map((item) => item.id)).toEqual(['pessoa-99']);
-    expect(candidatosSemCandidatura([], [])).toEqual([]);
   });
 });

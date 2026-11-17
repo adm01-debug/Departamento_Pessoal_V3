@@ -19,9 +19,9 @@
  * origem usa as strings reais já cadastradas.
  * ============================================================================
  */
-import type { CandidatoRow, CandidaturaComRelacoes, VagaRow } from '@/types/recrutamento';
+import type { CandidaturaComRelacoes, VagaRow } from '@/types/recrutamento';
 import { parseDateSafe } from '@/utils/format';
-import { ETAPAS, normalizarBusca, type EtapaPipeline, type EtapaPipelineId } from './pipelineEtapas';
+import { ETAPAS, normalizarBusca, normalizarEtapa, type EtapaPipeline, type EtapaPipelineId } from './pipelineEtapas';
 
 export type SituacaoCandidato = 'todas' | 'em_processo' | 'contratados' | 'reprovados' | 'arquivados';
 export type OrdenacaoCandidato = 'recentes' | 'antigos' | 'avaliacao' | 'pretensao' | 'nome' | 'experiencia';
@@ -81,7 +81,7 @@ export function situacaoDaCandidatura(cand: CandidaturaComRelacoes): Exclude<Sit
   const status = normalizarBusca(cand.status);
   if (STATUS_REPROVADO.has(status)) return 'reprovados';
   if (STATUS_ARQUIVADO.has(status)) return 'arquivados';
-  if (STATUS_CONTRATADO.has(status) || normalizarBusca(cand.etapa) === 'contratado') return 'contratados';
+  if (STATUS_CONTRATADO.has(status) || normalizarEtapa(cand.etapa) === 'contratado') return 'contratados';
   return 'em_processo';
 }
 
@@ -105,10 +105,13 @@ export function contarSituacoes(candidaturas: readonly CandidaturaComRelacoes[])
   return contagem;
 }
 
-/** Etapa real da candidatura; null quando ausente/desconhecida. */
+/**
+ * Etapa real da candidatura, normalizada (o banco grava `teste_tecnico` e
+ * `contratacao`); null quando ausente ou fora das cinco etapas monitoradas.
+ */
 export function etapaDaCandidatura(cand: CandidaturaComRelacoes): EtapaPipeline | null {
-  const id = (cand.etapa ?? '').trim();
-  if (!id) return null;
+  const id = normalizarEtapa(cand.etapa);
+  if (id === 'outras') return null;
   return ETAPAS.find((etapa) => etapa.id === id) ?? null;
 }
 
@@ -141,7 +144,12 @@ export function badgeEtapa(cand: CandidaturaComRelacoes): BadgeEtapa {
   if (situacao === 'arquivados') return { label: 'Arquivado', classe: PILL_FINAL.arquivados, etapaId: null };
   if (situacao === 'contratados') return { label: 'Contratado', classe: PILL_FINAL.contratados, etapaId: null };
   const etapa = etapaDaCandidatura(cand);
-  if (!etapa) return { label: 'Não informada', classe: PILL_NEUTRA, etapaId: null };
+  if (!etapa) {
+    // Etapa gravada mas fora das cinco monitoradas: dizer "Não informada"
+    // seria falso — a linha declara que está fora do funil.
+    const rotulo = (cand.etapa ?? '').trim() ? 'Fora do funil' : 'Não informada';
+    return { label: rotulo, classe: PILL_NEUTRA, etapaId: null };
+  }
   return { label: etapa.label, classe: PILL_ETAPA[etapa.id], etapaId: etapa.id };
 }
 
@@ -262,19 +270,15 @@ export function filtrarCandidaturas(
   return candidaturas.filter((cand) => {
     if (filtros.situacao !== 'todas' && situacaoDaCandidatura(cand) !== filtros.situacao) return false;
     if (filtros.vagaId !== 'todas' && cand.vaga_id !== filtros.vagaId) return false;
-    if (filtros.etapa !== 'todas' && (cand.etapa ?? '') !== filtros.etapa) return false;
+    if (filtros.etapa !== 'todas' && normalizarEtapa(cand.etapa) !== filtros.etapa) return false;
     if (origem && origem !== 'todas' && normalizarBusca(cand.candidato?.origem) !== origem) return false;
     if (filtros.apenasAvaliados && cand.nota_geral === null) return false;
     if (filtros.apenasComPretensao && (cand.candidato?.pretensao_salarial ?? null) === null) return false;
 
     if (busca) {
-      const texto = [
-        cand.candidato?.nome,
-        cand.candidato?.email,
-        cand.candidato?.origem,
-        cand.vaga?.titulo,
-        cand.vaga?.departamento,
-      ]
+      // E-mail NÃO entra na busca: confirmar um endereço digitando-o seria um
+      // canal lateral de PII, e a busca está disponível a qualquer papel.
+      const texto = [cand.candidato?.nome, cand.candidato?.origem, cand.vaga?.titulo, cand.vaga?.departamento]
         .map(normalizarBusca)
         .join(' ');
       if (!texto.includes(busca)) return false;
@@ -392,17 +396,4 @@ export function temFiltrosAtivos(filtros: FiltrosCandidatos): boolean {
 /** Quantidade de filtros extras ativos (badge do botão "Mais filtros"). */
 export function contarFiltrosExtras(filtros: FiltrosCandidatos): number {
   return (filtros.busca.trim() ? 1 : 0) + (filtros.apenasAvaliados ? 1 : 0) + (filtros.apenasComPretensao ? 1 : 0);
-}
-
-/**
- * Candidatos do CADASTRO que ainda não têm nenhuma candidatura. A aba trabalha
- * candidaturas; sem este recorte um candidato recém-cadastrado desapareceria da
- * tela e ninguém mais conseguiria inscrevê-lo numa vaga.
- */
-export function candidatosSemCandidatura(
-  candidatos: readonly CandidatoRow[],
-  candidaturas: readonly CandidaturaComRelacoes[]
-): CandidatoRow[] {
-  const inscritos = new Set(candidaturas.map((cand) => cand.candidato_id));
-  return candidatos.filter((candidato) => !inscritos.has(candidato.id));
 }

@@ -10,9 +10,10 @@ import { AnalyticsPainel, ChipContagem } from './AnalyticsPainel';
  * tokens de `pipelineVisual`). Mobile: a mesma leitura em linhas com faixa
  * lateral, porque cinco rótulos não cabem lado a lado no viewport estreito.
  *
- * O percentual de cada etapa é a RETENÇÃO sobre a entrada do funil (primeira
- * etapa), exatamente como na referência aprovada. A conversão etapa → etapa
- * aparece em faixa própria abaixo, para não confundir as duas leituras.
+ * O percentual de cada etapa é a PARTICIPAÇÃO no volume ATUAL de Triagem — uma
+ * foto do pipeline, não o acompanhamento de um grupo que entrou junto (com a
+ * fila já triada, uma etapa posterior pode ter mais gente que Triagem). A
+ * conversão etapa → etapa aparece em faixa própria abaixo.
  */
 function percentualCompacto(valor: number): string {
   return formatarPercentual(valor, Number.isInteger(valor) ? 0 : 1);
@@ -46,17 +47,20 @@ export function AnalyticsFunil({
   funil,
   conversoes,
   total,
+  fora,
   index,
 }: {
   funil: ItemFunil[];
   conversoes: ConversaoFunil[];
   total: number;
+  /** Candidaturas fora das cinco etapas — declaradas, nunca descartadas. */
+  fora: number;
   index: number;
 }) {
   const entrada = funil[0]?.total ?? 0;
   const contratados = funil[funil.length - 1]?.total ?? 0;
   const tokenPorEtapa = new Map(ETAPAS.map((etapa) => [etapa.id, etapa.token]));
-  // Retenção só existe com alguém na entrada do funil; sem isso, o percentual
+  // A participação só existe com alguém em Triagem; sem isso, o percentual
   // seria 0% sobre denominador vazio — mostramos a ausência, não um número.
   const temEntrada = entrada > 0;
   // Idem para a conversão: só compara quem tem etapa anterior povoada.
@@ -68,10 +72,14 @@ export function AnalyticsFunil({
     <AnalyticsPainel
       icon={Filter}
       title="Funil de recrutamento"
-      subtitle="Volume, retenção e conversão entre as etapas"
+      subtitle="Volume por etapa e conversão entre as etapas"
       tom="info"
       index={index}
-      action={<ChipContagem>{total} {total === 1 ? 'candidatura' : 'candidaturas'}</ChipContagem>}
+      action={
+        <ChipContagem>
+          {total} {total === 1 ? 'candidatura' : 'candidaturas'}
+        </ChipContagem>
+      }
     >
       {total === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-border/40 bg-background/30 px-4 py-8 text-center">
@@ -92,7 +100,9 @@ export function AnalyticsFunil({
                   role="listitem"
                   className="relative min-w-0 flex-1"
                   title={`${item.label}: ${item.total} ${
-                    temEntrada ? `candidaturas (${percentualCompacto(item.percentual)} da entrada)` : 'candidaturas'
+                    temEntrada
+                      ? `candidaturas (${percentualCompacto(item.percentual)} do volume atual em Triagem)`
+                      : 'candidaturas'
                   }`}
                 >
                   <div
@@ -112,7 +122,7 @@ export function AnalyticsFunil({
                       {item.total}
                     </span>
                     <span className="mt-1 text-[9px] leading-none text-muted-foreground">
-                      {temEntrada ? `${percentualCompacto(item.percentual)} da entrada` : 'sem base de entrada'}
+                      {temEntrada ? `${percentualCompacto(item.percentual)} vs. Triagem` : 'sem volume em Triagem'}
                     </span>
                   </div>
                 </div>
@@ -122,7 +132,7 @@ export function AnalyticsFunil({
 
           {/* Mobile — mesmas etapas em linhas, com faixa lateral na cor da etapa */}
           <p className="mb-1 text-[9px] uppercase tracking-widest text-muted-foreground/70 sm:hidden">
-            Retenção sobre a entrada do funil
+            Participação no volume atual em Triagem
           </p>
           <ol className="space-y-1.5 sm:hidden" aria-label="Funil por etapa">
             {funil.map((item) => {
@@ -196,44 +206,51 @@ export function AnalyticsFunil({
 
           {/* Destaques do funil — só com passagem medível (etapa anterior povoada). */}
           {maiorRetencao && maiorQueda && (
-          <div className="mt-2 grid grid-cols-2 gap-1.5">
-            <div className="min-w-0 rounded-lg border border-success/20 bg-success/5 px-2 py-1.5">
-              <p className="text-[8.5px] font-semibold uppercase tracking-widest text-muted-foreground">
-                Maior retenção
-              </p>
-              <p className="mt-0.5 text-[9.5px] leading-tight text-foreground/80">
-                {maiorRetencao.de} → {maiorRetencao.para}
-              </p>
-              <p className="mt-0.5 font-display text-[11px] font-semibold leading-none text-success">
-                {percentualCompacto(maiorRetencao.percentual)}
-              </p>
+            <div className="mt-2 grid grid-cols-2 gap-1.5">
+              <div className="min-w-0 rounded-lg border border-success/20 bg-success/5 px-2 py-1.5">
+                <p className="text-[8.5px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  Maior retenção
+                </p>
+                <p className="mt-0.5 text-[9.5px] leading-tight text-foreground/80">
+                  {maiorRetencao.de} → {maiorRetencao.para}
+                </p>
+                <p className="mt-0.5 font-display text-[11px] font-semibold leading-none text-success">
+                  {percentualCompacto(maiorRetencao.percentual)}
+                </p>
+              </div>
+              <div className="min-w-0 rounded-lg border border-warning/20 bg-warning/5 px-2 py-1.5">
+                <p className="text-[8.5px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  Maior queda
+                </p>
+                <p className="mt-0.5 text-[9.5px] leading-tight text-foreground/80">
+                  {maiorQueda.de} → {maiorQueda.para}
+                </p>
+                <p className="mt-0.5 font-display text-[11px] font-semibold leading-none text-warning">
+                  {percentualCompacto(maiorQueda.percentual)}
+                </p>
+              </div>
             </div>
-            <div className="min-w-0 rounded-lg border border-warning/20 bg-warning/5 px-2 py-1.5">
-              <p className="text-[8.5px] font-semibold uppercase tracking-widest text-muted-foreground">
-                Maior queda
-              </p>
-              <p className="mt-0.5 text-[9.5px] leading-tight text-foreground/80">
-                {maiorQueda.de} → {maiorQueda.para}
-              </p>
-              <p className="mt-0.5 font-display text-[11px] font-semibold leading-none text-warning">
-                {percentualCompacto(maiorQueda.percentual)}
-              </p>
-            </div>
-          </div>
           )}
 
-          {/* Leitura de retenção — ocupa a base do painel sem área vazia. */}
+          {/* Leitura do volume — ocupa a base do painel sem área vazia. */}
           <p className="mt-auto pt-2.5 text-[10px] leading-snug text-muted-foreground">
             {temEntrada ? (
               <>
-                <span className="font-semibold text-foreground">{contratados}</span> de{' '}
-                <span className="font-semibold text-foreground">{entrada}</span>{' '}
-                {entrada === 1 ? 'candidato da entrada chegou' : 'candidatos da entrada chegaram'} a Contratado.
+                <span className="font-semibold text-foreground">{contratados}</span> em Contratado e{' '}
+                <span className="font-semibold text-foreground">{entrada}</span> em Triagem agora — foto atual do
+                pipeline, não o percurso de um mesmo grupo de candidatos.
               </>
             ) : (
               <>
-                <span className="font-semibold text-foreground">{contratados}</span> em Contratado · sem candidatura
-                em Triagem, a retenção sobre a entrada não é medível.
+                <span className="font-semibold text-foreground">{contratados}</span> em Contratado · sem candidatura em
+                Triagem, a participação no volume de entrada não é calculável.
+              </>
+            )}
+            {fora > 0 && (
+              <>
+                {' '}
+                <span className="font-semibold text-foreground">{fora}</span>{' '}
+                {fora === 1 ? 'candidatura' : 'candidaturas'} fora das etapas monitoradas.
               </>
             )}
           </p>

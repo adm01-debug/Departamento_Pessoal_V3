@@ -18,6 +18,10 @@ export type CandidaturaRow = Tables['candidaturas']['Row'];
 export interface VagaResumo {
   titulo: string | null;
   departamento: string | null;
+  /** Coluna real de `vagas` (text, nullable). Opcional porque o `select`
+   * embutido da candidatura não a traz: a página de Recrutamento a preenche a
+   * partir da lista de vagas já carregada, para a busca cobrir requisito. */
+  requisitos?: string | null;
 }
 
 /**

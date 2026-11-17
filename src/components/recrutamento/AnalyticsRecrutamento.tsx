@@ -47,10 +47,7 @@ import { AnalyticsIndicadores } from './AnalyticsIndicadores';
  */
 type TomKpi = 'success' | 'info' | 'chart4' | 'warning';
 
-const KPI_VISUAL: Record<
-  KpiRecrutamento['id'],
-  { icone: LucideIcon; tom: TomKpi; tooltip: string }
-> = {
+const KPI_VISUAL: Record<KpiRecrutamento['id'], { icone: LucideIcon; tom: TomKpi; tooltip: string }> = {
   vagas: {
     icone: Briefcase,
     tom: 'success',
@@ -73,10 +70,7 @@ const KPI_VISUAL: Record<
   },
 };
 
-const ESTILO_KPI: Record<
-  TomKpi,
-  { chip: string; linha: string; halo: string }
-> = {
+const ESTILO_KPI: Record<TomKpi, { chip: string; linha: string; halo: string }> = {
   success: {
     chip: 'border-success/25 bg-success/10 text-success',
     linha: 'via-success/60',
@@ -136,12 +130,16 @@ function KpiCard({ kpi, index }: { kpi: KpiRecrutamento; index: number }) {
         </div>
 
         <p className="mt-2.5 font-display text-[30px] font-semibold leading-none tracking-tight tabular-nums text-foreground">
-          <AnimatedNumber
-            value={kpi.valor}
-            duration={0.9}
-            decimals={ehPercentual ? 1 : 0}
-            format={ehPercentual ? (numero) => `${numero.toFixed(1).replace('.', ',')}%` : undefined}
-          />
+          {/* Sem base a métrica é `null`: exibimos o `—` em vez de animar um zero. */}
+          {kpi.valor === null ? (
+            kpi.exibicao
+          ) : (
+            <AnimatedNumber
+              value={kpi.valor}
+              duration={0.9}
+              format={ehPercentual ? (numero) => `${numero.toFixed(1).replace('.', ',')}%` : undefined}
+            />
+          )}
         </p>
 
         <div className="mt-auto pt-2.5">
@@ -249,42 +247,39 @@ export function AnalyticsRecrutamento({
         </div>
       ) : (
         <>
-        {/* 1 · KPIs */}
-        <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
-          {analytics.kpis.map((kpi, indice) => (
-            <KpiCard key={kpi.id} kpi={kpi} index={indice} />
-          ))}
-        </div>
-
-        {/* 2 · Funil · Evolução · Origens */}
-        <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1.05fr)_minmax(0,0.85fr)]">
-          <div className="h-full md:col-span-2 xl:col-span-1">
-            <AnalyticsFunil
-              funil={analytics.funil}
-              conversoes={analytics.conversoes}
-              total={analytics.totalCandidaturas}
-              index={4}
-            />
+          {/* 1 · KPIs */}
+          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
+            {analytics.kpis.map((kpi, indice) => (
+              <KpiCard key={kpi.id} kpi={kpi} index={indice} />
+            ))}
           </div>
-          <AnalyticsEvolucao candidaturas={candidaturas} referencia={analytics.referencia} index={5} />
-          <AnalyticsOrigens origens={analytics.origens} index={6} />
-        </div>
 
-        {/* 3 · Tempo por etapa · Pontos de atenção · Desempenho por vaga */}
-        <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1.02fr)_minmax(0,1.12fr)_minmax(0,1fr)]">
-          <AnalyticsTempo tempos={analytics.tempos} index={7} />
-          <AnalyticsAtencao atencao={analytics.atencao} index={8} />
-          <div className="h-full md:col-span-2 xl:col-span-1">
-            <AnalyticsVagas vagas={analytics.vagas} index={9} />
+          {/* 2 · Funil · Evolução · Origens */}
+          <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1.05fr)_minmax(0,0.85fr)]">
+            <div className="h-full md:col-span-2 xl:col-span-1">
+              <AnalyticsFunil
+                funil={analytics.funil}
+                conversoes={analytics.conversoes}
+                total={analytics.totalCandidaturas}
+                fora={analytics.foraDasEtapas}
+                index={4}
+              />
+            </div>
+            <AnalyticsEvolucao candidaturas={candidaturas} referencia={analytics.referencia} index={5} />
+            <AnalyticsOrigens origens={analytics.origens} index={6} />
           </div>
-        </div>
 
-        {/* 4 · Indicadores gerais */}
-        <AnalyticsIndicadores
-          indicadores={analytics.indicadores}
-          referencia={analytics.referencia}
-          index={10}
-        />
+          {/* 3 · Tempo por etapa · Pontos de atenção · Desempenho por vaga */}
+          <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1.02fr)_minmax(0,1.12fr)_minmax(0,1fr)]">
+            <AnalyticsTempo tempos={analytics.tempos} index={7} />
+            <AnalyticsAtencao atencao={analytics.atencao} index={8} />
+            <div className="h-full md:col-span-2 xl:col-span-1">
+              <AnalyticsVagas vagas={analytics.vagas} index={9} />
+            </div>
+          </div>
+
+          {/* 4 · Indicadores gerais */}
+          <AnalyticsIndicadores indicadores={analytics.indicadores} referencia={analytics.referencia} index={10} />
         </>
       )}
     </div>

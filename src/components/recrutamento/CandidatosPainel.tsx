@@ -13,7 +13,6 @@ import {
   UserX,
   X,
   AlertTriangle,
-  Plus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -23,7 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { entradaCard } from '@/components/ui/entrada-cards';
 import { cn } from '@/lib/utils';
 import { formatCurrency, formatNumber } from '@/utils/format';
-import type { CandidatoRow, CandidaturaComRelacoes, VagaRow } from '@/types/recrutamento';
+import type { CandidaturaComRelacoes, VagaRow } from '@/types/recrutamento';
 import { ETAPAS } from './pipelineEtapas';
 import { TabelaCandidatos } from './TabelaCandidatos';
 import {
@@ -31,7 +30,6 @@ import {
   ORDENACOES,
   SITUACOES,
   contarFiltrosExtras,
-  candidatosSemCandidatura,
   contarSituacoes,
   filtrarCandidaturas,
   ordenarCandidaturas,
@@ -62,24 +60,12 @@ interface CandidatosPainelProps {
   vagas: readonly VagaRow[];
   onVerPerfil: (cand: CandidaturaComRelacoes) => void;
   onMoverEtapa: (id: string, etapa: string) => void | boolean | Promise<void | boolean>;
-  /**
-   * CADASTRO de candidatos da página. Quem ainda não tem candidatura ganha uma
-   * seção própria — sem isto um candidato recém-cadastrado desapareceria da
-   * tela, porque a aba trabalha candidaturas.
-   */
-  candidatos?: readonly CandidatoRow[];
-  /** Abre o diálogo "Adicionar <nome> a uma vaga" da página (criarCandidatura). */
-  onInscrever?: (candidato: CandidatoRow) => void;
   /** Consulta de candidaturas falhou — mostra erro + tentativa novamente. */
   erro?: boolean;
   onTentarNovamente?: () => void;
 }
 
 const TAMANHOS_PAGINA = [8, 16, 24] as const;
-
-/** Sufixo de experiência do candidato; vazio quando o campo não foi informado. */
-const experiencia = (anos: number | null | undefined) =>
-  anos === null || anos === undefined ? '' : ` · ${anos} ${anos === 1 ? 'ano' : 'anos'} de experiência`;
 
 const TEMA_INDICADOR: Record<SituacaoCandidato, { icone: typeof Users; chip: string; ativo: string; hover: string }> = {
   todas: {
@@ -119,8 +105,6 @@ export function CandidatosPainel({
   vagas,
   onVerPerfil,
   onMoverEtapa,
-  candidatos,
-  onInscrever,
   erro = false,
   onTentarNovamente,
 }: CandidatosPainelProps) {
@@ -133,11 +117,6 @@ export function CandidatosPainel({
   const vagasOpcoes = useMemo(() => vagasComCandidaturas(candidaturas, vagas), [candidaturas, vagas]);
   const origens = useMemo(() => origensDisponiveis(candidaturas), [candidaturas]);
   const contagens = useMemo(() => contarSituacoes(candidaturas), [candidaturas]);
-  // Só faz sentido oferecer a seção quando a página sabe inscrever de verdade.
-  const semInscricao = useMemo(
-    () => (onInscrever && candidatos ? candidatosSemCandidatura(candidatos, candidaturas) : []),
-    [onInscrever, candidatos, candidaturas]
-  );
 
   const filtradas = useMemo(
     () => ordenarCandidaturas(filtrarCandidaturas(candidaturas, filtros), filtros.ordenacao),
@@ -325,64 +304,6 @@ export function CandidatosPainel({
         </div>
       </motion.div>
 
-      {/* 2b · CADASTRO SEM INSCRIÇÃO — candidato que ainda não entrou em processo
-          nenhum. Sem contato na lista: e-mail/telefone só no dossiê, mascarados. */}
-      {onInscrever && semInscricao.length > 0 ? (
-        <motion.section
-          {...entradaCard(5)}
-          data-candidatos-sem-inscricao
-          aria-labelledby="candidatos-sem-inscricao-titulo"
-          className="overflow-hidden rounded-2xl border border-border/50 bg-card"
-        >
-          <div className="flex flex-wrap items-baseline gap-x-2 border-b border-border/40 px-3 py-2">
-            <h3 id="candidatos-sem-inscricao-titulo" className="text-[11.5px] font-semibold text-foreground">
-              Sem inscrição em vaga
-            </h3>
-            <span className="text-[10px] tabular-nums text-muted-foreground">
-              {semInscricao.length} {semInscricao.length === 1 ? 'candidato' : 'candidatos'} no cadastro
-            </span>
-          </div>
-          <ul className="divide-y divide-border/30">
-            {semInscricao.map((candidato) => (
-              <li
-                key={candidato.id}
-                data-candidato-sem-inscricao={candidato.id}
-                className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2"
-              >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-[10px] font-semibold text-primary">
-                  {(candidato.nome?.trim()?.charAt(0) || '?').toUpperCase()}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[12px] font-semibold text-foreground">
-                    {candidato.nome?.trim() || 'Candidato sem nome'}
-                  </span>
-                  <span className="block truncate text-[10px] text-muted-foreground">
-                    {candidato.origem?.trim() || 'Origem não informada'}
-                    {experiencia(candidato.experiencia_anos)}
-                    {candidato.pretensao_salarial !== null && candidato.pretensao_salarial !== undefined
-                      ? ` · ${formatCurrency(candidato.pretensao_salarial)}`
-                      : ''}
-                  </span>
-                </span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled={vagas.length === 0}
-                  title={vagas.length === 0 ? 'Cadastre uma vaga para inscrever candidatos.' : undefined}
-                  onClick={() => onInscrever(candidato)}
-                  aria-label={`Inscrever ${candidato.nome?.trim() || 'candidato'} em uma vaga`}
-                  className="h-8 shrink-0 gap-1.5 rounded-lg text-[11px]"
-                >
-                  <Plus className="h-3.5 w-3.5" aria-hidden />
-                  Inscrever em vaga
-                </Button>
-              </li>
-            ))}
-          </ul>
-        </motion.section>
-      ) : null}
-
       {/* 3 · TABELA / CARTÕES + 4 · PAGINAÇÃO */}
       <div className="overflow-hidden rounded-2xl border border-border/50 bg-card">
         {resumo.total > 0 ? (
@@ -538,7 +459,7 @@ function MaisFiltros({
                 id={`${id}-busca`}
                 value={filtros.busca}
                 onChange={(event) => aoMudar({ busca: event.target.value })}
-                placeholder="Nome, e-mail, vaga..."
+                placeholder="Nome, vaga, departamento..."
                 aria-label="Buscar candidatos"
                 className="h-8 rounded-lg border-border/60 bg-background/60 pl-7 text-[11px]"
               />

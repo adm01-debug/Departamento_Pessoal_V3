@@ -228,12 +228,7 @@ export function CandidatoDetalhesDialog({ open, candidatura, onClose, onAvancar 
             data-modal-faixa="rodape"
             className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-border/40 bg-muted/20 px-5 py-3 sm:px-6"
           >
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 rounded-lg px-3 font-medium"
-              onClick={onClose}
-            >
+            <Button variant="outline" size="sm" className="h-8 rounded-lg px-3 font-medium" onClick={onClose}>
               Fechar
             </Button>
             {proximaEtapa && (
@@ -248,4 +243,3 @@ export function CandidatoDetalhesDialog({ open, candidatura, onClose, onAvancar 
     </CascadeDialogFrame>
   );
 }
-

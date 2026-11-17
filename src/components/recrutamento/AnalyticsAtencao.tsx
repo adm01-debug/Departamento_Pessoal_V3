@@ -36,7 +36,9 @@ export function AnalyticsAtencao({ atencao, index }: { atencao: PontoAtencao[]; 
       index={index}
       action={
         atencao.length > 0 ? (
-          <ChipContagem>{atencao.length} {atencao.length === 1 ? 'alerta' : 'alertas'}</ChipContagem>
+          <ChipContagem>
+            {atencao.length} {atencao.length === 1 ? 'alerta' : 'alertas'}
+          </ChipContagem>
         ) : undefined
       }
     >

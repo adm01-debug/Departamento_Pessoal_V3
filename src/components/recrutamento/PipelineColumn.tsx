@@ -12,14 +12,14 @@
  *        ficam fixos. SEM `overscroll-behavior: contain`: ao chegar ao fim da
  *        lista a roda continua para a página (scroll chaining).
  * VAZIO  caixa tracejada pequena "Solte aqui", discreta como na referência.
- * RODAPÉ `p-2.5` com botão `h-8`; em Contratado, o aviso "Processo concluído"
- *        ocupa o mesmo lugar/altura. Sem `onAdicionar`, um vão de 32px mantém
- *        a altura das colunas idêntica.
+ * RODAPÉ só existe em Contratado, com o aviso "Processo concluído". A inscrição
+ *        de candidato é a da aba Candidatos, não da coluna — sem botão de
+ *        fachada e sem espaçador para fingir simetria (a altura externa vem do
+ *        slot, `.kanban-column-visual { height: 100% }`, não do conteúdo).
  * ============================================================================
  */
 import { useDroppable } from '@dnd-kit/core';
-import { Plus, ShieldCheck } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEntradaKanbanColuna } from '@/components/kanban/entradaKanban';
 import type { CandidaturaComRelacoes } from '@/types/recrutamento';
@@ -34,11 +34,6 @@ export interface PipelineColumnProps {
   indice: number;
   /** A aba Pipeline está ativa? Só então a entrada é disparada. */
   isActive: boolean;
-  /**
-   * Inscrição real de candidato nesta etapa. Ausente = o rodapé não mostra o
-   * botão; nunca um controle sem handler.
-   */
-  onAdicionar?: (etapa: EtapaPipeline) => void;
   onAbrir: (cand: CandidaturaComRelacoes) => void;
   onMoverEtapa: MoverEtapaHandler;
   onContatar: (cand: CandidaturaComRelacoes) => void;
@@ -49,7 +44,6 @@ export function PipelineColumn({
   items,
   indice,
   isActive,
-  onAdicionar,
   onAbrir,
   onMoverEtapa,
   onContatar,
@@ -145,26 +139,14 @@ export function PipelineColumn({
             )}
           </div>
 
-          <footer className="kb-footer shrink-0 border-t border-border/40 p-2.5">
-            {etapa.id === 'contratado' ? (
+          {etapa.id === 'contratado' ? (
+            <footer className="kb-footer shrink-0 border-t border-border/40 p-2.5">
               <div className="flex h-8 w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-success/40 bg-success/5 text-[11.5px] font-medium text-success">
                 <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
                 Processo concluído
               </div>
-            ) : onAdicionar ? (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onAdicionar(etapa)}
-                className="h-8 w-full justify-center gap-1.5 rounded-lg border border-dashed border-border/60 text-[11.5px] font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-foreground"
-              >
-                <Plus className="h-3.5 w-3.5" aria-hidden />
-                Adicionar candidato
-              </Button>
-            ) : (
-              <div className="h-8" aria-hidden />
-            )}
-          </footer>
+            </footer>
+          ) : null}
         </div>
       </section>
     </div>

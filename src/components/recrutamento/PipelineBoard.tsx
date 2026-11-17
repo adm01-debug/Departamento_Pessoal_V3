@@ -12,14 +12,8 @@ import {
 import { AlertTriangle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { CandidaturaComRelacoes } from '@/types/recrutamento';
-import {
-  ETAPAS,
-  etapaPorId,
-  formatarUltimaAtualizacao,
-  type EtapaPipeline,
-  type EtapaPipelineId,
-} from './pipelineEtapas';
-import { podeArrastarCandidatura, ehEtapaDoPipeline, normalizarEtapa } from './pipelineDragDrop';
+import { ETAPAS, etapaPorId, formatarUltimaAtualizacao, normalizarEtapa, type EtapaPipelineId } from './pipelineEtapas';
+import { podeArrastarCandidatura, ehEtapaDoPipeline } from './pipelineDragDrop';
 import { PipelineCard, type MoverEtapaHandler } from './PipelineCard';
 import { PipelineColumn } from './PipelineColumn';
 
@@ -59,11 +53,6 @@ export interface PipelineBoardProps {
   onAbrir: (cand: CandidaturaComRelacoes) => void;
   onMoverEtapa: MoverEtapaHandler;
   onContatar: (cand: CandidaturaComRelacoes) => void;
-  /**
-   * Inscrição real de candidato na etapa (fluxo `criarCandidatura` da página).
-   * Ausente = o rodapé da coluna não oferece o botão (nunca um botão de fachada).
-   */
-  onAdicionarCandidato?: (etapa: EtapaPipeline) => void;
   /** Consulta de candidaturas falhou — mostra erro em vez de board vazio. */
   erro?: boolean;
   onTentarNovamente?: () => void;
@@ -81,7 +70,6 @@ export function PipelineBoard({
   onAbrir,
   onMoverEtapa,
   onContatar,
-  onAdicionarCandidato,
   erro = false,
   onTentarNovamente,
   isActive = true,
@@ -124,8 +112,12 @@ export function PipelineBoard({
     });
   }, [porId]);
 
-  /** Agrupa por etapa EFETIVA (base + override otimista), preservando a ordem recebida. */
-  const grupos = useMemo(() => {
+  /**
+   * Agrupa por etapa EFETIVA (base + override otimista), preservando a ordem
+   * recebida. Etapa fora do vocabulário das cinco colunas não entra em nenhuma
+   * coluna — vai para `fora` e é DECLARADA no rodapé, nunca descartada em silêncio.
+   */
+  const { grupos, fora } = useMemo(() => {
     const mapa: Record<EtapaPipelineId, CandidaturaComRelacoes[]> = {
       triagem: [],
       entrevista: [],
@@ -133,11 +125,18 @@ export function PipelineBoard({
       proposta: [],
       contratado: [],
     };
+    const foraDoFunil: CandidaturaComRelacoes[] = [];
     for (const cand of candidaturas) {
-      const etapa = etapasLocais[cand.id] ?? normalizarEtapa(cand.etapa);
+      // A sobrescrita local já é um id válido; normalizar os dois pela mesma régua
+      // mantém o tipo na união e evita que o TS estreite e mate o ramo de 'outras'.
+      const etapa = normalizarEtapa(etapasLocais[cand.id] ?? cand.etapa);
+      if (etapa === 'outras') {
+        foraDoFunil.push(cand);
+        continue;
+      }
       mapa[etapa].push(cand);
     }
-    return mapa;
+    return { grupos: mapa, fora: foraDoFunil };
   }, [candidaturas, etapasLocais]);
 
   const limparBloqueioClique = useCallback(() => {
@@ -257,7 +256,6 @@ export function PipelineBoard({
               items={grupos[etapa.id]}
               indice={indice}
               isActive={isActive}
-              onAdicionar={onAdicionarCandidato}
               onAbrir={onAbrir}
               onMoverEtapa={onMoverEtapa}
               onContatar={onContatar}
@@ -300,6 +298,15 @@ export function PipelineBoard({
             <Clock className="h-3 w-3" aria-hidden />
             Última atualização: {ultimaAtualizacao}
           </span>
+          {fora.length > 0 ? (
+            <>
+              <span aria-hidden className="hidden h-3 w-px bg-border/60 sm:block" />
+              <span data-pipeline-fora>
+                <strong className="font-semibold tabular-nums text-foreground">{fora.length}</strong>{' '}
+                {fora.length === 1 ? 'candidatura' : 'candidaturas'} fora das etapas monitoradas
+              </span>
+            </>
+          ) : null}
         </div>
       </footer>
     </div>
