@@ -1124,6 +1124,7 @@
    "src/utils/safeError.ts"
   ],
   "src/components/colaborador-detalhes/ColaboradorDocuments.tsx": [
+   "src/components/colaborador-detalhes/documentos/FileUploadField.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
@@ -1134,6 +1135,9 @@
    "src/components/ui/spinner.tsx",
    "src/components/ui/table.tsx",
    "src/hooks/useDocumentos.ts",
+   "src/hooks/useEmpresas.ts",
+   "src/services/documentUploadService.ts",
+   "src/utils/safeError.ts",
    "src/utils/safeUrl.ts"
   ],
   "src/components/colaborador-detalhes/ContasBancariasTab.tsx": [
@@ -1184,6 +1188,7 @@
    "src/lib/utils.ts"
   ],
   "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx": [
+   "src/components/colaborador-detalhes/documentos/FileUploadField.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
@@ -1193,8 +1198,12 @@
    "src/components/ui/select.tsx",
    "src/components/ui/spinner.tsx",
    "src/components/ui/table.tsx",
+   "src/hooks/useEmpresas.ts",
    "src/hooks/usePiiMask.ts",
-   "src/hooks/useTabelasReferencia.ts"
+   "src/hooks/useTabelasReferencia.ts",
+   "src/services/documentUploadService.ts",
+   "src/utils/safeError.ts",
+   "src/utils/safeUrl.ts"
   ],
   "src/components/colaborador-detalhes/EditarJornadaDialog.tsx": [
    "src/components/colaborador-detalhes/FalhaConsulta.tsx",
@@ -1448,6 +1457,7 @@
   ],
   "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx": [
    "src/components/colaborador-detalhes/documentos/FileTypeIcon.tsx",
+   "src/components/colaborador-detalhes/documentos/FileUploadField.tsx",
    "src/components/colaborador-detalhes/historico/eventDate.ts",
    "src/components/dashboard/MetricCard.tsx",
    "src/components/ui/animated-cascade-dialog.tsx",
@@ -1461,10 +1471,13 @@
    "src/components/ui/table.tsx",
    "src/hooks/index.ts",
    "src/hooks/useEmpresas.ts",
+   "src/services/documentUploadService.ts",
+   "src/utils/safeError.ts",
    "src/utils/safeUrl.ts"
   ],
   "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx": [
    "src/components/colaborador-detalhes/FalhaConsulta.tsx",
+   "src/components/colaborador-detalhes/documentos/FileUploadField.tsx",
    "src/components/dashboard/MetricCard.tsx",
    "src/components/ui/animated-cascade-dialog.tsx",
    "src/components/ui/badge.tsx",
@@ -1477,6 +1490,7 @@
    "src/components/ui/table.tsx",
    "src/hooks/index.ts",
    "src/hooks/useEmpresas.ts",
+   "src/services/documentUploadService.ts",
    "src/utils/piiMask.ts",
    "src/utils/safeError.ts",
    "src/utils/safeUrl.ts"
@@ -1484,6 +1498,11 @@
   "src/components/colaborador-detalhes/documentos/FileTypeIcon.tsx": [
    "src/lib/utils.ts",
    "src/utils/documentFileType.ts"
+  ],
+  "src/components/colaborador-detalhes/documentos/FileUploadField.tsx": [
+   "src/components/colaborador-detalhes/documentos/FileTypeIcon.tsx",
+   "src/lib/utils.ts",
+   "src/utils/uploadValidation.ts"
   ],
   "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx": [
    "src/components/colaborador-detalhes/FalhaConsulta.tsx",
@@ -7337,6 +7356,10 @@
    "src/integrations/supabase/client.ts",
    "src/integrations/supabase/database.types.ts",
    "src/schemas/validate.ts",
+   "src/utils/uploadValidation.ts"
+  ],
+  "src/services/documentUploadService.ts": [
+   "src/integrations/supabase/client.ts",
    "src/utils/uploadValidation.ts"
   ],
   "src/services/documentoService.ts": [

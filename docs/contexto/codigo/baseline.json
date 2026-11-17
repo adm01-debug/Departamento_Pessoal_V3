@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6fbdf5c2bb950b624ff31135be9da1ab4d2ff22d",
+  "commit": "45748e77d40e1e664b96e9688caf95faecb2a88a",
   "branch": "main",
-  "data_commit": "2026-11-17T18:14:10-03:00",
+  "data_commit": "2026-11-17T18:47:45-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "45748e7",
+    "data": "2026-11-17",
+    "assunto": "feat(documentos): upload real de arquivo nos 4 formulários de documento (#653)"
+   },
+   {
+    "sha": "0425875",
+    "data": "2026-11-17",
+    "assunto": "fix(automação): registra os 5 scripts que a #652 deixou sem gatilho (#654)"
+   },
    {
     "sha": "6fbdf5c",
     "data": "2026-11-17",
@@ -121,23 +131,13 @@
     "sha": "6dfb623",
     "data": "2026-11-17",
     "assunto": "feat(ui): resgata da muri os primitivos do design system (#627)"
-   },
-   {
-    "sha": "d3a7108",
-    "data": "2026-11-17",
-    "assunto": "feat(layout): resgata da muri o shell de layout e a entrada de menu que faltava (#626)"
-   },
-   {
-    "sha": "e0e4448",
-    "data": "2026-11-17",
-    "assunto": "feat(design): traz o sistema de design da branch muri para a main (#625)"
    }
   ],
-  "arquivos_mudados_7d": 1094,
+  "arquivos_mudados_7d": 1082,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 358
+    "mudancas": 360
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 105
+    "mudancas": 106
    },
    {
     "pasta": "src/components/avaliacao",
@@ -157,7 +157,7 @@
    },
    {
     "pasta": "src/components/colaborador-detalhes",
-    "mudancas": 76
+    "mudancas": 81
    },
    {
     "pasta": "src/components/treinamentos",
@@ -226,12 +226,8 @@
     "mudancas": 9
    },
    {
-    "arquivo": "PENDENCIAS.md",
-    "mudancas": 7
-   },
-   {
     "arquivo": "scripts/automation.config.json",
-    "mudancas": 7
+    "mudancas": 8
    },
    {
     "arquivo": "scripts/sync/mirror-github.sh",
@@ -243,6 +239,10 @@
    },
    {
     "arquivo": "AGENTS.md",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "PENDENCIAS.md",
     "mudancas": 6
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 268
+    "commits": 270
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 16
+    "commits": 14
    },
    {
     "autor": "dependabot[bot]",
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3539,
-  "arquivos_codigo": 2053,
-  "linhas_codigo": 405542,
+  "arquivos_total": 3542,
+  "arquivos_codigo": 2056,
+  "linhas_codigo": 406207,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
-  "componentes": 629,
+  "componentes": 630,
   "hooks": 116,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 861,
   "cron_jobs": 41,
-  "testes": 760,
+  "testes": 761,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 332
@@ -647,8 +647,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 963,
-   "linhas": 173218
+   "arquivos": 964,
+   "linhas": 173625
   },
   "src/constants": {
    "arquivos": 7,
@@ -672,7 +672,7 @@
   },
   "src/integrations": {
    "arquivos": 11,
-   "linhas": 25911
+   "linhas": 25929
   },
   "src/lib": {
    "arquivos": 20,
@@ -696,11 +696,11 @@
   },
   "src/schemas": {
    "arquivos": 33,
-   "linhas": 8725
+   "linhas": 8731
   },
   "src/services": {
-   "arquivos": 189,
-   "linhas": 40624
+   "arquivos": 191,
+   "linhas": 40858
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -758,11 +758,11 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 24831
+   "linhas": 24849
   },
   {
    "arquivo": "src/schemas/tableColumns.ts",
-   "linhas": 4164
+   "linhas": 4170
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",
@@ -1077,11 +1077,9 @@
    "departamentos",
    "dependentes",
    "documento_templates",
-   "documentos",
    "documentos_admissao",
    "documentos_assinatura",
    "documentos_colaborador",
-   "documentos_pessoais_arquivos",
    "empresas",
    "emprestimos_consignados",
    "epis",

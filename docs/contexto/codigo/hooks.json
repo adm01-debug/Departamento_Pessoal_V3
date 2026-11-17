@@ -1629,12 +1629,14 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 123,
+   "usado_por": 125,
    "usado_por_arquivos": [
     "src/components/admissoes/AdmissoesKanban.tsx",
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     "src/components/afastamentos/AfastamentoForm.tsx",
     "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+    "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
+    "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
     "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
     "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
     "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
@@ -1658,9 +1660,7 @@
     "src/components/folha/LancamentosDialog.tsx",
     "src/components/folha/PagamentoBancarioWizard.tsx",
     "src/components/folha/RelatorioContabilDialog.tsx",
-    "src/components/folha/SimuladorWhatIf.tsx",
-    "src/components/integracoes/ConfigPanels.tsx",
-    "src/components/layout/EmpresaSwitcher.tsx"
+    "src/components/folha/SimuladorWhatIf.tsx"
    ],
    "coberto_por_testes": 6
   },

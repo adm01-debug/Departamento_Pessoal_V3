@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1915)",
+   "TypeScript (1918)",
    "SQL (927)",
    "Markdown (332)",
    "JavaScript (134)",
@@ -1850,7 +1850,7 @@
    },
    {
     "host": "example.test",
-    "arquivos": 6
+    "arquivos": 7
    },
    {
     "host": "lovable.app",
@@ -2235,6 +2235,10 @@
    },
    {
     "papel": "banner",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "button",
     "ocorrencias": 1
    },
    {

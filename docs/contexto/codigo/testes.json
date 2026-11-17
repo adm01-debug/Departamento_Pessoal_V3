@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 760,
+ "total": 761,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 721
+  "unit": 722
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 634
+   "arquivos": 635
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -1000,12 +1000,12 @@
   {
    "arquivo": "src/components/__tests__/ColaboradorDocuments.test.tsx",
    "tipo": "unit",
-   "linhas": 138,
+   "linhas": 158,
    "testa": [
     "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
     "src/hooks/useDocumentos.ts"
    ],
-   "casos": 9
+   "casos": 11
   },
   {
    "arquivo": "src/components/__tests__/ColaboradorFilters.test.tsx",
@@ -1351,7 +1351,7 @@
   {
    "arquivo": "src/components/__tests__/DocumentosPessoaisTab.test.tsx",
    "tipo": "unit",
-   "linhas": 95,
+   "linhas": 101,
    "testa": [
     "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
     "src/hooks/useTabelasReferencia.ts"
@@ -5662,6 +5662,16 @@
    "casos": 12
   },
   {
+   "arquivo": "src/services/__tests__/documentUploadService.test.ts",
+   "tipo": "unit",
+   "linhas": 156,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/services/documentUploadService.ts"
+   ],
+   "casos": 13
+  },
+  {
    "arquivo": "src/services/__tests__/edgeFunctionsService.test.ts",
    "tipo": "unit",
    "linhas": 298,
@@ -7522,7 +7532,7 @@
   "src/hooks/useWebhooksAvancados.ts": 2,
   "src/hooks/validators.ts": 1,
   "src/integrations/lovable/index.ts": 1,
-  "src/integrations/supabase/client.ts": 24,
+  "src/integrations/supabase/client.ts": 25,
   "src/integrations/supabase/database.types.ts": 12,
   "src/integrations/supabase/previewAuthStorage.ts": 1,
   "src/integrations/supabase/types.ts": 13,
@@ -7595,6 +7605,7 @@
   "src/services/departamentoService.ts": 3,
   "src/services/desligamentoService.ts": 4,
   "src/services/despesaService.ts": 1,
+  "src/services/documentUploadService.ts": 1,
   "src/services/documentoService.ts": 2,
   "src/services/edgeFunctionsService.ts": 3,
   "src/services/empresaService.ts": 1,

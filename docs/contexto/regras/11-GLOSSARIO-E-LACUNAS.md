@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6fbdf5c2bb` · branch `main` · 2026-11-17 21:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `45748e77d4` · branch `main` · 2026-11-17 21:48 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -146,14 +146,14 @@
 | `despesas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 19 colunas | migration |
 | `despesas_aprovacoes_log` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `documento_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `documentos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
+| `documentos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
 | `documentos_admissao` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `documentos_afastamento` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `documentos_assinatura` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
 | `documentos_assinaturas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
 | `documentos_colaborador` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `documentos_historico` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `documentos_pessoais_arquivos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
+| `documentos_pessoais_arquivos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `documentos_versoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
 | `dp_audit_config` | Registro de politicas de auditoria por tabela para LGPD Art. 37 e 39. PROCEDIMENTO DE ATIVACAO pgaudit:   1. Acessar Supabase Dashboard > Database > Extensions   2. Habilitar pgaudit   3. Executar: ALTER DATABASE postgres SET pgaudit.log = 'write';   4. Executar: ALTER DATABASE postgres SET pgaudit.log_relation = 'on';   5. Para cada tabela em dp_audit_config WHERE enabled=true E audit_writes=true:      SECURITY LABEL FOR pgaudit ON TABLE public.<tabela> IS 'OBJECT';   ATENCAO: pgaudit.log = 'all' enche o disco em horas. Usar SOMENTE 'write'. | 9 colunas | migration |
 | `dp_audit_log` | Audit log Departamento Pessoal — IMUTÁVEL (sem UPDATE/DELETE de roles de aplicação). Particionado por mês para performance e retenção. LGPD Art.37: registro de operações de tratamento de dados. Conteúdo: metadata de eventos — NÃO armazena PII raw no payload. | 10 colunas | migration |

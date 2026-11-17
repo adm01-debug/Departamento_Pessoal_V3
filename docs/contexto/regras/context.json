@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "6fbdf5c2bb950b624ff31135be9da1ab4d2ff22d",
+  "sha": "45748e77d40e1e664b96e9688caf95faecb2a88a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 21:20 UTC",
-  "files_total": 3552,
-  "code_files": 2978,
-  "code_lines": 470845
+  "generated_at": "2026-11-17 21:48 UTC",
+  "files_total": 3555,
+  "code_files": 2981,
+  "code_lines": 471492
  },
  "version": "1.3.2",
- "facts_hash": "60a7b272d8935f47",
+ "facts_hash": "feaec88a316380e2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,9 +387,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 989,
+   ".tsx": 990,
+   ".ts": 928,
    ".sql": 927,
-   ".ts": 926,
    ".mjs": 108,
    ".js": 15,
    ".cjs": 11,
@@ -14251,6 +14251,34 @@
       "fk": "",
       "generated": "",
       "src": "src/integrations/supabase/types.ts"
+     },
+     {
+      "name": "mime_type",
+      "type": "string | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
+     },
+     {
+      "name": "nome_arquivo",
+      "type": "string | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
+     },
+     {
+      "name": "storage_path",
+      "type": "string | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
+     },
+     {
+      "name": "tamanho",
+      "type": "number | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
      }
     ],
     "constraints": [
@@ -14818,6 +14846,20 @@
       "fk": "",
       "generated": "",
       "src": "supabase/rebaseline/20260831_corrected_public.sql"
+     },
+     {
+      "name": "mime_type",
+      "type": "string | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
+     },
+     {
+      "name": "storage_path",
+      "type": "string | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
      }
     ],
     "constraints": [
@@ -89144,7 +89186,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 299
+    "deps_count": 301
    },
    {
     "path": "",
@@ -99992,7 +100034,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 963,
+  "components_count": 964,
   "hooks": [
    {
     "name": "useContacts",
@@ -101579,8 +101621,8 @@
   },
   {
    "module": "src/components",
-   "files": 963,
-   "lines": 173218,
+   "files": 964,
+   "lines": 173625,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102551,7 +102593,7 @@
   {
    "module": "src/schemas",
    "files": 33,
-   "lines": 8725,
+   "lines": 8731,
    "tables": [],
    "exports": [
     "admissao.ts: admissaoSchema, AdmissaoSchema",
@@ -102633,8 +102675,8 @@
   },
   {
    "module": "src/services",
-   "files": 189,
-   "lines": 40624,
+   "files": 191,
+   "lines": 40858,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -102867,6 +102909,7 @@
     "departamentoService.ts: departamentoService",
     "desligamentoService.ts: DesligamentoComColaborador, desligamentoService",
     "despesaService.ts: DespesaStatus, DespesaTipo, DespesaComColaborador, despesaService",
+    "documentUploadService.ts: UploadedFileMeta, uploadDocumentFile, removeDocumentFile, getDocumentSignedUrl, resolveDocumentUrl",
     "documentoService.ts: DocumentoListItem, documentoService",
     "edgeFunctionsService.ts: EdgeFunctionInvokeError, isDefinitiveIdempotencyFailure, edgeFunctionsService",
     "empresaService.ts: empresaService",
@@ -102877,8 +102920,7 @@
     "faltasService.ts: FaltaComColaborador, faltasService",
     "feriasService.ts: feriasService",
     "folhaPagamentoService.ts: FolhaItemDetalhes, HoleriteData, folhaPagamentoService",
-    "folhaService.ts: FolhaRecord, FolhaFilters, folhaService",
-    "historicoContratoService.ts: historicoContratoService"
+    "folhaService.ts: FolhaRecord, FolhaFilters, folhaService"
    ],
    "docs": [
     "assistenteIAService.ts: P5-081: Assistente IA — service layer Simulação de cenários: 1. Edge function timeout (30s) → AbortController + friendly error 2. Request em andamento → cancela anterior (same-key cancellation) 3. 401 Unauthorized → refresh token + retry 4. Resposta malformada → fallback com mensagem CLT 5. Offline …",
@@ -102946,6 +102988,7 @@
     "src/services/departamentoService.ts",
     "src/services/desligamentoService.ts",
     "src/services/despesaService.ts",
+    "src/services/documentUploadService.ts",
     "src/services/documentoService.ts",
     "src/services/edgeFunctionsService.ts",
     "src/services/empresaService.ts",
@@ -102996,8 +103039,7 @@
     "src/services/__tests__/admissaoService.test.ts",
     "src/services/__tests__/afastamentoService.test.ts",
     "src/services/__tests__/assistenteIAService.test.ts",
-    "src/services/__tests__/auditoriaService.test.ts",
-    "src/services/__tests__/authService.test.ts"
+    "src/services/__tests__/auditoriaService.test.ts"
    ]
   },
   {
@@ -113846,11 +113888,15 @@
    },
    {
     "file": "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
-    "msg": "Erro ao salvar documento"
+    "msg": "Arquivo não encontrado."
    },
    {
     "file": "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
     "msg": "Nome do documento é obrigatório"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
+    "msg": "Selecione uma empresa antes de enviar o arquivo."
    },
    {
     "file": "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
@@ -113882,7 +113928,11 @@
    },
    {
     "file": "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
-    "msg": "Erro ao adicionar documento"
+    "msg": "Arquivo não encontrado."
+   },
+   {
+    "file": "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
+    "msg": "Selecione uma empresa antes de enviar o arquivo."
    },
    {
     "file": "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
@@ -115931,6 +115981,10 @@
    {
     "file": "src/services/despesaService.ts",
     "msg": "empresa_id obrigatório para isolamento de tenant"
+   },
+   {
+    "file": "src/services/documentUploadService.ts",
+    "msg": "Não foi possível gerar o link de acesso ao arquivo."
    },
    {
     "file": "src/services/documentoService.ts",
@@ -146281,14 +146335,44 @@
     "value": "365"
    },
    {
+    "file": "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
+    "name": "BUCKET",
+    "value": "'documentos'"
+   },
+   {
     "file": "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
     "name": "DIAS_ALERTA_VALIDADE",
     "value": "60"
    },
    {
+    "file": "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
+    "name": "BUCKET",
+    "value": "'documentos-colaboradores'"
+   },
+   {
     "file": "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
     "name": "HISTORICO_REVEAL_GAP",
     "value": "0.45"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
+    "name": "BUCKET",
+    "value": "'documentos'"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
+    "name": "BUCKET",
+    "value": "'documentos-colaboradores'"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/FileUploadField.tsx",
+    "name": "DEFAULT_ACCEPT",
+    "value": "'.pdf,.jpg,.jpeg,.png,.webp,.doc,.docx,.xls,.xlsx,.csv'"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/FileUploadField.tsx",
+    "name": "DEFAULT_MAX_SIZE_MB",
+    "value": "10"
    },
    {
     "file": "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx",
@@ -167836,6 +167920,14 @@
    {
     "file": "src/components/__tests__/ColaboradorDocuments.test.tsx",
     "name": "renders Contrato de Trabalho tipo option"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorDocuments.test.tsx",
+    "name": "oferece envio de arquivo, nao campo de URL"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorDocuments.test.tsx",
+    "name": "nao existe mais campo para colar link"
    },
    {
     "file": "src/components/__tests__/ColaboradorFilters.test.tsx",
@@ -191996,6 +192088,78 @@
    {
     "file": "src/services/__tests__/despesaService.test.ts",
     "name": "nunca dispara query cross-tenant: chamadas paralelas mantêm filtros isolados"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "documentUploadService"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "uploadDocumentFile"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "valida, envia o arquivo pro bucket e devolve o storage_path/meta"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "o primeiro segmento do path é sempre a empresa"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "extensão vem normalizada em minúscula e sem caractere estranho"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "rejeita arquivo maior que o limite antes de chamar o Storage"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "rejeita extensão perigosa antes de chamar o Storage"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "propaga erro do Storage quando o upload falha"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "removeDocumentFile"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "remove o objeto do bucket"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "lança quando o Storage devolve erro"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "getDocumentSignedUrl"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "devolve a signed URL"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "lança quando não vem signedUrl"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "resolveDocumentUrl"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "gera signed URL quando storage_path existe (fluxo novo)"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "cai pra url legada quando não há storage_path"
+   },
+   {
+    "file": "src/services/__tests__/documentUploadService.test.ts",
+    "name": "devolve null quando não há nem storage_path nem url"
    },
    {
     "file": "src/services/__tests__/documentoService.test.ts",
@@ -264347,7 +264511,7 @@
   },
   "src/components/__tests__/ColaboradorDocuments.test.tsx": {
    "path": "src/components/__tests__/ColaboradorDocuments.test.tsx",
-   "lines": 138,
+   "lines": 158,
    "is_test": true,
    "tests": [
     "ColaboradorDocuments",
@@ -264359,7 +264523,9 @@
     "shows spinner when loading",
     "renders Nome do Documento label in form",
     "renders Salvar Documento com Segurança button",
-    "renders Contrato de Trabalho tipo option"
+    "renders Contrato de Trabalho tipo option",
+    "oferece envio de arquivo, nao campo de URL",
+    "nao existe mais campo para colar link"
    ]
   },
   "src/components/__tests__/ColaboradorFilters.test.tsx": {
@@ -264915,7 +265081,7 @@
   },
   "src/components/__tests__/DocumentosPessoaisTab.test.tsx": {
    "path": "src/components/__tests__/DocumentosPessoaisTab.test.tsx",
-   "lines": 95,
+   "lines": 101,
    "is_test": true,
    "tests": [
     "DocumentosPessoaisTab",
@@ -273779,13 +273945,20 @@
   },
   "src/components/colaborador-detalhes/ColaboradorDocuments.tsx": {
    "path": "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
-   "lines": 231,
+   "lines": 291,
    "exports": [
     "function ColaboradorDocuments"
    ],
    "errors": [
-    "Erro ao salvar documento",
-    "Nome do documento é obrigatório"
+    "Arquivo não encontrado.",
+    "Nome do documento é obrigatório",
+    "Selecione uma empresa antes de enviar o arquivo."
+   ],
+   "params": [
+    {
+     "name": "BUCKET",
+     "value": "'documentos'"
+    }
    ],
    "status_values": [
     {
@@ -273855,13 +274028,20 @@
   },
   "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx": {
    "path": "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
-   "lines": 205,
+   "lines": 283,
    "exports": [
     "function DocumentosPessoaisTab"
    ],
    "errors": [
-    "Erro ao adicionar documento",
+    "Arquivo não encontrado.",
+    "Selecione uma empresa antes de enviar o arquivo.",
     "Tipo de documento é obrigatório"
+   ],
+   "params": [
+    {
+     "name": "BUCKET",
+     "value": "'documentos-colaboradores'"
+    }
    ]
   },
   "src/components/colaborador-detalhes/EditarJornadaDialog.tsx": {
@@ -274391,7 +274571,7 @@
   },
   "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx": {
    "path": "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
-   "lines": 269,
+   "lines": 316,
    "exports": [
     "function DocumentosDigitaisCard"
    ],
@@ -274399,6 +274579,12 @@
     "Arquivo não encontrado.",
     "Empresa não identificada.",
     "Nome do documento é obrigatório"
+   ],
+   "params": [
+    {
+     "name": "BUCKET",
+     "value": "'documentos'"
+    }
    ],
    "status_values": [
     {
@@ -274415,7 +274601,7 @@
   },
   "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx": {
    "path": "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
-   "lines": 282,
+   "lines": 337,
    "exports": [
     "function DocumentosPessoaisCard"
    ],
@@ -274423,6 +274609,12 @@
     "Arquivo não encontrado.",
     "Empresa não identificada.",
     "Tipo de documento é obrigatório"
+   ],
+   "params": [
+    {
+     "name": "BUCKET",
+     "value": "'documentos-colaboradores'"
+    }
    ]
   },
   "src/components/colaborador-detalhes/documentos/FileTypeIcon.tsx": {
@@ -274430,6 +274622,23 @@
    "lines": 18,
    "exports": [
     "function FileTypeIcon"
+   ]
+  },
+  "src/components/colaborador-detalhes/documentos/FileUploadField.tsx": {
+   "path": "src/components/colaborador-detalhes/documentos/FileUploadField.tsx",
+   "lines": 141,
+   "exports": [
+    "function FileUploadField"
+   ],
+   "params": [
+    {
+     "name": "DEFAULT_ACCEPT",
+     "value": "'.pdf,.jpg,.jpeg,.png,.webp,.doc,.docx,.xls,.xlsx,.csv'"
+    },
+    {
+     "name": "DEFAULT_MAX_SIZE_MB",
+     "value": "10"
+    }
    ]
   },
   "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx": {
@@ -299474,7 +299683,7 @@
   },
   "src/schemas/tableColumns.ts": {
    "path": "src/schemas/tableColumns.ts",
-   "lines": 4164,
+   "lines": 4170,
    "exports": [
     "const TABLE_COLUMNS"
    ],
@@ -302645,6 +302854,20 @@
      "value": "aprovado",
      "kind": "filtra"
     }
+   ]
+  },
+  "src/services/documentUploadService.ts": {
+   "path": "src/services/documentUploadService.ts",
+   "lines": 78,
+   "exports": [
+    "interface UploadedFileMeta",
+    "function uploadDocumentFile",
+    "function removeDocumentFile",
+    "function getDocumentSignedUrl",
+    "function resolveDocumentUrl"
+   ],
+   "errors": [
+    "Não foi possível gerar o link de acesso ao arquivo."
    ]
   },
   "src/services/documentoService.ts": {
@@ -306633,6 +306856,31 @@
    ],
    "pagination": [
     "0"
+   ]
+  },
+  "src/services/__tests__/documentUploadService.test.ts": {
+   "path": "src/services/__tests__/documentUploadService.test.ts",
+   "lines": 156,
+   "is_test": true,
+   "tests": [
+    "documentUploadService",
+    "uploadDocumentFile",
+    "valida, envia o arquivo pro bucket e devolve o storage_path/meta",
+    "o primeiro segmento do path é sempre a empresa",
+    "extensão vem normalizada em minúscula e sem caractere estranho",
+    "rejeita arquivo maior que o limite antes de chamar o Storage",
+    "rejeita extensão perigosa antes de chamar o Storage",
+    "propaga erro do Storage quando o upload falha",
+    "removeDocumentFile",
+    "remove o objeto do bucket",
+    "lança quando o Storage devolve erro",
+    "getDocumentSignedUrl",
+    "devolve a signed URL",
+    "lança quando não vem signedUrl",
+    "resolveDocumentUrl",
+    "gera signed URL quando storage_path existe (fluxo novo)",
+    "cai pra url legada quando não há storage_path",
+    "devolve null quando não há nem storage_path nem url"
    ]
   },
   "src/services/__tests__/documentoService.test.ts": {
@@ -325035,10 +325283,38 @@
   }
  },
  "git": {
-  "sha": "6fbdf5c2bb950b624ff31135be9da1ab4d2ff22d",
+  "sha": "45748e77d40e1e664b96e9688caf95faecb2a88a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "45748e7",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(documentos): upload real de arquivo nos 4 formulários de documento (#653)",
+    "files": [
+     "src/components/__tests__/ColaboradorDocuments.test.tsx",
+     "src/components/__tests__/DocumentosPessoaisTab.test.tsx",
+     "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
+     "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
+     "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
+     "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
+     "src/components/colaborador-detalhes/documentos/FileUploadField.tsx",
+     "src/integrations/supabase/types.ts",
+     "src/schemas/tableColumns.ts",
+     "src/services/__tests__/documentUploadService.test.ts",
+     "src/services/documentUploadService.ts"
+    ]
+   },
+   {
+    "sha": "0425875",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix(automação): registra os 5 scripts que a #652 deixou sem gatilho (#654)",
+    "files": [
+     "scripts/automation.config.json"
+    ]
+   },
    {
     "sha": "6fbdf5c",
     "date": "2026-11-17",
@@ -325406,38 +325682,12 @@
      "src/components/dashboard/WorkforceHealthScore.tsx",
      "src/index.css"
     ]
-   },
-   {
-    "sha": "b25c46e",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(desligamentos): drawer de rescisão com a UI da muri e o cálculo da main (#621)",
-    "files": [
-     "scripts/.bundle-budget.json",
-     "src/components/__tests__/DesligamentoChecklist.test.tsx",
-     "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
-     "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
-     "src/components/desligamentos/DesligamentoChecklist.tsx",
-     "src/components/desligamentos/DesligamentoDetailSheet.tsx",
-     "src/services/__tests__/desligamentoService.test.ts",
-     "src/services/desligamentoService.ts"
-    ]
-   },
-   {
-    "sha": "143c729",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(pwa): service worker servia HTML no lugar dos assets e travava o app (#622)",
-    "files": [
-     "public/sw-custom.js",
-     "scripts/tests/sw-routing.test.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    6
+    5
    ],
    [
     "src/pages/ColaboradoresPage.tsx",
@@ -325480,39 +325730,39 @@
     2
    ],
    [
-    "public/sw-custom.js",
-    2
-   ],
-   [
-    "scripts/tests/sw-routing.test.mjs",
-    2
-   ],
-   [
-    "docs/protegido/referencias/aguardando-gestor-1194.png",
+    "src/components/__tests__/ColaboradorDocuments.test.tsx",
     1
    ],
    [
-    "docs/protegido/referencias/aguardando-gestor-1456.png",
+    "src/components/__tests__/DocumentosPessoaisTab.test.tsx",
     1
    ],
    [
-    "docs/protegido/referencias/ciclo-nome-longo-1194.png",
+    "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
     1
    ],
    [
-    "docs/protegido/referencias/ciclo-nome-longo-1456.png",
+    "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
     1
    ],
    [
-    "docs/protegido/referencias/feedbacks-1194.png",
+    "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
     1
    ],
    [
-    "docs/protegido/referencias/feedbacks-1456.png",
+    "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
     1
    ],
    [
-    "docs/protegido/referencias/feedbacks-nome-longo-1194.png",
+    "src/components/colaborador-detalhes/documentos/FileUploadField.tsx",
+    1
+   ],
+   [
+    "src/integrations/supabase/types.ts",
+    1
+   ],
+   [
+    "src/schemas/tableColumns.ts",
     1
    ]
   ]

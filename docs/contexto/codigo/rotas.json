@@ -6174,6 +6174,7 @@
     "admin",
     "alert",
     "banner",
+    "button",
     "list",
     "listitem",
     "main",
@@ -6182,7 +6183,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 341
+   "arquivos_puxados": 343
   },
   {
    "protegida": true,

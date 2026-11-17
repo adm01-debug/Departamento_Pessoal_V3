@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6fbdf5c2bb` · branch `main` · 2026-11-17 21:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `45748e77d4` · branch `main` · 2026-11-17 21:48 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4526,8 +4526,14 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `MIN_CARACTERES_JUSTIFICATIVA` | `10` | `src/components/avaliacao/statusFeedback.ts` |
 | `CHAVE_HISTORICO_FEEDBACK` | `'historico_feedback'` | `src/components/avaliacao/useHistoricoFeedback.ts` |
 | `DIAS_HISTORICO` | `365` | `src/components/colaborador-detalhes/AfastamentosTab.tsx` |
+| `BUCKET` | `'documentos'` | `src/components/colaborador-detalhes/ColaboradorDocuments.tsx` |
 | `DIAS_ALERTA_VALIDADE` | `60` | `src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx` |
+| `BUCKET` | `'documentos-colaboradores'` | `src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx` |
 | `HISTORICO_REVEAL_GAP` | `0.45` | `src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx` |
+| `BUCKET` | `'documentos'` | `src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx` |
+| `BUCKET` | `'documentos-colaboradores'` | `src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx` |
+| `DEFAULT_ACCEPT` | `'.pdf,.jpg,.jpeg,.png,.webp,.doc,.docx,.xls,.xlsx,.csv'` | `src/components/colaborador-detalhes/documentos/FileUploadField.tsx` |
+| `DEFAULT_MAX_SIZE_MB` | `10` | `src/components/colaborador-detalhes/documentos/FileUploadField.tsx` |
 | `DIAS_ALERTA_VALIDADE` | `60` | `src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx` |
 | `ROW_STAGGER` | `0.12` | `src/components/colaborador-detalhes/historico/HistoryEventRow.tsx` |
 | `SUB_STEP` | `0.14` | `src/components/colaborador-detalhes/historico/HistoryEventRow.tsx` |
@@ -4701,13 +4707,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `EXTENSAO_PADRAO` | `'webp'` | `src/services/trainingImages/paths.ts` |
 | `TENTATIVAS_MAX` | `3` | `src/services/trainingImages/service.ts` |
 | `CONTROLE_MAX` | `500` | `src/services/trainingImages/service.ts` |
-| `LOCALE_BR` | `'pt-BR'` | `src/utils/format.ts` |
-| `TZ_BR` | `'America/Sao_Paulo'` | `src/utils/format.ts` |
-| `DEFAULT_FALLBACK` | `'—'` | `src/utils/format.ts` |
-| `MIN_LENGTH` | `8` | `src/utils/passwordPolicy.ts` |
-| `MAX_LENGTH` | `128` | `src/utils/passwordPolicy.ts` |
-| `HOURS_PER_DAY` | `24` | `src/utils/pgInterval.ts` |
-| … +115 linhas — lista completa em `context.json` | | |
+| … +121 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5167,8 +5167,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Erro ao adicionar anotação | `src/components/colaborador-detalhes/AnotacoesTab.tsx` |
 | Título é obrigatório | `src/components/colaborador-detalhes/AnotacoesTab.tsx` |
 | >             {erroSalvar}           </p>         )}         {carregando ? (           <Spinner />         ) : falhou ? (           <FalhaConsulta o= | `src/components/colaborador-detalhes/CamposCustomizadosTab.tsx` |
-| Erro ao salvar documento | `src/components/colaborador-detalhes/ColaboradorDocuments.tsx` |
+| Arquivo não encontrado. | `src/components/colaborador-detalhes/ColaboradorDocuments.tsx` |
 | Nome do documento é obrigatório | `src/components/colaborador-detalhes/ColaboradorDocuments.tsx` |
+| Selecione uma empresa antes de enviar o arquivo. | `src/components/colaborador-detalhes/ColaboradorDocuments.tsx` |
 | Agência é obrigatória | `src/components/colaborador-detalhes/ContasBancariasTab.tsx` |
 | Conta é obrigatória | `src/components/colaborador-detalhes/ContasBancariasTab.tsx` |
 | Erro ao adicionar conta | `src/components/colaborador-detalhes/ContasBancariasTab.tsx` |
@@ -5176,7 +5177,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Erro ao adicionar dependente | `src/components/colaborador-detalhes/DependentesTab.tsx` |
 | Nome é obrigatório | `src/components/colaborador-detalhes/DependentesTab.tsx` |
 | Parentesco é obrigatório | `src/components/colaborador-detalhes/DependentesTab.tsx` |
-| Erro ao adicionar documento | `src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx` |
+| Arquivo não encontrado. | `src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx` |
+| Selecione uma empresa antes de enviar o arquivo. | `src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx` |
 | Tipo de documento é obrigatório | `src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx` |
 |  className= | `src/components/colaborador-detalhes/EditarJornadaDialog.tsx` |
 | Apenas administradores e RH podem editar contatos de emergência (contêm telefone e e-mail). | `src/components/colaborador-detalhes/EmergenciaTab.tsx` |
@@ -5342,9 +5344,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Conexão já existe | `src/components/workflows/WorkflowDesigner.tsx` |
 | Corrija os erros antes de salvar | `src/components/workflows/WorkflowDesigner.tsx` |
 | Limite de 50 nós atingido | `src/components/workflows/WorkflowDesigner.tsx` |
-| O fluxo contém um ciclo — aprovações precisam formar uma sequência sem retorno. | `src/components/workflows/ordenarEtapas.ts` |
-| Senha fraca: ${pwCheck.errors.join( | `src/contexts/AuthContext.tsx` |
-| … +663 linhas — lista completa em `context.json` | |
+| … +666 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5415,7 +5415,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9176 testes em 716 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9196 testes em 717 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5546,6 +5546,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/constants/__tests__/regimes.test.ts` | 18 | REGIMES_TRIBUTARIOS · defines all 4 regime types · each regime has required fields · simples_nacional does NOT collect INSS patronal … |
 | `src/hooks/ferias/__tests__/useProgramacaoFerias.test.ts` | 18 | useProgramacaoFerias · uses ferias-programacao queryKey with ano and filters · is enabled when empresaId is present · returns data from query … |
 | `src/services/__tests__/baseService.test.ts` | 18 | BaseService.listar · returns data and total from supabase · returns empty data with total 0 when supabase returns null · queries page 2 with correct range offset … |
+| `src/services/__tests__/documentUploadService.test.ts` | 18 | documentUploadService · uploadDocumentFile · valida, envia o arquivo pro bucket e devolve o storage_path/meta · o primeiro segmento do path é sempre a empresa … |
 | `src/services/trainingImages/__tests__/briefing.test.ts` | 18 | briefing por assunto · panificação → padaria, fermentação e pães · segurança do trabalho → proteção e ambiente sinalizado · programação/tecnologia → software e ambiente técnico … |
 | `src/utils/__tests__/uploadValidation.test.ts` | 18 | validateUploadFile · accepts a valid PDF file · accepts a valid JPEG image · throws when file exceeds size limit … |
 | `scripts/tests/inventario-banco.test.mjs` | 17 | banco.sql tem as secoes esperadas e cada uma devolve a coluna j · banco.sql so le: nenhum comando de escrita e nada do command do cron · banco.sql: nome de tabela entra escapado na regex de citada_no_banco · banco.sql: count(*) exato so sem RLS no caminho (tabela sem RLS ou papel que ignora RLS) … |
@@ -5632,6 +5633,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/feriasPDF.test.ts` | 13 | feriasPDF.gerarRecibo · creates a jsPDF document · saves the PDF file · includes colaborador name in text calls … |
 | `src/calculators/__tests__/rescisao.test.ts` | 12 | calcularRescisao · returns all expected top-level keys · saldoSalario is proportional to days worked · sem_justa_causa has aviso previo > 0 … |
 | `src/components/__tests__/AppPagination.test.tsx` | 12 | AppPagination · mostra a página atual em verde-lima sólido com 28 × 28 px · não renderiza o seletor sem handler de troca de quantidade · renderiza  … |
+| `src/components/__tests__/ColaboradorDocuments.test.tsx` | 12 | ColaboradorDocuments · renders Gestão de Documentos Digitais heading · renders Novo Documento button · renders Adicionar Novo Documento dialog title … |
 | `src/components/__tests__/DashboardWidgets.test.tsx` | 12 | QuickActionsGrid · renders Ações Rápidas title · renders Novo Colaborador action · renders Calcular Folha action … |
 | `src/components/__tests__/DesligamentoStatusBadge.test.tsx` | 12 | StatusBadge · renders Pendente for pendente status · renders Em Andamento for em_andamento status · renders Concluído for concluido status … |
 | `src/components/__tests__/ESocialPagamentosAndSST.test.tsx` | 12 | S1210Pagamentos · renders Rendimentos Pagos label · renders payment dates · renders perApur for competência … |
@@ -5687,7 +5689,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/secureJson.test.ts` | 11 | secureJsonParse · parses simple valid JSON · parses JSON arrays · strips __proto__ keys to prevent prototype pollution … |
 | `src/components/__tests__/AfastamentoTable.test.tsx` | 10 | AfastamentoTable · renders Colaborador table header · renders Tipo / CID table header · renders Período table header … |
 | `src/components/__tests__/Breadcrumbs.test.tsx` | 10 | Breadcrumbs · returns null when path has only one segment · renders breadcrumb for two-segment path · shows  … |
-| `src/components/__tests__/ColaboradorDocuments.test.tsx` | 10 | ColaboradorDocuments · renders Gestão de Documentos Digitais heading · renders Novo Documento button · renders Adicionar Novo Documento dialog title … |
 | `src/components/__tests__/DarfTab.test.tsx` | 10 | DarfTab · renders DARF title · renders IRRF label · does not render non-payroll taxes (PIS/COFINS, CSLL) … |
 | `src/components/__tests__/DesempenhoBarrasProgresso.test.tsx` | 10 | barra de progresso — paridade com  · a régua do módulo é, número por número, a do card de referência · props da barra: 0 → pct%, com o stagger por índice · normaliza o percentual (limites 0–100 e valor inválido) … |
 | `src/components/__tests__/ESocialAuditDialog.test.tsx` | 10 | ESocialAuditDialog · renders honest dialog title when open (sem alegar IA) · renders description with the number of eventos checked · shows results immediately, without fake progress bar … |
@@ -5718,8 +5719,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/loggerService.test.ts` | 10 | loggerService · should buffer info logs and not call supabase rpc immediately · should flush error logs immediately via rpc · should flush warn logs immediately via rpc for security audit … |
 | `src/services/tabelas/__tests__/pontoService.test.ts` | 10 | ajustesPontoService · listar queries ajustes_ponto · listar returns [] when data is null · criar calls insert on ajustes_ponto … |
 | `src/test/securityHeadersParity.test.ts` | 10 | paridade de security headers vercel.json x nginx.conf · nginx.conf serve exatamente os headers globais do vercel.json · vercel.json aplica os headers em produção · não usa  … |
-| `src/utils/__tests__/avisoFeriasPDF.test.ts` | 10 | gerarAvisoFeriasPDF · returns a Blob · returns a Uint8Array bytes · returns a sha256 hash string … |
-| … +416 linhas — lista completa em `context.json` | | |
+| … +417 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

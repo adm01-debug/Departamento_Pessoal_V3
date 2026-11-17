@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 629,
+ "total": 630,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -1557,10 +1557,11 @@
     "ColaboradorDocuments"
    ],
    "export_default": null,
-   "linhas": 231,
+   "linhas": 291,
    "dominio": "components/colaborador-detalhes",
    "hooks_locais": [
-    "useDocumentos"
+    "useDocumentos",
+    "useEmpresas"
    ],
    "tabelas": [],
    "edges": [],
@@ -1728,7 +1729,7 @@
     "DocumentosDigitaisCard"
    ],
    "export_default": null,
-   "linhas": 269,
+   "linhas": 316,
    "dominio": "components/colaborador-detalhes",
    "hooks_locais": [
     "useDocumentos",
@@ -1745,7 +1746,7 @@
     "DocumentosPessoaisCard"
    ],
    "export_default": null,
-   "linhas": 282,
+   "linhas": 337,
    "dominio": "components/colaborador-detalhes",
    "hooks_locais": [
     "useCriarDocumentoPessoal",
@@ -1769,7 +1770,21 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/documentos/FileUploadField.tsx",
+   "exports": [
+    "FileUploadField"
+   ],
+   "export_default": null,
+   "linhas": 141,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 4,
    "orfao": false
   },
   {
@@ -1864,11 +1879,12 @@
     "DocumentosPessoaisTab"
    ],
    "export_default": null,
-   "linhas": 205,
+   "linhas": 283,
    "dominio": "components/colaborador-detalhes",
    "hooks_locais": [
     "useCriarDocumentoPessoal",
     "useDocumentosPessoais",
+    "useEmpresas",
     "useExcluirDocumentoPessoal",
     "usePiiMask"
    ],

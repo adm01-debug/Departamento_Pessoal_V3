@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (511)",
+   "src/components (512)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
@@ -17,12 +17,12 @@
    "src/contexts (4)"
   ],
   "servicos_logica": [
-   "src/services (94)",
+   "src/services (95)",
    "src/utils (35)",
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (634)",
+   "co-localizado (__tests__) (635)",
    "co-localizado (*.test) (73)",
    "e2e/ (28)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (629)"
+  ".tsx (630)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(documentos): upload real de arquivo nos 4 formulários de documento (#653)",
+   "fix(automação): registra os 5 scripts que a #652 deixou sem gatilho (#654)",
    "feat(design-system): recupera os gates de layout protegido e de tipografia (#652)",
    "fix(deploy): recupera o app depois de um deploy novo trocar os chunks (#646)",
-   "fix(hooks): guardas de empresa em ajuste de ponto e conta bancária (#650)",
-   "fix(portal): exclusão de documento não apaga a linha quando o storage recusa (#645)",
-   "feat(colaborador): aba de Afastamentos no dossiê, sem dado de saúde (#643)"
+   "fix(hooks): guardas de empresa em ajuste de ponto e conta bancária (#650)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

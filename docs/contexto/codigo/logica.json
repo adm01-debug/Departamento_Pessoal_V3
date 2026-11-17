@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 178,
+ "total": 179,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
@@ -9,7 +9,7 @@
   "providers": 1,
   "python": 3,
   "schemas": 25,
-  "services": 94,
+  "services": 95,
   "utils": 35
  },
  "arquivos": [
@@ -350,7 +350,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 240,
+   "usado_por": 241,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -390,7 +390,7 @@
     "utils",
     "utils/folha"
    ],
-   "coberto_por_testes": 24,
+   "coberto_por_testes": 25,
    "orfao": false
   },
   {
@@ -499,7 +499,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 24831,
+   "linhas": 24849,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -901,7 +901,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 280,
+   "usado_por": 281,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
@@ -1638,7 +1638,7 @@
     "TABLE_COLUMNS"
    ],
    "export_default": null,
-   "linhas": 4164,
+   "linhas": 4170,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -2669,6 +2669,33 @@
     "services"
    ],
    "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/documentUploadService.ts",
+   "camada": "services",
+   "exports": [
+    "UploadedFileMeta",
+    "getDocumentSignedUrl",
+    "removeDocumentFile",
+    "resolveDocumentUrl",
+    "uploadDocumentFile"
+   ],
+   "export_default": null,
+   "linhas": 78,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/colaborador-detalhes"
+   ],
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {
@@ -5716,7 +5743,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 132,
+   "usado_por": 135,
    "usado_por_modulos": [
     "components/admissoes",
     "components/colaborador-detalhes",
@@ -5761,7 +5788,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 12,
+   "usado_por": 13,
    "usado_por_modulos": [
     "components/afastamentos",
     "components/colaborador-detalhes",
@@ -5870,8 +5897,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 6,
+   "usado_por": 8,
    "usado_por_modulos": [
+    "components/colaborador-detalhes",
     "components/portal",
     "pages",
     "services"
