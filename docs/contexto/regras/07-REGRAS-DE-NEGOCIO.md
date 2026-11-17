@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d3a71089f7` · branch `main` · 2026-11-17 16:06 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6dfb623f48` · branch `main` · 2026-11-17 16:08 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4279,6 +4279,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `* para “Não informado”. Fundos em 8% e bordas em 20%.` | `src/components/treinamentos/TreinamentoBadges.tsx` |
 | `* 0.08 s por índice). O objeto é IMPORTADO da referência (não é uma cópia), então` | `src/components/treinamentos/TrilhaCard.tsx` |
 | `* ("—") em vez de 0%, que seria uma afirmação falsa.` | `src/components/treinamentos/treinamentosDerivacoes.ts` |
+| ``select.tsx`, não uma cópia. Content acima continua 100% Radix` | `src/components/ui/dropdown-menu.tsx` |
 | `* deslocado 150% + escalado 2.5x) e desliza para o centro no hover,` | `src/components/ui/flow-hover-button.tsx` |
 | `before:rounded-[100%] before:transition-transform before:duration-700 before:content-['']` | `src/components/ui/flow-hover-button.tsx` |
 | `transition={{ delay: index * 0.05 }}` | `src/components/ui/module-skeleton.tsx` |
@@ -4395,8 +4396,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `const desc = v.valor_mensal ? Number(v.valor_mensal) * 0.2 : 0;` | `supabase/functions/calcular-folha/index.ts` |
 | `const descontoVT = Math.min(Number(v.valor ?? 0), salarioBase * 0.06);` | `supabase/functions/calcular-folha/index.ts` |
 | `const descontoVT = Math.min(Number(vtLegacy.valor_mensal ?? 0), salarioBase * 0.06);` | `supabase/functions/calcular-folha/index.ts` |
-| `const fgts = trunc2(baseTributavel * 0.08);` | `supabase/functions/calcular-folha/index.ts` |
-| … +26 linhas — lista completa em `context.json` | |
+| … +27 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -5324,7 +5324,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Erro ao desvincular curso | `src/components/treinamentos/TrilhaCursosSection.tsx` |
 | Erro ao vincular | `src/components/treinamentos/TrilhaCursosSection.tsx` |
 |        data-turmas-erro       className= | `src/components/treinamentos/TurmasPainel.tsx` |
-| className={cn(alertVariants({variant}),className)}{...props}/>));Alert.displayName= | `src/components/ui/alert.tsx` |
+|  className={cn(alertVariants({ variant }), className)} {...props} /> )); Alert.displayName =  | `src/components/ui/alert.tsx` |
 | CEP não encontrado | `src/components/ui/cep-input.tsx` |
 | Erro ao consultar CEP | `src/components/ui/cep-input.tsx` |
 | CNPJ inválido | `src/components/ui/cnpj-input.tsx` |
@@ -5412,7 +5412,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9040 testes em 693 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9051 testes em 696 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5716,7 +5716,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `supabase/functions/_shared/idempotency.test.ts` | 10 | idempotency: primeira chamada retorna reason=NEW e id válido · idempotency: 20 requisições concorrentes com MESMA key produzem exatamente 1 NEW · idempotency: reenvio após conclusão retorna REPLAY com mesmo body · idempotency: conclusão 204 sem body continua sendo replay de sucesso … |
 | `supabase/functions/_shared/rateLimit.test.ts` | 10 | permite quando abaixo do limite e insere marcador · bloqueia quando count >= limit e não insere · isolamento por chave — outra chave não conta contra a atual · ignora rows fora da janela (timestamp < windowStart) … |
 | `src/components/__tests__/ASOTab.test.tsx` | 9 | ASOTab · shows spinner when loading · renders Atestados de Saúde Ocupacional title · renders Novo ASO button … |
-| … +393 linhas — lista completa em `context.json` | | |
+| … +396 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

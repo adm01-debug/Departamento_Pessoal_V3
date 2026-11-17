@@ -1425,6 +1425,7 @@
     "useGuidedTour",
     "useLocation",
     "useMemo",
+    "useMovimentoReduzido",
     "useMutation",
     "useNavigate",
     "useNotificacoes",
@@ -1455,6 +1456,7 @@
     "useEmpresas",
     "useGrupo",
     "useGuidedTour",
+    "useMovimentoReduzido",
     "useNotificacoes",
     "useNotification",
     "useOnMount",
@@ -1529,7 +1531,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 111
+   "arquivos_puxados": 112
   },
   {
    "protegida": false,
@@ -10789,7 +10791,7 @@
    ],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 74
+   "arquivos_puxados": 75
   },
   {
    "protegida": true,

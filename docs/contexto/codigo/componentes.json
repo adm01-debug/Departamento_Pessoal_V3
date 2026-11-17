@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 619,
+ "total": 620,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -6932,7 +6932,7 @@
     "AlertDialogTrigger"
    ],
    "export_default": null,
-   "linhas": 2,
+   "linhas": 87,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -6948,7 +6948,7 @@
     "AlertTitle"
    ],
    "export_default": null,
-   "linhas": 2,
+   "linhas": 36,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -7027,7 +7027,7 @@
     "BadgeProps"
    ],
    "export_default": null,
-   "linhas": 48,
+   "linhas": 46,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -7042,12 +7042,12 @@
     "ButtonProps"
    ],
    "export_default": null,
-   "linhas": 54,
+   "linhas": 57,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 352,
+   "usado_por": 353,
    "orfao": false
   },
   {
@@ -7077,7 +7077,7 @@
     "CardTitle"
    ],
    "export_default": null,
-   "linhas": 82,
+   "linhas": 77,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -7201,9 +7201,11 @@
     "CommandShortcut"
    ],
    "export_default": null,
-   "linhas": 121,
+   "linhas": 156,
    "dominio": "components/ui",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -7309,7 +7311,7 @@
     "DialogTrigger"
    ],
    "export_default": null,
-   "linhas": 91,
+   "linhas": 83,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -7326,12 +7328,16 @@
     "DropdownMenuItem",
     "DropdownMenuLabel",
     "DropdownMenuPortal",
+    "DropdownMenuRadioGroup",
+    "DropdownMenuRadioItem",
     "DropdownMenuSeparator",
     "DropdownMenuSub",
+    "DropdownMenuSubContent",
+    "DropdownMenuSubTrigger",
     "DropdownMenuTrigger"
    ],
    "export_default": null,
-   "linhas": 74,
+   "linhas": 243,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -7440,6 +7446,21 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/ui/input.tsx",
+   "exports": [
+    "Input",
+    "InputProps"
+   ],
+   "export_default": null,
+   "linhas": 15,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 177,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/ui/label.tsx",
    "exports": [
     "Label"
@@ -7542,7 +7563,7 @@
     "PopoverTrigger"
    ],
    "export_default": null,
-   "linhas": 2,
+   "linhas": 50,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -7556,7 +7577,7 @@
     "Progress"
    ],
    "export_default": null,
-   "linhas": 2,
+   "linhas": 21,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -7659,7 +7680,7 @@
     "SheetTrigger"
    ],
    "export_default": null,
-   "linhas": 25,
+   "linhas": 91,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -7740,7 +7761,7 @@
     "Slider"
    ],
    "export_default": null,
-   "linhas": 27,
+   "linhas": 30,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -7881,7 +7902,7 @@
     "TabsTrigger"
    ],
    "export_default": null,
-   "linhas": 2,
+   "linhas": 53,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -7896,7 +7917,7 @@
     "TextareaProps"
    ],
    "export_default": null,
-   "linhas": 2,
+   "linhas": 18,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -7965,7 +7986,7 @@
     "TooltipTrigger"
    ],
    "export_default": null,
-   "linhas": 11,
+   "linhas": 29,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],

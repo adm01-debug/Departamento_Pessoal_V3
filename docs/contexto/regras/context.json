@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d3a71089f786640ef42a724fe726183dfafef1db",
+  "sha": "6dfb623f48ad2401ce6e57a23cd3802e1ae167a2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 16:06 UTC",
-  "files_total": 3501,
-  "code_files": 2927,
-  "code_lines": 465300
+  "generated_at": "2026-11-17 16:08 UTC",
+  "files_total": 3504,
+  "code_files": 2930,
+  "code_lines": 466002
  },
  "version": "1.3.2",
- "facts_hash": "0c29532ebb597a8d",
+ "facts_hash": "5203c4839604f7bd",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 962,
+   ".tsx": 965,
    ".ts": 919,
    ".sql": 915,
    ".mjs": 103,
@@ -87572,7 +87572,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 103
+    "deps_count": 104
    },
    {
     "path": "",
@@ -96924,7 +96924,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 62
+    "deps_count": 63
    }
   ],
   "edge_functions": [
@@ -99950,7 +99950,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 934,
+  "components_count": 937,
   "hooks": [
    {
     "name": "useContacts",
@@ -101533,8 +101533,8 @@
   },
   {
    "module": "src/components",
-   "files": 934,
-   "lines": 169733,
+   "files": 937,
+   "lines": 170435,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101649,10 +101649,13 @@
     "@radix-ui/react-dialog",
     "@radix-ui/react-dropdown-menu",
     "@radix-ui/react-label",
+    "@radix-ui/react-popover",
+    "@radix-ui/react-progress",
     "@radix-ui/react-scroll-area",
     "@radix-ui/react-select",
     "@radix-ui/react-slider",
     "@radix-ui/react-slot",
+    "@radix-ui/react-tabs",
     "@radix-ui/react-toast",
     "@radix-ui/react-tooltip",
     "@supabase/supabase-js",
@@ -101661,10 +101664,7 @@
     "@testing-library/react",
     "@testing-library/user-event",
     "class-variance-authority",
-    "cmdk",
-    "date-fns",
-    "framer-motion",
-    "lucide-react"
+    "cmdk"
    ],
    "imports_modules": [
     "src/constants",
@@ -114400,7 +114400,7 @@
    },
    {
     "file": "src/components/ui/alert.tsx",
-    "msg": "className={cn(alertVariants({variant}),className)}{...props}/>));Alert.displayName="
+    "msg": " className={cn(alertVariants({ variant }), className)} {...props} />\n));\nAlert.displayName = "
    },
    {
     "file": "src/components/ui/cep-input.tsx",
@@ -163053,6 +163053,10 @@
     "line": "* (\"—\") em vez de 0%, que seria uma afirmação falsa."
    },
    {
+    "file": "src/components/ui/dropdown-menu.tsx",
+    "line": "`select.tsx`, não uma cópia. Content acima continua 100% Radix"
+   },
+   {
     "file": "src/components/ui/flow-hover-button.tsx",
     "line": "* deslocado 150% + escalado 2.5x) e desliza para o centro no hover,"
    },
@@ -180611,6 +180615,38 @@
     "name": "abre uma gaveta com os filtros principais ao tocar no botão"
    },
    {
+    "file": "src/components/ui/__tests__/dropdown-menu.test.tsx",
+    "name": "DropdownMenu — wrapper Motion do design system"
+   },
+   {
+    "file": "src/components/ui/__tests__/dropdown-menu.test.tsx",
+    "name": "renderiza os itens dentro do wrapper motion.div (DropdownMenuContent)"
+   },
+   {
+    "file": "src/components/ui/__tests__/dropdown-menu.test.tsx",
+    "name": "cada DropdownMenuItem envolve {children} num motion.span com style próprio"
+   },
+   {
+    "file": "src/components/ui/__tests__/dropdown-menu.test.tsx",
+    "name": "preserva o gap-3 do consumidor (ícone + texto) via [gap:inherit] no wrapper"
+   },
+   {
+    "file": "src/components/ui/__tests__/popover-combobox.test.tsx",
+    "name": "Popover — wrapper Motion do design system"
+   },
+   {
+    "file": "src/components/ui/__tests__/popover-combobox.test.tsx",
+    "name": "renderiza o conteúdo dentro do wrapper motion.div (PopoverContent)"
+   },
+   {
+    "file": "src/components/ui/__tests__/popover-combobox.test.tsx",
+    "name": "Popover + Command (combobox) — wrapper Motion do design system"
+   },
+   {
+    "file": "src/components/ui/__tests__/popover-combobox.test.tsx",
+    "name": "cada CommandItem envolve {children} num motion.span com style próprio"
+   },
+   {
     "file": "src/components/ui/__tests__/select.test.tsx",
     "name": "Select — wrapper Motion do design system"
    },
@@ -180625,6 +180661,18 @@
    {
     "file": "src/components/ui/__tests__/select.test.tsx",
     "name": "o chevron reflete o estado real do Radix (data-state), sem useState duplicado"
+   },
+   {
+    "file": "src/components/ui/__tests__/status-badge.test.tsx",
+    "name": "ColaboradorStatus"
+   },
+   {
+    "file": "src/components/ui/__tests__/status-badge.test.tsx",
+    "name": "renders a known label for status "
+   },
+   {
+    "file": "src/components/ui/__tests__/status-badge.test.tsx",
+    "name": "does not render the raw "
    },
    {
     "file": "src/components/ui/__tests__/user-profile-menu.test.tsx",
@@ -283085,13 +283133,13 @@
   },
   "src/components/ui/alert-dialog.tsx": {
    "path": "src/components/ui/alert-dialog.tsx",
-   "lines": 2
+   "lines": 87
   },
   "src/components/ui/alert.tsx": {
    "path": "src/components/ui/alert.tsx",
-   "lines": 2,
+   "lines": 36,
    "errors": [
-    "className={cn(alertVariants({variant}),className)}{...props}/>));Alert.displayName="
+    " className={cn(alertVariants({ variant }), className)} {...props} />\n));\nAlert.displayName = "
    ]
   },
   "src/components/ui/animated-cascade-dialog.tsx": {
@@ -283143,14 +283191,14 @@
   },
   "src/components/ui/badge.tsx": {
    "path": "src/components/ui/badge.tsx",
-   "lines": 48,
+   "lines": 46,
    "exports": [
     "interface BadgeProps"
    ]
   },
   "src/components/ui/button.tsx": {
    "path": "src/components/ui/button.tsx",
-   "lines": 54,
+   "lines": 57,
    "exports": [
     "interface ButtonProps"
    ]
@@ -283164,7 +283212,7 @@
   },
   "src/components/ui/card.tsx": {
    "path": "src/components/ui/card.tsx",
-   "lines": 82,
+   "lines": 77,
    "exports": [
     "interface CardProps"
    ]
@@ -283327,7 +283375,7 @@
   },
   "src/components/ui/command.tsx": {
    "path": "src/components/ui/command.tsx",
-   "lines": 121
+   "lines": 156
   },
   "src/components/ui/cpf-input.tsx": {
    "path": "src/components/ui/cpf-input.tsx",
@@ -283395,11 +283443,14 @@
   },
   "src/components/ui/dialog.tsx": {
    "path": "src/components/ui/dialog.tsx",
-   "lines": 91
+   "lines": 83
   },
   "src/components/ui/dropdown-menu.tsx": {
    "path": "src/components/ui/dropdown-menu.tsx",
-   "lines": 74
+   "lines": 243,
+   "percents": [
+    "`select.tsx`, não uma cópia. Content acima continua 100% Radix"
+   ]
   },
   "src/components/ui/empty-state.tsx": {
    "path": "src/components/ui/empty-state.tsx",
@@ -283494,7 +283545,10 @@
   },
   "src/components/ui/input.tsx": {
    "path": "src/components/ui/input.tsx",
-   "lines": 2
+   "lines": 15,
+   "exports": [
+    "interface InputProps"
+   ]
   },
   "src/components/ui/label.tsx": {
    "path": "src/components/ui/label.tsx",
@@ -283568,11 +283622,11 @@
   },
   "src/components/ui/popover.tsx": {
    "path": "src/components/ui/popover.tsx",
-   "lines": 2
+   "lines": 50
   },
   "src/components/ui/progress.tsx": {
    "path": "src/components/ui/progress.tsx",
-   "lines": 2
+   "lines": 21
   },
   "src/components/ui/radio-group.tsx": {
    "path": "src/components/ui/radio-group.tsx",
@@ -283605,7 +283659,7 @@
   },
   "src/components/ui/sheet.tsx": {
    "path": "src/components/ui/sheet.tsx",
-   "lines": 25,
+   "lines": 91,
    "doc": "V15-468"
   },
   "src/components/ui/sidebar.tsx": {
@@ -283653,7 +283707,7 @@
   },
   "src/components/ui/slider.tsx": {
    "path": "src/components/ui/slider.tsx",
-   "lines": 27
+   "lines": 30
   },
   "src/components/ui/sliding-indicator.tsx": {
    "path": "src/components/ui/sliding-indicator.tsx",
@@ -283744,11 +283798,14 @@
   },
   "src/components/ui/tabs.tsx": {
    "path": "src/components/ui/tabs.tsx",
-   "lines": 2
+   "lines": 53
   },
   "src/components/ui/textarea.tsx": {
    "path": "src/components/ui/textarea.tsx",
-   "lines": 2
+   "lines": 18,
+   "exports": [
+    "interface TextareaProps"
+   ]
   },
   "src/components/ui/theme-toggle.tsx": {
    "path": "src/components/ui/theme-toggle.tsx",
@@ -283772,7 +283829,7 @@
   },
   "src/components/ui/tooltip.tsx": {
    "path": "src/components/ui/tooltip.tsx",
-   "lines": 11,
+   "lines": 29,
    "doc": "V15-460"
   },
   "src/components/ui/use-toast.ts": {
@@ -283821,6 +283878,28 @@
     "abre uma gaveta com os filtros principais ao tocar no botão"
    ]
   },
+  "src/components/ui/__tests__/dropdown-menu.test.tsx": {
+   "path": "src/components/ui/__tests__/dropdown-menu.test.tsx",
+   "lines": 71,
+   "is_test": true,
+   "tests": [
+    "DropdownMenu — wrapper Motion do design system",
+    "renderiza os itens dentro do wrapper motion.div (DropdownMenuContent)",
+    "cada DropdownMenuItem envolve {children} num motion.span com style próprio",
+    "preserva o gap-3 do consumidor (ícone + texto) via [gap:inherit] no wrapper"
+   ]
+  },
+  "src/components/ui/__tests__/popover-combobox.test.tsx": {
+   "path": "src/components/ui/__tests__/popover-combobox.test.tsx",
+   "lines": 58,
+   "is_test": true,
+   "tests": [
+    "Popover — wrapper Motion do design system",
+    "renderiza o conteúdo dentro do wrapper motion.div (PopoverContent)",
+    "Popover + Command (combobox) — wrapper Motion do design system",
+    "cada CommandItem envolve {children} num motion.span com style próprio"
+   ]
+  },
   "src/components/ui/__tests__/select.test.tsx": {
    "path": "src/components/ui/__tests__/select.test.tsx",
    "lines": 79,
@@ -283830,6 +283909,16 @@
     "renderiza as opções dentro do wrapper motion.div (SelectContent)",
     "cada SelectItem tem um motion.span interno com estilo próprio de opacity/transform",
     "o chevron reflete o estado real do Radix (data-state), sem useState duplicado"
+   ]
+  },
+  "src/components/ui/__tests__/status-badge.test.tsx": {
+   "path": "src/components/ui/__tests__/status-badge.test.tsx",
+   "lines": 28,
+   "is_test": true,
+   "tests": [
+    "ColaboradorStatus",
+    "renders a known label for status ",
+    "does not render the raw "
    ]
   },
   "src/components/ui/__tests__/user-profile-menu.test.tsx": {
@@ -323537,10 +323626,39 @@
   }
  },
  "git": {
-  "sha": "d3a71089f786640ef42a724fe726183dfafef1db",
+  "sha": "6dfb623f48ad2401ce6e57a23cd3802e1ae167a2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "6dfb623",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(ui): resgata da muri os primitivos do design system (#627)",
+    "files": [
+     "src/components/ui/__tests__/dropdown-menu.test.tsx",
+     "src/components/ui/__tests__/popover-combobox.test.tsx",
+     "src/components/ui/__tests__/status-badge.test.tsx",
+     "src/components/ui/alert-dialog.tsx",
+     "src/components/ui/alert.tsx",
+     "src/components/ui/badge.tsx",
+     "src/components/ui/button.tsx",
+     "src/components/ui/card.tsx",
+     "src/components/ui/command.tsx",
+     "src/components/ui/dialog.tsx",
+     "src/components/ui/dropdown-menu.tsx",
+     "src/components/ui/input.tsx",
+     "src/components/ui/masked-input.tsx",
+     "src/components/ui/page-header.tsx",
+     "src/components/ui/popover.tsx",
+     "src/components/ui/progress.tsx",
+     "src/components/ui/sheet.tsx",
+     "src/components/ui/slider.tsx",
+     "src/components/ui/tabs.tsx",
+     "src/components/ui/textarea.tsx",
+     "src/components/ui/tooltip.tsx"
+    ]
+   },
    {
     "sha": "d3a7108",
     "date": "2026-11-17",
@@ -324307,45 +324425,6 @@
     "files": [
      "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md"
     ]
-   },
-   {
-    "sha": "f732746",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "docs: resgata a documentação operacional do ninebox e das capas de treinamento (#595)",
-    "files": [
-     "docs/CICLOS-PERSISTENCIA-E-EXCLUSAO.md",
-     "docs/DESIGN-SYSTEM-TIPOGRAFIA.md",
-     "docs/HOMOLOGACAO-CANCELAMENTO-REAL.md",
-     "docs/NINEBOX-CONCLUSAO-FEEDBACK.md",
-     "docs/NINEBOX-ESTABILIZACAO-PRODUCAO.md",
-     "docs/NINEBOX-OPERACAO-DEFINITIVA.md",
-     "docs/ONBOARDING_MODELO_B_DEPRECATED.md",
-     "docs/RECUPERACAO-FEEDBACKS.md",
-     "docs/auditoria/RESGATE_BRANCH_MURI_2026-11-16.md",
-     "docs/ninebox-aprovacao-gestor-implantacao.md",
-     "docs/ninebox-aprovacao-gestor-ui.md",
-     "docs/ninebox-aprovacao-gestor-vinculo-abner.sql",
-     "docs/ninebox-auditoria-banco.sql",
-     "docs/ninebox-divergencias-migrations.sql",
-     "docs/ninebox-homologacao-aprovacao-real.md",
-     "docs/ninebox-homologacao-funcional.md",
-     "docs/ninebox-homologacao.md",
-     "docs/ninebox-implantacao-minima.md",
-     "docs/ninebox-mapa-fontes.md",
-     "docs/ninebox-plano-finalizacao.md",
-     "docs/ninebox-pre-aplicacao.sql",
-     "docs/ninebox-proposta-controles-feedback.md",
-     "docs/ninebox-testes-seguranca.sql",
-     "docs/ninebox-validacao-banco.sql",
-     "docs/ninebox-verificacao-truncate.sql",
-     "docs/protegido/DESEMPENHO-LAYOUT-PROTEGIDO.md",
-     "docs/protegido/desempenho-layout.baseline.json",
-     "docs/treinamentos-imagens-fase3a2.md",
-     "docs/treinamentos-imagens-fase3b-prep.md",
-     "docs/treinamentos-imagens-homologacao.md",
-     "docs/treinamentos-imagens.md"
-    ]
    }
   ],
   "hot_files": [
@@ -324364,14 +324443,6 @@
    [
     "src/pages/ColaboradorDetalhesPage.tsx",
     4
-   ],
-   [
-    "docs/ninebox-aprovacao-gestor-implantacao.md",
-    3
-   ],
-   [
-    "docs/ninebox-homologacao-aprovacao-real.md",
-    3
    ],
    [
     "src/components/colaborador-detalhes/index.ts",
@@ -324402,11 +324473,15 @@
     2
    ],
    [
+    "docs/ninebox-aprovacao-gestor-implantacao.md",
+    2
+   ],
+   [
     "docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql",
     2
    ],
    [
-    "docs/ninebox-homologacao-funcional.md",
+    "docs/ninebox-homologacao-aprovacao-real.md",
     2
    ],
    [
@@ -324427,6 +324502,10 @@
    ],
    [
     "src/hooks/useColaboradorDetalhes.ts",
+    2
+   ],
+   [
+    "src/hooks/useVinculos.ts",
     2
    ]
   ]

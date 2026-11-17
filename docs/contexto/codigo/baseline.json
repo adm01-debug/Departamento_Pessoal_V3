@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d3a71089f786640ef42a724fe726183dfafef1db",
+  "commit": "6dfb623f48ad2401ce6e57a23cd3802e1ae167a2",
   "branch": "main",
-  "data_commit": "2026-11-17T13:04:49-03:00",
+  "data_commit": "2026-11-17T13:04:55-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "6dfb623",
+    "data": "2026-11-17",
+    "assunto": "feat(ui): resgata da muri os primitivos do design system (#627)"
+   },
    {
     "sha": "d3a7108",
     "data": "2026-11-17",
@@ -126,14 +131,9 @@
     "sha": "85f22ec",
     "data": "2026-11-16",
     "assunto": "fix: botão \"Editar Perfil\" do colaborador caía em 404 (#601)"
-   },
-   {
-    "sha": "4911958",
-    "data": "2026-11-16",
-    "assunto": "test: resgata 11 suítes de testes de Avaliação/Desempenho da branch muri (+194 casos) (#600)"
    }
   ],
-  "arquivos_mudados_7d": 1170,
+  "arquivos_mudados_7d": 1191,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -144,16 +144,16 @@
     "mudancas": 107
    },
    {
+    "pasta": "src/components/ui",
+    "mudancas": 105
+   },
+   {
     "pasta": "src/services/__tests__",
     "mudancas": 105
    },
    {
     "pasta": "src/components/avaliacao",
     "mudancas": 85
-   },
-   {
-    "pasta": "src/components/ui",
-    "mudancas": 84
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -294,18 +294,18 @@
     "mudancas": 5
    },
    {
-    "arquivo": "e2e/authenticated/esocial.spec.ts",
+    "arquivo": "public/sw-custom.js",
     "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 245
+    "commits": 246
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 34
+    "commits": 33
    },
    {
     "autor": "dependabot[bot]",
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3480,
-  "arquivos_codigo": 2014,
-  "linhas_codigo": 400658,
+  "arquivos_total": 3483,
+  "arquivos_codigo": 2017,
+  "linhas_codigo": 401360,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 95,
   "modulos": 81,
-  "componentes": 619,
+  "componentes": 620,
   "hooks": 115,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 736,
+  "testes": 739,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 934,
-   "linhas": 169733
+   "arquivos": 937,
+   "linhas": 170435
   },
   "src/constants": {
    "arquivos": 6,

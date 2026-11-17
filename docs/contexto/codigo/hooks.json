@@ -3135,7 +3135,7 @@
     "useReducedMotion"
    ],
    "canais_realtime": [],
-   "usado_por": 16,
+   "usado_por": 17,
    "usado_por_arquivos": [
     "src/components/avaliacao/AnaliticosDesempenho.tsx",
     "src/components/avaliacao/CicloAtivoPanel.tsx",
@@ -3150,6 +3150,7 @@
     "src/components/premiacoes/AuditoriaTab.tsx",
     "src/components/recrutamento/TabelaCandidatos.tsx",
     "src/components/treinamentos/InscricoesPainel.tsx",
+    "src/components/ui/command.tsx",
     "src/pages/PremiacoesPage.tsx",
     "src/pages/RecrutamentoPage.tsx",
     "src/pages/TreinamentosPage.tsx"

@@ -715,7 +715,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 16,
+   "usado_por": 17,
    "usado_por_modulos": [
     "components/avaliacao",
     "components/dashboard",
@@ -723,6 +723,7 @@
     "components/premiacoes",
     "components/recrutamento",
     "components/treinamentos",
+    "components/ui",
     "pages"
    ],
    "coberto_por_testes": 0,
@@ -899,7 +900,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 269,
+   "usado_por": 276,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",

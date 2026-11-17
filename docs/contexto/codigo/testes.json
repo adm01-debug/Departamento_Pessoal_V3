@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 736,
+ "total": 739,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 697
+  "unit": 700
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 613
+   "arquivos": 616
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -3753,6 +3753,25 @@
    "casos": 2
   },
   {
+   "arquivo": "src/components/ui/__tests__/dropdown-menu.test.tsx",
+   "tipo": "unit",
+   "linhas": 71,
+   "testa": [
+    "src/components/ui/dropdown-menu.tsx"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/components/ui/__tests__/popover-combobox.test.tsx",
+   "tipo": "unit",
+   "linhas": 58,
+   "testa": [
+    "src/components/ui/command.tsx",
+    "src/components/ui/popover.tsx"
+   ],
+   "casos": 2
+  },
+  {
    "arquivo": "src/components/ui/__tests__/select.test.tsx",
    "tipo": "unit",
    "linhas": 79,
@@ -3760,6 +3779,15 @@
     "src/components/ui/select.tsx"
    ],
    "casos": 3
+  },
+  {
+   "arquivo": "src/components/ui/__tests__/status-badge.test.tsx",
+   "tipo": "unit",
+   "linhas": 28,
+   "testa": [
+    "src/components/ui/status-badge.tsx"
+   ],
+   "casos": 2
   },
   {
    "arquivo": "src/components/ui/__tests__/user-profile-menu.test.tsx",
@@ -7172,11 +7200,15 @@
   "src/components/treinamentos/treinamentosDerivacoes.ts": 4,
   "src/components/treinamentos/trilhasDerivacoes.ts": 2,
   "src/components/treinamentos/turmasDerivacoes.ts": 8,
+  "src/components/ui/command.tsx": 1,
   "src/components/ui/cpf-input.tsx": 1,
   "src/components/ui/currency-input.tsx": 1,
   "src/components/ui/data-table-toolbar.tsx": 1,
+  "src/components/ui/dropdown-menu.tsx": 1,
   "src/components/ui/index.ts": 1,
+  "src/components/ui/popover.tsx": 1,
   "src/components/ui/select.tsx": 1,
+  "src/components/ui/status-badge.tsx": 1,
   "src/components/ui/tabs.tsx": 1,
   "src/components/ui/user-profile-menu.tsx": 1,
   "src/components/workflows/WorkflowDesigner.tsx": 2,

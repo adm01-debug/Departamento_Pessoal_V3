@@ -4155,6 +4155,13 @@
   "src/components/treinamentos/turmasDerivacoes.ts": [
    "src/components/treinamentos/treinamentosDerivacoes.ts"
   ],
+  "src/components/ui/alert-dialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/alert.tsx": [
+   "src/lib/utils.ts"
+  ],
   "src/components/ui/animated-cascade-dialog.tsx": [
    "src/components/ui/cascade-dialog.tsx",
    "src/components/ui/cascade-motion.ts"
@@ -4216,6 +4223,8 @@
   ],
   "src/components/ui/command.tsx": [
    "src/components/ui/dialog.tsx",
+   "src/components/ui/motion-presets.ts",
+   "src/lib/motionMode.ts",
    "src/lib/utils.ts"
   ],
   "src/components/ui/cpf-input.tsx": [
@@ -4251,6 +4260,7 @@
    "src/lib/utils.ts"
   ],
   "src/components/ui/dropdown-menu.tsx": [
+   "src/components/ui/motion-presets.ts",
    "src/lib/utils.ts"
   ],
   "src/components/ui/empty-state.tsx": [
@@ -4307,6 +4317,9 @@
    "src/components/ui/tooltip.tsx",
    "src/lib/utils.ts"
   ],
+  "src/components/ui/input.tsx": [
+   "src/lib/utils.ts"
+  ],
   "src/components/ui/masked-input.tsx": [
    "src/lib/masks.ts",
    "src/lib/utils.ts"
@@ -4329,6 +4342,13 @@
   ],
   "src/components/ui/phone-input.tsx": [
    "src/components/ui/input.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/popover.tsx": [
+   "src/components/ui/motion-presets.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/progress.tsx": [
    "src/lib/utils.ts"
   ],
   "src/components/ui/scroll-area.tsx": [
@@ -4388,6 +4408,12 @@
   "src/components/ui/sync-error-state.tsx": [
    "src/components/ui/alert.tsx",
    "src/components/ui/button.tsx"
+  ],
+  "src/components/ui/tabs.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/textarea.tsx": [
+   "src/lib/utils.ts"
   ],
   "src/components/ui/theme-toggle.tsx": [
    "src/components/ui/button.tsx",
