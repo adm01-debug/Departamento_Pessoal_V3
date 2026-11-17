@@ -182,6 +182,25 @@ describe('CamposCustomizadosTab', () => {
     expect(vi.mocked(toast.success)).not.toHaveBeenCalled();
   });
 
+  it('descarta o que foi digitado ao trocar de colaborador (nao grava no cadastro do outro)', async () => {
+    // Navegar para outro colaborador nao desmonta esta aba, so troca a prop:
+    // sem o descarte, o valor digitado para col-1 seguiria na tela e iria para
+    // o cadastro de col-2, porque `campoId` e da empresa e vale para os dois.
+    const mutateAsync = vi.fn(() => Promise.resolve(null));
+    mockCampos({ data: [CAMPO_TEXTO] });
+    mockValores({ data: [] });
+    mockSalvar(mutateAsync);
+    const { rerender } = render(<CamposCustomizadosTab colaboradorId="col-1" />);
+
+    await userEvent.type(screen.getByLabelText(/Matrícula interna/i), 'DO-COL-1');
+    expect(screen.getByLabelText(/Matrícula interna/i)).toHaveValue('DO-COL-1');
+
+    rerender(<CamposCustomizadosTab colaboradorId="col-2" />);
+
+    expect(screen.getByLabelText(/Matrícula interna/i)).toHaveValue('');
+    expect(screen.getByRole('button', { name: 'Salvar' })).toBeDisabled();
+  });
+
   it('expõe estado de erro quando o salvamento falha', async () => {
     const mutateAsync = vi.fn(() => Promise.reject(new Error('Falha na rede')));
     mockCampos({ data: [CAMPO_TEXTO] });

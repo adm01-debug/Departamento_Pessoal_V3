@@ -53,7 +53,18 @@ export function CamposCustomizadosTab({ colaboradorId }: { colaboradorId: string
   // `edicoes` guarda só os campos que o usuário tocou nesta sessão — o valor
   // exibido é sempre `edicoes[id] ?? valorSalvo[id] ?? ''`. Evita sincronizar
   // estado local a partir da query via useEffect.
-  const [edicoes, setEdicoes] = useState<Record<string, string>>({});
+  //
+  // O id do colaborador viaja JUNTO com as edições: navegar para outro
+  // colaborador (paleta de comandos, por exemplo) não desmonta esta aba, só
+  // troca a prop. Sem este par, o valor digitado para uma pessoa continuaria
+  // na tela e seria gravado no cadastro da OUTRA — aqui o duplo escopo que
+  // protege as abas de emergência e formação (`id` + `colaborador_id`) não
+  // vale, porque `campoId` é da empresa e existe para as duas.
+  const [edicoesPorColaborador, setEdicoes] = useState<{
+    colaboradorId: string;
+    valores: Record<string, string>;
+  }>({ colaboradorId, valores: {} });
+  const edicoes = edicoesPorColaborador.colaboradorId === colaboradorId ? edicoesPorColaborador.valores : {};
   const [erroSalvar, setErroSalvar] = useState<string | null>(null);
 
   const valorSalvo = useMemo(() => {
@@ -63,7 +74,11 @@ export function CamposCustomizadosTab({ colaboradorId }: { colaboradorId: string
   }, [valores]);
 
   const valorAtual = (campoId: string) => edicoes[campoId] ?? valorSalvo[campoId] ?? '';
-  const editar = (campoId: string, valor: string) => setEdicoes((e) => ({ ...e, [campoId]: valor }));
+  const editar = (campoId: string, valor: string) =>
+    setEdicoes((e) => ({
+      colaboradorId,
+      valores: { ...(e.colaboradorId === colaboradorId ? e.valores : {}), [campoId]: valor },
+    }));
 
   const carregando = carregandoCampos || carregandoValores;
   const falhou = erroCampos || erroValores;
