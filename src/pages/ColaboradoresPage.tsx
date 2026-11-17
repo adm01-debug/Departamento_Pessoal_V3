@@ -3,6 +3,8 @@ import { cn } from '@/lib/utils';
 import { ColaboradorFilters } from '@/components/colaboradores/ColaboradorFilters';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { ColaboradorStatus } from '@/components/ui/status-badge';
+import { Badge } from '@/components/ui/badge';
+import { useVinculosResumo } from '@/hooks/useVinculos';
 import { Button } from '@/components/ui/button';
 import { UserAvatar } from '@/components/ui/user-avatar';
 import { Eye, Edit, Users, Download, FileSpreadsheet, FileText } from 'lucide-react';
@@ -61,6 +63,12 @@ export default function ColaboradoresPage() {
     departamentosDisponiveis,
     cargosDisponiveis,
   } = useColaboradores();
+
+  // Uma consulta so para a pagina inteira (`.in('colaborador_id', ids)`), nao
+  // uma por linha — ver vinculoService.contarPassagensPorColaboradores. Alimenta
+  // o selo de recontratacao na tabela E na grade: a grade ja sabia desenhar o
+  // selo, mas ninguem passava o dado, entao ele nunca aparecia.
+  const { data: passagensPorId } = useVinculosResumo(colaboradores.map((c) => c.id));
 
   const handlePageChange = useCallback(
     (p: number) => {
@@ -289,7 +297,7 @@ export default function ColaboradoresPage() {
          container renderiza a tabela por `columns`/`renderRow`, como sempre. */
       renderBody={
         viewMode === 'diretorio' ? (
-          <ColaboradorDirectoryGrid items={colaboradores} isFetching={isFetching} />
+          <ColaboradorDirectoryGrid items={colaboradores} isFetching={isFetching} passagensPorId={passagensPorId} />
         ) : undefined
       }
       renderRow={(c) => (
@@ -330,7 +338,17 @@ export default function ColaboradoresPage() {
             </div>
           </TableCell>
           <TableCell>
-            <ColaboradorStatus status={c.status} />
+            <div className="flex items-center gap-1.5">
+              <ColaboradorStatus status={c.status} />
+              {/* Recontratação: o mesmo selo que a grade de cartões mostra, para
+                  as duas visões informarem a mesma coisa. Só aparece de 2
+                  passagens para cima — na primeira não há o que sinalizar. */}
+              {(passagensPorId?.[c.id]?.quantidadePassagens ?? 0) >= 2 && (
+                <Badge variant="secondary" className="h-4 px-1.5 py-0 text-[9px] font-normal shrink-0">
+                  {passagensPorId![c.id].quantidadePassagens}ª passagem
+                </Badge>
+              )}
+            </div>
           </TableCell>
           <TableCell className="pr-6 text-right">
             <div className="flex justify-end gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
