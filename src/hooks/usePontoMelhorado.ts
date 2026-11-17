@@ -34,8 +34,13 @@ export function usePontoMelhorado(empresaId?: string, colaboradorId?: string) {
 
   const { data: solicitacoes = [], isLoading } = useQuery({
     queryKey: ['solicitacoes-ajuste-ponto', empresaId, colaboradorId],
-    enabled: true,
+    // Sem empresa selecionada a query NAO sai. Com `enabled: true` e o
+    // `empresaId!` abaixo, a requisicao ia com `empresa_id=eq.undefined` e o
+    // Postgres respondia erro de uuid invalido — o usuario via falha de banco
+    // em vez de uma tela vazia.
+    enabled: !!empresaId,
     queryFn: async () => {
+      if (!empresaId) return [];
       let query = supabase
         .from('solicitacoes_ajuste_ponto')
         .select('*, colaborador:colaboradores(nome_completo)')
@@ -105,6 +110,10 @@ export function usePontoMelhorado(empresaId?: string, colaboradorId?: string) {
       status: 'aprovado' | 'recusado';
       observacoes?: string;
     }) => {
+      // Aprovar/recusar ajuste de ponto e escrita: sem empresa no contexto a
+      // clausula de isolamento seria `empresa_id=eq.undefined`. Falha explicita.
+      if (!empresaId) throw new Error('empresa_id obrigatório para responder solicitação de ajuste.');
+
       const {
         data: { user },
       } = await supabase.auth.getUser();
