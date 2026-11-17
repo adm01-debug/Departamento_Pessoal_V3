@@ -14,8 +14,17 @@ import { usePcsEquidade } from '@/hooks/usePcs';
 import { PCS_SITUACAO_LABEL, type PcsEnquadramentoRow, type PcsSituacao } from '@/types/pcs';
 
 const COLUNAS_EXPORT = [
-  'Colaborador', 'Cargo', 'Departamento', 'Grade', 'Salário atual',
-  'Mínimo', 'Médio', 'Máximo', 'Comparatio', 'Ajuste necessário', 'Situação',
+  'Colaborador',
+  'Cargo',
+  'Departamento',
+  'Grade',
+  'Salário atual',
+  'Mínimo',
+  'Médio',
+  'Máximo',
+  'Comparatio',
+  'Ajuste necessário',
+  'Situação',
 ] as const;
 
 /** Linhas do comitê de remuneração: números crus, para o Excel formatar/somar. */
@@ -69,8 +78,14 @@ export function PcsEquidadeTab({ planoId }: { planoId: string | null }) {
     }
   };
 
-  if (!planoId) return <p className="p-6 text-sm text-muted-foreground">Selecione um plano para simular o enquadramento.</p>;
-  if (isLoading) return <div className="flex justify-center p-8"><Spinner size="lg" /></div>;
+  if (!planoId)
+    return <p className="p-6 text-sm text-muted-foreground">Selecione um plano para simular o enquadramento.</p>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center p-8">
+        <Spinner size="lg" />
+      </div>
+    );
 
   return (
     <div className="space-y-4">
@@ -78,7 +93,15 @@ export function PcsEquidadeTab({ planoId }: { planoId: string | null }) {
         <CardContent className="flex flex-col gap-3 p-4 md:flex-row md:items-end">
           <div className="space-y-1.5">
             <Label htmlFor="pcs-encargos">Encargos sobre a folha (%)</Label>
-            <Input id="pcs-encargos" type="number" min={0} max={200} value={encargos} onChange={(e) => setEncargos(e.target.value)} className="md:w-40" />
+            <Input
+              id="pcs-encargos"
+              type="number"
+              min={0}
+              max={200}
+              value={encargos}
+              onChange={(e) => setEncargos(e.target.value)}
+              className="md:w-40"
+            />
           </div>
           <p className="pb-2 text-xs text-muted-foreground">
             Inclui INSS patronal, RAT, terceiros, FGTS e provisões de férias/13º.
@@ -130,9 +153,13 @@ export function PcsEquidadeTab({ planoId }: { planoId: string | null }) {
                 <TableRow key={l.colaborador_id} className="border-b border-border/10 last:border-0">
                   <TableCell className="py-3 pl-6 text-sm font-bold">{l.colaborador_nome}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{l.cargo_nome}</TableCell>
-                  <TableCell><Badge variant="outline" className="text-[10px]">{l.grade_nome}</Badge></TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="text-[10px]">
+                      {l.grade_nome}
+                    </Badge>
+                  </TableCell>
                   <TableCell className="text-right text-sm">{brl(l.salario_atual)}</TableCell>
-                  <TableCell className="text-right font-mono text-[11px] text-muted-foreground">
+                  <TableCell className="text-right text-numeric text-[11px] text-muted-foreground">
                     {brl(l.salario_min)} – {brl(l.salario_max)}
                   </TableCell>
                   <TableCell className="text-right text-sm">{Number(l.comparatio).toLocaleString('pt-BR')}</TableCell>
@@ -140,7 +167,9 @@ export function PcsEquidadeTab({ planoId }: { planoId: string | null }) {
                     {Number(l.ajuste_necessario) > 0 ? brl(l.ajuste_necessario) : '—'}
                   </TableCell>
                   <TableCell>
-                    <Badge className={`border-0 text-[10px] ${SITUACAO_CLASS[situacao]}`}>{PCS_SITUACAO_LABEL[situacao]}</Badge>
+                    <Badge className={`border-0 text-[10px] ${SITUACAO_CLASS[situacao]}`}>
+                      {PCS_SITUACAO_LABEL[situacao]}
+                    </Badge>
                   </TableCell>
                 </TableRow>
               );
@@ -148,7 +177,8 @@ export function PcsEquidadeTab({ planoId }: { planoId: string | null }) {
             {linhas.length === 0 && (
               <TableRow>
                 <TableCell colSpan={8} className="py-8 text-center text-sm text-muted-foreground">
-                  Sem enquadramento. Gere a matriz salarial e confira se os nomes dos cargos batem com o cadastro dos colaboradores.
+                  Sem enquadramento. Gere a matriz salarial e confira se os nomes dos cargos batem com o cadastro dos
+                  colaboradores.
                 </TableCell>
               </TableRow>
             )}

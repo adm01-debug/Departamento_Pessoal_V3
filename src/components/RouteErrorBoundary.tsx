@@ -13,6 +13,37 @@ interface State {
   error: Error | null;
 }
 
+// React.lazy() memoiza a Promise REJEITADA do import() que falhou. Resetar o
+// state do error boundary (o botao "Tentar novamente") NAO refaz o fetch: ele
+// relanca a mesma rejeicao em cache, e a tela de erro volta na hora. Esse erro
+// e tipicamente transitorio — um deploy novo trocou o hash dos chunks enquanto
+// a aba ainda tinha o index.html antigo. A unica recuperacao real e um reload
+// completo do documento.
+const CHUNK_LOAD_ERROR_RE =
+  /fetch dynamically imported module|error loading dynamically imported module|importing a module script failed/i;
+const CHUNK_RELOAD_KEY = 'chunk-reload-attempted';
+
+function isChunkLoadError(error: Error | null): boolean {
+  return !!error?.message && CHUNK_LOAD_ERROR_RE.test(error.message);
+}
+
+/**
+ * Libera o guard de reload depois que uma rota lazy monta com sucesso, para que
+ * uma falha de chunk futura (em outra rota, depois de outro deploy) ainda possa
+ * se recuperar sozinha. Chamado pelo `LazyPage` em `App.tsx`.
+ */
+// O guard mora junto da regex e da chave que o boundary usa: separar em outro
+// arquivo duplicaria a definicao de "erro de chunk" em dois lugares.
+// eslint-disable-next-line react-refresh/only-export-components
+export function clearChunkReloadGuard() {
+  try {
+    sessionStorage.removeItem(CHUNK_RELOAD_KEY);
+  } catch {
+    // sessionStorage indisponivel (aba privada, storage bloqueado): sem guard,
+    // o pior caso e nao auto-recuperar — nunca um loop.
+  }
+}
+
 export class RouteErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false, error: null };
 
@@ -29,9 +60,29 @@ export class RouteErrorBoundary extends Component<Props, State> {
       },
       error
     );
+
+    // Auto-recupera UMA vez por aba: evita mostrar tela de erro para o que
+    // costuma ser um deploy novo trocando o hash dos chunks. Se o reload nao
+    // resolver, o guard impede o loop e cai na tela de erro normal.
+    if (isChunkLoadError(error)) {
+      try {
+        if (!sessionStorage.getItem(CHUNK_RELOAD_KEY)) {
+          sessionStorage.setItem(CHUNK_RELOAD_KEY, '1');
+          window.location.reload();
+        }
+      } catch {
+        // Sem sessionStorage nao ha como garantir "uma vez so": nao recarrega.
+      }
+    }
   }
 
   handleRetry = () => {
+    if (isChunkLoadError(this.state.error)) {
+      // Resetar o state nao refaz o import() (ver comentario acima): o botao
+      // precisa recarregar de verdade, senao nao faz nada.
+      window.location.reload();
+      return;
+    }
     this.setState({ hasError: false, error: null });
   };
 

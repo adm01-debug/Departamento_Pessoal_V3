@@ -295,6 +295,22 @@ describe('PortalDocumentosTab', () => {
     expect(state.invalidateQueries).toHaveBeenCalledWith({ queryKey: ['portal-documentos'] });
   });
 
+  // BUG VIVO que este caso trava: `.remove()` do Storage NAO lanca — devolve
+  // { data, error }. O erro era descartado e `documentoService.excluir` rodava
+  // de todo jeito, entao o usuario lia "Documento removido" com o arquivo
+  // intacto no Storage. Agora o erro aborta ANTES de mexer no banco.
+  it('falha ao remover do storage NAO apaga a linha do banco', async () => {
+    state.docs = [MOCK_DOCS[1]];
+    state.storage.remove = vi.fn(async () => ({ error: { message: 'new row violates row-level security policy' } }));
+    renderTab();
+    fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
+    await waitFor(() => expect(toast.error).toHaveBeenCalled());
+    expect(state.storage.remove).toHaveBeenCalledWith(['emp-1/rg.pdf']);
+    // o ponto do teste: a linha do banco NAO foi apagada
+    expect(documentoService.excluir).not.toHaveBeenCalled();
+    expect(toast.success).not.toHaveBeenCalledWith('Documento removido');
+  });
+
   it('baixar documento faz download do storage e dispara o anchor', async () => {
     state.docs = [MOCK_DOCS[1]];
     renderTab();
