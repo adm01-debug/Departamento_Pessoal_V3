@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 763,
+ "total": 765,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 724
+  "unit": 726
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 637
+   "arquivos": 639
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -815,6 +815,16 @@
     "src/components/avaliacao/AuditoriaChips.tsx"
    ],
    "casos": 4
+  },
+  {
+   "arquivo": "src/components/__tests__/AuditoriaComum.test.ts",
+   "tipo": "unit",
+   "linhas": 196,
+   "testa": [
+    "src/components/premiacoes/auditoriaComum.ts",
+    "src/components/premiacoes/premiacoesComum.ts"
+   ],
+   "casos": 9
   },
   {
    "arquivo": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
@@ -2755,6 +2765,16 @@
     "src/components/folha/PagamentoBancarioWizard.tsx"
    ],
    "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/PagamentosComum.test.ts",
+   "tipo": "unit",
+   "linhas": 386,
+   "testa": [
+    "src/components/premiacoes/pagamentosComum.ts",
+    "src/components/premiacoes/premiacoesComum.ts"
+   ],
+   "casos": 24
   },
   {
    "arquivo": "src/components/__tests__/PageContainer.test.tsx",
@@ -7368,8 +7388,9 @@
   "src/components/premiacoes/ComparacaoCenarios.tsx": 1,
   "src/components/premiacoes/RewardsSimulator.tsx": 1,
   "src/components/premiacoes/ScenarioParameterCard.tsx": 1,
-  "src/components/premiacoes/auditoriaComum.ts": 1,
-  "src/components/premiacoes/premiacoesComum.ts": 1,
+  "src/components/premiacoes/auditoriaComum.ts": 2,
+  "src/components/premiacoes/pagamentosComum.ts": 1,
+  "src/components/premiacoes/premiacoesComum.ts": 3,
   "src/components/premiacoes/simuladorRoiComum.ts": 1,
   "src/components/recrutamento/AnalyticsRecrutamento.tsx": 1,
   "src/components/recrutamento/CandidatoDetalhesDialog.tsx": 1,

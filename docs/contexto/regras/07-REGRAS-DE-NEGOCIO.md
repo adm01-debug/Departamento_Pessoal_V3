@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `39a27a35f5` · branch `main` · 2026-11-17 22:29 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7681ca20c2` · branch `main` · 2026-11-17 22:31 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5418,7 +5418,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9213 testes em 719 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9256 testes em 721 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5469,6 +5469,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/trainingImages/__tests__/migration.test.ts` | 33 | migration — bucket e Storage · cria o bucket privado com limite e MIME allowlist · leitura de objeto exige vínculo com a empresa do caminho · escrita de objeto exige admin E vínculo com a empresa … |
 | `src/utils/importacao/__tests__/validators.test.ts` | 33 | validarCPF · returns true for valid CPF · returns false for CPFs with all same digits · returns false for CPF with wrong check digits … |
 | `src/components/__tests__/AcoesFeedback.test.ts` | 32 | perfilOperador (app_role real: admin\|gestor\|rh\|user) · mapeia os papéis administrativos e operacionais · papel ausente/desconhecido não vira permissão · podeValidarPotencial — exclusivo do RH … |
+| `src/components/__tests__/PagamentosComum.test.ts` | 32 | mapa status → etapa do fluxo · coloca cada status real em NO MÁXIMO uma das cinco etapas · mapeia a cadeia de aprovação como o quadro antigo (e deixa auditoria fora) · conta as etapas e fecha o total com o que está fora do fluxo … |
 | `src/pages/__tests__/OnboardingParidade.test.tsx` | 32 | PARIDADE — progresso, conclusão e contadores (mesma fixture) · percentual: a regra nova é idêntica à antiga em TODOS os registros · contadores do topo batem com o cálculo antigo da aba de Admissões · a divisão das abas (em andamento) bate com a régua antiga da Jornada … |
 | `src/components/__tests__/FeedbacksDerivacoes.test.tsx` | 31 | feedbacksComum — tipo do feedback (texto livre) · normaliza os quatro tipos reais, aceitando caixa e rótulo por extenso · cai em gestor sem valor utilizável (nunca inventa categoria) · agrupa subordinado no chip de Gestor … |
 | `src/lib/cursor.test.ts` | 31 | encodeCursor · encode/decodes string values correctly · encode/decodes numeric values correctly · encode/decodes null values correctly … |
@@ -5667,6 +5668,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/importacao/__tests__/excelDownload.test.ts` | 12 | XLSX_MIME · is the correct OOXML MIME type · downloadWorkbook · calls writeBuffer and creates object URL … |
 | `scripts/tests/contexto-publicacao.test.mjs` | 11 | cada upload fornece um ID e cada download usa destino explícito sem ocultar falhas · produtores independentes falham de verdade e o publisher ainda aceita as fontes disponíveis · falha fatal de ${failed} mantém sua versão anterior e publica as duas fontes saudáveis · publisher ${previousBranch ?  … |
 | `src/components/__tests__/AnimatedNumber.test.tsx` | 11 | AnimatedNumber · renders 0 initially when not in view · renders initial 0 even when format prop is provided · applies custom className to span … |
+| `src/components/__tests__/AuditoriaComum.test.ts` | 11 | auditoriaComum — normalização fiel aos dados · resolve valor anterior/posterior, entidade, colaborador e responsável · lida com data/entidade/valor ausentes sem inventar informação · não inventa valor quando não há campo nem citação monetária … |
 | `src/components/__tests__/EmprestimosFinanceiros.test.tsx` | 11 | EmprestimosTable · renders table headers · renders colaborador names · renders instituicao or dash for null … |
 | `src/components/__tests__/ExameFormDialog.test.tsx` | 11 | ExameFormDialog · renders trigger button with  · renders dialog content with title · renders all colaborador options in select … |
 | `src/components/__tests__/GerarPgrButton.test.tsx` | 11 | GerarPgrButton · renders trigger button with  · renders dialog title · renders Responsável Técnico label … |
@@ -5720,9 +5722,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/hooks/__tests__/useSystemHealth.test.ts` | 10 | useSystemHealth · returns initial status as online · returns initial latency as null · sets latency after health check … |
 | `src/services/__tests__/folhaPagamentoService.test.ts` | 10 | folhaPagamentoService · assinarHolerite · should call upsert with correct data and return hash · fecharFolha … |
 | `src/services/__tests__/loggerService.test.ts` | 10 | loggerService · should buffer info logs and not call supabase rpc immediately · should flush error logs immediately via rpc · should flush warn logs immediately via rpc for security audit … |
-| `src/services/tabelas/__tests__/pontoService.test.ts` | 10 | ajustesPontoService · listar queries ajustes_ponto · listar returns [] when data is null · criar calls insert on ajustes_ponto … |
-| `src/test/securityHeadersParity.test.ts` | 10 | paridade de security headers vercel.json x nginx.conf · nginx.conf serve exatamente os headers globais do vercel.json · vercel.json aplica os headers em produção · não usa  … |
-| … +419 linhas — lista completa em `context.json` | | |
+| … +421 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

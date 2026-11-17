@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "39a27a35f57854132764c8eb79f88831f1dea5d8",
+  "commit": "7681ca20c2992ec6d8d98e1d32a6eaa5a4db0014",
   "branch": "main",
-  "data_commit": "2026-11-17T19:28:44-03:00",
+  "data_commit": "2026-11-17T19:28:51-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "7681ca2",
+    "data": "2026-11-17",
+    "assunto": "test(premiacoes): resgata da muri os 29 testes das regras de pagamento e auditoria (#658)"
+   },
    {
     "sha": "39a27a3",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "1eff3e1",
     "data": "2026-11-17",
     "assunto": "infra(banco): resgata da muri 4 migrations que nunca foram aplicadas (#632)"
-   },
-   {
-    "sha": "7635f53",
-    "data": "2026-11-17",
-    "assunto": "feat(colaboradores): resgata da muri os cartões de KPI do diretório (#631)"
    }
   ],
-  "arquivos_mudados_7d": 1087,
+  "arquivos_mudados_7d": 1089,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 366
+    "mudancas": 368
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 273
+    "commits": 274
    },
    {
     "autor": "dependabot[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 11
+    "commits": 10
    },
    {
     "autor": "github-actions[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3548,
-  "arquivos_codigo": 2062,
-  "linhas_codigo": 407712,
+  "arquivos_total": 3550,
+  "arquivos_codigo": 2064,
+  "linhas_codigo": 408294,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -332,7 +332,7 @@
   "tabelas": 425,
   "migrations": 861,
   "cron_jobs": 41,
-  "testes": 763,
+  "testes": 765,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 332
@@ -647,8 +647,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 968,
-   "linhas": 174832
+   "arquivos": 970,
+   "linhas": 175414
   },
   "src/constants": {
    "arquivos": 7,

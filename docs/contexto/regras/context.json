@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "39a27a35f57854132764c8eb79f88831f1dea5d8",
+  "sha": "7681ca20c2992ec6d8d98e1d32a6eaa5a4db0014",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 22:29 UTC",
-  "files_total": 3561,
-  "code_files": 2987,
-  "code_lines": 472997
+  "generated_at": "2026-11-17 22:31 UTC",
+  "files_total": 3563,
+  "code_files": 2989,
+  "code_lines": 473579
  },
  "version": "1.3.2",
- "facts_hash": "e5c691127dc8c64d",
+ "facts_hash": "24ebefef5dfbe704",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 994,
-   ".ts": 930,
+   ".ts": 932,
    ".sql": 927,
    ".mjs": 108,
    ".js": 15,
@@ -100034,7 +100034,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 968,
+  "components_count": 970,
   "hooks": [
    {
     "name": "useContacts",
@@ -101621,8 +101621,8 @@
   },
   {
    "module": "src/components",
-   "files": 968,
-   "lines": 174832,
+   "files": 970,
+   "lines": 175414,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101799,6 +101799,7 @@
     "src/components/__tests__/AssinarAvisoDialog.test.tsx",
     "src/components/__tests__/AssinarEspelhoDialog.test.tsx",
     "src/components/__tests__/AuditoriaChips.test.tsx",
+    "src/components/__tests__/AuditoriaComum.test.ts",
     "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
     "src/components/__tests__/AuditoriaDetalheDialog.test.tsx",
     "src/components/__tests__/AuditoriaEventoDialog.test.tsx",
@@ -101848,8 +101849,7 @@
     "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
     "src/components/__tests__/DesligamentoFilters.test.tsx",
     "src/components/__tests__/DesligamentoKPIs.test.tsx",
-    "src/components/__tests__/DesligamentoStatusBadge.test.tsx",
-    "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx"
+    "src/components/__tests__/DesligamentoStatusBadge.test.tsx"
    ]
   },
   {
@@ -167157,6 +167157,50 @@
     "name": "o clique continua entregando o valor do módulo (nenhuma lógica mudou)"
    },
    {
+    "file": "src/components/__tests__/AuditoriaComum.test.ts",
+    "name": "auditoriaComum — normalização fiel aos dados"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaComum.test.ts",
+    "name": "resolve valor anterior/posterior, entidade, colaborador e responsável"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaComum.test.ts",
+    "name": "lida com data/entidade/valor ausentes sem inventar informação"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaComum.test.ts",
+    "name": "não inventa valor quando não há campo nem citação monetária"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaComum.test.ts",
+    "name": "distingue aprovação, campanha, regra e conciliação"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaComum.test.ts",
+    "name": "auditoriaComum — agrupamento e filtros"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaComum.test.ts",
+    "name": "agrupa por data no fuso da aplicação e usa Hoje/Ontem"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaComum.test.ts",
+    "name": "filtra busca, categoria, tipo, entidade e usuário"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaComum.test.ts",
+    "name": "ordena do mais recente para o mais antigo e respeita o período"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaComum.test.ts",
+    "name": "deriva o destaque de limpar filtros de qualquer filtro real"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaComum.test.ts",
+    "name": "gera uma janela de paginação sem páginas inexistentes"
+   },
+   {
     "file": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
     "name": "auditoria · normalização tolerante"
    },
@@ -176035,6 +176079,134 @@
    {
     "file": "src/components/__tests__/PagamentoBancarioWizard.test.tsx",
     "name": "renders Cancelar button in step 1"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "mapa status → etapa do fluxo"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "coloca cada status real em NO MÁXIMO uma das cinco etapas"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "mapeia a cadeia de aprovação como o quadro antigo (e deixa auditoria fora)"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "conta as etapas e fecha o total com o que está fora do fluxo"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "etapa atual (destaque do fluxo)"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "aponta a primeira etapa com pagamentos aguardando algo"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "sem nada em andamento, destaca a última etapa com pagamentos"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "valor do pagamento"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "prefere o valor da folha, depois o aprovado e por fim o calculado"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "calcula a diferença só quando a conciliação divergiu"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "os quatro indicadores"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "soma valores e conta pagamentos de cada indicador"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "não conta o mesmo pagamento em dois segmentos (sem dupla contagem no total)"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "resume o dinheiro em segmentos (sem fatia zerada) e fecha o total"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "ações do fluxo"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "avança exatamente um passo da cadeia real"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "rotula o botão com a AÇÃO real de cada status"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "libera rejeição e reinício nos limites certos"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "filtros, ordenação e paginação"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "filtra por etapa do fluxo e por "
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "filtra por campanha, status, período e busca"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "ordena por data e por valor"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "deriva as opções de período/campanha/status dos dados reais"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "pagina sem devolver página vazia ou inexistente"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "próximas ações"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "só cria pendência quando existe pagamento no estado correspondente"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "prioriza aprovação, depois divergência e depois o que aguarda conciliação"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "valorParaGravar"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "zera o aprovado ao rejeitar"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "volta ao calculado ao reiniciar o fluxo"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "ao avançar usa o aprovado, com o calculado como reserva"
+   },
+   {
+    "file": "src/components/__tests__/PagamentosComum.test.ts",
+    "name": "NUNCA grava o valor da folha, mesmo com conciliação divergente"
    },
    {
     "file": "src/components/__tests__/PageContainer.test.tsx",
@@ -264355,6 +264527,24 @@
     "o clique continua entregando o valor do módulo (nenhuma lógica mudou)"
    ]
   },
+  "src/components/__tests__/AuditoriaComum.test.ts": {
+   "path": "src/components/__tests__/AuditoriaComum.test.ts",
+   "lines": 196,
+   "is_test": true,
+   "tests": [
+    "auditoriaComum — normalização fiel aos dados",
+    "resolve valor anterior/posterior, entidade, colaborador e responsável",
+    "lida com data/entidade/valor ausentes sem inventar informação",
+    "não inventa valor quando não há campo nem citação monetária",
+    "distingue aprovação, campanha, regra e conciliação",
+    "auditoriaComum — agrupamento e filtros",
+    "agrupa por data no fuso da aplicação e usa Hoje/Ontem",
+    "filtra busca, categoria, tipo, entidade e usuário",
+    "ordena do mais recente para o mais antigo e respeita o período",
+    "deriva o destaque de limpar filtros de qualquer filtro real",
+    "gera uma janela de paginação sem páginas inexistentes"
+   ]
+  },
   "src/components/__tests__/AuditoriaDerivacoes.test.tsx": {
    "path": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
    "lines": 288,
@@ -268241,6 +268431,48 @@
     "renders Remessa CNAB option",
     "renders TLS security notice",
     "renders Cancelar button in step 1"
+   ]
+  },
+  "src/components/__tests__/PagamentosComum.test.ts": {
+   "path": "src/components/__tests__/PagamentosComum.test.ts",
+   "lines": 386,
+   "is_test": true,
+   "rule_comments": [
+    "* `valorParaGravar` é a regra que decide o número que vai para"
+   ],
+   "tests": [
+    "mapa status → etapa do fluxo",
+    "coloca cada status real em NO MÁXIMO uma das cinco etapas",
+    "mapeia a cadeia de aprovação como o quadro antigo (e deixa auditoria fora)",
+    "conta as etapas e fecha o total com o que está fora do fluxo",
+    "etapa atual (destaque do fluxo)",
+    "aponta a primeira etapa com pagamentos aguardando algo",
+    "sem nada em andamento, destaca a última etapa com pagamentos",
+    "valor do pagamento",
+    "prefere o valor da folha, depois o aprovado e por fim o calculado",
+    "calcula a diferença só quando a conciliação divergiu",
+    "os quatro indicadores",
+    "soma valores e conta pagamentos de cada indicador",
+    "não conta o mesmo pagamento em dois segmentos (sem dupla contagem no total)",
+    "resume o dinheiro em segmentos (sem fatia zerada) e fecha o total",
+    "ações do fluxo",
+    "avança exatamente um passo da cadeia real",
+    "rotula o botão com a AÇÃO real de cada status",
+    "libera rejeição e reinício nos limites certos",
+    "filtros, ordenação e paginação",
+    "filtra por etapa do fluxo e por ",
+    "filtra por campanha, status, período e busca",
+    "ordena por data e por valor",
+    "deriva as opções de período/campanha/status dos dados reais",
+    "pagina sem devolver página vazia ou inexistente",
+    "próximas ações",
+    "só cria pendência quando existe pagamento no estado correspondente",
+    "prioriza aprovação, depois divergência e depois o que aguarda conciliação",
+    "valorParaGravar",
+    "zera o aprovado ao rejeitar",
+    "volta ao calculado ao reiniciar o fluxo",
+    "ao avançar usa o aprovado, com o calculado como reserva",
+    "NUNCA grava o valor da folha, mesmo com conciliação divergente"
    ]
   },
   "src/components/__tests__/PageContainer.test.tsx": {
@@ -325668,10 +325900,20 @@
   }
  },
  "git": {
-  "sha": "39a27a35f57854132764c8eb79f88831f1dea5d8",
+  "sha": "7681ca20c2992ec6d8d98e1d32a6eaa5a4db0014",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "7681ca2",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "test(premiacoes): resgata da muri os 29 testes das regras de pagamento e auditoria (#658)",
+    "files": [
+     "src/components/__tests__/AuditoriaComum.test.ts",
+     "src/components/__tests__/PagamentosComum.test.ts"
+    ]
+   },
    {
     "sha": "39a27a3",
     "date": "2026-11-17",
@@ -326063,29 +326305,19 @@
      "src/components/layout/SidebarFooter.tsx",
      "src/components/layout/__tests__/AppSidebar.menu.test.ts"
     ]
-   },
-   {
-    "sha": "e0e4448",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(design): traz o sistema de design da branch muri para a main (#625)",
-    "files": [
-     "scripts/.bundle-budget.json",
-     "src/index.css"
-    ]
    }
   ],
   "hot_files": [
-   [
-    "scripts/.bundle-budget.json",
-    5
-   ],
    [
     "inventario/estado/rotas.json",
     4
    ],
    [
     "src/pages/ColaboradorDetalhesPage.tsx",
+    4
+   ],
+   [
+    "scripts/.bundle-budget.json",
     4
    ],
    [
@@ -326125,6 +326357,14 @@
     2
    ],
    [
+    "src/components/__tests__/AuditoriaComum.test.ts",
+    1
+   ],
+   [
+    "src/components/__tests__/PagamentosComum.test.ts",
+    1
+   ],
+   [
     "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
     1
    ],
@@ -326146,14 +326386,6 @@
    ],
    [
     "src/components/esocial/tabs.tsx",
-    1
-   ],
-   [
-    "src/components/ui/calendar.tsx",
-    1
-   ],
-   [
-    "src/components/AdminRoute.tsx",
     1
    ]
   ]
