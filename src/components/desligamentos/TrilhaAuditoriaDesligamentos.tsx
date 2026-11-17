@@ -89,7 +89,8 @@ import { AnimatedCascadeDialog } from '@/components/ui/animated-cascade-dialog';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { cn } from '@/lib/utils';
 import { exportPontoCSV } from '@/services/exportService';
-import { auditoriaService } from '@/services/auditoriaService';
+import { auditoriaService, type TrilhaAuditoriaRegistro } from '@/services/auditoriaService';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { SyncErrorState } from '@/components/ui/sync-error-state';
 import {
   acaoTrilhaMeta,
@@ -211,6 +212,12 @@ function chaveEvento(evento: EventoTrilha): string {
 }
 
 /** Trilha de Auditoria do módulo de Desligamentos. */
+/** Eventos por pagina da RPC (teto de `get_audit_trail` e 500). */
+const PAGINA_TRILHA = 500;
+
+/** Paginas no maximo — 2.000 eventos, o suficiente para a trilha de uma area. */
+const PAGINAS_TRILHA = 4;
+
 export function TrilhaAuditoriaDesligamentos({ tabela = 'desligamentos' }: TrilhaAuditoriaProps) {
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id;
@@ -220,8 +227,8 @@ export function TrilhaAuditoriaDesligamentos({ tabela = 'desligamentos' }: Trilh
    * chama a RPC `get_audit_trail` (presente na RPC_ALLOWLIST do gateway) com o
    * `empresa_id` do tenant.
    *
-   * A versao desta tela na branch de origem lia `audit_log` direto com
-   * `.from('audit_log').select('*')` — e `audit_log` esta na TABLE_DENYLIST do
+   * A versao desta tela na branch de origem lia a tabela legada de auditoria
+   * direto pelo cliente, com um select nela — e essa tabela esta na TABLE_DENYLIST do
    * `external-db-bridge` (supabase/functions/external-db-bridge/validation.ts).
    * Pior: o erro era engolido num `catch` que devolvia `[]`, entao a aba abria
    * em producao afirmando "Nenhum registro de auditoria encontrado" sobre uma
@@ -237,9 +244,40 @@ export function TrilhaAuditoriaDesligamentos({ tabela = 'desligamentos' }: Trilh
     refetch,
   } = useQuery({
     queryKey: ['trilha-auditoria', tabela, empresaId],
-    queryFn: () => auditoriaService.listarTrilha({ empresa_id: empresaId!, tabela, limite: 200 }),
+    // Pagina pelo cursor da propria RPC (`antes_de`/`antes_de_id`) em vez de
+    // trazer uma pagina so: os filtros de periodo, busca e a exportacao rodam
+    // sobre o que foi carregado, entao parar na primeira pagina faria o auditor
+    // escolher uma data antiga e ver "nenhum evento" com o evento gravado, e o
+    // CSV sairia truncado em silencio. O teto existe para a tela nao puxar a
+    // auditoria inteira: PAGINA_TRILHA x PAGINAS_TRILHA eventos, e a tela avisa
+    // quando bateu no teto.
+    queryFn: async () => {
+      const paginas: TrilhaAuditoriaRegistro[] = [];
+      let cursor: { antes_de?: string; antes_de_id?: string } = {};
+      for (let i = 0; i < PAGINAS_TRILHA; i++) {
+        const pagina = await auditoriaService.listarTrilha({
+          empresa_id: empresaId!,
+          tabela,
+          limite: PAGINA_TRILHA,
+          ...cursor,
+        });
+        paginas.push(...pagina);
+        if (pagina.length < PAGINA_TRILHA) break;
+        const ultimo = pagina[pagina.length - 1];
+        cursor = { antes_de: ultimo.created_at, antes_de_id: ultimo.id };
+      }
+      return paginas;
+    },
     enabled: !!empresaId,
+    // A aba de auditoria fica aberta enquanto o RH trabalha, e o
+    // `refetchOnWindowFocus` e desligado no queryClient: sem este intervalo a
+    // trilha congelava na versao carregada (a timeline que esta tela substitui
+    // tinha `refetchInterval: 30_000`).
+    refetchInterval: 30_000,
   });
+
+  /** Bateu no teto de paginas: o que esta na tela nao e a auditoria inteira. */
+  const trilhaTruncada = logs.length >= PAGINA_TRILHA * PAGINAS_TRILHA;
 
   /**
    * `user_id → nome` vem do PROPRIO registro: a RPC devolve `user_nome` e
@@ -360,6 +398,14 @@ export function TrilhaAuditoriaDesligamentos({ tabela = 'desligamentos' }: Trilh
       return;
     }
     try {
+      // O CSV leva nome, e-mail e identificadores do autor de cada evento: o
+      // mesmo acesso a PII que a exportacao Excel desta pagina ja registra
+      // (DesligamentosPage.tsx:105). Sem isto a trilha seria um caminho para
+      // extrair esses dados sem deixar registro.
+      void registrarAcessoPII('desligamentos', 'export', {
+        empresaId,
+        registroCount: filtrados.length,
+      });
       exportPontoCSV(
         filtrados.map((evento) => {
           const responsavel = responsavelDoEvento(evento, nomePorId);
@@ -454,7 +500,14 @@ export function TrilhaAuditoriaDesligamentos({ tabela = 'desligamentos' }: Trilh
                 {/* `flex-wrap` (e não `truncate`): com pouca largura a linha de
                   metadados QUEBRA — nenhuma informação secundária é cortada. */}
                 <div className="mt-0.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[10.5px] text-muted-foreground/80">
-                  <span>{resumo.total} eventos registrados</span>
+                  <span>
+                    {resumo.total} eventos registrados
+                    {/* A tela carrega no maximo PAGINA_TRILHA x PAGINAS_TRILHA
+                        eventos. Bater no teto nao pode passar por "historico
+                        completo": filtro de periodo, contadores e CSV valem
+                        sobre o que esta carregado. */}
+                    {trilhaTruncada && ' (mais antigos que estes nao estao nesta tela)'}
+                  </span>
                   <span aria-hidden className="shrink-0">
                     ·
                   </span>

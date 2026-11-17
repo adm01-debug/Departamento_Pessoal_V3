@@ -327,7 +327,10 @@ describe('responsável do evento', () => {
   it('deduz a origem da sessão', () => {
     expect(origemDoAutor(evento({ userId: null, userEmail: null }))).toBe('Sistema');
     expect(origemDoAutor(evento())).toBe('Web');
-    expect(origemDoAutor(evento({ userAgent: null }))).toBe('API');
+    // Sem `user_agent` a origem fica EM BRANCO: a RPC get_audit_trail nao
+    // devolve esse campo, entao a ausencia dele nao prova chamada por API —
+    // rotular 'API' fazia toda acao do navegador aparecer como API.
+    expect(origemDoAutor(evento({ userAgent: null }))).toBeNull();
     expect(origemDoAutor(evento({ depois: { departamento: 'Financeiro' } }))).toBe('Financeiro');
   });
 });
@@ -479,5 +482,110 @@ describe('trilhaComum (tokens de apresentação)', () => {
     expect(rotuloRecurso('desligamentos')).toBe('Desligamentos');
     expect(rotuloRecurso('tabela_nova')).toBe('Tabela Nova');
     expect(rotuloRecurso(null)).toBe('—');
+  });
+});
+
+/**
+ * ============================================================================
+ * Achados da revisão da PR #620 — todos sobre o mesmo erro de leitura: o
+ * `desligamentoService.atualizar` grava snapshots COMPLETOS em
+ * `dados_anteriores`/`dados_novos`, então o valor de `depois.status` NÃO diz
+ * qual operação aconteceu. Quem decidir título, nível e selo pelo estado final
+ * do registro atribui à trilha operações que nunca ocorreram.
+ * ============================================================================
+ */
+describe('trilha por TRANSIÇÃO de status, não por estado final', () => {
+  it('editar outro campo de um desligamento finalizado não vira "finalizado" de novo', () => {
+    const edicaoEmFinalizado = evento({
+      acao: 'UPDATE',
+      antes: { status: 'finalizado', motivo: 'reestruturação' },
+      depois: { status: 'finalizado', motivo: 'reestruturação da área' },
+    });
+
+    expect(tituloDoEvento(edicaoEmFinalizado)).toBe('Desligamento atualizado');
+    expect(resultadoDoEvento(edicaoEmFinalizado)).toBeNull();
+  });
+
+  it('a transição de verdade para finalizado continua nomeada e com selo', () => {
+    const transicao = evento({
+      acao: 'UPDATE',
+      antes: { status: 'homologado' },
+      depois: { status: 'finalizado' },
+    });
+
+    expect(tituloDoEvento(transicao)).toBe('Desligamento finalizado');
+    expect(resultadoDoEvento(transicao)).toMatchObject({ label: 'Concluído' });
+  });
+
+  it('o pagamento da rescisão é reconhecido (status `pago`, que a produção grava)', () => {
+    const pagamento = evento({
+      acao: 'UPDATE',
+      antes: { status: 'homologado', etapa: 'pagamento' },
+      depois: { status: 'pago', etapa: 'finalizado' },
+    });
+
+    expect(tituloDoEvento(pagamento)).toBe('Rescisão paga');
+    expect(resultadoDoEvento(pagamento)).toMatchObject({ label: 'Pago' });
+    // Estado terminal: não é mais uma pendência que exige ação.
+    expect(nivelDoEvento(pagamento)).toBe('informativo');
+  });
+
+  it('editar um cadastro já cancelado não é um novo cancelamento (nível crítico)', () => {
+    const edicaoEmCancelado = evento({
+      acao: 'UPDATE',
+      antes: { status: 'cancelado', motivo: 'a' },
+      depois: { status: 'cancelado', motivo: 'b' },
+    });
+    expect(nivelDoEvento(edicaoEmCancelado)).not.toBe('critico');
+
+    const cancelamentoReal = evento({
+      acao: 'UPDATE',
+      antes: { status: 'pendente' },
+      depois: { status: 'cancelado' },
+    });
+    expect(nivelDoEvento(cancelamentoReal)).toBe('critico');
+  });
+});
+
+describe('alterações dentro de um objeto do payload', () => {
+  it('mudança no conteúdo de detalhes_calculo não desaparece da lista', () => {
+    // `formatarValor` resume objeto por contagem ("2 campos"): comparar o texto
+    // formatado dizia "sem alteração" justamente no campo que guarda o
+    // recálculo da rescisão.
+    const recalculo = evento({
+      acao: 'UPDATE',
+      antes: { detalhes_calculo: { inss: 100, irrf: 50 } },
+      depois: { detalhes_calculo: { inss: 110, irrf: 40 } },
+    });
+
+    const alteracoes = alteracoesDoEvento(recalculo);
+    expect(alteracoes).toHaveLength(1);
+    expect(alteracoes[0].chave).toBe('detalhes_calculo');
+  });
+
+  it('objeto idêntico continua fora da lista', () => {
+    const semMudanca = evento({
+      acao: 'UPDATE',
+      antes: { detalhes_calculo: { inss: 100 }, motivo: 'x' },
+      depois: { detalhes_calculo: { inss: 100 }, motivo: 'y' },
+    });
+
+    const alteracoes = alteracoesDoEvento(semMudanca);
+    expect(alteracoes.map((a) => a.chave)).toEqual(['motivo']);
+  });
+});
+
+describe('filtro de período — limite superior exclusivo', () => {
+  const dia8 = evento({ id: 'dia-8', criadoEm: '2026-10-08T00:00:00' });
+  const dia7 = evento({ id: 'dia-7', criadoEm: '2026-10-07T23:59:00' });
+
+  it('"até 07/10" não inclui o evento da meia-noite do dia 08', () => {
+    const filtrados = filtrarTrilha([dia7, dia8], { ate: '2026-10-07' });
+    expect(filtrados.map((e) => e.id)).toEqual(['dia-7']);
+  });
+
+  it('"até 08/10" inclui o evento da meia-noite do dia 08', () => {
+    const filtrados = filtrarTrilha([dia7, dia8], { ate: '2026-10-08' });
+    expect(filtrados.map((e) => e.id).sort()).toEqual(['dia-7', 'dia-8']);
   });
 });

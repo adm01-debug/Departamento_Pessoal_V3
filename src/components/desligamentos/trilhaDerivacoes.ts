@@ -23,6 +23,8 @@
  */
 import { DIA_MS, dataValida, formatCurrencyBRL, inicioDoDia } from './desligamentosDerivacoes';
 import { ETAPA_BADGE, ETAPA_LABELS, STATUS_BADGE, STATUS_LABELS, TIPO_LABELS } from './desligamentosComum';
+import { STATUS_TERMINAIS } from './desligamentosDerivacoes';
+import { addDaysLocal } from '@/utils/dateLocal';
 import { ACOES_DOCUMENTO, ACOES_TECNICAS, type CategoriaTrilha, type NivelTrilha } from './trilhaComum';
 
 /** Recorte mínimo de um registro cru da trilha (linha de `audit_log`). */
@@ -280,8 +282,22 @@ export function alteracoesDoEvento(evento: EventoTrilha): AlteracaoTrilha[] {
   const chaves = new Set([...Object.keys(antes), ...Object.keys(depois)]);
   const alteracoes: AlteracaoTrilha[] = [];
   chaves.forEach((chave) => {
-    const de = chave in antes ? formatarValor(chave, antes[chave]) : '—';
-    const para = chave in depois ? formatarValor(chave, depois[chave]) : '—';
+    const temAntes = chave in antes;
+    const temDepois = chave in depois;
+    // A comparacao e feita nos valores CRUS: `formatarValor` resume objeto por
+    // contagem de chaves ("2 campos"), entao `detalhes_calculo` indo de
+    // { inss: 100, irrf: 50 } para { inss: 110, irrf: 40 } sairia como "sem
+    // alteracao" — justamente o campo que carrega o recalculo da rescisao.
+    if (temAntes && temDepois && mesmoValorCru(antes[chave], depois[chave])) return;
+    const de = temAntes ? formatarValor(chave, antes[chave]) : '—';
+    const para = temDepois ? formatarValor(chave, depois[chave]) : '—';
+    // Chave presente nos dois lados com valores diferentes mas MESMA
+    // representacao (dois objetos de 2 campos, por exemplo): a linha entra com
+    // o rotulo explicito, senao a alteracao desaparece da tabela.
+    if (de === para && temAntes && temDepois) {
+      alteracoes.push({ chave, label: rotuloCampo(chave), de, para: `${para} (conteudo alterado)` });
+      return;
+    }
     if (de === para) return;
     alteracoes.push({ chave, label: rotuloCampo(chave), de, para });
   });
@@ -292,6 +308,38 @@ export function alteracoesDoEvento(evento: EventoTrilha): AlteracaoTrilha[] {
   );
   const resto = alteracoes.filter((a) => !ORDEM_TRANSICAO.includes(a.chave));
   return [...nucleo, ...resto];
+}
+
+/**
+ * Compara dois valores do payload sem passar por formatacao. `JSON.stringify`
+ * basta porque os dois lados vem do MESMO snapshot do banco (mesma ordem de
+ * chaves), e nulo e ausente valem o mesmo aqui.
+ */
+function mesmoValorCru(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+  try {
+    return JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Status NOVO somente quando ele de fato MUDOU.
+ *
+ * `desligamentoService.atualizar` grava snapshots COMPLETOS em
+ * `dados_anteriores`/`dados_novos`, entao a simples presenca de
+ * `depois.status` nao diz qual operacao aconteceu: editar o motivo de um
+ * desligamento ja finalizado trazia `status: 'finalizado'` nos dois lados e a
+ * linha afirmava "Desligamento finalizado" outra vez, com selo de concluido.
+ *
+ * Sem snapshot anterior (INSERT, ou payload so-novo) o estado novo E a operacao.
+ */
+function statusTransicionado(evento: EventoTrilha): string | null {
+  const novo = texto(evento.depois?.status);
+  if (!novo) return null;
+  if (evento.antes && texto(evento.antes.status) === novo) return null;
+  return novo;
 }
 
 /** Metadado simples de um campo presente em UM dos lados do payload. */
@@ -422,9 +470,13 @@ export function tituloDoEvento(evento: EventoTrilha): string {
     case 'GENERATE_DOC':
       return 'Carta de rescisão gerada';
     case 'UPDATE': {
-      const status = texto(depois.status);
+      // Só o status que MUDOU nomeia a operação (ver `statusTransicionado`).
+      const status = statusTransicionado(evento);
       if (status === 'finalizado') return 'Desligamento finalizado';
       if (status === 'concluido') return 'Desligamento concluído';
+      // `pago` é o estado final que a produção grava ao quitar a rescisão
+      // (rescisaoService.ts:348) — faltava nesta lista.
+      if (status === 'pago') return 'Rescisão paga';
       if (status === 'homologado') return 'Rescisão homologada';
       if (status === 'calculado') return 'Rescisão calculada';
       if (status === 'comunicado') return 'Aviso prévio comunicado';
@@ -547,10 +599,14 @@ export function categoriaDoEvento(evento: EventoTrilha): CategoriaTrilha {
  * Derivado do próprio log — não existe coluna de severidade na auditoria.
  */
 export function nivelDoEvento(evento: EventoTrilha): NivelTrilha {
-  const status = texto(evento.depois?.status) ?? texto(evento.antes?.status);
-  if ((evento.acao ?? '').toUpperCase() === 'DELETE' || status === 'cancelado') return 'critico';
+  const transicao = statusTransicionado(evento);
+  // `cancelado` so e critico quando o evento CANCELOU algo: editar um campo de
+  // um desligamento ja cancelado nao e um novo cancelamento.
+  if ((evento.acao ?? '').toUpperCase() === 'DELETE' || transicao === 'cancelado') return 'critico';
   if (evento.antes && (evento.depois || evento.acao === 'UPDATE')) {
-    const terminal = status === 'finalizado' || status === 'concluido';
+    // Terminais da area, `pago` incluido (fonte unica em desligamentosDerivacoes).
+    const estado = transicao ?? texto(evento.depois?.status) ?? texto(evento.antes?.status);
+    const terminal = !!estado && (STATUS_TERMINAIS as readonly string[]).includes(estado);
     if (!terminal) return 'atencao';
   }
   return 'informativo';
@@ -568,9 +624,10 @@ export interface ResultadoTrilha {
  * maioria das linhas sem selo.
  */
 export function resultadoDoEvento(evento: EventoTrilha): ResultadoTrilha | null {
-  const status = texto(evento.depois?.status);
-  if (status === 'finalizado' || status === 'concluido') {
-    return { label: 'Concluído', badge: 'bg-success/15 text-success' };
+  const status = statusTransicionado(evento);
+  if (status === 'cancelado') return null;
+  if (status && (STATUS_TERMINAIS as readonly string[]).includes(status)) {
+    return { label: status === 'pago' ? 'Pago' : 'Concluído', badge: 'bg-success/15 text-success' };
   }
   if (!evento.userEmail && !evento.userId) {
     return { label: 'Sistema', badge: 'bg-info/15 text-info' };
@@ -622,14 +679,19 @@ export function iniciaisDoAutor(nome: string): string {
 
 /**
  * Origem da sessão do autor — `Sistema` sem autor, o departamento real quando o
- * payload o traz, senão a plataforma deduzida do `user_agent` do próprio log.
+ * payload o traz, `Web` quando o log tem `user_agent`.
+ *
+ * Sem `user_agent` a origem fica EM BRANCO, e não "API": a RPC
+ * `get_audit_trail` não devolve esse campo, então a ausência dele não prova
+ * chamada por API — rotular assim fazia toda ação feita pelo navegador aparecer
+ * como API na trilha.
  */
 export function origemDoAutor(evento: EventoTrilha): string | null {
   const departamento = texto(evento.depois?.departamento) ?? texto(evento.antes?.departamento);
   if (departamento) return departamento;
   if (!evento.userEmail && !evento.userId) return 'Sistema';
   if (evento.userAgent) return 'Web';
-  return 'API';
+  return null;
 }
 
 /* ─── Agrupamento por dia (a espinha editorial da timeline) ───────────────── */
@@ -716,7 +778,11 @@ export function filtrarTrilha(
 ): EventoTrilha[] {
   const busca = (filtros.busca ?? '').trim().toLowerCase();
   const de = dataValida(filtros.de)?.getTime();
-  const ate = filtros.ate ? (dataValida(filtros.ate)?.getTime() ?? 0) + DIA_MS : undefined;
+  // Limite superior EXCLUSIVO, na meia-noite local do dia seguinte. Somar
+  // `DIA_MS` erra o dia em mudanca de horario de verao, e a comparacao `>`
+  // deixava passar o evento das 00:00 do dia de fora do periodo.
+  const dataAte = dataValida(filtros.ate);
+  const ate = dataAte ? addDaysLocal(dataAte, 1).getTime() : undefined;
 
   return (eventos ?? []).filter((evento) => {
     if (filtros.categoria && filtros.categoria !== 'todos' && categoriaDoEvento(evento) !== filtros.categoria) {
@@ -736,7 +802,7 @@ export function filtrarTrilha(
       const quando = dataValida(evento.criadoEm)?.getTime();
       if (quando === undefined) return false;
       if (de !== undefined && quando < de) return false;
-      if (ate !== undefined && quando > ate) return false;
+      if (ate !== undefined && quando >= ate) return false;
     }
     if (busca) {
       const responsavel = responsavelDoEvento(evento, nomePorId);
