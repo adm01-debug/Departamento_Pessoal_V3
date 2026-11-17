@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { ColaboradorFilters } from '@/components/colaboradores/ColaboradorFilters';
 import { TableCell, TableRow } from '@/components/ui/table';
@@ -24,6 +24,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
 import { ColaboradorKpiCards } from '@/components/colaboradores/ColaboradorKpiCards';
+import { ColaboradorDirectoryGrid } from '@/components/colaboradores/ColaboradorDirectoryGrid';
+import { ColaboradorViewSwitcher, type ColaboradorViewMode } from '@/components/colaboradores/ColaboradorViewSwitcher';
 import type { Colaborador } from '@/types/entities';
 import { loggerService } from '@/services/loggerService';
 
@@ -33,6 +35,9 @@ export default function ColaboradoresPage() {
   const { exportarPDF } = usePDFExport();
   const { empresaAtual } = useEmpresas();
   const pii = usePiiMask();
+  // Tabela segue sendo o padrão (é o que o RH já conhece); a grade de cartões
+  // da `muri` entra como alternativa, não como substituta.
+  const [viewMode, setViewMode] = useState<ColaboradorViewMode>('tabela');
 
   const {
     colaboradores,
@@ -210,6 +215,8 @@ export default function ColaboradoresPage() {
       onRefetch={refetch}
       actions={
         <div className="flex items-center gap-2">
+          <ColaboradorViewSwitcher value={viewMode} onChange={setViewMode} />
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="h-11 rounded-xl gap-2 px-4 shadow-xs bg-card/50">
@@ -276,6 +283,15 @@ export default function ColaboradoresPage() {
         { header: 'Status' },
         { header: 'Ações', className: 'pr-6 text-right', width: '120px' },
       ]}
+      /* Na visão "diretório", a grade de cartões da `muri` substitui só o corpo
+         da listagem: paginação, filtros, KPIs e estados do container seguem os
+         mesmos. Na visão "tabela" (padrão) `renderBody` fica ausente e o
+         container renderiza a tabela por `columns`/`renderRow`, como sempre. */
+      renderBody={
+        viewMode === 'diretorio' ? (
+          <ColaboradorDirectoryGrid items={colaboradores} isFetching={isFetching} />
+        ) : undefined
+      }
       renderRow={(c) => (
         <TableRow
           key={c.id}

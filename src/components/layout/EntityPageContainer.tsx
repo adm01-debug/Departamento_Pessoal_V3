@@ -41,6 +41,8 @@ interface EntityPageContainerProps<T> {
   entityName: string; // e.g., "cargo", "departamento"
   columns: { header: string; className?: string; width?: string; hidden?: 'sm' | 'md' | 'lg' | boolean }[];
   renderRow: (item: T) => ReactNode;
+  /** Substitui a TABELA por um corpo proprio (grade de cartoes, etc). Resto do container intacto. */
+  renderBody?: ReactNode;
   stats?: ReactNode;
   customFilters?: ReactNode;
 }
@@ -69,6 +71,7 @@ export function EntityPageContainer<T extends { id: string | number }>({
   entityName,
   columns,
   renderRow,
+  renderBody,
   stats,
   customFilters,
   onAdd,
@@ -121,22 +124,30 @@ export function EntityPageContainer<T extends { id: string | number }>({
                   <Spinner size="md" />
                 </div>
               )}
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/30 hover:bg-muted/30 border-b border-border/20">
-                    {columns.map((col, idx) => (
-                      <TableHead
-                        key={idx}
-                        className={`font-display font-semibold py-4 ${col.className || ''}`}
-                        style={{ width: col.width }}
-                      >
-                        {col.header}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>{items.map(renderRow)}</TableBody>
-              </Table>
+              {/* `renderBody` é a saída para quem precisa de outra forma de
+                  listar (grade de cartões, por exemplo) sem abandonar este
+                  container: paginação, filtros, stats, estados de erro/vazio e
+                  o overlay de refetch continuam valendo. Ausente — o caso de
+                  todos os chamadores de hoje — nada muda: a tabela por
+                  `columns`/`renderRow` é renderizada igual. */}
+              {renderBody ?? (
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/30 hover:bg-muted/30 border-b border-border/20">
+                      {columns.map((col, idx) => (
+                        <TableHead
+                          key={idx}
+                          className={`font-display font-semibold py-4 ${col.className || ''}`}
+                          style={{ width: col.width }}
+                        >
+                          {col.header}
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>{items.map(renderRow)}</TableBody>
+                </Table>
+              )}
             </motion.div>
 
             <DataTablePagination
