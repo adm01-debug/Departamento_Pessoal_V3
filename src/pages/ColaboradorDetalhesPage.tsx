@@ -63,6 +63,10 @@ import {
   HoleritesTab,
   CamposCustomizadosTab,
   SSTResumoTab,
+  FinanceiroKpiRow,
+  ResumoRemuneracaoCard,
+  HoleritesPreviewCard,
+  FinanceiroPendenciasCard,
 } from '@/components/colaborador-detalhes';
 import { RecontratarColaboradorDialog } from '@/components/colaboradores/RecontratarColaboradorDialog';
 import { PendenciasDialog, type PendenciaItem } from '@/components/colaborador-detalhes/PendenciasDialog';
@@ -622,6 +626,23 @@ export default function ColaboradorDetalhesPage() {
           </TabsContent>
 
           <TabsContent value="financeiro">
+            {/*
+              Resumo cross-aba antes das sub-abas: ate aqui a aba Financeiro
+              eram tres tabelas, e o RH nao via em lugar nenhum salario base,
+              total de beneficios, desconto em folha, competencia do ultimo
+              holerite nem o alerta de "nenhuma conta principal" / "mais de uma
+              conta principal" — erro que hoje passa batido e vai parar na
+              folha. Reusa as MESMAS query keys das sub-abas, entao o React
+              Query dedupa: nenhuma chamada extra a rede.
+            */}
+            <div className="space-y-4 mb-4">
+              <FinanceiroKpiRow colaboradorId={id!} colaborador={colaborador} />
+              <div className="grid gap-4 lg:grid-cols-2">
+                <ResumoRemuneracaoCard colaboradorId={id!} colaborador={colaborador} />
+                <HoleritesPreviewCard colaboradorId={id!} onVerTodos={() => setActiveFinanceiroTab('holerites')} />
+              </div>
+              <FinanceiroPendenciasCard colaboradorId={id!} />
+            </div>
             <Tabs value={activeFinanceiroTab} onValueChange={setActiveFinanceiroTab} className="space-y-4">
               <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start">
                 <TabsTrigger
