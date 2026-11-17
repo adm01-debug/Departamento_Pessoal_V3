@@ -27,6 +27,11 @@ interface UseGenericCrudOptions<T> {
   searchColumn?: string;
   empresaId?: string;
   /**
+   * false suspende a query (ex.: enquanto a empresa atual nao foi resolvida),
+   * sem desmontar o hook. Default true.
+   */
+  enabled?: boolean;
+  /**
    * false apenas para services sem isolamento por empresa (ex.: EmpresaService,
    * RequireEmpresa=false no BaseService). Default true: atualizar/excluir exigem
    * empresaId, senão o service (tipado via ServiceInterface) perderia a garantia
@@ -52,6 +57,7 @@ export function useGenericCrud<T>({
   empresaId,
   requireEmpresaId = true,
   injectEmpresaIdOnCreate = false,
+  enabled = true,
 }: UseGenericCrudOptions<T>) {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
@@ -74,8 +80,16 @@ export function useGenericCrud<T>({
     setPage(1);
   }, []);
 
+  // Trocar "linhas por pagina" reinicia a paginacao, como busca/filtros ja fazem:
+  // sair de 10 por pagina na pagina 4 para 50 cairia numa pagina inexistente.
+  const alterarPageSize = useCallback((tamanho: number) => {
+    setPageSize(tamanho);
+    setPage(1);
+  }, []);
+
   const query = useQuery({
     queryKey: [queryKey, { search, page, pageSize, filters }],
+    enabled,
     queryFn: async () => {
       try {
         const result = await service.listar({ search, page, pageSize, filters, searchColumn });
@@ -171,7 +185,7 @@ export function useGenericCrud<T>({
     page,
     setPage,
     pageSize,
-    setPageSize,
+    setPageSize: alterarPageSize,
     search,
     setSearch: setSearchAndResetPage,
     criar: criarMutation.mutateAsync,

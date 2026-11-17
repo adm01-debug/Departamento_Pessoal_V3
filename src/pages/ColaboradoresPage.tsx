@@ -10,8 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useExcelExport } from '@/hooks/useExcelExport';
 import { usePDFExport } from '@/hooks/usePDFExport';
-import { useDepartamentos } from '@/hooks/useDepartamentos';
-import { useCargos } from '@/hooks/useCargos';
 import { useColaboradores } from '@/hooks/useColaboradores';
 import { usePiiMask } from '@/hooks/usePiiMask';
 import { registrarAcessoPII } from '@/services/piiAccessLogService';
@@ -31,8 +29,6 @@ import { loggerService } from '@/services/loggerService';
 
 export default function ColaboradoresPage() {
   const navigate = useNavigate();
-  const { departamentos } = useDepartamentos();
-  const { cargos } = useCargos();
   const { exportarExcel } = useExcelExport();
   const { exportarPDF } = usePDFExport();
   const { empresaAtual } = useEmpresas();
@@ -57,6 +53,8 @@ export default function ColaboradoresPage() {
     setCargo,
     refetch,
     summary,
+    departamentosDisponiveis,
+    cargosDisponiveis,
   } = useColaboradores();
 
   const handlePageChange = useCallback(
@@ -289,8 +287,11 @@ export default function ColaboradoresPage() {
           onStatusChange={handleStatusChange}
           onDeptoChange={handleDeptoChange}
           onCargoChange={handleCargoChange}
-          departamentos={departamentos}
-          cargos={cargos}
+          /* Opções vindas dos valores gravados em `colaboradores` (texto livre),
+             não das tabelas mestre: ver colaboradorService.listarOpcoesFiltro.
+             O componente espera {id, nome} — o próprio nome serve de id aqui. */
+          departamentos={departamentosDisponiveis.map((nome) => ({ id: nome, nome }))}
+          cargos={cargosDisponiveis.map((nome) => ({ id: nome, nome }))}
           currentFilters={{
             search,
             status,

@@ -86,8 +86,10 @@ export default function ColaboradorFormPage() {
   const [activeTab, setActiveTab] = useState('geral');
   const isEditing = !!id;
 
-  const { departamentos } = useDepartamentos();
-  const { cargos } = useCargos();
+  // pageSize 100 (teto do BaseService): os selects do formulario precisam da
+  // lista inteira da empresa, nao da primeira pagina da tela administrativa.
+  const { departamentos } = useDepartamentos({ pageSize: 100 });
+  const { cargos } = useCargos({ pageSize: 100 });
   const { empresaAtual } = useEmpresas();
 
   const { data: colaborador, isLoading } = useQuery({

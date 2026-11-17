@@ -6,6 +6,9 @@ import { validateInput } from '@/schemas/validate';
 import { supabase } from '@/integrations/supabase/client';
 import { registrarAcessoPII } from './piiAccessLogService';
 
+// Teto da external-db-bridge (MAX_LIMIT em supabase/functions/external-db-bridge/index.ts).
+const MAX_LINHAS_OPCOES_FILTRO = 1000;
+
 class ColaboradorService extends BaseService<Colaborador> {
   constructor() {
     super('colaboradores', {
@@ -23,7 +26,8 @@ class ColaboradorService extends BaseService<Colaborador> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     // Explicit column selection to prevent failures on missing optional columns in external DB
-    const columns = 'id, nome_completo, cpf, email, status, data_admissao, empresa_id, matricula, foto_url, telefone';
+    const columns =
+      'id, nome_completo, cpf, email, status, data_admissao, empresa_id, matricula, foto_url, telefone, cargo, departamento';
     let query = this.getQuery().select(columns, { count: 'exact' });
 
     query = query.eq('empresa_id', empresaId);
@@ -32,8 +36,24 @@ class ColaboradorService extends BaseService<Colaborador> {
     if (cargo && cargo !== 'all') query = query.eq('cargo', cargo);
 
     if (search) {
+      // `cpf` é gravado apenas com dígitos (ver CPFInput/ColaboradorFormPage),
+      // então a busca por CPF precisa remover TODA formatação (inclusive "-"),
+      // enquanto os demais campos usam a sanitização genérica (que protege o
+      // ilike/or contra os caracteres especiais % _ . , ( ) ).
       const s = search.replace(/[%_.,()]/g, '');
-      if (s) query = query.or(`nome_completo.ilike.%${s}%,cpf.ilike.%${s}%,email.ilike.%${s}%`);
+      const cpfDigits = search.replace(/\D/g, '');
+      const orParts: string[] = [];
+      if (s) {
+        orParts.push(
+          `nome_completo.ilike.%${s}%`,
+          `email.ilike.%${s}%`,
+          `matricula.ilike.%${s}%`,
+          `cargo.ilike.%${s}%`,
+          `departamento.ilike.%${s}%`
+        );
+      }
+      if (cpfDigits) orParts.push(`cpf.ilike.%${cpfDigits}%`);
+      if (orParts.length) query = query.or(orParts.join(','));
     }
 
     const from = (page - 1) * pageSize;
@@ -53,6 +73,39 @@ class ColaboradorService extends BaseService<Colaborador> {
     });
 
     return { data: (data as Colaborador[]) || [], total: count || 0 };
+  }
+
+  /**
+   * Opções dos dropdowns de filtro (Departamento/Cargo) — derivadas dos valores
+   * realmente presentes em `colaboradores.departamento`/`.cargo`, e não das
+   * tabelas mestre `departamentos`/`cargos`: essas colunas são texto livre
+   * (migration 002_colaboradores.sql) e não FK, então as tabelas mestre podem
+   * divergir do texto gravado e oferecer opção que não casa com colaborador
+   * nenhum (filtro que devolve lista vazia).
+   *
+   * O `.limit()` e OBRIGATORIO: um select sem limite nao manda `limit` no
+   * payload da bridge (client.ts createQueryBuilder) e a external-db-bridge
+   * aplica o default de 100 linhas (index.ts `queryLimit`), sem ORDER BY —
+   * as opcoes sairiam de um subconjunto arbitrario dos colaboradores.
+   */
+  async listarOpcoesFiltro(empresaId: string): Promise<{ departamentos: string[]; cargos: string[] }> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+
+    const { data, error } = await this.getQuery()
+      .select('departamento, cargo')
+      .eq('empresa_id', empresaId)
+      .limit(MAX_LINHAS_OPCOES_FILTRO);
+    if (error) throw error;
+
+    const rows = (Array.isArray(data) ? data : []) as { departamento?: string | null; cargo?: string | null }[];
+
+    const uniqueSorted = (values: (string | null | undefined)[]) =>
+      Array.from(new Set(values.filter((v): v is string => !!v))).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+    return {
+      departamentos: uniqueSorted(rows.map((r) => r.departamento)),
+      cargos: uniqueSorted(rows.map((r) => r.cargo)),
+    };
   }
 
   async getSummary(empresaId: string, filters: { departamento?: string; cargo?: string } = {}) {
