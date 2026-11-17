@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-17 01:15 UTC
+
+- **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_20`
+
 ## 2026-11-16 21:13 UTC
 
 - **functions** alterado (7): `public.backfill_training_image_requests(p_limit integer)`, `public.claim_training_image(p_empresa_id uuid, p_content_type text, p_content_id uuid, p_content_hash text, p_prompt_version text, p_max_attempts integer, p_stale_after interval)`, `public.claim_training_image_requests(p_limit integer)`, `public.edge_rate_limit_check(p_key text, p_limit integer, p_window_sec integer, p_now bigint)`, `public.edge_rate_limit_check_dual(p_empresa_key text, p_empresa_limit integer, p_usuario_key text, p_usuario_limit integer, p_window_sec integer, p_now bigint)`, `public.finish_training_image_request(p_id uuid, p_status text, p_error text, p_retry_after_seconds integer)`, `public.set_training_image_autoqueue(p_enabled boolean)`
