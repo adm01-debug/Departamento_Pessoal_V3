@@ -1,4 +1,4 @@
-import { Colaborador } from '@/types/entities';
+import type { Colaborador } from '@/types/entities';
 import { formatDateLocalISO, addDaysLocal } from '@/utils/dateLocal';
 
 // ============================================================================
