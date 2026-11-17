@@ -1694,6 +1694,7 @@
     "components/admissoes",
     "components/colaborador-detalhes",
     "components/colaboradores",
+    "components/desligamentos",
     "components/folha",
     "components/organograma",
     "components/ponto",
@@ -1835,13 +1836,13 @@
   },
   {
    "modulo": "components/desligamentos",
-   "arquivos": 15,
+   "arquivos": 16,
    "testes": 0,
-   "linhas": 5800,
+   "linhas": 5926,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 8,
+   "componentes": 9,
    "hooks_locais": [
     "useAuth",
     "useEmpresaStore",
@@ -1898,6 +1899,7 @@
     "pages"
    ],
    "depende_de_modulos": [
+    "components/dashboard",
     "components/organograma",
     "components/ui",
     "hooks",
@@ -7840,7 +7842,7 @@
    "modulo": "pages",
    "arquivos": 113,
    "testes": 0,
-   "linhas": 45874,
+   "linhas": 45894,
    "itens_menu": [
     "Admissões",
     "Afastamentos",

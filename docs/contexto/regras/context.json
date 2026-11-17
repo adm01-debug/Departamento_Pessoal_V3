@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e555a6312efa6fb571177010d21f0a6de7e5f519",
+  "sha": "f75996121f1879fd65434a9a1992d13b844eec7b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 23:29 UTC",
-  "files_total": 3564,
-  "code_files": 2989,
-  "code_lines": 473882
+  "generated_at": "2026-11-17 23:51 UTC",
+  "files_total": 3565,
+  "code_files": 2990,
+  "code_lines": 474074
  },
  "version": "1.3.2",
- "facts_hash": "2ed141bb5c505d28",
+ "facts_hash": "052176d9892654dc",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,7 +387,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 994,
+   ".tsx": 995,
    ".ts": 932,
    ".sql": 927,
    ".mjs": 108,
@@ -90640,7 +90640,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 128
+    "deps_count": 132
    },
    {
     "path": "",
@@ -100034,7 +100034,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 970,
+  "components_count": 971,
   "hooks": [
    {
     "name": "useContacts",
@@ -101621,8 +101621,8 @@
   },
   {
    "module": "src/components",
-   "files": 970,
-   "lines": 175587,
+   "files": 971,
+   "lines": 175759,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102312,7 +102312,7 @@
   {
    "module": "src/pages",
    "files": 134,
-   "lines": 49450,
+   "lines": 49470,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -119234,6 +119234,10 @@
    {
     "file": "src/components/dashboard/analytics/widgets.tsx",
     "text": "* Nenhuma lógica alterada — apenas movimentação estrutural."
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoAtencaoBanner.tsx",
+    "text": "números já calculados para a coluna de prazo. \"Ver processos\" filtra a própria"
    },
    {
     "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
@@ -179143,6 +179147,26 @@
    {
     "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
     "name": "sem data de desligamento não há prazo inventado"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "precisaAtencao x resumoAtencao — mesma régua"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "o filtro da lista aceita exatamente os processos que o banner conta"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "cada critério sozinho já basta"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "terminal e tranquilo ficam fora"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "as subcontagens podem se sobrepor sem inflar o total"
    },
    {
     "file": "src/components/__tests__/destinosDossie.test.ts",
@@ -269779,8 +269803,13 @@
   },
   "src/components/__tests__/desligamentosDerivacoes.test.ts": {
    "path": "src/components/__tests__/desligamentosDerivacoes.test.ts",
-   "lines": 138,
+   "lines": 184,
    "is_test": true,
+   "rule_comments": [
+    "05/10 + 10 dias = 15/10 → prazo HOJE.",
+    "Em aberto, prazo folgado, mas status pendente.",
+    "Em aberto, prazo folgado e status que não é pendente."
+   ],
    "tests": [
     "construirSerieMensal — tipos do enum real",
     "cada tipo do enum cai na própria faixa; só falecimento e desconhecido vão para Outros",
@@ -269793,7 +269822,12 @@
     "desligamento PAGO não aparece na faixa de atenção, mesmo com prazo vencido",
     "prazo do art. 477 §6º",
     "são 10 dias após a data do desligamento",
-    "sem data de desligamento não há prazo inventado"
+    "sem data de desligamento não há prazo inventado",
+    "precisaAtencao x resumoAtencao — mesma régua",
+    "o filtro da lista aceita exatamente os processos que o banner conta",
+    "cada critério sozinho já basta",
+    "terminal e tranquilo ficam fora",
+    "as subcontagens podem se sobrepor sem inflar o total"
    ]
   },
   "src/components/__tests__/destinosDossie.test.ts": {
@@ -276391,6 +276425,16 @@
     "const margin = colaboradorData.salario_base * 0.3; // 30% Law"
    ]
   },
+  "src/components/desligamentos/DesligamentoAtencaoBanner.tsx": {
+   "path": "src/components/desligamentos/DesligamentoAtencaoBanner.tsx",
+   "lines": 112,
+   "exports": [
+    "function DesligamentoAtencaoBanner"
+   ],
+   "rule_comments": [
+    "números já calculados para a coluna de prazo. \"Ver processos\" filtra a própria"
+   ]
+  },
   "src/components/desligamentos/DesligamentoChecklist.tsx": {
    "path": "src/components/desligamentos/DesligamentoChecklist.tsx",
    "lines": 305,
@@ -276781,7 +276825,7 @@
   },
   "src/components/desligamentos/desligamentosDerivacoes.ts": {
    "path": "src/components/desligamentos/desligamentosDerivacoes.ts",
-   "lines": 327,
+   "lines": 340,
    "exports": [
     "type DesligamentoLike",
     "const DIA_MS",
@@ -276804,6 +276848,7 @@
     "interface ProximaAcao",
     "function proximaAcaoDesligamento",
     "interface ResumoAtencao",
+    "function precisaAtencao",
     "function resumoAtencao",
     "interface PontoSerieMensal",
     "function construirSerieMensal",
@@ -276936,7 +276981,7 @@
   },
   "src/components/desligamentos/index.ts": {
    "path": "src/components/desligamentos/index.ts",
-   "lines": 9
+   "lines": 10
   },
   "src/components/desligamentos/trilhaComum.ts": {
    "path": "src/components/desligamentos/trilhaComum.ts",
@@ -296110,7 +296155,7 @@
   },
   "src/pages/DesligamentosPage.tsx": {
    "path": "src/pages/DesligamentosPage.tsx",
-   "lines": 379,
+   "lines": 399,
    "exports": [
     "function DesligamentosPage"
    ],
@@ -325955,10 +326000,23 @@
   }
  },
  "git": {
-  "sha": "e555a6312efa6fb571177010d21f0a6de7e5f519",
+  "sha": "f75996121f1879fd65434a9a1992d13b844eec7b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "f759961",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(desligamentos): faixa de atenção na tela, ligada ao cálculo que já existia (#664)",
+    "files": [
+     "src/components/__tests__/desligamentosDerivacoes.test.ts",
+     "src/components/desligamentos/DesligamentoAtencaoBanner.tsx",
+     "src/components/desligamentos/desligamentosDerivacoes.ts",
+     "src/components/desligamentos/index.ts",
+     "src/pages/DesligamentosPage.tsx"
+    ]
+   },
    {
     "sha": "e555a63",
     "date": "2026-11-17",
@@ -326316,21 +326374,6 @@
      "supabase/migrations/20261117170300_documentos_colunas_storage.sql",
      "supabase/migrations/20261117170300_documentos_colunas_storage.verify.sql"
     ]
-   },
-   {
-    "sha": "7635f53",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(colaboradores): resgata da muri os cartões de KPI do diretório (#631)",
-    "files": [
-     "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx",
-     "src/components/__tests__/ColaboradorKpiCards.test.tsx",
-     "src/components/colaboradores/ColaboradorDirectoryGrid.tsx",
-     "src/components/colaboradores/ColaboradorKpiCards.tsx",
-     "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
-     "src/components/layout/EntityPageContainer.tsx",
-     "src/pages/ColaboradoresPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -326344,7 +326387,7 @@
    ],
    [
     "src/pages/ColaboradoresPage.tsx",
-    4
+    3
    ],
    [
     "src/hooks/useTabelasReferencia.ts",
@@ -326371,8 +326414,24 @@
     2
    ],
    [
-    "src/components/layout/EntityPageContainer.tsx",
-    2
+    "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    1
+   ],
+   [
+    "src/components/desligamentos/DesligamentoAtencaoBanner.tsx",
+    1
+   ],
+   [
+    "src/components/desligamentos/desligamentosDerivacoes.ts",
+    1
+   ],
+   [
+    "src/components/desligamentos/index.ts",
+    1
+   ],
+   [
+    "src/pages/DesligamentosPage.tsx",
+    1
    ],
    [
     "src/pages/CalculadoraRescisaoPage.tsx",
@@ -326396,22 +326455,6 @@
    ],
    [
     "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/PontoWeekSummary.test.tsx",
-    1
-   ],
-   [
-    "src/components/ponto/PontoWeekSummary.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/AuditoriaComum.test.ts",
-    1
-   ],
-   [
-    "src/components/__tests__/PagamentosComum.test.ts",
     1
    ]
   ]

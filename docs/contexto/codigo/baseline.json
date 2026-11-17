@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e555a6312efa6fb571177010d21f0a6de7e5f519",
+  "commit": "f75996121f1879fd65434a9a1992d13b844eec7b",
   "branch": "main",
-  "data_commit": "2026-11-17T20:27:41-03:00",
+  "data_commit": "2026-11-17T20:50:46-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "f759961",
+    "data": "2026-11-17",
+    "assunto": "feat(desligamentos): faixa de atenção na tela, ligada ao cálculo que já existia (#664)"
+   },
    {
     "sha": "e555a63",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "6695a60",
     "data": "2026-11-17",
     "assunto": "feat(colaborador): resgata o painel de Pendências da muri, tipado (#639)"
-   },
-   {
-    "sha": "fec359d",
-    "data": "2026-11-17",
-    "assunto": "feat(dashboard): resgata o SystemStatusCard da muri, com os 3 contratos corrigidos (#636)"
    }
   ],
-  "arquivos_mudados_7d": 1097,
+  "arquivos_mudados_7d": 1094,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 370
+    "mudancas": 371
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -246,10 +246,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "infra/github/action-pins.json",
-    "mudancas": 6
-   },
-   {
     "arquivo": "scripts/sync/README.md",
     "mudancas": 6
    },
@@ -286,6 +282,10 @@
     "mudancas": 5
    },
    {
+    "arquivo": "infra/github/action-pins.json",
+    "mudancas": 5
+   },
+   {
     "arquivo": "nginx.conf",
     "mudancas": 5
    },
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 278
+    "commits": 279
    },
    {
     "autor": "dependabot[bot]",
@@ -313,20 +313,20 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 5
+    "commits": 4
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3551,
-  "arquivos_codigo": 2064,
-  "linhas_codigo": 408597,
+  "arquivos_total": 3552,
+  "arquivos_codigo": 2065,
+  "linhas_codigo": 408789,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
-  "componentes": 633,
+  "componentes": 634,
   "hooks": 117,
   "edge_functions": 67,
   "tabelas": 425,
@@ -647,8 +647,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 970,
-   "linhas": 175587
+   "arquivos": 971,
+   "linhas": 175759
   },
   "src/constants": {
    "arquivos": 7,
@@ -688,7 +688,7 @@
   },
   "src/pages": {
    "arquivos": 134,
-   "linhas": 49450
+   "linhas": 49470
   },
   "src/providers": {
    "arquivos": 4,

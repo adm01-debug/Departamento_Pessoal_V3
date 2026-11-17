@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e555a6312e` · branch `main` · 2026-11-17 23:29 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f75996121f` · branch `main` · 2026-11-17 23:51 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5418,7 +5418,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9264 testes em 721 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9269 testes em 721 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5558,6 +5558,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/ESocialAlteracaoComponents.test.tsx` | 17 | S2205AlteracaoCadastral · renders trabalhador name · renders CPF · renders data de alteração … |
 | `src/components/__tests__/GestaoRegistrosPonto.test.tsx` | 17 | GestaoRegistrosPonto · renders Controle de Ponto title · renders Filtros Avançados button · renders search input … |
 | `src/components/__tests__/RubricasDialog.test.tsx` | 17 | RubricasDialog · renders Rubricas trigger button · renders Gestão de Rubricas dialog title · renders Nova Rubrica button … |
+| `src/components/__tests__/desligamentosDerivacoes.test.ts` | 17 | construirSerieMensal — tipos do enum real · cada tipo do enum cai na própria faixa; só falecimento e desconhecido vão para Outros · as chaves inventadas pela branch antiga caem em Outros, não em faixa nomeada · agrupa pela competência da data, inclusive no dia 1º (sem day-shift de UTC) … |
 | `src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts` | 17 | modalidade · mapeia valores reais para o rótulo do sistema · não inventa modalidade ausente e preserva texto desconhecido · filtros do catálogo … |
 | `src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts` | 17 | useMetasColaborador · calls avaliacaoService.listarMetas with empresaId and colaboradorId · is disabled when no colaboradorId · usePDIsColaborador … |
 | `src/hooks/__tests__/useMoreGenericCrudHooks.test.ts` | 17 | useWebhooksAvancados · exposes webhooks as alias for items · passes webhookService to useGenericCrud with empresa_id filter · useWebhookLogs … |
@@ -5650,7 +5651,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/NovaAdmissaoDialog.test.tsx` | 12 | NovaAdmissaoDialog · renders Nova Admissão trigger button by default · renders Nova Admissão dialog title · renders Nome completo label … |
 | `src/components/__tests__/NovoDepartamentoDialog.test.tsx` | 12 | NovoDepartamentoDialog · renders Novo Departamento title when no departamento prop · renders Editar Departamento title when departamento provided · renders description text … |
 | `src/components/__tests__/NovoDesligamentoDialog.test.tsx` | 12 | NovoDesligamentoDialog · renders Novo Desligamento title · renders dialog description · renders Colaborador * label … |
-| `src/components/__tests__/desligamentosDerivacoes.test.ts` | 12 | construirSerieMensal — tipos do enum real · cada tipo do enum cai na própria faixa; só falecimento e desconhecido vão para Outros · as chaves inventadas pela branch antiga caem em Outros, não em faixa nomeada · agrupa pela competência da data, inclusive no dia 1º (sem day-shift de UTC) … |
 | `src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx` | 12 | CamposCustomizadosTab · mostra carregando enquanto as consultas não respondem · mostra falha de consulta sem inventar ausência de dados · mostra estado vazio honesto quando a empresa não definiu campos … |
 | `src/components/recrutamento/__tests__/vagasComum.test.ts` | 12 | vagasComum — contadores, identidade e datas · conta todas/abertas/fechadas pelos status reais · resolve a identidade por departamento e especialidade de dados · preserva YYYY-MM-DD no fuso local e retorna null para data inválida … |
 | `src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx` | 12 | MaisTurmasCard · renderiza ícone de grupo, título e descrição da referência · usa borda tracejada, raio de 12px e altura da referência (sem largura fixa) · não apresenta botão quando não existe fluxo real de criação … |
@@ -6090,4 +6090,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | METAS & OKRs — derivações da aba (situação, prazo, ordem e filtros). | `src/components/avaliacao/metasComum.ts` |
 | exibem. Nada aqui inventa dado: TODAS as funções leem somente campos que já | `src/components/avaliacao/metasComum.ts` |
 | 2. `atrasada`  → prazo vencido e ainda não concluída — é EXATAMENTE o | `src/components/avaliacao/metasComum.ts` |
-| … +905 linhas — lista completa em `context.json` | |
+| … +906 linhas — lista completa em `context.json` | |

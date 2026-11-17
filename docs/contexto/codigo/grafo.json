@@ -1,12 +1,12 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1301,
- "arestas": 6396,
+ "nos": 1302,
+ "arestas": 6402,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 359
+   "importado_por": 360
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -133,12 +133,12 @@
    "importado_por": 38
   },
   {
-   "arquivo": "src/components/ui/dropdown-menu.tsx",
+   "arquivo": "src/components/dashboard/MetricCard.tsx",
    "importado_por": 36
   },
   {
-   "arquivo": "src/components/dashboard/MetricCard.tsx",
-   "importado_por": 35
+   "arquivo": "src/components/ui/dropdown-menu.tsx",
+   "importado_por": 36
   },
   {
    "arquivo": "src/hooks/useColaboradorDetalhes.ts",
@@ -287,7 +287,7 @@
   {
    "modulo": "components/dashboard",
    "depende_de": 8,
-   "importado_por": 11
+   "importado_por": 12
   },
   {
    "modulo": "types",

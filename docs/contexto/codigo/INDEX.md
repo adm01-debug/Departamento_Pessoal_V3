@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e555a6312efa6fb571177010d21f0a6de7e5f519` (2026-11-17T20:27:41-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f75996121f1879fd65434a9a1992d13b844eec7b` (2026-11-17T20:50:46-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1926), SQL (927), Markdown (333), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1927), SQL (927), Markdown (333), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,15 +34,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3551 |
-| arquivos_codigo | 2064 |
-| linhas_codigo | 408597 |
+| arquivos_total | 3552 |
+| arquivos_codigo | 2065 |
+| linhas_codigo | 408789 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
 | itens_menu | 97 |
 | modulos | 81 |
-| componentes | 633 |
+| componentes | 634 |
 | hooks | 117 |
 | edge_functions | 67 |
 | tabelas | 425 |
@@ -55,7 +55,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
-- componentes: src/components (515), src/pages (110), src/contexts (3)
+- componentes: src/components (516), src/pages (110), src/contexts (3)
 - hooks: src/hooks (98), src/components (9), src/contexts (4)
 - servicos_logica: src/services (95), src/utils (35), src/schemas (25)
 - testes: co-localizado (__tests__) (639), co-localizado (*.test) (73), e2e/ (28)
@@ -79,7 +79,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/colaboradores | 0 | 0 | 9 | 9 | 0 | 3 |
 | components/dashboard | 0 | 0 | 17 | 9 | 24 | 60 |
 | components/descontos | 0 | 0 | 5 | 0 | 0 | 1 |
-| components/desligamentos | 0 | 0 | 15 | 4 | 1 | 6 |
+| components/desligamentos | 0 | 0 | 16 | 4 | 1 | 6 |
 | components/epis | 0 | 0 | 5 | 0 | 0 | 0 |
 | components/esocial | 0 | 0 | 21 | 2 | 2 | 7 |
 | components/exames | 0 | 0 | 5 | 0 | 0 | 0 |
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27128 nós · 61330 arestas · 2383 comunidades · grafo do commit `e555a631`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), @tanstack/react-query (421), lucide-react (408), cn (361), vitest (258), supabase/types.ts (205), useEmpresas (203), client.ts (175), deepChain (173), "public"."empresas" (159), "public"."colaboradores" (155)
+- 27133 nós · 61357 arestas · 2289 comunidades · grafo do commit `f7599612`
+- comunidades maiores: react (608), 20260831_corrected_public.sql (493), canonical_schema.sql (475), lucide-react (423), useEmpresas (413), card.tsx (409), cn (327), client.ts (249), usePiiMask (175), ColaboradorDetalhesPage.tsx (162), "public"."empresas" (159), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -414,9 +414,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - src/pages/ColaboradoresPage.tsx (7)
 - AGENTS.md (6)
 - deno.lock (6)
-- infra/github/action-pins.json (6)
 - scripts/sync/README.md (6)
 - scripts/sync/run-all.sh (6)
+- scripts/sync/sync-github.sh (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `f759961` feat(desligamentos): faixa de atenção na tela, ligada ao cálculo que já existia (#664)
 - 2026-11-17 `e555a63` feat(rescisao): memória de cálculo com a base e a alíquota efetiva de cada encargo (#663)
 - 2026-11-17 `1ddd897` docs(auditoria): veredito sobre apagar a branch muri, com a triagem dos 111 arquivos (#662)
 - 2026-11-17 `c234912` feat(colaborador): editar conta bancária, com o dado real só para quem pode vê-lo (#659)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `a7dd4ec` fix(deploy): recupera o app depois de um deploy novo trocar os chunks (#646)
 - 2026-11-17 `ba993ad` fix(hooks): guardas de empresa em ajuste de ponto e conta bancária (#650)
 - 2026-11-17 `50ae62a` fix(portal): exclusão de documento não apaga a linha quando o storage recusa (#645)
-- 2026-11-17 `65f863a` feat(colaborador): aba de Afastamentos no dossiê, sem dado de saúde (#643)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (515)",
+   "src/components (516)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (633)"
+  ".tsx (634)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(desligamentos): faixa de atenção na tela, ligada ao cálculo que já existia (#664)",
    "feat(rescisao): memória de cálculo com a base e a alíquota efetiva de cada encargo (#663)",
    "docs(auditoria): veredito sobre apagar a branch muri, com a triagem dos 111 arquivos (#662)",
    "feat(colaborador): editar conta bancária, com o dado real só para quem pode vê-lo (#659)",
-   "feat(ponto): mostra o débito de horas do dia no card &quot;Últimos 7 dias&quot; (#660)",
-   "test(premiacoes): resgata da muri os 29 testes das regras de pagamento e auditoria (#658)"
+   "feat(ponto): mostra o débito de horas do dia no card &quot;Últimos 7 dias&quot; (#660)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

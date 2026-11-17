@@ -1962,6 +1962,12 @@
    "src/types/descontos.ts",
    "src/utils/dateLocal.ts"
   ],
+  "src/components/desligamentos/DesligamentoAtencaoBanner.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/desligamentos/desligamentosDerivacoes.ts",
+   "src/components/desligamentos/entradaCards.tsx",
+   "src/components/ui/button.tsx"
+  ],
   "src/components/desligamentos/DesligamentoChecklist.tsx": [
    "src/components/desligamentos/entradaCards.tsx",
    "src/components/ui/button.tsx",
@@ -2061,6 +2067,7 @@
    "src/components/ui/entrada-cards.tsx"
   ],
   "src/components/desligamentos/index.ts": [
+   "src/components/desligamentos/DesligamentoAtencaoBanner.tsx",
    "src/components/desligamentos/DesligamentoChecklist.tsx",
    "src/components/desligamentos/DesligamentoDetailSheet.tsx",
    "src/components/desligamentos/DesligamentoFilters.tsx",
@@ -5950,6 +5957,7 @@
   ],
   "src/pages/DesligamentosPage.tsx": [
    "src/components/PageTitle.tsx",
+   "src/components/desligamentos/desligamentosDerivacoes.ts",
    "src/components/desligamentos/index.ts",
    "src/components/layout/index.ts",
    "src/components/ui/button.tsx",

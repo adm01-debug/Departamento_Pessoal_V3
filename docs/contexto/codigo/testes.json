@@ -1305,11 +1305,11 @@
   {
    "arquivo": "src/components/__tests__/desligamentosDerivacoes.test.ts",
    "tipo": "unit",
-   "linhas": 138,
+   "linhas": 184,
    "testa": [
     "src/components/desligamentos/desligamentosDerivacoes.ts"
    ],
-   "casos": 9
+   "casos": 13
   },
   {
    "arquivo": "src/components/__tests__/DesligamentoStatusBadge.test.tsx",

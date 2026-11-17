@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 633,
+ "total": 634,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -2752,7 +2752,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 32,
+   "usado_por": 33,
    "orfao": false
   },
   {
@@ -2936,6 +2936,20 @@
    "tabelas": [
     "colaboradores"
    ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/desligamentos/DesligamentoAtencaoBanner.tsx",
+   "exports": [
+    "DesligamentoAtencaoBanner"
+   ],
+   "export_default": null,
+   "linhas": 112,
+   "dominio": "components/desligamentos",
+   "hooks_locais": [],
+   "tabelas": [],
    "edges": [],
    "usado_por": 1,
    "orfao": false
@@ -7265,7 +7279,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 359,
+   "usado_por": 360,
    "orfao": false
   },
   {
@@ -9207,7 +9221,7 @@
     "DesligamentosPage"
    ],
    "export_default": "DesligamentosPage",
-   "linhas": 379,
+   "linhas": 399,
    "dominio": "pages",
    "hooks_locais": [
     "useDataAccessLog",
