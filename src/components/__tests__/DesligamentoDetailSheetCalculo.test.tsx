@@ -25,7 +25,12 @@ import userEvent from '@testing-library/user-event';
  * ============================================================================
  */
 
-const { mockCalcularESalvar } = vi.hoisted(() => ({ mockCalcularESalvar: vi.fn(async () => undefined) }));
+const { mockCalcularESalvar, mockAtualizar } = vi.hoisted(() => ({
+  mockCalcularESalvar: vi.fn(async () => undefined),
+  mockAtualizar: vi.fn(
+    async (_id: string, _updates: Record<string, unknown>, _empresaId: string): Promise<undefined> => undefined
+  ),
+}));
 
 vi.mock('framer-motion', () => ({
   motion: {
@@ -61,7 +66,7 @@ vi.mock('@/services/rescisaoService', () => ({
 }));
 
 vi.mock('@/services/desligamentoService', () => ({
-  desligamentoService: { atualizar: vi.fn() },
+  desligamentoService: { atualizar: mockAtualizar },
 }));
 
 vi.mock('@/utils/rescisaoPDF', () => ({
@@ -117,6 +122,7 @@ function registro(extra: Record<string, unknown> = {}): Registro {
 
 beforeEach(() => {
   mockCalcularESalvar.mockClear();
+  mockAtualizar.mockClear();
 });
 
 describe('DesligamentoDetailSheet — parâmetros do cálculo da rescisão', () => {
@@ -192,5 +198,128 @@ describe('DesligamentoDetailSheet — parâmetros do cálculo da rescisão', () 
     );
     expect(screen.getByLabelText(/Aviso prévio trabalhado/i)).toBeChecked();
     expect(screen.getByLabelText(/Saldo FGTS/i)).toHaveValue(999);
+  });
+});
+
+describe('DesligamentoDetailSheet — rótulo da multa do FGTS', () => {
+  // `rescisaoCalc.ts:320-323`: 40% na dispensa sem justa causa (e no término
+  // antecipado pelo empregador, que acompanha o art. 479), 20% no acordo mútuo
+  // e na culpa recíproca. Um rótulo fixo em "40%" descrevia errado o valor já
+  // calculado nessas duas modalidades.
+  it('mostra 20% no acordo mútuo', () => {
+    render(
+      <DesligamentoDetailSheet
+        desligamento={registro({ tipo: 'acordo', multa_fgts: 1000, valor_liquido: 5000 })}
+        open
+        onClose={vi.fn()}
+      />
+    );
+    expect(screen.getByText('Multa FGTS (20%)')).toBeInTheDocument();
+    expect(screen.queryByText('Multa FGTS (40%)')).toBeNull();
+  });
+
+  it('mostra 40% na dispensa sem justa causa', () => {
+    render(
+      <DesligamentoDetailSheet
+        desligamento={registro({ tipo: 'sem_justa_causa', multa_fgts: 2000, valor_liquido: 5000 })}
+        open
+        onClose={vi.fn()}
+      />
+    );
+    expect(screen.getByText('Multa FGTS (40%)')).toBeInTheDocument();
+  });
+
+  it('mostra 40% no término antecipado pelo empregador (art. 479)', () => {
+    render(
+      <DesligamentoDetailSheet
+        desligamento={registro({
+          tipo: 'fim_contrato',
+          multa_fgts: 2000,
+          valor_liquido: 5000,
+          detalhes_calculo: { indenizacaoArt479: 1500 },
+        })}
+        open
+        onClose={vi.fn()}
+      />
+    );
+    expect(screen.getByText('Multa FGTS (40%)')).toBeInTheDocument();
+  });
+
+  it('omite o percentual quando a modalidade não gera multa', () => {
+    render(
+      <DesligamentoDetailSheet
+        desligamento={registro({ tipo: 'pedido_demissao', multa_fgts: 0, valor_liquido: 5000 })}
+        open
+        onClose={vi.fn()}
+      />
+    );
+    // A linha do bloco de multas e a do "Resumo final" ficam sem percentual.
+    expect(screen.getAllByText('Multa FGTS')).toHaveLength(2);
+    expect(screen.queryAllByText(/Multa FGTS \(\d+%\)/)).toHaveLength(0);
+  });
+});
+
+describe('DesligamentoDetailSheet — termo de homologação após o pagamento', () => {
+  // A RPC `pagar_desligamento` exige homologação concluída e troca o status
+  // para `pago` sem desfazê-la: o termo não pode voltar a "Pendente".
+  it('mantém o termo disponível com status pago', () => {
+    render(
+      <DesligamentoDetailSheet
+        desligamento={registro({ status: 'pago', valor_liquido: 5000 })}
+        open
+        onClose={vi.fn()}
+      />
+    );
+    // A lista de documentos aparece em mais de uma aba; nenhuma pode mostrar
+    // a homologação como pendente depois do pagamento.
+    const termos = screen.getAllByText('Termo de Homologação');
+    expect(termos.length).toBeGreaterThan(0);
+    for (const termo of termos) {
+      expect(termo.parentElement?.parentElement?.textContent).toContain('Disponível');
+    }
+  });
+});
+
+describe('DesligamentoDetailSheet — conclusão em lote do checklist', () => {
+  // Sem as transições, o cadastro ficava em `comunicacao` com o checklist cheio
+  // e o cálculo seguinte era recusado por `rescisaoService.validarTransicao`.
+  it('aplica as transições de etapa ao concluir todas as pendências', async () => {
+    const user = userEvent.setup();
+    render(
+      <DesligamentoDetailSheet
+        desligamento={registro({ status: 'pendente', etapa: 'comunicacao' })}
+        open
+        onClose={vi.fn()}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: /Concluir pendências/i }));
+
+    await waitFor(() => expect(mockAtualizar).toHaveBeenCalled());
+    const payload = mockAtualizar.mock.calls[0][1];
+    expect(payload.checklist_comunicacao).toBe(true);
+    expect(payload.checklist_documentacao).toBe(true);
+    expect(payload.status).toBe('comunicado');
+    // Duas marcações em sequência levam de `comunicacao` a `calculo`, o mesmo
+    // destino do toggle item a item — e não além dele.
+    expect(payload.etapa).toBe('calculo');
+  });
+
+  it('não rebaixa a etapa de um cadastro já adiantado', async () => {
+    const user = userEvent.setup();
+    render(
+      <DesligamentoDetailSheet
+        desligamento={registro({ status: 'calculado', etapa: 'homologacao', valor_liquido: 5000 })}
+        open
+        onClose={vi.fn()}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: /Concluir pendências/i }));
+
+    await waitFor(() => expect(mockAtualizar).toHaveBeenCalled());
+    const payload = mockAtualizar.mock.calls[0][1];
+    expect(payload.etapa).toBeUndefined();
+    expect(payload.status).toBeUndefined();
   });
 });

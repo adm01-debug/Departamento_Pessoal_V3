@@ -170,6 +170,21 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
 
   const tipoNormalizado = normalizarTipoRescisao(d.tipo || 'sem_justa_causa');
 
+  // Percentual da multa do FGTS, derivado da MESMA condição do motor
+  // (`rescisaoCalc.ts:320-323`): 40% na dispensa sem justa causa e no término
+  // antecipado pelo empregador (acompanha o art. 479), 20% no acordo mútuo e na
+  // culpa recíproca, nada nos demais. Um rótulo fixo em "40%" descrevia errado
+  // o valor já calculado nessas duas modalidades.
+  const art479 = Number(
+    (d.detalhes_calculo as { indenizacaoArt479?: number } | null | undefined)?.indenizacaoArt479 ?? 0
+  );
+  const percentualMultaFgts =
+    tipoNormalizado === 'sem_justa_causa' || art479 > 0
+      ? 40
+      : tipoNormalizado === 'acordo_mutuo' || tipoNormalizado === 'culpa_reciproca'
+        ? 20
+        : null;
+
   /* ── Derivados de exibição (só leitura do registro) ───────────────────── */
   const nome = d.colaborador?.nome_completo || 'Colaborador';
   const cargo = d.colaborador?.cargo || 'Cargo não informado';
@@ -196,7 +211,10 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
     {
       nome: 'Termo de Homologação',
       descricao: 'Registro da homologação da rescisão',
-      disponivel: d.status === 'homologado' || d.status === 'finalizado',
+      // `pago` também preserva a disponibilidade: a RPC `pagar_desligamento`
+      // exige homologação concluída antes de pagar e troca o status para `pago`
+      // sem desfazê-la — sem este caso o termo voltava a aparecer "Pendente".
+      disponivel: d.status === 'homologado' || d.status === 'finalizado' || d.status === 'pago',
     },
     {
       nome: 'Comprovante eSocial (S-2299)',
@@ -235,6 +253,23 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
     keys.forEach((k) => {
       updates[k] = true;
     });
+
+    // As mesmas transições do toggle individual, aplicadas em sequência sobre o
+    // estado resultante das duas marcações. Sem isto o cadastro ficava em
+    // `comunicacao` com o checklist cheio e o cálculo seguinte era recusado por
+    // `rescisaoService.validarTransicao` (salto de duas etapas). Só avança a
+    // partir da etapa em que o registro está: nunca rebaixa uma etapa posterior
+    // nem transforma a conclusão operacional em cálculo, homologação ou
+    // pagamento reais.
+    let etapa = d.etapa || 'comunicacao';
+    if (updates.checklist_comunicacao === true && etapa === 'comunicacao') {
+      etapa = 'documentacao';
+      updates.status = 'comunicado';
+    }
+    const documentacaoConcluida = updates.checklist_documentacao === true || d.checklist_documentacao === true;
+    if (documentacaoConcluida && etapa === 'documentacao') etapa = 'calculo';
+    if (etapa !== (d.etapa || 'comunicacao')) updates.etapa = etapa;
+
     try {
       await desligamentoService.atualizar(d.id, updates, d.empresa_id ?? '');
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
@@ -701,7 +736,10 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
                   tom="warning"
                   total={formatCurrency(d.multa_fgts)}
                 >
-                  <LinhaValor rotulo="Multa FGTS (40%)" valor={d.multa_fgts} />
+                  <LinhaValor
+                    rotulo={percentualMultaFgts ? `Multa FGTS (${percentualMultaFgts}%)` : 'Multa FGTS'}
+                    valor={d.multa_fgts}
+                  />
                 </BlocoValores>
               </div>
 
