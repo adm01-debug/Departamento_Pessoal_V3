@@ -21,7 +21,12 @@ export function useColaboradores() {
 
   // Opções dos dropdowns de filtro — ver colaboradorService.listarOpcoesFiltro.
   const { data: opcoesFiltro } = useQuery({
-    queryKey: ['colaboradores-opcoes-filtro', empresaId],
+    // Prefixo 'colaboradores' de proposito: o react-query casa por prefixo, entao
+    // os invalidateQueries(['colaboradores']) que o formulario, a importacao, as
+    // movimentacoes e o kanban de admissoes ja fazem passam a atualizar tambem as
+    // opcoes — sem isto um departamento novo levava os 5 min de staleTime para
+    // aparecer no filtro.
+    queryKey: ['colaboradores', 'opcoes-filtro', empresaId],
     queryFn: () => colaboradorService.listarOpcoesFiltro(empresaId!),
     enabled: !!empresaId,
   });

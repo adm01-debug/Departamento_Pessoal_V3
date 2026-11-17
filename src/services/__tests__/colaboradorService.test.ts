@@ -109,6 +109,30 @@ describe('colaboradorService.listar', () => {
     expect(orArg).not.toContain('cpf.ilike');
   });
 
+  it('nao cria clausula de cpf para termo alfanumerico (matricula A12)', async () => {
+    const { orFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ search: 'A12', filters: { empresaId: EMP } });
+    const orArg = orFn.mock.calls[0][0] as string;
+    expect(orArg).toContain('matricula.ilike.%A12%');
+    expect(orArg).not.toContain('cpf.ilike');
+  });
+
+  it('mantem a expressao or dentro do limite de 500 caracteres da bridge', async () => {
+    const { orFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ search: 'a'.repeat(200), filters: { empresaId: EMP } });
+    const orArg = orFn.mock.calls[0][0] as string;
+    expect(orArg.length).toBeLessThanOrEqual(500);
+    expect(orArg).toContain(`nome_completo.ilike.%${'a'.repeat(60)}%`);
+  });
+
+  it('trunca tambem o CPF colado com formatacao sem estourar o limite', async () => {
+    const { orFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ search: '123.456.789-00 '.repeat(10), filters: { empresaId: EMP } });
+    const orArg = orFn.mock.calls[0][0] as string;
+    expect(orArg.length).toBeLessThanOrEqual(500);
+    expect(orArg).toContain('cpf.ilike.%12345678900%');
+  });
+
   it('filters by empresa_id when provided', async () => {
     const { eqFn } = setupListarChain([], 0);
     await colaboradorService.listar({ filters: { empresaId: 'emp-1' } });

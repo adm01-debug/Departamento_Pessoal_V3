@@ -9,6 +9,13 @@ import { registrarAcessoPII } from './piiAccessLogService';
 // Teto da external-db-bridge (MAX_LIMIT em supabase/functions/external-db-bridge/index.ts).
 const MAX_LINHAS_OPCOES_FILTRO = 1000;
 
+// A bridge rejeita expressao `or` com mais de 500 caracteres
+// (external-db-bridge/validation.ts, isSafeOrExpression). A busca repete o termo
+// em 5 colunas (89 caracteres fixos + 4 virgulas), entao acima de ~81 caracteres
+// a listagem quebrava com INVALID_OR_FILTER em vez de so nao achar nada. 60 deixa
+// folga para a clausula de CPF: 93 + 5*60 + 13 + 11 = 417.
+const LIMITE_TERMO_BUSCA = 60;
+
 class ColaboradorService extends BaseService<Colaborador> {
   constructor() {
     super('colaboradores', {
@@ -40,8 +47,11 @@ class ColaboradorService extends BaseService<Colaborador> {
       // então a busca por CPF precisa remover TODA formatação (inclusive "-"),
       // enquanto os demais campos usam a sanitização genérica (que protege o
       // ilike/or contra os caracteres especiais % _ . , ( ) ).
-      const s = search.replace(/[%_.,()]/g, '');
-      const cpfDigits = search.replace(/\D/g, '');
+      const s = search.replace(/[%_.,()]/g, '').slice(0, LIMITE_TERMO_BUSCA);
+      // Clausula de CPF so quando o termo e mesmo um numero formatado: buscar a
+      // matricula 'A12' viraria `cpf.ilike.%12%` e traria todo colaborador cujo
+      // CPF contenha 12, sem nenhum campo casando com o que foi digitado.
+      const cpfDigits = /^[\d.\-/\s]+$/.test(search.trim()) ? search.replace(/\D/g, '').slice(0, 11) : '';
       const orParts: string[] = [];
       if (s) {
         orParts.push(
@@ -87,6 +97,12 @@ class ColaboradorService extends BaseService<Colaborador> {
    * payload da bridge (client.ts createQueryBuilder) e a external-db-bridge
    * aplica o default de 100 linhas (index.ts `queryLimit`), sem ORDER BY —
    * as opcoes sairiam de um subconjunto arbitrario dos colaboradores.
+   *
+   * LIMITE CONHECIDO: 1000 e o teto da bridge (MAX_LIMIT), nao ha como pedir
+   * mais em uma chamada. Numa empresa com mais de 1000 colaboradores, um valor
+   * que apareca somente fora desse primeiro lote nao entra no dropdown (a busca
+   * por texto continua achando o colaborador). A correcao definitiva e uma RPC
+   * de valores distintos no banco — funcao nova em producao, decisao do dono.
    */
   async listarOpcoesFiltro(empresaId: string): Promise<{ departamentos: string[]; cargos: string[] }> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
