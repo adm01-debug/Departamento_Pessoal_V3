@@ -701,11 +701,11 @@
   {
    "arquivo": "src/components/__tests__/AnimatedNumber.test.tsx",
    "tipo": "unit",
-   "linhas": 62,
+   "linhas": 78,
    "testa": [
     "src/components/dashboard/AnimatedNumber.tsx"
    ],
-   "casos": 8
+   "casos": 10
   },
   {
    "arquivo": "src/components/__tests__/AnotacoesTab.test.tsx",
@@ -2303,11 +2303,11 @@
   {
    "arquivo": "src/components/__tests__/MetricCard.test.tsx",
    "tipo": "unit",
-   "linhas": 112,
+   "linhas": 207,
    "testa": [
     "src/components/dashboard/MetricCard.tsx"
    ],
-   "casos": 8
+   "casos": 19
   },
   {
    "arquivo": "src/components/__tests__/MFASetup.test.tsx",

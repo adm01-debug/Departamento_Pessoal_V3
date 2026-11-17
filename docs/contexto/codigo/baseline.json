@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b25c46e0edae00b48cd5c30c36ab04ca6348ef7a",
+  "commit": "93f1a5f2d8a0cd5d6d80b954b8228156eefb033b",
   "branch": "main",
-  "data_commit": "2026-11-17T12:02:13-03:00",
+  "data_commit": "2026-11-17T12:21:56-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "93f1a5f",
+    "data": "2026-11-17",
+    "assunto": "feat(dashboard): resgata da muri o MetricCard com tone, tooltip e variante compacta (#618)"
+   },
    {
     "sha": "b25c46e",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "c2102ad",
     "data": "2026-11-16",
     "assunto": "docs(auditoria): classifica as dez migrations órfãs da muri contra o banco real (#596)"
-   },
-   {
-    "sha": "f732746",
-    "data": "2026-11-16",
-    "assunto": "docs: resgata a documentação operacional do ninebox e das capas de treinamento (#595)"
    }
   ],
-  "arquivos_mudados_7d": 1155,
+  "arquivos_mudados_7d": 1162,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 339
+    "mudancas": 341
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -188,12 +188,12 @@
     "mudancas": 31
    },
    {
-    "pasta": "src/components/premiacoes",
-    "mudancas": 29
+    "pasta": "src/components/dashboard",
+    "mudancas": 30
    },
    {
-    "pasta": "src/components/esocial",
-    "mudancas": 28
+    "pasta": "src/components/premiacoes",
+    "mudancas": 29
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": "PENDENCIAS.md",
-    "mudancas": 13
+    "mudancas": 12
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -294,18 +294,18 @@
     "mudancas": 5
    },
    {
-    "arquivo": "RELATORIO_CI.md",
+    "arquivo": "e2e/authenticated/esocial.spec.ts",
     "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 240
+    "commits": 241
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 39
+    "commits": 38
    },
    {
     "autor": "dependabot[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3479,
   "arquivos_codigo": 2013,
-  "linhas_codigo": 400151,
+  "linhas_codigo": 400557,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -636,7 +636,7 @@
   },
   "src/components": {
    "arquivos": 933,
-   "linhas": 169267
+   "linhas": 169673
   },
   "src/constants": {
    "arquivos": 6,

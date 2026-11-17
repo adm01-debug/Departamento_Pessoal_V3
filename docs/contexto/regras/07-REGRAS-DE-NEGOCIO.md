@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b25c46e0ed` · branch `main` · 2026-11-17 15:03 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `93f1a5f2d8` · branch `main` · 2026-11-17 15:23 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1819,6 +1819,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | ImpedimentoCancelamento | motivo_ausente \| motivo_curto | `src/components/avaliacao/statusFeedback.ts` |
 | ImpedimentoReabertura | justificativa_ausente \| justificativa_curta | `src/components/avaliacao/statusFeedback.ts` |
 | MotivoChaveInvalida | operacao_ausente \| operacao_sem_idempotencia \| feedback_ausente \| id_operacao_ausente | `src/components/avaliacao/statusFeedback.ts` |
+| MetricTone | primary \| warning \| destructive \| muted \| info \| accent \| success | `src/components/dashboard/MetricCard.tsx` |
 | Tone | primary \| info \| success \| warning \| destructive | `src/components/desligamentos/desligamentosComum.ts` |
 | EtapaDesligamento | comunicacao \| documentacao \| calculo \| homologacao \| pagamento \| finalizado | `src/components/desligamentos/desligamentosComum.ts` |
 | TomPrazo | destructive \| warning \| muted | `src/components/desligamentos/desligamentosDerivacoes.ts` |
@@ -3030,9 +3031,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   const dataValidade = dataLocalDoEvento(validade); const dias = Math.round((dataValidade.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24)); const validadeBR = dataValidade.toLocaleDateString('pt-BR'); if (dias < 0) { alertas.push({ id, titulo, sub: `Venceu em ${validadeBR}`, tone: 'destructive', badgeLabel: 'Vencido' }); } else if (dias <= DIAS_ALERTA_VALIDADE) { alertas.push({ id, titulo, sub: `Vence em ${dias} dia${dias === 1 ? '' : 's'} (${validadeBR})`, tone: 'warning', badgeLabel: 'Em bre …
   ```
-- **formatCurrency(value: number)** — `src/components/dashboard/MetricCard.tsx`
+- **formatCurrency(value: number, decimals = 0)** — `src/components/dashboard/MetricCard.tsx`
   ```
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0, }).format(value);
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: decimals, maximumFractionDigits: decimals, }).format(value);
   ```
 - **dataValida(valor?: string | null)** — `src/components/desligamentos/desligamentosDerivacoes.ts`
   ```
@@ -4179,14 +4180,15 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ duration: 0.6, delay: i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}` | `src/components/dashboard/BarChartWidget.tsx` |
 | `const strokeOffset = -seg.offset + circumference * 0.25; // start from top` | `src/components/dashboard/DonutChart.tsx` |
 | `transition={{ delay: i * 0.08 }}` | `src/components/dashboard/EventTimeline.tsx` |
+| `// linha de apoio caber em UMA linha ("150% vs. período` | `src/components/dashboard/MetricCard.tsx` |
 | `transition: { delay: i * 0.08, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const },` | `src/components/dashboard/MetricCard.tsx` |
 | `transition={{ delay: 0.5 + i * 0.06 }}` | `src/components/dashboard/QuickActionsGrid.tsx` |
-| `(turnoverScore * 0.30) + (absenteismoScore * 0.25) + (cadastroScore * 0.20) + (feriasScore * 0.15) - passivoPenalty` | `src/components/dashboard/WorkforceHealthScore.tsx` |
-| `const absenteismoScore = Math.max(0, 100 - (absenteismo * 10)); // 0% = 100, 10% = 0` | `src/components/dashboard/WorkforceHealthScore.tsx` |
+| `const absenteismoScore = Math.max(0, 100 - absenteismo * 10); // 0% = 100, 10% = 0` | `src/components/dashboard/WorkforceHealthScore.tsx` |
 | `const arcLength = (compositeScore / 100) * circumference * 0.75; // 270 degree arc` | `src/components/dashboard/WorkforceHealthScore.tsx` |
-| `const turnoverScore = Math.max(0, 100 - (turnover * 5)); // 0% = 100, 20% = 0` | `src/components/dashboard/WorkforceHealthScore.tsx` |
+| `const turnoverScore = Math.max(0, 100 - turnover * 5); // 0% = 100, 20% = 0` | `src/components/dashboard/WorkforceHealthScore.tsx` |
 | `strokeDasharray={`${circumference * 0.75} ${circumference * 0.25}`}` | `src/components/dashboard/WorkforceHealthScore.tsx` |
 | `transition={{ delay: 0.8 + i * 0.1 }}` | `src/components/dashboard/WorkforceHealthScore.tsx` |
+| `turnoverScore * 0.3 + absenteismoScore * 0.25 + cadastroScore * 0.2 + feriasScore * 0.15 - passivoPenalty` | `src/components/dashboard/WorkforceHealthScore.tsx` |
 | `transition={{ duration: 0.2, delay: idx * 0.05 }}` | `src/components/dashboard/analytics/PendenciasDetailDialog.tsx` |
 | `98% Aceitação` | `src/components/dashboard/analytics/widgets.tsx` |
 | `if (value >= maxValue * 0.5) return 'from-primary-glow to-primary';` | `src/components/dashboard/analytics/widgets.tsx` |
@@ -4394,8 +4396,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `const descontoVT = Math.min(Number(v.valor ?? 0), salarioBase * 0.06);` | `supabase/functions/calcular-folha/index.ts` |
 | `const descontoVT = Math.min(Number(vtLegacy.valor_mensal ?? 0), salarioBase * 0.06);` | `supabase/functions/calcular-folha/index.ts` |
 | `const fgts = trunc2(baseTributavel * 0.08);` | `supabase/functions/calcular-folha/index.ts` |
-| `const noturnoValor = round2(valorHora * variaveis.noturno * (60 / 52.5) * 0.2);` | `supabase/functions/calcular-folha/index.ts` |
-| … +25 linhas — lista completa em `context.json` | |
+| … +26 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -5411,7 +5412,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9018 testes em 692 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9031 testes em 692 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5518,6 +5519,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/importacao/__tests__/columnMap.test.ts` | 21 | normalizeHeader · lowercases the header · trims surrounding whitespace · strips diacritics … |
 | `src/calculators/__tests__/impostos.test.ts` | 20 | calcularINSS · returns 0 for salary of 0 · returns 0 for negative salary · returns 0 for NaN … |
 | `src/components/__tests__/MFASetup.test.tsx` | 20 | MFASetup · shows loading spinner when loading · renders 2FA title · shows Desativado badge when no factors … |
+| `src/components/__tests__/MetricCard.test.tsx` | 20 | MetricCard · renders title · renders string value directly · renders AnimatedNumber when rawValue is provided … |
 | `src/components/recrutamento/__tests__/candidatosComum.test.ts` | 20 | candidatosComum — situações e contagens · classifica status finais e em processo sem confundir etapa com situação · conta todas as situações sobre o escopo recebido (não só a página) · badge de etapa usa o status final quando existir e a etapa real nos demais … |
 | `src/hooks/__tests__/useGenericCrud.test.tsx` | 20 | useGenericCrud · initial state has correct defaults · respects custom initialPageSize · loads items from service after query resolves … |
 | `src/services/__tests__/contratacaoService.test.ts` | 20 | contratacaoService.validarDocumento · updates admissao document status and logs audit · sets document flag false when status is rejeitado · throws for a document type the admission checklist does not send … |
@@ -5654,6 +5656,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/webhookService.test.ts` | 12 | webhookService · listar · returns paginated records when found · applies empresa_id filter when provided … |
 | `src/utils/importacao/__tests__/excelDownload.test.ts` | 12 | XLSX_MIME · is the correct OOXML MIME type · downloadWorkbook · calls writeBuffer and creates object URL … |
 | `scripts/tests/contexto-publicacao.test.mjs` | 11 | cada upload fornece um ID e cada download usa destino explícito sem ocultar falhas · produtores independentes falham de verdade e o publisher ainda aceita as fontes disponíveis · falha fatal de ${failed} mantém sua versão anterior e publica as duas fontes saudáveis · publisher ${previousBranch ?  … |
+| `src/components/__tests__/AnimatedNumber.test.tsx` | 11 | AnimatedNumber · renders 0 initially when not in view · renders initial 0 even when format prop is provided · applies custom className to span … |
 | `src/components/__tests__/EmprestimosFinanceiros.test.tsx` | 11 | EmprestimosTable · renders table headers · renders colaborador names · renders instituicao or dash for null … |
 | `src/components/__tests__/ExameFormDialog.test.tsx` | 11 | ExameFormDialog · renders trigger button with  · renders dialog content with title · renders all colaborador options in select … |
 | `src/components/__tests__/GerarPgrButton.test.tsx` | 11 | GerarPgrButton · renders trigger button with  · renders dialog title · renders Responsável Técnico label … |
@@ -5713,8 +5716,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `supabase/functions/_shared/rateLimit.test.ts` | 10 | permite quando abaixo do limite e insere marcador · bloqueia quando count >= limit e não insere · isolamento por chave — outra chave não conta contra a atual · ignora rows fora da janela (timestamp < windowStart) … |
 | `src/components/__tests__/ASOTab.test.tsx` | 9 | ASOTab · shows spinner when loading · renders Atestados de Saúde Ocupacional title · renders Novo ASO button … |
 | `src/components/__tests__/AdmissoesKanban.test.tsx` | 9 | AdmissoesKanban · renders Solicitação column label · renders Documentos column label · renders eSocial column label … |
-| `src/components/__tests__/AfastamentoDocumentManager.test.tsx` | 9 | AfastamentoDocumentManager · renders Tipo de Documento label · renders Arquivo label · renders Fazer Upload button … |
-| `src/components/__tests__/AfastamentoStats.test.tsx` | 9 | AfastamentoStats · renders total registros count · renders ativos count · renders pendentes count … |
 | … +392 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
@@ -6083,4 +6084,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * ── REGRAS DE NEGÓCIO APLICADAS ──────────────────────────────────────────── | `src/components/avaliacao/motorAvaliacao360.ts` |
 | • POTENCIAL = 100% gestor, com VALIDAÇÃO OBRIGATÓRIA do RH vinculada à versão | `src/components/avaliacao/motorAvaliacao360.ts` |
 | exata da avaliação (se a avaliação mudar ou for reaberta, a validação | `src/components/avaliacao/motorAvaliacao360.ts` |
-| … +871 linhas — lista completa em `context.json` | |
+| … +873 linhas — lista completa em `context.json` | |

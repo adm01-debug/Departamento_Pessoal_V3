@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "b25c46e0edae00b48cd5c30c36ab04ca6348ef7a",
+  "sha": "93f1a5f2d8a0cd5d6d80b954b8228156eefb033b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 15:03 UTC",
+  "generated_at": "2026-11-17 15:23 UTC",
   "files_total": 3500,
   "code_files": 2926,
-  "code_lines": 464793
+  "code_lines": 465199
  },
  "version": "1.3.2",
- "facts_hash": "be6847dafd485814",
+ "facts_hash": "07fc305205433024",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -87964,7 +87964,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 305
+    "deps_count": 306
    },
    {
     "path": "",
@@ -89103,7 +89103,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 284
+    "deps_count": 285
    },
    {
     "path": "",
@@ -90306,7 +90306,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 95
+    "deps_count": 96
    },
    {
     "path": "",
@@ -93657,7 +93657,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 91
+    "deps_count": 92
    },
    {
     "path": "",
@@ -93684,7 +93684,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 82
+    "deps_count": 83
    },
    {
     "path": "",
@@ -96254,7 +96254,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 278
+    "deps_count": 279
    },
    {
     "path": "",
@@ -96924,7 +96924,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 60
+    "deps_count": 62
    }
   ],
   "edge_functions": [
@@ -101534,7 +101534,7 @@
   {
    "module": "src/components",
    "files": 933,
-   "lines": 169267,
+   "lines": 169673,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -112640,6 +112640,11 @@
     "values": "operacao_ausente | operacao_sem_idempotencia | feedback_ausente | id_operacao_ausente"
    },
    {
+    "file": "src/components/dashboard/MetricCard.tsx",
+    "name": "MetricTone",
+    "values": "primary | warning | destructive | muted | info | accent | success"
+   },
+   {
     "file": "src/components/desligamentos/desligamentosComum.ts",
     "name": "Tone",
     "values": "primary | info | success | warning | destructive"
@@ -118964,6 +118969,14 @@
    {
     "file": "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
     "text": "regra — o formulário sozinho não protege o dado gravado."
+   },
+   {
+    "file": "src/components/dashboard/MetricCard.tsx",
+    "text": "do Dashboard Executivo) e apenas a LINHA DE APOIO fica um pouco menor (11px,"
+   },
+   {
+    "file": "src/components/dashboard/WorkforceHealthScore.tsx",
+    "text": "o mínimo forçado pela antiga altura travada à viewport. `bare` usa um"
    },
    {
     "file": "src/components/dashboard/analytics/widgets.tsx",
@@ -159848,8 +159861,8 @@
    {
     "file": "src/components/dashboard/MetricCard.tsx",
     "name": "formatCurrency",
-    "params": "value: number",
-    "body": "return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0, }).format(value);"
+    "params": "value: number, decimals = 0",
+    "body": "return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: decimals, maximumFractionDigits: decimals, }).format(value);"
    },
    {
     "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
@@ -162641,6 +162654,10 @@
    },
    {
     "file": "src/components/dashboard/MetricCard.tsx",
+    "line": "// linha de apoio caber em UMA linha (\"150% vs. período"
+   },
+   {
+    "file": "src/components/dashboard/MetricCard.tsx",
     "line": "transition: { delay: i * 0.08, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const },"
    },
    {
@@ -162649,11 +162666,7 @@
    },
    {
     "file": "src/components/dashboard/WorkforceHealthScore.tsx",
-    "line": "(turnoverScore * 0.30) + (absenteismoScore * 0.25) + (cadastroScore * 0.20) + (feriasScore * 0.15) - passivoPenalty"
-   },
-   {
-    "file": "src/components/dashboard/WorkforceHealthScore.tsx",
-    "line": "const absenteismoScore = Math.max(0, 100 - (absenteismo * 10)); // 0% = 100, 10% = 0"
+    "line": "const absenteismoScore = Math.max(0, 100 - absenteismo * 10); // 0% = 100, 10% = 0"
    },
    {
     "file": "src/components/dashboard/WorkforceHealthScore.tsx",
@@ -162661,7 +162674,7 @@
    },
    {
     "file": "src/components/dashboard/WorkforceHealthScore.tsx",
-    "line": "const turnoverScore = Math.max(0, 100 - (turnover * 5)); // 0% = 100, 20% = 0"
+    "line": "const turnoverScore = Math.max(0, 100 - turnover * 5); // 0% = 100, 20% = 0"
    },
    {
     "file": "src/components/dashboard/WorkforceHealthScore.tsx",
@@ -162670,6 +162683,10 @@
    {
     "file": "src/components/dashboard/WorkforceHealthScore.tsx",
     "line": "transition={{ delay: 0.8 + i * 0.1 }}"
+   },
+   {
+    "file": "src/components/dashboard/WorkforceHealthScore.tsx",
+    "line": "turnoverScore * 0.3 + absenteismoScore * 0.25 + cadastroScore * 0.2 + feriasScore * 0.15 - passivoPenalty"
    },
    {
     "file": "src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
@@ -166004,6 +166021,14 @@
    {
     "file": "src/components/__tests__/AnimatedNumber.test.tsx",
     "name": "renders with large value stays at 0 until animated"
+   },
+   {
+    "file": "src/components/__tests__/AnimatedNumber.test.tsx",
+    "name": "chega ao valor final com a animação desligada (duration = 0)"
+   },
+   {
+    "file": "src/components/__tests__/AnimatedNumber.test.tsx",
+    "name": "respeita o formatador no valor final com duration = 0"
    },
    {
     "file": "src/components/__tests__/AnotacoesTab.test.tsx",
@@ -173360,6 +173385,50 @@
    {
     "file": "src/components/__tests__/MetricCard.test.tsx",
     "name": "renders without optional props without crashing"
+   },
+   {
+    "file": "src/components/__tests__/MetricCard.test.tsx",
+    "name": "aceita call site legado que ainda passa gradient, sem tone"
+   },
+   {
+    "file": "src/components/__tests__/MetricCard.test.tsx",
+    "name": "pinta o chip do icone pelo tone"
+   },
+   {
+    "file": "src/components/__tests__/MetricCard.test.tsx",
+    "name": "vividRed usa a forma com valor arbitrario (o token curto nao existe no tema)"
+   },
+   {
+    "file": "src/components/__tests__/MetricCard.test.tsx",
+    "name": "repassa decimals ao AnimatedNumber (KPI monetario com centavos)"
+   },
+   {
+    "file": "src/components/__tests__/MetricCard.test.tsx",
+    "name": "mostra o tooltip do KPI quando recebe texto"
+   },
+   {
+    "file": "src/components/__tests__/MetricCard.test.tsx",
+    "name": "so fica clicavel quando ha destino (route ou titulo do mapa padrao)"
+   },
+   {
+    "file": "src/components/__tests__/MetricCard.test.tsx",
+    "name": "dense encolhe a linha de apoio sem mexer no valor"
+   },
+   {
+    "file": "src/components/__tests__/MetricCard.test.tsx",
+    "name": "preserva centavos no formato monetario automatico quando decimals = 2"
+   },
+   {
+    "file": "src/components/__tests__/MetricCard.test.tsx",
+    "name": "mantem o valor monetario inteiro quando decimals nao e informado"
+   },
+   {
+    "file": "src/components/__tests__/MetricCard.test.tsx",
+    "name": "nao deixa a sparkline disputar largura com o valor abaixo de 2xl"
+   },
+   {
+    "file": "src/components/__tests__/MetricCard.test.tsx",
+    "name": "expoe o valor inteiro no title quando o truncate corta"
    },
    {
     "file": "src/components/__tests__/MetricasFolhaDashboard.test.tsx",
@@ -262718,7 +262787,7 @@
   },
   "src/components/__tests__/AnimatedNumber.test.tsx": {
    "path": "src/components/__tests__/AnimatedNumber.test.tsx",
-   "lines": 62,
+   "lines": 78,
    "is_test": true,
    "tests": [
     "AnimatedNumber",
@@ -262729,7 +262798,9 @@
     "renders when isInView is true and animates to value",
     "renders with default duration",
     "renders with zero value",
-    "renders with large value stays at 0 until animated"
+    "renders with large value stays at 0 until animated",
+    "chega ao valor final com a animação desligada (duration = 0)",
+    "respeita o formatador no valor final com duration = 0"
    ]
   },
   "src/components/__tests__/AnotacoesTab.test.tsx": {
@@ -265874,7 +265945,7 @@
   },
   "src/components/__tests__/MetricCard.test.tsx": {
    "path": "src/components/__tests__/MetricCard.test.tsx",
-   "lines": 112,
+   "lines": 207,
    "is_test": true,
    "tests": [
     "MetricCard",
@@ -265885,7 +265956,18 @@
     "renders trend percentage",
     "renders trend label",
     "renders sparkline when provided",
-    "renders without optional props without crashing"
+    "renders without optional props without crashing",
+    "aceita call site legado que ainda passa gradient, sem tone",
+    "pinta o chip do icone pelo tone",
+    "vividRed usa a forma com valor arbitrario (o token curto nao existe no tema)",
+    "repassa decimals ao AnimatedNumber (KPI monetario com centavos)",
+    "mostra o tooltip do KPI quando recebe texto",
+    "so fica clicavel quando ha destino (route ou titulo do mapa padrao)",
+    "dense encolhe a linha de apoio sem mexer no valor",
+    "preserva centavos no formato monetario automatico quando decimals = 2",
+    "mantem o valor monetario inteiro quando decimals nao e informado",
+    "nao deixa a sparkline disputar largura com o valor abaixo de 2xl",
+    "expoe o valor inteiro no title quando o truncate corta"
    ]
   },
   "src/components/__tests__/MetricasFolhaDashboard.test.tsx": {
@@ -273616,14 +273698,14 @@
   },
   "src/components/dashboard/AnimatedNumber.tsx": {
    "path": "src/components/dashboard/AnimatedNumber.tsx",
-   "lines": 47,
+   "lines": 66,
    "exports": [
     "function AnimatedNumber"
    ]
   },
   "src/components/dashboard/BarChartWidget.tsx": {
    "path": "src/components/dashboard/BarChartWidget.tsx",
-   "lines": 63,
+   "lines": 61,
    "exports": [
     "const BarChartWidget"
    ],
@@ -273686,25 +273768,36 @@
   },
   "src/components/dashboard/MetricCard.tsx": {
    "path": "src/components/dashboard/MetricCard.tsx",
-   "lines": 137,
+   "lines": 264,
    "exports": [
     "const cardVariants",
+    "type MetricTone",
     "function MetricCard"
+   ],
+   "enums": [
+    {
+     "name": "MetricTone",
+     "values": "primary | warning | destructive | muted | info | accent | success"
+    }
+   ],
+   "rule_comments": [
+    "do Dashboard Executivo) e apenas a LINHA DE APOIO fica um pouco menor (11px,"
    ],
    "calc_fns": [
     {
      "name": "formatCurrency",
-     "params": "value: number",
-     "body": "return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0, }).format(value);"
+     "params": "value: number, decimals = 0",
+     "body": "return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: decimals, maximumFractionDigits: decimals, }).format(value);"
     }
    ],
    "percents": [
+    "// linha de apoio caber em UMA linha (\"150% vs. período",
     "transition: { delay: i * 0.08, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const },"
    ]
   },
   "src/components/dashboard/MiniSparkline.tsx": {
    "path": "src/components/dashboard/MiniSparkline.tsx",
-   "lines": 70,
+   "lines": 78,
    "exports": [
     "function MiniSparkline"
    ]
@@ -273851,14 +273944,14 @@
   },
   "src/components/dashboard/SectionHeader.tsx": {
    "path": "src/components/dashboard/SectionHeader.tsx",
-   "lines": 34,
+   "lines": 41,
    "exports": [
     "function SectionHeader"
    ]
   },
   "src/components/dashboard/WorkforceHealthScore.tsx": {
    "path": "src/components/dashboard/WorkforceHealthScore.tsx",
-   "lines": 159,
+   "lines": 295,
    "exports": [
     "function WorkforceHealthScore"
    ],
@@ -273874,13 +273967,16 @@
      "kind": "escreve"
     }
    ],
+   "rule_comments": [
+    "o mínimo forçado pela antiga altura travada à viewport. `bare` usa um"
+   ],
    "percents": [
-    "(turnoverScore * 0.30) + (absenteismoScore * 0.25) + (cadastroScore * 0.20) + (feriasScore * 0.15) - passivoPenalty",
-    "const absenteismoScore = Math.max(0, 100 - (absenteismo * 10)); // 0% = 100, 10% = 0",
+    "const absenteismoScore = Math.max(0, 100 - absenteismo * 10); // 0% = 100, 10% = 0",
     "const arcLength = (compositeScore / 100) * circumference * 0.75; // 270 degree arc",
-    "const turnoverScore = Math.max(0, 100 - (turnover * 5)); // 0% = 100, 20% = 0",
+    "const turnoverScore = Math.max(0, 100 - turnover * 5); // 0% = 100, 20% = 0",
     "strokeDasharray={`${circumference * 0.75} ${circumference * 0.25}`}",
-    "transition={{ delay: 0.8 + i * 0.1 }}"
+    "transition={{ delay: 0.8 + i * 0.1 }}",
+    "turnoverScore * 0.3 + absenteismoScore * 0.25 + cadastroScore * 0.2 + feriasScore * 0.15 - passivoPenalty"
    ]
   },
   "src/components/dashboard/index.ts": {
@@ -323383,10 +323479,27 @@
   }
  },
  "git": {
-  "sha": "b25c46e0edae00b48cd5c30c36ab04ca6348ef7a",
+  "sha": "93f1a5f2d8a0cd5d6d80b954b8228156eefb033b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "93f1a5f",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(dashboard): resgata da muri o MetricCard com tone, tooltip e variante compacta (#618)",
+    "files": [
+     "src/components/__tests__/AnimatedNumber.test.tsx",
+     "src/components/__tests__/MetricCard.test.tsx",
+     "src/components/dashboard/AnimatedNumber.tsx",
+     "src/components/dashboard/BarChartWidget.tsx",
+     "src/components/dashboard/MetricCard.tsx",
+     "src/components/dashboard/MiniSparkline.tsx",
+     "src/components/dashboard/SectionHeader.tsx",
+     "src/components/dashboard/WorkforceHealthScore.tsx",
+     "src/index.css"
+    ]
+   },
    {
     "sha": "b25c46e",
     "date": "2026-11-17",
@@ -324178,16 +324291,6 @@
      "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql",
      "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.verify.sql"
     ]
-   },
-   {
-    "sha": "e64be5e",
-    "date": "2026-11-16",
-    "author": "dependabot[bot]",
-    "subject": "build(deps): bump the minor-patch group with 11 updates (#586)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
@@ -324202,6 +324305,10 @@
    [
     "src/pages/ColaboradorDetalhesPage.tsx",
     4
+   ],
+   [
+    "src/index.css",
+    3
    ],
    [
     "docs/ninebox-aprovacao-gestor-implantacao.md",
@@ -324221,10 +324328,6 @@
    ],
    [
     "src/components/desligamentos/desligamentosDerivacoes.ts",
-    2
-   ],
-   [
-    "src/index.css",
     2
    ],
    [

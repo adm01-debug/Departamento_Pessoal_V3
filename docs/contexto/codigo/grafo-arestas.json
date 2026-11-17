@@ -1729,6 +1729,7 @@
    "src/components/dashboard/AnimatedNumber.tsx",
    "src/components/dashboard/MiniSparkline.tsx",
    "src/components/ui/card.tsx",
+   "src/components/ui/info-tooltip.tsx",
    "src/lib/utils.ts"
   ],
   "src/components/dashboard/MorningBriefing.tsx": [

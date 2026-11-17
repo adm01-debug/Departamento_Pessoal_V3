@@ -2505,7 +2505,7 @@
     "AnimatedNumber"
    ],
    "export_default": null,
-   "linhas": 47,
+   "linhas": 66,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [],
@@ -2519,7 +2519,7 @@
     "BarChartWidget"
    ],
    "export_default": null,
-   "linhas": 63,
+   "linhas": 61,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [],
@@ -2579,10 +2579,11 @@
   {
    "arquivo": "src/components/dashboard/MetricCard.tsx",
    "exports": [
-    "MetricCard"
+    "MetricCard",
+    "MetricTone"
    ],
    "export_default": null,
-   "linhas": 137,
+   "linhas": 264,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [],
@@ -2596,7 +2597,7 @@
     "MiniSparkline"
    ],
    "export_default": null,
-   "linhas": 70,
+   "linhas": 78,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [],
@@ -2646,7 +2647,7 @@
     "SectionHeader"
    ],
    "export_default": null,
-   "linhas": 34,
+   "linhas": 41,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [],
@@ -2660,7 +2661,7 @@
     "WorkforceHealthScore"
    ],
    "export_default": null,
-   "linhas": 159,
+   "linhas": 295,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [],
@@ -7435,7 +7436,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "orfao": false
   },
   {
