@@ -113,7 +113,12 @@ export function useAtualizarContaBancaria() {
   const { empresaAtual } = useEmpresas();
   return useMutation({
     mutationFn: async ({ id, dados }: { id: string; dados: Updatable<'contas_bancarias'> }) => {
-      return await service.atualizarContaBancaria(id, dados, empresaAtual!.id);
+      // Mesma guarda do criar: sem empresa no contexto, `empresaAtual!.id`
+      // estourava TypeError no navegador em vez de dizer o que fazer.
+      if (!empresaAtual?.id) {
+        throw new Error('Nenhuma empresa selecionada. Selecione uma empresa antes de editar uma conta bancária.');
+      }
+      return await service.atualizarContaBancaria(id, dados, empresaAtual.id);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['contas-bancarias'] }),
   });

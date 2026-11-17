@@ -5,7 +5,7 @@
     "urls": 116,
     "telas": 110,
     "itens_de_menu": 91,
-    "urls_admin": 23,
+    "urls_admin": 22,
     "urls_publicas": 7,
     "hooks_distintos": 149,
     "problemas": 0
@@ -215,7 +215,7 @@
       "arquivo": "src/pages/AuditoriaPage.tsx",
       "layout": false,
       "protegida": true,
-      "admin": true,
+      "admin": false,
       "redireciona": null
     },
     {
@@ -4694,7 +4694,7 @@
       "componente": "ColaboradorDetalhesPage",
       "urls": ["/colaboradores/:id"],
       "menu": [],
-      "arquivos_lidos": 201,
+      "arquivos_lidos": 202,
       "hooks": [
         {
           "nome": "useAfastamentosRecentes",

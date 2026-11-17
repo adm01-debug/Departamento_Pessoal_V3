@@ -14,10 +14,19 @@ import { useDocumentos } from '@/hooks/useDocumentos';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { safeHref } from '@/utils/safeUrl';
+import { safeErrorMessage } from '@/utils/safeError';
+import { useEmpresas } from '@/hooks/useEmpresas';
+import { FileUploadField } from './documentos/FileUploadField';
+import { uploadDocumentFile, removeDocumentFile, resolveDocumentUrl } from '@/services/documentUploadService';
+
+const BUCKET = 'documentos';
 
 export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string }) {
   const { documentos, isLoading, criarDocumento, excluirDocumento } = useDocumentos(colaboradorId);
+  const { empresaAtualId } = useEmpresas();
   const [open, setOpen] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [form, setForm] = useState({
     nome: '',
     tipo: 'Outros',
@@ -43,15 +52,70 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
       toast.error('Nome do documento é obrigatório');
       return;
     }
+    if (file && !empresaAtualId) {
+      toast.error('Selecione uma empresa antes de enviar o arquivo.');
+      return;
+    }
+
+    let enviado: Awaited<ReturnType<typeof uploadDocumentFile>> | null = null;
     try {
+      if (file && empresaAtualId) {
+        setUploading(true);
+        enviado = await uploadDocumentFile(file, {
+          bucket: BUCKET,
+          empresaId: empresaAtualId,
+          colaboradorId,
+          categoria: 'documentos-digitais',
+        });
+        setUploading(false);
+      }
+
       await criarDocumento.mutateAsync({
         ...form,
+        data_validade: form.data_validade.trim() === '' ? null : form.data_validade,
         colaborador_id: colaboradorId,
+        ...(enviado
+          ? {
+              storage_path: enviado.storage_path,
+              nome_arquivo: enviado.nome_arquivo,
+              tamanho: enviado.tamanho,
+              mime_type: enviado.mime_type,
+            }
+          : {}),
       });
       setOpen(false);
+      setFile(null);
       setForm({ nome: '', tipo: 'Outros', url: '', observacoes: '', data_validade: '' });
-    } catch (err) {
-      toast.error('Erro ao salvar documento');
+    } catch (e) {
+      setUploading(false);
+      // Arquivo subiu e a linha nao entrou: sem rollback o objeto fica orfao.
+      if (enviado) await removeDocumentFile(BUCKET, enviado.storage_path).catch(() => {});
+      toast.error(safeErrorMessage(e, 'Erro ao salvar documento.'));
+    }
+  };
+
+  const handleAbrir = async (doc: { storage_path?: string | null; url?: string | null }) => {
+    try {
+      const url = await resolveDocumentUrl({ storage_path: doc.storage_path, url: doc.url }, BUCKET);
+      if (!url) {
+        toast.error('Arquivo não encontrado.');
+        return;
+      }
+      window.open(safeHref(url), '_blank', 'noopener');
+    } catch (e) {
+      toast.error(safeErrorMessage(e, 'Não foi possível abrir o arquivo.'));
+    }
+  };
+
+  const handleExcluir = async (doc: { id: string; storage_path?: string | null }) => {
+    if (!confirm('Tem certeza que deseja excluir este documento permanentemente?')) return;
+    try {
+      // Arquivo primeiro: Storage recusou, a linha fica — melhor documento
+      // visivel que objeto orfao com PII.
+      if (doc.storage_path) await removeDocumentFile(BUCKET, doc.storage_path);
+      await excluirDocumento.mutateAsync(doc.id);
+    } catch (e) {
+      toast.error(safeErrorMessage(e, 'Erro ao excluir documento.'));
     }
   };
 
@@ -107,12 +171,12 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
                 />
               </div>
               <div className="space-y-2">
-                <Label>URL / Link do Arquivo</Label>
-                <Input
-                  placeholder="https://..."
-                  value={form.url}
-                  onChange={(e) => setForm((f) => ({ ...f, url: e.target.value }))}
-                  className="rounded-xl"
+                <Label>Arquivo (opcional)</Label>
+                <FileUploadField
+                  file={file}
+                  onFileChange={setFile}
+                  uploading={uploading}
+                  disabled={criarDocumento.isPending}
                 />
               </div>
               <div className="space-y-2">
@@ -193,13 +257,13 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
                   </TableCell>
                   <TableCell className="pr-6 text-right">
                     <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {doc.url && (
+                      {(doc.storage_path || doc.url) && (
                         <Button
                           variant="ghost"
                           size="icon"
                           aria-label="Abrir em nova aba"
                           className="h-8 w-8 rounded-lg hover:bg-info/10 text-info"
-                          onClick={() => window.open(safeHref(doc.url), '_blank', 'noopener')}
+                          onClick={() => handleAbrir(doc)}
                         >
                           <ExternalLink className="h-4 w-4" />
                         </Button>
@@ -209,11 +273,7 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
                         size="icon"
                         aria-label="Excluir"
                         className="h-8 w-8 rounded-lg hover:bg-destructive/10 text-destructive"
-                        onClick={() => {
-                          if (confirm('Tem certeza que deseja excluir este documento permanentemente?')) {
-                            excluirDocumento.mutate(doc.id);
-                          }
-                        }}
+                        onClick={() => handleExcluir(doc)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

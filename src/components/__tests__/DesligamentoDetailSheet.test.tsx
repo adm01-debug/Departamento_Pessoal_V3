@@ -49,6 +49,7 @@ vi.mock('@/components/ui/separator', () => ({
 }));
 
 vi.mock('@/components/ui/button', () => ({
+  buttonVariants: () => '',
   Button: ({ children, onClick, disabled }: { children?: ReactNode; onClick?: () => void; disabled?: boolean }) => (
     <button onClick={onClick} disabled={disabled}>
       {children}

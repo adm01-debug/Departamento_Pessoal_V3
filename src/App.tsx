@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { AdminRoute } from '@/components/AdminRoute';
+import { PermissionRoute } from '@/components/PermissionRoute';
 import { RouteErrorBoundary, clearChunkReloadGuard } from '@/components/RouteErrorBoundary';
 import { lazy, Suspense, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -275,12 +276,19 @@ export default function App() {
         <Route path="obrigacoes-fiscais" element={<LazyPage Component={ObrigacoesFiscaisPage} />} />
         <Route path="sst" element={<LazyPage Component={SSTPage} />} />
         <Route path="epis" element={<LazyPage Component={EPIsPage} />} />
+        {/*
+          Primeira rota por PERMISSAO, nao por papel: a matriz
+          `public.permissions` concede `auditoria.read` a admin, gestor e rh,
+          e o `AdminRoute` bloquearia gestor e rh. Enquanto a matriz estiver
+          vazia o comportamento e IDENTICO ao de antes — admin entra pelo
+          atalho de admin e os demais veem "Acesso Restrito" (fail-closed).
+        */}
         <Route
           path="auditoria"
           element={
-            <AdminRoute>
+            <PermissionRoute permission="auditoria.read">
               <LazyPage Component={AuditoriaPage} />
-            </AdminRoute>
+            </PermissionRoute>
           }
         />
         <Route path="canal-etica" element={<LazyPage Component={CanalEticaPage} />} />

@@ -114,9 +114,33 @@ vi.mock('@/components/ui/select', () => ({
 
 import { FeriasForm } from '../ferias/FeriasForm';
 
+const MESES_ABREV = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+/**
+ * `Input type="date"` é o `DatePicker` do design system (ver `ui/input.tsx`):
+ * um botão que abre o calendário, não um `<input type="date">`. Então a data
+ * entra pelo mesmo caminho do usuário — abre o popover, desce até a grade de
+ * anos pelo título, escolhe ano, mês e dia.
+ */
+function selecionarData(label: string, iso: string) {
+  const [ano, mes, dia] = iso.split('-').map(Number);
+  fireEvent.click(screen.getByLabelText(label));
+  // título (mês+ano) → grade de meses → grade de anos
+  fireEvent.click(screen.getByRole('button', { name: /^[a-zç]+ \d{4}$/i }));
+  fireEvent.click(screen.getByRole('button', { name: String(new Date().getFullYear()) }));
+  fireEvent.click(screen.getByRole('button', { name: String(ano) }));
+  fireEvent.click(screen.getByRole('button', { name: MESES_ABREV[mes - 1] }));
+  // `showOutsideDays` repete os dias do mês vizinho; só a célula do mês
+  // exibido serve (as de fora carregam `day-outside`).
+  const celula = screen
+    .getAllByRole('gridcell', { name: String(dia) })
+    .find((c) => !c.className.includes('day-outside'));
+  fireEvent.click(celula!.querySelector('button')!);
+}
+
 function preencher(dataInicio: string, diasGozo = '30', diasAbono = '0') {
   fireEvent.change(screen.getAllByTestId('select')[0], { target: { value: '11111111-1111-4111-8111-111111111111' } });
-  fireEvent.change(screen.getByLabelText('Início'), { target: { value: dataInicio } });
+  selecionarData('Início', dataInicio);
   fireEvent.change(screen.getByLabelText('Dias de gozo'), { target: { value: diasGozo } });
   fireEvent.change(screen.getByLabelText('Dias de abono pecuniário'), { target: { value: diasAbono } });
   fireEvent.click(screen.getByText('Solicitar').closest('button')!);
@@ -344,7 +368,7 @@ describe('FeriasForm', () => {
 
   it('não exibe aviso de antecedência com 30 dias ou mais', () => {
     render(<FeriasForm open onOpenChange={vi.fn()} onSubmit={vi.fn()} />);
-    fireEvent.change(screen.getByLabelText('Início'), { target: { value: '2026-12-14' } });
+    selecionarData('Início', '2026-12-14');
     expect(screen.queryByRole('status')).toBeNull();
   });
 });
