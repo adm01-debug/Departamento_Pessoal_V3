@@ -79,6 +79,7 @@ vi.mock('@/services/batidasPontoService', () => ({
 vi.mock('@/utils/dateLocal', () => ({
   formatDateLocalISO: (d: Date) => d.toISOString().split('T')[0],
   todayLocalISO: () => '2026-07-24',
+  parseDateLocalISO: (iso?: string | null) => (iso ? new Date(`${iso}T12:00:00`) : undefined),
 }));
 
 vi.mock('../ponto/PontoInconsistencyPanel', () => ({

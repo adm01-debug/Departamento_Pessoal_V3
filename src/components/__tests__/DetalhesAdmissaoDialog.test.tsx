@@ -78,6 +78,7 @@ vi.mock('@/components/ui/badge', () => ({
 }));
 
 vi.mock('@/components/ui/button', () => ({
+  buttonVariants: () => '',
   Button: ({
     children,
     onClick,
