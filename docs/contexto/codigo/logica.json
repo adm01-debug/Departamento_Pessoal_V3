@@ -692,9 +692,10 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 10,
+   "usado_por": 12,
    "usado_por_modulos": [
     "components/avaliacao",
+    "components/recrutamento",
     "components/treinamentos",
     "pages"
    ],
@@ -809,7 +810,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 242,
+   "usado_por": 253,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
@@ -4947,7 +4948,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 51,
+   "usado_por": 52,
    "usado_por_modulos": [
     "components/admissoes",
     "components/colaborador-detalhes",
@@ -4955,6 +4956,7 @@
     "components/folha",
     "components/pcs",
     "components/ponto",
+    "components/recrutamento",
     "components/sst",
     "components/ui",
     "hooks",
@@ -5233,7 +5235,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 24,
+   "usado_por": 27,
    "usado_por_modulos": [
     "components/admissoes",
     "components/afastamentos",
@@ -5241,6 +5243,7 @@
     "components/esocial",
     "components/folha",
     "components/premiacoes",
+    "components/recrutamento",
     "pages"
    ],
    "coberto_por_testes": 1,

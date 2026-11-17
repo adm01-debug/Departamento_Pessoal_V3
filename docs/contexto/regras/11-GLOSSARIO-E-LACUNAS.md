@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `576c7f4820` · branch `main` · 2026-11-17 01:50 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `182d5f9f81` · branch `main` · 2026-11-17 03:06 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
 | `pcs_grades` | Transactionally generated salary ranges for a PCS plan. | 11 colunas | migration |
 | `pcs_pesquisa_salarial` | Tenant-scoped external salary benchmark observations. | 14 colunas | migration |
-| … +349 linhas — lista completa em `context.json` | | | |
+| … +357 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -398,8 +398,7 @@
 | status | valor `processed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/webhook/index.ts` |
 | status | valor `processed_v1` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/webhook/index.ts` |
 | status | valor `processed_v2` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/webhook/index.ts` |
-| status | valor `triagem` para `etapa` usado no código não existe em nenhum enum do banco/TS | `escreve:src/pages/RecrutamentoPage.tsx` |
-| status | valor `contratado` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/RecrutamentoPage.tsx` |
+| status | valor `outras` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/recrutamento/PipelineBoard.tsx`<br>`compara:src/components/recrutamento/vagasComum.ts` |
 | status | valor `finalizado` para `etapa` usado no código não existe em nenhum enum do banco/TS | `escreve:src/services/rescisaoService.ts` |
 | status | valor `financeiro` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/rescisaoService.ts` |
 | status | valor `juridico` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/rescisaoService.ts` |
@@ -646,7 +645,8 @@
 | segurança | função `trg_medida_aplicada_integrar` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_medida_contestacao_notify` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_medida_contestacao_notify_after` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +38 linhas — lista completa em `context.json` | | |
+| segurança | função `trg_medida_esocial_on_aplicada` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| … +37 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 

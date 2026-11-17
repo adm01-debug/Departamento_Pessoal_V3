@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 578,
+ "total": 595,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -805,7 +805,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 4,
+   "usado_por": 5,
    "orfao": false
   },
   {
@@ -2431,7 +2431,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 9,
+   "usado_por": 10,
    "orfao": false
   },
   {
@@ -5210,12 +5210,170 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/recrutamento/AnalyticsAtencao.tsx",
+   "exports": [
+    "AnalyticsAtencao"
+   ],
+   "export_default": null,
+   "linhas": 89,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/AnalyticsEvolucao.tsx",
+   "exports": [
+    "AnalyticsEvolucao"
+   ],
+   "export_default": null,
+   "linhas": 162,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/AnalyticsFunil.tsx",
+   "exports": [
+    "AnalyticsFunil"
+   ],
+   "export_default": null,
+   "linhas": 262,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/AnalyticsIndicadores.tsx",
+   "exports": [
+    "AnalyticsIndicadores"
+   ],
+   "export_default": null,
+   "linhas": 89,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/AnalyticsOrigens.tsx",
+   "exports": [
+    "AnalyticsOrigens"
+   ],
+   "export_default": null,
+   "linhas": 111,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/AnalyticsPainel.tsx",
+   "exports": [
+    "AnalyticsPainel",
+    "ChipContagem",
+    "TomAnalytics"
+   ],
+   "export_default": null,
+   "linhas": 100,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 7,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/AnalyticsRecrutamento.tsx",
+   "exports": [
+    "AnalyticsRecrutamento"
+   ],
+   "export_default": null,
+   "linhas": 288,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/AnalyticsTempo.tsx",
+   "exports": [
+    "AnalyticsTempo"
+   ],
+   "export_default": null,
+   "linhas": 114,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/AnalyticsVagas.tsx",
+   "exports": [
+    "AnalyticsVagas"
+   ],
+   "export_default": null,
+   "linhas": 113,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/CandidatoDetalhesDialog.tsx",
+   "exports": [
+    "CandidatoDetalhesDialog"
+   ],
+   "export_default": null,
+   "linhas": 246,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/CandidatosPainel.tsx",
+   "exports": [
+    "CandidatosPainel"
+   ],
+   "export_default": null,
+   "linhas": 644,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/recrutamento/CandidatoTimeline.tsx",
    "exports": [
     "CandidatoTimeline"
    ],
    "export_default": null,
-   "linhas": 161,
+   "linhas": 166,
    "dominio": "components/recrutamento",
    "hooks_locais": [],
    "tabelas": [
@@ -5223,6 +5381,102 @@
     "recrutamento_entrevistas",
     "recrutamento_testes"
    ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/PipelineBoard.tsx",
+   "exports": [
+    "PipelineBoard",
+    "PipelineBoardProps"
+   ],
+   "export_default": null,
+   "linhas": 315,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/PipelineCard.tsx",
+   "exports": [
+    "DraggablePipelineCard",
+    "MoverEtapaHandler",
+    "PipelineCard",
+    "PipelineCardProps"
+   ],
+   "export_default": null,
+   "linhas": 359,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/PipelineColumn.tsx",
+   "exports": [
+    "PipelineColumn",
+    "PipelineColumnProps"
+   ],
+   "export_default": null,
+   "linhas": 155,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [
+    "useEntradaKanbanColuna"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/TabelaCandidatos.tsx",
+   "exports": [
+    "TabelaCandidatos",
+    "TabelaCandidatosProps"
+   ],
+   "export_default": null,
+   "linhas": 440,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/VagaCard.tsx",
+   "exports": [
+    "VagaCard",
+    "VagaCardProps"
+   ],
+   "export_default": null,
+   "linhas": 318,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/VagasPainel.tsx",
+   "exports": [
+    "VagasPainel",
+    "VagasPainelProps"
+   ],
+   "export_default": null,
+   "linhas": 309,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
    "edges": [],
    "usado_por": 1,
    "orfao": false
@@ -6420,7 +6674,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 333,
+   "usado_por": 340,
    "orfao": false
   },
   {
@@ -6455,7 +6709,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 277,
+   "usado_por": 280,
    "orfao": false
   },
   {
@@ -6470,7 +6724,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 6,
+   "usado_por": 7,
    "orfao": false
   },
   {
@@ -6485,7 +6739,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "orfao": false
   },
   {
@@ -6518,7 +6772,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 15,
+   "usado_por": 17,
    "orfao": false
   },
   {
@@ -6709,7 +6963,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 28,
+   "usado_por": 31,
    "orfao": false
   },
   {
@@ -6741,7 +6995,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 19,
+   "usado_por": 26,
    "orfao": false
   },
   {
@@ -6809,7 +7063,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -6920,7 +7174,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 16,
+   "usado_por": 17,
    "orfao": false
   },
   {
@@ -7000,7 +7254,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 118,
+   "usado_por": 121,
    "orfao": false
   },
   {
@@ -9201,7 +9455,7 @@
     "RecrutamentoPage"
    ],
    "export_default": "RecrutamentoPage",
-   "linhas": 861,
+   "linhas": 676,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas",

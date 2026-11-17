@@ -123,9 +123,10 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_arquivos": [
-    "src/components/admissoes/KanbanColumn.tsx"
+    "src/components/admissoes/KanbanColumn.tsx",
+    "src/components/recrutamento/PipelineColumn.tsx"
    ],
    "coberto_por_testes": 1
   },
@@ -276,7 +277,7 @@
     "src/pages/PerfilPage.tsx",
     "src/pages/PortalPage.tsx"
    ],
-   "coberto_por_testes": 2
+   "coberto_por_testes": 3
   },
   {
    "arquivo": "src/contexts/EmpresaContext.tsx",
@@ -2439,7 +2440,7 @@
     "useMemo"
    ],
    "canais_realtime": [],
-   "usado_por": 34,
+   "usado_por": 35,
    "usado_por_arquivos": [
     "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
     "src/components/colaborador-detalhes/DependentesTab.tsx",
@@ -2458,6 +2459,7 @@
     "src/components/esocial/SSTEvents.tsx",
     "src/components/folha/RelatorioContabilDialog.tsx",
     "src/components/organograma/OrganogramaNode.tsx",
+    "src/components/recrutamento/CandidatoDetalhesDialog.tsx",
     "src/components/settings/GlobalAuditLogTab.tsx",
     "src/components/ui/command-palette.tsx",
     "src/pages/AdminPontoDivergenciasPage.tsx",
@@ -2469,8 +2471,7 @@
     "src/pages/FolhaCompliancePage.tsx",
     "src/pages/GeradorDocumentosPage.tsx",
     "src/pages/HoleritesPage.tsx",
-    "src/pages/ImportacaoPage.tsx",
-    "src/pages/PensoesPage.tsx"
+    "src/pages/ImportacaoPage.tsx"
    ],
    "coberto_por_testes": 1
   },
@@ -3082,7 +3083,7 @@
     "useReducedMotion"
    ],
    "canais_realtime": [],
-   "usado_por": 10,
+   "usado_por": 12,
    "usado_por_arquivos": [
     "src/components/avaliacao/AnaliticosDesempenho.tsx",
     "src/components/avaliacao/CicloAtivoPanel.tsx",
@@ -3092,7 +3093,9 @@
     "src/components/avaliacao/PdiTab.tsx",
     "src/components/avaliacao/PerformanceAuditTimeline.tsx",
     "src/components/avaliacao/TodosCiclosTable.tsx",
+    "src/components/recrutamento/TabelaCandidatos.tsx",
     "src/components/treinamentos/InscricoesPainel.tsx",
+    "src/pages/RecrutamentoPage.tsx",
     "src/pages/TreinamentosPage.tsx"
    ],
    "coberto_por_testes": 0

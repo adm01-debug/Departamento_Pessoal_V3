@@ -811,6 +811,7 @@
     ]
    },
    "importado_por_outros_modulos": [
+    "components/recrutamento",
     "hooks",
     "mocks",
     "pages",
@@ -1644,6 +1645,7 @@
     "components/colaborador-detalhes",
     "components/folha",
     "components/ponto",
+    "components/recrutamento",
     "components/treinamentos",
     "components/ui",
     "pages"
@@ -3140,7 +3142,8 @@
     "rpcs": []
    },
    "importado_por_outros_modulos": [
-    "components/admissoes"
+    "components/admissoes",
+    "components/recrutamento"
    ],
    "depende_de_modulos": [],
    "pacotes_externos": []
@@ -4939,22 +4942,30 @@
   },
   {
    "modulo": "components/recrutamento",
-   "arquivos": 1,
-   "testes": 0,
-   "linhas": 161,
+   "arquivos": 26,
+   "testes": 14,
+   "linhas": 6377,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 1,
-   "hooks_locais": [],
+   "componentes": 18,
+   "hooks_locais": [
+    "useAuth",
+    "useEntradaKanbanColuna",
+    "useMovimentoReduzido",
+    "usePiiMask"
+   ],
    "hooks_definidos": [],
    "edges": [],
    "tabelas": [
+    "colaboradores",
+    "empresas",
     "recrutamento_anotacoes",
     "recrutamento_entrevistas",
     "recrutamento_testes"
    ],
    "rpcs": [
+    "get_user_roles",
     "log_frontend_error"
    ],
    "buckets": [],
@@ -4966,7 +4977,14 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "admin",
+    "alert",
+    "group",
+    "list",
+    "listitem",
+    "rh"
+   ],
    "diretos": {
     "edges": [],
     "tabelas": [
@@ -4980,14 +4998,24 @@
     "pages"
    ],
    "depende_de_modulos": [
+    "components/avaliacao",
+    "components/dashboard",
+    "components/kanban",
     "components/ui",
+    "hooks",
     "integrations/supabase",
-    "lib"
+    "lib",
+    "types",
+    "utils"
    ],
    "pacotes_externos": [
+    "@dnd-kit/core",
+    "@radix-ui/react-dialog",
     "@tanstack/react-query",
     "date-fns",
-    "lucide-react"
+    "framer-motion",
+    "lucide-react",
+    "recharts"
    ]
   },
   {
@@ -7084,6 +7112,7 @@
     "components/ponto",
     "components/portal",
     "components/premiacoes",
+    "components/recrutamento",
     "components/settings",
     "components/sst",
     "components/ui",
@@ -7572,7 +7601,7 @@
    "modulo": "pages",
    "arquivos": 113,
    "testes": 0,
-   "linhas": 45611,
+   "linhas": 45426,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -9807,7 +9836,7 @@
    "modulo": "types",
    "arquivos": 13,
    "testes": 0,
-   "linhas": 868,
+   "linhas": 872,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -9838,6 +9867,7 @@
     "components/folha",
     "components/medidas-disciplinares",
     "components/pcs",
+    "components/recrutamento",
     "components/sst",
     "hooks",
     "mocks",
@@ -9911,6 +9941,7 @@
     "components/ponto",
     "components/portal",
     "components/premiacoes",
+    "components/recrutamento",
     "components/relatorios",
     "components/settings",
     "components/sst",

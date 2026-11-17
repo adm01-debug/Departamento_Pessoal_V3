@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "576c7f4820b95d818ebf7e0399a0d9d6cbe08344",
+  "sha": "182d5f9f814ef2ac7b1c2aed4817ac86ba14d213",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 01:50 UTC",
-  "files_total": 3385,
-  "code_files": 2811,
-  "code_lines": 431074
+  "generated_at": "2026-11-17 03:06 UTC",
+  "files_total": 3424,
+  "code_files": 2850,
+  "code_lines": 439287
  },
  "version": "1.3.2",
- "facts_hash": "bb074cbf5428a621",
+ "facts_hash": "f7c0dab582968722",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,9 +384,9 @@
   ],
   "package_manager": "npm",
   "languages": {
+   ".tsx": 921,
    ".sql": 915,
-   ".tsx": 898,
-   ".ts": 867,
+   ".ts": 883,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -95097,7 +95097,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 198
+    "deps_count": 239
    },
    {
     "path": "",
@@ -99796,7 +99796,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 835,
+  "components_count": 874,
   "hooks": [
    {
     "name": "useContacts",
@@ -101339,8 +101339,8 @@
   },
   {
    "module": "src/components",
-   "files": 835,
-   "lines": 140329,
+   "files": 874,
+   "lines": 148723,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102014,7 +102014,7 @@
   {
    "module": "src/pages",
    "files": 133,
-   "lines": 48796,
+   "lines": 48611,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -102804,7 +102804,7 @@
   {
    "module": "src/types",
    "files": 13,
-   "lines": 868,
+   "lines": 872,
    "tables": [],
    "exports": [
     "afastamentos.ts: AfastamentoRow, AfastamentoInsert, AfastamentoUpdate, ConfigAfastamentoRow, DocumentoAfastamentoRow, ProrrogacaoAfastamentoRow",
@@ -112410,6 +112410,46 @@
     "values": "guias_fgts | guias_inss"
    },
    {
+    "file": "src/components/recrutamento/AnalyticsPainel.tsx",
+    "name": "TomAnalytics",
+    "values": "primary | info | chart4 | success | warning"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "name": "SeveridadeAtencao",
+    "values": "alta | media | baixa"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "name": "SituacaoCandidato",
+    "values": "todas | em_processo | contratados | reprovados | arquivados"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "name": "OrdenacaoCandidato",
+    "values": "recentes | antigos | avaliacao | pretensao | nome | experiencia"
+   },
+   {
+    "file": "src/components/recrutamento/pipelineEtapas.ts",
+    "name": "EtapaPipelineId",
+    "values": "triagem | entrevista | teste | proposta | contratado"
+   },
+   {
+    "file": "src/components/recrutamento/pipelineEtapas.ts",
+    "name": "TomStatusCard",
+    "values": "success | info | warning | chart-4 | chart-5"
+   },
+   {
+    "file": "src/components/recrutamento/vagasComum.ts",
+    "name": "FiltroStatusVaga",
+    "values": "todas | aberta | fechada"
+   },
+   {
+    "file": "src/components/recrutamento/vagasComum.ts",
+    "name": "OrdenacaoVaga",
+    "values": "recentes | antigas | candidatos | titulo"
+   },
+   {
     "file": "src/components/relatorios/reportScheduleContract.ts",
     "name": "ReportScheduleFrequency",
     "values": "diario | semanal | mensal"
@@ -113817,6 +113857,22 @@
    {
     "file": "src/components/premiacoes/RewardsSimulator.tsx",
     "msg": "Erro ao excluir snapshots"
+   },
+   {
+    "file": "src/components/recrutamento/AnalyticsRecrutamento.tsx",
+    "msg": "\n          className={cn(\n            "
+   },
+   {
+    "file": "src/components/recrutamento/CandidatosPainel.tsx",
+    "msg": "\n        className="
+   },
+   {
+    "file": "src/components/recrutamento/PipelineBoard.tsx",
+    "msg": "\n        data-pipeline-erro\n        className="
+   },
+   {
+    "file": "src/components/recrutamento/VagasPainel.tsx",
+    "msg": "\n        data-vagas-erro\n        className="
    },
    {
     "file": "src/components/relatorios/reportScheduleContract.ts",
@@ -118557,6 +118613,82 @@
    {
     "file": "src/components/premiacoes/premiacoesEntrada.ts",
     "text": "só o TEMPO mudou. Calibrar a cascata do Hub é mexer apenas nas constantes"
+   },
+   {
+    "file": "src/components/recrutamento/CandidatoDetalhesDialog.tsx",
+    "text": "`max-h-[90dvh]` e, passando disso, apenas a faixa do histórico rola — o"
+   },
+   {
+    "file": "src/components/recrutamento/CandidatoDetalhesDialog.tsx",
+    "text": "* REGRAS DE NEGÓCIO INTACTAS: nada aqui move etapa por conta própria. \"Avançar\""
+   },
+   {
+    "file": "src/components/recrutamento/CandidatoDetalhesDialog.tsx",
+    "text": "* Mesma função da página — preserva permissões e validação de transição. */"
+   },
+   {
+    "file": "src/components/recrutamento/PipelineBoard.tsx",
+    "text": "• Contratado é apenas uma etapa do funil: soltar ali NÃO efetiva contratação,"
+   },
+   {
+    "file": "src/components/recrutamento/PipelineCard.tsx",
+    "text": "RODAPÉ    responsável (entrevistador do registro) + prazo da próxima etapa"
+   },
+   {
+    "file": "src/components/recrutamento/PipelineCard.tsx",
+    "text": "com a etapa antiga por alguns milissegundos, e o card não deve \"piscar\"."
+   },
+   {
+    "file": "src/components/recrutamento/PipelineCard.tsx",
+    "text": "RODAPÉ — responsável do processo + prazo da próxima etapa */}"
+   },
+   {
+    "file": "src/components/recrutamento/PipelineColumn.tsx",
+    "text": "A COLUNA é a zona de soltura (os cards são apenas arrastáveis) — o mesmo"
+   },
+   {
+    "file": "src/components/recrutamento/VagaCard.tsx",
+    "text": "Status \"Fechada\": pill SEM indicador circular — apenas o texto,"
+   },
+   {
+    "file": "src/components/recrutamento/VagasPainel.tsx",
+    "text": "“Nova Vaga” do cabeçalho do módulo (mesmo formulário/permissão)."
+   },
+   {
+    "file": "src/components/recrutamento/VagasPainel.tsx",
+    "text": "* Mesmos três recortes de antes — apenas com a pele de chip do Hub. O estado é"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "text": "* A tela alimenta-se APENAS do que a página já carrega: `candidaturas`,"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "text": "1) Gargalo: etapa com maior permanência média acima do limite."
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "text": "Quem já conta como contratado não pode somar de novo no denominador."
+   },
+   {
+    "file": "src/components/recrutamento/pipelineDragDrop.ts",
+    "text": "decisão registrada: o Drag & Drop não pode recolocar a pessoa no processo"
+   },
+   {
+    "file": "src/components/recrutamento/pipelineEtapas.ts",
+    "text": "* Cada etapa carrega somente um TOKEN do Design System (`info`, `chart-4`,"
+   },
+   {
+    "file": "src/components/recrutamento/pipelineEtapas.ts",
+    "text": "Nada de texto fixo por candidato: data, entrevistador e prazo vêm do registro."
+   },
+   {
+    "file": "src/components/recrutamento/pipelineEtapas.ts",
+    "text": "* Avatar determinístico por nome, usando somente tokens do Design System. */"
+   },
+   {
+    "file": "src/components/recrutamento/pipelineVisual.ts",
+    "text": "de negócio não."
    },
    {
     "file": "src/components/relatorios/reportScheduleContract.ts",
@@ -145239,6 +145371,41 @@
     "value": "0.8"
    },
    {
+    "file": "src/components/recrutamento/CandidatoDetalhesDialog.tsx",
+    "name": "BLOCOS_CASCATA",
+    "value": "5"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "name": "JANELA_COMPARACAO_DIAS",
+    "value": "45"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "name": "DIAS_ALERTA_ETAPA",
+    "value": "21"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "name": "DIAS_ALERTA_VAGA",
+    "value": "15"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "name": "DIA_MS",
+    "value": "24"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "name": "PILL_NEUTRA",
+    "value": "'border-border/70 bg-muted/30 text-muted-foreground'"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "name": "ORIGEM_NEUTRA",
+    "value": "'border-border/70 bg-muted/30 text-muted-foreground'"
+   },
+   {
     "file": "src/components/sst/SSTIncidentesTab.tsx",
     "name": "PAGE",
     "value": "1000"
@@ -149210,6 +149377,24 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/recrutamento/AnalyticsVagas.tsx",
+    "field": "status",
+    "value": "aberta",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/AnalyticsVagas.tsx",
+    "field": "status",
+    "value": "aberta",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/AnalyticsVagas.tsx",
+    "field": "status",
+    "value": "aberta",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/recrutamento/CandidatoTimeline.tsx",
     "field": "type",
     "value": "entrevista",
@@ -149321,6 +149506,198 @@
     "file": "src/components/recrutamento/CandidatoTimeline.tsx",
     "field": "type",
     "value": "anotacao",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/PipelineBoard.tsx",
+    "field": "etapa",
+    "value": "outras",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "field": "tipo",
+    "value": "gargalo",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "field": "tipo",
+    "value": "gargalo",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "field": "tipo",
+    "value": "vaga",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "field": "tipo",
+    "value": "conversao",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "field": "tipo",
+    "value": "desistencia",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "field": "status",
+    "value": "contratado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "field": "status",
+    "value": "aberta",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "field": "status",
+    "value": "aberta",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "field": "status",
+    "value": "aberta",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "field": "status",
+    "value": "aberta",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "field": "situacao",
+    "value": "todas",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "field": "etapa",
+    "value": "todas",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "field": "situacao",
+    "value": "reprovados",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "field": "situacao",
+    "value": "arquivados",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "field": "situacao",
+    "value": "contratados",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "field": "situacao",
+    "value": "reprovados",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "field": "situacao",
+    "value": "arquivados",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "field": "situacao",
+    "value": "contratados",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "field": "situacao",
+    "value": "todas",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "field": "etapa",
+    "value": "todas",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "field": "situacao",
+    "value": "todas",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/candidatosComum.ts",
+    "field": "etapa",
+    "value": "todas",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/pipelineEtapas.ts",
+    "field": "status",
+    "value": "contratado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/vagasComum.ts",
+    "field": "tipo",
+    "value": "aberta",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/recrutamento/vagasComum.ts",
+    "field": "status",
+    "value": "todas",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/recrutamento/vagasComum.ts",
+    "field": "tipo",
+    "value": "aberta",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/vagasComum.ts",
+    "field": "tipo",
+    "value": "aberta",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/vagasComum.ts",
+    "field": "tipo",
+    "value": "aberta",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/vagasComum.ts",
+    "field": "etapa",
+    "value": "outras",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/vagasComum.ts",
+    "field": "status",
+    "value": "aberta",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/vagasComum.ts",
+    "field": "status",
+    "value": "fechada",
     "kind": "compara"
    },
    {
@@ -153668,18 +154045,6 @@
     "kind": "escreve"
    },
    {
-    "file": "src/pages/RecrutamentoPage.tsx",
-    "field": "etapa",
-    "value": "contratado",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/RecrutamentoPage.tsx",
-    "field": "status",
-    "value": "aberta",
-    "kind": "compara"
-   },
-   {
     "file": "src/pages/RelatoriosPage.tsx",
     "field": "status",
     "value": "ativo",
@@ -157840,6 +158205,42 @@
     "body": "const totalBudget = emp * sal * (bonus / 100) * (perf / 100); const turnoverCost = sal * 3 * emp * 0.15; const savings = turnoverCost * (ret / 100); const roi = totalBudget > 0 ? savings / totalBudget : 0; return { totalBudget, savings, roi };"
    },
    {
+    "file": "src/components/recrutamento/CandidatosPainel.tsx",
+    "name": "aplicarFiltros",
+    "params": "patch: Partial<FiltrosCandidatos>",
+    "body": "setFiltros((atual) => ({ ...atual, ...patch })); setPagina(1); setSelecionados(new Set());"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "name": "dataValida",
+    "params": "valor: string | null | undefined",
+    "body": "if (!valor) return null; const data = new Date(valor); return Number.isNaN(data.getTime()) ? null : data;"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "name": "arredondar",
+    "params": "valor: number, casas = 1",
+    "body": "const fator = 10 ** casas; return Math.round(valor * fator) / fator + 0;"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "name": "taxaConversaoDaJanela",
+    "params": "candidaturas: CandidaturaComRelacoes[], referencia: Date, deslocamento = 0",
+    "body": "const daJanela = candidaturas.filter((candidatura) => { const criada = dataValida(candidatura.created_at); if (!criada) return false; const fim = inicioDoDia(referencia) + DIA_MS - deslocamento * JANELA_COMPARACAO_DIAS * DIA_MS; const inicio = fim - JANELA_COMPARACAO_DIAS * DIA_MS; return criada.getTime() >= inicio && criada.getTime() < fim; }); if (daJanela.length === 0) return null; return arredondar((daJanela.filter(ehContratada).length / daJanela.length) * 100);"
+   },
+   {
+    "file": "src/components/recrutamento/pipelineDragDrop.ts",
+    "name": "podeArrastarCandidatura",
+    "params": "status: string | null | undefined",
+    "body": "const normalizado = (status ?? '').trim().toLowerCase(); return !STATUS_FORA_DO_FLUXO.includes(normalizado as (typeof STATUS_FORA_DO_FLUXO)[number]);"
+   },
+   {
+    "file": "src/components/recrutamento/pipelineEtapas.ts",
+    "name": "iniciaisDoNome",
+    "params": "nome: string | null | undefined",
+    "body": "const partes = (nome ?? '').trim().split(/\\s+/).filter(Boolean); if (partes.length === 0) return '?'; if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase(); return `${partes[0][0]}${partes[partes.length - 1][0]}`.toUpperCase();"
+   },
+   {
     "file": "src/components/settings/UserRolesTab.tsx",
     "name": "perfisDoUsuario",
     "params": "userId: string",
@@ -159256,6 +159657,18 @@
     "line": "const diffHoras = (agora.getTime() - dataBatida.getTime()) / (1000 * 60 * 60);"
    },
    {
+    "file": "src/components/recrutamento/PipelineBoard.tsx",
+    "line": "const timer = window.setTimeout(limparBloqueioClique, 1500);"
+   },
+   {
+    "file": "src/components/recrutamento/PipelineCard.tsx",
+    "line": "timerBloqueio.current = window.setTimeout(() => setBloqueioInicial(false), 1200);"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "line": "const DIA_MS = 24 * 60 * 60 * 1000;"
+   },
+   {
     "file": "src/components/seguranca/PolicyAuditPanel.tsx",
     "line": "staleTime: 5 * 60 * 1000,"
    },
@@ -160552,6 +160965,30 @@
    {
     "file": "src/components/premiacoes/RewardsSimulator.tsx",
     "line": "const turnoverCost = sal * 3 * emp * 0.15;"
+   },
+   {
+    "file": "src/components/recrutamento/AnalyticsAtencao.tsx",
+    "line": "Regras: permanência &gt; 21 dias, vaga parada &gt; 15 dias e conversão &lt; 60%."
+   },
+   {
+    "file": "src/components/recrutamento/AnalyticsFunil.tsx",
+    "line": "// seria 0% sobre denominador vazio — mostramos a ausência, não um número."
+   },
+   {
+    "file": "src/components/recrutamento/AnalyticsOrigens.tsx",
+    "line": "// Somar percentuais JÁ arredondados fechava 100,1%: o top-3 sai dos totais."
+   },
+   {
+    "file": "src/components/recrutamento/CandidatoDetalhesDialog.tsx",
+    "line": "limite de altura; ocupa 100% da largura útil do modal. */}"
+   },
+   {
+    "file": "src/components/recrutamento/PipelineBoard.tsx",
+    "line": "* (`useDroppable` com o id da etapa). O card de origem fica em 30% e o"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "line": "// quando ALGUÉM chegou à etapa seguinte — 0% por amostra vazia não é alerta."
    },
    {
     "file": "src/components/relatorios/RelatoriosAgendadosTab.tsx",
@@ -175226,6 +175663,558 @@
    {
     "file": "src/components/kanban/__tests__/entradaKanban.test.ts",
     "name": "no jsdom (altura 0) a animação não é disparada"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
+    "name": "AnalyticsRecrutamento"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
+    "name": "renderiza KPIs, funil, evolução, origens, operação e indicadores"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
+    "name": "não apresenta participação quando ninguém está em Triagem"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
+    "name": "declara as candidaturas fora das etapas monitoradas"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
+    "name": "mostra a falha da consulta em vez de um painel de zeros"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
+    "name": "não afirma nada enquanto a base está sendo carregada"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
+    "name": "mostra estados vazios coerentes quando a base está vazia"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
+    "name": "CandidatoDetalhesDialog"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
+    "name": "mostra identificação, cargo, departamento e etapa atual"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
+    "name": "destaca SOMENTE a etapa efetiva do candidato no indicador"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
+    "name": "não inventa contato ausente (nem "
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
+    "name": "mantém o telefone quando o e-mail não existe"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
+    "name": "omite o score quando a candidatura não tem nota"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
+    "name": "rotula o avanço com a próxima etapa real"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
+    "name": "não oferece avanço na última etapa"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
+    "name": "aciona fechar e avançar pelos mesmos callbacks da página"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
+    "name": "mascara e-mail e telefone para quem não é admin/rh"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
+    "name": "não renderiza conteúdo com a janela fechada"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+    "name": "CandidatosPainel — indicadores e tabela"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+    "name": "mostra as cinco contagens reais e oito linhas na primeira página"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+    "name": "usa os indicadores como filtros e não perde a sincronização"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+    "name": "mostra avatar (iniciais), origem, vaga, etapa, experiência, pretensão e avaliação reais"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+    "name": "usa estados neutros quando o dado não existe (sem inventar)"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+    "name": "CandidatosPainel — seleção, paginação e ações"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+    "name": "seleciona uma linha e mostra agregados reais; limpa a seleção"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+    "name": "seleciona todos apenas da página e reflete no cabeçalho"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+    "name": "pagina sem duplicar registros e preserva as ações"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+    "name": "abre o perfil pelo botão real da linha"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+    "name": "oferece mover de etapa apenas para as outras etapas reais"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+    "name": "CandidatosPainel — estados"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+    "name": "explica ausência total de candidaturas"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+    "name": "explica ausência de resultados após filtro"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+    "name": "não oculta erro de consulta e permite tentar novamente"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+    "name": "PipelineBoard — cinco etapas e cards ricos"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+    "name": "renderiza as cinco colunas com a contagem e o card completo"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+    "name": "abre o dossiê pelo card e pelo menu de ações"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+    "name": "move a etapa pelo menu do card sem perder as opções"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+    "name": "contata o candidato pelo menu de ações"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+    "name": "não oferece inscrição pela coluna: o rodapé só existe em Contratado"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+    "name": "coloca o vocabulário REAL do banco na coluna certa (teste_tecnico / contratacao)"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+    "name": "declara no rodapé a candidatura fora das etapas monitoradas, sem descartá-la"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+    "name": "mostra a falha de leitura ANTES de qualquer coluna, contagem ou "
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+    "name": "mostra o estado vazio discreto e o rodapé com total/última atualização"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+    "name": "usa largura/altura de coluna e scroll da referência de Admissão"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+    "name": "desabilita o arraste de candidatura arquivada para não contornar o estado"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+    "name": "mantém o dossiê e os botões internos independentes do arraste"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/VagaCard.test.tsx",
+    "name": "VagaCard — identidade, funil e ações reais"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/VagaCard.test.tsx",
+    "name": "mostra título, departamento, modalidade, competências e o funil completo"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/VagaCard.test.tsx",
+    "name": "abre o Pipeline pelo botão Gerenciar Vaga"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/VagaCard.test.tsx",
+    "name": "mantém apenas ações reais e não duplica Gerenciar no menu"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/VagaCard.test.tsx",
+    "name": "abre a edição da vaga pelo menu"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/VagaCard.test.tsx",
+    "name": "apenas NOTIFICA a exclusão: a confirmação é o AlertDialog da página"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/VagaCard.test.tsx",
+    "name": "mantém vaga fechada com data real de encerramento e funil histórico"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/VagaCard.test.tsx",
+    "name": "declara as candidaturas fora das etapas monitoradas em vez de sumir com elas"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/VagaCard.test.tsx",
+    "name": "não inventa candidatos quando o funil está vazio"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/VagasPainel.test.tsx",
+    "name": "VagasPainel — indicadores e filtros rápidos"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/VagasPainel.test.tsx",
+    "name": "calcula os três indicadores e mostra um card por vaga"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/VagasPainel.test.tsx",
+    "name": "usa os indicadores como filtros e compartilha o estado com o select de status"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/VagasPainel.test.tsx",
+    "name": "explica o estado vazio sem criar funcionalidade fictícia"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/VagasPainel.test.tsx",
+    "name": "distingue erro de vazio: não afirma "
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "analyticsComum"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "usa a movimentação mais recente da base como referência"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "monta o funil com volume e retenção sobre a entrada"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "calcula a conversão entre etapas consecutivas"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "distribui candidaturas e contratações nos últimos 6 meses"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "ordena as origens por volume, com participação percentual"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "mede a permanência média por etapa desde a última movimentação"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "deriva pontos de atenção reais do funil"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "calcula conversão e volume por vaga"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "entrega os quatro indicadores gerais com as réguas declaradas"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "mede o tempo de contratação até a movimentação da contratação"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "compara KPIs com a janela anterior usando os dados da base"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "não quebra nem inventa número com a base vazia"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "não exibe variação quando não há base de comparação"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "normaliza o vocabulário real do banco (teste_tecnico e contratacao)"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "declara a etapa desconhecida em vez de descartá-la"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "preserva a vaga sem status fora da contagem de abertas"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "não conta duas vezes quem está em proposta e já é contratado"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "candidatosComum — situações e contagens"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "classifica status finais e em processo sem confundir etapa com situação"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "conta todas as situações sobre o escopo recebido (não só a página)"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "badge de etapa usa o status final quando existir e a etapa real nos demais"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "candidatosComum — vocabulário real de etapa"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "conta contratação real como contratado"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "rotula a etapa pelo id da UI e não chama de “não informada” o que está fora do funil"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "filtra pelo id da UI alcançando a etapa gravada no banco"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "candidatosComum — filtros combináveis"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "filtra por situação, vaga, etapa e origem"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "combina busca, avaliação e pretensão sem inventar dados"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "ordena por nota, pretensão, nome e data real"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "lista somente origens e vagas reais"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "detecta filtros ativos e extras"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "candidatosComum — vaga, atividade, seleção e paginação"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "monta vaga + departamento · modalidade com fallbacks honestos"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "deriva a última atividade da candidatura e não inventa evento"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "agrega apenas os selecionados reais"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "pagina e calcula páginas com reticências"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+    "name": "estilo de origem é determinístico e neutro no desconhecido"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/competenciasComum.test.ts",
+    "name": "competenciasComum — cores determinísticas das tags"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/competenciasComum.test.ts",
+    "name": "usa o hex aprovado para as nove competências da referência"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/competenciasComum.test.ts",
+    "name": "fundo e borda vêm da MESMA família do texto"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/competenciasComum.test.ts",
+    "name": "normaliza caixa, acentos e espaços extras"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/competenciasComum.test.ts",
+    "name": "é determinístico para competências fora da tabela (nunca por índice)"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/competenciasComum.test.ts",
+    "name": "nenhum tema carrega glow, sombra ou gradiente"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineDragDrop.test.ts",
+    "name": "ehEtapaDoPipeline"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineDragDrop.test.ts",
+    "name": "reconhece apenas ids de etapa (o alvo do drop vem da coluna)"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineDragDrop.test.ts",
+    "name": "podeArrastarCandidatura"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineDragDrop.test.ts",
+    "name": "libera candidaturas em andamento e contratadas"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineDragDrop.test.ts",
+    "name": "bloqueia estados fora do fluxo (arquivada, rejeitada, cancelada)"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineEtapas.test.ts",
+    "name": "pipelineEtapas — configuração e leitura do board"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineEtapas.test.ts",
+    "name": "define as cinco etapas na ordem do processo com tokens distintos"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineEtapas.test.ts",
+    "name": "normaliza o vocabulário REAL do banco e isola o desconhecido em "
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineEtapas.test.ts",
+    "name": "resolve a etapa visual pelos aliases do banco"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineEtapas.test.ts",
+    "name": "busca por nome, vaga, origem, formação e requisitos sem acentos"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineEtapas.test.ts",
+    "name": "não compara o e-mail: a busca não pode confirmar PII que a tela nunca mostra"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineEtapas.test.ts",
+    "name": "usa os requisitos da vaga como habilidades e cai para formação/experiência"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineEtapas.test.ts",
+    "name": "deriva o status contextual de cada etapa"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineEtapas.test.ts",
+    "name": "monta a próxima ação a partir das datas e do entrevistador reais"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineEtapas.test.ts",
+    "name": "formata datas curtas e a última atualização"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/pipelineEtapas.test.ts",
+    "name": "gera iniciais e avatar determinístico"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasComum.test.ts",
+    "name": "vagasComum — contadores, identidade e datas"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasComum.test.ts",
+    "name": "conta todas/abertas/fechadas pelos status reais"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasComum.test.ts",
+    "name": "resolve a identidade por departamento e especialidade de dados"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasComum.test.ts",
+    "name": "preserva YYYY-MM-DD no fuso local e retorna null para data inválida"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasComum.test.ts",
+    "name": "calcula funil por etapa, total e última candidatura a partir das candidaturas reais"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasComum.test.ts",
+    "name": "usa a data de encerramento real em vaga fechada e não inventa data ausente"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasComum.test.ts",
+    "name": "conta o vocabulário real do banco e declara o que ficou fora do funil"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasComum.test.ts",
+    "name": "mantém “Nenhum candidato ainda” quando não há candidaturas"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasComum.test.ts",
+    "name": "vagasComum — filtros e ordenação"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasComum.test.ts",
+    "name": "combina status, departamento e modalidade"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasComum.test.ts",
+    "name": "ordena por recentes, antigas, candidatos e título"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasComum.test.ts",
+    "name": "lista departamentos e modalidades reais em ordem alfabética"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasGradients.test.ts",
+    "name": "vagasGradients — configuração dos cinco degradês"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasGradients.test.ts",
+    "name": "cobre as cinco identidades, uma por família"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasGradients.test.ts",
+    "name": "usa exatamente 2 radiais + 1 linear por card (camadas independentes)"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasGradients.test.ts",
+    "name": "mantém borda translúcida e um passo mais forte no hover"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasGradients.test.ts",
+    "name": "não usa glow, sombra nem imagem rasterizada"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/vagasGradients.test.ts",
+    "name": "devolve a configuração pelo token de identidade"
    },
    {
     "file": "src/components/relatorios/reportScheduleContract.test.ts",
@@ -222895,6 +223884,22 @@
       "compara:src/components/recrutamento/CandidatoTimeline.tsx",
       "compara:supabase/functions/pix-lote/index.ts"
      ],
+     "gargalo": [
+      "escreve:src/components/recrutamento/analyticsComum.ts"
+     ],
+     "vaga": [
+      "escreve:src/components/recrutamento/analyticsComum.ts"
+     ],
+     "conversao": [
+      "escreve:src/components/recrutamento/analyticsComum.ts"
+     ],
+     "desistencia": [
+      "escreve:src/components/recrutamento/analyticsComum.ts"
+     ],
+     "aberta": [
+      "compara:src/components/recrutamento/vagasComum.ts",
+      "escreve:src/components/recrutamento/vagasComum.ts"
+     ],
      "texto": [
       "escreve:src/components/settings/CamposCustomizadosTab.tsx"
      ],
@@ -223460,7 +224465,8 @@
      ],
      "todas": [
       "compara:src/components/avaliacao/MetasFiltros.tsx",
-      "compara:src/components/avaliacao/MetasOKRsTab.tsx"
+      "compara:src/components/avaliacao/MetasOKRsTab.tsx",
+      "escreve:src/components/recrutamento/vagasComum.ts"
      ],
      "em_preparacao": [
       "compara:src/components/avaliacao/aprovacaoGestor.ts"
@@ -223823,6 +224829,18 @@
       "escreve:src/services/contratoTemplateService.ts",
       "filtra:src/services/premiacoesService.ts"
      ],
+     "aberta": [
+      "compara:src/components/recrutamento/AnalyticsVagas.tsx",
+      "compara:src/components/recrutamento/analyticsComum.ts",
+      "compara:src/components/recrutamento/vagasComum.ts",
+      "compara:src/pages/ObrigacoesFiscaisPage.tsx",
+      "compara:src/services/folhaPagamentoService.ts",
+      "compara:supabase/functions/fechar-folha/index.ts",
+      "escreve:src/hooks/useCalculoFolha.ts",
+      "escreve:src/services/folha/calculoLoteService.ts",
+      "escreve:supabase/functions/reabrir-folha/index.ts",
+      "filtra:supabase/functions/fechar-folha/index.ts"
+     ],
      "realizada": [
       "compara:src/components/recrutamento/CandidatoTimeline.tsx"
      ],
@@ -223831,6 +224849,19 @@
      ],
      "agendada": [
       "compara:src/components/recrutamento/CandidatoTimeline.tsx"
+     ],
+     "contratado": [
+      "compara:src/components/recrutamento/analyticsComum.ts",
+      "compara:src/components/recrutamento/pipelineEtapas.ts"
+     ],
+     "fechada": [
+      "compara:src/components/recrutamento/vagasComum.ts",
+      "compara:src/services/folha/calculoLoteService.ts",
+      "compara:src/services/folhaPagamentoService.ts",
+      "compara:supabase/functions/reabrir-folha/index.ts",
+      "escreve:supabase/functions/fechar-folha/index.ts",
+      "escreve:supabase/functions/reabrir-folha/index.ts",
+      "filtra:supabase/functions/reabrir-folha/index.ts"
      ],
      "sucesso": [
       "compara:src/components/relatorios/RelatoriosAgendadosTab.tsx",
@@ -223864,16 +224895,6 @@
      ],
      "expirado": [
       "compara:src/hooks/useAssinaturas.ts"
-     ],
-     "aberta": [
-      "compara:src/pages/ObrigacoesFiscaisPage.tsx",
-      "compara:src/pages/RecrutamentoPage.tsx",
-      "compara:src/services/folhaPagamentoService.ts",
-      "compara:supabase/functions/fechar-folha/index.ts",
-      "escreve:src/hooks/useCalculoFolha.ts",
-      "escreve:src/services/folha/calculoLoteService.ts",
-      "escreve:supabase/functions/reabrir-folha/index.ts",
-      "filtra:supabase/functions/fechar-folha/index.ts"
      ],
      "valido": [
       "compara:src/hooks/useImportacaoColaboradores.ts",
@@ -224100,14 +225121,6 @@
       "compara:supabase/functions/fechar-folha/index.ts",
       "escreve:supabase/functions/calcular-folha/index.ts"
      ],
-     "fechada": [
-      "compara:src/services/folha/calculoLoteService.ts",
-      "compara:src/services/folhaPagamentoService.ts",
-      "compara:supabase/functions/reabrir-folha/index.ts",
-      "escreve:supabase/functions/fechar-folha/index.ts",
-      "escreve:supabase/functions/reabrir-folha/index.ts",
-      "filtra:supabase/functions/reabrir-folha/index.ts"
-     ],
      "aprovado_financeiro": [
       "compara:src/services/premiacoesService.ts"
      ],
@@ -224274,11 +225287,16 @@
      "documentacao": [
       "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx"
      ],
+     "outras": [
+      "compara:src/components/recrutamento/PipelineBoard.tsx",
+      "compara:src/components/recrutamento/vagasComum.ts"
+     ],
+     "todas": [
+      "compara:src/components/recrutamento/candidatosComum.ts",
+      "escreve:src/components/recrutamento/candidatosComum.ts"
+     ],
      "triagem": [
       "escreve:src/pages/RecrutamentoPage.tsx"
-     ],
-     "contratado": [
-      "compara:src/pages/RecrutamentoPage.tsx"
      ],
      "homologacao": [
       "escreve:src/services/rescisaoService.ts"
@@ -224352,6 +225370,19 @@
      ],
      "concluido": [
       "compara:src/components/avaliacao/pdiComum.ts"
+     ],
+     "todas": [
+      "compara:src/components/recrutamento/candidatosComum.ts",
+      "escreve:src/components/recrutamento/candidatosComum.ts"
+     ],
+     "reprovados": [
+      "compara:src/components/recrutamento/candidatosComum.ts"
+     ],
+     "arquivados": [
+      "compara:src/components/recrutamento/candidatosComum.ts"
+     ],
+     "contratados": [
+      "compara:src/components/recrutamento/candidatosComum.ts"
      ],
      "a_vencer": [
       "compara:src/components/treinamentos/CertificadoCard.tsx",
@@ -248729,16 +249760,10 @@
    },
    {
     "kind": "status",
-    "msg": "valor `triagem` para `etapa` usado no código não existe em nenhum enum do banco/TS",
+    "msg": "valor `outras` para `etapa` usado no código não existe em nenhum enum do banco/TS",
     "where": [
-     "escreve:src/pages/RecrutamentoPage.tsx"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `contratado` para `etapa` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/pages/RecrutamentoPage.tsx"
+     "compara:src/components/recrutamento/PipelineBoard.tsx",
+     "compara:src/components/recrutamento/vagasComum.ts"
     ]
    },
    {
@@ -271758,9 +272783,130 @@
     "só o TEMPO mudou. Calibrar a cascata do Hub é mexer apenas nas constantes"
    ]
   },
+  "src/components/recrutamento/AnalyticsAtencao.tsx": {
+   "path": "src/components/recrutamento/AnalyticsAtencao.tsx",
+   "lines": 89,
+   "exports": [
+    "function AnalyticsAtencao"
+   ],
+   "percents": [
+    "Regras: permanência &gt; 21 dias, vaga parada &gt; 15 dias e conversão &lt; 60%."
+   ]
+  },
+  "src/components/recrutamento/AnalyticsEvolucao.tsx": {
+   "path": "src/components/recrutamento/AnalyticsEvolucao.tsx",
+   "lines": 162,
+   "exports": [
+    "function AnalyticsEvolucao"
+   ]
+  },
+  "src/components/recrutamento/AnalyticsFunil.tsx": {
+   "path": "src/components/recrutamento/AnalyticsFunil.tsx",
+   "lines": 262,
+   "exports": [
+    "function AnalyticsFunil"
+   ],
+   "percents": [
+    "// seria 0% sobre denominador vazio — mostramos a ausência, não um número."
+   ]
+  },
+  "src/components/recrutamento/AnalyticsIndicadores.tsx": {
+   "path": "src/components/recrutamento/AnalyticsIndicadores.tsx",
+   "lines": 89,
+   "exports": [
+    "function AnalyticsIndicadores"
+   ]
+  },
+  "src/components/recrutamento/AnalyticsOrigens.tsx": {
+   "path": "src/components/recrutamento/AnalyticsOrigens.tsx",
+   "lines": 111,
+   "exports": [
+    "function AnalyticsOrigens"
+   ],
+   "percents": [
+    "// Somar percentuais JÁ arredondados fechava 100,1%: o top-3 sai dos totais."
+   ]
+  },
+  "src/components/recrutamento/AnalyticsPainel.tsx": {
+   "path": "src/components/recrutamento/AnalyticsPainel.tsx",
+   "lines": 100,
+   "exports": [
+    "type TomAnalytics",
+    "function AnalyticsPainel",
+    "function ChipContagem"
+   ],
+   "enums": [
+    {
+     "name": "TomAnalytics",
+     "values": "primary | info | chart4 | success | warning"
+    }
+   ]
+  },
+  "src/components/recrutamento/AnalyticsRecrutamento.tsx": {
+   "path": "src/components/recrutamento/AnalyticsRecrutamento.tsx",
+   "lines": 288,
+   "exports": [
+    "function AnalyticsRecrutamento"
+   ],
+   "errors": [
+    "\n          className={cn(\n            "
+   ]
+  },
+  "src/components/recrutamento/AnalyticsTempo.tsx": {
+   "path": "src/components/recrutamento/AnalyticsTempo.tsx",
+   "lines": 114,
+   "exports": [
+    "function AnalyticsTempo"
+   ]
+  },
+  "src/components/recrutamento/AnalyticsVagas.tsx": {
+   "path": "src/components/recrutamento/AnalyticsVagas.tsx",
+   "lines": 113,
+   "exports": [
+    "function AnalyticsVagas"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "aberta",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aberta",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aberta",
+     "kind": "compara"
+    }
+   ]
+  },
+  "src/components/recrutamento/CandidatoDetalhesDialog.tsx": {
+   "path": "src/components/recrutamento/CandidatoDetalhesDialog.tsx",
+   "lines": 246,
+   "exports": [
+    "function CandidatoDetalhesDialog"
+   ],
+   "params": [
+    {
+     "name": "BLOCOS_CASCATA",
+     "value": "5"
+    }
+   ],
+   "rule_comments": [
+    "`max-h-[90dvh]` e, passando disso, apenas a faixa do histórico rola — o",
+    "* REGRAS DE NEGÓCIO INTACTAS: nada aqui move etapa por conta própria. \"Avançar\"",
+    "* Mesma função da página — preserva permissões e validação de transição. */"
+   ],
+   "percents": [
+    "limite de altura; ocupa 100% da largura útil do modal. */}"
+   ]
+  },
   "src/components/recrutamento/CandidatoTimeline.tsx": {
    "path": "src/components/recrutamento/CandidatoTimeline.tsx",
-   "lines": 161,
+   "lines": 166,
    "exports": [
     "function CandidatoTimeline"
    ],
@@ -271885,6 +273031,799 @@
      "value": "anotacao",
      "kind": "compara"
     }
+   ]
+  },
+  "src/components/recrutamento/CandidatosPainel.tsx": {
+   "path": "src/components/recrutamento/CandidatosPainel.tsx",
+   "lines": 644,
+   "exports": [
+    "function CandidatosPainel"
+   ],
+   "errors": [
+    "\n        className="
+   ],
+   "calc_fns": [
+    {
+     "name": "aplicarFiltros",
+     "params": "patch: Partial<FiltrosCandidatos>",
+     "body": "setFiltros((atual) => ({ ...atual, ...patch })); setPagina(1); setSelecionados(new Set());"
+    }
+   ]
+  },
+  "src/components/recrutamento/PipelineBoard.tsx": {
+   "path": "src/components/recrutamento/PipelineBoard.tsx",
+   "lines": 315,
+   "exports": [
+    "interface PipelineBoardProps",
+    "function PipelineBoard"
+   ],
+   "errors": [
+    "\n        data-pipeline-erro\n        className="
+   ],
+   "status_values": [
+    {
+     "field": "etapa",
+     "value": "outras",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "• Contratado é apenas uma etapa do funil: soltar ali NÃO efetiva contratação,"
+   ],
+   "temporal": [
+    "const timer = window.setTimeout(limparBloqueioClique, 1500);"
+   ],
+   "percents": [
+    "* (`useDroppable` com o id da etapa). O card de origem fica em 30% e o"
+   ]
+  },
+  "src/components/recrutamento/PipelineCard.tsx": {
+   "path": "src/components/recrutamento/PipelineCard.tsx",
+   "lines": 359,
+   "exports": [
+    "type MoverEtapaHandler",
+    "interface PipelineCardProps",
+    "function PipelineCard",
+    "function DraggablePipelineCard"
+   ],
+   "rule_comments": [
+    "RODAPÉ    responsável (entrevistador do registro) + prazo da próxima etapa",
+    "com a etapa antiga por alguns milissegundos, e o card não deve \"piscar\".",
+    "RODAPÉ — responsável do processo + prazo da próxima etapa */}"
+   ],
+   "temporal": [
+    "timerBloqueio.current = window.setTimeout(() => setBloqueioInicial(false), 1200);"
+   ]
+  },
+  "src/components/recrutamento/PipelineColumn.tsx": {
+   "path": "src/components/recrutamento/PipelineColumn.tsx",
+   "lines": 155,
+   "exports": [
+    "interface PipelineColumnProps",
+    "function PipelineColumn"
+   ],
+   "rule_comments": [
+    "A COLUNA é a zona de soltura (os cards são apenas arrastáveis) — o mesmo"
+   ]
+  },
+  "src/components/recrutamento/TabelaCandidatos.tsx": {
+   "path": "src/components/recrutamento/TabelaCandidatos.tsx",
+   "lines": 440,
+   "exports": [
+    "interface TabelaCandidatosProps",
+    "function TabelaCandidatos"
+   ]
+  },
+  "src/components/recrutamento/VagaCard.tsx": {
+   "path": "src/components/recrutamento/VagaCard.tsx",
+   "lines": 318,
+   "exports": [
+    "interface VagaCardProps",
+    "function VagaCard"
+   ],
+   "rule_comments": [
+    "Status \"Fechada\": pill SEM indicador circular — apenas o texto,"
+   ]
+  },
+  "src/components/recrutamento/VagasPainel.tsx": {
+   "path": "src/components/recrutamento/VagasPainel.tsx",
+   "lines": 309,
+   "exports": [
+    "interface VagasPainelProps",
+    "function VagasPainel"
+   ],
+   "errors": [
+    "\n        data-vagas-erro\n        className="
+   ],
+   "rule_comments": [
+    "“Nova Vaga” do cabeçalho do módulo (mesmo formulário/permissão).",
+    "* Mesmos três recortes de antes — apenas com a pele de chip do Hub. O estado é"
+   ]
+  },
+  "src/components/recrutamento/analyticsComum.ts": {
+   "path": "src/components/recrutamento/analyticsComum.ts",
+   "lines": 713,
+   "exports": [
+    "const JANELA_COMPARACAO_DIAS",
+    "type SeveridadeAtencao",
+    "interface EntradaAnalytics",
+    "interface ItemFunil",
+    "interface ConversaoFunil",
+    "interface PontoEvolucao",
+    "interface OrigemRanking",
+    "interface TempoEtapa",
+    "interface PontoAtencao",
+    "interface DesempenhoVaga",
+    "interface IndicadorGeral",
+    "interface TendenciaKpi",
+    "interface KpiRecrutamento",
+    "interface AnalyticsRecrutamento",
+    "function dataValida",
+    "function formatarPercentual",
+    "function formatarNumero",
+    "function referenciaDosDados",
+    "function construirFunil",
+    "function contarForaDasEtapas",
+    "function construirConversoes",
+    "function construirEvolucao",
+    "function construirOrigens",
+    "function construirTempos",
+    "function construirDesempenhoVagas",
+    "function construirPontosDeAtencao",
+    "function construirIndicadores",
+    "function construirKpis",
+    "function construirAnalytics"
+   ],
+   "enums": [
+    {
+     "name": "SeveridadeAtencao",
+     "values": "alta | media | baixa"
+    }
+   ],
+   "params": [
+    {
+     "name": "JANELA_COMPARACAO_DIAS",
+     "value": "45"
+    },
+    {
+     "name": "DIAS_ALERTA_ETAPA",
+     "value": "21"
+    },
+    {
+     "name": "DIAS_ALERTA_VAGA",
+     "value": "15"
+    },
+    {
+     "name": "DIA_MS",
+     "value": "24"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "gargalo",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "gargalo",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "vaga",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "conversao",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "desistencia",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "contratado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aberta",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aberta",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aberta",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aberta",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "* A tela alimenta-se APENAS do que a página já carrega: `candidaturas`,",
+    "1) Gargalo: etapa com maior permanência média acima do limite.",
+    "Quem já conta como contratado não pode somar de novo no denominador."
+   ],
+   "calc_fns": [
+    {
+     "name": "dataValida",
+     "params": "valor: string | null | undefined",
+     "body": "if (!valor) return null; const data = new Date(valor); return Number.isNaN(data.getTime()) ? null : data;"
+    },
+    {
+     "name": "arredondar",
+     "params": "valor: number, casas = 1",
+     "body": "const fator = 10 ** casas; return Math.round(valor * fator) / fator + 0;"
+    },
+    {
+     "name": "taxaConversaoDaJanela",
+     "params": "candidaturas: CandidaturaComRelacoes[], referencia: Date, deslocamento = 0",
+     "body": "const daJanela = candidaturas.filter((candidatura) => { const criada = dataValida(candidatura.created_at); if (!criada) return false; const fim = inicioDoDia(referencia) + DIA_MS - deslocamento * JANELA_COMPARACAO_DIAS * DIA_MS; const inicio = fim - JANELA_COMPARACAO_DIAS * DIA_MS; return criada.getTime() >= inicio && criada.getTime() < fim; }); if (daJanela.length === 0) return null; return arredondar((daJanela.filter(ehContratada).length / daJanela.length) * 100);"
+    }
+   ],
+   "temporal": [
+    "const DIA_MS = 24 * 60 * 60 * 1000;"
+   ],
+   "percents": [
+    "// quando ALGUÉM chegou à etapa seguinte — 0% por amostra vazia não é alerta."
+   ]
+  },
+  "src/components/recrutamento/candidatosComum.ts": {
+   "path": "src/components/recrutamento/candidatosComum.ts",
+   "lines": 400,
+   "exports": [
+    "type SituacaoCandidato",
+    "type OrdenacaoCandidato",
+    "interface FiltrosCandidatos",
+    "const FILTROS_CANDIDATOS_PADRAO",
+    "const SITUACOES",
+    "const ORDENACOES",
+    "function situacaoDaCandidatura",
+    "interface ContagemSituacoes",
+    "function contarSituacoes",
+    "function etapaDaCandidatura",
+    "interface BadgeEtapa",
+    "function badgeEtapa",
+    "function rotuloOrigem",
+    "function estiloOrigem",
+    "function origensDisponiveis",
+    "interface OpcaoVaga",
+    "function vagasComCandidaturas",
+    "interface DadosVagaCandidatura",
+    "function dadosVagaDaCandidatura",
+    "interface AtividadeCandidato",
+    "function ultimaAtividade",
+    "function filtrarCandidaturas",
+    "function ordenarCandidaturas",
+    "interface PaginaCandidatos",
+    "function paginarCandidaturas",
+    "function paginasVisiveis",
+    "interface ResumoSelecao",
+    "function resumoSelecao",
+    "function temFiltrosAtivos",
+    "function contarFiltrosExtras"
+   ],
+   "enums": [
+    {
+     "name": "SituacaoCandidato",
+     "values": "todas | em_processo | contratados | reprovados | arquivados"
+    },
+    {
+     "name": "OrdenacaoCandidato",
+     "values": "recentes | antigos | avaliacao | pretensao | nome | experiencia"
+    }
+   ],
+   "params": [
+    {
+     "name": "PILL_NEUTRA",
+     "value": "'border-border/70 bg-muted/30 text-muted-foreground'"
+    },
+    {
+     "name": "ORIGEM_NEUTRA",
+     "value": "'border-border/70 bg-muted/30 text-muted-foreground'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "situacao",
+     "value": "todas",
+     "kind": "escreve"
+    },
+    {
+     "field": "etapa",
+     "value": "todas",
+     "kind": "escreve"
+    },
+    {
+     "field": "situacao",
+     "value": "reprovados",
+     "kind": "compara"
+    },
+    {
+     "field": "situacao",
+     "value": "arquivados",
+     "kind": "compara"
+    },
+    {
+     "field": "situacao",
+     "value": "contratados",
+     "kind": "compara"
+    },
+    {
+     "field": "situacao",
+     "value": "reprovados",
+     "kind": "compara"
+    },
+    {
+     "field": "situacao",
+     "value": "arquivados",
+     "kind": "compara"
+    },
+    {
+     "field": "situacao",
+     "value": "contratados",
+     "kind": "compara"
+    },
+    {
+     "field": "situacao",
+     "value": "todas",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "todas",
+     "kind": "compara"
+    },
+    {
+     "field": "situacao",
+     "value": "todas",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "todas",
+     "kind": "compara"
+    }
+   ]
+  },
+  "src/components/recrutamento/competenciasComum.ts": {
+   "path": "src/components/recrutamento/competenciasComum.ts",
+   "lines": 125,
+   "exports": [
+    "interface TemaCompetencia",
+    "function normalizarCompetencia",
+    "function temaDaCompetencia"
+   ]
+  },
+  "src/components/recrutamento/pipelineDragDrop.ts": {
+   "path": "src/components/recrutamento/pipelineDragDrop.ts",
+   "lines": 32,
+   "exports": [
+    "function ehEtapaDoPipeline",
+    "function podeArrastarCandidatura"
+   ],
+   "rule_comments": [
+    "decisão registrada: o Drag & Drop não pode recolocar a pessoa no processo"
+   ],
+   "doc": "============================================================================ PIPELINE — REGRAS DE DOMÍNIO DO ARRASTE Só o que o board precisa para decidir QUEM pode ser arrastado e QUAL etapa o registro representa. O movimento em si segue o mesmo desenho do Kanban de Admissão: a coluna é a zona de s …",
+   "calc_fns": [
+    {
+     "name": "podeArrastarCandidatura",
+     "params": "status: string | null | undefined",
+     "body": "const normalizado = (status ?? '').trim().toLowerCase(); return !STATUS_FORA_DO_FLUXO.includes(normalizado as (typeof STATUS_FORA_DO_FLUXO)[number]);"
+    }
+   ]
+  },
+  "src/components/recrutamento/pipelineEtapas.ts": {
+   "path": "src/components/recrutamento/pipelineEtapas.ts",
+   "lines": 274,
+   "exports": [
+    "type EtapaPipelineId",
+    "interface EtapaPipeline",
+    "const ETAPAS",
+    "type EtapaNormalizada",
+    "function normalizarEtapa",
+    "function etapaPorId",
+    "function normalizarBusca",
+    "function filtrarCandidaturas",
+    "function habilidadesDaCandidatura",
+    "function formatarDataCurta",
+    "function formatarDiaMes",
+    "function formatarDataHora",
+    "function formatarUltimaAtualizacao",
+    "type TomStatusCard",
+    "function statusDoCard",
+    "interface ContextoEtapa",
+    "function contextoDaEtapa",
+    "function iniciaisDoNome",
+    "function estiloAvatar"
+   ],
+   "enums": [
+    {
+     "name": "EtapaPipelineId",
+     "values": "triagem | entrevista | teste | proposta | contratado"
+    },
+    {
+     "name": "TomStatusCard",
+     "values": "success | info | warning | chart-4 | chart-5"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "contratado",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "* Cada etapa carrega somente um TOKEN do Design System (`info`, `chart-4`,",
+    "Nada de texto fixo por candidato: data, entrevistador e prazo vêm do registro.",
+    "* Avatar determinístico por nome, usando somente tokens do Design System. */"
+   ],
+   "calc_fns": [
+    {
+     "name": "iniciaisDoNome",
+     "params": "nome: string | null | undefined",
+     "body": "const partes = (nome ?? '').trim().split(/\\s+/).filter(Boolean); if (partes.length === 0) return '?'; if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase(); return `${partes[0][0]}${partes[partes.length - 1][0]}`.toUpperCase();"
+    }
+   ]
+  },
+  "src/components/recrutamento/pipelineVisual.ts": {
+   "path": "src/components/recrutamento/pipelineVisual.ts",
+   "lines": 98,
+   "exports": [
+    "interface TomPipeline",
+    "const TONS_PIPELINE",
+    "const ROTULO_CONTEXTO"
+   ],
+   "rule_comments": [
+    "de negócio não."
+   ]
+  },
+  "src/components/recrutamento/vagasComum.ts": {
+   "path": "src/components/recrutamento/vagasComum.ts",
+   "lines": 345,
+   "exports": [
+    "type FiltroStatusVaga",
+    "type OrdenacaoVaga",
+    "interface IdentidadeVaga",
+    "function normalizarVaga",
+    "interface VagaComResumo",
+    "function dataDaVaga",
+    "function montarVagasResumo",
+    "interface FiltrosVaga",
+    "const FILTROS_VAGA_PADRAO",
+    "interface ContagemVagas",
+    "function contarVagas",
+    "function opcoesDepartamento",
+    "function opcoesModalidade",
+    "function filtrarVagas"
+   ],
+   "enums": [
+    {
+     "name": "FiltroStatusVaga",
+     "values": "todas | aberta | fechada"
+    },
+    {
+     "name": "OrdenacaoVaga",
+     "values": "recentes | antigas | candidatos | titulo"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "aberta",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "todas",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "aberta",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "aberta",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "aberta",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "outras",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aberta",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "fechada",
+     "kind": "compara"
+    }
+   ]
+  },
+  "src/components/recrutamento/vagasGradients.ts": {
+   "path": "src/components/recrutamento/vagasGradients.ts",
+   "lines": 110,
+   "exports": [
+    "interface GradienteVaga",
+    "const VAGA_GRADIENTS",
+    "function gradienteDaVaga"
+   ]
+  },
+  "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx": {
+   "path": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
+   "lines": 149,
+   "is_test": true,
+   "errors": [
+    ")).toHaveTextContent("
+   ],
+   "rule_comments": [
+    "E o rodapé não pode afirmar coorte (\"N de M candidatos da entrada\")."
+   ],
+   "tests": [
+    "AnalyticsRecrutamento",
+    "renderiza KPIs, funil, evolução, origens, operação e indicadores",
+    "não apresenta participação quando ninguém está em Triagem",
+    "declara as candidaturas fora das etapas monitoradas",
+    "mostra a falha da consulta em vez de um painel de zeros",
+    "não afirma nada enquanto a base está sendo carregada",
+    "mostra estados vazios coerentes quando a base está vazia"
+   ]
+  },
+  "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx": {
+   "path": "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
+   "lines": 137,
+   "is_test": true,
+   "tests": [
+    "CandidatoDetalhesDialog",
+    "mostra identificação, cargo, departamento e etapa atual",
+    "destaca SOMENTE a etapa efetiva do candidato no indicador",
+    "não inventa contato ausente (nem ",
+    "mantém o telefone quando o e-mail não existe",
+    "omite o score quando a candidatura não tem nota",
+    "rotula o avanço com a próxima etapa real",
+    "não oferece avanço na última etapa",
+    "aciona fechar e avançar pelos mesmos callbacks da página",
+    "mascara e-mail e telefone para quem não é admin/rh",
+    "não renderiza conteúdo com a janela fechada"
+   ]
+  },
+  "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx": {
+   "path": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+   "lines": 187,
+   "is_test": true,
+   "errors": [
+    ")).toHaveTextContent("
+   ],
+   "tests": [
+    "CandidatosPainel — indicadores e tabela",
+    "mostra as cinco contagens reais e oito linhas na primeira página",
+    "usa os indicadores como filtros e não perde a sincronização",
+    "mostra avatar (iniciais), origem, vaga, etapa, experiência, pretensão e avaliação reais",
+    "usa estados neutros quando o dado não existe (sem inventar)",
+    "CandidatosPainel — seleção, paginação e ações",
+    "seleciona uma linha e mostra agregados reais; limpa a seleção",
+    "seleciona todos apenas da página e reflete no cabeçalho",
+    "pagina sem duplicar registros e preserva as ações",
+    "abre o perfil pelo botão real da linha",
+    "oferece mover de etapa apenas para as outras etapas reais",
+    "CandidatosPainel — estados",
+    "explica ausência total de candidaturas",
+    "explica ausência de resultados após filtro",
+    "não oculta erro de consulta e permite tentar novamente"
+   ]
+  },
+  "src/components/recrutamento/__tests__/PipelineBoard.test.tsx": {
+   "path": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+   "lines": 249,
+   "is_test": true,
+   "errors": [
+    ")).toHaveTextContent("
+   ],
+   "tests": [
+    "PipelineBoard — cinco etapas e cards ricos",
+    "renderiza as cinco colunas com a contagem e o card completo",
+    "abre o dossiê pelo card e pelo menu de ações",
+    "move a etapa pelo menu do card sem perder as opções",
+    "contata o candidato pelo menu de ações",
+    "não oferece inscrição pela coluna: o rodapé só existe em Contratado",
+    "coloca o vocabulário REAL do banco na coluna certa (teste_tecnico / contratacao)",
+    "declara no rodapé a candidatura fora das etapas monitoradas, sem descartá-la",
+    "mostra a falha de leitura ANTES de qualquer coluna, contagem ou ",
+    "mostra o estado vazio discreto e o rodapé com total/última atualização",
+    "usa largura/altura de coluna e scroll da referência de Admissão",
+    "desabilita o arraste de candidatura arquivada para não contornar o estado",
+    "mantém o dossiê e os botões internos independentes do arraste"
+   ]
+  },
+  "src/components/recrutamento/__tests__/VagaCard.test.tsx": {
+   "path": "src/components/recrutamento/__tests__/VagaCard.test.tsx",
+   "lines": 222,
+   "is_test": true,
+   "tests": [
+    "VagaCard — identidade, funil e ações reais",
+    "mostra título, departamento, modalidade, competências e o funil completo",
+    "abre o Pipeline pelo botão Gerenciar Vaga",
+    "mantém apenas ações reais e não duplica Gerenciar no menu",
+    "abre a edição da vaga pelo menu",
+    "apenas NOTIFICA a exclusão: a confirmação é o AlertDialog da página",
+    "mantém vaga fechada com data real de encerramento e funil histórico",
+    "declara as candidaturas fora das etapas monitoradas em vez de sumir com elas",
+    "não inventa candidatos quando o funil está vazio"
+   ]
+  },
+  "src/components/recrutamento/__tests__/VagasPainel.test.tsx": {
+   "path": "src/components/recrutamento/__tests__/VagasPainel.test.tsx",
+   "lines": 97,
+   "is_test": true,
+   "errors": [
+    ")).toHaveTextContent("
+   ],
+   "tests": [
+    "VagasPainel — indicadores e filtros rápidos",
+    "calcula os três indicadores e mostra um card por vaga",
+    "usa os indicadores como filtros e compartilha o estado com o select de status",
+    "explica o estado vazio sem criar funcionalidade fictícia",
+    "distingue erro de vazio: não afirma "
+   ]
+  },
+  "src/components/recrutamento/__tests__/analyticsComum.test.ts": {
+   "path": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+   "lines": 334,
+   "is_test": true,
+   "tests": [
+    "analyticsComum",
+    "usa a movimentação mais recente da base como referência",
+    "monta o funil com volume e retenção sobre a entrada",
+    "calcula a conversão entre etapas consecutivas",
+    "distribui candidaturas e contratações nos últimos 6 meses",
+    "ordena as origens por volume, com participação percentual",
+    "mede a permanência média por etapa desde a última movimentação",
+    "deriva pontos de atenção reais do funil",
+    "calcula conversão e volume por vaga",
+    "entrega os quatro indicadores gerais com as réguas declaradas",
+    "mede o tempo de contratação até a movimentação da contratação",
+    "compara KPIs com a janela anterior usando os dados da base",
+    "não quebra nem inventa número com a base vazia",
+    "não exibe variação quando não há base de comparação",
+    "normaliza o vocabulário real do banco (teste_tecnico e contratacao)",
+    "declara a etapa desconhecida em vez de descartá-la",
+    "preserva a vaga sem status fora da contagem de abertas",
+    "não conta duas vezes quem está em proposta e já é contratado"
+   ]
+  },
+  "src/components/recrutamento/__tests__/candidatosComum.test.ts": {
+   "path": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+   "lines": 204,
+   "is_test": true,
+   "tests": [
+    "candidatosComum — situações e contagens",
+    "classifica status finais e em processo sem confundir etapa com situação",
+    "conta todas as situações sobre o escopo recebido (não só a página)",
+    "badge de etapa usa o status final quando existir e a etapa real nos demais",
+    "candidatosComum — vocabulário real de etapa",
+    "conta contratação real como contratado",
+    "rotula a etapa pelo id da UI e não chama de “não informada” o que está fora do funil",
+    "filtra pelo id da UI alcançando a etapa gravada no banco",
+    "candidatosComum — filtros combináveis",
+    "filtra por situação, vaga, etapa e origem",
+    "combina busca, avaliação e pretensão sem inventar dados",
+    "ordena por nota, pretensão, nome e data real",
+    "lista somente origens e vagas reais",
+    "detecta filtros ativos e extras",
+    "candidatosComum — vaga, atividade, seleção e paginação",
+    "monta vaga + departamento · modalidade com fallbacks honestos",
+    "deriva a última atividade da candidatura e não inventa evento",
+    "agrega apenas os selecionados reais",
+    "pagina e calcula páginas com reticências",
+    "estilo de origem é determinístico e neutro no desconhecido"
+   ]
+  },
+  "src/components/recrutamento/__tests__/candidatosFixture.ts": {
+   "path": "src/components/recrutamento/__tests__/candidatosFixture.ts",
+   "lines": 92,
+   "is_test": true,
+   "exports": [
+    "function criarCandidatura",
+    "function criarVaga",
+    "function criarCandidato"
+   ]
+  },
+  "src/components/recrutamento/__tests__/competenciasComum.test.ts": {
+   "path": "src/components/recrutamento/__tests__/competenciasComum.test.ts",
+   "lines": 44,
+   "is_test": true,
+   "tests": [
+    "competenciasComum — cores determinísticas das tags",
+    "usa o hex aprovado para as nove competências da referência",
+    "fundo e borda vêm da MESMA família do texto",
+    "normaliza caixa, acentos e espaços extras",
+    "é determinístico para competências fora da tabela (nunca por índice)",
+    "nenhum tema carrega glow, sombra ou gradiente"
+   ]
+  },
+  "src/components/recrutamento/__tests__/pipelineDragDrop.test.ts": {
+   "path": "src/components/recrutamento/__tests__/pipelineDragDrop.test.ts",
+   "lines": 26,
+   "is_test": true,
+   "tests": [
+    "ehEtapaDoPipeline",
+    "reconhece apenas ids de etapa (o alvo do drop vem da coluna)",
+    "podeArrastarCandidatura",
+    "libera candidaturas em andamento e contratadas",
+    "bloqueia estados fora do fluxo (arquivada, rejeitada, cancelada)"
+   ]
+  },
+  "src/components/recrutamento/__tests__/pipelineEtapas.test.ts": {
+   "path": "src/components/recrutamento/__tests__/pipelineEtapas.test.ts",
+   "lines": 165,
+   "is_test": true,
+   "tests": [
+    "pipelineEtapas — configuração e leitura do board",
+    "define as cinco etapas na ordem do processo com tokens distintos",
+    "normaliza o vocabulário REAL do banco e isola o desconhecido em ",
+    "resolve a etapa visual pelos aliases do banco",
+    "busca por nome, vaga, origem, formação e requisitos sem acentos",
+    "não compara o e-mail: a busca não pode confirmar PII que a tela nunca mostra",
+    "usa os requisitos da vaga como habilidades e cai para formação/experiência",
+    "deriva o status contextual de cada etapa",
+    "monta a próxima ação a partir das datas e do entrevistador reais",
+    "formata datas curtas e a última atualização",
+    "gera iniciais e avatar determinístico"
+   ]
+  },
+  "src/components/recrutamento/__tests__/vagasComum.test.ts": {
+   "path": "src/components/recrutamento/__tests__/vagasComum.test.ts",
+   "lines": 230,
+   "is_test": true,
+   "tests": [
+    "vagasComum — contadores, identidade e datas",
+    "conta todas/abertas/fechadas pelos status reais",
+    "resolve a identidade por departamento e especialidade de dados",
+    "preserva YYYY-MM-DD no fuso local e retorna null para data inválida",
+    "calcula funil por etapa, total e última candidatura a partir das candidaturas reais",
+    "usa a data de encerramento real em vaga fechada e não inventa data ausente",
+    "conta o vocabulário real do banco e declara o que ficou fora do funil",
+    "mantém “Nenhum candidato ainda” quando não há candidaturas",
+    "vagasComum — filtros e ordenação",
+    "combina status, departamento e modalidade",
+    "ordena por recentes, antigas, candidatos e título",
+    "lista departamentos e modalidades reais em ordem alfabética"
+   ]
+  },
+  "src/components/recrutamento/__tests__/vagasGradients.test.ts": {
+   "path": "src/components/recrutamento/__tests__/vagasGradients.test.ts",
+   "lines": 42,
+   "is_test": true,
+   "tests": [
+    "vagasGradients — configuração dos cinco degradês",
+    "cobre as cinco identidades, uma por família",
+    "usa exatamente 2 radiais + 1 linear por card (camadas independentes)",
+    "mantém borda translúcida e um passo mais forte no hover",
+    "não usa glow, sombra nem imagem rasterizada",
+    "devolve a configuração pelo token de identidade"
    ]
   },
   "src/components/relatorios/RelatoriosAgendadosTab.tsx": {
@@ -287032,7 +288971,7 @@
   },
   "src/pages/RecrutamentoPage.tsx": {
    "path": "src/pages/RecrutamentoPage.tsx",
-   "lines": 861,
+   "lines": 676,
    "exports": [
     "function RecrutamentoPage"
    ],
@@ -287041,16 +288980,6 @@
      "field": "etapa",
      "value": "triagem",
      "kind": "escreve"
-    },
-    {
-     "field": "etapa",
-     "value": "contratado",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "aberta",
-     "kind": "compara"
     }
    ]
   },
@@ -299250,7 +301179,7 @@
   },
   "src/types/recrutamento.ts": {
    "path": "src/types/recrutamento.ts",
-   "lines": 32,
+   "lines": 36,
    "exports": [
     "type VagaRow",
     "type CandidatoRow",
@@ -314058,10 +315987,62 @@
   }
  },
  "git": {
-  "sha": "576c7f4820b95d818ebf7e0399a0d9d6cbe08344",
+  "sha": "182d5f9f814ef2ac7b1c2aed4817ac86ba14d213",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "182d5f9",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(recrutamento): resgata Recrutamento e seleção da muri preservando a máscara de PII e as 3 entregas da main (#610)",
+    "files": [
+     "inventario/estado/rotas.json",
+     "scripts/.bundle-budget.json",
+     "src/components/recrutamento/AnalyticsAtencao.tsx",
+     "src/components/recrutamento/AnalyticsEvolucao.tsx",
+     "src/components/recrutamento/AnalyticsFunil.tsx",
+     "src/components/recrutamento/AnalyticsIndicadores.tsx",
+     "src/components/recrutamento/AnalyticsOrigens.tsx",
+     "src/components/recrutamento/AnalyticsPainel.tsx",
+     "src/components/recrutamento/AnalyticsRecrutamento.tsx",
+     "src/components/recrutamento/AnalyticsTempo.tsx",
+     "src/components/recrutamento/AnalyticsVagas.tsx",
+     "src/components/recrutamento/CandidatoDetalhesDialog.tsx",
+     "src/components/recrutamento/CandidatoTimeline.tsx",
+     "src/components/recrutamento/CandidatosPainel.tsx",
+     "src/components/recrutamento/PipelineBoard.tsx",
+     "src/components/recrutamento/PipelineCard.tsx",
+     "src/components/recrutamento/PipelineColumn.tsx",
+     "src/components/recrutamento/TabelaCandidatos.tsx",
+     "src/components/recrutamento/VagaCard.tsx",
+     "src/components/recrutamento/VagasPainel.tsx",
+     "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
+     "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
+     "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+     "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+     "src/components/recrutamento/__tests__/VagaCard.test.tsx",
+     "src/components/recrutamento/__tests__/VagasPainel.test.tsx",
+     "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+     "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+     "src/components/recrutamento/__tests__/candidatosFixture.ts",
+     "src/components/recrutamento/__tests__/competenciasComum.test.ts",
+     "src/components/recrutamento/__tests__/pipelineDragDrop.test.ts",
+     "src/components/recrutamento/__tests__/pipelineEtapas.test.ts",
+     "src/components/recrutamento/__tests__/vagasComum.test.ts",
+     "src/components/recrutamento/__tests__/vagasGradients.test.ts",
+     "src/components/recrutamento/analyticsComum.ts",
+     "src/components/recrutamento/candidatosComum.ts",
+     "src/components/recrutamento/competenciasComum.ts",
+     "src/components/recrutamento/pipelineDragDrop.ts",
+     "src/components/recrutamento/pipelineEtapas.ts",
+     "src/components/recrutamento/pipelineVisual.ts",
+     "src/components/recrutamento/vagasComum.ts",
+     "src/components/recrutamento/vagasGradients.ts",
+     "src/pages/RecrutamentoPage.tsx",
+     "src/types/recrutamento.ts"
+    ]
+   },
    {
     "sha": "576c7f4",
     "date": "2026-11-16",
@@ -314663,22 +316644,16 @@
      "inventario/estado/edges.json",
      "inventario/estado/rotas.json"
     ]
-   },
-   {
-    "sha": "9ecaf8a",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "chore(ninebox): canoniza no repo as 4 funcoes endurecidas em producao (#577)",
-    "files": [
-     "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
-     "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.verify.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "inventario/estado/rotas.json",
-    5
+    6
+   ],
+   [
+    "scripts/.bundle-budget.json",
+    4
    ],
    [
     "package-lock.json",
@@ -314687,10 +316662,6 @@
    [
     "package.json",
     4
-   ],
-   [
-    "scripts/.bundle-budget.json",
-    3
    ],
    [
     "src/pages/ColaboradorDetalhesPage.tsx",

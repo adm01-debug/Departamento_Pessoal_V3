@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "576c7f4820b95d818ebf7e0399a0d9d6cbe08344",
+  "commit": "182d5f9f814ef2ac7b1c2aed4817ac86ba14d213",
   "branch": "main",
-  "data_commit": "2026-11-16T22:49:35-03:00",
+  "data_commit": "2026-11-17T00:05:48-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "182d5f9",
+    "data": "2026-11-17",
+    "assunto": "feat(recrutamento): resgata Recrutamento e seleção da muri preservando a máscara de PII e as 3 entregas da main (#610)"
+   },
    {
     "sha": "576c7f4",
     "data": "2026-11-16",
@@ -126,14 +131,9 @@
     "sha": "81e86aa",
     "data": "2026-11-16",
     "assunto": "infra(banco): sidecars rodam no FIM da transacao, nao no meio do lote (#583)"
-   },
-   {
-    "sha": "9d8ff76",
-    "data": "2026-11-16",
-    "assunto": "chore: resgata da branch `muri` as 3 migrations que rodam em produção e não existiam na main (#582)"
    }
   ],
-  "arquivos_mudados_7d": 992,
+  "arquivos_mudados_7d": 1033,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -168,6 +168,10 @@
     "mudancas": 57
    },
    {
+    "pasta": "src/components/recrutamento",
+    "mudancas": 41
+   },
+   {
     "pasta": "src/utils/__tests__",
     "mudancas": 38
    },
@@ -190,10 +194,6 @@
    {
     "pasta": "src/components/ponto",
     "mudancas": 27
-   },
-   {
-    "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 26
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 14
+    "mudancas": 15
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -230,10 +230,6 @@
     "mudancas": 9
    },
    {
-    "arquivo": "CLAUDE.md",
-    "mudancas": 8
-   },
-   {
     "arquivo": "deno.lock",
     "mudancas": 8
    },
@@ -246,15 +242,15 @@
     "mudancas": 7
    },
    {
+    "arquivo": "CLAUDE.md",
+    "mudancas": 7
+   },
+   {
     "arquivo": "scripts/automation.config.json",
     "mudancas": 7
    },
    {
     "arquivo": "scripts/sync/mirror-github.sh",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "supabase/functions/external-db-bridge/index.ts",
     "mudancas": 7
    },
    {
@@ -283,6 +279,10 @@
    },
    {
     "arquivo": "scripts/sync/sync-github.sh",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "supabase/functions/external-db-bridge/index.ts",
     "mudancas": 6
    },
    {
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3364,
-  "arquivos_codigo": 1898,
-  "linhas_codigo": 366432,
+  "arquivos_total": 3403,
+  "arquivos_codigo": 1937,
+  "linhas_codigo": 374645,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 94,
   "modulos": 81,
-  "componentes": 578,
+  "componentes": 595,
   "hooks": 114,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 688,
+  "testes": 702,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 835,
-   "linhas": 140329
+   "arquivos": 874,
+   "linhas": 148723
   },
   "src/constants": {
    "arquivos": 6,
@@ -676,7 +676,7 @@
   },
   "src/pages": {
    "arquivos": 133,
-   "linhas": 48796
+   "linhas": 48611
   },
   "src/providers": {
    "arquivos": 4,
@@ -704,7 +704,7 @@
   },
   "src/types": {
    "arquivos": 13,
-   "linhas": 868
+   "linhas": 872
   },
   "src/utils": {
    "arquivos": 69,
@@ -821,10 +821,6 @@
    "linhas": 869
   },
   {
-   "arquivo": "src/pages/RecrutamentoPage.tsx",
-   "linhas": 861
-  },
-  {
    "arquivo": "src/schemas/esocial/periodicosValidators.ts",
    "linhas": 861
   },
@@ -843,6 +839,10 @@
   {
    "arquivo": "src/pages/MovimentacoesPage.tsx",
    "linhas": 827
+  },
+  {
+   "arquivo": "src/components/workflows/WorkflowDesigner.tsx",
+   "linhas": 824
   }
  ],
  "qualidade": {
@@ -850,8 +850,8 @@
   "console_log": 395,
   "ts_ignore": 1,
   "eslint_disable": 4,
-  "todos": 20,
-  "arquivos_acima_500_linhas": 99
+  "todos": 21,
+  "arquivos_acima_500_linhas": 101
  },
  "todos": [
   {
@@ -937,6 +937,12 @@
    "linha": 167,
    "tipo": "TODO",
    "texto": "reenvio da MESMA tentativa (duplo clique, erro de"
+  },
+  {
+   "arquivo": "src/pages/RecrutamentoPage.tsx",
+   "linha": 102,
+   "tipo": "TODO",
+   "texto": "o processo — sem esta leitura separada, filtrar o Pipeline mudava os"
   },
   {
    "arquivo": "src/schemas/esocial/__tests__/crossFieldValidators.test.ts",

@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 688,
+ "total": 702,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 649
+  "unit": 663
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 565
+   "arquivos": 579
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -3177,6 +3177,141 @@
    "linhas": 38,
    "testa": [
     "src/components/kanban/entradaKanban.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+   "tipo": "unit",
+   "linhas": 334,
+   "testa": [
+    "src/components/recrutamento/analyticsComum.ts",
+    "src/types/recrutamento.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
+   "tipo": "unit",
+   "linhas": 149,
+   "testa": [
+    "src/components/recrutamento/AnalyticsRecrutamento.tsx"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 137,
+   "testa": [
+    "src/components/recrutamento/CandidatoDetalhesDialog.tsx",
+    "src/contexts/AuthContext.tsx"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
+   "tipo": "unit",
+   "linhas": 204,
+   "testa": [
+    "src/components/recrutamento/candidatosComum.ts"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/candidatosFixture.ts",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [
+    "src/types/recrutamento.ts"
+   ],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/CandidatosPainel.test.tsx",
+   "tipo": "unit",
+   "linhas": 187,
+   "testa": [
+    "src/components/recrutamento/CandidatosPainel.tsx",
+    "src/types/recrutamento.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/competenciasComum.test.ts",
+   "tipo": "unit",
+   "linhas": 44,
+   "testa": [
+    "src/components/recrutamento/competenciasComum.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+   "tipo": "unit",
+   "linhas": 249,
+   "testa": [
+    "src/components/recrutamento/PipelineBoard.tsx",
+    "src/types/recrutamento.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/pipelineDragDrop.test.ts",
+   "tipo": "unit",
+   "linhas": 26,
+   "testa": [
+    "src/components/recrutamento/pipelineDragDrop.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/pipelineEtapas.test.ts",
+   "tipo": "unit",
+   "linhas": 165,
+   "testa": [
+    "src/components/recrutamento/pipelineEtapas.ts",
+    "src/types/recrutamento.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/VagaCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 222,
+   "testa": [
+    "src/components/recrutamento/VagaCard.tsx",
+    "src/components/recrutamento/vagasComum.ts",
+    "src/types/recrutamento.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/vagasComum.test.ts",
+   "tipo": "unit",
+   "linhas": 230,
+   "testa": [
+    "src/components/recrutamento/vagasComum.ts",
+    "src/types/recrutamento.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/vagasGradients.test.ts",
+   "tipo": "unit",
+   "linhas": 42,
+   "testa": [
+    "src/components/recrutamento/vagasGradients.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/VagasPainel.test.tsx",
+   "tipo": "unit",
+   "linhas": 97,
+   "testa": [
+    "src/components/recrutamento/VagasPainel.tsx",
+    "src/types/recrutamento.ts"
    ],
    "casos": 4
   },
@@ -6620,7 +6755,20 @@
   "src/components/premiacoes/CampaignWizard.tsx": 1,
   "src/components/premiacoes/RewardsApprovalHub.tsx": 1,
   "src/components/premiacoes/RewardsSimulator.tsx": 1,
+  "src/components/recrutamento/AnalyticsRecrutamento.tsx": 1,
+  "src/components/recrutamento/CandidatoDetalhesDialog.tsx": 1,
   "src/components/recrutamento/CandidatoTimeline.tsx": 1,
+  "src/components/recrutamento/CandidatosPainel.tsx": 1,
+  "src/components/recrutamento/PipelineBoard.tsx": 1,
+  "src/components/recrutamento/VagaCard.tsx": 1,
+  "src/components/recrutamento/VagasPainel.tsx": 1,
+  "src/components/recrutamento/analyticsComum.ts": 1,
+  "src/components/recrutamento/candidatosComum.ts": 1,
+  "src/components/recrutamento/competenciasComum.ts": 1,
+  "src/components/recrutamento/pipelineDragDrop.ts": 1,
+  "src/components/recrutamento/pipelineEtapas.ts": 1,
+  "src/components/recrutamento/vagasComum.ts": 2,
+  "src/components/recrutamento/vagasGradients.ts": 1,
   "src/components/relatorios/RelatoriosAgendadosTab.tsx": 1,
   "src/components/relatorios/RelatoriosAnalyticsTab.tsx": 1,
   "src/components/relatorios/RelatoriosExportTab.tsx": 1,
@@ -6678,7 +6826,7 @@
   "src/constants/regimes.ts": 1,
   "src/constants/rubricas.ts": 3,
   "src/constants/workflow-status.ts": 1,
-  "src/contexts/AuthContext.tsx": 2,
+  "src/contexts/AuthContext.tsx": 3,
   "src/contexts/EmpresaContext.tsx": 1,
   "src/contexts/NotificationContext.tsx": 1,
   "src/contexts/index.ts": 1,
@@ -6901,6 +7049,7 @@
   "src/types/entities.ts": 6,
   "src/types/medidasDisciplinares.ts": 6,
   "src/types/pcs.ts": 1,
+  "src/types/recrutamento.ts": 8,
   "src/types/timelineEvent.ts": 1,
   "src/utils/afastamentoPDF.ts": 1,
   "src/utils/auditLogger.ts": 2,
