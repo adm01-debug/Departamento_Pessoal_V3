@@ -31,7 +31,15 @@ import { Progress } from '@/components/ui/progress';
 import { AnimatedCascadeDialog } from '@/components/ui/animated-cascade-dialog';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/format';
-import { ETAPA_BADGE, ETAPA_LABELS, TONE_BADGE, TONE_TEXT, proximaAcaoDaEtapa, type Tone, type ToneSelo } from './admissoesComum';
+import {
+  ETAPA_BADGE,
+  ETAPA_LABELS,
+  TONE_BADGE,
+  TONE_TEXT,
+  proximaAcaoDaEtapa,
+  type Tone,
+  type ToneSelo,
+} from './admissoesComum';
 
 /* ─── Contrato de dados (o dashboard deriva, o modal exibe) ───────────────── */
 
@@ -302,13 +310,12 @@ const CONTEXTO_PRIORIDADE: Record<
     ondeResolver: 'Aba "Gestão de Candidatos" → detalhe da admissão / botão "Enviar Link" do card.',
   },
   esocial: {
-    motivo: 'Admissão não transmitida (ou transmitida e depois encerrada) deixa o vínculo fora do eSocial.',
+    motivo: 'Admissão sem transmissão confirmada do S-2200 deixa o vínculo fora do eSocial.',
     gravidade: 'Alta',
     gravidadeBadge: 'destructive',
     prazo: 'Antes do início das atividades — a transmissão atrasada gera multa.',
-    etapa: 'Canceladas (`etapa = cancelada`).',
-    acaoRecomendada:
-      'Conferir o protocolo abaixo, transmitir o S-2200 da admissão correta e, se o processo foi encerrado por erro, reabrir a admissão.',
+    etapa: 'eSocial sem protocolo/transmissão (`etapa = esocial`) ou `status_esocial` com erro/rejeição.',
+    acaoRecomendada: 'Conferir o status e o protocolo abaixo e transmitir (ou retransmitir) o S-2200 da admissão.',
     ondeResolver: 'Módulo eSocial (`/esocial`).',
   },
 };
@@ -584,7 +591,10 @@ export function SlaAlertasDialog({
   risco: AdmissaoDetalhe[];
   atrasadas: AdmissaoDetalhe[];
   taxaConclusao: number;
-  /** Variação da taxa em %, ou `null` quando não há base anterior de comparação. */
+  /**
+   * Variação da PRÓPRIA taxa em pontos percentuais (últimos 30 dias contra os 30
+   * anteriores), ou `null` quando não há base nas duas janelas para comparar.
+   */
   variacaoConclusao: number | null;
 }) {
   return (
@@ -605,8 +615,8 @@ export function SlaAlertasDialog({
             <span className="font-medium tabular-nums">{taxaConclusao}%</span>{' '}
             <span className="text-muted-foreground">
               {variacaoConclusao === null
-                ? '(sem base nos 30 dias anteriores para comparar)'
-                : `(${variacaoConclusao >= 0 ? '+' : ''}${variacaoConclusao}% vs. 30 dias anteriores)`}
+                ? '(sem base nas duas janelas de 30 dias para comparar)'
+                : `(${variacaoConclusao >= 0 ? '+' : ''}${variacaoConclusao} p.p. vs. 30 dias anteriores)`}
             </span>
           </Campo>
           <Campo rotulo="Como ler">

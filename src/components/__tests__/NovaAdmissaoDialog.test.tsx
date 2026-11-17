@@ -10,12 +10,11 @@ vi.mock('@/hooks/useAdmissoes', () => ({
   })),
 }));
 
+// O componente só importa `DialogHeader`/`DialogTitle` do wrapper; a casca
+// (Root/Trigger/Portal/Overlay/Content/Close) vem do `DialogPrimitive` do Radix.
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
-  DialogTrigger: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
@@ -67,47 +66,47 @@ describe('NovaAdmissaoDialog', () => {
   });
 
   it('renders Nova Admissão dialog title', () => {
-    render(<NovaAdmissaoDialog />);
+    render(<NovaAdmissaoDialog open onOpenChange={vi.fn()} />);
     expect(screen.getAllByText('Nova Admissão').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders Nome completo label', () => {
-    render(<NovaAdmissaoDialog />);
+    render(<NovaAdmissaoDialog open onOpenChange={vi.fn()} />);
     expect(screen.getByText(/Nome completo/i)).toBeInTheDocument();
   });
 
   it('renders Cargo label', () => {
-    render(<NovaAdmissaoDialog />);
+    render(<NovaAdmissaoDialog open onOpenChange={vi.fn()} />);
     expect(screen.getByText(/^Cargo \*$/)).toBeInTheDocument();
   });
 
   it('renders Departamento label', () => {
-    render(<NovaAdmissaoDialog />);
+    render(<NovaAdmissaoDialog open onOpenChange={vi.fn()} />);
     expect(screen.getByText(/Departamento/i)).toBeInTheDocument();
   });
 
   it('renders Salário proposto label', () => {
-    render(<NovaAdmissaoDialog />);
+    render(<NovaAdmissaoDialog open onOpenChange={vi.fn()} />);
     expect(screen.getByText(/Salário proposto/i)).toBeInTheDocument();
   });
 
   it('renders Criar Admissão submit button', () => {
-    render(<NovaAdmissaoDialog />);
+    render(<NovaAdmissaoDialog open onOpenChange={vi.fn()} />);
     expect(screen.getByText('Criar Admissão')).toBeInTheDocument();
   });
 
   it('renders Cancelar button', () => {
-    render(<NovaAdmissaoDialog />);
+    render(<NovaAdmissaoDialog open onOpenChange={vi.fn()} />);
     expect(screen.getByText('Cancelar')).toBeInTheDocument();
   });
 
   it('renders RH department option', () => {
-    render(<NovaAdmissaoDialog />);
+    render(<NovaAdmissaoDialog open onOpenChange={vi.fn()} />);
     expect(screen.getByText('RH')).toBeInTheDocument();
   });
 
   it('renders TI department option', () => {
-    render(<NovaAdmissaoDialog />);
+    render(<NovaAdmissaoDialog open onOpenChange={vi.fn()} />);
     expect(screen.getByText('TI')).toBeInTheDocument();
   });
 

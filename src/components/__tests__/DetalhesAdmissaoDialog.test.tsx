@@ -1,14 +1,17 @@
 import type { ReactNode } from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
-const { maybeSingleMock, enviarLinkMock, toastMock } = vi.hoisted(() => ({
+const { maybeSingleMock, enviarLinkMock, toastMock, workflowMock } = vi.hoisted(() => ({
   maybeSingleMock: vi.fn(),
   enviarLinkMock: vi.fn(),
   toastMock: { success: vi.fn(), error: vi.fn() },
+  workflowMock: vi.fn(),
 }));
 
 vi.mock('sonner', () => ({ toast: toastMock }));
+
+vi.mock('react-router-dom', () => ({ useNavigate: () => vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => {
   const chain: Record<string, unknown> = {};
@@ -36,11 +39,7 @@ vi.mock('@/hooks/useContratacaoDigital', () => ({
 }));
 
 vi.mock('@/hooks/useAdmissaoWorkflow', () => ({
-  useAdmissaoWorkflow: vi.fn(() => ({ workflow: [] })),
-}));
-
-vi.mock('@/hooks/useESocial', () => ({
-  useESocial: vi.fn(() => ({ enviarEvento: vi.fn() })),
+  useAdmissaoWorkflow: workflowMock,
 }));
 
 vi.mock('@/hooks/useEmpresas', () => ({
@@ -71,6 +70,7 @@ vi.mock('@/components/ui/dialog', () => ({
   DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
   DialogDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
+  DialogFooter: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
@@ -134,6 +134,10 @@ const MOCK_ADMISSAO = {
 } as unknown as Tables<'admissoes'>;
 
 describe('DetalhesAdmissaoDialog', () => {
+  beforeEach(() => {
+    workflowMock.mockReturnValue({ workflow: null, isLoading: false, isError: false });
+  });
+
   it('returns null when admissao is null', () => {
     const { container } = render(<DetalhesAdmissaoDialog admissao={null} open={true} onOpenChange={vi.fn()} />);
     expect(container.firstChild).toBeNull();
@@ -146,27 +150,27 @@ describe('DetalhesAdmissaoDialog', () => {
 
   it('renders etapa badge', () => {
     render(<DetalhesAdmissaoDialog admissao={MOCK_ADMISSAO} open={true} onOpenChange={vi.fn()} />);
-    expect(screen.getByText('documentos')).toBeInTheDocument();
+    expect(screen.getByText('Docs Pendentes')).toBeInTheDocument();
   });
 
-  it('renders Gerenciamento de admissão digital description', () => {
+  it('renders cargo e departamento na descrição', () => {
     render(<DetalhesAdmissaoDialog admissao={MOCK_ADMISSAO} open={true} onOpenChange={vi.fn()} />);
-    expect(screen.getByText(/Gerenciamento de admissão digital/i)).toBeInTheDocument();
+    expect(screen.getAllByText('Analista').length).toBeGreaterThanOrEqual(1);
   });
 
-  it('renders Geral tab', () => {
+  it('renders seção Dados da admissão', () => {
     render(<DetalhesAdmissaoDialog admissao={MOCK_ADMISSAO} open={true} onOpenChange={vi.fn()} />);
-    expect(screen.getByRole('tab', { name: /Geral/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Dados da admissão/i })).toBeInTheDocument();
   });
 
-  it('renders Documentos tab', () => {
+  it('renders seção Documentos', () => {
     render(<DetalhesAdmissaoDialog admissao={MOCK_ADMISSAO} open={true} onOpenChange={vi.fn()} />);
-    expect(screen.getByRole('tab', { name: /Documentos/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Documentos/i })).toBeInTheDocument();
   });
 
-  it('renders Histórico tab', () => {
+  it('renders seção Histórico', () => {
     render(<DetalhesAdmissaoDialog admissao={MOCK_ADMISSAO} open={true} onOpenChange={vi.fn()} />);
-    expect(screen.getByRole('tab', { name: /Histórico/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Histórico/i })).toBeInTheDocument();
   });
 
   it('copia o link do portal (sem abrir sessão do candidato) e gera token se não houver vigente', async () => {
@@ -193,5 +197,24 @@ describe('DetalhesAdmissaoDialog', () => {
     expect(btn).toHaveAttribute('title', expect.stringMatching(/Admissão encerrada/));
     fireEvent.click(btn);
     expect(enviarLinkMock).not.toHaveBeenCalled();
+  });
+
+  it('não afirma histórico vazio enquanto a consulta do workflow carrega', () => {
+    workflowMock.mockReturnValue({ workflow: null, isLoading: true, isError: false });
+    render(<DetalhesAdmissaoDialog admissao={MOCK_ADMISSAO} open={true} onOpenChange={vi.fn()} />);
+    expect(screen.queryByText(/Nenhum evento registrado/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Carregando histórico/i)).toBeInTheDocument();
+  });
+
+  it('não afirma histórico vazio quando a consulta do workflow falha', () => {
+    workflowMock.mockReturnValue({ workflow: null, isLoading: false, isError: true });
+    render(<DetalhesAdmissaoDialog admissao={MOCK_ADMISSAO} open={true} onOpenChange={vi.fn()} />);
+    expect(screen.queryByText(/Nenhum evento registrado/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/NÃO significa que não houve evento/i)).toBeInTheDocument();
+  });
+
+  it('afirma histórico vazio só quando a consulta terminou sem erro', () => {
+    render(<DetalhesAdmissaoDialog admissao={MOCK_ADMISSAO} open={true} onOpenChange={vi.fn()} />);
+    expect(screen.getByText(/Nenhum evento registrado/i)).toBeInTheDocument();
   });
 });

@@ -7,16 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { NovaAdmissaoDialog } from '@/components/admissoes/NovaAdmissaoDialog';
 import { DetalhesAdmissaoDialog } from '@/components/admissoes/DetalhesAdmissaoDialog';
-import {
-  UserPlus,
-  ExternalLink,
-  LayoutDashboard,
-  List,
-  History,
-  Rocket,
-  Kanban,
-  AlertTriangle,
-} from 'lucide-react';
+import { UserPlus, ExternalLink, LayoutDashboard, List, History, Rocket, Kanban, AlertTriangle } from 'lucide-react';
 import { AdmissoesKanban } from '@/components/admissoes/AdmissoesKanban';
 import { useNavigate } from 'react-router-dom';
 import { useEmpresas } from '@/hooks/useEmpresas';
@@ -37,8 +28,11 @@ export default function AdmissoesPage() {
   // Sem empresa selecionada a query de admissões fica DESABILITADA
   // (`enabled: !!empresaId` no hook) e, no react-query v5, `isLoading` é false:
   // sem este aviso a tela cairia no vazio em vez de pedir a empresa.
-  const { empresaAtual, loadingEmpresas } = useEmpresas();
-  const semEmpresa = !loadingEmpresas && !empresaAtual?.id;
+  // `empresaAtual` é a empresa EFETIVA do hook e depende das DUAS queries
+  // (`user-empresas` e `todas-empresas`); checar só `loadingEmpresas` acusaria
+  // falta de empresa enquanto a segunda ainda carrega.
+  const { empresaAtual, loadingEmpresas, loadingTodas } = useEmpresas();
+  const semEmpresa = !loadingEmpresas && !loadingTodas && !empresaAtual?.id;
   /** Falha na consulta ou falta de empresa: nenhuma aba de dados pode afirmar saúde. */
   const dadosIndisponiveis = !!error || semEmpresa;
   // Aba ativa em estado próprio: é o que dá destino aos botões "Resolver agora"
@@ -159,9 +153,7 @@ export default function AdmissoesPage() {
                 semEmpresa ? 'border-border/40' : 'border-destructive/20'
               )}
             >
-              <AlertTriangle
-                className={cn('h-6 w-6', semEmpresa ? 'text-muted-foreground' : 'text-destructive')}
-              />
+              <AlertTriangle className={cn('h-6 w-6', semEmpresa ? 'text-muted-foreground' : 'text-destructive')} />
               <p className="text-sm text-muted-foreground">
                 {semEmpresa
                   ? 'Selecione uma empresa para carregar as admissões.'

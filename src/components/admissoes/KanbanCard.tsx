@@ -42,6 +42,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Spinner } from '@/components/ui/spinner';
+import type { Tables } from '@/integrations/supabase/database.types';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/format';
 import {
@@ -76,11 +77,14 @@ export interface KanbanAcoes {
    * spinner e fica bloqueado, os outros seguem livres.
    */
   sendingLink?: string | null;
-  /** `any` de propósito: espelha o contrato de `GestaoCandidatos` (a página guarda
-   * a linha como `LooseRow<'admissoes'>`, e o board recebe registros frouxos). */
-  onEnviarLink?: (admissao: any) => void;
-  onEnviarWhatsApp?: (admissao: any) => void;
-  onOpenDetalhes?: (admissao: any) => void;
+  /**
+   * As três ações são as da página (o mesmo contrato de `GestaoCandidatos`), que
+   * recebe a LINHA DO BANCO. O board lê essa linha na forma frouxa de
+   * `AdmissaoKanban`, então o card a devolve no tipo que a página já tem.
+   */
+  onEnviarLink?: (admissao: Tables<'admissoes'>) => void;
+  onEnviarWhatsApp?: (admissao: Tables<'admissoes'>) => void;
+  onOpenDetalhes?: (admissao: Tables<'admissoes'>) => void;
 }
 
 /**
@@ -92,6 +96,8 @@ export interface KanbanAcoes {
 function MenuAcoes({ item, acoes }: { item: AdmissaoKanban; acoes?: KanbanAcoes }) {
   const { sendingLink, onEnviarLink, onEnviarWhatsApp, onOpenDetalhes } = acoes ?? {};
   const enviando = sendingLink === item.id;
+  // Mesmo registro, de volta ao tipo da página (ver a nota de `KanbanAcoes`).
+  const linha = item as unknown as Tables<'admissoes'>;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -106,14 +112,14 @@ function MenuAcoes({ item, acoes }: { item: AdmissaoKanban; acoes?: KanbanAcoes 
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="rounded-xl">
-        <DropdownMenuItem onClick={() => onOpenDetalhes?.(item)} className="cursor-pointer gap-2">
+        <DropdownMenuItem onClick={() => onOpenDetalhes?.(linha)} className="cursor-pointer gap-2">
           <ExternalLink className="h-4 w-4 text-info" /> Abrir detalhes
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => onEnviarLink?.(item)} className="cursor-pointer gap-2">
+        <DropdownMenuItem onClick={() => onEnviarLink?.(linha)} className="cursor-pointer gap-2">
           <Mail className="h-4 w-4 text-primary" /> Enviar por e-mail
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onEnviarWhatsApp?.(item)} className="cursor-pointer gap-2">
+        <DropdownMenuItem onClick={() => onEnviarWhatsApp?.(linha)} className="cursor-pointer gap-2">
           <MessageSquare className="h-4 w-4 text-success" /> Enviar por WhatsApp
         </DropdownMenuItem>
       </DropdownMenuContent>

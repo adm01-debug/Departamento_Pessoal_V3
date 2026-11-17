@@ -530,7 +530,7 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { validarDocumento } = useContratacaoDigital();
-  const { workflow } = useAdmissaoWorkflow(admissao?.id);
+  const { workflow, isLoading: historicoCarregando, isError: historicoErro } = useAdmissaoWorkflow(admissao?.id);
   const { empresaAtual } = useEmpresas();
 
   /**
@@ -566,7 +566,12 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
     []
   );
 
-  const a = admissao && edicao?.id === admissao.id ? ({ ...admissao, ...edicao.dados } as AdmissaoDetalhe) : admissao;
+  // Memoizado porque o ramo de edição cria objeto novo a cada render, e `a` é
+  // dependência dos useMemo de documentos/progresso logo abaixo.
+  const a = useMemo(
+    () => (admissao && edicao?.id === admissao.id ? ({ ...admissao, ...edicao.dados } as AdmissaoDetalhe) : admissao),
+    [admissao, edicao]
+  );
 
   const documentos = useMemo(() => documentosDaAdmissao(a), [a]);
   const progresso = useMemo(() => progressoDaAdmissao(a), [a]);
@@ -1255,7 +1260,20 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                               <History className="h-4 w-4 text-primary" /> Histórico
                             </h3>
                           </div>
-                          {historicoCompleto.length === 0 ? (
+                          {/* Três estados DISTINTOS: a frase de vazio só aparece
+                      quando a consulta terminou SEM erro — a linha do tempo
+                      tem peso de auditoria no eSocial e não pode afirmar
+                      ausência de evento quando a leitura falhou. */}
+                          {historicoCarregando ? (
+                            <p className="flex items-center justify-center gap-2 py-4 text-xs text-muted-foreground">
+                              <Spinner size="sm" /> Carregando histórico…
+                            </p>
+                          ) : historicoErro ? (
+                            <p className="py-4 text-center text-xs text-destructive">
+                              Não foi possível carregar o histórico. Isso NÃO significa que não houve evento — a leitura
+                              falhou; feche e abra a janela para tentar de novo.
+                            </p>
+                          ) : historicoCompleto.length === 0 ? (
                             <p className="py-4 text-center text-xs text-muted-foreground">
                               Nenhum evento registrado para esta admissão.
                             </p>

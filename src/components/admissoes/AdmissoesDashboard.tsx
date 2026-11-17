@@ -51,6 +51,7 @@ import {
   TrendingUp,
   UserPlus,
   Zap,
+  type LucideIcon,
 } from 'lucide-react';
 // Fonte única dos rótulos/selos de etapa, do checklist e das tintas de tom —
 // o mesmo módulo que os modais de detalhe leem, para que card e modal nunca
@@ -64,6 +65,9 @@ import {
   TONE_TEXT,
   type Tone,
 } from './admissoesComum';
+// Regra única de "S-2200 já transmitido" — a mesma que o board do Kanban usa.
+import { esocialTransmitido } from './kanbanComum';
+import type { Tables } from '@/integrations/supabase/types';
 // Modais dos quatro widgets (mesma base/coreografia do popup de Pendências da
 // área de Colaboradores). Eles recebem os dados JÁ derivados daqui — a
 // matemática do card e a lista do modal saem sempre da mesma fonte.
@@ -87,13 +91,18 @@ type AdmissaoLike = {
   etapa?: string | null;
   data_prevista?: string | null;
   created_at?: string | null;
-  /** Última escrita na admissão — a conclusão, nas que estão `concluida`. */
+  /**
+   * Última escrita em QUALQUER campo da admissão. A tabela NÃO tem coluna de
+   * data de conclusão — é esta a referência usada no tempo médio, e é isso que
+   * o card diz.
+   */
   updated_at?: string | null;
   /** Texto registrado pelo RH na admissão (andamento/pendência). */
   observacoes?: string | null;
-  /** Situação e protocolo da transmissão do S-2200. */
+  /** Situação, protocolo e data da transmissão do S-2200. */
   status_esocial?: string | null;
   protocolo_esocial?: string | null;
+  data_transmissao_esocial?: string | null;
   /** Checklist obrigatório da admissão (colunas reais, podem vir nulas). */
   checklist_documentos_pessoais?: boolean | null;
   checklist_comprovante_endereco?: boolean | null;
@@ -176,6 +185,71 @@ function variacaoDePeriodo(lista: AdmissaoLike[], agora: Date): { value: number;
 
   if (anterior === 0) return undefined;
   return { value: Math.round(((atual - anterior) / anterior) * 100), label: 'vs. período anterior' };
+}
+
+/**
+ * Variação da TAXA de conclusão, em PONTOS PERCENTUAIS: taxa das admissões
+ * abertas nos últimos 30 dias contra a das abertas nos 30 anteriores. Sem
+ * admissão em uma das duas janelas não há comparação honesta → `undefined`.
+ *
+ * É diferente de `variacaoDePeriodo`, que compara QUANTIDADE: o rodapé mostra
+ * uma taxa, então o delta ao lado tem de ser o delta dessa taxa.
+ */
+function variacaoDaTaxaConclusao(lista: AdmissaoLike[], agora: Date): number | undefined {
+  const fim = agora.getTime();
+  const inicioAtual = fim - 30 * DIA_MS;
+  const inicioAnterior = inicioAtual - 30 * DIA_MS;
+
+  let atualTotal = 0;
+  let atualConcluidas = 0;
+  let anteriorTotal = 0;
+  let anteriorConcluidas = 0;
+  lista.forEach((item) => {
+    const data = dataValida(item.created_at);
+    if (!data) return;
+    const t = data.getTime();
+    const concluida = item.etapa === 'concluida' ? 1 : 0;
+    if (t >= inicioAtual && t < fim) {
+      atualTotal += 1;
+      atualConcluidas += concluida;
+    } else if (t >= inicioAnterior && t < inicioAtual) {
+      anteriorTotal += 1;
+      anteriorConcluidas += concluida;
+    }
+  });
+
+  if (atualTotal === 0 || anteriorTotal === 0) return undefined;
+  return percentual(atualConcluidas, atualTotal) - percentual(anteriorConcluidas, anteriorTotal);
+}
+
+/** Termos de `status_esocial` que indicam transmissão recusada ou com erro. */
+const STATUS_ESOCIAL_ERRO = ['erro', 'falha', 'rejeit'];
+
+/**
+ * Transmissão do S-2200 confirmada? Reusa `esocialTransmitido` (fonte única da
+ * regra: `status_esocial = 'enviado'`, protocolo ou data de transmissão) — aqui
+ * só adaptamos o registro ao formato que ele espera.
+ */
+function esocialJaTransmitido(a: AdmissaoLike): boolean {
+  return esocialTransmitido({
+    id: String(a.id ?? ''),
+    nome: a.nome ?? '',
+    etapa: a.etapa ?? '',
+    status_esocial: a.status_esocial ?? null,
+    protocolo_esocial: a.protocolo_esocial ?? null,
+    data_transmissao_esocial: a.data_transmissao_esocial ?? null,
+  });
+}
+
+/**
+ * Fila REAL do eSocial: processo parado na etapa `esocial` sem transmissão
+ * confirmada, ou com `status_esocial` registrando erro/rejeição. Cancelamento
+ * NÃO entra — cancelar uma admissão não é falha de transmissão.
+ */
+function esocialPendente(a: AdmissaoLike): boolean {
+  const status = (a.status_esocial ?? '').trim().toLowerCase();
+  if (STATUS_ESOCIAL_ERRO.some((termo) => status.includes(termo))) return true;
+  return a.etapa === 'esocial' && !esocialJaTransmitido(a);
 }
 
 /** Iniciais do candidato (avatar textual dos widgets). */
@@ -650,9 +724,9 @@ const LEGENDA_AREA = 'text-[10px] leading-tight @max-[240px]:text-[9px]';
  * cria rota nova: as ações dos modais só existem quando há um destino REAL —
  * uma aba desta própria página, `/exames` ou `/esocial`.
  *
- * A aba "onboarding" SAIU do tipo junto com a aba (consolidação do domínio):
- * nenhum destino interno de Admissões aponta mais para onboarding — a Jornada de
- * Onboarding é rota própria (`/onboarding`), alcançada pelo atalho do cabeçalho.
+ * O tipo cobre só os DESTINOS do dashboard: nenhum item dos modais aponta para
+ * onboarding, então 'onboarding' não está aqui. A aba "Onboarding" segue na
+ * página (`AdmissoesPage.tsx`) até o grupo da Jornada entrar.
  */
 export type AbaAdmissoes = 'gestao' | 'kanban';
 
@@ -660,7 +734,8 @@ export function AdmissoesDashboard({
   admissoes,
   onAbrirAba,
 }: {
-  admissoes: any[];
+  /** Linhas de `public.admissoes` como a página as carrega. */
+  admissoes: Tables<'admissoes'>[];
   /**
    * Leva o usuário para uma aba interna do módulo (ex.: "Gestão de Candidatos").
    * Opcional: sem ela, os itens que só têm uma aba como destino não exibem o
@@ -693,7 +768,12 @@ export function AdmissoesDashboard({
 
   const agora = useMemo(() => new Date(), []);
   const hoje = useMemo(() => inicioDoDia(agora), [agora]);
-  const lista = useMemo<AdmissaoLike[]>(() => (Array.isArray(admissoes) ? admissoes : []), [admissoes]);
+  // `metadata` chega como `Json` na linha gerada e aqui é lido como objeto com
+  // `responsavel` — mesma ponte já usada em `GestaoCandidatos.tsx`.
+  const lista = useMemo<AdmissaoLike[]>(
+    () => (Array.isArray(admissoes) ? (admissoes as unknown as AdmissaoLike[]) : []),
+    [admissoes]
+  );
 
   const stats = useMemo(() => {
     const concluidas = lista.filter((a) => a.etapa === 'concluida');
@@ -740,7 +820,9 @@ export function AdmissoesDashboard({
       return data ? data.getTime() < hoje : false;
     });
     const filaContratos = lista.filter((a) => a.etapa === 'contrato' || a.etapa === 'assinatura');
-    const filaEsocial = canceladas;
+    // Fila do eSocial é o estado REAL da transmissão (etapa `esocial` sem
+    // protocolo/transmissão ou `status_esocial` com erro) — não `canceladas`.
+    const filaEsocial = emAndamento.filter(esocialPendente);
     const filaPorPrioridade: Record<string, AdmissaoLike[]> = {
       documentos: filaDocumentos,
       exames: filaExamesAtrasados,
@@ -772,7 +854,7 @@ export function AdmissoesDashboard({
       },
       {
         id: 'esocial',
-        label: 'falha no eSocial',
+        label: 'transmissões pendentes no eSocial',
         total: filaEsocial.length,
         icon: ShieldAlert,
         tone: 'destructive',
@@ -786,42 +868,62 @@ export function AdmissoesDashboard({
       candidatos: detalharLista(ordenarPorDataPrevista(filaPorPrioridade[item.id] ?? []), hoje),
     }));
 
-    const kpis = [
+    // As frases de apoio NÃO dizem "no período": os quatro KPIs são calculados
+    // sobre a lista inteira (os dois seletores de período são locais aos cards
+    // analíticos). `comTendencia` fica `false` onde a seta do `MetricCard`
+    // mentiria.
+    const kpisBase: {
+      label: string;
+      valor: number;
+      icon: LucideIcon;
+      tone: Tone;
+      descricao: string;
+      amostra: AdmissaoLike[];
+      comTendencia: boolean;
+    }[] = [
       {
         label: 'Total Iniciadas',
         valor: lista.length,
         icon: UserPlus,
-        tone: 'primary' as Tone,
-        descricao: 'processos no período',
+        tone: 'primary',
+        descricao: 'processos cadastrados',
         amostra: lista,
+        comTendencia: true,
       },
       {
         label: 'Em Andamento',
         valor: emAndamento.length,
         icon: Clock,
-        tone: 'info' as Tone,
+        tone: 'info',
         descricao: 'em pipeline agora',
         amostra: emAndamento,
+        comTendencia: true,
       },
       {
         label: 'Finalizadas',
         valor: concluidas.length,
         icon: CheckCircle,
-        tone: 'success' as Tone,
-        descricao: 'concluídas no período',
+        tone: 'success',
+        descricao: 'admissões concluídas',
         amostra: concluidas,
+        comTendencia: true,
       },
       {
+        // Sem `trend`: o `MetricCard` pinta qualquer variação >= 0 de verde com
+        // seta para cima, e cancelamento subindo não é melhora. O card mostra a
+        // frase de apoio em vez de um indicador invertido.
         label: 'Canceladas',
         valor: canceladas.length,
         icon: AlertCircle,
-        tone: 'destructive' as Tone,
-        descricao: 'processos encerrados no período',
+        tone: 'destructive',
+        descricao: 'processos encerrados',
         amostra: canceladas,
+        comTendencia: false,
       },
-    ].map((kpi) => ({
+    ];
+    const kpis = kpisBase.map((kpi) => ({
       ...kpi,
-      trend: variacaoDePeriodo(kpi.amostra, agora),
+      trend: kpi.comTendencia ? variacaoDePeriodo(kpi.amostra, agora) : undefined,
     }));
 
     /**
@@ -866,7 +968,8 @@ export function AdmissoesDashboard({
       kpis,
       funil: contarPorEtapa(lista),
       taxaConclusao: percentual(concluidas.length, lista.length),
-      variacaoConclusao: variacaoDePeriodo(concluidas, agora),
+      /** Delta da PRÓPRIA taxa, em pontos percentuais (não da quantidade). */
+      variacaoTaxaConclusao: variacaoDaTaxaConclusao(lista, agora),
       /* Detalhes consumidos pelos modais dos quatro widgets. */
       prioridadesDetalhe,
       proximasDetalhe: detalharLista(proximasOrdenadas, hoje),
@@ -878,33 +981,40 @@ export function AdmissoesDashboard({
   }, [lista, agora, hoje]);
 
   /**
-   * Série do gráfico de tempo médio, CALCULADA do banco e recortada pelo
-   * seletor de período: dias entre a abertura (`created_at`) e a conclusão
-   * (`updated_at`) de cada admissão concluída, agrupados pelo mês da conclusão
-   * (mesma régua de `OnboardingDashboard`). Sem nenhuma admissão concluída com
-   * as duas datas a série fica VAZIA e o card mostra o estado vazio — nunca um
-   * número inventado.
+   * Série do gráfico de tempo médio, CALCULADA do banco: dias entre a abertura
+   * (`created_at`) e a última atualização do registro (`updated_at`) de cada
+   * admissão concluída, agrupados pelo mês dessa atualização.
+   *
+   * O recorte do seletor é por DATA, aplicado ANTES do agrupamento (o mesmo
+   * `recortarPorPeriodo` do funil) — e a chave do mapa é `ano * 12 + mês`, não o
+   * índice 0-11: sem o ano, novembros de anos diferentes caíam no mesmo balde e
+   * "últimos 3 meses" devolvia os 3 maiores índices de mês existentes. Sem
+   * nenhuma admissão concluída na janela a série fica VAZIA e o card mostra o
+   * estado vazio — nunca um número inventado.
    */
   const serieTempo = useMemo(() => {
     const porMes = new Map<number, { soma: number; n: number }>();
-    for (const a of lista) {
-      const conclusao = a.updated_at;
-      if (a.etapa !== 'concluida' || !a.created_at || !conclusao) continue;
+    for (const a of recortarPorPeriodo(lista, Number(periodoTempo), agora)) {
+      const atualizacao = a.updated_at;
+      if (a.etapa !== 'concluida' || !a.created_at || !atualizacao) continue;
       const inicio = new Date(a.created_at).getTime();
-      const fim = new Date(conclusao).getTime();
+      const fim = new Date(atualizacao).getTime();
       if (!Number.isFinite(inicio) || !Number.isFinite(fim) || fim < inicio) continue;
-      const mes = new Date(conclusao).getMonth();
-      const acumulado = porMes.get(mes) ?? { soma: 0, n: 0 };
+      const data = new Date(atualizacao);
+      const chave = data.getFullYear() * 12 + data.getMonth();
+      const acumulado = porMes.get(chave) ?? { soma: 0, n: 0 };
       acumulado.soma += (fim - inicio) / DIA_MS;
       acumulado.n += 1;
-      porMes.set(mes, acumulado);
+      porMes.set(chave, acumulado);
     }
-    const serie = [...porMes.entries()]
+    return [...porMes.entries()]
       .sort(([a], [b]) => a - b)
-      .map(([mes, { soma, n }]) => ({ month: MESES[mes], days: Math.round((soma / n) * 10) / 10 }));
-    const meses = Number(periodoTempo);
-    return meses > 0 ? serie.slice(-meses) : serie;
-  }, [lista, periodoTempo]);
+      .map(([chave, { soma, n }]) => ({
+        // Mês E ano no eixo X: é o que distingue "Nov/25" de "Nov/24".
+        month: `${MESES[chave % 12]}/${String(Math.floor(chave / 12) % 100).padStart(2, '0')}`,
+        days: Math.round((soma / n) * 10) / 10,
+      }));
+  }, [lista, periodoTempo, agora]);
 
   /** Funil recortado pelo período escolhido no cabeçalho do painel. */
   const funil = useMemo(
@@ -965,7 +1075,7 @@ export function AdmissoesDashboard({
           <PanelCard
             icon={TrendingUp}
             title="Tempo Médio de Admissão (dias)"
-            subtitle="Média do fluxo completo, da abertura ao eSocial"
+            subtitle="Média entre a abertura e a última atualização do registro"
             compact
             index={4}
             action={
@@ -978,7 +1088,9 @@ export function AdmissoesDashboard({
             }
           >
             {serieTempo.length === 0 ? (
-              <PanelEmpty>Nenhuma admissão concluída no período — sem tempo médio a exibir.</PanelEmpty>
+              <PanelEmpty>
+                Nenhuma admissão concluída entre as abertas no período selecionado — sem tempo médio a exibir.
+              </PanelEmpty>
             ) : (
               /* Sem cartão flutuante e sem rodapé de média: o gráfico ocupa a
                  altura inteira do miolo (`flex-1`) e centraliza a série. */
@@ -1403,15 +1515,18 @@ export function AdmissoesDashboard({
                     <span className="font-display text-base font-medium leading-none tabular-nums text-success">
                       {stats.taxaConclusao}%
                     </span>
-                    {stats.variacaoConclusao && (
+                    {/* Delta da PRÓPRIA taxa, em pontos percentuais — antes era a
+                        variação da QUANTIDADE de concluídas, lida como se fosse
+                        a variação da taxa ao lado dela. */}
+                    {stats.variacaoTaxaConclusao !== undefined && (
                       <span
                         className={cn(
                           'text-caption font-medium tabular-nums',
-                          stats.variacaoConclusao.value >= 0 ? 'text-success' : 'text-destructive-vivid'
+                          stats.variacaoTaxaConclusao >= 0 ? 'text-success' : 'text-[hsl(var(--destructive-vivid))]'
                         )}
                       >
-                        {stats.variacaoConclusao.value >= 0 ? '+' : ''}
-                        {stats.variacaoConclusao.value}%
+                        {stats.variacaoTaxaConclusao >= 0 ? '+' : ''}
+                        {stats.variacaoTaxaConclusao} p.p.
                       </span>
                     )}
                   </span>
@@ -1458,7 +1573,7 @@ export function AdmissoesDashboard({
         risco={stats.emRiscoDetalhe}
         atrasadas={stats.atrasadasDetalhe}
         taxaConclusao={stats.taxaConclusao}
-        variacaoConclusao={stats.variacaoConclusao?.value ?? null}
+        variacaoConclusao={stats.variacaoTaxaConclusao ?? null}
       />
     </div>
   );

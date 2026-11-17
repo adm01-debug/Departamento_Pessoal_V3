@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  MAX_CARDS_ESCALONADOS,
-  delayRodapeMs,
-  delayRodapeReduzidoMs,
-  estaVisivel,
-} from '../entradaKanban';
+import { MAX_CARDS_ESCALONADOS, delayRodapeMs, delayRodapeReduzidoMs, estaVisivel } from '../entradaKanban';
 
 /**
  * Os valores abaixo são o CONTRATO entre o JS e `src/index.css` (o rodapé do

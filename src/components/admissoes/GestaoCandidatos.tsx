@@ -77,6 +77,7 @@ import { formatCurrency, formatDate } from '@/utils/format';
 import { ETAPA_BADGE } from './admissoesComum';
 import { AppPagination } from '@/components/ui/app-pagination';
 import type { LooseRow } from '@/types/db';
+import type { Tables } from '@/integrations/supabase/database.types';
 import {
   DIA_MS,
   dataValida,
@@ -217,9 +218,10 @@ export interface GestaoCandidatosProps {
   admissoes: LooseRow<'admissoes'>[];
   isLoading: boolean;
   sendingLink: string | null;
-  onEnviarLink: (admissao: any) => void | Promise<void>;
-  onEnviarWhatsApp: (admissao: any) => void | Promise<void>;
-  onOpenDetalhes: (admissao: any) => void;
+  /** As três ações da página recebem a LINHA DO BANCO (ver `linhaDoBanco`). */
+  onEnviarLink: (admissao: Tables<'admissoes'>) => void | Promise<void>;
+  onEnviarWhatsApp: (admissao: Tables<'admissoes'>) => void | Promise<void>;
+  onOpenDetalhes: (admissao: Tables<'admissoes'>) => void;
 }
 
 /** Ações repassadas às linhas da tabela e aos cards. */
@@ -229,6 +231,16 @@ type AcoesProps = Pick<
 > & {
   admissao: AdmissaoLike;
 };
+
+/**
+ * Ponte entre as DUAS leituras do MESMO registro: a tela o lê na forma frouxa
+ * (`AdmissaoLike`, ver `lista`) e as ações da página esperam a linha de
+ * `admissoes`. É o inverso exato do cast de `lista` — nenhum dado novo, só a
+ * volta ao tipo que a página já tem em mãos.
+ */
+function linhaDoBanco(admissao: AdmissaoLike): Tables<'admissoes'> {
+  return admissao as unknown as Tables<'admissoes'>;
+}
 
 /* ─── Helpers puros de filtro/derivação de tela ──────────────────────────── */
 
@@ -319,7 +331,7 @@ function ProgressoBar({ admissao }: { admissao: AdmissaoLike }) {
   const valor = progressoValor(admissao);
   return (
     <div className="flex items-center gap-2">
-      <Progress value={valor} className="h-1.5 w-16 bg-muted" indicatorClassName="bg-primary" />
+      <Progress value={valor} className="h-1.5 w-16 bg-muted" />
       <span className="w-9 text-right text-xs font-medium tabular-nums text-foreground">{valor}%</span>
     </div>
   );
@@ -381,7 +393,7 @@ function AcoesCandidato({ admissao, sendingLink, onEnviarLink, onEnviarWhatsApp,
           variant="ghost"
           size="icon"
           className="h-8 w-8 rounded-lg text-info hover:bg-info/10 hover:text-info"
-          onClick={() => onOpenDetalhes(admissao)}
+          onClick={() => onOpenDetalhes(linhaDoBanco(admissao))}
           aria-label={`Ver detalhes de ${admissao.nome ?? 'candidato'}`}
         >
           <Eye className="h-4 w-4" />
@@ -401,14 +413,14 @@ function AcoesCandidato({ admissao, sendingLink, onEnviarLink, onEnviarWhatsApp,
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="rounded-xl">
-          <DropdownMenuItem onClick={() => onOpenDetalhes(admissao)} className="gap-2 cursor-pointer">
+          <DropdownMenuItem onClick={() => onOpenDetalhes(linhaDoBanco(admissao))} className="gap-2 cursor-pointer">
             <ExternalLink className="h-4 w-4 text-info" /> Abrir detalhes
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => onEnviarLink(admissao)} className="gap-2 cursor-pointer">
+          <DropdownMenuItem onClick={() => onEnviarLink(linhaDoBanco(admissao))} className="gap-2 cursor-pointer">
             <Mail className="h-4 w-4 text-primary" /> Enviar por e-mail
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onEnviarWhatsApp(admissao)} className="gap-2 cursor-pointer">
+          <DropdownMenuItem onClick={() => onEnviarWhatsApp(linhaDoBanco(admissao))} className="gap-2 cursor-pointer">
             <MessageSquare className="h-4 w-4 text-success" /> Enviar por WhatsApp
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -813,14 +825,14 @@ function MenuCardCandidato({ admissao, sendingLink, onEnviarLink, onEnviarWhatsA
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="rounded-xl">
-        <DropdownMenuItem onClick={() => onOpenDetalhes(admissao)} className="gap-2 cursor-pointer">
+        <DropdownMenuItem onClick={() => onOpenDetalhes(linhaDoBanco(admissao))} className="gap-2 cursor-pointer">
           <ExternalLink className="h-4 w-4 text-info" /> Abrir detalhes
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => onEnviarLink(admissao)} className="gap-2 cursor-pointer">
+        <DropdownMenuItem onClick={() => onEnviarLink(linhaDoBanco(admissao))} className="gap-2 cursor-pointer">
           <Mail className="h-4 w-4 text-primary" /> Enviar por e-mail
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onEnviarWhatsApp(admissao)} className="gap-2 cursor-pointer">
+        <DropdownMenuItem onClick={() => onEnviarWhatsApp(linhaDoBanco(admissao))} className="gap-2 cursor-pointer">
           <MessageSquare className="h-4 w-4 text-success" /> Enviar por WhatsApp
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -968,7 +980,7 @@ function CardsCandidatos({
                 (a barra ocupa toda a sobra horizontal; o `w-9` fixa a coluna do
                 percentual para os cards da linha ficarem alinhados). */}
             <div className="mt-1.5 flex items-center gap-2">
-              <Progress value={progresso} className="h-1.5 flex-1 bg-muted" indicatorClassName="bg-primary" />
+              <Progress value={progresso} className="h-1.5 flex-1 bg-muted" />
               <span className="w-9 shrink-0 text-right text-xs font-semibold tabular-nums text-foreground">
                 {progresso}%
               </span>
@@ -1030,7 +1042,7 @@ function CardsCandidatos({
                   size="sm"
                   className="h-7 gap-1.5 rounded-lg border-border/40 px-2 text-xs"
                   disabled={enviando}
-                  onClick={() => onEnviarLink(a)}
+                  onClick={() => onEnviarLink(linhaDoBanco(a))}
                 >
                   {enviando ? <Spinner size="sm" /> : <Send className="h-3.5 w-3.5" />}
                   Enviar Link
@@ -1040,7 +1052,7 @@ function CardsCandidatos({
                   size="sm"
                   className="h-7 gap-1.5 rounded-lg border-border/40 px-2 text-xs"
                   aria-label={`Ver detalhes de ${a.nome ?? 'candidato'}`}
-                  onClick={() => onOpenDetalhes(a)}
+                  onClick={() => onOpenDetalhes(linhaDoBanco(a))}
                 >
                   <FileText className="h-3.5 w-3.5" />
                   Detalhes
@@ -1740,12 +1752,7 @@ export function GestaoCandidatos({
                 transition={{ duration: 0.15 }}
               >
                 {visualizacao === 'tabela' ? (
-                  <TabelaCandidatos
-                    itens={visiveis}
-                    hoje={hoje}
-                    chaveCascata={cascataChave}
-                    {...acoes}
-                  />
+                  <TabelaCandidatos itens={visiveis} hoje={hoje} chaveCascata={cascataChave} {...acoes} />
                 ) : (
                   <CardsCandidatos itens={visiveis} hoje={hoje} {...acoes} />
                 )}

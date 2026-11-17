@@ -47,9 +47,9 @@ import {
 import { formatDateTime } from '@/utils/format';
 
 /**
- * Linha de `public.admissoes` como o board a consome. Deliberadamente frouxa nos
- * campos que o registro real traz e o mock de demonstração não: todo derivado
- * abaixo tolera campo faltando em vez de quebrar o card.
+ * Linha de `public.admissoes` como o board a consome. Deliberadamente frouxa: a
+ * página entrega a linha do banco como ela vem, então todo derivado abaixo
+ * tolera campo faltando ou nulo em vez de quebrar o card.
  */
 export interface AdmissaoKanban {
   id: string;
@@ -341,9 +341,9 @@ export function statusDoCard(a: AdmissaoKanban): StatusCard {
 
   switch (a?.etapa) {
     case 'solicitacao':
-      return pendencia
-        ? { icone: AlertTriangle, texto: 'Aguardando documentação' }
-        : { icone: Clock, texto: 'Aguardando aprovação' };
+      // A pendência registrada pelo RH é o texto — a frase-guia só aparece
+      // quando não há pendência nenhuma.
+      return pendencia ? { icone: AlertTriangle, texto: pendencia } : { icone: Clock, texto: 'Aguardando aprovação' };
     case 'documentos':
       return docs > 0
         ? { icone: CheckCircle2, texto: `${docs}/${DOCS_CHECKLIST.length} documentos` }
@@ -486,9 +486,11 @@ export function contextoDoCard(a: AdmissaoKanban): ContextoEtapa {
         ],
       };
     case 'contrato':
+      // SEM barra: o único progresso medível aqui é o checklist de DOCUMENTOS, e
+      // sob o rótulo "Contrato" ele se leria como andamento do contrato. Fica só
+      // a próxima ação.
       return {
         rotulo: 'Contrato',
-        progresso: { feito: docs, total: DOCS_CHECKLIST.length },
         linhas: [{ icone: FileSignature, texto: proximaAcaoCurtaDaEtapa(etapa), tom: 'acento' }],
       };
     case 'esocial': {
