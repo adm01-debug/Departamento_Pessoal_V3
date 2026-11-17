@@ -40,9 +40,9 @@ describe('useCriarContaBancaria sem empresa selecionada', () => {
 
   it('falha com mensagem de negocio e NAO chama o servico', async () => {
     const { result } = renderHook(() => useCriarContaBancaria(), { wrapper });
-    await expect(
-      result.current.mutateAsync({ colaborador_id: 'col-1', banco_nome: 'Banco X' })
-    ).rejects.toThrow(/Selecione uma empresa/);
+    await expect(result.current.mutateAsync({ colaborador_id: 'col-1', banco_nome: 'Banco X' })).rejects.toThrow(
+      /Selecione uma empresa/
+    );
     expect(mockCriarContaBancaria).not.toHaveBeenCalled();
   });
 });

@@ -87,9 +87,9 @@ describe('usePontoMelhorado', () => {
 
   it('sem empresaId responderSolicitacao falha explicitamente, sem tocar no banco', async () => {
     const { result } = renderHook(() => usePontoMelhorado(undefined), { wrapper });
-    await expect(
-      result.current.responderSolicitacao.mutateAsync({ id: 's1', status: 'aprovado' })
-    ).rejects.toThrow(/empresa_id obrigatório/);
+    await expect(result.current.responderSolicitacao.mutateAsync({ id: 's1', status: 'aprovado' })).rejects.toThrow(
+      /empresa_id obrigatório/
+    );
     expect(mockFrom).not.toHaveBeenCalledWith('solicitacoes_ajuste_ponto');
   });
 
