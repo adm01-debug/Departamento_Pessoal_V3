@@ -1,3 +1,4 @@
+import type * as React from 'react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
@@ -19,13 +20,32 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
  * única — e também confere que o layout/conteúdo do modal não mudou.
  * ============================================================================
  */
+// `any` evitado de proposito: o ratchet do projeto
+// (scripts/ratchet-any-tests.mjs) proibe aumentar `any` em teste, e aqui nao e
+// preciso — estas sao as props de motion que o mock consome; o resto passa em
+// `rest` sem desligar o type-checker.
+type PropsDoMock = {
+  children?: React.ReactNode;
+  custom?: unknown;
+  variants?: unknown;
+  initial?: unknown;
+  animate?: unknown;
+  exit?: unknown;
+  style?: React.CSSProperties;
+  [outras: string]: unknown;
+};
+
 vi.mock('framer-motion', () => {
   const cache = new Map<unknown, unknown>();
 
   const capturar = (Tag: unknown) => {
     if (cache.has(Tag)) return cache.get(Tag);
-    const Componente = ({ children, custom, variants, initial, animate, exit, style, ...rest }: any) => {
-      const Props = Tag as any;
+    // `any` evitado de proposito: o ratchet do projeto (scripts/ratchet-any-tests.mjs)
+    // proibe aumentar `any` em teste, e aqui nao e preciso — o mock aceita
+    // qualquer prop de motion, entao `Record<string, unknown>` descreve isso sem
+    // desligar o type-checker, e o Tag entra como ElementType.
+    const Componente = ({ children, custom, variants, initial, animate, exit, style, ...rest }: PropsDoMock) => {
+      const Props = Tag as React.ElementType;
       return (
         <Props
           {...rest}

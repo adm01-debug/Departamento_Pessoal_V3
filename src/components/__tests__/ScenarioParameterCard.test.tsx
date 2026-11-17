@@ -3,7 +3,17 @@ import { useState } from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 
 vi.mock('@/components/ui/slider', () => ({
-  Slider: ({ value, onValueChange, 'aria-label': ariaLabel }: any) => (
+  // Tipado em vez de `any` (ver ratchet-any-tests.mjs): sao exatamente as 3
+  // props que este mock consome do Slider real.
+  Slider: ({
+    value,
+    onValueChange,
+    'aria-label': ariaLabel,
+  }: {
+    value?: number[];
+    onValueChange?: (v: number[]) => void;
+    'aria-label'?: string;
+  }) => (
     <input
       type="range"
       aria-label={ariaLabel}
