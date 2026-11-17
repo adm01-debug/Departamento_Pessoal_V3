@@ -27,6 +27,7 @@ const fakeCache = (name) => ({
     if (!cacheStore.has(name)) cacheStore.set(name, new Map());
     cacheStore.get(name).set(typeof req === 'string' ? req : req.url, res);
   },
+  delete: async (req) => cacheStore.get(name)?.delete(typeof req === 'string' ? req : req.url) ?? false,
   addAll: async () => {},
 });
 const caches = {
@@ -97,7 +98,7 @@ const scenarios = [
   ['A', 'asset js same-origin (SWR)', H + '/assets/app.js', {}, true],
   ['B', 'imagem same-origin (CacheFirst)', H + '/img/logo.png', {}, true],
   ['C', 'Google Fonts gstatic (dedicado)', 'https://fonts.gstatic.com/s/x.woff2', {}, true],
-  ['D', 'navegação HTML (SWR)', H + '/dashboard', { mode: 'navigate' }, true],
+  ['D', 'navegação HTML (NetworkFirst)', H + '/dashboard', { mode: 'navigate' }, true],
   // E–P e R usam mode:'navigate' (que a allowlist cachearia): sem isso o
   // default network-only escondia a remoção de cada regra de bloqueio.
   ['E', 'supabase COM Authorization', 'https://abc.supabase.co/rest/v1/holerites?select=*',
@@ -135,6 +136,47 @@ try {
 }
 sandbox.fetch = originalFetch;
 
+// V e W: o rewrite SPA da Vercel responde 200 `text/html` para qualquer asset
+// que não exista mais (hash antigo após um deploy). Esse HTML não pode entrar
+// no cache sob a URL do .js, nem ser servido de um cache já envenenado — é o
+// que fazia o browser recusar o módulo por MIME e o app não dar boot.
+const swrFn = vm.runInContext('staleWhileRevalidate', sandbox);
+const CORE = vm.runInContext('CORE_CACHE', sandbox);
+const htmlDoRewrite = () =>
+  new Response('<!doctype html><html></html>', {
+    status: 200,
+    headers: { 'content-type': 'text/html; charset=utf-8' },
+  });
+
+const urlAssetMorto = H + '/assets/index-HASHMORTO.js';
+cacheStore.set(CORE, new Map());
+sandbox.fetch = async () => htmlDoRewrite();
+await swrFn(new Request(urlAssetMorto), CORE);
+const naoEnvenenou = !cacheStore.get(CORE)?.has(urlAssetMorto);
+if (!naoEnvenenou) failures++;
+results.push(`${naoEnvenenou ? '✅' : '❌'} V HTML do rewrite não entra no cache sob a URL do .js`);
+
+// W: cache já envenenado por uma versão anterior do SW — descarta e vai à rede.
+cacheStore.get(CORE).set(urlAssetMorto, htmlDoRewrite());
+sandbox.fetch = async () =>
+  new Response('export default 1', { status: 200, headers: { 'content-type': 'application/javascript' } });
+const servido = await swrFn(new Request(urlAssetMorto), CORE);
+const serviuJs = /javascript/i.test(servido?.headers?.get('content-type') || '');
+if (!serviuJs) failures++;
+results.push(`${serviuJs ? '✅' : '❌'} W entrada envenenada é descartada em favor da rede`);
+
+// X: a navegação é NetworkFirst — o HTML fresco da rede vence o cache antigo,
+// senão o usuário recebe a casca de um deploy cujos assets já não existem.
+const networkFirstFn = vm.runInContext('networkFirst', sandbox);
+const urlNav = H + '/login';
+cacheStore.get(CORE).set(urlNav, new Response('ANTIGO', { status: 200, headers: { 'content-type': 'text/html' } }));
+sandbox.fetch = async () => new Response('NOVO', { status: 200, headers: { 'content-type': 'text/html' } });
+const corpoNav = await (await networkFirstFn(new Request(urlNav), CORE))?.text();
+const vencuRede = corpoNav === 'NOVO';
+if (!vencuRede) failures++;
+results.push(`${vencuRede ? '✅' : '❌'} X navegação serve o HTML da rede, não o cacheado`);
+sandbox.fetch = originalFetch;
+
 // T: ativação limpa somente caches deste app; caches de outras aplicações
 // no mesmo origin não podem ser apagados.
 cacheStore.set('third-party-cache', new Map());
@@ -150,6 +192,6 @@ results.push(`${scopedCleanupOk ? '✅' : '❌'} T limpeza de cache limitada ao 
 
 console.log(results.join('\n'));
 console.log(failures === 0
-  ? `\n✅ SW-TEST: ${scenarios.length + 2}/${scenarios.length + 2} cenários OK`
-  : `\n❌ SW-TEST: ${failures} falha(s) em ${scenarios.length + 2} cenários`);
+  ? `\n✅ SW-TEST: ${scenarios.length + 5}/${scenarios.length + 5} cenários OK`
+  : `\n❌ SW-TEST: ${failures} falha(s) em ${scenarios.length + 5} cenários`);
 process.exit(failures === 0 ? 0 : 1);
