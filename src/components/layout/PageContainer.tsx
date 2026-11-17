@@ -4,8 +4,8 @@
  * @category Layout
  */
 
-import React from "react";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { cn } from '@/lib/utils';
 
 /**
  * Props do componente PageContainer
@@ -22,9 +22,9 @@ interface PageContainerProps {
   /** Breadcrumbs */
   breadcrumbs?: React.ReactNode;
   /** Largura máxima do conteúdo */
-  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "full";
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   /** Padding interno */
-  padding?: "none" | "sm" | "md" | "lg";
+  padding?: 'none' | 'sm' | 'md' | 'lg';
   /** Classes CSS adicionais */
   className?: string;
 }
@@ -33,22 +33,22 @@ interface PageContainerProps {
  * Mapeamento de larguras máximas
  */
 const maxWidthClasses: Record<string, string> = {
-  sm: "max-w-screen-sm",
-  md: "max-w-screen-md",
-  lg: "max-w-screen-lg",
-  xl: "max-w-screen-xl",
-  "2xl": "max-w-screen-2xl",
-  full: "max-w-full",
+  sm: 'max-w-screen-sm',
+  md: 'max-w-screen-md',
+  lg: 'max-w-screen-lg',
+  xl: 'max-w-screen-xl',
+  '2xl': 'max-w-screen-2xl',
+  full: 'max-w-full',
 };
 
 /**
  * Mapeamento de paddings
  */
 const paddingClasses: Record<string, string> = {
-  none: "p-0",
-  sm: "p-4",
-  md: "p-6",
-  lg: "p-8",
+  none: 'p-0',
+  sm: 'p-4',
+  md: 'p-6',
+  lg: 'p-8',
 };
 
 /**
@@ -74,54 +74,33 @@ export const PageContainer = React.memo(function PageContainer({
   description,
   actions,
   breadcrumbs,
-  maxWidth = "2xl",
-  padding = "md",
+  maxWidth = '2xl',
+  padding = 'md',
   className,
 }: PageContainerProps) {
   return (
-    <div
-      className={cn(
-        "w-full mx-auto",
-        maxWidthClasses[maxWidth],
-        paddingClasses[padding],
-        className
-      )}
-    >
+    <div className={cn('w-full mx-auto', maxWidthClasses[maxWidth], paddingClasses[padding], className)}>
       {/* Breadcrumbs */}
-      {breadcrumbs && (
-        <div className="mb-4">
-          {breadcrumbs}
-        </div>
-      )}
+      {breadcrumbs && <div className="mb-4">{breadcrumbs}</div>}
 
       {/* Page Header */}
       {(title || actions) && (
         <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            {title && (
-              <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-            )}
-            {description && (
-              <p className="text-muted-foreground mt-1">{description}</p>
-            )}
+            {title && <h1 className="text-2xl font-medium tracking-tight">{title}</h1>}
+            {description && <p className="text-muted-foreground mt-1">{description}</p>}
           </div>
-          {actions && (
-            <div className="flex items-center gap-2">
-              {actions}
-            </div>
-          )}
+          {actions && <div className="flex items-center gap-2">{actions}</div>}
         </div>
       )}
 
       {/* Page Content */}
-      <div className="space-y-6">
-        {children}
-      </div>
+      <div className="space-y-6">{children}</div>
     </div>
   );
 });
 
-PageContainer.displayName = "PageContainer";
+PageContainer.displayName = 'PageContainer';
 
 export default PageContainer;
 export type { PageContainerProps };

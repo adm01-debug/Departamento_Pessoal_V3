@@ -4,6 +4,13 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Building2, Check, ChevronDown, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { DROPDOWN_MOTION } from '@/components/ui/motion-presets';
+
+// EXCECAO DOCUMENTADA a arquitetura DropdownMenu/Popover do design system:
+// isto e um disclosure INLINE (empurra o conteudo da sidebar abaixo via
+// `height: auto`), nao um overlay flutuante — migrar para `DropdownMenu`
+// mudaria o layout real. Fica como Framer Motion proprio, mas consumindo os
+// MESMOS tokens de tempo do resto do sistema, nao numeros a parte.
 
 interface EmpresaSelectorProps {
   collapsed: boolean;
@@ -87,7 +94,13 @@ export function EmpresaSelector({
         </div>
         {temMultiplasEmpresas && (
           <ChevronDown
-            className={cn('h-3.5 w-3.5 text-muted-foreground/50 transition-transform', menuOpen && 'rotate-180')}
+            className={cn(
+              // `duration-200` e o degrau estatico mais proximo dos 220ms de
+              // `DROPDOWN_MOTION.openDurationMs`: interpolar o token na classe
+              // nao funciona (o Tailwind nao ve a string montada em runtime).
+              'h-3.5 w-3.5 text-muted-foreground/50 transition-transform duration-200 ease-out',
+              menuOpen && 'rotate-180'
+            )}
           />
         )}
       </button>
@@ -98,7 +111,7 @@ export function EmpresaSelector({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            transition={{ duration: DROPDOWN_MOTION.openDurationMs / 1000, ease: 'easeOut' }}
             className="overflow-hidden"
           >
             <div className="mt-1 rounded-xl border border-border/20 bg-sidebar-accent/40 p-1">
