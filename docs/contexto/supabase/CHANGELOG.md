@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-17 21:17 UTC
+
+- **lints** adicionado (8): `policy_auth_fn_not_wrapped:storage.objects.afastamentos_insert_authenticated`, `policy_auth_fn_not_wrapped:storage.objects.afastamentos_select_authenticated`, `policy_auth_fn_not_wrapped:storage.objects.afastamentos_update_authenticated`, `policy_auth_fn_not_wrapped:storage.objects.docs_colab_insert_authenticated`, `policy_auth_fn_not_wrapped:storage.objects.docs_colab_select_authenticated`, `policy_auth_fn_not_wrapped:storage.objects.documentos_insert_authenticated`, `policy_auth_fn_not_wrapped:storage.objects.documentos_select_authenticated`, `policy_auth_fn_not_wrapped:storage.objects.documentos_update_authenticated`
+- **policies (RLS)** adicionado (8): `storage.objects.afastamentos_insert_authenticated`, `storage.objects.afastamentos_select_authenticated`, `storage.objects.afastamentos_update_authenticated`, `storage.objects.docs_colab_insert_authenticated`, `storage.objects.docs_colab_select_authenticated`, `storage.objects.documentos_insert_authenticated`, `storage.objects.documentos_select_authenticated`, `storage.objects.documentos_update_authenticated`
+
 ## 2026-11-17 20:14 UTC
 
 - **colunas** adicionado (6): `public.documentos.mime_type`, `public.documentos.nome_arquivo`, `public.documentos.storage_path`, `public.documentos.tamanho`, `public.documentos_pessoais_arquivos.mime_type`, `public.documentos_pessoais_arquivos.storage_path`

@@ -138243,6 +138243,54 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.afastamentos_insert_authenticated",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.afastamentos_select_authenticated",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.afastamentos_update_authenticated",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.docs_colab_insert_authenticated",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.docs_colab_select_authenticated",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.documentos_insert_authenticated",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.documentos_select_authenticated",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.documentos_update_authenticated",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "storage.objects.tenant_delete_comprovantes_despesas",
         "severity": "BAIXA"
       },
@@ -146026,6 +146074,42 @@
         "with_check": "(EXISTS ( SELECT 1\n   FROM workflows_execucoes e\n  WHERE ((e.id = workflows_historico.execucao_id) AND (e.empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas)))))"
       },
       {
+        "cmd": "INSERT",
+        "name": "afastamentos_insert_authenticated",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": null,
+        "with_check": "((bucket_id = 'afastamentos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "afastamentos_select_authenticated",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'afastamentos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "afastamentos_update_authenticated",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'afastamentos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))",
+        "with_check": "((bucket_id = 'afastamentos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))"
+      },
+      {
         "cmd": "ALL",
         "name": "backups_service_role_all",
         "permissive": "PERMISSIVE",
@@ -146050,6 +146134,30 @@
         "with_check": null
       },
       {
+        "cmd": "INSERT",
+        "name": "docs_colab_insert_authenticated",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": null,
+        "with_check": "((bucket_id = 'documentos-colaboradores'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "docs_colab_select_authenticated",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'documentos-colaboradores'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))",
+        "with_check": null
+      },
+      {
         "cmd": "DELETE",
         "name": "documentos_delete_rh_admin",
         "permissive": "PERMISSIVE",
@@ -146060,6 +146168,42 @@
         "table": "objects",
         "using": "((bucket_id = 'documentos'::text) AND pode_gerir_rh(storage_path_empresa_id(name)))",
         "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "name": "documentos_insert_authenticated",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": null,
+        "with_check": "((bucket_id = 'documentos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "documentos_select_authenticated",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'documentos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "documentos_update_authenticated",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'documentos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))",
+        "with_check": "((bucket_id = 'documentos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))"
       },
       {
         "cmd": "DELETE",
