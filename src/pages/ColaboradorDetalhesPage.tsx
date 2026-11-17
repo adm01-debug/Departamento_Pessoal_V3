@@ -66,6 +66,10 @@ import {
 } from '@/components/colaborador-detalhes';
 import { RecontratarColaboradorDialog } from '@/components/colaboradores/RecontratarColaboradorDialog';
 import { PendenciasDialog, type PendenciaItem } from '@/components/colaborador-detalhes/PendenciasDialog';
+import { ProximosEventosDialog, type EventoDetalhado } from '@/components/colaborador-detalhes/ProximosEventosDialog';
+import { destinoPendencia, destinoEvento, type DestinoDossie } from '@/components/colaborador-detalhes/destinosDossie';
+import { format } from 'date-fns';
+import { parseDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
 import { usePendenciasColaborador } from '@/hooks/usePendenciasColaborador';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -89,6 +93,7 @@ export default function ColaboradorDetalhesPage() {
   const [activeJornadaTab, setActiveJornadaTab] = useState('ponto');
   const [recontratarAberto, setRecontratarAberto] = useState(false);
   const [pendenciasAberto, setPendenciasAberto] = useState(false);
+  const [eventosAberto, setEventosAberto] = useState(false);
 
   const { data: colaborador, isLoading } = useQuery({
     queryKey: ['colaborador', id, empresaAtual?.id],
@@ -104,6 +109,18 @@ export default function ColaboradorDetalhesPage() {
   // pendencia; a pagina decide o ICONE e PARA ONDE o "Resolver agora" leva,
   // porque so ela conhece as abas e as rotas.
   const { pendencias } = usePendenciasColaborador(id!, empresaAtual?.id);
+
+  // Aplica o destino: aba principal E sub-aba. Os dois estados sao
+  // independentes, por isso as duas trocas tem de acontecer juntas.
+  const irPara = (d: DestinoDossie) => {
+    setActiveMainTab(d.principal);
+    if (!d.sub) return;
+    if (d.principal === 'jornada') setActiveJornadaTab(d.sub);
+    else if (d.principal === 'profissional') setActiveProfissionalTab(d.sub);
+    else if (d.principal === 'documentos') setActiveDocumentosTab(d.sub);
+    else if (d.principal === 'pessoal') setActivePessoalTab(d.sub);
+    else if (d.principal === 'financeiro') setActiveFinanceiroTab(d.sub);
+  };
   const ICONE_PENDENCIA = {
     ponto: Clock,
     onboarding: GraduationCap,
@@ -116,22 +133,62 @@ export default function ColaboradorDetalhesPage() {
     contexto: p.contexto,
     itens: p.itens,
     severidade: p.severidade,
-    onClick: () => {
-      if (p.chave === 'ponto') {
-        setActiveMainTab('jornada');
-        setActiveJornadaTab('ponto');
-        return;
-      }
-      if (p.chave === 'onboarding') {
-        setActiveMainTab('profissional');
-        return;
-      }
-      if (p.chave === 'aso') {
-        navigate('/sst');
-        return;
-      }
-      setActiveMainTab('pessoal');
-    },
+    // Aba principal E sub-aba: trocar so a principal deixa a sub-aba no padrao
+    // dela, entao o botao prometia um destino e entregava outro. Achado do
+    // Devin e do Codex na #641; o mesmo defeito veio da #639, corrigido aqui.
+    onClick: () => irPara(destinoPendencia(p.chave)),
+  }));
+
+  // Proximos Eventos — o cartao da aba Geral era TEXTO FIXO ("Periodo vence em
+  // 45 dias", "ASO em conformidade") mesmo com `useProximosEventos` ja
+  // carregado na pagina e alimentando a timeline. Agora o cartao le os eventos
+  // de verdade, e o detalhe abre no dialogo resgatado da `muri`.
+  const ICONE_EVENTO: Record<string, typeof Calendar> = {
+    experiencia: Clock,
+    ferias_vencimento: Calendar,
+    ferias_inicio: Calendar,
+    aso: Stethoscope,
+    documento: FileWarning,
+    onboarding: GraduationCap,
+  };
+  // Por que cada evento importa, em portugues de RH. O hook nao preenche
+  // `descricao` (campo opcional, nunca setado), entao o texto mora aqui.
+  const CONTEXTO_EVENTO: Record<string, string> = {
+    experiencia:
+      'Fim do periodo de experiencia. Depois desta data o contrato passa a ser por prazo indeterminado: se a intencao for nao efetivar, a rescisao precisa acontecer ANTES do prazo, senao incide aviso previo e multa do FGTS.',
+    ferias_vencimento:
+      'Limite legal para conceder as ferias deste periodo aquisitivo (CLT art. 134). Passando a data, a empresa paga em dobro.',
+    ferias_inicio:
+      'Inicio de ferias ja programadas. O aviso ao colaborador deve sair com 30 dias de antecedencia e o pagamento, 2 dias antes do inicio.',
+    aso: 'Vencimento do Atestado de Saude Ocupacional. Pela NR-7 (PCMSO), o exame precisa ser renovado antes de vencer.',
+    documento:
+      'Vencimento de documento pessoal cadastrado. Documento vencido trava compliance, beneficios e auditoria.',
+    onboarding:
+      'Prazo de tarefa do plano de integracao. Atraso pode travar acessos, equipamentos e beneficios do periodo de adaptacao.',
+  };
+  function quandoLabel(dataISO: string): string {
+    const d = parseDateLocalISO(dataISO);
+    const hoje = parseDateLocalISO(todayLocalISO());
+    if (!d || !hoje) return '';
+    const dias = Math.round((d.getTime() - hoje.getTime()) / 86400000);
+    if (dias < 0) return 'atrasado';
+    if (dias === 0) return 'hoje';
+    if (dias === 1) return 'amanha';
+    return `em ${dias} dias`;
+  }
+  function dataBRevento(dataISO: string): string {
+    const d = parseDateLocalISO(dataISO);
+    return d ? format(d, 'dd/MM/yyyy') : '—';
+  }
+  const eventosDetalhados: EventoDetalhado[] = proximosEventos.eventos.map((e) => ({
+    icon: ICONE_EVENTO[e.tipo] ?? Calendar,
+    titulo: e.titulo,
+    categoria: e.categoria,
+    dataFormatada: dataBRevento(e.data),
+    quandoLabel: quandoLabel(e.data),
+    badge: e.badge,
+    contexto: e.descricao ?? CONTEXTO_EVENTO[e.tipo] ?? '',
+    onClick: () => irPara(destinoEvento(e.tipo)),
   }));
 
   if (isLoading)
@@ -363,26 +420,49 @@ export default function ColaboradorDetalhesPage() {
                     <div className="flex items-center gap-2 font-display font-bold text-lg">
                       <Calendar className="h-5 w-5 text-primary" /> Próximos Eventos
                     </div>
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3 p-3 rounded-xl border border-warning/20 bg-warning/5">
-                        <div className="h-8 w-8 rounded-lg bg-warning/10 flex items-center justify-center">
-                          <Calendar className="h-4 w-4 text-warning" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold">Férias</p>
-                          <p className="text-[10px] text-muted-foreground">Período vence em 45 dias</p>
-                        </div>
+                    {/* Dados REAIS de `useProximosEventos`. Antes isto era texto fixo
+                        ("Período vence em 45 dias", "ASO em conformidade") — dizia
+                        conformidade mesmo para quem tinha ASO vencido. O hook
+                        distingue lista vazia de falha de carga (`isError`), e o
+                        cartão respeita essa diferença: ver o comentário em
+                        `ProximosEventosResultado`. */}
+                    {proximosEventos.isError ? (
+                      <p className="text-xs text-muted-foreground">
+                        Não foi possível carregar os próximos eventos. A lista pode estar incompleta.
+                      </p>
+                    ) : eventosDetalhados.length === 0 ? (
+                      <p className="text-xs text-muted-foreground">
+                        {proximosEventos.isLoading ? 'Carregando…' : 'Nenhum evento futuro identificado.'}
+                      </p>
+                    ) : (
+                      <div className="space-y-3">
+                        {eventosDetalhados.slice(0, 3).map((e) => (
+                          <div
+                            key={`${e.titulo}-${e.dataFormatada}`}
+                            className="flex items-center gap-3 p-3 rounded-xl border border-border/30 bg-muted/20"
+                          >
+                            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                              <e.icon className="h-4 w-4 text-primary" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-xs font-bold truncate">{e.titulo}</p>
+                              <p className="text-[10px] text-muted-foreground">
+                                {e.dataFormatada}
+                                {e.quandoLabel ? ` · ${e.quandoLabel}` : ''}
+                              </p>
+                            </div>
+                            <Badge variant={e.badge.tone} size="sm" className="shrink-0">
+                              {e.badge.label}
+                            </Badge>
+                          </div>
+                        ))}
+                        <Button variant="outline" size="sm" className="w-full" onClick={() => setEventosAberto(true)}>
+                          {eventosDetalhados.length > 3
+                            ? `Ver todos os ${eventosDetalhados.length} eventos`
+                            : 'Ver detalhes'}
+                        </Button>
                       </div>
-                      <div className="flex items-center gap-3 p-3 rounded-xl border border-success/20 bg-success/5">
-                        <div className="h-8 w-8 rounded-lg bg-success/10 flex items-center justify-center">
-                          <Stethoscope className="h-4 w-4 text-success" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold">Exame Periódico</p>
-                          <p className="text-[10px] text-muted-foreground">ASO em conformidade</p>
-                        </div>
-                      </div>
-                    </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>
@@ -650,6 +730,8 @@ export default function ColaboradorDetalhesPage() {
       />
 
       <PendenciasDialog open={pendenciasAberto} onOpenChange={setPendenciasAberto} pendencias={pendenciasDetalhadas} />
+
+      <ProximosEventosDialog open={eventosAberto} onOpenChange={setEventosAberto} eventos={eventosDetalhados} />
     </>
   );
 }
