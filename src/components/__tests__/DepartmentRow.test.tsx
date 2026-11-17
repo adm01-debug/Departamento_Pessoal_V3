@@ -71,10 +71,15 @@ describe('DepartmentRow — ícone do departamento', () => {
     // Grid, altura e espaçamento do subdepartamento intactos.
     const row = container.firstElementChild as HTMLElement;
     expect(classes(row)).toContain('h-12');
-    expect(row.className).toMatch(/grid-cols-\[minmax\(0,1fr\)_120px_168px\]/);
+    // A reserva fixa das duas colunas de contagem vale de `sm` para cima; abaixo
+    // disso as colunas sao `auto`, senao em 375px nao sobra largura para o nome.
+    expect(row.className).toMatch(/sm:grid-cols-\[minmax\(0,1fr\)_120px_168px\]/);
+    expect(row.className).toMatch(/(?:^|\s)grid-cols-\[minmax\(0,1fr\)\]/);
 
     // Textos intactos: nome, contador de colaboradores e de subdepartamentos.
     expect(screen.getByText('Financeiro')).toBeInTheDocument();
+    // O numero fica sempre visivel e a palavra entra a partir de `sm` (dois nos
+    // de texto), por isso a busca e pelo conteudo do elemento.
     expect(screen.getByText('2 colaboradores')).toBeInTheDocument();
     expect(screen.getByText('1 subdepartamento')).toBeInTheDocument();
     // O contador de subdepartamentos já era azul (`text-info`) — segue igual.

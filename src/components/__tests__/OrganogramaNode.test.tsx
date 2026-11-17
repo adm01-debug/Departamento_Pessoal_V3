@@ -5,7 +5,13 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import { OrganogramaNode } from '../organograma/OrganogramaNode';
-import { CASCADE_DURATION, CASCADE_STEP, cascadeVariants } from '../organograma/organogramaCascade';
+import {
+  CASCADE_DURATION,
+  CASCADE_ENTER_MAX_WINDOW,
+  CASCADE_STEP,
+  cascadeEnterDelay,
+  cascadeVariants,
+} from '../organograma/organogramaCascade';
 import {
   REVEAL_CLOSE_DURATION,
   REVEAL_CLOSE_EASE,
@@ -391,6 +397,24 @@ describe('OrganogramaNode — entrada em cascata (mesma da Timeline de colaborad
     expect(quarto.transition.delay).toBeCloseTo(0.3, 10);
     expect(quarto.transition.duration).toBe(0.7);
     expect(quarto.transition.ease).toEqual([0.25, 0.46, 0.45, 0.94]);
+  });
+
+  it('tem TETO: o indice global nao vira espera sem limite', () => {
+    // `buildCascadeIndex` entrega a posicao da row na arvore INTEIRA. Sem teto,
+    // `enter * CASCADE_STEP` deixaria a row 300 de uma empresa grande 30 segundos
+    // com opacidade 0 — o RH leria aquilo como conteudo ausente, nao como
+    // animacao. O degrau cheio vale ate o teto; dai pra frente as rows entram
+    // juntas.
+    expect(CASCADE_ENTER_MAX_WINDOW).toBe(1.6);
+    expect(cascadeEnterDelay(0)).toBe(0);
+    expect(cascadeEnterDelay(3)).toBeCloseTo(3 * CASCADE_STEP, 10);
+    expect(cascadeEnterDelay(16)).toBeCloseTo(CASCADE_ENTER_MAX_WINDOW, 10);
+    expect(cascadeEnterDelay(300)).toBe(CASCADE_ENTER_MAX_WINDOW);
+    expect(cascadeVariants.visible({ enter: 300 }).transition.delay).toBe(CASCADE_ENTER_MAX_WINDOW);
+
+    // Indice invalido entra sem espera, em vez de NaN no delay.
+    expect(cascadeEnterDelay(Number.NaN)).toBe(0);
+    expect(cascadeEnterDelay(-5)).toBe(0);
   });
 
   it('sai na ordem INVERSA da entrada: o último item do bloco vai embora primeiro', () => {

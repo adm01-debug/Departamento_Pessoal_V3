@@ -22,8 +22,12 @@ function getInitials(name: string) {
 export function EmployeeRow({ colaborador }: EmployeeRowProps) {
   const pii = usePiiMask();
 
+  // A coluna de contato reserva os 260px do e-mail apenas de `lg` para cima,
+  // onde o texto do endereco de fato aparece; abaixo disso ela e `auto` (so o
+  // icone) e o nome do colaborador fica com a largura restante. Em 375px a
+  // reserva fixa comia o nome depois dos recuos da arvore.
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)_260px] items-center gap-2 h-10 px-2.5 rounded-md hover:bg-muted/5 transition-colors">
+    <div className="grid grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_260px] items-center gap-2 h-10 px-2.5 rounded-md hover:bg-muted/5 transition-colors">
       <div className="flex items-center gap-2.5 min-w-0">
         <Avatar className="h-7 w-7 shrink-0">
           <AvatarImage src={colaborador.foto_url || undefined} />

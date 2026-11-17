@@ -11,7 +11,17 @@ interface DepartmentRowProps {
   subDepartamentosCount: number;
 }
 
-const COUNT_GRID_COLS = 'grid-cols-[minmax(0,1fr)_120px_168px]';
+/**
+ * As duas colunas de contagem reservavam 288px em QUALQUER largura. Em 375px,
+ * descontados os recuos de cada nivel da arvore, o padding, a seta e o badge do
+ * icone, nao sobrava largura util para o nome do departamento — que truncava ate
+ * desaparecer. Agora a reserva fixa vale de `sm` para cima; abaixo disso as
+ * colunas sao `auto` e os contadores mostram so o numero (a palavra inteira
+ * so a coluna do nome existe e os dois contadores saem da linha — informacao
+ * secundaria, enquanto o nome do departamento e o proprio conteudo (quem toca a
+ * row ve os colaboradores de verdade).
+ */
+const COUNT_GRID_COLS = 'grid-cols-[minmax(0,1fr)] sm:grid-cols-[minmax(0,1fr)_120px_168px]';
 
 export function DepartmentRow({
   nome,
@@ -66,11 +76,11 @@ export function DepartmentRow({
         </span>
       </div>
 
-      <span className="text-[11px] text-muted-foreground text-right shrink-0">
+      <span className="hidden sm:block text-[11px] text-muted-foreground text-right shrink-0">
         {colaboradoresCount} {pluralize(colaboradoresCount, 'colaborador', 'colaboradores')}
       </span>
 
-      <span className="text-[11px] text-info text-right shrink-0">
+      <span className="hidden sm:block text-[11px] text-info text-right shrink-0">
         {subDepartamentosCount} {pluralize(subDepartamentosCount, 'subdepartamento', 'subdepartamentos')}
       </span>
     </div>

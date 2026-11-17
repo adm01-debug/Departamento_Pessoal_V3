@@ -158,6 +158,7 @@ export default function OrganogramaPage() {
               onSearchChange={setSearch}
               onExpandAll={handleExpandAll}
               onCollapseAll={handleCollapseAll}
+              acoesDesabilitadas={isSearching}
             />
           </div>
         </AnimatePresence>

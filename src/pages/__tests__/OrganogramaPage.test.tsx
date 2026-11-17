@@ -364,4 +364,26 @@ describe('OrganogramaPage', () => {
     expect(screen.queryByText('ana.souza@example.com')).not.toBeInTheDocument();
     expect(container.querySelectorAll('a[href^="mailto:"]').length).toBe(0);
   });
+
+  it('durante a busca, expandir/recolher ficam desabilitados em vez de nao fazer nada', async () => {
+    // O resultado da busca nasce expandido pelos `matchedIds` e `expandedIds` fica
+    // ignorado: clicar nas duas acoes nao teria efeito visivel, so mudaria em
+    // silencio o estado que reaparece quando o filtro sai.
+    const user = userEvent.setup();
+    mockUseOrganograma.mockReturnValue({ dados: TREE, isLoading: false, error: null, refetch: vi.fn() });
+    renderPage();
+
+    const expandir = screen.getByRole('button', { name: /Expandir tudo/i });
+    const recolher = screen.getByRole('button', { name: /Recolher tudo/i });
+    expect(expandir).toBeEnabled();
+    expect(recolher).toBeEnabled();
+
+    await user.type(screen.getByPlaceholderText('Buscar na estrutura...'), 'Tecnologia');
+    expect(expandir).toBeDisabled();
+    expect(recolher).toBeDisabled();
+
+    await user.clear(screen.getByPlaceholderText('Buscar na estrutura...'));
+    expect(expandir).toBeEnabled();
+    expect(recolher).toBeEnabled();
+  });
 });

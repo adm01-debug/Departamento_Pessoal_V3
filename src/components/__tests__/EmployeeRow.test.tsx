@@ -74,4 +74,14 @@ describe('EmployeeRow', () => {
     render(<EmployeeRow colaborador={{ ...COLABORADOR, cargo: null }} />);
     expect(screen.getByText('Membro')).toBeInTheDocument();
   });
+
+  it('reserva os 260px da coluna de contato só a partir de lg', () => {
+    // Em 375px, com o texto do e-mail já escondido pelo `hidden lg:inline`, uma
+    // reserva fixa de 260px consumia a largura do nome depois dos recuos da
+    // árvore. Abaixo de `lg` a coluna é `auto` — cabe o ícone e sobra o resto.
+    const { container } = render(<EmployeeRow colaborador={COLABORADOR} />);
+    const row = container.firstElementChild as HTMLElement;
+    expect(row.className).toMatch(/lg:grid-cols-\[minmax\(0,1fr\)_260px\]/);
+    expect(row.className).toMatch(/(?:^|\s)grid-cols-\[minmax\(0,1fr\)_auto\]/);
+  });
 });

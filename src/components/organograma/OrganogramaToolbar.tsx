@@ -10,6 +10,14 @@ interface OrganogramaToolbarProps {
   onSearchChange: (value: string) => void;
   onExpandAll: () => void;
   onCollapseAll: () => void;
+  /**
+   * Durante a busca a arvore e expandida pelos `matchedIds` (o resultado nasce
+   * aberto) e `expandedIds` fica ignorado — logo "Expandir tudo" e "Recolher
+   * tudo" nao teriam efeito visivel, so mudariam em silencio o estado que
+   * reaparece quando o filtro sai. Em vez de aceitar o clique e nao fazer nada,
+   * as duas acoes ficam desabilitadas, com o motivo no `title`.
+   */
+  acoesDesabilitadas?: boolean;
 }
 
 /**
@@ -121,7 +129,16 @@ function variantesIconeAcao(deslocamentoEmPx: number): Variants {
 const ICONE_EXPANDIR = variantesIconeAcao(2);
 const ICONE_RECOLHER = variantesIconeAcao(-2);
 
-export function OrganogramaToolbar({ search, onSearchChange, onExpandAll, onCollapseAll }: OrganogramaToolbarProps) {
+export function OrganogramaToolbar({
+  search,
+  onSearchChange,
+  onExpandAll,
+  onCollapseAll,
+  acoesDesabilitadas = false,
+}: OrganogramaToolbarProps) {
+  const motivoDesabilitado = acoesDesabilitadas
+    ? 'Durante a busca o resultado ja aparece expandido. Limpe a busca para expandir ou recolher a arvore.'
+    : undefined;
   return (
     <div className="flex items-center gap-2 h-11 flex-1 min-w-[280px]">
       <motion.div
@@ -149,7 +166,14 @@ export function OrganogramaToolbar({ search, onSearchChange, onExpandAll, onColl
         whileTap={TAP_ACAO}
         className="shrink-0"
       >
-        <Button variant="outline" size="default" className={LIME_DESTAQUE} onClick={onExpandAll}>
+        <Button
+          variant="outline"
+          size="default"
+          className={LIME_DESTAQUE}
+          onClick={onExpandAll}
+          disabled={acoesDesabilitadas}
+          title={motivoDesabilitado}
+        >
           <motion.span variants={ICONE_EXPANDIR} className="inline-flex">
             <ChevronsUpDown className="h-3.5 w-3.5 mr-1.5" />
           </motion.span>
@@ -166,7 +190,14 @@ export function OrganogramaToolbar({ search, onSearchChange, onExpandAll, onColl
         whileTap={TAP_ACAO}
         className="shrink-0"
       >
-        <Button variant="outline" size="default" className={LIME_DESTAQUE} onClick={onCollapseAll}>
+        <Button
+          variant="outline"
+          size="default"
+          className={LIME_DESTAQUE}
+          onClick={onCollapseAll}
+          disabled={acoesDesabilitadas}
+          title={motivoDesabilitado}
+        >
           <motion.span variants={ICONE_RECOLHER} className="inline-flex">
             <ChevronsDownUp className="h-3.5 w-3.5 mr-1.5" />
           </motion.span>

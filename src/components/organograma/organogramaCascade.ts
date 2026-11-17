@@ -158,12 +158,36 @@ export function cascadeItemExitDelay(items: number, rankFromEnd = 0) {
   return rank * cascadeItemStep(total);
 }
 
+/**
+ * Teto do escalonamento da ENTRADA, em segundos. `buildCascadeIndex` entrega um
+ * indice GLOBAL (a posicao da row na arvore inteira), e `enter * CASCADE_STEP`
+ * sem teto transforma isso em espera sem limite: numa empresa com 300 rows a de
+ * indice 300 ficaria 30 segundos com opacidade 0 — conteudo que o RH le como
+ * ausente, nao como animado. O mesmo acontecia ao reabrir um departamento no fim
+ * da arvore, cujos colaboradores herdam o indice de tudo que vem antes.
+ *
+ * A saida ja tinha o teto dela (`CASCADE_EXIT_MAX_WINDOW`); aqui o degrau cheio
+ * vale para as primeiras rows — as que o olho de fato acompanha, cerca de uma
+ * tela — e, passado o teto, as demais entram juntas em vez de somar espera.
+ */
+export const CASCADE_ENTER_MAX_WINDOW = 1.6;
+
+/**
+ * Atraso de entrada de UMA row, em segundos: o degrau cheio ate
+ * `CASCADE_ENTER_MAX_WINDOW`, e o teto dai pra frente. Indice invalido ou
+ * negativo entra sem espera.
+ */
+export function cascadeEnterDelay(enter = 0) {
+  if (!Number.isFinite(enter) || enter <= 0) return 0;
+  return Math.min(Math.floor(enter) * CASCADE_STEP, CASCADE_ENTER_MAX_WINDOW);
+}
+
 export const cascadeVariants = {
   hidden: { opacity: 0, x: -10 },
   visible: ({ enter = 0 }: CascadeOrder = {}) => ({
     opacity: 1,
     x: 0,
-    transition: { delay: enter * CASCADE_STEP, duration: CASCADE_DURATION, ease: CASCADE_EASE },
+    transition: { delay: cascadeEnterDelay(enter), duration: CASCADE_DURATION, ease: CASCADE_EASE },
   }),
   /**
    * Saída do item. Não usa `x` (o item não volta pra esquerda): ele apenas sobe
