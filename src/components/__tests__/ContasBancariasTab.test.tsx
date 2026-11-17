@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react';
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 vi.mock('@/hooks/useTabelasReferencia', () => ({
   useContasBancarias: vi.fn(),
   useCriarContaBancaria: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
+  useAtualizarContaBancaria: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
   useExcluirContaBancaria: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
 }));
 
@@ -13,11 +14,31 @@ vi.mock('sonner', () => ({
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  // O componente controla o diálogo por `onOpenChange` (é ele que limpa o
+  // modo edição ao fechar), então o mock precisa oferecer esse caminho.
+  Dialog: ({ children, onOpenChange }: { children?: ReactNode; onOpenChange?: (aberto: boolean) => void }) => (
+    <div>
+      <button aria-label="fechar-dialogo" onClick={() => onOpenChange?.(false)} />
+      {children}
+    </div>
+  ),
   DialogContent: ({ children }: { children?: ReactNode }) => <div role="dialog">{children}</div>,
   DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
   DialogTrigger: ({ children }: { children?: ReactNode }) => children,
+}));
+
+// `usePiiMask` real devolve `canViewPii: false` sem AuthContext — os casos de
+// edição precisam do papel que VÊ o dado bancário (admin/rh), e um caso
+// precisa do contrário, para provar que sem permissão não se edita.
+let podeVerPii = false;
+vi.mock('@/hooks/usePiiMask', () => ({
+  usePiiMask: () => ({
+    canViewPii: podeVerPii,
+    bankAccount: (v?: string | null) => (podeVerPii ? (v ?? '') : maskBankAccount(v)),
+    pix: (tipo?: string | null, chave?: string | null) =>
+      podeVerPii ? (chave ?? '') : (tipo ?? '').toLowerCase() === 'cpf' ? maskCpfDisplay(chave) : '***',
+  }),
 }));
 
 vi.mock('@/components/ui/spinner', () => ({
@@ -34,7 +55,7 @@ vi.mock('@/components/ui/select', () => ({
   ),
 }));
 
-import { useContasBancarias } from '@/hooks/useTabelasReferencia';
+import { useAtualizarContaBancaria, useContasBancarias, useCriarContaBancaria } from '@/hooks/useTabelasReferencia';
 import { ContasBancariasTab } from '../colaborador-detalhes/ContasBancariasTab';
 import { maskBankAccount, maskCpfDisplay } from '@/utils/piiMask';
 
@@ -105,5 +126,67 @@ describe('ContasBancariasTab', () => {
     vi.mocked(useContasBancarias).mockReturnValue({ data: MOCK_CONTAS, isLoading: false } as never);
     render(<ContasBancariasTab colaboradorId="col-1" />);
     expect(screen.getAllByText('Sim').length).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe('ContasBancariasTab — edição', () => {
+  beforeEach(() => {
+    podeVerPii = true;
+  });
+  afterEach(() => {
+    podeVerPii = false;
+  });
+
+  it('não deixa editar quem não pode ver o dado bancário', () => {
+    podeVerPii = false;
+    vi.mocked(useContasBancarias).mockReturnValue({ data: MOCK_CONTAS, isLoading: false } as never);
+    render(<ContasBancariasTab colaboradorId="col-1" />);
+
+    // A tabela mostra mascarado; o formulário de edição mostraria o real.
+    expect(screen.getByText(maskBankAccount('56789-0'))).toBeInTheDocument();
+    expect(screen.getByLabelText('Editar conta')).toBeDisabled();
+  });
+
+  it('abre o diálogo em modo edição com os valores REAIS da conta', () => {
+    vi.mocked(useContasBancarias).mockReturnValue({ data: MOCK_CONTAS, isLoading: false } as never);
+    render(<ContasBancariasTab colaboradorId="col-1" />);
+
+    fireEvent.click(screen.getByLabelText('Editar conta'));
+
+    expect(screen.getByText('Editar Conta Bancária')).toBeInTheDocument();
+    expect((screen.getByDisplayValue('56789-0') as HTMLInputElement).value).toBe('56789-0');
+    expect(screen.getByDisplayValue('1234')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Banco do Brasil')).toBeInTheDocument();
+  });
+
+  it('grava pelo hook de atualizar, com o id da conta', async () => {
+    const mutateAsync = vi.fn().mockResolvedValue(undefined);
+    vi.mocked(useAtualizarContaBancaria).mockReturnValue({ mutateAsync, isPending: false } as never);
+    vi.mocked(useContasBancarias).mockReturnValue({ data: MOCK_CONTAS, isLoading: false } as never);
+    render(<ContasBancariasTab colaboradorId="col-1" />);
+
+    fireEvent.click(screen.getByLabelText('Editar conta'));
+    fireEvent.change(screen.getByDisplayValue('56789-0'), { target: { value: '99999-9' } });
+    fireEvent.click(screen.getByText('Salvar'));
+
+    await waitFor(() => expect(mutateAsync).toHaveBeenCalledTimes(1));
+    expect(mutateAsync).toHaveBeenCalledWith({
+      id: 'c1',
+      dados: expect.objectContaining({ conta: '99999-9', agencia: '1234', principal: true }),
+    });
+    // Editar NUNCA chama o criar (criaria uma segunda conta).
+    expect(vi.mocked(useCriarContaBancaria).mock.results[0]?.value.mutateAsync).not.toHaveBeenCalled();
+  });
+
+  it('o diálogo volta ao modo "nova" depois de fechar a edição', () => {
+    vi.mocked(useContasBancarias).mockReturnValue({ data: MOCK_CONTAS, isLoading: false } as never);
+    render(<ContasBancariasTab colaboradorId="col-1" />);
+
+    fireEvent.click(screen.getByLabelText('Editar conta'));
+    expect(screen.getByText('Editar Conta Bancária')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText('fechar-dialogo'));
+    expect(screen.getByText('Nova Conta Bancária')).toBeInTheDocument();
+    expect(screen.queryByDisplayValue('56789-0')).toBeNull();
   });
 });

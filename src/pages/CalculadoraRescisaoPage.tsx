@@ -12,7 +12,7 @@ import { Calculator, Download, Save, Shield, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { calcularRescisao, fmt, type RescisaoResult } from '@/utils/rescisaoCalc';
+import { aliquotaEfetiva, calcularRescisao, fmt, type RescisaoResult } from '@/utils/rescisaoCalc';
 import { gerarPDFRescisao } from '@/utils/rescisaoPDF';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -558,6 +558,30 @@ export default function CalculadoraRescisaoPage() {
                         <span>{Math.round(result.fgtsSaquePercentual * 100)}%</span>
                       </div>
                     </div>
+
+                    {/* Memória de cálculo: sobre quanto cada encargo incidiu e
+                        qual foi a alíquota EFETIVA. Vem pronta do motor
+                        (`rescisaoCalc.ts`), nunca derivada aqui — INSS e IRRF
+                        incidem em duas parcelas separadas e a multa do FGTS
+                        soma o FGTS da rescisão ao saldo informado. Ausente em
+                        rescisão gravada antes dessa memória existir. */}
+                    {result.basesCalculo?.length ? (
+                      <>
+                        <Separator />
+                        <div className="space-y-2">
+                          <p className="text-xs font-display font-semibold text-muted-foreground">BASE DE CÁLCULO</p>
+                          {result.basesCalculo.map((linha) => (
+                            <div key={linha.descricao} className="flex justify-between gap-2 text-xs font-body">
+                              <span className="text-muted-foreground">{linha.descricao}</span>
+                              <span className="text-numeric whitespace-nowrap">
+                                R$ {fmt(linha.base)} → R$ {fmt(linha.encargo)}
+                                <span className="ml-1 text-muted-foreground">({fmt(aliquotaEfetiva(linha))}%)</span>
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    ) : null}
 
                     <Separator />
 

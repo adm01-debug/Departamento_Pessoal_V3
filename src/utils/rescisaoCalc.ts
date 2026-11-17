@@ -133,8 +133,35 @@ export interface RescisaoResult {
   meses13: number;
   diasAviso: number;
   diasAvisoNaoCumpridos: number;
+  /**
+   * Base × encargo de cada retenção, montado AQUI dentro, onde os números são
+   * calculados. A tela não deriva base nenhuma: INSS e IRRF são progressivos e
+   * incidem em duas parcelas separadas (saldo e 13º, cada uma na sua tabela),
+   * o INSS tem teto e o IRRF conta dependentes só no saldo — somar as bases e
+   * dividir pela retenção total daria um percentual que o motor nunca usou. A
+   * multa do FGTS incide sobre `saldo informado + FGTS da rescisão`, não só
+   * sobre o saldo informado.
+   *
+   * Opcional porque rescisão já gravada no banco não tem essa memória: a tela
+   * omite a tabela nesse caso, em vez de recalcular base a partir do resultado
+   * (seria adivinhar).
+   */
+  basesCalculo?: LinhaBaseCalculo[];
   assinaturaDigital?: string;
   timestamp: string;
+}
+
+/** Uma linha da memória de cálculo: sobre quanto incidiu e quanto foi retido. */
+export interface LinhaBaseCalculo {
+  descricao: string;
+  base: number;
+  encargo: number;
+}
+
+/** Alíquota EFETIVA em % (encargo ÷ base), nunca uma alíquota nominal fixa. */
+export function aliquotaEfetiva(linha: LinhaBaseCalculo): number {
+  if (!linha.base) return 0;
+  return Math.round((linha.encargo / linha.base) * 10000) / 100;
 }
 
 export interface RescisaoParams {
@@ -358,6 +385,20 @@ export function calcularRescisaoCore(params: RescisaoParams): RescisaoResult {
   const irrf13 = calcularIRRF(decimoTerceiro, 0, 0, false, anoDesligamento);
   const irrf = (Math.round(irrfSaldo * 100) + Math.round(irrf13 * 100)) / 100;
 
+  // Memória de cálculo: cada parcela com a base que ela realmente usou acima.
+  const basesCalculo: LinhaBaseCalculo[] = [
+    { descricao: 'INSS sobre o saldo de salário', base: saldoSalario, encargo: inssSaldo },
+    { descricao: 'INSS sobre o 13º', base: decimoTerceiro, encargo: inss13 },
+    { descricao: 'IRRF sobre o saldo de salário', base: saldoSalario, encargo: irrfSaldo },
+    { descricao: 'IRRF sobre o 13º', base: decimoTerceiro, encargo: irrf13 },
+    {
+      descricao: 'FGTS da rescisão (8%)',
+      base: trunc2(saldoSalario + avisoIndenizado + decimoTerceiro),
+      encargo: fgtsRescisao,
+    },
+    { descricao: 'Multa do FGTS', base: trunc2(saldoFGTS + fgtsRescisao), encargo: multaFGTS },
+  ];
+
   // Descontos incluem o aviso não cumprido (487 §2º) e a indenização do
   // art. 480 devida pelo empregado ao empregador.
   const totalDescontos = trunc2(inss + irrf + descontoAvisoPrevio + indenizacaoArt480);
@@ -420,6 +461,7 @@ export function calcularRescisaoCore(params: RescisaoParams): RescisaoResult {
     meses13,
     diasAviso,
     diasAvisoNaoCumpridos,
+    basesCalculo,
     timestamp: new Date().toISOString(),
   };
 }
