@@ -44,7 +44,9 @@ describe('usePermissions', () => {
   });
 
   it('libera o que a matriz concede', async () => {
-    mockFrom.mockImplementation(() => matriz([{ role: 'gestor', resource: 'auditoria', action: 'read', allowed: true }]));
+    mockFrom.mockImplementation(() =>
+      matriz([{ role: 'gestor', resource: 'auditoria', action: 'read', allowed: true }])
+    );
     const { result } = renderHook(() => usePermissions(), { wrapper });
     await waitFor(() => expect(result.current.estado).toBe('success'));
     expect(result.current.pode('auditoria', 'read')).toBe(true);
