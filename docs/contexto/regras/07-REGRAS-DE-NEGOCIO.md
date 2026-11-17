@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a03e4983a3` · branch `main` · 2026-11-17 20:49 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `65f863a9de` · branch `main` · 2026-11-17 21:08 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4525,6 +4525,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `MIN_CARACTERES_MOTIVO` | `3` | `src/components/avaliacao/statusFeedback.ts` |
 | `MIN_CARACTERES_JUSTIFICATIVA` | `10` | `src/components/avaliacao/statusFeedback.ts` |
 | `CHAVE_HISTORICO_FEEDBACK` | `'historico_feedback'` | `src/components/avaliacao/useHistoricoFeedback.ts` |
+| `DIAS_HISTORICO` | `365` | `src/components/colaborador-detalhes/AfastamentosTab.tsx` |
 | `DIAS_ALERTA_VALIDADE` | `60` | `src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx` |
 | `HISTORICO_REVEAL_GAP` | `0.45` | `src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx` |
 | `DIAS_ALERTA_VALIDADE` | `60` | `src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx` |
@@ -4706,8 +4707,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `MIN_LENGTH` | `8` | `src/utils/passwordPolicy.ts` |
 | `MAX_LENGTH` | `128` | `src/utils/passwordPolicy.ts` |
 | `HOURS_PER_DAY` | `24` | `src/utils/pgInterval.ts` |
-| `DAYS_PER_MONTH` | `30` | `src/utils/pgInterval.ts` |
-| … +114 linhas — lista completa em `context.json` | | |
+| … +115 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5415,7 +5415,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9158 testes em 712 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9166 testes em 713 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5719,7 +5719,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/tabelas/__tests__/pontoService.test.ts` | 10 | ajustesPontoService · listar queries ajustes_ponto · listar returns [] when data is null · criar calls insert on ajustes_ponto … |
 | `src/test/securityHeadersParity.test.ts` | 10 | paridade de security headers vercel.json x nginx.conf · nginx.conf serve exatamente os headers globais do vercel.json · vercel.json aplica os headers em produção · não usa  … |
 | `src/utils/__tests__/avisoFeriasPDF.test.ts` | 10 | gerarAvisoFeriasPDF · returns a Blob · returns a Uint8Array bytes · returns a sha256 hash string … |
-| … +412 linhas — lista completa em `context.json` | | |
+| … +413 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6087,4 +6087,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * Instante do prazo, no fim do dia. Aceita `data_limite` (coluna real) e | `src/components/avaliacao/metasComum.ts` |
 | * ── REGRAS DE NEGÓCIO APLICADAS ──────────────────────────────────────────── | `src/components/avaliacao/motorAvaliacao360.ts` |
 | • POTENCIAL = 100% gestor, com VALIDAÇÃO OBRIGATÓRIA do RH vinculada à versão | `src/components/avaliacao/motorAvaliacao360.ts` |
-| … +881 linhas — lista completa em `context.json` | |
+| … +882 linhas — lista completa em `context.json` | |

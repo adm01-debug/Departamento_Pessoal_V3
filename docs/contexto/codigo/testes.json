@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 756,
+ "total": 757,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 717
+  "unit": 718
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 632
+   "arquivos": 633
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -660,6 +660,15 @@
     "src/components/afastamentos/AfastamentoForm.tsx"
    ],
    "casos": 13
+  },
+  {
+   "arquivo": "src/components/__tests__/AfastamentosTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 94,
+   "testa": [
+    "src/components/colaborador-detalhes/AfastamentosTab.tsx"
+   ],
+   "casos": 7
   },
   {
    "arquivo": "src/components/__tests__/AfastamentoStats.test.tsx",
@@ -7093,6 +7102,7 @@
   "src/components/beneficios/BeneficioHistorico.tsx": 1,
   "src/components/beneficios/BeneficiosDashboard.tsx": 1,
   "src/components/colaborador-detalhes/ASOTab.tsx": 1,
+  "src/components/colaborador-detalhes/AfastamentosTab.tsx": 1,
   "src/components/colaborador-detalhes/AnotacoesTab.tsx": 1,
   "src/components/colaborador-detalhes/AquisitivosTab.tsx": 1,
   "src/components/colaborador-detalhes/BeneficiosTab.tsx": 1,

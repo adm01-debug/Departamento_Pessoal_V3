@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a03e4983a3f4e74d8d51c40fc64b186bd1990a57",
+  "sha": "65f863a9de8e4f8d18b21a283e0b6602e9a8649c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 20:49 UTC",
-  "files_total": 3544,
-  "code_files": 2970,
-  "code_lines": 469962
+  "generated_at": "2026-11-17 21:08 UTC",
+  "files_total": 3546,
+  "code_files": 2972,
+  "code_lines": 470179
  },
  "version": "1.3.2",
- "facts_hash": "cba0b54fce346f5c",
+ "facts_hash": "c05dc2e3a0dcbcb2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 987,
+   ".tsx": 989,
    ".sql": 927,
    ".ts": 925,
    ".mjs": 103,
@@ -88976,6 +88976,7 @@
      "canal_etica",
      "catalogo_cursos",
      "centros_custo",
+     "certificados_digitais",
      "ciclos_avaliacao",
      "cid10",
      "cnab_configuracoes",
@@ -88986,6 +88987,7 @@
      "comunicados",
      "comunicados_leituras",
      "config_afastamentos",
+     "configuracoes_esocial",
      "configuracoes_intervalo",
      "configuracoes_ponto",
      "contas_bancarias",
@@ -89007,6 +89009,8 @@
      "epis",
      "epis_entregas",
      "escalas_trabalho",
+     "esocial_eventos",
+     "esocial_transmissao_logs",
      "etnias",
      "faltas",
      "feedbacks_360",
@@ -89095,16 +89099,23 @@
     ],
     "invokes_transitive": [
      "calcular-folha",
-     "metricas"
+     "enviar-email-admissao",
+     "enviar-esocial",
+     "metricas",
+     "processar-ponto-offline",
+     "upload-certificado"
     ],
     "rpc_transitive": [
      "admin_associar_usuario_empresa",
      "aplicar_medida_folha_ponto",
      "aprovar_despesa",
+     "claim_admission_esocial_event",
+     "complete_admission_esocial_event",
      "criar_feedback_seguro",
      "decidir_aprovacao_gestor",
      "editar_feedback_seguro",
      "enviar_avaliacao_ao_gestor",
+     "fail_admission_esocial_event",
      "finalizar_feedback",
      "get_audit_trail",
      "get_my_user_empresas",
@@ -89130,7 +89141,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 289
+    "deps_count": 299
    },
    {
     "path": "",
@@ -99978,7 +99989,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 961,
+  "components_count": 963,
   "hooks": [
    {
     "name": "useContacts",
@@ -101565,8 +101576,8 @@
   },
   {
    "module": "src/components",
-   "files": 961,
-   "lines": 172902,
+   "files": 963,
+   "lines": 173110,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101730,6 +101741,7 @@
     "src/components/__tests__/AfastamentoStats.test.tsx",
     "src/components/__tests__/AfastamentoTable.test.tsx",
     "src/components/__tests__/AfastamentoTimeline.test.tsx",
+    "src/components/__tests__/AfastamentosTab.test.tsx",
     "src/components/__tests__/AnalyticsSection.test.tsx",
     "src/components/__tests__/AnimatedNumber.test.tsx",
     "src/components/__tests__/AnotacoesTab.test.tsx",
@@ -101792,8 +101804,7 @@
     "src/components/__tests__/DesligamentoStatusBadge.test.tsx",
     "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
     "src/components/__tests__/DistribuirHoleritesButton.test.tsx",
-    "src/components/__tests__/DocumentoPreview.test.tsx",
-    "src/components/__tests__/DocumentoTimeline.test.tsx"
+    "src/components/__tests__/DocumentoPreview.test.tsx"
    ]
   },
   {
@@ -102255,7 +102266,7 @@
   {
    "module": "src/pages",
    "files": 134,
-   "lines": 49396,
+   "lines": 49405,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -118977,6 +118988,10 @@
    {
     "file": "src/components/avaliacao/statusFeedback.ts",
     "text": "* Empacota a operação inteira (validação → destino → idempotência → auditoria)."
+   },
+   {
+    "file": "src/components/colaborador-detalhes/AfastamentosTab.tsx",
+    "text": "mostra APENAS tipo, datas e status. Nada de CID, atestado, médico ou"
    },
    {
     "file": "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
@@ -146246,6 +146261,11 @@
     "value": "'historico_feedback'"
    },
    {
+    "file": "src/components/colaborador-detalhes/AfastamentosTab.tsx",
+    "name": "DIAS_HISTORICO",
+    "value": "365"
+   },
+   {
     "file": "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
     "name": "DIAS_ALERTA_VALIDADE",
     "value": "60"
@@ -166161,6 +166181,38 @@
    {
     "file": "src/components/__tests__/AfastamentoTimeline.test.tsx",
     "name": "renders carregando text in loading state"
+   },
+   {
+    "file": "src/components/__tests__/AfastamentosTab.test.tsx",
+    "name": "AfastamentosTab"
+   },
+   {
+    "file": "src/components/__tests__/AfastamentosTab.test.tsx",
+    "name": "sem afastamento, diz que não há em andamento e histórico vazio"
+   },
+   {
+    "file": "src/components/__tests__/AfastamentosTab.test.tsx",
+    "name": "afastamento sem data_fim_real é a situação ATUAL"
+   },
+   {
+    "file": "src/components/__tests__/AfastamentosTab.test.tsx",
+    "name": "datas saem em dd/MM/yyyy, sem shift de fuso"
+   },
+   {
+    "file": "src/components/__tests__/AfastamentosTab.test.tsx",
+    "name": "afastamento com data_fim_real vai para o histórico, não para a situação atual"
+   },
+   {
+    "file": "src/components/__tests__/AfastamentosTab.test.tsx",
+    "name": "sem previsão de retorno não inventa data"
+   },
+   {
+    "file": "src/components/__tests__/AfastamentosTab.test.tsx",
+    "name": "erro na consulta NÃO aparece como "
+   },
+   {
+    "file": "src/components/__tests__/AfastamentosTab.test.tsx",
+    "name": "NÃO imprime CID, descrição do CID, médico nem CRM"
    },
    {
     "file": "src/components/__tests__/AnalyticsSection.test.tsx",
@@ -263497,6 +263549,21 @@
     "renders carregando text in loading state"
    ]
   },
+  "src/components/__tests__/AfastamentosTab.test.tsx": {
+   "path": "src/components/__tests__/AfastamentosTab.test.tsx",
+   "lines": 94,
+   "is_test": true,
+   "tests": [
+    "AfastamentosTab",
+    "sem afastamento, diz que não há em andamento e histórico vazio",
+    "afastamento sem data_fim_real é a situação ATUAL",
+    "datas saem em dd/MM/yyyy, sem shift de fuso",
+    "afastamento com data_fim_real vai para o histórico, não para a situação atual",
+    "sem previsão de retorno não inventa data",
+    "erro na consulta NÃO aparece como ",
+    "NÃO imprime CID, descrição do CID, médico nem CRM"
+   ]
+  },
   "src/components/__tests__/AnalyticsSection.test.tsx": {
    "path": "src/components/__tests__/AnalyticsSection.test.tsx",
    "lines": 211,
@@ -273456,6 +273523,22 @@
     "Data do exame é obrigatória",
     "Erro ao registrar ASO",
     "Tipo é obrigatório"
+   ]
+  },
+  "src/components/colaborador-detalhes/AfastamentosTab.tsx": {
+   "path": "src/components/colaborador-detalhes/AfastamentosTab.tsx",
+   "lines": 114,
+   "exports": [
+    "function AfastamentosTab"
+   ],
+   "params": [
+    {
+     "name": "DIAS_HISTORICO",
+     "value": "365"
+    }
+   ],
+   "rule_comments": [
+    "mostra APENAS tipo, datas e status. Nada de CID, atestado, médico ou"
    ]
   },
   "src/components/colaborador-detalhes/AnotacoesTab.tsx": {
@@ -294165,7 +294248,7 @@
   },
   "src/pages/ColaboradorDetalhesPage.tsx": {
    "path": "src/pages/ColaboradorDetalhesPage.tsx",
-   "lines": 738,
+   "lines": 747,
    "exports": [
     "function ColaboradorDetalhesPage"
    ],
@@ -324823,10 +324906,22 @@
   }
  },
  "git": {
-  "sha": "a03e4983a3f4e74d8d51c40fc64b186bd1990a57",
+  "sha": "65f863a9de8e4f8d18b21a283e0b6602e9a8649c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "65f863a",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(colaborador): aba de Afastamentos no dossiê, sem dado de saúde (#643)",
+    "files": [
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/AfastamentosTab.test.tsx",
+     "src/components/colaborador-detalhes/AfastamentosTab.tsx",
+     "src/pages/ColaboradorDetalhesPage.tsx"
+    ]
+   },
    {
     "sha": "a03e498",
     "date": "2026-11-17",
@@ -325233,27 +325328,12 @@
      "src/components/__tests__/NovoDesligamentoDialog.test.tsx",
      "src/components/desligamentos/NovoDesligamentoDialog.tsx"
     ]
-   },
-   {
-    "sha": "d15194a",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(docs): redige o user_id, o e-mail e o primeiro nome de pessoa que o #599 deixou passar (#615)",
-    "files": [
-     "docs/auditoria/PLANO_RESGATE_POR_AREA_2026-11-16.json",
-     "docs/auditoria/resgate/documentacao.md",
-     "docs/ninebox-aprovacao-gestor-implantacao.md",
-     "docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql",
-     "docs/ninebox-homologacao-aprovacao-real.md",
-     "docs/ninebox-homologacao-funcional.md",
-     "src/components/__tests__/PapeisAvaliacao.test.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    8
+    9
    ],
    [
     "inventario/estado/rotas.json",
@@ -325262,6 +325342,10 @@
    [
     "src/pages/ColaboradoresPage.tsx",
     4
+   ],
+   [
+    "src/pages/ColaboradorDetalhesPage.tsx",
+    3
    ],
    [
     "src/index.css",
@@ -325277,10 +325361,6 @@
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    2
-   ],
-   [
-    "src/pages/ColaboradorDetalhesPage.tsx",
     2
    ],
    [
@@ -325308,6 +325388,14 @@
     2
    ],
    [
+    "src/components/__tests__/AfastamentosTab.test.tsx",
+    1
+   ],
+   [
+    "src/components/colaborador-detalhes/AfastamentosTab.tsx",
+    1
+   ],
+   [
     "src/components/ui/__tests__/user-avatar.test.tsx",
     1
    ],
@@ -325321,14 +325409,6 @@
    ],
    [
     "supabase/tests/storage_documentos_tenant_isolation.test.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261117190000_permissions_matriz_seed.sql",
-    1
-   ],
-   [
-    "src/components/__tests__/ProximosEventosDialog.test.tsx",
     1
    ]
   ]

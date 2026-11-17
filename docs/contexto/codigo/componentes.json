@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 628,
+ "total": 629,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -1442,6 +1442,22 @@
    "linhas": 163,
    "dominio": "components/beneficios",
    "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/AfastamentosTab.tsx",
+   "exports": [
+    "AfastamentosTab"
+   ],
+   "export_default": null,
+   "linhas": 114,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useAfastamentosRecentes"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -7157,7 +7173,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 220,
+   "usado_por": 221,
    "orfao": false
   },
   {
@@ -7207,7 +7223,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 279,
+   "usado_por": 280,
    "orfao": false
   },
   {
@@ -7937,7 +7953,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 115,
+   "usado_por": 116,
    "orfao": false
   },
   {
@@ -8810,7 +8826,7 @@
     "ColaboradorDetalhesPage"
    ],
    "export_default": "ColaboradorDetalhesPage",
-   "linhas": 738,
+   "linhas": 747,
    "dominio": "pages",
    "hooks_locais": [
     "useDataAccessLog",

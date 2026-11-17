@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1291,
- "arestas": 6343,
+ "nos": 1292,
+ "arestas": 6349,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -14,7 +14,7 @@
   },
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 279
+   "importado_por": 280
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
@@ -22,7 +22,7 @@
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 220
+   "importado_por": 221
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -54,7 +54,7 @@
   },
   {
    "arquivo": "src/components/ui/spinner.tsx",
-   "importado_por": 115
+   "importado_por": 116
   },
   {
    "arquivo": "src/components/ui/table.tsx",
@@ -86,7 +86,7 @@
   },
   {
    "arquivo": "src/utils/dateLocal.ts",
-   "importado_por": 65
+   "importado_por": 66
   },
   {
    "arquivo": "supabase/functions/_shared/csrf.ts",
@@ -94,7 +94,7 @@
   },
   {
    "arquivo": "src/hooks/index.ts",
-   "importado_por": 57
+   "importado_por": 58
   },
   {
    "arquivo": "supabase/functions/_shared/sentry.ts",

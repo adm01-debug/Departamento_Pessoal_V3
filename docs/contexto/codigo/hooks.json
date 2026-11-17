@@ -699,9 +699,10 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 55,
+   "usado_por": 56,
    "usado_por_arquivos": [
     "scripts/ai-context/cenarios.mjs",
+    "src/components/colaborador-detalhes/AfastamentosTab.tsx",
     "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
     "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
     "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
@@ -729,8 +730,7 @@
     "src/pages/ColaboradorFormPage.tsx",
     "src/pages/ComunicacaoInternaPage.tsx",
     "src/pages/ControleAcessoPage.tsx",
-    "src/pages/ConveniosPage.tsx",
-    "src/pages/DescontosPage.tsx"
+    "src/pages/ConveniosPage.tsx"
    ],
    "coberto_por_testes": 2
   },

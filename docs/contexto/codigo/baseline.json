@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a03e4983a3f4e74d8d51c40fc64b186bd1990a57",
+  "commit": "65f863a9de8e4f8d18b21a283e0b6602e9a8649c",
   "branch": "main",
-  "data_commit": "2026-11-17T17:48:11-03:00",
+  "data_commit": "2026-11-17T18:06:38-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "65f863a",
+    "data": "2026-11-17",
+    "assunto": "feat(colaborador): aba de Afastamentos no dossiê, sem dado de saúde (#643)"
+   },
    {
     "sha": "a03e498",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "b25c46e",
     "data": "2026-11-17",
     "assunto": "feat(desligamentos): drawer de rescisão com a UI da muri e o cálculo da main (#621)"
-   },
-   {
-    "sha": "143c729",
-    "data": "2026-11-17",
-    "assunto": "fix(pwa): service worker servia HTML no lugar dos assets e travava o app (#622)"
    }
   ],
-  "arquivos_mudados_7d": 1072,
+  "arquivos_mudados_7d": 1074,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 356
+    "mudancas": 357
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -157,7 +157,7 @@
    },
    {
     "pasta": "src/components/colaborador-detalhes",
-    "mudancas": 75
+    "mudancas": 76
    },
    {
     "pasta": "src/components/treinamentos",
@@ -222,15 +222,11 @@
     "mudancas": 9
    },
    {
-    "arquivo": "PENDENCIAS.md",
-    "mudancas": 8
-   },
-   {
-    "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 8
-   },
-   {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "PENDENCIAS.md",
     "mudancas": 8
    },
    {
@@ -239,6 +235,10 @@
    },
    {
     "arquivo": "scripts/automation.config.json",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 7
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 263
+    "commits": 264
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 21
+    "commits": 20
    },
    {
     "autor": "dependabot[bot]",
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3523,
-  "arquivos_codigo": 2045,
-  "linhas_codigo": 404659,
+  "arquivos_total": 3525,
+  "arquivos_codigo": 2047,
+  "linhas_codigo": 404876,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
-  "componentes": 628,
+  "componentes": 629,
   "hooks": 116,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 861,
   "cron_jobs": 41,
-  "testes": 756,
+  "testes": 757,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 961,
-   "linhas": 172902
+   "arquivos": 963,
+   "linhas": 173110
   },
   "src/constants": {
    "arquivos": 7,
@@ -676,7 +676,7 @@
   },
   "src/pages": {
    "arquivos": 134,
-   "linhas": 49396
+   "linhas": 49405
   },
   "src/providers": {
    "arquivos": 4,

@@ -1069,6 +1069,13 @@
    "src/components/ui/table.tsx",
    "src/hooks/useColaboradorDetalhes.ts"
   ],
+  "src/components/colaborador-detalhes/AfastamentosTab.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/spinner.tsx",
+   "src/hooks/index.ts",
+   "src/utils/dateLocal.ts"
+  ],
   "src/components/colaborador-detalhes/AnotacoesTab.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -5604,6 +5611,7 @@
   ],
   "src/pages/ColaboradorDetalhesPage.tsx": [
    "src/components/PageTitle.tsx",
+   "src/components/colaborador-detalhes/AfastamentosTab.tsx",
    "src/components/colaborador-detalhes/PendenciasDialog.tsx",
    "src/components/colaborador-detalhes/ProximosEventosDialog.tsx",
    "src/components/colaborador-detalhes/destinosDossie.ts",

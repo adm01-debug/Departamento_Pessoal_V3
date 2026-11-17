@@ -195,7 +195,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 291,
+   "testes": 292,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -891,13 +891,13 @@
   },
   {
    "modulo": "components/colaborador-detalhes",
-   "arquivos": 58,
+   "arquivos": 59,
    "testes": 8,
-   "linhas": 9805,
+   "linhas": 9919,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 54,
+   "componentes": 55,
    "hooks_locais": [
     "useASOs",
     "useAdmissaoWorkflow",
@@ -7795,7 +7795,7 @@
    "modulo": "pages",
    "arquivos": 113,
    "testes": 0,
-   "linhas": 45820,
+   "linhas": 45829,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
