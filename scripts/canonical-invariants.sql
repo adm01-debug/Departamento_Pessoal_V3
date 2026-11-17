@@ -1,7 +1,16 @@
 SELECT jsonb_build_object(
   'ledger_count', (
     SELECT count(*) FROM supabase_migrations.schema_migrations
-    WHERE version IN ('20261116120000')
+    -- LOTE ATUAL (#628/#632): as 4 versoes desta leva. Tem de andar junto com
+    -- a lista do passo "Preparar somente as migracoes aprovadas" no workflow e
+    -- com o `=== 4` da assercao: se ficar na versao do lote anterior, a
+    -- assercao aprova por um registro ANTIGO e nao prova nada do lote novo.
+    WHERE version IN (
+      '20261117170000',
+      '20261117170100',
+      '20261117170200',
+      '20261117170300'
+    )
   ),
   'notificacoes_chk_wide', EXISTS (
     SELECT 1 FROM pg_constraint
