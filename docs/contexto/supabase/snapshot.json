@@ -18336,6 +18336,58 @@
         "type": "uuid"
       },
       {
+        "comment": "Caminho do objeto no bucket `documentos`, padrao {empresa_id}/{colaborador_id}/{categoria}/{uuid}.{ext}. Lido por PortalDocumentosTab para remover o arquivo junto com a linha.",
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "storage_path",
+        "nullable": true,
+        "position": 13,
+        "schema": "public",
+        "table": "documentos",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "mime_type",
+        "nullable": true,
+        "position": 14,
+        "schema": "public",
+        "table": "documentos",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "nome_arquivo",
+        "nullable": true,
+        "position": 15,
+        "schema": "public",
+        "table": "documentos",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "tamanho",
+        "nullable": true,
+        "position": 16,
+        "schema": "public",
+        "table": "documentos",
+        "type": "bigint"
+      },
+      {
         "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
@@ -19215,6 +19267,32 @@
         "name": "data_validade",
         "nullable": true,
         "position": 13,
+        "schema": "public",
+        "table": "documentos_pessoais_arquivos",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "storage_path",
+        "nullable": true,
+        "position": 14,
+        "schema": "public",
+        "table": "documentos_pessoais_arquivos",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "mime_type",
+        "nullable": true,
+        "position": 15,
         "schema": "public",
         "table": "documentos_pessoais_arquivos",
         "type": "text"
@@ -97441,7 +97519,8 @@
             "public.ferias.audit_ferias",
             "public.folhas_pagamento.audit_folhas_pagamento",
             "public.holerites.audit_holerites",
-            "public.registros_ponto.audit_registros_ponto"
+            "public.registros_ponto.audit_registros_ponto",
+            "public.tarefas_onboarding.audit_tarefas_onboarding"
           ],
           "views": []
         },
@@ -103223,9 +103302,13 @@
             {
               "file": "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.verify.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql",
+              "hits": 11
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 4,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -104979,7 +105062,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 33,
+          "code_total_files": 34,
           "cron": [],
           "db": [
             "public.contrato_gerar_token_assinatura",
@@ -128528,6 +128611,20 @@
       },
       {
         "columns": [
+          "empresa_id"
+        ],
+        "definition": "CREATE INDEX idx_onboarding_kits_empresa_id ON public.onboarding_kits USING btree (empresa_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_onboarding_kits_empresa_id",
+        "predicate": null,
+        "schema": "public",
+        "table": "onboarding_kits"
+      },
+      {
+        "columns": [
           "id"
         ],
         "definition": "CREATE UNIQUE INDEX onboarding_kits_pkey ON public.onboarding_kits USING btree (id)",
@@ -145942,6 +146039,30 @@
       },
       {
         "cmd": "DELETE",
+        "name": "docs_colab_delete_rh_admin",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'documentos-colaboradores'::text) AND pode_gerir_rh(storage_path_empresa_id(name)))",
+        "with_check": null
+      },
+      {
+        "cmd": "DELETE",
+        "name": "documentos_delete_rh_admin",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'documentos'::text) AND pode_gerir_rh(storage_path_empresa_id(name)))",
+        "with_check": null
+      },
+      {
+        "cmd": "DELETE",
         "name": "tenant_delete_comprovantes_despesas",
         "permissive": "PERMISSIVE",
         "roles": [
@@ -156903,6 +157024,17 @@
         "status": "enabled",
         "table": "sst_regimento_documentos",
         "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER audit_tarefas_onboarding AFTER INSERT OR DELETE OR UPDATE ON tarefas_onboarding FOR EACH ROW EXECUTE FUNCTION log_audit_change()",
+        "events": "INSERT OR DELETE OR UPDATE",
+        "function": "public.log_audit_change",
+        "level": "ROW",
+        "name": "audit_tarefas_onboarding",
+        "schema": "public",
+        "status": "enabled",
+        "table": "tarefas_onboarding",
+        "timing": "AFTER"
       },
       {
         "definition": "CREATE TRIGGER update_times_updated_at BEFORE UPDATE ON times FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()",

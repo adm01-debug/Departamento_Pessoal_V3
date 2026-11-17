@@ -2,6 +2,14 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-17 20:14 UTC
+
+- **colunas** adicionado (6): `public.documentos.mime_type`, `public.documentos.nome_arquivo`, `public.documentos.storage_path`, `public.documentos.tamanho`, `public.documentos_pessoais_arquivos.mime_type`, `public.documentos_pessoais_arquivos.storage_path`
+- **functions** alterado (3): `public.log_audit_change()`, `public.storage_path_empresa_id(p_name text)`, `public.user_belongs_to_empresa(_user_id uuid, _empresa_id uuid)`
+- **indexes** adicionado (1): `public.idx_onboarding_kits_empresa_id`
+- **policies (RLS)** adicionado (2): `storage.objects.docs_colab_delete_rh_admin`, `storage.objects.documentos_delete_rh_admin`
+- **triggers** adicionado (1): `public.tarefas_onboarding.audit_tarefas_onboarding`
+
 ## 2026-11-17 18:17 UTC
 
 - **functions** alterado (5): `public.get_auth_empresa_id()`, `public.get_user_empresas(_user_id uuid)`, `public.log_audit_change()`, `public.pode_gerir_rh(_empresa_id uuid)`, `public.storage_path_empresa_id(p_name text)`

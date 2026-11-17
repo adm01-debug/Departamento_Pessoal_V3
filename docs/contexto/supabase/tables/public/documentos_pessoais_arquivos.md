@@ -29,6 +29,8 @@
 | 11 | `orgao_emissor` | `text` | sim |  |  |  |
 | 12 | `data_emissao` | `text` | sim |  |  |  |
 | 13 | `data_validade` | `text` | sim |  |  |  |
+| 14 | `storage_path` | `text` | sim |  |  |  |
+| 15 | `mime_type` | `text` | sim |  |  |  |
 
 
 ## Constraints

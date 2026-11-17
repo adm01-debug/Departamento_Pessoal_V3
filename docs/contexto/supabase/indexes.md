@@ -852,6 +852,7 @@ Uso e tamanho em `stats.md`.
 | public.onboarding_documentos_obrigatorios | idx_onboarding_documentos_obrigatorios_empresa_id | btree | empresa_id | não | sim |  |
 | public.onboarding_documentos_obrigatorios | idx_onboarding_documentos_obrigatorios_onboarding_id | btree | onboarding_id | não | sim |  |
 | public.onboarding_documentos_obrigatorios | onboarding_documentos_obrigatorios_pkey | btree | id | sim | sim |  |
+| public.onboarding_kits | idx_onboarding_kits_empresa_id | btree | empresa_id | não | sim |  |
 | public.onboarding_kits | onboarding_kits_pkey | btree | id | sim | sim |  |
 | public.onboarding_tarefas | idx_onboarding_tarefas_concluida_por | btree | concluida_por | não | sim |  |
 | public.onboarding_tarefas | idx_onboarding_tarefas_empresa_id | btree | empresa_id | não | sim |  |

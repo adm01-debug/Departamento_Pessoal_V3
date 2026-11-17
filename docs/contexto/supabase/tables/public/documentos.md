@@ -28,6 +28,10 @@
 | 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
 | 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 | 12 | `empresa_id` | `uuid` | sim |  |  |  |
+| 13 | `storage_path` | `text` | sim |  |  | Caminho do objeto no bucket `documentos`, padrao {empresa_id}/{colaborador_id}/{categoria}/{uuid}.{ext}. Lido por PortalDocumentosTab para remover o arquivo junto com a linha. |
+| 14 | `mime_type` | `text` | sim |  |  |  |
+| 15 | `nome_arquivo` | `text` | sim |  |  |  |
+| 16 | `tamanho` | `bigint` | sim |  |  |  |
 
 
 ## Constraints

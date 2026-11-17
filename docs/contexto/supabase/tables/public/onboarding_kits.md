@@ -35,6 +35,7 @@
 
 | nome | método | colunas | único | válido | predicado | definição |
 |---|---|---|---|---|---|---|
+| idx_onboarding_kits_empresa_id | btree | empresa_id | não | sim |  | `CREATE INDEX idx_onboarding_kits_empresa_id ON public.onboarding_kits USING btree (empresa_id)` |
 | onboarding_kits_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX onboarding_kits_pkey ON public.onboarding_kits USING btree (id)` |
 
 

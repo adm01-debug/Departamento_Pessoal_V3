@@ -106,13 +106,13 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.despesas](tables/public/despesas.md) | table | sim | 1 | 19 | não |  |
 | [public.despesas_aprovacoes_log](tables/public/despesas_aprovacoes_log.md) | table | sim | 2 | 9 | não |  |
 | [public.documento_templates](tables/public/documento_templates.md) | table | sim | 2 | 11 | não |  |
-| [public.documentos](tables/public/documentos.md) | table | sim | 2 | 12 | não |  |
+| [public.documentos](tables/public/documentos.md) | table | sim | 2 | 16 | não |  |
 | [public.documentos_admissao](tables/public/documentos_admissao.md) | table | sim | 2 | 12 | não |  |
 | [public.documentos_afastamento](tables/public/documentos_afastamento.md) | table | sim | 2 | 7 | não |  |
 | [public.documentos_assinatura](tables/public/documentos_assinatura.md) | table | sim | 3 | 16 | não |  |
 | [public.documentos_colaborador](tables/public/documentos_colaborador.md) | table | sim | 2 | 12 | não |  |
 | [public.documentos_historico](tables/public/documentos_historico.md) | table | sim | 1 | 8 | não |  |
-| [public.documentos_pessoais_arquivos](tables/public/documentos_pessoais_arquivos.md) | table | sim | 1 | 13 | não |  |
+| [public.documentos_pessoais_arquivos](tables/public/documentos_pessoais_arquivos.md) | table | sim | 1 | 15 | não |  |
 | [public.dp_audit_config](tables/public/dp_audit_config.md) | table | sim | 1 | 9 | não | Registro de politicas de auditoria por tabela para LGPD Art. 37 e 39. PROCEDIMENTO DE ATIVACAO pgaudit:   1. Acessar Supabase Dashboard > Database > Extensions   2. Habilitar pgaudit   3. Executar: ALTER DATABASE postgres SET pgaudit.log = 'write';   4. Executar: ALTER DATABASE postgres SET pgaudit.log_relation = 'on';   5. Para cada tabela em dp_audit_config WHERE enabled=true E audit_writes=true:      SECURITY LABEL FOR pgaudit ON TABLE public.<tabela> IS 'OBJECT';   ATENCAO: pgaudit.log = 'all' enche o disco em horas. Usar SOMENTE 'write'. |
 | [public.dp_audit_log](tables/public/dp_audit_log.md) | partitioned | sim | 3 | 10 | não | Audit log Departamento Pessoal — IMUTÁVEL (sem UPDATE/DELETE de roles de aplicação). Particionado por mês para performance e retenção. LGPD Art.37: registro de operações de tratamento de dados. Conteúdo: metadata de eventos — NÃO armazena PII raw no payload. |
 | [public.dp_audit_log_2026_07](tables/public/dp_audit_log_2026_07.md) | table (partição) | sim | 0 | 10 | não |  |

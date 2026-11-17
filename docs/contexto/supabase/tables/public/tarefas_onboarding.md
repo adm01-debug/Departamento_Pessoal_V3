@@ -60,7 +60,9 @@
 
 ## Triggers
 
-_nenhum_
+| nome | timing | eventos | nível | status | função |
+|---|---|---|---|---|---|
+| audit_tarefas_onboarding | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.log_audit_change |
 
 
 ## Grants
