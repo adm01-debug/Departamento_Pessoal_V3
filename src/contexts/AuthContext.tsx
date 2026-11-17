@@ -18,6 +18,18 @@ export interface User {
   roles: AppRole[];
 }
 
+/**
+ * Estado da leitura dos papeis do usuario. Existe para separar "ainda nao sei"
+ * e "falhei ao descobrir" de "descobri que o usuario nao tem o papel".
+ *
+ * Por que importa: `fetchUserRoles` cai em `['user']` quando o RPC
+ * `get_user_roles` falha ou estoura o timeout. Sem este estado, uma falha de
+ * rede rebaixa silenciosamente um gestor a `user` e a tela diz "Acesso
+ * Restrito" — o usuario legitimo acha que perdeu permissao. Com ele, a guarda
+ * consegue mostrar "nao foi possivel verificar" em vez de negar.
+ */
+export type RolesStatus = 'loading' | 'success' | 'error';
+
 export interface AuthContextType {
   user: User | null;
   session: Session | null;
@@ -25,6 +37,10 @@ export interface AuthContextType {
   isReady: boolean;
   isAdmin: boolean;
   hasRole: (role: AppRole) => boolean;
+  /** Ver `RolesStatus`: `error` NAO significa "sem permissao". */
+  rolesStatus: RolesStatus;
+  /** Descricao da falha de leitura dos papeis; `null` quando nao houve. */
+  rolesError: string | null;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   signUp: (email: string, password: string, name: string) => Promise<void>;
@@ -37,36 +53,46 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 const AUTH_INIT_TIMEOUT_MS = 10000;
 const USER_ROLES_TIMEOUT_MS = 5000;
 
-async function fetchUserRoles(userId: string): Promise<AppRole[]> {
+/**
+ * Resultado da leitura de papeis. O fallback `['user']` continua igual ao de
+ * antes — o que muda e que a falha passa a ser REPORTADA em `erro`, em vez de
+ * virar indistinguivel de "o usuario e mesmo so user".
+ */
+interface ResultadoPapeis {
+  roles: AppRole[];
+  erro: string | null;
+}
+
+async function fetchUserRoles(userId: string): Promise<ResultadoPapeis> {
   try {
     const { data, error } = await supabase.rpc('get_user_roles', { _user_id: userId });
     if (error) {
       loggerService.error('Error fetching user roles', { userId, error });
-      return ['user'];
+      return { roles: ['user'], erro: error.message || 'Falha ao consultar os papéis do usuário.' };
     }
-    return (data as AppRole[]) || ['user'];
+    return { roles: (data as AppRole[]) || ['user'], erro: null };
   } catch (e) {
     loggerService.error('Exception fetching user roles', { userId }, e as Error);
-    return ['user'];
+    return { roles: ['user'], erro: (e as Error)?.message || 'Falha ao consultar os papéis do usuário.' };
   }
 }
 
-function fetchUserRolesWithTimeout(userId: string): Promise<AppRole[]> {
+function fetchUserRolesWithTimeout(userId: string): Promise<ResultadoPapeis> {
   return new Promise((resolve) => {
     const timeoutId = window.setTimeout(() => {
       loggerService.warn('User roles fetch timed out', { userId });
-      resolve(['user']);
+      resolve({ roles: ['user'], erro: 'Tempo esgotado ao verificar as permissões do usuário.' });
     }, USER_ROLES_TIMEOUT_MS);
 
     fetchUserRoles(userId)
-      .then((roles) => {
+      .then((resultado) => {
         window.clearTimeout(timeoutId);
-        resolve(roles);
+        resolve(resultado);
       })
       .catch((error) => {
         window.clearTimeout(timeoutId);
         loggerService.error('Failed to fetch user roles', { userId }, error);
-        resolve(['user']);
+        resolve({ roles: ['user'], erro: (error as Error)?.message || 'Falha ao verificar as permissões.' });
       });
   });
 }
@@ -88,6 +114,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isReady, setIsReady] = useState(false);
+  const [rolesStatus, setRolesStatus] = useState<RolesStatus>('loading');
+  const [rolesError, setRolesError] = useState<string | null>(null);
   // Ref espelha `isReady` para leitura no callback do timeout de inicialização
   // sem re-executar o useEffect (que re-subscreveria em onAuthStateChange).
   const isReadyRef = useRef(false);
@@ -100,8 +128,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const enrichUserWithRoles = useCallback(
     async (supabaseUser: { id: string; email?: string | null; user_metadata?: Record<string, unknown> }) => {
-      const roles = await fetchUserRolesWithTimeout(supabaseUser.id);
+      const { roles, erro } = await fetchUserRolesWithTimeout(supabaseUser.id);
       setUser((prevUser) => (prevUser && prevUser.id === supabaseUser.id ? buildUser(supabaseUser, roles) : prevUser));
+      setRolesError(erro);
+      setRolesStatus(erro ? 'error' : 'success');
     },
     []
   );
@@ -115,6 +145,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setSession(null);
         setUser(null);
+        setRolesStatus('loading');
+        setRolesError(null);
       }
       markReady();
     },
@@ -319,6 +351,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setUser(null);
       setSession(null);
+      setRolesStatus('loading');
+      setRolesError(null);
       loggerService.info('User signed out - all local state cleared');
     }
   }, []);
@@ -363,8 +397,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const hasRole = useCallback((role: AppRole) => user?.roles?.includes(role) ?? false, [user]);
 
   const value = useMemo(
-    () => ({ user, session, loading, isReady, isAdmin, hasRole, signIn, signOut, signUp, resetPassword }),
-    [user, session, loading, isReady, isAdmin, hasRole, signIn, signOut, signUp, resetPassword]
+    () => ({
+      user,
+      session,
+      loading,
+      isReady,
+      isAdmin,
+      hasRole,
+      rolesStatus,
+      rolesError,
+      signIn,
+      signOut,
+      signUp,
+      resetPassword,
+    }),
+    [user, session, loading, isReady, isAdmin, hasRole, rolesStatus, rolesError, signIn, signOut, signUp, resetPassword]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
