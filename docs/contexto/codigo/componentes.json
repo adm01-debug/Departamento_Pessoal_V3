@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 623,
+ "total": 624,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -2368,6 +2368,23 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/colaboradores/ColaboradorTable.tsx",
+   "exports": [
+    "COLABORADOR_TABLE_COLUMNS",
+    "ColaboradorTable"
+   ],
+   "export_default": null,
+   "linhas": 257,
+   "dominio": "components/colaboradores",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
    "exports": [
     "ColaboradorViewMode",
@@ -2633,7 +2650,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 30,
+   "usado_por": 31,
    "orfao": false
   },
   {
@@ -4239,7 +4256,7 @@
     "EntityPageContainer"
    ],
    "export_default": null,
-   "linhas": 166,
+   "linhas": 167,
    "dominio": "components/layout",
    "hooks_locais": [],
    "tabelas": [],
@@ -7077,7 +7094,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 216,
+   "usado_por": 217,
    "orfao": false
   },
   {
@@ -7092,7 +7109,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 355,
+   "usado_por": 356,
    "orfao": false
   },
   {
@@ -7857,7 +7874,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 114,
+   "usado_por": 115,
    "orfao": false
   },
   {
@@ -7887,7 +7904,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 14,
+   "usado_por": 15,
    "orfao": false
   },
   {
@@ -7935,7 +7952,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 111,
+   "usado_por": 112,
    "orfao": false
   },
   {
@@ -8036,7 +8053,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 39,
+   "usado_por": 40,
    "orfao": false
   },
   {
@@ -8050,7 +8067,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 5,
+   "usado_por": 6,
    "orfao": false
   },
   {
@@ -8750,7 +8767,7 @@
     "ColaboradoresPage"
    ],
    "export_default": "ColaboradoresPage",
-   "linhas": 388,
+   "linhas": 306,
    "dominio": "pages",
    "hooks_locais": [
     "useColaboradores",

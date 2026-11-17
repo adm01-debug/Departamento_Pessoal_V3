@@ -2458,13 +2458,14 @@
     "useMemo"
    ],
    "canais_realtime": [],
-   "usado_por": 37,
+   "usado_por": 38,
    "usado_por_arquivos": [
     "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
     "src/components/colaborador-detalhes/DependentesTab.tsx",
     "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
     "src/components/colaborador-detalhes/EmergenciaTab.tsx",
     "src/components/colaboradores/ColaboradorDirectoryGrid.tsx",
+    "src/components/colaboradores/ColaboradorTable.tsx",
     "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
     "src/components/esocial/NaoPeriodicos.tsx",
     "src/components/esocial/Periodicos.tsx",
@@ -2488,8 +2489,7 @@
     "src/pages/ColaboradorDetalhesPage.tsx",
     "src/pages/ColaboradoresPage.tsx",
     "src/pages/DocumentosPage.tsx",
-    "src/pages/FolhaCompliancePage.tsx",
-    "src/pages/GeradorDocumentosPage.tsx"
+    "src/pages/FolhaCompliancePage.tsx"
    ],
    "coberto_por_testes": 1
   },

@@ -195,7 +195,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 285,
+   "testes": 286,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -1333,13 +1333,13 @@
   },
   {
    "modulo": "components/colaboradores",
-   "arquivos": 7,
+   "arquivos": 8,
    "testes": 1,
-   "linhas": 837,
+   "linhas": 1094,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 6,
+   "componentes": 7,
    "hooks_locais": [
     "useAuth",
     "useCargos",
@@ -3228,7 +3228,7 @@
    "modulo": "components/layout",
    "arquivos": 28,
    "testes": 1,
-   "linhas": 3370,
+   "linhas": 3371,
    "itens_menu": [],
    "telas": [
     "/"
@@ -7788,7 +7788,7 @@
    "modulo": "pages",
    "arquivos": 113,
    "testes": 0,
-   "linhas": 45709,
+   "linhas": 45627,
    "itens_menu": [
     "Admissões",
     "Afastamentos",

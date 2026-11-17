@@ -900,7 +900,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 278,
+   "usado_por": 279,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
@@ -4771,7 +4771,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 6,
+   "usado_por": 7,
    "usado_por_modulos": [
     "components/colaboradores",
     "hooks",

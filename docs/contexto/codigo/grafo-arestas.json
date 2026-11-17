@@ -1657,6 +1657,20 @@
    "src/components/ui/module-skeleton.tsx",
    "src/lib/utils.ts"
   ],
+  "src/components/colaboradores/ColaboradorTable.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/spinner.tsx",
+   "src/components/ui/status-badge.tsx",
+   "src/components/ui/table.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/components/ui/user-avatar.tsx",
+   "src/hooks/usePiiMask.ts",
+   "src/lib/utils.ts",
+   "src/services/vinculoService.ts",
+   "src/types/entities.ts"
+  ],
   "src/components/colaboradores/ColaboradorViewSwitcher.tsx": [
    "src/components/ui/button.tsx",
    "src/lib/utils.ts"
@@ -5596,6 +5610,7 @@
    "src/components/colaboradores/ColaboradorDirectoryGrid.tsx",
    "src/components/colaboradores/ColaboradorFilters.tsx",
    "src/components/colaboradores/ColaboradorKpiCards.tsx",
+   "src/components/colaboradores/ColaboradorTable.tsx",
    "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
    "src/components/layout/EntityPageContainer.tsx",
    "src/components/ui/badge.tsx",

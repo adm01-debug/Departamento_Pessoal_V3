@@ -1,16 +1,16 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1283,
- "arestas": 6299,
+ "nos": 1284,
+ "arestas": 6312,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 355
+   "importado_por": 356
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 279
+   "importado_por": 280
   },
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -22,7 +22,7 @@
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 216
+   "importado_por": 217
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -54,11 +54,11 @@
   },
   {
    "arquivo": "src/components/ui/spinner.tsx",
-   "importado_por": 114
+   "importado_por": 115
   },
   {
    "arquivo": "src/components/ui/table.tsx",
-   "importado_por": 111
+   "importado_por": 112
   },
   {
    "arquivo": "src/integrations/supabase/types.ts",
@@ -118,11 +118,11 @@
   },
   {
    "arquivo": "src/components/ui/tooltip.tsx",
-   "importado_por": 39
+   "importado_por": 40
   },
   {
    "arquivo": "src/hooks/usePiiMask.ts",
-   "importado_por": 38
+   "importado_por": 39
   },
   {
    "arquivo": "src/services/index.ts",
@@ -130,7 +130,7 @@
   },
   {
    "arquivo": "src/types/entities.ts",
-   "importado_por": 36
+   "importado_por": 37
   },
   {
    "arquivo": "src/components/ui/dropdown-menu.tsx",
@@ -138,7 +138,7 @@
   },
   {
    "arquivo": "src/components/dashboard/MetricCard.tsx",
-   "importado_por": 33
+   "importado_por": 34
   },
   {
    "arquivo": "src/hooks/useColaboradorDetalhes.ts",

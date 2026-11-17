@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a588982d92a89b6bcb001e303e6e550192ae173a",
+  "sha": "8006fcf7e577a48f17ed6ee7fb9a89ea1b93963a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 17:35 UTC",
-  "files_total": 3523,
-  "code_files": 2949,
-  "code_lines": 467519
+  "generated_at": "2026-11-17 18:01 UTC",
+  "files_total": 3525,
+  "code_files": 2951,
+  "code_lines": 467789
  },
  "version": "1.3.2",
- "facts_hash": "6c6ec0b47cc43af6",
+ "facts_hash": "76b6e34dd9a05597",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 976,
+   ".tsx": 978,
    ".sql": 923,
    ".ts": 919,
    ".mjs": 103,
@@ -89328,7 +89328,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 93
+    "deps_count": 94
    },
    {
     "path": "",
@@ -99967,7 +99967,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 948,
+  "components_count": 950,
   "hooks": [
    {
     "name": "useContacts",
@@ -101550,8 +101550,8 @@
   },
   {
    "module": "src/components",
-   "files": 948,
-   "lines": 171634,
+   "files": 950,
+   "lines": 171986,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101749,6 +101749,7 @@
     "src/components/__tests__/ColaboradorHistory.test.tsx",
     "src/components/__tests__/ColaboradorKpiCards.test.tsx",
     "src/components/__tests__/ColaboradorSeloPassagem.test.tsx",
+    "src/components/__tests__/ColaboradorTable.test.tsx",
     "src/components/__tests__/ComparacaoCenarios.test.tsx",
     "src/components/__tests__/ConfiguracoesGeraisTab.test.tsx",
     "src/components/__tests__/Container.test.tsx",
@@ -101777,8 +101778,7 @@
     "src/components/__tests__/DistribuirHoleritesButton.test.tsx",
     "src/components/__tests__/DocumentoPreview.test.tsx",
     "src/components/__tests__/DocumentoTimeline.test.tsx",
-    "src/components/__tests__/DocumentosPessoaisTab.test.tsx",
-    "src/components/__tests__/DonutChart.test.tsx"
+    "src/components/__tests__/DocumentosPessoaisTab.test.tsx"
    ]
   },
   {
@@ -102237,7 +102237,7 @@
   {
    "module": "src/pages",
    "files": 134,
-   "lines": 49285,
+   "lines": 49203,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -146197,6 +146197,21 @@
     "value": "5"
    },
    {
+    "file": "src/components/colaboradores/ColaboradorTable.tsx",
+    "name": "ROW_DURATION",
+    "value": "0.28"
+   },
+   {
+    "file": "src/components/colaboradores/ColaboradorTable.tsx",
+    "name": "ROW_MAX_STAGGER_INDEX",
+    "value": "7"
+   },
+   {
+    "file": "src/components/colaboradores/ColaboradorTable.tsx",
+    "name": "ROW_STAGGER_STEP",
+    "value": "0.05"
+   },
+   {
     "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
     "name": "BASE_CONTEUDO_ABA",
     "value": "4"
@@ -167651,6 +167666,38 @@
    {
     "file": "src/components/__tests__/ColaboradorSeloPassagem.test.tsx",
     "name": "sem passagensPorId, não mostra selo nenhum"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorTable.test.tsx",
+    "name": "ColaboradorTable — máscara de PII"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorTable.test.tsx",
+    "name": "sem permissão de ver PII, não imprime o e-mail real"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorTable.test.tsx",
+    "name": "sem permissão de ver PII, não imprime o CPF real"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorTable.test.tsx",
+    "name": "com permissão, mostra e-mail e CPF completos"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorTable.test.tsx",
+    "name": "ColaboradorTable — colunas que a tabela anterior não tinha"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorTable.test.tsx",
+    "name": "mostra a admissão em dd/MM/yyyy sem shift de fuso"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorTable.test.tsx",
+    "name": "mostra o selo de recontratação a partir de 2 passagens"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorTable.test.tsx",
+    "name": "sem passagensPorId não inventa selo"
    },
    {
     "file": "src/components/__tests__/ComparacaoCenarios.test.tsx",
@@ -263808,6 +263855,21 @@
     "sem passagensPorId, não mostra selo nenhum"
    ]
   },
+  "src/components/__tests__/ColaboradorTable.test.tsx": {
+   "path": "src/components/__tests__/ColaboradorTable.test.tsx",
+   "lines": 94,
+   "is_test": true,
+   "tests": [
+    "ColaboradorTable — máscara de PII",
+    "sem permissão de ver PII, não imprime o e-mail real",
+    "sem permissão de ver PII, não imprime o CPF real",
+    "com permissão, mostra e-mail e CPF completos",
+    "ColaboradorTable — colunas que a tabela anterior não tinha",
+    "mostra a admissão em dd/MM/yyyy sem shift de fuso",
+    "mostra o selo de recontratação a partir de 2 passagens",
+    "sem passagensPorId não inventa selo"
+   ]
+  },
   "src/components/__tests__/ComparacaoCenarios.test.tsx": {
    "path": "src/components/__tests__/ComparacaoCenarios.test.tsx",
    "lines": 76,
@@ -273930,6 +273992,32 @@
     "function ColaboradorKpiCards"
    ]
   },
+  "src/components/colaboradores/ColaboradorTable.tsx": {
+   "path": "src/components/colaboradores/ColaboradorTable.tsx",
+   "lines": 257,
+   "exports": [
+    "const COLABORADOR_TABLE_COLUMNS",
+    "function ColaboradorTable"
+   ],
+   "navigates": [
+    "/colaboradores/",
+    "/colaboradores/editar/"
+   ],
+   "params": [
+    {
+     "name": "ROW_DURATION",
+     "value": "0.28"
+    },
+    {
+     "name": "ROW_MAX_STAGGER_INDEX",
+     "value": "7"
+    },
+    {
+     "name": "ROW_STAGGER_STEP",
+     "value": "0.05"
+    }
+   ]
+  },
   "src/components/colaboradores/ColaboradorViewSwitcher.tsx": {
    "path": "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
    "lines": 48,
@@ -277416,7 +277504,7 @@
   },
   "src/components/layout/EntityPageContainer.tsx": {
    "path": "src/components/layout/EntityPageContainer.tsx",
-   "lines": 166,
+   "lines": 167,
    "exports": [
     "function EntityPageContainer"
    ]
@@ -293490,13 +293578,11 @@
   },
   "src/pages/ColaboradoresPage.tsx": {
    "path": "src/pages/ColaboradoresPage.tsx",
-   "lines": 388,
+   "lines": 306,
    "exports": [
     "function ColaboradoresPage"
    ],
    "navigates": [
-    "/colaboradores/",
-    "/colaboradores/editar/",
     "/colaboradores/novo"
    ],
    "errors": [
@@ -324029,10 +324115,22 @@
   }
  },
  "git": {
-  "sha": "a588982d92a89b6bcb001e303e6e550192ae173a",
+  "sha": "8006fcf7e577a48f17ed6ee7fb9a89ea1b93963a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "8006fcf",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(colaboradores): adota a tabela densa da muri, com máscara de PII (#638)",
+    "files": [
+     "src/components/__tests__/ColaboradorTable.test.tsx",
+     "src/components/colaboradores/ColaboradorTable.tsx",
+     "src/components/layout/EntityPageContainer.tsx",
+     "src/pages/ColaboradoresPage.tsx"
+    ]
+   },
    {
     "sha": "a588982",
     "date": "2026-11-17",
@@ -324775,53 +324873,6 @@
      "supabase/functions/training-image-generate/README.md",
      "supabase/functions/training-image-generate/index.ts"
     ]
-   },
-   {
-    "sha": "8001252",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "feat(dossie): resgata a Timeline do colaborador da branch muri (#602)",
-    "files": [
-     "src/components/admissoes/OnboardingPageContent.tsx",
-     "src/components/admissoes/admissoesComum.ts",
-     "src/components/admissoes/admissoesDerivacoes.ts",
-     "src/components/admissoes/onboardingDerivacoes.ts",
-     "src/components/colaborador-detalhes/historico/EventTypesSummary.tsx",
-     "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx",
-     "src/components/colaborador-detalhes/historico/HistoryAuditDetailDialog.tsx",
-     "src/components/colaborador-detalhes/historico/HistoryCreateContractDialog.tsx",
-     "src/components/colaborador-detalhes/historico/HistoryCreateSalaryDialog.tsx",
-     "src/components/colaborador-detalhes/historico/HistoryEventRow.tsx",
-     "src/components/colaborador-detalhes/historico/HistorySidebar.tsx",
-     "src/components/colaborador-detalhes/historico/HistoryTimeline.tsx",
-     "src/components/colaborador-detalhes/historico/HistoryToolbar.tsx",
-     "src/components/colaborador-detalhes/historico/HistoryYearGroup.tsx",
-     "src/components/colaborador-detalhes/historico/JourneySummary.tsx",
-     "src/components/colaborador-detalhes/historico/LastUpdate.tsx",
-     "src/components/colaborador-detalhes/historico/UpcomingEvents.tsx",
-     "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx",
-     "src/components/colaborador-detalhes/historico/eventDate.ts",
-     "src/components/colaborador-detalhes/historico/eventTypeConfig.tsx",
-     "src/components/colaborador-detalhes/index.ts",
-     "src/components/dashboard/DonutChart.tsx",
-     "src/hooks/useColaboradorDetalhes.ts",
-     "src/hooks/useDesenvolvimentoColaborador.ts",
-     "src/hooks/useFerias.ts",
-     "src/hooks/useHistoricoColaborador.ts",
-     "src/hooks/useHistoricoContratos.ts",
-     "src/hooks/useNovasTabelas.ts",
-     "src/hooks/useProximosEventos.ts",
-     "src/pages/ColaboradorDetalhesPage.tsx",
-     "src/pages/OnboardingPage.tsx",
-     "src/services/catalogoCursoService.ts",
-     "src/services/colaboradorDetalhesService.ts",
-     "src/services/onboardingJornadaService.ts",
-     "src/services/tabelas/__tests__/rhService.test.ts",
-     "src/services/tabelas/rhService.ts",
-     "src/services/timelineService.ts",
-     "src/services/vinculoService.ts",
-     "src/types/timelineEvent.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -324834,24 +324885,20 @@
     11
    ],
    [
+    "src/pages/ColaboradoresPage.tsx",
+    4
+   ],
+   [
     "src/index.css",
     4
    ],
    [
-    "src/pages/ColaboradoresPage.tsx",
-    3
-   ],
-   [
-    "src/components/colaborador-detalhes/index.ts",
-    3
-   ],
-   [
-    "src/pages/ColaboradorDetalhesPage.tsx",
-    3
-   ],
-   [
     "src/services/colaboradorService.ts",
     3
+   ],
+   [
+    "src/components/layout/EntityPageContainer.tsx",
+    2
    ],
    [
     "src/components/layout/AppSidebar.tsx",
@@ -324886,11 +324933,11 @@
     2
    ],
    [
-    "src/hooks/index.ts",
+    "src/components/colaborador-detalhes/index.ts",
     2
    ],
    [
-    "src/hooks/useColaboradorDetalhes.ts",
+    "src/hooks/index.ts",
     2
    ],
    [
@@ -324898,11 +324945,15 @@
     2
    ],
    [
-    "src/services/colaboradorDetalhesService.ts",
+    "src/pages/ColaboradorDetalhesPage.tsx",
     2
    ],
    [
     "src/services/index.ts",
+    2
+   ],
+   [
+    "src/types/entities.ts",
     2
    ]
   ]
