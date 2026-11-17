@@ -240,7 +240,13 @@ export function ESocialConfigTab({
                   e.preventDefault();
                   const formData = new FormData(e.currentTarget);
                   const file = formData.get('file') as File;
-                  if (!file) return;
+                  // `required` do HTML não alcança os campos de data: viraram
+                  // o `DatePicker` do design system (ver `ui/input.tsx`), que
+                  // grava num `<input type="hidden">`. A vigência é obrigatória
+                  // no certificado, então a checagem passa a ser explícita.
+                  const validFrom = (formData.get('valid_from') as string) || '';
+                  const validTo = (formData.get('valid_to') as string) || '';
+                  if (!file || !validFrom || !validTo) return;
                   const reader = new FileReader();
                   reader.onload = () => {
                     const base64 = (reader.result as string).split(',')[1];
@@ -249,8 +255,8 @@ export function ESocialConfigTab({
                         empresa_id: empresaAtual.id,
                         subject: (formData.get('subject') as string) || file.name,
                         issuer: formData.get('issuer') as string,
-                        valid_from: formData.get('valid_from') as string,
-                        valid_to: formData.get('valid_to') as string,
+                        valid_from: validFrom,
+                        valid_to: validTo,
                         arquivo_base64: base64,
                         senha: formData.get('password') as string,
                         cnpj: empresaAtual.cnpj || '',

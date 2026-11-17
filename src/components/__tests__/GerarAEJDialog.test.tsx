@@ -66,7 +66,9 @@ describe('GerarAEJDialog', () => {
 
   it('renders date inputs', () => {
     render(<GerarAEJDialog />);
-    const dateInputs = document.querySelectorAll('input[type="date"]');
-    expect(dateInputs.length).toBe(2);
+    // `Input type="date"` delega para o `DatePicker` do design system (ver
+    // `src/components/ui/input.tsx`): o campo virou o botão que abre o
+    // popover, não um `<input type="date">` nativo.
+    expect(screen.getAllByText('Selecionar data')).toHaveLength(2);
   });
 });
