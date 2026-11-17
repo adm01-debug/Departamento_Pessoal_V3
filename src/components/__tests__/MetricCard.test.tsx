@@ -33,7 +33,7 @@ vi.mock('@/components/dashboard/AnimatedNumber', () => ({
 }));
 
 vi.mock('@/components/dashboard/MiniSparkline', () => ({
-  MiniSparkline: () => <svg data-testid="mini-sparkline" />,
+  MiniSparkline: ({ className }: { className?: string }) => <svg data-testid="mini-sparkline" className={className} />,
 }));
 
 import { MetricCard } from '../dashboard/MetricCard';
@@ -184,5 +184,23 @@ describe('MetricCard', () => {
   it('mantem o valor monetario inteiro quando decimals nao e informado', () => {
     render(<MetricCard title="Folha Mensal" value="R$ 19.080" rawValue={19079.93} icon={Users} />);
     expect(screen.getByText('R$ 19.080')).toBeInTheDocument();
+  });
+
+  it('nao deixa a sparkline disputar largura com o valor abaixo de 2xl', () => {
+    const { container } = render(
+      <MetricCard title="Folha Mensal" value="R$ 19.079,93" icon={Users} sparkline={[1, 2, 3, 4]} />
+    );
+    const spark = container.querySelector('[data-testid="mini-sparkline"]');
+    expect(spark).not.toBeNull();
+    // Entra so a partir de 2xl, e sem shrink-0: o valor nunca perde espaco
+    // para os 80px fixos do grafico na faixa 4-up do Dashboard.
+    expect(spark?.getAttribute('class') || '').toContain('hidden');
+    expect(spark?.getAttribute('class') || '').toContain('2xl:block');
+    expect(spark?.getAttribute('class') || '').not.toContain('shrink-0');
+  });
+
+  it('expoe o valor inteiro no title quando o truncate corta', () => {
+    const { container } = render(<MetricCard title="Folha Mensal" value="R$ 19.079,93" icon={Users} />);
+    expect(container.querySelector('[title="R$ 19.079,93"]')).not.toBeNull();
   });
 });

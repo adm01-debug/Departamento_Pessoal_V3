@@ -163,7 +163,12 @@ export function MetricCard({
               </span>
             )}
           </p>
-          <div className={cn('text-data truncate', dense ? 'mt-1' : 'mt-1.5')}>
+          {/* `title`: se mesmo assim a largura não bastar, o truncate deixa de
+              esconder o número — ele aparece inteiro ao passar o mouse. */}
+          <div
+            className={cn('text-data truncate', dense ? 'mt-1' : 'mt-1.5')}
+            title={typeof value === 'string' || typeof value === 'number' ? String(value) : undefined}
+          >
             {rawValue !== undefined ? (
               <AnimatedNumber
                 value={rawValue}
@@ -229,7 +234,17 @@ export function MetricCard({
         </div>
 
         {sparkline && sparkline.length > 0 && (
-          <MiniSparkline data={sparkline} className="opacity-60 group-hover:opacity-100 transition-opacity shrink-0" />
+          // O valor é o produto do cartão; a sparkline é acessório. Na faixa
+          // 4-up do Dashboard (`lg:grid-cols-4`) com a sidebar de 256px, o
+          // cartão tem ~168px em 1024px: ícone (36) + paddings/gaps (44) + os
+          // 80px fixos da sparkline não deixavam largura para o número, e a
+          // folha mensal saía como reticências. Entra só a partir de `2xl`, e
+          // aí mesmo pode encolher (sem `shrink-0`) — a coluna de texto tem
+          // `flex-1` com base 0, então o encolhimento recai todo aqui.
+          <MiniSparkline
+            data={sparkline}
+            className="hidden min-w-0 opacity-60 transition-opacity group-hover:opacity-100 2xl:block"
+          />
         )}
       </CardContent>
     </MotionCard>
