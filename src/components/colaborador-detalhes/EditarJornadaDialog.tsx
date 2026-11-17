@@ -289,6 +289,24 @@ function EscalaDoDiaFields({
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Não foi possível salvar a escala do dia.')),
   });
 
+  // Criar e corrigir sem poder remover deixa o dia errado gravado para sempre:
+  // o formulário só troca turno e observações, nunca apaga o agendamento.
+  const remover = useMutation({
+    // Relê antes de apagar, como o salvar: a escala pode ter saído em outra aba.
+    mutationFn: async (): Promise<{ removido: boolean }> => {
+      const existente = await turnoService.obterEscalaDoDia(colaboradorId, empresaId, data);
+      if (!existente) return { removido: false };
+      await turnoService.excluirEscala(existente.id, empresaId);
+      return { removido: true };
+    },
+    onSuccess: ({ removido }) => {
+      qc.invalidateQueries({ queryKey: ['escalas'] });
+      qc.invalidateQueries({ queryKey: ['escalas_trabalho'] });
+      toast.success(removido ? 'Escala do dia removida.' : 'Nenhuma escala neste dia para remover.');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Não foi possível remover a escala do dia.')),
+  });
+
   return (
     <div className="space-y-3">
       {turnos.length === 0 && (
@@ -338,10 +356,28 @@ function EscalaDoDiaFields({
       <Button
         className="w-full"
         onClick={() => salvar.mutate()}
-        disabled={salvar.isPending || !turnoId || turnos.length === 0}
+        disabled={salvar.isPending || remover.isPending || !turnoId || turnos.length === 0}
       >
         {salvar.isPending ? 'Salvando…' : 'Salvar escala do dia'}
       </Button>
+
+      {escala && (
+        <>
+          {remover.isError && (
+            <p role="alert" className="text-xs text-[hsl(var(--destructive-vivid))]">
+              {safeErrorMessage(remover.error, 'Não foi possível remover a escala do dia.')}
+            </p>
+          )}
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => remover.mutate()}
+            disabled={remover.isPending || salvar.isPending}
+          >
+            {remover.isPending ? 'Removendo…' : 'Remover escala do dia'}
+          </Button>
+        </>
+      )}
     </div>
   );
 }

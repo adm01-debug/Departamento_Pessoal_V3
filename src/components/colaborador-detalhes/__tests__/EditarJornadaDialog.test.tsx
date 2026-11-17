@@ -15,6 +15,7 @@ vi.mock('@/services/turnoService', () => ({
     obterEscalaDoDia: vi.fn(),
     criarEscala: vi.fn(),
     atualizarEscala: vi.fn(),
+    excluirEscala: vi.fn(),
   },
 }));
 
@@ -122,6 +123,7 @@ describe('EditarJornadaDialog — escala do dia', () => {
     vi.mocked(turnoService.obterEscalaDoDia).mockReset();
     vi.mocked(turnoService.criarEscala).mockReset();
     vi.mocked(turnoService.atualizarEscala).mockReset();
+    vi.mocked(turnoService.excluirEscala).mockReset();
   });
 
   it('não renderiza a seção de escala sem colaboradorId', () => {
@@ -140,6 +142,25 @@ describe('EditarJornadaDialog — escala do dia', () => {
     renderizar();
     expect(await screen.findByText(/Não foi possível carregar a escala deste dia/i)).toBeInTheDocument();
     expect(screen.queryByText(/Nenhuma escala registrada neste dia/i)).not.toBeInTheDocument();
+  });
+
+  it('remove a escala do dia quando ja existe uma (criar sem excluir e fluxo pela metade)', async () => {
+    vi.mocked(turnoService.obterEscalaDoDia).mockResolvedValue(ESCALA_EXISTENTE);
+    vi.mocked(turnoService.excluirEscala).mockResolvedValue(undefined);
+    renderizar();
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Remover escala do dia' }));
+
+    await waitFor(() => expect(turnoService.excluirEscala).toHaveBeenCalledTimes(1));
+    expect(turnoService.excluirEscala).toHaveBeenCalledWith('esc-1', 'e1');
+  });
+
+  it('nao oferece remover quando o dia nao tem escala', async () => {
+    vi.mocked(turnoService.obterEscalaDoDia).mockResolvedValue(null);
+    renderizar();
+
+    expect(await screen.findByText(/Nenhuma escala registrada neste dia/i)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Remover escala do dia' })).not.toBeInTheDocument();
   });
 
   it('carrega a escala existente do dia e salva com UPDATE', async () => {
