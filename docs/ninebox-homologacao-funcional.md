@@ -10,7 +10,7 @@
 
 **Identificadores confirmados**
 
-- `usuario_rh` = `60767f3f-bb08-4917-9d74-17ce19ef8adb`
+- `usuario_rh` = `<user_id da conta de homologacao>`
 - `empresa_id` = `66104399-aba8-4105-bbd3-9bf67820c1d0`
 - Marcador de teste = `HOMOLOG-NB` (em `pontos_fortes`, em `idempotency_key` e em `observacao`)
 
@@ -34,7 +34,7 @@ select u.user_id as usuario_rh, ue.empresa_id, ue.is_default, e.razao_social
 from public.user_roles u
 join public.user_empresas ue on ue.user_id = u.user_id
 left join public.empresas e on e.id = ue.empresa_id
-where u.user_id = '60767f3f-bb08-4917-9d74-17ce19ef8adb';
+where u.user_id = '<user_id da conta de homologacao>';
 
 -- 0.2 Objetos da migration (tudo precisa ser `true`)
 select 'criar_feedback_seguro' as objeto,
@@ -127,7 +127,7 @@ create temporary table _nb_l1 (passo int, caso text, esperado text, obtido text,
 do $$
 declare
   v_empresa uuid := '66104399-aba8-4105-bbd3-9bf67820c1d0';
-  v_rh      uuid := '60767f3f-bb08-4917-9d74-17ce19ef8adb';
+  v_rh      uuid := '<user_id da conta de homologacao>';
   v_tag     text := 'HOMOLOG-NB';
   v_run     text := to_char(now(), 'YYYYMMDDHH24MISS');
   v_colab   uuid;
@@ -280,7 +280,7 @@ create temporary table _nb_l2 (passo int, caso text, esperado text, obtido text,
 do $$
 declare
   v_empresa uuid := '66104399-aba8-4105-bbd3-9bf67820c1d0';
-  v_rh      uuid := '60767f3f-bb08-4917-9d74-17ce19ef8adb';
+  v_rh      uuid := '<user_id da conta de homologacao>';
   v_tag     text := 'HOMOLOG-NB';
   v_run     text := to_char(now(), 'YYYYMMDDHH24MISS');
   v_colab   uuid;
@@ -362,7 +362,7 @@ Tudo termina em **`rollback`** — nada persiste.
 begin;
 set local role authenticated;
 select set_config('request.jwt.claims',
-  '{"sub":"60767f3f-bb08-4917-9d74-17ce19ef8adb","email":"homolog-nb@example.invalid","app_metadata":{"empresa_id":"66104399-aba8-4105-bbd3-9bf67820c1d0"}}',
+  '{"sub":"<user_id da conta de homologacao>","email":"homolog-nb@example.invalid","app_metadata":{"empresa_id":"66104399-aba8-4105-bbd3-9bf67820c1d0"}}',
   true);
 
 -- A1 · RLS: enxerga a própria empresa
