@@ -24,7 +24,9 @@ function wrapper({ children }: { children: React.ReactNode }) {
 }
 
 describe('useCargos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns cargos array', async () => {
     const { result } = renderHook(() => useCargos(), { wrapper });
@@ -47,5 +49,17 @@ describe('useCargos', () => {
     const { result } = renderHook(() => useCargos(), { wrapper });
     expect(typeof result.current.atualizar).toBe('function');
     expect(typeof result.current.excluir).toBe('function');
+  });
+
+  it('uses pageSize 15 by default', async () => {
+    const { result } = renderHook(() => useCargos(), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockCargoService.listar).toHaveBeenCalledWith(expect.objectContaining({ pageSize: 15 }));
+  });
+
+  it('allows overriding pageSize (e.g. for filter dropdowns) without changing the default', async () => {
+    const { result } = renderHook(() => useCargos({ pageSize: 100 }), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockCargoService.listar).toHaveBeenCalledWith(expect.objectContaining({ pageSize: 100 }));
   });
 });

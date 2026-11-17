@@ -24,7 +24,9 @@ function wrapper({ children }: { children: React.ReactNode }) {
 }
 
 describe('useDepartamentos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns departamentos array', async () => {
     const { result } = renderHook(() => useDepartamentos(), { wrapper });
@@ -45,5 +47,17 @@ describe('useDepartamentos', () => {
   it('exposes excluir function', () => {
     const { result } = renderHook(() => useDepartamentos(), { wrapper });
     expect(typeof result.current.excluir).toBe('function');
+  });
+
+  it('uses pageSize 10 by default', async () => {
+    const { result } = renderHook(() => useDepartamentos(), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockDeptService.listar).toHaveBeenCalledWith(expect.objectContaining({ pageSize: 10 }));
+  });
+
+  it('allows overriding pageSize (e.g. for filter dropdowns) without changing the default', async () => {
+    const { result } = renderHook(() => useDepartamentos({ pageSize: 100 }), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockDeptService.listar).toHaveBeenCalledWith(expect.objectContaining({ pageSize: 100 }));
   });
 });

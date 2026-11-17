@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { queryClient } from '@/lib/queryClient';
-
-const SESSION_FP_KEY = 'dp_session_fp';
+import { SESSION_FP_KEY, limparSessaoLocal } from '@/lib/sessaoLocal';
 
 function computeSessionFingerprint(): string {
   const components = [
@@ -22,27 +21,9 @@ function computeSessionFingerprint(): string {
 
 function forceLogout(reason: string) {
   queryClient.clear();
-  try {
-    localStorage.clear();
-  } catch {
-    /* private browsing */
-  }
-  try {
-    sessionStorage.clear();
-  } catch {
-    /* private browsing */
-  }
-  try {
-    indexedDB.deleteDatabase('ponto-offline-db');
-  } catch {
-    /* ignore */
-  }
-  if ('caches' in window) {
-    caches
-      .keys()
-      .then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
-      .catch(() => {});
-  }
+  // Remove somente token/verifier do Supabase e o fingerprint de sessao: nunca
+  // localStorage.clear(), que apagaria a fila offline do ponto e rascunhos.
+  limparSessaoLocal();
   supabase.auth.signOut().catch(() => {});
   window.location.href = `/login?reason=${encodeURIComponent(reason)}`;
 }

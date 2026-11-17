@@ -6,6 +6,22 @@ import { validateInput } from '@/schemas/validate';
 import { supabase } from '@/integrations/supabase/client';
 import { registrarAcessoPII } from './piiAccessLogService';
 
+// Teto da external-db-bridge (MAX_LIMIT em supabase/functions/external-db-bridge/index.ts).
+const MAX_LINHAS_OPCOES_FILTRO = 1000;
+
+// A bridge rejeita expressao `or` com mais de 500 caracteres
+// (external-db-bridge/validation.ts, isSafeOrExpression).
+const LIMITE_OR_BRIDGE = 500;
+
+// Colunas da busca por texto, em duas reguas. A busca repete o termo em cada
+// coluna, entao o termo inteiro em 5 colunas estoura o limite da bridge por volta
+// de 81 caracteres. Em vez de cortar o termo (o que viraria busca por prefixo
+// silenciosa, devolvendo quem difere no final), termo longo cai para nome e
+// e-mail — os unicos campos onde texto desse tamanho de fato ocorre — e continua
+// sendo procurado por inteiro.
+const COLUNAS_BUSCA = ['nome_completo', 'email', 'matricula', 'cargo', 'departamento'] as const;
+const COLUNAS_BUSCA_TERMO_LONGO = ['nome_completo', 'email'] as const;
+
 class ColaboradorService extends BaseService<Colaborador> {
   constructor() {
     super('colaboradores', {
@@ -23,7 +39,8 @@ class ColaboradorService extends BaseService<Colaborador> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     // Explicit column selection to prevent failures on missing optional columns in external DB
-    const columns = 'id, nome_completo, cpf, email, status, data_admissao, empresa_id, matricula, foto_url, telefone';
+    const columns =
+      'id, nome_completo, cpf, email, status, data_admissao, empresa_id, matricula, foto_url, telefone, cargo, departamento';
     let query = this.getQuery().select(columns, { count: 'exact' });
 
     query = query.eq('empresa_id', empresaId);
@@ -32,8 +49,34 @@ class ColaboradorService extends BaseService<Colaborador> {
     if (cargo && cargo !== 'all') query = query.eq('cargo', cargo);
 
     if (search) {
+      // `cpf` é gravado apenas com dígitos (ver CPFInput/ColaboradorFormPage),
+      // então a busca por CPF precisa remover TODA formatação (inclusive "-"),
+      // enquanto os demais campos usam a sanitização genérica (que protege o
+      // ilike/or contra os caracteres especiais % _ . , ( ) ).
       const s = search.replace(/[%_.,()]/g, '');
-      if (s) query = query.or(`nome_completo.ilike.%${s}%,cpf.ilike.%${s}%,email.ilike.%${s}%`);
+      // Clausula de CPF so quando o termo e mesmo um numero formatado: buscar a
+      // matricula 'A12' viraria `cpf.ilike.%12%` e traria todo colaborador cujo
+      // CPF contenha 12, sem nenhum campo casando com o que foi digitado. E CPF
+      // tem 11 digitos: um numero maior nao e CPF de ninguem, e cortar nos 11
+      // primeiros acharia o CPF de OUTRA pessoa.
+      const digitos = /^[\d.\-/\s]+$/.test(search.trim()) ? search.replace(/\D/g, '') : '';
+      const cpfDigits = digitos.length > 0 && digitos.length <= 11 ? digitos : '';
+
+      const montarOr = (colunas: readonly string[]) =>
+        [
+          ...(s ? colunas.map((coluna) => `${coluna}.ilike.%${s}%`) : []),
+          ...(cpfDigits ? [`cpf.ilike.%${cpfDigits}%`] : []),
+        ].join(',');
+
+      let orExpr = montarOr(COLUNAS_BUSCA);
+      if (orExpr.length > LIMITE_OR_BRIDGE) orExpr = montarOr(COLUNAS_BUSCA_TERMO_LONGO);
+      if (orExpr.length > LIMITE_OR_BRIDGE) {
+        // Acima de ~231 caracteres nem duas colunas cabem. Devolver a lista sem
+        // o `or` mostraria TODOS os colaboradores como se casassem com o termo,
+        // e cortar o termo mentiria sobre o que foi procurado: avisar e o certo.
+        throw new Error('Termo de busca muito longo. Use no máximo 230 caracteres.');
+      }
+      if (orExpr) query = query.or(orExpr);
     }
 
     const from = (page - 1) * pageSize;
@@ -53,6 +96,45 @@ class ColaboradorService extends BaseService<Colaborador> {
     });
 
     return { data: (data as Colaborador[]) || [], total: count || 0 };
+  }
+
+  /**
+   * Opções dos dropdowns de filtro (Departamento/Cargo) — derivadas dos valores
+   * realmente presentes em `colaboradores.departamento`/`.cargo`, e não das
+   * tabelas mestre `departamentos`/`cargos`: essas colunas são texto livre
+   * (migration 002_colaboradores.sql) e não FK, então as tabelas mestre podem
+   * divergir do texto gravado e oferecer opção que não casa com colaborador
+   * nenhum (filtro que devolve lista vazia).
+   *
+   * O `.limit()` e OBRIGATORIO: um select sem limite nao manda `limit` no
+   * payload da bridge (client.ts createQueryBuilder) e a external-db-bridge
+   * aplica o default de 100 linhas (index.ts `queryLimit`), sem ORDER BY —
+   * as opcoes sairiam de um subconjunto arbitrario dos colaboradores.
+   *
+   * LIMITE CONHECIDO: 1000 e o teto da bridge (MAX_LIMIT), nao ha como pedir
+   * mais em uma chamada. Numa empresa com mais de 1000 colaboradores, um valor
+   * que apareca somente fora desse primeiro lote nao entra no dropdown (a busca
+   * por texto continua achando o colaborador). A correcao definitiva e uma RPC
+   * de valores distintos no banco — funcao nova em producao, decisao do dono.
+   */
+  async listarOpcoesFiltro(empresaId: string): Promise<{ departamentos: string[]; cargos: string[] }> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+
+    const { data, error } = await this.getQuery()
+      .select('departamento, cargo')
+      .eq('empresa_id', empresaId)
+      .limit(MAX_LINHAS_OPCOES_FILTRO);
+    if (error) throw error;
+
+    const rows = (Array.isArray(data) ? data : []) as { departamento?: string | null; cargo?: string | null }[];
+
+    const uniqueSorted = (values: (string | null | undefined)[]) =>
+      Array.from(new Set(values.filter((v): v is string => !!v))).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+    return {
+      departamentos: uniqueSorted(rows.map((r) => r.departamento)),
+      cargos: uniqueSorted(rows.map((r) => r.cargo)),
+    };
   }
 
   async getSummary(empresaId: string, filters: { departamento?: string; cargo?: string } = {}) {

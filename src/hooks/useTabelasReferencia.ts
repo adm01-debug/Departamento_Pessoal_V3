@@ -92,9 +92,10 @@ export function useContasBancarias(colaboradorId: string) {
 
 export function useCriarContaBancaria() {
   const qc = useQueryClient();
+  const { empresaAtual } = useEmpresas();
   return useMutation({
     mutationFn: async (data: Insertable<'contas_bancarias'>) => {
-      return await service.criarContaBancaria(data);
+      return await service.criarContaBancaria(data, empresaAtual!.id);
     },
     onSuccess: (_data: unknown, vars: Insertable<'contas_bancarias'>) =>
       qc.invalidateQueries({ queryKey: ['contas-bancarias', vars.colaborador_id] }),

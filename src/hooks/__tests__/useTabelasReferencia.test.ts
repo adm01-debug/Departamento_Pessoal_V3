@@ -336,7 +336,10 @@ describe('useCriarContaBancaria', () => {
       await result.current.mutateAsync({ colaborador_id: 'col-1', banco_codigo: '001' });
     });
 
-    expect(mockCriarContaBancaria).toHaveBeenCalledWith(expect.objectContaining({ colaborador_id: 'col-1' }));
+    expect(mockCriarContaBancaria).toHaveBeenCalledWith(
+      expect.objectContaining({ colaborador_id: 'col-1' }),
+      '00000000-0000-0000-0000-0000000000e1'
+    );
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['contas-bancarias', 'col-1'] });
   });
 });

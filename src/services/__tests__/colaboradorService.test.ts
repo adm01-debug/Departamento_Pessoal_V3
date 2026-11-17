@@ -72,6 +72,81 @@ describe('colaboradorService.listar', () => {
     expect(orFn).toHaveBeenCalledWith(expect.stringContaining('ilike.%Silva%'));
   });
 
+  it('selects cargo and departamento columns explicitly', async () => {
+    const { selectFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ filters: { empresaId: EMP } });
+    const columns = selectFn.mock.calls[0][0] as string;
+    expect(columns).toContain('cargo');
+    expect(columns).toContain('departamento');
+  });
+
+  it('searches by matricula, cargo and departamento in addition to nome/email', async () => {
+    const { orFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ search: 'Vendas', filters: { empresaId: EMP } });
+    const orArg = orFn.mock.calls[0][0] as string;
+    expect(orArg).toContain('matricula.ilike.%Vendas%');
+    expect(orArg).toContain('cargo.ilike.%Vendas%');
+    expect(orArg).toContain('departamento.ilike.%Vendas%');
+    expect(orArg).toContain('nome_completo.ilike.%Vendas%');
+    expect(orArg).toContain('email.ilike.%Vendas%');
+  });
+
+  it('normalizes a formatted CPF search (dots and dash) to digits only', async () => {
+    const { orFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ search: '123.456.789-00', filters: { empresaId: EMP } });
+    const orArg = orFn.mock.calls[0][0] as string;
+    // A cláusula de cpf precisa usar só dígitos (a coluna armazena CPF sem
+    // pontuação); o traço pode aparecer nas cláusulas dos outros campos
+    // (nome/email/etc.), que usam a sanitização genérica — isso é esperado.
+    expect(orArg).toContain('cpf.ilike.%12345678900%');
+    expect(orArg).not.toContain('cpf.ilike.%123456789-00%');
+  });
+
+  it('does not add a cpf clause when the search has no digits', async () => {
+    const { orFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ search: 'Maria', filters: { empresaId: EMP } });
+    const orArg = orFn.mock.calls[0][0] as string;
+    expect(orArg).not.toContain('cpf.ilike');
+  });
+
+  it('nao cria clausula de cpf para termo alfanumerico (matricula A12)', async () => {
+    const { orFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ search: 'A12', filters: { empresaId: EMP } });
+    const orArg = orFn.mock.calls[0][0] as string;
+    expect(orArg).toContain('matricula.ilike.%A12%');
+    expect(orArg).not.toContain('cpf.ilike');
+  });
+
+  it('termo longo cai para nome/email com o termo INTEIRO, sem estourar o limite da bridge', async () => {
+    const { orFn } = setupListarChain([], 0);
+    const termo = 'a'.repeat(200);
+    await colaboradorService.listar({ search: termo, filters: { empresaId: EMP } });
+    const orArg = orFn.mock.calls[0][0] as string;
+    expect(orArg.length).toBeLessThanOrEqual(500);
+    // O termo nao pode ser cortado: prefixo silencioso devolveria colaborador
+    // que difere no final do que foi digitado.
+    expect(orArg).toContain(`nome_completo.ilike.%${termo}%`);
+    expect(orArg).toContain(`email.ilike.%${termo}%`);
+    expect(orArg).not.toContain('matricula.ilike');
+  });
+
+  it('nao procura CPF quando o numero colado tem mais de 11 digitos', async () => {
+    const { orFn } = setupListarChain([], 0);
+    // 12 digitos nao sao CPF de ninguem; cortar nos 11 primeiros acharia o CPF
+    // de outra pessoa.
+    await colaboradorService.listar({ search: '123456789001', filters: { empresaId: EMP } });
+    const orArg = orFn.mock.calls[0][0] as string;
+    expect(orArg).not.toContain('cpf.ilike');
+    expect(orArg).toContain('matricula.ilike.%123456789001%');
+  });
+
+  it('avisa em vez de mentir quando o termo nao cabe nem em duas colunas', async () => {
+    setupListarChain([], 0);
+    await expect(colaboradorService.listar({ search: 'a'.repeat(300), filters: { empresaId: EMP } })).rejects.toThrow(
+      /Termo de busca muito longo/
+    );
+  });
+
   it('filters by empresa_id when provided', async () => {
     const { eqFn } = setupListarChain([], 0);
     await colaboradorService.listar({ filters: { empresaId: 'emp-1' } });
@@ -82,6 +157,18 @@ describe('colaboradorService.listar', () => {
     const { eqFn } = setupListarChain([], 0);
     await colaboradorService.listar({ filters: { empresaId: EMP, status: 'ativo' } });
     expect(eqFn).toHaveBeenCalledWith('status', 'ativo');
+  });
+
+  it('filters by status "pendente"', async () => {
+    const { eqFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ filters: { empresaId: EMP, status: 'pendente' } });
+    expect(eqFn).toHaveBeenCalledWith('status', 'pendente');
+  });
+
+  it('filters by status "desligado"', async () => {
+    const { eqFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ filters: { empresaId: EMP, status: 'desligado' } });
+    expect(eqFn).toHaveBeenCalledWith('status', 'desligado');
   });
 
   it('does NOT filter by status when status is "all"', async () => {
@@ -111,6 +198,50 @@ describe('colaboradorService.listar', () => {
     const { orderFn } = setupListarChain([], 0);
     await colaboradorService.listar({ filters: { empresaId: EMP } });
     expect(orderFn).toHaveBeenCalledWith('nome_completo', { ascending: true });
+  });
+});
+
+// ─── listarOpcoesFiltro ───────────────────────────────────────────────────────
+
+function setupOpcoesChain(data: unknown, error: { message: string } | null = null) {
+  const limitFn = vi.fn().mockResolvedValue({ data, error });
+  const eqFn = vi.fn().mockReturnValue({ limit: limitFn });
+  const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
+  mockFrom.mockReturnValue({ select: selectFn });
+  return { selectFn, eqFn, limitFn };
+}
+
+describe('colaboradorService.listarOpcoesFiltro', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns unique sorted values from colaboradores, ignoring nulls', async () => {
+    const { selectFn, eqFn, limitFn } = setupOpcoesChain([
+      { departamento: 'Vendas', cargo: 'Analista' },
+      { departamento: 'Almoxarifado', cargo: 'Analista' },
+      { departamento: 'Vendas', cargo: null },
+    ]);
+    const opcoes = await colaboradorService.listarOpcoesFiltro(EMP);
+    expect(selectFn).toHaveBeenCalledWith('departamento, cargo');
+    expect(eqFn).toHaveBeenCalledWith('empresa_id', EMP);
+    expect(opcoes.departamentos).toEqual(['Almoxarifado', 'Vendas']);
+    expect(opcoes.cargos).toEqual(['Analista']);
+  });
+
+  it('pede limite explicito (a bridge corta em 100 linhas sem limit)', async () => {
+    const { limitFn } = setupOpcoesChain([]);
+    await colaboradorService.listarOpcoesFiltro(EMP);
+    expect(limitFn).toHaveBeenCalledWith(1000);
+  });
+
+  it('throws without empresaId (tenant isolation)', async () => {
+    await expect(colaboradorService.listarOpcoesFiltro('')).rejects.toThrow(/empresa_id/);
+  });
+
+  it('throws on DB error', async () => {
+    setupOpcoesChain(null, { message: 'DB fail' });
+    await expect(colaboradorService.listarOpcoesFiltro(EMP)).rejects.toBeDefined();
   });
 });
 
