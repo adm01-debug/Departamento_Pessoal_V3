@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -64,9 +64,19 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
     setLoadingColab(false);
   }, [empresaAtual?.id]);
 
+  // A carga da lista tem de reagir ao `open` que vem do PAI: este Dialog e
+  // controlado por DesligamentosPage (`open={showNovo}`), e `onOpenChange` do
+  // Radix so dispara quando o proprio Dialog pede a mudanca (fechar pelo X, pelo
+  // Esc ou pelo overlay) — nunca na abertura feita de fora. Com a carga
+  // pendurada no `handleOpenChange`, `loadColaboradores` nunca rodava: o select
+  // de colaborador abria vazio e nao havia quem desligar.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- o setState da lista so ocorre depois do await: e sincronizacao com o banco, nao estado derivado de props.
+    if (open) void loadColaboradores();
+  }, [open, loadColaboradores]);
+
   const handleOpenChange = (v: boolean) => {
-    if (v) loadColaboradores();
-    else onClose();
+    if (!v) onClose();
   };
 
   const handleSubmit = async () => {
