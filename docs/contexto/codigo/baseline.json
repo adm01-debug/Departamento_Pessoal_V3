@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1eff3e1b62a3d4e4a60dedf2e09ba2a4d213a1f1",
+  "commit": "a588982d92a89b6bcb001e303e6e550192ae173a",
   "branch": "main",
-  "data_commit": "2026-11-17T14:30:49-03:00",
+  "data_commit": "2026-11-17T14:31:26-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "a588982",
+    "data": "2026-11-17",
+    "assunto": "fix(colaboradores): liga o selo de recontratacao, que estava invisivel (#635)"
+   },
+   {
+    "sha": "fabf6c7",
+    "data": "2026-11-17",
+    "assunto": "test: resgata da muri os 5 testes que a main não tinha e passam como está (#630)"
+   },
    {
     "sha": "1eff3e1",
     "data": "2026-11-17",
@@ -121,23 +131,13 @@
     "sha": "fe455b9",
     "data": "2026-11-16",
     "assunto": "feat(admissoes): resgata o núcleo de Admissões da branch muri preservando as 3 correções da main (#608)"
-   },
-   {
-    "sha": "4fe2dcc",
-    "data": "2026-11-16",
-    "assunto": "feat(treinamentos): resgata a UI de treinamentos da branch muri e reenxerta as correções da main (#607)"
-   },
-   {
-    "sha": "0b2efa2",
-    "data": "2026-11-16",
-    "assunto": "fix(dossiê): editar um colaborador passa a atualizar o dossiê dele na hora (#606)"
    }
   ],
-  "arquivos_mudados_7d": 1207,
+  "arquivos_mudados_7d": 1213,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 344
+    "mudancas": 350
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -207,11 +207,11 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 19
+    "mudancas": 18
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 18
+    "mudancas": 17
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -254,10 +254,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
-    "mudancas": 6
-   },
-   {
     "arquivo": "infra/github/action-pins.json",
     "mudancas": 6
    },
@@ -296,20 +292,24 @@
    {
     "arquivo": ".github/workflows/ci.yml",
     "mudancas": 5
+   },
+   {
+    "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 250
+    "commits": 252
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 29
+    "commits": 28
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 15
+    "commits": 14
    },
    {
     "autor": "github-actions[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3496,
-  "arquivos_codigo": 2022,
-  "linhas_codigo": 401870,
+  "arquivos_total": 3502,
+  "arquivos_codigo": 2028,
+  "linhas_codigo": 402562,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -332,7 +332,7 @@
   "tabelas": 425,
   "migrations": 857,
   "cron_jobs": 41,
-  "testes": 741,
+  "testes": 747,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 942,
-   "linhas": 170960
+   "arquivos": 948,
+   "linhas": 171634
   },
   "src/constants": {
    "arquivos": 6,
@@ -676,7 +676,7 @@
   },
   "src/pages": {
    "arquivos": 134,
-   "linhas": 49267
+   "linhas": 49285
   },
   "src/providers": {
    "arquivos": 4,

@@ -7077,7 +7077,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 215,
+   "usado_por": 216,
    "orfao": false
   },
   {
@@ -8750,14 +8750,15 @@
     "ColaboradoresPage"
    ],
    "export_default": "ColaboradoresPage",
-   "linhas": 370,
+   "linhas": 388,
    "dominio": "pages",
    "hooks_locais": [
     "useColaboradores",
     "useEmpresas",
     "useExcelExport",
     "usePDFExport",
-    "usePiiMask"
+    "usePiiMask",
+    "useVinculosResumo"
    ],
    "tabelas": [],
    "edges": [],

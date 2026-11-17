@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "1eff3e1b62a3d4e4a60dedf2e09ba2a4d213a1f1",
+  "sha": "a588982d92a89b6bcb001e303e6e550192ae173a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 17:32 UTC",
-  "files_total": 3517,
-  "code_files": 2943,
-  "code_lines": 466827
+  "generated_at": "2026-11-17 17:35 UTC",
+  "files_total": 3523,
+  "code_files": 2949,
+  "code_lines": 467519
  },
  "version": "1.3.2",
- "facts_hash": "1b174d97d2d1cc3b",
+ "facts_hash": "6c6ec0b47cc43af6",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 970,
+   ".tsx": 976,
    ".sql": 923,
    ".ts": 919,
    ".mjs": 103,
@@ -89328,7 +89328,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 92
+    "deps_count": 93
    },
    {
     "path": "",
@@ -99967,7 +99967,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 942,
+  "components_count": 948,
   "hooks": [
    {
     "name": "useContacts",
@@ -101550,8 +101550,8 @@
   },
   {
    "module": "src/components",
-   "files": 942,
-   "lines": 170960,
+   "files": 948,
+   "lines": 171634,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101651,10 +101651,10 @@
    "docs": [
     "index.ts: V25: Components Export - active modules only",
     "AcoesFeedback.test.ts: Ações de feedback — camada de decisão dos controles (pura). Garante as regras pedidas: RH também gerencia (admin+rh), Validação de Potencial EXCLUSIVA do RH e situação da validação comparada com a versão canônica vinda do banco.",
+    "AppPagination.test.tsx: AppPagination — padrão único de paginação do sistema. Cobre o contrato de APRESENTAÇÃO do componente: sequência dos controles, destaque da página ativa (verde-lima sólido), estado das setas nos extremos, seletor só quando há handler, recorte de página inexistente e as emissões de evento. A paginação …",
     "CriacaoFeedbackIntegracao.test.ts: Integração local da criação — a ponte entre o formulário existente e a RPC auditada. Cobre idempotência (mesma tentativa × operação nova), preservação de TODOS os campos, validações e payload da RPC. Sem rede, sem banco.",
     "EscritaOperacional.test.ts: Guarda de escrita operacional — impede gravação a partir de dados fictícios. Cobre as duas regras: identificador `mock-*` e ambiente de demonstração.",
-    "FeedbackAcoesRodape.test.tsx: CONTROLES FUNCIONAIS DO MODAL (rodapé) — testes de integração local. O serviço é mockado (nenhuma rede): o que se verifica aqui é a INTERFACE — quais controles aparecem por status/papel, obrigatoriedade da justificativa, bloqueio durante a operação, erro real, idempotência do reenvio, invalidação de …",
-    "KitOnboardingDialog.test.tsx: CRUD DE PERFIL DE KIT (FASE 7) — o botão \"Novo Perfil de Kit\" era decorativo; agora existe formulário real sobre `public.onboarding_kits` (nome + itens + ativo). Aqui testamos o CONTRATO do formulário: normalização dos itens, validação e o payload que chega ao `onSalvar`."
+    "FeedbackAcoesRodape.test.tsx: CONTROLES FUNCIONAIS DO MODAL (rodapé) — testes de integração local. O serviço é mockado (nenhuma rede): o que se verifica aqui é a INTERFACE — quais controles aparecem por status/papel, obrigatoriedade da justificativa, bloqueio durante a operação, erro real, idempotência do reenvio, invalidação de …"
    ],
    "deps": [
     "@\\/components\\",
@@ -101718,6 +101718,7 @@
     "src/components/__tests__/AnalyticsSection.test.tsx",
     "src/components/__tests__/AnimatedNumber.test.tsx",
     "src/components/__tests__/AnotacoesTab.test.tsx",
+    "src/components/__tests__/AppPagination.test.tsx",
     "src/components/__tests__/AprovacaoGestor.test.ts",
     "src/components/__tests__/AprovacaoLocal.test.ts",
     "src/components/__tests__/AquisitivosTab.test.tsx",
@@ -101726,6 +101727,7 @@
     "src/components/__tests__/AuditoriaChips.test.tsx",
     "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
     "src/components/__tests__/AuditoriaDetalheDialog.test.tsx",
+    "src/components/__tests__/AuditoriaEventoDialog.test.tsx",
     "src/components/__tests__/AuditoriaFeedback.test.tsx",
     "src/components/__tests__/BarChartWidget.test.tsx",
     "src/components/__tests__/BeneficioHistorico.test.tsx",
@@ -101746,6 +101748,8 @@
     "src/components/__tests__/ColaboradorFilters.test.tsx",
     "src/components/__tests__/ColaboradorHistory.test.tsx",
     "src/components/__tests__/ColaboradorKpiCards.test.tsx",
+    "src/components/__tests__/ColaboradorSeloPassagem.test.tsx",
+    "src/components/__tests__/ComparacaoCenarios.test.tsx",
     "src/components/__tests__/ConfiguracoesGeraisTab.test.tsx",
     "src/components/__tests__/Container.test.tsx",
     "src/components/__tests__/ContasBancariasTab.test.tsx",
@@ -101774,11 +101778,7 @@
     "src/components/__tests__/DocumentoPreview.test.tsx",
     "src/components/__tests__/DocumentoTimeline.test.tsx",
     "src/components/__tests__/DocumentosPessoaisTab.test.tsx",
-    "src/components/__tests__/DonutChart.test.tsx",
-    "src/components/__tests__/ESocialAlteracaoComponents.test.tsx",
-    "src/components/__tests__/ESocialAuditDialog.test.tsx",
-    "src/components/__tests__/ESocialComplianceScore.test.tsx",
-    "src/components/__tests__/ESocialConciliacao.test.tsx"
+    "src/components/__tests__/DonutChart.test.tsx"
    ]
   },
   {
@@ -102237,7 +102237,7 @@
   {
    "module": "src/pages",
    "files": 134,
-   "lines": 49267,
+   "lines": 49285,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -166097,6 +166097,54 @@
     "name": "renders conteudo when present"
    },
    {
+    "file": "src/components/__tests__/AppPagination.test.tsx",
+    "name": "AppPagination"
+   },
+   {
+    "file": "src/components/__tests__/AppPagination.test.tsx",
+    "name": "mostra a página atual em verde-lima sólido com 28 × 28 px"
+   },
+   {
+    "file": "src/components/__tests__/AppPagination.test.tsx",
+    "name": "não renderiza o seletor sem handler de troca de quantidade"
+   },
+   {
+    "file": "src/components/__tests__/AppPagination.test.tsx",
+    "name": "renderiza "
+   },
+   {
+    "file": "src/components/__tests__/AppPagination.test.tsx",
+    "name": "acrescenta o valor corrente às opções quando ele não está na lista"
+   },
+   {
+    "file": "src/components/__tests__/AppPagination.test.tsx",
+    "name": "navega para anterior/próxima emitindo os eventos"
+   },
+   {
+    "file": "src/components/__tests__/AppPagination.test.tsx",
+    "name": "desabilita as setas na primeira e na última página"
+   },
+   {
+    "file": "src/components/__tests__/AppPagination.test.tsx",
+    "name": "com uma única página as duas setas ficam desabilitadas"
+   },
+   {
+    "file": "src/components/__tests__/AppPagination.test.tsx",
+    "name": "lista vazia: página 1, setas desabilitadas e sem erro de divisão"
+   },
+   {
+    "file": "src/components/__tests__/AppPagination.test.tsx",
+    "name": "recorta uma página fora da faixa (nunca exibe página inexistente)"
+   },
+   {
+    "file": "src/components/__tests__/AppPagination.test.tsx",
+    "name": "desabilita os controles durante o carregamento"
+   },
+   {
+    "file": "src/components/__tests__/AppPagination.test.tsx",
+    "name": "mantém as setas acessíveis por teclado (botões nativos com rótulo)"
+   },
+   {
     "file": "src/components/__tests__/AprovacaoGestor.test.ts",
     "name": "situacaoAprovacao — espelho da função SQL"
    },
@@ -166715,6 +166763,30 @@
    {
     "file": "src/components/__tests__/AuditoriaDetalheDialog.test.tsx",
     "name": "mostra o botão de copiar junto do ID e copia o valor real"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaEventoDialog.test.tsx",
+    "name": "AuditoriaEventoDialog — mesma moldura do modal de Pendências"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaEventoDialog.test.tsx",
+    "name": "usa a casca, o véu e a orquestração exatos de "
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaEventoDialog.test.tsx",
+    "name": "preserva caixa, conteúdo e classes do layout aprovado"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaEventoDialog.test.tsx",
+    "name": "fecha pelo botão Fechar, pelo X e por Escape, sempre avisando o pai"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaEventoDialog.test.tsx",
+    "name": "sem evento não renderiza nada (mesma guarda de montagem)"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaEventoDialog.test.tsx",
+    "name": "devolve o foco ao botão de origem quando a janela fecha"
    },
    {
     "file": "src/components/__tests__/AuditoriaFeedback.test.tsx",
@@ -167559,6 +167631,42 @@
    {
     "file": "src/components/__tests__/ColaboradorKpiCards.test.tsx",
     "name": "com summary ausente e já carregado, mostra zero em vez de esqueleto"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorSeloPassagem.test.tsx",
+    "name": "selo de recontratação na grade de colaboradores"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorSeloPassagem.test.tsx",
+    "name": "com 2 passagens, mostra "
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorSeloPassagem.test.tsx",
+    "name": "com 3 passagens, mostra o número real e não um fixo"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorSeloPassagem.test.tsx",
+    "name": "na primeira passagem não há selo — não há o que sinalizar"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorSeloPassagem.test.tsx",
+    "name": "sem passagensPorId, não mostra selo nenhum"
+   },
+   {
+    "file": "src/components/__tests__/ComparacaoCenarios.test.tsx",
+    "name": "ComparacaoCenarios"
+   },
+   {
+    "file": "src/components/__tests__/ComparacaoCenarios.test.tsx",
+    "name": "expõe o contêiner de teste e as quatro colunas"
+   },
+   {
+    "file": "src/components/__tests__/ComparacaoCenarios.test.tsx",
+    "name": "renderiza todos os valores, inclusive negativos, com a variação em verde"
+   },
+   {
+    "file": "src/components/__tests__/ComparacaoCenarios.test.tsx",
+    "name": "acomoda dois cenários com cinco colunas"
    },
    {
     "file": "src/components/__tests__/ConfiguracoesGeraisTab.test.tsx",
@@ -172585,6 +172693,22 @@
     "name": "queryFn das configs seleciona id,url; erro não-42P01 propaga"
    },
    {
+    "file": "src/components/__tests__/JornadaPontoTab.test.tsx",
+    "name": "JornadaPontoTab"
+   },
+   {
+    "file": "src/components/__tests__/JornadaPontoTab.test.tsx",
+    "name": "shows jornada semanal from the colaborador record and escala from the jornada resolvida"
+   },
+   {
+    "file": "src/components/__tests__/JornadaPontoTab.test.tsx",
+    "name": "shows "
+   },
+   {
+    "file": "src/components/__tests__/JornadaPontoTab.test.tsx",
+    "name": "renders the ponto today and week summary widgets"
+   },
+   {
     "file": "src/components/__tests__/KitOnboardingDialog.test.tsx",
     "name": "KitOnboardingDialog — normalização"
    },
@@ -177211,6 +177335,30 @@
    {
     "file": "src/components/__tests__/SSTRiscosTab.test.tsx",
     "name": "shows spinner when loading"
+   },
+   {
+    "file": "src/components/__tests__/ScenarioParameterCard.test.tsx",
+    "name": "ScenarioParameterCard"
+   },
+   {
+    "file": "src/components/__tests__/ScenarioParameterCard.test.tsx",
+    "name": "confirma moeda no formato brasileiro e atualiza o pai"
+   },
+   {
+    "file": "src/components/__tests__/ScenarioParameterCard.test.tsx",
+    "name": "confirma percentual decimal"
+   },
+   {
+    "file": "src/components/__tests__/ScenarioParameterCard.test.tsx",
+    "name": "arredonda inteiro e não aceita acima do máximo"
+   },
+   {
+    "file": "src/components/__tests__/ScenarioParameterCard.test.tsx",
+    "name": "Escape restaura o último valor confirmado"
+   },
+   {
+    "file": "src/components/__tests__/ScenarioParameterCard.test.tsx",
+    "name": "bloqueia texto não numérico e campo vazio não confirma"
    },
    {
     "file": "src/components/__tests__/SectionHeader.test.tsx",
@@ -262978,6 +263126,26 @@
     "renders conteudo when present"
    ]
   },
+  "src/components/__tests__/AppPagination.test.tsx": {
+   "path": "src/components/__tests__/AppPagination.test.tsx",
+   "lines": 112,
+   "is_test": true,
+   "doc": "AppPagination — padrão único de paginação do sistema. Cobre o contrato de APRESENTAÇÃO do componente: sequência dos controles, destaque da página ativa (verde-lima sólido), estado das setas nos extremos, seletor só quando há handler, recorte de página inexistente e as emissões de evento. A paginação …",
+   "tests": [
+    "AppPagination",
+    "mostra a página atual em verde-lima sólido com 28 × 28 px",
+    "não renderiza o seletor sem handler de troca de quantidade",
+    "renderiza ",
+    "acrescenta o valor corrente às opções quando ele não está na lista",
+    "navega para anterior/próxima emitindo os eventos",
+    "desabilita as setas na primeira e na última página",
+    "com uma única página as duas setas ficam desabilitadas",
+    "lista vazia: página 1, setas desabilitadas e sem erro de divisão",
+    "recorta uma página fora da faixa (nunca exibe página inexistente)",
+    "desabilita os controles durante o carregamento",
+    "mantém as setas acessíveis por teclado (botões nativos com rótulo)"
+   ]
+  },
   "src/components/__tests__/AprovacaoGestor.test.ts": {
    "path": "src/components/__tests__/AprovacaoGestor.test.ts",
    "lines": 929,
@@ -263220,6 +263388,25 @@
    "tests": [
     "AuditoriaDetalheDialog — copiar ID do registro",
     "mostra o botão de copiar junto do ID e copia o valor real"
+   ]
+  },
+  "src/components/__tests__/AuditoriaEventoDialog.test.tsx": {
+   "path": "src/components/__tests__/AuditoriaEventoDialog.test.tsx",
+   "lines": 217,
+   "is_test": true,
+   "params": [
+    {
+     "name": "BLOCOS",
+     "value": "5"
+    }
+   ],
+   "tests": [
+    "AuditoriaEventoDialog — mesma moldura do modal de Pendências",
+    "usa a casca, o véu e a orquestração exatos de ",
+    "preserva caixa, conteúdo e classes do layout aprovado",
+    "fecha pelo botão Fechar, pelo X e por Escape, sempre avisando o pai",
+    "sem evento não renderiza nada (mesma guarda de montagem)",
+    "devolve o foco ao botão de origem quando a janela fecha"
    ]
   },
   "src/components/__tests__/AuditoriaFeedback.test.tsx": {
@@ -263604,6 +263791,32 @@
     "ao clicar no status já ativo, reporta esse mesmo status e não decide o reset",
     "sem summary e carregando, mostra esqueleto em vez de contagem zero",
     "com summary ausente e já carregado, mostra zero em vez de esqueleto"
+   ]
+  },
+  "src/components/__tests__/ColaboradorSeloPassagem.test.tsx": {
+   "path": "src/components/__tests__/ColaboradorSeloPassagem.test.tsx",
+   "lines": 71,
+   "is_test": true,
+   "rule_comments": [
+    "chegava. Sem `passagensPorId` o componente não pode inventar um número."
+   ],
+   "tests": [
+    "selo de recontratação na grade de colaboradores",
+    "com 2 passagens, mostra ",
+    "com 3 passagens, mostra o número real e não um fixo",
+    "na primeira passagem não há selo — não há o que sinalizar",
+    "sem passagensPorId, não mostra selo nenhum"
+   ]
+  },
+  "src/components/__tests__/ComparacaoCenarios.test.tsx": {
+   "path": "src/components/__tests__/ComparacaoCenarios.test.tsx",
+   "lines": 76,
+   "is_test": true,
+   "tests": [
+    "ComparacaoCenarios",
+    "expõe o contêiner de teste e as quatro colunas",
+    "renderiza todos os valores, inclusive negativos, com a variação em verde",
+    "acomoda dois cenários com cinco colunas"
    ]
   },
   "src/components/__tests__/ConfiguracoesGeraisTab.test.tsx": {
@@ -265778,6 +265991,17 @@
     "queryFn das configs seleciona id,url; erro não-42P01 propaga"
    ]
   },
+  "src/components/__tests__/JornadaPontoTab.test.tsx": {
+   "path": "src/components/__tests__/JornadaPontoTab.test.tsx",
+   "lines": 82,
+   "is_test": true,
+   "tests": [
+    "JornadaPontoTab",
+    "shows jornada semanal from the colaborador record and escala from the jornada resolvida",
+    "shows ",
+    "renders the ponto today and week summary widgets"
+   ]
+  },
   "src/components/__tests__/KitOnboardingDialog.test.tsx": {
    "path": "src/components/__tests__/KitOnboardingDialog.test.tsx",
    "lines": 106,
@@ -267780,6 +268004,19 @@
     "shows 0 agentes identificados for each category with no data",
     "shows empty agente message for each unmapped category",
     "shows spinner when loading"
+   ]
+  },
+  "src/components/__tests__/ScenarioParameterCard.test.tsx": {
+   "path": "src/components/__tests__/ScenarioParameterCard.test.tsx",
+   "lines": 116,
+   "is_test": true,
+   "tests": [
+    "ScenarioParameterCard",
+    "confirma moeda no formato brasileiro e atualiza o pai",
+    "confirma percentual decimal",
+    "arredonda inteiro e não aceita acima do máximo",
+    "Escape restaura o último valor confirmado",
+    "bloqueia texto não numérico e campo vazio não confirma"
    ]
   },
   "src/components/__tests__/SectionHeader.test.tsx": {
@@ -293253,7 +293490,7 @@
   },
   "src/pages/ColaboradoresPage.tsx": {
    "path": "src/pages/ColaboradoresPage.tsx",
-   "lines": 370,
+   "lines": 388,
    "exports": [
     "function ColaboradoresPage"
    ],
@@ -323792,10 +324029,34 @@
   }
  },
  "git": {
-  "sha": "1eff3e1b62a3d4e4a60dedf2e09ba2a4d213a1f1",
+  "sha": "a588982d92a89b6bcb001e303e6e550192ae173a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "a588982",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix(colaboradores): liga o selo de recontratacao, que estava invisivel (#635)",
+    "files": [
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/ColaboradorSeloPassagem.test.tsx",
+     "src/pages/ColaboradoresPage.tsx"
+    ]
+   },
+   {
+    "sha": "fabf6c7",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "test: resgata da muri os 5 testes que a main não tinha e passam como está (#630)",
+    "files": [
+     "src/components/__tests__/AppPagination.test.tsx",
+     "src/components/__tests__/AuditoriaEventoDialog.test.tsx",
+     "src/components/__tests__/ComparacaoCenarios.test.tsx",
+     "src/components/__tests__/JornadaPontoTab.test.tsx",
+     "src/components/__tests__/ScenarioParameterCard.test.tsx"
+    ]
+   },
    {
     "sha": "1eff3e1",
     "date": "2026-11-17",
@@ -324561,42 +324822,12 @@
      "src/services/vinculoService.ts",
      "src/types/timelineEvent.ts"
     ]
-   },
-   {
-    "sha": "85f22ec",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "fix: botão \"Editar Perfil\" do colaborador caía em 404 (#601)",
-    "files": [
-     "src/components/dashboard/analytics/widgets.tsx",
-     "src/pages/ColaboradorDetalhesPage.tsx"
-    ]
-   },
-   {
-    "sha": "4911958",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "test: resgata 11 suítes de testes de Avaliação/Desempenho da branch muri (+194 casos) (#600)",
-    "files": [
-     "src/components/__tests__/AprovacaoGestor.test.ts",
-     "src/components/__tests__/AuditoriaChips.test.tsx",
-     "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
-     "src/components/__tests__/AuditoriaDetalheDialog.test.tsx",
-     "src/components/__tests__/EscritaOperacional.test.ts",
-     "src/components/__tests__/MetasEtiquetas.test.tsx",
-     "src/components/__tests__/MetasFiltrosLimpar.test.tsx",
-     "src/components/__tests__/Motor360.test.tsx",
-     "src/components/__tests__/OrigemHomologacao.test.tsx",
-     "src/components/__tests__/PdiDerivacoes.test.tsx",
-     "src/components/__tests__/PendenciasAprovacao.test.tsx",
-     "src/setupTests.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    12
+    13
    ],
    [
     "inventario/estado/rotas.json",
@@ -324607,20 +324838,20 @@
     4
    ],
    [
-    "src/pages/ColaboradorDetalhesPage.tsx",
-    4
+    "src/pages/ColaboradoresPage.tsx",
+    3
    ],
    [
     "src/components/colaborador-detalhes/index.ts",
     3
    ],
    [
-    "src/services/colaboradorService.ts",
+    "src/pages/ColaboradorDetalhesPage.tsx",
     3
    ],
    [
-    "src/pages/ColaboradoresPage.tsx",
-    2
+    "src/services/colaboradorService.ts",
+    3
    ],
    [
     "src/components/layout/AppSidebar.tsx",

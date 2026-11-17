@@ -5464,12 +5464,15 @@
     "usePiiMask",
     "useQuery",
     "useQueryClient",
+    "useRecontratarColaborador",
     "useReducedMotion",
     "useRef",
     "useState",
     "useSystemHealth",
     "useTheme",
-    "useTranslation"
+    "useTranslation",
+    "useVinculosColaborador",
+    "useVinculosResumo"
    ],
    "hooks_locais": [
     "useAuth",
@@ -5488,9 +5491,12 @@
     "usePDFExport",
     "usePWA",
     "usePiiMask",
+    "useRecontratarColaborador",
     "useSystemHealth",
     "useTheme",
-    "useTranslation"
+    "useTranslation",
+    "useVinculosColaborador",
+    "useVinculosResumo"
    ],
    "tabelas": [
     "colaboradores",
@@ -5551,7 +5557,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 109
+   "arquivos_puxados": 110
   },
   {
    "protegida": true,

@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 741,
+ "total": 747,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 702
+  "unit": 708
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 618
+   "arquivos": 624
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -718,6 +718,15 @@
    "casos": 7
   },
   {
+   "arquivo": "src/components/__tests__/AppPagination.test.tsx",
+   "tipo": "unit",
+   "linhas": 112,
+   "testa": [
+    "src/components/ui/app-pagination.tsx"
+   ],
+   "casos": 11
+  },
+  {
    "arquivo": "src/components/__tests__/AprovacaoGestor.test.ts",
    "tipo": "unit",
    "linhas": 929,
@@ -802,6 +811,17 @@
     "src/components/avaliacao/auditoriaComum.ts"
    ],
    "casos": 1
+  },
+  {
+   "arquivo": "src/components/__tests__/AuditoriaEventoDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 217,
+   "testa": [
+    "src/components/premiacoes/AuditoriaEventoDialog.tsx",
+    "src/components/premiacoes/auditoriaComum.ts",
+    "src/components/ui/cascade-motion.ts"
+   ],
+   "casos": 5
   },
   {
    "arquivo": "src/components/__tests__/AuditoriaFeedback.test.tsx",
@@ -981,6 +1001,24 @@
     "src/components/colaboradores/ColaboradorKpiCards.tsx"
    ],
    "casos": 5
+  },
+  {
+   "arquivo": "src/components/__tests__/ColaboradorSeloPassagem.test.tsx",
+   "tipo": "unit",
+   "linhas": 71,
+   "testa": [
+    "src/components/colaboradores/ColaboradorDirectoryGrid.tsx"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/components/__tests__/ComparacaoCenarios.test.tsx",
+   "tipo": "unit",
+   "linhas": 76,
+   "testa": [
+    "src/components/premiacoes/ComparacaoCenarios.tsx"
+   ],
+   "casos": 3
   },
   {
    "arquivo": "src/components/__tests__/ConfiguracoesGeraisTab.test.tsx",
@@ -2138,6 +2176,15 @@
    "casos": 7
   },
   {
+   "arquivo": "src/components/__tests__/JornadaPontoTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 82,
+   "testa": [
+    "src/components/colaborador-detalhes/JornadaPontoTab.tsx"
+   ],
+   "casos": 3
+  },
+  {
    "arquivo": "src/components/__tests__/KitOnboardingDialog.test.tsx",
    "tipo": "unit",
    "linhas": 106,
@@ -2994,6 +3041,15 @@
     "src/integrations/supabase/client.ts"
    ],
    "casos": 15
+  },
+  {
+   "arquivo": "src/components/__tests__/ScenarioParameterCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 116,
+   "testa": [
+    "src/components/premiacoes/ScenarioParameterCard.tsx"
+   ],
+   "casos": 5
   },
   {
    "arquivo": "src/components/__tests__/SectionHeader.test.tsx",
@@ -6973,13 +7029,13 @@
   "src/components/colaborador-detalhes/HistoricoContratosTab.tsx": 1,
   "src/components/colaborador-detalhes/HistoricoSalarialTab.tsx": 1,
   "src/components/colaborador-detalhes/HoleritesTab.tsx": 1,
-  "src/components/colaborador-detalhes/JornadaPontoTab.tsx": 1,
+  "src/components/colaborador-detalhes/JornadaPontoTab.tsx": 2,
   "src/components/colaborador-detalhes/PCDTab.tsx": 1,
   "src/components/colaborador-detalhes/SSTResumoTab.tsx": 1,
   "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx": 1,
   "src/components/colaborador-detalhes/documentos/StatusComplianceCard.tsx": 1,
   "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx": 1,
-  "src/components/colaboradores/ColaboradorDirectoryGrid.tsx": 1,
+  "src/components/colaboradores/ColaboradorDirectoryGrid.tsx": 2,
   "src/components/colaboradores/ColaboradorFilters.tsx": 1,
   "src/components/colaboradores/ColaboradorHistory.tsx": 1,
   "src/components/colaboradores/ColaboradorKpiCards.tsx": 1,
@@ -7158,8 +7214,12 @@
   "src/components/portal/PortalMeusDadosTab.tsx": 1,
   "src/components/portal/PortalOverviewTab.tsx": 1,
   "src/components/portal/PortalRegimentoCard.tsx": 1,
+  "src/components/premiacoes/AuditoriaEventoDialog.tsx": 1,
   "src/components/premiacoes/CampaignWizard.tsx": 1,
+  "src/components/premiacoes/ComparacaoCenarios.tsx": 1,
   "src/components/premiacoes/RewardsSimulator.tsx": 1,
+  "src/components/premiacoes/ScenarioParameterCard.tsx": 1,
+  "src/components/premiacoes/auditoriaComum.ts": 1,
   "src/components/premiacoes/premiacoesComum.ts": 1,
   "src/components/premiacoes/simuladorRoiComum.ts": 1,
   "src/components/recrutamento/AnalyticsRecrutamento.tsx": 1,
@@ -7220,6 +7280,8 @@
   "src/components/treinamentos/treinamentosDerivacoes.ts": 4,
   "src/components/treinamentos/trilhasDerivacoes.ts": 2,
   "src/components/treinamentos/turmasDerivacoes.ts": 8,
+  "src/components/ui/app-pagination.tsx": 1,
+  "src/components/ui/cascade-motion.ts": 1,
   "src/components/ui/command.tsx": 1,
   "src/components/ui/cpf-input.tsx": 1,
   "src/components/ui/currency-input.tsx": 1,

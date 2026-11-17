@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1eff3e1b62a3d4e4a60dedf2e09ba2a4d213a1f1` (2026-11-17T14:30:49-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a588982d92a89b6bcb001e303e6e550192ae173a` (2026-11-17T14:31:26-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1889), SQL (923), Markdown (332), JavaScript (129), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1895), SQL (923), Markdown (332), JavaScript (129), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3496 |
-| arquivos_codigo | 2022 |
-| linhas_codigo | 401870 |
+| arquivos_total | 3502 |
+| arquivos_codigo | 2028 |
+| linhas_codigo | 402562 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 425 |
 | migrations | 857 |
 | cron_jobs | 41 |
-| testes | 741 |
+| testes | 747 |
 | workflows | 21 |
 | scripts | 132 |
 | docs_md | 332 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (505), src/pages (110), src/contexts (3)
 - hooks: src/hooks (96), src/components (9), src/contexts (4)
 - servicos_logica: src/services (94), src/utils (35), src/schemas (25)
-- testes: co-localizado (__tests__) (618), co-localizado (*.test) (70), e2e/ (28)
+- testes: co-localizado (__tests__) (624), co-localizado (*.test) (70), e2e/ (28)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -396,16 +396,16 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 26883 nós · 60607 arestas · 2350 comunidades · grafo do commit `1eff3e1b`
-- comunidades maiores: cn (521), 20260831_corrected_public.sql (493), canonical_schema.sql (475), @tanstack/react-query (448), button.tsx (369), lucide-react (366), useEmpresas (320), vitest (269), deepChain (248), services/index.ts (240), react (172), hooks/index.ts (168)
+- 26907 nós · 60667 arestas · 2330 comunidades · grafo do commit `a588982d`
+- comunidades maiores: cn (583), 20260831_corrected_public.sql (493), canonical_schema.sql (475), button.tsx (455), useEmpresas (444), client.ts (353), vitest (300), react (211), PremiacoesPage.tsx (189), App.tsx (167), "public"."empresas" (159), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - inventario/estado/rotas.json (21)
 - .github/workflows/canonical-migrations.yml (20)
-- package.json (19)
-- package-lock.json (18)
+- package.json (18)
+- package-lock.json (17)
 - scripts/canonical-invariants.sql (10)
 - scripts/sync/autocommit-local.sh (10)
 - PENDENCIAS.md (9)
@@ -416,7 +416,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - scripts/automation.config.json (7)
 - scripts/sync/mirror-github.sh (7)
 - CLAUDE.md (6)
-- docs/auditoria/estado/WORKFLOWS_STATUS.md (6)
+- infra/github/action-pins.json (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -650,6 +650,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `a588982` fix(colaboradores): liga o selo de recontratacao, que estava invisivel (#635)
+- 2026-11-17 `fabf6c7` test: resgata da muri os 5 testes que a main não tinha e passam como está (#630)
 - 2026-11-17 `1eff3e1` infra(banco): resgata da muri 4 migrations que nunca foram aplicadas (#632)
 - 2026-11-17 `7635f53` feat(colaboradores): resgata da muri os cartões de KPI do diretório (#631)
 - 2026-11-17 `29dd221` feat(dashboard): resgata da muri os atalhos de Workflows e Assistente IA (#633)
@@ -663,8 +665,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `b25c46e` feat(desligamentos): drawer de rescisão com a UI da muri e o cálculo da main (#621)
 - 2026-11-17 `143c729` fix(pwa): service worker servia HTML no lugar dos assets e travava o app (#622)
 - 2026-11-17 `cc7b1ac` feat(desligamentos): Trilha de Auditoria com a camada de dados reescrita para o caminho autorizado (#620)
-- 2026-11-17 `b7ee915` fix(desligamentos): vocabulário alinhado ao banco — 4 de 6 tipos e o status pago não eram reconhecidos (#619)
-- 2026-11-17 `7b17d30` feat: resgata da muri o organograma navegável — busca que filtra, expandir/recolher e níveis (#616)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

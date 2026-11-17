@@ -3053,11 +3053,12 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "usado_por_arquivos": [
     "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
     "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
-    "src/hooks/index.ts"
+    "src/hooks/index.ts",
+    "src/pages/ColaboradoresPage.tsx"
    ],
    "coberto_por_testes": 0
   },

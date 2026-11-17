@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1eff3e1b62` · branch `main` · 2026-11-17 17:32 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a588982d92` · branch `main` · 2026-11-17 17:35 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5413,7 +5413,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9062 testes em 698 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9099 testes em 704 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5628,6 +5628,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/pushNotificationService.test.ts` | 13 | pushNotificationService.isSupported · returns false when serviceWorker is absent · returns false when PushManager is absent · pushNotificationService.getSubscription … |
 | `src/utils/__tests__/feriasPDF.test.ts` | 13 | feriasPDF.gerarRecibo · creates a jsPDF document · saves the PDF file · includes colaborador name in text calls … |
 | `src/calculators/__tests__/rescisao.test.ts` | 12 | calcularRescisao · returns all expected top-level keys · saldoSalario is proportional to days worked · sem_justa_causa has aviso previo > 0 … |
+| `src/components/__tests__/AppPagination.test.tsx` | 12 | AppPagination · mostra a página atual em verde-lima sólido com 28 × 28 px · não renderiza o seletor sem handler de troca de quantidade · renderiza  … |
 | `src/components/__tests__/DashboardWidgets.test.tsx` | 12 | QuickActionsGrid · renders Ações Rápidas title · renders Novo Colaborador action · renders Calcular Folha action … |
 | `src/components/__tests__/DesligamentoStatusBadge.test.tsx` | 12 | StatusBadge · renders Pendente for pendente status · renders Em Andamento for em_andamento status · renders Concluído for concluido status … |
 | `src/components/__tests__/ESocialPagamentosAndSST.test.tsx` | 12 | S1210Pagamentos · renders Rendimentos Pagos label · renders payment dates · renders perApur for competência … |
@@ -5716,8 +5717,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/avisoFeriasPDF.test.ts` | 10 | gerarAvisoFeriasPDF · returns a Blob · returns a Uint8Array bytes · returns a sha256 hash string … |
 | `src/utils/__tests__/calculoFerias.test.ts` | 10 | calculoFerias · deve calcular férias simples (30 dias) sem abono · deve calcular férias com abono pecuniário (20 dias férias + 10 dias abono) · deve limitar o abono pecuniário a no máximo 10 dias … |
 | `supabase/functions/_shared/idempotency.test.ts` | 10 | idempotency: primeira chamada retorna reason=NEW e id válido · idempotency: 20 requisições concorrentes com MESMA key produzem exatamente 1 NEW · idempotency: reenvio após conclusão retorna REPLAY com mesmo body · idempotency: conclusão 204 sem body continua sendo replay de sucesso … |
-| `supabase/functions/_shared/rateLimit.test.ts` | 10 | permite quando abaixo do limite e insere marcador · bloqueia quando count >= limit e não insere · isolamento por chave — outra chave não conta contra a atual · ignora rows fora da janela (timestamp < windowStart) … |
-| … +398 linhas — lista completa em `context.json` | | |
+| … +404 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
