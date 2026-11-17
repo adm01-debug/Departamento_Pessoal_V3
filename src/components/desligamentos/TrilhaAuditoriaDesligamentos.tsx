@@ -86,12 +86,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AnimatedCascadeDialog } from '@/components/ui/animated-cascade-dialog';
-import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { cn } from '@/lib/utils';
 import { exportPontoCSV } from '@/services/exportService';
-// MOCK VISUAL — ver src/mocks/desligamentosMock.ts (dev + VITE_DESLIGAMENTOS_MOCK=true).
-import { getMockTrilhaAuditoriaDesligamentos, isDesligamentosMockEnabled } from '@/mocks/desligamentosMock';
+import { auditoriaService } from '@/services/auditoriaService';
+import { SyncErrorState } from '@/components/ui/sync-error-state';
 import {
   acaoTrilhaMeta,
   CATEGORIA_POR_CHAVE,
@@ -214,78 +213,46 @@ function chaveEvento(evento: EventoTrilha): string {
 /** Trilha de Auditoria do módulo de Desligamentos. */
 export function TrilhaAuditoriaDesligamentos({ tabela = 'desligamentos' }: TrilhaAuditoriaProps) {
   const { empresaAtual } = useEmpresas();
-  const queryClient = useQueryClient();
+  const empresaId = empresaAtual?.id;
 
-  // MOCK VISUAL — ver src/mocks/desligamentosMock.ts. Vale SÓ para a trilha de
-  // desligamentos: quando desligado, a tela segue para a consulta real.
-  const mockAtivo = isDesligamentosMockEnabled();
-  const habilitado = !!empresaAtual?.id || mockAtivo;
-
-  const { data: logs = [], isLoading } = useQuery({
-    queryKey: ['ponto-audit-logs', tabela],
-    queryFn: async () => {
-      if (mockAtivo) {
-        const mockLogs = getMockTrilhaAuditoriaDesligamentos();
-        if (mockLogs) return mockLogs;
-      }
-      try {
-        const { data, error: queryError } = await (supabase as any)
-          .from('audit_log')
-          .select('*')
-          .eq('tabela', tabela)
-          .order('created_at', { ascending: false })
-          .limit(200);
-        if (queryError) {
-          console.warn('[TrilhaAuditoriaDesligamentos] audit_log access denied:', queryError.message);
-          return [];
-        }
-        return data || [];
-      } catch (e) {
-        console.warn(
-          '[TrilhaAuditoriaDesligamentos] audit_log query failed:',
-          e instanceof Error ? e.message : String(e)
-        );
-        return [];
-      }
-    },
-    enabled: habilitado,
+  /**
+   * A trilha vem pelo caminho AUTORIZADO: `auditoriaService.listarTrilha`, que
+   * chama a RPC `get_audit_trail` (presente na RPC_ALLOWLIST do gateway) com o
+   * `empresa_id` do tenant.
+   *
+   * A versao desta tela na branch de origem lia `audit_log` direto com
+   * `.from('audit_log').select('*')` — e `audit_log` esta na TABLE_DENYLIST do
+   * `external-db-bridge` (supabase/functions/external-db-bridge/validation.ts).
+   * Pior: o erro era engolido num `catch` que devolvia `[]`, entao a aba abria
+   * em producao afirmando "Nenhum registro de auditoria encontrado" sobre uma
+   * consulta que nunca rodou — uma tela que mente com cara de tela vazia.
+   *
+   * Agora o erro SOBE: sem auditoria nao ha "vazio", ha falha, e a tela diz isso
+   * (SyncErrorState, com botao de tentar de novo).
+   */
+  const {
+    data: logs = [],
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['trilha-auditoria', tabela, empresaId],
+    queryFn: () => auditoriaService.listarTrilha({ empresa_id: empresaId!, tabela, limite: 200 }),
+    enabled: !!empresaId,
   });
 
-  // Assinatura de tempo real do `audit_log`: um evento novo revalida a trilha.
-  useEffect(() => {
-    if (!empresaAtual?.id) return;
-    const channel = (supabase as any)
-      .channel('audit-changes-desligamentos')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'audit_log' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['ponto-audit-logs'] });
-      })
-      .subscribe();
-    return () => {
-      (supabase as any).removeChannel(channel);
-    };
-  }, [queryClient, empresaAtual?.id]);
-
-  // LEITURA opcional do cadastro real (`profiles`) para resolver `user_id →
-  // nome`. Degrada em silêncio: sem permissão, o e-mail do log é o nome.
-  const { data: perfis } = useQuery({
-    queryKey: ['auditoria-perfis'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('profiles').select('user_id, nome');
-      if (error) throw error;
-      return data ?? [];
-    },
-    enabled: habilitado && !mockAtivo,
-    retry: false,
-    staleTime: 5 * 60 * 1000,
-  });
-
+  /**
+   * `user_id → nome` vem do PROPRIO registro: a RPC devolve `user_nome` e
+   * `user_email` ja resolvidos, entao a consulta extra a `profiles` que existia
+   * aqui deixou de ser necessaria (uma leitura a menos por abertura da aba).
+   */
   const nomePorId = useMemo(() => {
     const mapa = new Map<string, string>();
-    (perfis ?? []).forEach((perfil: { user_id?: string | null; nome?: string | null }) => {
-      if (perfil?.user_id && perfil?.nome) mapa.set(perfil.user_id, perfil.nome);
+    logs.forEach((registro) => {
+      if (registro.user_id && registro.user_nome) mapa.set(registro.user_id, registro.user_nome);
     });
     return mapa;
-  }, [perfis]);
+  }, [logs]);
 
   /* ─── Filtros ───────────────────────────────────────────────────────────── */
   const [busca, setBusca] = useState('');
@@ -301,7 +268,13 @@ export function TrilhaAuditoriaDesligamentos({ tabela = 'desligamentos' }: Trilh
 
   const hojeMs = useMemo(() => inicioDoDia(new Date()), []);
 
-  const eventos = useMemo(() => (logs as TrilhaLinhaCrua[]).map((linha) => normalizarEvento(linha)), [logs]);
+  const eventos = useMemo(
+    // O registro da RPC tem campos fixos e `TrilhaLinhaCrua` e um indice aberto:
+    // a conversao passa por `unknown` de proposito (o `normalizarEvento` le
+    // exatamente as chaves que a RPC devolve, `created_at` incluido).
+    () => (logs as unknown as TrilhaLinhaCrua[]).map((linha) => normalizarEvento(linha)),
+    [logs]
+  );
   const resumo = useMemo(() => resumoTrilha(eventos), [eventos]);
   const usuarios = useMemo(() => usuariosDaTrilha(eventos, nomePorId), [eventos, nomePorId]);
   const acoesDisponiveis = useMemo(() => acoesDaTrilha(eventos), [eventos]);
@@ -420,7 +393,7 @@ export function TrilhaAuditoriaDesligamentos({ tabela = 'desligamentos' }: Trilh
   };
 
   /* ─── Sem empresa: a trilha é sempre de um escopo ───────────────────────── */
-  if (!habilitado) {
+  if (!empresaId) {
     return (
       <EntradaPresenca>
         <MotionCard {...entradaCard(0)} className="overflow-hidden rounded-2xl border border-border/30 shadow-elevated">
@@ -706,7 +679,9 @@ export function TrilhaAuditoriaDesligamentos({ tabela = 'desligamentos' }: Trilh
 
           {/* 3. TIMELINE AGRUPADA POR DIA */}
           <div className="p-4 sm:p-5">
-            {isLoading ? (
+            {error ? (
+              <SyncErrorState error={error} onRetry={refetch} entityName="trilha de auditoria" />
+            ) : isLoading ? (
               <div className="space-y-4">
                 {Array.from({ length: 4 }).map((_, indice) => (
                   <div key={indice} className="flex gap-4">

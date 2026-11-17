@@ -158,9 +158,9 @@ describe('categoriaDoEvento', () => {
     expect(categoriaDoEvento(evento({ acao: 'GENERATE_DOC', userId: null, userEmail: null }))).toBe('sistema');
     expect(categoriaDoEvento(evento({ acao: 'VIEW' }))).toBe('documentos');
     expect(categoriaDoEvento(evento({ acao: 'EXPORT' }))).toBe('documentos');
-    expect(
-      categoriaDoEvento(evento({ antes: { documentos_validados: 4 }, depois: { documentos_validados: 6 } }))
-    ).toBe('documentos');
+    expect(categoriaDoEvento(evento({ antes: { documentos_validados: 4 }, depois: { documentos_validados: 6 } }))).toBe(
+      'documentos'
+    );
     expect(categoriaDoEvento(evento({ antes: { status: 'pagamento' }, depois: { status: 'finalizado' } }))).toBe(
       'status'
     );
@@ -203,7 +203,6 @@ describe('categoriaDoEvento', () => {
     });
   });
 });
-
 
 describe('nivelDoEvento', () => {
   it('marca exclusão e cancelamento como crítico', () => {
@@ -301,7 +300,6 @@ describe('título, descrição e resultado', () => {
     expect(resultadoDoEvento(evento({ antes: { status: 'calculado' }, depois: { status: 'pagamento' } }))).toBeNull();
   });
 });
-
 
 describe('responsável do evento', () => {
   it('resolve o nome pelo cadastro e degrada para o e-mail', () => {
@@ -417,7 +415,6 @@ describe('filtrarTrilha', () => {
   });
 });
 
-
 describe('opções dos filtros e resumo', () => {
   const trilha = [
     evento({ id: 'o1', acao: 'VIEW' }),
@@ -484,4 +481,3 @@ describe('trilhaComum (tokens de apresentação)', () => {
     expect(rotuloRecurso(null)).toBe('—');
   });
 });
-

@@ -123,7 +123,7 @@ export function coordenarTrilhaPorGrupo(contagens: number[]): number[][] {
  * atraso chega pelo `custom` (o coordenador, acima); a duração e a curva são as
  * desta calibração local (700ms/150ms).
  */
-export const trilhaRevealVariants: Variants = {
+export const trilhaRevealVariants = {
   collapsed: {
     height: 0,
     opacity: 0,
@@ -140,4 +140,4 @@ export const trilhaRevealVariants: Variants = {
       ease: TRILHA_EASE,
     },
   }),
-};
+} satisfies Variants;

@@ -33,7 +33,7 @@ describe('trilhaReveal — preset do Organograma', () => {
   it('usa a calibração local de ritmo (700ms por bloco, 150ms de passo)', () => {
     expect(TRILHA_EVENTO_DURACAO).toBe(0.7);
     expect(TRILHA_EVENTO_PASSO).toBe(0.15);
-    const transicao = (trilhaRevealVariants.expanded(0) as any).transition;
+    const transicao = trilhaRevealVariants.expanded(0).transition;
     expect(transicao.duration).toBe(0.7);
   });
 
@@ -46,7 +46,7 @@ describe('trilhaReveal — preset do Organograma', () => {
   });
 
   it('a SAÍDA é curta e sem atraso (recolhimento discreto de ~250ms)', () => {
-    const transicao = (trilhaRevealVariants.collapsed as any).transition;
+    const transicao = trilhaRevealVariants.collapsed.transition;
     expect(transicao.delay).toBe(0);
     expect(transicao.duration).toBe(TRILHA_SAIDA_DURACAO);
     expect(TRILHA_SAIDA_DURACAO).toBe(0.25);
@@ -57,9 +57,9 @@ describe('trilhaReveal — preset do Organograma', () => {
   });
 
   it('o atraso chega pelo `custom` e nunca é negativo', () => {
-    expect((trilhaRevealVariants.expanded(0.33) as any).transition.delay).toBeCloseTo(0.33, 6);
-    expect((trilhaRevealVariants.expanded(-5) as any).transition.delay).toBe(0);
-    expect((trilhaRevealVariants.expanded(Number.NaN) as any).transition.delay).toBe(0);
+    expect(trilhaRevealVariants.expanded(0.33).transition.delay).toBeCloseTo(0.33, 6);
+    expect(trilhaRevealVariants.expanded(-5).transition.delay).toBe(0);
+    expect(trilhaRevealVariants.expanded(Number.NaN).transition.delay).toBe(0);
   });
 });
 

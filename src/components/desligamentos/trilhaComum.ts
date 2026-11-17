@@ -158,7 +158,12 @@ export const ACOES_TRILHA: Record<string, AcaoTrilhaMeta> = {
     ponto: 'bg-destructive-vivid',
   },
   EXECUTE_CALC: { titulo: 'Execução de cálculo', icon: Calculator, badge: 'bg-info/15 text-info', ponto: 'bg-info' },
-  SIMULATION_CALC: { titulo: 'Simulação de cálculo', icon: Calculator, badge: 'bg-info/15 text-info', ponto: 'bg-info' },
+  SIMULATION_CALC: {
+    titulo: 'Simulação de cálculo',
+    icon: Calculator,
+    badge: 'bg-info/15 text-info',
+    ponto: 'bg-info',
+  },
   VIEW: { titulo: 'Visualização de registro', icon: Eye, badge: 'bg-xp/15 text-xp', ponto: 'bg-xp' },
   VISUALIZACAO: { titulo: 'Visualização de registro', icon: Eye, badge: 'bg-xp/15 text-xp', ponto: 'bg-xp' },
   EXPORT: { titulo: 'Exportação de dados', icon: Download, badge: 'bg-xp/15 text-xp', ponto: 'bg-xp' },

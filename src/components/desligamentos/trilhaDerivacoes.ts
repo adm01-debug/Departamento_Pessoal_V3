@@ -101,9 +101,7 @@ export function formatarHora(iso: string): string {
 /** Data e hora completas (bloco de identificação do detalhe). */
 export function formatarDataHora(iso: string): string {
   const data = dataValida(iso);
-  return data
-    ? `${data.toLocaleDateString('pt-BR')} · ${data.toLocaleTimeString('pt-BR')}`
-    : '—';
+  return data ? `${data.toLocaleDateString('pt-BR')} · ${data.toLocaleTimeString('pt-BR')}` : '—';
 }
 
 /* ─── Rótulos e formatação de valores do payload ──────────────────────────── */
@@ -597,10 +595,7 @@ export interface ResponsavelTrilha {
  * lido pela tela) o resolve; caso contrário mostramos o próprio e-mail e, sem
  * e-mail, "Sistema (Automático)" — nunca um nome inventado.
  */
-export function responsavelDoEvento(
-  evento: EventoTrilha,
-  nomePorId?: Map<string, string> | null
-): ResponsavelTrilha {
+export function responsavelDoEvento(evento: EventoTrilha, nomePorId?: Map<string, string> | null): ResponsavelTrilha {
   const nomePerfil = evento.userId && nomePorId ? nomePorId.get(evento.userId) : undefined;
   if (nomePerfil) {
     return { chave: evento.userId ?? nomePerfil, nome: nomePerfil, email: evento.userEmail, sistema: false };
@@ -622,9 +617,7 @@ export function iniciaisDoAutor(nome: string): string {
   if (partes.length === 0) return '—';
   if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
   const segunda = partes[1][0] ?? '';
-  return /[a-z0-9]/i.test(segunda)
-    ? `${partes[0][0]}${segunda}`.toUpperCase()
-    : partes[0].slice(0, 2).toUpperCase();
+  return /[a-z0-9]/i.test(segunda) ? `${partes[0][0]}${segunda}`.toUpperCase() : partes[0].slice(0, 2).toUpperCase();
 }
 
 /**
@@ -861,4 +854,3 @@ export function textoDoEvento(evento: EventoTrilha): string {
     JSON.stringify(evento.depois ?? null, null, 2),
   ].join('\n');
 }
-

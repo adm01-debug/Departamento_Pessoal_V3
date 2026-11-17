@@ -1,3 +1,5 @@
+import { createElement } from 'react';
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 
@@ -24,15 +26,16 @@ vi.mock('framer-motion', () => {
   // Identidade ESTÁVEL por tag: sem memoizar, `motion.div` devolveria um novo
   // componente a cada render e o React remontaria a subárvore (invalidando refs
   // e atributos já capturados). Com o cache, o mock se comporta como o Framer.
-  const cache = new Map<string, (props: any) => JSX.Element>();
+  type PropsMock = { children?: ReactNode; [chave: string]: unknown };
+  const cache = new Map<string, (props: PropsMock) => React.ReactElement>();
   const make = (Tag: string) => {
     if (!cache.has(Tag)) {
-      cache.set(Tag, ({ children, ...props }: any) => {
+      cache.set(Tag, ({ children, ...props }: PropsMock) => {
         const limpos: Record<string, unknown> = {};
         Object.keys(props).forEach((chave) => {
           if (!IGNORADAS.has(chave)) limpos[chave] = props[chave];
         });
-        return <Tag {...limpos}>{children}</Tag>;
+        return createElement(Tag, limpos, children);
       });
     }
     return cache.get(Tag)!;
@@ -40,16 +43,14 @@ vi.mock('framer-motion', () => {
   // Proxy: qualquer `motion.<tag>` vira o elemento HTML equivalente, então
   // componentes de UI reutilizados (EmptyState, AnimatedCascadeDialog…) também
   // renderizam sem eu enumerar cada tag.
-  const motion: any = new Proxy(
-    { create: (Componente: any) => Componente },
-    {
-      get: (alvo, tag) => (tag in alvo ? (alvo as any)[tag] : make(String(tag))),
-    }
-  );
+  const alvoBase: Record<string | symbol, unknown> = { create: (Componente: unknown) => Componente };
+  const motion = new Proxy(alvoBase, {
+    get: (alvo, tag) => (tag in alvo ? alvo[tag] : make(String(tag))),
+  });
   return {
     motion,
-    AnimatePresence: ({ children }: any) => <>{children}</>,
-    MotionConfig: ({ children }: any) => <>{children}</>,
+    AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
+    MotionConfig: ({ children }: { children?: ReactNode }) => <>{children}</>,
     useReducedMotion: () => false,
   };
 });
@@ -67,28 +68,14 @@ vi.mock('@tanstack/react-query', async () => {
   };
 });
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: {
-    from: vi.fn(() => ({
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockResolvedValue({ data: [], error: null }),
-    })),
-    channel: vi.fn(() => ({
-      on: vi.fn().mockReturnThis(),
-      subscribe: vi.fn(),
-    })),
-    removeChannel: vi.fn(),
-  },
+// A tela le a trilha pelo `auditoriaService.listarTrilha` (RPC `get_audit_trail`,
+// a unica permitida pelo gateway para auditoria) — nao mais por
+// `supabase.from('audit_log')`, que a TABLE_DENYLIST recusa.
+vi.mock('@/services/auditoriaService', () => ({
+  auditoriaService: { listarTrilha: vi.fn(async () => MOCK_LOGS) },
 }));
 
 vi.mock('@/services/exportService', () => ({ exportPontoCSV: vi.fn() }));
-
-vi.mock('@/mocks/desligamentosMock', () => ({
-  isDesligamentosMockEnabled: () => false,
-  getMockTrilhaAuditoriaDesligamentos: () => undefined,
-}));
 
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn(), info: vi.fn() } }));
 
@@ -135,6 +122,7 @@ const MOCK_LOGS = [
   },
 ];
 
+import * as reactQuery from '@tanstack/react-query';
 import { TrilhaAuditoriaDesligamentos } from '../desligamentos/TrilhaAuditoriaDesligamentos';
 
 /** O container de ações é o PAI direto do botão. */
@@ -201,6 +189,36 @@ describe('TrilhaAuditoriaDesligamentos — coluna de ações uniforme', () => {
     const container = botaoContainer(botao!);
     expect(container.children).toHaveLength(1);
     expect(container.className).toContain('justify-end');
+  });
+});
+
+describe('TrilhaAuditoriaDesligamentos — falha de leitura não é lista vazia', () => {
+  it('mostra erro de sincronização, e NÃO "nenhum registro", quando a consulta falha', () => {
+    // Era o defeito central da versão de origem: ela lia `audit_log` direto, o
+    // gateway recusava, o `catch` devolvia [] e a aba afirmava "Nenhum registro
+    // de auditoria encontrado" sobre uma consulta que nunca rodou — uma tela que
+    // mente com cara de tela vazia. Agora o erro sobe e aparece como erro.
+    const { useQuery } = reactQuery as unknown as { useQuery: ReturnType<typeof vi.fn> };
+    useQuery.mockReturnValueOnce({
+      data: [],
+      isLoading: false,
+      error: new Error('permission denied for table audit_log'),
+      refetch: vi.fn(),
+    });
+
+    render(<TrilhaAuditoriaDesligamentos />);
+
+    expect(screen.queryByText(/Nenhum registro de auditoria/i)).not.toBeInTheDocument();
+    // O SyncErrorState aparece (mais de um no do texto de erro; basta haver).
+    expect(screen.getAllByText(/tentar de novo|Tentar novamente|erro/i).length).toBeGreaterThan(0);
+  });
+
+  it('quando a consulta volta vazia DE VERDADE, aí sim mostra o vazio', () => {
+    const { useQuery } = reactQuery as unknown as { useQuery: ReturnType<typeof vi.fn> };
+    useQuery.mockReturnValueOnce({ data: [], isLoading: false, error: null, refetch: vi.fn() });
+
+    render(<TrilhaAuditoriaDesligamentos />);
+    expect(screen.getByText(/Nenhum registro de auditoria/i)).toBeInTheDocument();
   });
 });
 

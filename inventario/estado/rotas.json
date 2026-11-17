@@ -7828,7 +7828,7 @@
           "rotulo": "Desligamentos"
         }
       ],
-      "arquivos_lidos": 52,
+      "arquivos_lidos": 53,
       "hooks": [
         {
           "nome": "useAuth",
@@ -7857,6 +7857,10 @@
         {
           "nome": "useGrupo",
           "arquivo": "src/hooks/useGrupo.ts"
+        },
+        {
+          "nome": "useMovimentoReduzido",
+          "arquivo": "src/lib/motionMode.ts"
         },
         {
           "nome": "useOnMount",
@@ -19787,6 +19791,7 @@
         "src/pages/AvaliacaoPage.tsx",
         "src/pages/DashboardExecutivoPage.tsx",
         "src/pages/DashboardPage.tsx",
+        "src/pages/DesligamentosPage.tsx",
         "src/pages/PremiacoesPage.tsx",
         "src/pages/RecrutamentoPage.tsx",
         "src/pages/TreinamentosPage.tsx"
