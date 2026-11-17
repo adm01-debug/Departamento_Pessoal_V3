@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "182d5f9f814ef2ac7b1c2aed4817ac86ba14d213",
+  "commit": "34959e3cf998a6ba30ae6b95ad1641785c05a0fc",
   "branch": "main",
-  "data_commit": "2026-11-17T00:05:48-03:00",
+  "data_commit": "2026-11-17T01:26:49-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "34959e3",
+    "data": "2026-11-17",
+    "assunto": "feat(premiacoes): resgata o Hub de Premiações e o simulador de ROI da muri sobre o miolo corrigido da main (#611)"
+   },
    {
     "sha": "182d5f9",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "2357a56",
     "data": "2026-11-16",
     "assunto": "build(deps-dev): bump the testing group with 2 updates (#585)"
-   },
-   {
-    "sha": "81e86aa",
-    "data": "2026-11-16",
-    "assunto": "infra(banco): sidecars rodam no FIM da transacao, nao no meio do lote (#583)"
    }
   ],
-  "arquivos_mudados_7d": 1033,
+  "arquivos_mudados_7d": 1060,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 311
+    "mudancas": 316
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -188,18 +188,18 @@
     "mudancas": 31
    },
    {
-    "pasta": "src/components/esocial",
-    "mudancas": 28
+    "pasta": "src/components/premiacoes",
+    "mudancas": 29
    },
    {
-    "pasta": "src/components/ponto",
-    "mudancas": 27
+    "pasta": "src/components/esocial",
+    "mudancas": 28
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 26
+    "mudancas": 25
    },
    {
     "arquivo": "package.json",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 15
+    "mudancas": 16
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3403,
-  "arquivos_codigo": 1937,
-  "linhas_codigo": 374645,
+  "arquivos_total": 3424,
+  "arquivos_codigo": 1958,
+  "linhas_codigo": 383369,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 94,
   "modulos": 81,
-  "componentes": 595,
+  "componentes": 608,
   "hooks": 114,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 702,
+  "testes": 703,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 874,
-   "linhas": 148723
+   "arquivos": 894,
+   "linhas": 157277
   },
   "src/constants": {
    "arquivos": 6,
@@ -663,8 +663,8 @@
    "linhas": 25911
   },
   "src/lib": {
-   "arquivos": 16,
-   "linhas": 1853
+   "arquivos": 17,
+   "linhas": 1883
   },
   "src/main.tsx": {
    "arquivos": 1,
@@ -676,7 +676,7 @@
   },
   "src/pages": {
    "arquivos": 133,
-   "linhas": 48611
+   "linhas": 48751
   },
   "src/providers": {
    "arquivos": 4,
@@ -781,6 +781,10 @@
    "linhas": 1442
   },
   {
+   "arquivo": "src/components/premiacoes/RewardsSimulator.tsx",
+   "linhas": 1372
+  },
+  {
    "arquivo": "src/pages/TreinamentosPage.tsx",
    "linhas": 1299
   },
@@ -809,6 +813,10 @@
    "linhas": 997
   },
   {
+   "arquivo": "src/components/premiacoes/AuditoriaTab.tsx",
+   "linhas": 977
+  },
+  {
    "arquivo": "scripts/ai-context/gerar.mjs",
    "linhas": 940
   },
@@ -835,14 +843,6 @@
   {
    "arquivo": "scripts/training-images-local/edge-http-test.mjs",
    "linhas": 830
-  },
-  {
-   "arquivo": "src/pages/MovimentacoesPage.tsx",
-   "linhas": 827
-  },
-  {
-   "arquivo": "src/components/workflows/WorkflowDesigner.tsx",
-   "linhas": 824
   }
  ],
  "qualidade": {
@@ -851,7 +851,7 @@
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 21,
-  "arquivos_acima_500_linhas": 101
+  "arquivos_acima_500_linhas": 109
  },
  "todos": [
   {

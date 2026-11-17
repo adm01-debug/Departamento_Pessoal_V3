@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "182d5f9f814ef2ac7b1c2aed4817ac86ba14d213",
+  "sha": "34959e3cf998a6ba30ae6b95ad1641785c05a0fc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 03:06 UTC",
-  "files_total": 3424,
-  "code_files": 2850,
-  "code_lines": 439287
+  "generated_at": "2026-11-17 04:27 UTC",
+  "files_total": 3445,
+  "code_files": 2871,
+  "code_lines": 448011
  },
  "version": "1.3.2",
- "facts_hash": "f7c0dab582968722",
+ "facts_hash": "bd50a5e68ce8d515",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,9 +384,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 921,
+   ".tsx": 933,
    ".sql": 915,
-   ".ts": 883,
+   ".ts": 892,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -87539,7 +87539,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 186
+    "deps_count": 187
    },
    {
     "path": "",
@@ -90262,7 +90262,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 94
+    "deps_count": 95
    },
    {
     "path": "",
@@ -94761,7 +94761,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 206
+    "deps_count": 245
    },
    {
     "path": "",
@@ -96770,7 +96770,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 59
+    "deps_count": 60
    }
   ],
   "edge_functions": [
@@ -99796,7 +99796,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 874,
+  "components_count": 894,
   "hooks": [
    {
     "name": "useContacts",
@@ -101339,8 +101339,8 @@
   },
   {
    "module": "src/components",
-   "files": 874,
-   "lines": 148723,
+   "files": 894,
+   "lines": 157277,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101935,10 +101935,11 @@
   },
   {
    "module": "src/lib",
-   "files": 16,
-   "lines": 1853,
+   "files": 17,
+   "lines": 1883,
    "tables": [],
    "exports": [
+    "avatarTons.ts: TONS_AVATAR, tomDoAvatar",
     "circuitBreaker.ts: CircuitState, CircuitBreaker, bitrixBreaker, resendBreaker, genericBreaker",
     "cursor.ts: CursorParams, CursorResult, encodeCursor, parseCursor, buildCursorQuery, extractNextCursor",
     "masks.ts: maskCPF, maskCNPJ, maskPhone, maskCEP, maskPIS, maskCurrency",
@@ -101968,6 +101969,7 @@
     "src/services"
    ],
    "file_list": [
+    "src/lib/avatarTons.ts",
     "src/lib/circuitBreaker.ts",
     "src/lib/cursor.test.ts",
     "src/lib/cursor.ts",
@@ -102014,7 +102016,7 @@
   {
    "module": "src/pages",
    "files": 133,
-   "lines": 48611,
+   "lines": 48751,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -111993,6 +111995,11 @@
     "rules": "type=date"
    },
    {
+    "file": "src/components/premiacoes/PagamentosDialogs.tsx",
+    "field": "valor-folha",
+    "rules": "type=number, step=0.01"
+   },
+   {
     "file": "src/components/treinamentos/NovaTurmaDialog.tsx",
     "field": "nova-turma-capacidade",
     "rules": "type=number, min=1"
@@ -112410,6 +112417,91 @@
     "values": "guias_fgts | guias_inss"
    },
    {
+    "file": "src/components/premiacoes/ScenarioParameterCard.tsx",
+    "name": "ScenarioParameterUnit",
+    "values": "integer | currency | percentage"
+   },
+   {
+    "file": "src/components/premiacoes/auditoriaComum.ts",
+    "name": "CategoriaAuditoriaId",
+    "values": "todas | campanhas | pagamentos | regras | conciliacao | integracoes | aprovacoes"
+   },
+   {
+    "file": "src/components/premiacoes/auditoriaComum.ts",
+    "name": "TomAuditoria",
+    "values": "success | warning | destructive | info | primary | muted"
+   },
+   {
+    "file": "src/components/premiacoes/auditoriaComum.ts",
+    "name": "PeriodoAuditoria",
+    "values": "todos | hoje | 7d | 30d | 90d | ano"
+   },
+   {
+    "file": "src/components/premiacoes/auditoriaComum.ts",
+    "name": "OrdemAuditoria",
+    "values": "recentes | antigos"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "name": "EtapaFluxoPagamento",
+    "values": "calculado | em_aprovacao | aprovado | enviado_folha | conciliado"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "name": "OrdenacaoPagamento",
+    "values": "recentes | antigos | valor_desc | valor_asc | colaborador | campanha"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "name": "TipoAcaoPagamento",
+    "values": "avancar | conciliar | detalhes | reiniciar"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "name": "STATUS_FORA_DO_FLUXO",
+    "values": "'rejeitado', 'divergente_em_revisao'"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "name": "FiltroStatusCampanha",
+    "values": "todos | ativo | finalizado | rascunho | suspenso"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "name": "FiltroPeriodoCampanha",
+    "values": "todos | mes_atual | ultimos_90 | ano_atual"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "name": "OrdenacaoCampanha",
+    "values": "inicio_recente | inicio_antigo | nome | nome_desc | atualizadas | orcamento | participantes | aprovacao"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "name": "SituacaoTemporal",
+    "values": "futura | vigente | encerrada"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "name": "TipoAcaoPendente",
+    "values": "configuracao | aprovacao | conciliacao"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "name": "DestinoAcao",
+    "values": "campanhas | pagamentos"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "name": "STATUS_PAGAMENTO_PENDENTE",
+    "values": "'calculado', 'revisando', 'aprovado_gestor', 'aprovado_rh'"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "name": "STATUS_PAGAMENTO_LIQUIDADO",
+    "values": "'aprovado_financeiro', 'pago'"
+   },
+   {
     "file": "src/components/recrutamento/AnalyticsPainel.tsx",
     "name": "TomAnalytics",
     "values": "primary | info | chart4 | success | warning"
@@ -112713,6 +112805,11 @@
     "file": "src/i18n/index.ts",
     "name": "Locale",
     "values": "pt-BR | en-US | es-ES"
+   },
+   {
+    "file": "src/lib/avatarTons.ts",
+    "name": "TONS_AVATAR",
+    "values": "'bg-primary/20 text-primary', 'bg-info/20 text-info', 'bg-success/20 text-success', 'bg-xp/20 text-xp', 'bg-warning/20 text-warning',"
    },
    {
     "file": "src/lib/circuitBreaker.ts",
@@ -113847,16 +113944,20 @@
     "msg": "Toda regra precisa de um nome."
    },
    {
-    "file": "src/components/premiacoes/RewardsApprovalHub.tsx",
-    "msg": "Erro ao processar ação."
+    "file": "src/components/premiacoes/PagamentosTab.tsx",
+    "msg": "${alvos.length - falhas} de ${alvos.length} aprovados; ${falhas} falharam."
    },
    {
-    "file": "src/components/premiacoes/RewardsApprovalHub.tsx",
-    "msg": "Erro na conciliação."
+    "file": "src/components/premiacoes/PagamentosTab.tsx",
+    "msg": "Informe um valor válido para a folha."
    },
    {
     "file": "src/components/premiacoes/RewardsSimulator.tsx",
-    "msg": "Erro ao excluir snapshots"
+    "msg": "Não foi possível excluir o cenário."
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "msg": "Não foi possível salvar o cenário."
    },
    {
     "file": "src/components/recrutamento/AnalyticsRecrutamento.tsx",
@@ -118611,8 +118712,144 @@
     "text": "o cartão apenas não oferece a assinatura."
    },
    {
+    "file": "src/components/premiacoes/AuditoriaTab.tsx",
+    "text": "* Glow suave por categoria. Usa SOMENTE os tokens de cor existentes e fica"
+   },
+   {
+    "file": "src/components/premiacoes/AuditoriaTab.tsx",
+    "text": "* Aberto/FECHADO separado do dado (mesma regra do modal de Pendências): ao"
+   },
+   {
+    "file": "src/components/premiacoes/AuditoriaTab.tsx",
+    "text": "barra de filtros SAI de cena, a mesma regra que a aba Campanhas aplica aos"
+   },
+   {
+    "file": "src/components/premiacoes/CampanhaDetalhesDialog.tsx",
+    "text": "HUB DE PREMIAÇÕES — DETALHE DA CAMPANHA (somente leitura)."
+   },
+   {
+    "file": "src/components/premiacoes/CampanhaDetalhesDialog.tsx",
+    "text": "Pagamentos já carregados pela página — somente leitura. */}"
+   },
+   {
+    "file": "src/components/premiacoes/CampanhaTabela.tsx",
+    "text": "pagamentos). Mostra no máximo 5 e agrega o restante em \"+N\"."
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosDialogs.tsx",
+    "text": "aprovado) — nenhuma regra é duplicada aqui."
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosKpis.tsx",
+    "text": "se houvesse período comparável, e não há, então a linha de apoio traz apenas a"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosLateral.tsx",
+    "text": "· regra ......................... History · neutro"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTab.tsx",
+    "text": "segue valendo para indicadores, fluxo, resumo e tabela — apenas o controle de"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTab.tsx",
+    "text": "botão \"Limpar filtros\" e pelo próprio `limparFiltros` (sem duplicar regra):"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTab.tsx",
+    "text": "Regra da main: rejeição zera, reinício volta ao `valor_calculado` e o"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "text": "· A visão temporal usa SOMENTE cenários salvos (um ponto na data de"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "text": "* Verde quando a variação é boa para o negócio, vermelho quando é ruim. */"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "text": "* Leitura falhou e nada em cache: a tela não pode afirmar ausência de registro. */"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "text": "* A linha ROI segue a regra do KPI: sem payout mostra \"—\", nunca \"0,00x\". */"
+   },
+   {
+    "file": "src/components/premiacoes/ScenarioParameterCard.tsx",
+    "text": "apenas um rascunho de texto enquanto o campo está focado, para permitir"
+   },
+   {
+    "file": "src/components/premiacoes/ScenarioParameterCard.tsx",
+    "text": "* Escape cancela a edição e o blur não pode confirmar o rascunho antigo. */"
+   },
+   {
+    "file": "src/components/premiacoes/ScenarioParameterCard.tsx",
+    "text": "azul-acinzentada do contêiner — anulamos apenas esse anel local."
+   },
+   {
+    "file": "src/components/premiacoes/auditoriaComum.ts",
+    "text": "resolvidos SOMENTE quando existem nos snapshots ou nos pagamentos/campanhas"
+   },
+   {
+    "file": "src/components/premiacoes/auditoriaEntrada.ts",
+    "text": "* Índice máximo que ainda aumenta o atraso (limite do total da cascata). */"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "text": "* ── REGRA Nº 1: NENHUM ESTADO NOVO, NENHUM ESTADO ALTERADO ──────────────────"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "text": "* ── REGRA Nº 2: AGRUPAMENTO VISUAL = REGRA DE NEGÓCIO ───────────────────────"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "text": "─── Valor do pagamento (regra única, usada por todos os números da tela) ─── */"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "text": "* Valor que vai para `valor_aprovado` ao mover o pagamento — regra EXATA da"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "text": "consomem o que estas funções devolvem — o layout fica testável e a regra não"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "text": "* REGRAS DE NEGÓCIO RESPEITADAS (nenhuma métrica nova foi inventada):"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "text": "na ausência dele, `valor_calculado` (valor já reservado pela regra)."
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "text": "coluna vizinha) e não é meta de negócio: o schema não guarda meta atingida"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "text": "* Entidade REAL do evento na trilha (`pagamento`, `campanha`, `regra`). */"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "text": "Estado REAL da conciliação do pagamento do evento (regra idêntica à"
+   },
+   {
     "file": "src/components/premiacoes/premiacoesEntrada.ts",
     "text": "só o TEMPO mudou. Calibrar a cascata do Hub é mexer apenas nas constantes"
+   },
+   {
+    "file": "src/components/premiacoes/simuladorRoiComum.ts",
+    "text": "· \"Evolução temporal\" usa SOMENTE dados reais: cada cenário salvo é um ponto"
+   },
+   {
+    "file": "src/components/premiacoes/simuladorRoiComum.ts",
+    "text": "* Máximo de pontos na série temporal (9 salvos + \"Agora\"). */"
+   },
+   {
+    "file": "src/components/premiacoes/simuladorRoiComum.ts",
+    "text": "configuração atual (\"Agora\"). Apenas datas válidas entram; a série mantém os"
    },
    {
     "file": "src/components/recrutamento/CandidatoDetalhesDialog.tsx",
@@ -145341,6 +145578,101 @@
     "value": "'documentos'"
    },
    {
+    "file": "src/components/premiacoes/CampanhaLateral.tsx",
+    "name": "LIMITE_ACOES",
+    "value": "3"
+   },
+   {
+    "file": "src/components/premiacoes/CampanhaTabela.tsx",
+    "name": "LARGURA_MINIMA_GRADE",
+    "value": "'min-w-[906px]'"
+   },
+   {
+    "file": "src/components/premiacoes/CampanhaTabela.tsx",
+    "name": "PAD_LATERAL",
+    "value": "'px-2'"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTab.tsx",
+    "name": "POR_PAGINA",
+    "value": "6"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTabela.tsx",
+    "name": "TOM_STATUS_PADRAO",
+    "value": "'bg-muted/60 text-muted-foreground'"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTabela.tsx",
+    "name": "PONTO_STATUS_PADRAO",
+    "value": "'bg-muted-foreground'"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTabela.tsx",
+    "name": "TOM_BOTAO_CONCILIAR",
+    "value": "'border-xp/40 bg-xp/10 text-xp hover:bg-xp/20 hover:text-xp'"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTabela.tsx",
+    "name": "PAD_CELULA_X",
+    "value": "'px-2'"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTabela.tsx",
+    "name": "LARGURA_MINIMA_GRADE",
+    "value": "'min-w-[893px]'"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTabela.tsx",
+    "name": "PAD_CELULA",
+    "value": "'py-2'"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "name": "COR_LINHA_PAYOUT",
+    "value": "'#F59E0B'"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "name": "COR_LINHA_ECONOMIA",
+    "value": "'#10B981'"
+   },
+   {
+    "file": "src/components/premiacoes/auditoriaEntrada.ts",
+    "name": "AUDITORIA_ENTRADA_DURACAO",
+    "value": "0.55"
+   },
+   {
+    "file": "src/components/premiacoes/auditoriaEntrada.ts",
+    "name": "AUDITORIA_ENTRADA_PASSO",
+    "value": "0.11"
+   },
+   {
+    "file": "src/components/premiacoes/auditoriaEntrada.ts",
+    "name": "AUDITORIA_ENTRADA_ATRASO",
+    "value": "0.08"
+   },
+   {
+    "file": "src/components/premiacoes/auditoriaEntrada.ts",
+    "name": "AUDITORIA_ENTRADA_MAX_PASSO",
+    "value": "9"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "name": "ETAPA_FORA_DO_FLUXO",
+    "value": "'fora'"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "name": "ETAPA_PENDENTES",
+    "value": "'pendentes'"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "name": "STATUS_REINICIO_PAGAMENTO",
+    "value": "'calculado'"
+   },
+   {
     "file": "src/components/premiacoes/premiacoesEntrada.ts",
     "name": "ENTRADA_HUB_DURACAO",
     "value": "0.42"
@@ -145369,6 +145701,16 @@
     "file": "src/components/premiacoes/premiacoesEntrada.ts",
     "name": "LINHA_HUB_DURACAO",
     "value": "0.8"
+   },
+   {
+    "file": "src/components/premiacoes/simuladorEntrada.ts",
+    "name": "ENTRADA_SIMULADOR_DURACAO",
+    "value": "0.35"
+   },
+   {
+    "file": "src/components/premiacoes/simuladorEntrada.ts",
+    "name": "ENTRADA_SIMULADOR_PASSO",
+    "value": "0.06"
    },
    {
     "file": "src/components/recrutamento/CandidatoDetalhesDialog.tsx",
@@ -145749,6 +146091,11 @@
     "file": "src/pages/PassivoTrabalhistaPage.tsx",
     "name": "ALIQ_INSS",
     "value": "0.2"
+   },
+   {
+    "file": "src/pages/PremiacoesPage.tsx",
+    "name": "POR_PAGINA",
+    "value": "8"
    },
    {
     "file": "src/services/assistenteIAService.ts",
@@ -146466,11 +146813,6 @@
     "file": "src/components/layout/PageTransition.tsx",
     "name": "transition",
     "body": "type: 'tween', ease: resolved.ease, duration: resolved.duration,"
-   },
-   {
-    "file": "src/components/premiacoes/RewardsApprovalHub.tsx",
-    "name": "nextStageMap",
-    "body": "calculado: 'revisando', revisando: 'aprovado_gestor', aprovado_gestor: 'aprovado_rh', aprovado_rh: 'aprovado_financeiro',"
    },
    {
     "file": "src/pages/AdminAsoWorkflowPage.tsx",
@@ -149347,33 +149689,417 @@
     "kind": "compara"
    },
    {
-    "file": "src/components/premiacoes/RewardsApprovalHub.tsx",
+    "file": "src/components/premiacoes/CampanhaTabela.tsx",
     "field": "status",
-    "value": "rejeitado",
+    "value": "ativo",
     "kind": "compara"
    },
    {
-    "file": "src/components/premiacoes/RewardsApprovalHub.tsx",
+    "file": "src/components/premiacoes/CampanhaTabela.tsx",
+    "field": "status",
+    "value": "finalizado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/CampanhaTabela.tsx",
+    "field": "status",
+    "value": "suspenso",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/CampanhaTabela.tsx",
+    "field": "status",
+    "value": "ativo",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/CampanhaTabela.tsx",
+    "field": "status",
+    "value": "finalizado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/CampanhaTabela.tsx",
+    "field": "status",
+    "value": "suspenso",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/CampanhaTabela.tsx",
+    "field": "status",
+    "value": "rascunho",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTab.tsx",
+    "field": "tipo",
+    "value": "detalhes",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTab.tsx",
+    "field": "tipo",
+    "value": "conciliar",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTab.tsx",
+    "field": "tipo",
+    "value": "reiniciar",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTab.tsx",
+    "field": "tipo",
+    "value": "rejeitar",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTab.tsx",
+    "field": "status",
+    "value": "rejected",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTabela.tsx",
+    "field": "tipo",
+    "value": "reiniciar",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTabela.tsx",
+    "field": "tipo",
+    "value": "conciliar",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTabela.tsx",
+    "field": "status",
+    "value": "divergente_em_revisao",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTabela.tsx",
+    "field": "tipo",
+    "value": "detalhes",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTabela.tsx",
+    "field": "status",
+    "value": "calculado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTabela.tsx",
     "field": "status",
     "value": "pago",
     "kind": "compara"
    },
    {
-    "file": "src/components/premiacoes/RewardsApprovalHub.tsx",
+    "file": "src/components/premiacoes/PagamentosTabela.tsx",
+    "field": "tipo",
+    "value": "avancar",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTabela.tsx",
+    "field": "status",
+    "value": "rejeitado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "integer",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "currency",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "percentage",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "percentage",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "percentage",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "numero",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "moeda",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "pp",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "pp",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "pp",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "moeda",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "moeda",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "moeda",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "percentual",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "pp",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "field": "tipo",
+    "value": "numero",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/auditoriaComum.ts",
+    "field": "tipo",
+    "value": "todos",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/auditoriaComum.ts",
+    "field": "tipo",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "etapa",
+    "value": "todas",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "status",
+    "value": "todos",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "tipo",
+    "value": "reiniciar",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "tipo",
+    "value": "conciliar",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "tipo",
+    "value": "conciliar",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "tipo",
+    "value": "detalhes",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "tipo",
+    "value": "avancar",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "tipo",
+    "value": "detalhes",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
     "field": "status",
     "value": "pago",
     "kind": "compara"
    },
    {
-    "file": "src/components/premiacoes/RewardsApprovalHub.tsx",
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "status",
+    "value": "aprovado_financeiro",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "status",
+    "value": "pago",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "etapa",
+    "value": "todas",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
     "field": "status",
     "value": "rejeitado",
     "kind": "compara"
    },
    {
-    "file": "src/components/premiacoes/RewardsApprovalHub.tsx",
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "status",
+    "value": "pago",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "status",
+    "value": "aprovado_financeiro",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "status",
+    "value": "divergente_em_revisao",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
     "field": "status",
     "value": "rejeitado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "status",
+    "value": "divergente_em_revisao",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "status",
+    "value": "pago",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "field": "status",
+    "value": "calculado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "field": "situacao",
+    "value": "futura",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "field": "situacao",
+    "value": "vigente",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "field": "situacao",
+    "value": "encerrada",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "field": "status",
+    "value": "todos",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "field": "tipo",
+    "value": "configuracao",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "field": "tipo",
+    "value": "aprovacao",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "field": "tipo",
+    "value": "conciliacao",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "field": "status",
+    "value": "rascunho",
     "kind": "compara"
    },
    {
@@ -153951,37 +154677,7 @@
    {
     "file": "src/pages/PremiacoesPage.tsx",
     "field": "status",
-    "value": "calculado",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/PremiacoesPage.tsx",
-    "field": "status",
-    "value": "ativo",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/PremiacoesPage.tsx",
-    "field": "status",
     "value": "pago",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/PremiacoesPage.tsx",
-    "field": "status",
-    "value": "ativo",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/PremiacoesPage.tsx",
-    "field": "status",
-    "value": "ativo",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/PremiacoesPage.tsx",
-    "field": "status",
-    "value": "rascunho",
     "kind": "compara"
    },
    {
@@ -158199,10 +158895,118 @@
     "body": "const { empresaAtual } = useEmpresas(); const [open, setOpen] = useState(false); const [loading, setLoading] = useState(false); const [inicio, setInicio] = useState(''); const [fim, setFim] = useState(''); const [resultado, setResultado] = useState<{ hash: string; bytes: number; marcacoes: number; colaboradores: number; sem_pis: number; } | null>(null); const handleGerar = async () => { if (!empresaAtual?.id) return toast.error('Selecione uma empresa'); if (!inicio || !fim) return toast.error('I …"
    },
    {
+    "file": "src/components/premiacoes/AuditoriaEventoDialog.tsx",
+    "name": "Valor",
+    "params": "{ rotulo, valor }: { rotulo: string; valor: number | null }",
+    "body": "return ( <div> <dt className=\"text-[10px] uppercase tracking-wider text-muted-foreground\">{rotulo}</dt> <dd className=\"mt-0.5 text-xs font-medium tabular-nums\">{valor === null ? '—' : formatCurrency(valor)}</dd> </div> );"
+   },
+   {
+    "file": "src/components/premiacoes/AuditoriaTab.tsx",
+    "name": "ValorEvento",
+    "params": "{ evento, compacto = false }: { evento: EventoAuditoria; compacto?: boolean }",
+    "body": "const temTransicao = evento.valorAnterior !== null && evento.valorPosterior !== null && evento.valorAnterior !== evento.valorPosterior; if (temTransicao) { return ( <div className={cn('min-w-0', compacto && 'text-right')}> <div className=\"flex flex-wrap items-center gap-1 text-[11px] font-semibold tabular-nums\"> <span className=\"text-muted-foreground line-through\">{formatCurrency(evento.valorAnterior)}</span> <ChevronRight className=\"h-3 w-3 text-muted-foreground\" aria-hidden=\"true\" /> <span>{fo …"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTab.tsx",
+    "name": "invalidar",
+    "params": "",
+    "body": "CHAVES.forEach((key) => queryClient.invalidateQueries({ queryKey: key }));"
+   },
+   {
+    "file": "src/components/premiacoes/PagamentosTabela.tsx",
+    "name": "valor",
+    "params": "v: number | string | null | undefined",
+    "body": "(v ? formatCurrency(Number(v)) : '—');"
+   },
+   {
     "file": "src/components/premiacoes/RewardsSimulator.tsx",
-    "name": "calculateMetrics",
-    "params": "emp: number, sal: number, bonus: number, perf: number, ret: number",
-    "body": "const totalBudget = emp * sal * (bonus / 100) * (perf / 100); const turnoverCost = sal * 3 * emp * 0.15; const savings = turnoverCost * (ret / 100); const roi = totalBudget > 0 ? savings / totalBudget : 0; return { totalBudget, savings, roi };"
+    "name": "aplicarCenario",
+    "params": "s: CenarioROI",
+    "body": "setEmployees(s.configuracoes.employees ?? 0); setAvgSalary(s.configuracoes.avgSalary ?? 0); setBonusPercent(s.configuracoes.bonusPercent ?? 0); setPerformanceLevel(s.configuracoes.performanceLevel ?? 0); setRetentionImpact(s.configuracoes.retentionImpact ?? 0); setCenarioAtual(s.id); toast.info(`Cenário \"${nomeDoCenario(s)}\" carregado.`);"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "name": "valorDoCenario",
+    "params": "s: CenarioROI, chave: LinhaChave",
+    "body": "switch (chave) { case 'totalBudget': return s.resultados.totalBudget ?? 0; case 'savings': return s.resultados.savings ?? 0; case 'roi': return s.resultados.roi ?? 0; case 'resultadoLiquido': return (s.resultados.savings ?? 0) - (s.resultados.totalBudget ?? 0); default: return s.configuracoes[chave] ?? 0; }"
+   },
+   {
+    "file": "src/components/premiacoes/RewardsSimulator.tsx",
+    "name": "valorBase",
+    "params": "chave: LinhaChave",
+    "body": "switch (chave) { case 'totalBudget': return totalBudget; case 'savings': return savings; case 'roi': return roi; case 'resultadoLiquido': return resultadoLiquido; default: return valores[chave]; }"
+   },
+   {
+    "file": "src/components/premiacoes/ScenarioParameterCard.tsx",
+    "name": "formatarValor",
+    "params": "v: number, unit: ScenarioParameterUnit",
+    "body": "if (unit === 'currency') return numero(v, 2); if (unit === 'percentage') return numero(v, Number.isInteger(v) ? 0 : 1); return numero(v, 0);"
+   },
+   {
+    "file": "src/components/premiacoes/ScenarioParameterCard.tsx",
+    "name": "converterNumero",
+    "params": "texto: string",
+    "body": "let s = texto.trim().replace(/\\s/g, '').replace(/^R\\$/i, ''); if (!s) return null; let negativo = false; if (s.startsWith('-')) { negativo = true; s = s.slice(1); } if (!/^[\\d.,]+$/.test(s)) return null; if (s.includes(',')) { s = s.replace(/\\./g, '').replace(',', '.'); } else if (/^\\d{1,3}(\\.\\d{3})+$/.test(s)) { s = s.replace(/\\./g, ''); } if (!/^\\d+(\\.\\d+)?$/.test(s)) return null; const n = Number(s); if (!Number.isFinite(n)) return null; return negativo ? -n : n;"
+   },
+   {
+    "file": "src/components/premiacoes/ScenarioParameterCard.tsx",
+    "name": "arredondar",
+    "params": "v: number, casas: number",
+    "body": "const fator = 10 ** casas; return Math.round(v * fator) / fator;"
+   },
+   {
+    "file": "src/components/premiacoes/auditoriaComum.ts",
+    "name": "primeiroValor",
+    "params": "...fontes: unknown[]",
+    "body": "for (const fonte of fontes) { const obj = objeto(fonte); if (!obj) continue; for (const campo of CAMPOS_VALOR) { const n = numero(obj[campo]); if (n !== null) return n; } } return null;"
+   },
+   {
+    "file": "src/components/premiacoes/auditoriaComum.ts",
+    "name": "valorCitado",
+    "params": "motivo: string",
+    "body": "const achado = motivo.match(/R\\$\\s*([\\d.]+(?:,\\d{2})?)/i); return achado ? numero(achado[1]) : null;"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "name": "valorDoPagamento",
+    "params": "p: PagamentoHub",
+    "body": "return numero(p.valor_folha_real) || numero(p.valor_aprovado) || numero(p.valor_calculado);"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "name": "valorParaGravar",
+    "params": "p: PagamentoHub, proximoStatus: string",
+    "body": "if (proximoStatus === 'rejeitado') return 0; if (proximoStatus === STATUS_REINICIO_PAGAMENTO) return numero(p.valor_calculado); return numero(p.valor_aprovado) || numero(p.valor_calculado);"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "name": "podeRejeitarPagamento",
+    "params": "status: string",
+    "body": "return status !== 'rejeitado' && status !== 'pago';"
+   },
+   {
+    "file": "src/components/premiacoes/pagamentosComum.ts",
+    "name": "podeConciliarPagamento",
+    "params": "status: string",
+    "body": "return status === 'aprovado_financeiro' || status === 'divergente_em_revisao';"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "name": "iniciaisDe",
+    "params": "nome: string | null | undefined",
+    "body": "const partes = String(nome ?? '') .trim() .split(/\\s+/) .filter(Boolean); if (partes.length === 0) return '?'; if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase(); return `${partes[0][0]}${partes[partes.length - 1][0]}`.toUpperCase();"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesComum.ts",
+    "name": "maisAntigo",
+    "params": "lista: PagamentoHub[]",
+    "body": ""
+   },
+   {
+    "file": "src/components/premiacoes/simuladorRoiComum.ts",
+    "name": "calcularMetricas",
+    "params": "p: ParametrosRoi",
+    "body": "const totalBudget = p.employees * p.avgSalary * (p.bonusPercent / 100) * (p.performanceLevel / 100); const custoReposicao = p.avgSalary * PREMISSAS_ROI.salariosPorReposicao * p.employees * PREMISSAS_ROI.turnoverBase; const savings = custoReposicao * (p.retentionImpact / 100); const roi = totalBudget > 0 ? savings / totalBudget : 0; const retidos = p.employees * (p.retentionImpact / 100); const resultadoLiquido = savings - totalBudget; return { totalBudget, custoReposicao, savings, roi, resultado …"
    },
    {
     "file": "src/components/recrutamento/CandidatosPainel.tsx",
@@ -158587,12 +159391,6 @@
     "name": "calculateDistance",
     "params": "lat1: number, lon1: number, lat2: number, lon2: number",
     "body": "const R = 6371e3; // metres const φ1 = (lat1 * Math.PI) / 180; const φ2 = (lat2 * Math.PI) / 180; const Δφ = ((lat2 - lat1) * Math.PI) / 180; const Δλ = ((lon2 - lon1) * Math.PI) / 180; const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2); const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); return R * c; // in metres"
-   },
-   {
-    "file": "src/pages/PremiacoesPage.tsx",
-    "name": "formatCurrency",
-    "params": "val: number",
-    "body": ""
    },
    {
     "file": "src/pages/ProvisoesPage.tsx",
@@ -160715,10 +161513,6 @@
     "line": "const strokeOffset = -seg.offset + circumference * 0.25; // start from top"
    },
    {
-    "file": "src/components/dashboard/DonutChart.tsx",
-    "line": "transition={{ duration: 0.6, delay: 0.2 + i * 0.15 }}"
-   },
-   {
     "file": "src/components/dashboard/EventTimeline.tsx",
     "line": "transition={{ delay: i * 0.08 }}"
    },
@@ -160964,7 +161758,15 @@
    },
    {
     "file": "src/components/premiacoes/RewardsSimulator.tsx",
-    "line": "const turnoverCost = sal * 3 * emp * 0.15;"
+    "line": "* · Sem payout (0 colaboradores, 0% de bônus ou 0% de meta) não existe ROI:"
+   },
+   {
+    "file": "src/components/premiacoes/simuladorRoiComum.ts",
+    "line": "* custo de reposição = salário médio × 3 × colaboradores × 15%"
+   },
+   {
+    "file": "src/components/premiacoes/simuladorRoiComum.ts",
+    "line": "* · O custo de reposição assume 3 salários por desligamento e 15% de turnover"
    },
    {
     "file": "src/components/recrutamento/AnalyticsAtencao.tsx",
@@ -161285,6 +162087,10 @@
    {
     "file": "src/pages/PontoPage.tsx",
     "line": "// 100% e o ponto era registrado independente de qualquer checagem)."
+   },
+   {
+    "file": "src/pages/PremiacoesPage.tsx",
+    "line": "// desliga o deslocamento — conteúdo 100% visível."
    },
    {
     "file": "src/pages/ProvisoesPage.tsx",
@@ -173889,6 +174695,138 @@
     "name": "conta os dias restantes pela data local, não pelo instante UTC"
    },
    {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "métricas por campanha"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "soma orçamento comprometido pelo aprovado e cai no calculado quando falta"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "conta participantes distintos e ignora repetição do mesmo colaborador"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "devolve percentuais nulos (sem divisão inválida) quando não há orçamento nem cálculo"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "conta pendências e divergências pelos status reais do fluxo"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "situação temporal"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "marca vigente, futura e encerrada a partir das datas reais"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "não inventa contagem quando falta a data final"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "filtros, contadores e ordenação"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "conta por status real e mantém o total"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "busca por nome e por descrição, ignorando acento e caixa"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "combina status + período com as datas reais"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "ordena por período, nome, orçamento, participantes e % aprovado"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "variação do total aprovado"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "devolve null quando não há base no mês anterior"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "compara o mês corrente com o anterior pelas datas reais"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "usa updated_at quando o pagamento ainda não tem data de pagamento"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "próximas ações"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "deriva pendências apenas de fatos reais e ordena pelas mais antigas"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "não cria pendência quando não há rascunho, pagamento pendente ou divergência"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "atividade recente"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "ordena do mais recente para o mais antigo, resolve o objeto e o responsável"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "respeita o limite e ignora eventos sem data"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "paginação local"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "recorta a página pedida e informa o total de páginas"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "nunca devolve página inexistente nem página vazia por falta de registros"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "trata página ou tamanho inválidos sem quebrar"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "utilitários"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "formata tempo relativo em horas, dias e meses"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "gera iniciais do nome real do colaborador"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "normaliza texto para busca"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "rotula o evento da trilha pela entidade e ação reais"
+   },
+   {
+    "file": "src/components/__tests__/PremiacoesComum.test.ts",
+    "name": "conhece os estágios reais do pagamento"
+   },
+   {
     "file": "src/components/__tests__/ProtectedRoute.test.tsx",
     "name": "ProtectedRoute"
    },
@@ -174145,76 +175083,44 @@
     "name": "renders empty grid for no relatorios"
    },
    {
-    "file": "src/components/__tests__/RewardsApprovalHub.test.tsx",
-    "name": "RewardsApprovalHub"
-   },
-   {
-    "file": "src/components/__tests__/RewardsApprovalHub.test.tsx",
-    "name": "renders Aguardando Gestor stage"
-   },
-   {
-    "file": "src/components/__tests__/RewardsApprovalHub.test.tsx",
-    "name": "renders Em Revisão stage"
-   },
-   {
-    "file": "src/components/__tests__/RewardsApprovalHub.test.tsx",
-    "name": "renders Aguardando RH stage"
-   },
-   {
-    "file": "src/components/__tests__/RewardsApprovalHub.test.tsx",
-    "name": "renders Aguardando Financeiro stage"
-   },
-   {
-    "file": "src/components/__tests__/RewardsApprovalHub.test.tsx",
-    "name": "renders Conciliação stage"
-   },
-   {
-    "file": "src/components/__tests__/RewardsApprovalHub.test.tsx",
-    "name": "renders colaborador name in calculado stage"
-   },
-   {
-    "file": "src/components/__tests__/RewardsApprovalHub.test.tsx",
-    "name": "renders colaborador name in aprovado_gestor stage"
-   },
-   {
-    "file": "src/components/__tests__/RewardsApprovalHub.test.tsx",
-    "name": "renders 5 stage columns"
-   },
-   {
     "file": "src/components/__tests__/RewardsSimulator.test.tsx",
     "name": "RewardsSimulator"
    },
    {
     "file": "src/components/__tests__/RewardsSimulator.test.tsx",
-    "name": "renders Simulador de ROI title"
+    "name": "renderiza as quatro regiões do redesenho"
    },
    {
     "file": "src/components/__tests__/RewardsSimulator.test.tsx",
-    "name": "renders subtitle text"
+    "name": "mantém os cinco parâmetros do simulador"
    },
    {
     "file": "src/components/__tests__/RewardsSimulator.test.tsx",
-    "name": "renders Comparar Cenários button"
+    "name": "exibe os quatro KPIs de resultado"
    },
    {
     "file": "src/components/__tests__/RewardsSimulator.test.tsx",
-    "name": "renders Resetar button"
+    "name": "oferece os controles reais de cenário e salvamento"
    },
    {
     "file": "src/components/__tests__/RewardsSimulator.test.tsx",
-    "name": "renders Salvar Snapshot button"
+    "name": "mostra o estado vazio de comparação quando não há cenário selecionado"
    },
    {
     "file": "src/components/__tests__/RewardsSimulator.test.tsx",
-    "name": "renders Colaboradores slider label"
+    "name": "não afirma ausência de cenário quando a leitura falha — oferece "
    },
    {
     "file": "src/components/__tests__/RewardsSimulator.test.tsx",
-    "name": "renders Salário Médio slider label"
+    "name": "duplica o cenário salvo pelo serviço, com o nome marcado como cópia"
    },
    {
     "file": "src/components/__tests__/RewardsSimulator.test.tsx",
-    "name": "renders Snapshots Auditoria section"
+    "name": "exclui o cenário salvo pelo serviço, com o id do cenário"
+   },
+   {
+    "file": "src/components/__tests__/RewardsSimulator.test.tsx",
+    "name": "mostra "
    },
    {
     "file": "src/components/__tests__/RouteErrorBoundary.test.tsx",
@@ -174723,6 +175629,38 @@
    {
     "file": "src/components/__tests__/Simulador13Dialog.test.tsx",
     "name": "renders Dependentes IRRF label"
+   },
+   {
+    "file": "src/components/__tests__/SimuladorRoiComum.test.ts",
+    "name": "simuladorRoiComum"
+   },
+   {
+    "file": "src/components/__tests__/SimuladorRoiComum.test.ts",
+    "name": "preserva a fórmula financeira original"
+   },
+   {
+    "file": "src/components/__tests__/SimuladorRoiComum.test.ts",
+    "name": "deriva as métricas de retenção e por colaborador"
+   },
+   {
+    "file": "src/components/__tests__/SimuladorRoiComum.test.ts",
+    "name": "não divide por zero quando não há colaboradores/payout"
+   },
+   {
+    "file": "src/components/__tests__/SimuladorRoiComum.test.ts",
+    "name": "monta a série temporal com cenários reais e "
+   },
+   {
+    "file": "src/components/__tests__/SimuladorRoiComum.test.ts",
+    "name": "distingue no rótulo cenários do mesmo dia/mês em anos diferentes"
+   },
+   {
+    "file": "src/components/__tests__/SimuladorRoiComum.test.ts",
+    "name": "limita a série ao máximo de pontos (9 salvos + Agora)"
+   },
+   {
+    "file": "src/components/__tests__/SimuladorRoiComum.test.ts",
+    "name": "calcula variação percentual com proteção contra base zero"
    },
    {
     "file": "src/components/__tests__/SimuladorWhatIf.test.tsx",
@@ -223877,6 +224815,65 @@
      "Contrato": [
       "compara:src/components/portal/PortalDocumentosTab.tsx"
      ],
+     "detalhes": [
+      "compara:src/components/premiacoes/PagamentosTab.tsx",
+      "compara:src/components/premiacoes/PagamentosTabela.tsx",
+      "escreve:src/components/premiacoes/pagamentosComum.ts"
+     ],
+     "conciliar": [
+      "compara:src/components/premiacoes/PagamentosTab.tsx",
+      "compara:src/components/premiacoes/PagamentosTabela.tsx",
+      "escreve:src/components/premiacoes/pagamentosComum.ts"
+     ],
+     "reiniciar": [
+      "compara:src/components/premiacoes/PagamentosTab.tsx",
+      "compara:src/components/premiacoes/PagamentosTabela.tsx",
+      "escreve:src/components/premiacoes/pagamentosComum.ts"
+     ],
+     "rejeitar": [
+      "compara:src/components/premiacoes/PagamentosTab.tsx"
+     ],
+     "avancar": [
+      "compara:src/components/premiacoes/PagamentosTabela.tsx",
+      "escreve:src/components/premiacoes/pagamentosComum.ts"
+     ],
+     "integer": [
+      "escreve:src/components/premiacoes/RewardsSimulator.tsx"
+     ],
+     "currency": [
+      "escreve:src/components/premiacoes/RewardsSimulator.tsx"
+     ],
+     "percentage": [
+      "escreve:src/components/premiacoes/RewardsSimulator.tsx"
+     ],
+     "numero": [
+      "compara:src/components/premiacoes/RewardsSimulator.tsx",
+      "escreve:src/components/premiacoes/RewardsSimulator.tsx"
+     ],
+     "moeda": [
+      "escreve:src/components/premiacoes/RewardsSimulator.tsx"
+     ],
+     "pp": [
+      "compara:src/components/premiacoes/RewardsSimulator.tsx",
+      "escreve:src/components/premiacoes/RewardsSimulator.tsx"
+     ],
+     "percentual": [
+      "escreve:src/components/premiacoes/RewardsSimulator.tsx"
+     ],
+     "todos": [
+      "compara:src/components/premiacoes/auditoriaComum.ts",
+      "escreve:src/components/premiacoes/auditoriaComum.ts",
+      "escreve:src/pages/ObrigacoesFiscaisPage.tsx"
+     ],
+     "configuracao": [
+      "escreve:src/components/premiacoes/premiacoesComum.ts"
+     ],
+     "aprovacao": [
+      "escreve:src/components/premiacoes/premiacoesComum.ts"
+     ],
+     "conciliacao": [
+      "escreve:src/components/premiacoes/premiacoesComum.ts"
+     ],
      "remoto": [
       "compara:src/components/recrutamento/CandidatoTimeline.tsx"
      ],
@@ -224141,9 +225138,6 @@
       "compara:src/pages/ObrigacoesFiscaisPage.tsx",
       "escreve:src/pages/ObrigacoesFiscaisPage.tsx"
      ],
-     "todos": [
-      "escreve:src/pages/ObrigacoesFiscaisPage.tsx"
-     ],
      "alimenticia": [
       "escreve:src/pages/PensoesPage.tsx"
      ],
@@ -224389,7 +225383,8 @@
       "compara:src/components/descontos/AdiantamentosTable.tsx",
       "compara:src/components/ferias/FeriasWorkflowStepper.tsx",
       "compara:src/components/ponto/PontoAdjustmentRequests.tsx",
-      "compara:src/components/premiacoes/RewardsApprovalHub.tsx",
+      "compara:src/components/premiacoes/PagamentosTabela.tsx",
+      "compara:src/components/premiacoes/pagamentosComum.ts",
       "compara:src/services/premiacoesService.ts",
       "escreve:src/components/descontos/AdiantamentosTable.tsx"
      ],
@@ -224421,13 +225416,17 @@
       "compara:src/components/admissoes/GestaoCandidatos.tsx",
       "compara:src/components/avaliacao/PdiFiltros.tsx",
       "compara:src/components/avaliacao/PdiTab.tsx",
+      "compara:src/components/premiacoes/pagamentosComum.ts",
+      "compara:src/components/premiacoes/premiacoesComum.ts",
       "compara:src/components/treinamentos/TurmasPainel.tsx",
       "compara:src/components/treinamentos/inscricoesDerivacoes.ts",
       "compara:src/components/treinamentos/treinamentosDerivacoes.ts",
       "compara:src/components/treinamentos/trilhasDerivacoes.ts",
       "compara:src/components/treinamentos/turmasDerivacoes.ts",
       "compara:src/pages/ContratosGeradosPage.tsx",
-      "compara:supabase/functions/relatorio/index.ts"
+      "compara:supabase/functions/relatorio/index.ts",
+      "escreve:src/components/premiacoes/pagamentosComum.ts",
+      "escreve:src/components/premiacoes/premiacoesComum.ts"
      ],
      "ativos": [
       "compara:src/components/admissoes/GestaoKits.tsx"
@@ -224584,7 +225583,8 @@
       "compara:src/components/colaborador-detalhes/FeriasResumoTab.tsx",
       "compara:src/components/descontos/AdiantamentosTable.tsx",
       "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx",
-      "compara:src/components/premiacoes/RewardsApprovalHub.tsx",
+      "compara:src/components/premiacoes/PagamentosTabela.tsx",
+      "compara:src/components/premiacoes/pagamentosComum.ts",
       "compara:src/pages/PremiacoesPage.tsx",
       "escreve:src/services/despesaService.ts",
       "escreve:src/services/rescisaoService.ts"
@@ -224656,6 +225656,7 @@
       "compara:src/components/descontos/EmprestimosTable.tsx",
       "compara:src/components/descontos/FinancialSummaryCards.tsx",
       "compara:src/components/descontos/NewLoanDialog.tsx",
+      "compara:src/components/premiacoes/CampanhaTabela.tsx",
       "compara:src/components/sst/GerarPgrButton.tsx",
       "compara:src/components/ui/status-badge.tsx",
       "compara:src/hooks/useNotificacoes.ts",
@@ -224664,7 +225665,6 @@
       "compara:src/pages/AfastamentosPage.tsx",
       "compara:src/pages/AvaliacaoPage.tsx",
       "compara:src/pages/ColaboradorDetalhesPage.tsx",
-      "compara:src/pages/PremiacoesPage.tsx",
       "compara:src/pages/RelatoriosPage.tsx",
       "compara:src/utils/folha/validadorFolha.ts",
       "compara:supabase/functions/adiantamento-salarial/index.ts",
@@ -224738,6 +225738,7 @@
      "finalizado": [
       "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx",
       "compara:src/components/desligamentos/DesligamentoKPIs.tsx",
+      "compara:src/components/premiacoes/CampanhaTabela.tsx",
       "compara:src/services/cnabService.ts",
       "escreve:src/services/cnabService.ts"
      ],
@@ -224819,15 +225820,37 @@
      ],
      "rascunho": [
       "compara:src/components/premiacoes/CampaignWizard.tsx",
+      "compara:src/components/premiacoes/CampanhaTabela.tsx",
+      "compara:src/components/premiacoes/premiacoesComum.ts",
       "compara:src/hooks/usePontoMelhorado.ts",
       "compara:src/pages/PesquisasClimaPage.tsx",
-      "compara:src/pages/PremiacoesPage.tsx",
       "escreve:src/components/premiacoes/CampaignWizard.tsx",
       "escreve:src/hooks/usePontoMelhorado.ts",
       "escreve:src/mocks/desempenhoMock.ts",
       "escreve:src/pages/PesquisasClimaPage.tsx",
       "escreve:src/services/contratoTemplateService.ts",
       "filtra:src/services/premiacoesService.ts"
+     ],
+     "suspenso": [
+      "compara:src/components/premiacoes/CampanhaTabela.tsx"
+     ],
+     "rejected": [
+      "compara:src/components/premiacoes/PagamentosTab.tsx",
+      "compara:supabase/functions/alertas-dp/deliveryStatus.ts"
+     ],
+     "divergente_em_revisao": [
+      "compara:src/components/premiacoes/PagamentosTabela.tsx",
+      "compara:src/components/premiacoes/pagamentosComum.ts"
+     ],
+     "calculado": [
+      "compara:src/components/premiacoes/PagamentosTabela.tsx",
+      "compara:src/components/premiacoes/pagamentosComum.ts",
+      "compara:src/services/rescisaoService.ts",
+      "escreve:src/services/rescisaoService.ts"
+     ],
+     "aprovado_financeiro": [
+      "compara:src/components/premiacoes/pagamentosComum.ts",
+      "compara:src/services/premiacoesService.ts"
      ],
      "aberta": [
       "compara:src/components/recrutamento/AnalyticsVagas.tsx",
@@ -225081,11 +226104,6 @@
       "escreve:src/services/tabelas/beneficiosService.ts",
       "filtra:src/services/calculoBeneficiosService.ts"
      ],
-     "calculado": [
-      "compara:src/pages/PremiacoesPage.tsx",
-      "compara:src/services/rescisaoService.ts",
-      "escreve:src/services/rescisaoService.ts"
-     ],
      "CONCLUIDO": [
       "compara:src/pages/ProvisoesPage.tsx",
       "escreve:supabase/functions/calcular-provisoes/index.ts",
@@ -225121,9 +226139,6 @@
       "compara:supabase/functions/fechar-folha/index.ts",
       "escreve:supabase/functions/calcular-folha/index.ts"
      ],
-     "aprovado_financeiro": [
-      "compara:src/services/premiacoesService.ts"
-     ],
      "succeeded": [
       "compara:supabase/functions/_shared/trainingImages/estadoCapa.ts",
       "compara:supabase/functions/_shared/trainingImages/pipeline.ts",
@@ -225157,9 +226172,6 @@
       "compara:supabase/functions/_shared/trainingImages/pipeline.ts"
      ],
      "not_needed": [
-      "compara:supabase/functions/alertas-dp/deliveryStatus.ts"
-     ],
-     "rejected": [
       "compara:supabase/functions/alertas-dp/deliveryStatus.ts"
      ],
      "not_configured": [
@@ -225287,13 +226299,15 @@
      "documentacao": [
       "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx"
      ],
+     "todas": [
+      "compara:src/components/premiacoes/pagamentosComum.ts",
+      "compara:src/components/recrutamento/candidatosComum.ts",
+      "escreve:src/components/premiacoes/pagamentosComum.ts",
+      "escreve:src/components/recrutamento/candidatosComum.ts"
+     ],
      "outras": [
       "compara:src/components/recrutamento/PipelineBoard.tsx",
       "compara:src/components/recrutamento/vagasComum.ts"
-     ],
-     "todas": [
-      "compara:src/components/recrutamento/candidatosComum.ts",
-      "escreve:src/components/recrutamento/candidatosComum.ts"
      ],
      "triagem": [
       "escreve:src/pages/RecrutamentoPage.tsx"
@@ -225370,6 +226384,15 @@
      ],
      "concluido": [
       "compara:src/components/avaliacao/pdiComum.ts"
+     ],
+     "futura": [
+      "escreve:src/components/premiacoes/premiacoesComum.ts"
+     ],
+     "vigente": [
+      "escreve:src/components/premiacoes/premiacoesComum.ts"
+     ],
+     "encerrada": [
+      "escreve:src/components/premiacoes/premiacoesComum.ts"
      ],
      "todas": [
       "compara:src/components/recrutamento/candidatosComum.ts",
@@ -249446,16 +250469,6 @@
    },
    {
     "kind": "status",
-    "msg": "valor `finalizado` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx",
-     "compara:src/components/desligamentos/DesligamentoKPIs.tsx",
-     "compara:src/services/cnabService.ts",
-     "escreve:src/services/cnabService.ts"
-    ]
-   },
-   {
-    "kind": "status",
     "msg": "valor `sent` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/components/folha/FolhaESocialSync.tsx",
@@ -249660,13 +250673,6 @@
    },
    {
     "kind": "status",
-    "msg": "valor `aprovado_financeiro` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/services/premiacoesService.ts"
-    ]
-   },
-   {
-    "kind": "status",
     "msg": "valor `number` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:supabase/functions/_shared/trainingImages/pipeline.ts"
@@ -249768,13 +250774,6 @@
    },
    {
     "kind": "status",
-    "msg": "valor `finalizado` para `etapa` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "escreve:src/services/rescisaoService.ts"
-    ]
-   },
-   {
-    "kind": "status",
     "msg": "valor `financeiro` para `etapa` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/services/rescisaoService.ts"
@@ -249785,13 +250784,6 @@
     "msg": "valor `juridico` para `etapa` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/services/rescisaoService.ts"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `futura` para `estado` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/components/avaliacao/CicloAtivoPanel.tsx"
     ]
    },
    {
@@ -259333,7 +260325,7 @@
   },
   "src/components/__tests__/DonutChart.test.tsx": {
    "path": "src/components/__tests__/DonutChart.test.tsx",
-   "lines": 68,
+   "lines": 71,
    "is_test": true,
    "tests": [
     "DonutChart",
@@ -262529,6 +263521,46 @@
     "conta os dias restantes pela data local, não pelo instante UTC"
    ]
   },
+  "src/components/__tests__/PremiacoesComum.test.ts": {
+   "path": "src/components/__tests__/PremiacoesComum.test.ts",
+   "lines": 477,
+   "is_test": true,
+   "tests": [
+    "métricas por campanha",
+    "soma orçamento comprometido pelo aprovado e cai no calculado quando falta",
+    "conta participantes distintos e ignora repetição do mesmo colaborador",
+    "devolve percentuais nulos (sem divisão inválida) quando não há orçamento nem cálculo",
+    "conta pendências e divergências pelos status reais do fluxo",
+    "situação temporal",
+    "marca vigente, futura e encerrada a partir das datas reais",
+    "não inventa contagem quando falta a data final",
+    "filtros, contadores e ordenação",
+    "conta por status real e mantém o total",
+    "busca por nome e por descrição, ignorando acento e caixa",
+    "combina status + período com as datas reais",
+    "ordena por período, nome, orçamento, participantes e % aprovado",
+    "variação do total aprovado",
+    "devolve null quando não há base no mês anterior",
+    "compara o mês corrente com o anterior pelas datas reais",
+    "usa updated_at quando o pagamento ainda não tem data de pagamento",
+    "próximas ações",
+    "deriva pendências apenas de fatos reais e ordena pelas mais antigas",
+    "não cria pendência quando não há rascunho, pagamento pendente ou divergência",
+    "atividade recente",
+    "ordena do mais recente para o mais antigo, resolve o objeto e o responsável",
+    "respeita o limite e ignora eventos sem data",
+    "paginação local",
+    "recorta a página pedida e informa o total de páginas",
+    "nunca devolve página inexistente nem página vazia por falta de registros",
+    "trata página ou tamanho inválidos sem quebrar",
+    "utilitários",
+    "formata tempo relativo em horas, dias e meses",
+    "gera iniciais do nome real do colaborador",
+    "normaliza texto para busca",
+    "rotula o evento da trilha pela entidade e ação reais",
+    "conhece os estágios reais do pagamento"
+   ]
+  },
   "src/components/__tests__/ProtectedRoute.test.tsx": {
    "path": "src/components/__tests__/ProtectedRoute.test.tsx",
    "lines": 113,
@@ -262650,36 +263682,21 @@
     "renders empty grid for no relatorios"
    ]
   },
-  "src/components/__tests__/RewardsApprovalHub.test.tsx": {
-   "path": "src/components/__tests__/RewardsApprovalHub.test.tsx",
-   "lines": 99,
-   "is_test": true,
-   "tests": [
-    "RewardsApprovalHub",
-    "renders Aguardando Gestor stage",
-    "renders Em Revisão stage",
-    "renders Aguardando RH stage",
-    "renders Aguardando Financeiro stage",
-    "renders Conciliação stage",
-    "renders colaborador name in calculado stage",
-    "renders colaborador name in aprovado_gestor stage",
-    "renders 5 stage columns"
-   ]
-  },
   "src/components/__tests__/RewardsSimulator.test.tsx": {
    "path": "src/components/__tests__/RewardsSimulator.test.tsx",
-   "lines": 90,
+   "lines": 186,
    "is_test": true,
    "tests": [
     "RewardsSimulator",
-    "renders Simulador de ROI title",
-    "renders subtitle text",
-    "renders Comparar Cenários button",
-    "renders Resetar button",
-    "renders Salvar Snapshot button",
-    "renders Colaboradores slider label",
-    "renders Salário Médio slider label",
-    "renders Snapshots Auditoria section"
+    "renderiza as quatro regiões do redesenho",
+    "mantém os cinco parâmetros do simulador",
+    "exibe os quatro KPIs de resultado",
+    "oferece os controles reais de cenário e salvamento",
+    "mostra o estado vazio de comparação quando não há cenário selecionado",
+    "não afirma ausência de cenário quando a leitura falha — oferece ",
+    "duplica o cenário salvo pelo serviço, com o nome marcado como cópia",
+    "exclui o cenário salvo pelo serviço, com o id do cenário",
+    "mostra "
    ]
   },
   "src/components/__tests__/RouteErrorBoundary.test.tsx": {
@@ -262904,6 +263921,21 @@
     "renders 1ª Parcela option",
     "renders 2ª Parcela option",
     "renders Dependentes IRRF label"
+   ]
+  },
+  "src/components/__tests__/SimuladorRoiComum.test.ts": {
+   "path": "src/components/__tests__/SimuladorRoiComum.test.ts",
+   "lines": 114,
+   "is_test": true,
+   "tests": [
+    "simuladorRoiComum",
+    "preserva a fórmula financeira original",
+    "deriva as métricas de retenção e por colaborador",
+    "não divide por zero quando não há colaboradores/payout",
+    "monta a série temporal com cenários reais e ",
+    "distingue no rótulo cenários do mesmo dia/mês em anos diferentes",
+    "limita a série ao máximo de pontos (9 salvos + Agora)",
+    "calcula variação percentual com proteção contra base zero"
    ]
   },
   "src/components/__tests__/SimuladorWhatIf.test.tsx": {
@@ -268551,13 +269583,12 @@
   },
   "src/components/dashboard/DonutChart.tsx": {
    "path": "src/components/dashboard/DonutChart.tsx",
-   "lines": 102,
+   "lines": 174,
    "exports": [
     "function DonutChart"
    ],
    "percents": [
-    "const strokeOffset = -seg.offset + circumference * 0.25; // start from top",
-    "transition={{ duration: 0.6, delay: 0.2 + i * 0.15 }}"
+    "const strokeOffset = -seg.offset + circumference * 0.25; // start from top"
    ]
   },
   "src/components/dashboard/EventTimeline.tsx": {
@@ -272644,9 +273675,42 @@
     "1"
    ]
   },
+  "src/components/premiacoes/AuditoriaEventoDialog.tsx": {
+   "path": "src/components/premiacoes/AuditoriaEventoDialog.tsx",
+   "lines": 178,
+   "exports": [
+    "function AuditoriaEventoDialog"
+   ],
+   "calc_fns": [
+    {
+     "name": "Valor",
+     "params": "{ rotulo, valor }: { rotulo: string; valor: number | null }",
+     "body": "return ( <div> <dt className=\"text-[10px] uppercase tracking-wider text-muted-foreground\">{rotulo}</dt> <dd className=\"mt-0.5 text-xs font-medium tabular-nums\">{valor === null ? '—' : formatCurrency(valor)}</dd> </div> );"
+    }
+   ]
+  },
+  "src/components/premiacoes/AuditoriaTab.tsx": {
+   "path": "src/components/premiacoes/AuditoriaTab.tsx",
+   "lines": 977,
+   "exports": [
+    "function AuditoriaTab"
+   ],
+   "rule_comments": [
+    "* Glow suave por categoria. Usa SOMENTE os tokens de cor existentes e fica",
+    "* Aberto/FECHADO separado do dado (mesma regra do modal de Pendências): ao",
+    "barra de filtros SAI de cena, a mesma regra que a aba Campanhas aplica aos"
+   ],
+   "calc_fns": [
+    {
+     "name": "ValorEvento",
+     "params": "{ evento, compacto = false }: { evento: EventoAuditoria; compacto?: boolean }",
+     "body": "const temTransicao = evento.valorAnterior !== null && evento.valorPosterior !== null && evento.valorAnterior !== evento.valorPosterior; if (temTransicao) { return ( <div className={cn('min-w-0', compacto && 'text-right')}> <div className=\"flex flex-wrap items-center gap-1 text-[11px] font-semibold tabular-nums\"> <span className=\"text-muted-foreground line-through\">{formatCurrency(evento.valorAnterior)}</span> <ChevronRight className=\"h-3 w-3 text-muted-foreground\" aria-hidden=\"true\" /> <span>{fo …"
+    }
+   ]
+  },
   "src/components/premiacoes/CampaignWizard.tsx": {
    "path": "src/components/premiacoes/CampaignWizard.tsx",
-   "lines": 283,
+   "lines": 292,
    "exports": [
     "function CampaignWizard"
    ],
@@ -272675,27 +273739,260 @@
     }
    ]
   },
-  "src/components/premiacoes/RewardsApprovalHub.tsx": {
-   "path": "src/components/premiacoes/RewardsApprovalHub.tsx",
-   "lines": 347,
+  "src/components/premiacoes/CampanhaDetalhesDialog.tsx": {
+   "path": "src/components/premiacoes/CampanhaDetalhesDialog.tsx",
+   "lines": 209,
    "exports": [
-    "type PagamentoComColaborador",
-    "function RewardsApprovalHub"
+    "function CampanhaDetalhesDialog"
    ],
-   "errors": [
-    "Erro ao processar ação.",
-    "Erro na conciliação."
+   "rule_comments": [
+    "HUB DE PREMIAÇÕES — DETALHE DA CAMPANHA (somente leitura).",
+    "Pagamentos já carregados pela página — somente leitura. */}"
+   ]
+  },
+  "src/components/premiacoes/CampanhaLateral.tsx": {
+   "path": "src/components/premiacoes/CampanhaLateral.tsx",
+   "lines": 335,
+   "exports": [
+    "function CampanhaLateral"
    ],
-   "transition_maps": [
+   "params": [
     {
-     "name": "nextStageMap",
-     "body": "calculado: 'revisando', revisando: 'aprovado_gestor', aprovado_gestor: 'aprovado_rh', aprovado_rh: 'aprovado_financeiro',"
+     "name": "LIMITE_ACOES",
+     "value": "3"
+    }
+   ]
+  },
+  "src/components/premiacoes/CampanhaTabela.tsx": {
+   "path": "src/components/premiacoes/CampanhaTabela.tsx",
+   "lines": 665,
+   "exports": [
+    "function CampanhaTabela"
+   ],
+   "params": [
+    {
+     "name": "LARGURA_MINIMA_GRADE",
+     "value": "'min-w-[906px]'"
+    },
+    {
+     "name": "PAD_LATERAL",
+     "value": "'px-2'"
     }
    ],
    "status_values": [
     {
      "field": "status",
-     "value": "rejeitado",
+     "value": "ativo",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "finalizado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "suspenso",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "ativo",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "finalizado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "suspenso",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "rascunho",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "pagamentos). Mostra no máximo 5 e agrega o restante em \"+N\"."
+   ]
+  },
+  "src/components/premiacoes/ComparacaoCenarios.tsx": {
+   "path": "src/components/premiacoes/ComparacaoCenarios.tsx",
+   "lines": 98,
+   "exports": [
+    "interface LinhaComparacao",
+    "interface CenarioComparado",
+    "function ComparacaoCenarios"
+   ]
+  },
+  "src/components/premiacoes/IndicadorPremiacoes.tsx": {
+   "path": "src/components/premiacoes/IndicadorPremiacoes.tsx",
+   "lines": 90,
+   "exports": [
+    "interface IndicadorProps",
+    "function Indicador"
+   ]
+  },
+  "src/components/premiacoes/PagamentosDialogs.tsx": {
+   "path": "src/components/premiacoes/PagamentosDialogs.tsx",
+   "lines": 345,
+   "exports": [
+    "interface AcaoPendente",
+    "function PagamentosDialogs"
+   ],
+   "html_constraints": [
+    {
+     "field": "valor-folha",
+     "rules": "type=number, step=0.01"
+    }
+   ],
+   "rule_comments": [
+    "aprovado) — nenhuma regra é duplicada aqui."
+   ]
+  },
+  "src/components/premiacoes/PagamentosFluxo.tsx": {
+   "path": "src/components/premiacoes/PagamentosFluxo.tsx",
+   "lines": 127,
+   "exports": [
+    "function PagamentosFluxo"
+   ]
+  },
+  "src/components/premiacoes/PagamentosKpis.tsx": {
+   "path": "src/components/premiacoes/PagamentosKpis.tsx",
+   "lines": 84,
+   "exports": [
+    "function PagamentosKpis"
+   ],
+   "rule_comments": [
+    "se houvesse período comparável, e não há, então a linha de apoio traz apenas a"
+   ]
+  },
+  "src/components/premiacoes/PagamentosLateral.tsx": {
+   "path": "src/components/premiacoes/PagamentosLateral.tsx",
+   "lines": 337,
+   "exports": [
+    "function PagamentosLateral"
+   ],
+   "rule_comments": [
+    "· regra ......................... History · neutro"
+   ]
+  },
+  "src/components/premiacoes/PagamentosTab.tsx": {
+   "path": "src/components/premiacoes/PagamentosTab.tsx",
+   "lines": 679,
+   "exports": [
+    "function PagamentosTab"
+   ],
+   "errors": [
+    "${alvos.length - falhas} de ${alvos.length} aprovados; ${falhas} falharam.",
+    "Informe um valor válido para a folha."
+   ],
+   "params": [
+    {
+     "name": "POR_PAGINA",
+     "value": "6"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "detalhes",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "conciliar",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "reiniciar",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "rejeitar",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "rejected",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "segue valendo para indicadores, fluxo, resumo e tabela — apenas o controle de",
+    "botão \"Limpar filtros\" e pelo próprio `limparFiltros` (sem duplicar regra):",
+    "Regra da main: rejeição zera, reinício volta ao `valor_calculado` e o"
+   ],
+   "calc_fns": [
+    {
+     "name": "invalidar",
+     "params": "",
+     "body": "CHAVES.forEach((key) => queryClient.invalidateQueries({ queryKey: key }));"
+    }
+   ]
+  },
+  "src/components/premiacoes/PagamentosTabela.tsx": {
+   "path": "src/components/premiacoes/PagamentosTabela.tsx",
+   "lines": 587,
+   "exports": [
+    "function PagamentosTabela"
+   ],
+   "params": [
+    {
+     "name": "TOM_STATUS_PADRAO",
+     "value": "'bg-muted/60 text-muted-foreground'"
+    },
+    {
+     "name": "PONTO_STATUS_PADRAO",
+     "value": "'bg-muted-foreground'"
+    },
+    {
+     "name": "TOM_BOTAO_CONCILIAR",
+     "value": "'border-xp/40 bg-xp/10 text-xp hover:bg-xp/20 hover:text-xp'"
+    },
+    {
+     "name": "PAD_CELULA_X",
+     "value": "'px-2'"
+    },
+    {
+     "name": "LARGURA_MINIMA_GRADE",
+     "value": "'min-w-[893px]'"
+    },
+    {
+     "name": "PAD_CELULA",
+     "value": "'py-2'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "reiniciar",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "conciliar",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "divergente_em_revisao",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "detalhes",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "calculado",
      "kind": "compara"
     },
     {
@@ -272704,40 +274001,676 @@
      "kind": "compara"
     },
     {
-     "field": "status",
-     "value": "pago",
+     "field": "tipo",
+     "value": "avancar",
      "kind": "compara"
     },
     {
      "field": "status",
      "value": "rejeitado",
      "kind": "compara"
-    },
+    }
+   ],
+   "calc_fns": [
     {
-     "field": "status",
-     "value": "rejeitado",
-     "kind": "compara"
+     "name": "valor",
+     "params": "v: number | string | null | undefined",
+     "body": "(v ? formatCurrency(Number(v)) : '—');"
     }
    ]
   },
   "src/components/premiacoes/RewardsSimulator.tsx": {
    "path": "src/components/premiacoes/RewardsSimulator.tsx",
-   "lines": 388,
+   "lines": 1372,
    "exports": [
     "function RewardsSimulator"
    ],
    "errors": [
-    "Erro ao excluir snapshots"
+    "Não foi possível excluir o cenário.",
+    "Não foi possível salvar o cenário."
+   ],
+   "params": [
+    {
+     "name": "COR_LINHA_PAYOUT",
+     "value": "'#F59E0B'"
+    },
+    {
+     "name": "COR_LINHA_ECONOMIA",
+     "value": "'#10B981'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "integer",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "currency",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "percentage",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "percentage",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "percentage",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "numero",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "moeda",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "pp",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "pp",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "pp",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "moeda",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "moeda",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "moeda",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "percentual",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "pp",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "numero",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "· A visão temporal usa SOMENTE cenários salvos (um ponto na data de",
+    "* Verde quando a variação é boa para o negócio, vermelho quando é ruim. */",
+    "* Leitura falhou e nada em cache: a tela não pode afirmar ausência de registro. */",
+    "* A linha ROI segue a regra do KPI: sem payout mostra \"—\", nunca \"0,00x\". */"
    ],
    "calc_fns": [
     {
-     "name": "calculateMetrics",
-     "params": "emp: number, sal: number, bonus: number, perf: number, ret: number",
-     "body": "const totalBudget = emp * sal * (bonus / 100) * (perf / 100); const turnoverCost = sal * 3 * emp * 0.15; const savings = turnoverCost * (ret / 100); const roi = totalBudget > 0 ? savings / totalBudget : 0; return { totalBudget, savings, roi };"
+     "name": "aplicarCenario",
+     "params": "s: CenarioROI",
+     "body": "setEmployees(s.configuracoes.employees ?? 0); setAvgSalary(s.configuracoes.avgSalary ?? 0); setBonusPercent(s.configuracoes.bonusPercent ?? 0); setPerformanceLevel(s.configuracoes.performanceLevel ?? 0); setRetentionImpact(s.configuracoes.retentionImpact ?? 0); setCenarioAtual(s.id); toast.info(`Cenário \"${nomeDoCenario(s)}\" carregado.`);"
+    },
+    {
+     "name": "valorDoCenario",
+     "params": "s: CenarioROI, chave: LinhaChave",
+     "body": "switch (chave) { case 'totalBudget': return s.resultados.totalBudget ?? 0; case 'savings': return s.resultados.savings ?? 0; case 'roi': return s.resultados.roi ?? 0; case 'resultadoLiquido': return (s.resultados.savings ?? 0) - (s.resultados.totalBudget ?? 0); default: return s.configuracoes[chave] ?? 0; }"
+    },
+    {
+     "name": "valorBase",
+     "params": "chave: LinhaChave",
+     "body": "switch (chave) { case 'totalBudget': return totalBudget; case 'savings': return savings; case 'roi': return roi; case 'resultadoLiquido': return resultadoLiquido; default: return valores[chave]; }"
     }
    ],
    "percents": [
-    "const turnoverCost = sal * 3 * emp * 0.15;"
+    "* · Sem payout (0 colaboradores, 0% de bônus ou 0% de meta) não existe ROI:"
+   ]
+  },
+  "src/components/premiacoes/ScenarioParameterCard.tsx": {
+   "path": "src/components/premiacoes/ScenarioParameterCard.tsx",
+   "lines": 282,
+   "exports": [
+    "type ScenarioParameterUnit",
+    "function ScenarioParameterCard"
+   ],
+   "enums": [
+    {
+     "name": "ScenarioParameterUnit",
+     "values": "integer | currency | percentage"
+    }
+   ],
+   "rule_comments": [
+    "apenas um rascunho de texto enquanto o campo está focado, para permitir",
+    "* Escape cancela a edição e o blur não pode confirmar o rascunho antigo. */",
+    "azul-acinzentada do contêiner — anulamos apenas esse anel local."
+   ],
+   "calc_fns": [
+    {
+     "name": "formatarValor",
+     "params": "v: number, unit: ScenarioParameterUnit",
+     "body": "if (unit === 'currency') return numero(v, 2); if (unit === 'percentage') return numero(v, Number.isInteger(v) ? 0 : 1); return numero(v, 0);"
+    },
+    {
+     "name": "converterNumero",
+     "params": "texto: string",
+     "body": "let s = texto.trim().replace(/\\s/g, '').replace(/^R\\$/i, ''); if (!s) return null; let negativo = false; if (s.startsWith('-')) { negativo = true; s = s.slice(1); } if (!/^[\\d.,]+$/.test(s)) return null; if (s.includes(',')) { s = s.replace(/\\./g, '').replace(',', '.'); } else if (/^\\d{1,3}(\\.\\d{3})+$/.test(s)) { s = s.replace(/\\./g, ''); } if (!/^\\d+(\\.\\d+)?$/.test(s)) return null; const n = Number(s); if (!Number.isFinite(n)) return null; return negativo ? -n : n;"
+    },
+    {
+     "name": "arredondar",
+     "params": "v: number, casas: number",
+     "body": "const fator = 10 ** casas; return Math.round(v * fator) / fator;"
+    }
+   ]
+  },
+  "src/components/premiacoes/auditoriaComum.ts": {
+   "path": "src/components/premiacoes/auditoriaComum.ts",
+   "lines": 594,
+   "exports": [
+    "type CategoriaAuditoriaId",
+    "interface CategoriaAuditoria",
+    "const CATEGORIAS_AUDITORIA",
+    "type TomAuditoria",
+    "interface IntervaloAuditoria",
+    "type PeriodoAuditoria",
+    "const PERIODOS_AUDITORIA",
+    "type OrdemAuditoria",
+    "interface FiltrosAuditoria",
+    "const FILTROS_AUDITORIA_INICIAIS",
+    "function temFiltrosAtivos",
+    "interface ResponsavelAuditoria",
+    "interface EntidadeAuditoria",
+    "interface EventoAuditoria",
+    "interface GrupoAuditoria",
+    "function inferirCategoriaAuditoria",
+    "function rotuloGrupoData",
+    "function intervaloPeriodo",
+    "function rotuloIntervalo",
+    "interface ContextoAuditoria",
+    "function normalizarEventosAuditoria",
+    "function ordenarEventosAuditoria",
+    "function filtrarEventosAuditoria",
+    "function agruparEventosAuditoria",
+    "function categoriasDisponiveis",
+    "function contarCategoria",
+    "function tiposEventoDisponiveis",
+    "function entidadesDisponiveis",
+    "function usuariosDisponiveis",
+    "function rotuloAcao",
+    "function janelaPaginacao"
+   ],
+   "enums": [
+    {
+     "name": "CategoriaAuditoriaId",
+     "values": "todas | campanhas | pagamentos | regras | conciliacao | integracoes | aprovacoes"
+    },
+    {
+     "name": "TomAuditoria",
+     "values": "success | warning | destructive | info | primary | muted"
+    },
+    {
+     "name": "PeriodoAuditoria",
+     "values": "todos | hoje | 7d | 30d | 90d | ano"
+    },
+    {
+     "name": "OrdemAuditoria",
+     "values": "recentes | antigos"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "todos",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "todos",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "resolvidos SOMENTE quando existem nos snapshots ou nos pagamentos/campanhas"
+   ],
+   "calc_fns": [
+    {
+     "name": "primeiroValor",
+     "params": "...fontes: unknown[]",
+     "body": "for (const fonte of fontes) { const obj = objeto(fonte); if (!obj) continue; for (const campo of CAMPOS_VALOR) { const n = numero(obj[campo]); if (n !== null) return n; } } return null;"
+    },
+    {
+     "name": "valorCitado",
+     "params": "motivo: string",
+     "body": "const achado = motivo.match(/R\\$\\s*([\\d.]+(?:,\\d{2})?)/i); return achado ? numero(achado[1]) : null;"
+    }
+   ]
+  },
+  "src/components/premiacoes/auditoriaEntrada.ts": {
+   "path": "src/components/premiacoes/auditoriaEntrada.ts",
+   "lines": 52,
+   "exports": [
+    "const AUDITORIA_ENTRADA_DURACAO",
+    "const AUDITORIA_ENTRADA_PASSO",
+    "const AUDITORIA_ENTRADA_ATRASO",
+    "const AUDITORIA_ENTRADA_MAX_PASSO",
+    "const AUDITORIA_EASE_OUT_CUBIC",
+    "const linhaAuditoriaVariants"
+   ],
+   "params": [
+    {
+     "name": "AUDITORIA_ENTRADA_DURACAO",
+     "value": "0.55"
+    },
+    {
+     "name": "AUDITORIA_ENTRADA_PASSO",
+     "value": "0.11"
+    },
+    {
+     "name": "AUDITORIA_ENTRADA_ATRASO",
+     "value": "0.08"
+    },
+    {
+     "name": "AUDITORIA_ENTRADA_MAX_PASSO",
+     "value": "9"
+    }
+   ],
+   "rule_comments": [
+    "* Índice máximo que ainda aumenta o atraso (limite do total da cascata). */"
+   ]
+  },
+  "src/components/premiacoes/pagamentosComum.ts": {
+   "path": "src/components/premiacoes/pagamentosComum.ts",
+   "lines": 656,
+   "exports": [
+    "type EtapaFluxoPagamento",
+    "const ETAPA_FORA_DO_FLUXO",
+    "const ETAPA_PENDENTES",
+    "type FiltroEtapaFluxo",
+    "interface DefinicaoEtapa",
+    "const ETAPAS_FLUXO",
+    "const STATUS_FORA_DO_FLUXO",
+    "function etapaDoPagamento",
+    "function rotuloStatusPagamento",
+    "interface EtapasContadas",
+    "function contarEtapasPagamento",
+    "function etapaAtual",
+    "function valorDoPagamento",
+    "function divergenciaDoPagamento",
+    "interface IndicadorPagamento",
+    "interface KpisPagamentos",
+    "function montarKpisPagamentos",
+    "interface SegmentoResumo",
+    "interface ResumoFinanceiro",
+    "function montarResumoFinanceiro",
+    "interface AcaoPagamento",
+    "function montarAcoesPagamentos",
+    "type OrdenacaoPagamento",
+    "const ORDENACAO_PAGAMENTO_ROTULOS",
+    "interface FiltrosPagamento",
+    "const FILTROS_PAGAMENTO_INICIAIS",
+    "function dataDePagamento",
+    "function rotuloPeriodo",
+    "function opcoesPeriodo",
+    "function opcoesCampanha",
+    "function opcoesStatus",
+    "function filtrarEOrdenarPagamentos",
+    "function paginarPagamentos",
+    "function proximoStatusPagamento",
+    "const STATUS_REINICIO_PAGAMENTO",
+    "function valorParaGravar",
+    "function podeRejeitarPagamento",
+    "function podeConciliarPagamento",
+    "type TipoAcaoPagamento",
+    "interface AcaoPrincipalPagamento",
+    "function acaoPrincipalPagamento",
+    "function ultimoComentario",
+    "function ultimoResponsavel"
+   ],
+   "enums": [
+    {
+     "name": "EtapaFluxoPagamento",
+     "values": "calculado | em_aprovacao | aprovado | enviado_folha | conciliado"
+    },
+    {
+     "name": "OrdenacaoPagamento",
+     "values": "recentes | antigos | valor_desc | valor_asc | colaborador | campanha"
+    },
+    {
+     "name": "TipoAcaoPagamento",
+     "values": "avancar | conciliar | detalhes | reiniciar"
+    },
+    {
+     "name": "STATUS_FORA_DO_FLUXO",
+     "values": "'rejeitado', 'divergente_em_revisao'"
+    }
+   ],
+   "params": [
+    {
+     "name": "ETAPA_FORA_DO_FLUXO",
+     "value": "'fora'"
+    },
+    {
+     "name": "ETAPA_PENDENTES",
+     "value": "'pendentes'"
+    },
+    {
+     "name": "STATUS_REINICIO_PAGAMENTO",
+     "value": "'calculado'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "etapa",
+     "value": "todas",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "reiniciar",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "conciliar",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "conciliar",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "detalhes",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "avancar",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "detalhes",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "pago",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aprovado_financeiro",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "pago",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "todas",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "rejeitado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "pago",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aprovado_financeiro",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "divergente_em_revisao",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "rejeitado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "divergente_em_revisao",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "pago",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "calculado",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "* ── REGRA Nº 1: NENHUM ESTADO NOVO, NENHUM ESTADO ALTERADO ──────────────────",
+    "* ── REGRA Nº 2: AGRUPAMENTO VISUAL = REGRA DE NEGÓCIO ───────────────────────",
+    "─── Valor do pagamento (regra única, usada por todos os números da tela) ─── */",
+    "* Valor que vai para `valor_aprovado` ao mover o pagamento — regra EXATA da"
+   ],
+   "calc_fns": [
+    {
+     "name": "valorDoPagamento",
+     "params": "p: PagamentoHub",
+     "body": "return numero(p.valor_folha_real) || numero(p.valor_aprovado) || numero(p.valor_calculado);"
+    },
+    {
+     "name": "valorParaGravar",
+     "params": "p: PagamentoHub, proximoStatus: string",
+     "body": "if (proximoStatus === 'rejeitado') return 0; if (proximoStatus === STATUS_REINICIO_PAGAMENTO) return numero(p.valor_calculado); return numero(p.valor_aprovado) || numero(p.valor_calculado);"
+    },
+    {
+     "name": "podeRejeitarPagamento",
+     "params": "status: string",
+     "body": "return status !== 'rejeitado' && status !== 'pago';"
+    },
+    {
+     "name": "podeConciliarPagamento",
+     "params": "status: string",
+     "body": "return status === 'aprovado_financeiro' || status === 'divergente_em_revisao';"
+    }
+   ]
+  },
+  "src/components/premiacoes/premiacoesComum.ts": {
+   "path": "src/components/premiacoes/premiacoesComum.ts",
+   "lines": 746,
+   "exports": [
+    "const ENTRADA_BASE",
+    "function indiceEntrada",
+    "interface CampanhaHub",
+    "interface PagamentoHub",
+    "interface AuditoriaHub",
+    "const STATUS_PAGAMENTO_PENDENTE",
+    "const STATUS_PAGAMENTO_LIQUIDADO",
+    "type FiltroStatusCampanha",
+    "type FiltroPeriodoCampanha",
+    "type OrdenacaoCampanha",
+    "const ORDENACAO_ROTULOS",
+    "const ORDENACAO_POR_COLUNA",
+    "const APARENCIA_STATUS",
+    "const APARENCIA_STATUS_PADRAO",
+    "function aparenciaStatus",
+    "const ROTULO_APROVACAO",
+    "const ROTULO_STATUS_PAGAMENTO",
+    "const APARENCIA_CONCILIACAO",
+    "function numero",
+    "function normalizar",
+    "function iniciaisDe",
+    "function dataDe",
+    "function diferencaEmDias",
+    "function tempoRelativo",
+    "type SituacaoTemporal",
+    "interface MetricasCampanha",
+    "function situacaoTemporal",
+    "function pagamentosPendentesDa",
+    "function pagamentosDivergentesDa",
+    "function calcularMetricasCampanha",
+    "function montarMetricas",
+    "interface FiltrosHub",
+    "const FILTROS_HUB_INICIAIS",
+    "function filtrarEOrdenarCampanhas",
+    "type ContagemStatus",
+    "function contarPorStatus",
+    "interface PaginaCampanhas",
+    "function paginarCampanhas",
+    "function calcularVariacaoMensal",
+    "type TipoAcaoPendente",
+    "type DestinoAcao",
+    "interface AcaoPendente",
+    "function montarAcoesPendentes",
+    "interface EventoAtividade",
+    "function rotuloEventoAuditoria",
+    "function montarAtividadeRecente"
+   ],
+   "enums": [
+    {
+     "name": "FiltroStatusCampanha",
+     "values": "todos | ativo | finalizado | rascunho | suspenso"
+    },
+    {
+     "name": "FiltroPeriodoCampanha",
+     "values": "todos | mes_atual | ultimos_90 | ano_atual"
+    },
+    {
+     "name": "OrdenacaoCampanha",
+     "values": "inicio_recente | inicio_antigo | nome | nome_desc | atualizadas | orcamento | participantes | aprovacao"
+    },
+    {
+     "name": "SituacaoTemporal",
+     "values": "futura | vigente | encerrada"
+    },
+    {
+     "name": "TipoAcaoPendente",
+     "values": "configuracao | aprovacao | conciliacao"
+    },
+    {
+     "name": "DestinoAcao",
+     "values": "campanhas | pagamentos"
+    },
+    {
+     "name": "STATUS_PAGAMENTO_PENDENTE",
+     "values": "'calculado', 'revisando', 'aprovado_gestor', 'aprovado_rh'"
+    },
+    {
+     "name": "STATUS_PAGAMENTO_LIQUIDADO",
+     "values": "'aprovado_financeiro', 'pago'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "situacao",
+     "value": "futura",
+     "kind": "escreve"
+    },
+    {
+     "field": "situacao",
+     "value": "vigente",
+     "kind": "escreve"
+    },
+    {
+     "field": "situacao",
+     "value": "encerrada",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "configuracao",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "aprovacao",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "conciliacao",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "rascunho",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "consomem o que estas funções devolvem — o layout fica testável e a regra não",
+    "* REGRAS DE NEGÓCIO RESPEITADAS (nenhuma métrica nova foi inventada):",
+    "na ausência dele, `valor_calculado` (valor já reservado pela regra).",
+    "coluna vizinha) e não é meta de negócio: o schema não guarda meta atingida",
+    "* Entidade REAL do evento na trilha (`pagamento`, `campanha`, `regra`). */",
+    "Estado REAL da conciliação do pagamento do evento (regra idêntica à"
+   ],
+   "calc_fns": [
+    {
+     "name": "iniciaisDe",
+     "params": "nome: string | null | undefined",
+     "body": "const partes = String(nome ?? '') .trim() .split(/\\s+/) .filter(Boolean); if (partes.length === 0) return '?'; if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase(); return `${partes[0][0]}${partes[partes.length - 1][0]}`.toUpperCase();"
+    },
+    {
+     "name": "maisAntigo",
+     "params": "lista: PagamentoHub[]",
+     "body": ""
+    }
    ]
   },
   "src/components/premiacoes/premiacoesEntrada.ts": {
@@ -272781,6 +274714,55 @@
    ],
    "rule_comments": [
     "só o TEMPO mudou. Calibrar a cascata do Hub é mexer apenas nas constantes"
+   ]
+  },
+  "src/components/premiacoes/simuladorEntrada.ts": {
+   "path": "src/components/premiacoes/simuladorEntrada.ts",
+   "lines": 56,
+   "exports": [
+    "const ENTRADA_SIMULADOR_DURACAO",
+    "const ENTRADA_SIMULADOR_PASSO",
+    "function entradaSimulador"
+   ],
+   "params": [
+    {
+     "name": "ENTRADA_SIMULADOR_DURACAO",
+     "value": "0.35"
+    },
+    {
+     "name": "ENTRADA_SIMULADOR_PASSO",
+     "value": "0.06"
+    }
+   ]
+  },
+  "src/components/premiacoes/simuladorRoiComum.ts": {
+   "path": "src/components/premiacoes/simuladorRoiComum.ts",
+   "lines": 148,
+   "exports": [
+    "interface ParametrosRoi",
+    "const PREMISSAS_ROI",
+    "interface MetricasRoi",
+    "function calcularMetricas",
+    "function variacaoPercentual",
+    "interface CenarioTemporal",
+    "interface PontoTemporal",
+    "function montarSerieTemporal"
+   ],
+   "rule_comments": [
+    "· \"Evolução temporal\" usa SOMENTE dados reais: cada cenário salvo é um ponto",
+    "* Máximo de pontos na série temporal (9 salvos + \"Agora\"). */",
+    "configuração atual (\"Agora\"). Apenas datas válidas entram; a série mantém os"
+   ],
+   "calc_fns": [
+    {
+     "name": "calcularMetricas",
+     "params": "p: ParametrosRoi",
+     "body": "const totalBudget = p.employees * p.avgSalary * (p.bonusPercent / 100) * (p.performanceLevel / 100); const custoReposicao = p.avgSalary * PREMISSAS_ROI.salariosPorReposicao * p.employees * PREMISSAS_ROI.turnoverBase; const savings = custoReposicao * (p.retentionImpact / 100); const roi = totalBudget > 0 ? savings / totalBudget : 0; const retidos = p.employees * (p.retentionImpact / 100); const resultadoLiquido = savings - totalBudget; return { totalBudget, custoReposicao, savings, roi, resultado …"
+    }
+   ],
+   "percents": [
+    "* custo de reposição = salário médio × 3 × colaboradores × 15%",
+    "* · O custo de reposição assume 3 salários por desligamento e 15% de turnover"
    ]
   },
   "src/components/recrutamento/AnalyticsAtencao.tsx": {
@@ -282707,6 +284689,20 @@
     "faz fallback para a cópia local quando o broker não responde"
    ]
   },
+  "src/lib/avatarTons.ts": {
+   "path": "src/lib/avatarTons.ts",
+   "lines": 30,
+   "exports": [
+    "const TONS_AVATAR",
+    "function tomDoAvatar"
+   ],
+   "enums": [
+    {
+     "name": "TONS_AVATAR",
+     "values": "'bg-primary/20 text-primary', 'bg-info/20 text-info', 'bg-success/20 text-success', 'bg-xp/20 text-xp', 'bg-warning/20 text-warning',"
+    }
+   ]
+  },
   "src/lib/circuitBreaker.ts": {
    "path": "src/lib/circuitBreaker.ts",
    "lines": 93,
@@ -288777,42 +290773,23 @@
   },
   "src/pages/PremiacoesPage.tsx": {
    "path": "src/pages/PremiacoesPage.tsx",
-   "lines": 681,
+   "lines": 820,
    "exports": [
     "function PremiacoesPage"
    ],
    "errors": [
     "Nenhum pagamento para exportar."
    ],
+   "params": [
+    {
+     "name": "POR_PAGINA",
+     "value": "8"
+    }
+   ],
    "status_values": [
     {
      "field": "status",
-     "value": "calculado",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "ativo",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
      "value": "pago",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "ativo",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "ativo",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "rascunho",
      "kind": "compara"
     }
    ],
@@ -288820,12 +290797,8 @@
     "admin",
     "rh"
    ],
-   "calc_fns": [
-    {
-     "name": "formatCurrency",
-     "params": "val: number",
-     "body": ""
-    }
+   "percents": [
+    "// desliga o deslocamento — conteúdo 100% visível."
    ]
   },
   "src/pages/PromoBrindesPage.tsx": {
@@ -290140,7 +292113,7 @@
   },
   "src/pages/__tests__/PremiacoesPage.test.tsx": {
    "path": "src/pages/__tests__/PremiacoesPage.test.tsx",
-   "lines": 131,
+   "lines": 132,
    "is_test": true,
    "tests": [
     "PremiacoesPage — KPIs",
@@ -315987,10 +317960,52 @@
   }
  },
  "git": {
-  "sha": "182d5f9f814ef2ac7b1c2aed4817ac86ba14d213",
+  "sha": "34959e3cf998a6ba30ae6b95ad1641785c05a0fc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "34959e3",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(premiacoes): resgata o Hub de Premiações e o simulador de ROI da muri sobre o miolo corrigido da main (#611)",
+    "files": [
+     "inventario/estado/rotas.json",
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/DonutChart.test.tsx",
+     "src/components/__tests__/PremiacoesComum.test.ts",
+     "src/components/__tests__/RewardsApprovalHub.test.tsx",
+     "src/components/__tests__/RewardsSimulator.test.tsx",
+     "src/components/__tests__/SimuladorRoiComum.test.ts",
+     "src/components/dashboard/DonutChart.tsx",
+     "src/components/premiacoes/AuditoriaEventoDialog.tsx",
+     "src/components/premiacoes/AuditoriaTab.tsx",
+     "src/components/premiacoes/CampaignWizard.tsx",
+     "src/components/premiacoes/CampanhaDetalhesDialog.tsx",
+     "src/components/premiacoes/CampanhaLateral.tsx",
+     "src/components/premiacoes/CampanhaTabela.tsx",
+     "src/components/premiacoes/ComparacaoCenarios.tsx",
+     "src/components/premiacoes/IndicadorPremiacoes.tsx",
+     "src/components/premiacoes/PagamentosDialogs.tsx",
+     "src/components/premiacoes/PagamentosFluxo.tsx",
+     "src/components/premiacoes/PagamentosKpis.tsx",
+     "src/components/premiacoes/PagamentosLateral.tsx",
+     "src/components/premiacoes/PagamentosTab.tsx",
+     "src/components/premiacoes/PagamentosTabela.tsx",
+     "src/components/premiacoes/RewardsApprovalHub.tsx",
+     "src/components/premiacoes/RewardsSimulator.tsx",
+     "src/components/premiacoes/ScenarioParameterCard.tsx",
+     "src/components/premiacoes/auditoriaComum.ts",
+     "src/components/premiacoes/auditoriaEntrada.ts",
+     "src/components/premiacoes/pagamentosComum.ts",
+     "src/components/premiacoes/premiacoesComum.ts",
+     "src/components/premiacoes/simuladorEntrada.ts",
+     "src/components/premiacoes/simuladorRoiComum.ts",
+     "src/lib/avatarTons.ts",
+     "src/pages/PremiacoesPage.tsx",
+     "src/pages/__tests__/PremiacoesPage.test.tsx"
+    ]
+   },
    {
     "sha": "182d5f9",
     "date": "2026-11-17",
@@ -316633,17 +318648,6 @@
      "supabase/migrations/20261115170000_ninebox_repoe_revogacao_versao_consolidada.sql",
      "supabase/migrations/20261115170000_ninebox_repoe_revogacao_versao_consolidada.verify.sql"
     ]
-   },
-   {
-    "sha": "8f3efc6",
-    "date": "2026-11-16",
-    "author": "github-actions[bot]",
-    "subject": "chore: inventario do estado real [auto] (#581)",
-    "files": [
-     "inventario/estado/banco.json",
-     "inventario/estado/edges.json",
-     "inventario/estado/rotas.json"
-    ]
    }
   ],
   "hot_files": [
@@ -316653,7 +318657,7 @@
    ],
    [
     "scripts/.bundle-budget.json",
-    4
+    5
    ],
    [
     "package-lock.json",
@@ -316670,6 +318674,10 @@
    [
     ".github/workflows/canonical-migrations.yml",
     3
+   ],
+   [
+    "src/components/dashboard/DonutChart.tsx",
+    2
    ],
    [
     "src/components/admissoes/AdmissoesDashboard.tsx",
@@ -316721,10 +318729,6 @@
    ],
    [
     "docs/RECUPERACAO-FEEDBACKS.md",
-    2
-   ],
-   [
-    "docs/ninebox-aprovacao-gestor-implantacao.md",
     2
    ]
   ]

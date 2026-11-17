@@ -195,7 +195,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 265,
+   "testes": 266,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -326,7 +326,8 @@
     "useContratacaoDigital",
     "useEmpresaStore",
     "useEmpresas",
-    "useEntradaKanbanColuna"
+    "useEntradaKanbanColuna",
+    "useMovimentoReduzido"
    ],
    "hooks_definidos": [],
    "edges": [
@@ -811,6 +812,7 @@
     ]
    },
    "importado_por_outros_modulos": [
+    "components/premiacoes",
     "components/recrutamento",
     "hooks",
     "mocks",
@@ -999,6 +1001,7 @@
     "useMedidasDisciplinares",
     "useMedidasDisciplinaresColaborador",
     "useMetasColaborador",
+    "useMovimentoReduzido",
     "useNavigationGuard",
     "useNotificacoes",
     "useNow",
@@ -1497,7 +1500,7 @@
    "modulo": "components/dashboard",
    "arquivos": 16,
    "testes": 0,
-   "linhas": 3230,
+   "linhas": 3302,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1506,6 +1509,7 @@
     "useAuth",
     "useEmpresaStore",
     "useEmpresas",
+    "useMovimentoReduzido",
     "usePendencias",
     "usePontoMelhorado",
     "useRealTimeSubscription",
@@ -1645,6 +1649,7 @@
     "components/colaborador-detalhes",
     "components/folha",
     "components/ponto",
+    "components/premiacoes",
     "components/recrutamento",
     "components/treinamentos",
     "components/ui",
@@ -4570,13 +4575,13 @@
   },
   {
    "modulo": "components/premiacoes",
-   "arquivos": 4,
+   "arquivos": 23,
    "testes": 0,
-   "linhas": 1121,
+   "linhas": 9012,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 3,
+   "componentes": 16,
    "hooks_locais": [
     "useASOs",
     "useAdmissaoWorkflow",
@@ -4679,6 +4684,7 @@
     "useMedidasDisciplinares",
     "useMedidasDisciplinaresColaborador",
     "useMetasColaborador",
+    "useMovimentoReduzido",
     "useNavigationGuard",
     "useNotificacoes",
     "useNow",
@@ -4915,7 +4921,14 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "cell",
+    "columnheader",
+    "row",
+    "rowgroup",
+    "status",
+    "table"
+   ],
    "diretos": {
     "edges": [],
     "tabelas": [],
@@ -4926,9 +4939,12 @@
     "pages"
    ],
    "depende_de_modulos": [
+    "components/avaliacao",
+    "components/dashboard",
     "components/ui",
+    "contexts",
     "hooks",
-    "integrations/supabase",
+    "lib",
     "services",
     "utils"
    ],
@@ -6157,6 +6173,7 @@
     "components/layout",
     "components/ponto",
     "components/portal",
+    "components/premiacoes",
     "components/settings",
     "components/sst",
     "components/ui",
@@ -7410,7 +7427,6 @@
     "components/pcs",
     "components/ponto",
     "components/portal",
-    "components/premiacoes",
     "components/recrutamento",
     "components/relatorios",
     "components/seguranca",
@@ -7441,9 +7457,9 @@
   },
   {
    "modulo": "lib",
-   "arquivos": 9,
+   "arquivos": 10,
    "testes": 1,
-   "linhas": 824,
+   "linhas": 854,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7497,6 +7513,7 @@
     "components/organograma",
     "components/ponto",
     "components/portal",
+    "components/premiacoes",
     "components/recrutamento",
     "components/relatorios",
     "components/settings",
@@ -7601,7 +7618,7 @@
    "modulo": "pages",
    "arquivos": 113,
    "testes": 0,
-   "linhas": 45426,
+   "linhas": 45565,
    "itens_menu": [
     "Admissões",
     "Afastamentos",

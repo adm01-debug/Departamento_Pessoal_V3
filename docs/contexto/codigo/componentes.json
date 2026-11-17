@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 595,
+ "total": 608,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -805,7 +805,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 5,
+   "usado_por": 6,
    "orfao": false
   },
   {
@@ -2468,12 +2468,14 @@
     "DonutChart"
    ],
    "export_default": null,
-   "linhas": 102,
+   "linhas": 174,
    "dominio": "components/dashboard",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 4,
+   "usado_por": 5,
    "orfao": false
   },
   {
@@ -2506,7 +2508,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 25,
+   "usado_por": 26,
    "orfao": false
   },
   {
@@ -5147,12 +5149,12 @@
    "orfao": false
   },
   {
-   "arquivo": "src/components/premiacoes/CampaignWizard.tsx",
+   "arquivo": "src/components/premiacoes/AuditoriaEventoDialog.tsx",
    "exports": [
-    "CampaignWizard"
+    "AuditoriaEventoDialog"
    ],
    "export_default": null,
-   "linhas": 283,
+   "linhas": 178,
    "dominio": "components/premiacoes",
    "hooks_locais": [],
    "tabelas": [],
@@ -5161,17 +5163,191 @@
    "orfao": false
   },
   {
-   "arquivo": "src/components/premiacoes/RewardsApprovalHub.tsx",
+   "arquivo": "src/components/premiacoes/AuditoriaTab.tsx",
    "exports": [
-    "PagamentoComColaborador",
-    "RewardsApprovalHub"
+    "AuditoriaTab"
    ],
    "export_default": null,
-   "linhas": 347,
+   "linhas": 977,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [
+    "useAuth",
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/CampaignWizard.tsx",
+   "exports": [
+    "CampaignWizard"
+   ],
+   "export_default": null,
+   "linhas": 292,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/CampanhaDetalhesDialog.tsx",
+   "exports": [
+    "CampanhaDetalhesDialog"
+   ],
+   "export_default": null,
+   "linhas": 209,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/CampanhaLateral.tsx",
+   "exports": [
+    "CampanhaLateral"
+   ],
+   "export_default": null,
+   "linhas": 335,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/CampanhaTabela.tsx",
+   "exports": [
+    "CampanhaTabela"
+   ],
+   "export_default": null,
+   "linhas": 665,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/ComparacaoCenarios.tsx",
+   "exports": [
+    "CenarioComparado",
+    "ComparacaoCenarios",
+    "LinhaComparacao"
+   ],
+   "export_default": null,
+   "linhas": 98,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/IndicadorPremiacoes.tsx",
+   "exports": [
+    "Indicador",
+    "IndicadorProps"
+   ],
+   "export_default": null,
+   "linhas": 90,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/PagamentosDialogs.tsx",
+   "exports": [
+    "AcaoPendente",
+    "PagamentosDialogs"
+   ],
+   "export_default": null,
+   "linhas": 345,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/PagamentosFluxo.tsx",
+   "exports": [
+    "PagamentosFluxo"
+   ],
+   "export_default": null,
+   "linhas": 127,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/PagamentosKpis.tsx",
+   "exports": [
+    "PagamentosKpis"
+   ],
+   "export_default": null,
+   "linhas": 84,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/PagamentosLateral.tsx",
+   "exports": [
+    "PagamentosLateral"
+   ],
+   "export_default": null,
+   "linhas": 337,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/PagamentosTab.tsx",
+   "exports": [
+    "PagamentosTab"
+   ],
+   "export_default": null,
+   "linhas": 679,
    "dominio": "components/premiacoes",
    "hooks_locais": [
     "useEmpresas"
    ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/PagamentosTabela.tsx",
+   "exports": [
+    "PagamentosTabela"
+   ],
+   "export_default": null,
+   "linhas": 587,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -5183,11 +5359,26 @@
     "RewardsSimulator"
    ],
    "export_default": null,
-   "linhas": 388,
+   "linhas": 1372,
    "dominio": "components/premiacoes",
    "hooks_locais": [
     "useEmpresas"
    ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/ScenarioParameterCard.tsx",
+   "exports": [
+    "ScenarioParameterCard",
+    "ScenarioParameterUnit"
+   ],
+   "export_default": null,
+   "linhas": 282,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -6595,7 +6786,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 11,
+   "usado_por": 12,
    "orfao": false
   },
   {
@@ -6613,7 +6804,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -6628,7 +6819,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 10,
+   "usado_por": 12,
    "orfao": false
   },
   {
@@ -6659,7 +6850,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 212,
+   "usado_por": 213,
    "orfao": false
   },
   {
@@ -6674,7 +6865,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 340,
+   "usado_por": 346,
    "orfao": false
   },
   {
@@ -6709,7 +6900,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 280,
+   "usado_por": 277,
    "orfao": false
   },
   {
@@ -6724,7 +6915,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 7,
+   "usado_por": 11,
    "orfao": false
   },
   {
@@ -6772,7 +6963,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 17,
+   "usado_por": 18,
    "orfao": false
   },
   {
@@ -6941,7 +7132,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 150,
+   "usado_por": 152,
    "orfao": false
   },
   {
@@ -6963,7 +7154,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 31,
+   "usado_por": 34,
    "orfao": false
   },
   {
@@ -6995,7 +7186,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 26,
+   "usado_por": 27,
    "orfao": false
   },
   {
@@ -7063,7 +7254,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -7077,7 +7268,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 157,
+   "usado_por": 156,
    "orfao": false
   },
   {
@@ -7188,7 +7379,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 17,
+   "usado_por": 16,
    "orfao": false
   },
   {
@@ -7254,7 +7445,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 121,
+   "usado_por": 125,
    "orfao": false
   },
   {
@@ -7358,7 +7549,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 23,
+   "usado_por": 25,
    "orfao": false
   },
   {
@@ -7597,7 +7788,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 36,
+   "usado_por": 37,
    "orfao": false
   },
   {
@@ -7611,7 +7802,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -7682,7 +7873,7 @@
     "empresas"
    ],
    "edges": [],
-   "usado_por": 18,
+   "usado_por": 19,
    "orfao": false
   },
   {
@@ -9403,7 +9594,7 @@
     "PremiacoesPage"
    ],
    "export_default": "PremiacoesPage",
-   "linhas": 681,
+   "linhas": 820,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

@@ -1121,6 +1121,7 @@
     "useInView",
     "useLocation",
     "useMemo",
+    "useMovimentoReduzido",
     "useMutation",
     "useNavigate",
     "useNotificacoes",
@@ -1153,6 +1154,7 @@
     "useEntradaKanbanColuna",
     "useGrupo",
     "useGuidedTour",
+    "useMovimentoReduzido",
     "useNotificacoes",
     "useNotification",
     "useOnMount",
@@ -1389,7 +1391,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 207
+   "arquivos_puxados": 208
   },
   {
    "protegida": true,
@@ -5579,6 +5581,7 @@
     "useMedidasDisciplinaresColaborador",
     "useMemo",
     "useMetasColaborador",
+    "useMovimentoReduzido",
     "useMutation",
     "useNavigate",
     "useNavigationGuard",
@@ -5742,6 +5745,7 @@
     "useMedidasDisciplinares",
     "useMedidasDisciplinaresColaborador",
     "useMetasColaborador",
+    "useMovimentoReduzido",
     "useNavigationGuard",
     "useNotificacoes",
     "useNotification",
@@ -6043,7 +6047,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 324
+   "arquivos_puxados": 325
   },
   {
    "protegida": true,
@@ -10347,6 +10351,7 @@
     "useInView",
     "useMemo",
     "useMorningBriefing",
+    "useMovimentoReduzido",
     "useMutation",
     "useNavigate",
     "usePendencias",
@@ -10355,6 +10360,7 @@
     "useQueryClient",
     "useRealTimeSubscription",
     "useRealtimeDashboard",
+    "useReducedMotion",
     "useRef",
     "useState",
     "useSystemHealthHistory",
@@ -10364,6 +10370,7 @@
     "useAuth",
     "useEmpresaStore",
     "useEmpresas",
+    "useMovimentoReduzido",
     "usePendencias",
     "usePontoMelhorado",
     "useRealTimeSubscription",
@@ -10476,7 +10483,7 @@
    ],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 71
+   "arquivos_puxados": 72
   },
   {
    "protegida": true,
@@ -10508,6 +10515,7 @@
     "useInView",
     "useLocation",
     "useMemo",
+    "useMovimentoReduzido",
     "useMutation",
     "useNavigate",
     "useNotificacoes",
@@ -10539,6 +10547,7 @@
     "useExecutiveKPIs",
     "useGrupo",
     "useGuidedTour",
+    "useMovimentoReduzido",
     "useNotificacoes",
     "useNotification",
     "useOnMount",
@@ -10673,7 +10682,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 116
+   "arquivos_puxados": 117
   },
   {
    "protegida": true,
@@ -24367,12 +24376,17 @@
     "useFormacoes",
     "useGrupo",
     "useGuidedTour",
+    "useHighlight",
     "useHistoricoContratos",
     "useHistoricoSalarial",
     "useHorasExtras",
+    "useId",
     "useIdentidadesGenero",
+    "useImperativeHandle",
+    "useInView",
     "useIsMobile",
     "useJornadaHorarios",
+    "useLayoutEffect",
     "useLocaisTrabalho",
     "useLocation",
     "useMediaQuery",
@@ -24380,6 +24394,7 @@
     "useMedidasDisciplinaresColaborador",
     "useMemo",
     "useMetasColaborador",
+    "useMovimentoReduzido",
     "useMutation",
     "useNavigate",
     "useNavigationGuard",
@@ -24417,6 +24432,7 @@
     "useServerValidation",
     "useState",
     "useSystemHealth",
+    "useTabs",
     "useTheme",
     "useTimes",
     "useTiposAdmissao",
@@ -24525,6 +24541,7 @@
     "useFormacoes",
     "useGrupo",
     "useGuidedTour",
+    "useHighlight",
     "useHistoricoContratos",
     "useHistoricoSalarial",
     "useHorasExtras",
@@ -24536,6 +24553,7 @@
     "useMedidasDisciplinares",
     "useMedidasDisciplinaresColaborador",
     "useMetasColaborador",
+    "useMovimentoReduzido",
     "useNavigationGuard",
     "useNotificacoes",
     "useNotification",
@@ -24565,6 +24583,7 @@
     "useSalvarPeriodoExperiencia",
     "useServerValidation",
     "useSystemHealth",
+    "useTabs",
     "useTheme",
     "useTimes",
     "useTiposAdmissao",
@@ -24792,14 +24811,21 @@
    "papeis": [
     "admin",
     "banner",
+    "cell",
+    "columnheader",
     "list",
     "listitem",
     "main",
     "rh",
+    "row",
+    "rowgroup",
+    "status",
     "tab",
-    "tablist"
+    "table",
+    "tablist",
+    "tabpanel"
    ],
-   "arquivos_puxados": 226
+   "arquivos_puxados": 265
   },
   {
    "protegida": true,

@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 702,
+ "total": 703,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 663
+  "unit": 664
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 579
+   "arquivos": 580
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -1236,7 +1236,7 @@
   {
    "arquivo": "src/components/__tests__/DonutChart.test.tsx",
    "tipo": "unit",
-   "linhas": 68,
+   "linhas": 71,
    "testa": [
     "src/components/dashboard/DonutChart.tsx"
    ],
@@ -2796,6 +2796,15 @@
    "casos": 3
   },
   {
+   "arquivo": "src/components/__tests__/PremiacoesComum.test.ts",
+   "tipo": "unit",
+   "linhas": 477,
+   "testa": [
+    "src/components/premiacoes/premiacoesComum.ts"
+   ],
+   "casos": 25
+  },
+  {
    "arquivo": "src/components/__tests__/ProtectedRoute.test.tsx",
    "tipo": "unit",
    "linhas": 113,
@@ -2859,22 +2868,14 @@
    "casos": 9
   },
   {
-   "arquivo": "src/components/__tests__/RewardsApprovalHub.test.tsx",
-   "tipo": "unit",
-   "linhas": 99,
-   "testa": [
-    "src/components/premiacoes/RewardsApprovalHub.tsx"
-   ],
-   "casos": 8
-  },
-  {
    "arquivo": "src/components/__tests__/RewardsSimulator.test.tsx",
    "tipo": "unit",
-   "linhas": 90,
+   "linhas": 186,
    "testa": [
-    "src/components/premiacoes/RewardsSimulator.tsx"
+    "src/components/premiacoes/RewardsSimulator.tsx",
+    "src/services/premiacoesService.ts"
    ],
-   "casos": 8
+   "casos": 9
   },
   {
    "arquivo": "src/components/__tests__/RouteErrorBoundary.test.tsx",
@@ -2940,6 +2941,15 @@
     "src/components/folha/Simulador13Dialog.tsx"
    ],
    "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/SimuladorRoiComum.test.ts",
+   "tipo": "unit",
+   "linhas": 114,
+   "testa": [
+    "src/components/premiacoes/simuladorRoiComum.ts"
+   ],
+   "casos": 7
   },
   {
    "arquivo": "src/components/__tests__/SimuladorWhatIf.test.tsx",
@@ -4756,7 +4766,7 @@
   {
    "arquivo": "src/pages/__tests__/PremiacoesPage.test.tsx",
    "tipo": "unit",
-   "linhas": 131,
+   "linhas": 132,
    "testa": [
     "src/pages/PremiacoesPage.tsx",
     "src/services/premiacoesService.ts"
@@ -6753,8 +6763,9 @@
   "src/components/portal/PortalOverviewTab.tsx": 1,
   "src/components/portal/PortalRegimentoCard.tsx": 1,
   "src/components/premiacoes/CampaignWizard.tsx": 1,
-  "src/components/premiacoes/RewardsApprovalHub.tsx": 1,
   "src/components/premiacoes/RewardsSimulator.tsx": 1,
+  "src/components/premiacoes/premiacoesComum.ts": 1,
+  "src/components/premiacoes/simuladorRoiComum.ts": 1,
   "src/components/recrutamento/AnalyticsRecrutamento.tsx": 1,
   "src/components/recrutamento/CandidatoDetalhesDialog.tsx": 1,
   "src/components/recrutamento/CandidatoTimeline.tsx": 1,
@@ -7026,7 +7037,7 @@
   "src/services/pontoOfflineService.ts": 2,
   "src/services/pontoService.ts": 1,
   "src/services/pontosService.ts": 1,
-  "src/services/premiacoesService.ts": 3,
+  "src/services/premiacoesService.ts": 4,
   "src/services/provisaoService.ts": 1,
   "src/services/pushNotificationService.ts": 1,
   "src/services/recrutamentoService.ts": 1,

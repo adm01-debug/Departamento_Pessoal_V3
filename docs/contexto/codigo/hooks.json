@@ -256,10 +256,11 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 18,
+   "usado_por": 19,
    "usado_por_arquivos": [
     "src/components/layout/MainLayout.tsx",
     "src/components/portal/PortalRegimentoCard.tsx",
+    "src/components/premiacoes/AuditoriaTab.tsx",
     "src/components/settings/InlineTabs.tsx",
     "src/components/settings/MFASetup.tsx",
     "src/components/ui/user-profile-menu.tsx",
@@ -707,7 +708,7 @@
     "src/components/medidas-disciplinares/MedidaContestacaoDialog.tsx",
     "src/components/ponto/GestaoRegistrosPonto.tsx",
     "src/components/ponto/PontoAdjustmentRequests.tsx",
-    "src/components/premiacoes/RewardsApprovalHub.tsx",
+    "src/components/premiacoes/PagamentosTab.tsx",
     "src/components/settings/CamposCustomizadosTab.tsx",
     "src/pages/AvaliacaoPage.tsx",
     "src/pages/BancoHorasPage.tsx",
@@ -3083,7 +3084,7 @@
     "useReducedMotion"
    ],
    "canais_realtime": [],
-   "usado_por": 12,
+   "usado_por": 15,
    "usado_por_arquivos": [
     "src/components/avaliacao/AnaliticosDesempenho.tsx",
     "src/components/avaliacao/CicloAtivoPanel.tsx",
@@ -3093,8 +3094,11 @@
     "src/components/avaliacao/PdiTab.tsx",
     "src/components/avaliacao/PerformanceAuditTimeline.tsx",
     "src/components/avaliacao/TodosCiclosTable.tsx",
+    "src/components/dashboard/DonutChart.tsx",
+    "src/components/premiacoes/AuditoriaTab.tsx",
     "src/components/recrutamento/TabelaCandidatos.tsx",
     "src/components/treinamentos/InscricoesPainel.tsx",
+    "src/pages/PremiacoesPage.tsx",
     "src/pages/RecrutamentoPage.tsx",
     "src/pages/TreinamentosPage.tsx"
    ],

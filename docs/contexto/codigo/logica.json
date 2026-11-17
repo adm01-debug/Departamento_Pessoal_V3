@@ -1,11 +1,11 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 175,
+ "total": 176,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
-  "lib": 9,
+  "lib": 10,
   "providers": 1,
   "python": 3,
   "schemas": 25,
@@ -508,7 +508,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 81,
+   "usado_por": 80,
    "usado_por_modulos": [
     "components/admin",
     "components/admissoes",
@@ -521,7 +521,6 @@
     "components/obrigacoes",
     "components/ponto",
     "components/portal",
-    "components/premiacoes",
     "components/settings",
     "components/sst",
     "hooks",
@@ -534,6 +533,30 @@
     "utils"
    ],
    "coberto_por_testes": 13,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/avatarTons.ts",
+   "camada": "lib",
+   "exports": [
+    "TONS_AVATAR",
+    "tomDoAvatar"
+   ],
+   "export_default": null,
+   "linhas": 30,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "components/premiacoes"
+   ],
+   "coberto_por_testes": 0,
    "orfao": false
   },
   {
@@ -692,9 +715,11 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 12,
+   "usado_por": 15,
    "usado_por_modulos": [
     "components/avaliacao",
+    "components/dashboard",
+    "components/premiacoes",
     "components/recrutamento",
     "components/treinamentos",
     "pages"
@@ -810,7 +835,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 253,
+   "usado_por": 265,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
@@ -833,6 +858,7 @@
     "components/organograma",
     "components/ponto",
     "components/portal",
+    "components/premiacoes",
     "components/recrutamento",
     "components/relatorios",
     "components/settings",
@@ -3720,7 +3746,7 @@
     "components/premiacoes",
     "pages"
    ],
-   "coberto_por_testes": 3,
+   "coberto_por_testes": 4,
    "orfao": false
   },
   {
@@ -5235,7 +5261,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 27,
+   "usado_por": 38,
    "usado_por_modulos": [
     "components/admissoes",
     "components/afastamentos",
@@ -5606,7 +5632,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 128,
+   "usado_por": 129,
    "usado_por_modulos": [
     "components/admissoes",
     "components/colaborador-detalhes",
@@ -5620,6 +5646,7 @@
     "components/medidas-disciplinares",
     "components/ponto",
     "components/portal",
+    "components/premiacoes",
     "components/relatorios",
     "components/settings",
     "components/sst",

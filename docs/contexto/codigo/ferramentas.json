@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1804)",
+   "TypeScript (1825)",
    "SQL (915)",
    "Markdown (332)",
    "JavaScript (129)",
@@ -2116,7 +2116,7 @@
   "papeis_no_codigo": [
    {
     "papel": "dialog",
-    "ocorrencias": 34
+    "ocorrencias": 33
    },
    {
     "papel": "rh",
@@ -2147,20 +2147,32 @@
     "ocorrencias": 7
    },
    {
-    "papel": "tablist",
+    "papel": "status",
     "ocorrencias": 7
    },
    {
-    "papel": "status",
-    "ocorrencias": 6
+    "papel": "tablist",
+    "ocorrencias": 7
    },
    {
     "papel": "tab",
     "ocorrencias": 6
    },
    {
+    "papel": "row",
+    "ocorrencias": 5
+   },
+   {
     "papel": "service_role",
     "ocorrencias": 4
+   },
+   {
+    "papel": "cell",
+    "ocorrencias": 3
+   },
+   {
+    "papel": "columnheader",
+    "ocorrencias": 3
    },
    {
     "papel": "list",
@@ -2171,11 +2183,15 @@
     "ocorrencias": 3
    },
    {
-    "papel": "row",
+    "papel": "rowgroup",
     "ocorrencias": 3
    },
    {
     "papel": "switch",
+    "ocorrencias": 3
+   },
+   {
+    "papel": "table",
     "ocorrencias": 3
    },
    {
@@ -2215,15 +2231,7 @@
     "ocorrencias": 1
    },
    {
-    "papel": "cell",
-    "ocorrencias": 1
-   },
-   {
     "papel": "ci_auditor",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "columnheader",
     "ocorrencias": 1
    },
    {
@@ -2251,10 +2259,6 @@
     "ocorrencias": 1
    },
    {
-    "papel": "rowgroup",
-    "ocorrencias": 1
-   },
-   {
     "papel": "sup",
     "ocorrencias": 1
    },
@@ -2268,10 +2272,6 @@
    },
    {
     "papel": "supervisor",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "table",
     "ocorrencias": 1
    },
    {
