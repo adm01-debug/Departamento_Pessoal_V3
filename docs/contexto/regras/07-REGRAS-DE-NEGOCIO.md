@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `842a6afaef` · branch `main` · 2026-11-17 21:58 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e968e3e353` · branch `main` · 2026-11-17 22:05 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1723,7 +1723,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `concluida_validada` | compara | `src/components/avaliacao/FeedbackAcoesRodape.tsx`<br>`src/components/avaliacao/aprovacaoGestor.ts`<br>`src/components/avaliacao/feedbackCanonico.ts` |
 | `status` | `concluido` | compara, escreve | `src/components/avaliacao/nineBoxMock.ts`<br>`src/components/dashboard/AnalyticsSection.tsx`<br>`src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/components/desligamentos/DesligamentoKPIs.tsx`<br>`src/components/desligamentos/desligamentosDerivacoes.ts`<br>… +9 |
 | `status` | `configurando` | escreve | `src/pages/IntegracoesPage.tsx` |
-| … +202 linhas — lista completa em `context.json` | | | |
+| … +204 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -1897,6 +1897,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | AJUSTE_PONTO_STATUS | 'pendente', 'em_analise', 'aprovada', 'rejeitada', 'cancelada', 'estornada', | `src/constants/workflow-status.ts` |
 | VAGA_STATUS | 'rascunho', 'aberta', 'pausada', 'encerrada', 'preenchida', 'cancelada', 'arquivada', | `src/constants/workflow-status.ts` |
 | AppRole | admin \| gestor \| rh \| user \| supervisor \| coordenador | `src/contexts/AuthContext.tsx` |
+| RolesStatus | loading \| success \| error | `src/contexts/AuthContext.tsx` |
 | ErrorType | VALIDATION_ERROR \| AUTH_ERROR \| NETWORK_ERROR \| NOT_FOUND \| PERMISSION_DENIED \| SERVER_ERROR \| UNKNOWN_ERROR | `src/errors/types.ts` |
 | ErrorSeverity | info \| warning \| error \| critical | `src/errors/types.ts` |
 | SeveridadeContrato | vencido \| critico \| atencao \| ok | `src/hooks/useContratosVencendo.ts` |
@@ -1906,6 +1907,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | CHAVE_JORNADAS | 'onboarding-list' | `src/hooks/useJornadaOnboarding.ts` |
 | CHAVE_KITS | 'onboarding-kits' | `src/hooks/useJornadaOnboarding.ts` |
 | PendenciaChave | ponto \| onboarding \| aso \| documentos | `src/hooks/usePendenciasColaborador.ts` |
+| EstadoPermissoes | loading \| success \| error | `src/hooks/usePermissions.ts` |
 | ProximoEventoBadgeTone | info \| success \| warning | `src/hooks/useProximosEventos.ts` |
 | Locale | pt-BR \| en-US \| es-ES | `src/hooks/useTranslation.ts` |
 | SeveridadePagamento | ok \| atencao \| critico \| violacao_grave | `src/hooks/ferias/useAlertasPagamentoD2.ts` |
@@ -2485,7 +2487,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 | Campo | Restrições | Arquivo |
 |---|---|---|
-| `totp-code` | pattern=[0-9 ]{6,7, max | `src/components/AdminRoute.tsx` |
+| `totp-code` | pattern=[0-9 ]{6,7, max | `src/components/MfaGate.tsx` |
 | `pr-totp-code` | pattern=[0-9 ]{6,7, max | `src/components/ProtectedRoute.tsx` |
 | `gestao-salario-min` | min, type=number, min=0 | `src/components/admissoes/GestaoCandidatos.tsx` |
 | `data_prevista` | type=date | `src/components/admissoes/NovaAdmissaoDialog.tsx` |
@@ -4659,6 +4661,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `LOCAL_MAX_ATTEMPTS` | `5` | `src/hooks/useBruteForceProtection.ts` |
 | `LOCAL_LOCKOUT_MS` | `5` | `src/hooks/useBruteForceProtection.ts` |
 | `PAGE_SIZE` | `1000` | `src/hooks/useExecutiveDashboard.ts` |
+| `PERMISSOES_STALE_MS` | `5` | `src/hooks/usePermissions.ts` |
 | `INACTIVITY_LIMIT_MS` | `30` | `src/hooks/useSessionTimeout.ts` |
 | `CHECK_INTERVAL_MS` | `60` | `src/hooks/useSessionTimeout.ts` |
 | `ACTIVITY_PERSIST_INTERVAL_MS` | `2` | `src/hooks/useSessionTimeout.ts` |
@@ -4706,8 +4709,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `TRAINING_IMAGES_BUCKET` | `'training-images'` | `src/services/trainingImages/paths.ts` |
 | `EXTENSAO_PADRAO` | `'webp'` | `src/services/trainingImages/paths.ts` |
 | `TENTATIVAS_MAX` | `3` | `src/services/trainingImages/service.ts` |
-| `CONTROLE_MAX` | `500` | `src/services/trainingImages/service.ts` |
-| … +121 linhas — lista completa em `context.json` | | |
+| … +122 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -4772,6 +4774,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `const dataFimConcessivo = addDays(parseISO(periodo.data_fim), 365);` | `src/hooks/useNotificacoes.ts` |
 | `gcTime: 10 * 60 * 1000,` | `src/hooks/useNotificacoes.ts` |
 | `staleTime: 2 * 60 * 1000,` | `src/hooks/useNotificacoes.ts` |
+| `const PERMISSOES_STALE_MS = 5 * 60 * 1000;` | `src/hooks/usePermissions.ts` |
 | `const INACTIVITY_LIMIT_MS = 30 * 60 * 1000; // 30 minutes` | `src/hooks/useSessionTimeout.ts` |
 | `gcTime: 30 * 60 * 1000,` | `src/hooks/ferias/useReconciliacaoLogs.ts` |
 | `staleTime: 5 * 60 * 1000,` | `src/hooks/ferias/useReconciliacaoLogs.ts` |
@@ -5415,7 +5418,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9196 testes em 717 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9213 testes em 719 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5719,7 +5722,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/loggerService.test.ts` | 10 | loggerService · should buffer info logs and not call supabase rpc immediately · should flush error logs immediately via rpc · should flush warn logs immediately via rpc for security audit … |
 | `src/services/tabelas/__tests__/pontoService.test.ts` | 10 | ajustesPontoService · listar queries ajustes_ponto · listar returns [] when data is null · criar calls insert on ajustes_ponto … |
 | `src/test/securityHeadersParity.test.ts` | 10 | paridade de security headers vercel.json x nginx.conf · nginx.conf serve exatamente os headers globais do vercel.json · vercel.json aplica os headers em produção · não usa  … |
-| … +417 linhas — lista completa em `context.json` | | |
+| … +419 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -5801,6 +5804,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Gzipbomb-safe fetch wrapper: lê apenas os primeiros 4MB antes de entregar ao SW. | `public/sw-custom.js` |
 | intocada quando está dentro do limite — nunca reconstrói um novo Response | `public/sw-custom.js` |
 | cacheada — o SW apenas observa a resposta passar. | `public/sw-custom.js` |
+| Primeira rota por PERMISSAO, nao por papel: a matriz | `src/App.tsx` |
 | Clickjacking defense-in-depth: só quebra o frame em produção e apenas | `src/main.tsx` |
 | PWA Service Worker Registration — produção apenas. Um SW ativo em dev | `src/main.tsx` |
 | * 'true' somente se o provider Google estiver habilitado no Supabase Auth. */ | `src/vite-env.d.ts` |
@@ -5809,8 +5813,20 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | no prazo legal (10 dias corridos para aviso prévio trabalhado; 1° dia útil para demissão imediata). | `src/calculators/rescisao.ts` |
 | apenas o FGTS. Exceção do Anexo IV (art. 18, §5º-C): CPP e RAT/FAP são | `src/calculators/tabelas.ts` |
 | (edge não pode importar de src/). | `src/calculators/tabelas.ts` |
-| 'pending-challenge' = enrolled but aal1 session — must complete TOTP before access | `src/components/AdminRoute.tsx` |
-| Must complete TOTP challenge — do NOT grant access until aal2 is reached. | `src/components/AdminRoute.tsx` |
+| 'pending-challenge' = enrolled but aal1 session — must complete TOTP before access | `src/components/MfaGate.tsx` |
+| * Negativa de acesso: a verificacao CONCLUIU e a permissao nao esta concedida. */ | `src/components/MfaGate.tsx` |
+| permissao. Aqui a tela diz que nao foi possivel verificar e oferece recarregar. | `src/components/MfaGate.tsx` |
+| * Nao imprime id, e-mail nem as linhas da matriz: diagnostico de permissao em | `src/components/MfaGate.tsx` |
+| * Portao de MFA. Renderiza `children` somente com a sessao em `aal2`. */ | `src/components/MfaGate.tsx` |
+| Must complete TOTP challenge — do NOT grant access until aal2 is reached. | `src/components/MfaGate.tsx` |
+| * Guarda de rota por PERMISSAO — irma do `AdminRoute`. | `src/components/PermissionRoute.tsx` |
+| * REGRA: AUTENTICADO + (admin OU permissao na matriz `public.permissions`) + MFA. | `src/components/PermissionRoute.tsx` |
+| nada: quem nao tem a permissao continua vendo "Acesso Restrito", quem nao | `src/components/PermissionRoute.tsx` |
+| papel `admin` — bloquearia gestor e RH que JA tem a permissao concedida. | `src/components/PermissionRoute.tsx` |
+| * Permissao exigida no formato `'<resource>.<action>'` — ex.: `'auditoria.read'`. | `src/components/PermissionRoute.tsx` |
+| libera, nem nega (sem piscar "Acesso Restrito" para quem TEM a permissao). | `src/components/PermissionRoute.tsx` |
+| que perdeu permissao. | `src/components/PermissionRoute.tsx` |
+| 4) Negativa REAL — a verificacao concluiu e a permissao nao esta concedida. | `src/components/PermissionRoute.tsx` |
 | 'pending-challenge' = enrolled TOTP but session still at aal1 — TOTP required | `src/components/ProtectedRoute.tsx` |
 | Enrolled TOTP but session is still at aal1 — must complete challenge. | `src/components/ProtectedRoute.tsx` |
 | * Tokens semânticos apenas — cores de status ficam confinadas ao sparkline | `src/components/admin/HealthTrendCard.tsx` |
@@ -6074,17 +6090,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | METAS & OKRs — derivações da aba (situação, prazo, ordem e filtros). | `src/components/avaliacao/metasComum.ts` |
 | exibem. Nada aqui inventa dado: TODAS as funções leem somente campos que já | `src/components/avaliacao/metasComum.ts` |
 | 2. `atrasada`  → prazo vencido e ainda não concluída — é EXATAMENTE o | `src/components/avaliacao/metasComum.ts` |
-| `estaAtrasado()` compartilhado (`data_limite`/`prazo` < agora); | `src/components/avaliacao/metasComum.ts` |
-| ritmo esperado para o prazo já decorrido (`progressoMeta` < | `src/components/avaliacao/metasComum.ts` |
-| meta sem andamento (`pausado`/`bloqueado`). É a única regra nova e é | `src/components/avaliacao/metasComum.ts` |
-| histórico de progresso. O campo é lido apenas se existir | `src/components/avaliacao/metasComum.ts` |
-| `listarMetas` seleciona somente `nome_completo` na relação `colaborador`. | `src/components/avaliacao/metasComum.ts` |
-| * Dias até o prazo: 0 = hoje, positivo = restantes, negativo = em atraso. */ | `src/components/avaliacao/metasComum.ts` |
-| * Prazo formatado (dd/mm/aaaa) ou `—` quando não há data. */ | `src/components/avaliacao/metasComum.ts` |
-| * Recorte MÍNIMO de `colaboradores` que a resolução de departamento usa. A | `src/components/avaliacao/metasComum.ts` |
-| seja: nenhuma etiqueta de rascunho existe e nenhuma regra nova é criada aqui | `src/components/avaliacao/metasComum.ts` |
-| Compostos como "okr - equipe" caem em OKR — a MESMA regra do ícone e do | `src/components/avaliacao/metasComum.ts` |
-| * Tinta da linha de prazo (a leitura contextual muda com a situação). */ | `src/components/avaliacao/metasComum.ts` |
-| * Instante do prazo, no fim do dia. Aceita `data_limite` (coluna real) e | `src/components/avaliacao/metasComum.ts` |
-| * ── REGRAS DE NEGÓCIO APLICADAS ──────────────────────────────────────────── | `src/components/avaliacao/motorAvaliacao360.ts` |
-| … +884 linhas — lista completa em `context.json` | |
+| … +902 linhas — lista completa em `context.json` | |

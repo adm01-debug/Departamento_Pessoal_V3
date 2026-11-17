@@ -7,12 +7,12 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (513)",
+   "src/components (515)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
   "hooks": [
-   "src/hooks (97)",
+   "src/hooks (98)",
    "src/components (9)",
    "src/contexts (4)"
   ],
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (635)",
+   "co-localizado (__tests__) (637)",
    "co-localizado (*.test) (73)",
    "e2e/ (28)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (631)"
+  ".tsx (633)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(permissões): controle de acesso por funcionalidade, lendo a matriz do banco (#651)",
    "feat(colaborador): resumo financeiro no dossiê, com CPF mascarado no PDF (#655)",
    "feat(documentos): upload real de arquivo nos 4 formulários de documento (#653)",
    "fix(automação): registra os 5 scripts que a #652 deixou sem gatilho (#654)",
-   "feat(design-system): recupera os gates de layout protegido e de tipografia (#652)",
-   "fix(deploy): recupera o app depois de um deploy novo trocar os chunks (#646)"
+   "feat(design-system): recupera os gates de layout protegido e de tipografia (#652)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

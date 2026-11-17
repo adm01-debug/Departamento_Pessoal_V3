@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `842a6afaef` · branch `main` · 2026-11-17 21:58 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e968e3e353` · branch `main` · 2026-11-17 22:05 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -813,7 +813,6 @@
 | admin/sst/extintores | AdminRoute |  | `src/App.tsx` |
 | admin/sst/regimento | AdminRoute |  | `src/App.tsx` |
 | admin/telemetria | AdminRoute |  | `src/App.tsx` |
-| auditoria | AdminRoute |  | `src/App.tsx` |
 | backup | AdminRoute |  | `src/App.tsx` |
 | configuracoes | AdminRoute |  | `src/App.tsx` |
 | configuracoes/contratos-templates | AdminRoute |  | `src/App.tsx` |

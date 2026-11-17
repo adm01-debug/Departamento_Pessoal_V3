@@ -57,6 +57,7 @@
   ],
   "src/App.tsx": [
    "src/components/AdminRoute.tsx",
+   "src/components/PermissionRoute.tsx",
    "src/components/ProtectedRoute.tsx",
    "src/components/RouteErrorBoundary.tsx",
    "src/components/layout/index.ts",
@@ -204,12 +205,21 @@
    "src/calculators/trabalhista-base.ts"
   ],
   "src/components/AdminRoute.tsx": [
+   "src/components/MfaGate.tsx",
+   "src/hooks/useAuth.ts"
+  ],
+  "src/components/MfaGate.tsx": [
    "src/components/ui/button.tsx",
    "src/components/ui/input.tsx",
    "src/components/ui/label.tsx",
    "src/hooks/useAuth.ts",
    "src/integrations/supabase/client.ts",
    "src/services/loggerService.ts"
+  ],
+  "src/components/PermissionRoute.tsx": [
+   "src/components/MfaGate.tsx",
+   "src/hooks/useAuth.ts",
+   "src/hooks/usePermissions.ts"
   ],
   "src/components/ProtectedRoute.tsx": [
    "src/components/ui/button.tsx",
@@ -5017,6 +5027,11 @@
   ],
   "src/hooks/usePeriodosAquisitivos.ts": [
    "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/usePermissions.ts": [
+   "src/hooks/useAuth.ts",
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts"
   ],
   "src/hooks/usePiiMask.ts": [
    "src/contexts/AuthContext.tsx",

@@ -126,7 +126,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 71
   },
@@ -301,7 +302,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 75
   },
@@ -434,7 +436,8 @@
    "flags": [],
    "papeis": [
     "admin",
-    "rh"
+    "rh",
+    "user"
    ],
    "arquivos_puxados": 27
   },
@@ -592,7 +595,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 79
   },
@@ -646,7 +650,9 @@
    "edges": [],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "arquivos_puxados": 27
   },
   {
@@ -701,7 +707,9 @@
    "edges": [],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "arquivos_puxados": 26
   },
   {
@@ -823,7 +831,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 80
   },
@@ -876,7 +885,9 @@
    "edges": [],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "arquivos_puxados": 18
   },
   {
@@ -934,7 +945,9 @@
    "edges": [],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "arquivos_puxados": 38
   },
   {
@@ -989,7 +1002,9 @@
    "edges": [],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "arquivos_puxados": 27
   },
   {
@@ -1050,7 +1065,8 @@
    "flags": [],
    "papeis": [
     "admin",
-    "rh"
+    "rh",
+    "user"
    ],
    "arquivos_puxados": 28
   },
@@ -1389,7 +1405,8 @@
     "progressbar",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 210
   },
@@ -1529,7 +1546,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 113
   },
@@ -1759,7 +1777,9 @@
    ],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "arquivos_puxados": 127
   },
   {
@@ -1888,7 +1908,7 @@
   {
    "protegida": true,
    "wrappers": [
-    "AdminRoute",
+    "PermissionRoute",
     "LazyPage"
    ],
    "pai": "/",
@@ -2008,7 +2028,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 86
   },
@@ -2816,7 +2837,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 78
   },
@@ -3383,7 +3405,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 217
   },
@@ -3608,7 +3631,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 154
   },
@@ -3732,7 +3756,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 87
   },
@@ -3856,7 +3881,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 87
   },
@@ -3984,7 +4010,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 84
   },
@@ -4551,7 +4578,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 220
   },
@@ -4675,7 +4703,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 98
   },
@@ -4818,7 +4847,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 90
   },
@@ -5385,7 +5415,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 220
   },
@@ -5555,7 +5586,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 113
   },
@@ -6182,7 +6214,8 @@
     "rh",
     "status",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 345
   },
@@ -6754,7 +6787,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 232
   },
@@ -7326,7 +7360,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 232
   },
@@ -7894,7 +7929,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 223
   },
@@ -8510,7 +8546,8 @@
     "rh",
     "supervisor",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 250
   },
@@ -8583,7 +8620,9 @@
    ],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "arquivos_puxados": 34
   },
   {
@@ -8806,7 +8845,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 149
   },
@@ -9376,7 +9416,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 223
   },
@@ -9507,7 +9548,9 @@
    ],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "arquivos_puxados": 26
   },
   {
@@ -10074,7 +10117,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 220
   },
@@ -10643,7 +10687,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 222
   },
@@ -10803,7 +10848,9 @@
     "ponto-changes-${empresaId}-${Math.random().toString(36).slice(2)}"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "arquivos_puxados": 78
   },
   {
@@ -11001,7 +11048,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 119
   },
@@ -11127,7 +11175,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 97
   },
@@ -11696,7 +11745,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 228
   },
@@ -11861,7 +11911,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 138
   },
@@ -12428,7 +12479,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 222
   },
@@ -12656,7 +12708,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 154
   },
@@ -12780,7 +12833,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 91
   },
@@ -13011,7 +13065,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 177
   },
@@ -13242,7 +13297,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 177
   },
@@ -13809,7 +13865,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 229
   },
@@ -14377,7 +14434,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 220
   },
@@ -14513,7 +14571,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 120
   },
@@ -15081,7 +15140,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 228
   },
@@ -15648,7 +15708,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 222
   },
@@ -15770,7 +15831,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 78
   },
@@ -16366,7 +16428,8 @@
     "rh",
     "status",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 264
   },
@@ -16442,7 +16505,8 @@
    "papeis": [
     "admin",
     "list",
-    "rh"
+    "rh",
+    "user"
    ],
    "arquivos_puxados": 49
   },
@@ -16666,7 +16730,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 151
   },
@@ -16822,7 +16887,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 119
   },
@@ -17413,7 +17479,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 263
   },
@@ -17537,7 +17604,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 80
   },
@@ -17659,7 +17727,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 78
   },
@@ -17786,7 +17855,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 84
   },
@@ -17913,7 +17983,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 94
   },
@@ -18036,7 +18107,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 83
   },
@@ -18212,7 +18284,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 96
   },
@@ -18779,7 +18852,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 220
   },
@@ -19348,7 +19422,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 221
   },
@@ -19472,7 +19547,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 92
   },
@@ -19520,7 +19596,8 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [
-    "alert"
+    "alert",
+    "user"
    ],
    "arquivos_puxados": 21
   },
@@ -20088,7 +20165,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 219
   },
@@ -20661,7 +20739,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 238
   },
@@ -21232,7 +21311,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 222
   },
@@ -21355,7 +21435,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 80
   },
@@ -21927,7 +22008,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 229
   },
@@ -22067,7 +22149,8 @@
     "rh",
     "status",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 101
   },
@@ -22193,7 +22276,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 93
   },
@@ -22317,7 +22401,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 79
   },
@@ -22885,7 +22970,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 220
   },
@@ -23008,7 +23094,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 80
   },
@@ -23575,7 +23662,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 221
   },
@@ -24177,7 +24265,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 229
   },
@@ -24757,7 +24846,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 242
   },
@@ -24820,7 +24910,9 @@
    ],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "arquivos_puxados": 26
   },
   {
@@ -25054,7 +25146,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 161
   },
@@ -25644,7 +25737,8 @@
     "tab",
     "table",
     "tablist",
-    "tabpanel"
+    "tabpanel",
+    "user"
    ],
    "arquivos_puxados": 268
   },
@@ -25766,7 +25860,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 78
   },
@@ -25890,7 +25985,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 78
   },
@@ -26116,7 +26212,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 151
   },
@@ -26701,7 +26798,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 264
   },
@@ -26834,7 +26932,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 90
   },
@@ -27402,7 +27501,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 221
   },
@@ -27531,7 +27631,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 80
   },
@@ -28133,7 +28234,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 230
   },
@@ -28701,7 +28803,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 219
   },
@@ -28831,7 +28934,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 99
   },
@@ -29398,7 +29502,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 221
   },
@@ -29980,7 +30085,8 @@
     "rowgroup",
     "tab",
     "table",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 296
   },
@@ -30547,7 +30653,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 220
   },
@@ -30670,7 +30777,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 75
   },
@@ -31239,7 +31347,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 221
   },
@@ -31869,7 +31978,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "arquivos_puxados": 228
   }

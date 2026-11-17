@@ -75,13 +75,13 @@
   },
   {
    "modulo": "components",
-   "arquivos": 5,
+   "arquivos": 7,
    "testes": 0,
-   "linhas": 614,
+   "linhas": 745,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 4,
+   "componentes": 6,
    "hooks_locais": [
     "useAuth",
     "useBackGesture",
@@ -95,6 +95,7 @@
     "useNotification",
     "useOnMount",
     "usePWA",
+    "usePermissions",
     "usePiiMask",
     "useSystemHealth",
     "useTheme",
@@ -134,6 +135,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "permissions",
     "versao_banco"
    ],
    "rpcs": [
@@ -166,7 +168,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "diretos": {
     "edges": [],
@@ -195,7 +198,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 292,
+   "testes": 293,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -541,7 +544,8 @@
    "papeis": [
     "alert",
     "progressbar",
-    "status"
+    "status",
+    "user"
    ],
    "diretos": {
     "edges": [],
@@ -632,7 +636,8 @@
    ],
    "flags": [],
    "papeis": [
-    "combobox"
+    "combobox",
+    "user"
    ],
    "diretos": {
     "edges": [],
@@ -1296,7 +1301,8 @@
     "alert",
     "button",
     "rh",
-    "status"
+    "status",
+    "user"
    ],
    "diretos": {
     "edges": [],
@@ -1384,7 +1390,8 @@
    "flags": [],
    "papeis": [
     "admin",
-    "rh"
+    "rh",
+    "user"
    ],
    "diretos": {
     "edges": [],
@@ -1512,7 +1519,9 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "diretos": {
     "edges": [],
     "tabelas": [],
@@ -1663,7 +1672,8 @@
    ],
    "flags": [],
    "papeis": [
-    "alert"
+    "alert",
+    "user"
    ],
    "diretos": {
     "edges": [],
@@ -1751,7 +1761,9 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "diretos": {
     "edges": [],
     "tabelas": [],
@@ -1872,7 +1884,8 @@
    ],
    "flags": [],
    "papeis": [
-    "alert"
+    "alert",
+    "user"
    ],
    "diretos": {
     "edges": [],
@@ -1988,7 +2001,9 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "diretos": {
     "edges": [],
     "tabelas": [],
@@ -2087,7 +2102,8 @@
    "flags": [],
    "papeis": [
     "admin",
-    "rh"
+    "rh",
+    "user"
    ],
    "diretos": {
     "edges": [],
@@ -2533,7 +2549,8 @@
     "alert",
     "list",
     "rh",
-    "status"
+    "status",
+    "user"
    ],
    "diretos": {
     "edges": [],
@@ -2948,7 +2965,8 @@
    "flags": [],
    "papeis": [
     "admin",
-    "rh"
+    "rh",
+    "user"
    ],
    "diretos": {
     "edges": [
@@ -3168,7 +3186,8 @@
    ],
    "flags": [],
    "papeis": [
-    "rh"
+    "rh",
+    "user"
    ],
    "diretos": {
     "edges": [
@@ -3325,7 +3344,8 @@
     "main",
     "rh",
     "tab",
-    "tablist"
+    "tablist",
+    "user"
    ],
    "diretos": {
     "edges": [],
@@ -3757,7 +3777,8 @@
    ],
    "flags": [],
    "papeis": [
-    "alert"
+    "alert",
+    "user"
    ],
    "diretos": {
     "edges": [],
@@ -3827,7 +3848,9 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "diretos": {
     "edges": [],
     "tabelas": [],
@@ -3957,7 +3980,8 @@
    "flags": [],
    "papeis": [
     "admin",
-    "rh"
+    "rh",
+    "user"
    ],
    "diretos": {
     "edges": [],
@@ -4031,7 +4055,9 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "diretos": {
     "edges": [],
     "tabelas": [
@@ -4428,7 +4454,8 @@
    "papeis": [
     "alert",
     "gestor",
-    "rh"
+    "rh",
+    "user"
    ],
    "diretos": {
     "edges": [
@@ -4638,7 +4665,9 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "diretos": {
     "edges": [],
     "tabelas": [
@@ -5043,7 +5072,8 @@
     "row",
     "rowgroup",
     "status",
-    "table"
+    "table",
+    "user"
    ],
    "diretos": {
     "edges": [],
@@ -5115,7 +5145,8 @@
     "group",
     "list",
     "listitem",
-    "rh"
+    "rh",
+    "user"
    ],
    "diretos": {
     "edges": [],
@@ -5681,7 +5712,8 @@
     "admin",
     "coordenador",
     "rh",
-    "supervisor"
+    "supervisor",
+    "user"
    ],
    "diretos": {
     "edges": [],
@@ -5782,7 +5814,9 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "diretos": {
     "edges": [
      "gerar-ltcat-os",
@@ -6072,7 +6106,8 @@
     "rh",
     "tab",
     "tablist",
-    "tabpanel"
+    "tabpanel",
+    "user"
    ],
    "diretos": {
     "edges": [
@@ -6247,7 +6282,7 @@
    "modulo": "contexts",
    "arquivos": 4,
    "testes": 0,
-   "linhas": 515,
+   "linhas": 562,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6293,7 +6328,9 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "diretos": {
     "edges": [],
     "tabelas": [
@@ -6397,9 +6434,9 @@
   },
   {
    "modulo": "hooks",
-   "arquivos": 92,
+   "arquivos": 93,
    "testes": 0,
-   "linhas": 9092,
+   "linhas": 9212,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6558,6 +6595,7 @@
     "usePendenciasColaborador",
     "usePeriodoExperiencia",
     "usePeriodosAquisitivos",
+    "usePermissions",
     "usePiiMask",
     "usePonto",
     "usePontoMelhorado",
@@ -6916,6 +6954,7 @@
     "usePendencias",
     "usePendenciasColaborador",
     "usePeriodosAquisitivos",
+    "usePermissions",
     "usePiiMask",
     "usePonto",
     "usePontoMelhorado",
@@ -7108,6 +7147,7 @@
     "periodos_aquisitivos",
     "periodos_experiencia",
     "periodos_ponto",
+    "permissions",
     "personnel_budget",
     "pesquisas",
     "pesquisas_perguntas",
@@ -7228,7 +7268,8 @@
    "flags": [],
    "papeis": [
     "admin",
-    "rh"
+    "rh",
+    "user"
    ],
    "diretos": {
     "edges": [
@@ -7255,6 +7296,7 @@
      "notificacoes",
      "pendencias",
      "periodos_aquisitivos",
+     "permissions",
      "personnel_budget",
      "solicitacoes_ajuste_ponto",
      "sst_cat",
@@ -7349,7 +7391,7 @@
   {
    "modulo": "hooks/__tests__",
    "arquivos": 0,
-   "testes": 95,
+   "testes": 96,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -7440,7 +7482,9 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "user"
+   ],
    "diretos": {
     "edges": [],
     "tabelas": [

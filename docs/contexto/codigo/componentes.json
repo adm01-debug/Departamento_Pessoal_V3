@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 631,
+ "total": 633,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -110,7 +110,7 @@
     "App"
    ],
    "export_default": "App",
-   "linhas": 515,
+   "linhas": 523,
    "dominio": null,
    "hooks_locais": [
     "useSecureVisibility",
@@ -230,7 +230,7 @@
     "AdminRoute"
    ],
    "export_default": null,
-   "linhas": 210,
+   "linhas": 28,
    "dominio": "components",
    "hooks_locais": [
     "useAuth"
@@ -4770,6 +4770,25 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/MfaGate.tsx",
+   "exports": [
+    "AcessoRestrito",
+    "ErroVerificacaoPermissao",
+    "MfaGate",
+    "VerificandoPrivilegios"
+   ],
+   "export_default": null,
+   "linhas": 254,
+   "dominio": "components",
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/notifications/NotificationBell.tsx",
    "exports": [
     "NotificationBell"
@@ -5110,6 +5129,24 @@
    "linhas": 133,
    "dominio": "components/pcs",
    "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/PermissionRoute.tsx",
+   "exports": [
+    "PermissionRoute",
+    "PermissionRouteProps"
+   ],
+   "export_default": null,
+   "linhas": 59,
+   "dominio": "components",
+   "hooks_locais": [
+    "useAuth",
+    "usePermissions"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -8243,10 +8280,11 @@
     "AuthContext",
     "AuthContextType",
     "AuthProvider",
+    "RolesStatus",
     "User"
    ],
    "export_default": null,
-   "linhas": 379,
+   "linhas": 426,
    "dominio": "contexts",
    "hooks_locais": [
     "useAuth"

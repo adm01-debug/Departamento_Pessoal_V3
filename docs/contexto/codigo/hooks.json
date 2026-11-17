@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 116,
+ "total": 117,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -237,7 +237,7 @@
    "hooks_exportados": [
     "useAuth"
    ],
-   "linhas": 379,
+   "linhas": 426,
    "dominio": "contexts",
    "tabelas": [
     "colaboradores",
@@ -927,9 +927,11 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 17,
+   "usado_por": 20,
    "usado_por_arquivos": [
     "src/components/AdminRoute.tsx",
+    "src/components/MfaGate.tsx",
+    "src/components/PermissionRoute.tsx",
     "src/components/ProtectedRoute.tsx",
     "src/components/avaliacao/FeedbackAcoesRodape.tsx",
     "src/components/layout/AppSidebar.tsx",
@@ -940,6 +942,7 @@
     "src/hooks/useAssinaturas.ts",
     "src/hooks/useHorasExtras.ts",
     "src/hooks/usePcs.ts",
+    "src/hooks/usePermissions.ts",
     "src/pages/AdminAsoWorkflowPage.tsx",
     "src/pages/AvaliacaoPage.tsx",
     "src/pages/CalculadoraRescisaoPage.tsx",
@@ -2467,6 +2470,31 @@
     "src/components/ferias/FeriasForm.tsx",
     "src/components/ferias/programacao/NovaProgramacaoDialog.tsx",
     "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/usePermissions.ts",
+   "hooks_exportados": [
+    "usePermissions"
+   ],
+   "linhas": 120,
+   "dominio": "hooks",
+   "tabelas": [
+    "permissions"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useMemo",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/PermissionRoute.tsx"
    ],
    "coberto_por_testes": 1
   },

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "842a6afaefbdaeb8026052e550e6ac3ebfa7474f",
+  "sha": "e968e3e353b9217ddad38bcbf60edb003801ac0b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 21:58 UTC",
-  "files_total": 3556,
-  "code_files": 2982,
-  "code_lines": 472095
+  "generated_at": "2026-11-17 22:05 UTC",
+  "files_total": 3561,
+  "code_files": 2987,
+  "code_lines": 472620
  },
  "version": "1.3.2",
- "facts_hash": "710269e552291f95",
+ "facts_hash": "68b1fcfa0b27f07e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,8 +387,8 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 991,
-   ".ts": 928,
+   ".tsx": 994,
+   ".ts": 930,
    ".sql": 927,
    ".mjs": 108,
    ".js": 15,
@@ -99259,8 +99259,8 @@
    },
    {
     "path": "auditoria",
-    "component": "LazyPage",
-    "guard": "AdminRoute",
+    "component": "PermissionRoute",
+    "guard": "",
     "roles": [],
     "file": "src/App.tsx"
    },
@@ -100034,7 +100034,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 965,
+  "components_count": 968,
   "hooks": [
    {
     "name": "useContacts",
@@ -100721,6 +100721,10 @@
     "file": "src/hooks/usePeriodosAquisitivos.ts"
    },
    {
+    "name": "usePermissions",
+    "file": "src/hooks/usePermissions.ts"
+   },
+   {
     "name": "usePiiMask",
     "file": "src/hooks/usePiiMask.ts"
    },
@@ -101029,10 +101033,6 @@
    },
    {
     "guard": "ProtectedRoute",
-    "file": "src/App.tsx"
-   },
-   {
-    "guard": "AdminRoute",
     "file": "src/App.tsx"
    },
    {
@@ -101522,7 +101522,7 @@
   {
    "module": "src",
    "files": 4,
-   "lines": 809,
+   "lines": 817,
    "tables": [],
    "exports": [
     "App.tsx: App"
@@ -101621,8 +101621,8 @@
   },
   {
    "module": "src/components",
-   "files": 965,
-   "lines": 174207,
+   "files": 968,
+   "lines": 174455,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101679,7 +101679,9 @@
    ],
    "exports": [
     "AdminRoute.tsx: AdminRoute",
+    "MfaGate.tsx: VerificandoPrivilegios, AcessoRestrito, ErroVerificacaoPermissao, MfaGate",
     "PageTitle.tsx: PageTitle",
+    "PermissionRoute.tsx: PermissionRouteProps, PermissionRoute",
     "ProtectedRoute.tsx: ProtectedRoute",
     "RouteErrorBoundary.tsx: clearChunkReloadGuard, RouteErrorBoundary",
     "HealthTrendCard.tsx: HealthTrendCard",
@@ -101715,17 +101717,15 @@
     "AfastamentoTable.tsx: AfastamentoTable",
     "AfastamentoTimeline.tsx: AfastamentoTimeline",
     "ProrrogacaoDialog.tsx: ProrrogacaoDialog",
-    "LoginForm.tsx: LoginForm",
-    "AlertasDesempenho.tsx: AlertasDesempenho",
-    "AnaliticosDesempenho.tsx: EstadoAnimacaoLegenda, AnaliticosDesempenho"
+    "LoginForm.tsx: LoginForm"
    ],
    "docs": [
+    "AdminRoute.tsx: Guarda de rota ADMIN — exige o papel `admin` E o MFA. RESPONSABILIDADES, AGORA SEPARADAS: este componente decide QUEM pode entrar (papel `admin`); o portao de MFA mora no `MfaGate`, compartilhado com o `PermissionRoute`. A maquina de estados e as telas do MFA foram movidas NA INTEGRA para la, entao …",
     "index.ts: V25: Components Export - active modules only",
     "AcoesFeedback.test.ts: Ações de feedback — camada de decisão dos controles (pura). Garante as regras pedidas: RH também gerencia (admin+rh), Validação de Potencial EXCLUSIVA do RH e situação da validação comparada com a versão canônica vinda do banco.",
     "AppPagination.test.tsx: AppPagination — padrão único de paginação do sistema. Cobre o contrato de APRESENTAÇÃO do componente: sequência dos controles, destaque da página ativa (verde-lima sólido), estado das setas nos extremos, seletor só quando há handler, recorte de página inexistente e as emissões de evento. A paginação …",
     "CriacaoFeedbackIntegracao.test.ts: Integração local da criação — a ponte entre o formulário existente e a RPC auditada. Cobre idempotência (mesma tentativa × operação nova), preservação de TODOS os campos, validações e payload da RPC. Sem rede, sem banco.",
-    "EscritaOperacional.test.ts: Guarda de escrita operacional — impede gravação a partir de dados fictícios. Cobre as duas regras: identificador `mock-*` e ambiente de demonstração.",
-    "FeedbackAcoesRodape.test.tsx: CONTROLES FUNCIONAIS DO MODAL (rodapé) — testes de integração local. O serviço é mockado (nenhuma rede): o que se verifica aqui é a INTERFACE — quais controles aparecem por status/papel, obrigatoriedade da justificativa, bloqueio durante a operação, erro real, idempotência do reenvio, invalidação de …"
+    "EscritaOperacional.test.ts: Guarda de escrita operacional — impede gravação a partir de dados fictícios. Cobre as duas regras: identificador `mock-*` e ambiente de demonstração."
    ],
    "deps": [
     "@\\/components\\",
@@ -101771,7 +101771,9 @@
    ],
    "file_list": [
     "src/components/AdminRoute.tsx",
+    "src/components/MfaGate.tsx",
     "src/components/PageTitle.tsx",
+    "src/components/PermissionRoute.tsx",
     "src/components/ProtectedRoute.tsx",
     "src/components/RouteErrorBoundary.tsx",
     "src/components/index.ts",
@@ -101847,9 +101849,7 @@
     "src/components/__tests__/DesligamentoFilters.test.tsx",
     "src/components/__tests__/DesligamentoKPIs.test.tsx",
     "src/components/__tests__/DesligamentoStatusBadge.test.tsx",
-    "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
-    "src/components/__tests__/DistribuirHoleritesButton.test.tsx",
-    "src/components/__tests__/DocumentoPreview.test.tsx"
+    "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx"
    ]
   },
   {
@@ -101887,13 +101887,13 @@
   {
    "module": "src/contexts",
    "files": 7,
-   "lines": 968,
+   "lines": 1015,
    "tables": [
     "colaboradores",
     "empresas"
    ],
    "exports": [
-    "AuthContext.tsx: AppRole, User, AuthContextType, AuthContext, AuthProvider, useAuth",
+    "AuthContext.tsx: AppRole, User, RolesStatus, AuthContextType, AuthContext, AuthProvider",
     "EmpresaContext.tsx: EmpresaProvider, useEmpresa",
     "NotificationContext.tsx: NotificationProvider, useNotification, useNotifications"
    ],
@@ -101956,8 +101956,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 199,
-   "lines": 23266,
+   "files": 201,
+   "lines": 23488,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101980,6 +101980,7 @@
     "notificacoes",
     "pendencias",
     "periodos_aquisitivos",
+    "permissions",
     "personnel_budget",
     "solicitacoes_ajuste_ponto",
     "sst_cat",
@@ -102140,6 +102141,7 @@
     "src/hooks/usePendencias.ts",
     "src/hooks/usePendenciasColaborador.ts",
     "src/hooks/usePeriodosAquisitivos.ts",
+    "src/hooks/usePermissions.ts",
     "src/hooks/usePiiMask.ts",
     "src/hooks/usePonto.ts",
     "src/hooks/usePontoMelhorado.ts",
@@ -102151,8 +102153,7 @@
     "src/hooks/useSSTColaborador.ts",
     "src/hooks/useSecureVisibility.ts",
     "src/hooks/useSecurityMonitor.ts",
-    "src/hooks/useServerValidation.ts",
-    "src/hooks/useSessionTimeout.ts"
+    "src/hooks/useServerValidation.ts"
    ]
   },
   {
@@ -105925,6 +105926,11 @@
      "src/services/tabelas/pontoService.ts"
     ]
    },
+   "permissions": {
+    "select": [
+     "src/hooks/usePermissions.ts"
+    ]
+   },
    "personnel_budget": {
     "select": [
      "src/hooks/useExecutiveDashboard.ts"
@@ -107983,6 +107989,12 @@
     "colaborador_id",
     "id"
    ],
+   "permissions": [
+    "action",
+    "allowed",
+    "resource",
+    "role"
+   ],
    "personnel_budget": [
     "ano",
     "empresa_id"
@@ -109373,7 +109385,7 @@
     "vite.config.ts"
    ],
    "VITE_E2E_BYPASS_MFA": [
-    "src/components/AdminRoute.tsx",
+    "src/components/MfaGate.tsx",
     "src/components/ProtectedRoute.tsx"
    ],
    "VITE_FEATURE_X": [
@@ -110927,7 +110939,6 @@
    "pdis",
    "permissao_perfis",
    "permissao_recursos",
-   "permissions",
    "pii_access_alerts",
    "ponto_ajustes",
    "ponto_auditoria_fraude",
@@ -112126,7 +112137,7 @@
   ],
   "html_constraints": [
    {
-    "file": "src/components/AdminRoute.tsx",
+    "file": "src/components/MfaGate.tsx",
     "field": "totp-code",
     "rules": "pattern=[0-9 ]{6,7, max"
    },
@@ -113143,6 +113154,11 @@
     "values": "admin | gestor | rh | user | supervisor | coordenador"
    },
    {
+    "file": "src/contexts/AuthContext.tsx",
+    "name": "RolesStatus",
+    "values": "loading | success | error"
+   },
+   {
     "file": "src/errors/types.ts",
     "name": "ErrorType",
     "values": "VALIDATION_ERROR | AUTH_ERROR | NETWORK_ERROR | NOT_FOUND | PERMISSION_DENIED | SERVER_ERROR | UNKNOWN_ERROR"
@@ -113186,6 +113202,11 @@
     "file": "src/hooks/usePendenciasColaborador.ts",
     "name": "PendenciaChave",
     "values": "ponto | onboarding | aso | documentos"
+   },
+   {
+    "file": "src/hooks/usePermissions.ts",
+    "name": "EstadoPermissoes",
+    "values": "loading | success | error"
    },
    {
     "file": "src/hooks/useProximosEventos.ts",
@@ -117579,6 +117600,10 @@
     "text": "cacheada — o SW apenas observa a resposta passar."
    },
    {
+    "file": "src/App.tsx",
+    "text": "Primeira rota por PERMISSAO, nao por papel: a matriz"
+   },
+   {
     "file": "src/main.tsx",
     "text": "Clickjacking defense-in-depth: só quebra o frame em produção e apenas"
    },
@@ -117611,12 +117636,60 @@
     "text": "(edge não pode importar de src/)."
    },
    {
-    "file": "src/components/AdminRoute.tsx",
+    "file": "src/components/MfaGate.tsx",
     "text": "'pending-challenge' = enrolled but aal1 session — must complete TOTP before access"
    },
    {
-    "file": "src/components/AdminRoute.tsx",
+    "file": "src/components/MfaGate.tsx",
+    "text": "* Negativa de acesso: a verificacao CONCLUIU e a permissao nao esta concedida. */"
+   },
+   {
+    "file": "src/components/MfaGate.tsx",
+    "text": "permissao. Aqui a tela diz que nao foi possivel verificar e oferece recarregar."
+   },
+   {
+    "file": "src/components/MfaGate.tsx",
+    "text": "* Nao imprime id, e-mail nem as linhas da matriz: diagnostico de permissao em"
+   },
+   {
+    "file": "src/components/MfaGate.tsx",
+    "text": "* Portao de MFA. Renderiza `children` somente com a sessao em `aal2`. */"
+   },
+   {
+    "file": "src/components/MfaGate.tsx",
     "text": "Must complete TOTP challenge — do NOT grant access until aal2 is reached."
+   },
+   {
+    "file": "src/components/PermissionRoute.tsx",
+    "text": "* Guarda de rota por PERMISSAO — irma do `AdminRoute`."
+   },
+   {
+    "file": "src/components/PermissionRoute.tsx",
+    "text": "* REGRA: AUTENTICADO + (admin OU permissao na matriz `public.permissions`) + MFA."
+   },
+   {
+    "file": "src/components/PermissionRoute.tsx",
+    "text": "nada: quem nao tem a permissao continua vendo \"Acesso Restrito\", quem nao"
+   },
+   {
+    "file": "src/components/PermissionRoute.tsx",
+    "text": "papel `admin` — bloquearia gestor e RH que JA tem a permissao concedida."
+   },
+   {
+    "file": "src/components/PermissionRoute.tsx",
+    "text": "* Permissao exigida no formato `'<resource>.<action>'` — ex.: `'auditoria.read'`."
+   },
+   {
+    "file": "src/components/PermissionRoute.tsx",
+    "text": "libera, nem nega (sem piscar \"Acesso Restrito\" para quem TEM a permissao)."
+   },
+   {
+    "file": "src/components/PermissionRoute.tsx",
+    "text": "que perdeu permissao."
+   },
+   {
+    "file": "src/components/PermissionRoute.tsx",
+    "text": "4) Negativa REAL — a verificacao concluiu e a permissao nao esta concedida."
    },
    {
     "file": "src/components/ProtectedRoute.tsx",
@@ -119928,6 +120001,14 @@
    },
    {
     "file": "src/contexts/AuthContext.tsx",
+    "text": "Restrito\" — o usuario legitimo acha que perdeu permissao. Com ele, a guarda"
+   },
+   {
+    "file": "src/contexts/AuthContext.tsx",
+    "text": "* Ver `RolesStatus`: `error` NAO significa \"sem permissao\". */"
+   },
+   {
+    "file": "src/contexts/AuthContext.tsx",
     "text": "H20: o cliente do produto usa a Edge para aplicar rate-limit e lockout"
    },
    {
@@ -120033,6 +120114,18 @@
    {
     "file": "src/hooks/usePendenciasColaborador.ts",
     "text": "cada linha é tipada pelo que esta regra de fato lê — não pelo schema inteiro."
+   },
+   {
+    "file": "src/hooks/usePermissions.ts",
+    "text": "(aquelas linhas são a matriz papel→permissão, não dado de cliente), então"
+   },
+   {
+    "file": "src/hooks/usePermissions.ts",
+    "text": "* Estado da verificação de permissão — `error` NÃO é \"sem permissão\". */"
+   },
+   {
+    "file": "src/hooks/usePermissions.ts",
+    "text": "como \"sem permissão\" — a guarda mostra o estado de erro, não \"Acesso Restrito\"."
    },
    {
     "file": "src/hooks/useProximosEventos.ts",
@@ -147008,6 +147101,11 @@
     "value": "1000"
    },
    {
+    "file": "src/hooks/usePermissions.ts",
+    "name": "PERMISSOES_STALE_MS",
+    "value": "5"
+   },
+   {
     "file": "src/hooks/useSessionTimeout.ts",
     "name": "INACTIVITY_LIMIT_MS",
     "value": "30"
@@ -147986,9 +148084,21 @@
     "kind": "compara"
    },
    {
-    "file": "src/components/AdminRoute.tsx",
+    "file": "src/components/MfaGate.tsx",
     "field": "status",
     "value": "verified",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/PermissionRoute.tsx",
+    "field": "estado",
+    "value": "loading",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/PermissionRoute.tsx",
+    "field": "estado",
+    "value": "error",
     "kind": "compara"
    },
    {
@@ -162024,6 +162134,10 @@
    {
     "file": "src/hooks/useNotificacoes.ts",
     "line": "staleTime: 2 * 60 * 1000,"
+   },
+   {
+    "file": "src/hooks/usePermissions.ts",
+    "line": "const PERMISSOES_STALE_MS = 5 * 60 * 1000;"
    },
    {
     "file": "src/hooks/useSessionTimeout.ts",
@@ -176354,6 +176468,42 @@
     "name": "renders without crash when feedbacks and metas are empty"
    },
    {
+    "file": "src/components/__tests__/PermissionRoute.test.tsx",
+    "name": "PermissionRoute"
+   },
+   {
+    "file": "src/components/__tests__/PermissionRoute.test.tsx",
+    "name": "com a permissao concedida, mostra o conteudo"
+   },
+   {
+    "file": "src/components/__tests__/PermissionRoute.test.tsx",
+    "name": "admin entra mesmo sem linha na matriz"
+   },
+   {
+    "file": "src/components/__tests__/PermissionRoute.test.tsx",
+    "name": "sem a permissao, mostra Acesso Restrito"
+   },
+   {
+    "file": "src/components/__tests__/PermissionRoute.test.tsx",
+    "name": "falha ao consultar a matriz NAO vira Acesso Restrito"
+   },
+   {
+    "file": "src/components/__tests__/PermissionRoute.test.tsx",
+    "name": "falha ao ler os papeis NAO vira Acesso Restrito"
+   },
+   {
+    "file": "src/components/__tests__/PermissionRoute.test.tsx",
+    "name": "enquanto a matriz carrega, nem libera nem nega"
+   },
+   {
+    "file": "src/components/__tests__/PermissionRoute.test.tsx",
+    "name": "sem usuario, redireciona para o login"
+   },
+   {
+    "file": "src/components/__tests__/PermissionRoute.test.tsx",
+    "name": "a negativa nao imprime id nem e-mail do usuario"
+   },
+   {
     "file": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
     "name": "PontoAdjustmentRequests"
    },
@@ -184884,6 +185034,38 @@
    {
     "file": "src/hooks/__tests__/usePeriodosAquisitivos.test.ts",
     "name": "exposes refetch function"
+   },
+   {
+    "file": "src/hooks/__tests__/usePermissions.test.ts",
+    "name": "usePermissions"
+   },
+   {
+    "file": "src/hooks/__tests__/usePermissions.test.ts",
+    "name": "libera o que a matriz concede"
+   },
+   {
+    "file": "src/hooks/__tests__/usePermissions.test.ts",
+    "name": "nega quando a linha existe com allowed=false"
+   },
+   {
+    "file": "src/hooks/__tests__/usePermissions.test.ts",
+    "name": "nega quando a matriz esta vazia (fail-closed)"
+   },
+   {
+    "file": "src/hooks/__tests__/usePermissions.test.ts",
+    "name": "sem papel nenhum nem consulta a matriz, e nega"
+   },
+   {
+    "file": "src/hooks/__tests__/usePermissions.test.ts",
+    "name": "admin passa sem consultar a matriz"
+   },
+   {
+    "file": "src/hooks/__tests__/usePermissions.test.ts",
+    "name": "erro na consulta vira estado error, com a mensagem do PostgREST"
+   },
+   {
+    "file": "src/hooks/__tests__/usePermissions.test.ts",
+    "name": "falha ao ler os papeis tem precedencia e vira estado error"
    },
    {
     "file": "src/hooks/__tests__/usePiiMask.test.tsx",
@@ -229770,7 +229952,7 @@
     },
     "status": {
      "verified": [
-      "compara:src/components/AdminRoute.tsx",
+      "compara:src/components/MfaGate.tsx",
       "compara:src/components/ProtectedRoute.tsx",
       "compara:src/components/settings/MFASetup.tsx",
       "compara:src/pages/PerfilPage.tsx"
@@ -230752,6 +230934,43 @@
       "escreve:supabase/functions/webhook/index.ts"
      ]
     },
+    "estado": {
+     "loading": [
+      "compara:src/components/PermissionRoute.tsx"
+     ],
+     "error": [
+      "compara:src/components/PermissionRoute.tsx"
+     ],
+     "final": [
+      "compara:src/components/avaliacao/AnaliticosDesempenho.tsx"
+     ],
+     "animar": [
+      "compara:src/components/avaliacao/AnaliticosDesempenho.tsx"
+     ],
+     "informado": [
+      "compara:src/components/avaliacao/CartaoFeedbackCanonico.tsx",
+      "compara:src/components/avaliacao/FeedbackDetalheDialog.tsx",
+      "compara:src/components/avaliacao/HistoricoFeedbackDialog.tsx",
+      "compara:src/components/avaliacao/feedbackCanonico.ts",
+      "escreve:src/components/avaliacao/feedbackCanonico.ts"
+     ],
+     "concluida": [
+      "compara:src/components/avaliacao/CicloAtivoPanel.tsx"
+     ],
+     "atual": [
+      "compara:src/components/avaliacao/CicloAtivoPanel.tsx"
+     ],
+     "futura": [
+      "compara:src/components/avaliacao/CicloAtivoPanel.tsx"
+     ],
+     "nao_informado": [
+      "escreve:src/components/avaliacao/feedbackCanonico.ts"
+     ],
+     "nao_aplicavel": [
+      "compara:src/components/avaliacao/feedbackCanonico.ts",
+      "escreve:src/components/avaliacao/feedbackCanonico.ts"
+     ]
+    },
     "etapa": {
      "concluida": [
       "compara:src/components/admissoes/AdmissoesDashboard.tsx",
@@ -230847,37 +231066,6 @@
      ],
      "juridico": [
       "compara:src/services/rescisaoService.ts"
-     ]
-    },
-    "estado": {
-     "final": [
-      "compara:src/components/avaliacao/AnaliticosDesempenho.tsx"
-     ],
-     "animar": [
-      "compara:src/components/avaliacao/AnaliticosDesempenho.tsx"
-     ],
-     "informado": [
-      "compara:src/components/avaliacao/CartaoFeedbackCanonico.tsx",
-      "compara:src/components/avaliacao/FeedbackDetalheDialog.tsx",
-      "compara:src/components/avaliacao/HistoricoFeedbackDialog.tsx",
-      "compara:src/components/avaliacao/feedbackCanonico.ts",
-      "escreve:src/components/avaliacao/feedbackCanonico.ts"
-     ],
-     "concluida": [
-      "compara:src/components/avaliacao/CicloAtivoPanel.tsx"
-     ],
-     "atual": [
-      "compara:src/components/avaliacao/CicloAtivoPanel.tsx"
-     ],
-     "futura": [
-      "compara:src/components/avaliacao/CicloAtivoPanel.tsx"
-     ],
-     "nao_informado": [
-      "escreve:src/components/avaliacao/feedbackCanonico.ts"
-     ],
-     "nao_aplicavel": [
-      "compara:src/components/avaliacao/feedbackCanonico.ts",
-      "escreve:src/components/avaliacao/feedbackCanonico.ts"
      ]
     },
     "situacao": {
@@ -251339,10 +251527,6 @@
    },
    {
     "guard": "AdminRoute",
-    "file": "src/App.tsx"
-   },
-   {
-    "guard": "AdminRoute",
     "file": "src/components/__tests__/AdminRoute.test.tsx"
    },
    {
@@ -251512,13 +251696,6 @@
    },
    {
     "path": "admin/telemetria",
-    "component": "LazyPage",
-    "guard": "AdminRoute",
-    "roles": [],
-    "file": "src/App.tsx"
-   },
-   {
-    "path": "auditoria",
     "component": "LazyPage",
     "guard": "AdminRoute",
     "roles": [],
@@ -261967,7 +262144,7 @@
   },
   "src/App.tsx": {
    "path": "src/App.tsx",
-   "lines": 515,
+   "lines": 523,
    "exports": [
     "function App"
    ],
@@ -262331,8 +262508,8 @@
     },
     {
      "path": "auditoria",
-     "component": "LazyPage",
-     "guard": "AdminRoute",
+     "component": "PermissionRoute",
+     "guard": "",
      "roles": []
     },
     {
@@ -262684,8 +262861,10 @@
     "AdminRoute",
     "AdminRoute",
     "AdminRoute",
-    "AdminRoute",
     "AdminRoute"
+   ],
+   "rule_comments": [
+    "Primeira rota por PERMISSAO, nao por papel: a matriz"
    ]
   },
   "src/main.tsx": {
@@ -263534,9 +263713,20 @@
   },
   "src/components/AdminRoute.tsx": {
    "path": "src/components/AdminRoute.tsx",
-   "lines": 210,
+   "lines": 28,
    "exports": [
     "function AdminRoute"
+   ],
+   "doc": "Guarda de rota ADMIN — exige o papel `admin` E o MFA. RESPONSABILIDADES, AGORA SEPARADAS: este componente decide QUEM pode entrar (papel `admin`); o portao de MFA mora no `MfaGate`, compartilhado com o `PermissionRoute`. A maquina de estados e as telas do MFA foram movidas NA INTEGRA para la, entao …"
+  },
+  "src/components/MfaGate.tsx": {
+   "path": "src/components/MfaGate.tsx",
+   "lines": 254,
+   "exports": [
+    "function VerificandoPrivilegios",
+    "function AcessoRestrito",
+    "function ErroVerificacaoPermissao",
+    "function MfaGate"
    ],
    "env": [
     "VITE_E2E_BYPASS_MFA"
@@ -263559,6 +263749,10 @@
    ],
    "rule_comments": [
     "'pending-challenge' = enrolled but aal1 session — must complete TOTP before access",
+    "* Negativa de acesso: a verificacao CONCLUIU e a permissao nao esta concedida. */",
+    "permissao. Aqui a tela diz que nao foi possivel verificar e oferece recarregar.",
+    "* Nao imprime id, e-mail nem as linhas da matriz: diagnostico de permissao em",
+    "* Portao de MFA. Renderiza `children` somente com a sessao em `aal2`. */",
     "Must complete TOTP challenge — do NOT grant access until aal2 is reached."
    ]
   },
@@ -263567,6 +263761,36 @@
    "lines": 18,
    "exports": [
     "function PageTitle"
+   ]
+  },
+  "src/components/PermissionRoute.tsx": {
+   "path": "src/components/PermissionRoute.tsx",
+   "lines": 59,
+   "exports": [
+    "interface PermissionRouteProps",
+    "function PermissionRoute"
+   ],
+   "status_values": [
+    {
+     "field": "estado",
+     "value": "loading",
+     "kind": "compara"
+    },
+    {
+     "field": "estado",
+     "value": "error",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "* Guarda de rota por PERMISSAO — irma do `AdminRoute`.",
+    "* REGRA: AUTENTICADO + (admin OU permissao na matriz `public.permissions`) + MFA.",
+    "nada: quem nao tem a permissao continua vendo \"Acesso Restrito\", quem nao",
+    "papel `admin` — bloquearia gestor e RH que JA tem a permissao concedida.",
+    "* Permissao exigida no formato `'<resource>.<action>'` — ex.: `'auditoria.read'`.",
+    "libera, nem nega (sem piscar \"Acesso Restrito\" para quem TEM a permissao).",
+    "que perdeu permissao.",
+    "4) Negativa REAL — a verificacao concluiu e a permissao nao esta concedida."
    ]
   },
   "src/components/ProtectedRoute.tsx": {
@@ -268187,6 +268411,27 @@
     "renders the three analytics panels",
     "no longer renders the five-indicator strip",
     "renders without crash when feedbacks and metas are empty"
+   ]
+  },
+  "src/components/__tests__/PermissionRoute.test.tsx": {
+   "path": "src/components/__tests__/PermissionRoute.test.tsx",
+   "lines": 117,
+   "is_test": true,
+   "rule_comments": [
+    "legitimo pensaria que perdeu permissao);",
+    "aqui o foco e a decisao de PERMISSAO, entao o portao e substituido.",
+    "A tela de negacao nao pode expor diagnostico de PII (a versao da `muri`"
+   ],
+   "tests": [
+    "PermissionRoute",
+    "com a permissao concedida, mostra o conteudo",
+    "admin entra mesmo sem linha na matriz",
+    "sem a permissao, mostra Acesso Restrito",
+    "falha ao consultar a matriz NAO vira Acesso Restrito",
+    "falha ao ler os papeis NAO vira Acesso Restrito",
+    "enquanto a matriz carrega, nem libera nem nega",
+    "sem usuario, redireciona para o login",
+    "a negativa nao imprime id nem e-mail do usuario"
    ]
   },
   "src/components/__tests__/PontoAdjustmentRequests.test.tsx": {
@@ -285964,10 +286209,11 @@
   },
   "src/contexts/AuthContext.tsx": {
    "path": "src/contexts/AuthContext.tsx",
-   "lines": 379,
+   "lines": 426,
    "exports": [
     "type AppRole",
     "interface User",
+    "type RolesStatus",
     "interface AuthContextType",
     "const AuthContext",
     "function AuthProvider",
@@ -286016,6 +286262,10 @@
     {
      "name": "AppRole",
      "values": "admin | gestor | rh | user | supervisor | coordenador"
+    },
+    {
+     "name": "RolesStatus",
+     "values": "loading | success | error"
     }
    ],
    "params": [
@@ -286045,6 +286295,8 @@
     "role"
    ],
    "rule_comments": [
+    "Restrito\" — o usuario legitimo acha que perdeu permissao. Com ele, a guarda",
+    "* Ver `RolesStatus`: `error` NAO significa \"sem permissao\". */",
     "H20: o cliente do produto usa a Edge para aplicar rate-limit e lockout",
     "Check if MFA challenge is required (user enrolled TOTP → nextLevel = aal2)"
    ],
@@ -288264,6 +288516,52 @@
     "usePeriodosAquisitivos"
    ]
   },
+  "src/hooks/usePermissions.ts": {
+   "path": "src/hooks/usePermissions.ts",
+   "lines": 120,
+   "exports": [
+    "interface PermissaoRow",
+    "type EstadoPermissoes",
+    "function usePermissions"
+   ],
+   "tables": [
+    {
+     "table": "permissions",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "permissions": [
+     "action",
+     "allowed",
+     "resource",
+     "role"
+    ]
+   },
+   "enums": [
+    {
+     "name": "EstadoPermissoes",
+     "values": "loading | success | error"
+    }
+   ],
+   "params": [
+    {
+     "name": "PERMISSOES_STALE_MS",
+     "value": "5"
+    }
+   ],
+   "rule_comments": [
+    "(aquelas linhas são a matriz papel→permissão, não dado de cliente), então",
+    "* Estado da verificação de permissão — `error` NÃO é \"sem permissão\". */",
+    "como \"sem permissão\" — a guarda mostra o estado de erro, não \"Acesso Restrito\"."
+   ],
+   "hooks": [
+    "usePermissions"
+   ],
+   "temporal": [
+    "const PERMISSOES_STALE_MS = 5 * 60 * 1000;"
+   ]
+  },
   "src/hooks/usePiiMask.ts": {
    "path": "src/hooks/usePiiMask.ts",
    "lines": 34,
@@ -290384,6 +290682,25 @@
     "queries periodos_aquisitivos with colaboradorId",
     "returns periodos from service",
     "exposes refetch function"
+   ]
+  },
+  "src/hooks/__tests__/usePermissions.test.ts": {
+   "path": "src/hooks/__tests__/usePermissions.test.ts",
+   "lines": 102,
+   "is_test": true,
+   "rule_comments": [
+    "por omissao. E o tri-state: erro TECNICO nao e \"sem permissao\".",
+    "Falha da consulta = estado 'error', NAO 'sem permissao'."
+   ],
+   "tests": [
+    "usePermissions",
+    "libera o que a matriz concede",
+    "nega quando a linha existe com allowed=false",
+    "nega quando a matriz esta vazia (fail-closed)",
+    "sem papel nenhum nem consulta a matriz, e nega",
+    "admin passa sem consultar a matriz",
+    "erro na consulta vira estado error, com a mensagem do PostgREST",
+    "falha ao ler os papeis tem precedencia e vira estado error"
    ]
   },
   "src/hooks/__tests__/usePiiMask.test.tsx": {
@@ -325307,10 +325624,27 @@
   }
  },
  "git": {
-  "sha": "842a6afaefbdaeb8026052e550e6ac3ebfa7474f",
+  "sha": "e968e3e353b9217ddad38bcbf60edb003801ac0b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "e968e3e",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(permissões): controle de acesso por funcionalidade, lendo a matriz do banco (#651)",
+    "files": [
+     "inventario/estado/rotas.json",
+     "src/App.tsx",
+     "src/components/AdminRoute.tsx",
+     "src/components/MfaGate.tsx",
+     "src/components/PermissionRoute.tsx",
+     "src/components/__tests__/PermissionRoute.test.tsx",
+     "src/contexts/AuthContext.tsx",
+     "src/hooks/__tests__/usePermissions.test.ts",
+     "src/hooks/usePermissions.ts"
+    ]
+   },
    {
     "sha": "842a6af",
     "date": "2026-11-17",
@@ -325690,22 +326024,16 @@
      "src/test/securityHeadersParity.test.ts",
      "vercel.json"
     ]
-   },
-   {
-    "sha": "7381b27",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(pwa): navegacao ignorava o cache HTTP do browser e servia a casca antiga (#624)",
-    "files": [
-     "public/sw-custom.js",
-     "scripts/tests/sw-routing.test.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
     5
+   ],
+   [
+    "inventario/estado/rotas.json",
+    4
    ],
    [
     "src/pages/ColaboradorDetalhesPage.tsx",
@@ -325716,8 +326044,8 @@
     4
    ],
    [
-    "inventario/estado/rotas.json",
-    3
+    "src/App.tsx",
+    2
    ],
    [
     "supabase/migrations/20261117190000_permissions_matriz_seed.verify.sql",
@@ -325744,43 +326072,39 @@
     2
    ],
    [
+    "src/components/AdminRoute.tsx",
+    1
+   ],
+   [
+    "src/components/MfaGate.tsx",
+    1
+   ],
+   [
+    "src/components/PermissionRoute.tsx",
+    1
+   ],
+   [
+    "src/components/__tests__/PermissionRoute.test.tsx",
+    1
+   ],
+   [
+    "src/contexts/AuthContext.tsx",
+    1
+   ],
+   [
+    "src/hooks/__tests__/usePermissions.test.ts",
+    1
+   ],
+   [
+    "src/hooks/usePermissions.ts",
+    1
+   ],
+   [
     "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx",
     1
    ],
    [
     "src/components/colaborador-detalhes/index.ts",
-    1
-   ],
-   [
-    "src/components/__tests__/ColaboradorDocuments.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/DocumentosPessoaisTab.test.tsx",
-    1
-   ],
-   [
-    "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
-    1
-   ],
-   [
-    "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
-    1
-   ],
-   [
-    "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
-    1
-   ],
-   [
-    "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
-    1
-   ],
-   [
-    "src/components/colaborador-detalhes/documentos/FileUploadField.tsx",
-    1
-   ],
-   [
-    "src/integrations/supabase/types.ts",
     1
    ]
   ]

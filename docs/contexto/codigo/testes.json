@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 761,
+ "total": 763,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 722
+  "unit": 724
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 635
+   "arquivos": 637
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -2851,6 +2851,15 @@
    "casos": 3
   },
   {
+   "arquivo": "src/components/__tests__/PermissionRoute.test.tsx",
+   "tipo": "unit",
+   "linhas": 117,
+   "testa": [
+    "src/components/PermissionRoute.tsx"
+   ],
+   "casos": 8
+  },
+  {
    "arquivo": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
    "tipo": "unit",
    "linhas": 96,
@@ -4686,6 +4695,15 @@
     "src/hooks/usePeriodosAquisitivos.ts"
    ],
    "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/__tests__/usePermissions.test.ts",
+   "tipo": "unit",
+   "linhas": 102,
+   "testa": [
+    "src/hooks/usePermissions.ts"
+   ],
+   "casos": 7
   },
   {
    "arquivo": "src/hooks/__tests__/usePiiMask.test.tsx",
@@ -7059,6 +7077,7 @@
   "src/calculators/trabalhista-base.ts": 2,
   "src/components/AdminRoute.tsx": 1,
   "src/components/PageTitle.tsx": 1,
+  "src/components/PermissionRoute.tsx": 1,
   "src/components/ProtectedRoute.tsx": 1,
   "src/components/RouteErrorBoundary.tsx": 1,
   "src/components/admin/HealthTrendCard.tsx": 1,
@@ -7507,6 +7526,7 @@
   "src/hooks/usePendencias.ts": 1,
   "src/hooks/usePendenciasColaborador.ts": 2,
   "src/hooks/usePeriodosAquisitivos.ts": 1,
+  "src/hooks/usePermissions.ts": 1,
   "src/hooks/usePiiMask.ts": 1,
   "src/hooks/usePonto.ts": 1,
   "src/hooks/usePontoMelhorado.ts": 2,

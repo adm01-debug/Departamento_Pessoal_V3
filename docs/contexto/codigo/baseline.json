@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "842a6afaefbdaeb8026052e550e6ac3ebfa7474f",
+  "commit": "e968e3e353b9217ddad38bcbf60edb003801ac0b",
   "branch": "main",
-  "data_commit": "2026-11-17T18:57:23-03:00",
+  "data_commit": "2026-11-17T19:04:18-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "e968e3e",
+    "data": "2026-11-17",
+    "assunto": "feat(permissões): controle de acesso por funcionalidade, lendo a matriz do banco (#651)"
+   },
    {
     "sha": "842a6af",
     "data": "2026-11-17",
@@ -126,22 +131,17 @@
     "sha": "29dd221",
     "data": "2026-11-17",
     "assunto": "feat(dashboard): resgata da muri os atalhos de Workflows e Assistente IA (#633)"
-   },
-   {
-    "sha": "7e12152",
-    "data": "2026-11-17",
-    "assunto": "fix(menu): da caminho de navegacao a Faltas e Obrigacoes Fiscais (#634)"
    }
   ],
-  "arquivos_mudados_7d": 1083,
+  "arquivos_mudados_7d": 1084,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 360
+    "mudancas": 361
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 110
+    "mudancas": 111
    },
    {
     "pasta": "src/components/ui",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 22
+    "mudancas": 23
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -266,6 +266,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/App.tsx",
+    "mudancas": 6
+   },
+   {
     "arquivo": "src/components/layout/AppSidebar.tsx",
     "mudancas": 6
    },
@@ -286,10 +290,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": "PENDENCIAS.md",
-    "mudancas": 5
-   },
-   {
     "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
     "mudancas": 5
    },
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 271
+    "commits": 272
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 13
+    "commits": 12
    },
    {
     "autor": "dependabot[bot]",
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3543,
-  "arquivos_codigo": 2057,
-  "linhas_codigo": 406810,
+  "arquivos_total": 3548,
+  "arquivos_codigo": 2062,
+  "linhas_codigo": 407335,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
-  "componentes": 631,
-  "hooks": 116,
+  "componentes": 633,
+  "hooks": 117,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 861,
   "cron_jobs": 41,
-  "testes": 761,
+  "testes": 763,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 332
@@ -636,7 +636,7 @@
   },
   "src/App.tsx": {
    "arquivos": 1,
-   "linhas": 515
+   "linhas": 523
   },
   "src/assets": {
    "arquivos": 1,
@@ -647,8 +647,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 965,
-   "linhas": 174207
+   "arquivos": 968,
+   "linhas": 174455
   },
   "src/constants": {
    "arquivos": 7,
@@ -656,15 +656,15 @@
   },
   "src/contexts": {
    "arquivos": 7,
-   "linhas": 968
+   "linhas": 1015
   },
   "src/errors": {
    "arquivos": 4,
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 199,
-   "linhas": 23266
+   "arquivos": 201,
+   "linhas": 23488
   },
   "src/i18n": {
    "arquivos": 2,
