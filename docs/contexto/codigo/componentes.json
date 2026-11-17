@@ -2633,7 +2633,7 @@
     "QuickActionsGrid"
    ],
    "export_default": null,
-   "linhas": 66,
+   "linhas": 118,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [],

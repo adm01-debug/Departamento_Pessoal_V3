@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7e121525d99e338e14ca684c0bc06e634a15d9b9",
+  "sha": "29dd221dfd5b7032cdd115336898db8c6be60ae3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 16:49 UTC",
+  "generated_at": "2026-11-17 16:52 UTC",
   "files_total": 3504,
   "code_files": 2930,
-  "code_lines": 466015
+  "code_lines": 466084
  },
  "version": "1.3.2",
- "facts_hash": "eb4dc99720dc606c",
+ "facts_hash": "988a93024ff794f8",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -101534,7 +101534,7 @@
   {
    "module": "src/components",
    "files": 937,
-   "lines": 170448,
+   "lines": 170517,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -176561,6 +176561,14 @@
    {
     "file": "src/components/__tests__/QuickActionsGrid.test.tsx",
     "name": "renders 6 action buttons"
+   },
+   {
+    "file": "src/components/__tests__/QuickActionsGrid.test.tsx",
+    "name": "renders the %s action, recovered from the muri branch"
+   },
+   {
+    "file": "src/components/__tests__/QuickActionsGrid.test.tsx",
+    "name": "does NOT render %s (duplicate destination / nonexistent route)"
    },
    {
     "file": "src/components/__tests__/RejeitarDialog.test.tsx",
@@ -267412,7 +267420,7 @@
   },
   "src/components/__tests__/QuickActionsGrid.test.tsx": {
    "path": "src/components/__tests__/QuickActionsGrid.test.tsx",
-   "lines": 86,
+   "lines": 103,
    "is_test": true,
    "tests": [
     "QuickActionsGrid",
@@ -267423,7 +267431,9 @@
     "renders Férias / Ausências action",
     "renders Passivo Trabalhista action",
     "renders Relatórios DP action",
-    "renders 6 action buttons"
+    "renders 6 action buttons",
+    "renders the %s action, recovered from the muri branch",
+    "does NOT render %s (duplicate destination / nonexistent route)"
    ]
   },
   "src/components/__tests__/RejeitarDialog.test.tsx": {
@@ -274019,7 +274029,7 @@
   },
   "src/components/dashboard/QuickActionsGrid.tsx": {
    "path": "src/components/dashboard/QuickActionsGrid.tsx",
-   "lines": 66,
+   "lines": 118,
    "exports": [
     "function QuickActionsGrid"
    ],
@@ -323621,10 +323631,20 @@
   }
  },
  "git": {
-  "sha": "7e121525d99e338e14ca684c0bc06e634a15d9b9",
+  "sha": "29dd221dfd5b7032cdd115336898db8c6be60ae3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "29dd221",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(dashboard): resgata da muri os atalhos de Workflows e Assistente IA (#633)",
+    "files": [
+     "src/components/__tests__/QuickActionsGrid.test.tsx",
+     "src/components/dashboard/QuickActionsGrid.tsx"
+    ]
+   },
    {
     "sha": "7e12152",
     "date": "2026-11-17",
@@ -324411,16 +324431,6 @@
      "docs/ninebox-aprovacao-gestor-implantacao.md",
      "docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql",
      "docs/ninebox-homologacao-aprovacao-real.md"
-    ]
-   },
-   {
-    "sha": "5f74d3f",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "fix(docs): corrige as fixtures de conclusão e a alegação do Q8a do ninebox (#598)",
-    "files": [
-     "docs/ninebox-auditoria-banco.sql",
-     "docs/ninebox-testes-seguranca.sql"
     ]
    }
   ],

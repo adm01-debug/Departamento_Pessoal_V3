@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7e121525d99e338e14ca684c0bc06e634a15d9b9",
+  "commit": "29dd221dfd5b7032cdd115336898db8c6be60ae3",
   "branch": "main",
-  "data_commit": "2026-11-17T13:49:08-03:00",
+  "data_commit": "2026-11-17T13:49:14-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "29dd221",
+    "data": "2026-11-17",
+    "assunto": "feat(dashboard): resgata da muri os atalhos de Workflows e Assistente IA (#633)"
+   },
    {
     "sha": "7e12152",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "935356c",
     "data": "2026-11-16",
     "assunto": "feat(treinamentos): recupera a camada de aplicação das capas de treinamento (branch muri) (#593)"
-   },
-   {
-    "sha": "8001252",
-    "data": "2026-11-16",
-    "assunto": "feat(dossie): resgata a Timeline do colaborador da branch muri (#602)"
    }
   ],
-  "arquivos_mudados_7d": 1191,
+  "arquivos_mudados_7d": 1193,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 341
+    "mudancas": 342
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -184,12 +184,12 @@
     "mudancas": 31
    },
    {
-    "pasta": "src/components/folha",
+    "pasta": "src/components/dashboard",
     "mudancas": 31
    },
    {
-    "pasta": "src/components/dashboard",
-    "mudancas": 30
+    "pasta": "src/components/folha",
+    "mudancas": 31
    },
    {
     "pasta": "src/components/premiacoes",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 247
+    "commits": 248
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 32
+    "commits": 31
    },
    {
     "autor": "dependabot[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3483,
   "arquivos_codigo": 2017,
-  "linhas_codigo": 401373,
+  "linhas_codigo": 401442,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -636,7 +636,7 @@
   },
   "src/components": {
    "arquivos": 937,
-   "linhas": 170448
+   "linhas": 170517
   },
   "src/constants": {
    "arquivos": 6,

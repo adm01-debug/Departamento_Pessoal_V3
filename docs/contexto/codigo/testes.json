@@ -2896,11 +2896,11 @@
   {
    "arquivo": "src/components/__tests__/QuickActionsGrid.test.tsx",
    "tipo": "unit",
-   "linhas": 86,
+   "linhas": 103,
    "testa": [
     "src/components/dashboard/QuickActionsGrid.tsx"
    ],
-   "casos": 8
+   "casos": 10
   },
   {
    "arquivo": "src/components/__tests__/RejeitarDialog.test.tsx",

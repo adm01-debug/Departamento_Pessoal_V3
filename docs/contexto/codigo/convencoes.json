@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(dashboard): resgata da muri os atalhos de Workflows e Assistente IA (#633)",
    "fix(menu): da caminho de navegacao a Faltas e Obrigacoes Fiscais (#634)",
    "feat(ui): resgata da muri os primitivos do design system (#627)",
    "feat(layout): resgata da muri o shell de layout e a entrada de menu que faltava (#626)",
-   "feat(design): traz o sistema de design da branch muri para a main (#625)",
-   "fix(deploy): asset inexistente deve dar 404, não a index.html (#623)"
+   "feat(design): traz o sistema de design da branch muri para a main (#625)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
