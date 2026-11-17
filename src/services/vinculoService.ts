@@ -1,29 +1,27 @@
 import { BaseService } from './baseService';
 import { loggerService } from './loggerService';
+import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
 import { mockOr, getMockVinculosPorColaborador, getMockVinculosResumo } from '@/mocks/colaboradoresMock';
 
-export interface VinculoRow {
-  id: string;
-  colaborador_id: string;
-  tipo: string;
-  categoria: string | null;
-  data_inicio: string;
-  data_fim: string | null;
-  matricula: string | null;
-  status: string | null;
-  created_at: string;
-}
+export type VinculoRow = Tables<'vinculos'>;
 
 export interface VinculosResumo {
   quantidadePassagens: number;
   quantidadeRecontratacoes: number;
   primeiraAdmissao: string | null;
   admissaoAtual: string | null;
+  /**
+   * Maior `data_fim` entre as passagens já encerradas. O resumo só trazia datas
+   * de INÍCIO, então quem validava "a nova admissão é posterior?" contra
+   * `admissaoAtual` aceitava data anterior ao último desligamento — as duas
+   * passagens ficavam sobrepostas em `vinculos`.
+   */
+  ultimoEncerramento: string | null;
 }
 
 // `vinculos` não tem `empresa_id` própria — o isolamento de tenant é feito
-// pela RLS via join com `colaboradores` (ver policy `vinculos_tenant_all`).
-class VinculoService extends BaseService<VinculoRow, Record<string, unknown>, Record<string, unknown>, false> {
+// pela RLS via join com `colaboradores` (policy `tenant_vinculos`, authenticated/ALL).
+class VinculoService extends BaseService<VinculoRow, Insertable<'vinculos'>, Updatable<'vinculos'>, false> {
   constructor() {
     super('vinculos', { requireEmpresaId: false });
   }
@@ -65,6 +63,47 @@ class VinculoService extends BaseService<VinculoRow, Record<string, unknown>, Re
     } catch (e) {
       loggerService.error('Falha ao criar vínculo inicial', { colaboradorId, dataInicio, tipo }, e as Error);
     }
+  }
+
+  /**
+   * Registra uma passagem JÁ ENCERRADA. Usado ao recontratar cadastro legado
+   * (nenhuma linha em `vinculos`): sem ela o único vínculo passa a ser a
+   * readmissão e `useHistoricoColaborador` — que usa
+   * `colaboradores.data_admissao` como fallback da admissão inicial SÓ enquanto
+   * não existe vínculo nenhum (useHistoricoColaborador.ts:298-318) — rotula a
+   * readmissão como "Admissão inicial" e a passagem antiga desaparece da linha
+   * do tempo.
+   *
+   * NÃO é best-effort, ao contrário dos vizinhos: quem chama grava esta linha
+   * ANTES do update que zera `data_desligamento`, então engolir a falha aqui
+   * apagaria a data de fim da passagem antiga dos dois lugares, sem volta.
+   * Falhando, o erro sobe e a recontratação para com o cadastro intacto.
+   *
+   * Não repete linha idêntica já registrada (recontratações simultâneas do
+   * mesmo cadastro legado leem a lista vazia nas duas). A checagem estreita a
+   * janela mas não a fecha: a garantia real seria um índice único em
+   * `vinculos (colaborador_id, data_inicio, data_fim)` — DDL em produção.
+   */
+  async criarVinculoHistorico(colaboradorId: string, dataInicio: string, dataFim: string): Promise<void> {
+    if (!colaboradorId || !dataInicio || !dataFim) return;
+
+    const { data: existente, error: erroLeitura } = await this.getQuery()
+      .select('id')
+      .eq('colaborador_id', colaboradorId)
+      .eq('data_inicio', dataInicio)
+      .eq('data_fim', dataFim)
+      .limit(1);
+    if (erroLeitura) throw erroLeitura;
+    if (Array.isArray(existente) && existente.length > 0) return;
+
+    const { error } = await this.getQuery().insert({
+      colaborador_id: colaboradorId,
+      tipo: 'Admissão',
+      data_inicio: dataInicio,
+      data_fim: dataFim,
+      status: 'encerrado',
+    });
+    if (error) throw error;
   }
 
   /** Encerra o vínculo em aberto (`data_fim IS NULL`) do colaborador. Best-effort — ver `criarVinculoInicial`. */
@@ -117,11 +156,13 @@ class VinculoService extends BaseService<VinculoRow, Record<string, unknown>, Re
     for (const [colaboradorId, vinculos] of porColaborador) {
       const ordenados = [...vinculos].sort((a, b) => a.data_inicio.localeCompare(b.data_inicio));
       const aberto = ordenados.find((v) => !v.data_fim);
+      const encerramentos = ordenados.map((v) => v.data_fim).filter((d): d is string => !!d);
       result[colaboradorId] = {
         quantidadePassagens: ordenados.length,
         quantidadeRecontratacoes: Math.max(ordenados.length - 1, 0),
         primeiraAdmissao: ordenados[0]?.data_inicio ?? null,
         admissaoAtual: (aberto ?? ordenados[ordenados.length - 1])?.data_inicio ?? null,
+        ultimoEncerramento: encerramentos.length > 0 ? encerramentos.reduce((a, b) => (a > b ? a : b)) : null,
       };
     }
 

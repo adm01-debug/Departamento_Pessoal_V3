@@ -2,9 +2,10 @@ import type { ListOptions, ListResponse } from './baseService';
 import { BaseService } from './baseService';
 import type { Colaborador } from '@/types/entities';
 import { colaboradorSchema } from '@/schemas/colaborador';
-import { validateInput } from '@/schemas/validate';
+import { validateInput, validateTablePayload } from '@/schemas/validate';
 import { supabase } from '@/integrations/supabase/client';
 import { registrarAcessoPII } from './piiAccessLogService';
+import { vinculoService } from './vinculoService';
 
 // Teto da external-db-bridge (MAX_LIMIT em supabase/functions/external-db-bridge/index.ts).
 const MAX_LINHAS_OPCOES_FILTRO = 1000;
@@ -206,11 +207,14 @@ class ColaboradorService extends BaseService<Colaborador> {
 
   async criar(payload: Record<string, unknown>): Promise<Colaborador> {
     validateInput(colaboradorSchema, payload, 'colaboradorService.criar');
+    let criado: Colaborador;
     try {
-      return await super.criar(payload);
+      criado = await super.criar(payload);
     } catch (e) {
       throw this.mapDuplicidadeError(e);
     }
+
+    return criado;
   }
 
   async atualizar(id: string, payload: Record<string, unknown>, empresaId: string): Promise<Colaborador> {
@@ -220,6 +224,92 @@ class ColaboradorService extends BaseService<Colaborador> {
     } catch (e) {
       throw this.mapDuplicidadeError(e);
     }
+  }
+
+  /**
+   * Recontratação: reaproveita o MESMO colaborador.id (CPF é UNIQUE por empresa
+   * -- `colaboradores_empresa_cpf_key` -- então não há como criar um segundo
+   * registro para a mesma pessoa). Atualiza o colaborador com os dados
+   * profissionais aprovados no fluxo e registra uma NOVA linha em `vinculos`
+   * (nunca sobrescreve/apaga vínculos anteriores).
+   */
+  async recontratar(
+    id: string,
+    dados: { data_admissao: string; cargo?: string; cargo_id?: string; departamento?: string; salario_base?: number },
+    empresaId: string
+  ): Promise<Colaborador> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    if (!dados.data_admissao) throw new Error('Nova data de admissão é obrigatória para recontratação');
+
+    // Estado ANTES do update: `atualizar` zera `data_desligamento`, então a
+    // data do último desligamento só pode ser lida aqui.
+    const anterior = (await this.buscarPorId(id, empresaId)) as
+      (Colaborador & { data_desligamento?: string | null }) | null;
+    const vinculos = await vinculoService.listarPorColaborador(id);
+
+    // Só cadastro DESLIGADO pode ser recontratado. O diálogo já esconde a ação
+    // para quem está ativo, mas dois usuários de RH com o dossiê aberto podem
+    // confirmar a mesma recontratação: o segundo ainda vê o cache "desligado" e
+    // sobrescreveria a admissão, abrindo um segundo vínculo. O update abaixo
+    // repete a condição no WHERE para fechar também a janela entre esta leitura
+    // e a gravação.
+    if (anterior && anterior.status !== 'desligado') {
+      throw new Error('Este colaborador não está desligado — recontratação disponível apenas para cadastro desligado.');
+    }
+
+    // Guarda de sobreposição NO SERVICE: validar só no formulário não protege o
+    // dado gravado. O marco não é a última admissão (o que deixava passar data
+    // anterior ao desligamento) e sim a MAIOR data já registrada — início ou fim
+    // de qualquer passagem, inclusive a de cadastro legado, que vive em
+    // `colaboradores` e não em `vinculos`.
+    const marcos = [
+      ...vinculos.flatMap((v) => [v.data_inicio, v.data_fim]),
+      anterior?.data_admissao,
+      anterior?.data_desligamento,
+    ].filter((d): d is string => typeof d === 'string' && d.length > 0);
+    const ultimoMarco = marcos.length > 0 ? marcos.reduce((a, b) => (a > b ? a : b)) : null;
+    if (ultimoMarco && dados.data_admissao <= ultimoMarco) {
+      throw new Error(
+        `A nova admissão (${dados.data_admissao}) precisa ser posterior a ${ultimoMarco}, fim da passagem anterior — senão as duas passagens se sobrepõem.`
+      );
+    }
+
+    // Cadastro legado (nenhuma linha em `vinculos`): registra a passagem antiga
+    // como vínculo encerrado ANTES da readmissão, senão ela desaparece da linha
+    // do tempo — ver `vinculoService.criarVinculoHistorico`, que por isto NÃO é
+    // best-effort. Grava ANTES do update, que zera `data_desligamento`: se o
+    // insert falhar, o erro sobe e a recontratação para com o cadastro intacto,
+    // em vez de apagar a data de fim dos dois lugares. Sem `data_desligamento` não há data
+    // de fim que não seja inventada: a passagem fica só em
+    // `colaboradores.data_admissao` (histórico incompleto, mas sem vínculo
+    // aberto falso).
+    if (vinculos.length === 0 && anterior?.data_admissao && anterior.data_desligamento) {
+      await vinculoService.criarVinculoHistorico(id, anterior.data_admissao, anterior.data_desligamento);
+    }
+
+    // Update com `status = 'desligado'` no WHERE: se outra recontratação venceu
+    // a corrida, nenhuma linha casa e nada é gravado (em vez de sobrescrever a
+    // admissão alheia). Substitui a trava por `version` do `BaseService`, que
+    // relê a versão no próprio update e por isso não barra escrita concorrente.
+    const payload = { ...dados, status: 'ativo', data_desligamento: null } as Record<string, unknown>;
+    validateInput(colaboradorSchema, payload, 'colaboradorService.recontratar');
+    const { data: atualizado, error } = await this.getQuery()
+      .update(validateTablePayload('colaboradores', payload, 'colaboradorService.recontratar'))
+      .eq('id', id)
+      .eq('empresa_id', empresaId)
+      .eq('status', 'desligado')
+      .select()
+      .maybeSingle();
+    if (error) throw error;
+    if (!atualizado) {
+      throw new Error(
+        'Recontratação não aplicada: o cadastro deixou de estar desligado (outra recontratação aconteceu em paralelo). Recarregue a página.'
+      );
+    }
+
+    await vinculoService.criarVinculoInicial(id, dados.data_admissao, 'Readmissão');
+
+    return atualizado as Colaborador;
   }
 
   // Alias for backward compatibility

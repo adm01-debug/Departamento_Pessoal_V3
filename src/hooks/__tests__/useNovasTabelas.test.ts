@@ -26,6 +26,8 @@ const {
   mockSalvarGrade,
   mockBuscarBancoHoras,
   mockSalvarBancoHoras,
+  mockGetSaldoBancoHoras,
+  mockBuscarRegistrosSemana,
   mockToastSuccess,
   mockToastError,
 } = vi.hoisted(() => ({
@@ -53,6 +55,8 @@ const {
   mockSalvarGrade: vi.fn(),
   mockBuscarBancoHoras: vi.fn(),
   mockSalvarBancoHoras: vi.fn(),
+  mockGetSaldoBancoHoras: vi.fn(),
+  mockBuscarRegistrosSemana: vi.fn(),
   mockToastSuccess: vi.fn(),
   mockToastError: vi.fn(),
 }));
@@ -113,6 +117,14 @@ vi.mock('@/services/bancoHorasConfigService', () => ({
   },
 }));
 
+vi.mock('@/services/bancoHorasService', () => ({
+  bancoHorasService: { getSaldo: mockGetSaldoBancoHoras },
+}));
+
+vi.mock('@/services/pontoService', () => ({
+  pontoService: { buscarRegistrosSemana: mockBuscarRegistrosSemana },
+}));
+
 vi.mock('@/hooks/useEmpresas', () => ({
   useEmpresas: () => ({ empresaAtual: { id: 'emp-1' } }),
 }));
@@ -150,6 +162,8 @@ import {
   useSalvarGradeHorarios,
   useBancoHorasConfig,
   useSalvarBancoHorasConfig,
+  useSaldoBancoHoras,
+  useRegistrosPontoSemana,
 } from '../useNovasTabelas';
 
 import { wrapper, createWrapper } from '@/test/queryWrapper';
@@ -730,5 +744,42 @@ describe('useSalvarBancoHorasConfig', () => {
       await expect(result.current.mutateAsync({ limite_horas: 40 })).rejects.toThrow();
     });
     expect(mockToastError).toHaveBeenCalled();
+  });
+});
+
+describe('useSaldoBancoHoras', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetSaldoBancoHoras.mockResolvedValue(4.5);
+  });
+
+  it('calls bancoHorasService.getSaldo with colaboradorId and empresaId', async () => {
+    const { result } = renderHook(() => useSaldoBancoHoras('col-1'), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockGetSaldoBancoHoras).toHaveBeenCalledWith('col-1', 'emp-1');
+    expect(result.current.data).toBe(4.5);
+  });
+
+  it('is disabled when no colaboradorId', () => {
+    renderHook(() => useSaldoBancoHoras(''), { wrapper });
+    expect(mockGetSaldoBancoHoras).not.toHaveBeenCalled();
+  });
+});
+
+describe('useRegistrosPontoSemana', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockBuscarRegistrosSemana.mockResolvedValue([]);
+  });
+
+  it('calls pontoService.buscarRegistrosSemana with colaboradorId', async () => {
+    const { result } = renderHook(() => useRegistrosPontoSemana('col-1'), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockBuscarRegistrosSemana).toHaveBeenCalledWith('col-1');
+  });
+
+  it('is disabled when no colaboradorId', () => {
+    renderHook(() => useRegistrosPontoSemana(''), { wrapper });
+    expect(mockBuscarRegistrosSemana).not.toHaveBeenCalled();
   });
 });

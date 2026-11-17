@@ -58,6 +58,15 @@ export function useCriarContatoEmergencia() {
   });
 }
 
+export function useAtualizarContatoEmergencia(colaboradorId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, dados }: { id: string; dados: Updatable<'contatos_emergencia'> }) =>
+      service.atualizarContatoEmergencia(id, dados, colaboradorId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['contatos-emergencia', colaboradorId] }),
+  });
+}
+
 export function useExcluirContatoEmergencia(colaboradorId: string) {
   const qc = useQueryClient();
   return useMutation({
@@ -116,6 +125,15 @@ export function useCriarFormacao() {
   return useMutation({
     mutationFn: service.criarFormacao,
     onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['formacoes', vars.colaborador_id] }),
+  });
+}
+
+export function useAtualizarFormacao(colaboradorId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, dados }: { id: string; dados: Updatable<'formacoes_academicas'> }) =>
+      service.atualizarFormacao(colaboradorId, id, dados),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['formacoes', colaboradorId] }),
   });
 }
 
@@ -229,6 +247,15 @@ export function useFeriasResumoColaborador(colaboradorId: string, empresaId?: st
   });
 }
 
+// Holerites — dossiê do colaborador
+export function useHoleritesColaborador(colaboradorId: string) {
+  return useQuery({
+    queryKey: ['holerites-colaborador', colaboradorId],
+    queryFn: () => service.listarHoleritesColaborador(colaboradorId),
+    enabled: !!colaboradorId,
+  });
+}
+
 export function usePeriodosAquisitivos(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
@@ -301,8 +328,32 @@ export function useCriarFeriasColetivas() {
 // Campos Customizados
 export function useCamposCustomizados(empresaId?: string) {
   return useQuery({
-    queryKey: ['campos-customizados', empresaId],
+    // `ativos` no meio da chave de proposito: `listarCamposCustomizados` filtra
+    // `ativo = true`, enquanto src/components/settings/CamposCustomizadosTab.tsx
+    // consulta a MESMA tabela sem esse filtro. Com a chave identica e staleTime de
+    // 5 min, quem montasse primeiro servia o conjunto errado para a outra tela (o
+    // dossie deixaria preencher campo desativado; as configuracoes parariam de
+    // mostrar os desativados para reativar). O prefixo segue sendo
+    // `campos-customizados`, entao o invalidateQueries daquela tela cobre as duas.
+    queryKey: ['campos-customizados', 'ativos', empresaId],
     queryFn: () => service.listarCamposCustomizados(empresaId!),
     enabled: !!empresaId,
+  });
+}
+
+export function useValoresCamposCustomizados(colaboradorId?: string) {
+  return useQuery({
+    queryKey: ['valores-campos-customizados', colaboradorId],
+    queryFn: () => service.obterValoresCamposCustomizados(colaboradorId!),
+    enabled: !!colaboradorId,
+  });
+}
+
+export function useSalvarValorCampoCustomizado(colaboradorId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ campoId, valor }: { campoId: string; valor: string }) =>
+      service.salvarValorCampoCustomizado(campoId, colaboradorId, valor),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['valores-campos-customizados', colaboradorId] }),
   });
 }

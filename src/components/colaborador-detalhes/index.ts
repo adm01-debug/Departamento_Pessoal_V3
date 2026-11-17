@@ -21,3 +21,6 @@ export { JornadaPontoTab } from './JornadaPontoTab';
 export { FeriasResumoTab } from './FeriasResumoTab';
 export { DesenvolvimentoResumoTab } from './DesenvolvimentoResumoTab';
 export { DocumentosComplianceResumoTab } from './DocumentosComplianceResumoTab';
+export { HoleritesTab } from './HoleritesTab';
+export { CamposCustomizadosTab } from './CamposCustomizadosTab';
+export { SSTResumoTab } from './SSTResumoTab';

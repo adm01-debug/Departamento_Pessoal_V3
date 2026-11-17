@@ -5,6 +5,7 @@ import { render, screen } from '@testing-library/react';
 vi.mock('@/hooks/useColaboradorDetalhes', () => ({
   useContatosEmergencia: vi.fn(),
   useCriarContatoEmergencia: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
+  useAtualizarContatoEmergencia: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
   useExcluirContatoEmergencia: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
 }));
 

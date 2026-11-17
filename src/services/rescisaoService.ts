@@ -2,6 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { calcularRescisao } from '@/utils/rescisaoCalc';
 import { auditLogger } from '@/utils/auditLogger';
 import { loggerService } from './loggerService';
+import { vinculoService } from './vinculoService';
 import type { Tables } from '@/integrations/supabase/database.types';
 import { validateTablePayload } from '@/schemas/validate';
 
@@ -332,6 +333,12 @@ export const rescisaoService = {
       const data = (resp as { desligamento?: unknown } | null)?.desligamento;
       if (!data) throw new Error('Pagamento não confirmado pelo servidor');
       const pago = (Array.isArray(data) ? data[0] : data) as Tables<'desligamentos'>;
+
+      // Fecha o vínculo em aberto (data_fim IS NULL) — fonte de verdade para
+      // contagem de passagens/recontratação (ver vinculoService). Best-effort e
+      // fora da transação da RPC: uma falha aqui não desfaz o pagamento já
+      // confirmado, só fica registrada no log.
+      await vinculoService.fecharVinculoAberto(d.colaborador_id, d.data_desligamento);
 
       await auditLogger.log({
         tabela: 'desligamentos',

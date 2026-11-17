@@ -55,7 +55,11 @@ export function JornadaPontoTab({ colaboradorId }: { colaboradorId: string }) {
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 
-  const { data: jornadaColaborador, isLoading: isLoadingJornada } = useQuery({
+  const {
+    data: jornadaColaborador,
+    isLoading: isLoadingJornada,
+    isError: erroJornada,
+  } = useQuery({
     queryKey: ['jornada-colaborador', colaboradorId, empresaAtual?.id],
     queryFn: () => jornadaService.obterJornadaColaborador(colaboradorId, empresaAtual!.id),
     enabled: !!colaboradorId && !!empresaAtual?.id,
@@ -115,7 +119,10 @@ export function JornadaPontoTab({ colaboradorId }: { colaboradorId: string }) {
       icon: Clock,
       tone: 'info' as const,
       loading: isLoadingJornada,
-      onEdit: jornadaColaborador ? () => setEditarJornadaAberto(true) : undefined,
+      // A ação não depende de haver jornada contratual: `obterJornadaColaborador`
+      // devolve null quando a empresa não tem jornada ativa, e sem esta ação o
+      // colaborador ficava sem como criar nem corrigir a escala do dia.
+      onEdit: empresaAtual?.id ? () => setEditarJornadaAberto(true) : undefined,
     },
     {
       label: 'Banco de Horas',
@@ -181,7 +188,9 @@ export function JornadaPontoTab({ colaboradorId }: { colaboradorId: string }) {
         open={editarJornadaAberto}
         onOpenChange={setEditarJornadaAberto}
         jornada={jornadaColaborador ?? null}
+        jornadaIndisponivel={erroJornada}
         empresaId={empresaAtual?.id || ''}
+        colaboradorId={colaboradorId}
       />
 
       {isLoadingSemana ? <Spinner /> : <PontoTodayCard registroHoje={registroHoje} />}
