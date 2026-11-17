@@ -128,8 +128,8 @@ select c.id, c.nome_completo, c.empresa_id, c.user_id, c.supervisor_id, c.cpf
 --   • `user_roles` da conta (admin + gestor) — intocado; o admin continua.
 --   • Nenhum colaborador é criado; nenhuma avaliação é criada.
 --   • Nenhuma outra conta/perfil é vinculada.
---   • A conta de RH (`rh.ninebox.teste@promobrindes.com.br`, user_id
---     60767f3f-bb08-4917-9d74-17ce19ef8adb) não precisa de vínculo: a validação
+--   • A conta de RH (`<e-mail da conta de homologacao>`, user_id
+--     <user_id da conta de homologacao>) não precisa de vínculo: a validação
 --     do Potencial exige SOMENTE o papel `rh`.
 
 -- commit;

@@ -8,15 +8,15 @@
 
 ## 1. Estado real verificado agora (somente leitura)
 
-| Item                                                               | Resultado                                                             | Leitura                                                                |
-| ------------------------------------------------------------------ | --------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Papéis de **Abner** `<user_id da conta de homologacao>`            | `['admin','gestor']`                                                  | ✅ o banco já reconhece os dois papéis                                 |
-| Papéis de **RH** `rh.ninebox.teste@promobrindes.com.br`            | `role = 'rh'` no `user_id` **`60767f3f-bb08-4917-9d74-17ce19ef8adb`** | ✅ usuário existe e tem o papel exigido por `pode_validar_potencial()` |
-| `colaboradores.user_id = <user_id da conta de homologacao>`        | **0 linhas**                                                          | ❌ **sem vínculo** → `pode_aprovar_colaborador` seria `false`          |
-| Descartável de homologação (`cpf 00000000000`)                     | `0f303507-5b13-4ca2-aa76-16122b5b37e9`, `user_id` **nulo**            | pronto para o PASSO 1 do vínculo                                       |
-| `feedbacks_360` gestor + `concluido`                               | **0 linhas**                                                          | não há avaliação real atribuível ainda                                 |
-| `feedbacks_360_consolidacoes` / `feedbacks_360_aprovacoes_gestor`  | **PGRST205** (não existem)                                            | migration pendente                                                     |
-| `pode_aprovar_colaborador(uuid)` / `situacao_aprovacao(uuid,uuid)` | **PGRST202** (não existem)                                            | migration pendente                                                     |
+| Item                                                               | Resultado                                                          | Leitura                                                                |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| Papéis de **Abner** `<user_id da conta de homologacao>`            | `['admin','gestor']`                                               | ✅ o banco já reconhece os dois papéis                                 |
+| Papéis de **RH** `<e-mail da conta de homologacao>`                | `role = 'rh'` no `user_id` **`<user_id da conta de homologacao>`** | ✅ usuário existe e tem o papel exigido por `pode_validar_potencial()` |
+| `colaboradores.user_id = <user_id da conta de homologacao>`        | **0 linhas**                                                       | ❌ **sem vínculo** → `pode_aprovar_colaborador` seria `false`          |
+| Descartável de homologação (`cpf 00000000000`)                     | `0f303507-5b13-4ca2-aa76-16122b5b37e9`, `user_id` **nulo**         | pronto para o PASSO 1 do vínculo                                       |
+| `feedbacks_360` gestor + `concluido`                               | **0 linhas**                                                       | não há avaliação real atribuível ainda                                 |
+| `feedbacks_360_consolidacoes` / `feedbacks_360_aprovacoes_gestor`  | **PGRST205** (não existem)                                         | migration pendente                                                     |
+| `pode_aprovar_colaborador(uuid)` / `situacao_aprovacao(uuid,uuid)` | **PGRST202** (não existem)                                         | migration pendente                                                     |
 
 **Conclusão:** o bloqueio é 100% de implantação — **migration + vínculo** — e não
 de código: a interface, as RPCs e a leitura do fluxo já estão implementadas.
@@ -164,7 +164,7 @@ funções e ausência de DML fora de função. **Resultado atual: OK.**
 
 | #   | Passo                                                                               | Exige                                   |
 | --- | ----------------------------------------------------------------------------------- | --------------------------------------- |
-| R1  | RH autentica (`rh.ninebox.teste@promobrindes.com.br`)                               | login do RH                             |
+| R1  | RH autentica (`<e-mail da conta de homologacao>`)                                   | login do RH                             |
 | R2  | Gestor autentica (Abner)                                                            | login de Abner                          |
 | R3  | Gestor **incorreto** não acessa aprovação                                           | 2ª sessão sem vínculo (servidor recusa) |
 | R4  | RH cria a avaliação do gestor (Novo Feedback, tipo Gestor → **Concluir avaliação**) | migration + vínculo + colaborador real  |
