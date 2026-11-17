@@ -418,7 +418,7 @@ export default function PassivoTrabalhistaPage() {
                           {d.tipo}
                         </Badge>
                       </td>
-                      <td className="px-4 py-2 text-right font-mono text-warning">{formatCurrency(d.diff)}</td>
+                      <td className="px-4 py-2 text-right text-numeric text-warning">{formatCurrency(d.diff)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -584,13 +584,13 @@ export default function PassivoTrabalhistaPage() {
                           />
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-right font-mono text-xs">
+                      <td className="px-4 py-3 text-right text-numeric text-xs">
                         {formatCurrency(emp.valorFerias + emp.terco)}
                       </td>
-                      <td className="px-4 py-3 text-right font-mono text-xs text-warning">
+                      <td className="px-4 py-3 text-right text-numeric text-xs text-warning">
                         {formatCurrency(emp.fgtsFerias + emp.fgts13)}
                       </td>
-                      <td className="px-4 py-3 text-right font-mono text-xs text-destructive">
+                      <td className="px-4 py-3 text-right text-numeric text-xs text-destructive">
                         {formatCurrency(emp.multa)}
                       </td>
                       <td className="px-4 py-3 text-right font-bold">{formatCurrency(emp.totalProvisionado)}</td>
