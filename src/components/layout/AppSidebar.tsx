@@ -37,6 +37,7 @@ import {
   Receipt,
   GitBranch,
   CalendarClock,
+  CalendarX,
   Fingerprint,
   ShieldCheck,
   Scale,
@@ -147,6 +148,10 @@ export const menuGroups: MenuGroup[] = [
       { icon: CalendarClock, label: 'Turnos & Escalas', path: '/turnos', color: 'text-primary' },
       { icon: Umbrella, label: 'Férias', path: '/ferias', color: 'text-warning' },
       { icon: Heart, label: 'Afastamentos', path: '/afastamentos', color: 'text-destructive' },
+      // `/faltas` (FaltasPage, 485 linhas) estava registrada em App.tsx:219 e
+      // nao tinha entrada de menu nenhuma — tela pronta e inalcancavel. Nem a
+      // branch `muri` tinha: a lacuna e da propria main.
+      { icon: CalendarX, label: 'Faltas', path: '/faltas', color: 'text-destructive' },
       { icon: Calendar, label: 'Feriados', path: '/feriados', color: 'text-warning' },
       { icon: Fingerprint, label: 'Controle Acesso', path: '/controle-acesso', color: 'text-primary', adminOnly: true },
     ],
@@ -168,6 +173,9 @@ export const menuGroups: MenuGroup[] = [
       { icon: BookOpen, label: 'Rubricas', path: '/rubricas', color: 'text-info' },
       { icon: TrendingUp, label: 'Provisões', path: '/provisoes', color: 'text-warning' },
       { icon: ShieldCheck, label: 'Compliance Folha', path: '/folha/compliance', color: 'text-success' },
+      // `/obrigacoes-fiscais` (ObrigacoesFiscaisPage, 506 linhas) idem:
+      // registrada em App.tsx:266, sem caminho de navegacao.
+      { icon: FileCheck, label: 'Obrigações Fiscais', path: '/obrigacoes-fiscais', color: 'text-info' },
       { icon: Landmark, label: 'Convênios', path: '/convenios', color: 'text-info' },
       { icon: Gift, label: 'Vales', path: '/vales', color: 'text-warning' },
       { icon: Heart, label: 'Planos de Saúde', path: '/planos-saude', color: 'text-destructive' },
