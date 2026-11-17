@@ -207,11 +207,21 @@ class ColaboradorService extends BaseService<Colaborador> {
 
   async criar(payload: Record<string, unknown>): Promise<Colaborador> {
     validateInput(colaboradorSchema, payload, 'colaboradorService.criar');
+    let criado: Colaborador;
     try {
-      return await super.criar(payload);
+      criado = await super.criar(payload);
     } catch (e) {
       throw this.mapDuplicidadeError(e);
     }
+
+    // A 1ª admissão também é uma passagem: sem esta linha em `vinculos` ela
+    // existe apenas em `colaboradores.data_admissao`, e esse fallback é
+    // abandonado por `useHistoricoColaborador` no instante em que aparece o
+    // primeiro vínculo (a readmissão) — a passagem antiga sumia do histórico.
+    const dataAdmissao = typeof payload.data_admissao === 'string' ? payload.data_admissao : '';
+    if (dataAdmissao) await vinculoService.criarVinculoInicial(criado.id, dataAdmissao, 'Admissão');
+
+    return criado;
   }
 
   async atualizar(id: string, payload: Record<string, unknown>, empresaId: string): Promise<Colaborador> {
@@ -238,11 +248,45 @@ class ColaboradorService extends BaseService<Colaborador> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     if (!dados.data_admissao) throw new Error('Nova data de admissão é obrigatória para recontratação');
 
+    // Estado ANTES do update: `atualizar` zera `data_desligamento`, então a
+    // data do último desligamento só pode ser lida aqui.
+    const anterior = (await this.buscarPorId(id, empresaId)) as
+      | (Colaborador & { data_desligamento?: string | null })
+      | null;
+    const vinculos = await vinculoService.listarPorColaborador(id);
+
+    // Guarda de sobreposição NO SERVICE: validar só no formulário não protege o
+    // dado gravado. O marco não é a última admissão (o que deixava passar data
+    // anterior ao desligamento) e sim a MAIOR data já registrada — início ou fim
+    // de qualquer passagem, inclusive a de cadastro legado, que vive em
+    // `colaboradores` e não em `vinculos`.
+    const marcos = [
+      ...vinculos.flatMap((v) => [v.data_inicio, v.data_fim]),
+      anterior?.data_admissao,
+      anterior?.data_desligamento,
+    ].filter((d): d is string => typeof d === 'string' && d.length > 0);
+    const ultimoMarco = marcos.length > 0 ? marcos.reduce((a, b) => (a > b ? a : b)) : null;
+    if (ultimoMarco && dados.data_admissao <= ultimoMarco) {
+      throw new Error(
+        `A nova admissão (${dados.data_admissao}) precisa ser posterior a ${ultimoMarco}, fim da passagem anterior — senão as duas passagens se sobrepõem.`
+      );
+    }
+
     const atualizado = await this.atualizar(
       id,
       { ...dados, status: 'ativo', data_desligamento: null } as Record<string, unknown>,
       empresaId
     );
+
+    // Cadastro legado (nenhuma linha em `vinculos`): registra a passagem antiga
+    // como vínculo encerrado ANTES da readmissão, senão ela desaparece da linha
+    // do tempo — ver `vinculoService.criarVinculoHistorico`. Sem
+    // `data_desligamento` não há data de fim que não seja inventada: a passagem
+    // fica só em `colaboradores.data_admissao` (histórico incompleto, mas sem
+    // vínculo aberto falso).
+    if (vinculos.length === 0 && anterior?.data_admissao && anterior.data_desligamento) {
+      await vinculoService.criarVinculoHistorico(id, anterior.data_admissao, anterior.data_desligamento);
+    }
 
     await vinculoService.criarVinculoInicial(id, dados.data_admissao, 'Readmissão');
 

@@ -56,7 +56,24 @@ describe('vinculoService.contarPassagensPorColaboradores', () => {
       quantidadeRecontratacoes: 0,
       primeiraAdmissao: '2020-01-10',
       admissaoAtual: '2020-01-10',
+      ultimoEncerramento: null,
     });
+  });
+
+  it('expõe ultimoEncerramento = maior data_fim (a validação de sobreposição depende dele)', async () => {
+    const inFn = vi.fn().mockResolvedValue({
+      data: [
+        { colaborador_id: 'c1', data_inicio: '2018-03-01', data_fim: '2020-06-30' },
+        // Passagem que começou depois mas terminou ANTES: o marco é 2026-06-30.
+        { colaborador_id: 'c1', data_inicio: '2022-01-02', data_fim: '2026-06-30' },
+      ],
+      error: null,
+    });
+    mockFrom.mockReturnValue({ select: vi.fn().mockReturnValue({ in: inFn }) });
+
+    const result = await vinculoService.contarPassagensPorColaboradores(['c1']);
+    expect(result.c1.admissaoAtual).toBe('2022-01-02');
+    expect(result.c1.ultimoEncerramento).toBe('2026-06-30');
   });
 
   it('2 vínculos => quantidadePassagens 2, quantidadeRecontratacoes 1, admissaoAtual = vínculo aberto', async () => {
@@ -133,6 +150,41 @@ describe('vinculoService.criarVinculoInicial', () => {
     mockFrom.mockReturnValue({ insert: insertFn });
 
     await expect(vinculoService.criarVinculoInicial('c1', '2026-09-18')).resolves.toBeUndefined();
+    expect(mockLoggerError).toHaveBeenCalled();
+  });
+});
+
+describe('vinculoService.criarVinculoHistorico', () => {
+  it('insere a passagem antiga já encerrada (data_fim preenchida, status encerrado)', async () => {
+    const insertFn = vi.fn().mockResolvedValue({ data: null, error: null });
+    mockFrom.mockReturnValue({ insert: insertFn });
+
+    await vinculoService.criarVinculoHistorico('c1', '2022-01-01', '2026-06-30');
+
+    expect(insertFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        colaborador_id: 'c1',
+        tipo: 'Admissão',
+        data_inicio: '2022-01-01',
+        data_fim: '2026-06-30',
+        status: 'encerrado',
+      })
+    );
+  });
+
+  it('não insere vínculo sem data de fim (evitaria um 2º vínculo "aberto")', async () => {
+    const insertFn = vi.fn();
+    mockFrom.mockReturnValue({ insert: insertFn });
+
+    await vinculoService.criarVinculoHistorico('c1', '2022-01-01', '');
+    expect(insertFn).not.toHaveBeenCalled();
+  });
+
+  it('é best-effort: não lança erro quando o insert falha, só registra o log', async () => {
+    const insertFn = vi.fn().mockResolvedValue({ data: null, error: new Error('insert falhou') });
+    mockFrom.mockReturnValue({ insert: insertFn });
+
+    await expect(vinculoService.criarVinculoHistorico('c1', '2022-01-01', '2026-06-30')).resolves.toBeUndefined();
     expect(mockLoggerError).toHaveBeenCalled();
   });
 });

@@ -61,6 +61,7 @@ const RESUMO: VinculosResumo = {
   quantidadeRecontratacoes: 1,
   primeiraAdmissao: '2019-03-01',
   admissaoAtual: '2022-07-15',
+  ultimoEncerramento: '2021-12-31',
 };
 
 beforeEach(() => {
@@ -148,6 +149,23 @@ describe('RecontratarColaboradorDialog', () => {
     // Admitido e desligado no mesmo dia: a data padrão (hoje) não pode valer.
     mocks.resumo = {
       data: { [COLABORADOR.id]: { ...RESUMO, admissaoAtual: todayLocalISO() } },
+      isLoading: false,
+      isError: false,
+    };
+    renderDialog();
+
+    expect(screen.getByText(/A nova admissão precisa ser posterior a/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Confirmar recontratação' })).toBeDisabled();
+    expect(mocks.mutateAsync).not.toHaveBeenCalled();
+  });
+
+  it('bloqueia nova admissão anterior ao DESLIGAMENTO da última passagem', () => {
+    // Admitido muito antes, desligado hoje: comparar só com `admissaoAtual`
+    // deixava a data de hoje passar e gravava duas passagens sobrepostas.
+    mocks.resumo = {
+      data: {
+        [COLABORADOR.id]: { ...RESUMO, admissaoAtual: '2019-03-01', ultimoEncerramento: todayLocalISO() },
+      },
       isLoading: false,
       isError: false,
     };

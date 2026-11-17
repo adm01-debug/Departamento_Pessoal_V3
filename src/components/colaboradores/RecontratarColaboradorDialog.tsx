@@ -91,10 +91,15 @@ export function RecontratarColaboradorDialog({ colaborador, open, onOpenChange }
   // Sem resumo carregado não se sabe a data da última passagem: confirmar aqui
   // criaria vínculo sobreposto justo quando o histórico não pôde ser lido.
   const resumoIndisponivel = resumoPendente || resumoQuery.isError;
-  // A nova admissão não pode começar antes da última: as duas passagens se
-  // sobreporiam em `vinculos`.
-  const admissaoAnterior = resumo?.admissaoAtual ?? null;
-  const dataInvalida = !!dataAdmissao && !!admissaoAnterior && dataAdmissao <= admissaoAnterior;
+  // A nova admissão não pode começar antes do FIM da última passagem: comparar
+  // só com a admissão anterior aceitava data anterior ao desligamento (admitido
+  // em 2022, desligado em 2026, readmitido em 2025) e as duas passagens ficavam
+  // sobrepostas em `vinculos`. `colaboradorService.recontratar` repete a mesma
+  // regra — o formulário sozinho não protege o dado gravado.
+  const marcoAnterior = [resumo?.admissaoAtual, resumo?.ultimoEncerramento]
+    .filter((d): d is string => !!d)
+    .reduce<string | null>((maior, d) => (maior && maior > d ? maior : d), null);
+  const dataInvalida = !!dataAdmissao && !!marcoAnterior && dataAdmissao <= marcoAnterior;
   const podeConfirmar = !!dataAdmissao && !dataInvalida && !resumoIndisponivel && !recontratar.isPending;
 
   const handleConfirmar = async () => {
@@ -191,14 +196,14 @@ export function RecontratarColaboradorDialog({ colaborador, open, onOpenChange }
                   id="recontratar-data-admissao"
                   value={dataAdmissao}
                   onChange={setDataAdmissao}
-                  min={admissaoAnterior ?? undefined}
+                  min={marcoAnterior ?? undefined}
                   disabled={recontratar.isPending}
                   placeholder="Selecionar data"
                 />
                 {!dataAdmissao && <p className="text-sm text-destructive">Informe a nova data de admissão.</p>}
                 {dataInvalida && (
                   <p className="text-sm text-destructive">
-                    A nova admissão precisa ser posterior a {formatarDataLocal(admissaoAnterior)}.
+                    A nova admissão precisa ser posterior a {formatarDataLocal(marcoAnterior)}.
                   </p>
                 )}
               </div>

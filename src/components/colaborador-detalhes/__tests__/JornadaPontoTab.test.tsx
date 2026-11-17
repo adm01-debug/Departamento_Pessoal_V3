@@ -66,7 +66,9 @@ function renderizar() {
 
 describe('JornadaPontoTab — ação de escala', () => {
   beforeEach(() => {
-    vi.mocked(useEmpresas).mockReset().mockReturnValue({ empresaAtual: { id: 'e1' } } as never);
+    vi.mocked(useEmpresas)
+      .mockReset()
+      .mockReturnValue({ empresaAtual: { id: 'e1' } } as never);
     vi.mocked(colaboradorService.buscarPorId)
       .mockReset()
       .mockResolvedValue({ id: 'col-1', jornada_semanal: 44 } as never);
@@ -74,9 +76,15 @@ describe('JornadaPontoTab — ação de escala', () => {
     vi.mocked(useRegistrosPontoSemana)
       .mockReset()
       .mockReturnValue({ data: [], isLoading: false, isError: false } as never);
-    vi.mocked(useSaldoBancoHoras).mockReset().mockReturnValue({ data: 0, isLoading: false, isError: false } as never);
-    vi.mocked(useFaltasColaborador).mockReset().mockReturnValue({ data: [], isLoading: false, isError: false } as never);
-    vi.mocked(usePontoMelhorado).mockReset().mockReturnValue({ solicitacoes: [], isLoading: false } as never);
+    vi.mocked(useSaldoBancoHoras)
+      .mockReset()
+      .mockReturnValue({ data: 0, isLoading: false, isError: false } as never);
+    vi.mocked(useFaltasColaborador)
+      .mockReset()
+      .mockReturnValue({ data: [], isLoading: false, isError: false } as never);
+    vi.mocked(usePontoMelhorado)
+      .mockReset()
+      .mockReturnValue({ solicitacoes: [], isLoading: false } as never);
   });
 
   it('sem jornada contratual a ação de escala continua alcançável', async () => {

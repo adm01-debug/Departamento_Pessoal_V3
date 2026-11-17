@@ -10,6 +10,13 @@ export interface VinculosResumo {
   quantidadeRecontratacoes: number;
   primeiraAdmissao: string | null;
   admissaoAtual: string | null;
+  /**
+   * Maior `data_fim` entre as passagens já encerradas. O resumo só trazia datas
+   * de INÍCIO, então quem validava "a nova admissão é posterior?" contra
+   * `admissaoAtual` aceitava data anterior ao último desligamento — as duas
+   * passagens ficavam sobrepostas em `vinculos`.
+   */
+  ultimoEncerramento: string | null;
 }
 
 // `vinculos` não tem `empresa_id` própria — o isolamento de tenant é feito
@@ -55,6 +62,31 @@ class VinculoService extends BaseService<VinculoRow, Insertable<'vinculos'>, Upd
       if (error) throw error;
     } catch (e) {
       loggerService.error('Falha ao criar vínculo inicial', { colaboradorId, dataInicio, tipo }, e as Error);
+    }
+  }
+
+  /**
+   * Registra uma passagem JÁ ENCERRADA. Usado ao recontratar cadastro legado
+   * (nenhuma linha em `vinculos`): sem ela o único vínculo passa a ser a
+   * readmissão e `useHistoricoColaborador` — que usa
+   * `colaboradores.data_admissao` como fallback da admissão inicial SÓ enquanto
+   * não existe vínculo nenhum (useHistoricoColaborador.ts:298-318) — rotula a
+   * readmissão como "Admissão inicial" e a passagem antiga desaparece da linha
+   * do tempo. Best-effort — ver `criarVinculoInicial`.
+   */
+  async criarVinculoHistorico(colaboradorId: string, dataInicio: string, dataFim: string): Promise<void> {
+    try {
+      if (!colaboradorId || !dataInicio || !dataFim) return;
+      const { error } = await this.getQuery().insert({
+        colaborador_id: colaboradorId,
+        tipo: 'Admissão',
+        data_inicio: dataInicio,
+        data_fim: dataFim,
+        status: 'encerrado',
+      });
+      if (error) throw error;
+    } catch (e) {
+      loggerService.error('Falha ao registrar passagem anterior', { colaboradorId, dataInicio, dataFim }, e as Error);
     }
   }
 
@@ -108,11 +140,13 @@ class VinculoService extends BaseService<VinculoRow, Insertable<'vinculos'>, Upd
     for (const [colaboradorId, vinculos] of porColaborador) {
       const ordenados = [...vinculos].sort((a, b) => a.data_inicio.localeCompare(b.data_inicio));
       const aberto = ordenados.find((v) => !v.data_fim);
+      const encerramentos = ordenados.map((v) => v.data_fim).filter((d): d is string => !!d);
       result[colaboradorId] = {
         quantidadePassagens: ordenados.length,
         quantidadeRecontratacoes: Math.max(ordenados.length - 1, 0),
         primeiraAdmissao: ordenados[0]?.data_inicio ?? null,
         admissaoAtual: (aberto ?? ordenados[ordenados.length - 1])?.data_inicio ?? null,
+        ultimoEncerramento: encerramentos.length > 0 ? encerramentos.reduce((a, b) => (a > b ? a : b)) : null,
       };
     }
 
