@@ -314,10 +314,6 @@ export default function OnboardingPage() {
   const [kitsAbertos, setKitsAbertos] = useState(false);
   // Formulário de perfil de kit: `null` = fechado; `{kit: null}` = criar.
   const [kitEmEdicao, setKitEmEdicao] = useState<{ kit: KitOnboarding | null } | null>(null);
-  // IMAGEM DO KIT — overlay de SESSÃO (id do kit → URL da imagem). Não é
-  // persistido: `onboarding_kits` ainda não tem coluna de imagem, então a imagem
-  // vive apenas enquanto a página estiver montada (nada é gravado no banco).
-  const [imagensKit, setImagensKit] = useState<Record<string, string>>({});
 
   // ── FILTROS combináveis (busca/selects/painel) ────────────────────────────
   const [termo, setTermo] = useState('');
@@ -335,29 +331,34 @@ export default function OnboardingPage() {
   const [pagina, setPagina] = useState(1);
 
   const qc = useQueryClient();
+  /** Empresa do escopo: toda leitura da jornada/kits é isolada por ela. */
+  const empresaId = empresaAtual?.id ?? '';
   // `isError`/`refetch` são os estados do React Query: a jornada NUNCA desenha
   // lista, contador ou vazio quando a leitura falhou (ver `EstadoErroJornada`).
-  const { data: onboarding = [], isLoading, isError: jornadaComErro, refetch: recarregarJornada } = useJornadas();
-  const { data: kits = [], isError: kitsComErro } = useKits();
+  const {
+    data: onboarding = [],
+    isLoading,
+    isError: jornadaComErro,
+    refetch: recarregarJornada,
+  } = useJornadas(empresaId);
+  /**
+   * GESTÃO DE KITS — a leitura vem do `useKits()` (domínio canônico →
+   * `onboarding_kits`), com `incluirInativos` LIGADO: este é o gerenciador, e
+   * sem os inativos o filtro "Somente inativos" ficaria vazio e um kit
+   * desativado desapareceria sem caminho de volta. O `GestaoKits` distingue as
+   * QUATRO situações (carregando / erro / nenhum perfil / grade), então nem um
+   * erro nem uma leitura em andamento aparece como "nenhum kit".
+   */
+  const {
+    data: kits = [],
+    isLoading: kitsCarregando,
+    isError: kitsComErro,
+    refetch: recarregarKits,
+  } = useKits(empresaId, true);
   const concluirTarefa = useConcluirTarefa(() => setTarefaConcluindo(null));
   const criarKit = useCriarKit();
   const atualizarKit = useAtualizarKit();
 
-  /**
-   * KITS EXIBIDOS NA GRADE — os perfis do banco + o overlay de imagem da SESSÃO
-   * (ver `imagensKit`). Nenhum dado fictício: o que vem do banco permanece como
-   * está; só a imagem (que ainda não tem coluna) é acrescentada em memória.
-   */
-  const kitsComImagem = useMemo(
-    () => kits.map((kit) => ({ ...kit, imagem_url: imagensKit[kit.id] ?? kit.imagem_url ?? null })),
-    [kits, imagensKit]
-  );
-
-  /**
-   * GESTÃO DE KITS — a leitura (ativa/erro) vem do `useKits()` (domínio
-   * canônico → `onboarding_kits`). A tela distingue TRÊS situações, e um erro
-   * NUNCA é apresentado como "nenhum kit": ver `EstadoErroKits` na grade.
-   */
   const concluir = (tarefaId: string) => {
     setTarefaConcluindo(tarefaId);
     concluirTarefa.mutate(tarefaId, {
@@ -408,8 +409,16 @@ export default function OnboardingPage() {
   /** FONTE ÚNICA de leitura: uma projeção por lista (ver doc do topo). */
   const linhas = useMemo(() => projetarOnboarding(listaLimpa, hoje), [listaLimpa, hoje]);
   const resumo = useMemo(() => resumoGeralOnboarding(linhas), [linhas]);
-  const emAndamento = useMemo(() => linhas.filter((l) => !l.concluido), [linhas]);
-  const concluidos = useMemo(() => linhas.filter((l) => l.concluido), [linhas]);
+  /**
+   * CONCLUÍDO PARA AS ABAS = 100% E NÃO CANCELADA — a MESMA régua que
+   * `resumoGeralOnboarding` usa nos rótulos ("Concluídos (n)"). Sem o recorte da
+   * cancelada, uma admissão cancelada com todas as tarefas feitas virava card na
+   * aba "Concluídos" enquanto o rótulo dizia "(0)" e ela era somada em "Em
+   * andamento". Ela continua listada (histórico preservado), na aba que o
+   * contador afirma: "Em andamento".
+   */
+  const emAndamento = useMemo(() => linhas.filter((l) => !l.concluido || l.cancelada), [linhas]);
+  const concluidos = useMemo(() => linhas.filter((l) => l.concluido && !l.cancelada), [linhas]);
 
   /** Filtros combináveis — tudo MENOS o chip rápido (o chip é a última camada). */
   const passaFiltros = (linha: LinhaOnboarding): boolean => {
@@ -503,47 +512,20 @@ export default function OnboardingPage() {
   };
 
   /**
-   * REGISTRA A IMAGEM DO KIT NA SESSÃO — `onboarding_kits` ainda NÃO tem coluna
-   * de imagem, então NADA é gravado: guardamos a URL (imagem de sessão) em
-   * memória apenas para a grade exibir o kit com imagem. Ao recarregar a página
-   * a imagem some — o que é a verdade, não uma persistência fingida.
-   */
-  const registrarImagemSessao = (id: string, imagemUrl: string | null) => {
-    setImagensKit((atual) => {
-      const copia = { ...atual };
-      if (imagemUrl) copia[id] = imagemUrl;
-      else delete copia[id];
-      return copia;
-    });
-  };
-
-  /**
    * SALVAR PERFIL DE KIT (criar/editar) — o diálogo devolve o payload e a
    * gravação vai para o serviço canônico (via mutation do hook).
-   *
-   * A IMAGEM não é gravada (não existe coluna): ela é mantida só na SESSÃO, com
-   * aviso explícito — nada de persistência fingida.
    */
   const salvarKit = (entrada: KitOnboardingInput) => {
-    if (!empresaAtual?.id) {
+    if (!empresaId) {
       toast.error('Selecione uma empresa antes de salvar o perfil de kit.');
       return;
     }
-    /** Aviso honesto do que ACABOU de acontecer com a imagem de sessão. */
-    const avisarExtras = () => {
-      if (entrada.imagem_url !== undefined) {
-        toast.info('Imagem exibida nesta sessão: a gravação permanente depende de autorização para a coluna no banco.');
-      }
-    };
     if (kitEmEdicao?.kit) {
-      const id = kitEmEdicao.kit.id;
       atualizarKit.mutate(
-        { id, entrada },
+        { id: kitEmEdicao.kit.id, entrada },
         {
           onSuccess: () => {
-            registrarImagemSessao(id, entrada.imagem_url ?? null);
             toast.success('Perfil de kit atualizado.');
-            avisarExtras();
             setKitEmEdicao(null);
           },
           onError: () => toast.error('Não foi possível atualizar o perfil de kit.'),
@@ -552,12 +534,10 @@ export default function OnboardingPage() {
       return;
     }
     criarKit.mutate(
-      { empresaId: empresaAtual.id, entrada },
+      { empresaId, entrada },
       {
-        onSuccess: (novoKit) => {
-          registrarImagemSessao(novoKit.id, entrada.imagem_url ?? null);
+        onSuccess: () => {
           toast.success('Perfil de kit criado.');
-          avisarExtras();
           setKitEmEdicao(null);
         },
         onError: () => toast.error('Não foi possível criar o perfil de kit.'),
@@ -705,13 +685,15 @@ export default function OnboardingPage() {
               </div>
 
               {/* GESTÃO DE KITS — grade redesenhada em `GestaoKits`: busca, filtro
-                  de status, ordenação e resumo com contagens reais. Os três
-                  estados (grade / nenhum perfil / erro de leitura) vivem dentro
-                  do componente. */}
+                  de status, ordenação e resumo com contagens reais. Os quatro
+                  estados (carregando / erro de leitura / nenhum perfil / grade)
+                  vivem dentro do componente. */}
               <GestaoKits
                 key="kits-grade"
-                kits={kitsComImagem}
+                kits={kits}
+                isLoading={kitsCarregando}
                 isError={kitsComErro}
+                onTentarNovamente={() => void recarregarKits()}
                 departamentos={opcoesDepartamento}
                 revealOffset={REVELA_KITS.conteudo}
                 onEditar={(kit) => setKitEmEdicao({ kit })}

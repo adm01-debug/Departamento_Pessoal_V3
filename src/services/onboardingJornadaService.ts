@@ -139,10 +139,15 @@ function comResponsaveis(lista: ColaboradorOnboarding[], mapa: Map<string, strin
 }
 
 /**
- * LISTAR JORNADAS — a leitura canônica: todas as admissões com suas tarefas de
- * onboarding, já ordenadas e com o responsável resolvido.
+ * LISTAR JORNADAS — a leitura canônica: todas as admissões DA EMPRESA com suas
+ * tarefas de onboarding, já ordenadas e com o responsável resolvido.
+ *
+ * ⚠️ `empresaId` é obrigatório: a policy de `admissoes` permite ler todas as
+ * empresas às quais o usuário tem vínculo (ver `buscarJornadaDoColaborador`),
+ * então sem o recorte a lista, as abas e os contadores da tela misturariam
+ * empresas enquanto o cabeçalho mostra uma só.
  */
-export async function listarJornadas(): Promise<ColaboradorOnboarding[]> {
+export async function listarJornadas(empresaId: string): Promise<ColaboradorOnboarding[]> {
   const { data, error } = await supabase
     .from('admissoes')
     .select(
@@ -151,6 +156,7 @@ export async function listarJornadas(): Promise<ColaboradorOnboarding[]> {
       tarefas:tarefas_onboarding(*)
     `
     )
+    .eq('empresa_id', empresaId)
     .order('created_at', { ascending: false });
   if (error) throw error;
 
@@ -177,14 +183,18 @@ export async function concluirTarefa(tarefaId: string): Promise<void> {
 }
 
 /**
- * LISTAR KITS — perfis de kit da tabela real. `incluirInativos` é o modo do
+ * LISTAR KITS — perfis de kit DA EMPRESA. `incluirInativos` é o modo do
  * gerenciador (permite reativar); a grade pública usa só os ativos.
+ *
+ * ⚠️ `empresaId` é obrigatório: `criarKit` exige e grava `empresa_id`, então a
+ * leitura tem que usar o MESMO recorte — senão a grade e os contadores de kits
+ * trariam perfis de outra empresa.
  *
  * ⚠️ Diferente de "lista vazia": um erro de query/permissão LANÇA (a tela mostra
  * estado de ERRO explícito — nunca "nenhum kit cadastrado").
  */
-export async function listarKits(incluirInativos = false): Promise<KitOnboarding[]> {
-  let query = supabase.from('onboarding_kits').select(COLUNAS_KIT).order('nome');
+export async function listarKits(empresaId: string, incluirInativos = false): Promise<KitOnboarding[]> {
+  let query = supabase.from('onboarding_kits').select(COLUNAS_KIT).eq('empresa_id', empresaId).order('nome');
   if (!incluirInativos) query = query.eq('ativo', true);
   const { data, error } = await query;
   if (error) throw error;

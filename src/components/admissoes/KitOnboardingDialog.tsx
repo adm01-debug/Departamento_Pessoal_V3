@@ -50,10 +50,12 @@ const SHELL_CASCATA = cascadeShellVariants(BLOCOS_CASCATA);
 const OVERLAY_CASCATA = cascadeOverlayVariants(BLOCOS_CASCATA);
 
 /** Itens: uma linha por item (linhas em branco são descartadas). */
+// eslint-disable-next-line react-refresh/only-export-components -- helper puro, testado a parte (mesmo padrao de TreinamentoBadges)
 export function itensParaTexto(itens: string[]): string {
   return itens.join('\n');
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- helper puro, testado a parte (mesmo padrao de TreinamentoBadges)
 export function textoParaItens(texto: string): string[] {
   return texto
     .split('\n')
@@ -78,6 +80,7 @@ export function KitOnboardingDialog({ open, onOpenChange, kit, salvando, onSalva
   // Cada abertura recarrega o formulário do zero (criar) ou do kit (editar).
   useEffect(() => {
     if (!open) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reabrir recarrega o formulario, como no mount anterior (mesmo padrao de NovaTurmaDialog)
     setNome(kit?.nome ?? '');
     setItens(itensParaTexto(kit?.itens ?? []));
     setAtivo(kit?.ativo ?? true);

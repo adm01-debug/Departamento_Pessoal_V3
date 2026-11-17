@@ -3,8 +3,9 @@
  *
  * A página da Jornada NÃO fala mais com o Supabase direto: consome estas
  * consultas/mutations, que delegam ao `onboardingJornadaService`. As CHAVES de
- * cache são as MESMAS de antes (`['onboarding-list']`, `['onboarding-kits']`),
- * então nenhuma invalidação existente quebrou.
+ * cache mantêm o MESMO prefixo de antes (`['onboarding-list']`,
+ * `['onboarding-kits']`) e ganham o `empresaId` no fim, para não reaproveitar a
+ * lista de outra empresa; as invalidações por prefixo seguem valendo.
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -22,13 +23,15 @@ export const CHAVE_JORNADAS = ['onboarding-list'] as const;
 export const CHAVE_KITS = ['onboarding-kits'] as const;
 
 /**
- * LISTAR JORNADAS — todas as admissões com suas tarefas, ordenadas e com o
- * responsável já resolvido (`profiles`).
+ * LISTAR JORNADAS — admissões DA EMPRESA com suas tarefas, ordenadas e com o
+ * responsável já resolvido (`profiles`). `empresaId` entra na chave de cache
+ * para que a troca de empresa não reaproveite a lista da anterior.
  */
-export function useJornadas() {
+export function useJornadas(empresaId: string) {
   return useQuery({
-    queryKey: CHAVE_JORNADAS,
-    queryFn: (): Promise<ColaboradorOnboarding[]> => listarJornadas(),
+    queryKey: [...CHAVE_JORNADAS, empresaId],
+    queryFn: (): Promise<ColaboradorOnboarding[]> => listarJornadas(empresaId),
+    enabled: !!empresaId,
   });
 }
 
@@ -42,11 +45,12 @@ export function useConcluirTarefa(onSettled?: () => void) {
   });
 }
 
-/** LISTAR KITS — `incluirInativos` alimenta o gerenciador (permite reativar). */
-export function useKits(incluirInativos = false) {
+/** LISTAR KITS — da empresa; `incluirInativos` alimenta o gerenciador (permite reativar). */
+export function useKits(empresaId: string, incluirInativos = false) {
   return useQuery({
-    queryKey: [...CHAVE_KITS, incluirInativos],
-    queryFn: (): Promise<KitOnboarding[]> => listarKits(incluirInativos),
+    queryKey: [...CHAVE_KITS, empresaId, incluirInativos],
+    queryFn: (): Promise<KitOnboarding[]> => listarKits(empresaId, incluirInativos),
+    enabled: !!empresaId,
   });
 }
 

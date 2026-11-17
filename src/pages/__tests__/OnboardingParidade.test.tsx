@@ -219,8 +219,6 @@ describe('PARIDADE — risco, atraso e situação', () => {
   });
 });
 
-
-
 describe('PARIDADE — próxima ação (mudança INTENCIONAL documentada)', () => {
   it('a ordem do array NÃO decide mais: vale o prazo mais próximo', () => {
     const tarefas: TarefaOnboarding[] = [
@@ -301,7 +299,6 @@ describe('PARIDADE — ordenações da tela (FASE 15)', () => {
     });
   });
 });
-
 
 describe('CASOS-LIMITE (PENDÊNCIA 4)', () => {
   it('VÁRIAS tarefas atrasadas: o atraso reportado é o da pendência MAIS antiga', () => {
@@ -437,7 +434,7 @@ describe('CASOS-LIMITE — cancelamento, registro incompleto e reabertura', () =
     const original = projetarOnboarding(FIXTURE, HOJE);
     const comEtapaTerminal = projetarOnboarding(
       FIXTURE.map((c) => ({ ...c, etapa: 'concluida' })),
-      HOJE,
+      HOJE
     );
     expect(comEtapaTerminal.map((l) => l.situacao)).toEqual(original.map((l) => l.situacao));
     expect(comEtapaTerminal.map((l) => l.progresso.valor)).toEqual(original.map((l) => l.progresso.valor));
@@ -483,4 +480,3 @@ describe('HISTÓRICO — eventos legíveis da jornada (PENDÊNCIA 3)', () => {
     expect(eventosLegiveisDaJornada(registro, [])).toHaveLength(1); // só o início
   });
 });
-

@@ -18,8 +18,14 @@
  */
 import type { TomPrazo } from './onboardingDerivacoes';
 
-/** Marcos da jornada de integração (a régua horizontal do card). */
-export const MARCOS_ONBOARDING = ['Pré-onboarding', '1º dia', '1ª semana', '30 dias'] as const;
+/**
+ * Pontos da régua horizontal do card. Os rótulos falam de PROGRESSO, não de
+ * calendário, porque é isso que o dado sustenta: `estadosDosMarcos` acende os
+ * pontos a partir do PERCENTUAL de tarefas concluídas, sem olhar data nenhuma.
+ * Rótulos temporais ('1º dia', '30 dias') afirmavam um ponto do calendário que
+ * a régua não calcula — um admitido hoje com 3 de 4 tarefas caía em '30 dias'.
+ */
+export const MARCOS_ONBOARDING = ['Início', 'Parcial', 'Avançado', 'Completo'] as const;
 
 /**
  * Paleta determinística do avatar de iniciais. Só tints translúcidos + tinta

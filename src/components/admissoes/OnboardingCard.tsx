@@ -7,10 +7,12 @@
  *
  * HIERARQUIA (a leitura de cima para baixo):
  *   1. cabeçalho  — avatar de iniciais + nome + `cargo • departamento`, com o
- *                   percentual no canto direito;
+ *                   percentual e a data de início (`data_prevista`) no canto
+ *                   direito;
  *   2. barra      — progresso horizontal fino (cor muda com o estado);
- *   3. marcos     — régua de 4 pontos (Pré-onboarding → 30 dias);
- *   4. próxima ação (ou "Concluído" quando a jornada terminou) — TÍTULO em
+ *   3. marcos     — régua de 4 pontos de progresso (Início → Completo);
+ *   4. próxima ação (ou "Concluído" quando a jornada terminou, ou "Sem próxima
+ *                   ação" quando a admissão não tem tarefa) — TÍTULO em
  *                   largura total com quebra de linha livre, a `descricao` da
  *                   tarefa como legenda e o prazo + responsável numa faixa de
  *                   metadados própria. NENHUM texto daqui é truncado: o bloco
@@ -37,6 +39,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { parseDateLocalISO } from '@/utils/dateLocal';
 import { iniciais, inicioDoDia } from './admissoesDerivacoes';
 import { MARCOS_ONBOARDING, TOM_PRAZO, TOM_PRAZO_VEU, corAvatar } from './onboardingComum';
 import {
@@ -224,6 +227,12 @@ export function OnboardingCard({ colaborador, acoes }: OnboardingCardProps) {
   const prazo = proxima ? formatarPrazo(prazoDaTarefa(proxima), hoje) : null;
   const responsavelTarefa = proxima?.responsavel_nome || colaborador.metadata?.responsavel || 'Não atribuído';
 
+  // DATA DE INÍCIO do colaborador (`data_prevista`, o "quando essa pessoa
+  // começa/começou"). Parseada com `parseDateLocalISO`: `new Date('2026-11-17')`
+  // cru é meia-noite UTC e, em UTC-3, renderizaria o dia anterior.
+  const inicioPrevisto = parseDateLocalISO(colaborador.data_prevista);
+  const inicioEm = inicioPrevisto ? inicioPrevisto.toLocaleDateString('pt-BR') : '—';
+
   const concluido = progresso.total > 0 && progresso.valor >= 100;
   const emRisco = resumo.atrasadas > 0;
   const corBarra = concluido ? 'bg-success' : emRisco ? 'bg-[hsl(var(--destructive-vivid))]' : 'bg-primary';
@@ -272,6 +281,15 @@ export function OnboardingCard({ colaborador, acoes }: OnboardingCardProps) {
               style={{ width: `${progresso.valor}%` }}
             />
           </span>
+          {/* Data de início — o badge "Início em: ..." que as duas telas
+              anteriores tinham no topo do card. Fica no canto direito, abaixo
+              da micro barra, sem disputar largura com o nome. */}
+          <span
+            data-testid="onboarding-inicio-em"
+            className="inline-flex items-center gap-1 whitespace-nowrap rounded-md bg-muted/40 px-1.5 py-0.5 text-[10px] font-medium leading-tight tabular-nums text-muted-foreground"
+          >
+            <CalendarClock className="h-3 w-3 shrink-0" /> Início em: {inicioEm}
+          </span>
         </div>
       </div>
 
@@ -283,7 +301,7 @@ export function OnboardingCard({ colaborador, acoes }: OnboardingCardProps) {
       {/* 3. PRÓXIMA AÇÃO (ou estado concluído) */}
       <div className="mt-2.5">
         <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-          {concluido ? 'Status' : 'Próxima ação'}
+          {concluido || !proxima ? 'Status' : 'Próxima ação'}
         </p>
 
         {concluido ? (
@@ -319,7 +337,11 @@ export function OnboardingCard({ colaborador, acoes }: OnboardingCardProps) {
               data-testid="onboarding-proxima-titulo"
               className="min-w-0 break-words whitespace-normal text-[12.5px] font-medium leading-snug text-foreground"
             >
-              {proxima?.titulo || 'Definir a próxima tarefa'}
+              {/* Sem tarefa não existe ação a propor: o front não cria tarefa de
+                  onboarding (elas nascem de trigger no banco). Então o texto é
+                  o FATO, o mesmo estado da régua de situação
+                  (`sem_proxima_acao`), e não um convite a uma ação inexistente. */}
+              {proxima?.titulo || 'Sem próxima ação'}
             </p>
 
             {/* LEGENDA (texto auxiliar) — `descricao` da tarefa, a MESMA fonte

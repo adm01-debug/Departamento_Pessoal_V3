@@ -7,38 +7,32 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
-vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children, open }: any) => (open ? <div>{children}</div> : null),
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogDescription: ({ children }: any) => <p>{children}</p>,
-  DialogFooter: ({ children }: any) => <div>{children}</div>,
-}));
+// Dubles SÓ do que o componente realmente importa: ele usa `DialogPrimitive`
+// do Radix direto (sem `@/components/ui/dialog`) e não usa `cn` — mocar esses
+// dois aparentava uma troca que nunca acontecia.
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled, ...rest }: any) => (
+  Button: ({ children, onClick, disabled, ...rest }: React.ComponentProps<'button'>) => (
     <button onClick={onClick} disabled={disabled} {...rest}>
       {children}
     </button>
   ),
 }));
 vi.mock('@/components/ui/input', () => ({
-  Input: (props: any) => <input {...props} />,
+  Input: (props: React.ComponentProps<'input'>) => <input {...props} />,
 }));
 vi.mock('@/components/ui/textarea', () => ({
-  Textarea: (props: any) => <textarea {...props} />,
+  Textarea: (props: React.ComponentProps<'textarea'>) => <textarea {...props} />,
 }));
 vi.mock('@/components/ui/switch', () => ({
-  Switch: ({ checked, onCheckedChange }: any) => (
-    <button role="switch" aria-checked={checked} onClick={() => onCheckedChange(!checked)}>
+  Switch: ({ checked, onCheckedChange }: { checked?: boolean; onCheckedChange?: (valor: boolean) => void }) => (
+    <button role="switch" aria-checked={checked} onClick={() => onCheckedChange?.(!checked)}>
       switch
     </button>
   ),
 }));
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children, htmlFor }: any) => <label htmlFor={htmlFor}>{children}</label>,
+  Label: ({ children, htmlFor }: React.ComponentProps<'label'>) => <label htmlFor={htmlFor}>{children}</label>,
 }));
-vi.mock('@/lib/utils', () => ({ cn: (...a: any[]) => a.filter(Boolean).join(' ') }));
 
 import { KitOnboardingDialog, itensParaTexto, textoParaItens } from '@/components/admissoes/KitOnboardingDialog';
 
@@ -82,7 +76,7 @@ describe('KitOnboardingDialog — formulário', () => {
         onOpenChange={vi.fn()}
         kit={{ id: 'k1', nome: 'Kit Dev', itens: ['MacBook', 'Headset'], ativo: true }}
         onSalvar={onSalvar}
-      />,
+      />
     );
 
     expect(screen.getByText('Editar Kit Dev')).toBeInTheDocument();

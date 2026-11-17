@@ -8,8 +8,12 @@
  * o que a consolidação trouxe: resumo do topo, filtros, chips rápidos, as duas
  * abas e "Gestão de Kits" como ação do cabeçalho.
  */
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
+
+/** `data-*` não entra nos tipos de atributo do React — o duble declara o que lê. */
+type PropsCard = { children?: ReactNode; className?: string; 'data-testid'?: string };
 
 // Mock completo (mesma convenção de `OnboardingDashboard.test.tsx`): o
 // componente reaproveita `cardVariants` de `MetricCard`
@@ -19,9 +23,16 @@ import { render, screen, fireEvent, within } from '@testing-library/react';
 vi.mock('framer-motion', () => {
   // Só o essencial chega ao DOM nos wrappers de animação; as props de Motion
   // (`custom`/`variants`/`initial`/`animate`) NÃO são repassadas.
+  type PropsAnimacao = {
+    children?: ReactNode;
+    onClick?: () => void;
+    'aria-label'?: string;
+    'data-testid'?: string;
+  };
+  type PropsLivres = Record<string, unknown> & { children?: ReactNode };
   const wrapper =
-    (tag: any) =>
-    ({ children, onClick, ...rest }: any) =>
+    (tag: string) =>
+    ({ children, onClick, ...rest }: PropsAnimacao) =>
       tag === 'button' ? (
         <button onClick={onClick} aria-label={rest['aria-label']} data-testid={rest['data-testid']}>
           {children}
@@ -29,9 +40,12 @@ vi.mock('framer-motion', () => {
       ) : (
         <div>{children}</div>
       );
+  const criarComponente =
+    (Componente: React.ComponentType<PropsLivres>) =>
+    ({ children, ...rest }: PropsLivres) => <Componente {...rest}>{children}</Componente>;
   return {
     motion: {
-      create: (Component: any) => ({ children, ...rest }: any) => <Component {...rest}>{children}</Component>,
+      create: criarComponente,
       div: wrapper('div'),
       span: wrapper('span'),
       button: wrapper('button'),
@@ -40,7 +54,7 @@ vi.mock('framer-motion', () => {
       polygon: () => <polygon />,
       polyline: () => <polyline />,
     },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
+    AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
     useInView: () => true,
     useReducedMotion: () => false,
   };
@@ -79,7 +93,7 @@ vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn(), info: vi.f
 // layout). Mantém os filhos para o teste enxergar só o domínio da jornada.
 vi.mock('@/components/PageTitle', () => ({ PageTitle: () => null }));
 vi.mock('@/components/layout', () => ({
-  PageLayout: ({ children, actions }: any) => (
+  PageLayout: ({ children, actions }: { children?: ReactNode; actions?: ReactNode }) => (
     <div>
       <div data-testid="page-actions">{actions}</div>
       {children}
@@ -88,19 +102,19 @@ vi.mock('@/components/layout', () => ({
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children, className, ...rest }: any) => (
+  Card: ({ children, className, ...rest }: PropsCard) => (
     <div className={className} data-testid={rest['data-testid']}>
       {children}
     </div>
   ),
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h3>{children}</h3>,
-  CardDescription: ({ children }: any) => <p>{children}</p>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
+  CardDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled, ...rest }: any) => (
+  Button: ({ children, onClick, disabled, ...rest }: React.ComponentProps<'button'>) => (
     <button onClick={onClick} disabled={disabled} {...rest}>
       {children}
     </button>
@@ -108,16 +122,16 @@ vi.mock('@/components/ui/button', () => ({
 }));
 
 vi.mock('@/components/ui/input', () => ({
-  Input: (props: any) => <input {...props} />,
+  Input: (props: React.ComponentProps<'input'>) => <input {...props} />,
 }));
 
 // Dropdown fechado por padrão: só o TRIGGER aparece (o `Content` do Radix só
 // existe aberto). Assim "Ver onboarding" do menu não duplica o botão do card.
 vi.mock('@/components/ui/dropdown-menu', () => ({
-  DropdownMenu: ({ children }: any) => <>{children}</>,
-  DropdownMenuTrigger: ({ children }: any) => <>{children}</>,
+  DropdownMenu: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  DropdownMenuTrigger: ({ children }: { children?: ReactNode }) => <>{children}</>,
   DropdownMenuContent: () => null,
-  DropdownMenuItem: ({ children }: any) => <div>{children}</div>,
+  DropdownMenuItem: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   DropdownMenuSeparator: () => null,
 }));
 
@@ -125,11 +139,11 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
 // conteúdo sem interação. As listas de opção não entram no DOM e portanto não
 // colidem com os textos dos cards/chips.
 vi.mock('@/components/ui/select', () => ({
-  Select: ({ children }: any) => <div>{children}</div>,
-  SelectTrigger: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
-  SelectValue: ({ placeholder }: any) => <span>{placeholder}</span>,
+  Select: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  SelectTrigger: ({ children, ...rest }: React.ComponentProps<'div'>) => <div {...rest}>{children}</div>,
+  SelectValue: ({ placeholder }: { placeholder?: string }) => <span>{placeholder}</span>,
   SelectContent: () => null,
-  SelectItem: ({ children }: any) => <div>{children}</div>,
+  SelectItem: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 // Tabs com o mínimo do contrato do Radix: só a aba ATIVA renderiza o conteúdo e
@@ -137,12 +151,13 @@ vi.mock('@/components/ui/select', () => ({
 vi.mock('@/components/ui/tabs', async () => {
   const React = await import('react');
   const Ctx = React.createContext('');
+  type PropsTab = { children?: ReactNode; value?: string };
   return {
-    Tabs: ({ children, value, onValueChange }: any) => (
-      <Ctx.Provider value={value}>
+    Tabs: ({ children, value, onValueChange }: PropsTab & { onValueChange?: (valor: string) => void }) => (
+      <Ctx.Provider value={value ?? ''}>
         <div
-          onClick={(e: any) => {
-            const alvo = e.target?.dataset?.tabValue;
+          onClick={(evento) => {
+            const alvo = (evento.target as HTMLElement).dataset?.tabValue;
             if (alvo) onValueChange?.(alvo);
           }}
         >
@@ -150,13 +165,13 @@ vi.mock('@/components/ui/tabs', async () => {
         </div>
       </Ctx.Provider>
     ),
-    TabsList: ({ children }: any) => <div role="tablist">{children}</div>,
-    TabsTrigger: ({ children, value }: any) => (
+    TabsList: ({ children }: PropsTab) => <div role="tablist">{children}</div>,
+    TabsTrigger: ({ children, value }: PropsTab) => (
       <button role="tab" data-tab-value={value}>
         {children}
       </button>
     ),
-    TabsContent: ({ children, value }: any) => {
+    TabsContent: ({ children, value }: PropsTab) => {
       const ativo = React.useContext(Ctx);
       return ativo === value ? <div>{children}</div> : null;
     },
@@ -165,27 +180,28 @@ vi.mock('@/components/ui/tabs', async () => {
 
 // O detalhe tem tela própria; aqui só provamos a FIACAO (abre com o colaborador
 // clicado). A lista completa de tarefas é responsabilidade do detalhe.
+type PropsDetalhe = { colaborador?: { nome?: string | null } | null; open?: boolean };
 vi.mock('@/components/admissoes/OnboardingDetalheDialog', () => ({
-  OnboardingDetalheDialog: ({ colaborador, open }: any) =>
+  OnboardingDetalheDialog: ({ colaborador, open }: PropsDetalhe) =>
     open && colaborador ? <div>Detalhe de {colaborador.nome}</div> : null,
-}));
-
-// Popup de kit: pela mesma razão, só a fiacao interessa aqui.
-vi.mock('@/components/ui/animated-cascade-dialog', () => ({
-  AnimatedCascadeDialog: ({ open, title }: any) => (open ? <div>Kit aberto: {title}</div> : null),
 }));
 
 // O formulário de kit tem teste próprio (`KitOnboardingDialog.test.tsx`); aqui
 // provamos só a FIACAO: abrir com o kit certo e receber o payload salvo.
+type PropsKitDialog = {
+  open?: boolean;
+  kit?: KitOnboarding | null;
+  onSalvar?: (entrada: KitOnboardingInput) => void;
+};
 vi.mock('@/components/admissoes/KitOnboardingDialog', () => ({
-  KitOnboardingDialog: ({ open, kit, onSalvar }: any) =>
+  KitOnboardingDialog: ({ open, kit, onSalvar }: PropsKitDialog) =>
     open ? (
       <div data-testid="kit-dialog">
         <span>Formulário de kit: {kit?.nome ?? 'novo'}</span>
         <button
           type="button"
           aria-label="Confirmar kit de teste"
-          onClick={() => onSalvar({ nome: 'Kit Teste', itens: ['Notebook'], ativo: true })}
+          onClick={() => onSalvar?.({ nome: 'Kit Teste', itens: ['Notebook'], ativo: true })}
         >
           Confirmar
         </button>
@@ -193,10 +209,12 @@ vi.mock('@/components/admissoes/KitOnboardingDialog', () => ({
     ) : null,
 }));
 
-vi.mock('@/lib/utils', () => ({ cn: (...args: any[]) => args.filter(Boolean).join(' ') }));
+vi.mock('@/lib/utils', () => ({ cn: (...args: unknown[]) => args.filter(Boolean).join(' ') }));
 
 import { useQuery } from '@tanstack/react-query';
 import OnboardingPage from '@/pages/OnboardingPage';
+import { MARCOS_ONBOARDING } from '@/components/admissoes/onboardingComum';
+import type { KitOnboarding, KitOnboardingInput } from '@/services/onboardingJornadaService';
 
 /** `created_at` deslocado em dias a partir de HOJE — mantém a régua determinística. */
 const DIA = 24 * 60 * 60 * 1000;
@@ -258,7 +276,6 @@ const MOCK_ONBOARDING = [
   },
 ];
 
-
 /** Só o Lucas — isola as asserções do CARD (as mesmas do arquivo antigo). */
 const SO_LUCAS = [MOCK_ONBOARDING[0]];
 
@@ -273,25 +290,29 @@ const MOCK_KITS = [
  * `queryKey` — devolver o mesmo valor para as duas contaminaria uma com a outra.
  * `kitsErro` simula falha de leitura dos kits (estado C).
  */
+type OpcoesQuery = { queryKey?: readonly unknown[] };
+type RespostaQuery = { data: unknown; isLoading: boolean; isError: boolean };
+
+/** Instala o duble do `useQuery` (o `as` concentra a incompatibilidade de tipo em um ponto). */
+const instalarQueries = (responder: (opcoes: OpcoesQuery) => RespostaQuery) => {
+  vi.mocked(useQuery).mockImplementation(responder as unknown as typeof useQuery);
+};
+
+const ehKits = (opcoes: OpcoesQuery) => opcoes?.queryKey?.[0] === 'onboarding-kits';
+
 const montar = (dados: unknown[], isLoading = false, kits: unknown[] = MOCK_KITS, kitsErro = false) => {
   paramsMock.valor = '';
-  vi.mocked(useQuery).mockImplementation(
-    (opcoes: any) =>
-      ({
-        data: opcoes?.queryKey?.[0] === 'onboarding-kits' ? kits : dados,
-        isLoading,
-        isError: opcoes?.queryKey?.[0] === 'onboarding-kits' ? kitsErro : false,
-      }) as any
-  );
+  instalarQueries((opcoes) => ({
+    data: ehKits(opcoes) ? kits : dados,
+    isLoading,
+    isError: ehKits(opcoes) ? kitsErro : false,
+  }));
   return render(<OnboardingPage />);
 };
 
 /** Renderiza já com um deep link `?colaborador=<id>` (atalho de Admissões). */
 const montarComLink = (dados: unknown[], id: string) => {
-  vi.mocked(useQuery).mockImplementation(
-    (opcoes: any) =>
-      ({ data: opcoes?.queryKey?.[0] === 'onboarding-kits' ? MOCK_KITS : dados, isLoading: false, isError: false }) as any
-  );
+  instalarQueries((opcoes) => ({ data: ehKits(opcoes) ? MOCK_KITS : dados, isLoading: false, isError: false }));
   paramsMock.valor = `colaborador=${id}`;
   return render(<OnboardingPage />);
 };
@@ -317,7 +338,7 @@ describe('Jornada de Onboarding — card e estado (cobertura herdada)', () => {
 
   it('renders the milestone ruler labels', () => {
     montar(SO_LUCAS);
-    ['Pré-onboarding', '1º dia', '1ª semana', '30 dias'].forEach((label) => {
+    MARCOS_ONBOARDING.forEach((label) => {
       expect(screen.getByText(label)).toBeInTheDocument();
     });
   });
@@ -444,8 +465,24 @@ describe('Jornada de Onboarding — card e estado (cobertura herdada)', () => {
   });
 });
 
-
 describe('Jornada de Onboarding — consolidação (fonte única do onboarding)', () => {
+  // ISOLAMENTO POR EMPRESA: a página passa `empresaAtual.id` para os dois hooks,
+  // que o levam para a chave de cache — sem isso, trocar de empresa reaproveita
+  // a lista da anterior.
+  it('as duas consultas levam o id da empresa atual na chave de cache', () => {
+    const chaves: unknown[][] = [];
+    paramsMock.valor = '';
+    instalarQueries((opcoes) => {
+      chaves.push([...(opcoes?.queryKey ?? [])]);
+      return { data: ehKits(opcoes) ? MOCK_KITS : MOCK_ONBOARDING, isLoading: false, isError: false };
+    });
+    render(<OnboardingPage />);
+
+    expect(chaves).toContainEqual(['onboarding-list', 'empresa-teste']);
+    // Gestão de Kits precisa dos INATIVOS (é lá que um perfil volta a ativo).
+    expect(chaves).toContainEqual(['onboarding-kits', 'empresa-teste', true]);
+  });
+
   it('os totais do resumo vivem de forma contextual nos tabs (bloco isolado removido)', () => {
     montar(MOCK_ONBOARDING);
     // O resumo deixa de ser uma ÁREA própria no topo.
@@ -586,4 +623,3 @@ describe('Jornada de Onboarding — consolidação (fonte única do onboarding)'
     expect(screen.getByLabelText('Filtrar por período de início')).toBeInTheDocument();
   });
 });
-

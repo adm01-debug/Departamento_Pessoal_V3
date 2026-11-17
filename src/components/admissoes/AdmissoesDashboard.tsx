@@ -725,8 +725,9 @@ const LEGENDA_AREA = 'text-[10px] leading-tight @max-[240px]:text-[9px]';
  * uma aba desta própria página, `/exames` ou `/esocial`.
  *
  * O tipo cobre só os DESTINOS do dashboard: nenhum item dos modais aponta para
- * onboarding, então 'onboarding' não está aqui. A aba "Onboarding" segue na
- * página (`AdmissoesPage.tsx`) até o grupo da Jornada entrar.
+ * onboarding, então 'onboarding' não está aqui. A Jornada de Onboarding vive na
+ * rota `/onboarding` (a aba interna não existe mais); Admissões leva até lá pelo
+ * botão "Jornada de Onboarding" do cabeçalho da página.
  */
 export type AbaAdmissoes = 'gestao' | 'kanban';
 

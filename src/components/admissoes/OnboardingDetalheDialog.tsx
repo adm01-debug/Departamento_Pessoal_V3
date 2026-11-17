@@ -231,7 +231,7 @@ export function OnboardingDetalheDialog({
                     </p>
                     {tarefas.length === 0 ? (
                       <p className="py-6 text-center text-xs text-muted-foreground">
-                        Nenhuma tarefa de onboarding para esta etapa.
+                        Esta admissão não tem tarefas de onboarding.
                       </p>
                     ) : (
                       tarefas.map((tarefa) => (
