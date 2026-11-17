@@ -25,7 +25,9 @@ import { exportarDesligamentosExcel } from '@/utils/desligamentoExcel';
 import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { loggerService } from '@/services/loggerService';
+import { precisaAtencao, resumoAtencao } from '@/components/desligamentos/desligamentosDerivacoes';
 import {
+  DesligamentoAtencaoBanner,
   DesligamentoKPIs,
   DesligamentoFilters,
   StatusBadge,
@@ -49,9 +51,20 @@ export default function DesligamentosPage() {
   const [showDetail, setShowDetail] = useState(false);
   const [showNovo, setShowNovo] = useState(false);
   const [showChart] = useState(true);
+  /** Ligado pelo "Ver processos" da faixa de atenção. */
+  const [soAtencao, setSoAtencao] = useState(false);
+
+  // `useState` com inicializador, não `useMemo`: ler o relógio dentro de um
+  // useMemo é efeito colateral no render (react-hooks/purity). O dia só muda a
+  // cada 24h e a página recarrega muito antes disso.
+  const [hojeMs] = useState(() => Date.now());
+  const atencao = useMemo(() => resumoAtencao(desligamentos || [], hojeMs), [desligamentos, hojeMs]);
 
   const filtered = useMemo(() => {
     return (desligamentos || []).filter((d) => {
+      // Mesma régua da faixa de atenção (`precisaAtencao`), não uma segunda
+      // cópia do critério: o número do banner e o tamanho da lista batem.
+      if (soAtencao && !precisaAtencao(d, hojeMs)) return false;
       const matchSearch =
         !search ||
         (d.colaborador?.nome_completo || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -60,7 +73,7 @@ export default function DesligamentosPage() {
       const matchTipo = tipoFilter === 'todos' || d.tipo === tipoFilter;
       return matchSearch && matchStatus && matchTipo;
     });
-  }, [desligamentos, search, statusFilter, tipoFilter]);
+  }, [desligamentos, search, statusFilter, tipoFilter, soAtencao, hojeMs]);
 
   const openDetail = (d: DesligamentoComColaborador) => {
     setSelectedDesligamento(d);
@@ -154,6 +167,13 @@ export default function DesligamentosPage() {
                   </motion.div>
                 )}
               </AnimatePresence>
+
+              {/* Faixa de atenção — consome `resumoAtencao`, que existia em
+                  `desligamentosDerivacoes.ts` desde sempre e era chamada só
+                  pelo próprio teste: o RH nunca viu esses números. */}
+              {!isLoading && Array.isArray(desligamentos) && desligamentos.length > 0 && (
+                <DesligamentoAtencaoBanner resumo={atencao} onVerProcessos={() => setSoAtencao((v) => !v)} index={1} />
+              )}
 
               {/* Turnover Chart */}
               {!isLoading && Array.isArray(desligamentos) && (desligamentos?.length || 0) > 0 && showChart && (
