@@ -7,7 +7,7 @@
     "itens_de_menu": 88,
     "urls_admin": 23,
     "urls_publicas": 7,
-    "hooks_distintos": 132,
+    "hooks_distintos": 137,
     "problemas": 0
   },
   "urls": [
@@ -2103,7 +2103,7 @@
           "rotulo": "Admissões"
         }
       ],
-      "arquivos_lidos": 126,
+      "arquivos_lidos": 125,
       "hooks": [
         {
           "nome": "useAdmissaoWorkflow",
@@ -2334,7 +2334,6 @@
         "saved_filters",
         "seguros_colaboradores",
         "solicitacoes_hora_extra",
-        "tarefas_onboarding",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
@@ -12785,15 +12784,27 @@
           "rotulo": "Onboarding"
         }
       ],
-      "arquivos_lidos": 23,
+      "arquivos_lidos": 38,
       "hooks": [
         {
+          "nome": "useAtualizarKit",
+          "arquivo": "src/hooks/useJornadaOnboarding.ts"
+        },
+        {
           "nome": "useAuth",
-          "arquivo": "src/hooks/useAuth.ts"
+          "arquivo": "src/contexts/AuthContext.tsx"
         },
         {
           "nome": "useBackGesture",
           "arquivo": "src/hooks/useBackGesture.ts"
+        },
+        {
+          "nome": "useConcluirTarefa",
+          "arquivo": "src/hooks/useJornadaOnboarding.ts"
+        },
+        {
+          "nome": "useCriarKit",
+          "arquivo": "src/hooks/useJornadaOnboarding.ts"
         },
         {
           "nome": "useEmpresas",
@@ -12802,6 +12813,14 @@
         {
           "nome": "useGrupo",
           "arquivo": "src/hooks/useGrupo.ts"
+        },
+        {
+          "nome": "useJornadas",
+          "arquivo": "src/hooks/useJornadaOnboarding.ts"
+        },
+        {
+          "nome": "useKits",
+          "arquivo": "src/hooks/useJornadaOnboarding.ts"
         },
         {
           "nome": "useOnMount",
@@ -12850,7 +12869,15 @@
         "log_frontend_error",
         "set_own_default_empresa"
       ],
-      "tabelas": ["admissoes", "colaboradores", "empresas", "tarefas_onboarding", "versao_banco"],
+      "tabelas": [
+        "admissoes",
+        "colaboradores",
+        "empresas",
+        "onboarding_kits",
+        "profiles",
+        "tarefas_onboarding",
+        "versao_banco"
+      ],
       "imports_quebrados": []
     },
     {
@@ -17944,6 +17971,10 @@
       "arquivo": "src/hooks/index.ts",
       "telas": ["src/pages/EPIsPage.tsx"]
     },
+    "useAtualizarKit": {
+      "arquivo": "src/hooks/useJornadaOnboarding.ts",
+      "telas": ["src/pages/OnboardingPage.tsx"]
+    },
     "useAuth": {
       "arquivo": "src/contexts/AuthContext.tsx",
       "telas": [
@@ -18173,6 +18204,10 @@
         "src/pages/HorasExtrasPage.tsx"
       ]
     },
+    "useConcluirTarefa": {
+      "arquivo": "src/hooks/useJornadaOnboarding.ts",
+      "telas": ["src/pages/OnboardingPage.tsx"]
+    },
     "useConfirmarPagamentoFerias": {
       "arquivo": "src/hooks/ferias/useAlertasPagamentoD2.ts",
       "telas": ["src/pages/FeriasPage.tsx"]
@@ -18236,6 +18271,10 @@
     "useCriarFormacao": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
       "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
+    },
+    "useCriarKit": {
+      "arquivo": "src/hooks/useJornadaOnboarding.ts",
+      "telas": ["src/pages/OnboardingPage.tsx"]
     },
     "useCriarRegistroSalarial": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
@@ -18700,6 +18739,14 @@
     "useJornadaHorarios": {
       "arquivo": "src/hooks/useNovasTabelas.ts",
       "telas": ["src/pages/JornadasPage.tsx"]
+    },
+    "useJornadas": {
+      "arquivo": "src/hooks/useJornadaOnboarding.ts",
+      "telas": ["src/pages/OnboardingPage.tsx"]
+    },
+    "useKits": {
+      "arquivo": "src/hooks/useJornadaOnboarding.ts",
+      "telas": ["src/pages/OnboardingPage.tsx"]
     },
     "useLocaisTrabalho": {
       "arquivo": "src/hooks/useLocaisTrabalho.ts",

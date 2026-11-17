@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { NovaAdmissaoDialog } from '@/components/admissoes/NovaAdmissaoDialog';
 import { DetalhesAdmissaoDialog } from '@/components/admissoes/DetalhesAdmissaoDialog';
-import { UserPlus, ExternalLink, LayoutDashboard, List, History, Rocket, Kanban, AlertTriangle } from 'lucide-react';
+import { UserPlus, ExternalLink, LayoutDashboard, List, History, Kanban, AlertTriangle } from 'lucide-react';
 import { AdmissoesKanban } from '@/components/admissoes/AdmissoesKanban';
 import { useNavigate } from 'react-router-dom';
 import { useEmpresas } from '@/hooks/useEmpresas';
@@ -18,7 +18,6 @@ import { contratacaoService } from '@/services/contratacaoService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AdmissoesDashboard } from '@/components/admissoes/AdmissoesDashboard';
 import { GestaoCandidatos } from '@/components/admissoes/GestaoCandidatos';
-import OnboardingPageContent from '@/components/admissoes/OnboardingPageContent';
 import type { Tables } from '@/integrations/supabase/types';
 
 export default function AdmissoesPage() {
@@ -137,9 +136,6 @@ export default function AdmissoesPage() {
             <TabsTrigger value="kanban" className="rounded-lg gap-2">
               <Kanban className="h-4 w-4" /> Kanban
             </TabsTrigger>
-            <TabsTrigger value="onboarding" className="rounded-lg gap-2">
-              <Rocket className="h-4 w-4" /> Onboarding
-            </TabsTrigger>
             <TabsTrigger value="auditoria" className="rounded-lg gap-2">
               <History className="h-4 w-4" /> Auditoria
             </TabsTrigger>
@@ -198,10 +194,6 @@ export default function AdmissoesPage() {
               ) : (
                 <AdmissoesDashboard admissoes={admissoes || []} onAbrirAba={setActiveTab} />
               ))}
-          </TabsContent>
-
-          <TabsContent value="onboarding" className="space-y-6">
-            <OnboardingPageContent />
           </TabsContent>
 
           <TabsContent value="gestao" className="space-y-6">
