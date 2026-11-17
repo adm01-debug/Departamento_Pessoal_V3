@@ -30,6 +30,7 @@
 -- documento.
 -- =============================================================================
 
+-- audit-migration-style: allow-silent-drop verificado em producao que a policy NAO existe (pg_policies, schemaname=storage, tablename=objects, cmd=DELETE: zero linhas para este nome) — um gate fail-closed exigindo que ela exista reprovaria por definicao; o DROP esta aqui so para tornar a migration reaplicavel, e o CREATE abaixo deixa o estado final
 DROP POLICY IF EXISTS "documentos_delete_rh_admin" ON storage.objects;
 CREATE POLICY "documentos_delete_rh_admin"
   ON storage.objects FOR DELETE TO authenticated
@@ -38,6 +39,7 @@ CREATE POLICY "documentos_delete_rh_admin"
     AND public.pode_gerir_rh(public.storage_path_empresa_id(name))
   );
 
+-- audit-migration-style: allow-silent-drop mesmo caso da policy acima — conferido que nao existe em producao; DROP apenas para reaplicabilidade, CREATE abaixo fixa o estado final
 DROP POLICY IF EXISTS "docs_colab_delete_rh_admin" ON storage.objects;
 CREATE POLICY "docs_colab_delete_rh_admin"
   ON storage.objects FOR DELETE TO authenticated
