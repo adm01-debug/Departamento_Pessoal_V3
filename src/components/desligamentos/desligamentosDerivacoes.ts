@@ -144,11 +144,11 @@ export function variacaoRecente(
  * contado como pendencia na faixa de atencao e nos KPIs — a lista do RH nunca
  * esvaziava.
  */
-const STATUS_TERMINAIS = ['finalizado', 'concluido', 'cancelado', 'pago'];
+export const STATUS_TERMINAIS = ['finalizado', 'concluido', 'cancelado', 'pago'] as const;
 
 /** Processo ainda em aberto (não concluído nem cancelado). */
 export function emAberto(d: DesligamentoLike): boolean {
-  return !STATUS_TERMINAIS.includes(d.status ?? '');
+  return !(STATUS_TERMINAIS as readonly string[]).includes(d.status ?? '');
 }
 
 export function concluido(d: DesligamentoLike): boolean {
