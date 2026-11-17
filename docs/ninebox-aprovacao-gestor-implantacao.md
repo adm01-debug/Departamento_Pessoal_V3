@@ -1,4 +1,4 @@
-# Aprovação do gestor — implantação para a conta Abner
+# Aprovação do gestor — implantação para a conta de homologação
 
 > Verificado por leitura no banco em **16/10/2026** (nenhuma escrita executada).
 > Conta alvo: `<user_id da conta de homologacao>` (admin + gestor).
@@ -41,7 +41,7 @@ Sem a primeira: **não existe onde registrar a solicitação nem a decisão**, e
 front não tem como validar o vínculo (a fila só mostra o estado sintetizado da
 demonstração). Por isso os botões Aprovar/Devolver não aparecem.
 
-## 3. Vínculo necessário para a conta Abner
+## 3. Vínculo necessário para a conta de homologação
 
 Verificado: `user_roles` = **admin + gestor** ✅ · empresas
 `66104399-aba8-4105-bbd3-9bf67820c1d0` (default) e
@@ -57,7 +57,7 @@ mínimo é **uma linha**:
   `HOMOLOG-NB Colaborador Descartavel` (`0f303507-5b13-4ca2-aa76-16122b5b37e9`,
   CPF sentinela `00000000000`, empresa `66104399-…`, `user_id` **null**).
   Não cria colaborador nem avaliação e **não altera nenhuma outra conta**.
-  Com ele, Abner é responsável pela avaliação **do próprio descartável**
+  Com ele, a conta de homologação é responsável pela avaliação **do próprio descartável**
   (`alvo.id = gestor.id`).
 - **Vínculo 2 (opcional):** se a homologação precisar aprovar a avaliação de
   **outra pessoa**, apontar o `supervisor_id` desse avaliado para o descartável
@@ -68,7 +68,7 @@ SQL pronto (com conferência, guardas e rollback), **não executado**:
 
 > Observação do ambiente: na sessão de teste atual `feedbacks_360` e
 > `ciclos_avaliacao` retornam **0 linhas** (RLS por empresa) — os registros reais
-> de homologação vivem na empresa da sua conta. O teste com Abner deve rodar na
+> de homologação vivem na empresa da sua conta. O teste com a conta de homologação deve rodar na
 > empresa onde a avaliação existe.
 
 ## 4. Procedimento mínimo (após autorização)
@@ -82,7 +82,7 @@ SQL pronto (com conferência, guardas e rollback), **não executado**:
    reiniciar o dev server — sem isso a tela permanece em demonstração.
 5. **Criar a solicitação** pelo RH/admin: na fila "Aguardando gestor", botão
    _Enviar ao gestor_ (RPC `enviar_avaliacao_ao_gestor`).
-6. **Entrar como Abner** e abrir a avaliação: o selo deve mostrar
+6. **Entrar com a conta de homologação** e abrir a avaliação: o selo deve mostrar
    **"Aguardando gestor"** e o rodapé deve trazer **Aprovar** e **Devolver**
    (devolução exige justificativa ≥ 10 caracteres).
 7. **Conferir as invariantes:** ao aprovar, a linha sai do filtro e o RH passa a
@@ -98,7 +98,7 @@ SQL pronto (com conferência, guardas e rollback), **não executado**:
 2. _(Opcional)_ **Executar `20261018090000_ninebox_conclusao_gestor.sql`**
    (redefine `finalizar_feedback`: a conclusão passa a exigir o gestor responsável).
 3. **Executar o PASSO 1** do SQL de vínculo (1 `UPDATE` em linha descartável,
-   `user_id` nulo → conta Abner) e, se aplicável, o **PASSO 2** (`supervisor_id`
+   `user_id` nulo → conta de homologação) e, se aplicável, o **PASSO 2** (`supervisor_id`
    do avaliado escolhido).
 4. **Ligar `VITE_NINEBOX_MODO_REAL=true`** no ambiente do teste.
 
@@ -170,13 +170,13 @@ Regras preservadas na demonstração:
 
 ### 7.1 Diagnóstico (leitura no banco em 16/10/2026 — nenhuma escrita)
 
-| Fato verificado                                                   | Resultado                                                |
-| ----------------------------------------------------------------- | -------------------------------------------------------- |
-| `get_user_roles(<user_id da conta de homologacao>)` (conta Abner) | **`['admin','gestor']`** — o banco está certo            |
-| `colaboradores.user_id = <user_id da conta de homologacao>`       | **0 linhas** ← nenhum vínculo de gestor                  |
-| Descartável de homologação (`cpf = 00000000000`)                  | `0f303507-5b13-4ca2-aa76-16122b5b37e9`, `user_id = null` |
-| `feedbacks_360` com `tipo='gestor'` e `status='concluido'`        | **0 linhas** (nenhuma avaliação real atribuível hoje)    |
-| `pode_aprovar_colaborador`                                        | **PGRST202 — não existe** (migration pendente)           |
+| Fato verificado                                                            | Resultado                                                |
+| -------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `get_user_roles(<user_id da conta de homologacao>)` (conta de homologação) | **`['admin','gestor']`** — o banco está certo            |
+| `colaboradores.user_id = <user_id da conta de homologacao>`                | **0 linhas** ← nenhum vínculo de gestor                  |
+| Descartável de homologação (`cpf = 00000000000`)                           | `0f303507-5b13-4ca2-aa76-16122b5b37e9`, `user_id = null` |
+| `feedbacks_360` com `tipo='gestor'` e `status='concluido'`                 | **0 linhas** (nenhuma avaliação real atribuível hoje)    |
+| `pode_aprovar_colaborador`                                                 | **PGRST202 — não existe** (migration pendente)           |
 
 ### 7.2 A CAUSA (100% no front, não no banco)
 
@@ -234,11 +234,11 @@ interceptada — nenhuma permissão remota foi alterada):
 | Cenário                                                         | Fila "Aguardando gestor"                   | Menu administrativo             |
 | --------------------------------------------------------------- | ------------------------------------------ | ------------------------------- |
 | A · papéis `['admin']` (como está no banco do usuário de teste) | só **Ver avaliação** (defeito reproduzido) | presente                        |
-| B · papéis `['admin','gestor']` (a conta Abner)                 | **Devolver + Aprovar** + Ver avaliação     | **presente** (admin preservado) |
+| B · papéis `['admin','gestor']` (a conta de homologação)        | **Devolver + Aprovar** + Ver avaliação     | **presente** (admin preservado) |
 
-Evidências: `tmp-validacao-gestor-abner/01-fila-admin-sozinho.png`,
+Evidências: `tmp-validacao-gestor-homologacao/01-fila-admin-sozinho.png`,
 `02-fila-admin-gestor.png`, `03-modal-admin-gestor.png`, `relatorio.json`;
-diagnóstico em `tmp-diagnostico-gestor-abner.json`.
+diagnóstico em `tmp-diagnostico-gestor-homologacao.json`.
 
 ### 7.5 O que falta para a APROVAÇÃO REAL (parado, aguardando autorização)
 
@@ -253,7 +253,7 @@ diagnóstico em `tmp-diagnostico-gestor-abner.json`.
    `empresa_id = 66104399-aba8-4105-bbd3-9bf67820c1d0`). Sem ele
    `pode_aprovar_colaborador` devolve `false` para qualquer avaliado.
 3. **(Opcional) PASSO 2** — apontar o `supervisor_id` de um avaliado para o
-   descartável, para Abner aprovar a avaliação de OUTRA pessoa.
+   descartável, para a conta de homologação aprovar a avaliação de OUTRA pessoa.
 4. **Avaliação atribuída** — hoje não há nenhuma `feedbacks_360` de gestor
    concluída visível à sessão de teste; a conta verá a fila real quando existir
    uma avaliação no ciclo da empresa dela.

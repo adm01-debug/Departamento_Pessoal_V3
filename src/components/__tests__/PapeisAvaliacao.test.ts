@@ -11,7 +11,7 @@ import {
 
 /**
  * UMA CONTA, VÁRIOS PAPÉIS — regressão que este módulo corrige:
- * a conta `admin`+`gestor` (Abner) era tratada SÓ como administrador porque o
+ * a conta `admin`+`gestor` (conta de homologação) era tratada SÓ como administrador porque o
  * front reduzia a lista a um papel único (precedência) e testava IGUALDADE.
  * Ter `admin` NÃO pode anular `gestor`.
  */
@@ -36,7 +36,7 @@ describe('normalização da lista de papéis', () => {
   });
 });
 
-describe('capacidades da conta admin+gestor (a conta Abner)', () => {
+describe('capacidades da conta admin+gestor (a conta de homologação)', () => {
   it('mantém o admin E o gestor — um não anula o outro', () => {
     const c = capacidadesAvaliacao(ALVO);
     expect(c).toMatchObject({
