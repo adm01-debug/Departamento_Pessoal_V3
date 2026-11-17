@@ -40,7 +40,8 @@ interface EntityPageContainerProps<T> {
   searchPlaceholder?: string;
   entityName: string; // e.g., "cargo", "departamento"
   columns: { header: string; className?: string; width?: string; hidden?: 'sm' | 'md' | 'lg' | boolean }[];
-  renderRow: (item: T) => ReactNode;
+  /** Dispensavel quando `renderBody` substitui a tabela inteira. */
+  renderRow?: (item: T) => ReactNode;
   /** Substitui a TABELA por um corpo proprio (grade de cartoes, etc). Resto do container intacto. */
   renderBody?: ReactNode;
   stats?: ReactNode;
@@ -145,7 +146,7 @@ export function EntityPageContainer<T extends { id: string | number }>({
                       ))}
                     </TableRow>
                   </TableHeader>
-                  <TableBody>{items.map(renderRow)}</TableBody>
+                  <TableBody>{renderRow ? items.map(renderRow) : null}</TableBody>
                 </Table>
               )}
             </motion.div>
