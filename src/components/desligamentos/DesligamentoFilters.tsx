@@ -154,15 +154,25 @@ export function DesligamentoFilters({
             className="w-[190px] min-w-[130px]"
           />
         </motion.div>
-        <motion.div {...entradaCard(indexBase + 3)}>
-          <FiltroSelect
-            label="Departamento"
-            value={departamentoFilter}
-            onChange={onDepartamentoChange ?? (() => {})}
-            options={departamentoOpts}
-            className="w-[176px] min-w-[124px]"
-          />
-        </motion.div>
+        {/* Departamento e "Mais filtros" (período) só existem quando o chamador
+            oferece o callback correspondente. A página de Desligamentos de hoje
+            passa busca, status e tipo — nos outros dois o controle cairia num
+            handler vazio: o usuário escolheria "Últimos 3 meses" e a lista não
+            mudaria, com o seletor voltando sozinho para "Todo o período".
+            Controle que aceita clique e não faz nada é pior que controle ausente;
+            quando a nova Gestão de Desligamentos entrar e passar os callbacks,
+            os dois aparecem sem mudar nada aqui. */}
+        {onDepartamentoChange && (
+          <motion.div {...entradaCard(indexBase + 3)}>
+            <FiltroSelect
+              label="Departamento"
+              value={departamentoFilter}
+              onChange={onDepartamentoChange}
+              options={departamentoOpts}
+              className="w-[176px] min-w-[124px]"
+            />
+          </motion.div>
+        )}
 
         {/* Fecho da barra: os dois botões de AÇÃO entram como UM grupo (índice
             seguinte ao do Departamento), mantendo a geometria original — em
@@ -183,20 +193,22 @@ export function DesligamentoFilters({
             </Button>
           )}
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setMaisFiltros((v) => !v)}
-            className="h-10 w-[168px] shrink-0 gap-2 rounded-lg border-border/40 bg-card font-body"
-            aria-expanded={maisFiltros}
-          >
-            <SlidersHorizontal className="h-3.5 w-3.5" />
-            Mais filtros
-          </Button>
+          {onPeriodoChange && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setMaisFiltros((v) => !v)}
+              className="h-10 w-[168px] shrink-0 gap-2 rounded-lg border-border/40 bg-card font-body"
+              aria-expanded={maisFiltros}
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              Mais filtros
+            </Button>
+          )}
         </motion.div>
       </div>
 
-      {maisFiltros && (
+      {maisFiltros && onPeriodoChange && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
@@ -206,7 +218,7 @@ export function DesligamentoFilters({
             <FiltroSelect
               label="Período"
               value={periodoFilter}
-              onChange={onPeriodoChange ?? (() => {})}
+              onChange={onPeriodoChange}
               options={PERIODO_OPTIONS}
               className="w-[168px] min-w-[120px]"
             />
