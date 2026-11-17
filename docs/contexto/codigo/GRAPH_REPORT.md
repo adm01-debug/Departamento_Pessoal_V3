@@ -1,17 +1,17 @@
 # Graph Report - Departamento_Pessoal_V3  (2026-11-17)
 
 ## Corpus Check
-- 3423 files · ~3,257,432 words
+- 3425 files · ~3,258,279 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 37 file(s) not represented in the graph (top: (none) 16, .toml 5, .conf 4)
 
 ## Summary
-- 26970 nodes · 60905 edges · 2289 communities (1284 shown, 1005 thin omitted)
+- 26972 nodes · 60905 edges · 2291 communities (1284 shown, 1007 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 1534 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ec1a7343`
+- Built from commit: `f26f689e`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -1883,7 +1883,7 @@
 ## Import Cycles
 - 2-file cycle: `src/components/layout/MainLayout.tsx -> src/components/layout/index.ts -> src/components/layout/MainLayout.tsx`
 
-## Communities (2289 total, 1005 thin omitted)
+## Communities (2291 total, 1007 thin omitted)
 
 ### Community 0 - "20260831_corrected_public.sql"
 Cohesion: 0.01
@@ -7059,18 +7059,18 @@ Nodes (3): "public"."sst_regimento_ass_imutavel", "trg_regimento_ass_no_delete",
 
 ## Knowledge Gaps
 - **7618 isolated node(s):** `session-start.sh script`, `PATH`, `capacitorConfig`, `nodeModulesDir`, `AUTH_FILE` (+7613 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 11671 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **1005 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 11673 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **1007 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `vitest` connect `vitest` to `cn`, `card.tsx`, `button.tsx`, `validate.ts`, `client.ts`, `useEmpresas`, `framer-motion`, `validateTablePayload`, `hooks/index.ts`, `deepChain`, `App.tsx`, `reciboAssinaturaPdf.ts`, `entradaKanban.ts`, `nineBoxComum.ts`, `FeedbackAcoesRodape.tsx`, `hooks/useTranslation.ts`, `ref_node_fs`, `esocialService.ts`, `react`, `useEmpresas.ts`, `AvaliacaoPage.tsx`, `feedbackCanonico.ts`, `entradaCard`, `lucide-react`, `turmasDerivacoes.ts`, `useAuth`, `trainingImages/index.ts`, `supabase/types.ts`, `TrilhaAuditoriaDesligamentos.tsx`, `workflowService.ts`, `DesligamentoDetailSheet.tsx`, `AnalyticsSection.tsx`, `GestaoCandidatos.tsx`, `InscricoesPainel.tsx`, `CalculoFolhaWizard.tsx`, `nineBoxConsolidacao.ts`, `CircuitBreaker`, `FeriasPage.tsx`, `TreinamentosPage.tsx`, `esocial/index.ts`, `retry.ts`, `JornadaPontoTab.tsx`, `adminCatEdicao.ts`, `useHistoricoColaborador.ts`, `AdminRoute`, `medidasDisciplinaresService.test.ts`, `metasComum.ts`, `CandidatosPainel.tsx`, `regrasSolicitacaoFerias.ts`, `CertificadosPainel.tsx`, `feedbacksComum.ts`, `package.json`, `pipelineEtapas.ts`, `pdiComum.ts`, `treinamentosDerivacoes.ts`, `vagasComum.ts`, `useAfastamentos.ts`, `OrganogramaPage.tsx`, `trabalhistas.ts`, `OrganogramaNode.test.tsx`, `premiacoesComum.ts`, `desligamentoExcel.ts`, `onboardingDerivacoes.ts`, `competenciasComum.ts`, `cursor.ts`, `TrilhaAuditoriaDesligamentos.test.tsx`, `openaiProvider.ts`, `calculoFerias.ts`, `toError`, `tabelas.ts`, `_shared/trainingImages/types.ts`, `FeriasAuditTimeline.tsx`, `analyticsComum.ts`, `trilhasDerivacoes.ts`, `desligamentosDerivacoes.ts`, `useToast.ts`, `AdminTelemetriaPage.tsx`, `SSTResumoTab.tsx`, `contratoTemplateService.ts`, `useOnMount`, `workflow-status.ts`, `rescisaoCalc.ts`, `useGerarComunicadoColetivas.ts`, `3. Achados graves`, `FeedbacksTimeline.tsx`, `masks.ts`, `calculatorExtra.test.ts`, `hooks/__tests__/validators.test.ts`, `folhaResumo.ts`, `Tables`, `encryptionService.test.ts`, `jspdf`, `PensoesPage.test.tsx`, `ordenarEtapas.test.ts`, `OrganogramaToolbar.tsx`, `useNotificacoes`, `2. Tabela de funcionalidades (por domínio)`, `ContratacaoPage.tsx`, `useGrupo.ts`, `DescontosPage.tsx`, `pipeline.ts`, `main.tsx`, `1. Achados prioritários confirmados`, `avaliacao/auditoriaComum.ts`, `3. Achados graves`, `errors/index.ts`, `Ferias`, `LayoutGridSection.test.tsx`, `FolhaPagamentoPage`, `AuditoriaChips.tsx`, `Container.tsx`, `RelatoriosAnalyticsTab.tsx`, `reportScheduleContract.ts`, `queryClient.ts`, `backupService.ts`, `guardrails.test.ts`, `LayoutPrimitives.test.tsx`, `OnboardingJornada.test.tsx`, `useSecurityMonitor.ts`, `desligamentosComum.ts`, `CandidatoDetalhesDialog.tsx`, `edgeFunctionsService.ts`, `PerformanceAuditTimeline`, `ScenarioParameterCard.test.tsx`, `usePcs.ts`, `OrganogramaPage.test.tsx`, `AuditoriaEventoDialog.test.tsx`, `ComparacaoCenarios.tsx`, `comunicadoFeriasColetivasPDF.ts`, `HealthTrendCard.tsx`, `FolhaDashboard.tsx`, `useExecutiveDashboard.test.ts`, `SEÇÃO 3: FALHAS MEDIUM (82 achados)`, `DepartmentRow.test.tsx`, `PerformanceAuditTimeline.test.tsx`, `logExecucao.ts`, `LoginPage.tsx`, `simuladorRoiComum.ts`, `useBruteForceProtection.ts`, `turnoService.test.ts`, `PerformanceAuditTimelineCascata.test.tsx`?**
-  _High betweenness centrality (0.120) - this node is a cross-community bridge._
+  _High betweenness centrality (0.115) - this node is a cross-community bridge._
 - **Why does `"public"."medida_gerar_link_ciencia"()` connect `public.medidas_disciplinares` to `20260831_corrected_public.sql`, `"public"."colaboradores"`, `"public"."user_empresas"`, `cenarios.mjs`?**
   _High betweenness centrality (0.094) - this node is a cross-community bridge._
 - **Why does `resumo()` connect `public.medidas_disciplinares` to `vagasComum.ts`?**
-  _High betweenness centrality (0.078) - this node is a cross-community bridge._
+  _High betweenness centrality (0.079) - this node is a cross-community bridge._
 - **What connects `session-start.sh script`, `PATH`, `capacitorConfig` to the rest of the system?**
   _7618 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `20260831_corrected_public.sql` be split into smaller, more focused modules?**

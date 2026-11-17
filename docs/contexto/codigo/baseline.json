@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ec1a7343a61e82340c69bd6a889007685d5c922d",
+  "commit": "f26f689e98f679a4f17290632fd2d85e0433db37",
   "branch": "main",
-  "data_commit": "2026-11-17T16:26:43-03:00",
+  "data_commit": "2026-11-17T16:45:15-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "f26f689",
+    "data": "2026-11-17",
+    "assunto": "feat(permissions): seed da matriz de permissões por papel (#642)"
+   },
    {
     "sha": "ec1a734",
     "data": "2026-11-17",
@@ -126,14 +131,9 @@
     "sha": "9de335f",
     "data": "2026-11-17",
     "assunto": "fix(desligamentos): \"Novo Desligamento\" volta a listar colaboradores (#617)"
-   },
-   {
-    "sha": "d15194a",
-    "data": "2026-11-17",
-    "assunto": "fix(docs): redige o user_id, o e-mail e o primeiro nome de pessoa que o #599 deixou passar (#615)"
    }
   ],
-  "arquivos_mudados_7d": 1081,
+  "arquivos_mudados_7d": 1083,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -250,10 +250,6 @@
     "mudancas": 7
    },
    {
-    "arquivo": "supabase/functions/calcular-folha/index.ts",
-    "mudancas": 7
-   },
-   {
     "arquivo": "CLAUDE.md",
     "mudancas": 6
    },
@@ -294,6 +290,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "supabase/functions/calcular-folha/index.ts",
+    "mudancas": 6
+   },
+   {
     "arquivo": ".github/workflows/ci.yml",
     "mudancas": 5
    }
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 258
+    "commits": 259
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 26
+    "commits": 25
    },
    {
     "autor": "dependabot[bot]",
@@ -318,7 +318,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3517,
+  "arquivos_total": 3519,
   "arquivos_codigo": 2043,
   "linhas_codigo": 404379,
   "rotas": 116,
@@ -330,7 +330,7 @@
   "hooks": 116,
   "edge_functions": 67,
   "tabelas": 425,
-  "migrations": 857,
+  "migrations": 859,
   "cron_jobs": 41,
   "testes": 754,
   "workflows": 21,
