@@ -40,7 +40,7 @@ beforeEach(() => {
  * (`.select('version').eq().single()`) e o update com versionamento
  * (`.update().eq().eq().eq().select().maybeSingle()`).
  */
-function mockChainColaborador(cadastro: Record<string, unknown> | null, atualizado: Record<string, unknown>) {
+function mockChainColaborador(cadastro: Record<string, unknown> | null, atualizado: Record<string, unknown> | null) {
   const updateMaybeSingle = vi.fn().mockResolvedValue({ data: atualizado, error: null });
   const updateFn = vi.fn().mockReturnValue({
     eq: vi.fn().mockReturnValue({
@@ -121,7 +121,7 @@ describe('colaboradorService.recontratar', () => {
 
   it('recusa sobreposição em cadastro legado, cujas datas vivem em `colaboradores`', async () => {
     mockChainColaborador(
-      { id: 'c1', data_admissao: '2022-01-01', data_desligamento: '2026-06-30', version: 3 },
+      { id: 'c1', status: 'desligado', data_admissao: '2022-01-01', data_desligamento: '2026-06-30', version: 3 },
       { id: 'c1' }
     );
 
@@ -147,7 +147,7 @@ describe('colaboradorService.recontratar', () => {
 
   it('cadastro legado sem vínculo: registra a passagem antiga antes da readmissão', async () => {
     mockChainColaborador(
-      { id: 'c1', data_admissao: '2022-01-01', data_desligamento: '2026-06-30', version: 3 },
+      { id: 'c1', status: 'desligado', data_admissao: '2022-01-01', data_desligamento: '2026-06-30', version: 3 },
       { id: 'c1', status: 'ativo' }
     );
 
@@ -158,11 +158,34 @@ describe('colaboradorService.recontratar', () => {
   });
 
   it('não inventa data de fim quando o cadastro legado não tem data_desligamento', async () => {
-    mockChainColaborador({ id: 'c1', data_admissao: '2022-01-01', data_desligamento: null, version: 3 }, { id: 'c1' });
+    mockChainColaborador(
+      { id: 'c1', status: 'desligado', data_admissao: '2022-01-01', data_desligamento: null, version: 3 },
+      { id: 'c1' }
+    );
 
     await colaboradorService.recontratar('c1', { data_admissao: '2026-07-01' }, 'emp-1');
 
     expect(mockCriarVinculoHistorico).not.toHaveBeenCalled();
     expect(mockCriarVinculoInicial).toHaveBeenCalledWith('c1', '2026-07-01', 'Readmissão');
+  });
+  it('recusa recontratar cadastro que não está desligado', async () => {
+    mockChainColaborador({ id: 'c1', status: 'ativo', data_admissao: '2026-07-01', version: 3 }, { id: 'c1' });
+
+    await expect(colaboradorService.recontratar('c1', { data_admissao: '2027-01-02' }, 'emp-1')).rejects.toThrow(
+      /não está desligado/i
+    );
+    expect(mockCriarVinculoInicial).not.toHaveBeenCalled();
+    expect(mockCriarVinculoHistorico).not.toHaveBeenCalled();
+  });
+
+  it('não cria vínculo quando o update não casa nenhuma linha (recontratação concorrente)', async () => {
+    // Segundo usuário de RH confirma depois do primeiro: o WHERE
+    // `status = 'desligado'` não casa mais e o update devolve zero linhas.
+    mockChainColaborador({ id: 'c1', status: 'desligado', data_admissao: '2022-01-01', version: 3 }, null);
+
+    await expect(colaboradorService.recontratar('c1', { data_admissao: '2026-07-01' }, 'emp-1')).rejects.toThrow(
+      /paralelo/i
+    );
+    expect(mockCriarVinculoInicial).not.toHaveBeenCalled();
   });
 });

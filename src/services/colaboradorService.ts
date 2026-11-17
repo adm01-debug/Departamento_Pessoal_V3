@@ -2,7 +2,7 @@ import type { ListOptions, ListResponse } from './baseService';
 import { BaseService } from './baseService';
 import type { Colaborador } from '@/types/entities';
 import { colaboradorSchema } from '@/schemas/colaborador';
-import { validateInput } from '@/schemas/validate';
+import { validateInput, validateTablePayload } from '@/schemas/validate';
 import { supabase } from '@/integrations/supabase/client';
 import { registrarAcessoPII } from './piiAccessLogService';
 import { vinculoService } from './vinculoService';
@@ -247,6 +247,16 @@ class ColaboradorService extends BaseService<Colaborador> {
       (Colaborador & { data_desligamento?: string | null }) | null;
     const vinculos = await vinculoService.listarPorColaborador(id);
 
+    // Só cadastro DESLIGADO pode ser recontratado. O diálogo já esconde a ação
+    // para quem está ativo, mas dois usuários de RH com o dossiê aberto podem
+    // confirmar a mesma recontratação: o segundo ainda vê o cache "desligado" e
+    // sobrescreveria a admissão, abrindo um segundo vínculo. O update abaixo
+    // repete a condição no WHERE para fechar também a janela entre esta leitura
+    // e a gravação.
+    if (anterior && anterior.status !== 'desligado') {
+      throw new Error('Este colaborador não está desligado — recontratação disponível apenas para cadastro desligado.');
+    }
+
     // Guarda de sobreposição NO SERVICE: validar só no formulário não protege o
     // dado gravado. O marco não é a última admissão (o que deixava passar data
     // anterior ao desligamento) e sim a MAIOR data já registrada — início ou fim
@@ -277,15 +287,29 @@ class ColaboradorService extends BaseService<Colaborador> {
       await vinculoService.criarVinculoHistorico(id, anterior.data_admissao, anterior.data_desligamento);
     }
 
-    const atualizado = await this.atualizar(
-      id,
-      { ...dados, status: 'ativo', data_desligamento: null } as Record<string, unknown>,
-      empresaId
-    );
+    // Update com `status = 'desligado'` no WHERE: se outra recontratação venceu
+    // a corrida, nenhuma linha casa e nada é gravado (em vez de sobrescrever a
+    // admissão alheia). Substitui a trava por `version` do `BaseService`, que
+    // relê a versão no próprio update e por isso não barra escrita concorrente.
+    const payload = { ...dados, status: 'ativo', data_desligamento: null } as Record<string, unknown>;
+    validateInput(colaboradorSchema, payload, 'colaboradorService.recontratar');
+    const { data: atualizado, error } = await this.getQuery()
+      .update(validateTablePayload('colaboradores', payload, 'colaboradorService.recontratar'))
+      .eq('id', id)
+      .eq('empresa_id', empresaId)
+      .eq('status', 'desligado')
+      .select()
+      .maybeSingle();
+    if (error) throw error;
+    if (!atualizado) {
+      throw new Error(
+        'Recontratação não aplicada: o cadastro deixou de estar desligado (outra recontratação aconteceu em paralelo). Recarregue a página.'
+      );
+    }
 
     await vinculoService.criarVinculoInicial(id, dados.data_admissao, 'Readmissão');
 
-    return atualizado;
+    return atualizado as Colaborador;
   }
 
   // Alias for backward compatibility
