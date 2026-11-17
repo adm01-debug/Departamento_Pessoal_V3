@@ -9,7 +9,11 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
   const queryClient = useQueryClient();
   const { empresaAtualId } = useEmpresas();
 
-  const { data: workflow, isLoading } = useQuery({
+  const {
+    data: workflow,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['admissao-workflow', admissaoId],
     enabled: !!admissaoId,
     queryFn: async () => {
@@ -192,5 +196,5 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
     },
   });
 
-  return { workflow, isLoading, iniciarWorkflow, avancarEtapa };
+  return { workflow, isLoading, isError, iniciarWorkflow, avancarEtapa };
 }
