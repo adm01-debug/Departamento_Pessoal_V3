@@ -20,7 +20,7 @@ vi.mock('@/hooks/useAuth', () => ({ useAuth: () => estadoAuth }));
 
 import { usePermissions } from '../usePermissions';
 
-function matriz(linhas: unknown[], erro: unknown = null) {
+function matriz(linhas: unknown[] | null, erro: unknown = null) {
   const chain: Record<string, unknown> = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.in = vi.fn().mockResolvedValue({ data: linhas, error: erro });
