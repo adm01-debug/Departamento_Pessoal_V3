@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { rescisaoService } from '../rescisaoService';
 import { supabase } from '@/integrations/supabase/client';
+import { vinculoService } from '../vinculoService';
 
 // Mock dependências
 vi.mock('@/integrations/supabase/client', () => ({
@@ -16,6 +17,12 @@ vi.mock('@/utils/auditLogger', () => ({
   auditLogger: {
     log: vi.fn().mockResolvedValue({}),
   },
+}));
+
+// Isola o teste de orquestração de processarPagamento da lógica interna de
+// vínculo (já coberta em vinculoService.test.ts).
+vi.mock('../vinculoService', () => ({
+  vinculoService: { fecharVinculoAberto: vi.fn().mockResolvedValue(undefined) },
 }));
 
 const { mockLoggerError } = vi.hoisted(() => ({ mockLoggerError: vi.fn() }));
@@ -329,6 +336,18 @@ describe('rescisaoService', () => {
 
     it('exige empresa_id', async () => {
       await expect(rescisaoService.processarPagamento('d1', '')).rejects.toThrow(/empresa_id/);
+    });
+
+    it('fecha o vínculo em aberto do colaborador após confirmar o pagamento', async () => {
+      mockPagamentoCalls();
+      await rescisaoService.processarPagamento('d1', EMP);
+      expect(vinculoService.fecharVinculoAberto).toHaveBeenCalledWith('c1', '2026-06-01');
+    });
+
+    it('bloqueia o pagamento (e não fecha vínculo) se a rescisão não estiver assinada pelas duas partes', async () => {
+      mockPagamentoCalls({ deslig: { ...desligRow, assinado_colaborador: false } });
+      await expect(rescisaoService.processarPagamento('d1', EMP)).rejects.toThrow(/assinada/);
+      expect(vinculoService.fecharVinculoAberto).not.toHaveBeenCalled();
     });
   });
 });

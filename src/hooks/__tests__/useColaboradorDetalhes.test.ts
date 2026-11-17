@@ -36,6 +36,12 @@ const {
   mockListarFeriasColetivas,
   mockCriarFeriasColetivas,
   mockListarCamposCustomizados,
+  mockAtualizarContatoEmergencia,
+  mockAtualizarFormacao,
+  mockListarFeriasColaborador,
+  mockListarHoleritesColaborador,
+  mockObterValoresCamposCustomizados,
+  mockSalvarValorCampoCustomizado,
 } = vi.hoisted(() => ({
   mockListarDependentes: vi.fn(),
   mockCriarDependente: vi.fn(),
@@ -71,6 +77,12 @@ const {
   mockListarFeriasColetivas: vi.fn(),
   mockCriarFeriasColetivas: vi.fn(),
   mockListarCamposCustomizados: vi.fn(),
+  mockAtualizarContatoEmergencia: vi.fn(),
+  mockAtualizarFormacao: vi.fn(),
+  mockListarFeriasColaborador: vi.fn(),
+  mockListarHoleritesColaborador: vi.fn(),
+  mockObterValoresCamposCustomizados: vi.fn(),
+  mockSalvarValorCampoCustomizado: vi.fn(),
 }));
 
 vi.mock('@/services/colaboradorDetalhesService', () => ({
@@ -108,6 +120,12 @@ vi.mock('@/services/colaboradorDetalhesService', () => ({
   listarFeriasColetivas: mockListarFeriasColetivas,
   criarFeriasColetivas: mockCriarFeriasColetivas,
   listarCamposCustomizados: mockListarCamposCustomizados,
+  atualizarContatoEmergencia: mockAtualizarContatoEmergencia,
+  atualizarFormacao: mockAtualizarFormacao,
+  listarFeriasColaborador: mockListarFeriasColaborador,
+  listarHoleritesColaborador: mockListarHoleritesColaborador,
+  obterValoresCamposCustomizados: mockObterValoresCamposCustomizados,
+  salvarValorCampoCustomizado: mockSalvarValorCampoCustomizado,
 }));
 
 import {
@@ -145,6 +163,12 @@ import {
   useFeriasColetivas,
   useCriarFeriasColetivas,
   useCamposCustomizados,
+  useAtualizarContatoEmergencia,
+  useAtualizarFormacao,
+  useFeriasResumoColaborador,
+  useHoleritesColaborador,
+  useValoresCamposCustomizados,
+  useSalvarValorCampoCustomizado,
 } from '../useColaboradorDetalhes';
 
 vi.mock('@/hooks/useEmpresas', async () => (await import('@/test/empresaMock')).useEmpresasMockModule());
@@ -761,5 +785,110 @@ describe('useCamposCustomizados', () => {
   it('is disabled when no empresaId', () => {
     renderHook(() => useCamposCustomizados(undefined), { wrapper });
     expect(mockListarCamposCustomizados).not.toHaveBeenCalled();
+  });
+});
+
+describe('useAtualizarContatoEmergencia', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockAtualizarContatoEmergencia.mockResolvedValue(undefined);
+  });
+
+  it('calls atualizarContatoEmergencia scoped by colaboradorId', async () => {
+    const { result } = renderHook(() => useAtualizarContatoEmergencia('col-1'), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({ id: 'c1', dados: { nome: 'Mãe Atualizada' } });
+    });
+
+    expect(mockAtualizarContatoEmergencia).toHaveBeenCalledWith('c1', { nome: 'Mãe Atualizada' }, 'col-1');
+  });
+});
+
+describe('useAtualizarFormacao', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockAtualizarFormacao.mockResolvedValue({ id: 'f1' });
+  });
+
+  it('calls atualizarFormacao scoped by colaboradorId', async () => {
+    const { result } = renderHook(() => useAtualizarFormacao('col-1'), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({ id: 'f1', dados: { curso: 'Engenharia' } });
+    });
+
+    expect(mockAtualizarFormacao).toHaveBeenCalledWith('col-1', 'f1', { curso: 'Engenharia' });
+  });
+});
+
+describe('useFeriasResumoColaborador', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockListarFeriasColaborador.mockResolvedValue([]);
+  });
+
+  it('calls listarFeriasColaborador with colaboradorId and empresaId', async () => {
+    const { result } = renderHook(() => useFeriasResumoColaborador('col-1', 'emp-1'), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockListarFeriasColaborador).toHaveBeenCalledWith('col-1', 'emp-1');
+  });
+
+  it('is disabled when empresaId is missing', () => {
+    renderHook(() => useFeriasResumoColaborador('col-1', undefined), { wrapper });
+    expect(mockListarFeriasColaborador).not.toHaveBeenCalled();
+  });
+});
+
+describe('useHoleritesColaborador', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockListarHoleritesColaborador.mockResolvedValue([]);
+  });
+
+  it('calls listarHoleritesColaborador with colaboradorId', async () => {
+    const { result } = renderHook(() => useHoleritesColaborador('col-1'), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockListarHoleritesColaborador).toHaveBeenCalledWith('col-1');
+  });
+
+  it('is disabled when no colaboradorId', () => {
+    renderHook(() => useHoleritesColaborador(''), { wrapper });
+    expect(mockListarHoleritesColaborador).not.toHaveBeenCalled();
+  });
+});
+
+describe('useValoresCamposCustomizados', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockObterValoresCamposCustomizados.mockResolvedValue([]);
+  });
+
+  it('calls obterValoresCamposCustomizados with colaboradorId', async () => {
+    const { result } = renderHook(() => useValoresCamposCustomizados('col-1'), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockObterValoresCamposCustomizados).toHaveBeenCalledWith('col-1');
+  });
+
+  it('is disabled when colaboradorId is empty', () => {
+    renderHook(() => useValoresCamposCustomizados(''), { wrapper });
+    expect(mockObterValoresCamposCustomizados).not.toHaveBeenCalled();
+  });
+});
+
+describe('useSalvarValorCampoCustomizado', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockSalvarValorCampoCustomizado.mockResolvedValue({ id: 'v1' });
+  });
+
+  it('calls salvarValorCampoCustomizado scoped by colaboradorId', async () => {
+    const { result } = renderHook(() => useSalvarValorCampoCustomizado('col-1'), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({ campoId: 'cc1', valor: 'ABC-123' });
+    });
+
+    expect(mockSalvarValorCampoCustomizado).toHaveBeenCalledWith('cc1', 'col-1', 'ABC-123');
   });
 });

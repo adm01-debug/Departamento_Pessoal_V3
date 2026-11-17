@@ -113,6 +113,11 @@ export {
   useCriarFeriasColetivas,
   useCamposCustomizados,
   useFeriasResumoColaborador,
+  useAtualizarContatoEmergencia,
+  useAtualizarFormacao,
+  useHoleritesColaborador,
+  useValoresCamposCustomizados,
+  useSalvarValorCampoCustomizado,
 } from './useColaboradorDetalhes';
 
 // Tabelas de Referência
@@ -155,3 +160,9 @@ export {
   useVincularDependenteBeneficio,
   useDesvincularDependenteBeneficio,
 } from './useTabelasReferencia';
+
+// Vinculos do colaborador (passagens pela empresa, recontratacao)
+export { useVinculosResumo, useVinculosColaborador, useRecontratarColaborador } from './useVinculos';
+
+// SST por colaborador (incidentes, CAT, riscos)
+export { useIncidentesColaborador, useCatColaborador, useRiscosColaborador } from './useSSTColaborador';

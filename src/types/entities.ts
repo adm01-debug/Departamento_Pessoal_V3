@@ -68,6 +68,8 @@ export interface Colaborador {
   jornada_semanal?: number | null;
   horario_entrada?: string | null;
   horario_saida?: string | null;
+  /** Coluna real `intervalo_minutos` (não `horario_intervalo`). */
+  intervalo_minutos?: number | null;
   empresa_id: string;
   version?: number;
   created_at?: string;

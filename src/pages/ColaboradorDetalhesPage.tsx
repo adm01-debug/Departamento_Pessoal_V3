@@ -30,6 +30,7 @@ import {
   Gift,
   GitCommitVertical,
   Clock,
+  UserPlus,
 } from 'lucide-react';
 import {
   DependentesTab,
@@ -55,7 +56,11 @@ import {
   FeriasResumoTab,
   DesenvolvimentoResumoTab,
   DocumentosComplianceResumoTab,
+  HoleritesTab,
+  CamposCustomizadosTab,
+  SSTResumoTab,
 } from '@/components/colaborador-detalhes';
+import { RecontratarColaboradorDialog } from '@/components/colaboradores/RecontratarColaboradorDialog';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   DropdownMenu,
@@ -76,6 +81,7 @@ export default function ColaboradorDetalhesPage() {
   const [activeFinanceiroTab, setActiveFinanceiroTab] = useState('contas');
   const [activeDocumentosTab, setActiveDocumentosTab] = useState('compliance');
   const [activeJornadaTab, setActiveJornadaTab] = useState('ponto');
+  const [recontratarAberto, setRecontratarAberto] = useState(false);
 
   const { data: colaborador, isLoading } = useQuery({
     queryKey: ['colaborador', id, empresaAtual?.id],
@@ -151,6 +157,11 @@ export default function ColaboradorDetalhesPage() {
                 >
                   <FileText className="h-4 w-4" /> Exportar Ficha (PDF)
                 </DropdownMenuItem>
+                {colaborador.status === 'desligado' && (
+                  <DropdownMenuItem className="gap-2 cursor-pointer" onSelect={() => setRecontratarAberto(true)}>
+                    <UserPlus className="h-4 w-4" /> Recontratar Colaborador
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -397,6 +408,12 @@ export default function ColaboradorDetalhesPage() {
                 >
                   ASO / Exames
                 </TabsTrigger>
+                <TabsTrigger
+                  value="sst"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  SST
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="trabalho">
                 {activeProfissionalTab === 'trabalho' && <TrabalhoHierarquiaTab colaboradorId={id!} />}
@@ -417,6 +434,9 @@ export default function ColaboradorDetalhesPage() {
                 {activeProfissionalTab === 'desenvolvimento' && <DesenvolvimentoResumoTab colaboradorId={id!} />}
               </TabsContent>
               <TabsContent value="aso">{activeProfissionalTab === 'aso' && <ASOTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="sst">
+                {activeProfissionalTab === 'sst' && <SSTResumoTab colaboradorId={id!} />}
+              </TabsContent>
             </Tabs>
           </TabsContent>
 
@@ -460,12 +480,21 @@ export default function ColaboradorDetalhesPage() {
                 >
                   Períodos Aquisitivos
                 </TabsTrigger>
+                <TabsTrigger
+                  value="holerites"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Holerites
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="contas">
                 {activeFinanceiroTab === 'contas' && <ContasBancariasTab colaboradorId={id!} />}
               </TabsContent>
               <TabsContent value="aquisitivos">
                 {activeFinanceiroTab === 'aquisitivos' && <AquisitivosTab colaboradorId={id!} />}
+              </TabsContent>
+              <TabsContent value="holerites">
+                {activeFinanceiroTab === 'holerites' && <HoleritesTab colaboradorId={id!} />}
               </TabsContent>
             </Tabs>
           </TabsContent>
@@ -497,6 +526,12 @@ export default function ColaboradorDetalhesPage() {
                 >
                   Dados Estagiário
                 </TabsTrigger>
+                <TabsTrigger
+                  value="customizados"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Campos Personalizados
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="compliance">
                 {activeDocumentosTab === 'compliance' && <DocumentosComplianceResumoTab colaboradorId={id!} />}
@@ -514,6 +549,9 @@ export default function ColaboradorDetalhesPage() {
               </TabsContent>
               <TabsContent value="estagiario">
                 {activeDocumentosTab === 'estagiario' && <EstagiarioTab colaboradorId={id!} />}
+              </TabsContent>
+              <TabsContent value="customizados">
+                {activeDocumentosTab === 'customizados' && <CamposCustomizadosTab colaboradorId={id!} />}
               </TabsContent>
             </Tabs>
           </TabsContent>
@@ -537,6 +575,12 @@ export default function ColaboradorDetalhesPage() {
           </TabsContent>
         </Tabs>
       </PageLayout>
+
+      <RecontratarColaboradorDialog
+        colaborador={colaborador}
+        open={recontratarAberto}
+        onOpenChange={setRecontratarAberto}
+      />
     </>
   );
 }
