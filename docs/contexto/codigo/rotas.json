@@ -5,7 +5,7 @@
   "urls": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
-  "itens_menu": 95,
+  "itens_menu": 97,
   "lazy": 107
  },
  "urls": [
@@ -32615,6 +32615,15 @@
    "resolve_para": "src/pages/AdminExtintoresPage.tsx"
   },
   {
+   "rotulo": "Faltas",
+   "destino": "/faltas",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/AppSidebar.tsx",
+   "resolve_para": "src/pages/FaltasPage.tsx"
+  },
+  {
    "rotulo": "Feriados",
    "destino": "/feriados",
    "grupo": null,
@@ -32793,6 +32802,15 @@
    "papeis_nao_resolvidos": null,
    "definido_em": "src/components/layout/AppSidebar.tsx",
    "resolve_para": "src/pages/MovimentacoesPage.tsx"
+  },
+  {
+   "rotulo": "Obrigações Fiscais",
+   "destino": "/obrigacoes-fiscais",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/AppSidebar.tsx",
+   "resolve_para": "src/pages/ObrigacoesFiscaisPage.tsx"
   },
   {
    "rotulo": "Onboarding",

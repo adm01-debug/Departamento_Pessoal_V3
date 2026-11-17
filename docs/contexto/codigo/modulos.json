@@ -3224,7 +3224,7 @@
    "modulo": "components/layout",
    "arquivos": 28,
    "testes": 1,
-   "linhas": 3351,
+   "linhas": 3359,
    "itens_menu": [],
    "telas": [
     "/"
@@ -7828,6 +7828,7 @@
     "eSocial",
     "Exames",
     "Extintores (NR-23)",
+    "Faltas",
     "Feriados",
     "Férias",
     "Fichas de EPI",
@@ -7848,6 +7849,7 @@
     "Medidas Disciplinares",
     "Meu Portal",
     "Movimentações",
+    "Obrigações Fiscais",
     "Onboarding",
     "Operação (Painel)",
     "Organograma",

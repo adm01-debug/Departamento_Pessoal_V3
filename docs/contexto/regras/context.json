@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "6dfb623f48ad2401ce6e57a23cd3802e1ae167a2",
+  "sha": "7e121525d99e338e14ca684c0bc06e634a15d9b9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 16:08 UTC",
+  "generated_at": "2026-11-17 16:49 UTC",
   "files_total": 3504,
   "code_files": 2930,
-  "code_lines": 466002
+  "code_lines": 466015
  },
  "version": "1.3.2",
- "facts_hash": "5203c4839604f7bd",
+ "facts_hash": "eb4dc99720dc606c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -101534,7 +101534,7 @@
   {
    "module": "src/components",
    "files": 937,
-   "lines": 170435,
+   "lines": 170448,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -179033,10 +179033,6 @@
    {
     "file": "src/components/layout/__tests__/AppSidebar.menu.test.ts",
     "name": "AppSidebar — config do menu"
-   },
-   {
-    "file": "src/components/layout/__tests__/AppSidebar.menu.test.ts",
-    "name": "grupo "
    },
    {
     "file": "src/components/layout/__tests__/AppSidebar.menu.test.ts",
@@ -276930,7 +276926,7 @@
   },
   "src/components/layout/AppSidebar.tsx": {
    "path": "src/components/layout/AppSidebar.tsx",
-   "lines": 824,
+   "lines": 832,
    "exports": [
     "const menuGroups",
     "function AppSidebar"
@@ -277256,11 +277252,10 @@
   },
   "src/components/layout/__tests__/AppSidebar.menu.test.ts": {
    "path": "src/components/layout/__tests__/AppSidebar.menu.test.ts",
-   "lines": 45,
+   "lines": 50,
    "is_test": true,
    "tests": [
     "AppSidebar — config do menu",
-    "grupo ",
     "não introduz rota repetida no menu",
     "todo item tem label e rota absoluta não vazias"
    ]
@@ -323626,10 +323621,21 @@
   }
  },
  "git": {
-  "sha": "6dfb623f48ad2401ce6e57a23cd3802e1ae167a2",
+  "sha": "7e121525d99e338e14ca684c0bc06e634a15d9b9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "7e12152",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix(menu): da caminho de navegacao a Faltas e Obrigacoes Fiscais (#634)",
+    "files": [
+     "inventario/estado/rotas.json",
+     "src/components/layout/AppSidebar.tsx",
+     "src/components/layout/__tests__/AppSidebar.menu.test.ts"
+    ]
+   },
    {
     "sha": "6dfb623",
     "date": "2026-11-17",
@@ -324416,15 +324422,6 @@
      "docs/ninebox-auditoria-banco.sql",
      "docs/ninebox-testes-seguranca.sql"
     ]
-   },
-   {
-    "sha": "c2102ad",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "docs(auditoria): classifica as dez migrations órfãs da muri contra o banco real (#596)",
-    "files": [
-     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md"
-    ]
    }
   ],
   "hot_files": [
@@ -324434,7 +324431,7 @@
    ],
    [
     "inventario/estado/rotas.json",
-    10
+    11
    ],
    [
     "src/index.css",
@@ -324451,6 +324448,14 @@
    [
     "src/services/colaboradorService.ts",
     3
+   ],
+   [
+    "src/components/layout/AppSidebar.tsx",
+    2
+   ],
+   [
+    "src/components/layout/__tests__/AppSidebar.menu.test.ts",
+    2
    ],
    [
     "public/sw-custom.js",
@@ -324498,14 +324503,6 @@
    ],
    [
     "src/hooks/index.ts",
-    2
-   ],
-   [
-    "src/hooks/useColaboradorDetalhes.ts",
-    2
-   ],
-   [
-    "src/hooks/useVinculos.ts",
     2
    ]
   ]

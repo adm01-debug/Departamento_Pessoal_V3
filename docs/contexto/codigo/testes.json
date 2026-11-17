@@ -3390,7 +3390,7 @@
   {
    "arquivo": "src/components/layout/__tests__/AppSidebar.menu.test.ts",
    "tipo": "unit",
-   "linhas": 45,
+   "linhas": 50,
    "testa": [
     "src/components/layout/AppSidebar.tsx"
    ],

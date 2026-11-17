@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6dfb623f48ad2401ce6e57a23cd3802e1ae167a2` (2026-11-17T13:04:55-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7e121525d99e338e14ca684c0bc06e634a15d9b9` (2026-11-17T13:49:08-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,11 +36,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3483 |
 | arquivos_codigo | 2017 |
-| linhas_codigo | 401360 |
+| linhas_codigo | 401373 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
-| itens_menu | 95 |
+| itens_menu | 97 |
 | modulos | 81 |
 | componentes | 620 |
 | hooks | 115 |
@@ -103,7 +103,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks/ferias | 0 | 0 | 6 | 11 | 0 | 7 |
 | integrations/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib | 0 | 0 | 12 | 1 | 0 | 0 |
-| pages | 94 | 114 | 113 | 212 | 49 | 269 |
+| pages | 96 | 114 | 113 | 212 | 49 | 269 |
 | schemas | 0 | 0 | 19 | 0 | 0 | 0 |
 | schemas/esocial | 0 | 0 | 6 | 0 | 0 | 0 |
 | services | 0 | 0 | 75 | 0 | 36 | 193 |
@@ -395,14 +395,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 26850 nós · 60530 arestas · 2329 comunidades · grafo do commit `6dfb623f`
+- 26850 nós · 60530 arestas · 2329 comunidades · grafo do commit `7e121525`
 - comunidades maiores: lucide-react (531), 20260831_corrected_public.sql (497), canonical_schema.sql (475), button.tsx (449), useEmpresas (388), cn (368), @tanstack/react-query (343), vitest (252), App.tsx (199), contract.ts (194), "public"."colaboradores" (165), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
+- inventario/estado/rotas.json (21)
 - .github/workflows/canonical-migrations.yml (20)
-- inventario/estado/rotas.json (20)
 - package.json (19)
 - package-lock.json (18)
 - PENDENCIAS.md (10)
@@ -649,6 +649,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `7e12152` fix(menu): da caminho de navegacao a Faltas e Obrigacoes Fiscais (#634)
 - 2026-11-17 `6dfb623` feat(ui): resgata da muri os primitivos do design system (#627)
 - 2026-11-17 `d3a7108` feat(layout): resgata da muri o shell de layout e a entrada de menu que faltava (#626)
 - 2026-11-17 `e0e4448` feat(design): traz o sistema de design da branch muri para a main (#625)
@@ -663,7 +664,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `9de335f` fix(desligamentos): "Novo Desligamento" volta a listar colaboradores (#617)
 - 2026-11-17 `d15194a` fix(docs): redige o user_id, o e-mail e o primeiro nome de pessoa que o #599 deixou passar (#615)
 - 2026-11-17 `d63d655` feat: resgata da muri o dossiê do colaborador — holerites, SST, campos personalizados e recontratação (#613)
-- 2026-11-17 `0a74847` feat: resgata da muri 6 grupos de hooks/services com consumidor vivo (#612)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
