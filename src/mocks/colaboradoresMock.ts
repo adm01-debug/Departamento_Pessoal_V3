@@ -1843,6 +1843,15 @@ export function getMockVinculosResumo(colaboradorIds: string[]): Record<string, 
       quantidadeRecontratacoes: Math.max(ordenados.length - 1, 0),
       primeiraAdmissao: ordenados[0]?.data_inicio ?? null,
       admissaoAtual: (aberto ?? ordenados[ordenados.length - 1])?.data_inicio ?? null,
+      // Sem este campo o mock devolvia `ultimoEncerramento` undefined e a
+      // validação de sobreposição do diálogo voltava a comparar só com a
+      // admissão anterior (ver VinculosResumo em vinculoService.ts).
+      ultimoEncerramento:
+        ordenados
+          .map((v) => v.data_fim)
+          .filter((d): d is string => typeof d === 'string' && d.length > 0)
+          .sort()
+          .pop() ?? null,
     };
   }
   return result;

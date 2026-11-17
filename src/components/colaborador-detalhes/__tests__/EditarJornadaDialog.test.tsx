@@ -241,6 +241,26 @@ describe('EditarJornadaDialog — escala do dia', () => {
     expect(await screen.findByRole('button', { name: 'Salvar escala do dia' })).toBeInTheDocument();
   });
 
+  it('jornada indisponível por falha mostra erro honesto, não "nenhuma jornada"', async () => {
+    vi.mocked(turnoService.obterEscalaDoDia).mockResolvedValue(null);
+    render(
+      <EditarJornadaDialog
+        open
+        onOpenChange={vi.fn()}
+        jornada={null}
+        jornadaIndisponivel
+        empresaId="e1"
+        colaboradorId="col-1"
+      />,
+      { wrapper }
+    );
+
+    expect(await screen.findByText(/Não foi possível carregar a jornada contratual/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Nenhuma jornada contratual ativa nesta empresa/i)).not.toBeInTheDocument();
+    // A escala do dia segue alcançável mesmo assim.
+    expect(await screen.findByRole('button', { name: 'Salvar escala do dia' })).toBeInTheDocument();
+  });
+
   it('com jornada contratual mostra o form e não o aviso de vazio', async () => {
     vi.mocked(turnoService.obterEscalaDoDia).mockResolvedValue(null);
     render(

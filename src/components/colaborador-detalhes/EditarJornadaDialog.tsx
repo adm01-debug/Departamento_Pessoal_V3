@@ -33,6 +33,10 @@ interface EditarJornadaDialogProps {
   /** Quando informado, o modal também edita a escala de um dia específico
    *  (tabela `escalas_trabalho`) além da jornada contratual. */
   colaboradorId?: string;
+  /** A consulta da jornada contratual FALHOU — `jornada` é null por erro, não
+   *  por ausência. Sem isto o modal afirmaria "nenhuma jornada ativa" sem ter
+   *  conseguido olhar. */
+  jornadaIndisponivel?: boolean;
 }
 
 export function EditarJornadaDialog({
@@ -41,6 +45,7 @@ export function EditarJornadaDialog({
   jornada,
   empresaId,
   colaboradorId,
+  jornadaIndisponivel = false,
 }: EditarJornadaDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -49,12 +54,15 @@ export function EditarJornadaDialog({
           <DialogTitle>Editar Jornada</DialogTitle>
         </DialogHeader>
 
-        {!jornada && (
-          <p className="text-xs text-muted-foreground">
-            Nenhuma jornada contratual ativa nesta empresa — cadastre uma jornada em Jornadas para editar entrada,
-            saída, intervalo e carga semanal. A escala do dia abaixo pode ser ajustada mesmo assim.
-          </p>
-        )}
+        {!jornada &&
+          (jornadaIndisponivel ? (
+            <FalhaConsulta o="a jornada contratual" />
+          ) : (
+            <p className="text-xs text-muted-foreground">
+              Nenhuma jornada contratual ativa nesta empresa — cadastre uma jornada em Jornadas para editar entrada,
+              saída, intervalo e carga semanal. A escala do dia abaixo pode ser ajustada mesmo assim.
+            </p>
+          ))}
 
         {jornada && (
           <EditarJornadaForm

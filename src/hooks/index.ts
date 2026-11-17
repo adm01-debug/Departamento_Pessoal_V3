@@ -75,7 +75,6 @@ export {
   useRegistrosPontoSemana,
   useBancoHorasConfig,
   useSalvarBancoHorasConfig,
-  useEscalaAtual,
 } from './useNovasTabelas';
 
 // Colaborador Detalhes

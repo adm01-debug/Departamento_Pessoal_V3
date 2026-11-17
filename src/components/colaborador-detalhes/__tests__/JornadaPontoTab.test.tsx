@@ -25,16 +25,22 @@ vi.mock('@/components/colaborador-detalhes/EditarJornadaDialog', () => ({
   EditarJornadaDialog: ({
     open,
     jornada,
+    jornadaIndisponivel,
     empresaId,
     colaboradorId,
   }: {
     open: boolean;
     jornada: { id: string } | null;
+    jornadaIndisponivel?: boolean;
     empresaId: string;
     colaboradorId?: string;
   }) =>
     open ? (
-      <div data-testid="editar-jornada-dialog" data-jornada={jornada?.id ?? 'sem-jornada'}>
+      <div
+        data-testid="editar-jornada-dialog"
+        data-jornada={jornada?.id ?? 'sem-jornada'}
+        data-indisponivel={String(!!jornadaIndisponivel)}
+      >
         {`${empresaId}|${colaboradorId ?? ''}`}
       </div>
     ) : null,
@@ -97,6 +103,7 @@ describe('JornadaPontoTab — ação de escala', () => {
 
     const dialog = await screen.findByTestId('editar-jornada-dialog');
     expect(dialog).toHaveAttribute('data-jornada', 'sem-jornada');
+    expect(dialog).toHaveAttribute('data-indisponivel', 'false');
     expect(dialog).toHaveTextContent('e1|col-1');
   });
 
@@ -108,6 +115,16 @@ describe('JornadaPontoTab — ação de escala', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Editar escala' }));
 
     expect(await screen.findByTestId('editar-jornada-dialog')).toHaveAttribute('data-jornada', 'j1');
+  });
+
+  it('falha na consulta da jornada não é lida como "sem jornada"', async () => {
+    vi.mocked(jornadaService.obterJornadaColaborador).mockRejectedValue(new Error('timeout'));
+    renderizar();
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Editar escala' }));
+
+    const dialog = await screen.findByTestId('editar-jornada-dialog');
+    expect(dialog).toHaveAttribute('data-indisponivel', 'true');
   });
 
   it('sem empresa atual não oferece a ação (não há tenant para gravar)', async () => {

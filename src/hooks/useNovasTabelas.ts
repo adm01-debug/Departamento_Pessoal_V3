@@ -10,14 +10,7 @@ import { jornadaHorariosService } from '@/services/jornadaHorariosService';
 import { bancoHorasConfigService } from '@/services/bancoHorasConfigService';
 import { bancoHorasService } from '@/services/bancoHorasService';
 import { pontoService } from '@/services/pontoService';
-import { turnoService } from '@/services/turnoService';
-import type { EscalaComTurno } from '@/services/turnoService';
-import {
-  mockOr,
-  getMockSaldoBancoHoras,
-  getMockRegistrosPontoSemana,
-  getMockEscalaAtual,
-} from '@/mocks/colaboradoresMock';
+import { mockOr, getMockSaldoBancoHoras, getMockRegistrosPontoSemana } from '@/mocks/colaboradoresMock';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 
@@ -328,19 +321,5 @@ export function useRegistrosPontoSemana(colaboradorId: string) {
       (mockOr(getMockRegistrosPontoSemana(colaboradorId)) as Tables<'registros_ponto'>[] | undefined) ??
       pontoService.buscarRegistrosSemana(colaboradorId),
     enabled: !!colaboradorId,
-  });
-}
-
-// === ESCALA ATUAL (Dossiê → Jornada & Ponto) ===
-// Família ['escalas'], a mesma que as telas de escala já invalidam ao criar,
-// editar ou excluir escala — salvar a escala derruba este card sozinho.
-export function useEscalaAtual(colaboradorId: string) {
-  const { empresaAtual } = useEmpresas();
-  return useQuery({
-    queryKey: ['escalas', 'atual', colaboradorId, empresaAtual?.id],
-    queryFn: async () =>
-      (mockOr(getMockEscalaAtual(colaboradorId)) as EscalaComTurno | undefined) ??
-      turnoService.buscarEscalaAtual(colaboradorId, empresaAtual!.id),
-    enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }

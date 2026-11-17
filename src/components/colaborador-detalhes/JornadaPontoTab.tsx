@@ -55,7 +55,11 @@ export function JornadaPontoTab({ colaboradorId }: { colaboradorId: string }) {
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 
-  const { data: jornadaColaborador, isLoading: isLoadingJornada } = useQuery({
+  const {
+    data: jornadaColaborador,
+    isLoading: isLoadingJornada,
+    isError: erroJornada,
+  } = useQuery({
     queryKey: ['jornada-colaborador', colaboradorId, empresaAtual?.id],
     queryFn: () => jornadaService.obterJornadaColaborador(colaboradorId, empresaAtual!.id),
     enabled: !!colaboradorId && !!empresaAtual?.id,
@@ -184,6 +188,7 @@ export function JornadaPontoTab({ colaboradorId }: { colaboradorId: string }) {
         open={editarJornadaAberto}
         onOpenChange={setEditarJornadaAberto}
         jornada={jornadaColaborador ?? null}
+        jornadaIndisponivel={erroJornada}
         empresaId={empresaAtual?.id || ''}
         colaboradorId={colaboradorId}
       />

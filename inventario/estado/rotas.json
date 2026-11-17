@@ -7,7 +7,7 @@
     "itens_de_menu": 88,
     "urls_admin": 23,
     "urls_publicas": 7,
-    "hooks_distintos": 147,
+    "hooks_distintos": 148,
     "problemas": 0
   },
   "urls": [
@@ -4858,6 +4858,10 @@
         },
         {
           "nome": "useAtualizarContatoEmergencia",
+          "arquivo": "src/hooks/useColaboradorDetalhes.ts"
+        },
+        {
+          "nome": "useAtualizarFormacao",
           "arquivo": "src/hooks/useColaboradorDetalhes.ts"
         },
         {
@@ -18821,6 +18825,12 @@
       "arquivo": "src/hooks/index.ts",
       "telas": [
         "src/pages/EPIsPage.tsx"
+      ]
+    },
+    "useAtualizarFormacao": {
+      "arquivo": "src/hooks/useColaboradorDetalhes.ts",
+      "telas": [
+        "src/pages/ColaboradorDetalhesPage.tsx"
       ]
     },
     "useAtualizarKit": {

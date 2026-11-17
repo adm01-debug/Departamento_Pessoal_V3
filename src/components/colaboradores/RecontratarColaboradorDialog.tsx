@@ -96,7 +96,17 @@ export function RecontratarColaboradorDialog({ colaborador, open, onOpenChange }
   // em 2022, desligado em 2026, readmitido em 2025) e as duas passagens ficavam
   // sobrepostas em `vinculos`. `colaboradorService.recontratar` repete a mesma
   // regra — o formulário sozinho não protege o dado gravado.
-  const marcoAnterior = [resumo?.admissaoAtual, resumo?.ultimoEncerramento]
+  // As datas do próprio cadastro entram na conta porque o resumo vem VAZIO no
+  // cadastro legado (nenhuma linha em `vinculos`) — e é justo nesse caso que a
+  // passagem antiga só existe em `colaboradores`. Sem elas o formulário
+  // liberava qualquer data quando a consulta de apoio voltava vazia.
+  const legado = colaborador as Colaborador & { data_desligamento?: string | null };
+  const marcoAnterior = [
+    resumo?.admissaoAtual,
+    resumo?.ultimoEncerramento,
+    legado.data_admissao,
+    legado.data_desligamento,
+  ]
     .filter((d): d is string => !!d)
     .reduce<string | null>((maior, d) => (maior && maior > d ? maior : d), null);
   const dataInvalida = !!dataAdmissao && !!marcoAnterior && dataAdmissao <= marcoAnterior;

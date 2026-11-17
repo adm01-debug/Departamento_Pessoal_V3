@@ -7,10 +7,6 @@ type EscalaComColaboradorETurno = Tables<'escalas_trabalho'> & {
   turno: Pick<Tables<'turnos'>, 'nome' | 'horario_inicio' | 'horario_fim' | 'cor'> | null;
 };
 
-export type EscalaComTurno = Tables<'escalas_trabalho'> & {
-  turno: Pick<Tables<'turnos'>, 'nome' | 'horario_inicio' | 'horario_fim' | 'cor'> | null;
-};
-
 export type EscalaDoDia = Tables<'escalas_trabalho'> & {
   turno: Pick<Tables<'turnos'>, 'id' | 'nome' | 'horario_inicio' | 'horario_fim' | 'cor'> | null;
 };
@@ -69,23 +65,6 @@ export const turnoService = {
     const { data: result, error } = await q;
     if (error) throw error;
     return (result as EscalaComColaboradorETurno[]) || [];
-  },
-
-  // Escala atual de um colaborador (Dossiê — Jornada & Ponto). Não reusa
-  // listarEscalas() porque ele lista por data/empresa, não por colaborador —
-  // aqui buscamos só a última escala já registrada.
-  async buscarEscalaAtual(colaboradorId: string, empresaId: string): Promise<EscalaComTurno | null> {
-    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await supabase
-      .from('escalas_trabalho')
-      .select('*, turno:turnos(nome, horario_inicio, horario_fim, cor)')
-      .eq('colaborador_id', colaboradorId)
-      .eq('empresa_id', empresaId)
-      .order('data', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (error) throw error;
-    return (data as EscalaComTurno | null) ?? null;
   },
 
   async criarEscala(d: Insertable<'escalas_trabalho'>): Promise<Tables<'escalas_trabalho'>> {

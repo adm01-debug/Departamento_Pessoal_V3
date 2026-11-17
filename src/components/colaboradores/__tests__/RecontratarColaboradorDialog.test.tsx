@@ -176,6 +176,18 @@ describe('RecontratarColaboradorDialog', () => {
     expect(mocks.mutateAsync).not.toHaveBeenCalled();
   });
 
+  it('bloqueia sobreposição com a passagem do cadastro legado (resumo vazio)', () => {
+    // Cadastro legado: nenhuma linha em `vinculos`, então o resumo volta vazio
+    // e as datas da passagem antiga só existem em `colaboradores`. Sem elas na
+    // validação o formulário liberava qualquer data.
+    mocks.resumo = { data: {}, isLoading: false, isError: false };
+    renderDialog({ ...COLABORADOR, data_admissao: '2019-03-01', data_desligamento: todayLocalISO() } as Colaborador);
+
+    expect(screen.getByText(/A nova admissão precisa ser posterior a/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Confirmar recontratação' })).toBeDisabled();
+    expect(mocks.mutateAsync).not.toHaveBeenCalled();
+  });
+
   it('não confirma enquanto o resumo de vínculos não pôde ser lido', () => {
     // Sem a última admissão não há como barrar sobreposição: fail-closed.
     mocks.resumo = { data: undefined, isLoading: false, isError: true };

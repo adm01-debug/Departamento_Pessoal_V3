@@ -214,13 +214,6 @@ class ColaboradorService extends BaseService<Colaborador> {
       throw this.mapDuplicidadeError(e);
     }
 
-    // A 1ª admissão também é uma passagem: sem esta linha em `vinculos` ela
-    // existe apenas em `colaboradores.data_admissao`, e esse fallback é
-    // abandonado por `useHistoricoColaborador` no instante em que aparece o
-    // primeiro vínculo (a readmissão) — a passagem antiga sumia do histórico.
-    const dataAdmissao = typeof payload.data_admissao === 'string' ? payload.data_admissao : '';
-    if (dataAdmissao) await vinculoService.criarVinculoInicial(criado.id, dataAdmissao, 'Admissão');
-
     return criado;
   }
 
@@ -251,8 +244,7 @@ class ColaboradorService extends BaseService<Colaborador> {
     // Estado ANTES do update: `atualizar` zera `data_desligamento`, então a
     // data do último desligamento só pode ser lida aqui.
     const anterior = (await this.buscarPorId(id, empresaId)) as
-      | (Colaborador & { data_desligamento?: string | null })
-      | null;
+      (Colaborador & { data_desligamento?: string | null }) | null;
     const vinculos = await vinculoService.listarPorColaborador(id);
 
     // Guarda de sobreposição NO SERVICE: validar só no formulário não protege o
@@ -272,21 +264,24 @@ class ColaboradorService extends BaseService<Colaborador> {
       );
     }
 
+    // Cadastro legado (nenhuma linha em `vinculos`): registra a passagem antiga
+    // como vínculo encerrado ANTES da readmissão, senão ela desaparece da linha
+    // do tempo — ver `vinculoService.criarVinculoHistorico`. Grava ANTES do
+    // update: o update zera `data_desligamento` e o insert é best-effort, então
+    // na outra ordem uma falha do insert apagava a data de fim da passagem
+    // antiga dos dois lugares, sem volta. Sem `data_desligamento` não há data
+    // de fim que não seja inventada: a passagem fica só em
+    // `colaboradores.data_admissao` (histórico incompleto, mas sem vínculo
+    // aberto falso).
+    if (vinculos.length === 0 && anterior?.data_admissao && anterior.data_desligamento) {
+      await vinculoService.criarVinculoHistorico(id, anterior.data_admissao, anterior.data_desligamento);
+    }
+
     const atualizado = await this.atualizar(
       id,
       { ...dados, status: 'ativo', data_desligamento: null } as Record<string, unknown>,
       empresaId
     );
-
-    // Cadastro legado (nenhuma linha em `vinculos`): registra a passagem antiga
-    // como vínculo encerrado ANTES da readmissão, senão ela desaparece da linha
-    // do tempo — ver `vinculoService.criarVinculoHistorico`. Sem
-    // `data_desligamento` não há data de fim que não seja inventada: a passagem
-    // fica só em `colaboradores.data_admissao` (histórico incompleto, mas sem
-    // vínculo aberto falso).
-    if (vinculos.length === 0 && anterior?.data_admissao && anterior.data_desligamento) {
-      await vinculoService.criarVinculoHistorico(id, anterior.data_admissao, anterior.data_desligamento);
-    }
 
     await vinculoService.criarVinculoInicial(id, dados.data_admissao, 'Readmissão');
 
