@@ -10,16 +10,17 @@
  * `edgeFunctionsService` registra que "correlação, se necessária, deve ir no
  * body" — porque o CORS das funções não aceita header novo.
  *
- * Resgatado de `origin/muri:src/lib/tracing.ts`, onde estava órfão (nenhum
- * arquivo o importava nem lá). Vieram só as duas funções que o contrato pede;
- * `tracedFetch`, `withTrace`, `tracedService` e `useTracing` ficaram de fora
- * por não terem consumidor.
+ * UM ID POR REQUISIÇÃO, não por aba. A coluna é definida assim na migration
+ * `20260724120000_p3_064_query_telemetry_trace_id.sql`: "trace_id da
+ * REQUISIÇÃO distribuída", com índice "útil para debugging de UMA request". A
+ * versão de `origin/muri:src/lib/tracing.ts` guardava um único UUID em
+ * `sessionStorage['dp_trace_id']` e devolvia o mesmo para a aba inteira — isso
+ * é id de sessão: com ele, todas as queries da aba colidem no mesmo valor e a
+ * coluna deixa de isolar uma requisição, que é a razão de existir do índice.
  */
 
-const TRACE_ID_KEY = 'dp_trace_id';
-
-/** UUID v4, com fallback para navegador sem `crypto.randomUUID`. */
-function novoId(): string {
+/** UUID v4 por chamada, com fallback para navegador sem `crypto.randomUUID`. */
+export function novoTraceId(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID();
   }
@@ -31,26 +32,10 @@ function novoId(): string {
 }
 
 /**
- * trace_id da aba, estável enquanto ela viver: é o que permite ligar, num
- * atendimento de suporte, tudo o que o usuario fez na sessao aos logs que o
- * bridge e as Edge Functions escreveram.
- *
- * `sessionStorage` pode lancar (aba privada, cookies bloqueados) — nesse caso
- * devolve um id de uso unico em vez de derrubar a chamada que ia ser traceada.
+ * Acrescenta um `trace_id` novo ao corpo da requisição. Não sobrescreve um
+ * `trace_id` já posto pelo chamador: quem precisa amarrar duas chamadas no
+ * mesmo trace (fan-out) passa o seu e ele vence.
  */
-export function getTraceId(): string {
-  try {
-    const guardado = sessionStorage.getItem(TRACE_ID_KEY);
-    if (guardado && guardado.length >= 16) return guardado;
-    const gerado = novoId();
-    sessionStorage.setItem(TRACE_ID_KEY, gerado);
-    return gerado;
-  } catch {
-    return novoId();
-  }
-}
-
-/** Acrescenta `trace_id` ao corpo da requisicao, sem sobrescrever um ja posto. */
 export function withTraceId<T extends Record<string, unknown>>(body: T): T & { trace_id: string } {
-  return { trace_id: getTraceId(), ...body };
+  return { trace_id: novoTraceId(), ...body };
 }

@@ -172,12 +172,17 @@ describe('client.ts — callBridge via query builder', () => {
  * header novo), e o schema do bridge declara o campo —
  * `external-db-bridge/request-schema.ts:49`, com o comentário "era rejeitada
  * pelo .strict() e o trace_id nunca chegava à telemetria".
+ *
+ * A coluna é POR REQUISIÇÃO: a migration
+ * `20260724120000_p3_064_query_telemetry_trace_id.sql` a descreve como
+ * "trace_id da requisição distribuída" e cria índice "útil para debugging de
+ * uma request". Um id por aba (o que a muri fazia, via sessionStorage) faria
+ * todas as queries colidirem no mesmo valor.
  */
 describe('external-db-bridge — trace_id', () => {
   let fetchMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    sessionStorage.clear();
     fetchMock = vi.fn(async () => okJson({ data: [] }));
     vi.stubGlobal('fetch', fetchMock);
   });
@@ -189,12 +194,20 @@ describe('external-db-bridge — trace_id', () => {
     expect((body.trace_id as string).length).toBeGreaterThanOrEqual(16);
   });
 
-  it('o mesmo trace_id na aba inteira — é isso que correlaciona o atendimento', async () => {
+  it('CADA requisição ganha um trace_id próprio — é o que o índice da coluna isola', async () => {
     await supabase.from('colaboradores').select('id');
     const primeiro = lastFetchBody(fetchMock).trace_id;
     await supabase.from('empresas').select('id');
     const segundo = lastFetchBody(fetchMock).trace_id;
-    expect(segundo).toBe(primeiro);
+    expect(segundo).not.toBe(primeiro);
+  });
+
+  it('duas chamadas à MESMA tabela também não repetem o id', async () => {
+    await supabase.from('colaboradores').select('id');
+    const a = lastFetchBody(fetchMock).trace_id;
+    await supabase.from('colaboradores').select('id');
+    const b = lastFetchBody(fetchMock).trace_id;
+    expect(b).not.toBe(a);
   });
 
   it('o trace_id não atropela os campos do request', async () => {
@@ -207,22 +220,10 @@ describe('external-db-bridge — trace_id', () => {
     expect(body.trace_id).toBeDefined();
   });
 
-  it('sessionStorage indisponível (aba privada) não derruba a chamada', async () => {
-    const original = Object.getOwnPropertyDescriptor(window, 'sessionStorage');
-    Object.defineProperty(window, 'sessionStorage', {
-      configurable: true,
-      get() {
-        throw new Error('SecurityError: acesso negado');
-      },
-    });
-    try {
-      await supabase.from('colaboradores').select('id');
-      const body = lastFetchBody(fetchMock);
-      // id de uso único em vez de exceção
-      expect(typeof body.trace_id).toBe('string');
-      expect((body.trace_id as string).length).toBeGreaterThanOrEqual(16);
-    } finally {
-      if (original) Object.defineProperty(window, 'sessionStorage', original);
-    }
+  it('formato UUID v4, que é o que o backend espera', async () => {
+    await supabase.from('colaboradores').select('id');
+    expect(lastFetchBody(fetchMock).trace_id).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    );
   });
 });
