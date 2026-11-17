@@ -50,8 +50,34 @@ describe('TipoBadge', () => {
     expect(screen.getByText('Sem Justa Causa')).toBeInTheDocument();
   });
 
-  it('renders Justa Causa for com_justa_causa', () => {
-    render(<TipoBadge tipo="com_justa_causa" />);
-    expect(screen.getByText('Justa Causa')).toBeInTheDocument();
+  // Os seis valores REAIS do enum `tipo_desligamento` do banco canonico
+  // (conferidos por supabase_db_list_enums). Antes desta correcao o mapa usava
+  // `com_justa_causa`, `acordo_mutuo` e `termino_contrato` — que nao existem — e
+  // nao tinha `falecimento`: quatro dos seis tipos exibiam o valor cru na tela.
+  it.each([
+    ['sem_justa_causa', 'Sem Justa Causa'],
+    ['justa_causa', 'Justa Causa'],
+    ['pedido_demissao', 'Pedido Demissão'],
+    ['acordo', 'Acordo'],
+    ['fim_contrato', 'Fim de Contrato'],
+    ['falecimento', 'Falecimento'],
+  ])('traduz o tipo real %s', (tipo, rotulo) => {
+    render(<TipoBadge tipo={tipo} />);
+    expect(screen.getByText(rotulo)).toBeInTheDocument();
+  });
+
+  // Fecha a porta de volta: se alguem reintroduzir as chaves inventadas, elas
+  // aparecem cruas na tela — e este caso denuncia.
+  it.each(['com_justa_causa', 'acordo_mutuo', 'termino_contrato'])(
+    'nao reconhece a chave inexistente %s (cai no valor cru)',
+    (tipo) => {
+      render(<TipoBadge tipo={tipo} />);
+      expect(screen.getByText(tipo)).toBeInTheDocument();
+    }
+  );
+
+  it('status pago tem rotulo proprio (a producao grava esse valor)', () => {
+    render(<StatusBadge status="pago" />);
+    expect(screen.getByText('Pago')).toBeInTheDocument();
   });
 });
