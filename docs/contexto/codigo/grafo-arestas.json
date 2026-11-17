@@ -1866,6 +1866,9 @@
    "src/utils/safeError.ts"
   ],
   "src/components/desligamentos/DesligamentoFilters.tsx": [
+   "src/components/desligamentos/desligamentosComum.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx",
    "src/components/ui/input.tsx",
    "src/components/ui/select.tsx"
   ],
@@ -1874,6 +1877,7 @@
    "src/services/desligamentoService.ts"
   ],
   "src/components/desligamentos/DesligamentoStatusBadge.tsx": [
+   "src/components/desligamentos/desligamentosComum.ts",
    "src/components/ui/badge.tsx",
    "src/lib/utils.ts"
   ],
@@ -1892,8 +1896,18 @@
    "src/utils/safeError.ts"
   ],
   "src/components/desligamentos/TurnoverChart.tsx": [
+   "src/components/desligamentos/desligamentosDerivacoes.ts",
+   "src/components/desligamentos/entradaCards.tsx",
    "src/components/ui/card.tsx",
-   "src/services/desligamentoService.ts"
+   "src/components/ui/select.tsx",
+   "src/lib/motionMode.ts"
+  ],
+  "src/components/desligamentos/desligamentosDerivacoes.ts": [
+   "src/components/desligamentos/desligamentosComum.ts",
+   "src/utils/dateLocal.ts"
+  ],
+  "src/components/desligamentos/entradaCards.tsx": [
+   "src/components/ui/entrada-cards.tsx"
   ],
   "src/components/desligamentos/index.ts": [
    "src/components/desligamentos/DesligamentoChecklist.tsx",

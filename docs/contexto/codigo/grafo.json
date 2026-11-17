@@ -1,12 +1,12 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1273,
- "arestas": 6222,
+ "nos": 1276,
+ "arestas": 6232,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 349
+   "importado_por": 350
   },
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -42,7 +42,7 @@
   },
   {
    "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 128
+   "importado_por": 129
   },
   {
    "arquivo": "src/hooks/useEmpresas.ts",
@@ -85,12 +85,12 @@
    "importado_por": 67
   },
   {
-   "arquivo": "supabase/functions/_shared/csrf.ts",
+   "arquivo": "src/utils/dateLocal.ts",
    "importado_por": 62
   },
   {
-   "arquivo": "src/utils/dateLocal.ts",
-   "importado_por": 61
+   "arquivo": "supabase/functions/_shared/csrf.ts",
+   "importado_por": 62
   },
   {
    "arquivo": "src/hooks/index.ts",
@@ -149,6 +149,10 @@
    "importado_por": 31
   },
   {
+   "arquivo": "src/components/ui/entrada-cards.tsx",
+   "importado_por": 29
+  },
+  {
    "arquivo": "src/services/piiAccessLogService.ts",
    "importado_por": 29
   },
@@ -159,10 +163,6 @@
   {
    "arquivo": "src/contexts/index.ts",
    "importado_por": 28
-  },
-  {
-   "arquivo": "src/components/avaliacao/entradaCards.tsx",
-   "importado_por": 27
   }
  ],
  "ciclos": {

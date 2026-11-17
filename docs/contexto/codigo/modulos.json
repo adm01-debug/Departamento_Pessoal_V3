@@ -195,7 +195,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 272,
+   "testes": 273,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -1813,9 +1813,9 @@
   },
   {
    "modulo": "components/desligamentos",
-   "arquivos": 8,
+   "arquivos": 11,
    "testes": 0,
-   "linhas": 1150,
+   "linhas": 2199,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1823,7 +1823,8 @@
    "hooks_locais": [
     "useAuth",
     "useEmpresaStore",
-    "useEmpresas"
+    "useEmpresas",
+    "useMovimentoReduzido"
    ],
    "hooks_definidos": [],
    "edges": [

@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 730,
+ "total": 731,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 691
+  "unit": 692
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 607
+   "arquivos": 608
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -1142,11 +1142,11 @@
   {
    "arquivo": "src/components/__tests__/DesligamentoBadges.test.tsx",
    "tipo": "unit",
-   "linhas": 58,
+   "linhas": 65,
    "testa": [
     "src/components/desligamentos/DesligamentoStatusBadge.tsx"
    ],
-   "casos": 10
+   "casos": 11
   },
   {
    "arquivo": "src/components/__tests__/DesligamentoChecklist.test.tsx",
@@ -1171,11 +1171,11 @@
   {
    "arquivo": "src/components/__tests__/DesligamentoFilters.test.tsx",
    "tipo": "unit",
-   "linhas": 45,
+   "linhas": 80,
    "testa": [
     "src/components/desligamentos/DesligamentoFilters.tsx"
    ],
-   "casos": 5
+   "casos": 7
   },
   {
    "arquivo": "src/components/__tests__/DesligamentoKPIs.test.tsx",
@@ -1187,13 +1187,22 @@
    "casos": 7
   },
   {
+   "arquivo": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+   "tipo": "unit",
+   "linhas": 138,
+   "testa": [
+    "src/components/desligamentos/desligamentosDerivacoes.ts"
+   ],
+   "casos": 9
+  },
+  {
    "arquivo": "src/components/__tests__/DesligamentoStatusBadge.test.tsx",
    "tipo": "unit",
-   "linhas": 58,
+   "linhas": 84,
    "testa": [
     "src/components/desligamentos/DesligamentoStatusBadge.tsx"
    ],
-   "casos": 8
+   "casos": 10
   },
   {
    "arquivo": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
@@ -3171,12 +3180,12 @@
   {
    "arquivo": "src/components/__tests__/TurnoverChart.test.tsx",
    "tipo": "unit",
-   "linhas": 53,
+   "linhas": 82,
    "testa": [
     "src/components/desligamentos/TurnoverChart.tsx",
     "src/services/desligamentoService.ts"
    ],
-   "casos": 3
+   "casos": 4
   },
   {
    "arquivo": "src/components/__tests__/UnifiedAuditSection.test.tsx",
@@ -6908,6 +6917,7 @@
   "src/components/desligamentos/DesligamentoStatusBadge.tsx": 3,
   "src/components/desligamentos/NovoDesligamentoDialog.tsx": 1,
   "src/components/desligamentos/TurnoverChart.tsx": 1,
+  "src/components/desligamentos/desligamentosDerivacoes.ts": 1,
   "src/components/documents/DocumentoPreview.tsx": 1,
   "src/components/documents/DocumentoTimeline.tsx": 1,
   "src/components/empresa/EmpresaSelector.tsx": 1,

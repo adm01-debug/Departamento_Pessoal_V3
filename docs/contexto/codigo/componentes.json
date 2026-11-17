@@ -2792,7 +2792,7 @@
     "DesligamentoFilters"
    ],
    "export_default": null,
-   "linhas": 71,
+   "linhas": 231,
    "dominio": "components/desligamentos",
    "hooks_locais": [],
    "tabelas": [],
@@ -2853,9 +2853,11 @@
     "TurnoverChart"
    ],
    "export_default": null,
-   "linhas": 99,
+   "linhas": 489,
    "dominio": "components/desligamentos",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -7028,7 +7030,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 349,
+   "usado_por": 350,
    "orfao": false
   },
   {
@@ -7349,7 +7351,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 27,
+   "usado_por": 29,
    "orfao": false
   },
   {
@@ -7608,7 +7610,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 127,
+   "usado_por": 128,
    "orfao": false
   },
   {

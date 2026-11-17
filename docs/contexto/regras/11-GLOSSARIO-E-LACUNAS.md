@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7b17d30ef5` · branch `main` · 2026-11-17 12:39 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b7ee91549c` · branch `main` · 2026-11-17 13:14 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
 | `pcs_grades` | Transactionally generated salary ranges for a PCS plan. | 11 colunas | migration |
 | `pcs_pesquisa_salarial` | Tenant-scoped external salary benchmark observations. | 14 colunas | migration |
-| … +375 linhas — lista completa em `context.json` | | | |
+| … +378 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -357,6 +357,7 @@
 | status | valor `devolvida` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/feedbackCanonico.ts`<br>`compara:src/pages/AvaliacaoPage.tsx` |
 | status | valor `recusado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/dashboard/AnalyticsSection.tsx`<br>`compara:src/hooks/usePontoMelhorado.ts`<br>`escreve:src/components/dashboard/AnalyticsSection.tsx`<br>`escreve:src/components/dashboard/analytics/PendenciasDetailDialog.tsx` |
 | status | valor `excellent` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/dashboard/WorkforceHealthScore.tsx` |
+| status | valor `comunicado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/desligamentos/desligamentosDerivacoes.ts` |
 | status | valor `sent` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/folha/FolhaESocialSync.tsx`<br>`compara:supabase/functions/distribuir-holerites/index.ts`<br>`compara:supabase/functions/whatsapp-send/index.ts`<br>`escreve:supabase/functions/_shared/outboundDelivery.ts` |
 | status | valor `healthy` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/settings/SystemHealthTab.tsx`<br>`escreve:src/components/settings/SystemHealthTab.tsx` |
 | status | valor `em_investigacao` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/sst/SSTIncidentesTab.tsx` |
@@ -399,7 +400,7 @@
 | status | valor `outras` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/recrutamento/PipelineBoard.tsx`<br>`compara:src/components/recrutamento/vagasComum.ts` |
 | status | valor `financeiro` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/rescisaoService.ts` |
 | status | valor `juridico` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/rescisaoService.ts` |
-| status | valor `animando` para `fase` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/avaliacao/PerformanceAuditTimeline.tsx` |
+| status | valor `animando` para `fase` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/desligamentos/TurnoverChart.tsx`<br>`escreve:src/components/avaliacao/PerformanceAuditTimeline.tsx` |
 | status | valor `recolhido` para `fase` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/PerformanceAuditTimeline.tsx` |
 | status | valor `recolhendo` para `fase` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/PerformanceAuditTimeline.tsx` |
 | status | valor `expanded` para `state` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/ui/sidebar.tsx` |
@@ -645,8 +646,7 @@
 | segurança | função `update_extintor_status_vencimento` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `user_empresa_id` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `validar_contrato_clt` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `validate_ponto_compliance` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +33 linhas — lista completa em `context.json` | | |
+| … +34 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 

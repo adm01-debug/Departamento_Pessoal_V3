@@ -11739,8 +11739,12 @@
     "useEmpresas",
     "useGrupo",
     "useGuidedTour",
+    "useId",
+    "useInView",
+    "useLayoutEffect",
     "useLocation",
     "useMemo",
+    "useMovimentoReduzido",
     "useMutation",
     "useNavigate",
     "useNotificacoes",
@@ -11768,6 +11772,7 @@
     "useEmpresas",
     "useGrupo",
     "useGuidedTour",
+    "useMovimentoReduzido",
     "useNotificacoes",
     "useNotification",
     "useOnMount",
@@ -11842,7 +11847,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 112
+   "arquivos_puxados": 120
   },
   {
    "protegida": true,

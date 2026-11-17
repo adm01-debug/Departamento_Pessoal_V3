@@ -3135,7 +3135,7 @@
     "useReducedMotion"
    ],
    "canais_realtime": [],
-   "usado_por": 15,
+   "usado_por": 16,
    "usado_por_arquivos": [
     "src/components/avaliacao/AnaliticosDesempenho.tsx",
     "src/components/avaliacao/CicloAtivoPanel.tsx",
@@ -3146,6 +3146,7 @@
     "src/components/avaliacao/PerformanceAuditTimeline.tsx",
     "src/components/avaliacao/TodosCiclosTable.tsx",
     "src/components/dashboard/DonutChart.tsx",
+    "src/components/desligamentos/TurnoverChart.tsx",
     "src/components/premiacoes/AuditoriaTab.tsx",
     "src/components/recrutamento/TabelaCandidatos.tsx",
     "src/components/treinamentos/InscricoesPainel.tsx",

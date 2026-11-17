@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7b17d30ef58ec646fa04f6f3455b87c9a4ae0386",
+  "commit": "b7ee91549c6b192dc8236ed3fac18c4498d9dd4c",
   "branch": "main",
-  "data_commit": "2026-11-17T09:38:02-03:00",
+  "data_commit": "2026-11-17T10:12:29-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "b7ee915",
+    "data": "2026-11-17",
+    "assunto": "fix(desligamentos): vocabulário alinhado ao banco — 4 de 6 tipos e o status pago não eram reconhecidos (#619)"
+   },
    {
     "sha": "7b17d30",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "2ccd3e8",
     "data": "2026-11-16",
     "assunto": "docs(auditoria): mede as versões do ledger sem arquivo e registra por que **não** canonizar (#590)"
-   },
-   {
-    "sha": "4fc0347",
-    "data": "2026-11-16",
-    "assunto": "fix(provisões): encargos da provisão seguem o regime tributário e a competência guarda o contrato (#576)"
    }
   ],
-  "arquivos_mudados_7d": 1126,
+  "arquivos_mudados_7d": 1138,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 327
+    "mudancas": 333
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 22
+    "mudancas": 21
    },
    {
     "arquivo": "package.json",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3467,
-  "arquivos_codigo": 2001,
-  "linhas_codigo": 393864,
+  "arquivos_total": 3471,
+  "arquivos_codigo": 2005,
+  "linhas_codigo": 395148,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -332,7 +332,7 @@
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 730,
+  "testes": 731,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 921,
-   "linhas": 163072
+   "arquivos": 925,
+   "linhas": 164356
   },
   "src/constants": {
    "arquivos": 6,

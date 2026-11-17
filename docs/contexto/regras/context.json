@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7b17d30ef58ec646fa04f6f3455b87c9a4ae0386",
+  "sha": "b7ee91549c6b192dc8236ed3fac18c4498d9dd4c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 12:39 UTC",
-  "files_total": 3488,
-  "code_files": 2914,
-  "code_lines": 458506
+  "generated_at": "2026-11-17 13:14 UTC",
+  "files_total": 3492,
+  "code_files": 2918,
+  "code_lines": 459790
  },
  "version": "1.3.2",
- "facts_hash": "c615732f3c3412b4",
+ "facts_hash": "ad58071c14660f0d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,9 +384,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 958,
+   ".tsx": 959,
    ".sql": 915,
-   ".ts": 910,
+   ".ts": 913,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -90557,7 +90557,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 106
+    "deps_count": 112
    },
    {
     "path": "",
@@ -99950,7 +99950,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 921,
+  "components_count": 925,
   "hooks": [
    {
     "name": "useContacts",
@@ -101533,8 +101533,8 @@
   },
   {
    "module": "src/components",
-   "files": 921,
-   "lines": 163072,
+   "files": 925,
+   "lines": 164356,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -108517,6 +108517,7 @@
     "src/components/avaliacao/nineBoxMock.ts",
     "src/components/avaliacao/nineBoxModo.ts",
     "src/components/avaliacao/pdiProgressoMock.ts",
+    "src/components/desligamentos/TurnoverChart.tsx",
     "src/components/treinamentos/InscricoesPainel.tsx",
     "src/errors/ErrorBoundary.tsx",
     "src/hooks/useDataAccessLog.ts",
@@ -112635,6 +112636,21 @@
     "file": "src/components/avaliacao/statusFeedback.ts",
     "name": "MotivoChaveInvalida",
     "values": "operacao_ausente | operacao_sem_idempotencia | feedback_ausente | id_operacao_ausente"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosComum.ts",
+    "name": "Tone",
+    "values": "primary | info | success | warning | destructive"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosComum.ts",
+    "name": "EtapaDesligamento",
+    "values": "comunicacao | documentacao | calculo | homologacao | pagamento | finalizado"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "name": "TomPrazo",
+    "values": "destructive | warning | muted"
    },
    {
     "file": "src/components/layout/PageTransition.tsx",
@@ -118936,8 +118952,76 @@
     "text": "Com data_pagamento registrada, o motor aplica a multa do"
    },
    {
+    "file": "src/components/desligamentos/DesligamentoFilters.tsx",
+    "text": "de filtro não pode ser truncado (só o \"Todos\" curto cabe em uma linha)."
+   },
+   {
     "file": "src/components/desligamentos/NovoDesligamentoDialog.tsx",
     "text": "`desligamentos` (esse é o registro do caso/workflow) — são apenas"
+   },
+   {
+    "file": "src/components/desligamentos/TurnoverChart.tsx",
+    "text": "Geometria capturada UMA vez e reutilizada; re-descoberta apenas se algum nó"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "text": "(dias, período, variação, série do gráfico e prazo da rescisão). Nada de"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "text": "* Registro mínimo que as telas do módulo leem (desligamento real ou fictício). */"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "text": "* Prazo legal de pagamento da rescisão: até 10 dias após o término do contrato"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "text": "(art. 477, §6º, CLT). É a régua do prazo/atraso exibido na coluna \"Próxima"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "text": "ação\" e na faixa de atenção — um prazo REAL, não um número inventado."
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "text": "* Prazo-limite da rescisão: `data_desligamento + 10 dias` (art. 477 CLT)."
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "text": "─── Próxima ação + prazo ────────────────────────────────────────────────── */"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "text": "* Cue de prazo relativo (\"Hoje\", \"Amanhã\", \"Prazo: 26/09\", \"Atrasado há 5d\"). */"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "text": "* Deriva a \"próxima ação\" e o cue de prazo de um desligamento usando SOMENTE"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "text": "dados reais: a ação vem da `etapa`; o prazo, da `data_desligamento + 10 dias`"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "text": "(limite legal). Estados terminais não têm próxima ação."
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "text": "novo — é a contagem da própria lista pelas mesmas réguas da coluna de prazo):"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "text": "• `atrasados` — em aberto e com o prazo legal (data + 10 dias) vencido;"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "text": "• `hoje` — prazo legal vencendo hoje."
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "text": "pendente), então somar/pegar o máximo inflaria ou mentiria o número."
    },
    {
     "file": "src/components/esocial/tabs.tsx",
@@ -145972,6 +146056,36 @@
     "value": "0.14"
    },
    {
+    "file": "src/components/desligamentos/TurnoverChart.tsx",
+    "name": "COR_TOTAL",
+    "value": "'hsl(190 92% 52%)'"
+   },
+   {
+    "file": "src/components/desligamentos/TurnoverChart.tsx",
+    "name": "DURACAO_S",
+    "value": "1.8"
+   },
+   {
+    "file": "src/components/desligamentos/TurnoverChart.tsx",
+    "name": "DASH_OCULTO",
+    "value": "'999999'"
+   },
+   {
+    "file": "src/components/desligamentos/TurnoverChart.tsx",
+    "name": "AMOSTRAS",
+    "value": "64"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "name": "DIA_MS",
+    "value": "24"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "name": "PRAZO_RESCISAO_DIAS",
+    "value": "10"
+   },
+   {
     "file": "src/components/ferias/FeriasReconciliacaoHistoricoCard.tsx",
     "name": "SLA_ALERT_THRESHOLD",
     "value": "80"
@@ -149203,19 +149317,115 @@
    {
     "file": "src/components/desligamentos/TurnoverChart.tsx",
     "field": "tipo",
-    "value": "sem_justa_causa",
+    "value": "linha",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/desligamentos/TurnoverChart.tsx",
+    "field": "tipo",
+    "value": "total",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/desligamentos/TurnoverChart.tsx",
+    "field": "fase",
+    "value": "aguardando",
     "kind": "compara"
    },
    {
     "file": "src/components/desligamentos/TurnoverChart.tsx",
+    "field": "fase",
+    "value": "animando",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/TurnoverChart.tsx",
+    "field": "tipo",
+    "value": "total",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosComum.ts",
+    "field": "etapa",
+    "value": "finalizado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "field": "etapa",
+    "value": "finalizado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "field": "status",
+    "value": "finalizado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "field": "status",
+    "value": "concluido",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "field": "status",
+    "value": "pago",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "field": "status",
+    "value": "cancelado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "field": "status",
+    "value": "pendente",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "field": "status",
+    "value": "comunicado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "field": "status",
+    "value": "em_andamento",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "field": "tipo",
+    "value": "sem_justa_causa",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
     "field": "tipo",
     "value": "justa_causa",
     "kind": "compara"
    },
    {
-    "file": "src/components/desligamentos/TurnoverChart.tsx",
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
     "field": "tipo",
     "value": "pedido_demissao",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "field": "tipo",
+    "value": "acordo",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "field": "tipo",
+    "value": "fim_contrato",
     "kind": "compara"
    },
    {
@@ -159367,6 +159577,18 @@
     "body": "return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0, }).format(value);"
    },
    {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "name": "dataValida",
+    "params": "valor?: string | null",
+    "body": "if (!valor) return undefined; if (/^\\d{4}-\\d{2}-\\d{2}$/.test(valor)) return parseDateLocalISO(valor); const data = new Date(valor); return Number.isNaN(data.getTime()) ? undefined : data;"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "name": "formatCurrencyBRL",
+    "params": "valor: number",
+    "body": "return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });"
+   },
+   {
     "file": "src/components/esocial/NaoPeriodicos.tsx",
     "name": "formatCurrency",
     "params": "val: number | string",
@@ -161005,6 +161227,10 @@
    {
     "file": "src/components/dashboard/analytics/widgets.tsx",
     "line": "staleTime: 5 * 60 * 1000,"
+   },
+   {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "line": "export const DIA_MS = 24 * 60 * 60 * 1000;"
    },
    {
     "file": "src/components/epis/EpiEntregasTable.tsx",
@@ -167584,7 +167810,7 @@
    },
    {
     "file": "src/components/__tests__/DesligamentoBadges.test.tsx",
-    "name": "renders Justa Causa for com_justa_causa"
+    "name": "renders Justa Causa for justa_causa"
    },
    {
     "file": "src/components/__tests__/DesligamentoBadges.test.tsx",
@@ -167592,11 +167818,15 @@
    },
    {
     "file": "src/components/__tests__/DesligamentoBadges.test.tsx",
-    "name": "renders Acordo Mútuo for acordo_mutuo"
+    "name": "renders Acordo for acordo"
    },
    {
     "file": "src/components/__tests__/DesligamentoBadges.test.tsx",
-    "name": "renders Término Contrato for termino_contrato"
+    "name": "renders Fim de Contrato for fim_contrato"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoBadges.test.tsx",
+    "name": "renders Falecimento for falecimento"
    },
    {
     "file": "src/components/__tests__/DesligamentoChecklist.test.tsx",
@@ -167687,6 +167917,14 @@
     "name": "renders Todos os Tipos trigger text"
    },
    {
+    "file": "src/components/__tests__/DesligamentoFilters.test.tsx",
+    "name": "esconde Departamento e Mais filtros quando a pagina nao oferece os callbacks"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoFilters.test.tsx",
+    "name": "mostra os dois assim que os callbacks existem"
+   },
+   {
     "file": "src/components/__tests__/DesligamentoKPIs.test.tsx",
     "name": "DesligamentoKPIs"
    },
@@ -167756,7 +167994,15 @@
    },
    {
     "file": "src/components/__tests__/DesligamentoStatusBadge.test.tsx",
-    "name": "renders Justa Causa for com_justa_causa"
+    "name": "traduz o tipo real %s"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoStatusBadge.test.tsx",
+    "name": "nao reconhece a chave inexistente %s (cai no valor cru)"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoStatusBadge.test.tsx",
+    "name": "status pago tem rotulo proprio (a producao grava esse valor)"
    },
    {
     "file": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
@@ -177083,6 +177329,10 @@
     "name": "renders with all types of desligamentos"
    },
    {
+    "file": "src/components/__tests__/TurnoverChart.test.tsx",
+    "name": "tem faixa propria para Sem Justa Causa e rotulos do enum real"
+   },
+   {
     "file": "src/components/__tests__/UnifiedAuditSection.test.tsx",
     "name": "UnifiedAuditSection"
    },
@@ -177241,6 +177491,54 @@
    {
     "file": "src/components/__tests__/desligamento-badges.test.tsx",
     "name": "renders raw tipo for unknown tipo"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "construirSerieMensal — tipos do enum real"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "cada tipo do enum cai na própria faixa; só falecimento e desconhecido vão para Outros"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "as chaves inventadas pela branch antiga caem em Outros, não em faixa nomeada"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "agrupa pela competência da data, inclusive no dia 1º (sem day-shift de UTC)"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "registro sem data não entra em nenhuma competência"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "status terminais — "
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "pago não está em aberto e conta como concluído"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "os demais terminais seguem terminais e os intermediários seguem em aberto"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "desligamento PAGO não aparece na faixa de atenção, mesmo com prazo vencido"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "prazo do art. 477 §6º"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "são 10 dias após a data do desligamento"
+   },
+   {
+    "file": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+    "name": "sem data de desligamento não há prazo inventado"
    },
    {
     "file": "src/components/__tests__/forms.test.tsx",
@@ -226962,7 +227260,7 @@
     "tipo": {
      "sem_justa_causa": [
       "compara:src/calculators/rescisao.ts",
-      "compara:src/components/desligamentos/TurnoverChart.tsx",
+      "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
       "compara:src/pages/CalculadoraRescisaoPage.tsx",
       "compara:src/utils/rescisaoCalc.ts",
       "compara:supabase/functions/calcular-rescisao/motor.ts",
@@ -227063,8 +227361,15 @@
      "media": [
       "compara:src/components/dashboard/analytics/widgets.tsx"
      ],
-     "justa_causa": [
+     "linha": [
+      "escreve:src/components/desligamentos/TurnoverChart.tsx"
+     ],
+     "total": [
       "compara:src/components/desligamentos/TurnoverChart.tsx",
+      "escreve:src/components/desligamentos/TurnoverChart.tsx"
+     ],
+     "justa_causa": [
+      "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
       "compara:src/pages/CalculadoraRescisaoPage.tsx",
       "compara:src/pages/MedidasDisciplinaresPage.tsx",
       "compara:src/utils/rescisaoCalc.ts",
@@ -227072,8 +227377,18 @@
       "escreve:src/components/medidas-disciplinares/MedidasGravityScale.tsx"
      ],
      "pedido_demissao": [
-      "compara:src/components/desligamentos/TurnoverChart.tsx",
+      "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
       "compara:src/pages/CalculadoraRescisaoPage.tsx",
+      "compara:src/utils/rescisaoCalc.ts",
+      "compara:supabase/functions/calcular-rescisao/motor.ts"
+     ],
+     "acordo": [
+      "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
+      "compara:src/utils/rescisaoCalc.ts",
+      "compara:supabase/functions/calcular-rescisao/motor.ts"
+     ],
+     "fim_contrato": [
+      "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
       "compara:src/utils/rescisaoCalc.ts",
       "compara:supabase/functions/calcular-rescisao/motor.ts"
      ],
@@ -227561,14 +227876,6 @@
       "compara:src/utils/rescisaoCalc.ts",
       "compara:supabase/functions/calcular-rescisao/motor.ts"
      ],
-     "acordo": [
-      "compara:src/utils/rescisaoCalc.ts",
-      "compara:supabase/functions/calcular-rescisao/motor.ts"
-     ],
-     "fim_contrato": [
-      "compara:src/utils/rescisaoCalc.ts",
-      "compara:supabase/functions/calcular-rescisao/motor.ts"
-     ],
      "variacao_salarial": [
       "escreve:src/utils/folha/validadorFolha.ts"
      ],
@@ -227678,6 +227985,7 @@
       "compara:src/components/descontos/AdiantamentosTable.tsx",
       "compara:src/components/descontos/FinancialSummaryCards.tsx",
       "compara:src/components/desligamentos/DesligamentoKPIs.tsx",
+      "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
       "compara:src/components/esocial/ESocialAuditDialog.tsx",
       "compara:src/components/esocial/tabs.tsx",
       "compara:src/components/ferias/CalendarioFerias.tsx",
@@ -227806,6 +228114,7 @@
      "cancelado": [
       "compara:src/components/afastamentos/AfastamentoTable.tsx",
       "compara:src/components/contratos/ContratosVencendoPanel.tsx",
+      "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
       "compara:src/hooks/useProximosEventos.ts",
       "compara:src/pages/AdminAgendamentoExamesPage.tsx",
       "escreve:src/components/descontos/EmprestimosTable.tsx",
@@ -227858,6 +228167,7 @@
      "concluido": [
       "compara:src/components/dashboard/AnalyticsSection.tsx",
       "compara:src/components/desligamentos/DesligamentoKPIs.tsx",
+      "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
       "compara:src/components/ferias/GerenciamentoPeriodos.tsx",
       "compara:src/components/sst/SSTIncidentesTab.tsx",
       "compara:src/hooks/useProximosEventos.ts",
@@ -227872,6 +228182,7 @@
      ],
      "em_andamento": [
       "compara:src/components/desligamentos/DesligamentoKPIs.tsx",
+      "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
       "compara:src/pages/AvaliacaoPage.tsx",
       "compara:src/pages/WorkflowsPage.tsx",
       "escreve:src/components/avaliacao/nineBoxMock.ts",
@@ -227944,6 +228255,7 @@
       "compara:src/components/colaborador-detalhes/FeriasResumoTab.tsx",
       "compara:src/components/descontos/AdiantamentosTable.tsx",
       "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx",
+      "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
       "compara:src/components/premiacoes/PagamentosTabela.tsx",
       "compara:src/components/premiacoes/pagamentosComum.ts",
       "compara:src/pages/PremiacoesPage.tsx",
@@ -228111,9 +228423,13 @@
      "finalizado": [
       "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx",
       "compara:src/components/desligamentos/DesligamentoKPIs.tsx",
+      "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
       "compara:src/components/premiacoes/CampanhaTabela.tsx",
       "compara:src/services/cnabService.ts",
       "escreve:src/services/cnabService.ts"
+     ],
+     "comunicado": [
+      "compara:src/components/desligamentos/desligamentosDerivacoes.ts"
      ],
      "adquirido": [
       "compara:src/components/ferias/FeriasForm.tsx",
@@ -228664,6 +228980,11 @@
      "documentacao": [
       "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx"
      ],
+     "finalizado": [
+      "escreve:src/components/desligamentos/desligamentosComum.ts",
+      "escreve:src/components/desligamentos/desligamentosDerivacoes.ts",
+      "escreve:src/services/rescisaoService.ts"
+     ],
      "todas": [
       "compara:src/components/premiacoes/pagamentosComum.ts",
       "compara:src/components/recrutamento/candidatosComum.ts",
@@ -228682,9 +229003,6 @@
      ],
      "rh": [
       "compara:src/services/rescisaoService.ts",
-      "escreve:src/services/rescisaoService.ts"
-     ],
-     "finalizado": [
       "escreve:src/services/rescisaoService.ts"
      ],
      "financeiro": [
@@ -228810,6 +229128,7 @@
     },
     "fase": {
      "animando": [
+      "compara:src/components/desligamentos/TurnoverChart.tsx",
       "escreve:src/components/avaliacao/PerformanceAuditTimeline.tsx"
      ],
      "aberto": [
@@ -228820,6 +229139,9 @@
      ],
      "recolhendo": [
       "compara:src/components/avaliacao/PerformanceAuditTimeline.tsx"
+     ],
+     "aguardando": [
+      "compara:src/components/desligamentos/TurnoverChart.tsx"
      ]
     },
     "perfil": {
@@ -252834,6 +253156,13 @@
    },
    {
     "kind": "status",
+    "msg": "valor `comunicado` para `status` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "compara:src/components/desligamentos/desligamentosDerivacoes.ts"
+    ]
+   },
+   {
+    "kind": "status",
     "msg": "valor `sent` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/components/folha/FolhaESocialSync.tsx",
@@ -253155,6 +253484,7 @@
     "kind": "status",
     "msg": "valor `animando` para `fase` usado no código não existe em nenhum enum do banco/TS",
     "where": [
+     "compara:src/components/desligamentos/TurnoverChart.tsx",
      "escreve:src/components/avaliacao/PerformanceAuditTimeline.tsx"
     ]
    },
@@ -262524,7 +262854,7 @@
   },
   "src/components/__tests__/DesligamentoBadges.test.tsx": {
    "path": "src/components/__tests__/DesligamentoBadges.test.tsx",
-   "lines": 58,
+   "lines": 65,
    "is_test": true,
    "tests": [
     "StatusBadge",
@@ -262535,10 +262865,11 @@
     "renders raw label for unknown status",
     "TipoBadge",
     "renders Sem Justa Causa for sem_justa_causa",
-    "renders Justa Causa for com_justa_causa",
+    "renders Justa Causa for justa_causa",
     "renders Pedido Demissão for pedido_demissao",
-    "renders Acordo Mútuo for acordo_mutuo",
-    "renders Término Contrato for termino_contrato"
+    "renders Acordo for acordo",
+    "renders Fim de Contrato for fim_contrato",
+    "renders Falecimento for falecimento"
    ]
   },
   "src/components/__tests__/DesligamentoChecklist.test.tsx": {
@@ -262573,7 +262904,7 @@
   },
   "src/components/__tests__/DesligamentoFilters.test.tsx": {
    "path": "src/components/__tests__/DesligamentoFilters.test.tsx",
-   "lines": 45,
+   "lines": 80,
    "is_test": true,
    "tests": [
     "DesligamentoFilters",
@@ -262581,7 +262912,9 @@
     "shows current search value",
     "calls onSearchChange when typing",
     "renders Todos os Status trigger text",
-    "renders Todos os Tipos trigger text"
+    "renders Todos os Tipos trigger text",
+    "esconde Departamento e Mais filtros quando a pagina nao oferece os callbacks",
+    "mostra os dois assim que os callbacks existem"
    ]
   },
   "src/components/__tests__/DesligamentoKPIs.test.tsx": {
@@ -262601,7 +262934,7 @@
   },
   "src/components/__tests__/DesligamentoStatusBadge.test.tsx": {
    "path": "src/components/__tests__/DesligamentoStatusBadge.test.tsx",
-   "lines": 58,
+   "lines": 84,
    "is_test": true,
    "tests": [
     "StatusBadge",
@@ -262613,7 +262946,9 @@
     "renders raw status for unknown status",
     "TipoBadge",
     "renders Sem Justa Causa for sem_justa_causa",
-    "renders Justa Causa for com_justa_causa"
+    "traduz o tipo real %s",
+    "nao reconhece a chave inexistente %s (cai no valor cru)",
+    "status pago tem rotulo proprio (a producao grava esse valor)"
    ]
   },
   "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx": {
@@ -266642,13 +266977,14 @@
   },
   "src/components/__tests__/TurnoverChart.test.tsx": {
    "path": "src/components/__tests__/TurnoverChart.test.tsx",
-   "lines": 53,
+   "lines": 82,
    "is_test": true,
    "tests": [
     "TurnoverChart",
     "renders chart title",
     "renders without crash when empty",
-    "renders with all types of desligamentos"
+    "renders with all types of desligamentos",
+    "tem faixa propria para Sem Justa Causa e rotulos do enum real"
    ]
   },
   "src/components/__tests__/UnifiedAuditSection.test.tsx": {
@@ -266717,6 +267053,25 @@
     "renders ",
     "renders ",
     "renders raw tipo for unknown tipo"
+   ]
+  },
+  "src/components/__tests__/desligamentosDerivacoes.test.ts": {
+   "path": "src/components/__tests__/desligamentosDerivacoes.test.ts",
+   "lines": 138,
+   "is_test": true,
+   "tests": [
+    "construirSerieMensal — tipos do enum real",
+    "cada tipo do enum cai na própria faixa; só falecimento e desconhecido vão para Outros",
+    "as chaves inventadas pela branch antiga caem em Outros, não em faixa nomeada",
+    "agrupa pela competência da data, inclusive no dia 1º (sem day-shift de UTC)",
+    "registro sem data não entra em nenhuma competência",
+    "status terminais — ",
+    "pago não está em aberto e conta como concluído",
+    "os demais terminais seguem terminais e os intermediários seguem em aberto",
+    "desligamento PAGO não aparece na faixa de atenção, mesmo com prazo vencido",
+    "prazo do art. 477 §6º",
+    "são 10 dias após a data do desligamento",
+    "sem data de desligamento não há prazo inventado"
    ]
   },
   "src/components/__tests__/forms.test.tsx": {
@@ -273017,9 +273372,12 @@
   },
   "src/components/desligamentos/DesligamentoFilters.tsx": {
    "path": "src/components/desligamentos/DesligamentoFilters.tsx",
-   "lines": 71,
+   "lines": 231,
    "exports": [
     "function DesligamentoFilters"
+   ],
+   "rule_comments": [
+    "de filtro não pode ser truncado (só o \"Todos\" curto cabe em uma linha)."
    ]
   },
   "src/components/desligamentos/DesligamentoKPIs.tsx": {
@@ -273134,11 +273492,182 @@
   },
   "src/components/desligamentos/TurnoverChart.tsx": {
    "path": "src/components/desligamentos/TurnoverChart.tsx",
-   "lines": 99,
+   "lines": 489,
    "exports": [
     "function TurnoverChart"
    ],
+   "env": [
+    "DEV"
+   ],
+   "params": [
+    {
+     "name": "COR_TOTAL",
+     "value": "'hsl(190 92% 52%)'"
+    },
+    {
+     "name": "DURACAO_S",
+     "value": "1.8"
+    },
+    {
+     "name": "DASH_OCULTO",
+     "value": "'999999'"
+    },
+    {
+     "name": "AMOSTRAS",
+     "value": "64"
+    }
+   ],
    "status_values": [
+    {
+     "field": "tipo",
+     "value": "linha",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "total",
+     "kind": "escreve"
+    },
+    {
+     "field": "fase",
+     "value": "aguardando",
+     "kind": "compara"
+    },
+    {
+     "field": "fase",
+     "value": "animando",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "total",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "Geometria capturada UMA vez e reutilizada; re-descoberta apenas se algum nó"
+   ]
+  },
+  "src/components/desligamentos/desligamentosComum.ts": {
+   "path": "src/components/desligamentos/desligamentosComum.ts",
+   "lines": 152,
+   "exports": [
+    "type Tone",
+    "type EtapaDesligamento",
+    "const ETAPA_LABELS",
+    "const ETAPA_FLUXO",
+    "const ETAPA_BADGE",
+    "const STATUS_LABELS",
+    "const STATUS_BADGE",
+    "const TIPO_LABELS",
+    "const TIPO_BADGE",
+    "const ETAPA_PROXIMA_ACAO",
+    "function proximaAcaoDaEtapa"
+   ],
+   "enums": [
+    {
+     "name": "Tone",
+     "values": "primary | info | success | warning | destructive"
+    },
+    {
+     "name": "EtapaDesligamento",
+     "values": "comunicacao | documentacao | calculo | homologacao | pagamento | finalizado"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "etapa",
+     "value": "finalizado",
+     "kind": "escreve"
+    }
+   ]
+  },
+  "src/components/desligamentos/desligamentosDerivacoes.ts": {
+   "path": "src/components/desligamentos/desligamentosDerivacoes.ts",
+   "lines": 327,
+   "exports": [
+    "type DesligamentoLike",
+    "const DIA_MS",
+    "const PRAZO_RESCISAO_DIAS",
+    "function dataValida",
+    "function inicioDoDia",
+    "function iniciais",
+    "function percentual",
+    "function formatCurrencyBRL",
+    "function diasAteHoje",
+    "function prazoRescisao",
+    "function recortarPorPeriodo",
+    "function variacaoRecente",
+    "function emAberto",
+    "function concluido",
+    "function cancelado",
+    "function pendente",
+    "type TomPrazo",
+    "interface ProximaAcao",
+    "function proximaAcaoDesligamento",
+    "interface ResumoAtencao",
+    "function resumoAtencao",
+    "interface PontoSerieMensal",
+    "function construirSerieMensal",
+    "function indiceEtapa"
+   ],
+   "enums": [
+    {
+     "name": "TomPrazo",
+     "values": "destructive | warning | muted"
+    }
+   ],
+   "params": [
+    {
+     "name": "DIA_MS",
+     "value": "24"
+    },
+    {
+     "name": "PRAZO_RESCISAO_DIAS",
+     "value": "10"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "etapa",
+     "value": "finalizado",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "finalizado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "concluido",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "pago",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "cancelado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "pendente",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "comunicado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "em_andamento",
+     "kind": "compara"
+    },
     {
      "field": "tipo",
      "value": "sem_justa_causa",
@@ -273153,8 +273682,55 @@
      "field": "tipo",
      "value": "pedido_demissao",
      "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "acordo",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "fim_contrato",
+     "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "(dias, período, variação, série do gráfico e prazo da rescisão). Nada de",
+    "* Registro mínimo que as telas do módulo leem (desligamento real ou fictício). */",
+    "* Prazo legal de pagamento da rescisão: até 10 dias após o término do contrato",
+    "(art. 477, §6º, CLT). É a régua do prazo/atraso exibido na coluna \"Próxima",
+    "ação\" e na faixa de atenção — um prazo REAL, não um número inventado.",
+    "* Prazo-limite da rescisão: `data_desligamento + 10 dias` (art. 477 CLT).",
+    "─── Próxima ação + prazo ────────────────────────────────────────────────── */",
+    "* Cue de prazo relativo (\"Hoje\", \"Amanhã\", \"Prazo: 26/09\", \"Atrasado há 5d\"). */",
+    "* Deriva a \"próxima ação\" e o cue de prazo de um desligamento usando SOMENTE",
+    "dados reais: a ação vem da `etapa`; o prazo, da `data_desligamento + 10 dias`",
+    "(limite legal). Estados terminais não têm próxima ação.",
+    "novo — é a contagem da própria lista pelas mesmas réguas da coluna de prazo):",
+    "• `atrasados` — em aberto e com o prazo legal (data + 10 dias) vencido;",
+    "• `hoje` — prazo legal vencendo hoje.",
+    "pendente), então somar/pegar o máximo inflaria ou mentiria o número."
+   ],
+   "doc": "============================================================================ Derivações PURAS da área de Desligamentos (mesma entrada → mesma saída). Mesmo princípio de `admissoes/admissoesDerivacoes.ts`: aqui só vive matemática (dias, período, variação, série do gráfico e prazo da rescisão). Nada d …",
+   "calc_fns": [
+    {
+     "name": "dataValida",
+     "params": "valor?: string | null",
+     "body": "if (!valor) return undefined; if (/^\\d{4}-\\d{2}-\\d{2}$/.test(valor)) return parseDateLocalISO(valor); const data = new Date(valor); return Number.isNaN(data.getTime()) ? undefined : data;"
+    },
+    {
+     "name": "formatCurrencyBRL",
+     "params": "valor: number",
+     "body": "return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });"
+    }
+   ],
+   "temporal": [
+    "export const DIA_MS = 24 * 60 * 60 * 1000;"
    ]
+  },
+  "src/components/desligamentos/entradaCards.tsx": {
+   "path": "src/components/desligamentos/entradaCards.tsx",
+   "lines": 20
   },
   "src/components/desligamentos/index.ts": {
    "path": "src/components/desligamentos/index.ts",
@@ -321569,10 +322145,31 @@
   }
  },
  "git": {
-  "sha": "7b17d30ef58ec646fa04f6f3455b87c9a4ae0386",
+  "sha": "b7ee91549c6b192dc8236ed3fac18c4498d9dd4c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "b7ee915",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix(desligamentos): vocabulário alinhado ao banco — 4 de 6 tipos e o status pago não eram reconhecidos (#619)",
+    "files": [
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/DesligamentoBadges.test.tsx",
+     "src/components/__tests__/DesligamentoFilters.test.tsx",
+     "src/components/__tests__/DesligamentoStatusBadge.test.tsx",
+     "src/components/__tests__/TurnoverChart.test.tsx",
+     "src/components/__tests__/desligamento-badges.test.tsx",
+     "src/components/__tests__/desligamentosDerivacoes.test.ts",
+     "src/components/desligamentos/DesligamentoFilters.tsx",
+     "src/components/desligamentos/DesligamentoStatusBadge.tsx",
+     "src/components/desligamentos/TurnoverChart.tsx",
+     "src/components/desligamentos/desligamentosComum.ts",
+     "src/components/desligamentos/desligamentosDerivacoes.ts",
+     "src/components/desligamentos/entradaCards.tsx"
+    ]
+   },
    {
     "sha": "7b17d30",
     "date": "2026-11-17",
@@ -322337,37 +322934,19 @@
     "files": [
      "src/components/__tests__/NineBoxQuadranteDialog.test.tsx"
     ]
-   },
-   {
-    "sha": "2357a56",
-    "date": "2026-11-16",
-    "author": "dependabot[bot]",
-    "subject": "build(deps-dev): bump the testing group with 2 updates (#585)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "scripts/.bundle-budget.json",
+    9
+   ],
    [
     "inventario/estado/rotas.json",
     8
    ],
    [
-    "scripts/.bundle-budget.json",
-    8
-   ],
-   [
     "src/pages/ColaboradorDetalhesPage.tsx",
-    4
-   ],
-   [
-    "package-lock.json",
-    4
-   ],
-   [
-    "package.json",
     4
    ],
    [
@@ -322384,6 +322963,14 @@
    ],
    [
     "src/services/colaboradorService.ts",
+    3
+   ],
+   [
+    "package-lock.json",
+    3
+   ],
+   [
+    "package.json",
     3
    ],
    [
