@@ -24,3 +24,9 @@ export { DocumentosComplianceResumoTab } from './DocumentosComplianceResumoTab';
 export { HoleritesTab } from './HoleritesTab';
 export { CamposCustomizadosTab } from './CamposCustomizadosTab';
 export { SSTResumoTab } from './SSTResumoTab';
+export {
+  FinanceiroKpiRow,
+  ResumoRemuneracaoCard,
+  HoleritesPreviewCard,
+  FinanceiroPendenciasCard,
+} from './FinanceiroResumoCards';

@@ -18,6 +18,10 @@ import { safeHref } from '@/utils/safeUrl';
 import { safeErrorMessage } from '@/utils/safeError';
 import { cardVariants } from '@/components/dashboard/MetricCard';
 import { FalhaConsulta } from '../FalhaConsulta';
+import { FileUploadField } from './FileUploadField';
+import { uploadDocumentFile, removeDocumentFile, resolveDocumentUrl } from '@/services/documentUploadService';
+
+const BUCKET = 'documentos-colaboradores';
 
 const MotionCard = motion.create(Card);
 
@@ -41,16 +45,19 @@ const TIPOS = [
  * useExcluirDocumentoPessoal, mesmas query keys, sem duplicar lógica),
  * reconstruído em layout denso (cabeçalho + tabela compacta) para caber na
  * coluna esquerda do dashboard de "Documentos & Compliance", ao lado de
- * "Status de Compliance". O arquivo é referenciado por `arquivo_url`; o envio
- * para o bucket privado `documentos-colaboradores` depende de colunas que a
- * tabela ainda não tem em produção (storage_path/mime_type) — ver a issue de
- * DDL ligada a esta PR. */
+ * "Status de Compliance". O arquivo vai para o bucket privado
+ * `documentos-colaboradores` e só o `storage_path` fica salvo — a URL de
+ * leitura é assinada na hora de abrir, então nunca existe link permanente
+ * para um documento pessoal. Linha antiga com `arquivo_url` continua
+ * abrindo pelo caminho legado (ver `resolveDocumentUrl`). */
 export function DocumentosPessoaisCard({ colaboradorId }: { colaboradorId: string }) {
   const { data, isLoading, isError } = useDocumentosPessoais(colaboradorId);
   const criar = useCriarDocumentoPessoal();
   const excluir = useExcluirDocumentoPessoal(colaboradorId);
   const { empresaAtualId } = useEmpresas();
   const [open, setOpen] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [form, setForm] = useState({
     tipo_documento: '',
     numero: '',
@@ -60,7 +67,8 @@ export function DocumentosPessoaisCard({ colaboradorId }: { colaboradorId: strin
     arquivo_url: '',
   });
 
-  const resetForm = () =>
+  const resetForm = () => {
+    setFile(null);
     setForm({
       tipo_documento: '',
       numero: '',
@@ -69,6 +77,7 @@ export function DocumentosPessoaisCard({ colaboradorId }: { colaboradorId: strin
       data_validade: '',
       arquivo_url: '',
     });
+  };
 
   const handleSubmit = async () => {
     if (!form.tipo_documento) {
@@ -80,27 +89,72 @@ export function DocumentosPessoaisCard({ colaboradorId }: { colaboradorId: strin
       return;
     }
 
+    // `data_emissao`/`data_validade` são validadas por regex ISO
+    // (schemas/referencias.ts): string vazia REPROVA. O formulário começa com
+    // '' nos dois campos, então salvar sem data era recusado com uma mensagem
+    // de formato de data que não explicava nada.
+    const vazioParaNulo = (v: string) => (v.trim() === '' ? null : v);
+
+    let enviado: Awaited<ReturnType<typeof uploadDocumentFile>> | null = null;
     try {
-      await criar.mutateAsync({ ...form, colaborador_id: colaboradorId });
+      if (file) {
+        setUploading(true);
+        enviado = await uploadDocumentFile(file, {
+          bucket: BUCKET,
+          empresaId: empresaAtualId,
+          colaboradorId,
+          categoria: 'documentos-pessoais',
+        });
+        setUploading(false);
+      }
+
+      await criar.mutateAsync({
+        colaborador_id: colaboradorId,
+        tipo_documento: form.tipo_documento,
+        numero: vazioParaNulo(form.numero),
+        orgao_emissor: vazioParaNulo(form.orgao_emissor),
+        data_emissao: vazioParaNulo(form.data_emissao),
+        data_validade: vazioParaNulo(form.data_validade),
+        ...(enviado
+          ? {
+              storage_path: enviado.storage_path,
+              arquivo_nome: enviado.nome_arquivo,
+              arquivo_tamanho: enviado.tamanho,
+              mime_type: enviado.mime_type,
+            }
+          : {}),
+      });
       toast.success('Documento adicionado');
       setOpen(false);
       resetForm();
     } catch (e) {
+      setUploading(false);
+      // O arquivo já subiu e a linha não entrou: sem este rollback o objeto
+      // fica no bucket sem nada no banco apontando para ele.
+      if (enviado) await removeDocumentFile(BUCKET, enviado.storage_path).catch(() => {});
       toast.error(safeErrorMessage(e, 'Erro ao adicionar documento.'));
     }
   };
 
-  const handleAbrir = (doc: { arquivo_url: string | null }) => {
-    if (!doc.arquivo_url) {
-      toast.error('Arquivo não encontrado.');
-      return;
+  const handleAbrir = async (doc: { storage_path?: string | null; arquivo_url: string | null }) => {
+    try {
+      const url = await resolveDocumentUrl({ storage_path: doc.storage_path, url: doc.arquivo_url }, BUCKET);
+      if (!url) {
+        toast.error('Arquivo não encontrado.');
+        return;
+      }
+      window.open(safeHref(url), '_blank', 'noopener');
+    } catch (e) {
+      toast.error(safeErrorMessage(e, 'Não foi possível abrir o arquivo.'));
     }
-    window.open(safeHref(doc.arquivo_url), '_blank', 'noopener');
   };
 
-  const handleExcluir = async (doc: { id: string }) => {
+  const handleExcluir = async (doc: { id: string; storage_path?: string | null }) => {
     if (!confirm('Excluir documento?')) return;
     try {
+      // Arquivo primeiro: se o Storage recusar, a linha continua no banco e o
+      // documento segue visível, em vez de virar um objeto órfão com PII.
+      if (doc.storage_path) await removeDocumentFile(BUCKET, doc.storage_path);
       await excluir.mutateAsync(doc.id);
     } catch (e) {
       toast.error(safeErrorMessage(e, 'Erro ao excluir documento.'));
@@ -184,16 +238,17 @@ export function DocumentosPessoaisCard({ colaboradorId }: { colaboradorId: strin
               </div>
             </div>,
             <div key="arquivo" className="space-y-1">
-              <Label>Link do arquivo (opcional)</Label>
-              <Input
-                placeholder="https://..."
-                value={form.arquivo_url}
-                onChange={(e) => setForm((f) => ({ ...f, arquivo_url: e.target.value }))}
-              />
+              <Label>Arquivo (opcional)</Label>
+              <FileUploadField file={file} onFileChange={setFile} uploading={uploading} disabled={criar.isPending} />
             </div>,
             <div key="salvar" className="flex justify-end pt-1">
-              <Button size="sm" className="rounded-lg px-4" onClick={handleSubmit} disabled={criar.isPending}>
-                {criar.isPending && <Spinner className="mr-1.5 h-3.5 w-3.5" />}
+              <Button
+                size="sm"
+                className="rounded-lg px-4"
+                onClick={handleSubmit}
+                disabled={criar.isPending || uploading}
+              >
+                {(criar.isPending || uploading) && <Spinner className="mr-1.5 h-3.5 w-3.5" />}
                 Salvar
               </Button>
             </div>,
@@ -247,7 +302,7 @@ export function DocumentosPessoaisCard({ colaboradorId }: { colaboradorId: strin
                     </TableCell>
                     <TableCell className="px-2 py-2.5 text-right">
                       <div className="flex justify-end gap-0.5">
-                        {d.arquivo_url && (
+                        {(d.storage_path || d.arquivo_url) && (
                           <Button
                             variant="ghost"
                             size="icon"
