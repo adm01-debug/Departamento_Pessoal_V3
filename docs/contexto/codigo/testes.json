@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 685,
+ "total": 686,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 646
+  "unit": 647
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 562
+   "arquivos": 563
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -1189,12 +1189,12 @@
   {
    "arquivo": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
    "tipo": "unit",
-   "linhas": 198,
+   "linhas": 221,
    "testa": [
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     "src/integrations/supabase/types.ts"
    ],
-   "casos": 9
+   "casos": 12
   },
   {
    "arquivo": "src/components/__tests__/DistribuirHoleritesButton.test.tsx",
@@ -2470,7 +2470,7 @@
   {
    "arquivo": "src/components/__tests__/NovaAdmissaoDialog.test.tsx",
    "tipo": "unit",
-   "linhas": 123,
+   "linhas": 122,
    "testa": [
     "src/components/admissoes/NovaAdmissaoDialog.tsx"
    ],
@@ -3170,6 +3170,15 @@
     "src/components/integracoes/ConfigPanels.tsx"
    ],
    "casos": 9
+  },
+  {
+   "arquivo": "src/components/kanban/__tests__/entradaKanban.test.ts",
+   "tipo": "unit",
+   "linhas": 38,
+   "testa": [
+    "src/components/kanban/entradaKanban.ts"
+   ],
+   "casos": 4
   },
   {
    "arquivo": "src/components/relatorios/reportScheduleContract.test.ts",
@@ -6524,6 +6533,7 @@
   "src/components/forms/FormSelect.tsx": 1,
   "src/components/forms/FormSwitch.tsx": 1,
   "src/components/integracoes/ConfigPanels.tsx": 1,
+  "src/components/kanban/entradaKanban.ts": 1,
   "src/components/layout/BackButton.tsx": 1,
   "src/components/layout/Breadcrumbs.tsx": 1,
   "src/components/layout/Column.tsx": 1,

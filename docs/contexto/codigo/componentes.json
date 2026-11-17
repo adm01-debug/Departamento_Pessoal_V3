@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 570,
- "orfaos": 27,
+ "total": 575,
+ "orfaos": 26,
  "nomes_duplicados": {
   "AlertasRHWidget": [
    "src/components/dashboard/analytics/widgets.tsx",
@@ -265,12 +265,49 @@
    "orfao": false
   },
   {
-   "arquivo": "src/components/admissoes/AdmissoesKanban.tsx",
+   "arquivo": "src/components/admissoes/AdmissoesDashboard.tsx",
    "exports": [
-    "AdmissoesKanban"
+    "AbaAdmissoes",
+    "AdmissoesDashboard"
    ],
    "export_default": null,
-   "linhas": 214,
+   "linhas": 1581,
+   "dominio": "components/admissoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admissoes/admissoesDashboardModais.tsx",
+   "exports": [
+    "AcoesPrioritariasDialog",
+    "AdmissaoDetalhe",
+    "AreaDetalhe",
+    "DistribuicaoAreaDialog",
+    "PrioridadeDetalhe",
+    "ProximasAdmissoesDialog",
+    "SlaAlertasDialog",
+    "SlaSegmento"
+   ],
+   "export_default": null,
+   "linhas": 655,
+   "dominio": "components/admissoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admissoes/AdmissoesKanban.tsx",
+   "exports": [
+    "AdmissoesKanban",
+    "AdmissoesKanbanProps"
+   ],
+   "export_default": null,
+   "linhas": 200,
    "dominio": "components/admissoes",
    "hooks_locais": [
     "useEmpresas"
@@ -286,13 +323,12 @@
     "DetalhesAdmissaoDialog"
    ],
    "export_default": null,
-   "linhas": 509,
+   "linhas": 1442,
    "dominio": "components/admissoes",
    "hooks_locais": [
     "useAdmissaoWorkflow",
     "useContratacaoDigital",
-    "useEmpresas",
-    "usePiiMask"
+    "useEmpresas"
    ],
    "tabelas": [
     "admissao_tokens"
@@ -302,19 +338,69 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/admissoes/GestaoCandidatos.tsx",
+   "exports": [
+    "GestaoCandidatos",
+    "GestaoCandidatosProps",
+    "GestaoVisualizacao"
+   ],
+   "export_default": null,
+   "linhas": 1778,
+   "dominio": "components/admissoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admissoes/KanbanCard.tsx",
+   "exports": [
+    "DraggableCard",
+    "KanbanAcoes",
+    "KanbanCard",
+    "KanbanCardProps"
+   ],
+   "export_default": null,
+   "linhas": 279,
+   "dominio": "components/admissoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admissoes/KanbanColumn.tsx",
+   "exports": [
+    "KanbanColumn",
+    "KanbanColumnProps"
+   ],
+   "export_default": null,
+   "linhas": 157,
+   "dominio": "components/admissoes",
+   "hooks_locais": [
+    "useEntradaKanbanColuna"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/admissoes/NovaAdmissaoDialog.tsx",
    "exports": [
     "NovaAdmissaoDialog"
    ],
    "export_default": null,
-   "linhas": 253,
+   "linhas": 370,
    "dominio": "components/admissoes",
    "hooks_locais": [
     "useAdmissoes"
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -328,8 +414,8 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
-   "orfao": false
+   "usado_por": 0,
+   "orfao": true
   },
   {
    "arquivo": "src/components/admissoes/OnboardingPageContent.tsx",
@@ -2263,7 +2349,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -2346,7 +2432,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "orfao": false
   },
   {
@@ -2379,7 +2465,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 21,
+   "usado_por": 23,
    "orfao": false
   },
   {
@@ -6183,7 +6269,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 18,
+   "usado_por": 19,
    "orfao": false
   },
   {
@@ -6214,7 +6300,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 10,
+   "usado_por": 11,
    "orfao": false
   },
   {
@@ -6247,7 +6333,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 8,
+   "usado_por": 9,
    "orfao": false
   },
   {
@@ -6263,7 +6349,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 16,
+   "usado_por": 17,
    "orfao": false
   },
   {
@@ -6278,7 +6364,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 212,
+   "usado_por": 213,
    "orfao": false
   },
   {
@@ -6293,7 +6379,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 326,
+   "usado_por": 330,
    "orfao": false
   },
   {
@@ -6328,7 +6414,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 274,
+   "usado_por": 276,
    "orfao": false
   },
   {
@@ -6358,7 +6444,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -6391,7 +6477,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 14,
+   "usado_por": 15,
    "orfao": false
   },
   {
@@ -6582,7 +6668,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 25,
+   "usado_por": 27,
    "orfao": false
   },
   {
@@ -6682,8 +6768,8 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 0,
-   "orfao": true
+   "usado_por": 1,
+   "orfao": false
   },
   {
    "arquivo": "src/components/ui/label.tsx",
@@ -6696,7 +6782,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 157,
+   "usado_por": 156,
    "orfao": false
   },
   {
@@ -6807,7 +6893,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 17,
+   "usado_por": 19,
    "orfao": false
   },
   {
@@ -6837,7 +6923,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 17,
+   "usado_por": 16,
    "orfao": false
   },
   {
@@ -7005,8 +7091,8 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 0,
-   "orfao": true
+   "usado_por": 1,
+   "orfao": false
   },
   {
    "arquivo": "src/components/ui/sonner.tsx",
@@ -7037,7 +7123,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 107,
+   "usado_por": 110,
    "orfao": false
   },
   {
@@ -7115,7 +7201,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 109,
+   "usado_por": 110,
    "orfao": false
   },
   {
@@ -7132,7 +7218,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 50,
+   "usado_por": 49,
    "orfao": false
   },
   {
@@ -7216,7 +7302,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 35,
+   "usado_por": 36,
    "orfao": false
   },
   {
@@ -7605,10 +7691,11 @@
     "AdmissoesPage"
    ],
    "export_default": "AdmissoesPage",
-   "linhas": 391,
+   "linhas": 255,
    "dominio": "pages",
    "hooks_locais": [
-    "useAdmissoes"
+    "useAdmissoes",
+    "useEmpresas"
    ],
    "tabelas": [],
    "edges": [],

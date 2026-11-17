@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4fe2dccc38d2b0b3e9807b36b5421e0a3ef21e8f",
+  "sha": "fe455b97124d979895d4dae24756f88cb815e0ab",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-16 23:11 UTC",
-  "files_total": 3370,
-  "code_files": 2796,
-  "code_lines": 421504
+  "generated_at": "2026-11-17 00:39 UTC",
+  "files_total": 3378,
+  "code_files": 2804,
+  "code_lines": 427610
  },
  "version": "1.3.2",
- "facts_hash": "953a53c1033b6f26",
+ "facts_hash": "c12302e06395d097",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -385,8 +385,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 915,
-   ".tsx": 888,
-   ".ts": 862,
+   ".tsx": 893,
+   ".ts": 865,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -87540,7 +87540,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 160
+    "deps_count": 187
    },
    {
     "path": "",
@@ -87727,7 +87727,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 112
+    "deps_count": 115
    },
    {
     "path": "",
@@ -99793,7 +99793,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 823,
+  "components_count": 831,
   "hooks": [
    {
     "name": "useContacts",
@@ -99802,6 +99802,10 @@
    {
     "name": "useHistoricoFeedback",
     "file": "src/components/avaliacao/useHistoricoFeedback.ts"
+   },
+   {
+    "name": "useEntradaKanbanColuna",
+    "file": "src/components/kanban/entradaKanban.ts"
    },
    {
     "name": "useBreadcrumb",
@@ -101312,8 +101316,8 @@
   },
   {
    "module": "src/components",
-   "files": 823,
-   "lines": 132677,
+   "files": 831,
+   "lines": 138915,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101382,13 +101386,19 @@
     "TelemetryTopOffenders.tsx: TelemetryTopOffenders",
     "AdmissaoChecklist.tsx: Documento, AdmissaoChecklist",
     "SignaturePad.tsx: SignaturePad",
-    "AdmissoesKanban.tsx: AdmissoesKanban",
+    "AdmissoesDashboard.tsx: AbaAdmissoes, AdmissoesDashboard",
+    "AdmissoesKanban.tsx: AdmissoesKanbanProps, AdmissoesKanban",
     "DetalhesAdmissaoDialog.tsx: DetalhesAdmissaoDialog",
+    "GestaoCandidatos.tsx: GestaoVisualizacao, GestaoCandidatosProps, GestaoCandidatos",
+    "KanbanCard.tsx: KanbanAcoes, KanbanCardProps, KanbanCard, DraggableCard",
+    "KanbanColumn.tsx: KanbanColumnProps, KanbanColumn",
     "NovaAdmissaoDialog.tsx: NovaAdmissaoDialog",
     "OnboardingDashboard.tsx: OnboardingDashboard",
     "OnboardingPageContent.tsx: OnboardingPageContent",
     "admissoesComum.ts: Tone, TONE_CHIP, TONE_TEXT, ToneSelo, TONE_BADGE, ETAPA_LABELS",
+    "admissoesDashboardModais.tsx: SlaSegmento, AdmissaoDetalhe, PrioridadeDetalhe, AreaDetalhe, AcoesPrioritariasDialog, ProximasAdmissoesDialog",
     "admissoesDerivacoes.ts: AdmissaoLike, DIA_MS, dataValida, inicioDoDia, iniciais, percentual",
+    "kanbanComum.ts: AdmissaoKanban, TomEtapa, TomKanban, TOM_KANBAN, ColunaKanban, COLUNAS_KANBAN",
     "onboardingDerivacoes.ts: TarefaOnboarding, ColaboradorOnboarding, ProgressoOnboarding, progressoOnboarding, prazoDaTarefa, ordenarTarefas",
     "AfastamentoDocumentManager.tsx: AfastamentoDocumentManager",
     "AfastamentoForm.tsx: AfastamentoForm",
@@ -101402,13 +101412,7 @@
     "AuditoriaChips.tsx: AuditoriaChips",
     "AuditoriaDetalheDialog.tsx: AuditoriaDetalheDialog",
     "AuditoriaEvento.tsx: ResponsavelResolvido, AuditoriaEvento",
-    "AuditoriaFiltros.tsx: AuditoriaFiltros",
-    "CancelamentoFeedbackResumo.tsx: CancelamentoFeedbackResumo",
-    "CartaoFeedbackCanonico.tsx: CartaoFeedbackProps, CartaoFeedbackCanonico",
-    "CicloAtivoPanel.tsx: CicloAtivoPanel",
-    "ColoredFilterChip.tsx: ColoredFilterChip",
-    "DialogoDevolucao.tsx: DialogoDevolucaoProps, DialogoDevolucao",
-    "EstrelasNota.tsx: EstrelasNota"
+    "AuditoriaFiltros.tsx: AuditoriaFiltros"
    ],
    "docs": [
     "index.ts: V25: Components Export - active modules only",
@@ -101645,7 +101649,7 @@
   {
    "module": "src/hooks",
    "files": 189,
-   "lines": 21463,
+   "lines": 21467,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101988,7 +101992,7 @@
   {
    "module": "src/pages",
    "files": 131,
-   "lines": 46974,
+   "lines": 46838,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -111756,19 +111760,9 @@
     "rules": "pattern=[0-9 ]{6,7, max"
    },
    {
-    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-    "field": "det-cpf",
-    "rules": "disabled=terminal || !pii.canViewPii"
-   },
-   {
-    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-    "field": "det-nasc",
-    "rules": "type=date, disabled=terminal"
-   },
-   {
-    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-    "field": "det-mae",
-    "rules": "disabled=terminal"
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "field": "gestao-salario-min",
+    "rules": "min, type=number, min=0"
    },
    {
     "file": "src/components/admissoes/NovaAdmissaoDialog.tsx",
@@ -112073,6 +112067,16 @@
     "values": "sem_justa_causa | com_justa_causa | justa_causa | pedido_demissao | acordo_mutuo | culpa_reciproca | termino_contrato | falecimento"
    },
    {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "name": "AbaAdmissoes",
+    "values": "gestao | kanban"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "name": "GestaoVisualizacao",
+    "values": "tabela | cards"
+   },
+   {
     "file": "src/components/admissoes/admissoesComum.ts",
     "name": "Tone",
     "values": "primary | info | success | warning | destructive"
@@ -112091,6 +112095,26 @@
     "file": "src/components/admissoes/admissoesComum.ts",
     "name": "ETAPA_FLUXO",
     "values": "'solicitacao', 'documentos', 'validacao', 'pendente', 'exame', 'contrato', 'assinatura', 'esocial',"
+   },
+   {
+    "file": "src/components/admissoes/admissoesDashboardModais.tsx",
+    "name": "SlaSegmento",
+    "values": "dentro | risco | atrasada"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "name": "TomEtapa",
+    "values": "info | warning | teal | violet | success | primary | destructive | aqua"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "name": "TomLinha",
+    "values": "neutro | acento | alerta | ok"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "name": "DOCS_CHECKLIST",
+    "values": "'checklist_documentos_pessoais', 'checklist_comprovante_endereco', 'checklist_foto', 'checklist_ctps', 'checklist_exame_admissional', 'checklist_contrato_assinado',"
    },
    {
     "file": "src/components/admissoes/onboardingDerivacoes.ts",
@@ -114224,6 +114248,10 @@
    {
     "file": "src/pages/AdmissoesPage.tsx",
     "msg": "Candidato sem telefone cadastrado"
+   },
+   {
+    "file": "src/pages/AdmissoesPage.tsx",
+    "msg": "}\n              className={cn(\n                "
    },
    {
     "file": "src/pages/AfastamentosPage.tsx",
@@ -116898,12 +116926,168 @@
     "text": "Limite máximo de eventos por chamada (espelha o teto da RPC search_audit_unified)."
    },
    {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "text": "Regra única de \"S-2200 já transmitido\" — a mesma que o board do Kanban usa."
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "text": "* Registro mínimo que este dashboard lê (admissão real ou fictícia). */"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "text": "regra: `status_esocial = 'enviado'`, protocolo ou data de transmissão) — aqui"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "text": "* Mesma régua de prazo que o card usa: `atrasada` quando a data prevista já"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "text": "(232px de card para 112px de donut + 6 nomes completos): é um limite físico"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "text": "que ficam a validação do documento e o reenvio do link de contratação. O ASO"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "text": "Partição exata de `emAndamento` pela régua de prazo: todo processo cai em"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesKanban.tsx",
+    "text": "disso deve existir no board antes do primeiro clique."
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "text": "* REGRA DE IDENTIDADE: só permanecem fiéis ao sistema as CORES (tokens de"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "text": "* Texto curto de prazo a partir de `data_prevista` (usa a mesma régua `diasAteHoje`). */"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "text": "* A tabela real (`workflows_historico`) guarda apenas `usuario_id` — um UUID — e"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "text": "glow. O destaque deve vir do CONTEÚDO, não do fundo."
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "text": "• documentos / validacao / pendente — coleta, conferência e destrave do"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "text": "O timer do destaque não pode sobreviver ao modal (ele desmonta ao fechar)."
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "text": "ao checklist, e é isso que habilita a validação do documento enviado. A ação"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "text": "* REGRA DE IDENTIDADE: só permanecem fiéis ao sistema as CORES (tokens de"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "text": "* Toda a matemática (prazo, progresso, iniciais) vem de `admissoesDerivacoes.ts`"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "text": "quebrava no espaço (\"Docs Pendentes\", \"Em Validação\", \"Aguardando Exame\","
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "text": "* Prazo com o texto auxiliar do estado. Estados críticos ganham destaque:"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "text": "atraso na variante vibrante da área, vencimento em <= 7 dias em âmbar."
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "text": "então a última pílula termina no limite direito da área útil."
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "text": "Estado VISUAL (só do indicador): muda na hora e dirige apenas o `transform`."
+   },
+   {
+    "file": "src/components/admissoes/KanbanCard.tsx",
+    "text": "6. prazo                       (data_prevista, no canto direito do rodapé)"
+   },
+   {
+    "file": "src/components/admissoes/KanbanCard.tsx",
+    "text": "RODAPÉ — responsável (esquerda) + prazo (direita) */}"
+   },
+   {
+    "file": "src/components/admissoes/NovaAdmissaoDialog.tsx",
+    "text": "(mesmo service/regra da criação — nada de um segundo caminho de escrita)."
+   },
+   {
+    "file": "src/components/admissoes/admissoesDashboardModais.tsx",
+    "text": "* Classificação de prazo de uma admissão em andamento (mesma régua do card). */"
+   },
+   {
+    "file": "src/components/admissoes/admissoesDashboardModais.tsx",
+    "text": "* Rótulo, selo e tinta de cada classificação de prazo. */"
+   },
+   {
+    "file": "src/components/admissoes/admissoesDashboardModais.tsx",
+    "text": "prazo/pendências (o que cobrar), \"Próximas Admissões\" quer o progresso, e"
+   },
+   {
+    "file": "src/components/admissoes/admissoesDashboardModais.tsx",
+    "text": "\"SLA & Alertas\" quer a classificação de prazo e a próxima ação."
+   },
+   {
+    "file": "src/components/admissoes/admissoesDashboardModais.tsx",
+    "text": "prioritário, qual é a gravidade, qual é o prazo de referência, em que etapa"
+   },
+   {
+    "file": "src/components/admissoes/admissoesDashboardModais.tsx",
+    "text": "(quantidade, motivo, gravidade, prazo, etapa, responsável, ação recomendada e"
+   },
+   {
+    "file": "src/components/admissoes/admissoesDashboardModais.tsx",
+    "text": "e somente quando — existe destino real no sistema."
+   },
+   {
+    "file": "src/components/admissoes/admissoesDashboardModais.tsx",
+    "text": "todos os processos de cada grupo com etapa, prazo, tempo restante/atraso,"
+   },
+   {
     "file": "src/components/admissoes/admissoesDerivacoes.ts",
     "text": "(aba \"Dashboard\"): prazo, progresso e iniciais do avatar. A aba \"Gestão de"
    },
    {
     "file": "src/components/admissoes/admissoesDerivacoes.ts",
     "text": "* Registro mínimo que as telas do módulo leem (admissão real ou fictícia). */"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "text": "então mudá-los não pode mexer em nenhuma outra."
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "text": "(Validação) e `violet` (Exame) saem de `--chart-2`/`--chart-4`; `aqua`"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "text": "`teal` (Validação) e `violet` (Exame) saem de `--chart-2`/`--chart-4`; `aqua`"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "text": "`--chart-2` = ciano/teal (pedido da referência para \"Validação\")."
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "text": "Validação, Exame, Contrato), depois as demais do fluxo real e os dois estados"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "text": "* Coluna de uma etapa — `undefined` para etapa fora do board (não deve ocorrer). */"
    },
    {
     "file": "src/components/admissoes/onboardingDerivacoes.ts",
@@ -118198,6 +118382,14 @@
     "text": "E50-37: checagem de forma só para feedback imediato — a validação"
    },
    {
+    "file": "src/components/kanban/entradaKanban.ts",
+    "text": "página/aba) que esconderiam o Kanban — a keyframe não pode rodar atrás disso,"
+   },
+   {
+    "file": "src/components/kanban/entradaKanban.ts",
+    "text": "* GATILHO — a keyframe NÃO pode começar antes de a coluna existir de verdade na"
+   },
+   {
     "file": "src/components/layout/AppSidebar.tsx",
     "text": "RLS/permissão → some silenciosamente"
    },
@@ -118776,6 +118968,10 @@
    {
     "file": "src/pages/AdminTelemetriaPage.tsx",
     "text": "\").gte(\"created_at\", from).lte(\"created_at\", to).order(\"created_at\", { ascending: false }).limit(500);"
+   },
+   {
+    "file": "src/pages/AdmissoesPage.tsx",
+    "text": "Só abrir escreve aqui; fechar zera apenas o `selectedAdmissao` (e com ele o"
    },
    {
     "file": "src/pages/AssinarContratoPage.tsx",
@@ -144305,6 +144501,116 @@
     "value": "100"
    },
    {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "name": "DIA_MS",
+    "value": "24"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "name": "ALTURA_WIDGET",
+    "value": "'h-[256px]'"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "name": "ALTURA_LISTA_WIDGET",
+    "value": "'h-[136px]'"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "name": "HOVER_LINHA_WIDGET",
+    "value": "'hover:bg-background/70'"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "name": "LEGENDA_AREA",
+    "value": "'text-[10px] leading-tight @max-[240px]:text-[9px]'"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "name": "FUNDO_PROGRESSO",
+    "value": "'bg-background/60'"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "name": "MIOLO_STEPPER_OPACO",
+    "value": "'bg-card'"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "name": "LIMITE_DESCRICAO",
+    "value": "120"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "name": "ACOES_HEADER",
+    "value": "'shrink-0 pr-9'"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "name": "ACOES_HEADER_EIXO",
+    "value": "'-mt-2'"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "name": "BLOCOS_CASCATA",
+    "value": "3"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "name": "DESTAQUE_MS",
+    "value": "1000"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "name": "RECUO_SCROLL",
+    "value": "12"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "name": "DESTAQUE_DESTINO",
+    "value": "'border-primary/40 bg-primary/5'"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "name": "MAX_STAGGER",
+    "value": "5"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "name": "INICIO_FILTROS",
+    "value": "0.05"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "name": "PASSO_FILTROS",
+    "value": "0.028"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "name": "INICIO_CHIPS",
+    "value": "0.18"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "name": "PASSO_CHIPS",
+    "value": "0.022"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "name": "INICIO_CARD",
+    "value": "0.38"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "name": "PASSO_CARD_VARIANTS",
+    "value": "0.08"
+   },
+   {
+    "file": "src/components/admissoes/NovaAdmissaoDialog.tsx",
+    "name": "BLOCOS_CASCATA",
+    "value": "3"
+   },
+   {
     "file": "src/components/admissoes/admissoesDerivacoes.ts",
     "name": "DIA_MS",
     "value": "24"
@@ -144697,6 +145003,21 @@
    {
     "file": "src/components/ferias/FeriasReconciliacaoHistoricoCard.tsx",
     "name": "SLA_ALERT_THRESHOLD",
+    "value": "80"
+   },
+   {
+    "file": "src/components/kanban/entradaKanban.ts",
+    "name": "PASSO_COLUNA_MS",
+    "value": "180"
+   },
+   {
+    "file": "src/components/kanban/entradaKanban.ts",
+    "name": "MAX_CARDS_ESCALONADOS",
+    "value": "8"
+   },
+   {
+    "file": "src/components/kanban/entradaKanban.ts",
+    "name": "PASSO_COLUNA_REDUZIDO_MS",
     "value": "80"
    },
    {
@@ -146026,46 +146347,70 @@
     "kind": "compara"
    },
    {
-    "file": "src/components/admissoes/AdmissoesKanban.tsx",
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
     "field": "etapa",
     "value": "concluida",
     "kind": "compara"
    },
    {
-    "file": "src/components/admissoes/AdmissoesKanban.tsx",
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "field": "etapa",
+    "value": "esocial",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "field": "etapa",
+    "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
     "field": "etapa",
     "value": "cancelada",
     "kind": "compara"
    },
    {
-    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-    "field": "tipo",
-    "value": "documentos_pessoais",
-    "kind": "escreve"
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "field": "etapa",
+    "value": "concluida",
+    "kind": "compara"
    },
    {
-    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-    "field": "tipo",
-    "value": "comprovante_endereco",
-    "kind": "escreve"
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "field": "etapa",
+    "value": "cancelada",
+    "kind": "compara"
    },
    {
-    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-    "field": "tipo",
-    "value": "ctps",
-    "kind": "escreve"
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "field": "etapa",
+    "value": "documentos",
+    "kind": "compara"
    },
    {
-    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-    "field": "tipo",
-    "value": "exame_admissional",
-    "kind": "escreve"
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "field": "etapa",
+    "value": "exame",
+    "kind": "compara"
    },
    {
-    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-    "field": "tipo",
-    "value": "contrato_assinado",
-    "kind": "escreve"
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "field": "etapa",
+    "value": "contrato",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "field": "etapa",
+    "value": "assinatura",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "field": "etapa",
+    "value": "concluida",
+    "kind": "compara"
    },
    {
     "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
@@ -146076,6 +146421,30 @@
    {
     "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     "field": "etapa",
+    "value": "cancelada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "field": "etapa",
+    "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "field": "etapa",
+    "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "field": "status",
+    "value": "validado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "field": "etapa",
     "value": "concluida",
     "kind": "compara"
    },
@@ -146100,7 +146469,79 @@
    {
     "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     "field": "status",
-    "value": "em_andamento",
+    "value": "enviado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "field": "etapa",
+    "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "field": "etapa",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "field": "etapa",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "field": "etapa",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "field": "etapa",
+    "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "field": "etapa",
+    "value": "cancelada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "field": "etapa",
+    "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "field": "etapa",
+    "value": "cancelada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/KanbanCard.tsx",
+    "field": "etapa",
+    "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/KanbanCard.tsx",
+    "field": "etapa",
+    "value": "cancelada",
     "kind": "compara"
    },
    {
@@ -146131,6 +146572,126 @@
     "file": "src/components/admissoes/OnboardingDashboard.tsx",
     "field": "etapa",
     "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "solicitacao",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "documentos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "validacao",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "exame",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "contrato",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "pendente",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "assinatura",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "esocial",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "cancelada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "solicitacao",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "documentos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "validacao",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "exame",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "contrato",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "esocial",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "assinatura",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "pendente",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/kanbanComum.ts",
+    "field": "etapa",
+    "value": "cancelada",
     "kind": "compara"
    },
    {
@@ -151334,12 +151895,6 @@
     "field": "status",
     "value": "PUBLICADO",
     "kind": "filtra"
-   },
-   {
-    "file": "src/pages/AdmissoesPage.tsx",
-    "field": "etapa",
-    "value": "todos",
-    "kind": "compara"
    },
    {
     "file": "src/pages/AfastamentosPage.tsx",
@@ -156618,6 +157173,24 @@
     "body": "const valorIntegral = (salarioBase / 12) * mesesTrabalhados; if (parcela === 1) { // 1ª Parcela é sempre 50% do valor de direito, sem descontos de INSS/IRRF return Math.trunc((valorIntegral / 2) * 100) / 100; } // 2ª Parcela é o valor integral (sobre o qual incidirão descontos no cálculo principal) return Math.trunc(valorIntegral * 100) / 100;"
    },
    {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "name": "dataValida",
+    "params": "valor?: string | null",
+    "body": "if (!valor) return null; const data = new Date(valor); return Number.isNaN(data.getTime()) ? null : data;"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "name": "kpisBas",
+    "params": "e",
+    "body": "label: string; valor: number; icon: LucideIcon; tone: Tone; descricao: string; amostra: AdmissaoLike[]; comTendencia: boolean;"
+   },
+   {
+    "file": "src/components/admissoes/admissoesDashboardModais.tsx",
+    "name": "responsaveisDaFila",
+    "params": "candidatos: AdmissaoDetalhe[]",
+    "body": "const nomes = [...new Set(candidatos.map((c) => c.responsavel).filter((nome) => nome && nome !== 'Não atribuído'))]; return nomes.length > 0 ? nomes.join(', ') : 'Não atribuído — nenhuma admissão desta fila tem responsável preenchido.';"
+   },
+   {
     "file": "src/components/admissoes/admissoesDerivacoes.ts",
     "name": "dataValida",
     "params": "valor?: string | null",
@@ -158364,6 +158937,10 @@
     "line": "? 60 * 60 * 1000"
    },
    {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "line": "const DIA_MS = 24 * 60 * 60 * 1000;"
+   },
+   {
     "file": "src/components/admissoes/admissoesDerivacoes.ts",
     "line": "export const DIA_MS = 24 * 60 * 60 * 1000;"
    },
@@ -159250,6 +159827,74 @@
     "line": "* sobreviver a HMR/refresh curto. Alerta via toast quando failRate > 20%"
    },
    {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "line": "* (112/13). O anel mantém a espessura relativa na mesma ordem (~11,6% do"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "line": "* O donut tem 112px de diâmetro e anel de 13px: 9,7% menor que os 124px/14px"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "line": "* que este card usava antes e 12,5% menor que os 128px/14px do"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "line": "142 76% 40% no escuro). Contraste medido no browser: 5,4:1"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "line": "direito deste retângulo, que cresce de 0 a 100% da largura —"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "line": "token `--success` já existente (142 71% 38% no claro /"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "line": "transition={{ duration: 0.6, delay: index * 0.05, ease: [0.25, 0.46, 0.45, 0.94] }}"
+   },
+   {
+    "file": "src/components/admissoes/AdmissoesDashboard.tsx",
+    "line": "{/* Coluna esquerda: largura fixa do donut, ~10% menor que os"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "line": "// concluído = (nós concluídos − 1). Em 0% → 0 (nenhum trecho verde)."
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "line": "* 0.94]`), importada de `dashboard/MetricCard.tsx`."
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "line": "* LARGURA: a faixa ocupa 100% da coluna e os chips a dividem"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "line": "* colorir a superfície. A base é `bg-card/85` (navy/charcoal de `--card` a 85%"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "line": "* no tablet (`sm`) e 3 no desktop LARGO (`xl`), ocupando 100% da largura do"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "line": "* terceira faixa na horizontal a altura cai para ≈180px a 1920px (≈30% mais"
+   },
+   {
+    "file": "src/components/admissoes/GestaoCandidatos.tsx",
+    "line": "`text-primary-foreground` (240 20% 6%, quase preto) — MESMA"
+   },
+   {
+    "file": "src/components/admissoes/KanbanColumn.tsx",
+    "line": "* ENTRADA 100% CSS (ver o bloco `KANBAN … ENTRADA DAS COLUNAS` no `src/index.css`):"
+   },
+   {
+    "file": "src/components/admissoes/KanbanColumn.tsx",
+    "line": "* `kanban-coluna-concluida` depois que as keyframes terminam (altura 100% estável e"
+   },
+   {
     "file": "src/components/admissoes/OnboardingDashboard.tsx",
     "line": "transition={{ delay: i * 0.05 }}"
    },
@@ -159610,6 +160255,14 @@
     "line": "transition={{ delay: i * 0.05 }}"
    },
    {
+    "file": "src/components/kanban/entradaKanban.ts",
+    "line": "* `kanban-coluna-concluida`: altura final estável (100% responsivo) e cards"
+   },
+   {
+    "file": "src/components/kanban/entradaKanban.ts",
+    "line": "* por `kanban-coluna-concluida` (altura 100% estável; cards novos/movidos não"
+   },
+   {
     "file": "src/components/layout/MobileQuickActions.tsx",
     "line": "transition={{ delay: i * 0.05 }}"
    },
@@ -159832,10 +160485,6 @@
    {
     "file": "src/mocks/colaboradoresMock.ts",
     "line": "valor_irrf: Math.round(salario * 0.05),"
-   },
-   {
-    "file": "src/pages/AdmissoesPage.tsx",
-    "line": "transition={{ delay: i * 0.05 }}"
    },
    {
     "file": "src/pages/AssistenteIAPage.tsx",
@@ -165017,19 +165666,19 @@
    },
    {
     "file": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
-    "name": "renders Gerenciamento de admissão digital description"
+    "name": "renders cargo e departamento na descrição"
    },
    {
     "file": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
-    "name": "renders Geral tab"
+    "name": "renders seção Dados da admissão"
    },
    {
     "file": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
-    "name": "renders Documentos tab"
+    "name": "renders seção Documentos"
    },
    {
     "file": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
-    "name": "renders Histórico tab"
+    "name": "renders seção Histórico"
    },
    {
     "file": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
@@ -165038,6 +165687,18 @@
    {
     "file": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
     "name": "desabilita o link do portal em admissão encerrada e não gera token"
+   },
+   {
+    "file": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
+    "name": "não afirma histórico vazio enquanto a consulta do workflow carrega"
+   },
+   {
+    "file": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
+    "name": "não afirma histórico vazio quando a consulta do workflow falha"
+   },
+   {
+    "file": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
+    "name": "afirma histórico vazio só quando a consulta terminou sem erro"
    },
    {
     "file": "src/components/__tests__/DistribuirHoleritesButton.test.tsx",
@@ -174326,6 +174987,30 @@
    {
     "file": "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
     "name": "Remover pede confirmação e exclui o webhook da empresa"
+   },
+   {
+    "file": "src/components/kanban/__tests__/entradaKanban.test.ts",
+    "name": "entradaKanban — delays do rodapé"
+   },
+   {
+    "file": "src/components/kanban/__tests__/entradaKanban.test.ts",
+    "name": "rodapé normal: 1300ms + 100ms por card, com teto de 8 cards"
+   },
+   {
+    "file": "src/components/kanban/__tests__/entradaKanban.test.ts",
+    "name": "rodapé com movimento reduzido: 620ms + 50ms por card (mesmo teto)"
+   },
+   {
+    "file": "src/components/kanban/__tests__/entradaKanban.test.ts",
+    "name": "estaVisivel"
+   },
+   {
+    "file": "src/components/kanban/__tests__/entradaKanban.test.ts",
+    "name": "elemento nulo/inexistente não está visível"
+   },
+   {
+    "file": "src/components/kanban/__tests__/entradaKanban.test.ts",
+    "name": "no jsdom (altura 0) a animação não é disparada"
    },
    {
     "file": "src/components/relatorios/reportScheduleContract.test.ts",
@@ -221555,21 +222240,6 @@
       "escreve:src/components/desligamentos/NovoDesligamentoDialog.tsx",
       "escreve:src/pages/CalculadoraRescisaoPage.tsx"
      ],
-     "documentos_pessoais": [
-      "escreve:src/components/admissoes/DetalhesAdmissaoDialog.tsx"
-     ],
-     "comprovante_endereco": [
-      "escreve:src/components/admissoes/DetalhesAdmissaoDialog.tsx"
-     ],
-     "ctps": [
-      "escreve:src/components/admissoes/DetalhesAdmissaoDialog.tsx"
-     ],
-     "exame_admissional": [
-      "escreve:src/components/admissoes/DetalhesAdmissaoDialog.tsx"
-     ],
-     "contrato_assinado": [
-      "escreve:src/components/admissoes/DetalhesAdmissaoDialog.tsx"
-     ],
      "cancelado": [
       "compara:src/components/avaliacao/historicoFeedback.ts"
      ],
@@ -222250,6 +222920,7 @@
      ],
      "validado": [
       "compara:src/components/admissao/AdmissaoChecklist.tsx",
+      "compara:src/components/admissoes/DetalhesAdmissaoDialog.tsx",
       "compara:src/pages/AdminAsoWorkflowPage.tsx",
       "compara:src/services/contratacaoService.ts",
       "escreve:src/components/admissao/AdmissaoChecklist.tsx",
@@ -222268,6 +222939,7 @@
      ],
      "enviado": [
       "compara:src/components/admissao/AdmissaoChecklist.tsx",
+      "compara:src/components/admissoes/DetalhesAdmissaoDialog.tsx",
       "compara:src/components/colaborador-detalhes/JornadaPontoTab.tsx",
       "compara:src/components/dashboard/AnalyticsSection.tsx",
       "compara:src/components/esocial/ESocialTimeline.tsx",
@@ -222289,18 +222961,17 @@
       "escreve:supabase/functions/processar-agendamentos/filaNotificacoes.ts",
       "filtra:src/hooks/useExecutiveDashboard.ts"
      ],
-     "em_andamento": [
-      "compara:src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-      "compara:src/components/desligamentos/DesligamentoKPIs.tsx",
-      "compara:src/pages/AvaliacaoPage.tsx",
-      "compara:src/pages/WorkflowsPage.tsx",
-      "escreve:src/components/avaliacao/nineBoxMock.ts",
-      "escreve:src/hooks/useAdmissaoWorkflow.ts",
-      "escreve:src/mocks/colaboradoresMock.ts",
-      "escreve:src/mocks/desempenhoMock.ts",
-      "escreve:src/mocks/treinamentosMock.ts",
-      "escreve:src/pages/WorkflowsPage.tsx",
-      "escreve:src/services/workflowService.ts"
+     "todos": [
+      "compara:src/components/admissoes/GestaoCandidatos.tsx",
+      "compara:src/components/avaliacao/PdiFiltros.tsx",
+      "compara:src/components/avaliacao/PdiTab.tsx",
+      "compara:src/components/treinamentos/TurmasPainel.tsx",
+      "compara:src/components/treinamentos/inscricoesDerivacoes.ts",
+      "compara:src/components/treinamentos/treinamentosDerivacoes.ts",
+      "compara:src/components/treinamentos/trilhasDerivacoes.ts",
+      "compara:src/components/treinamentos/turmasDerivacoes.ts",
+      "compara:src/pages/ContratosGeradosPage.tsx",
+      "compara:supabase/functions/relatorio/index.ts"
      ],
      "encerrado": [
       "compara:src/components/afastamentos/AfastamentoTable.tsx",
@@ -222333,17 +223004,6 @@
      "todas": [
       "compara:src/components/avaliacao/MetasFiltros.tsx",
       "compara:src/components/avaliacao/MetasOKRsTab.tsx"
-     ],
-     "todos": [
-      "compara:src/components/avaliacao/PdiFiltros.tsx",
-      "compara:src/components/avaliacao/PdiTab.tsx",
-      "compara:src/components/treinamentos/TurmasPainel.tsx",
-      "compara:src/components/treinamentos/inscricoesDerivacoes.ts",
-      "compara:src/components/treinamentos/treinamentosDerivacoes.ts",
-      "compara:src/components/treinamentos/trilhasDerivacoes.ts",
-      "compara:src/components/treinamentos/turmasDerivacoes.ts",
-      "compara:src/pages/ContratosGeradosPage.tsx",
-      "compara:supabase/functions/relatorio/index.ts"
      ],
      "em_preparacao": [
       "compara:src/components/avaliacao/aprovacaoGestor.ts"
@@ -222386,6 +223046,18 @@
       "escreve:src/mocks/desempenhoMock.ts",
       "escreve:src/mocks/treinamentosMock.ts",
       "escreve:src/pages/NineBoxPreviewPage.tsx"
+     ],
+     "em_andamento": [
+      "compara:src/components/desligamentos/DesligamentoKPIs.tsx",
+      "compara:src/pages/AvaliacaoPage.tsx",
+      "compara:src/pages/WorkflowsPage.tsx",
+      "escreve:src/components/avaliacao/nineBoxMock.ts",
+      "escreve:src/hooks/useAdmissaoWorkflow.ts",
+      "escreve:src/mocks/colaboradoresMock.ts",
+      "escreve:src/mocks/desempenhoMock.ts",
+      "escreve:src/mocks/treinamentosMock.ts",
+      "escreve:src/pages/WorkflowsPage.tsx",
+      "escreve:src/services/workflowService.ts"
      ],
      "vencido": [
       "compara:src/components/colaborador-detalhes/AquisitivosTab.tsx",
@@ -223089,28 +223761,61 @@
     },
     "etapa": {
      "concluida": [
-      "compara:src/components/admissoes/AdmissoesKanban.tsx",
+      "compara:src/components/admissoes/AdmissoesDashboard.tsx",
       "compara:src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+      "compara:src/components/admissoes/GestaoCandidatos.tsx",
+      "compara:src/components/admissoes/KanbanCard.tsx",
       "compara:src/components/admissoes/OnboardingDashboard.tsx",
+      "compara:src/components/admissoes/kanbanComum.ts",
       "compara:src/services/admissaoService.ts",
       "escreve:src/services/admissaoService.ts"
      ],
+     "esocial": [
+      "compara:src/components/admissoes/AdmissoesDashboard.tsx",
+      "compara:src/components/admissoes/kanbanComum.ts"
+     ],
      "cancelada": [
-      "compara:src/components/admissoes/AdmissoesKanban.tsx",
+      "compara:src/components/admissoes/AdmissoesDashboard.tsx",
       "compara:src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+      "compara:src/components/admissoes/GestaoCandidatos.tsx",
+      "compara:src/components/admissoes/KanbanCard.tsx",
       "compara:src/components/admissoes/OnboardingDashboard.tsx",
+      "compara:src/components/admissoes/kanbanComum.ts",
       "compara:src/components/admissoes/onboardingDerivacoes.ts",
       "compara:src/services/admissaoService.ts",
       "escreve:src/services/admissaoService.ts"
      ],
-     "documentacao": [
-      "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx"
-     ],
      "documentos": [
+      "compara:src/components/admissoes/AdmissoesDashboard.tsx",
+      "compara:src/components/admissoes/kanbanComum.ts",
       "escreve:src/hooks/useAdmissaoWorkflow.ts"
      ],
+     "exame": [
+      "compara:src/components/admissoes/AdmissoesDashboard.tsx",
+      "compara:src/components/admissoes/kanbanComum.ts"
+     ],
+     "contrato": [
+      "compara:src/components/admissoes/AdmissoesDashboard.tsx",
+      "compara:src/components/admissoes/kanbanComum.ts"
+     ],
+     "assinatura": [
+      "compara:src/components/admissoes/AdmissoesDashboard.tsx",
+      "compara:src/components/admissoes/kanbanComum.ts"
+     ],
      "todos": [
-      "compara:src/pages/AdmissoesPage.tsx"
+      "compara:src/components/admissoes/GestaoCandidatos.tsx"
+     ],
+     "solicitacao": [
+      "compara:src/components/admissoes/kanbanComum.ts"
+     ],
+     "validacao": [
+      "compara:src/components/admissoes/kanbanComum.ts"
+     ],
+     "pendente": [
+      "compara:src/components/admissoes/kanbanComum.ts"
+     ],
+     "documentacao": [
+      "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx"
      ],
      "triagem": [
       "escreve:src/pages/RecrutamentoPage.tsx"
@@ -257049,19 +257754,22 @@
   },
   "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx": {
    "path": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
-   "lines": 198,
+   "lines": 221,
    "is_test": true,
    "tests": [
     "DetalhesAdmissaoDialog",
     "returns null when admissao is null",
     "renders colaborador name in dialog title",
     "renders etapa badge",
-    "renders Gerenciamento de admissão digital description",
-    "renders Geral tab",
-    "renders Documentos tab",
-    "renders Histórico tab",
+    "renders cargo e departamento na descrição",
+    "renders seção Dados da admissão",
+    "renders seção Documentos",
+    "renders seção Histórico",
     "copia o link do portal (sem abrir sessão do candidato) e gera token se não houver vigente",
-    "desabilita o link do portal em admissão encerrada e não gera token"
+    "desabilita o link do portal em admissão encerrada e não gera token",
+    "não afirma histórico vazio enquanto a consulta do workflow carrega",
+    "não afirma histórico vazio quando a consulta do workflow falha",
+    "afirma histórico vazio só quando a consulta terminou sem erro"
    ]
   },
   "src/components/__tests__/DistribuirHoleritesButton.test.tsx": {
@@ -259676,7 +260384,7 @@
   },
   "src/components/__tests__/NovaAdmissaoDialog.test.tsx": {
    "path": "src/components/__tests__/NovaAdmissaoDialog.test.tsx",
-   "lines": 123,
+   "lines": 122,
    "is_test": true,
    "tests": [
     "NovaAdmissaoDialog",
@@ -261232,14 +261940,44 @@
     "function SignaturePad"
    ]
   },
-  "src/components/admissoes/AdmissoesKanban.tsx": {
-   "path": "src/components/admissoes/AdmissoesKanban.tsx",
-   "lines": 214,
+  "src/components/admissoes/AdmissoesDashboard.tsx": {
+   "path": "src/components/admissoes/AdmissoesDashboard.tsx",
+   "lines": 1581,
    "exports": [
-    "function AdmissoesKanban"
+    "type AbaAdmissoes",
+    "function AdmissoesDashboard"
    ],
-   "errors": [
-    "Empresa ativa não carregada."
+   "navigates": [
+    "/esocial",
+    "/exames"
+   ],
+   "enums": [
+    {
+     "name": "AbaAdmissoes",
+     "values": "gestao | kanban"
+    }
+   ],
+   "params": [
+    {
+     "name": "DIA_MS",
+     "value": "24"
+    },
+    {
+     "name": "ALTURA_WIDGET",
+     "value": "'h-[256px]'"
+    },
+    {
+     "name": "ALTURA_LISTA_WIDGET",
+     "value": "'h-[136px]'"
+    },
+    {
+     "name": "HOVER_LINHA_WIDGET",
+     "value": "'hover:bg-background/70'"
+    },
+    {
+     "name": "LEGENDA_AREA",
+     "value": "'text-[10px] leading-tight @max-[240px]:text-[9px]'"
+    }
    ],
    "status_values": [
     {
@@ -261249,14 +261987,107 @@
     },
     {
      "field": "etapa",
+     "value": "esocial",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "concluida",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
      "value": "cancelada",
      "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "concluida",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "cancelada",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "documentos",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "exame",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "contrato",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "assinatura",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "concluida",
+     "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "Regra única de \"S-2200 já transmitido\" — a mesma que o board do Kanban usa.",
+    "* Registro mínimo que este dashboard lê (admissão real ou fictícia). */",
+    "regra: `status_esocial = 'enviado'`, protocolo ou data de transmissão) — aqui",
+    "* Mesma régua de prazo que o card usa: `atrasada` quando a data prevista já",
+    "(232px de card para 112px de donut + 6 nomes completos): é um limite físico",
+    "que ficam a validação do documento e o reenvio do link de contratação. O ASO",
+    "Partição exata de `emAndamento` pela régua de prazo: todo processo cai em"
+   ],
+   "calc_fns": [
+    {
+     "name": "dataValida",
+     "params": "valor?: string | null",
+     "body": "if (!valor) return null; const data = new Date(valor); return Number.isNaN(data.getTime()) ? null : data;"
+    },
+    {
+     "name": "kpisBas",
+     "params": "e",
+     "body": "label: string; valor: number; icon: LucideIcon; tone: Tone; descricao: string; amostra: AdmissaoLike[]; comTendencia: boolean;"
+    }
+   ],
+   "temporal": [
+    "const DIA_MS = 24 * 60 * 60 * 1000;"
+   ],
+   "percents": [
+    "* (112/13). O anel mantém a espessura relativa na mesma ordem (~11,6% do",
+    "* O donut tem 112px de diâmetro e anel de 13px: 9,7% menor que os 124px/14px",
+    "* que este card usava antes e 12,5% menor que os 128px/14px do",
+    "142 76% 40% no escuro). Contraste medido no browser: 5,4:1",
+    "direito deste retângulo, que cresce de 0 a 100% da largura —",
+    "token `--success` já existente (142 71% 38% no claro /",
+    "transition={{ duration: 0.6, delay: index * 0.05, ease: [0.25, 0.46, 0.45, 0.94] }}",
+    "{/* Coluna esquerda: largura fixa do donut, ~10% menor que os"
+   ]
+  },
+  "src/components/admissoes/AdmissoesKanban.tsx": {
+   "path": "src/components/admissoes/AdmissoesKanban.tsx",
+   "lines": 200,
+   "exports": [
+    "interface AdmissoesKanbanProps",
+    "function AdmissoesKanban"
+   ],
+   "errors": [
+    "Empresa ativa não carregada."
+   ],
+   "rule_comments": [
+    "disso deve existir no board antes do primeiro clique."
    ]
   },
   "src/components/admissoes/DetalhesAdmissaoDialog.tsx": {
    "path": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-   "lines": 509,
+   "lines": 1442,
    "exports": [
     "function DetalhesAdmissaoDialog"
    ],
@@ -261273,49 +262104,52 @@
      "token"
     ]
    },
+   "navigates": [
+    "/esocial",
+    "/onboarding?colaborador="
+   ],
    "errors": [
     "Candidato sem e-mail cadastrado e sem link de portal vigente."
    ],
-   "html_constraints": [
+   "params": [
     {
-     "field": "det-cpf",
-     "rules": "disabled=terminal || !pii.canViewPii"
+     "name": "FUNDO_PROGRESSO",
+     "value": "'bg-background/60'"
     },
     {
-     "field": "det-nasc",
-     "rules": "type=date, disabled=terminal"
+     "name": "MIOLO_STEPPER_OPACO",
+     "value": "'bg-card'"
     },
     {
-     "field": "det-mae",
-     "rules": "disabled=terminal"
+     "name": "LIMITE_DESCRICAO",
+     "value": "120"
+    },
+    {
+     "name": "ACOES_HEADER",
+     "value": "'shrink-0 pr-9'"
+    },
+    {
+     "name": "ACOES_HEADER_EIXO",
+     "value": "'-mt-2'"
+    },
+    {
+     "name": "BLOCOS_CASCATA",
+     "value": "3"
+    },
+    {
+     "name": "DESTAQUE_MS",
+     "value": "1000"
+    },
+    {
+     "name": "RECUO_SCROLL",
+     "value": "12"
+    },
+    {
+     "name": "DESTAQUE_DESTINO",
+     "value": "'border-primary/40 bg-primary/5'"
     }
    ],
    "status_values": [
-    {
-     "field": "tipo",
-     "value": "documentos_pessoais",
-     "kind": "escreve"
-    },
-    {
-     "field": "tipo",
-     "value": "comprovante_endereco",
-     "kind": "escreve"
-    },
-    {
-     "field": "tipo",
-     "value": "ctps",
-     "kind": "escreve"
-    },
-    {
-     "field": "tipo",
-     "value": "exame_admissional",
-     "kind": "escreve"
-    },
-    {
-     "field": "tipo",
-     "value": "contrato_assinado",
-     "kind": "escreve"
-    },
     {
      "field": "status",
      "value": "validado",
@@ -261323,6 +262157,26 @@
     },
     {
      "field": "etapa",
+     "value": "cancelada",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "concluida",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "concluida",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "validado",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
      "value": "concluida",
      "kind": "compara"
     },
@@ -261343,17 +262197,187 @@
     },
     {
      "field": "status",
-     "value": "em_andamento",
+     "value": "enviado",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "concluida",
      "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "* REGRA DE IDENTIDADE: só permanecem fiéis ao sistema as CORES (tokens de",
+    "* Texto curto de prazo a partir de `data_prevista` (usa a mesma régua `diasAteHoje`). */",
+    "* A tabela real (`workflows_historico`) guarda apenas `usuario_id` — um UUID — e",
+    "glow. O destaque deve vir do CONTEÚDO, não do fundo.",
+    "• documentos / validacao / pendente — coleta, conferência e destrave do",
+    "O timer do destaque não pode sobreviver ao modal (ele desmonta ao fechar).",
+    "ao checklist, e é isso que habilita a validação do documento enviado. A ação"
+   ],
+   "percents": [
+    "// concluído = (nós concluídos − 1). Em 0% → 0 (nenhum trecho verde)."
    ],
    "pagination": [
     "1"
    ]
   },
+  "src/components/admissoes/GestaoCandidatos.tsx": {
+   "path": "src/components/admissoes/GestaoCandidatos.tsx",
+   "lines": 1778,
+   "exports": [
+    "type GestaoVisualizacao",
+    "interface GestaoCandidatosProps",
+    "function GestaoCandidatos"
+   ],
+   "html_constraints": [
+    {
+     "field": "gestao-salario-min",
+     "rules": "min, type=number, min=0"
+    }
+   ],
+   "enums": [
+    {
+     "name": "GestaoVisualizacao",
+     "values": "tabela | cards"
+    }
+   ],
+   "params": [
+    {
+     "name": "MAX_STAGGER",
+     "value": "5"
+    },
+    {
+     "name": "INICIO_FILTROS",
+     "value": "0.05"
+    },
+    {
+     "name": "PASSO_FILTROS",
+     "value": "0.028"
+    },
+    {
+     "name": "INICIO_CHIPS",
+     "value": "0.18"
+    },
+    {
+     "name": "PASSO_CHIPS",
+     "value": "0.022"
+    },
+    {
+     "name": "INICIO_CARD",
+     "value": "0.38"
+    },
+    {
+     "name": "PASSO_CARD_VARIANTS",
+     "value": "0.08"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "concluida",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "cancelada",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "concluida",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "cancelada",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "* REGRA DE IDENTIDADE: só permanecem fiéis ao sistema as CORES (tokens de",
+    "* Toda a matemática (prazo, progresso, iniciais) vem de `admissoesDerivacoes.ts`",
+    "quebrava no espaço (\"Docs Pendentes\", \"Em Validação\", \"Aguardando Exame\",",
+    "* Prazo com o texto auxiliar do estado. Estados críticos ganham destaque:",
+    "atraso na variante vibrante da área, vencimento em <= 7 dias em âmbar.",
+    "então a última pílula termina no limite direito da área útil.",
+    "Estado VISUAL (só do indicador): muda na hora e dirige apenas o `transform`."
+   ],
+   "percents": [
+    "* 0.94]`), importada de `dashboard/MetricCard.tsx`.",
+    "* LARGURA: a faixa ocupa 100% da coluna e os chips a dividem",
+    "* colorir a superfície. A base é `bg-card/85` (navy/charcoal de `--card` a 85%",
+    "* no tablet (`sm`) e 3 no desktop LARGO (`xl`), ocupando 100% da largura do",
+    "* terceira faixa na horizontal a altura cai para ≈180px a 1920px (≈30% mais",
+    "`text-primary-foreground` (240 20% 6%, quase preto) — MESMA"
+   ]
+  },
+  "src/components/admissoes/KanbanCard.tsx": {
+   "path": "src/components/admissoes/KanbanCard.tsx",
+   "lines": 279,
+   "exports": [
+    "interface KanbanAcoes",
+    "interface KanbanCardProps",
+    "function KanbanCard",
+    "function DraggableCard"
+   ],
+   "status_values": [
+    {
+     "field": "etapa",
+     "value": "concluida",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "cancelada",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "6. prazo                       (data_prevista, no canto direito do rodapé)",
+    "RODAPÉ — responsável (esquerda) + prazo (direita) */}"
+   ]
+  },
+  "src/components/admissoes/KanbanColumn.tsx": {
+   "path": "src/components/admissoes/KanbanColumn.tsx",
+   "lines": 157,
+   "exports": [
+    "interface KanbanColumnProps",
+    "function KanbanColumn"
+   ],
+   "percents": [
+    "* ENTRADA 100% CSS (ver o bloco `KANBAN … ENTRADA DAS COLUNAS` no `src/index.css`):",
+    "* `kanban-coluna-concluida` depois que as keyframes terminam (altura 100% estável e"
+   ]
+  },
   "src/components/admissoes/NovaAdmissaoDialog.tsx": {
    "path": "src/components/admissoes/NovaAdmissaoDialog.tsx",
-   "lines": 253,
+   "lines": 370,
    "exports": [
     "function NovaAdmissaoDialog"
    ],
@@ -261374,6 +262398,15 @@
      "field": "data_nascimento",
      "rules": "type=date"
     }
+   ],
+   "params": [
+    {
+     "name": "BLOCOS_CASCATA",
+     "value": "3"
+    }
+   ],
+   "rule_comments": [
+    "(mesmo service/regra da criação — nada de um segundo caminho de escrita)."
    ]
   },
   "src/components/admissoes/OnboardingDashboard.tsx": {
@@ -261466,6 +262499,43 @@
     }
    ]
   },
+  "src/components/admissoes/admissoesDashboardModais.tsx": {
+   "path": "src/components/admissoes/admissoesDashboardModais.tsx",
+   "lines": 655,
+   "exports": [
+    "type SlaSegmento",
+    "interface AdmissaoDetalhe",
+    "interface PrioridadeDetalhe",
+    "interface AreaDetalhe",
+    "function AcoesPrioritariasDialog",
+    "function ProximasAdmissoesDialog",
+    "function DistribuicaoAreaDialog",
+    "function SlaAlertasDialog"
+   ],
+   "enums": [
+    {
+     "name": "SlaSegmento",
+     "values": "dentro | risco | atrasada"
+    }
+   ],
+   "rule_comments": [
+    "* Classificação de prazo de uma admissão em andamento (mesma régua do card). */",
+    "* Rótulo, selo e tinta de cada classificação de prazo. */",
+    "prazo/pendências (o que cobrar), \"Próximas Admissões\" quer o progresso, e",
+    "\"SLA & Alertas\" quer a classificação de prazo e a próxima ação.",
+    "prioritário, qual é a gravidade, qual é o prazo de referência, em que etapa",
+    "(quantidade, motivo, gravidade, prazo, etapa, responsável, ação recomendada e",
+    "e somente quando — existe destino real no sistema.",
+    "todos os processos de cada grupo com etapa, prazo, tempo restante/atraso,"
+   ],
+   "calc_fns": [
+    {
+     "name": "responsaveisDaFila",
+     "params": "candidatos: AdmissaoDetalhe[]",
+     "body": "const nomes = [...new Set(candidatos.map((c) => c.responsavel).filter((nome) => nome && nome !== 'Não atribuído'))]; return nomes.length > 0 ? nomes.join(', ') : 'Não atribuído — nenhuma admissão desta fila tem responsável preenchido.';"
+    }
+   ]
+  },
   "src/components/admissoes/admissoesDerivacoes.ts": {
    "path": "src/components/admissoes/admissoesDerivacoes.ts",
    "lines": 118,
@@ -261505,6 +262575,155 @@
    ],
    "temporal": [
     "export const DIA_MS = 24 * 60 * 60 * 1000;"
+   ]
+  },
+  "src/components/admissoes/kanbanComum.ts": {
+   "path": "src/components/admissoes/kanbanComum.ts",
+   "lines": 528,
+   "exports": [
+    "interface AdmissaoKanban",
+    "type TomEtapa",
+    "interface TomKanban",
+    "const TOM_KANBAN",
+    "interface ColunaKanban",
+    "const COLUNAS_KANBAN",
+    "function colunaDaEtapa",
+    "const DOCS_CHECKLIST",
+    "function documentosConcluidos",
+    "function esocialTransmitido",
+    "interface StatusCard",
+    "function statusDoCard",
+    "function iniciais",
+    "function responsavelDaAdmissao",
+    "type TomLinha",
+    "interface LinhaContexto",
+    "interface ContextoEtapa",
+    "function proximaAcaoCurtaDaEtapa",
+    "function contextoDoCard"
+   ],
+   "enums": [
+    {
+     "name": "TomEtapa",
+     "values": "info | warning | teal | violet | success | primary | destructive | aqua"
+    },
+    {
+     "name": "TomLinha",
+     "values": "neutro | acento | alerta | ok"
+    },
+    {
+     "name": "DOCS_CHECKLIST",
+     "values": "'checklist_documentos_pessoais', 'checklist_comprovante_endereco', 'checklist_foto', 'checklist_ctps', 'checklist_exame_admissional', 'checklist_contrato_assinado',"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "etapa",
+     "value": "solicitacao",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "documentos",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "validacao",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "exame",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "contrato",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "pendente",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "assinatura",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "esocial",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "concluida",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "cancelada",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "solicitacao",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "documentos",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "validacao",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "exame",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "contrato",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "esocial",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "assinatura",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "pendente",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "concluida",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "cancelada",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "então mudá-los não pode mexer em nenhuma outra.",
+    "(Validação) e `violet` (Exame) saem de `--chart-2`/`--chart-4`; `aqua`",
+    "`teal` (Validação) e `violet` (Exame) saem de `--chart-2`/`--chart-4`; `aqua`",
+    "`--chart-2` = ciano/teal (pedido da referência para \"Validação\").",
+    "Validação, Exame, Contrato), depois as demais do fluxo real e os dois estados",
+    "* Coluna de uma etapa — `undefined` para etapa fora do board (não deve ocorrer). */"
    ]
   },
   "src/components/admissoes/onboardingDerivacoes.ts": {
@@ -268241,6 +269460,59 @@
     "Remover pede confirmação e exclui o webhook da empresa"
    ]
   },
+  "src/components/kanban/entradaKanban.ts": {
+   "path": "src/components/kanban/entradaKanban.ts",
+   "lines": 164,
+   "exports": [
+    "const PASSO_COLUNA_MS",
+    "const MAX_CARDS_ESCALONADOS",
+    "const delayRodapeMs",
+    "const PASSO_COLUNA_REDUZIDO_MS",
+    "const delayRodapeReduzidoMs",
+    "function estaVisivel",
+    "type VarsEntradaKanban",
+    "interface OpcoesEntradaKanban",
+    "function useEntradaKanbanColuna"
+   ],
+   "params": [
+    {
+     "name": "PASSO_COLUNA_MS",
+     "value": "180"
+    },
+    {
+     "name": "MAX_CARDS_ESCALONADOS",
+     "value": "8"
+    },
+    {
+     "name": "PASSO_COLUNA_REDUZIDO_MS",
+     "value": "80"
+    }
+   ],
+   "rule_comments": [
+    "página/aba) que esconderiam o Kanban — a keyframe não pode rodar atrás disso,",
+    "* GATILHO — a keyframe NÃO pode começar antes de a coluna existir de verdade na"
+   ],
+   "hooks": [
+    "useEntradaKanbanColuna"
+   ],
+   "percents": [
+    "* `kanban-coluna-concluida`: altura final estável (100% responsivo) e cards",
+    "* por `kanban-coluna-concluida` (altura 100% estável; cards novos/movidos não"
+   ]
+  },
+  "src/components/kanban/__tests__/entradaKanban.test.ts": {
+   "path": "src/components/kanban/__tests__/entradaKanban.test.ts",
+   "lines": 38,
+   "is_test": true,
+   "tests": [
+    "entradaKanban — delays do rodapé",
+    "rodapé normal: 1300ms + 100ms por card, com teto de 8 cards",
+    "rodapé com movimento reduzido: 620ms + 50ms por card (mesmo teto)",
+    "estaVisivel",
+    "elemento nulo/inexistente não está visível",
+    "no jsdom (altura 0) a animação não é disparada"
+   ]
+  },
   "src/components/layout/AppSidebar.tsx": {
    "path": "src/components/layout/AppSidebar.tsx",
    "lines": 812,
@@ -273971,7 +275243,7 @@
   },
   "src/hooks/useAdmissaoWorkflow.ts": {
    "path": "src/hooks/useAdmissaoWorkflow.ts",
-   "lines": 197,
+   "lines": 201,
    "exports": [
     "function useAdmissaoWorkflow"
    ],
@@ -281242,27 +282514,22 @@
   },
   "src/pages/AdmissoesPage.tsx": {
    "path": "src/pages/AdmissoesPage.tsx",
-   "lines": 391,
+   "lines": 255,
    "exports": [
     "function AdmissoesPage"
    ],
    "navigates": [
-    "/auditoria"
+    "/auditoria",
+    "/onboarding"
    ],
    "errors": [
     "Admissão sem empresa vinculada — impossível enviar e-mail.",
     "Candidato sem e-mail cadastrado",
-    "Candidato sem telefone cadastrado"
+    "Candidato sem telefone cadastrado",
+    "}\n              className={cn(\n                "
    ],
-   "status_values": [
-    {
-     "field": "etapa",
-     "value": "todos",
-     "kind": "compara"
-    }
-   ],
-   "percents": [
-    "transition={{ delay: i * 0.05 }}"
+   "rule_comments": [
+    "Só abrir escreve aqui; fechar zera apenas o `selectedAdmissao` (e com ele o"
    ]
   },
   "src/pages/AfastamentosPage.tsx": {
@@ -312046,10 +313313,36 @@
   }
  },
  "git": {
-  "sha": "4fe2dccc38d2b0b3e9807b36b5421e0a3ef21e8f",
+  "sha": "fe455b97124d979895d4dae24756f88cb815e0ab",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "fe455b9",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "feat(admissoes): resgata o núcleo de Admissões da branch muri preservando as 3 correções da main (#608)",
+    "files": [
+     "inventario/estado/rotas.json",
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
+     "src/components/__tests__/NovaAdmissaoDialog.test.tsx",
+     "src/components/admissoes/AdmissoesDashboard.tsx",
+     "src/components/admissoes/AdmissoesKanban.tsx",
+     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+     "src/components/admissoes/GestaoCandidatos.tsx",
+     "src/components/admissoes/KanbanCard.tsx",
+     "src/components/admissoes/KanbanColumn.tsx",
+     "src/components/admissoes/NovaAdmissaoDialog.tsx",
+     "src/components/admissoes/admissoesDashboardModais.tsx",
+     "src/components/admissoes/kanbanComum.ts",
+     "src/components/kanban/__tests__/entradaKanban.test.ts",
+     "src/components/kanban/entradaKanban.ts",
+     "src/hooks/useAdmissaoWorkflow.ts",
+     "src/index.css",
+     "src/pages/AdmissoesPage.tsx"
+    ]
+   },
    {
     "sha": "4fe2dcc",
     "date": "2026-11-16",
@@ -312620,18 +313913,13 @@
      "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.sql",
      "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.verify.sql"
     ]
-   },
-   {
-    "sha": "1392114",
-    "date": "2026-11-15",
-    "author": "adm01-debug",
-    "subject": "test(ferias): resgata as 2 assercoes extras do sidecar do feriado de 20/11 (#572)",
-    "files": [
-     "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "inventario/estado/rotas.json",
+    4
+   ],
    [
     "package-lock.json",
     4
@@ -312641,16 +313929,20 @@
     4
    ],
    [
-    "inventario/estado/rotas.json",
-    3
-   ],
-   [
     "src/pages/ColaboradorDetalhesPage.tsx",
     3
    ],
    [
     ".github/workflows/canonical-migrations.yml",
     3
+   ],
+   [
+    "scripts/.bundle-budget.json",
+    2
+   ],
+   [
+    "src/components/admissoes/AdmissoesKanban.tsx",
+    2
    ],
    [
     "src/components/colaborador-detalhes/index.ts",
@@ -312703,14 +313995,6 @@
    [
     "scripts/canonical-invariants.sql",
     2
-   ],
-   [
-    "eslint.config.js",
-    1
-   ],
-   [
-    "scripts/.bundle-budget.json",
-    1
    ]
   ]
  }

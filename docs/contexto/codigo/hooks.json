@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 112,
+ "total": 113,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -106,6 +106,28 @@
     "src/components/avaliacao/CartaoFeedbackCanonico.tsx"
    ],
    "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/kanban/entradaKanban.ts",
+   "hooks_exportados": [
+    "useEntradaKanbanColuna"
+   ],
+   "linhas": 164,
+   "dominio": "components/kanban",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/admissoes/KanbanColumn.tsx"
+   ],
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/components/layout/Breadcrumb.tsx",
@@ -726,7 +748,7 @@
    "hooks_exportados": [
     "useAdmissaoWorkflow"
    ],
-   "linhas": 197,
+   "linhas": 201,
    "dominio": "hooks",
    "tabelas": [
     "admissao_tokens",
@@ -1585,7 +1607,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 116,
+   "usado_por": 117,
    "usado_por_arquivos": [
     "src/components/admissoes/AdmissoesKanban.tsx",
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
@@ -2391,9 +2413,8 @@
     "useMemo"
    ],
    "canais_realtime": [],
-   "usado_por": 35,
+   "usado_por": 34,
    "usado_por_arquivos": [
-    "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
     "src/components/colaborador-detalhes/DependentesTab.tsx",
     "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
@@ -2422,7 +2443,8 @@
     "src/pages/FolhaCompliancePage.tsx",
     "src/pages/GeradorDocumentosPage.tsx",
     "src/pages/HoleritesPage.tsx",
-    "src/pages/ImportacaoPage.tsx"
+    "src/pages/ImportacaoPage.tsx",
+    "src/pages/PensoesPage.tsx"
    ],
    "coberto_por_testes": 1
   },

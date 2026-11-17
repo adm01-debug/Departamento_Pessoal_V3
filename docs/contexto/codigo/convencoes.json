@@ -7,13 +7,13 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (452)",
+   "src/components (457)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
   "hooks": [
    "src/hooks (94)",
-   "src/components (8)",
+   "src/components (9)",
    "src/contexts (4)"
   ],
   "servicos_logica": [
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (562)",
+   "co-localizado (__tests__) (563)",
    "co-localizado (*.test) (70)",
    "e2e/ (28)"
   ],
@@ -40,7 +40,7 @@
   ]
  },
  "nomenclatura": {
-  "componentes": "PascalCase (88%)",
+  "componentes": "PascalCase (87%)",
   "hooks": "use + PascalCase",
   "servicos": "camelCase (98%)",
   "edge_functions": "kebab-case (69%)",
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (570)"
+  ".tsx (575)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(admissoes): resgata o núcleo de Admissões da branch muri preservando as 3 correções da main (#608)",
    "feat(treinamentos): resgata a UI de treinamentos da branch muri e reenxerta as correções da main (#607)",
    "fix(dossiê): editar um colaborador passa a atualizar o dossiê dele na hora (#606)",
    "feat(dossiê): enxerta as 5 abas restantes do dossiê do colaborador (branch muri) (#604)",
-   "feat(treinamentos): recupera a camada de aplicação das capas de treinamento (branch muri) (#593)",
-   "feat(dossie): resgata a Timeline do colaborador da branch muri (#602)"
+   "feat(treinamentos): recupera a camada de aplicação das capas de treinamento (branch muri) (#593)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

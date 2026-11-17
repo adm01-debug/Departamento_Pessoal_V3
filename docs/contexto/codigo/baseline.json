@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4fe2dccc38d2b0b3e9807b36b5421e0a3ef21e8f",
+  "commit": "fe455b97124d979895d4dae24756f88cb815e0ab",
   "branch": "main",
-  "data_commit": "2026-11-16T20:10:34-03:00",
+  "data_commit": "2026-11-16T21:37:57-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "fe455b9",
+    "data": "2026-11-16",
+    "assunto": "feat(admissoes): resgata o núcleo de Admissões da branch muri preservando as 3 correções da main (#608)"
+   },
    {
     "sha": "4fe2dcc",
     "data": "2026-11-16",
@@ -126,18 +131,13 @@
     "sha": "284f005",
     "data": "2026-11-16",
     "assunto": "chore(docs): resgata da branch do #557 a prova de navegador que fechou o B23 (#584)"
-   },
-   {
-    "sha": "efe96e8",
-    "data": "2026-11-16",
-    "assunto": "infra(banco): lista fechada do canonical-migrations passa a ser o lote NineBox (#578)"
    }
   ],
-  "arquivos_mudados_7d": 995,
+  "arquivos_mudados_7d": 983,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 307
+    "mudancas": 309
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -184,15 +184,15 @@
     "mudancas": 28
    },
    {
-    "pasta": "supabase/functions/external-db-bridge",
-    "mudancas": 28
-   },
-   {
     "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 27
    },
    {
     "pasta": "src/components/ponto",
+    "mudancas": 27
+   },
+   {
+    "pasta": "supabase/functions/external-db-bridge",
     "mudancas": 27
    }
   ],
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 21
+    "mudancas": 20
    },
    {
     "arquivo": "package-lock.json",
@@ -215,19 +215,19 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 11
    },
    {
-    "arquivo": "CLAUDE.md",
+    "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 10
    },
    {
-    "arquivo": "scripts/sync/autocommit-local.sh",
-    "mudancas": 10
+    "arquivo": "CLAUDE.md",
+    "mudancas": 9
    },
    {
     "arquivo": "docs/prod-readiness.md",
@@ -255,10 +255,6 @@
    },
    {
     "arquivo": "supabase/functions/external-db-bridge/index.ts",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
     "mudancas": 7
    },
    {
@@ -290,6 +286,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
+    "mudancas": 6
+   },
+   {
     "arquivo": ".github/workflows/ci.yml",
     "mudancas": 5
    },
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3349,
-  "arquivos_codigo": 1883,
-  "linhas_codigo": 356862,
+  "arquivos_total": 3357,
+  "arquivos_codigo": 1891,
+  "linhas_codigo": 362968,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 94,
-  "modulos": 80,
-  "componentes": 570,
-  "hooks": 112,
+  "modulos": 81,
+  "componentes": 575,
+  "hooks": 113,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 685,
+  "testes": 686,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 823,
-   "linhas": 132677
+   "arquivos": 831,
+   "linhas": 138915
   },
   "src/constants": {
    "arquivos": 6,
@@ -652,7 +652,7 @@
   },
   "src/hooks": {
    "arquivos": 189,
-   "linhas": 21463
+   "linhas": 21467
   },
   "src/i18n": {
    "arquivos": 2,
@@ -676,7 +676,7 @@
   },
   "src/pages": {
    "arquivos": 131,
-   "linhas": 46974
+   "linhas": 46838
   },
   "src/providers": {
    "arquivos": 4,
@@ -765,8 +765,20 @@
    "linhas": 1802
   },
   {
+   "arquivo": "src/components/admissoes/GestaoCandidatos.tsx",
+   "linhas": 1778
+  },
+  {
+   "arquivo": "src/components/admissoes/AdmissoesDashboard.tsx",
+   "linhas": 1581
+  },
+  {
    "arquivo": "src/pages/AvaliacaoPage.tsx",
    "linhas": 1565
+  },
+  {
+   "arquivo": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+   "linhas": 1442
   },
   {
    "arquivo": "src/pages/TreinamentosPage.tsx",
@@ -831,18 +843,6 @@
   {
    "arquivo": "src/components/workflows/WorkflowDesigner.tsx",
    "linhas": 824
-  },
-  {
-   "arquivo": "src/components/layout/AppSidebar.tsx",
-   "linhas": 812
-  },
-  {
-   "arquivo": "supabase/functions/external-db-bridge/index.ts",
-   "linhas": 810
-  },
-  {
-   "arquivo": "src/components/settings/InlineTabs.tsx",
-   "linhas": 808
   }
  ],
  "qualidade": {
@@ -850,8 +850,8 @@
   "console_log": 395,
   "ts_ignore": 1,
   "eslint_disable": 4,
-  "todos": 19,
-  "arquivos_acima_500_linhas": 93
+  "todos": 20,
+  "arquivos_acima_500_linhas": 97
  },
  "todos": [
   {
@@ -901,6 +901,12 @@
    "linha": 57,
    "tipo": "TODO",
    "texto": "job tem timeout-minutes — antes era 1 ocorrência por arquivo,"
+  },
+  {
+   "arquivo": "src/components/admissoes/kanbanComum.ts",
+   "linha": 96,
+   "tipo": "TODO",
+   "texto": ", e não só"
   },
   {
    "arquivo": "src/components/avaliacao/escritaOperacional.ts",
@@ -1101,6 +1107,7 @@
    "fail_admission_esocial_event"
   ],
   "componentes_orfaos": [
+   "src/components/admissoes/OnboardingDashboard.tsx",
    "src/components/animate-ui/components/animate/tabs.tsx",
    "src/components/avaliacao/NineBoxMatrix.tsx",
    "src/components/dashboard/SectionHeader.tsx",
@@ -1123,11 +1130,9 @@
    "src/components/ui/filter-chip.tsx",
    "src/components/ui/flow-hover-button.tsx",
    "src/components/ui/form.tsx",
-   "src/components/ui/info-tooltip.tsx",
    "src/components/ui/masked-input.tsx",
    "src/components/ui/page-header.tsx",
-   "src/components/ui/sidebar.tsx",
-   "src/components/ui/sliding-indicator.tsx"
+   "src/components/ui/sidebar.tsx"
   ],
   "componentes_com_nome_duplicado": [
    "AlertasRHWidget",

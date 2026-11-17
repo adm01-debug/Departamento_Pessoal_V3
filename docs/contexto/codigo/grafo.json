@@ -1,16 +1,16 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1200,
- "arestas": 5793,
+ "nos": 1207,
+ "arestas": 5852,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 326
+   "importado_por": 330
   },
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 274
+   "importado_por": 276
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
@@ -18,19 +18,19 @@
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 236
+   "importado_por": 241
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 212
+   "importado_por": 213
   },
   {
    "arquivo": "src/components/ui/input.tsx",
-   "importado_por": 169
+   "importado_por": 168
   },
   {
    "arquivo": "src/components/ui/label.tsx",
-   "importado_por": 157
+   "importado_por": 156
   },
   {
    "arquivo": "src/components/ui/dialog.tsx",
@@ -42,7 +42,7 @@
   },
   {
    "arquivo": "src/hooks/useEmpresas.ts",
-   "importado_por": 121
+   "importado_por": 122
   },
   {
    "arquivo": "src/schemas/validate.ts",
@@ -53,16 +53,16 @@
    "importado_por": 117
   },
   {
-   "arquivo": "src/components/ui/table.tsx",
-   "importado_por": 109
+   "arquivo": "src/components/ui/spinner.tsx",
+   "importado_por": 110
   },
   {
-   "arquivo": "src/components/ui/spinner.tsx",
-   "importado_por": 107
+   "arquivo": "src/components/ui/table.tsx",
+   "importado_por": 110
   },
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "importado_por": 92
+   "importado_por": 94
   },
   {
    "arquivo": "src/components/PageTitle.tsx",
@@ -74,7 +74,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/database.types.ts",
-   "importado_por": 76
+   "importado_por": 78
   },
   {
    "arquivo": "supabase/functions/_shared/contract.ts",
@@ -106,7 +106,7 @@
   },
   {
    "arquivo": "src/components/ui/tabs.tsx",
-   "importado_por": 51
+   "importado_por": 50
   },
   {
    "arquivo": "src/components/ui/textarea.tsx",
@@ -117,11 +117,11 @@
    "importado_por": 37
   },
   {
-   "arquivo": "src/hooks/usePiiMask.ts",
+   "arquivo": "src/components/ui/tooltip.tsx",
    "importado_por": 36
   },
   {
-   "arquivo": "src/components/ui/tooltip.tsx",
+   "arquivo": "src/hooks/usePiiMask.ts",
    "importado_por": 35
   },
   {
@@ -145,6 +145,10 @@
    "importado_por": 27
   },
   {
+   "arquivo": "src/components/ui/dropdown-menu.tsx",
+   "importado_por": 27
+  },
+  {
    "arquivo": "src/components/treinamentos/treinamentosDerivacoes.ts",
    "importado_por": 26
   },
@@ -153,16 +157,12 @@
    "importado_por": 26
   },
   {
-   "arquivo": "src/components/ui/dropdown-menu.tsx",
+   "arquivo": "src/components/dashboard/MetricCard.tsx",
    "importado_por": 25
   },
   {
-   "arquivo": "src/components/dashboard/MetricCard.tsx",
-   "importado_por": 23
-  },
-  {
-   "arquivo": "src/components/ui/skeleton.tsx",
-   "importado_por": 22
+   "arquivo": "src/utils/format.ts",
+   "importado_por": 25
   }
  ],
  "ciclos": {
@@ -195,6 +195,7 @@
   "lighthouserc.cjs",
   "public/sw-custom.js",
   "src/assets/index.ts",
+  "src/components/admissoes/OnboardingDashboard.tsx",
   "src/components/animate-ui/components/animate/tabs.tsx",
   "src/components/auth/index.ts",
   "src/components/avaliacao/NineBoxMatrix.tsx",
@@ -221,11 +222,9 @@
   "src/components/ui/filter-chip.tsx",
   "src/components/ui/flow-hover-button.tsx",
   "src/components/ui/form.tsx",
-  "src/components/ui/info-tooltip.tsx",
   "src/components/ui/masked-input.tsx",
   "src/components/ui/page-header.tsx",
   "src/components/ui/sidebar.tsx",
-  "src/components/ui/sliding-indicator.tsx",
   "src/components/ui/use-toast.ts",
   "src/constants/workflow-status.ts",
   "src/hooks/validators.ts",
@@ -287,14 +286,14 @@
    "importado_por": 32
   },
   {
+   "modulo": "types",
+   "depende_de": 1,
+   "importado_por": 16
+  },
+  {
    "modulo": "schemas",
    "depende_de": 2,
    "importado_por": 14
-  },
-  {
-   "modulo": "types",
-   "depende_de": 1,
-   "importado_por": 15
   },
   {
    "modulo": "contexts",
@@ -307,6 +306,11 @@
    "importado_por": 2
   },
   {
+   "modulo": "components/dashboard",
+   "depende_de": 7,
+   "importado_por": 7
+  },
+  {
    "modulo": "components/folha",
    "depende_de": 13,
    "importado_por": 1
@@ -317,9 +321,9 @@
    "importado_por": 2
   },
   {
-   "modulo": "components/dashboard",
-   "depende_de": 7,
-   "importado_por": 6
+   "modulo": "components/admissoes",
+   "depende_de": 11,
+   "importado_por": 2
   },
   {
    "modulo": "components/settings",
@@ -339,11 +343,6 @@
   {
    "modulo": "components/ponto",
    "depende_de": 9,
-   "importado_por": 2
-  },
-  {
-   "modulo": "components/admissoes",
-   "depende_de": 8,
    "importado_por": 2
   },
   {
