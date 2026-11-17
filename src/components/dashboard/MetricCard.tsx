@@ -169,7 +169,8 @@ export function MetricCard({
                 value={rawValue}
                 decimals={decimals}
                 format={
-                  formatFn || (typeof value === 'string' && value.includes('R$') ? (n) => formatCurrency(n) : undefined)
+                  formatFn ||
+                  (typeof value === 'string' && value.includes('R$') ? (n) => formatCurrency(n, decimals) : undefined)
                 }
               />
             ) : (
@@ -235,11 +236,13 @@ export function MetricCard({
   );
 }
 
-function formatCurrency(value: number): string {
+// `decimals` vem do card: com 0 (padrão histórico) o valor sai inteiro; com 2
+// os centavos são preservados — senão `R$ 1.234,56` era exibido como `R$ 1.235`.
+function formatCurrency(value: number, decimals = 0): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
   }).format(value);
 }

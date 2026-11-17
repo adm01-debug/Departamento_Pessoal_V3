@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
@@ -57,5 +57,21 @@ describe('AnimatedNumber', () => {
   it('renders with large value stays at 0 until animated', () => {
     render(<AnimatedNumber value={999999} />);
     expect(screen.getByText('0')).toBeInTheDocument();
+  });
+
+  it('chega ao valor final com a animação desligada (duration = 0)', async () => {
+    // Com `duration={0}` o primeiro quadro calculava 0/0 = NaN e o número
+    // ficava preso em "0" para sempre.
+    const { useInView } = await import('framer-motion');
+    vi.mocked(useInView).mockReturnValueOnce(true);
+    render(<AnimatedNumber value={1234} duration={0} />);
+    await waitFor(() => expect(screen.getByText('1234')).toBeInTheDocument());
+  });
+
+  it('respeita o formatador no valor final com duration = 0', async () => {
+    const { useInView } = await import('framer-motion');
+    vi.mocked(useInView).mockReturnValueOnce(true);
+    render(<AnimatedNumber value={19079.93} duration={0} decimals={2} format={(n) => n.toFixed(2)} />);
+    await waitFor(() => expect(screen.getByText('19079.93')).toBeInTheDocument());
   });
 });

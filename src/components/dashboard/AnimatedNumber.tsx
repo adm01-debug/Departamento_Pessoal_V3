@@ -38,7 +38,9 @@ export function AnimatedNumber({ value, format, duration = 1.2, className, decim
 
     function step(now: number) {
       if (startTime === 0) startTime = now;
-      const progress = Math.min(Math.max((now - startTime) / dur, 0), 1);
+      // `duration={0}` (animacao desligada) daria 0/0 = NaN e o numero ficaria
+      // preso no fallback para sempre; com duracao nao-positiva vai direto ao fim.
+      const progress = dur <= 0 ? 1 : Math.min(Math.max((now - startTime) / dur, 0), 1);
       const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
       const bruto = start + (end - start) * eased;
       const current = decimals > 0 ? Number(bruto.toFixed(decimals)) : Math.round(bruto);

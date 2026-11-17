@@ -174,4 +174,15 @@ describe('MetricCard', () => {
     expect(container.querySelector('[class*="text-[10px]"]')).not.toBeNull();
     expect(container.querySelector('.text-data')).not.toBeNull();
   });
+
+  it('preserva centavos no formato monetario automatico quando decimals = 2', () => {
+    render(<MetricCard title="Folha Mensal" value="R$ 19.079,93" rawValue={19079.93} decimals={2} icon={Users} />);
+    // Sem o decimals na formatacao, o valor saia arredondado para R$ 19.080.
+    expect(screen.getByText('R$ 19.079,93')).toBeInTheDocument();
+  });
+
+  it('mantem o valor monetario inteiro quando decimals nao e informado', () => {
+    render(<MetricCard title="Folha Mensal" value="R$ 19.080" rawValue={19079.93} icon={Users} />);
+    expect(screen.getByText('R$ 19.080')).toBeInTheDocument();
+  });
 });
