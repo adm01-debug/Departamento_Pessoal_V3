@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "65e05a390f161904f4c8dfc27d291e9dd8c675f0",
+  "commit": "a03e4983a3f4e74d8d51c40fc64b186bd1990a57",
   "branch": "main",
-  "data_commit": "2026-11-17T17:30:29-03:00",
+  "data_commit": "2026-11-17T17:48:11-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "a03e498",
+    "data": "2026-11-17",
+    "assunto": "fix(ui): iniciais do avatar voltam a ter fundo (#649)"
+   },
+   {
+    "sha": "fc03c4a",
+    "data": "2026-11-17",
+    "assunto": "chore(inventario): regenera rotas.json, defasado desde a #639 (#648)"
+   },
    {
     "sha": "65e05a3",
     "data": "2026-11-17",
@@ -121,19 +131,9 @@
     "sha": "143c729",
     "data": "2026-11-17",
     "assunto": "fix(pwa): service worker servia HTML no lugar dos assets e travava o app (#622)"
-   },
-   {
-    "sha": "cc7b1ac",
-    "data": "2026-11-17",
-    "assunto": "feat(desligamentos): Trilha de Auditoria com a camada de dados reescrita para o caminho autorizado (#620)"
-   },
-   {
-    "sha": "b7ee915",
-    "data": "2026-11-17",
-    "assunto": "fix(desligamentos): vocabulário alinhado ao banco — 4 de 6 tipos e o status pago não eram reconhecidos (#619)"
    }
   ],
-  "arquivos_mudados_7d": 1086,
+  "arquivos_mudados_7d": 1072,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -145,7 +145,7 @@
    },
    {
     "pasta": "src/components/ui",
-    "mudancas": 105
+    "mudancas": 107
    },
    {
     "pasta": "src/services/__tests__",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 21
+    "mudancas": 22
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 20
+    "mudancas": 18
    },
    {
     "arquivo": "package.json",
@@ -222,11 +222,11 @@
     "mudancas": 9
    },
    {
-    "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 9
+    "arquivo": "PENDENCIAS.md",
+    "mudancas": 8
    },
    {
-    "arquivo": "PENDENCIAS.md",
+    "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 8
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 261
+    "commits": 263
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 23
+    "commits": 21
    },
    {
     "autor": "dependabot[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3522,
-  "arquivos_codigo": 2044,
-  "linhas_codigo": 404601,
+  "arquivos_total": 3523,
+  "arquivos_codigo": 2045,
+  "linhas_codigo": 404659,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -332,7 +332,7 @@
   "tabelas": 425,
   "migrations": 861,
   "cron_jobs": 41,
-  "testes": 755,
+  "testes": 756,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 960,
-   "linhas": 172844
+   "arquivos": 961,
+   "linhas": 172902
   },
   "src/constants": {
    "arquivos": 7,

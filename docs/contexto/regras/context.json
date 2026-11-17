@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "65e05a390f161904f4c8dfc27d291e9dd8c675f0",
+  "sha": "a03e4983a3f4e74d8d51c40fc64b186bd1990a57",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 20:35 UTC",
-  "files_total": 3543,
-  "code_files": 2969,
-  "code_lines": 469904
+  "generated_at": "2026-11-17 20:49 UTC",
+  "files_total": 3544,
+  "code_files": 2970,
+  "code_lines": 469962
  },
  "version": "1.3.2",
- "facts_hash": "5a925bf2ca3f1450",
+ "facts_hash": "cba0b54fce346f5c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 986,
+   ".tsx": 987,
    ".sql": 927,
    ".ts": 925,
    ".mjs": 103,
@@ -89338,7 +89338,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 95
+    "deps_count": 96
    },
    {
     "path": "",
@@ -90584,7 +90584,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 127
+    "deps_count": 128
    },
    {
     "path": "",
@@ -99978,7 +99978,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 960,
+  "components_count": 961,
   "hooks": [
    {
     "name": "useContacts",
@@ -101565,8 +101565,8 @@
   },
   {
    "module": "src/components",
-   "files": 960,
-   "lines": 172844,
+   "files": 961,
+   "lines": 172902,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -181241,6 +181241,30 @@
    {
     "file": "src/components/ui/__tests__/status-badge.test.tsx",
     "name": "does not render the raw "
+   },
+   {
+    "file": "src/components/ui/__tests__/user-avatar.test.tsx",
+    "name": "UserAvatar"
+   },
+   {
+    "file": "src/components/ui/__tests__/user-avatar.test.tsx",
+    "name": "mostra as iniciais de nome composto"
+   },
+   {
+    "file": "src/components/ui/__tests__/user-avatar.test.tsx",
+    "name": "o fundo vem sempre da paleta de avatarTons"
+   },
+   {
+    "file": "src/components/ui/__tests__/user-avatar.test.tsx",
+    "name": "nao usa mais gradiente nem token chart-*"
+   },
+   {
+    "file": "src/components/ui/__tests__/user-avatar.test.tsx",
+    "name": "o mesmo nome recebe sempre o mesmo tom"
+   },
+   {
+    "file": "src/components/ui/__tests__/user-avatar.test.tsx",
+    "name": "nomes diferentes usam mais de um tom"
    },
    {
     "file": "src/components/ui/__tests__/user-profile-menu.test.tsx",
@@ -284839,7 +284863,7 @@
   },
   "src/components/ui/user-avatar.tsx": {
    "path": "src/components/ui/user-avatar.tsx",
-   "lines": 52,
+   "lines": 50,
    "exports": [
     "function UserAvatar"
    ]
@@ -284914,6 +284938,19 @@
     "ColaboradorStatus",
     "renders a known label for status ",
     "does not render the raw "
+   ]
+  },
+  "src/components/ui/__tests__/user-avatar.test.tsx": {
+   "path": "src/components/ui/__tests__/user-avatar.test.tsx",
+   "lines": 60,
+   "is_test": true,
+   "tests": [
+    "UserAvatar",
+    "mostra as iniciais de nome composto",
+    "o fundo vem sempre da paleta de avatarTons",
+    "nao usa mais gradiente nem token chart-*",
+    "o mesmo nome recebe sempre o mesmo tom",
+    "nomes diferentes usam mais de um tom"
    ]
   },
   "src/components/ui/__tests__/user-profile-menu.test.tsx": {
@@ -324786,10 +324823,29 @@
   }
  },
  "git": {
-  "sha": "65e05a390f161904f4c8dfc27d291e9dd8c675f0",
+  "sha": "a03e4983a3f4e74d8d51c40fc64b186bd1990a57",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "a03e498",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix(ui): iniciais do avatar voltam a ter fundo (#649)",
+    "files": [
+     "src/components/ui/__tests__/user-avatar.test.tsx",
+     "src/components/ui/user-avatar.tsx"
+    ]
+   },
+   {
+    "sha": "fc03c4a",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "chore(inventario): regenera rotas.json, defasado desde a #639 (#648)",
+    "files": [
+     "inventario/estado/rotas.json"
+    ]
+   },
    {
     "sha": "65e05a3",
     "date": "2026-11-17",
@@ -325192,112 +325248,20 @@
      "docs/ninebox-homologacao-funcional.md",
      "src/components/__tests__/PapeisAvaliacao.test.ts"
     ]
-   },
-   {
-    "sha": "d63d655",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat: resgata da muri o dossiê do colaborador — holerites, SST, campos personalizados e recontratação (#613)",
-    "files": [
-     "inventario/estado/rotas.json",
-     "scripts/.bundle-budget.json",
-     "src/components/__tests__/EmergenciaTab.test.tsx",
-     "src/components/__tests__/FormacaoTab.test.tsx",
-     "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
-     "src/components/colaborador-detalhes/EditarJornadaDialog.tsx",
-     "src/components/colaborador-detalhes/EmergenciaTab.tsx",
-     "src/components/colaborador-detalhes/FormacaoTab.tsx",
-     "src/components/colaborador-detalhes/HoleritesTab.tsx",
-     "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
-     "src/components/colaborador-detalhes/SSTResumoTab.tsx",
-     "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
-     "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
-     "src/components/colaborador-detalhes/__tests__/EmergenciaTab.test.tsx",
-     "src/components/colaborador-detalhes/__tests__/FormacaoTab.test.tsx",
-     "src/components/colaborador-detalhes/__tests__/HoleritesTab.test.tsx",
-     "src/components/colaborador-detalhes/__tests__/JornadaPontoTab.test.tsx",
-     "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
-     "src/components/colaborador-detalhes/index.ts",
-     "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
-     "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
-     "src/hooks/__tests__/useColaboradorDetalhes.test.ts",
-     "src/hooks/__tests__/useComplianceColaborador.test.ts",
-     "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
-     "src/hooks/__tests__/useHistoricoColaborador.test.ts",
-     "src/hooks/__tests__/useNovasTabelas.test.ts",
-     "src/hooks/__tests__/useProximosEventos.test.ts",
-     "src/hooks/__tests__/useSSTColaborador.test.ts",
-     "src/hooks/index.ts",
-     "src/hooks/useColaboradorDetalhes.ts",
-     "src/hooks/useSSTColaborador.ts",
-     "src/hooks/useVinculos.ts",
-     "src/mocks/colaboradoresMock.ts",
-     "src/pages/ColaboradorDetalhesPage.tsx",
-     "src/services/__tests__/colaboradorDetalhesService.test.ts",
-     "src/services/__tests__/colaboradorService.recontratacao.test.ts",
-     "src/services/__tests__/onboardingJornadaService.test.ts",
-     "src/services/__tests__/rescisaoService.test.ts",
-     "src/services/__tests__/timelineService.test.ts",
-     "src/services/__tests__/turnoService.test.ts",
-     "src/services/__tests__/vinculoService.test.ts",
-     "src/services/colaboradorDetalhesService.ts",
-     "src/services/colaboradorService.ts",
-     "src/services/index.ts",
-     "src/services/rescisaoService.ts",
-     "src/services/turnoService.ts",
-     "src/services/vinculoService.ts",
-     "src/types/entities.ts"
-    ]
-   },
-   {
-    "sha": "0a74847",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat: resgata da muri 6 grupos de hooks/services com consumidor vivo (#612)",
-    "files": [
-     "scripts/.bundle-budget.json",
-     "src/components/colaboradores/ColaboradorFilters.tsx",
-     "src/hooks/__tests__/useCargos.test.ts",
-     "src/hooks/__tests__/useDepartamentos.test.ts",
-     "src/hooks/__tests__/useSessionTimeout.test.ts",
-     "src/hooks/__tests__/useTabelasReferencia.test.ts",
-     "src/hooks/useCargos.ts",
-     "src/hooks/useColaboradores.ts",
-     "src/hooks/useDepartamentos.ts",
-     "src/hooks/useGenericCrud.ts",
-     "src/hooks/useLocaisTrabalho.ts",
-     "src/hooks/useSecurityMonitor.ts",
-     "src/hooks/useSessionTimeout.ts",
-     "src/hooks/useTabelasReferencia.ts",
-     "src/lib/sessaoLocal.ts",
-     "src/pages/ColaboradorFormPage.tsx",
-     "src/pages/ColaboradoresPage.tsx",
-     "src/services/__tests__/avaliacaoAprovacaoService.test.ts",
-     "src/services/__tests__/avaliacaoCriacaoSegura.test.ts",
-     "src/services/__tests__/colaboradorService.test.ts",
-     "src/services/__tests__/lgpdService.test.ts",
-     "src/services/__tests__/tabelasReferenciaService.test.ts",
-     "src/services/colaboradorService.ts",
-     "src/services/tabelasReferenciaService.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    10
-   ],
-   [
-    "src/pages/ColaboradoresPage.tsx",
-    5
+    8
    ],
    [
     "inventario/estado/rotas.json",
     5
    ],
    [
-    "src/pages/ColaboradorDetalhesPage.tsx",
-    3
+    "src/pages/ColaboradoresPage.tsx",
+    4
    ],
    [
     "src/index.css",
@@ -325316,7 +325280,7 @@
     2
    ],
    [
-    "src/components/colaboradores/ColaboradorFilters.tsx",
+    "src/pages/ColaboradorDetalhesPage.tsx",
     2
    ],
    [
@@ -325344,8 +325308,12 @@
     2
    ],
    [
-    "src/services/colaboradorService.ts",
-    2
+    "src/components/ui/__tests__/user-avatar.test.tsx",
+    1
+   ],
+   [
+    "src/components/ui/user-avatar.tsx",
+    1
    ],
    [
     "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql",

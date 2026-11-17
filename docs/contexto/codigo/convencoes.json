@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (631)",
+   "co-localizado (__tests__) (632)",
    "co-localizado (*.test) (71)",
    "e2e/ (28)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(ui): iniciais do avatar voltam a ter fundo (#649)",
+   "chore(inventario): regenera rotas.json, defasado desde a #639 (#648)",
    "fix(migrations): corrige os dois sidecars que reprovaram no dry-run (#647)",
    "infra(storage): policies de tenant para documentos, documentos-colaboradores e afastamentos (#644)",
-   "feat(permissions): seed da matriz de permissões por papel (#642)",
-   "fix(colaborador): \"Próximos Eventos\" lê o dado real e os atalhos levam ao lugar certo (#641)",
-   "infra(migrations): troca o LOTE ATUAL para as 4 migrations da #628 (#637)"
+   "feat(permissions): seed da matriz de permissões por papel (#642)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

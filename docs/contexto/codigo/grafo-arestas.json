@@ -4496,6 +4496,7 @@
   ],
   "src/components/ui/user-avatar.tsx": [
    "src/components/ui/avatar.tsx",
+   "src/lib/avatarTons.ts",
    "src/lib/utils.ts"
   ],
   "src/components/ui/user-profile-menu.tsx": [
