@@ -95319,9 +95319,13 @@
             {
               "file": "supabase/migrations/20260816000000_p1_024_policies_orfas.sql",
               "hits": 6
+            },
+            {
+              "file": "supabase/migrations/20261117170200_onboarding_kits_indice_empresa.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 22,
+          "code_total_files": 23,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -95960,7 +95964,7 @@
               "hits": 2
             }
           ],
-          "code_total_files": 75,
+          "code_total_files": 76,
           "cron": [],
           "db": [
             "public.aplicar_medida_folha_ponto",
@@ -97416,9 +97420,13 @@
             {
               "file": "supabase/migrations/20260317125552_ab20d4cd-5708-41d7-b798-7b69d9b87917.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261117170100_onboarding_audit_trigger.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 4,
           "cron": [],
           "db": [],
           "triggers": [
@@ -99424,9 +99432,13 @@
             {
               "file": "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.sql",
+              "hits": 3
             }
           ],
-          "code_total_files": 27,
+          "code_total_files": 28,
           "cron": [],
           "db": [
             "public.admin_definir_pin_quiosque",
@@ -103203,9 +103215,17 @@
             {
               "file": "supabase/migrations/20260830000001_plano100_e028_storage_buckets_privados.sql",
               "hits": 8
+            },
+            {
+              "file": "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.sql",
+              "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.verify.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],

@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-17 18:17 UTC
+
+- **functions** alterado (5): `public.get_auth_empresa_id()`, `public.get_user_empresas(_user_id uuid)`, `public.log_audit_change()`, `public.pode_gerir_rh(_empresa_id uuid)`, `public.storage_path_empresa_id(p_name text)`
+
 ## 2026-11-17 02:19 UTC
 
 - **realtime** removido (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_13`
