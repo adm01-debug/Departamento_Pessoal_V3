@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c234912b7d03c99b87bcb0f343500ad60e073b62",
+  "commit": "1ddd897012c0ace312845dcbaa77daa03b2e31a6",
   "branch": "main",
-  "data_commit": "2026-11-17T19:54:22-03:00",
+  "data_commit": "2026-11-17T19:54:29-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1ddd897",
+    "data": "2026-11-17",
+    "assunto": "docs(auditoria): veredito sobre apagar a branch muri, com a triagem dos 111 arquivos (#662)"
+   },
    {
     "sha": "c234912",
     "data": "2026-11-17",
@@ -126,14 +131,9 @@
     "sha": "8006fcf",
     "data": "2026-11-17",
     "assunto": "feat(colaboradores): adota a tabela densa da muri, com máscara de PII (#638)"
-   },
-   {
-    "sha": "a588982",
-    "data": "2026-11-17",
-    "assunto": "fix(colaboradores): liga o selo de recontratacao, que estava invisivel (#635)"
    }
   ],
-  "arquivos_mudados_7d": 1093,
+  "arquivos_mudados_7d": 1094,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 106
+    "mudancas": 104
    },
    {
     "pasta": "src/components/avaliacao",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 276
+    "commits": 277
    },
    {
     "autor": "dependabot[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 8
+    "commits": 7
    },
    {
     "autor": "github-actions[bot]",
@@ -318,7 +318,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3550,
+  "arquivos_total": 3551,
   "arquivos_codigo": 2064,
   "linhas_codigo": 408472,
   "rotas": 116,
@@ -335,7 +335,7 @@
   "testes": 765,
   "workflows": 21,
   "scripts": 135,
-  "docs_md": 332
+  "docs_md": 333
  },
  "por_pasta": {
   "capacitor.config.ts": {
