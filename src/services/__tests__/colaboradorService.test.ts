@@ -117,20 +117,34 @@ describe('colaboradorService.listar', () => {
     expect(orArg).not.toContain('cpf.ilike');
   });
 
-  it('mantem a expressao or dentro do limite de 500 caracteres da bridge', async () => {
+  it('termo longo cai para nome/email com o termo INTEIRO, sem estourar o limite da bridge', async () => {
     const { orFn } = setupListarChain([], 0);
-    await colaboradorService.listar({ search: 'a'.repeat(200), filters: { empresaId: EMP } });
+    const termo = 'a'.repeat(200);
+    await colaboradorService.listar({ search: termo, filters: { empresaId: EMP } });
     const orArg = orFn.mock.calls[0][0] as string;
     expect(orArg.length).toBeLessThanOrEqual(500);
-    expect(orArg).toContain(`nome_completo.ilike.%${'a'.repeat(60)}%`);
+    // O termo nao pode ser cortado: prefixo silencioso devolveria colaborador
+    // que difere no final do que foi digitado.
+    expect(orArg).toContain(`nome_completo.ilike.%${termo}%`);
+    expect(orArg).toContain(`email.ilike.%${termo}%`);
+    expect(orArg).not.toContain('matricula.ilike');
   });
 
-  it('trunca tambem o CPF colado com formatacao sem estourar o limite', async () => {
+  it('nao procura CPF quando o numero colado tem mais de 11 digitos', async () => {
     const { orFn } = setupListarChain([], 0);
-    await colaboradorService.listar({ search: '123.456.789-00 '.repeat(10), filters: { empresaId: EMP } });
+    // 12 digitos nao sao CPF de ninguem; cortar nos 11 primeiros acharia o CPF
+    // de outra pessoa.
+    await colaboradorService.listar({ search: '123456789001', filters: { empresaId: EMP } });
     const orArg = orFn.mock.calls[0][0] as string;
-    expect(orArg.length).toBeLessThanOrEqual(500);
-    expect(orArg).toContain('cpf.ilike.%12345678900%');
+    expect(orArg).not.toContain('cpf.ilike');
+    expect(orArg).toContain('matricula.ilike.%123456789001%');
+  });
+
+  it('avisa em vez de mentir quando o termo nao cabe nem em duas colunas', async () => {
+    setupListarChain([], 0);
+    await expect(colaboradorService.listar({ search: 'a'.repeat(300), filters: { empresaId: EMP } })).rejects.toThrow(
+      /Termo de busca muito longo/
+    );
   });
 
   it('filters by empresa_id when provided', async () => {

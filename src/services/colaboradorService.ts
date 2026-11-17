@@ -10,11 +10,17 @@ import { registrarAcessoPII } from './piiAccessLogService';
 const MAX_LINHAS_OPCOES_FILTRO = 1000;
 
 // A bridge rejeita expressao `or` com mais de 500 caracteres
-// (external-db-bridge/validation.ts, isSafeOrExpression). A busca repete o termo
-// em 5 colunas (89 caracteres fixos + 4 virgulas), entao acima de ~81 caracteres
-// a listagem quebrava com INVALID_OR_FILTER em vez de so nao achar nada. 60 deixa
-// folga para a clausula de CPF: 93 + 5*60 + 13 + 11 = 417.
-const LIMITE_TERMO_BUSCA = 60;
+// (external-db-bridge/validation.ts, isSafeOrExpression).
+const LIMITE_OR_BRIDGE = 500;
+
+// Colunas da busca por texto, em duas reguas. A busca repete o termo em cada
+// coluna, entao o termo inteiro em 5 colunas estoura o limite da bridge por volta
+// de 81 caracteres. Em vez de cortar o termo (o que viraria busca por prefixo
+// silenciosa, devolvendo quem difere no final), termo longo cai para nome e
+// e-mail — os unicos campos onde texto desse tamanho de fato ocorre — e continua
+// sendo procurado por inteiro.
+const COLUNAS_BUSCA = ['nome_completo', 'email', 'matricula', 'cargo', 'departamento'] as const;
+const COLUNAS_BUSCA_TERMO_LONGO = ['nome_completo', 'email'] as const;
 
 class ColaboradorService extends BaseService<Colaborador> {
   constructor() {
@@ -47,23 +53,30 @@ class ColaboradorService extends BaseService<Colaborador> {
       // então a busca por CPF precisa remover TODA formatação (inclusive "-"),
       // enquanto os demais campos usam a sanitização genérica (que protege o
       // ilike/or contra os caracteres especiais % _ . , ( ) ).
-      const s = search.replace(/[%_.,()]/g, '').slice(0, LIMITE_TERMO_BUSCA);
+      const s = search.replace(/[%_.,()]/g, '');
       // Clausula de CPF so quando o termo e mesmo um numero formatado: buscar a
       // matricula 'A12' viraria `cpf.ilike.%12%` e traria todo colaborador cujo
-      // CPF contenha 12, sem nenhum campo casando com o que foi digitado.
-      const cpfDigits = /^[\d.\-/\s]+$/.test(search.trim()) ? search.replace(/\D/g, '').slice(0, 11) : '';
-      const orParts: string[] = [];
-      if (s) {
-        orParts.push(
-          `nome_completo.ilike.%${s}%`,
-          `email.ilike.%${s}%`,
-          `matricula.ilike.%${s}%`,
-          `cargo.ilike.%${s}%`,
-          `departamento.ilike.%${s}%`
-        );
+      // CPF contenha 12, sem nenhum campo casando com o que foi digitado. E CPF
+      // tem 11 digitos: um numero maior nao e CPF de ninguem, e cortar nos 11
+      // primeiros acharia o CPF de OUTRA pessoa.
+      const digitos = /^[\d.\-/\s]+$/.test(search.trim()) ? search.replace(/\D/g, '') : '';
+      const cpfDigits = digitos.length > 0 && digitos.length <= 11 ? digitos : '';
+
+      const montarOr = (colunas: readonly string[]) =>
+        [
+          ...(s ? colunas.map((coluna) => `${coluna}.ilike.%${s}%`) : []),
+          ...(cpfDigits ? [`cpf.ilike.%${cpfDigits}%`] : []),
+        ].join(',');
+
+      let orExpr = montarOr(COLUNAS_BUSCA);
+      if (orExpr.length > LIMITE_OR_BRIDGE) orExpr = montarOr(COLUNAS_BUSCA_TERMO_LONGO);
+      if (orExpr.length > LIMITE_OR_BRIDGE) {
+        // Acima de ~231 caracteres nem duas colunas cabem. Devolver a lista sem
+        // o `or` mostraria TODOS os colaboradores como se casassem com o termo,
+        // e cortar o termo mentiria sobre o que foi procurado: avisar e o certo.
+        throw new Error('Termo de busca muito longo. Use no máximo 230 caracteres.');
       }
-      if (cpfDigits) orParts.push(`cpf.ilike.%${cpfDigits}%`);
-      if (orParts.length) query = query.or(orParts.join(','));
+      if (orExpr) query = query.or(orExpr);
     }
 
     const from = (page - 1) * pageSize;
