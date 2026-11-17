@@ -5,12 +5,12 @@
   "vitest",
   "playwright"
  ],
- "total": 758,
+ "total": 760,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 719
+  "unit": 721
  },
  "onde_ficam": [
   {
@@ -19,7 +19,7 @@
   },
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 71
+   "arquivos": 73
   },
   {
    "padrao": "e2e/",
@@ -461,6 +461,13 @@
    "casos": 18
   },
   {
+   "arquivo": "scripts/tests/inventario-layout-protegido.test.mjs",
+   "tipo": "unit",
+   "linhas": 49,
+   "testa": [],
+   "casos": 3
+  },
+  {
    "arquivo": "scripts/tests/inventario-mudou.test.mjs",
    "tipo": "unit",
    "linhas": 99,
@@ -484,6 +491,13 @@
     "src/pages/UsuariosPage.tsx"
    ],
    "casos": 7
+  },
+  {
+   "arquivo": "scripts/tests/inventario-tipografia.test.mjs",
+   "tipo": "unit",
+   "linhas": 52,
+   "testa": [],
+   "casos": 2
   },
   {
    "arquivo": "scripts/tests/rebaseline-artifact.test.mjs",

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ba993ad1a5c643d72fd2adf40fa56632f4ca2cc3",
+  "sha": "6fbdf5c2bb950b624ff31135be9da1ab4d2ff22d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 21:11 UTC",
-  "files_total": 3547,
-  "code_files": 2973,
-  "code_lines": 470288
+  "generated_at": "2026-11-17 21:20 UTC",
+  "files_total": 3552,
+  "code_files": 2978,
+  "code_lines": 470845
  },
  "version": "1.3.2",
- "facts_hash": "4172bf8d608982a5",
+ "facts_hash": "60a7b272d8935f47",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -130,6 +130,9 @@
    "audit:ratchet-any-tests": "node scripts/ratchet-any-tests.mjs",
    "audit:ratchet-warnings": "node scripts/ratchet-lint-warnings.mjs",
    "audit:types-drift": "node scripts/audit-types-drift.mjs",
+   "verificar:layout": "node scripts/verificar-layout-protegido.mjs --sem-diff",
+   "verificar:tipografia": "node scripts/verificar-tipografia.mjs",
+   "capturar:referencias": "node scripts/capturar-referencias-protegidas.mjs",
    "lint:ci": "eslint src --ext ts,tsx --max-warnings=1",
    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json,md}\"",
    "format:check:changed": "bash scripts/format-check-changed.sh",
@@ -387,7 +390,7 @@
    ".tsx": 989,
    ".sql": 927,
    ".ts": 926,
-   ".mjs": 103,
+   ".mjs": 108,
    ".js": 15,
    ".cjs": 11,
    ".py": 5
@@ -101268,8 +101271,8 @@
   },
   {
    "module": "scripts",
-   "files": 148,
-   "lines": 34160,
+   "files": 153,
+   "lines": 34604,
    "tables": [
     "a",
     "anexos",
@@ -101353,6 +101356,7 @@
    "deps": [
     "#",
     "@lib/y",
+    "@playwright/test",
     "@supabase/supabase-js",
     "@swc/core",
     "@tanstack/react-query",
@@ -101374,8 +101378,7 @@
     "node:http",
     "node:https",
     "node:module",
-    "node:net",
-    "node:os"
+    "node:net"
    ],
    "imports_modules": [
     "src/b",
@@ -101412,6 +101415,7 @@
     "scripts/automation.unit.mjs",
     "scripts/build-rebaseline.mjs",
     "scripts/canonical-invariants.sql",
+    "scripts/capturar-referencias-protegidas.mjs",
     "scripts/check-bundle-budget.mjs",
     "scripts/check-dependencies.js",
     "scripts/eslint-tests-any.config.mjs",
@@ -101437,6 +101441,8 @@
     "scripts/update-workflows-status.mjs",
     "scripts/validate-canonical-db-url.mjs",
     "scripts/validate-plan-50.mjs",
+    "scripts/verificar-layout-protegido.mjs",
+    "scripts/verificar-tipografia.mjs",
     "scripts/ai-context/cenarios.mjs",
     "scripts/ai-context/gerar.mjs",
     "scripts/ai-context/gerar.unit.mjs",
@@ -101468,16 +101474,13 @@
     "scripts/ci/workflow-test-support.mjs",
     "scripts/db/classify-migration-drift.mjs",
     "scripts/db/derive-pending-migrations.mjs",
-    "scripts/db/schema-inventory.sql",
-    "scripts/diag/run-sql-diag.mjs",
-    "scripts/e2e/ensure-fixtures.mjs",
-    "scripts/e2e/seed.mjs"
+    "scripts/db/schema-inventory.sql"
    ]
   },
   {
    "module": "src",
    "files": 4,
-   "lines": 777,
+   "lines": 809,
    "tables": [],
    "exports": [
     "App.tsx: App"
@@ -101577,7 +101580,7 @@
   {
    "module": "src/components",
    "files": 963,
-   "lines": 173137,
+   "lines": 173218,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101636,7 +101639,7 @@
     "AdminRoute.tsx: AdminRoute",
     "PageTitle.tsx: PageTitle",
     "ProtectedRoute.tsx: ProtectedRoute",
-    "RouteErrorBoundary.tsx: RouteErrorBoundary",
+    "RouteErrorBoundary.tsx: clearChunkReloadGuard, RouteErrorBoundary",
     "HealthTrendCard.tsx: HealthTrendCard",
     "UnifiedAuditSection.tsx: AuditRow, AUDIT_UNIFIED_LIMIT, UnifiedAuditSection",
     "TelemetryCharts.tsx: TelemetryCharts",
@@ -117520,6 +117523,10 @@
    {
     "file": "src/main.tsx",
     "text": "Clickjacking defense-in-depth: só quebra o frame em produção e apenas"
+   },
+   {
+    "file": "src/main.tsx",
+    "text": "PWA Service Worker Registration — produção apenas. Um SW ativo em dev"
    },
    {
     "file": "src/vite-env.d.ts",
@@ -164531,6 +164538,18 @@
     "name": "contarUsoNoCodigo conta .from() de verdade no DP (src e edges) e ignora storage.from"
    },
    {
+    "file": "scripts/tests/inventario-layout-protegido.test.mjs",
+    "name": "o verificador e o baseline existem"
+   },
+   {
+    "file": "scripts/tests/inventario-layout-protegido.test.mjs",
+    "name": "o baseline declara arquivos e ancoras"
+   },
+   {
+    "file": "scripts/tests/inventario-layout-protegido.test.mjs",
+    "name": "nenhuma ancora visual protegida foi alterada"
+   },
+   {
     "file": "scripts/tests/inventario-mudou.test.mjs",
     "name": "so a data mudou (edges.json numa linha so): nao abre PR"
    },
@@ -164585,6 +164604,14 @@
    {
     "file": "scripts/tests/inventario-rotas.test.mjs",
     "name": "--check compara conteudo, nao bytes: rotas.json formatado pelo prettier (lint-staged) continua em dia"
+   },
+   {
+    "file": "scripts/tests/inventario-tipografia.test.mjs",
+    "name": "o verificador de tipografia existe"
+   },
+   {
+    "file": "scripts/tests/inventario-tipografia.test.mjs",
+    "name": "nenhuma divergencia de tipografia (familia oficial, text-numeric em valor)"
    },
    {
     "file": "scripts/tests/run-sql-diag-guard.test.mjs",
@@ -258343,6 +258370,29 @@
     "notify_fn_fixed"
    ]
   },
+  "scripts/capturar-referencias-protegidas.mjs": {
+   "path": "scripts/capturar-referencias-protegidas.mjs",
+   "lines": 91,
+   "params": [
+    {
+     "name": "OUT",
+     "value": "'docs/protegido/referencias'"
+    },
+    {
+     "name": "NOME_LONGO",
+     "value": "'HOMOLOG-NB Colaborador Descartavel'"
+    },
+    {
+     "name": "CICLO_LONGO",
+     "value": "'HOMOLOG-NB Ciclo Nine-Box de Avaliação Trimestral 2026'"
+    }
+   ],
+   "doc": "!/usr/bin/env node",
+   "temporal": [
+    "await page.getByRole('heading', { name: /Gestão de Desempenho/ }).waitFor({ timeout: 30000 });",
+    "await page.getByText('Gestor responsável').first().waitFor({ timeout: 15000 });"
+   ]
+  },
   "scripts/check-bundle-budget.mjs": {
    "path": "scripts/check-bundle-budget.mjs",
    "lines": 96,
@@ -258682,6 +258732,18 @@
     "digitado com hífen validava apenas o início e a dependência futura passava."
    ],
    "doc": "!/usr/bin/env node"
+  },
+  "scripts/verificar-layout-protegido.mjs": {
+   "path": "scripts/verificar-layout-protegido.mjs",
+   "lines": 129,
+   "rule_comments": [
+    "• Não altera nada — é somente leitura."
+   ],
+   "doc": "!/usr/bin/env node"
+  },
+  "scripts/verificar-tipografia.mjs": {
+   "path": "scripts/verificar-tipografia.mjs",
+   "lines": 123
   },
   "scripts/ai-context/cenarios.mjs": {
    "path": "scripts/ai-context/cenarios.mjs",
@@ -261222,6 +261284,16 @@
     "contarUsoNoCodigo conta .from() de verdade no DP (src e edges) e ignora storage.from"
    ]
   },
+  "scripts/tests/inventario-layout-protegido.test.mjs": {
+   "path": "scripts/tests/inventario-layout-protegido.test.mjs",
+   "lines": 49,
+   "is_test": true,
+   "tests": [
+    "o verificador e o baseline existem",
+    "o baseline declara arquivos e ancoras",
+    "nenhuma ancora visual protegida foi alterada"
+   ]
+  },
   "scripts/tests/inventario-mudou.test.mjs": {
    "path": "scripts/tests/inventario-mudou.test.mjs",
    "lines": 99,
@@ -261349,6 +261421,15 @@
    ],
    "side_effects": [
     "invoke("
+   ]
+  },
+  "scripts/tests/inventario-tipografia.test.mjs": {
+   "path": "scripts/tests/inventario-tipografia.test.mjs",
+   "lines": 52,
+   "is_test": true,
+   "tests": [
+    "o verificador de tipografia existe",
+    "nenhuma divergencia de tipografia (familia oficial, text-numeric em valor)"
    ]
   },
   "scripts/tests/rebaseline-artifact.test.mjs": {
@@ -261714,7 +261795,7 @@
   },
   "src/App.tsx": {
    "path": "src/App.tsx",
-   "lines": 506,
+   "lines": 515,
    "exports": [
     "function App"
    ],
@@ -262437,7 +262518,7 @@
   },
   "src/main.tsx": {
    "path": "src/main.tsx",
-   "lines": 190,
+   "lines": 213,
    "env": [
     "DEV",
     "MODE",
@@ -262452,7 +262533,8 @@
     "[BOOT] Variáveis Supabase ausentes — inicialização abortada."
    ],
    "rule_comments": [
-    "Clickjacking defense-in-depth: só quebra o frame em produção e apenas"
+    "Clickjacking defense-in-depth: só quebra o frame em produção e apenas",
+    "PWA Service Worker Registration — produção apenas. Um SW ativo em dev"
    ]
   },
   "src/setupTests.ts": {
@@ -263347,8 +263429,9 @@
   },
   "src/components/RouteErrorBoundary.tsx": {
    "path": "src/components/RouteErrorBoundary.tsx",
-   "lines": 98,
+   "lines": 149,
    "exports": [
+    "function clearChunkReloadGuard",
     "class RouteErrorBoundary"
    ],
    "env": [
@@ -278921,7 +279004,7 @@
   },
   "src/components/pcs/PcsEquidadeTab.tsx": {
    "path": "src/components/pcs/PcsEquidadeTab.tsx",
-   "lines": 172,
+   "lines": 202,
    "exports": [
     "function PcsEquidadeTab"
    ],
@@ -324952,10 +325035,46 @@
   }
  },
  "git": {
-  "sha": "ba993ad1a5c643d72fd2adf40fa56632f4ca2cc3",
+  "sha": "6fbdf5c2bb950b624ff31135be9da1ab4d2ff22d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "6fbdf5c",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(design-system): recupera os gates de layout protegido e de tipografia (#652)",
+    "files": [
+     "docs/protegido/referencias/aguardando-gestor-1194.png",
+     "docs/protegido/referencias/aguardando-gestor-1456.png",
+     "docs/protegido/referencias/ciclo-nome-longo-1194.png",
+     "docs/protegido/referencias/ciclo-nome-longo-1456.png",
+     "docs/protegido/referencias/feedbacks-1194.png",
+     "docs/protegido/referencias/feedbacks-1456.png",
+     "docs/protegido/referencias/feedbacks-nome-longo-1194.png",
+     "docs/protegido/referencias/feedbacks-nome-longo-1456.png",
+     "package.json",
+     "scripts/capturar-referencias-protegidas.mjs",
+     "scripts/tests/inventario-layout-protegido.test.mjs",
+     "scripts/tests/inventario-tipografia.test.mjs",
+     "scripts/verificar-layout-protegido.mjs",
+     "scripts/verificar-tipografia.mjs",
+     "src/components/pcs/PcsEquidadeTab.tsx",
+     "src/pages/PassivoTrabalhistaPage.tsx",
+     "src/pages/ProvisoesPage.tsx"
+    ]
+   },
+   {
+    "sha": "a7dd4ec",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix(deploy): recupera o app depois de um deploy novo trocar os chunks (#646)",
+    "files": [
+     "src/App.tsx",
+     "src/components/RouteErrorBoundary.tsx",
+     "src/main.tsx"
+    ]
+   },
    {
     "sha": "ba993ad",
     "date": "2026-11-17",
@@ -325313,57 +325432,12 @@
      "public/sw-custom.js",
      "scripts/tests/sw-routing.test.mjs"
     ]
-   },
-   {
-    "sha": "cc7b1ac",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(desligamentos): Trilha de Auditoria com a camada de dados reescrita para o caminho autorizado (#620)",
-    "files": [
-     "inventario/estado/rotas.json",
-     "scripts/.bundle-budget.json",
-     "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
-     "src/components/__tests__/trilhaDerivacoes.test.ts",
-     "src/components/__tests__/trilhaReveal.test.ts",
-     "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
-     "src/components/desligamentos/desligamentosDerivacoes.ts",
-     "src/components/desligamentos/index.ts",
-     "src/components/desligamentos/trilhaComum.ts",
-     "src/components/desligamentos/trilhaDerivacoes.ts",
-     "src/components/desligamentos/trilhaReveal.ts",
-     "src/pages/DesligamentosPage.tsx"
-    ]
-   },
-   {
-    "sha": "b7ee915",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(desligamentos): vocabulário alinhado ao banco — 4 de 6 tipos e o status pago não eram reconhecidos (#619)",
-    "files": [
-     "scripts/.bundle-budget.json",
-     "src/components/__tests__/DesligamentoBadges.test.tsx",
-     "src/components/__tests__/DesligamentoFilters.test.tsx",
-     "src/components/__tests__/DesligamentoStatusBadge.test.tsx",
-     "src/components/__tests__/TurnoverChart.test.tsx",
-     "src/components/__tests__/desligamento-badges.test.tsx",
-     "src/components/__tests__/desligamentosDerivacoes.test.ts",
-     "src/components/desligamentos/DesligamentoFilters.tsx",
-     "src/components/desligamentos/DesligamentoStatusBadge.tsx",
-     "src/components/desligamentos/TurnoverChart.tsx",
-     "src/components/desligamentos/desligamentosComum.ts",
-     "src/components/desligamentos/desligamentosDerivacoes.ts",
-     "src/components/desligamentos/entradaCards.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    8
-   ],
-   [
-    "inventario/estado/rotas.json",
-    4
+    6
    ],
    [
     "src/pages/ColaboradoresPage.tsx",
@@ -325371,6 +325445,10 @@
    ],
    [
     "src/pages/ColaboradorDetalhesPage.tsx",
+    3
+   ],
+   [
+    "inventario/estado/rotas.json",
     3
    ],
    [
@@ -325410,31 +325488,31 @@
     2
    ],
    [
-    "src/components/desligamentos/desligamentosDerivacoes.ts",
-    2
-   ],
-   [
-    "src/hooks/__tests__/useCriarContaBancaria.guarda.test.ts",
+    "docs/protegido/referencias/aguardando-gestor-1194.png",
     1
    ],
    [
-    "src/hooks/__tests__/usePontoMelhorado.test.ts",
+    "docs/protegido/referencias/aguardando-gestor-1456.png",
     1
    ],
    [
-    "src/hooks/usePontoMelhorado.ts",
+    "docs/protegido/referencias/ciclo-nome-longo-1194.png",
     1
    ],
    [
-    "src/hooks/useTabelasReferencia.ts",
+    "docs/protegido/referencias/ciclo-nome-longo-1456.png",
     1
    ],
    [
-    "src/components/__tests__/PortalDocumentosTab.test.tsx",
+    "docs/protegido/referencias/feedbacks-1194.png",
     1
    ],
    [
-    "src/components/portal/PortalDocumentosTab.tsx",
+    "docs/protegido/referencias/feedbacks-1456.png",
+    1
+   ],
+   [
+    "docs/protegido/referencias/feedbacks-nome-longo-1194.png",
     1
    ]
   ]

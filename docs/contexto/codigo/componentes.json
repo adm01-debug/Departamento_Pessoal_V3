@@ -110,7 +110,7 @@
     "App"
    ],
    "export_default": "App",
-   "linhas": 506,
+   "linhas": 515,
    "dominio": null,
    "hooks_locais": [
     "useSecureVisibility",
@@ -5020,7 +5020,7 @@
     "PcsEquidadeTab"
    ],
    "export_default": null,
-   "linhas": 172,
+   "linhas": 202,
    "dominio": "components/pcs",
    "hooks_locais": [
     "usePcsEquidade"
@@ -6047,7 +6047,7 @@
     "RouteErrorBoundary"
    ],
    "export_default": null,
-   "linhas": 98,
+   "linhas": 149,
    "dominio": "components",
    "hooks_locais": [],
    "tabelas": [],

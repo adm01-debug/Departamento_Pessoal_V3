@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ba993ad1a5` · branch `main` · 2026-11-17 21:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6fbdf5c2bb` · branch `main` · 2026-11-17 21:20 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5415,7 +5415,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9171 testes em 714 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9176 testes em 716 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5719,7 +5719,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/tabelas/__tests__/pontoService.test.ts` | 10 | ajustesPontoService · listar queries ajustes_ponto · listar returns [] when data is null · criar calls insert on ajustes_ponto … |
 | `src/test/securityHeadersParity.test.ts` | 10 | paridade de security headers vercel.json x nginx.conf · nginx.conf serve exatamente os headers globais do vercel.json · vercel.json aplica os headers em produção · não usa  … |
 | `src/utils/__tests__/avisoFeriasPDF.test.ts` | 10 | gerarAvisoFeriasPDF · returns a Blob · returns a Uint8Array bytes · returns a sha256 hash string … |
-| … +414 linhas — lista completa em `context.json` | | |
+| … +416 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -5802,6 +5802,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | intocada quando está dentro do limite — nunca reconstrói um novo Response | `public/sw-custom.js` |
 | cacheada — o SW apenas observa a resposta passar. | `public/sw-custom.js` |
 | Clickjacking defense-in-depth: só quebra o frame em produção e apenas | `src/main.tsx` |
+| PWA Service Worker Registration — produção apenas. Um SW ativo em dev | `src/main.tsx` |
 | * 'true' somente se o provider Google estiver habilitado no Supabase Auth. */ | `src/vite-env.d.ts` |
 | Opção 2: Desconto Simplificado | `src/calculators/impostos.ts` |
 | CLT Art. 477 §8°: multa de um salário mensal quando o empregador não quita as verbas rescisórias | `src/calculators/rescisao.ts` |
@@ -6086,5 +6087,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * Tinta da linha de prazo (a leitura contextual muda com a situação). */ | `src/components/avaliacao/metasComum.ts` |
 | * Instante do prazo, no fim do dia. Aceita `data_limite` (coluna real) e | `src/components/avaliacao/metasComum.ts` |
 | * ── REGRAS DE NEGÓCIO APLICADAS ──────────────────────────────────────────── | `src/components/avaliacao/motorAvaliacao360.ts` |
-| • POTENCIAL = 100% gestor, com VALIDAÇÃO OBRIGATÓRIA do RH vinculada à versão | `src/components/avaliacao/motorAvaliacao360.ts` |
-| … +882 linhas — lista completa em `context.json` | |
+| … +883 linhas — lista completa em `context.json` | |

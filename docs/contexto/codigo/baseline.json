@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ba993ad1a5c643d72fd2adf40fa56632f4ca2cc3",
+  "commit": "6fbdf5c2bb950b624ff31135be9da1ab4d2ff22d",
   "branch": "main",
-  "data_commit": "2026-11-17T18:06:53-03:00",
+  "data_commit": "2026-11-17T18:14:10-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "6fbdf5c",
+    "data": "2026-11-17",
+    "assunto": "feat(design-system): recupera os gates de layout protegido e de tipografia (#652)"
+   },
+   {
+    "sha": "a7dd4ec",
+    "data": "2026-11-17",
+    "assunto": "fix(deploy): recupera o app depois de um deploy novo trocar os chunks (#646)"
+   },
    {
     "sha": "ba993ad",
     "data": "2026-11-17",
@@ -121,19 +131,9 @@
     "sha": "e0e4448",
     "data": "2026-11-17",
     "assunto": "feat(design): traz o sistema de design da branch muri para a main (#625)"
-   },
-   {
-    "sha": "e3178c5",
-    "data": "2026-11-17",
-    "assunto": "fix(deploy): asset inexistente deve dar 404, não a index.html (#623)"
-   },
-   {
-    "sha": "7381b27",
-    "data": "2026-11-17",
-    "assunto": "fix(pwa): navegacao ignorava o cache HTTP do browser e servia a casca antiga (#624)"
    }
   ],
-  "arquivos_mudados_7d": 1079,
+  "arquivos_mudados_7d": 1094,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -165,7 +165,7 @@
    },
    {
     "pasta": "supabase/functions/_shared",
-    "mudancas": 60
+    "mudancas": 58
    },
    {
     "pasta": "src/components/layout",
@@ -177,7 +177,7 @@
    },
    {
     "pasta": "src/utils/__tests__",
-    "mudancas": 38
+    "mudancas": 35
    },
    {
     "pasta": "src/components/dashboard",
@@ -203,11 +203,11 @@
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 17
+    "mudancas": 16
    },
    {
     "arquivo": "package.json",
-    "mudancas": 15
+    "mudancas": 16
    },
    {
     "arquivo": "package-lock.json",
@@ -227,7 +227,7 @@
    },
    {
     "arquivo": "PENDENCIAS.md",
-    "mudancas": 8
+    "mudancas": 7
    },
    {
     "arquivo": "scripts/automation.config.json",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 266
+    "commits": 268
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 18
+    "commits": 16
    },
    {
     "autor": "dependabot[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3526,
-  "arquivos_codigo": 2048,
-  "linhas_codigo": 404985,
+  "arquivos_total": 3539,
+  "arquivos_codigo": 2053,
+  "linhas_codigo": 405542,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -332,9 +332,9 @@
   "tabelas": 425,
   "migrations": 861,
   "cron_jobs": 41,
-  "testes": 758,
+  "testes": 760,
   "workflows": 21,
-  "scripts": 132,
+  "scripts": 135,
   "docs_md": 332
  },
  "por_pasta": {
@@ -482,6 +482,10 @@
    "arquivos": 1,
    "linhas": 141
   },
+  "scripts/capturar-referencias-protegidas.mjs": {
+   "arquivos": 1,
+   "linhas": 91
+  },
   "scripts/check-bundle-budget.mjs": {
    "arquivos": 1,
    "linhas": 96
@@ -599,8 +603,8 @@
    "linhas": 2867
   },
   "scripts/tests": {
-   "arquivos": 19,
-   "linhas": 2227
+   "arquivos": 21,
+   "linhas": 2328
   },
   "scripts/training-images-homolog": {
    "arquivos": 1,
@@ -622,9 +626,17 @@
    "arquivos": 1,
    "linhas": 122
   },
+  "scripts/verificar-layout-protegido.mjs": {
+   "arquivos": 1,
+   "linhas": 129
+  },
+  "scripts/verificar-tipografia.mjs": {
+   "arquivos": 1,
+   "linhas": 123
+  },
   "src/App.tsx": {
    "arquivos": 1,
-   "linhas": 506
+   "linhas": 515
   },
   "src/assets": {
    "arquivos": 1,
@@ -636,7 +648,7 @@
   },
   "src/components": {
    "arquivos": 963,
-   "linhas": 173137
+   "linhas": 173218
   },
   "src/constants": {
    "arquivos": 7,
@@ -668,7 +680,7 @@
   },
   "src/main.tsx": {
    "arquivos": 1,
-   "linhas": 190
+   "linhas": 213
   },
   "src/mocks": {
    "arquivos": 3,
@@ -847,7 +859,7 @@
  ],
  "qualidade": {
   "any": 187,
-  "console_log": 395,
+  "console_log": 412,
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 23,

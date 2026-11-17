@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 132,
+ "total": 135,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -416,6 +416,17 @@
     "build:mobile",
     "build:mobile:android",
     "cap:check"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/capturar-referencias-protegidas.mjs",
+   "descricao": "* ============================================================================",
+   "linhas": 91,
+   "env": [],
+   "npm_scripts": [
+    "capturar:referencias"
    ],
    "workflows": [],
    "orfao": false
@@ -1496,6 +1507,28 @@
    "workflows": [
     "ci.yml"
    ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/verificar-layout-protegido.mjs",
+   "descricao": "* ============================================================================",
+   "linhas": 129,
+   "env": [],
+   "npm_scripts": [
+    "verificar:layout"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/verificar-tipografia.mjs",
+   "descricao": "* ============================================================================",
+   "linhas": 123,
+   "env": [],
+   "npm_scripts": [
+    "verificar:tipografia"
+   ],
+   "workflows": [],
    "orfao": false
   }
  ]
