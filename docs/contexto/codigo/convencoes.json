@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(design): traz o sistema de design da branch muri para a main (#625)",
    "fix(deploy): asset inexistente deve dar 404, não a index.html (#623)",
    "fix(pwa): navegacao ignorava o cache HTTP do browser e servia a casca antiga (#624)",
    "feat(dashboard): resgata da muri o MetricCard com tone, tooltip e variante compacta (#618)",
-   "feat(desligamentos): drawer de rescisão com a UI da muri e o cálculo da main (#621)",
-   "fix(pwa): service worker servia HTML no lugar dos assets e travava o app (#622)"
+   "feat(desligamentos): drawer de rescisão com a UI da muri e o cálculo da main (#621)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

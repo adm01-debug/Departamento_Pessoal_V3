@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "e3178c5ff1d837329e7784b93e21e5fcf0f09fab",
+  "sha": "e0e4448200c80ab4e9b126fb153575c34a08708a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 15:25 UTC",
+  "generated_at": "2026-11-17 15:40 UTC",
   "files_total": 3500,
   "code_files": 2926,
   "code_lines": 465240
@@ -323509,10 +323509,20 @@
   }
  },
  "git": {
-  "sha": "e3178c5ff1d837329e7784b93e21e5fcf0f09fab",
+  "sha": "e0e4448200c80ab4e9b126fb153575c34a08708a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "e0e4448",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(design): traz o sistema de design da branch muri para a main (#625)",
+    "files": [
+     "scripts/.bundle-budget.json",
+     "src/index.css"
+    ]
+   },
    {
     "sha": "e3178c5",
     "date": "2026-11-17",
@@ -324307,34 +324317,24 @@
      "supabase/rollback/20261028090000_ninebox_justificativa_historico_rollback.sql",
      "supabase/rollback/README.md"
     ]
-   },
-   {
-    "sha": "a054841",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "chore(deps): jsdom sai de dependencies e vira devDependency (#591)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    11
+    12
    ],
    [
     "inventario/estado/rotas.json",
     9
    ],
    [
-    "src/pages/ColaboradorDetalhesPage.tsx",
+    "src/index.css",
     4
    ],
    [
-    "src/index.css",
-    3
+    "src/pages/ColaboradorDetalhesPage.tsx",
+    4
    ],
    [
     "docs/ninebox-aprovacao-gestor-implantacao.md",

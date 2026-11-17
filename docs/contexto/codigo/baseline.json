@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e3178c5ff1d837329e7784b93e21e5fcf0f09fab",
+  "commit": "e0e4448200c80ab4e9b126fb153575c34a08708a",
   "branch": "main",
-  "data_commit": "2026-11-17T12:22:13-03:00",
+  "data_commit": "2026-11-17T12:35:45-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "e0e4448",
+    "data": "2026-11-17",
+    "assunto": "feat(design): traz o sistema de design da branch muri para a main (#625)"
+   },
    {
     "sha": "e3178c5",
     "data": "2026-11-17",
@@ -126,11 +131,6 @@
     "sha": "792eeb5",
     "data": "2026-11-16",
     "assunto": "docs(auditoria): publica o plano de resgate por área da branch muri (#597)"
-   },
-   {
-    "sha": "2b50f15",
-    "data": "2026-11-16",
-    "assunto": "fix(docs): redige o user_id e o e-mail pessoais publicados no #595 (#599)"
    }
   ],
   "arquivos_mudados_7d": 1162,
@@ -278,6 +278,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/index.css",
+    "mudancas": 6
+   },
+   {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
     "mudancas": 6
    },
@@ -290,10 +294,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": "e2e/auth.setup.ts",
-    "mudancas": 5
-   },
-   {
     "arquivo": "e2e/authenticated/esocial.spec.ts",
     "mudancas": 5
    }
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 243
+    "commits": 244
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 36
+    "commits": 35
    },
    {
     "autor": "dependabot[bot]",
