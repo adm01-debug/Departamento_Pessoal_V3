@@ -4,6 +4,7 @@ import { ArrowRight, Building2, Mail, Phone, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CascadeDialogFrame } from '@/components/ui/cascade-dialog';
 import { cascadeItemVariants } from '@/components/ui/cascade-motion';
+import { usePiiMask } from '@/hooks/usePiiMask';
 import { cn } from '@/lib/utils';
 import type { CandidaturaComRelacoes } from '@/types/recrutamento';
 import { CandidatoTimeline } from './CandidatoTimeline';
@@ -60,6 +61,7 @@ function limpar(valor: string | null | undefined): string | null {
 
 export function CandidatoDetalhesDialog({ open, candidatura, onClose, onAvancar }: CandidatoDetalhesDialogProps) {
   const exibida = candidatura;
+  const pii = usePiiMask();
 
   const nome = exibida?.candidato?.nome ?? 'Candidato';
   const etapa = etapaPorId(exibida?.etapa);
@@ -68,8 +70,9 @@ export function CandidatoDetalhesDialog({ open, candidatura, onClose, onAvancar 
   const indiceEtapa = ETAPAS.findIndex((item) => item.id === etapa.id);
   const proximaEtapa = indiceEtapa >= 0 ? ETAPAS[indiceEtapa + 1] : undefined;
   const nota = formatarNota(exibida?.nota_geral);
-  const email = limpar(exibida?.candidato?.email);
-  const telefone = limpar(exibida?.candidato?.telefone);
+  // LGPD: só admin/rh veem e-mail e telefone completos (`usePiiMask`).
+  const email = limpar(pii.email(exibida?.candidato?.email));
+  const telefone = limpar(pii.phone(exibida?.candidato?.telefone));
   const cargo = limpar(exibida?.vaga?.titulo);
   const departamento = limpar(exibida?.vaga?.departamento);
   const temContato = Boolean(email || telefone);

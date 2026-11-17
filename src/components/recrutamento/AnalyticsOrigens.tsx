@@ -10,7 +10,7 @@ import { AnalyticsPainel } from './AnalyticsPainel';
  * inclusive "Não informada". O tom de cada linha só ordena a leitura visual —
  * não carrega semântica de desempenho.
  */
-const PALETA_ORIGENS = ['--info', '--chart-4', '--warning', '--chart-5', '--success', '--aqua', '--primary'] as const;
+const PALETA_ORIGENS = ['info', 'chart-4', 'warning', 'chart-5', 'success', 'aqua', 'primary'] as const;
 
 const ICONES_ORIGEM: { chave: string; icone: LucideIcon }[] = [
   { chave: 'linkedin', icone: Briefcase },

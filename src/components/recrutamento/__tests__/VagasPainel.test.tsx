@@ -32,14 +32,17 @@ const VAGAS: VagaRow[] = [
   { ...BASE, id: 'v3', titulo: 'Vaga 3', status: 'fechada', data_encerramento: '2026-09-05' },
 ];
 
-function renderizar(vagas: VagaRow[] = VAGAS) {
+function renderizar(vagas: VagaRow[] = VAGAS, extras: { erro?: boolean; retry?: () => void } = {}) {
   return render(
     <VagasPainel
       vagas={vagas}
       candidaturas={[] as CandidaturaComRelacoes[]}
       onGerenciar={vi.fn()}
+      onEditar={vi.fn()}
       onVerAnalises={vi.fn()}
       onExcluir={vi.fn()}
+      erro={extras.erro}
+      onTentarNovamente={extras.retry}
     />
   );
 }
@@ -75,5 +78,19 @@ describe('VagasPainel — indicadores e filtros rápidos', () => {
     expect(container.querySelectorAll('[data-vaga-card]')).toHaveLength(0);
     expect(screen.getByText('Nenhuma vaga cadastrada.')).toBeInTheDocument();
     expect(screen.queryByText('Criar Nova Vaga')).not.toBeInTheDocument();
+  });
+
+  it('distingue erro de vazio: não afirma "nenhuma vaga" nem mostra contador quando a consulta falha', async () => {
+    const retry = vi.fn();
+    const { container } = renderizar([], { erro: true, retry });
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Não foi possível carregar as vagas');
+    expect(screen.queryByText('Nenhuma vaga cadastrada.')).not.toBeInTheDocument();
+    expect(screen.queryByText('Nenhuma vaga encontrada.')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Todas: 0 vagas/i })).not.toBeInTheDocument();
+    expect(container.querySelector('[data-vagas-empty]')).toBeNull();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Tentar novamente' }));
+    expect(retry).toHaveBeenCalledTimes(1);
   });
 });

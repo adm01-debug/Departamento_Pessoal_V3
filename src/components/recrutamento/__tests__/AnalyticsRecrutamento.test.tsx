@@ -84,6 +84,39 @@ describe('AnalyticsRecrutamento', () => {
     expect(screen.getAllByText('Desenvolvedor(a) Full Stack Sênior').length).toBeGreaterThan(0);
   });
 
+  it('não apresenta retenção quando ninguém está na entrada do funil', () => {
+    const dados = cenario();
+    const soContratado = dados.candidaturas.filter((candidatura) => candidatura.etapa === 'contratado');
+    render(<AnalyticsRecrutamento {...dados} candidaturas={soContratado} />);
+
+    // Triagem vazia: 0% "da entrada" seria percentual sobre denominador vazio.
+    expect(screen.getAllByText('sem base de entrada').length).toBeGreaterThan(0);
+    expect(screen.queryByText(/da entrada chegar/)).not.toBeInTheDocument();
+  });
+
+  it('mostra a falha da consulta em vez de um painel de zeros', () => {
+    render(
+      <AnalyticsRecrutamento
+        candidaturas={[]}
+        vagas={[]}
+        candidatos={[]}
+        erro="Não foi possível consultar as candidaturas."
+      />
+    );
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Não foi possível consultar as candidaturas.');
+    expect(screen.queryByText('Nenhum gargalo crítico')).not.toBeInTheDocument();
+    expect(screen.queryByText('Taxa de conversão')).not.toBeInTheDocument();
+  });
+
+  it('não afirma nada enquanto a base está sendo carregada', () => {
+    render(<AnalyticsRecrutamento candidaturas={[]} vagas={[]} candidatos={[]} carregando />);
+
+    expect(screen.getByText('Carregando a base do recrutamento…')).toBeInTheDocument();
+    expect(screen.queryByText('Nenhum gargalo crítico')).not.toBeInTheDocument();
+    expect(screen.queryByText('Vagas abertas')).not.toBeInTheDocument();
+  });
+
   it('mostra estados vazios coerentes quando a base está vazia', () => {
     render(<AnalyticsRecrutamento candidaturas={[]} vagas={[]} candidatos={[]} />);
     expect(screen.getByText('Nenhuma candidatura no funil')).toBeInTheDocument();

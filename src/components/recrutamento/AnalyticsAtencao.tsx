@@ -12,7 +12,9 @@ import { cn } from '@/lib/utils';
  * painel mostra um estado positivo compacto.
  */
 const ESTILO_SEVERIDADE: Record<SeveridadeAtencao, string> = {
-  alta: 'border-destructive-vivid/25 bg-destructive-vivid/10 text-destructive-vivid',
+  alta:
+    'border-[hsl(var(--destructive-vivid)/0.25)] bg-[hsl(var(--destructive-vivid)/0.10)]' +
+    ' text-[hsl(var(--destructive-vivid))]',
   media: 'border-warning/25 bg-warning/10 text-warning',
   baixa: 'border-info/25 bg-info/10 text-info',
 };

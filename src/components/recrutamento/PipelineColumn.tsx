@@ -13,7 +13,8 @@
  *        lista a roda continua para a página (scroll chaining).
  * VAZIO  caixa tracejada pequena "Solte aqui", discreta como na referência.
  * RODAPÉ `p-2.5` com botão `h-8`; em Contratado, o aviso "Processo concluído"
- *        ocupa o mesmo lugar/altura.
+ *        ocupa o mesmo lugar/altura. Sem `onAdicionar`, um vão de 32px mantém
+ *        a altura das colunas idêntica.
  * ============================================================================
  */
 import { useDroppable } from '@dnd-kit/core';
@@ -33,7 +34,11 @@ export interface PipelineColumnProps {
   indice: number;
   /** A aba Pipeline está ativa? Só então a entrada é disparada. */
   isActive: boolean;
-  onAdicionar: (etapa: EtapaPipeline) => void;
+  /**
+   * Inscrição real de candidato nesta etapa. Ausente = o rodapé não mostra o
+   * botão; nunca um controle sem handler.
+   */
+  onAdicionar?: (etapa: EtapaPipeline) => void;
   onAbrir: (cand: CandidaturaComRelacoes) => void;
   onMoverEtapa: MoverEtapaHandler;
   onContatar: (cand: CandidaturaComRelacoes) => void;
@@ -146,7 +151,7 @@ export function PipelineColumn({
                 <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
                 Processo concluído
               </div>
-            ) : (
+            ) : onAdicionar ? (
               <Button
                 variant="ghost"
                 size="sm"
@@ -156,6 +161,8 @@ export function PipelineColumn({
                 <Plus className="h-3.5 w-3.5" aria-hidden />
                 Adicionar candidato
               </Button>
+            ) : (
+              <div className="h-8" aria-hidden />
             )}
           </footer>
         </div>

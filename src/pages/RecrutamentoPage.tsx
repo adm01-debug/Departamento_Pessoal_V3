@@ -1,6 +1,6 @@
 import { PageTitle } from '@/components/PageTitle';
 import { PageLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,24 +8,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { recrutamentoService } from '@/services/recrutamentoService';
 import { useEmpresas } from '@/hooks';
 import { usePiiMask } from '@/hooks/usePiiMask';
-import {
-  UserSearch,
-  Plus,
-  Briefcase,
-  Users,
-  Filter,
-  BarChart3,
-  ChevronRight,
-  Mail,
-  Phone,
-  Calendar,
-  Star,
-  Trash2,
-  Clock,
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { UserSearch, Plus, Filter, Mail, Phone, Search, X } from 'lucide-react';
+import { MotionConfig } from 'framer-motion';
+import { MOTION_REDUCED_MODE } from '@/lib/motionMode';
 import { Spinner } from '@/components/ui/spinner';
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -42,16 +29,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
-import { CandidatoTimeline } from '@/components/recrutamento/CandidatoTimeline';
+import { EntradaPresenca } from '@/components/ui/entrada-cards';
+import { AnalyticsRecrutamento } from '@/components/recrutamento/AnalyticsRecrutamento';
+import { CandidatoDetalhesDialog } from '@/components/recrutamento/CandidatoDetalhesDialog';
+import { CandidatosPainel } from '@/components/recrutamento/CandidatosPainel';
+import { PipelineBoard } from '@/components/recrutamento/PipelineBoard';
+import { VagasPainel } from '@/components/recrutamento/VagasPainel';
+import { ETAPAS, filtrarCandidaturas } from '@/components/recrutamento/pipelineEtapas';
 import type { CandidaturaComRelacoes, VagaRow, CandidatoRow } from '@/types/recrutamento';
-const ETAPAS = [
-  { id: 'triagem', label: 'Triagem', color: 'bg-slate-100 border-slate-200' },
-  { id: 'entrevista', label: 'Entrevista', color: 'bg-blue-50 border-blue-200' },
-  { id: 'teste', label: 'Teste Técnico', color: 'bg-purple-50 border-purple-200' },
-  { id: 'proposta', label: 'Proposta', color: 'bg-warning-foreground/10 border-warning' },
-  { id: 'contratado', label: 'Contratado', color: 'bg-success-foreground/10 border-success' },
-];
 
 const VAGA_FORM_VAZIO = { titulo: '', departamento: '', modalidade: '', quantidade: '1', requisitos: '' };
 
@@ -61,7 +46,15 @@ export default function RecrutamentoPage() {
   const qc = useQueryClient();
   const [activeTab, setActiveTab] = useState('pipeline');
   const [selectedVagaId, setSelectedVagaId] = useState<string>('all');
+  const [busca, setBusca] = useState('');
+  const buscaRef = useRef<HTMLInputElement>(null);
   const [selectedCandidatura, setSelectedCandidatura] = useState<CandidaturaComRelacoes | null>(null);
+  /**
+   * `selectedCandidatura` guarda os dados do dossiê e `detalhesAbertos` manda no
+   * `open` do diálogo: fechar não descarta os dados, então o conteúdo continua
+   * na tela durante a animação de saída.
+   */
+  const [detalhesAbertos, setDetalhesAbertos] = useState(false);
   const [vagaDialogOpen, setVagaDialogOpen] = useState(false);
   const [vagaEditandoId, setVagaEditandoId] = useState<string | null>(null);
   const [vagaForm, setVagaForm] = useState(VAGA_FORM_VAZIO);
@@ -88,11 +81,41 @@ export default function RecrutamentoPage() {
     enabled: !!empresaAtual?.id,
   });
 
+  /**
+   * Candidaturas SEM o filtro por vaga. O seletor do topo é o filtro do KANBAN
+   * (só aparece na aba Pipeline); Vagas, Candidatos e Analytics são números de
+   * TODO o processo — sem esta leitura separada, filtrar o Pipeline mudava os
+   * KPIs das outras abas.
+   */
+  const {
+    data: candidaturasTodas = [],
+    isLoading: loadCandidaturasTodas,
+    isError: erroCandidaturasTodas,
+    refetch: recarregarCandidaturasTodas,
+  } = useQuery({
+    queryKey: ['candidaturas-todas', empresaAtual?.id],
+    queryFn: () => recrutamentoService.listarCandidaturas(empresaAtual!.id),
+    enabled: !!empresaAtual?.id,
+  });
+
+  // Atalho ⌘/Ctrl+K leva o foco à busca do pipeline (o mesmo hint do campo).
+  useEffect(() => {
+    const aoTeclar = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        buscaRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', aoTeclar);
+    return () => window.removeEventListener('keydown', aoTeclar);
+  }, []);
+
   const updateEtapa = useMutation({
     mutationFn: ({ id, etapa }: { id: string; etapa: string }) =>
       recrutamentoService.atualizarCandidatura(id, { etapa }, empresaAtual!.id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
+      qc.invalidateQueries({ queryKey: ['candidaturas-todas', empresaAtual?.id] });
       toast.success('Etapa atualizada!');
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar etapa.')),
@@ -135,6 +158,7 @@ export default function RecrutamentoPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['vagas', empresaAtual?.id] });
       qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
+      qc.invalidateQueries({ queryKey: ['candidaturas-todas', empresaAtual?.id] });
       toast.success(vagaEditandoId ? 'Vaga atualizada!' : 'Vaga publicada!');
       setVagaDialogOpen(false);
     },
@@ -147,6 +171,7 @@ export default function RecrutamentoPage() {
       if (selectedVagaId === id) setSelectedVagaId('all');
       qc.invalidateQueries({ queryKey: ['vagas', empresaAtual?.id] });
       qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
+      qc.invalidateQueries({ queryKey: ['candidaturas-todas', empresaAtual?.id] });
       toast.success('Vaga excluída!');
       setVagaParaExcluir(null);
     },
@@ -163,24 +188,69 @@ export default function RecrutamentoPage() {
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
+      qc.invalidateQueries({ queryKey: ['candidaturas-todas', empresaAtual?.id] });
       toast.success('Candidato adicionado à vaga!');
       setCandidatoParaVaga(null);
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao adicionar candidato.')),
   });
 
-  const etapaAtualSelecionada = selectedCandidatura?.etapa || 'triagem';
-  const proximaEtapa = ETAPAS[ETAPAS.findIndex((e) => e.id === etapaAtualSelecionada) + 1];
+  /** Abre o dossiê do candidato (card do kanban e painel de processos). */
+  const abrirDetalhes = (cand: CandidaturaComRelacoes) => {
+    setSelectedCandidatura(cand);
+    setDetalhesAbertos(true);
+  };
 
-  const totalContratados = candidaturas.filter((c: CandidaturaComRelacoes) => c.etapa === 'contratado').length;
-  const taxaConversao = candidaturas.length
-    ? `${((totalContratados / candidaturas.length) * 100).toFixed(1).replace('.', ',')}%`
-    : '0%';
+  /**
+   * Move a candidatura (menu do card E arrastar-e-soltar). Devolve `false`
+   * quando a gravação falha, para o board desfazer o movimento otimista e
+   * restaurar a coluna de origem.
+   */
+  const moverEtapa = async (id: string, etapa: string): Promise<boolean> => {
+    try {
+      await updateEtapa.mutateAsync({ id, etapa });
+      if (selectedCandidatura?.id === id) {
+        setSelectedCandidatura((atual) => (atual ? { ...atual, etapa } : atual));
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
-  const isLoading = loadVagas || loadCandidaturas || loadCandidatos;
+  /** "Avançar para Próxima Etapa" do dossiê do candidato. */
+  const avancarEtapa = () => {
+    const cand = selectedCandidatura;
+    if (!cand) return;
+    const proxima = ETAPAS[ETAPAS.findIndex((e) => e.id === (cand.etapa || 'triagem')) + 1];
+    if (!proxima) {
+      toast.info('Este candidato já está na última etapa do processo.');
+      return;
+    }
+    updateEtapa.mutate({ id: cand.id, etapa: proxima.id });
+    setSelectedCandidatura({ ...cand, etapa: proxima.id });
+  };
+
+  const isLoading = loadVagas || loadCandidaturas || loadCandidatos || loadCandidaturasTodas;
+
+  /**
+   * Kanban: respeita o filtro de vaga (query) + a busca do topo (client-side).
+   * As habilidades vêm das vagas já carregadas — o join de `listarCandidaturas`
+   * não traz `requisitos`, então o enriquecimento acontece aqui, sem nova consulta.
+   */
+  const candidaturasPipeline = useMemo(() => {
+    const requisitosPorVaga = new Map(vagas.map((vaga: VagaRow) => [vaga.id, vaga.requisitos]));
+    const enriquecidas = candidaturas.map((cand: CandidaturaComRelacoes) => ({
+      ...cand,
+      vaga: cand.vaga
+        ? { ...cand.vaga, requisitos: requisitosPorVaga.get(cand.vaga_id) ?? cand.vaga.requisitos ?? null }
+        : cand.vaga,
+    }));
+    return filtrarCandidaturas(enriquecidas, busca);
+  }, [candidaturas, vagas, busca]);
 
   return (
-    <>
+    <MotionConfig reducedMotion={MOTION_REDUCED_MODE}>
       <PageTitle title="Recrutamento" description="Gestão de talentos e processos seletivos" />
       <PageLayout
         title="Recrutamento & Seleção"
@@ -267,32 +337,68 @@ export default function RecrutamentoPage() {
               <TabsTrigger value="candidatos" className="rounded-lg">
                 Candidatos
               </TabsTrigger>
+              <TabsTrigger value="processos" className="rounded-lg">
+                Processos
+              </TabsTrigger>
               <TabsTrigger value="analytics" className="rounded-lg">
                 Analytics
               </TabsTrigger>
             </TabsList>
 
-            {(activeTab === 'pipeline' || activeTab === 'analytics') && (
-              <div className="flex items-center gap-2 w-full md:w-64">
-                <Filter className="h-4 w-4 text-muted-foreground" />
-                <Select value={selectedVagaId} onValueChange={setSelectedVagaId}>
-                  <SelectTrigger className="rounded-xl">
-                    <SelectValue placeholder="Filtrar por Vaga" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas as Vagas</SelectItem>
-                    {vagas.map((v: VagaRow) => (
-                      <SelectItem key={v.id} value={v.id}>
-                        {v.titulo}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {activeTab === 'pipeline' && (
+              <div data-pipeline-toolbar className="flex w-full flex-col gap-2 md:w-auto md:flex-row md:items-center">
+                <div className="relative min-w-0 md:w-80">
+                  <Search
+                    className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                    aria-hidden
+                  />
+                  <Input
+                    ref={buscaRef}
+                    value={busca}
+                    onChange={(event) => setBusca(event.target.value)}
+                    placeholder="Buscar candidatos por nome, vaga, habilidade..."
+                    aria-label="Buscar candidatos"
+                    className="h-10 rounded-xl pl-9 pr-20 text-xs"
+                  />
+                  {busca ? (
+                    <button
+                      type="button"
+                      onClick={() => setBusca('')}
+                      aria-label="Limpar busca"
+                      className="absolute right-11 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  ) : null}
+                  <kbd className="pointer-events-none absolute right-2 top-1/2 hidden h-5 -translate-y-1/2 items-center rounded border border-border/60 bg-muted/40 px-1.5 text-[9px] font-medium text-muted-foreground sm:flex">
+                    ⌘K
+                  </kbd>
+                </div>
+
+                <div className="flex items-center gap-2 md:w-64">
+                  <Filter className="h-4 w-4 text-muted-foreground" aria-hidden />
+                  <Select value={selectedVagaId} onValueChange={setSelectedVagaId}>
+                    <SelectTrigger aria-label="Filtrar por vaga" className="rounded-xl">
+                      <SelectValue placeholder="Filtrar por Vaga" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas as Vagas</SelectItem>
+                      {vagas.map((v: VagaRow) => (
+                        <SelectItem key={v.id} value={v.id}>
+                          {v.titulo}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             )}
           </div>
 
-          <AnimatePresence mode="wait">
+          {/* Entrada em cascata das abas: `EntradaPresenca` dá o contexto de
+              presença à subárvore sem renderizar DOM nem animar por conta
+              própria — quem cascateia são os cards de cada aba. */}
+          <EntradaPresenca>
             {isLoading ? (
               <div className="flex justify-center py-20">
                 <Spinner size="lg" />
@@ -301,240 +407,35 @@ export default function RecrutamentoPage() {
               <>
                 {/* PIPELINE KANBAN */}
                 <TabsContent value="pipeline" className="mt-0">
-                  <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar min-h-[600px] select-none">
-                    {ETAPAS.map((etapa) => (
-                      <div key={etapa.id} className="shrink-0 w-72 flex flex-col gap-3">
-                        <div className="flex items-center justify-between px-2">
-                          <h3 className="font-display font-semibold text-sm flex items-center gap-2">
-                            {etapa.label}
-                            <Badge variant="secondary" className="rounded-full h-5 px-1.5 text-[10px] bg-muted/80">
-                              {
-                                candidaturas.filter((c: CandidaturaComRelacoes) => (c.etapa || 'triagem') === etapa.id)
-                                  .length
-                              }
-                            </Badge>
-                          </h3>
-                        </div>
-
-                        <div
-                          className={cn(
-                            'flex-1 rounded-2xl border-2 border-dashed p-3 space-y-3 transition-colors duration-300',
-                            etapa.color
-                          )}
-                        >
-                          {candidaturas
-                            .filter((c: CandidaturaComRelacoes) => (c.etapa || 'triagem') === etapa.id)
-                            .map((cand: CandidaturaComRelacoes) => (
-                              <motion.div
-                                key={cand.id}
-                                layoutId={cand.id}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                className="bg-white p-4 rounded-xl shadow-xs border border-border/40 hover:shadow-md hover:border-primary/20 transition-all cursor-pointer group relative"
-                                onClick={() => setSelectedCandidatura(cand)}
-                              >
-                                <div className="flex justify-between items-start mb-2">
-                                  <div>
-                                    <h4 className="font-semibold text-sm truncate max-w-[180px]">
-                                      {cand.candidato?.nome}
-                                    </h4>
-                                    <p className="text-[10px] text-muted-foreground mt-0.5">{cand.vaga?.titulo}</p>
-                                  </div>
-                                  <Badge variant="outline" className="text-[9px] h-4 px-1 bg-muted/30">
-                                    {cand.candidato?.origem || 'Direto'}
-                                  </Badge>
-                                </div>
-
-                                <div className="flex items-center gap-3 text-[10px] text-muted-foreground mb-4">
-                                  <span className="flex items-center gap-1">
-                                    <Star
-                                      className={cn(
-                                        'h-3 w-3',
-                                        (cand.nota_geral || 0) > 0 ? 'text-warning fill-warning' : 'text-slate-300'
-                                      )}
-                                    />
-                                    {cand.nota_geral || 'S/N'}
-                                  </span>
-                                  <span className="flex items-center gap-1">
-                                    <Calendar className="h-3 w-3" />
-                                    {new Date(cand.created_at).toLocaleDateString('pt-BR', {
-                                      day: '2-digit',
-                                      month: 'short',
-                                    })}
-                                  </span>
-                                </div>
-
-                                <div className="flex items-center justify-between">
-                                  <div className="flex -space-x-2">
-                                    <div className="h-6 w-6 rounded-full bg-primary/10 border-2 border-white flex items-center justify-center text-[10px] font-bold text-primary">
-                                      {cand.candidato?.nome?.charAt(0)}
-                                    </div>
-                                  </div>
-
-                                  <div
-                                    className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-7 w-7 rounded-lg hover:bg-blue-50 hover:text-blue-600"
-                                      aria-label="Contatar candidato"
-                                      disabled={!cand.candidato?.email}
-                                      onClick={() => {
-                                        if (cand.candidato?.email)
-                                          window.location.href = `mailto:${cand.candidato.email}`;
-                                      }}
-                                    >
-                                      <Mail className="h-3.5 w-3.5" />
-                                    </Button>
-                                    <Select
-                                      onValueChange={(val) => updateEtapa.mutate({ id: cand.id, etapa: val })}
-                                      defaultValue={etapa.id}
-                                    >
-                                      <SelectTrigger className="h-7 text-[9px] w-28 rounded-lg border-primary/20 bg-primary/5">
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        {ETAPAS.map((e) => (
-                                          <SelectItem key={e.id} value={e.id}>
-                                            {e.label}
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                </div>
-                              </motion.div>
-                            ))}
-                          {candidaturas.filter((c: CandidaturaComRelacoes) => (c.etapa || 'triagem') === etapa.id)
-                            .length === 0 && (
-                            <div className="h-32 flex flex-col items-center justify-center border border-dashed rounded-xl opacity-20 gap-2">
-                              <Users className="h-6 w-6" />
-                              <span className="text-xs font-medium">Sem candidatos</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <PipelineBoard
+                    candidaturas={candidaturasPipeline}
+                    isActive={activeTab === 'pipeline'}
+                    onAbrir={abrirDetalhes}
+                    onMoverEtapa={moverEtapa}
+                    onContatar={(cand) => {
+                      const email = cand.candidato?.email;
+                      if (!email) {
+                        toast.info('Este candidato não tem e-mail cadastrado.');
+                        return;
+                      }
+                      window.location.href = `mailto:${email}`;
+                    }}
+                  />
                 </TabsContent>
 
                 {/* VAGAS */}
                 <TabsContent value="vagas" className="mt-0">
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {vagas.map((vaga: VagaRow) => (
-                      <Card
-                        key={vaga.id}
-                        className="rounded-2xl border-border/40 hover:border-primary/30 hover:shadow-xl transition-all group overflow-hidden bg-card/50 backdrop-blur-xs"
-                      >
-                        <CardHeader className="pb-3">
-                          <div className="flex justify-between items-start mb-2">
-                            <Badge
-                              className={cn(
-                                'rounded-lg px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider',
-                                vaga.status === 'aberta'
-                                  ? 'bg-success/10 text-success border-success/20'
-                                  : 'bg-muted text-muted-foreground'
-                              )}
-                            >
-                              {vaga.status}
-                            </Badge>
-                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5"
-                                aria-label="Ver análises"
-                                onClick={() => {
-                                  setSelectedVagaId(vaga.id);
-                                  setActiveTab('analytics');
-                                }}
-                              >
-                                <BarChart3 className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/5"
-                                aria-label="Excluir vaga"
-                                onClick={() => setVagaParaExcluir(vaga)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          <CardTitle className="text-xl font-display font-bold leading-tight group-hover:text-primary transition-colors">
-                            {vaga.titulo}
-                          </CardTitle>
-                          <CardDescription className="flex items-center gap-2 text-xs font-medium mt-1">
-                            <Briefcase className="h-3 w-3" /> {vaga.departamento}
-                            <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
-                            {vaga.modalidade}
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            <div className="flex flex-wrap gap-1.5">
-                              {(vaga.requisitos ?? '')
-                                .split(',')
-                                .filter(Boolean)
-                                .slice(0, 3)
-                                .map((req: string, i: number) => (
-                                  <Badge
-                                    key={i}
-                                    variant="secondary"
-                                    className="text-[9px] bg-slate-100/50 text-slate-600 font-normal"
-                                  >
-                                    {req.trim()}
-                                  </Badge>
-                                ))}
-                              {(vaga.requisitos ?? '').split(',').filter(Boolean).length > 3 && (
-                                <Badge
-                                  variant="secondary"
-                                  className="text-[9px] bg-slate-100/50 text-slate-600 font-normal"
-                                >
-                                  +{(vaga.requisitos ?? '').split(',').filter(Boolean).length - 3}
-                                </Badge>
-                              )}
-                            </div>
-
-                            <div className="pt-4 border-t border-border/40 flex items-center justify-between">
-                              <div className="flex flex-col">
-                                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">
-                                  Candidatos
-                                </span>
-                                <span className="text-lg font-display font-bold text-primary">
-                                  {candidaturas.filter((c: CandidaturaComRelacoes) => c.vaga_id === vaga.id).length}
-                                </span>
-                              </div>
-                              <Button
-                                className="rounded-xl h-9 px-4 text-xs font-bold shadow-xs group-hover:shadow-md transition-all"
-                                onClick={() => abrirEdicaoVaga(vaga)}
-                              >
-                                Gerenciar Vaga
-                                <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
-                              </Button>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={abrirNovaVaga}
-                      className="border-2 border-dashed border-border/60 rounded-3xl p-8 flex flex-col items-center justify-center gap-3 hover:border-primary/40 hover:bg-primary/5 transition-all group min-h-[250px]"
-                    >
-                      <div className="h-12 w-12 rounded-2xl bg-muted group-hover:bg-primary/10 flex items-center justify-center transition-colors">
-                        <Plus className="h-6 w-6 text-muted-foreground group-hover:text-primary" />
-                      </div>
-                      <div className="text-center">
-                        <p className="font-bold text-sm">Criar Nova Vaga</p>
-                        <p className="text-xs text-muted-foreground">Inicie um novo processo seletivo</p>
-                      </div>
-                    </button>
-                  </div>
+                  <VagasPainel
+                    vagas={vagas}
+                    candidaturas={candidaturasTodas}
+                    onGerenciar={(vaga) => {
+                      setSelectedVagaId(vaga.id);
+                      setActiveTab('pipeline');
+                    }}
+                    onVerAnalises={() => setActiveTab('analytics')}
+                    onEditar={abrirEdicaoVaga}
+                    onExcluir={(vaga) => setVagaParaExcluir(vaga)}
+                  />
                 </TabsContent>
 
                 {/* CANDIDATOS */}
@@ -622,169 +523,38 @@ export default function RecrutamentoPage() {
                   </Card>
                 </TabsContent>
 
+                {/* PROCESSOS — candidaturas em andamento (filtros, seleção e
+                    paginação). A aba "Candidatos" continua sendo o CADASTRO:
+                    candidato sem candidatura só aparece (e só é inscrito) lá. */}
+                <TabsContent value="processos" className="mt-0">
+                  <CandidatosPainel
+                    candidaturas={candidaturasTodas}
+                    vagas={vagas}
+                    onVerPerfil={abrirDetalhes}
+                    onMoverEtapa={moverEtapa}
+                    erro={erroCandidaturasTodas}
+                    onTentarNovamente={() => void recarregarCandidaturasTodas()}
+                  />
+                </TabsContent>
+
                 {/* ANALYTICS */}
                 <TabsContent value="analytics" className="mt-0">
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                    {[
-                      { label: 'Vagas Abertas', value: vagas.length, icon: Briefcase, color: 'text-success' },
-                      { label: 'Total Candidatos', value: candidatos.length, icon: Users, color: 'text-info' },
-                      {
-                        label: 'Processos Ativos',
-                        value: candidaturas.length,
-                        icon: UserSearch,
-                        color: 'text-primary',
-                      },
-                      { label: 'Taxa de Conversão', value: taxaConversao, icon: BarChart3, color: 'text-warning' },
-                    ].map((stat, i) => (
-                      <Card key={i} className="rounded-2xl border-border/40 shadow-xs">
-                        <CardContent className="p-6 flex items-center gap-4">
-                          <div
-                            className={cn(
-                              'h-12 w-12 rounded-xl bg-muted/30 flex items-center justify-center',
-                              stat.color
-                            )}
-                          >
-                            <stat.icon className="h-6 w-6" />
-                          </div>
-                          <div>
-                            <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">
-                              {stat.label}
-                            </p>
-                            <p className="text-2xl font-display font-bold">{stat.value}</p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-
-                  <Card className="rounded-3xl border-border/40 overflow-hidden shadow-xs h-64">
-                    <CardHeader className="pb-0">
-                      <CardTitle className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
-                        Distribuição por Etapa
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="h-full flex items-end gap-2 px-8 pb-8 pt-4">
-                      {ETAPAS.map((e) => {
-                        const count = candidaturas.filter(
-                          (c: CandidaturaComRelacoes) => (c.etapa || 'triagem') === e.id
-                        ).length;
-                        const height = (count / (candidaturas.length || 1)) * 100 + 10;
-                        return (
-                          <div key={e.id} className="flex-1 flex flex-col items-center gap-2">
-                            <div
-                              className={cn(
-                                'w-full rounded-t-lg transition-all duration-500 bg-primary/20 hover:bg-primary/40'
-                              )}
-                              style={{ height: `${height}%` }}
-                            />
-                            <span className="text-[10px] uppercase font-bold opacity-60">{e.label}</span>
-                          </div>
-                        );
-                      })}
-                    </CardContent>
-                  </Card>
+                  <AnalyticsRecrutamento candidaturas={candidaturasTodas} vagas={vagas} candidatos={candidatos} />
                 </TabsContent>
               </>
             )}
-          </AnimatePresence>
+          </EntradaPresenca>
         </Tabs>
 
-        {/* Detalhes do Candidato */}
-        <Dialog
-          open={!!selectedCandidatura}
-          onOpenChange={(o) => {
-            if (!o) setSelectedCandidatura(null);
-          }}
-        >
-          <DialogContent className="max-w-2xl rounded-3xl h-[85vh] flex flex-col p-0 overflow-hidden border-none shadow-elevated">
-            {selectedCandidatura && (
-              <>
-                <DialogHeader className="p-6 border-b bg-muted/20">
-                  <div className="flex items-center gap-4">
-                    <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xl">
-                      {selectedCandidatura.candidato?.nome?.charAt(0)}
-                    </div>
-                    <div>
-                      <DialogTitle className="text-2xl font-display font-bold">
-                        {selectedCandidatura.candidato?.nome}
-                      </DialogTitle>
-                      <p className="text-sm text-muted-foreground font-medium">
-                        {selectedCandidatura.vaga?.titulo} • {selectedCandidatura.vaga?.departamento}
-                      </p>
-                    </div>
-                  </div>
-                </DialogHeader>
-                <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
-                  <div className="grid grid-cols-2 gap-4">
-                    <Card className="border-border/40 bg-muted/10 shadow-none">
-                      <CardContent className="p-4 flex flex-col gap-1">
-                        <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">
-                          Contato
-                        </span>
-                        <p className="text-sm flex items-center gap-2">
-                          <Mail className="h-3.5 w-3.5" />{' '}
-                          {selectedCandidatura.candidato?.email
-                            ? pii.email(selectedCandidatura.candidato.email)
-                            : 'N/A'}
-                        </p>
-                        <p className="text-sm flex items-center gap-2">
-                          <Phone className="h-3.5 w-3.5" />{' '}
-                          {selectedCandidatura.candidato?.telefone
-                            ? pii.phone(selectedCandidatura.candidato.telefone)
-                            : 'N/A'}
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card className="border-border/40 bg-muted/10 shadow-none">
-                      <CardContent className="p-4 flex flex-col gap-1">
-                        <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">
-                          Status Atual
-                        </span>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge className="rounded-lg px-2 bg-primary/10 text-primary border-primary/20 capitalize font-bold">
-                            {ETAPAS.find((e) => e.id === (selectedCandidatura.etapa || 'triagem'))?.label}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground font-bold">
-                            Score: {selectedCandidatura.nota_geral || 'N/D'}
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  <div>
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-primary" /> Timeline do Processo Seletivo
-                    </h3>
-                    <CandidatoTimeline candidaturaId={selectedCandidatura.id} />
-                  </div>
-                </div>
-                <div className="p-6 border-t bg-muted/10 flex justify-end gap-3">
-                  <Button
-                    variant="outline"
-                    className="rounded-xl font-bold"
-                    onClick={() => setSelectedCandidatura(null)}
-                  >
-                    Fechar Janela
-                  </Button>
-                  <Button
-                    className="rounded-xl bg-gradient-to-r from-primary to-primary-glow font-bold shadow-lg"
-                    disabled={!proximaEtapa || updateEtapa.isPending}
-                    onClick={() => {
-                      if (!proximaEtapa) return;
-                      updateEtapa.mutate(
-                        { id: selectedCandidatura.id, etapa: proximaEtapa.id },
-                        { onSuccess: () => setSelectedCandidatura(null) }
-                      );
-                    }}
-                  >
-                    Avançar para Próxima Etapa
-                  </Button>
-                </div>
-              </>
-            )}
-          </DialogContent>
-        </Dialog>
+        {/* Detalhes do Candidato — o componente concentra a apresentação (e a
+            máscara de PII); a página continua dona dos dados, do fechamento e
+            de `avancarEtapa`. */}
+        <CandidatoDetalhesDialog
+          open={detalhesAbertos}
+          candidatura={selectedCandidatura}
+          onClose={() => setDetalhesAbertos(false)}
+          onAvancar={avancarEtapa}
+        />
 
         {/* Confirmação de exclusão de vaga */}
         <AlertDialog
@@ -855,6 +625,6 @@ export default function RecrutamentoPage() {
           </DialogContent>
         </Dialog>
       </PageLayout>
-    </>
+    </MotionConfig>
   );
 }

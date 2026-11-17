@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   FILTROS_CANDIDATOS_PADRAO,
   badgeEtapa,
+  candidatosSemCandidatura,
   contarFiltrosExtras,
   contarSituacoes,
   dadosVagaDaCandidatura,
@@ -17,7 +18,7 @@ import {
   ultimaAtividade,
   vagasComCandidaturas,
 } from '../candidatosComum';
-import { criarCandidatura, criarVaga } from './candidatosFixture';
+import { criarCandidato, criarCandidatura, criarVaga } from './candidatosFixture';
 
 const LISTA = [
   criarCandidatura({ id: '1', status: 'em_andamento', etapa: 'triagem', nota_geral: 4.2 }),
@@ -168,5 +169,13 @@ describe('candidatosComum — vaga, atividade, seleção e paginação', () => {
   it('estilo de origem é determinístico e neutro no desconhecido', () => {
     expect(estiloOrigem('LinkedIn')).toBe(estiloOrigem('linkedin'));
     expect(estiloOrigem('Origem Inédita')).toContain('text-muted-foreground');
+  });
+
+  it('isola o candidato do cadastro que ainda não tem candidatura', () => {
+    const inscrito = criarCandidato({ id: 'pessoa-1' });
+    const avulso = criarCandidato({ id: 'pessoa-99', nome: 'Bruno Lima' });
+    const resultado = candidatosSemCandidatura([inscrito, avulso], [criarCandidatura({ candidato_id: 'pessoa-1' })]);
+    expect(resultado.map((item) => item.id)).toEqual(['pessoa-99']);
+    expect(candidatosSemCandidatura([], [])).toEqual([]);
   });
 });

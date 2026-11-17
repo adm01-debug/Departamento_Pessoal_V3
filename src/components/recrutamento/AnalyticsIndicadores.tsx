@@ -19,7 +19,7 @@ const META: Record<
   'tempo-contratacao': {
     icone: Timer,
     classe: 'border-info/25 bg-info/10 text-info',
-    dica: 'Dias entre a entrada na base e a data de referência para os processos em Contratado.',
+    dica: 'Dias entre a entrada na base e a movimentação que registrou a contratação.',
   },
   'candidatos-vaga': {
     icone: Users,

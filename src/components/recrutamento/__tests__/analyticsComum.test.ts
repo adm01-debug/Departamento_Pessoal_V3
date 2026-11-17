@@ -166,13 +166,25 @@ describe('analyticsComum', () => {
     expect(indicadores.map((indicador) => indicador.label)).toEqual([
       'Tempo médio de contratação',
       'Candidatos por vaga',
-      'Taxa de desistência',
+      'Desistências e cancelamentos',
       'Taxa de aceitação de proposta',
     ]);
-    expect(indicadores[0].valor).toBe('32 dias');
+    // A única contratação da base entrou e foi movida em 05/08 — zero dia, e
+    // não os 32 dias até a referência da base (05/08 → 06/09).
+    expect(indicadores[0].valor).toBe('0 dias');
     expect(indicadores[1].valor).toBe('2,5');
     expect(indicadores[2].valor).toBe('0,0%');
     expect(indicadores[3].valor).toBe('33,3%');
+  });
+
+  it('mede o tempo de contratação até a movimentação da contratação', () => {
+    const base = candidaturas();
+    const contratada = base.find((candidatura) => candidatura.etapa === 'contratado')!;
+    contratada.created_at = iso('2026-07-01');
+    contratada.updated_at = iso('2026-07-31');
+    const analytics = construirAnalytics({ candidaturas: base, vagas: vagas(), candidatos: candidatos() });
+    // 30 dias entre entrada e contratação; a referência da base (06/09) não entra.
+    expect(analytics.indicadores[0].valor).toBe('30 dias');
   });
 
   it('compara KPIs com a janela anterior usando os dados da base', () => {

@@ -56,8 +56,13 @@ export function AnalyticsFunil({
   const entrada = funil[0]?.total ?? 0;
   const contratados = funil[funil.length - 1]?.total ?? 0;
   const tokenPorEtapa = new Map(ETAPAS.map((etapa) => [etapa.id, etapa.token]));
-  const maiorRetencao = [...conversoes].sort((a, b) => b.percentual - a.percentual)[0];
-  const maiorQueda = [...conversoes].sort((a, b) => a.percentual - b.percentual)[0];
+  // Retenção só existe com alguém na entrada do funil; sem isso, o percentual
+  // seria 0% sobre denominador vazio — mostramos a ausência, não um número.
+  const temEntrada = entrada > 0;
+  // Idem para a conversão: só compara quem tem etapa anterior povoada.
+  const conversoesComBase = conversoes.filter((_, indice) => (funil[indice]?.total ?? 0) > 0);
+  const maiorRetencao = [...conversoesComBase].sort((a, b) => b.percentual - a.percentual)[0];
+  const maiorQueda = [...conversoesComBase].sort((a, b) => a.percentual - b.percentual)[0];
 
   return (
     <AnalyticsPainel
@@ -86,7 +91,9 @@ export function AnalyticsFunil({
                   key={item.id}
                   role="listitem"
                   className="relative min-w-0 flex-1"
-                  title={`${item.label}: ${item.total} candidaturas (${percentualCompacto(item.percentual)} da entrada)`}
+                  title={`${item.label}: ${item.total} ${
+                    temEntrada ? `candidaturas (${percentualCompacto(item.percentual)} da entrada)` : 'candidaturas'
+                  }`}
                 >
                   <div
                     className="relative flex h-[88px] flex-col justify-center px-2 shadow-[inset_0_1px_0_hsl(var(--foreground)/0.06)]"
@@ -105,7 +112,7 @@ export function AnalyticsFunil({
                       {item.total}
                     </span>
                     <span className="mt-1 text-[9px] leading-none text-muted-foreground">
-                      {percentualCompacto(item.percentual)} da entrada
+                      {temEntrada ? `${percentualCompacto(item.percentual)} da entrada` : 'sem base de entrada'}
                     </span>
                   </div>
                 </div>
@@ -132,7 +139,7 @@ export function AnalyticsFunil({
                   />
                   <span className="min-w-0 flex-1 truncate text-[11px] text-foreground/85">{item.label}</span>
                   <span className="shrink-0 text-[10px] tabular-nums text-muted-foreground">
-                    {percentualCompacto(item.percentual)}
+                    {temEntrada ? percentualCompacto(item.percentual) : '—'}
                   </span>
                   <span className="w-6 shrink-0 text-right font-display text-sm font-semibold tabular-nums">
                     {item.total}
@@ -154,24 +161,27 @@ export function AnalyticsFunil({
               {conversoes.map((conversao, indice) => {
                 const etapaDestino = funil[indice + 1];
                 const token = etapaDestino ? (tokenPorEtapa.get(etapaDestino.id) ?? 'primary') : 'primary';
+                const comBase = (funil[indice]?.total ?? 0) > 0;
                 return (
                   <div
                     key={`${conversao.de}-${conversao.para}`}
                     className="min-w-0 rounded-lg border border-border/40 bg-background/40 px-2 py-1.5"
-                    title={`${conversao.de} → ${conversao.para}: ${formatarPercentual(conversao.percentual)}`}
+                    title={`${conversao.de} → ${conversao.para}: ${
+                      comBase ? formatarPercentual(conversao.percentual) : 'sem candidatura na etapa anterior'
+                    }`}
                   >
                     <p className="min-h-[24px] text-[9.5px] leading-tight text-muted-foreground">
                       {conversao.de} → {conversao.para}
                     </p>
                     <p className="mt-0.5 font-display text-[13px] font-semibold leading-none tabular-nums">
-                      {percentualCompacto(conversao.percentual)}
+                      {comBase ? percentualCompacto(conversao.percentual) : '—'}
                     </p>
                     <span aria-hidden className="mt-1 block h-1 overflow-hidden rounded-full bg-border/30">
                       <span
                         className="block h-full rounded-full transition-all duration-500"
                         style={{
                           width:
-                            conversao.percentual > 0
+                            comBase && conversao.percentual > 0
                               ? `${Math.min(100, Math.max(2, conversao.percentual))}%`
                               : '0%',
                           background: corDaEtapa(token, 0.85),
@@ -184,7 +194,8 @@ export function AnalyticsFunil({
             </div>
           </div>
 
-          {/* Destaques do funil — fecham a leitura sem deixar área vazia. */}
+          {/* Destaques do funil — só com passagem medível (etapa anterior povoada). */}
+          {maiorRetencao && maiorQueda && (
           <div className="mt-2 grid grid-cols-2 gap-1.5">
             <div className="min-w-0 rounded-lg border border-success/20 bg-success/5 px-2 py-1.5">
               <p className="text-[8.5px] font-semibold uppercase tracking-widest text-muted-foreground">
@@ -209,12 +220,22 @@ export function AnalyticsFunil({
               </p>
             </div>
           </div>
+          )}
 
           {/* Leitura de retenção — ocupa a base do painel sem área vazia. */}
           <p className="mt-auto pt-2.5 text-[10px] leading-snug text-muted-foreground">
-            <span className="font-semibold text-foreground">{contratados}</span> de{' '}
-            <span className="font-semibold text-foreground">{entrada}</span>{' '}
-            {entrada === 1 ? 'candidato da entrada chegou' : 'candidatos da entrada chegaram'} a Contratado.
+            {temEntrada ? (
+              <>
+                <span className="font-semibold text-foreground">{contratados}</span> de{' '}
+                <span className="font-semibold text-foreground">{entrada}</span>{' '}
+                {entrada === 1 ? 'candidato da entrada chegou' : 'candidatos da entrada chegaram'} a Contratado.
+              </>
+            ) : (
+              <>
+                <span className="font-semibold text-foreground">{contratados}</span> em Contratado · sem candidatura
+                em Triagem, a retenção sobre a entrada não é medível.
+              </>
+            )}
           </p>
         </>
       )}

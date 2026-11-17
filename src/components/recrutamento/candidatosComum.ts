@@ -19,7 +19,7 @@
  * origem usa as strings reais já cadastradas.
  * ============================================================================
  */
-import type { CandidaturaComRelacoes, VagaRow } from '@/types/recrutamento';
+import type { CandidatoRow, CandidaturaComRelacoes, VagaRow } from '@/types/recrutamento';
 import { parseDateSafe } from '@/utils/format';
 import { ETAPAS, normalizarBusca, type EtapaPipeline, type EtapaPipelineId } from './pipelineEtapas';
 
@@ -127,7 +127,9 @@ const PILL_ETAPA: Record<EtapaPipelineId, string> = {
   contratado: 'border-success/35 bg-success/10 text-success',
 };
 const PILL_FINAL: Record<'reprovados' | 'arquivados' | 'contratados', string> = {
-  reprovados: 'border-destructive-vivid/40 bg-destructive-vivid/10 text-destructive-vivid',
+  reprovados:
+    'border-[hsl(var(--destructive-vivid)/0.40)] bg-[hsl(var(--destructive-vivid)/0.10)]' +
+    ' text-[hsl(var(--destructive-vivid))]',
   arquivados: 'border-border/70 bg-muted/40 text-muted-foreground',
   contratados: 'border-success/35 bg-success/10 text-success',
 };
@@ -390,4 +392,17 @@ export function temFiltrosAtivos(filtros: FiltrosCandidatos): boolean {
 /** Quantidade de filtros extras ativos (badge do botão "Mais filtros"). */
 export function contarFiltrosExtras(filtros: FiltrosCandidatos): number {
   return (filtros.busca.trim() ? 1 : 0) + (filtros.apenasAvaliados ? 1 : 0) + (filtros.apenasComPretensao ? 1 : 0);
+}
+
+/**
+ * Candidatos do CADASTRO que ainda não têm nenhuma candidatura. A aba trabalha
+ * candidaturas; sem este recorte um candidato recém-cadastrado desapareceria da
+ * tela e ninguém mais conseguiria inscrevê-lo numa vaga.
+ */
+export function candidatosSemCandidatura(
+  candidatos: readonly CandidatoRow[],
+  candidaturas: readonly CandidaturaComRelacoes[]
+): CandidatoRow[] {
+  const inscritos = new Set(candidaturas.map((cand) => cand.candidato_id));
+  return candidatos.filter((candidato) => !inscritos.has(candidato.id));
 }

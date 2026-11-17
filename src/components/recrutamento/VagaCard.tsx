@@ -1,6 +1,6 @@
 import { useState, type CSSProperties } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, BarChart3, Building2, Clock, MapPin, MoreVertical, Trash2 } from 'lucide-react';
+import { ArrowRight, BarChart3, Building2, Clock, MapPin, MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -8,16 +8,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { entradaCard } from '@/components/ui/entrada-cards';
 import { cn } from '@/lib/utils';
 import type { VagaRow } from '@/types/recrutamento';
@@ -35,15 +25,20 @@ import type { VagaComResumo } from './vagasComum';
  * candidato/etapa/data é criado aqui.
  *
  * AÇÕES REAIS: “Gerenciar Vaga” abre o Pipeline filtrado pela vaga; o menu
- * contextual mantém “Ver análises” e “Excluir vaga” (com a confirmação já
- * existente). Não há atalho duplicado de Gerenciar dentro do menu.
+ * contextual tem “Editar vaga” (formulário da página), “Ver análises” e
+ * “Excluir vaga”. A exclusão só NOTIFICA o pai — a confirmação é o AlertDialog
+ * da página, para não haver duas confirmações empilhadas. Não há atalho
+ * duplicado de Gerenciar dentro do menu.
  * ============================================================================
  */
 export interface VagaCardProps {
   resumo: VagaComResumo;
   indice: number;
   onGerenciar: (vaga: VagaRow) => void;
+  /** Abre o formulário de vaga da página já preenchido (editar). */
+  onEditar: (vaga: VagaRow) => void;
   onVerAnalises: () => void;
+  /** Pede a exclusão ao pai; a confirmação é o AlertDialog da página. */
   onExcluir: (vaga: VagaRow) => void;
 }
 
@@ -72,11 +67,10 @@ const ICONE_IDENTIDADE =
  */
 const FUNDO_NEUTRO = false;
 
-export function VagaCard({ resumo, indice, onGerenciar, onVerAnalises, onExcluir }: VagaCardProps) {
+export function VagaCard({ resumo, indice, onGerenciar, onEditar, onVerAnalises, onExcluir }: VagaCardProps) {
   const { vaga, identidade, aberta, fechada, statusRotulo, totalCandidatos, candidatosPorEtapa, temporal, atividade } =
     resumo;
   const [menuAberto, setMenuAberto] = useState(false);
-  const [confirmarExclusao, setConfirmarExclusao] = useState(false);
   const Icone = identidade.icone;
   const requisitos = (vaga.requisitos ?? '')
     .split(',')
@@ -158,6 +152,16 @@ export function VagaCard({ resumo, indice, onGerenciar, onVerAnalises, onExcluir
               className="gap-2"
               onSelect={() => {
                 setMenuAberto(false);
+                onEditar(vaga);
+              }}
+            >
+              <Pencil className="h-4 w-4" />
+              Editar vaga
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="gap-2"
+              onSelect={() => {
+                setMenuAberto(false);
                 onVerAnalises();
               }}
             >
@@ -168,7 +172,7 @@ export function VagaCard({ resumo, indice, onGerenciar, onVerAnalises, onExcluir
               className="gap-2 text-destructive focus:text-destructive"
               onSelect={() => {
                 setMenuAberto(false);
-                setConfirmarExclusao(true);
+                onExcluir(vaga);
               }}
             >
               <Trash2 className="h-4 w-4" />
@@ -290,29 +294,6 @@ export function VagaCard({ resumo, indice, onGerenciar, onVerAnalises, onExcluir
           <ArrowRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover/botao:translate-x-0.5" />
         </Button>
       </div>
-
-      <AlertDialog open={confirmarExclusao} onOpenChange={setConfirmarExclusao}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Excluir "{titulo}"?</AlertDialogTitle>
-            <AlertDialogDescription>
-              A vaga sai da listagem junto com as candidaturas vinculadas a ela. As demais vagas e candidatos não são
-              afetados.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                setConfirmarExclusao(false);
-                onExcluir(vaga);
-              }}
-            >
-              Excluir vaga
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </motion.article>
   );
 }

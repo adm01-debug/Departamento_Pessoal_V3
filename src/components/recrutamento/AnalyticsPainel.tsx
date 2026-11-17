@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
  * o índice de leitura da tela.
  * ============================================================================
  */
-export type TomAnalytics = 'primary' | 'info' | 'chart4' | 'success' | 'warning' | 'destructive';
+export type TomAnalytics = 'primary' | 'info' | 'chart4' | 'success' | 'warning';
 
 const TONS: Record<TomAnalytics, { chip: string; halo: string; texto: string }> = {
   primary: { chip: 'border-primary/25 bg-primary/10 text-primary', halo: 'bg-primary/10', texto: 'text-primary' },
@@ -27,11 +27,6 @@ const TONS: Record<TomAnalytics, { chip: string; halo: string; texto: string }> 
   },
   success: { chip: 'border-success/25 bg-success/10 text-success', halo: 'bg-success/10', texto: 'text-success' },
   warning: { chip: 'border-warning/25 bg-warning/10 text-warning', halo: 'bg-warning/10', texto: 'text-warning' },
-  destructive: {
-    chip: 'border-destructive-vivid/25 bg-destructive-vivid/10 text-destructive-vivid',
-    halo: 'bg-destructive-vivid/10',
-    texto: 'text-destructive-vivid',
-  },
 };
 
 interface AnalyticsPainelProps {

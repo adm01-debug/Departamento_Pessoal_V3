@@ -67,6 +67,7 @@ describe('VagaCard — identidade, funil e ações reais', () => {
         resumo={resumo({}, CINCO)}
         indice={0}
         onGerenciar={vi.fn()}
+        onEditar={vi.fn()}
         onVerAnalises={vi.fn()}
         onExcluir={vi.fn()}
       />
@@ -90,7 +91,14 @@ describe('VagaCard — identidade, funil e ações reais', () => {
   it('abre o Pipeline pelo botão Gerenciar Vaga', async () => {
     const onGerenciar = vi.fn();
     render(
-      <VagaCard resumo={resumo()} indice={0} onGerenciar={onGerenciar} onVerAnalises={vi.fn()} onExcluir={vi.fn()} />
+      <VagaCard
+        resumo={resumo()}
+        indice={0}
+        onGerenciar={onGerenciar}
+        onEditar={vi.fn()}
+        onVerAnalises={vi.fn()}
+        onExcluir={vi.fn()}
+      />
     );
 
     await userEvent.click(screen.getByRole('button', { name: /Gerenciar vaga/i }));
@@ -100,31 +108,62 @@ describe('VagaCard — identidade, funil e ações reais', () => {
   it('mantém apenas ações reais e não duplica Gerenciar no menu', async () => {
     const onVerAnalises = vi.fn();
     render(
-      <VagaCard resumo={resumo()} indice={0} onGerenciar={vi.fn()} onVerAnalises={onVerAnalises} onExcluir={vi.fn()} />
+      <VagaCard
+        resumo={resumo()}
+        indice={0}
+        onGerenciar={vi.fn()}
+        onEditar={vi.fn()}
+        onVerAnalises={onVerAnalises}
+        onExcluir={vi.fn()}
+      />
     );
 
     await userEvent.click(screen.getByRole('button', { name: /Ações da vaga/i }));
     const itens = await screen.findAllByRole('menuitem');
-    expect(itens.map((item) => item.textContent?.trim())).toEqual(['Ver análises', 'Excluir vaga']);
+    expect(itens.map((item) => item.textContent?.trim())).toEqual(['Editar vaga', 'Ver análises', 'Excluir vaga']);
     expect(within(document.body).queryByRole('menuitem', { name: /Gerenciar/i })).not.toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('menuitem', { name: /Ver análises/i }));
     expect(onVerAnalises).toHaveBeenCalledTimes(1);
   });
 
-  it('preserva a confirmação de exclusão da vaga', async () => {
+  it('abre a edição da vaga pelo menu', async () => {
+    const onEditar = vi.fn();
+    render(
+      <VagaCard
+        resumo={resumo()}
+        indice={0}
+        onGerenciar={vi.fn()}
+        onEditar={onEditar}
+        onVerAnalises={vi.fn()}
+        onExcluir={vi.fn()}
+      />
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: /Ações da vaga/i }));
+    await userEvent.click(await screen.findByRole('menuitem', { name: /Editar vaga/i }));
+    expect(onEditar).toHaveBeenCalledWith(expect.objectContaining({ id: 'vaga-1' }));
+  });
+
+  it('apenas NOTIFICA a exclusão: a confirmação é o AlertDialog da página', async () => {
     const onExcluir = vi.fn();
     render(
-      <VagaCard resumo={resumo()} indice={0} onGerenciar={vi.fn()} onVerAnalises={vi.fn()} onExcluir={onExcluir} />
+      <VagaCard
+        resumo={resumo()}
+        indice={0}
+        onGerenciar={vi.fn()}
+        onEditar={vi.fn()}
+        onVerAnalises={vi.fn()}
+        onExcluir={onExcluir}
+      />
     );
 
     await userEvent.click(screen.getByRole('button', { name: /Ações da vaga/i }));
     await userEvent.click(await screen.findByRole('menuitem', { name: /Excluir vaga/i }));
 
-    const dialogo = await screen.findByRole('alertdialog');
-    expect(within(dialogo).getByText(`Excluir "${BASE.titulo}"?`)).toBeInTheDocument();
-    await userEvent.click(within(dialogo).getByRole('button', { name: 'Excluir vaga' }));
     expect(onExcluir).toHaveBeenCalledWith(expect.objectContaining({ id: 'vaga-1' }));
+    // Nenhum segundo diálogo no card: quem confirma é a página.
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
   });
 
   it('mantém vaga fechada com data real de encerramento e funil histórico', () => {
@@ -133,6 +172,7 @@ describe('VagaCard — identidade, funil e ações reais', () => {
         resumo={resumo({ status: 'fechada', data_encerramento: '2026-09-05' }, [candidatura('proposta')])}
         indice={0}
         onGerenciar={vi.fn()}
+        onEditar={vi.fn()}
         onVerAnalises={vi.fn()}
         onExcluir={vi.fn()}
       />
@@ -145,7 +185,16 @@ describe('VagaCard — identidade, funil e ações reais', () => {
   });
 
   it('não inventa candidatos quando o funil está vazio', () => {
-    render(<VagaCard resumo={resumo()} indice={0} onGerenciar={vi.fn()} onVerAnalises={vi.fn()} onExcluir={vi.fn()} />);
+    render(
+      <VagaCard
+        resumo={resumo()}
+        indice={0}
+        onGerenciar={vi.fn()}
+        onEditar={vi.fn()}
+        onVerAnalises={vi.fn()}
+        onExcluir={vi.fn()}
+      />
+    );
 
     expect(document.querySelector('[data-vaga-funil]')).toHaveTextContent(/0\s*candidatos/);
     expect(screen.getByText('Nenhum candidato ainda')).toBeInTheDocument();

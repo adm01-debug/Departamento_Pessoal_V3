@@ -11,10 +11,10 @@ import { cn } from '@/lib/utils';
  * status diferencia vaga aberta de fechada sem esconder nenhuma delas.
  */
 function tokenDaConversao(conversao: number): string {
-  if (conversao >= 50) return '--success';
-  if (conversao >= 20) return '--info';
-  if (conversao > 0) return '--warning';
-  return '--muted-foreground';
+  if (conversao >= 50) return 'success';
+  if (conversao >= 20) return 'info';
+  if (conversao > 0) return 'warning';
+  return 'muted-foreground';
 }
 
 export function AnalyticsVagas({ vagas, index }: { vagas: DesempenhoVaga[]; index: number }) {

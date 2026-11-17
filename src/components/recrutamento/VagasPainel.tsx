@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpDown, X } from 'lucide-react';
+import { AlertTriangle, ArrowUpDown, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { entradaCard } from '@/components/ui/entrada-cards';
@@ -35,8 +35,17 @@ export interface VagasPainelProps {
   vagas: readonly VagaRow[];
   candidaturas: readonly CandidaturaComRelacoes[];
   onGerenciar: (vaga: VagaRow) => void;
+  /** Abre o formulário de vaga da página já preenchido (editar). */
+  onEditar: (vaga: VagaRow) => void;
   onVerAnalises: () => void;
+  /** Pede a exclusão ao pai; a confirmação é o AlertDialog da página. */
   onExcluir: (vaga: VagaRow) => void;
+  /**
+   * A consulta de vagas falhou — mostra erro em vez de "Nenhuma vaga
+   * cadastrada". Contagem zero nunca é apresentada como realidade.
+   */
+  erro?: boolean;
+  onTentarNovamente?: () => void;
 }
 
 /*
@@ -105,7 +114,16 @@ const ORDENACAO_OPCOES = [
   { value: 'titulo', label: 'Título (A–Z)' },
 ];
 
-export function VagasPainel({ vagas, candidaturas, onGerenciar, onVerAnalises, onExcluir }: VagasPainelProps) {
+export function VagasPainel({
+  vagas,
+  candidaturas,
+  onGerenciar,
+  onEditar,
+  onVerAnalises,
+  onExcluir,
+  erro = false,
+  onTentarNovamente,
+}: VagasPainelProps) {
   const [status, setStatus] = useState<FiltroStatusVaga>('todas');
   const [departamento, setDepartamento] = useState('todos');
   const [modalidade, setModalidade] = useState('todas');
@@ -143,6 +161,30 @@ export function VagasPainel({ vagas, candidaturas, onGerenciar, onVerAnalises, o
     { label: 'Abertas', valor: 'aberta' as const, tema: PALETAS_CHIP.emerald, total: contagem.abertas },
     { label: 'Fechadas', valor: 'fechada' as const, tema: PALETAS_CHIP.red, total: contagem.fechadas },
   ];
+
+  if (erro) {
+    return (
+      <div
+        role="alert"
+        data-vagas-erro
+        className="rounded-xl border border-[hsl(var(--destructive-vivid)/0.35)] bg-[hsl(var(--destructive-vivid)/0.06)] px-6 py-10 text-center"
+      >
+        <span className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-full border border-[hsl(var(--destructive-vivid)/0.35)] bg-[hsl(var(--destructive-vivid)/0.10)] text-[hsl(var(--destructive-vivid))]">
+          <AlertTriangle className="h-5 w-5" aria-hidden />
+        </span>
+        <p className="text-sm font-medium text-foreground">Não foi possível carregar as vagas</p>
+        <p className="mx-auto mt-1 max-w-md text-[11px] leading-relaxed text-muted-foreground">
+          A consulta falhou, então não é possível afirmar quantas vagas existem. Verifique a conexão e tente
+          novamente.
+        </p>
+        {onTentarNovamente ? (
+          <Button type="button" variant="outline" size="sm" onClick={onTentarNovamente} className="mt-3 h-8 rounded-lg">
+            Tentar novamente
+          </Button>
+        ) : null}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -255,6 +297,7 @@ export function VagasPainel({ vagas, candidaturas, onGerenciar, onVerAnalises, o
               resumo={resumo}
               indice={4 + indice}
               onGerenciar={onGerenciar}
+              onEditar={onEditar}
               onVerAnalises={onVerAnalises}
               onExcluir={onExcluir}
             />

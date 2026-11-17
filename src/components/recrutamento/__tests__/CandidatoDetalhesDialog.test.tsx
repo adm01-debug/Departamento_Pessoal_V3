@@ -1,6 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import { AuthContext } from '@/contexts/AuthContext';
+import type { AppRole, AuthContextType } from '@/contexts/AuthContext';
 import { criarCandidatura } from './candidatosFixture';
 
 /**
@@ -31,14 +33,28 @@ vi.mock('@/components/recrutamento/CandidatoTimeline', () => ({
 
 import { CandidatoDetalhesDialog } from '../CandidatoDetalhesDialog';
 
-function montar(candidatura = criarCandidatura(), onClose = vi.fn(), onAvancar = vi.fn()) {
+/** `usePiiMask` autoriza por papel: admin/rh veem PII completo, os demais não. */
+function comPapeis(papeis: AppRole[], children: ReactNode) {
+  const value = { hasRole: (papel: AppRole) => papeis.includes(papel) } as AuthContextType;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+function montar(
+  candidatura = criarCandidatura(),
+  onClose = vi.fn(),
+  onAvancar = vi.fn(),
+  papeis: AppRole[] = ['admin']
+) {
   return render(
-    <CandidatoDetalhesDialog
-      open
-      candidatura={candidatura}
-      onClose={onClose}
-      onAvancar={onAvancar}
-    />
+    comPapeis(
+      papeis,
+      <CandidatoDetalhesDialog
+        open
+        candidatura={candidatura}
+        onClose={onClose}
+        onAvancar={onAvancar}
+      />
+    )
   );
 }
 
@@ -105,6 +121,15 @@ describe('CandidatoDetalhesDialog', () => {
 
     fireEvent.click(screen.getByText('Avançar para Entrevista'));
     expect(onAvancar).toHaveBeenCalledTimes(1);
+  });
+
+  // LGPD (PR #173): sem papel admin/rh o contato do candidato sai mascarado.
+  it('mascara e-mail e telefone para quem não é admin/rh', () => {
+    montar(criarCandidatura(), vi.fn(), vi.fn(), ['user']);
+    expect(screen.getByText('a\u2022a@email.com')).toBeInTheDocument();
+    expect(screen.queryByText('ana@email.com')).not.toBeInTheDocument();
+    expect(screen.queryByText('(11) 99999-0000')).not.toBeInTheDocument();
+    expect(screen.getByText('\u2022'.repeat(11) + '0000')).toBeInTheDocument();
   });
 
   it('não renderiza conteúdo com a janela fechada', () => {

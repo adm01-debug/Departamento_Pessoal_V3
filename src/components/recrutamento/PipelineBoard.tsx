@@ -9,9 +9,16 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
-import { Archive, Clock } from 'lucide-react';
+import { AlertTriangle, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import type { CandidaturaComRelacoes } from '@/types/recrutamento';
-import { ETAPAS, etapaPorId, formatarUltimaAtualizacao, type EtapaPipelineId } from './pipelineEtapas';
+import {
+  ETAPAS,
+  etapaPorId,
+  formatarUltimaAtualizacao,
+  type EtapaPipeline,
+  type EtapaPipelineId,
+} from './pipelineEtapas';
 import { podeArrastarCandidatura, ehEtapaDoPipeline, normalizarEtapa } from './pipelineDragDrop';
 import { PipelineCard, type MoverEtapaHandler } from './PipelineCard';
 import { PipelineColumn } from './PipelineColumn';
@@ -37,15 +44,14 @@ import { PipelineColumn } from './PipelineColumn';
  *   (`useDroppable` com o id da etapa). O card de origem fica em 30% e o
  *   `DragOverlay` (portalado no `body`) segue o cursor com o mesmo desenho.
  * • No drop, a etapa é gravada pelo fluxo QUE JÁ EXISTIA (`onMoverEtapa` →
- *   `moverCandidaturaMock` no demo, `atualizarCandidatura` no real). Enquanto a
- *   gravação está em voo, o card fica na coluna de destino por um override
- *   otimista; falha = rollback + toast da página.
+ *   `atualizarCandidatura`). Enquanto a gravação está em voo, o card fica na
+ *   coluna de destino por um override otimista; falha = rollback + toast.
  * • Estados arquivado/cancelado/rejeitado não são arrastáveis; o menu "Mover
  *   para" continua sendo a via acessível (teclado incluído).
  * • Contratado é apenas uma etapa do funil: soltar ali NÃO efetiva contratação,
  *   exatamente como o menu existente.
  *
- * A ordem dos cards é a do servidor/mock (não há ordenação manual na coluna —
+ * A ordem dos cards é a do servidor (não há ordenação manual na coluna —
  * igual à Admissão). Nenhuma migration foi criada.
  */
 export interface PipelineBoardProps {
@@ -53,7 +59,14 @@ export interface PipelineBoardProps {
   onAbrir: (cand: CandidaturaComRelacoes) => void;
   onMoverEtapa: MoverEtapaHandler;
   onContatar: (cand: CandidaturaComRelacoes) => void;
-  onSimular: (acao: string) => void;
+  /**
+   * Inscrição real de candidato na etapa (fluxo `criarCandidatura` da página).
+   * Ausente = o rodapé da coluna não oferece o botão (nunca um botão de fachada).
+   */
+  onAdicionarCandidato?: (etapa: EtapaPipeline) => void;
+  /** Consulta de candidaturas falhou — mostra erro em vez de board vazio. */
+  erro?: boolean;
+  onTentarNovamente?: () => void;
   /**
    * A aba Pipeline está ativa? Mesmo contrato de `AdmissoesKanban`: a entrada
    * (CSS) só é disparada quando o board está realmente em cena.
@@ -68,7 +81,9 @@ export function PipelineBoard({
   onAbrir,
   onMoverEtapa,
   onContatar,
-  onSimular,
+  onAdicionarCandidato,
+  erro = false,
+  onTentarNovamente,
   isActive = true,
 }: PipelineBoardProps) {
   const sensores = useSensors(
@@ -192,10 +207,37 @@ export function PipelineBoard({
     suprimirClique();
   };
 
+  if (erro) {
+    return (
+      <div
+        role="alert"
+        data-pipeline-erro
+        className="rounded-xl border border-[hsl(var(--destructive-vivid)/0.35)] bg-[hsl(var(--destructive-vivid)/0.06)] px-6 py-12 text-center"
+      >
+        <span className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-full border border-[hsl(var(--destructive-vivid)/0.35)] bg-[hsl(var(--destructive-vivid)/0.10)] text-[hsl(var(--destructive-vivid))]">
+          <AlertTriangle className="h-5 w-5" aria-hidden />
+        </span>
+        <p className="text-[12.5px] font-semibold text-foreground">Não foi possível carregar o pipeline</p>
+        <p className="mx-auto mt-1 max-w-md text-[10.5px] leading-relaxed text-muted-foreground">
+          A consulta de candidaturas falhou, então nenhuma etapa pode ser exibida. Verifique a conexão e tente
+          novamente.
+        </p>
+        {onTentarNovamente ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onTentarNovamente}
+            className="mt-3 h-8 rounded-lg text-[11px]"
+          >
+            Tentar novamente
+          </Button>
+        ) : null}
+      </div>
+    );
+  }
+
   const ultimaAtualizacao = formatarUltimaAtualizacao(candidaturas);
-  const arquivadas = candidaturas.filter((cand) =>
-    ['arquivado', 'arquivada', 'rejeitado', 'rejeitada', 'cancelado', 'cancelada'].includes(cand.status ?? '')
-  ).length;
   const candAtivo = ativo ? (porId.get(ativo) ?? null) : null;
   const etapaAtiva = ativo ? etapaPorId(etapasLocais[ativo] ?? porId.get(ativo)?.etapa) : null;
 
@@ -215,7 +257,7 @@ export function PipelineBoard({
               items={grupos[etapa.id]}
               indice={indice}
               isActive={isActive}
-              onAdicionar={(alvo) => onSimular(`adicionar candidato em ${alvo.label}`)}
+              onAdicionar={onAdicionarCandidato}
               onAbrir={onAbrir}
               onMoverEtapa={onMoverEtapa}
               onContatar={onContatar}
@@ -259,16 +301,6 @@ export function PipelineBoard({
             Última atualização: {ultimaAtualizacao}
           </span>
         </div>
-
-        <button
-          type="button"
-          onClick={() => onSimular('ver etapas arquivadas')}
-          className="inline-flex items-center gap-1.5 self-start rounded-md px-1 py-0.5 font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset sm:self-auto"
-        >
-          <Archive className="h-3 w-3" aria-hidden />
-          Ver etapas arquivadas
-          <span className="tabular-nums text-muted-foreground/70">({arquivadas})</span>
-        </button>
       </footer>
     </div>
   );

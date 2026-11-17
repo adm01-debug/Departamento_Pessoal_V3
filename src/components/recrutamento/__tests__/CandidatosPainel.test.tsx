@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CandidatosPainel } from '../CandidatosPainel';
-import { criarCandidatura, criarVaga } from './candidatosFixture';
-import type { CandidaturaComRelacoes } from '@/types/recrutamento';
+import { criarCandidato, criarCandidatura, criarVaga } from './candidatosFixture';
+import type { CandidatoRow, CandidaturaComRelacoes } from '@/types/recrutamento';
 
 const VAGAS = [
   criarVaga(),
@@ -38,7 +38,12 @@ function lista(qtd = 10): CandidaturaComRelacoes[] {
 
 function renderizar(
   candidaturas: CandidaturaComRelacoes[] = lista(),
-  extras: { erro?: boolean; retry?: () => void } = {}
+  extras: {
+    erro?: boolean;
+    retry?: () => void;
+    candidatos?: CandidatoRow[];
+    onInscrever?: (candidato: CandidatoRow) => void;
+  } = {}
 ) {
   const onVerPerfil = vi.fn();
   const onMoverEtapa = vi.fn();
@@ -48,6 +53,8 @@ function renderizar(
       vagas={VAGAS}
       onVerPerfil={onVerPerfil}
       onMoverEtapa={onMoverEtapa}
+      candidatos={extras.candidatos}
+      onInscrever={extras.onInscrever}
       erro={extras.erro}
       onTentarNovamente={extras.retry}
     />
@@ -182,5 +189,36 @@ describe('CandidatosPainel — estados', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('Não foi possível carregar os candidatos');
     await userEvent.click(screen.getByRole('button', { name: /Tentar novamente/i }));
     expect(retry).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('CandidatosPainel — cadastro sem candidatura', () => {
+  const SEM_PROCESSO = criarCandidato({ id: 'pessoa-99', nome: 'Bruno Lima', origem: 'Indicação' });
+
+  it('mantém visível e inscritível quem não tem candidatura', async () => {
+    const onInscrever = vi.fn();
+    const inscritos = criarCandidato({ id: 'pessoa-1', nome: 'Ana Souza' });
+    renderizar([criarCandidatura()], { candidatos: [inscritos, SEM_PROCESSO], onInscrever });
+
+    const secao = screen.getByRole('region', { name: /Sem inscrição em vaga/i });
+    expect(secao).toHaveTextContent('1 candidato no cadastro');
+    expect(within(secao).getByText('Bruno Lima')).toBeInTheDocument();
+    // Quem já tem candidatura aparece na tabela, não nesta seção.
+    expect(within(secao).queryByText('Ana Souza')).not.toBeInTheDocument();
+
+    await userEvent.click(within(secao).getByRole('button', { name: /Inscrever Bruno Lima/i }));
+    expect(onInscrever).toHaveBeenCalledWith(expect.objectContaining({ id: 'pessoa-99' }));
+  });
+
+  it('não expõe e-mail nem telefone na listagem', () => {
+    renderizar([], { candidatos: [SEM_PROCESSO], onInscrever: vi.fn() });
+    const secao = screen.getByRole('region', { name: /Sem inscrição em vaga/i });
+    expect(secao.textContent).not.toContain('@');
+    expect(secao.textContent).not.toContain('99999-0000');
+  });
+
+  it('não declara seção quando a página não sabe inscrever', () => {
+    renderizar([], { candidatos: [SEM_PROCESSO] });
+    expect(screen.queryByRole('region', { name: /Sem inscrição em vaga/i })).not.toBeInTheDocument();
   });
 });

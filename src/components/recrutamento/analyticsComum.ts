@@ -428,7 +428,11 @@ export function construirPontosDeAtencao({
       id: 'desistencias',
       tipo: 'desistencia',
       severidade: 'media',
-      titulo: `${desistencias} ${desistencias === 1 ? 'desistência registrada' : 'desistências registradas'}`,
+      titulo: `${desistencias} ${
+        desistencias === 1
+          ? 'desistência ou cancelamento registrado'
+          : 'desistências ou cancelamentos registrados'
+      }`,
       descricao: 'Contate os candidatos para entender o motivo antes de encerrar o processo.',
     });
   }
@@ -455,7 +459,12 @@ export function construirIndicadores({
   const temposContratacao = contratados
     .map((candidatura) => {
       const entrada = dataValida(candidatura.created_at);
-      return entrada ? Math.max(0, differenceInCalendarDays(referencia, entrada)) : null;
+      if (!entrada) return null;
+      // Fim do intervalo = movimentação que registrou a contratação. Usar a
+      // referência global faria o número de um contratado antigo crescer para
+      // sempre; sem `updated_at`, a referência é o único fim conhecido.
+      const conclusao = dataValida(candidatura.updated_at) ?? referencia;
+      return Math.max(0, differenceInCalendarDays(conclusao, entrada));
     })
     .filter((dias): dias is number => dias !== null);
   const tempoMedio = temposContratacao.length
@@ -482,7 +491,7 @@ export function construirIndicadores({
     },
     {
       id: 'desistencia',
-      label: 'Taxa de desistência',
+      label: 'Desistências e cancelamentos',
       valor: formatarPercentual(taxaDesistencia),
       apoio: `${desistencias} de ${candidaturas.length} processos`,
     },
@@ -490,7 +499,7 @@ export function construirIndicadores({
       id: 'aceitacao',
       label: 'Taxa de aceitação de proposta',
       valor: aceitacao === null ? '—' : formatarPercentual(aceitacao),
-      apoio: `${contratados.length} de ${basePropostas} propostas emitidas`,
+      apoio: `${contratados.length} de ${basePropostas} em proposta ou contratados`,
     },
   ];
 }

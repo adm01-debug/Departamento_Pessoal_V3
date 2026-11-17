@@ -72,7 +72,7 @@ export function AnalyticsTempo({ tempos, index }: { tempos: TempoEtapa[]; index:
             })}
           </div>
 
-          {/* Extremos do período — leitura rápida de quem segura o funil. */}
+          {/* Extremos da base (não há recorte de período) — quem segura o funil. */}
           <div className="mt-2 grid grid-cols-2 gap-1.5">
             <div className="min-w-0 rounded-lg border border-border/40 bg-background/40 px-2 py-1.5">
               <p className="text-[8.5px] font-semibold uppercase tracking-widest text-muted-foreground">

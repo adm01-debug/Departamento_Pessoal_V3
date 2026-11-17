@@ -6,7 +6,9 @@ import {
   ArrowUpRight,
   BarChart3,
   Briefcase,
+  Loader2,
   Minus,
+  TriangleAlert,
   Users,
   Workflow,
   type LucideIcon,
@@ -152,7 +154,7 @@ function KpiCard({ kpi, index }: { kpi: KpiRecrutamento; index: number }) {
                     ? 'text-muted-foreground'
                     : kpi.tendencia.positiva
                       ? 'text-success'
-                      : 'text-destructive-vivid'
+                      : 'text-[hsl(var(--destructive-vivid))]'
                 )}
               >
                 {kpi.tendencia.neutra ? (
@@ -180,15 +182,24 @@ export function AnalyticsRecrutamento({
   candidaturas,
   vagas,
   candidatos,
+  carregando = false,
+  erro = null,
 }: {
   candidaturas: CandidaturaComRelacoes[];
   vagas: VagaRow[];
   candidatos: CandidatoRow[];
+  /** A página ainda está buscando a base: não afirmar zero nem "nada pendente". */
+  carregando?: boolean;
+  /** A consulta falhou: mostrar a falha em vez de um painel saudável de zeros. */
+  erro?: string | null;
 }) {
   const analytics = useMemo(
     () => construirAnalytics({ candidaturas, vagas, candidatos }),
     [candidaturas, vagas, candidatos]
   );
+  // Sem nenhum registro não existe "data de referência": o módulo usaria o
+  // relógio do navegador, e o selo afirmaria uma base que não foi lida.
+  const temBase = candidaturas.length + vagas.length + candidatos.length > 0;
 
   return (
     <div data-analytics-recrutamento className="space-y-3.5 sm:space-y-4">
@@ -202,48 +213,80 @@ export function AnalyticsRecrutamento({
             Funil, origens e desempenho derivados da base atual do módulo.
           </p>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-border/40 bg-card/60 px-2.5 py-1 text-[10px] leading-none text-muted-foreground">
-          <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-success" />
-          Base de referência: {format(analytics.referencia, 'dd MMM yyyy', { locale: ptBR })}
-        </span>
+        {temBase && !erro && !carregando && (
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/40 bg-card/60 px-2.5 py-1 text-[10px] leading-none text-muted-foreground">
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-success" />
+            Base de referência: {format(analytics.referencia, 'dd MMM yyyy', { locale: ptBR })}
+          </span>
+        )}
       </div>
 
-      {/* 1 · KPIs */}
-      <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
-        {analytics.kpis.map((kpi, indice) => (
-          <KpiCard key={kpi.id} kpi={kpi} index={indice} />
-        ))}
-      </div>
-
-      {/* 2 · Funil · Evolução · Origens */}
-      <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1.05fr)_minmax(0,0.85fr)]">
-        <div className="h-full md:col-span-2 xl:col-span-1">
-          <AnalyticsFunil
-            funil={analytics.funil}
-            conversoes={analytics.conversoes}
-            total={analytics.totalCandidaturas}
-            index={4}
-          />
+      {erro ? (
+        <div
+          role="alert"
+          className={cn(
+            'flex flex-col items-center justify-center gap-1.5 rounded-2xl px-4 py-10 text-center',
+            'border border-dashed border-[hsl(var(--destructive-vivid)/0.35)]',
+            'bg-[hsl(var(--destructive-vivid)/0.06)]'
+          )}
+        >
+          <TriangleAlert className="h-5 w-5 text-[hsl(var(--destructive-vivid))]" aria-hidden />
+          <p className="text-[12px] font-medium text-foreground/85">Não foi possível carregar a análise</p>
+          <p className="max-w-[320px] text-[10.5px] leading-snug text-muted-foreground">{erro}</p>
         </div>
-        <AnalyticsEvolucao candidaturas={candidaturas} referencia={analytics.referencia} index={5} />
-        <AnalyticsOrigens origens={analytics.origens} index={6} />
-      </div>
-
-      {/* 3 · Tempo por etapa · Pontos de atenção · Desempenho por vaga */}
-      <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1.02fr)_minmax(0,1.12fr)_minmax(0,1fr)]">
-        <AnalyticsTempo tempos={analytics.tempos} index={7} />
-        <AnalyticsAtencao atencao={analytics.atencao} index={8} />
-        <div className="h-full md:col-span-2 xl:col-span-1">
-          <AnalyticsVagas vagas={analytics.vagas} index={9} />
+      ) : carregando ? (
+        <div
+          className={cn(
+            'flex flex-col items-center justify-center gap-1.5 rounded-2xl px-4 py-10 text-center',
+            'border border-dashed border-border/40 bg-background/30'
+          )}
+        >
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground/60" aria-hidden />
+          <p className="text-[12px] font-medium text-foreground/80">Carregando a base do recrutamento…</p>
+          <p className="max-w-[300px] text-[10.5px] leading-snug text-muted-foreground">
+            Os indicadores aparecem quando a leitura terminar.
+          </p>
         </div>
-      </div>
+      ) : (
+        <>
+        {/* 1 · KPIs */}
+        <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
+          {analytics.kpis.map((kpi, indice) => (
+            <KpiCard key={kpi.id} kpi={kpi} index={indice} />
+          ))}
+        </div>
 
-      {/* 4 · Indicadores gerais */}
-      <AnalyticsIndicadores
-        indicadores={analytics.indicadores}
-        referencia={analytics.referencia}
-        index={10}
-      />
+        {/* 2 · Funil · Evolução · Origens */}
+        <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1.05fr)_minmax(0,0.85fr)]">
+          <div className="h-full md:col-span-2 xl:col-span-1">
+            <AnalyticsFunil
+              funil={analytics.funil}
+              conversoes={analytics.conversoes}
+              total={analytics.totalCandidaturas}
+              index={4}
+            />
+          </div>
+          <AnalyticsEvolucao candidaturas={candidaturas} referencia={analytics.referencia} index={5} />
+          <AnalyticsOrigens origens={analytics.origens} index={6} />
+        </div>
+
+        {/* 3 · Tempo por etapa · Pontos de atenção · Desempenho por vaga */}
+        <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1.02fr)_minmax(0,1.12fr)_minmax(0,1fr)]">
+          <AnalyticsTempo tempos={analytics.tempos} index={7} />
+          <AnalyticsAtencao atencao={analytics.atencao} index={8} />
+          <div className="h-full md:col-span-2 xl:col-span-1">
+            <AnalyticsVagas vagas={analytics.vagas} index={9} />
+          </div>
+        </div>
+
+        {/* 4 · Indicadores gerais */}
+        <AnalyticsIndicadores
+          indicadores={analytics.indicadores}
+          referencia={analytics.referencia}
+          index={10}
+        />
+        </>
+      )}
     </div>
   );
 }

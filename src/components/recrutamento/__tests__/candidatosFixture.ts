@@ -1,4 +1,4 @@
-import type { CandidaturaComRelacoes, VagaRow } from '@/types/recrutamento';
+import type { CandidatoRow, CandidaturaComRelacoes, VagaRow } from '@/types/recrutamento';
 
 /**
  * Fixtures LOCAIS de teste (não são mocks da aplicação). Todos os campos
@@ -63,6 +63,27 @@ export function criarVaga(overrides: Partial<VagaRow> = {}): VagaRow {
     data_encerramento: null,
     beneficios_oferecidos: null,
     responsavel_id: null,
+    created_at: '2026-08-01T12:00:00Z',
+    updated_at: '2026-08-01T12:00:00Z',
+    ...overrides,
+  };
+}
+
+export function criarCandidato(overrides: Partial<CandidatoRow> = {}): CandidatoRow {
+  return {
+    id: 'pessoa-1',
+    empresa_id: 'empresa-1',
+    nome: 'Ana Souza',
+    email: 'ana@email.com',
+    telefone: '(11) 99999-0000',
+    origem: 'LinkedIn',
+    experiencia_anos: 7,
+    pretensao_salarial: 15000,
+    formacao: 'Computação',
+    linkedin: null,
+    cpf: null,
+    curriculo_url: null,
+    observacoes: null,
     created_at: '2026-08-01T12:00:00Z',
     updated_at: '2026-08-01T12:00:00Z',
     ...overrides,
