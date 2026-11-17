@@ -2,9 +2,12 @@
 -- Contrato: toda linha nao-vazia da saida tem de ser exatamente 'ok'.
 -- Somente leitura de catalogo/dados — nenhuma escrita.
 
--- 1) a matriz deixou de estar vazia
-SELECT CASE WHEN (SELECT count(*) FROM public.permissions) >= 43
-  THEN 'ok' ELSE 'FALHOU: matriz com menos de 43 linhas' END;
+-- 1) a matriz deixou de estar vazia.
+-- 42, nao 43: o INSERT do seed tem 42 tuplas (role, resource, action)
+-- distintas — o dry-run do validate reportou "INSERT 0 42" e reprovou a
+-- assercao, que eu havia escrito com a contagem errada.
+SELECT CASE WHEN (SELECT count(*) FROM public.permissions) >= 42
+  THEN 'ok' ELSE 'FALHOU: matriz com menos de 42 linhas' END;
 
 -- 2) os 4 papeis semeados estao presentes
 SELECT CASE WHEN (SELECT count(DISTINCT role::text) FROM public.permissions
@@ -39,7 +42,10 @@ SELECT CASE WHEN (SELECT c.relrowsecurity FROM pg_class c JOIN pg_namespace n ON
                   WHERE n.nspname='public' AND c.relname='permissions')
   THEN 'ok' ELSE 'FALHOU: RLS desligada em public.permissions' END;
 
--- 8) a versao ficou registrada no ledger
-SELECT CASE WHEN EXISTS (
-    SELECT 1 FROM supabase_migrations.schema_migrations WHERE version = '20261117190000'
-  ) THEN 'ok' ELSE 'FALHOU: versao ausente do ledger' END;
+-- A assercao de ledger NAO mora aqui. O `validate` roda as migrations e os
+-- sidecars dentro de UMA transacao e termina em ROLLBACK, e o registro no
+-- ledger e escrito so no modo `apply` — logo um sidecar que exige a versao no
+-- ledger reprova em todo validate. Foi o que aconteceu no run 44165166842.
+-- Os sidecars do lote anterior (20261117170000..170300) nao tem essa assercao,
+-- e por isso passaram. A prova de ledger fica em scripts/canonical-invariants.sql,
+-- que roda no modo `verify`, depois do apply.
