@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e968e3e353b9217ddad38bcbf60edb003801ac0b",
+  "commit": "39a27a35f57854132764c8eb79f88831f1dea5d8",
   "branch": "main",
-  "data_commit": "2026-11-17T19:04:18-03:00",
+  "data_commit": "2026-11-17T19:28:44-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "39a27a3",
+    "data": "2026-11-17",
+    "assunto": "feat(ui): calendário pt-BR com navegação por mês/ano em todo campo de data (#657)"
+   },
    {
     "sha": "e968e3e",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "7635f53",
     "data": "2026-11-17",
     "assunto": "feat(colaboradores): resgata da muri os cartões de KPI do diretório (#631)"
-   },
-   {
-    "sha": "29dd221",
-    "data": "2026-11-17",
-    "assunto": "feat(dashboard): resgata da muri os atalhos de Workflows e Assistente IA (#633)"
    }
   ],
-  "arquivos_mudados_7d": 1084,
+  "arquivos_mudados_7d": 1087,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 361
+    "mudancas": 366
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -145,7 +145,7 @@
    },
    {
     "pasta": "src/components/ui",
-    "mudancas": 107
+    "mudancas": 109
    },
    {
     "pasta": "src/services/__tests__",
@@ -192,7 +192,7 @@
     "mudancas": 31
    },
    {
-    "pasta": "src/components/premiacoes",
+    "pasta": "src/components/esocial",
     "mudancas": 29
    }
   ],
@@ -202,12 +202,12 @@
     "mudancas": 23
    },
    {
-    "arquivo": ".github/workflows/canonical-migrations.yml",
+    "arquivo": "package.json",
     "mudancas": 16
    },
    {
-    "arquivo": "package.json",
-    "mudancas": 16
+    "arquivo": ".github/workflows/canonical-migrations.yml",
+    "mudancas": 15
    },
    {
     "arquivo": "package-lock.json",
@@ -247,10 +247,6 @@
    },
    {
     "arquivo": "infra/github/action-pins.json",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 6
    },
    {
@@ -296,19 +292,23 @@
    {
     "arquivo": "nginx.conf",
     "mudancas": 5
+   },
+   {
+    "arquivo": "public/sw-custom.js",
+    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 272
-   },
-   {
-    "autor": "devin-ai-integration[bot]",
-    "commits": 12
+    "commits": 273
    },
    {
     "autor": "dependabot[bot]",
+    "commits": 11
+   },
+   {
+    "autor": "devin-ai-integration[bot]",
     "commits": 11
    },
    {
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3548,
   "arquivos_codigo": 2062,
-  "linhas_codigo": 407335,
+  "linhas_codigo": 407712,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -648,7 +648,7 @@
   },
   "src/components": {
    "arquivos": 968,
-   "linhas": 174455
+   "linhas": 174832
   },
   "src/constants": {
    "arquivos": 7,

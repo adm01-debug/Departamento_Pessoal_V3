@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e968e3e353` · branch `main` · 2026-11-17 22:05 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `39a27a35f5` · branch `main` · 2026-11-17 22:29 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1446,6 +1446,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `type` | `creation` | compara, escreve | `src/components/esocial/ESocialTimeline.tsx` |
 | `type` | `critical` | compara, escreve | `src/components/esocial/ESocialAuditDialog.tsx`<br>`src/components/ferias/FeriasInsights.tsx`<br>`src/components/folha/FolhaValidationAlerts.tsx` |
 | `type` | `ctps` | escreve | `src/pages/ContratacaoPage.tsx` |
+| `type` | `date` | compara, escreve | `src/components/ui/input.tsx` |
 | `type` | `day` | compara | `src/components/colaborador-detalhes/historico/HistoryEventRow.tsx` |
 | `type` | `delay` | compara, escreve | `src/components/workflows/NodeInspector.tsx`<br>`src/components/workflows/WorkflowDesigner.tsx` |
 | `type` | `desligamento` | escreve | `src/hooks/useHistoricoColaborador.ts` |
@@ -1722,8 +1723,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `concluida` | compara, escreve | `src/components/colaborador-detalhes/FeriasResumoTab.tsx`<br>`src/components/ferias/CalendarioFerias.tsx`<br>`src/mocks/colaboradoresMock.ts`<br>`src/pages/LGPDPage.tsx`<br>`src/pages/PassivoTrabalhistaPage.tsx`<br>… +1 |
 | `status` | `concluida_validada` | compara | `src/components/avaliacao/FeedbackAcoesRodape.tsx`<br>`src/components/avaliacao/aprovacaoGestor.ts`<br>`src/components/avaliacao/feedbackCanonico.ts` |
 | `status` | `concluido` | compara, escreve | `src/components/avaliacao/nineBoxMock.ts`<br>`src/components/dashboard/AnalyticsSection.tsx`<br>`src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/components/desligamentos/DesligamentoKPIs.tsx`<br>`src/components/desligamentos/desligamentosDerivacoes.ts`<br>… +9 |
-| `status` | `configurando` | escreve | `src/pages/IntegracoesPage.tsx` |
-| … +204 linhas — lista completa em `context.json` | | | |
+| … +205 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -4633,6 +4633,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `TRILHAS_POR_PAGINA_PADRAO` | `12` | `src/components/treinamentos/trilhasDerivacoes.ts` |
 | `ORDENACAO_TURMA_PADRAO` | `'data_asc'` | `src/components/treinamentos/turmasDerivacoes.ts` |
 | `ROTULO_LINHAS_POR_PAGINA` | `'Linhas por página'` | `src/components/ui/app-pagination.tsx` |
+| `YEAR_WINDOW` | `12` | `src/components/ui/calendar.tsx` |
 | `CASCADE_SHELL_OPEN_DURATION` | `0.9` | `src/components/ui/cascade-motion.ts` |
 | `CASCADE_SHELL_CLOSE_DURATION` | `0.55` | `src/components/ui/cascade-motion.ts` |
 | `CASCADE_ITEM_STAGGER` | `0.1` | `src/components/ui/cascade-motion.ts` |
@@ -4708,8 +4709,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `TRAINING_IMAGES_GC_MS` | `30` | `src/services/trainingImages/config.ts` |
 | `TRAINING_IMAGES_BUCKET` | `'training-images'` | `src/services/trainingImages/paths.ts` |
 | `EXTENSAO_PADRAO` | `'webp'` | `src/services/trainingImages/paths.ts` |
-| `TENTATIVAS_MAX` | `3` | `src/services/trainingImages/service.ts` |
-| … +122 linhas — lista completa em `context.json` | | |
+| … +123 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -6090,4 +6090,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | METAS & OKRs — derivações da aba (situação, prazo, ordem e filtros). | `src/components/avaliacao/metasComum.ts` |
 | exibem. Nada aqui inventa dado: TODAS as funções leem somente campos que já | `src/components/avaliacao/metasComum.ts` |
 | 2. `atrasada`  → prazo vencido e ainda não concluída — é EXATAMENTE o | `src/components/avaliacao/metasComum.ts` |
-| … +902 linhas — lista completa em `context.json` | |
+| … +903 linhas — lista completa em `context.json` | |

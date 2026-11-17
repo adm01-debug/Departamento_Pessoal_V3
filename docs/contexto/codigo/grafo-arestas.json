@@ -4437,6 +4437,7 @@
    "src/lib/utils.ts"
   ],
   "src/components/ui/input.tsx": [
+   "src/components/ui/date-picker.tsx",
    "src/lib/utils.ts"
   ],
   "src/components/ui/masked-input.tsx": [

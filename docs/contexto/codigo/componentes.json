@@ -3424,7 +3424,7 @@
     "ESocialLogsTabProps"
    ],
    "export_default": null,
-   "linhas": 541,
+   "linhas": 547,
    "dominio": "components/esocial",
    "hooks_locais": [],
    "tabelas": [],
@@ -7274,7 +7274,7 @@
     "CalendarProps"
    ],
    "export_default": null,
-   "linhas": 68,
+   "linhas": 350,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -7510,7 +7510,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 5,
+   "usado_por": 6,
    "orfao": false
   },
   {
@@ -7669,7 +7669,7 @@
     "InputProps"
    ],
    "export_default": null,
-   "linhas": 15,
+   "linhas": 75,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],

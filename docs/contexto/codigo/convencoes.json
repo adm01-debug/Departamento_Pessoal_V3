@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(ui): calendário pt-BR com navegação por mês/ano em todo campo de data (#657)",
    "feat(permissões): controle de acesso por funcionalidade, lendo a matriz do banco (#651)",
    "feat(colaborador): resumo financeiro no dossiê, com CPF mascarado no PDF (#655)",
    "feat(documentos): upload real de arquivo nos 4 formulários de documento (#653)",
-   "fix(automação): registra os 5 scripts que a #652 deixou sem gatilho (#654)",
-   "feat(design-system): recupera os gates de layout protegido e de tipografia (#652)"
+   "fix(automação): registra os 5 scripts que a #652 deixou sem gatilho (#654)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

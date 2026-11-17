@@ -356,6 +356,7 @@
     "useMutation",
     "useQuery",
     "useQueryClient",
+    "useReducedMotion",
     "useState"
    ],
    "hooks_locais": [],
@@ -375,7 +376,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 14
+   "arquivos_puxados": 19
   },
   {
    "protegida": true,
@@ -439,7 +440,7 @@
     "rh",
     "user"
    ],
-   "arquivos_puxados": 27
+   "arquivos_puxados": 31
   },
   {
    "protegida": true,
@@ -459,6 +460,7 @@
    "hooks": [
     "useMutation",
     "useQueryClient",
+    "useReducedMotion",
     "useState"
    ],
    "hooks_locais": [],
@@ -473,7 +475,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 14
+   "arquivos_puxados": 19
   },
   {
    "protegida": true,
@@ -598,7 +600,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 79
+   "arquivos_puxados": 81
   },
   {
    "protegida": true,
@@ -653,7 +655,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 27
+   "arquivos_puxados": 31
   },
   {
    "protegida": true,
@@ -710,7 +712,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 26
+   "arquivos_puxados": 29
   },
   {
    "protegida": true,
@@ -834,7 +836,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 80
+   "arquivos_puxados": 83
   },
   {
    "protegida": true,
@@ -948,7 +950,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 38
+   "arquivos_puxados": 41
   },
   {
    "protegida": true,
@@ -1005,7 +1007,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 27
+   "arquivos_puxados": 31
   },
   {
    "protegida": true,
@@ -1034,6 +1036,7 @@
     "usePiiMask",
     "useQuery",
     "useQueryClient",
+    "useReducedMotion",
     "useRef",
     "useState"
    ],
@@ -1068,7 +1071,7 @@
     "rh",
     "user"
    ],
-   "arquivos_puxados": 28
+   "arquivos_puxados": 32
   },
   {
    "protegida": true,
@@ -1087,7 +1090,8 @@
    "redireciona": null,
    "hooks": [
     "useMemo",
-    "useReducedMotion"
+    "useReducedMotion",
+    "useState"
    ],
    "hooks_locais": [],
    "tabelas": [
@@ -1408,7 +1412,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 210
+   "arquivos_puxados": 212
   },
   {
    "protegida": true,
@@ -1549,7 +1553,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 113
+   "arquivos_puxados": 115
   },
   {
    "protegida": false,
@@ -1568,6 +1572,7 @@
    "hooks": [
     "useEffect",
     "useMemo",
+    "useReducedMotion",
     "useSearchParams",
     "useState"
    ],
@@ -1585,7 +1590,7 @@
    "papeis": [
     "alert"
    ],
-   "arquivos_puxados": 13
+   "arquivos_puxados": 18
   },
   {
    "protegida": true,
@@ -1780,7 +1785,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 127
+   "arquivos_puxados": 130
   },
   {
    "protegida": true,
@@ -1903,7 +1908,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 76
+   "arquivos_puxados": 79
   },
   {
    "protegida": true,
@@ -2031,7 +2036,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 86
+   "arquivos_puxados": 89
   },
   {
    "protegida": true,
@@ -2650,7 +2655,7 @@
     "tabpanel",
     "user"
    ],
-   "arquivos_puxados": 324
+   "arquivos_puxados": 326
   },
   {
    "protegida": true,
@@ -3634,7 +3639,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 154
+   "arquivos_puxados": 156
   },
   {
    "protegida": true,
@@ -3759,7 +3764,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 87
+   "arquivos_puxados": 90
   },
   {
    "protegida": true,
@@ -3884,7 +3889,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 87
+   "arquivos_puxados": 90
   },
   {
    "protegida": true,
@@ -4013,7 +4018,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 84
+   "arquivos_puxados": 87
   },
   {
    "protegida": true,
@@ -4706,7 +4711,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 98
+   "arquivos_puxados": 101
   },
   {
    "protegida": true,
@@ -4850,7 +4855,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 90
+   "arquivos_puxados": 92
   },
   {
    "protegida": true,
@@ -5418,7 +5423,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 220
+   "arquivos_puxados": 222
   },
   {
    "protegida": false,
@@ -5589,7 +5594,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 113
+   "arquivos_puxados": 115
   },
   {
    "protegida": true,
@@ -6790,7 +6795,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 232
+   "arquivos_puxados": 234
   },
   {
    "protegida": true,
@@ -7363,7 +7368,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 232
+   "arquivos_puxados": 234
   },
   {
    "protegida": true,
@@ -7932,7 +7937,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 223
+   "arquivos_puxados": 225
   },
   {
    "protegida": true,
@@ -8549,7 +8554,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 250
+   "arquivos_puxados": 252
   },
   {
    "protegida": true,
@@ -8623,7 +8628,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 34
+   "arquivos_puxados": 38
   },
   {
    "protegida": true,
@@ -9419,7 +9424,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 223
+   "arquivos_puxados": 225
   },
   {
    "protegida": false,
@@ -9442,6 +9447,7 @@
     "useMutation",
     "useQuery",
     "useQueryClient",
+    "useReducedMotion",
     "useSearchParams",
     "useState",
     "useToast"
@@ -9487,7 +9493,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 39
+   "arquivos_puxados": 43
   },
   {
    "protegida": true,
@@ -9515,6 +9521,7 @@
     "useMutation",
     "useQuery",
     "useQueryClient",
+    "useReducedMotion",
     "useRef",
     "useState",
     "useSyncedState"
@@ -9551,7 +9558,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 26
+   "arquivos_puxados": 31
   },
   {
    "protegida": true,
@@ -10120,7 +10127,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 220
+   "arquivos_puxados": 222
   },
   {
    "protegida": true,
@@ -10690,7 +10697,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 222
+   "arquivos_puxados": 224
   },
   {
    "protegida": true,
@@ -10851,7 +10858,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 78
+   "arquivos_puxados": 81
   },
   {
    "protegida": true,
@@ -11051,7 +11058,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 119
+   "arquivos_puxados": 121
   },
   {
    "protegida": true,
@@ -11178,7 +11185,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 97
+   "arquivos_puxados": 100
   },
   {
    "protegida": true,
@@ -11748,7 +11755,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 228
+   "arquivos_puxados": 230
   },
   {
    "protegida": true,
@@ -12482,7 +12489,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 222
+   "arquivos_puxados": 224
   },
   {
    "protegida": true,
@@ -12711,7 +12718,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 154
+   "arquivos_puxados": 156
   },
   {
    "protegida": true,
@@ -12836,7 +12843,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 91
+   "arquivos_puxados": 94
   },
   {
    "protegida": true,
@@ -13068,7 +13075,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 177
+   "arquivos_puxados": 179
   },
   {
    "protegida": true,
@@ -13300,7 +13307,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 177
+   "arquivos_puxados": 179
   },
   {
    "protegida": true,
@@ -13868,7 +13875,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 229
+   "arquivos_puxados": 231
   },
   {
    "protegida": true,
@@ -14437,7 +14444,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 220
+   "arquivos_puxados": 222
   },
   {
    "protegida": true,
@@ -14574,7 +14581,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 120
+   "arquivos_puxados": 122
   },
   {
    "protegida": true,
@@ -15143,7 +15150,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 228
+   "arquivos_puxados": 230
   },
   {
    "protegida": true,
@@ -15711,7 +15718,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 222
+   "arquivos_puxados": 224
   },
   {
    "protegida": true,
@@ -15834,7 +15841,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 78
+   "arquivos_puxados": 81
   },
   {
    "protegida": true,
@@ -16431,7 +16438,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 264
+   "arquivos_puxados": 266
   },
   {
    "protegida": true,
@@ -16508,7 +16515,7 @@
     "rh",
     "user"
    ],
-   "arquivos_puxados": 49
+   "arquivos_puxados": 52
   },
   {
    "protegida": true,
@@ -16733,7 +16740,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 151
+   "arquivos_puxados": 153
   },
   {
    "protegida": true,
@@ -16890,7 +16897,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 119
+   "arquivos_puxados": 121
   },
   {
    "protegida": true,
@@ -17482,7 +17489,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 263
+   "arquivos_puxados": 265
   },
   {
    "protegida": true,
@@ -17607,7 +17614,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 80
+   "arquivos_puxados": 82
   },
   {
    "protegida": true,
@@ -17858,7 +17865,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 84
+   "arquivos_puxados": 86
   },
   {
    "protegida": true,
@@ -17986,7 +17993,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 94
+   "arquivos_puxados": 96
   },
   {
    "protegida": true,
@@ -18287,7 +18294,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 96
+   "arquivos_puxados": 98
   },
   {
    "protegida": true,
@@ -18855,7 +18862,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 220
+   "arquivos_puxados": 222
   },
   {
    "protegida": true,
@@ -19550,7 +19557,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 92
+   "arquivos_puxados": 95
   },
   {
    "protegida": false,
@@ -19572,6 +19579,7 @@
     "useEffect",
     "useMemo",
     "useNavigate",
+    "useReducedMotion",
     "useRef",
     "useSearchParams",
     "useState",
@@ -19599,7 +19607,7 @@
     "alert",
     "user"
    ],
-   "arquivos_puxados": 21
+   "arquivos_puxados": 26
   },
   {
    "protegida": true,
@@ -20168,7 +20176,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 219
+   "arquivos_puxados": 221
   },
   {
    "protegida": true,
@@ -20742,7 +20750,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 238
+   "arquivos_puxados": 240
   },
   {
    "protegida": true,
@@ -21314,7 +21322,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 222
+   "arquivos_puxados": 224
   },
   {
    "protegida": true,
@@ -21438,7 +21446,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 80
+   "arquivos_puxados": 83
   },
   {
    "protegida": true,
@@ -22011,7 +22019,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 229
+   "arquivos_puxados": 231
   },
   {
    "protegida": true,
@@ -22152,7 +22160,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 101
+   "arquivos_puxados": 103
   },
   {
    "protegida": true,
@@ -22279,7 +22287,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 93
+   "arquivos_puxados": 96
   },
   {
    "protegida": true,
@@ -22973,7 +22981,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 220
+   "arquivos_puxados": 222
   },
   {
    "protegida": true,
@@ -23097,7 +23105,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 80
+   "arquivos_puxados": 83
   },
   {
    "protegida": true,
@@ -23665,7 +23673,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 221
+   "arquivos_puxados": 223
   },
   {
    "protegida": true,
@@ -24268,7 +24276,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 229
+   "arquivos_puxados": 231
   },
   {
    "protegida": true,
@@ -24849,7 +24857,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 242
+   "arquivos_puxados": 244
   },
   {
    "protegida": true,
@@ -24878,6 +24886,7 @@
     "useOnMount",
     "useQuery",
     "useQueryClient",
+    "useReducedMotion",
     "useRef",
     "useState"
    ],
@@ -24913,7 +24922,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 26
+   "arquivos_puxados": 30
   },
   {
    "protegida": true,
@@ -25149,7 +25158,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 161
+   "arquivos_puxados": 163
   },
   {
    "protegida": true,
@@ -25740,7 +25749,7 @@
     "tabpanel",
     "user"
    ],
-   "arquivos_puxados": 268
+   "arquivos_puxados": 270
   },
   {
    "protegida": true,
@@ -25863,7 +25872,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 78
+   "arquivos_puxados": 81
   },
   {
    "protegida": true,
@@ -25988,7 +25997,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 78
+   "arquivos_puxados": 81
   },
   {
    "protegida": true,
@@ -26801,7 +26810,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 264
+   "arquivos_puxados": 266
   },
   {
    "protegida": true,
@@ -26935,7 +26944,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 90
+   "arquivos_puxados": 92
   },
   {
    "protegida": true,
@@ -27504,7 +27513,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 221
+   "arquivos_puxados": 223
   },
   {
    "protegida": true,
@@ -28237,7 +28246,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 230
+   "arquivos_puxados": 232
   },
   {
    "protegida": true,
@@ -28806,7 +28815,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 219
+   "arquivos_puxados": 221
   },
   {
    "protegida": true,
@@ -28937,7 +28946,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 99
+   "arquivos_puxados": 101
   },
   {
    "protegida": true,
@@ -29505,7 +29514,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 221
+   "arquivos_puxados": 223
   },
   {
    "protegida": true,
@@ -30656,7 +30665,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 220
+   "arquivos_puxados": 222
   },
   {
    "protegida": true,
@@ -31350,7 +31359,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 221
+   "arquivos_puxados": 223
   },
   {
    "protegida": false,
@@ -31367,6 +31376,7 @@
    "definida_em": "src/App.tsx",
    "redireciona": null,
    "hooks": [
+    "useReducedMotion",
     "useState"
    ],
    "hooks_locais": [],
@@ -31381,7 +31391,7 @@
    "papeis": [
     "alert"
    ],
-   "arquivos_puxados": 11
+   "arquivos_puxados": 16
   },
   {
    "protegida": false,
@@ -31398,6 +31408,7 @@
    "definida_em": "src/App.tsx",
    "redireciona": null,
    "hooks": [
+    "useReducedMotion",
     "useState"
    ],
    "hooks_locais": [],
@@ -31412,7 +31423,7 @@
    "papeis": [
     "alert"
    ],
-   "arquivos_puxados": 11
+   "arquivos_puxados": 16
   },
   {
    "protegida": true,
@@ -31981,7 +31992,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 228
+   "arquivos_puxados": 230
   }
  ],
  "rotas_http_backend": [

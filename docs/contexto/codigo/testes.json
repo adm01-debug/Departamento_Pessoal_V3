@@ -1258,7 +1258,7 @@
   {
    "arquivo": "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
    "tipo": "unit",
-   "linhas": 134,
+   "linhas": 135,
    "testa": [
     "src/components/desligamentos/DesligamentoDetailSheet.tsx",
     "src/services/desligamentoService.ts"
@@ -1323,7 +1323,7 @@
   {
    "arquivo": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
    "tipo": "unit",
-   "linhas": 221,
+   "linhas": 222,
    "testa": [
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     "src/integrations/supabase/types.ts"
@@ -1873,7 +1873,7 @@
   {
    "arquivo": "src/components/__tests__/FeriasForm.test.tsx",
    "tipo": "unit",
-   "linhas": 351,
+   "linhas": 375,
    "testa": [
     "src/components/ferias/FeriasForm.tsx"
    ],
@@ -2064,7 +2064,7 @@
   {
    "arquivo": "src/components/__tests__/GerarAEJDialog.test.tsx",
    "tipo": "unit",
-   "linhas": 73,
+   "linhas": 75,
    "testa": [
     "src/components/ponto/GerarAEJDialog.tsx"
    ],
@@ -2111,7 +2111,7 @@
   {
    "arquivo": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
    "tipo": "unit",
-   "linhas": 305,
+   "linhas": 306,
    "testa": [
     "src/components/ponto/GestaoRegistrosPonto.tsx",
     "src/integrations/supabase/client.ts"
