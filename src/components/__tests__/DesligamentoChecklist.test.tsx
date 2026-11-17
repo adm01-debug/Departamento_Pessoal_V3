@@ -5,11 +5,24 @@ import userEvent from '@testing-library/user-event';
 
 vi.mock('framer-motion', () => ({
   motion: {
+    // `create` entra porque o checklist passou a usar o MotionCard de
+    // entradaCards.tsx (mesma animacao de entrada dos cartoes da area).
+    create:
+      (Component: React.ElementType) =>
+      ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => (
+        <Component {...rest}>{children}</Component>
+      ),
+    section: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => (
+      <section {...rest}>{children}</section>
+    ),
     div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
     button: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => (
       <button {...rest}>{children}</button>
     ),
   },
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  useInView: () => true,
+  useReducedMotion: () => false,
 }));
 
 import { DesligamentoChecklist } from '../desligamentos/DesligamentoChecklist';
