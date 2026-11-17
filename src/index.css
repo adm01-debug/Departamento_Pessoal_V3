@@ -47,6 +47,16 @@
     --space-element: 0.75rem;
     --space-compact: 0.5rem;
 
+    /* ─── ORGANOGRAMA — linhas de conexão ───
+       Fonte única de espessura e tinta de TODA linha da árvore (moldura de cada
+       nível, tronco vertical e ramal horizontal). Consumidas pelas classes
+       `.organograma-*` no @layer utilities deste arquivo — nada de 2px solto em
+       className nem opacidade escolhida por chamada. Só existem aqui porque
+       `--muted-foreground` já é por tema: a substituição de var() é tardia, então
+       a cor acompanha .dark/.light sozinha. */
+    --organograma-line-width: 2px;
+    --organograma-line-color: hsl(var(--muted-foreground));
+
     /* ─── TYPOGRAPHY SCALE ─── */
     --text-display-xl: 2.25rem;
     --text-display: 1.875rem;
@@ -308,6 +318,43 @@
 
   .glass-dark {
     @apply bg-card/30 backdrop-blur-[16px] border border-border/30 shadow-glass;
+  }
+
+  /* ─── Organograma: linhas de conexão (fonte única) ───
+     As quatro linhas da árvore — moldura de cada nível (departamento e
+     subdepartamento), tronco vertical e ramal horizontal — são desenhadas por
+     UM só mecanismo, `border`: uma espessura (`--organograma-line-width`), uma
+     cor opaca (`--organograma-line-color`, sem `/alpha`) e nenhum fundo. Tronco
+     e ramal são caixas do tamanho exato do token e a borda preenche a caixa
+     inteira, então as quatro linhas têm literalmente o mesmo traço: mudar o
+     token muda as quatro juntas. */
+  .organograma-line {
+    box-sizing: border-box;
+    background-color: transparent;
+    border: 0 solid var(--organograma-line-color);
+  }
+
+  /* Tronco vertical: a espessura da linha é a largura da caixa. */
+  .organograma-line-vertical {
+    width: var(--organograma-line-width);
+    border-left-width: var(--organograma-line-width);
+  }
+
+  /* Ramal horizontal: a espessura é a altura da caixa e o traço se centra na
+     linha do colaborador (`top-1/2` no componente). O recuo de meia espessura
+     vem do próprio token, via calc(). */
+  .organograma-line-horizontal {
+    height: var(--organograma-line-width);
+    margin-top: calc(var(--organograma-line-width) / -2);
+    border-top-width: var(--organograma-line-width);
+  }
+
+  /* Moldura de um nível (departamento/subdepartamento): as quatro bordas são
+     exatamente a mesma linha do tronco e do ramal. A hierarquia raiz ×
+     subdepartamento continua visível pelo preenchimento, não pela linha. */
+  .organograma-frame {
+    box-sizing: border-box;
+    border: var(--organograma-line-width) solid var(--organograma-line-color);
   }
 
   /* Gamification badges */
