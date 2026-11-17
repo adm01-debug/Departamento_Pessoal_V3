@@ -17,6 +17,11 @@ describe('AppSidebar — config do menu', () => {
     // nenhum caminho de navegação até ela.
     ['estrutura', 'Centros de Custo', '/centros-custo'],
     ['estrutura', 'Locais de Trabalho', '/locais-trabalho'],
+    // `/faltas` e `/obrigacoes-fiscais`: rotas registradas em App.tsx com
+    // página pronta (485 e 506 linhas) e nenhuma entrada de menu — telas
+    // inalcançáveis. Nem a branch `muri` as tinha; a lacuna era da main.
+    ['tempo-ausencias', 'Faltas', '/faltas'],
+    ['remuneracao', 'Obrigações Fiscais', '/obrigacoes-fiscais'],
     ['gestao-pessoas', 'Times', '/times'],
     ['gestao-pessoas', 'Lotações', '/lotacoes'],
   ])('grupo "%s" contém "%s" apontando para "%s"', (grupo, label, path) => {
