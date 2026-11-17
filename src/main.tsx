@@ -97,6 +97,24 @@ const TRUSTED_FRAME_HOST_RE =
 const isPreviewHost =
   TRUSTED_FRAME_HOST_RE.test(window.location.hostname) || window.location.hostname.includes('id-preview--');
 
+// Recuperação de chunk após deploy: o index.html ainda em cache no navegador
+// referencia hashes de chunk que não existem mais no servidor. O helper de
+// preload do Vite (usado nos import() lazy das rotas) emite este evento; sem
+// tratá-lo, a Promise rejeitada fica presa e o usuário vê tela de erro cujo
+// botão "Tentar novamente" não funciona (React.lazy memoiza a rejeição). Um
+// reload busca o index.html atual e resolve. O guard em sessionStorage — a
+// mesma chave usada pelo RouteErrorBoundary — evita loop se a causa for outra.
+window.addEventListener('vite:preloadError', () => {
+  try {
+    const chave = 'chunk-reload-attempted';
+    if (sessionStorage.getItem(chave)) return;
+    sessionStorage.setItem(chave, '1');
+    window.location.reload();
+  } catch {
+    // sessionStorage indisponível: sem garantia de "uma vez só", não recarrega.
+  }
+});
+
 // Clickjacking defense-in-depth: só quebra o frame em produção e apenas
 // quando o host NÃO é confiável. Nunca apaga o body (evita tela branca).
 if (isInIframe && !isPreviewHost && import.meta.env.PROD) {
@@ -121,8 +139,13 @@ if (import.meta.env.PROD) {
   });
 }
 
-// PWA Service Worker Registration
-if (!isInIframe && !isPreviewHost && 'serviceWorker' in navigator) {
+// PWA Service Worker Registration — produção apenas. Um SW ativo em dev
+// intercepta as próprias requisições de módulo do Vite: o fetch do
+// `sw-custom.js` reconstrói a Response lendo o stream e recriando os headers,
+// o que não preserva content-encoding/length de forma confiável para conteúdo
+// arbitrário. Resultado: "Failed to fetch dynamically imported module" só no
+// navegador (nunca via curl, que não passa pelo SW).
+if (import.meta.env.PROD && !isInIframe && !isPreviewHost && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('/sw-custom.js')

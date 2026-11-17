@@ -2,8 +2,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { AdminRoute } from '@/components/AdminRoute';
-import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
-import { lazy, Suspense } from 'react';
+import { RouteErrorBoundary, clearChunkReloadGuard } from '@/components/RouteErrorBoundary';
+import { lazy, Suspense, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSessionTimeout } from '@/hooks/useSessionTimeout';
 import { useSecureVisibility } from '@/hooks/useSecureVisibility';
@@ -49,7 +49,10 @@ const BackupPage = lazy(() => import('@/pages/BackupPage'));
 const OrganogramaPage = lazy(() => import('@/pages/OrganogramaPage'));
 const PortalPage = lazy(() => import('@/pages/PortalPage'));
 const AvaliacaoPage = lazy(() => import('@/pages/AvaliacaoPage'));
-const NineBoxPreviewPage = lazy(() => import('@/pages/NineBoxPreviewPage'));
+// Pagina de preview so para desenvolvimento. Com `import.meta.env.DEV` falso o
+// Vite substitui por `false` e elimina o `import()` do build — antes o chunk
+// era gerado e publicado em producao, embora a rota (abaixo) ja fosse DEV-only.
+const NineBoxPreviewPage = import.meta.env.DEV ? lazy(() => import('@/pages/NineBoxPreviewPage')) : null;
 const TreinamentosPage = lazy(() => import('@/pages/TreinamentosPage'));
 const RecrutamentoPage = lazy(() => import('@/pages/RecrutamentoPage'));
 const ContratacaoPage = lazy(() => import('@/pages/ContratacaoPage'));
@@ -159,11 +162,20 @@ function PageLoader() {
   );
 }
 
+function RotaCarregada({ children }: { children: React.ReactNode }) {
+  // Chunk carregado: libera o guard de reload para que uma falha futura (outro
+  // deploy, outra rota) ainda consiga se auto-recuperar uma vez.
+  useEffect(() => clearChunkReloadGuard(), []);
+  return <>{children}</>;
+}
+
 function LazyPage({ Component }: { Component: React.LazyExoticComponent<() => React.ReactElement | null> }) {
   return (
     <RouteErrorBoundary>
       <Suspense fallback={<PageLoader />}>
-        <Component />
+        <RotaCarregada>
+          <Component />
+        </RotaCarregada>
       </Suspense>
     </RouteErrorBoundary>
   );
