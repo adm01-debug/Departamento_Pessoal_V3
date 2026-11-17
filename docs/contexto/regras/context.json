@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "fe455b97124d979895d4dae24756f88cb815e0ab",
+  "sha": "576c7f4820b95d818ebf7e0399a0d9d6cbe08344",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 00:39 UTC",
-  "files_total": 3378,
-  "code_files": 2804,
-  "code_lines": 427610
+  "generated_at": "2026-11-17 01:50 UTC",
+  "files_total": 3385,
+  "code_files": 2811,
+  "code_lines": 431074
  },
  "version": "1.3.2",
- "facts_hash": "c12302e06395d097",
+ "facts_hash": "bb074cbf5428a621",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -385,8 +385,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 915,
-   ".tsx": 893,
-   ".ts": 865,
+   ".tsx": 898,
+   ".ts": 867,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -87478,7 +87478,6 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
-     "tarefas_onboarding",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
@@ -87540,7 +87539,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 187
+    "deps_count": 186
    },
    {
     "path": "",
@@ -93537,11 +93536,15 @@
     "file": "src/pages/OnboardingPage.tsx",
     "component": "OnboardingPage",
     "tables_transitive": [
+     "admissoes",
      "colaboradores",
      "empresas",
      "ferias",
      "notificacoes",
+     "onboarding_kits",
      "periodos_aquisitivos",
+     "profiles",
+     "tarefas_onboarding",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -93556,7 +93559,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 66
+    "deps_count": 91
    },
    {
     "path": "",
@@ -99793,7 +99796,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 831,
+  "components_count": 835,
   "hooks": [
    {
     "name": "useContacts",
@@ -100242,6 +100245,26 @@
    {
     "name": "useImportacaoColaboradores",
     "file": "src/hooks/useImportacaoColaboradores.ts"
+   },
+   {
+    "name": "useJornadas",
+    "file": "src/hooks/useJornadaOnboarding.ts"
+   },
+   {
+    "name": "useConcluirTarefa",
+    "file": "src/hooks/useJornadaOnboarding.ts"
+   },
+   {
+    "name": "useKits",
+    "file": "src/hooks/useJornadaOnboarding.ts"
+   },
+   {
+    "name": "useCriarKit",
+    "file": "src/hooks/useJornadaOnboarding.ts"
+   },
+   {
+    "name": "useAtualizarKit",
+    "file": "src/hooks/useJornadaOnboarding.ts"
    },
    {
     "name": "useLocaisTrabalho",
@@ -101316,8 +101339,8 @@
   },
   {
    "module": "src/components",
-   "files": 831,
-   "lines": 138915,
+   "files": 835,
+   "lines": 140329,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101365,7 +101388,6 @@
     "sst_regimento_assinaturas",
     "sst_regimento_documentos",
     "sst_riscos_ambientais",
-    "tarefas_onboarding",
     "tipos_beneficio",
     "trilha_auditoria_ponto",
     "user_mfa",
@@ -101390,15 +101412,19 @@
     "AdmissoesKanban.tsx: AdmissoesKanbanProps, AdmissoesKanban",
     "DetalhesAdmissaoDialog.tsx: DetalhesAdmissaoDialog",
     "GestaoCandidatos.tsx: GestaoVisualizacao, GestaoCandidatosProps, GestaoCandidatos",
+    "GestaoKits.tsx: GestaoKits",
     "KanbanCard.tsx: KanbanAcoes, KanbanCardProps, KanbanCard, DraggableCard",
     "KanbanColumn.tsx: KanbanColumnProps, KanbanColumn",
+    "KitOnboardingDialog.tsx: itensParaTexto, textoParaItens, KitOnboardingDialog",
     "NovaAdmissaoDialog.tsx: NovaAdmissaoDialog",
+    "OnboardingCard.tsx: OnboardingAcoes, OnboardingCard",
     "OnboardingDashboard.tsx: OnboardingDashboard",
-    "OnboardingPageContent.tsx: OnboardingPageContent",
+    "OnboardingDetalheDialog.tsx: OnboardingDetalheDialogProps, OnboardingDetalheDialog",
     "admissoesComum.ts: Tone, TONE_CHIP, TONE_TEXT, ToneSelo, TONE_BADGE, ETAPA_LABELS",
     "admissoesDashboardModais.tsx: SlaSegmento, AdmissaoDetalhe, PrioridadeDetalhe, AreaDetalhe, AcoesPrioritariasDialog, ProximasAdmissoesDialog",
     "admissoesDerivacoes.ts: AdmissaoLike, DIA_MS, dataValida, inicioDoDia, iniciais, percentual",
     "kanbanComum.ts: AdmissaoKanban, TomEtapa, TomKanban, TOM_KANBAN, ColunaKanban, COLUNAS_KANBAN",
+    "onboardingComum.ts: MARCOS_ONBOARDING, PALETA_AVATAR, corAvatar, TOM_PRAZO, TOM_PRAZO_VEU",
     "onboardingDerivacoes.ts: TarefaOnboarding, ColaboradorOnboarding, ProgressoOnboarding, progressoOnboarding, prazoDaTarefa, ordenarTarefas",
     "AfastamentoDocumentManager.tsx: AfastamentoDocumentManager",
     "AfastamentoForm.tsx: AfastamentoForm",
@@ -101408,11 +101434,7 @@
     "ProrrogacaoDialog.tsx: ProrrogacaoDialog",
     "LoginForm.tsx: LoginForm",
     "AlertasDesempenho.tsx: AlertasDesempenho",
-    "AnaliticosDesempenho.tsx: EstadoAnimacaoLegenda, AnaliticosDesempenho",
-    "AuditoriaChips.tsx: AuditoriaChips",
-    "AuditoriaDetalheDialog.tsx: AuditoriaDetalheDialog",
-    "AuditoriaEvento.tsx: ResponsavelResolvido, AuditoriaEvento",
-    "AuditoriaFiltros.tsx: AuditoriaFiltros"
+    "AnaliticosDesempenho.tsx: EstadoAnimacaoLegenda, AnaliticosDesempenho"
    ],
    "docs": [
     "index.ts: V25: Components Export - active modules only",
@@ -101420,7 +101442,7 @@
     "CriacaoFeedbackIntegracao.test.ts: Integração local da criação — a ponte entre o formulário existente e a RPC auditada. Cobre idempotência (mesma tentativa × operação nova), preservação de TODOS os campos, validações e payload da RPC. Sem rede, sem banco.",
     "EscritaOperacional.test.ts: Guarda de escrita operacional — impede gravação a partir de dados fictícios. Cobre as duas regras: identificador `mock-*` e ambiente de demonstração.",
     "FeedbackAcoesRodape.test.tsx: CONTROLES FUNCIONAIS DO MODAL (rodapé) — testes de integração local. O serviço é mockado (nenhuma rede): o que se verifica aqui é a INTERFACE — quais controles aparecem por status/papel, obrigatoriedade da justificativa, bloqueio durante a operação, erro real, idempotência do reenvio, invalidação de …",
-    "UnifiedAuditSection.test.tsx: Testes de integração da UI de busca unificada de auditoria. Cobre: 1. Lazy-loading: a RPC search_audit_unified só é chamada após o clique em \"Buscar\". 2. Limite fixo de 100 eventos por chamada (contrato da RPC). 3. Filtro por tabela de origem propagado corretamente à RPC (_source_table). 4. Filtro v …"
+    "KitOnboardingDialog.test.tsx: CRUD DE PERFIL DE KIT (FASE 7) — o botão \"Novo Perfil de Kit\" era decorativo; agora existe formulário real sobre `public.onboarding_kits` (nome + itens + ativo). Aqui testamos o CONTRATO do formulário: normalização dos itens, validação e o payload que chega ao `onSalvar`."
    ],
    "deps": [
     "@dnd-kit/core",
@@ -101648,8 +101670,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 189,
-   "lines": 21467,
+   "files": 190,
+   "lines": 21542,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101813,6 +101835,7 @@
     "src/hooks/useHorasExtras.ts",
     "src/hooks/useIdempotencyKey.ts",
     "src/hooks/useImportacaoColaboradores.ts",
+    "src/hooks/useJornadaOnboarding.ts",
     "src/hooks/useLocaisTrabalho.ts",
     "src/hooks/useLocalStorage.ts",
     "src/hooks/useMediaQuery.ts",
@@ -101840,8 +101863,7 @@
     "src/hooks/useServerValidation.ts",
     "src/hooks/useSessionTimeout.ts",
     "src/hooks/useSyncedState.ts",
-    "src/hooks/useSystemHealth.ts",
-    "src/hooks/useSystemHealthHistory.ts"
+    "src/hooks/useSystemHealth.ts"
    ]
   },
   {
@@ -101991,8 +102013,8 @@
   },
   {
    "module": "src/pages",
-   "files": 131,
-   "lines": 46838,
+   "files": 133,
+   "lines": 48796,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -102064,7 +102086,6 @@
     "sst_extintores_inspecoes",
     "sst_incidentes",
     "sst_regimento_documentos",
-    "tarefas_onboarding",
     "times",
     "times_brindes",
     "transferencias",
@@ -102121,7 +102142,9 @@
    "docs": [
     "DashboardPage.tsx: DashboardPage — Modular Executive Dashboard (V26)",
     "FolhaCompliancePage.tsx: FolhaCompliancePage — Painel de auditoria não-repudiável da folha (Fase 5) Consome `vw_folha_compliance` (security_invoker=true → herda RLS de audit_log). Mostra timeline de eventos PAYROLL_CALC / PAYROLL_CLOSE / PAYROLL_REOPEN por competência, com: - filtro por competência, ação e busca livre (auto …",
-    "NotFoundPage.tsx: V15-472"
+    "NotFoundPage.tsx: V15-472",
+    "OnboardingJornada.test.tsx: REGRESSÃO DA CONSOLIDAÇÃO — Jornada de Onboarding (`/onboarding`). A aba \"Onboarding\" de Admissões foi REMOVIDA e esta é a única superfície de onboarding. O arquivo ABSORVE os testes que existiam para `OnboardingPageContent.test.tsx` (o card, a régua, o detalhe, o loading e os estados vazios continu …",
+    "OnboardingParidade.test.tsx: TESTES DE PARIDADE — regra ANTIGA (HEAD) × regra NOVA (domínio canônico). Como o código antigo foi REMOVIDO (`OnboardingPageContent.tsx`), as fórmulas antigas foram recuperadas com `git show HEAD:<arquivo>` e estão reescritas aqui como `antigo*()` — SOMENTE como oráculo de comparação. Nenhuma arquit …"
    ],
    "deps": [
     "@hookform/resolvers",
@@ -102356,7 +102379,7 @@
   {
    "module": "src/services",
    "files": 183,
-   "lines": 38413,
+   "lines": 38430,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -103464,11 +103487,9 @@
    },
    "admissoes": {
     "select": [
-     "src/components/admissoes/OnboardingPageContent.tsx",
      "src/components/dashboard/MorningBriefing.tsx",
      "src/hooks/useAdmissaoWorkflow.ts",
      "src/pages/DashboardPage.tsx",
-     "src/pages/OnboardingPage.tsx",
      "src/pages/RelatoriosPage.tsx",
      "src/services/contratacaoService.ts",
      "src/services/onboardingJornadaService.ts",
@@ -106210,10 +106231,6 @@
    },
    "tarefas_onboarding": {
     "ref": [
-     "src/components/admissoes/OnboardingPageContent.tsx",
-     "src/pages/OnboardingPage.tsx"
-    ],
-    "update": [
      "src/services/onboardingJornadaService.ts"
     ],
     "select": [
@@ -107569,6 +107586,7 @@
     "empresa_id"
    ],
    "onboarding_kits": [
+    "empresa_id",
     "id"
    ],
    "onboarding_tarefas": [
@@ -112117,6 +112135,11 @@
     "values": "'checklist_documentos_pessoais', 'checklist_comprovante_endereco', 'checklist_foto', 'checklist_ctps', 'checklist_exame_admissional', 'checklist_contrato_assinado',"
    },
    {
+    "file": "src/components/admissoes/onboardingComum.ts",
+    "name": "MARCOS_ONBOARDING",
+    "values": "'Início', 'Parcial', 'Avançado', 'Completo'"
+   },
+   {
     "file": "src/components/admissoes/onboardingDerivacoes.ts",
     "name": "EstadoMarco",
     "values": "concluido | atual | pendente"
@@ -112610,6 +112633,16 @@
     "file": "src/hooks/useFolhaAuditoria.ts",
     "name": "AuditoriaSeveridade",
     "values": "INFO | AVISO | ERRO | CRITICO"
+   },
+   {
+    "file": "src/hooks/useJornadaOnboarding.ts",
+    "name": "CHAVE_JORNADAS",
+    "values": "'onboarding-list'"
+   },
+   {
+    "file": "src/hooks/useJornadaOnboarding.ts",
+    "name": "CHAVE_KITS",
+    "values": "'onboarding-kits'"
    },
    {
     "file": "src/hooks/useProximosEventos.ts",
@@ -113196,6 +113229,10 @@
    {
     "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     "msg": "Candidato sem e-mail cadastrado e sem link de portal vigente."
+   },
+   {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "msg": "\n            className="
    },
    {
     "file": "src/components/afastamentos/AfastamentoDocumentManager.tsx",
@@ -114644,6 +114681,22 @@
    {
     "file": "src/pages/ObrigacoesFiscaisPage.tsx",
     "msg": "Erro ao gerar guia"
+   },
+   {
+    "file": "src/pages/OnboardingPage.tsx",
+    "msg": "Não foi possível atualizar o perfil de kit."
+   },
+   {
+    "file": "src/pages/OnboardingPage.tsx",
+    "msg": "Não foi possível concluir a tarefa."
+   },
+   {
+    "file": "src/pages/OnboardingPage.tsx",
+    "msg": "Não foi possível criar o perfil de kit."
+   },
+   {
+    "file": "src/pages/OnboardingPage.tsx",
+    "msg": "Selecione uma empresa antes de salvar o perfil de kit."
    },
    {
     "file": "src/pages/PensoesPage.tsx",
@@ -117014,6 +117067,42 @@
     "text": "Estado VISUAL (só do indicador): muda na hora e dirige apenas o `transform`."
    },
    {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "text": "busca/filtro/ordenação e um resumo com contagens reais — nenhuma regra de"
+   },
+   {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "text": "negócio nova, nenhuma navegação falsa e NENHUM dado inventado."
+   },
+   {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "text": "* LIMITE HONESTO (sem tocar em backend/banco): o registro real"
+   },
+   {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "text": "(`public.onboarding_kits`) tem apenas `nome`, `itens`, `ativo` e `created_at`."
+   },
+   {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "text": "O serviço LANÇA em falha de query/permissão justamente para `isError` chegar"
+   },
+   {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "text": "dos `itens`. É determinístico (mesmo kit → mesmo ícone E mesma cor), usa apenas"
+   },
+   {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "text": "usando apenas dados reais (nome do kit + departamentos reais da empresa)."
+   },
+   {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "text": "inferido pelo nome (mesma regra do filtro) ou, na falta dele, a data real de"
+   },
+   {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "text": "Subtítulo: SOMENTE dado real (departamento inferido pelo nome ou data de"
+   },
+   {
     "file": "src/components/admissoes/KanbanCard.tsx",
     "text": "6. prazo                       (data_prevista, no canto direito do rodapé)"
    },
@@ -117022,8 +117111,28 @@
     "text": "RODAPÉ — responsável (esquerda) + prazo (direita) */}"
    },
    {
+    "file": "src/components/admissoes/KitOnboardingDialog.tsx",
+    "text": "o CRUD mínimo sobre a tabela EXISTENTE (nenhuma tabela nova):"
+   },
+   {
     "file": "src/components/admissoes/NovaAdmissaoDialog.tsx",
     "text": "(mesmo service/regra da criação — nada de um segundo caminho de escrita)."
+   },
+   {
+    "file": "src/components/admissoes/OnboardingCard.tsx",
+    "text": "tarefa como legenda e o prazo + responsável numa faixa de"
+   },
+   {
+    "file": "src/components/admissoes/OnboardingCard.tsx",
+    "text": "números via `onboardingDerivacoes.ts` — nenhuma regra de negócio é duplicada."
+   },
+   {
+    "file": "src/components/admissoes/OnboardingCard.tsx",
+    "text": "prazo da próxima tarefa, contadores). Nenhum texto é inventado."
+   },
+   {
+    "file": "src/components/admissoes/OnboardingCard.tsx",
+    "text": "METADADOS LATERAIS — prazo e responsável desceram para uma linha"
    },
    {
     "file": "src/components/admissoes/admissoesDashboardModais.tsx",
@@ -117088,6 +117197,22 @@
    {
     "file": "src/components/admissoes/kanbanComum.ts",
     "text": "* Coluna de uma etapa — `undefined` para etapa fora do board (não deve ocorrer). */"
+   },
+   {
+    "file": "src/components/admissoes/onboardingComum.ts",
+    "text": "(texto de marco, classe de cor, tint de prazo). A matemática fica em"
+   },
+   {
+    "file": "src/components/admissoes/onboardingComum.ts",
+    "text": "reordena não deve repintar os avatares)."
+   },
+   {
+    "file": "src/components/admissoes/onboardingComum.ts",
+    "text": "* Tinta do rótulo de prazo por tom (`TomPrazo`). */"
+   },
+   {
+    "file": "src/components/admissoes/onboardingComum.ts",
+    "text": "* Fundo do selo de prazo por tom (véu translúcido curto). */"
    },
    {
     "file": "src/components/admissoes/onboardingDerivacoes.ts",
@@ -119068,6 +119193,34 @@
    {
     "file": "src/pages/NineBoxPreviewPage.tsx",
     "text": "• A rota é registrada em `App.tsx` apenas quando `import.meta.env.DEV` — e"
+   },
+   {
+    "file": "src/pages/OnboardingPage.tsx",
+    "text": "em `profiles.nome`. A régua de negócio (progresso, prazo, risco, situação,"
+   },
+   {
+    "file": "src/pages/OnboardingPage.tsx",
+    "text": "* Chips rápidos da aba \"Concluídos\" — prazo de fechamento e recência. */"
+   },
+   {
+    "file": "src/pages/OnboardingPage.tsx",
+    "text": "* Estes overrides neutralizam o corte SOMENTE nos selects desta página"
+   },
+   {
+    "file": "src/pages/OnboardingPage.tsx",
+    "text": "— e os de concluídos leem prazo de fechamento e recência da última conclusão."
+   },
+   {
+    "file": "src/pages/OnboardingPage.tsx",
+    "text": "apenas deixa de aceitar operação."
+   },
+   {
+    "file": "src/pages/OnboardingPage.tsx",
+    "text": "Chip rápido (SITUAÇÃO em Andamento / recência-prazo em Concluídos): é o"
+   },
+   {
+    "file": "src/pages/OnboardingPage.tsx",
+    "text": "sem os inativos o filtro \"Somente inativos\" ficaria vazio e um kit"
    },
    {
     "file": "src/pages/PontoKioskPage.tsx",
@@ -144606,7 +144759,32 @@
     "value": "0.08"
    },
    {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "name": "MAX_STAGGER_INDEX",
+    "value": "5"
+   },
+   {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "name": "CARTOES_ESQUELETO",
+    "value": "3"
+   },
+   {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "name": "TODOS_DEPARTAMENTOS",
+    "value": "'todos'"
+   },
+   {
+    "file": "src/components/admissoes/KitOnboardingDialog.tsx",
+    "name": "BLOCOS_CASCATA",
+    "value": "3"
+   },
+   {
     "file": "src/components/admissoes/NovaAdmissaoDialog.tsx",
+    "name": "BLOCOS_CASCATA",
+    "value": "3"
+   },
+   {
+    "file": "src/components/admissoes/OnboardingDetalheDialog.tsx",
     "name": "BLOCOS_CASCATA",
     "value": "3"
    },
@@ -145364,6 +145542,21 @@
     "file": "src/pages/DocumentosPage.tsx",
     "name": "BUCKET",
     "value": "'documentos'"
+   },
+   {
+    "file": "src/pages/OnboardingPage.tsx",
+    "name": "MAX_STAGGER_INDEX",
+    "value": "5"
+   },
+   {
+    "file": "src/pages/OnboardingPage.tsx",
+    "name": "ITENS_POR_PAGINA",
+    "value": "12"
+   },
+   {
+    "file": "src/pages/OnboardingPage.tsx",
+    "name": "VALOR_TODOS",
+    "value": "'__todos__'"
    },
    {
     "file": "src/pages/PassivoTrabalhistaPage.tsx",
@@ -146530,6 +146723,18 @@
     "file": "src/components/admissoes/GestaoCandidatos.tsx",
     "field": "etapa",
     "value": "cancelada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "field": "status",
+    "value": "ativos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "field": "status",
+    "value": "inativos",
     "kind": "compara"
    },
    {
@@ -157953,6 +158158,12 @@
     "body": "if (!empresaAtual?.id) return; setGerandoServidor(true); try { const [mes, ano] = competencia.split('/'); // gerarGuias devolve o RetryResult de retryWithIdempotency: o corpo da edge vem em `.data`. const { data: r } = (await edgeFunctionsService.gerarGuias({ empresaId: empresaAtual.id, competencia: `${ano}-${mes}`, tipo: 'todos', })) as { data?: { guias?: unknown[]; duplicatas_bloqueadas?: string[]; nao_persistidas?: { tipo: string }[]; } | null; }; qc.invalidateQueries({ queryKey: ['guias-fgts …"
    },
    {
+    "file": "src/pages/OnboardingPage.tsx",
+    "name": "totalDoChip",
+    "params": "valor: ChipAtivo | ChipConcluido",
+    "body": "baseFiltrada.filter((l) => combinaChip(l, valor)).length;"
+   },
+   {
     "file": "src/pages/PassivoTrabalhistaPage.tsx",
     "name": "calcFerias",
     "params": "salario: number, admissao: string, ultimaFim: string | null, hoje: Date",
@@ -159887,6 +160098,14 @@
     "line": "`text-primary-foreground` (240 20% 6%, quase preto) — MESMA"
    },
    {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "line": "* filete a 25%. Escolhidos por serem DISTINTOS tanto no tema claro quanto no escuro"
+   },
+   {
+    "file": "src/components/admissoes/GestaoKits.tsx",
+    "line": "* pelo resto da área. Convenção idêntica à dos chips: tint a 15% + tinta cheia +"
+   },
+   {
     "file": "src/components/admissoes/KanbanColumn.tsx",
     "line": "* ENTRADA 100% CSS (ver o bloco `KANBAN … ENTRADA DAS COLUNAS` no `src/index.css`):"
    },
@@ -159897,6 +160116,10 @@
    {
     "file": "src/components/admissoes/OnboardingDashboard.tsx",
     "line": "transition={{ delay: i * 0.05 }}"
+   },
+   {
+    "file": "src/components/admissoes/onboardingComum.ts",
+    "line": "* vibrante, no mesmo padrão dos chips da área (tint a 15% + tinta cheia)."
    },
    {
     "file": "src/components/admissoes/onboardingDerivacoes.ts",
@@ -160588,7 +160811,7 @@
    },
    {
     "file": "src/pages/OnboardingPage.tsx",
-    "line": "100%"
+    "line": "* CONCLUÍDO PARA AS ABAS = 100% E NÃO CANCELADA — a MESMA régua que"
    },
    {
     "file": "src/pages/PassivoTrabalhistaPage.tsx",
@@ -169721,6 +169944,38 @@
     "name": "queryFn das configs seleciona id,url; erro não-42P01 propaga"
    },
    {
+    "file": "src/components/__tests__/KitOnboardingDialog.test.tsx",
+    "name": "KitOnboardingDialog — normalização"
+   },
+   {
+    "file": "src/components/__tests__/KitOnboardingDialog.test.tsx",
+    "name": "quebra os itens por linha, apara espaços e descarta linhas vazias"
+   },
+   {
+    "file": "src/components/__tests__/KitOnboardingDialog.test.tsx",
+    "name": "KitOnboardingDialog — formulário"
+   },
+   {
+    "file": "src/components/__tests__/KitOnboardingDialog.test.tsx",
+    "name": "não monta nada quando fechado"
+   },
+   {
+    "file": "src/components/__tests__/KitOnboardingDialog.test.tsx",
+    "name": "cria: começa vazio, exige nome e ao menos um item, e devolve o payload limpo"
+   },
+   {
+    "file": "src/components/__tests__/KitOnboardingDialog.test.tsx",
+    "name": "edita: carrega o kit, permite desativar e devolve o payload alterado"
+   },
+   {
+    "file": "src/components/__tests__/KitOnboardingDialog.test.tsx",
+    "name": "não oferece campo de imagem (sem coluna no banco, nada a persistir)"
+   },
+   {
+    "file": "src/components/__tests__/KitOnboardingDialog.test.tsx",
+    "name": "não salva com o formulário inválido (só espaços)"
+   },
+   {
     "file": "src/components/__tests__/LayoutGridSection.test.tsx",
     "name": "Row"
    },
@@ -172015,46 +172270,6 @@
    {
     "file": "src/components/__tests__/OnboardingDashboard.test.tsx",
     "name": "handles empty admissoes array"
-   },
-   {
-    "file": "src/components/__tests__/OnboardingPageContent.test.tsx",
-    "name": "OnboardingPageContent"
-   },
-   {
-    "file": "src/components/__tests__/OnboardingPageContent.test.tsx",
-    "name": "shows loading spinner while fetching"
-   },
-   {
-    "file": "src/components/__tests__/OnboardingPageContent.test.tsx",
-    "name": "shows empty state when no onboarding data"
-   },
-   {
-    "file": "src/components/__tests__/OnboardingPageContent.test.tsx",
-    "name": "shows empty state description"
-   },
-   {
-    "file": "src/components/__tests__/OnboardingPageContent.test.tsx",
-    "name": "renders colaborador name from onboarding data"
-   },
-   {
-    "file": "src/components/__tests__/OnboardingPageContent.test.tsx",
-    "name": "renders Progresso do Onboarding text"
-   },
-   {
-    "file": "src/components/__tests__/OnboardingPageContent.test.tsx",
-    "name": "renders Tarefas Críticas section"
-   },
-   {
-    "file": "src/components/__tests__/OnboardingPageContent.test.tsx",
-    "name": "renders task titles from onboarding"
-   },
-   {
-    "file": "src/components/__tests__/OnboardingPageContent.test.tsx",
-    "name": "does not render a welcome-email button without a backend to send it"
-   },
-   {
-    "file": "src/components/__tests__/OnboardingPageContent.test.tsx",
-    "name": "shows no-tasks message when tarefas array is empty"
    },
    {
     "file": "src/components/__tests__/OrganogramaNode.test.tsx",
@@ -181335,6 +181550,242 @@
    {
     "file": "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx",
     "name": "não anuncia sucesso quando tudo já existia: informa as duplicatas"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "Jornada de Onboarding — card e estado (cobertura herdada)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "shows loading spinner while fetching"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "shows empty state when no onboarding data"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "renders the collaborator header (name + cargo • departamento + % progress)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "renders the milestone ruler labels"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "renders the next action from the first pending task"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "mostra a DESCRIÇÃO (texto auxiliar) da próxima ação, além do título"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "renders the compact status counters"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "does NOT render the always-open checklist on the card"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "opens the detail when "
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "mantém a timeline contida: trilho entre o 1º e o último ponto e preenchimento sem vazar"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "empilha a linha ATRÁS dos pontos (pontos sempre acima do traço)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "mantém a micro barra de progresso no canto (largura curta, ao lado da porcentagem)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "NÃO corta a próxima ação: título e descrição longos aparecem por INTEIRO"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "Jornada de Onboarding — consolidação (fonte única do onboarding)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "as duas consultas levam o id da empresa atual na chave de cache"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "os totais do resumo vivem de forma contextual nos tabs (bloco isolado removido)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "renderiza os chips rápidos da aba Em Andamento com a contagem real"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "o chip "
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "a busca filtra por nome/cargo/departamento/responsável e "
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "a busca sem resultado mostra o estado vazio de filtro (não o de jornada vazia)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "a aba Concluídos mostra só as jornadas 100% integradas"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "a grade de kits cai no estado vazio quando não há perfil cadastrado (nada de kit fictício)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "erro de leitura dos kits mostra estado de ERRO explícito (não "
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "editar um perfil abre o formulário já com o kit carregado"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "o deep link ?colaborador=<id> foca apenas o colaborador indicado"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingJornada.test.tsx",
+    "name": "mantém os filtros operacionais na caixa de busca (busca, departamento, responsável, etapa)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "PARIDADE — progresso, conclusão e contadores (mesma fixture)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "percentual: a regra nova é idêntica à antiga em TODOS os registros"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "contadores do topo batem com o cálculo antigo da aba de Admissões"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "a divisão das abas (em andamento) bate com a régua antiga da Jornada"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "tarefas concluídas/pendentes e o total batem registro a registro"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "o MARCO atual acompanha o percentual (mesma régua de 4 marcos)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "PARIDADE — risco, atraso e situação"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "o conjunto "
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "classifica cada situação da fixture (atrasado / em risco / em dia / concluído / sem ação)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "dias de atraso refletem o vencimento mais antigo (0 quando nada venceu)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "o card e a tela leem a MESMA função de situação"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "PARIDADE — próxima ação (mudança INTENCIONAL documentada)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "a ordem do array NÃO decide mais: vale o prazo mais próximo"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "quando o array já vem ordenado, antigo e novo coincidem"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "é um contrato TOTAL: embaralhar a entrada nunca muda a saída"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "tarefa sem "
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "PARIDADE — ordenações da tela (FASE 15)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "progresso e nome ordenam de forma estável e determinística"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "nenhuma ordenação perde ou duplica registros"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "CASOS-LIMITE (PENDÊNCIA 4)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "VÁRIAS tarefas atrasadas: o atraso reportado é o da pendência MAIS antiga"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "RESPONSÁVEL nulo e INEXISTENTE caem na cadeia de fallback (nunca inventa nome)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "RESPONSÁVEL real: "
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "CASOS-LIMITE — cancelamento, registro incompleto e reabertura"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "ADMISSÃO CANCELADA: regra explícita — não conta risco, não é concluída, continua listada"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "REGISTRO INCOMPLETO não quebra nem inventa dados"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "TAREFA REABERTA (concluída → pendente) volta a ser a próxima ação e derruba o 100%"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "DESLIGAMENTO não é inferível pela jornada: o cálculo não muda e nada é removido"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "HISTÓRICO — eventos legíveis da jornada (PENDÊNCIA 3)"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "emite "
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "jornada em aberto NÃO emite evento de conclusão"
+   },
+   {
+    "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
+    "name": "sem registro (fallback vazio) não inventa evento"
    },
    {
     "file": "src/pages/__tests__/PensoesPage.test.tsx",
@@ -222973,6 +223424,12 @@
       "compara:src/pages/ContratosGeradosPage.tsx",
       "compara:supabase/functions/relatorio/index.ts"
      ],
+     "ativos": [
+      "compara:src/components/admissoes/GestaoKits.tsx"
+     ],
+     "inativos": [
+      "compara:src/components/admissoes/GestaoKits.tsx"
+     ],
      "encerrado": [
       "compara:src/components/afastamentos/AfastamentoTable.tsx",
       "compara:src/pages/AfastamentosPage.tsx",
@@ -247894,6 +248351,20 @@
    },
    {
     "kind": "status",
+    "msg": "valor `ativos` para `status` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "compara:src/components/admissoes/GestaoKits.tsx"
+    ]
+   },
+   {
+    "kind": "status",
+    "msg": "valor `inativos` para `status` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "compara:src/components/admissoes/GestaoKits.tsx"
+    ]
+   },
+   {
+    "kind": "status",
     "msg": "valor `aprovada_gestor` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/components/avaliacao/FeedbackAcoesRodape.tsx",
@@ -259505,6 +259976,25 @@
     "queryFn das configs seleciona id,url; erro não-42P01 propaga"
    ]
   },
+  "src/components/__tests__/KitOnboardingDialog.test.tsx": {
+   "path": "src/components/__tests__/KitOnboardingDialog.test.tsx",
+   "lines": 106,
+   "is_test": true,
+   "rule_comments": [
+    "validação e o payload que chega ao `onSalvar`."
+   ],
+   "doc": "CRUD DE PERFIL DE KIT (FASE 7) — o botão \"Novo Perfil de Kit\" era decorativo; agora existe formulário real sobre `public.onboarding_kits` (nome + itens + ativo). Aqui testamos o CONTRATO do formulário: normalização dos itens, validação e o payload que chega ao `onSalvar`.",
+   "tests": [
+    "KitOnboardingDialog — normalização",
+    "quebra os itens por linha, apara espaços e descarta linhas vazias",
+    "KitOnboardingDialog — formulário",
+    "não monta nada quando fechado",
+    "cria: começa vazio, exige nome e ao menos um item, e devolve o payload limpo",
+    "edita: carrega o kit, permite desativar e devolve o payload alterado",
+    "não oferece campo de imagem (sem coluna no banco, nada a persistir)",
+    "não salva com o formulário inválido (só espaços)"
+   ]
+  },
   "src/components/__tests__/LayoutGridSection.test.tsx": {
    "path": "src/components/__tests__/LayoutGridSection.test.tsx",
    "lines": 291,
@@ -260481,23 +260971,6 @@
     "shows Tempo Médio de Admissão chart title",
     "renders charts",
     "handles empty admissoes array"
-   ]
-  },
-  "src/components/__tests__/OnboardingPageContent.test.tsx": {
-   "path": "src/components/__tests__/OnboardingPageContent.test.tsx",
-   "lines": 133,
-   "is_test": true,
-   "tests": [
-    "OnboardingPageContent",
-    "shows loading spinner while fetching",
-    "shows empty state when no onboarding data",
-    "shows empty state description",
-    "renders colaborador name from onboarding data",
-    "renders Progresso do Onboarding text",
-    "renders Tarefas Críticas section",
-    "renders task titles from onboarding",
-    "does not render a welcome-email button without a backend to send it",
-    "shows no-tasks message when tarefas array is empty"
    ]
   },
   "src/components/__tests__/OrganogramaNode.test.tsx": {
@@ -261942,7 +262415,7 @@
   },
   "src/components/admissoes/AdmissoesDashboard.tsx": {
    "path": "src/components/admissoes/AdmissoesDashboard.tsx",
-   "lines": 1581,
+   "lines": 1582,
    "exports": [
     "type AbaAdmissoes",
     "function AdmissoesDashboard"
@@ -262337,6 +262810,57 @@
     "`text-primary-foreground` (240 20% 6%, quase preto) — MESMA"
    ]
   },
+  "src/components/admissoes/GestaoKits.tsx": {
+   "path": "src/components/admissoes/GestaoKits.tsx",
+   "lines": 611,
+   "exports": [
+    "function GestaoKits"
+   ],
+   "errors": [
+    "\n            className="
+   ],
+   "params": [
+    {
+     "name": "MAX_STAGGER_INDEX",
+     "value": "5"
+    },
+    {
+     "name": "CARTOES_ESQUELETO",
+     "value": "3"
+    },
+    {
+     "name": "TODOS_DEPARTAMENTOS",
+     "value": "'todos'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "ativos",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "inativos",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "busca/filtro/ordenação e um resumo com contagens reais — nenhuma regra de",
+    "negócio nova, nenhuma navegação falsa e NENHUM dado inventado.",
+    "* LIMITE HONESTO (sem tocar em backend/banco): o registro real",
+    "(`public.onboarding_kits`) tem apenas `nome`, `itens`, `ativo` e `created_at`.",
+    "O serviço LANÇA em falha de query/permissão justamente para `isError` chegar",
+    "dos `itens`. É determinístico (mesmo kit → mesmo ícone E mesma cor), usa apenas",
+    "usando apenas dados reais (nome do kit + departamentos reais da empresa).",
+    "inferido pelo nome (mesma regra do filtro) ou, na falta dele, a data real de",
+    "Subtítulo: SOMENTE dado real (departamento inferido pelo nome ou data de"
+   ],
+   "percents": [
+    "* filete a 25%. Escolhidos por serem DISTINTOS tanto no tema claro quanto no escuro",
+    "* pelo resto da área. Convenção idêntica à dos chips: tint a 15% + tinta cheia +"
+   ]
+  },
   "src/components/admissoes/KanbanCard.tsx": {
    "path": "src/components/admissoes/KanbanCard.tsx",
    "lines": 279,
@@ -262375,6 +262899,24 @@
     "* `kanban-coluna-concluida` depois que as keyframes terminam (altura 100% estável e"
    ]
   },
+  "src/components/admissoes/KitOnboardingDialog.tsx": {
+   "path": "src/components/admissoes/KitOnboardingDialog.tsx",
+   "lines": 214,
+   "exports": [
+    "function itensParaTexto",
+    "function textoParaItens",
+    "function KitOnboardingDialog"
+   ],
+   "params": [
+    {
+     "name": "BLOCOS_CASCATA",
+     "value": "3"
+    }
+   ],
+   "rule_comments": [
+    "o CRUD mínimo sobre a tabela EXISTENTE (nenhuma tabela nova):"
+   ]
+  },
   "src/components/admissoes/NovaAdmissaoDialog.tsx": {
    "path": "src/components/admissoes/NovaAdmissaoDialog.tsx",
    "lines": 370,
@@ -262407,6 +262949,20 @@
    ],
    "rule_comments": [
     "(mesmo service/regra da criação — nada de um segundo caminho de escrita)."
+   ]
+  },
+  "src/components/admissoes/OnboardingCard.tsx": {
+   "path": "src/components/admissoes/OnboardingCard.tsx",
+   "lines": 427,
+   "exports": [
+    "interface OnboardingAcoes",
+    "function OnboardingCard"
+   ],
+   "rule_comments": [
+    "tarefa como legenda e o prazo + responsável numa faixa de",
+    "números via `onboardingDerivacoes.ts` — nenhuma regra de negócio é duplicada.",
+    "prazo da próxima tarefa, contadores). Nenhum texto é inventado.",
+    "METADADOS LATERAIS — prazo e responsável desceram para uma linha"
    ]
   },
   "src/components/admissoes/OnboardingDashboard.tsx": {
@@ -262446,20 +263002,17 @@
     "transition={{ delay: i * 0.05 }}"
    ]
   },
-  "src/components/admissoes/OnboardingPageContent.tsx": {
-   "path": "src/components/admissoes/OnboardingPageContent.tsx",
-   "lines": 163,
+  "src/components/admissoes/OnboardingDetalheDialog.tsx": {
+   "path": "src/components/admissoes/OnboardingDetalheDialog.tsx",
+   "lines": 282,
    "exports": [
-    "function OnboardingPageContent"
+    "interface OnboardingDetalheDialogProps",
+    "function OnboardingDetalheDialog"
    ],
-   "tables": [
+   "params": [
     {
-     "table": "admissoes",
-     "op": "select"
-    },
-    {
-     "table": "tarefas_onboarding",
-     "op": "ref"
+     "name": "BLOCOS_CASCATA",
+     "value": "3"
     }
    ]
   },
@@ -262724,6 +263277,32 @@
     "`--chart-2` = ciano/teal (pedido da referência para \"Validação\").",
     "Validação, Exame, Contrato), depois as demais do fluxo real e os dois estados",
     "* Coluna de uma etapa — `undefined` para etapa fora do board (não deve ocorrer). */"
+   ]
+  },
+  "src/components/admissoes/onboardingComum.ts": {
+   "path": "src/components/admissoes/onboardingComum.ts",
+   "lines": 69,
+   "exports": [
+    "const MARCOS_ONBOARDING",
+    "const PALETA_AVATAR",
+    "function corAvatar",
+    "const TOM_PRAZO",
+    "const TOM_PRAZO_VEU"
+   ],
+   "enums": [
+    {
+     "name": "MARCOS_ONBOARDING",
+     "values": "'Início', 'Parcial', 'Avançado', 'Completo'"
+    }
+   ],
+   "rule_comments": [
+    "(texto de marco, classe de cor, tint de prazo). A matemática fica em",
+    "reordena não deve repintar os avatares).",
+    "* Tinta do rótulo de prazo por tom (`TomPrazo`). */",
+    "* Fundo do selo de prazo por tom (véu translúcido curto). */"
+   ],
+   "percents": [
+    "* vibrante, no mesmo padrão dos chips da área (tint a 15% + tinta cheia)."
    ]
   },
   "src/components/admissoes/onboardingDerivacoes.ts": {
@@ -276690,6 +277269,37 @@
     "useImportacaoColaboradores"
    ]
   },
+  "src/hooks/useJornadaOnboarding.ts": {
+   "path": "src/hooks/useJornadaOnboarding.ts",
+   "lines": 75,
+   "exports": [
+    "const CHAVE_JORNADAS",
+    "const CHAVE_KITS",
+    "function useJornadas",
+    "function useConcluirTarefa",
+    "function useKits",
+    "function useCriarKit",
+    "function useAtualizarKit"
+   ],
+   "enums": [
+    {
+     "name": "CHAVE_JORNADAS",
+     "values": "'onboarding-list'"
+    },
+    {
+     "name": "CHAVE_KITS",
+     "values": "'onboarding-kits'"
+    }
+   ],
+   "doc": "HOOKS DO DOMÍNIO CANÔNICO DE ONBOARDING (Jornada). A página da Jornada NÃO fala mais com o Supabase direto: consome estas consultas/mutations, que delegam ao `onboardingJornadaService`. As CHAVES de cache mantêm o MESMO prefixo de antes (`['onboarding-list']`, `['onboarding-kits']`) e ganham o `empr …",
+   "hooks": [
+    "useJornadas",
+    "useConcluirTarefa",
+    "useKits",
+    "useCriarKit",
+    "useAtualizarKit"
+   ]
+  },
   "src/hooks/useLocaisTrabalho.ts": {
    "path": "src/hooks/useLocaisTrabalho.ts",
    "lines": 29,
@@ -282514,7 +283124,7 @@
   },
   "src/pages/AdmissoesPage.tsx": {
    "path": "src/pages/AdmissoesPage.tsx",
-   "lines": 255,
+   "lines": 247,
    "exports": [
     "function AdmissoesPage"
    ],
@@ -285487,22 +286097,51 @@
   },
   "src/pages/OnboardingPage.tsx": {
    "path": "src/pages/OnboardingPage.tsx",
-   "lines": 222,
+   "lines": 1079,
    "exports": [
     "function OnboardingPage"
    ],
-   "tables": [
+   "navigates": [
+    "/admissoes"
+   ],
+   "errors": [
+    "Não foi possível atualizar o perfil de kit.",
+    "Não foi possível concluir a tarefa.",
+    "Não foi possível criar o perfil de kit.",
+    "Selecione uma empresa antes de salvar o perfil de kit."
+   ],
+   "params": [
     {
-     "table": "admissoes",
-     "op": "select"
+     "name": "MAX_STAGGER_INDEX",
+     "value": "5"
     },
     {
-     "table": "tarefas_onboarding",
-     "op": "ref"
+     "name": "ITENS_POR_PAGINA",
+     "value": "12"
+    },
+    {
+     "name": "VALOR_TODOS",
+     "value": "'__todos__'"
+    }
+   ],
+   "rule_comments": [
+    "em `profiles.nome`. A régua de negócio (progresso, prazo, risco, situação,",
+    "* Chips rápidos da aba \"Concluídos\" — prazo de fechamento e recência. */",
+    "* Estes overrides neutralizam o corte SOMENTE nos selects desta página",
+    "— e os de concluídos leem prazo de fechamento e recência da última conclusão.",
+    "apenas deixa de aceitar operação.",
+    "Chip rápido (SITUAÇÃO em Andamento / recência-prazo em Concluídos): é o",
+    "sem os inativos o filtro \"Somente inativos\" ficaria vazio e um kit"
+   ],
+   "calc_fns": [
+    {
+     "name": "totalDoChip",
+     "params": "valor: ChipAtivo | ChipConcluido",
+     "body": "baseFiltrada.filter((l) => combinaChip(l, valor)).length;"
     }
    ],
    "percents": [
-    "100%"
+    "* CONCLUÍDO PARA AS ABAS = 100% E NÃO CANCELADA — a MESMA régua que"
    ]
   },
   "src/pages/OrganogramaPage.tsx": {
@@ -287437,6 +288076,111 @@
     "mostra quantas guias foram geradas",
     "avisa quando o DARF foi só calculado e não salvo (nao_persistidas)",
     "não anuncia sucesso quando tudo já existia: informa as duplicatas"
+   ]
+  },
+  "src/pages/__tests__/OnboardingJornada.test.tsx": {
+   "path": "src/pages/__tests__/OnboardingJornada.test.tsx",
+   "lines": 626,
+   "is_test": true,
+   "params": [
+    {
+     "name": "DIA",
+     "value": "24"
+    }
+   ],
+   "rule_comments": [
+    "Tabs com o mínimo do contrato do Radix: só a aba ATIVA renderiza o conteúdo e",
+    "Nenhuma regra de corte nos textos do bloco + quebra de linha liberada.",
+    "Metadados (prazo + responsável) não espremem o texto: linha própria com wrap.",
+    "── CASO-LIMITE 16: erro ao buscar kits ≠ \"nenhum kit\" ────────────────────"
+   ],
+   "doc": "REGRESSÃO DA CONSOLIDAÇÃO — Jornada de Onboarding (`/onboarding`). A aba \"Onboarding\" de Admissões foi REMOVIDA e esta é a única superfície de onboarding. O arquivo ABSORVE os testes que existiam para `OnboardingPageContent.test.tsx` (o card, a régua, o detalhe, o loading e os estados vazios continu …",
+   "temporal": [
+    "const DIA = 24 * 60 * 60 * 1000;"
+   ],
+   "tests": [
+    "Jornada de Onboarding — card e estado (cobertura herdada)",
+    "shows loading spinner while fetching",
+    "shows empty state when no onboarding data",
+    "renders the collaborator header (name + cargo • departamento + % progress)",
+    "renders the milestone ruler labels",
+    "renders the next action from the first pending task",
+    "mostra a DESCRIÇÃO (texto auxiliar) da próxima ação, além do título",
+    "renders the compact status counters",
+    "does NOT render the always-open checklist on the card",
+    "opens the detail when ",
+    "mantém a timeline contida: trilho entre o 1º e o último ponto e preenchimento sem vazar",
+    "empilha a linha ATRÁS dos pontos (pontos sempre acima do traço)",
+    "mantém a micro barra de progresso no canto (largura curta, ao lado da porcentagem)",
+    "NÃO corta a próxima ação: título e descrição longos aparecem por INTEIRO",
+    "Jornada de Onboarding — consolidação (fonte única do onboarding)",
+    "as duas consultas levam o id da empresa atual na chave de cache",
+    "os totais do resumo vivem de forma contextual nos tabs (bloco isolado removido)",
+    "renderiza os chips rápidos da aba Em Andamento com a contagem real",
+    "o chip ",
+    "a busca filtra por nome/cargo/departamento/responsável e ",
+    "a busca sem resultado mostra o estado vazio de filtro (não o de jornada vazia)",
+    "a aba Concluídos mostra só as jornadas 100% integradas",
+    "a grade de kits cai no estado vazio quando não há perfil cadastrado (nada de kit fictício)",
+    "erro de leitura dos kits mostra estado de ERRO explícito (não ",
+    "editar um perfil abre o formulário já com o kit carregado",
+    "o deep link ?colaborador=<id> foca apenas o colaborador indicado",
+    "mantém os filtros operacionais na caixa de busca (busca, departamento, responsável, etapa)"
+   ]
+  },
+  "src/pages/__tests__/OnboardingParidade.test.tsx": {
+   "path": "src/pages/__tests__/OnboardingParidade.test.tsx",
+   "lines": 483,
+   "is_test": true,
+   "rule_comments": [
+    "* TESTES DE PARIDADE — regra ANTIGA (HEAD) × regra NOVA (domínio canônico).",
+    "aqui como `antigo*()` — SOMENTE como oráculo de comparação. Nenhuma",
+    "ação passou a ser determinística por prazo — FASE 4), o teste documenta a",
+    "EM DIA: 1 de 2 concluídas (50%), próxima ação com prazo futuro.",
+    "SEM TAREFAS: caso-limite — 0% mas NÃO concluído.",
+    "O caso-limite (sem tarefas) NÃO é concluído em nenhuma das duas réguas.",
+    "Dora concluiu tudo dentro do prazo (sem created_at → prazo não calculável).",
+    "ANTIGO: pegava a PRIMEIRA do array (\"Prazo longo\").",
+    "NOVO: determinístico pelo prazo (\"Prazo curto\").",
+    "prazo (empate) → created_at → id",
+    "A \"próxima ação\" é a MAIS atrasada (prazo mais próximo) — não a do array.",
+    "Pendência MUITO vencida: sem a regra, entraria como \"atrasado\"/risco.",
+    "sem prazo calculável não há atraso"
+   ],
+   "doc": "TESTES DE PARIDADE — regra ANTIGA (HEAD) × regra NOVA (domínio canônico). Como o código antigo foi REMOVIDO (`OnboardingPageContent.tsx`), as fórmulas antigas foram recuperadas com `git show HEAD:<arquivo>` e estão reescritas aqui como `antigo*()` — SOMENTE como oráculo de comparação. Nenhuma arquit …",
+   "tests": [
+    "PARIDADE — progresso, conclusão e contadores (mesma fixture)",
+    "percentual: a regra nova é idêntica à antiga em TODOS os registros",
+    "contadores do topo batem com o cálculo antigo da aba de Admissões",
+    "a divisão das abas (em andamento) bate com a régua antiga da Jornada",
+    "tarefas concluídas/pendentes e o total batem registro a registro",
+    "o MARCO atual acompanha o percentual (mesma régua de 4 marcos)",
+    "PARIDADE — risco, atraso e situação",
+    "o conjunto ",
+    "classifica cada situação da fixture (atrasado / em risco / em dia / concluído / sem ação)",
+    "dias de atraso refletem o vencimento mais antigo (0 quando nada venceu)",
+    "o card e a tela leem a MESMA função de situação",
+    "PARIDADE — próxima ação (mudança INTENCIONAL documentada)",
+    "a ordem do array NÃO decide mais: vale o prazo mais próximo",
+    "quando o array já vem ordenado, antigo e novo coincidem",
+    "é um contrato TOTAL: embaralhar a entrada nunca muda a saída",
+    "tarefa sem ",
+    "PARIDADE — ordenações da tela (FASE 15)",
+    "progresso e nome ordenam de forma estável e determinística",
+    "nenhuma ordenação perde ou duplica registros",
+    "CASOS-LIMITE (PENDÊNCIA 4)",
+    "VÁRIAS tarefas atrasadas: o atraso reportado é o da pendência MAIS antiga",
+    "RESPONSÁVEL nulo e INEXISTENTE caem na cadeia de fallback (nunca inventa nome)",
+    "RESPONSÁVEL real: ",
+    "CASOS-LIMITE — cancelamento, registro incompleto e reabertura",
+    "ADMISSÃO CANCELADA: regra explícita — não conta risco, não é concluída, continua listada",
+    "REGISTRO INCOMPLETO não quebra nem inventa dados",
+    "TAREFA REABERTA (concluída → pendente) volta a ser a próxima ação e derruba o 100%",
+    "DESLIGAMENTO não é inferível pela jornada: o cálculo não muda e nada é removido",
+    "HISTÓRICO — eventos legíveis da jornada (PENDÊNCIA 3)",
+    "emite ",
+    "jornada em aberto NÃO emite evento de conclusão",
+    "sem registro (fallback vazio) não inventa evento"
    ]
   },
   "src/pages/__tests__/PensoesPage.test.tsx": {
@@ -292434,7 +293178,7 @@
   },
   "src/services/onboardingJornadaService.ts": {
    "path": "src/services/onboardingJornadaService.ts",
-   "lines": 450,
+   "lines": 467,
    "exports": [
     "interface KitOnboarding",
     "interface KitOnboardingInput",
@@ -292463,7 +293207,7 @@
     },
     {
      "table": "tarefas_onboarding",
-     "op": "update"
+     "op": "ref"
     },
     {
      "table": "onboarding_kits",
@@ -292503,16 +293247,15 @@
      "nome",
      "user_id"
     ],
-    "tarefas_onboarding": [
-     "admissao_id",
-     "concluida",
-     "concluida_em",
+    "admissoes": [
+     "cpf",
      "created_at",
+     "empresa_id",
      "id",
-     "prazo_dias",
-     "titulo"
+     "nome"
     ],
     "onboarding_kits": [
+     "empresa_id",
      "id"
     ],
     "colaboradores": [
@@ -292521,12 +293264,14 @@
      "id",
      "metadata"
     ],
-    "admissoes": [
-     "cpf",
+    "tarefas_onboarding": [
+     "admissao_id",
+     "concluida",
+     "concluida_em",
      "created_at",
-     "empresa_id",
      "id",
-     "nome"
+     "prazo_dias",
+     "titulo"
     ]
    },
    "errors": [
@@ -313313,10 +314058,35 @@
   }
  },
  "git": {
-  "sha": "fe455b97124d979895d4dae24756f88cb815e0ab",
+  "sha": "576c7f4820b95d818ebf7e0399a0d9d6cbe08344",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "576c7f4",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "feat(onboarding): resgata a Jornada de Onboarding e a Gestão de Kits da branch muri (#609)",
+    "files": [
+     "inventario/estado/rotas.json",
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/KitOnboardingDialog.test.tsx",
+     "src/components/__tests__/OnboardingPageContent.test.tsx",
+     "src/components/admissoes/AdmissoesDashboard.tsx",
+     "src/components/admissoes/GestaoKits.tsx",
+     "src/components/admissoes/KitOnboardingDialog.tsx",
+     "src/components/admissoes/OnboardingCard.tsx",
+     "src/components/admissoes/OnboardingDetalheDialog.tsx",
+     "src/components/admissoes/OnboardingPageContent.tsx",
+     "src/components/admissoes/onboardingComum.ts",
+     "src/hooks/useJornadaOnboarding.ts",
+     "src/pages/AdmissoesPage.tsx",
+     "src/pages/OnboardingPage.tsx",
+     "src/pages/__tests__/OnboardingJornada.test.tsx",
+     "src/pages/__tests__/OnboardingParidade.test.tsx",
+     "src/services/onboardingJornadaService.ts"
+    ]
+   },
    {
     "sha": "fe455b9",
     "date": "2026-11-16",
@@ -313903,22 +314673,12 @@
      "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
      "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.verify.sql"
     ]
-   },
-   {
-    "sha": "6450ca8",
-    "date": "2026-11-15",
-    "author": "adm01-debug",
-    "subject": "fix(ninebox): policy de leitura volta a valer somente para authenticated (#574)",
-    "files": [
-     "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.sql",
-     "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.verify.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "inventario/estado/rotas.json",
-    4
+    5
    ],
    [
     "package-lock.json",
@@ -313929,6 +314689,10 @@
     4
    ],
    [
+    "scripts/.bundle-budget.json",
+    3
+   ],
+   [
     "src/pages/ColaboradorDetalhesPage.tsx",
     3
    ],
@@ -313937,7 +314701,23 @@
     3
    ],
    [
-    "scripts/.bundle-budget.json",
+    "src/components/admissoes/AdmissoesDashboard.tsx",
+    2
+   ],
+   [
+    "src/components/admissoes/OnboardingPageContent.tsx",
+    2
+   ],
+   [
+    "src/pages/AdmissoesPage.tsx",
+    2
+   ],
+   [
+    "src/pages/OnboardingPage.tsx",
+    2
+   ],
+   [
+    "src/services/onboardingJornadaService.ts",
     2
    ],
    [
@@ -313974,26 +314754,6 @@
    ],
    [
     "docs/ninebox-aprovacao-gestor-implantacao.md",
-    2
-   ],
-   [
-    "docs/ninebox-homologacao-aprovacao-real.md",
-    2
-   ],
-   [
-    "docs/ninebox-auditoria-banco.sql",
-    2
-   ],
-   [
-    "docs/ninebox-testes-seguranca.sql",
-    2
-   ],
-   [
-    "scripts/.types-drift-baseline.json",
-    2
-   ],
-   [
-    "scripts/canonical-invariants.sql",
     2
    ]
   ]

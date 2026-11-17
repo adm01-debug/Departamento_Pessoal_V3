@@ -350,7 +350,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 241,
+   "usado_por": 239,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -809,7 +809,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 240,
+   "usado_por": 242,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
@@ -1580,9 +1580,8 @@
    "zod_schemas": 1,
    "flags": [],
    "papeis": [],
-   "usado_por": 117,
+   "usado_por": 116,
    "usado_por_modulos": [
-    "components/admissoes",
     "components/dashboard",
     "components/ferias",
     "components/folha",
@@ -3395,7 +3394,7 @@
     "resolverResponsaveis"
    ],
    "export_default": null,
-   "linhas": 450,
+   "linhas": 467,
    "tabelas": [
     "admissoes",
     "colaboradores",
@@ -3412,11 +3411,13 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 2,
+   "usado_por": 6,
    "usado_por_modulos": [
-    "hooks"
+    "components/admissoes",
+    "hooks",
+    "pages"
    ],
-   "coberto_por_testes": 0,
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {
@@ -4946,8 +4947,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 50,
+   "usado_por": 51,
    "usado_por_modulos": [
+    "components/admissoes",
     "components/colaborador-detalhes",
     "components/descontos",
     "components/folha",

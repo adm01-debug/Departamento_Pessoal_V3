@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 686,
+ "total": 688,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 647
+  "unit": 649
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 563
+   "arquivos": 565
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -2083,6 +2083,15 @@
    "casos": 7
   },
   {
+   "arquivo": "src/components/__tests__/KitOnboardingDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "src/components/admissoes/KitOnboardingDialog.tsx"
+   ],
+   "casos": 6
+  },
+  {
    "arquivo": "src/components/__tests__/layout.test.tsx",
    "tipo": "unit",
    "linhas": 114,
@@ -2522,15 +2531,6 @@
     "src/components/admissoes/OnboardingDashboard.tsx"
    ],
    "casos": 8
-  },
-  {
-   "arquivo": "src/components/__tests__/OnboardingPageContent.test.tsx",
-   "tipo": "unit",
-   "linhas": 133,
-   "testa": [
-    "src/components/admissoes/OnboardingPageContent.tsx"
-   ],
-   "casos": 9
   },
   {
    "arquivo": "src/components/__tests__/OrganogramaNode.test.tsx",
@@ -4579,6 +4579,28 @@
    "casos": 3
   },
   {
+   "arquivo": "src/pages/__tests__/OnboardingJornada.test.tsx",
+   "tipo": "unit",
+   "linhas": 626,
+   "testa": [
+    "src/components/admissoes/onboardingComum.ts",
+    "src/pages/OnboardingPage.tsx",
+    "src/services/onboardingJornadaService.ts"
+   ],
+   "casos": 27
+  },
+  {
+   "arquivo": "src/pages/__tests__/OnboardingParidade.test.tsx",
+   "tipo": "unit",
+   "linhas": 483,
+   "testa": [
+    "src/components/admissoes/admissoesDerivacoes.ts",
+    "src/components/admissoes/onboardingDerivacoes.ts",
+    "src/services/onboardingJornadaService.ts"
+   ],
+   "casos": 29
+  },
+  {
    "arquivo": "src/pages/__tests__/PensoesPage.test.tsx",
    "tipo": "unit",
    "linhas": 159,
@@ -6352,9 +6374,12 @@
   "src/components/admissao/SignaturePad.tsx": 1,
   "src/components/admissoes/AdmissoesKanban.tsx": 1,
   "src/components/admissoes/DetalhesAdmissaoDialog.tsx": 1,
+  "src/components/admissoes/KitOnboardingDialog.tsx": 1,
   "src/components/admissoes/NovaAdmissaoDialog.tsx": 1,
   "src/components/admissoes/OnboardingDashboard.tsx": 1,
-  "src/components/admissoes/OnboardingPageContent.tsx": 1,
+  "src/components/admissoes/admissoesDerivacoes.ts": 1,
+  "src/components/admissoes/onboardingComum.ts": 1,
+  "src/components/admissoes/onboardingDerivacoes.ts": 1,
   "src/components/afastamentos/AfastamentoDocumentManager.tsx": 1,
   "src/components/afastamentos/AfastamentoForm.tsx": 1,
   "src/components/afastamentos/AfastamentoStats.tsx": 1,
@@ -6775,6 +6800,7 @@
   "src/pages/NineBoxPreviewPage.tsx": 1,
   "src/pages/NotFoundPage.tsx": 1,
   "src/pages/ObrigacoesFiscaisPage.tsx": 1,
+  "src/pages/OnboardingPage.tsx": 1,
   "src/pages/PensoesPage.tsx": 1,
   "src/pages/PlanosSaudePage.tsx": 1,
   "src/pages/PremiacoesPage.tsx": 1,
@@ -6842,6 +6868,7 @@
   "src/services/loggerService.ts": 2,
   "src/services/medidasDisciplinaresService.ts": 1,
   "src/services/notificacoesService.ts": 1,
+  "src/services/onboardingJornadaService.ts": 2,
   "src/services/pcsService.ts": 1,
   "src/services/pesquisaService.ts": 1,
   "src/services/piiAccessLogService.ts": 1,
@@ -7024,7 +7051,6 @@
    "src/pages/MedidasDisciplinaresPage.tsx",
    "src/pages/MovimentacoesPage.tsx",
    "src/pages/NotificacoesPage.tsx",
-   "src/pages/OnboardingPage.tsx",
    "src/pages/OrganogramaPage.tsx",
    "src/pages/PassivoTrabalhistaPage.tsx",
    "src/pages/PerfilPage.tsx",
@@ -7059,6 +7085,7 @@
    "src/components/ui/use-toast.ts",
    "src/hooks/useDesenvolvimentoColaborador.ts",
    "src/hooks/useHistoricoColaborador.ts",
+   "src/hooks/useJornadaOnboarding.ts",
    "src/hooks/useProximosEventos.ts",
    "src/hooks/useVinculos.ts",
    "src/i18n/useTranslation.ts",
@@ -7111,7 +7138,6 @@
   ],
   "servicos": [
    "src/services/jornadaService.ts",
-   "src/services/onboardingJornadaService.ts",
    "src/services/tabelas/index.ts",
    "src/services/tabelasComplementaresService.ts",
    "src/services/timelineService.ts",

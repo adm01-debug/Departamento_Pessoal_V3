@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 575,
- "orfaos": 26,
+ "total": 578,
+ "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
    "src/components/dashboard/analytics/widgets.tsx",
@@ -271,7 +271,7 @@
     "AdmissoesDashboard"
    ],
    "export_default": null,
-   "linhas": 1581,
+   "linhas": 1582,
    "dominio": "components/admissoes",
    "hooks_locais": [],
    "tabelas": [],
@@ -354,6 +354,20 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/admissoes/GestaoKits.tsx",
+   "exports": [
+    "GestaoKits"
+   ],
+   "export_default": null,
+   "linhas": 611,
+   "dominio": "components/admissoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/admissoes/KanbanCard.tsx",
    "exports": [
     "DraggableCard",
@@ -388,6 +402,20 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/admissoes/KitOnboardingDialog.tsx",
+   "exports": [
+    "KitOnboardingDialog"
+   ],
+   "export_default": null,
+   "linhas": 214,
+   "dominio": "components/admissoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/admissoes/NovaAdmissaoDialog.tsx",
    "exports": [
     "NovaAdmissaoDialog"
@@ -401,6 +429,21 @@
    "tabelas": [],
    "edges": [],
    "usado_por": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admissoes/OnboardingCard.tsx",
+   "exports": [
+    "OnboardingAcoes",
+    "OnboardingCard"
+   ],
+   "export_default": null,
+   "linhas": 427,
+   "dominio": "components/admissoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -418,18 +461,16 @@
    "orfao": true
   },
   {
-   "arquivo": "src/components/admissoes/OnboardingPageContent.tsx",
+   "arquivo": "src/components/admissoes/OnboardingDetalheDialog.tsx",
    "exports": [
-    "OnboardingPageContent"
+    "OnboardingDetalheDialog",
+    "OnboardingDetalheDialogProps"
    ],
-   "export_default": "OnboardingPageContent",
-   "linhas": 163,
+   "export_default": null,
+   "linhas": 282,
    "dominio": "components/admissoes",
    "hooks_locais": [],
-   "tabelas": [
-    "admissoes",
-    "tarefas_onboarding"
-   ],
+   "tabelas": [],
    "edges": [],
    "usado_por": 1,
    "orfao": false
@@ -2465,7 +2506,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 23,
+   "usado_por": 25,
    "orfao": false
   },
   {
@@ -6333,7 +6374,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 9,
+   "usado_por": 10,
    "orfao": false
   },
   {
@@ -6364,7 +6405,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 213,
+   "usado_por": 212,
    "orfao": false
   },
   {
@@ -6379,7 +6420,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 330,
+   "usado_por": 333,
    "orfao": false
   },
   {
@@ -6414,7 +6455,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 276,
+   "usado_por": 277,
    "orfao": false
   },
   {
@@ -6668,7 +6709,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 27,
+   "usado_por": 28,
    "orfao": false
   },
   {
@@ -6716,8 +6757,8 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 0,
-   "orfao": true
+   "usado_por": 1,
+   "orfao": false
   },
   {
    "arquivo": "src/components/ui/flow-hover-button.tsx",
@@ -6782,7 +6823,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 156,
+   "usado_por": 157,
    "orfao": false
   },
   {
@@ -6893,7 +6934,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 19,
+   "usado_por": 17,
    "orfao": false
   },
   {
@@ -6959,7 +7000,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 116,
+   "usado_por": 118,
    "orfao": false
   },
   {
@@ -7063,7 +7104,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 22,
+   "usado_por": 23,
    "orfao": false
   },
   {
@@ -7091,7 +7132,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -7123,7 +7164,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 110,
+   "usado_por": 111,
    "orfao": false
   },
   {
@@ -7167,7 +7208,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 14,
+   "usado_por": 15,
    "orfao": false
   },
   {
@@ -7233,7 +7274,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 49,
+   "usado_por": 50,
    "orfao": false
   },
   {
@@ -7691,7 +7732,7 @@
     "AdmissoesPage"
    ],
    "export_default": "AdmissoesPage",
-   "linhas": 255,
+   "linhas": 247,
    "dominio": "pages",
    "hooks_locais": [
     "useAdmissoes",
@@ -8891,13 +8932,17 @@
     "OnboardingPage"
    ],
    "export_default": "OnboardingPage",
-   "linhas": 222,
+   "linhas": 1079,
    "dominio": "pages",
-   "hooks_locais": [],
-   "tabelas": [
-    "admissoes",
-    "tarefas_onboarding"
+   "hooks_locais": [
+    "useAtualizarKit",
+    "useConcluirTarefa",
+    "useCriarKit",
+    "useEmpresas",
+    "useJornadas",
+    "useKits"
    ],
+   "tabelas": [],
    "edges": [],
    "usado_por": 2,
    "orfao": false

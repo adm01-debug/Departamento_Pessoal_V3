@@ -312,13 +312,13 @@
   },
   {
    "modulo": "components/admissoes",
-   "arquivos": 14,
+   "arquivos": 18,
    "testes": 0,
-   "linhas": 8064,
+   "linhas": 9505,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 10,
+   "componentes": 13,
    "hooks_locais": [
     "useAdmissaoWorkflow",
     "useAdmissoes",
@@ -422,6 +422,7 @@
     "notificacoes",
     "notificacoes_admissao",
     "onboarding_colaborador",
+    "onboarding_kits",
     "onboarding_tarefas",
     "onboarding_template_tarefas",
     "onboarding_templates",
@@ -435,6 +436,7 @@
     "plano_contas",
     "ponto_auditoria",
     "pontos_abertos",
+    "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
     "recargas_vale",
@@ -536,18 +538,19 @@
    ],
    "flags": [],
    "papeis": [
-    "progressbar"
+    "alert",
+    "progressbar",
+    "status"
    ],
    "diretos": {
     "edges": [],
     "tabelas": [
-     "admissao_tokens",
-     "admissoes",
-     "tarefas_onboarding"
+     "admissao_tokens"
     ],
     "rpcs": []
    },
    "importado_por_outros_modulos": [
+    "hooks",
     "pages",
     "services"
    ],
@@ -559,7 +562,6 @@
     "hooks",
     "integrations/supabase",
     "lib",
-    "schemas",
     "services",
     "types",
     "utils"
@@ -6213,9 +6215,9 @@
   },
   {
    "modulo": "hooks",
-   "arquivos": 89,
+   "arquivos": 90,
    "testes": 0,
-   "linhas": 8495,
+   "linhas": 8570,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6236,6 +6238,7 @@
     "useAtualizarEpi",
     "useAtualizarFalta",
     "useAtualizarFeriasAprovacao",
+    "useAtualizarKit",
     "useAtualizarMedidaDisciplinar",
     "useAuth",
     "useBackGesture",
@@ -6255,6 +6258,7 @@
     "useColaboradorVinculo",
     "useColaboradores",
     "useCompetenciasColaborador",
+    "useConcluirTarefa",
     "useConfiguracoesIntervalo",
     "useConsentimentosColaborador",
     "useContasBancarias",
@@ -6279,6 +6283,7 @@
     "useCriarFeriasArquivo",
     "useCriarFeriasColetivas",
     "useCriarFormacao",
+    "useCriarKit",
     "useCriarMedidaDisciplinar",
     "useCriarRegistroSalarial",
     "useCriarWebhook",
@@ -6339,6 +6344,8 @@
     "useImportacaoColaboradores",
     "useIsMobile",
     "useJornadaHorarios",
+    "useJornadas",
+    "useKits",
     "useLocaisTrabalho",
     "useMediaQuery",
     "useMedidasDisciplinares",
@@ -6647,6 +6654,11 @@
     "useHorasExtras",
     "useIdempotencyKey",
     "useImportacaoColaboradores",
+    "useAtualizarKit",
+    "useConcluirTarefa",
+    "useCriarKit",
+    "useJornadas",
+    "useKits",
     "useLocaisTrabalho",
     "useLocalStorage",
     "useBreakpoint",
@@ -7080,6 +7092,7 @@
     "pages"
    ],
    "depende_de_modulos": [
+    "components/admissoes",
     "components/avaliacao",
     "components/colaborador-detalhes",
     "components/ui",
@@ -7559,7 +7572,7 @@
    "modulo": "pages",
    "arquivos": 113,
    "testes": 0,
-   "linhas": 44762,
+   "linhas": 45611,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -7790,6 +7803,7 @@
     "useAtualizarEpi",
     "useAtualizarFalta",
     "useAtualizarFeriasAprovacao",
+    "useAtualizarKit",
     "useAtualizarMedidaDisciplinar",
     "useAuth",
     "useBackGesture",
@@ -7809,6 +7823,7 @@
     "useColaboradorVinculo",
     "useColaboradores",
     "useCompetenciasColaborador",
+    "useConcluirTarefa",
     "useConfiguracoesIntervalo",
     "useConfirmarPagamentoFerias",
     "useConsentimentosColaborador",
@@ -7834,6 +7849,7 @@
     "useCriarFeriasArquivo",
     "useCriarFeriasColetivas",
     "useCriarFormacao",
+    "useCriarKit",
     "useCriarMedidaDisciplinar",
     "useCriarRegistroSalarial",
     "useCriarWebhook",
@@ -7900,6 +7916,8 @@
     "useImportacaoColaboradores",
     "useIsMobile",
     "useJornadaHorarios",
+    "useJornadas",
+    "useKits",
     "useLocaisTrabalho",
     "useMediaQuery",
     "useMedidasDisciplinares",
@@ -8532,7 +8550,6 @@
      "sst_extintores_inspecoes",
      "sst_incidentes",
      "sst_regimento_documentos",
-     "tarefas_onboarding",
      "times",
      "times_brindes",
      "transferencias",
@@ -8654,7 +8671,7 @@
   {
    "modulo": "pages/__tests__",
    "arquivos": 0,
-   "testes": 18,
+   "testes": 20,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -8753,7 +8770,6 @@
     "rpcs": []
    },
    "importado_por_outros_modulos": [
-    "components/admissoes",
     "components/dashboard",
     "components/ferias",
     "components/folha",
@@ -8842,7 +8858,7 @@
    "modulo": "services",
    "arquivos": 75,
    "testes": 0,
-   "linhas": 13738,
+   "linhas": 13755,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],

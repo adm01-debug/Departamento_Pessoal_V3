@@ -1267,7 +1267,6 @@
     "saved_filters",
     "seguros_colaboradores",
     "solicitacoes_hora_extra",
-    "tarefas_onboarding",
     "treinamento_certificados",
     "treinamento_feedback",
     "treinamento_instancias",
@@ -1390,7 +1389,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 208
+   "arquivos_puxados": 207
   },
   {
    "protegida": true,
@@ -21248,10 +21247,13 @@
    "definida_em": "src/App.tsx",
    "redireciona": null,
    "hooks": [
+    "useAtualizarKit",
     "useAuth",
     "useBackGesture",
     "useCallback",
+    "useConcluirTarefa",
     "useContext",
+    "useCriarKit",
     "useDebounce",
     "useEffect",
     "useEmpresa",
@@ -21259,6 +21261,9 @@
     "useEmpresas",
     "useGrupo",
     "useGuidedTour",
+    "useInView",
+    "useJornadas",
+    "useKits",
     "useLocation",
     "useMemo",
     "useMutation",
@@ -21272,20 +21277,26 @@
     "useQueryClient",
     "useReducedMotion",
     "useRef",
+    "useSearchParams",
     "useState",
     "useSystemHealth",
     "useTheme",
     "useTranslation"
    ],
    "hooks_locais": [
+    "useAtualizarKit",
     "useAuth",
     "useBackGesture",
+    "useConcluirTarefa",
+    "useCriarKit",
     "useDebounce",
     "useEmpresa",
     "useEmpresaStore",
     "useEmpresas",
     "useGrupo",
     "useGuidedTour",
+    "useJornadas",
+    "useKits",
     "useNotificacoes",
     "useNotification",
     "useOnMount",
@@ -21301,7 +21312,9 @@
     "empresas",
     "ferias",
     "notificacoes",
+    "onboarding_kits",
     "periodos_aquisitivos",
+    "profiles",
     "tarefas_onboarding",
     "versao_banco"
    ],
@@ -21346,15 +21359,18 @@
    "flags": [],
    "papeis": [
     "admin",
+    "alert",
     "banner",
     "list",
     "listitem",
     "main",
+    "progressbar",
     "rh",
+    "status",
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 74
+   "arquivos_puxados": 99
   },
   {
    "protegida": true,

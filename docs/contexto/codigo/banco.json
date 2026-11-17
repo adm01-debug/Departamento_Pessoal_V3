@@ -3951,7 +3951,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 8,
+   "usada_no_front": 6,
    "usada_em_edges": [
     "enviar-email-admissao",
     "gerar-contrato-pdf"
@@ -56671,7 +56671,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 3,
+   "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,

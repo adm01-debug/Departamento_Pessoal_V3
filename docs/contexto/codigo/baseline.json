@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fe455b97124d979895d4dae24756f88cb815e0ab",
+  "commit": "576c7f4820b95d818ebf7e0399a0d9d6cbe08344",
   "branch": "main",
-  "data_commit": "2026-11-16T21:37:57-03:00",
+  "data_commit": "2026-11-16T22:49:35-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "576c7f4",
+    "data": "2026-11-16",
+    "assunto": "feat(onboarding): resgata a Jornada de Onboarding e a Gestão de Kits da branch muri (#609)"
+   },
    {
     "sha": "fe455b9",
     "data": "2026-11-16",
@@ -126,18 +131,13 @@
     "sha": "9d8ff76",
     "data": "2026-11-16",
     "assunto": "chore: resgata da branch `muri` as 3 migrations que rodam em produção e não existiam na main (#582)"
-   },
-   {
-    "sha": "284f005",
-    "data": "2026-11-16",
-    "assunto": "chore(docs): resgata da branch do #557 a prova de navegador que fechou o B23 (#584)"
    }
   ],
-  "arquivos_mudados_7d": 983,
+  "arquivos_mudados_7d": 992,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 309
+    "mudancas": 311
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -176,6 +176,10 @@
     "mudancas": 36
    },
    {
+    "pasta": "src/components/admissoes",
+    "mudancas": 31
+   },
+   {
     "pasta": "src/components/folha",
     "mudancas": 31
    },
@@ -184,22 +188,18 @@
     "mudancas": 28
    },
    {
-    "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 27
-   },
-   {
     "pasta": "src/components/ponto",
     "mudancas": 27
    },
    {
-    "pasta": "supabase/functions/external-db-bridge",
-    "mudancas": 27
+    "pasta": ".github/workflows/canonical-migrations.yml",
+    "mudancas": 26
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 27
+    "mudancas": 26
    },
    {
     "arquivo": "package.json",
@@ -210,11 +210,11 @@
     "mudancas": 19
    },
    {
-    "arquivo": "PENDENCIAS.md",
-    "mudancas": 13
+    "arquivo": "inventario/estado/rotas.json",
+    "mudancas": 14
    },
    {
-    "arquivo": "inventario/estado/rotas.json",
+    "arquivo": "PENDENCIAS.md",
     "mudancas": 13
    },
    {
@@ -226,12 +226,12 @@
     "mudancas": 10
    },
    {
-    "arquivo": "CLAUDE.md",
+    "arquivo": "docs/prod-readiness.md",
     "mudancas": 9
    },
    {
-    "arquivo": "docs/prod-readiness.md",
-    "mudancas": 9
+    "arquivo": "CLAUDE.md",
+    "mudancas": 8
    },
    {
     "arquivo": "deno.lock",
@@ -286,15 +286,15 @@
     "mudancas": 6
    },
    {
-    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
-    "mudancas": 6
-   },
-   {
     "arquivo": ".github/workflows/ci.yml",
     "mudancas": 5
    },
    {
     "arquivo": "RELATORIO_CI.md",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "e2e/authenticated/esocial.spec.ts",
     "mudancas": 5
    }
   ],
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3357,
-  "arquivos_codigo": 1891,
-  "linhas_codigo": 362968,
+  "arquivos_total": 3364,
+  "arquivos_codigo": 1898,
+  "linhas_codigo": 366432,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 94,
   "modulos": 81,
-  "componentes": 575,
-  "hooks": 113,
+  "componentes": 578,
+  "hooks": 114,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 686,
+  "testes": 688,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 831,
-   "linhas": 138915
+   "arquivos": 835,
+   "linhas": 140329
   },
   "src/constants": {
    "arquivos": 6,
@@ -651,8 +651,8 @@
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 189,
-   "linhas": 21467
+   "arquivos": 190,
+   "linhas": 21542
   },
   "src/i18n": {
    "arquivos": 2,
@@ -675,8 +675,8 @@
    "linhas": 3555
   },
   "src/pages": {
-   "arquivos": 131,
-   "linhas": 46838
+   "arquivos": 133,
+   "linhas": 48796
   },
   "src/providers": {
    "arquivos": 4,
@@ -688,7 +688,7 @@
   },
   "src/services": {
    "arquivos": 183,
-   "linhas": 38413
+   "linhas": 38430
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -770,7 +770,7 @@
   },
   {
    "arquivo": "src/components/admissoes/AdmissoesDashboard.tsx",
-   "linhas": 1581
+   "linhas": 1582
   },
   {
    "arquivo": "src/pages/AvaliacaoPage.tsx",
@@ -787,6 +787,10 @@
   {
    "arquivo": "src/services/cnabService.ts",
    "linhas": 1199
+  },
+  {
+   "arquivo": "src/pages/OnboardingPage.tsx",
+   "linhas": 1079
   },
   {
    "arquivo": "src/components/avaliacao/aprovacaoGestor.ts",
@@ -839,10 +843,6 @@
   {
    "arquivo": "src/pages/MovimentacoesPage.tsx",
    "linhas": 827
-  },
-  {
-   "arquivo": "src/components/workflows/WorkflowDesigner.tsx",
-   "linhas": 824
   }
  ],
  "qualidade": {
@@ -851,7 +851,7 @@
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 20,
-  "arquivos_acima_500_linhas": 97
+  "arquivos_acima_500_linhas": 99
  },
  "todos": [
   {
@@ -1127,7 +1127,6 @@
    "src/components/notifications/NotificationCenter.tsx",
    "src/components/ponto/PontoLeaderboard.tsx",
    "src/components/ui/data-table.tsx",
-   "src/components/ui/filter-chip.tsx",
    "src/components/ui/flow-hover-button.tsx",
    "src/components/ui/form.tsx",
    "src/components/ui/masked-input.tsx",

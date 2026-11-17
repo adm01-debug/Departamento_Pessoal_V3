@@ -341,6 +341,17 @@
    "src/types/db.ts",
    "src/utils/format.ts"
   ],
+  "src/components/admissoes/GestaoKits.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/lib/utils.ts",
+   "src/services/onboardingJornadaService.ts"
+  ],
   "src/components/admissoes/KanbanCard.tsx": [
    "src/components/admissoes/kanbanComum.ts",
    "src/components/ui/button.tsx",
@@ -358,6 +369,15 @@
    "src/components/ui/button.tsx",
    "src/lib/utils.ts"
   ],
+  "src/components/admissoes/KitOnboardingDialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/switch.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/services/onboardingJornadaService.ts"
+  ],
   "src/components/admissoes/NovaAdmissaoDialog.tsx": [
    "src/components/ui/button.tsx",
    "src/components/ui/cascade-motion.ts",
@@ -369,17 +389,27 @@
    "src/hooks/useAdmissoes.ts",
    "src/integrations/supabase/types.ts"
   ],
+  "src/components/admissoes/OnboardingCard.tsx": [
+   "src/components/admissoes/admissoesDerivacoes.ts",
+   "src/components/admissoes/onboardingComum.ts",
+   "src/components/admissoes/onboardingDerivacoes.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/lib/utils.ts",
+   "src/utils/dateLocal.ts"
+  ],
   "src/components/admissoes/OnboardingDashboard.tsx": [
    "src/components/ui/card.tsx"
   ],
-  "src/components/admissoes/OnboardingPageContent.tsx": [
-   "src/components/ui/badge.tsx",
+  "src/components/admissoes/OnboardingDetalheDialog.tsx": [
+   "src/components/admissoes/admissoesDerivacoes.ts",
+   "src/components/admissoes/onboardingComum.ts",
+   "src/components/admissoes/onboardingDerivacoes.ts",
    "src/components/ui/button.tsx",
-   "src/components/ui/card.tsx",
-   "src/components/ui/progress.tsx",
-   "src/integrations/supabase/client.ts",
-   "src/lib/utils.ts",
-   "src/schemas/validate.ts"
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/spinner.tsx",
+   "src/lib/utils.ts"
   ],
   "src/components/admissoes/admissoesDashboardModais.tsx": [
    "src/components/admissoes/admissoesComum.ts",
@@ -394,6 +424,9 @@
   ],
   "src/components/admissoes/kanbanComum.ts": [
    "src/utils/format.ts"
+  ],
+  "src/components/admissoes/onboardingComum.ts": [
+   "src/components/admissoes/onboardingDerivacoes.ts"
   ],
   "src/components/admissoes/onboardingDerivacoes.ts": [
    "src/components/admissoes/admissoesDerivacoes.ts",
@@ -4313,6 +4346,10 @@
    "src/utils/importacao/validators.ts",
    "src/utils/safeError.ts"
   ],
+  "src/hooks/useJornadaOnboarding.ts": [
+   "src/components/admissoes/onboardingDerivacoes.ts",
+   "src/services/onboardingJornadaService.ts"
+  ],
   "src/hooks/useLocaisTrabalho.ts": [
    "src/hooks/useEmpresas.ts",
    "src/hooks/useGenericCrud.ts",
@@ -4704,7 +4741,6 @@
    "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
    "src/components/admissoes/GestaoCandidatos.tsx",
    "src/components/admissoes/NovaAdmissaoDialog.tsx",
-   "src/components/admissoes/OnboardingPageContent.tsx",
    "src/components/layout/index.ts",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
@@ -5847,15 +5883,27 @@
   ],
   "src/pages/OnboardingPage.tsx": [
    "src/components/PageTitle.tsx",
+   "src/components/admissoes/GestaoKits.tsx",
+   "src/components/admissoes/KitOnboardingDialog.tsx",
+   "src/components/admissoes/OnboardingCard.tsx",
+   "src/components/admissoes/OnboardingDetalheDialog.tsx",
+   "src/components/admissoes/admissoesDerivacoes.ts",
+   "src/components/admissoes/onboardingComum.ts",
+   "src/components/admissoes/onboardingDerivacoes.ts",
+   "src/components/dashboard/MetricCard.tsx",
    "src/components/layout/index.ts",
-   "src/components/ui/badge.tsx",
+   "src/components/ui/app-pagination.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
-   "src/components/ui/progress.tsx",
+   "src/components/ui/filter-chip.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/sliding-indicator.tsx",
    "src/components/ui/tabs.tsx",
-   "src/integrations/supabase/client.ts",
+   "src/hooks/useEmpresas.ts",
+   "src/hooks/useJornadaOnboarding.ts",
    "src/lib/utils.ts",
-   "src/schemas/validate.ts"
+   "src/services/onboardingJornadaService.ts"
   ],
   "src/pages/OrganogramaPage.tsx": [
    "src/components/PageTitle.tsx",
@@ -6852,6 +6900,7 @@
   "src/services/onboardingJornadaService.ts": [
    "src/components/admissoes/onboardingDerivacoes.ts",
    "src/integrations/supabase/client.ts",
+   "src/schemas/validate.ts",
    "src/utils/dateLocal.ts"
   ],
   "src/services/pcsService.ts": [

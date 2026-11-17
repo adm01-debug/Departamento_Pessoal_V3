@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fe455b9712` · branch `main` · 2026-11-17 00:39 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `576c7f4820` · branch `main` · 2026-11-17 01:50 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1690,6 +1690,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `assinado` | compara, escreve | `src/components/contratos/ContratosVencendoPanel.tsx`<br>`src/components/portal/PortalDocumentosTab.tsx`<br>`src/hooks/useAssinaturas.ts`<br>`src/pages/ContratosGeradosPage.tsx` |
 | `status` | `ativa` | compara, escreve, filtra | `src/pages/PesquisasClimaPage.tsx`<br>`supabase/functions/gerar-ltcat-os/index.ts` |
 | `status` | `ativo` | compara, escreve, filtra | `src/components/dashboard/MorningBriefing.tsx`<br>`src/components/descontos/EmprestimosTable.tsx`<br>`src/components/descontos/FinancialSummaryCards.tsx`<br>`src/components/descontos/NewLoanDialog.tsx`<br>`src/components/desligamentos/NovoDesligamentoDialog.tsx`<br>… +54 |
+| `status` | `ativos` | compara | `src/components/admissoes/GestaoKits.tsx` |
 | `status` | `calculada` | compara, escreve | `src/services/folhaPagamentoService.ts`<br>`supabase/functions/calcular-folha/index.ts`<br>`supabase/functions/fechar-folha/index.ts` |
 | `status` | `calculado` | compara, escreve | `src/pages/PremiacoesPage.tsx`<br>`src/services/rescisaoService.ts` |
 | `status` | `cancelada` | compara, escreve | `src/components/colaborador-detalhes/FeriasResumoTab.tsx`<br>`src/components/ferias/CalendarioFerias.tsx`<br>`src/components/ferias/FeriasAuditTimeline.tsx`<br>`src/services/feriasService.ts`<br>`src/utils/regrasSolicitacaoFerias.ts` |
@@ -1726,8 +1727,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `error` | compara, escreve | `src/components/folha/FolhaESocialSync.tsx`<br>`src/pages/ContratacaoPage.tsx`<br>`supabase/functions/external-db-bridge/index.ts` |
 | `status` | `excellent` | escreve | `src/components/dashboard/WorkforceHealthScore.tsx` |
 | `status` | `excluido` | compara, escreve, filtra | `src/pages/PlanosSaudePage.tsx`<br>`src/services/calculoBeneficiosService.ts`<br>`src/services/tabelas/beneficiosService.ts` |
-| `status` | `expirado` | compara | `src/hooks/useAssinaturas.ts` |
-| … +159 linhas — lista completa em `context.json` | | | |
+| … +161 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -1772,6 +1772,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | TomEtapa | info \| warning \| teal \| violet \| success \| primary \| destructive \| aqua | `src/components/admissoes/kanbanComum.ts` |
 | TomLinha | neutro \| acento \| alerta \| ok | `src/components/admissoes/kanbanComum.ts` |
 | DOCS_CHECKLIST | 'checklist_documentos_pessoais', 'checklist_comprovante_endereco', 'checklist_foto', 'checklist_ctps', 'checklist_exame_admissional', 'checklist_contrato_assinado', | `src/components/admissoes/kanbanComum.ts` |
+| MARCOS_ONBOARDING | 'Início', 'Parcial', 'Avançado', 'Completo' | `src/components/admissoes/onboardingComum.ts` |
 | EstadoMarco | concluido \| atual \| pendente | `src/components/admissoes/onboardingDerivacoes.ts` |
 | TomPrazo | atraso \| hoje \| proximo \| neutro | `src/components/admissoes/onboardingDerivacoes.ts` |
 | SituacaoOnboarding | concluido \| em_dia \| em_risco \| atrasado \| sem_proxima_acao \| cancelado | `src/components/admissoes/onboardingDerivacoes.ts` |
@@ -1871,6 +1872,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | EmpresaModo | consolidado \| empresa_unica | `src/hooks/useEmpresas.ts` |
 | AuditoriaEvento | CALCULO \| CONFERENCIA \| ESOCIAL \| AJUSTE | `src/hooks/useFolhaAuditoria.ts` |
 | AuditoriaSeveridade | INFO \| AVISO \| ERRO \| CRITICO | `src/hooks/useFolhaAuditoria.ts` |
+| CHAVE_JORNADAS | 'onboarding-list' | `src/hooks/useJornadaOnboarding.ts` |
+| CHAVE_KITS | 'onboarding-kits' | `src/hooks/useJornadaOnboarding.ts` |
 | ProximoEventoBadgeTone | info \| success \| warning | `src/hooks/useProximosEventos.ts` |
 | Locale | pt-BR \| en-US \| es-ES | `src/hooks/useTranslation.ts` |
 | SeveridadePagamento | ok \| atencao \| critico \| violacao_grave | `src/hooks/ferias/useAlertasPagamentoD2.ts` |
@@ -3297,6 +3300,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   if (!empresaAtual?.id) return; setGerandoServidor(true); try { const [mes, ano] = competencia.split('/'); // gerarGuias devolve o RetryResult de retryWithIdempotency: o corpo da edge vem em `.data`. const { data: r } = (await edgeFunctionsService.gerarGuias({ empresaId: empresaAtual.id, competencia: `${ano}-${mes}`, tipo: 'todos', })) as { data?: { guias?: unknown[]; duplicatas_bloqueadas?: string[]; nao_persistidas?: { tipo: string }[]; } | null; }; qc.invalidateQueries({ queryKey: ['guias-fgts …
   ```
+- **totalDoChip(valor: ChipAtivo | ChipConcluido)** — `src/pages/OnboardingPage.tsx`
+  ```
+  baseFiltrada.filter((l) => combinaChip(l, valor)).length;
+  ```
 - **calcFerias(salario: number, admissao: string, ultimaFim: string | null, hoje: Date)** — `src/pages/PassivoTrabalhistaPage.tsx`
   ```
   const admiss = new Date(admissao); const ultFim = ultimaFim ? new Date(ultimaFim) : null; const periodoInicio = ultFim ? new Date(ultFim.getTime() + 86400000) : admiss; const vencimento = addMonths(periodoInicio, 12); const diasDecorridos = differenceInDays(vencimento, hoje); const vencidas = Math.max(0, -diasDecorridos); const direito = Math.min(vencidas, 30); const vf = (salario / 30) * direito; const tc = vf * TERCO; return { dias: vencidas, vf, tc, vencimento };
@@ -3970,9 +3977,12 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `* no tablet (`sm`) e 3 no desktop LARGO (`xl`), ocupando 100% da largura do` | `src/components/admissoes/GestaoCandidatos.tsx` |
 | `* terceira faixa na horizontal a altura cai para ≈180px a 1920px (≈30% mais` | `src/components/admissoes/GestaoCandidatos.tsx` |
 | ``text-primary-foreground` (240 20% 6%, quase preto) — MESMA` | `src/components/admissoes/GestaoCandidatos.tsx` |
+| `* filete a 25%. Escolhidos por serem DISTINTOS tanto no tema claro quanto no escuro` | `src/components/admissoes/GestaoKits.tsx` |
+| `* pelo resto da área. Convenção idêntica à dos chips: tint a 15% + tinta cheia +` | `src/components/admissoes/GestaoKits.tsx` |
 | `* ENTRADA 100% CSS (ver o bloco `KANBAN … ENTRADA DAS COLUNAS` no `src/index.css`):` | `src/components/admissoes/KanbanColumn.tsx` |
 | `* `kanban-coluna-concluida` depois que as keyframes terminam (altura 100% estável e` | `src/components/admissoes/KanbanColumn.tsx` |
 | `transition={{ delay: i * 0.05 }}` | `src/components/admissoes/OnboardingDashboard.tsx` |
+| `* vibrante, no mesmo padrão dos chips da área (tint a 15% + tinta cheia).` | `src/components/admissoes/onboardingComum.ts` |
 | `* (`MARCOS_ONBOARDING`), quem monta o texto é a tela. Com 100% devolve o ÚLTIMO` | `src/components/admissoes/onboardingDerivacoes.ts` |
 | `* 1. `concluido` — 100% das tarefas concluídas;` | `src/components/admissoes/onboardingDerivacoes.ts` |
 | `* tarefa e 100% dela está concluída. Derivada (não há coluna de status), como` | `src/components/admissoes/onboardingDerivacoes.ts` |
@@ -4145,7 +4155,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ delay: 0.3 + i * 0.1 }}` | `src/pages/LoginPage.tsx` |
 | `transition={{ delay: i * 0.02 }}` | `src/pages/NotificacoesPage.tsx` |
 | `transition={{ delay: i * 0.05 }}` | `src/pages/NotificacoesPage.tsx` |
-| `100%` | `src/pages/OnboardingPage.tsx` |
+| `* CONCLUÍDO PARA AS ABAS = 100% E NÃO CANCELADA — a MESMA régua que` | `src/pages/OnboardingPage.tsx` |
 | `(Math.abs(vf + tc - provF) > sal * 0.05 \|\| Math.abs(v13 - prov13) > sal * 0.05)` | `src/pages/PassivoTrabalhistaPage.tsx` |
 | `13º) e uma estimativa de 2% de reajustes ou novas admissões mensais.` | `src/pages/PassivoTrabalhistaPage.tsx` |
 | `Provisionamento registrado diverge &gt;5% do calculado — revise os valores da folha.` | `src/pages/PassivoTrabalhistaPage.tsx` |
@@ -4235,10 +4245,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `// - Prazo ≤ 84 meses, taxa 0-15%/mês` | `supabase/functions/emprestimo-consignado/index.ts` |
 | `// Descontos de benefícios — regra do canônico: VT limitado a 6% do` | `supabase/functions/gerar-holerite/index.ts` |
 | `const fgts = Number((salarioBase * 0.08).toFixed(2));` | `supabase/functions/gerar-holerite/index.ts` |
-| `if (b.tipo?.codigo === 'VT') return Math.min(Number(b.valor ?? 0), salarioBase * 0.06);` | `supabase/functions/gerar-holerite/index.ts` |
-| `* - bridge_error_rate > 1% por 1min` | `supabase/functions/metrics/index.ts` |
-| `// Domingo/feriado/folga trabalhado: tudo é HE 100% (DSR); sem falta/atraso.` | `supabase/functions/processar-ponto/index.ts` |
-| … +4 linhas — lista completa em `context.json` | |
+| … +7 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -4285,7 +4292,12 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `PASSO_CHIPS` | `0.022` | `src/components/admissoes/GestaoCandidatos.tsx` |
 | `INICIO_CARD` | `0.38` | `src/components/admissoes/GestaoCandidatos.tsx` |
 | `PASSO_CARD_VARIANTS` | `0.08` | `src/components/admissoes/GestaoCandidatos.tsx` |
+| `MAX_STAGGER_INDEX` | `5` | `src/components/admissoes/GestaoKits.tsx` |
+| `CARTOES_ESQUELETO` | `3` | `src/components/admissoes/GestaoKits.tsx` |
+| `TODOS_DEPARTAMENTOS` | `'todos'` | `src/components/admissoes/GestaoKits.tsx` |
+| `BLOCOS_CASCATA` | `3` | `src/components/admissoes/KitOnboardingDialog.tsx` |
 | `BLOCOS_CASCATA` | `3` | `src/components/admissoes/NovaAdmissaoDialog.tsx` |
+| `BLOCOS_CASCATA` | `3` | `src/components/admissoes/OnboardingDetalheDialog.tsx` |
 | `DIA_MS` | `24` | `src/components/admissoes/admissoesDerivacoes.ts` |
 | `PRAZO_DIAS_PADRAO` | `5` | `src/components/admissoes/onboardingDerivacoes.ts` |
 | `MARCOS` | `4` | `src/components/admissoes/onboardingDerivacoes.ts` |
@@ -4437,6 +4449,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `MOTIVO_MIN` | `10` | `src/pages/CienciaMedidaPage.tsx` |
 | `PAGE_SIZE` | `25` | `src/pages/ContratosGeradosPage.tsx` |
 | `BUCKET` | `'documentos'` | `src/pages/DocumentosPage.tsx` |
+| `MAX_STAGGER_INDEX` | `5` | `src/pages/OnboardingPage.tsx` |
+| `ITENS_POR_PAGINA` | `12` | `src/pages/OnboardingPage.tsx` |
+| `VALOR_TODOS` | `'__todos__'` | `src/pages/OnboardingPage.tsx` |
 | `DIAS_POR_ANO` | `30` | `src/pages/PassivoTrabalhistaPage.tsx` |
 | `TERCO` | `1` | `src/pages/PassivoTrabalhistaPage.tsx` |
 | `ALIQ_FGTS` | `0.08` | `src/pages/PassivoTrabalhistaPage.tsx` |
@@ -4538,15 +4553,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `MAX_PAYLOAD_BYTES` | `128` | `supabase/functions/criptografia/index.ts` |
 | `MARGEM_CONSIGNAVEL_PCT` | `35` | `supabase/functions/emprestimo-consignado/index.ts` |
 | `REPORT_DELIVERY_UNAVAILABLE_MESSAGE` | `"Serviço de entrega de relatórios indisponível."` | `supabase/functions/enviar-relatorio/deliveryStatus.ts` |
-| `REPORT_DELIVERY_FAILED_MESSAGE` | `"O provedor de e-mail não confirmou o envio do relatório."` | `supabase/functions/enviar-relatorio/deliveryStatus.ts` |
-| `BUCKET` | `"relatorios-privados"` | `supabase/functions/enviar-relatorio/index.ts` |
-| `REPORT_MAX_ROWS` | `5000` | `supabase/functions/enviar-relatorio/index.ts` |
-| `HARD_CAP` | `10` | `supabase/functions/exportacao/index.ts` |
-| `MAX_PAYLOAD_BYTES` | `256` | `supabase/functions/external-db-bridge/index.ts` |
-| `MAX_LIMIT` | `1000` | `supabase/functions/external-db-bridge/index.ts` |
-| `TELEMETRY_MAX_BATCH` | `25` | `supabase/functions/external-db-bridge/index.ts` |
-| `TELEMETRY_FLUSH_INTERVAL_MS` | `2000` | `supabase/functions/external-db-bridge/index.ts` |
-| … +38 linhas — lista completa em `context.json` | | |
+| … +46 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -4974,6 +4981,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Bridge instável | `src/components/admin/HealthTrendCard.tsx` |
 | Empresa ativa não carregada. | `src/components/admissoes/AdmissoesKanban.tsx` |
 | Candidato sem e-mail cadastrado e sem link de portal vigente. | `src/components/admissoes/DetalhesAdmissaoDialog.tsx` |
+|              className= | `src/components/admissoes/GestaoKits.tsx` |
 | Erro de Segurança | `src/components/afastamentos/AfastamentoDocumentManager.tsx` |
 | Erro no Upload | `src/components/afastamentos/AfastamentoDocumentManager.tsx` |
 | Não foi possível excluir o documento agora. | `src/components/afastamentos/AfastamentoDocumentManager.tsx` |
@@ -5177,8 +5185,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Empresa não selecionada | `src/hooks/useAssinarAvisoFerias.ts` |
 | Férias sem ID | `src/hooks/useAssinarAvisoFerias.ts` |
 | Erro ao calcular 13º: ${safeErrorMessage(err,  | `src/hooks/useCalcular13Salario.ts` |
-| Lote concluído parcialmente: ${results.length - simulatedCount} transmitido(s) e ${simulatedCount} simulado(s) | `src/hooks/useESocial.ts` |
-| … +638 linhas — lista completa em `context.json` | |
+| … +643 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5249,7 +5256,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (8235 testes em 644 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (8292 testes em 646 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5294,6 +5301,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/trainingImages/__tests__/migration.test.ts` | 33 | migration — bucket e Storage · cria o bucket privado com limite e MIME allowlist · leitura de objeto exige vínculo com a empresa do caminho · escrita de objeto exige admin E vínculo com a empresa … |
 | `src/utils/importacao/__tests__/validators.test.ts` | 33 | validarCPF · returns true for valid CPF · returns false for CPFs with all same digits · returns false for CPF with wrong check digits … |
 | `src/components/__tests__/AcoesFeedback.test.ts` | 32 | perfilOperador (app_role real: admin\|gestor\|rh\|user) · mapeia os papéis administrativos e operacionais · papel ausente/desconhecido não vira permissão · podeValidarPotencial — exclusivo do RH … |
+| `src/pages/__tests__/OnboardingParidade.test.tsx` | 32 | PARIDADE — progresso, conclusão e contadores (mesma fixture) · percentual: a regra nova é idêntica à antiga em TODOS os registros · contadores do topo batem com o cálculo antigo da aba de Admissões · a divisão das abas (em andamento) bate com a régua antiga da Jornada … |
 | `src/components/__tests__/FeedbacksDerivacoes.test.tsx` | 31 | feedbacksComum — tipo do feedback (texto livre) · normaliza os quatro tipos reais, aceitando caixa e rótulo por extenso · cai em gestor sem valor utilizável (nunca inventa categoria) · agrupa subordinado no chip de Gestor … |
 | `src/lib/cursor.test.ts` | 31 | encodeCursor · encode/decodes string values correctly · encode/decodes numeric values correctly · encode/decodes null values correctly … |
 | `src/services/__tests__/auditoriaService.test.ts` | 31 | auditoriaService.listarTrilha · usa a RPC unificada com tenant e filtros explícitos · aceita escopo global apenas como pedido explícito para a RPC autoritativa · rejeita limites fora do contrato antes de consultar o banco … |
@@ -5306,6 +5314,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/turnoService.test.ts` | 29 | turnoService.listarTurnos · returns all turnos without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/whatsappService.test.ts` | 29 | whatsappService · getConfig · returns config data when found · returns null when no config found … |
 | `src/utils/__tests__/format.test.ts` | 28 | format — resiliência a entradas inválidas · formatDate(%p) → fallback · formatCurrency(%p) → fallback · respeita fallback customizado … |
+| `src/pages/__tests__/OnboardingJornada.test.tsx` | 27 | Jornada de Onboarding — card e estado (cobertura herdada) · shows loading spinner while fetching · shows empty state when no onboarding data · renders the collaborator header (name + cargo • departamento + % progress) … |
 | `src/schemas/esocial/__tests__/sstValidators.test.ts` | 27 | validarS2210 · returns valid for complete data · errors when cpfTrab is missing · errors for invalid CPF … |
 | `src/services/__tests__/admissaoService.test.ts` | 27 | admissaoService.listarAdmissoes · always scopes query by empresa_id (multi-tenant) · returns empty array when supabase returns null · filters by empresa_id when provided … |
 | `src/services/__tests__/episService.test.ts` | 27 | episService.listar · returns EPIs without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
@@ -5494,7 +5503,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/FeriasReconciliacaoHistoricoCard.test.tsx` | 10 | FeriasReconciliacaoHistoricoCard · renders Reconciliação Automática — Histórico title · shows empty state when no logs · shows skeleton when loading … |
 | `src/components/__tests__/MedidasTimeline.test.tsx` | 10 | MedidasTimeline · returns null when medidas is empty · renders medida descricao · renders colaborador name … |
 | `src/components/__tests__/Notifications.test.tsx` | 10 | NotificationItem · renders Notificações header · shows empty state when no notifications · renders notification titles … |
-| `src/components/__tests__/OnboardingPageContent.test.tsx` | 10 | OnboardingPageContent · shows loading spinner while fetching · shows empty state when no onboarding data · shows empty state description … |
 | `src/components/__tests__/PapeisAvaliacao.test.ts` | 10 | normalização da lista de papéis · aceita a lista do  · capacidades da conta admin+gestor (a conta Abner) · mantém o admin E o gestor — um não anula o outro … |
 | `src/components/__tests__/PontoAuditTimeline.test.tsx` | 10 | PontoAuditTimeline · renders Trilha de Auditoria title · renders search input · shows empty state when no logs … |
 | `src/components/__tests__/PontoTodayCard.test.tsx` | 10 | PontoTodayCard · renders Hoje title · shows empty state when no registro · renders Progresso da Jornada when registro present … |
@@ -5552,8 +5560,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/FeedbackEdicao.test.tsx` | 9 | filtros normais — somente Editar feedback · o card tem a ação de edição e NENHUM controle de aprovação · cancelado NÃO pode ser editado: ação desabilitada e clique não abre o formulário · cancelado exibe no card o motivo e o responsável vindos do histórico … |
 | `src/components/__tests__/FeriasActions.test.tsx` | 9 | FeriasActions · renders Aprovar (Gestor) button when not yet approved · renders Rejeitar button when not yet approved by gestor · renders Baixar button always … |
 | `src/components/__tests__/FeriasAlertasPagamentoCard.test.tsx` | 9 | FeriasAlertasPagamentoCard · renders Pagamento de Férias title · renders Art. 145 CLT reference in title · shows empty state when no alerts … |
-| `src/components/__tests__/FeriasAuditTimeline.test.tsx` | 9 | FeriasAuditTimeline · renders Tudo tab filter · renders Criação tab filter · renders Aprovação tab filter … |
-| … +344 linhas — lista completa em `context.json` | | |
+| … +346 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -5668,9 +5675,23 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | atraso na variante vibrante da área, vencimento em <= 7 dias em âmbar. | `src/components/admissoes/GestaoCandidatos.tsx` |
 | então a última pílula termina no limite direito da área útil. | `src/components/admissoes/GestaoCandidatos.tsx` |
 | Estado VISUAL (só do indicador): muda na hora e dirige apenas o `transform`. | `src/components/admissoes/GestaoCandidatos.tsx` |
+| busca/filtro/ordenação e um resumo com contagens reais — nenhuma regra de | `src/components/admissoes/GestaoKits.tsx` |
+| negócio nova, nenhuma navegação falsa e NENHUM dado inventado. | `src/components/admissoes/GestaoKits.tsx` |
+| * LIMITE HONESTO (sem tocar em backend/banco): o registro real | `src/components/admissoes/GestaoKits.tsx` |
+| (`public.onboarding_kits`) tem apenas `nome`, `itens`, `ativo` e `created_at`. | `src/components/admissoes/GestaoKits.tsx` |
+| O serviço LANÇA em falha de query/permissão justamente para `isError` chegar | `src/components/admissoes/GestaoKits.tsx` |
+| dos `itens`. É determinístico (mesmo kit → mesmo ícone E mesma cor), usa apenas | `src/components/admissoes/GestaoKits.tsx` |
+| usando apenas dados reais (nome do kit + departamentos reais da empresa). | `src/components/admissoes/GestaoKits.tsx` |
+| inferido pelo nome (mesma regra do filtro) ou, na falta dele, a data real de | `src/components/admissoes/GestaoKits.tsx` |
+| Subtítulo: SOMENTE dado real (departamento inferido pelo nome ou data de | `src/components/admissoes/GestaoKits.tsx` |
 | 6. prazo                       (data_prevista, no canto direito do rodapé) | `src/components/admissoes/KanbanCard.tsx` |
 | RODAPÉ — responsável (esquerda) + prazo (direita) */} | `src/components/admissoes/KanbanCard.tsx` |
+| o CRUD mínimo sobre a tabela EXISTENTE (nenhuma tabela nova): | `src/components/admissoes/KitOnboardingDialog.tsx` |
 | (mesmo service/regra da criação — nada de um segundo caminho de escrita). | `src/components/admissoes/NovaAdmissaoDialog.tsx` |
+| tarefa como legenda e o prazo + responsável numa faixa de | `src/components/admissoes/OnboardingCard.tsx` |
+| números via `onboardingDerivacoes.ts` — nenhuma regra de negócio é duplicada. | `src/components/admissoes/OnboardingCard.tsx` |
+| prazo da próxima tarefa, contadores). Nenhum texto é inventado. | `src/components/admissoes/OnboardingCard.tsx` |
+| METADADOS LATERAIS — prazo e responsável desceram para uma linha | `src/components/admissoes/OnboardingCard.tsx` |
 | * Classificação de prazo de uma admissão em andamento (mesma régua do card). */ | `src/components/admissoes/admissoesDashboardModais.tsx` |
 | * Rótulo, selo e tinta de cada classificação de prazo. */ | `src/components/admissoes/admissoesDashboardModais.tsx` |
 | prazo/pendências (o que cobrar), "Próximas Admissões" quer o progresso, e | `src/components/admissoes/admissoesDashboardModais.tsx` |
@@ -5687,6 +5708,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `--chart-2` = ciano/teal (pedido da referência para "Validação"). | `src/components/admissoes/kanbanComum.ts` |
 | Validação, Exame, Contrato), depois as demais do fluxo real e os dois estados | `src/components/admissoes/kanbanComum.ts` |
 | * Coluna de uma etapa — `undefined` para etapa fora do board (não deve ocorrer). */ | `src/components/admissoes/kanbanComum.ts` |
+| (texto de marco, classe de cor, tint de prazo). A matemática fica em | `src/components/admissoes/onboardingComum.ts` |
+| reordena não deve repintar os avatares). | `src/components/admissoes/onboardingComum.ts` |
+| * Tinta do rótulo de prazo por tom (`TomPrazo`). */ | `src/components/admissoes/onboardingComum.ts` |
+| * Fundo do selo de prazo por tom (véu translúcido curto). */ | `src/components/admissoes/onboardingComum.ts` |
 | admissionAL (prazo da admissão, checklist de documentos, progresso por etapa). | `src/components/admissoes/onboardingDerivacoes.ts` |
 | mede risco por prazo de tarefa. Misturar as duas réguas num arquivo só | `src/components/admissoes/onboardingDerivacoes.ts` |
 | * Dias corridos somados ao `created_at` para achar o prazo da tarefa. */ | `src/components/admissoes/onboardingDerivacoes.ts` |
@@ -5903,22 +5928,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | • POTENCIAL = 100% gestor, com VALIDAÇÃO OBRIGATÓRIA do RH vinculada à versão | `src/components/avaliacao/motorAvaliacao360.ts` |
 | exata da avaliação (se a avaliação mudar ou for reaberta, a validação | `src/components/avaliacao/motorAvaliacao360.ts` |
 | ─── Validação do Potencial pelo RH ──────────────────────────────────────── */ | `src/components/avaliacao/motorAvaliacao360.ts` |
-| O frontend **nunca** recalcula essa string: ele apenas COMPARA o valor que o | `src/components/avaliacao/motorAvaliacao360.ts` |
-| banco gravou na validação (`feedbacks_360_validacoes_potencial.versao_avaliacao`) | `src/components/avaliacao/motorAvaliacao360.ts` |
-| cobre o caso de transações distintas no mesmo segundo. Aqui o valor é apenas | `src/components/avaliacao/motorAvaliacao360.ts` |
-| * A validação só vale quando é da MESMA empresa, do MESMO ciclo, do MESMO | `src/components/avaliacao/motorAvaliacao360.ts` |
-| * `versaoAtual` deve vir SEMPRE de `vw_feedbacks_360_versao` (nunca calculada aqui). | `src/components/avaliacao/motorAvaliacao360.ts` |
-| NÃO exige validação posterior do RH. O chamador é responsável por provar | `src/components/avaliacao/motorAvaliacao360.ts` |
-| validação do RH. Sem qualquer etapa, devolve `classificavel: false` com o | `src/components/avaliacao/motorAvaliacao360.ts` |
-| É a fonte oficial do fluxo novo: não existe validação posterior do RH. | `src/components/avaliacao/motorAvaliacao360.ts` |
-| gestor é a decisão final do fluxo: não há nova validação do RH. | `src/components/avaliacao/motorAvaliacao360.ts` |
-| * Texto do motivo quando o colaborador não pode ser classificado. */ | `src/components/avaliacao/motorAvaliacao360.ts` |
-| opcionais apenas para compatibilidade de leitura; omitidos equivalem a | `src/components/avaliacao/nineBox360.ts` |
-| * Normaliza uma validação de Potencial vinda do BANCO para o contrato do motor. | `src/components/avaliacao/nineBox360.ts` |
-| Somente avaliações ELEGÍVEIS entram; `pendente`/`cancelado` ficam fora. | `src/components/avaliacao/nineBox360.ts` |
-| uma decisão antiga/sem snapshot não pode classificar por aproximação. | `src/components/avaliacao/nineBox360.ts` |
-| * Aprovado pelo gestor, aguardando a validação do Potencial pelo RH. */ | `src/components/avaliacao/nineBox360.ts` |
-| alterar nenhum componente visual. `pdis` entra apenas para marcar "Com PDI". | `src/components/avaliacao/nineBox360.ts` |
-| a validação de escala, a detecção de duplicatas reais e a rastreabilidade. | `src/components/avaliacao/nineBoxComum.ts` |
-| * ── A REGRA DE CLASSIFICAÇÃO É A MESMA (não foi tocada) ───────────────────── | `src/components/avaliacao/nineBoxComum.ts` |
-| … +724 linhas — lista completa em `context.json` | |
+| … +749 linhas — lista completa em `context.json` | |
