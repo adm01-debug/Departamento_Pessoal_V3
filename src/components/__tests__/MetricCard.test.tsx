@@ -21,13 +21,19 @@ vi.mock('framer-motion', () => ({
 }));
 
 vi.mock('@/components/dashboard/AnimatedNumber', () => ({
-  AnimatedNumber: ({ value, format }: { value?: number; format?: (v: number) => string }) => (
-    <span>{format ? format(value ?? 0) : String(value)}</span>
-  ),
+  AnimatedNumber: ({
+    value,
+    format,
+    decimals,
+  }: {
+    value?: number;
+    format?: (v: number) => string;
+    decimals?: number;
+  }) => <span data-decimals={decimals}>{format ? format(value ?? 0) : String(value)}</span>,
 }));
 
 vi.mock('@/components/dashboard/MiniSparkline', () => ({
-  MiniSparkline: () => <svg data-testid="mini-sparkline" />,
+  MiniSparkline: ({ className }: { className?: string }) => <svg data-testid="mini-sparkline" className={className} />,
 }));
 
 import { MetricCard } from '../dashboard/MetricCard';
@@ -107,5 +113,94 @@ describe('MetricCard', () => {
       <MetricCard title="Minimal" value="0" icon={Users} gradient="from-primary to-primary-glow" />
     );
     expect(container.firstChild).toBeInTheDocument();
+  });
+
+  // ─── Props acrescentados no resgate da muri ───
+  // `gradient` virou opcional e deprecado: os 69 call sites que ainda o passam
+  // seguem compilando e a cor passa a vir de `tone`.
+  it('aceita call site legado que ainda passa gradient, sem tone', () => {
+    const { container } = render(
+      <MetricCard title="Legado" value="7" icon={Users} gradient="from-primary to-primary-glow" />
+    );
+    // Tom padrao (primary) no chip do icone, nenhum gradiente aplicado.
+    expect(container.querySelector('[class*="bg-primary/10"]')).not.toBeNull();
+    expect(container.querySelector('[class*="bg-gradient-to-br"]')).toBeNull();
+  });
+
+  it('pinta o chip do icone pelo tone', () => {
+    const { container } = render(<MetricCard title="Risco" value="3" icon={Users} tone="destructive" />);
+    expect(container.querySelector('[class*="bg-destructive/10"]')).not.toBeNull();
+  });
+
+  it('vividRed usa a forma com valor arbitrario (o token curto nao existe no tema)', () => {
+    // `--destructive-vivid` esta em src/index.css mas NAO em
+    // tailwind.config.js: `text-destructive-vivid` nao geraria CSS nenhum.
+    const { container } = render(<MetricCard title="Canceladas" value="2" icon={Users} tone="destructive" vividRed />);
+    const html = container.innerHTML;
+    expect(html).toContain('hsl(var(--destructive-vivid))');
+    expect(html).not.toContain('text-destructive-vivid');
+  });
+
+  it('repassa decimals ao AnimatedNumber (KPI monetario com centavos)', () => {
+    const { container } = render(
+      <MetricCard title="Folha" value="R$ 1.234,56" rawValue={1234.56} icon={Users} decimals={2} />
+    );
+    expect(container.querySelector('[data-decimals]')?.getAttribute('data-decimals')).toBe('2');
+  });
+
+  it('mostra o tooltip do KPI quando recebe texto', () => {
+    render(<MetricCard title="Headcount" value="10" icon={Users} tooltip="Colaboradores com vinculo ativo" />);
+    expect(screen.getByText('Headcount')).toBeInTheDocument();
+    // O InfoTooltip real renderiza um gatilho acessivel ao lado do titulo.
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  it('so fica clicavel quando ha destino (route ou titulo do mapa padrao)', () => {
+    const { container: semRota } = render(<MetricCard title="Sem destino" value="1" icon={Users} />);
+    expect(semRota.querySelector('.cursor-pointer')).toBeNull();
+
+    const { container: comRota } = render(<MetricCard title="Com destino" value="1" icon={Users} route="/ponto" />);
+    expect(comRota.querySelector('.cursor-pointer')).not.toBeNull();
+
+    const { container: porTitulo } = render(<MetricCard title="Colaboradores Ativos" value="1" icon={Users} />);
+    expect(porTitulo.querySelector('.cursor-pointer')).not.toBeNull();
+  });
+
+  it('dense encolhe a linha de apoio sem mexer no valor', () => {
+    const { container } = render(
+      <MetricCard title="Compacto" value="5" icon={Users} trend={{ value: 150, label: 'vs. periodo anterior' }} dense />
+    );
+    // A frase de apoio cai para 10px; o valor segue em `text-data`.
+    expect(container.querySelector('[class*="text-[10px]"]')).not.toBeNull();
+    expect(container.querySelector('.text-data')).not.toBeNull();
+  });
+
+  it('preserva centavos no formato monetario automatico quando decimals = 2', () => {
+    render(<MetricCard title="Folha Mensal" value="R$ 19.079,93" rawValue={19079.93} decimals={2} icon={Users} />);
+    // Sem o decimals na formatacao, o valor saia arredondado para R$ 19.080.
+    expect(screen.getByText('R$ 19.079,93')).toBeInTheDocument();
+  });
+
+  it('mantem o valor monetario inteiro quando decimals nao e informado', () => {
+    render(<MetricCard title="Folha Mensal" value="R$ 19.080" rawValue={19079.93} icon={Users} />);
+    expect(screen.getByText('R$ 19.080')).toBeInTheDocument();
+  });
+
+  it('nao deixa a sparkline disputar largura com o valor abaixo de 2xl', () => {
+    const { container } = render(
+      <MetricCard title="Folha Mensal" value="R$ 19.079,93" icon={Users} sparkline={[1, 2, 3, 4]} />
+    );
+    const spark = container.querySelector('[data-testid="mini-sparkline"]');
+    expect(spark).not.toBeNull();
+    // Entra so a partir de 2xl, e sem shrink-0: o valor nunca perde espaco
+    // para os 80px fixos do grafico na faixa 4-up do Dashboard.
+    expect(spark?.getAttribute('class') || '').toContain('hidden');
+    expect(spark?.getAttribute('class') || '').toContain('2xl:block');
+    expect(spark?.getAttribute('class') || '').not.toContain('shrink-0');
+  });
+
+  it('expoe o valor inteiro no title quando o truncate corta', () => {
+    const { container } = render(<MetricCard title="Folha Mensal" value="R$ 19.079,93" icon={Users} />);
+    expect(container.querySelector('[title="R$ 19.079,93"]')).not.toBeNull();
   });
 });

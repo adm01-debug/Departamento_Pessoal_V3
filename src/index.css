@@ -66,6 +66,8 @@
     --text-body: 0.875rem;
     --text-caption: 0.75rem;
     --text-overline: 0.625rem;
+    /* Dado/KPI em destaque: nenhum token existente batia 24px com peso 500. */
+    --text-data: 1.5rem;
     --chart-1: 68 100% 48%;
     --chart-2: 142 71% 38%;
     --chart-3: 38 92% 50%;
@@ -112,6 +114,9 @@
     --sidebar-accent-foreground: 240 20% 10%;
     --sidebar-border: 240 8% 90%;
     --sidebar-ring: 68 100% 48%;
+
+    /* Tinta do valor numerico em destaque (.text-data). */
+    --data-foreground: 240 20% 10%;
   }
 
   .dark {
@@ -159,6 +164,9 @@
     --sidebar-accent-foreground: 60 10% 92%;
     --sidebar-border: 240 16% 13%;
     --sidebar-ring: 68 100% 48%;
+
+    /* Tinta do valor numerico em destaque (.text-data). */
+    --data-foreground: 0 0% 95%;
   }
 }
 
@@ -226,6 +234,30 @@
     line-height: 1.4;
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
+  /* VALOR NUMERICO EM DESTAQUE (KPI). Estava DOCUMENTADO em
+     docs/DESIGN-SYSTEM-TIPOGRAFIA.md e USADO na main (DonutChart.tsx), mas nunca
+     foi definido: a classe saia no HTML sem pintar nada. A definicao vem da
+     branch muri junto do MetricCard que a consome. */
+  .text-data {
+    font-size: var(--text-data);
+    line-height: 1;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    color: hsl(var(--data-foreground));
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* NUMERO DA INTERFACE (dinheiro, horas, percentuais, contagens): familia
+     oficial do sistema, alinhamento por `tabular-nums` em vez de monoespacada.
+     Mesmo caso do `.text-data` — a main ja usa em 7 arquivos / 18 ocorrencias
+     (avaliacao, premiacoes) e a classe nao existia. */
+  .text-numeric {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+
   .text-overline {
     font-size: var(--text-overline);
     line-height: 1.4;

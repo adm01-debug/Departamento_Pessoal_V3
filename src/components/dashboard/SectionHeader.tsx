@@ -11,7 +11,14 @@ interface SectionHeaderProps {
   className?: string;
 }
 
-export function SectionHeader({ title, subtitle, icon: Icon, gradient = 'from-primary to-primary-glow', action, className }: SectionHeaderProps) {
+export function SectionHeader({
+  title,
+  subtitle,
+  icon: Icon,
+  gradient = 'from-primary to-primary-glow',
+  action,
+  className,
+}: SectionHeaderProps) {
   return (
     <motion.div
       initial={{ opacity: 0, x: -8 }}
@@ -23,7 +30,7 @@ export function SectionHeader({ title, subtitle, icon: Icon, gradient = 'from-pr
           <Icon className="h-4 w-4 text-primary-foreground" />
         </div>
         <div>
-          <h2 className="text-h3 font-display font-semibold">{title}</h2>
+          <h2 className="text-sm font-display font-medium tracking-tight leading-snug">{title}</h2>
           {subtitle && <p className="text-caption text-muted-foreground font-body">{subtitle}</p>}
         </div>
       </div>
