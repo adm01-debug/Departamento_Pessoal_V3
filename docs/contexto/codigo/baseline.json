@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6695a608fa171c802a961f7edcf3ef93dbfd1c6c",
+  "commit": "cbe13fb60c75aac8269de401fa42b8ab9e42c676",
   "branch": "main",
-  "data_commit": "2026-11-17T15:21:49-03:00",
+  "data_commit": "2026-11-17T15:34:56-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "cbe13fb",
+    "data": "2026-11-17",
+    "assunto": "feat(colaboradores): liga os chips de filtro ativo resgatados da muri (#640)"
+   },
    {
     "sha": "6695a60",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "0a74847",
     "data": "2026-11-17",
     "assunto": "feat: resgata da muri 6 grupos de hooks/services com consumidor vivo (#612)"
-   },
-   {
-    "sha": "34959e3",
-    "data": "2026-11-17",
-    "assunto": "feat(premiacoes): resgata o Hub de Premiações e o simulador de ROI da muri sobre o miolo corrigido da main (#611)"
    }
   ],
-  "arquivos_mudados_7d": 1147,
+  "arquivos_mudados_7d": 1133,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 353
+    "mudancas": 354
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -222,12 +222,12 @@
     "mudancas": 10
    },
    {
-    "arquivo": "PENDENCIAS.md",
+    "arquivo": "docs/prod-readiness.md",
     "mudancas": 9
    },
    {
-    "arquivo": "docs/prod-readiness.md",
-    "mudancas": 9
+    "arquivo": "PENDENCIAS.md",
+    "mudancas": 8
    },
    {
     "arquivo": "supabase/functions/calcular-folha/index.ts",
@@ -251,6 +251,10 @@
    },
    {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "src/pages/ColaboradoresPage.tsx",
     "mudancas": 7
    },
    {
@@ -286,10 +290,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "src/pages/ColaboradoresPage.tsx",
-    "mudancas": 6
-   },
-   {
     "arquivo": "src/services/colaboradorService.ts",
     "mudancas": 6
    },
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 255
+    "commits": 256
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 12
+    "commits": 11
    },
    {
     "autor": "github-actions[bot]",
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3511,
-  "arquivos_codigo": 2037,
-  "linhas_codigo": 403836,
+  "arquivos_total": 3513,
+  "arquivos_codigo": 2039,
+  "linhas_codigo": 404008,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
-  "componentes": 626,
+  "componentes": 627,
   "hooks": 116,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 857,
   "cron_jobs": 41,
-  "testes": 751,
+  "testes": 752,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 954,
-   "linhas": 172417
+   "arquivos": 956,
+   "linhas": 172555
   },
   "src/constants": {
    "arquivos": 7,
@@ -676,7 +676,7 @@
   },
   "src/pages": {
    "arquivos": 134,
-   "linhas": 49280
+   "linhas": 49314
   },
   "src/providers": {
    "arquivos": 4,

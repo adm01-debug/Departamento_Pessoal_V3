@@ -1631,6 +1631,10 @@
    "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx",
    "src/components/colaboradores/ColaboradorHistory.tsx"
   ],
+  "src/components/colaboradores/ColaboradorActiveFilterChips.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx"
+  ],
   "src/components/colaboradores/ColaboradorDirectoryGrid.tsx": [
    "src/components/dashboard/MetricCard.tsx",
    "src/components/ui/badge.tsx",
@@ -1644,6 +1648,7 @@
    "src/types/entities.ts"
   ],
   "src/components/colaboradores/ColaboradorFilters.tsx": [
+   "src/components/colaboradores/ColaboradorActiveFilterChips.tsx",
    "src/components/ui/input.tsx",
    "src/components/ui/select.tsx",
    "src/types/entities.ts"
@@ -5631,6 +5636,7 @@
    "src/services/index.ts"
   ],
   "src/pages/ColaboradoresPage.tsx": [
+   "src/components/colaboradores/ColaboradorActiveFilterChips.tsx",
    "src/components/colaboradores/ColaboradorDirectoryGrid.tsx",
    "src/components/colaboradores/ColaboradorFilters.tsx",
    "src/components/colaboradores/ColaboradorKpiCards.tsx",

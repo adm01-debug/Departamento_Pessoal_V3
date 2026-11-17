@@ -195,7 +195,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 288,
+   "testes": 289,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -1333,13 +1333,13 @@
   },
   {
    "modulo": "components/colaboradores",
-   "arquivos": 8,
+   "arquivos": 9,
    "testes": 1,
-   "linhas": 1094,
+   "linhas": 1161,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 7,
+   "componentes": 8,
    "hooks_locais": [
     "useAuth",
     "useCargos",
@@ -7794,7 +7794,7 @@
    "modulo": "pages",
    "arquivos": 113,
    "testes": 0,
-   "linhas": 45704,
+   "linhas": 45738,
    "itens_menu": [
     "Admissões",
     "Afastamentos",

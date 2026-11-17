@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 626,
+ "total": 627,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -2324,6 +2324,21 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/colaboradores/ColaboradorActiveFilterChips.tsx",
+   "exports": [
+    "ActiveFilter",
+    "ColaboradorActiveFilterChips"
+   ],
+   "export_default": null,
+   "linhas": 55,
+   "dominio": "components/colaboradores",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/colaboradores/ColaboradorDirectoryGrid.tsx",
    "exports": [
     "ColaboradorDirectoryGrid"
@@ -2345,7 +2360,7 @@
     "ColaboradorFilters"
    ],
    "export_default": null,
-   "linhas": 87,
+   "linhas": 99,
    "dominio": "components/colaboradores",
    "hooks_locais": [],
    "tabelas": [],
@@ -7127,7 +7142,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 218,
+   "usado_por": 219,
    "orfao": false
   },
   {
@@ -7142,7 +7157,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 357,
+   "usado_por": 358,
    "orfao": false
   },
   {
@@ -8801,7 +8816,7 @@
     "ColaboradoresPage"
    ],
    "export_default": "ColaboradoresPage",
-   "linhas": 306,
+   "linhas": 340,
    "dominio": "pages",
    "hooks_locais": [
     "useColaboradores",

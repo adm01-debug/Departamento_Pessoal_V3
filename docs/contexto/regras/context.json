@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "6695a608fa171c802a961f7edcf3ef93dbfd1c6c",
+  "sha": "cbe13fb60c75aac8269de401fa42b8ab9e42c676",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 18:22 UTC",
-  "files_total": 3532,
-  "code_files": 2958,
-  "code_lines": 468793
+  "generated_at": "2026-11-17 18:35 UTC",
+  "files_total": 3534,
+  "code_files": 2960,
+  "code_lines": 468965
  },
  "version": "1.3.2",
- "facts_hash": "a5cfefdce55f2f33",
+ "facts_hash": "b4a4891ccb84a026",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 982,
+   ".tsx": 984,
    ".sql": 923,
    ".ts": 922,
    ".mjs": 103,
@@ -89328,7 +89328,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 94
+    "deps_count": 95
    },
    {
     "path": "",
@@ -99968,7 +99968,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 954,
+  "components_count": 956,
   "hooks": [
    {
     "name": "useContacts",
@@ -101555,8 +101555,8 @@
   },
   {
    "module": "src/components",
-   "files": 954,
-   "lines": 172417,
+   "files": 956,
+   "lines": 172555,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101748,6 +101748,7 @@
     "src/components/__tests__/CamposCustomizadosTab.test.tsx",
     "src/components/__tests__/CandidatoTimeline.test.tsx",
     "src/components/__tests__/CardProgramacao.test.tsx",
+    "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
     "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx",
     "src/components/__tests__/ColaboradorDocuments.test.tsx",
     "src/components/__tests__/ColaboradorFilters.test.tsx",
@@ -101782,8 +101783,7 @@
     "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
     "src/components/__tests__/DistribuirHoleritesButton.test.tsx",
     "src/components/__tests__/DocumentoPreview.test.tsx",
-    "src/components/__tests__/DocumentoTimeline.test.tsx",
-    "src/components/__tests__/DocumentosPessoaisTab.test.tsx"
+    "src/components/__tests__/DocumentoTimeline.test.tsx"
    ]
   },
   {
@@ -102245,7 +102245,7 @@
   {
    "module": "src/pages",
    "files": 134,
-   "lines": 49280,
+   "lines": 49314,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -154767,6 +154767,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/pages/ColaboradoresPage.tsx",
+    "field": "status",
+    "value": "all",
+    "kind": "compara"
+   },
+   {
     "file": "src/pages/ComunicacaoInternaPage.tsx",
     "field": "tipo",
     "value": "aviso",
@@ -167597,6 +167603,26 @@
    {
     "file": "src/components/__tests__/CardProgramacao.test.tsx",
     "name": "shows data_inicio_prevista in formatted form"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
+    "name": "ColaboradorActiveFilterChips"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
+    "name": "sem filtro ativo não renderiza nada (nem o "
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
+    "name": "mostra um chip por filtro ativo"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
+    "name": "o X de cada chip remove só aquele filtro"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
+    "name": "cada X tem rótulo acessível com o nome do filtro"
    },
    {
     "file": "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx",
@@ -263947,6 +263973,18 @@
     "shows data_inicio_prevista in formatted form"
    ]
   },
+  "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx": {
+   "path": "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
+   "lines": 71,
+   "is_test": true,
+   "tests": [
+    "ColaboradorActiveFilterChips",
+    "sem filtro ativo não renderiza nada (nem o ",
+    "mostra um chip por filtro ativo",
+    "o X de cada chip remove só aquele filtro",
+    "cada X tem rótulo acessível com o nome do filtro"
+   ]
+  },
   "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx": {
    "path": "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx",
    "lines": 63,
@@ -274160,6 +274198,14 @@
     "shows a compact empty state when there are no events at all"
    ]
   },
+  "src/components/colaboradores/ColaboradorActiveFilterChips.tsx": {
+   "path": "src/components/colaboradores/ColaboradorActiveFilterChips.tsx",
+   "lines": 55,
+   "exports": [
+    "interface ActiveFilter",
+    "function ColaboradorActiveFilterChips"
+   ]
+  },
   "src/components/colaboradores/ColaboradorDirectoryGrid.tsx": {
    "path": "src/components/colaboradores/ColaboradorDirectoryGrid.tsx",
    "lines": 148,
@@ -274179,7 +274225,7 @@
   },
   "src/components/colaboradores/ColaboradorFilters.tsx": {
    "path": "src/components/colaboradores/ColaboradorFilters.tsx",
-   "lines": 87,
+   "lines": 99,
    "exports": [
     "function ColaboradorFilters"
    ]
@@ -293898,7 +293944,7 @@
   },
   "src/pages/ColaboradoresPage.tsx": {
    "path": "src/pages/ColaboradoresPage.tsx",
-   "lines": 306,
+   "lines": 340,
    "exports": [
     "function ColaboradoresPage"
    ],
@@ -293911,6 +293957,11 @@
     "Nenhum dado encontrado para exportar"
    ],
    "status_values": [
+    {
+     "field": "status",
+     "value": "all",
+     "kind": "compara"
+    },
     {
      "field": "status",
      "value": "all",
@@ -324435,10 +324486,22 @@
   }
  },
  "git": {
-  "sha": "6695a608fa171c802a961f7edcf3ef93dbfd1c6c",
+  "sha": "cbe13fb60c75aac8269de401fa42b8ab9e42c676",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "cbe13fb",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(colaboradores): liga os chips de filtro ativo resgatados da muri (#640)",
+    "files": [
+     "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
+     "src/components/colaboradores/ColaboradorActiveFilterChips.tsx",
+     "src/components/colaboradores/ColaboradorFilters.tsx",
+     "src/pages/ColaboradoresPage.tsx"
+    ]
+   },
    {
     "sha": "6695a60",
     "date": "2026-11-17",
@@ -325087,19 +325150,6 @@
      "src/mocks/treinamentosMock.ts",
      "src/pages/TreinamentosPage.tsx"
     ]
-   },
-   {
-    "sha": "0b2efa2",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "fix(dossiê): editar um colaborador passa a atualizar o dossiê dele na hora (#606)",
-    "files": [
-     "src/components/admissoes/AdmissoesKanban.tsx",
-     "src/hooks/__tests__/invalidacaoColaborador.test.ts",
-     "src/hooks/useImportacaoColaboradores.ts",
-     "src/pages/ColaboradorFormPage.tsx",
-     "src/pages/MovimentacoesPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -325113,11 +325163,15 @@
    ],
    [
     "src/pages/ColaboradoresPage.tsx",
-    4
+    5
    ],
    [
     "src/index.css",
     4
+   ],
+   [
+    "src/components/colaboradores/ColaboradorFilters.tsx",
+    2
    ],
    [
     "src/pages/ColaboradorDetalhesPage.tsx",
@@ -325152,10 +325206,6 @@
     2
    ],
    [
-    "src/pages/ColaboradorFormPage.tsx",
-    2
-   ],
-   [
     "src/components/admissoes/AdmissoesDashboard.tsx",
     2
    ],
@@ -325164,8 +325214,12 @@
     2
    ],
    [
-    "src/components/admissoes/AdmissoesKanban.tsx",
-    2
+    "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
+    1
+   ],
+   [
+    "src/components/colaboradores/ColaboradorActiveFilterChips.tsx",
+    1
    ],
    [
     "src/components/__tests__/PendenciasDialog.test.tsx",
@@ -325177,10 +325231,6 @@
    ],
    [
     "src/hooks/__tests__/usePendenciasColaborador.test.ts",
-    1
-   ],
-   [
-    "src/hooks/usePendenciasColaborador.ts",
     1
    ]
   ]

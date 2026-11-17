@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6695a608fa` · branch `main` · 2026-11-17 18:22 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `cbe13fb60c` · branch `main` · 2026-11-17 18:35 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5414,7 +5414,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9128 testes em 708 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9133 testes em 709 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5718,7 +5718,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/test/securityHeadersParity.test.ts` | 10 | paridade de security headers vercel.json x nginx.conf · nginx.conf serve exatamente os headers globais do vercel.json · vercel.json aplica os headers em produção · não usa  … |
 | `src/utils/__tests__/avisoFeriasPDF.test.ts` | 10 | gerarAvisoFeriasPDF · returns a Blob · returns a Uint8Array bytes · returns a sha256 hash string … |
 | `src/utils/__tests__/calculoFerias.test.ts` | 10 | calculoFerias · deve calcular férias simples (30 dias) sem abono · deve calcular férias com abono pecuniário (20 dias férias + 10 dias abono) · deve limitar o abono pecuniário a no máximo 10 dias … |
-| … +408 linhas — lista completa em `context.json` | | |
+| … +409 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
