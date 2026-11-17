@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "cc7b1acb4450d17e5b40003ad0a7f641881804e0",
+  "sha": "b25c46e0edae00b48cd5c30c36ab04ca6348ef7a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 14:22 UTC",
-  "files_total": 3499,
-  "code_files": 2925,
-  "code_lines": 463436
+  "generated_at": "2026-11-17 15:03 UTC",
+  "files_total": 3500,
+  "code_files": 2926,
+  "code_lines": 464793
  },
  "version": "1.3.2",
- "facts_hash": "5653ee1495d6dc7d",
+ "facts_hash": "be6847dafd485814",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 961,
+   ".tsx": 962,
    ".ts": 918,
    ".sql": 915,
    ".mjs": 103,
@@ -90557,7 +90557,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 125
+    "deps_count": 127
    },
    {
     "path": "",
@@ -99950,7 +99950,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 932,
+  "components_count": 933,
   "hooks": [
    {
     "name": "useContacts",
@@ -101213,7 +101213,7 @@
   {
    "module": "public",
    "files": 1,
-   "lines": 291,
+   "lines": 332,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -101226,7 +101226,7 @@
   {
    "module": "scripts",
    "files": 148,
-   "lines": 34093,
+   "lines": 34135,
    "tables": [
     "a",
     "anexos",
@@ -101533,8 +101533,8 @@
   },
   {
    "module": "src/components",
-   "files": 932,
-   "lines": 167998,
+   "files": 933,
+   "lines": 169267,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101746,6 +101746,7 @@
     "src/components/__tests__/DesligamentoBadges.test.tsx",
     "src/components/__tests__/DesligamentoChecklist.test.tsx",
     "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
+    "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
     "src/components/__tests__/DesligamentoFilters.test.tsx",
     "src/components/__tests__/DesligamentoKPIs.test.tsx",
     "src/components/__tests__/DesligamentoStatusBadge.test.tsx",
@@ -101760,8 +101761,7 @@
     "src/components/__tests__/ESocialComplianceScore.test.tsx",
     "src/components/__tests__/ESocialConciliacao.test.tsx",
     "src/components/__tests__/ESocialDesligamentoCDP.test.tsx",
-    "src/components/__tests__/ESocialEventComponents.test.tsx",
-    "src/components/__tests__/ESocialEventViewer.test.tsx"
+    "src/components/__tests__/ESocialEventComponents.test.tsx"
    ]
   },
   {
@@ -102585,7 +102585,7 @@
   {
    "module": "src/services",
    "files": 189,
-   "lines": 40619,
+   "lines": 40624,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -117399,6 +117399,10 @@
    },
    {
     "file": "public/sw-custom.js",
+    "text": "// A navegação NÃO pode ser stale-while-revalidate: o HTML servido do cache"
+   },
+   {
+    "file": "public/sw-custom.js",
     "text": "Gzipbomb-safe fetch wrapper: lê apenas os primeiros 4MB antes de entregar ao SW."
    },
    {
@@ -118967,15 +118971,23 @@
    },
    {
     "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
-    "text": "vencidas, saldo FGTS, pedido de demissão com desconto de aviso (art. 487"
+    "text": "ferias vencidas, saldo FGTS, pedido de demissao com desconto de aviso"
    },
    {
     "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
-    "text": "§2º) e término de contrato a prazo (arts. 479/480). Antes o fluxo chamava"
+    "text": "(art. 487 §2º) e termino de contrato a prazo (arts. 479/480). Persistem em"
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "text": "Percentual da multa do FGTS, derivado da MESMA condição do motor"
    },
    {
     "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
     "text": "Com data_pagamento registrada, o motor aplica a multa do"
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "text": "futura) são exatamente os de antes: a animação apenas REVELA o estado real,"
    },
    {
     "file": "src/components/desligamentos/DesligamentoFilters.tsx",
@@ -145525,7 +145537,7 @@
    {
     "file": "public/sw-custom.js",
     "name": "CACHE_VERSION",
-    "value": "'v3'"
+    "value": "'v4'"
    },
    {
     "file": "src/calculators/tabelas.ts",
@@ -146136,6 +146148,21 @@
     "file": "src/components/colaborador-detalhes/historico/HistoryEventRow.tsx",
     "name": "SUB_STEP",
     "value": "0.14"
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "name": "BASE_CONTEUDO_ABA",
+    "value": "4"
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "name": "ANDAMENTO_GAP",
+    "value": "0.22"
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "name": "ANDAMENTO_INICIO",
+    "value": "0.6"
    },
    {
     "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
@@ -149332,6 +149359,42 @@
     "file": "src/components/descontos/NewLoanDialog.tsx",
     "field": "status",
     "value": "ativo",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "field": "etapa",
+    "value": "finalizado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "field": "status",
+    "value": "homologado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "field": "status",
+    "value": "finalizado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "field": "status",
+    "value": "pago",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "field": "etapa",
+    "value": "documentacao",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "field": "etapa",
+    "value": "comunicacao",
     "kind": "compara"
    },
    {
@@ -162641,8 +162704,16 @@
     "line": "const margin = colaboradorData.salario_base * 0.3; // 30% Law"
    },
    {
-    "file": "src/components/desligamentos/DesligamentoChecklist.tsx",
-    "line": "transition={{ delay: i * 0.03 }}"
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "line": "// (`rescisaoCalc.ts:320-323`): 40% na dispensa sem justa causa e no término"
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "line": "// antecipado pelo empregador (acompanha o art. 479), 20% no acordo mútuo e na"
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "line": "transition={{ delay: atraso - ANDAMENTO_GAP * 0.5, duration: ANDAMENTO_GAP, ease: 'easeInOut' }}"
    },
    {
     "file": "src/components/desligamentos/DesligamentoKPIs.tsx",
@@ -168128,7 +168199,75 @@
    },
    {
     "file": "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
-    "name": "renders Etapa Atual card when etapa is set"
+    "name": "mostra o cartao de andamento do processo quando ha etapa"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "DesligamentoDetailSheet — parâmetros do cálculo da rescisão"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "a tela oferece os parâmetros que o motor aceita"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "manda ao motor os parâmetros escolhidos na tela, não defaults fixos"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "o payload carrega TODOS os campos do motor, inclusive os das modalidades"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "pedido de demissão sem aviso trabalhado pede os dias não cumpridos (art. 487 §2º)"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "cadastro já pago não oferece recálculo (o valor está quitado)"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "lê os parâmetros já salvos em detalhes_calculo._parametros"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "DesligamentoDetailSheet — rótulo da multa do FGTS"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "mostra 20% no acordo mútuo"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "mostra 40% na dispensa sem justa causa"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "mostra 40% no término antecipado pelo empregador (art. 479)"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "omite o percentual quando a modalidade não gera multa"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "DesligamentoDetailSheet — termo de homologação após o pagamento"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "mantém o termo disponível com status pago"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "DesligamentoDetailSheet — conclusão em lote do checklist"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "aplica as transições de etapa ao concluir todas as pendências"
+   },
+   {
+    "file": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    "name": "não rebaixa a etapa de um cadastro já adiantado"
    },
    {
     "file": "src/components/__tests__/DesligamentoFilters.test.tsx",
@@ -229590,13 +229729,17 @@
      "pendente": [
       "compara:src/components/admissoes/kanbanComum.ts"
      ],
-     "documentacao": [
-      "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx"
-     ],
      "finalizado": [
+      "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx",
       "escreve:src/components/desligamentos/desligamentosComum.ts",
       "escreve:src/components/desligamentos/desligamentosDerivacoes.ts",
       "escreve:src/services/rescisaoService.ts"
+     ],
+     "documentacao": [
+      "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx"
+     ],
+     "comunicacao": [
+      "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx"
      ],
      "Etapa": [
       "escreve:src/components/desligamentos/trilhaDerivacoes.ts"
@@ -256960,14 +257103,14 @@
   },
   "public/sw-custom.js": {
    "path": "public/sw-custom.js",
-   "lines": 291,
+   "lines": 332,
    "errors": [
     "Payload too large"
    ],
    "params": [
     {
      "name": "CACHE_VERSION",
-     "value": "'v3'"
+     "value": "'v4'"
     }
    ],
    "status_values": [
@@ -256979,6 +257122,7 @@
    ],
    "rule_comments": [
     "Se ambos falharem retorna null → quem chamou deve handlear.",
+    "// A navegação NÃO pode ser stale-while-revalidate: o HTML servido do cache",
     "Gzipbomb-safe fetch wrapper: lê apenas os primeiros 4MB antes de entregar ao SW.",
     "intocada quando está dentro do limite — nunca reconstrói um novo Response",
     "cacheada — o SW apenas observa a resposta passar."
@@ -260369,7 +260513,7 @@
   },
   "scripts/tests/sw-routing.test.mjs": {
    "path": "scripts/tests/sw-routing.test.mjs",
-   "lines": 156,
+   "lines": 198,
    "is_test": true,
    "params": [
     {
@@ -260381,6 +260525,7 @@
     "Node's Request aceita apenas HTTP(S); o SW ainda recebe a URL da extensão.",
     "default network-only escondia a remoção de cada regra de bloqueio.",
     "S: uma falha no stream não pode virar HTTP 200 com corpo parcial/vazio.",
+    "que não exista mais (hash antigo após um deploy). Esse HTML não pode entrar",
     "T: ativação limpa somente caches deste app; caches de outras aplicações"
    ],
    "doc": "!/usr/bin/env node"
@@ -263500,7 +263645,7 @@
   },
   "src/components/__tests__/DesligamentoChecklist.test.tsx": {
    "path": "src/components/__tests__/DesligamentoChecklist.test.tsx",
-   "lines": 89,
+   "lines": 102,
    "is_test": true,
    "tests": [
     "DesligamentoChecklist",
@@ -263525,7 +263670,37 @@
     "renders Detalhes tab",
     "renders Checklist tab",
     "renders Rescisão tab",
-    "renders Etapa Atual card when etapa is set"
+    "mostra o cartao de andamento do processo quando ha etapa"
+   ]
+  },
+  "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx": {
+   "path": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+   "lines": 326,
+   "is_test": true,
+   "rule_comments": [
+    "nenhum desconto de aviso não cumprido (art. 487 §2º), nenhuma indenização dos",
+    "arts. 479/480 e nenhuma multa do art. 477 §8º — ou seja, valor pago errado a",
+    "487 §2º (aviso não cumprido), 479/480 (contrato a prazo) e 477 §8º (multa",
+    "para `pago` sem desfazê-la: o termo não pode voltar a \"Pendente\"."
+   ],
+   "tests": [
+    "DesligamentoDetailSheet — parâmetros do cálculo da rescisão",
+    "a tela oferece os parâmetros que o motor aceita",
+    "manda ao motor os parâmetros escolhidos na tela, não defaults fixos",
+    "o payload carrega TODOS os campos do motor, inclusive os das modalidades",
+    "pedido de demissão sem aviso trabalhado pede os dias não cumpridos (art. 487 §2º)",
+    "cadastro já pago não oferece recálculo (o valor está quitado)",
+    "lê os parâmetros já salvos em detalhes_calculo._parametros",
+    "DesligamentoDetailSheet — rótulo da multa do FGTS",
+    "mostra 20% no acordo mútuo",
+    "mostra 40% na dispensa sem justa causa",
+    "mostra 40% no término antecipado pelo empregador (art. 479)",
+    "omite o percentual quando a modalidade não gera multa",
+    "DesligamentoDetailSheet — termo de homologação após o pagamento",
+    "mantém o termo disponível com status pago",
+    "DesligamentoDetailSheet — conclusão em lote do checklist",
+    "aplica as transições de etapa ao concluir todas as pendências",
+    "não rebaixa a etapa de um cadastro já adiantado"
    ]
   },
   "src/components/__tests__/DesligamentoFilters.test.tsx": {
@@ -274031,17 +274206,14 @@
   },
   "src/components/desligamentos/DesligamentoChecklist.tsx": {
    "path": "src/components/desligamentos/DesligamentoChecklist.tsx",
-   "lines": 82,
+   "lines": 305,
    "exports": [
     "function DesligamentoChecklist"
-   ],
-   "percents": [
-    "transition={{ delay: i * 0.03 }}"
    ]
   },
   "src/components/desligamentos/DesligamentoDetailSheet.tsx": {
    "path": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
-   "lines": 495,
+   "lines": 1202,
    "exports": [
     "function DesligamentoDetailSheet"
    ],
@@ -274069,7 +274241,51 @@
      "rules": "type=number, min=0, step=0.01"
     }
    ],
+   "params": [
+    {
+     "name": "BASE_CONTEUDO_ABA",
+     "value": "4"
+    },
+    {
+     "name": "ANDAMENTO_GAP",
+     "value": "0.22"
+    },
+    {
+     "name": "ANDAMENTO_INICIO",
+     "value": "0.6"
+    }
+   ],
    "status_values": [
+    {
+     "field": "etapa",
+     "value": "finalizado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "homologado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "finalizado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "pago",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "documentacao",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "comunicacao",
+     "kind": "compara"
+    },
     {
      "field": "etapa",
      "value": "documentacao",
@@ -274112,9 +274328,16 @@
     }
    ],
    "rule_comments": [
-    "vencidas, saldo FGTS, pedido de demissão com desconto de aviso (art. 487",
-    "§2º) e término de contrato a prazo (arts. 479/480). Antes o fluxo chamava",
-    "Com data_pagamento registrada, o motor aplica a multa do"
+    "ferias vencidas, saldo FGTS, pedido de demissao com desconto de aviso",
+    "(art. 487 §2º) e termino de contrato a prazo (arts. 479/480). Persistem em",
+    "Percentual da multa do FGTS, derivado da MESMA condição do motor",
+    "Com data_pagamento registrada, o motor aplica a multa do",
+    "futura) são exatamente os de antes: a animação apenas REVELA o estado real,"
+   ],
+   "percents": [
+    "// (`rescisaoCalc.ts:320-323`): 40% na dispensa sem justa causa e no término",
+    "// antecipado pelo empregador (acompanha o art. 479), 20% no acordo mútuo e na",
+    "transition={{ delay: atraso - ANDAMENTO_GAP * 0.5, duration: ANDAMENTO_GAP, ease: 'easeInOut' }}"
    ]
   },
   "src/components/desligamentos/DesligamentoFilters.tsx": {
@@ -300758,7 +300981,7 @@
   },
   "src/services/desligamentoService.ts": {
    "path": "src/services/desligamentoService.ts",
-   "lines": 114,
+   "lines": 119,
    "exports": [
     "type DesligamentoComColaborador",
     "const desligamentoService"
@@ -323160,10 +323383,36 @@
   }
  },
  "git": {
-  "sha": "cc7b1acb4450d17e5b40003ad0a7f641881804e0",
+  "sha": "b25c46e0edae00b48cd5c30c36ab04ca6348ef7a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "b25c46e",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(desligamentos): drawer de rescisão com a UI da muri e o cálculo da main (#621)",
+    "files": [
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/DesligamentoChecklist.test.tsx",
+     "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
+     "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+     "src/components/desligamentos/DesligamentoChecklist.tsx",
+     "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+     "src/services/__tests__/desligamentoService.test.ts",
+     "src/services/desligamentoService.ts"
+    ]
+   },
+   {
+    "sha": "143c729",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix(pwa): service worker servia HTML no lugar dos assets e travava o app (#622)",
+    "files": [
+     "public/sw-custom.js",
+     "scripts/tests/sw-routing.test.mjs"
+    ]
+   },
    {
     "sha": "cc7b1ac",
     "date": "2026-11-17",
@@ -323939,33 +324188,12 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "3482e18",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "infra(ci): probes de segurança do canônico passam de diários a semanais — a fila chegava a 3,7 dias (#589)",
-    "files": [
-     ".github/workflows/canonical-probes.yml",
-     "inventario/ia/INDEX.md",
-     "inventario/ia/ferramentas.json"
-    ]
-   },
-   {
-    "sha": "181fcb7",
-    "date": "2026-11-16",
-    "author": "dependabot[bot]",
-    "subject": "build(deps): bump jsdom from 30.1.3 to 31.0.0 (#587)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    10
+    11
    ],
    [
     "inventario/estado/rotas.json",
@@ -323989,14 +324217,6 @@
    ],
    [
     "src/services/colaboradorService.ts",
-    3
-   ],
-   [
-    "package-lock.json",
-    3
-   ],
-   [
-    "package.json",
     3
    ],
    [
@@ -324041,6 +324261,14 @@
    ],
    [
     "src/hooks/useColaboradorDetalhes.ts",
+    2
+   ],
+   [
+    "src/hooks/useVinculos.ts",
+    2
+   ],
+   [
+    "src/services/colaboradorDetalhesService.ts",
     2
    ]
   ]

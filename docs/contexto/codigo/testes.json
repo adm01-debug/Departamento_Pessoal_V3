@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 734,
+ "total": 735,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 695
+  "unit": 696
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 611
+   "arquivos": 612
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -502,9 +502,9 @@
   {
    "arquivo": "scripts/tests/sw-routing.test.mjs",
    "tipo": "unit",
-   "linhas": 156,
+   "linhas": 198,
    "testa": [],
-   "casos": 0
+   "casos": 1
   },
   {
    "arquivo": "scripts/tests/validate-canonical-db-url.test.mjs",
@@ -1151,7 +1151,7 @@
   {
    "arquivo": "src/components/__tests__/DesligamentoChecklist.test.tsx",
    "tipo": "unit",
-   "linhas": 89,
+   "linhas": 102,
    "testa": [
     "src/components/desligamentos/DesligamentoChecklist.tsx",
     "src/integrations/supabase/types.ts"
@@ -1167,6 +1167,15 @@
     "src/services/desligamentoService.ts"
    ],
    "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+   "tipo": "unit",
+   "linhas": 326,
+   "testa": [
+    "src/components/desligamentos/DesligamentoDetailSheet.tsx"
+   ],
+   "casos": 13
   },
   {
    "arquivo": "src/components/__tests__/DesligamentoFilters.test.tsx",
@@ -6941,7 +6950,7 @@
   "src/components/descontos/NewAdvanceDialog.tsx": 1,
   "src/components/descontos/NewLoanDialog.tsx": 1,
   "src/components/desligamentos/DesligamentoChecklist.tsx": 1,
-  "src/components/desligamentos/DesligamentoDetailSheet.tsx": 1,
+  "src/components/desligamentos/DesligamentoDetailSheet.tsx": 2,
   "src/components/desligamentos/DesligamentoFilters.tsx": 1,
   "src/components/desligamentos/DesligamentoKPIs.tsx": 1,
   "src/components/desligamentos/DesligamentoStatusBadge.tsx": 3,

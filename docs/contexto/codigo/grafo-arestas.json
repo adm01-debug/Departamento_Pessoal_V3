@@ -1843,14 +1843,19 @@
    "src/utils/dateLocal.ts"
   ],
   "src/components/desligamentos/DesligamentoChecklist.tsx": [
+   "src/components/desligamentos/entradaCards.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/progress.tsx",
    "src/integrations/supabase/types.ts",
    "src/lib/utils.ts"
   ],
   "src/components/desligamentos/DesligamentoDetailSheet.tsx": [
    "src/components/desligamentos/DesligamentoChecklist.tsx",
    "src/components/desligamentos/DesligamentoStatusBadge.tsx",
+   "src/components/desligamentos/desligamentosComum.ts",
+   "src/components/desligamentos/desligamentosDerivacoes.ts",
+   "src/components/desligamentos/entradaCards.tsx",
    "src/components/ui/button.tsx",
-   "src/components/ui/card.tsx",
    "src/components/ui/checkbox.tsx",
    "src/components/ui/input.tsx",
    "src/components/ui/label.tsx",
@@ -1858,9 +1863,12 @@
    "src/components/ui/separator.tsx",
    "src/components/ui/sheet.tsx",
    "src/components/ui/tabs.tsx",
+   "src/components/ui/user-avatar.tsx",
    "src/integrations/supabase/database.types.ts",
+   "src/lib/utils.ts",
    "src/services/desligamentoService.ts",
    "src/services/rescisaoService.ts",
+   "src/utils/format.ts",
    "src/utils/rescisaoCalc.ts",
    "src/utils/rescisaoPDF.ts",
    "src/utils/safeError.ts"

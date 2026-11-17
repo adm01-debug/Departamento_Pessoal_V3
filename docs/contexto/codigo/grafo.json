@@ -2,19 +2,19 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 1280,
- "arestas": 6258,
+ "arestas": 6266,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 351
+   "importado_por": 352
   },
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 279
+   "importado_por": 278
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 269
+   "importado_por": 270
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
@@ -114,7 +114,7 @@
   },
   {
    "arquivo": "src/utils/format.ts",
-   "importado_por": 41
+   "importado_por": 42
   },
   {
    "arquivo": "src/components/ui/tooltip.tsx",

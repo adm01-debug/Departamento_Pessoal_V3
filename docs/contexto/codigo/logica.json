@@ -899,7 +899,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 268,
+   "usado_por": 269,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
@@ -2588,7 +2588,7 @@
     "desligamentoService"
    ],
    "export_default": null,
-   "linhas": 114,
+   "linhas": 119,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -5340,11 +5340,12 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 40,
+   "usado_por": 41,
    "usado_por_modulos": [
     "components/admissoes",
     "components/afastamentos",
     "components/colaborador-detalhes",
+    "components/desligamentos",
     "components/esocial",
     "components/folha",
     "components/premiacoes",

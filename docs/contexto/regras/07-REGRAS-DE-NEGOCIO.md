@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `cc7b1acb44` · branch `main` · 2026-11-17 14:22 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b25c46e0ed` · branch `main` · 2026-11-17 15:03 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1723,7 +1723,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `concluida_validada` | compara | `src/components/avaliacao/FeedbackAcoesRodape.tsx`<br>`src/components/avaliacao/aprovacaoGestor.ts`<br>`src/components/avaliacao/feedbackCanonico.ts` |
 | `status` | `concluido` | compara, escreve | `src/components/avaliacao/nineBoxMock.ts`<br>`src/components/dashboard/AnalyticsSection.tsx`<br>`src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/components/desligamentos/DesligamentoKPIs.tsx`<br>`src/components/desligamentos/desligamentosDerivacoes.ts`<br>… +9 |
 | `status` | `configurando` | escreve | `src/pages/IntegracoesPage.tsx` |
-| … +201 linhas — lista completa em `context.json` | | | |
+| … +202 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -4195,7 +4195,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ delay: index * 0.1 }}` | `src/components/dashboard/analytics/widgets.tsx` |
 | `Colaboradores acima de 30% de desconto` | `src/components/descontos/FinancialSummaryCards.tsx` |
 | `const margin = colaboradorData.salario_base * 0.3; // 30% Law` | `src/components/descontos/NewLoanDialog.tsx` |
-| `transition={{ delay: i * 0.03 }}` | `src/components/desligamentos/DesligamentoChecklist.tsx` |
+| `// (`rescisaoCalc.ts:320-323`): 40% na dispensa sem justa causa e no término` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
+| `// antecipado pelo empregador (acompanha o art. 479), 20% no acordo mútuo e na` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
+| `transition={{ delay: atraso - ANDAMENTO_GAP * 0.5, duration: ANDAMENTO_GAP, ease: 'easeInOut' }}` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
 | `transition={{ delay: i * 0.06, type: 'spring', stiffness: 300, damping: 24 }}` | `src/components/desligamentos/DesligamentoKPIs.tsx` |
 | `direita NÃO existe: a linha ocupa 100% da largura útil (`w-full`) e o` | `src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx` |
 | `/** Cor do pontinho (`bg-*`) — a MESMA tinta, só sem os 15% de alfa. */` | `src/components/desligamentos/trilhaComum.ts` |
@@ -4393,9 +4395,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `const descontoVT = Math.min(Number(vtLegacy.valor_mensal ?? 0), salarioBase * 0.06);` | `supabase/functions/calcular-folha/index.ts` |
 | `const fgts = trunc2(baseTributavel * 0.08);` | `supabase/functions/calcular-folha/index.ts` |
 | `const noturnoValor = round2(valorHora * variaveis.noturno * (60 / 52.5) * 0.2);` | `supabase/functions/calcular-folha/index.ts` |
-| `// Encargos patronais consolidados. Achado K5 da auditoria: RAT estava em 2%` | `supabase/functions/calcular-provisoes/index.ts` |
-| `const FGTS_BPS = 80n; // 8%` | `supabase/functions/calcular-provisoes/index.ts` |
-| … +23 linhas — lista completa em `context.json` | |
+| … +25 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -4403,7 +4403,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 | Constante | Valor | Arquivo |
 |---|---|---|
-| `CACHE_VERSION` | `'v3'` | `public/sw-custom.js` |
+| `CACHE_VERSION` | `'v4'` | `public/sw-custom.js` |
 | `SALARIO_MINIMO_2026` | `1621.0` | `src/calculators/tabelas.ts` |
 | `TETO_INSS_2026` | `8475.55` | `src/calculators/tabelas.ts` |
 | `TETO_INSS_2025` | `8157.41` | `src/calculators/tabelas.ts` |
@@ -4526,6 +4526,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `DIAS_ALERTA_VALIDADE` | `60` | `src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx` |
 | `ROW_STAGGER` | `0.12` | `src/components/colaborador-detalhes/historico/HistoryEventRow.tsx` |
 | `SUB_STEP` | `0.14` | `src/components/colaborador-detalhes/historico/HistoryEventRow.tsx` |
+| `BASE_CONTEUDO_ABA` | `4` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
+| `ANDAMENTO_GAP` | `0.22` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
+| `ANDAMENTO_INICIO` | `0.6` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
 | `COLUNAS_RELATORIO` | `'grid grid-cols-2 gap-x-4 gap-y-3 '` | `src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx` |
 | `SUPERFICIE_LINHA` | `'rounded-lg border border-border/30 bg-background/40 '` | `src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx` |
 | `PAGINA_TRILHA` | `500` | `src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx` |
@@ -4700,10 +4703,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `MASK_CHAR` | `'•'` | `src/utils/piiMask.ts` |
 | `DIAS_AVISO_FERIAS` | `30` | `src/utils/regrasSolicitacaoFerias.ts` |
 | `DIA_MS` | `1000` | `src/utils/rescisaoCalc.ts` |
-| `DEFAULT_TTL_MS` | `5` | `supabase/functions/_shared/cache.ts` |
-| `DEFAULT_MAX_PAYLOAD_BYTES` | `256` | `supabase/functions/_shared/contract.ts` |
-| `FINANCIAL_TOLERANCE` | `0.01` | `supabase/functions/_shared/folhaIntegrity.ts` |
-| … +107 linhas — lista completa em `context.json` | | |
+| … +110 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5411,7 +5411,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9001 testes em 691 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9018 testes em 692 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5544,6 +5544,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/trainingImages/__tests__/briefing.test.ts` | 18 | briefing por assunto · panificação → padaria, fermentação e pães · segurança do trabalho → proteção e ambiente sinalizado · programação/tecnologia → software e ambiente técnico … |
 | `src/utils/__tests__/uploadValidation.test.ts` | 18 | validateUploadFile · accepts a valid PDF file · accepts a valid JPEG image · throws when file exceeds size limit … |
 | `scripts/tests/inventario-banco.test.mjs` | 17 | banco.sql tem as secoes esperadas e cada uma devolve a coluna j · banco.sql so le: nenhum comando de escrita e nada do command do cron · banco.sql: nome de tabela entra escapado na regex de citada_no_banco · banco.sql: count(*) exato so sem RLS no caminho (tabela sem RLS ou papel que ignora RLS) … |
+| `src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx` | 17 | DesligamentoDetailSheet — parâmetros do cálculo da rescisão · a tela oferece os parâmetros que o motor aceita · manda ao motor os parâmetros escolhidos na tela, não defaults fixos · o payload carrega TODOS os campos do motor, inclusive os das modalidades … |
 | `src/components/__tests__/ESocialAlteracaoComponents.test.tsx` | 17 | S2205AlteracaoCadastral · renders trabalhador name · renders CPF · renders data de alteração … |
 | `src/components/__tests__/GestaoRegistrosPonto.test.tsx` | 17 | GestaoRegistrosPonto · renders Controle de Ponto title · renders Filtros Avançados button · renders search input … |
 | `src/components/__tests__/RubricasDialog.test.tsx` | 17 | RubricasDialog · renders Rubricas trigger button · renders Gestão de Rubricas dialog title · renders Nova Rubrica button … |
@@ -5714,8 +5715,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/AdmissoesKanban.test.tsx` | 9 | AdmissoesKanban · renders Solicitação column label · renders Documentos column label · renders eSocial column label … |
 | `src/components/__tests__/AfastamentoDocumentManager.test.tsx` | 9 | AfastamentoDocumentManager · renders Tipo de Documento label · renders Arquivo label · renders Fazer Upload button … |
 | `src/components/__tests__/AfastamentoStats.test.tsx` | 9 | AfastamentoStats · renders total registros count · renders ativos count · renders pendentes count … |
-| `src/components/__tests__/AfastamentoTimeline.test.tsx` | 9 | AfastamentoTimeline · renders Spinner when loading · renders Linha do Tempo heading · renders Registro Inicial badge … |
-| … +391 linhas — lista completa em `context.json` | | |
+| … +392 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -5792,6 +5792,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Origin/Referer para o deployment Vercel canônico da allowlist (somente | `vite.config.ts` |
 | regra do time: só subir, nunca baixar (ratchet). | `vitest.config.ts` |
 | Se ambos falharem retorna null → quem chamou deve handlear. | `public/sw-custom.js` |
+| // A navegação NÃO pode ser stale-while-revalidate: o HTML servido do cache | `public/sw-custom.js` |
 | Gzipbomb-safe fetch wrapper: lê apenas os primeiros 4MB antes de entregar ao SW. | `public/sw-custom.js` |
 | intocada quando está dentro do limite — nunca reconstrói um novo Response | `public/sw-custom.js` |
 | cacheada — o SW apenas observa a resposta passar. | `public/sw-custom.js` |
@@ -6082,5 +6083,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * ── REGRAS DE NEGÓCIO APLICADAS ──────────────────────────────────────────── | `src/components/avaliacao/motorAvaliacao360.ts` |
 | • POTENCIAL = 100% gestor, com VALIDAÇÃO OBRIGATÓRIA do RH vinculada à versão | `src/components/avaliacao/motorAvaliacao360.ts` |
 | exata da avaliação (se a avaliação mudar ou for reaberta, a validação | `src/components/avaliacao/motorAvaliacao360.ts` |
-| ─── Validação do Potencial pelo RH ──────────────────────────────────────── */ | `src/components/avaliacao/motorAvaliacao360.ts` |
-| … +868 linhas — lista completa em `context.json` | |
+| … +871 linhas — lista completa em `context.json` | |

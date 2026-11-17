@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "cc7b1acb4450d17e5b40003ad0a7f641881804e0",
+  "commit": "b25c46e0edae00b48cd5c30c36ab04ca6348ef7a",
   "branch": "main",
-  "data_commit": "2026-11-17T11:18:36-03:00",
+  "data_commit": "2026-11-17T12:02:13-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "b25c46e",
+    "data": "2026-11-17",
+    "assunto": "feat(desligamentos): drawer de rescisão com a UI da muri e o cálculo da main (#621)"
+   },
+   {
+    "sha": "143c729",
+    "data": "2026-11-17",
+    "assunto": "fix(pwa): service worker servia HTML no lugar dos assets e travava o app (#622)"
+   },
    {
     "sha": "cc7b1ac",
     "data": "2026-11-17",
@@ -121,23 +131,13 @@
     "sha": "f732746",
     "data": "2026-11-16",
     "assunto": "docs: resgata a documentação operacional do ninebox e das capas de treinamento (#595)"
-   },
-   {
-    "sha": "3dcc001",
-    "data": "2026-11-16",
-    "assunto": "chore(banco): resgata os rollbacks das dez migrations ninebox já aplicadas em produção (#594)"
-   },
-   {
-    "sha": "a054841",
-    "data": "2026-11-16",
-    "assunto": "chore(deps): jsdom sai de dependencies e vira devDependency (#591)"
    }
   ],
-  "arquivos_mudados_7d": 1147,
+  "arquivos_mudados_7d": 1155,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 336
+    "mudancas": 339
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -145,7 +145,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 104
+    "mudancas": 105
    },
    {
     "pasta": "src/components/avaliacao",
@@ -230,15 +230,15 @@
     "mudancas": 9
    },
    {
-    "arquivo": "deno.lock",
-    "mudancas": 8
-   },
-   {
     "arquivo": "supabase/functions/calcular-folha/index.ts",
     "mudancas": 8
    },
    {
     "arquivo": "AGENTS.md",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "deno.lock",
     "mudancas": 7
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 238
+    "commits": 240
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 41
+    "commits": 39
    },
    {
     "autor": "dependabot[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3478,
-  "arquivos_codigo": 2012,
-  "linhas_codigo": 398794,
+  "arquivos_total": 3479,
+  "arquivos_codigo": 2013,
+  "linhas_codigo": 400151,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -332,7 +332,7 @@
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 734,
+  "testes": 735,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -392,7 +392,7 @@
   },
   "public/sw-custom.js": {
    "arquivos": 1,
-   "linhas": 291
+   "linhas": 332
   },
   "release.config.js": {
    "arquivos": 1,
@@ -600,7 +600,7 @@
   },
   "scripts/tests": {
    "arquivos": 19,
-   "linhas": 2169
+   "linhas": 2211
   },
   "scripts/training-images-homolog": {
    "arquivos": 1,
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 932,
-   "linhas": 167998
+   "arquivos": 933,
+   "linhas": 169267
   },
   "src/constants": {
    "arquivos": 6,
@@ -688,7 +688,7 @@
   },
   "src/services": {
    "arquivos": 189,
-   "linhas": 40619
+   "linhas": 40624
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -793,6 +793,10 @@
    "linhas": 1299
   },
   {
+   "arquivo": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+   "linhas": 1202
+  },
+  {
    "arquivo": "src/services/cnabService.ts",
    "linhas": 1199
   },
@@ -839,10 +843,6 @@
   {
    "arquivo": "src/schemas/esocial/periodicosValidators.ts",
    "linhas": 861
-  },
-  {
-   "arquivo": "src/pages/SegurosVidaPage.tsx",
-   "linhas": 848
   }
  ],
  "qualidade": {
@@ -851,7 +851,7 @@
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 23,
-  "arquivos_acima_500_linhas": 111
+  "arquivos_acima_500_linhas": 112
  },
  "todos": [
   {

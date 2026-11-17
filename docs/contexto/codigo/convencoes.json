@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (611)",
+   "co-localizado (__tests__) (612)",
    "co-localizado (*.test) (70)",
    "e2e/ (28)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(desligamentos): drawer de rescisão com a UI da muri e o cálculo da main (#621)",
+   "fix(pwa): service worker servia HTML no lugar dos assets e travava o app (#622)",
    "feat(desligamentos): Trilha de Auditoria com a camada de dados reescrita para o caminho autorizado (#620)",
    "fix(desligamentos): vocabulário alinhado ao banco — 4 de 6 tipos e o status pago não eram reconhecidos (#619)",
-   "feat: resgata da muri o organograma navegável — busca que filtra, expandir/recolher e níveis (#616)",
-   "fix(desligamentos): \"Novo Desligamento\" volta a listar colaboradores (#617)",
-   "fix(docs): redige o user_id, o e-mail e o primeiro nome de pessoa que o #599 deixou passar (#615)"
+   "feat: resgata da muri o organograma navegável — busca que filtra, expandir/recolher e níveis (#616)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
