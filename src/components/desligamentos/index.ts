@@ -6,3 +6,4 @@ export { DesligamentoDetailSheet } from './DesligamentoDetailSheet';
 export { NovoDesligamentoDialog } from './NovoDesligamentoDialog';
 export { TurnoverChart } from './TurnoverChart';
 export { TrilhaAuditoriaDesligamentos } from './TrilhaAuditoriaDesligamentos';
+export { DesligamentoAtencaoBanner } from './DesligamentoAtencaoBanner';
