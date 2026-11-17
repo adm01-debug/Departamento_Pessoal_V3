@@ -1279,6 +1279,25 @@
    "src/lib/utils.ts",
    "src/utils/dateLocal.ts"
   ],
+  "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/spinner.tsx",
+   "src/components/ui/table.tsx",
+   "src/hooks/index.ts",
+   "src/hooks/useBeneficiosColaborador.ts",
+   "src/hooks/useEmpresas.ts",
+   "src/hooks/usePiiMask.ts",
+   "src/hooks/useTabelasReferencia.ts",
+   "src/lib/utils.ts",
+   "src/services/piiAccessLogService.ts",
+   "src/types/entities.ts",
+   "src/utils/format.ts",
+   "src/utils/holeritePDF.ts"
+  ],
   "src/components/colaborador-detalhes/FormacaoTab.tsx": [
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
@@ -1654,6 +1673,7 @@
    "src/components/colaborador-detalhes/EstrangeiroTab.tsx",
    "src/components/colaborador-detalhes/ExperienciaTab.tsx",
    "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+   "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx",
    "src/components/colaborador-detalhes/FormacaoTab.tsx",
    "src/components/colaborador-detalhes/HistoricoContratosTab.tsx",
    "src/components/colaborador-detalhes/HistoricoSalarialTab.tsx",

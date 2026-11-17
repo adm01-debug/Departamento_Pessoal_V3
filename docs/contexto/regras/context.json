@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "45748e77d40e1e664b96e9688caf95faecb2a88a",
+  "sha": "842a6afaefbdaeb8026052e550e6ac3ebfa7474f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 21:48 UTC",
-  "files_total": 3555,
-  "code_files": 2981,
-  "code_lines": 471492
+  "generated_at": "2026-11-17 21:58 UTC",
+  "files_total": 3556,
+  "code_files": 2982,
+  "code_lines": 472095
  },
  "version": "1.3.2",
- "facts_hash": "feaec88a316380e2",
+ "facts_hash": "710269e552291f95",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,7 +387,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 990,
+   ".tsx": 991,
    ".ts": 928,
    ".sql": 927,
    ".mjs": 108,
@@ -89186,7 +89186,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 301
+    "deps_count": 303
    },
    {
     "path": "",
@@ -100034,7 +100034,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 964,
+  "components_count": 965,
   "hooks": [
    {
     "name": "useContacts",
@@ -101621,8 +101621,8 @@
   },
   {
    "module": "src/components",
-   "files": 964,
-   "lines": 173625,
+   "files": 965,
+   "lines": 174207,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102311,7 +102311,7 @@
   {
    "module": "src/pages",
    "files": 134,
-   "lines": 49405,
+   "lines": 49426,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -113979,6 +113979,10 @@
     "msg": "Erro ao salvar"
    },
    {
+    "file": "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx",
+    "msg": "Erro ao gerar PDF do holerite."
+   },
+   {
     "file": "src/components/colaborador-detalhes/FormacaoTab.tsx",
     "msg": "Escolaridade é obrigatória"
    },
@@ -119085,6 +119089,10 @@
    {
     "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
     "text": "centro), por isso um SVG local mínimo em vez de adaptar um componente"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx",
+    "text": "num só lugar; não introduz nenhuma regra de pendência nova. */"
    },
    {
     "file": "src/components/colaborador-detalhes/HoleritesTab.tsx",
@@ -274182,6 +274190,22 @@
     "onClick={() => setMesAtual((m) => subMonths(m, 1))}"
    ]
   },
+  "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx": {
+   "path": "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx",
+   "lines": 576,
+   "exports": [
+    "function FinanceiroKpiRow",
+    "function ResumoRemuneracaoCard",
+    "function HoleritesPreviewCard",
+    "function FinanceiroPendenciasCard"
+   ],
+   "errors": [
+    "Erro ao gerar PDF do holerite."
+   ],
+   "rule_comments": [
+    "num só lugar; não introduz nenhuma regra de pendência nova. */"
+   ]
+  },
   "src/components/colaborador-detalhes/FormacaoTab.tsx": {
    "path": "src/components/colaborador-detalhes/FormacaoTab.tsx",
    "lines": 218,
@@ -274355,7 +274379,7 @@
   },
   "src/components/colaborador-detalhes/index.ts": {
    "path": "src/components/colaborador-detalhes/index.ts",
-   "lines": 27
+   "lines": 33
   },
   "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx": {
    "path": "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
@@ -294586,7 +294610,7 @@
   },
   "src/pages/ColaboradorDetalhesPage.tsx": {
    "path": "src/pages/ColaboradorDetalhesPage.tsx",
-   "lines": 747,
+   "lines": 768,
    "exports": [
     "function ColaboradorDetalhesPage"
    ],
@@ -325283,10 +325307,21 @@
   }
  },
  "git": {
-  "sha": "45748e77d40e1e664b96e9688caf95faecb2a88a",
+  "sha": "842a6afaefbdaeb8026052e550e6ac3ebfa7474f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "842a6af",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(colaborador): resumo financeiro no dossiê, com CPF mascarado no PDF (#655)",
+    "files": [
+     "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx",
+     "src/components/colaborador-detalhes/index.ts",
+     "src/pages/ColaboradorDetalhesPage.tsx"
+    ]
+   },
    {
     "sha": "45748e7",
     "date": "2026-11-17",
@@ -325665,23 +325700,6 @@
      "public/sw-custom.js",
      "scripts/tests/sw-routing.test.mjs"
     ]
-   },
-   {
-    "sha": "93f1a5f",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(dashboard): resgata da muri o MetricCard com tone, tooltip e variante compacta (#618)",
-    "files": [
-     "src/components/__tests__/AnimatedNumber.test.tsx",
-     "src/components/__tests__/MetricCard.test.tsx",
-     "src/components/dashboard/AnimatedNumber.tsx",
-     "src/components/dashboard/BarChartWidget.tsx",
-     "src/components/dashboard/MetricCard.tsx",
-     "src/components/dashboard/MiniSparkline.tsx",
-     "src/components/dashboard/SectionHeader.tsx",
-     "src/components/dashboard/WorkforceHealthScore.tsx",
-     "src/index.css"
-    ]
    }
   ],
   "hot_files": [
@@ -325690,12 +325708,12 @@
     5
    ],
    [
-    "src/pages/ColaboradoresPage.tsx",
+    "src/pages/ColaboradorDetalhesPage.tsx",
     4
    ],
    [
-    "src/pages/ColaboradorDetalhesPage.tsx",
-    3
+    "src/pages/ColaboradoresPage.tsx",
+    4
    ],
    [
     "inventario/estado/rotas.json",
@@ -325726,8 +325744,12 @@
     2
    ],
    [
-    "src/index.css",
-    2
+    "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx",
+    1
+   ],
+   [
+    "src/components/colaborador-detalhes/index.ts",
+    1
    ],
    [
     "src/components/__tests__/ColaboradorDocuments.test.tsx",
@@ -325759,10 +325781,6 @@
    ],
    [
     "src/integrations/supabase/types.ts",
-    1
-   ],
-   [
-    "src/schemas/tableColumns.ts",
     1
    ]
   ]

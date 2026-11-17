@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 630,
+ "total": 631,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -2014,6 +2014,29 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx",
+   "exports": [
+    "FinanceiroKpiRow",
+    "FinanceiroPendenciasCard",
+    "HoleritesPreviewCard",
+    "ResumoRemuneracaoCard"
+   ],
+   "export_default": null,
+   "linhas": 576,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useBeneficiosColaborador",
+    "useContasBancarias",
+    "useEmpresas",
+    "useHoleritesColaborador",
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/colaborador-detalhes/FormacaoTab.tsx",
    "exports": [
     "FormacaoTab"
@@ -2728,7 +2751,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 31,
+   "usado_por": 32,
    "orfao": false
   },
   {
@@ -7189,7 +7212,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 221,
+   "usado_por": 222,
    "orfao": false
   },
   {
@@ -7204,7 +7227,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 358,
+   "usado_por": 359,
    "orfao": false
   },
   {
@@ -7239,7 +7262,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 280,
+   "usado_por": 281,
    "orfao": false
   },
   {
@@ -7499,7 +7522,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 34,
+   "usado_por": 35,
    "orfao": false
   },
   {
@@ -7969,7 +7992,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 116,
+   "usado_por": 117,
    "orfao": false
   },
   {
@@ -8047,7 +8070,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 112,
+   "usado_por": 113,
    "orfao": false
   },
   {
@@ -8842,7 +8865,7 @@
     "ColaboradorDetalhesPage"
    ],
    "export_default": "ColaboradorDetalhesPage",
-   "linhas": 747,
+   "linhas": 768,
    "dominio": "pages",
    "hooks_locais": [
     "useDataAccessLog",

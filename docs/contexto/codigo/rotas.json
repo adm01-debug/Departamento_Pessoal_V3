@@ -5673,6 +5673,7 @@
     "useFeriasArquivos",
     "useFeriasColetivas",
     "useFeriasResumoColaborador",
+    "useFinanceiroAgregado",
     "useFolha",
     "useFormacoes",
     "useGrupo",
@@ -6183,7 +6184,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 343
+   "arquivos_puxados": 345
   },
   {
    "protegida": true,

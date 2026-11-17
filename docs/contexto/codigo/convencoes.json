@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (512)",
+   "src/components (513)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (630)"
+  ".tsx (631)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(colaborador): resumo financeiro no dossiê, com CPF mascarado no PDF (#655)",
    "feat(documentos): upload real de arquivo nos 4 formulários de documento (#653)",
    "fix(automação): registra os 5 scripts que a #652 deixou sem gatilho (#654)",
    "feat(design-system): recupera os gates de layout protegido e de tipografia (#652)",
-   "fix(deploy): recupera o app depois de um deploy novo trocar os chunks (#646)",
-   "fix(hooks): guardas de empresa em ajuste de ponto e conta bancária (#650)"
+   "fix(deploy): recupera o app depois de um deploy novo trocar os chunks (#646)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

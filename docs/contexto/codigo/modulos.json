@@ -891,13 +891,13 @@
   },
   {
    "modulo": "components/colaborador-detalhes",
-   "arquivos": 60,
+   "arquivos": 61,
    "testes": 8,
-   "linhas": 10300,
+   "linhas": 10882,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 56,
+   "componentes": 57,
    "hooks_locais": [
     "useASOs",
     "useAdmissaoWorkflow",
@@ -7796,7 +7796,7 @@
    "modulo": "pages",
    "arquivos": 113,
    "testes": 0,
-   "linhas": 45829,
+   "linhas": 45850,
    "itens_menu": [
     "Admissões",
     "Afastamentos",

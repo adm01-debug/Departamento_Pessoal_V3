@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "45748e77d40e1e664b96e9688caf95faecb2a88a",
+  "commit": "842a6afaefbdaeb8026052e550e6ac3ebfa7474f",
   "branch": "main",
-  "data_commit": "2026-11-17T18:47:45-03:00",
+  "data_commit": "2026-11-17T18:57:23-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "842a6af",
+    "data": "2026-11-17",
+    "assunto": "feat(colaborador): resumo financeiro no dossiê, com CPF mascarado no PDF (#655)"
+   },
    {
     "sha": "45748e7",
     "data": "2026-11-17",
@@ -126,14 +131,9 @@
     "sha": "7e12152",
     "data": "2026-11-17",
     "assunto": "fix(menu): da caminho de navegacao a Faltas e Obrigacoes Fiscais (#634)"
-   },
-   {
-    "sha": "6dfb623",
-    "data": "2026-11-17",
-    "assunto": "feat(ui): resgata da muri os primitivos do design system (#627)"
    }
   ],
-  "arquivos_mudados_7d": 1082,
+  "arquivos_mudados_7d": 1083,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -157,7 +157,7 @@
    },
    {
     "pasta": "src/components/colaborador-detalhes",
-    "mudancas": 81
+    "mudancas": 83
    },
    {
     "pasta": "src/components/treinamentos",
@@ -218,11 +218,11 @@
     "mudancas": 10
    },
    {
-    "arquivo": "docs/prod-readiness.md",
-    "mudancas": 9
+    "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
+    "mudancas": 10
    },
    {
-    "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
+    "arquivo": "docs/prod-readiness.md",
     "mudancas": 9
    },
    {
@@ -239,10 +239,6 @@
    },
    {
     "arquivo": "AGENTS.md",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "PENDENCIAS.md",
     "mudancas": 6
    },
    {
@@ -290,6 +286,10 @@
     "mudancas": 5
    },
    {
+    "arquivo": "PENDENCIAS.md",
+    "mudancas": 5
+   },
+   {
     "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
     "mudancas": 5
    },
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 270
+    "commits": 271
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 14
+    "commits": 13
    },
    {
     "autor": "dependabot[bot]",
@@ -318,15 +318,15 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3542,
-  "arquivos_codigo": 2056,
-  "linhas_codigo": 406207,
+  "arquivos_total": 3543,
+  "arquivos_codigo": 2057,
+  "linhas_codigo": 406810,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
-  "componentes": 630,
+  "componentes": 631,
   "hooks": 116,
   "edge_functions": 67,
   "tabelas": 425,
@@ -647,8 +647,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 964,
-   "linhas": 173625
+   "arquivos": 965,
+   "linhas": 174207
   },
   "src/constants": {
    "arquivos": 7,
@@ -688,7 +688,7 @@
   },
   "src/pages": {
    "arquivos": 134,
-   "linhas": 49405
+   "linhas": 49426
   },
   "src/providers": {
    "arquivos": 4,
@@ -863,7 +863,7 @@
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 23,
-  "arquivos_acima_500_linhas": 112
+  "arquivos_acima_500_linhas": 113
  },
  "todos": [
   {

@@ -1,20 +1,20 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1297,
- "arestas": 6368,
+ "nos": 1298,
+ "arestas": 6386,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 358
+   "importado_por": 359
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 282
+   "importado_por": 283
   },
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 280
+   "importado_por": 281
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
@@ -22,7 +22,7 @@
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 221
+   "importado_por": 222
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -42,23 +42,23 @@
   },
   {
    "arquivo": "src/hooks/useEmpresas.ts",
-   "importado_por": 131
+   "importado_por": 132
   },
   {
    "arquivo": "src/components/ui/select.tsx",
    "importado_por": 130
   },
   {
+   "arquivo": "src/components/ui/spinner.tsx",
+   "importado_por": 117
+  },
+  {
    "arquivo": "src/schemas/validate.ts",
    "importado_por": 117
   },
   {
-   "arquivo": "src/components/ui/spinner.tsx",
-   "importado_por": 116
-  },
-  {
    "arquivo": "src/components/ui/table.tsx",
-   "importado_por": 112
+   "importado_por": 113
   },
   {
    "arquivo": "src/integrations/supabase/types.ts",
@@ -94,7 +94,7 @@
   },
   {
    "arquivo": "src/hooks/index.ts",
-   "importado_por": 58
+   "importado_por": 59
   },
   {
    "arquivo": "supabase/functions/_shared/sentry.ts",
@@ -114,7 +114,7 @@
   },
   {
    "arquivo": "src/utils/format.ts",
-   "importado_por": 42
+   "importado_por": 43
   },
   {
    "arquivo": "src/components/ui/tooltip.tsx",
@@ -122,7 +122,7 @@
   },
   {
    "arquivo": "src/hooks/usePiiMask.ts",
-   "importado_por": 39
+   "importado_por": 40
   },
   {
    "arquivo": "src/services/index.ts",
@@ -130,15 +130,15 @@
   },
   {
    "arquivo": "src/types/entities.ts",
-   "importado_por": 37
+   "importado_por": 38
   },
   {
    "arquivo": "src/components/ui/dropdown-menu.tsx",
-   "importado_por": 35
+   "importado_por": 36
   },
   {
    "arquivo": "src/components/dashboard/MetricCard.tsx",
-   "importado_por": 34
+   "importado_por": 35
   },
   {
    "arquivo": "src/hooks/useColaboradorDetalhes.ts",
@@ -150,7 +150,7 @@
   },
   {
    "arquivo": "src/services/piiAccessLogService.ts",
-   "importado_por": 30
+   "importado_por": 31
   },
   {
    "arquivo": "src/components/ui/entrada-cards.tsx",

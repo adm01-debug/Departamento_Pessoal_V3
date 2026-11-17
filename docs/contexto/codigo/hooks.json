@@ -699,12 +699,13 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 56,
+   "usado_por": 57,
    "usado_por_arquivos": [
     "scripts/ai-context/cenarios.mjs",
     "src/components/colaborador-detalhes/AfastamentosTab.tsx",
     "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
     "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx",
     "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
     "src/components/colaborador-detalhes/desenvolvimento/DesenvolvimentoProfissionalCard.tsx",
     "src/components/colaborador-detalhes/desenvolvimento/FormacaoQualificacoesCard.tsx",
@@ -729,8 +730,7 @@
     "src/pages/CentrosCustoPage.tsx",
     "src/pages/ColaboradorFormPage.tsx",
     "src/pages/ComunicacaoInternaPage.tsx",
-    "src/pages/ControleAcessoPage.tsx",
-    "src/pages/ConveniosPage.tsx"
+    "src/pages/ControleAcessoPage.tsx"
    ],
    "coberto_por_testes": 2
   },
@@ -1011,9 +1011,10 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_arquivos": [
     "src/components/colaborador-detalhes/BeneficiosTab.tsx",
+    "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx",
     "src/hooks/index.ts"
    ],
    "coberto_por_testes": 2
@@ -1629,7 +1630,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 125,
+   "usado_por": 126,
    "usado_por_arquivos": [
     "src/components/admissoes/AdmissoesKanban.tsx",
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
@@ -1638,6 +1639,7 @@
     "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
     "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
     "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx",
     "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
     "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
     "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
@@ -1659,8 +1661,7 @@
     "src/components/folha/DistribuirHoleritesButton.tsx",
     "src/components/folha/LancamentosDialog.tsx",
     "src/components/folha/PagamentoBancarioWizard.tsx",
-    "src/components/folha/RelatorioContabilDialog.tsx",
-    "src/components/folha/SimuladorWhatIf.tsx"
+    "src/components/folha/RelatorioContabilDialog.tsx"
    ],
    "coberto_por_testes": 6
   },
@@ -2484,12 +2485,13 @@
     "useMemo"
    ],
    "canais_realtime": [],
-   "usado_por": 38,
+   "usado_por": 39,
    "usado_por_arquivos": [
     "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
     "src/components/colaborador-detalhes/DependentesTab.tsx",
     "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
     "src/components/colaborador-detalhes/EmergenciaTab.tsx",
+    "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx",
     "src/components/colaboradores/ColaboradorDirectoryGrid.tsx",
     "src/components/colaboradores/ColaboradorTable.tsx",
     "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
@@ -2514,8 +2516,7 @@
     "src/pages/AuditoriaPage.tsx",
     "src/pages/ColaboradorDetalhesPage.tsx",
     "src/pages/ColaboradoresPage.tsx",
-    "src/pages/DocumentosPage.tsx",
-    "src/pages/FolhaCompliancePage.tsx"
+    "src/pages/DocumentosPage.tsx"
    ],
    "coberto_por_testes": 1
   },
@@ -2949,11 +2950,12 @@
     "useResultQuery"
    ],
    "canais_realtime": [],
-   "usado_por": 7,
+   "usado_por": 8,
    "usado_por_arquivos": [
     "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
     "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
     "src/components/colaborador-detalhes/EstagiarioTab.tsx",
+    "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx",
     "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
     "src/hooks/index.ts",
     "src/hooks/usePendenciasColaborador.ts",

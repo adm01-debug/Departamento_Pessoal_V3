@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `45748e77d4` · branch `main` · 2026-11-17 21:48 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `842a6afaef` · branch `main` · 2026-11-17 21:58 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5190,6 +5190,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | País de origem é obrigatório | `src/components/colaborador-detalhes/EstrangeiroTab.tsx` |
 | Data de início é obrigatória | `src/components/colaborador-detalhes/ExperienciaTab.tsx` |
 | Erro ao salvar | `src/components/colaborador-detalhes/ExperienciaTab.tsx` |
+| Erro ao gerar PDF do holerite. | `src/components/colaborador-detalhes/FinanceiroResumoCards.tsx` |
 | Escolaridade é obrigatória | `src/components/colaborador-detalhes/FormacaoTab.tsx` |
 | Data e motivo são obrigatórios | `src/components/colaborador-detalhes/HistoricoContratosTab.tsx` |
 | Data de vigência é obrigatória | `src/components/colaborador-detalhes/HistoricoSalarialTab.tsx` |
@@ -5343,8 +5344,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Ciclo detectado no fluxo! | `src/components/workflows/WorkflowDesigner.tsx` |
 | Conexão já existe | `src/components/workflows/WorkflowDesigner.tsx` |
 | Corrija os erros antes de salvar | `src/components/workflows/WorkflowDesigner.tsx` |
-| Limite de 50 nós atingido | `src/components/workflows/WorkflowDesigner.tsx` |
-| … +666 linhas — lista completa em `context.json` | |
+| … +667 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -6087,4 +6087,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * Tinta da linha de prazo (a leitura contextual muda com a situação). */ | `src/components/avaliacao/metasComum.ts` |
 | * Instante do prazo, no fim do dia. Aceita `data_limite` (coluna real) e | `src/components/avaliacao/metasComum.ts` |
 | * ── REGRAS DE NEGÓCIO APLICADAS ──────────────────────────────────────────── | `src/components/avaliacao/motorAvaliacao360.ts` |
-| … +883 linhas — lista completa em `context.json` | |
+| … +884 linhas — lista completa em `context.json` | |
