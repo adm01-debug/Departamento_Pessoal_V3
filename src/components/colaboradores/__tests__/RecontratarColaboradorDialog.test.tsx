@@ -115,6 +115,22 @@ describe('RecontratarColaboradorDialog', () => {
     expect(screen.queryByText(/12345678901/)).not.toBeInTheDocument();
   });
 
+  it('segue o cargo_id do cadastro, nao o nome (cargos homonimos nao tem UNIQUE no banco)', async () => {
+    // `cargo` diz 'Analista Fiscal' (nome de c1) mas a referencia aponta para c2:
+    // procurar pelo NOME mandaria c1 e repontaria o cadastro para outro cargo.
+    const { onOpenChange } = renderDialog({ ...COLABORADOR, cargo_id: 'c2' });
+
+    const confirmar = screen.getByRole('button', { name: 'Confirmar recontratação' });
+    await waitFor(() => expect(confirmar).toBeEnabled());
+    await userEvent.click(confirmar);
+
+    expect(mocks.mutateAsync).toHaveBeenCalledWith({
+      id: 'col-1',
+      dados: expect.objectContaining({ cargo_id: 'c2', cargo: 'Auxiliar de DP' }),
+    });
+    await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
+  });
+
   it('envia a nova admissão com cargo, departamento e salário da última passagem', async () => {
     const { onOpenChange } = renderDialog();
 

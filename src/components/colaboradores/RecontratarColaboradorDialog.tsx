@@ -34,6 +34,24 @@ function formatarDataLocal(iso: string | null | undefined): string {
   return data ? format(data, 'dd/MM/yyyy') : '—';
 }
 
+/**
+ * `cargos` NAO tem UNIQUE em (empresa_id, nome) — conferido no banco canonico:
+ * so PK, as duas FKs e os NOT NULL. Procurar o cargo pelo NOME, portanto, pode
+ * casar com um homonimo e repontar `cargo_id` para outro cargo sem mudar o
+ * texto na tela. Por isso o seletor guarda o ID, como a promocao em
+ * MovimentacoesPage: o nome e so rotulo.
+ *
+ * Cadastro legado sem `cargo_id`: usa o texto para achar o cargo, mas apenas se
+ * houver UM com aquele nome. Ambiguo ou inexistente, fica sem selecao — e o
+ * confirmar nao manda cargo nenhum, deixando o texto atual intocado, em vez de
+ * chutar um id.
+ */
+function cargoInicial(colaborador: Colaborador, cargos: { id: string; nome: string }[]): string {
+  if (colaborador.cargo_id) return colaborador.cargo_id;
+  const homonimos = cargos.filter((c) => c.nome === colaborador.cargo);
+  return homonimos.length === 1 ? homonimos[0].id : '';
+}
+
 type RecontratarDados = {
   data_admissao: string;
   cargo?: string;
@@ -68,7 +86,7 @@ export function RecontratarColaboradorDialog({ colaborador, open, onOpenChange }
   const resumo = resumoQuery.data?.[colaborador.id];
 
   const [dataAdmissao, setDataAdmissao] = useState(todayLocalISO());
-  const [cargo, setCargo] = useState(colaborador.cargo ?? '');
+  const [cargoId, setCargoId] = useState(() => cargoInicial(colaborador, cargos));
   const [departamento, setDepartamento] = useState(colaborador.departamento ?? '');
   const [salarioBase, setSalarioBase] = useState(colaborador.salario_base ?? 0);
 
@@ -79,7 +97,7 @@ export function RecontratarColaboradorDialog({ colaborador, open, onOpenChange }
     setSessao({ aberto: open, id: colaborador.id });
     if (open) {
       setDataAdmissao(todayLocalISO());
-      setCargo(colaborador.cargo ?? '');
+      setCargoId(cargoInicial(colaborador, cargos));
       setDepartamento(colaborador.departamento ?? '');
       setSalarioBase(colaborador.salario_base ?? 0);
     }
@@ -116,15 +134,16 @@ export function RecontratarColaboradorDialog({ colaborador, open, onOpenChange }
   const handleConfirmar = async () => {
     if (!podeConfirmar) return;
     const dados: RecontratarDados = { data_admissao: dataAdmissao };
-    if (cargo) dados.cargo = cargo;
-    // Gravar só o texto deixaria `cargo_id` apontando para o cargo ANTIGO, e o
-    // dossiê prioriza o nome que vem dessa referência
-    // (TrabalhoHierarquiaTab: `cargoDetalhe?.nome ?? colaborador?.cargo`) — a
-    // tela mostraria o cargo de antes da recontratação. O trigger do banco
-    // sincroniza `cargo_id` -> `cargo`, nunca o contrário. Mesmo par que a
-    // promoção já grava em MovimentacoesPage.
-    const cargoSelecionado = cargos.find((c) => c.nome === cargo);
-    if (cargoSelecionado) dados.cargo_id = cargoSelecionado.id;
+    // Grava o PAR: só o texto deixaria `cargo_id` no cargo ANTIGO, e o dossiê
+    // prioriza o nome que vem dessa referência (TrabalhoHierarquiaTab:
+    // `cargoDetalhe?.nome ?? colaborador?.cargo`) — a tela mostraria o cargo de
+    // antes da recontratação. O trigger do banco sincroniza `cargo_id` ->
+    // `cargo`, nunca o contrário.
+    const cargoSelecionado = cargos.find((c) => c.id === cargoId);
+    if (cargoSelecionado) {
+      dados.cargo = cargoSelecionado.nome;
+      dados.cargo_id = cargoSelecionado.id;
+    }
     if (departamento) dados.departamento = departamento;
     if (salarioBase > 0) dados.salario_base = salarioBase;
 
@@ -229,9 +248,9 @@ export function RecontratarColaboradorDialog({ colaborador, open, onOpenChange }
 
               <FormSelect
                 label="Cargo"
-                value={cargo}
-                onChange={setCargo}
-                options={cargos.map((c) => ({ value: c.nome, label: c.nome }))}
+                value={cargoId}
+                onChange={setCargoId}
+                options={cargos.map((c) => ({ value: c.id, label: c.nome }))}
                 placeholder={
                   cargosCarregando
                     ? 'Carregando cargos...'
