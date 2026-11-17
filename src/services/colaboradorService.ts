@@ -266,10 +266,10 @@ class ColaboradorService extends BaseService<Colaborador> {
 
     // Cadastro legado (nenhuma linha em `vinculos`): registra a passagem antiga
     // como vínculo encerrado ANTES da readmissão, senão ela desaparece da linha
-    // do tempo — ver `vinculoService.criarVinculoHistorico`. Grava ANTES do
-    // update: o update zera `data_desligamento` e o insert é best-effort, então
-    // na outra ordem uma falha do insert apagava a data de fim da passagem
-    // antiga dos dois lugares, sem volta. Sem `data_desligamento` não há data
+    // do tempo — ver `vinculoService.criarVinculoHistorico`, que por isto NÃO é
+    // best-effort. Grava ANTES do update, que zera `data_desligamento`: se o
+    // insert falhar, o erro sobe e a recontratação para com o cadastro intacto,
+    // em vez de apagar a data de fim dos dois lugares. Sem `data_desligamento` não há data
     // de fim que não seja inventada: a passagem fica só em
     // `colaboradores.data_admissao` (histórico incompleto, mas sem vínculo
     // aberto falso).

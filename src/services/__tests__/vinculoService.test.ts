@@ -180,12 +180,44 @@ describe('vinculoService.criarVinculoHistorico', () => {
     expect(insertFn).not.toHaveBeenCalled();
   });
 
-  it('é best-effort: não lança erro quando o insert falha, só registra o log', async () => {
+  it('NAO e best-effort: propaga a falha do insert para a recontratacao parar', async () => {
+    // Quem chama grava esta linha ANTES do update que zera data_desligamento.
+    // Engolir a falha aqui apagaria a data de fim da passagem antiga dos dois
+    // lugares, sem volta.
     const insertFn = vi.fn().mockResolvedValue({ data: null, error: new Error('insert falhou') });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    await expect(vinculoService.criarVinculoHistorico('c1', '2022-01-01', '2026-06-30')).resolves.toBeUndefined();
-    expect(mockLoggerError).toHaveBeenCalled();
+    await expect(vinculoService.criarVinculoHistorico('c1', '2022-01-01', '2026-06-30')).rejects.toThrow(
+      'insert falhou'
+    );
+  });
+
+  it('nao duplica a passagem quando ja existe linha identica (recontratacoes simultaneas)', async () => {
+    const insertFn = vi.fn();
+    const limitFn = vi.fn().mockResolvedValue({ data: [{ id: 'v1' }], error: null });
+    const eq3 = vi.fn().mockReturnValue({ limit: limitFn });
+    const eq2 = vi.fn().mockReturnValue({ eq: eq3 });
+    const eq1 = vi.fn().mockReturnValue({ eq: eq2 });
+    const selectFn = vi.fn().mockReturnValue({ eq: eq1 });
+    mockFrom.mockReturnValue({ select: selectFn, insert: insertFn });
+
+    await vinculoService.criarVinculoHistorico('c1', '2022-01-01', '2026-06-30');
+    expect(insertFn).not.toHaveBeenCalled();
+  });
+
+  it('propaga falha da leitura em vez de inserir as cegas', async () => {
+    const insertFn = vi.fn();
+    const limitFn = vi.fn().mockResolvedValue({ data: null, error: new Error('select falhou') });
+    const eq3 = vi.fn().mockReturnValue({ limit: limitFn });
+    const eq2 = vi.fn().mockReturnValue({ eq: eq3 });
+    const eq1 = vi.fn().mockReturnValue({ eq: eq2 });
+    const selectFn = vi.fn().mockReturnValue({ eq: eq1 });
+    mockFrom.mockReturnValue({ select: selectFn, insert: insertFn });
+
+    await expect(vinculoService.criarVinculoHistorico('c1', '2022-01-01', '2026-06-30')).rejects.toThrow(
+      'select falhou'
+    );
+    expect(insertFn).not.toHaveBeenCalled();
   });
 });
 

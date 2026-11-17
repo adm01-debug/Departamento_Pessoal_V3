@@ -72,22 +72,38 @@ class VinculoService extends BaseService<VinculoRow, Insertable<'vinculos'>, Upd
    * `colaboradores.data_admissao` como fallback da admissão inicial SÓ enquanto
    * não existe vínculo nenhum (useHistoricoColaborador.ts:298-318) — rotula a
    * readmissão como "Admissão inicial" e a passagem antiga desaparece da linha
-   * do tempo. Best-effort — ver `criarVinculoInicial`.
+   * do tempo.
+   *
+   * NÃO é best-effort, ao contrário dos vizinhos: quem chama grava esta linha
+   * ANTES do update que zera `data_desligamento`, então engolir a falha aqui
+   * apagaria a data de fim da passagem antiga dos dois lugares, sem volta.
+   * Falhando, o erro sobe e a recontratação para com o cadastro intacto.
+   *
+   * Não repete linha idêntica já registrada (recontratações simultâneas do
+   * mesmo cadastro legado leem a lista vazia nas duas). A checagem estreita a
+   * janela mas não a fecha: a garantia real seria um índice único em
+   * `vinculos (colaborador_id, data_inicio, data_fim)` — DDL em produção.
    */
   async criarVinculoHistorico(colaboradorId: string, dataInicio: string, dataFim: string): Promise<void> {
-    try {
-      if (!colaboradorId || !dataInicio || !dataFim) return;
-      const { error } = await this.getQuery().insert({
-        colaborador_id: colaboradorId,
-        tipo: 'Admissão',
-        data_inicio: dataInicio,
-        data_fim: dataFim,
-        status: 'encerrado',
-      });
-      if (error) throw error;
-    } catch (e) {
-      loggerService.error('Falha ao registrar passagem anterior', { colaboradorId, dataInicio, dataFim }, e as Error);
-    }
+    if (!colaboradorId || !dataInicio || !dataFim) return;
+
+    const { data: existente, error: erroLeitura } = await this.getQuery()
+      .select('id')
+      .eq('colaborador_id', colaboradorId)
+      .eq('data_inicio', dataInicio)
+      .eq('data_fim', dataFim)
+      .limit(1);
+    if (erroLeitura) throw erroLeitura;
+    if (Array.isArray(existente) && existente.length > 0) return;
+
+    const { error } = await this.getQuery().insert({
+      colaborador_id: colaboradorId,
+      tipo: 'Admissão',
+      data_inicio: dataInicio,
+      data_fim: dataFim,
+      status: 'encerrado',
+    });
+    if (error) throw error;
   }
 
   /** Encerra o vínculo em aberto (`data_fim IS NULL`) do colaborador. Best-effort — ver `criarVinculoInicial`. */
