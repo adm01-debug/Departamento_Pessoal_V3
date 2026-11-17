@@ -1,5 +1,5 @@
 -- ============================================================================
--- HOMOLOGAÇÃO · HABILITAR A CONTA ABNER COMO GESTORA — ⚠️ NÃO EXECUTADO
+-- HOMOLOGAÇÃO · HABILITAR A CONTA DE HOMOLOGAÇÃO COMO GESTORA — ⚠️ NÃO EXECUTADO
 -- ----------------------------------------------------------------------------
 -- Conta: <e-mail da conta de homologacao>  ·  user_id <user_id da conta de homologacao>
 --

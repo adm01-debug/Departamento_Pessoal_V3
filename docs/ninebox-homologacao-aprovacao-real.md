@@ -8,15 +8,15 @@
 
 ## 1. Estado real verificado agora (somente leitura)
 
-| Item                                                               | Resultado                                                          | Leitura                                                                |
-| ------------------------------------------------------------------ | ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
-| Papéis de **Abner** `<user_id da conta de homologacao>`            | `['admin','gestor']`                                               | ✅ o banco já reconhece os dois papéis                                 |
-| Papéis de **RH** `<e-mail da conta de homologacao>`                | `role = 'rh'` no `user_id` **`<user_id da conta de homologacao>`** | ✅ usuário existe e tem o papel exigido por `pode_validar_potencial()` |
-| `colaboradores.user_id = <user_id da conta de homologacao>`        | **0 linhas**                                                       | ❌ **sem vínculo** → `pode_aprovar_colaborador` seria `false`          |
-| Descartável de homologação (`cpf 00000000000`)                     | `0f303507-5b13-4ca2-aa76-16122b5b37e9`, `user_id` **nulo**         | pronto para o PASSO 1 do vínculo                                       |
-| `feedbacks_360` gestor + `concluido`                               | **0 linhas**                                                       | não há avaliação real atribuível ainda                                 |
-| `feedbacks_360_consolidacoes` / `feedbacks_360_aprovacoes_gestor`  | **PGRST205** (não existem)                                         | migration pendente                                                     |
-| `pode_aprovar_colaborador(uuid)` / `situacao_aprovacao(uuid,uuid)` | **PGRST202** (não existem)                                         | migration pendente                                                     |
+| Item                                                                   | Resultado                                                          | Leitura                                                                |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| Papéis de **conta de homologação** `<user_id da conta de homologacao>` | `['admin','gestor']`                                               | ✅ o banco já reconhece os dois papéis                                 |
+| Papéis de **RH** `<e-mail da conta de homologacao>`                    | `role = 'rh'` no `user_id` **`<user_id da conta de homologacao>`** | ✅ usuário existe e tem o papel exigido por `pode_validar_potencial()` |
+| `colaboradores.user_id = <user_id da conta de homologacao>`            | **0 linhas**                                                       | ❌ **sem vínculo** → `pode_aprovar_colaborador` seria `false`          |
+| Descartável de homologação (`cpf 00000000000`)                         | `0f303507-5b13-4ca2-aa76-16122b5b37e9`, `user_id` **nulo**         | pronto para o PASSO 1 do vínculo                                       |
+| `feedbacks_360` gestor + `concluido`                                   | **0 linhas**                                                       | não há avaliação real atribuível ainda                                 |
+| `feedbacks_360_consolidacoes` / `feedbacks_360_aprovacoes_gestor`      | **PGRST205** (não existem)                                         | migration pendente                                                     |
+| `pode_aprovar_colaborador(uuid)` / `situacao_aprovacao(uuid,uuid)`     | **PGRST202** (não existem)                                         | migration pendente                                                     |
 
 **Conclusão:** o bloqueio é 100% de implantação — **migration + vínculo** — e não
 de código: a interface, as RPCs e a leitura do fluxo já estão implementadas.
@@ -84,15 +84,15 @@ Opcional (não necessário para o fluxo de aprovação):
 **Nada de terceiros é alterado**: só objetos novos + o vínculo da linha
 descartável de homologação.
 
-| #   | Passo                                            | Comando / ação                                                                                                                                                    | Verificação                |
-| --- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
-| 0   | Backup lógico do alvo                            | `pg_dump` do schema `public` (ou snapshot do painel)                                                                                                              | arquivo gerado             |
-| 1   | Aplicar a migration                              | `supabase db push` **ou** colar o arquivo no SQL Editor                                                                                                           | §4.1 responde `200`        |
-| 2   | Vínculo de responsabilidade (Abner)              | `docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql` **PASSO 1** (1 `UPDATE` na linha `0f303507…`, `user_id` nulo → `<user_id da conta de homologacao>`) | §4.2 devolve 1 linha       |
-| 3   | (Opcional) responsabilidade sobre OUTRO avaliado | **PASSO 2** do mesmo arquivo (`supervisor_id` do avaliado → descartável)                                                                                          | §4.3                       |
-| 4   | Ligar o modo real na homologação                 | `VITE_NINEBOX_MODO_REAL=true` no `.env.local` **local** (os mocks continuam no código; a flag só troca a origem dos dados) + reiniciar o `vite dev`               | a área passa a ler o banco |
-| 5   | Roteiro real pela interface                      | §5 (R1…R15)                                                                                                                                                       | decisão sobrevive ao F5    |
-| 6   | Se algo falhar                                   | `supabase/rollback/20261017090000_ninebox_aprovacao_gestor_rollback.sql`                                                                                          | prova no fim do arquivo    |
+| #   | Passo                                              | Comando / ação                                                                                                                                                    | Verificação                |
+| --- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| 0   | Backup lógico do alvo                              | `pg_dump` do schema `public` (ou snapshot do painel)                                                                                                              | arquivo gerado             |
+| 1   | Aplicar a migration                                | `supabase db push` **ou** colar o arquivo no SQL Editor                                                                                                           | §4.1 responde `200`        |
+| 2   | Vínculo de responsabilidade (conta de homologação) | `docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql` **PASSO 1** (1 `UPDATE` na linha `0f303507…`, `user_id` nulo → `<user_id da conta de homologacao>`) | §4.2 devolve 1 linha       |
+| 3   | (Opcional) responsabilidade sobre OUTRO avaliado   | **PASSO 2** do mesmo arquivo (`supervisor_id` do avaliado → descartável)                                                                                          | §4.3                       |
+| 4   | Ligar o modo real na homologação                   | `VITE_NINEBOX_MODO_REAL=true` no `.env.local` **local** (os mocks continuam no código; a flag só troca a origem dos dados) + reiniciar o `vite dev`               | a área passa a ler o banco |
+| 5   | Roteiro real pela interface                        | §5 (R1…R15)                                                                                                                                                       | decisão sobrevive ao F5    |
+| 6   | Se algo falhar                                     | `supabase/rollback/20261017090000_ninebox_aprovacao_gestor_rollback.sql`                                                                                          | prova no fim do arquivo    |
 
 > O PASSO 4 é reversível: `VITE_NINEBOX_MODO_REAL=false` devolve o módulo à
 > vitrine, **sem** perda das decisões reais já gravadas.
@@ -119,12 +119,12 @@ Atalho pronto no repositório (somente leitura): `node scripts/_tmp-diagnostico-
 ### 4.2 O vínculo de responsabilidade está correto? (SQL)
 
 ```sql
--- 1) O colaborador vinculado a Abner (esperado: 1 linha com user_id = <user_id da conta de homologacao>)
+-- 1) O colaborador vinculado a conta de homologação (esperado: 1 linha com user_id = <user_id da conta de homologacao>)
 select id, nome_completo, empresa_id, user_id, supervisor_id
   from public.colaboradores
  where user_id = '<user_id da conta de homologacao>';
 
--- 2) Autorização NA SESSÃO DE ABNER (esperado: true só para o próprio/seus avaliados)
+-- 2) Autorização NA SESSÃO DA CONTA DE HOMOLOGAÇÃO (esperado: true só para o próprio/seus avaliados)
 select public.pode_aprovar_colaborador('0f303507-5b13-4ca2-aa76-16122b5b37e9');  -- true
 select public.pode_aprovar_colaborador('<uuid de colaborador alheio>');           -- false
 
@@ -165,7 +165,7 @@ funções e ausência de DML fora de função. **Resultado atual: OK.**
 | #   | Passo                                                                               | Exige                                   |
 | --- | ----------------------------------------------------------------------------------- | --------------------------------------- |
 | R1  | RH autentica (`<e-mail da conta de homologacao>`)                                   | login do RH                             |
-| R2  | Gestor autentica (Abner)                                                            | login de Abner                          |
+| R2  | Gestor autentica (conta de homologação)                                             | login de conta de homologação           |
 | R3  | Gestor **incorreto** não acessa aprovação                                           | 2ª sessão sem vínculo (servidor recusa) |
 | R4  | RH cria a avaliação do gestor (Novo Feedback, tipo Gestor → **Concluir avaliação**) | migration + vínculo + colaborador real  |
 | R5  | O registro persiste após F5                                                         | —                                       |
