@@ -10,7 +10,7 @@ on:
         type: choice
         options: [validate, apply, verify]
       migration_files:
-        description: "Lista de arquivos de migração separados por newline (obrigatório para mode=verify)"
+        description: "mode=verify SOMENTE. NOME DO ARQUIVO, um por linha, SEM o prefixo supabase/migrations/ (o workflow prefixa). Ex.: 20261117170000_x.sql. NAO escolhe o lote de validate/apply — esse e a lista fechada no passo Preparar."
         required: false
         type: string
       confirm_project_ref:
@@ -134,23 +134,33 @@ jobs:
           # Versões já presentes no ledger do canônico são puladas: um
           # re-dispatch do mesmo lote não pode re-executar as migrações.
           applied="$(psql "$SUPABASE_DB_URL" -X -At -c "SELECT version FROM supabase_migrations.schema_migrations")"
-          # LOTE ATUAL: resgate da branch `muri` (issue #628, PR #632, 4 arquivos)
-          # -- storage de documentos sem policy de DELETE por empresa, onboarding
-          # sem trilha de auditoria, indice de empresa_id em onboarding_kits e
-          # colunas de storage em documentos.
-          # O lote anterior (20261116120000_provisoes_registra_aliquota_aplicada)
-          # saiu daqui porque JA ESTA no ledger canonico -- conferido por consulta
-          # antes da troca (SELECT version FROM supabase_migrations.schema_migrations
-          # WHERE version >= '20261116' devolve 20261116000000 e 20261116120000).
-          # Com ele sozinho na lista, o run 44138619233 (mode=apply, 17/11/2026)
-          # terminou em "Nada a aplicar -- lote ja registrado no ledger canonico":
-          # ou seja, o input `migration_files` do dispatch NAO alimenta
-          # validate/apply, so o passo de verify. E esta lista que decide o lote.
+          # LOTE ATUAL: duas migrations, ambas de diagnostico desta sessao.
+          #  - 20261117190000_permissions_matriz_seed: a tabela public.permissions
+          #    existe com 2 policies e ZERO linhas; sem seed, o controle de acesso
+          #    por funcionalidade da muri (usePermissions, falha fechada) negaria
+          #    tudo para quem nao e admin. Ver PR #642 e issue #629.
+          #  - 20261117193000_storage_documentos_tenant_scope: os buckets
+          #    documentos, documentos-colaboradores e afastamentos tinham ZERO
+          #    policy em storage.objects (RLS ligada => tudo negado; o bucket
+          #    documentos estava VAZIO). A 20260724150000_t008 criava essas
+          #    policies, existe na main e NUNCA entrou no ledger. Ver issue #628.
+          #
+          # O lote anterior (20261117170000..170300, resgate da muri) saiu daqui
+          # porque foi APLICADO e VERIFICADO no canonico em 17/11/2026: validate
+          # run 44155922909, apply, e verify run 44157555314 com os 4 sidecars
+          # executados (ledger OK nas 4 versoes). Conferido tambem por consulta
+          # direta: policy documentos_delete_rh_admin, trigger
+          # audit_tarefas_onboarding, indice idx_onboarding_kits_empresa_id e as
+          # 6 colunas de storage, todos presentes.
+          #
+          # ATENCAO, custou dois erros meus hoje: o input `migration_files` do
+          # dispatch NAO escolhe o lote de validate/apply — e ESTA lista que
+          # decide. E no mode=verify ele quer NOME DE ARQUIVO, sem o prefixo
+          # supabase/migrations/ (o workflow prefixa; caminho completo gera
+          # "supabase/migrations/supabase/migrations/..." e o sidecar nao e achado).
           for migration in \
-            20261117170000_storage_documentos_delete_tenant_scope.sql \
-            20261117170100_onboarding_audit_trigger.sql \
-            20261117170200_onboarding_kits_indice_empresa.sql \
-            20261117170300_documentos_colunas_storage.sql
+            20261117190000_permissions_matriz_seed.sql \
+            20261117193000_storage_documentos_tenant_scope.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
