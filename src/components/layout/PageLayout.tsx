@@ -88,13 +88,9 @@ export function PageLayout({
                   </Tooltip>
                 </TooltipProvider>
               )}
-              {icon && (
-                <div className={cn('p-2.5 rounded-xl bg-gradient-to-br shadow-lg', gradient)}>
-                  {icon}
-                </div>
-              )}
+              {icon && <div className={cn('p-2.5 rounded-xl bg-gradient-to-br shadow-lg', gradient)}>{icon}</div>}
               <div>
-                {title && <h1 className="text-2xl font-display font-bold tracking-tight">{title}</h1>}
+                {title && <h1 className="text-2xl font-display font-medium tracking-tight">{title}</h1>}
                 {description && <p className="text-muted-foreground font-body mt-0.5">{description}</p>}
               </div>
             </div>

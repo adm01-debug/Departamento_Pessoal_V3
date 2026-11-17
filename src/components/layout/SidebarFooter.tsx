@@ -18,7 +18,7 @@ export function SidebarFooter({ collapsed, user, userInitials, onSignOut }: Side
         <div className="space-y-2">
           <div className="flex items-center gap-3 px-2 py-2">
             <Avatar className="h-9 w-9 ring-2 ring-border/30">
-              <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-xs font-bold">
+              <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-xs font-medium">
                 {userInitials}
               </AvatarFallback>
             </Avatar>
@@ -26,9 +26,7 @@ export function SidebarFooter({ collapsed, user, userInitials, onSignOut }: Side
               <p className="text-sm font-body font-medium text-foreground truncate">
                 {user?.name || user?.email || 'Usuário'}
               </p>
-              <p className="text-[10px] text-muted-foreground font-body truncate">
-                {user?.email || ''}
-              </p>
+              <p className="text-[10px] text-muted-foreground font-body truncate">{user?.email || ''}</p>
             </div>
           </div>
           <button
@@ -58,7 +56,9 @@ export function SidebarFooter({ collapsed, user, userInitials, onSignOut }: Side
               <LogOut className="h-4 w-4" />
             </button>
           </TooltipTrigger>
-          <TooltipContent side="right"><p>Sair</p></TooltipContent>
+          <TooltipContent side="right">
+            <p>Sair</p>
+          </TooltipContent>
         </Tooltip>
       )}
     </div>
