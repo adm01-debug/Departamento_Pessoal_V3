@@ -1454,6 +1454,46 @@
       "manual": ["node", "scripts/training-images-homolog/homolog.mjs"],
       "triggers": ["manual"],
       "reason": "Homologação das capas de treinamento contra ambiente real: consome quota do provedor de imagens e grava no Storage. Automatizar geraria custo sem pedido do dono."
+    },
+    {
+      "id": "legacy-cf80dead9bf1db19",
+      "kind": "legacy",
+      "files": ["scripts/verificar-layout-protegido.mjs"],
+      "manual": ["node", "scripts/verificar-layout-protegido.mjs", "--sem-diff"],
+      "triggers": ["manual"],
+      "reason": "Gate de layout protegido resgatado da branch muri; referências literais: package.json:scripts (verificar:layout) e scripts/tests/inventario-layout-protegido.test.mjs. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-b5c7de44eec532e6",
+      "kind": "legacy",
+      "files": ["scripts/verificar-tipografia.mjs"],
+      "manual": ["node", "scripts/verificar-tipografia.mjs"],
+      "triggers": ["manual"],
+      "reason": "Gate de tipografia do design system resgatado da branch muri; referências literais: package.json:scripts (verificar:tipografia) e scripts/tests/inventario-tipografia.test.mjs. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-68e7dd35a43dd2d3",
+      "kind": "legacy",
+      "files": ["scripts/capturar-referencias-protegidas.mjs"],
+      "manual": ["node", "scripts/capturar-referencias-protegidas.mjs"],
+      "triggers": ["manual"],
+      "reason": "Regenera as capturas de docs/protegido/referencias; referências literais: package.json:scripts (capturar:referencias) e docs/protegido/DESEMPENHO-LAYOUT-PROTEGIDO.md. Exige dev server e sessão autenticada, por isso manual."
+    },
+    {
+      "id": "legacy-2a678db885cc8db7",
+      "kind": "legacy",
+      "files": ["scripts/tests/inventario-layout-protegido.test.mjs"],
+      "manual": ["node", "--test", "scripts/tests/inventario-layout-protegido.test.mjs"],
+      "triggers": ["manual"],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/ci.yml (glob scripts/tests/inventario-*.test.mjs). O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-c498e61e59706b2c",
+      "kind": "legacy",
+      "files": ["scripts/tests/inventario-tipografia.test.mjs"],
+      "manual": ["node", "--test", "scripts/tests/inventario-tipografia.test.mjs"],
+      "triggers": ["manual"],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/ci.yml (glob scripts/tests/inventario-*.test.mjs). O dispatcher não executa esta operação."
     }
   ],
   "ci": [
