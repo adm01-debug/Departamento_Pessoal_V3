@@ -67,6 +67,7 @@ import {
 import { RecontratarColaboradorDialog } from '@/components/colaboradores/RecontratarColaboradorDialog';
 import { PendenciasDialog, type PendenciaItem } from '@/components/colaborador-detalhes/PendenciasDialog';
 import { ProximosEventosDialog, type EventoDetalhado } from '@/components/colaborador-detalhes/ProximosEventosDialog';
+import { destinoPendencia, destinoEvento, type DestinoDossie } from '@/components/colaborador-detalhes/destinosDossie';
 import { format } from 'date-fns';
 import { parseDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
 import { usePendenciasColaborador } from '@/hooks/usePendenciasColaborador';
@@ -108,6 +109,18 @@ export default function ColaboradorDetalhesPage() {
   // pendencia; a pagina decide o ICONE e PARA ONDE o "Resolver agora" leva,
   // porque so ela conhece as abas e as rotas.
   const { pendencias } = usePendenciasColaborador(id!, empresaAtual?.id);
+
+  // Aplica o destino: aba principal E sub-aba. Os dois estados sao
+  // independentes, por isso as duas trocas tem de acontecer juntas.
+  const irPara = (d: DestinoDossie) => {
+    setActiveMainTab(d.principal);
+    if (!d.sub) return;
+    if (d.principal === 'jornada') setActiveJornadaTab(d.sub);
+    else if (d.principal === 'profissional') setActiveProfissionalTab(d.sub);
+    else if (d.principal === 'documentos') setActiveDocumentosTab(d.sub);
+    else if (d.principal === 'pessoal') setActivePessoalTab(d.sub);
+    else if (d.principal === 'financeiro') setActiveFinanceiroTab(d.sub);
+  };
   const ICONE_PENDENCIA = {
     ponto: Clock,
     onboarding: GraduationCap,
@@ -120,22 +133,10 @@ export default function ColaboradorDetalhesPage() {
     contexto: p.contexto,
     itens: p.itens,
     severidade: p.severidade,
-    onClick: () => {
-      if (p.chave === 'ponto') {
-        setActiveMainTab('jornada');
-        setActiveJornadaTab('ponto');
-        return;
-      }
-      if (p.chave === 'onboarding') {
-        setActiveMainTab('profissional');
-        return;
-      }
-      if (p.chave === 'aso') {
-        navigate('/sst');
-        return;
-      }
-      setActiveMainTab('pessoal');
-    },
+    // Aba principal E sub-aba: trocar so a principal deixa a sub-aba no padrao
+    // dela, entao o botao prometia um destino e entregava outro. Achado do
+    // Devin e do Codex na #641; o mesmo defeito veio da #639, corrigido aqui.
+    onClick: () => irPara(destinoPendencia(p.chave)),
   }));
 
   // Proximos Eventos — o cartao da aba Geral era TEXTO FIXO ("Periodo vence em
@@ -187,25 +188,7 @@ export default function ColaboradorDetalhesPage() {
     quandoLabel: quandoLabel(e.data),
     badge: e.badge,
     contexto: e.descricao ?? CONTEXTO_EVENTO[e.tipo] ?? '',
-    onClick: () => {
-      if (e.tipo === 'aso') {
-        navigate('/sst');
-        return;
-      }
-      if (e.tipo === 'ferias_vencimento' || e.tipo === 'ferias_inicio') {
-        setActiveMainTab('jornada');
-        return;
-      }
-      if (e.tipo === 'onboarding') {
-        setActiveMainTab('profissional');
-        return;
-      }
-      if (e.tipo === 'documento') {
-        setActiveMainTab('pessoal');
-        return;
-      }
-      setActiveMainTab('profissional');
-    },
+    onClick: () => irPara(destinoEvento(e.tipo)),
   }));
 
   if (isLoading)
