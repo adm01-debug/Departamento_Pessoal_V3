@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b7ee91549c6b192dc8236ed3fac18c4498d9dd4c",
+  "commit": "cc7b1acb4450d17e5b40003ad0a7f641881804e0",
   "branch": "main",
-  "data_commit": "2026-11-17T10:12:29-03:00",
+  "data_commit": "2026-11-17T11:18:36-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "cc7b1ac",
+    "data": "2026-11-17",
+    "assunto": "feat(desligamentos): Trilha de Auditoria com a camada de dados reescrita para o caminho autorizado (#620)"
+   },
    {
     "sha": "b7ee915",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "a054841",
     "data": "2026-11-16",
     "assunto": "chore(deps): jsdom sai de dependencies e vira devDependency (#591)"
-   },
-   {
-    "sha": "2ccd3e8",
-    "data": "2026-11-16",
-    "assunto": "docs(auditoria): mede as versões do ledger sem arquivo e registra por que **não** canonizar (#590)"
    }
   ],
-  "arquivos_mudados_7d": 1138,
+  "arquivos_mudados_7d": 1147,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 333
+    "mudancas": 336
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -199,18 +199,18 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 21
-   },
-   {
-    "arquivo": "package.json",
     "mudancas": 20
    },
    {
-    "arquivo": "package-lock.json",
+    "arquivo": "inventario/estado/rotas.json",
     "mudancas": 19
    },
    {
-    "arquivo": "inventario/estado/rotas.json",
+    "arquivo": "package.json",
+    "mudancas": 19
+   },
+   {
+    "arquivo": "package-lock.json",
     "mudancas": 18
    },
    {
@@ -219,7 +219,7 @@
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 11
+    "mudancas": 10
    },
    {
     "arquivo": "scripts/sync/autocommit-local.sh",
@@ -248,10 +248,6 @@
    {
     "arquivo": "scripts/sync/mirror-github.sh",
     "mudancas": 7
-   },
-   {
-    "arquivo": ".github/workflows/canonical-edge-functions.yml",
-    "mudancas": 6
    },
    {
     "arquivo": "CLAUDE.md",
@@ -290,6 +286,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": ".github/workflows/canonical-edge-functions.yml",
+    "mudancas": 5
+   },
+   {
     "arquivo": ".github/workflows/ci.yml",
     "mudancas": 5
    },
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 237
+    "commits": 238
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 42
+    "commits": 41
    },
    {
     "autor": "dependabot[bot]",
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3471,
-  "arquivos_codigo": 2005,
-  "linhas_codigo": 395148,
+  "arquivos_total": 3478,
+  "arquivos_codigo": 2012,
+  "linhas_codigo": 398794,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 94,
   "modulos": 81,
-  "componentes": 618,
+  "componentes": 619,
   "hooks": 115,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 731,
+  "testes": 734,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 925,
-   "linhas": 164356
+   "arquivos": 932,
+   "linhas": 167998
   },
   "src/constants": {
    "arquivos": 6,
@@ -676,7 +676,7 @@
   },
   "src/pages": {
    "arquivos": 134,
-   "linhas": 49278
+   "linhas": 49282
   },
   "src/providers": {
    "arquivos": 4,
@@ -785,6 +785,10 @@
    "linhas": 1372
   },
   {
+   "arquivo": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+   "linhas": 1342
+  },
+  {
    "arquivo": "src/pages/TreinamentosPage.tsx",
    "linhas": 1299
   },
@@ -821,6 +825,10 @@
    "linhas": 940
   },
   {
+   "arquivo": "src/components/desligamentos/trilhaDerivacoes.ts",
+   "linhas": 923
+  },
+  {
    "arquivo": "src/components/avaliacao/FeedbackAcoesRodape.tsx",
    "linhas": 914
   },
@@ -835,14 +843,6 @@
   {
    "arquivo": "src/pages/SegurosVidaPage.tsx",
    "linhas": 848
-  },
-  {
-   "arquivo": "src/mocks/desempenhoMock.ts",
-   "linhas": 846
-  },
-  {
-   "arquivo": "scripts/training-images-local/edge-http-test.mjs",
-   "linhas": 830
   }
  ],
  "qualidade": {
@@ -851,7 +851,7 @@
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 23,
-  "arquivos_acima_500_linhas": 109
+  "arquivos_acima_500_linhas": 111
  },
  "todos": [
   {

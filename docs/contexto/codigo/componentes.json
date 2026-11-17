@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 618,
+ "total": 619,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -2848,6 +2848,22 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+   "exports": [
+    "TrilhaAuditoriaDesligamentos"
+   ],
+   "export_default": null,
+   "linhas": 1342,
+   "dominio": "components/desligamentos",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/desligamentos/TurnoverChart.tsx",
    "exports": [
     "TurnoverChart"
@@ -5080,7 +5096,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -6951,7 +6967,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 12,
+   "usado_por": 13,
    "orfao": false
   },
   {
@@ -7030,7 +7046,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 350,
+   "usado_por": 351,
    "orfao": false
   },
   {
@@ -7065,7 +7081,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 278,
+   "usado_por": 279,
    "orfao": false
   },
   {
@@ -7274,7 +7290,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 4,
+   "usado_por": 5,
    "orfao": false
   },
   {
@@ -7335,7 +7351,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 17,
+   "usado_por": 18,
    "orfao": false
   },
   {
@@ -7367,7 +7383,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -7610,7 +7626,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 128,
+   "usado_por": 129,
    "orfao": false
   },
   {
@@ -7714,7 +7730,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 28,
+   "usado_por": 29,
    "orfao": false
   },
   {
@@ -7832,7 +7848,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "orfao": false
   },
   {
@@ -7953,7 +7969,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 37,
+   "usado_por": 38,
    "orfao": false
   },
   {
@@ -8948,7 +8964,7 @@
     "DesligamentosPage"
    ],
    "export_default": "DesligamentosPage",
-   "linhas": 375,
+   "linhas": 379,
    "dominio": "pages",
    "hooks_locais": [
     "useDataAccessLog",

@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 731,
+ "total": 734,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 692
+  "unit": 695
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 608
+   "arquivos": 611
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -3176,6 +3176,36 @@
     "src/components/contratacao/TokenInput.tsx"
    ],
    "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+   "tipo": "unit",
+   "linhas": 279,
+   "testa": [
+    "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/components/__tests__/trilhaDerivacoes.test.ts",
+   "tipo": "unit",
+   "linhas": 592,
+   "testa": [
+    "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "src/components/desligamentos/trilhaComum.ts",
+    "src/components/desligamentos/trilhaDerivacoes.ts"
+   ],
+   "casos": 47
+  },
+  {
+   "arquivo": "src/components/__tests__/trilhaReveal.test.ts",
+   "tipo": "unit",
+   "linhas": 100,
+   "testa": [
+    "src/components/desligamentos/trilhaReveal.ts",
+    "src/components/organograma/organogramaReveal.ts"
+   ],
+   "casos": 12
   },
   {
    "arquivo": "src/components/__tests__/TurnoverChart.test.tsx",
@@ -6916,8 +6946,12 @@
   "src/components/desligamentos/DesligamentoKPIs.tsx": 1,
   "src/components/desligamentos/DesligamentoStatusBadge.tsx": 3,
   "src/components/desligamentos/NovoDesligamentoDialog.tsx": 1,
+  "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx": 1,
   "src/components/desligamentos/TurnoverChart.tsx": 1,
-  "src/components/desligamentos/desligamentosDerivacoes.ts": 1,
+  "src/components/desligamentos/desligamentosDerivacoes.ts": 2,
+  "src/components/desligamentos/trilhaComum.ts": 1,
+  "src/components/desligamentos/trilhaDerivacoes.ts": 1,
+  "src/components/desligamentos/trilhaReveal.ts": 1,
   "src/components/documents/DocumentoPreview.tsx": 1,
   "src/components/documents/DocumentoTimeline.tsx": 1,
   "src/components/empresa/EmpresaSelector.tsx": 1,
@@ -7036,7 +7070,7 @@
   "src/components/organograma/OrganogramaToolbar.tsx": 1,
   "src/components/organograma/organogramaCascade.ts": 2,
   "src/components/organograma/organogramaHeaderReveal.ts": 1,
-  "src/components/organograma/organogramaReveal.ts": 2,
+  "src/components/organograma/organogramaReveal.ts": 3,
   "src/components/ponto/AssinarEspelhoDialog.tsx": 1,
   "src/components/ponto/GerarAEJDialog.tsx": 1,
   "src/components/ponto/GestaoPontoAnalytics.tsx": 1,

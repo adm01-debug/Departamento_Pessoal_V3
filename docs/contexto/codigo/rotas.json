@@ -11839,6 +11839,7 @@
    "flags": [],
    "papeis": [
     "admin",
+    "alert",
     "banner",
     "list",
     "listitem",
@@ -11847,7 +11848,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 120
+   "arquivos_puxados": 134
   },
   {
    "protegida": true,

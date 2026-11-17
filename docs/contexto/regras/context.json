@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "b7ee91549c6b192dc8236ed3fac18c4498d9dd4c",
+  "sha": "cc7b1acb4450d17e5b40003ad0a7f641881804e0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 13:14 UTC",
-  "files_total": 3492,
-  "code_files": 2918,
-  "code_lines": 459790
+  "generated_at": "2026-11-17 14:22 UTC",
+  "files_total": 3499,
+  "code_files": 2925,
+  "code_lines": 463436
  },
  "version": "1.3.2",
- "facts_hash": "ad58071c14660f0d",
+ "facts_hash": "5653ee1495d6dc7d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,9 +384,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 959,
+   ".tsx": 961,
+   ".ts": 918,
    ".sql": 915,
-   ".ts": 913,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -90557,7 +90557,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 112
+    "deps_count": 125
    },
    {
     "path": "",
@@ -99950,7 +99950,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 925,
+  "components_count": 932,
   "hooks": [
    {
     "name": "useContacts",
@@ -101533,12 +101533,13 @@
   },
   {
    "module": "src/components",
-   "files": 925,
-   "lines": 164356,
+   "files": 932,
+   "lines": 167998,
    "tables": [
     "admissao_tokens",
     "admissoes",
     "afastamentos",
+    "audit_log",
     "batidas_ponto",
     "beneficio_movimentacoes",
     "beneficios",
@@ -102219,7 +102220,7 @@
   {
    "module": "src/pages",
    "files": 134,
-   "lines": 49278,
+   "lines": 49282,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -103803,6 +103804,7 @@
    "audit_log": {
     "ref": [
      "scripts/tests/audit-edge-audit-log-contract.test.mjs",
+     "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
      "supabase/functions/calcular-folha/index.ts",
      "supabase/functions/gerar-guias/index.ts"
     ],
@@ -112653,6 +112655,26 @@
     "values": "destructive | warning | muted"
    },
    {
+    "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
+    "name": "STATUS_TERMINAIS",
+    "values": "'finalizado', 'concluido', 'cancelado', 'pago'"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaComum.ts",
+    "name": "CategoriaTrilha",
+    "values": "alteracoes | calculos | documentos | status | sistema"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaComum.ts",
+    "name": "NivelTrilha",
+    "values": "critico | atencao | informativo"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "name": "OrdemTrilha",
+    "values": "recentes | antigos"
+   },
+   {
     "file": "src/components/layout/PageTransition.tsx",
     "name": "TransitionEffect",
     "values": "fade | slide | zoom | flip | parallax | none"
@@ -113946,6 +113968,10 @@
    {
     "file": "src/components/desligamentos/NovoDesligamentoDialog.tsx",
     "msg": "Selecione o colaborador e a data de desligamento"
+   },
+   {
+    "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+    "msg": "Não foi possível copiar os dados do evento."
    },
    {
     "file": "src/components/ferias/FeriasColetivasTab.tsx",
@@ -118960,6 +118986,34 @@
     "text": "`desligamentos` (esse é o registro do caso/workflow) — são apenas"
    },
    {
+    "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+    "text": "* DADOS: nenhuma query nova e nenhuma regra nova. A trilha vem do `audit_log`"
+   },
+   {
+    "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+    "text": "nenhum dos dois. Como os outros trilhos têm mínimo 0, o piso da coluna F é"
+   },
+   {
+    "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+    "text": "então a transição NÃO pode ser trocada dentro dela — isso mexeria em telas de"
+   },
+   {
+    "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+    "text": "* Paginas no maximo — 2.000 eventos, o suficiente para a trilha de uma area. */"
+   },
+   {
+    "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+    "text": "`external-db-bridge` (supabase/functions/external-db-bridge/validation.ts)."
+   },
+   {
+    "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+    "text": "os que PERMANECEM e os reanima — a piscada que não pode existir. Então a"
+   },
+   {
+    "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+    "text": "A tela carrega no maximo PAGINA_TRILHA x PAGINAS_TRILHA"
+   },
+   {
     "file": "src/components/desligamentos/TurnoverChart.tsx",
     "text": "Geometria capturada UMA vez e reutilizada; re-descoberta apenas se algum nó"
    },
@@ -119022,6 +119076,34 @@
    {
     "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
     "text": "pendente), então somar/pegar o máximo inflaria ou mentiria o número."
+   },
+   {
+    "file": "src/components/desligamentos/trilhaComum.ts",
+    "text": "classe — nada de regra de negócio (isso fica em `trilhaDerivacoes.ts`) e nada"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaComum.ts",
+    "text": "* REGRA DE OURO: nenhum token de cor novo. As tintas saem dos tons que o módulo"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "text": "(prazo legal, variação, série do gráfico); a trilha lê outra coisa — eventos"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "text": "* Recorte mínimo de um registro cru da trilha (linha de `audit_log`). */"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "text": "* Regra: só há transição quando o payload ANTERIOR existe (é um UPDATE); em"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "text": "* Status NOVO somente quando ele de fato MUDOU."
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "text": "Limite superior EXCLUSIVO, na meia-noite local do dia seguinte. Somar"
    },
    {
     "file": "src/components/esocial/tabs.tsx",
@@ -146056,6 +146138,26 @@
     "value": "0.14"
    },
    {
+    "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+    "name": "COLUNAS_RELATORIO",
+    "value": "'grid grid-cols-2 gap-x-4 gap-y-3 '"
+   },
+   {
+    "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+    "name": "SUPERFICIE_LINHA",
+    "value": "'rounded-lg border border-border/30 bg-background/40 '"
+   },
+   {
+    "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+    "name": "PAGINA_TRILHA",
+    "value": "500"
+   },
+   {
+    "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+    "name": "PAGINAS_TRILHA",
+    "value": "4"
+   },
+   {
     "file": "src/components/desligamentos/TurnoverChart.tsx",
     "name": "COR_TOTAL",
     "value": "'hsl(190 92% 52%)'"
@@ -146084,6 +146186,26 @@
     "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
     "name": "PRAZO_RESCISAO_DIAS",
     "value": "10"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaReveal.ts",
+    "name": "TRILHA_EVENTO_DURACAO",
+    "value": "0.7"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaReveal.ts",
+    "name": "TRILHA_EVENTO_PASSO",
+    "value": "0.15"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaReveal.ts",
+    "name": "TRILHA_PASSOS_MAX",
+    "value": "8"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaReveal.ts",
+    "name": "TRILHA_SAIDA_DURACAO",
+    "value": "0.25"
    },
    {
     "file": "src/components/ferias/FeriasReconciliacaoHistoricoCard.tsx",
@@ -149426,6 +149548,96 @@
     "file": "src/components/desligamentos/desligamentosDerivacoes.ts",
     "field": "tipo",
     "value": "fim_contrato",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "field": "status",
+    "value": "Status",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "field": "etapa",
+    "value": "Etapa",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "field": "tipo",
+    "value": "Motivo",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "field": "perfil",
+    "value": "Perfil",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "field": "status",
+    "value": "finalizado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "field": "status",
+    "value": "finalizado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "field": "status",
+    "value": "concluido",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "field": "status",
+    "value": "pago",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "field": "status",
+    "value": "homologado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "field": "status",
+    "value": "calculado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "field": "status",
+    "value": "comunicado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "field": "status",
+    "value": "pagamento",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "field": "status",
+    "value": "cancelado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "field": "status",
+    "value": "cancelado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "field": "status",
+    "value": "pago",
     "kind": "compara"
    },
    {
@@ -159589,6 +159801,24 @@
     "body": "return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });"
    },
    {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "name": "formatarValor",
+    "params": "chave: string, valor: unknown",
+    "body": "if (valor === null || valor === undefined || valor === '') return '—'; if (typeof valor === 'boolean') return valor ? 'Sim' : 'Não'; if (typeof valor === 'number') { if (CAMPOS_MOEDA.has(chave)) return formatCurrencyBRL(valor); if (CAMPOS_CONTAGEM.has(chave)) return `${valor} validado${valor === 1 ? '' : 's'}`; return valor.toLocaleString('pt-BR'); } if (typeof valor === 'string') { if (CAMPOS_DATA.has(chave)) return formatarData(valor); if (chave === 'status') return STATUS_LABELS[valor] ?? hum …"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "name": "mesmoValorCru",
+    "params": "a: unknown, b: unknown",
+    "body": "if (a === b) return true; try { return JSON.stringify(a ?? null) === JSON.stringify(b ?? null); } catch { return false; }"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaDerivacoes.ts",
+    "name": "iniciaisDoAutor",
+    "params": "nome: string",
+    "body": "if (!nome) return '—'; const limpo = nome.includes('@') ? nome.split('@')[0] : nome; const partes = limpo.split(/[.\\s_-]+/).filter(Boolean); if (partes.length === 0) return '—'; if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase(); const segunda = partes[1][0] ?? ''; return /[a-z0-9]/i.test(segunda) ? `${partes[0][0]}${segunda}`.toUpperCase() : partes[0].slice(0, 2).toUpperCase();"
+   },
+   {
     "file": "src/components/esocial/NaoPeriodicos.tsx",
     "name": "formatCurrency",
     "params": "val: number | string",
@@ -162417,6 +162647,14 @@
    {
     "file": "src/components/desligamentos/DesligamentoKPIs.tsx",
     "line": "transition={{ delay: i * 0.06, type: 'spring', stiffness: 300, damping: 24 }}"
+   },
+   {
+    "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+    "line": "direita NÃO existe: a linha ocupa 100% da largura útil (`w-full`) e o"
+   },
+   {
+    "file": "src/components/desligamentos/trilhaComum.ts",
+    "line": "/** Cor do pontinho (`bg-*`) — a MESMA tinta, só sem os 15% de alfa. */"
    },
    {
     "file": "src/components/epis/EpiCatalogoTable.tsx",
@@ -177313,6 +177551,66 @@
     "name": "renders Powered by Lovable Cloud text"
    },
    {
+    "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+    "name": "TrilhaAuditoriaDesligamentos — coluna de ações uniforme"
+   },
+   {
+    "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+    "name": "renderiza um "
+   },
+   {
+    "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+    "name": "usa um único container horizontal (flex-nowrap, items-center, justify-end) em TODOS os eventos"
+   },
+   {
+    "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+    "name": "coloca o selo "
+   },
+   {
+    "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+    "name": "coloca o selo "
+   },
+   {
+    "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+    "name": "mantém o botão alinhado à direita mesmo no evento SEM selo (um único filho)"
+   },
+   {
+    "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+    "name": "TrilhaAuditoriaDesligamentos — falha de leitura não é lista vazia"
+   },
+   {
+    "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+    "name": "mostra erro de sincronização, e NÃO "
+   },
+   {
+    "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+    "name": "quando a consulta volta vazia DE VERDADE, aí sim mostra o vazio"
+   },
+   {
+    "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+    "name": "TrilhaAuditoriaDesligamentos — expansão "
+   },
+   {
+    "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+    "name": "mantém o painel de filtros avançados FECHADO por padrão"
+   },
+   {
+    "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+    "name": "revela os filtros adicionais ABAIXO da barra principal (não acima)"
+   },
+   {
+    "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+    "name": "posiciona o painel ANTES da timeline (a timeline desce ao abrir)"
+   },
+   {
+    "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+    "name": "alterna (abre/fecha) o painel a cada clique e atualiza o aria-expanded"
+   },
+   {
+    "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+    "name": "preserva o valor digitado no filtro ao fechar e reabrir"
+   },
+   {
     "file": "src/components/__tests__/TurnoverChart.test.tsx",
     "name": "TurnoverChart"
    },
@@ -177731,6 +178029,306 @@
    {
     "file": "src/components/__tests__/simulacaoResumo.test.ts",
     "name": "retorna 0 para resultado nulo ou sem valores"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "normalizarEvento"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "lê a linha crua do audit_log (payload achatado)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "lê o registro do RPC com o payload aninhado"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "não quebra com linha vazia e recusa payload que não é objeto"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "formatação de data e hora"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "formata o carimbo no fuso local"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "devolve "
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "formatarValor"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "traduz o payload para linguagem humana (nunca JSON)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "formata dinheiro, contagem de documentos e coleções"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "devolve "
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "categoriaDoEvento"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "classifica cada evento em exatamente UMA categoria"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "a precedência é cálculo → sistema → documento → status → alteração"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "a soma das categorias é o total do resumo"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "nivelDoEvento"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "marca exclusão e cancelamento como crítico"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "marca alteração não terminal como atenção e o resto como informativo"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "alteracoesDoEvento e metadadosDoEvento"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "lista o diff real na ordem de relevância (núcleo primeiro)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "não inventa transição em criação/exclusão (payload único)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "mostra no máximo dois metadados, sem repetir rótulo"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "destaca valor em R$ e mostra o código técnico da ação do app"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "não esconde payload desconhecido: cai nos pares genéricos"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "título, descrição e resultado"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "monta o título a partir da ação e do payload novo"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "humaniza a ação desconhecida em vez de esconder o código"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "descreve a transição em uma frase legível"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "só dá selo de resultado para conclusão ou execução do sistema"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "responsável do evento"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "resolve o nome pelo cadastro e degrada para o e-mail"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "gera iniciais tanto de nome quanto de e-mail"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "deduz a origem da sessão"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "agrupamento e ordenação"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "nomeia os dois primeiros dias e data os demais por extenso"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "agrupa por dia, do mais recente para o mais antigo"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "não perde evento sem data válida (cai no grupo de hoje)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "ordena por carimbo nos dois sentidos"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "filtrarTrilha"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "combina todas as dimensões (AND)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "filtra pelo período (limites inclusivos no fuso local)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "busca no título, no autor, no registro e no código da ação"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "sem filtro devolve a trilha inteira e tolera entrada nula"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "opções dos filtros e resumo"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "lista autores e ações por volume, sem inventar item"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "zera os contadores de uma trilha vazia"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "textoDoEvento (evidência para a área de transferência)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "inclui o resumo humano e os dois payloads"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "trilhaComum (tokens de apresentação)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "as categorias são únicas e completas"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "a tinta do avatar é determinística e vem da paleta"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "rotula a entidade sem inventar nome"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "trilha por TRANSIÇÃO de status, não por estado final"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "editar outro campo de um desligamento finalizado não vira "
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "a transição de verdade para finalizado continua nomeada e com selo"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "o pagamento da rescisão é reconhecido (status "
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "editar um cadastro já cancelado não é um novo cancelamento (nível crítico)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "alterações dentro de um objeto do payload"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "mudança no conteúdo de detalhes_calculo não desaparece da lista"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "objeto idêntico continua fora da lista"
+   },
+   {
+    "file": "src/components/__tests__/trilhaDerivacoes.test.ts",
+    "name": "filtro de período — limite superior exclusivo"
+   },
+   {
+    "file": "src/components/__tests__/trilhaReveal.test.ts",
+    "name": "trilhaReveal — preset do Organograma"
+   },
+   {
+    "file": "src/components/__tests__/trilhaReveal.test.ts",
+    "name": "reusa curva e deslocamento do Organograma (só o ritmo é local)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaReveal.test.ts",
+    "name": "usa a calibração local de ritmo (700ms por bloco, 150ms de passo)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaReveal.test.ts",
+    "name": "o passo é menor que a duração: há SOBREPOSIÇÃO entre os eventos"
+   },
+   {
+    "file": "src/components/__tests__/trilhaReveal.test.ts",
+    "name": "o estado recolhido é altura ZERO e invisível (expansão, não fade)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaReveal.test.ts",
+    "name": "a SAÍDA é curta e sem atraso (recolhimento discreto de ~250ms)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaReveal.test.ts",
+    "name": "o estado expandido é a altura NATURAL do conteúdo e opaco"
+   },
+   {
+    "file": "src/components/__tests__/trilhaReveal.test.ts",
+    "name": "o atraso chega pelo "
+   },
+   {
+    "file": "src/components/__tests__/trilhaReveal.test.ts",
+    "name": "coordenarTrilhaPorGrupo — cascata com reset por grupo"
+   },
+   {
+    "file": "src/components/__tests__/trilhaReveal.test.ts",
+    "name": "cada grupo devolve cabeçalho + um atraso por evento"
+   },
+   {
+    "file": "src/components/__tests__/trilhaReveal.test.ts",
+    "name": "a contagem REINICIA em cada grupo (o 2º grupo não espera o 1º)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaReveal.test.ts",
+    "name": "dentro do grupo o atraso é estritamente crescente até o teto"
+   },
+   {
+    "file": "src/components/__tests__/trilhaReveal.test.ts",
+    "name": "acima do teto o atraso congela (dia grande não arrasta a entrada)"
+   },
+   {
+    "file": "src/components/__tests__/trilhaReveal.test.ts",
+    "name": "grupo vazio devolve só a posição do cabeçalho"
    },
    {
     "file": "src/components/admin/__tests__/UnifiedAuditSection.test.tsx",
@@ -227392,6 +227990,9 @@
       "compara:src/utils/rescisaoCalc.ts",
       "compara:supabase/functions/calcular-rescisao/motor.ts"
      ],
+     "Motivo": [
+      "escreve:src/components/desligamentos/trilhaDerivacoes.ts"
+     ],
      "mensal": [
       "escreve:src/hooks/useCalculoFolha.ts",
       "escreve:src/services/folha/calculoLoteService.ts",
@@ -228115,6 +228716,7 @@
       "compara:src/components/afastamentos/AfastamentoTable.tsx",
       "compara:src/components/contratos/ContratosVencendoPanel.tsx",
       "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
+      "compara:src/components/desligamentos/trilhaDerivacoes.ts",
       "compara:src/hooks/useProximosEventos.ts",
       "compara:src/pages/AdminAgendamentoExamesPage.tsx",
       "escreve:src/components/descontos/EmprestimosTable.tsx",
@@ -228168,6 +228770,7 @@
       "compara:src/components/dashboard/AnalyticsSection.tsx",
       "compara:src/components/desligamentos/DesligamentoKPIs.tsx",
       "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
+      "compara:src/components/desligamentos/trilhaDerivacoes.ts",
       "compara:src/components/ferias/GerenciamentoPeriodos.tsx",
       "compara:src/components/sst/SSTIncidentesTab.tsx",
       "compara:src/hooks/useProximosEventos.ts",
@@ -228256,6 +228859,7 @@
       "compara:src/components/descontos/AdiantamentosTable.tsx",
       "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx",
       "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
+      "compara:src/components/desligamentos/trilhaDerivacoes.ts",
       "compara:src/components/premiacoes/PagamentosTabela.tsx",
       "compara:src/components/premiacoes/pagamentosComum.ts",
       "compara:src/pages/PremiacoesPage.tsx",
@@ -228418,18 +229022,36 @@
       "escreve:src/components/descontos/EmprestimosTable.tsx"
      ],
      "homologado": [
-      "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx"
+      "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx",
+      "compara:src/components/desligamentos/trilhaDerivacoes.ts"
      ],
      "finalizado": [
       "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx",
       "compara:src/components/desligamentos/DesligamentoKPIs.tsx",
       "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
+      "compara:src/components/desligamentos/trilhaDerivacoes.ts",
       "compara:src/components/premiacoes/CampanhaTabela.tsx",
       "compara:src/services/cnabService.ts",
+      "escreve:src/components/desligamentos/trilhaDerivacoes.ts",
       "escreve:src/services/cnabService.ts"
      ],
      "comunicado": [
-      "compara:src/components/desligamentos/desligamentosDerivacoes.ts"
+      "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
+      "compara:src/components/desligamentos/trilhaDerivacoes.ts"
+     ],
+     "Status": [
+      "escreve:src/components/desligamentos/trilhaDerivacoes.ts",
+      "escreve:src/i18n/index.ts"
+     ],
+     "calculado": [
+      "compara:src/components/desligamentos/trilhaDerivacoes.ts",
+      "compara:src/components/premiacoes/PagamentosTabela.tsx",
+      "compara:src/components/premiacoes/pagamentosComum.ts",
+      "compara:src/services/rescisaoService.ts",
+      "escreve:src/services/rescisaoService.ts"
+     ],
+     "pagamento": [
+      "compara:src/components/desligamentos/trilhaDerivacoes.ts"
      ],
      "adquirido": [
       "compara:src/components/ferias/FeriasForm.tsx",
@@ -228523,12 +229145,6 @@
       "compara:src/components/premiacoes/PagamentosTabela.tsx",
       "compara:src/components/premiacoes/pagamentosComum.ts"
      ],
-     "calculado": [
-      "compara:src/components/premiacoes/PagamentosTabela.tsx",
-      "compara:src/components/premiacoes/pagamentosComum.ts",
-      "compara:src/services/rescisaoService.ts",
-      "escreve:src/services/rescisaoService.ts"
-     ],
      "aprovado_financeiro": [
       "compara:src/components/premiacoes/pagamentosComum.ts",
       "compara:src/services/premiacoesService.ts"
@@ -228619,9 +229235,6 @@
       "compara:src/pages/ColaboradoresPage.tsx",
       "compara:src/services/colaboradorService.ts",
       "compara:src/services/feriasService.ts"
-     ],
-     "Status": [
-      "escreve:src/i18n/index.ts"
      ],
      "Estado": [
       "escreve:src/i18n/index.ts"
@@ -228985,6 +229598,9 @@
       "escreve:src/components/desligamentos/desligamentosDerivacoes.ts",
       "escreve:src/services/rescisaoService.ts"
      ],
+     "Etapa": [
+      "escreve:src/components/desligamentos/trilhaDerivacoes.ts"
+     ],
      "todas": [
       "compara:src/components/premiacoes/pagamentosComum.ts",
       "compara:src/components/recrutamento/candidatosComum.ts",
@@ -229146,6 +229762,7 @@
     },
     "perfil": {
      "Perfil": [
+      "escreve:src/components/desligamentos/trilhaDerivacoes.ts",
       "escreve:src/components/layout/Breadcrumbs.tsx"
      ]
     },
@@ -253158,7 +253775,16 @@
     "kind": "status",
     "msg": "valor `comunicado` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
-     "compara:src/components/desligamentos/desligamentosDerivacoes.ts"
+     "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
+     "compara:src/components/desligamentos/trilhaDerivacoes.ts"
+    ]
+   },
+   {
+    "kind": "status",
+    "msg": "valor `Status` para `status` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "escreve:src/components/desligamentos/trilhaDerivacoes.ts",
+     "escreve:src/i18n/index.ts"
     ]
    },
    {
@@ -253222,13 +253848,6 @@
      "compara:src/pages/ColaboradoresPage.tsx",
      "compara:src/services/colaboradorService.ts",
      "compara:src/services/feriasService.ts"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `Status` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "escreve:src/i18n/index.ts"
     ]
    },
    {
@@ -253456,6 +254075,13 @@
     "msg": "valor `processed_v2` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "escreve:supabase/functions/webhook/index.ts"
+    ]
+   },
+   {
+    "kind": "status",
+    "msg": "valor `Etapa` para `etapa` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "escreve:src/components/desligamentos/trilhaDerivacoes.ts"
     ]
    },
    {
@@ -266975,6 +267601,34 @@
     "renders Powered by Lovable Cloud text"
    ]
   },
+  "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx": {
+   "path": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+   "lines": 279,
+   "is_test": true,
+   "tables": [
+    {
+     "table": "audit_log",
+     "op": "ref"
+    }
+   ],
+   "tests": [
+    "TrilhaAuditoriaDesligamentos — coluna de ações uniforme",
+    "renderiza um ",
+    "usa um único container horizontal (flex-nowrap, items-center, justify-end) em TODOS os eventos",
+    "coloca o selo ",
+    "coloca o selo ",
+    "mantém o botão alinhado à direita mesmo no evento SEM selo (um único filho)",
+    "TrilhaAuditoriaDesligamentos — falha de leitura não é lista vazia",
+    "mostra erro de sincronização, e NÃO ",
+    "quando a consulta volta vazia DE VERDADE, aí sim mostra o vazio",
+    "TrilhaAuditoriaDesligamentos — expansão ",
+    "mantém o painel de filtros avançados FECHADO por padrão",
+    "revela os filtros adicionais ABAIXO da barra principal (não acima)",
+    "posiciona o painel ANTES da timeline (a timeline desce ao abrir)",
+    "alterna (abre/fecha) o painel a cada clique e atualiza o aria-expanded",
+    "preserva o valor digitado no filtro ao fechar e reabrir"
+   ]
+  },
   "src/components/__tests__/TurnoverChart.test.tsx": {
    "path": "src/components/__tests__/TurnoverChart.test.tsx",
    "lines": 82,
@@ -267141,6 +267795,99 @@
     "usa custoTotal salvo pelo SimuladorWhatIf",
     "cai no impacto_total legado",
     "retorna 0 para resultado nulo ou sem valores"
+   ]
+  },
+  "src/components/__tests__/trilhaDerivacoes.test.ts": {
+   "path": "src/components/__tests__/trilhaDerivacoes.test.ts",
+   "lines": 592,
+   "is_test": true,
+   "rule_comments": [
+    "- a linha mostra no MÁXIMO 2 metadados e o detalhe mostra tudo;"
+   ],
+   "doc": "Testes das derivações da Trilha de Auditoria de Desligamentos. O que está sendo protegido aqui: - `categoriaDoEvento` é MUTUAMENTE EXCLUSIVA (a soma dos chips é o total); - o payload cru NUNCA vira JSON na linha (vira rótulo/valor legível); - a linha mostra no MÁXIMO 2 metadados e o detalhe mostra t …",
+   "tests": [
+    "normalizarEvento",
+    "lê a linha crua do audit_log (payload achatado)",
+    "lê o registro do RPC com o payload aninhado",
+    "não quebra com linha vazia e recusa payload que não é objeto",
+    "formatação de data e hora",
+    "formata o carimbo no fuso local",
+    "devolve ",
+    "formatarValor",
+    "traduz o payload para linguagem humana (nunca JSON)",
+    "formata dinheiro, contagem de documentos e coleções",
+    "devolve ",
+    "categoriaDoEvento",
+    "classifica cada evento em exatamente UMA categoria",
+    "a precedência é cálculo → sistema → documento → status → alteração",
+    "a soma das categorias é o total do resumo",
+    "nivelDoEvento",
+    "marca exclusão e cancelamento como crítico",
+    "marca alteração não terminal como atenção e o resto como informativo",
+    "alteracoesDoEvento e metadadosDoEvento",
+    "lista o diff real na ordem de relevância (núcleo primeiro)",
+    "não inventa transição em criação/exclusão (payload único)",
+    "mostra no máximo dois metadados, sem repetir rótulo",
+    "destaca valor em R$ e mostra o código técnico da ação do app",
+    "não esconde payload desconhecido: cai nos pares genéricos",
+    "título, descrição e resultado",
+    "monta o título a partir da ação e do payload novo",
+    "humaniza a ação desconhecida em vez de esconder o código",
+    "descreve a transição em uma frase legível",
+    "só dá selo de resultado para conclusão ou execução do sistema",
+    "responsável do evento",
+    "resolve o nome pelo cadastro e degrada para o e-mail",
+    "gera iniciais tanto de nome quanto de e-mail",
+    "deduz a origem da sessão",
+    "agrupamento e ordenação",
+    "nomeia os dois primeiros dias e data os demais por extenso",
+    "agrupa por dia, do mais recente para o mais antigo",
+    "não perde evento sem data válida (cai no grupo de hoje)",
+    "ordena por carimbo nos dois sentidos",
+    "filtrarTrilha",
+    "combina todas as dimensões (AND)",
+    "filtra pelo período (limites inclusivos no fuso local)",
+    "busca no título, no autor, no registro e no código da ação",
+    "sem filtro devolve a trilha inteira e tolera entrada nula",
+    "opções dos filtros e resumo",
+    "lista autores e ações por volume, sem inventar item",
+    "zera os contadores de uma trilha vazia",
+    "textoDoEvento (evidência para a área de transferência)",
+    "inclui o resumo humano e os dois payloads",
+    "trilhaComum (tokens de apresentação)",
+    "as categorias são únicas e completas",
+    "a tinta do avatar é determinística e vem da paleta",
+    "rotula a entidade sem inventar nome",
+    "trilha por TRANSIÇÃO de status, não por estado final",
+    "editar outro campo de um desligamento finalizado não vira ",
+    "a transição de verdade para finalizado continua nomeada e com selo",
+    "o pagamento da rescisão é reconhecido (status ",
+    "editar um cadastro já cancelado não é um novo cancelamento (nível crítico)",
+    "alterações dentro de um objeto do payload",
+    "mudança no conteúdo de detalhes_calculo não desaparece da lista",
+    "objeto idêntico continua fora da lista",
+    "filtro de período — limite superior exclusivo"
+   ]
+  },
+  "src/components/__tests__/trilhaReveal.test.ts": {
+   "path": "src/components/__tests__/trilhaReveal.test.ts",
+   "lines": 100,
+   "is_test": true,
+   "tests": [
+    "trilhaReveal — preset do Organograma",
+    "reusa curva e deslocamento do Organograma (só o ritmo é local)",
+    "usa a calibração local de ritmo (700ms por bloco, 150ms de passo)",
+    "o passo é menor que a duração: há SOBREPOSIÇÃO entre os eventos",
+    "o estado recolhido é altura ZERO e invisível (expansão, não fade)",
+    "a SAÍDA é curta e sem atraso (recolhimento discreto de ~250ms)",
+    "o estado expandido é a altura NATURAL do conteúdo e opaco",
+    "o atraso chega pelo ",
+    "coordenarTrilhaPorGrupo — cascata com reset por grupo",
+    "cada grupo devolve cabeçalho + um atraso por evento",
+    "a contagem REINICIA em cada grupo (o 2º grupo não espera o 1º)",
+    "dentro do grupo o atraso é estritamente crescente até o teto",
+    "acima do teto o atraso congela (dia grande não arrasta a entrada)",
+    "grupo vazio devolve só a posição do cabeçalho"
    ]
   },
   "src/components/admin/HealthTrendCard.tsx": {
@@ -273490,6 +274237,46 @@
     "`desligamentos` (esse é o registro do caso/workflow) — são apenas"
    ]
   },
+  "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx": {
+   "path": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+   "lines": 1342,
+   "exports": [
+    "function TrilhaAuditoriaDesligamentos"
+   ],
+   "errors": [
+    "Não foi possível copiar os dados do evento."
+   ],
+   "params": [
+    {
+     "name": "COLUNAS_RELATORIO",
+     "value": "'grid grid-cols-2 gap-x-4 gap-y-3 '"
+    },
+    {
+     "name": "SUPERFICIE_LINHA",
+     "value": "'rounded-lg border border-border/30 bg-background/40 '"
+    },
+    {
+     "name": "PAGINA_TRILHA",
+     "value": "500"
+    },
+    {
+     "name": "PAGINAS_TRILHA",
+     "value": "4"
+    }
+   ],
+   "rule_comments": [
+    "* DADOS: nenhuma query nova e nenhuma regra nova. A trilha vem do `audit_log`",
+    "nenhum dos dois. Como os outros trilhos têm mínimo 0, o piso da coluna F é",
+    "então a transição NÃO pode ser trocada dentro dela — isso mexeria em telas de",
+    "* Paginas no maximo — 2.000 eventos, o suficiente para a trilha de uma area. */",
+    "`external-db-bridge` (supabase/functions/external-db-bridge/validation.ts).",
+    "os que PERMANECEM e os reanima — a piscada que não pode existir. Então a",
+    "A tela carrega no maximo PAGINA_TRILHA x PAGINAS_TRILHA"
+   ],
+   "percents": [
+    "direita NÃO existe: a linha ocupa 100% da largura útil (`w-full`) e o"
+   ]
+  },
   "src/components/desligamentos/TurnoverChart.tsx": {
    "path": "src/components/desligamentos/TurnoverChart.tsx",
    "lines": 489,
@@ -273598,6 +274385,7 @@
     "function prazoRescisao",
     "function recortarPorPeriodo",
     "function variacaoRecente",
+    "const STATUS_TERMINAIS",
     "function emAberto",
     "function concluido",
     "function cancelado",
@@ -273615,6 +274403,10 @@
     {
      "name": "TomPrazo",
      "values": "destructive | warning | muted"
+    },
+    {
+     "name": "STATUS_TERMINAIS",
+     "values": "'finalizado', 'concluido', 'cancelado', 'pago'"
     }
    ],
    "params": [
@@ -273734,7 +274526,230 @@
   },
   "src/components/desligamentos/index.ts": {
    "path": "src/components/desligamentos/index.ts",
-   "lines": 8
+   "lines": 9
+  },
+  "src/components/desligamentos/trilhaComum.ts": {
+   "path": "src/components/desligamentos/trilhaComum.ts",
+   "lines": 261,
+   "exports": [
+    "type CategoriaTrilha",
+    "interface CategoriaMeta",
+    "const CATEGORIAS_TRILHA",
+    "const CATEGORIA_POR_CHAVE",
+    "type NivelTrilha",
+    "interface NivelMeta",
+    "const NIVEIS_TRILHA",
+    "interface AcaoTrilhaMeta",
+    "const ACOES_TRILHA",
+    "const ACAO_TRILHA_FALLBACK",
+    "function acaoTrilhaMeta",
+    "const ACOES_TECNICAS",
+    "const ACOES_DOCUMENTO",
+    "function rotuloRecurso",
+    "const TINTAS_AVATAR",
+    "function tintaAvatar"
+   ],
+   "enums": [
+    {
+     "name": "CategoriaTrilha",
+     "values": "alteracoes | calculos | documentos | status | sistema"
+    },
+    {
+     "name": "NivelTrilha",
+     "values": "critico | atencao | informativo"
+    }
+   ],
+   "rule_comments": [
+    "classe — nada de regra de negócio (isso fica em `trilhaDerivacoes.ts`) e nada",
+    "* REGRA DE OURO: nenhum token de cor novo. As tintas saem dos tons que o módulo"
+   ],
+   "percents": [
+    "/** Cor do pontinho (`bg-*`) — a MESMA tinta, só sem os 15% de alfa. */"
+   ]
+  },
+  "src/components/desligamentos/trilhaDerivacoes.ts": {
+   "path": "src/components/desligamentos/trilhaDerivacoes.ts",
+   "lines": 923,
+   "exports": [
+    "interface TrilhaLinhaCrua",
+    "interface EventoTrilha",
+    "function normalizarEvento",
+    "function formatarData",
+    "function formatarHora",
+    "function formatarDataHora",
+    "const ROTULOS_CAMPO",
+    "function humanizarChave",
+    "function rotuloCampo",
+    "function formatarValor",
+    "interface MetaTrilha",
+    "interface AlteracaoTrilha",
+    "function alteracoesDoEvento",
+    "function metadadosDoEvento",
+    "function tituloDoEvento",
+    "function descricaoDoEvento",
+    "function categoriaDoEvento",
+    "function nivelDoEvento",
+    "interface ResultadoTrilha",
+    "function resultadoDoEvento",
+    "interface ResponsavelTrilha",
+    "function responsavelDoEvento",
+    "function iniciaisDoAutor",
+    "function origemDoAutor",
+    "interface GrupoTrilha",
+    "function rotuloDoDia",
+    "function agruparPorDia",
+    "type OrdemTrilha",
+    "function ordenarTrilha",
+    "interface FiltrosTrilha",
+    "function filtrarTrilha",
+    "interface ResumoTrilha",
+    "function resumoTrilha",
+    "interface UsuarioTrilha",
+    "function usuariosDaTrilha",
+    "interface AcaoTrilhaOpcao",
+    "function acoesDaTrilha",
+    "function textoDoEvento"
+   ],
+   "enums": [
+    {
+     "name": "OrdemTrilha",
+     "values": "recentes | antigos"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "Status",
+     "kind": "escreve"
+    },
+    {
+     "field": "etapa",
+     "value": "Etapa",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "Motivo",
+     "kind": "escreve"
+    },
+    {
+     "field": "perfil",
+     "value": "Perfil",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "finalizado",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "finalizado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "concluido",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "pago",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "homologado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "calculado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "comunicado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "pagamento",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "cancelado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "cancelado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "pago",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "(prazo legal, variação, série do gráfico); a trilha lê outra coisa — eventos",
+    "* Recorte mínimo de um registro cru da trilha (linha de `audit_log`). */",
+    "* Regra: só há transição quando o payload ANTERIOR existe (é um UPDATE); em",
+    "* Status NOVO somente quando ele de fato MUDOU.",
+    "Limite superior EXCLUSIVO, na meia-noite local do dia seguinte. Somar"
+   ],
+   "calc_fns": [
+    {
+     "name": "formatarValor",
+     "params": "chave: string, valor: unknown",
+     "body": "if (valor === null || valor === undefined || valor === '') return '—'; if (typeof valor === 'boolean') return valor ? 'Sim' : 'Não'; if (typeof valor === 'number') { if (CAMPOS_MOEDA.has(chave)) return formatCurrencyBRL(valor); if (CAMPOS_CONTAGEM.has(chave)) return `${valor} validado${valor === 1 ? '' : 's'}`; return valor.toLocaleString('pt-BR'); } if (typeof valor === 'string') { if (CAMPOS_DATA.has(chave)) return formatarData(valor); if (chave === 'status') return STATUS_LABELS[valor] ?? hum …"
+    },
+    {
+     "name": "mesmoValorCru",
+     "params": "a: unknown, b: unknown",
+     "body": "if (a === b) return true; try { return JSON.stringify(a ?? null) === JSON.stringify(b ?? null); } catch { return false; }"
+    },
+    {
+     "name": "iniciaisDoAutor",
+     "params": "nome: string",
+     "body": "if (!nome) return '—'; const limpo = nome.includes('@') ? nome.split('@')[0] : nome; const partes = limpo.split(/[.\\s_-]+/).filter(Boolean); if (partes.length === 0) return '—'; if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase(); const segunda = partes[1][0] ?? ''; return /[a-z0-9]/i.test(segunda) ? `${partes[0][0]}${segunda}`.toUpperCase() : partes[0].slice(0, 2).toUpperCase();"
+    }
+   ]
+  },
+  "src/components/desligamentos/trilhaReveal.ts": {
+   "path": "src/components/desligamentos/trilhaReveal.ts",
+   "lines": 144,
+   "exports": [
+    "const TRILHA_EVENTO_DURACAO",
+    "const TRILHA_EVENTO_PASSO",
+    "const TRILHA_PASSOS_MAX",
+    "const TRILHA_SAIDA_DURACAO",
+    "const TRILHA_EASE",
+    "const TRILHA_PASSO",
+    "function atrasoDoGrupo",
+    "function coordenarTrilhaPorGrupo",
+    "const trilhaRevealVariants"
+   ],
+   "params": [
+    {
+     "name": "TRILHA_EVENTO_DURACAO",
+     "value": "0.7"
+    },
+    {
+     "name": "TRILHA_EVENTO_PASSO",
+     "value": "0.15"
+    },
+    {
+     "name": "TRILHA_PASSOS_MAX",
+     "value": "8"
+    },
+    {
+     "name": "TRILHA_SAIDA_DURACAO",
+     "value": "0.25"
+    }
+   ]
   },
   "src/components/documents/DocumentoPreview.tsx": {
    "path": "src/components/documents/DocumentoPreview.tsx",
@@ -292446,7 +293461,7 @@
   },
   "src/pages/DesligamentosPage.tsx": {
    "path": "src/pages/DesligamentosPage.tsx",
-   "lines": 375,
+   "lines": 379,
    "exports": [
     "function DesligamentosPage"
    ],
@@ -322145,10 +323160,30 @@
   }
  },
  "git": {
-  "sha": "b7ee91549c6b192dc8236ed3fac18c4498d9dd4c",
+  "sha": "cc7b1acb4450d17e5b40003ad0a7f641881804e0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "cc7b1ac",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(desligamentos): Trilha de Auditoria com a camada de dados reescrita para o caminho autorizado (#620)",
+    "files": [
+     "inventario/estado/rotas.json",
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
+     "src/components/__tests__/trilhaDerivacoes.test.ts",
+     "src/components/__tests__/trilhaReveal.test.ts",
+     "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
+     "src/components/desligamentos/desligamentosDerivacoes.ts",
+     "src/components/desligamentos/index.ts",
+     "src/components/desligamentos/trilhaComum.ts",
+     "src/components/desligamentos/trilhaDerivacoes.ts",
+     "src/components/desligamentos/trilhaReveal.ts",
+     "src/pages/DesligamentosPage.tsx"
+    ]
+   },
    {
     "sha": "b7ee915",
     "date": "2026-11-17",
@@ -322925,25 +323960,16 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "1bc67e6",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "fix(test): asserção da casca do NineBox deixa de depender da ordem do transform-origin (#588)",
-    "files": [
-     "src/components/__tests__/NineBoxQuadranteDialog.test.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    9
+    10
    ],
    [
     "inventario/estado/rotas.json",
-    8
+    9
    ],
    [
     "src/pages/ColaboradorDetalhesPage.tsx",
@@ -322972,6 +323998,10 @@
    [
     "package.json",
     3
+   ],
+   [
+    "src/components/desligamentos/desligamentosDerivacoes.ts",
+    2
    ],
    [
     "src/index.css",
@@ -323011,10 +324041,6 @@
    ],
    [
     "src/hooks/useColaboradorDetalhes.ts",
-    2
-   ],
-   [
-    "src/hooks/useVinculos.ts",
     2
    ]
   ]

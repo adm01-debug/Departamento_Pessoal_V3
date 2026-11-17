@@ -1895,6 +1895,29 @@
    "src/services/desligamentoService.ts",
    "src/utils/safeError.ts"
   ],
+  "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx": [
+   "src/components/desligamentos/desligamentosDerivacoes.ts",
+   "src/components/desligamentos/entradaCards.tsx",
+   "src/components/desligamentos/trilhaComum.ts",
+   "src/components/desligamentos/trilhaDerivacoes.ts",
+   "src/components/desligamentos/trilhaReveal.ts",
+   "src/components/ui/animated-cascade-dialog.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/date-picker.tsx",
+   "src/components/ui/empty-state.tsx",
+   "src/components/ui/filter-chip.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/sync-error-state.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/hooks/useEmpresas.ts",
+   "src/lib/utils.ts",
+   "src/services/auditoriaService.ts",
+   "src/services/exportService.ts",
+   "src/services/piiAccessLogService.ts"
+  ],
   "src/components/desligamentos/TurnoverChart.tsx": [
    "src/components/desligamentos/desligamentosDerivacoes.ts",
    "src/components/desligamentos/entradaCards.tsx",
@@ -1916,7 +1939,17 @@
    "src/components/desligamentos/DesligamentoKPIs.tsx",
    "src/components/desligamentos/DesligamentoStatusBadge.tsx",
    "src/components/desligamentos/NovoDesligamentoDialog.tsx",
+   "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
    "src/components/desligamentos/TurnoverChart.tsx"
+  ],
+  "src/components/desligamentos/trilhaDerivacoes.ts": [
+   "src/components/desligamentos/desligamentosComum.ts",
+   "src/components/desligamentos/desligamentosDerivacoes.ts",
+   "src/components/desligamentos/trilhaComum.ts",
+   "src/utils/dateLocal.ts"
+  ],
+  "src/components/desligamentos/trilhaReveal.ts": [
+   "src/components/organograma/organogramaReveal.ts"
   ],
   "src/components/documents/DocumentoPreview.tsx": [
    "src/components/ui/button.tsx",
@@ -5737,7 +5770,6 @@
    "src/components/PageTitle.tsx",
    "src/components/desligamentos/index.ts",
    "src/components/layout/index.ts",
-   "src/components/ponto/PontoAuditTimeline.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/components/ui/dropdown-menu.tsx",
