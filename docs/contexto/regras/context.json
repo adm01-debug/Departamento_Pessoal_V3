@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "9de335ff8f9155e265376c1aaa904a316f0fa643",
+  "sha": "7b17d30ef58ec646fa04f6f3455b87c9a4ae0386",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 12:09 UTC",
-  "files_total": 3470,
-  "code_files": 2896,
-  "code_lines": 454465
+  "generated_at": "2026-11-17 12:39 UTC",
+  "files_total": 3488,
+  "code_files": 2914,
+  "code_lines": 458506
  },
  "version": "1.3.2",
- "facts_hash": "529db24834d3c5e2",
+ "facts_hash": "c615732f3c3412b4",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,9 +384,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 945,
+   ".tsx": 958,
    ".sql": 915,
-   ".ts": 905,
+   ".ts": 910,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -93684,7 +93684,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 70
+    "deps_count": 82
    },
    {
     "path": "",
@@ -99950,7 +99950,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 906,
+  "components_count": 921,
   "hooks": [
    {
     "name": "useContacts",
@@ -101533,8 +101533,8 @@
   },
   {
    "module": "src/components",
-   "files": 906,
-   "lines": 160093,
+   "files": 921,
+   "lines": 163072,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101639,6 +101639,7 @@
     "KitOnboardingDialog.test.tsx: CRUD DE PERFIL DE KIT (FASE 7) — o botão \"Novo Perfil de Kit\" era decorativo; agora existe formulário real sobre `public.onboarding_kits` (nome + itens + ativo). Aqui testamos o CONTRATO do formulário: normalização dos itens, validação e o payload que chega ao `onSalvar`."
    ],
    "deps": [
+    "@\\/components\\",
     "@dnd-kit/core",
     "@dnd-kit/utilities",
     "@hookform/resolvers",
@@ -101662,8 +101663,7 @@
     "cmdk",
     "date-fns",
     "framer-motion",
-    "lucide-react",
-    "node:fs"
+    "lucide-react"
    ],
    "imports_modules": [
     "src/constants",
@@ -101738,6 +101738,7 @@
     "src/components/__tests__/DashboardHeader.test.tsx",
     "src/components/__tests__/DashboardWidgets.test.tsx",
     "src/components/__tests__/DeclaracoesTable.test.tsx",
+    "src/components/__tests__/DepartmentRow.test.tsx",
     "src/components/__tests__/DependentesTab.test.tsx",
     "src/components/__tests__/DesempenhoBarrasProgresso.test.tsx",
     "src/components/__tests__/DesempenhoEntradaCascade.test.tsx",
@@ -101759,8 +101760,7 @@
     "src/components/__tests__/ESocialConciliacao.test.tsx",
     "src/components/__tests__/ESocialDesligamentoCDP.test.tsx",
     "src/components/__tests__/ESocialEventComponents.test.tsx",
-    "src/components/__tests__/ESocialEventViewer.test.tsx",
-    "src/components/__tests__/ESocialNaoPeriodicos.test.tsx"
+    "src/components/__tests__/ESocialEventViewer.test.tsx"
    ]
   },
   {
@@ -102132,8 +102132,8 @@
   },
   {
    "module": "src/lib",
-   "files": 18,
-   "lines": 1922,
+   "files": 20,
+   "lines": 2504,
    "tables": [],
    "exports": [
     "avatarTons.ts: TONS_AVATAR, tomDoAvatar",
@@ -102141,6 +102141,7 @@
     "cursor.ts: CursorParams, CursorResult, encodeCursor, parseCursor, buildCursorQuery, extractNextCursor",
     "masks.ts: maskCPF, maskCNPJ, maskPhone, maskCEP, maskPIS, maskCurrency",
     "motionMode.ts: MotionReducedMode, FORCE_MOTION_KEY, FORCE_MOTION_CLASS, MOTION_REDUCED_MODE, deveReduzirMovimento, useMovimentoReduzido",
+    "organogramaTree.ts: OrgColaborador, OrgDepartamento, normalizeText, countTree, maxDepth, collectAllIds",
     "queryClient.ts: queryClient, invalidateQueries, prefetchQuery, setQueryData, getQueryData",
     "reciboAssinaturaPdf.ts: ReciboAssinaturaData, gerarReciboAssinaturaPDF",
     "retry.ts: RetryOptions, RetryResult, retryWithIdempotency, retryEdgeFunction",
@@ -102175,6 +102176,7 @@
     "src/lib/get-strict-context.tsx",
     "src/lib/masks.ts",
     "src/lib/motionMode.ts",
+    "src/lib/organogramaTree.ts",
     "src/lib/queryClient.ts",
     "src/lib/reciboAssinaturaPdf.ts",
     "src/lib/retry.ts",
@@ -102182,6 +102184,7 @@
     "src/lib/utils.ts",
     "src/lib/__tests__/circuitBreaker.test.ts",
     "src/lib/__tests__/masks.test.ts",
+    "src/lib/__tests__/organogramaTree.test.ts",
     "src/lib/__tests__/queryClient.test.ts",
     "src/lib/__tests__/reciboAssinaturaPdf.test.ts",
     "src/lib/__tests__/retry.test.ts",
@@ -102215,8 +102218,8 @@
   },
   {
    "module": "src/pages",
-   "files": 133,
-   "lines": 48798,
+   "files": 134,
+   "lines": 49278,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -119009,6 +119012,46 @@
     "text": "apenas o hash, portanto não há como recuperá-lo depois. Ao fechar o diálogo o"
    },
    {
+    "file": "src/components/organograma/EmployeeRow.tsx",
+    "text": "A coluna de contato reserva os 260px do e-mail apenas de `lg` para cima,"
+   },
+   {
+    "file": "src/components/organograma/OrganogramaToolbar.tsx",
+    "text": "`flex-wrap` + `min-h-11` no lugar de `h-11`: em 360–390px a busca (minimo de"
+   },
+   {
+    "file": "src/components/organograma/OrganogramaTree.tsx",
+    "text": "é a mesma da cascata das rows, então a fila não pode se remexer a cada clique."
+   },
+   {
+    "file": "src/components/organograma/organogramaCascade.ts",
+    "text": "40 colaboradores não pode segurar a árvore inteira só porque o bloco dele"
+   },
+   {
+    "file": "src/components/organograma/organogramaCascade.ts",
+    "text": "sem teto transforma isso em espera sem limite: numa empresa com 300 rows a de"
+   },
+   {
+    "file": "src/components/organograma/organogramaCascade.ts",
+    "text": "* Saída do item. Não usa `x` (o item não volta pra esquerda): ele apenas sobe"
+   },
+   {
+    "file": "src/components/organograma/organogramaHeaderReveal.ts",
+    "text": "componente lê apenas o próprio slot (`HEADER_REVEAL.busca`, etc.);"
+   },
+   {
+    "file": "src/components/organograma/organogramaReveal.ts",
+    "text": "* Quantos slots a onda usa antes do teto (0,09 × 8 = 720ms no máximo). Acima"
+   },
+   {
+    "file": "src/components/organograma/organogramaReveal.ts",
+    "text": "mesmo passo, e a volta não pode somar espera — acima disso os blocos fecham"
+   },
+   {
+    "file": "src/components/organograma/organogramaReveal.ts",
+    "text": "sem cortar nada que o olho ainda esteja lendo: o que não pode ser atropelado é"
+   },
+   {
     "file": "src/components/ponto/PontoClockRegister.tsx",
     "text": "(upload + validação biométrica), não mais um timer decorativo até"
    },
@@ -119931,6 +119974,10 @@
    {
     "file": "src/pages/OnboardingPage.tsx",
     "text": "sem os inativos o filtro \"Somente inativos\" ficaria vazio e um kit"
+   },
+   {
+    "file": "src/pages/OrganogramaPage.tsx",
+    "text": "filtro não pode ficar \"esquecido\" aberto pra reaparecer expandido quando a"
    },
    {
     "file": "src/pages/PontoKioskPage.tsx",
@@ -145945,6 +145992,76 @@
     "value": "80"
    },
    {
+    "file": "src/components/organograma/organogramaCascade.ts",
+    "name": "CASCADE_STEP",
+    "value": "0.1"
+   },
+   {
+    "file": "src/components/organograma/organogramaCascade.ts",
+    "name": "CASCADE_DURATION",
+    "value": "0.7"
+   },
+   {
+    "file": "src/components/organograma/organogramaCascade.ts",
+    "name": "CASCADE_EXIT_DURATION",
+    "value": "0.22"
+   },
+   {
+    "file": "src/components/organograma/organogramaCascade.ts",
+    "name": "CASCADE_EXIT_OFFSET_Y",
+    "value": "-4"
+   },
+   {
+    "file": "src/components/organograma/organogramaCascade.ts",
+    "name": "CASCADE_EXIT_STEP",
+    "value": "0.03"
+   },
+   {
+    "file": "src/components/organograma/organogramaCascade.ts",
+    "name": "CASCADE_EXIT_MAX_WINDOW",
+    "value": "0.28"
+   },
+   {
+    "file": "src/components/organograma/organogramaCascade.ts",
+    "name": "CASCADE_ENTER_MAX_WINDOW",
+    "value": "1.6"
+   },
+   {
+    "file": "src/components/organograma/organogramaReveal.ts",
+    "name": "REVEAL_OPEN_DURATION",
+    "value": "0.4"
+   },
+   {
+    "file": "src/components/organograma/organogramaReveal.ts",
+    "name": "REVEAL_CLOSE_DURATION",
+    "value": "0.3"
+   },
+   {
+    "file": "src/components/organograma/organogramaReveal.ts",
+    "name": "REVEAL_OFFSET_Y",
+    "value": "-4"
+   },
+   {
+    "file": "src/components/organograma/organogramaReveal.ts",
+    "name": "REVEAL_WAVE_STEP",
+    "value": "0.09"
+   },
+   {
+    "file": "src/components/organograma/organogramaReveal.ts",
+    "name": "REVEAL_MAX_STAGGERED_BLOCKS",
+    "value": "8"
+   },
+   {
+    "file": "src/components/organograma/organogramaReveal.ts",
+    "name": "REVEAL_CLOSE_WAVE_STEP",
+    "value": "0.05"
+   },
+   {
+    "file": "src/components/organograma/organogramaReveal.ts",
+    "name": "REVEAL_MAX_STAGGERED_CLOSE_BLOCKS",
+    "value": "3"
+   },
+   {
     "file": "src/components/ponto/PontoGeoAnalytics.tsx",
     "name": "TILE",
     "value": "256"
@@ -162208,6 +162325,30 @@
     "line": "transition={{ delay: i * 0.04 }}"
    },
    {
+    "file": "src/components/organograma/organogramaCascade.ts",
+    "line": "* 100ms entre um item e o seguinte, contra os 50ms (`index * 0.05`) da"
+   },
+   {
+    "file": "src/components/organograma/organogramaCascade.ts",
+    "line": "* • `delay: index * 0.1`: o atraso cresce com a posição do item na árvore"
+   },
+   {
+    "file": "src/components/organograma/organogramaReveal.ts",
+    "line": "* Quanto do FIM de um passo o passo seguinte pode atropelar, em segundos: 30% da"
+   },
+   {
+    "file": "src/components/organograma/organogramaReveal.ts",
+    "line": "* `y1 = y2 = 1`, logo o progresso é sempre ≤ 100%: sem overshoot (nada de mola)."
+   },
+   {
+    "file": "src/components/organograma/organogramaReveal.ts",
+    "line": "* progresso nunca passa de 100%: não estufa e não volta (aqui não existe"
+   },
+   {
+    "file": "src/components/organograma/organogramaReveal.ts",
+    "line": "export const REVEAL_STAGE_OVERLAP = REVEAL_CLOSE_DURATION * 0.3;"
+   },
+   {
     "file": "src/components/pcs/PcsGradesTab.tsx",
     "line": "O P50 vem da pesquisa salarial mais recente de cada cargo da grade (aba Mercado). Tolerância de ±5%."
    },
@@ -167306,6 +167447,22 @@
     "name": "downloads the SEFIP content when Baixar is clicked"
    },
    {
+    "file": "src/components/__tests__/DepartmentRow.test.tsx",
+    "name": "DepartmentRow — ícone do departamento"
+   },
+   {
+    "file": "src/components/__tests__/DepartmentRow.test.tsx",
+    "name": "pinta o ícone do subdepartamento de azul (token "
+   },
+   {
+    "file": "src/components/__tests__/DepartmentRow.test.tsx",
+    "name": "não mexe na cor do ícone do departamento principal (raiz segue lime)"
+   },
+   {
+    "file": "src/components/__tests__/DepartmentRow.test.tsx",
+    "name": "preserva badge, ícone, textos, grid e alturas (só a cor mudou)"
+   },
+   {
     "file": "src/components/__tests__/DependentesTab.test.tsx",
     "name": "DependentesTab"
    },
@@ -168584,6 +168741,38 @@
    {
     "file": "src/components/__tests__/EmergenciaTab.test.tsx",
     "name": "renders telefone and celular"
+   },
+   {
+    "file": "src/components/__tests__/EmployeeRow.test.tsx",
+    "name": "EmployeeRow"
+   },
+   {
+    "file": "src/components/__tests__/EmployeeRow.test.tsx",
+    "name": "mostra nome e cargo"
+   },
+   {
+    "file": "src/components/__tests__/EmployeeRow.test.tsx",
+    "name": "com permissão de PII: e-mail por inteiro e link mailto"
+   },
+   {
+    "file": "src/components/__tests__/EmployeeRow.test.tsx",
+    "name": "sem permissão de PII: e-mail mascarado e NENHUM mailto"
+   },
+   {
+    "file": "src/components/__tests__/EmployeeRow.test.tsx",
+    "name": "sem e-mail: não renderiza link nem texto de contato"
+   },
+   {
+    "file": "src/components/__tests__/EmployeeRow.test.tsx",
+    "name": "fallback de iniciais quando não há foto"
+   },
+   {
+    "file": "src/components/__tests__/EmployeeRow.test.tsx",
+    "name": "mostra "
+   },
+   {
+    "file": "src/components/__tests__/EmployeeRow.test.tsx",
+    "name": "reserva os 260px da coluna de contato só a partir de lg"
    },
    {
     "file": "src/components/__tests__/EmpresaSelector.test.tsx",
@@ -174014,6 +174203,26 @@
     "name": "handles empty admissoes array"
    },
    {
+    "file": "src/components/__tests__/OrganogramaHeaderReveal.test.tsx",
+    "name": "organogramaHeaderReveal"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaHeaderReveal.test.tsx",
+    "name": "declara os seis itens na ordem visual, com índices únicos e sem buraco"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaHeaderReveal.test.tsx",
+    "name": "não recria a animação: os slots valem o exato "
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaHeaderReveal.test.tsx",
+    "name": "fecha a cascata do cabeçalho em 0.8s, no mesmo compasso dos KPIs"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaHeaderReveal.test.tsx",
+    "name": "os dois componentes do cabeçalho leem os slots daqui, na ordem visual (sem índice solto)"
+   },
+   {
     "file": "src/components/__tests__/OrganogramaNode.test.tsx",
     "name": "OrganogramaNode"
    },
@@ -174023,23 +174232,287 @@
    },
    {
     "file": "src/components/__tests__/OrganogramaNode.test.tsx",
-    "name": "shows colaborador count badge"
+    "name": "shows colaborador count"
    },
    {
     "file": "src/components/__tests__/OrganogramaNode.test.tsx",
-    "name": "shows colaborador name when expanded"
+    "name": "pluralizes colaborador count correctly"
    },
    {
     "file": "src/components/__tests__/OrganogramaNode.test.tsx",
-    "name": "shows sub-departamento badge"
+    "name": "shows colaborador name only when expanded"
    },
    {
     "file": "src/components/__tests__/OrganogramaNode.test.tsx",
-    "name": "collapses when clicked"
+    "name": "shows sub-departamento count"
    },
    {
     "file": "src/components/__tests__/OrganogramaNode.test.tsx",
-    "name": "renders sub-departamento node name"
+    "name": "calls onToggle when the row is clicked (expansion is controlled by the parent)"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "renders sub-departamento node name when expanded"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "renders 3+ level deep hierarchies"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "shows empty state message for a department with no colaboradores or sub-departamentos"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "renders mailto link for colaborador email"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "OrganogramaNode — linhas de conexão (fonte única)"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "desenha moldura, tronco e ramal com as classes organizadas do token"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "cria um tronco por nível e um ramal por colaborador"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "desenha um ramal por colaborador, sem valor de espessura ou tinta embutido no markup"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "declara espessura e tinta uma única vez em src/index.css, com tinta opaca"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "OrganogramaNode — ícones por nível (raiz lime, subdepartamento azul)"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "segue o nível: raiz em lime, todo subdepartamento em azul"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "não altera o tamanho do badge nem o ícone da row"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "não altera o avatar do colaborador"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "OrganogramaNode — entrada em cascata (mesma da Timeline de colaboradores)"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "parte de opacidade 0 com deslocamento curto à esquerda"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "usa o ritmo desacelerado: 0.7s por item, 100ms entre itens"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "termina em opacidade 1 / x 0, com duração, easing e delay por index"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "tem TETO: o indice global nao vira espera sem limite"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "sai na ordem INVERSA da entrada: o último item do bloco vai embora primeiro"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "bloco cheio encolhe o degrau em vez de estourar a janela que o bloco espera"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "anima a row do departamento e a row de cada colaborador"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "não mexe no que a row já era: mesmas classes, sem estilo extra de layout"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "OrganogramaNode — abertura/fechamento suave (altura + opacidade)"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "abre em 350–450ms e fecha um degrau abaixo (300ms), animando altura + opacidade + um y curto (sem scale nem glow)"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "abre e fecha sem snap: tangente zero nas pontas em que o bloco precisa parar"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "não anima o bloco que já nasce aberto (é o layout inicial, não uma interação)"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "abre animando quando a abertura acontece depois do primeiro render"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "recolhe animando: o bloco só desmonta no fim da transição (não some no clique)"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "fecha e reabre: a segunda abertura volta a animar do zero"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "os itens saem ANTES de o bloco encolher (o vão fecha depois do conteúdo)"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "envolve os colaboradores no mesmo bloco animado"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "envolve a mensagem de departamento vazio no mesmo bloco animado"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "OrganogramaNode — onda entre blocos ao abrir/fechar"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "abre na ordem da árvore: um degrau por slot, com teto"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "fecha na ordem inversa do nível e só ENCOLHE depois que os itens saíram"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "a VOLTA é mais apertada que a abertura: degrau e teto próprios do fechamento"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "o item e o bloco andam no mesmo passo da onda"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "não soma tempo além do teto nem com slot fora do normal"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "a página espera a janela do nível inteiro antes de recolher o de cima"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "o passo seguinte do "
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaNode.test.tsx",
+    "name": "a onda muda só o TEMPO: altura, opacidade e y são os mesmos em qualquer slot"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaRevealBlock.test.tsx",
+    "name": "OrganogramaRevealBlock — onda dos blocos (fiação árvore → nó → bloco)"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaRevealBlock.test.tsx",
+    "name": "cada bloco recebe o preset do PRÓPRIO slot na fila da árvore"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaRevealBlock.test.tsx",
+    "name": "abre descendo a árvore: cada bloco entra um degrau depois do anterior"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaRevealBlock.test.tsx",
+    "name": "o bloco mais cheio espera os próprios itens saírem antes de encolher"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaRevealBlock.test.tsx",
+    "name": "sem "
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaStats.test.tsx",
+    "name": "OrganogramaStats"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaStats.test.tsx",
+    "name": "mostra os três indicadores com os seus valores"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaStats.test.tsx",
+    "name": "dá uma cor de ícone diferente para cada indicador"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaStats.test.tsx",
+    "name": "mantém o tamanho e o raio do badge de ícone e a estrutura do card"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaStats.test.tsx",
+    "name": "entra com a cascata dos KPI Cards do Dashboard (escondido no 1º frame, visível no fim)"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaStats.test.tsx",
+    "name": "reaproveita o "
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+    "name": "OrganogramaToolbar"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+    "name": "destaca "
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+    "name": "mantém os ícones e os rótulos das duas ações"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+    "name": "dispara as ações de expandir e recolher"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+    "name": "deixa o campo de busca sem alteração"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+    "name": "entra na cascata do cabeçalho com a MESMA animação dos KPI Cards do Dashboard"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+    "name": "anima o botão por um wrapper, para não apagar o "
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+    "name": "desloca só o ícone no hover, no sentido em que a árvore vai mexer"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+    "name": "encolhe o wrapper ao pressionar, sem encostar no botão"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+    "name": "declara a microanimação do ícone com as duas pontas em tween, só em y"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+    "name": "reaproveita o "
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+    "name": "deixa os ícones herdarem a tinta do botão (nada de cor fixa que suma)"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+    "name": "usa só utilitários de brilho que existem no tema (sem classe morta)"
+   },
+   {
+    "file": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+    "name": "a toolbar quebra em linhas em tela estreita, em vez de empurrar as acoes para fora"
    },
    {
     "file": "src/components/__tests__/OrigemHomologacao.test.tsx",
@@ -184134,6 +184607,154 @@
     "name": "returns false for wrong length"
    },
    {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "normalizeText"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "lowercases and strips accents"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "countTree"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "counts departamentos and colaboradores recursively"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "returns zero for an empty tree"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "maxDepth"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "computes the deepest level (root = 1)"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "returns 0 for an empty tree"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "returns 1 for a flat structure"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "collectAllIds"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "flattens every department id in the tree"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "getDefaultExpandedIds"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "expands roots and their direct children only"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "buildCascadeIndex"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "não consome posição de subárvore recolhida"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "não indexa colaborador de departamento recolhido"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "ordena raiz → subdepartamentos (recursivo) → colaboradores, sem repetir posição"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "devolve um mapa vazio para árvore vazia"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "filterTree"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "returns the original tree untouched when the term is empty"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "matches by department name and keeps its whole subtree"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "matches a deeply nested colaborador and preserves the ancestor path"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "matches by cargo"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "is case and accent insensitive"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "returns no nodes when nothing matches"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "pluralize"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "uses the singular form for 1"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "uses the plural form for 0 and for 2+"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "buildRevealWave"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "abre na pré-ordem: a row do dono, os subdepartamentos e só então os colaboradores"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "fecha de trás pra frente DENTRO do nível (o último do nível sai primeiro)"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "lida com árvore vazia e com departamento sem filhos"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "buildCollapseStages"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "recolhe um nível por vez, do fundo pra raiz"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "leva pro passo a medida do nível: o bloco mais cheio e a onda do nível"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "não cria passo de nível já recolhido nem deixa id de fora"
+   },
+   {
+    "file": "src/lib/__tests__/organogramaTree.test.ts",
+    "name": "cobre TODOS os ids expandidos: no fim da onda a árvore está recolhida"
+   },
+   {
     "file": "src/lib/__tests__/queryClient.test.ts",
     "name": "queryClient"
    },
@@ -184832,6 +185453,90 @@
    {
     "file": "src/pages/__tests__/OnboardingParidade.test.tsx",
     "name": "sem registro (fallback vazio) não inventa evento"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "OrganogramaPage"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "shows a loading spinner while data is loading"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "shows the sync error state and allows retry"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "shows the empty state when there is no structure"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "renders header title/subtitle without the old version label"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "entra com a cascata dos KPI Cards do Dashboard, da esquerda para a direita"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "a cascata do cabeçalho toca mesmo sob um "
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "computes departamentos, colaboradores and níveis hierárquicos from the tree"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "starts with roots and first level expanded by default"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "collapses and expands a department on row click"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "expands every level with "
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "collapses every department with "
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "filters by department name"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "filters by colaborador name and keeps the ancestor path visible (rule: no orphan results)"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "finds a colaborador even when their department starts collapsed"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "filters by cargo"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "is case and accent insensitive"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "shows a "
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "com permissao de PII: mailto por colaborador"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "sem permissao de PII: nenhum e-mail da empresa inteira na tela"
+   },
+   {
+    "file": "src/pages/__tests__/OrganogramaPage.test.tsx",
+    "name": "durante a busca, expandir/recolher ficam desabilitados em vez de nao fazer nada"
    },
    {
     "file": "src/pages/__tests__/PensoesPage.test.tsx",
@@ -261763,6 +262468,17 @@
     "downloads the SEFIP content when Baixar is clicked"
    ]
   },
+  "src/components/__tests__/DepartmentRow.test.tsx": {
+   "path": "src/components/__tests__/DepartmentRow.test.tsx",
+   "lines": 104,
+   "is_test": true,
+   "tests": [
+    "DepartmentRow — ícone do departamento",
+    "pinta o ícone do subdepartamento de azul (token ",
+    "não mexe na cor do ícone do departamento principal (raiz segue lime)",
+    "preserva badge, ícone, textos, grid e alturas (só a cor mudou)"
+   ]
+  },
   "src/components/__tests__/DependentesTab.test.tsx": {
    "path": "src/components/__tests__/DependentesTab.test.tsx",
    "lines": 99,
@@ -262312,6 +263028,24 @@
     "renders contato nome",
     "renders parentesco",
     "renders telefone and celular"
+   ]
+  },
+  "src/components/__tests__/EmployeeRow.test.tsx": {
+   "path": "src/components/__tests__/EmployeeRow.test.tsx",
+   "lines": 88,
+   "is_test": true,
+   "rule_comments": [
+    "Mesma forma do hook real: com permissão devolve o valor; sem, mascara."
+   ],
+   "tests": [
+    "EmployeeRow",
+    "mostra nome e cargo",
+    "com permissão de PII: e-mail por inteiro e link mailto",
+    "sem permissão de PII: e-mail mascarado e NENHUM mailto",
+    "sem e-mail: não renderiza link nem texto de contato",
+    "fallback de iniciais quando não há foto",
+    "mostra ",
+    "reserva os 260px da coluna de contato só a partir de lg"
    ]
   },
   "src/components/__tests__/EmpresaSelector.test.tsx": {
@@ -264653,18 +265387,145 @@
     "handles empty admissoes array"
    ]
   },
+  "src/components/__tests__/OrganogramaHeaderReveal.test.tsx": {
+   "path": "src/components/__tests__/OrganogramaHeaderReveal.test.tsx",
+   "lines": 57,
+   "is_test": true,
+   "tests": [
+    "organogramaHeaderReveal",
+    "declara os seis itens na ordem visual, com índices únicos e sem buraco",
+    "não recria a animação: os slots valem o exato ",
+    "fecha a cascata do cabeçalho em 0.8s, no mesmo compasso dos KPIs",
+    "os dois componentes do cabeçalho leem os slots daqui, na ordem visual (sem índice solto)"
+   ]
+  },
   "src/components/__tests__/OrganogramaNode.test.tsx": {
    "path": "src/components/__tests__/OrganogramaNode.test.tsx",
-   "lines": 80,
+   "lines": 887,
    "is_test": true,
+   "rule_comments": [
+    "cascata está ligada nas rows, não apenas declarada no preset.",
+    "O que NÃO pode ser atropelado é a saída dos itens: o passo seguinte"
+   ],
+   "temporal": [
+    "await waitFor(() => expect(Number(row.style.opacity)).toBeLessThan(1), { timeout: 2000 });",
+    "await waitFor(() => expect(row.style.opacity).toBe('1'), { timeout: 2000 });"
+   ],
    "tests": [
     "OrganogramaNode",
     "renders department name",
-    "shows colaborador count badge",
-    "shows colaborador name when expanded",
-    "shows sub-departamento badge",
-    "collapses when clicked",
-    "renders sub-departamento node name"
+    "shows colaborador count",
+    "pluralizes colaborador count correctly",
+    "shows colaborador name only when expanded",
+    "shows sub-departamento count",
+    "calls onToggle when the row is clicked (expansion is controlled by the parent)",
+    "renders sub-departamento node name when expanded",
+    "renders 3+ level deep hierarchies",
+    "shows empty state message for a department with no colaboradores or sub-departamentos",
+    "renders mailto link for colaborador email",
+    "OrganogramaNode — linhas de conexão (fonte única)",
+    "desenha moldura, tronco e ramal com as classes organizadas do token",
+    "cria um tronco por nível e um ramal por colaborador",
+    "desenha um ramal por colaborador, sem valor de espessura ou tinta embutido no markup",
+    "declara espessura e tinta uma única vez em src/index.css, com tinta opaca",
+    "OrganogramaNode — ícones por nível (raiz lime, subdepartamento azul)",
+    "segue o nível: raiz em lime, todo subdepartamento em azul",
+    "não altera o tamanho do badge nem o ícone da row",
+    "não altera o avatar do colaborador",
+    "OrganogramaNode — entrada em cascata (mesma da Timeline de colaboradores)",
+    "parte de opacidade 0 com deslocamento curto à esquerda",
+    "usa o ritmo desacelerado: 0.7s por item, 100ms entre itens",
+    "termina em opacidade 1 / x 0, com duração, easing e delay por index",
+    "tem TETO: o indice global nao vira espera sem limite",
+    "sai na ordem INVERSA da entrada: o último item do bloco vai embora primeiro",
+    "bloco cheio encolhe o degrau em vez de estourar a janela que o bloco espera",
+    "anima a row do departamento e a row de cada colaborador",
+    "não mexe no que a row já era: mesmas classes, sem estilo extra de layout",
+    "OrganogramaNode — abertura/fechamento suave (altura + opacidade)",
+    "abre em 350–450ms e fecha um degrau abaixo (300ms), animando altura + opacidade + um y curto (sem scale nem glow)",
+    "abre e fecha sem snap: tangente zero nas pontas em que o bloco precisa parar",
+    "não anima o bloco que já nasce aberto (é o layout inicial, não uma interação)",
+    "abre animando quando a abertura acontece depois do primeiro render",
+    "recolhe animando: o bloco só desmonta no fim da transição (não some no clique)",
+    "fecha e reabre: a segunda abertura volta a animar do zero",
+    "os itens saem ANTES de o bloco encolher (o vão fecha depois do conteúdo)",
+    "envolve os colaboradores no mesmo bloco animado",
+    "envolve a mensagem de departamento vazio no mesmo bloco animado",
+    "OrganogramaNode — onda entre blocos ao abrir/fechar",
+    "abre na ordem da árvore: um degrau por slot, com teto",
+    "fecha na ordem inversa do nível e só ENCOLHE depois que os itens saíram",
+    "a VOLTA é mais apertada que a abertura: degrau e teto próprios do fechamento",
+    "o item e o bloco andam no mesmo passo da onda",
+    "não soma tempo além do teto nem com slot fora do normal",
+    "a página espera a janela do nível inteiro antes de recolher o de cima",
+    "o passo seguinte do ",
+    "a onda muda só o TEMPO: altura, opacidade e y são os mesmos em qualquer slot"
+   ]
+  },
+  "src/components/__tests__/OrganogramaRevealBlock.test.tsx": {
+   "path": "src/components/__tests__/OrganogramaRevealBlock.test.tsx",
+   "lines": 176,
+   "is_test": true,
+   "rule_comments": [
+    "apenas guardando o `variants` em vez de descartá-lo."
+   ],
+   "tests": [
+    "OrganogramaRevealBlock — onda dos blocos (fiação árvore → nó → bloco)",
+    "cada bloco recebe o preset do PRÓPRIO slot na fila da árvore",
+    "abre descendo a árvore: cada bloco entra um degrau depois do anterior",
+    "o bloco mais cheio espera os próprios itens saírem antes de encolher",
+    "sem "
+   ]
+  },
+  "src/components/__tests__/OrganogramaStats.test.tsx": {
+   "path": "src/components/__tests__/OrganogramaStats.test.tsx",
+   "lines": 111,
+   "is_test": true,
+   "temporal": [
+    "{ timeout: 2000 }"
+   ],
+   "tests": [
+    "OrganogramaStats",
+    "mostra os três indicadores com os seus valores",
+    "dá uma cor de ícone diferente para cada indicador",
+    "mantém o tamanho e o raio do badge de ícone e a estrutura do card",
+    "entra com a cascata dos KPI Cards do Dashboard (escondido no 1º frame, visível no fim)",
+    "reaproveita o "
+   ]
+  },
+  "src/components/__tests__/OrganogramaToolbar.test.tsx": {
+   "path": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+   "lines": 344,
+   "is_test": true,
+   "rule_comments": [
+    "estreita ele não pode transbordar por cima da busca.",
+    "está em `boxShadow` e o Tailwind simplesmente não emite regra. Aqui o",
+    "Em 360–390px a busca (minimo de 220px) mais os dois botoes `shrink-0`",
+    "O minimo de 220px da busca vale a partir de `sm`."
+   ],
+   "temporal": [
+    "await waitFor(() => expect(iconeExpandir.style.transform).toBe('none'), { timeout: 2000 });",
+    "await waitFor(() => expect(iconeExpandir.style.transform).toBe('translateY(2px)'), { timeout: 2000 });",
+    "await waitFor(() => expect(iconeRecolher.style.transform).toBe('translateY(-2px)'), { timeout: 2000 });",
+    "await waitFor(() => expect(wrapper.style.transform).toBe('none'), { timeout: 2000 });",
+    "await waitFor(() => expect(wrapper.style.transform).toBe('scale(0.98)'), { timeout: 2000 });",
+    "{ timeout: 2000 }"
+   ],
+   "tests": [
+    "OrganogramaToolbar",
+    "destaca ",
+    "mantém os ícones e os rótulos das duas ações",
+    "dispara as ações de expandir e recolher",
+    "deixa o campo de busca sem alteração",
+    "entra na cascata do cabeçalho com a MESMA animação dos KPI Cards do Dashboard",
+    "anima o botão por um wrapper, para não apagar o ",
+    "desloca só o ícone no hover, no sentido em que a árvore vai mexer",
+    "encolhe o wrapper ao pressionar, sem encostar no botão",
+    "declara a microanimação do ícone com as duas pontas em tween, só em y",
+    "reaproveita o ",
+    "deixa os ícones herdarem a tinta do botão (nada de cor fixa que suma)",
+    "usa só utilitários de brilho que existem no tema (sem classe morta)",
+    "a toolbar quebra em linhas em tela estreita, em vez de empurrar as acoes para fora"
    ]
   },
   "src/components/__tests__/OrigemHomologacao.test.tsx": {
@@ -274693,11 +275554,196 @@
     "setTimeout(() => { close(); }, 2000);"
    ]
   },
+  "src/components/organograma/DepartmentRow.tsx": {
+   "path": "src/components/organograma/DepartmentRow.tsx",
+   "lines": 89,
+   "exports": [
+    "function DepartmentRow"
+   ]
+  },
+  "src/components/organograma/EmployeeRow.tsx": {
+   "path": "src/components/organograma/EmployeeRow.tsx",
+   "lines": 72,
+   "exports": [
+    "function EmployeeRow"
+   ],
+   "rule_comments": [
+    "A coluna de contato reserva os 260px do e-mail apenas de `lg` para cima,"
+   ]
+  },
   "src/components/organograma/OrganogramaNode.tsx": {
    "path": "src/components/organograma/OrganogramaNode.tsx",
-   "lines": 131,
+   "lines": 194,
    "exports": [
     "function OrganogramaNode"
+   ]
+  },
+  "src/components/organograma/OrganogramaRevealBlock.tsx": {
+   "path": "src/components/organograma/OrganogramaRevealBlock.tsx",
+   "lines": 131,
+   "exports": [
+    "function OrganogramaRevealBlock"
+   ]
+  },
+  "src/components/organograma/OrganogramaStats.tsx": {
+   "path": "src/components/organograma/OrganogramaStats.tsx",
+   "lines": 84,
+   "exports": [
+    "function OrganogramaStats"
+   ]
+  },
+  "src/components/organograma/OrganogramaToolbar.tsx": {
+   "path": "src/components/organograma/OrganogramaToolbar.tsx",
+   "lines": 216,
+   "exports": [
+    "function OrganogramaToolbar"
+   ],
+   "rule_comments": [
+    "`flex-wrap` + `min-h-11` no lugar de `h-11`: em 360–390px a busca (minimo de"
+   ]
+  },
+  "src/components/organograma/OrganogramaTree.tsx": {
+   "path": "src/components/organograma/OrganogramaTree.tsx",
+   "lines": 88,
+   "exports": [
+    "function OrganogramaTree"
+   ],
+   "rule_comments": [
+    "é a mesma da cascata das rows, então a fila não pode se remexer a cada clique."
+   ]
+  },
+  "src/components/organograma/organogramaCascade.ts": {
+   "path": "src/components/organograma/organogramaCascade.ts",
+   "lines": 208,
+   "exports": [
+    "const CASCADE_STEP",
+    "const CASCADE_DURATION",
+    "const CASCADE_EASE",
+    "interface CascadeOrder",
+    "const CASCADE_EXIT_DURATION",
+    "const CASCADE_EXIT_OFFSET_Y",
+    "const CASCADE_EXIT_STEP",
+    "const CASCADE_EXIT_MAX_WINDOW",
+    "const CASCADE_EXIT_EASE",
+    "function cascadeItemStep",
+    "function cascadeItemsSpan",
+    "function cascadeItemExitDelay",
+    "const CASCADE_ENTER_MAX_WINDOW",
+    "function cascadeEnterDelay",
+    "const cascadeVariants"
+   ],
+   "params": [
+    {
+     "name": "CASCADE_STEP",
+     "value": "0.1"
+    },
+    {
+     "name": "CASCADE_DURATION",
+     "value": "0.7"
+    },
+    {
+     "name": "CASCADE_EXIT_DURATION",
+     "value": "0.22"
+    },
+    {
+     "name": "CASCADE_EXIT_OFFSET_Y",
+     "value": "-4"
+    },
+    {
+     "name": "CASCADE_EXIT_STEP",
+     "value": "0.03"
+    },
+    {
+     "name": "CASCADE_EXIT_MAX_WINDOW",
+     "value": "0.28"
+    },
+    {
+     "name": "CASCADE_ENTER_MAX_WINDOW",
+     "value": "1.6"
+    }
+   ],
+   "rule_comments": [
+    "40 colaboradores não pode segurar a árvore inteira só porque o bloco dele",
+    "sem teto transforma isso em espera sem limite: numa empresa com 300 rows a de",
+    "* Saída do item. Não usa `x` (o item não volta pra esquerda): ele apenas sobe"
+   ],
+   "percents": [
+    "* 100ms entre um item e o seguinte, contra os 50ms (`index * 0.05`) da",
+    "* • `delay: index * 0.1`: o atraso cresce com a posição do item na árvore"
+   ]
+  },
+  "src/components/organograma/organogramaHeaderReveal.ts": {
+   "path": "src/components/organograma/organogramaHeaderReveal.ts",
+   "lines": 51,
+   "exports": [
+    "const HEADER_REVEAL"
+   ],
+   "rule_comments": [
+    "componente lê apenas o próprio slot (`HEADER_REVEAL.busca`, etc.);"
+   ]
+  },
+  "src/components/organograma/organogramaReveal.ts": {
+   "path": "src/components/organograma/organogramaReveal.ts",
+   "lines": 290,
+   "exports": [
+    "const REVEAL_OPEN_DURATION",
+    "const REVEAL_CLOSE_DURATION",
+    "const REVEAL_OPEN_EASE",
+    "const REVEAL_CLOSE_EASE",
+    "const REVEAL_OFFSET_Y",
+    "const REVEAL_WAVE_STEP",
+    "const REVEAL_MAX_STAGGERED_BLOCKS",
+    "const REVEAL_CLOSE_WAVE_STEP",
+    "const REVEAL_MAX_STAGGERED_CLOSE_BLOCKS",
+    "interface RevealWave",
+    "function revealWaveDelay",
+    "function revealCloseWaveDelay",
+    "function revealItemExitDelay",
+    "function revealLevelWindow",
+    "const REVEAL_STAGE_OVERLAP",
+    "function revealStageGap",
+    "function makeRevealVariants"
+   ],
+   "params": [
+    {
+     "name": "REVEAL_OPEN_DURATION",
+     "value": "0.4"
+    },
+    {
+     "name": "REVEAL_CLOSE_DURATION",
+     "value": "0.3"
+    },
+    {
+     "name": "REVEAL_OFFSET_Y",
+     "value": "-4"
+    },
+    {
+     "name": "REVEAL_WAVE_STEP",
+     "value": "0.09"
+    },
+    {
+     "name": "REVEAL_MAX_STAGGERED_BLOCKS",
+     "value": "8"
+    },
+    {
+     "name": "REVEAL_CLOSE_WAVE_STEP",
+     "value": "0.05"
+    },
+    {
+     "name": "REVEAL_MAX_STAGGERED_CLOSE_BLOCKS",
+     "value": "3"
+    }
+   ],
+   "rule_comments": [
+    "* Quantos slots a onda usa antes do teto (0,09 × 8 = 720ms no máximo). Acima",
+    "mesmo passo, e a volta não pode somar espera — acima disso os blocos fecham",
+    "sem cortar nada que o olho ainda esteja lendo: o que não pode ser atropelado é"
+   ],
+   "percents": [
+    "* Quanto do FIM de um passo o passo seguinte pode atropelar, em segundos: 30% da",
+    "* `y1 = y2 = 1`, logo o progresso é sempre ≤ 100%: sem overshoot (nada de mola).",
+    "* progresso nunca passa de 100%: não estufa e não volta (aqui não existe",
+    "export const REVEAL_STAGE_OVERLAP = REVEAL_CLOSE_DURATION * 0.3;"
    ]
   },
   "src/components/pcs/PcsAvaliacaoTab.tsx": {
@@ -287036,6 +288082,27 @@
     "useMovimentoReduzido"
    ]
   },
+  "src/lib/organogramaTree.ts": {
+   "path": "src/lib/organogramaTree.ts",
+   "lines": 275,
+   "exports": [
+    "interface OrgColaborador",
+    "interface OrgDepartamento",
+    "function normalizeText",
+    "function countTree",
+    "function maxDepth",
+    "function collectAllIds",
+    "function getDefaultExpandedIds",
+    "function buildCascadeIndex",
+    "interface RevealWaveSlot",
+    "interface RevealWaveIndex",
+    "function buildRevealWave",
+    "interface CollapseStage",
+    "function buildCollapseStages",
+    "function filterTree",
+    "function pluralize"
+   ]
+  },
   "src/lib/queryClient.ts": {
    "path": "src/lib/queryClient.ts",
    "lines": 32,
@@ -287229,6 +288296,50 @@
     "returns true for exactly 11 digits",
     "strips non-digits before checking",
     "returns false for wrong length"
+   ]
+  },
+  "src/lib/__tests__/organogramaTree.test.ts": {
+   "path": "src/lib/__tests__/organogramaTree.test.ts",
+   "lines": 307,
+   "is_test": true,
+   "tests": [
+    "normalizeText",
+    "lowercases and strips accents",
+    "countTree",
+    "counts departamentos and colaboradores recursively",
+    "returns zero for an empty tree",
+    "maxDepth",
+    "computes the deepest level (root = 1)",
+    "returns 0 for an empty tree",
+    "returns 1 for a flat structure",
+    "collectAllIds",
+    "flattens every department id in the tree",
+    "getDefaultExpandedIds",
+    "expands roots and their direct children only",
+    "buildCascadeIndex",
+    "não consome posição de subárvore recolhida",
+    "não indexa colaborador de departamento recolhido",
+    "ordena raiz → subdepartamentos (recursivo) → colaboradores, sem repetir posição",
+    "devolve um mapa vazio para árvore vazia",
+    "filterTree",
+    "returns the original tree untouched when the term is empty",
+    "matches by department name and keeps its whole subtree",
+    "matches a deeply nested colaborador and preserves the ancestor path",
+    "matches by cargo",
+    "is case and accent insensitive",
+    "returns no nodes when nothing matches",
+    "pluralize",
+    "uses the singular form for 1",
+    "uses the plural form for 0 and for 2+",
+    "buildRevealWave",
+    "abre na pré-ordem: a row do dono, os subdepartamentos e só então os colaboradores",
+    "fecha de trás pra frente DENTRO do nível (o último do nível sai primeiro)",
+    "lida com árvore vazia e com departamento sem filhos",
+    "buildCollapseStages",
+    "recolhe um nível por vez, do fundo pra raiz",
+    "leva pro passo a medida do nível: o bloco mais cheio e a onda do nível",
+    "não cria passo de nível já recolhido nem deixa id de fora",
+    "cobre TODOS os ids expandidos: no fim da onda a árvore está recolhida"
    ]
   },
   "src/lib/__tests__/queryClient.test.ts": {
@@ -292231,9 +293342,12 @@
   },
   "src/pages/OrganogramaPage.tsx": {
    "path": "src/pages/OrganogramaPage.tsx",
-   "lines": 109,
+   "lines": 199,
    "exports": [
     "function OrganogramaPage"
+   ],
+   "rule_comments": [
+    "filtro não pode ficar \"esquecido\" aberto pra reaparecer expandido quando a"
    ]
   },
   "src/pages/PassivoTrabalhistaPage.tsx": {
@@ -294233,6 +295347,45 @@
     "emite ",
     "jornada em aberto NÃO emite evento de conclusão",
     "sem registro (fallback vazio) não inventa evento"
+   ]
+  },
+  "src/pages/__tests__/OrganogramaPage.test.tsx": {
+   "path": "src/pages/__tests__/OrganogramaPage.test.tsx",
+   "lines": 390,
+   "is_test": true,
+   "params": [
+    {
+     "name": "HIDDEN_STYLE",
+     "value": "'opacity: 0; transform: translateY(20px);'"
+    }
+   ],
+   "temporal": [
+    "await waitFor(() => expect(screen.queryByText('Ana Beatriz Souza')).not.toBeInTheDocument(), { timeout: 3000 });",
+    "await waitFor(() => expect(screen.queryByText('Recursos Humanos')).not.toBeInTheDocument(), { timeout: 3000 });",
+    "{ timeout: 3000 }"
+   ],
+   "tests": [
+    "OrganogramaPage",
+    "shows a loading spinner while data is loading",
+    "shows the sync error state and allows retry",
+    "shows the empty state when there is no structure",
+    "renders header title/subtitle without the old version label",
+    "entra com a cascata dos KPI Cards do Dashboard, da esquerda para a direita",
+    "a cascata do cabeçalho toca mesmo sob um ",
+    "computes departamentos, colaboradores and níveis hierárquicos from the tree",
+    "starts with roots and first level expanded by default",
+    "collapses and expands a department on row click",
+    "expands every level with ",
+    "collapses every department with ",
+    "filters by department name",
+    "filters by colaborador name and keeps the ancestor path visible (rule: no orphan results)",
+    "finds a colaborador even when their department starts collapsed",
+    "filters by cargo",
+    "is case and accent insensitive",
+    "shows a ",
+    "com permissao de PII: mailto por colaborador",
+    "sem permissao de PII: nenhum e-mail da empresa inteira na tela",
+    "durante a busca, expandir/recolher ficam desabilitados em vez de nao fazer nada"
    ]
   },
   "src/pages/__tests__/PensoesPage.test.tsx": {
@@ -320416,10 +321569,42 @@
   }
  },
  "git": {
-  "sha": "9de335ff8f9155e265376c1aaa904a316f0fa643",
+  "sha": "7b17d30ef58ec646fa04f6f3455b87c9a4ae0386",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "7b17d30",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat: resgata da muri o organograma navegável — busca que filtra, expandir/recolher e níveis (#616)",
+    "files": [
+     "inventario/estado/rotas.json",
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/DepartmentRow.test.tsx",
+     "src/components/__tests__/EmployeeRow.test.tsx",
+     "src/components/__tests__/OrganogramaHeaderReveal.test.tsx",
+     "src/components/__tests__/OrganogramaNode.test.tsx",
+     "src/components/__tests__/OrganogramaRevealBlock.test.tsx",
+     "src/components/__tests__/OrganogramaStats.test.tsx",
+     "src/components/__tests__/OrganogramaToolbar.test.tsx",
+     "src/components/organograma/DepartmentRow.tsx",
+     "src/components/organograma/EmployeeRow.tsx",
+     "src/components/organograma/OrganogramaNode.tsx",
+     "src/components/organograma/OrganogramaRevealBlock.tsx",
+     "src/components/organograma/OrganogramaStats.tsx",
+     "src/components/organograma/OrganogramaToolbar.tsx",
+     "src/components/organograma/OrganogramaTree.tsx",
+     "src/components/organograma/organogramaCascade.ts",
+     "src/components/organograma/organogramaHeaderReveal.ts",
+     "src/components/organograma/organogramaReveal.ts",
+     "src/index.css",
+     "src/lib/__tests__/organogramaTree.test.ts",
+     "src/lib/organogramaTree.ts",
+     "src/pages/OrganogramaPage.tsx",
+     "src/pages/__tests__/OrganogramaPage.test.tsx"
+    ]
+   },
    {
     "sha": "9de335f",
     "date": "2026-11-17",
@@ -321162,25 +322347,16 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "81e86aa",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "infra(banco): sidecars rodam no FIM da transacao, nao no meio do lote (#583)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml"
-    ]
    }
   ],
   "hot_files": [
    [
     "inventario/estado/rotas.json",
-    7
+    8
    ],
    [
     "scripts/.bundle-budget.json",
-    7
+    8
    ],
    [
     "src/pages/ColaboradorDetalhesPage.tsx",
@@ -321209,6 +322385,10 @@
    [
     "src/services/colaboradorService.ts",
     3
+   ],
+   [
+    "src/index.css",
+    2
    ],
    [
     "docs/auditoria/PLANO_RESGATE_POR_AREA_2026-11-16.json",
@@ -321248,10 +322428,6 @@
    ],
    [
     "src/hooks/useVinculos.ts",
-    2
-   ],
-   [
-    "src/services/colaboradorDetalhesService.ts",
     2
    ]
   ]

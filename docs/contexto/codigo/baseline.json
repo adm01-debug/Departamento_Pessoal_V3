@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9de335ff8f9155e265376c1aaa904a316f0fa643",
+  "commit": "7b17d30ef58ec646fa04f6f3455b87c9a4ae0386",
   "branch": "main",
-  "data_commit": "2026-11-17T09:08:36-03:00",
+  "data_commit": "2026-11-17T09:38:02-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "7b17d30",
+    "data": "2026-11-17",
+    "assunto": "feat: resgata da muri o organograma navegável — busca que filtra, expandir/recolher e níveis (#616)"
+   },
    {
     "sha": "9de335f",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "4fc0347",
     "data": "2026-11-16",
     "assunto": "fix(provisões): encargos da provisão seguem o regime tributário e a competência guarda o contrato (#576)"
-   },
-   {
-    "sha": "e64be5e",
-    "data": "2026-11-16",
-    "assunto": "build(deps): bump the minor-patch group with 11 updates (#586)"
    }
   ],
-  "arquivos_mudados_7d": 1105,
+  "arquivos_mudados_7d": 1126,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 320
+    "mudancas": 327
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 17
+    "mudancas": 18
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -290,22 +290,22 @@
     "mudancas": 6
    },
    {
-    "arquivo": "supabase/functions/external-db-bridge/index.ts",
-    "mudancas": 6
+    "arquivo": ".github/workflows/ci.yml",
+    "mudancas": 5
    },
    {
-    "arquivo": ".github/workflows/ci.yml",
+    "arquivo": "RELATORIO_CI.md",
     "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 236
+    "commits": 237
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 43
+    "commits": 42
    },
    {
     "autor": "dependabot[bot]",
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3449,
-  "arquivos_codigo": 1983,
-  "linhas_codigo": 389823,
+  "arquivos_total": 3467,
+  "arquivos_codigo": 2001,
+  "linhas_codigo": 393864,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 94,
   "modulos": 81,
-  "componentes": 612,
+  "componentes": 618,
   "hooks": 115,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 722,
+  "testes": 730,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 906,
-   "linhas": 160093
+   "arquivos": 921,
+   "linhas": 163072
   },
   "src/constants": {
    "arquivos": 6,
@@ -663,8 +663,8 @@
    "linhas": 25911
   },
   "src/lib": {
-   "arquivos": 18,
-   "linhas": 1922
+   "arquivos": 20,
+   "linhas": 2504
   },
   "src/main.tsx": {
    "arquivos": 1,
@@ -675,8 +675,8 @@
    "linhas": 3564
   },
   "src/pages": {
-   "arquivos": 133,
-   "linhas": 48798
+   "arquivos": 134,
+   "linhas": 49278
   },
   "src/providers": {
    "arquivos": 4,
@@ -850,7 +850,7 @@
   "console_log": 395,
   "ts_ignore": 1,
   "eslint_disable": 4,
-  "todos": 21,
+  "todos": 23,
   "arquivos_acima_500_linhas": 109
  },
  "todos": [
@@ -903,6 +903,12 @@
    "texto": "job tem timeout-minutes — antes era 1 ocorrência por arquivo,"
   },
   {
+   "arquivo": "src/components/__tests__/OrganogramaNode.test.tsx",
+   "linha": 287,
+   "tipo": "TODO",
+   "texto": "nó interno (nível ≥ 1, os"
+  },
+  {
    "arquivo": "src/components/admissoes/kanbanComum.ts",
    "linha": 96,
    "tipo": "TODO",
@@ -913,6 +919,12 @@
    "linha": 33,
    "tipo": "TODO",
    "texto": "identificador fictício do módulo (`mock-empresa-1`, ...). */"
+  },
+  {
+   "arquivo": "src/components/organograma/DepartmentRow.tsx",
+   "linha": 58,
+   "tipo": "TODO",
+   "texto": "nó interno da árvore (nível ≥ 1"
   },
   {
    "arquivo": "src/components/treinamentos/trilhasDerivacoes.ts",

@@ -1,11 +1,11 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 177,
+ "total": 178,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
-  "lib": 11,
+  "lib": 12,
   "providers": 1,
   "python": 3,
   "schemas": 25,
@@ -728,6 +728,44 @@
    "orfao": false
   },
   {
+   "arquivo": "src/lib/organogramaTree.ts",
+   "camada": "lib",
+   "exports": [
+    "CollapseStage",
+    "OrgColaborador",
+    "OrgDepartamento",
+    "RevealWaveIndex",
+    "RevealWaveSlot",
+    "buildCascadeIndex",
+    "buildCollapseStages",
+    "buildRevealWave",
+    "collectAllIds",
+    "countTree",
+    "filterTree",
+    "getDefaultExpandedIds",
+    "maxDepth",
+    "normalizeText",
+    "pluralize"
+   ],
+   "export_default": null,
+   "linhas": 275,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 5,
+   "usado_por_modulos": [
+    "components/organograma",
+    "pages"
+   ],
+   "coberto_por_testes": 4,
+   "orfao": false
+  },
+  {
    "arquivo": "src/lib/queryClient.ts",
    "camada": "lib",
    "exports": [
@@ -860,7 +898,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 265,
+   "usado_por": 267,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",

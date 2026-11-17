@@ -2820,13 +2820,44 @@
    "src/components/ui/button.tsx",
    "src/lib/utils.ts"
   ],
-  "src/components/organograma/OrganogramaNode.tsx": [
-   "src/components/ui/avatar.tsx",
-   "src/components/ui/badge.tsx",
-   "src/components/ui/card.tsx",
-   "src/hooks/useOrganograma.ts",
-   "src/hooks/usePiiMask.ts",
+  "src/components/organograma/DepartmentRow.tsx": [
+   "src/lib/organogramaTree.ts",
    "src/lib/utils.ts"
+  ],
+  "src/components/organograma/EmployeeRow.tsx": [
+   "src/components/ui/avatar.tsx",
+   "src/hooks/usePiiMask.ts",
+   "src/lib/organogramaTree.ts"
+  ],
+  "src/components/organograma/OrganogramaNode.tsx": [
+   "src/components/organograma/DepartmentRow.tsx",
+   "src/components/organograma/EmployeeRow.tsx",
+   "src/components/organograma/OrganogramaRevealBlock.tsx",
+   "src/components/organograma/organogramaCascade.ts",
+   "src/components/organograma/organogramaReveal.ts",
+   "src/lib/organogramaTree.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/organograma/OrganogramaRevealBlock.tsx": [
+   "src/components/organograma/organogramaReveal.ts"
+  ],
+  "src/components/organograma/OrganogramaStats.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/organograma/organogramaHeaderReveal.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/organograma/OrganogramaToolbar.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/organograma/organogramaHeaderReveal.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx"
+  ],
+  "src/components/organograma/OrganogramaTree.tsx": [
+   "src/components/organograma/OrganogramaNode.tsx",
+   "src/lib/organogramaTree.ts"
+  ],
+  "src/components/organograma/organogramaReveal.ts": [
+   "src/components/organograma/organogramaCascade.ts"
   ],
   "src/components/pcs/PcsAvaliacaoTab.tsx": [
    "src/components/ui/badge.tsx",
@@ -6293,12 +6324,14 @@
   "src/pages/OrganogramaPage.tsx": [
    "src/components/PageTitle.tsx",
    "src/components/layout/index.ts",
-   "src/components/organograma/OrganogramaNode.tsx",
-   "src/components/ui/card.tsx",
-   "src/components/ui/input.tsx",
+   "src/components/organograma/OrganogramaStats.tsx",
+   "src/components/organograma/OrganogramaToolbar.tsx",
+   "src/components/organograma/OrganogramaTree.tsx",
+   "src/components/organograma/organogramaReveal.ts",
    "src/components/ui/spinner.tsx",
    "src/components/ui/sync-error-state.tsx",
-   "src/hooks/useOrganograma.ts"
+   "src/hooks/useOrganograma.ts",
+   "src/lib/organogramaTree.ts"
   ],
   "src/pages/PassivoTrabalhistaPage.tsx": [
    "src/components/layout/index.ts",

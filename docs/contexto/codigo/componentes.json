@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 612,
+ "total": 618,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -2587,7 +2587,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 26,
+   "usado_por": 28,
    "orfao": false
   },
   {
@@ -4705,16 +4705,100 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/organograma/DepartmentRow.tsx",
+   "exports": [
+    "DepartmentRow"
+   ],
+   "export_default": null,
+   "linhas": 89,
+   "dominio": "components/organograma",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/organograma/EmployeeRow.tsx",
+   "exports": [
+    "EmployeeRow"
+   ],
+   "export_default": null,
+   "linhas": 72,
+   "dominio": "components/organograma",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/organograma/OrganogramaNode.tsx",
    "exports": [
     "OrganogramaNode"
    ],
    "export_default": null,
+   "linhas": 194,
+   "dominio": "components/organograma",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/organograma/OrganogramaRevealBlock.tsx",
+   "exports": [
+    "OrganogramaRevealBlock"
+   ],
+   "export_default": null,
    "linhas": 131,
    "dominio": "components/organograma",
-   "hooks_locais": [
-    "usePiiMask"
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/organograma/OrganogramaStats.tsx",
+   "exports": [
+    "OrganogramaStats"
    ],
+   "export_default": null,
+   "linhas": 84,
+   "dominio": "components/organograma",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/organograma/OrganogramaToolbar.tsx",
+   "exports": [
+    "OrganogramaToolbar"
+   ],
+   "export_default": null,
+   "linhas": 216,
+   "dominio": "components/organograma",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/organograma/OrganogramaTree.tsx",
+   "exports": [
+    "OrganogramaTree"
+   ],
+   "export_default": null,
+   "linhas": 88,
+   "dominio": "components/organograma",
+   "hooks_locais": [],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -6929,7 +7013,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 215,
+   "usado_por": 214,
    "orfao": false
   },
   {
@@ -6944,7 +7028,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 348,
+   "usado_por": 349,
    "orfao": false
   },
   {
@@ -6979,7 +7063,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 280,
+   "usado_por": 278,
    "orfao": false
   },
   {
@@ -9475,7 +9559,7 @@
     "OrganogramaPage"
    ],
    "export_default": "OrganogramaPage",
-   "linhas": 109,
+   "linhas": 199,
    "dominio": "pages",
    "hooks_locais": [
     "useOrganograma"

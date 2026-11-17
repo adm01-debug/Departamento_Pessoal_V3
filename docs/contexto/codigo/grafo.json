@@ -1,20 +1,20 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1263,
- "arestas": 6203,
+ "nos": 1273,
+ "arestas": 6222,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 348
+   "importado_por": 349
   },
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 280
+   "importado_por": 278
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 266
+   "importado_por": 268
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
@@ -22,7 +22,7 @@
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 215
+   "importado_por": 214
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -145,12 +145,12 @@
    "importado_por": 32
   },
   {
-   "arquivo": "src/services/piiAccessLogService.ts",
-   "importado_por": 29
+   "arquivo": "src/components/dashboard/MetricCard.tsx",
+   "importado_por": 31
   },
   {
-   "arquivo": "src/components/dashboard/MetricCard.tsx",
-   "importado_por": 28
+   "arquivo": "src/services/piiAccessLogService.ts",
+   "importado_por": 29
   },
   {
    "arquivo": "src/components/ui/skeleton.tsx",
@@ -292,7 +292,7 @@
   {
    "modulo": "components/dashboard",
    "depende_de": 7,
-   "importado_por": 9
+   "importado_por": 10
   },
   {
    "modulo": "contexts",

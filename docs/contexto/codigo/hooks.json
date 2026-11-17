@@ -2329,12 +2329,11 @@
     "useQuery"
    ],
    "canais_realtime": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "usado_por_arquivos": [
-    "src/components/organograma/OrganogramaNode.tsx",
     "src/pages/OrganogramaPage.tsx"
    ],
-   "coberto_por_testes": 2
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/usePcs.ts",
@@ -2478,7 +2477,7 @@
     "src/components/esocial/S2400CDP.tsx",
     "src/components/esocial/SSTEvents.tsx",
     "src/components/folha/RelatorioContabilDialog.tsx",
-    "src/components/organograma/OrganogramaNode.tsx",
+    "src/components/organograma/EmployeeRow.tsx",
     "src/components/recrutamento/CandidatoDetalhesDialog.tsx",
     "src/components/settings/GlobalAuditLogTab.tsx",
     "src/components/ui/command-palette.tsx",

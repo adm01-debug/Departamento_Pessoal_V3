@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 722,
+ "total": 730,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 683
+  "unit": 691
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 599
+   "arquivos": 607
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -1089,6 +1089,15 @@
    "casos": 11
   },
   {
+   "arquivo": "src/components/__tests__/DepartmentRow.test.tsx",
+   "tipo": "unit",
+   "linhas": 104,
+   "testa": [
+    "src/components/organograma/DepartmentRow.tsx"
+   ],
+   "casos": 3
+  },
+  {
    "arquivo": "src/components/__tests__/DependentesTab.test.tsx",
    "tipo": "unit",
    "linhas": 99,
@@ -1260,6 +1269,16 @@
    "testa": [
     "src/components/colaborador-detalhes/EmergenciaTab.tsx",
     "src/hooks/useColaboradorDetalhes.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/EmployeeRow.test.tsx",
+   "tipo": "unit",
+   "linhas": 88,
+   "testa": [
+    "src/components/organograma/EmployeeRow.tsx",
+    "src/lib/organogramaTree.ts"
    ],
    "casos": 7
   },
@@ -2533,14 +2552,57 @@
    "casos": 8
   },
   {
+   "arquivo": "src/components/__tests__/OrganogramaHeaderReveal.test.tsx",
+   "tipo": "unit",
+   "linhas": 57,
+   "testa": [
+    "src/components/dashboard/MetricCard.tsx",
+    "src/components/organograma/organogramaHeaderReveal.ts"
+   ],
+   "casos": 4
+  },
+  {
    "arquivo": "src/components/__tests__/OrganogramaNode.test.tsx",
    "tipo": "unit",
-   "linhas": 80,
+   "linhas": 887,
    "testa": [
     "src/components/organograma/OrganogramaNode.tsx",
-    "src/hooks/useOrganograma.ts"
+    "src/components/organograma/organogramaCascade.ts",
+    "src/components/organograma/organogramaReveal.ts",
+    "src/lib/organogramaTree.ts"
    ],
-   "casos": 6
+   "casos": 42
+  },
+  {
+   "arquivo": "src/components/__tests__/OrganogramaRevealBlock.test.tsx",
+   "tipo": "unit",
+   "linhas": 176,
+   "testa": [
+    "src/components/organograma/OrganogramaNode.tsx",
+    "src/components/organograma/OrganogramaRevealBlock.tsx",
+    "src/components/organograma/organogramaCascade.ts",
+    "src/components/organograma/organogramaReveal.ts",
+    "src/lib/organogramaTree.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/components/__tests__/OrganogramaStats.test.tsx",
+   "tipo": "unit",
+   "linhas": 111,
+   "testa": [
+    "src/components/organograma/OrganogramaStats.tsx"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/__tests__/OrganogramaToolbar.test.tsx",
+   "tipo": "unit",
+   "linhas": 344,
+   "testa": [
+    "src/components/organograma/OrganogramaToolbar.tsx"
+   ],
+   "casos": 13
   },
   {
    "arquivo": "src/components/__tests__/OrigemHomologacao.test.tsx",
@@ -4687,6 +4749,15 @@
    "casos": 55
   },
   {
+   "arquivo": "src/lib/__tests__/organogramaTree.test.ts",
+   "tipo": "unit",
+   "linhas": 307,
+   "testa": [
+    "src/lib/organogramaTree.ts"
+   ],
+   "casos": 27
+  },
+  {
    "arquivo": "src/lib/__tests__/queryClient.test.ts",
    "tipo": "unit",
    "linhas": 75,
@@ -4876,6 +4947,15 @@
     "src/services/onboardingJornadaService.ts"
    ],
    "casos": 29
+  },
+  {
+   "arquivo": "src/pages/__tests__/OrganogramaPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 390,
+   "testa": [
+    "src/pages/OrganogramaPage.tsx"
+   ],
+   "casos": 20
   },
   {
    "arquivo": "src/pages/__tests__/PensoesPage.test.tsx",
@@ -6809,7 +6889,7 @@
   "src/components/dashboard/DashboardHeader.tsx": 1,
   "src/components/dashboard/DonutChart.tsx": 1,
   "src/components/dashboard/EventTimeline.tsx": 1,
-  "src/components/dashboard/MetricCard.tsx": 2,
+  "src/components/dashboard/MetricCard.tsx": 3,
   "src/components/dashboard/MiniSparkline.tsx": 1,
   "src/components/dashboard/MorningBriefing.tsx": 1,
   "src/components/dashboard/QuickActionsGrid.tsx": 2,
@@ -6938,7 +7018,15 @@
   "src/components/obrigacoes/ObrigacoesKPIs.tsx": 1,
   "src/components/obrigacoes/simulacaoResumo.ts": 1,
   "src/components/onboarding/GuidedTour.tsx": 1,
-  "src/components/organograma/OrganogramaNode.tsx": 1,
+  "src/components/organograma/DepartmentRow.tsx": 1,
+  "src/components/organograma/EmployeeRow.tsx": 1,
+  "src/components/organograma/OrganogramaNode.tsx": 2,
+  "src/components/organograma/OrganogramaRevealBlock.tsx": 1,
+  "src/components/organograma/OrganogramaStats.tsx": 1,
+  "src/components/organograma/OrganogramaToolbar.tsx": 1,
+  "src/components/organograma/organogramaCascade.ts": 2,
+  "src/components/organograma/organogramaHeaderReveal.ts": 1,
+  "src/components/organograma/organogramaReveal.ts": 2,
   "src/components/ponto/AssinarEspelhoDialog.tsx": 1,
   "src/components/ponto/GerarAEJDialog.tsx": 1,
   "src/components/ponto/GestaoPontoAnalytics.tsx": 1,
@@ -7104,7 +7192,7 @@
   "src/hooks/useNotificacoes.ts": 2,
   "src/hooks/useNovasTabelas.ts": 1,
   "src/hooks/useNow.ts": 1,
-  "src/hooks/useOrganograma.ts": 2,
+  "src/hooks/useOrganograma.ts": 1,
   "src/hooks/usePDFExport.ts": 1,
   "src/hooks/usePWA.ts": 1,
   "src/hooks/usePcs.ts": 1,
@@ -7142,6 +7230,7 @@
   "src/lib/circuitBreaker.ts": 2,
   "src/lib/cursor.ts": 1,
   "src/lib/masks.ts": 1,
+  "src/lib/organogramaTree.ts": 4,
   "src/lib/queryClient.ts": 1,
   "src/lib/reciboAssinaturaPdf.ts": 1,
   "src/lib/retry.ts": 2,
@@ -7161,6 +7250,7 @@
   "src/pages/NotFoundPage.tsx": 1,
   "src/pages/ObrigacoesFiscaisPage.tsx": 1,
   "src/pages/OnboardingPage.tsx": 1,
+  "src/pages/OrganogramaPage.tsx": 1,
   "src/pages/PensoesPage.tsx": 1,
   "src/pages/PlanosSaudePage.tsx": 1,
   "src/pages/PremiacoesPage.tsx": 1,
@@ -7414,7 +7504,6 @@
    "src/pages/MedidasDisciplinaresPage.tsx",
    "src/pages/MovimentacoesPage.tsx",
    "src/pages/NotificacoesPage.tsx",
-   "src/pages/OrganogramaPage.tsx",
    "src/pages/PassivoTrabalhistaPage.tsx",
    "src/pages/PerfilPage.tsx",
    "src/pages/PesquisasClimaPage.tsx",

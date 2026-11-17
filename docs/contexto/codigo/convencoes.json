@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (494)",
+   "src/components (500)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (599)",
+   "co-localizado (__tests__) (607)",
    "co-localizado (*.test) (70)",
    "e2e/ (28)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (612)"
+  ".tsx (618)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: resgata da muri o organograma navegável — busca que filtra, expandir/recolher e níveis (#616)",
    "fix(desligamentos): \"Novo Desligamento\" volta a listar colaboradores (#617)",
    "fix(docs): redige o user_id, o e-mail e o primeiro nome de pessoa que o #599 deixou passar (#615)",
    "feat: resgata da muri o dossiê do colaborador — holerites, SST, campos personalizados e recontratação (#613)",
-   "feat: resgata da muri 6 grupos de hooks/services com consumidor vivo (#612)",
-   "feat(premiacoes): resgata o Hub de Premiações e o simulador de ROI da muri sobre o miolo corrigido da main (#611)"
+   "feat: resgata da muri 6 grupos de hooks/services com consumidor vivo (#612)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
