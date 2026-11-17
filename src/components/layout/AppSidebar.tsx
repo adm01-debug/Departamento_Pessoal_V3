@@ -85,7 +85,11 @@ interface MenuGroup {
   items: MenuItem[];
 }
 
-const menuGroups: MenuGroup[] = [
+// Exportado só para teste (`__tests__/AppSidebar.menu.test.ts`): é esta config
+// que alimenta o `to` de cada NavLink, e montar o AppSidebar inteiro exigiria
+// mockar auth/PWA/notificações/edge functions que não têm mock neste arquivo.
+// eslint-disable-next-line react-refresh/only-export-components
+export const menuGroups: MenuGroup[] = [
   {
     id: 'principal',
     label: 'Principal',
@@ -181,6 +185,7 @@ const menuGroups: MenuGroup[] = [
       { icon: Briefcase, label: 'Cargos', path: '/cargos', color: 'text-warning' },
       { icon: TrendingUp, label: 'Cargos & Salários (PCS)', path: '/cargos-salarios', color: 'text-success' },
       { icon: Building2, label: 'Departamentos', path: '/departamentos', color: 'text-info' },
+      { icon: Wallet, label: 'Centros de Custo', path: '/centros-custo', color: 'text-warning' },
       { icon: MapPin, label: 'Locais de Trabalho', path: '/locais-trabalho', color: 'text-success' },
     ],
   },
@@ -338,7 +343,7 @@ const SidebarMenuItem = memo(function SidebarMenuItem({
       to={item.path}
       onMouseEnter={handleMouseEnter}
       className={cn(
-        'flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 group',
+        'flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all duration-200 group',
         isActive
           ? 'bg-sidebar-accent text-sidebar-accent-foreground'
           : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground',
@@ -353,7 +358,14 @@ const SidebarMenuItem = memo(function SidebarMenuItem({
       />
       {!collapsed && (
         <>
-          <span className="text-sm font-medium truncate flex-1">{item.label}</span>
+          <span
+            className={cn(
+              'text-[13px] tracking-wide leading-snug truncate flex-1',
+              isActive ? 'font-medium' : 'font-normal'
+            )}
+          >
+            {item.label}
+          </span>
           {item.path === '/colaboradores' && <ColaboradoresCount />}
           {item.path === '/admin/security' && <SecurityAlertsCount />}
           {isActive && <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />}
@@ -410,7 +422,7 @@ const SidebarMenuGroup = memo(function SidebarMenuGroup({
       <CollapsibleTrigger asChild>
         <button
           className={cn(
-            'flex items-center gap-3 w-full px-3 py-2 rounded-lg transition-all duration-200 group',
+            'flex items-center gap-3 w-full px-3 py-1.5 rounded-lg transition-all duration-200 group',
             'text-sidebar-foreground hover:bg-sidebar-accent/30',
             hasActiveItem && 'bg-sidebar-accent/20'
           )}
@@ -423,7 +435,7 @@ const SidebarMenuGroup = memo(function SidebarMenuGroup({
           />
           <span
             className={cn(
-              'text-xs font-semibold uppercase tracking-wider flex-1 text-left',
+              'text-overline font-medium flex-1 text-left',
               hasActiveItem ? 'text-sidebar-foreground' : 'text-sidebar-foreground/70'
             )}
           >
@@ -463,7 +475,7 @@ const ColaboradoresCount = memo(function ColaboradoresCount() {
   if (isLoading || !count) return null;
 
   return (
-    <span className="ml-auto bg-primary/10 text-primary text-[10px] font-bold px-1.5 py-0.5 rounded-full ring-1 ring-primary/20">
+    <span className="ml-auto bg-primary/10 text-primary text-overline font-medium px-1.5 py-0.5 rounded-full ring-1 ring-primary/20">
       {count}
     </span>
   );
@@ -511,7 +523,7 @@ const SecurityAlertsCount = memo(function SecurityAlertsCount() {
   if (!count) return null;
 
   return (
-    <span className="ml-auto bg-destructive/10 text-destructive text-[10px] font-bold px-1.5 py-0.5 rounded-full ring-1 ring-destructive/30 animate-pulse">
+    <span className="ml-auto bg-destructive/10 text-destructive text-overline font-medium px-1.5 py-0.5 rounded-full ring-1 ring-destructive/30 animate-pulse">
       {count > 99 ? '99+' : count}
     </span>
   );
@@ -561,7 +573,7 @@ const SystemStatus = memo(function SystemStatus({ collapsed }: { collapsed: bool
               : 'bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)]'
         )}
       />
-      <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+      <span className="text-overline font-medium text-muted-foreground">
         {isLoading ? 'Verificando...' : isHealthy ? 'Sistemas Online' : 'Erro de Conexão'}
       </span>
     </div>
@@ -630,8 +642,8 @@ export function AppSidebar({ onSearchOpen }: AppSidebarProps) {
                   <Users className="w-4 h-4 text-primary-foreground" />
                 </div>
                 <div>
-                  <h1 className="font-display font-bold text-foreground text-sm">TIME | PROMO BRINDES</h1>
-                  <p className="text-[10px] text-muted-foreground">Sistema de Gestão de Pessoas</p>
+                  <h1 className="text-heading font-medium text-foreground">TIME | PROMO BRINDES</h1>
+                  <p className="text-overline normal-case tracking-normal text-muted-foreground">Gestão de Pessoas</p>
                 </div>
               </div>
             )}
@@ -675,8 +687,8 @@ export function AppSidebar({ onSearchOpen }: AppSidebarProps) {
             <Search className="h-4 w-4 shrink-0" />
             {!collapsed && (
               <>
-                <span className="flex-1 text-left text-sm">Buscar...</span>
-                <kbd className="hidden md:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+                <span className="flex-1 text-left text-body">Buscar...</span>
+                <kbd className="hidden md:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-overline font-medium text-muted-foreground">
                   <span className="text-xs">⌘</span>K
                 </kbd>
               </>
@@ -751,7 +763,7 @@ export function AppSidebar({ onSearchOpen }: AppSidebarProps) {
                       location.pathname === '/perfil' && 'ring-2 ring-primary'
                     )}
                   >
-                    <span className="text-xs font-semibold text-primary">
+                    <span className="text-caption font-medium text-primary">
                       {user?.name ? getInitials(user.name) : '??'}
                     </span>
                   </NavLink>
@@ -782,15 +794,15 @@ export function AppSidebar({ onSearchOpen }: AppSidebarProps) {
                 )}
               >
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center ring-2 ring-primary/20">
-                  <span className="text-xs font-semibold text-primary">
+                  <span className="text-caption font-medium text-primary">
                     {user?.name ? getInitials(user.name) : '??'}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">
+                  <p className="text-body font-medium text-foreground truncate">
                     {user?.name || user?.email || 'Carregando...'}
                   </p>
-                  <p className="text-xs text-muted-foreground truncate">Usuário</p>
+                  <p className="text-caption text-muted-foreground truncate">Usuário</p>
                 </div>
               </NavLink>
               <Button

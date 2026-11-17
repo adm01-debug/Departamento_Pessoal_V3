@@ -73,7 +73,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           >
             Pular para conteúdo
           </a>
-          <div id="main-content">
+          <div id="main-content" className="flex flex-col min-h-full">
             <PageTransition>{children || <Outlet />}</PageTransition>
           </div>
         </main>
