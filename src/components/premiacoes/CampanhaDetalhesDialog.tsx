@@ -44,15 +44,7 @@ function percentual(valor: number | null): string {
 }
 
 /** Bloco rótulo/valor do resumo (ícone + título + conteúdo). */
-function Bloco({
-  icone: Icone,
-  label,
-  children,
-}: {
-  icone: typeof Target;
-  label: string;
-  children: React.ReactNode;
-}) {
+function Bloco({ icone: Icone, label, children }: { icone: typeof Target; label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1 rounded-lg border border-border/40 bg-muted/10 p-2.5">
       <span className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
@@ -88,7 +80,7 @@ export function CampanhaDetalhesDialog({ linha, pagamentos, onClose, onVerPagame
                 <span
                   className={cn(
                     'inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide',
-                    aparencia.badge,
+                    aparencia.badge
                   )}
                 >
                   {aparencia.label}
@@ -179,7 +171,7 @@ export function CampanhaDetalhesDialog({ linha, pagamentos, onClose, onVerPagame
                         <span
                           className={cn(
                             'inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide',
-                            APARENCIA_CONCILIACAO[p.status_conciliacao ?? 'pendente'] ?? APARENCIA_CONCILIACAO.pendente,
+                            APARENCIA_CONCILIACAO[p.status_conciliacao ?? 'pendente'] ?? APARENCIA_CONCILIACAO.pendente
                           )}
                         >
                           {p.status_conciliacao ?? 'pendente'}

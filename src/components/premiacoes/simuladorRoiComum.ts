@@ -61,8 +61,7 @@ export interface MetricasRoi {
 /** Calcula TODAS as métricas derivadas do cenário. */
 export function calcularMetricas(p: ParametrosRoi): MetricasRoi {
   const totalBudget = p.employees * p.avgSalary * (p.bonusPercent / 100) * (p.performanceLevel / 100);
-  const custoReposicao =
-    p.avgSalary * PREMISSAS_ROI.salariosPorReposicao * p.employees * PREMISSAS_ROI.turnoverBase;
+  const custoReposicao = p.avgSalary * PREMISSAS_ROI.salariosPorReposicao * p.employees * PREMISSAS_ROI.turnoverBase;
   const savings = custoReposicao * (p.retentionImpact / 100);
   const roi = totalBudget > 0 ? savings / totalBudget : 0;
   const retidos = p.employees * (p.retentionImpact / 100);
@@ -109,10 +108,7 @@ export interface PontoTemporal {
  * configuração atual ("Agora"). Apenas datas válidas entram; a série mantém os
  * últimos `maxPontosTemporais - 1` salvos para não comprimir o eixo.
  */
-export function montarSerieTemporal(
-  cenarios: CenarioTemporal[],
-  atual: { metricas: MetricasRoi },
-): PontoTemporal[] {
+export function montarSerieTemporal(cenarios: CenarioTemporal[], atual: { metricas: MetricasRoi }): PontoTemporal[] {
   const pontos = cenarios
     .filter((c) => c.created_at && !Number.isNaN(new Date(c.created_at).getTime()))
     .map((c) => {

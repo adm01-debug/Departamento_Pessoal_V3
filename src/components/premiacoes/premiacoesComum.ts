@@ -162,7 +162,11 @@ export const APARENCIA_STATUS: Record<string, { label: string; badge: string; po
   ativo: { label: 'Ativa', badge: 'bg-primary/15 text-primary border-primary/30', ponto: 'bg-primary' },
   finalizado: { label: 'Finalizada', badge: 'bg-info/15 text-info border-info/30', ponto: 'bg-info' },
   rascunho: { label: 'Rascunho', badge: 'bg-warning/15 text-warning border-warning/30', ponto: 'bg-warning' },
-  suspenso: { label: 'Suspensa', badge: 'bg-muted text-muted-foreground border-border/60', ponto: 'bg-muted-foreground' },
+  suspenso: {
+    label: 'Suspensa',
+    badge: 'bg-muted text-muted-foreground border-border/60',
+    ponto: 'bg-muted-foreground',
+  },
 };
 
 /** Aparência neutra para status desconhecido (nunca inventa rótulo bonito). */
@@ -301,7 +305,7 @@ export interface MetricasCampanha {
 /** Situação temporal da campanha a partir das datas reais (nunca de campo ausente). */
 export function situacaoTemporal(
   campanha: CampanhaHub,
-  hoje: Date = new Date(),
+  hoje: Date = new Date()
 ): { situacao: SituacaoTemporal; diasRestantes: number | null } {
   const inicio = dataDe(campanha.data_inicio);
   const fim = dataDe(campanha.data_fim);
@@ -331,7 +335,7 @@ export function pagamentosDivergentesDa(pagamentos: PagamentoHub[]): PagamentoHu
 export function calcularMetricasCampanha(
   campanha: CampanhaHub,
   pagamentos: PagamentoHub[],
-  hoje: Date = new Date(),
+  hoje: Date = new Date()
 ): MetricasCampanha {
   const orcamentoTotal = numero(campanha.orcamento_estimado);
   const valorCalculado = pagamentos.reduce((acc, p) => acc + numero(p.valor_calculado), 0);
@@ -342,7 +346,7 @@ export function calcularMetricasCampanha(
       (p.valor_aprovado === null || p.valor_aprovado === undefined
         ? numero(p.valor_calculado)
         : numero(p.valor_aprovado)),
-    0,
+    0
   );
 
   const porColaborador = new Map<string, string>();
@@ -376,7 +380,7 @@ export function calcularMetricasCampanha(
 export function montarMetricas(
   campanhas: CampanhaHub[],
   pagamentos: PagamentoHub[],
-  hoje: Date = new Date(),
+  hoje: Date = new Date()
 ): MetricasCampanha[] {
   const porCampanha = new Map<string, PagamentoHub[]>();
   for (const p of pagamentos) {
@@ -429,7 +433,7 @@ function combinaBusca(metricas: MetricasCampanha, termo: string): boolean {
       campanha.status,
       campanha.status_aprovacao,
       aparenciaStatus(campanha.status).label,
-    ].join(' '),
+    ].join(' ')
   );
   return termo.split(/\s+/).every((parte) => alvo.includes(parte));
 }
@@ -464,7 +468,7 @@ function compararPorOrdenacao(a: MetricasCampanha, b: MetricasCampanha, ordenaca
 export function filtrarEOrdenarCampanhas(
   metricas: MetricasCampanha[],
   filtros: FiltrosHub,
-  hoje: Date = new Date(),
+  hoje: Date = new Date()
 ): MetricasCampanha[] {
   const termo = normalizar(filtros.busca);
   return metricas
@@ -502,7 +506,7 @@ export interface PaginaCampanhas {
 export function paginarCampanhas(
   metricas: MetricasCampanha[],
   paginaPedida: number,
-  porPagina: number,
+  porPagina: number
 ): PaginaCampanhas {
   const tamanho = Math.max(1, Math.floor(porPagina));
   const totalPaginas = Math.max(1, Math.ceil(metricas.length / tamanho));
@@ -520,7 +524,7 @@ export function paginarCampanhas(
  */
 export function calcularVariacaoMensal(
   pagamentos: PagamentoHub[],
-  agora: Date = new Date(),
+  agora: Date = new Date()
 ): { atual: number; anterior: number; percentual: number } | null {
   const mesDe = (input: unknown): { ano: number; mes: number } | null => {
     const d = dataDe(input);
@@ -601,9 +605,7 @@ export function montarAcoesPendentes(metricas: MetricasCampanha[], pagamentos: P
         titulo: LABEL_CAMPANHA_PENDENTE[campanha.status_aprovacao ?? ''] ?? 'Continuar configuração',
         objeto: campanha.nome,
         detalhe:
-          campanha.status_aprovacao === 'revisando'
-            ? 'Orçamento aguardando aprovação'
-            : 'Campanha salva como rascunho',
+          campanha.status_aprovacao === 'revisando' ? 'Orçamento aguardando aprovação' : 'Campanha salva como rascunho',
         desde: campanha.updated_at ?? campanha.created_at ?? null,
         destino: 'campanhas',
       });
@@ -637,9 +639,7 @@ export function montarAcoesPendentes(metricas: MetricasCampanha[], pagamentos: P
   }
 
   // Mais antigas primeiro: são as que esperam há mais tempo.
-  return acoes.sort(
-    (a, b) => (dataDe(a.desde)?.getTime() ?? Infinity) - (dataDe(b.desde)?.getTime() ?? Infinity),
-  );
+  return acoes.sort((a, b) => (dataDe(a.desde)?.getTime() ?? Infinity) - (dataDe(b.desde)?.getTime() ?? Infinity));
 }
 
 /* ─── Atividade recente (trilha de auditoria já existente) ─────────────────── */
@@ -706,7 +706,7 @@ export function montarAtividadeRecente(
   auditoria: AuditoriaHub[],
   campanhas: CampanhaHub[],
   pagamentos: PagamentoHub[],
-  limite = 4,
+  limite = 4
 ): EventoAtividade[] {
   const campanhaPorId = new Map(campanhas.map((c) => [c.id, c]));
   const pagamentoPorId = new Map(pagamentos.map((p) => [p.id, p]));

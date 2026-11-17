@@ -13,8 +13,8 @@
  *    alinhamento das colunas — mesma régua da tabela de Campanhas.
  *  · Ação principal = a AÇÃO REAL daquele status (`acaoPrincipalPagamento`): o
  *    rótulo nunca é decorativo. O menu de três pontos concentra as demais ações
- *    que já existiam no quadro de aprovação (rejeitar, conciliar manual,
- *    conciliar automático, reiniciar fluxo) — nenhuma foi removida.
+ *    que já existiam no quadro de aprovação (rejeitar, conciliar manualmente
+ *    com a folha, reiniciar fluxo).
  *  · Seleção é FUNCIONAL: as caixas marcam pagamentos reais e habilitam a barra
  *    de "Aprovar selecionados", que avança um passo cada item elegível.
  * ============================================================================
@@ -79,8 +79,8 @@ const TOM_STATUS: Record<string, string> = {
   aprovado_rh: 'bg-level/15 text-level',
   aprovado_financeiro: 'bg-xp/15 text-xp',
   pago: 'bg-success/15 text-success',
-  rejeitado: 'bg-destructive-vivid/15 text-destructive-vivid',
-  divergente_em_revisao: 'bg-destructive-vivid/15 text-destructive-vivid',
+  rejeitado: 'bg-[hsl(var(--destructive-vivid)/0.15)] text-[hsl(var(--destructive-vivid))]',
+  divergente_em_revisao: 'bg-[hsl(var(--destructive-vivid)/0.15)] text-[hsl(var(--destructive-vivid))]',
   cancelado: 'bg-muted/60 text-muted-foreground',
 };
 const TOM_STATUS_PADRAO = 'bg-muted/60 text-muted-foreground';
@@ -93,8 +93,8 @@ const PONTO_STATUS: Record<string, string> = {
   aprovado_rh: 'bg-level',
   aprovado_financeiro: 'bg-xp',
   pago: 'bg-success',
-  rejeitado: 'bg-destructive-vivid',
-  divergente_em_revisao: 'bg-destructive-vivid',
+  rejeitado: 'bg-[hsl(var(--destructive-vivid))]',
+  divergente_em_revisao: 'bg-[hsl(var(--destructive-vivid))]',
   cancelado: 'bg-muted-foreground',
 };
 const PONTO_STATUS_PADRAO = 'bg-muted-foreground';
@@ -210,7 +210,7 @@ interface PagamentosTabelaProps {
   /** Ação principal da linha (avançar / conciliar / detalhes / reiniciar). */
   onAcaoPrincipal: (pagamento: PagamentoHub, tipo: TipoAcaoPagamento) => void;
   /** Ações secundárias do menu de contexto. */
-  onAcao: (pagamento: PagamentoHub, tipo: TipoAcaoPagamento | 'rejeitar' | 'auto-conciliar') => void;
+  onAcao: (pagamento: PagamentoHub, tipo: TipoAcaoPagamento | 'rejeitar') => void;
   mensagemVazia: string;
 }
 
@@ -354,7 +354,7 @@ interface LinhaPagamentoProps {
   marcada: boolean;
   onAlternarSelecao: (id: string) => void;
   onAcaoPrincipal: (pagamento: PagamentoHub, tipo: TipoAcaoPagamento) => void;
-  onAcao: (pagamento: PagamentoHub, tipo: TipoAcaoPagamento | 'rejeitar' | 'auto-conciliar') => void;
+  onAcao: (pagamento: PagamentoHub, tipo: TipoAcaoPagamento | 'rejeitar') => void;
 }
 
 /** Ícone da ação principal (o mesmo símbolo do quadro de aprovação anterior). */
@@ -506,7 +506,7 @@ function LinhaPagamento({ linha, indice, marcada, onAlternarSelecao, onAcaoPrinc
             <span className="break-words">{quando ? `Há ${quando.replace('há ', '')}` : '—'}</span>
           </span>
           {divergencia > 0 && (
-            <span className="flex items-center gap-1 text-[12px] font-medium leading-[15px] text-destructive-vivid">
+            <span className="flex items-center gap-1 text-[12px] font-medium leading-[15px] text-[hsl(var(--destructive-vivid))]">
               <AlertTriangle className="h-3 w-3 shrink-0" aria-hidden />
               <span className="break-words">Diferença: {formatCurrency(divergencia)}</span>
             </span>
@@ -554,14 +554,9 @@ function LinhaPagamento({ linha, indice, marcada, onAlternarSelecao, onAcaoPrinc
                 </DropdownMenuItem>
               )}
               {podeConciliarPagamento(linha.status) && (
-                <>
-                  <DropdownMenuItem onClick={() => onAcao(linha, 'conciliar')} className="gap-2 text-xs">
-                    <Search className="h-3.5 w-3.5" /> Conciliar manualmente
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onAcao(linha, 'auto-conciliar')} className="gap-2 text-xs">
-                    <RefreshCw className="h-3.5 w-3.5" /> Conciliação automática
-                  </DropdownMenuItem>
-                </>
+                <DropdownMenuItem onClick={() => onAcao(linha, 'conciliar')} className="gap-2 text-xs">
+                  <Search className="h-3.5 w-3.5" /> Conciliar manualmente
+                </DropdownMenuItem>
               )}
               {linha.status === 'rejeitado' && (
                 <DropdownMenuItem onClick={() => onAcao(linha, 'reiniciar')} className="gap-2 text-xs">

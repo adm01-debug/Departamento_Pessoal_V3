@@ -61,7 +61,7 @@ describe('simuladorRoiComum', () => {
         },
         { id: 'sem-data', configuracoes: BASE, resultados: { totalBudget: 1, savings: 1 } },
       ],
-      { metricas: atual },
+      { metricas: atual }
     );
     expect(serie).toHaveLength(3);
     expect(serie[0].rotulo).toBe('10/09');

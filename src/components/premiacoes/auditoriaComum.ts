@@ -16,13 +16,7 @@ import { formatCurrency, formatDate, formatDateLong, parseDateSafe } from '@/uti
 import type { AuditoriaHub, CampanhaHub, PagamentoHub } from './premiacoesComum';
 
 export type CategoriaAuditoriaId =
-  | 'todas'
-  | 'campanhas'
-  | 'pagamentos'
-  | 'regras'
-  | 'conciliacao'
-  | 'integracoes'
-  | 'aprovacoes';
+  'todas' | 'campanhas' | 'pagamentos' | 'regras' | 'conciliacao' | 'integracoes' | 'aprovacoes';
 
 export interface CategoriaAuditoria {
   id: CategoriaAuditoriaId;
@@ -163,15 +157,16 @@ function acaoCanonica(valor: unknown): string {
 }
 
 function objeto(valor: unknown): Record<string, unknown> | null {
-  return valor && typeof valor === 'object' && !Array.isArray(valor)
-    ? (valor as Record<string, unknown>)
-    : null;
+  return valor && typeof valor === 'object' && !Array.isArray(valor) ? (valor as Record<string, unknown>) : null;
 }
 
 function numero(valor: unknown): number | null {
   if (typeof valor === 'number' && Number.isFinite(valor)) return valor;
   if (typeof valor !== 'string' || !valor.trim()) return null;
-  const limpo = valor.replace(/[^\d,.-]/g, '').replace(/\.(?=\d{3}(?:\D|$))/g, '').replace(',', '.');
+  const limpo = valor
+    .replace(/[^\d,.-]/g, '')
+    .replace(/\.(?=\d{3}(?:\D|$))/g, '')
+    .replace(',', '.');
   const n = Number(limpo);
   return Number.isFinite(n) ? n : null;
 }
@@ -409,22 +404,18 @@ export function normalizarEventosAuditoria(
       : pagamento
         ? campanhaPorId.get(String(pagamento.campanha_id))
         : undefined;
-    const divergente =
-      pagamento?.status_conciliacao === 'divergente' || normalizar(motivo).includes('divergencia');
+    const divergente = pagamento?.status_conciliacao === 'divergente' || normalizar(motivo).includes('divergencia');
     const categoria = inferirCategoriaAuditoria({ entidadeTipo, acao, motivo, divergente });
     const data = parseDateSafe(registro.created_at);
     const valorAnterior = primeiroValor(dadosAnteriores);
     const valorPosterior = primeiroValor(dadosNovos);
-    const valorContexto = pagamento
-      ? primeiroValor(pagamento)
-      : campanha
-        ? primeiroValor(campanha)
-        : null;
-    const valor = valorPosterior
-      ?? valorAnterior
-      ?? (categoria === 'conciliacao' ? valorCitado(motivo) : null)
-      ?? valorContexto
-      ?? valorCitado(motivo);
+    const valorContexto = pagamento ? primeiroValor(pagamento) : campanha ? primeiroValor(campanha) : null;
+    const valor =
+      valorPosterior ??
+      valorAnterior ??
+      (categoria === 'conciliacao' ? valorCitado(motivo) : null) ??
+      valorContexto ??
+      valorCitado(motivo);
     const usuarioId = texto(registro.usuario_id) || null;
     const responsavel = resolverResponsavel(usuarioId, pagamento, contexto.usuarioAtual);
     const valorLegenda =

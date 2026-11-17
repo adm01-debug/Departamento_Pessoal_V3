@@ -62,7 +62,7 @@ export function Indicador({
             // `--destructive` é o token de perigo do tema (no noturno ele já é o
             // vermelho profundo), então o tom acompanha claro/escuro sozinho.
             'border-destructive/30 bg-gradient-to-br from-destructive/25 to-destructive/[0.15]'
-          : 'border-border/50 bg-gradient-to-b from-card to-card/60',
+          : 'border-border/50 bg-gradient-to-b from-card to-card/60'
       )}
     >
       <span className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-xl', caixa)}>

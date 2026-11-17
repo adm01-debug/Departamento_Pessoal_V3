@@ -157,7 +157,7 @@ export function ScenarioParameterCard({
       {...entradaSimulador(indice)}
       className={cn(
         'flex min-w-0 flex-col rounded-xl border border-border/60 bg-card/80 p-3.5',
-        'transition-colors duration-150 hover:border-border hover:bg-card',
+        'transition-colors duration-150 hover:border-border hover:bg-card'
       )}
     >
       <div className="flex items-center justify-between gap-2">
@@ -178,7 +178,7 @@ export function ScenarioParameterCard({
             larguraCampo,
             invalido
               ? 'border-destructive/70 focus-within:border-destructive/70 focus-within:ring-1 focus-within:ring-destructive/15'
-              : 'border-border/60 focus-within:border-muted-foreground/70 focus-within:ring-1 focus-within:ring-muted-foreground/15',
+              : 'border-border/60 focus-within:border-muted-foreground/70 focus-within:ring-1 focus-within:ring-muted-foreground/15'
           )}
         >
           {unit === 'currency' && (
@@ -241,7 +241,7 @@ export function ScenarioParameterCard({
               // O `:focus-visible` global aplica `ring-2 ring-ring ring-inset` (lime)
               // DENTRO do input. O indicador de foco deste campo é a borda
               // azul-acinzentada do contêiner — anulamos apenas esse anel local.
-              'focus-visible:ring-0 focus-visible:ring-offset-0',
+              'focus-visible:ring-0 focus-visible:ring-offset-0'
             )}
           />
           {unit === 'percentage' && (
@@ -279,4 +279,3 @@ export function ScenarioParameterCard({
     </motion.div>
   );
 }
-

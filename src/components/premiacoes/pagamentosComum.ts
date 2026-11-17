@@ -243,9 +243,7 @@ export interface KpisPagamentos {
 
 export function montarKpisPagamentos(pagamentos: PagamentoHub[]): KpisPagamentos {
   const comAprovado = pagamentos.filter((p) => numero(p.valor_aprovado) > 0);
-  const pendentes = pagamentos.filter((p) =>
-    (STATUS_PAGAMENTO_PENDENTE as readonly string[]).includes(p.status),
-  );
+  const pendentes = pagamentos.filter((p) => (STATUS_PAGAMENTO_PENDENTE as readonly string[]).includes(p.status));
   const divergentes = pagamentos.filter((p) => p.status_conciliacao === 'divergente');
   const pagos = pagamentos.filter((p) => p.status === 'pago');
 
@@ -310,9 +308,7 @@ export function montarResumoFinanceiro(pagamentos: PagamentoHub[]): ResumoFinanc
   const idsDivergentes = new Set(divergentes.map((p) => p.id));
   const demais = pagamentos.filter((p) => !idsDivergentes.has(p.id));
 
-  const pendentes = demais.filter((p) =>
-    (STATUS_PAGAMENTO_PENDENTE as readonly string[]).includes(p.status),
-  );
+  const pendentes = demais.filter((p) => (STATUS_PAGAMENTO_PENDENTE as readonly string[]).includes(p.status));
   const aprovados = demais.filter((p) => p.status === 'aprovado_financeiro');
   const pagos = demais.filter((p) => p.status === 'pago');
 
@@ -505,16 +501,13 @@ function casaBusca(p: PagamentoHub, termo: string): boolean {
   const alvo = normalizar(
     [p.colaborador?.nome_completo, p.campanha?.nome, p.observacoes, rotuloStatusPagamento(p.status)]
       .filter(Boolean)
-      .join(' '),
+      .join(' ')
   );
   return alvo.includes(termo);
 }
 
 /** Aplica busca, etapa, campanha, status e período — e devolve na ordem pedida. */
-export function filtrarEOrdenarPagamentos(
-  pagamentos: PagamentoHub[],
-  filtros: FiltrosPagamento,
-): PagamentoHub[] {
+export function filtrarEOrdenarPagamentos(pagamentos: PagamentoHub[], filtros: FiltrosPagamento): PagamentoHub[] {
   const termo = normalizar(filtros.busca);
 
   const filtrados = pagamentos.filter((p) => {
@@ -559,7 +552,7 @@ export function filtrarEOrdenarPagamentos(
 export function paginarPagamentos(
   lista: PagamentoHub[],
   pagina: number,
-  porPagina: number,
+  porPagina: number
 ): { pagina: number; totalPaginas: number; linhas: PagamentoHub[] } {
   const tamanho = Math.max(1, porPagina);
   if (lista.length === 0) return { pagina: 1, totalPaginas: 1, linhas: [] };

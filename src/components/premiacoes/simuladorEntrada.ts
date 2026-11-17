@@ -53,4 +53,3 @@ export function entradaSimulador(index = 0) {
     animate: 'visible',
   };
 }
-

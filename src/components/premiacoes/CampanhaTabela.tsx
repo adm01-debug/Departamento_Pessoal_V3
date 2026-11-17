@@ -19,6 +19,7 @@
  * ============================================================================
  */
 import {
+  AlertTriangle,
   ArrowRight,
   ArrowUpDown,
   ChevronRight,
@@ -69,6 +70,20 @@ interface CampanhaTabelaProps {
   onExportar: () => void;
   /** Texto do estado vazio (muda quando há filtros ativos). */
   mensagemVazia: string;
+  /** Ações de rascunho (lançar/excluir) só para quem é RH ou admin. */
+  podeGerir: boolean;
+  /** Lança o rascunho; só aparece em linha com status `rascunho`. */
+  onLancarRascunho: (id: string) => void;
+  /** Pede a exclusão do rascunho — a confirmação mora na página. */
+  onExcluirRascunho: (id: string, nome: string) => void;
+  /** Escrita de rascunho em curso: desabilita os dois botões. */
+  rascunhoOcupado: boolean;
+  /** Pagamentos ainda carregando: sem eles não se sabe se o rascunho é excluível. */
+  pagamentosCarregando: boolean;
+  /** Leitura das campanhas falhou: proíbe afirmar "nenhuma campanha". */
+  erro?: boolean;
+  /** Repete a leitura (botão do aviso de falha). */
+  onTentarNovamente?: () => void;
 }
 
 /** Blocos de ícone por campanha — paleta do design system, estável por id. */
@@ -224,12 +239,22 @@ function LinhaCampanha({
   onAbrirDetalhes,
   onVerPagamentos,
   onExportar,
+  podeGerir,
+  onLancarRascunho,
+  onExcluirRascunho,
+  rascunhoOcupado,
+  pagamentosCarregando,
   indice,
 }: {
   linha: MetricasCampanha;
   onAbrirDetalhes: (linha: MetricasCampanha) => void;
   onVerPagamentos: () => void;
   onExportar: () => void;
+  podeGerir: boolean;
+  onLancarRascunho: (id: string) => void;
+  onExcluirRascunho: (id: string, nome: string) => void;
+  rascunhoOcupado: boolean;
+  pagamentosCarregando: boolean;
   /** Índice da linha na cascata de entrada (a LINHA inteira anima, nunca a célula). */
   indice: number;
 }) {
@@ -239,6 +264,11 @@ function LinhaCampanha({
   const situacao = situacaoTexto(linha);
   const secundario = indicadorSecundario(linha);
   const acao = acaoPrincipal(campanha.status);
+  // Ações de rascunho: só RH/admin as vê. "Excluir rascunho" exige campanha SEM
+  // pagamento — `participantes.total` é 0 só quando não há nenhum pagamento
+  // (`colaborador_id` é NOT NULL na tabela) — e os pagamentos já carregados.
+  const acoesRascunho = podeGerir && campanha.status === 'rascunho';
+  const podeExcluirRascunho = acoesRascunho && !pagamentosCarregando && linha.participantes.total === 0;
   const corBarraDesempenho =
     linha.pctAprovado === null ? 'bg-muted' : linha.pctAprovado >= 100 ? 'bg-success' : 'bg-primary';
   const corBarraOrcamento =
@@ -379,7 +409,7 @@ function LinhaCampanha({
           lateral das demais), em vez de empurrados para a extremidade direita:
           é o que fazia "AÇÕES" parecer isolado no cabeçalho. */}
       <div role="cell" className={cn(PAD_LATERAL, 'min-w-0 py-[26px]')}>
-        <div className="flex items-center justify-start gap-1.5">
+        <div className="flex flex-wrap items-center justify-start gap-1.5">
           <Button
             variant="outline"
             size="sm"
@@ -409,6 +439,32 @@ function LinhaCampanha({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Rascunho: lançar (vira campanha ativa) e excluir — os MESMOS botões
+              e as mesmas permissões do hub anterior, agora dentro da linha. */}
+          {acoesRascunho && (
+            <>
+              {podeExcluirRascunho && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={rascunhoOcupado}
+                  onClick={() => onExcluirRascunho(campanha.id, campanha.nome)}
+                  className="h-9 whitespace-nowrap rounded-xl border-destructive/40 px-2 text-[10px] font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
+                >
+                  Excluir rascunho
+                </Button>
+              )}
+              <Button
+                size="sm"
+                disabled={rascunhoOcupado}
+                onClick={() => onLancarRascunho(campanha.id)}
+                className="h-9 whitespace-nowrap rounded-xl px-3 text-[10px] font-medium"
+              >
+                Lançar
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </motion.div>
@@ -445,6 +501,13 @@ export function CampanhaTabela({
   onVerPagamentos,
   onExportar,
   mensagemVazia,
+  podeGerir,
+  onLancarRascunho,
+  onExcluirRascunho,
+  rascunhoOcupado,
+  pagamentosCarregando,
+  erro = false,
+  onTentarNovamente,
 }: CampanhaTabelaProps) {
   const colunaOrdenada = ORDENACAO_POR_COLUNA[ordenacaoAtual];
   const exibidos = linhas.length;
@@ -507,18 +570,49 @@ export function CampanhaTabela({
               quando a lista troca de identidade (página, ordenação, filtros). */}
           <AnimatePresence>
             <div key={chaveCascata} role="rowgroup" className="divide-y divide-border/25">
-              {linhas.map((linha, indiceLinha) => (
-                <LinhaCampanha
-                  key={linha.campanha.id}
-                  linha={linha}
-                  indice={indiceLinha}
-                  onAbrirDetalhes={onAbrirDetalhes}
-                  onVerPagamentos={onVerPagamentos}
-                  onExportar={onExportar}
-                />
-              ))}
+              {/* Falha de leitura NÃO é lista vazia: em vez de "nenhuma campanha",
+                  a tabela avisa o erro e oferece a releitura. */}
+              {erro && (
+                <div role="row" style={{ gridTemplateColumns: GRID_COLUNAS }} className="grid">
+                  <div role="cell" style={{ gridColumn: '1 / -1' }} className="px-4 py-12 text-center">
+                    <div className="mx-auto flex max-w-sm flex-col items-center gap-2">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
+                        <AlertTriangle className="h-4 w-4" />
+                      </span>
+                      <p className="text-xs font-medium">Não foi possível carregar as campanhas.</p>
+                      {onTentarNovamente && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={onTentarNovamente}
+                          className="h-8 rounded-xl text-[11px]"
+                        >
+                          Tentar novamente
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
 
-              {exibidos === 0 && (
+              {!erro &&
+                linhas.map((linha, indiceLinha) => (
+                  <LinhaCampanha
+                    key={linha.campanha.id}
+                    linha={linha}
+                    indice={indiceLinha}
+                    onAbrirDetalhes={onAbrirDetalhes}
+                    onVerPagamentos={onVerPagamentos}
+                    onExportar={onExportar}
+                    podeGerir={podeGerir}
+                    onLancarRascunho={onLancarRascunho}
+                    onExcluirRascunho={onExcluirRascunho}
+                    rascunhoOcupado={rascunhoOcupado}
+                    pagamentosCarregando={pagamentosCarregando}
+                  />
+                ))}
+
+              {!erro && exibidos === 0 && (
                 <motion.div
                   role="row"
                   custom={0}
@@ -548,19 +642,23 @@ export function CampanhaTabela({
           `w-full` é o que dá largura à raiz do `AppPagination` (que é um item
           flex e, sem ele, encolheria ao próprio conteúdo, deixando o
           `justify-between` sem efeito). */}
-      <motion.footer
-        {...entradaCard(linhas.length)}
-        className="flex h-[56px] items-center border-t border-border/40 px-4"
-      >
-        <AppPagination
-          className="w-full"
-          page={pagina}
-          total={total}
-          pageSize={porPagina}
-          onPageChange={onPaginaChange}
-          label={`Mostrando ${exibidos} de ${total} ${total === 1 ? 'campanha' : 'campanhas'}`}
-        />
-      </motion.footer>
+      {/* Sem rodapé quando a leitura falhou: "Mostrando 0 de 0" seria um zero
+          inventado para um conjunto que o sistema não conhece. */}
+      {!erro && (
+        <motion.footer
+          {...entradaCard(linhas.length)}
+          className="flex h-[56px] items-center border-t border-border/40 px-4"
+        >
+          <AppPagination
+            className="w-full"
+            page={pagina}
+            total={total}
+            pageSize={porPagina}
+            onPageChange={onPaginaChange}
+            label={`Mostrando ${exibidos} de ${total} ${total === 1 ? 'campanha' : 'campanhas'}`}
+          />
+        </motion.footer>
+      )}
     </motion.section>
   );
 }

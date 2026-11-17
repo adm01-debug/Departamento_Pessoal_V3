@@ -528,6 +528,14 @@ export function AuditoriaTab({
       }),
     [auditoria, pagamentos, campanhas, user, agora]
   );
+  /**
+   * Falha de carga SEM nenhum evento em memória. A trilha de auditoria tem peso
+   * de conformidade: quando a consulta falha, a tela diz que NÃO foi possível
+   * carregar e oferece nova tentativa — nunca afirma que não há evento
+   * registrado. Com dado em tela (falha depois de uma carga boa), o aviso vai
+   * acima da lista e os eventos já lidos continuam visíveis.
+   */
+  const falhaSemEventos = erro && eventos.length === 0;
   const categorias = useMemo(() => categoriasDisponiveis(eventos), [eventos]);
   const tipos = useMemo(() => tiposEventoDisponiveis(eventos), [eventos]);
   const entidades = useMemo(() => entidadesDisponiveis(eventos), [eventos]);
@@ -599,7 +607,7 @@ export function AuditoriaTab({
     // em `ui/entrada-cards.tsx` e já usado pela aba Pagamentos.
     <EntradaPresenca>
       <div className="space-y-3">
-        {erro && (
+        {erro && !falhaSemEventos && (
           <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-warning/35 bg-warning/10 px-3 py-2 text-[11px] text-warning">
             <span className="flex items-center gap-2">
               <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
@@ -850,6 +858,25 @@ export function AuditoriaTab({
               </section>
             ))}
           </div>
+        ) : falhaSemEventos ? (
+          <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-warning/40 bg-warning/5 px-6 py-12 text-center">
+            <AlertTriangle className="h-6 w-6 text-warning" aria-hidden="true" />
+            <p className="text-[13px] font-medium">Não foi possível carregar a trilha de auditoria</p>
+            <p className="text-[11px] text-muted-foreground">
+              Nenhum evento foi lido do servidor — esta tela não representa o histórico registrado.
+            </p>
+            {onTentarNovamente && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-1 h-8 text-xs"
+                onClick={onTentarNovamente}
+              >
+                Tentar novamente
+              </Button>
+            )}
+          </div>
         ) : grupos.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border/50 px-6 py-12 text-center">
             <FileSearch className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
@@ -912,7 +939,7 @@ export function AuditoriaTab({
           </div>
         )}
 
-        {!carregando && (
+        {!carregando && !falhaSemEventos && (
           <div className="overflow-hidden rounded-xl border border-border/40 bg-card/30">
             <PaginacaoAuditoria
               pagina={paginaAtual}

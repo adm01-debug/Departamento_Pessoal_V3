@@ -33,8 +33,7 @@ interface ComparacaoCenariosProps {
 }
 
 export function ComparacaoCenarios({ linhas, cenarios }: ComparacaoCenariosProps) {
-  const colunas =
-    cenarios.length > 1 ? ['28%', '18%', '18%', '18%', '18%'] : ['33%', '24%', '24%', '19%'];
+  const colunas = cenarios.length > 1 ? ['28%', '18%', '18%', '18%', '18%'] : ['33%', '24%', '24%', '19%'];
 
   return (
     <div
@@ -84,7 +83,7 @@ export function ComparacaoCenarios({ linhas, cenarios }: ComparacaoCenariosProps
               <td
                 className={cn(
                   'text-numeric whitespace-nowrap text-right font-semibold tabular-nums',
-                  linha.corVariacao,
+                  linha.corVariacao
                 )}
               >
                 {linha.variacao}

@@ -15,21 +15,24 @@
  * O que mudou é a APRESENTAÇÃO. Nada de funcionalidade saiu:
  *  · aprovar / avançar a cadeia, rejeitar e REINICIAR FLUXO (o antigo quadro de
  *    quatro colunas virou as ações da tabela + o fluxo horizontal filtrável);
- *  · conciliação MANUAL e AUTOMÁTICA com a folha (diálogo + item de menu);
- *  · os MESMOS serviços (`atualizarStatusPagamento`, `reconciliarFolha`,
- *    `autoConciliarComFolha`) e o MESMO `nextStageMap` da cadeia de estados;
+ *  · conciliação MANUAL com a folha (diálogo + item de menu);
+ *  · os MESMOS serviços (`atualizarStatusPagamento`, `reconciliarFolha`) e o
+ *    MESMO `nextStageMap` da cadeia de estados;
  *  · o filtro de período continua sendo LIDO dos pagamentos (nunca um mês fixo) e
  *    segue valendo para indicadores, fluxo, resumo e tabela — apenas o controle de
- *    seleção saiu junto do cabeçalho, com o período em "Todos os períodos";
- *  · o guard do modo demonstração (`bloquearEscritaPremiacoes`) continua na
- *    frente de toda escrita.
+ *    seleção saiu junto do cabeçalho, com o período em "Todos os períodos".
+ *
+ * A conciliação AUTOMÁTICA não existe: `premiacoesService.autoConciliarComFolha`
+ * foi removida do serviço (#485) porque passava a justificativa na posição do
+ * `empresaId` e o filtro nunca achava linha — o botão falhava sempre. Só a
+ * conciliação manual (`reconciliarFolha`) é oferecida.
  * ============================================================================
  */
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { CheckCircle2, FilterX, Search } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, FilterX, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -39,8 +42,13 @@ import { cn } from '@/lib/utils';
 import { safeErrorMessage } from '@/utils/safeError';
 import { premiacoesService } from '@/services/premiacoesService';
 import { useEmpresas } from '@/hooks';
-import { bloquearEscritaPremiacoes } from '@/mocks/premiacoesMock';
-import { indiceEntrada, montarAtividadeRecente, type AuditoriaHub, type CampanhaHub, type PagamentoHub } from './premiacoesComum';
+import {
+  indiceEntrada,
+  montarAtividadeRecente,
+  type AuditoriaHub,
+  type CampanhaHub,
+  type PagamentoHub,
+} from './premiacoesComum';
 import {
   contarEtapasPagamento,
   FILTROS_PAGAMENTO_INICIAIS,
@@ -82,12 +90,23 @@ interface PagamentosTabProps {
   campanhas: CampanhaHub[];
   /** Navega para outra aba do hub (destino do "Ver todas" da atividade). */
   onNavegar: (aba: string) => void;
+  /** Leitura dos pagamentos falhou: proíbe exibir zero como se fosse dado. */
+  erro?: boolean;
+  /** Repete a leitura (botão do aviso de falha). */
+  onTentarNovamente?: () => void;
 }
 
 /** Chaves invalidadas por qualquer escrita da aba (pagamento + trilha). */
 const CHAVES = [['premiacoes_pagamentos'], ['premiacoes_auditoria']];
 
-export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: PagamentosTabProps) {
+export function PagamentosTab({
+  pagamentos,
+  auditoria,
+  campanhas,
+  onNavegar,
+  erro = false,
+  onTentarNovamente,
+}: PagamentosTabProps) {
   const queryClient = useQueryClient();
   const { empresaAtual } = useEmpresas();
 
@@ -112,7 +131,7 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
         ...FILTROS_PAGAMENTO_INICIAIS,
         periodo,
       }),
-    [pagamentos, periodo],
+    [pagamentos, periodo]
   );
 
   const kpis = useMemo(() => montarKpisPagamentos(noPeriodo), [noPeriodo]);
@@ -130,7 +149,7 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
   // A trilha de auditoria é do hub inteiro (não é recortada pelo período da aba).
   const eventos = useMemo(
     () => montarAtividadeRecente(auditoria, campanhas, pagamentos, 4),
-    [auditoria, campanhas, pagamentos],
+    [auditoria, campanhas, pagamentos]
   );
 
   const atualizarFiltros = (patch: Partial<FiltrosPagamento>) => {
@@ -178,60 +197,29 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
   const invalidar = () => CHAVES.forEach((key) => queryClient.invalidateQueries({ queryKey: key }));
 
   const atualizarStatus = useMutation({
-    mutationFn: (dados: { id: string; status: string; valor: number; comentario: string }) => {
-      // MOCK VISUAL — ver src/mocks/premiacoesMock.ts: aborta a escrita no modo demo.
-      const rotulo =
-        dados.status === 'rejeitado'
-          ? 'Rejeitar pagamento'
-          : dados.status === STATUS_REINICIO_PAGAMENTO
-            ? 'Reiniciar fluxo do pagamento'
-            : 'Aprovar pagamento';
-      if (bloquearEscritaPremiacoes(rotulo)) return Promise.reject(new Error('mock'));
-      return premiacoesService.atualizarStatusPagamento(
+    mutationFn: (dados: { id: string; status: string; valor: number; comentario: string }) =>
+      premiacoesService.atualizarStatusPagamento(
         dados.id,
         dados.status,
         empresaAtual!.id,
         dados.valor,
-        dados.comentario,
-      );
-    },
+        dados.comentario
+      ),
     onSuccess: () => {
       invalidar();
       toast.success('Status atualizado e registrado na auditoria.');
     },
-    onError: (e: unknown) => {
-      if ((e as Error)?.message !== 'mock') toast.error(safeErrorMessage(e, 'Não foi possível atualizar o pagamento.'));
-    },
+    onError: (e: unknown) => toast.error(safeErrorMessage(e, 'Não foi possível atualizar o pagamento.')),
   });
 
   const reconciliar = useMutation({
-    mutationFn: (dados: { id: string; valor: number; justificativa: string }) => {
-      if (bloquearEscritaPremiacoes('Salvar conciliação com a folha')) return Promise.reject(new Error('mock'));
-      return premiacoesService.reconciliarFolha(dados.id, dados.valor, empresaAtual!.id, dados.justificativa);
-    },
+    mutationFn: (dados: { id: string; valor: number; justificativa: string }) =>
+      premiacoesService.reconciliarFolha(dados.id, dados.valor, empresaAtual!.id, dados.justificativa),
     onSuccess: () => {
       invalidar();
       toast.success('Conciliação registrada.');
     },
-    onError: (e: unknown) => {
-      if ((e as Error)?.message !== 'mock') toast.error(safeErrorMessage(e, 'Erro na conciliação.'));
-    },
-  });
-
-  const autoConciliar = useMutation({
-    mutationFn: (id: string) => {
-      if (bloquearEscritaPremiacoes('Conciliar automaticamente com a folha')) return Promise.reject(new Error('mock'));
-      return premiacoesService.autoConciliarComFolha(id);
-    },
-    onSuccess: () => {
-      invalidar();
-      toast.success('Auto-conciliação concluída com sucesso!');
-    },
-    onError: (e: unknown) => {
-      if ((e as Error)?.message !== 'mock') {
-        toast.error(safeErrorMessage(e, 'Falha na conciliação automática.'));
-      }
-    },
+    onError: (e: unknown) => toast.error(safeErrorMessage(e, 'Erro na conciliação.')),
   });
 
   /* ─── Ações da tabela e dos painéis ─────────────────────────────────────── */
@@ -248,9 +236,8 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
     }
   };
 
-  const executarAcao = (pagamento: PagamentoHub, tipo: TipoAcaoPagamento | 'rejeitar' | 'auto-conciliar') => {
+  const executarAcao = (pagamento: PagamentoHub, tipo: TipoAcaoPagamento | 'rejeitar') => {
     if (tipo === 'rejeitar') abrirAprovacao(pagamento, 'rejeitado');
-    else if (tipo === 'auto-conciliar') autoConciliar.mutate(pagamento.id);
     else executarPrincipal(pagamento, tipo);
   };
 
@@ -275,7 +262,13 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
 
   const confirmarConciliacao = (valorFolha: string, justificativa: string) => {
     if (!conciliacao) return;
-    reconciliar.mutate({ id: conciliacao.id, valor: Number(valorFolha), justificativa });
+    // Sem este guard um campo ilegível viraria `NaN` no valor gravado na folha.
+    const valor = Number(valorFolha);
+    if (!Number.isFinite(valor) || valor < 0) {
+      toast.error('Informe um valor válido para a folha.');
+      return;
+    }
+    reconciliar.mutate({ id: conciliacao.id, valor, justificativa });
     setConciliacao(null);
   };
 
@@ -287,8 +280,7 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
       return novo;
     });
 
-  const alternarTodos = (marcar: boolean) =>
-    setSelecionados(marcar ? new Set(linhas.map((l) => l.id)) : new Set());
+  const alternarTodos = (marcar: boolean) => setSelecionados(marcar ? new Set(linhas.map((l) => l.id)) : new Set());
 
   /**
    * Aprovação em lote: avança UM passo cada pagamento selecionado que tenha
@@ -298,7 +290,6 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
   const aprovarSelecionados = async () => {
     const alvos = filtrados.filter((p) => selecionados.has(p.id) && proximoStatusPagamento(p.status));
     if (alvos.length === 0 || !empresaAtual) return;
-    if (bloquearEscritaPremiacoes(`Aprovar ${alvos.length} pagamento(s)`)) return;
     const resultados = await Promise.allSettled(
       alvos.map((p) =>
         premiacoesService.atualizarStatusPagamento(
@@ -306,9 +297,9 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
           proximoStatusPagamento(p.status)!,
           empresaAtual.id,
           valorDoPagamento(p),
-          'Aprovação em lote pelo Hub',
-        ),
-      ),
+          'Aprovação em lote pelo Hub'
+        )
+      )
     );
     invalidar();
     const falhas = resultados.filter((r) => r.status === 'rejected').length;
@@ -324,8 +315,43 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
       ? 'Nenhum pagamento registrado ainda.'
       : 'Nenhum pagamento corresponde aos filtros aplicados.';
 
+  /**
+   * Leitura falhou e nada chegou: NENHUM número é exibido. Mostrar R$ 0,00 nos
+   * indicadores, 0 nos contadores do fluxo ou "Nenhum pagamento registrado
+   * ainda" na tabela afirmaria que não há pagamento — quando o que houve foi
+   * uma falha de leitura. Com dado em cache (`pagamentos` não vazio) a aba
+   * continua operando e o aviso fica acima, sinalizando que pode estar velho.
+   */
+  const semLeitura = erro && pagamentos.length === 0;
+
+  const aviso = erro ? (
+    <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-warning/35 bg-warning/10 px-3 py-2 text-[11px] text-warning">
+      <span className="flex items-center gap-2">
+        <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+        {semLeitura
+          ? 'Não foi possível carregar os pagamentos agora. Os valores não podem ser exibidos.'
+          : 'Não foi possível atualizar os pagamentos agora. Os valores abaixo podem estar desatualizados.'}
+      </span>
+      {onTentarNovamente && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-7 border-warning/40 bg-transparent text-[10px] text-warning"
+          onClick={onTentarNovamente}
+        >
+          Tentar novamente
+        </Button>
+      )}
+    </div>
+  ) : null;
+
+  if (semLeitura) {
+    return <EntradaPresenca>{aviso}</EntradaPresenca>;
+  }
+
   return (
     <EntradaPresenca>
+      {aviso && <div className="mb-3.5">{aviso}</div>}
       {/* Grade principal: tabela e fluxo (~80%) + painéis laterais (~20%).
           Abaixo de `xl` as colunas empilham (a lateral desce inteira). */}
       <div className="grid min-w-0 grid-cols-1 items-stretch gap-3.5 xl:grid-cols-[minmax(0,4.2fr)_minmax(212px,0.82fr)]">
@@ -343,10 +369,7 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
 
           {/* 4 · Barra de filtros */}
           <div className="flex min-h-[64px] min-w-0 flex-wrap items-center gap-3 rounded-[14px] border border-border/50 bg-card/60 px-4 py-3">
-            <motion.div
-              {...entradaCard(indiceEntrada('filtros', 0))}
-              className="relative w-full min-w-[180px] flex-1"
-            >
+            <motion.div {...entradaCard(indiceEntrada('filtros', 0))} className="relative w-full min-w-[180px] flex-1">
               <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 value={filtros.busca}
@@ -364,7 +387,10 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
                 completa continua acessível na lista suspensa. */}
             <motion.div {...entradaCard(indiceEntrada('filtros', 1))} className="w-[150px] shrink-0">
               <Select value={filtros.etapa} onValueChange={(v) => atualizarFiltros({ etapa: v as FiltroEtapaFluxo })}>
-                <SelectTrigger aria-label="Etapa do fluxo" className="h-10 rounded-xl border-border/50 bg-background text-[12.5px]">
+                <SelectTrigger
+                  aria-label="Etapa do fluxo"
+                  className="h-10 rounded-xl border-border/50 bg-background text-[12.5px]"
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent align="end">
@@ -388,7 +414,10 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
 
             <motion.div {...entradaCard(indiceEntrada('filtros', 2))} className="w-[190px] shrink-0">
               <Select value={filtros.campanha} onValueChange={(v) => atualizarFiltros({ campanha: v })}>
-                <SelectTrigger aria-label="Campanha" className="h-10 rounded-xl border-border/50 bg-background text-[12.5px]">
+                <SelectTrigger
+                  aria-label="Campanha"
+                  className="h-10 rounded-xl border-border/50 bg-background text-[12.5px]"
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent align="end">
@@ -406,7 +435,10 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
 
             <motion.div {...entradaCard(indiceEntrada('filtros', 3))} className="w-[160px] shrink-0">
               <Select value={filtros.status} onValueChange={(v) => atualizarFiltros({ status: v })}>
-                <SelectTrigger aria-label="Status" className="h-10 rounded-xl border-border/50 bg-background text-[12.5px]">
+                <SelectTrigger
+                  aria-label="Status"
+                  className="h-10 rounded-xl border-border/50 bg-background text-[12.5px]"
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent align="end">
@@ -427,7 +459,10 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
                 value={filtros.ordenacao}
                 onValueChange={(v) => atualizarFiltros({ ordenacao: v as FiltrosPagamento['ordenacao'] })}
               >
-                <SelectTrigger aria-label="Ordenar por" className="h-10 rounded-xl border-border/50 bg-background text-[12.5px]">
+                <SelectTrigger
+                  aria-label="Ordenar por"
+                  className="h-10 rounded-xl border-border/50 bg-background text-[12.5px]"
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent align="end">
@@ -463,7 +498,7 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
                         'h-10 w-10 rounded-xl border transition-colors duration-200 ease-in-out',
                         temFiltrosAtivos
                           ? 'border-primary/60 bg-primary/10 text-primary hover:border-primary/80 hover:bg-primary/20 hover:text-primary'
-                          : 'border-border/50 bg-background text-muted-foreground hover:border-border hover:bg-accent hover:text-foreground',
+                          : 'border-border/50 bg-background text-muted-foreground hover:border-border hover:bg-accent hover:text-foreground'
                       )}
                     >
                       <FilterX className="h-4 w-4" />

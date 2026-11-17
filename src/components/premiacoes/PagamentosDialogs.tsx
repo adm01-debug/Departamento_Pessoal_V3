@@ -3,8 +3,8 @@
  * ABA PAGAMENTOS — DIÁLOGOS DE ESCRITA E LEITURA.
  *
  * Os TRÊS diálogos da aba, com as MESMAS chamadas de serviço do quadro de
- * aprovação anterior (`premiacoesService.atualizarStatusPagamento`,
- * `reconciliarFolha`, `autoConciliarComFolha` — disparadas por `PagamentosTab`):
+ * aprovação anterior (`premiacoesService.atualizarStatusPagamento` e
+ * `reconciliarFolha` — disparadas por `PagamentosTab`):
  *
  *   1. APROVAÇÃO / REJEIÇÃO / REINÍCIO — um único diálogo de confirmação, com o
  *      comentário opcional que vai para o histórico do pagamento (o "Último
@@ -25,12 +25,7 @@ import { motion } from 'framer-motion';
 import { CheckCircle2, History, Search, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { CascadeDialogFrame } from '@/components/ui/cascade-dialog';
 import { cascadeItemVariants } from '@/components/ui/cascade-motion';
 import { formatCurrency, formatDateTime } from '@/utils/format';
@@ -192,9 +187,7 @@ export function PagamentosDialogs({
               <Search className="h-5 w-5 text-primary" />
               Conciliação com a Folha
             </DialogTitle>
-            <DialogDescription>
-              Compare o valor aprovado com o lançamento real na folha de pagamento.
-            </DialogDescription>
+            <DialogDescription>Compare o valor aprovado com o lançamento real na folha de pagamento.</DialogDescription>
           </DialogHeader>
         </motion.div>
         <motion.div variants={cascadeItemVariants}>
@@ -329,7 +322,7 @@ export function PagamentosDialogs({
                         </div>
                         {item.comentario && <p className="mt-1 text-[11px] text-muted-foreground">{item.comentario}</p>}
                       </li>
-                    ),
+                    )
                   )}
                 </ol>
               ) : (

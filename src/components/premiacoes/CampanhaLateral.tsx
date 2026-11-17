@@ -17,15 +17,7 @@
  */
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  AlertTriangle,
-  ArrowRight,
-  CalendarClock,
-  ClipboardList,
-  Clock,
-  History,
-  type LucideIcon,
-} from 'lucide-react';
+import { AlertTriangle, ArrowRight, CalendarClock, ClipboardList, Clock, History, type LucideIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { AnimatedCascadeDialog } from '@/components/ui/animated-cascade-dialog';
 import { entradaCard, linhaEntradaHubVariants } from './premiacoesEntrada';
@@ -48,6 +40,14 @@ interface CampanhaLateralProps {
   eventos: EventoAtividade[];
   /** Navega para a seção onde a pendência/atividade se resolve. */
   onNavegar: (destino: DestinoAcao | 'auditoria') => void;
+  /** Leitura de campanhas/pagamentos falhou: proíbe afirmar "nenhuma pendência". */
+  erroAcoes?: boolean;
+  /** Repete a leitura das pendências. */
+  onRecarregarAcoes?: () => void;
+  /** Leitura da trilha falhou: proíbe afirmar "sem eventos". */
+  erroEventos?: boolean;
+  /** Repete a leitura da trilha de auditoria. */
+  onRecarregarEventos?: () => void;
 }
 
 /** Ícone + cor de cada tipo de pendência (mesmos tons dos indicadores do topo). */
@@ -78,12 +78,41 @@ function BotaoCabecalho({ onClick, children }: { onClick: () => void; children: 
   );
 }
 
-export function CampanhaLateral({ acoes, eventos, onNavegar }: CampanhaLateralProps) {
+/** Aviso de leitura falha — substitui o texto de lista vazia da seção. */
+function AvisoFalha({ texto, onTentarNovamente }: { texto: string; onTentarNovamente?: () => void }) {
+  return (
+    <div className="flex flex-col items-start gap-1.5 px-1 py-2">
+      <p className="flex items-start gap-1.5 text-[11px] text-destructive">
+        <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+        {texto}
+      </p>
+      {onTentarNovamente && (
+        <button
+          type="button"
+          onClick={onTentarNovamente}
+          className="text-[11px] font-medium text-primary hover:underline"
+        >
+          Tentar novamente
+        </button>
+      )}
+    </div>
+  );
+}
+
+export function CampanhaLateral({
+  acoes,
+  eventos,
+  onNavegar,
+  erroAcoes = false,
+  onRecarregarAcoes,
+  erroEventos = false,
+  onRecarregarEventos,
+}: CampanhaLateralProps) {
   const [detalheAberto, setDetalheAberto] = useState(false);
   // O card mostra as primeiras ações; a LISTA COMPLETA vai na janela (mesma
   // fonte de dados, nenhum registro simulado).
   const acoesVisiveis = acoes.slice(0, LIMITE_ACOES);
-  const podeExpandir = acoes.length > LIMITE_ACOES;
+  const podeExpandir = !erroAcoes && acoes.length > LIMITE_ACOES;
 
   return (
     <div className="flex h-full min-w-0 flex-col gap-3.5 xl:min-h-0">
@@ -96,21 +125,24 @@ export function CampanhaLateral({ acoes, eventos, onNavegar }: CampanhaLateralPr
         <div className="mb-3 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <CalendarClock className="h-4 w-4 text-primary" />
-            <h3 className="text-[11px] font-semibold uppercase text-muted-foreground">
-              Próximas ações
-            </h3>
+            <h3 className="text-[11px] font-semibold uppercase text-muted-foreground">Próximas ações</h3>
           </div>
           <span
             className={cn(
               'flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold tabular-nums',
-              acoes.length > 0 ? 'bg-primary/15 text-primary' : 'bg-muted/50 text-muted-foreground',
+              !erroAcoes && acoes.length > 0 ? 'bg-primary/15 text-primary' : 'bg-muted/50 text-muted-foreground'
             )}
           >
-            {acoes.length}
+            {erroAcoes ? '—' : acoes.length}
           </span>
         </div>
 
-        {acoes.length === 0 ? (
+        {erroAcoes ? (
+          <AvisoFalha
+            texto="Não foi possível apurar as pendências: campanhas ou pagamentos não carregaram."
+            onTentarNovamente={onRecarregarAcoes}
+          />
+        ) : acoes.length === 0 ? (
           <p className="px-1 py-2 text-[11px] text-muted-foreground">
             Nenhuma pendência: nenhuma campanha aguarda aprovação ou conciliação.
           </p>
@@ -133,21 +165,22 @@ export function CampanhaLateral({ acoes, eventos, onNavegar }: CampanhaLateralPr
                     onClick={() => onNavegar(acao.destino)}
                     className="flex w-full items-center gap-3 rounded-lg px-1.5 py-2 text-left transition-colors hover:bg-accent/5"
                   >
-                    <span className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-full', aparencia.caixa)}>
+                    <span
+                      className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-full', aparencia.caixa)}
+                    >
                       <aparencia.Icone className="h-4 w-4" />
                     </span>
                     <span className="min-w-0 flex-1">
                       {/* Duas linhas: TÍTULO em largura cheia e, abaixo, objeto +
-                          tempo — nenhum título trunca por causa do indicador de
-                          tempo. O detalhe ("3 solicitações pendentes") fica no
-                          title e na aba onde a pendência é resolvida. */}
+                          detalhe ("3 solicitações pendentes") + tempo — nenhum
+                          título trunca por causa do indicador de tempo. */}
                       <span className="block truncate text-[11.5px] font-semibold leading-snug">{acao.titulo}</span>
                       <span className="flex items-baseline justify-between gap-2">
                         <span
                           className="truncate text-[11px] leading-[17px] text-muted-foreground"
                           title={`${acao.objeto} · ${acao.detalhe}`}
                         >
-                          {acao.objeto}
+                          {acao.objeto} · {acao.detalhe}
                         </span>
                         {desde && <span className="shrink-0 text-[10.5px] text-muted-foreground/80">{desde}</span>}
                       </span>
@@ -160,10 +193,7 @@ export function CampanhaLateral({ acoes, eventos, onNavegar }: CampanhaLateralPr
         )}
 
         {podeExpandir && (
-          <motion.div
-            {...entradaCard(acoesVisiveis.length)}
-            className="mt-1.5 border-t border-border/30 pt-2"
-          >
+          <motion.div {...entradaCard(acoesVisiveis.length)} className="mt-1.5 border-t border-border/30 pt-2">
             <BotaoCabecalho onClick={() => setDetalheAberto(true)}>Ver todas as ações</BotaoCabecalho>
           </motion.div>
         )}
@@ -182,18 +212,19 @@ export function CampanhaLateral({ acoes, eventos, onNavegar }: CampanhaLateralPr
             ITEM FLEX (`flex shrink-0`) do `justify-between`, então a caixa do
             botão continua colada à direita, no mesmo ponto de antes. */}
         <div className="mb-3 flex items-center justify-between gap-2">
-          <h3 className="text-[11px] font-semibold uppercase text-muted-foreground">
-            Atividade recente
-          </h3>
+          <h3 className="text-[11px] font-semibold uppercase text-muted-foreground">Atividade recente</h3>
           <motion.div {...entradaCard(indiceEntrada('lateral', 6))} className="flex shrink-0 items-center">
             <BotaoCabecalho onClick={() => onNavegar('auditoria')}>Ver todas</BotaoCabecalho>
           </motion.div>
         </div>
 
-        {eventos.length === 0 ? (
-          <p className="px-1 py-2 text-[11px] text-muted-foreground">
-            Sem eventos registrados na trilha de auditoria.
-          </p>
+        {erroEventos ? (
+          <AvisoFalha
+            texto="Não foi possível carregar a trilha de auditoria."
+            onTentarNovamente={onRecarregarEventos}
+          />
+        ) : eventos.length === 0 ? (
+          <p className="px-1 py-2 text-[11px] text-muted-foreground">Sem eventos registrados na trilha de auditoria.</p>
         ) : (
           <ul className="flex min-h-0 flex-col gap-0.5 xl:flex-1 xl:overflow-y-auto xl:pr-1">
             {eventos.map((evento, indiceEvento) => {
@@ -272,10 +303,7 @@ export function CampanhaLateral({ acoes, eventos, onNavegar }: CampanhaLateralPr
                     <aparencia.Icone className="h-4 w-4" />
                   </span>
                   <span className="min-w-0 flex-1 text-sm font-semibold">{acao.titulo}</span>
-                  <Badge
-                    variant="outline"
-                    className="shrink-0 text-[9.5px] font-medium uppercase tracking-wide"
-                  >
+                  <Badge variant="outline" className="shrink-0 text-[9.5px] font-medium uppercase tracking-wide">
                     {ROTULO_TIPO_ACAO[acao.tipo]}
                   </Badge>
                 </div>

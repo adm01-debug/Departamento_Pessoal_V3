@@ -39,7 +39,10 @@ import type { AcaoPagamento, ResumoFinanceiro } from './pagamentosComum';
 /** Ícone + tom de cada pendência (mesmos tons dos indicadores financeiros). */
 const APARENCIA_ACAO: Record<string, { Icone: typeof Clock; caixa: string }> = {
   'aguardando-aprovacao': { Icone: Clock, caixa: 'bg-warning/20 text-warning' },
-  divergencias: { Icone: AlertTriangle, caixa: 'bg-destructive-vivid/20 text-destructive-vivid' },
+  divergencias: {
+    Icone: AlertTriangle,
+    caixa: 'bg-[hsl(var(--destructive-vivid)/0.2)] text-[hsl(var(--destructive-vivid))]',
+  },
   'enviados-folha': { Icone: CheckCircle2, caixa: 'bg-success/20 text-success' },
 };
 
@@ -62,15 +65,24 @@ const APARENCIA_EVENTO: Record<string, { Icone: typeof History; tom: string }> =
   'pagamento:conciliacao': { Icone: BadgeCheck, tom: 'bg-success/15 text-success' },
   'pagamento:alteracao': { Icone: History, tom: 'bg-info/15 text-info' },
   'pagamento:criacao': { Icone: CirclePlus, tom: 'bg-primary/15 text-primary' },
-  'pagamento:exclusao': { Icone: XCircle, tom: 'bg-destructive-vivid/15 text-destructive-vivid' },
+  'pagamento:exclusao': {
+    Icone: XCircle,
+    tom: 'bg-[hsl(var(--destructive-vivid)/0.15)] text-[hsl(var(--destructive-vivid))]',
+  },
   'campanha:criacao': { Icone: CirclePlus, tom: 'bg-xp/15 text-xp' },
   'campanha:aprovacao': { Icone: CheckCircle2, tom: 'bg-xp/15 text-xp' },
   'campanha:alteracao': { Icone: PenLine, tom: 'bg-xp/15 text-xp' },
-  'campanha:exclusao': { Icone: XCircle, tom: 'bg-destructive-vivid/15 text-destructive-vivid' },
+  'campanha:exclusao': {
+    Icone: XCircle,
+    tom: 'bg-[hsl(var(--destructive-vivid)/0.15)] text-[hsl(var(--destructive-vivid))]',
+  },
 };
 
 /** Divergência de conciliação é um ESTADO do pagamento: sobrepõe o tom da ação. */
-const APARENCIA_DIVERGENCIA = { Icone: AlertTriangle, tom: 'bg-destructive-vivid/15 text-destructive-vivid' };
+const APARENCIA_DIVERGENCIA = {
+  Icone: AlertTriangle,
+  tom: 'bg-[hsl(var(--destructive-vivid)/0.15)] text-[hsl(var(--destructive-vivid))]',
+};
 
 /**
  * TRAÇADO DO DONUT DO RESUMO FINANCEIRO — mais lento e mais suave que a régua
@@ -94,7 +106,12 @@ const TRAÇADO_DONUT_RESUMO = {
 
 function aparenciaDoEvento(evento: EventoAtividade): { Icone: typeof History; tom: string } {
   if (evento.divergente) return APARENCIA_DIVERGENCIA;
-  return APARENCIA_EVENTO[`${evento.entidade}:${evento.acao}`] ?? { Icone: History, tom: 'bg-muted/60 text-muted-foreground' };
+  return (
+    APARENCIA_EVENTO[`${evento.entidade}:${evento.acao}`] ?? {
+      Icone: History,
+      tom: 'bg-muted/60 text-muted-foreground',
+    }
+  );
 }
 
 interface PagamentosLateralProps {
@@ -197,10 +214,7 @@ export function PagamentosLateral({
                     className="group flex w-full cursor-pointer items-center gap-3 rounded-[10px] px-1.5 py-1.5 text-left transition-colors duration-200 ease-in-out hover:bg-background focus-visible:bg-background"
                   >
                     <span
-                      className={cn(
-                        'flex h-7 w-7 shrink-0 items-center justify-center rounded-full',
-                        aparencia.caixa,
-                      )}
+                      className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-full', aparencia.caixa)}
                     >
                       <aparencia.Icone className="h-4 w-4" />
                     </span>
@@ -214,7 +228,9 @@ export function PagamentosLateral({
                       <span
                         className={cn(
                           'truncate text-[11px] leading-[15px]',
-                          acao.id === 'divergencias' ? 'font-medium text-destructive-vivid' : 'text-muted-foreground',
+                          acao.id === 'divergencias'
+                            ? 'font-medium text-[hsl(var(--destructive-vivid))]'
+                            : 'text-muted-foreground'
                         )}
                         title={acao.detalhe}
                       >
@@ -226,7 +242,9 @@ export function PagamentosLateral({
                     <ArrowRight
                       className={cn(
                         'h-3.5 w-3.5 shrink-0 text-muted-foreground transition-colors duration-200 ease-in-out',
-                        acao.id === 'divergencias' ? 'group-hover:text-destructive-vivid' : 'group-hover:text-foreground',
+                        acao.id === 'divergencias'
+                          ? 'group-hover:text-[hsl(var(--destructive-vivid))]'
+                          : 'group-hover:text-foreground'
                       )}
                       aria-hidden
                     />
@@ -267,9 +285,7 @@ export function PagamentosLateral({
         </div>
 
         {eventos.length === 0 ? (
-          <p className="px-1 py-2 text-[11px] text-muted-foreground">
-            Sem eventos registrados na trilha de auditoria.
-          </p>
+          <p className="px-1 py-2 text-[11px] text-muted-foreground">Sem eventos registrados na trilha de auditoria.</p>
         ) : (
           <ul className="flex flex-col gap-0">
             {eventos.map((evento, indiceEvento) => {
@@ -291,10 +307,7 @@ export function PagamentosLateral({
                     return (
                       <span
                         title={evento.responsavel ?? undefined}
-                        className={cn(
-                          'flex h-7 w-7 shrink-0 items-center justify-center rounded-full',
-                          aparencia.tom,
-                        )}
+                        className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-full', aparencia.tom)}
                       >
                         <aparencia.Icone className="h-4 w-4" />
                       </span>
@@ -309,9 +322,7 @@ export function PagamentosLateral({
                       >
                         {evento.objeto ?? evento.descricao}
                       </span>
-                      {quando && (
-                        <span className="shrink-0 text-[10.5px] text-muted-foreground/80">{quando}</span>
-                      )}
+                      {quando && <span className="shrink-0 text-[10.5px] text-muted-foreground/80">{quando}</span>}
                     </span>
                   </span>
                 </motion.li>
