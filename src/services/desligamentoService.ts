@@ -4,7 +4,10 @@ import { auditLogger } from '@/utils/auditLogger';
 import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
 
 export type DesligamentoComColaborador = Tables<'desligamentos'> & {
-  colaborador?: Pick<Tables<'colaboradores'>, 'nome_completo' | 'cpf' | 'cargo' | 'data_admissao'> | null;
+  colaborador?: Pick<
+    Tables<'colaboradores'>,
+    'nome_completo' | 'cpf' | 'cargo' | 'departamento' | 'data_admissao'
+  > | null;
 };
 
 class DesligamentoService extends BaseService<
@@ -24,7 +27,9 @@ class DesligamentoService extends BaseService<
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     let query = this.getQuery()
-      .select('*, colaborador:colaboradores(nome_completo, cpf, cargo, data_admissao)', { count: 'exact' })
+      .select('*, colaborador:colaboradores(nome_completo, cpf, cargo, departamento, data_admissao)', {
+        count: 'exact',
+      })
       .order('data_desligamento', { ascending: false })
       .limit(500);
 

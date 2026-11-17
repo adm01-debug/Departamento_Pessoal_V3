@@ -46,7 +46,7 @@ describe('desligamentoService', () => {
       mockEq.mockResolvedValue({ data: [], error: null });
       desligamentoService.listar({ filters: { empresa_id: EMPRESA_ID } });
       expect(mockSelect).toHaveBeenCalledWith(
-        '*, colaborador:colaboradores(nome_completo, cpf, cargo, data_admissao)',
+        '*, colaborador:colaboradores(nome_completo, cpf, cargo, departamento, data_admissao)',
         { count: 'exact' }
       );
     });
