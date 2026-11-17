@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
-import { Calendar, User, Clock, MessageSquare, Video, Phone, MapPin, CheckCircle2 } from 'lucide-react';
+import { Calendar, Clock, MessageSquare, Video, Phone, MapPin, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -52,10 +52,17 @@ export function CandidatoTimeline({ candidaturaId }: CandidatoTimelineProps) {
       </div>
     );
 
+  const temEventos = (timeline?.length ?? 0) > 0;
+
   return (
-    <div className="space-y-6 relative before:absolute before:left-[17px] before:top-2 before:bottom-2 before:w-[2px] before:bg-muted">
-      {timeline && timeline.length > 0 ? (
-        timeline.map((item) => (
+    <div
+      className={cn(
+        'space-y-6 relative',
+        temEventos && 'before:absolute before:left-[17px] before:top-2 before:bottom-2 before:w-[2px] before:bg-muted'
+      )}
+    >
+      {temEventos ? (
+        (timeline ?? []).map((item) => (
           <div key={item.id} className="relative pl-10">
             <div
               className={cn(
@@ -116,16 +123,14 @@ export function CandidatoTimeline({ candidaturaId }: CandidatoTimelineProps) {
                   {item.type === 'entrevista' && (
                     <>
                       <p className="text-sm font-semibold">{item.feedback || 'Aguardando realização...'}</p>
-                      <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <User className="h-3 w-3" /> Entrevistador
-                        </span>
-                        {item.nota && (
+                      {/* Só o que o registro traz: sem nota, a linha não existe. */}
+                      {item.nota ? (
+                        <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
                           <span className="flex items-center gap-1 font-bold text-warning">
                             <CheckCircle2 className="h-3 w-3" /> Nota {item.nota}/5
                           </span>
-                        )}
-                      </div>
+                        </div>
+                      ) : null}
                     </>
                   )}
 
@@ -150,9 +155,9 @@ export function CandidatoTimeline({ candidaturaId }: CandidatoTimelineProps) {
           </div>
         ))
       ) : (
-        <div className="py-12 text-center">
-          <Clock className="h-12 w-12 text-muted-foreground/20 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground font-medium">Inicie o processo para ver o histórico aqui.</p>
+        <div className="flex items-center gap-2.5 rounded-xl border border-dashed border-border/40 bg-background/30 px-3.5 py-3">
+          <Clock className="h-4 w-4 shrink-0 text-muted-foreground/50" aria-hidden />
+          <p className="text-[12px] leading-snug text-muted-foreground">Inicie o processo para ver o histórico aqui.</p>
         </div>
       )}
     </div>

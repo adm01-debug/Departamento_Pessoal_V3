@@ -1,0 +1,314 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core';
+import { AlertTriangle, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import type { CandidaturaComRelacoes } from '@/types/recrutamento';
+import { ETAPAS, etapaPorId, formatarUltimaAtualizacao, normalizarEtapa, type EtapaPipelineId } from './pipelineEtapas';
+import { podeArrastarCandidatura, ehEtapaDoPipeline } from './pipelineDragDrop';
+import { PipelineCard, type MoverEtapaHandler } from './PipelineCard';
+import { PipelineColumn } from './PipelineColumn';
+
+/**
+ * PIPELINE — board das cinco etapas no MESMO padrão do Kanban de Admissão.
+ *
+ * ── ESTRUTURA (referência: `admissoes/AdmissoesKanban.tsx`) ──────────────────
+ * • A faixa rola só na HORIZONTAL (`overflow-x-auto overflow-y-hidden`); cada
+ *   coluna tem largura fixa de 272px e a MESMA altura externa
+ *   (`h-[calc(100vh-19rem)] max-h-[900px] min-h-[520px]`), então 4 colunas
+ *   inteiras + parte da 5ª aparecem em 1600px — nada é comprimido.
+ * • Dentro da coluna, só a LISTA rola na vertical (cabeçalho e rodapé fixos).
+ *   A lista NÃO usa `overscroll-behavior: contain`: ao chegar ao fim, a roda
+ *   continua rolando a página (sem o aprisionamento que existia antes).
+ * • As colunas vazias mostram a caixa tracejada discreta "Solte aqui" — sem
+ *   bloco colorido gigante.
+ *
+ * ── ARRASTE (referência: `AdmissoesKanban.tsx` + `KanbanColumn.tsx`) ────────
+ * • `PointerSensor` com `distance: 6`: clique no card/menu não vira arraste; a
+ *   roda do mouse nem dispara `pointerdown`, então rolar nunca arrasta.
+ * • Os cards são `useDraggable`; CADA COLUNA é a única zona de soltura
+ *   (`useDroppable` com o id da etapa). O card de origem fica em 30% e o
+ *   `DragOverlay` (portalado no `body`) segue o cursor com o mesmo desenho.
+ * • No drop, a etapa é gravada pelo fluxo QUE JÁ EXISTIA (`onMoverEtapa` →
+ *   `atualizarCandidatura`). Enquanto a gravação está em voo, o card fica na
+ *   coluna de destino por um override otimista; falha = rollback + toast.
+ * • Estados arquivado/cancelado/rejeitado não são arrastáveis; o menu "Mover
+ *   para" continua sendo a via acessível (teclado incluído).
+ * • Contratado é apenas uma etapa do funil: soltar ali NÃO efetiva contratação,
+ *   exatamente como o menu existente.
+ *
+ * A ordem dos cards é a do servidor (não há ordenação manual na coluna —
+ * igual à Admissão). Nenhuma migration foi criada.
+ */
+export interface PipelineBoardProps {
+  candidaturas: readonly CandidaturaComRelacoes[];
+  onAbrir: (cand: CandidaturaComRelacoes) => void;
+  onMoverEtapa: MoverEtapaHandler;
+  onContatar: (cand: CandidaturaComRelacoes) => void;
+  /** Consulta de candidaturas falhou — mostra erro em vez de board vazio. */
+  erro?: boolean;
+  onTentarNovamente?: () => void;
+  /**
+   * A aba Pipeline está ativa? Mesmo contrato de `AdmissoesKanban`: a entrada
+   * (CSS) só é disparada quando o board está realmente em cena.
+   */
+  isActive?: boolean;
+}
+
+type EtapasLocais = Record<string, EtapaPipelineId>;
+
+export function PipelineBoard({
+  candidaturas,
+  onAbrir,
+  onMoverEtapa,
+  onContatar,
+  erro = false,
+  onTentarNovamente,
+  isActive = true,
+}: PipelineBoardProps) {
+  const sensores = useSensors(
+    useSensor(PointerSensor, {
+      // Mesmo sensor/constraint do Kanban de Admissão.
+      activationConstraint: { distance: 6 },
+    })
+  );
+
+  const [ativo, setAtivo] = useState<string | null>(null);
+  const [larguraAtiva, setLarguraAtiva] = useState<number | null>(null);
+  const [etapasLocais, setEtapasLocais] = useState<EtapasLocais>({});
+  /**
+   * O browser emite `click` no fim de um arraste (inclusive após cancelar com
+   * Escape). Bloqueia UM clique residual para não abrir o dossiê sem intenção.
+   */
+  const bloqueioClique = useRef<{ handler: (event: MouseEvent) => void; timer: number } | null>(null);
+
+  const porId = useMemo(() => new Map(candidaturas.map((cand) => [cand.id, cand])), [candidaturas]);
+
+  // Quando o dado do servidor/mock já reflete a etapa otimista, o override sai
+  // de cena. Sincronização legítima de estado efêmero com props.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sincronização de estado efêmero com o dado que chegou
+    setEtapasLocais((anterior) => {
+      const entradas = Object.entries(anterior);
+      if (entradas.length === 0) return anterior;
+      let mudou = false;
+      const proximo = { ...anterior };
+      for (const [id, etapa] of entradas) {
+        const cand = porId.get(id);
+        if (!cand || normalizarEtapa(cand.etapa) === etapa) {
+          delete proximo[id];
+          mudou = true;
+        }
+      }
+      return mudou ? proximo : anterior;
+    });
+  }, [porId]);
+
+  /**
+   * Agrupa por etapa EFETIVA (base + override otimista), preservando a ordem
+   * recebida. Etapa fora do vocabulário das cinco colunas não entra em nenhuma
+   * coluna — vai para `fora` e é DECLARADA no rodapé, nunca descartada em silêncio.
+   */
+  const { grupos, fora } = useMemo(() => {
+    const mapa: Record<EtapaPipelineId, CandidaturaComRelacoes[]> = {
+      triagem: [],
+      entrevista: [],
+      teste: [],
+      proposta: [],
+      contratado: [],
+    };
+    const foraDoFunil: CandidaturaComRelacoes[] = [];
+    for (const cand of candidaturas) {
+      // A sobrescrita local já é um id válido; normalizar os dois pela mesma régua
+      // mantém o tipo na união e evita que o TS estreite e mate o ramo de 'outras'.
+      const etapa = normalizarEtapa(etapasLocais[cand.id] ?? cand.etapa);
+      if (etapa === 'outras') {
+        foraDoFunil.push(cand);
+        continue;
+      }
+      mapa[etapa].push(cand);
+    }
+    return { grupos: mapa, fora: foraDoFunil };
+  }, [candidaturas, etapasLocais]);
+
+  const limparBloqueioClique = useCallback(() => {
+    const atual = bloqueioClique.current;
+    if (!atual) return;
+    document.removeEventListener('click', atual.handler, true);
+    window.clearTimeout(atual.timer);
+    bloqueioClique.current = null;
+  }, []);
+
+  const suprimirClique = useCallback(() => {
+    limparBloqueioClique();
+    const handler = (event: MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      limparBloqueioClique();
+    };
+    const timer = window.setTimeout(limparBloqueioClique, 1500);
+    bloqueioClique.current = { handler, timer };
+    document.addEventListener('click', handler, true);
+  }, [limparBloqueioClique]);
+
+  useEffect(() => limparBloqueioClique, [limparBloqueioClique]);
+
+  const aoIniciarArraste = (event: DragStartEvent) => {
+    const id = String(event.active.id);
+    if (!porId.has(id)) return;
+    setAtivo(id);
+    setLarguraAtiva(event.active.rect.current.initial?.width ?? null);
+  };
+
+  const aoSoltar = async (event: DragEndEvent) => {
+    const id = String(event.active.id);
+    const cand = porId.get(id);
+    const alvo = event.over?.id ? String(event.over.id) : null;
+
+    setAtivo(null);
+    setLarguraAtiva(null);
+    suprimirClique();
+
+    if (!cand || !ehEtapaDoPipeline(alvo) || !podeArrastarCandidatura(cand.status)) return;
+
+    const origem = etapasLocais[id] ?? normalizarEtapa(cand.etapa);
+    if (alvo === origem) return;
+
+    setEtapasLocais((anterior) => ({ ...anterior, [id]: alvo }));
+
+    let resultado: void | boolean;
+    try {
+      resultado = await onMoverEtapa(id, alvo);
+    } catch {
+      resultado = false;
+    }
+
+    if (resultado === false) {
+      setEtapasLocais((anterior) => {
+        const proximo = { ...anterior };
+        delete proximo[id];
+        return proximo;
+      });
+    }
+  };
+
+  const aoCancelarArraste = () => {
+    setAtivo(null);
+    setLarguraAtiva(null);
+    suprimirClique();
+  };
+
+  if (erro) {
+    return (
+      <div
+        role="alert"
+        data-pipeline-erro
+        className="rounded-xl border border-[hsl(var(--destructive-vivid)/0.35)] bg-[hsl(var(--destructive-vivid)/0.06)] px-6 py-12 text-center"
+      >
+        <span className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-full border border-[hsl(var(--destructive-vivid)/0.35)] bg-[hsl(var(--destructive-vivid)/0.10)] text-[hsl(var(--destructive-vivid))]">
+          <AlertTriangle className="h-5 w-5" aria-hidden />
+        </span>
+        <p className="text-[12.5px] font-semibold text-foreground">Não foi possível carregar o pipeline</p>
+        <p className="mx-auto mt-1 max-w-md text-[10.5px] leading-relaxed text-muted-foreground">
+          A consulta de candidaturas falhou, então nenhuma etapa pode ser exibida. Verifique a conexão e tente
+          novamente.
+        </p>
+        {onTentarNovamente ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onTentarNovamente}
+            className="mt-3 h-8 rounded-lg text-[11px]"
+          >
+            Tentar novamente
+          </Button>
+        ) : null}
+      </div>
+    );
+  }
+
+  const ultimaAtualizacao = formatarUltimaAtualizacao(candidaturas);
+  const candAtivo = ativo ? (porId.get(ativo) ?? null) : null;
+  const etapaAtiva = ativo ? etapaPorId(etapasLocais[ativo] ?? porId.get(ativo)?.etapa) : null;
+
+  return (
+    <div className="flex min-w-0 flex-col">
+      <DndContext
+        sensors={sensores}
+        onDragStart={aoIniciarArraste}
+        onDragEnd={aoSoltar}
+        onDragCancel={aoCancelarArraste}
+      >
+        <div data-pipeline-board className="-mx-2 flex items-end gap-3 overflow-x-auto overflow-y-hidden px-2 pb-4">
+          {ETAPAS.map((etapa, indice) => (
+            <PipelineColumn
+              key={`${etapa.id}-${isActive ? 'ativa' : 'inativa'}`}
+              etapa={etapa}
+              items={grupos[etapa.id]}
+              indice={indice}
+              isActive={isActive}
+              onAbrir={onAbrir}
+              onMoverEtapa={onMoverEtapa}
+              onContatar={onContatar}
+            />
+          ))}
+        </div>
+
+        {/* Portal no body: imune ao overflow do board e ao `transform`/`filter`
+            dos wrappers de transição — o overlay fica preso ao ponteiro. */}
+        {createPortal(
+          <DragOverlay dropAnimation={null}>
+            {candAtivo && etapaAtiva ? (
+              <div data-pipeline-arrastado className="pointer-events-none" style={{ width: larguraAtiva ?? undefined }}>
+                <PipelineCard
+                  cand={candAtivo}
+                  etapa={etapaAtiva}
+                  dragging
+                  onAbrir={() => undefined}
+                  onMoverEtapa={() => undefined}
+                  onContatar={() => undefined}
+                />
+              </div>
+            ) : null}
+          </DragOverlay>,
+          document.body
+        )}
+      </DndContext>
+
+      <footer
+        data-pipeline-footer
+        className="mt-3 flex flex-col gap-2 border-t border-border/40 pt-3 text-[10px] text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          <span>
+            Mostrando <strong className="font-semibold tabular-nums text-foreground">{candidaturas.length}</strong>{' '}
+            {candidaturas.length === 1 ? 'candidato' : 'candidatos'}
+          </span>
+          <span aria-hidden className="hidden h-3 w-px bg-border/60 sm:block" />
+          <span className="inline-flex items-center gap-1">
+            <Clock className="h-3 w-3" aria-hidden />
+            Última atualização: {ultimaAtualizacao}
+          </span>
+          {fora.length > 0 ? (
+            <>
+              <span aria-hidden className="hidden h-3 w-px bg-border/60 sm:block" />
+              <span data-pipeline-fora>
+                <strong className="font-semibold tabular-nums text-foreground">{fora.length}</strong>{' '}
+                {fora.length === 1 ? 'candidatura' : 'candidaturas'} fora das etapas monitoradas
+              </span>
+            </>
+          ) : null}
+        </div>
+      </footer>
+    </div>
+  );
+}
