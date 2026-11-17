@@ -16,7 +16,7 @@
  * automaticamente em cada deploy — evita servir assets desatualizados.
  */
 
-const CACHE_VERSION = 'v4';          // Bumpar em cada deploy para bustar cache antigo (v4: purga cache envenenado com HTML)
+const CACHE_VERSION = 'v5';          // Bumpar em cada deploy para bustar cache antigo (v5: HTML da navegacao sem cache HTTP)
 const CORE_CACHE = `bombon-dp-${CACHE_VERSION}`;
 const IMAGE_CACHE = `bombon-dp-images-${CACHE_VERSION}`;
 
@@ -86,7 +86,13 @@ async function staleWhileRevalidate(request, cacheName) {
 async function networkFirst(request, cacheName) {
   const cache = await openCache(cacheName);
   try {
-    const networkResponse = await safeFetch(request);
+    // `cache: 'reload'`: ir a rede NAO basta — o cache HTTP do proprio browser
+    // responde antes dela. A regra `no-store` do vercel.json vale para
+    // `/index.html`, mas o usuario pede `/login`, `/dashboard`: esses caminhos
+    // vem do rewrite SEM header de cache, entao o browser guardava a casca de
+    // um deploy antigo e continuava pedindo assets com hash que nao existe
+    // mais. Com `reload` a revalidacao e obrigatoria.
+    const networkResponse = await safeFetch(new Request(request, { cache: 'reload' }));
     if (networkResponse.ok) {
       cache?.put(request, networkResponse.clone());
       return networkResponse;

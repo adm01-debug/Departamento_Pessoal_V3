@@ -175,6 +175,22 @@ const corpoNav = await (await networkFirstFn(new Request(urlNav), CORE))?.text()
 const vencuRede = corpoNav === 'NOVO';
 if (!vencuRede) failures++;
 results.push(`${vencuRede ? '✅' : '❌'} X navegação serve o HTML da rede, não o cacheado`);
+
+// Y: ir a rede nao basta — o cache HTTP do browser responde antes dela. O
+// caminho da SPA (`/login`) vem do rewrite sem header de cache, entao sem
+// `cache: 'reload'` o browser devolve a casca de um deploy antigo, que aponta
+// para assets cujo hash ja nao existe.
+let modoCache = null;
+sandbox.fetch = async (req) => {
+  modoCache = typeof req === 'string' ? null : req.cache;
+  return new Response('NOVO', { status: 200, headers: { 'content-type': 'text/html' } });
+};
+await networkFirstFn(new Request(urlNav), CORE);
+const forcouRevalidacao = modoCache === 'reload';
+if (!forcouRevalidacao) failures++;
+results.push(
+  `${forcouRevalidacao ? '✅' : '❌'} Y navegação ignora o cache HTTP do browser (cache=${modoCache ?? 'não definido'})`
+);
 sandbox.fetch = originalFetch;
 
 // T: ativação limpa somente caches deste app; caches de outras aplicações
@@ -192,6 +208,6 @@ results.push(`${scopedCleanupOk ? '✅' : '❌'} T limpeza de cache limitada ao 
 
 console.log(results.join('\n'));
 console.log(failures === 0
-  ? `\n✅ SW-TEST: ${scenarios.length + 5}/${scenarios.length + 5} cenários OK`
-  : `\n❌ SW-TEST: ${failures} falha(s) em ${scenarios.length + 5} cenários`);
+  ? `\n✅ SW-TEST: ${scenarios.length + 6}/${scenarios.length + 6} cenários OK`
+  : `\n❌ SW-TEST: ${failures} falha(s) em ${scenarios.length + 6} cenários`);
 process.exit(failures === 0 ? 0 : 1);
