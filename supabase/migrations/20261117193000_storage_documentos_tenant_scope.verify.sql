@@ -65,7 +65,7 @@ SELECT CASE WHEN (SELECT c.relrowsecurity FROM pg_class c JOIN pg_namespace n ON
                   WHERE n.nspname='storage' AND c.relname='objects')
   THEN 'ok' ELSE 'FALHOU: RLS desligada em storage.objects' END;
 
--- 10) a versao ficou no ledger
-SELECT CASE WHEN EXISTS (
-    SELECT 1 FROM supabase_migrations.schema_migrations WHERE version = '20261117193000'
-  ) THEN 'ok' ELSE 'FALHOU: versao ausente do ledger' END;
+-- A assercao de ledger NAO mora aqui: o `validate` roda em transacao com
+-- ROLLBACK e o ledger so e escrito no `apply`. Ver o cabecalho equivalente em
+-- 20261117190000_permissions_matriz_seed.verify.sql. A prova de ledger esta em
+-- scripts/canonical-invariants.sql, no modo `verify`.
