@@ -37,6 +37,25 @@ describe('vercel.json aplica os headers em produção', () => {
   });
 
   it('mantém o fallback de SPA via "rewrites"', () => {
-    expect(v.rewrites).toContainEqual({ source: '/(.*)', destination: '/index.html' });
+    const rewrites = v.rewrites as { source: string; destination: string }[];
+    const spa = rewrites.find((r) => r.destination === '/index.html');
+    expect(spa).toBeDefined();
+    // As rotas da SPA continuam caindo na index.html...
+    expect(new RegExp(`^${spa!.source}$`).test('/dashboard')).toBe(true);
+    expect(new RegExp(`^${spa!.source}$`).test('/colaboradores/123')).toBe(true);
+  });
+
+  it('não devolve a index.html para asset inexistente', () => {
+    // ...mas /assets/ fica FORA do rewrite: um arquivo com hash de um deploy
+    // antigo tem de dar 404. Servido como 200 text/html, o browser recusa o
+    // módulo por MIME e o app inteiro deixa de dar boot.
+    const rewrites = v.rewrites as { source: string; destination: string }[];
+    const spa = rewrites.find((r) => r.destination === '/index.html');
+    expect(new RegExp(`^${spa!.source}$`).test('/assets/index-ABC123.js')).toBe(false);
+  });
+
+  it('nginx.conf serve /assets/ com a mesma regra', () => {
+    const conf = readFileSync(join(root, 'nginx.conf'), 'utf8');
+    expect(conf).toMatch(/location\s+\/assets\/\s*\{[^}]*try_files\s+\$uri\s+=404;/);
   });
 });
