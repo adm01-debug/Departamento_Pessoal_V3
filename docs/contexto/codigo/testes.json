@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 748,
+ "total": 749,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 709
+  "unit": 710
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 625
+   "arquivos": 626
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -3214,6 +3214,15 @@
     "src/components/settings/SystemHealthTab.tsx"
    ],
    "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/SystemStatusCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 62,
+   "testa": [
+    "src/components/dashboard/SystemStatusCard.tsx"
+   ],
+   "casos": 5
   },
   {
    "arquivo": "src/components/__tests__/TelemetryCharts.test.tsx",
@@ -7065,6 +7074,7 @@
   "src/components/dashboard/MorningBriefing.tsx": 1,
   "src/components/dashboard/QuickActionsGrid.tsx": 2,
   "src/components/dashboard/SectionHeader.tsx": 2,
+  "src/components/dashboard/SystemStatusCard.tsx": 1,
   "src/components/dashboard/WorkforceHealthScore.tsx": 1,
   "src/components/departamentos/NovoDepartamentoDialog.tsx": 1,
   "src/components/descontos/AdiantamentosTable.tsx": 1,

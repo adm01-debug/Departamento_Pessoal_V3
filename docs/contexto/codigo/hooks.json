@@ -1627,7 +1627,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 122,
+   "usado_por": 123,
    "usado_por_arquivos": [
     "src/components/admissoes/AdmissoesKanban.tsx",
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
@@ -1639,6 +1639,7 @@
     "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
     "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
     "src/components/colaboradores/ColaboradorHistory.tsx",
+    "src/components/dashboard/SystemStatusCard.tsx",
     "src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
     "src/components/desligamentos/NovoDesligamentoDialog.tsx",
     "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
@@ -1657,8 +1658,7 @@
     "src/components/folha/RelatorioContabilDialog.tsx",
     "src/components/folha/SimuladorWhatIf.tsx",
     "src/components/integracoes/ConfigPanels.tsx",
-    "src/components/layout/EmpresaSwitcher.tsx",
-    "src/components/layout/Header.tsx"
+    "src/components/layout/EmpresaSwitcher.tsx"
    ],
    "coberto_por_testes": 6
   },
@@ -2836,8 +2836,9 @@
     "useEmpresas"
    ],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_arquivos": [
+    "src/components/dashboard/SystemStatusCard.tsx",
     "src/components/layout/Header.tsx"
    ],
    "coberto_por_testes": 1

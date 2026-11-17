@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8006fcf7e577a48f17ed6ee7fb9a89ea1b93963a",
+  "commit": "fec359d7f1d8d80c03fb4d6cf6413759085985fa",
   "branch": "main",
-  "data_commit": "2026-11-17T15:00:17-03:00",
+  "data_commit": "2026-11-17T15:00:29-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "fec359d",
+    "data": "2026-11-17",
+    "assunto": "feat(dashboard): resgata o SystemStatusCard da muri, com os 3 contratos corrigidos (#636)"
+   },
    {
     "sha": "8006fcf",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "182d5f9",
     "data": "2026-11-17",
     "assunto": "feat(recrutamento): resgata Recrutamento e seleção da muri preservando a máscara de PII e as 3 entregas da main (#610)"
-   },
-   {
-    "sha": "576c7f4",
-    "data": "2026-11-16",
-    "assunto": "feat(onboarding): resgata a Jornada de Onboarding e a Gestão de Kits da branch muri (#609)"
    }
   ],
-  "arquivos_mudados_7d": 1202,
+  "arquivos_mudados_7d": 1167,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 351
+    "mudancas": 352
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -180,11 +180,11 @@
     "mudancas": 38
    },
    {
-    "pasta": "src/components/admissoes",
-    "mudancas": 31
+    "pasta": "src/components/dashboard",
+    "mudancas": 32
    },
    {
-    "pasta": "src/components/dashboard",
+    "pasta": "src/components/admissoes",
     "mudancas": 31
    },
    {
@@ -207,11 +207,11 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 17
+    "mudancas": 16
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 16
+    "mudancas": 15
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 253
+    "commits": 254
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 14
+    "commits": 13
    },
    {
     "autor": "github-actions[bot]",
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3504,
-  "arquivos_codigo": 2030,
-  "linhas_codigo": 402832,
+  "arquivos_total": 3507,
+  "arquivos_codigo": 2033,
+  "linhas_codigo": 403359,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
-  "componentes": 624,
+  "componentes": 625,
   "hooks": 115,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 857,
   "cron_jobs": 41,
-  "testes": 748,
+  "testes": 749,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,12 +635,12 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 950,
-   "linhas": 171986
+   "arquivos": 952,
+   "linhas": 172299
   },
   "src/constants": {
-   "arquivos": 6,
-   "linhas": 607
+   "arquivos": 7,
+   "linhas": 813
   },
   "src/contexts": {
    "arquivos": 7,
@@ -676,7 +676,7 @@
   },
   "src/pages": {
    "arquivos": 134,
-   "linhas": 49203
+   "linhas": 49211
   },
   "src/providers": {
    "arquivos": 4,

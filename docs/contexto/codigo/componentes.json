@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 624,
+ "total": 625,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -2716,6 +2716,23 @@
    "edges": [],
    "usado_por": 0,
    "orfao": true
+  },
+  {
+   "arquivo": "src/components/dashboard/SystemStatusCard.tsx",
+   "exports": [
+    "SystemStatusCard"
+   ],
+   "export_default": null,
+   "linhas": 251,
+   "dominio": "components/dashboard",
+   "hooks_locais": [
+    "useEmpresaStore",
+    "useSystemHealth"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
   },
   {
    "arquivo": "src/components/dashboard/WorkforceHealthScore.tsx",
@@ -7109,7 +7126,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 356,
+   "usado_por": 357,
    "orfao": false
   },
   {
@@ -7144,7 +7161,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 278,
+   "usado_por": 279,
    "orfao": false
   },
   {
@@ -7504,7 +7521,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 4,
+   "usado_por": 5,
    "orfao": false
   },
   {
@@ -8968,7 +8985,7 @@
     "DashboardPage"
    ],
    "export_default": "DashboardPage",
-   "linhas": 457,
+   "linhas": 465,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

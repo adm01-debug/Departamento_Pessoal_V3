@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8006fcf7e577a48f17ed6ee7fb9a89ea1b93963a` (2026-11-17T15:00:17-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `fec359d7f1d8d80c03fb4d6cf6413759085985fa` (2026-11-17T15:00:29-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1897), SQL (923), Markdown (332), JavaScript (129), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1900), SQL (923), Markdown (332), JavaScript (129), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3504 |
-| arquivos_codigo | 2030 |
-| linhas_codigo | 402832 |
+| arquivos_total | 3507 |
+| arquivos_codigo | 2033 |
+| linhas_codigo | 403359 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
 | itens_menu | 97 |
 | modulos | 81 |
-| componentes | 624 |
+| componentes | 625 |
 | hooks | 115 |
 | edge_functions | 67 |
 | tabelas | 425 |
 | migrations | 857 |
 | cron_jobs | 41 |
-| testes | 748 |
+| testes | 749 |
 | workflows | 21 |
 | scripts | 132 |
 | docs_md | 332 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
-- componentes: src/components (506), src/pages (110), src/contexts (3)
+- componentes: src/components (507), src/pages (110), src/contexts (3)
 - hooks: src/hooks (96), src/components (9), src/contexts (4)
 - servicos_logica: src/services (94), src/utils (35), src/schemas (25)
-- testes: co-localizado (__tests__) (625), co-localizado (*.test) (70), e2e/ (28)
+- testes: co-localizado (__tests__) (626), co-localizado (*.test) (70), e2e/ (28)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -77,7 +77,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/avaliacao | 0 | 0 | 83 | 5 | 0 | 11 |
 | components/colaborador-detalhes | 0 | 0 | 55 | 154 | 8 | 170 |
 | components/colaboradores | 0 | 0 | 8 | 9 | 0 | 3 |
-| components/dashboard | 0 | 0 | 16 | 8 | 24 | 59 |
+| components/dashboard | 0 | 0 | 17 | 9 | 24 | 60 |
 | components/descontos | 0 | 0 | 5 | 0 | 0 | 1 |
 | components/desligamentos | 0 | 0 | 15 | 4 | 1 | 6 |
 | components/epis | 0 | 0 | 5 | 0 | 0 | 0 |
@@ -396,16 +396,16 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 26921 nós · 60728 arestas · 2269 comunidades · grafo do commit `8006fcf7`
-- comunidades maiores: cn (496), 20260831_corrected_public.sql (493), canonical_schema.sql (475), button.tsx (424), @tanstack/react-query (398), lucide-react (362), vitest (359), useEmpresas (310), AfastamentosPage.tsx (166), react (164), "public"."empresas" (159), App.tsx (157)
+- 26928 nós · 60767 arestas · 2370 comunidades · grafo do commit `fec359d7`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), cn (422), lucide-react (418), react (374), useEmpresas (369), @tanstack/react-query (356), App.tsx (313), vitest (300), contract.ts (175), ref_node_fs (161), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - inventario/estado/rotas.json (21)
 - .github/workflows/canonical-migrations.yml (20)
-- package.json (17)
-- package-lock.json (16)
+- package.json (16)
+- package-lock.json (15)
 - scripts/canonical-invariants.sql (10)
 - scripts/sync/autocommit-local.sh (10)
 - PENDENCIAS.md (9)
@@ -650,6 +650,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `fec359d` feat(dashboard): resgata o SystemStatusCard da muri, com os 3 contratos corrigidos (#636)
 - 2026-11-17 `8006fcf` feat(colaboradores): adota a tabela densa da muri, com máscara de PII (#638)
 - 2026-11-17 `a588982` fix(colaboradores): liga o selo de recontratacao, que estava invisivel (#635)
 - 2026-11-17 `fabf6c7` test: resgata da muri os 5 testes que a main não tinha e passam como está (#630)
@@ -664,7 +665,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `7381b27` fix(pwa): navegacao ignorava o cache HTTP do browser e servia a casca antiga (#624)
 - 2026-11-17 `93f1a5f` feat(dashboard): resgata da muri o MetricCard com tone, tooltip e variante compacta (#618)
 - 2026-11-17 `b25c46e` feat(desligamentos): drawer de rescisão com a UI da muri e o cálculo da main (#621)
-- 2026-11-17 `143c729` fix(pwa): service worker servia HTML no lugar dos assets e travava o app (#622)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

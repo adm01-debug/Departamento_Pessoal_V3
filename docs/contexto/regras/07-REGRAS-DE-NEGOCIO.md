@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8006fcf7e5` · branch `main` · 2026-11-17 18:01 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fec359d7f1` · branch `main` · 2026-11-17 18:06 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5215,6 +5215,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | O provedor não confirmou a entrega dos alertas. | `src/components/dashboard/MorningBriefing.tsx` |
 | Selecione uma empresa antes de disparar alertas. | `src/components/dashboard/MorningBriefing.tsx` |
 | Selecione uma empresa para carregar o briefing. | `src/components/dashboard/MorningBriefing.tsx` |
+| Selecione uma empresa antes de disparar alertas. | `src/components/dashboard/SystemStatusCard.tsx` |
 | Informe o nome do departamento | `src/components/departamentos/NovoDepartamentoDialog.tsx` |
 | Não é possível inativar  | `src/components/departamentos/NovoDepartamentoDialog.tsx` |
 | Salário base e data de desligamento são obrigatórios para o cálculo | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
@@ -5341,8 +5342,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Limite de 50 nós atingido | `src/components/workflows/WorkflowDesigner.tsx` |
 | O fluxo contém um ciclo — aprovações precisam formar uma sequência sem retorno. | `src/components/workflows/ordenarEtapas.ts` |
 | Senha fraca: ${pwCheck.errors.join( | `src/contexts/AuthContext.tsx` |
-| VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY são obrigatórias | `src/contexts/AuthContext.tsx` |
-| … +660 linhas — lista completa em `context.json` | |
+| … +661 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5413,7 +5413,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9107 testes em 705 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9113 testes em 706 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5717,7 +5717,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/avisoFeriasPDF.test.ts` | 10 | gerarAvisoFeriasPDF · returns a Blob · returns a Uint8Array bytes · returns a sha256 hash string … |
 | `src/utils/__tests__/calculoFerias.test.ts` | 10 | calculoFerias · deve calcular férias simples (30 dias) sem abono · deve calcular férias com abono pecuniário (20 dias férias + 10 dias abono) · deve limitar o abono pecuniário a no máximo 10 dias … |
 | `supabase/functions/_shared/idempotency.test.ts` | 10 | idempotency: primeira chamada retorna reason=NEW e id válido · idempotency: 20 requisições concorrentes com MESMA key produzem exatamente 1 NEW · idempotency: reenvio após conclusão retorna REPLAY com mesmo body · idempotency: conclusão 204 sem body continua sendo replay de sucesso … |
-| … +405 linhas — lista completa em `context.json` | | |
+| … +406 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6085,4 +6085,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * Instante do prazo, no fim do dia. Aceita `data_limite` (coluna real) e | `src/components/avaliacao/metasComum.ts` |
 | * ── REGRAS DE NEGÓCIO APLICADAS ──────────────────────────────────────────── | `src/components/avaliacao/motorAvaliacao360.ts` |
 | • POTENCIAL = 100% gestor, com VALIDAÇÃO OBRIGATÓRIA do RH vinculada à versão | `src/components/avaliacao/motorAvaliacao360.ts` |
-| … +874 linhas — lista completa em `context.json` | |
+| … +879 linhas — lista completa em `context.json` | |

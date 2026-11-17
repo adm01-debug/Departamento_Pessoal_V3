@@ -1784,6 +1784,17 @@
   "src/components/dashboard/SectionHeader.tsx": [
    "src/lib/utils.ts"
   ],
+  "src/components/dashboard/SystemStatusCard.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/info-tooltip.tsx",
+   "src/constants/tooltips.ts",
+   "src/hooks/useEmpresas.ts",
+   "src/hooks/useSystemHealth.ts",
+   "src/lib/utils.ts",
+   "src/services/edgeFunctionsService.ts",
+   "src/utils/safeError.ts"
+  ],
   "src/components/dashboard/WorkforceHealthScore.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/card.tsx",
@@ -5797,6 +5808,7 @@
    "src/components/dashboard/MetricCard.tsx",
    "src/components/dashboard/MorningBriefing.tsx",
    "src/components/dashboard/QuickActionsGrid.tsx",
+   "src/components/dashboard/SystemStatusCard.tsx",
    "src/components/dashboard/WorkforceHealthScore.tsx",
    "src/components/ui/card.tsx",
    "src/components/ui/module-skeleton.tsx",

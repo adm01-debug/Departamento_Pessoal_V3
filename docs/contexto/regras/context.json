@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "8006fcf7e577a48f17ed6ee7fb9a89ea1b93963a",
+  "sha": "fec359d7f1d8d80c03fb4d6cf6413759085985fa",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 18:01 UTC",
-  "files_total": 3525,
-  "code_files": 2951,
-  "code_lines": 467789
+  "generated_at": "2026-11-17 18:06 UTC",
+  "files_total": 3528,
+  "code_files": 2954,
+  "code_lines": 468316
  },
  "version": "1.3.2",
- "facts_hash": "76b6e34dd9a05597",
+ "facts_hash": "7d135e231285e55b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,9 +384,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 978,
+   ".tsx": 980,
    ".sql": 923,
-   ".ts": 919,
+   ".ts": 920,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -96931,7 +96931,8 @@
      "versao_banco"
     ],
     "invokes_transitive": [
-     "calcular-folha"
+     "calcular-folha",
+     "metricas"
     ],
     "rpc_transitive": [
      "admin_associar_usuario_empresa",
@@ -96941,7 +96942,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 63
+    "deps_count": 66
    }
   ],
   "edge_functions": [
@@ -99967,7 +99968,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 950,
+  "components_count": 952,
   "hooks": [
    {
     "name": "useContacts",
@@ -101550,8 +101551,8 @@
   },
   {
    "module": "src/components",
-   "files": 950,
-   "lines": 171986,
+   "files": 952,
+   "lines": 172299,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101783,17 +101784,19 @@
   },
   {
    "module": "src/constants",
-   "files": 6,
-   "lines": 607,
+   "files": 7,
+   "lines": 813,
    "tables": [],
    "exports": [
     "regimes.ts: RegimeTributario, RegimeInfo, REGIMES_TRIBUTARIOS, REGIMES_OPTIONS, getRegimeInfo",
     "rubricas.ts: TipoRubrica, RubricaPadrao, RUBRICAS_PADRAO",
+    "tooltips.ts: dashboardTooltips",
     "workflow-status.ts: FERIAS_STATUS, FeriasStatus, FERIAS_STATUS_LABELS, CICLO_AVALIACAO_STATUS, CicloAvaliacaoStatus, CICLO_AVALIACAO_TIPO"
    ],
    "docs": [
     "regimes.ts: Constantes e helpers para regimes tributários brasileiros. Fonte legal: - Simples Nacional: LC 123/2006 (alíquotas variáveis por faixa de receita) - Lucro Presumido: Lei 9.249/1995 - Lucro Real: Lei 8.981/1995 - MEI: LC 128/2008 Para encargos patronais sobre folha: - Simples Nacional: CPP normalment …",
     "rubricas.ts: Rubricas padrão de folha de pagamento (conforme eSocial). Centralizado para sincronizar Frontend, Backend e Migrations.",
+    "tooltips.ts: Textos de todos os tooltips informativos do dashboard, centralizados para facilitar manutenção/tradução.",
     "workflow-status.ts: @fileoverview Constantes canônicas de status/tipo — fonte única de verdade espelhando os CHECK constraints aplicados no banco de dados (Melhoria #19). IMPORTANTE: Qualquer alteração nestes valores DEVE ser acompanhada de migração SQL correspondente atualizando o CHECK constraint da tabela relacionad …",
     "workflow-status.test.ts: @fileoverview Testes de sanidade — garantem que as constantes de workflow-status permanecem sincronizadas com os CHECK constraints do banco (Melhoria #19). Se um valor for adicionado/removido aqui sem migração SQL correspondente, este teste passará mas o INSERT falhará em runtime — por isso os teste …"
    ],
@@ -101804,6 +101807,7 @@
    "file_list": [
     "src/constants/regimes.ts",
     "src/constants/rubricas.ts",
+    "src/constants/tooltips.ts",
     "src/constants/workflow-status.ts",
     "src/constants/__tests__/regimes.test.ts",
     "src/constants/__tests__/rubricas.test.ts",
@@ -102237,7 +102241,7 @@
   {
    "module": "src/pages",
    "files": 134,
-   "lines": 49203,
+   "lines": 49211,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -113984,6 +113988,10 @@
     "msg": "Selecione uma empresa para carregar o briefing."
    },
    {
+    "file": "src/components/dashboard/SystemStatusCard.tsx",
+    "msg": "Selecione uma empresa antes de disparar alertas."
+   },
+   {
     "file": "src/components/departamentos/NovoDepartamentoDialog.tsx",
     "msg": "Informe o nome do departamento"
    },
@@ -119758,6 +119766,26 @@
    {
     "file": "src/components/workflows/WorkflowDesigner.tsx",
     "text": "Validation summary */}"
+   },
+   {
+    "file": "src/constants/tooltips.ts",
+    "text": "Sobrevivem só os tooltips com dado calculado/threshold de negócio específico deste"
+   },
+   {
+    "file": "src/constants/tooltips.ts",
+    "text": "Somente os 2 tooltips considerados essenciais (dado calculado/thresholds de negócio,"
+   },
+   {
+    "file": "src/constants/tooltips.ts",
+    "text": "Só os 3 tooltips com regra/threshold de negócio próprio deste dashboard"
+   },
+   {
+    "file": "src/constants/tooltips.ts",
+    "text": "experiente porque a aba lida com regras de negócio específicas deste sistema"
+   },
+   {
+    "file": "src/constants/tooltips.ts",
+    "text": "regras/thresholds específicos deste sistema (prazo de 2 anos p/ risco"
    },
    {
     "file": "src/constants/workflow-status.ts",
@@ -149190,6 +149218,42 @@
     "kind": "filtra"
    },
    {
+    "file": "src/components/dashboard/SystemStatusCard.tsx",
+    "field": "status",
+    "value": "online",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/dashboard/SystemStatusCard.tsx",
+    "field": "status",
+    "value": "slow",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/dashboard/SystemStatusCard.tsx",
+    "field": "status",
+    "value": "online",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/dashboard/SystemStatusCard.tsx",
+    "field": "status",
+    "value": "slow",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/dashboard/SystemStatusCard.tsx",
+    "field": "status",
+    "value": "offline",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/dashboard/SystemStatusCard.tsx",
+    "field": "status",
+    "value": "slow",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/dashboard/WorkforceHealthScore.tsx",
     "field": "status",
     "value": "excellent",
@@ -177818,6 +177882,30 @@
    {
     "file": "src/components/__tests__/SystemHealthTab.test.tsx",
     "name": "shows health results after clicking Health Check"
+   },
+   {
+    "file": "src/components/__tests__/SystemStatusCard.test.tsx",
+    "name": "SystemStatusCard — contratos do useSystemHealth"
+   },
+   {
+    "file": "src/components/__tests__/SystemStatusCard.test.tsx",
+    "name": "lê avg_latency_ms (o nome novo) para a latência da API"
+   },
+   {
+    "file": "src/components/__tests__/SystemStatusCard.test.tsx",
+    "name": "lê success_rate_pct (o nome novo) para a taxa de sucesso"
+   },
+   {
+    "file": "src/components/__tests__/SystemStatusCard.test.tsx",
+    "name": "abaixo de 90% a taxa de sucesso é sinalizada como alerta"
+   },
+   {
+    "file": "src/components/__tests__/SystemStatusCard.test.tsx",
+    "name": "sem métricas, mostra travessão em vez de valor fabricado"
+   },
+   {
+    "file": "src/components/__tests__/SystemStatusCard.test.tsx",
+    "name": "campo nulo não vira NaN nem 0 — continua travessão"
    },
    {
     "file": "src/components/__tests__/TelemetryCharts.test.tsx",
@@ -229125,17 +229213,20 @@
      ],
      "offline": [
       "compara:src/components/admin/HealthTrendCard.tsx",
+      "compara:src/components/dashboard/SystemStatusCard.tsx",
       "compara:src/hooks/useSystemHealthHistory.ts",
       "escreve:src/hooks/useSystemHealthHistory.ts"
      ],
      "online": [
       "compara:src/components/admin/HealthTrendCard.tsx",
+      "compara:src/components/dashboard/SystemStatusCard.tsx",
       "compara:src/components/layout/Header.tsx",
       "compara:src/pages/AdminDiagnosticoMigracaoPage.tsx",
       "escreve:src/hooks/useSystemHealthHistory.ts"
      ],
      "slow": [
       "compara:src/components/admin/HealthTrendCard.tsx",
+      "compara:src/components/dashboard/SystemStatusCard.tsx",
       "compara:src/components/layout/Header.tsx",
       "compara:src/pages/AdminDiagnosticoMigracaoPage.tsx",
       "compara:supabase/functions/external-db-bridge/index.ts",
@@ -254249,6 +254340,7 @@
     "msg": "valor `offline` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/components/admin/HealthTrendCard.tsx",
+     "compara:src/components/dashboard/SystemStatusCard.tsx",
      "compara:src/hooks/useSystemHealthHistory.ts",
      "escreve:src/hooks/useSystemHealthHistory.ts"
     ]
@@ -254258,9 +254350,9 @@
     "msg": "valor `online` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/components/admin/HealthTrendCard.tsx",
+     "compara:src/components/dashboard/SystemStatusCard.tsx",
      "compara:src/components/layout/Header.tsx",
-     "compara:src/pages/AdminDiagnosticoMigracaoPage.tsx",
-     "escreve:src/hooks/useSystemHealthHistory.ts"
+     "compara:src/pages/AdminDiagnosticoMigracaoPage.tsx"
     ]
    },
    {
@@ -254268,9 +254360,9 @@
     "msg": "valor `slow` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/components/admin/HealthTrendCard.tsx",
+     "compara:src/components/dashboard/SystemStatusCard.tsx",
      "compara:src/components/layout/Header.tsx",
-     "compara:src/pages/AdminDiagnosticoMigracaoPage.tsx",
-     "compara:supabase/functions/external-db-bridge/index.ts"
+     "compara:src/pages/AdminDiagnosticoMigracaoPage.tsx"
     ]
    },
    {
@@ -268247,6 +268339,19 @@
     "shows health results after clicking Health Check"
    ]
   },
+  "src/components/__tests__/SystemStatusCard.test.tsx": {
+   "path": "src/components/__tests__/SystemStatusCard.test.tsx",
+   "lines": 62,
+   "is_test": true,
+   "tests": [
+    "SystemStatusCard — contratos do useSystemHealth",
+    "lê avg_latency_ms (o nome novo) para a latência da API",
+    "lê success_rate_pct (o nome novo) para a taxa de sucesso",
+    "abaixo de 90% a taxa de sucesso é sinalizada como alerta",
+    "sem métricas, mostra travessão em vez de valor fabricado",
+    "campo nulo não vira NaN nem 0 — continua travessão"
+   ]
+  },
   "src/components/__tests__/TelemetryCharts.test.tsx": {
    "path": "src/components/__tests__/TelemetryCharts.test.tsx",
    "lines": 83,
@@ -274496,6 +274601,51 @@
    "lines": 41,
    "exports": [
     "function SectionHeader"
+   ]
+  },
+  "src/components/dashboard/SystemStatusCard.tsx": {
+   "path": "src/components/dashboard/SystemStatusCard.tsx",
+   "lines": 251,
+   "exports": [
+    "function SystemStatusCard"
+   ],
+   "navigates": [
+    "/admin/telemetria"
+   ],
+   "errors": [
+    "Selecione uma empresa antes de disparar alertas."
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "online",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "slow",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "online",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "slow",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "offline",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "slow",
+     "kind": "compara"
+    }
    ]
   },
   "src/components/dashboard/WorkforceHealthScore.tsx": {
@@ -284788,6 +284938,21 @@
    ],
    "doc": "Rubricas padrão de folha de pagamento (conforme eSocial). Centralizado para sincronizar Frontend, Backend e Migrations."
   },
+  "src/constants/tooltips.ts": {
+   "path": "src/constants/tooltips.ts",
+   "lines": 206,
+   "exports": [
+    "const dashboardTooltips"
+   ],
+   "rule_comments": [
+    "Sobrevivem só os tooltips com dado calculado/threshold de negócio específico deste",
+    "Somente os 2 tooltips considerados essenciais (dado calculado/thresholds de negócio,",
+    "Só os 3 tooltips com regra/threshold de negócio próprio deste dashboard",
+    "experiente porque a aba lida com regras de negócio específicas deste sistema",
+    "regras/thresholds específicos deste sistema (prazo de 2 anos p/ risco"
+   ],
+   "doc": "Textos de todos os tooltips informativos do dashboard, centralizados para facilitar manutenção/tradução."
+  },
   "src/constants/workflow-status.ts": {
    "path": "src/constants/workflow-status.ts",
    "lines": 259,
@@ -294047,7 +294212,7 @@
   },
   "src/pages/DashboardPage.tsx": {
    "path": "src/pages/DashboardPage.tsx",
-   "lines": 457,
+   "lines": 465,
    "exports": [
     "function DashboardPage"
    ],
@@ -324115,10 +324280,23 @@
   }
  },
  "git": {
-  "sha": "8006fcf7e577a48f17ed6ee7fb9a89ea1b93963a",
+  "sha": "fec359d7f1d8d80c03fb4d6cf6413759085985fa",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "fec359d",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(dashboard): resgata o SystemStatusCard da muri, com os 3 contratos corrigidos (#636)",
+    "files": [
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/SystemStatusCard.test.tsx",
+     "src/components/dashboard/SystemStatusCard.tsx",
+     "src/constants/tooltips.ts",
+     "src/pages/DashboardPage.tsx"
+    ]
+   },
    {
     "sha": "8006fcf",
     "date": "2026-11-17",
@@ -324804,81 +324982,12 @@
      "src/types/entities.ts",
      "src/utils/documentFileType.ts"
     ]
-   },
-   {
-    "sha": "935356c",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "feat(treinamentos): recupera a camada de aplicação das capas de treinamento (branch muri) (#593)",
-    "files": [
-     ".env.example",
-     "deno.lock",
-     "e2e/authenticated/training-images-homolog.spec.ts",
-     "scripts/automation.config.json",
-     "scripts/training-images-homolog/README.md",
-     "scripts/training-images-homolog/homolog.mjs",
-     "scripts/training-images-homolog/scheduler-disable.sql",
-     "scripts/training-images-homolog/scheduler-enable.sql",
-     "scripts/training-images-homolog/scheduler-status.sql",
-     "scripts/training-images-local/autoqueue.test.sql",
-     "scripts/training-images-local/bootstrap.sql",
-     "scripts/training-images-local/claim.test.sql",
-     "scripts/training-images-local/concurrency-autoqueue.sql",
-     "scripts/training-images-local/concurrency-claim.sql",
-     "scripts/training-images-local/concurrency-dual.sql",
-     "scripts/training-images-local/concurrency-rate-limit.sql",
-     "scripts/training-images-local/edge-http-test.mjs",
-     "scripts/training-images-local/pipeline-e2e.ts",
-     "scripts/training-images-local/rate-limit.test.sql",
-     "scripts/training-images-local/rls.test.sql",
-     "scripts/training-images-local/run-tests.mjs",
-     "scripts/training-images-local/seed.sql",
-     "src/hooks/useTrainingImages.ts",
-     "src/services/trainingImages/__tests__/allowlist.test.ts",
-     "src/services/trainingImages/__tests__/briefing.test.ts",
-     "src/services/trainingImages/__tests__/guardrails.test.ts",
-     "src/services/trainingImages/__tests__/hash.test.ts",
-     "src/services/trainingImages/__tests__/migration.test.ts",
-     "src/services/trainingImages/__tests__/openaiProvider.test.ts",
-     "src/services/trainingImages/__tests__/parity.test.ts",
-     "src/services/trainingImages/__tests__/pipeline.test.ts",
-     "src/services/trainingImages/__tests__/trainingImages.test.ts",
-     "src/services/trainingImages/briefing.ts",
-     "src/services/trainingImages/config.ts",
-     "src/services/trainingImages/hash.ts",
-     "src/services/trainingImages/index.ts",
-     "src/services/trainingImages/paths.ts",
-     "src/services/trainingImages/provider.ts",
-     "src/services/trainingImages/request.ts",
-     "src/services/trainingImages/service.ts",
-     "src/services/trainingImages/storage.ts",
-     "src/services/trainingImages/types.ts",
-     "supabase/functions/_shared/rateLimit.ts",
-     "supabase/functions/_shared/trainingImages/allowlist.ts",
-     "supabase/functions/_shared/trainingImages/briefing.ts",
-     "supabase/functions/_shared/trainingImages/estadoCapa.ts",
-     "supabase/functions/_shared/trainingImages/hash.ts",
-     "supabase/functions/_shared/trainingImages/imageValidation.ts",
-     "supabase/functions/_shared/trainingImages/openaiProvider.ts",
-     "supabase/functions/_shared/trainingImages/pipeline.ts",
-     "supabase/functions/_shared/trainingImages/quotas.ts",
-     "supabase/functions/_shared/trainingImages/simulatedProvider.ts",
-     "supabase/functions/_shared/trainingImages/storagePath.ts",
-     "supabase/functions/_shared/trainingImages/supabaseDeps.ts",
-     "supabase/functions/_shared/trainingImages/types.ts",
-     "supabase/functions/_shared/trainingImages/uuid.ts",
-     "supabase/functions/external-db-bridge/tableCatalog.ts",
-     "supabase/functions/training-image-dispatch/README.md",
-     "supabase/functions/training-image-dispatch/index.ts",
-     "supabase/functions/training-image-generate/README.md",
-     "supabase/functions/training-image-generate/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    13
+    14
    ],
    [
     "inventario/estado/rotas.json",

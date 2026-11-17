@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8006fcf7e5` · branch `main` · 2026-11-17 18:01 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fec359d7f1` · branch `main` · 2026-11-17 18:06 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -346,9 +346,9 @@
 
 | Tipo | Problema | Onde |
 |---|---|---|
-| status | valor `offline` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/admin/HealthTrendCard.tsx`<br>`compara:src/hooks/useSystemHealthHistory.ts`<br>`escreve:src/hooks/useSystemHealthHistory.ts` |
-| status | valor `online` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/admin/HealthTrendCard.tsx`<br>`compara:src/components/layout/Header.tsx`<br>`compara:src/pages/AdminDiagnosticoMigracaoPage.tsx`<br>`escreve:src/hooks/useSystemHealthHistory.ts` |
-| status | valor `slow` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/admin/HealthTrendCard.tsx`<br>`compara:src/components/layout/Header.tsx`<br>`compara:src/pages/AdminDiagnosticoMigracaoPage.tsx`<br>`compara:supabase/functions/external-db-bridge/index.ts` |
+| status | valor `offline` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/admin/HealthTrendCard.tsx`<br>`compara:src/components/dashboard/SystemStatusCard.tsx`<br>`compara:src/hooks/useSystemHealthHistory.ts`<br>`escreve:src/hooks/useSystemHealthHistory.ts` |
+| status | valor `online` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/admin/HealthTrendCard.tsx`<br>`compara:src/components/dashboard/SystemStatusCard.tsx`<br>`compara:src/components/layout/Header.tsx`<br>`compara:src/pages/AdminDiagnosticoMigracaoPage.tsx` |
+| status | valor `slow` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/admin/HealthTrendCard.tsx`<br>`compara:src/components/dashboard/SystemStatusCard.tsx`<br>`compara:src/components/layout/Header.tsx`<br>`compara:src/pages/AdminDiagnosticoMigracaoPage.tsx` |
 | status | valor `ativos` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/admissoes/GestaoKits.tsx` |
 | status | valor `inativos` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/admissoes/GestaoKits.tsx` |
 | status | valor `aprovada_gestor` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/FeedbackAcoesRodape.tsx`<br>`compara:src/components/avaliacao/FeedbacksTab.tsx`<br>`compara:src/components/avaliacao/aprovacaoGestor.ts` |

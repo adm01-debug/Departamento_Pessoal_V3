@@ -10678,6 +10678,7 @@
     "useReducedMotion",
     "useRef",
     "useState",
+    "useSystemHealth",
     "useSystemHealthHistory",
     "useToast"
    ],
@@ -10690,6 +10691,7 @@
     "usePontoMelhorado",
     "useRealTimeSubscription",
     "useRealtimeDashboard",
+    "useSystemHealth",
     "useSystemHealthHistory",
     "useToast"
    ],
@@ -10798,7 +10800,7 @@
    ],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 75
+   "arquivos_puxados": 78
   },
   {
    "protegida": true,
