@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f75996121f` · branch `main` · 2026-11-17 23:51 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `94c16ea1fc` · branch `main` · 2026-11-17 23:53 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 314 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 315 arquivo(s)
 
 - `docs/ninebox-pre-aplicacao.sql`
 - `docs/ninebox-verificacao-truncate.sql`
@@ -472,7 +472,7 @@
 - `supabase/migrations/20260712215808_8c16ff4b-eb80-4fbb-a8c6-c15c62ed93c7.sql`
 - `supabase/migrations/20260712215942_0c45a861-8424-4178-936a-cae1ebe129b2.sql`
 - `supabase/migrations/20260712220248_803bf461-91a3-4d53-abd6-41fb5b5f0892.sql`
-- … +164 (lista completa em `context.json`)
+- … +165 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -851,7 +851,7 @@ Middleware matcher (Next.js): nenhum
 | grant | ci_auditor | execute | `extensions` |
 | grant | ci_auditor | select | `cron.job` |
 | grant | service_role | all | `logs_sistema`, `login_lockouts`, `idempotency_keys`, `folha_lock_conflicts`, `audit_log_unified`, `audit_log_unified_archive`, `rate_limits`, `rate_limit_logs`, `rate_limit_config`, `despesas_aprovacoes_log`, `contabilidade_contatos`, `contabilidade_threads`, `contabilidade_mensagens`, `holerite_distribuicoes`, `afdt_importacoes` … +56 |
-| grant | service_role | execute | `detectar_fraude_ponto`, `check_brute_force`, `check_rate_limit`, `is_ip_blocked`, `is_ip_whitelisted`, `is_country_allowed`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `purge_expired_idempotency_keys`, `check_idempotency_anomalies`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash` … +108 |
+| grant | service_role | execute | `detectar_fraude_ponto`, `check_brute_force`, `check_rate_limit`, `is_ip_blocked`, `is_ip_whitelisted`, `is_country_allowed`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `purge_expired_idempotency_keys`, `check_idempotency_anomalies`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash` … +110 |
 | grant | service_role | select | `vw_folha_compliance`, `v_idempotency_metrics`, `feedbacks_360_consolidacoes`, `feedbacks_360_aprovacoes_gestor`, `health_checks`, `mv_folha_summary`, `health_checks` |
 | grant | service_role | select, insert, delete | `pii_access_logs`, `pii_access_alerts` |
 | revoke | PUBLIC | all | `_is_admin_bypass`, `_purge_audit_log_internal`, `_scan_status_anomalies_global`, `admin_list_security_definer_rpcs`, `admin_list_user_roles`, `admin_set_user_role`, `anonimizar_dados_pessoais`, `aplicar_medida_folha_ponto`, `aprovar_despesa`, `assinar_aviso_ferias`, `assinar_desligamento`, `assinar_espelho_ponto`, `associar_pis_colaborador_afdt`, `auto_vincular_admins_empresa`, `check_idempotency_anomalies` … +319 |
@@ -859,7 +859,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | PUBLIC, anon | all | `get_idempotency_health`, `check_idempotency_anomalies`, `v_slow_queries_top50`, `get_query_telemetry`, `get_dlq_stats`, `get_audit_trail_by_user`, `get_audit_trail_by_entity`, `search_audit_unified`, `rate_limit_logs`, `rate_limit_config`, `purge_audit_log_old`, `resolve_security_alert`, `refresh_dashboard_mvs`, `mv_status_change_daily`, `mv_anomalies_hourly` … +108 |
 | revoke | PUBLIC, anon | execute | `get_cron_jobs_health`, `get_security_alerts_summary`, `resolve_security_alert`, `pode_gerir_rh`, `pode_gerir_pessoas`, `sou_o_colaborador`, `empresa_do_colaborador`, `is_admin`, `sou_o_colaborador` |
 | revoke | PUBLIC, anon | select | `v_system_health` |
-| revoke | PUBLIC, anon, authenticated | all | `enforce_batida_ponto_hash`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash`, `enforce_desligamento_hash`, `enforce_ferias_hash`, `enforce_medida_disciplinar_hash`, `enforce_aso_hash`, `enforce_cat_hash`, `enforce_epi_entrega_hash`, `enforce_documento_assinatura_hash`, `enforce_afastamento_hash`, `purge_old_lock_conflicts` … +75 |
+| revoke | PUBLIC, anon, authenticated | all | `enforce_batida_ponto_hash`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash`, `enforce_desligamento_hash`, `enforce_ferias_hash`, `enforce_medida_disciplinar_hash`, `enforce_aso_hash`, `enforce_cat_hash`, `enforce_epi_entrega_hash`, `enforce_documento_assinatura_hash`, `enforce_afastamento_hash`, `purge_old_lock_conflicts` … +77 |
 | revoke | PUBLIC, anon, authenticated | execute | `check_processamento_timeout`, `fn_alert_severe_disciplinary_measure`, `fn_audit_biometric_failure`, `fn_auto_generate_training_certificate`, `fn_consolidar_batidas`, `fn_create_default_onboarding_tasks`, `fn_enqueue_notification`, `fn_trigger_whatsapp_on_event`, `fn_update_admissao_checklist`, `fn_update_candidatura_history`, `fn_workflow_admissao_auto`, `handle_new_user`, `handle_new_user_role`, `log_audit_change`, `log_esocial_transmission` … +42 |
 | revoke | PUBLIC, anon, authenticated | select | `v_audit_trail`, `mv_folha_summary`, `health_checks` |
 | revoke | anon | all | `detectar_fraude_ponto`, `contrato_estender_expiracao`, `pcs_pode_gerir_plano`, `pcs_pode_ver_plano`, `pcs_gerar_grades`, `pcs_enquadramento`, `pcs_simular_impacto`, `medidas_ciencia_tokens`, `audit_log`, `folha_auditoria`, `sst_regimento_interno`, `feedbacks_360_operacoes`, `feedbacks_360_validacoes_potencial`, `provisoes_competencia_tributaria` |

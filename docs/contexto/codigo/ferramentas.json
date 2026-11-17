@@ -3,9 +3,9 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1927)",
-   "SQL (927)",
-   "Markdown (333)",
+   "TypeScript (1932)",
+   "SQL (935)",
+   "Markdown (334)",
    "JavaScript (134)",
    "JSON (63)",
    "Shell (57)",
@@ -1546,7 +1546,7 @@
  "docs_em_subpastas": [
   {
    "pasta": "docs/auditoria",
-   "arquivos_md": 62
+   "arquivos_md": 63
   },
   {
    "pasta": "docs/_archive",
@@ -2142,11 +2142,11 @@
     "ocorrencias": 13
    },
    {
-    "papel": "progressbar",
-    "ocorrencias": 8
+    "papel": "tablist",
+    "ocorrencias": 9
    },
    {
-    "papel": "tablist",
+    "papel": "progressbar",
     "ocorrencias": 8
    },
    {
@@ -2182,6 +2182,10 @@
     "ocorrencias": 3
    },
    {
+    "papel": "combobox",
+    "ocorrencias": 3
+   },
+   {
     "papel": "list",
     "ocorrencias": 3
    },
@@ -2196,10 +2200,6 @@
    {
     "papel": "table",
     "ocorrencias": 3
-   },
-   {
-    "papel": "combobox",
-    "ocorrencias": 2
    },
    {
     "papel": "grid",

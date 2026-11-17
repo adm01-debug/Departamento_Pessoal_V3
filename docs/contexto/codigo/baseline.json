@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f75996121f1879fd65434a9a1992d13b844eec7b",
+  "commit": "94c16ea1fc64e6cf7d29d0a5154fda1ba3f818fa",
   "branch": "main",
-  "data_commit": "2026-11-17T20:50:46-03:00",
+  "data_commit": "2026-11-17T20:51:00-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "94c16ea",
+    "data": "2026-11-17",
+    "assunto": "chore(migrations): documenta no repo as 8 DDL que só existiam no ledger (#656)"
+   },
+   {
+    "sha": "9fe99bd",
+    "data": "2026-11-17",
+    "assunto": "test(e2e): resgata da muri os 5 especs de navegador (#661)"
+   },
    {
     "sha": "f759961",
     "data": "2026-11-17",
@@ -121,19 +131,9 @@
     "sha": "3c53e8b",
     "data": "2026-11-17",
     "assunto": "infra(migrations): troca o LOTE ATUAL para as 4 migrations da #628 (#637)"
-   },
-   {
-    "sha": "cbe13fb",
-    "data": "2026-11-17",
-    "assunto": "feat(colaboradores): liga os chips de filtro ativo resgatados da muri (#640)"
-   },
-   {
-    "sha": "6695a60",
-    "data": "2026-11-17",
-    "assunto": "feat(colaborador): resgata o painel de Pendências da muri, tipado (#639)"
    }
   ],
-  "arquivos_mudados_7d": 1094,
+  "arquivos_mudados_7d": 1107,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 104
+    "mudancas": 103
    },
    {
     "pasta": "src/components/avaliacao",
@@ -180,16 +180,16 @@
     "mudancas": 36
    },
    {
-    "pasta": "src/components/admissoes",
-    "mudancas": 31
-   },
-   {
     "pasta": "src/components/dashboard",
     "mudancas": 31
    },
    {
     "pasta": "src/components/folha",
     "mudancas": 31
+   },
+   {
+    "pasta": "src/components/admissoes",
+    "mudancas": 30
    },
    {
     "pasta": "src/components/esocial",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 279
+    "commits": 280
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 11
+    "commits": 10
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3552,
-  "arquivos_codigo": 2065,
-  "linhas_codigo": 408789,
+  "arquivos_total": 3566,
+  "arquivos_codigo": 2070,
+  "linhas_codigo": 410107,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -330,12 +330,12 @@
   "hooks": 117,
   "edge_functions": 67,
   "tabelas": 425,
-  "migrations": 861,
+  "migrations": 869,
   "cron_jobs": 41,
-  "testes": 765,
+  "testes": 770,
   "workflows": 21,
   "scripts": 135,
-  "docs_md": 333
+  "docs_md": 334
  },
  "por_pasta": {
   "capacitor.config.ts": {
@@ -355,8 +355,8 @@
    "linhas": 257
   },
   "e2e/authenticated": {
-   "arquivos": 16,
-   "linhas": 863
+   "arquivos": 21,
+   "linhas": 2181
   },
   "e2e/authenticated-non-admin": {
    "arquivos": 1,

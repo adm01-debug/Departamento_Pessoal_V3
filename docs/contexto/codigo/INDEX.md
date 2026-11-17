@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f75996121f1879fd65434a9a1992d13b844eec7b` (2026-11-17T20:50:46-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `94c16ea1fc64e6cf7d29d0a5154fda1ba3f818fa` (2026-11-17T20:51:00-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1927), SQL (927), Markdown (333), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1932), SQL (935), Markdown (334), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3552 |
-| arquivos_codigo | 2065 |
-| linhas_codigo | 408789 |
+| arquivos_total | 3566 |
+| arquivos_codigo | 2070 |
+| linhas_codigo | 410107 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -46,19 +46,19 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 117 |
 | edge_functions | 67 |
 | tabelas | 425 |
-| migrations | 861 |
+| migrations | 869 |
 | cron_jobs | 41 |
-| testes | 765 |
+| testes | 770 |
 | workflows | 21 |
 | scripts | 135 |
-| docs_md | 333 |
+| docs_md | 334 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
 - componentes: src/components (516), src/pages (110), src/contexts (3)
 - hooks: src/hooks (98), src/components (9), src/contexts (4)
 - servicos_logica: src/services (95), src/utils (35), src/schemas (25)
-- testes: co-localizado (__tests__) (639), co-localizado (*.test) (73), e2e/ (28)
+- testes: co-localizado (__tests__) (639), co-localizado (*.test) (73), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -373,7 +373,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - env de integração (só nomes): AI_GATEWAY_API_KEY, CRON_SECRET, DEEPSEEK_API_KEY, E2E_PONTO_HASH_SECRET, GOVBR_CLIENT_ID, GOVBR_CLIENT_SECRET, OPENAI_API_KEY, PONTO_HASH_SECRET, REPORT_SCHEDULER_SECRET, RESEND_API_KEY, SENTRY_DSN, SENTRY_ENVIRONMENT, SENTRY_RELEASE, SLACK_WEBHOOK_URL, TRAINING_IMAGE_DISPATCH_SECRET, TURNSTILE_SECRET_KEY, VITE_AUTH_GOOGLE_ENABLED, VITE_SENTRY_DSN, VITE_SENTRY_ORG, VITE_SENTRY_PROJECT, VITE_SENTRY_RELEASE, WEBHOOK_REQUIRE_TIMESTAMP, WEBHOOK_SECRET
 
 ## Permissões / papéis
-- papéis no código: dialog (35), rh (26), admin (23), alert (23), user (22), gestor (13), progressbar (8), tablist (8), group (7), status (7), tab (6), row (5), menuitem (4), service_role (4), cell (3), columnheader (3), list (3), rowgroup (3), switch (3), table (3), combobox (2), grid (2), listitem (2), system (2), agent (1), alertdialog (1), anon (1), assistant (1), authenticated (1), banner (1), button (1), ci_auditor (1), coordenador (1), heading (1), img (1), main (1), option (1), sup (1), supabase_admin (1), super_admin (1), supervisor (1), tabpanel (1), tooltip (1)
+- papéis no código: dialog (35), rh (26), admin (23), alert (23), user (22), gestor (13), tablist (9), progressbar (8), group (7), status (7), tab (6), row (5), menuitem (4), service_role (4), cell (3), columnheader (3), combobox (3), list (3), rowgroup (3), switch (3), table (3), grid (2), listitem (2), system (2), agent (1), alertdialog (1), anon (1), assistant (1), authenticated (1), banner (1), button (1), ci_auditor (1), coordenador (1), heading (1), img (1), main (1), option (1), sup (1), supabase_admin (1), super_admin (1), supervisor (1), tabpanel (1), tooltip (1)
 - enums de papel: app_role: admin|moderator|user|supervisor|coordenador; dp_user_role: colaborador|gestor|rh|auditoria|admin|dpo
 - guards: src/components/ProtectedRoute.tsx, src/components/RouteErrorBoundary.tsx · rotas protegidas: 110 · públicas: /assinar-contrato/:token, /ciencia-medida/:token, /contratacao, /login, /verificar-contrato, /verificar-contrato/:hash
 - feature flags: FEATURE_X, nova-tela, novo-inbox
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27133 nós · 61357 arestas · 2289 comunidades · grafo do commit `f7599612`
-- comunidades maiores: react (608), 20260831_corrected_public.sql (493), canonical_schema.sql (475), lucide-react (423), useEmpresas (413), card.tsx (409), cn (327), client.ts (249), usePiiMask (175), ColaboradorDetalhesPage.tsx (162), "public"."empresas" (159), "public"."colaboradores" (155)
+- 27174 nós · 61394 arestas · 2360 comunidades · grafo do commit `94c16ea1`
+- comunidades maiores: useEmpresas (599), 20260831_corrected_public.sql (493), cn (489), canonical_schema.sql (475), button.tsx (408), vitest (390), lucide-react (374), App.tsx (322), react (178), nineBoxComum.ts (165), FeedbackAcoesRodape.tsx (165), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -649,10 +649,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/treinamentos-imagens-fase3b-prep.md` — Fase 3B — preparação final (relatório) (133 linhas)
 - `docs/treinamentos-imagens-homologacao.md` — Homologação isolada — Hub de imagens (alternativa ao Docker) (233 linhas)
 - `docs/treinamentos-imagens.md` — Imagens do Hub de Treinamentos — Fase 2 (auditoria) + preparação da Fase 3 (426 linhas)
-- subpastas de docs/: docs/auditoria (62), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/protegido (1), docs/seguranca (1)
+- subpastas de docs/: docs/auditoria (63), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/protegido (1), docs/seguranca (1)
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `94c16ea` chore(migrations): documenta no repo as 8 DDL que só existiam no ledger (#656)
+- 2026-11-17 `9fe99bd` test(e2e): resgata da muri os 5 especs de navegador (#661)
 - 2026-11-17 `f759961` feat(desligamentos): faixa de atenção na tela, ligada ao cálculo que já existia (#664)
 - 2026-11-17 `e555a63` feat(rescisao): memória de cálculo com a base e a alíquota efetiva de cada encargo (#663)
 - 2026-11-17 `1ddd897` docs(auditoria): veredito sobre apagar a branch muri, com a triagem dos 111 arquivos (#662)
@@ -666,8 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `0425875` fix(automação): registra os 5 scripts que a #652 deixou sem gatilho (#654)
 - 2026-11-17 `6fbdf5c` feat(design-system): recupera os gates de layout protegido e de tipografia (#652)
 - 2026-11-17 `a7dd4ec` fix(deploy): recupera o app depois de um deploy novo trocar os chunks (#646)
-- 2026-11-17 `ba993ad` fix(hooks): guardas de empresa em ajuste de ponto e conta bancária (#650)
-- 2026-11-17 `50ae62a` fix(portal): exclusão de documento não apaga a linha quando o storage recusa (#645)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

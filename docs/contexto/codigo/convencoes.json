@@ -24,7 +24,7 @@
   "testes": [
    "co-localizado (__tests__) (639)",
    "co-localizado (*.test) (73)",
-   "e2e/ (28)"
+   "e2e/ (33)"
   ],
   "edge_functions": "supabase/functions",
   "migrations": "supabase/migrations",
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(migrations): documenta no repo as 8 DDL que só existiam no ledger (#656)",
+   "test(e2e): resgata da muri os 5 especs de navegador (#661)",
    "feat(desligamentos): faixa de atenção na tela, ligada ao cálculo que já existia (#664)",
    "feat(rescisao): memória de cálculo com a base e a alíquota efetiva de cada encargo (#663)",
-   "docs(auditoria): veredito sobre apagar a branch muri, com a triagem dos 111 arquivos (#662)",
-   "feat(colaborador): editar conta bancária, com o dado real só para quem pode vê-lo (#659)",
-   "feat(ponto): mostra o débito de horas do dia no card &quot;Últimos 7 dias&quot; (#660)"
+   "docs(auditoria): veredito sobre apagar a branch muri, com a triagem dos 111 arquivos (#662)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

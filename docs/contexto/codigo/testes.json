@@ -5,10 +5,10 @@
   "vitest",
   "playwright"
  ],
- "total": 765,
+ "total": 770,
  "por_tipo": {
   "contrato": 4,
-  "e2e": 31,
+  "e2e": 36,
   "pytest": 2,
   "unit": 726
  },
@@ -23,7 +23,7 @@
   },
   {
    "padrao": "e2e/",
-   "arquivos": 28
+   "arquivos": 33
   },
   {
    "padrao": "outro",
@@ -102,6 +102,20 @@
    "casos": 5
   },
   {
+   "arquivo": "e2e/authenticated/feedbacks-historico.spec.ts",
+   "tipo": "e2e",
+   "linhas": 87,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "e2e/authenticated/feedbacks-padronizacao.spec.ts",
+   "tipo": "e2e",
+   "linhas": 252,
+   "testa": [],
+   "casos": 4
+  },
+  {
    "arquivo": "e2e/authenticated/ferias.spec.ts",
    "tipo": "e2e",
    "linhas": 74,
@@ -121,6 +135,13 @@
    "linhas": 38,
    "testa": [],
    "casos": 2
+  },
+  {
+   "arquivo": "e2e/authenticated/layout-protegido-desempenho.spec.ts",
+   "tipo": "e2e",
+   "linhas": 223,
+   "testa": [],
+   "casos": 5
   },
   {
    "arquivo": "e2e/authenticated/modulos-criticos.spec.ts",
@@ -149,6 +170,20 @@
    "linhas": 92,
    "testa": [],
    "casos": 4
+  },
+  {
+   "arquivo": "e2e/authenticated/recrutamento-pipeline-animacao.spec.ts",
+   "tipo": "e2e",
+   "linhas": 276,
+   "testa": [],
+   "casos": 7
+  },
+  {
+   "arquivo": "e2e/authenticated/recrutamento-pipeline.spec.ts",
+   "tipo": "e2e",
+   "linhas": 480,
+   "testa": [],
+   "casos": 12
   },
   {
    "arquivo": "e2e/authenticated/session-expiration.spec.ts",

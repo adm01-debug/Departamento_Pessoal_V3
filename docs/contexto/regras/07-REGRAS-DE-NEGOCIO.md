@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f75996121f` · branch `main` · 2026-11-17 23:51 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `94c16ea1fc` · branch `main` · 2026-11-17 23:53 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4913,6 +4913,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `v_fim := (v_inicio + interval '1 month' - interval '1 day')::date;` | `supabase/migrations/20260728220146_f687c8e6-2691-473e-ab7e-d2a2fd9aafb9.sql` |
 | `WHERE created_at > now() - interval '24 hours'` | `supabase/migrations/20260830000002_plano100_e036_pii_access_logs.sql` |
 | `v_window interval := interval '15 minutes';` | `supabase/migrations/20260911191000_p0_auth_lockout_contract.sql` |
+| `v_window interval := interval '15 minutes';` | `supabase/migrations/20260912142506_p0_auth_lockout_contract.sql` |
 | `OR ra.dispatch_claimed_at < p_now - interval '5 minutes'` | `supabase/migrations/20260912192000_p0_report_schedule_claims.sql` |
 | `WHERE scan_at < now() - interval '180 days';` | `supabase/migrations/20260912203000_p1_security_cron_contract.sql` |
 | `AND event_claimed_at > now() - interval '5 minutes' THEN` | `supabase/migrations/20260912204000_p1_admission_esocial_claim.sql` |
@@ -5418,7 +5419,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9269 testes em 721 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9299 testes em 726 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5667,6 +5668,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/pontosService.test.ts` | 12 | pontosService facade · exposes registrar from pontoService · exposes getSettings from pontoService · exposes buscarRegistroHoje from pontoService … |
 | `src/services/__tests__/webhookService.test.ts` | 12 | webhookService · listar · returns paginated records when found · applies empresa_id filter when provided … |
 | `src/utils/importacao/__tests__/excelDownload.test.ts` | 12 | XLSX_MIME · is the correct OOXML MIME type · downloadWorkbook · calls writeBuffer and creates object URL … |
+| `e2e/authenticated/recrutamento-pipeline.spec.ts` | 11 | Pipeline — estrutura e scroll no padrão de Admissão · 5 colunas de 272px, mesma altura, rodapés alinhados e scroll horizontal · A/B/C — lista rola, encadeia para a página; cabeçalho/espaço vazio rolam direto · D — arrasta de Triagem para Entrevista sem duplicar e atualiza contadores … |
 | `scripts/tests/contexto-publicacao.test.mjs` | 11 | cada upload fornece um ID e cada download usa destino explícito sem ocultar falhas · produtores independentes falham de verdade e o publisher ainda aceita as fontes disponíveis · falha fatal de ${failed} mantém sua versão anterior e publica as duas fontes saudáveis · publisher ${previousBranch ?  … |
 | `src/components/__tests__/AnimatedNumber.test.tsx` | 11 | AnimatedNumber · renders 0 initially when not in view · renders initial 0 even when format prop is provided · applies custom className to span … |
 | `src/components/__tests__/AuditoriaComum.test.ts` | 11 | auditoriaComum — normalização fiel aos dados · resolve valor anterior/posterior, entidade, colaborador e responsável · lida com data/entidade/valor ausentes sem inventar informação · não inventa valor quando não há campo nem citação monetária … |
@@ -5721,8 +5723,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/hooks/__tests__/useHorasExtras.test.ts` | 10 | useHorasExtras · returns initial solicitacoes empty array · calls horaExtraService.listar with empresaId · returns solicitacoes from service … |
 | `src/hooks/__tests__/usePendenciasColaborador.test.ts` | 10 | usePendenciasColaborador · sem nada vencido nem pendente, não devolve pendência alguma · ajuste de ponto só conta quando o status é  · ASO vencido é severidade alta e cita a NR-7 … |
 | `src/hooks/__tests__/useRealTimeSubscription.test.tsx` | 10 | useRealTimeSubscription · does NOT subscribe when empresaId is undefined · does NOT subscribe when empresaId is empty string · creates a channel when empresaId is provided … |
-| `src/hooks/__tests__/useSystemHealth.test.ts` | 10 | useSystemHealth · returns initial status as online · returns initial latency as null · sets latency after health check … |
-| … +421 linhas — lista completa em `context.json` | | |
+| … +426 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
