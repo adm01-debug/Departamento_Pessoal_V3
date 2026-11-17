@@ -7,12 +7,12 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (490)",
+   "src/components (494)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
   "hooks": [
-   "src/hooks (95)",
+   "src/hooks (96)",
    "src/components (9)",
    "src/contexts (4)"
   ],
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (582)",
+   "co-localizado (__tests__) (599)",
    "co-localizado (*.test) (70)",
    "e2e/ (28)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (608)"
+  ".tsx (612)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: resgata da muri o dossiê do colaborador — holerites, SST, campos personalizados e recontratação (#613)",
    "feat: resgata da muri 6 grupos de hooks/services com consumidor vivo (#612)",
    "feat(premiacoes): resgata o Hub de Premiações e o simulador de ROI da muri sobre o miolo corrigido da main (#611)",
    "feat(recrutamento): resgata Recrutamento e seleção da muri preservando a máscara de PII e as 3 entregas da main (#610)",
-   "feat(onboarding): resgata a Jornada de Onboarding e a Gestão de Kits da branch muri (#609)",
-   "feat(admissoes): resgata o núcleo de Admissões da branch muri preservando as 3 correções da main (#608)"
+   "feat(onboarding): resgata a Jornada de Onboarding e a Gestão de Kits da branch muri (#609)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

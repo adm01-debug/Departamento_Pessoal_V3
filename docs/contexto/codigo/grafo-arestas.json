@@ -1100,6 +1100,22 @@
    "src/integrations/supabase/client.ts",
    "src/utils/dateLocal.ts"
   ],
+  "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx": [
+   "src/components/colaborador-detalhes/FalhaConsulta.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/date-picker.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/spinner.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/hooks/useColaboradorDetalhes.ts",
+   "src/hooks/useEmpresas.ts",
+   "src/integrations/supabase/types.ts",
+   "src/utils/safeError.ts"
+  ],
   "src/components/colaborador-detalhes/ColaboradorDocuments.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -1174,14 +1190,23 @@
    "src/hooks/useTabelasReferencia.ts"
   ],
   "src/components/colaborador-detalhes/EditarJornadaDialog.tsx": [
+   "src/components/colaborador-detalhes/FalhaConsulta.tsx",
    "src/components/ui/button.tsx",
+   "src/components/ui/date-picker.tsx",
    "src/components/ui/dialog.tsx",
    "src/components/ui/input.tsx",
    "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/spinner.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/integrations/supabase/database.types.ts",
    "src/services/index.ts",
+   "src/services/turnoService.ts",
+   "src/utils/dateLocal.ts",
    "src/utils/safeError.ts"
   ],
   "src/components/colaborador-detalhes/EmergenciaTab.tsx": [
+   "src/components/colaborador-detalhes/FalhaConsulta.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/components/ui/dialog.tsx",
@@ -1191,7 +1216,8 @@
    "src/components/ui/spinner.tsx",
    "src/components/ui/table.tsx",
    "src/hooks/useColaboradorDetalhes.ts",
-   "src/hooks/usePiiMask.ts"
+   "src/hooks/usePiiMask.ts",
+   "src/integrations/supabase/database.types.ts"
   ],
   "src/components/colaborador-detalhes/EstagiarioTab.tsx": [
    "src/components/ui/button.tsx",
@@ -1246,7 +1272,8 @@
    "src/components/ui/select.tsx",
    "src/components/ui/spinner.tsx",
    "src/components/ui/table.tsx",
-   "src/hooks/useColaboradorDetalhes.ts"
+   "src/hooks/useColaboradorDetalhes.ts",
+   "src/integrations/supabase/database.types.ts"
   ],
   "src/components/colaborador-detalhes/HistoricoContratosTab.tsx": [
    "src/components/ui/button.tsx",
@@ -1268,6 +1295,15 @@
    "src/components/ui/table.tsx",
    "src/components/ui/textarea.tsx",
    "src/hooks/useColaboradorDetalhes.ts"
+  ],
+  "src/components/colaborador-detalhes/HoleritesTab.tsx": [
+   "src/components/colaborador-detalhes/FalhaConsulta.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/table.tsx",
+   "src/hooks/useColaboradorDetalhes.ts",
+   "src/utils/format.ts"
   ],
   "src/components/colaborador-detalhes/JornadaPontoTab.tsx": [
    "src/components/colaborador-detalhes/EditarJornadaDialog.tsx",
@@ -1298,6 +1334,14 @@
    "src/components/ui/textarea.tsx",
    "src/hooks/useColaboradorDetalhes.ts",
    "src/hooks/useSyncedState.ts"
+  ],
+  "src/components/colaborador-detalhes/SSTResumoTab.tsx": [
+   "src/components/colaborador-detalhes/FalhaConsulta.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/hooks/useSSTColaborador.ts",
+   "src/utils/format.ts"
   ],
   "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx": [
    "src/components/dashboard/MetricCard.tsx",
@@ -1560,6 +1604,7 @@
    "src/components/colaborador-detalhes/AnotacoesTab.tsx",
    "src/components/colaborador-detalhes/AquisitivosTab.tsx",
    "src/components/colaborador-detalhes/BeneficiosTab.tsx",
+   "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
    "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
    "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
    "src/components/colaborador-detalhes/DependentesTab.tsx",
@@ -1574,8 +1619,10 @@
    "src/components/colaborador-detalhes/FormacaoTab.tsx",
    "src/components/colaborador-detalhes/HistoricoContratosTab.tsx",
    "src/components/colaborador-detalhes/HistoricoSalarialTab.tsx",
+   "src/components/colaborador-detalhes/HoleritesTab.tsx",
    "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
    "src/components/colaborador-detalhes/PCDTab.tsx",
+   "src/components/colaborador-detalhes/SSTResumoTab.tsx",
    "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
    "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx",
    "src/components/colaboradores/ColaboradorHistory.tsx"
@@ -1592,6 +1639,21 @@
    "src/components/ui/spinner.tsx",
    "src/hooks/useEmpresas.ts",
    "src/services/auditoriaService.ts"
+  ],
+  "src/components/colaboradores/RecontratarColaboradorDialog.tsx": [
+   "src/components/forms/index.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/currency-input.tsx",
+   "src/components/ui/date-picker.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/hooks/useCargos.ts",
+   "src/hooks/useDepartamentos.ts",
+   "src/hooks/usePiiMask.ts",
+   "src/hooks/useVinculos.ts",
+   "src/types/entities.ts",
+   "src/utils/dateLocal.ts"
   ],
   "src/components/colaboradores/index.ts": [
    "src/components/colaboradores/ColaboradorFilters.tsx",
@@ -4376,9 +4438,11 @@
    "src/hooks/usePonto.ts",
    "src/hooks/usePontoOffline.ts",
    "src/hooks/usePontosAbertos.ts",
+   "src/hooks/useSSTColaborador.ts",
    "src/hooks/useTabelasReferencia.ts",
    "src/hooks/useToast.ts",
    "src/hooks/useValeTransporte.ts",
+   "src/hooks/useVinculos.ts",
    "src/hooks/useWebhooksAvancados.ts"
   ],
   "src/hooks/use-mobile.tsx": [
@@ -4762,6 +4826,12 @@
    "src/hooks/useEmpresas.ts",
    "src/integrations/supabase/client.ts"
   ],
+  "src/hooks/useSSTColaborador.ts": [
+   "src/hooks/useEmpresas.ts",
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/database.types.ts",
+   "src/mocks/colaboradoresMock.ts"
+  ],
   "src/hooks/useSecureVisibility.ts": [
    "src/integrations/supabase/client.ts"
   ],
@@ -4802,7 +4872,10 @@
    "src/services/calculoBeneficiosService.ts"
   ],
   "src/hooks/useVinculos.ts": [
-   "src/services/vinculoService.ts"
+   "src/hooks/useEmpresas.ts",
+   "src/services/colaboradorService.ts",
+   "src/services/vinculoService.ts",
+   "src/utils/safeError.ts"
   ],
   "src/hooks/useWebhooksAvancados.ts": [
    "src/hooks/useEmpresas.ts",
@@ -5347,6 +5420,7 @@
   "src/pages/ColaboradorDetalhesPage.tsx": [
    "src/components/PageTitle.tsx",
    "src/components/colaborador-detalhes/index.ts",
+   "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
    "src/components/layout/index.ts",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -7004,6 +7078,7 @@
    "src/schemas/validate.ts",
    "src/services/baseService.ts",
    "src/services/piiAccessLogService.ts",
+   "src/services/vinculoService.ts",
    "src/types/entities.ts"
   ],
   "src/services/comunicacaoService.ts": [
@@ -7182,6 +7257,7 @@
    "src/services/pontoService.ts",
    "src/services/provisaoService.ts",
    "src/services/turnoService.ts",
+   "src/services/vinculoService.ts",
    "src/services/webhookService.ts",
    "src/services/workflowService.ts"
   ],
@@ -7304,6 +7380,7 @@
    "src/integrations/supabase/database.types.ts",
    "src/schemas/validate.ts",
    "src/services/loggerService.ts",
+   "src/services/vinculoService.ts",
    "src/utils/auditLogger.ts",
    "src/utils/rescisaoCalc.ts"
   ],
@@ -7415,6 +7492,7 @@
    "src/schemas/validate.ts"
   ],
   "src/services/vinculoService.ts": [
+   "src/integrations/supabase/database.types.ts",
    "src/mocks/colaboradoresMock.ts",
    "src/services/baseService.ts",
    "src/services/loggerService.ts"

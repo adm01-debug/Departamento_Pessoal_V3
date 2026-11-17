@@ -1,16 +1,16 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1258,
- "arestas": 6135,
+ "nos": 1263,
+ "arestas": 6203,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 346
+   "importado_por": 348
   },
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 277
+   "importado_por": 280
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -18,35 +18,35 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 263
+   "importado_por": 264
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 213
+   "importado_por": 215
   },
   {
    "arquivo": "src/components/ui/input.tsx",
-   "importado_por": 175
+   "importado_por": 176
   },
   {
    "arquivo": "src/components/ui/label.tsx",
-   "importado_por": 156
+   "importado_por": 158
   },
   {
    "arquivo": "src/components/ui/dialog.tsx",
-   "importado_por": 152
+   "importado_por": 153
   },
   {
    "arquivo": "src/utils/safeError.ts",
-   "importado_por": 130
+   "importado_por": 132
   },
   {
    "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 126
+   "importado_por": 128
   },
   {
    "arquivo": "src/hooks/useEmpresas.ts",
-   "importado_por": 123
+   "importado_por": 127
   },
   {
    "arquivo": "src/schemas/validate.ts",
@@ -54,15 +54,15 @@
   },
   {
    "arquivo": "src/components/ui/spinner.tsx",
-   "importado_por": 111
+   "importado_por": 113
   },
   {
    "arquivo": "src/components/ui/table.tsx",
-   "importado_por": 110
+   "importado_por": 111
   },
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "importado_por": 93
+   "importado_por": 94
   },
   {
    "arquivo": "src/components/PageTitle.tsx",
@@ -74,7 +74,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/database.types.ts",
-   "importado_por": 79
+   "importado_por": 85
   },
   {
    "arquivo": "supabase/functions/_shared/contract.ts",
@@ -90,11 +90,11 @@
   },
   {
    "arquivo": "src/utils/dateLocal.ts",
-   "importado_por": 58
+   "importado_por": 61
   },
   {
    "arquivo": "src/hooks/index.ts",
-   "importado_por": 56
+   "importado_por": 57
   },
   {
    "arquivo": "supabase/functions/_shared/sentry.ts",
@@ -105,36 +105,40 @@
    "importado_por": 55
   },
   {
+   "arquivo": "src/components/ui/textarea.tsx",
+   "importado_por": 52
+  },
+  {
    "arquivo": "src/components/ui/tabs.tsx",
    "importado_por": 50
   },
   {
-   "arquivo": "src/components/ui/textarea.tsx",
-   "importado_por": 50
+   "arquivo": "src/utils/format.ts",
+   "importado_por": 41
   },
   {
-   "arquivo": "src/utils/format.ts",
-   "importado_por": 39
+   "arquivo": "src/services/index.ts",
+   "importado_por": 38
   },
   {
    "arquivo": "src/components/ui/tooltip.tsx",
    "importado_por": 37
   },
   {
-   "arquivo": "src/services/index.ts",
+   "arquivo": "src/hooks/usePiiMask.ts",
    "importado_por": 37
   },
   {
-   "arquivo": "src/hooks/usePiiMask.ts",
-   "importado_por": 36
+   "arquivo": "src/types/entities.ts",
+   "importado_por": 35
   },
   {
    "arquivo": "src/components/ui/dropdown-menu.tsx",
    "importado_por": 34
   },
   {
-   "arquivo": "src/types/entities.ts",
-   "importado_por": 33
+   "arquivo": "src/hooks/useColaboradorDetalhes.ts",
+   "importado_por": 32
   },
   {
    "arquivo": "supabase/functions/_shared/authz.ts",
@@ -149,20 +153,16 @@
    "importado_por": 28
   },
   {
+   "arquivo": "src/components/ui/skeleton.tsx",
+   "importado_por": 28
+  },
+  {
    "arquivo": "src/contexts/index.ts",
    "importado_por": 28
   },
   {
    "arquivo": "src/components/avaliacao/entradaCards.tsx",
    "importado_por": 27
-  },
-  {
-   "arquivo": "src/components/ui/entrada-cards.tsx",
-   "importado_por": 27
-  },
-  {
-   "arquivo": "src/components/treinamentos/treinamentosDerivacoes.ts",
-   "importado_por": 26
   }
  ],
  "ciclos": {
@@ -277,7 +277,7 @@
   {
    "modulo": "utils",
    "depende_de": 5,
-   "importado_por": 35
+   "importado_por": 36
   },
   {
    "modulo": "lib",

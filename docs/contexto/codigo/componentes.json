@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 608,
+ "total": 612,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -11,6 +11,10 @@
   "CadastroIncompletoWidget": [
    "src/components/dashboard/analytics/widgets.tsx",
    "src/components/dashboard/AnalyticsSection.tsx"
+  ],
+  "CamposCustomizadosTab": [
+   "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+   "src/components/settings/CamposCustomizadosTab.tsx"
   ],
   "ESocialMonitorWidget": [
    "src/components/dashboard/analytics/widgets.tsx",
@@ -1512,6 +1516,25 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+   "exports": [
+    "CamposCustomizadosTab"
+   ],
+   "export_default": null,
+   "linhas": 216,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useCamposCustomizados",
+    "useEmpresas",
+    "useSalvarValorCampoCustomizado",
+    "useValoresCamposCustomizados"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
    "exports": [
     "ColaboradorDocuments"
@@ -1843,7 +1866,7 @@
     "EditarJornadaDialog"
    ],
    "export_default": null,
-   "linhas": 149,
+   "linhas": 391,
    "dominio": "components/colaborador-detalhes",
    "hooks_locais": [],
    "tabelas": [],
@@ -1857,9 +1880,10 @@
     "EmergenciaTab"
    ],
    "export_default": null,
-   "linhas": 152,
+   "linhas": 218,
    "dominio": "components/colaborador-detalhes",
    "hooks_locais": [
+    "useAtualizarContatoEmergencia",
     "useContatosEmergencia",
     "useCriarContatoEmergencia",
     "useExcluirContatoEmergencia",
@@ -1934,7 +1958,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 9,
+   "usado_por": 14,
    "orfao": false
   },
   {
@@ -1962,9 +1986,10 @@
     "FormacaoTab"
    ],
    "export_default": null,
-   "linhas": 165,
+   "linhas": 218,
    "dominio": "components/colaborador-detalhes",
    "hooks_locais": [
+    "useAtualizarFormacao",
     "useCriarFormacao",
     "useExcluirFormacao",
     "useFormacoes"
@@ -2192,12 +2217,28 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/colaborador-detalhes/HoleritesTab.tsx",
+   "exports": [
+    "HoleritesTab"
+   ],
+   "export_default": null,
+   "linhas": 77,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useHoleritesColaborador"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
    "exports": [
     "JornadaPontoTab"
    ],
    "export_default": null,
-   "linhas": 203,
+   "linhas": 212,
    "dominio": "components/colaborador-detalhes",
    "hooks_locais": [
     "useEmpresas",
@@ -2223,6 +2264,24 @@
     "useDeficiencia",
     "useSalvarDeficiencia",
     "useSyncedState"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/SSTResumoTab.tsx",
+   "exports": [
+    "SSTResumoTab"
+   ],
+   "export_default": null,
+   "linhas": 240,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useCatColaborador",
+    "useIncidentesColaborador",
+    "useRiscosColaborador"
    ],
    "tabelas": [],
    "edges": [],
@@ -2276,6 +2335,26 @@
    "tabelas": [],
    "edges": [],
    "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
+   "exports": [
+    "RecontratarColaboradorDialog"
+   ],
+   "export_default": null,
+   "linhas": 305,
+   "dominio": "components/colaboradores",
+   "hooks_locais": [
+    "useCargos",
+    "useDepartamentos",
+    "usePiiMask",
+    "useRecontratarColaborador",
+    "useVinculosResumo"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -6850,7 +6929,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 213,
+   "usado_por": 215,
    "orfao": false
   },
   {
@@ -6865,7 +6944,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 346,
+   "usado_por": 348,
    "orfao": false
   },
   {
@@ -6900,7 +6979,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 277,
+   "usado_por": 280,
    "orfao": false
   },
   {
@@ -6963,7 +7042,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 18,
+   "usado_por": 19,
    "orfao": false
   },
   {
@@ -7052,7 +7131,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -7109,7 +7188,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 4,
    "orfao": false
   },
   {
@@ -7132,7 +7211,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 152,
+   "usado_por": 153,
    "orfao": false
   },
   {
@@ -7268,7 +7347,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 156,
+   "usado_por": 158,
    "orfao": false
   },
   {
@@ -7445,7 +7524,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 125,
+   "usado_por": 127,
    "orfao": false
   },
   {
@@ -7549,7 +7628,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 25,
+   "usado_por": 28,
    "orfao": false
   },
   {
@@ -7609,7 +7688,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 111,
+   "usado_por": 113,
    "orfao": false
   },
   {
@@ -7687,7 +7766,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 110,
+   "usado_por": 111,
    "orfao": false
   },
   {
@@ -7719,7 +7798,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 50,
+   "usado_por": 52,
    "orfao": false
   },
   {
@@ -8482,7 +8561,7 @@
     "ColaboradorDetalhesPage"
    ],
    "export_default": "ColaboradorDetalhesPage",
-   "linhas": 543,
+   "linhas": 587,
    "dominio": "pages",
    "hooks_locais": [
     "useDataAccessLog",

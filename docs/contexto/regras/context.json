@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "0a74847448e82ce4c2d40e92ba52bea9e067bb59",
+  "sha": "d63d655084cfba860168d22be14168ae7bfef26d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 05:52 UTC",
-  "files_total": 3448,
-  "code_files": 2874,
-  "code_lines": 449146
+  "generated_at": "2026-11-17 11:17 UTC",
+  "files_total": 3470,
+  "code_files": 2896,
+  "code_lines": 454406
  },
  "version": "1.3.2",
- "facts_hash": "55ba9a1b55b25393",
+ "facts_hash": "8a3d9d059a06ee4f",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,9 +384,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 933,
+   ".tsx": 945,
    ".sql": 915,
-   ".ts": 895,
+   ".ts": 905,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -87275,7 +87275,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 33
+    "deps_count": 37
    },
    {
     "path": "",
@@ -87539,7 +87539,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 187
+    "deps_count": 189
    },
    {
     "path": "",
@@ -87572,7 +87572,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 102
+    "deps_count": 103
    },
    {
     "path": "",
@@ -87726,7 +87726,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 115
+    "deps_count": 117
    },
    {
     "path": "",
@@ -87858,6 +87858,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -87895,6 +87896,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -87960,7 +87964,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 302
+    "deps_count": 305
    },
    {
     "path": "",
@@ -88062,6 +88066,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -88099,6 +88104,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -88164,7 +88172,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 189
+    "deps_count": 192
    },
    {
     "path": "",
@@ -88320,7 +88328,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 143
+    "deps_count": 145
    },
    {
     "path": "",
@@ -88428,6 +88436,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -88465,6 +88474,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -88530,7 +88542,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 197
+    "deps_count": 200
    },
    {
     "path": "",
@@ -88605,6 +88617,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -88642,6 +88655,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -88707,7 +88723,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 193
+    "deps_count": 196
    },
    {
     "path": "",
@@ -88805,6 +88821,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -88842,6 +88859,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -88907,7 +88927,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 192
+    "deps_count": 195
    },
    {
     "path": "",
@@ -88980,6 +89000,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -89019,6 +89040,9 @@
      "registros_ponto",
      "solicitacoes_ajuste_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -89079,7 +89103,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 273
+    "deps_count": 284
    },
    {
     "path": "",
@@ -89155,6 +89179,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -89192,6 +89217,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -89259,7 +89287,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 213
+    "deps_count": 216
    },
    {
     "path": "",
@@ -89283,7 +89311,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 80
+    "deps_count": 84
    },
    {
     "path": "",
@@ -89358,6 +89386,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -89395,6 +89424,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -89460,7 +89492,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 196
+    "deps_count": 199
    },
    {
     "path": "",
@@ -89538,6 +89570,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "integracoes",
@@ -89573,6 +89606,9 @@
      "saved_filters",
      "seguros_colaboradores",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -89652,7 +89688,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 194
+    "deps_count": 197
    },
    {
     "path": "",
@@ -89779,7 +89815,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 138
+    "deps_count": 140
    },
    {
     "path": "",
@@ -89943,6 +89979,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -89980,6 +90017,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -90045,7 +90085,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 200
+    "deps_count": 203
    },
    {
     "path": "",
@@ -90120,6 +90160,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -90157,6 +90198,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -90222,7 +90266,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 196
+    "deps_count": 199
    },
    {
     "path": "",
@@ -90363,6 +90407,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -90400,6 +90445,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -90465,7 +90513,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 204
+    "deps_count": 207
    },
    {
     "path": "",
@@ -90509,7 +90557,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 105
+    "deps_count": 106
    },
    {
     "path": "",
@@ -90585,6 +90633,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -90622,6 +90671,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -90687,7 +90739,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 203
+    "deps_count": 206
    },
    {
     "path": "",
@@ -90815,7 +90867,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 147
+    "deps_count": 149
    },
    {
     "path": "",
@@ -90891,6 +90943,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -90928,6 +90981,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -90993,7 +91049,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 209
+    "deps_count": 212
    },
    {
     "path": "",
@@ -91159,7 +91215,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 168
+    "deps_count": 170
    },
    {
     "path": "",
@@ -91258,6 +91314,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -91295,6 +91352,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -91360,7 +91420,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 193
+    "deps_count": 196
    },
    {
     "path": "",
@@ -91436,6 +91496,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -91473,6 +91534,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -91538,7 +91602,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 208
+    "deps_count": 211
    },
    {
     "path": "",
@@ -91614,6 +91678,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -91651,6 +91716,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -91716,7 +91784,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 202
+    "deps_count": 205
    },
    {
     "path": "",
@@ -91825,6 +91893,9 @@
      "recibos_ferias",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
@@ -91882,7 +91953,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 226
+    "deps_count": 230
    },
    {
     "path": "",
@@ -91909,7 +91980,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 44
+    "deps_count": 47
    },
    {
     "path": "",
@@ -92036,7 +92107,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 140
+    "deps_count": 142
    },
    {
     "path": "",
@@ -92102,6 +92173,9 @@
      "registros_ponto",
      "rubricas_folha",
      "simulacoes_fiscais",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "vales_alimentacao",
      "vales_transporte",
      "versao_banco",
@@ -92132,7 +92206,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 168
+    "deps_count": 170
    },
    {
     "path": "",
@@ -92268,7 +92342,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 83
+    "deps_count": 85
    },
    {
     "path": "",
@@ -92452,6 +92526,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas_horarios",
@@ -92488,6 +92563,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -92553,7 +92631,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 193
+    "deps_count": 196
    },
    {
     "path": "",
@@ -92628,6 +92706,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -92665,6 +92744,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -92730,7 +92812,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 201
+    "deps_count": 204
    },
    {
     "path": "",
@@ -92829,6 +92911,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -92866,6 +92949,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -92931,7 +93017,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 191
+    "deps_count": 194
    },
    {
     "path": "",
@@ -93007,6 +93093,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -93044,6 +93131,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -93110,7 +93200,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 218
+    "deps_count": 221
    },
    {
     "path": "",
@@ -93184,6 +93274,7 @@
      "historico_cargo",
      "historico_contratos",
      "historico_ferias",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -93221,6 +93312,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -93286,7 +93380,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 202
+    "deps_count": 205
    },
    {
     "path": "",
@@ -93427,6 +93521,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -93464,6 +93559,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -93529,7 +93627,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 206
+    "deps_count": 209
    },
    {
     "path": "",
@@ -93687,6 +93785,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -93724,6 +93823,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -93789,7 +93891,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 202
+    "deps_count": 205
    },
    {
     "path": "",
@@ -93892,6 +93994,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -93929,6 +94032,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -93994,7 +94100,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 194
+    "deps_count": 197
    },
    {
     "path": "",
@@ -94117,6 +94223,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -94160,6 +94267,9 @@
      "saved_filters",
      "seguros_colaboradores",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -94241,7 +94351,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 203
+    "deps_count": 206
    },
    {
     "path": "",
@@ -94338,6 +94448,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -94375,6 +94486,9 @@
      "recargas_vale",
      "solicitacoes_ajuste_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -94449,7 +94563,7 @@
      "validar_potencial_avaliacao",
      "verificar_espelho_ponto"
     ],
-    "deps_count": 226
+    "deps_count": 229
    },
    {
     "path": "",
@@ -94577,7 +94691,7 @@
      "validar_potencial_avaliacao",
      "vincular_colaborador_ao_usuario"
     ],
-    "deps_count": 148
+    "deps_count": 150
    },
    {
     "path": "",
@@ -94653,6 +94767,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -94695,6 +94810,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -94761,7 +94879,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 245
+    "deps_count": 248
    },
    {
     "path": "",
@@ -94913,7 +95031,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 139
+    "deps_count": 141
    },
    {
     "path": "",
@@ -94991,6 +95109,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -95031,6 +95150,9 @@
      "recrutamento_testes",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -95097,7 +95219,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 239
+    "deps_count": 242
    },
    {
     "path": "",
@@ -95203,6 +95325,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -95240,6 +95363,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -95305,7 +95431,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 194
+    "deps_count": 197
    },
    {
     "path": "",
@@ -95455,6 +95581,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -95498,6 +95625,9 @@
      "saved_filters",
      "seguros_colaboradores",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -95579,7 +95709,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 205
+    "deps_count": 208
    },
    {
     "path": "",
@@ -95655,6 +95785,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -95692,6 +95823,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -95757,7 +95891,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 191
+    "deps_count": 194
    },
    {
     "path": "",
@@ -95833,6 +95967,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -95870,6 +96005,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "tipos_admissao",
      "tipos_estabilidade",
@@ -95934,7 +96072,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 193
+    "deps_count": 196
    },
    {
     "path": "",
@@ -96010,6 +96148,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -96047,6 +96186,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -96112,7 +96254,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 275
+    "deps_count": 278
    },
    {
     "path": "",
@@ -96188,6 +96330,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -96225,6 +96368,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -96290,7 +96436,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 192
+    "deps_count": 195
    },
    {
     "path": "",
@@ -96391,6 +96537,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -96427,6 +96574,9 @@
      "provisoes_mensais",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -96492,7 +96642,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 194
+    "deps_count": 197
    },
    {
     "path": "",
@@ -96605,6 +96755,7 @@
      "historico_contratos",
      "historico_ferias",
      "historico_salarial",
+     "holerites",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
@@ -96642,6 +96793,9 @@
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
      "tarefas_onboarding",
      "times",
      "tipos_admissao",
@@ -96707,7 +96861,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 203
+    "deps_count": 206
    },
    {
     "path": "/auth/callback",
@@ -99796,7 +99950,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 894,
+  "components_count": 906,
   "hooks": [
    {
     "name": "useContacts",
@@ -99963,6 +100117,10 @@
     "file": "src/hooks/useColaboradorDetalhes.ts"
    },
    {
+    "name": "useAtualizarContatoEmergencia",
+    "file": "src/hooks/useColaboradorDetalhes.ts"
+   },
+   {
     "name": "useExcluirContatoEmergencia",
     "file": "src/hooks/useColaboradorDetalhes.ts"
    },
@@ -99988,6 +100146,10 @@
    },
    {
     "name": "useCriarFormacao",
+    "file": "src/hooks/useColaboradorDetalhes.ts"
+   },
+   {
+    "name": "useAtualizarFormacao",
     "file": "src/hooks/useColaboradorDetalhes.ts"
    },
    {
@@ -100035,6 +100197,10 @@
     "file": "src/hooks/useColaboradorDetalhes.ts"
    },
    {
+    "name": "useHoleritesColaborador",
+    "file": "src/hooks/useColaboradorDetalhes.ts"
+   },
+   {
     "name": "usePeriodosAquisitivos",
     "file": "src/hooks/useColaboradorDetalhes.ts"
    },
@@ -100076,6 +100242,14 @@
    },
    {
     "name": "useCamposCustomizados",
+    "file": "src/hooks/useColaboradorDetalhes.ts"
+   },
+   {
+    "name": "useValoresCamposCustomizados",
+    "file": "src/hooks/useColaboradorDetalhes.ts"
+   },
+   {
+    "name": "useSalvarValorCampoCustomizado",
     "file": "src/hooks/useColaboradorDetalhes.ts"
    },
    {
@@ -100491,6 +100665,18 @@
     "file": "src/hooks/useRealtimeDashboard.ts"
    },
    {
+    "name": "useIncidentesColaborador",
+    "file": "src/hooks/useSSTColaborador.ts"
+   },
+   {
+    "name": "useCatColaborador",
+    "file": "src/hooks/useSSTColaborador.ts"
+   },
+   {
+    "name": "useRiscosColaborador",
+    "file": "src/hooks/useSSTColaborador.ts"
+   },
+   {
     "name": "useSecureVisibility",
     "file": "src/hooks/useSecureVisibility.ts"
    },
@@ -100683,7 +100869,15 @@
     "file": "src/hooks/useValeTransporte.ts"
    },
    {
+    "name": "useVinculosResumo",
+    "file": "src/hooks/useVinculos.ts"
+   },
+   {
     "name": "useVinculosColaborador",
+    "file": "src/hooks/useVinculos.ts"
+   },
+   {
+    "name": "useRecontratarColaborador",
     "file": "src/hooks/useVinculos.ts"
    },
    {
@@ -101339,8 +101533,8 @@
   },
   {
    "module": "src/components",
-   "files": 894,
-   "lines": 157277,
+   "files": 906,
+   "lines": 160034,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101670,8 +101864,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 190,
-   "lines": 21712,
+   "files": 196,
+   "lines": 22894,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101696,6 +101890,9 @@
     "periodos_aquisitivos",
     "personnel_budget",
     "solicitacoes_ajuste_ponto",
+    "sst_cat",
+    "sst_exposicao_riscos",
+    "sst_incidentes",
     "v_contrato_token_timeline",
     "v_contratos_assinatura_kpi",
     "v_contratos_tokens_pendentes",
@@ -101858,12 +102055,12 @@
     "src/hooks/useProximosEventos.ts",
     "src/hooks/useRealTimeSubscription.ts",
     "src/hooks/useRealtimeDashboard.ts",
+    "src/hooks/useSSTColaborador.ts",
     "src/hooks/useSecureVisibility.ts",
     "src/hooks/useSecurityMonitor.ts",
     "src/hooks/useServerValidation.ts",
     "src/hooks/useSessionTimeout.ts",
-    "src/hooks/useSyncedState.ts",
-    "src/hooks/useSystemHealth.ts"
+    "src/hooks/useSyncedState.ts"
    ]
   },
   {
@@ -101994,7 +102191,7 @@
   {
    "module": "src/mocks",
    "files": 3,
-   "lines": 3555,
+   "lines": 3564,
    "tables": [],
    "exports": [
     "colaboradoresMock.ts: isColaboradoresMockEnabled, MOCK_EMPRESA, getMockUserEmpresas, mockOr, isMockEmpresaId, MOCK_COLABORADORES",
@@ -102019,7 +102216,7 @@
   {
    "module": "src/pages",
    "files": 133,
-   "lines": 48754,
+   "lines": 48798,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -102383,8 +102580,8 @@
   },
   {
    "module": "src/services",
-   "files": 185,
-   "lines": 39353,
+   "files": 189,
+   "lines": 40619,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -102809,7 +103006,7 @@
   {
    "module": "src/types",
    "files": 13,
-   "lines": 872,
+   "lines": 874,
    "tables": [],
    "exports": [
     "afastamentos.ts: AfastamentoRow, AfastamentoInsert, AfastamentoUpdate, ConfigAfastamentoRow, DocumentoAfastamentoRow, ProrrogacaoAfastamentoRow",
@@ -104280,6 +104477,9 @@
     "insert": [
      "src/services/colaboradorDetalhesService.ts"
     ],
+    "update": [
+     "src/services/colaboradorDetalhesService.ts"
+    ],
     "delete": [
      "src/services/colaboradorDetalhesService.ts"
     ]
@@ -104685,6 +104885,9 @@
     ],
     "delete": [
      "src/services/turnoService.ts"
+    ],
+    "update": [
+     "src/services/turnoService.ts"
     ]
    },
    "esocial_eventos": {
@@ -105025,6 +105228,9 @@
     ],
     "delete": [
      "src/services/colaboradorDetalhesService.ts"
+    ],
+    "update": [
+     "src/services/colaboradorDetalhesService.ts"
     ]
    },
    "geo_blocked_attempts": {
@@ -105130,6 +105336,7 @@
    "holerites": {
     "select": [
      "src/pages/PortalPage.tsx",
+     "src/services/colaboradorDetalhesService.ts",
      "src/services/folhaPagamentoService.ts",
      "supabase/functions/_shared/folhaIntegrity.ts",
      "supabase/functions/distribuir-holerites/index.ts"
@@ -106128,10 +106335,16 @@
    },
    "sst_cat": {
     "select": [
+     "src/hooks/useSSTColaborador.ts",
      "src/pages/AdminCatPage.tsx"
     ],
     "ref": [
      "src/pages/AdminCatPage.tsx"
+    ]
+   },
+   "sst_exposicao_riscos": {
+    "select": [
+     "src/hooks/useSSTColaborador.ts"
     ]
    },
    "sst_extintores": {
@@ -106156,7 +106369,8 @@
    "sst_incidentes": {
     "select": [
      "src/components/sst/SSTIncidentesTab.tsx",
-     "src/components/sst/SSTKPIs.tsx"
+     "src/components/sst/SSTKPIs.tsx",
+     "src/hooks/useSSTColaborador.ts"
     ],
     "ref": [
      "src/pages/SSTPage.tsx"
@@ -107444,15 +107658,21 @@
     "status"
    ],
    "holerites": [
+    "assinado",
+    "colaborador_cargo",
+    "colaborador_cpf",
     "colaborador_id",
     "colaborador_nome",
     "created_at",
     "folha_id",
     "id",
     "liquido",
+    "salario_base",
     "total_descontos",
     "total_proventos",
-    "valor_fgts"
+    "valor_fgts",
+    "valor_inss",
+    "valor_irrf"
    ],
    "idempotency_keys": [
     "created_at",
@@ -107875,6 +108095,15 @@
     "tipo_acidente",
     "tipo_cat"
    ],
+   "sst_exposicao_riscos": [
+    "agente_nocivo_codigo",
+    "colaborador_id",
+    "data_fim_exposicao",
+    "data_inicio_exposicao",
+    "epi_eficaz",
+    "id",
+    "status_esocial"
+   ],
    "sst_extintores": [
     "capacidade_kg",
     "codigo_patrimonio",
@@ -107889,8 +108118,13 @@
     "tipo"
    ],
    "sst_incidentes": [
+    "colaborador_id",
     "data_hora",
-    "empresa_id"
+    "empresa_id",
+    "gravidade",
+    "id",
+    "status",
+    "tipo"
    ],
    "sst_ltcat_laudos": [
     "empresa_id",
@@ -110616,7 +110850,6 @@
    "sst_cat_testemunhas",
    "sst_epis",
    "sst_exames",
-   "sst_exposicao_riscos",
    "sst_regimento_interno",
    "taxas_cambio",
    "tempos_residencia",
@@ -113476,6 +113709,10 @@
     "msg": "Título é obrigatório"
    },
    {
+    "file": "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+    "msg": ">\n            {erroSalvar}\n          </p>\n        )}\n        {carregando ? (\n          <Spinner />\n        ) : falhou ? (\n          <FalhaConsulta o="
+   },
+   {
     "file": "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
     "msg": "Erro ao salvar documento"
    },
@@ -113520,8 +113757,12 @@
     "msg": "Tipo de documento é obrigatório"
    },
    {
+    "file": "src/components/colaborador-detalhes/EditarJornadaDialog.tsx",
+    "msg": " className="
+   },
+   {
     "file": "src/components/colaborador-detalhes/EmergenciaTab.tsx",
-    "msg": "Erro ao adicionar contato"
+    "msg": "Apenas administradores e RH podem editar contatos de emergência (contêm telefone e e-mail)."
    },
    {
     "file": "src/components/colaborador-detalhes/EmergenciaTab.tsx",
@@ -113554,10 +113795,6 @@
    {
     "file": "src/components/colaborador-detalhes/ExperienciaTab.tsx",
     "msg": "Erro ao salvar"
-   },
-   {
-    "file": "src/components/colaborador-detalhes/FormacaoTab.tsx",
-    "msg": "Erro ao adicionar formação"
    },
    {
     "file": "src/components/colaborador-detalhes/FormacaoTab.tsx",
@@ -114304,6 +114541,10 @@
     "msg": "Falha ao salvar ponto offline."
    },
    {
+    "file": "src/hooks/useSSTColaborador.ts",
+    "msg": "empresa_id obrigatório para isolamento de tenant"
+   },
+   {
     "file": "src/hooks/useServerValidation.ts",
     "msg": "O servidor demorou muito para responder. Tente novamente em alguns instantes."
    },
@@ -114314,6 +114555,10 @@
    {
     "file": "src/hooks/useServerValidation.ts",
     "msg": "Verifique os campos destacados no formulário."
+   },
+   {
+    "file": "src/hooks/useVinculos.ts",
+    "msg": "Nenhuma empresa selecionada."
    },
    {
     "file": "src/hooks/ferias/useGerarComunicadoColetivas.ts",
@@ -115366,6 +115611,22 @@
    {
     "file": "src/services/colaboradorDetalhesService.ts",
     "msg": "id obrigatório"
+   },
+   {
+    "file": "src/services/colaboradorService.ts",
+    "msg": "A nova admissão (${dados.data_admissao}) precisa ser posterior a ${ultimoMarco}, fim da passagem anterior — senão as duas passagens se sobrepõem."
+   },
+   {
+    "file": "src/services/colaboradorService.ts",
+    "msg": "Este colaborador não está desligado — recontratação disponível apenas para cadastro desligado."
+   },
+   {
+    "file": "src/services/colaboradorService.ts",
+    "msg": "Nova data de admissão é obrigatória para recontratação"
+   },
+   {
+    "file": "src/services/colaboradorService.ts",
+    "msg": "Recontratação não aplicada: o cadastro deixou de estar desligado (outra recontratação aconteceu em paralelo). Recarregue a página."
    },
    {
     "file": "src/services/colaboradorService.ts",
@@ -118584,6 +118845,10 @@
     "text": "* Empacota a operação inteira (validação → destino → idempotência → auditoria)."
    },
    {
+    "file": "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+    "text": "O `*` de `obrigatorio` não pode ser enfeite: apagar um campo obrigatório e"
+   },
+   {
     "file": "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
     "text": "existe (mesma lógica de vencimento de PrazosAlertasCard). */"
    },
@@ -118596,8 +118861,28 @@
     "text": "apenas abrem o popup \"Ver todos\" (mesma coreografia do popup de"
    },
    {
+    "file": "src/components/colaborador-detalhes/EmergenciaTab.tsx",
+    "text": "não pode ver PII também não edita — abrir o formulário com o valor real"
+   },
+   {
     "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
     "text": "centro), por isso um SVG local mínimo em vez de adaptar um componente"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/HoleritesTab.tsx",
+    "text": "competências já geradas para o colaborador. É SOMENTE LEITURA — a geração"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/HoleritesTab.tsx",
+    "text": "Lista vazia por falha de consulta não pode parecer \"não há holerite\":"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/SSTResumoTab.tsx",
+    "text": "* Uma seção do painel. Cada consulta tem estado próprio: falha de UMA não pode"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/SSTResumoTab.tsx",
+    "text": "* SOMENTE LEITURA e só status/data/tipo — os hooks de `useSSTColaborador.ts`"
    },
    {
     "file": "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx",
@@ -118618,6 +118903,18 @@
    {
     "file": "src/components/colaborador-detalhes/historico/UpcomingEvents.tsx",
     "text": "vencimento real do RH."
+   },
+   {
+    "file": "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
+    "text": "* Cadastro legado sem `cargo_id`: usa o texto para achar o cargo, mas apenas se"
+   },
+   {
+    "file": "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
+    "text": "A nova admissão não pode começar antes do FIM da última passagem: comparar"
+   },
+   {
+    "file": "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
+    "text": "regra — o formulário sozinho não protege o dado gravado."
    },
    {
     "file": "src/components/dashboard/analytics/widgets.tsx",
@@ -119320,6 +119617,10 @@
     "text": "e ocuparia vaga no card, escondendo o prazo de um documento válido."
    },
    {
+    "file": "src/hooks/useSSTColaborador.ts",
+    "text": "REGRA DE CACHE DESTE ARQUIVO: a leitura vive DENTRO da família que o writer"
+   },
+   {
     "file": "src/hooks/useSecurityMonitor.ts",
     "text": "Remove somente token/verifier do Supabase e o fingerprint de sessao: nunca"
    },
@@ -119438,6 +119739,10 @@
    {
     "file": "src/mocks/colaboradoresMock.ts",
     "text": "* Ativa o mock apenas em dev e apenas com o opt-in explícito da env var."
+   },
+   {
+    "file": "src/mocks/colaboradoresMock.ts",
+    "text": "validação de sobreposição do diálogo voltava a comparar só com a"
    },
    {
     "file": "src/mocks/desempenhoMock.ts",
@@ -120050,6 +120355,10 @@
    {
     "file": "src/services/timelineService.ts",
     "text": "mínimo, direto pelas colunas reais confirmadas em types.ts."
+   },
+   {
+    "file": "src/services/turnoService.ts",
+    "text": "o fluxo de salvar deve fazer UPDATE (linha já existe) ou INSERT (ainda"
    },
    {
     "file": "src/services/vinculoService.ts",
@@ -148127,6 +148436,42 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+    "field": "tipo",
+    "value": "textarea",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+    "field": "tipo",
+    "value": "textarea",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+    "field": "tipo",
+    "value": "numero",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+    "field": "tipo",
+    "value": "data",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+    "field": "tipo",
+    "value": "checkbox",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+    "field": "tipo",
+    "value": "selecao",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
     "field": "tipo",
     "value": "Outros",
@@ -148250,6 +148595,12 @@
     "file": "src/components/colaborador-detalhes/historico/HistoryEventRow.tsx",
     "field": "type",
     "value": "month",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
+    "field": "status",
+    "value": "desligado",
     "kind": "compara"
    },
    {
@@ -153637,6 +153988,12 @@
    {
     "file": "src/pages/ColaboradorDetalhesPage.tsx",
     "field": "status",
+    "value": "desligado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/ColaboradorDetalhesPage.tsx",
+    "field": "status",
     "value": "ativo",
     "kind": "compara"
    },
@@ -155419,6 +155776,12 @@
    {
     "file": "src/services/colaboradorService.ts",
     "field": "status",
+    "value": "ativo",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/services/colaboradorService.ts",
+    "field": "status",
     "value": "all",
     "kind": "compara"
    },
@@ -155427,6 +155790,18 @@
     "field": "status",
     "value": "desligado",
     "kind": "compara"
+   },
+   {
+    "file": "src/services/colaboradorService.ts",
+    "field": "status",
+    "value": "desligado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/services/colaboradorService.ts",
+    "field": "status",
+    "value": "desligado",
+    "kind": "filtra"
    },
    {
     "file": "src/services/contabilidadeService.ts",
@@ -155786,6 +156161,18 @@
     "file": "src/services/vinculoService.ts",
     "field": "status",
     "value": "ativo",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/services/vinculoService.ts",
+    "field": "tipo",
+    "value": "Admissão",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/services/vinculoService.ts",
+    "field": "status",
+    "value": "encerrado",
     "kind": "escreve"
    },
    {
@@ -158839,6 +159226,12 @@
     "body": "(v ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });"
    },
    {
+    "file": "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+    "name": "valorAtual",
+    "params": "campoId: string",
+    "body": "edicoes[campoId] ?? valorSalvo[campoId] ?? '';"
+   },
+   {
     "file": "src/components/colaborador-detalhes/HistoricoSalarialTab.tsx",
     "name": "formatCurrency",
     "params": "v: number",
@@ -159215,6 +159608,12 @@
     "name": "calcular",
     "params": "dados: Dados13Salario",
     "body": "setLoading(true); setResultado(null); try { const { data, error } = await supabase.functions.invoke('calcular-13-salario', { body: dados, }); if (error) throw error; if (!data?.success) throw new Error(data?.error || 'Erro no cálculo'); setResultado(data.resultado); toast.success(`13º Salário (${dados.parcela}ª parcela) calculado!`); return data.resultado; } catch (err) { // Prefixo de contexto ajuda o usuário a saber qual operação falhou. toast.error(`Erro ao calcular 13º: ${safeErrorMessage(er …"
+   },
+   {
+    "file": "src/hooks/useColaboradorDetalhes.ts",
+    "name": "useValoresCamposCustomizados",
+    "params": "colaboradorId?: string",
+    "body": "return useQuery({ queryKey: ['valores-campos-customizados', colaboradorId], queryFn: () => service.obterValoresCamposCustomizados(colaboradorId!), enabled: !!colaboradorId, });"
    },
    {
     "file": "src/hooks/useContratoTemplates.ts",
@@ -176583,6 +176982,286 @@
     "name": "nunca ultrapassa o teto de 100 mesmo se resultado exceder (defesa em camadas)"
    },
    {
+    "file": "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
+    "name": "CamposCustomizadosTab"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
+    "name": "mostra carregando enquanto as consultas não respondem"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
+    "name": "mostra falha de consulta sem inventar ausência de dados"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
+    "name": "mostra estado vazio honesto quando a empresa não definiu campos"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
+    "name": "renderiza rótulo e valor salvo de cada campo"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
+    "name": "descarta opções não-string do Json de opcoes"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
+    "name": "salva apenas os campos editados e confirma com toast"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
+    "name": "usa o DatePicker do design system no campo de data, não input nativo"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
+    "name": "não grava vazio em campo obrigatório que o usuário apagou"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
+    "name": "descarta o que foi digitado ao trocar de colaborador (nao grava no cadastro do outro)"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
+    "name": "limpa o valor de campo de selecao OPCIONAL (trocar dava, remover nao)"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
+    "name": "expõe estado de erro quando o salvamento falha"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "EditarJornadaDialog — escala do dia"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "não renderiza a seção de escala sem colaboradorId"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "mostra carregando antes da escala do dia chegar"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "em falha de consulta mostra erro honesto, não "
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "descarta turno e observacoes ao trocar de colaborador sem escala no dia"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "remove a escala do dia quando ja existe uma (criar sem excluir e fluxo pela metade)"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "nao oferece remover quando o dia nao tem escala"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "carrega a escala existente do dia e salva com UPDATE"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "sem escala no dia mostra estado vazio honesto e salva com INSERT"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "decide UPDATE x INSERT pela releitura no salvar, não pelo estado carregado"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "erro ao salvar aparece na tela, não só em toast"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "sem turno cadastrado avisa e mantém o salvar bloqueado"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "sem jornada contratual explica o vazio e não oferece salvar jornada"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "jornada indisponível por falha mostra erro honesto, não "
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "com jornada contratual mostra o form e não o aviso de vazio"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+    "name": "trocar o dia recarrega a escala daquele dia"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EmergenciaTab.test.tsx",
+    "name": "EmergenciaTab — edição de contato"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EmergenciaTab.test.tsx",
+    "name": "mostra FalhaConsulta quando a consulta falha, em vez de estado vazio"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EmergenciaTab.test.tsx",
+    "name": "expõe um botão de editar por contato"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EmergenciaTab.test.tsx",
+    "name": "abre o diálogo em modo edição com o título correto"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EmergenciaTab.test.tsx",
+    "name": "preenche o formulário com o telefone REAL, não com a máscara exibida na tabela"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EmergenciaTab.test.tsx",
+    "name": "salvar em modo edição chama atualizar com id e dados, e não cria um novo contato"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EmergenciaTab.test.tsx",
+    "name": "volta para modo criação ao reabrir pelo botão Adicionar"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EmergenciaTab.test.tsx",
+    "name": "não abre a edição para quem não pode ver PII (o formulário mostra o valor real)"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/EmergenciaTab.test.tsx",
+    "name": "salva null, não string vazia, nos campos opcionais em branco"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/FormacaoTab.test.tsx",
+    "name": "FormacaoTab — edição de formação"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/FormacaoTab.test.tsx",
+    "name": "expõe um botão de editar por formação"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/FormacaoTab.test.tsx",
+    "name": "abre o diálogo em modo edição com o título correto e os valores atuais"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/FormacaoTab.test.tsx",
+    "name": "salvar em modo edição chama atualizar com id e dados, e não cria uma nova formação"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/FormacaoTab.test.tsx",
+    "name": "salva null, não string vazia, nos campos opcionais em branco"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/FormacaoTab.test.tsx",
+    "name": "volta para modo criação ao reabrir pelo botão Adicionar"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/HoleritesTab.test.tsx",
+    "name": "HoleritesTab"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/HoleritesTab.test.tsx",
+    "name": "mostra skeleton enquanto carrega, sem estado vazio"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/HoleritesTab.test.tsx",
+    "name": "em falha de consulta mostra erro honesto, não "
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/HoleritesTab.test.tsx",
+    "name": "mostra estado vazio quando a consulta não traz holerite"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/HoleritesTab.test.tsx",
+    "name": "formata competência e valores em pt-BR e marca a assinatura"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/HoleritesTab.test.tsx",
+    "name": "não expõe o CPF do colaborador"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/HoleritesTab.test.tsx",
+    "name": "competência ausente cai no travessão que o serviço devolve"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/HoleritesTab.test.tsx",
+    "name": "assinado nulo não vira "
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/JornadaPontoTab.test.tsx",
+    "name": "JornadaPontoTab — ação de escala"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/JornadaPontoTab.test.tsx",
+    "name": "sem jornada contratual a ação de escala continua alcançável"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/JornadaPontoTab.test.tsx",
+    "name": "com jornada contratual a ação segue funcionando e mostra a escala atual"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/JornadaPontoTab.test.tsx",
+    "name": "falha na consulta da jornada não é lida como "
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/JornadaPontoTab.test.tsx",
+    "name": "sem empresa atual não oferece a ação (não há tenant para gravar)"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+    "name": "SSTResumoTab"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+    "name": "mostra skeleton enquanto qualquer consulta carrega, sem estado vazio"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+    "name": "sem nenhum registro mostra o vazio honesto, não conformidade"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+    "name": "consulta ainda não resolvida (hook desabilitado) não vira "
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+    "name": "falha de consulta não vira "
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+    "name": "falha em uma consulta preserva o que as outras trouxeram"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+    "name": "trata gravidade como inteiro da escala 1-5, com rótulo da escala"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+    "name": "gravidade fora da escala mostra o valor cru, sem rótulo inventado"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+    "name": "gravidade nula não vira nível nenhum"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+    "name": "lista CAT com data e situação no eSocial"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+    "name": "status_esocial nulo na CAT não vira "
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+    "name": "lista risco com agente, início e eficácia do EPI"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+    "name": "epi_eficaz nulo não afirma que o EPI protege"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+    "name": "seção vazia ao lado de seção com dado mostra vazio só da sua seção"
+   },
+   {
     "file": "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx",
     "name": "HistoricoColaborador"
    },
@@ -176605,6 +177284,70 @@
    {
     "file": "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx",
     "name": "shows a compact empty state when there are no events at all"
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "RecontratarColaboradorDialog"
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "mostra skeleton enquanto o resumo de vínculos carrega"
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "não inventa "
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "mostra estado vazio honesto quando não há vínculo anterior"
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "exibe o resumo real de passagens com datas no fuso local"
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "mascara o CPF do colaborador (sem contexto de auth, sem PII crua)"
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "segue o cargo_id do cadastro, nao o nome (cargos homonimos nao tem UNIQUE no banco)"
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "envia a nova admissão com cargo, departamento e salário da última passagem"
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "bloqueia confirmação sem data de admissão"
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "bloqueia nova admissão que se sobreporia à passagem anterior"
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "bloqueia nova admissão anterior ao DESLIGAMENTO da última passagem"
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "bloqueia sobreposição com a passagem do cadastro legado (resumo vazio)"
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "não confirma enquanto o resumo de vínculos não pôde ser lido"
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "recusa recontratar quem não está desligado"
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "mantém o diálogo aberto quando a mutation falha"
+   },
+   {
+    "file": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+    "name": "não envia nada enquanto a recontratação está em andamento"
    },
    {
     "file": "src/components/folha/__tests__/folhaDashboardData.test.ts",
@@ -179479,6 +180222,22 @@
     "name": "is disabled when no empresaId"
    },
    {
+    "file": "src/hooks/__tests__/useColaboradorDetalhes.test.ts",
+    "name": "useAtualizarContatoEmergencia"
+   },
+   {
+    "file": "src/hooks/__tests__/useColaboradorDetalhes.test.ts",
+    "name": "calls atualizarContatoEmergencia scoped by colaboradorId"
+   },
+   {
+    "file": "src/hooks/__tests__/useColaboradorDetalhes.test.ts",
+    "name": "useAtualizarFormacao"
+   },
+   {
+    "file": "src/hooks/__tests__/useColaboradorDetalhes.test.ts",
+    "name": "calls atualizarFormacao scoped by colaboradorId"
+   },
+   {
     "file": "src/hooks/__tests__/useColaboradorVinculo.test.ts",
     "name": "useColaboradorVinculo"
    },
@@ -179529,6 +180288,18 @@
    {
     "file": "src/hooks/__tests__/useColaboradores.test.ts",
     "name": "summary is defined after load"
+   },
+   {
+    "file": "src/hooks/__tests__/useComplianceColaborador.test.ts",
+    "name": "useConsentimentosColaborador"
+   },
+   {
+    "file": "src/hooks/__tests__/useComplianceColaborador.test.ts",
+    "name": "calls lgpdService.listarConsentimentos with empresaId and colaboradorId"
+   },
+   {
+    "file": "src/hooks/__tests__/useComplianceColaborador.test.ts",
+    "name": "is disabled when no colaboradorId"
    },
    {
     "file": "src/hooks/__tests__/useConfiguracoesIntervalo.test.ts",
@@ -179821,6 +180592,74 @@
    {
     "file": "src/hooks/__tests__/useDepartamentos.test.ts",
     "name": "allows overriding pageSize (e.g. for filter dropdowns) without changing the default"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "useMetasColaborador"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "calls avaliacaoService.listarMetas with empresaId and colaboradorId"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "is disabled when no colaboradorId"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "usePDIsColaborador"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "calls avaliacaoService.listarPDIs with empresaId and colaboradorId"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "useFeedbacksColaborador"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "calls avaliacaoService.listarFeedbacks with empresaId and colaboradorId"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "useCertificadosColaborador"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "calls catalogoCursoService.listarCertificados with empresaId and colaboradorId"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "useCompetenciasColaborador"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "resolves to an empty list outside mock mode"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "useTreinamentosColaborador"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "calls treinamentoParticipantesService.listarPorColaborador with colaboradorId"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "useOnboardingColaborador"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "returns null progresso and no crash when the colaborador has no onboarding started"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "reads the canonical jornada (modelo A) scoped by empresa and its admissao tarefas"
+   },
+   {
+    "file": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+    "name": "falls back to the legacy modelo B only when there is no jornada"
    },
    {
     "file": "src/hooks/__tests__/useDesligamentos.test.ts",
@@ -180555,6 +181394,50 @@
     "name": "sets isError=true on unexpected error"
    },
    {
+    "file": "src/hooks/__tests__/useHistoricoColaborador.test.ts",
+    "name": "useHistoricoColaborador"
+   },
+   {
+    "file": "src/hooks/__tests__/useHistoricoColaborador.test.ts",
+    "name": "merges events from every source and sorts them from most to least recent"
+   },
+   {
+    "file": "src/hooks/__tests__/useHistoricoColaborador.test.ts",
+    "name": "preserves rich fields instead of flattening them into a single description string"
+   },
+   {
+    "file": "src/hooks/__tests__/useHistoricoColaborador.test.ts",
+    "name": "includes audit entries as a filterable "
+   },
+   {
+    "file": "src/hooks/__tests__/useHistoricoColaborador.test.ts",
+    "name": "ignora ações da trilha que não são INSERT/UPDATE/DELETE"
+   },
+   {
+    "file": "src/hooks/__tests__/useHistoricoColaborador.test.ts",
+    "name": "exposes the colaborador record for the sidebar summary (status, tipo_contrato, data_admissao)"
+   },
+   {
+    "file": "src/hooks/__tests__/useHistoricoColaborador.test.ts",
+    "name": "lê o colaborador com o empresa_id da empresa atual (isolamento de tenant)"
+   },
+   {
+    "file": "src/hooks/__tests__/useHistoricoColaborador.test.ts",
+    "name": "usa os vínculos como fonte da admissão quando existem, numerando as recontratações"
+   },
+   {
+    "file": "src/hooks/__tests__/useHistoricoColaborador.test.ts",
+    "name": "inclui apenas cursos concluídos, datados pela conclusão"
+   },
+   {
+    "file": "src/hooks/__tests__/useHistoricoColaborador.test.ts",
+    "name": "rotula o feedback 360 pelo status canônico, não como concluído por padrão"
+   },
+   {
+    "file": "src/hooks/__tests__/useHistoricoColaborador.test.ts",
+    "name": "expõe isError quando qualquer uma das fontes falha"
+   },
+   {
     "file": "src/hooks/__tests__/useHistoricoContratos.test.ts",
     "name": "useHistoricoContratos"
    },
@@ -181255,6 +182138,30 @@
     "name": "calls toast.error on failure"
    },
    {
+    "file": "src/hooks/__tests__/useNovasTabelas.test.ts",
+    "name": "useSaldoBancoHoras"
+   },
+   {
+    "file": "src/hooks/__tests__/useNovasTabelas.test.ts",
+    "name": "calls bancoHorasService.getSaldo with colaboradorId and empresaId"
+   },
+   {
+    "file": "src/hooks/__tests__/useNovasTabelas.test.ts",
+    "name": "is disabled when no colaboradorId"
+   },
+   {
+    "file": "src/hooks/__tests__/useNovasTabelas.test.ts",
+    "name": "useRegistrosPontoSemana"
+   },
+   {
+    "file": "src/hooks/__tests__/useNovasTabelas.test.ts",
+    "name": "calls pontoService.buscarRegistrosSemana with colaboradorId"
+   },
+   {
+    "file": "src/hooks/__tests__/useNovasTabelas.test.ts",
+    "name": "is disabled when no colaboradorId"
+   },
+   {
     "file": "src/hooks/__tests__/useNow.test.ts",
     "name": "useNow"
    },
@@ -181631,6 +182538,58 @@
     "name": "exposes refetch function"
    },
    {
+    "file": "src/hooks/__tests__/useProximosEventos.test.ts",
+    "name": "useProximosEventos"
+   },
+   {
+    "file": "src/hooks/__tests__/useProximosEventos.test.ts",
+    "name": "returns an empty list when nothing is upcoming"
+   },
+   {
+    "file": "src/hooks/__tests__/useProximosEventos.test.ts",
+    "name": "includes a future ASO expiration and a future document expiration, sorted by date"
+   },
+   {
+    "file": "src/hooks/__tests__/useProximosEventos.test.ts",
+    "name": "ignores expired/past dates"
+   },
+   {
+    "file": "src/hooks/__tests__/useProximosEventos.test.ts",
+    "name": "excludes a período de experiência already concluído"
+   },
+   {
+    "file": "src/hooks/__tests__/useProximosEventos.test.ts",
+    "name": "inclui o fim do período de experiência ainda em curso"
+   },
+   {
+    "file": "src/hooks/__tests__/useProximosEventos.test.ts",
+    "name": "usa data_limite_concessao do período aquisitivo"
+   },
+   {
+    "file": "src/hooks/__tests__/useProximosEventos.test.ts",
+    "name": "ignora período aquisitivo já encerrado (gozado/pago/vencido) ou com perdeu_direito"
+   },
+   {
+    "file": "src/hooks/__tests__/useProximosEventos.test.ts",
+    "name": "ignora ASO cancelado mesmo com data_validade futura"
+   },
+   {
+    "file": "src/hooks/__tests__/useProximosEventos.test.ts",
+    "name": "usa o status real das férias programadas no badge, sem contagem de dias"
+   },
+   {
+    "file": "src/hooks/__tests__/useProximosEventos.test.ts",
+    "name": "inclui tarefa de onboarding pendente com prazo futuro"
+   },
+   {
+    "file": "src/hooks/__tests__/useProximosEventos.test.ts",
+    "name": "propaga isError quando qualquer uma das 6 fontes falha"
+   },
+   {
+    "file": "src/hooks/__tests__/useProximosEventos.test.ts",
+    "name": "propaga isLoading enquanto qualquer uma das 6 fontes carrega"
+   },
+   {
     "file": "src/hooks/__tests__/useRealTimeSubscription.test.tsx",
     "name": "useRealTimeSubscription"
    },
@@ -181689,6 +182648,42 @@
    {
     "file": "src/hooks/__tests__/useRealtimeDashboard.test.ts",
     "name": "removes channel on unmount"
+   },
+   {
+    "file": "src/hooks/__tests__/useSSTColaborador.test.ts",
+    "name": "useIncidentesColaborador"
+   },
+   {
+    "file": "src/hooks/__tests__/useSSTColaborador.test.ts",
+    "name": "queries sst_incidentes scoped by colaborador and empresa, without descricao"
+   },
+   {
+    "file": "src/hooks/__tests__/useSSTColaborador.test.ts",
+    "name": "returns the rows read from the table"
+   },
+   {
+    "file": "src/hooks/__tests__/useSSTColaborador.test.ts",
+    "name": "is disabled when no colaboradorId"
+   },
+   {
+    "file": "src/hooks/__tests__/useSSTColaborador.test.ts",
+    "name": "useCatColaborador"
+   },
+   {
+    "file": "src/hooks/__tests__/useSSTColaborador.test.ts",
+    "name": "queries sst_cat scoped by colaborador and empresa, without cid_principal/cid_secundarios"
+   },
+   {
+    "file": "src/hooks/__tests__/useSSTColaborador.test.ts",
+    "name": "useRiscosColaborador"
+   },
+   {
+    "file": "src/hooks/__tests__/useSSTColaborador.test.ts",
+    "name": "queries sst_exposicao_riscos scoped by colaborador_id only (no empresa_id column)"
+   },
+   {
+    "file": "src/hooks/__tests__/useSSTColaborador.test.ts",
+    "name": "is disabled when no colaboradorId"
    },
    {
     "file": "src/hooks/__tests__/useSecureVisibility.test.ts",
@@ -187288,6 +188283,58 @@
    },
    {
     "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
+    "name": "atualizarContatoEmergencia"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
+    "name": "updates contato scoped by id and colaboradorId"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
+    "name": "atualizarFormacao"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
+    "name": "updates formacao scoped by id and colaboradorId"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
+    "name": "listarFeriasColaborador"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
+    "name": "returns ferias for colaborador scoped by empresa"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
+    "name": "returns empty array when data is null"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
+    "name": "throws when empresaId is missing"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
+    "name": "listarHoleritesColaborador"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
+    "name": "normalizes competencia from the joined folha and total_liquido from liquido"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
+    "name": "falls back competencia to — when there is no folha joined"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
+    "name": "filters by colaborador_id and limits to the given amount"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
+    "name": "returns empty array when data is null"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
     "name": "listarTimes"
    },
    {
@@ -187327,56 +188374,48 @@
     "name": "returns webhooks without empresa filter"
    },
    {
-    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
-    "name": "filters by empresa_id when provided"
+    "file": "src/services/__tests__/colaboradorService.recontratacao.test.ts",
+    "name": "colaboradorService.recontratar"
    },
    {
-    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
-    "name": "criarWebhook"
+    "file": "src/services/__tests__/colaboradorService.recontratacao.test.ts",
+    "name": "exige empresaId (isolamento de tenant)"
    },
    {
-    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
-    "name": "inserts and returns webhook"
+    "file": "src/services/__tests__/colaboradorService.recontratacao.test.ts",
+    "name": "exige data_admissao"
    },
    {
-    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
-    "name": "excluirWebhook"
+    "file": "src/services/__tests__/colaboradorService.recontratacao.test.ts",
+    "name": "atualiza o MESMO colaborador.id (status ativo, data_desligamento null) e cria vínculo tipo "
    },
    {
-    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
-    "name": "deletes webhook by id"
+    "file": "src/services/__tests__/colaboradorService.recontratacao.test.ts",
+    "name": "recusa admissão anterior ao ENCERRAMENTO da última passagem (sobreposição)"
    },
    {
-    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
-    "name": "listarFeriasColetivas"
+    "file": "src/services/__tests__/colaboradorService.recontratacao.test.ts",
+    "name": "recusa sobreposição em cadastro legado, cujas datas vivem em "
    },
    {
-    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
-    "name": "returns ferias coletivas for empresa"
+    "file": "src/services/__tests__/colaboradorService.recontratacao.test.ts",
+    "name": "aceita admissão posterior ao encerramento da última passagem"
    },
    {
-    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
-    "name": "criarFeriasColetivas"
+    "file": "src/services/__tests__/colaboradorService.recontratacao.test.ts",
+    "name": "cadastro legado sem vínculo: registra a passagem antiga antes da readmissão"
    },
    {
-    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
-    "name": "inserts and returns ferias coletivas"
+    "file": "src/services/__tests__/colaboradorService.recontratacao.test.ts",
+    "name": "não inventa data de fim quando o cadastro legado não tem data_desligamento"
    },
    {
-    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
-    "name": "listarCamposCustomizados"
+    "file": "src/services/__tests__/colaboradorService.recontratacao.test.ts",
+    "name": "recusa recontratar cadastro que não está desligado"
    },
    {
-    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
-    "name": "returns campos without empresa filter and filters by ativo=true"
-   },
-   {
-    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
-    "name": "filters by empresa_id when provided"
-   },
-   {
-    "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
-    "name": "obterValoresCamposCustomizados"
+    "file": "src/services/__tests__/colaboradorService.recontratacao.test.ts",
+    "name": "não cria vínculo quando o update não casa nenhuma linha (recontratação concorrente)"
    },
    {
     "file": "src/services/__tests__/colaboradorService.test.ts",
@@ -190299,6 +191338,54 @@
     "name": "exposes notificarAjustePonto"
    },
    {
+    "file": "src/services/__tests__/onboardingJornadaService.test.ts",
+    "name": "listarKits"
+   },
+   {
+    "file": "src/services/__tests__/onboardingJornadaService.test.ts",
+    "name": "filtra por empresa_id e por ativo quando não inclui inativos"
+   },
+   {
+    "file": "src/services/__tests__/onboardingJornadaService.test.ts",
+    "name": "mantém o recorte de empresa e dispensa o filtro de ativo no modo gerenciador"
+   },
+   {
+    "file": "src/services/__tests__/onboardingJornadaService.test.ts",
+    "name": "normaliza "
+   },
+   {
+    "file": "src/services/__tests__/onboardingJornadaService.test.ts",
+    "name": "lança o erro da query em vez de devolver lista vazia"
+   },
+   {
+    "file": "src/services/__tests__/onboardingJornadaService.test.ts",
+    "name": "criarKit"
+   },
+   {
+    "file": "src/services/__tests__/onboardingJornadaService.test.ts",
+    "name": "grava empresa_id junto com nome/itens e ignora imagem_url (sem coluna no banco)"
+   },
+   {
+    "file": "src/services/__tests__/onboardingJornadaService.test.ts",
+    "name": "recusa empresaId vazio antes de tocar no banco"
+   },
+   {
+    "file": "src/services/__tests__/onboardingJornadaService.test.ts",
+    "name": "lança quando o insert não devolve linha"
+   },
+   {
+    "file": "src/services/__tests__/onboardingJornadaService.test.ts",
+    "name": "definirAtivoKit"
+   },
+   {
+    "file": "src/services/__tests__/onboardingJornadaService.test.ts",
+    "name": "alterna apenas o campo ativo da linha pedida"
+   },
+   {
+    "file": "src/services/__tests__/onboardingJornadaService.test.ts",
+    "name": "propaga o erro do update"
+   },
+   {
     "file": "src/services/__tests__/pcsService.test.ts",
     "name": "pcsService"
    },
@@ -191343,6 +192430,14 @@
     "name": "exige empresa_id"
    },
    {
+    "file": "src/services/__tests__/rescisaoService.test.ts",
+    "name": "fecha o vínculo em aberto do colaborador após confirmar o pagamento"
+   },
+   {
+    "file": "src/services/__tests__/rescisaoService.test.ts",
+    "name": "bloqueia o pagamento (e não fecha vínculo) se a rescisão não estiver assinada pelas duas partes"
+   },
+   {
     "file": "src/services/__tests__/securityService.test.ts",
     "name": "securityService.getBlockedIps"
    },
@@ -191771,6 +192866,62 @@
     "name": "returns arquivos for ferias_id"
    },
    {
+    "file": "src/services/__tests__/timelineService.test.ts",
+    "name": "listarHistoricoCargoTimeline"
+   },
+   {
+    "file": "src/services/__tests__/timelineService.test.ts",
+    "name": "queries historico_cargo by colaborador_id only, ordered by data_alteracao"
+   },
+   {
+    "file": "src/services/__tests__/timelineService.test.ts",
+    "name": "propaga o erro do PostgREST em vez de devolver lista vazia"
+   },
+   {
+    "file": "src/services/__tests__/timelineService.test.ts",
+    "name": "devolve [] quando data vem nulo"
+   },
+   {
+    "file": "src/services/__tests__/timelineService.test.ts",
+    "name": "listarPromocoesTimeline"
+   },
+   {
+    "file": "src/services/__tests__/timelineService.test.ts",
+    "name": "queries promocoes by colaborador_id only (no empresa_id column)"
+   },
+   {
+    "file": "src/services/__tests__/timelineService.test.ts",
+    "name": "listarTransferenciasTimeline"
+   },
+   {
+    "file": "src/services/__tests__/timelineService.test.ts",
+    "name": "queries transferencias by colaborador_id only, ordered by data_vigencia"
+   },
+   {
+    "file": "src/services/__tests__/timelineService.test.ts",
+    "name": "listarAfastamentosTimeline"
+   },
+   {
+    "file": "src/services/__tests__/timelineService.test.ts",
+    "name": "queries afastamentos scoped by colaborador and empresa"
+   },
+   {
+    "file": "src/services/__tests__/timelineService.test.ts",
+    "name": "throws when empresaId is missing"
+   },
+   {
+    "file": "src/services/__tests__/timelineService.test.ts",
+    "name": "listarDesligamentoTimeline"
+   },
+   {
+    "file": "src/services/__tests__/timelineService.test.ts",
+    "name": "queries desligamentos scoped by colaborador and empresa"
+   },
+   {
+    "file": "src/services/__tests__/timelineService.test.ts",
+    "name": "throws when empresaId is missing"
+   },
+   {
     "file": "src/services/__tests__/turnoService.test.ts",
     "name": "turnoService.listarTurnos"
    },
@@ -191885,6 +193036,142 @@
    {
     "file": "src/services/__tests__/turnoService.test.ts",
     "name": "throws on DB error"
+   },
+   {
+    "file": "src/services/__tests__/turnoService.test.ts",
+    "name": "turnoService.obterEscalaDoDia"
+   },
+   {
+    "file": "src/services/__tests__/turnoService.test.ts",
+    "name": "returns the escala for the colaborador on the given date"
+   },
+   {
+    "file": "src/services/__tests__/turnoService.test.ts",
+    "name": "filters by colaborador_id, empresa_id and the exact date"
+   },
+   {
+    "file": "src/services/__tests__/turnoService.test.ts",
+    "name": "returns null when there is no escala for that date"
+   },
+   {
+    "file": "src/services/__tests__/turnoService.test.ts",
+    "name": "throws when empresaId is missing"
+   },
+   {
+    "file": "src/services/__tests__/turnoService.test.ts",
+    "name": "throws on DB error"
+   },
+   {
+    "file": "src/services/__tests__/turnoService.test.ts",
+    "name": "turnoService.atualizarEscala"
+   },
+   {
+    "file": "src/services/__tests__/turnoService.test.ts",
+    "name": "updates only turno_id and returns the escala"
+   },
+   {
+    "file": "src/services/__tests__/turnoService.test.ts",
+    "name": "throws when data is null"
+   },
+   {
+    "file": "src/services/__tests__/turnoService.test.ts",
+    "name": "throws when empresaId is missing"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "vinculoService.contarPassagensPorColaboradores"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "retorna objeto vazio sem chamar o supabase quando não há ids"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "faz UMA única query .in() para N colaboradores (sem N+1)"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "1 vínculo => quantidadePassagens 1, quantidadeRecontratacoes 0"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "expõe ultimoEncerramento = maior data_fim (a validação de sobreposição depende dele)"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "2 vínculos => quantidadePassagens 2, quantidadeRecontratacoes 1, admissaoAtual = vínculo aberto"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "3 vínculos => quantidadePassagens 3"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "colaborador sem nenhum vínculo não aparece no resultado (não força 1ª passagem)"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "vinculoService.criarVinculoInicial"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "insere colaborador_id, data_inicio, data_fim null, status ativo e o tipo informado"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "usa tipo "
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "é best-effort: não lança erro quando o insert falha, só registra o log"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "vinculoService.criarVinculoHistorico"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "insere a passagem antiga já encerrada (data_fim preenchida, status encerrado)"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "não insere vínculo sem data de fim (evitaria um 2º vínculo "
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "NAO e best-effort: propaga a falha do insert para a recontratacao parar"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "nao duplica a passagem quando ja existe linha identica (recontratacoes simultaneas)"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "propaga falha da leitura em vez de inserir as cegas"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "vinculoService.fecharVinculoAberto"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "encontra o vínculo com data_fim IS NULL e o encerra"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "não chama update quando não há vínculo aberto (nada a fechar)"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "é best-effort: não lança erro quando a busca falha"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "vinculoService.listarPorColaborador"
+   },
+   {
+    "file": "src/services/__tests__/vinculoService.test.ts",
+    "name": "retorna [] sem consultar o supabase quando colaboradorId está vazio"
    },
    {
     "file": "src/services/__tests__/webhookService.test.ts",
@@ -222890,6 +224177,10 @@
     "limit": "500"
    },
    {
+    "file": "src/services/turnoService.ts",
+    "limit": "1"
+   },
+   {
     "file": "src/services/vinculoService.ts",
     "limit": "1"
    },
@@ -224992,6 +226283,26 @@
       "escreve:src/components/colaborador-detalhes/documentos/AnotacoesInternasCard.tsx",
       "escreve:src/mocks/colaboradoresMock.ts"
      ],
+     "textarea": [
+      "compara:src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+      "escreve:src/mocks/colaboradoresMock.ts"
+     ],
+     "numero": [
+      "compara:src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+      "compara:src/components/premiacoes/RewardsSimulator.tsx",
+      "escreve:src/components/premiacoes/RewardsSimulator.tsx"
+     ],
+     "data": [
+      "compara:src/components/colaborador-detalhes/CamposCustomizadosTab.tsx"
+     ],
+     "checkbox": [
+      "compara:src/components/colaborador-detalhes/CamposCustomizadosTab.tsx"
+     ],
+     "selecao": [
+      "compara:src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+      "compara:src/components/settings/CamposCustomizadosTab.tsx",
+      "escreve:src/mocks/colaboradoresMock.ts"
+     ],
      "Outros": [
       "escreve:src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
       "escreve:src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
@@ -225190,10 +226501,6 @@
      "percentage": [
       "escreve:src/components/premiacoes/RewardsSimulator.tsx"
      ],
-     "numero": [
-      "compara:src/components/premiacoes/RewardsSimulator.tsx",
-      "escreve:src/components/premiacoes/RewardsSimulator.tsx"
-     ],
      "moeda": [
       "escreve:src/components/premiacoes/RewardsSimulator.tsx"
      ],
@@ -225243,10 +226550,6 @@
      ],
      "texto": [
       "escreve:src/components/settings/CamposCustomizadosTab.tsx"
-     ],
-     "selecao": [
-      "compara:src/components/settings/CamposCustomizadosTab.tsx",
-      "escreve:src/mocks/colaboradoresMock.ts"
      ],
      "os": [
       "compara:src/components/sst/GerarLtcatOsButton.tsx",
@@ -225368,9 +226671,6 @@
      "vida": [
       "escreve:src/mocks/colaboradoresMock.ts",
       "filtra:src/services/calculoBeneficiosService.ts"
-     ],
-     "textarea": [
-      "escreve:src/mocks/colaboradoresMock.ts"
      ],
      "Admissão": [
       "escreve:src/mocks/colaboradoresMock.ts",
@@ -225938,6 +227238,17 @@
       "escreve:src/mocks/treinamentosMock.ts",
       "escreve:src/pages/TreinamentosPage.tsx"
      ],
+     "desligado": [
+      "compara:src/components/colaboradores/RecontratarColaboradorDialog.tsx",
+      "compara:src/components/ferias/FeriasForm.tsx",
+      "compara:src/mocks/colaboradoresMock.ts",
+      "compara:src/pages/ColaboradorDetalhesPage.tsx",
+      "compara:src/services/colaboradorService.ts",
+      "compara:supabase/functions/metricas/index.ts",
+      "escreve:src/mocks/colaboradoresMock.ts",
+      "filtra:src/services/colaboradorService.ts",
+      "filtra:src/services/departamentoService.ts"
+     ],
      "assinado": [
       "compara:src/components/contratos/ContratosVencendoPanel.tsx",
       "compara:src/hooks/useAssinaturas.ts",
@@ -226027,6 +227338,7 @@
       "escreve:src/pages/PlanosSaudePage.tsx",
       "escreve:src/pages/SegurosVidaPage.tsx",
       "escreve:src/services/admissaoService.ts",
+      "escreve:src/services/colaboradorService.ts",
       "escreve:src/services/contratoService.ts",
       "escreve:src/services/premiacoesService.ts",
       "escreve:src/services/vinculoService.ts",
@@ -226089,14 +227401,6 @@
      "adquirido": [
       "compara:src/components/ferias/FeriasForm.tsx",
       "filtra:src/hooks/useNotificacoes.ts"
-     ],
-     "desligado": [
-      "compara:src/components/ferias/FeriasForm.tsx",
-      "compara:src/mocks/colaboradoresMock.ts",
-      "compara:src/services/colaboradorService.ts",
-      "compara:supabase/functions/metricas/index.ts",
-      "escreve:src/mocks/colaboradoresMock.ts",
-      "filtra:src/services/departamentoService.ts"
      ],
      "vencida": [
       "compara:src/components/ferias/FeriasRelatorioDialog.tsx",
@@ -260985,7 +262289,7 @@
   },
   "src/components/__tests__/EmergenciaTab.test.tsx": {
    "path": "src/components/__tests__/EmergenciaTab.test.tsx",
-   "lines": 107,
+   "lines": 108,
    "is_test": true,
    "tests": [
     "EmergenciaTab",
@@ -261990,7 +263294,7 @@
   },
   "src/components/__tests__/FormacaoTab.test.tsx": {
    "path": "src/components/__tests__/FormacaoTab.test.tsx",
-   "lines": 94,
+   "lines": 95,
    "is_test": true,
    "tests": [
     "FormacaoTab",
@@ -269063,6 +270367,58 @@
     }
    ]
   },
+  "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx": {
+   "path": "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+   "lines": 216,
+   "exports": [
+    "function CamposCustomizadosTab"
+   ],
+   "errors": [
+    ">\n            {erroSalvar}\n          </p>\n        )}\n        {carregando ? (\n          <Spinner />\n        ) : falhou ? (\n          <FalhaConsulta o="
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "textarea",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "textarea",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "numero",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "data",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "checkbox",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "selecao",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "O `*` de `obrigatorio` não pode ser enfeite: apagar um campo obrigatório e"
+   ],
+   "calc_fns": [
+    {
+     "name": "valorAtual",
+     "params": "campoId: string",
+     "body": "edicoes[campoId] ?? valorSalvo[campoId] ?? '';"
+    }
+   ]
+  },
   "src/components/colaborador-detalhes/ColaboradorDocuments.tsx": {
    "path": "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
    "lines": 231,
@@ -269152,21 +270508,27 @@
   },
   "src/components/colaborador-detalhes/EditarJornadaDialog.tsx": {
    "path": "src/components/colaborador-detalhes/EditarJornadaDialog.tsx",
-   "lines": 149,
+   "lines": 391,
    "exports": [
     "function EditarJornadaDialog"
+   ],
+   "errors": [
+    " className="
    ]
   },
   "src/components/colaborador-detalhes/EmergenciaTab.tsx": {
    "path": "src/components/colaborador-detalhes/EmergenciaTab.tsx",
-   "lines": 152,
+   "lines": 218,
    "exports": [
     "function EmergenciaTab"
    ],
    "errors": [
-    "Erro ao adicionar contato",
+    "Apenas administradores e RH podem editar contatos de emergência (contêm telefone e e-mail).",
     "Informe pelo menos um telefone",
     "Nome é obrigatório"
+   ],
+   "rule_comments": [
+    "não pode ver PII também não edita — abrir o formulário com o valor real"
    ]
   },
   "src/components/colaborador-detalhes/EstagiarioTab.tsx": {
@@ -269284,12 +270646,11 @@
   },
   "src/components/colaborador-detalhes/FormacaoTab.tsx": {
    "path": "src/components/colaborador-detalhes/FormacaoTab.tsx",
-   "lines": 165,
+   "lines": 218,
    "exports": [
     "function FormacaoTab"
    ],
    "errors": [
-    "Erro ao adicionar formação",
     "Escolaridade é obrigatória"
    ]
   },
@@ -269323,9 +270684,20 @@
     }
    ]
   },
+  "src/components/colaborador-detalhes/HoleritesTab.tsx": {
+   "path": "src/components/colaborador-detalhes/HoleritesTab.tsx",
+   "lines": 77,
+   "exports": [
+    "function HoleritesTab"
+   ],
+   "rule_comments": [
+    "competências já geradas para o colaborador. É SOMENTE LEITURA — a geração",
+    "Lista vazia por falha de consulta não pode parecer \"não há holerite\":"
+   ]
+  },
   "src/components/colaborador-detalhes/JornadaPontoTab.tsx": {
    "path": "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
-   "lines": 203,
+   "lines": 212,
    "exports": [
     "function JornadaPontoTab"
    ],
@@ -269346,6 +270718,17 @@
    "errors": [
     "Erro ao salvar",
     "Tipo de deficiência é obrigatório"
+   ]
+  },
+  "src/components/colaborador-detalhes/SSTResumoTab.tsx": {
+   "path": "src/components/colaborador-detalhes/SSTResumoTab.tsx",
+   "lines": 240,
+   "exports": [
+    "function SSTResumoTab"
+   ],
+   "rule_comments": [
+    "* Uma seção do painel. Cada consulta tem estado próprio: falha de UMA não pode",
+    "* SOMENTE LEITURA e só status/data/tipo — os hooks de `useSSTColaborador.ts`"
    ]
   },
   "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx": {
@@ -269370,7 +270753,139 @@
   },
   "src/components/colaborador-detalhes/index.ts": {
    "path": "src/components/colaborador-detalhes/index.ts",
-   "lines": 24
+   "lines": 27
+  },
+  "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx": {
+   "path": "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
+   "lines": 231,
+   "is_test": true,
+   "errors": [
+    ")).toHaveTextContent("
+   ],
+   "calc_fns": [
+    {
+     "name": "mockValores",
+     "params": "estado: Partial<{ data: unknown[]; isLoading: boolean; isError: boolean }>",
+     "body": ""
+    }
+   ],
+   "tests": [
+    "CamposCustomizadosTab",
+    "mostra carregando enquanto as consultas não respondem",
+    "mostra falha de consulta sem inventar ausência de dados",
+    "mostra estado vazio honesto quando a empresa não definiu campos",
+    "renderiza rótulo e valor salvo de cada campo",
+    "descarta opções não-string do Json de opcoes",
+    "salva apenas os campos editados e confirma com toast",
+    "usa o DatePicker do design system no campo de data, não input nativo",
+    "não grava vazio em campo obrigatório que o usuário apagou",
+    "descarta o que foi digitado ao trocar de colaborador (nao grava no cadastro do outro)",
+    "limpa o valor de campo de selecao OPCIONAL (trocar dava, remover nao)",
+    "expõe estado de erro quando o salvamento falha"
+   ]
+  },
+  "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx": {
+   "path": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+   "lines": 334,
+   "is_test": true,
+   "errors": [
+    ")).toHaveTextContent(/escala fora do período fechado/i);\n  });\n\n  it("
+   ],
+   "tests": [
+    "EditarJornadaDialog — escala do dia",
+    "não renderiza a seção de escala sem colaboradorId",
+    "mostra carregando antes da escala do dia chegar",
+    "em falha de consulta mostra erro honesto, não ",
+    "descarta turno e observacoes ao trocar de colaborador sem escala no dia",
+    "remove a escala do dia quando ja existe uma (criar sem excluir e fluxo pela metade)",
+    "nao oferece remover quando o dia nao tem escala",
+    "carrega a escala existente do dia e salva com UPDATE",
+    "sem escala no dia mostra estado vazio honesto e salva com INSERT",
+    "decide UPDATE x INSERT pela releitura no salvar, não pelo estado carregado",
+    "erro ao salvar aparece na tela, não só em toast",
+    "sem turno cadastrado avisa e mantém o salvar bloqueado",
+    "sem jornada contratual explica o vazio e não oferece salvar jornada",
+    "jornada indisponível por falha mostra erro honesto, não ",
+    "com jornada contratual mostra o form e não o aviso de vazio",
+    "trocar o dia recarrega a escala daquele dia"
+   ]
+  },
+  "src/components/colaborador-detalhes/__tests__/EmergenciaTab.test.tsx": {
+   "path": "src/components/colaborador-detalhes/__tests__/EmergenciaTab.test.tsx",
+   "lines": 213,
+   "is_test": true,
+   "tests": [
+    "EmergenciaTab — edição de contato",
+    "mostra FalhaConsulta quando a consulta falha, em vez de estado vazio",
+    "expõe um botão de editar por contato",
+    "abre o diálogo em modo edição com o título correto",
+    "preenche o formulário com o telefone REAL, não com a máscara exibida na tabela",
+    "salvar em modo edição chama atualizar com id e dados, e não cria um novo contato",
+    "volta para modo criação ao reabrir pelo botão Adicionar",
+    "não abre a edição para quem não pode ver PII (o formulário mostra o valor real)",
+    "salva null, não string vazia, nos campos opcionais em branco"
+   ]
+  },
+  "src/components/colaborador-detalhes/__tests__/FormacaoTab.test.tsx": {
+   "path": "src/components/colaborador-detalhes/__tests__/FormacaoTab.test.tsx",
+   "lines": 138,
+   "is_test": true,
+   "tests": [
+    "FormacaoTab — edição de formação",
+    "expõe um botão de editar por formação",
+    "abre o diálogo em modo edição com o título correto e os valores atuais",
+    "salvar em modo edição chama atualizar com id e dados, e não cria uma nova formação",
+    "salva null, não string vazia, nos campos opcionais em branco",
+    "volta para modo criação ao reabrir pelo botão Adicionar"
+   ]
+  },
+  "src/components/colaborador-detalhes/__tests__/HoleritesTab.test.tsx": {
+   "path": "src/components/colaborador-detalhes/__tests__/HoleritesTab.test.tsx",
+   "lines": 96,
+   "is_test": true,
+   "tests": [
+    "HoleritesTab",
+    "mostra skeleton enquanto carrega, sem estado vazio",
+    "em falha de consulta mostra erro honesto, não ",
+    "mostra estado vazio quando a consulta não traz holerite",
+    "formata competência e valores em pt-BR e marca a assinatura",
+    "não expõe o CPF do colaborador",
+    "competência ausente cai no travessão que o serviço devolve",
+    "assinado nulo não vira "
+   ]
+  },
+  "src/components/colaborador-detalhes/__tests__/JornadaPontoTab.test.tsx": {
+   "path": "src/components/colaborador-detalhes/__tests__/JornadaPontoTab.test.tsx",
+   "lines": 138,
+   "is_test": true,
+   "tests": [
+    "JornadaPontoTab — ação de escala",
+    "sem jornada contratual a ação de escala continua alcançável",
+    "com jornada contratual a ação segue funcionando e mostra a escala atual",
+    "falha na consulta da jornada não é lida como ",
+    "sem empresa atual não oferece a ação (não há tenant para gravar)"
+   ]
+  },
+  "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx": {
+   "path": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+   "lines": 146,
+   "is_test": true,
+   "tests": [
+    "SSTResumoTab",
+    "mostra skeleton enquanto qualquer consulta carrega, sem estado vazio",
+    "sem nenhum registro mostra o vazio honesto, não conformidade",
+    "consulta ainda não resolvida (hook desabilitado) não vira ",
+    "falha de consulta não vira ",
+    "falha em uma consulta preserva o que as outras trouxeram",
+    "trata gravidade como inteiro da escala 1-5, com rótulo da escala",
+    "gravidade fora da escala mostra o valor cru, sem rótulo inventado",
+    "gravidade nula não vira nível nenhum",
+    "lista CAT com data e situação no eSocial",
+    "status_esocial nulo na CAT não vira ",
+    "lista risco com agente, início e eficácia do EPI",
+    "epi_eficaz nulo não afirma que o EPI protege",
+    "seção vazia ao lado de seção com dado mostra vazio só da sua seção"
+   ]
   },
   "src/components/colaborador-detalhes/desenvolvimento/DesenvolvimentoProfissionalCard.tsx": {
    "path": "src/components/colaborador-detalhes/desenvolvimento/DesenvolvimentoProfissionalCard.tsx",
@@ -269733,9 +271248,55 @@
     "transition={{ delay: index * 0.05 }}"
    ]
   },
+  "src/components/colaboradores/RecontratarColaboradorDialog.tsx": {
+   "path": "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
+   "lines": 305,
+   "exports": [
+    "function RecontratarColaboradorDialog"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "desligado",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "* Cadastro legado sem `cargo_id`: usa o texto para achar o cargo, mas apenas se",
+    "A nova admissão não pode começar antes do FIM da última passagem: comparar",
+    "regra — o formulário sozinho não protege o dado gravado."
+   ]
+  },
   "src/components/colaboradores/index.ts": {
    "path": "src/components/colaboradores/index.ts",
    "lines": 3
+  },
+  "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx": {
+   "path": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+   "lines": 248,
+   "is_test": true,
+   "rule_comments": [
+    "Admitido e desligado no mesmo dia: a data padrão (hoje) não pode valer.",
+    "validação o formulário liberava qualquer data."
+   ],
+   "tests": [
+    "RecontratarColaboradorDialog",
+    "mostra skeleton enquanto o resumo de vínculos carrega",
+    "não inventa ",
+    "mostra estado vazio honesto quando não há vínculo anterior",
+    "exibe o resumo real de passagens com datas no fuso local",
+    "mascara o CPF do colaborador (sem contexto de auth, sem PII crua)",
+    "segue o cargo_id do cadastro, nao o nome (cargos homonimos nao tem UNIQUE no banco)",
+    "envia a nova admissão com cargo, departamento e salário da última passagem",
+    "bloqueia confirmação sem data de admissão",
+    "bloqueia nova admissão que se sobreporia à passagem anterior",
+    "bloqueia nova admissão anterior ao DESLIGAMENTO da última passagem",
+    "bloqueia sobreposição com a passagem do cadastro legado (resumo vazio)",
+    "não confirma enquanto o resumo de vínculos não pôde ser lido",
+    "recusa recontratar quem não está desligado",
+    "mantém o diálogo aberto quando a mutation falha",
+    "não envia nada enquanto a recontratação está em andamento"
+   ]
   },
   "src/components/contratacao/TokenInput.tsx": {
    "path": "src/components/contratacao/TokenInput.tsx",
@@ -280065,7 +281626,7 @@
   },
   "src/hooks/index.ts": {
    "path": "src/hooks/index.ts",
-   "lines": 158
+   "lines": 169
   },
   "src/hooks/use-mobile.tsx": {
    "path": "src/hooks/use-mobile.tsx",
@@ -280478,7 +282039,7 @@
   },
   "src/hooks/useColaboradorDetalhes.ts": {
    "path": "src/hooks/useColaboradorDetalhes.ts",
-   "lines": 309,
+   "lines": 360,
    "exports": [
     "function useDependentes",
     "function useCriarDependente",
@@ -280486,6 +282047,7 @@
     "function useExcluirDependente",
     "function useContatosEmergencia",
     "function useCriarContatoEmergencia",
+    "function useAtualizarContatoEmergencia",
     "function useExcluirContatoEmergencia",
     "function useHistoricoSalarial",
     "function useCriarRegistroSalarial",
@@ -280493,6 +282055,7 @@
     "function useCriarASO",
     "function useFormacoes",
     "function useCriarFormacao",
+    "function useAtualizarFormacao",
     "function useExcluirFormacao",
     "function useDadosEstrangeiro",
     "function useSalvarDadosEstrangeiro",
@@ -280504,6 +282067,7 @@
     "function useCriarAnotacao",
     "function useExcluirAnotacao",
     "function useFeriasResumoColaborador",
+    "function useHoleritesColaborador",
     "function usePeriodosAquisitivos",
     "function useEtnias",
     "function useIdentidadesGenero",
@@ -280514,7 +282078,9 @@
     "function useCriarWebhook",
     "function useFeriasColetivas",
     "function useCriarFeriasColetivas",
-    "function useCamposCustomizados"
+    "function useCamposCustomizados",
+    "function useValoresCamposCustomizados",
+    "function useSalvarValorCampoCustomizado"
    ],
    "hooks": [
     "useDependentes",
@@ -280523,6 +282089,7 @@
     "useExcluirDependente",
     "useContatosEmergencia",
     "useCriarContatoEmergencia",
+    "useAtualizarContatoEmergencia",
     "useExcluirContatoEmergencia",
     "useHistoricoSalarial",
     "useCriarRegistroSalarial",
@@ -280530,6 +282097,7 @@
     "useCriarASO",
     "useFormacoes",
     "useCriarFormacao",
+    "useAtualizarFormacao",
     "useExcluirFormacao",
     "useDadosEstrangeiro",
     "useSalvarDadosEstrangeiro",
@@ -280541,6 +282109,7 @@
     "useCriarAnotacao",
     "useExcluirAnotacao",
     "useFeriasResumoColaborador",
+    "useHoleritesColaborador",
     "usePeriodosAquisitivos",
     "useEtnias",
     "useIdentidadesGenero",
@@ -280551,7 +282120,16 @@
     "useCriarWebhook",
     "useFeriasColetivas",
     "useCriarFeriasColetivas",
-    "useCamposCustomizados"
+    "useCamposCustomizados",
+    "useValoresCamposCustomizados",
+    "useSalvarValorCampoCustomizado"
+   ],
+   "calc_fns": [
+    {
+     "name": "useValoresCamposCustomizados",
+     "params": "colaboradorId?: string",
+     "body": "return useQuery({ queryKey: ['valores-campos-customizados', colaboradorId], queryFn: () => service.obterValoresCamposCustomizados(colaboradorId!), enabled: !!colaboradorId, });"
+    }
    ]
   },
   "src/hooks/useColaboradorVinculo.ts": {
@@ -282310,6 +283888,73 @@
     "useRealtimeDashboard"
    ]
   },
+  "src/hooks/useSSTColaborador.ts": {
+   "path": "src/hooks/useSSTColaborador.ts",
+   "lines": 116,
+   "exports": [
+    "type IncidenteSSTColaborador",
+    "type CatSSTColaborador",
+    "type RiscoSSTColaborador",
+    "function useIncidentesColaborador",
+    "function useCatColaborador",
+    "function useRiscosColaborador"
+   ],
+   "tables": [
+    {
+     "table": "sst_incidentes",
+     "op": "select"
+    },
+    {
+     "table": "sst_cat",
+     "op": "select"
+    },
+    {
+     "table": "sst_exposicao_riscos",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "sst_incidentes": [
+     "colaborador_id",
+     "data_hora",
+     "empresa_id",
+     "gravidade",
+     "id",
+     "status",
+     "tipo"
+    ],
+    "sst_cat": [
+     "colaborador_id",
+     "data_acidente",
+     "empresa_id",
+     "id",
+     "status_esocial",
+     "tipo_acidente",
+     "tipo_cat"
+    ],
+    "sst_exposicao_riscos": [
+     "agente_nocivo_codigo",
+     "colaborador_id",
+     "data_fim_exposicao",
+     "data_inicio_exposicao",
+     "epi_eficaz",
+     "id",
+     "status_esocial"
+    ]
+   },
+   "errors": [
+    "empresa_id obrigatório para isolamento de tenant"
+   ],
+   "rule_comments": [
+    "REGRA DE CACHE DESTE ARQUIVO: a leitura vive DENTRO da família que o writer"
+   ],
+   "doc": "PARTE H — Dossiê do Colaborador, aba SST & Saúde Ocupacional. Hooks finos de leitura por colaborador_id. Nenhum deles seleciona campos de diagnóstico/CID/descrição narrativa — só status/data/tipo (ver PARTE 20).",
+   "hooks": [
+    "useIncidentesColaborador",
+    "useCatColaborador",
+    "useRiscosColaborador"
+   ]
+  },
   "src/hooks/useSecureVisibility.ts": {
    "path": "src/hooks/useSecureVisibility.ts",
    "lines": 25,
@@ -282754,12 +284399,19 @@
   },
   "src/hooks/useVinculos.ts": {
    "path": "src/hooks/useVinculos.ts",
-   "lines": 12,
+   "lines": 60,
    "exports": [
-    "function useVinculosColaborador"
+    "function useVinculosResumo",
+    "function useVinculosColaborador",
+    "function useRecontratarColaborador"
+   ],
+   "errors": [
+    "Nenhuma empresa selecionada."
    ],
    "hooks": [
-    "useVinculosColaborador"
+    "useVinculosResumo",
+    "useVinculosColaborador",
+    "useRecontratarColaborador"
    ]
   },
   "src/hooks/useWebhooksAvancados.ts": {
@@ -283077,7 +284729,7 @@
   },
   "src/hooks/__tests__/useColaboradorDetalhes.test.ts": {
    "path": "src/hooks/__tests__/useColaboradorDetalhes.test.ts",
-   "lines": 766,
+   "lines": 895,
    "is_test": true,
    "tests": [
     "useDependentes",
@@ -283155,7 +284807,11 @@
     "calls criarFeriasColetivas and invalidates ferias-coletivas",
     "useCamposCustomizados",
     "calls listarCamposCustomizados with empresaId",
-    "is disabled when no empresaId"
+    "is disabled when no empresaId",
+    "useAtualizarContatoEmergencia",
+    "calls atualizarContatoEmergencia scoped by colaboradorId",
+    "useAtualizarFormacao",
+    "calls atualizarFormacao scoped by colaboradorId"
    ]
   },
   "src/hooks/__tests__/useColaboradorVinculo.test.ts": {
@@ -283183,6 +284839,16 @@
     "exposes cargo and setCargo",
     "exposes criar function",
     "summary is defined after load"
+   ]
+  },
+  "src/hooks/__tests__/useComplianceColaborador.test.ts": {
+   "path": "src/hooks/__tests__/useComplianceColaborador.test.ts",
+   "lines": 37,
+   "is_test": true,
+   "tests": [
+    "useConsentimentosColaborador",
+    "calls lgpdService.listarConsentimentos with empresaId and colaboradorId",
+    "is disabled when no colaboradorId"
    ]
   },
   "src/hooks/__tests__/useConfiguracoesIntervalo.test.ts": {
@@ -283326,6 +284992,30 @@
     "exposes excluir function",
     "uses pageSize 10 by default",
     "allows overriding pageSize (e.g. for filter dropdowns) without changing the default"
+   ]
+  },
+  "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts": {
+   "path": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+   "lines": 193,
+   "is_test": true,
+   "tests": [
+    "useMetasColaborador",
+    "calls avaliacaoService.listarMetas with empresaId and colaboradorId",
+    "is disabled when no colaboradorId",
+    "usePDIsColaborador",
+    "calls avaliacaoService.listarPDIs with empresaId and colaboradorId",
+    "useFeedbacksColaborador",
+    "calls avaliacaoService.listarFeedbacks with empresaId and colaboradorId",
+    "useCertificadosColaborador",
+    "calls catalogoCursoService.listarCertificados with empresaId and colaboradorId",
+    "useCompetenciasColaborador",
+    "resolves to an empty list outside mock mode",
+    "useTreinamentosColaborador",
+    "calls treinamentoParticipantesService.listarPorColaborador with colaboradorId",
+    "useOnboardingColaborador",
+    "returns null progresso and no crash when the colaborador has no onboarding started",
+    "reads the canonical jornada (modelo A) scoped by empresa and its admissao tarefas",
+    "falls back to the legacy modelo B only when there is no jornada"
    ]
   },
   "src/hooks/__tests__/useDesligamentos.test.ts": {
@@ -283649,6 +285339,24 @@
     "sets isError=true on unexpected error"
    ]
   },
+  "src/hooks/__tests__/useHistoricoColaborador.test.ts": {
+   "path": "src/hooks/__tests__/useHistoricoColaborador.test.ts",
+   "lines": 272,
+   "is_test": true,
+   "tests": [
+    "useHistoricoColaborador",
+    "merges events from every source and sorts them from most to least recent",
+    "preserves rich fields instead of flattening them into a single description string",
+    "includes audit entries as a filterable ",
+    "ignora ações da trilha que não são INSERT/UPDATE/DELETE",
+    "exposes the colaborador record for the sidebar summary (status, tipo_contrato, data_admissao)",
+    "lê o colaborador com o empresa_id da empresa atual (isolamento de tenant)",
+    "usa os vínculos como fonte da admissão quando existem, numerando as recontratações",
+    "inclui apenas cursos concluídos, datados pela conclusão",
+    "rotula o feedback 360 pelo status canônico, não como concluído por padrão",
+    "expõe isError quando qualquer uma das fontes falha"
+   ]
+  },
   "src/hooks/__tests__/useHistoricoContratos.test.ts": {
    "path": "src/hooks/__tests__/useHistoricoContratos.test.ts",
    "lines": 114,
@@ -283836,7 +285544,7 @@
   },
   "src/hooks/__tests__/useNovasTabelas.test.ts": {
    "path": "src/hooks/__tests__/useNovasTabelas.test.ts",
-   "lines": 735,
+   "lines": 786,
    "is_test": true,
    "tests": [
     "useBatidasPonto",
@@ -283905,7 +285613,13 @@
     "calls bancoHorasConfigService.buscar with empresaId",
     "useSalvarBancoHorasConfig",
     "calls bancoHorasConfigService.salvar, toasts and invalidates",
-    "calls toast.error on failure"
+    "calls toast.error on failure",
+    "useSaldoBancoHoras",
+    "calls bancoHorasService.getSaldo with colaboradorId and empresaId",
+    "is disabled when no colaboradorId",
+    "useRegistrosPontoSemana",
+    "calls pontoService.buscarRegistrosSemana with colaboradorId",
+    "is disabled when no colaboradorId"
    ]
   },
   "src/hooks/__tests__/useNow.test.ts": {
@@ -284092,6 +285806,26 @@
     "exposes refetch function"
    ]
   },
+  "src/hooks/__tests__/useProximosEventos.test.ts": {
+   "path": "src/hooks/__tests__/useProximosEventos.test.ts",
+   "lines": 163,
+   "is_test": true,
+   "tests": [
+    "useProximosEventos",
+    "returns an empty list when nothing is upcoming",
+    "includes a future ASO expiration and a future document expiration, sorted by date",
+    "ignores expired/past dates",
+    "excludes a período de experiência already concluído",
+    "inclui o fim do período de experiência ainda em curso",
+    "usa data_limite_concessao do período aquisitivo",
+    "ignora período aquisitivo já encerrado (gozado/pago/vencido) ou com perdeu_direito",
+    "ignora ASO cancelado mesmo com data_validade futura",
+    "usa o status real das férias programadas no badge, sem contagem de dias",
+    "inclui tarefa de onboarding pendente com prazo futuro",
+    "propaga isError quando qualquer uma das 6 fontes falha",
+    "propaga isLoading enquanto qualquer uma das 6 fontes carrega"
+   ]
+  },
   "src/hooks/__tests__/useRealTimeSubscription.test.tsx": {
    "path": "src/hooks/__tests__/useRealTimeSubscription.test.tsx",
    "lines": 149,
@@ -284119,6 +285853,22 @@
     "creates a supabase channel on mount",
     "subscribes to postgres_changes",
     "removes channel on unmount"
+   ]
+  },
+  "src/hooks/__tests__/useSSTColaborador.test.ts": {
+   "path": "src/hooks/__tests__/useSSTColaborador.test.ts",
+   "lines": 111,
+   "is_test": true,
+   "tests": [
+    "useIncidentesColaborador",
+    "queries sst_incidentes scoped by colaborador and empresa, without descricao",
+    "returns the rows read from the table",
+    "is disabled when no colaboradorId",
+    "useCatColaborador",
+    "queries sst_cat scoped by colaborador and empresa, without cid_principal/cid_secundarios",
+    "useRiscosColaborador",
+    "queries sst_exposicao_riscos scoped by colaborador_id only (no empresa_id column)",
+    "is disabled when no colaboradorId"
    ]
   },
   "src/hooks/__tests__/useSecureVisibility.test.ts": {
@@ -285554,7 +287304,7 @@
   },
   "src/mocks/colaboradoresMock.ts": {
    "path": "src/mocks/colaboradoresMock.ts",
-   "lines": 1979,
+   "lines": 1988,
    "exports": [
     "function isColaboradoresMockEnabled",
     "const MOCK_EMPRESA",
@@ -285945,7 +287695,8 @@
     }
    ],
    "rule_comments": [
-    "* Ativa o mock apenas em dev e apenas com o opt-in explícito da env var."
+    "* Ativa o mock apenas em dev e apenas com o opt-in explícito da env var.",
+    "validação de sobreposição do diálogo voltava a comparar só com a"
    ],
    "calc_fns": [
     {
@@ -288139,7 +289890,7 @@
   },
   "src/pages/ColaboradorDetalhesPage.tsx": {
    "path": "src/pages/ColaboradorDetalhesPage.tsx",
-   "lines": 543,
+   "lines": 587,
    "exports": [
     "function ColaboradorDetalhesPage"
    ],
@@ -288147,6 +289898,11 @@
     "/colaboradores/editar/"
    ],
    "status_values": [
+    {
+     "field": "status",
+     "value": "desligado",
+     "kind": "compara"
+    },
     {
      "field": "status",
      "value": "ativo",
@@ -295417,7 +297173,7 @@
   },
   "src/services/colaboradorDetalhesService.ts": {
    "path": "src/services/colaboradorDetalhesService.ts",
-   "lines": 567,
+   "lines": 658,
    "exports": [
     "function listarDependentes",
     "function criarDependente",
@@ -295425,6 +297181,7 @@
     "function excluirDependente",
     "function listarContatosEmergencia",
     "function criarContatoEmergencia",
+    "function atualizarContatoEmergencia",
     "function excluirContatoEmergencia",
     "function listarHistoricoSalarial",
     "function criarRegistroSalarial",
@@ -295433,6 +297190,7 @@
     "function listarFormacoes",
     "function criarFormacao",
     "function excluirFormacao",
+    "function atualizarFormacao",
     "function obterDadosEstrangeiro",
     "function salvarDadosEstrangeiro",
     "function obterDeficiencia",
@@ -295447,6 +297205,8 @@
     "function criarTime",
     "function listarEtnias",
     "function listarIdentidadesGenero",
+    "interface HoleriteResumoColaborador",
+    "function listarHoleritesColaborador",
     "function listarFeriasColaborador",
     "function listarTiposAdmissao",
     "function listarTiposEstabilidade",
@@ -295491,6 +297251,10 @@
     },
     {
      "table": "contatos_emergencia",
+     "op": "update"
+    },
+    {
+     "table": "contatos_emergencia",
      "op": "delete"
     },
     {
@@ -295520,6 +297284,10 @@
     {
      "table": "formacoes_academicas",
      "op": "delete"
+    },
+    {
+     "table": "formacoes_academicas",
+     "op": "select,update"
     },
     {
      "table": "dados_estrangeiro",
@@ -295579,6 +297347,10 @@
     },
     {
      "table": "identidades_genero",
+     "op": "select"
+    },
+    {
+     "table": "holerites",
      "op": "select"
     },
     {
@@ -295668,6 +297440,22 @@
     "periodos_aquisitivos": [
      "colaborador_id"
     ],
+    "holerites": [
+     "assinado",
+     "colaborador_cargo",
+     "colaborador_cpf",
+     "colaborador_id",
+     "colaborador_nome",
+     "created_at",
+     "id",
+     "liquido",
+     "salario_base",
+     "total_descontos",
+     "total_proventos",
+     "valor_fgts",
+     "valor_inss",
+     "valor_irrf"
+    ],
     "ferias": [
      "colaborador_id",
      "data_fim",
@@ -295712,7 +297500,7 @@
   },
   "src/services/colaboradorService.ts": {
    "path": "src/services/colaboradorService.ts",
-   "lines": 263,
+   "lines": 353,
    "exports": [
     "const colaboradorService"
    ],
@@ -295729,6 +297517,10 @@
     ]
    },
    "errors": [
+    "A nova admissão (${dados.data_admissao}) precisa ser posterior a ${ultimoMarco}, fim da passagem anterior — senão as duas passagens se sobrepõem.",
+    "Este colaborador não está desligado — recontratação disponível apenas para cadastro desligado.",
+    "Nova data de admissão é obrigatória para recontratação",
+    "Recontratação não aplicada: o cadastro deixou de estar desligado (outra recontratação aconteceu em paralelo). Recarregue a página.",
     "Termo de busca muito longo. Use no máximo 230 caracteres.",
     "empresa_id obrigatório para isolamento de tenant"
    ],
@@ -295745,6 +297537,11 @@
    "status_values": [
     {
      "field": "status",
+     "value": "ativo",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
      "value": "all",
      "kind": "compara"
     },
@@ -295752,6 +297549,16 @@
      "field": "status",
      "value": "desligado",
      "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "desligado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "desligado",
+     "kind": "filtra"
     }
    ],
    "rule_comments": [
@@ -297007,7 +298814,7 @@
   },
   "src/services/index.ts": {
    "path": "src/services/index.ts",
-   "lines": 50,
+   "lines": 51,
    "exports": [
     "const fgtsService"
    ],
@@ -298268,7 +300075,7 @@
   },
   "src/services/rescisaoService.ts": {
    "path": "src/services/rescisaoService.ts",
-   "lines": 351,
+   "lines": 358,
    "exports": [
     "interface CalcularRescisaoParams",
     "const rescisaoService"
@@ -298808,8 +300615,9 @@
   },
   "src/services/turnoService.ts": {
    "path": "src/services/turnoService.ts",
-   "lines": 83,
+   "lines": 125,
    "exports": [
+    "type EscalaDoDia",
     "const turnoService"
    ],
    "tables": [
@@ -298840,6 +300648,14 @@
     {
      "table": "escalas_trabalho",
      "op": "delete"
+    },
+    {
+     "table": "escalas_trabalho",
+     "op": "select"
+    },
+    {
+     "table": "escalas_trabalho",
+     "op": "select,update"
     }
    ],
    "table_cols": {
@@ -298848,6 +300664,8 @@
      "id"
     ],
     "escalas_trabalho": [
+     "colaborador_id",
+     "data",
      "empresa_id",
      "id"
     ]
@@ -298856,13 +300674,19 @@
     "Nenhum registro de escala foi retornado.",
     "Nenhum registro de turno foi retornado.",
     "empresa_id obrigatório para isolamento de tenant"
+   ],
+   "rule_comments": [
+    "o fluxo de salvar deve fazer UPDATE (linha já existe) ou INSERT (ainda"
+   ],
+   "pagination": [
+    "1"
    ]
   },
   "src/services/vinculoService.ts": {
    "path": "src/services/vinculoService.ts",
-   "lines": 133,
+   "lines": 174,
    "exports": [
-    "interface VinculoRow",
+    "type VinculoRow",
     "interface VinculosResumo",
     "const vinculoService"
    ],
@@ -298875,6 +300699,16 @@
     {
      "field": "status",
      "value": "ativo",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "Admissão",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "encerrado",
      "kind": "escreve"
     },
     {
@@ -299829,8 +301663,11 @@
   },
   "src/services/__tests__/colaboradorDetalhesService.test.ts": {
    "path": "src/services/__tests__/colaboradorDetalhesService.test.ts",
-   "lines": 805,
+   "lines": 922,
    "is_test": true,
+   "rule_comments": [
+    "select → eq → order → limit → resolvedValue"
+   ],
    "tests": [
     "listarDependentes",
     "returns dependentes for colaborador",
@@ -299889,6 +301726,19 @@
     "deletes anotacao by id",
     "listarPeriodosAquisitivos",
     "returns periodos for colaborador",
+    "atualizarContatoEmergencia",
+    "updates contato scoped by id and colaboradorId",
+    "atualizarFormacao",
+    "updates formacao scoped by id and colaboradorId",
+    "listarFeriasColaborador",
+    "returns ferias for colaborador scoped by empresa",
+    "returns empty array when data is null",
+    "throws when empresaId is missing",
+    "listarHoleritesColaborador",
+    "normalizes competencia from the joined folha and total_liquido from liquido",
+    "falls back competencia to — when there is no folha joined",
+    "filters by colaborador_id and limits to the given amount",
+    "returns empty array when data is null",
     "listarTimes",
     "returns times without empresa filter",
     "filters by empresa_id when provided",
@@ -299898,20 +301748,25 @@
     "listarEtnias",
     "queries etnias table and returns data",
     "listarWebhooks",
-    "returns webhooks without empresa filter",
-    "filters by empresa_id when provided",
-    "criarWebhook",
-    "inserts and returns webhook",
-    "excluirWebhook",
-    "deletes webhook by id",
-    "listarFeriasColetivas",
-    "returns ferias coletivas for empresa",
-    "criarFeriasColetivas",
-    "inserts and returns ferias coletivas",
-    "listarCamposCustomizados",
-    "returns campos without empresa filter and filters by ativo=true",
-    "filters by empresa_id when provided",
-    "obterValoresCamposCustomizados"
+    "returns webhooks without empresa filter"
+   ]
+  },
+  "src/services/__tests__/colaboradorService.recontratacao.test.ts": {
+   "path": "src/services/__tests__/colaboradorService.recontratacao.test.ts",
+   "lines": 192,
+   "is_test": true,
+   "tests": [
+    "colaboradorService.recontratar",
+    "exige empresaId (isolamento de tenant)",
+    "exige data_admissao",
+    "atualiza o MESMO colaborador.id (status ativo, data_desligamento null) e cria vínculo tipo ",
+    "recusa admissão anterior ao ENCERRAMENTO da última passagem (sobreposição)",
+    "recusa sobreposição em cadastro legado, cujas datas vivem em ",
+    "aceita admissão posterior ao encerramento da última passagem",
+    "cadastro legado sem vínculo: registra a passagem antiga antes da readmissão",
+    "não inventa data de fim quando o cadastro legado não tem data_desligamento",
+    "recusa recontratar cadastro que não está desligado",
+    "não cria vínculo quando o update não casa nenhuma linha (recontratação concorrente)"
    ]
   },
   "src/services/__tests__/colaboradorService.test.ts": {
@@ -300914,6 +302769,25 @@
     "notify"
    ]
   },
+  "src/services/__tests__/onboardingJornadaService.test.ts": {
+   "path": "src/services/__tests__/onboardingJornadaService.test.ts",
+   "lines": 162,
+   "is_test": true,
+   "tests": [
+    "listarKits",
+    "filtra por empresa_id e por ativo quando não inclui inativos",
+    "mantém o recorte de empresa e dispensa o filtro de ativo no modo gerenciador",
+    "normaliza ",
+    "lança o erro da query em vez de devolver lista vazia",
+    "criarKit",
+    "grava empresa_id junto com nome/itens e ignora imagem_url (sem coluna no banco)",
+    "recusa empresaId vazio antes de tocar no banco",
+    "lança quando o insert não devolve linha",
+    "definirAtivoKit",
+    "alterna apenas o campo ativo da linha pedida",
+    "propaga o erro do update"
+   ]
+  },
   "src/services/__tests__/pcsService.test.ts": {
    "path": "src/services/__tests__/pcsService.test.ts",
    "lines": 115,
@@ -301284,7 +303158,7 @@
   },
   "src/services/__tests__/rescisaoService.test.ts": {
    "path": "src/services/__tests__/rescisaoService.test.ts",
-   "lines": 335,
+   "lines": 354,
    "is_test": true,
    "params": [
     {
@@ -301322,7 +303196,9 @@
     "bloqueia sem assinatura das duas partes",
     "bloqueia sem homologação concluída",
     "erro da RPC aborta o pagamento (transação faz rollback no banco)",
-    "exige empresa_id"
+    "exige empresa_id",
+    "fecha o vínculo em aberto do colaborador após confirmar o pagamento",
+    "bloqueia o pagamento (e não fecha vínculo) se a rescisão não estiver assinada pelas duas partes"
    ],
    "uses_service_role": true
   },
@@ -301457,10 +303333,37 @@
     "returns arquivos for ferias_id"
    ]
   },
+  "src/services/__tests__/timelineService.test.ts": {
+   "path": "src/services/__tests__/timelineService.test.ts",
+   "lines": 140,
+   "is_test": true,
+   "rule_comments": [
+    "* Chain thenable mínimo de PostgREST: `.select().eq().eq().order()` resolve no mesmo objeto. */"
+   ],
+   "tests": [
+    "listarHistoricoCargoTimeline",
+    "queries historico_cargo by colaborador_id only, ordered by data_alteracao",
+    "propaga o erro do PostgREST em vez de devolver lista vazia",
+    "devolve [] quando data vem nulo",
+    "listarPromocoesTimeline",
+    "queries promocoes by colaborador_id only (no empresa_id column)",
+    "listarTransferenciasTimeline",
+    "queries transferencias by colaborador_id only, ordered by data_vigencia",
+    "listarAfastamentosTimeline",
+    "queries afastamentos scoped by colaborador and empresa",
+    "throws when empresaId is missing",
+    "listarDesligamentoTimeline",
+    "queries desligamentos scoped by colaborador and empresa",
+    "throws when empresaId is missing"
+   ]
+  },
   "src/services/__tests__/turnoService.test.ts": {
    "path": "src/services/__tests__/turnoService.test.ts",
-   "lines": 260,
+   "lines": 340,
    "is_test": true,
+   "rule_comments": [
+    "select → eq → eq → order → limit → maybeSingle"
+   ],
    "tests": [
     "turnoService.listarTurnos",
     "returns all turnos without empresa filter",
@@ -301490,7 +303393,48 @@
     "throws when data is null",
     "turnoService.excluirEscala",
     "deletes escala by id",
-    "throws on DB error"
+    "throws on DB error",
+    "turnoService.obterEscalaDoDia",
+    "returns the escala for the colaborador on the given date",
+    "filters by colaborador_id, empresa_id and the exact date",
+    "returns null when there is no escala for that date",
+    "throws when empresaId is missing",
+    "throws on DB error",
+    "turnoService.atualizarEscala",
+    "updates only turno_id and returns the escala",
+    "throws when data is null",
+    "throws when empresaId is missing"
+   ]
+  },
+  "src/services/__tests__/vinculoService.test.ts": {
+   "path": "src/services/__tests__/vinculoService.test.ts",
+   "lines": 284,
+   "is_test": true,
+   "tests": [
+    "vinculoService.contarPassagensPorColaboradores",
+    "retorna objeto vazio sem chamar o supabase quando não há ids",
+    "faz UMA única query .in() para N colaboradores (sem N+1)",
+    "1 vínculo => quantidadePassagens 1, quantidadeRecontratacoes 0",
+    "expõe ultimoEncerramento = maior data_fim (a validação de sobreposição depende dele)",
+    "2 vínculos => quantidadePassagens 2, quantidadeRecontratacoes 1, admissaoAtual = vínculo aberto",
+    "3 vínculos => quantidadePassagens 3",
+    "colaborador sem nenhum vínculo não aparece no resultado (não força 1ª passagem)",
+    "vinculoService.criarVinculoInicial",
+    "insere colaborador_id, data_inicio, data_fim null, status ativo e o tipo informado",
+    "usa tipo ",
+    "é best-effort: não lança erro quando o insert falha, só registra o log",
+    "vinculoService.criarVinculoHistorico",
+    "insere a passagem antiga já encerrada (data_fim preenchida, status encerrado)",
+    "não insere vínculo sem data de fim (evitaria um 2º vínculo ",
+    "NAO e best-effort: propaga a falha do insert para a recontratacao parar",
+    "nao duplica a passagem quando ja existe linha identica (recontratacoes simultaneas)",
+    "propaga falha da leitura em vez de inserir as cegas",
+    "vinculoService.fecharVinculoAberto",
+    "encontra o vínculo com data_fim IS NULL e o encerra",
+    "não chama update quando não há vínculo aberto (nada a fechar)",
+    "é best-effort: não lança erro quando a busca falha",
+    "vinculoService.listarPorColaborador",
+    "retorna [] sem consultar o supabase quando colaboradorId está vazio"
    ]
   },
   "src/services/__tests__/webhookService.test.ts": {
@@ -303530,7 +305474,7 @@
   },
   "src/types/entities.ts": {
    "path": "src/types/entities.ts",
-   "lines": 184,
+   "lines": 186,
    "exports": [
     "interface Cargo",
     "interface Departamento",
@@ -318457,10 +320401,66 @@
   }
  },
  "git": {
-  "sha": "0a74847448e82ce4c2d40e92ba52bea9e067bb59",
+  "sha": "d63d655084cfba860168d22be14168ae7bfef26d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "d63d655",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat: resgata da muri o dossiê do colaborador — holerites, SST, campos personalizados e recontratação (#613)",
+    "files": [
+     "inventario/estado/rotas.json",
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/EmergenciaTab.test.tsx",
+     "src/components/__tests__/FormacaoTab.test.tsx",
+     "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+     "src/components/colaborador-detalhes/EditarJornadaDialog.tsx",
+     "src/components/colaborador-detalhes/EmergenciaTab.tsx",
+     "src/components/colaborador-detalhes/FormacaoTab.tsx",
+     "src/components/colaborador-detalhes/HoleritesTab.tsx",
+     "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
+     "src/components/colaborador-detalhes/SSTResumoTab.tsx",
+     "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
+     "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+     "src/components/colaborador-detalhes/__tests__/EmergenciaTab.test.tsx",
+     "src/components/colaborador-detalhes/__tests__/FormacaoTab.test.tsx",
+     "src/components/colaborador-detalhes/__tests__/HoleritesTab.test.tsx",
+     "src/components/colaborador-detalhes/__tests__/JornadaPontoTab.test.tsx",
+     "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+     "src/components/colaborador-detalhes/index.ts",
+     "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
+     "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+     "src/hooks/__tests__/useColaboradorDetalhes.test.ts",
+     "src/hooks/__tests__/useComplianceColaborador.test.ts",
+     "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+     "src/hooks/__tests__/useHistoricoColaborador.test.ts",
+     "src/hooks/__tests__/useNovasTabelas.test.ts",
+     "src/hooks/__tests__/useProximosEventos.test.ts",
+     "src/hooks/__tests__/useSSTColaborador.test.ts",
+     "src/hooks/index.ts",
+     "src/hooks/useColaboradorDetalhes.ts",
+     "src/hooks/useSSTColaborador.ts",
+     "src/hooks/useVinculos.ts",
+     "src/mocks/colaboradoresMock.ts",
+     "src/pages/ColaboradorDetalhesPage.tsx",
+     "src/services/__tests__/colaboradorDetalhesService.test.ts",
+     "src/services/__tests__/colaboradorService.recontratacao.test.ts",
+     "src/services/__tests__/onboardingJornadaService.test.ts",
+     "src/services/__tests__/rescisaoService.test.ts",
+     "src/services/__tests__/timelineService.test.ts",
+     "src/services/__tests__/turnoService.test.ts",
+     "src/services/__tests__/vinculoService.test.ts",
+     "src/services/colaboradorDetalhesService.ts",
+     "src/services/colaboradorService.ts",
+     "src/services/index.ts",
+     "src/services/rescisaoService.ts",
+     "src/services/turnoService.ts",
+     "src/services/vinculoService.ts",
+     "src/types/entities.ts"
+    ]
+   },
    {
     "sha": "0a74847",
     "date": "2026-11-17",
@@ -319155,26 +321155,20 @@
     "files": [
      "docs/prod-readiness.md"
     ]
-   },
-   {
-    "sha": "efe96e8",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "infra(banco): lista fechada do canonical-migrations passa a ser o lote NineBox (#578)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "scripts/canonical-invariants.sql"
-    ]
    }
   ],
   "hot_files": [
    [
-    "scripts/.bundle-budget.json",
-    6
+    "inventario/estado/rotas.json",
+    7
    ],
    [
-    "inventario/estado/rotas.json",
-    6
+    "scripts/.bundle-budget.json",
+    7
+   ],
+   [
+    "src/pages/ColaboradorDetalhesPage.tsx",
+    4
    ],
    [
     "package-lock.json",
@@ -319185,19 +321179,55 @@
     4
    ],
    [
-    "src/pages/ColaboradorDetalhesPage.tsx",
+    "src/components/colaborador-detalhes/index.ts",
     3
-   ],
-   [
-    ".github/workflows/canonical-migrations.yml",
-    3
-   ],
-   [
-    "src/pages/ColaboradorFormPage.tsx",
-    2
    ],
    [
     "src/services/colaboradorService.ts",
+    3
+   ],
+   [
+    "src/components/colaborador-detalhes/EditarJornadaDialog.tsx",
+    2
+   ],
+   [
+    "src/components/colaborador-detalhes/FormacaoTab.tsx",
+    2
+   ],
+   [
+    "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
+    2
+   ],
+   [
+    "src/hooks/index.ts",
+    2
+   ],
+   [
+    "src/hooks/useColaboradorDetalhes.ts",
+    2
+   ],
+   [
+    "src/hooks/useVinculos.ts",
+    2
+   ],
+   [
+    "src/services/colaboradorDetalhesService.ts",
+    2
+   ],
+   [
+    "src/services/index.ts",
+    2
+   ],
+   [
+    "src/services/vinculoService.ts",
+    2
+   ],
+   [
+    "src/types/entities.ts",
+    2
+   ],
+   [
+    "src/pages/ColaboradorFormPage.tsx",
     2
    ],
    [
@@ -319206,46 +321236,6 @@
    ],
    [
     "src/components/admissoes/AdmissoesDashboard.tsx",
-    2
-   ],
-   [
-    "src/components/admissoes/OnboardingPageContent.tsx",
-    2
-   ],
-   [
-    "src/pages/AdmissoesPage.tsx",
-    2
-   ],
-   [
-    "src/pages/OnboardingPage.tsx",
-    2
-   ],
-   [
-    "src/services/onboardingJornadaService.ts",
-    2
-   ],
-   [
-    "src/components/admissoes/AdmissoesKanban.tsx",
-    2
-   ],
-   [
-    "src/components/colaborador-detalhes/index.ts",
-    2
-   ],
-   [
-    "src/hooks/useDesenvolvimentoColaborador.ts",
-    2
-   ],
-   [
-    "src/hooks/useNovasTabelas.ts",
-    2
-   ],
-   [
-    "src/services/tabelas/rhService.ts",
-    2
-   ],
-   [
-    "docs/HOMOLOGACAO-CANCELAMENTO-REAL.md",
     2
    ]
   ]

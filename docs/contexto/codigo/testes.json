@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 705,
+ "total": 722,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 666
+  "unit": 683
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 582
+   "arquivos": 599
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -1256,7 +1256,7 @@
   {
    "arquivo": "src/components/__tests__/EmergenciaTab.test.tsx",
    "tipo": "unit",
-   "linhas": 107,
+   "linhas": 108,
    "testa": [
     "src/components/colaborador-detalhes/EmergenciaTab.tsx",
     "src/hooks/useColaboradorDetalhes.ts"
@@ -1898,7 +1898,7 @@
   {
    "arquivo": "src/components/__tests__/FormacaoTab.test.tsx",
    "tipo": "unit",
-   "linhas": 94,
+   "linhas": 95,
    "testa": [
     "src/components/colaborador-detalhes/FormacaoTab.tsx",
     "src/hooks/useColaboradorDetalhes.ts"
@@ -3154,6 +3154,81 @@
    "casos": 7
   },
   {
+   "arquivo": "src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 231,
+   "testa": [
+    "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
+    "src/hooks/useColaboradorDetalhes.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 334,
+   "testa": [
+    "src/components/colaborador-detalhes/EditarJornadaDialog.tsx",
+    "src/integrations/supabase/database.types.ts",
+    "src/services/turnoService.ts"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/__tests__/EmergenciaTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 213,
+   "testa": [
+    "src/components/colaborador-detalhes/EmergenciaTab.tsx",
+    "src/hooks/useColaboradorDetalhes.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/__tests__/FormacaoTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 138,
+   "testa": [
+    "src/components/colaborador-detalhes/FormacaoTab.tsx",
+    "src/hooks/useColaboradorDetalhes.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/__tests__/HoleritesTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 96,
+   "testa": [
+    "src/components/colaborador-detalhes/HoleritesTab.tsx",
+    "src/hooks/useColaboradorDetalhes.ts",
+    "src/services/colaboradorDetalhesService.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/__tests__/JornadaPontoTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 138,
+   "testa": [
+    "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
+    "src/hooks/index.ts",
+    "src/hooks/useEmpresas.ts",
+    "src/hooks/usePontoMelhorado.ts",
+    "src/services/index.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 146,
+   "testa": [
+    "src/components/colaborador-detalhes/SSTResumoTab.tsx",
+    "src/hooks/useSSTColaborador.ts"
+   ],
+   "casos": 13
+  },
+  {
    "arquivo": "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx",
    "tipo": "unit",
    "linhas": 114,
@@ -3162,6 +3237,18 @@
     "src/types/timelineEvent.ts"
    ],
    "casos": 5
+  },
+  {
+   "arquivo": "src/components/colaboradores/__tests__/RecontratarColaboradorDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 248,
+   "testa": [
+    "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
+    "src/services/vinculoService.ts",
+    "src/types/entities.ts",
+    "src/utils/dateLocal.ts"
+   ],
+   "casos": 15
   },
   {
    "arquivo": "src/components/folha/__tests__/folhaDashboardData.test.ts",
@@ -3800,11 +3887,11 @@
   {
    "arquivo": "src/hooks/__tests__/useColaboradorDetalhes.test.ts",
    "tipo": "unit",
-   "linhas": 766,
+   "linhas": 895,
    "testa": [
     "src/hooks/useColaboradorDetalhes.ts"
    ],
-   "casos": 46
+   "casos": 55
   },
   {
    "arquivo": "src/hooks/__tests__/useColaboradores.test.ts",
@@ -3823,6 +3910,15 @@
     "src/hooks/useColaboradorVinculo.ts"
    ],
    "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useComplianceColaborador.test.ts",
+   "tipo": "unit",
+   "linhas": 37,
+   "testa": [
+    "src/hooks/useComplianceColaborador.ts"
+   ],
+   "casos": 2
   },
   {
    "arquivo": "src/hooks/__tests__/useConfiguracoesIntervalo.test.ts",
@@ -3913,6 +4009,15 @@
     "src/hooks/useDepartamentos.ts"
    ],
    "casos": 6
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useDesenvolvimentoColaborador.test.ts",
+   "tipo": "unit",
+   "linhas": 193,
+   "testa": [
+    "src/hooks/useDesenvolvimentoColaborador.ts"
+   ],
+   "casos": 10
   },
   {
    "arquivo": "src/hooks/__tests__/useDesligamentos.test.ts",
@@ -4081,6 +4186,15 @@
    "casos": 14
   },
   {
+   "arquivo": "src/hooks/__tests__/useHistoricoColaborador.test.ts",
+   "tipo": "unit",
+   "linhas": 272,
+   "testa": [
+    "src/hooks/useHistoricoColaborador.ts"
+   ],
+   "casos": 10
+  },
+  {
    "arquivo": "src/hooks/__tests__/useHistoricoContratos.test.ts",
    "tipo": "unit",
    "linhas": 114,
@@ -4185,11 +4299,11 @@
   {
    "arquivo": "src/hooks/__tests__/useNovasTabelas.test.ts",
    "tipo": "unit",
-   "linhas": 735,
+   "linhas": 786,
    "testa": [
     "src/hooks/useNovasTabelas.ts"
    ],
-   "casos": 43
+   "casos": 47
   },
   {
    "arquivo": "src/hooks/__tests__/useNow.test.ts",
@@ -4293,6 +4407,15 @@
    "casos": 4
   },
   {
+   "arquivo": "src/hooks/__tests__/useProximosEventos.test.ts",
+   "tipo": "unit",
+   "linhas": 163,
+   "testa": [
+    "src/hooks/useProximosEventos.ts"
+   ],
+   "casos": 12
+  },
+  {
    "arquivo": "src/hooks/__tests__/usePWA.test.ts",
    "tipo": "unit",
    "linhas": 108,
@@ -4352,6 +4475,15 @@
    "linhas": 102,
    "testa": [
     "src/hooks/useSessionTimeout.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useSSTColaborador.test.ts",
+   "tipo": "unit",
+   "linhas": 111,
+   "testa": [
+    "src/hooks/useSSTColaborador.ts"
    ],
    "casos": 6
   },
@@ -5053,12 +5185,21 @@
   {
    "arquivo": "src/services/__tests__/colaboradorDetalhesService.test.ts",
    "tipo": "unit",
-   "linhas": 805,
+   "linhas": 922,
    "testa": [
     "src/integrations/supabase/database.types.ts",
     "src/services/colaboradorDetalhesService.ts"
    ],
-   "casos": 47
+   "casos": 56
+  },
+  {
+   "arquivo": "src/services/__tests__/colaboradorService.recontratacao.test.ts",
+   "tipo": "unit",
+   "linhas": 192,
+   "testa": [
+    "src/services/colaboradorService.ts"
+   ],
+   "casos": 10
   },
   {
    "arquivo": "src/services/__tests__/colaboradorService.test.ts",
@@ -5363,6 +5504,15 @@
    "casos": 17
   },
   {
+   "arquivo": "src/services/__tests__/onboardingJornadaService.test.ts",
+   "tipo": "unit",
+   "linhas": 162,
+   "testa": [
+    "src/services/onboardingJornadaService.ts"
+   ],
+   "casos": 9
+  },
+  {
    "arquivo": "src/services/__tests__/pcsService.test.ts",
    "tipo": "unit",
    "linhas": 115,
@@ -5502,12 +5652,13 @@
   {
    "arquivo": "src/services/__tests__/rescisaoService.test.ts",
    "tipo": "unit",
-   "linhas": 335,
+   "linhas": 354,
    "testa": [
     "src/integrations/supabase/client.ts",
-    "src/services/rescisaoService.ts"
+    "src/services/rescisaoService.ts",
+    "src/services/vinculoService.ts"
    ],
-   "casos": 16
+   "casos": 18
   },
   {
    "arquivo": "src/services/__tests__/securityService.test.ts",
@@ -5529,13 +5680,31 @@
    "casos": 73
   },
   {
+   "arquivo": "src/services/__tests__/timelineService.test.ts",
+   "tipo": "unit",
+   "linhas": 140,
+   "testa": [
+    "src/services/timelineService.ts"
+   ],
+   "casos": 9
+  },
+  {
    "arquivo": "src/services/__tests__/turnoService.test.ts",
    "tipo": "unit",
-   "linhas": 260,
+   "linhas": 340,
    "testa": [
     "src/services/turnoService.ts"
    ],
-   "casos": 22
+   "casos": 30
+  },
+  {
+   "arquivo": "src/services/__tests__/vinculoService.test.ts",
+   "tipo": "unit",
+   "linhas": 284,
+   "testa": [
+    "src/services/vinculoService.ts"
+   ],
+   "casos": 19
   },
   {
    "arquivo": "src/services/__tests__/webhookService.test.ts",
@@ -6607,23 +6776,29 @@
   "src/components/colaborador-detalhes/AnotacoesTab.tsx": 1,
   "src/components/colaborador-detalhes/AquisitivosTab.tsx": 1,
   "src/components/colaborador-detalhes/BeneficiosTab.tsx": 1,
+  "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx": 1,
   "src/components/colaborador-detalhes/ColaboradorDocuments.tsx": 1,
   "src/components/colaborador-detalhes/ContasBancariasTab.tsx": 1,
   "src/components/colaborador-detalhes/DependentesTab.tsx": 1,
   "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx": 1,
-  "src/components/colaborador-detalhes/EmergenciaTab.tsx": 1,
+  "src/components/colaborador-detalhes/EditarJornadaDialog.tsx": 1,
+  "src/components/colaborador-detalhes/EmergenciaTab.tsx": 2,
   "src/components/colaborador-detalhes/EstagiarioTab.tsx": 1,
   "src/components/colaborador-detalhes/EstrangeiroTab.tsx": 1,
   "src/components/colaborador-detalhes/ExperienciaTab.tsx": 1,
-  "src/components/colaborador-detalhes/FormacaoTab.tsx": 1,
+  "src/components/colaborador-detalhes/FormacaoTab.tsx": 2,
   "src/components/colaborador-detalhes/HistoricoContratosTab.tsx": 1,
   "src/components/colaborador-detalhes/HistoricoSalarialTab.tsx": 1,
+  "src/components/colaborador-detalhes/HoleritesTab.tsx": 1,
+  "src/components/colaborador-detalhes/JornadaPontoTab.tsx": 1,
   "src/components/colaborador-detalhes/PCDTab.tsx": 1,
+  "src/components/colaborador-detalhes/SSTResumoTab.tsx": 1,
   "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx": 1,
   "src/components/colaborador-detalhes/documentos/StatusComplianceCard.tsx": 1,
   "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx": 1,
   "src/components/colaboradores/ColaboradorFilters.tsx": 1,
   "src/components/colaboradores/ColaboradorHistory.tsx": 1,
+  "src/components/colaboradores/RecontratarColaboradorDialog.tsx": 1,
   "src/components/contratacao/TokenInput.tsx": 1,
   "src/components/contratos/ContratoTokenTimelineDialog.tsx": 1,
   "src/components/contratos/ContratosAssinaturaKPICard.tsx": 1,
@@ -6870,7 +7045,7 @@
   "src/hooks/ferias/useProgramacaoFerias.ts": 2,
   "src/hooks/ferias/useReconciliacaoFolha.ts": 2,
   "src/hooks/ferias/useReconciliacaoLogs.ts": 2,
-  "src/hooks/index.ts": 1,
+  "src/hooks/index.ts": 2,
   "src/hooks/use-mobile.tsx": 1,
   "src/hooks/useAdmissaoWorkflow.ts": 1,
   "src/hooks/useAdmissoes.ts": 1,
@@ -6886,10 +7061,10 @@
   "src/hooks/useCalcular13Salario.ts": 2,
   "src/hooks/useCalculoFolha.ts": 1,
   "src/hooks/useCargos.ts": 2,
-  "src/hooks/useColaboradorDetalhes.ts": 11,
+  "src/hooks/useColaboradorDetalhes.ts": 15,
   "src/hooks/useColaboradorVinculo.ts": 1,
   "src/hooks/useColaboradores.ts": 2,
-  "src/hooks/useComplianceColaborador.ts": 1,
+  "src/hooks/useComplianceColaborador.ts": 2,
   "src/hooks/useConfiguracoesIntervalo.ts": 1,
   "src/hooks/useContratacaoDigital.ts": 1,
   "src/hooks/useContratoTemplates.ts": 1,
@@ -6900,11 +7075,12 @@
   "src/hooks/useDataAccessLog.ts": 1,
   "src/hooks/useDebounce.ts": 1,
   "src/hooks/useDepartamentos.ts": 3,
+  "src/hooks/useDesenvolvimentoColaborador.ts": 1,
   "src/hooks/useDesligamentos.ts": 2,
   "src/hooks/useDocumentOCR.ts": 1,
   "src/hooks/useDocumentos.ts": 2,
   "src/hooks/useESocial.ts": 1,
-  "src/hooks/useEmpresas.ts": 5,
+  "src/hooks/useEmpresas.ts": 6,
   "src/hooks/useExcelExport.ts": 1,
   "src/hooks/useExecutiveDashboard.ts": 1,
   "src/hooks/useFeriados.ts": 1,
@@ -6915,6 +7091,7 @@
   "src/hooks/useFormGuard.ts": 1,
   "src/hooks/useGenericCrud.ts": 2,
   "src/hooks/useGrupo.ts": 3,
+  "src/hooks/useHistoricoColaborador.ts": 1,
   "src/hooks/useHistoricoContratos.ts": 2,
   "src/hooks/useHorasExtras.ts": 1,
   "src/hooks/useIdempotencyKey.ts": 1,
@@ -6935,11 +7112,13 @@
   "src/hooks/usePeriodosAquisitivos.ts": 1,
   "src/hooks/usePiiMask.ts": 1,
   "src/hooks/usePonto.ts": 1,
-  "src/hooks/usePontoMelhorado.ts": 1,
+  "src/hooks/usePontoMelhorado.ts": 2,
   "src/hooks/usePontoOffline.ts": 1,
   "src/hooks/usePontosAbertos.ts": 1,
+  "src/hooks/useProximosEventos.ts": 1,
   "src/hooks/useRealTimeSubscription.ts": 1,
   "src/hooks/useRealtimeDashboard.ts": 1,
+  "src/hooks/useSSTColaborador.ts": 2,
   "src/hooks/useSecureVisibility.ts": 1,
   "src/hooks/useSecurityMonitor.ts": 1,
   "src/hooks/useServerValidation.ts": 1,
@@ -6957,7 +7136,7 @@
   "src/hooks/validators.ts": 1,
   "src/integrations/lovable/index.ts": 1,
   "src/integrations/supabase/client.ts": 24,
-  "src/integrations/supabase/database.types.ts": 11,
+  "src/integrations/supabase/database.types.ts": 12,
   "src/integrations/supabase/previewAuthStorage.ts": 1,
   "src/integrations/supabase/types.ts": 13,
   "src/lib/circuitBreaker.ts": 2,
@@ -7015,8 +7194,8 @@
   "src/services/cargoService.ts": 1,
   "src/services/catalogoCursoService.ts": 1,
   "src/services/cnabService.ts": 2,
-  "src/services/colaboradorDetalhesService.ts": 1,
-  "src/services/colaboradorService.ts": 1,
+  "src/services/colaboradorDetalhesService.ts": 2,
+  "src/services/colaboradorService.ts": 2,
   "src/services/comunicacaoService.ts": 3,
   "src/services/contabilidadeService.ts": 1,
   "src/services/contratacaoService.ts": 2,
@@ -7040,7 +7219,7 @@
   "src/services/folhaService.ts": 1,
   "src/services/historicoContratoService.ts": 1,
   "src/services/horaExtraService.ts": 1,
-  "src/services/index.ts": 1,
+  "src/services/index.ts": 2,
   "src/services/integracaoService.ts": 1,
   "src/services/intervaloService.ts": 1,
   "src/services/jornadaHorariosService.ts": 1,
@@ -7049,7 +7228,7 @@
   "src/services/loggerService.ts": 2,
   "src/services/medidasDisciplinaresService.ts": 1,
   "src/services/notificacoesService.ts": 1,
-  "src/services/onboardingJornadaService.ts": 2,
+  "src/services/onboardingJornadaService.ts": 3,
   "src/services/pcsService.ts": 1,
   "src/services/pesquisaService.ts": 1,
   "src/services/piiAccessLogService.ts": 1,
@@ -7073,13 +7252,15 @@
   "src/services/tabelas/rhService.ts": 1,
   "src/services/tabelas/viewsService.ts": 1,
   "src/services/tabelasReferenciaService.ts": 1,
+  "src/services/timelineService.ts": 1,
   "src/services/trainingImages/index.ts": 4,
-  "src/services/turnoService.ts": 1,
+  "src/services/turnoService.ts": 2,
+  "src/services/vinculoService.ts": 3,
   "src/services/webhookService.ts": 1,
   "src/services/whatsappService.ts": 1,
   "src/services/workflowService.ts": 1,
   "src/types/afastamentos.ts": 1,
-  "src/types/entities.ts": 6,
+  "src/types/entities.ts": 7,
   "src/types/medidasDisciplinares.ts": 6,
   "src/types/pcs.ts": 1,
   "src/types/recrutamento.ts": 8,
@@ -7090,7 +7271,7 @@
   "src/utils/calculoFerias.ts": 1,
   "src/utils/comunicadoFeriasColetivasPDF.ts": 1,
   "src/utils/cursorPagination.ts": 1,
-  "src/utils/dateLocal.ts": 6,
+  "src/utils/dateLocal.ts": 7,
   "src/utils/desligamentoExcel.ts": 1,
   "src/utils/esocialXmlGenerator.ts": 1,
   "src/utils/evaluationPDF.ts": 1,
@@ -7265,10 +7446,7 @@
    "src/components/ui/form.tsx",
    "src/components/ui/sidebar.tsx",
    "src/components/ui/use-toast.ts",
-   "src/hooks/useDesenvolvimentoColaborador.ts",
-   "src/hooks/useHistoricoColaborador.ts",
    "src/hooks/useJornadaOnboarding.ts",
-   "src/hooks/useProximosEventos.ts",
    "src/hooks/useVinculos.ts",
    "src/i18n/useTranslation.ts",
    "src/lib/motionMode.ts",
@@ -7322,7 +7500,6 @@
    "src/services/jornadaService.ts",
    "src/services/tabelas/index.ts",
    "src/services/tabelasComplementaresService.ts",
-   "src/services/timelineService.ts",
    "src/services/trainingImages/briefing.ts",
    "src/services/trainingImages/config.ts",
    "src/services/trainingImages/hash.ts",
@@ -7331,8 +7508,7 @@
    "src/services/trainingImages/request.ts",
    "src/services/trainingImages/service.ts",
    "src/services/trainingImages/storage.ts",
-   "src/services/trainingImages/types.ts",
-   "src/services/vinculoService.ts"
+   "src/services/trainingImages/types.ts"
   ]
  }
 }

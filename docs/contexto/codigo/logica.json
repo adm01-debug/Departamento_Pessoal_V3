@@ -350,7 +350,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 239,
+   "usado_por": 240,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -423,7 +423,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 68,
+   "usado_por": 73,
    "usado_por_modulos": [
     "components/admissoes",
     "components/colaborador-detalhes",
@@ -438,7 +438,7 @@
     "types",
     "utils"
    ],
-   "coberto_por_testes": 11,
+   "coberto_por_testes": 12,
    "orfao": false
   },
   {
@@ -508,7 +508,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 80,
+   "usado_por": 81,
    "usado_por_modulos": [
     "components/admin",
     "components/admissoes",
@@ -2220,7 +2220,10 @@
    "arquivo": "src/services/colaboradorDetalhesService.ts",
    "camada": "services",
    "exports": [
+    "HoleriteResumoColaborador",
+    "atualizarContatoEmergencia",
     "atualizarDependente",
+    "atualizarFormacao",
     "criarASO",
     "criarAnotacao",
     "criarCampoCustomizado",
@@ -2246,6 +2249,7 @@
     "listarFeriasColetivas",
     "listarFormacoes",
     "listarHistoricoSalarial",
+    "listarHoleritesColaborador",
     "listarIdentidadesGenero",
     "listarPeriodosAquisitivos",
     "listarTimes",
@@ -2262,7 +2266,7 @@
     "salvarValorCampoCustomizado"
    ],
    "export_default": null,
-   "linhas": 567,
+   "linhas": 658,
    "tabelas": [
     "anotacoes_colaborador",
     "asos",
@@ -2276,6 +2280,7 @@
     "ferias_coletivas",
     "formacoes_academicas",
     "historico_salarial",
+    "holerites",
     "identidades_genero",
     "periodos_aquisitivos",
     "periodos_experiencia",
@@ -2297,7 +2302,7 @@
     "hooks",
     "pages"
    ],
-   "coberto_por_testes": 1,
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {
@@ -2307,7 +2312,7 @@
     "colaboradorService"
    ],
    "export_default": null,
-   "linhas": 263,
+   "linhas": 353,
    "tabelas": [
     "colaboradores"
    ],
@@ -2318,14 +2323,14 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 5,
+   "usado_por": 6,
    "usado_por_modulos": [
     "components/ferias",
     "hooks",
     "pages",
     "services"
    ],
-   "coberto_por_testes": 1,
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {
@@ -3117,11 +3122,12 @@
     "pontoService",
     "provisaoService",
     "turnoService",
+    "vinculoService",
     "webhookService",
     "workflowService"
    ],
    "export_default": null,
-   "linhas": 50,
+   "linhas": 51,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -3140,7 +3146,7 @@
     "hooks",
     "pages"
    ],
-   "coberto_por_testes": 1,
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {
@@ -3469,7 +3475,7 @@
     "hooks",
     "pages"
    ],
-   "coberto_por_testes": 2,
+   "coberto_por_testes": 3,
    "orfao": false
   },
   {
@@ -3864,7 +3870,7 @@
     "rescisaoService"
    ],
    "export_default": null,
-   "linhas": 351,
+   "linhas": 358,
    "tabelas": [
     "dependentes",
     "desligamentos",
@@ -4338,7 +4344,7 @@
    "usado_por_modulos": [
     "hooks"
    ],
-   "coberto_por_testes": 0,
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {
@@ -4678,10 +4684,11 @@
    "arquivo": "src/services/turnoService.ts",
    "camada": "services",
    "exports": [
+    "EscalaDoDia",
     "turnoService"
    ],
    "export_default": null,
-   "linhas": 83,
+   "linhas": 125,
    "tabelas": [
     "escalas_trabalho",
     "turnos"
@@ -4693,12 +4700,13 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_modulos": [
+    "components/colaborador-detalhes",
     "pages",
     "services"
    ],
-   "coberto_por_testes": 1,
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {
@@ -4710,7 +4718,7 @@
     "vinculoService"
    ],
    "export_default": null,
-   "linhas": 133,
+   "linhas": 174,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -4719,11 +4727,12 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 2,
+   "usado_por": 5,
    "usado_por_modulos": [
-    "hooks"
+    "hooks",
+    "services"
    ],
-   "coberto_por_testes": 0,
+   "coberto_por_testes": 3,
    "orfao": false
   },
   {
@@ -5000,10 +5009,11 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 52,
+   "usado_por": 54,
    "usado_por_modulos": [
     "components/admissoes",
     "components/colaborador-detalhes",
+    "components/colaboradores",
     "components/descontos",
     "components/folha",
     "components/pcs",
@@ -5020,7 +5030,7 @@
     "utils",
     "utils/importacao"
    ],
-   "coberto_por_testes": 6,
+   "coberto_por_testes": 7,
    "orfao": false
   },
   {
@@ -5287,7 +5297,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 38,
+   "usado_por": 40,
    "usado_por_modulos": [
     "components/admissoes",
     "components/afastamentos",
@@ -5658,7 +5668,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 129,
+   "usado_por": 131,
    "usado_por_modulos": [
     "components/admissoes",
     "components/colaborador-detalhes",

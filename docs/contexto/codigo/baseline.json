@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0a74847448e82ce4c2d40e92ba52bea9e067bb59",
+  "commit": "d63d655084cfba860168d22be14168ae7bfef26d",
   "branch": "main",
-  "data_commit": "2026-11-17T02:52:12-03:00",
+  "data_commit": "2026-11-17T08:17:01-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "d63d655",
+    "data": "2026-11-17",
+    "assunto": "feat: resgata da muri o dossiê do colaborador — holerites, SST, campos personalizados e recontratação (#613)"
+   },
    {
     "sha": "0a74847",
     "data": "2026-11-17",
@@ -126,26 +131,21 @@
     "sha": "181fcb7",
     "data": "2026-11-16",
     "assunto": "build(deps): bump jsdom from 30.1.3 to 31.0.0 (#587)"
-   },
-   {
-    "sha": "1bc67e6",
-    "data": "2026-11-16",
-    "assunto": "fix(test): asserção da casca do NineBox deixa de depender da ordem do transform-origin (#588)"
    }
   ],
-  "arquivos_mudados_7d": 1080,
+  "arquivos_mudados_7d": 1103,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 316
+    "mudancas": 318
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 100
+    "mudancas": 107
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 97
+    "mudancas": 104
    },
    {
     "pasta": "src/components/avaliacao",
@@ -156,16 +156,16 @@
     "mudancas": 84
    },
    {
+    "pasta": "src/components/colaborador-detalhes",
+    "mudancas": 72
+   },
+   {
     "pasta": "src/components/treinamentos",
     "mudancas": 67
    },
    {
     "pasta": "supabase/functions/_shared",
     "mudancas": 60
-   },
-   {
-    "pasta": "src/components/colaborador-detalhes",
-    "mudancas": 57
    },
    {
     "pasta": "src/components/recrutamento",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 24
+    "mudancas": 23
    },
    {
     "arquivo": "package.json",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 16
+    "mudancas": 17
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -282,19 +282,19 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "src/services/colaboradorService.ts",
+    "mudancas": 6
+   },
+   {
     "arquivo": "supabase/functions/external-db-bridge/index.ts",
     "mudancas": 6
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "RELATORIO_CI.md",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "e2e/authenticated/esocial.spec.ts",
     "mudancas": 5
    }
   ],
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3427,
-  "arquivos_codigo": 1961,
-  "linhas_codigo": 384504,
+  "arquivos_total": 3449,
+  "arquivos_codigo": 1983,
+  "linhas_codigo": 389764,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 94,
   "modulos": 81,
-  "componentes": 608,
-  "hooks": 114,
+  "componentes": 612,
+  "hooks": 115,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 705,
+  "testes": 722,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 894,
-   "linhas": 157277
+   "arquivos": 906,
+   "linhas": 160034
   },
   "src/constants": {
    "arquivos": 6,
@@ -651,8 +651,8 @@
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 190,
-   "linhas": 21712
+   "arquivos": 196,
+   "linhas": 22894
   },
   "src/i18n": {
    "arquivos": 2,
@@ -672,11 +672,11 @@
   },
   "src/mocks": {
    "arquivos": 3,
-   "linhas": 3555
+   "linhas": 3564
   },
   "src/pages": {
    "arquivos": 133,
-   "linhas": 48754
+   "linhas": 48798
   },
   "src/providers": {
    "arquivos": 4,
@@ -687,8 +687,8 @@
    "linhas": 8725
   },
   "src/services": {
-   "arquivos": 185,
-   "linhas": 39353
+   "arquivos": 189,
+   "linhas": 40619
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -704,7 +704,7 @@
   },
   "src/types": {
    "arquivos": 13,
-   "linhas": 872
+   "linhas": 874
   },
   "src/utils": {
    "arquivos": 69,
@@ -758,7 +758,7 @@
   },
   {
    "arquivo": "src/mocks/colaboradoresMock.ts",
-   "linhas": 1979
+   "linhas": 1988
   },
   {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
@@ -1142,6 +1142,7 @@
   "componentes_com_nome_duplicado": [
    "AlertasRHWidget",
    "CadastroIncompletoWidget",
+   "CamposCustomizadosTab",
    "ESocialMonitorWidget",
    "EmpresaSelector",
    "FormField",
