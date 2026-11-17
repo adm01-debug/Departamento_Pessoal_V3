@@ -1080,7 +1080,7 @@
    "hooks_exportados": [
     "useCargos"
    ],
-   "linhas": 29,
+   "linhas": 44,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -1089,12 +1089,11 @@
     "useEmpresas"
    ],
    "canais_realtime": [],
-   "usado_por": 4,
+   "usado_por": 3,
    "usado_por_arquivos": [
     "src/hooks/index.ts",
     "src/pages/CargosPage.tsx",
-    "src/pages/ColaboradorFormPage.tsx",
-    "src/pages/ColaboradoresPage.tsx"
+    "src/pages/ColaboradorFormPage.tsx"
    ],
    "coberto_por_testes": 2
   },
@@ -1174,7 +1173,7 @@
    "hooks_exportados": [
     "useColaboradores"
    ],
-   "linhas": 54,
+   "linhas": 68,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -1467,7 +1466,7 @@
    "hooks_exportados": [
     "useDepartamentos"
    ],
-   "linhas": 29,
+   "linhas": 44,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -1476,12 +1475,11 @@
     "useEmpresas"
    ],
    "canais_realtime": [],
-   "usado_por": 5,
+   "usado_por": 4,
    "usado_por_arquivos": [
     "src/components/departamentos/NovoDepartamentoDialog.tsx",
     "src/hooks/index.ts",
     "src/pages/ColaboradorFormPage.tsx",
-    "src/pages/ColaboradoresPage.tsx",
     "src/pages/DepartamentosPage.tsx"
    ],
    "coberto_por_testes": 3
@@ -1871,7 +1869,7 @@
    "hooks_exportados": [
     "useGenericCrud"
    ],
-   "linhas": 191,
+   "linhas": 205,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -2075,7 +2073,7 @@
    "hooks_exportados": [
     "useLocaisTrabalho"
    ],
-   "linhas": 29,
+   "linhas": 39,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -2690,7 +2688,7 @@
    "hooks_exportados": [
     "useSecurityMonitor"
    ],
-   "linhas": 87,
+   "linhas": 68,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -2730,7 +2728,7 @@
    "hooks_exportados": [
     "useSessionTimeout"
    ],
-   "linhas": 55,
+   "linhas": 105,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -2863,7 +2861,7 @@
     "useTiposVisto",
     "useVincularDependenteBeneficio"
    ],
-   "linhas": 264,
+   "linhas": 265,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],

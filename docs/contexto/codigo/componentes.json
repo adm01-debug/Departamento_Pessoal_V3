@@ -8502,12 +8502,10 @@
     "ColaboradoresPage"
    ],
    "export_default": "ColaboradoresPage",
-   "linhas": 384,
+   "linhas": 385,
    "dominio": "pages",
    "hooks_locais": [
-    "useCargos",
     "useColaboradores",
-    "useDepartamentos",
     "useEmpresas",
     "useExcelExport",
     "usePDFExport",
@@ -8524,7 +8522,7 @@
     "ColaboradorFormPage"
    ],
    "export_default": "ColaboradorFormPage",
-   "linhas": 493,
+   "linhas": 495,
    "dominio": "pages",
    "hooks_locais": [
     "useCargos",

@@ -1,11 +1,11 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 176,
+ "total": 177,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
-  "lib": 10,
+  "lib": 11,
   "providers": 1,
   "python": 3,
   "schemas": 25,
@@ -438,7 +438,7 @@
     "types",
     "utils"
    ],
-   "coberto_por_testes": 10,
+   "coberto_por_testes": 11,
    "orfao": false
   },
   {
@@ -808,6 +808,31 @@
     "services"
    ],
    "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/sessaoLocal.ts",
+   "camada": "lib",
+   "exports": [
+    "IDLE_ACTIVITY_KEY",
+    "SESSION_FP_KEY",
+    "limparSessaoLocal"
+   ],
+   "export_default": null,
+   "linhas": 39,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks"
+   ],
+   "coberto_por_testes": 0,
    "orfao": false
   },
   {
@@ -1861,7 +1886,7 @@
     "pages",
     "services"
    ],
-   "coberto_por_testes": 2,
+   "coberto_por_testes": 4,
    "orfao": false
   },
   {
@@ -2282,7 +2307,7 @@
     "colaboradorService"
    ],
    "export_default": null,
-   "linhas": 181,
+   "linhas": 263,
    "tabelas": [
     "colaboradores"
    ],
@@ -4257,9 +4282,10 @@
     "vincularDependenteBeneficio"
    ],
    "export_default": null,
-   "linhas": 330,
+   "linhas": 376,
    "tabelas": [
     "centros_custo",
+    "colaboradores",
     "contas_bancarias",
     "dados_estagiario",
     "dependentes_beneficios",

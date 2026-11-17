@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 703,
+ "total": 705,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 664
+  "unit": 666
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 580
+   "arquivos": 582
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -3791,11 +3791,11 @@
   {
    "arquivo": "src/hooks/__tests__/useCargos.test.ts",
    "tipo": "unit",
-   "linhas": 52,
+   "linhas": 66,
    "testa": [
     "src/hooks/useCargos.ts"
    ],
-   "casos": 4
+   "casos": 6
   },
   {
    "arquivo": "src/hooks/__tests__/useColaboradorDetalhes.test.ts",
@@ -3908,11 +3908,11 @@
   {
    "arquivo": "src/hooks/__tests__/useDepartamentos.test.ts",
    "tipo": "unit",
-   "linhas": 50,
+   "linhas": 64,
    "testa": [
     "src/hooks/useDepartamentos.ts"
    ],
-   "casos": 4
+   "casos": 6
   },
   {
    "arquivo": "src/hooks/__tests__/useDesligamentos.test.ts",
@@ -4349,11 +4349,11 @@
   {
    "arquivo": "src/hooks/__tests__/useSessionTimeout.test.ts",
    "tipo": "unit",
-   "linhas": 63,
+   "linhas": 102,
    "testa": [
     "src/hooks/useSessionTimeout.ts"
    ],
-   "casos": 4
+   "casos": 6
   },
   {
    "arquivo": "src/hooks/__tests__/useSyncedState.test.tsx",
@@ -4385,7 +4385,7 @@
   {
    "arquivo": "src/hooks/__tests__/useTabelasReferencia.test.ts",
    "tipo": "unit",
-   "linhas": 628,
+   "linhas": 631,
    "testa": [
     "src/hooks/useTabelasReferencia.ts"
    ],
@@ -4916,6 +4916,27 @@
    "casos": 9
   },
   {
+   "arquivo": "src/services/__tests__/avaliacaoAprovacaoService.test.ts",
+   "tipo": "unit",
+   "linhas": 241,
+   "testa": [
+    "src/components/avaliacao/escritaOperacional.ts",
+    "src/services/avaliacaoService.ts"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/services/__tests__/avaliacaoCriacaoSegura.test.ts",
+   "tipo": "unit",
+   "linhas": 313,
+   "testa": [
+    "src/components/avaliacao/escritaOperacional.ts",
+    "src/components/avaliacao/nineBoxModo.ts",
+    "src/services/avaliacaoService.ts"
+   ],
+   "casos": 20
+  },
+  {
    "arquivo": "src/services/__tests__/avaliacaoService.test.ts",
    "tipo": "unit",
    "linhas": 394,
@@ -5042,11 +5063,11 @@
   {
    "arquivo": "src/services/__tests__/colaboradorService.test.ts",
    "tipo": "unit",
-   "linhas": 238,
+   "linhas": 369,
    "testa": [
     "src/services/colaboradorService.ts"
    ],
-   "casos": 21
+   "casos": 35
   },
   {
    "arquivo": "src/services/__tests__/comunicacaoService.test.ts",
@@ -5297,12 +5318,12 @@
   {
    "arquivo": "src/services/__tests__/lgpdService.test.ts",
    "tipo": "unit",
-   "linhas": 229,
+   "linhas": 242,
    "testa": [
     "src/integrations/supabase/database.types.ts",
     "src/services/lgpdService.ts"
    ],
-   "casos": 21
+   "casos": 23
   },
   {
    "arquivo": "src/services/__tests__/localTrabalhoService.test.ts",
@@ -5500,11 +5521,12 @@
   {
    "arquivo": "src/services/__tests__/tabelasReferenciaService.test.ts",
    "tipo": "unit",
-   "linhas": 758,
+   "linhas": 855,
    "testa": [
+    "src/integrations/supabase/database.types.ts",
     "src/services/tabelasReferenciaService.ts"
    ],
-   "casos": 64
+   "casos": 73
   },
   {
    "arquivo": "src/services/__tests__/turnoService.test.ts",
@@ -6563,7 +6585,7 @@
   "src/components/avaliacao/criacaoFeedback.ts": 1,
   "src/components/avaliacao/desempenhoDemoStore.ts": 2,
   "src/components/avaliacao/edicaoFeedback.ts": 1,
-  "src/components/avaliacao/escritaOperacional.ts": 1,
+  "src/components/avaliacao/escritaOperacional.ts": 3,
   "src/components/avaliacao/execucaoFeedback.ts": 1,
   "src/components/avaliacao/feedbackCanonico.ts": 4,
   "src/components/avaliacao/feedbacksComum.ts": 5,
@@ -6574,7 +6596,7 @@
   "src/components/avaliacao/nineBoxComum.ts": 8,
   "src/components/avaliacao/nineBoxConsolidacao.ts": 3,
   "src/components/avaliacao/nineBoxMock.ts": 1,
-  "src/components/avaliacao/nineBoxModo.ts": 2,
+  "src/components/avaliacao/nineBoxModo.ts": 3,
   "src/components/avaliacao/papeisAvaliacao.ts": 1,
   "src/components/avaliacao/pdiComum.ts": 1,
   "src/components/avaliacao/servicoDemo.ts": 1,
@@ -6935,7 +6957,7 @@
   "src/hooks/validators.ts": 1,
   "src/integrations/lovable/index.ts": 1,
   "src/integrations/supabase/client.ts": 24,
-  "src/integrations/supabase/database.types.ts": 10,
+  "src/integrations/supabase/database.types.ts": 11,
   "src/integrations/supabase/previewAuthStorage.ts": 1,
   "src/integrations/supabase/types.ts": 13,
   "src/lib/circuitBreaker.ts": 2,
@@ -6981,7 +7003,7 @@
   "src/services/assistenteIAService.ts": 1,
   "src/services/auditoriaService.ts": 1,
   "src/services/authService.ts": 1,
-  "src/services/avaliacaoService.ts": 2,
+  "src/services/avaliacaoService.ts": 4,
   "src/services/backupService.ts": 1,
   "src/services/bancoHorasConfigService.ts": 2,
   "src/services/bancoHorasService.ts": 1,

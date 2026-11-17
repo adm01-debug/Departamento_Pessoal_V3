@@ -4767,11 +4767,13 @@
   ],
   "src/hooks/useSecurityMonitor.ts": [
    "src/integrations/supabase/client.ts",
-   "src/lib/queryClient.ts"
+   "src/lib/queryClient.ts",
+   "src/lib/sessaoLocal.ts"
   ],
   "src/hooks/useSessionTimeout.ts": [
    "src/integrations/supabase/client.ts",
-   "src/lib/queryClient.ts"
+   "src/lib/queryClient.ts",
+   "src/lib/sessaoLocal.ts"
   ],
   "src/hooks/useSystemHealth.ts": [
    "src/hooks/useEmpresas.ts",
@@ -5390,9 +5392,7 @@
    "src/components/ui/status-badge.tsx",
    "src/components/ui/table.tsx",
    "src/components/ui/user-avatar.tsx",
-   "src/hooks/useCargos.ts",
    "src/hooks/useColaboradores.ts",
-   "src/hooks/useDepartamentos.ts",
    "src/hooks/useEmpresas.ts",
    "src/hooks/useExcelExport.ts",
    "src/hooks/usePDFExport.ts",

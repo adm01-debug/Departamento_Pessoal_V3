@@ -5335,11 +5335,9 @@
     "useAuth",
     "useBackGesture",
     "useCallback",
-    "useCargos",
     "useColaboradores",
     "useContext",
     "useDebounce",
-    "useDepartamentos",
     "useEffect",
     "useEmpresa",
     "useEmpresaStore",
@@ -5369,10 +5367,8 @@
    "hooks_locais": [
     "useAuth",
     "useBackGesture",
-    "useCargos",
     "useColaboradores",
     "useDebounce",
-    "useDepartamentos",
     "useEmpresa",
     "useEmpresaStore",
     "useEmpresas",
@@ -5448,7 +5444,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 104
+   "arquivos_puxados": 98
   },
   {
    "protegida": true,

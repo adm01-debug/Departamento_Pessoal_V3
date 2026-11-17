@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1257,
+ "nos": 1258,
  "arestas": 6135,
  "hubs": [
   {
@@ -74,7 +74,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/database.types.ts",
-   "importado_por": 78
+   "importado_por": 79
   },
   {
    "arquivo": "supabase/functions/_shared/contract.ts",

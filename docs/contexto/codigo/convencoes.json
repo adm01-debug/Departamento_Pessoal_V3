@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (580)",
+   "co-localizado (__tests__) (582)",
    "co-localizado (*.test) (70)",
    "e2e/ (28)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: resgata da muri 6 grupos de hooks/services com consumidor vivo (#612)",
    "feat(premiacoes): resgata o Hub de Premiações e o simulador de ROI da muri sobre o miolo corrigido da main (#611)",
    "feat(recrutamento): resgata Recrutamento e seleção da muri preservando a máscara de PII e as 3 entregas da main (#610)",
    "feat(onboarding): resgata a Jornada de Onboarding e a Gestão de Kits da branch muri (#609)",
-   "feat(admissoes): resgata o núcleo de Admissões da branch muri preservando as 3 correções da main (#608)",
-   "feat(treinamentos): resgata a UI de treinamentos da branch muri e reenxerta as correções da main (#607)"
+   "feat(admissoes): resgata o núcleo de Admissões da branch muri preservando as 3 correções da main (#608)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

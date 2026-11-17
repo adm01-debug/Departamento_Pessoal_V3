@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `34959e3cf9` · branch `main` · 2026-11-17 04:27 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `0a74847448` · branch `main` · 2026-11-17 05:52 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4580,6 +4580,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `PAGE_SIZE` | `1000` | `src/hooks/useExecutiveDashboard.ts` |
 | `INACTIVITY_LIMIT_MS` | `30` | `src/hooks/useSessionTimeout.ts` |
 | `CHECK_INTERVAL_MS` | `60` | `src/hooks/useSessionTimeout.ts` |
+| `ACTIVITY_PERSIST_INTERVAL_MS` | `2` | `src/hooks/useSessionTimeout.ts` |
+| `SIGN_OUT_TIMEOUT_MS` | `3` | `src/hooks/useSessionTimeout.ts` |
 | `TOAST_LIMIT` | `1` | `src/hooks/useToast.ts` |
 | `TOAST_REMOVE_DELAY` | `1000000` | `src/hooks/useToast.ts` |
 | `BUCKET` | `'ferias-coletivas-comunicados'` | `src/hooks/ferias/useGerarComunicadoColetivas.ts` |
@@ -4605,6 +4607,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `MAX_HISTORY` | `10` | `src/services/assistenteIAService.ts` |
 | `MAX_RECORDS_PER_TABLE` | `10` | `src/services/backupService.ts` |
 | `BUCKET` | `'contabilidade-anexos'` | `src/services/canalContabilidadeService.ts` |
+| `MAX_LINHAS_OPCOES_FILTRO` | `1000` | `src/services/colaboradorService.ts` |
+| `LIMITE_OR_BRIDGE` | `500` | `src/services/colaboradorService.ts` |
 | `MAX_LOGS_BUFFER` | `50` | `src/services/loggerService.ts` |
 | `REDACTED` | `'[REDACTED]'` | `src/services/loggerService.ts` |
 | `MAX_LOG_TEXT_LENGTH` | `2` | `src/services/loggerService.ts` |
@@ -4664,11 +4668,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `STALE_FILA_MINUTOS` | `30` | `supabase/functions/_shared/trainingImages/quotas.ts` |
 | `TRAINING_IMAGES_BUCKET` | `'training-images'` | `supabase/functions/_shared/trainingImages/storagePath.ts` |
 | `BUCKET` | `'documentos'` | `supabase/functions/admissao-publica/index.ts` |
-| `MAX_FILE_BYTES` | `10` | `supabase/functions/admissao-publica/index.ts` |
-| `ALERT_EMAIL_UNAVAILABLE_MESSAGE` | `"O provedor de e-mail não está disponível para os alertas."` | `supabase/functions/alertas-dp/deliveryStatus.ts` |
-| `MES_MS` | `1000` | `supabase/functions/alertas-dp/index.ts` |
-| `MAX_JSON_BYTES` | `64` | `supabase/functions/auditoria/index.ts` |
-| … +75 linhas — lista completa em `context.json` | | |
+| … +79 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5303,7 +5303,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY são obrigatórias | `src/contexts/AuthContext.tsx` |
 | useAuth must be used within AuthProvider | `src/contexts/AuthContext.tsx` |
 | useEmpresa must be used within EmpresaProvider | `src/contexts/EmpresaContext.tsx` |
-| … +648 linhas — lista completa em `context.json` | |
+| … +652 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5374,7 +5374,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (8463 testes em 660 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (8527 testes em 662 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5404,6 +5404,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/tabelas/__tests__/rhService.test.ts` | 44 | configAfastamentosService · obter calls from config_afastamentos · obter throws on error · salvar calls upsert … |
 | `src/components/__tests__/LayoutGridSection.test.tsx` | 43 | Row · renders children · has flex class · applies flex-wrap when wrap=true … |
 | `src/services/__tests__/recrutamentoService.test.ts` | 41 | recrutamentoService.listarVagas · returns vagas without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
+| `src/services/__tests__/colaboradorService.test.ts` | 40 | colaboradorService.listar · returns data and total from supabase · returns empty data with total 0 when supabase returns null · adds or() filter when search is provided … |
 | `src/services/__tests__/medidasDisciplinaresService.test.ts` | 40 | medidasDisciplinaresService.listar · returns all medidas without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/calculators/__tests__/calculatorExtra.test.ts` | 39 | calcularAvisoPrevioIndenizado · 30 dias para menos de 1 ano de serviço · incrementa 3 dias por ano de serviço (1 ano → 33 dias) · incrementa 3 dias por ano de serviço (5 anos → 45 dias) … |
 | `src/schemas/esocial/__tests__/helpers.test.ts` | 39 | required · adds no error for a non-empty string · adds error for empty string · adds error for null … |
@@ -5429,6 +5430,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/bancoHorasService.test.ts` | 30 | bancoHorasService · listarPorColaborador · queries banco_horas for the given colaboradorId · returns data from supabase … |
 | `src/services/__tests__/comunicacaoService.test.ts` | 30 | comunicacaoService.listarComunicados · returns all comunicados without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/despesaService.test.ts` | 29 | despesaService — escritas e storage · criar: aplica defaults de status/tipo e retorna o registro · criar: lança quando insert não retorna registro · aprovar: exige empresaId … |
+| `src/services/__tests__/lgpdService.test.ts` | 29 | lgpdService.listarConsentimentos · returns consentimentos without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/pesquisaService.test.ts` | 29 | pesquisaService.listar · returns pesquisas without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/turnoService.test.ts` | 29 | turnoService.listarTurnos · returns all turnos without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/whatsappService.test.ts` | 29 | whatsappService · getConfig · returns config data when found · returns null when no config found … |
@@ -5437,14 +5439,12 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/schemas/esocial/__tests__/sstValidators.test.ts` | 27 | validarS2210 · returns valid for complete data · errors when cpfTrab is missing · errors for invalid CPF … |
 | `src/services/__tests__/admissaoService.test.ts` | 27 | admissaoService.listarAdmissoes · always scopes query by empresa_id (multi-tenant) · returns empty array when supabase returns null · filters by empresa_id when provided … |
 | `src/services/__tests__/episService.test.ts` | 27 | episService.listar · returns EPIs without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
-| `src/services/__tests__/lgpdService.test.ts` | 27 | lgpdService.listarConsentimentos · returns consentimentos without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/securityService.test.ts` | 27 | securityService.getBlockedIps · returns blocked IPs ordered by created_at desc · returns empty array when data is null · throws and logs error on DB failure … |
 | `src/components/__tests__/FeedbackCanonico.test.ts` | 26 | campo — ausente ≠ não aplicável ≠ preenchido · distingue os três estados · texto de exibição usa o rótulo padronizado, sem inventar conteúdo · statusCanonico — nomenclaturas históricas … |
 | `src/components/__tests__/NineBox360.test.tsx` | 26 | fase E · consolidação 360 dos feedbacks persistidos · agrupa por categoria e aplica os pesos aprovados (4,26) · mapeia os tipos para as quatro categorias (inclui variações) · sem gestor não classifica, mesmo com as demais categorias presentes … |
 | `src/components/__tests__/NineBoxDerivacoes.test.tsx` | 26 | nineBoxComum — classificação (regra original preservada) · mantém os limiares do componente anterior · a tolerância a valor vazio saiu daqui: quem valida é  · nomeia os nove quadrantes com a leitura de posição … |
 | `src/services/__tests__/batidasPontoService.test.ts` | 26 | batidasPontoService.listar · returns batidas for colaborador · returns empty array when data is null · filters by colaborador_id … |
 | `src/components/__tests__/CriacaoFeedbackIntegracao.test.ts` | 25 | textoOuNulo · apara e converte vazio em nulo · assinaturaFeedback (identifica a TENTATIVA) · é estável e ignora a ordem das chaves … |
-| `src/services/__tests__/colaboradorService.test.ts` | 25 | colaboradorService.listar · returns data and total from supabase · returns empty data with total 0 when supabase returns null · adds or() filter when search is provided … |
 | `src/services/__tests__/contratoService.test.ts` | 25 | contratoService.listar · returns all contratos without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/contratoTemplateService.test.ts` | 25 | contratoTemplateService.listar · returns templates list · returns empty array when data is null · throws on DB error … |
 | `src/services/__tests__/edgeFunctionsService.test.ts` | 25 | edgeFunctionsService.dispararAlertasDP · calls invoke with  · uses genericBreaker · edgeFunctionsService.enviarRelatorioEmail … |
@@ -5454,6 +5454,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `supabase/functions/external-db-bridge/validation.test.ts` | 25 | tabela: injeção rejeitada · tabela: nomes legítimos aceitos · denylist: tabelas sensíveis presentes · colunas: injeção/subquery rejeitada … |
 | `src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts` | 24 | título, nível e status · lê titulo ou nome (as duas colunas existentes) · traduz os três níveis reais e nunca inventa · distingue ativo=false de ativo ausente … |
 | `src/hooks/__tests__/validators.test.ts` | 24 | required · rejeita null, undefined e string vazia · aceita valores presentes, incluindo 0 e false · isValidEmail … |
+| `src/services/__tests__/avaliacaoCriacaoSegura.test.ts` | 24 | flag do Nine-Box desligada NÃO bloqueia a escrita de UUID real · criarFeedbackSeguro chama a RPC com IDs reais · finalizarFeedback chama a RPC com feedback real · finalizarFeedback sem auditoria NÃO é aceito como persistência confirmada … |
 | `src/utils/__tests__/esocialXmlGenerator.test.ts` | 24 | gerarXmlESocial · returns valid XML declaration · wraps output in eSocial root element · uses testing environment by default (tpAmb=2) … |
 | `src/components/__tests__/AuditoriaDerivacoes.test.tsx` | 23 | auditoria · normalização tolerante · aceita registro sem os campos opcionais · ignora data inválida sem quebrar · auditoria · títulos legíveis por módulo e ação … |
 | `src/components/__tests__/CardProgramacao.test.tsx` | 23 | CardProgramacao · renders colaborador name · renders dias previstos · renders status badge for rascunho … |
@@ -5509,6 +5510,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/hooks/__tests__/useNotificacoes.test.ts` | 17 | useNotificacoes · returns empty notificacoes initially · naoLidas count is 0 when all notificacoes are read · naoLidas counts unread notificacoes … |
 | `src/hooks/__tests__/usePcs.test.ts` | 17 | usePcsPlanos · lista planos da empresa atual · criar semeia os fatores da metodologia padrão no plano novo · atualizar delega ao service e toasta sucesso … |
 | `src/pages/__tests__/adminCatEdicao.test.ts` | 17 | podeEditarCat · permite editar CAT pendente sem protocolo nem envio · bloqueia status %s · bloqueia quando já há protocolo ou data de envio … |
+| `src/services/__tests__/avaliacaoAprovacaoService.test.ts` | 17 | avaliação — RPCs reais de aprovação do gestor · enviar: chama  · enviar: recusa identificador fictício ANTES da rede · aprovar: envia decisão + justificativa + idempotência para a RPC … |
 | `src/services/tabelas/__tests__/adminService.test.ts` | 17 | logEnvioRelatoriosService · listar queries log_envio_relatorios · listar with empresaId filters via relatorios_agendados first · listar with empresaId returns [] when the empresa has no agendamentos … |
 | `src/services/tabelas/__tests__/documentosService.test.ts` | 17 | documentoTemplatesService · listar queries documento_templates · listar returns [] when data is null · criar calls insert on documento_templates … |
 | `src/utils/__tests__/cursorPagination.test.ts` | 17 | cursorPagination · encodeCursor/decodeCursor round-trip · round-trip: ${c.column}=${c.value} · numeric value is preserved as number … |
@@ -5676,9 +5678,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/DistribuirHoleritesButton.test.tsx` | 9 | DistribuirHoleritesButton · renders Distribuir em massa trigger button · renders dialog title with competencia · renders Portal do Colaborador channel option … |
 | `src/components/__tests__/DocumentoPreview.test.tsx` | 9 | DocumentoPreview · renders null when documento is null · renders document name in title · renders Abrir Original button … |
 | `src/components/__tests__/DocumentoTimeline.test.tsx` | 9 | DocumentoTimeline · shows loading state · shows empty state when no history · renders Histórico de Versões title … |
-| `src/components/__tests__/DonutChart.test.tsx` | 9 | DonutChart · returns null when total is 0 · renders SVG with segments · renders total count in center text … |
-| `src/components/__tests__/ESocialTabs.test.tsx` | 9 | ESocialLogsTab · renders Histórico de Transmissão Real title · shows empty state when no logs · shows log headers when logs exist … |
-| … +360 linhas — lista completa em `context.json` | | |
+| … +362 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6046,4 +6046,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | • POTENCIAL = 100% gestor, com VALIDAÇÃO OBRIGATÓRIA do RH vinculada à versão | `src/components/avaliacao/motorAvaliacao360.ts` |
 | exata da avaliação (se a avaliação mudar ou for reaberta, a validação | `src/components/avaliacao/motorAvaliacao360.ts` |
 | ─── Validação do Potencial pelo RH ──────────────────────────────────────── */ | `src/components/avaliacao/motorAvaliacao360.ts` |
-| … +802 linhas — lista completa em `context.json` | |
+| … +814 linhas — lista completa em `context.json` | |

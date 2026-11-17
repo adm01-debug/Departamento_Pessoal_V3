@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `34959e3cf998a6ba30ae6b95ad1641785c05a0fc` (2026-11-17T01:26:49-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `0a74847448e82ce4c2d40e92ba52bea9e067bb59` (2026-11-17T02:52:12-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1825), SQL (915), Markdown (332), JavaScript (129), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1828), SQL (915), Markdown (332), JavaScript (129), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3424 |
-| arquivos_codigo | 1958 |
-| linhas_codigo | 383369 |
+| arquivos_total | 3427 |
+| arquivos_codigo | 1961 |
+| linhas_codigo | 384504 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 425 |
 | migrations | 849 |
 | cron_jobs | 41 |
-| testes | 703 |
+| testes | 705 |
 | workflows | 21 |
 | scripts | 132 |
 | docs_md | 332 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (490), src/pages (110), src/contexts (3)
 - hooks: src/hooks (95), src/components (9), src/contexts (4)
 - servicos_logica: src/services (94), src/utils (35), src/schemas (25)
-- testes: co-localizado (__tests__) (580), co-localizado (*.test) (70), e2e/ (28)
+- testes: co-localizado (__tests__) (582), co-localizado (*.test) (70), e2e/ (28)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -101,7 +101,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 0 | 0 | 90 | 188 | 12 | 156 |
 | hooks/ferias | 0 | 0 | 6 | 11 | 0 | 7 |
 | integrations/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
-| lib | 0 | 0 | 10 | 1 | 0 | 0 |
+| lib | 0 | 0 | 11 | 1 | 0 | 0 |
 | pages | 93 | 114 | 113 | 202 | 49 | 268 |
 | schemas | 0 | 0 | 19 | 0 | 0 | 0 |
 | schemas/esocial | 0 | 0 | 6 | 0 | 0 | 0 |
@@ -394,13 +394,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 26385 nós · 58993 arestas · 2312 comunidades · grafo do commit `34959e3c`
-- comunidades maiores: useEmpresas (555), 20260831_corrected_public.sql (493), canonical_schema.sql (475), cn (455), button.tsx (448), vitest (292), PontoPage.tsx (217), react (186), rateLimit.ts (181), "public"."empresas" (159), "public"."colaboradores" (155), "public"."empresas" (154)
+- 26413 nós · 59041 arestas · 2349 comunidades · grafo do commit `0a748474`
+- comunidades maiores: 20260831_corrected_public.sql (493), useEmpresas (479), canonical_schema.sql (475), lucide-react (456), button.tsx (427), cn (376), vitest (288), client.ts (264), contract.ts (193), DetalhesAdmissaoDialog.tsx (165), "public"."empresas" (159), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), entradaCard() (src/components/ui/entrada-cards.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (25)
+- .github/workflows/canonical-migrations.yml (24)
 - package.json (20)
 - package-lock.json (19)
 - inventario/estado/rotas.json (16)
@@ -648,6 +648,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `0a74847` feat: resgata da muri 6 grupos de hooks/services com consumidor vivo (#612)
 - 2026-11-17 `34959e3` feat(premiacoes): resgata o Hub de Premiações e o simulador de ROI da muri sobre o miolo corrigido da main (#611)
 - 2026-11-17 `182d5f9` feat(recrutamento): resgata Recrutamento e seleção da muri preservando a máscara de PII e as 3 entregas da main (#610)
 - 2026-11-16 `576c7f4` feat(onboarding): resgata a Jornada de Onboarding e a Gestão de Kits da branch muri (#609)
@@ -662,7 +663,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-16 `792eeb5` docs(auditoria): publica o plano de resgate por área da branch muri (#597)
 - 2026-11-16 `2b50f15` fix(docs): redige o user_id e o e-mail pessoais publicados no #595 (#599)
 - 2026-11-16 `5f74d3f` fix(docs): corrige as fixtures de conclusão e a alegação do Q8a do ninebox (#598)
-- 2026-11-16 `c2102ad` docs(auditoria): classifica as dez migrations órfãs da muri contra o banco real (#596)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "34959e3cf998a6ba30ae6b95ad1641785c05a0fc",
+  "commit": "0a74847448e82ce4c2d40e92ba52bea9e067bb59",
   "branch": "main",
-  "data_commit": "2026-11-17T01:26:49-03:00",
+  "data_commit": "2026-11-17T02:52:12-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "0a74847",
+    "data": "2026-11-17",
+    "assunto": "feat: resgata da muri 6 grupos de hooks/services com consumidor vivo (#612)"
+   },
    {
     "sha": "34959e3",
     "data": "2026-11-17",
@@ -126,14 +131,9 @@
     "sha": "1bc67e6",
     "data": "2026-11-16",
     "assunto": "fix(test): asserção da casca do NineBox deixa de depender da ordem do transform-origin (#588)"
-   },
-   {
-    "sha": "2357a56",
-    "data": "2026-11-16",
-    "assunto": "build(deps-dev): bump the testing group with 2 updates (#585)"
    }
   ],
-  "arquivos_mudados_7d": 1060,
+  "arquivos_mudados_7d": 1080,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -141,11 +141,11 @@
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 96
+    "mudancas": 100
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 92
+    "mudancas": 97
    },
    {
     "pasta": "src/components/avaliacao",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 25
+    "mudancas": 24
    },
    {
     "arquivo": "package.json",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3424,
-  "arquivos_codigo": 1958,
-  "linhas_codigo": 383369,
+  "arquivos_total": 3427,
+  "arquivos_codigo": 1961,
+  "linhas_codigo": 384504,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -332,7 +332,7 @@
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 703,
+  "testes": 705,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -652,7 +652,7 @@
   },
   "src/hooks": {
    "arquivos": 190,
-   "linhas": 21542
+   "linhas": 21712
   },
   "src/i18n": {
    "arquivos": 2,
@@ -663,8 +663,8 @@
    "linhas": 25911
   },
   "src/lib": {
-   "arquivos": 17,
-   "linhas": 1883
+   "arquivos": 18,
+   "linhas": 1922
   },
   "src/main.tsx": {
    "arquivos": 1,
@@ -676,7 +676,7 @@
   },
   "src/pages": {
    "arquivos": 133,
-   "linhas": 48751
+   "linhas": 48754
   },
   "src/providers": {
    "arquivos": 4,
@@ -687,8 +687,8 @@
    "linhas": 8725
   },
   "src/services": {
-   "arquivos": 183,
-   "linhas": 38430
+   "arquivos": 185,
+   "linhas": 39353
   },
   "src/setupTests.ts": {
    "arquivos": 1,
