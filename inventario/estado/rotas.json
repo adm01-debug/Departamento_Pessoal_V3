@@ -4,7 +4,7 @@
   "resumo": {
     "urls": 116,
     "telas": 110,
-    "itens_de_menu": 89,
+    "itens_de_menu": 91,
     "urls_admin": 23,
     "urls_publicas": 7,
     "hooks_distintos": 148,
@@ -1200,6 +1200,11 @@
     },
     {
       "grupo": "Tempo & Ausências",
+      "rotulo": "Faltas",
+      "caminho": "/faltas"
+    },
+    {
+      "grupo": "Tempo & Ausências",
       "rotulo": "Feriados",
       "caminho": "/feriados"
     },
@@ -1263,6 +1268,11 @@
       "grupo": "Remuneração",
       "rotulo": "Compliance Folha",
       "caminho": "/folha/compliance"
+    },
+    {
+      "grupo": "Remuneração",
+      "rotulo": "Obrigações Fiscais",
+      "caminho": "/obrigacoes-fiscais"
     },
     {
       "grupo": "Remuneração",
@@ -9251,7 +9261,12 @@
       "arquivo": "src/pages/FaltasPage.tsx",
       "componente": "FaltasPage",
       "urls": ["/faltas"],
-      "menu": [],
+      "menu": [
+        {
+          "grupo": "Tempo & Ausências",
+          "rotulo": "Faltas"
+        }
+      ],
       "arquivos_lidos": 157,
       "hooks": [
         {
@@ -12687,7 +12702,12 @@
       "arquivo": "src/pages/ObrigacoesFiscaisPage.tsx",
       "componente": "ObrigacoesFiscaisPage",
       "urls": ["/obrigacoes-fiscais"],
-      "menu": [],
+      "menu": [
+        {
+          "grupo": "Remuneração",
+          "rotulo": "Obrigações Fiscais"
+        }
+      ],
       "arquivos_lidos": 164,
       "hooks": [
         {
@@ -19573,11 +19593,9 @@
       "/colaboradores/novo",
       "/design-system",
       "/empresas/novo",
-      "/faltas",
       "/ferias/programacao",
       "/folha/calcular",
       "/notificacoes",
-      "/obrigacoes-fiscais",
       "/perfil",
       "/ponto/kiosk",
       "/seguranca"

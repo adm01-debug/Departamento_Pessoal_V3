@@ -2,20 +2,67 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
-import {
-  Zap, UserPlus, DollarSign, Clock, 
-  Calendar, BarChart3, Scale
-} from 'lucide-react';
+import { Zap, UserPlus, DollarSign, Clock, Calendar, BarChart3, Scale, GitBranch, Bot } from 'lucide-react';
 
 const MotionCard = motion.create(Card);
 
 const actions = [
-  { label: 'Novo Colaborador', icon: UserPlus, gradient: 'from-primary to-primary-glow', path: '/colaboradores/novo', desc: 'Cadastrar funcionário' },
+  {
+    label: 'Novo Colaborador',
+    icon: UserPlus,
+    gradient: 'from-primary to-primary-glow',
+    path: '/colaboradores/novo',
+    desc: 'Cadastrar funcionário',
+  },
   { label: 'Lançar Ponto', icon: Clock, gradient: 'from-primary/80 to-primary', path: '/ponto', desc: 'Batida manual' },
-  { label: 'Calcular Folha', icon: DollarSign, gradient: 'from-primary/60 to-primary/90', path: '/folha/calcular', desc: 'Processamento mensal' },
-  { label: 'Férias / Ausências', icon: Calendar, gradient: 'from-primary-glow to-primary', path: '/ferias', desc: 'Gestão de tempo' },
-  { label: 'Passivo Trabalhista', icon: Scale, gradient: 'from-destructive to-destructive/80', path: '/passivo-trabalhista', desc: 'Análise de risco' },
-  { label: 'Relatórios DP', icon: BarChart3, gradient: 'from-primary to-primary-glow', path: '/relatorios', desc: 'Extração de BI' },
+  {
+    label: 'Calcular Folha',
+    icon: DollarSign,
+    gradient: 'from-primary/60 to-primary/90',
+    path: '/folha/calcular',
+    desc: 'Processamento mensal',
+  },
+  {
+    label: 'Férias / Ausências',
+    icon: Calendar,
+    gradient: 'from-primary-glow to-primary',
+    path: '/ferias',
+    desc: 'Gestão de tempo',
+  },
+  {
+    label: 'Passivo Trabalhista',
+    icon: Scale,
+    gradient: 'from-destructive to-destructive/80',
+    path: '/passivo-trabalhista',
+    desc: 'Análise de risco',
+  },
+  {
+    label: 'Relatórios DP',
+    icon: BarChart3,
+    gradient: 'from-primary to-primary-glow',
+    path: '/relatorios',
+    desc: 'Extração de BI',
+  },
+  // Dois atalhos resgatados do `QuickActionsMenu` da branch `muri`, que tinha
+  // 4 ações a mais que esta grade. Só estes dois entraram: `BI e Metas` da muri
+  // aponta para `/relatorios`, destino que "Relatórios DP" já cobre (seriam dois
+  // cartões para a mesma tela), e `Auditoria` aponta para `/auditoria`, que não
+  // existe em App.tsx — seria um atalho para o 404.
+  // Ícones iguais aos que o menu lateral já usa para as mesmas rotas.
+  {
+    label: 'Workflows',
+    icon: GitBranch,
+    gradient: 'from-info to-info/80',
+    path: '/workflows',
+    desc: 'Automações do DP',
+  },
+  {
+    label: 'Assistente IA',
+    icon: Bot,
+    gradient: 'from-primary-glow to-primary',
+    path: '/assistente-ia',
+    desc: 'Perguntas sobre os dados',
+  },
 ];
 
 export function QuickActionsGrid() {
@@ -49,7 +96,12 @@ export function QuickActionsGrid() {
               onClick={() => navigate(a.path)}
               className="flex flex-col items-center gap-2 p-4 rounded-xl glass border border-border/30 hover:border-primary/30 hover:shadow-glow-sm transition-all group text-center"
             >
-              <div className={cn("p-2.5 rounded-xl bg-gradient-to-br shadow-lg group-hover:scale-110 transition-transform", a.gradient)}>
+              <div
+                className={cn(
+                  'p-2.5 rounded-xl bg-gradient-to-br shadow-lg group-hover:scale-110 transition-transform',
+                  a.gradient
+                )}
+              >
                 <a.icon className="h-4 w-4 text-primary-foreground" />
               </div>
               <div>

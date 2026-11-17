@@ -82,4 +82,21 @@ describe('QuickActionsGrid', () => {
     const buttons = screen.getAllByRole('button');
     expect(buttons.length).toBeGreaterThanOrEqual(6);
   });
+
+  // Resgatados do `QuickActionsMenu` da branch `muri`.
+  it.each([['Workflows'], ['Assistente IA']])('renders the %s action, recovered from the muri branch', (label) => {
+    render(<QuickActionsGrid />);
+    expect(screen.getByText(label)).toBeInTheDocument();
+  });
+
+  // As outras 2 ações daquele menu NÃO devem estar aqui: "BI e Metas" aponta
+  // para /relatorios, destino que "Relatórios DP" já cobre, e "Auditoria"
+  // aponta para /auditoria, que não existe em App.tsx — seria atalho para 404.
+  it.each([['BI e Metas'], ['Auditoria']])(
+    'does NOT render %s (duplicate destination / nonexistent route)',
+    (label) => {
+      render(<QuickActionsGrid />);
+      expect(screen.queryByText(label)).not.toBeInTheDocument();
+    }
+  );
 });
