@@ -8,30 +8,46 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Spinner } from '@/components/ui/spinner';
-import { Plus, Trash2 } from 'lucide-react';
+import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useContasBancarias, useCriarContaBancaria, useExcluirContaBancaria } from '@/hooks/useTabelasReferencia';
+import {
+  useAtualizarContaBancaria,
+  useContasBancarias,
+  useCriarContaBancaria,
+  useExcluirContaBancaria,
+} from '@/hooks/useTabelasReferencia';
 import { usePiiMask } from '@/hooks/usePiiMask';
 
 const TIPOS_CONTA = ['Corrente', 'Poupança', 'Salário'];
 const TIPOS_PIX = ['CPF', 'CNPJ', 'Email', 'Telefone', 'Chave aleatória'];
 
+const FORM_VAZIO = {
+  banco_codigo: '',
+  banco_nome: '',
+  agencia: '',
+  conta: '',
+  tipo_conta: 'Corrente',
+  pix_tipo: '',
+  pix_chave: '',
+  principal: false,
+};
+
 export function ContasBancariasTab({ colaboradorId }: { colaboradorId: string }) {
   const pii = usePiiMask();
   const { data, isLoading } = useContasBancarias(colaboradorId);
   const criar = useCriarContaBancaria();
+  const atualizar = useAtualizarContaBancaria();
   const excluir = useExcluirContaBancaria(colaboradorId);
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({
-    banco_codigo: '',
-    banco_nome: '',
-    agencia: '',
-    conta: '',
-    tipo_conta: 'Corrente',
-    pix_tipo: '',
-    pix_chave: '',
-    principal: false,
-  });
+  /** id da conta em edição; `null` = o diálogo está cadastrando uma nova. */
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [form, setForm] = useState(FORM_VAZIO);
+
+  const fechar = () => {
+    setOpen(false);
+    setEditandoId(null);
+    setForm(FORM_VAZIO);
+  };
 
   const handleSubmit = async () => {
     if (!form.banco_nome.trim()) {
@@ -47,21 +63,20 @@ export function ContasBancariasTab({ colaboradorId }: { colaboradorId: string })
       return;
     }
     try {
-      await criar.mutateAsync({ ...form, colaborador_id: colaboradorId });
-      toast.success('Conta bancária adicionada');
-      setOpen(false);
-      setForm({
-        banco_codigo: '',
-        banco_nome: '',
-        agencia: '',
-        conta: '',
-        tipo_conta: 'Corrente',
-        pix_tipo: '',
-        pix_chave: '',
-        principal: false,
-      });
-    } catch {
-      toast.error('Erro ao adicionar conta');
+      if (editandoId) {
+        await atualizar.mutateAsync({ id: editandoId, dados: form });
+        toast.success('Conta bancária atualizada');
+      } else {
+        await criar.mutateAsync({ ...form, colaborador_id: colaboradorId });
+        toast.success('Conta bancária adicionada');
+      }
+      fechar();
+    } catch (erro) {
+      // A guarda de empresa do hook devolve uma mensagem acionável ("Selecione
+      // uma empresa..."); mostrá-la é melhor que o texto genérico.
+      toast.error(
+        erro instanceof Error ? erro.message : editandoId ? 'Erro ao salvar conta' : 'Erro ao adicionar conta'
+      );
     }
   };
 
@@ -69,7 +84,7 @@ export function ContasBancariasTab({ colaboradorId }: { colaboradorId: string })
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-lg">Contas Bancárias</CardTitle>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={(aberto) => (aberto ? setOpen(true) : fechar())}>
           <DialogTrigger asChild>
             <Button size="sm">
               <Plus className="mr-1 h-4 w-4" />
@@ -78,7 +93,7 @@ export function ContasBancariasTab({ colaboradorId }: { colaboradorId: string })
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Nova Conta Bancária</DialogTitle>
+              <DialogTitle>{editandoId ? 'Editar Conta Bancária' : 'Nova Conta Bancária'}</DialogTitle>
             </DialogHeader>
             <div className="grid gap-3">
               <div className="grid grid-cols-2 gap-3">
@@ -155,7 +170,7 @@ export function ContasBancariasTab({ colaboradorId }: { colaboradorId: string })
                 />
                 Conta principal
               </label>
-              <Button onClick={handleSubmit} disabled={criar.isPending}>
+              <Button onClick={handleSubmit} disabled={criar.isPending || atualizar.isPending}>
                 Salvar
               </Button>
             </div>
@@ -191,10 +206,37 @@ export function ContasBancariasTab({ colaboradorId }: { colaboradorId: string })
                   <TableCell>{c.tipo_conta}</TableCell>
                   <TableCell>{c.pix_tipo ? `${c.pix_tipo}: ${pii.pix(c.pix_tipo, c.pix_chave)}` : '-'}</TableCell>
                   <TableCell>{c.principal ? <Badge>Sim</Badge> : 'Não'}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-right whitespace-nowrap">
                     <Button
                       variant="ghost"
                       size="sm"
+                      aria-label="Editar conta"
+                      // O formulário exibe agência/conta/chave PIX sem máscara:
+                      // quem não pode ver o dado bancário não pode abri-lo.
+                      disabled={!pii.canViewPii}
+                      onClick={() => {
+                        // O formulário recebe os valores REAIS da conta (não os
+                        // mascarados da tabela): editar não pode gravar "****".
+                        setForm({
+                          banco_codigo: c.banco_codigo ?? '',
+                          banco_nome: c.banco_nome ?? '',
+                          agencia: c.agencia ?? '',
+                          conta: c.conta ?? '',
+                          tipo_conta: c.tipo_conta ?? 'Corrente',
+                          pix_tipo: c.pix_tipo ?? '',
+                          pix_chave: c.pix_chave ?? '',
+                          principal: !!c.principal,
+                        });
+                        setEditandoId(c.id);
+                        setOpen(true);
+                      }}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      aria-label="Excluir conta"
                       onClick={() => {
                         if (confirm('Excluir conta?')) excluir.mutate(c.id);
                       }}
