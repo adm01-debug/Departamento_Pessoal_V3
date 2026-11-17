@@ -31,6 +31,10 @@ import {
   GitCommitVertical,
   Clock,
   UserPlus,
+  AlertTriangle,
+  GraduationCap,
+  HeartPulse,
+  FileWarning,
 } from 'lucide-react';
 import {
   DependentesTab,
@@ -61,6 +65,8 @@ import {
   SSTResumoTab,
 } from '@/components/colaborador-detalhes';
 import { RecontratarColaboradorDialog } from '@/components/colaboradores/RecontratarColaboradorDialog';
+import { PendenciasDialog, type PendenciaItem } from '@/components/colaborador-detalhes/PendenciasDialog';
+import { usePendenciasColaborador } from '@/hooks/usePendenciasColaborador';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   DropdownMenu,
@@ -82,6 +88,7 @@ export default function ColaboradorDetalhesPage() {
   const [activeDocumentosTab, setActiveDocumentosTab] = useState('compliance');
   const [activeJornadaTab, setActiveJornadaTab] = useState('ponto');
   const [recontratarAberto, setRecontratarAberto] = useState(false);
+  const [pendenciasAberto, setPendenciasAberto] = useState(false);
 
   const { data: colaborador, isLoading } = useQuery({
     queryKey: ['colaborador', id, empresaAtual?.id],
@@ -92,6 +99,40 @@ export default function ColaboradorDetalhesPage() {
   useDataAccessLog('colaboradores', id, colaborador?.empresa_id);
 
   const proximosEventos = useProximosEventos(id!, empresaAtual?.id);
+
+  // Pendencias do dossie — resgate da branch `muri`. O hook decide O QUE e
+  // pendencia; a pagina decide o ICONE e PARA ONDE o "Resolver agora" leva,
+  // porque so ela conhece as abas e as rotas.
+  const { pendencias } = usePendenciasColaborador(id!, empresaAtual?.id);
+  const ICONE_PENDENCIA = {
+    ponto: Clock,
+    onboarding: GraduationCap,
+    aso: HeartPulse,
+    documentos: FileWarning,
+  } as const;
+  const pendenciasDetalhadas: PendenciaItem[] = pendencias.map((p) => ({
+    icon: ICONE_PENDENCIA[p.chave],
+    texto: p.texto,
+    contexto: p.contexto,
+    itens: p.itens,
+    severidade: p.severidade,
+    onClick: () => {
+      if (p.chave === 'ponto') {
+        setActiveMainTab('jornada');
+        setActiveJornadaTab('ponto');
+        return;
+      }
+      if (p.chave === 'onboarding') {
+        setActiveMainTab('profissional');
+        return;
+      }
+      if (p.chave === 'aso') {
+        navigate('/sst');
+        return;
+      }
+      setActiveMainTab('pessoal');
+    },
+  }));
 
   if (isLoading)
     return (
@@ -290,6 +331,32 @@ export default function ColaboradorDetalhesPage() {
                     </div>
                   </CardContent>
                 </Card>
+
+                {pendenciasDetalhadas.length > 0 && (
+                  <Card className="border border-warning/30 rounded-2xl overflow-hidden shadow-elevated">
+                    <CardContent className="p-6 space-y-4">
+                      <div className="flex items-center gap-2 font-display font-bold text-lg">
+                        <AlertTriangle className="h-5 w-5 text-warning" /> Pendências
+                        <Badge variant="warning" size="sm" className="ml-auto">
+                          {pendenciasDetalhadas.length}
+                        </Badge>
+                      </div>
+                      <ul className="space-y-2">
+                        {pendenciasDetalhadas.map((p) => (
+                          <li key={p.texto} className="flex items-center gap-3 text-sm">
+                            <p.icon
+                              className={`h-4 w-4 shrink-0 ${p.severidade === 'alta' ? 'text-destructive' : 'text-warning'}`}
+                            />
+                            <span className="min-w-0">{p.texto}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <Button variant="outline" size="sm" className="w-full" onClick={() => setPendenciasAberto(true)}>
+                        Ver detalhes
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
 
                 <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
                   <CardContent className="p-6 space-y-6">
@@ -581,6 +648,8 @@ export default function ColaboradorDetalhesPage() {
         open={recontratarAberto}
         onOpenChange={setRecontratarAberto}
       />
+
+      <PendenciasDialog open={pendenciasAberto} onOpenChange={setPendenciasAberto} pendencias={pendenciasDetalhadas} />
     </>
   );
 }
