@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (612)",
+   "co-localizado (__tests__) (613)",
    "co-localizado (*.test) (70)",
    "e2e/ (28)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(layout): resgata da muri o shell de layout e a entrada de menu que faltava (#626)",
    "feat(design): traz o sistema de design da branch muri para a main (#625)",
    "fix(deploy): asset inexistente deve dar 404, não a index.html (#623)",
    "fix(pwa): navegacao ignorava o cache HTTP do browser e servia a casca antiga (#624)",
-   "feat(dashboard): resgata da muri o MetricCard com tone, tooltip e variante compacta (#618)",
-   "feat(desligamentos): drawer de rescisão com a UI da muri e o cálculo da main (#621)"
+   "feat(dashboard): resgata da muri o MetricCard com tone, tooltip e variante compacta (#618)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

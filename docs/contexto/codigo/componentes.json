@@ -4058,7 +4058,7 @@
     "AppSidebar"
    ],
    "export_default": null,
-   "linhas": 812,
+   "linhas": 824,
    "dominio": "components/layout",
    "hooks_locais": [
     "useAuth",
@@ -4149,7 +4149,7 @@
     "EmpresaSelector"
    ],
    "export_default": null,
-   "linhas": 133,
+   "linhas": 146,
    "dominio": "components/layout",
    "hooks_locais": [],
    "tabelas": [],
@@ -4250,7 +4250,7 @@
     "Header"
    ],
    "export_default": null,
-   "linhas": 113,
+   "linhas": 115,
    "dominio": "components/layout",
    "hooks_locais": [
     "useAuth",
@@ -4331,7 +4331,7 @@
     "PageContainer"
    ],
    "export_default": "PageContainer",
-   "linhas": 128,
+   "linhas": 107,
    "dominio": "components/layout",
    "hooks_locais": [],
    "tabelas": [],
@@ -4345,7 +4345,7 @@
     "PageHeader"
    ],
    "export_default": null,
-   "linhas": 6,
+   "linhas": 19,
    "dominio": "components/layout",
    "hooks_locais": [],
    "tabelas": [],
@@ -4359,7 +4359,7 @@
     "PageLayout"
    ],
    "export_default": null,
-   "linhas": 109,
+   "linhas": 105,
    "dominio": "components/layout",
    "hooks_locais": [],
    "tabelas": [],

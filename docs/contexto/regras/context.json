@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e0e4448200c80ab4e9b126fb153575c34a08708a",
+  "sha": "d3a71089f786640ef42a724fe726183dfafef1db",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 15:40 UTC",
-  "files_total": 3500,
-  "code_files": 2926,
-  "code_lines": 465240
+  "generated_at": "2026-11-17 16:06 UTC",
+  "files_total": 3501,
+  "code_files": 2927,
+  "code_lines": 465300
  },
  "version": "1.3.2",
- "facts_hash": "1545f5a6c0153986",
+ "facts_hash": "0c29532ebb597a8d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -385,7 +385,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 962,
-   ".ts": 918,
+   ".ts": 919,
    ".sql": 915,
    ".mjs": 103,
    ".js": 15,
@@ -87254,7 +87254,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 64
+    "deps_count": 65
    },
    {
     "path": "",
@@ -87752,7 +87752,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 65
+    "deps_count": 66
    },
    {
     "path": "",
@@ -87991,7 +87991,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 69
+    "deps_count": 70
    },
    {
     "path": "",
@@ -88172,7 +88172,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 192
+    "deps_count": 193
    },
    {
     "path": "",
@@ -88927,7 +88927,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 195
+    "deps_count": 196
    },
    {
     "path": "",
@@ -92313,7 +92313,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 75
+    "deps_count": 76
    },
    {
     "path": "",
@@ -92368,7 +92368,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 76
+    "deps_count": 77
    },
    {
     "path": "",
@@ -92450,7 +92450,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 85
+    "deps_count": 86
    },
    {
     "path": "",
@@ -93017,7 +93017,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 194
+    "deps_count": 195
    },
    {
     "path": "",
@@ -93684,7 +93684,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 83
+    "deps_count": 84
    },
    {
     "path": "",
@@ -93709,7 +93709,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 69
+    "deps_count": 70
    },
    {
     "path": "",
@@ -93918,7 +93918,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 70
+    "deps_count": 71
    },
    {
     "path": "",
@@ -94905,7 +94905,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 68
+    "deps_count": 69
    },
    {
     "path": "",
@@ -95031,7 +95031,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 141
+    "deps_count": 142
    },
    {
     "path": "",
@@ -95495,7 +95495,7 @@
      "sec_audit_policies",
      "set_own_default_empresa"
     ],
-    "deps_count": 69
+    "deps_count": 70
    },
    {
     "path": "",
@@ -95891,7 +95891,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 194
+    "deps_count": 195
    },
    {
     "path": "",
@@ -96072,7 +96072,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 196
+    "deps_count": 197
    },
    {
     "path": "",
@@ -96436,7 +96436,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 195
+    "deps_count": 196
    },
    {
     "path": "",
@@ -96462,7 +96462,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 64
+    "deps_count": 65
    },
    {
     "path": "",
@@ -99950,7 +99950,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 933,
+  "components_count": 934,
   "hooks": [
    {
     "name": "useContacts",
@@ -101533,8 +101533,8 @@
   },
   {
    "module": "src/components",
-   "files": 933,
-   "lines": 169673,
+   "files": 934,
+   "lines": 169733,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -179025,6 +179025,22 @@
    {
     "file": "src/components/kanban/__tests__/entradaKanban.test.ts",
     "name": "no jsdom (altura 0) a animação não é disparada"
+   },
+   {
+    "file": "src/components/layout/__tests__/AppSidebar.menu.test.ts",
+    "name": "AppSidebar — config do menu"
+   },
+   {
+    "file": "src/components/layout/__tests__/AppSidebar.menu.test.ts",
+    "name": "grupo "
+   },
+   {
+    "file": "src/components/layout/__tests__/AppSidebar.menu.test.ts",
+    "name": "não introduz rota repetida no menu"
+   },
+   {
+    "file": "src/components/layout/__tests__/AppSidebar.menu.test.ts",
+    "name": "todo item tem label e rota absoluta não vazias"
    },
    {
     "file": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
@@ -276866,8 +276882,9 @@
   },
   "src/components/layout/AppSidebar.tsx": {
    "path": "src/components/layout/AppSidebar.tsx",
-   "lines": 812,
+   "lines": 824,
    "exports": [
+    "const menuGroups",
     "function AppSidebar"
    ],
    "tables": [
@@ -276957,7 +276974,7 @@
   },
   "src/components/layout/EmpresaSelector.tsx": {
    "path": "src/components/layout/EmpresaSelector.tsx",
-   "lines": 133,
+   "lines": 146,
    "exports": [
     "function EmpresaSelector"
    ]
@@ -277008,7 +277025,7 @@
   },
   "src/components/layout/Header.tsx": {
    "path": "src/components/layout/Header.tsx",
-   "lines": 113,
+   "lines": 115,
    "exports": [
     "function Header"
    ],
@@ -277091,7 +277108,7 @@
   },
   "src/components/layout/PageContainer.tsx": {
    "path": "src/components/layout/PageContainer.tsx",
-   "lines": 128,
+   "lines": 107,
    "exports": [
     "const PageContainer"
    ],
@@ -277099,14 +277116,14 @@
   },
   "src/components/layout/PageHeader.tsx": {
    "path": "src/components/layout/PageHeader.tsx",
-   "lines": 6,
+   "lines": 19,
    "exports": [
     "function PageHeader"
    ]
   },
   "src/components/layout/PageLayout.tsx": {
    "path": "src/components/layout/PageLayout.tsx",
-   "lines": 109,
+   "lines": 105,
    "exports": [
     "function PageLayout"
    ]
@@ -277188,6 +277205,17 @@
    "path": "src/components/layout/index.ts",
    "lines": 7,
    "doc": "V15-197: src/components/layout/index.ts"
+  },
+  "src/components/layout/__tests__/AppSidebar.menu.test.ts": {
+   "path": "src/components/layout/__tests__/AppSidebar.menu.test.ts",
+   "lines": 45,
+   "is_test": true,
+   "tests": [
+    "AppSidebar — config do menu",
+    "grupo ",
+    "não introduz rota repetida no menu",
+    "todo item tem label e rota absoluta não vazias"
+   ]
   },
   "src/components/login/LockoutMessage.tsx": {
    "path": "src/components/login/LockoutMessage.tsx",
@@ -323509,10 +323537,30 @@
   }
  },
  "git": {
-  "sha": "e0e4448200c80ab4e9b126fb153575c34a08708a",
+  "sha": "d3a71089f786640ef42a724fe726183dfafef1db",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "d3a7108",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(layout): resgata da muri o shell de layout e a entrada de menu que faltava (#626)",
+    "files": [
+     "inventario/estado/rotas.json",
+     "src/components/layout/AppSidebar.tsx",
+     "src/components/layout/EmpresaSelector.tsx",
+     "src/components/layout/Header.tsx",
+     "src/components/layout/MainLayout.tsx",
+     "src/components/layout/MobileBottomNav.tsx",
+     "src/components/layout/MobileQuickActions.tsx",
+     "src/components/layout/PageContainer.tsx",
+     "src/components/layout/PageHeader.tsx",
+     "src/components/layout/PageLayout.tsx",
+     "src/components/layout/SidebarFooter.tsx",
+     "src/components/layout/__tests__/AppSidebar.menu.test.ts"
+    ]
+   },
    {
     "sha": "e0e4448",
     "date": "2026-11-17",
@@ -324298,25 +324346,6 @@
      "docs/treinamentos-imagens-homologacao.md",
      "docs/treinamentos-imagens.md"
     ]
-   },
-   {
-    "sha": "3dcc001",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "chore(banco): resgata os rollbacks das dez migrations ninebox já aplicadas em produção (#594)",
-    "files": [
-     "supabase/rollback/20261015090000_ninebox_finalizacao_e_potencial.rollback-operacional.sql",
-     "supabase/rollback/20261015090000_ninebox_finalizacao_e_potencial.rollback-seguranca.sql",
-     "supabase/rollback/20261016090000_revoga_insert_direto_rollback.sql",
-     "supabase/rollback/20261017090000_ninebox_aprovacao_gestor_rollback.sql",
-     "supabase/rollback/20261020090000_ninebox_edicao_feedback_rollback.sql",
-     "supabase/rollback/20261021090000_ninebox_aprovacao_confirmada_rollback.sql",
-     "supabase/rollback/20261022090000_ninebox_conclusao_feedback_autorizada_rollback.sql",
-     "supabase/rollback/20261025090000_ninebox_aprovacao_autoria_rollback.sql",
-     "supabase/rollback/20261027090000_ninebox_reconciliacao_incremental_rollback.sql",
-     "supabase/rollback/20261028090000_ninebox_justificativa_historico_rollback.sql",
-     "supabase/rollback/README.md"
-    ]
    }
   ],
   "hot_files": [
@@ -324326,7 +324355,7 @@
    ],
    [
     "inventario/estado/rotas.json",
-    9
+    10
    ],
    [
     "src/index.css",

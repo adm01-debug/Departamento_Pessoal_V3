@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e0e4448200` · branch `main` · 2026-11-17 15:40 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d3a71089f7` · branch `main` · 2026-11-17 16:06 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5412,7 +5412,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9036 testes em 692 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9040 testes em 693 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5716,7 +5716,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `supabase/functions/_shared/idempotency.test.ts` | 10 | idempotency: primeira chamada retorna reason=NEW e id válido · idempotency: 20 requisições concorrentes com MESMA key produzem exatamente 1 NEW · idempotency: reenvio após conclusão retorna REPLAY com mesmo body · idempotency: conclusão 204 sem body continua sendo replay de sucesso … |
 | `supabase/functions/_shared/rateLimit.test.ts` | 10 | permite quando abaixo do limite e insere marcador · bloqueia quando count >= limit e não insere · isolamento por chave — outra chave não conta contra a atual · ignora rows fora da janela (timestamp < windowStart) … |
 | `src/components/__tests__/ASOTab.test.tsx` | 9 | ASOTab · shows spinner when loading · renders Atestados de Saúde Ocupacional title · renders Novo ASO button … |
-| … +392 linhas — lista completa em `context.json` | | |
+| … +393 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

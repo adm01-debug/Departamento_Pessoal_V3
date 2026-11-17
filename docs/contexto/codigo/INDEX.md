@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e0e4448200c80ab4e9b126fb153575c34a08708a` (2026-11-17T12:35:45-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d3a71089f786640ef42a724fe726183dfafef1db` (2026-11-17T13:04:49-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1880), SQL (915), Markdown (332), JavaScript (129), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1881), SQL (915), Markdown (332), JavaScript (129), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,13 +34,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3479 |
-| arquivos_codigo | 2013 |
-| linhas_codigo | 400598 |
+| arquivos_total | 3480 |
+| arquivos_codigo | 2014 |
+| linhas_codigo | 400658 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
-| itens_menu | 94 |
+| itens_menu | 95 |
 | modulos | 81 |
 | componentes | 619 |
 | hooks | 115 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 425 |
 | migrations | 849 |
 | cron_jobs | 41 |
-| testes | 735 |
+| testes | 736 |
 | workflows | 21 |
 | scripts | 132 |
 | docs_md | 332 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (501), src/pages (110), src/contexts (3)
 - hooks: src/hooks (96), src/components (9), src/contexts (4)
 - servicos_logica: src/services (94), src/utils (35), src/schemas (25)
-- testes: co-localizado (__tests__) (612), co-localizado (*.test) (70), e2e/ (28)
+- testes: co-localizado (__tests__) (613), co-localizado (*.test) (70), e2e/ (28)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -103,7 +103,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks/ferias | 0 | 0 | 6 | 11 | 0 | 7 |
 | integrations/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib | 0 | 0 | 12 | 1 | 0 | 0 |
-| pages | 93 | 114 | 113 | 212 | 49 | 269 |
+| pages | 94 | 114 | 113 | 212 | 49 | 269 |
 | schemas | 0 | 0 | 19 | 0 | 0 | 0 |
 | schemas/esocial | 0 | 0 | 6 | 0 | 0 | 0 |
 | services | 0 | 0 | 75 | 0 | 36 | 193 |
@@ -395,14 +395,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 26842 nós · 60474 arestas · 2289 comunidades · grafo do commit `e0e44482`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), lucide-react (474), button.tsx (444), cn (421), useEmpresas (409), vitest (326), client.ts (300), App.tsx (187), colaboradoresMock.ts (165), checkRateLimit (160), "public"."empresas" (159)
+- 26844 nós · 60480 arestas · 2294 comunidades · grafo do commit `d3a71089`
+- comunidades maiores: lucide-react (580), cn (509), button.tsx (496), 20260831_corrected_public.sql (493), canonical_schema.sql (475), useEmpresas (459), vitest (349), PremiacoesPage.tsx (306), entradaCard (236), colaboradoresMock.ts (159), "public"."empresas" (159), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/canonical-migrations.yml (20)
-- inventario/estado/rotas.json (19)
+- inventario/estado/rotas.json (20)
 - package.json (19)
 - package-lock.json (18)
 - PENDENCIAS.md (10)
@@ -649,6 +649,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `d3a7108` feat(layout): resgata da muri o shell de layout e a entrada de menu que faltava (#626)
 - 2026-11-17 `e0e4448` feat(design): traz o sistema de design da branch muri para a main (#625)
 - 2026-11-17 `e3178c5` fix(deploy): asset inexistente deve dar 404, não a index.html (#623)
 - 2026-11-17 `7381b27` fix(pwa): navegacao ignorava o cache HTTP do browser e servia a casca antiga (#624)
@@ -663,7 +664,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `d63d655` feat: resgata da muri o dossiê do colaborador — holerites, SST, campos personalizados e recontratação (#613)
 - 2026-11-17 `0a74847` feat: resgata da muri 6 grupos de hooks/services com consumidor vivo (#612)
 - 2026-11-17 `34959e3` feat(premiacoes): resgata o Hub de Premiações e o simulador de ROI da muri sobre o miolo corrigido da main (#611)
-- 2026-11-17 `182d5f9` feat(recrutamento): resgata Recrutamento e seleção da muri preservando a máscara de PII e as 3 entregas da main (#610)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -3222,8 +3222,8 @@
   {
    "modulo": "components/layout",
    "arquivos": 28,
-   "testes": 0,
-   "linhas": 3336,
+   "testes": 1,
+   "linhas": 3351,
    "itens_menu": [],
    "telas": [
     "/"
@@ -7795,6 +7795,7 @@
     "Cargos",
     "Cargos & Salários (PCS)",
     "CAT Eletrônica",
+    "Centros de Custo",
     "Clínicas Parceiras",
     "Colaboradores",
     "Compliance Folha",

@@ -5,7 +5,7 @@
   "urls": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
-  "itens_menu": 94,
+  "itens_menu": 95,
   "lazy": 107
  },
  "urls": [
@@ -128,7 +128,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 69
+   "arquivos_puxados": 70
   },
   {
    "protegida": true,
@@ -303,7 +303,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 73
+   "arquivos_puxados": 74
   },
   {
    "protegida": true,
@@ -1881,7 +1881,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 74
+   "arquivos_puxados": 75
   },
   {
    "protegida": true,
@@ -2816,7 +2816,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 76
+   "arquivos_puxados": 77
   },
   {
    "protegida": true,
@@ -3383,7 +3383,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 215
+   "arquivos_puxados": 216
   },
   {
    "protegida": true,
@@ -5385,7 +5385,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 218
+   "arquivos_puxados": 219
   },
   {
    "protegida": false,
@@ -17773,7 +17773,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 82
+   "arquivos_puxados": 83
   },
   {
    "protegida": true,
@@ -18023,7 +18023,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 81
+   "arquivos_puxados": 82
   },
   {
    "protegida": true,
@@ -18199,7 +18199,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 94
+   "arquivos_puxados": 95
   },
   {
    "protegida": true,
@@ -20075,7 +20075,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 217
+   "arquivos_puxados": 218
   },
   {
    "protegida": true,
@@ -22180,7 +22180,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 91
+   "arquivos_puxados": 92
   },
   {
    "protegida": true,
@@ -22304,7 +22304,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 77
+   "arquivos_puxados": 78
   },
   {
    "protegida": true,
@@ -22995,7 +22995,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 78
+   "arquivos_puxados": 79
   },
   {
    "protegida": true,
@@ -25753,7 +25753,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 76
+   "arquivos_puxados": 77
   },
   {
    "protegida": true,
@@ -26103,7 +26103,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 149
+   "arquivos_puxados": 150
   },
   {
    "protegida": true,
@@ -27518,7 +27518,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 78
+   "arquivos_puxados": 79
   },
   {
    "protegida": true,
@@ -28688,7 +28688,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 217
+   "arquivos_puxados": 218
   },
   {
    "protegida": true,
@@ -29385,7 +29385,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 219
+   "arquivos_puxados": 220
   },
   {
    "protegida": true,
@@ -30534,7 +30534,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 218
+   "arquivos_puxados": 219
   },
   {
    "protegida": true,
@@ -30657,7 +30657,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 73
+   "arquivos_puxados": 74
   },
   {
    "protegida": true,
@@ -32368,6 +32368,15 @@
    "papeis_nao_resolvidos": null,
    "definido_em": "src/components/layout/AppSidebar.tsx",
    "resolve_para": "src/pages/AdminCatPage.tsx"
+  },
+  {
+   "rotulo": "Centros de Custo",
+   "destino": "/centros-custo",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/AppSidebar.tsx",
+   "resolve_para": "src/pages/CentrosCustoPage.tsx"
   },
   {
    "rotulo": "Clínicas Parceiras",

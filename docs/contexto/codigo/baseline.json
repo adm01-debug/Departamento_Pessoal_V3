@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e0e4448200c80ab4e9b126fb153575c34a08708a",
+  "commit": "d3a71089f786640ef42a724fe726183dfafef1db",
   "branch": "main",
-  "data_commit": "2026-11-17T12:35:45-03:00",
+  "data_commit": "2026-11-17T13:04:49-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "d3a7108",
+    "data": "2026-11-17",
+    "assunto": "feat(layout): resgata da muri o shell de layout e a entrada de menu que faltava (#626)"
+   },
    {
     "sha": "e0e4448",
     "data": "2026-11-17",
@@ -126,14 +131,9 @@
     "sha": "4911958",
     "data": "2026-11-16",
     "assunto": "test: resgata 11 suítes de testes de Avaliação/Desempenho da branch muri (+194 casos) (#600)"
-   },
-   {
-    "sha": "792eeb5",
-    "data": "2026-11-16",
-    "assunto": "docs(auditoria): publica o plano de resgate por área da branch muri (#597)"
    }
   ],
-  "arquivos_mudados_7d": 1162,
+  "arquivos_mudados_7d": 1170,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -168,16 +168,16 @@
     "mudancas": 60
    },
    {
+    "pasta": "src/components/layout",
+    "mudancas": 47
+   },
+   {
     "pasta": "src/components/recrutamento",
     "mudancas": 41
    },
    {
     "pasta": "src/utils/__tests__",
     "mudancas": 38
-   },
-   {
-    "pasta": "src/components/layout",
-    "mudancas": 36
    },
    {
     "pasta": "src/components/admissoes",
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 19
+    "mudancas": 20
    },
    {
     "arquivo": "package.json",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 244
+    "commits": 245
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 35
+    "commits": 34
    },
    {
     "autor": "dependabot[bot]",
@@ -318,13 +318,13 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3479,
-  "arquivos_codigo": 2013,
-  "linhas_codigo": 400598,
+  "arquivos_total": 3480,
+  "arquivos_codigo": 2014,
+  "linhas_codigo": 400658,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
-  "itens_menu": 94,
+  "itens_menu": 95,
   "modulos": 81,
   "componentes": 619,
   "hooks": 115,
@@ -332,7 +332,7 @@
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 735,
+  "testes": 736,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 933,
-   "linhas": 169673
+   "arquivos": 934,
+   "linhas": 169733
   },
   "src/constants": {
    "arquivos": 6,

@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 735,
+ "total": 736,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 696
+  "unit": 697
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 612
+   "arquivos": 613
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -3386,6 +3386,15 @@
     "src/components/kanban/entradaKanban.ts"
    ],
    "casos": 4
+  },
+  {
+   "arquivo": "src/components/layout/__tests__/AppSidebar.menu.test.ts",
+   "tipo": "unit",
+   "linhas": 45,
+   "testa": [
+    "src/components/layout/AppSidebar.tsx"
+   ],
+   "casos": 3
   },
   {
    "arquivo": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
@@ -7034,6 +7043,7 @@
   "src/components/forms/FormSwitch.tsx": 1,
   "src/components/integracoes/ConfigPanels.tsx": 1,
   "src/components/kanban/entradaKanban.ts": 1,
+  "src/components/layout/AppSidebar.tsx": 1,
   "src/components/layout/BackButton.tsx": 1,
   "src/components/layout/Breadcrumbs.tsx": 1,
   "src/components/layout/Column.tsx": 1,
