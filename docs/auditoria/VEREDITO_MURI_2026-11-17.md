@@ -149,6 +149,22 @@ consumidora na `muri`.
 
 ## 5b. As PRs fechadas sem merge — 38, verificadas uma a uma
 
+### Medido: 38 é o conjunto COMPLETO, não uma amostra
+
+Dizer "38 PRs fechadas" não provava que não havia uma 39ª fora da varredura. Contagem completa
+do repositório, via GraphQL (`pullRequests(states:…){ totalCount }`), em 2026-11-18:
+
+| estado                 | total   |
+| ---------------------- | ------- |
+| **total de PRs**       | **632** |
+| mergeadas              | 592     |
+| abertas                | 2       |
+| **fechadas sem merge** | **38**  |
+
+592 + 2 + 38 = 632. A soma fecha: **não existe PR fora de uma dessas três categorias.** As 592
+mergeadas estão na `main` por definição; as 2 abertas são as desta sessão; as 38 são exatamente
+as auditadas abaixo. O conjunto de PRs do projeto está integralmente coberto.
+
 O objetivo cobre PRs, não só branches. São **38** PRs fechadas sem merge no repositório. Importante:
 **fechar branch não apaga PR** — o diff de uma PR fechada fica no GitHub indefinidamente, então nada
 aqui se perde ao apagar a `muri` ou as branches locais. Mesmo assim, cada uma foi verificada.
