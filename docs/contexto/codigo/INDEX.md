@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7524b933bda5766a22875f1ba8ec9e231a1702f9` (2026-11-18T08:06:57-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3801d319d1bffafa69761a2f88a63753809998f1` (2026-11-18T12:02:13-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1941), SQL (945), Markdown (335), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1941), SQL (947), Markdown (335), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3586 |
+| arquivos_total | 3588 |
 | arquivos_codigo | 2079 |
 | linhas_codigo | 411633 |
 | rotas | 116 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 118 |
 | edge_functions | 67 |
 | tabelas | 426 |
-| migrations | 872 |
+| migrations | 874 |
 | cron_jobs | 41 |
 | testes | 774 |
 | workflows | 21 |
@@ -396,14 +396,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27337 nós · 61663 arestas · 2354 comunidades · grafo do commit `7524b933`
+- 27339 nós · 61663 arestas · 2356 comunidades · grafo do commit `3801d319`
 - comunidades maiores: useEmpresas (555), 20260831_corrected_public.sql (497), canonical_schema.sql (475), button.tsx (422), vitest (419), lucide-react (379), cn (346), App.tsx (224), rateLimit.ts (193), react (192), ColaboradorDetalhesPage.tsx (176), services/index.ts (172)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - inventario/estado/rotas.json (23)
-- .github/workflows/canonical-migrations.yml (18)
+- .github/workflows/canonical-migrations.yml (19)
 - package.json (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - package-lock.json (10)
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-18 `3801d31` infra: derruba a policy inerte das 5 tabelas de recrutamento, sem criar outra (#693)
 - 2026-11-18 `7524b93` fix: retrata o "maior risco aberto" - a policy public e inerte (#692)
 - 2026-11-18 `b74d4c2` chore: fecha 2 dos 3 casos sem veredito e sobe o risco de policy public (#691)
 - 2026-11-18 `1025265` fix: retrata o Lote 1 - nao era funcionalidade morta, era falta de consumidor (#690)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-18 `c96848a` chore: documenta que o canonical-sql-diag está quebrado em modo não-PII (#680)
 - 2026-11-18 `616e46b` chore: integra a lição dos P0 preservados como guarda de CI contra RLS permissiva (#679)
 - 2026-11-18 `d324939` chore: fecha a conta da muri com medições, em vez de inferências (#678)
-- 2026-11-18 `9ffdf21` feat: integra colaborador_lotacoes ponta a ponta no dossiê do colaborador (#677)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7524b933bda5766a22875f1ba8ec9e231a1702f9",
+  "commit": "3801d319d1bffafa69761a2f88a63753809998f1",
   "branch": "main",
-  "data_commit": "2026-11-18T08:06:57-03:00",
+  "data_commit": "2026-11-18T12:02:13-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "3801d31",
+    "data": "2026-11-18",
+    "assunto": "infra: derruba a policy inerte das 5 tabelas de recrutamento, sem criar outra (#693)"
+   },
    {
     "sha": "7524b93",
     "data": "2026-11-18",
@@ -126,14 +131,9 @@
     "sha": "544b877",
     "data": "2026-11-17",
     "assunto": "feat(desligamentos): coluna &quot;Próxima Ação&quot; com prazo legal, e os filtros que o componente já tinha (#668)"
-   },
-   {
-    "sha": "2569c2a",
-    "data": "2026-11-17",
-    "assunto": "feat(observabilidade): liga o trace_id do frontend ao bridge (#666)"
    }
   ],
-  "arquivos_mudados_7d": 1131,
+  "arquivos_mudados_7d": 1133,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 18
+    "mudancas": 19
    },
    {
     "arquivo": "package.json",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3586,
+  "arquivos_total": 3588,
   "arquivos_codigo": 2079,
   "linhas_codigo": 411633,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 118,
   "edge_functions": 67,
   "tabelas": 426,
-  "migrations": 872,
+  "migrations": 874,
   "cron_jobs": 41,
   "testes": 774,
   "workflows": 21,
