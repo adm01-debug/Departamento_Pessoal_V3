@@ -15,6 +15,14 @@
 -- DEFINER e portanto nao passam por RLS. Criar policy permissiva aqui afrouxaria
 -- o controle sem necessidade.
 --
+-- ORDEM IMPORTA: esta versao (20261020120000) e deliberadamente ANTERIOR a
+-- 20261027090000_ninebox_reconciliacao_incremental.sql (primeiro leitor) e a
+-- 20261115150000 (o preflight acima). O lote canonico e montado pela ordem dos
+-- nomes de arquivo (.github/workflows/canonical-migrations.yml:215-233, glob
+-- lexicografico), entao numerar depois dos dependentes nao consertaria o
+-- rebuild: o preflight abortaria antes de a tabela ser criada. 20261020 e
+-- tambem a data real de criacao em producao (criado_em = 2026-10-20 13:05Z).
+--
 -- Idempotente: pode rodar em producao (onde a tabela ja existe) sem efeito.
 
 CREATE TABLE IF NOT EXISTS public.ninebox_permissoes_homologacao (
