@@ -481,3 +481,85 @@ dono, pelo `canonical-migrations.yml`. O `supabase_db_query` do MCP está devolv
 para `select 1`, o que é a razão dos 16 `NÃO_VERIFICÁVEL`: `REVOKE`/`GRANT`, corpo de função e
 conteúdo de policy não têm como ser lidos pelas ferramentas estruturadas. Esses 16 são
 **NÃO VERIFICADO**, não "aplicados".
+
+## 13. Triagem das 26 restantes, em lotes de decisão (2026-11-18)
+
+A §12 mediu 27 arquivos com DDL não viva. **Uma já foi aplicada:**
+`20261028230000_govbr_auth_state_user_id` — PR #687, `validate` run 44278442293, `apply` run
+44278669976, `verify` run 44278831397 (`Sidecar: ... (ledger ✓ versão 20261028230000)` +
+`CANONICAL_VERIFY_OK`), e conferido fora do workflow: `public.govbr_auth_state` tem 7 colunas, com
+`user_id uuid` nullable na posição 7. Login com gov.br destravado.
+
+Restam **26**. Elas não são um bloco: há bug vivo, há redundância e há decisão de produto no mesmo
+monte. Agrupadas por **decisão**, não por tema, para que cada lote vire uma PR.
+
+### Lote 1 — funcionalidade morta em produção (recomendo aplicar)
+
+| arquivo                                                                 | efeito hoje                                                                                                                                                                                                                                                                           |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `20260804000000_p0_010_write_policies_provisoes.sql`                    | as 4 policies de escrita estão ausentes e a RLS está ligada: `INSERT`/`UPDATE`/`DELETE` em `provisoes_folha` e `historico_calculos_folha` ficam **bloqueados por deny-by-default** para `authenticated`. Quem usa a tela de provisões não consegue gravar.                            |
+| `20260719150000_storage_bucket_security_hardening.sql` (PARCIAL, 12/19) | `afastamentos`, `documentos` e `documentos-colaboradores` estão cobertos (10 policies vivas), mas o bucket **`documentos-admissao` ficou sem nenhuma das 3 policies** — RLS ligada sem policy = tudo negado. É o mesmo bug que a `20261117193000` já corrigiu para os outros buckets. |
+
+### Lote 2 — isolamento por empresa: investigar antes de decidir
+
+| arquivo                                                    | o que falta saber                                                                                                                                                                                                                                                                                                         |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `20260724000700_fix_rls_recrutamento_onboarding.sql`       | as 5 tabelas têm hoje uma policy `"Multi-tenant access"` para role **`public`** além da nominal. Se o `USING` dela não restringir por `empresa_id`, é vazamento entre empresas. **Não consegui ler o `USING`**: exige `db_query`, que está quebrado.                                                                      |
+| `20260719191000_empresa_id_not_null_constraints.sql`       | as 8 colunas `empresa_id` conferidas seguem **NULLABLE**. Linha sem `empresa_id` é exatamente o vetor que torna perigosa a policy `OR empresa_id IS NULL` que recusei (§ do `sql-preservado`). O `NOT NULL` fecharia a porta na raiz, mas exige backfill antes — e o backfill precisa saber a empresa de cada linha órfã. |
+| `20260724000200_fix_desligamentos_empresa_id_not_null.sql` | contém `DELETE FROM public.desligamentos WHERE empresa_id IS NULL`. **Isso apaga dado, sem volta.** Não aplico sem sua palavra, e antes é preciso contar quantas linhas são.                                                                                                                                              |
+
+### Lote 3 — auditoria e observabilidade (baixo risco, aplicar se quiser o recurso)
+
+`20260719170000_security_indexes_constraints.sql` (13 índices em `audit_log`, `login_attempts`,
+`rate_limit_logs` — as 3 tabelas existem) · `20260719190000_audit_delete_trigger.sql` (1 função +
+10 triggers que registram DELETE; as 10 tabelas existem) ·
+`20260719193000_security_monitoring_views.sql` (3 views de monitoramento) ·
+`20260815000000_p1_023_naming_pattern.sql` (2 objetos).
+
+Nenhum deles conserta bug: são capacidade nova. Índices e triggers custam escrita.
+
+### Lote 4 — a tabela `backup_logs` não existe: o recurso entra ou sai?
+
+Três arquivos encadeados: `20260725100000_p3_060_backup_logs.sql` cria a tabela;
+`20260724140001_t007_backup_logs_rls.sql` e `20260816000000_p1_024_policies_orfas.sql` criam policies
+**sobre ela**. Hoje nada disso existe. É decisão de produto: o sistema vai ter registro de backup
+dentro do banco? Aplicar os três na ordem, ou descartar os três — meio caminho deixa policy órfã.
+
+### Lote 5 — dashboards materializados: decisão de custo
+
+`20260725130000_p5_077_passivo_trabalhista.sql` (4 materialized views — saldo de férias, provisão de
+13º, passivo de FGTS, passivo consolidado — mais 9 índices, a função `refresh_passivo_trabalhista()`
+e a view `v_passivo_summary`) · `20260817010000_p4_072_materialized_views_dashboards.sql` (14
+objetos) · `20260724140000_p4_072_mv_dashboards.sql` (PARCIAL; a única MV viva, `mv_folha_summary`,
+veio de `20261018130000`, que está no ledger e diz isso no próprio texto).
+
+Materialized view ocupa espaço e **precisa de refresh agendado** para não mostrar número velho. O
+valor de negócio é real (passivo trabalhista é número que vai a balanço), o custo também.
+
+### Lote 6 — descartar: medido como redundante, superado ou impossível
+
+| arquivo                                                     | por que não aplicar                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `20260317130255_3d640e88-….sql`                             | tenta criar 135 constraints `fk_<tabela>_<ref>`. A integridade **já existe** sob os nomes default `<tabela>_<coluna>_fkey` (conferido em 12 tabelas). Trabalho redundante, não buraco.                                                                                                                                                                                                                                                |
+| `20260720040000_fix_jornada_fk_ordering.sql`                | referencia `colaboradores.jornada_id`, coluna que **não existe**. Sem `EXCEPTION` no bloco: aplicar daria erro.                                                                                                                                                                                                                                                                                                                       |
+| `20260725120000_p4_071_compound_indexes.sql`                | referencia `public.folhas` e `public.pontos`, tabelas que **não existem**. É uma transação única: abortaria inteira.                                                                                                                                                                                                                                                                                                                  |
+| `20260726120000_p4_068_connection_pooling.sql`              | o schema `admin` não existe (arrasta 4 views e 2 funções) e os 6 índices `_sw` também não.                                                                                                                                                                                                                                                                                                                                            |
+| `20260817000000_p4_071_indices_compostos_top20.sql`         | 32 índices; os 6 presentes são **homônimos criados por outras migrations**, não obra dele.                                                                                                                                                                                                                                                                                                                                            |
+| `20261012130000_rotinas_agendadas_falhando.sql`             | **superada de fato**: `20261013130000` e `20261013140000`, ambas no ledger, recriam as mesmas funções. O tipo de retorno divergente (`integer` vs `jsonb`) prova que o que está vivo é a versão posterior.                                                                                                                                                                                                                            |
+| `20260802000000_p0_007_views_security_invoker.sql`          | **corrigi aqui um falso alarme meu.** Parecia buraco de segurança (14 views sem `security_invoker`). Não é: `20260911180000_p0_views_security_invoker` **está no ledger** e faz `ALTER VIEW … SET (security_invoker = true)` + `REVOKE SELECT … FROM anon` sobre a mesma lista de views. O que resta neste arquivo é **redefinição** de 17 views; aplicar trocaria definições vivas por outras. Decisão de produto, não de segurança. |
+| `20260317001935_1663bc94-….sql`                             | 3 das 7 views rodam definição diferente (mais enxuta) da do arquivo. Mesmo caso: redefinição, não falha.                                                                                                                                                                                                                                                                                                                              |
+| `20260726110000_p2_037_consolidate_duplicates.sql`          | o único objeto presente (`documentos.empresa_id`) vem de `20260712214642_fixup_documentos_empresa_id.sql:3`, não deste arquivo.                                                                                                                                                                                                                                                                                                       |
+| `20260724000500_fix_faltas_status_default.sql`              | o `DEFAULT` vivo de `faltas.status` é `'registrada'`, que não consta da lista do `chk_faltas_status` citada no arquivo. **Bloqueado por ferramenta:** ler o conteúdo do CHECK exige `db_query`.                                                                                                                                                                                                                                       |
+| `20260724001200_fix_faltas_tipo_default_and_constraint.sql` | mesmo caso em `faltas.tipo` (`DEFAULT 'falta'`). Se o CHECK vivo for o de `20260713110053`, sem `'falta'` na lista, **qualquer INSERT em `faltas` sem `tipo` explícito falha** — mas isso é hipótese, não medição, enquanto o `db_query` estiver quebrado.                                                                                                                                                                            |
+
+### O que trava a triagem completa
+
+Os dois últimos itens do lote 6 e o primeiro do lote 2 são os três casos em que **a decisão depende
+de ler conteúdo de `CHECK` ou de policy**, o que as ferramentas estruturadas do MCP não fazem. Com o
+`supabase_db_query` devolvendo zero linhas até para `select 1`, eles ficam **NÃO VERIFICADOS** — não
+"sem problema". Consertar esse acesso de leitura é pré-requisito para fechar a triagem, e é também o
+que destrava o `canonical-sql-diag.yml` (§ do `banco.md`).
+
+Nada deste lote foi aplicado. Cada lote acima vira uma PR própria, pelo mesmo caminho que funcionou
+na #687: editar o `LOTE ATUAL` do `canonical-migrations.yml`, escrever o sidecar `.verify.sql`, e
+disparar `validate` → `apply` → `verify` a partir da `main`.
