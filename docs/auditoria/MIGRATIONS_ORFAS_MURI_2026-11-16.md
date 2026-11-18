@@ -841,3 +841,280 @@ Os sidecars prendem o que importa, não só o que mudou:
 - o valor `'falta'` **não** foi somado à lista válida — a correção certa é trocar o default, não
   afrouxar a constraint para aceitar um tipo que não existe no domínio de negócio;
 - `tipo` continua `NOT NULL`.
+
+## 18. Veredito das 21 migrations restantes (medido 2026-11-18)
+
+Fecha o eixo aberto na §13. Das 26 triadas: 2 aplicadas (§17), 1 substituída pela
+`20261118110000` (§16), 2 retratadas (§14), restavam **21**. Cada uma foi medida contra o
+banco canônico `frjbfeamybqsejlvmqbl` e contra o `src/`, com as duas lições:
+
+- **§16** — antes de dizer "falta medição", procurar o objeto em `supabase/migrations/`.
+- **§14** — medição de schema não é defeito de produto; procurar o **consumidor**.
+
+Placar: **2 aplicáveis**, **19 descartáveis** (11 impossíveis, 5 obsoletas, 3 redundantes).
+
+### 18.1 As 2 que valem — mesmo defeito: isolamento multi-tenant não garantido por banco
+
+| Arquivo | Efeito | Medição |
+| --- | --- | --- |
+| `20260719191000_empresa_id_not_null_constraints.sql` | `SET NOT NULL` em `empresa_id` | DDL puro, sem DELETE. Guarda por `information_schema` (linhas 25-31) pula o que não existe |
+| `20260724000200_fix_desligamentos_empresa_id_not_null.sql` | idem, em `desligamentos` | **contém `DELETE` na linha 19** |
+
+Por que `desligamentos` ficou de fora da primeira: a lista da `20260719191000:17` traz
+`'rescisoes'`, tabela que **não existe** — o nome real é `desligamentos`. Erro de digitação
+que deixou a tabela de rescisão (salário, valor líquido, hashes de assinatura) sem a
+restrição.
+
+Estado medido hoje em produção, tabela por tabela — `empresa_id` **NULLABLE** em
+`colaboradores` (pos.70), `ferias` (pos.26), `contas_bancarias`, `beneficios`, `asos`,
+`despesas`, `folhas_pagamento`, `batidas_ponto` e `desligamentos` (pos.30). Ou seja: a
+`20260719191000` **nunca produziu efeito em produção**, ao contrário do que o cabeçalho da
+`20260724000200` (linhas 3-6) afirma. Linhas com `empresa_id IS NULL`: **0 em todas as 9**.
+`desligamentos` tem 2 linhas, nenhuma órfã — então o `DELETE` da linha 19 é no-op hoje.
+
+`dependentes`, `holerites` (nenhuma das duas tem a coluna) e `rescisoes` (tabela ausente)
+são puladas em silêncio pela guarda. O arquivo não entrega o que o título promete para essas
+três.
+
+### 18.2 Erro do agente — e RETRATAÇÃO parcial da minha própria correção
+
+**O agente errou.** Classificou a `20260719191000` como "risco BAIXO" afirmando que
+`src/components/settings/BeneficiosSettingsTab.tsx:58-69` — o único `INSERT` que omite
+`empresa_id` — estava em componente "importado APENAS pelo seu próprio teste, por nenhuma
+página ou componente".
+
+É falso: o componente é renderizado por `src/pages/ConfiguracoesPage.tsx:18,135`, roteado em
+`src/App.tsx:338` em `/configuracoes` sob `AdminRoute`. É tela viva.
+
+**Eu também errei, e a Devin Review pegou em #695.** Conclui daí que o `NOT NULL` quebraria o
+botão e tirei `beneficios` do lote. O mecanismo estava errado: parei no `supabase.from(...)` e
+supus PostgREST direto.
+
+O `supabase` exportado por `src/integrations/supabase/client.ts:444` é um **Proxy** cujo `from`
+monta `createQueryBuilder` e manda tudo para o `external-db-bridge` (`client.ts:201`) — não vai
+direto ao banco. E o gateway recusa esse insert **antes** de chegar ao Postgres: `beneficios`
+está em `TENANT_SCOPED_TABLES` (`external-db-bridge/validation.ts:105-110`) e `index.ts:610-615`
+devolve **403 `TENANT_SCOPE_REQUIRED`** para qualquer `insert` cuja linha não traga `empresa_id`
+não-vazio (`tenantScope.ts:37-50`: `missingTenantRows` > 0 reprova).
+
+Está vivo desde **2026-07-23** (`7a3672fc5`), e a prova empírica fecha: `public.beneficios` tem
+8 linhas e **0 com `empresa_id` NULL**. Se esse insert gravasse NULL, haveria NULL.
+
+Consequências:
+
+1. **`beneficios` VOLTA para o lote do `NOT NULL`.** A restrição não introduz regressão nenhuma
+   — o caminho de escrita já é barrado uma camada antes, com 403.
+2. **O defeito real é outro, e é anterior:** o botão "criar plano de benefício" em Configurações
+   **já está quebrado em produção**, devolvendo 403. Não é consequência de migration; é um
+   `INSERT` que esqueceu `empresa_id` num caminho que exige o tenant. Fica fora deste escopo e
+   vai para os próximos passos.
+3. **Lição de método (a 3ª):** antes de afirmar o que um `INSERT` do front faz no banco,
+   **seguir o cliente até o fim**. Neste repo `supabase.from()` não é PostgREST — é gateway com
+   fail-closed de tenant. Ler a chamada e parar ali erra nas duas direções: inventei uma
+   regressão que não existe e deixei de ver um botão que já falha.
+
+Os outros caminhos de escrita preenchem `empresa_id` e foram conferidos:
+`src/services/tabelasReferenciaService.ts:145-151` (`contas_bancarias`),
+`src/hooks/useCalculoFolha.ts:55-66` (`folhas_pagamento`),
+`supabase/functions/processar-ponto-offline/index.ts:257-262` (`batidas_ponto`),
+`src/components/desligamentos/NovoDesligamentoDialog.tsx:107` e
+`src/pages/CalculadoraRescisaoPage.tsx:231` (`desligamentos`).
+
+### 18.3 Sobre o `DELETE` da `20260724000200`
+
+O arquivo apaga linhas sem `empresa_id` antes de aplicar a restrição. Hoje atinge 0 de 2
+linhas, mas se uma rescisão órfã nascer entre a medição e o `apply`, ela é **apagada sem
+backup** — e rescisão carrega salário e valor líquido.
+
+Decisão: **não aplicar o arquivo como está.** A restrição vai para uma migration nova que só
+faz `SET NOT NULL`, sem `DELETE`. Se aparecer linha órfã, o `ALTER` falha e a migration aborta
+sem mudar nada — falha segura, em vez de falha destrutiva. O trabalho do outro agente é
+preservado no efeito; o que fica de fora é só o risco.
+
+### 18.4 As 19 descartáveis, com a prova
+
+**Quebram ao rodar (11).** Não é opinião: cada uma tem um objeto que não existe no schema
+canônico, dentro de bloco que não tolera a falha.
+
+| Arquivo | Ponto exato da quebra |
+| --- | --- |
+| `20260719170000_security_indexes_constraints` | `prevent_empty_empresa_id` (linhas 52-60) compara `NEW.empresa_id = ''` numa coluna `uuid`. O gatilho é instalado em `colaboradores`, `folhas_pagamento`, `despesas`, `batidas_ponto`, `registros_ponto` e `admissoes` (linhas 63-75) e **quebra toda escrita** dessas 6 tabelas com `22P02` |
+| `20260719190000_audit_delete_trigger` | usa `OLD.empresa_id` para toda tabela ≠ `empresas`; `dependentes` (linha 44) **não tem a coluna** → todo `DELETE` nela passa a falhar com `42703` |
+| `20260720040000_fix_jornada_fk_ordering` | `colaboradores.jornada_id` não existe; a guarda só testa a constraint, não a coluna |
+| `20260317001935_1663bc94` | `CREATE OR REPLACE VIEW` não renomeia coluna: prod `vw_dashboard_time` tem `empresa_id` na pos.1, o arquivo quer `total_ativos` |
+| `20260724140001_t007_backup_logs_rls` | `public.backup_logs` não existe |
+| `20260725100000_p3_060_backup_logs` | `INSERT` em `config_retencao` (linha 145), tabela ausente; tudo em `BEGIN`/`COMMIT` |
+| `20260816000000_p1_024_policies_orfas` | `CREATE POLICY ... ON public.backup_logs` (linha 39) **sem** `to_regclass`, ao contrário dos blocos vizinhos |
+| `20260817010000_p4_072_materialized_views_dashboards` | compara `tipo_contrato` com `'CLT'`, `'PJ'`, `'estagio'` (linhas 127-129); labels reais do enum: `clt`, `pj`, `estagiario`, `temporario`, `intermitente`, `aprendiz` |
+| `20260725120000_p4_071_compound_indexes` | `ferias.dias_vendidos`, `public.folhas` e `public.pontos` — nenhum existe |
+| `20260817000000_p4_071_indices_compostos_top20` | `holerites(empresa_id, ...)` (linhas 120-129); `holerites` não tem `empresa_id` nem `status` |
+| `20261012130000_rotinas_agendadas_falhando` | `CREATE OR REPLACE` de `fn_atualizar_status_ferias_diario()` com `RETURNS jsonb`; a função viva retorna `integer` |
+
+**Obsoletas (5).** O objetivo foi atendido depois, por caminho melhor, ou deixou de existir.
+
+- `20260719193000_security_monitoring_views` — as 3 views não existem e não têm consumidor;
+  substituídas por `v_login_anomalies_email`/`v_login_anomalies_ip` (`20260724110000`), vivas.
+- `20260815000000_p1_023_naming_pattern` — a tabela criada é **inerte**: não existe um `INSERT`
+  em `migration_naming_audit` nem uma chamada a `_classify_migration_name` em todo o repo, então
+  ela não valida nada; é registro que ninguém escreve.
+  **Correção (Devin Review em #695):** eu havia justificado o descarte dizendo que o gate de
+  nome já roda em CI. **Não roda.** `scripts/audit-migration-style.mjs:452` é um `.filter()` que
+  **exclui** da auditoria o arquivo fora do padrão `^\d{14}_.+\.sql$` — não o reprova — e as
+  verificações seguintes (linhas 470-545) avaliam policies, não nomes. Nenhum outro script ou
+  workflow testa o padrão: buscar `\d{14}` em `scripts/` e `.github/workflows/` devolve só essa
+  linha. **Existe lacuna real: migration com nome fora do padrão passa no CI e ainda é
+  silenciosamente ignorada pela auditoria de policies** — o pior dos dois mundos. O descarte da
+  migration continua certo (tabela inerte não fecha lacuna nenhuma); o gate certo é no CI, e vai
+  para os próximos passos.
+- `20260725130000_p5_077_passivo_trabalhista` — as 4 matviews nascem `WITH NO DATA` e a única
+  função que as popula usa `REFRESH ... CONCURRENTLY`, que falha em matview nunca populada.
+- `20260726120000_p4_068_connection_pooling` — PgBouncer não se configura por SQL (o próprio
+  cabeçalho, linhas 7-28, são instruções de Dashboard); o SQL que sobra duplica índice
+  existente.
+- `20260726110000_p2_037_consolidate_duplicates` — reintroduziria view sem RLS com URLs de
+  documentos de **todas** as empresas, objeto que migration posterior classificou como
+  vazamento.
+
+**Redundantes (3).** O efeito já está em produção; reaplicar piora.
+
+- `20260317130255_3d640e88` — as FKs existem com nome canônico `<tabela>_<coluna>_fkey`; o
+  arquivo só silencia `duplicate_object`, que depende do nome, então criaria uma **segunda** FK
+  sobre a mesma coluna, agora com `ON DELETE CASCADE`.
+- `20260724140000_p4_072_mv_dashboards` — `mv_folha_summary` já vive, reaplicada por
+  `20261018130000_onda4e_objetos_ausentes.sql:203`; as outras 4 matviews não têm consumidor.
+- `20260802000000_p0_007_views_security_invoker` — `security_invoker` já posto por
+  `20260911180000` via `ALTER VIEW`, preservando as definições; o P0-007 faz `DROP`+`CREATE`
+  com definições reinventadas e trocaria o contrato de 19 views.
+
+### 18.5 Método: três camadas de erro no mesmo veredito
+
+Nenhum dos 19 descartes é "não achei consumidor, logo é morto" — todos têm objeto ausente,
+substituto vivo nomeado, ou efeito já presente.
+
+O caso de `beneficios` é o mais instrutivo desta sessão porque errou três vezes seguidas, e cada
+camada pegou a anterior:
+
+1. **O agente** disse que o componente era código morto. Era tela viva (`App.tsx:338`).
+2. **Eu**, conferindo, achei a tela viva e concluí regressão — mas parei no `supabase.from()` e
+   não segui o Proxy até o `external-db-bridge`.
+3. **A Devin Review**, em #695, apontou o gateway. Conferido: 403 `TENANT_SCOPE_REQUIRED` desde
+   julho, e produção confirma (8 linhas, 0 NULL).
+
+O veredito final — `beneficios` entra no lote, e existe um botão já quebrado — só aparece depois
+das três. Nenhuma das camadas sozinha chegaria nele. Vale registrar que a minha correção do erro
+do agente estava errada também: conferir não é o mesmo que conferir até o fim.
+
+Placar de método da sessão: **12 erros meus corrigidos na `main` com prova ao lado**, 1 de
+agente, 2 de documentação achados pelo revisor automático neste PR.
+
+### 18.6 A migration que fecha o lote — e um gate cego achado no caminho
+
+`supabase/migrations/20261118160000_empresa_id_not_null_rh.sql` faz o efeito das duas
+aplicáveis e **não** faz o `DELETE`:
+
+- `SET NOT NULL` em `empresa_id` nas 9: `colaboradores`, `folhas_pagamento`, `despesas`,
+  `contas_bancarias`, `ferias`, `beneficios`, `asos`, `batidas_ponto`, `desligamentos`.
+- **Passo 1 verifica órfãs em todas antes de qualquer `ALTER`** e `RAISE EXCEPTION` nomeando
+  tabela e contagem se houver. Nada é apagado e nada é alterado: a decisão sobre a linha órfã
+  volta para quem pode tomar, com o dado na mão.
+- `dependentes` e `holerites` ficam fora **por nome**, não por guarda silenciosa — não têm a
+  coluna. A `20260719191000` as listava e as pulava calada; aqui o arquivo não promete o que
+  não entrega.
+- `registros_ponto` e `admissoes` não entram: nunca estiveram na lista original e não foram
+  medidas. Não se amplia escopo por conta própria.
+
+O sidecar prende o que ela promete **não** fazer: a asserção 3 exige que `desligamentos`
+continue com **≥ 2 linhas**. Se o `DELETE` voltasse num merge futuro, a contagem cairia e o
+`verify` reprovaria.
+
+**Gate cego achado ao editar o lote.** O passo "Verificar objetos e ledger" exigia
+`Number(r.ledger_count) === 3`, e a lista de versões em `scripts/canonical-invariants.sql:8-12`
+estava parada em `20260929120000` / `20261117190000` / `20261117193000` — nenhuma das três é de
+lote recente. Ou seja: os três lotes desta sessão (gov.br, policy inerte, armadilha de
+`faltas`) passaram por essa asserção **contando três registros velhos**. Exatamente a falha que
+o comentário do próprio arquivo avisava ("se ficar na versão do lote anterior, a asserção aprova
+por um registro ANTIGO e não prova nada do lote novo").
+
+Os três lotes **estão** aplicados — foram provados pelos próprios sidecars em `mode=verify`,
+que conferem o ledger versão por versão (`ledger ✓ versão X`) e por leitura direta do catálogo.
+O que não houve foi prova **por este gate**. Lista e asserção atualizadas para a versão deste
+lote (`=== 1`).
+
+Vale o registro de método: o gate que avisava sobre o próprio modo de falhar falhou desse jeito
+por três lotes seguidos. Comentário não é gate. O que prendeu de verdade, nas três vezes, foi o
+sidecar com asserção de ledger por versão.
+
+### 18.7 Devin Review no PR da migration: um vermelho real e uma asserção fraca
+
+Dois achados na migration `20261118160000`, os dois conferidos no banco antes de mexer.
+
+**1. Vermelho real — o `NOT NULL` quebraria a rescisão automática por justa causa.**
+
+`public.aplicar_medida_folha_ponto(uuid)` é `SECURITY DEFINER`, está **viva** no banco
+(`supabase_db_list_functions` a lista; nenhuma migration a redefine depois do baseline) e faz:
+
+```
+INSERT INTO public.desligamentos (colaborador_id, tipo, data_desligamento,
+                                  motivo, status, salario_base) VALUES (...)
+```
+
+— `baseline/20260831_canonical/canonical_schema.sql:667-677`. **Omite `empresa_id`.** A coluna
+não tem `DEFAULT` (pos.30, `column_default: null`) e, por `supabase_db_list_triggers`,
+`desligamentos` **não tem nenhum gatilho `BEFORE INSERT`** que a preencha — o único é
+`trg_enforce_desligamento_hash`.
+
+O que aconteceria com o `NOT NULL` aplicado: o `INSERT` falha com `23502`, e
+`public.trg_medida_aplicada_integrar()` (`canonical_schema.sql:9883-9905`) **engole o erro com
+`EXCEPTION WHEN OTHERS`**, gravando a integração como `'erro'`. A medida disciplinar fica
+**aplicada** e a rescisão nunca nasce — sem erro visível para ninguém. Regressão silenciosa,
+que a meta desta sessão proíbe.
+
+Correção escolhida — e por que **não** foi reescrever a função: ela tem ~130 linhas e cobre
+suspensão, justa causa e folha; um `CREATE OR REPLACE` só para somar uma coluna arrisca
+regredir o resto. Em vez disso, o passo 0 da migration anexa a `desligamentos` o gatilho que
+**já existe e já foi revisado**: `trg_sync_empresa_colaborador` sobre
+`public.dp_sync_empresa_from_colaborador()` (`20261018120000_onda4d_review243.sql:66-82`), o
+mesmo que governa `documentos`, `historico_cargo`, `colaborador_beneficios` e
+`documentos_colaborador` desde outubro. Ele deriva `empresa_id` de `colaboradores.empresa_id`,
+que para uma rescisão é a empresa correta por definição (`desligamentos.colaborador_id` é
+`NOT NULL`).
+
+Ganho sobre consertar a função: **fecha a classe**. Qualquer escrita interna em
+`desligamentos` que omita `empresa_id` — RPC, job, outra função — passa a ser preenchida em vez
+de falhar. E não alarga acesso: só copia o tenant do próprio colaborador. O passo 0 aborta se o
+helper não existir, porque aplicar o `NOT NULL` sem ele é exatamente o cenário de regressão.
+Asserções 6 e 7 do sidecar prendem o gatilho (existência, função certa, `BEFORE INSERT`), para
+que ninguém o derrube mantendo a restrição.
+
+**2. Asserção fraca — eu havia overclaimado.** Dizer que `count(*) >= 2` prova que nenhuma
+linha foi apagada é falso: 3 antes e 2 depois também passa, e a própria aplicação permite
+excluir (`src/pages/DesligamentosPage.tsx:132-149`), o que mexe no piso sem participação
+nenhuma da migration. Comparar antes/depois na mesma transação não é possível num sidecar, que
+roda depois do DDL.
+
+Troca: a asserção 3 ficou declarada como **piso**, e a prova de verdade virou a **asserção 8**,
+que é estática. O `apply` grava em `supabase_migrations.schema_migrations.statements` o
+**conteúdo exato** do arquivo executado; a asserção varre esse texto procurando exclusão. É
+condicional de propósito — no `validate` a linha do ledger ainda não existe (ROLLBACK), então
+ausência devolve `ok`; no `verify`, após o COMMIT, ela morde.
+
+**3. A varredura não era prova geral — terceira rodada da review, também procedente.** A
+primeira versão da asserção 8 exigia `delete[[:space:]]+from`, que não pega `DELETE/**/FROM`
+nem um comentário entre as duas palavras. E chamá-la de "prova de preservação de dado" induziria
+revisão futura ao erro, porque ela não vê exclusão feita **dentro** de função chamada pela
+migration.
+
+Duas correções: o padrão passou a casar a **palavra** `delete` ou `truncate` em qualquer
+posição (`\\m \\M`, fronteira de palavra do Postgres), sem depender do que vem depois; e o
+escopo está escrito no sidecar, separando o que a asserção prova do que não prova. Aqui a
+limitação (b) não se aplica: a migration faz DDL, um `SELECT count(*)` e `CREATE TRIGGER` —
+que apenas **registra** `dp_sync_empresa_from_colaborador` para inserts futuros, sem executá-la.
+Se uma versão futura passar a chamar função, a asserção deixa de cobrir esse caminho e precisa
+de outra; está anotado.
+
+Custo aceito, e documentado no cabeçalho da migration: como o ledger guarda o arquivo
+**inteiro**, comentário entra na varredura. Com o padrão largo, o arquivo não pode escrever os
+verbos de remoção nem em prosa explicativa — as duas menções que havia foram reescritas, e a
+nota "escreva em prosa" ficou no topo para quem editar depois. Vale a troca: o alvo da asserção
+é pegar uma instrução reintroduzida, e um padrão largo é estritamente mais forte que um
+sintático que se contorna com um comentário no meio.
