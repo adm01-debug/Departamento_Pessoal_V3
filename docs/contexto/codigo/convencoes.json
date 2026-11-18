@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: empresa_id NOT NULL nas 9 tabelas de RH + veredito das 21 migrations (#695)",
    "fix: cadastro de plano de benefício grava a empresa (403 em produção) (#696)",
    "infra: conserta a armadilha de DEFAULT x CHECK em public.faltas (#694)",
    "infra: derruba a policy inerte das 5 tabelas de recrutamento, sem criar outra (#693)",
-   "fix: retrata o \"maior risco aberto\" - a policy public e inerte (#692)",
-   "chore: fecha 2 dos 3 casos sem veredito e sobe o risco de policy public (#691)"
+   "fix: retrata o \"maior risco aberto\" - a policy public e inerte (#692)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

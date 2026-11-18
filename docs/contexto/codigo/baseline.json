@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8daa52dec42d3c0f2f89d7f0a7d1423ec150a881",
+  "commit": "d3a09321e37d0436fa246e7300b9047888902418",
   "branch": "main",
-  "data_commit": "2026-11-18T13:35:40-03:00",
+  "data_commit": "2026-11-18T13:43:30-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "d3a0932",
+    "data": "2026-11-18",
+    "assunto": "feat: empresa_id NOT NULL nas 9 tabelas de RH + veredito das 21 migrations (#695)"
+   },
    {
     "sha": "8daa52d",
     "data": "2026-11-18",
@@ -126,14 +131,9 @@
     "sha": "60e5ae9",
     "data": "2026-11-17",
     "assunto": "chore(auditoria): fecha o destino das 14 migrations que só existiam na muri (#672)"
-   },
-   {
-    "sha": "ec2987e",
-    "data": "2026-11-17",
-    "assunto": "docs(auditoria): fecha o veredito de branches e PRs — nenhuma perda de função (#670)"
    }
   ],
-  "arquivos_mudados_7d": 1136,
+  "arquivos_mudados_7d": 1138,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -141,7 +141,7 @@
    },
    {
     "pasta": "src/components/ui",
-    "mudancas": 109
+    "mudancas": 108
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 20
+    "mudancas": 21
    },
    {
     "arquivo": "package.json",
@@ -214,16 +214,16 @@
     "mudancas": 11
    },
    {
+    "arquivo": "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
+    "mudancas": 10
+   },
+   {
     "arquivo": "package-lock.json",
     "mudancas": 10
    },
    {
     "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 10
-   },
-   {
-    "arquivo": "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
-    "mudancas": 9
    },
    {
     "arquivo": "docs/prod-readiness.md",
@@ -234,15 +234,15 @@
     "mudancas": 8
    },
    {
+    "arquivo": "scripts/canonical-invariants.sql",
+    "mudancas": 8
+   },
+   {
     "arquivo": "docs/auditoria/sql-preservado/README.md",
     "mudancas": 7
    },
    {
     "arquivo": "scripts/audit-migration-style.mjs",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 7
    },
    {
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3591,
+  "arquivos_total": 3593,
   "arquivos_codigo": 2080,
   "linhas_codigo": 411755,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 118,
   "edge_functions": 67,
   "tabelas": 426,
-  "migrations": 876,
+  "migrations": 878,
   "cron_jobs": 41,
   "testes": 775,
   "workflows": 21,

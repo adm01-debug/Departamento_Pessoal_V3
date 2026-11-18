@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "8daa52dec42d3c0f2f89d7f0a7d1423ec150a881",
+  "sha": "d3a09321e37d0436fa246e7300b9047888902418",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 16:36 UTC",
-  "files_total": 3604,
-  "code_files": 3027,
-  "code_lines": 478606
+  "generated_at": "2026-11-18 16:44 UTC",
+  "files_total": 3606,
+  "code_files": 3029,
+  "code_lines": 478944
  },
  "version": "1.3.2",
- "facts_hash": "b324c010ff073f58",
+ "facts_hash": "bf253dbb2cd677de",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1000,
-   ".sql": 949,
+   ".sql": 951,
    ".ts": 942,
    ".mjs": 108,
    ".js": 15,
@@ -72026,6 +72026,8 @@
    "supabase/migrations/20261117193000_storage_documentos_tenant_scope.verify.sql",
    "supabase/migrations/20261118110000_drop_policy_inerte_recrutamento.sql",
    "supabase/migrations/20261118110000_drop_policy_inerte_recrutamento.verify.sql",
+   "supabase/migrations/20261118160000_empresa_id_not_null_rh.sql",
+   "supabase/migrations/20261118160000_empresa_id_not_null_rh.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -101535,7 +101537,7 @@
   {
    "module": "scripts",
    "files": 153,
-   "lines": 34998,
+   "lines": 35005,
    "tables": [
     "a",
     "anexos",
@@ -103788,8 +103790,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 876,
-   "lines": 79446,
+   "files": 878,
+   "lines": 79777,
    "tables": [
     "profiles",
     "user_roles"
@@ -122639,6 +122641,10 @@
    {
     "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
     "text": "VALIDAÇÃO DO RH: a âncora de `feedbacks_360_validacoes_potencial` é a versão"
+   },
+   {
+    "file": "supabase/migrations/20261118160000_empresa_id_not_null_rh.verify.sql",
+    "text": ") de verificacao, e CREATE TRIGGER, que apenas REGISTRA"
    },
    {
     "file": "supabase/rollback/20261015090000_ninebox_finalizacao_e_potencial.rollback-seguranca.sql",
@@ -259931,7 +259937,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 441,
+   "lines": 448,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -326964,6 +326970,17 @@
    "path": "supabase/migrations/20261118110000_drop_policy_inerte_recrutamento.verify.sql",
    "lines": 63
   },
+  "supabase/migrations/20261118160000_empresa_id_not_null_rh.sql": {
+   "path": "supabase/migrations/20261118160000_empresa_id_not_null_rh.sql",
+   "lines": 182
+  },
+  "supabase/migrations/20261118160000_empresa_id_not_null_rh.verify.sql": {
+   "path": "supabase/migrations/20261118160000_empresa_id_not_null_rh.verify.sql",
+   "lines": 149,
+   "rule_comments": [
+    ") de verificacao, e CREATE TRIGGER, que apenas REGISTRA"
+   ]
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -327282,10 +327299,23 @@
   }
  },
  "git": {
-  "sha": "8daa52dec42d3c0f2f89d7f0a7d1423ec150a881",
+  "sha": "d3a09321e37d0436fa246e7300b9047888902418",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "d3a0932",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "feat: empresa_id NOT NULL nas 9 tabelas de RH + veredito das 21 migrations (#695)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
+     "scripts/canonical-invariants.sql",
+     "supabase/migrations/20261118160000_empresa_id_not_null_rh.sql",
+     "supabase/migrations/20261118160000_empresa_id_not_null_rh.verify.sql"
+    ]
+   },
    {
     "sha": "8daa52d",
     "date": "2026-11-18",
@@ -327593,29 +327623,12 @@
      "src/components/__tests__/PortalDocumentosTab.test.tsx",
      "src/components/portal/PortalDocumentosTab.tsx"
     ]
-   },
-   {
-    "sha": "94c16ea",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "chore(migrations): documenta no repo as 8 DDL que só existiam no ledger (#656)",
-    "files": [
-     "docs/auditoria/MIGRATIONS_LEDGER_SEM_ARQUIVO_2026-11-17.md",
-     "supabase/migrations/20260912142449_p0_hash_trigger_search_path.sql",
-     "supabase/migrations/20260912142506_p0_auth_lockout_contract.sql",
-     "supabase/migrations/20260912142520_p0_payroll_upsert_contract.sql",
-     "supabase/migrations/20260912143019_p0_views_revoke_public.sql",
-     "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
-     "supabase/migrations/20260912143344_p1_function_search_path.sql",
-     "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
-     "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
-    8
+    9
    ],
    [
     "docs/auditoria/sql-preservado/README.md",
@@ -327623,7 +327636,7 @@
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    5
+    6
    ],
    [
     "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
@@ -327634,6 +327647,10 @@
     4
    ],
    [
+    "scripts/canonical-invariants.sql",
+    3
+   ],
+   [
     "scripts/audit-migration-style.mjs",
     3
    ],
@@ -327642,8 +327659,12 @@
     2
    ],
    [
-    "scripts/canonical-invariants.sql",
-    2
+    "supabase/migrations/20261118160000_empresa_id_not_null_rh.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261118160000_empresa_id_not_null_rh.verify.sql",
+    1
    ],
    [
     "src/components/__tests__/BeneficiosSettingsTabCriar.test.tsx",
@@ -327683,14 +327704,6 @@
    ],
    [
     "src/hooks/useColaboradorLotacao.ts",
-    1
-   ],
-   [
-    "src/integrations/supabase/types.ts",
-    1
-   ],
-   [
-    "src/schemas/tableColumns.ts",
     1
    ]
   ]
