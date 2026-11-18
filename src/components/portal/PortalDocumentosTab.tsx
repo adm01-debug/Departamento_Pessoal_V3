@@ -30,6 +30,42 @@ import { validateTablePayload } from '@/schemas/validate';
 const BUCKET = 'documentos';
 const TIPOS_DOCUMENTO = ['Atestado', 'Certificado', 'Comprovante', 'Contrato', 'RG', 'CPF', 'Outro'];
 
+/**
+ * Em qual etapa a exclusao parou. A exclusao tem duas, nessa ordem: apagar o
+ * arquivo do Storage e depois apagar a linha do banco. O aviso ao usuario tem
+ * de dizer a verdade sobre o arquivo em cada caso, e `safeErrorMessage` cai no
+ * texto de fallback sempre que a mensagem do erro e interna (constraint, RLS,
+ * relation inexistente — ver INTERNAL_PATTERNS em utils/safeError.ts), que e
+ * justamente o caso comum de falha do banco.
+ */
+type EtapaExclusao = 'storage' | 'banco' | 'banco-sem-arquivo';
+
+function marcarEtapa(erro: unknown, etapa: EtapaExclusao): unknown {
+  if (erro && typeof erro === 'object') {
+    (erro as { etapaExclusao?: EtapaExclusao }).etapaExclusao = etapa;
+  }
+  return erro;
+}
+
+function etapaDoErro(erro: unknown): EtapaExclusao | undefined {
+  return erro && typeof erro === 'object' ? (erro as { etapaExclusao?: EtapaExclusao }).etapaExclusao : undefined;
+}
+
+function fallbackExclusao(etapa: EtapaExclusao | undefined): string {
+  // Falha no banco = o arquivo JA saiu do Storage e sobrou a linha apontando
+  // para ele. Repetir a exclusao resolve (remover um caminho que nao existe
+  // mais nao e erro no Storage), por isso a mensagem pede exatamente isso.
+  if (etapa === 'banco') {
+    return 'O arquivo foi removido, mas o registro não. Tente excluir novamente para concluir.';
+  }
+  // Registro sem arquivo no Storage: nao havia o que remover, entao a mensagem
+  // nao pode afirmar nem que o arquivo foi removido nem que esta guardado.
+  if (etapa === 'banco-sem-arquivo') {
+    return 'Nao foi possivel excluir o registro do documento.';
+  }
+  return 'Nao foi possivel remover o documento. O arquivo continua guardado.';
+}
+
 interface PortalDocumentosTabProps {
   navigate: (path: string) => void;
   colaboradorId?: string;
@@ -128,9 +164,16 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
         // registro orfao ao contrario: o arquivo fica sem a linha que o aponta.
         // Agora o erro aborta a exclusao ANTES de mexer no banco.
         const { error: erroStorage } = await supabase.storage.from(BUCKET).remove([path]);
-        if (erroStorage) throw erroStorage;
+        if (erroStorage) throw marcarEtapa(erroStorage, 'storage');
       }
-      await documentoService.excluir(doc.id, empresaId);
+      try {
+        await documentoService.excluir(doc.id, empresaId);
+      } catch (erroBanco) {
+        // Com `path`, o arquivo JA foi apagado do Storage; sem marcar a etapa,
+        // o aviso de "o arquivo continua guardado" cairia aqui e mentiria.
+        // Sem `path`, nao havia arquivo nenhum — outra mensagem ainda.
+        throw marcarEtapa(erroBanco, path ? 'banco' : 'banco-sem-arquivo');
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['portal-documentos'] });
@@ -139,7 +182,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
     // Sem isto o usuario nao sabia que a exclusao falhou: a mutation morria
     // calada e a lista continuava igual, sem explicacao.
     onError: (e: unknown) => {
-      toast.error(safeErrorMessage(e, 'Nao foi possivel remover o documento. O arquivo continua guardado.'));
+      toast.error(safeErrorMessage(e, fallbackExclusao(etapaDoErro(e))));
     },
   });
 

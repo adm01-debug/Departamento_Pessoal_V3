@@ -4,6 +4,7 @@ import {
   concluido,
   emAberto,
   pendente,
+  precisaAtencao,
   resumoAtencao,
   prazoRescisao,
   PRAZO_RESCISAO_DIAS,
@@ -133,5 +134,50 @@ describe('prazo do art. 477 §6º', () => {
 
   it('sem data de desligamento não há prazo inventado', () => {
     expect(prazoRescisao({ data_desligamento: null })).toBeUndefined();
+  });
+});
+
+describe('precisaAtencao x resumoAtencao — mesma régua', () => {
+  const hojeMs = AGORA.getTime();
+
+  // 01/09 + 10 dias = 11/09 → vencido em 15/10.
+  const vencidoAberto = desligamento('sem_justa_causa', '2026-09-01', 'pendente');
+  // 05/10 + 10 dias = 15/10 → prazo HOJE.
+  const prazoHoje = desligamento('acordo', '2026-10-05', 'calculado');
+  // Em aberto, prazo folgado, mas status pendente.
+  const sóPendente = desligamento('pedido_demissao', '2026-10-14', 'comunicado');
+  // Terminais: nunca entram.
+  const pago = desligamento('sem_justa_causa', '2026-09-01', 'pago');
+  const cancelado = desligamento('acordo', '2026-09-01', 'cancelado');
+  // Em aberto, prazo folgado e status que não é pendente.
+  const tranquilo = desligamento('fim_contrato', '2026-10-14', 'homologado');
+
+  it('o filtro da lista aceita exatamente os processos que o banner conta', () => {
+    const lista = [vencidoAberto, prazoHoje, sóPendente, pago, cancelado, tranquilo];
+    const filtrados = lista.filter((d) => precisaAtencao(d, hojeMs));
+    // Se as duas réguas divergissem, o banner diria um número e a lista
+    // mostraria outro — foi por isso que o critério virou função única.
+    expect(filtrados).toHaveLength(resumoAtencao(lista, hojeMs).total);
+    expect(filtrados.map((d) => d.id)).toEqual([vencidoAberto.id, prazoHoje.id, sóPendente.id]);
+  });
+
+  it('cada critério sozinho já basta', () => {
+    expect(precisaAtencao(vencidoAberto, hojeMs)).toBe(true);
+    expect(precisaAtencao(prazoHoje, hojeMs)).toBe(true);
+    expect(precisaAtencao(sóPendente, hojeMs)).toBe(true);
+  });
+
+  it('terminal e tranquilo ficam fora', () => {
+    expect(precisaAtencao(pago, hojeMs)).toBe(false);
+    expect(precisaAtencao(cancelado, hojeMs)).toBe(false);
+    expect(precisaAtencao(tranquilo, hojeMs)).toBe(false);
+  });
+
+  it('as subcontagens podem se sobrepor sem inflar o total', () => {
+    // `vencidoAberto` é atrasado E pendente: 1 processo, não 2.
+    const r = resumoAtencao([vencidoAberto], hojeMs);
+    expect(r.atrasados).toBe(1);
+    expect(r.pendentes).toBe(1);
+    expect(r.total).toBe(1);
   });
 });

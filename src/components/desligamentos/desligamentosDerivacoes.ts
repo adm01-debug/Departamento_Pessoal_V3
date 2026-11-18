@@ -220,6 +220,32 @@ export interface ResumoAtencao {
  *   • `pendentes` — status pendente/comunicado/em_andamento;
  *   • `hoje` — prazo legal vencendo hoje.
  */
+/**
+ * Classifica UM processo pelos três critérios da faixa de atenção. Existe para
+ * que a contagem do banner e o filtro "só os que precisam de atenção" da lista
+ * usem exatamente a mesma régua — duas implementações divergiriam e o banner
+ * diria 5 enquanto a lista mostra 3.
+ */
+function classificarAtencao(
+  d: DesligamentoLike,
+  hojeMs: number
+): { pendente: boolean; atrasado: boolean; hoje: boolean } {
+  if (concluido(d) || cancelado(d)) return { pendente: false, atrasado: false, hoje: false };
+  const limite = prazoRescisao(d);
+  const dias = limite ? Math.round((limite.getTime() - hojeMs) / DIA_MS) : null;
+  return {
+    pendente: pendente(d),
+    atrasado: dias !== null && dias < 0,
+    hoje: dias === 0,
+  };
+}
+
+/** Dispara qualquer um dos três critérios da faixa de atenção. */
+export function precisaAtencao(d: DesligamentoLike, hojeMs: number): boolean {
+  const c = classificarAtencao(d, hojeMs);
+  return c.pendente || c.atrasado || c.hoje;
+}
+
 export function resumoAtencao(lista: DesligamentoLike[], hojeMs: number): ResumoAtencao {
   let atrasados = 0;
   let pendentes = 0;
@@ -227,27 +253,14 @@ export function resumoAtencao(lista: DesligamentoLike[], hojeMs: number): Resumo
   let total = 0;
 
   lista.forEach((d) => {
-    if (concluido(d) || cancelado(d)) return;
+    const c = classificarAtencao(d, hojeMs);
+    if (c.pendente) pendentes += 1;
+    if (c.atrasado) atrasados += 1;
+    if (c.hoje) hoje += 1;
     // `total` é a UNIÃO (processo distinto que dispara qualquer um dos três
     // critérios) — as subcontagens podem se sobrepor (um atrasado também é
     // pendente), então somar/pegar o máximo inflaria ou mentiria o número.
-    let precisa = false;
-    if (pendente(d)) {
-      pendentes += 1;
-      precisa = true;
-    }
-    const limite = prazoRescisao(d);
-    if (limite) {
-      const dias = Math.round((limite.getTime() - hojeMs) / DIA_MS);
-      if (dias < 0) {
-        atrasados += 1;
-        precisa = true;
-      } else if (dias === 0) {
-        hoje += 1;
-        precisa = true;
-      }
-    }
-    if (precisa) total += 1;
+    if (c.pendente || c.atrasado || c.hoje) total += 1;
   });
 
   return { atrasados, pendentes, hoje, total };
