@@ -307,7 +307,62 @@ mesmo export podem divergir por dentro. Para esse resto, o que existe é a verif
 separe "reescrito" de "perdido" dentro de um corpo de função — e afirmar o contrário seria o mesmo
 tipo de excesso de confiança que produziu os erros corrigidos neste documento.
 
-### Três lições de método, registradas para não repetir
+### 7b. Refeito em 2026-11-18 sobre TODAS as 564 cabeças de PR (não só as branches apagadas)
+
+A varredura da §7 cobriu os 186 tips pendurados das branches apagadas. Isso deixava uma lacuna de
+método: uma PR **mergeada** cujo arquivo a `main` removeu depois não estava no conjunto. Refeita
+sobre `refs/remotes/pr/*` — a cabeça de **toda PR que já existiu**, conjunto cuja completude a §5b
+prova (632 = 592 + 2 + 38).
+
+| etapa                                                                       | número  |
+| --------------------------------------------------------------------------- | ------- |
+| refs `pr/*` varridos (todos com árvore local completa, > 100 arquivos cada) | **564** |
+| pares blob/caminho únicos na união das 564 árvores                          | 10 592  |
+| ... ausentes da árvore ATUAL da `main` (3 617 pares)                        | 7 370   |
+| ... cujo blob nunca existiu em TODA a história da `main` (187 646 objetos)  | 3 242   |
+| caminhos distintos correspondentes                                          | 3 120   |
+| ... que a `main` não tem hoje                                               | 2 361   |
+| ... em `src/`, `supabase/`, `e2e/` (resto é `tmp-*/`, `anim-out/`, scripts) | 57      |
+| ... componentes/libs, fora testes e itens já resolvidos                     | 24      |
+| **com símbolo exportado sem equivalente na `main`**                         | **15**  |
+
+A história completa veio de `git rev-list --objects origin/main` (uma passada sobre os 31 922
+commits), não de amostra: a primeira tentativa usou os 4 000 commits mais recentes e foi descartada
+por ser amostra. Os 187 646 objetos batem com os 187 586 blobs da §7, o que valida o método.
+
+### O resultado que importa: os 15 vêm de UM único ref
+
+Todos os 15 estão em `pr/546` — a branch `muri` — e **em nenhum outro**. Ou seja: **nenhuma das
+outras 563 PRs deixou código fora da `main`.** Os 15 caem dentro dos 111 arquivos `src/` da `muri`
+já triados na §4; abaixo, a resolução individual conferida no código da `main`, não pelo nome:
+
+| símbolo da `muri`                                         | o que a `main` tem                                                                                                                                                         |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `EditarEscalaDialog`                                      | `EditarJornadaDialog.tsx:187-190` — `EscalaDoDiaSection` edita `escalas_trabalho` via `turnoService` **e** a jornada contratual: superconjunto, com teste                  |
+| `PainelAuditoriaRoi`                                      | subsistema inteiro: `premiacoes/AuditoriaTab.tsx`, `AuditoriaEventoDialog.tsx`, `auditoriaComum.ts`, `auditoriaEntrada.ts`, `simuladorRoiComum.ts`, `RewardsSimulator.tsx` |
+| `ComplianceTab`                                           | `colaborador-detalhes/documentos/StatusComplianceCard.tsx` (linhagem no comentário)                                                                                        |
+| `SaudeResumoCard`                                         | `dashboard/WorkforceHealthScore.tsx`                                                                                                                                       |
+| `GestaoDesligamentos`                                     | `desligamentos/entradaCards.tsx` + `avaliacao/TodosCiclosTable.tsx`                                                                                                        |
+| `FGTSDigitalDashboard`, `DepartmentsCard`                 | `admissoes/AdmissoesDashboard.tsx`                                                                                                                                         |
+| `HeadcountOverviewCard` / `EvolucaoPonto`                 | `ui/entrada-cards.tsx` + `colaborador-detalhes/historico/HistoryEventRow.tsx`                                                                                              |
+| `QuickActionsMenu`                                        | `ui/dropdown-menu.tsx` + `ui/motion-presets.ts`                                                                                                                            |
+| `AuditoriaAdmissoesContent` + `auditoriaComum/Derivacoes` | substituídos pela Jornada de Onboarding; a peça reutilizável virou `ui/filter-chip.tsx:4`, que registra a origem                                                           |
+| `FormularioRescisao`, `ResultadoRescisao`, `rescisaoView` | `pages/CalculadoraRescisaoPage.tsx` — 669 linhas, autocontida, com aviso prévio trabalhado/indenizado, saldo FGTS e multa do art. 477 §8º                                  |
+| `AnimatedDossieTabs`, `useStaggerCards`                   | `dashboard/MetricCard.tsx` (`cardVariants`) e `ui/motion-presets.ts`                                                                                                       |
+| `ESocialAIInsights`                                       | **removido de propósito**, com trava: `__tests__/ESocialSemDadosFicticios.test.tsx`                                                                                        |
+| `bankBrand` + 13 logos de banco                           | não recuperado — ativo visual, sem regra de negócio                                                                                                                        |
+| `MeasureTestPage`                                         | andaime de medição de uma sessão                                                                                                                                           |
+
+### Nota de método: um falso "OK" meu, pego e corrigido
+
+A primeira passada marcou 9 dos 24 como "símbolo existe na `main`" usando `grep -rE "\bSimbolo\b" src/`.
+Isso é **errado**: casa **comentário**. `AuditoriaAdmissoesContent` "existia" só porque
+`ui/filter-chip.tsx:4` menciona o nome em prosa. Refeito exigindo definição
+(`export (function|const|type|interface|class) <Simbolo>`), e cada caso restante conferido abrindo o
+arquivo sucessor na `main`. Terceira vez nesta sessão que contagem/grep solto produziu um verde
+falso — as outras duas foram `head -N` e `npm run --silent` de script inexistente.
+
+## Três lições de método, registradas para não repetir
 
 1. **Não concluir de busca truncada.** Três erros desta auditoria vieram de `| head -N`: o
    `20261117170300` ficou fora dos 8 primeiros resultados; o `FOR DELETE` foi procurado no arquivo
