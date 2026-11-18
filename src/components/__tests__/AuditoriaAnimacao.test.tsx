@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ComponentType, ElementType, ReactNode } from 'react';
 
 /**
  * ============================================================================
@@ -25,35 +25,39 @@ import type { ComponentProps } from 'react';
  */
 vi.mock('framer-motion', async (importOriginal) => {
   const actual = await importOriginal<typeof import('framer-motion')>();
-  const cache = new Map<unknown, unknown>();
+  /** Props que o mock realmente lê; o resto é repassado ao elemento. */
+  type CapturarProps = Record<string, unknown> & {
+    children?: ReactNode;
+    custom?: number;
+    variants?: { hidden?: unknown; visible?: (custom?: number) => unknown };
+    initial?: string;
+    animate?: string;
+  };
+  const cache = new Map<ElementType, ComponentType<CapturarProps>>();
 
-  const capturar = (Tag: unknown) => {
-    if (cache.has(Tag)) return cache.get(Tag);
-    const Componente = ({ children, custom, variants, initial, animate, ...rest }: any) => {
-      const Props = Tag as any;
-      return (
-        <Props
-          {...rest}
-          data-custom={String(custom)}
-          data-initial={initial}
-          data-animate={animate}
-          data-hidden={JSON.stringify(variants?.hidden)}
-          data-visible={JSON.stringify(variants?.visible?.(custom))}
-        >
-          {children}
-        </Props>
-      );
-    };
+  const capturar = (Tag: ElementType): ComponentType<CapturarProps> => {
+    const memorizado = cache.get(Tag);
+    if (memorizado) return memorizado;
+    const Componente = ({ children, custom, variants, initial, animate, ...rest }: CapturarProps) => (
+      <Tag
+        {...rest}
+        data-custom={String(custom)}
+        data-initial={initial}
+        data-animate={animate}
+        data-hidden={JSON.stringify(variants?.hidden)}
+        data-visible={JSON.stringify(variants?.visible?.(custom))}
+      >
+        {children}
+      </Tag>
+    );
     cache.set(Tag, Componente);
     return Componente;
   };
 
-  const motion = new Proxy(
-    {},
-    {
-      get: (_alvo, tag) => (tag === 'create' ? (Componente: unknown) => capturar(Componente) : capturar(tag)),
-    }
-  );
+  const motion = new Proxy({} as Record<string, ComponentType<CapturarProps>>, {
+    get: (_alvo, tag) =>
+      tag === 'create' ? (Componente: ElementType) => capturar(Componente) : capturar(tag as ElementType),
+  });
 
   return {
     ...actual,

@@ -2,6 +2,29 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
+import type { useOnboardingColaborador, useMetasColaborador, useCompetenciasColaborador } from '@/hooks';
+
+// Tipos vindos dos próprios hooks do repo: `useOnboardingColaborador` devolve
+// um objeto agregado, e os outros dois são `useQuery` — destes, os cards só
+// consomem `data`/`isLoading`, então o mock declara exatamente esse recorte.
+type OnboardingResult = ReturnType<typeof useOnboardingColaborador>;
+type MetasResult = Pick<ReturnType<typeof useMetasColaborador>, 'data' | 'isLoading'>;
+type CompetenciasResult = Pick<ReturnType<typeof useCompetenciasColaborador>, 'data' | 'isLoading'>;
+
+const mocks = vi.hoisted(() => ({
+  useOnboardingColaborador: vi.fn((): OnboardingResult => ({
+    onboarding: null,
+    tarefas: [],
+    concluidas: [],
+    pendentes: [],
+    atrasadas: [],
+    progresso: null,
+    isLoading: false,
+    isError: false,
+  })),
+  useMetasColaborador: vi.fn((): MetasResult => ({ data: [], isLoading: false })),
+  useCompetenciasColaborador: vi.fn((): CompetenciasResult => ({ data: [], isLoading: false })),
+}));
 
 vi.mock('@/hooks', () => ({
   useFormacoes: vi.fn(() => ({ data: [], isLoading: false })),
@@ -10,17 +33,9 @@ vi.mock('@/hooks', () => ({
   useTreinamentosColaborador: vi.fn(() => ({ data: [], isLoading: false })),
   useFeedbacksColaborador: vi.fn(() => ({ data: [], isLoading: false })),
   usePDIsColaborador: vi.fn(() => ({ data: [], isLoading: false })),
-  useMetasColaborador: vi.fn(() => ({ data: [], isLoading: false })),
-  useCompetenciasColaborador: vi.fn(() => ({ data: [], isLoading: false })),
-  useOnboardingColaborador: vi.fn(() => ({
-    onboarding: null,
-    tarefas: [],
-    concluidas: [],
-    pendentes: [],
-    atrasadas: [],
-    progresso: null,
-    isLoading: false,
-  })),
+  useMetasColaborador: mocks.useMetasColaborador,
+  useCompetenciasColaborador: mocks.useCompetenciasColaborador,
+  useOnboardingColaborador: mocks.useOnboardingColaborador,
   usePeriodoExperiencia: vi.fn(() => ({ data: null, isLoading: false })),
   useEmpresas: vi.fn(() => ({ empresaAtual: { id: 'emp-1' } })),
 }));
@@ -29,7 +44,6 @@ vi.mock('@/services', () => ({
 }));
 vi.mock('@/components/ui/spinner', () => ({ Spinner: () => <div data-testid="spinner" /> }));
 
-import { useOnboardingColaborador, useMetasColaborador, useCompetenciasColaborador } from '@/hooks';
 import { DesenvolvimentoResumoTab } from '../colaborador-detalhes/DesenvolvimentoResumoTab';
 
 function renderTab() {
@@ -56,25 +70,26 @@ describe('DesenvolvimentoResumoTab', () => {
   });
 
   it('shows onboarding as concluded when progresso is 100%', () => {
-    vi.mocked(useOnboardingColaborador).mockReturnValue({
+    mocks.useOnboardingColaborador.mockReturnValue({
       onboarding: { id: 'ob-1' },
-      tarefas: [{ id: 't1' }],
-      concluidas: [{ id: 't1', data_conclusao: '2026-01-06' }],
+      tarefas: [{ concluida: true, data_conclusao: '2026-01-06' }],
+      concluidas: [{ concluida: true, data_conclusao: '2026-01-06' }],
       pendentes: [],
       atrasadas: [],
       progresso: 100,
       isLoading: false,
-    } as any);
+      isError: false,
+    });
     renderTab();
     expect(screen.getByText('Onboarding')).toBeInTheDocument();
     expect(screen.getByText('Concluído')).toBeInTheDocument();
   });
 
   it('shows metas progress when metas exist', () => {
-    vi.mocked(useMetasColaborador).mockReturnValue({
+    mocks.useMetasColaborador.mockReturnValue({
       data: [{ id: 'm1', titulo: 'Meta 1', progresso: 60, status: 'ativo' }],
       isLoading: false,
-    } as any);
+    });
     renderTab();
     expect(screen.getByText('1 ativas')).toBeInTheDocument();
     expect(screen.getByText('de 1 no total')).toBeInTheDocument();
@@ -82,10 +97,10 @@ describe('DesenvolvimentoResumoTab', () => {
   });
 
   it('shows competência bars when competências exist', () => {
-    vi.mocked(useCompetenciasColaborador).mockReturnValue({
+    mocks.useCompetenciasColaborador.mockReturnValue({
       data: [{ id: 'c1', nome: 'Comunicação', percentual: 90 }],
       isLoading: false,
-    } as any);
+    });
     renderTab();
     expect(screen.getByText('Comunicação')).toBeInTheDocument();
     expect(screen.getByText('90%')).toBeInTheDocument();

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { type ComponentProps } from 'react';
+import { type ComponentProps, type ElementType, type ReactNode } from 'react';
+import type { AnimatedCascadeDialogProps } from '@/components/ui/animated-cascade-dialog';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -10,11 +11,13 @@ vi.mock('framer-motion', () => ({
   // Os elementos só rendem `children` (sem repassar props de animação ao DOM).
   motion: {
     create:
-      (Component: any) =>
-      ({ children, ...rest }: any) => <Component {...rest}>{children}</Component>,
-    div: ({ children }: any) => <div>{children}</div>,
-    span: ({ children }: any) => <span>{children}</span>,
-    li: ({ children }: any) => <li>{children}</li>,
+      (Component: ElementType) =>
+      ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => (
+        <Component {...rest}>{children}</Component>
+      ),
+    div: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+    span: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
+    li: ({ children }: { children?: ReactNode }) => <li>{children}</li>,
     circle: () => <circle />,
     polygon: () => <polygon />,
     polyline: () => <polyline />,
@@ -22,34 +25,34 @@ vi.mock('framer-motion', () => ({
     // — o mesmo do card "Visão Geral da Empresa" (`HeadcountOverviewCard.tsx`).
     rect: () => <rect />,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
   useInView: () => true,
   useReducedMotion: () => false,
 }));
 
 vi.mock('recharts', () => ({
-  BarChart: ({ children }: any) => <div data-testid="bar-chart">{children}</div>,
+  BarChart: ({ children }: { children?: ReactNode }) => <div data-testid="bar-chart">{children}</div>,
   Bar: () => null,
   XAxis: () => null,
   YAxis: () => null,
   CartesianGrid: () => null,
   Tooltip: () => null,
-  ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Cell: () => null,
   // O gráfico de tempo médio virou área (linha + degradê), então o container
   // testado é `AreaChart`/`Area` em vez de `LineChart`/`Line`.
-  AreaChart: ({ children }: any) => <div data-testid="area-chart">{children}</div>,
+  AreaChart: ({ children }: { children?: ReactNode }) => <div data-testid="area-chart">{children}</div>,
   Area: () => null,
-  LineChart: ({ children }: any) => <div data-testid="line-chart">{children}</div>,
+  LineChart: ({ children }: { children?: ReactNode }) => <div data-testid="line-chart">{children}</div>,
   Line: () => null,
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h3>{children}</h3>,
-  CardDescription: ({ children }: any) => <p>{children}</p>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
+  CardDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
 }));
 
 // O `MiniSparkline` é mockado (com testid) só para provar que os KPI Cards de
@@ -67,7 +70,7 @@ vi.mock('@/components/dashboard/MiniSparkline', () => ({
 // como o original) e expõe o conteúdo com `role="dialog"`, o mesmo padrão já
 // usado em `ContasBancariasTab.test.tsx` para esse mesmo componente.
 vi.mock('@/components/ui/animated-cascade-dialog', () => ({
-  AnimatedCascadeDialog: ({ open, title, items }: any) =>
+  AnimatedCascadeDialog: ({ open, title, items }: Pick<AnimatedCascadeDialogProps, 'open' | 'title' | 'items'>) =>
     open ? (
       <div role="dialog" aria-label={title}>
         <h2>{title}</h2>
@@ -78,12 +81,56 @@ vi.mock('@/components/ui/animated-cascade-dialog', () => ({
 
 import { AdmissoesDashboard } from '../admissoes/AdmissoesDashboard';
 
+/** Linha de `public.admissoes` exatamente como o dashboard a recebe. */
+type LinhaAdmissao = ComponentProps<typeof AdmissoesDashboard>['admissoes'][number];
+
+/**
+ * Fixture de uma linha real da tabela: o caso declara só as colunas que ele
+ * exercita e as demais ficam no vazio que o dashboard lê como "não cadastrada"
+ * — toda data passa por `dataValida` (vazio = sem data) e o checklist só conta
+ * campo booleano (`null` = coluna ausente na base).
+ */
+const linhaAdmissao = (dados: Partial<LinhaAdmissao>): LinhaAdmissao => ({
+  id: 'admissao',
+  nome: '',
+  cargo: '',
+  departamento: '',
+  etapa: 'documentos',
+  data_prevista: '',
+  salario_proposto: 0,
+  created_at: '',
+  updated_at: '',
+  cpf: null,
+  created_by: null,
+  data_nascimento: null,
+  data_transmissao_esocial: null,
+  email: null,
+  empresa_id: null,
+  estado_civil: null,
+  metadata: null,
+  nome_mae: null,
+  observacoes: null,
+  protocolo_esocial: null,
+  sexo: null,
+  status_esocial: null,
+  telefone: null,
+  template_contrato_id: null,
+  checklist_documentos_pessoais: null,
+  checklist_comprovante_endereco: null,
+  checklist_foto: null,
+  checklist_ctps: null,
+  checklist_exame_admissional: null,
+  checklist_contrato_assinado: null,
+  checklist_esocial_enviado: null,
+  ...dados,
+});
+
 /**
  * O dashboard navega a partir dos modais ("Resolver agora" → `/exames`,
  * `/esocial`), então `useNavigate` exige um Router no teste — mesmo caminho de
  * `ColaboradoresPage.test.tsx`.
  */
-const renderDashboard = (admissoes: any[], props: Partial<ComponentProps<typeof AdmissoesDashboard>> = {}) =>
+const renderDashboard = (admissoes: LinhaAdmissao[], props: Partial<ComponentProps<typeof AdmissoesDashboard>> = {}) =>
   render(
     <MemoryRouter>
       <AdmissoesDashboard admissoes={admissoes} {...props} />
@@ -97,16 +144,16 @@ const renderDashboard = (admissoes: any[], props: Partial<ComponentProps<typeof 
 const diasAtras = (dias: number) => new Date(Date.now() - dias * 24 * 60 * 60 * 1000).toISOString();
 
 const MOCK_ADMISSOES = [
-  { id: '1', etapa: 'documentos' },
-  { id: '2', etapa: 'documentos' },
+  linhaAdmissao({ id: '1', etapa: 'documentos' }),
+  linhaAdmissao({ id: '2', etapa: 'documentos' }),
   // A série do gráfico de tempo médio é CALCULADA de `created_at`/`updated_at`
   // das admissões concluídas (AdmissoesDashboard.tsx:996-1017): sem as duas
   // colunas a série fica vazia e o card mostra o estado vazio em vez do
   // `AreaChart`. `created_at` dentro dos últimos 30 dias mantém a variação
   // `undefined` (sem base anterior), então os KPIs seguem exibindo a frase de
   // apoio em vez da seta de tendência.
-  { id: '3', etapa: 'concluida', created_at: diasAtras(10), updated_at: diasAtras(3) },
-  { id: '4', etapa: 'cancelada' },
+  linhaAdmissao({ id: '3', etapa: 'concluida', created_at: diasAtras(10), updated_at: diasAtras(3) }),
+  linhaAdmissao({ id: '4', etapa: 'cancelada' }),
 ];
 
 /**
@@ -116,10 +163,10 @@ const MOCK_ADMISSOES = [
  * canceladas: é por isso que a 4ª linha entra como `esocial`.
  */
 const MOCK_ADMISSOES_PRIORIDADES = [
-  { id: '1', etapa: 'documentos' },
-  { id: '2', etapa: 'documentos' },
-  { id: '3', etapa: 'concluida' },
-  { id: '4', etapa: 'esocial' },
+  linhaAdmissao({ id: '1', etapa: 'documentos' }),
+  linhaAdmissao({ id: '2', etapa: 'documentos' }),
+  linhaAdmissao({ id: '3', etapa: 'concluida' }),
+  linhaAdmissao({ id: '4', etapa: 'esocial' }),
 ];
 
 /**
@@ -128,8 +175,8 @@ const MOCK_ADMISSOES_PRIORIDADES = [
  * container com scroll interno.
  */
 const MOCK_ADMISSOES_COM_DATA = [
-  { id: '1', nome: 'Ana Souza', etapa: 'documentos', data_prevista: '2026-12-01' },
-  { id: '2', nome: 'Bruno Lima', etapa: 'exame', data_prevista: '2026-12-02' },
+  linhaAdmissao({ id: '1', nome: 'Ana Souza', etapa: 'documentos', data_prevista: '2026-12-01' }),
+  linhaAdmissao({ id: '2', nome: 'Bruno Lima', etapa: 'exame', data_prevista: '2026-12-02' }),
 ];
 
 /**
@@ -159,37 +206,40 @@ const CHECKLIST_COMPLETO = {
 
 /** Cinco admissões em andamento: o card exibe 4, o modal precisa exibir as 5. */
 const MOCK_ADMISSOES_CINCO = ['Ana Souza', 'Bruno Lima', 'Carla Dias', 'Diego Nunes', 'Elias Prado'].map(
-  (nome, indice) => ({
-    id: String(indice + 1),
-    nome,
-    cargo: 'Analista',
-    departamento: 'Financeiro',
-    etapa: 'documentos',
-    data_prevista: emDias(5 + indice),
-    observacoes: 'Link seguro enviado ao candidato com a lista de documentos.',
-    metadata: { responsavel: 'Camila Ribeiro' },
-    ...CHECKLIST_COMPLETO,
-    // Metade com o checklist completo (7/7), metade com o CTPS em falta (6/7) —
-    // é o insumo do "progresso" que o modal mostra por admissão.
-    checklist_ctps: indice % 2 === 0,
-  })
+  (nome, indice) =>
+    linhaAdmissao({
+      id: String(indice + 1),
+      nome,
+      cargo: 'Analista',
+      departamento: 'Financeiro',
+      etapa: 'documentos',
+      data_prevista: emDias(5 + indice),
+      observacoes: 'Link seguro enviado ao candidato com a lista de documentos.',
+      metadata: { responsavel: 'Camila Ribeiro' },
+      ...CHECKLIST_COMPLETO,
+      // Metade com o checklist completo (7/7), metade com o CTPS em falta (6/7) —
+      // é o insumo do "progresso" que o modal mostra por admissão.
+      checklist_ctps: indice % 2 === 0,
+    })
 );
 
 /** Sete áreas, uma admissão cada: no card as duas últimas entram em "Outros". */
 const AREAS_SETE = ['Área Um', 'Área Dois', 'Área Três', 'Área Quatro', 'Área Cinco', 'Área Seis', 'Área Sete'];
 
-const MOCK_ADMISSOES_SETE_AREAS = AREAS_SETE.map((departamento, indice) => ({
-  id: `area-${indice + 1}`,
-  nome: `Candidato ${indice + 1}`,
-  cargo: 'Assistente',
-  departamento,
-  etapa: 'concluida',
-  data_prevista: emDias(-10 - indice),
-}));
+const MOCK_ADMISSOES_SETE_AREAS = AREAS_SETE.map((departamento, indice) =>
+  linhaAdmissao({
+    id: `area-${indice + 1}`,
+    nome: `Candidato ${indice + 1}`,
+    cargo: 'Assistente',
+    departamento,
+    etapa: 'concluida',
+    data_prevista: emDias(-10 - indice),
+  })
+);
 
 /** Um processo em cada faixa de prazo (mesma régua das contagens do card). */
 const MOCK_ADMISSOES_SLA = [
-  {
+  linhaAdmissao({
     id: 'a',
     nome: 'Ana Atrasada',
     cargo: 'Analista',
@@ -199,8 +249,8 @@ const MOCK_ADMISSOES_SLA = [
     metadata: { responsavel: 'Camila Ribeiro' },
     ...CHECKLIST_COMPLETO,
     checklist_esocial_enviado: false,
-  },
-  {
+  }),
+  linhaAdmissao({
     id: 'b',
     nome: 'Bruno Risco',
     cargo: 'Analista',
@@ -209,8 +259,8 @@ const MOCK_ADMISSOES_SLA = [
     data_prevista: emDias(2),
     metadata: { responsavel: 'Diego Martins' },
     ...CHECKLIST_COMPLETO,
-  },
-  {
+  }),
+  linhaAdmissao({
     id: 'c',
     nome: 'Carla Dentro',
     cargo: 'Assistente',
@@ -218,7 +268,7 @@ const MOCK_ADMISSOES_SLA = [
     etapa: 'validacao',
     data_prevista: emDias(30),
     ...CHECKLIST_COMPLETO,
-  },
+  }),
 ];
 
 describe('AdmissoesDashboard', () => {
@@ -468,7 +518,7 @@ describe('AdmissoesDashboard', () => {
     const casos: {
       atalho: RegExp;
       indice: number;
-      admissoes: any[];
+      admissoes: LinhaAdmissao[];
       /** Rótulos conferidos em todos os campos (curtos e longos). */
       rotulos: string[];
       /** Subconjunto que QUEBRA linha na largura do modal — o caso crítico. */

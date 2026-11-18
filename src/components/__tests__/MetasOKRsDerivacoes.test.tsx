@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import type { ElementType, ReactNode } from 'react';
 
 /**
  * Prova das derivações da aba "Metas & OKRs" e da cascata de entrada do grid.
@@ -9,9 +10,16 @@ import { render, screen } from '@testing-library/react';
  * a ORDEM de entrada contra o `cardVariants` do Dashboard Executivo.
  */
 vi.mock('framer-motion', () => {
+  type CapturarProps = Record<string, unknown> & {
+    children?: ReactNode;
+    custom?: unknown;
+    variants?: { hidden?: unknown };
+    initial?: unknown;
+    animate?: unknown;
+  };
   const capturar =
-    (Tag: any) =>
-    ({ children, custom, variants, initial, animate, ...rest }: any) => (
+    (Tag: ElementType) =>
+    ({ children, custom, variants, initial, animate, ...rest }: CapturarProps) => (
       <Tag
         data-testid="entrada-card"
         data-custom={String(custom)}
@@ -28,8 +36,8 @@ vi.mock('framer-motion', () => {
       div: capturar('div'),
       span: capturar('span'),
       create:
-        (Component: any) =>
-        ({ children, custom, variants, initial, animate, ...rest }: any) => (
+        (Component: ElementType) =>
+        ({ children, custom, variants, initial, animate, ...rest }: CapturarProps) => (
           <div
             data-testid="entrada-card"
             data-custom={String(custom)}
@@ -41,7 +49,7 @@ vi.mock('framer-motion', () => {
           </div>
         ),
     },
-    AnimatePresence: ({ children }: any) => children,
+    AnimatePresence: ({ children }: { children?: ReactNode }) => children,
     useReducedMotion: () => false,
     useInView: () => true,
   };

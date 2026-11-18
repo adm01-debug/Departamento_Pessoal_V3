@@ -1,6 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
+import type { ComponentProps, ElementType, ReactNode } from 'react';
 import { formatCurrency } from '@/utils/format';
+import type { LooseRow } from '@/types/db';
+import type { Enums } from '@/integrations/supabase/database.types';
 
 /**
  * A tela reaproveita `MetricCard` (Dashboard de Admissões), que usa
@@ -10,36 +13,45 @@ import { formatCurrency } from '@/utils/format';
  */
 vi.mock('framer-motion', () => {
   // Props de ANIMAÇÃO do Framer Motion (não existem no DOM) — descartadas no
-  // mock; todo o resto (className, onClick, aria-pressed, type, data-*) passa
-  // adiante para o elemento real.
-  const MOTION_PROPS = new Set([
-    'custom',
-    'variants',
-    'initial',
-    'animate',
-    'exit',
-    'whileHover',
-    'whileTap',
-    'transition',
-    'layoutId',
-  ]);
-  const semMotion = (props: any) => {
-    const out: any = {};
-    for (const [k, v] of Object.entries(props)) if (!MOTION_PROPS.has(k)) out[k] = v;
-    return out;
+  // mock por desestruturação; todo o resto (className, onClick, aria-pressed,
+  // type, data-*) passa adiante para o elemento real.
+  type PropsDeAnimacao = {
+    custom?: unknown;
+    variants?: unknown;
+    initial?: unknown;
+    animate?: unknown;
+    exit?: unknown;
+    whileHover?: unknown;
+    whileTap?: unknown;
+    transition?: unknown;
+    layoutId?: unknown;
   };
+  const semMotion = <P extends object>({
+    custom,
+    variants,
+    initial,
+    animate,
+    exit,
+    whileHover,
+    whileTap,
+    transition,
+    layoutId,
+    ...resto
+  }: P & PropsDeAnimacao) => resto;
   return {
     motion: {
-      create: (Component: any) => (props: any) => <Component {...semMotion(props)} />,
-      div: (props: any) => <div {...semMotion(props)} />,
-      span: (props: any) => <span {...semMotion(props)} />,
-      tr: (props: any) => <tr {...semMotion(props)} />,
-      button: (props: any) => <button {...semMotion(props)} />,
+      create: (Component: ElementType) => (props: ComponentProps<'div'> & PropsDeAnimacao) => (
+        <Component {...semMotion(props)} />
+      ),
+      div: (props: ComponentProps<'div'> & PropsDeAnimacao) => <div {...semMotion(props)} />,
+      span: (props: ComponentProps<'span'> & PropsDeAnimacao) => <span {...semMotion(props)} />,
+      tr: (props: ComponentProps<'tr'> & PropsDeAnimacao) => <tr {...semMotion(props)} />,
+      button: (props: ComponentProps<'button'> & PropsDeAnimacao) => <button {...semMotion(props)} />,
       circle: () => <circle />,
       polygon: () => <polygon />,
       polyline: () => <polyline />,
     },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
+    AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
     useInView: () => true,
     useReducedMotion: () => false,
   };
@@ -54,7 +66,12 @@ vi.mock('@/components/dashboard/MiniSparkline', () => ({
 
 import { GestaoCandidatos } from '../admissoes/GestaoCandidatos';
 
-const base = (over: Record<string, unknown>) => ({
+/**
+ * Fábrica dos mocks: a LINHA de `admissoes` como a tela a recebe
+ * (`LooseRow<'admissoes'>` = colunas reais opcionais + campos livres, caso do
+ * `status`, que não existe na tabela e vem do JSON do processo).
+ */
+const base = (over: LooseRow<'admissoes'>): LooseRow<'admissoes'> => ({
   status: 'em_andamento',
   salario_proposto: 3000,
   metadata: { responsavel: 'Bruno Cardoso' },
@@ -96,7 +113,11 @@ const ADMISSOES = [
     cargo: 'Técnico de Suporte',
     departamento: 'TI',
     etapa: 'cancelada',
-    data_prevista: null,
+    // Admissão SEM prazo. A coluna `data_prevista` é NOT NULL na tabela, então
+    // a forma real de "sem prazo" é o campo AUSENTE, não `null` — e as duas
+    // chegam iguais nas derivações (`dataValida`/`diasAteHoje`/`formatDate`
+    // tratam `!valor`).
+    data_prevista: undefined,
     status: 'cancelado',
     metadata: { responsavel: 'Renata Alves' },
   }),
@@ -157,7 +178,7 @@ const gradeCards = (container: HTMLElement) => container.querySelector<HTMLEleme
 const montar = (props: Record<string, unknown> = {}) =>
   render(
     <GestaoCandidatos
-      admissoes={ADMISSOES as any}
+      admissoes={ADMISSOES}
       isLoading={false}
       sendingLink={null}
       onEnviarLink={vi.fn()}
@@ -654,7 +675,7 @@ describe('GestaoCandidatos', () => {
   });
 
   it('entrega os 9 rótulos de etapa inteiros e sem quebra', () => {
-    const etapas = [
+    const etapas: Enums<'etapa_admissao'>[] = [
       'solicitacao',
       'documentos',
       'validacao',
