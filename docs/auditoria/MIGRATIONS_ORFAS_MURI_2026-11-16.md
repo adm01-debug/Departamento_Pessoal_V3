@@ -841,3 +841,126 @@ Os sidecars prendem o que importa, não só o que mudou:
 - o valor `'falta'` **não** foi somado à lista válida — a correção certa é trocar o default, não
   afrouxar a constraint para aceitar um tipo que não existe no domínio de negócio;
 - `tipo` continua `NOT NULL`.
+
+## 18. Veredito das 21 migrations restantes (medido 2026-11-18)
+
+Fecha o eixo aberto na §13. Das 26 triadas: 2 aplicadas (§17), 1 substituída pela
+`20261118110000` (§16), 2 retratadas (§14), restavam **21**. Cada uma foi medida contra o
+banco canônico `frjbfeamybqsejlvmqbl` e contra o `src/`, com as duas lições:
+
+- **§16** — antes de dizer "falta medição", procurar o objeto em `supabase/migrations/`.
+- **§14** — medição de schema não é defeito de produto; procurar o **consumidor**.
+
+Placar: **2 aplicáveis**, **19 descartáveis** (11 impossíveis, 5 obsoletas, 3 redundantes).
+
+### 18.1 As 2 que valem — mesmo defeito: isolamento multi-tenant não garantido por banco
+
+| Arquivo | Efeito | Medição |
+| --- | --- | --- |
+| `20260719191000_empresa_id_not_null_constraints.sql` | `SET NOT NULL` em `empresa_id` | DDL puro, sem DELETE. Guarda por `information_schema` (linhas 25-31) pula o que não existe |
+| `20260724000200_fix_desligamentos_empresa_id_not_null.sql` | idem, em `desligamentos` | **contém `DELETE` na linha 19** |
+
+Por que `desligamentos` ficou de fora da primeira: a lista da `20260719191000:17` traz
+`'rescisoes'`, tabela que **não existe** — o nome real é `desligamentos`. Erro de digitação
+que deixou a tabela de rescisão (salário, valor líquido, hashes de assinatura) sem a
+restrição.
+
+Estado medido hoje em produção, tabela por tabela — `empresa_id` **NULLABLE** em
+`colaboradores` (pos.70), `ferias` (pos.26), `contas_bancarias`, `beneficios`, `asos`,
+`despesas`, `folhas_pagamento`, `batidas_ponto` e `desligamentos` (pos.30). Ou seja: a
+`20260719191000` **nunca produziu efeito em produção**, ao contrário do que o cabeçalho da
+`20260724000200` (linhas 3-6) afirma. Linhas com `empresa_id IS NULL`: **0 em todas as 9**.
+`desligamentos` tem 2 linhas, nenhuma órfã — então o `DELETE` da linha 19 é no-op hoje.
+
+`dependentes`, `holerites` (nenhuma das duas tem a coluna) e `rescisoes` (tabela ausente)
+são puladas em silêncio pela guarda. O arquivo não entrega o que o título promete para essas
+três.
+
+### 18.2 Erro do agente que a verificação pegou: `beneficios` NÃO pode entrar no lote
+
+O agente classificou a `20260719191000` como "risco BAIXO" afirmando que o único `INSERT`
+que omite `empresa_id` — `src/components/settings/BeneficiosSettingsTab.tsx:58-69` — estava
+em componente "importado APENAS pelo seu próprio teste, por nenhuma página ou componente".
+
+**Falso.** O componente é renderizado por `src/pages/ConfiguracoesPage.tsx:18,135`, que está
+roteado em `src/App.tsx:338` em `/configuracoes` sob `AdminRoute`. É tela viva.
+
+`public.beneficios.empresa_id` não tem `DEFAULT` (pos.2, `column_default: null`) e o payload
+do insert monta só `nome`/`tipo`/`valor`/`ativo`. Hoje esse insert grava `NULL` em silêncio;
+com o `NOT NULL` aplicado ele passa a falhar com `23502` e o botão "criar plano de benefício"
+para de funcionar em produção. Isso é **regressão**, que a meta desta sessão proíbe.
+
+Consequência: `beneficios` sai do lote. O `NOT NULL` continua certo — o defeito de verdade é
+o insert sem `empresa_id`, que é vazamento de tenant em potencial —, mas a ordem é consertar
+o insert primeiro, em PR própria, e só então aplicar a restrição.
+
+Os outros caminhos de escrita já preenchem `empresa_id` e foram conferidos:
+`src/services/tabelasReferenciaService.ts:145-151` (`contas_bancarias`),
+`src/hooks/useCalculoFolha.ts:55-66` (`folhas_pagamento`),
+`supabase/functions/processar-ponto-offline/index.ts:257-262` (`batidas_ponto`),
+`src/components/desligamentos/NovoDesligamentoDialog.tsx:107` e
+`src/pages/CalculadoraRescisaoPage.tsx:231` (`desligamentos`).
+
+### 18.3 Sobre o `DELETE` da `20260724000200`
+
+O arquivo apaga linhas sem `empresa_id` antes de aplicar a restrição. Hoje atinge 0 de 2
+linhas, mas se uma rescisão órfã nascer entre a medição e o `apply`, ela é **apagada sem
+backup** — e rescisão carrega salário e valor líquido.
+
+Decisão: **não aplicar o arquivo como está.** A restrição vai para uma migration nova que só
+faz `SET NOT NULL`, sem `DELETE`. Se aparecer linha órfã, o `ALTER` falha e a migration aborta
+sem mudar nada — falha segura, em vez de falha destrutiva. O trabalho do outro agente é
+preservado no efeito; o que fica de fora é só o risco.
+
+### 18.4 As 19 descartáveis, com a prova
+
+**Quebram ao rodar (11).** Não é opinião: cada uma tem um objeto que não existe no schema
+canônico, dentro de bloco que não tolera a falha.
+
+| Arquivo | Ponto exato da quebra |
+| --- | --- |
+| `20260719170000_security_indexes_constraints` | `prevent_empty_empresa_id` (linhas 52-60) compara `NEW.empresa_id = ''` numa coluna `uuid`. O gatilho é instalado em `colaboradores`, `folhas_pagamento`, `despesas`, `batidas_ponto`, `registros_ponto` e `admissoes` (linhas 63-75) e **quebra toda escrita** dessas 6 tabelas com `22P02` |
+| `20260719190000_audit_delete_trigger` | usa `OLD.empresa_id` para toda tabela ≠ `empresas`; `dependentes` (linha 44) **não tem a coluna** → todo `DELETE` nela passa a falhar com `42703` |
+| `20260720040000_fix_jornada_fk_ordering` | `colaboradores.jornada_id` não existe; a guarda só testa a constraint, não a coluna |
+| `20260317001935_1663bc94` | `CREATE OR REPLACE VIEW` não renomeia coluna: prod `vw_dashboard_time` tem `empresa_id` na pos.1, o arquivo quer `total_ativos` |
+| `20260724140001_t007_backup_logs_rls` | `public.backup_logs` não existe |
+| `20260725100000_p3_060_backup_logs` | `INSERT` em `config_retencao` (linha 145), tabela ausente; tudo em `BEGIN`/`COMMIT` |
+| `20260816000000_p1_024_policies_orfas` | `CREATE POLICY ... ON public.backup_logs` (linha 39) **sem** `to_regclass`, ao contrário dos blocos vizinhos |
+| `20260817010000_p4_072_materialized_views_dashboards` | compara `tipo_contrato` com `'CLT'`, `'PJ'`, `'estagio'` (linhas 127-129); labels reais do enum: `clt`, `pj`, `estagiario`, `temporario`, `intermitente`, `aprendiz` |
+| `20260725120000_p4_071_compound_indexes` | `ferias.dias_vendidos`, `public.folhas` e `public.pontos` — nenhum existe |
+| `20260817000000_p4_071_indices_compostos_top20` | `holerites(empresa_id, ...)` (linhas 120-129); `holerites` não tem `empresa_id` nem `status` |
+| `20261012130000_rotinas_agendadas_falhando` | `CREATE OR REPLACE` de `fn_atualizar_status_ferias_diario()` com `RETURNS jsonb`; a função viva retorna `integer` |
+
+**Obsoletas (5).** O objetivo foi atendido depois, por caminho melhor, ou deixou de existir.
+
+- `20260719193000_security_monitoring_views` — as 3 views não existem e não têm consumidor;
+  substituídas por `v_login_anomalies_email`/`v_login_anomalies_ip` (`20260724110000`), vivas.
+- `20260815000000_p1_023_naming_pattern` — o gate de nome já roda em CI
+  (`scripts/audit-migration-style.mjs:452` + `.github/workflows/ci.yml:383`), o que pega o
+  arquivo errado **antes** do merge; a tabela proposta é inerte (zero `INSERT` no repo).
+- `20260725130000_p5_077_passivo_trabalhista` — as 4 matviews nascem `WITH NO DATA` e a única
+  função que as popula usa `REFRESH ... CONCURRENTLY`, que falha em matview nunca populada.
+- `20260726120000_p4_068_connection_pooling` — PgBouncer não se configura por SQL (o próprio
+  cabeçalho, linhas 7-28, são instruções de Dashboard); o SQL que sobra duplica índice
+  existente.
+- `20260726110000_p2_037_consolidate_duplicates` — reintroduziria view sem RLS com URLs de
+  documentos de **todas** as empresas, objeto que migration posterior classificou como
+  vazamento.
+
+**Redundantes (3).** O efeito já está em produção; reaplicar piora.
+
+- `20260317130255_3d640e88` — as FKs existem com nome canônico `<tabela>_<coluna>_fkey`; o
+  arquivo só silencia `duplicate_object`, que depende do nome, então criaria uma **segunda** FK
+  sobre a mesma coluna, agora com `ON DELETE CASCADE`.
+- `20260724140000_p4_072_mv_dashboards` — `mv_folha_summary` já vive, reaplicada por
+  `20261018130000_onda4e_objetos_ausentes.sql:203`; as outras 4 matviews não têm consumidor.
+- `20260802000000_p0_007_views_security_invoker` — `security_invoker` já posto por
+  `20260911180000` via `ALTER VIEW`, preservando as definições; o P0-007 faz `DROP`+`CREATE`
+  com definições reinventadas e trocaria o contrato de 19 views.
+
+### 18.5 Método que se confirmou mais uma vez
+
+Nenhum dos 19 descartes é "não achei consumidor, logo é morto" — todos têm objeto ausente,
+substituto vivo nomeado, ou efeito já presente. E o único veredito que o agente marcou como
+seguro foi o que a verificação derrubou (§18.2). Amostragem de veredito de agente antes de
+publicar continua pagando: 11 erros de método corrigidos nesta sessão, 1 deles de agente.
