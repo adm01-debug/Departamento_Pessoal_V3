@@ -16,6 +16,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { colaboradorService } from '@/services';
+import { normalizarPayloadColaborador } from './colaboradorPayload';
 import { useNotification } from '@/contexts';
 import { User, MapPin, Landmark, Briefcase, FileText, Save, Loader2, Camera } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -128,9 +129,12 @@ export default function ColaboradorFormPage() {
   const mutation = useMutation({
     mutationFn: (data: FormData) => {
       if (!empresaAtual?.id) throw new Error('Empresa atual não identificada');
+      // Campo opcional em branco precisa virar NULL, não '' — ver
+      // `colaboradorPayload.ts` (o índice único de `matricula` colide em '').
+      const payload = normalizarPayloadColaborador(data);
       return isEditing
-        ? colaboradorService.atualizar(id!, data, empresaAtual.id)
-        : colaboradorService.criar({ ...data, empresa_id: empresaAtual.id });
+        ? colaboradorService.atualizar(id!, payload, empresaAtual.id)
+        : colaboradorService.criar({ ...payload, empresa_id: empresaAtual.id });
     },
 
     onSuccess: () => {
