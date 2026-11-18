@@ -178,7 +178,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.geo_allowed_countries](tables/public/geo_allowed_countries.md) | table | sim | 1 | 5 | não |  |
 | [public.geo_blocked_attempts](tables/public/geo_blocked_attempts.md) | table | sim | 1 | 6 | não |  |
 | [public.geo_blocking_config](tables/public/geo_blocking_config.md) | table | sim | 1 | 6 | não |  |
-| [public.govbr_auth_state](tables/public/govbr_auth_state.md) | table | sim | 1 | 6 | não |  |
+| [public.govbr_auth_state](tables/public/govbr_auth_state.md) | table | sim | 1 | 7 | não |  |
 | [public.guias_fgts](tables/public/guias_fgts.md) | table | sim | 1 | 12 | não |  |
 | [public.guias_fgts_digital](tables/public/guias_fgts_digital.md) | table | sim | 1 | 13 | não |  |
 | [public.guias_inss](tables/public/guias_inss.md) | table | sim | 1 | 12 | não |  |

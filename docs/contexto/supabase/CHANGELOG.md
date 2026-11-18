@@ -2,6 +2,12 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-18 10:14 UTC
+
+- **colunas** adicionado (1): `public.govbr_auth_state.user_id`
+- **constraints** adicionado (1): `public.govbr_auth_state.govbr_auth_state_user_id_fkey`
+- **indexes** adicionado (1): `public.idx_govbr_auth_state_user_id`
+
 ## 2026-11-18 06:23 UTC
 
 - **functions** alterado (3): `public.get_user_empresas(_user_id uuid)`, `public.is_admin(_user_id uuid)`, `public.user_empresa_id()`

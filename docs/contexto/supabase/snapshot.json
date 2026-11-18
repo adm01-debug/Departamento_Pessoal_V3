@@ -30037,6 +30037,19 @@
       },
       {
         "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "user_id",
+        "nullable": true,
+        "position": 7,
+        "schema": "public",
+        "table": "govbr_auth_state",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -76219,6 +76232,25 @@
         "schema": "public",
         "table": "govbr_auth_state",
         "type": "UNIQUE",
+        "validated": true
+      },
+      {
+        "columns": [
+          "user_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE",
+        "name": "govbr_auth_state_user_id_fkey",
+        "on_delete": "CASCADE",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "auth",
+        "ref_table": "users",
+        "schema": "public",
+        "table": "govbr_auth_state",
+        "type": "FOREIGN KEY",
         "validated": true
       },
       {
@@ -126579,6 +126611,20 @@
         "is_valid": true,
         "method": "btree",
         "name": "govbr_auth_state_state_key",
+        "predicate": null,
+        "schema": "public",
+        "table": "govbr_auth_state"
+      },
+      {
+        "columns": [
+          "user_id"
+        ],
+        "definition": "CREATE INDEX idx_govbr_auth_state_user_id ON public.govbr_auth_state USING btree (user_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_govbr_auth_state_user_id",
         "predicate": null,
         "schema": "public",
         "table": "govbr_auth_state"

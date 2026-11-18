@@ -22,6 +22,7 @@
 | 4 | `redirect_uri` | `text` | sim |  |  |  |
 | 5 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
 | 6 | `expires_at` | `timestamp with time zone` | sim | `(now() + '00:10:00'::interval)` |  |  |
+| 7 | `user_id` | `uuid` | sim |  |  |  |
 
 
 ## Constraints
@@ -30,6 +31,7 @@
 |---|---|---|---|---|---|
 | govbr_auth_state_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
 | govbr_auth_state_state_key | UNIQUE | `UNIQUE (state)` |  |  | sim |
+| govbr_auth_state_user_id_fkey | FOREIGN KEY | `FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE` | CASCADE | NO ACTION | sim |
 
 
 ## Índices
@@ -38,6 +40,7 @@
 |---|---|---|---|---|---|---|
 | govbr_auth_state_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX govbr_auth_state_pkey ON public.govbr_auth_state USING btree (id)` |
 | govbr_auth_state_state_key | btree | state | sim | sim |  | `CREATE UNIQUE INDEX govbr_auth_state_state_key ON public.govbr_auth_state USING btree (state)` |
+| idx_govbr_auth_state_user_id | btree | user_id | não | sim |  | `CREATE INDEX idx_govbr_auth_state_user_id ON public.govbr_auth_state USING btree (user_id)` |
 
 
 ## Policies (RLS)

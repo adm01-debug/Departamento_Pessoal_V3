@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "4bb5a248be6940e7235cb9d9ccea8260b8a5c35a",
+  "sha": "102526573dc6a0efc94b9bbc9fe31959b6933aca",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 09:43 UTC",
+  "generated_at": "2026-11-18 10:14 UTC",
   "files_total": 3599,
   "code_files": 3022,
   "code_lines": 478255
@@ -327227,10 +327227,28 @@
   }
  },
  "git": {
-  "sha": "4bb5a248be6940e7235cb9d9ccea8260b8a5c35a",
+  "sha": "102526573dc6a0efc94b9bbc9fe31959b6933aca",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "1025265",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "fix: retrata o Lote 1 - nao era funcionalidade morta, era falta de consumidor (#690)",
+    "files": [
+     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md"
+    ]
+   },
+   {
+    "sha": "e667066",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "chore: tria as 26 migrations restantes em 6 lotes de decisao (#689)",
+    "files": [
+     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md"
+    ]
+   },
    {
     "sha": "4bb5a24",
     "date": "2026-11-18",
@@ -327543,26 +327561,6 @@
      "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
      "src/hooks/useTabelasReferencia.ts"
     ]
-   },
-   {
-    "sha": "40b2c41",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(ponto): mostra o débito de horas do dia no card &quot;Últimos 7 dias&quot; (#660)",
-    "files": [
-     "src/components/__tests__/PontoWeekSummary.test.tsx",
-     "src/components/ponto/PontoWeekSummary.tsx"
-    ]
-   },
-   {
-    "sha": "7681ca2",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "test(premiacoes): resgata da muri os 29 testes das regras de pagamento e auditoria (#658)",
-    "files": [
-     "src/components/__tests__/AuditoriaComum.test.ts",
-     "src/components/__tests__/PagamentosComum.test.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -327575,15 +327573,15 @@
     6
    ],
    [
+    "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
+    5
+   ],
+   [
     "docs/agentes/banco.md",
     4
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    3
-   ],
-   [
-    "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
     3
    ],
    [

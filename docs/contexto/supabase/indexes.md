@@ -680,6 +680,7 @@ Uso e tamanho em `stats.md`.
 | public.geo_blocking_config | idx_geo_blocking_config_updated_by | btree | updated_by | não | sim |  |
 | public.govbr_auth_state | govbr_auth_state_pkey | btree | id | sim | sim |  |
 | public.govbr_auth_state | govbr_auth_state_state_key | btree | state | sim | sim |  |
+| public.govbr_auth_state | idx_govbr_auth_state_user_id | btree | user_id | não | sim |  |
 | public.guias_fgts | guias_fgts_pkey | btree | id | sim | sim |  |
 | public.guias_fgts | idx_guias_fgts_empresa_id | btree | empresa_id | não | sim |  |
 | public.guias_fgts_digital | guias_fgts_digital_pkey | btree | id | sim | sim |  |

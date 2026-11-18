@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4bb5a248be6940e7235cb9d9ccea8260b8a5c35a",
+  "commit": "102526573dc6a0efc94b9bbc9fe31959b6933aca",
   "branch": "main",
-  "data_commit": "2026-11-18T06:42:16-03:00",
+  "data_commit": "2026-11-18T07:08:51-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1025265",
+    "data": "2026-11-18",
+    "assunto": "fix: retrata o Lote 1 - nao era funcionalidade morta, era falta de consumidor (#690)"
+   },
+   {
+    "sha": "e667066",
+    "data": "2026-11-18",
+    "assunto": "chore: tria as 26 migrations restantes em 6 lotes de decisao (#689)"
+   },
    {
     "sha": "4bb5a24",
     "data": "2026-11-18",
@@ -121,16 +131,6 @@
     "sha": "94c16ea",
     "data": "2026-11-17",
     "assunto": "chore(migrations): documenta no repo as 8 DDL que só existiam no ledger (#656)"
-   },
-   {
-    "sha": "9fe99bd",
-    "data": "2026-11-17",
-    "assunto": "test(e2e): resgata da muri os 5 especs de navegador (#661)"
-   },
-   {
-    "sha": "f759961",
-    "data": "2026-11-17",
-    "assunto": "feat(desligamentos): faixa de atenção na tela, ligada ao cálculo que já existia (#664)"
    }
   ],
   "arquivos_mudados_7d": 1131,
@@ -258,6 +258,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
+    "mudancas": 6
+   },
+   {
     "arquivo": "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
     "mudancas": 6
    },
@@ -292,10 +296,6 @@
    {
     "arquivo": "src/services/colaboradorService.ts",
     "mudancas": 6
-   },
-   {
-    "arquivo": "public/sw-custom.js",
-    "mudancas": 5
    }
   ],
   "autores_30d": [

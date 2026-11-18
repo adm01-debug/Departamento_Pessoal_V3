@@ -274,6 +274,7 @@
 | public.formacoes_academicas | colaborador_id | public.colaboradores | id | CASCADE | NO ACTION |
 | public.geo_allowed_countries | added_by | auth.users | id | SET NULL | NO ACTION |
 | public.geo_blocking_config | updated_by | auth.users | id | SET NULL | NO ACTION |
+| public.govbr_auth_state | user_id | auth.users | id | CASCADE | NO ACTION |
 | public.guias_fgts | empresa_id | public.empresas | id | NO ACTION | NO ACTION |
 | public.guias_inss | empresa_id | public.empresas | id | NO ACTION | NO ACTION |
 | public.historico_calculos_folha | criado_por | auth.users | id | SET NULL | NO ACTION |
