@@ -54,6 +54,11 @@ export function BeneficiosSettingsTab() {
       if (!nome) throw new Error('Nome do plano é obrigatório.');
       if (valor < 0 || valor > 99999.99 || isNaN(valor)) throw new Error('Valor inválido (entre 0 e 99.999,99).');
 
+      // O gateway external-db-bridge recusa insert sem empresa_id em tabela
+      // tenant-scoped com 403 TENANT_SCOPE_REQUIRED (external-db-bridge/
+      // validation.ts:105-110). Sem esta guarda o botao falhava em producao.
+      if (!empresaAtual?.id) throw new Error('Selecione uma empresa.');
+
       validateInput(beneficioSchema, { nome, tipo, valor }, 'BeneficiosSettingsTab:beneficios');
       const { error } = await supabase.from('beneficios').insert(
         validateTablePayload(
@@ -63,6 +68,7 @@ export function BeneficiosSettingsTab() {
             tipo,
             valor,
             ativo: true,
+            empresa_id: empresaAtual.id,
           },
           'BeneficiosSettingsTab:beneficios'
         )
