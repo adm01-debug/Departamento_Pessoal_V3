@@ -3010,13 +3010,13 @@
   {
    "arquivo": "src/components/__tests__/PortalDocumentosTab.test.tsx",
    "tipo": "unit",
-   "linhas": 392,
+   "linhas": 432,
    "testa": [
     "src/components/portal/PortalDocumentosTab.tsx",
     "src/services/documentoService.ts",
     "src/services/index.ts"
    ],
-   "casos": 21
+   "casos": 23
   },
   {
    "arquivo": "src/components/__tests__/PortalFinanceiroTab.test.tsx",

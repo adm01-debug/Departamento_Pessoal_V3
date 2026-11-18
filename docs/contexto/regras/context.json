@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "94c16ea1fc64e6cf7d29d0a5154fda1ba3f818fa",
+  "sha": "fa2dec8b6767c635146ef9b4623e4f050e5d6b15",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-17 23:53 UTC",
+  "generated_at": "2026-11-18 00:07 UTC",
   "files_total": 3579,
   "code_files": 3003,
-  "code_lines": 475817
+  "code_lines": 475900
  },
  "version": "1.3.2",
- "facts_hash": "eb322d8932d9aa6c",
+ "facts_hash": "c463edb4ca7dcd0d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -101667,7 +101667,7 @@
   {
    "module": "src/components",
    "files": 971,
-   "lines": 175759,
+   "lines": 175842,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -119563,6 +119563,10 @@
    {
     "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
     "text": "Já gravados (aprovados/cobrados): \"Mostrar ocultas\" não pode trazê-los de"
+   },
+   {
+    "file": "src/components/portal/PortalDocumentosTab.tsx",
+    "text": "nao pode afirmar nem que o arquivo foi removido nem que esta guardado."
    },
    {
     "file": "src/components/portal/PortalRegimentoCard.tsx",
@@ -151205,6 +151209,18 @@
    },
    {
     "file": "src/components/portal/PortalDocumentosTab.tsx",
+    "field": "etapa",
+    "value": "banco",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/portal/PortalDocumentosTab.tsx",
+    "field": "etapa",
+    "value": "banco-sem-arquivo",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/portal/PortalDocumentosTab.tsx",
     "field": "tipo",
     "value": "Contrato",
     "kind": "compara"
@@ -177368,6 +177384,14 @@
    {
     "file": "src/components/__tests__/PortalDocumentosTab.test.tsx",
     "name": "falha ao remover do storage NAO apaga a linha do banco"
+   },
+   {
+    "file": "src/components/__tests__/PortalDocumentosTab.test.tsx",
+    "name": "falha no banco DEPOIS de remover o arquivo avisa que o registro ficou, nao que o arquivo esta guardado"
+   },
+   {
+    "file": "src/components/__tests__/PortalDocumentosTab.test.tsx",
+    "name": "sem storage_path, a mensagem nao afirma nada sobre arquivo"
    },
    {
     "file": "src/components/__tests__/PortalDocumentosTab.test.tsx",
@@ -231471,6 +231495,12 @@
      "Etapa": [
       "escreve:src/components/desligamentos/trilhaDerivacoes.ts"
      ],
+     "banco": [
+      "compara:src/components/portal/PortalDocumentosTab.tsx"
+     ],
+     "banco-sem-arquivo": [
+      "compara:src/components/portal/PortalDocumentosTab.tsx"
+     ],
      "todas": [
       "compara:src/components/premiacoes/pagamentosComum.ts",
       "compara:src/components/recrutamento/candidatosComum.ts",
@@ -255951,6 +255981,20 @@
    },
    {
     "kind": "status",
+    "msg": "valor `banco` para `etapa` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "compara:src/components/portal/PortalDocumentosTab.tsx"
+    ]
+   },
+   {
+    "kind": "status",
+    "msg": "valor `banco-sem-arquivo` para `etapa` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "compara:src/components/portal/PortalDocumentosTab.tsx"
+    ]
+   },
+   {
+    "kind": "status",
     "msg": "valor `outras` para `etapa` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/components/recrutamento/PipelineBoard.tsx",
@@ -269324,12 +269368,16 @@
   },
   "src/components/__tests__/PortalDocumentosTab.test.tsx": {
    "path": "src/components/__tests__/PortalDocumentosTab.test.tsx",
-   "lines": 392,
+   "lines": 432,
    "is_test": true,
    "errors": [
     ", async () => {\n    state.fromInsert.mockResolvedValueOnce({ error: { message: ",
     ", async () => {\n    state.storage.download.mockResolvedValue({ data: null, error: { message: ",
     ", async () => {\n    state.storage.upload.mockResolvedValue({ error: { message: "
+   ],
+   "rule_comments": [
+    "Falha DEPOIS da remocao do arquivo: o aviso nao pode dizer que o arquivo",
+    "mensagem nao pode afirmar NEM que o arquivo foi removido NEM que continua"
    ],
    "tests": [
     "PortalDocumentosTab",
@@ -269347,6 +269395,8 @@
     "erro no storage.upload mostra toast.error",
     "excluir documento remove do storage e chama service.excluir",
     "falha ao remover do storage NAO apaga a linha do banco",
+    "falha no banco DEPOIS de remover o arquivo avisa que o registro ficou, nao que o arquivo esta guardado",
+    "sem storage_path, a mensagem nao afirma nada sobre arquivo",
     "baixar documento faz download do storage e dispara o anchor",
     "erro no download mostra toast.error",
     "contrato não assinado mostra botão Assinar e registra a assinatura",
@@ -280892,7 +280942,7 @@
   },
   "src/components/portal/PortalDocumentosTab.tsx": {
    "path": "src/components/portal/PortalDocumentosTab.tsx",
-   "lines": 429,
+   "lines": 472,
    "exports": [
     "function PortalDocumentosTab"
    ],
@@ -280936,10 +280986,23 @@
      "kind": "escreve"
     },
     {
+     "field": "etapa",
+     "value": "banco",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "banco-sem-arquivo",
+     "kind": "compara"
+    },
+    {
      "field": "tipo",
      "value": "Contrato",
      "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "nao pode afirmar nem que o arquivo foi removido nem que esta guardado."
    ],
    "pagination": [
     "1"
@@ -326411,10 +326474,20 @@
   }
  },
  "git": {
-  "sha": "94c16ea1fc64e6cf7d29d0a5154fda1ba3f818fa",
+  "sha": "fa2dec8b6767c635146ef9b4623e4f050e5d6b15",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "fa2dec8",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix(portal): aviso de exclusão de documento para de mentir sobre o arquivo (#665)",
+    "files": [
+     "src/components/__tests__/PortalDocumentosTab.test.tsx",
+     "src/components/portal/PortalDocumentosTab.tsx"
+    ]
+   },
    {
     "sha": "94c16ea",
     "date": "2026-11-17",
@@ -326775,17 +326848,6 @@
      "src/components/layout/EntityPageContainer.tsx",
      "src/pages/ColaboradoresPage.tsx"
     ]
-   },
-   {
-    "sha": "a588982",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(colaboradores): liga o selo de recontratacao, que estava invisivel (#635)",
-    "files": [
-     "scripts/.bundle-budget.json",
-     "src/components/__tests__/ColaboradorSeloPassagem.test.tsx",
-     "src/pages/ColaboradoresPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -326795,11 +326857,15 @@
    ],
    [
     "scripts/.bundle-budget.json",
-    4
+    3
    ],
    [
-    "src/pages/ColaboradoresPage.tsx",
-    3
+    "src/components/__tests__/PortalDocumentosTab.test.tsx",
+    2
+   ],
+   [
+    "src/components/portal/PortalDocumentosTab.tsx",
+    2
    ],
    [
     "src/hooks/useTabelasReferencia.ts",
@@ -326823,6 +326889,10 @@
    ],
    [
     ".github/workflows/canonical-migrations.yml",
+    2
+   ],
+   [
+    "src/pages/ColaboradoresPage.tsx",
     2
    ],
    [
@@ -326859,14 +326929,6 @@
    ],
    [
     "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
-    1
-   ],
-   [
-    "e2e/authenticated/feedbacks-historico.spec.ts",
-    1
-   ],
-   [
-    "e2e/authenticated/feedbacks-padronizacao.spec.ts",
     1
    ]
   ]

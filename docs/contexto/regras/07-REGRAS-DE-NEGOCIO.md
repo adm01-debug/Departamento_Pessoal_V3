@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `94c16ea1fc` · branch `main` · 2026-11-17 23:53 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fa2dec8b67` · branch `main` · 2026-11-18 00:07 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1723,7 +1723,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `concluida` | compara, escreve | `src/components/colaborador-detalhes/FeriasResumoTab.tsx`<br>`src/components/ferias/CalendarioFerias.tsx`<br>`src/mocks/colaboradoresMock.ts`<br>`src/pages/LGPDPage.tsx`<br>`src/pages/PassivoTrabalhistaPage.tsx`<br>… +1 |
 | `status` | `concluida_validada` | compara | `src/components/avaliacao/FeedbackAcoesRodape.tsx`<br>`src/components/avaliacao/aprovacaoGestor.ts`<br>`src/components/avaliacao/feedbackCanonico.ts` |
 | `status` | `concluido` | compara, escreve | `src/components/avaliacao/nineBoxMock.ts`<br>`src/components/dashboard/AnalyticsSection.tsx`<br>`src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/components/desligamentos/DesligamentoKPIs.tsx`<br>`src/components/desligamentos/desligamentosDerivacoes.ts`<br>… +9 |
-| … +205 linhas — lista completa em `context.json` | | | |
+| … +207 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -5419,7 +5419,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9299 testes em 726 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9301 testes em 726 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5501,6 +5501,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/pontoService.test.ts` | 25 | pontoService.getSettings · returns settings for empresa · returns null when no settings found · throws on DB error … |
 | `src/utils/__tests__/folhaCalc.test.ts` | 25 | Motor de Cálculo de Folha (folhaCalc) · deve processar uma folha simples corretamente · deve incluir horas extras e DSR no cálculo · deve calcular 13º salário quando solicitado … |
 | `supabase/functions/external-db-bridge/validation.test.ts` | 25 | tabela: injeção rejeitada · tabela: nomes legítimos aceitos · denylist: tabelas sensíveis presentes · colunas: injeção/subquery rejeitada … |
+| `src/components/__tests__/PortalDocumentosTab.test.tsx` | 24 | PortalDocumentosTab · renders Gestão de Documentos title · renders Enviar Novo button · shows loading spinner when loading … |
 | `src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts` | 24 | título, nível e status · lê titulo ou nome (as duas colunas existentes) · traduz os três níveis reais e nunca inventa · distingue ativo=false de ativo ausente … |
 | `src/hooks/__tests__/validators.test.ts` | 24 | required · rejeita null, undefined e string vazia · aceita valores presentes, incluindo 0 e false · isValidEmail … |
 | `src/services/__tests__/avaliacaoCriacaoSegura.test.ts` | 24 | flag do Nine-Box desligada NÃO bloqueia a escrita de UUID real · criarFeedbackSeguro chama a RPC com IDs reais · finalizarFeedback chama a RPC com feedback real · finalizarFeedback sem auditoria NÃO é aceito como persistência confirmada … |
@@ -5512,7 +5513,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/NineBoxElegibilidade.test.tsx` | 23 | etapa 1 · identificação de suspeita (isolada) · a PRIMEIRA ocorrência nunca é sinalizada; as repetições são · não muta a lista recebida (função pura) · avaliadores diferentes com as MESMAS notas não se sinalizam … |
 | `src/components/__tests__/CNABDialog.test.tsx` | 22 | CNABDialog · renders Exportar Bancário trigger button · renders Pagamento de Salários dialog title · renders Código do Banco label … |
 | `src/components/__tests__/CalculoFolhaWizard.test.tsx` | 22 | CalculoFolhaWizard · renders Assistente de Cálculo trigger button · renders Assistente de Folha dialog title · renders competencia in dialog header … |
-| `src/components/__tests__/PortalDocumentosTab.test.tsx` | 22 | PortalDocumentosTab · renders Gestão de Documentos title · renders Enviar Novo button · shows loading spinner when loading … |
 | `src/hooks/__tests__/useBruteForceProtection.test.ts` | 22 | useBruteForceProtection · estado inicial · começa destravado e sem tentativas · superfície de rede … |
 | `src/lib/__tests__/utils.test.ts` | 22 | merges class names · deduplicates tailwind classes (tw-merge) · filters falsy values · truncate … |
 | `src/schemas/__tests__/validate.test.ts` | 22 | validateInput · rejeita payload vazio · aceita payload parcial válido (update) · rejeita valor fora de domínio mesmo em payload parcial … |
@@ -6091,4 +6091,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | METAS & OKRs — derivações da aba (situação, prazo, ordem e filtros). | `src/components/avaliacao/metasComum.ts` |
 | exibem. Nada aqui inventa dado: TODAS as funções leem somente campos que já | `src/components/avaliacao/metasComum.ts` |
 | 2. `atrasada`  → prazo vencido e ainda não concluída — é EXATAMENTE o | `src/components/avaliacao/metasComum.ts` |
-| … +906 linhas — lista completa em `context.json` | |
+| … +907 linhas — lista completa em `context.json` | |

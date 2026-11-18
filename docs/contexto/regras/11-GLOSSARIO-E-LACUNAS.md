@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `94c16ea1fc` · branch `main` · 2026-11-17 23:53 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fa2dec8b67` · branch `main` · 2026-11-18 00:07 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -399,6 +399,8 @@
 | status | valor `processed_v1` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/webhook/index.ts` |
 | status | valor `processed_v2` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/webhook/index.ts` |
 | status | valor `Etapa` para `etapa` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/desligamentos/trilhaDerivacoes.ts` |
+| status | valor `banco` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/portal/PortalDocumentosTab.tsx` |
+| status | valor `banco-sem-arquivo` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/portal/PortalDocumentosTab.tsx` |
 | status | valor `outras` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/recrutamento/PipelineBoard.tsx`<br>`compara:src/components/recrutamento/vagasComum.ts` |
 | status | valor `juridico` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/rescisaoService.ts` |
 | status | valor `animando` para `fase` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/desligamentos/TurnoverChart.tsx`<br>`escreve:src/components/avaliacao/PerformanceAuditTimeline.tsx` |
@@ -645,9 +647,7 @@
 | segurança | função `trg_medida_contestacao_notify_after` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_medida_esocial_on_aplicada` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `update_extintor_status_vencimento` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `user_empresa_id` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `validar_contrato_clt` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +34 linhas — lista completa em `context.json` | | |
+| … +36 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 
