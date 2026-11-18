@@ -265,6 +265,47 @@ inspeção de nome de arquivo.
 
 ---
 
+## Fechamento: as 5 migrations resgatadas estão NO BANCO, não só na `main`
+
+Arquivo na `main` não é DDL em produção — foi esse exatamente o buraco em que
+`colaborador_lotacoes` ficou. E linha no ledger também não prova que o objeto existe (lição da
+PR #671). O que prova é o sidecar rodando contra o banco.
+
+`canonical-migrations.yml` em `mode=verify`, run
+[44236033035](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/runs/44236033035),
+em 2026-11-18, sobre o commit de merge da #677, **conclusion: success**:
+
+```
+Sidecar: supabase/migrations/20260929120000_colaborador_lotacoes.verify.sql (ledger ✓ versão 20260929120000)
+Sidecar: supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.verify.sql (ledger ✓ versão 20261117170000)
+Sidecar: supabase/migrations/20261117170100_onboarding_audit_trigger.verify.sql (ledger ✓ versão 20261117170100)
+Sidecar: supabase/migrations/20261117170200_onboarding_kits_indice_empresa.verify.sql (ledger ✓ versão 20261117170200)
+Sidecar: supabase/migrations/20261117170300_documentos_colunas_storage.verify.sql (ledger ✓ versão 20261117170300)
+CANONICAL_VERIFY_OK
+```
+
+Por que isso é prova, e não um verde qualquer:
+
+- o `ledger ✓` de cada linha só é impresso depois de `count(*) = 1` em
+  `supabase_migrations.schema_migrations` — o passo recusa migration pendente;
+- cada sidecar roda com `default_transaction_read_only=on` contra o canônico, e o passo exige que
+  **toda linha não-vazia seja literalmente `ok`**;
+- `CANONICAL_VERIFY_OK` só é emitido com `verify_errors = 0`;
+- no mesmo run, o passo de dry-run reportou `Nada a aplicar — lote já registrado no ledger
+canônico.`, confirmando por outro caminho que o LOTE ATUAL inteiro está registrado.
+
+**As 10 órfãs da `muri` estão encerradas:** 6 vivas no banco, 3 preservadas como NÃO APLICAR
+(reabririam buracos de RLS que a `main` fechou) e 1 preservada por copiar linhas de seed fictício.
+
+### Nota de método: dois erros meus no dispatch do `verify`
+
+Registrados porque custaram dois runs vermelhos e são fáceis de repetir:
+
+1. passei os nomes dos **sidecars**; o input quer o da **migration** — o passo monta o
+   `.verify.sql` sozinho a partir do nome da migration;
+2. passei a lista **separada por espaço**; o loop é `while IFS= read -r`, ou seja **uma por
+   linha** — com espaços os cinco nomes viram um só, e o `tr -d` os concatena.
+
 ## Conclusão operacional
 
 1. **Descartar** `20260819000000`, `20260820000000`, `20260821000000` e
