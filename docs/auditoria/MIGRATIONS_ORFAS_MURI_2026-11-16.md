@@ -666,7 +666,12 @@ Veredito: o DEFAULT nunca é exercitado pelo aplicativo. **Não é bug vivo**, e
 `20260724001200` não tem urgência. Fica como melhoria, se um dia a tela de registro de falta for
 construída — e aí o CHECK precisa ser lido antes.
 
-### NÃO cai, e é o maior risco aberto: policy para role `public` em tabelas de candidato
+### RETRATADO (ver §16): a policy `public` é INERTE, não é risco
+
+> **Esta subseção estava errada.** O `USING` da policy, que eu disse não conseguir ler, estava
+> versionado em `20260516175648_835be6f9-b129-4520-bc17-b60bf8d426c1.sql:169`: compara `empresa_id`
+> com `auth.uid()` e busca `colaboradores.id = auth.uid()` quando o vínculo é `colaboradores.user_id`.
+> Nunca concede nada — é fail-closed por acidente. **Não há vazamento.** Medição na §16.
 
 Aqui o raciocínio do consumidor **se inverte** e é importante entender por quê: uma policy
 permissiva para role `public` não precisa de código nosso para ser explorada. `public` inclui
@@ -708,3 +713,67 @@ sobre tabelas com PII, então é decisão do dono, e o certo é medir o `USING` 
 
 Este caso sobe para o topo dos próximos passos e passa à frente do conserto do `db_query` — porque é
 o `db_query` que o destrava.
+
+## 16. RETRATAÇÃO da §15: a policy `public` é inerte, não permissiva (medido 2026-11-18)
+
+A §15 classificou a policy `"Multi-tenant access"` (PERMISSIVE, role `public`, cmd ALL) nas 5 tabelas
+de recrutamento como **"o maior risco aberto desta auditoria"**, com PII de candidato em jogo, e
+disse que as medições para decidir dependiam do `supabase_db_query` quebrado.
+
+**Estava errado, e o texto que eu disse não conseguir ler estava no repositório todo o tempo.**
+
+`20260516175648_835be6f9-b129-4520-bc17-b60bf8d426c1.sql:169` cria a policy assim:
+
+```sql
+CREATE POLICY "Multi-tenant access" ON public.%I FOR ALL
+  USING (empresa_id = auth.uid()
+         OR (SELECT c.empresa_id FROM public.colaboradores c WHERE c.id = auth.uid()) = empresa_id)
+```
+
+Os dois lados do `OR` não concedem nada:
+
+1. `empresa_id = auth.uid()` compara o **id da empresa** com o **id do usuário autenticado**. São
+   entidades diferentes; nunca coincidem.
+2. A subconsulta procura `colaboradores.id = auth.uid()`, mas o vínculo entre usuário e colaborador
+   neste schema é `colaboradores.user_id`, não `colaboradores.id`. Logo a subconsulta devolve NULL
+   para qualquer usuário, e `NULL = empresa_id` é NULL — que a RLS trata como falso.
+
+E para `anon` não há sequer usuário: `auth.uid()` é NULL e as duas pernas são NULL.
+
+**Conclusão: a policy é inerte. Fail-closed por acidente, não permissiva.** Não existe o vazamento
+que eu levantei. O acesso dessas tabelas vem das outras policies PERMISSIVE, por `authenticated`
+(`Users can manage candidatos of their empresa`, `Users can manage candidaturas via vaga empresa`),
+e é isso que governa hoje.
+
+O cabeçalho da própria `20260724000700` já dizia isso, na linha 9: "As 5 tabelas abaixo ficaram com a
+policy **fail-closed (ninguém consegue ler/escrever)** desde então". Eu li esse arquivo para extrair a
+lista de tabelas e não li o parágrafo que explicava o efeito.
+
+### O erro de método, que é novo
+
+Os oito anteriores foram variações de "concluir de um agregado em vez de conferir o item". **Este é
+diferente e pior:** eu tratei "o `db_query` está quebrado" como "o dado é inconhecível", quando a
+definição da policy estava versionada no repositório, em texto, a um `grep` de distância. Procurei a
+resposta só no banco porque a pergunta era sobre o banco.
+
+Entra no método: **antes de declarar uma medição bloqueada por ferramenta, procurar o objeto no
+`supabase/migrations/`.** O que criou está escrito lá, e o ledger diz se foi aplicado.
+
+### O que isso muda na fila
+
+A §15 pôs a `20260724000700` como prioridade de segurança. **Não é.** O que ela faz, de fato:
+
+- remove a policy inerte `"Multi-tenant access"` das 5 tabelas — **limpeza**, sem efeito de acesso;
+- cria `empresa_isolation_<tabela>` com `empresa_id = public.get_auth_empresa_id()`, **PERMISSIVE,
+  para `authenticated`**.
+
+Atenção ao segundo ponto, que é o motivo de eu **não** aplicar por conta própria mesmo com a
+aplicação autorizada: policies PERMISSIVE são combinadas por **OR**. A policy nova somaria ao que já
+existe. Se `get_auth_empresa_id()` for mais amplo que o `USING` das policies atuais (que eu ainda não
+li), aplicar **alargaria** o acesso em vez de apertar. O ganho é cosmético; o risco não é zero.
+
+Recomendação revisada: se o dono quiser a limpeza, o caminho certo é uma migration nova que **só
+derruba** `"Multi-tenant access"` nas 5 tabelas, sem criar policy permissiva no lugar — mantendo o
+que hoje governa o acesso. Isso é diff mínimo e efeito nulo sobre quem já usa o sistema.
+
+Também não há pressa: nada está quebrado nem exposto nessas tabelas.
