@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3801d319d1bffafa69761a2f88a63753809998f1",
+  "commit": "a48b81cef59a8964b585ce9b7c4de02cbeb94adf",
   "branch": "main",
-  "data_commit": "2026-11-18T12:02:13-03:00",
+  "data_commit": "2026-11-18T12:17:25-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "a48b81c",
+    "data": "2026-11-18",
+    "assunto": "infra: conserta a armadilha de DEFAULT x CHECK em public.faltas (#694)"
+   },
    {
     "sha": "3801d31",
     "data": "2026-11-18",
@@ -126,14 +131,9 @@
     "sha": "f59c729",
     "data": "2026-11-17",
     "assunto": "feat(colaborador): aba Identificação no dossiê, com PII mascarada e acesso registrado (#669)"
-   },
-   {
-    "sha": "544b877",
-    "data": "2026-11-17",
-    "assunto": "feat(desligamentos): coluna &quot;Próxima Ação&quot; com prazo legal, e os filtros que o componente já tinha (#668)"
    }
   ],
-  "arquivos_mudados_7d": 1133,
+  "arquivos_mudados_7d": 1135,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 19
+    "mudancas": 20
    },
    {
     "arquivo": "package.json",
@@ -222,12 +222,12 @@
     "mudancas": 10
    },
    {
-    "arquivo": "docs/prod-readiness.md",
+    "arquivo": "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
     "mudancas": 9
    },
    {
-    "arquivo": "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
-    "mudancas": 8
+    "arquivo": "docs/prod-readiness.md",
+    "mudancas": 9
    },
    {
     "arquivo": "scripts/automation.config.json",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3588,
+  "arquivos_total": 3590,
   "arquivos_codigo": 2079,
   "linhas_codigo": 411633,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 118,
   "edge_functions": 67,
   "tabelas": 426,
-  "migrations": 874,
+  "migrations": 876,
   "cron_jobs": 41,
   "testes": 774,
   "workflows": 21,
