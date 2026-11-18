@@ -143,6 +143,23 @@ legítimas reprovam sem relação com PII:
 Escreva sem alias e com o nome completo (`pg_catalog.pg_proc`, `pronamespace =
 'public'::regnamespace`) que o guard aceita.
 
+## `Supabase Preview` vermelho na `main` NÃO é regressão (medido 2026-11-18)
+
+O check `Supabase Preview` falha na `main` com `Remote migration versions not found in local
+migrations directory.`. Já era vermelho antes dos merges de 2026-11-18 — **não é regressão de PR
+nenhuma** e não é check obrigatório.
+
+Causa medida: o ledger tem **316** versões sem arquivo no repo (DDL aplicada pelo Studio/Lovable em
+jul/2026, `name` nulo ou UUID) e o repo tem **52** arquivos sem entrada no ledger. As 52 **estão
+aplicadas em produção** — conferido em 4 arquivos de 2 eras (trigger `trg_pensoes_set_empresa`, as 4
+policies de `comunicados`, `blocked_ips.updated_at`, view `vw_passivo_trabalhista_consolidado`). A
+divergência é do registro, não do banco. Medição completa:
+`docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md` §11.
+
+Não reconcilie o ledger por conta própria: INSERT em `supabase_migrations.schema_migrations` de
+produção é regra 8 do Fluxo Git. A integridade real é coberta por
+`Integridade do banco canônico (live)`, que passa.
+
 ## Runbooks de banco (`infra/runbooks/`)
 
 `MIGRATIONS.md` (processo auditável) · `RECONCILIACAO_DRIFT_MIGRATIONS.md` (drift de julho/2026) ·
