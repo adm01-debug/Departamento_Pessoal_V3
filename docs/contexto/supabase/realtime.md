@@ -13,13 +13,13 @@
 |---|---|---|
 | supabase_realtime | public.afdt_divergencias | default |
 | supabase_realtime | public.security_alerts | default |
-| supabase_realtime_messages_publication | realtime.messages_2026_11_14 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_15 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_16 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_17 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_18 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_19 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_20 |  |
+| supabase_realtime_messages_publication | realtime.messages_2026_11_21 |  |
 
 ## Broadcast / Presence (policies em realtime.messages)
 
