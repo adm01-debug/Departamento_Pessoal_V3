@@ -8,7 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Spinner } from '@/components/ui/spinner';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { Landmark, Pencil, Plus, Trash2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { resolveBankBrand } from '@/lib/bankBrand';
 import { toast } from 'sonner';
 import {
   useAtualizarContaBancaria,
@@ -31,6 +33,39 @@ const FORM_VAZIO = {
   pix_chave: '',
   principal: false,
 };
+
+/** Selo de identidade do banco — resgatado da branch `muri` (PR #546), sem os
+ * assets de logo: a caixa mostra a sigla curta sobre a cor oficial, que é o
+ * caminho que o próprio autor desenhou como fallback em `bankBrand.ts`. Banco
+ * não reconhecido cai no ícone neutro, nunca na marca de outro banco. O motivo
+ * de não trazer as imagens está medido no cabeçalho de src/lib/bankBrand.ts. */
+function BancoLogo({ codigo, nome }: { codigo?: string | null; nome?: string | null }) {
+  const brand = resolveBankBrand(codigo, nome);
+
+  if (!brand.isKnown) {
+    return (
+      <div
+        className="h-9 w-9 shrink-0 rounded-xl flex items-center justify-center bg-muted text-muted-foreground"
+        title={nome || 'Banco não identificado'}
+      >
+        <Landmark className="h-4 w-4" />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={cn(
+        'h-9 w-9 shrink-0 rounded-xl flex items-center justify-center font-bold text-[10px] leading-none tracking-tight',
+        brand.bg,
+        brand.text ?? 'text-white'
+      )}
+      title={brand.name}
+    >
+      {brand.shortLabel}
+    </div>
+  );
+}
 
 export function ContasBancariasTab({ colaboradorId }: { colaboradorId: string }) {
   const pii = usePiiMask();
@@ -199,7 +234,12 @@ export function ContasBancariasTab({ colaboradorId }: { colaboradorId: string })
               {data.map((c) => (
                 <TableRow key={c.id}>
                   <TableCell>
-                    {c.banco_nome} {c.banco_codigo ? `(${c.banco_codigo})` : ''}
+                    <div className="flex items-center gap-2">
+                      <BancoLogo codigo={c.banco_codigo} nome={c.banco_nome} />
+                      <span>
+                        {c.banco_nome} {c.banco_codigo ? `(${c.banco_codigo})` : ''}
+                      </span>
+                    </div>
                   </TableCell>
                   <TableCell>{pii.bankAccount(c.agencia)}</TableCell>
                   <TableCell>{pii.bankAccount(c.conta)}</TableCell>
