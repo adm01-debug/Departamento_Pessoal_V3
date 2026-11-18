@@ -320,3 +320,66 @@ Registrados porque custaram dois runs vermelhos e são fáceis de repetir:
 Nenhuma destas migrations foi aplicada por esta auditoria: a auditoria só leu o
 banco. O inventário geral do resgate está em
 `docs/auditoria/RESGATE_BRANCH_MURI_2026-11-16.md`.
+
+## 11. Eixo que faltava: repo x ledger de produção (medido em 2026-11-18)
+
+As seções 1–10 varreram **branch por branch**. Faltava um eixo: comparar os arquivos de
+migration da `main` com o ledger do banco de produção. Isso veio à tona porque o check
+`Supabase Preview` está vermelho na `main` desde 2026-11-17 21:39 com:
+
+```
+Remote migration versions not found in local migrations directory.
+```
+
+Medido com `supabase_db_migrations` (1 087 versões no ledger) contra
+`supabase/migrations/*.sql` (823 versões em arquivo):
+
+| medida                                     | valor   |
+| ------------------------------------------ | ------- |
+| versões no ledger **sem** arquivo no repo  | **316** |
+| arquivos no repo **sem** entrada no ledger | **52**  |
+
+### As 316 sem arquivo: é o que o check reclama, e é histórico
+
+A grande maioria tem `name` nulo ou um UUID (ex. `20260729161527` →
+`f56939e3-4ec6-4534-a18e-68f33f812b96`), assinatura de DDL aplicada pelo Studio/Lovable
+em jul/2026, antes da disciplina de arquivo. O efeito dessas está no schema; a fonte
+nunca existiu como arquivo. É isso que deixa o `Supabase Preview` vermelho — e é por isso
+que ele não é check obrigatório.
+
+### As 52 sem ledger: NÃO é trabalho perdido — estão aplicadas
+
+A hipótese perigosa era a inversa: arquivo na `main` cuja DDL nunca chegou à produção,
+isto é, trabalho de outro agente escrito e nunca aplicado. **Medido, item por item, em
+quatro arquivos independentes de duas eras diferentes — todos vivos no banco:**
+
+| arquivo ausente do ledger                               | objeto que só ele cria                    | estado no banco                                                               |
+| ------------------------------------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------- |
+| `20261114000500_pensoes_empresa_id_drift.sql:93`        | trigger `trg_pensoes_set_empresa`         | **existe** (BEFORE INSERT + UPDATE em `pensoes`)                              |
+| `20261114000600_rls_escrita_por_papel.sql:31-41`        | 4 policies em `comunicados`               | **existem** as 4 (`_tenant_select`, `_rh_insert`, `_rh_update`, `_rh_delete`) |
+| `20261114000400_adiciona_updated_at_faltante.sql:71-72` | `blocked_ips.updated_at`                  | **existe**, `NOT NULL DEFAULT now()`, última coluna                           |
+| `20260725130000_p5_077_passivo_trabalhista.sql`         | view `vw_passivo_trabalhista_consolidado` | **existe**, 9 colunas                                                         |
+
+Cinco das 52 são ainda mais simples: foram aplicadas sob **outra versão**. Exemplo:
+`20260911190000_p0_hash_trigger_search_path.sql` não está no ledger, mas
+`20260912142449 p0_hash_trigger_search_path` está — mesmo conteúdo, carimbo diferente.
+O mesmo vale para `p0_views_revoke_public`, `p0_payroll_upsert_contract`,
+`p1_function_search_path` e `p0_pgcrypto_routine_search_path`.
+
+**Conclusão:** a divergência é do **ledger**, não da produção. Nenhuma funcionalidade
+falta no banco por causa dela, e nenhum trabalho de agente ficou sem aplicar. O que existe
+é um registro incompleto — exatamente o que a seção 5 do `AGENTS.md` já avisa
+("Ledger não prova DDL: exija o sidecar `.verify.sql`"), agora com número.
+
+### Por que não corrigi
+
+Reconciliar o ledger é INSERT em `supabase_migrations.schema_migrations` no banco de
+produção: DDL/dado em produção, regra 8 do Fluxo Git. Fica para o dono decidir, com duas
+opções honestas:
+
+1. **Backfill do ledger** (registrar as 52 versões já aplicadas) — deixa o
+   `Supabase Preview` verde do lado do repo, mas não resolve as 316 sem arquivo.
+2. **Aceitar e silenciar o check** — ele é informativo, não obrigatório, e a integridade
+   real já é coberta por `Integridade do banco canônico (live)`, que passa.
+
+Esta auditoria só leu o banco. Nada foi aplicado.
