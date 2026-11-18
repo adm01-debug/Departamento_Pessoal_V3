@@ -124,7 +124,11 @@ export default function ColaboradoresPage() {
 
   const statusOptions = [
     { value: 'ativo', label: 'Ativos' },
-    { value: 'inativo', label: 'Inativos' },
+    // 'inativo' NAO existe no enum `status_colaborador` (ativo, ferias,
+    // afastado, desligado, pendente): a opcao filtrava por um valor que nenhuma
+    // linha pode ter, e 'pendente' — que existe e o hook ja conta em `summary` —
+    // nao tinha como ser filtrado. Correcao resgatada da branch `muri`.
+    { value: 'pendente', label: 'Pendentes' },
     { value: 'desligado', label: 'Desligados' },
     { value: 'ferias', label: 'Em Férias' },
     { value: 'afastado', label: 'Afastados' },
