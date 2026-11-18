@@ -2,6 +2,12 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-18 15:13 UTC
+
+- **functions** alterado (1): `public.get_auth_empresa_id()`
+- **lints** removido (5): `policy_auth_fn_not_wrapped:public.candidatos.Multi-tenant access`, `policy_auth_fn_not_wrapped:public.candidaturas.Multi-tenant access`, `policy_auth_fn_not_wrapped:public.onboarding_colaborador.Multi-tenant access`, `policy_auth_fn_not_wrapped:public.onboarding_tarefas.Multi-tenant access`, `policy_auth_fn_not_wrapped:public.vagas.Multi-tenant access`
+- **policies (RLS)** removido (5): `public.candidatos.Multi-tenant access`, `public.candidaturas.Multi-tenant access`, `public.onboarding_colaborador.Multi-tenant access`, `public.onboarding_tarefas.Multi-tenant access`, `public.vagas.Multi-tenant access`
+
 ## 2026-11-18 10:14 UTC
 
 - **colunas** adicionado (1): `public.govbr_auth_state.user_id`

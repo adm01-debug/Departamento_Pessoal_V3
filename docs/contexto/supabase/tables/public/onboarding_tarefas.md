@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 1 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -56,16 +56,6 @@
 
 
 ## Policies (RLS)
-
-### `Multi-tenant access`
-
-| campo | valor |
-|---|---|
-| comando | ALL |
-| tipo | PERMISSIVE |
-| roles | public |
-| USING | `((empresa_id = auth.uid()) OR (( SELECT c.empresa_id    FROM colaboradores c   WHERE (c.id = auth.uid())) = empresa_id))` |
-| WITH CHECK |  |
 
 ### `Tenant scoped onboarding_tarefas`
 

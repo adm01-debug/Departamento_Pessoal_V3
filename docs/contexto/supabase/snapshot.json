@@ -95793,9 +95793,13 @@
             {
               "file": "supabase/migrations/20261117170200_onboarding_kits_indice_empresa.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261118110000_drop_policy_inerte_recrutamento.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 24,
+          "code_total_files": 25,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -136328,19 +136332,7 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.candidatos.Multi-tenant access",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.candidatos.Users can manage candidatos of their empresa",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.candidaturas.Multi-tenant access",
         "severity": "BAIXA"
       },
       {
@@ -137516,19 +137508,7 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.onboarding_colaborador.Multi-tenant access",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.onboarding_colaborador.Tenant scoped onboarding_colaborador",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.onboarding_tarefas.Multi-tenant access",
         "severity": "BAIXA"
       },
       {
@@ -138591,12 +138571,6 @@
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.user_sessions.Users can view own sessions",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.vagas.Multi-tenant access",
         "severity": "BAIXA"
       },
       {
@@ -139846,18 +139820,6 @@
       },
       {
         "cmd": "ALL",
-        "name": "Multi-tenant access",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "public"
-        ],
-        "schema": "public",
-        "table": "candidatos",
-        "using": "((empresa_id = auth.uid()) OR (( SELECT c.empresa_id\n   FROM colaboradores c\n  WHERE (c.id = auth.uid())) = empresa_id))",
-        "with_check": null
-      },
-      {
-        "cmd": "ALL",
         "name": "Users can manage candidatos of their empresa",
         "permissive": "PERMISSIVE",
         "roles": [
@@ -139866,18 +139828,6 @@
         "schema": "public",
         "table": "candidatos",
         "using": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))",
-        "with_check": null
-      },
-      {
-        "cmd": "ALL",
-        "name": "Multi-tenant access",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "public"
-        ],
-        "schema": "public",
-        "table": "candidaturas",
-        "using": "((empresa_id = auth.uid()) OR (( SELECT c.empresa_id\n   FROM colaboradores c\n  WHERE (c.id = auth.uid())) = empresa_id))",
         "with_check": null
       },
       {
@@ -143206,18 +143156,6 @@
       },
       {
         "cmd": "ALL",
-        "name": "Multi-tenant access",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "public"
-        ],
-        "schema": "public",
-        "table": "onboarding_colaborador",
-        "using": "((empresa_id = auth.uid()) OR (( SELECT c.empresa_id\n   FROM colaboradores c\n  WHERE (c.id = auth.uid())) = empresa_id))",
-        "with_check": null
-      },
-      {
-        "cmd": "ALL",
         "name": "Tenant scoped onboarding_colaborador",
         "permissive": "PERMISSIVE",
         "roles": [
@@ -143251,18 +143189,6 @@
         "table": "onboarding_kits",
         "using": "(empresa_id = get_auth_empresa_id())",
         "with_check": "(empresa_id = get_auth_empresa_id())"
-      },
-      {
-        "cmd": "ALL",
-        "name": "Multi-tenant access",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "public"
-        ],
-        "schema": "public",
-        "table": "onboarding_tarefas",
-        "using": "((empresa_id = auth.uid()) OR (( SELECT c.empresa_id\n   FROM colaboradores c\n  WHERE (c.id = auth.uid())) = empresa_id))",
-        "with_check": null
       },
       {
         "cmd": "ALL",
@@ -146227,18 +146153,6 @@
         "table": "vaga_etapas",
         "using": "(empresa_id = get_auth_empresa_id())",
         "with_check": "(empresa_id = get_auth_empresa_id())"
-      },
-      {
-        "cmd": "ALL",
-        "name": "Multi-tenant access",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "public"
-        ],
-        "schema": "public",
-        "table": "vagas",
-        "using": "((empresa_id = auth.uid()) OR (( SELECT c.empresa_id\n   FROM colaboradores c\n  WHERE (c.id = auth.uid())) = empresa_id))",
-        "with_check": null
       },
       {
         "cmd": "ALL",

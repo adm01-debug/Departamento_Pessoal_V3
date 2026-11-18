@@ -43,8 +43,8 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.blocked_ips](tables/public/blocked_ips.md) | table | sim | 1 | 9 | não |  |
 | [public.campos_customizados](tables/public/campos_customizados.md) | table | sim | 1 | 11 | não |  |
 | [public.canal_etica](tables/public/canal_etica.md) | table | sim | 4 | 11 | não |  |
-| [public.candidatos](tables/public/candidatos.md) | table | sim | 2 | 15 | não |  |
-| [public.candidaturas](tables/public/candidaturas.md) | table | sim | 2 | 16 | não |  |
+| [public.candidatos](tables/public/candidatos.md) | table | sim | 1 | 15 | não |  |
+| [public.candidaturas](tables/public/candidaturas.md) | table | sim | 1 | 16 | não |  |
 | [public.cargo_faixas_salariais](tables/public/cargo_faixas_salariais.md) | table | sim | 1 | 7 | não |  |
 | [public.cargos](tables/public/cargos.md) | table | sim | 1 | 13 | não |  |
 | [public.catalogo_cursos](tables/public/catalogo_cursos.md) | table | sim | 4 | 12 | não |  |
@@ -233,10 +233,10 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.ninebox_permissoes_homologacao](tables/public/ninebox_permissoes_homologacao.md) | table | sim | 0 | 4 | não |  |
 | [public.notificacoes](tables/public/notificacoes.md) | table | sim | 4 | 12 | não |  |
 | [public.notificacoes_admissao](tables/public/notificacoes_admissao.md) | table | sim | 1 | 9 | não |  |
-| [public.onboarding_colaborador](tables/public/onboarding_colaborador.md) | table | sim | 2 | 11 | não |  |
+| [public.onboarding_colaborador](tables/public/onboarding_colaborador.md) | table | sim | 1 | 11 | não |  |
 | [public.onboarding_documentos_obrigatorios](tables/public/onboarding_documentos_obrigatorios.md) | table | sim | 1 | 7 | não |  |
 | [public.onboarding_kits](tables/public/onboarding_kits.md) | table | sim | 1 | 6 | não |  |
-| [public.onboarding_tarefas](tables/public/onboarding_tarefas.md) | table | sim | 2 | 15 | não |  |
+| [public.onboarding_tarefas](tables/public/onboarding_tarefas.md) | table | sim | 1 | 15 | não |  |
 | [public.onboarding_template_tarefas](tables/public/onboarding_template_tarefas.md) | table | sim | 1 | 10 | não |  |
 | [public.onboarding_templates](tables/public/onboarding_templates.md) | table | sim | 1 | 8 | não |  |
 | [public.paises](tables/public/paises.md) | table | sim | 1 | 4 | não |  |
@@ -373,7 +373,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.user_sessions](tables/public/user_sessions.md) | table | sim | 2 | 11 | não |  |
 | [public.vaga_entrevistas](tables/public/vaga_entrevistas.md) | table | sim | 1 | 8 | não |  |
 | [public.vaga_etapas](tables/public/vaga_etapas.md) | table | sim | 1 | 7 | não |  |
-| [public.vagas](tables/public/vagas.md) | table | sim | 2 | 19 | não |  |
+| [public.vagas](tables/public/vagas.md) | table | sim | 1 | 19 | não |  |
 | [public.vales_alimentacao](tables/public/vales_alimentacao.md) | table | sim | 1 | 12 | não |  |
 | [public.vales_transporte](tables/public/vales_transporte.md) | table | sim | 1 | 11 | não |  |
 | [public.valores_campos_customizados](tables/public/valores_campos_customizados.md) | table | sim | 1 | 6 | não |  |
