@@ -60,6 +60,8 @@ import {
   IndicatorRow,
   QuickStat,
   PendenciaItem,
+  AlertasRHWidget,
+  CadastroIncompletoWidget,
   ESocialMonitorWidget,
   type PendenciaSummary,
 } from './analytics/widgets';
@@ -510,6 +512,73 @@ export function AnalyticsSection({
           </CardHeader>
           <CardContent>
             <ESocialMonitorWidget />
+          </CardContent>
+        </MotionCard>
+      </div>
+
+      {/* Row 1b: os dois widgets que existiam e NUNCA eram renderizados.
+          `AlertasRHWidget` e `CadastroIncompletoWidget` estavam definidos em
+          `analytics/widgets.tsx` e apenas RE-EXPORTADOS acima — nenhum arquivo
+          do `src` os colocava em tela, então `vw_alertas_rh` e
+          `vw_cadastro_incompleto` eram consultadas por componentes que nunca
+          montavam. Medido em 18/11/2026 no banco de produção: 47 alertas (todos
+          "Férias iniciada SEM pagamento — Art. 145 CLT", de 13/11 a 18/11) e 15
+          cadastros incompletos, invisíveis ao RH. As duas views têm
+          `security_invoker=true`, então cada usuário vê só a própria empresa. */}
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+        <MotionCard
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.56 }}
+          className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden group hover:border-destructive/20 transition-all"
+        >
+          <CardHeader className="pb-3 flex flex-row items-center justify-between">
+            <CardTitle className="flex items-center gap-2.5 text-h3 font-display">
+              <div className="p-1.5 rounded-lg bg-gradient-to-br from-destructive to-destructive/70">
+                <AlertCircle className="h-4 w-4 text-white" />
+              </div>
+              Alertas de RH
+            </CardTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Ver relatórios"
+              onClick={() => navigate('/relatorios')}
+              className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <AlertasRHWidget />
+          </CardContent>
+        </MotionCard>
+
+        <MotionCard
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.58 }}
+          className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden group hover:border-warning/20 transition-all"
+        >
+          <CardHeader className="pb-3 flex flex-row items-center justify-between">
+            <CardTitle className="flex items-center gap-2.5 text-h3 font-display">
+              <div className="p-1.5 rounded-lg bg-gradient-to-br from-warning to-warning/70">
+                <Database className="h-4 w-4 text-white" />
+              </div>
+              Cadastros incompletos
+            </CardTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Ver colaboradores"
+              onClick={() => navigate('/colaboradores')}
+              className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <CadastroIncompletoWidget />
           </CardContent>
         </MotionCard>
       </div>
