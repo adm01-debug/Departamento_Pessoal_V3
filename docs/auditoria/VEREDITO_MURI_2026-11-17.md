@@ -356,8 +356,15 @@ no remoto:
 | refs `pr/*` locais na primeira varredura | 564     |
 | **faltando, reconciliadas por número**   | **70**  |
 
-As 70 são contíguas — **#607 a #680** —, isto é, PRs criadas depois do fetch que havia populado os
-refs locais. Foram buscadas (`git fetch` dos 70 refspecs), conferidas uma a uma por árvore completa
+As 70 estão **na faixa #607–#680**, isto é, PRs criadas depois do fetch que havia populado os refs
+locais. A primeira versão desta seção dizia "contíguas — #607 a #680", e **um revisor automático
+(Devin, na PR #682) derrubou isso com aritmética**: a faixa inclusiva tem 74 números, não 70.
+Reconciliado por identificador com `git ls-remote origin 'refs/pull/*/head'`: quatro números da
+faixa — **#614, #628, #629 e #667** — não têm `refs/pull/N/head` no remoto. 74 − 4 = 70, o que fecha
+com a diferença 634 − 564. Era o mesmo erro de método da seção acima, cometido de novo duas linhas
+depois: concluir de um agregado em vez de conferir os itens.
+
+Foram buscadas (`git fetch` dos 70 refspecs), conferidas uma a uma por árvore completa
 (70/70 com > 100 arquivos) e varridas. Resultado da varredura sobre as **634**:
 
 | etapa                                                                       | 564 (errado) | **634 (reconciliado)** |
