@@ -1163,6 +1163,12 @@
    "src/hooks/usePiiMask.ts",
    "src/hooks/useTabelasReferencia.ts"
   ],
+  "src/components/colaborador-detalhes/DadosPessoaisTab.tsx": [
+   "src/components/ui/card.tsx",
+   "src/hooks/usePiiMask.ts",
+   "src/services/piiAccessLogService.ts",
+   "src/types/entities.ts"
+  ],
   "src/components/colaborador-detalhes/DependentesTab.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -1674,6 +1680,7 @@
    "src/components/colaborador-detalhes/CamposCustomizadosTab.tsx",
    "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
    "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
+   "src/components/colaborador-detalhes/DadosPessoaisTab.tsx",
    "src/components/colaborador-detalhes/DependentesTab.tsx",
    "src/components/colaborador-detalhes/DesenvolvimentoResumoTab.tsx",
    "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
@@ -5679,6 +5686,7 @@
   "src/pages/ColaboradorDetalhesPage.tsx": [
    "src/components/PageTitle.tsx",
    "src/components/colaborador-detalhes/AfastamentosTab.tsx",
+   "src/components/colaborador-detalhes/DadosPessoaisTab.tsx",
    "src/components/colaborador-detalhes/PendenciasDialog.tsx",
    "src/components/colaborador-detalhes/ProximosEventosDialog.tsx",
    "src/components/colaborador-detalhes/destinosDossie.ts",

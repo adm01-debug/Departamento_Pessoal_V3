@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "544b877ba377e9b197d10eb3836a1841a780ebf3",
+  "commit": "f59c72965ef906a3a18fdab4e9ac1eaa64f89e43",
   "branch": "main",
-  "data_commit": "2026-11-17T21:27:38-03:00",
+  "data_commit": "2026-11-17T21:36:35-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "f59c729",
+    "data": "2026-11-17",
+    "assunto": "feat(colaborador): aba Identificação no dossiê, com PII mascarada e acesso registrado (#669)"
+   },
    {
     "sha": "544b877",
     "data": "2026-11-17",
@@ -126,38 +131,33 @@
     "sha": "65e05a3",
     "data": "2026-11-17",
     "assunto": "fix(migrations): corrige os dois sidecars que reprovaram no dry-run (#647)"
-   },
-   {
-    "sha": "3084304",
-    "data": "2026-11-17",
-    "assunto": "infra(storage): policies de tenant para documentos, documentos-colaboradores e afastamentos (#644)"
    }
   ],
-  "arquivos_mudados_7d": 1109,
+  "arquivos_mudados_7d": 1112,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
     "mudancas": 373
    },
    {
-    "pasta": "src/hooks/__tests__",
-    "mudancas": 111
-   },
-   {
     "pasta": "src/components/ui",
     "mudancas": 109
    },
    {
+    "pasta": "src/hooks/__tests__",
+    "mudancas": 107
+   },
+   {
     "pasta": "src/services/__tests__",
-    "mudancas": 102
+    "mudancas": 96
+   },
+   {
+    "pasta": "src/components/colaborador-detalhes",
+    "mudancas": 87
    },
    {
     "pasta": "src/components/avaliacao",
     "mudancas": 85
-   },
-   {
-    "pasta": "src/components/colaborador-detalhes",
-    "mudancas": 84
    },
    {
     "pasta": "src/components/treinamentos",
@@ -165,19 +165,15 @@
    },
    {
     "pasta": "supabase/functions/_shared",
-    "mudancas": 58
+    "mudancas": 57
    },
    {
     "pasta": "src/components/layout",
-    "mudancas": 51
+    "mudancas": 50
    },
    {
     "pasta": "src/components/recrutamento",
     "mudancas": 41
-   },
-   {
-    "pasta": "src/utils/__tests__",
-    "mudancas": 36
    },
    {
     "pasta": "src/components/dashboard",
@@ -189,6 +185,10 @@
    },
    {
     "pasta": "src/components/admissoes",
+    "mudancas": 30
+   },
+   {
+    "pasta": "src/utils/__tests__",
     "mudancas": 30
    },
    {
@@ -214,11 +214,11 @@
     "mudancas": 14
    },
    {
-    "arquivo": "scripts/sync/autocommit-local.sh",
-    "mudancas": 10
+    "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
+    "mudancas": 11
    },
    {
-    "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
+    "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 10
    },
    {
@@ -262,6 +262,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/components/colaborador-detalhes/index.ts",
+    "mudancas": 6
+   },
+   {
     "arquivo": "src/components/layout/AppSidebar.tsx",
     "mudancas": 6
    },
@@ -292,16 +296,12 @@
    {
     "arquivo": "public/sw-custom.js",
     "mudancas": 5
-   },
-   {
-    "arquivo": "scripts/autofix/run.mjs",
-    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 283
+    "commits": 284
    },
    {
     "autor": "dependabot[bot]",
@@ -313,26 +313,26 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 3
+    "commits": 2
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3569,
-  "arquivos_codigo": 2073,
-  "linhas_codigo": 410471,
+  "arquivos_total": 3571,
+  "arquivos_codigo": 2075,
+  "linhas_codigo": 410747,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
-  "componentes": 635,
+  "componentes": 636,
   "hooks": 117,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 869,
   "cron_jobs": 41,
-  "testes": 771,
+  "testes": 772,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 334
@@ -647,8 +647,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 973,
-   "linhas": 175945
+   "arquivos": 975,
+   "linhas": 176184
   },
   "src/constants": {
    "arquivos": 7,
@@ -664,7 +664,7 @@
   },
   "src/hooks": {
    "arquivos": 201,
-   "linhas": 23493
+   "linhas": 23497
   },
   "src/i18n": {
    "arquivos": 2,
@@ -688,7 +688,7 @@
   },
   "src/pages": {
    "arquivos": 134,
-   "linhas": 49536
+   "linhas": 49552
   },
   "src/providers": {
    "arquivos": 4,
@@ -716,7 +716,7 @@
   },
   "src/types": {
    "arquivos": 13,
-   "linhas": 874
+   "linhas": 891
   },
   "src/utils": {
    "arquivos": 69,

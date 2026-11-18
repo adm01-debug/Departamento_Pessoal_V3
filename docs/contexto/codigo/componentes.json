@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 635,
+ "total": 636,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -1586,6 +1586,22 @@
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/DadosPessoaisTab.tsx",
+   "exports": [
+    "DadosPessoaisTab"
+   ],
+   "export_default": null,
+   "linhas": 113,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -7328,7 +7344,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 281,
+   "usado_por": 282,
    "orfao": false
   },
   {
@@ -8932,7 +8948,7 @@
     "ColaboradorDetalhesPage"
    ],
    "export_default": "ColaboradorDetalhesPage",
-   "linhas": 768,
+   "linhas": 784,
    "dominio": "pages",
    "hooks_locais": [
     "useDataAccessLog",

@@ -3655,7 +3655,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 30,
+   "usado_por": 31,
    "usado_por_modulos": [
     "components/colaborador-detalhes",
     "components/dashboard",
@@ -5655,7 +5655,7 @@
     "components/colaborador-detalhes",
     "hooks"
    ],
-   "coberto_por_testes": 4,
+   "coberto_por_testes": 5,
    "orfao": false
   },
   {

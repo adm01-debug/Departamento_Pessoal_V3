@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (517)",
+   "src/components (518)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (640)",
+   "co-localizado (__tests__) (641)",
    "co-localizado (*.test) (73)",
    "e2e/ (33)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (635)"
+  ".tsx (636)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(colaborador): aba Identificação no dossiê, com PII mascarada e acesso registrado (#669)",
    "feat(desligamentos): coluna &quot;Próxima Ação&quot; com prazo legal, e os filtros que o componente já tinha (#668)",
    "feat(observabilidade): liga o trace_id do frontend ao bridge (#666)",
    "fix(portal): aviso de exclusão de documento para de mentir sobre o arquivo (#665)",
-   "chore(migrations): documenta no repo as 8 DDL que só existiam no ledger (#656)",
-   "test(e2e): resgata da muri os 5 especs de navegador (#661)"
+   "chore(migrations): documenta no repo as 8 DDL que só existiam no ledger (#656)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

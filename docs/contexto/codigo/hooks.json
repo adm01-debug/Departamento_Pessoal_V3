@@ -2503,7 +2503,7 @@
    "hooks_exportados": [
     "usePiiMask"
    ],
-   "linhas": 34,
+   "linhas": 38,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -2513,9 +2513,10 @@
     "useMemo"
    ],
    "canais_realtime": [],
-   "usado_por": 39,
+   "usado_por": 40,
    "usado_por_arquivos": [
     "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
+    "src/components/colaborador-detalhes/DadosPessoaisTab.tsx",
     "src/components/colaborador-detalhes/DependentesTab.tsx",
     "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
     "src/components/colaborador-detalhes/EmergenciaTab.tsx",
@@ -2543,8 +2544,7 @@
     "src/pages/AdminRegimentoInternoPage.tsx",
     "src/pages/AuditoriaPage.tsx",
     "src/pages/ColaboradorDetalhesPage.tsx",
-    "src/pages/ColaboradoresPage.tsx",
-    "src/pages/DocumentosPage.tsx"
+    "src/pages/ColaboradoresPage.tsx"
    ],
    "coberto_por_testes": 1
   },
