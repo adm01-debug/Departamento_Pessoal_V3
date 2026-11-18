@@ -134,36 +134,50 @@ jobs:
           # Versões já presentes no ledger do canônico são puladas: um
           # re-dispatch do mesmo lote não pode re-executar as migrações.
           applied="$(psql "$SUPABASE_DB_URL" -X -At -c "SELECT version FROM supabase_migrations.schema_migrations")"
-          # LOTE ATUAL: duas migrations que consertam uma armadilha em public.faltas.
-          #   Medido em 18/11/2026: a coluna tipo era text NOT NULL DEFAULT 'falta'
-          #   e a coluna status tinha DEFAULT 'registrada', mas os CHECKs
-          #   chk_faltas_tipo e chk_faltas_status (20260713110053:41-50) NAO
-          #   aceitam nenhum desses dois valores. Logo qualquer INSERT que
-          #   omitisse tipo ou status FALHAVA — e, por tipo ser NOT NULL, nem
-          #   passar NULL escapava. A tabela estava VAZIA (0 linhas), entao os
-          #   UPDATE das duas migrations sao no-op e o efeito e DDL puro: trocar
-          #   dois DEFAULT e recriar um CHECK. Melhor momento para consertar.
-          #  - 20260724000500_fix_faltas_status_default: DEFAULT -> 'pendente'.
-          #  - 20260724001200_fix_faltas_tipo_default_and_constraint: DEFAULT ->
-          #    'falta_injustificada', com DROP/ADD do CHECK em volta do backfill.
-          #    O sidecar exige que o CHECK volte a existir: sem o passo 4 a
-          #    tabela ficaria SEM validacao de tipo, pior que o problema.
-          #    Ver docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md §17.
+          # LOTE ATUAL: uma migration que garante isolamento multi-tenant por
+          #   banco nas tabelas de RH. SOMENTE DDL — nao apaga nem altera linha.
+          #   Medido em 18/11/2026: empresa_id era uuid NULLABLE em colaboradores,
+          #   folhas_pagamento, despesas, contas_bancarias, ferias, beneficios,
+          #   asos, batidas_ponto e desligamentos, com 0 linhas orfas em TODAS as
+          #   9. Ou seja: a tabela de rescisao (salario, valor liquido, hashes de
+          #   assinatura) nao tinha dono garantido por banco.
+          #  - 20261118160000_empresa_id_not_null_rh: SET NOT NULL nas 9.
           #
-          # O lote anterior (20261118110000_drop_policy_inerte_recrutamento) saiu
-          # daqui porque foi APLICADO e esta no ledger: validate run 44330969749,
-          # apply run 44331080813 e verify run 44331451635 (ledger OK +
-          # CANONICAL_VERIFY_OK). Conferido por consulta direta: candidatos e
-          # candidaturas ficaram com 1 policy cada, so para authenticated.
+          #   Termina o trabalho de duas migrations orfas sem levar o risco delas:
+          #   a 20260719191000 e DDL correto mas lista 'rescisoes' (tabela
+          #   inexistente) em vez de 'desligamentos' — erro de digitacao que
+          #   deixou a rescisao de fora; a 20260724000200 conserta isso mas na
+          #   linha 19 faz DELETE FROM desligamentos WHERE empresa_id IS NULL.
+          #   Hoje o DELETE atinge 0 de 2 linhas, mas apagaria uma rescisao com
+          #   salario sem backup se uma orfa nascer entre a medicao e o apply.
+          #   Esta migration verifica orfas PRIMEIRO e ABORTA nomeando tabela e
+          #   contagem, em vez de apagar. O sidecar prende isso: a assercao 3
+          #   exige que desligamentos continue com >= 2 linhas.
+          #   Ver docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md §18.
           #
-          # ATENCAO, custou dois erros meus hoje: o input `migration_files` do
+          #   beneficios ENTRA no lote. Eu havia tirado por achar que o NOT NULL
+          #   quebraria o cadastro de plano de beneficio; a Devin Review mostrou
+          #   que o supabase do front e Proxy para o external-db-bridge, e o
+          #   gateway ja recusa esse insert com 403 TENANT_SCOPE_REQUIRED desde
+          #   julho (validation.ts:105-110). Nao ha regressao a introduzir — ha um
+          #   botao que ja falha hoje, consertado em outra PR. Ver §18.2.
+          #
+          #   dependentes e holerites NAO entram: nao tem a coluna em producao.
+          #   registros_ponto e admissoes tambem nao: nunca estiveram na lista
+          #   original e nao foram medidas.
+          #
+          # O lote anterior (20260724000500 + 20260724001200, armadilha de
+          # public.faltas) saiu daqui porque foi APLICADO e esta no ledger:
+          # validate run 44333923501, apply run 44334121411 e verify run
+          # 44334327820 (ledger OK nas duas versoes + CANONICAL_VERIFY_OK).
+          #
+          # ATENCAO, custou dois erros meus: o input `migration_files` do
           # dispatch NAO escolhe o lote de validate/apply — e ESTA lista que
           # decide. E no mode=verify ele quer NOME DE ARQUIVO, sem o prefixo
           # supabase/migrations/ (o workflow prefixa; caminho completo gera
           # "supabase/migrations/supabase/migrations/..." e o sidecar nao e achado).
           for migration in \
-            20260724000500_fix_faltas_status_default.sql \
-            20260724001200_fix_faltas_tipo_default_and_constraint.sql
+            20261118160000_empresa_id_not_null_rh.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -334,7 +348,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 3 &&
+              Number(r.ledger_count) === 1 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&

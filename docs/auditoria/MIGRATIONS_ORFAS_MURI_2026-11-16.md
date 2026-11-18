@@ -1006,3 +1006,40 @@ do agente estava errada também: conferir não é o mesmo que conferir até o fi
 
 Placar de método da sessão: **12 erros meus corrigidos na `main` com prova ao lado**, 1 de
 agente, 2 de documentação achados pelo revisor automático neste PR.
+
+### 18.6 A migration que fecha o lote — e um gate cego achado no caminho
+
+`supabase/migrations/20261118160000_empresa_id_not_null_rh.sql` faz o efeito das duas
+aplicáveis e **não** faz o `DELETE`:
+
+- `SET NOT NULL` em `empresa_id` nas 9: `colaboradores`, `folhas_pagamento`, `despesas`,
+  `contas_bancarias`, `ferias`, `beneficios`, `asos`, `batidas_ponto`, `desligamentos`.
+- **Passo 1 verifica órfãs em todas antes de qualquer `ALTER`** e `RAISE EXCEPTION` nomeando
+  tabela e contagem se houver. Nada é apagado e nada é alterado: a decisão sobre a linha órfã
+  volta para quem pode tomar, com o dado na mão.
+- `dependentes` e `holerites` ficam fora **por nome**, não por guarda silenciosa — não têm a
+  coluna. A `20260719191000` as listava e as pulava calada; aqui o arquivo não promete o que
+  não entrega.
+- `registros_ponto` e `admissoes` não entram: nunca estiveram na lista original e não foram
+  medidas. Não se amplia escopo por conta própria.
+
+O sidecar prende o que ela promete **não** fazer: a asserção 3 exige que `desligamentos`
+continue com **≥ 2 linhas**. Se o `DELETE` voltasse num merge futuro, a contagem cairia e o
+`verify` reprovaria.
+
+**Gate cego achado ao editar o lote.** O passo "Verificar objetos e ledger" exigia
+`Number(r.ledger_count) === 3`, e a lista de versões em `scripts/canonical-invariants.sql:8-12`
+estava parada em `20260929120000` / `20261117190000` / `20261117193000` — nenhuma das três é de
+lote recente. Ou seja: os três lotes desta sessão (gov.br, policy inerte, armadilha de
+`faltas`) passaram por essa asserção **contando três registros velhos**. Exatamente a falha que
+o comentário do próprio arquivo avisava ("se ficar na versão do lote anterior, a asserção aprova
+por um registro ANTIGO e não prova nada do lote novo").
+
+Os três lotes **estão** aplicados — foram provados pelos próprios sidecars em `mode=verify`,
+que conferem o ledger versão por versão (`ledger ✓ versão X`) e por leitura direta do catálogo.
+O que não houve foi prova **por este gate**. Lista e asserção atualizadas para a versão deste
+lote (`=== 1`).
+
+Vale o registro de método: o gate que avisava sobre o próprio modo de falhar falhou desse jeito
+por três lotes seguidos. Comentário não é gate. O que prendeu de verdade, nas três vezes, foi o
+sidecar com asserção de ledger por versão.
