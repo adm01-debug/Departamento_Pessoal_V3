@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c3281196994c3d6689d26f61a8e1dffc25c1001a",
+  "commit": "6d44dd42e1984ff987cb13b4892c94aea5cbef2f",
   "branch": "main",
-  "data_commit": "2026-11-18T15:41:14-03:00",
+  "data_commit": "2026-11-18T16:22:30-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "6d44dd4",
+    "data": "2026-11-18",
+    "assunto": "fix(colaboradores): filtro de status oferecia valor inexistente no enum + 21 testes da muri (#701)"
+   },
    {
     "sha": "c328119",
     "data": "2026-11-18",
@@ -126,18 +131,13 @@
     "sha": "8d5a823",
     "data": "2026-11-18",
     "assunto": "infra: põe colaborador_lotacoes no LOTE ATUAL, pronta para validate/apply (#676)"
-   },
-   {
-    "sha": "b376487",
-    "data": "2026-11-18",
-    "assunto": "docs(auditoria): decide não aplicar colaborador_lotacoes, com a medição que sustenta (#675)"
    }
   ],
-  "arquivos_mudados_7d": 1152,
+  "arquivos_mudados_7d": 1155,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 382
+    "mudancas": 383
    },
    {
     "pasta": "src/components/ui",
@@ -238,6 +238,10 @@
     "mudancas": 8
    },
    {
+    "arquivo": "src/pages/ColaboradoresPage.tsx",
+    "mudancas": 8
+   },
+   {
     "arquivo": "docs/auditoria/sql-preservado/README.md",
     "mudancas": 7
    },
@@ -247,10 +251,6 @@
    },
    {
     "arquivo": "scripts/sync/mirror-github.sh",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "src/pages/ColaboradoresPage.tsx",
     "mudancas": 7
    },
    {
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3606,
-  "arquivos_codigo": 2093,
-  "linhas_codigo": 415419,
+  "arquivos_total": 3609,
+  "arquivos_codigo": 2096,
+  "linhas_codigo": 415939,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 426,
   "migrations": 878,
   "cron_jobs": 41,
-  "testes": 784,
+  "testes": 787,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 335
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 988,
-   "linhas": 179836
+   "arquivos": 989,
+   "linhas": 180011
   },
   "src/constants": {
    "arquivos": 7,
@@ -683,8 +683,8 @@
    "linhas": 3564
   },
   "src/pages": {
-   "arquivos": 134,
-   "linhas": 49575
+   "arquivos": 136,
+   "linhas": 49920
   },
   "src/providers": {
    "arquivos": 4,

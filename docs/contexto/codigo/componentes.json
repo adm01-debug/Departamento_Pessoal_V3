@@ -8995,7 +8995,7 @@
     "ColaboradoresPage"
    ],
    "export_default": "ColaboradoresPage",
-   "linhas": 340,
+   "linhas": 344,
    "dominio": "pages",
    "hooks_locais": [
     "useColaboradores",

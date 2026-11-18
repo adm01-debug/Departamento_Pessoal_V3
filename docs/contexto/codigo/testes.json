@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 784,
+ "total": 787,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 2,
-  "unit": 740
+  "unit": 743
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 653
+   "arquivos": 656
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -2938,6 +2938,17 @@
    "casos": 6
   },
   {
+   "arquivo": "src/components/__tests__/PdiCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 175,
+   "testa": [
+    "src/components/avaliacao/PdiCard.tsx",
+    "src/components/avaliacao/pdiComum.ts",
+    "src/components/avaliacao/pdiProgressoMock.ts"
+   ],
+   "casos": 14
+  },
+  {
    "arquivo": "src/components/__tests__/PdiDerivacoes.test.tsx",
    "tipo": "unit",
    "linhas": 298,
@@ -5313,6 +5324,15 @@
    "casos": 3
   },
   {
+   "arquivo": "src/pages/__tests__/AdmissoesConsolidacao.test.tsx",
+   "tipo": "unit",
+   "linhas": 140,
+   "testa": [
+    "src/pages/AdmissoesPage.tsx"
+   ],
+   "casos": 2
+  },
+  {
    "arquivo": "src/pages/__tests__/CanalEticaPage.test.tsx",
    "tipo": "unit",
    "linhas": 131,
@@ -5329,6 +5349,15 @@
    "testa": [
     "src/integrations/supabase/client.ts",
     "src/pages/CienciaMedidaPage.tsx"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/pages/__tests__/ColaboradoresPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 201,
+   "testa": [
+    "src/pages/ColaboradoresPage.tsx"
    ],
    "casos": 5
   },
@@ -7324,6 +7353,7 @@
   "src/components/avaliacao/NineBoxQuadranteDialog.tsx": 1,
   "src/components/avaliacao/NovoFeedbackDialog.tsx": 1,
   "src/components/avaliacao/OrigemHomologacao.tsx": 1,
+  "src/components/avaliacao/PdiCard.tsx": 1,
   "src/components/avaliacao/PendenciasAprovacao.tsx": 1,
   "src/components/avaliacao/PerformanceAuditTimeline.tsx": 2,
   "src/components/avaliacao/PerformanceDashboard.tsx": 1,
@@ -7352,7 +7382,8 @@
   "src/components/avaliacao/nineBoxMock.ts": 1,
   "src/components/avaliacao/nineBoxModo.ts": 3,
   "src/components/avaliacao/papeisAvaliacao.ts": 1,
-  "src/components/avaliacao/pdiComum.ts": 1,
+  "src/components/avaliacao/pdiComum.ts": 2,
+  "src/components/avaliacao/pdiProgressoMock.ts": 1,
   "src/components/avaliacao/servicoDemo.ts": 1,
   "src/components/avaliacao/statusFeedback.ts": 1,
   "src/components/beneficios/BeneficioHistorico.tsx": 1,
@@ -7783,8 +7814,10 @@
   "src/pages/AdminAgendamentoExamesPage.tsx": 1,
   "src/pages/AdminExtintoresPage.tsx": 1,
   "src/pages/AdminRegimentoInternoPage.tsx": 1,
+  "src/pages/AdmissoesPage.tsx": 1,
   "src/pages/CanalEticaPage.tsx": 1,
   "src/pages/CienciaMedidaPage.tsx": 1,
+  "src/pages/ColaboradoresPage.tsx": 1,
   "src/pages/ComunicacaoInternaPage.tsx": 1,
   "src/pages/ConveniosPage.tsx": 1,
   "src/pages/DepartamentosPage.tsx": 1,
@@ -7996,7 +8029,6 @@
    "src/pages/AdminSecurityPage.tsx",
    "src/pages/AdminSstDashboardPage.tsx",
    "src/pages/AdminTelemetriaPage.tsx",
-   "src/pages/AdmissoesPage.tsx",
    "src/pages/AfastamentosPage.tsx",
    "src/pages/AssinarContratoPage.tsx",
    "src/pages/AssinaturasPage.tsx",
@@ -8014,7 +8046,6 @@
    "src/pages/CentrosCustoPage.tsx",
    "src/pages/ColaboradorDetalhesPage.tsx",
    "src/pages/ColaboradorFormPage.tsx",
-   "src/pages/ColaboradoresPage.tsx",
    "src/pages/ConfiguracoesPage.tsx",
    "src/pages/ContabilidadePage.tsx",
    "src/pages/ContratacaoPage.tsx",

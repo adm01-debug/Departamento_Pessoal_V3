@@ -198,7 +198,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 305,
+   "testes": 306,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -7871,7 +7871,7 @@
    "modulo": "pages",
    "arquivos": 113,
    "testes": 0,
-   "linhas": 45999,
+   "linhas": 46003,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -8996,7 +8996,7 @@
   {
    "modulo": "pages/__tests__",
    "arquivos": 0,
-   "testes": 21,
+   "testes": 23,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],

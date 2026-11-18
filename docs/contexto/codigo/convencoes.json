@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (653)",
+   "co-localizado (__tests__) (656)",
    "co-localizado (*.test) (73)",
    "e2e/ (33)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(colaboradores): filtro de status oferecia valor inexistente no enum + 21 testes da muri (#701)",
    "feat(contas-bancarias): resgata identidade visual de banco da muri (#699)",
    "feat(dashboard): resgata Resumo Operacional e Próximas Atividades da muri (#698)",
    "test: recupera 9 arquivos de teste da branch muri (#546) — 107 casos (#697)",
-   "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#688)",
-   "feat: empresa_id NOT NULL nas 9 tabelas de RH + veredito das 21 migrations (#695)"
+   "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#688)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
