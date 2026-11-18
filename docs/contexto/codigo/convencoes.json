@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: retrata o \"maior risco aberto\" - a policy public e inerte (#692)",
+   "chore: fecha 2 dos 3 casos sem veredito e sobe o risco de policy public (#691)",
    "fix: retrata o Lote 1 - nao era funcionalidade morta, era falta de consumidor (#690)",
    "chore: tria as 26 migrations restantes em 6 lotes de decisao (#689)",
-   "infra: poe a migration do gov.br no lote canonico para destravar o login (#687)",
-   "fix: retrata \"as 52 estao aplicadas\" - 27 nao estao, e uma e bug de producao (#686)",
-   "fix: troca as tres passadas de regex da guarda de RLS por um tokenizador unico (#684)"
+   "infra: poe a migration do gov.br no lote canonico para destravar o login (#687)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

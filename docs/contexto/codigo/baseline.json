@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "102526573dc6a0efc94b9bbc9fe31959b6933aca",
+  "commit": "7524b933bda5766a22875f1ba8ec9e231a1702f9",
   "branch": "main",
-  "data_commit": "2026-11-18T07:08:51-03:00",
+  "data_commit": "2026-11-18T08:06:57-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "7524b93",
+    "data": "2026-11-18",
+    "assunto": "fix: retrata o \"maior risco aberto\" - a policy public e inerte (#692)"
+   },
+   {
+    "sha": "b74d4c2",
+    "data": "2026-11-18",
+    "assunto": "chore: fecha 2 dos 3 casos sem veredito e sobe o risco de policy public (#691)"
+   },
    {
     "sha": "1025265",
     "data": "2026-11-18",
@@ -121,16 +131,6 @@
     "sha": "2569c2a",
     "data": "2026-11-17",
     "assunto": "feat(observabilidade): liga o trace_id do frontend ao bridge (#666)"
-   },
-   {
-    "sha": "fa2dec8",
-    "data": "2026-11-17",
-    "assunto": "fix(portal): aviso de exclusão de documento para de mentir sobre o arquivo (#665)"
-   },
-   {
-    "sha": "94c16ea",
-    "data": "2026-11-17",
-    "assunto": "chore(migrations): documenta no repo as 8 DDL que só existiam no ledger (#656)"
    }
   ],
   "arquivos_mudados_7d": 1131,
@@ -226,6 +226,10 @@
     "mudancas": 9
    },
    {
+    "arquivo": "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
+    "mudancas": 8
+   },
+   {
     "arquivo": "scripts/automation.config.json",
     "mudancas": 8
    },
@@ -250,15 +254,7 @@
     "mudancas": 7
    },
    {
-    "arquivo": "deno.lock",
-    "mudancas": 6
-   },
-   {
     "arquivo": "docs/agentes/banco.md",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
     "mudancas": 6
    },
    {
@@ -296,6 +292,10 @@
    {
     "arquivo": "src/services/colaboradorService.ts",
     "mudancas": 6
+   },
+   {
+    "arquivo": "deno.lock",
+    "mudancas": 5
    }
   ],
   "autores_30d": [

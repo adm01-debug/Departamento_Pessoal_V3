@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `102526573dc6a0efc94b9bbc9fe31959b6933aca` (2026-11-18T07:08:51-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7524b933bda5766a22875f1ba8ec9e231a1702f9` (2026-11-18T08:06:57-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27331 nós · 61650 arestas · 2330 comunidades · grafo do commit `10252657`
-- comunidades maiores: cn (654), useEmpresas (534), 20260831_corrected_public.sql (493), canonical_schema.sql (475), button.tsx (452), vitest (383), services/index.ts (306), PremiacoesPage.tsx (212), contract.ts (169), "public"."empresas" (159), react (157), "public"."colaboradores" (155)
+- 27337 nós · 61663 arestas · 2354 comunidades · grafo do commit `7524b933`
+- comunidades maiores: useEmpresas (555), 20260831_corrected_public.sql (497), canonical_schema.sql (475), button.tsx (422), vitest (419), lucide-react (379), cn (346), App.tsx (224), rateLimit.ts (193), react (192), ColaboradorDetalhesPage.tsx (176), services/index.ts (172)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -409,13 +409,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package-lock.json (10)
 - scripts/sync/autocommit-local.sh (10)
 - docs/prod-readiness.md (9)
+- docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (8)
 - scripts/automation.config.json (8)
 - docs/auditoria/sql-preservado/README.md (7)
 - scripts/audit-migration-style.mjs (7)
 - scripts/canonical-invariants.sql (7)
 - scripts/sync/mirror-github.sh (7)
 - src/pages/ColaboradoresPage.tsx (7)
-- deno.lock (6)
 - docs/agentes/banco.md (6)
 
 ## Workflows
@@ -653,6 +653,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-18 `7524b93` fix: retrata o "maior risco aberto" - a policy public e inerte (#692)
+- 2026-11-18 `b74d4c2` chore: fecha 2 dos 3 casos sem veredito e sobe o risco de policy public (#691)
 - 2026-11-18 `1025265` fix: retrata o Lote 1 - nao era funcionalidade morta, era falta de consumidor (#690)
 - 2026-11-18 `e667066` chore: tria as 26 migrations restantes em 6 lotes de decisao (#689)
 - 2026-11-18 `4bb5a24` infra: poe a migration do gov.br no lote canonico para destravar o login (#687)
@@ -666,8 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-18 `616e46b` chore: integra a lição dos P0 preservados como guarda de CI contra RLS permissiva (#679)
 - 2026-11-18 `d324939` chore: fecha a conta da muri com medições, em vez de inferências (#678)
 - 2026-11-18 `9ffdf21` feat: integra colaborador_lotacoes ponta a ponta no dossiê do colaborador (#677)
-- 2026-11-18 `8d5a823` infra: põe colaborador_lotacoes no LOTE ATUAL, pronta para validate/apply (#676)
-- 2026-11-18 `b376487` docs(auditoria): decide não aplicar colaborador_lotacoes, com a medição que sustenta (#675)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

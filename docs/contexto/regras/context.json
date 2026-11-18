@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "102526573dc6a0efc94b9bbc9fe31959b6933aca",
+  "sha": "7524b933bda5766a22875f1ba8ec9e231a1702f9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 10:14 UTC",
+  "generated_at": "2026-11-18 11:13 UTC",
   "files_total": 3599,
   "code_files": 3022,
   "code_lines": 478255
@@ -327227,10 +327227,28 @@
   }
  },
  "git": {
-  "sha": "102526573dc6a0efc94b9bbc9fe31959b6933aca",
+  "sha": "7524b933bda5766a22875f1ba8ec9e231a1702f9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "7524b93",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "fix: retrata o \"maior risco aberto\" - a policy public e inerte (#692)",
+    "files": [
+     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md"
+    ]
+   },
+   {
+    "sha": "b74d4c2",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "chore: fecha 2 dos 3 casos sem veredito e sobe o risco de policy public (#691)",
+    "files": [
+     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md"
+    ]
+   },
    {
     "sha": "1025265",
     "date": "2026-11-18",
@@ -327541,39 +327559,19 @@
      "src/utils/__tests__/rescisaoCalc.test.ts",
      "src/utils/rescisaoCalc.ts"
     ]
-   },
-   {
-    "sha": "1ddd897",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "docs(auditoria): veredito sobre apagar a branch muri, com a triagem dos 111 arquivos (#662)",
-    "files": [
-     "docs/auditoria/VEREDITO_MURI_2026-11-17.md"
-    ]
-   },
-   {
-    "sha": "c234912",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(colaborador): editar conta bancária, com o dado real só para quem pode vê-lo (#659)",
-    "files": [
-     "src/components/__tests__/ContasBancariasTab.test.tsx",
-     "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
-     "src/hooks/useTabelasReferencia.ts"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
+    7
+   ],
    [
     "docs/auditoria/sql-preservado/README.md",
     7
    ],
    [
     "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
-    6
-   ],
-   [
-    "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
     5
    ],
    [
