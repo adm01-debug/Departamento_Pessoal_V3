@@ -60,6 +60,34 @@ const DROP_POLICY_RE =
   /^\s*DROP\s+POLICY\s+IF\s+EXISTS\s+"?([A-Za-z0-9_]+)"?\s+ON\s+(?:"?[A-Za-z0-9_]+"?\.)?"?([A-Za-z0-9_]+)"?/i;
 const ALLOW_ANNOTATION_RE = /^\s*--\s*audit-migration-style:\s*allow-silent-drop\b/i;
 
+// Duas portas de RLS permissiva, derivadas de uma migration real que ficou fora
+// da `main` justamente por reabrir isto (docs/auditoria/sql-preservado/README.md):
+//
+//   USING (empresa_id = user_empresa_id() OR empresa_id IS NULL
+//          OR auth.jwt() ->> 'role' IN ('admin','super_admin'))
+//
+// 1. `empresa_id IS NULL` numa policy libera toda linha de tenant nulo para
+//    QUALQUER usuário autenticado de QUALQUER empresa — uma linha basta para
+//    vazar entre inquilinos. A `main` exige `empresa_id IS NOT NULL`.
+// 2. Autorização lida de `auth.jwt()` é payload de token, não fonte de verdade
+//    do servidor. A `main` decide por `public.is_admin(auth.uid())` /
+//    `rls_tenant_or_admin()`, e tem invariantes de banco exigindo isso.
+const POLICY_NULL_TENANT_RE = /\bempresa_id\s+IS\s+NULL\b/i;
+const POLICY_JWT_AUTHZ_RE = /\bauth\s*\.\s*jwt\s*\(\s*\)/i;
+const CREATE_POLICY_RE = /^\s*CREATE\s+POLICY\s+"?([A-Za-z0-9_]+)"?/i;
+
+/** Remove comentários e literais para que a detecção olhe só o código: um
+ *  `COMMENT ON ... IS '... empresa_id IS NULL ...'` não é uma policy. */
+function stripSqlNoise(sql) {
+  return sql.replace(/--[^\n]*|\/\*[\s\S]*?\*\/|'(?:[^']|'')*'/g, (t) => (t[0] === "'" ? "''" : ''));
+}
+
+/** Escape hatch explícito: a anotação tem de citar o nome da policy. */
+function temAnotacaoPara(rawContent, tipo, policyName) {
+  const re = new RegExp(`^\\s*--\\s*audit-migration-style:\\s*${tipo}\\b.*\\b${escapeRegex(policyName)}\\b`, 'im');
+  return re.test(rawContent);
+}
+
 function escapeRegex(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -90,7 +118,9 @@ const migrationFiles = entries
 // Guard de falso verde: o corte é histórico, então 0 migrations avaliadas
 // significa diretório esvaziado ou padrão de nome quebrado -- não "tudo limpo".
 if (migrationFiles.length === 0) {
-  console.error(`❌ audit-migration-style: nenhuma migration >= ${CUTOFF_VERSION} em ${migrationsDir} — nada foi avaliado.`);
+  console.error(
+    `❌ audit-migration-style: nenhuma migration >= ${CUTOFF_VERSION} em ${migrationsDir} — nada foi avaliado.`
+  );
   process.exit(1);
 }
 
@@ -131,20 +161,75 @@ for (const fileName of migrationFiles) {
   }
   console.error(
     '   DROP POLICY IF EXISTS sem verificação fail-closed que cite a policy ou tabela (pg_policies + ' +
-    'RAISE EXCEPTION + nome entre aspas, ver supabase/migrations/_template.sql) e sem ' +
-    '"-- audit-migration-style: allow-silent-drop <motivo>" na linha imediatamente acima.'
+      'RAISE EXCEPTION + nome entre aspas, ver supabase/migrations/_template.sql) e sem ' +
+      '"-- audit-migration-style: allow-silent-drop <motivo>" na linha imediatamente acima.'
   );
 }
 
 if (failures > 0) {
   console.error(
     `\n${failures} migration(s) nova(s) com DROP POLICY IF EXISTS solto ` +
-    `(de ${filesWithAnyDrop} com DROP, ${migrationFiles.length} migrations avaliadas desde ${CUTOFF_VERSION}).`
+      `(de ${filesWithAnyDrop} com DROP, ${migrationFiles.length} migrations avaliadas desde ${CUTOFF_VERSION}).`
+  );
+  process.exit(1);
+}
+
+// ── Segunda passada: policy permissiva (tenant nulo / authz por JWT) ─────────
+let rlsFailures = 0;
+let policiesAvaliadas = 0;
+
+for (const fileName of migrationFiles) {
+  const raw = await readFile(resolve(migrationsDir, fileName), 'utf8');
+  const rawLines = raw.split('\n');
+  // Split por `;`: o corpo de uma policy quebra em várias linhas, então a
+  // detecção tem de olhar o STATEMENT inteiro, não linha a linha.
+  const statements = stripSqlNoise(raw).split(';');
+  const violacoes = [];
+
+  for (const stmt of statements) {
+    const match = CREATE_POLICY_RE.exec(stmt);
+    if (!match) continue;
+    policiesAvaliadas += 1;
+    const policyName = match[1];
+    const lineNo = rawLines.findIndex((l) => CREATE_POLICY_RE.test(l) && l.includes(policyName)) + 1;
+
+    if (POLICY_NULL_TENANT_RE.test(stmt) && !temAnotacaoPara(raw, 'allow-null-tenant', policyName)) {
+      violacoes.push({
+        policyName,
+        lineNo,
+        tipo: 'allow-null-tenant',
+        porque: '`empresa_id IS NULL` libera linhas de tenant nulo para qualquer empresa',
+      });
+    }
+    if (POLICY_JWT_AUTHZ_RE.test(stmt) && !temAnotacaoPara(raw, 'allow-jwt-authz', policyName)) {
+      violacoes.push({
+        policyName,
+        lineNo,
+        tipo: 'allow-jwt-authz',
+        porque: 'autorização vinda de `auth.jwt()` em vez de is_admin(auth.uid()) / rls_tenant_or_admin()',
+      });
+    }
+  }
+
+  if (violacoes.length === 0) continue;
+  rlsFailures += 1;
+  console.error(`❌ ${fileName}`);
+  for (const v of violacoes) {
+    console.error(`   linha ${v.lineNo} — policy "${v.policyName}": ${v.porque}`);
+    console.error(`   Se for intencional: "-- audit-migration-style: ${v.tipo} <motivo> ${v.policyName}".`);
+  }
+}
+
+if (rlsFailures > 0) {
+  console.error(
+    `\n${rlsFailures} migration(s) nova(s) com policy permissiva ` +
+      `(de ${policiesAvaliadas} CREATE POLICY avaliadas desde ${CUTOFF_VERSION}).`
   );
   process.exit(1);
 }
 
 console.log(
-  `✅ audit-migration-style: ${migrationFiles.length} migration(s) desde ${CUTOFF_VERSION} sem DROP POLICY solto` +
-  (filesWithAnyDrop > 0 ? ` (${filesWithAnyDrop} com DROP guardado OK)` : '') + '.'
+  `✅ audit-migration-style: ${migrationFiles.length} migration(s) desde ${CUTOFF_VERSION} sem DROP POLICY solto, ${policiesAvaliadas} policy(s) sem tenant nulo nem authz por JWT` +
+    (filesWithAnyDrop > 0 ? ` (${filesWithAnyDrop} com DROP guardado OK)` : '') +
+    '.'
 );

@@ -151,6 +151,25 @@ por `20260912195000_p1_scoped_audit_trail.sql` — a versão **escopada por empr
 derrubaria a versão endurecida vigente. Mesmo defeito de `FIX_APLICAR_REGISTRAR_AUDITORIA.sql`,
 que além disso manda colar no SQL Editor do dashboard — caminho proibido pelo AGENTS §5.
 
+### O que FOI integrado destes arquivos: a lição, como guarda de CI
+
+Preservar sem aprender nada seria perder o trabalho de outra forma. Os dois defeitos da
+`20260821000000` viraram asserção estática em `scripts/audit-migration-style.mjs`, que o
+`ci.yml:383` já executava — nenhum workflow foi tocado:
+
+1. nenhum `CREATE POLICY` pode conter `empresa_id IS NULL`;
+2. nenhum `CREATE POLICY` pode ler autorização de `auth.jwt()`.
+
+A detecção olha o STATEMENT inteiro (o corpo de uma policy quebra em várias linhas), ignora
+comentários e literais, e tem escape hatch que exige citar o nome da policy:
+`-- audit-migration-style: allow-null-tenant <motivo> <policy>`.
+
+Verificado nos três estados: reprova a policy da `muri` copiada literalmente (exit 1, os dois
+defeitos apontados por nome e linha), aceita com a anotação (exit 0), e passa nas 145 migrations
+da `main` (76 CREATE POLICY avaliadas). Ou seja: o erro daquele arquivo não entra mais no banco
+por nenhuma via, e a intenção legítima do outro agente — "o dashboard não pode quebrar por RLS" —
+continua atendida pelas policies escopadas da `main`.
+
 > **Por que preservar, e não integrar.** O pedido do dono tem duas metades: "não perder trabalho de
 > outro agente" **e** "o sistema não pode ter regressões". Nestes três arquivos as metades apontam
 > para lados opostos, e a segunda vence porque o dano é concreto e medido acima: vazamento entre
