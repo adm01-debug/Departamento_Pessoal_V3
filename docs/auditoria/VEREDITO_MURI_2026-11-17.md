@@ -147,6 +147,36 @@ consumidora na `muri`.
 | contrato de `trace_id` (3 pontos no backend)                          | 0 no frontend      | #666      |
 | `proximaAcaoDesligamento` (`:183`) + 7 props de `DesligamentoFilters` | 0                  | #668      |
 
+## 5b. As PRs fechadas sem merge — 38, verificadas uma a uma
+
+O objetivo cobre PRs, não só branches. São **38** PRs fechadas sem merge no repositório. Importante:
+**fechar branch não apaga PR** — o diff de uma PR fechada fica no GitHub indefinidamente, então nada
+aqui se perde ao apagar a `muri` ou as branches locais. Mesmo assim, cada uma foi verificada.
+
+**25 são bumps do dependabot** (`build(deps)`), substituídos por bumps posteriores já na `main`.
+Das 13 restantes:
+
+| PR          | o que era                             | veredito                                                                                                                                                                                                                                                                                                                                                  |
+| ----------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #546 `Muri` | a branch inteira                      | triada na seção 3 e 4                                                                                                                                                                                                                                                                                                                                     |
+| #592        | canonização de 8 migrations           | o próprio título diz "conteúdo já está na main"                                                                                                                                                                                                                                                                                                           |
+| #564        | integra Avaliação/NineBox da `muri`   | **incorporada**: 34 113 linhas acrescentadas, **100** ausentes — e as 100 são o comentário do `eslint.config.js`. A exceção em si está na `main` (`:117` e `:122`), e os 83 arquivos de `src/components/avaliacao/` estão lá                                                                                                                              |
+| #533        | feriado de 20/11 no prazo do Art. 145 | **incorporada sob outro nome.** A PR propunha `20261114000700_eh_feriado_fixo_br_consciencia_negra.sql`; a `main` tem `20261114000000_remediate_ferias_art145_11_20.sql`, que inclui `'11-20'` em `eh_feriado_fixo_br` (`:24`) e cujo sidecar **assere o comportamento** — `prosrc ILIKE '%11-20%'` **e** `eh_feriado_fixo_br(DATE '2026-11-20') IS TRUE` |
+| #209        | 4 rotinas agendadas que falhavam      | **as duas migrations estão na `main`**. As 26 linhas ausentes são a lista do LOTE ATUAL e dois invariantes (`cron_routines_ok`, `ferias_status_job_ok`) — o mesmo padrão de lote que rotaciona, não regra de negócio                                                                                                                                      |
+| #358        | bypass de MFA para E2E                | **na `main`, mais amplo**: `VITE_E2E_BYPASS_MFA` aparece em `ProtectedRoute.tsx`, `AdminRoute.tsx` e `MfaGate.tsx`                                                                                                                                                                                                                                        |
+| #370        | reprovar dependência ausente          | **na `main`** (`check-dependencies.js:131`), com mensagem melhor                                                                                                                                                                                                                                                                                          |
+| #371        | fail-fast nos geradores               | **a `main` está à frente**: `generate-component.js:11` já usa `path.join(import.meta.dirname, …)` em ESM; a PR era CommonJS com `require`                                                                                                                                                                                                                 |
+| #372        | fail-fast nos scripts de shell        | **na `main`**: `backup.sh` tem `set -euo pipefail` (`:5`), `error() … exit 1` (`:26`) e `if ! … pg_dump` (`:35`)                                                                                                                                                                                                                                          |
+| #361        | estabilizar cleanup do E2E            | comentários e um `const initialis =` (nome com erro de digitação). Nada de função                                                                                                                                                                                                                                                                         |
+| #256        | notas de sessão no `CLAUDE.md`        | histórico; o `CLAUDE.md` da `main` hoje é só `@AGENTS.md`                                                                                                                                                                                                                                                                                                 |
+| #328        | `Create main.yml`                     | 1 linha, stub                                                                                                                                                                                                                                                                                                                                             |
+
+**Única melhoria não incorporada em toda a varredura de PRs:** a #391 embrulha a leitura dos
+arquivos de entrada do `scripts/build-rebaseline.mjs` em `try/catch` com mensagem clara; a `main`
+lê direto em `:21`. É mensagem de erro em script de build, e o head da própria PR tem os
+comentários com UTF-8 duplamente codificado (`correÃ§Ãµes`), que voltariam para o repositório.
+Fica anotado, não resgatado.
+
 ## 6. O que fica para o dono
 
 1. **`colaborador_lotacoes`** — a tabela não existe no banco canônico (`42P01`), e a migration que a
