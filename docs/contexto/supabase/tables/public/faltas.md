@@ -23,11 +23,11 @@
 | 4 | `data` | `date` | não |  |  |  |
 | 5 | `data_fim` | `date` | sim |  |  |  |
 | 6 | `dias_total` | `integer` | sim | `1` |  |  |
-| 7 | `tipo` | `text` | não | `'falta'::text` |  |  |
+| 7 | `tipo` | `text` | não | `'falta_injustificada'::text` |  |  |
 | 8 | `justificada` | `boolean` | sim | `false` |  |  |
 | 9 | `motivo_afastamento_id` | `integer` | sim |  |  |  |
 | 10 | `motivo` | `text` | sim |  |  |  |
-| 11 | `status` | `text` | sim | `'registrada'::text` |  |  |
+| 11 | `status` | `text` | sim | `'pendente'::text` |  |  |
 | 12 | `cid` | `text` | sim |  |  |  |
 | 13 | `medico_nome` | `text` | sim |  |  |  |
 | 14 | `medico_crm` | `text` | sim |  |  |  |

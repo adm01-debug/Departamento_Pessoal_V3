@@ -24824,7 +24824,7 @@
       },
       {
         "comment": null,
-        "default": "'falta'::text",
+        "default": "'falta_injustificada'::text",
         "generated": null,
         "identity": null,
         "is_enum": false,
@@ -24876,7 +24876,7 @@
       },
       {
         "comment": null,
-        "default": "'registrada'::text",
+        "default": "'pendente'::text",
         "generated": null,
         "identity": null,
         "is_enum": false,

@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-18 16:15 UTC
+
+- **colunas** alterado (2): `public.faltas.status`, `public.faltas.tipo`
+
 ## 2026-11-18 15:13 UTC
 
 - **functions** alterado (1): `public.get_auth_empresa_id()`
