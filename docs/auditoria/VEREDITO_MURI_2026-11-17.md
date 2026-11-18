@@ -146,9 +146,40 @@ consumidora na `muri`.
 
 ## 6. O que fica para o dono
 
-1. **Tabelas declaradas e ausentes do banco** — `query_telemetry` está em
-   `integrations/supabase/types.ts:16471` e em `schemas/tableColumns.ts:3280`, e **não existe** no
-   banco canônico (`information_schema`). Por isso o `trace_id` da #666 correlaciona em **log**, não
-   em tabela. `colaborador_lotacoes` é o mesmo caso e bloqueia 2 arquivos da `muri`.
-2. **`docs/api/`** — 37 arquivos só na `muri`, ainda não avaliados.
-3. **A `muri` em si** — pode ser apagada depois da #669. Tudo o que sobrou dela está acima, com a razão.
+1. **`colaborador_lotacoes`** — a tabela não existe no banco canônico (`42P01`), e a migration que a
+   cria, `20260929120000_colaborador_lotacoes.sql`, existe **só na `muri`**. Com ela vão embora
+   quatro coisas que a `main` não tem: a tabela de associação N:N colaborador↔lotação; o índice
+   único **parcial** que garante no máximo uma lotação principal por colaborador; o trigger
+   `colaborador_lotacoes_valida_tenant`, que valida que linha, colaborador e lotação são da **mesma
+   empresa** (a RLS sozinha não valida o tenant da FK); e o `COMMENT` que deprecia
+   `lotacoes.colaborador_id`.
+
+   **Efeito hoje: nenhum.** Nada na `main` lê ou escreve essa tabela (as duas menções em
+   `src/mocks/colaboradoresMock.ts:1679,1686` são comentários), e `public.lotacoes` tem **0 linhas**
+   em produção. A `main` cobre "unidade de lotação" por outro caminho —
+   `colaboradores.local_trabalho_id` → `locais_trabalho`, em `TrabalhoHierarquiaTab.tsx:306-308` —
+   mas isso é uma unidade por colaborador, só leitura, não o N:N com flag `principal`.
+
+   A decisão já estava registrada: `docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md:146-156` diz
+   "nenhum código consulta a tabela; quem consulta é a aba Trabalho & Hierarquia da `muri`.
+   **Aplicar junto com essa aba**". Então o risco não é dado perdido: é o **SQL se perder** se a
+   `muri` for apagada antes de a aba ser decidida.
+
+2. **`docs/api/`** — 37 arquivos só na `muri`.
+
+3. **A `muri` em si** — pode ser apagada depois de preservado o SQL do item 1.
+
+### Correção de uma afirmação anterior deste documento
+
+Uma versão anterior desta seção dizia que `public.query_telemetry` **não existia** no banco e que,
+por isso, o `trace_id` da #666 correlacionaria "em log, não em tabela". **As duas afirmações eram
+falsas.** A tabela existe: 322 linhas, RLS ligada com 3 policies, e a coluna `trace_id` (criada por
+`20260724120000_p3_064_query_telemetry_trace_id.sql`, versão no ledger) com 57 linhas preenchidas. A
+criação está em `20260323120607_*.sql` e `20260522142643_*.sql`, ambas aplicadas. O `trace_id`
+correlaciona **em tabela**.
+
+A causa do erro foi de método, e vale registrar: consultas `SELECT` em `information_schema` feitas
+pelo MCP `supabase_db_query` voltaram `{"rows": [], "affected": true}` — vazio, sem erro. Isso foi
+lido como "a tabela não existe". `supabase_db_count` e `supabase_db_list_columns` respondem
+corretamente nos mesmos objetos. **Ausência de linhas num `SELECT` por essa via não prova ausência
+do objeto**; confirme com `count`/`list_columns`, ou com `to_regclass`.
