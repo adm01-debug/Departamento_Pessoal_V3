@@ -113,6 +113,23 @@ catálogo (`pg_catalog`, `information_schema`) use o modo `verify` do
 `canonical-migrations.yml` com um sidecar, que roda com `default_transaction_read_only=on` e
 **sem** `SET ROLE` — foi assim que as 5 migrations resgatadas foram provadas no banco.
 
+### Pré-requisitos do `mode=verify` como alternativa (não é consulta livre)
+
+O `mode=verify` do `canonical-migrations.yml` **não substitui** uma consulta ad-hoc. Ele tem três
+exigências, e omiti-las aqui faria alguém tentar e falhar:
+
+1. **a migration tem de estar no ledger** — o passo checa
+   `count(*) = 1` em `supabase_migrations.schema_migrations` antes de rodar o sidecar
+   (`canonical-migrations.yml:501-544`), e recusa migration pendente;
+2. **a saída só pode ter linhas `ok`** — toda linha não-vazia é comparada com `ok` literal, então a
+   consulta precisa ser reescrita como **asserção**, não como listagem. Listar as sobrecargas de
+   `pg_proc` direto reprovaria o workflow;
+3. **só roda a partir da `main`** — há um gate de branch (`canonical-migrations.yml:46-58`).
+
+Ou seja: serve para **verificar um invariante** sobre o banco (foi assim que as 5 migrations
+resgatadas foram provadas), não para explorar. Para exploração sem o papel `ci_auditor` não há hoje
+caminho seguro — é o que o item acima pede para decidir.
+
 ### Duas armadilhas do guard W27, para quem for escrever uma consulta ali
 
 O guard de PII em `scripts/diag/run-sql-diag.mjs:137-166` é conservador por regex, e duas coisas
