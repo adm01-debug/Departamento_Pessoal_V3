@@ -96,50 +96,153 @@ function mascarar(trecho) {
 /**
  * Neutraliza o que não é código executável, preservando posições.
  *
- * Ordem: comentários → dollar-quoted → literais de aspas simples. Comentários
- * primeiro porque são onde mais aparecem `$` e aspas soltas, que de outro modo
- * viram delimitadores falsos e engolem o SQL seguinte.
+ * Varredura ÚNICA da esquerda para a direita. A versão anterior fazia três
+ * passadas de regex independentes (comentários → dollar-quoted → aspas
+ * simples) e cada uma ignorava o estado léxico das outras. Os revisores da
+ * PR #681 acharam três fugas reais, todas reproduzidas antes da correção:
  *
- * Dollar-quoted (`$$ ... $$`, `$doc$ ... $doc$`) é o caso delicado: o corpo de
- * `DO $$ ... $$` e de `CREATE FUNCTION ... AS $$ ... $$` é EXECUTÁVEL e pode
- * criar policy, então tem de continuar sendo varrido. Já um
- * `COMMENT ON ... IS $doc$ ... $doc$` é texto. A regra é fail-closed: o corpo só
- * é descartado quando a palavra imediatamente anterior é `IS`; em qualquer
- * outra posição ele permanece e é inspecionado.
+ *  1. `COMMENT ON t IS '--'; CREATE POLICY ...` — o `--` dentro do literal era
+ *     lido como comentário de linha e apagava a policy da mesma linha.
+ *  2. `IS 'x IS $$'` ... policy ... `IS 'fim $$'` — os dois `$$` dentro de
+ *     literais se pareavam como um dollar-quote e, como o texto anterior
+ *     terminava em `IS`, o corpo (com a policy dentro) era descartado.
+ *  3. `IS 'linha um\nfim'; CREATE POLICY ... 'role' ...` — a aspa de fecho do
+ *     literal multilinha se pareava com a aspa seguinte da MESMA linha e
+ *     mascarava a policy entre elas.
  *
- * Limitação declarada: `$` dentro de comentário ou literal já foi mascarado
- * antes, mas um delimitador dollar-quoted sem fechamento no arquivo faz o
- * restante ser tratado como corpo — o que mantém a varredura (fail-closed).
+ * Com um só varredor isso não acontece: quem abre primeiro consome o trecho.
+ *
+ * Regras por token:
+ *  - `--` até fim de linha e `/* *\/` (aninhável, como no PostgreSQL): máscara.
+ *  - `'...'` (com `''`, e com `\` quando é `E'...'`), podendo atravessar
+ *    linhas: máscara.
+ *  - `"..."`: identificador — NÃO mascara, só atravessa. O nome da policy vive
+ *    aqui e precisa continuar legível para a captura; mas `--` ou `'` dentro
+ *    dele não pode virar delimitador.
+ *  - `$tag$ ... $tag$`: o corpo de `DO $$ ... $$` e de
+ *    `CREATE FUNCTION ... AS $$ ... $$` é EXECUTÁVEL e pode criar policy, então
+ *    continua sendo varrido. Só é descartado quando a palavra imediatamente
+ *    anterior é `IS` (o caso `COMMENT ON ... IS $doc$ ... $doc$`, que é texto).
+ *    Fail-closed: em qualquer outra posição o corpo permanece e é inspecionado.
+ *  - Delimitador sem fechamento no arquivo: mantém o resto (fail-closed).
+ *
+ * Decisão deliberada: o corpo dollar-quoted MANTIDO (o executável) é varrido
+ * recursivamente, mas em modo `mascararLiterais = false`: comentários dentro
+ * dele CONTINUAM sendo neutralizados (sem isso um `-- ... ;` entre os tokens da
+ * policy encerrava a deteccao antes do `empresa_id IS NULL` — regressão que um
+ * revisor pegou na #684 e que o tokenizador de três passadas não tinha), e os
+ * literais são preservados. É assim que
+ * `EXECUTE 'CREATE POLICY ... empresa_id IS NULL'` dentro de `DO $$ ... $$`
+ * continua visível para a guarda — SQL dinâmico cria policy de verdade, e é
+ * justamente ali que uma permissiva passaria sem ser vista. O preço é falso
+ * positivo possível (texto dentro do corpo), que é anotável; o inverso seria
+ * um furo. Foi medindo isso que apareceu
+ * `20261002103000_p0_fix_audit_critical_gaps.sql:112`, uma policy real que o
+ * tokenizador anterior nunca avaliou.
+ *
+ * A máscara troca cada caractere por espaço e preserva `\n`, então as posições
+ * e os números de linha continuam valendo.
  */
-function limparPreservandoPosicao(sql) {
-  let s = sql.replace(/--[^\n]*|\/\*[\s\S]*?\*\//g, mascarar);
-
+function limparPreservandoPosicao(sql, mascararLiterais = true) {
+  const n = sql.length;
+  const ehIdent = (c) => c !== undefined && /[A-Za-z0-9_]/.test(c);
   let out = '';
   let i = 0;
-  for (;;) {
-    const resto = s.slice(i);
-    const m = /\$([A-Za-z_][A-Za-z0-9_]*)?\$/.exec(resto);
-    if (!m) {
-      out += resto;
-      break;
+
+  while (i < n) {
+    const c = sql[i];
+
+    if (c === '-' && sql[i + 1] === '-') {
+      let j = sql.indexOf('\n', i);
+      if (j === -1) j = n;
+      out += mascarar(sql.slice(i, j));
+      i = j;
+      continue;
     }
-    const abre = i + m.index;
-    const delim = m[0];
-    const fecha = s.indexOf(delim, abre + delim.length);
-    out += s.slice(i, abre);
-    if (fecha === -1) {
-      // Sem fechamento: mantém o resto (fail-closed) e para.
-      out += s.slice(abre);
-      break;
+
+    if (c === '/' && sql[i + 1] === '*') {
+      let nivel = 1;
+      let j = i + 2;
+      while (j < n && nivel > 0) {
+        if (sql[j] === '/' && sql[j + 1] === '*') {
+          nivel += 1;
+          j += 2;
+        } else if (sql[j] === '*' && sql[j + 1] === '/') {
+          nivel -= 1;
+          j += 2;
+        } else {
+          j += 1;
+        }
+      }
+      out += mascarar(sql.slice(i, j));
+      i = j;
+      continue;
     }
-    const corpo = s.slice(abre + delim.length, fecha);
-    const antes = out.replace(/\s+$/, '');
-    const ehLiteral = /\bIS$/i.test(antes);
-    out += mascarar(delim) + (ehLiteral ? mascarar(corpo) : corpo) + mascarar(delim);
-    i = fecha + delim.length;
+
+    if (c === "'") {
+      const comBarra = /[eE]/.test(sql[i - 1] ?? '') && !ehIdent(sql[i - 2]);
+      let j = i + 1;
+      while (j < n) {
+        if (comBarra && sql[j] === '\\') {
+          j += 2;
+        } else if (sql[j] === "'" && sql[j + 1] === "'") {
+          j += 2;
+        } else if (sql[j] === "'") {
+          j += 1;
+          break;
+        } else {
+          j += 1;
+        }
+      }
+      const fim = Math.min(j, n);
+      const trecho = sql.slice(i, fim);
+      out += mascararLiterais ? mascarar(trecho) : trecho;
+      i = fim;
+      continue;
+    }
+
+    if (c === '"') {
+      let j = i + 1;
+      while (j < n) {
+        if (sql[j] === '"' && sql[j + 1] === '"') {
+          j += 2;
+        } else if (sql[j] === '"') {
+          j += 1;
+          break;
+        } else {
+          j += 1;
+        }
+      }
+      const fim = Math.min(j, n);
+      out += sql.slice(i, fim);
+      i = fim;
+      continue;
+    }
+
+    if (c === '$' && !ehIdent(sql[i - 1])) {
+      const m = /^\$([A-Za-z_][A-Za-z0-9_]*)?\$/.exec(sql.slice(i));
+      if (m) {
+        const delim = m[0];
+        const fecha = sql.indexOf(delim, i + delim.length);
+        if (fecha === -1) {
+          out += sql.slice(i);
+          i = n;
+          continue;
+        }
+        const ehLiteral = /\bIS$/i.test(out.replace(/\s+$/, ''));
+        const corpo = sql.slice(i + delim.length, fecha);
+        out +=
+          mascarar(delim) + (ehLiteral ? mascarar(corpo) : limparPreservandoPosicao(corpo, false)) + mascarar(delim);
+        i = fecha + delim.length;
+        continue;
+      }
+    }
+
+    out += c;
+    i += 1;
   }
 
-  return out.replace(/'(?:[^'\n]|'')*'/g, mascarar);
+  return out;
 }
 
 /**
@@ -239,11 +342,11 @@ CREATE POLICY "teste_select" ON public.admissoes
     },
     {
       nome: 'policy dentro de bloco DO — tem de REPROVAR nos dois defeitos',
-      sql: `DO $
+      sql: `DO $$
 BEGIN
   CREATE POLICY "dentro_do_do" ON public.admissoes FOR SELECT TO authenticated
     USING (empresa_id IS NULL OR auth.jwt() ->> 'role' = 'admin');
-END $;`,
+END $$`,
       espera: ['allow-null-tenant', 'allow-jwt-authz'],
     },
     {
@@ -252,6 +355,58 @@ END $;`,
 CREATE POLICY "Leitura" ON public.admissoes FOR SELECT TO authenticated
   USING (empresa_id IS NULL);`,
       espera: ['allow-null-tenant'],
+    },
+    {
+      nome: 'fuga 1: marcador -- dentro de literal NÃO pode esconder a policy da linha',
+      sql: `COMMENT ON TABLE public.admissoes IS '--'; CREATE POLICY b1 ON public.admissoes FOR SELECT TO authenticated USING (empresa_id IS NULL);`,
+      espera: ['allow-null-tenant'],
+    },
+    {
+      nome: 'fuga 2: $$ dentro de dois literais NÃO pode parear e engolir a policy',
+      sql: `COMMENT ON TABLE public.admissoes IS 'exemplo onde x IS ${'$$'}';
+CREATE POLICY b2 ON public.admissoes FOR SELECT TO authenticated USING (empresa_id IS NULL);
+COMMENT ON TABLE public.admissoes IS 'fim ${'$$'}';`,
+      espera: ['allow-null-tenant'],
+    },
+    {
+      nome: 'fuga 3: aspa de fecho de literal multilinha NÃO pode mascarar a policy',
+      sql: `COMMENT ON TABLE public.admissoes IS 'linha um
+fim'; CREATE POLICY b3 ON public.admissoes FOR SELECT TO authenticated USING (empresa_id IS NULL OR auth.jwt() ->> 'role' = 'admin');`,
+      espera: ['allow-null-tenant', 'allow-jwt-authz'],
+    },
+    {
+      nome: 'comentário de bloco aninhado é neutralizado por inteiro',
+      sql: `/* fora /* dentro: CREATE POLICY p ON public.admissoes USING (empresa_id IS NULL); */ ainda fora */
+CREATE POLICY ok2 ON public.admissoes FOR SELECT TO authenticated
+  USING (empresa_id IS NOT NULL AND public.is_admin(auth.uid()));`,
+      espera: [],
+    },
+    {
+      nome: 'nome de policy entre aspas duplas com aspa simples dentro continua legível',
+      sql: `CREATE POLICY "leitura d'area" ON public.admissoes FOR SELECT TO authenticated
+  USING (empresa_id IS NULL);`,
+      espera: ['allow-null-tenant'],
+    },
+    {
+      nome: 'fuga 4: policy permissiva via EXECUTE dentro de DO — tem de REPROVAR',
+      sql: `DO $$
+BEGIN
+  EXECUTE 'CREATE POLICY "via_execute" ON public.admissoes FOR SELECT TO authenticated USING (empresa_id IS NULL)';
+END $$;`,
+      espera: ['allow-null-tenant'],
+    },
+    {
+      nome: 'fuga 5: comentario com ; dentro de bloco DO NAO pode esconder a policy',
+      sql: `DO $$
+BEGIN
+  CREATE POLICY "com_comentario" ON public.admissoes
+    FOR SELECT TO authenticated
+    USING ( -- fim falso ;
+      empresa_id IS NULL
+      OR auth.jwt() ->> 'role' = 'admin'
+    );
+END $$;`,
+      espera: ['allow-null-tenant', 'allow-jwt-authz'],
     },
     {
       nome: 'policy correta (IS NOT NULL + is_admin) — PASSA',
