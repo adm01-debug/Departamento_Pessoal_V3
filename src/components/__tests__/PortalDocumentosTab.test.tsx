@@ -309,6 +309,46 @@ describe('PortalDocumentosTab', () => {
     // o ponto do teste: a linha do banco NAO foi apagada
     expect(documentoService.excluir).not.toHaveBeenCalled();
     expect(toast.success).not.toHaveBeenCalledWith('Documento removido');
+    // ...e o aviso pode afirmar que o arquivo continua la, porque continua.
+    expect(toast.error).toHaveBeenCalledWith('Nao foi possivel remover o documento. O arquivo continua guardado.');
+  });
+
+  // Falha DEPOIS da remocao do arquivo: o aviso nao pode dizer que o arquivo
+  // continua guardado, porque ele ja foi apagado. `safeErrorMessage` cai no
+  // fallback exatamente nesse caso (mensagem de constraint e interna), entao o
+  // texto errado chegaria ao usuario.
+  it('falha no banco DEPOIS de remover o arquivo avisa que o registro ficou, nao que o arquivo esta guardado', async () => {
+    state.docs = [MOCK_DOCS[1]];
+    state.storage.remove = vi.fn(async () => ({ error: null }));
+    vi.mocked(documentoService.excluir).mockRejectedValueOnce(
+      new Error('update or delete on table "documentos" violates foreign key constraint')
+    );
+    renderTab();
+    fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
+    await waitFor(() => expect(toast.error).toHaveBeenCalled());
+    expect(state.storage.remove).toHaveBeenCalledWith(['emp-1/rg.pdf']);
+    expect(toast.error).toHaveBeenCalledWith(
+      'O arquivo foi removido, mas o registro não. Tente excluir novamente para concluir.'
+    );
+    expect(toast.error).not.toHaveBeenCalledWith('Nao foi possivel remover o documento. O arquivo continua guardado.');
+    expect(toast.success).not.toHaveBeenCalledWith('Documento removido');
+  });
+
+  // Documento sem caminho no Storage: nao havia arquivo nenhum, entao a
+  // mensagem nao pode afirmar NEM que o arquivo foi removido NEM que continua
+  // guardado — as duas seriam falsas.
+  it('sem storage_path, a mensagem nao afirma nada sobre arquivo', async () => {
+    state.docs = [{ ...MOCK_DOCS[1], storage_path: null, url: '' }];
+    vi.mocked(documentoService.excluir).mockRejectedValueOnce(new Error('relation "documentos" does not exist'));
+    renderTab();
+    fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
+    await waitFor(() => expect(toast.error).toHaveBeenCalled());
+    expect(state.storage.remove).not.toHaveBeenCalled();
+    expect(toast.error).toHaveBeenCalledWith('Nao foi possivel excluir o registro do documento.');
+    expect(toast.error).not.toHaveBeenCalledWith(
+      'O arquivo foi removido, mas o registro não. Tente excluir novamente para concluir.'
+    );
+    expect(toast.error).not.toHaveBeenCalledWith('Nao foi possivel remover o documento. O arquivo continua guardado.');
   });
 
   it('baixar documento faz download do storage e dispara o anchor', async () => {
