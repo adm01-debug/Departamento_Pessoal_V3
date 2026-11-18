@@ -239,7 +239,10 @@ describe('Auditoria — entrada padrão do sistema', () => {
 
     const painelAntes = screen.getByLabelText('Filtros da auditoria');
     const listaAntes = porTestId('auditoria-timeline');
-    const rowsAntes = eventoRows();
+    // O NO do evento IRRF, nao o array: eventoRows() devolve um array novo a cada
+    // chamada, entao comparar arrays com not.toBe passaria sempre, mesmo sem remontagem
+    // (apontado pela Devin Review em #697). A identidade que importa e a do elemento.
+    const noIrrfAntes = eventoRows().find((el) => el.textContent?.includes('IRRF'));
     const cabecalhoAntes = listaAntes.querySelector('[data-testid="auditoria-grupo-cabecalho"]');
 
     fireEvent.change(screen.getByLabelText(/Buscar evento, campanha, colaborador ou valor/i), {
@@ -250,7 +253,12 @@ describe('Auditoria — entrada padrão do sistema', () => {
     expect(screen.getByLabelText('Filtros da auditoria')).toBe(painelAntes);
     expect(porTestId('auditoria-timeline')).toBe(listaAntes);
     expect(listaAntes.querySelector('[data-testid="auditoria-grupo-cabecalho"]')).toBe(cabecalhoAntes);
-    // A lista de eventos troca de identidade (mesma `chaveCascata` de Campanhas).
-    expect(eventoRows()).not.toBe(rowsAntes);
+    // O evento IRRF continua na lista depois do filtro...
+    const noIrrfDepois = eventoRows().find((el) => el.textContent?.includes('IRRF'));
+    expect(noIrrfAntes).toBeTruthy();
+    expect(noIrrfDepois).toBeTruthy();
+    // ...mas e um ELEMENTO novo: a lista de eventos remonta (mesma `chaveCascata` de
+    // Campanhas), enquanto painel, lista e cabecalho acima permanecem os mesmos nos.
+    expect(noIrrfDepois).not.toBe(noIrrfAntes);
   });
 });
