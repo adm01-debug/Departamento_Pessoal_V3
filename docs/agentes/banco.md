@@ -150,10 +150,12 @@ migrations directory.`. Já era vermelho antes dos merges de 2026-11-18 — **n�
 nenhuma** e não é check obrigatório.
 
 Causa medida: o ledger tem **316** versões sem arquivo no repo (DDL aplicada pelo Studio/Lovable em
-jul/2026, `name` nulo ou UUID) e o repo tem **52** arquivos sem entrada no ledger. As 52 **estão
-aplicadas em produção** — conferido em 4 arquivos de 2 eras (trigger `trg_pensoes_set_empresa`, as 4
-policies de `comunicados`, `blocked_ips.updated_at`, view `vw_passivo_trabalhista_consolidado`). A
-divergência é do registro, não do banco. Medição completa:
+jul/2026, `name` nulo ou UUID) e o repo tem **52** arquivos sem entrada no ledger. Das 52, medido arquivo por arquivo: **7 aplicadas, 2 supersedidas, 8 parciais, 19 ausentes e 16
+não verificáveis** sem `db_query`. Ou seja **27 têm DDL que NÃO está viva** — trabalho mergeado na
+`main` e nunca aplicado. **Não faça backfill do ledger**: registrar as que nunca rodaram esconderia
+a lacuna para sempre. Uma delas é bug de produção agora: `govbr_auth_state` não tem `user_id`, e a
+edge `auth-gov-br` insere essa coluna em `supabase/functions/auth-gov-br/index.ts:130`, então o
+login com gov.br falha. Medição e as 27: `docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md` §12. Medição completa:
 `docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md` §11.
 
 Não reconcilie o ledger por conta própria: INSERT em `supabase_migrations.schema_migrations` de
