@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `778a5b4672` · branch `main` · 2026-11-18 20:10 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2e210c42b1` · branch `main` · 2026-11-18 21:29 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `pcs_avaliacoes_cargo` | Cargo evaluation whose total is always calculated by a trigger. | 10 colunas | migration |
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
 | `pcs_grades` | Transactionally generated salary ranges for a PCS plan. | 11 colunas | migration |
-| … +391 linhas — lista completa em `context.json` | | | |
+| … +392 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -358,6 +358,7 @@
 | status | valor `devolvida` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/feedbackCanonico.ts`<br>`compara:src/pages/AvaliacaoPage.tsx` |
 | status | valor `recusado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/dashboard/AnalyticsSection.tsx`<br>`compara:src/hooks/usePontoMelhorado.ts`<br>`escreve:src/components/dashboard/AnalyticsSection.tsx`<br>`escreve:src/components/dashboard/analytics/PendenciasDetailDialog.tsx` |
 | status | valor `excellent` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/dashboard/WorkforceHealthScore.tsx` |
+| status | valor `sem_colaboradores` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/dashboard/analytics/AlertasPreditivosWidget.tsx`<br>`escreve:src/hooks/useAlertasPreditivos.ts`<br>`escreve:supabase/functions/alertas-preditivos/index.ts` |
 | status | valor `comunicado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/desligamentos/desligamentosDerivacoes.ts`<br>`compara:src/components/desligamentos/trilhaDerivacoes.ts` |
 | status | valor `Status` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/desligamentos/trilhaDerivacoes.ts`<br>`escreve:src/i18n/index.ts` |
 | status | valor `sent` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/folha/FolhaESocialSync.tsx`<br>`compara:supabase/functions/distribuir-holerites/index.ts`<br>`compara:supabase/functions/whatsapp-send/index.ts`<br>`escreve:supabase/functions/_shared/outboundDelivery.ts` |
@@ -386,7 +387,6 @@
 | status | valor `PROCESSANDO` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/ProvisoesPage.tsx`<br>`escreve:supabase/functions/calcular-provisoes/index.ts` |
 | status | valor `completo` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/services/backupService.ts` |
 | status | valor `number` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/_shared/trainingImages/pipeline.ts` |
-| status | valor `sem_colaboradores` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/alertas-preditivos/index.ts` |
 | status | valor `simulado` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/enviar-esocial/index.ts` |
 | status | valor `very_slow` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/external-db-bridge/index.ts` |
 | status | valor `received` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/integracao/index.ts`<br>`escreve:supabase/functions/webhook/index.ts` |

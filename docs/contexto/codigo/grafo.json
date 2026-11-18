@@ -1,16 +1,16 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1313,
- "arestas": 6446,
+ "nos": 1315,
+ "arestas": 6456,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 361
+   "importado_por": 362
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 287
+   "importado_por": 288
   },
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -18,11 +18,11 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 271
+   "importado_por": 272
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 223
+   "importado_por": 224
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -42,7 +42,7 @@
   },
   {
    "arquivo": "src/hooks/useEmpresas.ts",
-   "importado_por": 132
+   "importado_por": 133
   },
   {
    "arquivo": "src/components/ui/select.tsx",
@@ -153,11 +153,11 @@
    "importado_por": 32
   },
   {
-   "arquivo": "src/components/ui/entrada-cards.tsx",
-   "importado_por": 29
+   "arquivo": "src/components/ui/skeleton.tsx",
+   "importado_por": 30
   },
   {
-   "arquivo": "src/components/ui/skeleton.tsx",
+   "arquivo": "src/components/ui/entrada-cards.tsx",
    "importado_por": 29
   },
   {

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 119,
+ "total": 120,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -873,6 +873,26 @@
    "coberto_por_testes": 4
   },
   {
+   "arquivo": "src/hooks/useAlertasPreditivos.ts",
+   "hooks_exportados": [
+    "useAlertasPreditivos"
+   ],
+   "linhas": 58,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [
+    "alertas-preditivos"
+   ],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
    "arquivo": "src/hooks/useAssinarAvisoFerias.ts",
    "hooks_exportados": [
     "useAssinarAvisoFerias"
@@ -956,13 +976,14 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 20,
+   "usado_por": 21,
    "usado_por_arquivos": [
     "src/components/AdminRoute.tsx",
     "src/components/MfaGate.tsx",
     "src/components/PermissionRoute.tsx",
     "src/components/ProtectedRoute.tsx",
     "src/components/avaliacao/FeedbackAcoesRodape.tsx",
+    "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
     "src/components/layout/AppSidebar.tsx",
     "src/components/layout/Header.tsx",
     "src/components/layout/MobileBottomNav.tsx",
@@ -1687,7 +1708,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 126,
+   "usado_por": 127,
    "usado_por_arquivos": [
     "src/components/admissoes/AdmissoesKanban.tsx",
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
@@ -1703,6 +1724,7 @@
     "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
     "src/components/colaboradores/ColaboradorHistory.tsx",
     "src/components/dashboard/SystemStatusCard.tsx",
+    "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
     "src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
     "src/components/desligamentos/NovoDesligamentoDialog.tsx",
     "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
@@ -1717,8 +1739,7 @@
     "src/components/folha/CalculoFolhaWizard.tsx",
     "src/components/folha/DistribuirHoleritesButton.tsx",
     "src/components/folha/LancamentosDialog.tsx",
-    "src/components/folha/PagamentoBancarioWizard.tsx",
-    "src/components/folha/RelatorioContabilDialog.tsx"
+    "src/components/folha/PagamentoBancarioWizard.tsx"
    ],
    "coberto_por_testes": 6
   },

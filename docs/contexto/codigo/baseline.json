@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "778a5b46724116e548bc3bdc2020fdf8ab7f4eda",
+  "commit": "2e210c42b102bbc95cd3893abaa8d483c29203fb",
   "branch": "main",
-  "data_commit": "2026-11-18T17:01:42-03:00",
+  "data_commit": "2026-11-18T18:29:02-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2e210c4",
+    "data": "2026-11-18",
+    "assunto": "feat(dashboard): liga alertas-preditivos, que rodava em producao sem tela (#709)"
+   },
    {
     "sha": "778a5b4",
     "data": "2026-11-18",
@@ -126,18 +131,13 @@
     "sha": "1512a40",
     "data": "2026-11-18",
     "assunto": "fix: corrige a faixa de PRs da secao 7b, derrubada por aritmetica do revisor (#685)"
-   },
-   {
-    "sha": "50a7966",
-    "data": "2026-11-18",
-    "assunto": "chore: mede o eixo repo x ledger e explica o Supabase Preview vermelho (#683)"
    }
   ],
-  "arquivos_mudados_7d": 1164,
+  "arquivos_mudados_7d": 1149,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 386
+    "mudancas": 388
    },
    {
     "pasta": "src/components/ui",
@@ -177,7 +177,7 @@
    },
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 36
+    "mudancas": 38
    },
    {
     "pasta": "src/components/folha",
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3616,
-  "arquivos_codigo": 2102,
-  "linhas_codigo": 417529,
+  "arquivos_total": 3619,
+  "arquivos_codigo": 2105,
+  "linhas_codigo": 418053,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
-  "componentes": 639,
-  "hooks": 119,
+  "componentes": 640,
+  "hooks": 120,
   "edge_functions": 67,
   "tabelas": 426,
   "migrations": 878,
   "cron_jobs": 41,
-  "testes": 791,
+  "testes": 792,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 336
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 992,
-   "linhas": 181419
+   "arquivos": 994,
+   "linhas": 181885
   },
   "src/constants": {
    "arquivos": 7,
@@ -659,8 +659,8 @@
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 203,
-   "linhas": 23602
+   "arquivos": 204,
+   "linhas": 23660
   },
   "src/i18n": {
    "arquivos": 2,
@@ -849,8 +849,8 @@
    "linhas": 885
   },
   {
-   "arquivo": "scripts/automation.mjs",
-   "linhas": 869
+   "arquivo": "src/components/dashboard/AnalyticsSection.tsx",
+   "linhas": 876
   }
  ],
  "qualidade": {
@@ -1008,7 +1008,6 @@
    "Ações -> /quick-actions"
   ],
   "edges_orfas": [
-   "alertas-preditivos",
    "assistente-ia",
    "auditoria",
    "backup",

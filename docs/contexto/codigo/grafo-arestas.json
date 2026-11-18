@@ -1812,6 +1812,7 @@
    "src/components/dashboard/AnimatedNumber.tsx",
    "src/components/dashboard/BarChartWidget.tsx",
    "src/components/dashboard/DonutChart.tsx",
+   "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
    "src/components/dashboard/analytics/NotificationsDialog.tsx",
    "src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
    "src/components/dashboard/analytics/widgets.tsx",
@@ -1895,6 +1896,16 @@
   "src/components/dashboard/WorkforceHealthScore.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx": [
+   "src/components/ui/alert.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/hooks/useAlertasPreditivos.ts",
+   "src/hooks/useAuth.ts",
+   "src/hooks/useEmpresas.ts",
    "src/lib/utils.ts"
   ],
   "src/components/dashboard/analytics/NotificationsDialog.tsx": [
@@ -4761,6 +4772,9 @@
    "src/types/afastamentos.ts",
    "src/utils/auditLogger.ts",
    "src/utils/safeError.ts"
+  ],
+  "src/hooks/useAlertasPreditivos.ts": [
+   "src/integrations/supabase/client.ts"
   ],
   "src/hooks/useAssinarAvisoFerias.ts": [
    "src/contexts/index.ts",

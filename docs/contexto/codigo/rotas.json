@@ -10725,6 +10725,7 @@
    "definida_em": "src/App.tsx",
    "redireciona": null,
    "hooks": [
+    "useAlertasPreditivos",
     "useAuth",
     "useCallback",
     "useContext",
@@ -10752,6 +10753,7 @@
     "useToast"
    ],
    "hooks_locais": [
+    "useAlertasPreditivos",
     "useAuth",
     "useEmpresaStore",
     "useEmpresas",
@@ -10842,6 +10844,7 @@
     "OCR",
     "adiantamento-salarial",
     "alertas-dp",
+    "alertas-preditivos",
     "assinaturaDigital",
     "backup-automatico",
     "cache",
@@ -10870,9 +10873,11 @@
    ],
    "flags": [],
    "papeis": [
+    "alert",
+    "rh",
     "user"
    ],
-   "arquivos_puxados": 85
+   "arquivos_puxados": 90
   },
   {
    "protegida": true,
@@ -10889,6 +10894,7 @@
    "definida_em": "src/App.tsx",
    "redireciona": null,
    "hooks": [
+    "useAlertasPreditivos",
     "useAuth",
     "useBackGesture",
     "useCallback",
@@ -10927,6 +10933,7 @@
     "useTranslation"
    ],
    "hooks_locais": [
+    "useAlertasPreditivos",
     "useAuth",
     "useBackGesture",
     "useDebounce",
@@ -11032,6 +11039,7 @@
     "OCR",
     "adiantamento-salarial",
     "alertas-dp",
+    "alertas-preditivos",
     "assinaturaDigital",
     "backup-automatico",
     "cache",
@@ -11072,7 +11080,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 122
+   "arquivos_puxados": 126
   },
   {
    "protegida": true,

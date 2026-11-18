@@ -198,7 +198,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 308,
+   "testes": 309,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -1549,14 +1549,15 @@
   },
   {
    "modulo": "components/dashboard",
-   "arquivos": 20,
+   "arquivos": 21,
    "testes": 0,
-   "linhas": 4277,
+   "linhas": 4475,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 18,
+   "componentes": 19,
    "hooks_locais": [
+    "useAlertasPreditivos",
     "useAuth",
     "useEmpresaStore",
     "useEmpresas",
@@ -1577,6 +1578,7 @@
     "OCR",
     "adiantamento-salarial",
     "alertas-dp",
+    "alertas-preditivos",
     "assinaturaDigital",
     "backup-automatico",
     "cache",
@@ -1689,6 +1691,7 @@
    "flags": [],
    "papeis": [
     "alert",
+    "rh",
     "user"
    ],
    "diretos": {
@@ -6453,9 +6456,9 @@
   },
   {
    "modulo": "hooks",
-   "arquivos": 94,
+   "arquivos": 95,
    "testes": 0,
-   "linhas": 9277,
+   "linhas": 9335,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6466,6 +6469,7 @@
     "useAdmissoes",
     "useAfastamentos",
     "useAfastamentosRecentes",
+    "useAlertasPreditivos",
     "useAnotacoes",
     "useAssinarAvisoFerias",
     "useAssinaturaDigital",
@@ -6831,6 +6835,7 @@
     "useAfastamentosRecentes",
     "useDocumentosAfastamento",
     "useProrrogacoesAfastamento",
+    "useAlertasPreditivos",
     "useAssinarAvisoFerias",
     "useAssinaturaDigital",
     "useAssinaturas",
@@ -7050,6 +7055,7 @@
     "useWebhooksAvancados"
    ],
    "edges": [
+    "alertas-preditivos",
     "calcular-13-salario",
     "calcular-provisoes",
     "enviar-email-admissao",
@@ -7302,6 +7308,7 @@
    ],
    "diretos": {
     "edges": [
+     "alertas-preditivos",
      "calcular-13-salario",
      "metricas",
      "process-document-ocr"
@@ -8095,6 +8102,7 @@
     "useAfastamentos",
     "useAfastamentosRecentes",
     "useAlertasPagamentoD2",
+    "useAlertasPreditivos",
     "useAnotacoes",
     "useAssinarAvisoFerias",
     "useAssinaturaDigital",
@@ -8315,6 +8323,7 @@
     "adiantamento-salarial",
     "admissao-publica",
     "alertas-dp",
+    "alertas-preditivos",
     "assinaturaDigital",
     "auth-gov-br",
     "backup-automatico",

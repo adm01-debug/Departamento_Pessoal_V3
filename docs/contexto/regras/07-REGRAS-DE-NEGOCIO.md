@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `778a5b4672` · branch `main` · 2026-11-18 20:10 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2e210c42b1` · branch `main` · 2026-11-18 21:29 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1901,6 +1901,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | RolesStatus | loading \| success \| error | `src/contexts/AuthContext.tsx` |
 | ErrorType | VALIDATION_ERROR \| AUTH_ERROR \| NETWORK_ERROR \| NOT_FOUND \| PERMISSION_DENIED \| SERVER_ERROR \| UNKNOWN_ERROR | `src/errors/types.ts` |
 | ErrorSeverity | info \| warning \| error \| critical | `src/errors/types.ts` |
+| NivelAlertaPreditivo | critica \| alta \| media | `src/hooks/useAlertasPreditivos.ts` |
 | SeveridadeContrato | vencido \| critico \| atencao \| ok | `src/hooks/useContratosVencendo.ts` |
 | EmpresaModo | consolidado \| empresa_unica | `src/hooks/useEmpresas.ts` |
 | AuditoriaEvento | CALCULO \| CONFERENCIA \| ESOCIAL \| AJUSTE | `src/hooks/useFolhaAuditoria.ts` |
@@ -5227,6 +5228,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Selecione uma empresa antes de disparar alertas. | `src/components/dashboard/MorningBriefing.tsx` |
 | Selecione uma empresa antes de disparar alertas. | `src/components/dashboard/SystemStatusCard.tsx` |
 | Selecione uma empresa para carregar o briefing. | `src/components/dashboard/useMorningBriefing.ts` |
+| ; import { Skeleton } from  | `src/components/dashboard/analytics/AlertasPreditivosWidget.tsx` |
 | Informe o nome do departamento | `src/components/departamentos/NovoDepartamentoDialog.tsx` |
 | Não é possível inativar  | `src/components/departamentos/NovoDepartamentoDialog.tsx` |
 | Salário base e data de desligamento são obrigatórios para o cálculo | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
@@ -5350,8 +5352,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Ciclo detectado no fluxo! | `src/components/workflows/WorkflowDesigner.tsx` |
 | Conexão já existe | `src/components/workflows/WorkflowDesigner.tsx` |
 | Corrija os erros antes de salvar | `src/components/workflows/WorkflowDesigner.tsx` |
-| Limite de 50 nós atingido | `src/components/workflows/WorkflowDesigner.tsx` |
-| … +668 linhas — lista completa em `context.json` | |
+| … +670 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5360,6 +5361,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `admin` | `src/components/avaliacao/FeedbackAcoesRodape.tsx` |
 | `gestor` | `src/components/avaliacao/FeedbackAcoesRodape.tsx` |
 | `user` | `src/components/avaliacao/FeedbackAcoesRodape.tsx` |
+| `rh` | `src/components/dashboard/analytics/AlertasPreditivosWidget.tsx` |
 | `rh` | `src/components/ferias/FeriasTable.tsx` |
 | `rh` | `src/components/integracoes/ConfigPanels.tsx` |
 | `rh` | `src/components/layout/MobileQuickActions.tsx` |
@@ -5422,7 +5424,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9521 testes em 747 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9536 testes em 748 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5609,6 +5611,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/folha/__tests__/calculoLoteService.test.ts` | 15 | calculoLoteService.processarLote · usa somente relações existentes e lê jornada do colaborador canônico · aplica eventos variáveis da competência via rubrica e dependentes de IRRF · grava no cabeçalho os totais somados dos itens, só com a folha aberta … |
 | `src/utils/__tests__/sanitizeHtml.test.ts` | 15 | sanitizeHtml — baseline hardened profile · strips <script> entirely · preserves safe anchors (http, mailto, tel, hash) · forces rel= … |
 | `src/components/__tests__/AfastamentoForm.test.tsx` | 14 | AfastamentoForm · renders Colaborador label · renders Motivo do Afastamento label · renders Data de Início label … |
+| `src/components/__tests__/AlertasPreditivosWidget.test.tsx` | 14 | AlertasPreditivosWidget · nega a análise para quem não é RH nem admin · libera para admin mesmo sem o papel de rh · pede uma empresa específica quando está no modo consolidado … |
 | `src/components/__tests__/CampaignWizard.test.tsx` | 14 | CampaignWizard · renders dialog title · renders dialog description · renders Nome da Campanha label on step 1 … |
 | `src/components/__tests__/ContasBancariasTab.test.tsx` | 14 | ContasBancariasTab · shows spinner when loading · renders Contas Bancárias title · renders Adicionar button … |
 | `src/components/__tests__/ESocialDesligamentoCDP.test.tsx` | 14 | S2299Desligamento · renders CPF do trabalhador · renders data do desligamento · renders motivo do desligamento … |
@@ -5648,6 +5651,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/pushNotificationService.test.ts` | 13 | pushNotificationService.isSupported · returns false when serviceWorker is absent · returns false when PushManager is absent · pushNotificationService.getSubscription … |
 | `src/utils/__tests__/feriasPDF.test.ts` | 13 | feriasPDF.gerarRecibo · creates a jsPDF document · saves the PDF file · includes colaborador name in text calls … |
 | `src/calculators/__tests__/rescisao.test.ts` | 12 | calcularRescisao · returns all expected top-level keys · saldoSalario is proportional to days worked · sem_justa_causa has aviso previo > 0 … |
+| `src/components/__tests__/AnalyticsSection.test.tsx` | 12 | AnalyticsSection · renders Workflows quick access card · renders BI e Metas quick access card · renders Auditoria quick access card … |
 | `src/components/__tests__/AppPagination.test.tsx` | 12 | AppPagination · mostra a página atual em verde-lima sólido com 28 × 28 px · não renderiza o seletor sem handler de troca de quantidade · renderiza  … |
 | `src/components/__tests__/ColaboradorDocuments.test.tsx` | 12 | ColaboradorDocuments · renders Gestão de Documentos Digitais heading · renders Novo Documento button · renders Adicionar Novo Documento dialog title … |
 | `src/components/__tests__/DashboardWidgets.test.tsx` | 12 | QuickActionsGrid · renders Ações Rápidas title · renders Novo Colaborador action · renders Calcular Folha action … |
@@ -5678,7 +5682,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/importacao/__tests__/excelDownload.test.ts` | 12 | XLSX_MIME · is the correct OOXML MIME type · downloadWorkbook · calls writeBuffer and creates object URL … |
 | `e2e/authenticated/recrutamento-pipeline.spec.ts` | 11 | Pipeline — estrutura e scroll no padrão de Admissão · 5 colunas de 272px, mesma altura, rodapés alinhados e scroll horizontal · A/B/C — lista rola, encadeia para a página; cabeçalho/espaço vazio rolam direto · D — arrasta de Triagem para Entrevista sem duplicar e atualiza contadores … |
 | `scripts/tests/contexto-publicacao.test.mjs` | 11 | cada upload fornece um ID e cada download usa destino explícito sem ocultar falhas · produtores independentes falham de verdade e o publisher ainda aceita as fontes disponíveis · falha fatal de ${failed} mantém sua versão anterior e publica as duas fontes saudáveis · publisher ${previousBranch ?  … |
-| `src/components/__tests__/AnalyticsSection.test.tsx` | 11 | AnalyticsSection · renders Workflows quick access card · renders BI e Metas quick access card · renders Auditoria quick access card … |
 | `src/components/__tests__/AnimatedNumber.test.tsx` | 11 | AnimatedNumber · renders 0 initially when not in view · renders initial 0 even when format prop is provided · applies custom className to span … |
 | `src/components/__tests__/AuditoriaComum.test.ts` | 11 | auditoriaComum — normalização fiel aos dados · resolve valor anterior/posterior, entidade, colaborador e responsável · lida com data/entidade/valor ausentes sem inventar informação · não inventa valor quando não há campo nem citação monetária … |
 | `src/components/__tests__/EmprestimosFinanceiros.test.tsx` | 11 | EmprestimosTable · renders table headers · renders colaborador names · renders instituicao or dash for null … |
@@ -5725,8 +5728,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/RelatoriosAgendadosTab.test.tsx` | 10 | RelatoriosAgendadosTab · renders Relatórios Agendados heading · renders Agendar Novo button · shows empty state when no agendamentos … |
 | `src/components/__tests__/RelatoriosExportTab.test.tsx` | 10 | RelatoriosExportTab · renders report titles · renders report descriptions · shows CSV button label when exportFormat is csv … |
 | `src/components/__tests__/RewardsSimulator.test.tsx` | 10 | RewardsSimulator · renderiza as quatro regiões do redesenho · mantém os cinco parâmetros do simulador · exibe os quatro KPIs de resultado … |
-| `src/components/__tests__/SSTEPIsTab.test.tsx` | 10 | SSTEPIsTab · shows empty state when no EPIs · renders EPI nome when EPIs provided · renders EPI CA number … |
-| … +447 linhas — lista completa em `context.json` | | |
+| … +448 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

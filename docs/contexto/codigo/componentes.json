@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 639,
+ "total": 640,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -2608,6 +2608,24 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
+   "exports": [
+    "AlertasPreditivosWidget"
+   ],
+   "export_default": null,
+   "linhas": 169,
+   "dominio": "components/dashboard",
+   "hooks_locais": [
+    "useAlertasPreditivos",
+    "useAuth",
+    "useEmpresaStore"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/dashboard/analytics/NotificationsDialog.tsx",
    "exports": [
     "Notificacao",
@@ -2673,7 +2691,7 @@
     "QuickStat"
    ],
    "export_default": null,
-   "linhas": 847,
+   "linhas": 876,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "usePendencias",
@@ -7260,7 +7278,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 11,
+   "usado_por": 12,
    "orfao": false
   },
   {
@@ -7339,7 +7357,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 223,
+   "usado_por": 224,
    "orfao": false
   },
   {
@@ -7354,7 +7372,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 361,
+   "usado_por": 362,
    "orfao": false
   },
   {
@@ -8059,7 +8077,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 29,
+   "usado_por": 30,
    "orfao": false
   },
   {

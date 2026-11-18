@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "778a5b46724116e548bc3bdc2020fdf8ab7f4eda",
+  "sha": "2e210c42b102bbc95cd3893abaa8d483c29203fb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 20:10 UTC",
-  "files_total": 3629,
-  "code_files": 3051,
-  "code_lines": 484718
+  "generated_at": "2026-11-18 21:29 UTC",
+  "files_total": 3632,
+  "code_files": 3054,
+  "code_lines": 485242
  },
  "version": "1.3.2",
- "facts_hash": "0b504628b515a0e3",
+ "facts_hash": "5d9365ca5d4edf51",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,9 +387,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1018,
+   ".tsx": 1020,
    ".sql": 951,
-   ".ts": 946,
+   ".ts": 947,
    ".mjs": 108,
    ".js": 15,
    ".cjs": 11,
@@ -90584,7 +90584,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 97
+    "deps_count": 101
    },
    {
     "path": "",
@@ -97203,7 +97203,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 71
+    "deps_count": 76
    }
   ],
   "edge_functions": [
@@ -100229,7 +100229,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 992,
+  "components_count": 994,
   "hooks": [
    {
     "name": "useContacts",
@@ -100334,6 +100334,10 @@
    {
     "name": "useAfastamentosRecentes",
     "file": "src/hooks/useAfastamentos.ts"
+   },
+   {
+    "name": "useAlertasPreditivos",
+    "file": "src/hooks/useAlertasPreditivos.ts"
    },
    {
     "name": "useAssinarAvisoFerias",
@@ -101848,8 +101852,8 @@
   },
   {
    "module": "src/components",
-   "files": 992,
-   "lines": 181419,
+   "files": 994,
+   "lines": 181885,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102017,6 +102021,7 @@
     "src/components/__tests__/AfastamentoTable.test.tsx",
     "src/components/__tests__/AfastamentoTimeline.test.tsx",
     "src/components/__tests__/AfastamentosTab.test.tsx",
+    "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
     "src/components/__tests__/AnalyticsSection.test.tsx",
     "src/components/__tests__/AnimatedNumber.test.tsx",
     "src/components/__tests__/AnimatedTabs.test.tsx",
@@ -102075,8 +102080,7 @@
     "src/components/__tests__/DependentesTab.test.tsx",
     "src/components/__tests__/DesempenhoBarrasProgresso.test.tsx",
     "src/components/__tests__/DesempenhoEntradaCascade.test.tsx",
-    "src/components/__tests__/DesenvolvimentoResumoTab.test.tsx",
-    "src/components/__tests__/DesligamentoBadges.test.tsx"
+    "src/components/__tests__/DesenvolvimentoResumoTab.test.tsx"
    ]
   },
   {
@@ -102183,8 +102187,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 203,
-   "lines": 23602,
+   "files": 204,
+   "lines": 23660,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102229,6 +102233,7 @@
     "useAdmissaoWorkflow.ts: useAdmissaoWorkflow",
     "useAdmissoes.ts: useAdmissoes",
     "useAfastamentos.ts: AfastamentoFiltros, useAfastamentos, useProrrogacoesAfastamento, useDocumentosAfastamento, useAfastamentosRecentes",
+    "useAlertasPreditivos.ts: NivelAlertaPreditivo, AlertaPreditivo, RespostaAlertasPreditivos, useAlertasPreditivos",
     "useAssinarAvisoFerias.ts: useAssinarAvisoFerias",
     "useAssinaturaDigital.ts: useAssinaturaDigital",
     "useAssinaturas.ts: DocumentoAssinatura, useAssinaturas",
@@ -102263,16 +102268,15 @@
     "useExcelExport.ts: useExcelExport",
     "useExecutiveDashboard.ts: useExecutiveKPIs, useStrategicFinancials",
     "useFeriados.ts: useFeriados",
-    "useFerias.ts: useFerias",
-    "useFeriasAprovacao.ts: useFeriasAprovacao"
+    "useFerias.ts: useFerias"
    ],
    "docs": [
+    "useAlertasPreditivos.ts: useAlertasPreditivos — porta de entrada da edge `alertas-preditivos`. A edge existe e esta publicada em producao (sonda em 18/11/2026: POST /functions/v1/alertas-preditivos devolve 405 para GET, ou seja esta no ar), mas nenhum arquivo do `src` a invocava: o RH nunca via esses alertas. Deliberadament …",
     "useAuth.ts: V19: useAuth hook - Re-export do context",
     "useComplianceColaborador.ts: PARTE I — Dossiê do Colaborador, aba Documentos & Compliance.",
     "useDesenvolvimentoColaborador.ts: PARTE G — Dossiê do Colaborador, aba Desenvolvimento (+ Onboarding). Hooks finos por colaborador_id sobre services já existentes (avaliacaoService, catalogoCursoService, rhService), sem duplicar lógica.",
     "useEmpresas.ts: @fileoverview Hook para gerenciamento de empresas @module hooks/useEmpresas",
-    "useGrupo.ts: @fileoverview Hook de contexto de GRUPO empresarial. Holding única com várias CNPJs. Expõe lista completa de empresas no escopo do usuário (via RLS / get_user_scope_empresas) e helpers agregados (cor, regime, ordem) usados por dashboards consolidados. Performance: agrega em maps Record<id, X> para O …",
-    "useHistoricoColaborador.ts: Histórico do Colaborador — substitui useTimelineFuncional.ts. Agrega os MESMOS ~13 sub-recursos de antes (vínculos, histórico salarial, contratos, cargo, promoções, transferências, férias, afastamentos, treinamentos, feedbacks 360, onboarding, medidas disciplinares, desligamentos) MAIS o audit_log ( …"
+    "useGrupo.ts: @fileoverview Hook de contexto de GRUPO empresarial. Holding única com várias CNPJs. Expõe lista completa de empresas no escopo do usuário (via RLS / get_user_scope_empresas) e helpers agregados (cor, regime, ordem) usados por dashboards consolidados. Performance: agrega em maps Record<id, X> para O …"
    ],
    "deps": [
     "@supabase/supabase-js",
@@ -102306,6 +102310,7 @@
     "src/hooks/useAdmissaoWorkflow.ts",
     "src/hooks/useAdmissoes.ts",
     "src/hooks/useAfastamentos.ts",
+    "src/hooks/useAlertasPreditivos.ts",
     "src/hooks/useAssinarAvisoFerias.ts",
     "src/hooks/useAssinaturaDigital.ts",
     "src/hooks/useAssinaturas.ts",
@@ -102379,8 +102384,7 @@
     "src/hooks/useRealTimeSubscription.ts",
     "src/hooks/useRealtimeDashboard.ts",
     "src/hooks/useSSTColaborador.ts",
-    "src/hooks/useSecureVisibility.ts",
-    "src/hooks/useSecurityMonitor.ts"
+    "src/hooks/useSecureVisibility.ts"
    ]
   },
   {
@@ -113454,6 +113458,11 @@
     "values": "info | warning | error | critical"
    },
    {
+    "file": "src/hooks/useAlertasPreditivos.ts",
+    "name": "NivelAlertaPreditivo",
+    "values": "critica | alta | media"
+   },
+   {
     "file": "src/hooks/useContratosVencendo.ts",
     "name": "SeveridadeContrato",
     "values": "vencido | critico | atencao | ok"
@@ -114410,6 +114419,10 @@
     "msg": "Selecione uma empresa para carregar o briefing."
    },
    {
+    "file": "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
+    "msg": ";\nimport { Skeleton } from "
+   },
+   {
     "file": "src/components/departamentos/NovoDepartamentoDialog.tsx",
     "msg": "Informe o nome do departamento"
    },
@@ -114932,6 +114945,10 @@
    {
     "file": "src/hooks/useAfastamentos.ts",
     "msg": "Empresa ativa não carregada."
+   },
+   {
+    "file": "src/hooks/useAlertasPreditivos.ts",
+    "msg": "Resposta vazia da analise preditiva"
    },
    {
     "file": "src/hooks/useAssinarAvisoFerias.ts",
@@ -117590,6 +117607,10 @@
    {
     "file": "src/components/avaliacao/FeedbackAcoesRodape.tsx",
     "value": "user"
+   },
+   {
+    "file": "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
+    "value": "rh"
    },
    {
     "file": "src/components/ferias/FeriasTable.tsx",
@@ -150008,6 +150029,12 @@
     "kind": "filtra"
    },
    {
+    "file": "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
+    "field": "status",
+    "value": "sem_colaboradores",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/dashboard/analytics/NotificationsDialog.tsx",
     "field": "tipo",
     "value": "ponto_aprovado",
@@ -153119,6 +153146,12 @@
     "file": "src/hooks/useAdmissaoWorkflow.ts",
     "field": "etapa",
     "value": "documentos",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/useAlertasPreditivos.ts",
+    "field": "status",
+    "value": "sem_colaboradores",
     "kind": "escreve"
    },
    {
@@ -167156,6 +167189,62 @@
     "name": "NÃO imprime CID, descrição do CID, médico nem CRM"
    },
    {
+    "file": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    "name": "AlertasPreditivosWidget"
+   },
+   {
+    "file": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    "name": "nega a análise para quem não é RH nem admin"
+   },
+   {
+    "file": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    "name": "libera para admin mesmo sem o papel de rh"
+   },
+   {
+    "file": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    "name": "pede uma empresa específica quando está no modo consolidado"
+   },
+   {
+    "file": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    "name": "NÃO dispara a análise sozinho ao montar — a edge grava em notificacoes"
+   },
+   {
+    "file": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    "name": "dispara com a empresa atual quando o usuário clica"
+   },
+   {
+    "file": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    "name": "mostra carregando e desabilita o botão durante a análise"
+   },
+   {
+    "file": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    "name": "mostra o erro real da edge em vez de falhar calado"
+   },
+   {
+    "file": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    "name": "trata a resposta sem_colaboradores como vazio, não como erro"
+   },
+   {
+    "file": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    "name": "diz que não há risco quando a edge analisa e não encontra sinal"
+   },
+   {
+    "file": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    "name": "lista os sinais, o contador de urgentes e a rotatividade"
+   },
+   {
+    "file": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    "name": "ordena os críticos antes dos médios"
+   },
+   {
+    "file": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    "name": "exibe o resumo da IA quando a edge devolve um"
+   },
+   {
+    "file": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    "name": "não exibe o bloco de resumo quando a IA não respondeu (fallback estatístico)"
+   },
+   {
     "file": "src/components/__tests__/AnalyticsSection.test.tsx",
     "name": "AnalyticsSection"
    },
@@ -167198,6 +167287,10 @@
    {
     "file": "src/components/__tests__/AnalyticsSection.test.tsx",
     "name": "renderiza o card de Cadastros incompletos com o widget dentro"
+   },
+   {
+    "file": "src/components/__tests__/AnalyticsSection.test.tsx",
+    "name": "renderiza o card de Riscos previstos com o widget dentro"
    },
    {
     "file": "src/components/__tests__/AnimatedNumber.test.tsx",
@@ -232196,6 +232289,11 @@
       "filtra:supabase/functions/gerar-pgr/index.ts",
       "filtra:supabase/functions/processar-ponto/index.ts"
      ],
+     "sem_colaboradores": [
+      "compara:src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
+      "escreve:src/hooks/useAlertasPreditivos.ts",
+      "escreve:supabase/functions/alertas-preditivos/index.ts"
+     ],
      "quitado": [
       "compara:src/components/descontos/EmprestimosTable.tsx",
       "escreve:src/components/descontos/EmprestimosTable.tsx"
@@ -232652,9 +232750,6 @@
      ],
      "no_recipients": [
       "compara:supabase/functions/alertas-dp/deliveryStatus.ts"
-     ],
-     "sem_colaboradores": [
-      "escreve:supabase/functions/alertas-preditivos/index.ts"
      ],
      "enfileirado": [
       "compara:supabase/functions/distribuir-holerites/index.ts",
@@ -257021,6 +257116,15 @@
    },
    {
     "kind": "status",
+    "msg": "valor `sem_colaboradores` para `status` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "compara:src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
+     "escreve:src/hooks/useAlertasPreditivos.ts",
+     "escreve:supabase/functions/alertas-preditivos/index.ts"
+    ]
+   },
+   {
+    "kind": "status",
     "msg": "valor `comunicado` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/components/desligamentos/desligamentosDerivacoes.ts",
@@ -257237,13 +257341,6 @@
     "msg": "valor `number` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:supabase/functions/_shared/trainingImages/pipeline.ts"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `sem_colaboradores` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "escreve:supabase/functions/alertas-preditivos/index.ts"
     ]
    },
    {
@@ -266179,9 +266276,39 @@
     "NÃO imprime CID, descrição do CID, médico nem CRM"
    ]
   },
+  "src/components/__tests__/AlertasPreditivosWidget.test.tsx": {
+   "path": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+   "lines": 253,
+   "is_test": true,
+   "params": [
+    {
+     "name": "EMPRESA",
+     "value": "'11111111-1111-1111-1111-111111111111'"
+    }
+   ],
+   "rule_comments": [
+    "`notificacoes`, logo nao pode rodar no carregamento) e os quatro estados."
+   ],
+   "tests": [
+    "AlertasPreditivosWidget",
+    "nega a análise para quem não é RH nem admin",
+    "libera para admin mesmo sem o papel de rh",
+    "pede uma empresa específica quando está no modo consolidado",
+    "NÃO dispara a análise sozinho ao montar — a edge grava em notificacoes",
+    "dispara com a empresa atual quando o usuário clica",
+    "mostra carregando e desabilita o botão durante a análise",
+    "mostra o erro real da edge em vez de falhar calado",
+    "trata a resposta sem_colaboradores como vazio, não como erro",
+    "diz que não há risco quando a edge analisa e não encontra sinal",
+    "lista os sinais, o contador de urgentes e a rotatividade",
+    "ordena os críticos antes dos médios",
+    "exibe o resumo da IA quando a edge devolve um",
+    "não exibe o bloco de resumo quando a IA não respondeu (fallback estatístico)"
+   ]
+  },
   "src/components/__tests__/AnalyticsSection.test.tsx": {
    "path": "src/components/__tests__/AnalyticsSection.test.tsx",
-   "lines": 229,
+   "lines": 244,
    "is_test": true,
    "tests": [
     "AnalyticsSection",
@@ -266194,7 +266321,8 @@
     "renders Sem notificações empty state",
     "renders Tudo em dia when pendencias empty",
     "renderiza o card de Alertas de RH com o widget dentro",
-    "renderiza o card de Cadastros incompletos com o widget dentro"
+    "renderiza o card de Cadastros incompletos com o widget dentro",
+    "renderiza o card de Riscos previstos com o widget dentro"
    ]
   },
   "src/components/__tests__/AnimatedNumber.test.tsx": {
@@ -277850,7 +277978,7 @@
   },
   "src/components/dashboard/AnalyticsSection.tsx": {
    "path": "src/components/dashboard/AnalyticsSection.tsx",
-   "lines": 847,
+   "lines": 876,
    "exports": [
     "function AnalyticsSection"
    ],
@@ -278341,6 +278469,27 @@
     "const em7Dias = format(new Date(hoje.getTime() + 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd');",
     "staleTime: 5 * 60 * 1000,"
    ]
+  },
+  "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx": {
+   "path": "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
+   "lines": 169,
+   "exports": [
+    "function AlertasPreditivosWidget"
+   ],
+   "errors": [
+    ";\nimport { Skeleton } from "
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "sem_colaboradores",
+     "kind": "compara"
+    }
+   ],
+   "role_checks": [
+    "rh"
+   ],
+   "doc": "AlertasPreditivosWidget — tela para a edge `alertas-preditivos`. A edge analisa turnover e absenteismo por heuristica sobre o historico (faltas, afastamentos, ponto, desligamentos) e estava publicada sem nenhuma porta de entrada na UI. Este widget e essa porta. Nao dispara sozinho: a edge grava em ` …"
   },
   "src/components/dashboard/analytics/NotificationsDialog.tsx": {
    "path": "src/components/dashboard/analytics/NotificationsDialog.tsx",
@@ -289306,6 +289455,36 @@
     "useProrrogacoesAfastamento",
     "useDocumentosAfastamento",
     "useAfastamentosRecentes"
+   ]
+  },
+  "src/hooks/useAlertasPreditivos.ts": {
+   "path": "src/hooks/useAlertasPreditivos.ts",
+   "lines": 58,
+   "exports": [
+    "type NivelAlertaPreditivo",
+    "interface AlertaPreditivo",
+    "interface RespostaAlertasPreditivos",
+    "function useAlertasPreditivos"
+   ],
+   "errors": [
+    "Resposta vazia da analise preditiva"
+   ],
+   "enums": [
+    {
+     "name": "NivelAlertaPreditivo",
+     "values": "critica | alta | media"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "sem_colaboradores",
+     "kind": "escreve"
+    }
+   ],
+   "doc": "useAlertasPreditivos — porta de entrada da edge `alertas-preditivos`. A edge existe e esta publicada em producao (sonda em 18/11/2026: POST /functions/v1/alertas-preditivos devolve 405 para GET, ou seja esta no ar), mas nenhum arquivo do `src` a invocava: o RH nunca via esses alertas. Deliberadament …",
+   "hooks": [
+    "useAlertasPreditivos"
    ]
   },
   "src/hooks/useAssinarAvisoFerias.ts": {
@@ -328647,10 +328826,23 @@
   }
  },
  "git": {
-  "sha": "778a5b46724116e548bc3bdc2020fdf8ab7f4eda",
+  "sha": "2e210c42b102bbc95cd3893abaa8d483c29203fb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "2e210c4",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "feat(dashboard): liga alertas-preditivos, que rodava em producao sem tela (#709)",
+    "files": [
+     "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+     "src/components/__tests__/AnalyticsSection.test.tsx",
+     "src/components/dashboard/AnalyticsSection.tsx",
+     "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
+     "src/hooks/useAlertasPreditivos.ts"
+    ]
+   },
    {
     "sha": "778a5b4",
     "date": "2026-11-18",
@@ -328950,23 +329142,12 @@
      "docs/auditoria/sql-preservado/README.md",
      "scripts/audit-migration-style.mjs"
     ]
-   },
-   {
-    "sha": "d324939",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "chore: fecha a conta da muri com medições, em vez de inferências (#678)",
-    "files": [
-     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
-     "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
-     "docs/auditoria/sql-preservado/README.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
-    9
+    8
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -328981,12 +329162,28 @@
     3
    ],
    [
-    "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
-    3
+    "src/components/__tests__/AnalyticsSection.test.tsx",
+    2
    ],
    [
-    "docs/auditoria/sql-preservado/README.md",
+    "src/components/dashboard/AnalyticsSection.tsx",
     2
+   ],
+   [
+    "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
+    2
+   ],
+   [
+    "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    1
+   ],
+   [
+    "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
+    1
+   ],
+   [
+    "src/hooks/useAlertasPreditivos.ts",
+    1
    ],
    [
     "src/components/__tests__/FeriasResumoTab.test.tsx",
@@ -329026,22 +329223,6 @@
    ],
    [
     "src/pages/DesligamentosPage.tsx",
-    1
-   ],
-   [
-    "scripts/.bundle-budget.json",
-    1
-   ],
-   [
-    "src/components/__tests__/AnalyticsSection.test.tsx",
-    1
-   ],
-   [
-    "src/components/dashboard/AnalyticsSection.tsx",
-    1
-   ],
-   [
-    "scripts/build-rebaseline.mjs",
     1
    ]
   ]
