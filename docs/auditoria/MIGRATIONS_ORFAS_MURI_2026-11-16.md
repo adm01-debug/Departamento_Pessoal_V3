@@ -323,6 +323,11 @@ banco. O inventário geral do resgate está em
 
 ## 11. Eixo que faltava: repo x ledger de produção (medido em 2026-11-18)
 
+> **A conclusão desta seção foi RETRATADA.** O trecho "as 52 estão aplicadas em
+> produção" estava errado: provei 4 arquivos e generalizei para 52. A medição real,
+> arquivo por arquivo, está na **§12** — 27 dos 52 têm DDL que não está viva, e o backfill
+> do ledger recomendado aqui foi retirado porque esconderia essas lacunas.
+
 As seções 1–10 varreram **branch por branch**. Faltava um eixo: comparar os arquivos de
 migration da `main` com o ledger do banco de produção. Isso veio à tona porque o check
 `Supabase Preview` está vermelho na `main` desde 2026-11-17 21:39 com:
@@ -383,3 +388,96 @@ opções honestas:
    real já é coberta por `Integridade do banco canônico (live)`, que passa.
 
 Esta auditoria só leu o banco. Nada foi aplicado.
+
+## 12. RETRATAÇÃO da §11: as 52 NÃO estão todas aplicadas (medido 2026-11-18)
+
+A §11 afirmava, em negrito, que **"as 52 estão aplicadas em produção"**. **Isso estava errado.** Um
+revisor automático (Devin, na PR #683) apontou a falha de método antes de eu medir: a §11 provava
+objetos de **4** arquivos e generalizava para 52. A regra 3 da seção 2 do `AGENTS.md` ("toda
+afirmação sobre código cita evidência; sem evidência = NÃO VERIFICADO") existe exatamente para
+impedir isso, e eu a violei no mesmo documento em que a invoco.
+
+Refeito: os **52** arquivos foram verificados **objeto por objeto** contra o banco canônico
+`frjbfeamybqsejlvmqbl`, com as ferramentas estruturadas do MCP (`list_columns`, `list_policies`,
+`list_triggers`, `list_indexes`, `list_functions`, `list_views`, `constraints`). Resultado real:
+
+| veredito            | arquivos | significado                                                        |
+| ------------------- | -------- | ------------------------------------------------------------------ |
+| **APLICADA**        | **7**    | todos os objetos verificáveis existem                              |
+| **SUPERSEDIDA**     | **2**    | conteúdo aplicado sob outra versão, com evidência                  |
+| **PARCIAL**         | **8**    | parte dos objetos existe, parte não                                |
+| **AUSENTE**         | **19**   | nenhum objeto verificável existe                                   |
+| **NÃO_VERIFICÁVEL** | **16**   | só `REVOKE`/`GRANT`/`COMMENT`/`DO` opaco, ou precisa de `db_query` |
+
+**27 arquivos (8 PARCIAL + 19 AUSENTE) têm DDL que não está viva em produção.** Isto é trabalho de
+outro agente que foi escrito, mergeado na `main` e **nunca aplicado** — exatamente o que a auditoria
+existia para encontrar, e que a §11 declarou inexistente.
+
+### O erro concreto que me levou ao engano
+
+A §11 citava `20260725130000_p5_077_passivo_trabalhista.sql` como prova, baseada em
+`vw_passivo_trabalhista_consolidado` existir no banco. **Aquele arquivo não cria essa view.** Ele
+cria `mv_saldo_ferias`, `mv_provisao_13`, `mv_fgts_passivo`, `mv_passivo_trabalhista`,
+`refresh_passivo_trabalhista()` e `v_passivo_summary` — e `mv_passivo_trabalhista` **não existe**
+(`list_columns` devolve 0 colunas). Eu conferi por **semelhança de nome**, não por identidade. É a
+sexta vez nesta auditoria que concluo de um agregado ou de um proxy em vez do item.
+
+### Consequência grave: o backfill do ledger que eu recomendei faria MAL
+
+A §11 recomendava "backfill do ledger (registrar as 52 versões já aplicadas)". **Retirado.**
+Registrar no ledger 27 migrations que nunca rodaram marcaria DDL ausente como aplicada e esconderia
+essas lacunas para sempre — o oposto do que o ledger serve. Qualquer reconciliação precisa ser feita
+**só sobre as 7 APLICADA e as 2 SUPERSEDIDA**, e as 27 precisam de decisão arquivo por arquivo.
+
+### Bug de produção encontrado assim: login com gov.br está quebrado
+
+`20261028230000_govbr_auth_state_user_id.sql` está **AUSENTE**. A tabela `govbr_auth_state` tem 6
+colunas e **não tem `user_id`**. A edge `auth-gov-br` insere essa coluna em
+`supabase/functions/auth-gov-br/index.ts:130` (`user_id: userId`) e faz `throw stateErr` na linha
+133, então **todo pedido de URL de autenticação gov.br falha em produção**. O comentário no topo do
+próprio arquivo já dizia que a coluna "nunca foi criada em migration" — e continua não criada.
+
+### As 27 não aplicadas
+
+| arquivo                                                     | veredito | presentes/conferidos | exemplos do que falta                                                                                                                          |
+| ----------------------------------------------------------- | -------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `20260719170000_security_indexes_constraints.sql`           | AUSENTE  | 0/13                 | index idx_audit_log_tabela_acao_created (public.audit_log); index idx_login_attempts_email_created (public.login_attempts)                     |
+| `20260719190000_audit_delete_trigger.sql`                   | AUSENTE  | 0/11                 | function public.audit_delete_operation(); trigger trg_audit_delete_colaboradores                                                               |
+| `20260719191000_empresa_id_not_null_constraints.sql`        | AUSENTE  | 0/8                  | NOT NULL em colaboradores.empresa_id; NOT NULL em folhas_pagamento.empresa_id                                                                  |
+| `20260719193000_security_monitoring_views.sql`              | AUSENTE  | 0/3                  | view public.v_security_dashboard; view public.v_security_brute_force_targets                                                                   |
+| `20260720040000_fix_jornada_fk_ordering.sql`                | AUSENTE  | 0/1                  | constraint colaboradores_jornada_id_fkey (FOREIGN KEY colaboradores.jo                                                                         |
+| `20260724000200_fix_desligamentos_empresa_id_not_null.sql`  | AUSENTE  | 0/1                  | NOT NULL em desligamentos.empresa_id                                                                                                           |
+| `20260317001935_1663bc94-c134-4084-9b08-4b4257a48256.sql`   | PARCIAL  | 4/7                  | vw_dashboard_time; vw_colaboradores_completo                                                                                                   |
+| `20260317130255_3d640e88-8321-4584-b921-81b859f83b82.sql`   | AUSENTE  | 0/17                 | fk_afastamentos_colaborador; fk_afastamentos_empresa                                                                                           |
+| `20260719150000_storage_bucket_security_hardening.sql`      | PARCIAL  | 12/19                | POLICY afastamentos_delete_rh_admin ON storage.objects; POLICY admissao_docs_insert_public ON storage.objects                                  |
+| `20260724000500_fix_faltas_status_default.sql`              | AUSENTE  | 0/1                  | public.faltas.status DEFAULT 'pendente' (valor real no banco: 'registr                                                                         |
+| `20260724000700_fix_rls_recrutamento_onboarding.sql`        | AUSENTE  | 0/5                  | policy empresa_isolation_vagas em public.vagas; policy empresa_isolation_candidatos em public.candidatos                                       |
+| `20260724001200_fix_faltas_tipo_default_and_constraint.sql` | AUSENTE  | 0/1                  | public.faltas.tipo DEFAULT 'falta_injustificada' (valor real no banco:                                                                         |
+| `20260724140000_p4_072_p4_072_mv_dashboards.sql`            | PARCIAL  | 2/13                 | mv_headcount_daily (materialized view); idx_mv_headcount_daily_pk                                                                              |
+| `20260724140001_t007_backup_logs_rls.sql`                   | AUSENTE  | 0/2                  | policy backup_logs_select ON public.backup_logs; policy backup_logs_insert ON public.backup_logs                                               |
+| `20260725100000_p3_060_backup_logs.sql`                     | AUSENTE  | 0/5                  | tabela public.backup_logs (e as 9 colunas do ALTER TABLE ... ADD COLUM; idx_backup_logs_empresa                                                |
+| `20260725120000_p4_071_compound_indexes.sql`                | PARCIAL  | 4/22                 | idx_colaboradores_empresa_status_admissao; idx_colaboradores_empresa_depto_status                                                              |
+| `20260725130000_p5_077_passivo_trabalhista.sql`             | AUSENTE  | 0/15                 | MATERIALIZED VIEW public.mv_saldo_ferias; INDEX idx_mv_saldo_ferias_pk                                                                         |
+| `20260726110000_p2_037_consolidate_duplicates.sql`          | PARCIAL  | 1/4                  | VIEW public.v_documentos_unificado; FUNCTION public.documento_registrar(...)                                                                   |
+| `20260726120000_p4_068_connection_pooling.sql`              | AUSENTE  | 0/13                 | SCHEMA admin; VIEW admin.v_pgbouncer_stats                                                                                                     |
+| `20260802000000_p0_007_views_security_invoker.sql`          | PARCIAL  | 2/17                 | VIEW public.v_filter_stats (inexistente no banco); public.vw_dashboard_time (existe com definicao divergente)                                  |
+| `20260804000000_p0_010_write_policies_provisoes.sql`        | AUSENTE  | 0/4                  | POLICY "provisoes_folha_insert" ON public.provisoes_folha (FOR INSERT); POLICY "provisoes_folha_update" ON public.provisoes_folha (FOR UPDATE) |
+| `20260815000000_p1_023_naming_pattern.sql`                  | AUSENTE  | 0/2                  | TABLE public.migration_naming_audit; FUNCTION public._classify_migration_name(TEXT)                                                            |
+| `20260816000000_p1_024_policies_orfas.sql`                  | AUSENTE  | 0/3                  | policy public.backup_logs_tenant_all (tabela backup_logs nem existe); policy public.contratos_tenant_all                                       |
+| `20260817000000_p4_071_indices_compostos_top20.sql`         | PARCIAL  | 6/33                 | idx_colaboradores_empresa_status_admissao; idx_colaboradores_empresa_pk                                                                        |
+| `20260817010000_p4_072_materialized_views_dashboards.sql`   | AUSENTE  | 0/14                 | tabela mv_refresh_log; tabela feriados_brasileiros                                                                                             |
+| `20261012130000_rotinas_agendadas_falhando.sql`             | PARCIAL  | 3/4                  | public.fn_atualizar_status_ferias_diario() RETURNS jsonb (linha 160); conteudo de chk_notificacoes_tipo com 'ferias_pagamento_d5'              |
+| `20261028230000_govbr_auth_state_user_id.sql`               | AUSENTE  | 0/2                  | public.govbr_auth_state.user_id (uuid, REFERENCES auth.users ON DELETE; indice public.idx_govbr_auth_state_user_id                             |
+
+Quatro destes vereditos foram reconferidos por mim, em quatro lotes diferentes, com chamada direta
+ao MCP: `mv_passivo_trabalhista` (0 colunas), `govbr_auth_state` (6 colunas, sem `user_id`),
+`colaboradores` (tem `idx_colaboradores_cpf`, não tem `idx_colaboradores_empresa_status_admissao`
+nem `idx_colaboradores_empresa_pk`) e as views do primeiro arquivo de 2026-03. Todos bateram.
+
+### O que NÃO foi feito
+
+Nada foi aplicado. Aplicar qualquer uma das 27 é DDL em produção — regra 8 do Fluxo Git, decisão do
+dono, pelo `canonical-migrations.yml`. O `supabase_db_query` do MCP está devolvendo zero linhas até
+para `select 1`, o que é a razão dos 16 `NÃO_VERIFICÁVEL`: `REVOKE`/`GRANT`, corpo de função e
+conteúdo de policy não têm como ser lidos pelas ferramentas estruturadas. Esses 16 são
+**NÃO VERIFICADO**, não "aplicados".
