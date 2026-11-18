@@ -2029,6 +2029,9 @@
    "src/services/desligamentoService.ts",
    "src/utils/safeError.ts"
   ],
+  "src/components/desligamentos/ProximaAcaoCell.tsx": [
+   "src/components/desligamentos/desligamentosDerivacoes.ts"
+  ],
   "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx": [
    "src/components/desligamentos/desligamentosDerivacoes.ts",
    "src/components/desligamentos/entradaCards.tsx",
@@ -2074,6 +2077,7 @@
    "src/components/desligamentos/DesligamentoKPIs.tsx",
    "src/components/desligamentos/DesligamentoStatusBadge.tsx",
    "src/components/desligamentos/NovoDesligamentoDialog.tsx",
+   "src/components/desligamentos/ProximaAcaoCell.tsx",
    "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
    "src/components/desligamentos/TurnoverChart.tsx"
   ],

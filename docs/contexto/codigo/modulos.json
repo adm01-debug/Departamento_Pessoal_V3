@@ -198,7 +198,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 295,
+   "testes": 296,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -1836,13 +1836,13 @@
   },
   {
    "modulo": "components/desligamentos",
-   "arquivos": 16,
+   "arquivos": 17,
    "testes": 0,
-   "linhas": 5926,
+   "linhas": 5955,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 9,
+   "componentes": 10,
    "hooks_locais": [
     "useAuth",
     "useEmpresaStore",
@@ -7844,7 +7844,7 @@
    "modulo": "pages",
    "arquivos": 113,
    "testes": 0,
-   "linhas": 45894,
+   "linhas": 45960,
    "itens_menu": [
     "Admissões",
     "Afastamentos",

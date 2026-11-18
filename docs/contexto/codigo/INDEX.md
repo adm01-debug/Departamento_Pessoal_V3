@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2569c2a4f1da834ff33e2da2ae1a7d8c6f7063df` (2026-11-17T21:15:02-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `544b877ba377e9b197d10eb3836a1841a780ebf3` (2026-11-17T21:27:38-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1933), SQL (935), Markdown (334), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1935), SQL (935), Markdown (334), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,36 +34,36 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3567 |
-| arquivos_codigo | 2071 |
-| linhas_codigo | 410302 |
+| arquivos_total | 3569 |
+| arquivos_codigo | 2073 |
+| linhas_codigo | 410471 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
 | itens_menu | 97 |
 | modulos | 81 |
-| componentes | 634 |
+| componentes | 635 |
 | hooks | 117 |
 | edge_functions | 67 |
 | tabelas | 425 |
 | migrations | 869 |
 | cron_jobs | 41 |
-| testes | 770 |
+| testes | 771 |
 | workflows | 21 |
 | scripts | 135 |
 | docs_md | 334 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
-- componentes: src/components (516), src/pages (110), src/contexts (3)
+- componentes: src/components (517), src/pages (110), src/contexts (3)
 - hooks: src/hooks (98), src/components (9), src/contexts (4)
 - servicos_logica: src/services (95), src/utils (35), src/schemas (25)
-- testes: co-localizado (__tests__) (639), co-localizado (*.test) (73), e2e/ (33)
+- testes: co-localizado (__tests__) (640), co-localizado (*.test) (73), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
 - docs: docs (95), (raiz) (32), .github (1)
-- nomenclatura: {"componentes":"PascalCase (88%)","hooks":"use + PascalCase","servicos":"camelCase (98%)","edge_functions":"kebab-case (69%)","tabelas":"snake_case (84%)"}
+- nomenclatura: {"componentes":"PascalCase (89%)","hooks":"use + PascalCase","servicos":"camelCase (98%)","edge_functions":"kebab-case (69%)","tabelas":"snake_case (84%)"}
 - instruções para agentes no repo: .claude/CLAUDE.md, AGENTS.md, CLAUDE.md
 
 ## Módulos (menu → domínio)
@@ -79,7 +79,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/colaboradores | 0 | 0 | 9 | 9 | 0 | 3 |
 | components/dashboard | 0 | 0 | 17 | 9 | 24 | 60 |
 | components/descontos | 0 | 0 | 5 | 0 | 0 | 1 |
-| components/desligamentos | 0 | 0 | 16 | 4 | 1 | 6 |
+| components/desligamentos | 0 | 0 | 17 | 4 | 1 | 6 |
 | components/epis | 0 | 0 | 5 | 0 | 0 | 0 |
 | components/esocial | 0 | 0 | 21 | 2 | 2 | 7 |
 | components/exames | 0 | 0 | 5 | 0 | 0 | 0 |
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27181 nós · 61407 arestas · 2378 comunidades · grafo do commit `2569c2a4`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), button.tsx (455), lucide-react (454), useEmpresas (378), cn (378), vitest (307), react (254), client.ts (250), nineBoxComum.ts (201), "public"."empresas" (159), entradaCard (159)
+- 27188 nós · 61425 arestas · 2343 comunidades · grafo do commit `544b877b`
+- comunidades maiores: 20260831_corrected_public.sql (493), lucide-react (489), button.tsx (477), canonical_schema.sql (475), useEmpresas (451), @tanstack/react-query (382), vitest (310), react (306), cn (286), nineBoxComum.ts (212), contract.ts (198), FeedbackAcoesRodape.tsx (160)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `544b877` feat(desligamentos): coluna &quot;Próxima Ação&quot; com prazo legal, e os filtros que o componente já tinha (#668)
 - 2026-11-17 `2569c2a` feat(observabilidade): liga o trace_id do frontend ao bridge (#666)
 - 2026-11-17 `fa2dec8` fix(portal): aviso de exclusão de documento para de mentir sobre o arquivo (#665)
 - 2026-11-17 `94c16ea` chore(migrations): documenta no repo as 8 DDL que só existiam no ledger (#656)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `e968e3e` feat(permissões): controle de acesso por funcionalidade, lendo a matriz do banco (#651)
 - 2026-11-17 `842a6af` feat(colaborador): resumo financeiro no dossiê, com CPF mascarado no PDF (#655)
 - 2026-11-17 `45748e7` feat(documentos): upload real de arquivo nos 4 formulários de documento (#653)
-- 2026-11-17 `0425875` fix(automação): registra os 5 scripts que a #652 deixou sem gatilho (#654)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

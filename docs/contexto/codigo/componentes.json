@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 634,
+ "total": 635,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -3039,6 +3039,20 @@
    "tabelas": [
     "colaboradores"
    ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/desligamentos/ProximaAcaoCell.tsx",
+   "exports": [
+    "ProximaAcaoCell"
+   ],
+   "export_default": null,
+   "linhas": 28,
+   "dominio": "components/desligamentos",
+   "hooks_locais": [],
+   "tabelas": [],
    "edges": [],
    "usado_por": 1,
    "orfao": false
@@ -9221,7 +9235,7 @@
     "DesligamentosPage"
    ],
    "export_default": "DesligamentosPage",
-   "linhas": 399,
+   "linhas": 465,
    "dominio": "pages",
    "hooks_locais": [
     "useDataAccessLog",

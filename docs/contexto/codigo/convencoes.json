@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (516)",
+   "src/components (517)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (639)",
+   "co-localizado (__tests__) (640)",
    "co-localizado (*.test) (73)",
    "e2e/ (33)"
   ],
@@ -40,7 +40,7 @@
   ]
  },
  "nomenclatura": {
-  "componentes": "PascalCase (88%)",
+  "componentes": "PascalCase (89%)",
   "hooks": "use + PascalCase",
   "servicos": "camelCase (98%)",
   "edge_functions": "kebab-case (69%)",
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (634)"
+  ".tsx (635)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(desligamentos): coluna &quot;Próxima Ação&quot; com prazo legal, e os filtros que o componente já tinha (#668)",
    "feat(observabilidade): liga o trace_id do frontend ao bridge (#666)",
    "fix(portal): aviso de exclusão de documento para de mentir sobre o arquivo (#665)",
    "chore(migrations): documenta no repo as 8 DDL que só existiam no ledger (#656)",
-   "test(e2e): resgata da muri os 5 especs de navegador (#661)",
-   "feat(desligamentos): faixa de atenção na tela, ligada ao cálculo que já existia (#664)"
+   "test(e2e): resgata da muri os 5 especs de navegador (#661)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

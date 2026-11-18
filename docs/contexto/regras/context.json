@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "2569c2a4f1da834ff33e2da2ae1a7d8c6f7063df",
+  "sha": "544b877ba377e9b197d10eb3836a1841a780ebf3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 00:16 UTC",
-  "files_total": 3580,
-  "code_files": 3004,
-  "code_lines": 476012
+  "generated_at": "2026-11-18 00:28 UTC",
+  "files_total": 3582,
+  "code_files": 3006,
+  "code_lines": 476181
  },
  "version": "1.3.2",
- "facts_hash": "314293cfa624f531",
+ "facts_hash": "326207aeaa8b6b8b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,7 +387,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 995,
+   ".tsx": 997,
    ".ts": 938,
    ".sql": 935,
    ".mjs": 108,
@@ -90680,7 +90680,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 133
+    "deps_count": 134
    },
    {
     "path": "",
@@ -100074,7 +100074,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 971,
+  "components_count": 973,
   "hooks": [
    {
     "name": "useContacts",
@@ -101666,8 +101666,8 @@
   },
   {
    "module": "src/components",
-   "files": 971,
-   "lines": 175842,
+   "files": 973,
+   "lines": 175945,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102361,7 +102361,7 @@
   {
    "module": "src/pages",
    "files": 134,
-   "lines": 49470,
+   "lines": 49536,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -119316,6 +119316,14 @@
    {
     "file": "src/components/desligamentos/NovoDesligamentoDialog.tsx",
     "text": "`desligamentos` (esse é o registro do caso/workflow) — são apenas"
+   },
+   {
+    "file": "src/components/desligamentos/ProximaAcaoCell.tsx",
+    "text": "* Mostra a próxima providência do processo e o prazo legal do art. 477 §6º"
+   },
+   {
+    "file": "src/components/desligamentos/ProximaAcaoCell.tsx",
+    "text": "`desligamentosDerivacoes.ts` com teste e NENHUM consumidor: o prazo era"
    },
    {
     "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
@@ -177745,6 +177753,34 @@
    {
     "file": "src/components/__tests__/ProtectedRoute.test.tsx",
     "name": "fail-open: libera acesso se a consulta de AAL falhar"
+   },
+   {
+    "file": "src/components/__tests__/ProximaAcaoCell.test.tsx",
+    "name": "ProximaAcaoCell"
+   },
+   {
+    "file": "src/components/__tests__/ProximaAcaoCell.test.tsx",
+    "name": "prazo vencido aparece como atraso, em vermelho"
+   },
+   {
+    "file": "src/components/__tests__/ProximaAcaoCell.test.tsx",
+    "name": "prazo vencendo hoje aparece como "
+   },
+   {
+    "file": "src/components/__tests__/ProximaAcaoCell.test.tsx",
+    "name": "prazo folgado não alarma: tom neutro"
+   },
+   {
+    "file": "src/components/__tests__/ProximaAcaoCell.test.tsx",
+    "name": "processo concluído não mostra prazo nenhum"
+   },
+   {
+    "file": "src/components/__tests__/ProximaAcaoCell.test.tsx",
+    "name": "processo cancelado também não mostra prazo"
+   },
+   {
+    "file": "src/components/__tests__/ProximaAcaoCell.test.tsx",
+    "name": "sem data de desligamento mostra a ação, sem inventar prazo"
    },
    {
     "file": "src/components/__tests__/ProximosEventosDialog.test.tsx",
@@ -269578,6 +269614,24 @@
     "fail-open: libera acesso se a consulta de AAL falhar"
    ]
   },
+  "src/components/__tests__/ProximaAcaoCell.test.tsx": {
+   "path": "src/components/__tests__/ProximaAcaoCell.test.tsx",
+   "lines": 74,
+   "is_test": true,
+   "rule_comments": [
+    "* O que este arquivo trava: o prazo do art. 477 §6º (data do desligamento + 10",
+    "o prazo venceu, mas não há mais nada a fazer: alarme aqui seria ruído"
+   ],
+   "tests": [
+    "ProximaAcaoCell",
+    "prazo vencido aparece como atraso, em vermelho",
+    "prazo vencendo hoje aparece como ",
+    "prazo folgado não alarma: tom neutro",
+    "processo concluído não mostra prazo nenhum",
+    "processo cancelado também não mostra prazo",
+    "sem data de desligamento mostra a ação, sem inventar prazo"
+   ]
+  },
   "src/components/__tests__/ProximosEventosDialog.test.tsx": {
    "path": "src/components/__tests__/ProximosEventosDialog.test.tsx",
    "lines": 61,
@@ -277149,6 +277203,17 @@
     "`desligamentos` (esse é o registro do caso/workflow) — são apenas"
    ]
   },
+  "src/components/desligamentos/ProximaAcaoCell.tsx": {
+   "path": "src/components/desligamentos/ProximaAcaoCell.tsx",
+   "lines": 28,
+   "exports": [
+    "function ProximaAcaoCell"
+   ],
+   "rule_comments": [
+    "* Mostra a próxima providência do processo e o prazo legal do art. 477 §6º",
+    "`desligamentosDerivacoes.ts` com teste e NENHUM consumidor: o prazo era"
+   ]
+  },
   "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx": {
    "path": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
    "lines": 1342,
@@ -277439,7 +277504,7 @@
   },
   "src/components/desligamentos/index.ts": {
    "path": "src/components/desligamentos/index.ts",
-   "lines": 10
+   "lines": 11
   },
   "src/components/desligamentos/trilhaComum.ts": {
    "path": "src/components/desligamentos/trilhaComum.ts",
@@ -296675,7 +296740,7 @@
   },
   "src/pages/DesligamentosPage.tsx": {
    "path": "src/pages/DesligamentosPage.tsx",
-   "lines": 399,
+   "lines": 465,
    "exports": [
     "function DesligamentosPage"
    ],
@@ -326556,10 +326621,22 @@
   }
  },
  "git": {
-  "sha": "2569c2a4f1da834ff33e2da2ae1a7d8c6f7063df",
+  "sha": "544b877ba377e9b197d10eb3836a1841a780ebf3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "544b877",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(desligamentos): coluna &quot;Próxima Ação&quot; com prazo legal, e os filtros que o componente já tinha (#668)",
+    "files": [
+     "src/components/__tests__/ProximaAcaoCell.test.tsx",
+     "src/components/desligamentos/ProximaAcaoCell.tsx",
+     "src/components/desligamentos/index.ts",
+     "src/pages/DesligamentosPage.tsx"
+    ]
+   },
    {
     "sha": "2569c2a",
     "date": "2026-11-17",
@@ -326916,19 +326993,6 @@
      "src/hooks/usePendenciasColaborador.ts",
      "src/pages/ColaboradorDetalhesPage.tsx"
     ]
-   },
-   {
-    "sha": "fec359d",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(dashboard): resgata o SystemStatusCard da muri, com os 3 contratos corrigidos (#636)",
-    "files": [
-     "scripts/.bundle-budget.json",
-     "src/components/__tests__/SystemStatusCard.test.tsx",
-     "src/components/dashboard/SystemStatusCard.tsx",
-     "src/constants/tooltips.ts",
-     "src/pages/DashboardPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -326937,8 +327001,12 @@
     4
    ],
    [
-    "scripts/.bundle-budget.json",
-    3
+    "src/components/desligamentos/index.ts",
+    2
+   ],
+   [
+    "src/pages/DesligamentosPage.tsx",
+    2
    ],
    [
     "src/components/__tests__/PortalDocumentosTab.test.tsx",
@@ -326961,6 +327029,10 @@
     2
    ],
    [
+    "scripts/.bundle-budget.json",
+    2
+   ],
+   [
     "supabase/migrations/20261117190000_permissions_matriz_seed.verify.sql",
     2
    ],
@@ -326971,6 +327043,14 @@
    [
     ".github/workflows/canonical-migrations.yml",
     2
+   ],
+   [
+    "src/components/__tests__/ProximaAcaoCell.test.tsx",
+    1
+   ],
+   [
+    "src/components/desligamentos/ProximaAcaoCell.tsx",
+    1
    ],
    [
     "src/integrations/supabase/__tests__/clientBridge.test.ts",
@@ -326994,22 +327074,6 @@
    ],
    [
     "supabase/migrations/20260912142506_p0_auth_lockout_contract.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20260912142520_p0_payroll_upsert_contract.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20260912143019_p0_views_revoke_public.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20260912143344_p1_function_search_path.sql",
     1
    ]
   ]

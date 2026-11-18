@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2569c2a4f1da834ff33e2da2ae1a7d8c6f7063df",
+  "commit": "544b877ba377e9b197d10eb3836a1841a780ebf3",
   "branch": "main",
-  "data_commit": "2026-11-17T21:15:02-03:00",
+  "data_commit": "2026-11-17T21:27:38-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "544b877",
+    "data": "2026-11-17",
+    "assunto": "feat(desligamentos): coluna &quot;Próxima Ação&quot; com prazo legal, e os filtros que o componente já tinha (#668)"
+   },
    {
     "sha": "2569c2a",
     "data": "2026-11-17",
@@ -126,18 +131,13 @@
     "sha": "3084304",
     "data": "2026-11-17",
     "assunto": "infra(storage): policies de tenant para documentos, documentos-colaboradores e afastamentos (#644)"
-   },
-   {
-    "sha": "f26f689",
-    "data": "2026-11-17",
-    "assunto": "feat(permissions): seed da matriz de permissões por papel (#642)"
    }
   ],
-  "arquivos_mudados_7d": 1107,
+  "arquivos_mudados_7d": 1109,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 372
+    "mudancas": 373
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -301,38 +301,38 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 282
+    "commits": 283
    },
    {
     "autor": "dependabot[bot]",
     "commits": 10
    },
    {
-    "autor": "devin-ai-integration[bot]",
+    "autor": "github-actions[bot]",
     "commits": 4
    },
    {
-    "autor": "github-actions[bot]",
-    "commits": 4
+    "autor": "devin-ai-integration[bot]",
+    "commits": 3
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3567,
-  "arquivos_codigo": 2071,
-  "linhas_codigo": 410302,
+  "arquivos_total": 3569,
+  "arquivos_codigo": 2073,
+  "linhas_codigo": 410471,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
-  "componentes": 634,
+  "componentes": 635,
   "hooks": 117,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 869,
   "cron_jobs": 41,
-  "testes": 770,
+  "testes": 771,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 334
@@ -647,8 +647,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 971,
-   "linhas": 175842
+   "arquivos": 973,
+   "linhas": 175945
   },
   "src/constants": {
    "arquivos": 7,
@@ -688,7 +688,7 @@
   },
   "src/pages": {
    "arquivos": 134,
-   "linhas": 49470
+   "linhas": 49536
   },
   "src/providers": {
    "arquivos": 4,
