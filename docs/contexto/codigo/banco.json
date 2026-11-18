@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 878,
+ "migrations": 880,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -40374,6 +40374,50 @@
     "so_na_migration": [],
     "so_no_types": []
    },
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "ninebox_permissoes_homologacao": {
+   "colunas": {
+    "criado_em": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "expira_em": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "habilitado": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "false",
+     "ref": null
+    },
+    "user_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [],
+   "indices": [],
+   "fks": [
+    "user_id->auth"
+   ],
+   "criada_em": "20261020120000_ninebox_permissoes_homologacao_versiona_tabela.sql",
    "usada_no_front": 0,
    "usada_em_edges": [],
    "triggers": [],

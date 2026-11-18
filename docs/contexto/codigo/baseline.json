@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2e210c42b102bbc95cd3893abaa8d483c29203fb",
+  "commit": "a4e0aae5eb65b8227c1d8607fdb25902c4e740bc",
   "branch": "main",
-  "data_commit": "2026-11-18T18:29:02-03:00",
+  "data_commit": "2026-11-18T20:46:29-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "a4e0aae",
+    "data": "2026-11-18",
+    "assunto": "infra(banco): versiona ninebox_permissoes_homologacao, que existia só em produção (#708)"
+   },
    {
     "sha": "2e210c4",
     "data": "2026-11-18",
@@ -126,14 +131,9 @@
     "sha": "8056cc5",
     "data": "2026-11-18",
     "assunto": "fix: troca as tres passadas de regex da guarda de RLS por um tokenizador unico (#684)"
-   },
-   {
-    "sha": "1512a40",
-    "data": "2026-11-18",
-    "assunto": "fix: corrige a faixa de PRs da secao 7b, derrubada por aritmetica do revisor (#685)"
    }
   ],
-  "arquivos_mudados_7d": 1149,
+  "arquivos_mudados_7d": 1145,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3619,
+  "arquivos_total": 3621,
   "arquivos_codigo": 2105,
   "linhas_codigo": 418053,
   "rotas": 116,
@@ -325,8 +325,8 @@
   "componentes": 640,
   "hooks": 120,
   "edge_functions": 67,
-  "tabelas": 426,
-  "migrations": 878,
+  "tabelas": 427,
+  "migrations": 880,
   "cron_jobs": 41,
   "testes": 792,
   "workflows": 21,

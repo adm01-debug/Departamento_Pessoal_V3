@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2e210c42b1` · branch `main` · 2026-11-18 21:29 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a4e0aae5eb` · branch `main` · 2026-11-18 23:47 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `desligamentos` | `total_descontos` | default 0 |
 | `desligamentos` | `valor_liquido` | default 0 |
 | `desligamentos` | `checklist_comunicacao` | default false |
-| … +4405 linhas — lista completa em `context.json` | | |
+| … +4409 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 

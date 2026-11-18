@@ -1,13 +1,13 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2e210c42b1` · branch `main` · 2026-11-18 21:29 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a4e0aae5eb` · branch `main` · 2026-11-18 23:47 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
 
 `admin`, `assistant`, `auditoria`, `colaborador`, `confirmado`, `coordenador`, `dpo`, `gestor`, `granted`, `pendente`, `rh`, `role`, `service_role`, `supabase_admin`, `super_admin`, `supervisor`, `user`
 
-- Tabelas de perfil/permissão: `controle_acesso`, `dp_user_roles`, `permissao_perfis`, `permissao_recursos`, `permissions`, `role_permissions`, `user_roles`
+- Tabelas de perfil/permissão: `controle_acesso`, `dp_user_roles`, `permissao_perfis`, `permissao_recursos`, `permissions`, `role_permissions`, `user_roles`, `ninebox_permissoes_homologacao`
 - Colunas de perfil: `auth.users.role` (character varying(255)), `dp_user_roles.role` ("public"."dp_user_role" NOT NULL), `permissao_perfis.is_admin` (boolean DEFAULT false), `permissions.role` ("public"."app_role" NOT NULL), `role_permissions.role` ("text" NOT NULL), `user_roles.role` (public.app_role NOT NULL DEFAULT 'user')
 - Claims do JWT usados em políticas/funções: `role`, `user_metadata`
 - Funções usadas dentro de políticas RLS (a regra real está no corpo delas — veja `06`): `candidatura_na_minha_empresa`, `empresa_do_colaborador`, `foldername`, `get_auth_empresa_id`, `get_user_empresa_ids`, `get_user_empresas`, `get_user_scope_empresas`, `has_role`, `is_admin`, `jwt`, `pertence_a_empresa`, `pode_gerir_avaliacoes`, `pode_gerir_config_ponto`, `pode_gerir_pessoas`, `pode_gerir_rh`, `rls_tenant_or_admin`, `role`, `sou_o_colaborador`, `storage_path_empresa_id`, `uid`, `user_belongs_to_empresa`, `user_can_manage_tenant_storage`, `user_empresa_id`
@@ -297,6 +297,7 @@
 | `motivos_afastamento` | enabled | authenticated: true | — | — | — |
 | `mv_refresh_log` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `nacionalidades` | enabled | public: ("auth"."role"() = 'authenticated'::"text") | — | — | — |
+| `ninebox_permissoes_homologacao` | enabled | — | — | — | — |
 | `notificacoes` | enabled | public: usuario_id = auth.uid() OR empresa_id = public.user_empresa_id()<br>authenticated: user_id = auth.uid()<br>authenticated: ("public"."is_admin"("auth"."uid"()) OR ("user_id" = "auth"."uid"()) OR (("empresa_id" IS NOT NULL) AND "public"."user_belong | authenticated: ("public"."is_admin"("auth"."uid"()) OR ("user_id" = "auth"."uid"()) OR (("empresa_id" IS NOT NULL) AND "public"."user_belong | public: usuario_id = auth.uid()<br>authenticated: user_id = auth.uid()<br>authenticated: ("public"."is_admin"("auth"."uid"()) OR ("user_id" = "auth"."uid"()) OR (("empresa_id" IS NOT NULL) AND "public"."user_belong | public: auth.uid() = user_id AND lida = true<br>authenticated: ("public"."is_admin"("auth"."uid"()) OR ("user_id" = "auth"."uid"()) OR (("empresa_id" IS NOT NULL) AND "public"."user_belong |
 | `notificacoes_admissao` | enabled | authenticated: ("admissao_id" IN ( SELECT "admissoes"."id" FROM "public"."admissoes" WHERE ("admissoes"."empresa_id" IN ( SELECT "public"."g | authenticated: ("admissao_id" IN ( SELECT "admissoes"."id" FROM "public"."admissoes" WHERE ("admissoes"."empresa_id" IN ( SELECT "public"."g | authenticated: ("admissao_id" IN ( SELECT "admissoes"."id" FROM "public"."admissoes" WHERE ("admissoes"."empresa_id" IN ( SELECT "public"."g | authenticated: ("admissao_id" IN ( SELECT "admissoes"."id" FROM "public"."admissoes" WHERE ("admissoes"."empresa_id" IN ( SELECT "public"."g |
 | `notificacoes_templates` | enabled | public: auth.role() = 'authenticated' | public: auth.role() = 'authenticated' | public: auth.role() = 'authenticated' | — |
@@ -315,12 +316,11 @@
 | `password_reset_requests` | enabled | authenticated: user_id = auth.uid()<br>authenticated: "public"."is_admin"("auth"."uid"()) | authenticated: "public"."is_admin"("auth"."uid"())<br>authenticated: ("user_id" = "auth"."uid"()) | authenticated: "public"."is_admin"("auth"."uid"()) | authenticated: "public"."is_admin"("auth"."uid"()) |
 | `pcs_avaliacoes_cargo` | enabled | — | — | — | — |
 | `pcs_fatores` | enabled | — | — | — | — |
-| `pcs_grades` | enabled | — | — | — | — |
-| … +169 linhas — lista completa em `context.json` | | | | | |
+| … +170 linhas — lista completa em `context.json` | | | | | |
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 317 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 319 arquivo(s)
 
 - `docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql`
 - `docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql`
@@ -472,7 +472,7 @@
 - `supabase/migrations/20260712214929_4971f364-3f69-48cd-9150-a55524b1025d.sql`
 - `supabase/migrations/20260712215539_349ae8a8-7ed9-41a5-b06c-ea4b8f35c7b5.sql`
 - `supabase/migrations/20260712215808_8c16ff4b-eb80-4fbb-a8c6-c15c62ed93c7.sql`
-- … +167 (lista completa em `context.json`)
+- … +169 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -850,16 +850,18 @@ Middleware matcher (Next.js): nenhum
 | grant | authenticated, service_role | select, insert, update, delete | `storage.objects` |
 | grant | ci_auditor | execute | `extensions` |
 | grant | ci_auditor | select | `cron.job` |
+| grant | dp_mcp_role | select | `ninebox_permissoes_homologacao` |
 | grant | service_role | all | `logs_sistema`, `login_lockouts`, `idempotency_keys`, `folha_lock_conflicts`, `audit_log_unified`, `audit_log_unified_archive`, `rate_limits`, `rate_limit_logs`, `rate_limit_config`, `despesas_aprovacoes_log`, `contabilidade_contatos`, `contabilidade_threads`, `contabilidade_mensagens`, `holerite_distribuicoes`, `afdt_importacoes` … +56 |
 | grant | service_role | execute | `detectar_fraude_ponto`, `check_brute_force`, `check_rate_limit`, `is_ip_blocked`, `is_ip_whitelisted`, `is_country_allowed`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `purge_expired_idempotency_keys`, `check_idempotency_anomalies`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash` … +110 |
 | grant | service_role | select | `vw_folha_compliance`, `v_idempotency_metrics`, `feedbacks_360_consolidacoes`, `feedbacks_360_aprovacoes_gestor`, `health_checks`, `mv_folha_summary`, `health_checks` |
 | grant | service_role | select, insert, delete | `pii_access_logs`, `pii_access_alerts` |
+| grant | service_role | select, insert, update, delete, truncate, references, trigger | `ninebox_permissoes_homologacao` |
 | revoke | PUBLIC | all | `_is_admin_bypass`, `_purge_audit_log_internal`, `_scan_status_anomalies_global`, `admin_list_security_definer_rpcs`, `admin_list_user_roles`, `admin_set_user_role`, `anonimizar_dados_pessoais`, `aplicar_medida_folha_ponto`, `aprovar_despesa`, `assinar_aviso_ferias`, `assinar_desligamento`, `assinar_espelho_ponto`, `associar_pis_colaborador_afdt`, `auto_vincular_admins_empresa`, `check_idempotency_anomalies` … +319 |
 | revoke | PUBLIC | execute | `has_role`, `is_admin`, `get_user_roles`, `get_user_default_empresa`, `get_user_empresas`, `user_belongs_to_empresa`, `anonimizar_dados_pessoais`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `get_colaborador_banco_horas`, `check_processamento_timeout`, `fn_alert_severe_disciplinary_measure`, `fn_audit_biometric_failure`, `fn_auto_generate_training_certificate`, `fn_consolidar_batidas` … +38 |
 | revoke | PUBLIC, anon | all | `get_idempotency_health`, `check_idempotency_anomalies`, `v_slow_queries_top50`, `get_query_telemetry`, `get_dlq_stats`, `get_audit_trail_by_user`, `get_audit_trail_by_entity`, `search_audit_unified`, `rate_limit_logs`, `rate_limit_config`, `purge_audit_log_old`, `resolve_security_alert`, `refresh_dashboard_mvs`, `mv_status_change_daily`, `mv_anomalies_hourly` … +108 |
 | revoke | PUBLIC, anon | execute | `get_cron_jobs_health`, `get_security_alerts_summary`, `resolve_security_alert`, `pode_gerir_rh`, `pode_gerir_pessoas`, `sou_o_colaborador`, `empresa_do_colaborador`, `is_admin`, `sou_o_colaborador` |
 | revoke | PUBLIC, anon | select | `v_system_health` |
-| revoke | PUBLIC, anon, authenticated | all | `enforce_batida_ponto_hash`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash`, `enforce_desligamento_hash`, `enforce_ferias_hash`, `enforce_medida_disciplinar_hash`, `enforce_aso_hash`, `enforce_cat_hash`, `enforce_epi_entrega_hash`, `enforce_documento_assinatura_hash`, `enforce_afastamento_hash`, `purge_old_lock_conflicts` … +77 |
+| revoke | PUBLIC, anon, authenticated | all | `enforce_batida_ponto_hash`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash`, `enforce_desligamento_hash`, `enforce_ferias_hash`, `enforce_medida_disciplinar_hash`, `enforce_aso_hash`, `enforce_cat_hash`, `enforce_epi_entrega_hash`, `enforce_documento_assinatura_hash`, `enforce_afastamento_hash`, `purge_old_lock_conflicts` … +78 |
 | revoke | PUBLIC, anon, authenticated | execute | `check_processamento_timeout`, `fn_alert_severe_disciplinary_measure`, `fn_audit_biometric_failure`, `fn_auto_generate_training_certificate`, `fn_consolidar_batidas`, `fn_create_default_onboarding_tasks`, `fn_enqueue_notification`, `fn_trigger_whatsapp_on_event`, `fn_update_admissao_checklist`, `fn_update_candidatura_history`, `fn_workflow_admissao_auto`, `handle_new_user`, `handle_new_user_role`, `log_audit_change`, `log_esocial_transmission` … +42 |
 | revoke | PUBLIC, anon, authenticated | select | `v_audit_trail`, `mv_folha_summary`, `health_checks` |
 | revoke | anon | all | `detectar_fraude_ponto`, `contrato_estender_expiracao`, `pcs_pode_gerir_plano`, `pcs_pode_ver_plano`, `pcs_gerar_grades`, `pcs_enquadramento`, `pcs_simular_impacto`, `medidas_ciencia_tokens`, `audit_log`, `folha_auditoria`, `sst_regimento_interno`, `feedbacks_360_operacoes`, `feedbacks_360_validacoes_potencial`, `provisoes_competencia_tributaria` |
@@ -1291,7 +1293,7 @@ Middleware matcher (Next.js): nenhum
 | `sindicatos` | `created_at` |
 | `sinistros_seguro` | `created_at` |
 | `solicitacoes_ajuste_ponto` | `created_at`, `updated_at` |
-| … +134 linhas — lista completa em `context.json` | |
+| … +135 linhas — lista completa em `context.json` | |
 
 ## Dados pessoais / sensíveis (LGPD — cuidado em logs, exports, prompts de IA)
 
