@@ -77,6 +77,35 @@ A análise que sustenta as linhas de "regressão", de `onboarding` e de `ciclos`
 **NÃO APLICAR** estão aqui só para não desaparecerem: aplicá-las reabriria buracos de RLS que a
 `main` já fechou.
 
+### Provado com arquivo:linha — por que a `20260819000000` é regressão, e não melhoria
+
+O cabeçalho do próprio arquivo afirma: _"Esta correção só pode AMPLIAR acesso, nunca reduzir"_ e
+_"Mantém fallback para `user_metadata.empresa_id`"_. Essa é a alegação do outro agente. O que a
+`main` tem hoje, em `supabase/migrations/20260912190000_p0_identity_rls_authz.sql:51-66`:
+
+```sql
+CREATE OR REPLACE FUNCTION public.user_empresa_id() RETURNS uuid
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = pg_catalog, public, pg_temp AS $function$
+  SELECT ue.empresa_id FROM public.user_empresas AS ue
+  WHERE ue.user_id = auth.uid()
+  ORDER BY COALESCE(ue.is_default, false) DESC, ue.created_at ASC, ue.id ASC LIMIT 1
+$function$;
+REVOKE ALL ON FUNCTION public.user_empresa_id() FROM PUBLIC, anon;
+```
+
+Duas conclusões, e as duas vêm do código:
+
+1. **O conserto que a `muri` queria já está feito** — a `main` lê `user_empresas` com a mesma
+   ordem (`is_default` primeiro). A migration da `muri` é obsoleta.
+2. **A diferença é o fallback, e o fallback é o buraco.** A `main` o removeu de propósito.
+   `user_metadata` no Supabase é gravável pelo próprio usuário (`supabase.auth.updateUser`), então
+   com o fallback de volta um colaborador apontaria o próprio `empresa_id` para outra empresa e
+   leria os dados dela. Aplicar o arquivo reabre vazamento entre empresas.
+
+Por isso **preservar com veredito é o tratamento correto**, não integrar: o pedido do dono inclui
+"o sistema não pode ter regressões". Integrar isto seria a regressão. A decisão de sobrepor
+continua sendo dele, com esta medição à vista.
+
 ## Mais dois arquivos de SQL que só existiam na `muri`
 
 | arquivo                                                  | o que é                                                                | veredito                      |

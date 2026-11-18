@@ -307,7 +307,34 @@ mesmo export podem divergir por dentro. Para esse resto, o que existe é a verif
 separe "reescrito" de "perdido" dentro de um corpo de função — e afirmar o contrário seria o mesmo
 tipo de excesso de confiança que produziu os erros corrigidos neste documento.
 
-### 7b. Refeito em 2026-11-18 sobre TODAS as 564 cabeças de PR (não só as branches apagadas)
+#### Refeito ao vivo em 2026-11-18: os objetos das branches apagadas ainda existem
+
+A §7 foi escrita quando as branches ainda tinham tips acessíveis. Para não depender de registro
+antigo, a varredura foi **refeita nesta sessão**: `git fsck --no-reflogs --dangling` ainda encontra
+**197 commits pendurados** — os objetos das branches apagadas sobreviveram no repositório local
+(o reflog também guarda 263 entradas `claude/`).
+
+| etapa                                                                | número      |
+| -------------------------------------------------------------------- | ----------- |
+| tips pendurados varridos (todos com árvore completa, > 100 arquivos) | **197/197** |
+| pares blob/caminho únicos                                            | 4 275       |
+| ausentes da árvore ATUAL da `main`                                   | 658         |
+| blobs que nunca existiram em TODA a história da `main`               | 285         |
+| **caminhos que a `main` não tem**                                    | **3**       |
+
+Os três, por extenso:
+
+1. `src/lib/functionsUrl.ts` — absorvido em `src/integrations/supabase/client.ts:33-41`
+   (`functionsAwareFetch`), com teste dedicado em
+   `src/integrations/supabase/__tests__/clientFunctionsProxy.test.ts` e em `clientBridge.test.ts`;
+2. `src/mocks/dashboardMockData.ts` e 3. `src/mocks/layoutMock/gate.ts` — mocks, **proibidos**
+   pelo AGENTS §3.
+
+Reproduz a §7 (7 caminhos, dos quais 4 eram remoções minhas de propósito, 2 mocks e o
+`functionsUrl`) por um caminho independente, agora medido ao vivo e não por ponteiro. **Zero
+função perdida nas 91 branches locais apagadas.**
+
+## 7b. Refeito em 2026-11-18 sobre TODAS as 564 cabeças de PR (não só as branches apagadas)
 
 A varredura da §7 cobriu os 186 tips pendurados das branches apagadas. Isso deixava uma lacuna de
 método: uma PR **mergeada** cujo arquivo a `main` removeu depois não estava no conjunto. Refeita
