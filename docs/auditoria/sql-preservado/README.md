@@ -57,19 +57,106 @@ diz nada sobre a migration estar ou não no repositório. Apontado na revisão d
 
 ## Os seis que ficam preservados, e por quê
 
-| arquivo                                           | estado na `main`                         | o que fazer                                      |
-| ------------------------------------------------- | ---------------------------------------- | ------------------------------------------------ |
-| `20260929120000_colaborador_lotacoes`             | ausente                                  | **a única perda real** — decisão do dono, abaixo |
-| `20261005020000_onboarding_modelo_b_convergencia` | ausente                                  | **não aplicar** — converte linhas que são seed   |
-| `20261026090000_ciclos_exclusao_autorizada`       | ausente como arquivo, **já em produção** | não aplicar; guardado como registro              |
-| `20260819000000_p0_fix_user_empresa_id_rls`       | ausente                                  | **NÃO APLICAR — é regressão**                    |
-| `20260820000000_p0_fix_auditoria_rpc`             | ausente                                  | **NÃO APLICAR — é regressão**                    |
-| `20260821000000_p0_rls_dashboard_audit`           | ausente                                  | **NÃO APLICAR** — desfaria duas remediações      |
+| arquivo                                           | estado na `main`                  | o que fazer                                      |
+| ------------------------------------------------- | --------------------------------- | ------------------------------------------------ |
+| `20260929120000_colaborador_lotacoes`             | ausente                           | **a única perda real** — decisão do dono, abaixo |
+| `20261005020000_onboarding_modelo_b_convergencia` | ausente                           | **não aplicar** — converte linhas que são seed   |
+| `20261026090000_ciclos_exclusao_autorizada`       | **superada** por `20261027090000` | não aplicar; a `main` é superconjunto estrito    |
+| `20260819000000_p0_fix_user_empresa_id_rls`       | ausente                           | **NÃO APLICAR — é regressão**                    |
+| `20260820000000_p0_fix_auditoria_rpc`             | ausente                           | **NÃO APLICAR — é regressão**                    |
+| `20260821000000_p0_rls_dashboard_audit`           | ausente                           | **NÃO APLICAR** — desfaria duas remediações      |
+
+O `ciclos` foi **medido**, não inferido: o diff dos blocos equivalentes (linhas 14-71 do arquivo
+preservado contra `supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql`
+linhas 590-657) mostra policies, `revoke` e trigger idênticos, e a `main` acrescentando uma
+sexta dependência (`audit_log`) que a `muri` não checava — detalhe em
+`MIGRATIONS_ORFAS_MURI_2026-11-16.md` §10.
 
 A análise que sustenta as linhas de "regressão", de `onboarding` e de `ciclos` está em
 `docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md`, seções 1-3 e 7-10. As três marcadas
 **NÃO APLICAR** estão aqui só para não desaparecerem: aplicá-las reabriria buracos de RLS que a
 `main` já fechou.
+
+### Provado com arquivo:linha — por que a `20260819000000` é regressão, e não melhoria
+
+O cabeçalho do próprio arquivo afirma: _"Esta correção só pode AMPLIAR acesso, nunca reduzir"_ e
+_"Mantém fallback para `user_metadata.empresa_id`"_. Essa é a alegação do outro agente. O que a
+`main` tem hoje, em `supabase/migrations/20260912190000_p0_identity_rls_authz.sql:51-66`:
+
+```sql
+CREATE OR REPLACE FUNCTION public.user_empresa_id() RETURNS uuid
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = pg_catalog, public, pg_temp AS $function$
+  SELECT ue.empresa_id FROM public.user_empresas AS ue
+  WHERE ue.user_id = auth.uid()
+  ORDER BY COALESCE(ue.is_default, false) DESC, ue.created_at ASC, ue.id ASC LIMIT 1
+$function$;
+REVOKE ALL ON FUNCTION public.user_empresa_id() FROM PUBLIC, anon;
+```
+
+Duas conclusões, e as duas vêm do código:
+
+1. **O conserto que a `muri` queria já está feito** — a `main` lê `user_empresas` com a mesma
+   ordem (`is_default` primeiro). A migration da `muri` é obsoleta.
+2. **A diferença é o fallback, e o fallback é o buraco.** A `main` o removeu de propósito.
+   `user_metadata` no Supabase é gravável pelo próprio usuário (`supabase.auth.updateUser`), então
+   com o fallback de volta um colaborador apontaria o próprio `empresa_id` para outra empresa e
+   leria os dados dela. Aplicar o arquivo reabre vazamento entre empresas.
+
+Por isso **preservar com veredito é o tratamento correto**, não integrar: o pedido do dono inclui
+"o sistema não pode ter regressões". Integrar isto seria a regressão. A decisão de sobrepor
+continua sendo dele, com esta medição à vista.
+
+### `20260821000000_p0_rls_dashboard_audit` — provado: duas portas abertas
+
+O próprio arquivo declara a solução como _"Garantir políticas RLS **permissivas** para SELECT"_.
+Comparando a mesma policy nas duas pontas:
+
+`muri`, `20260821000000:17-22`:
+
+```sql
+CREATE POLICY "admissoes_tenant_select" ON public.admissoes FOR SELECT TO authenticated
+USING (empresa_id = public.user_empresa_id() OR empresa_id IS NULL
+       OR auth.jwt() ->> 'role' IN ('admin', 'super_admin'));
+```
+
+`main`, `20260912190000_p0_identity_rls_authz.sql:248-250`:
+
+```sql
+DROP POLICY IF EXISTS admissoes_tenant_select ON public.admissoes;
+CREATE POLICY admissoes_tenant_select ON public.admissoes FOR SELECT TO authenticated
+USING ((empresa_id IS NOT NULL AND empresa_id IN (SELECT public.get_user_empresas(auth.uid())))
+       OR public.is_admin(auth.uid()));
+```
+
+Três diferenças, todas contra a `muri`:
+
+1. **`OR empresa_id IS NULL`** — libera **toda linha sem empresa para qualquer usuário autenticado
+   de qualquer empresa**. A `main` exige `empresa_id IS NOT NULL` explicitamente. Uma única linha
+   com empresa nula vaza para todos os inquilinos.
+2. **`auth.jwt() ->> 'role' IN ('admin','super_admin')`** — autorização por claim do token. A `main`
+   decide por função no servidor (`public.is_admin(auth.uid())`), e tem invariantes de CI exigindo
+   isso (`is_admin_self_scoped`, `is_admin_anon_locked` em `scripts/canonical-invariants.sql`).
+3. **`empresa_id = ` (igualdade)** — empresa única; a `main` usa
+   `IN (SELECT public.get_user_empresas(auth.uid()))`, que atende usuário com mais de uma empresa.
+
+E a `main` é **posterior** (12/set contra 21/ago) e substitui a policy com o mesmo nome: é a
+remediação deste arquivo, não uma alternativa.
+
+### `20260820000000_p0_fix_auditoria_rpc` — provado: derrubaria as funções vigentes
+
+O arquivo começa com três `DROP FUNCTION IF EXISTS` em assinaturas de `registrar_auditoria` e
+`listar_auditoria` (`:14-16`) e tem um `CREATE TABLE IF NOT EXISTS public.audit_log` "mínima".
+Na `main` essas funções são definidas por `20260805000000_p0_005_auditoria_via_rpc.sql` e, depois,
+por `20260912195000_p1_scoped_audit_trail.sql` — a versão **escopada por empresa**. Rodar os DROPs
+derrubaria a versão endurecida vigente. Mesmo defeito de `FIX_APLICAR_REGISTRAR_AUDITORIA.sql`,
+que além disso manda colar no SQL Editor do dashboard — caminho proibido pelo AGENTS §5.
+
+> **Por que preservar, e não integrar.** O pedido do dono tem duas metades: "não perder trabalho de
+> outro agente" **e** "o sistema não pode ter regressões". Nestes três arquivos as metades apontam
+> para lados opostos, e a segunda vence porque o dano é concreto e medido acima: vazamento entre
+> empresas e queda de funções vigentes. Preservar com o veredito provado atende a primeira metade —
+> o trabalho continua recuperável e a decisão rastreável. Sobrepor é decisão do dono, agora com a
+> medição à vista.
 
 ## Mais dois arquivos de SQL que só existiam na `muri`
 
