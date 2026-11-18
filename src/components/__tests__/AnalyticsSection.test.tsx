@@ -94,6 +94,13 @@ vi.mock('@/components/dashboard/analytics/widgets', () => ({
   ESocialMonitorWidget: () => <div data-testid="esocial-monitor">Monitor eSocial</div>,
 }));
 
+// Mesmo padrão dos widgets acima: o filho é mockado para o teste focar no
+// AnalyticsSection. O real importa `useAuth` -> AuthContext -> queryClient, que
+// este arquivo mocka só parcialmente.
+vi.mock('@/components/dashboard/analytics/AlertasPreditivosWidget', () => ({
+  AlertasPreditivosWidget: () => <div data-testid="alertas-preditivos" />,
+}));
+
 vi.mock('@/components/dashboard/MiniSparkline', () => ({
   MiniSparkline: () => <div data-testid="mini-sparkline" />,
 }));
@@ -224,5 +231,13 @@ describe('AnalyticsSection', () => {
     render(<AnalyticsSection {...DEFAULT_PROPS} />);
     expect(screen.getByText('Cadastros incompletos')).toBeInTheDocument();
     expect(screen.getByTestId('cadastro-incompleto')).toBeInTheDocument();
+  });
+
+  // A edge `alertas-preditivos` estava publicada em produção sem nenhuma porta
+  // de entrada: nenhum arquivo do `src` a invocava. Este caso trava a ligação.
+  it('renderiza o card de Riscos previstos com o widget dentro', () => {
+    render(<AnalyticsSection {...DEFAULT_PROPS} />);
+    expect(screen.getByText('Riscos previstos')).toBeInTheDocument();
+    expect(screen.getByTestId('alertas-preditivos')).toBeInTheDocument();
   });
 });
