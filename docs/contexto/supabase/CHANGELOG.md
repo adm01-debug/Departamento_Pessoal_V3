@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-18 05:15 UTC
+
+- **functions** alterado (1): `public.is_admin(_user_id uuid)`
+
 ## 2026-11-18 04:16 UTC
 
 - **colunas** adicionado (7): `public.colaborador_lotacoes.colaborador_id`, `public.colaborador_lotacoes.created_at`, `public.colaborador_lotacoes.empresa_id`, `public.colaborador_lotacoes.id`, `public.colaborador_lotacoes.lotacao_id`, `public.colaborador_lotacoes.principal`, `public.colaborador_lotacoes.updated_at`

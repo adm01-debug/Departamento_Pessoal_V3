@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9ffdf21880bdd734b1e8ec1faaa5d96d7761292e",
+  "commit": "c96848a1efc3c4cda4c2defa39cbefa99a48c813",
   "branch": "main",
-  "data_commit": "2026-11-18T01:14:17-03:00",
+  "data_commit": "2026-11-18T02:09:19-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "c96848a",
+    "data": "2026-11-18",
+    "assunto": "chore: documenta que o canonical-sql-diag está quebrado em modo não-PII (#680)"
+   },
+   {
+    "sha": "616e46b",
+    "data": "2026-11-18",
+    "assunto": "chore: integra a lição dos P0 preservados como guarda de CI contra RLS permissiva (#679)"
+   },
+   {
+    "sha": "d324939",
+    "data": "2026-11-18",
+    "assunto": "chore: fecha a conta da muri com medições, em vez de inferências (#678)"
+   },
    {
     "sha": "9ffdf21",
     "data": "2026-11-18",
@@ -116,24 +131,9 @@
     "sha": "e968e3e",
     "data": "2026-11-17",
     "assunto": "feat(permissões): controle de acesso por funcionalidade, lendo a matriz do banco (#651)"
-   },
-   {
-    "sha": "842a6af",
-    "data": "2026-11-17",
-    "assunto": "feat(colaborador): resumo financeiro no dossiê, com CPF mascarado no PDF (#655)"
-   },
-   {
-    "sha": "45748e7",
-    "data": "2026-11-17",
-    "assunto": "feat(documentos): upload real de arquivo nos 4 formulários de documento (#653)"
-   },
-   {
-    "sha": "0425875",
-    "data": "2026-11-17",
-    "assunto": "fix(automação): registra os 5 scripts que a #652 deixou sem gatilho (#654)"
    }
   ],
-  "arquivos_mudados_7d": 1128,
+  "arquivos_mudados_7d": 1130,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 16
+    "mudancas": 15
    },
    {
     "arquivo": "package-lock.json",
@@ -228,6 +228,10 @@
    {
     "arquivo": "scripts/automation.config.json",
     "mudancas": 8
+   },
+   {
+    "arquivo": "docs/auditoria/sql-preservado/README.md",
+    "mudancas": 7
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -278,30 +282,26 @@
     "mudancas": 6
    },
    {
-    "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "docs/auditoria/sql-preservado/README.md",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "infra/github/action-pins.json",
-    "mudancas": 5
-   },
-   {
     "arquivo": "public/sw-custom.js",
     "mudancas": 5
    },
    {
+    "arquivo": "scripts/audit-migration-style.mjs",
+    "mudancas": 5
+   },
+   {
     "arquivo": "scripts/autofix/run.mjs",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "scripts/ci/README.md",
     "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 286
+    "commits": 287
    },
    {
     "autor": "dependabot[bot]",
@@ -309,14 +309,14 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 4
+    "commits": 3
    }
   ]
  },
  "contagens": {
   "arquivos_total": 3585,
   "arquivos_codigo": 2079,
-  "linhas_codigo": 411238,
+  "linhas_codigo": 411323,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -428,7 +428,7 @@
   },
   "scripts/audit-migration-style.mjs": {
    "arquivos": 1,
-   "linhas": 151
+   "linhas": 236
   },
   "scripts/audit-required-checks.mjs": {
    "arquivos": 1,

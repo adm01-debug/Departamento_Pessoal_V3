@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: documenta que o canonical-sql-diag está quebrado em modo não-PII (#680)",
+   "chore: integra a lição dos P0 preservados como guarda de CI contra RLS permissiva (#679)",
+   "chore: fecha a conta da muri com medições, em vez de inferências (#678)",
    "feat: integra colaborador_lotacoes ponta a ponta no dossiê do colaborador (#677)",
-   "infra: põe colaborador_lotacoes no LOTE ATUAL, pronta para validate/apply (#676)",
-   "docs(auditoria): decide não aplicar colaborador_lotacoes, com a medição que sustenta (#675)",
-   "docs(auditoria): registra a prova byte a byte, por símbolo exportado e por token (#674)",
-   "chore(auditoria): escreve e executa o sidecar que faltava ao colaborador_lotacoes (#673)"
+   "infra: põe colaborador_lotacoes no LOTE ATUAL, pronta para validate/apply (#676)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

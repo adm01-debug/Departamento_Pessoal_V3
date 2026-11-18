@@ -97435,6 +97435,10 @@
         "callers": {
           "code": [
             {
+              "file": "scripts/audit-migration-style.mjs",
+              "hits": 1
+            },
+            {
               "file": "scripts/canonical-invariants.sql",
               "hits": 1
             },
@@ -97549,13 +97553,9 @@
             {
               "file": "supabase/migrations/20260713125122_10586a25-75f3-4d51-a949-e4a59fded62e.sql",
               "hits": 2
-            },
-            {
-              "file": "supabase/migrations/20260718220000_rls_remediacao_auditoria.sql",
-              "hits": 1
             }
           ],
-          "code_total_files": 76,
+          "code_total_files": 77,
           "cron": [],
           "db": [
             "public.admin_associar_usuario_empresa",

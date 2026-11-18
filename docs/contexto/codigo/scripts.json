@@ -137,7 +137,7 @@
   {
    "arquivo": "scripts/audit-migration-style.mjs",
    "descricao": "* Gate estático (sem DATABASE_URL): reprova migration nova com",
-   "linhas": 151,
+   "linhas": 236,
    "env": [],
    "npm_scripts": [],
    "workflows": [
