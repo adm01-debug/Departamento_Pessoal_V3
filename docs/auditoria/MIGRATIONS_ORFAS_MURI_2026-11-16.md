@@ -777,3 +777,67 @@ derruba** `"Multi-tenant access"` nas 5 tabelas, sem criar policy permissiva no 
 que hoje governa o acesso. Isso é diff mínimo e efeito nulo sobre quem já usa o sistema.
 
 Também não há pressa: nada está quebrado nem exposto nessas tabelas.
+
+## 17. Item 2 do bloco: a lição da §16 achou um defeito real em `public.faltas`
+
+A §16 fixou no método: **antes de declarar uma medição bloqueada por ferramenta, procurar o objeto
+no `supabase/migrations/`.** Aplicada aos dois casos que a §13 marcou como bloqueados — os CHECKs de
+`faltas` — ela produziu o oposto do que a §15 concluiu por "falta de consumidor".
+
+### O que o repositório entregou, que o `db_query` não entregaria mais rápido
+
+`20260713110053_2154cbf4-e4c4-4863-9f2b-ca5a517c93de.sql:41-50` define as duas listas:
+
+```sql
+ADD CONSTRAINT chk_faltas_status CHECK (
+  status IS NULL OR status IN ('pendente','justificada','abonada','injustificada','em_analise','rejeitada')
+),
+ADD CONSTRAINT chk_faltas_tipo CHECK (
+  tipo IS NULL OR tipo IN (
+    'atestado_medico','falta_injustificada','falta_justificada','licenca',
+    'ausencia_parcial','atraso','saida_antecipada','luto','casamento',
+    'doacao_sangue','servico_militar','doenca_familiar','maternidade',
+    'paternidade','outros'
+  )
+)
+```
+
+E o estado vivo, medido com `supabase_db_list_columns`:
+
+| coluna   | tipo | nulo?        | DEFAULT vivo         | está na lista do CHECK?                    |
+| -------- | ---- | ------------ | -------------------- | ------------------------------------------ |
+| `tipo`   | text | **NOT NULL** | `'falta'::text`      | **não** (15 valores, nenhum é `falta`)     |
+| `status` | text | sim          | `'registrada'::text` | **não** (6 valores, nenhum é `registrada`) |
+
+**Conclusão: as duas colunas são armadilha.** Qualquer `INSERT` que omita `tipo` ou `status` pega o
+DEFAULT e **viola o CHECK**. E como `tipo` é `NOT NULL`, nem passar NULL escapa — é obrigatório
+mandar um valor válido explícito. O `DEFAULT` da coluna, que existe justamente para o caso de
+omissão, é inutilizável.
+
+A §15 tinha fechado esses dois casos como "não é bug vivo porque nenhuma UI cria falta". Isso
+continua verdade para o aplicativo **hoje**, e por isso ninguém tropeçou ainda. Mas a conclusão
+estava incompleta: o defeito é real e está armado. Qualquer tela de registro de falta, qualquer
+script, qualquer edge function ou carga de dados que omita um dos dois campos falha no primeiro
+INSERT.
+
+### Por que aplicar agora foi a decisão certa, e barata
+
+`public.faltas` tem **0 linhas** (`supabase_db_count`). Isso muda a natureza das duas migrations:
+
+- `20260724000500` faz `UPDATE ... WHERE status = 'ativo'` → **no-op**;
+- `20260724001200` faz `UPDATE ... WHERE tipo = 'falta' OR tipo NOT IN (...)` → **no-op**.
+
+Sem linha nenhuma para tocar, as duas viram **DDL pura**: trocar dois `DEFAULT` e recriar um `CHECK`.
+Zero mudança de dado, zero risco de perda. É o melhor momento possível — depois de a tabela receber
+dado, o mesmo conserto passaria a reescrever valores de falta de funcionário.
+
+Os sidecars prendem o que importa, não só o que mudou:
+
+- o `DEFAULT` novo de cada coluna é exatamente o esperado **e** é aceito pelo CHECK — era a
+  incompatibilidade entre os dois que quebrava o INSERT, então assertar um sem o outro não provaria
+  o conserto;
+- `chk_faltas_tipo` **voltou a existir** — a migration o derruba para fazer o backfill, e se o passo
+  4 não rodasse a tabela ficaria **sem validação de tipo**, pior que o problema original;
+- o valor `'falta'` **não** foi somado à lista válida — a correção certa é trocar o default, não
+  afrouxar a constraint para aceitar um tipo que não existe no domínio de negócio;
+- `tipo` continua `NOT NULL`.
