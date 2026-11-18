@@ -108,8 +108,8 @@ describe('AuditoriaTab — timeline funcional', () => {
     expect(screen.getAllByText('Campanha criada').length).toBeGreaterThan(0);
     expect(screen.queryByText('Divergência identificada na conciliação')).toBeNull();
 
-    const csv = screen.getByRole('button', { name: 'CSV' });
-    const pdf = screen.getByRole('button', { name: 'PDF' });
+    const csv = screen.getByRole('button', { name: 'Pagamentos CSV' });
+    const pdf = screen.getByRole('button', { name: 'Pagamentos PDF' });
     expect(csv).toHaveClass('text-success', 'h-10', 'px-4', 'text-[13px]', 'font-semibold');
     expect(pdf).toHaveClass('text-destructive', 'h-10', 'px-4', 'text-[13px]', 'font-semibold');
     expect(csv.parentElement).toHaveClass('gap-3');
@@ -130,9 +130,30 @@ describe('AuditoriaTab — timeline funcional', () => {
     };
     const eventosCategorias: AuditoriaHub[] = [
       ...AUDITORIA,
-      { id: 'a-3', entidade_tipo: 'pagamento', entidade_id: 'pag-2', acao: 'aprovacao', motivo: 'Pagamento aprovado.', created_at: AGORA },
-      { id: 'a-4', entidade_tipo: 'regra', entidade_id: 'regra-1', acao: 'criacao', motivo: 'Regra criada.', created_at: AGORA },
-      { id: 'a-5', entidade_tipo: 'pagamento', entidade_id: 'pag-2', acao: 'alteracao', motivo: 'Pagamento atualizado.', created_at: AGORA },
+      {
+        id: 'a-3',
+        entidade_tipo: 'pagamento',
+        entidade_id: 'pag-2',
+        acao: 'aprovacao',
+        motivo: 'Pagamento aprovado.',
+        created_at: AGORA,
+      },
+      {
+        id: 'a-4',
+        entidade_tipo: 'regra',
+        entidade_id: 'regra-1',
+        acao: 'criacao',
+        motivo: 'Regra criada.',
+        created_at: AGORA,
+      },
+      {
+        id: 'a-5',
+        entidade_tipo: 'pagamento',
+        entidade_id: 'pag-2',
+        acao: 'alteracao',
+        motivo: 'Pagamento atualizado.',
+        created_at: AGORA,
+      },
     ];
     render(
       <AuditoriaTab
@@ -211,7 +232,7 @@ describe('AuditoriaTab — timeline funcional', () => {
         onExportar={vi.fn()}
       />
     );
-    expect(screen.getByText('Não foi possível carregar a auditoria agora.')).toBeInTheDocument();
+    expect(screen.getByText('Não foi possível carregar a trilha de auditoria')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Tentar novamente' }));
     expect(onTentarNovamente).toHaveBeenCalled();
   });

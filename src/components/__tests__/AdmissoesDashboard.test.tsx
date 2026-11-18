@@ -90,11 +90,36 @@ const renderDashboard = (admissoes: any[], props: Partial<ComponentProps<typeof 
     </MemoryRouter>
   );
 
+/**
+ * Datas relativas para as fixtures (a janela do gráfico e a régua de prazo são
+ * relativas a "hoje", então data fixa envelheceria o teste).
+ */
+const diasAtras = (dias: number) => new Date(Date.now() - dias * 24 * 60 * 60 * 1000).toISOString();
+
 const MOCK_ADMISSOES = [
   { id: '1', etapa: 'documentos' },
   { id: '2', etapa: 'documentos' },
-  { id: '3', etapa: 'concluida' },
+  // A série do gráfico de tempo médio é CALCULADA de `created_at`/`updated_at`
+  // das admissões concluídas (AdmissoesDashboard.tsx:996-1017): sem as duas
+  // colunas a série fica vazia e o card mostra o estado vazio em vez do
+  // `AreaChart`. `created_at` dentro dos últimos 30 dias mantém a variação
+  // `undefined` (sem base anterior), então os KPIs seguem exibindo a frase de
+  // apoio em vez da seta de tendência.
+  { id: '3', etapa: 'concluida', created_at: diasAtras(10), updated_at: diasAtras(3) },
   { id: '4', etapa: 'cancelada' },
+];
+
+/**
+ * Uma admissão em cada uma das quatro famílias de pendência do card. A família
+ * do eSocial é a FILA REAL da transmissão (`etapa = 'esocial'` sem protocolo /
+ * data, ou `status_esocial` com erro — AdmissoesDashboard.tsx:245-253), não as
+ * canceladas: é por isso que a 4ª linha entra como `esocial`.
+ */
+const MOCK_ADMISSOES_PRIORIDADES = [
+  { id: '1', etapa: 'documentos' },
+  { id: '2', etapa: 'documentos' },
+  { id: '3', etapa: 'concluida' },
+  { id: '4', etapa: 'esocial' },
 ];
 
 /**
@@ -247,10 +272,13 @@ describe('AdmissoesDashboard', () => {
   // sai por inteiro no DOM, sem depender de largura disponível.
   it('mostra a frase de apoio completa de cada KPI', () => {
     renderDashboard(MOCK_ADMISSOES);
-    expect(screen.getByText('processos no período')).toBeInTheDocument();
+    // Frases reais dos quatro KPIs (AdmissoesDashboard.tsx:890, 899, 908 e 920).
+    // Elas NÃO dizem "no período": os quatro KPIs somam a lista inteira, e os
+    // seletores de período são locais aos cards analíticos.
+    expect(screen.getByText('processos cadastrados')).toBeInTheDocument();
     expect(screen.getByText('em pipeline agora')).toBeInTheDocument();
-    expect(screen.getByText('concluídas no período')).toBeInTheDocument();
-    expect(screen.getByText('processos encerrados no período')).toBeInTheDocument();
+    expect(screen.getByText('admissões concluídas')).toBeInTheDocument();
+    expect(screen.getByText('processos encerrados')).toBeInTheDocument();
   });
 
   // ─── Scroll interno (cabeçalho fixo, lista rolando dentro do card) ───────
@@ -317,7 +345,7 @@ describe('AdmissoesDashboard', () => {
   // derivação), então é isso que estes testes cobrem.
 
   it('abre o modal de Ações Prioritárias direto na fila das quatro famílias', () => {
-    renderDashboard(MOCK_ADMISSOES);
+    renderDashboard(MOCK_ADMISSOES_PRIORIDADES);
     // Fechado, o modal não renderiza nada (igual ao original, via Radix).
     expect(screen.queryByRole('dialog')).toBeNull();
 
@@ -342,11 +370,14 @@ describe('AdmissoesDashboard', () => {
     // espaço que ela ocupava não virou faixa vazia.
     expect(screen.getByRole('dialog').querySelector('[class*="bg-muted/20"]')).toBeNull();
 
-    // As quatro famílias com o MESMO número do card (2 documentos + 1 cancelada).
+    // As quatro famílias com o MESMO número do card (2 documentos + 1 eSocial).
+    // Os rótulos saem de `prioridades` (AdmissoesDashboard.tsx:835-861),
+    // capitalizados no modal (admissoesDashboardModais.tsx:359) — por isso a
+    // família do eSocial é "Transmissões pendentes no eSocial".
     expect(modal.getByText('Documentos pendentes')).toBeInTheDocument();
     expect(modal.getByText('Exames em atraso')).toBeInTheDocument();
     expect(modal.getByText('Contratos aguardando assinatura')).toBeInTheDocument();
-    expect(modal.getByText('Falha no eSocial')).toBeInTheDocument();
+    expect(modal.getByText('Transmissões pendentes no eSocial')).toBeInTheDocument();
     expect(modal.getAllByText('admissões nesta condição')).toHaveLength(3);
     expect(modal.getAllByText('admissão nesta condição')).toHaveLength(1);
     // E a fila inteira de candidatos: 2 na família de documentos + 1 na de eSocial.

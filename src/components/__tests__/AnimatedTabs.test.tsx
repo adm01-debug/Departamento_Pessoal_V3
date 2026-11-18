@@ -78,8 +78,8 @@ async function expectLeft(indicator: HTMLElement, expected: number) {
   );
 }
 
-/** Mesma composição de `AdmissoesPage`: Radix `Tabs` + tablist animada. */
-function AdmissoesLikeTabs({ initialValue = 'dashboard' }: { initialValue?: string }) {
+/** Mesma composição de `PremiacoesPage`: Radix `Tabs` + tablist animada. */
+function PremiacoesLikeTabs({ initialValue = 'dashboard' }: { initialValue?: string }) {
   const [value, setValue] = React.useState(initialValue);
 
   return (
@@ -113,7 +113,7 @@ describe('AnimatedTabsList (indicador deslizante)', () => {
 
   it('monta o indicador já na primeira pintura, na faixa da aba ativa', async () => {
     stubTabRects();
-    const { container } = render(<AdmissoesLikeTabs />);
+    const { container } = render(<PremiacoesLikeTabs />);
 
     // Sem nenhum clique: se o "assentamento" de first-mount do pacote falhar,
     // `boundsState` fica null e este nó nunca existe.
@@ -123,7 +123,7 @@ describe('AnimatedTabsList (indicador deslizante)', () => {
 
   it('reusa o MESMO nó e remede o indicador ao trocar de aba', async () => {
     stubTabRects();
-    const { container } = render(<AdmissoesLikeTabs />);
+    const { container } = render(<PremiacoesLikeTabs />);
     const indicator = await waitFor(() => getIndicator(container));
     await expectLeft(indicator, 0);
 
@@ -137,7 +137,7 @@ describe('AnimatedTabsList (indicador deslizante)', () => {
 
   it('aplica a skin de cada área nos elementos do Animate UI', async () => {
     stubTabRects();
-    const { container } = render(<AdmissoesLikeTabs />);
+    const { container } = render(<PremiacoesLikeTabs />);
     const indicator = await waitFor(() => getIndicator(container));
 
     const skinContainer = container.querySelector('[data-slot="motion-highlight-container"]');
@@ -153,7 +153,7 @@ describe('AnimatedTabsList (indicador deslizante)', () => {
 
   it('mantém o conteúdo do Radix Tabs sincronizado com a aba clicada', async () => {
     stubTabRects();
-    const { container } = render(<AdmissoesLikeTabs />);
+    const { container } = render(<PremiacoesLikeTabs />);
     expect(container.textContent).toContain('CONTEUDO_DASHBOARD');
     expect(container.textContent).not.toContain('CONTEUDO_AUDITORIA');
 

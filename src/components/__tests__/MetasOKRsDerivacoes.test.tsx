@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 /**
@@ -156,6 +156,18 @@ describe('metasComum — prazo e agregações', () => {
 describe('MetasOKRsTab — cascata de entrada na ordem de leitura', () => {
   const REF_HIDDEN = JSON.stringify(cardVariants.hidden);
 
+  // A aba deriva as metas com o `Date.now()` padrão do helper
+  // (`MetasOKRsTab.tsx:82`), então o relógio precisa ser o mesmo `AGORA` dos
+  // prazos da fixture — senão a meta "Em dia" (prazo AGORA+20) vence sozinha e
+  // o banner passa a contar duas críticas. Só `Date` é falsificado: os timers
+  // do testing-library seguem reais.
+  beforeAll(() => {
+    vi.useFakeTimers({ toFake: ['Date'], now: AGORA });
+  });
+  afterAll(() => {
+    vi.useRealTimers();
+  });
+
   it('banner (0) → filtros (1) → cards (2, 3, 4), com o keyframe do Dashboard', () => {
     const metas = [
       metaBase({ id: 'm1', titulo: 'Atrasada', data_limite: prazoLocal(-6), valor_atual: 40 }),
@@ -247,4 +259,3 @@ describe('MetaCard — indicador só aparece com histórico real', () => {
     expect(screen.queryByText('desde a última atualização')).not.toBeInTheDocument();
   });
 });
-

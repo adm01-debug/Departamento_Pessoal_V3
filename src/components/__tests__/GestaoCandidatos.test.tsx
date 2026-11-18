@@ -13,7 +13,15 @@ vi.mock('framer-motion', () => {
   // mock; todo o resto (className, onClick, aria-pressed, type, data-*) passa
   // adiante para o elemento real.
   const MOTION_PROPS = new Set([
-    'custom', 'variants', 'initial', 'animate', 'exit', 'whileHover', 'whileTap', 'transition', 'layoutId',
+    'custom',
+    'variants',
+    'initial',
+    'animate',
+    'exit',
+    'whileHover',
+    'whileTap',
+    'transition',
+    'layoutId',
   ]);
   const semMotion = (props: any) => {
     const out: any = {};
@@ -248,8 +256,6 @@ describe('GestaoCandidatos', () => {
     fireEvent.click(tabela);
     expect(contornos()).toHaveLength(1);
   });
-
-
 
   /* ─── Contrato de diagramação do CARD (visão Cards) ──────────────────────
      A ficha da referência é DENSA e HORIZONTAL, em QUATRO faixas: no topo
@@ -626,14 +632,18 @@ describe('GestaoCandidatos', () => {
 
     // A coluna segue AUTOMÁTICA: nenhum `w-[..]`/`max-w-[..]` no cabeçalho, o
     // piso da largura é o próprio rótulo do selo.
-    const titulo = [...container.querySelectorAll('table thead th')].find(
-      (th) => th.textContent?.trim() === 'Etapa Atual'
-    ) as HTMLElement;
+    const cabecalhos = [...container.querySelectorAll('table thead th')];
+    const titulo = cabecalhos.find((th) => th.textContent?.trim() === 'Etapa Atual') as HTMLElement;
     expect(titulo).toBeTruthy();
     expect(titulo.className).not.toMatch(/\b(max-)?w-\[/);
 
+    // A posição da coluna sai do CABEÇALHO, não de um índice fixo: nesta tela
+    // "Etapa Atual" é a 4ª coluna (Candidato, Cargo, Departamento, Etapa Atual
+    // — GestaoCandidatos.tsx:692-695), então o contrato continua valendo se a
+    // régua de colunas mudar de ordem.
+    const colEtapa = cabecalhos.indexOf(titulo);
     const selos = [...container.querySelectorAll('table tbody tr')].map(
-      (tr) => tr.children[4].firstElementChild as HTMLElement
+      (tr) => tr.children[colEtapa].firstElementChild as HTMLElement
     );
     expect(selos).toHaveLength(4);
     selos.forEach((selo) => {
@@ -679,8 +689,11 @@ describe('GestaoCandidatos', () => {
       ),
     });
 
+    const cabecalhos = [...container.querySelectorAll('table thead th')];
+    const colEtapa = cabecalhos.findIndex((th) => th.textContent?.trim() === 'Etapa Atual');
+    expect(colEtapa).toBeGreaterThanOrEqual(0);
     const selos = [...container.querySelectorAll('table tbody tr')].map(
-      (tr) => tr.children[4].firstElementChild as HTMLElement
+      (tr) => tr.children[colEtapa].firstElementChild as HTMLElement
     );
     expect(selos).toHaveLength(9);
     // Texto COMPLETO (sem reticências) e o MESMO contrato de uma linha.

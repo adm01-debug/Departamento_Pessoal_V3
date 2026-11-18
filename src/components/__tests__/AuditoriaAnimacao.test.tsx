@@ -166,8 +166,8 @@ describe('Auditoria — entrada padrão do sistema', () => {
       entradaDe(screen.getByRole('button', { name: /Todas\s*\d+/ })),
       entradaDe(screen.getByLabelText('Ordenar por')),
       screen.getByRole('button', { name: /Limpar filtros/ }),
-      screen.getByRole('button', { name: 'CSV' }),
-      screen.getByRole('button', { name: 'PDF' }),
+      screen.getByRole('button', { name: 'Pagamentos CSV' }),
+      screen.getByRole('button', { name: 'Pagamentos PDF' }),
     ].map((el) => el as HTMLElement);
 
     unidades.forEach((el, i) => {
