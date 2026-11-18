@@ -24,6 +24,11 @@ vi.mock('@/services/integracaoService', () => ({
   webhookService: { listar: svc.listar, getLogs: svc.getLogs, criar: svc.criar, excluir: svc.excluir },
 }));
 
+const wa = vi.hoisted(() => ({ getConfig: vi.fn(), saveConfig: vi.fn() }));
+vi.mock('@/services/whatsappService', () => ({
+  whatsappService: { getConfig: wa.getConfig, saveConfig: wa.saveConfig },
+}));
+
 vi.mock('@/hooks/useEmpresas', () => ({
   useEmpresas: () => ({ empresaAtual: { id: 'empresa-1' } }),
 }));
@@ -39,7 +44,7 @@ vi.mock('@/contexts', () => ({
 }));
 
 import { toast } from 'sonner';
-import { CnabConfigPanel, WebhookConfigPanel } from '../ConfigPanels';
+import { CnabConfigPanel, WebhookConfigPanel, WhatsAppConfigPanel } from '../ConfigPanels';
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -49,6 +54,8 @@ beforeEach(() => {
   svc.saveConfig.mockResolvedValue(undefined);
   svc.criar.mockResolvedValue(undefined);
   svc.excluir.mockResolvedValue(undefined);
+  wa.getConfig.mockResolvedValue(null);
+  wa.saveConfig.mockResolvedValue(undefined);
 });
 
 describe('CnabConfigPanel', () => {
@@ -224,5 +231,39 @@ describe('WebhookConfigPanel', () => {
 
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Webhook removido.'));
     expect(svc.excluir).toHaveBeenCalledWith('empresa-1', 'w1');
+  });
+});
+
+// A policy whatsapp_config_admin_rh (migration 20261118223000) corta leitura e
+// escrita da api_key da Evolution API para quem não é admin/rh. A rota
+// /integracoes não passa por AdminRoute (App.tsx:487), então sem o gate na
+// tela um colaborador abriria o formulário vazio e tomaria erro mudo ao salvar.
+describe('WhatsAppConfigPanel', () => {
+  it('colaborador vê o aviso de restrição e não busca a configuração', () => {
+    auth.roles = ['colaborador'];
+    const { wrapper } = createWrapper();
+    render(<WhatsAppConfigPanel />, { wrapper });
+
+    expect(screen.getByTestId('whatsapp-sem-permissao')).toBeInTheDocument();
+    expect(screen.queryByText('API Key')).not.toBeInTheDocument();
+    expect(wa.getConfig).not.toHaveBeenCalled();
+  });
+
+  it('RH vê o formulário e a configuração é buscada', async () => {
+    auth.roles = ['rh'];
+    const { wrapper } = createWrapper();
+    render(<WhatsAppConfigPanel />, { wrapper });
+
+    expect(await screen.findByText('API Key')).toBeInTheDocument();
+    expect(screen.queryByTestId('whatsapp-sem-permissao')).not.toBeInTheDocument();
+    await waitFor(() => expect(wa.getConfig).toHaveBeenCalledWith('empresa-1'));
+  });
+
+  it('admin sem papel rh também gerencia', async () => {
+    auth.roles = ['admin'];
+    const { wrapper } = createWrapper();
+    render(<WhatsAppConfigPanel />, { wrapper });
+
+    expect(await screen.findByText('API Key')).toBeInTheDocument();
   });
 });
