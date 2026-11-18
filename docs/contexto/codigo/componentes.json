@@ -2669,7 +2669,7 @@
     "QuickStat"
    ],
    "export_default": null,
-   "linhas": 778,
+   "linhas": 847,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "usePendencias",

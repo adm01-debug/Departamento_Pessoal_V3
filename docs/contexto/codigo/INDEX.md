@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6d44dd42e1984ff987cb13b4892c94aea5cbef2f` (2026-11-18T16:22:30-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d9cc47549b453a69f3381a3bf1e206baa5b294e6` (2026-11-18T16:39:51-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1958), SQL (951), Markdown (335), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1958), SQL (951), Markdown (336), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3609 |
+| arquivos_total | 3610 |
 | arquivos_codigo | 2096 |
-| linhas_codigo | 415939 |
+| linhas_codigo | 416036 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 787 |
 | workflows | 21 |
 | scripts | 135 |
-| docs_md | 335 |
+| docs_md | 336 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27460 nós · 61959 arestas · 2345 comunidades · grafo do commit `6d44dd42`
-- comunidades maiores: lucide-react (496), 20260831_corrected_public.sql (493), canonical_schema.sql (475), button.tsx (428), @tanstack/react-query (386), cn (348), useEmpresas (323), vitest (274), App.tsx (255), react (229), contract.ts (207), entradaCard (168)
+- 27469 nós · 61979 arestas · 2409 comunidades · grafo do commit `d9cc4754`
+- comunidades maiores: button.tsx (502), lucide-react (498), 20260831_corrected_public.sql (485), canonical_schema.sql (475), useEmpresas (468), cn (385), vitest (297), PontoPage.tsx (222), react (203), deepChain (202), contract.ts (192), FeedbackAcoesRodape.tsx (192)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -407,9 +407,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package.json (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
-- package-lock.json (10)
 - scripts/sync/autocommit-local.sh (10)
 - docs/prod-readiness.md (9)
+- package-lock.json (9)
 - scripts/automation.config.json (8)
 - scripts/canonical-invariants.sql (8)
 - src/pages/ColaboradoresPage.tsx (8)
@@ -649,10 +649,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/treinamentos-imagens-fase3b-prep.md` — Fase 3B — preparação final (relatório) (133 linhas)
 - `docs/treinamentos-imagens-homologacao.md` — Homologação isolada — Hub de imagens (alternativa ao Docker) (233 linhas)
 - `docs/treinamentos-imagens.md` — Imagens do Hub de Treinamentos — Fase 2 (auditoria) + preparação da Fase 3 (426 linhas)
-- subpastas de docs/: docs/auditoria (64), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/protegido (1), docs/seguranca (1)
+- subpastas de docs/: docs/auditoria (65), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/protegido (1), docs/seguranca (1)
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-18 `d9cc475` feat(dashboard): põe em tela os 2 widgets que nunca eram renderizados (#702)
+- 2026-11-18 `07742aa` fix(scripts): build-rebaseline diz qual arquivo de entrada falta (#706)
+- 2026-11-18 `72d1d6b` docs(auditoria): registro da reauditoria dos descartes (#703)
 - 2026-11-18 `6d44dd4` fix(colaboradores): filtro de status oferecia valor inexistente no enum + 21 testes da muri (#701)
 - 2026-11-18 `c328119` feat(contas-bancarias): resgata identidade visual de banco da muri (#699)
 - 2026-11-18 `5d9deb6` feat(dashboard): resgata Resumo Operacional e Próximas Atividades da muri (#698)
@@ -665,9 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-18 `7524b93` fix: retrata o "maior risco aberto" - a policy public e inerte (#692)
 - 2026-11-18 `b74d4c2` chore: fecha 2 dos 3 casos sem veredito e sobe o risco de policy public (#691)
 - 2026-11-18 `1025265` fix: retrata o Lote 1 - nao era funcionalidade morta, era falta de consumidor (#690)
-- 2026-11-18 `e667066` chore: tria as 26 migrations restantes em 6 lotes de decisao (#689)
-- 2026-11-18 `4bb5a24` infra: poe a migration do gov.br no lote canonico para destravar o login (#687)
-- 2026-11-18 `2271c4a` fix: retrata "as 52 estao aplicadas" - 27 nao estao, e uma e bug de producao (#686)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -760,11 +760,11 @@
   {
    "arquivo": "src/components/__tests__/AnalyticsSection.test.tsx",
    "tipo": "unit",
-   "linhas": 211,
+   "linhas": 229,
    "testa": [
     "src/components/dashboard/AnalyticsSection.tsx"
    ],
-   "casos": 8
+   "casos": 10
   },
   {
    "arquivo": "src/components/__tests__/AnimatedNumber.test.tsx",

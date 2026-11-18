@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6d44dd42e1` · branch `main` · 2026-11-18 19:24 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d9cc47549b` · branch `main` · 2026-11-18 19:43 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5419,7 +5419,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9489 testes em 743 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9491 testes em 743 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5675,6 +5675,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/importacao/__tests__/excelDownload.test.ts` | 12 | XLSX_MIME · is the correct OOXML MIME type · downloadWorkbook · calls writeBuffer and creates object URL … |
 | `e2e/authenticated/recrutamento-pipeline.spec.ts` | 11 | Pipeline — estrutura e scroll no padrão de Admissão · 5 colunas de 272px, mesma altura, rodapés alinhados e scroll horizontal · A/B/C — lista rola, encadeia para a página; cabeçalho/espaço vazio rolam direto · D — arrasta de Triagem para Entrevista sem duplicar e atualiza contadores … |
 | `scripts/tests/contexto-publicacao.test.mjs` | 11 | cada upload fornece um ID e cada download usa destino explícito sem ocultar falhas · produtores independentes falham de verdade e o publisher ainda aceita as fontes disponíveis · falha fatal de ${failed} mantém sua versão anterior e publica as duas fontes saudáveis · publisher ${previousBranch ?  … |
+| `src/components/__tests__/AnalyticsSection.test.tsx` | 11 | AnalyticsSection · renders Workflows quick access card · renders BI e Metas quick access card · renders Auditoria quick access card … |
 | `src/components/__tests__/AnimatedNumber.test.tsx` | 11 | AnimatedNumber · renders 0 initially when not in view · renders initial 0 even when format prop is provided · applies custom className to span … |
 | `src/components/__tests__/AuditoriaComum.test.ts` | 11 | auditoriaComum — normalização fiel aos dados · resolve valor anterior/posterior, entidade, colaborador e responsável · lida com data/entidade/valor ausentes sem inventar informação · não inventa valor quando não há campo nem citação monetária … |
 | `src/components/__tests__/EmprestimosFinanceiros.test.tsx` | 11 | EmprestimosTable · renders table headers · renders colaborador names · renders instituicao or dash for null … |
@@ -5722,7 +5723,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/RewardsSimulator.test.tsx` | 10 | RewardsSimulator · renderiza as quatro regiões do redesenho · mantém os cinco parâmetros do simulador · exibe os quatro KPIs de resultado … |
 | `src/components/__tests__/SSTEPIsTab.test.tsx` | 10 | SSTEPIsTab · shows empty state when no EPIs · renders EPI nome when EPIs provided · renders EPI CA number … |
 | `src/components/treinamentos/__tests__/InscricoesPainel.test.tsx` | 10 | InscricoesPainel · renderiza as oito inscrições, com nomes, cursos, departamentos e categorias · mostra status humano e não exibe o código técnico · mostra Não informado quando não existe progresso real … |
-| `src/constants/__tests__/rubricas.test.ts` | 10 | RUBRICAS_PADRAO · is a non-empty array · has no duplicate codigos · each rubrica has required fields … |
 | … +443 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)

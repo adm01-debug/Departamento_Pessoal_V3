@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6d44dd42e1984ff987cb13b4892c94aea5cbef2f",
+  "commit": "d9cc47549b453a69f3381a3bf1e206baa5b294e6",
   "branch": "main",
-  "data_commit": "2026-11-18T16:22:30-03:00",
+  "data_commit": "2026-11-18T16:39:51-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "d9cc475",
+    "data": "2026-11-18",
+    "assunto": "feat(dashboard): põe em tela os 2 widgets que nunca eram renderizados (#702)"
+   },
+   {
+    "sha": "07742aa",
+    "data": "2026-11-18",
+    "assunto": "fix(scripts): build-rebaseline diz qual arquivo de entrada falta (#706)"
+   },
+   {
+    "sha": "72d1d6b",
+    "data": "2026-11-18",
+    "assunto": "docs(auditoria): registro da reauditoria dos descartes (#703)"
+   },
    {
     "sha": "6d44dd4",
     "data": "2026-11-18",
@@ -116,28 +131,13 @@
     "sha": "616e46b",
     "data": "2026-11-18",
     "assunto": "chore: integra a lição dos P0 preservados como guarda de CI contra RLS permissiva (#679)"
-   },
-   {
-    "sha": "d324939",
-    "data": "2026-11-18",
-    "assunto": "chore: fecha a conta da muri com medições, em vez de inferências (#678)"
-   },
-   {
-    "sha": "9ffdf21",
-    "data": "2026-11-18",
-    "assunto": "feat: integra colaborador_lotacoes ponta a ponta no dossiê do colaborador (#677)"
-   },
-   {
-    "sha": "8d5a823",
-    "data": "2026-11-18",
-    "assunto": "infra: põe colaborador_lotacoes no LOTE ATUAL, pronta para validate/apply (#676)"
    }
   ],
-  "arquivos_mudados_7d": 1155,
+  "arquivos_mudados_7d": 1158,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 383
+    "mudancas": 384
    },
    {
     "pasta": "src/components/ui",
@@ -177,7 +177,7 @@
    },
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 35
+    "mudancas": 36
    },
    {
     "pasta": "src/components/folha",
@@ -218,15 +218,15 @@
     "mudancas": 10
    },
    {
-    "arquivo": "package-lock.json",
-    "mudancas": 10
-   },
-   {
     "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 10
    },
    {
     "arquivo": "docs/prod-readiness.md",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "package-lock.json",
     "mudancas": 9
    },
    {
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3609,
+  "arquivos_total": 3610,
   "arquivos_codigo": 2096,
-  "linhas_codigo": 415939,
+  "linhas_codigo": 416036,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -331,7 +331,7 @@
   "testes": 787,
   "workflows": 21,
   "scripts": 135,
-  "docs_md": 335
+  "docs_md": 336
  },
  "por_pasta": {
   "capacitor.config.ts": {
@@ -476,7 +476,7 @@
   },
   "scripts/build-rebaseline.mjs": {
    "arquivos": 1,
-   "linhas": 141
+   "linhas": 151
   },
   "scripts/capturar-referencias-protegidas.mjs": {
    "arquivos": 1,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 989,
-   "linhas": 180011
+   "linhas": 180098
   },
   "src/constants": {
    "arquivos": 7,

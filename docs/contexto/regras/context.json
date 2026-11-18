@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "6d44dd42e1984ff987cb13b4892c94aea5cbef2f",
+  "sha": "d9cc47549b453a69f3381a3bf1e206baa5b294e6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 19:24 UTC",
-  "files_total": 3622,
+  "generated_at": "2026-11-18 19:43 UTC",
+  "files_total": 3623,
   "code_files": 3045,
-  "code_lines": 483128
+  "code_lines": 483225
  },
  "version": "1.3.2",
- "facts_hash": "cecd8a9a9382de54",
+ "facts_hash": "f7273993cc75e1bb",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -101541,7 +101541,7 @@
   {
    "module": "scripts",
    "files": 153,
-   "lines": 35005,
+   "lines": 35015,
    "tables": [
     "a",
     "anexos",
@@ -101849,7 +101849,7 @@
   {
    "module": "src/components",
    "files": 989,
-   "lines": 180011,
+   "lines": 180098,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -167117,6 +167117,14 @@
    {
     "file": "src/components/__tests__/AnalyticsSection.test.tsx",
     "name": "renders Tudo em dia when pendencias empty"
+   },
+   {
+    "file": "src/components/__tests__/AnalyticsSection.test.tsx",
+    "name": "renderiza o card de Alertas de RH com o widget dentro"
+   },
+   {
+    "file": "src/components/__tests__/AnalyticsSection.test.tsx",
+    "name": "renderiza o card de Cadastros incompletos com o widget dentro"
    },
    {
     "file": "src/components/__tests__/AnimatedNumber.test.tsx",
@@ -260541,7 +260549,7 @@
   },
   "scripts/build-rebaseline.mjs": {
    "path": "scripts/build-rebaseline.mjs",
-   "lines": 141,
+   "lines": 151,
    "errors": [
     "A migração gerada não contém a role dp_mcp_role — o prelude não foi incluído.",
     "A migração gerada não contém nenhum CREATE TABLE — o dump pode estar vazio ou corrompido.",
@@ -265969,7 +265977,7 @@
   },
   "src/components/__tests__/AnalyticsSection.test.tsx": {
    "path": "src/components/__tests__/AnalyticsSection.test.tsx",
-   "lines": 211,
+   "lines": 229,
    "is_test": true,
    "tests": [
     "AnalyticsSection",
@@ -265980,7 +265988,9 @@
     "renders Evolução Headcount card title",
     "renders Notificações card",
     "renders Sem notificações empty state",
-    "renders Tudo em dia when pendencias empty"
+    "renders Tudo em dia when pendencias empty",
+    "renderiza o card de Alertas de RH com o widget dentro",
+    "renderiza o card de Cadastros incompletos com o widget dentro"
    ]
   },
   "src/components/__tests__/AnimatedNumber.test.tsx": {
@@ -277598,7 +277608,7 @@
   },
   "src/components/dashboard/AnalyticsSection.tsx": {
    "path": "src/components/dashboard/AnalyticsSection.tsx",
-   "lines": 778,
+   "lines": 847,
    "exports": [
     "function AnalyticsSection"
    ],
@@ -277630,6 +277640,7 @@
    "navigates": [
     "/assistente-ia",
     "/auditoria",
+    "/colaboradores",
     "/esocial",
     "/passivo-trabalhista",
     "/relatorios",
@@ -328279,10 +328290,39 @@
   }
  },
  "git": {
-  "sha": "6d44dd42e1984ff987cb13b4892c94aea5cbef2f",
+  "sha": "d9cc47549b453a69f3381a3bf1e206baa5b294e6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "d9cc475",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "feat(dashboard): põe em tela os 2 widgets que nunca eram renderizados (#702)",
+    "files": [
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/AnalyticsSection.test.tsx",
+     "src/components/dashboard/AnalyticsSection.tsx"
+    ]
+   },
+   {
+    "sha": "07742aa",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "fix(scripts): build-rebaseline diz qual arquivo de entrada falta (#706)",
+    "files": [
+     "scripts/build-rebaseline.mjs"
+    ]
+   },
+   {
+    "sha": "72d1d6b",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "docs(auditoria): registro da reauditoria dos descartes (#703)",
+    "files": [
+     "docs/auditoria/REAUDITORIA_DESCARTES_2026-11-18.md"
+    ]
+   },
    {
     "sha": "6d44dd4",
     "date": "2026-11-18",
@@ -328570,42 +328610,6 @@
     "files": [
      "docs/auditoria/VEREDITO_MURI_2026-11-17.md"
     ]
-   },
-   {
-    "sha": "a0a6967",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "chore(auditoria): escreve e executa o sidecar que faltava ao colaborador_lotacoes (#673)",
-    "files": [
-     "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.verify.sql",
-     "docs/auditoria/sql-preservado/README.md"
-    ]
-   },
-   {
-    "sha": "4699117",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "infra: o apply do canonical-migrations confirma o lote anterior, não o atual (#671)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "scripts/canonical-invariants.sql"
-    ]
-   },
-   {
-    "sha": "60e5ae9",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "chore(auditoria): fecha o destino das 14 migrations que só existiam na muri (#672)",
-    "files": [
-     "docs/auditoria/sql-preservado/20260819000000_p0_fix_user_empresa_id_rls.sql",
-     "docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql",
-     "docs/auditoria/sql-preservado/20260821000000_p0_rls_dashboard_audit.sql",
-     "docs/auditoria/sql-preservado/20261005020000_onboarding_modelo_b_convergencia.sql",
-     "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada.sql",
-     "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada_rollback.sql",
-     "docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql",
-     "docs/auditoria/sql-preservado/README.md"
-    ]
    }
   ],
   "hot_files": [
@@ -328615,11 +328619,7 @@
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    6
-   ],
-   [
-    "docs/auditoria/sql-preservado/README.md",
-    6
+    5
    ],
    [
     "docs/agentes/banco.md",
@@ -328630,16 +328630,40 @@
     4
    ],
    [
-    "scripts/canonical-invariants.sql",
-    3
+    "docs/auditoria/sql-preservado/README.md",
+    4
    ],
    [
     "scripts/audit-migration-style.mjs",
     3
    ],
    [
+    "scripts/canonical-invariants.sql",
+    2
+   ],
+   [
     "scripts/.types-drift-baseline.json",
     2
+   ],
+   [
+    "scripts/.bundle-budget.json",
+    1
+   ],
+   [
+    "src/components/__tests__/AnalyticsSection.test.tsx",
+    1
+   ],
+   [
+    "src/components/dashboard/AnalyticsSection.tsx",
+    1
+   ],
+   [
+    "scripts/build-rebaseline.mjs",
+    1
+   ],
+   [
+    "docs/auditoria/REAUDITORIA_DESCARTES_2026-11-18.md",
+    1
    ],
    [
     "src/components/__tests__/PdiCard.test.tsx",
@@ -328667,26 +328691,6 @@
    ],
    [
     "src/components/dashboard/MorningBriefing.tsx",
-    1
-   ],
-   [
-    "src/components/dashboard/ProximasAtividadesCard.tsx",
-    1
-   ],
-   [
-    "src/components/dashboard/ResumoOperacionalCard.tsx",
-    1
-   ],
-   [
-    "src/components/dashboard/useMorningBriefing.ts",
-    1
-   ],
-   [
-    "src/pages/DashboardPage.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/AdmissoesDashboard.test.tsx",
     1
    ]
   ]

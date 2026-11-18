@@ -392,7 +392,7 @@
   {
    "arquivo": "scripts/build-rebaseline.mjs",
    "descricao": "Estas correções não pertencem ao histórico de migrations ativo: elas são aplicadas SOBRE o snapshot físico antes de ele virar a baseline única.",
-   "linhas": 141,
+   "linhas": 151,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
