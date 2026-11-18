@@ -134,33 +134,34 @@ jobs:
           # Versões já presentes no ledger do canônico são puladas: um
           # re-dispatch do mesmo lote não pode re-executar as migrações.
           applied="$(psql "$SUPABASE_DB_URL" -X -At -c "SELECT version FROM supabase_migrations.schema_migrations")"
-          # LOTE ATUAL: uma migration, aditiva e idempotente, que conserta um
-          #   login quebrado em producao.
-          #  - 20261028230000_govbr_auth_state_user_id: esta na main desde
-          #    28/10/2026 e NUNCA entrou no ledger. Medido em 18/11/2026:
-          #    public.govbr_auth_state tem 6 colunas e NAO tem user_id. A edge
-          #    auth-gov-br insere essa coluna em
-          #    supabase/functions/auth-gov-br/index.ts:130 e faz throw stateErr
-          #    na 133, entao TODO pedido de URL de autenticacao gov.br falha. O
-          #    proprio cabecalho do arquivo ja dizia que a coluna "nunca foi
-          #    criada em migration". E ADD COLUMN IF NOT EXISTS + CREATE INDEX
-          #    IF NOT EXISTS: aditivo, idempotente, sem perda de dado.
-          #    Ver docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md secao 12.
+          # LOTE ATUAL: uma migration que SO REMOVE policy, sem criar nenhuma.
+          #  - 20261118110000_drop_policy_inerte_recrutamento: derruba a policy
+          #    "Multi-tenant access" das 5 tabelas de recrutamento/onboarding
+          #    (vagas, candidatos, candidaturas, onboarding_colaborador,
+          #    onboarding_tarefas). Medido em 18/11/2026: o USING dela, criado em
+          #    20260516175648:169, compara empresa_id com auth.uid() e busca
+          #    colaboradores.id = auth.uid() quando o vinculo e
+          #    colaboradores.user_id — nunca concede nada. Policy PERMISSIVE para
+          #    role public que e fail-closed por acidente. O acesso real vem das
+          #    policies por authenticated, que ficam INTACTAS.
+          #    NAO usamos a 20260724000700 (na main, nunca aplicada) porque ela
+          #    tambem CRIA empresa_isolation_* PERMISSIVE: policies PERMISSIVE sao
+          #    OR'ed, entao somar uma nova poderia ALARGAR o acesso em tabelas com
+          #    PII. Ver docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md §16.
           #
-          # O lote anterior (20260929120000_colaborador_lotacoes,
-          # 20261117190000_permissions_matriz_seed,
-          # 20261117193000_storage_documentos_tenant_scope) saiu daqui porque as
-          # tres foram APLICADAS e estao no ledger: apply run 44233003760
-          # ("ledger_count": 3, CANONICAL_SCHEMA_INVARIANTS_OK) e verify run
-          # 44236033035 (ledger OK nos 5 sidecars, CANONICAL_VERIFY_OK). O passo
-          # pula versao ja registrada, mas mante-las na lista nao tem funcao.
+          # O lote anterior (20261028230000_govbr_auth_state_user_id) saiu daqui
+          # porque foi APLICADO e esta no ledger: validate run 44278442293, apply
+          # run 44278669976 e verify run 44278831397 (ledger OK + CANONICAL_VERIFY_OK),
+          # conferido tambem por consulta direta: public.govbr_auth_state passou a
+          # ter 7 colunas, com user_id uuid nullable.
+          #
           # ATENCAO, custou dois erros meus hoje: o input `migration_files` do
           # dispatch NAO escolhe o lote de validate/apply — e ESTA lista que
           # decide. E no mode=verify ele quer NOME DE ARQUIVO, sem o prefixo
           # supabase/migrations/ (o workflow prefixa; caminho completo gera
           # "supabase/migrations/supabase/migrations/..." e o sidecar nao e achado).
           for migration in \
-            20261028230000_govbr_auth_state_user_id.sql
+            20261118110000_drop_policy_inerte_recrutamento.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
