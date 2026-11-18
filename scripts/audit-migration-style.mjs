@@ -126,8 +126,12 @@ function mascarar(trecho) {
  *    Fail-closed: em qualquer outra posição o corpo permanece e é inspecionado.
  *  - Delimitador sem fechamento no arquivo: mantém o resto (fail-closed).
  *
- * Decisão deliberada: dentro de um corpo dollar-quoted MANTIDO (o executável),
- * os literais NÃO são mascarados. É assim que
+ * Decisão deliberada: o corpo dollar-quoted MANTIDO (o executável) é varrido
+ * recursivamente, mas em modo `mascararLiterais = false`: comentários dentro
+ * dele CONTINUAM sendo neutralizados (sem isso um `-- ... ;` entre os tokens da
+ * policy encerrava a deteccao antes do `empresa_id IS NULL` — regressão que um
+ * revisor pegou na #684 e que o tokenizador de três passadas não tinha), e os
+ * literais são preservados. É assim que
  * `EXECUTE 'CREATE POLICY ... empresa_id IS NULL'` dentro de `DO $$ ... $$`
  * continua visível para a guarda — SQL dinâmico cria policy de verdade, e é
  * justamente ali que uma permissiva passaria sem ser vista. O preço é falso
@@ -139,7 +143,7 @@ function mascarar(trecho) {
  * A máscara troca cada caractere por espaço e preserva `\n`, então as posições
  * e os números de linha continuam valendo.
  */
-function limparPreservandoPosicao(sql) {
+function limparPreservandoPosicao(sql, mascararLiterais = true) {
   const n = sql.length;
   const ehIdent = (c) => c !== undefined && /[A-Za-z0-9_]/.test(c);
   let out = '';
@@ -191,7 +195,8 @@ function limparPreservandoPosicao(sql) {
         }
       }
       const fim = Math.min(j, n);
-      out += mascarar(sql.slice(i, fim));
+      const trecho = sql.slice(i, fim);
+      out += mascararLiterais ? mascarar(trecho) : trecho;
       i = fim;
       continue;
     }
@@ -226,7 +231,8 @@ function limparPreservandoPosicao(sql) {
         }
         const ehLiteral = /\bIS$/i.test(out.replace(/\s+$/, ''));
         const corpo = sql.slice(i + delim.length, fecha);
-        out += mascarar(delim) + (ehLiteral ? mascarar(corpo) : corpo) + mascarar(delim);
+        out +=
+          mascarar(delim) + (ehLiteral ? mascarar(corpo) : limparPreservandoPosicao(corpo, false)) + mascarar(delim);
         i = fecha + delim.length;
         continue;
       }
@@ -388,6 +394,19 @@ BEGIN
   EXECUTE 'CREATE POLICY "via_execute" ON public.admissoes FOR SELECT TO authenticated USING (empresa_id IS NULL)';
 END $$;`,
       espera: ['allow-null-tenant'],
+    },
+    {
+      nome: 'fuga 5: comentario com ; dentro de bloco DO NAO pode esconder a policy',
+      sql: `DO $$
+BEGIN
+  CREATE POLICY "com_comentario" ON public.admissoes
+    FOR SELECT TO authenticated
+    USING ( -- fim falso ;
+      empresa_id IS NULL
+      OR auth.jwt() ->> 'role' = 'admin'
+    );
+END $$;`,
+      espera: ['allow-null-tenant', 'allow-jwt-authz'],
     },
     {
       nome: 'policy correta (IS NOT NULL + is_admin) — PASSA',
