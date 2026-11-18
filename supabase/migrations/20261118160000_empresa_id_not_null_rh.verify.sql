@@ -38,15 +38,15 @@ SELECT CASE WHEN NOT EXISTS (
     WHERE a.atttypid <> 'uuid'::regtype
   ) THEN 'ok' ELSE 'FALHOU: empresa_id deixou de ser uuid em alguma das 9' END;
 
--- 3) NENHUMA LINHA FOI APAGADA de desligamentos. Esta e a assercao central do
---    arquivo: a migration original fazia
---    `DELETE FROM public.desligamentos WHERE empresa_id IS NULL` e esta nao faz.
---    Medido antes do apply: 2 linhas. Se o DELETE tivesse rodado por engano, ou
---    se alguem reintroduzisse o DELETE num merge futuro, a contagem cairia e
---    isso apareceria aqui. Uso >= porque criar desligamento e operacao normal
---    do sistema; o que nao pode e a contagem DIMINUIR.
+-- 3) PISO de linhas em desligamentos. Medido antes do apply: 2 linhas.
+--    Devin Review em #695, com razao: isto NAO prova ausencia de exclusao —
+--    3 antes e 2 depois tambem passa, e a propria aplicacao permite excluir
+--    (src/pages/DesligamentosPage.tsx:132-149), o que pode mexer no piso sem
+--    participacao nenhuma da migration. Comparar antes/depois na mesma
+--    transacao nao e possivel aqui: o sidecar roda DEPOIS do DDL.
+--    Fica como tripwire grosseiro; a prova de verdade e a assercao 8.
 SELECT CASE WHEN (SELECT count(*) FROM public.desligamentos) >= 2
-  THEN 'ok' ELSE 'FALHOU: desligamentos tem menos de 2 linhas — a migration apagou dado' END;
+  THEN 'ok' ELSE 'FALHOU: desligamentos caiu abaixo de 2 linhas' END;
 
 -- 4) a RLS continua LIGADA nas 9. Garantia por coluna nao substitui garantia por
 --    policy: se a RLS caisse, o NOT NULL so garantiria que o dado tem dono, nao
@@ -81,3 +81,48 @@ SELECT CASE WHEN (
 -- A assercao de ledger NAO mora aqui: o `validate` roda em transacao que termina
 -- em ROLLBACK e o ledger so e escrito no `apply`. A prova de ledger esta em
 -- scripts/canonical-invariants.sql, no modo `verify`.
+
+-- 6) o gatilho que deriva empresa_id do colaborador existe em desligamentos, e
+--    aponta para o helper certo. Sem ele, o NOT NULL quebra a rescisao
+--    automatica por justa causa: aplicar_medida_folha_ponto insere em
+--    desligamentos SEM empresa_id (canonical_schema.sql:667-677) e
+--    trg_medida_aplicada_integrar engole o 23502 com EXCEPTION WHEN OTHERS
+--    (canonical_schema.sql:9883-9905), deixando a medida aplicada sem rescisao
+--    e sem erro visivel. Achado pela Devin Review em #695.
+--    Esta assercao e o que impede alguem derrubar o gatilho e manter o NOT NULL.
+SELECT CASE WHEN EXISTS (
+    SELECT 1
+    FROM pg_trigger tg
+    JOIN pg_proc p ON p.oid = tg.tgfoid
+    JOIN pg_namespace n ON n.oid = p.pronamespace AND n.nspname = 'public'
+    WHERE tg.tgrelid = 'public.desligamentos'::regclass
+      AND NOT tg.tgisinternal
+      AND tg.tgname = 'trg_sync_empresa_colaborador'
+      AND p.proname = 'dp_sync_empresa_from_colaborador'
+  ) THEN 'ok' ELSE 'FALHOU: desligamentos sem o gatilho trg_sync_empresa_colaborador — o NOT NULL quebraria a rescisao por justa causa' END;
+
+-- 7) e ele e BEFORE INSERT (um AFTER nao preencheria nada em tempo de
+--    verificacao da constraint).
+SELECT CASE WHEN EXISTS (
+    SELECT 1 FROM pg_trigger
+    WHERE tgrelid = 'public.desligamentos'::regclass
+      AND tgname = 'trg_sync_empresa_colaborador'
+      AND (tgtype & 2) = 2    -- BEFORE
+      AND (tgtype & 4) = 4    -- INSERT
+  ) THEN 'ok' ELSE 'FALHOU: trg_sync_empresa_colaborador nao e BEFORE INSERT em desligamentos' END;
+
+-- 8) PROVA de que o que foi aplicado nao apaga linha. Responde direto a Devin
+--    Review em #695: a assercao 3 e so um piso. Esta aqui e estatica e forte —
+--    o `apply` grava em supabase_migrations.schema_migrations.statements o
+--    CONTEUDO EXATO do arquivo executado. Se o SQL aplicado contivesse DELETE
+--    ou TRUNCATE em qualquer forma, apareceria ali.
+--
+--    Condicional de proposito: no `validate` a transacao termina em ROLLBACK e
+--    a linha do ledger ainda nao existe, entao ausencia de linha devolve 'ok'
+--    (sem isso o dry-run reprovaria sempre). No `verify`, apos o COMMIT, a
+--    linha existe e a assercao morde.
+SELECT CASE WHEN NOT EXISTS (
+    SELECT 1 FROM supabase_migrations.schema_migrations
+    WHERE version = '20261118160000'
+      AND array_to_string(statements, ' ') ~* '(delete[[:space:]]+from|truncate)'
+  ) THEN 'ok' ELSE 'FALHOU: o SQL aplicado como 20261118160000 contem DELETE/TRUNCATE — esta migration nao deve apagar dado' END;

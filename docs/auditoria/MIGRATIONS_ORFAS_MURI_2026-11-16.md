@@ -1043,3 +1043,62 @@ lote (`=== 1`).
 Vale o registro de método: o gate que avisava sobre o próprio modo de falhar falhou desse jeito
 por três lotes seguidos. Comentário não é gate. O que prendeu de verdade, nas três vezes, foi o
 sidecar com asserção de ledger por versão.
+
+### 18.7 Devin Review no PR da migration: um vermelho real e uma asserção fraca
+
+Dois achados na migration `20261118160000`, os dois conferidos no banco antes de mexer.
+
+**1. Vermelho real — o `NOT NULL` quebraria a rescisão automática por justa causa.**
+
+`public.aplicar_medida_folha_ponto(uuid)` é `SECURITY DEFINER`, está **viva** no banco
+(`supabase_db_list_functions` a lista; nenhuma migration a redefine depois do baseline) e faz:
+
+```
+INSERT INTO public.desligamentos (colaborador_id, tipo, data_desligamento,
+                                  motivo, status, salario_base) VALUES (...)
+```
+
+— `baseline/20260831_canonical/canonical_schema.sql:667-677`. **Omite `empresa_id`.** A coluna
+não tem `DEFAULT` (pos.30, `column_default: null`) e, por `supabase_db_list_triggers`,
+`desligamentos` **não tem nenhum gatilho `BEFORE INSERT`** que a preencha — o único é
+`trg_enforce_desligamento_hash`.
+
+O que aconteceria com o `NOT NULL` aplicado: o `INSERT` falha com `23502`, e
+`public.trg_medida_aplicada_integrar()` (`canonical_schema.sql:9883-9905`) **engole o erro com
+`EXCEPTION WHEN OTHERS`**, gravando a integração como `'erro'`. A medida disciplinar fica
+**aplicada** e a rescisão nunca nasce — sem erro visível para ninguém. Regressão silenciosa,
+que a meta desta sessão proíbe.
+
+Correção escolhida — e por que **não** foi reescrever a função: ela tem ~130 linhas e cobre
+suspensão, justa causa e folha; um `CREATE OR REPLACE` só para somar uma coluna arrisca
+regredir o resto. Em vez disso, o passo 0 da migration anexa a `desligamentos` o gatilho que
+**já existe e já foi revisado**: `trg_sync_empresa_colaborador` sobre
+`public.dp_sync_empresa_from_colaborador()` (`20261018120000_onda4d_review243.sql:66-82`), o
+mesmo que governa `documentos`, `historico_cargo`, `colaborador_beneficios` e
+`documentos_colaborador` desde outubro. Ele deriva `empresa_id` de `colaboradores.empresa_id`,
+que para uma rescisão é a empresa correta por definição (`desligamentos.colaborador_id` é
+`NOT NULL`).
+
+Ganho sobre consertar a função: **fecha a classe**. Qualquer escrita interna em
+`desligamentos` que omita `empresa_id` — RPC, job, outra função — passa a ser preenchida em vez
+de falhar. E não alarga acesso: só copia o tenant do próprio colaborador. O passo 0 aborta se o
+helper não existir, porque aplicar o `NOT NULL` sem ele é exatamente o cenário de regressão.
+Asserções 6 e 7 do sidecar prendem o gatilho (existência, função certa, `BEFORE INSERT`), para
+que ninguém o derrube mantendo a restrição.
+
+**2. Asserção fraca — eu havia overclaimado.** Dizer que `count(*) >= 2` prova que nenhuma
+linha foi apagada é falso: 3 antes e 2 depois também passa, e a própria aplicação permite
+excluir (`src/pages/DesligamentosPage.tsx:132-149`), o que mexe no piso sem participação
+nenhuma da migration. Comparar antes/depois na mesma transação não é possível num sidecar, que
+roda depois do DDL.
+
+Troca: a asserção 3 ficou declarada como **piso**, e a prova de verdade virou a **asserção 8**,
+que é estática. O `apply` grava em `supabase_migrations.schema_migrations.statements` o
+**conteúdo exato** do arquivo executado; a asserção varre esse texto procurando exclusão. É
+condicional de propósito — no `validate` a linha do ledger ainda não existe (ROLLBACK), então
+ausência devolve `ok`; no `verify`, após o COMMIT, ela morde.
+
+Efeito colateral que vale registrar: como o ledger guarda o arquivo inteiro, **comentário entra
+na varredura**. O cabeçalho da migration citava a instrução de exclusão da versão órfã
+literalmente e isso reprovaria a própria asserção 8. A citação foi reescrita em prosa, com o
+motivo anotado no lugar — senão alguém reintroduz a menção e leva uma falha incompreensível.
