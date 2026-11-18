@@ -258,6 +258,32 @@ e todo `export { … }` de cada versão das branches e comparei com a superfíci
 **Conclusão: dos 14, treze estão incorporados, renomeados, absorvidos ou descartados com razão
 registrada. O décimo quarto depende da única decisão que não é técnica.**
 
+### Etapa 6: descendo de símbolo exportado para identificador e literal
+
+O corpo de função não tem oráculo que separe "reescrito" de "perdido", mas dá para descer um nível
+abaixo do export: **todo identificador com 4+ caracteres e todo literal de texto com 4+ caracteres**
+de cada versão das branches, comparado com o conjunto inteiro de tokens da `main` (**172 611**
+distintos).
+
+Resultado: **288 tokens distintos, em 69 dos 192 caminhos.** Classificados:
+
+| classe                              | exemplos                                                                                                                              | veredito                                                                                                                                                                                                                                                                        |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| maquinaria de **mock**              | `getMockOnboarding`, `getMockKitsOnboarding`, `VITE_DESLIGAMENTOS_MOCK`, `moverCandidaturaMock`, `@/mocks/premiacoesMock`, `mockLogs` | proibido em produção (AGENTS §3)                                                                                                                                                                                                                                                |
+| `trace_id` **por aba**              | `TRACE_ID_KEY`, "o mesmo trace_id na aba inteira", "sessionStorage indisponível"                                                      | substituído de propósito na #666 pela semântica por requisição, que é a da coluna                                                                                                                                                                                               |
+| já resolvidos nas etapas anteriores | `functionUrl`, `rewriteFunctionsUrl`, `candidatosSemCandidatura`, `DOCUMENTOS_COLABORADORES_BUCKET`                                   | ver tabela dos 14                                                                                                                                                                                                                                                               |
+| classes CSS e textos de UI          | `grid-cols-[minmax(0,1fr)_130px_70px_28px]`, "Sem imagem", "Volume, retenção e conversão entre as etapas"                             | variantes de arquivos que a `main` reescreveu; não são função                                                                                                                                                                                                                   |
+| query keys renomeadas               | `"transferencias-timeline"`, `"afastamentos-timeline"`                                                                                | mesma consulta, chave de cache com outro nome                                                                                                                                                                                                                                   |
+| imagem de kit                       | `MAX_IMAGEM_MB`, `ImagePlus`, `RETRATO`                                                                                               | a `main` mantém o campo no contrato e **ignora de propósito**: não existe coluna, e o serviço documenta isso (`onboardingJornadaService.ts:66-76`) — nada de persistência falsa                                                                                                 |
+| **seleção em massa de candidatos**  | `toggleTodos`, `toggleLinha`, `idsPagina`, `algumMarcado`                                                                             | **UI pela metade**: `selecionados` tem 7 usos no blob da branch e **todos são do próprio mecanismo** — cria o `Set`, passa adiante, lê para marcar o checkbox. **Nada consome.** Eram caixas que selecionam e não fazem nada; trazer isso adicionaria coluna de checkbox inerte |
+
+**Nenhum dos 288 tokens é função de negócio ausente.** O único que exigia leitura nova era a seleção
+em massa, e ela se revelou do mesmo tipo do `candidatosSemCandidatura`: construída sem consumidor,
+na própria branch.
+
+Com isso a verificação desceu quatro níveis — blob, linha, símbolo exportado, identificador e
+literal — e cada nível fechou.
+
 ### Um limite honesto desta prova
 
 Export que desaparece é contrato que desaparece, mas o contrário não vale: duas implementações com o
