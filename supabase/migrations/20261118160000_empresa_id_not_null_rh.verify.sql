@@ -111,18 +111,38 @@ SELECT CASE WHEN EXISTS (
       AND (tgtype & 4) = 4    -- INSERT
   ) THEN 'ok' ELSE 'FALHOU: trg_sync_empresa_colaborador nao e BEFORE INSERT em desligamentos' END;
 
--- 8) PROVA de que o que foi aplicado nao apaga linha. Responde direto a Devin
---    Review em #695: a assercao 3 e so um piso. Esta aqui e estatica e forte —
---    o `apply` grava em supabase_migrations.schema_migrations.statements o
---    CONTEUDO EXATO do arquivo executado. Se o SQL aplicado contivesse DELETE
---    ou TRUNCATE em qualquer forma, apareceria ali.
+-- 8) O SQL APLICADO nao contem instrucao de exclusao. Responde a Devin Review
+--    em #695, que apontou duas limitacoes reais nas versoes anteriores desta
+--    assercao, as duas corrigidas aqui:
+--
+--    (a) a primeira versao exigia `delete[[:space:]]+from`, que nao pega
+--        `DELETE/**/FROM` nem `DELETE  -- nota\n  FROM`. Agora casa a PALAVRA
+--        `delete` ou `truncate` em qualquer posicao (\m \M sao fronteira de
+--        palavra no Postgres), sem depender do que vem depois.
+--    (b) e o escopo esta declarado abaixo, porque chamar isto de "prova de
+--        preservacao de dado" induziria revisao futura ao erro.
+--
+--    O QUE ESTA ASSERCAO PROVA: que o texto exato gravado em
+--    supabase_migrations.schema_migrations.statements pelo `apply` — o conteudo
+--    integral do arquivo executado — nao menciona exclusao.
+--
+--    O QUE ELA NAO PROVA: nada sobre exclusao feita DENTRO de funcao chamada
+--    pela migration. Aqui isso nao se aplica porque esta migration nao chama
+--    nenhuma funcao que escreva: ela faz DDL (ALTER ... SET NOT NULL), um
+--    SELECT count(*) de verificacao, e CREATE TRIGGER, que apenas REGISTRA
+--    dp_sync_empresa_from_colaborador para INSERTs futuros, sem executa-la. Se
+--    uma versao futura passar a chamar funcao, esta assercao deixa de cobrir
+--    esse caminho e precisa de outra.
+--
+--    Consequencia pratica de (a): como o ledger guarda o arquivo INTEIRO,
+--    comentario entra na varredura. Por isso o cabecalho da migration descreve
+--    a instrucao de exclusao da versao orfa em prosa, nunca literalmente.
 --
 --    Condicional de proposito: no `validate` a transacao termina em ROLLBACK e
---    a linha do ledger ainda nao existe, entao ausencia de linha devolve 'ok'
---    (sem isso o dry-run reprovaria sempre). No `verify`, apos o COMMIT, a
---    linha existe e a assercao morde.
+--    a linha do ledger ainda nao existe, entao ausencia devolve 'ok' (sem isso
+--    o dry-run reprovaria sempre). No `verify`, apos o COMMIT, ela morde.
 SELECT CASE WHEN NOT EXISTS (
     SELECT 1 FROM supabase_migrations.schema_migrations
     WHERE version = '20261118160000'
-      AND array_to_string(statements, ' ') ~* '(delete[[:space:]]+from|truncate)'
-  ) THEN 'ok' ELSE 'FALHOU: o SQL aplicado como 20261118160000 contem DELETE/TRUNCATE — esta migration nao deve apagar dado' END;
+      AND array_to_string(statements, ' ') ~* '(\mdelete\M|\mtruncate\M)'
+  ) THEN 'ok' ELSE 'FALHOU: o SQL aplicado como 20261118160000 menciona exclusao (delete/truncate) — esta migration nao deve apagar dado, e nem cita a palavra: ver escopo no comentario acima' END;

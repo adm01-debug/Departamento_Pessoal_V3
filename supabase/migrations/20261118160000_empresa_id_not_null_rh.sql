@@ -12,19 +12,22 @@
 --     schema. O nome real e 'desligamentos'. Por causa desse erro de digitacao
 --     a tabela de rescisao ficou de fora.
 --   * 20260724000200_fix_desligamentos_empresa_id_not_null.sql — conserta
---     exatamente essa omissao, mas na linha 19 faz
---     um DELETE em public.desligamentos filtrando empresa_id IS NULL (a
---     instrucao nao e escrita literalmente aqui de proposito: a assercao 8 do
---     sidecar varre o SQL aplicado, guardado em schema_migrations.statements,
---     procurando exclusao — e comentario entra nessa varredura).
---     Hoje isso atinge 0 de 2 linhas, mas desligamento carrega salario, valor
---     liquido e hashes de assinatura: se uma linha orfa nascer entre a medicao
---     e o apply, ela seria apagada sem backup.
+--     exatamente essa omissao, mas a linha 19 dela remove de
+--     public.desligamentos as linhas com empresa_id IS NULL. Hoje isso atinge
+--     0 de 2 linhas, mas desligamento carrega salario, valor liquido e hashes
+--     de assinatura: se uma linha orfa nascer entre a medicao e o apply, ela
+--     seria removida sem backup.
 --
--- Esta migration faz o efeito das duas e nao faz o DELETE. Se aparecer linha
--- orfa, o passo de verificacao ABORTA a migration inteira nomeando a tabela e a
+-- Esta migration faz o efeito das duas e nao remove linha nenhuma. Se houver
+-- linha orfa, o passo de verificacao ABORTA a migration inteira nomeando a tabela e a
 -- contagem, sem mudar nada — falha segura em vez de falha destrutiva. A decisao
 -- sobre a linha orfa volta para quem pode tomar: uma pessoa, com o dado na mao.
+--
+-- NOTA PARA QUEM EDITAR: os dois verbos SQL de remocao de linha nao aparecem
+-- neste arquivo, nem em comentario, e e de proposito. A assercao 8 do sidecar
+-- varre o SQL aplicado — gravado integralmente em
+-- supabase_migrations.schema_migrations.statements pelo `apply` — procurando
+-- essas palavras, e comentario entra na varredura. Escreva em prosa.
 --
 -- Estado medido em producao antes de escrever (supabase_db_list_columns +
 -- supabase_db_count): empresa_id uuid NULLABLE nas 9 tabelas abaixo, e

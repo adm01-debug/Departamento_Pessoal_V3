@@ -1098,7 +1098,23 @@ que é estática. O `apply` grava em `supabase_migrations.schema_migrations.stat
 condicional de propósito — no `validate` a linha do ledger ainda não existe (ROLLBACK), então
 ausência devolve `ok`; no `verify`, após o COMMIT, ela morde.
 
-Efeito colateral que vale registrar: como o ledger guarda o arquivo inteiro, **comentário entra
-na varredura**. O cabeçalho da migration citava a instrução de exclusão da versão órfã
-literalmente e isso reprovaria a própria asserção 8. A citação foi reescrita em prosa, com o
-motivo anotado no lugar — senão alguém reintroduz a menção e leva uma falha incompreensível.
+**3. A varredura não era prova geral — terceira rodada da review, também procedente.** A
+primeira versão da asserção 8 exigia `delete[[:space:]]+from`, que não pega `DELETE/**/FROM`
+nem um comentário entre as duas palavras. E chamá-la de "prova de preservação de dado" induziria
+revisão futura ao erro, porque ela não vê exclusão feita **dentro** de função chamada pela
+migration.
+
+Duas correções: o padrão passou a casar a **palavra** `delete` ou `truncate` em qualquer
+posição (`\\m \\M`, fronteira de palavra do Postgres), sem depender do que vem depois; e o
+escopo está escrito no sidecar, separando o que a asserção prova do que não prova. Aqui a
+limitação (b) não se aplica: a migration faz DDL, um `SELECT count(*)` e `CREATE TRIGGER` —
+que apenas **registra** `dp_sync_empresa_from_colaborador` para inserts futuros, sem executá-la.
+Se uma versão futura passar a chamar função, a asserção deixa de cobrir esse caminho e precisa
+de outra; está anotado.
+
+Custo aceito, e documentado no cabeçalho da migration: como o ledger guarda o arquivo
+**inteiro**, comentário entra na varredura. Com o padrão largo, o arquivo não pode escrever os
+verbos de remoção nem em prosa explicativa — as duas menções que havia foram reescritas, e a
+nota "escreva em prosa" ficou no topo para quem editar depois. Vale a troca: o alvo da asserção
+é pegar uma instrução reintroduzida, e um padrão largo é estritamente mais forte que um
+sintático que se contorna com um comentário no meio.
