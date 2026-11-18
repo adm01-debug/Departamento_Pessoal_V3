@@ -6,12 +6,12 @@ Resumo das regras na seção 5 do `AGENTS.md`; aqui está o detalhe. Errar o ban
 
 ## Onde se trabalha
 
-| Situação | Banco | Como |
-|---|---|---|
-| Diagnóstico | **produção, só leitura** | `canonical-sql-diag.yml` (`workflow_dispatch`, read-only); nunca escrita para "testar" |
-| Migration nova | arquivo em `supabase/migrations/` | PR → `validate` → merge na `main` → `apply` → `verify` (abaixo) |
-| Teste de comportamento de banco | **Postgres descartável** | `npm run test:migrations*` (`scripts/tests/migrations-*.sh`, contêiner efêmero); nunca no canônico |
-| Migration destrutiva, segredos, rotação de chaves | **só com o dono** | `infra/runbooks/ROTACAO_SEGREDOS.md`, `BREAK_GLASS.md` |
+| Situação                                          | Banco                             | Como                                                                                               |
+| ------------------------------------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Diagnóstico                                       | **produção, só leitura**          | `canonical-sql-diag.yml` (`workflow_dispatch`, read-only); nunca escrita para "testar"             |
+| Migration nova                                    | arquivo em `supabase/migrations/` | PR → `validate` → merge na `main` → `apply` → `verify` (abaixo)                                    |
+| Teste de comportamento de banco                   | **Postgres descartável**          | `npm run test:migrations*` (`scripts/tests/migrations-*.sh`, contêiner efêmero); nunca no canônico |
+| Migration destrutiva, segredos, rotação de chaves | **só com o dono**                 | `infra/runbooks/ROTACAO_SEGREDOS.md`, `BREAK_GLASS.md`                                             |
 
 **Não existe desvio para banco local.** `src/integrations/supabase/client.ts:11-12` exige
 `VITE_SUPABASE_URL` + `VITE_SUPABASE_PUBLISHABLE_KEY` e usa exatamente o que estiver no `.env`; o
@@ -34,7 +34,7 @@ Produtos). Nome parecido, banco diferente: antes de qualquer escrita confira o r
 ## Regras de migration
 
 1. **Ledger não prova DDL aplicado.** `supabase_migrations.schema_migrations` registra que a versão foi
-   *marcada* como aplicada, não que o efeito existe no schema vivo. Toda aplicação exige **duas provas**: entrada
+   _marcada_ como aplicada, não que o efeito existe no schema vivo. Toda aplicação exige **duas provas**: entrada
    no ledger **e** verificação do efeito (policy existe/sumiu, grant revogado, `search_path` setado).
 2. **Canal único:** `canonical-migrations.yml` por `workflow_dispatch`, environment `production`. Nunca `psql`
    nem MCP direto contra produção fora desse workflow.
@@ -78,6 +78,53 @@ simulations" (3 shards) e "RLS live (pós-merge, não bloqueante)".
 - Gateway `external-db-bridge`: POST-only, JWT nos writes, CSRF fail-closed, rate limit, denylist de tabelas e
   allowlist de RPC. Detalhe e runbook de desempenho em `docs/agentes/arquitetura.md` e
   `infra/runbooks/BRIDGE_PERFORMANCE.md`.
+
+## `canonical-sql-diag.yml` está QUEBRADO em modo não-PII (medido 2026-11-18)
+
+Não confie nessa ferramenta até o grant abaixo existir. Com `allow_pii=false`, o
+`scripts/diag/run-sql-diag.mjs` prefixa a consulta com `SET LOCAL ROLE ci_auditor;`
+(`:225`) e o psql morre antes de qualquer consulta:
+
+```
+ERROR:  permission denied to set role "ci_auditor"
+##[error]a consulta falhou no canônico
+```
+
+Reproduzido em dois runs independentes, com consultas diferentes:
+[44235639541](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/runs/44235639541)
+(ledger) e
+[44240698826](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/runs/44240698826)
+(`pg_proc`).
+
+**Causa raiz:** `supabase/migrations/20261015160000_ci_auditor_readonly_role.sql:19` faz
+`CREATE ROLE ci_auditor WITH LOGIN ... NOINHERIT` e dá os GRANTs de leitura, mas **não existe
+nenhum `GRANT ci_auditor TO <papel da conexão>` em todo o `supabase/`**. `SET ROLE` exige
+pertencer ao papel; o papel existe, está configurado, e ninguém pode assumi-lo.
+
+**Consequência prática:** toda consulta de diagnóstico read-only falha, e o modo
+`allow_pii=true` (que pula o `SET LOCAL ROLE`, `:225`) passou a ser o único caminho — justamente
+o que manda o resultado para artifact de retenção de 1 dia, baixável por qualquer usuário
+autenticado do GitHub em repositório público. O controle desenhado para proteger virou o
+controle que obriga a usar o caminho menos protegido.
+
+**Correção é decisão do dono (regra 8):** um `GRANT ci_auditor TO <papel>` é DDL em produção, e
+alterar o `SET LOCAL ROLE` no workflow é CI. Enquanto não houver decisão, para diagnóstico de
+catálogo (`pg_catalog`, `information_schema`) use o modo `verify` do
+`canonical-migrations.yml` com um sidecar, que roda com `default_transaction_read_only=on` e
+**sem** `SET ROLE` — foi assim que as 5 migrations resgatadas foram provadas no banco.
+
+### Duas armadilhas do guard W27, para quem for escrever uma consulta ali
+
+O guard de PII em `scripts/diag/run-sql-diag.mjs:137-166` é conservador por regex, e duas coisas
+legítimas reprovam sem relação com PII:
+
+1. **`FROM (VALUES ...)`** — qualquer `FROM` sem schema explícito é tratado como `public`
+   (`:146`), então uma lista literal basta para reprovar;
+2. **alias de tabela** — o regex de referência qualificada (`:138`) casa **qualquer** `x.y`, e
+   `p.proname` / `n.oid` entram como "schemas" desconhecidos. Consulta com alias reprova.
+
+Escreva sem alias e com o nome completo (`pg_catalog.pg_proc`, `pronamespace =
+'public'::regnamespace`) que o guard aceita.
 
 ## Runbooks de banco (`infra/runbooks/`)
 
