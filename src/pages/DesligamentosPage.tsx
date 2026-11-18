@@ -25,10 +25,15 @@ import { exportarDesligamentosExcel } from '@/utils/desligamentoExcel';
 import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { loggerService } from '@/services/loggerService';
-import { precisaAtencao, resumoAtencao } from '@/components/desligamentos/desligamentosDerivacoes';
+import {
+  precisaAtencao,
+  proximaAcaoDesligamento,
+  resumoAtencao,
+} from '@/components/desligamentos/desligamentosDerivacoes';
 import {
   DesligamentoAtencaoBanner,
   DesligamentoKPIs,
+  ProximaAcaoCell,
   DesligamentoFilters,
   StatusBadge,
   TipoBadge,
@@ -53,12 +58,45 @@ export default function DesligamentosPage() {
   const [showChart] = useState(true);
   /** Ligado pelo "Ver processos" da faixa de atenção. */
   const [soAtencao, setSoAtencao] = useState(false);
+  // `DesligamentoFilters` já declarava estas duas props (departamento e
+  // período) e NENHUMA página as passava — os filtros existiam no componente e
+  // não apareciam na tela.
+  const [departamentoFilter, setDepartamentoFilter] = useState('todos');
+  const [periodoFilter, setPeriodoFilter] = useState('todos');
 
   // `useState` com inicializador, não `useMemo`: ler o relógio dentro de um
   // useMemo é efeito colateral no render (react-hooks/purity). O dia só muda a
   // cada 24h e a página recarrega muito antes disso.
   const [hojeMs] = useState(() => Date.now());
   const atencao = useMemo(() => resumoAtencao(desligamentos || [], hojeMs), [desligamentos, hojeMs]);
+
+  /** Departamentos que realmente aparecem na lista — não uma lista fixa. */
+  const departamentoOptions = useMemo(() => {
+    const vistos = new Set<string>();
+    (desligamentos || []).forEach((d) => {
+      const dep = d.colaborador?.departamento;
+      if (dep) vistos.add(dep);
+    });
+    return [...vistos].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  }, [desligamentos]);
+
+  /** Controla a visibilidade de "Limpar filtros" na barra. */
+  const filtroAtivo =
+    !!search ||
+    statusFilter !== 'todos' ||
+    tipoFilter !== 'todos' ||
+    departamentoFilter !== 'todos' ||
+    periodoFilter !== 'todos' ||
+    soAtencao;
+
+  const limparFiltros = () => {
+    setSearch('');
+    setStatusFilter('todos');
+    setTipoFilter('todos');
+    setDepartamentoFilter('todos');
+    setPeriodoFilter('todos');
+    setSoAtencao(false);
+  };
 
   const filtered = useMemo(() => {
     return (desligamentos || []).filter((d) => {
@@ -71,9 +109,20 @@ export default function DesligamentosPage() {
         (d.motivo || '').toLowerCase().includes(search.toLowerCase());
       const matchStatus = statusFilter === 'todos' || d.status === statusFilter;
       const matchTipo = tipoFilter === 'todos' || d.tipo === tipoFilter;
-      return matchSearch && matchStatus && matchTipo;
+      const matchDep = departamentoFilter === 'todos' || d.colaborador?.departamento === departamentoFilter;
+      // Período em MESES para trás, contados da data de desligamento.
+      let matchPeriodo = true;
+      if (periodoFilter !== 'todos' && d.data_desligamento) {
+        const meses = Number(periodoFilter);
+        if (Number.isFinite(meses) && meses > 0) {
+          const corte = new Date(hojeMs);
+          corte.setMonth(corte.getMonth() - meses);
+          matchPeriodo = new Date(`${d.data_desligamento}T12:00:00`) >= corte;
+        }
+      }
+      return matchSearch && matchStatus && matchTipo && matchDep && matchPeriodo;
     });
-  }, [desligamentos, search, statusFilter, tipoFilter, soAtencao, hojeMs]);
+  }, [desligamentos, search, statusFilter, tipoFilter, soAtencao, hojeMs, departamentoFilter, periodoFilter]);
 
   const openDetail = (d: DesligamentoComColaborador) => {
     setSelectedDesligamento(d);
@@ -188,6 +237,13 @@ export default function DesligamentosPage() {
                 onStatusChange={setStatusFilter}
                 tipoFilter={tipoFilter}
                 onTipoChange={setTipoFilter}
+                departamentoFilter={departamentoFilter}
+                onDepartamentoChange={setDepartamentoFilter}
+                departamentoOptions={departamentoOptions}
+                periodoFilter={periodoFilter}
+                onPeriodoChange={setPeriodoFilter}
+                filtroAtivo={filtroAtivo}
+                onLimpar={limparFiltros}
               />
 
               {/* Content */}
@@ -217,6 +273,9 @@ export default function DesligamentosPage() {
                               </th>
                               <th className="text-left text-[10px] font-display font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">
                                 Status
+                              </th>
+                              <th className="text-left text-[10px] font-display font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">
+                                Próxima Ação
                               </th>
                               <th className="text-left text-[10px] font-display font-semibold text-muted-foreground uppercase tracking-wider px-4 py-3">
                                 Valor Líquido
@@ -261,6 +320,13 @@ export default function DesligamentosPage() {
                                 </td>
                                 <td className="px-4 py-3">
                                   <StatusBadge status={d.status} />
+                                </td>
+                                {/* `proximaAcaoDesligamento` existia em
+                                    desligamentosDerivacoes.ts:183 sem NENHUM
+                                    consumidor: o prazo legal do art. 477 §6º
+                                    era calculado e nunca chegava à tela. */}
+                                <td className="px-4 py-3">
+                                  <ProximaAcaoCell desligamento={d} hojeMs={hojeMs} />
                                 </td>
                                 <td className="px-4 py-3 text-sm font-body font-medium">
                                   {d.valor_liquido
