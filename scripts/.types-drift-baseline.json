@@ -49,6 +49,7 @@
   "lgpd_purge_log",
   "migration_naming_audit",
   "mv_refresh_log",
+  "ninebox_permissoes_homologacao",
   "notificacoes_templates",
   "pii_access_alerts",
   "pii_access_logs",
