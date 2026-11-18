@@ -22,6 +22,7 @@ import {
   Target,
   Zap,
   Scale,
+  Brain,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedNumber } from './AnimatedNumber';
@@ -65,6 +66,7 @@ import {
   ESocialMonitorWidget,
   type PendenciaSummary,
 } from './analytics/widgets';
+import { AlertasPreditivosWidget } from './analytics/AlertasPreditivosWidget';
 import { validateTablePayload } from '@/schemas/validate';
 export type { PendenciaSummary } from './analytics/widgets';
 
@@ -579,6 +581,33 @@ export function AnalyticsSection({
           </CardHeader>
           <CardContent>
             <CadastroIncompletoWidget />
+          </CardContent>
+        </MotionCard>
+      </div>
+
+      {/* Row 1c: a edge `alertas-preditivos` (434 linhas, publicada em producao)
+          nao tinha nenhuma porta de entrada na UI — nenhum arquivo do `src` a
+          invocava, entao o RH nunca via os sinais de risco de saida e de
+          absenteismo que ela calcula. Fica fora das rows automaticas de cima
+          porque a edge GRAVA em `notificacoes` (index.ts:408): quem dispara e
+          o usuario, no botao, nao o carregamento da tela. */}
+      <div className="grid gap-4 grid-cols-1">
+        <MotionCard
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden group hover:border-primary/20 transition-all"
+        >
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2.5 text-h3 font-display">
+              <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-primary/70">
+                <Brain className="h-4 w-4 text-white" />
+              </div>
+              Riscos previstos
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AlertasPreditivosWidget />
           </CardContent>
         </MotionCard>
       </div>
