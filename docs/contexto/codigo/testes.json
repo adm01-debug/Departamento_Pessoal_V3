@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 774,
+ "total": 775,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 2,
-  "unit": 730
+  "unit": 731
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 643
+   "arquivos": 644
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -936,6 +936,16 @@
     "src/integrations/supabase/client.ts"
    ],
    "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/BeneficiosSettingsTabCriar.test.tsx",
+   "tipo": "unit",
+   "linhas": 116,
+   "testa": [
+    "src/components/settings/BeneficiosSettingsTab.tsx",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 3
   },
   {
    "arquivo": "src/components/__tests__/BeneficiosTab.test.tsx",
@@ -7488,7 +7498,7 @@
   "src/components/relatorios/RelatoriosExportTab.tsx": 1,
   "src/components/relatorios/reportScheduleContract.ts": 1,
   "src/components/seguranca/PolicyAuditPanel.tsx": 1,
-  "src/components/settings/BeneficiosSettingsTab.tsx": 1,
+  "src/components/settings/BeneficiosSettingsTab.tsx": 2,
   "src/components/settings/CamposCustomizadosTab.tsx": 1,
   "src/components/settings/ConfiguracoesGeraisTab.tsx": 1,
   "src/components/settings/EmpresaSettingsTab.tsx": 1,
@@ -7651,7 +7661,7 @@
   "src/hooks/useWebhooksAvancados.ts": 2,
   "src/hooks/validators.ts": 1,
   "src/integrations/lovable/index.ts": 1,
-  "src/integrations/supabase/client.ts": 26,
+  "src/integrations/supabase/client.ts": 27,
   "src/integrations/supabase/database.types.ts": 12,
   "src/integrations/supabase/previewAuthStorage.ts": 1,
   "src/integrations/supabase/types.ts": 13,

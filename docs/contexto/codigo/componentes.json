@@ -6201,7 +6201,7 @@
     "BeneficiosSettingsTab"
    ],
    "export_default": null,
-   "linhas": 278,
+   "linhas": 284,
    "dominio": "components/settings",
    "hooks_locais": [
     "useEmpresas"

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a48b81cef59a8964b585ce9b7c4de02cbeb94adf",
+  "commit": "8daa52dec42d3c0f2f89d7f0a7d1423ec150a881",
   "branch": "main",
-  "data_commit": "2026-11-18T12:17:25-03:00",
+  "data_commit": "2026-11-18T13:35:40-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "8daa52d",
+    "data": "2026-11-18",
+    "assunto": "fix: cadastro de plano de benefício grava a empresa (403 em produção) (#696)"
+   },
    {
     "sha": "a48b81c",
     "data": "2026-11-18",
@@ -126,18 +131,13 @@
     "sha": "ec2987e",
     "data": "2026-11-17",
     "assunto": "docs(auditoria): fecha o veredito de branches e PRs — nenhuma perda de função (#670)"
-   },
-   {
-    "sha": "f59c729",
-    "data": "2026-11-17",
-    "assunto": "feat(colaborador): aba Identificação no dossiê, com PII mascarada e acesso registrado (#669)"
    }
   ],
-  "arquivos_mudados_7d": 1135,
+  "arquivos_mudados_7d": 1136,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 373
+    "mudancas": 374
    },
    {
     "pasta": "src/components/ui",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3590,
-  "arquivos_codigo": 2079,
-  "linhas_codigo": 411633,
+  "arquivos_total": 3591,
+  "arquivos_codigo": 2080,
+  "linhas_codigo": 411755,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 426,
   "migrations": 876,
   "cron_jobs": 41,
-  "testes": 774,
+  "testes": 775,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 335
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 975,
-   "linhas": 176270
+   "arquivos": 976,
+   "linhas": 176392
   },
   "src/constants": {
    "arquivos": 7,

@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (643)",
+   "co-localizado (__tests__) (644)",
    "co-localizado (*.test) (73)",
    "e2e/ (33)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: cadastro de plano de benefício grava a empresa (403 em produção) (#696)",
    "infra: conserta a armadilha de DEFAULT x CHECK em public.faltas (#694)",
    "infra: derruba a policy inerte das 5 tabelas de recrutamento, sem criar outra (#693)",
    "fix: retrata o \"maior risco aberto\" - a policy public e inerte (#692)",
-   "chore: fecha 2 dos 3 casos sem veredito e sobe o risco de policy public (#691)",
-   "fix: retrata o Lote 1 - nao era funcionalidade morta, era falta de consumidor (#690)"
+   "chore: fecha 2 dos 3 casos sem veredito e sobe o risco de policy public (#691)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a48b81cef59a8964b585ce9b7c4de02cbeb94adf",
+  "sha": "8daa52dec42d3c0f2f89d7f0a7d1423ec150a881",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 15:18 UTC",
-  "files_total": 3603,
-  "code_files": 3026,
-  "code_lines": 478484
+  "generated_at": "2026-11-18 16:36 UTC",
+  "files_total": 3604,
+  "code_files": 3027,
+  "code_lines": 478606
  },
  "version": "1.3.2",
- "facts_hash": "beaf6e779d52f7b6",
+ "facts_hash": "b324c010ff073f58",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,7 +387,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 999,
+   ".tsx": 1000,
    ".sql": 949,
    ".ts": 942,
    ".mjs": 108,
@@ -100227,7 +100227,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 975,
+  "components_count": 976,
   "hooks": [
    {
     "name": "useContacts",
@@ -101842,8 +101842,8 @@
   },
   {
    "module": "src/components",
-   "files": 975,
-   "lines": 176270,
+   "files": 976,
+   "lines": 176392,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101945,8 +101945,8 @@
     "index.ts: V25: Components Export - active modules only",
     "AcoesFeedback.test.ts: Ações de feedback — camada de decisão dos controles (pura). Garante as regras pedidas: RH também gerencia (admin+rh), Validação de Potencial EXCLUSIVA do RH e situação da validação comparada com a versão canônica vinda do banco.",
     "AppPagination.test.tsx: AppPagination — padrão único de paginação do sistema. Cobre o contrato de APRESENTAÇÃO do componente: sequência dos controles, destaque da página ativa (verde-lima sólido), estado das setas nos extremos, seletor só quando há handler, recorte de página inexistente e as emissões de evento. A paginação …",
-    "CriacaoFeedbackIntegracao.test.ts: Integração local da criação — a ponte entre o formulário existente e a RPC auditada. Cobre idempotência (mesma tentativa × operação nova), preservação de TODOS os campos, validações e payload da RPC. Sem rede, sem banco.",
-    "EscritaOperacional.test.ts: Guarda de escrita operacional — impede gravação a partir de dados fictícios. Cobre as duas regras: identificador `mock-*` e ambiente de demonstração."
+    "BeneficiosSettingsTabCriar.test.tsx: Exercita a mutationFn de CRIACAO de plano de beneficio — o caminho que o teste existente (BeneficiosSettingsTab.test.tsx) nao executa, porque ali `useMutation` e mockado como `() => ({ mutate: vi.fn() })` e o `mutationFn` nunca roda. Apontado pela Devin Review em #696, com razao: os 8 testes de la p …",
+    "CriacaoFeedbackIntegracao.test.ts: Integração local da criação — a ponte entre o formulário existente e a RPC auditada. Cobre idempotência (mesma tentativa × operação nova), preservação de TODOS os campos, validações e payload da RPC. Sem rede, sem banco."
    ],
    "deps": [
     "@\\/components\\",
@@ -102029,6 +102029,7 @@
     "src/components/__tests__/BeneficioHistorico.test.tsx",
     "src/components/__tests__/BeneficiosDashboard.test.tsx",
     "src/components/__tests__/BeneficiosSettingsTab.test.tsx",
+    "src/components/__tests__/BeneficiosSettingsTabCriar.test.tsx",
     "src/components/__tests__/BeneficiosTab.test.tsx",
     "src/components/__tests__/Breadcrumbs.test.tsx",
     "src/components/__tests__/CNABDialog.test.tsx",
@@ -102069,8 +102070,7 @@
     "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
     "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
     "src/components/__tests__/DesligamentoFilters.test.tsx",
-    "src/components/__tests__/DesligamentoKPIs.test.tsx",
-    "src/components/__tests__/DesligamentoStatusBadge.test.tsx"
+    "src/components/__tests__/DesligamentoKPIs.test.tsx"
    ]
   },
   {
@@ -120023,6 +120023,10 @@
    {
     "file": "src/components/seguranca/PolicyAuditPanel.tsx",
     "text": "recebe erro de permissão em vez de uma lista vazia, e o componente distingue"
+   },
+   {
+    "file": "src/components/settings/BeneficiosSettingsTab.tsx",
+    "text": "validation.ts:105-110). Sem esta guarda o botao falhava em producao."
    },
    {
     "file": "src/components/treinamentos/AgendaSemanal.tsx",
@@ -167985,6 +167989,22 @@
    {
     "file": "src/components/__tests__/BeneficiosSettingsTab.test.tsx",
     "name": "shows dialog when Novo Plano clicked"
+   },
+   {
+    "file": "src/components/__tests__/BeneficiosSettingsTabCriar.test.tsx",
+    "name": "BeneficiosSettingsTab — criação de plano"
+   },
+   {
+    "file": "src/components/__tests__/BeneficiosSettingsTabCriar.test.tsx",
+    "name": "envia empresa_id no insert — sem isso o gateway devolve 403 TENANT_SCOPE_REQUIRED"
+   },
+   {
+    "file": "src/components/__tests__/BeneficiosSettingsTabCriar.test.tsx",
+    "name": "bloqueia antes de chamar o banco quando nenhuma empresa está selecionada"
+   },
+   {
+    "file": "src/components/__tests__/BeneficiosSettingsTabCriar.test.tsx",
+    "name": "continua validando nome e valor antes da empresa"
    },
    {
     "file": "src/components/__tests__/BeneficiosTab.test.tsx",
@@ -265706,6 +265726,18 @@
     "shows dialog when Novo Plano clicked"
    ]
   },
+  "src/components/__tests__/BeneficiosSettingsTabCriar.test.tsx": {
+   "path": "src/components/__tests__/BeneficiosSettingsTabCriar.test.tsx",
+   "lines": 116,
+   "is_test": true,
+   "doc": "Exercita a mutationFn de CRIACAO de plano de beneficio — o caminho que o teste existente (BeneficiosSettingsTab.test.tsx) nao executa, porque ali `useMutation` e mockado como `() => ({ mutate: vi.fn() })` e o `mutationFn` nunca roda. Apontado pela Devin Review em #696, com razao: os 8 testes de la p …",
+   "tests": [
+    "BeneficiosSettingsTab — criação de plano",
+    "envia empresa_id no insert — sem isso o gateway devolve 403 TENANT_SCOPE_REQUIRED",
+    "bloqueia antes de chamar o banco quando nenhuma empresa está selecionada",
+    "continua validando nome e valor antes da empresa"
+   ]
+  },
   "src/components/__tests__/BeneficiosTab.test.tsx": {
    "path": "src/components/__tests__/BeneficiosTab.test.tsx",
    "lines": 131,
@@ -284001,7 +284033,7 @@
   },
   "src/components/settings/BeneficiosSettingsTab.tsx": {
    "path": "src/components/settings/BeneficiosSettingsTab.tsx",
-   "lines": 278,
+   "lines": 284,
    "exports": [
     "function BeneficiosSettingsTab"
    ],
@@ -284035,6 +284067,9 @@
     "Plano não excluído: ele é obrigatório por lei, não pertence à empresa selecionada ou já foi removido.",
     "Selecione uma empresa.",
     "Valor inválido (entre 0 e 99.999,99)."
+   ],
+   "rule_comments": [
+    "validation.ts:105-110). Sem esta guarda o botao falhava em producao."
    ]
   },
   "src/components/settings/CamposCustomizadosTab.tsx": {
@@ -327247,10 +327282,20 @@
   }
  },
  "git": {
-  "sha": "a48b81cef59a8964b585ce9b7c4de02cbeb94adf",
+  "sha": "8daa52dec42d3c0f2f89d7f0a7d1423ec150a881",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "8daa52d",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "fix: cadastro de plano de benefício grava a empresa (403 em produção) (#696)",
+    "files": [
+     "src/components/__tests__/BeneficiosSettingsTabCriar.test.tsx",
+     "src/components/settings/BeneficiosSettingsTab.tsx"
+    ]
+   },
    {
     "sha": "a48b81c",
     "date": "2026-11-18",
@@ -327565,19 +327610,6 @@
      "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
      "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql"
     ]
-   },
-   {
-    "sha": "9fe99bd",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "test(e2e): resgata da muri os 5 especs de navegador (#661)",
-    "files": [
-     "e2e/authenticated/feedbacks-historico.spec.ts",
-     "e2e/authenticated/feedbacks-padronizacao.spec.ts",
-     "e2e/authenticated/layout-protegido-desempenho.spec.ts",
-     "e2e/authenticated/recrutamento-pipeline-animacao.spec.ts",
-     "e2e/authenticated/recrutamento-pipeline.spec.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -327612,6 +327644,14 @@
    [
     "scripts/canonical-invariants.sql",
     2
+   ],
+   [
+    "src/components/__tests__/BeneficiosSettingsTabCriar.test.tsx",
+    1
+   ],
+   [
+    "src/components/settings/BeneficiosSettingsTab.tsx",
+    1
    ],
    [
     "supabase/migrations/20260724000500_fix_faltas_status_default.verify.sql",
@@ -327651,14 +327691,6 @@
    ],
    [
     "src/schemas/tableColumns.ts",
-    1
-   ],
-   [
-    "src/services/__tests__/colaboradorLotacaoService.test.ts",
-    1
-   ],
-   [
-    "src/services/colaboradorLotacaoService.ts",
     1
    ]
   ]
