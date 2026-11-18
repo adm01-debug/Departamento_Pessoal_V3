@@ -334,28 +334,49 @@ Reproduz a §7 (7 caminhos, dos quais 4 eram remoções minhas de propósito, 2 
 `functionsUrl`) por um caminho independente, agora medido ao vivo e não por ponteiro. **Zero
 função perdida nas 91 branches locais apagadas.**
 
-## 7b. Refeito em 2026-11-18 sobre TODAS as 564 cabeças de PR (não só as branches apagadas)
+## 7b. Refeito em 2026-11-18 sobre TODAS as 634 cabeças de PR (não só as branches apagadas)
 
 A varredura da §7 cobriu os 186 tips pendurados das branches apagadas. Isso deixava uma lacuna de
 método: uma PR **mergeada** cujo arquivo a `main` removeu depois não estava no conjunto. Refeita
-sobre `refs/remotes/pr/*` — a cabeça de **toda PR que já existiu**, conjunto cuja completude a §5b
-prova (632 = 592 + 2 + 38).
+sobre as cabeças de PR.
 
-| etapa                                                                       | número  |
-| --------------------------------------------------------------------------- | ------- |
-| refs `pr/*` varridos (todos com árvore local completa, > 100 arquivos cada) | **564** |
-| pares blob/caminho únicos na união das 564 árvores                          | 10 592  |
-| ... ausentes da árvore ATUAL da `main` (3 617 pares)                        | 7 370   |
-| ... cujo blob nunca existiu em TODA a história da `main` (187 646 objetos)  | 3 242   |
-| caminhos distintos correspondentes                                          | 3 120   |
-| ... que a `main` não tem hoje                                               | 2 361   |
-| ... em `src/`, `supabase/`, `e2e/` (resto é `tmp-*/`, `anim-out/`, scripts) | 57      |
-| ... componentes/libs, fora testes e itens já resolvidos                     | 24      |
-| **com símbolo exportado sem equivalente na `main`**                         | **15**  |
+### Correção de método: a soma dos estados NÃO provava cobertura
+
+A primeira versão desta seção varreu **564** refs `pr/*` e as apresentou como o conjunto completo,
+justificando com a aritmética da §5b (632 = 592 + 2 + 38). **Isso estava errado, e um revisor
+automático (Devin, na PR #678) apontou:** a soma prova que os _estados_ das PRs fecham, não que os
+refs locais incluem todas as PRs. Cobertura se prova reconciliando identificadores.
+
+Reconciliado com `git ls-remote origin 'refs/pull/*/head'`, que lista toda cabeça de PR existente
+no remoto:
+
+| medida                                   | valor   |
+| ---------------------------------------- | ------- |
+| cabeças de PR no remoto                  | **634** |
+| refs `pr/*` locais na primeira varredura | 564     |
+| **faltando, reconciliadas por número**   | **70**  |
+
+As 70 são contíguas — **#607 a #680** —, isto é, PRs criadas depois do fetch que havia populado os
+refs locais. Foram buscadas (`git fetch` dos 70 refspecs), conferidas uma a uma por árvore completa
+(70/70 com > 100 arquivos) e varridas. Resultado da varredura sobre as **634**:
+
+| etapa                                                                       | 564 (errado) | **634 (reconciliado)** |
+| --------------------------------------------------------------------------- | ------------ | ---------------------- |
+| refs varridos, todos com árvore completa                                    | 564          | **634**                |
+| pares blob/caminho únicos na união das árvores                              | 10 592       | 11 076                 |
+| ... ausentes da árvore ATUAL da `main` (3 617 pares)                        | 7 370        | 7 459                  |
+| ... cujo blob nunca existiu em TODA a história da `main` (187 667 objetos)  | 3 242        | **3 242**              |
+| ... que a `main` não tem hoje (caminhos)                                    | 2 361        | **2 361**              |
+| ... em `src/`, `supabase/`, `e2e/` (resto é `tmp-*/`, `anim-out/`, scripts) | 57           | **57**                 |
+| **com símbolo exportado sem equivalente na `main`**                         | **15**       | **15**                 |
+
+**As 70 cabeças faltantes não acrescentaram nenhum caminho ausente da `main`** — são PRs mergeadas,
+logo o conteúdo delas _é_ o conteúdo da `main`. A conclusão da seção não muda; o que muda é que
+agora ela está **provada por reconciliação de identificadores**, não inferida de uma soma.
 
 A história completa veio de `git rev-list --objects origin/main` (uma passada sobre os 31 922
 commits), não de amostra: a primeira tentativa usou os 4 000 commits mais recentes e foi descartada
-por ser amostra. Os 187 646 objetos batem com os 187 586 blobs da §7, o que valida o método.
+por ser amostra. Os 187 667 objetos batem com os 187 586 blobs da §7, o que valida o método.
 
 ### O resultado que importa: os 15 vêm de UM único ref
 
