@@ -493,7 +493,12 @@ A §12 mediu 27 arquivos com DDL não viva. **Uma já foi aplicada:**
 Restam **26**. Elas não são um bloco: há bug vivo, há redundância e há decisão de produto no mesmo
 monte. Agrupadas por **decisão**, não por tema, para que cada lote vire uma PR.
 
-### Lote 1 — funcionalidade morta em produção (recomendo aplicar)
+### Lote 1 — RETRATADO: não era funcionalidade morta (ver §14)
+
+> **Os dois arquivos deste lote caem.** Fui verificar os consumidores antes de aplicar e nenhum é
+> defeito vivo: `provisoes_folha` não tem escritor cliente (só o trigger SECURITY DEFINER, que
+> bypassa RLS) e usa padrão de tenant obsoleto; e a ausência de policy no bucket
+> `documentos-admissao` é decisão registrada em duas migrations. Medição na **§14**.
 
 | arquivo                                                                 | efeito hoje                                                                                                                                                                                                                                                                           |
 | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -563,3 +568,74 @@ que destrava o `canonical-sql-diag.yml` (§ do `banco.md`).
 Nada deste lote foi aplicado. Cada lote acima vira uma PR própria, pelo mesmo caminho que funcionou
 na #687: editar o `LOTE ATUAL` do `canonical-migrations.yml`, escrever o sidecar `.verify.sql`, e
 disparar `validate` → `apply` → `verify` a partir da `main`.
+
+## 14. RETRATAÇÃO do Lote 1 da §13: não era funcionalidade morta (medido 2026-11-18)
+
+A §13 colocou dois arquivos no **Lote 1 — funcionalidade morta em produção (recomendo aplicar)**.
+**Os dois caem.** Fui verificar os consumidores antes de montar a PR de aplicação, e nenhum dos dois
+é defeito vivo. Se eu tivesse seguido a própria recomendação, teria aplicado DDL em produção para
+resolver problema que não existe — e, no primeiro caso, com um padrão de tenant que o sistema
+abandonou.
+
+### 1. `20260804000000_p0_010_write_policies_provisoes.sql` — não aplicar nesta forma
+
+O que é verdade: `public.provisoes_folha` tem **uma única policy**, `provisoes_folha_rh_read`
+(SELECT), logo `INSERT`/`UPDATE`/`DELETE` estão bloqueados por deny-by-default.
+
+O que eu não tinha verificado, e muda a conclusão:
+
+- **Nenhum código cliente escreve nessa tabela.** `provisoes_folha` aparece em `src/` apenas em
+  arquivos **gerados** (`src/schemas/tableColumns.ts` e `src/integrations/supabase/types.ts`).
+  Nenhum `insert`/`update`/`delete`/`upsert` em serviço, hook ou página.
+- **Quem escreve é o trigger** `calcular_provisao_mensal`, que é `SECURITY DEFINER` e portanto
+  **bypassa RLS**. O próprio arquivo de migration diz isso: a policy de INSERT seria
+  "defense-in-depth", não requisito de funcionamento.
+- **O padrão de tenant do arquivo está obsoleto.** Ele deriva a empresa de
+  `current_setting('request.jwt.claims')::jsonb -> 'app_metadata' ->> 'empresa_id'`. A policy que
+  está **viva** na mesma tabela usa `public.pode_gerir_rh(empresa_id)`, criada pela
+  `20260924140000_p0_close_live_rls_gap_pix_cnab_colaboradores.sql`, que **está no ledger**.
+  Aplicar o arquivo de agosto colocaria dois padrões de isolamento na mesma tabela; e se
+  `app_metadata.empresa_id` não estiver preenchido no JWT, as policies novas avaliariam para NULL e
+  a escrita seguiria bloqueada — ou seja, nem o "conserto" funcionaria.
+
+Veredito: **descartar nesta forma.** Se o dono quiser a defesa em profundidade, o caminho é uma
+migration nova com `pode_gerir_rh(empresa_id)` — melhoria, não conserto, e sem urgência.
+
+Correção colateral: a §13 dizia "escrita em `provisoes_folha`/`historico_calculos_folha` bloqueada".
+Errado para a segunda: `historico_calculos_folha` **já tem** policy de SELECT
+(`Acesso por empresa historico`) e de INSERT (`Inserção por empresa historico`). Lá só faltam UPDATE
+e DELETE, e o próprio arquivo de agosto diz que o UPDATE **deve** ficar bloqueado ("histórico fiscal
+é IMUTÁVEL").
+
+### 2. `20260719150000_storage_bucket_security_hardening.sql` — a lacuna é deliberada
+
+O bucket `documentos-admissao` existe, é privado, e realmente **não tem nenhuma policy** em
+`storage.objects` (nenhuma das 25 vivas nomeia `admissao`).
+
+Só que isso **não é esquecimento — é decisão registrada duas vezes**, por duas migrations
+diferentes. A `20261117193000_storage_documentos_tenant_scope.sql:38-40` escreve:
+
+> `documentos-admissao` segue intocado, pela mesma razao que a t008 registrava: recebe documento por
+> fluxo com token ANTES de o usuario ter vinculo de empresa, entao nao da para exigir `empresa_id` no
+> caminho.
+
+E o único código cliente que toca o bucket é **código morto**: `src/hooks/useDocumentOCR.ts` é
+importado **apenas pelo próprio teste** (`src/hooks/__tests__/useDocumentOCR.test.ts`); nenhuma
+página ou componente o usa. Além disso o hook tem dois outros defeitos que confirmam que nunca
+rodou de verdade: chama `getPublicUrl` num bucket **privado** (`:40`), e invoca a função
+`process-document-ocr` quando a edge no repositório se chama `OCR`.
+
+Veredito: **não aplicar.** Criar policy de `empresa_id` nesse bucket contrariaria a decisão de
+arquitetura do fluxo de admissão por token.
+
+### A lição, que é a mesma de novo
+
+Este é o **sétimo e o oitavo** caso nesta auditoria do mesmo erro: tomar o resultado de uma medição
+de schema ("faltam as policies") como defeito de produto ("a tela não grava") **sem conferir se
+existe consumidor**. O schema diz o que o banco permite; só o código diz o que o sistema faz. As
+duas perguntas são diferentes e eu as misturei.
+
+O que passou a fazer parte do método, e está registrado aqui para o próximo agente: antes de
+classificar DDL ausente como "funcionalidade morta", procurar o consumidor — `grep` no `src/` por
+escrita na tabela ou no bucket, e checar se o arquivo que a usa é importado por algo além do próprio
+teste.
