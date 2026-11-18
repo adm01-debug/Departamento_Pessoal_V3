@@ -145,6 +145,51 @@ isso é **uma** unidade por colaborador, só leitura. Não é o N:N com flag `pr
 página `/lotacoes` trata a tabela como catálogo e nunca grava `colaborador_id`, então
 `colaboradorDetalhesService.listarLotacoes`, que filtra por essa coluna, sempre devolveu vazio.
 
+### Decisão: não aplicar — o sistema já responde essa pergunta duas vezes
+
+Esta é a decisão tomada na auditoria de 2026-11-18, com a medição que a sustenta. **Não reabrir sem
+antes ler isto**, porque ela já foi reaberta duas vezes por enquadramento errado (inclusive por mim).
+
+O propósito do outro agente, lido no `colaboradorLotacaoService.ts` da `muri`, era um Select
+**"Unidade / Lotação principal"** no dossiê, com a tabela N:N servindo de armazenamento e o índice
+parcial garantindo **uma** principal. Não era "colaborador em vários lugares ao mesmo tempo".
+
+O problema é o conceito, não a implementação. As colunas, lidas do mapa gerado do banco
+(`src/schemas/tableColumns.ts`):
+
+| tabela            | colunas                                                              | o que responde                 |
+| ----------------- | -------------------------------------------------------------------- | ------------------------------ |
+| `locais_trabalho` | `nome, endereco, cep, cidade, uf, pais, **latitude**, **longitude**` | **endereço físico**            |
+| `centros_custo`   | via `colaboradores.centro_custo_id`                                  | **código administrativo**      |
+| `lotacoes`        | `nome, **codigo**, **endereco**, ativa, colaborador_id (legado)`     | sobrepõe as duas metades acima |
+
+E o dossiê (`TrabalhoHierarquiaTab.tsx`) já exibe as duas:
+
+- **Centro de custo** em `:603-604` (de `centro_custo_id`, com fallback no texto livre `centro_custo`);
+- **Local de trabalho** em `:385`, `:608` e `:683` (de `local_trabalho_id`).
+
+Acrescentar "Lotação" criaria um **terceiro** campo para uma pergunta já respondida duas vezes — e a
+versão de `lotacoes` é a mais pobre das três: tem endereço mas **não tem latitude/longitude**.
+
+Quem consome as coordenadas é o **ponto**, e só ele: `pontoService.ts:62` traz
+`locais_trabalho(latitude, longitude)` e `:76-84` calcula a distância para o geofencing da marcação.
+A tela de **SST** usa o local apenas pelo nome — `SSTRiscosTab.tsx:20` seleciona
+`local:locais_trabalho(nome)`, sem coordenada alguma. A distinção importa: trocar `locais_trabalho`
+por `lotacoes` quebraria o geofencing do ponto, não o risco ambiental.
+
+Soma-se a isso: `public.lotacoes` estava com **0 linhas** em produção (medido em 2026-11-17; **não
+reverificado** depois, porque o MCP do Supabase passou a devolver vazio para qualquer `SELECT`). O
+catálogo nunca foi adotado, e a única tela que o toca é o CRUD avulso `/lotacoes`.
+
+**Decisão:** não aplicar a DDL e não construir a tela. A tarefa correta, se um dia valer a pena, não
+é "ligar lotação": é **consolidar** — decidir se `lotacoes` substitui `centros_custo`, se é retirada,
+ou se vira uma visão de `locais_trabalho`. Isso tem escopo próprio e mexe em código vizinho de folha
+e de SST.
+
+O SQL fica preservado porque a engenharia dele está **pronta e provada** (ver acima: 12 asserções,
+seis estados ruins reprovados, quatro regras exercitadas com dados). Se a consolidação decidir pelo
+N:N, não há nada a reescrever.
+
 ### Quando aplicar
 
 Junto com a tela que a consome — é o que `MIGRATIONS_ORFAS_MURI_2026-11-16.md:146-156` já concluía:
