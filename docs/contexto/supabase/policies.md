@@ -105,6 +105,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.cnae | cnae_read_auth | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.colaborador_beneficios | colaborador_beneficios_tenant_select | SELECT | PERMISSIVE | authenticated | `((EXISTS ( SELECT 1    FROM colaboradores c   WHERE ((c.id = colaborador_beneficios.colaborador_id) AND (c.empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))))) OR is_admin(auth.uid()))` |  |
 | public.colaborador_beneficios | tenant_colaborador_beneficios | ALL | PERMISSIVE | authenticated | `(colaborador_id IN ( SELECT colaboradores.id    FROM colaboradores   WHERE (colaboradores.empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))))` | `(colaborador_id IN ( SELECT colaboradores.id    FROM colaboradores   WHERE (colaboradores.empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))))` |
+| public.colaborador_lotacoes | colaborador_lotacoes_tenant | ALL | PERMISSIVE | authenticated | `rls_tenant_or_admin(empresa_id)` | `rls_tenant_or_admin(empresa_id)` |
 | public.colaboradores | Colaborador vê o próprio cadastro | SELECT | PERMISSIVE | authenticated | `(user_id = auth.uid())` |  |
 | public.colaboradores | colaboradores_rh_manage | ALL | PERMISSIVE | authenticated | `pode_gerir_rh(empresa_id)` | `pode_gerir_rh(empresa_id)` |
 | public.colaboradores | colaboradores_tenant_read | SELECT | PERMISSIVE | authenticated | `pertence_a_empresa(empresa_id)` |  |

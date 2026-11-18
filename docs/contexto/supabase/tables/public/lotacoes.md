@@ -18,7 +18,7 @@
 |---|---|---|---|---|---|---|
 | 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
 | 2 | `empresa_id` | `uuid` | sim |  |  |  |
-| 3 | `colaborador_id` | `uuid` | sim |  |  |  |
+| 3 | `colaborador_id` | `uuid` | sim |  |  | DEPRECATED (2026-09-29): sem fluxo de escrita no app, substituida por colaborador_lotacoes. Nao remover sem antes confirmar 0 linhas preenchidas em producao (ver RAISE NOTICE desta migration). |
 | 4 | `nome` | `text` | não |  |  |  |
 | 5 | `codigo` | `text` | sim |  |  |  |
 | 6 | `endereco` | `text` | sim |  |  |  |
@@ -34,6 +34,13 @@
 | lotacoes_colaborador_id_fkey | FOREIGN KEY | `FOREIGN KEY (colaborador_id) REFERENCES colaboradores(id) ON DELETE CASCADE` | CASCADE | NO ACTION | sim |
 | lotacoes_empresa_id_fkey | FOREIGN KEY | `FOREIGN KEY (empresa_id) REFERENCES empresas(id)` | NO ACTION | NO ACTION | sim |
 | lotacoes_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
+
+
+## Referenciada por (FKs de outras tabelas)
+
+| tabela | constraint | colunas | on delete |
+|---|---|---|---|
+| public.colaborador_lotacoes | colaborador_lotacoes_lotacao_id_fkey | lotacao_id | CASCADE |
 
 
 ## Índices

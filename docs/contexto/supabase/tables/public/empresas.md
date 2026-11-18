@@ -92,6 +92,7 @@
 | public.cnab_configuracoes | cnab_configuracoes_empresa_id_fkey | empresa_id | CASCADE |
 | public.cnab_remessas | cnab_remessas_empresa_id_fkey | empresa_id | CASCADE |
 | public.colaborador_beneficios | colaborador_beneficios_empresa_id_fkey | empresa_id | NO ACTION |
+| public.colaborador_lotacoes | colaborador_lotacoes_empresa_id_fkey | empresa_id | CASCADE |
 | public.colaboradores | colaboradores_empresa_id_fkey | empresa_id | NO ACTION |
 | public.competencias_config | competencias_config_empresa_id_fkey | empresa_id | CASCADE |
 | public.competencias_matriz | competencias_matriz_empresa_id_fkey | empresa_id | NO ACTION |

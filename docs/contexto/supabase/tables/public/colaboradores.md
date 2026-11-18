@@ -217,6 +217,7 @@
 | public.beneficios_colaboradores | beneficios_colaboradores_colaborador_id_fkey | colaborador_id | CASCADE |
 | public.cnab_itens | cnab_itens_colaborador_id_fkey | colaborador_id | SET NULL |
 | public.colaborador_beneficios | colaborador_beneficios_colaborador_id_fkey | colaborador_id | CASCADE |
+| public.colaborador_lotacoes | colaborador_lotacoes_colaborador_id_fkey | colaborador_id | CASCADE |
 | public.colaboradores | colaboradores_gestor_ferias_id_fkey | gestor_ferias_id | NO ACTION |
 | public.colaboradores | colaboradores_supervisor_id_fkey | supervisor_id | NO ACTION |
 | public.colaboradores_pin | colaboradores_pin_colaborador_id_fkey | colaborador_id | CASCADE |

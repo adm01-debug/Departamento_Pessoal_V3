@@ -242,6 +242,8 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.colaborador_beneficios | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.colaborador_beneficios | dp_mcp_role | SELECT |
 | public.colaborador_beneficios | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.colaborador_lotacoes | dp_mcp_role | SELECT |
+| public.colaborador_lotacoes | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.colaboradores | anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.colaboradores | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.colaboradores | dp_mcp_role | SELECT |

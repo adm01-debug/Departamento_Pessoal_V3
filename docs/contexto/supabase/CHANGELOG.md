@@ -2,6 +2,19 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-18 04:16 UTC
+
+- **colunas** adicionado (7): `public.colaborador_lotacoes.colaborador_id`, `public.colaborador_lotacoes.created_at`, `public.colaborador_lotacoes.empresa_id`, `public.colaborador_lotacoes.id`, `public.colaborador_lotacoes.lotacao_id`, `public.colaborador_lotacoes.principal`, `public.colaborador_lotacoes.updated_at`
+- **colunas** alterado (1): `public.lotacoes.colaborador_id`
+- **constraints** adicionado (5): `public.colaborador_lotacoes.colaborador_lotacoes_colaborador_id_fkey`, `public.colaborador_lotacoes.colaborador_lotacoes_empresa_id_fkey`, `public.colaborador_lotacoes.colaborador_lotacoes_lotacao_id_fkey`, `public.colaborador_lotacoes.colaborador_lotacoes_pkey`, `public.colaborador_lotacoes.colaborador_lotacoes_vinculo_unico`
+- **functions** adicionado (1): `public.colaborador_lotacoes_valida_tenant()`
+- **functions** alterado (2): `public.get_auth_empresa_id()`, `public.rls_tenant_or_admin(row_empresa_id uuid)`
+- **grants** adicionado (2): `public.colaborador_lotacoes:dp_mcp_role`, `public.colaborador_lotacoes:service_role`
+- **indexes** adicionado (6): `public.colaborador_lotacoes_pkey`, `public.colaborador_lotacoes_principal_unica`, `public.colaborador_lotacoes_vinculo_unico`, `public.idx_colaborador_lotacoes_colaborador`, `public.idx_colaborador_lotacoes_empresa`, `public.idx_colaborador_lotacoes_lotacao`
+- **policies (RLS)** adicionado (1): `public.colaborador_lotacoes.colaborador_lotacoes_tenant`
+- **tabelas** adicionado (1): `public.colaborador_lotacoes`
+- **triggers** adicionado (1): `public.colaborador_lotacoes.trg_colaborador_lotacoes_valida_tenant`
+
 ## 2026-11-18 01:15 UTC
 
 - **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_21`

@@ -65,6 +65,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.cnab_sequencias](tables/public/cnab_sequencias.md) | table | sim | 0 | 3 | não |  |
 | [public.cnae](tables/public/cnae.md) | table | sim | 1 | 3 | não | Catálogo CNAE. Carga via importação de domínio. |
 | [public.colaborador_beneficios](tables/public/colaborador_beneficios.md) | table | sim | 2 | 5 | não |  |
+| [public.colaborador_lotacoes](tables/public/colaborador_lotacoes.md) | table | sim | 1 | 7 | não | Relacionamento colaborador <-> lotacao (M:N). Uma lotacao pode servir varios colaboradores; um colaborador pode ter mais de uma lotacao, com no maximo uma marcada principal = true (ver indice unico parcial abaixo). UI atual (aba Profissional) so gerencia a lotacao principal. |
 | [public.colaboradores](tables/public/colaboradores.md) | table | sim | 3 | 150 | não |  |
 | [public.colaboradores_pin](tables/public/colaboradores_pin.md) | table | sim | 0 | 6 | não |  |
 | [public.competencias_config](tables/public/competencias_config.md) | table | sim | 1 | 8 | não |  |

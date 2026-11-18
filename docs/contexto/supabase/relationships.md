@@ -88,6 +88,9 @@
 | public.colaborador_beneficios | beneficio_id | public.beneficios | id | CASCADE | NO ACTION |
 | public.colaborador_beneficios | colaborador_id | public.colaboradores | id | CASCADE | NO ACTION |
 | public.colaborador_beneficios | empresa_id | public.empresas | id | NO ACTION | NO ACTION |
+| public.colaborador_lotacoes | colaborador_id | public.colaboradores | id | CASCADE | NO ACTION |
+| public.colaborador_lotacoes | empresa_id | public.empresas | id | CASCADE | NO ACTION |
+| public.colaborador_lotacoes | lotacao_id | public.lotacoes | id | CASCADE | NO ACTION |
 | public.colaboradores | cargo_id | public.cargos | id | SET NULL | NO ACTION |
 | public.colaboradores | categoria_trabalhador_id | public.categorias_trabalhador | id | NO ACTION | NO ACTION |
 | public.colaboradores | centro_custo_id | public.centros_custo | id | NO ACTION | NO ACTION |

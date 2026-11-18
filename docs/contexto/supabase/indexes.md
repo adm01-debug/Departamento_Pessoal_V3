@@ -231,6 +231,12 @@ Uso e tamanho em `stats.md`.
 | public.colaborador_beneficios | colaborador_beneficios_pkey | btree | id | sim | sim |  |
 | public.colaborador_beneficios | idx_colaborador_beneficios_colaborador_id | btree | colaborador_id | não | sim |  |
 | public.colaborador_beneficios | idx_colaborador_beneficios_empresa | btree | empresa_id | não | sim | `(empresa_id IS NOT NULL)` |
+| public.colaborador_lotacoes | colaborador_lotacoes_pkey | btree | id | sim | sim |  |
+| public.colaborador_lotacoes | colaborador_lotacoes_principal_unica | btree | colaborador_id | sim | sim | `(principal = true)` |
+| public.colaborador_lotacoes | colaborador_lotacoes_vinculo_unico | btree | colaborador_id, lotacao_id | sim | sim |  |
+| public.colaborador_lotacoes | idx_colaborador_lotacoes_colaborador | btree | colaborador_id | não | sim |  |
+| public.colaborador_lotacoes | idx_colaborador_lotacoes_empresa | btree | empresa_id | não | sim |  |
+| public.colaborador_lotacoes | idx_colaborador_lotacoes_lotacao | btree | lotacao_id | não | sim |  |
 | public.colaboradores | colaboradores_cpf_key | btree | cpf | sim | sim |  |
 | public.colaboradores | colaboradores_empresa_cpf_key | btree | empresa_id, cpf | sim | sim |  |
 | public.colaboradores | colaboradores_empresa_email_key | btree | empresa_id, email | sim | sim |  |

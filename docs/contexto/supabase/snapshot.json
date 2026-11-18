@@ -9934,6 +9934,97 @@
         "nullable": false,
         "position": 1,
         "schema": "public",
+        "table": "colaborador_lotacoes",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": false,
+        "position": 2,
+        "schema": "public",
+        "table": "colaborador_lotacoes",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "colaborador_id",
+        "nullable": false,
+        "position": 3,
+        "schema": "public",
+        "table": "colaborador_lotacoes",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "lotacao_id",
+        "nullable": false,
+        "position": 4,
+        "schema": "public",
+        "table": "colaborador_lotacoes",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "principal",
+        "nullable": false,
+        "position": 5,
+        "schema": "public",
+        "table": "colaborador_lotacoes",
+        "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "created_at",
+        "nullable": false,
+        "position": 6,
+        "schema": "public",
+        "table": "colaborador_lotacoes",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 7,
+        "schema": "public",
+        "table": "colaborador_lotacoes",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "id",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
         "table": "colaboradores",
         "type": "uuid"
       },
@@ -35158,7 +35249,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "DEPRECATED (2026-09-29): sem fluxo de escrita no app, substituida por colaborador_lotacoes. Nao remover sem antes confirmar 0 linhas preenchidas em producao (ver RAISE NOTICE desta migration).",
         "default": null,
         "generated": null,
         "identity": null,
@@ -67751,6 +67842,98 @@
       },
       {
         "columns": [
+          "colaborador_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (colaborador_id) REFERENCES colaboradores(id) ON DELETE CASCADE",
+        "name": "colaborador_lotacoes_colaborador_id_fkey",
+        "on_delete": "CASCADE",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "colaboradores",
+        "schema": "public",
+        "table": "colaborador_lotacoes",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (empresa_id) REFERENCES empresas(id) ON DELETE CASCADE",
+        "name": "colaborador_lotacoes_empresa_id_fkey",
+        "on_delete": "CASCADE",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "empresas",
+        "schema": "public",
+        "table": "colaborador_lotacoes",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "lotacao_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (lotacao_id) REFERENCES lotacoes(id) ON DELETE CASCADE",
+        "name": "colaborador_lotacoes_lotacao_id_fkey",
+        "on_delete": "CASCADE",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "lotacoes",
+        "schema": "public",
+        "table": "colaborador_lotacoes",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (id)",
+        "name": "colaborador_lotacoes_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "colaborador_lotacoes",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "colaborador_id",
+          "lotacao_id"
+        ],
+        "deferrable": false,
+        "definition": "UNIQUE (colaborador_id, lotacao_id)",
+        "name": "colaborador_lotacoes_vinculo_unico",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "colaborador_lotacoes",
+        "type": "UNIQUE",
+        "validated": true
+      },
+      {
+        "columns": [
           "cpf"
         ],
         "deferrable": false,
@@ -90420,6 +90603,43 @@
         "volatility": "stable"
       },
       {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20260929120000_colaborador_lotacoes.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.colaborador_lotacoes.trg_colaborador_lotacoes_valida_tenant"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "e3bb2a63812c67f7",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "colaborador_lotacoes_valida_tenant",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
         "args": "p_admissao_id uuid, p_empresa_id uuid, p_evento_id uuid, p_claim_token uuid, p_protocolo text, p_recibo text",
         "callers": {
           "code": [
@@ -95535,11 +95755,15 @@
               "hits": 6
             },
             {
+              "file": "supabase/migrations/20260929120000_colaborador_lotacoes.verify.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20261117170200_onboarding_kits_indice_empresa.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 23,
+          "code_total_files": 24,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -102213,6 +102437,14 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260929120000_colaborador_lotacoes.sql",
+              "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20260929120000_colaborador_lotacoes.verify.sql",
+              "hits": 4
+            },
+            {
               "file": "supabase/migrations/20261002103000_p0_fix_audit_critical_gaps.sql",
               "hits": 2
             },
@@ -102237,7 +102469,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 10,
+          "code_total_files": 12,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -108043,6 +108275,18 @@
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "colaborador_beneficios"
+        },
+        {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "colaborador_lotacoes"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "colaborador_lotacoes"
         },
         {
           "grantee": "anon",
@@ -119970,6 +120214,91 @@
         "predicate": "(empresa_id IS NOT NULL)",
         "schema": "public",
         "table": "colaborador_beneficios"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "definition": "CREATE UNIQUE INDEX colaborador_lotacoes_pkey ON public.colaborador_lotacoes USING btree (id)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "colaborador_lotacoes_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "colaborador_lotacoes"
+      },
+      {
+        "columns": [
+          "colaborador_id"
+        ],
+        "definition": "CREATE UNIQUE INDEX colaborador_lotacoes_principal_unica ON public.colaborador_lotacoes USING btree (colaborador_id) WHERE (principal = true)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "colaborador_lotacoes_principal_unica",
+        "predicate": "(principal = true)",
+        "schema": "public",
+        "table": "colaborador_lotacoes"
+      },
+      {
+        "columns": [
+          "colaborador_id",
+          "lotacao_id"
+        ],
+        "definition": "CREATE UNIQUE INDEX colaborador_lotacoes_vinculo_unico ON public.colaborador_lotacoes USING btree (colaborador_id, lotacao_id)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "colaborador_lotacoes_vinculo_unico",
+        "predicate": null,
+        "schema": "public",
+        "table": "colaborador_lotacoes"
+      },
+      {
+        "columns": [
+          "colaborador_id"
+        ],
+        "definition": "CREATE INDEX idx_colaborador_lotacoes_colaborador ON public.colaborador_lotacoes USING btree (colaborador_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_colaborador_lotacoes_colaborador",
+        "predicate": null,
+        "schema": "public",
+        "table": "colaborador_lotacoes"
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "definition": "CREATE INDEX idx_colaborador_lotacoes_empresa ON public.colaborador_lotacoes USING btree (empresa_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_colaborador_lotacoes_empresa",
+        "predicate": null,
+        "schema": "public",
+        "table": "colaborador_lotacoes"
+      },
+      {
+        "columns": [
+          "lotacao_id"
+        ],
+        "definition": "CREATE INDEX idx_colaborador_lotacoes_lotacao ON public.colaborador_lotacoes USING btree (lotacao_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_colaborador_lotacoes_lotacao",
+        "predicate": null,
+        "schema": "public",
+        "table": "colaborador_lotacoes"
       },
       {
         "columns": [
@@ -139874,6 +140203,18 @@
         "with_check": "(colaborador_id IN ( SELECT colaboradores.id\n   FROM colaboradores\n  WHERE (colaboradores.empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))))"
       },
       {
+        "cmd": "ALL",
+        "name": "colaborador_lotacoes_tenant",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "colaborador_lotacoes",
+        "using": "rls_tenant_or_admin(empresa_id)",
+        "with_check": "rls_tenant_or_admin(empresa_id)"
+      },
+      {
         "cmd": "SELECT",
         "name": "Colaborador vê o próprio cadastro",
         "permissive": "PERMISSIVE",
@@ -148071,6 +148412,21 @@
         "schema": "public"
       },
       {
+        "comment": "Relacionamento colaborador <-> lotacao (M:N). Uma lotacao pode servir varios colaboradores; um colaborador pode ter mais de uma lotacao, com no maximo uma marcada principal = true (ver indice unico parcial abaixo). UI atual (aba Profissional) so gerencia a lotacao principal.",
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "colaborador_lotacoes",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
         "comment": null,
         "from_extension": false,
         "is_partition": false,
@@ -154050,6 +154406,17 @@
         "schema": "public",
         "status": "enabled",
         "table": "colaborador_beneficios",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_colaborador_lotacoes_valida_tenant BEFORE INSERT OR UPDATE ON colaborador_lotacoes FOR EACH ROW EXECUTE FUNCTION colaborador_lotacoes_valida_tenant()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.colaborador_lotacoes_valida_tenant",
+        "level": "ROW",
+        "name": "trg_colaborador_lotacoes_valida_tenant",
+        "schema": "public",
+        "status": "enabled",
+        "table": "colaborador_lotacoes",
         "timing": "BEFORE"
       },
       {
