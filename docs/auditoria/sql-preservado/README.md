@@ -145,62 +145,37 @@ isso é **uma** unidade por colaborador, só leitura. Não é o N:N com flag `pr
 página `/lotacoes` trata a tabela como catálogo e nunca grava `colaborador_id`, então
 `colaboradorDetalhesService.listarLotacoes`, que filtra por essa coluna, sempre devolveu vazio.
 
-### Decisão: não aplicar — o sistema já responde essa pergunta duas vezes
+### Revertido: a migration SAIU desta pasta e entrou no LOTE ATUAL
 
-Esta é a decisão tomada na auditoria de 2026-11-18, com a medição que a sustenta. **Não reabrir sem
-antes ler isto**, porque ela já foi reaberta duas vezes por enquadramento errado (inclusive por mim).
+**Esta seção substitui uma decisão anterior minha de "não aplicar".** Os arquivos
+`20260929120000_colaborador_lotacoes.sql` e seu `.verify.sql` **não estão mais aqui**: foram para
+`supabase/migrations/` e a migration entrou no LOTE ATUAL do
+`.github/workflows/canonical-migrations.yml`.
 
-O propósito do outro agente, lido no `colaboradorLotacaoService.ts` da `muri`, era um Select
-**"Unidade / Lotação principal"** no dossiê, com a tabela N:N servindo de armazenamento e o índice
-parcial garantindo **uma** principal. Não era "colaborador em vários lugares ao mesmo tempo".
+**Por que eu revertia.** Eu havia decidido não aplicar usando como régua "qual é o desenho de
+produto mais limpo?", e sob essa régua a conclusão era defensável: `lotacoes` sobrepõe
+`centros_custo` e `locais_trabalho`. Mas a régua do dono é outra e está escrita: **terminar o
+trabalho do outro agente, sem perder melhoria.** Para uma mudança **aditiva, reversível e sobre
+catálogo vazio**, a régua do dono vence — a sobreposição é ressalva para ele decidir, não veto meu.
 
-O problema é o conceito, não a implementação. As colunas, lidas do mapa gerado do banco
-(`src/schemas/tableColumns.ts`):
+**A ressalva, mantida por escrito.** O dossiê já responde "onde a pessoa trabalha" por dois
+caminhos: **Centro de custo** (`TrabalhoHierarquiaTab.tsx:603-604`, de `centro_custo_id`) e **Local
+de trabalho** (`:385`, `:608`, `:683`, de `local_trabalho_id`). A lotação é um terceiro rótulo.
+Quem consome coordenadas é só o ponto (`pontoService.ts:62` e `:76-84`, geofencing da marcação); a
+tela de SST usa o local pelo nome (`SSTRiscosTab.tsx:20`). Se o dono preferir consolidar em vez de
+somar, o caminho é retirar esta migration do LOTE ATUAL — nada foi aplicado só por estar listado.
 
-| tabela            | colunas                                                              | o que responde                 |
-| ----------------- | -------------------------------------------------------------------- | ------------------------------ |
-| `locais_trabalho` | `nome, endereco, cep, cidade, uf, pais, **latitude**, **longitude**` | **endereço físico**            |
-| `centros_custo`   | via `colaboradores.centro_custo_id`                                  | **código administrativo**      |
-| `lotacoes`        | `nome, **codigo**, **endereco**, ativa, colaborador_id (legado)`     | sobrepõe as duas metades acima |
+### A ordem obrigatória, e por que a tela vem depois
 
-E o dossiê (`TrabalhoHierarquiaTab.tsx`) já exibe as duas:
+O cliente Supabase é **tipado a partir do banco** (`src/integrations/supabase/types.ts`, gerado).
+Enquanto `colaborador_lotacoes` não existir no banco canônico, `supabase.from('colaborador_lotacoes')`
+não compila. Então a sequência não é escolha de estilo, é imposição da ferramenta:
 
-- **Centro de custo** em `:603-604` (de `centro_custo_id`, com fallback no texto livre `centro_custo`);
-- **Local de trabalho** em `:385`, `:608` e `:683` (de `local_trabalho_id`).
-
-Acrescentar "Lotação" criaria um **terceiro** campo para uma pergunta já respondida duas vezes — e a
-versão de `lotacoes` é a mais pobre das três: tem endereço mas **não tem latitude/longitude**.
-
-Quem consome as coordenadas é o **ponto**, e só ele: `pontoService.ts:62` traz
-`locais_trabalho(latitude, longitude)` e `:76-84` calcula a distância para o geofencing da marcação.
-A tela de **SST** usa o local apenas pelo nome — `SSTRiscosTab.tsx:20` seleciona
-`local:locais_trabalho(nome)`, sem coordenada alguma. A distinção importa: trocar `locais_trabalho`
-por `lotacoes` quebraria o geofencing do ponto, não o risco ambiental.
-
-Soma-se a isso: `public.lotacoes` estava com **0 linhas** em produção (medido em 2026-11-17; **não
-reverificado** depois, porque o MCP do Supabase passou a devolver vazio para qualquer `SELECT`). O
-catálogo nunca foi adotado, e a única tela que o toca é o CRUD avulso `/lotacoes`.
-
-**Decisão:** não aplicar a DDL e não construir a tela. A tarefa correta, se um dia valer a pena, não
-é "ligar lotação": é **consolidar** — decidir se `lotacoes` substitui `centros_custo`, se é retirada,
-ou se vira uma visão de `locais_trabalho`. Isso tem escopo próprio e mexe em código vizinho de folha
-e de SST.
-
-O SQL fica preservado porque a engenharia dele está **pronta e provada** (ver acima: 12 asserções,
-seis estados ruins reprovados, quatro regras exercitadas com dados). Se a consolidação decidir pelo
-N:N, não há nada a reescrever.
-
-### Quando aplicar
-
-Junto com a tela que a consome — é o que `MIGRATIONS_ORFAS_MURI_2026-11-16.md:146-156` já concluía:
-"quem consulta é a aba Trabalho & Hierarquia da `muri`. **Aplicar junto com essa aba**".
-
-O caminho é o do repositório: mover **os dois arquivos** para `supabase/migrations/` e pôr
-**só a migration** no **LOTE ATUAL** do `.github/workflows/canonical-migrations.yml` — o loop do
-workflow deriva o sidecar sozinho (`sidecar="${migration%.sql}.verify.sql"`, `:171-175`), então
-listar o `.verify.sql` junto o trataria como migration. Depois rodar
-`validate` → `apply` → `verify` a partir da `main`. É DDL em produção: decisão do dono (regra 8 do
-fluxo Git).
+1. `validate` — roda a DDL contra o schema real **dentro de transação que termina em `ROLLBACK`**;
+   não grava nada e prova a migration contra produção;
+2. `apply` — aplica e registra no ledger;
+3. regerar `types.ts` a partir do banco;
+4. só então o serviço, o hook e o campo no dossiê compilam e podem ser escritos.
 
 ### O sidecar já existe, e foi executado
 
