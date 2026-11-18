@@ -9035,7 +9035,7 @@
     "ColaboradorFormPage"
    ],
    "export_default": "ColaboradorFormPage",
-   "linhas": 495,
+   "linhas": 499,
    "dominio": "pages",
    "hooks_locais": [
     "useCargos",

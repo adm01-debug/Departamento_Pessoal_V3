@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "96ef3edb4ed90f0e2d09f3822129ec9489496401",
+  "sha": "6670984714e32daedb1e41d97c08791366007603",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 19:55 UTC",
-  "files_total": 3626,
-  "code_files": 3048,
-  "code_lines": 484406
+  "generated_at": "2026-11-18 20:01 UTC",
+  "files_total": 3628,
+  "code_files": 3050,
+  "code_lines": 484582
  },
  "version": "1.3.2",
- "facts_hash": "fa53e4560ba3e55a",
+ "facts_hash": "ffe118f4d4822be9",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   "languages": {
    ".tsx": 1017,
    ".sql": 951,
-   ".ts": 944,
+   ".ts": 946,
    ".mjs": 108,
    ".js": 15,
    ".cjs": 11,
@@ -89565,7 +89565,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 219
+    "deps_count": 220
    },
    {
     "path": "",
@@ -102545,8 +102545,8 @@
   },
   {
    "module": "src/pages",
-   "files": 137,
-   "lines": 49916,
+   "files": 139,
+   "lines": 50092,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -113539,6 +113539,11 @@
     "values": "user | never"
    },
    {
+    "file": "src/pages/colaboradorPayload.ts",
+    "name": "NULLABLE_TEXT_FIELDS",
+    "values": "'nome_social', 'telefone', 'celular', 'nome_pai', 'cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'matricula', 'banco_codigo', 'agencia', 'conta', 'pix_chave', 'rg', 'rg_orgao_emissor', 'pis_pasep', 'ctps_numero', 'ctps_serie',"
+   },
+   {
     "file": "src/services/canalContabilidadeService.ts",
     "name": "ThreadStatus",
     "values": "aberto | respondido | resolvido | arquivado"
@@ -120863,6 +120868,10 @@
    {
     "file": "src/pages/adminCatEdicao.ts",
     "text": "* Prazo legal de envio da CAT, mesma regra de `calcular_prazo_cat`"
+   },
+   {
+    "file": "src/pages/colaboradorPayload.ts",
+    "text": "Só mexe em string vazia (inclusive quando o usuário digitou apenas espaços):"
    },
    {
     "file": "src/schemas/validate.ts",
@@ -189517,6 +189526,38 @@
    {
     "file": "src/pages/__tests__/adminCatEdicao.test.ts",
     "name": "converte campo limpo em null e preserva os demais"
+   },
+   {
+    "file": "src/pages/__tests__/colaboradorPayload.test.ts",
+    "name": "normalizarPayloadColaborador"
+   },
+   {
+    "file": "src/pages/__tests__/colaboradorPayload.test.ts",
+    "name": "converte "
+   },
+   {
+    "file": "src/pages/__tests__/colaboradorPayload.test.ts",
+    "name": "matricula em branco vira null — é o que evita a colisão no índice único"
+   },
+   {
+    "file": "src/pages/__tests__/colaboradorPayload.test.ts",
+    "name": "não mexe em campo preenchido"
+   },
+   {
+    "file": "src/pages/__tests__/colaboradorPayload.test.ts",
+    "name": "não toca em campo obrigatório nem em coluna NOT NULL"
+   },
+   {
+    "file": "src/pages/__tests__/colaboradorPayload.test.ts",
+    "name": "preserva tipos que não são string e não inventa chave"
+   },
+   {
+    "file": "src/pages/__tests__/colaboradorPayload.test.ts",
+    "name": "devolve uma cópia — o objeto do formulário não é mutado"
+   },
+   {
+    "file": "src/pages/__tests__/colaboradorPayload.test.ts",
+    "name": "a lista cobre só colunas nullable que o formulário coleta"
    },
    {
     "file": "src/pages/__tests__/folhaResumo.test.ts",
@@ -297675,7 +297716,7 @@
   },
   "src/pages/ColaboradorFormPage.tsx": {
    "path": "src/pages/ColaboradorFormPage.tsx",
-   "lines": 495,
+   "lines": 499,
    "exports": [
     "function ColaboradorFormPage"
    ],
@@ -301707,6 +301748,24 @@
     "if (houveObito) d.setTime(d.getTime() + 24 * 60 * 60 * 1000);"
    ]
   },
+  "src/pages/colaboradorPayload.ts": {
+   "path": "src/pages/colaboradorPayload.ts",
+   "lines": 72,
+   "exports": [
+    "const NULLABLE_TEXT_FIELDS",
+    "type CampoNormalizado",
+    "function normalizarPayloadColaborador"
+   ],
+   "enums": [
+    {
+     "name": "NULLABLE_TEXT_FIELDS",
+     "values": "'nome_social', 'telefone', 'celular', 'nome_pai', 'cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'matricula', 'banco_codigo', 'agencia', 'conta', 'pix_chave', 'rg', 'rg_orgao_emissor', 'pis_pasep', 'ctps_numero', 'ctps_serie',"
+    }
+   ],
+   "rule_comments": [
+    "Só mexe em string vazia (inclusive quando o usuário digitou apenas espaços):"
+   ]
+  },
   "src/pages/folhaResumo.ts": {
    "path": "src/pages/folhaResumo.ts",
    "lines": 70,
@@ -302149,6 +302208,21 @@
     "descarta valor legado fora das opções (ex.: queda_de_nivel)",
     "vazioParaNull",
     "converte campo limpo em null e preserva os demais"
+   ]
+  },
+  "src/pages/__tests__/colaboradorPayload.test.ts": {
+   "path": "src/pages/__tests__/colaboradorPayload.test.ts",
+   "lines": 100,
+   "is_test": true,
+   "tests": [
+    "normalizarPayloadColaborador",
+    "converte ",
+    "matricula em branco vira null — é o que evita a colisão no índice único",
+    "não mexe em campo preenchido",
+    "não toca em campo obrigatório nem em coluna NOT NULL",
+    "preserva tipos que não são string e não inventa chave",
+    "devolve uma cópia — o objeto do formulário não é mutado",
+    "a lista cobre só colunas nullable que o formulário coleta"
    ]
   },
   "src/pages/__tests__/folhaResumo.test.ts": {
@@ -328528,10 +328602,21 @@
   }
  },
  "git": {
-  "sha": "96ef3edb4ed90f0e2d09f3822129ec9489496401",
+  "sha": "6670984714e32daedb1e41d97c08791366007603",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "6670984",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "fix(colaboradores): campo opcional em branco virava \"\" e travava o 2o cadastro (#705)",
+    "files": [
+     "src/pages/ColaboradorFormPage.tsx",
+     "src/pages/__tests__/colaboradorPayload.test.ts",
+     "src/pages/colaboradorPayload.ts"
+    ]
+   },
    {
     "sha": "96ef3ed",
     "date": "2026-11-18",
@@ -328838,20 +328923,6 @@
      "src/services/__tests__/colaboradorLotacaoService.test.ts",
      "src/services/colaboradorLotacaoService.ts"
     ]
-   },
-   {
-    "sha": "8d5a823",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "infra: põe colaborador_lotacoes no LOTE ATUAL, pronta para validate/apply (#676)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "docs/auditoria/sql-preservado/README.md",
-     "scripts/.types-drift-baseline.json",
-     "scripts/canonical-invariants.sql",
-     "supabase/migrations/20260929120000_colaborador_lotacoes.sql",
-     "supabase/migrations/20260929120000_colaborador_lotacoes.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -328861,7 +328932,7 @@
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    5
+    4
    ],
    [
     "docs/agentes/banco.md",
@@ -328877,15 +328948,19 @@
    ],
    [
     "docs/auditoria/sql-preservado/README.md",
-    3
-   ],
-   [
-    "scripts/canonical-invariants.sql",
     2
    ],
    [
-    "scripts/.types-drift-baseline.json",
-    2
+    "src/pages/ColaboradorFormPage.tsx",
+    1
+   ],
+   [
+    "src/pages/__tests__/colaboradorPayload.test.ts",
+    1
+   ],
+   [
+    "src/pages/colaboradorPayload.ts",
+    1
    ],
    [
     "src/pages/CalculadoraRescisaoPage.tsx",
@@ -328929,10 +329004,6 @@
    ],
    [
     "docs/auditoria/REAUDITORIA_DESCARTES_2026-11-18.md",
-    1
-   ],
-   [
-    "src/components/__tests__/PdiCard.test.tsx",
     1
    ]
   ]

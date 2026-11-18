@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `96ef3edb4e` · branch `main` · 2026-11-18 19:55 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6670984714` · branch `main` · 2026-11-18 20:01 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1918,6 +1918,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | TONS_AVATAR | 'bg-primary/20 text-primary', 'bg-info/20 text-info', 'bg-success/20 text-success', 'bg-xp/20 text-xp', 'bg-warning/20 text-warning', | `src/lib/avatarTons.ts` |
 | CircuitState | CLOSED \| OPEN \| HALF_OPEN | `src/lib/circuitBreaker.ts` |
 | MotionReducedMode | user \| never | `src/lib/motionMode.ts` |
+| NULLABLE_TEXT_FIELDS | 'nome_social', 'telefone', 'celular', 'nome_pai', 'cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'matricula', 'banco_codigo', 'agencia', 'conta', 'pix_chave', 'rg', 'rg_orgao_emissor', 'pis_pasep', 'ctps_numero', 'ctps_serie', | `src/pages/colaboradorPayload.ts` |
 | ThreadStatus | aberto \| respondido \| resolvido \| arquivado | `src/services/canalContabilidadeService.ts` |
 | ThreadCategoria | folha \| esocial \| admissao \| rescisao \| tributos \| ferias \| outro | `src/services/canalContabilidadeService.ts` |
 | ThreadPrioridade | baixa \| normal \| alta \| urgente | `src/services/canalContabilidadeService.ts` |
@@ -5421,7 +5422,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9506 testes em 745 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9514 testes em 746 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5725,7 +5726,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/RelatoriosExportTab.test.tsx` | 10 | RelatoriosExportTab · renders report titles · renders report descriptions · shows CSV button label when exportFormat is csv … |
 | `src/components/__tests__/RewardsSimulator.test.tsx` | 10 | RewardsSimulator · renderiza as quatro regiões do redesenho · mantém os cinco parâmetros do simulador · exibe os quatro KPIs de resultado … |
 | `src/components/__tests__/SSTEPIsTab.test.tsx` | 10 | SSTEPIsTab · shows empty state when no EPIs · renders EPI nome when EPIs provided · renders EPI CA number … |
-| … +445 linhas — lista completa em `context.json` | | |
+| … +446 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6093,4 +6094,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | METAS & OKRs — derivações da aba (situação, prazo, ordem e filtros). | `src/components/avaliacao/metasComum.ts` |
 | exibem. Nada aqui inventa dado: TODAS as funções leem somente campos que já | `src/components/avaliacao/metasComum.ts` |
 | 2. `atrasada`  → prazo vencido e ainda não concluída — é EXATAMENTE o | `src/components/avaliacao/metasComum.ts` |
-| … +918 linhas — lista completa em `context.json` | |
+| … +919 linhas — lista completa em `context.json` | |

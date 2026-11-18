@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 789,
+ "total": 790,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 2,
-  "unit": 745
+  "unit": 746
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 658
+   "arquivos": 659
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -5381,6 +5381,15 @@
    "casos": 5
   },
   {
+   "arquivo": "src/pages/__tests__/colaboradorPayload.test.ts",
+   "tipo": "unit",
+   "linhas": 100,
+   "testa": [
+    "src/pages/colaboradorPayload.ts"
+   ],
+   "casos": 7
+  },
+  {
    "arquivo": "src/pages/__tests__/ComunicacaoInternaPage.test.tsx",
    "tipo": "unit",
    "linhas": 145,
@@ -7857,6 +7866,7 @@
   "src/pages/UsuariosPage.tsx": 1,
   "src/pages/ValesPage.tsx": 1,
   "src/pages/adminCatEdicao.ts": 1,
+  "src/pages/colaboradorPayload.ts": 1,
   "src/pages/folhaResumo.ts": 1,
   "src/schemas/common.ts": 1,
   "src/schemas/esocial/helpers.ts": 1,
