@@ -169,8 +169,13 @@ E o dossiê (`TrabalhoHierarquiaTab.tsx`) já exibe as duas:
 - **Local de trabalho** em `:385`, `:608` e `:683` (de `local_trabalho_id`).
 
 Acrescentar "Lotação" criaria um **terceiro** campo para uma pergunta já respondida duas vezes — e a
-versão de `lotacoes` é a mais pobre das três: tem endereço mas **não tem latitude/longitude**, que é
-justamente o que `pontoService.ts` e `SSTRiscosTab.tsx` consomem de `locais_trabalho`.
+versão de `lotacoes` é a mais pobre das três: tem endereço mas **não tem latitude/longitude**.
+
+Quem consome as coordenadas é o **ponto**, e só ele: `pontoService.ts:62` traz
+`locais_trabalho(latitude, longitude)` e `:76-84` calcula a distância para o geofencing da marcação.
+A tela de **SST** usa o local apenas pelo nome — `SSTRiscosTab.tsx:20` seleciona
+`local:locais_trabalho(nome)`, sem coordenada alguma. A distinção importa: trocar `locais_trabalho`
+por `lotacoes` quebraria o geofencing do ponto, não o risco ambiental.
 
 Soma-se a isso: `public.lotacoes` estava com **0 linhas** em produção (medido em 2026-11-17; **não
 reverificado** depois, porque o MCP do Supabase passou a devolver vazio para qualquer `SELECT`). O
