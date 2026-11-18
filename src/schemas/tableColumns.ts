@@ -798,6 +798,7 @@ export const TABLE_COLUMNS: Record<string, readonly string[]> = {
   ],
   cnae: ['codigo', 'descricao', 'subclasse'],
   colaborador_beneficios: ['beneficio_id', 'colaborador_id', 'created_at', 'id'],
+  colaborador_lotacoes: ['colaborador_id', 'created_at', 'empresa_id', 'id', 'lotacao_id', 'principal', 'updated_at'],
   colaboradores: [
     'agencia',
     'aposentado',
