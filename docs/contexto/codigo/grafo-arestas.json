@@ -1161,7 +1161,9 @@
    "src/components/ui/spinner.tsx",
    "src/components/ui/table.tsx",
    "src/hooks/usePiiMask.ts",
-   "src/hooks/useTabelasReferencia.ts"
+   "src/hooks/useTabelasReferencia.ts",
+   "src/lib/bankBrand.ts",
+   "src/lib/utils.ts"
   ],
   "src/components/colaborador-detalhes/DadosPessoaisTab.tsx": [
    "src/components/ui/card.tsx",

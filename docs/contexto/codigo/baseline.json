@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5d9deb666a4e7503b3684e8dc22040676107ff7d",
+  "commit": "c3281196994c3d6689d26f61a8e1dffc25c1001a",
   "branch": "main",
-  "data_commit": "2026-11-18T15:20:13-03:00",
+  "data_commit": "2026-11-18T15:41:14-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "c328119",
+    "data": "2026-11-18",
+    "assunto": "feat(contas-bancarias): resgata identidade visual de banco da muri (#699)"
+   },
    {
     "sha": "5d9deb6",
     "data": "2026-11-18",
@@ -126,14 +131,9 @@
     "sha": "b376487",
     "data": "2026-11-18",
     "assunto": "docs(auditoria): decide não aplicar colaborador_lotacoes, com a medição que sustenta (#675)"
-   },
-   {
-    "sha": "3616289",
-    "data": "2026-11-17",
-    "assunto": "docs(auditoria): registra a prova byte a byte, por símbolo exportado e por token (#674)"
    }
   ],
-  "arquivos_mudados_7d": 1151,
+  "arquivos_mudados_7d": 1152,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -153,7 +153,7 @@
    },
    {
     "pasta": "src/components/colaborador-detalhes",
-    "mudancas": 89
+    "mudancas": 90
    },
    {
     "pasta": "src/components/avaliacao",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3605,
-  "arquivos_codigo": 2092,
-  "linhas_codigo": 415182,
+  "arquivos_total": 3606,
+  "arquivos_codigo": 2093,
+  "linhas_codigo": 415419,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 988,
-   "linhas": 179796
+   "linhas": 179836
   },
   "src/constants": {
    "arquivos": 7,
@@ -671,8 +671,8 @@
    "linhas": 26072
   },
   "src/lib": {
-   "arquivos": 21,
-   "linhas": 2546
+   "arquivos": 22,
+   "linhas": 2743
   },
   "src/main.tsx": {
    "arquivos": 1,

@@ -1,11 +1,11 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 181,
+ "total": 182,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
-  "lib": 13,
+  "lib": 14,
   "providers": 1,
   "python": 3,
   "schemas": 25,
@@ -561,6 +561,31 @@
    "orfao": false
   },
   {
+   "arquivo": "src/lib/bankBrand.ts",
+   "camada": "lib",
+   "exports": [
+    "BANK_CATALOG",
+    "BankBrand",
+    "resolveBankBrand"
+   ],
+   "export_default": null,
+   "linhas": 197,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "components/colaborador-detalhes"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
    "arquivo": "src/lib/circuitBreaker.ts",
    "camada": "lib",
    "exports": [
@@ -925,7 +950,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 284,
+   "usado_por": 285,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
