@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (659)",
+   "co-localizado (__tests__) (660)",
    "co-localizado (*.test) (73)",
    "e2e/ (33)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "test(ferias): cobre FeriasResumoTab, que estava viva no dossie sem teste (#707)",
    "fix(colaboradores): campo opcional em branco virava \"\" e travava o 2o cadastro (#705)",
    "feat(rescisão): a calculadora passa a LER o histórico que já gravava (#704)",
    "feat(desligamentos): paginação, ordenação e filtro por etapa resgatados da muri (#700)",
-   "feat(dashboard): põe em tela os 2 widgets que nunca eram renderizados (#702)",
-   "fix(scripts): build-rebaseline diz qual arquivo de entrada falta (#706)"
+   "feat(dashboard): põe em tela os 2 widgets que nunca eram renderizados (#702)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6670984714e32daedb1e41d97c08791366007603",
+  "commit": "778a5b46724116e548bc3bdc2020fdf8ab7f4eda",
   "branch": "main",
-  "data_commit": "2026-11-18T16:52:09-03:00",
+  "data_commit": "2026-11-18T17:01:42-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "778a5b4",
+    "data": "2026-11-18",
+    "assunto": "test(ferias): cobre FeriasResumoTab, que estava viva no dossie sem teste (#707)"
+   },
    {
     "sha": "6670984",
     "data": "2026-11-18",
@@ -126,18 +131,13 @@
     "sha": "50a7966",
     "data": "2026-11-18",
     "assunto": "chore: mede o eixo repo x ledger e explica o Supabase Preview vermelho (#683)"
-   },
-   {
-    "sha": "4bab149",
-    "data": "2026-11-18",
-    "assunto": "chore: corrige duas afirmações minhas que os revisores derrubaram (#682)"
    }
   ],
-  "arquivos_mudados_7d": 1163,
+  "arquivos_mudados_7d": 1164,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 385
+    "mudancas": 386
    },
    {
     "pasta": "src/components/ui",
@@ -246,10 +246,6 @@
     "mudancas": 7
    },
    {
-    "arquivo": "scripts/audit-migration-style.mjs",
-    "mudancas": 7
-   },
-   {
     "arquivo": "scripts/sync/mirror-github.sh",
     "mudancas": 7
    },
@@ -259,6 +255,10 @@
    },
    {
     "arquivo": "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "scripts/audit-migration-style.mjs",
     "mudancas": 6
    },
    {
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3615,
-  "arquivos_codigo": 2101,
-  "linhas_codigo": 417393,
+  "arquivos_total": 3616,
+  "arquivos_codigo": 2102,
+  "linhas_codigo": 417529,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 426,
   "migrations": 878,
   "cron_jobs": 41,
-  "testes": 790,
+  "testes": 791,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 336
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 991,
-   "linhas": 181283
+   "arquivos": 992,
+   "linhas": 181419
   },
   "src/constants": {
    "arquivos": 7,

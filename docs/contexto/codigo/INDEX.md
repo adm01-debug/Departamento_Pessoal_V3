@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6670984714e32daedb1e41d97c08791366007603` (2026-11-18T16:52:09-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `778a5b46724116e548bc3bdc2020fdf8ab7f4eda` (2026-11-18T17:01:42-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1963), SQL (951), Markdown (336), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1964), SQL (951), Markdown (336), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3615 |
-| arquivos_codigo | 2101 |
-| linhas_codigo | 417393 |
+| arquivos_total | 3616 |
+| arquivos_codigo | 2102 |
+| linhas_codigo | 417529 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 426 |
 | migrations | 878 |
 | cron_jobs | 41 |
-| testes | 790 |
+| testes | 791 |
 | workflows | 21 |
 | scripts | 135 |
 | docs_md | 336 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (521), src/pages (110), src/contexts (3)
 - hooks: src/hooks (99), src/components (10), src/contexts (4)
 - servicos_logica: src/services (96), src/utils (35), src/schemas (25)
-- testes: co-localizado (__tests__) (659), co-localizado (*.test) (73), e2e/ (33)
+- testes: co-localizado (__tests__) (660), co-localizado (*.test) (73), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27504 nós · 62091 arestas · 2381 comunidades · grafo do commit `66709847`
-- comunidades maiores: cn (553), 20260831_corrected_public.sql (485), useEmpresas (479), canonical_schema.sql (475), sonner (428), lucide-react (384), client.ts (361), vitest (275), App.tsx (232), ref_node_fs (194), useColaboradorDetalhes.ts (165), rateLimit.ts (164)
+- 27511 nós · 62102 arestas · 2349 comunidades · grafo do commit `778a5b46`
+- comunidades maiores: useEmpresas (583), lucide-react (575), 20260831_corrected_public.sql (485), canonical_schema.sql (475), button.tsx (407), cn (332), vitest (326), App.tsx (251), FeedbackAcoesRodape.tsx (202), react (181), ColaboradorFormPage.tsx (172), nineBoxComum.ts (165)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -414,9 +414,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - scripts/canonical-invariants.sql (8)
 - src/pages/ColaboradoresPage.tsx (8)
 - docs/auditoria/sql-preservado/README.md (7)
-- scripts/audit-migration-style.mjs (7)
 - scripts/sync/mirror-github.sh (7)
 - docs/agentes/banco.md (6)
+- docs/auditoria/VEREDITO_MURI_2026-11-17.md (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-18 `778a5b4` test(ferias): cobre FeriasResumoTab, que estava viva no dossie sem teste (#707)
 - 2026-11-18 `6670984` fix(colaboradores): campo opcional em branco virava "" e travava o 2o cadastro (#705)
 - 2026-11-18 `96ef3ed` feat(rescisão): a calculadora passa a LER o histórico que já gravava (#704)
 - 2026-11-18 `656863d` feat(desligamentos): paginação, ordenação e filtro por etapa resgatados da muri (#700)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-18 `d3a0932` feat: empresa_id NOT NULL nas 9 tabelas de RH + veredito das 21 migrations (#695)
 - 2026-11-18 `8daa52d` fix: cadastro de plano de benefício grava a empresa (403 em produção) (#696)
 - 2026-11-18 `a48b81c` infra: conserta a armadilha de DEFAULT x CHECK em public.faltas (#694)
-- 2026-11-18 `3801d31` infra: derruba a policy inerte das 5 tabelas de recrutamento, sem criar outra (#693)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
