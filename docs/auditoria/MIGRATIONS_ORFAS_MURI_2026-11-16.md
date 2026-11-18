@@ -639,3 +639,72 @@ O que passou a fazer parte do método, e está registrado aqui para o próximo a
 classificar DDL ausente como "funcionalidade morta", procurar o consumidor — `grep` no `src/` por
 escrita na tabela ou no bucket, e checar se o arquivo que a usa é importado por algo além do próprio
 teste.
+
+## 15. Dos 3 casos sem veredito da §13: um cai, um é o maior risco aberto (2026-11-18)
+
+A §13 deixou três itens como **NÃO VERIFICADOS** porque dependiam de ler conteúdo de `CHECK` ou de
+policy, o que o `supabase_db_query` faria e ele está devolvendo zero linhas. Em vez de esperar a
+ferramenta, apliquei o caminho que funcionou nas §14: **procurar o consumidor**. Dois dos três
+fecharam.
+
+### Caem: os dois CHECKs de `faltas` não são bug vivo
+
+A suspeita era que `faltas.tipo` tem `DEFAULT 'falta'` e `faltas.status` tem `DEFAULT 'registrada'`,
+valores que podem não constar das listas de `chk_faltas_tipo` / `chk_faltas_status` — e então
+qualquer `INSERT` sem esses campos explodiria.
+
+`supabase_db_constraints` confirma que as duas constraints existem, mas **não devolve a cláusula**,
+então a lista continua ilegível. O que resolve é o consumidor:
+
+- `tipo` e `status` são **opcionais** no tipo gerado (`tipo?: string`, `status?: string | null`), logo
+  um insert pode omiti-los e cair no DEFAULT;
+- mas **nenhuma UI cria falta**. `faltasService.criar` só é chamado por `useCriarFalta`
+  (`src/hooks/useNovasTabelas.ts:72`), que é exportado no barrel `src/hooks/index.ts:57` e **não é
+  chamado por nenhum componente**. `JornadaPontoTab.tsx` usa os hooks de **leitura** de faltas.
+
+Veredito: o DEFAULT nunca é exercitado pelo aplicativo. **Não é bug vivo**, e a migration
+`20260724001200` não tem urgência. Fica como melhoria, se um dia a tela de registro de falta for
+construída — e aí o CHECK precisa ser lido antes.
+
+### NÃO cai, e é o maior risco aberto: policy para role `public` em tabelas de candidato
+
+Aqui o raciocínio do consumidor **se inverte** e é importante entender por quê: uma policy
+permissiva para role `public` não precisa de código nosso para ser explorada. `public` inclui
+`anon`, e o PostgREST aceita a chave anônima — qualquer pessoa com a chave pública do projeto pode
+tentar a consulta direto, sem passar pela nossa interface.
+
+Medido com `supabase_db_list_policies`:
+
+| tabela         | policy                | permissive | roles        | cmd     |
+| -------------- | --------------------- | ---------- | ------------ | ------- |
+| `candidatos`   | `Multi-tenant access` | PERMISSIVE | **`public`** | **ALL** |
+| `candidaturas` | `Multi-tenant access` | PERMISSIVE | **`public`** | **ALL** |
+
+A `20260724000700_fix_rls_recrutamento_onboarding.sql:15-33` mira **5** tabelas com esse mesmo
+padrão: `vagas`, `candidatos`, `candidaturas`, `onboarding_colaborador`, `onboarding_tarefas`.
+
+No PostgreSQL, policies PERMISSIVE são combinadas por **OR**. Então, se o `USING` dessa policy for
+frouxo, ela concede acesso por si só — a policy nominal correta ao lado não restringe nada.
+
+**O que falta para fechar, e eu não consigo medir:**
+
+1. **o `USING` da policy** — exige `db_query`;
+2. **se `anon` tem GRANT de tabela** nessas 5 tabelas. Sem GRANT a policy é inerte, qualquer que
+   seja o `USING`. Procurei: **não existe em migration nenhuma** um
+   `REVOKE ALL ON ALL TABLES IN SCHEMA public FROM anon` (nem `FROM PUBLIC`). Os `REVOKE ... FROM
+PUBLIC, anon` da `20260912190000` (`:65`, `:135-141`, `:173`) são todos **sobre funções**, não
+   sobre tabelas.
+
+Portanto: **não afirmo que há vazamento, e não afirmo que está seguro.** Afirmo que é o item de maior
+risco em aberto nesta auditoria, que o dado em jogo é PII de candidato, e que as duas medições que o
+resolveriam dependem do acesso de leitura que está quebrado.
+
+**O conserto já existe no repositório** e nunca foi aplicado: a `20260724000700` faz
+`DROP POLICY IF EXISTS 'Multi-tenant access'` e cria, no lugar,
+`FOR ALL TO authenticated USING (empresa_id = public.get_auth_empresa_id()) WITH CHECK (mesma
+expressão)`. O helper `get_auth_empresa_id` é estabelecido: definido desde 2026-05 e usado em **28**
+arquivos de migration. Ou seja, aplicar é viável como está escrito — mas é DDL de RLS em produção
+sobre tabelas com PII, então é decisão do dono, e o certo é medir o `USING` antes, não depois.
+
+Este caso sobe para o topo dos próximos passos e passa à frente do conserto do `db_query` — porque é
+o `db_query` que o destrava.
