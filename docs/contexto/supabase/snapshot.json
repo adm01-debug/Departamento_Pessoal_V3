@@ -89122,11 +89122,15 @@
               "hits": 2
             },
             {
+              "file": "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912152000_p0_pgcrypto_routine_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 4,
           "cron": [],
           "db": [
             "public.trg_protect_assinatura_rescisao"
@@ -89163,6 +89167,10 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912152000_p0_pgcrypto_routine_search_path.sql",
               "hits": 1
             },
@@ -89171,7 +89179,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 4,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -89755,9 +89763,13 @@
             {
               "file": "supabase/migrations/20260911191000_p0_auth_lockout_contract.sql",
               "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20260912142506_p0_auth_lockout_contract.sql",
+              "hits": 3
             }
           ],
-          "code_total_files": 5,
+          "code_total_files": 6,
           "cron": [],
           "db": [
             "public.record_login_attempt"
@@ -90494,6 +90506,10 @@
               "hits": 2
             },
             {
+              "file": "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912152000_p0_pgcrypto_routine_search_path.sql",
               "hits": 1
             },
@@ -90506,7 +90522,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 6,
+          "code_total_files": 7,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -90541,11 +90557,15 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912152000_p0_pgcrypto_routine_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -90619,11 +90639,15 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912152000_p0_pgcrypto_routine_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -90732,11 +90756,15 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912152000_p0_pgcrypto_routine_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -91416,11 +91444,15 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912143344_p1_function_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912151000_p1_function_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [
             "public.dp_pre_deploy_gate"
@@ -91457,11 +91489,15 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [
@@ -91511,11 +91547,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
@@ -91556,11 +91596,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -91591,6 +91635,10 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             },
@@ -91599,7 +91647,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -91630,11 +91678,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -91665,6 +91717,10 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             },
@@ -91673,7 +91729,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -91704,6 +91760,10 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             },
@@ -91712,7 +91772,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -91743,11 +91803,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -91778,11 +91842,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -91817,11 +91885,15 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [
             "public.dp_require_role"
@@ -91854,11 +91926,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -91889,11 +91965,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -91924,11 +92004,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -91959,11 +92043,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -91994,11 +92082,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -92033,6 +92125,10 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             },
@@ -92041,7 +92137,7 @@
               "hits": 2
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 4,
           "cron": [],
           "db": [
             "public.dp_audit_log_immutable"
@@ -92078,11 +92174,15 @@
               "hits": 2
             },
             {
+              "file": "supabase/migrations/20260912143344_p1_function_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912151000_p1_function_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [
             "public.dp_table_template"
@@ -92118,11 +92218,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143344_p1_function_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912151000_p1_function_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -92191,11 +92295,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143344_p1_function_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912151000_p1_function_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -92226,11 +92334,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
@@ -93422,11 +93534,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143344_p1_function_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912151000_p1_function_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
@@ -93461,11 +93577,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143344_p1_function_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912151000_p1_function_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
@@ -93498,11 +93618,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260912143344_p1_function_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912151000_p1_function_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
@@ -94967,11 +95091,15 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912152000_p0_pgcrypto_routine_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [
@@ -95008,11 +95136,15 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912143344_p1_function_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912151000_p1_function_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [
@@ -95090,11 +95222,15 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912152000_p0_pgcrypto_routine_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [
@@ -95766,11 +95902,15 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912143344_p1_function_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912151000_p1_function_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 4,
+          "code_total_files": 5,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -97970,11 +98110,15 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912152000_p0_pgcrypto_routine_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -98009,6 +98153,10 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912152000_p0_pgcrypto_routine_search_path.sql",
               "hits": 1
             },
@@ -98017,7 +98165,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 4,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -99935,6 +100083,10 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912152000_p0_pgcrypto_routine_search_path.sql",
               "hits": 1
             },
@@ -99943,7 +100095,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 5,
+          "code_total_files": 6,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -102077,11 +102229,15 @@
               "hits": 2
             },
             {
+              "file": "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
+              "hits": 2
+            },
+            {
               "file": "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 9,
+          "code_total_files": 10,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -103097,11 +103253,15 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912152000_p0_pgcrypto_routine_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 4,
+          "code_total_files": 5,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -103257,11 +103417,15 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912152000_p0_pgcrypto_routine_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 4,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -105179,11 +105343,15 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912143239_p0_secdef_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 8,
+          "code_total_files": 9,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -105547,11 +105715,15 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260912152000_p0_pgcrypto_routine_search_path.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
