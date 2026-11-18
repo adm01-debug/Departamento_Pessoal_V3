@@ -150,15 +150,32 @@ página `/lotacoes` trata a tabela como catálogo e nunca grava `colaborador_id`
 Junto com a tela que a consome — é o que `MIGRATIONS_ORFAS_MURI_2026-11-16.md:146-156` já concluía:
 "quem consulta é a aba Trabalho & Hierarquia da `muri`. **Aplicar junto com essa aba**".
 
-O caminho é o do repositório: mover **os dois arquivos** para `supabase/migrations/`, pôr a
-migration e o sidecar no **LOTE ATUAL** do `.github/workflows/canonical-migrations.yml` e rodar
+O caminho é o do repositório: mover **os dois arquivos** para `supabase/migrations/` e pôr
+**só a migration** no **LOTE ATUAL** do `.github/workflows/canonical-migrations.yml` — o loop do
+workflow deriva o sidecar sozinho (`sidecar="${migration%.sql}.verify.sql"`, `:171-175`), então
+listar o `.verify.sql` junto o trataria como migration. Depois rodar
 `validate` → `apply` → `verify` a partir da `main`. É DDL em produção: decisão do dono (regra 8 do
 fluxo Git).
 
 ### O sidecar já existe, e foi executado
 
+Ele passou por revisão e **três asserções minhas estavam fracas** — aprovavam estados que violam a
+regra. Os dois revisores convergiram nos mesmos pontos, e os três foram corrigidos e testados:
+
+| estado ruim                                             | antes                                                               | agora                                                                             |
+| ------------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| índice com `WHERE principal = false`                    | **passava** — era único, parcial e o predicado continha "principal" | reprova: o predicado é comparado com `(principal = true)`                         |
+| `DISABLE TRIGGER` no trigger de tenant                  | **passava** — desabilitar não altera `tgname` nem `tgtype`          | reprova: exige `tgenabled IN ('O','A')`                                           |
+| policy com `rls_tenant_or_admin(get_auth_empresa_id())` | **passava** — só se procurava o nome do helper                      | reprova: a expressão tem de ser `rls_tenant_or_admin(empresa_id)` nas duas pontas |
+| índice com chave `(colaborador_id, lotacao_id)`         | **passava** — a chave não era checada                               | reprova: a chave tem de ser exatamente `colaborador_id`                           |
+
+O primeiro não era teórico. Com o índice invertido, o banco **aceitou 2 lotações principais** para o
+mesmo colaborador (verificado com dados) — exatamente a regra ao contrário. E como a migration usa
+`CREATE UNIQUE INDEX IF NOT EXISTS`, um índice homônimo preexistente com o predicado invertido
+seria **preservado**, não corrigido: por isso a verificação olha o efeito, não só a existência.
+
 `20260929120000_colaborador_lotacoes.verify.sql` foi escrito nesta auditoria — a migration da
-`muri` vinha sem ele, e sem sidecar o lote não entra no workflow. São **13 asserções** de catálogo,
+`muri` vinha sem ele, e sem sidecar o lote não entra no workflow. São **12 asserções** de catálogo,
 somente leitura, no mesmo contrato dos outros sidecars (toda linha não-vazia da saída tem de ser
 exatamente `ok`): tabela, RLS ligada, a policy usando `rls_tenant_or_admin` nas duas pontas, o
 índice único **parcial** (existe + é unique + tem predicado), a constraint de vínculo único, as 3 FKs
@@ -170,9 +187,10 @@ Não foi só escrito: **rodou num PostgreSQL 16 local e descartável**, com stub
 `empresas`, `colaboradores`, `lotacoes` e `rls_tenant_or_admin`. Resultado:
 
 - a migration aplica limpa (`ON_ERROR_STOP=1`, exit 0);
-- o sidecar devolve **13 linhas `ok` e nenhuma diferente**;
-- e ele **pega regressão**: derrubando o trigger, reprova na asserção 9; trocando a policy por
-  `USING (true)`, reprova na asserção 3.
+- o sidecar devolve **12 linhas `ok` e nenhuma diferente**;
+- e ele **pega regressão** nos seis estados testados: trigger derrubado, trigger desabilitado,
+  policy `USING (true)`, policy com `get_auth_empresa_id()`, predicado do índice invertido e chave
+  do índice com coluna a mais.
 
 As quatro regras de negócio que a migration entrega também foram exercitadas com dados:
 

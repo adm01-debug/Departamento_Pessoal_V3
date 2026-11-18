@@ -16,14 +16,18 @@ SELECT CASE WHEN (SELECT c.relrowsecurity FROM pg_class c JOIN pg_namespace n ON
                   WHERE n.nspname = 'public' AND c.relname = 'colaborador_lotacoes')
   THEN 'ok' ELSE 'FALHOU: RLS desligada em colaborador_lotacoes' END;
 
--- 3) a policy de tenant usa o helper rls_tenant_or_admin nas DUAS pontas
---    (USING e WITH CHECK). Se alguem trocar por USING (true), isto reprova.
-SELECT CASE WHEN (SELECT count(*) FROM pg_policies
-                  WHERE schemaname = 'public' AND tablename = 'colaborador_lotacoes'
-                    AND policyname = 'colaborador_lotacoes_tenant'
-                    AND coalesce(qual, '') LIKE '%rls_tenant_or_admin%'
-                    AND coalesce(with_check, '') LIKE '%rls_tenant_or_admin%') = 1
-  THEN 'ok' ELSE 'FALHOU: colaborador_lotacoes_tenant sem rls_tenant_or_admin em USING e WITH CHECK' END;
+-- 3) a policy de tenant RESTRINGE pela empresa_id DA LINHA nas duas pontas.
+--    Nao basta citar o helper: `rls_tenant_or_admin(get_auth_empresa_id())`
+--    tambem o citaria, mas checaria a empresa do SOLICITANTE e liberaria
+--    linhas de outras empresas. O Postgres renderiza a expressao de forma
+--    canonica em pg_policies, entao comparamos o texto normalizado.
+SELECT CASE WHEN (
+    SELECT replace(coalesce(qual, ''), ' ', '') = 'rls_tenant_or_admin(empresa_id)'
+       AND replace(coalesce(with_check, ''), ' ', '') = 'rls_tenant_or_admin(empresa_id)'
+    FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'colaborador_lotacoes'
+      AND policyname = 'colaborador_lotacoes_tenant'
+  ) THEN 'ok' ELSE 'FALHOU: colaborador_lotacoes_tenant nao restringe por rls_tenant_or_admin(empresa_id) em USING e WITH CHECK' END;
 
 -- 4) nenhuma outra policy permissiva irrestrita na tabela
 SELECT CASE WHEN NOT EXISTS (
@@ -32,25 +36,32 @@ SELECT CASE WHEN NOT EXISTS (
       AND policyname <> 'colaborador_lotacoes_tenant'
   ) THEN 'ok' ELSE 'FALHOU: policy extra em colaborador_lotacoes' END;
 
--- 5) o indice unico PARCIAL que garante no maximo uma lotacao principal por
---    colaborador. Tres coisas de uma vez: existe, e UNIQUE, e tem predicado
---    (indpred NOT NULL) — um indice unico SEM predicado proibiria o colaborador
---    de ter mais de uma lotacao, que e o oposto do que a tabela existe para
---    permitir.
+-- 5) o indice unico PARCIAL que garante no maximo UMA lotacao principal por
+--    colaborador. Cinco coisas na mesma assercao, porque qualquer uma faltando
+--    inverte ou anula a regra:
+--      a) e da tabela certa;
+--      b) e UNIQUE;
+--      c) e VALIDO — indice invalido nao impede duplicata;
+--      d) a chave e EXATAMENTE (colaborador_id);
+--      e) o predicado e EXATAMENTE `(principal = true)`.
+--    O (e) e o ponto critico: com `WHERE principal = false` o indice continua
+--    unico e parcial, mas o banco passaria a aceitar VARIAS principais e a
+--    recusar varias nao-principais — a regra ao contrario. E como a migration
+--    usa `CREATE UNIQUE INDEX IF NOT EXISTS`, um indice homonimo preexistente
+--    com o predicado invertido seria PRESERVADO, nao corrigido.
 SELECT CASE WHEN EXISTS (
     SELECT 1 FROM pg_index i
     JOIN pg_class ic ON ic.oid = i.indexrelid
     WHERE ic.relname = 'colaborador_lotacoes_principal_unica'
       AND i.indrelid = 'public.colaborador_lotacoes'::regclass
       AND i.indisunique
-      AND i.indpred IS NOT NULL
-  ) THEN 'ok' ELSE 'FALHOU: colaborador_lotacoes_principal_unica ausente, nao-unica ou sem predicado' END;
-
--- 6) e o predicado e exatamente sobre principal = true
-SELECT CASE WHEN (SELECT pg_get_expr(i.indpred, i.indrelid) FROM pg_index i
-                  JOIN pg_class ic ON ic.oid = i.indexrelid
-                  WHERE ic.relname = 'colaborador_lotacoes_principal_unica') LIKE '%principal%'
-  THEN 'ok' ELSE 'FALHOU: predicado do indice parcial nao e sobre principal' END;
+      AND i.indisvalid
+      AND (SELECT string_agg(a.attname, ',' ORDER BY k.ord)
+             FROM unnest(i.indkey::int[]) WITH ORDINALITY AS k(attnum, ord)
+             JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.attnum
+          ) = 'colaborador_id'
+      AND replace(pg_get_expr(i.indpred, i.indrelid), ' ', '') = '(principal=true)'
+  ) THEN 'ok' ELSE 'FALHOU: colaborador_lotacoes_principal_unica nao e unique+valido sobre (colaborador_id) WHERE principal = true' END;
 
 -- 7) o vinculo colaborador+lotacao e unico (nao da para duplicar a mesma dupla)
 SELECT CASE WHEN EXISTS (
@@ -80,11 +91,12 @@ SELECT CASE WHEN EXISTS (
     WHERE t.tgrelid = 'public.colaborador_lotacoes'::regclass
       AND t.tgname = 'trg_colaborador_lotacoes_valida_tenant'
       AND NOT t.tgisinternal
+      AND t.tgenabled IN ('O', 'A')  -- ATIVO: DISABLE TRIGGER nao altera tgtype
       AND (t.tgtype & 2) <> 0    -- BEFORE
       AND (t.tgtype & 1) <> 0    -- FOR EACH ROW
       AND (t.tgtype & 4) <> 0    -- INSERT
       AND (t.tgtype & 16) <> 0   -- UPDATE
-  ) THEN 'ok' ELSE 'FALHOU: trigger de tenant ausente, AFTER, por statement, ou sem cobrir INSERT+UPDATE' END;
+  ) THEN 'ok' ELSE 'FALHOU: trigger de tenant ausente, DESABILITADO, AFTER, por statement, ou sem cobrir INSERT+UPDATE' END;
 
 -- 10) a funcao do trigger checa as DUAS pontas (colaborador e lotacao)
 SELECT CASE WHEN (SELECT p.prosrc FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
