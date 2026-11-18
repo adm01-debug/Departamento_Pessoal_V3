@@ -5,6 +5,7 @@ import type { Database } from './types';
 import { brokeredPreviewStorage } from './previewAuthStorage';
 import { secureJsonParse } from '@/utils/secureJson';
 import { loggerService } from '@/services/loggerService';
+import { withTraceId } from '@/lib/tracing';
 
 // Projeto ativo: variáveis de ambiente são obrigatórias (P0-008).
 // Chave canônica única: VITE_SUPABASE_PUBLISHABLE_KEY (sem fallback legado).
@@ -163,6 +164,8 @@ interface RpcBody {
   countMode?: string;
   onConflict?: string;
   params?: Record<string, unknown>;
+  /** Correlação distribuída — ver `src/lib/tracing.ts` e o schema do bridge. */
+  trace_id?: string;
 }
 
 const callBridge = async <T = unknown>(
@@ -173,11 +176,16 @@ const callBridge = async <T = unknown>(
   const {
     data: { session },
   } = await supabaseBase.auth.getSession();
-  const body: RpcBody = {
+  // `trace_id` SÓ aqui, no bridge: ele é a única função com `.strict()` que
+  // declara o campo (`external-db-bridge/request-schema.ts:49`). As outras 8
+  // funções com schema strict — entre elas `fechar-folha`, `reabrir-folha` e
+  // `pagar-desligamento` — rejeitariam a requisição inteira, então injetar no
+  // `handleInvoke` genérico do edgeFunctionsService quebraria a folha.
+  const body: RpcBody = withTraceId({
     action,
     ...(action === 'rpc' ? { fn: target } : { table: target }),
     ...payload,
-  };
+  });
 
   // P0-009: nunca usar anon key como Authorization. Writes exigem JWT válido;
   // reads anônimos continuam permitidos (compatibilidade com o frontend).
