@@ -223,6 +223,59 @@ Fica anotado, não resgatado.
    **não devem ser resgatados** (seção 2: preenchimento de template descrevendo uma API que não
    existe).
 
+## 7. A prova byte a byte, depois de as branches terem sido apagadas
+
+As 91 branches locais eram **só locais**: não tinham contraparte no remoto e viviam num container
+efêmero. A verificação por linha e por conjunto de arquivos rodou **antes** de apagá-las. Mas os
+objetos continuam no repositório, então foi possível fazer depois a verificação mais forte — e é
+esta que sustenta a frase "nenhum trabalho foi perdido". Cinco etapas, cada uma mecânica:
+
+| #   | o que foi medido                                                                                                    | número        | resultado                                                                                                                                                                                  |
+| --- | ------------------------------------------------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | commits **exclusivos** das branches (`rev-list <tip> --not origin/main`, sobre os 186 tips)                         | **471**       | base da varredura                                                                                                                                                                          |
+| 2   | pares (caminho, blob) nesses commits                                                                                | **1 565 552** | —                                                                                                                                                                                          |
+| 3   | caminhos cujo blob **nunca** esteve em nenhum ponto da história da `main` **e** que não existem na `main` hoje      | **7**         | 4 são arquivos meus, removidos de propósito (a `main` já tem aquele SQL como `20261117170000-170300`); 2 são `src/mocks/` (proibido em produção, AGENTS §3); 1 é `src/lib/functionsUrl.ts` |
+| 4   | caminhos de código cuja versão da branch nunca chegou à `main`, com alguma linha fora de todo o conteúdo atual dela | **192**       | não é perda por si: a `main` evoluiu depois do merge, e linha ausente não distingue "perdido" de "superado"                                                                                |
+| 5   | **símbolos exportados** por essas 192 versões que não existem em **nenhum** arquivo da `main`                       | **14**        | verificados um a um, abaixo                                                                                                                                                                |
+
+A etapa 5 é a que decide. Linha some por prettier, por rename de variável e por reescrita; **export
+que desaparece é contrato que desaparece.** Extraí todo `export function|const|type|interface|class`
+e todo `export { … }` de cada versão das branches e comparei com a superfície de exports inteira da
+`main`. Sobraram 14:
+
+| símbolo                                                                             | de onde                                          | veredito                                                                                                                                                                                                                                                                                                                                                            |
+| ----------------------------------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `FUNCTIONS_BASE`, `ABSOLUTE_FUNCTIONS_BASE`, `functionUrl`, `rewriteFunctionsUrl`   | `src/lib/functionsUrl.ts`                        | **absorvidos** em `src/integrations/supabase/client.ts:34-38`, como constantes privadas do módulo, dentro do `functionsAwareFetch` — que cobre **todo** `functions.invoke()` de uma vez, que era o objetivo declarado no comentário do próprio arquivo original. Com 2 testes, inclusive o caso negativo (URL de `auth` **não** reescrita) que o original não tinha |
+| `getTraceId`                                                                        | `src/lib/tracing.ts`                             | **removido de propósito** na #666: era um id por aba em `sessionStorage`, e a migration `20260724120000_p3_064_query_telemetry_trace_id.sql` define a coluna como **da requisição**. A versão por requisição é a que entrou                                                                                                                                         |
+| `DOCUMENTOS_COLABORADORES_BUCKET`, `DOCUMENTO_MAX_SIZE_MB`, `UploadDocumentOptions` | `src/services/documentUploadService.ts`          | viraram **parâmetros** em `uploadDocumentFile(file, { bucket, empresaId, colaboradorId, categoria, maxSizeMB })` (`:23`). Mesma capacidade, escolhida por quem chama                                                                                                                                                                                                |
+| `EscalaComTurno`                                                                    | `src/services/turnoService.ts`                   | a `main` tem `EscalaComColaboradorETurno` (`:5`) e `EscalaDoDia` (`:10`) — mesmo conceito, renomeado                                                                                                                                                                                                                                                                |
+| `StatusPapeis`                                                                      | `src/hooks/usePermissions.ts`                    | `type StatusPapeis = 'loading'                                                                                                                                                                                                                                                                                                                                      | 'success'` — alias de uma linha, sem comportamento |
+| `jornadaEmModoDemonstracao`                                                         | `src/hooks/useJornadaOnboarding.ts`              | era `return isAdmissoesMockEnabled()` — **modo mock**, que o AGENTS §3 proíbe em produção. Correto estar ausente                                                                                                                                                                                                                                                    |
+| `useAlternarKit`                                                                    | `src/hooks/useJornadaOnboarding.ts`              | **o fluxo existe na `main`**: o `KitOnboardingDialog` tem o `Switch` "Perfil ativo" (`:184`), inicializa de `kit?.ativo` (`:86`), envia `ativo` no payload (`:96`) e `atualizarKit` persiste (`onboardingJornadaService.ts:229`). O hook era atalho para não abrir o formulário                                                                                     |
+| `candidatosSemCandidatura`                                                          | `src/components/recrutamento/candidatosComum.ts` | aparece **uma vez** no blob da branch: a própria definição. **Zero consumidores até lá** — era órfão quando foi escrito, e trazê-lo criaria código morto. A `main` trata "nenhuma candidatura" no analytics, com estado vazio honesto (`analyticsComum.ts:489,514`)                                                                                                 |
+| `listarLotacoes`                                                                    | `src/services/colaboradorDetalhesService.ts`     | depende de `colaborador_lotacoes`, a tabela que **não** foi aplicada. É o item 1 da seção 6 — o único ponto realmente aberto, e é decisão de negócio                                                                                                                                                                                                                |
+
+**Conclusão: dos 14, treze estão incorporados, renomeados, absorvidos ou descartados com razão
+registrada. O décimo quarto depende da única decisão que não é técnica.**
+
+### Um limite honesto desta prova
+
+Export que desaparece é contrato que desaparece, mas o contrário não vale: duas implementações com o
+mesmo export podem divergir por dentro. Para esse resto, o que existe é a verificação por linha
+(§2) mais a leitura caso a caso dos 8 arquivos de `src/` que divergiam. Não há oráculo mecânico que
+separe "reescrito" de "perdido" dentro de um corpo de função — e afirmar o contrário seria o mesmo
+tipo de excesso de confiança que produziu os erros corrigidos neste documento.
+
+### Duas lições de método, registradas para não repetir
+
+1. **Não concluir de busca truncada.** Três erros desta auditoria vieram de `| head -N`: o
+   `20261117170300` ficou fora dos 8 primeiros resultados; o `FOR DELETE` foi procurado no arquivo
+   errado; e o `definirAtivoKit` existia na `main` mas o `head -8` cortou antes. Em varredura de
+   verificação, contar o total **antes** de olhar a amostra.
+2. **Ausência num artefato gerado não prova ausência no banco.** `storage_path` não estava em
+   `database.types.ts` e isso foi lido como "a coluna não existe". O arquivo é gerado e pode estar
+   velho; quem responde é `supabase_db_count`, `list_columns` ou `to_regclass`.
+
 ### Correção de uma afirmação anterior deste documento
 
 Uma versão anterior desta seção dizia que `public.query_telemetry` **não existia** no banco e que,
