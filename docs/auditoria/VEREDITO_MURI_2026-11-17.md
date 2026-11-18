@@ -33,14 +33,17 @@ sobre o cadastro) — só com o comentário reescrito.
 
 Por isso as 34 foram triadas por **função**, não por linha:
 
-| motivo da divergência                        | branches | é perda?                                                                         |
-| -------------------------------------------- | -------- | -------------------------------------------------------------------------------- |
-| só `scripts/.bundle-budget.json`             | 15       | não — teto elevado à mão várias vezes; vale o maior                              |
-| `.github/workflows/canonical-migrations.yml` | 3        | não — o LOTE ATUAL é hardcoded e rotaciona a cada lote; nenhuma salvaguarda saiu |
-| sidecars `.verify.sql`                       | 3        | não — versões já aplicadas; a `main` tem a corrigida (#647)                      |
-| `docs/*` reeditados                          | 3        | não                                                                              |
-| PRs abertas no momento da medição            | 2        | não                                                                              |
-| **arquivos de `src/`**                       | **8**    | **não — verificados um a um**                                                    |
+Todos os grupos foram verificados **por conteúdo**, não classificados por hipótese:
+
+| grupo                                                   | branches    | perda?  | o que a verificação provou                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------------------------------- | ----------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/.bundle-budget.json`                           | 15          | **não** | a união das chaves de todas as branches + `main` dá exatamente 3 — `js_total_kb`, `js_max_chunk_kb`, `css_total_kb`. **Nenhuma chave desapareceu**, então nenhum gate deixou de existir, e a `main` é teto maior ou igual nas três                                                                                                                                                                                   |
+| `canonical-migrations.yml` + `canonical-invariants.sql` | 3           | **não** | só a descrição do input, a lista do LOTE ATUAL e o `ledger_count` esperado. Nenhum step, `if` ou invariante saiu — e a `main` é **estritamente mais protegida**: a branch usava o glob ingênuo `migrations=("$stage_dir"/supabase/migrations/*.sql)`, a `main` separa migration de sidecar (`:196-207`)                                                                                                              |
+| sidecars `*.verify.sql`                                 | 3           | **não** | os 6 arquivos (3 `.sql` + 3 `.verify.sql`) estão na `main`. Asserções branch × main: ninebox 3×3, permissions 8×7, storage 10×9 — a única que saiu é a **de ledger**, removida de propósito na #647 porque não pode passar em `validate` (que termina em `ROLLBACK`). E o sidecar do ninebox na `main` é **mais forte**: trocou subconsulta escalar por `bool_and(...)`, valendo para todas as assinaturas da função |
+| `docs/*` reeditados                                     | 4           | **não** | `docs/ninebox-aprovacao-gestor-vinculo-abner.sql` **não está ausente: foi renomeado** para `…-conta-homologacao.sql`. O arquivo da branch trazia **e-mail e `user_id` reais em claro**; a `main` tem o mesmo SQL íntegro e **sanitizado** — 16 linhas alteradas, **0 removidas**. A ausência do nome antigo é correta e **não deve ser resgatada**                                                                   |
+| `docs/api/` só da `muri`                                | 37 arquivos | **não** | 32 KB em 37 arquivos de 805–923 bytes. Normalizados em tokens de estrutura, restam **2 formas distintas**: é preenchimento de template, e o único texto que varia é o nome do módulo. Descrevem uma API REST `/api/<modulo>` que **não existe** neste sistema — trazê-los criaria documentação falsa concorrendo com `docs/MAPA_API.md`. **Não resgatar**                                                            |
+| PRs abertas no momento da medição                       | 2           | **não** | mergeadas depois                                                                                                                                                                                                                                                                                                                                                                                                     |
+| **arquivos de `src/`**                                  | **8**       | **não** | verificados um a um, abaixo                                                                                                                                                                                                                                                                                                                                                                                          |
 
 ### Os 8 arquivos de `src/`, verificados por função
 
@@ -165,9 +168,21 @@ consumidora na `muri`.
    **Aplicar junto com essa aba**". Então o risco não é dado perdido: é o **SQL se perder** se a
    `muri` for apagada antes de a aba ser decidida.
 
-2. **`docs/api/`** — 37 arquivos só na `muri`.
+2. **O `verify` do `canonical-migrations.yml` está checando o lote errado.** O LOTE ATUAL do
+   workflow (`:161-163`) tem **2** migrations — `20261117190000_permissions_matriz_seed.sql` e
+   `20261117193000_storage_documentos_tenant_scope.sql`. Mas `scripts/canonical-invariants.sql:8-13`
+   ainda lista as **4** versões do lote **anterior** (`20261117170000`..`170300`), e a asserção em
+   `.github/workflows/canonical-migrations.yml:334` exige `Number(r.ledger_count) === 4`. O próprio
+   comentário do arquivo avisa do risco: "se ficar na versão do lote anterior, a asserção aprova por
+   um registro ANTIGO e não prova nada do lote novo". É exatamente o que acontece hoje: o `verify`
+   passa contando registros antigos e **não prova** que o lote atual foi aplicado.
 
-3. **A `muri` em si** — pode ser apagada depois de preservado o SQL do item 1.
+   Não corrigi junto: mexer em workflow que aplica DDL em produção é item da **regra 8** do fluxo
+   Git. Vai em PR própria, para o dono aprovar.
+
+3. **A `muri` em si** — pode ser apagada depois de preservado o SQL do item 1. Os `docs/api/` dela
+   **não devem ser resgatados** (seção 2: preenchimento de template descrevendo uma API que não
+   existe).
 
 ### Correção de uma afirmação anterior deste documento
 
