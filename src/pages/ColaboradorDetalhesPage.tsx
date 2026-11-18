@@ -72,6 +72,7 @@ import { RecontratarColaboradorDialog } from '@/components/colaboradores/Recontr
 import { PendenciasDialog, type PendenciaItem } from '@/components/colaborador-detalhes/PendenciasDialog';
 import { ProximosEventosDialog, type EventoDetalhado } from '@/components/colaborador-detalhes/ProximosEventosDialog';
 import { AfastamentosTab } from '@/components/colaborador-detalhes/AfastamentosTab';
+import { DadosPessoaisTab } from '@/components/colaborador-detalhes/DadosPessoaisTab';
 import { destinoPendencia, destinoEvento, type DestinoDossie } from '@/components/colaborador-detalhes/destinosDossie';
 import { format } from 'date-fns';
 import { parseDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
@@ -91,7 +92,7 @@ export default function ColaboradorDetalhesPage() {
   const navigate = useNavigate();
   const { empresaAtual } = useEmpresas();
   const [activeMainTab, setActiveMainTab] = useState('geral');
-  const [activePessoalTab, setActivePessoalTab] = useState('dependentes');
+  const [activePessoalTab, setActivePessoalTab] = useState('identificacao');
   const [activeProfissionalTab, setActiveProfissionalTab] = useState('trabalho');
   const [activeFinanceiroTab, setActiveFinanceiroTab] = useState('contas');
   const [activeDocumentosTab, setActiveDocumentosTab] = useState('compliance');
@@ -478,6 +479,12 @@ export default function ColaboradorDetalhesPage() {
             <Tabs value={activePessoalTab} onValueChange={setActivePessoalTab} className="space-y-4">
               <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
                 <TabsTrigger
+                  value="identificacao"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Identificação
+                </TabsTrigger>
+                <TabsTrigger
                   value="dependentes"
                   className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
                 >
@@ -502,6 +509,15 @@ export default function ColaboradorDetalhesPage() {
                   Estrangeiro
                 </TabsTrigger>
               </TabsList>
+              {/* Resgatada da `muri`, onde mostrava CPF, RG, e-mail, telefone e
+                  endereço SEM máscara (0 usos de usePiiMask). Aqui cada campo
+                  passa pelo contrato de PII da main. Antes disso, nome social,
+                  RG, estado civil, e-mail pessoal, CEP, logradouro e
+                  complemento não apareciam em lugar nenhum do dossiê — só
+                  abrindo o formulário de edição. */}
+              <TabsContent value="identificacao">
+                {activePessoalTab === 'identificacao' && <DadosPessoaisTab colaborador={colaborador} />}
+              </TabsContent>
               <TabsContent value="dependentes">
                 {activePessoalTab === 'dependentes' && <DependentesTab colaboradorId={id!} />}
               </TabsContent>
