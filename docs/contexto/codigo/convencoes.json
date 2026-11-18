@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (520)",
+   "src/components (521)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (656)",
+   "co-localizado (__tests__) (658)",
    "co-localizado (*.test) (73)",
    "e2e/ (33)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (638)"
+  ".tsx (639)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(rescisão): a calculadora passa a LER o histórico que já gravava (#704)",
+   "feat(desligamentos): paginação, ordenação e filtro por etapa resgatados da muri (#700)",
    "feat(dashboard): põe em tela os 2 widgets que nunca eram renderizados (#702)",
    "fix(scripts): build-rebaseline diz qual arquivo de entrada falta (#706)",
-   "docs(auditoria): registro da reauditoria dos descartes (#703)",
-   "fix(colaboradores): filtro de status oferecia valor inexistente no enum + 21 testes da muri (#701)",
-   "feat(contas-bancarias): resgata identidade visual de banco da muri (#699)"
+   "docs(auditoria): registro da reauditoria dos descartes (#703)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

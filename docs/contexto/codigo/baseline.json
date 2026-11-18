@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d9cc47549b453a69f3381a3bf1e206baa5b294e6",
+  "commit": "96ef3edb4ed90f0e2d09f3822129ec9489496401",
   "branch": "main",
-  "data_commit": "2026-11-18T16:39:51-03:00",
+  "data_commit": "2026-11-18T16:42:42-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "96ef3ed",
+    "data": "2026-11-18",
+    "assunto": "feat(rescisão): a calculadora passa a LER o histórico que já gravava (#704)"
+   },
+   {
+    "sha": "656863d",
+    "data": "2026-11-18",
+    "assunto": "feat(desligamentos): paginação, ordenação e filtro por etapa resgatados da muri (#700)"
+   },
    {
     "sha": "d9cc475",
     "data": "2026-11-18",
@@ -121,23 +131,13 @@
     "sha": "bb0fe99",
     "data": "2026-11-18",
     "assunto": "fix: fecha quatro bypasses na guarda de RLS permissiva, com matriz de regressão (#681)"
-   },
-   {
-    "sha": "c96848a",
-    "data": "2026-11-18",
-    "assunto": "chore: documenta que o canonical-sql-diag está quebrado em modo não-PII (#680)"
-   },
-   {
-    "sha": "616e46b",
-    "data": "2026-11-18",
-    "assunto": "chore: integra a lição dos P0 preservados como guarda de CI contra RLS permissiva (#679)"
    }
   ],
-  "arquivos_mudados_7d": 1158,
+  "arquivos_mudados_7d": 1161,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 384
+    "mudancas": 385
    },
    {
     "pasta": "src/components/ui",
@@ -188,12 +188,12 @@
     "mudancas": 30
    },
    {
-    "pasta": "src/utils/__tests__",
+    "pasta": "src/components/desligamentos",
     "mudancas": 30
    },
    {
-    "pasta": "src/components/premiacoes",
-    "mudancas": 29
+    "pasta": "src/utils/__tests__",
+    "mudancas": 30
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3610,
-  "arquivos_codigo": 2096,
-  "linhas_codigo": 416036,
+  "arquivos_total": 3613,
+  "arquivos_codigo": 2099,
+  "linhas_codigo": 417217,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
-  "componentes": 638,
+  "componentes": 639,
   "hooks": 119,
   "edge_functions": 67,
   "tabelas": 426,
   "migrations": 878,
   "cron_jobs": 41,
-  "testes": 787,
+  "testes": 789,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 336
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 989,
-   "linhas": 180098
+   "arquivos": 991,
+   "linhas": 181283
   },
   "src/constants": {
    "arquivos": 7,
@@ -683,8 +683,8 @@
    "linhas": 3564
   },
   "src/pages": {
-   "arquivos": 136,
-   "linhas": 49920
+   "arquivos": 137,
+   "linhas": 49916
   },
   "src/providers": {
    "arquivos": 4,
@@ -845,12 +845,12 @@
    "linhas": 914
   },
   {
-   "arquivo": "scripts/automation.mjs",
-   "linhas": 869
+   "arquivo": "src/components/desligamentos/GestaoDesligamentos.tsx",
+   "linhas": 885
   },
   {
-   "arquivo": "src/schemas/esocial/periodicosValidators.ts",
-   "linhas": 861
+   "arquivo": "scripts/automation.mjs",
+   "linhas": 869
   }
  ],
  "qualidade": {
@@ -859,7 +859,7 @@
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 23,
-  "arquivos_acima_500_linhas": 114
+  "arquivos_acima_500_linhas": 115
  },
  "todos": [
   {
@@ -1166,6 +1166,7 @@
    "ESocialMonitorWidget",
    "EmpresaSelector",
    "FormField",
+   "GestaoVisualizacao",
    "IndicatorRow",
    "MotionCard",
    "NotificationCenter",

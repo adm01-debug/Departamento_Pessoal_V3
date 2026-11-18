@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d9cc47549b453a69f3381a3bf1e206baa5b294e6",
+  "sha": "96ef3edb4ed90f0e2d09f3822129ec9489496401",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 19:43 UTC",
-  "files_total": 3623,
-  "code_files": 3045,
-  "code_lines": 483225
+  "generated_at": "2026-11-18 19:55 UTC",
+  "files_total": 3626,
+  "code_files": 3048,
+  "code_lines": 484406
  },
  "version": "1.3.2",
- "facts_hash": "f7273993cc75e1bb",
+ "facts_hash": "fa53e4560ba3e55a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,7 +387,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1014,
+   ".tsx": 1017,
    ".sql": 951,
    ".ts": 944,
    ".mjs": 108,
@@ -90835,7 +90835,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 134
+    "deps_count": 140
    },
    {
     "path": "",
@@ -100229,7 +100229,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 989,
+  "components_count": 991,
   "hooks": [
    {
     "name": "useContacts",
@@ -101848,8 +101848,8 @@
   },
   {
    "module": "src/components",
-   "files": 989,
-   "lines": 180098,
+   "files": 991,
+   "lines": 181283,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102545,8 +102545,8 @@
   },
   {
    "module": "src/pages",
-   "files": 136,
-   "lines": 49920,
+   "files": 137,
+   "lines": 49916,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -105662,6 +105662,9 @@
     ]
    },
    "historico_rescisoes": {
+    "select": [
+     "src/pages/CalculadoraRescisaoPage.tsx"
+    ],
     "ref": [
      "src/pages/CalculadoraRescisaoPage.tsx"
     ]
@@ -108017,6 +108020,16 @@
     "colaborador_id",
     "empresa_id",
     "id"
+   ],
+   "historico_rescisoes": [
+    "cargo",
+    "created_at",
+    "data_desligamento",
+    "empresa_id",
+    "id",
+    "nome_colaborador",
+    "tipo_rescisao",
+    "total_liquido"
    ],
    "historico_salarial": [
     "colaborador_id",
@@ -113044,6 +113057,11 @@
     "file": "src/components/dashboard/MetricCard.tsx",
     "name": "MetricTone",
     "values": "primary | warning | destructive | muted | info | accent | success"
+   },
+   {
+    "file": "src/components/desligamentos/GestaoDesligamentos.tsx",
+    "name": "GestaoVisualizacao",
+    "values": "tabela | cards"
    },
    {
     "file": "src/components/desligamentos/desligamentosComum.ts",
@@ -119541,6 +119559,14 @@
    {
     "file": "src/components/desligamentos/DesligamentoFilters.tsx",
     "text": "de filtro não pode ser truncado (só o \"Todos\" curto cabe em uma linha)."
+   },
+   {
+    "file": "src/components/desligamentos/GestaoDesligamentos.tsx",
+    "text": "+ do prazo legal (ver `desligamentosDerivacoes`)."
+   },
+   {
+    "file": "src/components/desligamentos/GestaoDesligamentos.tsx",
+    "text": "Estado VISUAL (só do indicador): muda na hora e dirige apenas o `transform`."
    },
    {
     "file": "src/components/desligamentos/NovoDesligamentoDialog.tsx",
@@ -150309,6 +150335,48 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/desligamentos/GestaoDesligamentos.tsx",
+    "field": "etapa",
+    "value": "pagamento",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/GestaoDesligamentos.tsx",
+    "field": "etapa",
+    "value": "finalizado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/GestaoDesligamentos.tsx",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/GestaoDesligamentos.tsx",
+    "field": "tipo",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/GestaoDesligamentos.tsx",
+    "field": "etapa",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/GestaoDesligamentos.tsx",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/GestaoDesligamentos.tsx",
+    "field": "tipo",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/desligamentos/NovoDesligamentoDialog.tsx",
     "field": "tipo",
     "value": "sem_justa_causa",
@@ -163605,6 +163673,10 @@
     "line": "transition={{ delay: i * 0.06, type: 'spring', stiffness: 300, damping: 24 }}"
    },
    {
+    "file": "src/components/desligamentos/GestaoDesligamentos.tsx",
+    "line": "// Ocupa 100% da largura do card \"Processos\" logo abaixo (mesmo pai). Em telas"
+   },
+   {
     "file": "src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx",
     "line": "direita NÃO existe: a linha ocupa 100% da largura útil (`w-full`) e o"
    },
@@ -164035,14 +164107,6 @@
    {
     "file": "src/pages/DashboardPage.tsx",
     "line": "transition={{ delay: 0.5 + i * 0.15 }}"
-   },
-   {
-    "file": "src/pages/DesligamentosPage.tsx",
-    "line": "transition={{ delay: i * 0.02 }}"
-   },
-   {
-    "file": "src/pages/DesligamentosPage.tsx",
-    "line": "transition={{ delay: i * 0.03 }}"
    },
    {
     "file": "src/pages/ESocialPage.tsx",
@@ -173489,6 +173553,50 @@
    {
     "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
     "name": "mostra o olho de "
+   },
+   {
+    "file": "src/components/__tests__/GestaoDesligamentos.test.tsx",
+    "name": "GestaoDesligamentos — paginação, ordenação e etapa"
+   },
+   {
+    "file": "src/components/__tests__/GestaoDesligamentos.test.tsx",
+    "name": "mostra só a primeira página (5 de 7) e avança para a segunda"
+   },
+   {
+    "file": "src/components/__tests__/GestaoDesligamentos.test.tsx",
+    "name": "ordena por nome e troca quem aparece na primeira página"
+   },
+   {
+    "file": "src/components/__tests__/GestaoDesligamentos.test.tsx",
+    "name": "ordena por maior valor"
+   },
+   {
+    "file": "src/components/__tests__/GestaoDesligamentos.test.tsx",
+    "name": "a pílula de etapa conta e filtra os processos daquela etapa"
+   },
+   {
+    "file": "src/components/__tests__/GestaoDesligamentos.test.tsx",
+    "name": "a pílula Finalização agrupa pagamento e finalizado"
+   },
+   {
+    "file": "src/components/__tests__/GestaoDesligamentos.test.tsx",
+    "name": "devolve ao pai os ids do recorte na tela (é o que o cabeçalho exporta)"
+   },
+   {
+    "file": "src/components/__tests__/GestaoDesligamentos.test.tsx",
+    "name": "a busca filtra por nome, cargo, departamento e motivo"
+   },
+   {
+    "file": "src/components/__tests__/GestaoDesligamentos.test.tsx",
+    "name": "a linha marcada no checkbox ganha uma ação de verdade (exportar seleção)"
+   },
+   {
+    "file": "src/components/__tests__/GestaoDesligamentos.test.tsx",
+    "name": "mantém a coluna Motivo que a tabela anterior já mostrava"
+   },
+   {
+    "file": "src/components/__tests__/GestaoDesligamentos.test.tsx",
+    "name": "com a faixa de atenção ligada, mostra o aviso e o atalho para limpar"
    },
    {
     "file": "src/components/__tests__/GestaoPontoAnalytics.test.tsx",
@@ -188689,6 +188797,22 @@
    {
     "file": "src/pages/__tests__/AdmissoesConsolidacao.test.tsx",
     "name": "o cabeçalho leva à Jornada de Onboarding em vez de reproduzir o conteúdo"
+   },
+   {
+    "file": "src/pages/__tests__/CalculadoraRescisaoHistorico.test.tsx",
+    "name": "CalculadoraRescisaoPage — histórico salvo passa a ser lido"
+   },
+   {
+    "file": "src/pages/__tests__/CalculadoraRescisaoHistorico.test.tsx",
+    "name": "com a tabela vazia, explica como preencher em vez de mostrar tabela em branco"
+   },
+   {
+    "file": "src/pages/__tests__/CalculadoraRescisaoHistorico.test.tsx",
+    "name": "lista os cálculos salvos com colaborador, tipo, data e líquido"
+   },
+   {
+    "file": "src/pages/__tests__/CalculadoraRescisaoHistorico.test.tsx",
+    "name": "a data de desligamento não escorrega um dia por fuso"
    },
    {
     "file": "src/pages/__tests__/CanalEticaPage.test.tsx",
@@ -228627,6 +228751,10 @@
     "limit": "200"
    },
    {
+    "file": "src/pages/CalculadoraRescisaoPage.tsx",
+    "limit": "10"
+   },
+   {
     "file": "src/pages/ContratosGeradosPage.tsx",
     "limit": "500"
    },
@@ -230954,6 +231082,12 @@
      "media": [
       "compara:src/components/dashboard/analytics/widgets.tsx"
      ],
+     "todos": [
+      "compara:src/components/desligamentos/GestaoDesligamentos.tsx",
+      "compara:src/components/premiacoes/auditoriaComum.ts",
+      "escreve:src/components/premiacoes/auditoriaComum.ts",
+      "escreve:src/pages/ObrigacoesFiscaisPage.tsx"
+     ],
      "linha": [
       "escreve:src/components/desligamentos/TurnoverChart.tsx"
      ],
@@ -231138,11 +231272,6 @@
      ],
      "percentual": [
       "escreve:src/components/premiacoes/RewardsSimulator.tsx"
-     ],
-     "todos": [
-      "compara:src/components/premiacoes/auditoriaComum.ts",
-      "escreve:src/components/premiacoes/auditoriaComum.ts",
-      "escreve:src/pages/ObrigacoesFiscaisPage.tsx"
      ],
      "configuracao": [
       "escreve:src/components/premiacoes/premiacoesComum.ts"
@@ -231666,6 +231795,7 @@
       "compara:src/components/admissoes/GestaoCandidatos.tsx",
       "compara:src/components/avaliacao/PdiFiltros.tsx",
       "compara:src/components/avaliacao/PdiTab.tsx",
+      "compara:src/components/desligamentos/GestaoDesligamentos.tsx",
       "compara:src/components/premiacoes/pagamentosComum.ts",
       "compara:src/components/premiacoes/premiacoesComum.ts",
       "compara:src/components/treinamentos/TurmasPainel.tsx",
@@ -232596,7 +232726,8 @@
       "compara:src/components/admissoes/kanbanComum.ts"
      ],
      "todos": [
-      "compara:src/components/admissoes/GestaoCandidatos.tsx"
+      "compara:src/components/admissoes/GestaoCandidatos.tsx",
+      "compara:src/components/desligamentos/GestaoDesligamentos.tsx"
      ],
      "solicitacao": [
       "compara:src/components/admissoes/kanbanComum.ts"
@@ -232609,6 +232740,7 @@
      ],
      "finalizado": [
       "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx",
+      "compara:src/components/desligamentos/GestaoDesligamentos.tsx",
       "escreve:src/components/desligamentos/desligamentosComum.ts",
       "escreve:src/components/desligamentos/desligamentosDerivacoes.ts",
       "escreve:src/services/rescisaoService.ts"
@@ -232618,6 +232750,9 @@
      ],
      "comunicacao": [
       "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx"
+     ],
+     "pagamento": [
+      "compara:src/components/desligamentos/GestaoDesligamentos.tsx"
      ],
      "Etapa": [
       "escreve:src/components/desligamentos/trilhaDerivacoes.ts"
@@ -268806,6 +268941,27 @@
     "mostra o olho de "
    ]
   },
+  "src/components/__tests__/GestaoDesligamentos.test.tsx": {
+   "path": "src/components/__tests__/GestaoDesligamentos.test.tsx",
+   "lines": 299,
+   "is_test": true,
+   "errors": [
+    "Opção de ordenação "
+   ],
+   "tests": [
+    "GestaoDesligamentos — paginação, ordenação e etapa",
+    "mostra só a primeira página (5 de 7) e avança para a segunda",
+    "ordena por nome e troca quem aparece na primeira página",
+    "ordena por maior valor",
+    "a pílula de etapa conta e filtra os processos daquela etapa",
+    "a pílula Finalização agrupa pagamento e finalizado",
+    "devolve ao pai os ids do recorte na tela (é o que o cabeçalho exporta)",
+    "a busca filtra por nome, cargo, departamento e motivo",
+    "a linha marcada no checkbox ganha uma ação de verdade (exportar seleção)",
+    "mantém a coluna Motivo que a tabela anterior já mostrava",
+    "com a faixa de atenção ligada, mostra o aviso e o atalho para limpar"
+   ]
+  },
   "src/components/__tests__/GestaoPontoAnalytics.test.tsx": {
    "path": "src/components/__tests__/GestaoPontoAnalytics.test.tsx",
    "lines": 107,
@@ -278618,6 +278774,64 @@
     "function TipoBadge"
    ]
   },
+  "src/components/desligamentos/GestaoDesligamentos.tsx": {
+   "path": "src/components/desligamentos/GestaoDesligamentos.tsx",
+   "lines": 885,
+   "exports": [
+    "type GestaoVisualizacao",
+    "function GestaoDesligamentos"
+   ],
+   "enums": [
+    {
+     "name": "GestaoVisualizacao",
+     "values": "tabela | cards"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "etapa",
+     "value": "pagamento",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "finalizado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "todos",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "+ do prazo legal (ver `desligamentosDerivacoes`).",
+    "Estado VISUAL (só do indicador): muda na hora e dirige apenas o `transform`."
+   ],
+   "percents": [
+    "// Ocupa 100% da largura do card \"Processos\" logo abaixo (mesmo pai). Em telas"
+   ]
+  },
   "src/components/desligamentos/NovoDesligamentoDialog.tsx": {
    "path": "src/components/desligamentos/NovoDesligamentoDialog.tsx",
    "lines": 284,
@@ -278984,7 +279198,7 @@
   },
   "src/components/desligamentos/index.ts": {
    "path": "src/components/desligamentos/index.ts",
-   "lines": 11
+   "lines": 12
   },
   "src/components/desligamentos/trilhaComum.ts": {
    "path": "src/components/desligamentos/trilhaComum.ts",
@@ -297169,7 +297383,7 @@
   },
   "src/pages/CalculadoraRescisaoPage.tsx": {
    "path": "src/pages/CalculadoraRescisaoPage.tsx",
-   "lines": 670,
+   "lines": 778,
    "exports": [
     "function CalculadoraRescisaoPage"
    ],
@@ -297180,6 +297394,10 @@
     },
     {
      "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "historico_rescisoes",
      "op": "select"
     },
     {
@@ -297197,6 +297415,16 @@
      "id",
      "nome_completo",
      "status"
+    ],
+    "historico_rescisoes": [
+     "cargo",
+     "created_at",
+     "data_desligamento",
+     "empresa_id",
+     "id",
+     "nome_colaborador",
+     "tipo_rescisao",
+     "total_liquido"
     ]
    },
    "errors": [
@@ -297288,6 +297516,9 @@
      "params": "",
      "body": "const { user } = useAuth(); const { empresaAtual } = useEmpresas(); const [loadingColab, setLoadingColab] = useState(false); const [selectedColabId, setSelectedColabId] = useState<string | undefined>(undefined); useDataAccessLog('colaboradores', selectedColabId, empresaAtual?.id); const [form, setForm] = useState({ nomeColaborador: '', cpf: '', cargo: '', salario: '', dataAdmissao: '', dataDesligamento: '', tipo: 'sem_justa_causa', avisoTrabalhado: false, feriasVencidas: false, saldoFGTS: '', di …"
     }
+   ],
+   "pagination": [
+    "10"
    ]
   },
   "src/pages/CanalContabilidadePage.tsx": {
@@ -298277,7 +298508,7 @@
   },
   "src/pages/DesligamentosPage.tsx": {
    "path": "src/pages/DesligamentosPage.tsx",
-   "lines": 465,
+   "lines": 241,
    "exports": [
     "function DesligamentosPage"
    ],
@@ -298287,10 +298518,6 @@
    "errors": [
     "Empresa ativa não carregada.",
     "Erro ao excluir desligamento"
-   ],
-   "percents": [
-    "transition={{ delay: i * 0.02 }}",
-    "transition={{ delay: i * 0.03 }}"
    ]
   },
   "src/pages/DespesasPage.tsx": {
@@ -301539,6 +301766,17 @@
     "Admissões — onboarding consolidado fora do módulo",
     "não exibe mais a aba ",
     "o cabeçalho leva à Jornada de Onboarding em vez de reproduzir o conteúdo"
+   ]
+  },
+  "src/pages/__tests__/CalculadoraRescisaoHistorico.test.tsx": {
+   "path": "src/pages/__tests__/CalculadoraRescisaoHistorico.test.tsx",
+   "lines": 112,
+   "is_test": true,
+   "tests": [
+    "CalculadoraRescisaoPage — histórico salvo passa a ser lido",
+    "com a tabela vazia, explica como preencher em vez de mostrar tabela em branco",
+    "lista os cálculos salvos com colaborador, tipo, data e líquido",
+    "a data de desligamento não escorrega um dia por fuso"
    ]
   },
   "src/pages/__tests__/CanalEticaPage.test.tsx": {
@@ -328290,10 +328528,32 @@
   }
  },
  "git": {
-  "sha": "d9cc47549b453a69f3381a3bf1e206baa5b294e6",
+  "sha": "96ef3edb4ed90f0e2d09f3822129ec9489496401",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "96ef3ed",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "feat(rescisão): a calculadora passa a LER o histórico que já gravava (#704)",
+    "files": [
+     "src/pages/CalculadoraRescisaoPage.tsx",
+     "src/pages/__tests__/CalculadoraRescisaoHistorico.test.tsx"
+    ]
+   },
+   {
+    "sha": "656863d",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "feat(desligamentos): paginação, ordenação e filtro por etapa resgatados da muri (#700)",
+    "files": [
+     "src/components/__tests__/GestaoDesligamentos.test.tsx",
+     "src/components/desligamentos/GestaoDesligamentos.tsx",
+     "src/components/desligamentos/index.ts",
+     "src/pages/DesligamentosPage.tsx"
+    ]
+   },
    {
     "sha": "d9cc475",
     "date": "2026-11-18",
@@ -328592,24 +328852,6 @@
      "supabase/migrations/20260929120000_colaborador_lotacoes.sql",
      "supabase/migrations/20260929120000_colaborador_lotacoes.verify.sql"
     ]
-   },
-   {
-    "sha": "b376487",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "docs(auditoria): decide não aplicar colaborador_lotacoes, com a medição que sustenta (#675)",
-    "files": [
-     "docs/auditoria/sql-preservado/README.md"
-    ]
-   },
-   {
-    "sha": "3616289",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "docs(auditoria): registra a prova byte a byte, por símbolo exportado e por token (#674)",
-    "files": [
-     "docs/auditoria/VEREDITO_MURI_2026-11-17.md"
-    ]
    }
   ],
   "hot_files": [
@@ -328626,15 +328868,15 @@
     4
    ],
    [
+    "scripts/audit-migration-style.mjs",
+    3
+   ],
+   [
     "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
-    4
+    3
    ],
    [
     "docs/auditoria/sql-preservado/README.md",
-    4
-   ],
-   [
-    "scripts/audit-migration-style.mjs",
     3
    ],
    [
@@ -328644,6 +328886,30 @@
    [
     "scripts/.types-drift-baseline.json",
     2
+   ],
+   [
+    "src/pages/CalculadoraRescisaoPage.tsx",
+    1
+   ],
+   [
+    "src/pages/__tests__/CalculadoraRescisaoHistorico.test.tsx",
+    1
+   ],
+   [
+    "src/components/__tests__/GestaoDesligamentos.test.tsx",
+    1
+   ],
+   [
+    "src/components/desligamentos/GestaoDesligamentos.tsx",
+    1
+   ],
+   [
+    "src/components/desligamentos/index.ts",
+    1
+   ],
+   [
+    "src/pages/DesligamentosPage.tsx",
+    1
    ],
    [
     "scripts/.bundle-budget.json",
@@ -328667,30 +328933,6 @@
    ],
    [
     "src/components/__tests__/PdiCard.test.tsx",
-    1
-   ],
-   [
-    "src/pages/ColaboradoresPage.tsx",
-    1
-   ],
-   [
-    "src/pages/__tests__/AdmissoesConsolidacao.test.tsx",
-    1
-   ],
-   [
-    "src/pages/__tests__/ColaboradoresPage.test.tsx",
-    1
-   ],
-   [
-    "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
-    1
-   ],
-   [
-    "src/lib/bankBrand.ts",
-    1
-   ],
-   [
-    "src/components/dashboard/MorningBriefing.tsx",
     1
    ]
   ]

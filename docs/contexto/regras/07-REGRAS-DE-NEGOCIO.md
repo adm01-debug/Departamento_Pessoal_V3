@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d9cc47549b` · branch `main` · 2026-11-18 19:43 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `96ef3edb4e` · branch `main` · 2026-11-18 19:55 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1666,7 +1666,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `termino_contrato` | compara | `src/pages/CalculadoraRescisaoPage.tsx`<br>`src/utils/rescisaoCalc.ts`<br>`supabase/functions/calcular-rescisao/motor.ts` |
 | `tipo` | `textarea` | compara, escreve | `src/components/colaborador-detalhes/CamposCustomizadosTab.tsx`<br>`src/mocks/colaboradoresMock.ts` |
 | `tipo` | `texto` | escreve | `src/components/settings/CamposCustomizadosTab.tsx` |
-| `tipo` | `todos` | compara, escreve | `src/components/premiacoes/auditoriaComum.ts`<br>`src/pages/ObrigacoesFiscaisPage.tsx` |
+| `tipo` | `todos` | compara, escreve | `src/components/desligamentos/GestaoDesligamentos.tsx`<br>`src/components/premiacoes/auditoriaComum.ts`<br>`src/pages/ObrigacoesFiscaisPage.tsx` |
 | `tipo` | `total` | compara, escreve | `src/components/desligamentos/TurnoverChart.tsx` |
 | `tipo` | `training_session` | compara | `src/services/trainingImages/briefing.ts`<br>`supabase/functions/_shared/trainingImages/briefing.ts` |
 | `tipo` | `transporte` | compara, escreve | `src/mocks/colaboradoresMock.ts`<br>`src/services/calculoBeneficiosService.ts` |
@@ -1723,7 +1723,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `concluida` | compara, escreve | `src/components/colaborador-detalhes/FeriasResumoTab.tsx`<br>`src/components/ferias/CalendarioFerias.tsx`<br>`src/mocks/colaboradoresMock.ts`<br>`src/pages/LGPDPage.tsx`<br>`src/pages/PassivoTrabalhistaPage.tsx`<br>… +1 |
 | `status` | `concluida_validada` | compara | `src/components/avaliacao/FeedbackAcoesRodape.tsx`<br>`src/components/avaliacao/aprovacaoGestor.ts`<br>`src/components/avaliacao/feedbackCanonico.ts` |
 | `status` | `concluido` | compara, escreve | `src/components/avaliacao/nineBoxMock.ts`<br>`src/components/dashboard/AnalyticsSection.tsx`<br>`src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/components/desligamentos/DesligamentoKPIs.tsx`<br>`src/components/desligamentos/desligamentosDerivacoes.ts`<br>… +9 |
-| … +207 linhas — lista completa em `context.json` | | | |
+| … +208 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -1822,6 +1822,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | AbaPrincipal | geral \| pessoal \| profissional \| jornada \| financeiro \| documentos \| beneficios \| historico \| timeline | `src/components/colaborador-detalhes/destinosDossie.ts` |
 | ColaboradorViewMode | tabela \| diretorio | `src/components/colaboradores/ColaboradorViewSwitcher.tsx` |
 | MetricTone | primary \| warning \| destructive \| muted \| info \| accent \| success | `src/components/dashboard/MetricCard.tsx` |
+| GestaoVisualizacao | tabela \| cards | `src/components/desligamentos/GestaoDesligamentos.tsx` |
 | Tone | primary \| info \| success \| warning \| destructive | `src/components/desligamentos/desligamentosComum.ts` |
 | EtapaDesligamento | comunicacao \| documentacao \| calculo \| homologacao \| pagamento \| finalizado | `src/components/desligamentos/desligamentosComum.ts` |
 | TomPrazo | destructive \| warning \| muted | `src/components/desligamentos/desligamentosDerivacoes.ts` |
@@ -4207,6 +4208,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `// antecipado pelo empregador (acompanha o art. 479), 20% no acordo mútuo e na` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
 | `transition={{ delay: atraso - ANDAMENTO_GAP * 0.5, duration: ANDAMENTO_GAP, ease: 'easeInOut' }}` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
 | `transition={{ delay: i * 0.06, type: 'spring', stiffness: 300, damping: 24 }}` | `src/components/desligamentos/DesligamentoKPIs.tsx` |
+| `// Ocupa 100% da largura do card "Processos" logo abaixo (mesmo pai). Em telas` | `src/components/desligamentos/GestaoDesligamentos.tsx` |
 | `direita NÃO existe: a linha ocupa 100% da largura útil (`w-full`) e o` | `src/components/desligamentos/TrilhaAuditoriaDesligamentos.tsx` |
 | `/** Cor do pontinho (`bg-*`) — a MESMA tinta, só sem os 15% de alfa. */` | `src/components/desligamentos/trilhaComum.ts` |
 | `transition={{ delay: i * 0.02 }}` | `src/components/epis/EpiCatalogoTable.tsx` |
@@ -4315,8 +4317,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ delay: i * 0.05 }}` | `src/pages/ComunicacaoInternaPage.tsx` |
 | `transition={{ delay: i * 0.05 }}` | `src/pages/DashboardExecutivoPage.tsx` |
 | `transition={{ delay: 0.5 + i * 0.15 }}` | `src/pages/DashboardPage.tsx` |
-| `transition={{ delay: i * 0.02 }}` | `src/pages/DesligamentosPage.tsx` |
-| `transition={{ delay: i * 0.03 }}` | `src/pages/DesligamentosPage.tsx` |
 | `transition={{ delay: 0.05 + i * 0.03 }}` | `src/pages/ESocialPage.tsx` |
 | `transition={{ delay: i * 0.06 }}` | `src/pages/ESocialPage.tsx` |
 | `transition={{ delay: i * 0.05 }}` | `src/pages/EmpresasPage.tsx` |
@@ -4401,7 +4401,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `const desc = v.valor_mensal ? Number(v.valor_mensal) * 0.2 : 0;` | `supabase/functions/calcular-folha/index.ts` |
 | `const descontoVT = Math.min(Number(v.valor ?? 0), salarioBase * 0.06);` | `supabase/functions/calcular-folha/index.ts` |
 | `const descontoVT = Math.min(Number(vtLegacy.valor_mensal ?? 0), salarioBase * 0.06);` | `supabase/functions/calcular-folha/index.ts` |
-| … +27 linhas — lista completa em `context.json` | |
+| `const fgts = trunc2(baseTributavel * 0.08);` | `supabase/functions/calcular-folha/index.ts` |
+| … +26 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -4979,6 +4980,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | 200 | `src/pages/AdminSecurityPage.tsx` |
 | 500 | `src/pages/AdminTelemetriaPage.tsx` |
 | 200 | `src/pages/BancoHorasPage.tsx` |
+| 10 | `src/pages/CalculadoraRescisaoPage.tsx` |
 | 500 | `src/pages/ContratosGeradosPage.tsx` |
 | 1 | `src/pages/DashboardPage.tsx` |
 | 500 | `src/pages/FolhaCompliancePage.tsx` |
@@ -5419,7 +5421,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9491 testes em 743 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9506 testes em 745 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5681,6 +5683,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/EmprestimosFinanceiros.test.tsx` | 11 | EmprestimosTable · renders table headers · renders colaborador names · renders instituicao or dash for null … |
 | `src/components/__tests__/ExameFormDialog.test.tsx` | 11 | ExameFormDialog · renders trigger button with  · renders dialog content with title · renders all colaborador options in select … |
 | `src/components/__tests__/GerarPgrButton.test.tsx` | 11 | GerarPgrButton · renders trigger button with  · renders dialog title · renders Responsável Técnico label … |
+| `src/components/__tests__/GestaoDesligamentos.test.tsx` | 11 | GestaoDesligamentos — paginação, ordenação e etapa · mostra só a primeira página (5 de 7) e avança para a segunda · ordena por nome e troca quem aparece na primeira página · ordena por maior valor … |
 | `src/components/__tests__/GestaoPontoAnalytics.test.tsx` | 11 | GestaoPontoAnalytics · renders Painel de Gestão Estratégica title · renders subtitle text · renders IA Monitorando badge … |
 | `src/components/__tests__/MedidaContestacaoDialog.test.tsx` | 11 | MedidaContestacaoDialog · returns null when medida is null · does not render dialog content when open is false · renders dialog when open is true with medida … |
 | `src/components/__tests__/MobileBottomNav.test.tsx` | 11 | MobileBottomNav · renders nav with aria-label · renders Home link · renders Equipe link … |
@@ -5722,8 +5725,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/RelatoriosExportTab.test.tsx` | 10 | RelatoriosExportTab · renders report titles · renders report descriptions · shows CSV button label when exportFormat is csv … |
 | `src/components/__tests__/RewardsSimulator.test.tsx` | 10 | RewardsSimulator · renderiza as quatro regiões do redesenho · mantém os cinco parâmetros do simulador · exibe os quatro KPIs de resultado … |
 | `src/components/__tests__/SSTEPIsTab.test.tsx` | 10 | SSTEPIsTab · shows empty state when no EPIs · renders EPI nome when EPIs provided · renders EPI CA number … |
-| `src/components/treinamentos/__tests__/InscricoesPainel.test.tsx` | 10 | InscricoesPainel · renderiza as oito inscrições, com nomes, cursos, departamentos e categorias · mostra status humano e não exibe o código técnico · mostra Não informado quando não existe progresso real … |
-| … +443 linhas — lista completa em `context.json` | | |
+| … +445 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6091,4 +6093,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | METAS & OKRs — derivações da aba (situação, prazo, ordem e filtros). | `src/components/avaliacao/metasComum.ts` |
 | exibem. Nada aqui inventa dado: TODAS as funções leem somente campos que já | `src/components/avaliacao/metasComum.ts` |
 | 2. `atrasada`  → prazo vencido e ainda não concluída — é EXATAMENTE o | `src/components/avaliacao/metasComum.ts` |
-| … +916 linhas — lista completa em `context.json` | |
+| … +918 linhas — lista completa em `context.json` | |

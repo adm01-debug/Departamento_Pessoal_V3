@@ -11845,6 +11845,7 @@
     "useState",
     "useSystemHealth",
     "useTheme",
+    "useTransition",
     "useTranslation"
    ],
    "hooks_locais": [
@@ -11935,7 +11936,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 141
+   "arquivos_puxados": 147
   },
   {
    "protegida": true,

@@ -198,7 +198,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 306,
+   "testes": 307,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -1853,13 +1853,13 @@
   },
   {
    "modulo": "components/desligamentos",
-   "arquivos": 17,
+   "arquivos": 18,
    "testes": 0,
-   "linhas": 5955,
+   "linhas": 6841,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 10,
+   "componentes": 11,
    "hooks_locais": [
     "useAuth",
     "useEmpresaStore",
@@ -7871,7 +7871,7 @@
    "modulo": "pages",
    "arquivos": 113,
    "testes": 0,
-   "linhas": 46003,
+   "linhas": 45887,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -8996,7 +8996,7 @@
   {
    "modulo": "pages/__tests__",
    "arquivos": 0,
-   "testes": 23,
+   "testes": 24,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
