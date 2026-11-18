@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Calculator, Download, Save, Shield, Loader2 } from 'lucide-react';
+import { Calculator, Download, History, Save, Shield, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
@@ -18,7 +18,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import type { Json, Database } from '@/integrations/supabase/types';
@@ -110,6 +110,36 @@ export default function CalculadoraRescisaoPage() {
         .eq('status', 'ativo')
         .order('nome_completo');
       if (error) throw error;
+      return data || [];
+    },
+    enabled: !!empresaAtual?.id,
+  });
+
+  const queryClient = useQueryClient();
+
+  /**
+   * A tela GRAVAVA em `historico_rescisoes` (ver `salvarHistorico`) e NUNCA lia:
+   * o botão "Salvar" mandava o cálculo para uma tabela que nenhuma tela exibia.
+   * Fluxo pela metade (AGENTS.md, seção 3). Aqui ele fecha.
+   */
+  const { data: historico = [], isLoading: carregandoHistorico } = useQuery({
+    queryKey: ['historico-rescisoes', empresaAtual?.id],
+    queryFn: async () => {
+      if (!empresaAtual?.id) return [];
+      const { data, error } = await supabase
+        .from('historico_rescisoes')
+        .select('id, created_at, nome_colaborador, cargo, tipo_rescisao, data_desligamento, total_liquido')
+        .eq('empresa_id', empresaAtual.id)
+        .order('created_at', { ascending: false })
+        .limit(10);
+      if (error) throw error;
+      // Trilha LGPD: a lista traz nome e cargo de quem foi desligado.
+      if ((data?.length ?? 0) > 0) {
+        void registrarAcessoPII('historico_rescisoes', 'select', {
+          empresaId: empresaAtual.id,
+          registroCount: data?.length ?? 0,
+        });
+      }
       return data || [];
     },
     enabled: !!empresaAtual?.id,
@@ -249,6 +279,9 @@ export default function CalculadoraRescisaoPage() {
         }
       }
 
+      // Sem isto o cálculo recém-salvo não aparece na lista abaixo até a tela
+      // ser recarregada.
+      void queryClient.invalidateQueries({ queryKey: ['historico-rescisoes', empresaAtual.id] });
       toast.success('Cálculo salvo no histórico!');
     } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao salvar cálculo.'));
@@ -663,6 +696,81 @@ export default function CalculadoraRescisaoPage() {
             )}
           </div>
         </div>
+
+        {/* Histórico — a contraparte de leitura do botão "Salvar". */}
+        <Card className="mt-6 border-border/30 rounded-2xl">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base font-display">
+              <History className="h-4 w-4 text-primary" />
+              Últimos cálculos salvos
+            </CardTitle>
+            <CardDescription className="font-body">
+              Os 10 mais recentes desta empresa. Cada linha é um clique no botão "Salvar" acima.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            {carregandoHistorico ? (
+              <div className="flex justify-center py-10">
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              </div>
+            ) : historico.length === 0 ? (
+              <div className="py-10 text-center">
+                <p className="text-sm font-body text-muted-foreground">Nenhum cálculo salvo ainda.</p>
+                <p className="mt-1 text-xs font-body text-muted-foreground/60">
+                  Calcule uma rescisão e clique em "Salvar" para guardar aqui.
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border/30 bg-muted/30">
+                      <th className="px-4 py-3 text-left text-[10px] font-display font-semibold uppercase tracking-wider text-muted-foreground">
+                        Colaborador
+                      </th>
+                      <th className="px-4 py-3 text-left text-[10px] font-display font-semibold uppercase tracking-wider text-muted-foreground">
+                        Tipo
+                      </th>
+                      <th className="px-4 py-3 text-left text-[10px] font-display font-semibold uppercase tracking-wider text-muted-foreground">
+                        Desligamento
+                      </th>
+                      <th className="px-4 py-3 text-right text-[10px] font-display font-semibold uppercase tracking-wider text-muted-foreground">
+                        Líquido
+                      </th>
+                      <th className="px-4 py-3 text-left text-[10px] font-display font-semibold uppercase tracking-wider text-muted-foreground">
+                        Salvo em
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {historico.map((h) => (
+                      <tr key={h.id} className="border-b border-border/20">
+                        <td className="px-4 py-3">
+                          <p className="text-sm font-body font-medium">{h.nome_colaborador || '—'}</p>
+                          <p className="text-[11px] font-body text-muted-foreground">{h.cargo || '—'}</p>
+                        </td>
+                        <td className="px-4 py-3 text-sm font-body text-muted-foreground">
+                          {(h.tipo_rescisao || '—').replace(/_/g, ' ')}
+                        </td>
+                        <td className="px-4 py-3 text-sm font-body tabular-nums text-muted-foreground">
+                          {h.data_desligamento
+                            ? new Date(`${h.data_desligamento}T12:00:00`).toLocaleDateString('pt-BR')
+                            : '—'}
+                        </td>
+                        <td className="px-4 py-3 text-right text-sm font-body font-medium tabular-nums">
+                          {typeof h.total_liquido === 'number' ? fmt(h.total_liquido) : '—'}
+                        </td>
+                        <td className="px-4 py-3 text-[11px] font-body tabular-nums text-muted-foreground">
+                          {h.created_at ? new Date(h.created_at).toLocaleString('pt-BR') : '—'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </PageLayout>
     </>
   );
