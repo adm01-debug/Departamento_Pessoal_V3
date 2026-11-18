@@ -72,20 +72,119 @@ const ALLOW_ANNOTATION_RE = /^\s*--\s*audit-migration-style:\s*allow-silent-drop
 // 2. Autorização lida de `auth.jwt()` é payload de token, não fonte de verdade
 //    do servidor. A `main` decide por `public.is_admin(auth.uid())` /
 //    `rls_tenant_or_admin()`, e tem invariantes de banco exigindo isso.
-const POLICY_NULL_TENANT_RE = /\bempresa_id\s+IS\s+NULL\b/i;
+//
+// `"empresa_id"` entre aspas é o MESMO identificador para o PostgreSQL, então a
+// detecção aceita as duas formas — sem isso a guarda era contornável trocando
+// `empresa_id` por `"empresa_id"`.
+const POLICY_NULL_TENANT_RE = /(?:"empresa_id"|\bempresa_id\b)\s+IS\s+NULL\b/i;
 const POLICY_JWT_AUTHZ_RE = /\bauth\s*\.\s*jwt\s*\(\s*\)/i;
-const CREATE_POLICY_RE = /^\s*CREATE\s+POLICY\s+"?([A-Za-z0-9_]+)"?/i;
 
-/** Remove comentários e literais para que a detecção olhe só o código: um
- *  `COMMENT ON ... IS '... empresa_id IS NULL ...'` não é uma policy. */
-function stripSqlNoise(sql) {
-  return sql.replace(/--[^\n]*|\/\*[\s\S]*?\*\/|'(?:[^']|'')*'/g, (t) => (t[0] === "'" ? "''" : ''));
+// Nome entre aspas pode conter espaço (`CREATE POLICY "Leitura global"`), e
+// capturar só `[A-Za-z0-9_]+` truncava no primeiro token: a anotação de
+// `"Leitura global"` passava a liberar `"Leitura"` também. Global (`g`) porque
+// a varredura não exige mais que o statement COMECE com CREATE POLICY — uma
+// policy criada dentro de `DO $$ ... $$` tem de ser inspecionada igual.
+const CREATE_POLICY_GLOBAL_RE = /CREATE\s+POLICY\s+(?:"([^"]+)"|([A-Za-z0-9_]+))/gi;
+
+/** Substitui um trecho por espaços preservando os `\n`, para que o texto
+ *  limpo tenha o MESMO comprimento do original e o índice de cada achado
+ *  continue mapeando na linha certa do arquivo. */
+function mascarar(trecho) {
+  return trecho.replace(/[^\n]/g, ' ');
 }
 
-/** Escape hatch explícito: a anotação tem de citar o nome da policy. */
+/**
+ * Neutraliza o que não é código executável, preservando posições.
+ *
+ * Ordem: comentários → dollar-quoted → literais de aspas simples. Comentários
+ * primeiro porque são onde mais aparecem `$` e aspas soltas, que de outro modo
+ * viram delimitadores falsos e engolem o SQL seguinte.
+ *
+ * Dollar-quoted (`$$ ... $$`, `$doc$ ... $doc$`) é o caso delicado: o corpo de
+ * `DO $$ ... $$` e de `CREATE FUNCTION ... AS $$ ... $$` é EXECUTÁVEL e pode
+ * criar policy, então tem de continuar sendo varrido. Já um
+ * `COMMENT ON ... IS $doc$ ... $doc$` é texto. A regra é fail-closed: o corpo só
+ * é descartado quando a palavra imediatamente anterior é `IS`; em qualquer
+ * outra posição ele permanece e é inspecionado.
+ *
+ * Limitação declarada: `$` dentro de comentário ou literal já foi mascarado
+ * antes, mas um delimitador dollar-quoted sem fechamento no arquivo faz o
+ * restante ser tratado como corpo — o que mantém a varredura (fail-closed).
+ */
+function limparPreservandoPosicao(sql) {
+  let s = sql.replace(/--[^\n]*|\/\*[\s\S]*?\*\//g, mascarar);
+
+  let out = '';
+  let i = 0;
+  for (;;) {
+    const resto = s.slice(i);
+    const m = /\$([A-Za-z_][A-Za-z0-9_]*)?\$/.exec(resto);
+    if (!m) {
+      out += resto;
+      break;
+    }
+    const abre = i + m.index;
+    const delim = m[0];
+    const fecha = s.indexOf(delim, abre + delim.length);
+    out += s.slice(i, abre);
+    if (fecha === -1) {
+      // Sem fechamento: mantém o resto (fail-closed) e para.
+      out += s.slice(abre);
+      break;
+    }
+    const corpo = s.slice(abre + delim.length, fecha);
+    const antes = out.replace(/\s+$/, '');
+    const ehLiteral = /\bIS$/i.test(antes);
+    out += mascarar(delim) + (ehLiteral ? mascarar(corpo) : corpo) + mascarar(delim);
+    i = fecha + delim.length;
+  }
+
+  return out.replace(/'(?:[^'\n]|'')*'/g, mascarar);
+}
+
+/**
+ * Escape hatch explícito. O nome da policy vai ENTRE ASPAS DUPLAS na anotação:
+ * sem isso, `allow-null-tenant ... Leitura global` liberava a policy `Leitura`,
+ * porque o nome dela aparece dentro do outro nome.
+ */
 function temAnotacaoPara(rawContent, tipo, policyName) {
-  const re = new RegExp(`^\\s*--\\s*audit-migration-style:\\s*${tipo}\\b.*\\b${escapeRegex(policyName)}\\b`, 'im');
+  const re = new RegExp(`^\\s*--\\s*audit-migration-style:\\s*${tipo}\\b.*"${escapeRegex(policyName)}"`, 'im');
   return re.test(rawContent);
+}
+
+/** Detecção pura, para o laço de arquivos e para o `--selftest`. */
+function analisarPolicies(raw) {
+  const limpo = limparPreservandoPosicao(raw);
+  const violacoes = [];
+  let policies = 0;
+
+  CREATE_POLICY_GLOBAL_RE.lastIndex = 0;
+  for (let m; (m = CREATE_POLICY_GLOBAL_RE.exec(limpo)) !== null;) {
+    policies += 1;
+    const policyName = m[1] ?? m[2];
+    const fim = limpo.indexOf(';', m.index);
+    const stmt = limpo.slice(m.index, fim === -1 ? limpo.length : fim);
+    const lineNo = raw.slice(0, m.index).split('\n').length;
+
+    if (POLICY_NULL_TENANT_RE.test(stmt) && !temAnotacaoPara(raw, 'allow-null-tenant', policyName)) {
+      violacoes.push({
+        policyName,
+        lineNo,
+        tipo: 'allow-null-tenant',
+        porque: '`empresa_id IS NULL` libera linhas de tenant nulo para qualquer empresa',
+      });
+    }
+    if (POLICY_JWT_AUTHZ_RE.test(stmt) && !temAnotacaoPara(raw, 'allow-jwt-authz', policyName)) {
+      violacoes.push({
+        policyName,
+        lineNo,
+        tipo: 'allow-jwt-authz',
+        porque: 'autorização vinda de `auth.jwt()` em vez de is_admin(auth.uid()) / rls_tenant_or_admin()',
+      });
+    }
+  }
+
+  return { policies, violacoes };
 }
 
 function escapeRegex(s) {
@@ -99,6 +198,90 @@ function hasFailClosedGuardFor(contentWithoutDropLine, policyName, tableName) {
   const policyRe = new RegExp(`['"\`]${escapeRegex(policyName)}['"\`]`, 'i');
   const tableRe = new RegExp(`['"\`]${escapeRegex(tableName)}['"\`]`, 'i');
   return policyRe.test(contentWithoutDropLine) || tableRe.test(contentWithoutDropLine);
+}
+
+// ── `--selftest`: matriz de regressão da guarda de RLS permissiva ───────────
+// `scripts/` não é coletado pelo vitest (vitest.config.ts só inclui `src/**`),
+// e foi por falta de regressão que quatro bypasses passaram na primeira versão
+// desta guarda. Rodar: `node scripts/audit-migration-style.mjs --selftest`.
+if (process.argv.includes('--selftest')) {
+  const CASOS = [
+    {
+      nome: 'policy da muri, literal — tem de REPROVAR nos dois defeitos',
+      sql: `CREATE POLICY "teste_select" ON public.admissoes
+  FOR SELECT TO authenticated
+  USING (
+    empresa_id = public.user_empresa_id()
+    OR empresa_id IS NULL
+    OR auth.jwt() ->> 'role' IN ('admin', 'super_admin')
+  );`,
+      espera: ['allow-null-tenant', 'allow-jwt-authz'],
+    },
+    {
+      nome: 'a mesma, com as duas anotações citando a policy entre aspas — PASSA',
+      sql: `-- audit-migration-style: allow-null-tenant motivo "teste_select"
+-- audit-migration-style: allow-jwt-authz motivo "teste_select"
+CREATE POLICY "teste_select" ON public.admissoes
+  FOR SELECT TO authenticated
+  USING (empresa_id IS NULL OR auth.jwt() ->> 'role' = 'admin');`,
+      espera: [],
+    },
+    {
+      nome: 'identificador entre aspas `"empresa_id" IS NULL` — tem de REPROVAR',
+      sql: `CREATE POLICY p ON public.admissoes FOR SELECT TO authenticated
+  USING ("empresa_id" IS NULL);`,
+      espera: ['allow-null-tenant'],
+    },
+    {
+      nome: 'COMMENT ON com exemplo dollar-quoted — NÃO pode reprovar',
+      sql: `COMMENT ON TABLE public.admissoes IS $doc$Exemplo de policy proibida:; CREATE POLICY p ON public.admissoes USING (empresa_id IS NULL);$doc$;`,
+      espera: [],
+    },
+    {
+      nome: 'policy dentro de bloco DO — tem de REPROVAR nos dois defeitos',
+      sql: `DO $
+BEGIN
+  CREATE POLICY "dentro_do_do" ON public.admissoes FOR SELECT TO authenticated
+    USING (empresa_id IS NULL OR auth.jwt() ->> 'role' = 'admin');
+END $;`,
+      espera: ['allow-null-tenant', 'allow-jwt-authz'],
+    },
+    {
+      nome: 'anotação de "Leitura global" NÃO pode liberar a policy "Leitura"',
+      sql: `-- audit-migration-style: allow-null-tenant motivo "Leitura global"
+CREATE POLICY "Leitura" ON public.admissoes FOR SELECT TO authenticated
+  USING (empresa_id IS NULL);`,
+      espera: ['allow-null-tenant'],
+    },
+    {
+      nome: 'policy correta (IS NOT NULL + is_admin) — PASSA',
+      sql: `CREATE POLICY ok_select ON public.admissoes FOR SELECT TO authenticated
+  USING ((empresa_id IS NOT NULL AND empresa_id IN (SELECT public.get_user_empresas(auth.uid())))
+         OR public.is_admin(auth.uid()));`,
+      espera: [],
+    },
+  ];
+
+  let falhas = 0;
+  for (const caso of CASOS) {
+    const { violacoes } = analisarPolicies(caso.sql);
+    const obtido = violacoes.map((v) => v.tipo).sort();
+    const esperado = [...caso.espera].sort();
+    const ok = JSON.stringify(obtido) === JSON.stringify(esperado);
+    if (!ok) {
+      falhas += 1;
+      console.error(`❌ ${caso.nome}`);
+      console.error(`   esperado: [${esperado.join(', ')}] | obtido: [${obtido.join(', ')}]`);
+    } else {
+      console.log(`✅ ${caso.nome}`);
+    }
+  }
+  if (falhas > 0) {
+    console.error(`\n${falhas} de ${CASOS.length} caso(s) do selftest falharam.`);
+    process.exit(1);
+  }
+  console.log(`\n✅ selftest: ${CASOS.length} casos, todos como esperado.`);
+  process.exit(0);
 }
 
 let entries;
@@ -180,43 +363,15 @@ let policiesAvaliadas = 0;
 
 for (const fileName of migrationFiles) {
   const raw = await readFile(resolve(migrationsDir, fileName), 'utf8');
-  const rawLines = raw.split('\n');
-  // Split por `;`: o corpo de uma policy quebra em várias linhas, então a
-  // detecção tem de olhar o STATEMENT inteiro, não linha a linha.
-  const statements = stripSqlNoise(raw).split(';');
-  const violacoes = [];
-
-  for (const stmt of statements) {
-    const match = CREATE_POLICY_RE.exec(stmt);
-    if (!match) continue;
-    policiesAvaliadas += 1;
-    const policyName = match[1];
-    const lineNo = rawLines.findIndex((l) => CREATE_POLICY_RE.test(l) && l.includes(policyName)) + 1;
-
-    if (POLICY_NULL_TENANT_RE.test(stmt) && !temAnotacaoPara(raw, 'allow-null-tenant', policyName)) {
-      violacoes.push({
-        policyName,
-        lineNo,
-        tipo: 'allow-null-tenant',
-        porque: '`empresa_id IS NULL` libera linhas de tenant nulo para qualquer empresa',
-      });
-    }
-    if (POLICY_JWT_AUTHZ_RE.test(stmt) && !temAnotacaoPara(raw, 'allow-jwt-authz', policyName)) {
-      violacoes.push({
-        policyName,
-        lineNo,
-        tipo: 'allow-jwt-authz',
-        porque: 'autorização vinda de `auth.jwt()` em vez de is_admin(auth.uid()) / rls_tenant_or_admin()',
-      });
-    }
-  }
+  const { policies, violacoes } = analisarPolicies(raw);
+  policiesAvaliadas += policies;
 
   if (violacoes.length === 0) continue;
   rlsFailures += 1;
   console.error(`❌ ${fileName}`);
   for (const v of violacoes) {
     console.error(`   linha ${v.lineNo} — policy "${v.policyName}": ${v.porque}`);
-    console.error(`   Se for intencional: "-- audit-migration-style: ${v.tipo} <motivo> ${v.policyName}".`);
+    console.error(`   Se for intencional: -- audit-migration-style: ${v.tipo} <motivo> "${v.policyName}"`);
   }
 }
 
