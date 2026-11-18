@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8d5a8236b2` · branch `main` · 2026-11-18 03:45 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9ffdf21880` · branch `main` · 2026-11-18 04:14 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4692,6 +4692,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `MAX_HISTORY` | `10` | `src/services/assistenteIAService.ts` |
 | `MAX_RECORDS_PER_TABLE` | `10` | `src/services/backupService.ts` |
 | `BUCKET` | `'contabilidade-anexos'` | `src/services/canalContabilidadeService.ts` |
+| `FILTRO_ATIVA` | `'ativa.eq.true,ativa.is.null'` | `src/services/colaboradorLotacaoService.ts` |
 | `MAX_LINHAS_OPCOES_FILTRO` | `1000` | `src/services/colaboradorService.ts` |
 | `LIMITE_OR_BRIDGE` | `500` | `src/services/colaboradorService.ts` |
 | `MAX_LOGS_BUFFER` | `50` | `src/services/loggerService.ts` |
@@ -4708,8 +4709,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `TRAINING_IMAGES_STALE_MS` | `15` | `src/services/trainingImages/config.ts` |
 | `TRAINING_IMAGES_GC_MS` | `30` | `src/services/trainingImages/config.ts` |
 | `TRAINING_IMAGES_BUCKET` | `'training-images'` | `src/services/trainingImages/paths.ts` |
-| `EXTENSAO_PADRAO` | `'webp'` | `src/services/trainingImages/paths.ts` |
-| … +123 linhas — lista completa em `context.json` | | |
+| … +124 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5348,7 +5348,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Conexão já existe | `src/components/workflows/WorkflowDesigner.tsx` |
 | Corrija os erros antes de salvar | `src/components/workflows/WorkflowDesigner.tsx` |
 | Limite de 50 nós atingido | `src/components/workflows/WorkflowDesigner.tsx` |
-| … +667 linhas — lista completa em `context.json` | |
+| … +668 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5419,7 +5419,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9321 testes em 728 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9335 testes em 730 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5723,7 +5723,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/hooks/__tests__/useHorasExtras.test.ts` | 10 | useHorasExtras · returns initial solicitacoes empty array · calls horaExtraService.listar with empresaId · returns solicitacoes from service … |
 | `src/hooks/__tests__/usePendenciasColaborador.test.ts` | 10 | usePendenciasColaborador · sem nada vencido nem pendente, não devolve pendência alguma · ajuste de ponto só conta quando o status é  · ASO vencido é severidade alta e cita a NR-7 … |
 | `src/hooks/__tests__/useRealTimeSubscription.test.tsx` | 10 | useRealTimeSubscription · does NOT subscribe when empresaId is undefined · does NOT subscribe when empresaId is empty string · creates a channel when empresaId is provided … |
-| … +428 linhas — lista completa em `context.json` | | |
+| … +430 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

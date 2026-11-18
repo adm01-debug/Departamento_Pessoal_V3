@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1305,
- "arestas": 6411,
+ "nos": 1307,
+ "arestas": 6416,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -18,7 +18,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 267
+   "importado_por": 269
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
@@ -69,11 +69,11 @@
    "importado_por": 89
   },
   {
-   "arquivo": "src/components/layout/index.ts",
-   "importado_por": 85
+   "arquivo": "src/integrations/supabase/database.types.ts",
+   "importado_por": 86
   },
   {
-   "arquivo": "src/integrations/supabase/database.types.ts",
+   "arquivo": "src/components/layout/index.ts",
    "importado_por": 85
   },
   {

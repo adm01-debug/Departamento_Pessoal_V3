@@ -12,17 +12,17 @@
    "src/contexts (3)"
   ],
   "hooks": [
-   "src/hooks (98)",
+   "src/hooks (99)",
    "src/components (9)",
    "src/contexts (4)"
   ],
   "servicos_logica": [
-   "src/services (95)",
+   "src/services (96)",
    "src/utils (35)",
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (641)",
+   "co-localizado (__tests__) (643)",
    "co-localizado (*.test) (73)",
    "e2e/ (33)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: integra colaborador_lotacoes ponta a ponta no dossiê do colaborador (#677)",
    "infra: põe colaborador_lotacoes no LOTE ATUAL, pronta para validate/apply (#676)",
    "docs(auditoria): decide não aplicar colaborador_lotacoes, com a medição que sustenta (#675)",
    "docs(auditoria): registra a prova byte a byte, por símbolo exportado e por token (#674)",
-   "chore(auditoria): escreve e executa o sidecar que faltava ao colaborador_lotacoes (#673)",
-   "infra: o apply do canonical-migrations confirma o lote anterior, não o atual (#671)"
+   "chore(auditoria): escreve e executa o sidecar que faltava ao colaborador_lotacoes (#673)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

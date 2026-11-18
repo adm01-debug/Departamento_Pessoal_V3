@@ -2397,11 +2397,15 @@
     "TrabalhoHierarquiaTab"
    ],
    "export_default": null,
-   "linhas": 709,
+   "linhas": 795,
    "dominio": "components/colaborador-detalhes",
    "hooks_locais": [
     "useCentrosCusto",
+    "useDefinirLotacaoPrincipal",
     "useEmpresas",
+    "useLotacaoPrincipal",
+    "useLotacoesCatalogo",
+    "usePermissions",
     "useTimes",
     "useVinculosColaborador"
    ],

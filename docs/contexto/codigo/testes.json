@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 772,
+ "total": 774,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 2,
-  "unit": 728
+  "unit": 730
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 641
+   "arquivos": 643
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -4297,6 +4297,15 @@
    "casos": 7
   },
   {
+   "arquivo": "src/hooks/__tests__/useColaboradorLotacao.test.ts",
+   "tipo": "unit",
+   "linhas": 49,
+   "testa": [
+    "src/hooks/useColaboradorLotacao.ts"
+   ],
+   "casos": 3
+  },
+  {
    "arquivo": "src/hooks/__tests__/useColaboradorVinculo.test.ts",
    "tipo": "unit",
    "linhas": 79,
@@ -5630,6 +5639,16 @@
     "src/services/colaboradorDetalhesService.ts"
    ],
    "casos": 56
+  },
+  {
+   "arquivo": "src/services/__tests__/colaboradorLotacaoService.test.ts",
+   "tipo": "unit",
+   "linhas": 131,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/services/colaboradorLotacaoService.ts"
+   ],
+   "casos": 7
   },
   {
    "arquivo": "src/services/__tests__/colaboradorService.recontratacao.test.ts",
@@ -7556,6 +7575,7 @@
   "src/hooks/useCalculoFolha.ts": 1,
   "src/hooks/useCargos.ts": 2,
   "src/hooks/useColaboradorDetalhes.ts": 15,
+  "src/hooks/useColaboradorLotacao.ts": 1,
   "src/hooks/useColaboradorVinculo.ts": 1,
   "src/hooks/useColaboradores.ts": 2,
   "src/hooks/useComplianceColaborador.ts": 2,
@@ -7631,7 +7651,7 @@
   "src/hooks/useWebhooksAvancados.ts": 2,
   "src/hooks/validators.ts": 1,
   "src/integrations/lovable/index.ts": 1,
-  "src/integrations/supabase/client.ts": 25,
+  "src/integrations/supabase/client.ts": 26,
   "src/integrations/supabase/database.types.ts": 12,
   "src/integrations/supabase/previewAuthStorage.ts": 1,
   "src/integrations/supabase/types.ts": 13,
@@ -7694,6 +7714,7 @@
   "src/services/catalogoCursoService.ts": 1,
   "src/services/cnabService.ts": 2,
   "src/services/colaboradorDetalhesService.ts": 2,
+  "src/services/colaboradorLotacaoService.ts": 1,
   "src/services/colaboradorService.ts": 2,
   "src/services/comunicacaoService.ts": 3,
   "src/services/contabilidadeService.ts": 1,

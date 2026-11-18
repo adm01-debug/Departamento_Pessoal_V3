@@ -13816,13 +13816,26 @@
     "lotacao_id->lotacoes"
    ],
    "criada_em": "20260929120000_colaborador_lotacoes.sql",
-   "usada_no_front": 0,
+   "colunas_types": {
+    "colaborador_id": "string",
+    "created_at": "string",
+    "empresa_id": "string",
+    "id": "string",
+    "lotacao_id": "string",
+    "principal": "boolean",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [
     "trg_colaborador_lotacoes_valida_tenant"
    ],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "colaboradores": {
    "colunas": {
@@ -38672,7 +38685,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 1,
+   "usada_no_front": 2,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,

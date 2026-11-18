@@ -1412,7 +1412,9 @@
    "src/components/ui/spinner.tsx",
    "src/components/ui/status-badge.tsx",
    "src/hooks/useColaboradorDetalhes.ts",
+   "src/hooks/useColaboradorLotacao.ts",
    "src/hooks/useEmpresas.ts",
+   "src/hooks/usePermissions.ts",
    "src/hooks/useTabelasReferencia.ts",
    "src/hooks/useVinculos.ts",
    "src/services/cargoService.ts",
@@ -4778,6 +4780,9 @@
    "src/mocks/colaboradoresMock.ts",
    "src/services/colaboradorDetalhesService.ts"
   ],
+  "src/hooks/useColaboradorLotacao.ts": [
+   "src/services/colaboradorLotacaoService.ts"
+  ],
   "src/hooks/useColaboradorVinculo.ts": [
    "src/contexts/AuthContext.tsx",
    "src/hooks/useEmpresas.ts",
@@ -7353,6 +7358,10 @@
    "src/integrations/supabase/database.types.ts",
    "src/schemas/colaboradorDetalhes.ts",
    "src/schemas/validate.ts"
+  ],
+  "src/services/colaboradorLotacaoService.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/database.types.ts"
   ],
   "src/services/colaboradorService.ts": [
    "src/integrations/supabase/client.ts",

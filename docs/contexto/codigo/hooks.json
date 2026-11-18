@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 117,
+ "total": 118,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -1219,6 +1219,31 @@
     "src/pages/HorasExtrasPage.tsx"
    ],
    "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useColaboradorLotacao.ts",
+   "hooks_exportados": [
+    "useDefinirLotacaoPrincipal",
+    "useLotacaoPrincipal",
+    "useLotacoesCatalogo",
+    "useLotacoesDoColaborador"
+   ],
+   "linhas": 56,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx"
+   ],
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/useColaboradorVinculo.ts",
@@ -2492,9 +2517,10 @@
     "useQuery"
    ],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_arquivos": [
-    "src/components/PermissionRoute.tsx"
+    "src/components/PermissionRoute.tsx",
+    "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx"
    ],
    "coberto_por_testes": 1
   },

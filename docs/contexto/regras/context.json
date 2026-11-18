@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "8d5a8236b203f5afe4ea4c03ad8f339f15e43c16",
+  "sha": "9ffdf21880bdd734b1e8ec1faaa5d96d7761292e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 03:45 UTC",
-  "files_total": 3594,
-  "code_files": 3017,
-  "code_lines": 477373
+  "generated_at": "2026-11-18 04:14 UTC",
+  "files_total": 3598,
+  "code_files": 3021,
+  "code_lines": 477791
  },
  "version": "1.3.2",
- "facts_hash": "e521e07b5b7e6c75",
+ "facts_hash": "83c9d1c098ecab86",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   "languages": {
    ".tsx": 999,
    ".sql": 944,
-   ".ts": 938,
+   ".ts": 942,
    ".mjs": 108,
    ".js": 15,
    ".cjs": 11,
@@ -89212,6 +89212,7 @@
      "cnab_configuracoes",
      "cnab_itens",
      "cnab_remessas",
+     "colaborador_lotacoes",
      "colaboradores",
      "competencias_config",
      "comunicados",
@@ -89270,6 +89271,7 @@
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
      "linhas_transporte",
+     "lotacoes",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -89286,6 +89288,7 @@
      "periodos_aquisitivos",
      "periodos_experiencia",
      "periodos_ponto",
+     "permissions",
      "pesquisas",
      "pesquisas_perguntas",
      "pesquisas_respostas",
@@ -89371,7 +89374,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 305
+    "deps_count": 308
    },
    {
     "path": "",
@@ -100522,6 +100525,22 @@
     "file": "src/hooks/useColaboradorDetalhes.ts"
    },
    {
+    "name": "useLotacoesCatalogo",
+    "file": "src/hooks/useColaboradorLotacao.ts"
+   },
+   {
+    "name": "useLotacaoPrincipal",
+    "file": "src/hooks/useColaboradorLotacao.ts"
+   },
+   {
+    "name": "useLotacoesDoColaborador",
+    "file": "src/hooks/useColaboradorLotacao.ts"
+   },
+   {
+    "name": "useDefinirLotacaoPrincipal",
+    "file": "src/hooks/useColaboradorLotacao.ts"
+   },
+   {
     "name": "useColaboradorVinculo",
     "file": "src/hooks/useColaboradorVinculo.ts"
    },
@@ -101819,7 +101838,7 @@
   {
    "module": "src/components",
    "files": 975,
-   "lines": 176184,
+   "lines": 176270,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102153,8 +102172,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 201,
-   "lines": 23497,
+   "files": 203,
+   "lines": 23602,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102210,6 +102229,7 @@
     "useCalculoFolha.ts: useCalculoFolha",
     "useCargos.ts: useCargos",
     "useColaboradorDetalhes.ts: useDependentes, useCriarDependente, useAtualizarDependente, useExcluirDependente, useContatosEmergencia, useCriarContatoEmergencia",
+    "useColaboradorLotacao.ts: chaveCatalogoLotacoes, chaveLotacoesDoColaborador, useLotacoesCatalogo, useLotacaoPrincipal, useLotacoesDoColaborador, useDefinirLotacaoPrincipal",
     "useColaboradorVinculo.ts: useColaboradorVinculo",
     "useColaboradores.ts: useColaboradores",
     "useComplianceColaborador.ts: useConsentimentosColaborador",
@@ -102233,8 +102253,7 @@
     "useExecutiveDashboard.ts: useExecutiveKPIs, useStrategicFinancials",
     "useFeriados.ts: useFeriados",
     "useFerias.ts: useFerias",
-    "useFeriasAprovacao.ts: useFeriasAprovacao",
-    "useFolha.ts: useFolha"
+    "useFeriasAprovacao.ts: useFeriasAprovacao"
    ],
    "docs": [
     "useAuth.ts: V19: useAuth hook - Re-export do context",
@@ -102288,6 +102307,7 @@
     "src/hooks/useCalculoFolha.ts",
     "src/hooks/useCargos.ts",
     "src/hooks/useColaboradorDetalhes.ts",
+    "src/hooks/useColaboradorLotacao.ts",
     "src/hooks/useColaboradorVinculo.ts",
     "src/hooks/useColaboradores.ts",
     "src/hooks/useComplianceColaborador.ts",
@@ -102349,8 +102369,7 @@
     "src/hooks/useRealtimeDashboard.ts",
     "src/hooks/useSSTColaborador.ts",
     "src/hooks/useSecureVisibility.ts",
-    "src/hooks/useSecurityMonitor.ts",
-    "src/hooks/useServerValidation.ts"
+    "src/hooks/useSecurityMonitor.ts"
    ]
   },
   {
@@ -102795,7 +102814,7 @@
   {
    "module": "src/schemas",
    "files": 33,
-   "lines": 8731,
+   "lines": 8732,
    "tables": [],
    "exports": [
     "admissao.ts: admissaoSchema, AdmissaoSchema",
@@ -102877,8 +102896,8 @@
   },
   {
    "module": "src/services",
-   "files": 191,
-   "lines": 40858,
+   "files": 193,
+   "lines": 41084,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -102910,6 +102929,7 @@
     "cnab_itens",
     "cnab_remessas",
     "colaborador_beneficios",
+    "colaborador_lotacoes",
     "colaboradores",
     "competencias_config",
     "comunicados",
@@ -102986,6 +103006,7 @@
     "linhas_transporte",
     "log_envio_relatorios",
     "login_attempts",
+    "lotacoes",
     "medidas_disciplinares",
     "medidas_disciplinares_contestacao_anexos",
     "medidas_disciplinares_integracao",
@@ -103101,6 +103122,7 @@
     "catalogoCursoService.ts: InscricaoComJoins, CertificadoComJoins, TrilhaCursoComCurso, InstanciaComJoins, catalogoCursoService",
     "cnabService.ts: CNABConfig, cnabService",
     "colaboradorDetalhesService.ts: listarDependentes, criarDependente, atualizarDependente, excluirDependente, listarContatosEmergencia, criarContatoEmergencia",
+    "colaboradorLotacaoService.ts: LotacaoCatalogo, ColaboradorLotacao, colaboradorLotacaoService",
     "colaboradorService.ts: colaboradorService",
     "comunicacaoService.ts: comunicacaoService",
     "contabilidadeService.ts: LancamentoComContas, contabilidadeService",
@@ -103121,8 +103143,7 @@
     "exportService.ts: validateExportData, exportPontoCSV, PontoPdfLabels, exportPontoPDF, Portaria671Solicitacao, exportPortaria671PDF",
     "faltasService.ts: FaltaComColaborador, faltasService",
     "feriasService.ts: feriasService",
-    "folhaPagamentoService.ts: FolhaItemDetalhes, HoleriteData, folhaPagamentoService",
-    "folhaService.ts: FolhaRecord, FolhaFilters, folhaService"
+    "folhaPagamentoService.ts: FolhaItemDetalhes, HoleriteData, folhaPagamentoService"
    ],
    "docs": [
     "assistenteIAService.ts: P5-081: Assistente IA — service layer Simulação de cenários: 1. Edge function timeout (30s) → AbortController + friendly error 2. Request em andamento → cancela anterior (same-key cancellation) 3. 401 Unauthorized → refresh token + retry 4. Resposta malformada → fallback com mensagem CLT 5. Offline …",
@@ -103180,6 +103201,7 @@
     "src/services/catalogoCursoService.ts",
     "src/services/cnabService.ts",
     "src/services/colaboradorDetalhesService.ts",
+    "src/services/colaboradorLotacaoService.ts",
     "src/services/colaboradorService.ts",
     "src/services/comunicacaoService.ts",
     "src/services/contabilidadeService.ts",
@@ -103240,8 +103262,7 @@
     "src/services/workflowService.ts",
     "src/services/__tests__/admissaoService.test.ts",
     "src/services/__tests__/afastamentoService.test.ts",
-    "src/services/__tests__/assistenteIAService.test.ts",
-    "src/services/__tests__/auditoriaService.test.ts"
+    "src/services/__tests__/assistenteIAService.test.ts"
    ]
   },
   {
@@ -104504,6 +104525,17 @@
    "colaborador_beneficios": {
     "select": [
      "src/services/tabelas/beneficiosService.ts"
+    ]
+   },
+   "colaborador_lotacoes": {
+    "select": [
+     "src/services/colaboradorLotacaoService.ts"
+    ],
+    "update": [
+     "src/services/colaboradorLotacaoService.ts"
+    ],
+    "upsert": [
+     "src/services/colaboradorLotacaoService.ts"
     ]
    },
    "colaboradores": {
@@ -105823,7 +105855,8 @@
    },
    "lotacoes": {
     "select": [
-     "src/pages/LotacoesPage.tsx"
+     "src/pages/LotacoesPage.tsx",
+     "src/services/colaboradorLotacaoService.ts"
     ],
     "insert": [
      "src/pages/LotacoesPage.tsx"
@@ -107528,6 +107561,12 @@
     "id",
     "status"
    ],
+   "colaborador_lotacoes": [
+    "colaborador_id",
+    "empresa_id",
+    "lotacao_id",
+    "principal"
+   ],
    "colaboradores": [
     "agencia",
     "banco_nome",
@@ -108071,8 +108110,10 @@
     "user_agent"
    ],
    "lotacoes": [
+    "codigo",
     "empresa_id",
-    "id"
+    "id",
+    "nome"
    ],
    "medidas_disciplinares": [
     "colaborador_id",
@@ -110423,6 +110464,10 @@
     "count": 1
    },
    {
+    "file": "src/services/__tests__/colaboradorLotacaoService.test.ts",
+    "count": 1
+   },
+   {
     "file": "src/services/trainingImages/storage.ts",
     "count": 1
    },
@@ -111052,7 +111097,6 @@
    "clinicas_partners_servicos",
    "cnab_sequencias",
    "cnae",
-   "colaborador_lotacoes",
    "colaboradores_historico",
    "colaboradores_pin",
    "comissoes",
@@ -114862,6 +114906,10 @@
    {
     "file": "src/hooks/useCalcular13Salario.ts",
     "msg": "Erro ao calcular 13º: ${safeErrorMessage(err, "
+   },
+   {
+    "file": "src/hooks/useColaboradorLotacao.ts",
+    "msg": "Não foi possível atualizar a lotação principal: ${mensagem}"
    },
    {
     "file": "src/hooks/useESocial.ts",
@@ -147538,6 +147586,11 @@
     "file": "src/services/canalContabilidadeService.ts",
     "name": "BUCKET",
     "value": "'contabilidade-anexos'"
+   },
+   {
+    "file": "src/services/colaboradorLotacaoService.ts",
+    "name": "FILTRO_ATIVA",
+    "value": "'ativa.eq.true,ativa.is.null'"
    },
    {
     "file": "src/services/colaboradorService.ts",
@@ -183553,6 +183606,22 @@
     "name": "calls atualizarFormacao scoped by colaboradorId"
    },
    {
+    "file": "src/hooks/__tests__/useColaboradorLotacao.test.ts",
+    "name": "chaves de colaborador_lotacoes"
+   },
+   {
+    "file": "src/hooks/__tests__/useColaboradorLotacao.test.ts",
+    "name": "invalidar a lista alcança a query da lotação principal"
+   },
+   {
+    "file": "src/hooks/__tests__/useColaboradorLotacao.test.ts",
+    "name": "não invalida o catálogo da empresa (prefixo diferente)"
+   },
+   {
+    "file": "src/hooks/__tests__/useColaboradorLotacao.test.ts",
+    "name": "a chave é escopada por empresa — outra empresa não é alcançada"
+   },
+   {
     "file": "src/hooks/__tests__/useColaboradorVinculo.test.ts",
     "name": "useColaboradorVinculo"
    },
@@ -192031,6 +192100,46 @@
    {
     "file": "src/services/__tests__/colaboradorDetalhesService.test.ts",
     "name": "returns webhooks without empresa filter"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorLotacaoService.test.ts",
+    "name": "listarCatalogo"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorLotacaoService.test.ts",
+    "name": "filtra pela empresa e exclui só o ativa=false (NULL continua valendo)"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorLotacaoService.test.ts",
+    "name": "propaga o erro do banco"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorLotacaoService.test.ts",
+    "name": "buscarPrincipal"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorLotacaoService.test.ts",
+    "name": "devolve null quando o colaborador ainda não tem vínculo"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorLotacaoService.test.ts",
+    "name": "escopa pela empresa — não só pelo colaborador"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorLotacaoService.test.ts",
+    "name": "definirPrincipal"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorLotacaoService.test.ts",
+    "name": "desmarca a principal anterior ANTES do upsert e poupa a lotação alvo"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorLotacaoService.test.ts",
+    "name": "não roda o upsert se o desmarque falhar"
+   },
+   {
+    "file": "src/services/__tests__/colaboradorLotacaoService.test.ts",
+    "name": "propaga o erro do upsert (estado fica com zero principal, nunca com duas)"
    },
    {
     "file": "src/services/__tests__/colaboradorService.recontratacao.test.ts",
@@ -275752,7 +275861,7 @@
   },
   "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx": {
    "path": "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
-   "lines": 709,
+   "lines": 795,
    "exports": [
     "const hierarquiaItemVariants",
     "function TrabalhoHierarquiaTab"
@@ -288254,6 +288363,27 @@
     }
    ]
   },
+  "src/hooks/useColaboradorLotacao.ts": {
+   "path": "src/hooks/useColaboradorLotacao.ts",
+   "lines": 56,
+   "exports": [
+    "const chaveCatalogoLotacoes",
+    "const chaveLotacoesDoColaborador",
+    "function useLotacoesCatalogo",
+    "function useLotacaoPrincipal",
+    "function useLotacoesDoColaborador",
+    "function useDefinirLotacaoPrincipal"
+   ],
+   "errors": [
+    "Não foi possível atualizar a lotação principal: ${mensagem}"
+   ],
+   "hooks": [
+    "useLotacoesCatalogo",
+    "useLotacaoPrincipal",
+    "useLotacoesDoColaborador",
+    "useDefinirLotacaoPrincipal"
+   ]
+  },
   "src/hooks/useColaboradorVinculo.ts": {
    "path": "src/hooks/useColaboradorVinculo.ts",
    "lines": 74,
@@ -291016,6 +291146,24 @@
     "calls atualizarContatoEmergencia scoped by colaboradorId",
     "useAtualizarFormacao",
     "calls atualizarFormacao scoped by colaboradorId"
+   ]
+  },
+  "src/hooks/__tests__/useColaboradorLotacao.test.ts": {
+   "path": "src/hooks/__tests__/useColaboradorLotacao.test.ts",
+   "lines": 49,
+   "is_test": true,
+   "calc_fns": [
+    {
+     "name": "invalidada",
+     "params": "qc: QueryClient, chave: readonly unknown[]",
+     "body": ""
+    }
+   ],
+   "tests": [
+    "chaves de colaborador_lotacoes",
+    "invalidar a lista alcança a query da lotação principal",
+    "não invalida o catálogo da empresa (prefixo diferente)",
+    "a chave é escopada por empresa — outra empresa não é alcançada"
    ]
   },
   "src/hooks/__tests__/useColaboradorVinculo.test.ts": {
@@ -301356,7 +301504,7 @@
   },
   "src/schemas/tableColumns.ts": {
    "path": "src/schemas/tableColumns.ts",
-   "lines": 4170,
+   "lines": 4171,
    "exports": [
     "const TABLE_COLUMNS"
    ],
@@ -303906,6 +304054,57 @@
      "name": "salvarValorCampoCustomizado",
      "params": "campoId: string, colaboradorId: string, valor: string",
      "body": "const { data, error } = await supabase .from('valores_campos_customizados') .upsert( validateTablePayload( 'valores_campos_customizados', { campo_customizado_id: campoId, colaborador_id: colaboradorId, valor }, 'colaboradorDetalhesService:valores_campos_customizados' ), { onConflict: 'campo_customizado_id,colaborador_id' } ) .select() .maybeSingle(); if (error) throw error; return data;"
+    }
+   ]
+  },
+  "src/services/colaboradorLotacaoService.ts": {
+   "path": "src/services/colaboradorLotacaoService.ts",
+   "lines": 95,
+   "exports": [
+    "type LotacaoCatalogo",
+    "interface ColaboradorLotacao",
+    "const colaboradorLotacaoService"
+   ],
+   "tables": [
+    {
+     "table": "lotacoes",
+     "op": "select"
+    },
+    {
+     "table": "colaborador_lotacoes",
+     "op": "select"
+    },
+    {
+     "table": "colaborador_lotacoes",
+     "op": "select"
+    },
+    {
+     "table": "colaborador_lotacoes",
+     "op": "update"
+    },
+    {
+     "table": "colaborador_lotacoes",
+     "op": "upsert"
+    }
+   ],
+   "table_cols": {
+    "lotacoes": [
+     "codigo",
+     "empresa_id",
+     "id",
+     "nome"
+    ],
+    "colaborador_lotacoes": [
+     "colaborador_id",
+     "empresa_id",
+     "lotacao_id",
+     "principal"
+    ]
+   },
+   "params": [
+    {
+     "name": "FILTRO_ATIVA",
+     "value": "'ativa.eq.true,ativa.is.null'"
     }
    ]
   },
@@ -308174,6 +308373,24 @@
     "queries etnias table and returns data",
     "listarWebhooks",
     "returns webhooks without empresa filter"
+   ]
+  },
+  "src/services/__tests__/colaboradorLotacaoService.test.ts": {
+   "path": "src/services/__tests__/colaboradorLotacaoService.test.ts",
+   "lines": 131,
+   "is_test": true,
+   "dyn_from": 1,
+   "tests": [
+    "listarCatalogo",
+    "filtra pela empresa e exclui só o ativa=false (NULL continua valendo)",
+    "propaga o erro do banco",
+    "buscarPrincipal",
+    "devolve null quando o colaborador ainda não tem vínculo",
+    "escopa pela empresa — não só pelo colaborador",
+    "definirPrincipal",
+    "desmarca a principal anterior ANTES do upsert e poupa a lotação alvo",
+    "não roda o upsert se o desmarque falhar",
+    "propaga o erro do upsert (estado fica com zero principal, nunca com duas)"
    ]
   },
   "src/services/__tests__/colaboradorService.recontratacao.test.ts": {
@@ -327002,10 +327219,26 @@
   }
  },
  "git": {
-  "sha": "8d5a8236b203f5afe4ea4c03ad8f339f15e43c16",
+  "sha": "9ffdf21880bdd734b1e8ec1faaa5d96d7761292e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "9ffdf21",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "feat: integra colaborador_lotacoes ponta a ponta no dossiê do colaborador (#677)",
+    "files": [
+     "scripts/.types-drift-baseline.json",
+     "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
+     "src/hooks/__tests__/useColaboradorLotacao.test.ts",
+     "src/hooks/useColaboradorLotacao.ts",
+     "src/integrations/supabase/types.ts",
+     "src/schemas/tableColumns.ts",
+     "src/services/__tests__/colaboradorLotacaoService.test.ts",
+     "src/services/colaboradorLotacaoService.ts"
+    ]
+   },
    {
     "sha": "8d5a823",
     "date": "2026-11-18",
@@ -327367,16 +327600,6 @@
      "src/components/colaborador-detalhes/AfastamentosTab.tsx",
      "src/pages/ColaboradorDetalhesPage.tsx"
     ]
-   },
-   {
-    "sha": "a03e498",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(ui): iniciais do avatar voltam a ter fundo (#649)",
-    "files": [
-     "src/components/ui/__tests__/user-avatar.test.tsx",
-     "src/components/ui/user-avatar.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -327391,6 +327614,18 @@
    [
     "src/pages/ColaboradorDetalhesPage.tsx",
     3
+   ],
+   [
+    "scripts/.types-drift-baseline.json",
+    2
+   ],
+   [
+    "src/integrations/supabase/types.ts",
+    2
+   ],
+   [
+    "src/schemas/tableColumns.ts",
+    2
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -327429,35 +327664,23 @@
     2
    ],
    [
-    "scripts/.types-drift-baseline.json",
+    "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
     1
    ],
    [
-    "supabase/migrations/20260929120000_colaborador_lotacoes.sql",
+    "src/hooks/__tests__/useColaboradorLotacao.test.ts",
     1
    ],
    [
-    "supabase/migrations/20260929120000_colaborador_lotacoes.verify.sql",
+    "src/hooks/useColaboradorLotacao.ts",
     1
    ],
    [
-    "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.verify.sql",
+    "src/services/__tests__/colaboradorLotacaoService.test.ts",
     1
    ],
    [
-    "docs/auditoria/sql-preservado/20260819000000_p0_fix_user_empresa_id_rls.sql",
-    1
-   ],
-   [
-    "docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql",
-    1
-   ],
-   [
-    "docs/auditoria/sql-preservado/20260821000000_p0_rls_dashboard_audit.sql",
-    1
-   ],
-   [
-    "docs/auditoria/sql-preservado/20261005020000_onboarding_modelo_b_convergencia.sql",
+    "src/services/colaboradorLotacaoService.ts",
     1
    ]
   ]

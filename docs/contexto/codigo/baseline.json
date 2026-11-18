@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8d5a8236b203f5afe4ea4c03ad8f339f15e43c16",
+  "commit": "9ffdf21880bdd734b1e8ec1faaa5d96d7761292e",
   "branch": "main",
-  "data_commit": "2026-11-18T00:45:04-03:00",
+  "data_commit": "2026-11-18T01:14:17-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "9ffdf21",
+    "data": "2026-11-18",
+    "assunto": "feat: integra colaborador_lotacoes ponta a ponta no dossiê do colaborador (#677)"
+   },
    {
     "sha": "8d5a823",
     "data": "2026-11-18",
@@ -126,14 +131,9 @@
     "sha": "0425875",
     "data": "2026-11-17",
     "assunto": "fix(automação): registra os 5 scripts que a #652 deixou sem gatilho (#654)"
-   },
-   {
-    "sha": "6fbdf5c",
-    "data": "2026-11-17",
-    "assunto": "feat(design-system): recupera os gates de layout protegido e de tipografia (#652)"
    }
   ],
-  "arquivos_mudados_7d": 1124,
+  "arquivos_mudados_7d": 1128,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -145,15 +145,15 @@
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 107
+    "mudancas": 108
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 95
+    "mudancas": 96
    },
    {
     "pasta": "src/components/colaborador-detalhes",
-    "mudancas": 87
+    "mudancas": 88
    },
    {
     "pasta": "src/components/avaliacao",
@@ -282,10 +282,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": "AGENTS.md",
-    "mudancas": 5
-   },
-   {
     "arquivo": "docs/auditoria/sql-preservado/README.md",
     "mudancas": 5
    },
@@ -295,6 +291,10 @@
    },
    {
     "arquivo": "public/sw-custom.js",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "scripts/autofix/run.mjs",
     "mudancas": 5
    }
   ],
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3581,
-  "arquivos_codigo": 2075,
-  "linhas_codigo": 410747,
+  "arquivos_total": 3585,
+  "arquivos_codigo": 2079,
+  "linhas_codigo": 411238,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
   "componentes": 636,
-  "hooks": 117,
+  "hooks": 118,
   "edge_functions": 67,
   "tabelas": 426,
   "migrations": 871,
   "cron_jobs": 41,
-  "testes": 772,
+  "testes": 774,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 335
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 975,
-   "linhas": 176184
+   "linhas": 176270
   },
   "src/constants": {
    "arquivos": 7,
@@ -659,8 +659,8 @@
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 201,
-   "linhas": 23497
+   "arquivos": 203,
+   "linhas": 23602
   },
   "src/i18n": {
    "arquivos": 2,
@@ -668,7 +668,7 @@
   },
   "src/integrations": {
    "arquivos": 11,
-   "linhas": 25999
+   "linhas": 26072
   },
   "src/lib": {
    "arquivos": 21,
@@ -692,11 +692,11 @@
   },
   "src/schemas": {
    "arquivos": 33,
-   "linhas": 8731
+   "linhas": 8732
   },
   "src/services": {
-   "arquivos": 191,
-   "linhas": 40858
+   "arquivos": 193,
+   "linhas": 41084
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -754,11 +754,11 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 24849
+   "linhas": 24922
   },
   {
    "arquivo": "src/schemas/tableColumns.ts",
-   "linhas": 4170
+   "linhas": 4171
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",
