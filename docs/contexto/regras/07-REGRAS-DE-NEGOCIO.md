@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3616289d4b` · branch `main` · 2026-11-18 03:17 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8d5a8236b2` · branch `main` · 2026-11-18 03:45 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -311,7 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `vinculos` | tenant_vinculos | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `ferias_aprovacoes` | tenant_ferias_aprovacoes | ALL | authenticated | permissive | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `ferias_arquivos` | tenant_ferias_arquivos | ALL | authenticated | permissive | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| … +863 linhas — lista completa em `context.json` | | | | | | |
+| … +864 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `desligamentos` | `total_descontos` | default 0 |
 | `desligamentos` | `valor_liquido` | default 0 |
 | `desligamentos` | `checklist_comunicacao` | default false |
-| … +4397 linhas — lista completa em `context.json` | | |
+| … +4405 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -691,6 +691,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_pcs_validate_factor | BEFORE INSERT OR UPDATE | `pcs_fatores` | `pcs_validate_factor` |  |
 | trg_pcs_recalc_pontos | BEFORE INSERT OR UPDATE | `pcs_avaliacoes_cargo` | `pcs_recalc_pontos` |  |
 | tr_protect_esocial_transport_fields | BEFORE UPDATE | `esocial_eventos` | `protect_esocial_transport_fields` |  |
+| trg_colaborador_lotacoes_valida_tenant | BEFORE INSERT OR UPDATE | `colaborador_lotacoes` | `colaborador_lotacoes_valida_tenant` |  |
 | trg_sync_holerite_folha_item | AFTER INSERT OR DELETE OR UPDATE OF SALARIO_BASE, TOTAL_PROVENTOS, TOTAL_DESCONTOS, TOTAL_LIQUIDO, INSS_MES, IRRF_MES, FGTS_MES | `folha_itens` | `fn_sync_holerite_from_folha_item` |  |
 | trg_provisao_auditoria_empresa | BEFORE INSERT | `provisao_auditoria` | `provisao_auditoria_set_empresa` |  |
 | trg_documentos_sync_empresa_id | BEFORE INSERT OR UPDATE OF COLABORADOR_ID | `documentos` | `documentos_sync_empresa_id` |  |
@@ -922,8 +923,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_fwd_audit_unified | AFTER INSERT | `ferias_audit_log` | `fwd_to_audit_unified` |  |
 | trg_fwd_audit_unified | AFTER INSERT | `folha_auditoria` | `fwd_to_audit_unified` |  |
 | trg_fwd_audit_unified | AFTER INSERT | `folha_eventos_auditoria` | `fwd_to_audit_unified` |  |
-| trg_fwd_audit_unified | AFTER INSERT | `ponto_auditoria` | `fwd_to_audit_unified` |  |
-| … +161 linhas — lista completa em `context.json` | | | | |
+| … +162 linhas — lista completa em `context.json` | | | | |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -983,6 +983,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `admin_definir_pin_quiosque` | sem permissão para definir PIN deste colaborador | `supabase/migrations/20260924190000_p0_fix_search_path_pin_quiosque.sql` |
 | `admin_definir_pin_quiosque` | PIN deve ter de 4 a 6 dígitos numéricos | `supabase/migrations/20260924190000_p0_fix_search_path_pin_quiosque.sql` |
 | `verificar_pin_quiosque` | PIN_BLOQUEADO | `supabase/migrations/20260924190000_p0_fix_search_path_pin_quiosque.sql` |
+| `colaborador_lotacoes_valida_tenant` | colaborador_lotacoes: colaborador_id pertence a outra empresa (colaborador.empresa_id=%, linha.empresa_id=%) | `supabase/migrations/20260929120000_colaborador_lotacoes.sql` |
+| `colaborador_lotacoes_valida_tenant` | colaborador_lotacoes: lotacao_id pertence a outra empresa (lotacao.empresa_id=%, linha.empresa_id=%) | `supabase/migrations/20260929120000_colaborador_lotacoes.sql` |
 | `admissao_salvar_dados` | token invalido ou expirado | `supabase/migrations/20261002103000_p0_fix_audit_critical_gaps.sql` |
 | `admissao_marcar_documentos` | token invalido ou expirado | `supabase/migrations/20261002103000_p0_fix_audit_critical_gaps.sql` |
 | `admissao_registrar_documento` | token invalido ou expirado | `supabase/migrations/20261002103000_p0_fix_audit_critical_gaps.sql` |
@@ -1227,9 +1229,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `programacao_ferias_aprovar_gestor` | Sem permissão de escopo | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `programacao_ferias_aprovar_gestor` | Apenas gestor/RH pode aprovar | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `programacao_ferias_aprovar_gestor` | Status atual não permite aprovação do gestor: % | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `programacao_ferias_aprovar_rh` | Programação não encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `programacao_ferias_aprovar_rh` | Sem permissão de escopo | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +159 linhas — lista completa em `context.json` | | |
+| … +161 linhas — lista completa em `context.json` | | |
 
 ## E. Estados, máquinas de estado e transições
 

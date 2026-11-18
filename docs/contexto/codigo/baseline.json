@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3616289d4bfe3c1d765b7f91756ef1f377a2605e",
+  "commit": "8d5a8236b203f5afe4ea4c03ad8f339f15e43c16",
   "branch": "main",
-  "data_commit": "2026-11-17T23:54:28-03:00",
+  "data_commit": "2026-11-18T00:45:04-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "8d5a823",
+    "data": "2026-11-18",
+    "assunto": "infra: põe colaborador_lotacoes no LOTE ATUAL, pronta para validate/apply (#676)"
+   },
+   {
+    "sha": "b376487",
+    "data": "2026-11-18",
+    "assunto": "docs(auditoria): decide não aplicar colaborador_lotacoes, com a medição que sustenta (#675)"
+   },
    {
     "sha": "3616289",
     "data": "2026-11-17",
@@ -121,19 +131,9 @@
     "sha": "6fbdf5c",
     "data": "2026-11-17",
     "assunto": "feat(design-system): recupera os gates de layout protegido e de tipografia (#652)"
-   },
-   {
-    "sha": "a7dd4ec",
-    "data": "2026-11-17",
-    "assunto": "fix(deploy): recupera o app depois de um deploy novo trocar os chunks (#646)"
-   },
-   {
-    "sha": "ba993ad",
-    "data": "2026-11-17",
-    "assunto": "fix(hooks): guardas de empresa em ajuste de ponto e conta bancária (#650)"
    }
   ],
-  "arquivos_mudados_7d": 1122,
+  "arquivos_mudados_7d": 1124,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 16
+    "mudancas": 17
    },
    {
     "arquivo": "package.json",
@@ -230,6 +230,10 @@
     "mudancas": 8
    },
    {
+    "arquivo": "scripts/canonical-invariants.sql",
+    "mudancas": 7
+   },
+   {
     "arquivo": "scripts/sync/mirror-github.sh",
     "mudancas": 7
    },
@@ -239,10 +243,6 @@
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 6
    },
    {
@@ -286,22 +286,22 @@
     "mudancas": 5
    },
    {
+    "arquivo": "docs/auditoria/sql-preservado/README.md",
+    "mudancas": 5
+   },
+   {
     "arquivo": "infra/github/action-pins.json",
     "mudancas": 5
    },
    {
     "arquivo": "public/sw-custom.js",
     "mudancas": 5
-   },
-   {
-    "arquivo": "scripts/autofix/run.mjs",
-    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 285
+    "commits": 286
    },
    {
     "autor": "dependabot[bot]",
@@ -310,10 +310,6 @@
    {
     "autor": "github-actions[bot]",
     "commits": 4
-   },
-   {
-    "autor": "devin-ai-integration[bot]",
-    "commits": 1
    }
   ]
  },
@@ -329,8 +325,8 @@
   "componentes": 636,
   "hooks": 117,
   "edge_functions": 67,
-  "tabelas": 425,
-  "migrations": 869,
+  "tabelas": 426,
+  "migrations": 871,
   "cron_jobs": 41,
   "testes": 772,
   "workflows": 21,

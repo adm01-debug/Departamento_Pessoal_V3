@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3616289d4bfe3c1d765b7f91756ef1f377a2605e` (2026-11-17T23:54:28-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8d5a8236b203f5afe4ea4c03ad8f339f15e43c16` (2026-11-18T00:45:04-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -45,8 +45,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | componentes | 636 |
 | hooks | 117 |
 | edge_functions | 67 |
-| tabelas | 425 |
-| migrations | 869 |
+| tabelas | 426 |
+| migrations | 871 |
 | cron_jobs | 41 |
 | testes | 772 |
 | workflows | 21 |
@@ -63,7 +63,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
 - docs: docs (95), (raiz) (32), .github (1)
-- nomenclatura: {"componentes":"PascalCase (89%)","hooks":"use + PascalCase","servicos":"camelCase (98%)","edge_functions":"kebab-case (69%)","tabelas":"snake_case (84%)"}
+- nomenclatura: {"componentes":"PascalCase (89%)","hooks":"use + PascalCase","servicos":"camelCase (98%)","edge_functions":"kebab-case (69%)","tabelas":"snake_case (85%)"}
 - instruções para agentes no repo: .claude/CLAUDE.md, AGENTS.md, CLAUDE.md
 
 ## Módulos (menu → domínio)
@@ -396,24 +396,24 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27255 nós · 61529 arestas · 2353 comunidades · grafo do commit `3616289d`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), cn (472), button.tsx (402), card.tsx (396), @tanstack/react-query (327), client.ts (321), vitest (314), useEmpresas (280), usePiiMask (165), "public"."empresas" (159), rateLimit.ts (158)
+- 27256 nós · 61530 arestas · 2402 comunidades · grafo do commit `8d5a8236`
+- comunidades maiores: lucide-react (566), 20260831_corrected_public.sql (493), useEmpresas (488), canonical_schema.sql (475), button.tsx (434), cn (294), client.ts (246), vitest (236), react (208), contract.ts (173), "public"."empresas" (159), App.tsx (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - inventario/estado/rotas.json (23)
-- .github/workflows/canonical-migrations.yml (16)
+- .github/workflows/canonical-migrations.yml (17)
 - package.json (16)
 - package-lock.json (14)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - scripts/sync/autocommit-local.sh (10)
 - docs/prod-readiness.md (9)
 - scripts/automation.config.json (8)
+- scripts/canonical-invariants.sql (7)
 - scripts/sync/mirror-github.sh (7)
 - src/pages/ColaboradoresPage.tsx (7)
 - deno.lock (6)
-- scripts/canonical-invariants.sql (6)
 - scripts/sync/README.md (6)
 - scripts/sync/run-all.sh (6)
 - scripts/sync/sync-github.sh (6)
@@ -653,6 +653,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-18 `8d5a823` infra: põe colaborador_lotacoes no LOTE ATUAL, pronta para validate/apply (#676)
+- 2026-11-18 `b376487` docs(auditoria): decide não aplicar colaborador_lotacoes, com a medição que sustenta (#675)
 - 2026-11-17 `3616289` docs(auditoria): registra a prova byte a byte, por símbolo exportado e por token (#674)
 - 2026-11-17 `a0a6967` chore(auditoria): escreve e executa o sidecar que faltava ao colaborador_lotacoes (#673)
 - 2026-11-17 `4699117` infra: o apply do canonical-migrations confirma o lote anterior, não o atual (#671)
@@ -666,8 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `9fe99bd` test(e2e): resgata da muri os 5 especs de navegador (#661)
 - 2026-11-17 `f759961` feat(desligamentos): faixa de atenção na tela, ligada ao cálculo que já existia (#664)
 - 2026-11-17 `e555a63` feat(rescisao): memória de cálculo com a base e a alíquota efetiva de cada encargo (#663)
-- 2026-11-17 `1ddd897` docs(auditoria): veredito sobre apagar a branch muri, com a triagem dos 111 arquivos (#662)
-- 2026-11-17 `c234912` feat(colaborador): editar conta bancária, com o dado real só para quem pode vê-lo (#659)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

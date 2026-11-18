@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 869,
+ "migrations": 871,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -281,6 +281,7 @@
   "cleanup_security_logs",
   "clinicas_proximas",
   "colaborador_id_do_usuario",
+  "colaborador_lotacoes_valida_tenant",
   "consumir_pendencias_medida_no_holerite",
   "contrato_assinar_por_token",
   "contrato_consultar_por_token",
@@ -1223,6 +1224,13 @@
    "evento": "update",
    "tabela": "cnab_remessas",
    "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "trg_colaborador_lotacoes_valida_tenant",
+   "quando": "before",
+   "evento": "insert or update",
+   "tabela": "colaborador_lotacoes",
+   "funcao": "colaborador_lotacoes_valida_tenant"
   },
   {
    "nome": "audit_colaboradores",
@@ -13718,6 +13726,103 @@
    "triggers": [],
    "sem_rls": false,
    "nao_usada": false
+  },
+  "colaborador_lotacoes": {
+   "colunas": {
+    "colaborador_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "colaboradores"
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "empresa_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "empresas"
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "lotacao_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "lotacoes"
+    },
+    "principal": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "false",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "colaborador_lotacoes_tenant",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "colaborador_lotacoes_principal_unica",
+     "colunas": "colaborador_id",
+     "unico": true
+    },
+    {
+     "nome": "idx_colaborador_lotacoes_colaborador",
+     "colunas": "colaborador_id",
+     "unico": false
+    },
+    {
+     "nome": "idx_colaborador_lotacoes_empresa",
+     "colunas": "empresa_id",
+     "unico": false
+    },
+    {
+     "nome": "idx_colaborador_lotacoes_lotacao",
+     "colunas": "lotacao_id",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "colaborador_id->colaboradores",
+    "empresa_id->empresas",
+    "lotacao_id->lotacoes"
+   ],
+   "criada_em": "20260929120000_colaborador_lotacoes.sql",
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_colaborador_lotacoes_valida_tenant"
+   ],
+   "sem_rls": false,
+   "nao_usada": true
   },
   "colaboradores": {
    "colunas": {

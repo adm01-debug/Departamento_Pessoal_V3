@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3616289d4bfe3c1d765b7f91756ef1f377a2605e",
+  "sha": "8d5a8236b203f5afe4ea4c03ad8f339f15e43c16",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 03:17 UTC",
+  "generated_at": "2026-11-18 03:45 UTC",
   "files_total": 3594,
   "code_files": 3017,
-  "code_lines": 477371
+  "code_lines": 477373
  },
  "version": "1.3.2",
- "facts_hash": "8f3939d7d23fd408",
+ "facts_hash": "e521e07b5b7e6c75",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -40604,6 +40604,65 @@
     "comment": "",
     "origin": "migration"
    },
+   "colaborador_lotacoes": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "UUID PRIMARY KEY DEFAULT gen_random_uuid()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+     },
+     {
+      "name": "empresa_id",
+      "type": "UUID NOT NULL REFERENCES public.empresas(id) ON DELETE CASCADE",
+      "fk": "empresas.id ON DELETE CASCADE",
+      "generated": "",
+      "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+     },
+     {
+      "name": "colaborador_id",
+      "type": "UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE",
+      "fk": "colaboradores.id ON DELETE CASCADE",
+      "generated": "",
+      "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+     },
+     {
+      "name": "lotacao_id",
+      "type": "UUID NOT NULL REFERENCES public.lotacoes(id) ON DELETE CASCADE",
+      "fk": "lotacoes.id ON DELETE CASCADE",
+      "generated": "",
+      "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+     },
+     {
+      "name": "principal",
+      "type": "BOOLEAN NOT NULL DEFAULT false",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+     },
+     {
+      "name": "created_at",
+      "type": "TIMESTAMPTZ NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "TIMESTAMPTZ NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+     }
+    ],
+    "constraints": [
+     "CONSTRAINT colaborador_lotacoes_vinculo_unico UNIQUE (colaborador_id, lotacao_id)"
+    ],
+    "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql",
+    "comment": "Relacionamento colaborador <-> lotacao (M:N). Uma lotacao pode servir varios colaboradores; um colaborador pode ter mais de uma lotacao, com no maximo uma marcada principal = true (ver indice unico parcial abaixo). UI atual (aba Profissional) so gerencia a lotacao principal.",
+    "origin": "migration"
+   },
    "cnab_sequencias": {
     "columns": [
      {
@@ -49830,6 +49889,16 @@
     "src": "supabase/migrations/20260924210000_p0_rls_tenant_correlation_remediation.sql"
    },
    {
+    "name": "colaborador_lotacoes_tenant",
+    "table": "colaborador_lotacoes",
+    "cmd": "ALL",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.rls_tenant_or_admin(empresa_id)",
+    "check": "public.rls_tenant_or_admin(empresa_id)",
+    "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+   },
+   {
     "name": "whatsapp_config_admin_rh",
     "table": "whatsapp_config",
     "cmd": "ALL",
@@ -53902,6 +53971,15 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20260912204000_p1_admission_esocial_claim.sql"
+   },
+   {
+    "name": "trg_colaborador_lotacoes_valida_tenant",
+    "when": "BEFORE INSERT OR UPDATE",
+    "table": "colaborador_lotacoes",
+    "function": "colaborador_lotacoes_valida_tenant",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
    },
    {
     "name": "trg_sync_holerite_folha_item",
@@ -63843,6 +63921,26 @@
      "v_row"
     ]
    },
+   "colaborador_lotacoes_valida_tenant": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE colaborador_empresa UUID; lotacao_empresa UUID; BEGIN SELECT empresa_id INTO colaborador_empresa FROM public.colaboradores WHERE id = NEW.colaborador_id; SELECT empresa_id INTO lotacao_empresa FROM public.lotacoes WHERE id = NEW.lotacao_id; IF colaborador_empresa IS DISTINCT FROM NEW.empresa_id THEN RAISE EXCEPTION 'colaborador_lotacoes: colaborador_id pertence a outra empresa (colaborador.empresa_id=%, linha.empresa_id=%)', colaborador_empresa, NEW.empresa_id; END IF; IF lotacao_empresa IS DISTINCT FROM NEW.empresa_id THEN RAISE EXCEPTION 'colaborador_lotacoes: lotacao_id pertence a outra empresa (lotacao.empresa_id=%, linha.empresa_id=%)', lotacao_empresa, NEW.empresa_id; END IF; R …",
+    "raises": [
+     "colaborador_lotacoes: colaborador_id pertence a outra empresa (colaborador.empresa_id=%, linha.empresa_id=%)",
+     "colaborador_lotacoes: lotacao_id pertence a outra empresa (lotacao.empresa_id=%, linha.empresa_id=%)"
+    ],
+    "tables": [
+     "NEW",
+     "colaborador_empresa",
+     "colaboradores",
+     "lotacao_empresa",
+     "lotacoes"
+    ]
+   },
    "_admissao_token_row": {
     "args": "_token TEXT",
     "returns": "public.admissao_tokens",
@@ -70295,6 +70393,38 @@
     "src": "supabase/migrations/20260924180000_e50_40_colaboradores_cpf_matricula_por_empresa.sql"
    },
    {
+    "name": "colaborador_lotacoes_principal_unica",
+    "table": "colaborador_lotacoes",
+    "columns": "colaborador_id",
+    "unique": true,
+    "where": "WHERE principal = true",
+    "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+   },
+   {
+    "name": "idx_colaborador_lotacoes_colaborador",
+    "table": "colaborador_lotacoes",
+    "columns": "colaborador_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+   },
+   {
+    "name": "idx_colaborador_lotacoes_lotacao",
+    "table": "colaborador_lotacoes",
+    "columns": "lotacao_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+   },
+   {
+    "name": "idx_colaborador_lotacoes_empresa",
+    "table": "colaborador_lotacoes",
+    "columns": "empresa_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+   },
+   {
     "name": "idx_cnab_remessas_folha",
     "table": "cnab_remessas",
     "columns": "folha_id",
@@ -71747,6 +71877,8 @@
    "supabase/migrations/20260924230000_p0_secdef_revoke_public_grant.sql",
    "supabase/migrations/20260924240000_p0_fix_processar_ajuste_search_path.sql",
    "supabase/migrations/20260924310000_p0_batidas_ponto_role_gate.sql",
+   "supabase/migrations/20260929120000_colaborador_lotacoes.sql",
+   "supabase/migrations/20260929120000_colaborador_lotacoes.verify.sql",
    "supabase/migrations/20261001140000_p1_rls_status_hardening.sql",
    "supabase/migrations/20261002102900_p0_rls_tenant_or_admin_helper.sql",
    "supabase/migrations/20261002103000_p0_fix_audit_critical_gaps.sql",
@@ -72359,6 +72491,7 @@
    "auditoria_acesso_bancario": "enabled",
    "report_dispatch_attempts": "enabled",
    "colaboradores_pin": "enabled",
+   "colaborador_lotacoes": "enabled",
    "cnab_sequencias": "enabled",
    "feedbacks_360_operacoes": "enabled",
    "feedbacks_360_validacoes_potencial": "enabled",
@@ -84909,6 +85042,16 @@
     "src": "supabase/migrations/20260924190000_p0_fix_search_path_pin_quiosque.sql"
    },
    {
+    "function": "colaborador_lotacoes_valida_tenant",
+    "msg": "colaborador_lotacoes: colaborador_id pertence a outra empresa (colaborador.empresa_id=%, linha.empresa_id=%)",
+    "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+   },
+   {
+    "function": "colaborador_lotacoes_valida_tenant",
+    "msg": "colaborador_lotacoes: lotacao_id pertence a outra empresa (lotacao.empresa_id=%, linha.empresa_id=%)",
+    "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+   },
+   {
     "function": "admissao_salvar_dados",
     "msg": "token invalido ou expirado",
     "src": "supabase/migrations/20261002103000_p0_fix_audit_critical_gaps.sql"
@@ -87216,6 +87359,8 @@
    "column:empresas.simples_anexo": "Anexo tributário vigente; obrigatório no cálculo quando regime=simples_nacional e não houver alíquota efetiva.",
    "column:empresas.aliquota_encargos_folha": "Alíquota efetiva empresarial revisada (fração 0..1), usada como override explícito nas provisões.",
    "table:report_dispatch_attempts": "Payload exato e recibo de envio de relatório agendado; impede alteração de parâmetros sob a mesma Idempotency-Key.",
+   "table:colaborador_lotacoes": "Relacionamento colaborador <-> lotacao (M:N). Uma lotacao pode servir varios colaboradores; um colaborador pode ter mais de uma lotacao, com no maximo uma marcada principal = true (ver indice unico parcial abaixo). UI atual (aba Profissional) so gerencia a lotacao principal.",
+   "column:lotacoes.colaborador_id": "DEPRECATED (2026-09-29): sem fluxo de escrita no app, substituida por colaborador_lotacoes. Nao remover sem antes confirmar 0 linhas preenchidas em producao (ver RAISE NOTICE desta migration).",
    "column:feedbacks_360.revisao": "Contador monotonico incrementado a CADA alteracao da linha pelo trigger trg_feedbacks_360_revisao (status, nota, potencial ou qualquer outro campo). Entra na versao canonica: reabrir/alterar/concluir de novo invalida a validacao anterior do RH mesmo dentro da MESMA transacao, quando now() e constante.",
    "column:audit_log.empresa_id": "Empresa do evento de auditoria (isolamento da Trilha por tenant). Preenchida explicitamente pelas RPCs do modulo Nine-Box; tambem replicada em dados_novos.empresa_id.",
    "table:feedbacks_360": "Criacao EXCLUSIVAMENTE pela RPC public.criar_feedback_seguro (feedback + auditoria na mesma transacao). INSERT direto revogado; correcao por CANCELAMENTO auditado, nunca DELETE.",
@@ -101272,8 +101417,8 @@
   },
   {
    "module": "docs",
-   "files": 16,
-   "lines": 3002,
+   "files": 14,
+   "lines": 2751,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -101290,8 +101435,6 @@
     "docs/auditoria/sql-preservado/20260819000000_p0_fix_user_empresa_id_rls.sql",
     "docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql",
     "docs/auditoria/sql-preservado/20260821000000_p0_rls_dashboard_audit.sql",
-    "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.sql",
-    "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.verify.sql",
     "docs/auditoria/sql-preservado/20261005020000_onboarding_modelo_b_convergencia.sql",
     "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada.sql",
     "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada_rollback.sql",
@@ -101368,7 +101511,7 @@
   {
    "module": "scripts",
    "files": 153,
-   "lines": 34602,
+   "lines": 34603,
    "tables": [
     "a",
     "anexos",
@@ -103619,8 +103762,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 869,
-   "lines": 78896,
+   "files": 871,
+   "lines": 79148,
    "tables": [
     "profiles",
     "user_roles"
@@ -110439,6 +110582,7 @@
     "lancamentos_folha",
     "itens_folha",
     "lotacoes",
+    "colaborador_lotacoes",
     "medidas_disciplinares_integracao",
     "onboarding_colaborador",
     "onboarding_documentos_obrigatorios",
@@ -110588,6 +110732,7 @@
     "pcs_avaliacoes_cargo",
     "pcs_grades",
     "pcs_pesquisa_salarial",
+    "colaborador_lotacoes",
     "training_images",
     "training_image_requests",
     "afd_geracoes",
@@ -110839,6 +110984,9 @@
     "pcs_fatores",
     "pcs_avaliacoes_cargo",
     "pcs_grades"
+   ],
+   "lotacoes": [
+    "colaborador_lotacoes"
    ]
   },
   "tables_only_in_code": [
@@ -110904,6 +111052,7 @@
    "clinicas_partners_servicos",
    "cnab_sequencias",
    "cnae",
+   "colaborador_lotacoes",
    "colaboradores_historico",
    "colaboradores_pin",
    "comissoes",
@@ -145447,6 +145596,46 @@
     "table": "colaboradores_pin",
     "column": "updated_by",
     "rule": "FK → users.id"
+   },
+   {
+    "table": "colaborador_lotacoes",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "colaborador_lotacoes",
+    "column": "empresa_id",
+    "rule": "obrigatório; FK → empresas.id ON DELETE CASCADE"
+   },
+   {
+    "table": "colaborador_lotacoes",
+    "column": "colaborador_id",
+    "rule": "obrigatório; FK → colaboradores.id ON DELETE CASCADE"
+   },
+   {
+    "table": "colaborador_lotacoes",
+    "column": "lotacao_id",
+    "rule": "obrigatório; FK → lotacoes.id ON DELETE CASCADE"
+   },
+   {
+    "table": "colaborador_lotacoes",
+    "column": "principal",
+    "rule": "default false"
+   },
+   {
+    "table": "colaborador_lotacoes",
+    "column": "created_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "colaborador_lotacoes",
+    "column": "updated_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "colaborador_lotacoes",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT colaborador_lotacoes_vinculo_unico UNIQUE (colaborador_id, lotacao_id)"
    },
    {
     "table": "cnab_sequencias",
@@ -209872,6 +210061,16 @@
     "src": "supabase/migrations/20260924210000_p0_rls_tenant_correlation_remediation.sql"
    },
    {
+    "name": "colaborador_lotacoes_tenant",
+    "table": "colaborador_lotacoes",
+    "cmd": "ALL",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.rls_tenant_or_admin(empresa_id)",
+    "check": "public.rls_tenant_or_admin(empresa_id)",
+    "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+   },
+   {
     "name": "whatsapp_config_admin_rh",
     "table": "whatsapp_config",
     "cmd": "ALL",
@@ -213944,6 +214143,15 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20260912204000_p1_admission_esocial_claim.sql"
+   },
+   {
+    "name": "trg_colaborador_lotacoes_valida_tenant",
+    "when": "BEFORE INSERT OR UPDATE",
+    "table": "colaborador_lotacoes",
+    "function": "colaborador_lotacoes_valida_tenant",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
    },
    {
     "name": "trg_sync_holerite_folha_item",
@@ -223885,6 +224093,26 @@
      "v_row"
     ]
    },
+   "colaborador_lotacoes_valida_tenant": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE colaborador_empresa UUID; lotacao_empresa UUID; BEGIN SELECT empresa_id INTO colaborador_empresa FROM public.colaboradores WHERE id = NEW.colaborador_id; SELECT empresa_id INTO lotacao_empresa FROM public.lotacoes WHERE id = NEW.lotacao_id; IF colaborador_empresa IS DISTINCT FROM NEW.empresa_id THEN RAISE EXCEPTION 'colaborador_lotacoes: colaborador_id pertence a outra empresa (colaborador.empresa_id=%, linha.empresa_id=%)', colaborador_empresa, NEW.empresa_id; END IF; IF lotacao_empresa IS DISTINCT FROM NEW.empresa_id THEN RAISE EXCEPTION 'colaborador_lotacoes: lotacao_id pertence a outra empresa (lotacao.empresa_id=%, linha.empresa_id=%)', lotacao_empresa, NEW.empresa_id; END IF; R …",
+    "raises": [
+     "colaborador_lotacoes: colaborador_id pertence a outra empresa (colaborador.empresa_id=%, linha.empresa_id=%)",
+     "colaborador_lotacoes: lotacao_id pertence a outra empresa (lotacao.empresa_id=%, linha.empresa_id=%)"
+    ],
+    "tables": [
+     "NEW",
+     "colaborador_empresa",
+     "colaboradores",
+     "lotacao_empresa",
+     "lotacoes"
+    ]
+   },
    "_admissao_token_row": {
     "args": "_token TEXT",
     "returns": "public.admissao_tokens",
@@ -225109,6 +225337,16 @@
     "function": "verificar_pin_quiosque",
     "msg": "PIN_BLOQUEADO",
     "src": "supabase/migrations/20260924190000_p0_fix_search_path_pin_quiosque.sql"
+   },
+   {
+    "function": "colaborador_lotacoes_valida_tenant",
+    "msg": "colaborador_lotacoes: colaborador_id pertence a outra empresa (colaborador.empresa_id=%, linha.empresa_id=%)",
+    "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
+   },
+   {
+    "function": "colaborador_lotacoes_valida_tenant",
+    "msg": "colaborador_lotacoes: lotacao_id pertence a outra empresa (lotacao.empresa_id=%, linha.empresa_id=%)",
+    "src": "supabase/migrations/20260929120000_colaborador_lotacoes.sql"
    },
    {
     "function": "admissao_salvar_dados",
@@ -233286,6 +233524,21 @@
     "DELETE": [
      "authenticated: colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))",
      "authenticated: empresa_id IN (SELECT empresa_id FROM public.user_empresas WHERE user_id = auth.uid())"
+    ]
+   },
+   "colaborador_lotacoes": {
+    "rls": "enabled",
+    "SELECT": [
+     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+    ],
+    "INSERT": [
+     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+    ],
+    "UPDATE": [
+     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+    ],
+    "DELETE": [
+     "authenticated: public.rls_tenant_or_admin(empresa_id)"
     ]
    },
    "colaboradores": {
@@ -252573,6 +252826,7 @@
    "pcs_pesquisa_salarial",
    "feriados_brasileiros",
    "report_dispatch_attempts",
+   "colaborador_lotacoes",
    "cnab_sequencias",
    "feedbacks_360_operacoes",
    "feedbacks_360_validacoes_potencial",
@@ -254429,6 +254683,10 @@
    "colaboradores_pin": [
     "updated_at",
     "updated_by"
+   ],
+   "colaborador_lotacoes": [
+    "created_at",
+    "updated_at"
    ],
    "cnab_sequencias": [],
    "feedbacks_360_operacoes": [],
@@ -258170,7 +258428,7 @@
    "`health_checks.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`afd_geracoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`feedbacks_360_consolidacoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "400/468 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …"
+   "400/469 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …"
   ]
  },
  "manual": [],
@@ -258440,14 +258698,6 @@
   "docs/auditoria/sql-preservado/20260821000000_p0_rls_dashboard_audit.sql": {
    "path": "docs/auditoria/sql-preservado/20260821000000_p0_rls_dashboard_audit.sql",
    "lines": 178
-  },
-  "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.sql": {
-   "path": "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.sql",
-   "lines": 112
-  },
-  "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.verify.sql": {
-   "path": "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.verify.sql",
-   "lines": 139
   },
   "docs/auditoria/sql-preservado/20261005020000_onboarding_modelo_b_convergencia.sql": {
    "path": "docs/auditoria/sql-preservado/20261005020000_onboarding_modelo_b_convergencia.sql",
@@ -259544,7 +259794,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 440,
+   "lines": 441,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -325760,6 +326010,14 @@
    "path": "supabase/migrations/20260924310000_p0_batidas_ponto_role_gate.sql",
    "lines": 133
   },
+  "supabase/migrations/20260929120000_colaborador_lotacoes.sql": {
+   "path": "supabase/migrations/20260929120000_colaborador_lotacoes.sql",
+   "lines": 113
+  },
+  "supabase/migrations/20260929120000_colaborador_lotacoes.verify.sql": {
+   "path": "supabase/migrations/20260929120000_colaborador_lotacoes.verify.sql",
+   "lines": 139
+  },
   "supabase/migrations/20261001140000_p1_rls_status_hardening.sql": {
    "path": "supabase/migrations/20261001140000_p1_rls_status_hardening.sql",
    "lines": 86,
@@ -326744,10 +327002,33 @@
   }
  },
  "git": {
-  "sha": "3616289d4bfe3c1d765b7f91756ef1f377a2605e",
+  "sha": "8d5a8236b203f5afe4ea4c03ad8f339f15e43c16",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "8d5a823",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "infra: põe colaborador_lotacoes no LOTE ATUAL, pronta para validate/apply (#676)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "docs/auditoria/sql-preservado/README.md",
+     "scripts/.types-drift-baseline.json",
+     "scripts/canonical-invariants.sql",
+     "supabase/migrations/20260929120000_colaborador_lotacoes.sql",
+     "supabase/migrations/20260929120000_colaborador_lotacoes.verify.sql"
+    ]
+   },
+   {
+    "sha": "b376487",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "docs(auditoria): decide não aplicar colaborador_lotacoes, com a medição que sustenta (#675)",
+    "files": [
+     "docs/auditoria/sql-preservado/README.md"
+    ]
+   },
    {
     "sha": "3616289",
     "date": "2026-11-17",
@@ -327096,39 +327377,28 @@
      "src/components/ui/__tests__/user-avatar.test.tsx",
      "src/components/ui/user-avatar.tsx"
     ]
-   },
-   {
-    "sha": "fc03c4a",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "chore(inventario): regenera rotas.json, defasado desde a #639 (#648)",
-    "files": [
-     "inventario/estado/rotas.json"
-    ]
-   },
-   {
-    "sha": "65e05a3",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(migrations): corrige os dois sidecars que reprovaram no dry-run (#647)",
-    "files": [
-     "supabase/migrations/20261117190000_permissions_matriz_seed.verify.sql",
-     "supabase/migrations/20261117193000_storage_documentos_tenant_scope.verify.sql"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "docs/auditoria/sql-preservado/README.md",
+    5
+   ],
    [
     "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
     3
    ],
    [
-    "docs/auditoria/sql-preservado/README.md",
+    "src/pages/ColaboradorDetalhesPage.tsx",
     3
    ],
    [
-    "src/pages/ColaboradorDetalhesPage.tsx",
-    3
+    ".github/workflows/canonical-migrations.yml",
+    2
+   ],
+   [
+    "scripts/canonical-invariants.sql",
+    2
    ],
    [
     "src/components/colaborador-detalhes/index.ts",
@@ -327155,23 +327425,23 @@
     2
    ],
    [
-    "inventario/estado/rotas.json",
-    2
-   ],
-   [
     "src/App.tsx",
     2
    ],
    [
+    "scripts/.types-drift-baseline.json",
+    1
+   ],
+   [
+    "supabase/migrations/20260929120000_colaborador_lotacoes.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20260929120000_colaborador_lotacoes.verify.sql",
+    1
+   ],
+   [
     "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.verify.sql",
-    1
-   ],
-   [
-    ".github/workflows/canonical-migrations.yml",
-    1
-   ],
-   [
-    "scripts/canonical-invariants.sql",
     1
    ],
    [
@@ -327188,14 +327458,6 @@
    ],
    [
     "docs/auditoria/sql-preservado/20261005020000_onboarding_modelo_b_convergencia.sql",
-    1
-   ],
-   [
-    "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada.sql",
-    1
-   ],
-   [
-    "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada_rollback.sql",
     1
    ]
   ]

@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3616289d4b` · branch `main` · 2026-11-18 03:17 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8d5a8236b2` · branch `main` · 2026-11-18 03:45 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -101,6 +101,7 @@
 | `cnab_sequencias` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
 | `cnae` | Catálogo CNAE. Carga via importação de domínio. | 3 colunas | migration |
 | `colaborador_beneficios` | _(sem COMMENT ON TABLE — significado não documentado)_ | 4 colunas | migration |
+| `colaborador_lotacoes` | Relacionamento colaborador <-> lotacao (M:N). Uma lotacao pode servir varios colaboradores; um colaborador pode ter mais de uma lotacao, com no maximo uma marcada principal = true (ver indice unico parcial abaixo). UI atual (aba Profissional) so gerencia a lotacao principal. | 7 colunas | migration |
 | `colaboradores` | [P0-001] RLS tenant-scoped via get_auth_empresa_id(). | 149 colunas | migration |
 | `colaboradores_historico` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
 | `colaboradores_pin` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
@@ -306,8 +307,7 @@
 | `pcs_avaliacoes_cargo` | Cargo evaluation whose total is always calculated by a trigger. | 10 colunas | migration |
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
 | `pcs_grades` | Transactionally generated salary ranges for a PCS plan. | 11 colunas | migration |
-| `pcs_pesquisa_salarial` | Tenant-scoped external salary benchmark observations. | 14 colunas | migration |
-| … +388 linhas — lista completa em `context.json` | | | |
+| … +389 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -761,7 +761,7 @@
 - `health_checks.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `afd_geracoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `feedbacks_360_consolidacoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- 400/468 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …
+- 400/469 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …
 
 ## Regras manuais presentes
 
