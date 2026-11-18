@@ -27,20 +27,44 @@ runtime em PL/pgSQL. A `main` discrimina por `NOT EXISTS (… column_name = 'dat
 `ferias_count` ao `RAISE`, protege o `COMMENT` com `to_regclass` e recria a `ferias` canônica se o
 rename a tiver removido. **Não resgatar a da `muri`.**
 
-Os **10 restantes** estão preservados nesta pasta. Veredito de cada um:
+Dos **10 restantes**, quatro **já foram resgatados para a `main`** num lote anterior, com nome
+novo e conteúdo revisado. Conferido objeto por objeto:
 
-| arquivo                                           | estado na `main`                                 | o que fazer                                    |
-| ------------------------------------------------- | ------------------------------------------------ | ---------------------------------------------- |
-| `20260929120000_colaborador_lotacoes`             | ausente                                          | **decisão do dono** — detalhado abaixo         |
-| `20260925120000_document_upload_storage_columns`  | ausente (`storage_path` não está nos tipos)      | **candidato real** — detalhado abaixo          |
-| `20260925130000_storage_documentos_delete_…`      | ausente (a `main` tem **0** policy `FOR DELETE`) | **decisão do dono: amplia acesso**             |
-| `20261005000000_onboarding_kits_rls_additive`     | redundante, menos um índice                      | aproveitar **só o índice**                     |
-| `20261005010000_onboarding_audit_trigger`         | ausente                                          | **decisão do dono** — valor baixo              |
-| `20261005020000_onboarding_modelo_b_convergencia` | ausente                                          | **não aplicar** — converte linhas que são seed |
-| `20261026090000_ciclos_exclusao_autorizada`       | ausente como arquivo, **já em produção**         | não aplicar; guardado como registro            |
-| `20260819000000_p0_fix_user_empresa_id_rls`       | ausente                                          | **NÃO APLICAR — é regressão**                  |
-| `20260820000000_p0_fix_auditoria_rpc`             | ausente                                          | **NÃO APLICAR — é regressão**                  |
-| `20260821000000_p0_rls_dashboard_audit`           | ausente                                          | **NÃO APLICAR** — desfaria duas remediações    |
+| arquivo da `muri`                                       | na `main` como                                              | prova de equivalência                                                                                        |
+| ------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `20260925120000_document_upload_storage_columns`        | `20261117170300_documentos_colunas_storage.sql`             | as mesmas 4 colunas em `documentos` e 2 em `documentos_pessoais_arquivos`                                    |
+| `20260925130000_storage_documentos_delete_tenant_scope` | `20261117170000_storage_documentos_delete_tenant_scope.sql` | as 2 policies `FOR DELETE`, com os mesmos nomes: `documentos_delete_rh_admin` e `docs_colab_delete_rh_admin` |
+| `20261005010000_onboarding_audit_trigger`               | `20261117170100_onboarding_audit_trigger.sql`               | o trigger `audit_tarefas_onboarding` em `public.tarefas_onboarding`                                          |
+| `20261005000000_onboarding_kits_rls_additive`           | `20261117170200_onboarding_kits_indice_empresa.sql`         | o índice `idx_onboarding_kits_empresa_id` — a parte que faltava                                              |
+
+Esses quatro **não** ficam duplicados aqui: guardar a versão pré-revisão da `muri` ao lado da que a
+`main` já tem só convidaria alguém a aplicar a errada. O mapeamento acima é o registro.
+
+### Correção de uma afirmação anterior deste README
+
+Uma versão anterior deste arquivo chamava os dois primeiros de "candidatos reais" e dizia que as
+colunas de storage e as policies `FOR DELETE` **não existiam** na `main`. **Estava errado**, e o erro
+foi de método, duas vezes:
+
+- procurei `storage_path` nas migrations da `main` **com `head -8`** e concluí da lista truncada.
+  O `20261117170300` estava fora dos 8 primeiros;
+- procurei `FOR DELETE` **só** no `20261117193000_storage_documentos_tenant_scope.sql`, achei 0 e
+  concluí que a `main` não tinha policy de DELETE. Elas estão no `20261117170000`, outro arquivo.
+
+Também usei `storage_path` ausente de `database.types.ts` como prova de que a coluna não existia no
+banco. Não prova: o arquivo gerado pode estar desatualizado, e a ausência num artefato gerado não
+diz nada sobre a migration estar ou não no repositório. Apontado na revisão da #672.
+
+## Os seis que ficam preservados, e por quê
+
+| arquivo                                           | estado na `main`                         | o que fazer                                      |
+| ------------------------------------------------- | ---------------------------------------- | ------------------------------------------------ |
+| `20260929120000_colaborador_lotacoes`             | ausente                                  | **a única perda real** — decisão do dono, abaixo |
+| `20261005020000_onboarding_modelo_b_convergencia` | ausente                                  | **não aplicar** — converte linhas que são seed   |
+| `20261026090000_ciclos_exclusao_autorizada`       | ausente como arquivo, **já em produção** | não aplicar; guardado como registro              |
+| `20260819000000_p0_fix_user_empresa_id_rls`       | ausente                                  | **NÃO APLICAR — é regressão**                    |
+| `20260820000000_p0_fix_auditoria_rpc`             | ausente                                  | **NÃO APLICAR — é regressão**                    |
+| `20260821000000_p0_rls_dashboard_audit`           | ausente                                  | **NÃO APLICAR** — desfaria duas remediações      |
 
 A análise que sustenta as linhas de "regressão", de `onboarding` e de `ciclos` está em
 `docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md`, seções 1-3 e 7-10. As três marcadas
@@ -92,23 +116,6 @@ Fora de `supabase/migrations/`, sobraram 2 504 caminhos só na `muri`. Nenhum é
 
 > **Nenhum arquivo desta pasta deve ser movido para `supabase/migrations/` sem decisão do dono.**
 > Todo ele é DDL em produção — regra 8 do fluxo Git.
-
-## `20260925120000_document_upload_storage_columns.sql` — o candidato mais concreto
-
-Acrescenta `storage_path`, `mime_type`, `nome_arquivo` e `tamanho` em `public.documentos`, e
-`storage_path` + `mime_type` em `public.documentos_pessoais_arquivos`.
-
-**Não está na `main`:** `storage_path` aparece **0 vezes** em
-`src/integrations/supabase/database.types.ts`, que é gerado do banco canônico e tem gate de frescura
-(`gen:table-columns --check`). Então as colunas não existem em produção.
-
-Por que interessa: a #653 trouxe upload real de arquivo nos quatro formulários de documento. Sem
-essas colunas, o que o upload grava sobre o arquivo (caminho no bucket, tipo, nome original,
-tamanho) não tem onde ser guardado de forma estruturada. É `ADD COLUMN IF NOT EXISTS` em colunas
-anuláveis — aditivo, sem reescrever linha existente.
-
-**O que falta antes de aplicar:** o sidecar `.verify.sql` (este arquivo não tem) e o código que
-passa a gravar e ler as colunas. Sem o segundo, vira coluna vazia.
 
 ## `20260929120000_colaborador_lotacoes.sql`
 
