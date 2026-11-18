@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2271c4a80de34988dba2045947ba7a44e77c0b7e` (2026-11-18T03:20:33-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4bb5a248be6940e7235cb9d9ccea8260b8a5c35a` (2026-11-18T06:42:16-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1941), SQL (944), Markdown (335), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1941), SQL (945), Markdown (335), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3585 |
+| arquivos_total | 3586 |
 | arquivos_codigo | 2079 |
 | linhas_codigo | 411633 |
 | rotas | 116 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 118 |
 | edge_functions | 67 |
 | tabelas | 426 |
-| migrations | 871 |
+| migrations | 872 |
 | cron_jobs | 41 |
 | testes | 774 |
 | workflows | 21 |
@@ -396,14 +396,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27318 nós · 61636 arestas · 2389 comunidades · grafo do commit `2271c4a8`
+- 27319 nós · 61636 arestas · 2390 comunidades · grafo do commit `4bb5a248`
 - comunidades maiores: @tanstack/react-query (538), 20260831_corrected_public.sql (493), canonical_schema.sql (475), sonner (465), lucide-react (459), cn (389), react (310), vitest (301), useEmpresas (299), ref_node_fs (219), ColaboradorDetalhesPage.tsx (177), rateLimit.ts (172)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - inventario/estado/rotas.json (23)
-- .github/workflows/canonical-migrations.yml (17)
+- .github/workflows/canonical-migrations.yml (18)
 - package.json (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - package-lock.json (10)
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-18 `4bb5a24` infra: poe a migration do gov.br no lote canonico para destravar o login (#687)
 - 2026-11-18 `2271c4a` fix: retrata "as 52 estao aplicadas" - 27 nao estao, e uma e bug de producao (#686)
 - 2026-11-18 `8056cc5` fix: troca as tres passadas de regex da guarda de RLS por um tokenizador unico (#684)
 - 2026-11-18 `1512a40` fix: corrige a faixa de PRs da secao 7b, derrubada por aritmetica do revisor (#685)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-18 `b376487` docs(auditoria): decide não aplicar colaborador_lotacoes, com a medição que sustenta (#675)
 - 2026-11-17 `3616289` docs(auditoria): registra a prova byte a byte, por símbolo exportado e por token (#674)
 - 2026-11-17 `a0a6967` chore(auditoria): escreve e executa o sidecar que faltava ao colaborador_lotacoes (#673)
-- 2026-11-17 `4699117` infra: o apply do canonical-migrations confirma o lote anterior, não o atual (#671)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

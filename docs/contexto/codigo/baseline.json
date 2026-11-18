@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2271c4a80de34988dba2045947ba7a44e77c0b7e",
+  "commit": "4bb5a248be6940e7235cb9d9ccea8260b8a5c35a",
   "branch": "main",
-  "data_commit": "2026-11-18T03:20:33-03:00",
+  "data_commit": "2026-11-18T06:42:16-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "4bb5a24",
+    "data": "2026-11-18",
+    "assunto": "infra: poe a migration do gov.br no lote canonico para destravar o login (#687)"
+   },
    {
     "sha": "2271c4a",
     "data": "2026-11-18",
@@ -126,14 +131,9 @@
     "sha": "f759961",
     "data": "2026-11-17",
     "assunto": "feat(desligamentos): faixa de atenção na tela, ligada ao cálculo que já existia (#664)"
-   },
-   {
-    "sha": "e555a63",
-    "data": "2026-11-17",
-    "assunto": "feat(rescisao): memória de cálculo com a base e a alíquota efetiva de cada encargo (#663)"
    }
   ],
-  "arquivos_mudados_7d": 1130,
+  "arquivos_mudados_7d": 1131,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 17
+    "mudancas": 18
    },
    {
     "arquivo": "package.json",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 291
+    "commits": 292
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 7
+    "commits": 6
    },
    {
     "autor": "github-actions[bot]",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3585,
+  "arquivos_total": 3586,
   "arquivos_codigo": 2079,
   "linhas_codigo": 411633,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 118,
   "edge_functions": 67,
   "tabelas": 426,
-  "migrations": 871,
+  "migrations": 872,
   "cron_jobs": 41,
   "testes": 774,
   "workflows": 21,

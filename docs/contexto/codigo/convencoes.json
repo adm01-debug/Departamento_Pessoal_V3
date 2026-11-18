@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra: poe a migration do gov.br no lote canonico para destravar o login (#687)",
    "fix: retrata \"as 52 estao aplicadas\" - 27 nao estao, e uma e bug de producao (#686)",
    "fix: troca as tres passadas de regex da guarda de RLS por um tokenizador unico (#684)",
    "fix: corrige a faixa de PRs da secao 7b, derrubada por aritmetica do revisor (#685)",
-   "chore: mede o eixo repo x ledger e explica o Supabase Preview vermelho (#683)",
-   "chore: corrige duas afirmações minhas que os revisores derrubaram (#682)"
+   "chore: mede o eixo repo x ledger e explica o Supabase Preview vermelho (#683)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

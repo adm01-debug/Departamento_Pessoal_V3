@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "2271c4a80de34988dba2045947ba7a44e77c0b7e",
+  "sha": "4bb5a248be6940e7235cb9d9ccea8260b8a5c35a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 06:23 UTC",
-  "files_total": 3598,
-  "code_files": 3021,
-  "code_lines": 478186
+  "generated_at": "2026-11-18 09:43 UTC",
+  "files_total": 3599,
+  "code_files": 3022,
+  "code_lines": 478255
  },
  "version": "1.3.2",
- "facts_hash": "746c05d6b7ea3024",
+ "facts_hash": "4edd7b5a87bf16a1",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 999,
-   ".sql": 944,
+   ".sql": 945,
    ".ts": 942,
    ".mjs": 108,
    ".js": 15,
@@ -71963,6 +71963,7 @@
    "supabase/migrations/20261028130000_revoke_orphan_secdef_v2.sql",
    "supabase/migrations/20261028220000_pagar_desligamento_transacional.sql",
    "supabase/migrations/20261028230000_govbr_auth_state_user_id.sql",
+   "supabase/migrations/20261028230000_govbr_auth_state_user_id.verify.sql",
    "supabase/migrations/20261029000000_gaps_v2_verificacao.sql",
    "supabase/migrations/20261029120000_whatsapp_pending_trigger_retire.sql",
    "supabase/migrations/20261029120000_whatsapp_pending_trigger_retire.verify.sql",
@@ -103783,8 +103784,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 871,
-   "lines": 79148,
+   "files": 872,
+   "lines": 79217,
    "tables": [
     "profiles",
     "user_roles"
@@ -326652,6 +326653,10 @@
    "path": "supabase/migrations/20261028230000_govbr_auth_state_user_id.sql",
    "lines": 9
   },
+  "supabase/migrations/20261028230000_govbr_auth_state_user_id.verify.sql": {
+   "path": "supabase/migrations/20261028230000_govbr_auth_state_user_id.verify.sql",
+   "lines": 69
+  },
   "supabase/migrations/20261029000000_gaps_v2_verificacao.sql": {
    "path": "supabase/migrations/20261029000000_gaps_v2_verificacao.sql",
    "lines": 126,
@@ -327222,10 +327227,20 @@
   }
  },
  "git": {
-  "sha": "2271c4a80de34988dba2045947ba7a44e77c0b7e",
+  "sha": "4bb5a248be6940e7235cb9d9ccea8260b8a5c35a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "4bb5a24",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "infra: poe a migration do gov.br no lote canonico para destravar o login (#687)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "supabase/migrations/20261028230000_govbr_auth_state_user_id.verify.sql"
+    ]
+   },
    {
     "sha": "2271c4a",
     "date": "2026-11-18",
@@ -327548,22 +327563,6 @@
      "src/components/__tests__/AuditoriaComum.test.ts",
      "src/components/__tests__/PagamentosComum.test.ts"
     ]
-   },
-   {
-    "sha": "39a27a3",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(ui): calendário pt-BR com navegação por mês/ano em todo campo de data (#657)",
-    "files": [
-     "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
-     "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
-     "src/components/__tests__/FeriasForm.test.tsx",
-     "src/components/__tests__/GerarAEJDialog.test.tsx",
-     "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
-     "src/components/esocial/tabs.tsx",
-     "src/components/ui/calendar.tsx",
-     "src/components/ui/input.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -327580,6 +327579,10 @@
     4
    ],
    [
+    ".github/workflows/canonical-migrations.yml",
+    3
+   ],
+   [
     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
     3
    ],
@@ -327589,10 +327592,6 @@
    ],
    [
     "scripts/.types-drift-baseline.json",
-    2
-   ],
-   [
-    ".github/workflows/canonical-migrations.yml",
     2
    ],
    [
@@ -327606,6 +327605,10 @@
    [
     "src/pages/DesligamentosPage.tsx",
     2
+   ],
+   [
+    "supabase/migrations/20261028230000_govbr_auth_state_user_id.verify.sql",
+    1
    ],
    [
     "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
@@ -327641,10 +327644,6 @@
    ],
    [
     "supabase/migrations/20260929120000_colaborador_lotacoes.verify.sql",
-    1
-   ],
-   [
-    "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.verify.sql",
     1
    ]
   ]
