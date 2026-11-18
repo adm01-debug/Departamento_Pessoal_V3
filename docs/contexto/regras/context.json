@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "364a2153844cac54b156afced9ca734d452b2020",
+  "sha": "5d9deb666a4e7503b3684e8dc22040676107ff7d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 17:56 UTC",
-  "files_total": 3615,
-  "code_files": 3038,
-  "code_lines": 482040
+  "generated_at": "2026-11-18 18:23 UTC",
+  "files_total": 3618,
+  "code_files": 3041,
+  "code_lines": 482371
  },
  "version": "1.3.2",
- "facts_hash": "4f51c80f28d3f74d",
+ "facts_hash": "2140bdf2168e2c11",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,9 +387,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1009,
+   ".tsx": 1011,
    ".sql": 951,
-   ".ts": 942,
+   ".ts": 943,
    ".mjs": 108,
    ".js": 15,
    ".cjs": 11,
@@ -97203,7 +97203,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 68
+    "deps_count": 71
    }
   ],
   "edge_functions": [
@@ -100229,7 +100229,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 985,
+  "components_count": 988,
   "hooks": [
    {
     "name": "useContacts",
@@ -100238,6 +100238,10 @@
    {
     "name": "useHistoricoFeedback",
     "file": "src/components/avaliacao/useHistoricoFeedback.ts"
+   },
+   {
+    "name": "useMorningBriefing",
+    "file": "src/components/dashboard/useMorningBriefing.ts"
    },
    {
     "name": "useEntradaKanbanColuna",
@@ -101844,8 +101848,8 @@
   },
   {
    "module": "src/components",
-   "files": 985,
-   "lines": 179488,
+   "files": 988,
+   "lines": 179796,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102539,7 +102543,7 @@
   {
    "module": "src/pages",
    "files": 134,
-   "lines": 49552,
+   "lines": 49575,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -104019,7 +104023,7 @@
    },
    "admissoes": {
     "select": [
-     "src/components/dashboard/MorningBriefing.tsx",
+     "src/components/dashboard/useMorningBriefing.ts",
      "src/hooks/useAdmissaoWorkflow.ts",
      "src/pages/DashboardPage.tsx",
      "src/pages/RelatoriosPage.tsx",
@@ -104045,7 +104049,7 @@
    },
    "afastamentos": {
     "select": [
-     "src/components/dashboard/MorningBriefing.tsx",
+     "src/components/dashboard/useMorningBriefing.ts",
      "src/hooks/useExecutiveDashboard.ts",
      "src/pages/DashboardPage.tsx",
      "src/services/afastamentoService.ts",
@@ -104233,7 +104237,7 @@
    },
    "batidas_ponto": {
     "select": [
-     "src/components/dashboard/MorningBriefing.tsx",
+     "src/components/dashboard/useMorningBriefing.ts",
      "src/components/ponto/GestaoRegistrosPonto.tsx",
      "src/hooks/useExecutiveDashboard.ts",
      "src/services/batidasPontoService.ts",
@@ -104553,7 +104557,7 @@
      "scripts/e2e/ensure-fixtures.mjs",
      "scripts/e2e/seed.mjs",
      "scripts/e2e/verify-seed.mjs",
-     "src/components/dashboard/MorningBriefing.tsx",
+     "src/components/dashboard/useMorningBriefing.ts",
      "src/components/descontos/NewLoanDialog.tsx",
      "src/components/desligamentos/NovoDesligamentoDialog.tsx",
      "src/components/folha/LancamentosDialog.tsx",
@@ -105240,7 +105244,7 @@
    },
    "esocial_eventos": {
     "select": [
-     "src/components/dashboard/MorningBriefing.tsx",
+     "src/components/dashboard/useMorningBriefing.ts",
      "src/services/esocialService.ts",
      "supabase/functions/enviar-esocial/index.ts",
      "supabase/functions/metricas/index.ts"
@@ -105290,7 +105294,7 @@
    },
    "exames": {
     "select": [
-     "src/components/dashboard/MorningBriefing.tsx",
+     "src/components/dashboard/useMorningBriefing.ts",
      "src/pages/ExamesPage.tsx"
     ],
     "insert": [
@@ -105383,7 +105387,7 @@
      "src/services/feriasService.ts"
     ],
     "select": [
-     "src/components/dashboard/MorningBriefing.tsx",
+     "src/components/dashboard/useMorningBriefing.ts",
      "src/hooks/useExecutiveDashboard.ts",
      "src/hooks/useNotificacoes.ts",
      "src/pages/DashboardPage.tsx",
@@ -114371,12 +114375,12 @@
     "msg": "Selecione uma empresa antes de disparar alertas."
    },
    {
-    "file": "src/components/dashboard/MorningBriefing.tsx",
-    "msg": "Selecione uma empresa para carregar o briefing."
-   },
-   {
     "file": "src/components/dashboard/SystemStatusCard.tsx",
     "msg": "Selecione uma empresa antes de disparar alertas."
+   },
+   {
+    "file": "src/components/dashboard/useMorningBriefing.ts",
+    "msg": "Selecione uma empresa para carregar o briefing."
    },
    {
     "file": "src/components/departamentos/NovoDepartamentoDialog.tsx",
@@ -119497,6 +119501,10 @@
    {
     "file": "src/components/dashboard/WorkforceHealthScore.tsx",
     "text": "o mínimo forçado pela antiga altura travada à viewport. `bare` usa um"
+   },
+   {
+    "file": "src/components/dashboard/useMorningBriefing.ts",
+    "text": "do componente viola react-refresh/only-export-components — a propria regra"
    },
    {
     "file": "src/components/dashboard/analytics/widgets.tsx",
@@ -149863,40 +149871,10 @@
     "kind": "escreve"
    },
    {
-    "file": "src/components/dashboard/MorningBriefing.tsx",
+    "file": "src/components/dashboard/ResumoOperacionalCard.tsx",
     "field": "tipo",
-    "value": "exame",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/dashboard/MorningBriefing.tsx",
-    "field": "status",
-    "value": "erro",
+    "value": "assinaturas",
     "kind": "compara"
-   },
-   {
-    "file": "src/components/dashboard/MorningBriefing.tsx",
-    "field": "status",
-    "value": "ativo",
-    "kind": "filtra"
-   },
-   {
-    "file": "src/components/dashboard/MorningBriefing.tsx",
-    "field": "status",
-    "value": "aprovada",
-    "kind": "filtra"
-   },
-   {
-    "file": "src/components/dashboard/MorningBriefing.tsx",
-    "field": "status",
-    "value": "ativo",
-    "kind": "filtra"
-   },
-   {
-    "file": "src/components/dashboard/MorningBriefing.tsx",
-    "field": "status",
-    "value": "ativo",
-    "kind": "filtra"
    },
    {
     "file": "src/components/dashboard/SystemStatusCard.tsx",
@@ -149945,6 +149923,42 @@
     "field": "type",
     "value": "spring",
     "kind": "escreve"
+   },
+   {
+    "file": "src/components/dashboard/useMorningBriefing.ts",
+    "field": "tipo",
+    "value": "exame",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/dashboard/useMorningBriefing.ts",
+    "field": "status",
+    "value": "erro",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/dashboard/useMorningBriefing.ts",
+    "field": "status",
+    "value": "ativo",
+    "kind": "filtra"
+   },
+   {
+    "file": "src/components/dashboard/useMorningBriefing.ts",
+    "field": "status",
+    "value": "aprovada",
+    "kind": "filtra"
+   },
+   {
+    "file": "src/components/dashboard/useMorningBriefing.ts",
+    "field": "status",
+    "value": "ativo",
+    "kind": "filtra"
+   },
+   {
+    "file": "src/components/dashboard/useMorningBriefing.ts",
+    "field": "status",
+    "value": "ativo",
+    "kind": "filtra"
    },
    {
     "file": "src/components/dashboard/analytics/NotificationsDialog.tsx",
@@ -162353,11 +162367,11 @@
     "line": "const dias = Math.round((dataValidade.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));"
    },
    {
-    "file": "src/components/dashboard/MorningBriefing.tsx",
+    "file": "src/components/dashboard/useMorningBriefing.ts",
     "line": "const em7Dias = format(new Date(hoje.getTime() + 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd');"
    },
    {
-    "file": "src/components/dashboard/MorningBriefing.tsx",
+    "file": "src/components/dashboard/useMorningBriefing.ts",
     "line": "staleTime: 5 * 60 * 1000,"
    },
    {
@@ -163501,6 +163515,10 @@
    {
     "file": "src/components/dashboard/QuickActionsGrid.tsx",
     "line": "transition={{ delay: 0.5 + i * 0.06 }}"
+   },
+   {
+    "file": "src/components/dashboard/ResumoOperacionalCard.tsx",
+    "line": "// — não mais uma barra em posição absoluta calculada sobre \"50% da"
    },
    {
     "file": "src/components/dashboard/WorkforceHealthScore.tsx",
@@ -230780,8 +230798,14 @@
       "compara:src/components/dashboard/AnalyticsSection.tsx",
       "compara:src/components/dashboard/analytics/NotificationsDialog.tsx"
      ],
+     "assinaturas": [
+      "compara:src/components/dashboard/ResumoOperacionalCard.tsx",
+      "compara:src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
+      "escreve:src/pages/DashboardExecutivoPage.tsx",
+      "escreve:src/pages/DashboardPage.tsx"
+     ],
      "exame": [
-      "escreve:src/components/dashboard/MorningBriefing.tsx"
+      "escreve:src/components/dashboard/useMorningBriefing.ts"
      ],
      "ponto_recusado": [
       "compara:src/components/dashboard/analytics/NotificationsDialog.tsx"
@@ -230795,11 +230819,6 @@
       "escreve:src/pages/DashboardPage.tsx",
       "escreve:src/pages/WorkflowsPage.tsx",
       "escreve:supabase/functions/calcular-provisoes/index.ts"
-     ],
-     "assinaturas": [
-      "compara:src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
-      "escreve:src/pages/DashboardExecutivoPage.tsx",
-      "escreve:src/pages/DashboardPage.tsx"
      ],
      "alta": [
       "compara:src/components/dashboard/analytics/widgets.tsx"
@@ -231646,7 +231665,7 @@
       "escreve:src/pages/FaltasPage.tsx",
       "escreve:src/services/feriasService.ts",
       "escreve:src/services/horaExtraService.ts",
-      "filtra:src/components/dashboard/MorningBriefing.tsx",
+      "filtra:src/components/dashboard/useMorningBriefing.ts",
       "filtra:src/hooks/useNotificacoes.ts"
      ],
      "em_gozo": [
@@ -231758,8 +231777,11 @@
       "compara:src/pages/SegurosVidaPage.tsx",
       "escreve:src/components/dashboard/analytics/PendenciasDetailDialog.tsx"
      ],
+     "excellent": [
+      "escreve:src/components/dashboard/WorkforceHealthScore.tsx"
+     ],
      "erro": [
-      "compara:src/components/dashboard/MorningBriefing.tsx",
+      "compara:src/components/dashboard/useMorningBriefing.ts",
       "compara:src/components/esocial/ESocialAuditDialog.tsx",
       "compara:src/components/esocial/ESocialTimeline.tsx",
       "compara:src/components/folha/FolhaESocialSync.tsx",
@@ -231812,7 +231834,7 @@
       "escreve:supabase/functions/emprestimo-consignado/index.ts",
       "escreve:supabase/functions/gerar-ltcat-os/index.ts",
       "escreve:supabase/functions/gerar-pgr/index.ts",
-      "filtra:src/components/dashboard/MorningBriefing.tsx",
+      "filtra:src/components/dashboard/useMorningBriefing.ts",
       "filtra:src/components/desligamentos/NovoDesligamentoDialog.tsx",
       "filtra:src/components/folha/LancamentosDialog.tsx",
       "filtra:src/components/layout/AppSidebar.tsx",
@@ -231846,9 +231868,6 @@
       "filtra:supabase/functions/gerar-ltcat-os/index.ts",
       "filtra:supabase/functions/gerar-pgr/index.ts",
       "filtra:supabase/functions/processar-ponto/index.ts"
-     ],
-     "excellent": [
-      "escreve:src/components/dashboard/WorkforceHealthScore.tsx"
      ],
      "quitado": [
       "compara:src/components/descontos/EmprestimosTable.tsx",
@@ -277657,85 +277676,10 @@
   },
   "src/components/dashboard/MorningBriefing.tsx": {
    "path": "src/components/dashboard/MorningBriefing.tsx",
-   "lines": 457,
+   "lines": 338,
    "exports": [
     "function MorningBriefing"
    ],
-   "tables": [
-    {
-     "table": "colaboradores",
-     "op": "select"
-    },
-    {
-     "table": "ferias",
-     "op": "select"
-    },
-    {
-     "table": "afastamentos",
-     "op": "select"
-    },
-    {
-     "table": "admissoes",
-     "op": "select"
-    },
-    {
-     "table": "exames",
-     "op": "select"
-    },
-    {
-     "table": "colaboradores",
-     "op": "select"
-    },
-    {
-     "table": "batidas_ponto",
-     "op": "select"
-    },
-    {
-     "table": "esocial_eventos",
-     "op": "select"
-    }
-   ],
-   "table_cols": {
-    "colaboradores": [
-     "data_nascimento",
-     "empresa_id",
-     "id",
-     "nome_completo",
-     "status"
-    ],
-    "ferias": [
-     "data_fim",
-     "data_inicio",
-     "empresa_id",
-     "status"
-    ],
-    "afastamentos": [
-     "data_fim_prevista",
-     "data_inicio",
-     "empresa_id",
-     "status",
-     "tipo"
-    ],
-    "admissoes": [
-     "cargo",
-     "data_prevista",
-     "empresa_id",
-     "nome"
-    ],
-    "exames": [
-     "data_validade",
-     "tipo"
-    ],
-    "batidas_ponto": [
-     "data",
-     "empresa_id",
-     "id"
-    ],
-    "esocial_eventos": [
-     "empresa_id",
-     "status"
-    ]
-   },
    "navigates": [
     "/admissoes",
     "/afastamentos",
@@ -277745,44 +277689,14 @@
    ],
    "errors": [
     "O provedor não confirmou a entrega dos alertas.",
-    "Selecione uma empresa antes de disparar alertas.",
-    "Selecione uma empresa para carregar o briefing."
-   ],
-   "status_values": [
-    {
-     "field": "tipo",
-     "value": "exame",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "erro",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "ativo",
-     "kind": "filtra"
-    },
-    {
-     "field": "status",
-     "value": "aprovada",
-     "kind": "filtra"
-    },
-    {
-     "field": "status",
-     "value": "ativo",
-     "kind": "filtra"
-    },
-    {
-     "field": "status",
-     "value": "ativo",
-     "kind": "filtra"
-    }
-   ],
-   "temporal": [
-    "const em7Dias = format(new Date(hoje.getTime() + 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd');",
-    "staleTime: 5 * 60 * 1000,"
+    "Selecione uma empresa antes de disparar alertas."
+   ]
+  },
+  "src/components/dashboard/ProximasAtividadesCard.tsx": {
+   "path": "src/components/dashboard/ProximasAtividadesCard.tsx",
+   "lines": 148,
+   "exports": [
+    "function ProximasAtividadesCard"
    ]
   },
   "src/components/dashboard/QuickActionsGrid.tsx": {
@@ -277793,6 +277707,23 @@
    ],
    "percents": [
     "transition={{ delay: 0.5 + i * 0.06 }}"
+   ]
+  },
+  "src/components/dashboard/ResumoOperacionalCard.tsx": {
+   "path": "src/components/dashboard/ResumoOperacionalCard.tsx",
+   "lines": 142,
+   "exports": [
+    "function ResumoOperacionalCard"
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "assinaturas",
+     "kind": "compara"
+    }
+   ],
+   "percents": [
+    "// — não mais uma barra em posição absoluta calculada sobre \"50% da"
    ]
   },
   "src/components/dashboard/SectionHeader.tsx": {
@@ -277880,6 +277811,135 @@
   "src/components/dashboard/index.ts": {
    "path": "src/components/dashboard/index.ts",
    "lines": 22
+  },
+  "src/components/dashboard/useMorningBriefing.ts": {
+   "path": "src/components/dashboard/useMorningBriefing.ts",
+   "lines": 137,
+   "exports": [
+    "interface BriefingData",
+    "function useMorningBriefing"
+   ],
+   "tables": [
+    {
+     "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "ferias",
+     "op": "select"
+    },
+    {
+     "table": "afastamentos",
+     "op": "select"
+    },
+    {
+     "table": "admissoes",
+     "op": "select"
+    },
+    {
+     "table": "exames",
+     "op": "select"
+    },
+    {
+     "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "batidas_ponto",
+     "op": "select"
+    },
+    {
+     "table": "esocial_eventos",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "colaboradores": [
+     "data_nascimento",
+     "empresa_id",
+     "id",
+     "nome_completo",
+     "status"
+    ],
+    "ferias": [
+     "data_fim",
+     "data_inicio",
+     "empresa_id",
+     "status"
+    ],
+    "afastamentos": [
+     "data_fim_prevista",
+     "data_inicio",
+     "empresa_id",
+     "status",
+     "tipo"
+    ],
+    "admissoes": [
+     "cargo",
+     "data_prevista",
+     "empresa_id",
+     "nome"
+    ],
+    "exames": [
+     "data_validade",
+     "tipo"
+    ],
+    "batidas_ponto": [
+     "data",
+     "empresa_id",
+     "id"
+    ],
+    "esocial_eventos": [
+     "empresa_id",
+     "status"
+    ]
+   },
+   "errors": [
+    "Selecione uma empresa para carregar o briefing."
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "exame",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "erro",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "ativo",
+     "kind": "filtra"
+    },
+    {
+     "field": "status",
+     "value": "aprovada",
+     "kind": "filtra"
+    },
+    {
+     "field": "status",
+     "value": "ativo",
+     "kind": "filtra"
+    },
+    {
+     "field": "status",
+     "value": "ativo",
+     "kind": "filtra"
+    }
+   ],
+   "rule_comments": [
+    "do componente viola react-refresh/only-export-components — a propria regra"
+   ],
+   "doc": "Hook e tipo do briefing matinal, extraidos de MorningBriefing.tsx. Motivo da extracao: o Resumo Operacional e o Proximas Atividades (resgatados da branch `muri`) precisam do mesmo `briefing`, e exportar o hook do arquivo do componente viola react-refresh/only-export-components — a propria regra mand …",
+   "hooks": [
+    "useMorningBriefing"
+   ],
+   "temporal": [
+    "const em7Dias = format(new Date(hoje.getTime() + 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd');",
+    "staleTime: 5 * 60 * 1000,"
+   ]
   },
   "src/components/dashboard/analytics/NotificationsDialog.tsx": {
    "path": "src/components/dashboard/analytics/NotificationsDialog.tsx",
@@ -297714,8 +297774,9 @@
   },
   "src/pages/DashboardPage.tsx": {
    "path": "src/pages/DashboardPage.tsx",
-   "lines": 465,
+   "lines": 488,
    "exports": [
+    "interface Pendencia",
     "function DashboardPage"
    ],
    "tables": [
@@ -328032,10 +328093,23 @@
   }
  },
  "git": {
-  "sha": "364a2153844cac54b156afced9ca734d452b2020",
+  "sha": "5d9deb666a4e7503b3684e8dc22040676107ff7d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "5d9deb6",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "feat(dashboard): resgata Resumo Operacional e Próximas Atividades da muri (#698)",
+    "files": [
+     "src/components/dashboard/MorningBriefing.tsx",
+     "src/components/dashboard/ProximasAtividadesCard.tsx",
+     "src/components/dashboard/ResumoOperacionalCard.tsx",
+     "src/components/dashboard/useMorningBriefing.ts",
+     "src/pages/DashboardPage.tsx"
+    ]
+   },
    {
     "sha": "364a215",
     "date": "2026-11-18",
@@ -328349,18 +328423,6 @@
      "src/pages/ColaboradorDetalhesPage.tsx",
      "src/types/entities.ts"
     ]
-   },
-   {
-    "sha": "544b877",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(desligamentos): coluna &quot;Próxima Ação&quot; com prazo legal, e os filtros que o componente já tinha (#668)",
-    "files": [
-     "src/components/__tests__/ProximaAcaoCell.test.tsx",
-     "src/components/desligamentos/ProximaAcaoCell.tsx",
-     "src/components/desligamentos/index.ts",
-     "src/pages/DesligamentosPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -328397,6 +328459,26 @@
     2
    ],
    [
+    "src/components/dashboard/MorningBriefing.tsx",
+    1
+   ],
+   [
+    "src/components/dashboard/ProximasAtividadesCard.tsx",
+    1
+   ],
+   [
+    "src/components/dashboard/ResumoOperacionalCard.tsx",
+    1
+   ],
+   [
+    "src/components/dashboard/useMorningBriefing.ts",
+    1
+   ],
+   [
+    "src/pages/DashboardPage.tsx",
+    1
+   ],
+   [
     "src/components/__tests__/AdmissoesDashboard.test.tsx",
     1
    ],
@@ -328422,26 +328504,6 @@
    ],
    [
     "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
-    1
-   ],
-   [
-    "src/components/colaborador-detalhes/documentos/__tests__/FileUploadField.test.tsx",
-    1
-   ],
-   [
-    "docs/auditoria/estado/WORKFLOWS_STATUS.md",
-    1
-   ],
-   [
-    "supabase/migrations/20261118160000_empresa_id_not_null_rh.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261118160000_empresa_id_not_null_rh.verify.sql",
     1
    ]
   ]

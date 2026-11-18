@@ -1549,25 +1549,30 @@
   },
   {
    "modulo": "components/dashboard",
-   "arquivos": 17,
+   "arquivos": 20,
    "testes": 0,
-   "linhas": 3900,
+   "linhas": 4208,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 16,
+   "componentes": 18,
    "hooks_locais": [
     "useAuth",
     "useEmpresaStore",
     "useEmpresas",
+    "useMorningBriefing",
     "useMovimentoReduzido",
     "usePendencias",
     "usePontoMelhorado",
     "useRealTimeSubscription",
+    "useRealtimeDashboard",
     "useSystemHealth",
+    "useSystemHealthHistory",
     "useToast"
    ],
-   "hooks_definidos": [],
+   "hooks_definidos": [
+    "useMorningBriefing"
+   ],
    "edges": [
     "OCR",
     "adiantamento-salarial",
@@ -1598,6 +1603,7 @@
     "admissoes",
     "afastamentos",
     "ajustes_ponto",
+    "banco_horas",
     "batidas_ponto",
     "beneficiarios_plano",
     "beneficiarios_seguro",
@@ -1607,6 +1613,7 @@
     "colaboradores",
     "config_afastamentos",
     "conformidade_ponto_logs",
+    "desligamentos",
     "documento_templates",
     "documentos_admissao",
     "documentos_afastamento",
@@ -1619,6 +1626,7 @@
     "exames",
     "ferias",
     "ferias_solicitacoes",
+    "folhas_pagamento",
     "historico_cargo",
     "historico_ferias",
     "lancamentos_folha",
@@ -1718,6 +1726,7 @@
     "hooks",
     "integrations/supabase",
     "lib",
+    "pages",
     "schemas",
     "services",
     "utils"
@@ -7862,7 +7871,7 @@
    "modulo": "pages",
    "arquivos": 113,
    "testes": 0,
-   "linhas": 45976,
+   "linhas": 45999,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -8225,6 +8234,7 @@
     "useMedidasDisciplinares",
     "useMedidasDisciplinaresColaborador",
     "useMetasColaborador",
+    "useMorningBriefing",
     "useMovimentoReduzido",
     "useNavigationGuard",
     "useNotificacoes",
@@ -8908,7 +8918,9 @@
      "verificar_pin_quiosque"
     ]
    },
-   "importado_por_outros_modulos": [],
+   "importado_por_outros_modulos": [
+    "components/dashboard"
+   ],
    "depende_de_modulos": [
     "assets",
     "components",

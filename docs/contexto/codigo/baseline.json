@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "364a2153844cac54b156afced9ca734d452b2020",
+  "commit": "5d9deb666a4e7503b3684e8dc22040676107ff7d",
   "branch": "main",
-  "data_commit": "2026-11-18T14:55:02-03:00",
+  "data_commit": "2026-11-18T15:20:13-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "5d9deb6",
+    "data": "2026-11-18",
+    "assunto": "feat(dashboard): resgata Resumo Operacional e Próximas Atividades da muri (#698)"
+   },
    {
     "sha": "364a215",
     "data": "2026-11-18",
@@ -126,14 +131,9 @@
     "sha": "3616289",
     "data": "2026-11-17",
     "assunto": "docs(auditoria): registra a prova byte a byte, por símbolo exportado e por token (#674)"
-   },
-   {
-    "sha": "a0a6967",
-    "data": "2026-11-17",
-    "assunto": "chore(auditoria): escreve e executa o sidecar que faltava ao colaborador_lotacoes (#673)"
    }
   ],
-  "arquivos_mudados_7d": 1147,
+  "arquivos_mudados_7d": 1151,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -177,7 +177,7 @@
    },
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 31
+    "mudancas": 35
    },
    {
     "pasta": "src/components/folha",
@@ -314,16 +314,16 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3602,
-  "arquivos_codigo": 2089,
-  "linhas_codigo": 414851,
+  "arquivos_total": 3605,
+  "arquivos_codigo": 2092,
+  "linhas_codigo": 415182,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
-  "componentes": 636,
-  "hooks": 118,
+  "componentes": 638,
+  "hooks": 119,
   "edge_functions": 67,
   "tabelas": 426,
   "migrations": 878,
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 985,
-   "linhas": 179488
+   "arquivos": 988,
+   "linhas": 179796
   },
   "src/constants": {
    "arquivos": 7,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 134,
-   "linhas": 49552
+   "linhas": 49575
   },
   "src/providers": {
    "arquivos": 4,
@@ -1207,7 +1207,7 @@
    "VITE_TREINAMENTOS_MOCK",
    "VITE_TREINAMENTOS_PREVIEW_PROGRESSO"
   ],
-  "ciclos_de_import": 3,
+  "ciclos_de_import": 4,
   "possiveis_segredos_no_codigo": [
    "e2e/public/api-auth-errors.spec.ts:56",
    "scripts/ai-context/cenarios.mjs:120"

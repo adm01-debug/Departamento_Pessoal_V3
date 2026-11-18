@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `364a215384` · branch `main` · 2026-11-18 17:56 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5d9deb666a` · branch `main` · 2026-11-18 18:23 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1537,7 +1537,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `anual` | escreve | `src/mocks/desempenhoMock.ts` |
 | `tipo` | `aprovacao` | escreve | `src/components/premiacoes/premiacoesComum.ts` |
 | `tipo` | `aso` | compara, escreve | `src/components/colaborador-detalhes/destinosDossie.ts`<br>`src/hooks/useProximosEventos.ts` |
-| `tipo` | `assinaturas` | compara, escreve | `src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/pages/DashboardExecutivoPage.tsx`<br>`src/pages/DashboardPage.tsx` |
+| `tipo` | `assinaturas` | compara, escreve | `src/components/dashboard/ResumoOperacionalCard.tsx`<br>`src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/pages/DashboardExecutivoPage.tsx`<br>`src/pages/DashboardPage.tsx` |
 | `tipo` | `atestado_medico` | compara | `src/pages/FaltasPage.tsx` |
 | `tipo` | `atraso` | compara, escreve | `src/components/ponto/PontoOcorrenciasCard.tsx` |
 | `tipo` | `auditoria` | compara | `supabase/functions/relatorio/index.ts` |
@@ -1579,7 +1579,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `entrada` | compara, escreve | `src/components/ponto/PontoClockRegister.tsx`<br>`src/hooks/usePonto.ts`<br>`src/hooks/usePontoOffline.ts`<br>`src/pages/ControleAcessoPage.tsx`<br>`src/pages/PontoKioskPage.tsx`<br>… +5 |
 | `tipo` | `equipe` | escreve | `src/mocks/desempenhoMock.ts` |
 | `tipo` | `evp` | compara | `supabase/functions/pix-lote/index.ts` |
-| `tipo` | `exame` | escreve | `src/components/dashboard/MorningBriefing.tsx` |
+| `tipo` | `exame` | escreve | `src/components/dashboard/useMorningBriefing.ts` |
 | `tipo` | `excessive_overtime` | escreve | `src/components/ponto/PontoInconsistencyPanel.tsx` |
 | `tipo` | `experiencia` | compara, escreve | `src/components/colaborador-detalhes/destinosDossie.ts`<br>`src/hooks/useProximosEventos.ts`<br>`src/mocks/desempenhoMock.ts` |
 | `tipo` | `falecimento` | compara | `src/pages/CalculadoraRescisaoPage.tsx` |
@@ -1699,7 +1699,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `aguardando_inicio` | escreve | `src/mocks/treinamentosMock.ts` |
 | `status` | `aguardando_inss` | compara, escreve | `src/pages/AfastamentosPage.tsx`<br>`src/services/afastamentoService.ts` |
 | `status` | `all` | compara | `src/hooks/ferias/useProgramacaoFerias.ts`<br>`src/pages/ColaboradoresPage.tsx`<br>`src/services/colaboradorService.ts`<br>`src/services/feriasService.ts` |
-| `status` | `aprovada` | compara, escreve, filtra | `src/components/colaborador-detalhes/FeriasResumoTab.tsx`<br>`src/components/dashboard/MorningBriefing.tsx`<br>`src/components/ferias/CalendarioFerias.tsx`<br>`src/components/ferias/FeriasDashboard.tsx`<br>`src/components/portal/PortalOverviewTab.tsx`<br>… +7 |
+| `status` | `aprovada` | compara, escreve, filtra | `src/components/colaborador-detalhes/FeriasResumoTab.tsx`<br>`src/components/dashboard/useMorningBriefing.ts`<br>`src/components/ferias/CalendarioFerias.tsx`<br>`src/components/ferias/FeriasDashboard.tsx`<br>`src/components/portal/PortalOverviewTab.tsx`<br>… +7 |
 | `status` | `aprovada_gestor` | compara | `src/components/avaliacao/FeedbackAcoesRodape.tsx`<br>`src/components/avaliacao/FeedbacksTab.tsx`<br>`src/components/avaliacao/aprovacaoGestor.ts` |
 | `status` | `aprovado` | compara, escreve, filtra | `src/components/dashboard/AnalyticsSection.tsx`<br>`src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/components/descontos/AdiantamentosTable.tsx`<br>`src/components/ferias/FeriasAuditTimeline.tsx`<br>`src/components/ferias/FeriasWorkflowStepper.tsx`<br>… +13 |
 | `status` | `aprovado_financeiro` | compara | `src/components/premiacoes/pagamentosComum.ts`<br>`src/services/premiacoesService.ts` |
@@ -1711,7 +1711,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `assinada` | compara, escreve | `src/pages/AdminEpisFichasPage.tsx` |
 | `status` | `assinado` | compara, escreve | `src/components/contratos/ContratosVencendoPanel.tsx`<br>`src/components/portal/PortalDocumentosTab.tsx`<br>`src/hooks/useAssinaturas.ts`<br>`src/pages/ContratosGeradosPage.tsx` |
 | `status` | `ativa` | compara, escreve, filtra | `src/pages/PesquisasClimaPage.tsx`<br>`supabase/functions/gerar-ltcat-os/index.ts` |
-| `status` | `ativo` | compara, escreve, filtra | `src/components/dashboard/MorningBriefing.tsx`<br>`src/components/descontos/EmprestimosTable.tsx`<br>`src/components/descontos/FinancialSummaryCards.tsx`<br>`src/components/descontos/NewLoanDialog.tsx`<br>`src/components/desligamentos/NovoDesligamentoDialog.tsx`<br>… +55 |
+| `status` | `ativo` | compara, escreve, filtra | `src/components/dashboard/useMorningBriefing.ts`<br>`src/components/descontos/EmprestimosTable.tsx`<br>`src/components/descontos/FinancialSummaryCards.tsx`<br>`src/components/descontos/NewLoanDialog.tsx`<br>`src/components/desligamentos/NovoDesligamentoDialog.tsx`<br>… +55 |
 | `status` | `ativos` | compara | `src/components/admissoes/GestaoKits.tsx` |
 | `status` | `calculada` | compara, escreve | `src/services/folhaPagamentoService.ts`<br>`supabase/functions/calcular-folha/index.ts`<br>`supabase/functions/fechar-folha/index.ts` |
 | `status` | `calculado` | compara, escreve | `src/components/desligamentos/trilhaDerivacoes.ts`<br>`src/components/premiacoes/PagamentosTabela.tsx`<br>`src/components/premiacoes/pagamentosComum.ts`<br>`src/services/rescisaoService.ts` |
@@ -4188,6 +4188,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `// linha de apoio caber em UMA linha ("150% vs. período` | `src/components/dashboard/MetricCard.tsx` |
 | `transition: { delay: i * 0.08, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const },` | `src/components/dashboard/MetricCard.tsx` |
 | `transition={{ delay: 0.5 + i * 0.06 }}` | `src/components/dashboard/QuickActionsGrid.tsx` |
+| `// — não mais uma barra em posição absoluta calculada sobre "50% da` | `src/components/dashboard/ResumoOperacionalCard.tsx` |
 | `const absenteismoScore = Math.max(0, 100 - absenteismo * 10); // 0% = 100, 10% = 0` | `src/components/dashboard/WorkforceHealthScore.tsx` |
 | `const arcLength = (compositeScore / 100) * circumference * 0.75; // 270 degree arc` | `src/components/dashboard/WorkforceHealthScore.tsx` |
 | `const turnoverScore = Math.max(0, 100 - turnover * 5); // 0% = 100, 20% = 0` | `src/components/dashboard/WorkforceHealthScore.tsx` |
@@ -4400,8 +4401,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `const desc = v.valor_mensal ? Number(v.valor_mensal) * 0.2 : 0;` | `supabase/functions/calcular-folha/index.ts` |
 | `const descontoVT = Math.min(Number(v.valor ?? 0), salarioBase * 0.06);` | `supabase/functions/calcular-folha/index.ts` |
 | `const descontoVT = Math.min(Number(vtLegacy.valor_mensal ?? 0), salarioBase * 0.06);` | `supabase/functions/calcular-folha/index.ts` |
-| `const fgts = trunc2(baseTributavel * 0.08);` | `supabase/functions/calcular-folha/index.ts` |
-| … +26 linhas — lista completa em `context.json` | |
+| … +27 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -4733,8 +4733,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `onClick={() => setMesAtual((m) => addMonths(m, 1))}` | `src/components/colaborador-detalhes/FeriasResumoTab.tsx` |
 | `onClick={() => setMesAtual((m) => subMonths(m, 1))}` | `src/components/colaborador-detalhes/FeriasResumoTab.tsx` |
 | `const dias = Math.round((dataValidade.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));` | `src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx` |
-| `const em7Dias = format(new Date(hoje.getTime() + 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd');` | `src/components/dashboard/MorningBriefing.tsx` |
-| `staleTime: 5 * 60 * 1000,` | `src/components/dashboard/MorningBriefing.tsx` |
+| `const em7Dias = format(new Date(hoje.getTime() + 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd');` | `src/components/dashboard/useMorningBriefing.ts` |
+| `staleTime: 5 * 60 * 1000,` | `src/components/dashboard/useMorningBriefing.ts` |
 | `staleTime: 5 * 60 * 1000,` | `src/components/dashboard/analytics/widgets.tsx` |
 | `export const DIA_MS = 24 * 60 * 60 * 1000;` | `src/components/desligamentos/desligamentosDerivacoes.ts` |
 | `const isProximo = vencimento && !isVencido && isBefore(vencimento, addMonths(new Date(), 1));` | `src/components/epis/EpiEntregasTable.tsx` |
@@ -5222,8 +5222,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 |  className= | `src/components/dashboard/EventTimeline.tsx` |
 | O provedor não confirmou a entrega dos alertas. | `src/components/dashboard/MorningBriefing.tsx` |
 | Selecione uma empresa antes de disparar alertas. | `src/components/dashboard/MorningBriefing.tsx` |
-| Selecione uma empresa para carregar o briefing. | `src/components/dashboard/MorningBriefing.tsx` |
 | Selecione uma empresa antes de disparar alertas. | `src/components/dashboard/SystemStatusCard.tsx` |
+| Selecione uma empresa para carregar o briefing. | `src/components/dashboard/useMorningBriefing.ts` |
 | Informe o nome do departamento | `src/components/departamentos/NovoDepartamentoDialog.tsx` |
 | Não é possível inativar  | `src/components/departamentos/NovoDepartamentoDialog.tsx` |
 | Salário base e data de desligamento são obrigatórios para o cálculo | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
@@ -6091,4 +6091,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | METAS & OKRs — derivações da aba (situação, prazo, ordem e filtros). | `src/components/avaliacao/metasComum.ts` |
 | exibem. Nada aqui inventa dado: TODAS as funções leem somente campos que já | `src/components/avaliacao/metasComum.ts` |
 | 2. `atrasada`  → prazo vencido e ainda não concluída — é EXATAMENTE o | `src/components/avaliacao/metasComum.ts` |
-| … +913 linhas — lista completa em `context.json` | |
+| … +914 linhas — lista completa em `context.json` | |

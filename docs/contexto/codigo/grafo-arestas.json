@@ -1850,6 +1850,7 @@
    "src/lib/utils.ts"
   ],
   "src/components/dashboard/MorningBriefing.tsx": [
+   "src/components/dashboard/useMorningBriefing.ts",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
@@ -1859,9 +1860,21 @@
    "src/services/edgeFunctionsService.ts",
    "src/utils/safeError.ts"
   ],
+  "src/components/dashboard/ProximasAtividadesCard.tsx": [
+   "src/components/dashboard/useMorningBriefing.ts",
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
   "src/components/dashboard/QuickActionsGrid.tsx": [
    "src/components/ui/card.tsx",
    "src/lib/utils.ts"
+  ],
+  "src/components/dashboard/ResumoOperacionalCard.tsx": [
+   "src/components/dashboard/useMorningBriefing.ts",
+   "src/components/ui/card.tsx",
+   "src/components/ui/module-skeleton.tsx",
+   "src/lib/utils.ts",
+   "src/pages/DashboardPage.tsx"
   ],
   "src/components/dashboard/SectionHeader.tsx": [
    "src/lib/utils.ts"
@@ -1921,6 +1934,9 @@
    "src/components/dashboard/MiniSparkline.tsx",
    "src/components/dashboard/QuickActionsGrid.tsx",
    "src/components/dashboard/WorkforceHealthScore.tsx"
+  ],
+  "src/components/dashboard/useMorningBriefing.ts": [
+   "src/integrations/supabase/client.ts"
   ],
   "src/components/departamentos/NovoDepartamentoDialog.tsx": [
    "src/components/ui/button.tsx",
@@ -5926,9 +5942,12 @@
    "src/components/dashboard/DashboardHeader.tsx",
    "src/components/dashboard/MetricCard.tsx",
    "src/components/dashboard/MorningBriefing.tsx",
+   "src/components/dashboard/ProximasAtividadesCard.tsx",
    "src/components/dashboard/QuickActionsGrid.tsx",
+   "src/components/dashboard/ResumoOperacionalCard.tsx",
    "src/components/dashboard/SystemStatusCard.tsx",
    "src/components/dashboard/WorkforceHealthScore.tsx",
+   "src/components/dashboard/useMorningBriefing.ts",
    "src/components/ui/card.tsx",
    "src/components/ui/module-skeleton.tsx",
    "src/contexts/AuthContext.tsx",

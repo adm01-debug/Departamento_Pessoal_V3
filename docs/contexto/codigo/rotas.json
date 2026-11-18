@@ -10755,6 +10755,7 @@
     "useAuth",
     "useEmpresaStore",
     "useEmpresas",
+    "useMorningBriefing",
     "useMovimentoReduzido",
     "usePendencias",
     "usePontoMelhorado",
@@ -10871,7 +10872,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 82
+   "arquivos_puxados": 85
   },
   {
    "protegida": true,

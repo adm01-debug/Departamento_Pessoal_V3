@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 118,
+ "total": 119,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -104,6 +104,35 @@
    "usado_por_arquivos": [
     "src/components/avaliacao/CancelamentoFeedbackResumo.tsx",
     "src/components/avaliacao/CartaoFeedbackCanonico.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/dashboard/useMorningBriefing.ts",
+   "hooks_exportados": [
+    "useMorningBriefing"
+   ],
+   "linhas": 137,
+   "dominio": "components/dashboard",
+   "tabelas": [
+    "admissoes",
+    "afastamentos",
+    "batidas_ponto",
+    "colaboradores",
+    "esocial_eventos",
+    "exames",
+    "ferias"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/dashboard/MorningBriefing.tsx",
+    "src/components/dashboard/ProximasAtividadesCard.tsx",
+    "src/components/dashboard/ResumoOperacionalCard.tsx",
+    "src/pages/DashboardPage.tsx"
    ],
    "coberto_por_testes": 0
   },

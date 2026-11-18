@@ -7,13 +7,13 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (518)",
+   "src/components (520)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
   "hooks": [
    "src/hooks (99)",
-   "src/components (9)",
+   "src/components (10)",
    "src/contexts (4)"
   ],
   "servicos_logica": [
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (636)"
+  ".tsx (638)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(dashboard): resgata Resumo Operacional e Próximas Atividades da muri (#698)",
    "test: recupera 9 arquivos de teste da branch muri (#546) — 107 casos (#697)",
    "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#688)",
    "feat: empresa_id NOT NULL nas 9 tabelas de RH + veredito das 21 migrations (#695)",
-   "fix: cadastro de plano de benefício grava a empresa (403 em produção) (#696)",
-   "infra: conserta a armadilha de DEFAULT x CHECK em public.faltas (#694)"
+   "fix: cadastro de plano de benefício grava a empresa (403 em produção) (#696)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

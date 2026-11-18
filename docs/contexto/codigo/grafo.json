@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1307,
- "arestas": 6416,
+ "nos": 1310,
+ "arestas": 6429,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -10,15 +10,15 @@
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 283
+   "importado_por": 285
   },
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 282
+   "importado_por": 284
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 270
+   "importado_por": 271
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
@@ -166,8 +166,15 @@
   }
  ],
  "ciclos": {
-  "total": 3,
+  "total": 4,
   "maiores": [
+   {
+    "tamanho": 2,
+    "arquivos": [
+     "src/components/dashboard/ResumoOperacionalCard.tsx",
+     "src/pages/DashboardPage.tsx"
+    ]
+   },
    {
     "tamanho": 2,
     "arquivos": [
@@ -250,14 +257,14 @@
  ],
  "modulos_mais_acoplados": [
   {
+   "modulo": "pages",
+   "depende_de": 54,
+   "importado_por": 1
+  },
+  {
    "modulo": "components/ui",
    "depende_de": 8,
    "importado_por": 46
-  },
-  {
-   "modulo": "pages",
-   "depende_de": 54,
-   "importado_por": 0
   },
   {
    "modulo": "hooks",
@@ -286,7 +293,7 @@
   },
   {
    "modulo": "components/dashboard",
-   "depende_de": 8,
+   "depende_de": 9,
    "importado_por": 12
   },
   {

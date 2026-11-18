@@ -8079,6 +8079,7 @@
    "src/components/animate-ui/primitives/animate/tabs.tsx",
    "src/components/animate-ui/primitives/effects/highlight.tsx",
    "src/components/avaliacao/useHistoricoFeedback.ts",
+   "src/components/dashboard/useMorningBriefing.ts",
    "src/components/layout/Breadcrumb.tsx",
    "src/components/ui/form.tsx",
    "src/components/ui/sidebar.tsx",

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 636,
+ "total": 638,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -2795,18 +2795,26 @@
     "MorningBriefing"
    ],
    "export_default": null,
-   "linhas": 457,
+   "linhas": 338,
+   "dominio": "components/dashboard",
+   "hooks_locais": [
+    "useMorningBriefing"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/ProximasAtividadesCard.tsx",
+   "exports": [
+    "ProximasAtividadesCard"
+   ],
+   "export_default": null,
+   "linhas": 148,
    "dominio": "components/dashboard",
    "hooks_locais": [],
-   "tabelas": [
-    "admissoes",
-    "afastamentos",
-    "batidas_ponto",
-    "colaboradores",
-    "esocial_eventos",
-    "exames",
-    "ferias"
-   ],
+   "tabelas": [],
    "edges": [],
    "usado_por": 1,
    "orfao": false
@@ -2823,6 +2831,20 @@
    "tabelas": [],
    "edges": [],
    "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/ResumoOperacionalCard.tsx",
+   "exports": [
+    "ResumoOperacionalCard"
+   ],
+   "export_default": null,
+   "linhas": 142,
+   "dominio": "components/dashboard",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -7348,7 +7370,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 282,
+   "usado_por": 284,
    "orfao": false
   },
   {
@@ -7774,7 +7796,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 15,
+   "usado_por": 16,
    "orfao": false
   },
   {
@@ -9171,13 +9193,15 @@
   {
    "arquivo": "src/pages/DashboardPage.tsx",
    "exports": [
-    "DashboardPage"
+    "DashboardPage",
+    "Pendencia"
    ],
    "export_default": "DashboardPage",
-   "linhas": 465,
+   "linhas": 488,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
+    "useMorningBriefing",
     "usePendencias",
     "useRealtimeDashboard"
    ],
@@ -9195,7 +9219,7 @@
     "vw_kpi_turnover"
    ],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "orfao": false
   },
   {
