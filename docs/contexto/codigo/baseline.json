@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fa2dec8b6767c635146ef9b4623e4f050e5d6b15",
+  "commit": "2569c2a4f1da834ff33e2da2ae1a7d8c6f7063df",
   "branch": "main",
-  "data_commit": "2026-11-17T21:04:58-03:00",
+  "data_commit": "2026-11-17T21:15:02-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2569c2a",
+    "data": "2026-11-17",
+    "assunto": "feat(observabilidade): liga o trace_id do frontend ao bridge (#666)"
+   },
    {
     "sha": "fa2dec8",
     "data": "2026-11-17",
@@ -126,14 +131,9 @@
     "sha": "f26f689",
     "data": "2026-11-17",
     "assunto": "feat(permissions): seed da matriz de permissões por papel (#642)"
-   },
-   {
-    "sha": "ec1a734",
-    "data": "2026-11-17",
-    "assunto": "fix(colaborador): \"Próximos Eventos\" lê o dado real e os atalhos levam ao lugar certo (#641)"
    }
   ],
-  "arquivos_mudados_7d": 1104,
+  "arquivos_mudados_7d": 1107,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 281
+    "commits": 282
    },
    {
     "autor": "dependabot[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 5
+    "commits": 4
    },
    {
     "autor": "github-actions[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3566,
-  "arquivos_codigo": 2070,
-  "linhas_codigo": 410190,
+  "arquivos_total": 3567,
+  "arquivos_codigo": 2071,
+  "linhas_codigo": 410302,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -672,11 +672,11 @@
   },
   "src/integrations": {
    "arquivos": 11,
-   "linhas": 25929
+   "linhas": 25999
   },
   "src/lib": {
-   "arquivos": 20,
-   "linhas": 2504
+   "arquivos": 21,
+   "linhas": 2546
   },
   "src/main.tsx": {
    "arquivos": 1,

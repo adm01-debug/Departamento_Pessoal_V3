@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(observabilidade): liga o trace_id do frontend ao bridge (#666)",
    "fix(portal): aviso de exclusão de documento para de mentir sobre o arquivo (#665)",
    "chore(migrations): documenta no repo as 8 DDL que só existiam no ledger (#656)",
    "test(e2e): resgata da muri os 5 especs de navegador (#661)",
-   "feat(desligamentos): faixa de atenção na tela, ligada ao cálculo que já existia (#664)",
-   "feat(rescisao): memória de cálculo com a base e a alíquota efetiva de cada encargo (#663)"
+   "feat(desligamentos): faixa de atenção na tela, ligada ao cálculo que já existia (#664)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

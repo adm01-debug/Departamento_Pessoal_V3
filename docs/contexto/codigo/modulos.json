@@ -7599,7 +7599,7 @@
    "modulo": "integrations/supabase",
    "arquivos": 6,
    "testes": 4,
-   "linhas": 25475,
+   "linhas": 25483,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7670,6 +7670,7 @@
     "utils/folha"
    ],
    "depende_de_modulos": [
+    "lib",
     "services",
     "utils"
    ],
@@ -7680,9 +7681,9 @@
   },
   {
    "modulo": "lib",
-   "arquivos": 12,
+   "arquivos": 13,
    "testes": 1,
-   "linhas": 1168,
+   "linhas": 1210,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7747,6 +7748,7 @@
     "components/workflows",
     "contexts",
     "hooks",
+    "integrations/supabase",
     "pages",
     "services"
    ],

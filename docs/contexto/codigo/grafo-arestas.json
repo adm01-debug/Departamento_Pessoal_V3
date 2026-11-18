@@ -5148,6 +5148,7 @@
   "src/integrations/supabase/client.ts": [
    "src/integrations/supabase/previewAuthStorage.ts",
    "src/integrations/supabase/types.ts",
+   "src/lib/tracing.ts",
    "src/services/loggerService.ts",
    "src/utils/secureJson.ts"
   ],

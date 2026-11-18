@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "fa2dec8b6767c635146ef9b4623e4f050e5d6b15",
+  "sha": "2569c2a4f1da834ff33e2da2ae1a7d8c6f7063df",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 00:07 UTC",
-  "files_total": 3579,
-  "code_files": 3003,
-  "code_lines": 475900
+  "generated_at": "2026-11-18 00:16 UTC",
+  "files_total": 3580,
+  "code_files": 3004,
+  "code_lines": 476012
  },
  "version": "1.3.2",
- "facts_hash": "c463edb4ca7dcd0d",
+ "facts_hash": "314293cfa624f531",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 995,
-   ".ts": 937,
+   ".ts": 938,
    ".sql": 935,
    ".mjs": 108,
    ".js": 15,
@@ -87279,7 +87279,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 72
+    "deps_count": 73
    },
    {
     "path": "",
@@ -87297,7 +87297,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 30
+    "deps_count": 31
    },
    {
     "path": "",
@@ -87314,7 +87314,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 28
+    "deps_count": 29
    },
    {
     "path": "",
@@ -87340,7 +87340,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 74
+    "deps_count": 75
    },
    {
     "path": "",
@@ -87366,7 +87366,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 65
+    "deps_count": 66
    },
    {
     "path": "",
@@ -87387,7 +87387,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 40
+    "deps_count": 41
    },
    {
     "path": "",
@@ -87405,7 +87405,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 30
+    "deps_count": 31
    },
    {
     "path": "",
@@ -87416,7 +87416,7 @@
     "rpc_transitive": [
      "log_frontend_error"
     ],
-    "deps_count": 11
+    "deps_count": 12
    },
    {
     "path": "",
@@ -87428,7 +87428,7 @@
      "log_frontend_error",
      "search_audit_unified"
     ],
-    "deps_count": 17
+    "deps_count": 18
    },
    {
     "path": "",
@@ -87445,7 +87445,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 30
+    "deps_count": 31
    },
    {
     "path": "",
@@ -87464,7 +87464,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 31
+    "deps_count": 32
    },
    {
     "path": "",
@@ -87475,7 +87475,7 @@
     "rpc_transitive": [
      "log_frontend_error"
     ],
-    "deps_count": 18
+    "deps_count": 19
    },
    {
     "path": "",
@@ -87493,7 +87493,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 17
+    "deps_count": 18
    },
    {
     "path": "",
@@ -87504,7 +87504,7 @@
     "rpc_transitive": [
      "log_frontend_error"
     ],
-    "deps_count": 19
+    "deps_count": 20
    },
    {
     "path": "",
@@ -87651,7 +87651,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 191
+    "deps_count": 192
    },
    {
     "path": "",
@@ -87684,7 +87684,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 106
+    "deps_count": 107
    },
    {
     "path": "",
@@ -87695,7 +87695,7 @@
     "rpc_transitive": [
      "log_frontend_error"
     ],
-    "deps_count": 16
+    "deps_count": 17
    },
    {
     "path": "",
@@ -87838,7 +87838,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 120
+    "deps_count": 121
    },
    {
     "path": "",
@@ -87864,7 +87864,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 69
+    "deps_count": 70
    },
    {
     "path": "",
@@ -87894,7 +87894,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 81
+    "deps_count": 82
    },
    {
     "path": "",
@@ -88076,7 +88076,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 308
+    "deps_count": 309
    },
    {
     "path": "",
@@ -88103,7 +88103,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 70
+    "deps_count": 71
    },
    {
     "path": "",
@@ -88284,7 +88284,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 193
+    "deps_count": 194
    },
    {
     "path": "",
@@ -88312,7 +88312,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 80
+    "deps_count": 81
    },
    {
     "path": "",
@@ -88440,7 +88440,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 147
+    "deps_count": 148
    },
    {
     "path": "",
@@ -88469,7 +88469,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 82
+    "deps_count": 83
    },
    {
     "path": "",
@@ -88654,7 +88654,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 202
+    "deps_count": 203
    },
    {
     "path": "",
@@ -88835,7 +88835,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 196
+    "deps_count": 197
    },
    {
     "path": "",
@@ -88858,7 +88858,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 77
+    "deps_count": 78
    },
    {
     "path": "",
@@ -89039,7 +89039,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 198
+    "deps_count": 199
    },
    {
     "path": "",
@@ -89226,7 +89226,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 303
+    "deps_count": 304
    },
    {
     "path": "",
@@ -89410,7 +89410,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 218
+    "deps_count": 219
    },
    {
     "path": "",
@@ -89434,7 +89434,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 98
+    "deps_count": 99
    },
    {
     "path": "",
@@ -89615,7 +89615,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 201
+    "deps_count": 202
    },
    {
     "path": "",
@@ -89811,7 +89811,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 199
+    "deps_count": 200
    },
    {
     "path": "",
@@ -89938,7 +89938,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 140
+    "deps_count": 141
    },
    {
     "path": "",
@@ -89970,7 +89970,7 @@
      "log_frontend_error",
      "registrar_auditoria"
     ],
-    "deps_count": 40
+    "deps_count": 41
    },
    {
     "path": "",
@@ -90000,7 +90000,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 37
+    "deps_count": 38
    },
    {
     "path": "",
@@ -90026,7 +90026,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 30
+    "deps_count": 31
    },
    {
     "path": "",
@@ -90208,7 +90208,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 205
+    "deps_count": 206
    },
    {
     "path": "",
@@ -90389,7 +90389,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 201
+    "deps_count": 202
    },
    {
     "path": "",
@@ -90429,7 +90429,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 96
+    "deps_count": 97
    },
    {
     "path": "",
@@ -90455,7 +90455,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 80
+    "deps_count": 81
    },
    {
     "path": "",
@@ -90636,7 +90636,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 209
+    "deps_count": 210
    },
    {
     "path": "",
@@ -90680,7 +90680,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 132
+    "deps_count": 133
    },
    {
     "path": "",
@@ -90862,7 +90862,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 208
+    "deps_count": 209
    },
    {
     "path": "",
@@ -90990,7 +90990,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 151
+    "deps_count": 152
    },
    {
     "path": "",
@@ -91172,7 +91172,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 214
+    "deps_count": 215
    },
    {
     "path": "",
@@ -91209,7 +91209,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 112
+    "deps_count": 113
    },
    {
     "path": "",
@@ -91338,7 +91338,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 172
+    "deps_count": 173
    },
    {
     "path": "",
@@ -91543,7 +91543,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 198
+    "deps_count": 199
    },
    {
     "path": "",
@@ -91725,7 +91725,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 213
+    "deps_count": 214
    },
    {
     "path": "",
@@ -91907,7 +91907,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 207
+    "deps_count": 208
    },
    {
     "path": "",
@@ -91933,7 +91933,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 74
+    "deps_count": 75
    },
    {
     "path": "",
@@ -92076,7 +92076,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 232
+    "deps_count": 233
    },
    {
     "path": "",
@@ -92103,7 +92103,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 51
+    "deps_count": 52
    },
    {
     "path": "",
@@ -92230,7 +92230,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 144
+    "deps_count": 145
    },
    {
     "path": "",
@@ -92258,7 +92258,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 74
+    "deps_count": 75
    },
    {
     "path": "",
@@ -92329,7 +92329,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 172
+    "deps_count": 173
    },
    {
     "path": "",
@@ -92380,7 +92380,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 111
+    "deps_count": 112
    },
    {
     "path": "",
@@ -92406,7 +92406,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 71
+    "deps_count": 72
    },
    {
     "path": "",
@@ -92436,7 +92436,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 78
+    "deps_count": 79
    },
    {
     "path": "",
@@ -92465,7 +92465,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 88
+    "deps_count": 89
    },
    {
     "path": "",
@@ -92491,7 +92491,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 77
+    "deps_count": 78
    },
    {
     "path": "",
@@ -92573,7 +92573,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 89
+    "deps_count": 90
    },
    {
     "path": "",
@@ -92754,7 +92754,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 198
+    "deps_count": 199
    },
    {
     "path": "",
@@ -92935,7 +92935,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 204
+    "deps_count": 205
    },
    {
     "path": "",
@@ -92958,7 +92958,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 71
+    "deps_count": 72
    },
    {
     "path": "",
@@ -93140,7 +93140,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 197
+    "deps_count": 198
    },
    {
     "path": "",
@@ -93323,7 +93323,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 223
+    "deps_count": 224
    },
    {
     "path": "",
@@ -93503,7 +93503,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 207
+    "deps_count": 208
    },
    {
     "path": "",
@@ -93536,7 +93536,7 @@
      "pode_gerir_avaliacoes",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 42
+    "deps_count": 43
    },
    {
     "path": "",
@@ -93570,7 +93570,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 74
+    "deps_count": 75
    },
    {
     "path": "",
@@ -93750,7 +93750,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 211
+    "deps_count": 212
    },
    {
     "path": "",
@@ -93780,7 +93780,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 94
+    "deps_count": 95
    },
    {
     "path": "",
@@ -93807,7 +93807,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 87
+    "deps_count": 88
    },
    {
     "path": "",
@@ -93832,7 +93832,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 70
+    "deps_count": 71
    },
    {
     "path": "",
@@ -94014,7 +94014,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 207
+    "deps_count": 208
    },
    {
     "path": "",
@@ -94041,7 +94041,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 74
+    "deps_count": 75
    },
    {
     "path": "",
@@ -94223,7 +94223,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 199
+    "deps_count": 200
    },
    {
     "path": "",
@@ -94259,7 +94259,7 @@
      "pcs_simular_impacto",
      "set_own_default_empresa"
     ],
-    "deps_count": 83
+    "deps_count": 84
    },
    {
     "path": "",
@@ -94474,7 +94474,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 208
+    "deps_count": 209
    },
    {
     "path": "",
@@ -94498,7 +94498,7 @@
      "registrar_batida_ponto",
      "set_own_default_empresa"
     ],
-    "deps_count": 29
+    "deps_count": 30
    },
    {
     "path": "",
@@ -94686,7 +94686,7 @@
      "validar_potencial_avaliacao",
      "verificar_espelho_ponto"
     ],
-    "deps_count": 231
+    "deps_count": 232
    },
    {
     "path": "",
@@ -94814,7 +94814,7 @@
      "validar_potencial_avaliacao",
      "vincular_colaborador_ao_usuario"
     ],
-    "deps_count": 152
+    "deps_count": 153
    },
    {
     "path": "",
@@ -95002,7 +95002,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 250
+    "deps_count": 251
    },
    {
     "path": "",
@@ -95028,7 +95028,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 72
+    "deps_count": 73
    },
    {
     "path": "",
@@ -95154,7 +95154,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 142
+    "deps_count": 143
    },
    {
     "path": "",
@@ -95342,7 +95342,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 244
+    "deps_count": 245
    },
    {
     "path": "",
@@ -95372,7 +95372,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 88
+    "deps_count": 89
    },
    {
     "path": "",
@@ -95554,7 +95554,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 199
+    "deps_count": 200
    },
    {
     "path": "",
@@ -95585,7 +95585,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 93
+    "deps_count": 94
    },
    {
     "path": "",
@@ -95618,7 +95618,7 @@
      "sec_audit_policies",
      "set_own_default_empresa"
     ],
-    "deps_count": 70
+    "deps_count": 71
    },
    {
     "path": "",
@@ -95832,7 +95832,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 210
+    "deps_count": 211
    },
    {
     "path": "",
@@ -96014,7 +96014,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 197
+    "deps_count": 198
    },
    {
     "path": "",
@@ -96195,7 +96195,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 199
+    "deps_count": 200
    },
    {
     "path": "",
@@ -96377,7 +96377,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 279
+    "deps_count": 280
    },
    {
     "path": "",
@@ -96559,7 +96559,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 198
+    "deps_count": 199
    },
    {
     "path": "",
@@ -96585,7 +96585,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 65
+    "deps_count": 66
    },
    {
     "path": "",
@@ -96765,7 +96765,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 199
+    "deps_count": 200
    },
    {
     "path": "",
@@ -96776,7 +96776,7 @@
     "rpc_transitive": [
      "log_frontend_error"
     ],
-    "deps_count": 15
+    "deps_count": 16
    },
    {
     "path": "",
@@ -96802,7 +96802,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 72
+    "deps_count": 73
    },
    {
     "path": "",
@@ -96984,7 +96984,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 208
+    "deps_count": 209
    },
    {
     "path": "/auth/callback",
@@ -96995,7 +96995,7 @@
     "rpc_transitive": [
      "log_frontend_error"
     ],
-    "deps_count": 7
+    "deps_count": 8
    },
    {
     "path": "/ciencia-medida/:token",
@@ -97006,7 +97006,7 @@
     "rpc_transitive": [
      "log_frontend_error"
     ],
-    "deps_count": 13
+    "deps_count": 14
    },
    {
     "path": "/login",
@@ -97021,7 +97021,7 @@
      "get_user_roles",
      "log_frontend_error"
     ],
-    "deps_count": 24
+    "deps_count": 25
    },
    {
     "path": "dashboard",
@@ -97048,7 +97048,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 67
+    "deps_count": 68
    }
   ],
   "edge_functions": [
@@ -102225,9 +102225,10 @@
   {
    "module": "src/integrations",
    "files": 10,
-   "lines": 1080,
+   "lines": 1150,
    "tables": [
     "colaboradores",
+    "empresas",
     "folha_itens",
     "t",
     "x"
@@ -102252,6 +102253,7 @@
     "vitest"
    ],
    "imports_modules": [
+    "src/lib",
     "src/services",
     "src/utils"
    ],
@@ -102270,8 +102272,8 @@
   },
   {
    "module": "src/lib",
-   "files": 20,
-   "lines": 2504,
+   "files": 21,
+   "lines": 2546,
    "tables": [],
    "exports": [
     "avatarTons.ts: TONS_AVATAR, tomDoAvatar",
@@ -102284,6 +102286,7 @@
     "reciboAssinaturaPdf.ts: ReciboAssinaturaData, gerarReciboAssinaturaPDF",
     "retry.ts: RetryOptions, RetryResult, retryWithIdempotency, retryEdgeFunction",
     "sessaoLocal.ts: IDLE_ACTIVITY_KEY, SESSION_FP_KEY, limparSessaoLocal",
+    "tracing.ts: novoTraceId, withTraceId",
     "utils.ts: cn, sleep, generateId, truncate, capitalize, debounce"
    ],
    "docs": [
@@ -102319,6 +102322,7 @@
     "src/lib/reciboAssinaturaPdf.ts",
     "src/lib/retry.ts",
     "src/lib/sessaoLocal.ts",
+    "src/lib/tracing.ts",
     "src/lib/utils.ts",
     "src/lib/__tests__/circuitBreaker.test.ts",
     "src/lib/__tests__/masks.test.ts",
@@ -104924,6 +104928,7 @@
      "src/hooks/ferias/useGerarComunicadoColetivas.ts",
      "src/hooks/useEmpresas.ts",
      "src/hooks/useGrupo.ts",
+     "src/integrations/supabase/__tests__/clientBridge.test.ts",
      "src/services/cnabService.ts",
      "src/services/esocialService.ts",
      "src/services/folhaPagamentoService.ts",
@@ -120327,6 +120332,10 @@
    {
     "file": "src/lib/retry.ts",
     "text": "* Backoff máximo em ms (default: 8000). */"
+   },
+   {
+    "file": "src/lib/tracing.ts",
+    "text": "`edgeFunctionsService` registra que \"correlação, se necessária, deve ir no"
    },
    {
     "file": "src/mocks/colaboradoresMock.ts",
@@ -186728,6 +186737,30 @@
    {
     "file": "src/integrations/supabase/__tests__/clientBridge.test.ts",
     "name": "falha de rede vira mensagem amigável + toast"
+   },
+   {
+    "file": "src/integrations/supabase/__tests__/clientBridge.test.ts",
+    "name": "external-db-bridge — trace_id"
+   },
+   {
+    "file": "src/integrations/supabase/__tests__/clientBridge.test.ts",
+    "name": "todo request ao bridge leva trace_id no body"
+   },
+   {
+    "file": "src/integrations/supabase/__tests__/clientBridge.test.ts",
+    "name": "CADA requisição ganha um trace_id próprio — é o que o índice da coluna isola"
+   },
+   {
+    "file": "src/integrations/supabase/__tests__/clientBridge.test.ts",
+    "name": "duas chamadas à MESMA tabela também não repetem o id"
+   },
+   {
+    "file": "src/integrations/supabase/__tests__/clientBridge.test.ts",
+    "name": "o trace_id não atropela os campos do request"
+   },
+   {
+    "file": "src/integrations/supabase/__tests__/clientBridge.test.ts",
+    "name": "formato UUID v4, que é o que o backend espera"
    },
    {
     "file": "src/integrations/supabase/__tests__/clientFunctionsProxy.test.ts",
@@ -292370,7 +292403,7 @@
   },
   "src/integrations/supabase/client.ts": {
    "path": "src/integrations/supabase/client.ts",
-   "lines": 440,
+   "lines": 448,
    "exports": [
     "const supabaseBase",
     "function fetchWithRetry",
@@ -292450,7 +292483,7 @@
   },
   "src/integrations/supabase/__tests__/clientBridge.test.ts": {
    "path": "src/integrations/supabase/__tests__/clientBridge.test.ts",
-   "lines": 168,
+   "lines": 230,
    "is_test": true,
    "tables": [
     {
@@ -292496,6 +292529,34 @@
     {
      "table": "t",
      "op": "select"
+    },
+    {
+     "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "empresas",
+     "op": "select"
+    },
+    {
+     "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "colaboradores",
+     "op": "select"
     }
    ],
    "table_cols": {
@@ -292512,6 +292573,9 @@
      "id",
      "nome",
      "pai"
+    ],
+    "empresas": [
+     "id"
     ]
    },
    "rpc": [
@@ -292529,11 +292593,18 @@
     "write com sessão envia Bearer do JWT e Idempotency-Key",
     "erro do bridge vira {message} e dispara toast (exceto objeto ausente)",
     "rpc vai para action=rpc com fn/params (sem table)",
-    "falha de rede vira mensagem amigável + toast"
+    "falha de rede vira mensagem amigável + toast",
+    "external-db-bridge — trace_id",
+    "todo request ao bridge leva trace_id no body",
+    "CADA requisição ganha um trace_id próprio — é o que o índice da coluna isola",
+    "duas chamadas à MESMA tabela também não repetem o id",
+    "o trace_id não atropela os campos do request",
+    "formato UUID v4, que é o que o backend espera"
    ],
    "pagination": [
     "10",
-    "20"
+    "20",
+    "5"
    ]
   },
   "src/integrations/supabase/__tests__/clientFunctionsProxy.test.ts": {
@@ -292900,6 +292971,17 @@
     "function limparSessaoLocal"
    ],
    "doc": "Limpeza de sessão do navegador. Só remove o que pertence à AUTENTICAÇÃO (token/verifier do Supabase e o fingerprint de sessão). Dados de trabalho no localStorage — rascunhos, fila offline do ponto, registros demonstrativos, tema/idioma — NÃO são apagados por logout, inatividade ou troca de usuário."
+  },
+  "src/lib/tracing.ts": {
+   "path": "src/lib/tracing.ts",
+   "lines": 42,
+   "exports": [
+    "function novoTraceId",
+    "function withTraceId"
+   ],
+   "rule_comments": [
+    "`edgeFunctionsService` registra que \"correlação, se necessária, deve ir no"
+   ]
   },
   "src/lib/utils.ts": {
    "path": "src/lib/utils.ts",
@@ -326474,10 +326556,21 @@
   }
  },
  "git": {
-  "sha": "fa2dec8b6767c635146ef9b4623e4f050e5d6b15",
+  "sha": "2569c2a4f1da834ff33e2da2ae1a7d8c6f7063df",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "2569c2a",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(observabilidade): liga o trace_id do frontend ao bridge (#666)",
+    "files": [
+     "src/integrations/supabase/__tests__/clientBridge.test.ts",
+     "src/integrations/supabase/client.ts",
+     "src/lib/tracing.ts"
+    ]
+   },
    {
     "sha": "fa2dec8",
     "date": "2026-11-17",
@@ -326836,18 +326929,6 @@
      "src/constants/tooltips.ts",
      "src/pages/DashboardPage.tsx"
     ]
-   },
-   {
-    "sha": "8006fcf",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(colaboradores): adota a tabela densa da muri, com máscara de PII (#638)",
-    "files": [
-     "src/components/__tests__/ColaboradorTable.test.tsx",
-     "src/components/colaboradores/ColaboradorTable.tsx",
-     "src/components/layout/EntityPageContainer.tsx",
-     "src/pages/ColaboradoresPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -326892,8 +326973,16 @@
     2
    ],
    [
-    "src/pages/ColaboradoresPage.tsx",
-    2
+    "src/integrations/supabase/__tests__/clientBridge.test.ts",
+    1
+   ],
+   [
+    "src/integrations/supabase/client.ts",
+    1
+   ],
+   [
+    "src/lib/tracing.ts",
+    1
    ],
    [
     "docs/auditoria/MIGRATIONS_LEDGER_SEM_ARQUIVO_2026-11-17.md",
@@ -326921,14 +327010,6 @@
    ],
    [
     "supabase/migrations/20260912143344_p1_function_search_path.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20260912144208_p0_pgcrypto_routine_search_path.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
     1
    ]
   ]

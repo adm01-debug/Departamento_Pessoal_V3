@@ -5035,11 +5035,11 @@
   {
    "arquivo": "src/integrations/supabase/__tests__/clientBridge.test.ts",
    "tipo": "unit",
-   "linhas": 168,
+   "linhas": 230,
    "testa": [
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 11
+   "casos": 16
   },
   {
    "arquivo": "src/integrations/supabase/__tests__/clientFunctionsProxy.test.ts",

@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1302,
- "arestas": 6402,
+ "nos": 1303,
+ "arestas": 6403,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -265,14 +265,14 @@
    "importado_por": 33
   },
   {
+   "modulo": "integrations/supabase",
+   "depende_de": 3,
+   "importado_por": 41
+  },
+  {
    "modulo": "services",
    "depende_de": 11,
    "importado_por": 33
-  },
-  {
-   "modulo": "integrations/supabase",
-   "depende_de": 2,
-   "importado_por": 41
   },
   {
    "modulo": "utils",
@@ -282,7 +282,7 @@
   {
    "modulo": "lib",
    "depende_de": 1,
-   "importado_por": 34
+   "importado_por": 35
   },
   {
    "modulo": "components/dashboard",

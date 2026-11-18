@@ -1,11 +1,11 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 179,
+ "total": 180,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
-  "lib": 12,
+  "lib": 13,
   "providers": 1,
   "python": 3,
   "schemas": 25,
@@ -334,7 +334,7 @@
     "supabaseBase"
    ],
    "export_default": null,
-   "linhas": 440,
+   "linhas": 448,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -872,6 +872,30 @@
    "usado_por": 2,
    "usado_por_modulos": [
     "hooks"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/tracing.ts",
+   "camada": "lib",
+   "exports": [
+    "novoTraceId",
+    "withTraceId"
+   ],
+   "export_default": null,
+   "linhas": 42,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "integrations/supabase"
    ],
    "coberto_por_testes": 0,
    "orfao": false
