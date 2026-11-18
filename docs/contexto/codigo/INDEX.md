@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c96848a1efc3c4cda4c2defa39cbefa99a48c813` (2026-11-18T02:09:19-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2271c4a80de34988dba2045947ba7a44e77c0b7e` (2026-11-18T03:20:33-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3585 |
 | arquivos_codigo | 2079 |
-| linhas_codigo | 411323 |
+| linhas_codigo | 411633 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -396,27 +396,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27303 nós · 61617 arestas · 2390 comunidades · grafo do commit `c96848a1`
-- comunidades maiores: cn (510), 20260831_corrected_public.sql (493), useEmpresas (479), button.tsx (477), canonical_schema.sql (475), client.ts (285), vitest (263), App.tsx (199), ref_node_fs (176), ColaboradorDetalhesPage.tsx (169), "public"."empresas" (159), react (157)
+- 27318 nós · 61636 arestas · 2389 comunidades · grafo do commit `2271c4a8`
+- comunidades maiores: @tanstack/react-query (538), 20260831_corrected_public.sql (493), canonical_schema.sql (475), sonner (465), lucide-react (459), cn (389), react (310), vitest (301), useEmpresas (299), ref_node_fs (219), ColaboradorDetalhesPage.tsx (177), rateLimit.ts (172)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - inventario/estado/rotas.json (23)
 - .github/workflows/canonical-migrations.yml (17)
-- package.json (15)
-- package-lock.json (14)
+- package.json (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
+- package-lock.json (10)
 - scripts/sync/autocommit-local.sh (10)
 - docs/prod-readiness.md (9)
 - scripts/automation.config.json (8)
 - docs/auditoria/sql-preservado/README.md (7)
+- scripts/audit-migration-style.mjs (7)
 - scripts/canonical-invariants.sql (7)
 - scripts/sync/mirror-github.sh (7)
 - src/pages/ColaboradoresPage.tsx (7)
 - deno.lock (6)
-- scripts/sync/README.md (6)
-- scripts/sync/run-all.sh (6)
+- docs/agentes/banco.md (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -653,6 +653,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-18 `2271c4a` fix: retrata "as 52 estao aplicadas" - 27 nao estao, e uma e bug de producao (#686)
+- 2026-11-18 `8056cc5` fix: troca as tres passadas de regex da guarda de RLS por um tokenizador unico (#684)
+- 2026-11-18 `1512a40` fix: corrige a faixa de PRs da secao 7b, derrubada por aritmetica do revisor (#685)
+- 2026-11-18 `50a7966` chore: mede o eixo repo x ledger e explica o Supabase Preview vermelho (#683)
+- 2026-11-18 `4bab149` chore: corrige duas afirmações minhas que os revisores derrubaram (#682)
+- 2026-11-18 `bb0fe99` fix: fecha quatro bypasses na guarda de RLS permissiva, com matriz de regressão (#681)
 - 2026-11-18 `c96848a` chore: documenta que o canonical-sql-diag está quebrado em modo não-PII (#680)
 - 2026-11-18 `616e46b` chore: integra a lição dos P0 preservados como guarda de CI contra RLS permissiva (#679)
 - 2026-11-18 `d324939` chore: fecha a conta da muri com medições, em vez de inferências (#678)
@@ -662,12 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `3616289` docs(auditoria): registra a prova byte a byte, por símbolo exportado e por token (#674)
 - 2026-11-17 `a0a6967` chore(auditoria): escreve e executa o sidecar que faltava ao colaborador_lotacoes (#673)
 - 2026-11-17 `4699117` infra: o apply do canonical-migrations confirma o lote anterior, não o atual (#671)
-- 2026-11-17 `60e5ae9` chore(auditoria): fecha o destino das 14 migrations que só existiam na muri (#672)
-- 2026-11-17 `ec2987e` docs(auditoria): fecha o veredito de branches e PRs — nenhuma perda de função (#670)
-- 2026-11-17 `f59c729` feat(colaborador): aba Identificação no dossiê, com PII mascarada e acesso registrado (#669)
-- 2026-11-17 `544b877` feat(desligamentos): coluna &quot;Próxima Ação&quot; com prazo legal, e os filtros que o componente já tinha (#668)
-- 2026-11-17 `2569c2a` feat(observabilidade): liga o trace_id do frontend ao bridge (#666)
-- 2026-11-17 `fa2dec8` fix(portal): aviso de exclusão de documento para de mentir sobre o arquivo (#665)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -2,11 +2,41 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c96848a1efc3c4cda4c2defa39cbefa99a48c813",
+  "commit": "2271c4a80de34988dba2045947ba7a44e77c0b7e",
   "branch": "main",
-  "data_commit": "2026-11-18T02:09:19-03:00",
+  "data_commit": "2026-11-18T03:20:33-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2271c4a",
+    "data": "2026-11-18",
+    "assunto": "fix: retrata \"as 52 estao aplicadas\" - 27 nao estao, e uma e bug de producao (#686)"
+   },
+   {
+    "sha": "8056cc5",
+    "data": "2026-11-18",
+    "assunto": "fix: troca as tres passadas de regex da guarda de RLS por um tokenizador unico (#684)"
+   },
+   {
+    "sha": "1512a40",
+    "data": "2026-11-18",
+    "assunto": "fix: corrige a faixa de PRs da secao 7b, derrubada por aritmetica do revisor (#685)"
+   },
+   {
+    "sha": "50a7966",
+    "data": "2026-11-18",
+    "assunto": "chore: mede o eixo repo x ledger e explica o Supabase Preview vermelho (#683)"
+   },
+   {
+    "sha": "4bab149",
+    "data": "2026-11-18",
+    "assunto": "chore: corrige duas afirmações minhas que os revisores derrubaram (#682)"
+   },
+   {
+    "sha": "bb0fe99",
+    "data": "2026-11-18",
+    "assunto": "fix: fecha quatro bypasses na guarda de RLS permissiva, com matriz de regressão (#681)"
+   },
    {
     "sha": "c96848a",
     "data": "2026-11-18",
@@ -101,36 +131,6 @@
     "sha": "e555a63",
     "data": "2026-11-17",
     "assunto": "feat(rescisao): memória de cálculo com a base e a alíquota efetiva de cada encargo (#663)"
-   },
-   {
-    "sha": "1ddd897",
-    "data": "2026-11-17",
-    "assunto": "docs(auditoria): veredito sobre apagar a branch muri, com a triagem dos 111 arquivos (#662)"
-   },
-   {
-    "sha": "c234912",
-    "data": "2026-11-17",
-    "assunto": "feat(colaborador): editar conta bancária, com o dado real só para quem pode vê-lo (#659)"
-   },
-   {
-    "sha": "40b2c41",
-    "data": "2026-11-17",
-    "assunto": "feat(ponto): mostra o débito de horas do dia no card &quot;Últimos 7 dias&quot; (#660)"
-   },
-   {
-    "sha": "7681ca2",
-    "data": "2026-11-17",
-    "assunto": "test(premiacoes): resgata da muri os 29 testes das regras de pagamento e auditoria (#658)"
-   },
-   {
-    "sha": "39a27a3",
-    "data": "2026-11-17",
-    "assunto": "feat(ui): calendário pt-BR com navegação por mês/ano em todo campo de data (#657)"
-   },
-   {
-    "sha": "e968e3e",
-    "data": "2026-11-17",
-    "assunto": "feat(permissões): controle de acesso por funcionalidade, lendo a matriz do banco (#651)"
    }
   ],
   "arquivos_mudados_7d": 1130,
@@ -207,15 +207,15 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 15
-   },
-   {
-    "arquivo": "package-lock.json",
-    "mudancas": 14
+    "mudancas": 11
    },
    {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
     "mudancas": 11
+   },
+   {
+    "arquivo": "package-lock.json",
+    "mudancas": 10
    },
    {
     "arquivo": "scripts/sync/autocommit-local.sh",
@@ -234,6 +234,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "scripts/audit-migration-style.mjs",
+    "mudancas": 7
+   },
+   {
     "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 7
    },
@@ -247,6 +251,14 @@
    },
    {
     "arquivo": "deno.lock",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "docs/agentes/banco.md",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
     "mudancas": 6
    },
    {
@@ -284,39 +296,27 @@
    {
     "arquivo": "public/sw-custom.js",
     "mudancas": 5
-   },
-   {
-    "arquivo": "scripts/audit-migration-style.mjs",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "scripts/autofix/run.mjs",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "scripts/ci/README.md",
-    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 287
+    "commits": 291
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 10
+    "commits": 7
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 3
+    "commits": 2
    }
   ]
  },
  "contagens": {
   "arquivos_total": 3585,
   "arquivos_codigo": 2079,
-  "linhas_codigo": 411323,
+  "linhas_codigo": 411633,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -428,7 +428,7 @@
   },
   "scripts/audit-migration-style.mjs": {
    "arquivos": 1,
-   "linhas": 236
+   "linhas": 546
   },
   "scripts/audit-required-checks.mjs": {
    "arquivos": 1,
@@ -855,11 +855,11 @@
  ],
  "qualidade": {
   "any": 187,
-  "console_log": 412,
+  "console_log": 414,
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 23,
-  "arquivos_acima_500_linhas": 113
+  "arquivos_acima_500_linhas": 114
  },
  "todos": [
   {

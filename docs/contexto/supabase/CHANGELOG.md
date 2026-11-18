@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-18 06:23 UTC
+
+- **functions** alterado (3): `public.get_user_empresas(_user_id uuid)`, `public.is_admin(_user_id uuid)`, `public.user_empresa_id()`
+
 ## 2026-11-18 05:15 UTC
 
 - **functions** alterado (1): `public.is_admin(_user_id uuid)`

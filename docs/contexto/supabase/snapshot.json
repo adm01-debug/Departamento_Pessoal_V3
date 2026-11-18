@@ -96286,6 +96286,10 @@
         "callers": {
           "code": [
             {
+              "file": "scripts/audit-migration-style.mjs",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20251220140409_c447a74a-cabb-4b49-adf8-c26dd6c204fc.sql",
               "hits": 5
             },
@@ -96400,13 +96404,9 @@
             {
               "file": "supabase/migrations/20260724002700_fix_epis_missing_business_columns.sql",
               "hits": 1
-            },
-            {
-              "file": "supabase/migrations/20260726110000_p2_037_consolidate_duplicates.sql",
-              "hits": 2
             }
           ],
-          "code_total_files": 76,
+          "code_total_files": 77,
           "cron": [],
           "db": [
             "public.aplicar_medida_folha_ponto",
@@ -97436,7 +97436,7 @@
           "code": [
             {
               "file": "scripts/audit-migration-style.mjs",
-              "hits": 1
+              "hits": 3
             },
             {
               "file": "scripts/canonical-invariants.sql",
@@ -105547,6 +105547,10 @@
         "callers": {
           "code": [
             {
+              "file": "scripts/audit-migration-style.mjs",
+              "hits": 1
+            },
+            {
               "file": "scripts/probes/run-probes.mjs",
               "hits": 1
             },
@@ -105583,7 +105587,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 9,
+          "code_total_files": 10,
           "cron": [],
           "db": [],
           "triggers": [],

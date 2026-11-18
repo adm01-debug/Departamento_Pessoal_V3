@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c96848a1efc3c4cda4c2defa39cbefa99a48c813",
+  "sha": "2271c4a80de34988dba2045947ba7a44e77c0b7e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 05:14 UTC",
+  "generated_at": "2026-11-18 06:23 UTC",
   "files_total": 3598,
   "code_files": 3021,
-  "code_lines": 477876
+  "code_lines": 478186
  },
  "version": "1.3.2",
- "facts_hash": "1ee6d0278e589993",
+ "facts_hash": "746c05d6b7ea3024",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -101530,7 +101530,7 @@
   {
    "module": "scripts",
    "files": 153,
-   "lines": 34688,
+   "lines": 34998,
    "tables": [
     "a",
     "anexos",
@@ -259669,12 +259669,15 @@
   },
   "scripts/audit-migration-style.mjs": {
    "path": "scripts/audit-migration-style.mjs",
-   "lines": 236,
+   "lines": 546,
    "params": [
     {
      "name": "CUTOFF_VERSION",
      "value": "'20260924300000'"
     }
+   ],
+   "rule_comments": [
+    "dele não pode virar delimitador."
    ],
    "doc": "!/usr/bin/env node",
    "percents": [
@@ -327219,10 +327222,67 @@
   }
  },
  "git": {
-  "sha": "c96848a1efc3c4cda4c2defa39cbefa99a48c813",
+  "sha": "2271c4a80de34988dba2045947ba7a44e77c0b7e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "2271c4a",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "fix: retrata \"as 52 estao aplicadas\" - 27 nao estao, e uma e bug de producao (#686)",
+    "files": [
+     "docs/agentes/banco.md",
+     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md"
+    ]
+   },
+   {
+    "sha": "8056cc5",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "fix: troca as tres passadas de regex da guarda de RLS por um tokenizador unico (#684)",
+    "files": [
+     "scripts/audit-migration-style.mjs"
+    ]
+   },
+   {
+    "sha": "1512a40",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "fix: corrige a faixa de PRs da secao 7b, derrubada por aritmetica do revisor (#685)",
+    "files": [
+     "docs/auditoria/VEREDITO_MURI_2026-11-17.md"
+    ]
+   },
+   {
+    "sha": "50a7966",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "chore: mede o eixo repo x ledger e explica o Supabase Preview vermelho (#683)",
+    "files": [
+     "docs/agentes/banco.md",
+     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md"
+    ]
+   },
+   {
+    "sha": "4bab149",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "chore: corrige duas afirmações minhas que os revisores derrubaram (#682)",
+    "files": [
+     "docs/agentes/banco.md",
+     "docs/auditoria/VEREDITO_MURI_2026-11-17.md"
+    ]
+   },
+   {
+    "sha": "bb0fe99",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "fix: fecha quatro bypasses na guarda de RLS permissiva, com matriz de regressão (#681)",
+    "files": [
+     "scripts/audit-migration-style.mjs"
+    ]
+   },
    {
     "sha": "c96848a",
     "date": "2026-11-18",
@@ -327504,98 +327564,6 @@
      "src/components/ui/calendar.tsx",
      "src/components/ui/input.tsx"
     ]
-   },
-   {
-    "sha": "e968e3e",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(permissões): controle de acesso por funcionalidade, lendo a matriz do banco (#651)",
-    "files": [
-     "inventario/estado/rotas.json",
-     "src/App.tsx",
-     "src/components/AdminRoute.tsx",
-     "src/components/MfaGate.tsx",
-     "src/components/PermissionRoute.tsx",
-     "src/components/__tests__/PermissionRoute.test.tsx",
-     "src/contexts/AuthContext.tsx",
-     "src/hooks/__tests__/usePermissions.test.ts",
-     "src/hooks/usePermissions.ts"
-    ]
-   },
-   {
-    "sha": "842a6af",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(colaborador): resumo financeiro no dossiê, com CPF mascarado no PDF (#655)",
-    "files": [
-     "src/components/colaborador-detalhes/FinanceiroResumoCards.tsx",
-     "src/components/colaborador-detalhes/index.ts",
-     "src/pages/ColaboradorDetalhesPage.tsx"
-    ]
-   },
-   {
-    "sha": "45748e7",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(documentos): upload real de arquivo nos 4 formulários de documento (#653)",
-    "files": [
-     "src/components/__tests__/ColaboradorDocuments.test.tsx",
-     "src/components/__tests__/DocumentosPessoaisTab.test.tsx",
-     "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
-     "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
-     "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
-     "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
-     "src/components/colaborador-detalhes/documentos/FileUploadField.tsx",
-     "src/integrations/supabase/types.ts",
-     "src/schemas/tableColumns.ts",
-     "src/services/__tests__/documentUploadService.test.ts",
-     "src/services/documentUploadService.ts"
-    ]
-   },
-   {
-    "sha": "0425875",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(automação): registra os 5 scripts que a #652 deixou sem gatilho (#654)",
-    "files": [
-     "scripts/automation.config.json"
-    ]
-   },
-   {
-    "sha": "6fbdf5c",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(design-system): recupera os gates de layout protegido e de tipografia (#652)",
-    "files": [
-     "docs/protegido/referencias/aguardando-gestor-1194.png",
-     "docs/protegido/referencias/aguardando-gestor-1456.png",
-     "docs/protegido/referencias/ciclo-nome-longo-1194.png",
-     "docs/protegido/referencias/ciclo-nome-longo-1456.png",
-     "docs/protegido/referencias/feedbacks-1194.png",
-     "docs/protegido/referencias/feedbacks-1456.png",
-     "docs/protegido/referencias/feedbacks-nome-longo-1194.png",
-     "docs/protegido/referencias/feedbacks-nome-longo-1456.png",
-     "package.json",
-     "scripts/capturar-referencias-protegidas.mjs",
-     "scripts/tests/inventario-layout-protegido.test.mjs",
-     "scripts/tests/inventario-tipografia.test.mjs",
-     "scripts/verificar-layout-protegido.mjs",
-     "scripts/verificar-tipografia.mjs",
-     "src/components/pcs/PcsEquidadeTab.tsx",
-     "src/pages/PassivoTrabalhistaPage.tsx",
-     "src/pages/ProvisoesPage.tsx"
-    ]
-   },
-   {
-    "sha": "a7dd4ec",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(deploy): recupera o app depois de um deploy novo trocar os chunks (#646)",
-    "files": [
-     "src/App.tsx",
-     "src/components/RouteErrorBoundary.tsx",
-     "src/main.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -327605,18 +327573,22 @@
    ],
    [
     "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
+    6
+   ],
+   [
+    "docs/agentes/banco.md",
     4
    ],
    [
+    "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
+    3
+   ],
+   [
+    "scripts/audit-migration-style.mjs",
+    3
+   ],
+   [
     "scripts/.types-drift-baseline.json",
-    2
-   ],
-   [
-    "src/integrations/supabase/types.ts",
-    2
-   ],
-   [
-    "src/schemas/tableColumns.ts",
     2
    ],
    [
@@ -327628,36 +327600,12 @@
     2
    ],
    [
-    "src/components/colaborador-detalhes/index.ts",
-    2
-   ],
-   [
-    "src/pages/ColaboradorDetalhesPage.tsx",
-    2
-   ],
-   [
     "src/components/desligamentos/index.ts",
     2
    ],
    [
     "src/pages/DesligamentosPage.tsx",
     2
-   ],
-   [
-    "src/App.tsx",
-    2
-   ],
-   [
-    "docs/agentes/banco.md",
-    1
-   ],
-   [
-    "scripts/audit-migration-style.mjs",
-    1
-   ],
-   [
-    "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
-    1
    ],
    [
     "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
@@ -327672,11 +327620,31 @@
     1
    ],
    [
+    "src/integrations/supabase/types.ts",
+    1
+   ],
+   [
+    "src/schemas/tableColumns.ts",
+    1
+   ],
+   [
     "src/services/__tests__/colaboradorLotacaoService.test.ts",
     1
    ],
    [
     "src/services/colaboradorLotacaoService.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20260929120000_colaborador_lotacoes.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20260929120000_colaborador_lotacoes.verify.sql",
+    1
+   ],
+   [
+    "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.verify.sql",
     1
    ]
   ]
