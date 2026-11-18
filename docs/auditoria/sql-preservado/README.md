@@ -57,14 +57,20 @@ diz nada sobre a migration estar ou não no repositório. Apontado na revisão d
 
 ## Os seis que ficam preservados, e por quê
 
-| arquivo                                           | estado na `main`                         | o que fazer                                      |
-| ------------------------------------------------- | ---------------------------------------- | ------------------------------------------------ |
-| `20260929120000_colaborador_lotacoes`             | ausente                                  | **a única perda real** — decisão do dono, abaixo |
-| `20261005020000_onboarding_modelo_b_convergencia` | ausente                                  | **não aplicar** — converte linhas que são seed   |
-| `20261026090000_ciclos_exclusao_autorizada`       | ausente como arquivo, **já em produção** | não aplicar; guardado como registro              |
-| `20260819000000_p0_fix_user_empresa_id_rls`       | ausente                                  | **NÃO APLICAR — é regressão**                    |
-| `20260820000000_p0_fix_auditoria_rpc`             | ausente                                  | **NÃO APLICAR — é regressão**                    |
-| `20260821000000_p0_rls_dashboard_audit`           | ausente                                  | **NÃO APLICAR** — desfaria duas remediações      |
+| arquivo                                           | estado na `main`                  | o que fazer                                      |
+| ------------------------------------------------- | --------------------------------- | ------------------------------------------------ |
+| `20260929120000_colaborador_lotacoes`             | ausente                           | **a única perda real** — decisão do dono, abaixo |
+| `20261005020000_onboarding_modelo_b_convergencia` | ausente                           | **não aplicar** — converte linhas que são seed   |
+| `20261026090000_ciclos_exclusao_autorizada`       | **superada** por `20261027090000` | não aplicar; a `main` é superconjunto estrito    |
+| `20260819000000_p0_fix_user_empresa_id_rls`       | ausente                           | **NÃO APLICAR — é regressão**                    |
+| `20260820000000_p0_fix_auditoria_rpc`             | ausente                           | **NÃO APLICAR — é regressão**                    |
+| `20260821000000_p0_rls_dashboard_audit`           | ausente                           | **NÃO APLICAR** — desfaria duas remediações      |
+
+O `ciclos` foi **medido**, não inferido: o diff dos blocos equivalentes (linhas 14-71 do arquivo
+preservado contra `supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql`
+linhas 590-657) mostra policies, `revoke` e trigger idênticos, e a `main` acrescentando uma
+sexta dependência (`audit_log`) que a `muri` não checava — detalhe em
+`MIGRATIONS_ORFAS_MURI_2026-11-16.md` §10.
 
 A análise que sustenta as linhas de "regressão", de `onboarding` e de `ciclos` está em
 `docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md`, seções 1-3 e 7-10. As três marcadas

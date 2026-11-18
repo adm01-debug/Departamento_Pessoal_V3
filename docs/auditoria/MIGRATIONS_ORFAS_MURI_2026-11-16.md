@@ -245,6 +245,24 @@ Estado real de `public.ciclos_avaliacao`:
 `pode_gerir_avaliacoes()` e `bloquear_exclusao_ciclo_com_dependencias()`
 existem. **Nada a fazer** — o arquivo da `muri` é duplicata de versão anterior.
 
+### Medido: a versão da `main` é um SUPERCONJUNTO estrito, não um empate
+
+Esta seção dizia só que o conteúdo "já está aplicado". Faltava a medida. Diff dos blocos
+equivalentes — `20261026090000_ciclos_exclusao_autorizada.sql` linhas 14-71 contra
+`supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql` linhas 590-657:
+
+- as duas policies (`ciclos_avaliacao_insert`, `ciclos_avaliacao_delete`), o `revoke` e o
+  trigger `ciclos_bloqueio_exclusao_com_dependencias` são **idênticos**;
+- a `main` acrescenta uma sexta dependência que a `muri` não checava: `v_auditoria`, um
+  `count(*)` em `audit_log` para `tabela = ciclos_avaliacao`. Sem ela, excluir um ciclo
+  deixaria a trilha de auditoria apontando para um registro inexistente;
+- a `main` documenta por que PDI **não** é dependência (`pdis` e `pdi_plano_desenvolvimento`
+  não têm `ciclo_id`) e anota o `allow-silent-drop` exigido pelo gate de estilo.
+
+Ou seja: o trabalho do outro agente não só foi incorporado — foi **endurecido**. Nenhuma regra
+de negócio da versão da `muri` ficou de fora. Nada a fazer confirmado por medição, não por
+inspeção de nome de arquivo.
+
 ---
 
 ## Conclusão operacional
