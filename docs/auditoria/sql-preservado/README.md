@@ -106,6 +106,58 @@ Por isso **preservar com veredito é o tratamento correto**, não integrar: o pe
 "o sistema não pode ter regressões". Integrar isto seria a regressão. A decisão de sobrepor
 continua sendo dele, com esta medição à vista.
 
+### `20260821000000_p0_rls_dashboard_audit` — provado: duas portas abertas
+
+O próprio arquivo declara a solução como _"Garantir políticas RLS **permissivas** para SELECT"_.
+Comparando a mesma policy nas duas pontas:
+
+`muri`, `20260821000000:17-22`:
+
+```sql
+CREATE POLICY "admissoes_tenant_select" ON public.admissoes FOR SELECT TO authenticated
+USING (empresa_id = public.user_empresa_id() OR empresa_id IS NULL
+       OR auth.jwt() ->> 'role' IN ('admin', 'super_admin'));
+```
+
+`main`, `20260912190000_p0_identity_rls_authz.sql:248-250`:
+
+```sql
+DROP POLICY IF EXISTS admissoes_tenant_select ON public.admissoes;
+CREATE POLICY admissoes_tenant_select ON public.admissoes FOR SELECT TO authenticated
+USING ((empresa_id IS NOT NULL AND empresa_id IN (SELECT public.get_user_empresas(auth.uid())))
+       OR public.is_admin(auth.uid()));
+```
+
+Três diferenças, todas contra a `muri`:
+
+1. **`OR empresa_id IS NULL`** — libera **toda linha sem empresa para qualquer usuário autenticado
+   de qualquer empresa**. A `main` exige `empresa_id IS NOT NULL` explicitamente. Uma única linha
+   com empresa nula vaza para todos os inquilinos.
+2. **`auth.jwt() ->> 'role' IN ('admin','super_admin')`** — autorização por claim do token. A `main`
+   decide por função no servidor (`public.is_admin(auth.uid())`), e tem invariantes de CI exigindo
+   isso (`is_admin_self_scoped`, `is_admin_anon_locked` em `scripts/canonical-invariants.sql`).
+3. **`empresa_id = ` (igualdade)** — empresa única; a `main` usa
+   `IN (SELECT public.get_user_empresas(auth.uid()))`, que atende usuário com mais de uma empresa.
+
+E a `main` é **posterior** (12/set contra 21/ago) e substitui a policy com o mesmo nome: é a
+remediação deste arquivo, não uma alternativa.
+
+### `20260820000000_p0_fix_auditoria_rpc` — provado: derrubaria as funções vigentes
+
+O arquivo começa com três `DROP FUNCTION IF EXISTS` em assinaturas de `registrar_auditoria` e
+`listar_auditoria` (`:14-16`) e tem um `CREATE TABLE IF NOT EXISTS public.audit_log` "mínima".
+Na `main` essas funções são definidas por `20260805000000_p0_005_auditoria_via_rpc.sql` e, depois,
+por `20260912195000_p1_scoped_audit_trail.sql` — a versão **escopada por empresa**. Rodar os DROPs
+derrubaria a versão endurecida vigente. Mesmo defeito de `FIX_APLICAR_REGISTRAR_AUDITORIA.sql`,
+que além disso manda colar no SQL Editor do dashboard — caminho proibido pelo AGENTS §5.
+
+> **Por que preservar, e não integrar.** O pedido do dono tem duas metades: "não perder trabalho de
+> outro agente" **e** "o sistema não pode ter regressões". Nestes três arquivos as metades apontam
+> para lados opostos, e a segunda vence porque o dano é concreto e medido acima: vazamento entre
+> empresas e queda de funções vigentes. Preservar com o veredito provado atende a primeira metade —
+> o trabalho continua recuperável e a decisão rastreável. Sobrepor é decisão do dono, agora com a
+> medição à vista.
+
 ## Mais dois arquivos de SQL que só existiam na `muri`
 
 | arquivo                                                  | o que é                                                                | veredito                      |
