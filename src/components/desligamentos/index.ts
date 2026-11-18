@@ -1,5 +1,6 @@
 export { DesligamentoKPIs } from './DesligamentoKPIs';
 export { DesligamentoFilters } from './DesligamentoFilters';
+export { GestaoDesligamentos } from './GestaoDesligamentos';
 export { StatusBadge, TipoBadge } from './DesligamentoStatusBadge';
 export { DesligamentoChecklist } from './DesligamentoChecklist';
 export { DesligamentoDetailSheet } from './DesligamentoDetailSheet';
