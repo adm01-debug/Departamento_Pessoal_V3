@@ -1,15 +1,13 @@
 SELECT jsonb_build_object(
   'ledger_count', (
     SELECT count(*) FROM supabase_migrations.schema_migrations
-    -- LOTE ATUAL (#628/#632): as 4 versoes desta leva. Tem de andar junto com
-    -- a lista do passo "Preparar somente as migracoes aprovadas" no workflow e
-    -- com o `=== 4` da assercao: se ficar na versao do lote anterior, a
-    -- assercao aprova por um registro ANTIGO e nao prova nada do lote novo.
+    -- LOTE ATUAL: as 2 versoes desta leva. Tem de andar junto com a lista do
+    -- passo "Preparar somente as migracoes aprovadas" no workflow e com o
+    -- `=== 2` da assercao: se ficar na versao do lote anterior, a assercao
+    -- aprova por um registro ANTIGO e nao prova nada do lote novo.
     WHERE version IN (
-      '20261117170000',
-      '20261117170100',
-      '20261117170200',
-      '20261117170300'
+      '20261117190000',
+      '20261117193000'
     )
   ),
   'notificacoes_chk_wide', EXISTS (
