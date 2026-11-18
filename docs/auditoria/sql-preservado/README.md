@@ -150,7 +150,38 @@ página `/lotacoes` trata a tabela como catálogo e nunca grava `colaborador_id`
 Junto com a tela que a consome — é o que `MIGRATIONS_ORFAS_MURI_2026-11-16.md:146-156` já concluía:
 "quem consulta é a aba Trabalho & Hierarquia da `muri`. **Aplicar junto com essa aba**".
 
-O caminho é o do repositório: mover o arquivo para `supabase/migrations/`, escrever o sidecar
-`.verify.sql` (este SQL não tem), pôr as duas no **LOTE ATUAL** do
-`.github/workflows/canonical-migrations.yml` e rodar `validate` → `apply` → `verify` a partir da
-`main`. É DDL em produção: decisão do dono (regra 8 do fluxo Git).
+O caminho é o do repositório: mover **os dois arquivos** para `supabase/migrations/`, pôr a
+migration e o sidecar no **LOTE ATUAL** do `.github/workflows/canonical-migrations.yml` e rodar
+`validate` → `apply` → `verify` a partir da `main`. É DDL em produção: decisão do dono (regra 8 do
+fluxo Git).
+
+### O sidecar já existe, e foi executado
+
+`20260929120000_colaborador_lotacoes.verify.sql` foi escrito nesta auditoria — a migration da
+`muri` vinha sem ele, e sem sidecar o lote não entra no workflow. São **13 asserções** de catálogo,
+somente leitura, no mesmo contrato dos outros sidecars (toda linha não-vazia da saída tem de ser
+exatamente `ok`): tabela, RLS ligada, a policy usando `rls_tenant_or_admin` nas duas pontas, o
+índice único **parcial** (existe + é unique + tem predicado), a constraint de vínculo único, as 3 FKs
+com `ON DELETE CASCADE`, o trigger (BEFORE, FOR EACH ROW, cobrindo INSERT e UPDATE), a função
+validando as duas pontas e com `search_path` fixo, os 3 índices de leitura e o `COMMENT` de
+depreciação.
+
+Não foi só escrito: **rodou num PostgreSQL 16 local e descartável**, com stubs mínimos de
+`empresas`, `colaboradores`, `lotacoes` e `rls_tenant_or_admin`. Resultado:
+
+- a migration aplica limpa (`ON_ERROR_STOP=1`, exit 0);
+- o sidecar devolve **13 linhas `ok` e nenhuma diferente**;
+- e ele **pega regressão**: derrubando o trigger, reprova na asserção 9; trocando a policy por
+  `USING (true)`, reprova na asserção 3.
+
+As quatro regras de negócio que a migration entrega também foram exercitadas com dados:
+
+| caso                                                   | resultado                                              |
+| ------------------------------------------------------ | ------------------------------------------------------ |
+| lotação de **outra** empresa                           | **barrada** pelo trigger, citando as duas `empresa_id` |
+| referência pendurada (lotação inexistente)             | **barrada** pelo trigger                               |
+| segunda lotação **principal** para o mesmo colaborador | **barrada** pelo índice único parcial                  |
+| segunda lotação **não principal**                      | aceita — estado final: 2 lotações, 1 principal         |
+
+Isso é verificação em banco descartável, **não** em produção: o banco canônico continua sem a
+tabela (`42P01`).
