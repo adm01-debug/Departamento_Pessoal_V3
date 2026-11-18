@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
@@ -23,6 +24,7 @@ import {
   Info,
   MapPin,
   IdCard,
+  Check,
 } from 'lucide-react';
 import { colaboradorService } from '@/services';
 import { cargoService } from '@/services/cargoService';
@@ -31,6 +33,8 @@ import { useCentrosCusto } from '@/hooks/useTabelasReferencia';
 import { useTimes } from '@/hooks/useColaboradorDetalhes';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { useVinculosColaborador } from '@/hooks/useVinculos';
+import { usePermissions } from '@/hooks/usePermissions';
+import { useLotacaoPrincipal, useLotacoesCatalogo, useDefinirLotacaoPrincipal } from '@/hooks/useColaboradorLotacao';
 import { ColaboradorStatus } from '@/components/ui/status-badge';
 import { cardVariants } from '@/components/dashboard/MetricCard';
 
@@ -275,6 +279,87 @@ function ItemHistorico({
         <div className="text-sm font-semibold mt-0.5 break-words">{valor}</div>
         {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
       </motion.div>
+    </div>
+  );
+}
+
+/**
+ * Lotação principal do colaborador — lê `colaborador_lotacoes` (tabela nova,
+ * com RLS por empresa) e deixa trocar a principal no mesmo lugar em que ela é
+ * exibida. Só quem tem `colaboradores:update` vê o botão; o banco ainda barra
+ * por RLS de qualquer forma.
+ *
+ * `lotacoes.colaborador_id` (1 colaborador por lotação) está deprecado por
+ * esta tabela, que é N:N — ver COMMENT na migration 20260929120000.
+ */
+function LinhaLotacaoPrincipal({ colaboradorId, empresaId }: { colaboradorId: string; empresaId?: string }) {
+  const [aberto, setAberto] = useState(false);
+  const { pode } = usePermissions();
+  const podeEditar = pode('colaboradores', 'update');
+  const { data: principal, isLoading, isError } = useLotacaoPrincipal(colaboradorId, empresaId);
+  // O catálogo só é buscado quando o popover abre — a tela não paga a lista
+  // inteira de lotações para mostrar um nome.
+  const { data: catalogo = [], isLoading: carregandoCatalogo } = useLotacoesCatalogo(aberto ? empresaId : undefined);
+  const definir = useDefinirLotacaoPrincipal(colaboradorId, empresaId);
+
+  const nome = principal?.lotacao?.nome;
+  const vazio = !nome;
+
+  return (
+    <div className="flex items-center gap-2">
+      <Network className="h-4 w-4 text-muted-foreground/60 shrink-0" />
+      <span className="text-xs text-muted-foreground w-[124px] shrink-0 leading-tight whitespace-nowrap">Lotação</span>
+      {isLoading ? (
+        <Spinner size="sm" />
+      ) : isError ? (
+        <span className="text-sm text-destructive whitespace-nowrap">Falha ao carregar</span>
+      ) : (
+        <span className={`text-sm whitespace-nowrap ${vazio ? 'text-muted-foreground font-normal' : 'font-semibold'}`}>
+          {vazio ? 'Não informada' : nome}
+        </span>
+      )}
+      {podeEditar && (
+        <Popover open={aberto} onOpenChange={setAberto}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={!empresaId}
+              className="h-6 w-6 p-0 text-primary hover:bg-primary/5 hover:text-primary shrink-0"
+            >
+              <Edit className="h-3 w-3" />
+              <span className="sr-only">Alterar lotação principal</span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="start" className="w-64 p-1.5">
+            {carregandoCatalogo ? (
+              <div className="flex justify-center py-3">
+                <Spinner size="sm" />
+              </div>
+            ) : catalogo.length === 0 ? (
+              <p className="px-2 py-3 text-xs text-muted-foreground">Nenhuma lotação ativa nesta empresa.</p>
+            ) : (
+              <div className="flex max-h-56 flex-col overflow-y-auto">
+                {catalogo.map((lotacao) => (
+                  <button
+                    key={lotacao.id}
+                    type="button"
+                    disabled={definir.isPending}
+                    onClick={() => definir.mutate(lotacao.id, { onSuccess: () => setAberto(false) })}
+                    className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-left text-sm hover:bg-muted/60 disabled:opacity-50"
+                  >
+                    <span className="truncate">
+                      {lotacao.nome}
+                      {lotacao.codigo ? <span className="text-muted-foreground"> · {lotacao.codigo}</span> : null}
+                    </span>
+                    {lotacao.id === principal?.lotacao_id && <Check className="h-3.5 w-3.5 shrink-0 text-primary" />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </PopoverContent>
+        </Popover>
+      )}
     </div>
   );
 }
@@ -609,6 +694,7 @@ export function TrabalhoHierarquiaTab({ colaboradorId }: { colaboradorId: string
                   valor={localTrabalhoDetalhe?.nome ?? colaborador?.local_trabalho}
                 />
                 <LinhaVinculo icon={Users} label="Time" valor={timeDetalhe?.nome} />
+                <LinhaLotacaoPrincipal colaboradorId={colaboradorId} empresaId={empresaId} />
               </div>
             </div>
           </CardContent>
