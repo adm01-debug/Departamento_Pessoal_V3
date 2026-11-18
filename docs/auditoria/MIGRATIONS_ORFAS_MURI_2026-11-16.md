@@ -876,25 +876,44 @@ Estado medido hoje em produção, tabela por tabela — `empresa_id` **NULLABLE*
 são puladas em silêncio pela guarda. O arquivo não entrega o que o título promete para essas
 três.
 
-### 18.2 Erro do agente que a verificação pegou: `beneficios` NÃO pode entrar no lote
+### 18.2 Erro do agente — e RETRATAÇÃO parcial da minha própria correção
 
-O agente classificou a `20260719191000` como "risco BAIXO" afirmando que o único `INSERT`
-que omite `empresa_id` — `src/components/settings/BeneficiosSettingsTab.tsx:58-69` — estava
-em componente "importado APENAS pelo seu próprio teste, por nenhuma página ou componente".
+**O agente errou.** Classificou a `20260719191000` como "risco BAIXO" afirmando que
+`src/components/settings/BeneficiosSettingsTab.tsx:58-69` — o único `INSERT` que omite
+`empresa_id` — estava em componente "importado APENAS pelo seu próprio teste, por nenhuma
+página ou componente".
 
-**Falso.** O componente é renderizado por `src/pages/ConfiguracoesPage.tsx:18,135`, que está
-roteado em `src/App.tsx:338` em `/configuracoes` sob `AdminRoute`. É tela viva.
+É falso: o componente é renderizado por `src/pages/ConfiguracoesPage.tsx:18,135`, roteado em
+`src/App.tsx:338` em `/configuracoes` sob `AdminRoute`. É tela viva.
 
-`public.beneficios.empresa_id` não tem `DEFAULT` (pos.2, `column_default: null`) e o payload
-do insert monta só `nome`/`tipo`/`valor`/`ativo`. Hoje esse insert grava `NULL` em silêncio;
-com o `NOT NULL` aplicado ele passa a falhar com `23502` e o botão "criar plano de benefício"
-para de funcionar em produção. Isso é **regressão**, que a meta desta sessão proíbe.
+**Eu também errei, e a Devin Review pegou em #695.** Conclui daí que o `NOT NULL` quebraria o
+botão e tirei `beneficios` do lote. O mecanismo estava errado: parei no `supabase.from(...)` e
+supus PostgREST direto.
 
-Consequência: `beneficios` sai do lote. O `NOT NULL` continua certo — o defeito de verdade é
-o insert sem `empresa_id`, que é vazamento de tenant em potencial —, mas a ordem é consertar
-o insert primeiro, em PR própria, e só então aplicar a restrição.
+O `supabase` exportado por `src/integrations/supabase/client.ts:444` é um **Proxy** cujo `from`
+monta `createQueryBuilder` e manda tudo para o `external-db-bridge` (`client.ts:201`) — não vai
+direto ao banco. E o gateway recusa esse insert **antes** de chegar ao Postgres: `beneficios`
+está em `TENANT_SCOPED_TABLES` (`external-db-bridge/validation.ts:105-110`) e `index.ts:610-615`
+devolve **403 `TENANT_SCOPE_REQUIRED`** para qualquer `insert` cuja linha não traga `empresa_id`
+não-vazio (`tenantScope.ts:37-50`: `missingTenantRows` > 0 reprova).
 
-Os outros caminhos de escrita já preenchem `empresa_id` e foram conferidos:
+Está vivo desde **2026-07-23** (`7a3672fc5`), e a prova empírica fecha: `public.beneficios` tem
+8 linhas e **0 com `empresa_id` NULL**. Se esse insert gravasse NULL, haveria NULL.
+
+Consequências:
+
+1. **`beneficios` VOLTA para o lote do `NOT NULL`.** A restrição não introduz regressão nenhuma
+   — o caminho de escrita já é barrado uma camada antes, com 403.
+2. **O defeito real é outro, e é anterior:** o botão "criar plano de benefício" em Configurações
+   **já está quebrado em produção**, devolvendo 403. Não é consequência de migration; é um
+   `INSERT` que esqueceu `empresa_id` num caminho que exige o tenant. Fica fora deste escopo e
+   vai para os próximos passos.
+3. **Lição de método (a 3ª):** antes de afirmar o que um `INSERT` do front faz no banco,
+   **seguir o cliente até o fim**. Neste repo `supabase.from()` não é PostgREST — é gateway com
+   fail-closed de tenant. Ler a chamada e parar ali erra nas duas direções: inventei uma
+   regressão que não existe e deixei de ver um botão que já falha.
+
+Os outros caminhos de escrita preenchem `empresa_id` e foram conferidos:
 `src/services/tabelasReferenciaService.ts:145-151` (`contas_bancarias`),
 `src/hooks/useCalculoFolha.ts:55-66` (`folhas_pagamento`),
 `supabase/functions/processar-ponto-offline/index.ts:257-262` (`batidas_ponto`),
@@ -935,9 +954,18 @@ canônico, dentro de bloco que não tolera a falha.
 
 - `20260719193000_security_monitoring_views` — as 3 views não existem e não têm consumidor;
   substituídas por `v_login_anomalies_email`/`v_login_anomalies_ip` (`20260724110000`), vivas.
-- `20260815000000_p1_023_naming_pattern` — o gate de nome já roda em CI
-  (`scripts/audit-migration-style.mjs:452` + `.github/workflows/ci.yml:383`), o que pega o
-  arquivo errado **antes** do merge; a tabela proposta é inerte (zero `INSERT` no repo).
+- `20260815000000_p1_023_naming_pattern` — a tabela criada é **inerte**: não existe um `INSERT`
+  em `migration_naming_audit` nem uma chamada a `_classify_migration_name` em todo o repo, então
+  ela não valida nada; é registro que ninguém escreve.
+  **Correção (Devin Review em #695):** eu havia justificado o descarte dizendo que o gate de
+  nome já roda em CI. **Não roda.** `scripts/audit-migration-style.mjs:452` é um `.filter()` que
+  **exclui** da auditoria o arquivo fora do padrão `^\d{14}_.+\.sql$` — não o reprova — e as
+  verificações seguintes (linhas 470-545) avaliam policies, não nomes. Nenhum outro script ou
+  workflow testa o padrão: buscar `\d{14}` em `scripts/` e `.github/workflows/` devolve só essa
+  linha. **Existe lacuna real: migration com nome fora do padrão passa no CI e ainda é
+  silenciosamente ignorada pela auditoria de policies** — o pior dos dois mundos. O descarte da
+  migration continua certo (tabela inerte não fecha lacuna nenhuma); o gate certo é no CI, e vai
+  para os próximos passos.
 - `20260725130000_p5_077_passivo_trabalhista` — as 4 matviews nascem `WITH NO DATA` e a única
   função que as popula usa `REFRESH ... CONCURRENTLY`, que falha em matview nunca populada.
 - `20260726120000_p4_068_connection_pooling` — PgBouncer não se configura por SQL (o próprio
@@ -958,9 +986,23 @@ canônico, dentro de bloco que não tolera a falha.
   `20260911180000` via `ALTER VIEW`, preservando as definições; o P0-007 faz `DROP`+`CREATE`
   com definições reinventadas e trocaria o contrato de 19 views.
 
-### 18.5 Método que se confirmou mais uma vez
+### 18.5 Método: três camadas de erro no mesmo veredito
 
 Nenhum dos 19 descartes é "não achei consumidor, logo é morto" — todos têm objeto ausente,
-substituto vivo nomeado, ou efeito já presente. E o único veredito que o agente marcou como
-seguro foi o que a verificação derrubou (§18.2). Amostragem de veredito de agente antes de
-publicar continua pagando: 11 erros de método corrigidos nesta sessão, 1 deles de agente.
+substituto vivo nomeado, ou efeito já presente.
+
+O caso de `beneficios` é o mais instrutivo desta sessão porque errou três vezes seguidas, e cada
+camada pegou a anterior:
+
+1. **O agente** disse que o componente era código morto. Era tela viva (`App.tsx:338`).
+2. **Eu**, conferindo, achei a tela viva e concluí regressão — mas parei no `supabase.from()` e
+   não segui o Proxy até o `external-db-bridge`.
+3. **A Devin Review**, em #695, apontou o gateway. Conferido: 403 `TENANT_SCOPE_REQUIRED` desde
+   julho, e produção confirma (8 linhas, 0 NULL).
+
+O veredito final — `beneficios` entra no lote, e existe um botão já quebrado — só aparece depois
+das três. Nenhuma das camadas sozinha chegaria nele. Vale registrar que a minha correção do erro
+do agente estava errada também: conferir não é o mesmo que conferir até o fim.
+
+Placar de método da sessão: **12 erros meus corrigidos na `main` com prova ao lado**, 1 de
+agente, 2 de documentação achados pelo revisor automático neste PR.
