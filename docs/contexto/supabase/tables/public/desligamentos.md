@@ -46,7 +46,7 @@
 | 27 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
 | 28 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 | 29 | `created_by` | `uuid` | sim |  |  |  |
-| 30 | `empresa_id` | `uuid` | sim |  |  |  |
+| 30 | `empresa_id` | `uuid` | não |  |  |  |
 | 31 | `tipo_desligamento_id` | `integer` | sim |  |  |  |
 | 32 | `tipo_aviso_previo_id` | `integer` | sim |  |  |  |
 | 33 | `data_aviso_previo` | `text` | sim |  |  |  |
@@ -135,6 +135,7 @@
 | trg_impedir_alteracao_desligamento_homologado | BEFORE | UPDATE | ROW | enabled | public.impedir_alteracao_desligamento_homologado |
 | trg_proibir_delete_desligamento_homologado | BEFORE | DELETE | ROW | enabled | public.proibir_delete_desligamento_homologado |
 | trg_protect_assinatura | BEFORE | UPDATE | ROW | enabled | public.trg_protect_assinatura_rescisao |
+| trg_sync_empresa_colaborador | BEFORE | INSERT OR UPDATE | ROW | enabled | public.dp_sync_empresa_from_colaborador |
 | update_desligamentos_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 
 

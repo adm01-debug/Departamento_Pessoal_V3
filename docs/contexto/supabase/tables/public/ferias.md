@@ -42,7 +42,7 @@
 | 23 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
 | 24 | `created_by` | `uuid` | sim |  |  |  |
 | 25 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 26 | `empresa_id` | `uuid` | sim |  |  |  |
+| 26 | `empresa_id` | `uuid` | não |  |  |  |
 | 27 | `justificativa` | `text` | sim |  |  |  |
 | 28 | `enviado_contabilidade` | `boolean` | sim | `false` |  |  |
 | 29 | `saldo_gasto` | `integer` | sim |  |  |  |

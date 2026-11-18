@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d3a09321e37d0436fa246e7300b9047888902418",
+  "commit": "5e88936033a0389f6d0900c37cdd60d068aa6451",
   "branch": "main",
-  "data_commit": "2026-11-18T13:43:30-03:00",
+  "data_commit": "2026-11-18T13:48:07-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "5e88936",
+    "data": "2026-11-18",
+    "assunto": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#688)"
+   },
    {
     "sha": "d3a0932",
     "data": "2026-11-18",
@@ -126,11 +131,6 @@
     "sha": "4699117",
     "data": "2026-11-17",
     "assunto": "infra: o apply do canonical-migrations confirma o lote anterior, não o atual (#671)"
-   },
-   {
-    "sha": "60e5ae9",
-    "data": "2026-11-17",
-    "assunto": "chore(auditoria): fecha o destino das 14 migrations que só existiam na muri (#672)"
    }
   ],
   "arquivos_mudados_7d": 1138,
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 292
+    "commits": 291
    },
    {
     "autor": "dependabot[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 2
+    "commits": 3
    }
   ]
  },

@@ -86,7 +86,7 @@
 | 67 | `status` | `status_colaborador` | não | `'ativo'::status_colaborador` |  |  |
 | 68 | `observacoes` | `text` | sim |  |  |  |
 | 69 | `foto_url` | `text` | sim |  |  |  |
-| 70 | `empresa_id` | `uuid` | sim |  |  |  |
+| 70 | `empresa_id` | `uuid` | não |  |  |  |
 | 71 | `bitrix_id` | `character varying(50)` | sim |  |  |  |
 | 72 | `bitrix_sync_status` | `character varying(50)` | sim |  |  |  |
 | 73 | `bitrix_ultima_sync` | `timestamp with time zone` | sim |  |  |  |

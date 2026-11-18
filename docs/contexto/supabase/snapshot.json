@@ -2404,7 +2404,7 @@
         "identity": null,
         "is_enum": false,
         "name": "empresa_id",
-        "nullable": true,
+        "nullable": false,
         "position": 3,
         "schema": "public",
         "table": "asos",
@@ -4471,7 +4471,7 @@
         "identity": null,
         "is_enum": false,
         "name": "empresa_id",
-        "nullable": true,
+        "nullable": false,
         "position": 3,
         "schema": "public",
         "table": "batidas_ponto",
@@ -5654,7 +5654,7 @@
         "identity": null,
         "is_enum": false,
         "name": "empresa_id",
-        "nullable": true,
+        "nullable": false,
         "position": 2,
         "schema": "public",
         "table": "beneficios",
@@ -10919,7 +10919,7 @@
         "identity": null,
         "is_enum": false,
         "name": "empresa_id",
-        "nullable": true,
+        "nullable": false,
         "position": 70,
         "schema": "public",
         "table": "colaboradores",
@@ -13753,7 +13753,7 @@
         "identity": null,
         "is_enum": false,
         "name": "empresa_id",
-        "nullable": true,
+        "nullable": false,
         "position": 3,
         "schema": "public",
         "table": "contas_bancarias",
@@ -17510,7 +17510,7 @@
         "identity": null,
         "is_enum": false,
         "name": "empresa_id",
-        "nullable": true,
+        "nullable": false,
         "position": 30,
         "schema": "public",
         "table": "desligamentos",
@@ -17926,7 +17926,7 @@
         "identity": null,
         "is_enum": false,
         "name": "empresa_id",
-        "nullable": true,
+        "nullable": false,
         "position": 13,
         "schema": "public",
         "table": "despesas",
@@ -26402,7 +26402,7 @@
         "identity": null,
         "is_enum": false,
         "name": "empresa_id",
-        "nullable": true,
+        "nullable": false,
         "position": 26,
         "schema": "public",
         "table": "ferias",
@@ -29457,7 +29457,7 @@
         "identity": null,
         "is_enum": false,
         "name": "empresa_id",
-        "nullable": true,
+        "nullable": false,
         "position": 18,
         "schema": "public",
         "table": "folhas_pagamento",
@@ -89113,9 +89113,13 @@
             {
               "file": "src/services/medidasDisciplinaresService.ts",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261118160000_empresa_id_not_null_rh.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [
             "public.trg_medida_aplicada_integrar"
@@ -92511,13 +92515,18 @@
             {
               "file": "supabase/migrations/20261018120000_onda4d_review243.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261118160000_empresa_id_not_null_rh.sql",
+              "hits": 3
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
             "public.colaborador_beneficios.trg_sync_empresa_colaborador",
+            "public.desligamentos.trg_sync_empresa_colaborador",
             "public.documentos.trg_sync_empresa_colaborador",
             "public.documentos_colaborador.trg_sync_empresa_colaborador",
             "public.historico_cargo.trg_sync_empresa_colaborador"
@@ -104571,9 +104580,13 @@
             {
               "file": "supabase/migrations/20260728202022_d5734d3c-0cee-4ce6-98f0-469e5f0536ec.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261118160000_empresa_id_not_null_rh.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
@@ -154829,6 +154842,17 @@
         "function": "public.trg_protect_assinatura_rescisao",
         "level": "ROW",
         "name": "trg_protect_assinatura",
+        "schema": "public",
+        "status": "enabled",
+        "table": "desligamentos",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_sync_empresa_colaborador BEFORE INSERT OR UPDATE OF colaborador_id, empresa_id ON desligamentos FOR EACH ROW EXECUTE FUNCTION dp_sync_empresa_from_colaborador()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.dp_sync_empresa_from_colaborador",
+        "level": "ROW",
+        "name": "trg_sync_empresa_colaborador",
         "schema": "public",
         "status": "enabled",
         "table": "desligamentos",

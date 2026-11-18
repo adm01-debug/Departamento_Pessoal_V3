@@ -19,7 +19,7 @@
 |---|---|---|---|---|---|---|
 | 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
 | 2 | `colaborador_id` | `uuid` | não |  |  |  |
-| 3 | `empresa_id` | `uuid` | sim |  |  |  |
+| 3 | `empresa_id` | `uuid` | não |  |  |  |
 | 4 | `banco_nome` | `text` | sim |  |  |  |
 | 5 | `banco_codigo` | `text` | sim |  |  |  |
 | 6 | `agencia` | `text` | sim |  |  |  |

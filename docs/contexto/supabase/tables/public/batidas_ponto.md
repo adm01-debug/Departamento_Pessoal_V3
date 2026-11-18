@@ -19,7 +19,7 @@
 |---|---|---|---|---|---|---|
 | 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
 | 2 | `colaborador_id` | `uuid` | não |  |  |  |
-| 3 | `empresa_id` | `uuid` | sim |  |  |  |
+| 3 | `empresa_id` | `uuid` | não |  |  |  |
 | 4 | `data` | `date` | não |  |  |  |
 | 5 | `hora` | `time without time zone` | não |  |  |  |
 | 6 | `ordem` | `integer` | não |  |  |  |

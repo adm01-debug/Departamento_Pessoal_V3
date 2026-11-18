@@ -34,7 +34,7 @@
 | 15 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
 | 16 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 | 17 | `created_by` | `uuid` | sim |  |  |  |
-| 18 | `empresa_id` | `uuid` | sim |  |  |  |
+| 18 | `empresa_id` | `uuid` | não |  |  |  |
 | 19 | `alerta_calculo` | `jsonb` | sim |  |  |  |
 | 20 | `version` | `integer` | não | `1` |  |  |
 | 21 | `fechada_por` | `uuid` | sim |  |  |  |

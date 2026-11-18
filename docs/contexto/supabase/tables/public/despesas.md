@@ -28,7 +28,7 @@
 | 10 | `aprovado_em` | `timestamp with time zone` | sim |  |  |  |
 | 11 | `observacoes` | `text` | sim |  |  |  |
 | 12 | `observacoes_aprovador` | `text` | sim |  |  |  |
-| 13 | `empresa_id` | `uuid` | sim |  |  |  |
+| 13 | `empresa_id` | `uuid` | não |  |  |  |
 | 14 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
 | 15 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
 | 16 | `tipo` | `text` | não | `'reembolso'::text` |  |  |

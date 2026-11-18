@@ -18,7 +18,7 @@
 |---|---|---|---|---|---|---|
 | 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
 | 2 | `colaborador_id` | `uuid` | não |  |  |  |
-| 3 | `empresa_id` | `uuid` | sim |  |  |  |
+| 3 | `empresa_id` | `uuid` | não |  |  |  |
 | 4 | `tipo` | `text` | não |  |  |  |
 | 5 | `data_exame` | `date` | não |  |  |  |
 | 6 | `data_validade` | `date` | sim |  |  |  |

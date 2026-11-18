@@ -2,6 +2,12 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-18 17:13 UTC
+
+- **colunas** alterado (9): `public.asos.empresa_id`, `public.batidas_ponto.empresa_id`, `public.beneficios.empresa_id`, `public.colaboradores.empresa_id`, `public.contas_bancarias.empresa_id`, `public.desligamentos.empresa_id`, `public.despesas.empresa_id`, `public.ferias.empresa_id`, `public.folhas_pagamento.empresa_id`
+- **functions** alterado (3): `public.aplicar_medida_folha_ponto(p_medida_id uuid)`, `public.dp_sync_empresa_from_colaborador()`, `public.trg_medida_aplicada_integrar()`
+- **triggers** adicionado (1): `public.desligamentos.trg_sync_empresa_colaborador`
+
 ## 2026-11-18 16:15 UTC
 
 - **colunas** alterado (2): `public.faltas.status`, `public.faltas.tipo`

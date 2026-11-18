@@ -18,7 +18,7 @@
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
 | 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `empresa_id` | `uuid` | sim |  |  |  |
+| 2 | `empresa_id` | `uuid` | não |  |  |  |
 | 3 | `nome` | `text` | não |  |  |  |
 | 4 | `tipo` | `text` | sim | `'outros'::text` |  |  |
 | 5 | `descricao` | `text` | sim |  |  |  |

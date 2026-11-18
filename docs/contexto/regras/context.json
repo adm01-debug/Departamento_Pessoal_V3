@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "d3a09321e37d0436fa246e7300b9047888902418",
+  "sha": "5e88936033a0389f6d0900c37cdd60d068aa6451",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 16:44 UTC",
+  "generated_at": "2026-11-18 17:13 UTC",
   "files_total": 3606,
   "code_files": 3029,
   "code_lines": 478944
@@ -327299,10 +327299,19 @@
   }
  },
  "git": {
-  "sha": "d3a09321e37d0436fa246e7300b9047888902418",
+  "sha": "5e88936033a0389f6d0900c37cdd60d068aa6451",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "5e88936",
+    "date": "2026-11-18",
+    "author": "github-actions[bot]",
+    "subject": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#688)",
+    "files": [
+     "docs/auditoria/estado/WORKFLOWS_STATUS.md"
+    ]
+   },
    {
     "sha": "d3a0932",
     "date": "2026-11-18",
@@ -327613,16 +327622,6 @@
      "src/integrations/supabase/client.ts",
      "src/lib/tracing.ts"
     ]
-   },
-   {
-    "sha": "fa2dec8",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(portal): aviso de exclusão de documento para de mentir sobre o arquivo (#665)",
-    "files": [
-     "src/components/__tests__/PortalDocumentosTab.test.tsx",
-     "src/components/portal/PortalDocumentosTab.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -327657,6 +327656,10 @@
    [
     "scripts/.types-drift-baseline.json",
     2
+   ],
+   [
+    "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+    1
    ],
    [
     "supabase/migrations/20261118160000_empresa_id_not_null_rh.sql",
@@ -327700,10 +327703,6 @@
    ],
    [
     "src/hooks/__tests__/useColaboradorLotacao.test.ts",
-    1
-   ],
-   [
-    "src/hooks/useColaboradorLotacao.ts",
     1
    ]
   ]
