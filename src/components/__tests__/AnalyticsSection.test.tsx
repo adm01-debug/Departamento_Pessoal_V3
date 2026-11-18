@@ -207,4 +207,22 @@ describe('AnalyticsSection', () => {
     render(<AnalyticsSection {...DEFAULT_PROPS} pendencias={[]} />);
     expect(screen.getByText('Tudo em dia!')).toBeInTheDocument();
   });
+
+  // Os dois widgets já eram mockados neste arquivo (linhas 92-93) e nunca
+  // tinham sido afirmados: estavam definidos em `analytics/widgets.tsx`,
+  // re-exportados aqui, e NENHUM arquivo do `src` os renderizava — as views
+  // `vw_alertas_rh` (47 linhas em produção, todas de Art. 145) e
+  // `vw_cadastro_incompleto` (15) eram consultadas por componentes que nunca
+  // montavam. Estes dois casos impedem que isso volte a acontecer.
+  it('renderiza o card de Alertas de RH com o widget dentro', () => {
+    render(<AnalyticsSection {...DEFAULT_PROPS} />);
+    expect(screen.getByText('Alertas de RH')).toBeInTheDocument();
+    expect(screen.getByTestId('alertas-rh')).toBeInTheDocument();
+  });
+
+  it('renderiza o card de Cadastros incompletos com o widget dentro', () => {
+    render(<AnalyticsSection {...DEFAULT_PROPS} />);
+    expect(screen.getByText('Cadastros incompletos')).toBeInTheDocument();
+    expect(screen.getByTestId('cadastro-incompleto')).toBeInTheDocument();
+  });
 });
