@@ -12,6 +12,9 @@ import { cn } from '@/lib/utils';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { MetricCard } from '@/components/dashboard/MetricCard';
 import { MorningBriefing } from '@/components/dashboard/MorningBriefing';
+import { useMorningBriefing } from '@/components/dashboard/useMorningBriefing';
+import { ResumoOperacionalCard } from '@/components/dashboard/ResumoOperacionalCard';
+import { ProximasAtividadesCard } from '@/components/dashboard/ProximasAtividadesCard';
 import { WorkforceHealthScore } from '@/components/dashboard/WorkforceHealthScore';
 import { QuickActionsGrid } from '@/components/dashboard/QuickActionsGrid';
 import { SystemStatusCard } from '@/components/dashboard/SystemStatusCard';
@@ -37,7 +40,7 @@ interface DashboardStats {
   passivoTotal: number;
 }
 
-interface Pendencia {
+export interface Pendencia {
   tipo: string;
   descricao: string;
   quantidade: number;
@@ -351,6 +354,9 @@ export default function DashboardPage() {
   const isAuthenticated = !!user;
   const { data: stats, isLoading: loadingStats, refetch: refetchStats } = useDashboardStats(isAuthenticated);
   const { data: pendencias, isLoading: loadingPendencias } = usePendencias(isAuthenticated);
+  // Mesma queryKey ['morning-briefing', empresaId] que o MorningBriefing ja usa:
+  // o react-query deduplica, entao nao ha requisicao nova.
+  const { data: briefing, isLoading: loadingBriefing } = useMorningBriefing(empresaAtualId || undefined);
 
   const hoje = new Date();
   const greeting = hoje.getHours() < 12 ? 'Bom dia' : hoje.getHours() < 18 ? 'Boa tarde' : 'Boa noite';
@@ -431,6 +437,23 @@ export default function DashboardPage() {
               passivoTotal={stats?.passivoTotal || 0}
             />
           </div>
+        </div>
+      )}
+
+      {/* 3b. Resumo Operacional + Proximas Atividades — resgatados da branch
+             `muri` (PR #546). Nenhuma consulta nova: os dois cards recebem por
+             prop o `briefing` e as `pendencias` que a pagina ja busca. O
+             Resumo mostra presentes/ativos do dia, processos em andamento,
+             documentos pendentes e tarefas do dia; o Proximas Atividades lista
+             nominalmente o que hoje aparece so como contador no MorningBriefing. */}
+      {!isEmptySystem && (
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+          <ResumoOperacionalCard
+            briefing={briefing}
+            pendencias={pendencias}
+            isLoading={loadingBriefing || loadingPendencias}
+          />
+          <ProximasAtividadesCard briefing={briefing} maxItems={4} />
         </div>
       )}
 
