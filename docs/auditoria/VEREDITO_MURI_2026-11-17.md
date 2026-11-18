@@ -1,85 +1,154 @@
-# Veredito da branch `muri` — 2026-11-17
+# Veredito da auditoria de branches — fechado em 2026-11-18
 
-Fecha a pergunta "a `muri` pode ser apagada?". **Resposta: ainda não.**
+Responde: **o que de cada branch ainda não está na `main`, e o que pode ser apagado.**
+Critério do dono: só se apaga o que está **comprovadamente na `main`** ou é **comprovadamente obsoleto**.
 
-Base: `origin/main` em `40b2c416` × `origin/muri`. Critério do dono: só se apaga o que está
-**comprovadamente na `main`** ou é **comprovadamente obsoleto**.
+## 1. Veredito
 
-## 1. Números
+| branch                            | veredito                                                                                    |
+| --------------------------------- | ------------------------------------------------------------------------------------------- |
+| **90 branches locais `claude/*`** | **podem ser apagadas** — nada a recuperar (§2)                                              |
+| **`muri`**                        | **pode ser apagada** depois da PR da aba Identificação — resíduo triado e decidido (§3, §4) |
+| `contexto`, `computador_local`    | **ficam** — infraestrutura, não trabalho pendente                                           |
 
-`git ls-tree` nos dois lados: **2 526** caminhos existem só na `muri`. Deles:
+As branches remotas das PRs mergeadas já foram apagadas no squash-merge. As `refs/remotes/origin/pr/*`
+não são branches do repositório, e sim refs de PR criadas por fetch: não entram nesta conta.
 
-| grupo                                               | arquivos | veredito                                                                                                   |
-| --------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------- |
-| `tmp-*/`, `anim-out/` (sessões de auditoria visual) | 1 982    | descartável — PNG, JSON e scripts de inspeção de uma sessão                                                |
-| `scripts/` de auditoria pontual                     | 154      | descartável                                                                                                |
-| `docs/api/`                                         | 37       | avaliar                                                                                                    |
-| `supabase/.temp/`                                   | 8        | descartável — cache local do CLI                                                                           |
-| **`src/` (código de produção)**                     | **111**  | **triado abaixo**                                                                                          |
-| `e2e/`                                              | 9        | 5 na PR #661; 4 (`audit-checklist`, `fuzz-testing`, `ninebox-aprovacao`, `premiacoes-auditoria`) a avaliar |
+## 2. As 90 branches locais — verificação byte a byte, e por função
 
-## 2. Os 111 arquivos de `src/`
+Verificação literal (`scripts` de sessão): para cada branch, toda linha que ela **acrescentou**
+em relação ao merge-base foi procurada no conteúdo **atual** da `main`.
 
-### 2.1 Não é perda (65)
+| resultado                  | branches |
+| -------------------------- | -------- |
+| incorporadas byte a byte   | **55**   |
+| vazias (só arquivo gerado) | 1        |
+| divergem literalmente      | 34       |
 
-- **`src/mocks/*` (15)** — dados fictícios de apresentação. `AGENTS.md` §3 proíbe mock em produção.
-- **`src/assets/banks/*` (14 imagens)** — só fazem sentido com `src/lib/bankBrand.ts` (ver 2.3).
-- **Testes de componentes que a `main` não tem (19)** — `RewardsApprovalHub.test`, `FGTSDigitalDashboard.test`,
-  `AuditoriaAdmissoesContent.test`, etc. Sem o componente, o teste não tem o que testar.
-- **Órfãos na própria `muri`** (nenhum arquivo os importa, nem lá):
-  `components/metabase/MetabaseEmbed.tsx`, `services/metabaseService.ts`,
-  `services/dominioService.ts`, `services/dominioAlterdataService.ts`,
-  `hooks/useFeriasCursor.ts`, `components/premiacoes/PainelAuditoriaRoi.tsx`,
-  `components/dashboard/AlertasProximasCard.tsx`, `components/dashboard/SaudeResumoCard.tsx`,
-  `pages/__MeasureTestPage.tsx`.
-- **Já resolvido de outra forma na `main`:**
-  - `calculators/folhaCompleta.ts` — apagado de propósito em `8bc1418f3` (PR #311): "órfão, removido junto com seus testes".
-  - `validators/esocialValidators.ts` — shim de 9 linhas marcado `@deprecated`; a `main` tem os validadores reais em `src/schemas/esocial/`.
-  - `utils/esocialEventosPeriodicos.ts`, `utils/esocialEventosSST.ts` — a `main` tem `schemas/esocial/periodicosValidators.ts` e `sstValidators.ts`.
-  - `components/colaborador-detalhes/ComplianceTab.tsx` — a `main` tem `DocumentosComplianceResumoTab.tsx`.
-  - `components/folha/FGTSDigitalDashboard.tsx` — mockup da `muri` (valores fixos), não existe na `main`.
+**O byte a byte literal gera falso positivo.** Código reescrito, prettier, variável renomeada e
+comentário reeditado depois do merge fazem a linha literal desaparecer, embora a função esteja lá.
+Confirmado num caso concreto: `supabase/functions/calcular-provisoes/index.ts` acusou 10 linhas
+ausentes e a `main` tem a regra inteira em `:155-182` (a alíquota gravada na competência manda
+sobre o cadastro) — só com o comentário reescrito.
 
-### 2.2 Mockup — não trazer como está (4)
+Por isso as 34 foram triadas por **função**, não por linha:
 
-`components/admissoes/AuditoriaAdmissoesContent.tsx` (1 114 linhas), `admissoes/auditoriaComum.ts`,
-`admissoes/auditoriaDerivacoes.ts`, `services/colaboradorLotacaoService.ts`.
+| motivo da divergência                        | branches | é perda?                                                                         |
+| -------------------------------------------- | -------- | -------------------------------------------------------------------------------- |
+| só `scripts/.bundle-budget.json`             | 15       | não — teto elevado à mão várias vezes; vale o maior                              |
+| `.github/workflows/canonical-migrations.yml` | 3        | não — o LOTE ATUAL é hardcoded e rotaciona a cada lote; nenhuma salvaguarda saiu |
+| sidecars `.verify.sql`                       | 3        | não — versões já aplicadas; a `main` tem a corrigida (#647)                      |
+| `docs/*` reeditados                          | 3        | não                                                                              |
+| PRs abertas no momento da medição            | 2        | não                                                                              |
+| **arquivos de `src/`**                       | **8**    | **não — verificados um a um**                                                    |
 
-Evidência: `AuditoriaAdmissoesContent.tsx:408` — `isAdmissoesMockEnabled() ? getMockAuditoria() : []`.
-Sem o mock ligado a aba fica **vazia**. A ideia (trilha de auditoria de admissões) é boa; a implementação
-precisa ler o banco, não `src/mocks/admissoesMock.ts`.
+### Os 8 arquivos de `src/`, verificados por função
 
-### 2.3 Merece resgate — a avaliar um a um (42)
+| arquivo                                    | conclusão                                                                                                                                                                                                                |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `documentos/DocumentosDigitaisCard.tsx`    | `main` é a versão **mais nova** (#653). O campo de texto livre "Link do arquivo" saiu **de propósito**, trocado por `FileUploadField` (upload em bucket privado); linha legada continua abrindo via `resolveDocumentUrl` |
+| `documentos/DocumentosPessoaisCard.tsx`    | `main` é **superconjunto**. Mesma troca, documentada em `:48-52`                                                                                                                                                         |
+| `eslint.config.js`                         | **zero** literais da branch ausentes; a `main` é superset estrito (+3 entradas de treinamentos). Nenhuma regra ligada ou desligada a mais ou a menos                                                                     |
+| `desligamentos/desligamentosDerivacoes.ts` | vocabulário **intacto**: `STATUS_TERMINAIS` com `'pago'` em `:147` — era a suspeita grave, e não se confirmou                                                                                                            |
+| `dashboard/MetricCard.tsx`                 | `cardVariants` continua exportado e equivalente (`:11-19`)                                                                                                                                                               |
+| `index.css` (2 branches)                   | **nenhum token** de design nem classe declarada pelas branches está ausente                                                                                                                                              |
+| `pages/ColaboradoresPage.tsx` (2 branches) | o `renderRow` inline foi **extraído** para `ColaboradorTable.tsx`; selo de recontratação na `main` em `:198-201`, mesma regra (`>= 2`)                                                                                   |
+| `public/sw-custom.js`                      | a `main` é **mais forte**: `CACHE_VERSION` v5 onde a branch tinha v4                                                                                                                                                     |
+| `services/onboardingJornadaService.ts`     | as 7 linhas são versões antigas que a `main` substituiu por versões mais completas                                                                                                                                       |
 
-Nenhum destes é mock nem órfão; cada um precisa de uma sessão própria, com a mesma régua das PRs
-#657–#660 (tipado, com teste, sem PII crua):
+**Resultado: nenhuma perda de função em nenhuma das 90 branches locais.**
 
-| bloco                        | arquivos                                                                                                          | linhas | o que entrega                                                       |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------- |
-| Calculadora de rescisão      | `calculadoraRescisao/{FormularioRescisao,ResultadoRescisao,rescisaoView}`                                         | 1 492  | a `main` tem `CalculadoraRescisaoPage.tsx`; comparar antes de mexer |
-| Gestão de desligamentos      | `desligamentos/{GestaoDesligamentos,DesligamentoAtencaoBanner}`                                                   | 965    | a `main` tem a pasta `desligamentos/`; comparar                     |
-| Dossiê — dados pessoais      | `colaborador-detalhes/{DadosPessoaisTab,CampoInfo}`                                                               | 312    | aba que a `main` não tem                                            |
-| Cards do dashboard           | `dashboard/{HeadcountOverviewCard,ResumoOperacionalCard,ProximasAtividadesCard,DepartmentsCard,QuickActionsMenu}` | 637    | 5 cards                                                             |
-| Observabilidade              | `lib/{tracing,tracedService,useTracing}`                                                                          | 330    | rastreio de chamadas                                                |
-| Logo do banco                | `lib/bankBrand.ts` + 14 imagens                                                                                   | 195    | logo na conta bancária (casa com a PR #659)                         |
-| Paginação                    | `types/pagination.ts`                                                                                             | 83     | contrato de paginação                                               |
-| Ponto                        | `schemas/ponto.ts` (13 linhas, **14 importadores na `muri`**), `ponto/EditarEscalaDialog.tsx`                     | 143    | schema muito usado lá                                               |
-| Provisões / automação / CNAB | `services/{folha/provisoesService,automacaoService,cnabLayoutService}`                                            | 220    |                                                                     |
-| Hooks                        | `hooks/{useActionStateHelper,useCalculoFeriasPreview,use-stagger-cards,useColaboradorLotacao}`                    | 295    | `useColaboradorLotacao` depende de DDL (ver abaixo)                 |
-| Diversos                     | `AnimatedDossieTabs`, `esocial/ESocialAIInsights`, `lib/functionsUrl`                                             | 224    |                                                                     |
+## 3. A `muri` — 2 526 caminhos só dela
 
-## 3. Decisões que são do dono
+| grupo                           | arquivos | veredito                                                      |
+| ------------------------------- | -------- | ------------------------------------------------------------- |
+| `tmp-*/`, `anim-out/`           | 1 982    | descartável — PNG/JSON/scripts de sessões de auditoria visual |
+| `scripts/` de auditoria pontual | 154      | descartável                                                   |
+| `docs/api/`                     | 37       | avaliar (documentação)                                        |
+| `supabase/.temp/`               | 8        | descartável — cache do CLI                                    |
+| **`src/`**                      | **111**  | triado em §4                                                  |
+| `e2e/`                          | 9        | 5 resgatados (#661); 4 decididos em §4                        |
 
-1. **`colaborador_lotacoes`** — a tabela não existe no banco canônico. `services/colaboradorLotacaoService.ts` e
-   `hooks/useColaboradorLotacao.ts` dependem dela. Precisa de DDL via `canonical-migrations.yml` (regra 8).
-2. **PR #656** — 8 DDL aplicadas em produção sem arquivo no repositório, e `main` com 2 arquivos sem versão no
-   ledger. Divergência nos dois sentidos.
-3. **PR #661** — 24 testes de navegador que não consigo executar: `e2e/auth-non-admin.setup.ts:9` exige
-   `E2E_NON_ADMIN_PASSWORD`, que por desenho não está no repositório.
+## 4. Os 111 arquivos de `src/` da `muri`
 
-## 4. Conclusão
+### Recuperados nesta auditoria
 
-A `muri` **não pode ser apagada**. 2 047 dos 2 526 caminhos são descartáveis e 69 dos 111 arquivos de `src/`
-estão resolvidos (incorporados, obsoletos, órfãos ou mockup) — mas sobram **42 arquivos de produção**, nenhum
-deles mock, que ainda não foram avaliados um a um.
+| o que                                                           | PR   |
+| --------------------------------------------------------------- | ---- |
+| upload real de arquivo nos 4 formulários de documento           | #653 |
+| resumo financeiro no dossiê, com CPF mascarado no PDF           | #655 |
+| permissões por funcionalidade, lendo a matriz do banco          | #651 |
+| calendário pt-BR com navegação por mês/ano em 90 campos de data | #657 |
+| 33 testes das regras de pagamento e auditoria de premiações     | #658 |
+| editar conta bancária                                           | #659 |
+| débito de horas no card de ponto                                | #660 |
+| 24 testes de navegador                                          | #661 |
+| memória de cálculo da rescisão (3 bases corrigidas)             | #663 |
+| faixa de atenção dos desligamentos                              | #664 |
+| `trace_id` do frontend ligado ao bridge                         | #666 |
+| coluna "Próxima Ação" + filtros de departamento/período         | #668 |
+| aba Identificação no dossiê, com PII mascarada                  | #669 |
 
-As branches `contexto` e `computador_local` também ficam: não são trabalho pendente, são infraestrutura.
+### Descartados, com a razão
+
+- **Mocks** (15 arquivos de `src/mocks/`) — dados fictícios de apresentação.
+- **Órfãos na própria `muri`** (nada os importa nem lá): Metabase (`MetabaseEmbed`, `metabaseService`),
+  Domínio/Alterdata, `useFeriasCursor`, `PainelAuditoriaRoi`, `AlertasProximasCard`,
+  `SaudeResumoCard`, `__MeasureTestPage`.
+- **Já resolvido de outra forma:** `calculators/folhaCompleta.ts` apagado de propósito em `8bc1418f3`
+  (PR #311) · `validators/esocialValidators.ts` → `src/schemas/esocial/` · `utils/esocialEventos*` →
+  `schemas/esocial/{periodicos,sst}Validators.ts` · `ComplianceTab` → `DocumentosComplianceResumoTab`
+  · `ponto/EditarEscalaDialog` → `EditarJornadaDialog.tsx` (`EscalaDoDiaSection:190`), integrado e testado.
+- **Mockup** (aba fica vazia sem o mock): `AuditoriaAdmissoesContent.tsx:408` é
+  `isAdmissoesMockEnabled() ? getMockAuditoria() : []`, com `admissoes/auditoriaComum.ts` e
+  `auditoriaDerivacoes.ts`.
+- **`main` à frente:** `services/folha/provisoesService.ts`, `automacaoService.ts`,
+  `cnabLayoutService.ts` (8 `any`, e a `main` tem `provisaoService.ts` + a Edge `calcular-provisoes`)
+  · `QuickActionsMenu` → `QuickActionsGrid.tsx:46`, que documenta por que recusou 2 dos 4 atalhos (um
+  aponta para rota inexistente) · `DepartmentsCard` → `AnalyticsSection.tsx:618-652`
+  · `ResumoOperacionalCard` → números já em `MorningBriefing.tsx:274,285`.
+- **Criaria código morto na `main`:** 6 hooks e tipos (`useActionStateHelper`,
+  `useCalculoFeriasPreview`, `use-stagger-cards`, `useColaboradorLotacao`, `types/pagination.ts`,
+  `schemas/ponto.ts`) — 5 dos 6 são órfãos até na `muri`.
+- **Defeito confirmado, descartados por decisão:**
+  - `dashboard/ProximasAtividadesCard.tsx:34` — `date: a.tipo` em `Afastamento — ${nome}` põe o
+    **motivo do afastamento** (dado de saúde) na tela inicial. Contradiz a #643, que fez a aba de
+    Afastamentos **sem** dado de saúde.
+  - `dashboard/HeadcountOverviewCard.tsx:78-80` — `Math.max(totalAtivos - saldoPosterior, 0)`
+    reconstrói o quadro de pessoal misturando duas queries de bases diferentes, e o `Math.max`
+    esconde quando a conta dá negativo.
+  - `lib/bankBrand.ts` — bug de marca trocada: `('107','Banco BBM')` e `('999','BBVA')` resolvem
+    como **Banco do Brasil**, e `banco_codigo` é texto livre no formulário. Mostraria o logo errado
+    na conta do colaborador. (Também havia questão de marca registrada em repositório público.)
+  - `e2e/audit-checklist.spec.ts` e `e2e/fuzz-testing.spec.ts` — duplicatas dos de
+    `e2e/authenticated/` **com regressão de seletor**, e na raiz `e2e/` nenhum `testMatch` do
+    `playwright.config.ts` as coleta.
+  - `e2e/authenticated/{ninebox-aprovacao,premiacoes-auditoria}.spec.ts` — dependem de mock que não
+    existe na `main`, e asseram botões "CSV"/"PDF" quando na `main` são "Pagamentos CSV"/"Pagamentos PDF"
+    (`AuditoriaTab.tsx:829,839`).
+- **Observabilidade:** `lib/tracing.ts` recuperado em #666 **com a semântica corrigida** (um
+  `trace_id` por requisição, não por aba — a migration
+  `20260724120000_p3_064_query_telemetry_trace_id.sql` define a coluna como "da requisição").
+  `tracedFetch`, `withTrace`, `tracedService.ts` e `useTracing.ts` ficaram fora: sem consumidor, e o
+  `tracedFetch` põe body em toda requisição, o que quebra GET.
+
+## 5. O padrão que explicava a maior parte do "trabalho perdido"
+
+Quase nunca era código que faltava: era **código pronto na `main` que ninguém chamava**, com a peça
+consumidora na `muri`.
+
+| pronto e sem consumidor na `main`                                     | chamadas           | ligado em |
+| --------------------------------------------------------------------- | ------------------ | --------- |
+| `useAtualizarContaBancaria` (`useTabelasReferencia.ts:111`)           | 0                  | #659      |
+| `resumoAtencao` (`desligamentosDerivacoes.ts:223`)                    | só o próprio teste | #664      |
+| contrato de `trace_id` (3 pontos no backend)                          | 0 no frontend      | #666      |
+| `proximaAcaoDesligamento` (`:183`) + 7 props de `DesligamentoFilters` | 0                  | #668      |
+
+## 6. O que fica para o dono
+
+1. **Tabelas declaradas e ausentes do banco** — `query_telemetry` está em
+   `integrations/supabase/types.ts:16471` e em `schemas/tableColumns.ts:3280`, e **não existe** no
+   banco canônico (`information_schema`). Por isso o `trace_id` da #666 correlaciona em **log**, não
+   em tabela. `colaborador_lotacoes` é o mesmo caso e bloqueia 2 arquivos da `muri`.
+2. **`docs/api/`** — 37 arquivos só na `muri`, ainda não avaliados.
+3. **A `muri` em si** — pode ser apagada depois da #669. Tudo o que sobrou dela está acima, com a razão.
