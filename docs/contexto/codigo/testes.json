@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 775,
+ "total": 784,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 2,
-  "unit": 731
+  "unit": 740
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 644
+   "arquivos": 653
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -683,6 +683,16 @@
    "casos": 7
   },
   {
+   "arquivo": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+   "tipo": "unit",
+   "linhas": 687,
+   "testa": [
+    "src/components/admissoes/AdmissoesDashboard.tsx",
+    "src/components/ui/animated-cascade-dialog.tsx"
+   ],
+   "casos": 22
+  },
+  {
    "arquivo": "src/components/__tests__/AdmissoesKanban.test.tsx",
    "tipo": "unit",
    "linhas": 124,
@@ -766,6 +776,16 @@
    "casos": 10
   },
   {
+   "arquivo": "src/components/__tests__/AnimatedTabs.test.tsx",
+   "tipo": "unit",
+   "linhas": 166,
+   "testa": [
+    "src/components/ui/animated-tabs.tsx",
+    "src/components/ui/tabs.tsx"
+   ],
+   "casos": 4
+  },
+  {
    "arquivo": "src/components/__tests__/AnotacoesTab.test.tsx",
    "tipo": "unit",
    "linhas": 96,
@@ -843,6 +863,18 @@
    "casos": 8
   },
   {
+   "arquivo": "src/components/__tests__/AuditoriaAnimacao.test.tsx",
+   "tipo": "unit",
+   "linhas": 269,
+   "testa": [
+    "src/components/dashboard/MetricCard.tsx",
+    "src/components/premiacoes/AuditoriaTab.tsx",
+    "src/components/premiacoes/auditoriaEntrada.ts",
+    "src/components/premiacoes/premiacoesComum.ts"
+   ],
+   "casos": 3
+  },
+  {
    "arquivo": "src/components/__tests__/AuditoriaChips.test.tsx",
    "tipo": "unit",
    "linhas": 188,
@@ -899,6 +931,16 @@
     "src/components/avaliacao/auditoriaFeedback.ts"
    ],
    "casos": 10
+  },
+  {
+   "arquivo": "src/components/__tests__/AuditoriaTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 240,
+   "testa": [
+    "src/components/premiacoes/AuditoriaTab.tsx",
+    "src/components/premiacoes/premiacoesComum.ts"
+   ],
+   "casos": 8
   },
   {
    "arquivo": "src/components/__tests__/BarChartWidget.test.tsx",
@@ -1281,6 +1323,16 @@
     "src/components/dashboard/MetricCard.tsx"
    ],
    "casos": 3
+  },
+  {
+   "arquivo": "src/components/__tests__/DesenvolvimentoResumoTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 109,
+   "testa": [
+    "src/components/colaborador-detalhes/DesenvolvimentoResumoTab.tsx",
+    "src/hooks/index.ts"
+   ],
+   "casos": 4
   },
   {
    "arquivo": "src/components/__tests__/desligamento-badges.test.tsx",
@@ -2154,6 +2206,18 @@
    "casos": 7
   },
   {
+   "arquivo": "src/components/__tests__/GestaoCandidatos.test.tsx",
+   "tipo": "unit",
+   "linhas": 981,
+   "testa": [
+    "src/components/admissoes/GestaoCandidatos.tsx",
+    "src/integrations/supabase/database.types.ts",
+    "src/types/db.ts",
+    "src/utils/format.ts"
+   ],
+   "casos": 28
+  },
+  {
    "arquivo": "src/components/__tests__/GestaoPontoAnalytics.test.tsx",
    "tipo": "unit",
    "linhas": 107,
@@ -2461,6 +2525,19 @@
     "src/components/avaliacao/metasComum.ts"
    ],
    "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+   "tipo": "unit",
+   "linhas": 270,
+   "testa": [
+    "src/components/avaliacao/IndicadorEvolucao.tsx",
+    "src/components/avaliacao/MetaCard.tsx",
+    "src/components/avaliacao/MetasOKRsTab.tsx",
+    "src/components/avaliacao/metasComum.ts",
+    "src/components/dashboard/MetricCard.tsx"
+   ],
+   "casos": 20
   },
   {
    "arquivo": "src/components/__tests__/MetricasFolhaDashboard.test.tsx",
@@ -3423,6 +3500,15 @@
    "casos": 8
   },
   {
+   "arquivo": "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 289,
+   "testa": [
+    "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx"
+   ],
+   "casos": 10
+  },
+  {
    "arquivo": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
    "tipo": "unit",
    "linhas": 279,
@@ -3584,6 +3670,15 @@
     "src/hooks/useSSTColaborador.ts"
    ],
    "casos": 13
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/documentos/__tests__/FileUploadField.test.tsx",
+   "tipo": "unit",
+   "linhas": 85,
+   "testa": [
+    "src/components/colaborador-detalhes/documentos/FileUploadField.tsx"
+   ],
+   "casos": 8
   },
   {
    "arquivo": "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx",
@@ -7194,8 +7289,10 @@
   "src/components/admin/telemetry/TelemetryTopOffenders.tsx": 1,
   "src/components/admissao/AdmissaoChecklist.tsx": 1,
   "src/components/admissao/SignaturePad.tsx": 1,
+  "src/components/admissoes/AdmissoesDashboard.tsx": 1,
   "src/components/admissoes/AdmissoesKanban.tsx": 1,
   "src/components/admissoes/DetalhesAdmissaoDialog.tsx": 1,
+  "src/components/admissoes/GestaoCandidatos.tsx": 1,
   "src/components/admissoes/KitOnboardingDialog.tsx": 1,
   "src/components/admissoes/NovaAdmissaoDialog.tsx": 1,
   "src/components/admissoes/OnboardingDashboard.tsx": 1,
@@ -7217,8 +7314,10 @@
   "src/components/avaliacao/FeedbackDetalheDialog.tsx": 2,
   "src/components/avaliacao/FeedbacksTimeline.tsx": 1,
   "src/components/avaliacao/HistoricoFeedbackDialog.tsx": 1,
-  "src/components/avaliacao/MetaCard.tsx": 1,
+  "src/components/avaliacao/IndicadorEvolucao.tsx": 1,
+  "src/components/avaliacao/MetaCard.tsx": 2,
   "src/components/avaliacao/MetasFiltros.tsx": 1,
+  "src/components/avaliacao/MetasOKRsTab.tsx": 1,
   "src/components/avaliacao/NineBoxFocoBanner.tsx": 1,
   "src/components/avaliacao/NineBoxMatrix.tsx": 1,
   "src/components/avaliacao/NineBoxQuadrante.tsx": 1,
@@ -7245,7 +7344,7 @@
   "src/components/avaliacao/feedbackCanonico.ts": 4,
   "src/components/avaliacao/feedbacksComum.ts": 5,
   "src/components/avaliacao/historicoFeedback.ts": 1,
-  "src/components/avaliacao/metasComum.ts": 2,
+  "src/components/avaliacao/metasComum.ts": 3,
   "src/components/avaliacao/motorAvaliacao360.ts": 1,
   "src/components/avaliacao/nineBox360.ts": 1,
   "src/components/avaliacao/nineBoxComum.ts": 8,
@@ -7268,6 +7367,7 @@
   "src/components/colaborador-detalhes/ContasBancariasTab.tsx": 1,
   "src/components/colaborador-detalhes/DadosPessoaisTab.tsx": 1,
   "src/components/colaborador-detalhes/DependentesTab.tsx": 1,
+  "src/components/colaborador-detalhes/DesenvolvimentoResumoTab.tsx": 1,
   "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx": 1,
   "src/components/colaborador-detalhes/EditarJornadaDialog.tsx": 1,
   "src/components/colaborador-detalhes/EmergenciaTab.tsx": 2,
@@ -7283,7 +7383,9 @@
   "src/components/colaborador-detalhes/PendenciasDialog.tsx": 1,
   "src/components/colaborador-detalhes/ProximosEventosDialog.tsx": 1,
   "src/components/colaborador-detalhes/SSTResumoTab.tsx": 1,
+  "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx": 1,
   "src/components/colaborador-detalhes/destinosDossie.ts": 1,
+  "src/components/colaborador-detalhes/documentos/FileUploadField.tsx": 1,
   "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx": 1,
   "src/components/colaborador-detalhes/documentos/StatusComplianceCard.tsx": 1,
   "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx": 1,
@@ -7304,7 +7406,7 @@
   "src/components/dashboard/DashboardHeader.tsx": 1,
   "src/components/dashboard/DonutChart.tsx": 1,
   "src/components/dashboard/EventTimeline.tsx": 1,
-  "src/components/dashboard/MetricCard.tsx": 3,
+  "src/components/dashboard/MetricCard.tsx": 5,
   "src/components/dashboard/MiniSparkline.tsx": 1,
   "src/components/dashboard/MorningBriefing.tsx": 1,
   "src/components/dashboard/QuickActionsGrid.tsx": 2,
@@ -7471,13 +7573,15 @@
   "src/components/portal/PortalOverviewTab.tsx": 1,
   "src/components/portal/PortalRegimentoCard.tsx": 1,
   "src/components/premiacoes/AuditoriaEventoDialog.tsx": 1,
+  "src/components/premiacoes/AuditoriaTab.tsx": 2,
   "src/components/premiacoes/CampaignWizard.tsx": 1,
   "src/components/premiacoes/ComparacaoCenarios.tsx": 1,
   "src/components/premiacoes/RewardsSimulator.tsx": 1,
   "src/components/premiacoes/ScenarioParameterCard.tsx": 1,
   "src/components/premiacoes/auditoriaComum.ts": 2,
+  "src/components/premiacoes/auditoriaEntrada.ts": 1,
   "src/components/premiacoes/pagamentosComum.ts": 1,
-  "src/components/premiacoes/premiacoesComum.ts": 3,
+  "src/components/premiacoes/premiacoesComum.ts": 5,
   "src/components/premiacoes/simuladorRoiComum.ts": 1,
   "src/components/recrutamento/AnalyticsRecrutamento.tsx": 1,
   "src/components/recrutamento/CandidatoDetalhesDialog.tsx": 1,
@@ -7537,6 +7641,8 @@
   "src/components/treinamentos/treinamentosDerivacoes.ts": 4,
   "src/components/treinamentos/trilhasDerivacoes.ts": 2,
   "src/components/treinamentos/turmasDerivacoes.ts": 8,
+  "src/components/ui/animated-cascade-dialog.tsx": 1,
+  "src/components/ui/animated-tabs.tsx": 1,
   "src/components/ui/app-pagination.tsx": 1,
   "src/components/ui/cascade-motion.ts": 1,
   "src/components/ui/command.tsx": 1,
@@ -7548,7 +7654,7 @@
   "src/components/ui/popover.tsx": 1,
   "src/components/ui/select.tsx": 1,
   "src/components/ui/status-badge.tsx": 1,
-  "src/components/ui/tabs.tsx": 1,
+  "src/components/ui/tabs.tsx": 2,
   "src/components/ui/user-avatar.tsx": 1,
   "src/components/ui/user-profile-menu.tsx": 1,
   "src/components/workflows/WorkflowDesigner.tsx": 2,
@@ -7568,7 +7674,7 @@
   "src/hooks/ferias/useProgramacaoFerias.ts": 2,
   "src/hooks/ferias/useReconciliacaoFolha.ts": 2,
   "src/hooks/ferias/useReconciliacaoLogs.ts": 2,
-  "src/hooks/index.ts": 2,
+  "src/hooks/index.ts": 3,
   "src/hooks/use-mobile.tsx": 1,
   "src/hooks/useAdmissaoWorkflow.ts": 1,
   "src/hooks/useAdmissoes.ts": 1,
@@ -7662,7 +7768,7 @@
   "src/hooks/validators.ts": 1,
   "src/integrations/lovable/index.ts": 1,
   "src/integrations/supabase/client.ts": 27,
-  "src/integrations/supabase/database.types.ts": 12,
+  "src/integrations/supabase/database.types.ts": 13,
   "src/integrations/supabase/previewAuthStorage.ts": 1,
   "src/integrations/supabase/types.ts": 13,
   "src/lib/avatarTons.ts": 1,
@@ -7791,6 +7897,7 @@
   "src/services/whatsappService.ts": 1,
   "src/services/workflowService.ts": 1,
   "src/types/afastamentos.ts": 1,
+  "src/types/db.ts": 1,
   "src/types/entities.ts": 8,
   "src/types/medidasDisciplinares.ts": 6,
   "src/types/pcs.ts": 1,
@@ -7810,7 +7917,7 @@
   "src/utils/folha/pontoIntegracaoUtils.ts": 1,
   "src/utils/folha/validadorFolha.ts": 2,
   "src/utils/folhaCalc.ts": 2,
-  "src/utils/format.ts": 1,
+  "src/utils/format.ts": 2,
   "src/utils/holeritePDF.ts": 1,
   "src/utils/importacao/columnMap.ts": 3,
   "src/utils/importacao/excelDownload.ts": 1,

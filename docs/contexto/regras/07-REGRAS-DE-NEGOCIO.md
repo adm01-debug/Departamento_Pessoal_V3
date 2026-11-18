@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5e88936033` · branch `main` · 2026-11-18 17:13 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `364a215384` · branch `main` · 2026-11-18 17:56 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5419,7 +5419,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9339 testes em 731 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9462 testes em 740 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5479,6 +5479,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts` | 30 | texto, datas e horas · normaliza acentos e caixa · formata YYYY-MM-DD sem recuo de fuso · devolve — para data ausente ou inválida … |
 | `src/services/__tests__/bancoHorasService.test.ts` | 30 | bancoHorasService · listarPorColaborador · queries banco_horas for the given colaboradorId · returns data from supabase … |
 | `src/services/__tests__/comunicacaoService.test.ts` | 30 | comunicacaoService.listarComunicados · returns all comunicados without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
+| `src/components/__tests__/GestaoCandidatos.test.tsx` | 29 | GestaoCandidatos · renderiza os quatro KPIs sem mini gráfico lateral · abre na visão de TABELA (padrão) com o cabeçalho completo · lista os candidatos com nome, cargo e o selo de etapa … |
 | `src/services/__tests__/despesaService.test.ts` | 29 | despesaService — escritas e storage · criar: aplica defaults de status/tipo e retorna o registro · criar: lança quando insert não retorna registro · aprovar: exige empresaId … |
 | `src/services/__tests__/lgpdService.test.ts` | 29 | lgpdService.listarConsentimentos · returns consentimentos without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/pesquisaService.test.ts` | 29 | pesquisaService.listar · returns pesquisas without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
@@ -5490,6 +5491,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/episService.test.ts` | 27 | episService.listar · returns EPIs without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/securityService.test.ts` | 27 | securityService.getBlockedIps · returns blocked IPs ordered by created_at desc · returns empty array when data is null · throws and logs error on DB failure … |
 | `src/components/__tests__/FeedbackCanonico.test.ts` | 26 | campo — ausente ≠ não aplicável ≠ preenchido · distingue os três estados · texto de exibição usa o rótulo padronizado, sem inventar conteúdo · statusCanonico — nomenclaturas históricas … |
+| `src/components/__tests__/MetasOKRsDerivacoes.test.tsx` | 26 | metasComum — situação derivada (nunca uma coluna do banco) · status encerrado → concluída · prazo vencido e não concluída → atrasada (mesma regra do módulo) · progresso abaixo do ritmo decorrido → em risco … |
 | `src/components/__tests__/NineBox360.test.tsx` | 26 | fase E · consolidação 360 dos feedbacks persistidos · agrupa por categoria e aplica os pesos aprovados (4,26) · mapeia os tipos para as quatro categorias (inclui variações) · sem gestor não classifica, mesmo com as demais categorias presentes … |
 | `src/components/__tests__/NineBoxDerivacoes.test.tsx` | 26 | nineBoxComum — classificação (regra original preservada) · mantém os limiares do componente anterior · a tolerância a valor vazio saiu daqui: quem valida é  · nomeia os nove quadrantes com a leitura de posição … |
 | `src/services/__tests__/batidasPontoService.test.ts` | 26 | batidasPontoService.listar · returns batidas for colaborador · returns empty array when data is null · filters by colaborador_id … |
@@ -5508,6 +5510,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/rescisaoService.test.ts` | 24 | rescisaoService · validarTransicao · should block jumping more than one stage · should block homologation if status is not calculado … |
 | `src/services/__tests__/vinculoService.test.ts` | 24 | vinculoService.contarPassagensPorColaboradores · retorna objeto vazio sem chamar o supabase quando não há ids · faz UMA única query .in() para N colaboradores (sem N+1) · 1 vínculo => quantidadePassagens 1, quantidadeRecontratacoes 0 … |
 | `src/utils/__tests__/esocialXmlGenerator.test.ts` | 24 | gerarXmlESocial · returns valid XML declaration · wraps output in eSocial root element · uses testing environment by default (tpAmb=2) … |
+| `src/components/__tests__/AdmissoesDashboard.test.tsx` | 23 | AdmissoesDashboard · renders Total Iniciadas KPI · renders Em Andamento KPI · renders Finalizadas KPI … |
 | `src/components/__tests__/AuditoriaDerivacoes.test.tsx` | 23 | auditoria · normalização tolerante · aceita registro sem os campos opcionais · ignora data inválida sem quebrar · auditoria · títulos legíveis por módulo e ação … |
 | `src/components/__tests__/CardProgramacao.test.tsx` | 23 | CardProgramacao · renders colaborador name · renders dias previstos · renders status badge for rascunho … |
 | `src/components/__tests__/NineBoxElegibilidade.test.tsx` | 23 | etapa 1 · identificação de suspeita (isolada) · a PRIMEIRA ocorrência nunca é sinalizada; as repetições são · não muta a lista recebida (função pura) · avaliadores diferentes com as MESMAS notas não se sinalizam … |
@@ -5630,6 +5633,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/EntityPageContainer.test.tsx` | 13 | EntityPageContainer · renders page title and description · shows TableSkeleton when isLoading=true · shows SyncErrorState when error is present … |
 | `src/components/__tests__/MetasEtiquetas.test.tsx` | 13 | metasComum — tom do TIPO da meta · mapeia cada tipo real para o tom da sua família de cor · trata o tipo como texto livre: caixa/espaços não mudam o tom · joga o composto  … |
 | `src/components/__tests__/NewLoanDialog.test.tsx` | 13 | NewLoanDialog · renders Novo Empréstimo trigger button · renders Registrar Empréstimo Consignado title · renders Compliance L10.820 badge … |
+| `src/components/__tests__/TrabalhoHierarquiaTab.test.tsx` | 13 | TrabalhoHierarquiaTab · shows cargo from the cargos join when cargo_id is set · falls back to the plain text cargo column when cargo_id is not set · does not invent a gestor direto when supervisor_id is not set … |
 | `src/components/__tests__/desligamento-badges.test.tsx` | 13 | StatusBadge · renders  · renders  · renders  … |
 | `src/components/recrutamento/__tests__/PipelineBoard.test.tsx` | 13 | PipelineBoard — cinco etapas e cards ricos · renderiza as cinco colunas com a contagem e o card completo · abre o dossiê pelo card e pelo menu de ações · move a etapa pelo menu do card sem perder as opções … |
 | `src/components/treinamentos/__tests__/AgendaSemanal.test.tsx` | 13 | AgendaSemanal — minicards · renderiza o evento da semana como minicard com horário e local · mostra os dias sem turma com texto discreto e não cria navegação fictícia · abre o calendário no mês correspondente ao evento da semana exibida … |
@@ -5719,11 +5723,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/treinamentos/__tests__/InscricoesPainel.test.tsx` | 10 | InscricoesPainel · renderiza as oito inscrições, com nomes, cursos, departamentos e categorias · mostra status humano e não exibe o código técnico · mostra Não informado quando não existe progresso real … |
 | `src/constants/__tests__/rubricas.test.ts` | 10 | RUBRICAS_PADRAO · is a non-empty array · has no duplicate codigos · each rubrica has required fields … |
 | `src/hooks/__tests__/useDocumentOCR.test.ts` | 10 | useDocumentOCR · starts with isProcessing false · returns processDocument function · sets isProcessing true during processing … |
-| `src/hooks/__tests__/useFeriasAprovacao.test.ts` | 10 | useFeriasAprovacao · starts with isLoading=false · aprovarGestor calls feriasService.aprovarGestor with id and userId · aprovarGestor shows success toast … |
-| `src/hooks/__tests__/useHorasExtras.test.ts` | 10 | useHorasExtras · returns initial solicitacoes empty array · calls horaExtraService.listar with empresaId · returns solicitacoes from service … |
-| `src/hooks/__tests__/usePendenciasColaborador.test.ts` | 10 | usePendenciasColaborador · sem nada vencido nem pendente, não devolve pendência alguma · ajuste de ponto só conta quando o status é  · ASO vencido é severidade alta e cita a NR-7 … |
-| `src/hooks/__tests__/useRealTimeSubscription.test.tsx` | 10 | useRealTimeSubscription · does NOT subscribe when empresaId is undefined · does NOT subscribe when empresaId is empty string · creates a channel when empresaId is provided … |
-| … +431 linhas — lista completa em `context.json` | | |
+| … +440 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

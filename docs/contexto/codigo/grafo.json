@@ -70,7 +70,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/database.types.ts",
-   "importado_por": 86
+   "importado_por": 87
   },
   {
    "arquivo": "src/components/layout/index.ts",
@@ -94,7 +94,7 @@
   },
   {
    "arquivo": "src/hooks/index.ts",
-   "importado_por": 59
+   "importado_por": 60
   },
   {
    "arquivo": "supabase/functions/_shared/sentry.ts",
@@ -110,11 +110,11 @@
   },
   {
    "arquivo": "src/components/ui/tabs.tsx",
-   "importado_por": 50
+   "importado_por": 51
   },
   {
    "arquivo": "src/utils/format.ts",
-   "importado_por": 43
+   "importado_por": 44
   },
   {
    "arquivo": "src/hooks/usePiiMask.ts",
@@ -129,12 +129,12 @@
    "importado_por": 40
   },
   {
-   "arquivo": "src/services/index.ts",
+   "arquivo": "src/components/dashboard/MetricCard.tsx",
    "importado_por": 38
   },
   {
-   "arquivo": "src/components/dashboard/MetricCard.tsx",
-   "importado_por": 36
+   "arquivo": "src/services/index.ts",
+   "importado_por": 38
   },
   {
    "arquivo": "src/components/ui/dropdown-menu.tsx",

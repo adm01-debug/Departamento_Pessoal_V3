@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1942)",
+   "TypeScript (1951)",
    "SQL (951)",
    "Markdown (335)",
    "JavaScript (134)",
@@ -2119,7 +2119,7 @@
   "papeis_no_codigo": [
    {
     "papel": "dialog",
-    "ocorrencias": 36
+    "ocorrencias": 37
    },
    {
     "papel": "rh",

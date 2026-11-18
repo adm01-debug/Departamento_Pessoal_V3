@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "5e88936033a0389f6d0900c37cdd60d068aa6451",
+  "sha": "364a2153844cac54b156afced9ca734d452b2020",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 17:13 UTC",
-  "files_total": 3606,
-  "code_files": 3029,
-  "code_lines": 478944
+  "generated_at": "2026-11-18 17:56 UTC",
+  "files_total": 3615,
+  "code_files": 3038,
+  "code_lines": 482040
  },
  "version": "1.3.2",
- "facts_hash": "bf253dbb2cd677de",
+ "facts_hash": "4f51c80f28d3f74d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,7 +387,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1000,
+   ".tsx": 1009,
    ".sql": 951,
    ".ts": 942,
    ".mjs": 108,
@@ -100229,7 +100229,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 976,
+  "components_count": 985,
   "hooks": [
    {
     "name": "useContacts",
@@ -101844,8 +101844,8 @@
   },
   {
    "module": "src/components",
-   "files": 976,
-   "lines": 176392,
+   "files": 985,
+   "lines": 179488,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102005,6 +102005,7 @@
     "src/components/__tests__/AdiantamentosTable.test.tsx",
     "src/components/__tests__/AdminRoute.test.tsx",
     "src/components/__tests__/AdmissaoChecklist.test.tsx",
+    "src/components/__tests__/AdmissoesDashboard.test.tsx",
     "src/components/__tests__/AdmissoesKanban.test.tsx",
     "src/components/__tests__/AfastamentoDocumentManager.test.tsx",
     "src/components/__tests__/AfastamentoForm.test.tsx",
@@ -102014,6 +102015,7 @@
     "src/components/__tests__/AfastamentosTab.test.tsx",
     "src/components/__tests__/AnalyticsSection.test.tsx",
     "src/components/__tests__/AnimatedNumber.test.tsx",
+    "src/components/__tests__/AnimatedTabs.test.tsx",
     "src/components/__tests__/AnotacoesTab.test.tsx",
     "src/components/__tests__/AppPagination.test.tsx",
     "src/components/__tests__/AprovacaoGestor.test.ts",
@@ -102021,12 +102023,14 @@
     "src/components/__tests__/AquisitivosTab.test.tsx",
     "src/components/__tests__/AssinarAvisoDialog.test.tsx",
     "src/components/__tests__/AssinarEspelhoDialog.test.tsx",
+    "src/components/__tests__/AuditoriaAnimacao.test.tsx",
     "src/components/__tests__/AuditoriaChips.test.tsx",
     "src/components/__tests__/AuditoriaComum.test.ts",
     "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
     "src/components/__tests__/AuditoriaDetalheDialog.test.tsx",
     "src/components/__tests__/AuditoriaEventoDialog.test.tsx",
     "src/components/__tests__/AuditoriaFeedback.test.tsx",
+    "src/components/__tests__/AuditoriaTab.test.tsx",
     "src/components/__tests__/BarChartWidget.test.tsx",
     "src/components/__tests__/BeneficioHistorico.test.tsx",
     "src/components/__tests__/BeneficiosDashboard.test.tsx",
@@ -102067,12 +102071,8 @@
     "src/components/__tests__/DependentesTab.test.tsx",
     "src/components/__tests__/DesempenhoBarrasProgresso.test.tsx",
     "src/components/__tests__/DesempenhoEntradaCascade.test.tsx",
-    "src/components/__tests__/DesligamentoBadges.test.tsx",
-    "src/components/__tests__/DesligamentoChecklist.test.tsx",
-    "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
-    "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
-    "src/components/__tests__/DesligamentoFilters.test.tsx",
-    "src/components/__tests__/DesligamentoKPIs.test.tsx"
+    "src/components/__tests__/DesenvolvimentoResumoTab.test.tsx",
+    "src/components/__tests__/DesligamentoBadges.test.tsx"
    ]
   },
   {
@@ -166689,6 +166689,98 @@
     "name": "shows 100% when all validated"
    },
    {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "AdmissoesDashboard"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "renders Total Iniciadas KPI"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "renders Em Andamento KPI"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "renders Finalizadas KPI"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "renders Canceladas KPI"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "shows correct total count"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "shows Tempo Médio de Admissão chart title"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "renders charts"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "handles empty admissoes array"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "não renderiza micro gráfico nos KPI cards"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "mostra a frase de apoio completa de cada KPI"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "dá overflow próprio a exatamente 3 listas, e não ao resto do dashboard"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "rola a lista de ações prioritárias sem o título do card dentro do scroll"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "rola a lista de próximas admissões com o selo de etapa dentro da linha"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "rola o SLA & Alertas com o rodapé "
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "abre o modal de Ações Prioritárias direto na fila das quatro famílias"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "nenhum dos quatro modais exibe o bloco de explicação — a lista vem primeiro"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "campos longos usam fluxo de texto — o rótulo nunca vira coluna fixa"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "só mostra "
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "fecha o modal e navega quando existe destino (mesma coreografia de Pendências)"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "o modal de Próximas Admissões lista TODAS as admissões, com progresso e pendências"
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "o modal de Distribuição por Área lista todas as áreas, sem agrupar em "
+   },
+   {
+    "file": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    "name": "o modal de SLA & Alertas agrupa os processos pela mesma régua do card"
+   },
+   {
     "file": "src/components/__tests__/AdmissoesKanban.test.tsx",
     "name": "AdmissoesKanban"
    },
@@ -167039,6 +167131,26 @@
    {
     "file": "src/components/__tests__/AnimatedNumber.test.tsx",
     "name": "respeita o formatador no valor final com duration = 0"
+   },
+   {
+    "file": "src/components/__tests__/AnimatedTabs.test.tsx",
+    "name": "AnimatedTabsList (indicador deslizante)"
+   },
+   {
+    "file": "src/components/__tests__/AnimatedTabs.test.tsx",
+    "name": "monta o indicador já na primeira pintura, na faixa da aba ativa"
+   },
+   {
+    "file": "src/components/__tests__/AnimatedTabs.test.tsx",
+    "name": "reusa o MESMO nó e remede o indicador ao trocar de aba"
+   },
+   {
+    "file": "src/components/__tests__/AnimatedTabs.test.tsx",
+    "name": "aplica a skin de cada área nos elementos do Animate UI"
+   },
+   {
+    "file": "src/components/__tests__/AnimatedTabs.test.tsx",
+    "name": "mantém o conteúdo do Radix Tabs sincronizado com a aba clicada"
    },
    {
     "file": "src/components/__tests__/AnotacoesTab.test.tsx",
@@ -167621,6 +167733,22 @@
     "name": "renders custom trigger when trigger prop provided"
    },
    {
+    "file": "src/components/__tests__/AuditoriaAnimacao.test.tsx",
+    "name": "Auditoria — entrada padrão do sistema"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAnimacao.test.tsx",
+    "name": "os 10 controles dos filtros entram em cascata com o variant dos KPI Cards"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAnimacao.test.tsx",
+    "name": "cabeçalho e eventos entram em sequência (0,55s · 0,11s · easeOutCubic), sem movimento duplicado"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAnimacao.test.tsx",
+    "name": "filtrar não reinicia a cascata dos controles nem a entrada dos cabeçalhos"
+   },
+   {
     "file": "src/components/__tests__/AuditoriaChips.test.tsx",
     "name": "AuditoriaChips — a cor da categoria vale mesmo SEM seleção"
    },
@@ -167859,6 +167987,42 @@
    {
     "file": "src/components/__tests__/AuditoriaFeedback.test.tsx",
     "name": "campo declarado como alterado precisa existir em um dos lados"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaTab.test.tsx",
+    "name": "AuditoriaTab — timeline funcional"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaTab.test.tsx",
+    "name": "renderiza agrupamento por data e não usa tabela HTML"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaTab.test.tsx",
+    "name": "abre o detalhe existente com os dados do evento"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaTab.test.tsx",
+    "name": "filtra por busca e mostra o estado vazio quando não há resultado"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaTab.test.tsx",
+    "name": "filtra pela categoria e exporta pelos botões existentes"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaTab.test.tsx",
+    "name": "aplica o ponto semântico e o contador de cada categoria suportada"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaTab.test.tsx",
+    "name": "mantém cor de texto/contador e glow da própria categoria na seleção"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaTab.test.tsx",
+    "name": "destaca Limpar filtros somente quando algum filtro real está ativo"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaTab.test.tsx",
+    "name": "exibe skeleton durante o carregamento e erro com tentativa novamente"
    },
    {
     "file": "src/components/__tests__/BarChartWidget.test.tsx",
@@ -169407,6 +169571,26 @@
    {
     "file": "src/components/__tests__/DesempenhoEntradaCascade.test.tsx",
     "name": "aba Ciclos: "
+   },
+   {
+    "file": "src/components/__tests__/DesenvolvimentoResumoTab.test.tsx",
+    "name": "DesenvolvimentoResumoTab"
+   },
+   {
+    "file": "src/components/__tests__/DesenvolvimentoResumoTab.test.tsx",
+    "name": "renders the four dashboard cards with empty states when there is no data"
+   },
+   {
+    "file": "src/components/__tests__/DesenvolvimentoResumoTab.test.tsx",
+    "name": "shows onboarding as concluded when progresso is 100%"
+   },
+   {
+    "file": "src/components/__tests__/DesenvolvimentoResumoTab.test.tsx",
+    "name": "shows metas progress when metas exist"
+   },
+   {
+    "file": "src/components/__tests__/DesenvolvimentoResumoTab.test.tsx",
+    "name": "shows competência bars when competências exist"
    },
    {
     "file": "src/components/__tests__/DesligamentoBadges.test.tsx",
@@ -173153,6 +173337,122 @@
     "name": "renders status badges in table"
    },
    {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "GestaoCandidatos"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "renderiza os quatro KPIs sem mini gráfico lateral"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "abre na visão de TABELA (padrão) com o cabeçalho completo"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "lista os candidatos com nome, cargo e o selo de etapa"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "mostra a faixa de etapas com as pills da referência e a ativa por padrão"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "filtrar por etapa reduz a listagem"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "a busca textual filtra por nome, cargo ou departamento"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "alternar para Cards troca a tabela por uma grade"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "usa UM contorno lime permanente (irmão dos botões) — sem borda por botão"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "monta o card da referência: 3 infos lado a lado, salário em BRL e ações no rodapé"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "usa grade de 1/2/3 colunas na listagem de Cards — sem auto-fit, 3 só no desktop largo"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "fixa o status/ações no topo-direita e trunca nome e cargo em 1 linha"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "entrega valores e responsável em UMA linha — sem reticências"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "mostra a faixa exibida e a paginação"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "modo Tabela mantém 10 por página e o seletor com 10/20/50"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "modo Cards pagina de 12 em 12 (grade cheia) e o seletor vira 12/24/36"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "alternar Tabela↔Cards volta à 1ª página e adota o tamanho do modo"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "aciona a abertura do detalhe do candidato"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "exibe o estado vazio quando não há candidatos"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "mantém busca, filtros e ações numa ÚNICA linha — sem "
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "dá largura dominante à busca e corta valor/rótulo dos filtros em UMA linha"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "organiza as 10 pills de etapa numa faixa única, sem esmagar nem quebrar rótulo"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "mantém os selos de etapa em UMA linha — coluna automática, sem largura fixa"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "entrega os 9 rótulos de etapa inteiros e sem quebra"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "abre o dropdown SEMPRE para baixo (bottom-start), rolando por dentro do espaço"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "nivela o "
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "abre o dropdown de ordenação para BAIXO, encostado à direita do trigger"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "sem filtro fica neutro; com QUALQUER filtro fica lime e volta ao neutro ao limpar"
+   },
+   {
+    "file": "src/components/__tests__/GestaoCandidatos.test.tsx",
+    "name": "mostra o olho de "
+   },
+   {
     "file": "src/components/__tests__/GestaoPontoAnalytics.test.tsx",
     "name": "GestaoPontoAnalytics"
    },
@@ -174663,6 +174963,110 @@
    {
     "file": "src/components/__tests__/MetasFiltrosLimpar.test.tsx",
     "name": "vem logo depois de "
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "metasComum — situação derivada (nunca uma coluna do banco)"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "status encerrado → concluída"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "prazo vencido e não concluída → atrasada (mesma regra do módulo)"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "progresso abaixo do ritmo decorrido → em risco"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "progresso acima do ritmo decorrido → em dia"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "status sem andamento → em risco"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "sem prazo não afirma atraso nem risco"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "metasComum — prazo e agregações"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "conta dias de calendário (0 = hoje, negativo = atraso)"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "descreve o prazo com a leitura contextual da referência"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "não inventa evolução sem histórico nem departamento sem a relação"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "conta cada situação uma única vez"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "ordena "
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "MetasOKRsTab — cascata de entrada na ordem de leitura"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "banner (0) → filtros (1) → cards (2, 3, 4), com o keyframe do Dashboard"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "metasComum — evolução em PONTOS PERCENTUAIS (nunca variação relativa)"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "diferença entre o progresso atual e a medição anterior"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "51% → 63% é +12 pontos percentuais (a variação relativa seria ~+23,5%)"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "travou a variação em −100…100 e ignora histórico inválido"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "IndicadorEvolucao — os três estados da referência"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "positiva: TrendingUp com ícone e percentual em verde-success"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "negativa: TrendingDown com ícone e percentual em vermelho"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "neutra: ícone neutro e percentual sem sinal (sem alteração)"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "vive direto sobre o card: sem background, badge, borda ou container quadrado"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "MetaCard — indicador só aparece com histórico real"
+   },
+   {
+    "file": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    "name": "mostra a evolução quando há progresso_anterior e some sem ele"
    },
    {
     "file": "src/components/__tests__/MetricCard.test.tsx",
@@ -179385,6 +179789,58 @@
     "name": "renders Powered by Lovable Cloud text"
    },
    {
+    "file": "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+    "name": "TrabalhoHierarquiaTab"
+   },
+   {
+    "file": "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+    "name": "shows cargo from the cargos join when cargo_id is set"
+   },
+   {
+    "file": "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+    "name": "falls back to the plain text cargo column when cargo_id is not set"
+   },
+   {
+    "file": "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+    "name": "does not invent a gestor direto when supervisor_id is not set"
+   },
+   {
+    "file": "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+    "name": "Vínculo & Alocação — Time/Centro de custo/Local de trabalho"
+   },
+   {
+    "file": "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+    "name": "mostra o Time resolvido via join quando time_id está definido"
+   },
+   {
+    "file": "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+    "name": "mostra o Centro de custo resolvido via join quando centro_custo_id está definido"
+   },
+   {
+    "file": "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+    "name": "mostra o Local de trabalho resolvido via localTrabalhoService quando local_trabalho_id está definido"
+   },
+   {
+    "file": "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+    "name": "cai para o texto legado quando centro_custo_id/local_trabalho_id não têm join correspondente (colaborador antigo)"
+   },
+   {
+    "file": "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+    "name": "Vínculo & Alocação — Unidade / Locação principal"
+   },
+   {
+    "file": "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+    "name": "mostra a lotação principal vinda de colaborador_lotacoes.principal = true"
+   },
+   {
+    "file": "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+    "name": "mostra "
+   },
+   {
+    "file": "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+    "name": "troca de Unidade São Paulo/SP para Unidade Campinas/SP quando a fonte muda (simula reabrir após salvar)"
+   },
+   {
     "file": "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx",
     "name": "TrilhaAuditoriaDesligamentos — coluna de ações uniforme"
    },
@@ -180579,6 +181035,42 @@
    {
     "file": "src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx",
     "name": "seção vazia ao lado de seção com dado mostra vazio só da sua seção"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/__tests__/FileUploadField.test.tsx",
+    "name": "FileUploadField"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/__tests__/FileUploadField.test.tsx",
+    "name": "mostra a dropzone quando nenhum arquivo está selecionado"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/__tests__/FileUploadField.test.tsx",
+    "name": "aceita um arquivo válido selecionado pelo input e chama onFileChange"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/__tests__/FileUploadField.test.tsx",
+    "name": "rejeita arquivo maior que o limite e não chama onFileChange"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/__tests__/FileUploadField.test.tsx",
+    "name": "rejeita extensão perigosa com mensagem amigável"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/__tests__/FileUploadField.test.tsx",
+    "name": "mostra o arquivo selecionado com nome, tamanho e botão Remover"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/__tests__/FileUploadField.test.tsx",
+    "name": "clicar em Remover chama onFileChange(null)"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/__tests__/FileUploadField.test.tsx",
+    "name": "estado uploading esconde o botão Remover e mostra "
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/__tests__/FileUploadField.test.tsx",
+    "name": "disabled impede abrir o seletor de arquivo pela dropzone"
    },
    {
     "file": "src/components/colaborador-detalhes/historico/__tests__/HistoricoColaborador.test.tsx",
@@ -265177,6 +265669,48 @@
     "shows 100% when all validated"
    ]
   },
+  "src/components/__tests__/AdmissoesDashboard.test.tsx": {
+   "path": "src/components/__tests__/AdmissoesDashboard.test.tsx",
+   "lines": 687,
+   "is_test": true,
+   "rule_comments": [
+    "* Datas relativas para as fixtures (a janela do gráfico e a régua de prazo são",
+    "* Datas RELATIVAS: a classificação de prazo do card (\"Atrasadas\" / \"Em risco\" /",
+    "* Um processo em cada faixa de prazo (mesma régua das contagens do card). */",
+    "Critério: abrir qualquer um dos quatro modais não pode mostrar texto",
+    "* Valor de linha de lista que também não pode ter indentação à esquerda. */",
+    "texto e não pode ter indentação à esquerda: era o `pl-7` alinhado ao selo",
+    "Um processo em cada faixa, com prazo, tempo restante/atraso e próxima ação."
+   ],
+   "temporal": [
+    "const diasAtras = (dias: number) => new Date(Date.now() - dias * 24 * 60 * 60 * 1000).toISOString();"
+   ],
+   "tests": [
+    "AdmissoesDashboard",
+    "renders Total Iniciadas KPI",
+    "renders Em Andamento KPI",
+    "renders Finalizadas KPI",
+    "renders Canceladas KPI",
+    "shows correct total count",
+    "shows Tempo Médio de Admissão chart title",
+    "renders charts",
+    "handles empty admissoes array",
+    "não renderiza micro gráfico nos KPI cards",
+    "mostra a frase de apoio completa de cada KPI",
+    "dá overflow próprio a exatamente 3 listas, e não ao resto do dashboard",
+    "rola a lista de ações prioritárias sem o título do card dentro do scroll",
+    "rola a lista de próximas admissões com o selo de etapa dentro da linha",
+    "rola o SLA & Alertas com o rodapé ",
+    "abre o modal de Ações Prioritárias direto na fila das quatro famílias",
+    "nenhum dos quatro modais exibe o bloco de explicação — a lista vem primeiro",
+    "campos longos usam fluxo de texto — o rótulo nunca vira coluna fixa",
+    "só mostra ",
+    "fecha o modal e navega quando existe destino (mesma coreografia de Pendências)",
+    "o modal de Próximas Admissões lista TODAS as admissões, com progresso e pendências",
+    "o modal de Distribuição por Área lista todas as áreas, sem agrupar em ",
+    "o modal de SLA & Alertas agrupa os processos pela mesma régua do card"
+   ]
+  },
   "src/components/__tests__/AdmissoesKanban.test.tsx": {
    "path": "src/components/__tests__/AdmissoesKanban.test.tsx",
    "lines": 124,
@@ -265326,6 +265860,34 @@
     "renders with large value stays at 0 until animated",
     "chega ao valor final com a animação desligada (duration = 0)",
     "respeita o formatador no valor final com duration = 0"
+   ]
+  },
+  "src/components/__tests__/AnimatedTabs.test.tsx": {
+   "path": "src/components/__tests__/AnimatedTabs.test.tsx",
+   "lines": 166,
+   "is_test": true,
+   "errors": [
+    "indicador deslizante não foi montado"
+   ],
+   "params": [
+    {
+     "name": "TAB_WIDTH",
+     "value": "300"
+    },
+    {
+     "name": "TAB_HEIGHT",
+     "value": "44"
+    }
+   ],
+   "temporal": [
+    "{ timeout: 4000 }"
+   ],
+   "tests": [
+    "AnimatedTabsList (indicador deslizante)",
+    "monta o indicador já na primeira pintura, na faixa da aba ativa",
+    "reusa o MESMO nó e remede o indicador ao trocar de aba",
+    "aplica a skin de cada área nos elementos do Animate UI",
+    "mantém o conteúdo do Radix Tabs sincronizado com a aba clicada"
    ]
   },
   "src/components/__tests__/AnotacoesTab.test.tsx": {
@@ -265537,6 +266099,29 @@
     "renders custom trigger when trigger prop provided"
    ]
   },
+  "src/components/__tests__/AuditoriaAnimacao.test.tsx": {
+   "path": "src/components/__tests__/AuditoriaAnimacao.test.tsx",
+   "lines": 269,
+   "is_test": true,
+   "params": [
+    {
+     "name": "DIA",
+     "value": "24"
+    }
+   ],
+   "rule_comments": [
+    "easing REAIS — não apenas \"parecido\"."
+   ],
+   "temporal": [
+    "const DIA = 24 * 60 * 60 * 1000;"
+   ],
+   "tests": [
+    "Auditoria — entrada padrão do sistema",
+    "os 10 controles dos filtros entram em cascata com o variant dos KPI Cards",
+    "cabeçalho e eventos entram em sequência (0,55s · 0,11s · easeOutCubic), sem movimento duplicado",
+    "filtrar não reinicia a cascata dos controles nem a entrada dos cabeçalhos"
+   ]
+  },
   "src/components/__tests__/AuditoriaChips.test.tsx": {
    "path": "src/components/__tests__/AuditoriaChips.test.tsx",
    "lines": 188,
@@ -265665,6 +266250,22 @@
     "registro bem formado é válido",
     "exige registro, tabela e ao menos um campo alterado",
     "campo declarado como alterado precisa existir em um dos lados"
+   ]
+  },
+  "src/components/__tests__/AuditoriaTab.test.tsx": {
+   "path": "src/components/__tests__/AuditoriaTab.test.tsx",
+   "lines": 240,
+   "is_test": true,
+   "tests": [
+    "AuditoriaTab — timeline funcional",
+    "renderiza agrupamento por data e não usa tabela HTML",
+    "abre o detalhe existente com os dados do evento",
+    "filtra por busca e mostra o estado vazio quando não há resultado",
+    "filtra pela categoria e exporta pelos botões existentes",
+    "aplica o ponto semântico e o contador de cada categoria suportada",
+    "mantém cor de texto/contador e glow da própria categoria na seleção",
+    "destaca Limpar filtros somente quando algum filtro real está ativo",
+    "exibe skeleton durante o carregamento e erro com tentativa novamente"
    ]
   },
   "src/components/__tests__/BarChartWidget.test.tsx": {
@@ -266371,6 +266972,18 @@
     "reutiliza exatamente o keyframe ",
     "os três cards analíticos entram em cascata a partir de ",
     "aba Ciclos: "
+   ]
+  },
+  "src/components/__tests__/DesenvolvimentoResumoTab.test.tsx": {
+   "path": "src/components/__tests__/DesenvolvimentoResumoTab.test.tsx",
+   "lines": 109,
+   "is_test": true,
+   "tests": [
+    "DesenvolvimentoResumoTab",
+    "renders the four dashboard cards with empty states when there is no data",
+    "shows onboarding as concluded when progresso is 100%",
+    "shows metas progress when metas exist",
+    "shows competência bars when competências exist"
    ]
   },
   "src/components/__tests__/DesligamentoBadges.test.tsx": {
@@ -268003,6 +268616,47 @@
     "renders status badges in table"
    ]
   },
+  "src/components/__tests__/GestaoCandidatos.test.tsx": {
+   "path": "src/components/__tests__/GestaoCandidatos.test.tsx",
+   "lines": 981,
+   "is_test": true,
+   "rule_comments": [
+    "Admissão SEM prazo. A coluna `data_prevista` é NOT NULL na tabela, então",
+    "a forma real de \"sem prazo\" é o campo AUSENTE, não `null` — e as duas",
+    "não pode ser criada/removida por botão."
+   ],
+   "tests": [
+    "GestaoCandidatos",
+    "renderiza os quatro KPIs sem mini gráfico lateral",
+    "abre na visão de TABELA (padrão) com o cabeçalho completo",
+    "lista os candidatos com nome, cargo e o selo de etapa",
+    "mostra a faixa de etapas com as pills da referência e a ativa por padrão",
+    "filtrar por etapa reduz a listagem",
+    "a busca textual filtra por nome, cargo ou departamento",
+    "alternar para Cards troca a tabela por uma grade",
+    "usa UM contorno lime permanente (irmão dos botões) — sem borda por botão",
+    "monta o card da referência: 3 infos lado a lado, salário em BRL e ações no rodapé",
+    "usa grade de 1/2/3 colunas na listagem de Cards — sem auto-fit, 3 só no desktop largo",
+    "fixa o status/ações no topo-direita e trunca nome e cargo em 1 linha",
+    "entrega valores e responsável em UMA linha — sem reticências",
+    "mostra a faixa exibida e a paginação",
+    "modo Tabela mantém 10 por página e o seletor com 10/20/50",
+    "modo Cards pagina de 12 em 12 (grade cheia) e o seletor vira 12/24/36",
+    "alternar Tabela↔Cards volta à 1ª página e adota o tamanho do modo",
+    "aciona a abertura do detalhe do candidato",
+    "exibe o estado vazio quando não há candidatos",
+    "mantém busca, filtros e ações numa ÚNICA linha — sem ",
+    "dá largura dominante à busca e corta valor/rótulo dos filtros em UMA linha",
+    "organiza as 10 pills de etapa numa faixa única, sem esmagar nem quebrar rótulo",
+    "mantém os selos de etapa em UMA linha — coluna automática, sem largura fixa",
+    "entrega os 9 rótulos de etapa inteiros e sem quebra",
+    "abre o dropdown SEMPRE para baixo (bottom-start), rolando por dentro do espaço",
+    "nivela o ",
+    "abre o dropdown de ordenação para BAIXO, encostado à direita do trigger",
+    "sem filtro fica neutro; com QUALQUER filtro fica lime e volta ao neutro ao limpar",
+    "mostra o olho de "
+   ]
+  },
   "src/components/__tests__/GestaoPontoAnalytics.test.tsx": {
    "path": "src/components/__tests__/GestaoPontoAnalytics.test.tsx",
    "lines": 107,
@@ -268631,6 +269285,49 @@
     "SOME quando os filtros voltam ao padrão (re-render)",
     "aciona ",
     "vem logo depois de "
+   ]
+  },
+  "src/components/__tests__/MetasOKRsDerivacoes.test.tsx": {
+   "path": "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+   "lines": 270,
+   "is_test": true,
+   "params": [
+    {
+     "name": "DIA",
+     "value": "86"
+    }
+   ],
+   "rule_comments": [
+    "60 de 80 dias decorridos (75%) com apenas 40% de progresso.",
+    "prazos da fixture — senão a meta \"Em dia\" (prazo AGORA+20) vence sozinha e"
+   ],
+   "tests": [
+    "metasComum — situação derivada (nunca uma coluna do banco)",
+    "status encerrado → concluída",
+    "prazo vencido e não concluída → atrasada (mesma regra do módulo)",
+    "progresso abaixo do ritmo decorrido → em risco",
+    "progresso acima do ritmo decorrido → em dia",
+    "status sem andamento → em risco",
+    "sem prazo não afirma atraso nem risco",
+    "metasComum — prazo e agregações",
+    "conta dias de calendário (0 = hoje, negativo = atraso)",
+    "descreve o prazo com a leitura contextual da referência",
+    "não inventa evolução sem histórico nem departamento sem a relação",
+    "conta cada situação uma única vez",
+    "ordena ",
+    "MetasOKRsTab — cascata de entrada na ordem de leitura",
+    "banner (0) → filtros (1) → cards (2, 3, 4), com o keyframe do Dashboard",
+    "metasComum — evolução em PONTOS PERCENTUAIS (nunca variação relativa)",
+    "diferença entre o progresso atual e a medição anterior",
+    "51% → 63% é +12 pontos percentuais (a variação relativa seria ~+23,5%)",
+    "travou a variação em −100…100 e ignora histórico inválido",
+    "IndicadorEvolucao — os três estados da referência",
+    "positiva: TrendingUp com ícone e percentual em verde-success",
+    "negativa: TrendingDown com ícone e percentual em vermelho",
+    "neutra: ícone neutro e percentual sem sinal (sem alteração)",
+    "vive direto sobre o card: sem background, badge, borda ou container quadrado",
+    "MetaCard — indicador só aparece com histórico real",
+    "mostra a evolução quando há progresso_anterior e some sem ele"
    ]
   },
   "src/components/__tests__/MetricCard.test.tsx": {
@@ -270689,6 +271386,26 @@
     "button enables when token is typed",
     "does not render the unfinished Gov.br placeholder",
     "renders Powered by Lovable Cloud text"
+   ]
+  },
+  "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx": {
+   "path": "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+   "lines": 289,
+   "is_test": true,
+   "tests": [
+    "TrabalhoHierarquiaTab",
+    "shows cargo from the cargos join when cargo_id is set",
+    "falls back to the plain text cargo column when cargo_id is not set",
+    "does not invent a gestor direto when supervisor_id is not set",
+    "Vínculo & Alocação — Time/Centro de custo/Local de trabalho",
+    "mostra o Time resolvido via join quando time_id está definido",
+    "mostra o Centro de custo resolvido via join quando centro_custo_id está definido",
+    "mostra o Local de trabalho resolvido via localTrabalhoService quando local_trabalho_id está definido",
+    "cai para o texto legado quando centro_custo_id/local_trabalho_id não têm join correspondente (colaborador antigo)",
+    "Vínculo & Alocação — Unidade / Locação principal",
+    "mostra a lotação principal vinda de colaborador_lotacoes.principal = true",
+    "mostra ",
+    "troca de Unidade São Paulo/SP para Unidade Campinas/SP quando a fonte muda (simula reabrir após salvar)"
    ]
   },
   "src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx": {
@@ -276347,6 +277064,22 @@
    ],
    "rule_comments": [
     "colaborador (o quê + quando), sem inventar regra nova: só detalha os"
+   ]
+  },
+  "src/components/colaborador-detalhes/documentos/__tests__/FileUploadField.test.tsx": {
+   "path": "src/components/colaborador-detalhes/documentos/__tests__/FileUploadField.test.tsx",
+   "lines": 85,
+   "is_test": true,
+   "tests": [
+    "FileUploadField",
+    "mostra a dropzone quando nenhum arquivo está selecionado",
+    "aceita um arquivo válido selecionado pelo input e chama onFileChange",
+    "rejeita arquivo maior que o limite e não chama onFileChange",
+    "rejeita extensão perigosa com mensagem amigável",
+    "mostra o arquivo selecionado com nome, tamanho e botão Remover",
+    "clicar em Remover chama onFileChange(null)",
+    "estado uploading esconde o botão Remover e mostra ",
+    "disabled impede abrir o seletor de arquivo pela dropzone"
    ]
   },
   "src/components/colaborador-detalhes/historico/EventTypesSummary.tsx": {
@@ -327299,10 +328032,27 @@
   }
  },
  "git": {
-  "sha": "5e88936033a0389f6d0900c37cdd60d068aa6451",
+  "sha": "364a2153844cac54b156afced9ca734d452b2020",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "364a215",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "test: recupera 9 arquivos de teste da branch muri (#546) — 107 casos (#697)",
+    "files": [
+     "src/components/__tests__/AdmissoesDashboard.test.tsx",
+     "src/components/__tests__/AnimatedTabs.test.tsx",
+     "src/components/__tests__/AuditoriaAnimacao.test.tsx",
+     "src/components/__tests__/AuditoriaTab.test.tsx",
+     "src/components/__tests__/DesenvolvimentoResumoTab.test.tsx",
+     "src/components/__tests__/GestaoCandidatos.test.tsx",
+     "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+     "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+     "src/components/colaborador-detalhes/documentos/__tests__/FileUploadField.test.tsx"
+    ]
+   },
    {
     "sha": "5e88936",
     "date": "2026-11-18",
@@ -327611,17 +328361,6 @@
      "src/components/desligamentos/index.ts",
      "src/pages/DesligamentosPage.tsx"
     ]
-   },
-   {
-    "sha": "2569c2a",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(observabilidade): liga o trace_id do frontend ao bridge (#666)",
-    "files": [
-     "src/integrations/supabase/__tests__/clientBridge.test.ts",
-     "src/integrations/supabase/client.ts",
-     "src/lib/tracing.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -327658,6 +328397,42 @@
     2
    ],
    [
+    "src/components/__tests__/AdmissoesDashboard.test.tsx",
+    1
+   ],
+   [
+    "src/components/__tests__/AnimatedTabs.test.tsx",
+    1
+   ],
+   [
+    "src/components/__tests__/AuditoriaAnimacao.test.tsx",
+    1
+   ],
+   [
+    "src/components/__tests__/AuditoriaTab.test.tsx",
+    1
+   ],
+   [
+    "src/components/__tests__/DesenvolvimentoResumoTab.test.tsx",
+    1
+   ],
+   [
+    "src/components/__tests__/GestaoCandidatos.test.tsx",
+    1
+   ],
+   [
+    "src/components/__tests__/MetasOKRsDerivacoes.test.tsx",
+    1
+   ],
+   [
+    "src/components/__tests__/TrabalhoHierarquiaTab.test.tsx",
+    1
+   ],
+   [
+    "src/components/colaborador-detalhes/documentos/__tests__/FileUploadField.test.tsx",
+    1
+   ],
+   [
     "docs/auditoria/estado/WORKFLOWS_STATUS.md",
     1
    ],
@@ -327667,42 +328442,6 @@
    ],
    [
     "supabase/migrations/20261118160000_empresa_id_not_null_rh.verify.sql",
-    1
-   ],
-   [
-    "src/components/__tests__/BeneficiosSettingsTabCriar.test.tsx",
-    1
-   ],
-   [
-    "src/components/settings/BeneficiosSettingsTab.tsx",
-    1
-   ],
-   [
-    "supabase/migrations/20260724000500_fix_faltas_status_default.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20260724001200_fix_faltas_tipo_default_and_constraint.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261118110000_drop_policy_inerte_recrutamento.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261118110000_drop_policy_inerte_recrutamento.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261028230000_govbr_auth_state_user_id.verify.sql",
-    1
-   ],
-   [
-    "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
-    1
-   ],
-   [
-    "src/hooks/__tests__/useColaboradorLotacao.test.ts",
     1
    ]
   ]

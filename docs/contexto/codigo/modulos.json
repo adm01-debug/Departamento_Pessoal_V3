@@ -198,7 +198,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 297,
+   "testes": 305,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -897,7 +897,7 @@
   {
    "modulo": "components/colaborador-detalhes",
    "arquivos": 62,
-   "testes": 9,
+   "testes": 10,
    "linhas": 11124,
    "itens_menu": [],
    "telas": [],

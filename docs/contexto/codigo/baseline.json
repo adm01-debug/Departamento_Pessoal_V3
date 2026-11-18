@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5e88936033a0389f6d0900c37cdd60d068aa6451",
+  "commit": "364a2153844cac54b156afced9ca734d452b2020",
   "branch": "main",
-  "data_commit": "2026-11-18T13:48:07-03:00",
+  "data_commit": "2026-11-18T14:55:02-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "364a215",
+    "data": "2026-11-18",
+    "assunto": "test: recupera 9 arquivos de teste da branch muri (#546) — 107 casos (#697)"
+   },
    {
     "sha": "5e88936",
     "data": "2026-11-18",
@@ -126,18 +131,13 @@
     "sha": "a0a6967",
     "data": "2026-11-17",
     "assunto": "chore(auditoria): escreve e executa o sidecar que faltava ao colaborador_lotacoes (#673)"
-   },
-   {
-    "sha": "4699117",
-    "data": "2026-11-17",
-    "assunto": "infra: o apply do canonical-migrations confirma o lote anterior, não o atual (#671)"
    }
   ],
-  "arquivos_mudados_7d": 1138,
+  "arquivos_mudados_7d": 1147,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 374
+    "mudancas": 382
    },
    {
     "pasta": "src/components/ui",
@@ -153,7 +153,7 @@
    },
    {
     "pasta": "src/components/colaborador-detalhes",
-    "mudancas": 88
+    "mudancas": 89
    },
    {
     "pasta": "src/components/avaliacao",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3593,
-  "arquivos_codigo": 2080,
-  "linhas_codigo": 411755,
+  "arquivos_total": 3602,
+  "arquivos_codigo": 2089,
+  "linhas_codigo": 414851,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 426,
   "migrations": 878,
   "cron_jobs": 41,
-  "testes": 775,
+  "testes": 784,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 335
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 976,
-   "linhas": 176392
+   "arquivos": 985,
+   "linhas": 179488
   },
   "src/constants": {
    "arquivos": 7,

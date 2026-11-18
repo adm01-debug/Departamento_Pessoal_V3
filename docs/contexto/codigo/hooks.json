@@ -732,7 +732,7 @@
     "src/pages/ComunicacaoInternaPage.tsx",
     "src/pages/ControleAcessoPage.tsx"
    ],
-   "coberto_por_testes": 2
+   "coberto_por_testes": 3
   },
   {
    "arquivo": "src/hooks/use-mobile.tsx",
