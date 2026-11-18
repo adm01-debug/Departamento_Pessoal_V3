@@ -30,3 +30,4 @@ export {
   HoleritesPreviewCard,
   FinanceiroPendenciasCard,
 } from './FinanceiroResumoCards';
+export { DadosPessoaisTab } from './DadosPessoaisTab';
