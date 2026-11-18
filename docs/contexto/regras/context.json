@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4699117c7ab1c8c47653b474546a4d5fd63d4a62",
+  "sha": "3616289d4bfe3c1d765b7f91756ef1f377a2605e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 01:56 UTC",
-  "files_total": 3593,
-  "code_files": 3016,
-  "code_lines": 477232
+  "generated_at": "2026-11-18 03:17 UTC",
+  "files_total": 3594,
+  "code_files": 3017,
+  "code_lines": 477371
  },
  "version": "1.3.2",
- "facts_hash": "8599ba909c279bca",
+ "facts_hash": "8f3939d7d23fd408",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 999,
-   ".sql": 943,
+   ".sql": 944,
    ".ts": 938,
    ".mjs": 108,
    ".js": 15,
@@ -101272,8 +101272,8 @@
   },
   {
    "module": "docs",
-   "files": 15,
-   "lines": 2863,
+   "files": 16,
+   "lines": 3002,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -101291,6 +101291,7 @@
     "docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql",
     "docs/auditoria/sql-preservado/20260821000000_p0_rls_dashboard_audit.sql",
     "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.sql",
+    "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.verify.sql",
     "docs/auditoria/sql-preservado/20261005020000_onboarding_modelo_b_convergencia.sql",
     "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada.sql",
     "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada_rollback.sql",
@@ -258444,6 +258445,10 @@
    "path": "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.sql",
    "lines": 112
   },
+  "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.verify.sql": {
+   "path": "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.verify.sql",
+   "lines": 139
+  },
   "docs/auditoria/sql-preservado/20261005020000_onboarding_modelo_b_convergencia.sql": {
    "path": "docs/auditoria/sql-preservado/20261005020000_onboarding_modelo_b_convergencia.sql",
    "lines": 73
@@ -326739,10 +326744,29 @@
   }
  },
  "git": {
-  "sha": "4699117c7ab1c8c47653b474546a4d5fd63d4a62",
+  "sha": "3616289d4bfe3c1d765b7f91756ef1f377a2605e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "3616289",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "docs(auditoria): registra a prova byte a byte, por símbolo exportado e por token (#674)",
+    "files": [
+     "docs/auditoria/VEREDITO_MURI_2026-11-17.md"
+    ]
+   },
+   {
+    "sha": "a0a6967",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "chore(auditoria): escreve e executa o sidecar que faltava ao colaborador_lotacoes (#673)",
+    "files": [
+     "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.verify.sql",
+     "docs/auditoria/sql-preservado/README.md"
+    ]
+   },
    {
     "sha": "4699117",
     "date": "2026-11-17",
@@ -327091,46 +327115,20 @@
      "supabase/migrations/20261117190000_permissions_matriz_seed.verify.sql",
      "supabase/migrations/20261117193000_storage_documentos_tenant_scope.verify.sql"
     ]
-   },
-   {
-    "sha": "3084304",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "infra(storage): policies de tenant para documentos, documentos-colaboradores e afastamentos (#644)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql",
-     "supabase/migrations/20261117193000_storage_documentos_tenant_scope.verify.sql",
-     "supabase/tests/storage_documentos_tenant_isolation.test.ts"
-    ]
-   },
-   {
-    "sha": "f26f689",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(permissions): seed da matriz de permissões por papel (#642)",
-    "files": [
-     "supabase/migrations/20261117190000_permissions_matriz_seed.sql",
-     "supabase/migrations/20261117190000_permissions_matriz_seed.verify.sql"
-    ]
    }
   ],
   "hot_files": [
    [
-    "src/pages/ColaboradorDetalhesPage.tsx",
+    "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
     3
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
-    2
-   ],
-   [
     "docs/auditoria/sql-preservado/README.md",
-    2
+    3
    ],
    [
-    "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
-    2
+    "src/pages/ColaboradorDetalhesPage.tsx",
+    3
    ],
    [
     "src/components/colaborador-detalhes/index.ts",
@@ -327165,12 +327163,12 @@
     2
    ],
    [
-    "supabase/migrations/20261117190000_permissions_matriz_seed.verify.sql",
-    2
+    "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.verify.sql",
+    1
    ],
    [
-    "supabase/migrations/20261117193000_storage_documentos_tenant_scope.verify.sql",
-    2
+    ".github/workflows/canonical-migrations.yml",
+    1
    ],
    [
     "scripts/canonical-invariants.sql",
@@ -327194,6 +327192,10 @@
    ],
    [
     "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada.sql",
+    1
+   ],
+   [
+    "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada_rollback.sql",
     1
    ]
   ]

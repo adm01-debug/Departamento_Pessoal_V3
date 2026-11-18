@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4699117c7ab1c8c47653b474546a4d5fd63d4a62",
+  "commit": "3616289d4bfe3c1d765b7f91756ef1f377a2605e",
   "branch": "main",
-  "data_commit": "2026-11-17T22:55:40-03:00",
+  "data_commit": "2026-11-17T23:54:28-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "3616289",
+    "data": "2026-11-17",
+    "assunto": "docs(auditoria): registra a prova byte a byte, por símbolo exportado e por token (#674)"
+   },
+   {
+    "sha": "a0a6967",
+    "data": "2026-11-17",
+    "assunto": "chore(auditoria): escreve e executa o sidecar que faltava ao colaborador_lotacoes (#673)"
+   },
    {
     "sha": "4699117",
     "data": "2026-11-17",
@@ -121,19 +131,9 @@
     "sha": "ba993ad",
     "data": "2026-11-17",
     "assunto": "fix(hooks): guardas de empresa em ajuste de ponto e conta bancária (#650)"
-   },
-   {
-    "sha": "50ae62a",
-    "data": "2026-11-17",
-    "assunto": "fix(portal): exclusão de documento não apaga a linha quando o storage recusa (#645)"
-   },
-   {
-    "sha": "65f863a",
-    "data": "2026-11-17",
-    "assunto": "feat(colaborador): aba de Afastamentos no dossiê, sem dado de saúde (#643)"
    }
   ],
-  "arquivos_mudados_7d": 1121,
+  "arquivos_mudados_7d": 1122,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 96
+    "mudancas": 95
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -192,7 +192,7 @@
     "mudancas": 30
    },
    {
-    "pasta": "src/components/esocial",
+    "pasta": "src/components/premiacoes",
     "mudancas": 29
    }
   ],
@@ -236,10 +236,6 @@
    {
     "arquivo": "src/pages/ColaboradoresPage.tsx",
     "mudancas": 7
-   },
-   {
-    "arquivo": "AGENTS.md",
-    "mudancas": 6
    },
    {
     "arquivo": "deno.lock",
@@ -286,7 +282,7 @@
     "mudancas": 5
    },
    {
-    "arquivo": "CLAUDE.md",
+    "arquivo": "AGENTS.md",
     "mudancas": 5
    },
    {
@@ -294,7 +290,11 @@
     "mudancas": 5
    },
    {
-    "arquivo": "nginx.conf",
+    "arquivo": "public/sw-custom.js",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "scripts/autofix/run.mjs",
     "mudancas": 5
    }
   ],
@@ -318,7 +318,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3580,
+  "arquivos_total": 3581,
   "arquivos_codigo": 2075,
   "linhas_codigo": 410747,
   "rotas": 116,

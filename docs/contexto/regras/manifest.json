@@ -2,8 +2,8 @@
  "produtor": "ai-context-sync",
  "versao": "1.3.2",
  "perfil": "regras",
- "gerado_em": "2026-11-18 01:56 UTC",
- "commit": "4699117c7ab1c8c47653b474546a4d5fd63d4a62",
+ "gerado_em": "2026-11-18 03:17 UTC",
+ "commit": "3616289d4bfe3c1d765b7f91756ef1f377a2605e",
  "fonte": "código + migrations/types + manual/ (regras de negócio)",
  "entrada": "07-REGRAS-DE-NEGOCIO.md",
  "arquivos": [
