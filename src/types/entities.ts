@@ -80,6 +80,23 @@ export interface Colaborador {
   uf?: string;
   observacoes?: string;
   matricula?: string;
+  /** Dados pessoais e de contato que `buscarPorId` traz via `select('*')`.
+   * Colunas reais de `public.colaboradores` (conferidas no banco canônico);
+   * opcionais porque listagens enxutas não as selecionam. */
+  nome_social?: string | null;
+  rg?: string | null;
+  rg_orgao_emissor?: string | null;
+  rg_uf?: string | null;
+  data_nascimento?: string | null;
+  estado_civil?: string | null;
+  email_pessoal?: string | null;
+  telefone?: string | null;
+  celular?: string | null;
+  cep?: string | null;
+  logradouro?: string | null;
+  numero?: string | null;
+  complemento?: string | null;
+  bairro?: string | null;
 }
 
 export interface Ferias {
