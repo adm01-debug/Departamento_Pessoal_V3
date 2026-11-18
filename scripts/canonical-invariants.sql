@@ -1,11 +1,12 @@
 SELECT jsonb_build_object(
   'ledger_count', (
     SELECT count(*) FROM supabase_migrations.schema_migrations
-    -- LOTE ATUAL: as 2 versoes desta leva. Tem de andar junto com a lista do
+    -- LOTE ATUAL: as 3 versoes desta leva. Tem de andar junto com a lista do
     -- passo "Preparar somente as migracoes aprovadas" no workflow e com o
-    -- `=== 2` da assercao: se ficar na versao do lote anterior, a assercao
+    -- `=== 3` da assercao: se ficar na versao do lote anterior, a assercao
     -- aprova por um registro ANTIGO e nao prova nada do lote novo.
     WHERE version IN (
+      '20260929120000',
       '20261117190000',
       '20261117193000'
     )

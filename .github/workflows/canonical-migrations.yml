@@ -159,6 +159,7 @@ jobs:
           # supabase/migrations/ (o workflow prefixa; caminho completo gera
           # "supabase/migrations/supabase/migrations/..." e o sidecar nao e achado).
           for migration in \
+            20260929120000_colaborador_lotacoes.sql \
             20261117190000_permissions_matriz_seed.sql \
             20261117193000_storage_documentos_tenant_scope.sql
           do
@@ -331,7 +332,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 2 &&
+              Number(r.ledger_count) === 3 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&

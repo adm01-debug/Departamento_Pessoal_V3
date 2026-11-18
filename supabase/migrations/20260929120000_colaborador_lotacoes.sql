@@ -85,6 +85,7 @@ CREATE TRIGGER trg_colaborador_lotacoes_valida_tenant
 -- -----------------------------------------------------------------------------
 ALTER TABLE public.colaborador_lotacoes ENABLE ROW LEVEL SECURITY;
 
+-- audit-migration-style: allow-silent-drop a tabela e CRIADA por esta mesma migration, entao a policy nao pode preexistir — um gate fail-closed exigindo que ela exista em pg_policies reprovaria por definicao. O DROP esta aqui so para tornar a migration reaplicavel, e o CREATE abaixo deixa o estado final. A garantia fail-closed mora no sidecar: assercao 3 exige rls_tenant_or_admin(empresa_id) nas duas pontas e a 4 exige que nenhuma OUTRA policy exista na tabela
 DROP POLICY IF EXISTS "colaborador_lotacoes_tenant" ON public.colaborador_lotacoes;
 CREATE POLICY "colaborador_lotacoes_tenant" ON public.colaborador_lotacoes
   FOR ALL TO authenticated
