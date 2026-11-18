@@ -47,6 +47,49 @@ A análise que sustenta as linhas de "regressão", de `onboarding` e de `ciclos`
 **NÃO APLICAR** estão aqui só para não desaparecerem: aplicá-las reabriria buracos de RLS que a
 `main` já fechou.
 
+## Mais dois arquivos de SQL que só existiam na `muri`
+
+| arquivo                                                  | o que é                                                                | veredito                      |
+| -------------------------------------------------------- | ---------------------------------------------------------------------- | ----------------------------- |
+| `20261026090000_ciclos_exclusao_autorizada_rollback.sql` | o rollback da migration `20261026090000`, preservada acima             | guardado junto com a forward  |
+| `FIX_APLICAR_REGISTRAR_AUDITORIA.sql`                    | script manual de diagnóstico + correção de `registrar_auditoria` (404) | **não executar** — ver abaixo |
+
+`supabase/rollback/` existe na `main` com 10 arquivos, mas **não** com o do
+`20261026090000` — porque a forward também não está lá. Os dois ficam aqui juntos: se o dono
+decidir aplicar a forward, o rollback vem no mesmo pacote.
+
+`FIX_APLICAR_REGISTRAR_AUDITORIA.sql` é um roteiro de sessão: o próprio cabeçalho manda abrir o
+SQL Editor do dashboard, colar e clicar "Run". Isso é exatamente o caminho que o AGENTS.md §5
+proíbe — DDL em produção só por `canonical-migrations.yml`. E o PASSO 2 faz
+`DROP FUNCTION` em três assinaturas de `registrar_auditoria`/`listar_auditoria`; rodá-lo hoje
+derrubaria as versões vigentes, que a `main` define em várias migrations. Fica preservado como
+registro — **a metade útil é o PASSO 1**, a consulta de diagnóstico que lista as sobrecargas
+existentes em `pg_proc`.
+
+## O resíduo não-SQL da `muri`, para fechar a conta
+
+Fora de `supabase/migrations/`, sobraram 2 504 caminhos só na `muri`. Nenhum é perda:
+
+| grupo                                                                     | arquivos | por quê não é perda                                                                                                                                                                   |
+| ------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tmp-*/`, `anim-out/`, `_tmp-*.mjs`, PNG/WEBM/TXT de sessão               | ~2 050   | artefato de sessão de auditoria visual                                                                                                                                                |
+| `scripts/` de auditoria pontual                                           | 154      | scripts de uma sessão                                                                                                                                                                 |
+| `docs/api/`                                                               | 37       | preenchimento de template de uma API REST que não existe (veredito em `VEREDITO_MURI_2026-11-17.md` §2)                                                                               |
+| `src/`                                                                    | 111      | triado em `VEREDITO_MURI_2026-11-17.md` §4 — 13 melhorias recuperadas em PRs próprias                                                                                                 |
+| `e2e/`                                                                    | 9        | 5 recuperados na #661; 4 descartados com defeito confirmado                                                                                                                           |
+| `docs/ADR/` + `docs/adr/`                                                 | 7        | **todos na `main`**, consolidados e renumerados em `docs/adr/0001-0007`. Única diferença amostrada: o título `ADR 001` → `ADR 0001`                                                   |
+| `docs/{API,API_REFERENCE,ARCHITECTURE,ARQUITETURA,CONTRIBUTING*,DEPLOY*}` | 10       | **todos na `main`, byte a byte**, em `docs/_archive/docs-duplicados/` — foram arquivados de propósito como duplicados                                                                 |
+| `k8s/`, `helm/`, `terraform/`, `ansible/`                                 | 21       | scaffolding genérico de um deploy Kubernetes/Terraform que **não existe**: nenhum desses arquivos menciona `supabase` ou `vercel`. Os `secrets.y*ml` são placeholders, sem valor real |
+| `bun.lock`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`                       | 3        | **proibidos** — AGENTS.md §8: npm único                                                                                                                                               |
+| `netlify.toml`                                                            | 1        | o deploy é Vercel                                                                                                                                                                     |
+| `.github/ISSUE_TEMPLATE/*.md`, `pull_request_template.md`                 | 3        | a `main` tem a forma melhor: `bug_report.yml`, `feature_request.yml`, `config.yml` e `PULL_REQUEST_TEMPLATE.md`                                                                       |
+| `.github/workflows/branch-protection.yml`                                 | 1        | **regressão**: define `required_status_checks.contexts: []`, apagando os 10 checks obrigatórios da `main`, e exige 1 aprovação onde hoje são 0. Correto estar ausente                 |
+| `.husky/pre-commit.sh`                                                    | 1        | a `main` tem `.husky/pre-commit` com o mesmo `npx lint-staged` (o nome com `.sh` o husky não executa)                                                                                 |
+| `lighthouserc.js`                                                         | 1        | a `main` tem `lighthouserc.cjs` **funcionando**: a da `muri` auditava `localhost:3000` em rotas autenticadas, que redirecionam para `/login` — mediria a tela de login                |
+| `public/manifest.webmanifest`                                             | 1        | a `main` tem `public/manifest.json` com a marca real e ícones SVG inline; a da `muri` aponta para `/icon-192.png` e `/icon-512.png`, que não existem                                  |
+| `.clinerules`, `.github/FUNDING.yml`, `AUDIT_REPORT.pdf`, `audit.json`    | 4        | configuração de outra ferramenta, patrocínio e relatórios de sessão                                                                                                                   |
+| `docs/ninebox-aprovacao-gestor-vinculo-abner.sql`                         | 1        | **não resgatar**: a `main` tem o mesmo SQL em `…-conta-homologacao.sql`, sanitizado. A versão da `muri` traz e-mail e `user_id` reais em claro                                        |
+
 > **Nenhum arquivo desta pasta deve ser movido para `supabase/migrations/` sem decisão do dono.**
 > Todo ele é DDL em produção — regra 8 do fluxo Git.
 
