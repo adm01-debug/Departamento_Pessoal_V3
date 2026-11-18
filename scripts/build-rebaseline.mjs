@@ -18,9 +18,19 @@ const remediationPaths = [
 ].map((path) => resolve(root, path));
 const storagePath = resolve(root, 'supabase/rebaseline/20260831_storage_remediation.sql');
 
-const publicDump = (await readFile(publicDumpPath, 'utf8')).replace(/\r\n/g, '\n');
-const remediations = await Promise.all(remediationPaths.map((path) => readFile(path, 'utf8')));
-const storage = await readFile(storagePath, 'utf8');
+// Entrada ausente/ilegivel precisa dizer QUAL arquivo falta. Sem isto o
+// script morria com o stack do Node (ENOENT no meio de um Promise.all), e quem
+// roda a rebaseline tinha de abrir o traceback para descobrir o caminho.
+// Resgatado da PR #391 (fechada sem merge).
+let publicDump, remediations, storage;
+try {
+  publicDump = (await readFile(publicDumpPath, 'utf8')).replace(/\r\n/g, '\n');
+  remediations = await Promise.all(remediationPaths.map((path) => readFile(path, 'utf8')));
+  storage = await readFile(storagePath, 'utf8');
+} catch (err) {
+  process.stderr.write(`build-rebaseline: arquivo de entrada ausente ou ilegivel - ${err.message}\n`);
+  process.exit(1);
+}
 
 const sanitizedDump = publicDump
   .split('\n')
