@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f59c72965ef906a3a18fdab4e9ac1eaa64f89e43` (2026-11-17T21:36:35-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4699117c7ab1c8c47653b474546a4d5fd63d4a62` (2026-11-17T22:55:40-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1937), SQL (935), Markdown (334), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1937), SQL (943), Markdown (335), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3571 |
+| arquivos_total | 3580 |
 | arquivos_codigo | 2075 |
 | linhas_codigo | 410747 |
 | rotas | 116 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 772 |
 | workflows | 21 |
 | scripts | 135 |
-| docs_md | 334 |
+| docs_md | 335 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
@@ -396,15 +396,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27196 nós · 61461 arestas · 2392 comunidades · grafo do commit `f59c7296`
-- comunidades maiores: lucide-react (518), 20260831_corrected_public.sql (493), button.tsx (487), canonical_schema.sql (475), @tanstack/react-query (438), cn (427), useEmpresas (397), vitest (260), react (176), "public"."empresas" (159), "public"."colaboradores" (155), "public"."empresas" (154)
+- 27249 nós · 61519 arestas · 2391 comunidades · grafo do commit `4699117c`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), lucide-react (445), vitest (396), button.tsx (371), useEmpresas (343), App.tsx (325), cn (278), @tanstack/react-query (262), ColaboradorDetalhesPage.tsx (196), contract.ts (180), react (170)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - inventario/estado/rotas.json (23)
+- .github/workflows/canonical-migrations.yml (16)
 - package.json (16)
-- .github/workflows/canonical-migrations.yml (15)
 - package-lock.json (14)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - scripts/sync/autocommit-local.sh (10)
@@ -414,9 +414,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - src/pages/ColaboradoresPage.tsx (7)
 - AGENTS.md (6)
 - deno.lock (6)
+- scripts/canonical-invariants.sql (6)
 - scripts/sync/README.md (6)
 - scripts/sync/run-all.sh (6)
-- scripts/sync/sync-github.sh (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -649,10 +649,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/treinamentos-imagens-fase3b-prep.md` — Fase 3B — preparação final (relatório) (133 linhas)
 - `docs/treinamentos-imagens-homologacao.md` — Homologação isolada — Hub de imagens (alternativa ao Docker) (233 linhas)
 - `docs/treinamentos-imagens.md` — Imagens do Hub de Treinamentos — Fase 2 (auditoria) + preparação da Fase 3 (426 linhas)
-- subpastas de docs/: docs/auditoria (63), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/protegido (1), docs/seguranca (1)
+- subpastas de docs/: docs/auditoria (64), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/protegido (1), docs/seguranca (1)
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-17 `4699117` infra: o apply do canonical-migrations confirma o lote anterior, não o atual (#671)
+- 2026-11-17 `60e5ae9` chore(auditoria): fecha o destino das 14 migrations que só existiam na muri (#672)
+- 2026-11-17 `ec2987e` docs(auditoria): fecha o veredito de branches e PRs — nenhuma perda de função (#670)
 - 2026-11-17 `f59c729` feat(colaborador): aba Identificação no dossiê, com PII mascarada e acesso registrado (#669)
 - 2026-11-17 `544b877` feat(desligamentos): coluna &quot;Próxima Ação&quot; com prazo legal, e os filtros que o componente já tinha (#668)
 - 2026-11-17 `2569c2a` feat(observabilidade): liga o trace_id do frontend ao bridge (#666)
@@ -665,9 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `c234912` feat(colaborador): editar conta bancária, com o dado real só para quem pode vê-lo (#659)
 - 2026-11-17 `40b2c41` feat(ponto): mostra o débito de horas do dia no card &quot;Últimos 7 dias&quot; (#660)
 - 2026-11-17 `7681ca2` test(premiacoes): resgata da muri os 29 testes das regras de pagamento e auditoria (#658)
-- 2026-11-17 `39a27a3` feat(ui): calendário pt-BR com navegação por mês/ano em todo campo de data (#657)
-- 2026-11-17 `e968e3e` feat(permissões): controle de acesso por funcionalidade, lendo a matriz do banco (#651)
-- 2026-11-17 `842a6af` feat(colaborador): resumo financeiro no dossiê, com CPF mascarado no PDF (#655)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

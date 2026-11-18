@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f59c72965ef906a3a18fdab4e9ac1eaa64f89e43",
+  "commit": "4699117c7ab1c8c47653b474546a4d5fd63d4a62",
   "branch": "main",
-  "data_commit": "2026-11-17T21:36:35-03:00",
+  "data_commit": "2026-11-17T22:55:40-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "4699117",
+    "data": "2026-11-17",
+    "assunto": "infra: o apply do canonical-migrations confirma o lote anterior, não o atual (#671)"
+   },
+   {
+    "sha": "60e5ae9",
+    "data": "2026-11-17",
+    "assunto": "chore(auditoria): fecha o destino das 14 migrations que só existiam na muri (#672)"
+   },
+   {
+    "sha": "ec2987e",
+    "data": "2026-11-17",
+    "assunto": "docs(auditoria): fecha o veredito de branches e PRs — nenhuma perda de função (#670)"
+   },
    {
     "sha": "f59c729",
     "data": "2026-11-17",
@@ -116,24 +131,9 @@
     "sha": "65f863a",
     "data": "2026-11-17",
     "assunto": "feat(colaborador): aba de Afastamentos no dossiê, sem dado de saúde (#643)"
-   },
-   {
-    "sha": "a03e498",
-    "data": "2026-11-17",
-    "assunto": "fix(ui): iniciais do avatar voltam a ter fundo (#649)"
-   },
-   {
-    "sha": "fc03c4a",
-    "data": "2026-11-17",
-    "assunto": "chore(inventario): regenera rotas.json, defasado desde a #639 (#648)"
-   },
-   {
-    "sha": "65e05a3",
-    "data": "2026-11-17",
-    "assunto": "fix(migrations): corrige os dois sidecars que reprovaram no dry-run (#647)"
    }
   ],
-  "arquivos_mudados_7d": 1112,
+  "arquivos_mudados_7d": 1121,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -202,12 +202,12 @@
     "mudancas": 23
    },
    {
-    "arquivo": "package.json",
+    "arquivo": ".github/workflows/canonical-migrations.yml",
     "mudancas": 16
    },
    {
-    "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 15
+    "arquivo": "package.json",
+    "mudancas": 16
    },
    {
     "arquivo": "package-lock.json",
@@ -243,6 +243,10 @@
    },
    {
     "arquivo": "deno.lock",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 6
    },
    {
@@ -292,16 +296,12 @@
    {
     "arquivo": "nginx.conf",
     "mudancas": 5
-   },
-   {
-    "arquivo": "public/sw-custom.js",
-    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 284
+    "commits": 285
    },
    {
     "autor": "dependabot[bot]",
@@ -313,12 +313,12 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 2
+    "commits": 1
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3571,
+  "arquivos_total": 3580,
   "arquivos_codigo": 2075,
   "linhas_codigo": 410747,
   "rotas": 116,
@@ -335,7 +335,7 @@
   "testes": 772,
   "workflows": 21,
   "scripts": 135,
-  "docs_md": 334
+  "docs_md": 335
  },
  "por_pasta": {
   "capacitor.config.ts": {

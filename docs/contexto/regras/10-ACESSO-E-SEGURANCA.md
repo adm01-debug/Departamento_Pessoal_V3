@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f59c72965e` · branch `main` · 2026-11-18 00:39 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4699117c7a` · branch `main` · 2026-11-18 01:56 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,8 +320,10 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 315 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 317 arquivo(s)
 
+- `docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql`
+- `docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql`
 - `docs/ninebox-pre-aplicacao.sql`
 - `docs/ninebox-verificacao-truncate.sql`
 - `e2e/cleanup/seed-cleanup.spec.ts`
@@ -470,9 +472,7 @@
 - `supabase/migrations/20260712214929_4971f364-3f69-48cd-9150-a55524b1025d.sql`
 - `supabase/migrations/20260712215539_349ae8a8-7ed9-41a5-b06c-ea4b8f35c7b5.sql`
 - `supabase/migrations/20260712215808_8c16ff4b-eb80-4fbb-a8c6-c15c62ed93c7.sql`
-- `supabase/migrations/20260712215942_0c45a861-8424-4178-936a-cae1ebe129b2.sql`
-- `supabase/migrations/20260712220248_803bf461-91a3-4d53-abd6-41fb5b5f0892.sql`
-- … +165 (lista completa em `context.json`)
+- … +167 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "f59c72965ef906a3a18fdab4e9ac1eaa64f89e43",
+  "sha": "4699117c7ab1c8c47653b474546a4d5fd63d4a62",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-18 00:39 UTC",
-  "files_total": 3584,
-  "code_files": 3008,
-  "code_lines": 476457
+  "generated_at": "2026-11-18 01:56 UTC",
+  "files_total": 3593,
+  "code_files": 3016,
+  "code_lines": 477232
  },
  "version": "1.3.2",
- "facts_hash": "7a22f8da004f1cae",
+ "facts_hash": "8599ba909c279bca",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,8 +388,8 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 999,
+   ".sql": 943,
    ".ts": 938,
-   ".sql": 935,
    ".mjs": 108,
    ".js": 15,
    ".cjs": 11,
@@ -101272,8 +101272,8 @@
   },
   {
    "module": "docs",
-   "files": 7,
-   "lines": 2086,
+   "files": 15,
+   "lines": 2863,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -101286,7 +101286,15 @@
     "docs/ninebox-pre-aplicacao.sql",
     "docs/ninebox-testes-seguranca.sql",
     "docs/ninebox-validacao-banco.sql",
-    "docs/ninebox-verificacao-truncate.sql"
+    "docs/ninebox-verificacao-truncate.sql",
+    "docs/auditoria/sql-preservado/20260819000000_p0_fix_user_empresa_id_rls.sql",
+    "docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql",
+    "docs/auditoria/sql-preservado/20260821000000_p0_rls_dashboard_audit.sql",
+    "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.sql",
+    "docs/auditoria/sql-preservado/20261005020000_onboarding_modelo_b_convergencia.sql",
+    "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada.sql",
+    "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada_rollback.sql",
+    "docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql"
    ]
   },
   {
@@ -101359,7 +101367,7 @@
   {
    "module": "scripts",
    "files": 153,
-   "lines": 34604,
+   "lines": 34602,
    "tables": [
     "a",
     "anexos",
@@ -239100,6 +239108,8 @@
    }
   ],
   "service_role_files": [
+   "docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql",
+   "docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql",
    "docs/ninebox-pre-aplicacao.sql",
    "docs/ninebox-verificacao-truncate.sql",
    "e2e/cleanup/seed-cleanup.spec.ts",
@@ -258417,6 +258427,40 @@
    ],
    "uses_service_role": true
   },
+  "docs/auditoria/sql-preservado/20260819000000_p0_fix_user_empresa_id_rls.sql": {
+   "path": "docs/auditoria/sql-preservado/20260819000000_p0_fix_user_empresa_id_rls.sql",
+   "lines": 47
+  },
+  "docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql": {
+   "path": "docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql",
+   "lines": 118,
+   "uses_service_role": true
+  },
+  "docs/auditoria/sql-preservado/20260821000000_p0_rls_dashboard_audit.sql": {
+   "path": "docs/auditoria/sql-preservado/20260821000000_p0_rls_dashboard_audit.sql",
+   "lines": 178
+  },
+  "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.sql": {
+   "path": "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.sql",
+   "lines": 112
+  },
+  "docs/auditoria/sql-preservado/20261005020000_onboarding_modelo_b_convergencia.sql": {
+   "path": "docs/auditoria/sql-preservado/20261005020000_onboarding_modelo_b_convergencia.sql",
+   "lines": 73
+  },
+  "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada.sql": {
+   "path": "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada.sql",
+   "lines": 75
+  },
+  "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada_rollback.sql": {
+   "path": "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada_rollback.sql",
+   "lines": 19
+  },
+  "docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql": {
+   "path": "docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql",
+   "lines": 155,
+   "uses_service_role": true
+  },
   "e2e/auth-non-admin.setup.ts": {
    "path": "e2e/auth-non-admin.setup.ts",
    "lines": 89,
@@ -259495,7 +259539,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 442,
+   "lines": 440,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -326695,10 +326739,47 @@
   }
  },
  "git": {
-  "sha": "f59c72965ef906a3a18fdab4e9ac1eaa64f89e43",
+  "sha": "4699117c7ab1c8c47653b474546a4d5fd63d4a62",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "4699117",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "infra: o apply do canonical-migrations confirma o lote anterior, não o atual (#671)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql"
+    ]
+   },
+   {
+    "sha": "60e5ae9",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "chore(auditoria): fecha o destino das 14 migrations que só existiam na muri (#672)",
+    "files": [
+     "docs/auditoria/sql-preservado/20260819000000_p0_fix_user_empresa_id_rls.sql",
+     "docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql",
+     "docs/auditoria/sql-preservado/20260821000000_p0_rls_dashboard_audit.sql",
+     "docs/auditoria/sql-preservado/20261005020000_onboarding_modelo_b_convergencia.sql",
+     "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada.sql",
+     "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada_rollback.sql",
+     "docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql",
+     "docs/auditoria/sql-preservado/README.md"
+    ]
+   },
+   {
+    "sha": "ec2987e",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "docs(auditoria): fecha o veredito de branches e PRs — nenhuma perda de função (#670)",
+    "files": [
+     "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
+     "docs/auditoria/sql-preservado/20260929120000_colaborador_lotacoes.sql",
+     "docs/auditoria/sql-preservado/README.md"
+    ]
+   },
    {
     "sha": "f59c729",
     "date": "2026-11-17",
@@ -327032,47 +327113,24 @@
      "supabase/migrations/20261117190000_permissions_matriz_seed.sql",
      "supabase/migrations/20261117190000_permissions_matriz_seed.verify.sql"
     ]
-   },
-   {
-    "sha": "ec1a734",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(colaborador): \"Próximos Eventos\" lê o dado real e os atalhos levam ao lugar certo (#641)",
-    "files": [
-     "src/components/__tests__/ProximosEventosDialog.test.tsx",
-     "src/components/__tests__/destinosDossie.test.ts",
-     "src/components/colaborador-detalhes/ProximosEventosDialog.tsx",
-     "src/components/colaborador-detalhes/destinosDossie.ts",
-     "src/pages/ColaboradorDetalhesPage.tsx"
-    ]
-   },
-   {
-    "sha": "3c53e8b",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "infra(migrations): troca o LOTE ATUAL para as 4 migrations da #628 (#637)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "scripts/canonical-invariants.sql"
-    ]
-   },
-   {
-    "sha": "cbe13fb",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(colaboradores): liga os chips de filtro ativo resgatados da muri (#640)",
-    "files": [
-     "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
-     "src/components/colaboradores/ColaboradorActiveFilterChips.tsx",
-     "src/components/colaboradores/ColaboradorFilters.tsx",
-     "src/pages/ColaboradoresPage.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "src/pages/ColaboradorDetalhesPage.tsx",
-    4
+    3
+   ],
+   [
+    ".github/workflows/canonical-migrations.yml",
+    2
+   ],
+   [
+    "docs/auditoria/sql-preservado/README.md",
+    2
+   ],
+   [
+    "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
+    2
    ],
    [
     "src/components/colaborador-detalhes/index.ts",
@@ -327115,39 +327173,27 @@
     2
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
-    2
-   ],
-   [
-    "src/components/colaborador-detalhes/DadosPessoaisTab.tsx",
+    "scripts/canonical-invariants.sql",
     1
    ],
    [
-    "src/components/colaborador-detalhes/__tests__/DadosPessoaisTab.test.tsx",
+    "docs/auditoria/sql-preservado/20260819000000_p0_fix_user_empresa_id_rls.sql",
     1
    ],
    [
-    "src/hooks/usePiiMask.ts",
+    "docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql",
     1
    ],
    [
-    "src/types/entities.ts",
+    "docs/auditoria/sql-preservado/20260821000000_p0_rls_dashboard_audit.sql",
     1
    ],
    [
-    "src/components/__tests__/ProximaAcaoCell.test.tsx",
+    "docs/auditoria/sql-preservado/20261005020000_onboarding_modelo_b_convergencia.sql",
     1
    ],
    [
-    "src/components/desligamentos/ProximaAcaoCell.tsx",
-    1
-   ],
-   [
-    "src/integrations/supabase/__tests__/clientBridge.test.ts",
-    1
-   ],
-   [
-    "src/integrations/supabase/client.ts",
+    "docs/auditoria/sql-preservado/20261026090000_ciclos_exclusao_autorizada.sql",
     1
    ]
   ]

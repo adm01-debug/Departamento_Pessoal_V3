@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra: o apply do canonical-migrations confirma o lote anterior, não o atual (#671)",
+   "chore(auditoria): fecha o destino das 14 migrations que só existiam na muri (#672)",
+   "docs(auditoria): fecha o veredito de branches e PRs — nenhuma perda de função (#670)",
    "feat(colaborador): aba Identificação no dossiê, com PII mascarada e acesso registrado (#669)",
-   "feat(desligamentos): coluna &quot;Próxima Ação&quot; com prazo legal, e os filtros que o componente já tinha (#668)",
-   "feat(observabilidade): liga o trace_id do frontend ao bridge (#666)",
-   "fix(portal): aviso de exclusão de documento para de mentir sobre o arquivo (#665)",
-   "chore(migrations): documenta no repo as 8 DDL que só existiam no ledger (#656)"
+   "feat(desligamentos): coluna &quot;Próxima Ação&quot; com prazo legal, e os filtros que o componente já tinha (#668)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
