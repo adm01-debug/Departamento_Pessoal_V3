@@ -99854,7 +99854,7 @@
             },
             {
               "file": "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
-              "hits": 4
+              "hits": 2
             },
             {
               "file": "supabase/migrations/20261119130000_ferias_gestor_update.sql",
