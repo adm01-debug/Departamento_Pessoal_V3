@@ -17,6 +17,7 @@
 -- ============================================================
 -- ferias
 -- ============================================================
+-- audit-migration-style: allow-silent-drop policy nova ainda não existe em produção; DROP é idempotência
 DROP POLICY IF EXISTS "ferias_gestor_update" ON public.ferias;
 CREATE POLICY "ferias_gestor_update" ON public.ferias
   FOR UPDATE TO authenticated
@@ -26,6 +27,7 @@ CREATE POLICY "ferias_gestor_update" ON public.ferias
 -- ============================================================
 -- folhas_pagamento
 -- ============================================================
+-- audit-migration-style: allow-silent-drop policy nova ainda não existe em produção; DROP é idempotência
 DROP POLICY IF EXISTS "folhas_gestor_update" ON public.folhas_pagamento;
 CREATE POLICY "folhas_gestor_update" ON public.folhas_pagamento
   FOR UPDATE TO authenticated
