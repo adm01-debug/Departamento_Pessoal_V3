@@ -83,6 +83,8 @@ export default function DashboardExecutivoPage() {
       icon: Users,
       gradient: 'from-primary to-primary-glow',
       format: 'number',
+      // Cresceu ou encolheu no mes? O card mostrava so o total de hoje.
+      delta: data?.variacaoHeadcount,
     },
     {
       label: 'Folha Mensal',
