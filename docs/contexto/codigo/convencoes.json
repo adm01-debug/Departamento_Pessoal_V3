@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(empresas): empresa de abertura deixa de ser sorteada pela ordem do RPC (#723)",
+   "docs(gaps): causa raiz das 11 falhas do E2E autenticado na main (#722)",
    "chore(auditoria): fecha a varredura com as 34 branches que só existiam no clone local (#721)",
    "chore(consignado): trava a coerência do teto da margem entre tela e banco (#719)",
-   "fix(baseline): whatsapp_config fail-closed no restore do baseline de DR (#718)",
-   "chore: registra lote de higiene de 9 migrations no canonical-migrations (#717)",
-   "chore(banco): registra no ledger as 11 migrations em vigor, excluindo as 2 que reverteriam produção (#716)"
+   "fix(baseline): whatsapp_config fail-closed no restore do baseline de DR (#718)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

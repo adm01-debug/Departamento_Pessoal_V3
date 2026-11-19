@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `08a26cf246ac0abf67e5cfa276d51921144d3301` (2026-11-18T23:06:27-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9048fce0d2053d887593963a4f737af2f96ae56d` (2026-11-18T23:49:42-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3627 |
 | arquivos_codigo | 2105 |
-| linhas_codigo | 418137 |
+| linhas_codigo | 418241 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27550 nós · 62173 arestas · 2417 comunidades · grafo do commit `08a26cf2`
-- comunidades maiores: cn (543), useEmpresas (528), 20260831_corrected_public.sql (493), canonical_schema.sql (475), sonner (403), card.tsx (358), App.tsx (347), vitest (338), contract.ts (191), ref_node_fs (165), "public"."empresas" (159), "public"."colaboradores" (155)
+- 27553 nós · 62180 arestas · 2400 comunidades · grafo do commit `9048fce0`
+- comunidades maiores: lucide-react (486), 20260831_corrected_public.sql (485), canonical_schema.sql (475), button.tsx (433), @tanstack/react-query (379), vitest (272), useEmpresas (262), cn (242), @testing-library/react (241), react (197), contract.ts (183), App.tsx (163)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -653,6 +653,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-18 `9048fce` fix(empresas): empresa de abertura deixa de ser sorteada pela ordem do RPC (#723)
+- 2026-11-18 `f7681c0` docs(gaps): causa raiz das 11 falhas do E2E autenticado na main (#722)
 - 2026-11-18 `08a26cf` chore(auditoria): fecha a varredura com as 34 branches que só existiam no clone local (#721)
 - 2026-11-18 `62748b3` chore(consignado): trava a coerência do teto da margem entre tela e banco (#719)
 - 2026-11-18 `09ea734` fix(baseline): whatsapp_config fail-closed no restore do baseline de DR (#718)
@@ -666,8 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-18 `2e210c4` feat(dashboard): liga alertas-preditivos, que rodava em producao sem tela (#709)
 - 2026-11-18 `778a5b4` test(ferias): cobre FeriasResumoTab, que estava viva no dossie sem teste (#707)
 - 2026-11-18 `6670984` fix(colaboradores): campo opcional em branco virava "" e travava o 2o cadastro (#705)
-- 2026-11-18 `96ef3ed` feat(rescisão): a calculadora passa a LER o histórico que já gravava (#704)
-- 2026-11-18 `656863d` feat(desligamentos): paginação, ordenação e filtro por etapa resgatados da muri (#700)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

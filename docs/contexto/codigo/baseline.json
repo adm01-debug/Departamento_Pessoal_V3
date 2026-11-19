@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "08a26cf246ac0abf67e5cfa276d51921144d3301",
+  "commit": "9048fce0d2053d887593963a4f737af2f96ae56d",
   "branch": "main",
-  "data_commit": "2026-11-18T23:06:27-03:00",
+  "data_commit": "2026-11-18T23:49:42-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "9048fce",
+    "data": "2026-11-18",
+    "assunto": "fix(empresas): empresa de abertura deixa de ser sorteada pela ordem do RPC (#723)"
+   },
+   {
+    "sha": "f7681c0",
+    "data": "2026-11-18",
+    "assunto": "docs(gaps): causa raiz das 11 falhas do E2E autenticado na main (#722)"
+   },
    {
     "sha": "08a26cf",
     "data": "2026-11-18",
@@ -121,16 +131,6 @@
     "sha": "5e88936",
     "data": "2026-11-18",
     "assunto": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#688)"
-   },
-   {
-    "sha": "d3a0932",
-    "data": "2026-11-18",
-    "assunto": "feat: empresa_id NOT NULL nas 9 tabelas de RH + veredito das 21 migrations (#695)"
-   },
-   {
-    "sha": "8daa52d",
-    "data": "2026-11-18",
-    "assunto": "fix: cadastro de plano de benefício grava a empresa (403 em produção) (#696)"
    }
   ],
   "arquivos_mudados_7d": 1147,
@@ -140,11 +140,11 @@
     "mudancas": 389
    },
    {
-    "pasta": "src/components/ui",
-    "mudancas": 108
+    "pasta": "src/hooks/__tests__",
+    "mudancas": 109
    },
    {
-    "pasta": "src/hooks/__tests__",
+    "pasta": "src/components/ui",
     "mudancas": 108
    },
    {
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3627,
   "arquivos_codigo": 2105,
-  "linhas_codigo": 418137,
+  "linhas_codigo": 418241,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -660,7 +660,7 @@
   },
   "src/hooks": {
    "arquivos": 204,
-   "linhas": 23660
+   "linhas": 23764
   },
   "src/i18n": {
    "arquivos": 2,

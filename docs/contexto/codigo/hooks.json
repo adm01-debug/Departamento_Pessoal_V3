@@ -1689,7 +1689,7 @@
     "useEmpresaStore",
     "useEmpresas"
    ],
-   "linhas": 353,
+   "linhas": 379,
    "dominio": "hooks",
    "tabelas": [
     "empresas"
