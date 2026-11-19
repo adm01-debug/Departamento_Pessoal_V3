@@ -44,6 +44,8 @@ const buildersColaboradores: ChainableQuery[] = [];
 const buildersDesligamentos: ChainableQuery[] = [];
 /** Linha completa devolvida por `.select('*').eq('id', …).single()` ao importar. */
 let colaboradorImportado: Record<string, unknown> | null = null;
+/** Quando true, a consulta de import falha — como uma queda de rede. */
+let erroNoImport = false;
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
@@ -55,10 +57,11 @@ vi.mock('@/integrations/supabase/client', () => ({
       }
       if (tabela !== 'colaboradores') return createQueryBuilder({ data: [], error: null });
       // `.single()` do import precisa de UMA linha; a lista do seletor, do array.
-      const builder = createQueryBuilder<unknown>({
-        data: colaboradorImportado ?? ATIVOS,
-        error: null,
-      });
+      const builder = createQueryBuilder<unknown>(
+        erroNoImport
+          ? { data: null, error: { message: 'falha de rede' } }
+          : { data: colaboradorImportado ?? ATIVOS, error: null }
+      );
       buildersColaboradores.push(builder);
       return builder;
     }),
@@ -104,6 +107,7 @@ beforeEach(() => {
   buildersColaboradores.length = 0;
   buildersDesligamentos.length = 0;
   colaboradorImportado = null;
+  erroNoImport = false;
 });
 
 beforeAll(() => {
@@ -182,6 +186,42 @@ describe('CalculadoraRescisaoPage — importar colaborador', () => {
       expect(insert, 'nenhum insert em desligamentos foi feito').toBeDefined();
       expect(JSON.stringify(insert!.args[0])).toContain('"colaborador_id":"c2"');
       expect(JSON.stringify(insert!.args[0])).not.toContain('"colaborador_id":"c1"');
+    });
+  });
+
+  it('import que falha não troca a pessoa do desligamento', async () => {
+    renderPagina();
+    // 1) importa o PRIMEIRO José Silva (matrícula 1001) com sucesso
+    await userEvent.click((await screen.findByText(/selecione para preencher/i)).closest('button')!);
+    await userEvent.type(await screen.findByPlaceholderText(/buscar por nome/i), '1001');
+    colaboradorImportado = {
+      id: 'c1',
+      nome_completo: 'José Silva',
+      cpf: '00000000000',
+      cargo: 'Analista',
+      salario_base: 3000,
+      data_admissao: '2024-01-10',
+    };
+    await userEvent.click(await screen.findByText('1001'));
+    await waitFor(() => expect(screen.getByPlaceholderText('Nome completo')).toHaveValue('José Silva'));
+
+    // 2) tenta importar o SEGUNDO (2002) e a consulta FALHA
+    erroNoImport = true;
+    await userEvent.click((await screen.findByText('José Silva')).closest('button')!);
+    await userEvent.type(await screen.findByPlaceholderText(/buscar por nome/i), '2002');
+    await userEvent.click(await screen.findByText('2002'));
+    erroNoImport = false;
+
+    selecionarData('Data Desligamento', '2026-03-10');
+    await userEvent.click(await screen.findByRole('button', { name: /Calcular Local/i }));
+    await userEvent.click(await screen.findByRole('button', { name: /^Salvar$/i }));
+
+    await waitFor(() => {
+      const insert = buildersDesligamentos.flatMap((b) => b.__calls).find((c) => c.method === 'insert');
+      expect(insert, 'nenhum insert em desligamentos foi feito').toBeDefined();
+      // os dados em tela são do 1001; o desligamento tem de ir para ELE
+      expect(JSON.stringify(insert!.args[0])).toContain('"colaborador_id":"c1"');
+      expect(JSON.stringify(insert!.args[0])).not.toContain('"colaborador_id":"c2"');
     });
   });
 

@@ -99,10 +99,14 @@ export default function CalculadoraRescisaoPage() {
   const handleSelectColaborador = async (id: string) => {
     if (!id) return;
     setLoadingColab(true);
-    setSelectedColabId(id);
     try {
       const { data, error } = await supabase.from('colaboradores').select('*').eq('id', id).single();
       if (error) throw error;
+      // O id entra DEPOIS da consulta dar certo, junto com os dados. Marcá-lo
+      // antes deixava id e formulário apontando para pessoas diferentes quando
+      // a consulta falhava: com dois homônimos, o desligamento ia para o id da
+      // importação que falhou, carregando os dados da anterior.
+      setSelectedColabId(id);
       setForm((p) => ({
         ...p,
         nomeColaborador: data.nome_completo,
