@@ -1,4 +1,4 @@
--- Sidecar de 20261119180000_versiona_ddl_orfao_dp.sql. SÓ LEITURA.
+-- Sidecar de 20261019235900_versiona_ddl_orfao_dp.sql. SÓ LEITURA.
 --
 -- CONTRATO DO GATE: saída VAZIA é falha, e toda linha não vazia tem de ser
 -- literalmente `ok`. Cada asserção é um `CASE ... ELSE 'FALHOU: …' END`, que

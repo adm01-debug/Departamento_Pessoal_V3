@@ -5,22 +5,26 @@
 -- No canônico de hoje é NO-OP: tudo aqui já existe lá. O ganho é para QUALQUER
 -- banco novo (preview, ambiente de teste, DR), onde hoje nada disso nasce.
 --
--- ╔══════════════════════════════════════════════════════════════════════════╗
--- ║ ESCOPO, CORRIGIDO DEPOIS DE REVISÃO: esta migration NÃO destrava o       ║
--- ║ replay por si só, e a primeira versão deste arquivo afirmava que sim.    ║
--- ║ Ela é 20261119180000, ou seja roda DEPOIS dos dois arquivos que já       ║
--- ║ dependem destes objetos — num banco zerado o replay aborta antes de      ║
--- ║ chegar aqui. O que ela faz é tornar os objetos VERSIONADOS e             ║
--- ║ reproduzíveis, e garantir a imutabilidade do log a partir do ponto em    ║
--- ║ que roda. Consertar a ORDEM é decisão separada (renumerar para antes dos ║
--- ║ dependentes, tornar os dependentes tolerantes, ou ativar o squash do     ║
--- ║ baseline pelo Gate D do runbook) e envolve mexer em migration já         ║
--- ║ aplicada — regra 8, fica para o dono.                                   ║
+-- ╔═══════════════════════════════════════════════════════════════════════-- ║ VERSÃO ESCOLHIDA DE PROPÓSITO: 20261019235900, ou seja ANTES do primeiro ║
+-- ║ arquivo que depende destes objetos (20261020120000). A primeira versão   ║
+-- ║ deste arquivo era 20261119180000 e, por rodar DEPOIS dos dependentes,    ║
+-- ║ não destravava replay nenhum — achado de revisão, e estava certo.        ║
+-- ║                                                                          ║
+-- ║ Renumerar é seguro aqui, e isso foi verificado, não suposto:             ║
+-- ║  • o arquivo nunca foi aplicado em lugar algum, então não há linha de    ║
+-- ║    ledger para contradizer;                                             ║
+-- ║  • o canonical-migrations.yml NÃO usa `supabase db push`: ele copia uma   ║
+-- ║    LISTA EXPLÍCITA para um stage e aplica com \i numa transação          ║
+-- ║    (linhas 215, 245 e 319), inserindo a linha do ledger ele mesmo. Nada  ║
+-- ║    no repo impõe ordem monotônica de versão;                            ║
+-- ║  • a dependência desta migration (as funções de trigger, criadas em      ║
+-- ║    20260912140000) é ANTERIOR a 20261019235900, então a ordem fica       ║
+-- ║    coerente nas duas pontas.                                            ║
 -- ╚══════════════════════════════════════════════════════════════════════════╝
 --
 -- ╔══════════════════════════════════════════════════════════════════════════╗
--- ║ OS DOIS PONTOS QUE HOJE ABORTAM O REPLAY, medidos                        ║
--- ║ independentes, os dois medidos:                                          ║
+-- ║ OS DOIS PONTOS QUE ABORTAVAM O REPLAY, medidos — e que esta migration,   ║
+-- ║ na posição 20261019235900, passa a satisfazer ANTES de cada um:          ║
 -- ║                                                                          ║
 -- ║  1. `20261115000000_revoke_dml_audit_log_anon_auth.sql:14-16` tem         ║
 -- ║     `RAISE EXCEPTION 'preflight: nenhuma relação dp_audit_log*           ║
@@ -98,7 +102,7 @@ BEGIN
 END
 $papeis$;
 
-COMMENT ON ROLE dp_mcp_role IS 'Papel de infra do gateway MCP (NOLOGIN). Versionado em 20261119180000 após a varredura de 19/11/2026 constatar que existia no canônico sem fonte, e que 20261020120000 já dependia dele.';
+COMMENT ON ROLE dp_mcp_role IS 'Papel de infra do gateway MCP (NOLOGIN). Versionado em 20261019235900 após a varredura de 19/11/2026 constatar que existia no canônico sem fonte, e que 20261020120000 já dependia dele.';
 COMMENT ON ROLE dp_mcp_user IS 'Usuário de login do gateway MCP, herda dp_mcp_role. Criado SEM senha por migration: a senha vem do secret store, nunca de arquivo versionado.';
 
 -- ============================================================
