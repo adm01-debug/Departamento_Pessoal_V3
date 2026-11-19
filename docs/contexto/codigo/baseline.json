@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c351847294d339231cd050c6617bce9682128ae0",
+  "commit": "92ac0090c619fbcbcd518778217be3df86054e25",
   "branch": "main",
-  "data_commit": "2026-11-19T19:57:42-03:00",
+  "data_commit": "2026-11-19T20:23:56-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "92ac009",
+    "data": "2026-11-19",
+    "assunto": "fix(recrutamento): restaura header 'Histórico do processo' no dossiê do candidato (#761)"
+   },
    {
     "sha": "c351847",
     "data": "2026-11-19",
@@ -126,11 +131,6 @@
     "sha": "c658c6a",
     "data": "2026-11-19",
     "assunto": "feat(rescisao): resgata a UX do import de colaborador da PR #546 (muri) (#738)"
-   },
-   {
-    "sha": "732d46f",
-    "data": "2026-11-19",
-    "assunto": "feat(auditoria): passa a gravar a trilha de onboarding, com empresa_id (#737)"
    }
   ],
   "arquivos_mudados_7d": 1098,
@@ -173,7 +173,7 @@
    },
    {
     "pasta": "src/components/recrutamento",
-    "mudancas": 43
+    "mudancas": 44
    },
    {
     "pasta": "src/components/dashboard",
@@ -218,16 +218,16 @@
     "mudancas": 10
    },
    {
-    "arquivo": "package.json",
-    "mudancas": 10
-   },
-   {
     "arquivo": "docs/prod-readiness.md",
     "mudancas": 9
    },
    {
-    "arquivo": "package-lock.json",
+    "arquivo": "package.json",
     "mudancas": 9
+   },
+   {
+    "arquivo": "package-lock.json",
+    "mudancas": 8
    },
    {
     "arquivo": "docs/auditoria/sql-preservado/README.md",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3661,
   "arquivos_codigo": 2118,
-  "linhas_codigo": 422693,
+  "linhas_codigo": 422708,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 999,
-   "linhas": 184677
+   "linhas": 184692
   },
   "src/constants": {
    "arquivos": 7,
