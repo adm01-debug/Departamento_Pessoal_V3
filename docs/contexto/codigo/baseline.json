@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7086dc94a6754a9b581a5418883b1104c2457d21",
+  "commit": "6af99a6d89dfd015723df9714821167520902cb8",
   "branch": "main",
-  "data_commit": "2026-11-18T21:59:18-03:00",
+  "data_commit": "2026-11-18T22:23:40-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "6af99a6",
+    "data": "2026-11-18",
+    "assunto": "chore: registra lote de higiene de 9 migrations no canonical-migrations (#717)"
+   },
    {
     "sha": "7086dc9",
     "data": "2026-11-18",
@@ -126,11 +131,6 @@
     "sha": "7524b93",
     "data": "2026-11-18",
     "assunto": "fix: retrata o \"maior risco aberto\" - a policy public e inerte (#692)"
-   },
-   {
-    "sha": "b74d4c2",
-    "data": "2026-11-18",
-    "assunto": "chore: fecha 2 dos 3 casos sem veredito e sobe o risco de policy public (#691)"
    }
   ],
   "arquivos_mudados_7d": 1146,
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 23
+    "mudancas": 24
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -210,15 +210,15 @@
     "mudancas": 11
    },
    {
+    "arquivo": "scripts/canonical-invariants.sql",
+    "mudancas": 11
+   },
+   {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
     "mudancas": 11
    },
    {
     "arquivo": "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 10
    },
    {
