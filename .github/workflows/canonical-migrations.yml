@@ -204,8 +204,22 @@ jobs:
           # verify run 44525243641, os tres success, com os dois triggers
           # (audit_onboarding_colaborador/_tarefas) lidos vivos no catalogo e o
           # sidecar devolvendo CANONICAL_VERIFY_OK.
+          # LOTE ATUAL (20/11/2026): 2 migrations novas na main apos o
+          # merge das PRs #751 e #747.
+          #  - 20261019235900: versiona o DDL orfao da familia dp_* (audit log
+          #    imutavel, papeis dp_mcp, dp_retention_policy). Aditiva e
+          #    idempotente; no canonico atual e NO-OP (tudo ja existe), o ganho
+          #    e versionar + destravar replay de banco novo.
+          #  - 20261119170000: copia o historico de onboarding do legado
+          #    (onboarding_tarefas/colaborador) para o canonico
+          #    (tarefas_onboarding), com vinculo pela regra canonica
+          #    (metadata.admissao_id com recorte de empresa) e queda por CPF
+          #    unico. Idempotente, sem DROP/DELETE.
+          # A 20261119160000 saiu daqui porque ja esta no ledger (apply run
+          # 44544895486 e verify run 44545027860, ambos success).
           for migration in \
-            20261119160000_audit_log_empresa_id_e_leitura_rh.sql
+            20261019235900_versiona_ddl_orfao_dp.sql \
+            20261119170000_onboarding_converge_modelo_b.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
