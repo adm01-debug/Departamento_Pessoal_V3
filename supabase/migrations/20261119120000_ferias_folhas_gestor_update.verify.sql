@@ -1,9 +1,11 @@
-﻿-- Verify: policy de UPDATE gestor existe em ferias e folhas_pagamento.
+-- Verify: a policy de UPDATE gestor existe em ferias.
+-- Escopo revisado: folhas_pagamento fica sem escrita de gestor (decisão da
+-- 20261119130000); o sidecar de verify dela já assevera essa não-existência.
 BEGIN;
 SELECT 1 / COUNT(*) FROM pg_policies
 WHERE schemaname = 'public'
-  AND tablename IN ('ferias', 'folhas_pagamento')
-  AND policyname IN ('ferias_gestor_update', 'folhas_gestor_update')
+  AND tablename = 'ferias'
+  AND policyname = 'ferias_gestor_update'
   AND cmd = 'UPDATE'
   AND roles::text LIKE '%authenticated%';
 ROLLBACK;
