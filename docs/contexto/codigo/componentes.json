@@ -4327,7 +4327,7 @@
     "WhatsAppConfigPanel"
    ],
    "export_default": null,
-   "linhas": 767,
+   "linhas": 784,
    "dominio": "components/integracoes",
    "hooks_locais": [
     "useAuth",

@@ -3754,11 +3754,11 @@
   {
    "arquivo": "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
    "tipo": "unit",
-   "linhas": 229,
+   "linhas": 270,
    "testa": [
     "src/components/integracoes/ConfigPanels.tsx"
    ],
-   "casos": 9
+   "casos": 12
   },
   {
    "arquivo": "src/components/kanban/__tests__/entradaKanban.test.ts",

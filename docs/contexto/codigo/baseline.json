@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a4e0aae5eb65b8227c1d8607fdb25902c4e740bc",
+  "commit": "b8db9e5e842925a8fa07291d431f35362e1a10d6",
   "branch": "main",
-  "data_commit": "2026-11-18T20:46:29-03:00",
+  "data_commit": "2026-11-18T20:59:25-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "b8db9e5",
+    "data": "2026-11-18",
+    "assunto": "fix(segurança): restringe whatsapp_config a admin/rh em produção e na tela (#710)"
+   },
    {
     "sha": "a4e0aae",
     "data": "2026-11-18",
@@ -126,14 +131,9 @@
     "sha": "2271c4a",
     "data": "2026-11-18",
     "assunto": "fix: retrata \"as 52 estao aplicadas\" - 27 nao estao, e uma e bug de producao (#686)"
-   },
-   {
-    "sha": "8056cc5",
-    "data": "2026-11-18",
-    "assunto": "fix: troca as tres passadas de regex da guarda de RLS por um tokenizador unico (#684)"
    }
   ],
-  "arquivos_mudados_7d": 1145,
+  "arquivos_mudados_7d": 1147,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3621,
+  "arquivos_total": 3623,
   "arquivos_codigo": 2105,
-  "linhas_codigo": 418053,
+  "linhas_codigo": 418111,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -326,7 +326,7 @@
   "hooks": 120,
   "edge_functions": 67,
   "tabelas": 427,
-  "migrations": 880,
+  "migrations": 882,
   "cron_jobs": 41,
   "testes": 792,
   "workflows": 21,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 994,
-   "linhas": 181885
+   "linhas": 181943
   },
   "src/constants": {
    "arquivos": 7,

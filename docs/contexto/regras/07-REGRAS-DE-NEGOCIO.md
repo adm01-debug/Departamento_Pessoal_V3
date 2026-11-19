@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a4e0aae5eb` · branch `main` · 2026-11-18 23:47 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b8db9e5e84` · branch `main` · 2026-11-19 00:00 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5424,7 +5424,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9536 testes em 748 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9540 testes em 748 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5602,6 +5602,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/calculators/__tests__/auditHelper.test.ts` | 15 | signCalculation · returns a hex string · returns the same hash for identical data · returns different hashes for different data … |
 | `src/components/__tests__/ESocialEventComponents.test.tsx` | 15 | S2200Admissao (NaoPeriodicos) · renders trabalhador name · renders CPF · renders admissao date … |
 | `src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx` | 15 | TrilhaAuditoriaDesligamentos — coluna de ações uniforme · renderiza um  · usa um único container horizontal (flex-nowrap, items-center, justify-end) em TODOS os eventos · coloca o selo  … |
+| `src/components/integracoes/__tests__/ConfigPanels.test.tsx` | 15 | CnabConfigPanel · Salvar Configurações grava os dados editados e invalida a configuração · não salva sem os campos obrigatórios · Salvar Configurações fica desabilitado enquanto a config carrega … |
 | `src/components/recrutamento/__tests__/CandidatosPainel.test.tsx` | 15 | CandidatosPainel — indicadores e tabela · mostra as cinco contagens reais e oito linhas na primeira página · usa os indicadores como filtros e não perde a sincronização · mostra avatar (iniciais), origem, vaga, etapa, experiência, pretensão e avaliação reais … |
 | `src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts` | 15 | montarInscricoes · faz join de colaborador, curso e certificado sem inventar dados · preserva o status original e não exibe underscore no rótulo · usa Não informado quando datas não existem e nunca transforma status em progresso … |
 | `src/hooks/__tests__/useEmpresas.test.ts` | 15 | useEmpresas · returns expected shape · returns loadingEmpresas=true initially · loads todasEmpresas when isAdmin=true … |
@@ -5694,7 +5695,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/MorningBriefing.test.tsx` | 11 | MorningBriefing · separa o cache por empresa e não consulta sem tenant selecionado · shows skeleton when loading · renders error state when error occurs … |
 | `src/components/__tests__/PontoInconsistencyPanel.test.tsx` | 11 | PontoInconsistencyPanel · renders without crash when registros is empty · shows Insights de Inteligência when inconsistency detected · shows Resolução Assistida Ativa badge when inconsistencies exist … |
 | `src/components/__tests__/QuickActionsGrid.test.tsx` | 11 | QuickActionsGrid · renders Ações Rápidas heading · renders Novo Colaborador action · renders Lançar Ponto action … |
-| `src/components/integracoes/__tests__/ConfigPanels.test.tsx` | 11 | CnabConfigPanel · Salvar Configurações grava os dados editados e invalida a configuração · não salva sem os campos obrigatórios · Salvar Configurações fica desabilitado enquanto a config carrega … |
 | `src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx` | 11 | CandidatoDetalhesDialog · mostra identificação, cargo, departamento e etapa atual · destaca SOMENTE a etapa efetiva do candidato no indicador · não inventa contato ausente (nem  … |
 | `src/components/recrutamento/__tests__/pipelineEtapas.test.ts` | 11 | pipelineEtapas — configuração e leitura do board · define as cinco etapas na ordem do processo com tokens distintos · normaliza o vocabulário REAL do banco e isola o desconhecido em  · resolve a etapa visual pelos aliases do banco … |
 | `src/components/treinamentos/__tests__/CertificadoCard.test.tsx` | 11 | CertificadoCard — bloco Emissão / Validade / Código · usa três colunas proporcionais com labels, valores e complemento alinhados · exibe emissão e validade reais no formato dd/MM/yyyy · mostra o aviso âmbar de certificado a vencer … |

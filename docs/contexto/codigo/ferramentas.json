@@ -4,7 +4,7 @@
  "stack": {
   "linguagens": [
    "TypeScript (1967)",
-   "SQL (953)",
+   "SQL (955)",
    "Markdown (336)",
    "JavaScript (134)",
    "JSON (63)",
@@ -2243,6 +2243,10 @@
    },
    {
     "papel": "ci_auditor",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "colaborador",
     "ocorrencias": 1
    },
    {
