@@ -262,7 +262,7 @@ describe('CalculadoraRescisaoPage — foco do campo de busca', () => {
     const command = wrapper!.closest('[cmdk-root]');
     expect(command, 'o wrapper deveria estar dentro do Command').not.toBeNull();
     const classes = command!.className;
-    expect(classes).toContain('[&_[cmdk-input-wrapper]:focus-within]:border-primary');
+    expect(classes).toContain(String.raw`[&_[cmdk-input-wrapper]:focus-within]:ring-inset`);
     expect(classes).toContain('[&_[cmdk-input-wrapper]:focus-within]:ring-1');
 
     // e o input cancela o próprio anel, para não desenhar um segundo contorno
