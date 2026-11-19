@@ -1,3 +1,4 @@
+import type { ComponentType, ReactNode } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
@@ -17,22 +18,26 @@ vi.mock('framer-motion', () => {
     'whileTap',
     'transition',
   ]);
-  const semMotion = (props: any) => {
-    const out: any = {};
+  const semMotion = (props: Record<string, unknown>) => {
+    const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(props)) if (!MOTION_PROPS.has(k)) out[k] = v;
     return out;
   };
   return {
     motion: {
       create:
-        (Component: any) =>
-        ({ children, ...rest }: any) => <Component {...rest}>{children}</Component>,
-      div: ({ children }: any) => <div>{children}</div>,
-      span: ({ children }: any) => <span>{children}</span>,
+        (Component: ComponentType<Record<string, unknown>>) =>
+        ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => (
+          <Component {...rest}>{children}</Component>
+        ),
+      div: ({ children }: { children?: ReactNode; [key: string]: unknown }) => <div>{children}</div>,
+      span: ({ children }: { children?: ReactNode; [key: string]: unknown }) => <span>{children}</span>,
       // As linhas da trilha são `motion.tr` (cascata de entrada).
-      tr: ({ children, ...rest }: any) => <tr {...semMotion(rest)}>{children}</tr>,
+      tr: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => (
+        <tr {...semMotion(rest)}>{children}</tr>
+      ),
     },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
+    AnimatePresence: ({ children }: { children?: ReactNode; [key: string]: unknown }) => <>{children}</>,
     useInView: () => true,
     useReducedMotion: () => false,
   };
@@ -109,7 +114,7 @@ const { navigateMock, listarTrilhaMock, refetchMock, empresas, consulta, MOCK_EV
       responsavel_cargo: 'Gestora de Departamento Pessoal',
       detalhe: 'Documentos pessoais e comprovante de endereço conferidos.',
     },
-  ] as any[],
+  ] as EventoAuditoria[],
 }));
 
 vi.mock('react-router-dom', () => ({ useNavigate: () => navigateMock }));
@@ -122,7 +127,7 @@ vi.mock('@/hooks', () => ({ useEmpresas: () => empresas }));
 vi.mock('@/services/auditoriaAdmissoesService', () => ({ listarTrilhaAdmissoes: listarTrilhaMock }));
 
 vi.mock('@tanstack/react-query', () => ({
-  useQuery: ({ queryFn, enabled }: any) => ({
+  useQuery: ({ queryFn, enabled }: { queryFn: () => unknown; enabled?: boolean }) => ({
     data: enabled && !consulta.isLoading && !consulta.isError ? queryFn() : undefined,
     isLoading: consulta.isLoading,
     isError: consulta.isError,
@@ -133,46 +138,59 @@ vi.mock('@tanstack/react-query', () => ({
 // Selects viram `<select>` nativos: dá para disparar o filtro como o usuário
 // faria (o Radix só monta as opções quando abre, o que em jsdom não ajuda).
 vi.mock('@/components/ui/select', () => ({
-  Select: ({ value, onValueChange, children }: any) => (
+  Select: ({
+    value,
+    onValueChange,
+    children,
+  }: {
+    value?: string;
+    onValueChange?: (v: string) => void;
+    children?: ReactNode;
+  }) => (
     <select value={value} onChange={(e) => onValueChange?.(e.target.value)}>
       {children}
     </select>
   ),
   SelectTrigger: () => null,
   SelectValue: () => null,
-  SelectContent: ({ children }: any) => <>{children}</>,
-  SelectItem: ({ value, children }: any) => <option value={value}>{children}</option>,
+  SelectContent: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  SelectItem: ({ value, children }: { value?: string; children?: ReactNode }) => (
+    <option value={value}>{children}</option>
+  ),
 }));
 
 vi.mock('@/components/ui/input', () => ({
-  Input: ({ type, ...rest }: any) => <input type={type} {...rest} />,
+  Input: ({ type, ...rest }: { children?: ReactNode; [key: string]: unknown }) => (
+    <input type={typeof type === 'string' ? type : undefined} {...rest} />
+  ),
 }));
 
 // Tooltips e dropdowns fechados: só o gatilho existe (o conteúdo é portal).
 vi.mock('@/components/ui/tooltip', () => ({
-  Tooltip: ({ children }: any) => <>{children}</>,
-  TooltipTrigger: ({ children }: any) => <>{children}</>,
+  Tooltip: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  TooltipTrigger: ({ children }: { children?: ReactNode }) => <>{children}</>,
   TooltipContent: () => null,
-  TooltipProvider: ({ children }: any) => <>{children}</>,
+  TooltipProvider: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 vi.mock('@/components/ui/dropdown-menu', () => ({
-  DropdownMenu: ({ children }: any) => <>{children}</>,
-  DropdownMenuTrigger: ({ children }: any) => <>{children}</>,
+  DropdownMenu: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  DropdownMenuTrigger: ({ children }: { children?: ReactNode }) => <>{children}</>,
   DropdownMenuContent: () => null,
-  DropdownMenuItem: ({ children }: any) => <div>{children}</div>,
+  DropdownMenuItem: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   DropdownMenuSeparator: () => null,
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ open, children }: any) => (open ? <div>{children}</div> : null),
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h3>{children}</h3>,
-  DialogDescription: ({ children }: any) => <p>{children}</p>,
+  Dialog: ({ open, children }: { open?: boolean; children?: ReactNode }) => (open ? <div>{children}</div> : null),
+  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
+  DialogDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
 }));
 
 import AuditoriaAdmissoesContent from '../admissoes/AuditoriaAdmissoesContent';
+import type { EventoAuditoria } from '../admissoes/auditoriaDerivacoes';
 import { formatarDataHora } from '../admissoes/auditoriaDerivacoes';
 
 /** Título do bloco principal (o mesmo da referência aprovada). */

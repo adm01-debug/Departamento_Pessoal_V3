@@ -25,7 +25,7 @@
  * Nada aqui é inventado: campo ausente na trilha vira `null` ou `'—'`, e o
  * evento aparece com o que de fato foi gravado.
  */
-import { supabase } from '@/integrations/supabase/client';
+import { auditoriaService, type TrilhaAuditoriaRegistro } from './auditoriaService';
 import type { EventoAuditoria, EtapaAdmissao, StatusAuditoria } from '@/components/admissoes/auditoriaDerivacoes';
 
 /** Tabelas cuja trilha pertence ao processo admissional. */
@@ -50,18 +50,14 @@ const TITULO_POR_ACAO: Record<string, Record<string, string>> = {
   },
 };
 
-/** Linha de `audit_log` como o PostgREST a devolve (só o que esta aba usa). */
-interface LinhaAuditoria {
-  id: string;
-  tabela: string;
-  registro_id: string;
-  acao: string;
-  dados_anteriores: Record<string, unknown> | null;
-  dados_novos: Record<string, unknown> | null;
-  campos_alterados: string[] | null;
-  user_email: string | null;
-  created_at: string;
-}
+/**
+ * A linha da trilha é a que a RPC devolve. ESTA ABA NÃO LÊ `audit_log`
+ * DIRETO: `audit_log` é tabela sensível e o contrato do front
+ * (`scripts/audit-bridge-frontend-contract.mjs`) exige RPC tenant-scoped.
+ * `get_audit_trail` (SECURITY DEFINER, recorte por empresa, limite de 500) é
+ * esse caminho, e `auditoriaService.listarTrilha` é quem o chama.
+ */
+type LinhaAuditoria = TrilhaAuditoriaRegistro;
 
 function texto(fonte: Record<string, unknown> | null, campo: string): string | null {
   const valor = fonte?.[campo];
@@ -118,14 +114,14 @@ export function mapearEvento(linha: LinhaAuditoria): EventoAuditoria {
     candidato: texto(estado, 'nome') ?? texto(estado, 'nome_completo') ?? '—',
     cargo: texto(estado, 'cargo') ?? '—',
     departamento: texto(estado, 'departamento') ?? '—',
-    acao: TITULO_POR_ACAO[linha.tabela]?.[linha.acao] ?? `${linha.tabela}: ${linha.acao}`,
+    acao: TITULO_POR_ACAO[linha.tabela ?? '']?.[linha.acao ?? ''] ?? `${linha.tabela ?? '—'}: ${linha.acao ?? '—'}`,
     // Sem etapa na linha (onboarding), cai em 'pendente' do enum — é o valor
     // neutro do processo, e o filtro por etapa continua honesto.
     etapa: (texto(estado, 'etapa') as EtapaAdmissao | null) ?? 'pendente',
     evento_esocial: texto(estado, 'status_esocial'),
     protocolo: texto(estado, 'protocolo_esocial'),
     status: statusDoEvento(estado),
-    responsavel: linha.user_email ?? 'Sistema',
+    responsavel: linha.user_nome ?? linha.user_email ?? 'Sistema',
     responsavel_cargo: null,
     detalhe: detalheDoEvento(linha),
   };
@@ -134,23 +130,18 @@ export function mapearEvento(linha: LinhaAuditoria): EventoAuditoria {
 /**
  * Lê a trilha das tabelas do processo admissional para UMA empresa.
  *
- * O filtro por `empresa_id` é explícito além da RLS: a policy
- * `audit_log_rh_read_empresa` já restringe por empresa, mas quem lê a tela pode
- * ser admin (que vê tudo pela policy "Admins podem ver todo audit_log") — e a
- * aba mostra a empresa ATUAL, não todas.
+ * O recorte por empresa é da própria RPC (`get_audit_trail` recebe
+ * `p_empresa_id`), e não da RLS da tabela: quem lê a tela pode ser admin, que
+ * veria tudo pela policy de admin — a aba mostra a empresa ATUAL, não todas.
  *
  * `limite` existe porque a trilha cresce para sempre: a aba é de consulta
  * recente, não de exportação histórica.
  */
 export async function listarTrilhaAdmissoes(empresaId: string, limite = 500): Promise<EventoAuditoria[]> {
-  const { data, error } = await supabase
-    .from('audit_log')
-    .select('id, tabela, registro_id, acao, dados_anteriores, dados_novos, campos_alterados, user_email, created_at')
-    .eq('empresa_id', empresaId)
-    .in('tabela', TABELAS_TRILHA_ADMISSAO as unknown as string[])
-    .order('created_at', { ascending: false })
-    .limit(limite);
-
-  if (error) throw error;
-  return ((data ?? []) as unknown as LinhaAuditoria[]).map(mapearEvento);
+  const linhas = await auditoriaService.listarTrilha({
+    empresa_id: empresaId,
+    tabelas: [...TABELAS_TRILHA_ADMISSAO],
+    limite,
+  });
+  return linhas.map(mapearEvento);
 }
