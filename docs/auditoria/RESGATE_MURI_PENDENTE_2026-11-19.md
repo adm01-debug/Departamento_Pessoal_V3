@@ -145,6 +145,13 @@ certificado homologado), e `src/assets/banks/` (13 arquivos, 304 KB; decisão re
 ## 6. Como refazer esta medição
 
 ```sh
+# 0. PRIMEIRO: popular refs/remotes/pr/*. Um clone normal NÃO traz esse
+# namespace — o refspec padrão é só `+refs/heads/*:refs/remotes/origin/*`, e sem
+# este passo os laços abaixo não examinam PR nenhuma e devolvem zero em
+# silêncio. Uma PR de cada vez, ou todas:
+git fetch origin '+refs/pull/*/head:refs/remotes/pr/*'
+git for-each-ref --format='%(refname)' refs/remotes/pr | wc -l   # confere: >0
+
 # superfície de exports da main
 git grep -hE '^[[:space:]]*export ' origin/main -- 'src/**' \
   | grep -oE 'export (async )?(function|const|let|class|type|interface|enum) [A-Za-z_][A-Za-z0-9_]*' \
@@ -159,8 +166,19 @@ done | sed -E 's/.*export (async )?(function|const|let|class|type|interface|enum
 
 comm -23 /tmp/pr_exports.txt /tmp/main_exports.txt   # o que falta na main
 
-# e o corte por caminho, que pega também `export default`
+# e o corte por caminho, que pega também `export default` (invisível ao corte
+# por símbolo acima)
 git ls-tree -r --name-only origin/main -- src supabase/functions | sort > /tmp/main_paths.txt
+
+: > /tmp/pr_paths.txt
+for r in $(git for-each-ref --format='%(refname)' refs/remotes/pr); do
+  git ls-tree -r --name-only "$r" -- src supabase/functions 2>/dev/null >> /tmp/pr_paths.txt
+done
+sort -u /tmp/pr_paths.txt -o /tmp/pr_paths.txt
+
+# caminhos que existem em alguma cabeça de PR e não existem na main de hoje
+comm -23 /tmp/pr_paths.txt /tmp/main_paths.txt \
+  | grep -v '__tests__\|/test/\|\.test\.\|\.spec\.'
 ```
 
 Para cada símbolo que sobrar, o corte que decide é: o **arquivo** existe na `main`? Se existe, é renomeação ou
