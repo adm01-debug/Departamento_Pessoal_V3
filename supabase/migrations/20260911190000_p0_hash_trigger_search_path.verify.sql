@@ -1,8 +1,11 @@
 -- Sidecar de 20260911190000_p0_hash_trigger_search_path.sql
 -- Só leitura. Prova que pgcrypto segue no schema extensions e que as 13
 -- funções de selo continuam com o search_path resolvendo digest() em tempo de
--- execução. O LIKE em vez de igualdade exata tolera a formatação do proconfig
--- (ordem e aspas variam entre versões) sem deixar passar schema faltando.
+-- execução. Compara NOME DE SCHEMA, não substring: a primeira versão usava
+-- `cfg LIKE '%extensions%'` e um search_path com `extensions_old` passava,
+-- escondendo a perda do schema exigido (achado da review na PR #720). Aqui o
+-- valor do proconfig é quebrado em itens e comparado com `<@`, que tolera
+-- ordem, espaços e aspas, mas não tolera nome parecido.
 SELECT 'ok'
 WHERE EXISTS (
   SELECT 1
@@ -39,9 +42,10 @@ AND NOT EXISTS (
         SELECT 1
         FROM unnest(COALESCE(p.proconfig, '{}'::text[])) AS cfg
         WHERE cfg LIKE 'search_path=%'
-          AND cfg LIKE '%public%'
-          AND cfg LIKE '%extensions%'
-          AND cfg LIKE '%pg_catalog%'
+          AND ARRAY['public', 'extensions', 'pg_catalog'] <@ (
+            SELECT array_agg(btrim(btrim(item), '"'))
+            FROM unnest(string_to_array(substr(cfg, length('search_path=') + 1), ',')) AS item
+          )
       )
   )
 );

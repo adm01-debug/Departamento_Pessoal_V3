@@ -20,9 +20,12 @@ WHERE EXISTS (
       SELECT 1
       FROM unnest(COALESCE(p.proconfig, '{}'::text[])) AS cfg
       WHERE cfg LIKE 'search_path=%'
-        AND cfg LIKE '%pg_catalog%'
-        AND cfg LIKE '%public%'
-        AND cfg LIKE '%pg_temp%'
+        -- Nome de schema, não substring: `LIKE '%public%'` aprovava um
+        -- search_path com `public_old` (mesmo achado da review na PR #720).
+        AND ARRAY['pg_catalog', 'public', 'pg_temp'] <@ (
+          SELECT array_agg(btrim(btrim(item), '"'))
+          FROM unnest(string_to_array(substr(cfg, length('search_path=') + 1), ',')) AS item
+        )
     )
     AND EXISTS (
       SELECT 1 FROM aclexplode(p.proacl) AS a
