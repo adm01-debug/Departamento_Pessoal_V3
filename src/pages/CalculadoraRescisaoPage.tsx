@@ -8,7 +8,10 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Calculator, Download, History, Save, Shield, Loader2 } from 'lucide-react';
+import { CurrencyInput } from '@/components/ui/currency-input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Calculator, Check, ChevronsUpDown, Download, History, Save, Shield, Loader2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
@@ -50,6 +53,7 @@ export default function CalculadoraRescisaoPage() {
   const { empresaAtual } = useEmpresas();
   const [loadingColab, setLoadingColab] = useState(false);
   const [selectedColabId, setSelectedColabId] = useState<string | undefined>(undefined);
+  const [seletorAberto, setSeletorAberto] = useState(false);
 
   useDataAccessLog('colaboradores', selectedColabId, empresaAtual?.id);
 
@@ -79,6 +83,18 @@ export default function CalculadoraRescisaoPage() {
   // estado, e sem isto a tela e o TRCT não dizem de onde veio o número — uma
   // homologação feita com a regra "errada" não deixava rastro.
   const [origemCalculo, setOrigemCalculo] = useState<'local' | 'servidor' | null>(null);
+
+  /**
+   * Desfaz um import errado: limpa só o que o import preencheu e zera o
+   * resultado em cena, pela mesma razão do `set` — mostrar o cálculo velho ao
+   * lado de dados novos já causou homologação errada.
+   */
+  const limparColaboradorImportado = () => {
+    setSelectedColabId(undefined);
+    setResult(null);
+    setOrigemCalculo(null);
+    setForm((p) => ({ ...p, nomeColaborador: '', cpf: '', cargo: '', salario: '', dataAdmissao: '' }));
+  };
 
   const handleSelectColaborador = async (id: string) => {
     if (!id) return;
@@ -118,6 +134,8 @@ export default function CalculadoraRescisaoPage() {
     },
     enabled: !!empresaAtual?.id,
   });
+
+  const colaboradorSelecionado = colaboradores.find((c) => c.id === selectedColabId);
 
   const queryClient = useQueryClient();
 
@@ -325,18 +343,68 @@ export default function CalculadoraRescisaoPage() {
             <CardContent className="space-y-4">
               <div className="space-y-1.5">
                 <Label className="font-body text-xs">Importar Colaborador Ativo</Label>
-                <Select onValueChange={handleSelectColaborador} disabled={loadingColab}>
-                  <SelectTrigger className="rounded-xl">
-                    <SelectValue placeholder="Selecione para preencher automaticamente" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {colaboradores.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.nome_completo}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {/* Combobox com busca digitável, resgatado da PR #546
+                    (FormularioRescisao.tsx:274-335). Com muitos ativos, o
+                    `Select` simples obrigava a rolar a lista inteira. O `X`
+                    desfaz um import errado, que antes não tinha como desfazer. */}
+                <div className="flex items-center gap-2">
+                  <Popover open={seletorAberto} onOpenChange={setSeletorAberto}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={seletorAberto}
+                        disabled={loadingColab}
+                        className="flex-1 justify-between rounded-xl font-body font-normal"
+                      >
+                        <span className="truncate">
+                          {colaboradorSelecionado?.nome_completo ?? 'Selecione para preencher automaticamente'}
+                        </span>
+                        {loadingColab ? (
+                          <Loader2 className="ml-2 h-4 w-4 shrink-0 animate-spin" />
+                        ) : (
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                      <Command>
+                        <CommandInput placeholder="Buscar por nome..." />
+                        <CommandList>
+                          <CommandEmpty>Nenhum colaborador ativo encontrado.</CommandEmpty>
+                          <CommandGroup>
+                            {colaboradores.map((c) => (
+                              <CommandItem
+                                key={c.id}
+                                value={c.nome_completo}
+                                onSelect={() => {
+                                  setSeletorAberto(false);
+                                  void handleSelectColaborador(c.id);
+                                }}
+                              >
+                                <Check
+                                  className={`mr-2 h-4 w-4 ${c.id === selectedColabId ? 'opacity-100' : 'opacity-0'}`}
+                                />
+                                {c.nome_completo}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  {selectedColabId && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label="Remover colaborador importado"
+                      onClick={limparColaboradorImportado}
+                      className="rounded-xl"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -366,12 +434,10 @@ export default function CalculadoraRescisaoPage() {
                 </div>
                 <div>
                   <Label className="font-body text-xs">Salário Base (R$)</Label>
-                  <Input
-                    type="number"
-                    value={form.salario}
-                    onChange={(e) => set('salario', e.target.value)}
+                  <CurrencyInput
+                    value={form.salario ? Number(form.salario) : undefined}
+                    onChange={(v) => set('salario', v ? String(v) : '')}
                     className="rounded-xl"
-                    placeholder="0.00"
                   />
                 </div>
               </div>
@@ -481,12 +547,10 @@ export default function CalculadoraRescisaoPage() {
               </div>
               <div>
                 <Label className="font-body text-xs">Saldo FGTS (R$)</Label>
-                <Input
-                  type="number"
-                  value={form.saldoFGTS}
-                  onChange={(e) => set('saldoFGTS', e.target.value)}
+                <CurrencyInput
+                  value={form.saldoFGTS ? Number(form.saldoFGTS) : undefined}
+                  onChange={(v) => set('saldoFGTS', v ? String(v) : '')}
                   className="rounded-xl"
-                  placeholder="0.00"
                 />
               </div>
               <div className="flex items-center justify-between">
