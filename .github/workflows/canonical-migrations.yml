@@ -134,40 +134,36 @@ jobs:
           # Versões já presentes no ledger do canônico são puladas: um
           # re-dispatch do mesmo lote não pode re-executar as migrações.
           applied="$(psql "$SUPABASE_DB_URL" -X -At -c "SELECT version FROM supabase_migrations.schema_migrations")"
-          # LOTE ATUAL: tres migrations. SOMENTE DDL — nao apaga nem altera linha.
+          # LOTE ATUAL: higiene do ledger. 11 migrations que estao EM VIGOR no
+          # banco canonico mas NAO tem registro em
+          # supabase_migrations.schema_migrations. Conferido objeto por objeto em
+          # 19/11/2026: as funcoes, colunas, triggers, indices, policies e
+          # revokes que elas declaram existem todos em producao. Nenhuma delas
+          # muda estado aqui -- o apply e no-op e serve para o ledger deixar de
+          # mentir, de modo que uma reconstrucao cronologica seja deterministica.
           #
-          #  - 20261020120000_ninebox_permissoes_homologacao_versiona_tabela:
-          #    versiona ninebox_permissoes_homologacao, que existia SO em
-          #    producao (4 colunas, RLS ligada, 0 policies — medido em
-          #    18/11/2026). CREATE TABLE IF NOT EXISTS: em producao e no-op e
-          #    serve para registrar a versao no ledger; numa reconstrucao e o
-          #    que faz a tabela existir antes do preflight da 20261115150000.
-          #    Por isso a versao tem de ficar ANTES de 20261027090000. PR #708.
+          # Todas as 11 sao idempotentes: cada CREATE POLICY e cada CREATE
+          # TRIGGER tem o DROP ... IF EXISTS correspondente no mesmo arquivo.
           #
-          #  - 20261118223000_whatsapp_config_repoe_policy_admin_rh: a api_key da
-          #    Evolution API estava legivel e gravavel por QUALQUER vinculado a
-          #    empresa. Producao tinha uma unica policy, "Empresas gerenciam seu
-          #    proprio WhatsApp" (PERMISSIVE, role public, FOR ALL), com qual que
-          #    so exige vinculo em user_empresas. As versoes 20261012150000 e
-          #    20261013120000 estao no ledger mas a policy antiga esta de volta:
-          #    o estado foi reposto do baseline 20260831_canonical, que carrega a
-          #    permissiva. Como aquelas versoes ja constam no ledger, o step de
-          #    stage as pula — o conserto tem de ser versao nova. PR #710.
+          # DUAS das 13 sem registro ficaram DE FORA, de proposito, porque
+          # reaplica-las REVERTERIA producao para versoes antigas de funcao:
+          #  - 20260912140000_replay_backfill_canonical_routines: declara
+          #    contrato_assinar_por_token, que a 20260912204000 e a 20261005160000
+          #    redefiniram depois;
+          #  - 20261012130000_rotinas_agendadas_falhando: declara purge_rate_limits,
+          #    drenar_fila_limpeza_lgpd, process_lgpd_cleanup_queue e
+          #    fn_atualizar_status_ferias_diario, todas redefinidas depois pela
+          #    20261013130000, 20261013140000 e 20261013152000.
+          # As duas estao SUPERADAS: o efeito delas vive no banco em versao mais
+          # nova. Registra-las no ledger afirmaria que o conteudo do arquivo foi
+          # o aplicado, o que seria falso. Ficam sem registro, documentadas aqui.
           #
-          #  - 20261118235000_consignado_margem_consignavel_trigger: a edge
-          #    emprestimo-consignado recusa parcela acima de 35% do salario
-          #    (index.ts:140-146), mas DescontosPage.tsx:74 grava direto na
-          #    tabela com a parcela digitada. A guarda vira trigger BEFORE
-          #    INSERT OR UPDATE, valendo para todo caminho de escrita. Medido
-          #    antes: 6 colaboradores com consignado ativo, NENHUM acima da
-          #    margem — nenhuma linha existente fica travada. PR #711.
-          #
-          # O lote anterior (20261118160000_empresa_id_not_null_rh) saiu daqui
-          # porque foi APLICADO e esta no ledger (conferido em 18/11/2026 em
-          # supabase_migrations.schema_migrations). O anterior a ele
-          # (20260724000500 + 20260724001200, armadilha de public.faltas) tambem:
-          # validate run 44333923501, apply run 44334121411 e verify run
-          # 44334327820 (ledger OK nas duas versoes + CANONICAL_VERIFY_OK).
+          # O lote anterior (20261020120000 ninebox_permissoes_homologacao,
+          # 20261118223000 whatsapp_config policy admin/rh e 20261118235000
+          # trigger da margem consignavel) saiu daqui porque foi APLICADO e esta
+          # no ledger: validate run 44430235547, apply run 44430760106 e verify
+          # run 44430891943, os tres success, com ledger_count === 3 e os 3
+          # sidecars devolvendo 'ok' no dry-run e no pos-commit.
           #
           # ATENCAO, custou dois erros meus: o input `migration_files` do
           # dispatch NAO escolhe o lote de validate/apply — e ESTA lista que
@@ -175,9 +171,17 @@ jobs:
           # supabase/migrations/ (o workflow prefixa; caminho completo gera
           # "supabase/migrations/supabase/migrations/..." e o sidecar nao e achado).
           for migration in \
-            20261020120000_ninebox_permissoes_homologacao_versiona_tabela.sql \
-            20261118223000_whatsapp_config_repoe_policy_admin_rh.sql \
-            20261118235000_consignado_margem_consignavel_trigger.sql
+            20260911190000_p0_hash_trigger_search_path.sql \
+            20260911192000_p0_views_revoke_public.sql \
+            20260911195000_p0_payroll_upsert_contract.sql \
+            20260912151000_p1_function_search_path.sql \
+            20260912152000_p0_pgcrypto_routine_search_path.sql \
+            20261028220000_pagar_desligamento_transacional.sql \
+            20261114000300_fn_certificado_treinamento_sem_metadata.sql \
+            20261114000400_adiciona_updated_at_faltante.sql \
+            20261114000500_pensoes_empresa_id_drift.sql \
+            20261114000600_rls_escrita_por_papel.sql \
+            20261115000000_revoke_dml_audit_log_anon_auth.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -348,7 +352,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 3 &&
+              Number(r.ledger_count) === 11 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
