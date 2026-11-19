@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b027ad2bbf04e1db8dbb9cba9c711071946366e4",
+  "commit": "df983c683079821635093d3bf5ac3d11227d8c0d",
   "branch": "main",
-  "data_commit": "2026-11-19T08:37:43-03:00",
+  "data_commit": "2026-11-19T08:44:48-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "df983c6",
+    "data": "2026-11-19",
+    "assunto": "fix(ferias): policy de UPDATE do gestor, fechando o hiato de aprovacao (#729)"
+   },
+   {
+    "sha": "92be4ce",
+    "data": "2026-11-19",
+    "assunto": "chore(auditoria): inventario do que falta resgatar da PR #546 (muri) (#728)"
+   },
    {
     "sha": "b027ad2",
     "data": "2026-11-19",
@@ -121,19 +131,9 @@
     "sha": "07742aa",
     "data": "2026-11-18",
     "assunto": "fix(scripts): build-rebaseline diz qual arquivo de entrada falta (#706)"
-   },
-   {
-    "sha": "72d1d6b",
-    "data": "2026-11-18",
-    "assunto": "docs(auditoria): registro da reauditoria dos descartes (#703)"
-   },
-   {
-    "sha": "6d44dd4",
-    "data": "2026-11-18",
-    "assunto": "fix(colaboradores): filtro de status oferecia valor inexistente no enum + 21 testes da muri (#701)"
    }
   ],
-  "arquivos_mudados_7d": 1137,
+  "arquivos_mudados_7d": 1140,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -145,7 +145,7 @@
    },
    {
     "pasta": "src/components/ui",
-    "mudancas": 108
+    "mudancas": 104
    },
    {
     "pasta": "src/services/__tests__",
@@ -169,7 +169,7 @@
    },
    {
     "pasta": "src/components/layout",
-    "mudancas": 50
+    "mudancas": 47
    },
    {
     "pasta": "src/components/recrutamento",
@@ -180,26 +180,26 @@
     "mudancas": 38
    },
    {
-    "pasta": "src/components/folha",
-    "mudancas": 31
-   },
-   {
     "pasta": "src/utils/__tests__",
     "mudancas": 31
    },
    {
-    "pasta": "src/components/admissoes",
+    "pasta": "src/components/desligamentos",
     "mudancas": 30
    },
    {
-    "pasta": "src/components/desligamentos",
-    "mudancas": 30
+    "pasta": "src/components/premiacoes",
+    "mudancas": 29
+   },
+   {
+    "pasta": "src/components/admissoes",
+    "mudancas": 28
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 25
+    "mudancas": 26
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": "package.json",
@@ -238,15 +238,15 @@
     "mudancas": 8
    },
    {
-    "arquivo": "src/pages/ColaboradoresPage.tsx",
-    "mudancas": 8
-   },
-   {
     "arquivo": "docs/auditoria/sql-preservado/README.md",
     "mudancas": 7
    },
    {
     "arquivo": "scripts/sync/mirror-github.sh",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "src/pages/ColaboradoresPage.tsx",
     "mudancas": 7
    },
    {
@@ -274,15 +274,7 @@
     "mudancas": 6
    },
    {
-    "arquivo": "src/components/layout/AppSidebar.tsx",
-    "mudancas": 6
-   },
-   {
     "arquivo": "src/index.css",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "src/services/colaboradorService.ts",
     "mudancas": 6
    },
    {
@@ -295,6 +287,14 @@
    },
    {
     "arquivo": "scripts/audit-migration-style.mjs",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/components/desligamentos/index.ts",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/components/layout/AppSidebar.tsx",
     "mudancas": 5
    }
   ],
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3633,
+  "arquivos_total": 3636,
   "arquivos_codigo": 2105,
   "linhas_codigo": 418341,
   "rotas": 116,
@@ -326,12 +326,12 @@
   "hooks": 120,
   "edge_functions": 67,
   "tabelas": 427,
-  "migrations": 890,
+  "migrations": 892,
   "cron_jobs": 41,
   "testes": 792,
   "workflows": 21,
   "scripts": 135,
-  "docs_md": 337
+  "docs_md": 338
  },
  "por_pasta": {
   "capacitor.config.ts": {

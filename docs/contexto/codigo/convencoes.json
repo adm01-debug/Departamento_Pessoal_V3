@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(ferias): policy de UPDATE do gestor, fechando o hiato de aprovacao (#729)",
+   "chore(auditoria): inventario do que falta resgatar da PR #546 (muri) (#728)",
    "feat(rescisao): carimba procedencia do calculo na tela e no TRCT (#727)",
    "fix(consignado): teto do emprestimo vai de 35% para 30% (Lei 10.820 art. 1 §1) (#725)",
-   "fix(banco): sidecar conferia substring do search_path, não nome de schema (#724)",
-   "chore(banco): sidecar .verify.sql para as 4 migrations do lote que nao tinham (#720)",
-   "fix(empresas): empresa de abertura deixa de ser sorteada pela ordem do RPC (#723)"
+   "fix(banco): sidecar conferia substring do search_path, não nome de schema (#724)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

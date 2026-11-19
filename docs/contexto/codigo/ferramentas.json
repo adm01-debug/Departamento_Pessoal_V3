@@ -4,8 +4,8 @@
  "stack": {
   "linguagens": [
    "TypeScript (1967)",
-   "SQL (964)",
-   "Markdown (337)",
+   "SQL (966)",
+   "Markdown (338)",
    "JavaScript (134)",
    "JSON (63)",
    "Shell (57)",
@@ -1546,7 +1546,7 @@
  "docs_em_subpastas": [
   {
    "pasta": "docs/auditoria",
-   "arquivos_md": 66
+   "arquivos_md": 67
   },
   {
    "pasta": "docs/_archive",

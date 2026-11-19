@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b027ad2bbf04e1db8dbb9cba9c711071946366e4` (2026-11-19T08:37:43-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `df983c683079821635093d3bf5ac3d11227d8c0d` (2026-11-19T08:44:48-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1967), SQL (964), Markdown (337), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1967), SQL (966), Markdown (338), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3633 |
+| arquivos_total | 3636 |
 | arquivos_codigo | 2105 |
 | linhas_codigo | 418341 |
 | rotas | 116 |
@@ -46,12 +46,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 120 |
 | edge_functions | 67 |
 | tabelas | 427 |
-| migrations | 890 |
+| migrations | 892 |
 | cron_jobs | 41 |
 | testes | 792 |
 | workflows | 21 |
 | scripts | 135 |
-| docs_md | 337 |
+| docs_md | 338 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
@@ -396,15 +396,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27565 nós · 62192 arestas · 2375 comunidades · grafo do commit `b027ad2b`
-- comunidades maiores: lucide-react (506), 20260831_corrected_public.sql (485), useEmpresas (484), canonical_schema.sql (475), button.tsx (416), vitest (394), cn (359), App.tsx (225), dateLocal.ts (171), contract.ts (170), react (164), FeedbackAcoesRodape.tsx (160)
+- 27578 nós · 62212 arestas · 2436 comunidades · grafo do commit `df983c68`
+- comunidades maiores: useEmpresas (603), 20260831_corrected_public.sql (493), button.tsx (484), canonical_schema.sql (475), cn (462), lucide-react (302), vitest (241), App.tsx (223), contract.ts (169), "public"."empresas" (159), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (25)
+- .github/workflows/canonical-migrations.yml (26)
 - inventario/estado/rotas.json (23)
-- scripts/canonical-invariants.sql (12)
+- scripts/canonical-invariants.sql (13)
 - package.json (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
@@ -412,9 +412,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - docs/prod-readiness.md (9)
 - package-lock.json (9)
 - scripts/automation.config.json (8)
-- src/pages/ColaboradoresPage.tsx (8)
 - docs/auditoria/sql-preservado/README.md (7)
 - scripts/sync/mirror-github.sh (7)
+- src/pages/ColaboradoresPage.tsx (7)
 - docs/auditoria/VEREDITO_MURI_2026-11-17.md (6)
 - scripts/sync/README.md (6)
 
@@ -649,10 +649,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/treinamentos-imagens-fase3b-prep.md` — Fase 3B — preparação final (relatório) (133 linhas)
 - `docs/treinamentos-imagens-homologacao.md` — Homologação isolada — Hub de imagens (alternativa ao Docker) (233 linhas)
 - `docs/treinamentos-imagens.md` — Imagens do Hub de Treinamentos — Fase 2 (auditoria) + preparação da Fase 3 (426 linhas)
-- subpastas de docs/: docs/auditoria (66), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/protegido (1), docs/seguranca (1)
+- subpastas de docs/: docs/auditoria (67), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/protegido (1), docs/seguranca (1)
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-19 `df983c6` fix(ferias): policy de UPDATE do gestor, fechando o hiato de aprovacao (#729)
+- 2026-11-19 `92be4ce` chore(auditoria): inventario do que falta resgatar da PR #546 (muri) (#728)
 - 2026-11-19 `b027ad2` feat(rescisao): carimba procedencia do calculo na tela e no TRCT (#727)
 - 2026-11-19 `26629de` fix(consignado): teto do emprestimo vai de 35% para 30% (Lei 10.820 art. 1 §1) (#725)
 - 2026-11-19 `d327ab7` fix(banco): sidecar conferia substring do search_path, não nome de schema (#724)
@@ -666,8 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-18 `7086dc9` chore(banco): registra no ledger as 11 migrations em vigor, excluindo as 2 que reverteriam produção (#716)
 - 2026-11-18 `72514eb` infra(banco): substitui a lista do lote canônico pelas 3 migrations pendentes (#712)
 - 2026-11-18 `bdf533e` fix(consignado): aplica a margem de 35% no banco, fechando o desvio pela tela (#711)
-- 2026-11-18 `7320b38` chore(auditoria): registra a varredura de branches, tags e ledger de 19/11 (#713)
-- 2026-11-18 `b8db9e5` fix(segurança): restringe whatsapp_config a admin/rh em produção e na tela (#710)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

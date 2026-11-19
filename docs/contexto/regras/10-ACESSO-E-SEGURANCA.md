@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b027ad2bbf` · branch `main` · 2026-11-19 11:38 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `df983c6830` · branch `main` · 2026-11-19 11:45 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -210,7 +210,7 @@
 | `feedbacks_360_validacoes_potencial` | enabled | authenticated: public.pode_gerir_avaliacoes() and empresa_id in (select public.get_user_empresas(auth.uid())) | — | — | — |
 | `feriados` | enabled | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id() OR empresa_id IS NULL<br>authenticated: empresa_id = public.get_auth_empresa_id() | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id() | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id() | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id() |
 | `feriados_brasileiros` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
-| `ferias` | enabled | public: colaborador_id IN (SELECT id FROM colaboradores WHERE empresa_id = public.user_empresa_id())<br>public: colaborador_id IN (SELECT id FROM colaboradores WHERE empresa_id = public.user_empresa_id()) AND auth.jwt() ->> 'role' IN ('admin', <br>authenticated: public.rls_tenant_or_admin(empresa_id)<br>authenticated: public.sou_o_colaborador(colaborador_id)<br>authenticated: empresa_id = public.get_auth_empresa_id()<br>authenticated: public.pode_gerir_rh(empresa_id)<br>authenticated: public.pode_gerir_pessoas(empresa_id)<br>authenticated: public.pode_gerir_rh(empresa_id)<br>authenticated: public.sou_o_colaborador(colaborador_id) | public: colaborador_id IN (SELECT id FROM colaboradores WHERE empresa_id = public.user_empresa_id()) AND auth.jwt() ->> 'role' IN ('admin', <br>authenticated: public.rls_tenant_or_admin(empresa_id)<br>authenticated: empresa_id = public.get_auth_empresa_id()<br>authenticated: public.pode_gerir_rh(empresa_id)<br>authenticated: public.pode_gerir_rh(empresa_id) | public: colaborador_id IN (SELECT id FROM colaboradores WHERE empresa_id = public.user_empresa_id()) AND auth.jwt() ->> 'role' IN ('admin', <br>authenticated: public.rls_tenant_or_admin(empresa_id)<br>authenticated: empresa_id = public.get_auth_empresa_id()<br>authenticated: public.pode_gerir_rh(empresa_id)<br>authenticated: public.pode_gerir_rh(empresa_id) | public: colaborador_id IN (SELECT id FROM colaboradores WHERE empresa_id = public.user_empresa_id()) AND auth.jwt() ->> 'role' IN ('admin', <br>authenticated: public.rls_tenant_or_admin(empresa_id)<br>authenticated: empresa_id = public.get_auth_empresa_id()<br>authenticated: public.pode_gerir_rh(empresa_id)<br>authenticated: public.pode_gerir_rh(empresa_id) |
+| `ferias` | enabled | public: colaborador_id IN (SELECT id FROM colaboradores WHERE empresa_id = public.user_empresa_id())<br>public: colaborador_id IN (SELECT id FROM colaboradores WHERE empresa_id = public.user_empresa_id()) AND auth.jwt() ->> 'role' IN ('admin', <br>authenticated: public.rls_tenant_or_admin(empresa_id)<br>authenticated: public.sou_o_colaborador(colaborador_id)<br>authenticated: empresa_id = public.get_auth_empresa_id()<br>authenticated: public.pode_gerir_rh(empresa_id)<br>authenticated: public.pode_gerir_pessoas(empresa_id)<br>authenticated: public.pode_gerir_rh(empresa_id)<br>authenticated: public.sou_o_colaborador(colaborador_id) | public: colaborador_id IN (SELECT id FROM colaboradores WHERE empresa_id = public.user_empresa_id()) AND auth.jwt() ->> 'role' IN ('admin', <br>authenticated: public.rls_tenant_or_admin(empresa_id)<br>authenticated: empresa_id = public.get_auth_empresa_id()<br>authenticated: public.pode_gerir_rh(empresa_id)<br>authenticated: public.pode_gerir_rh(empresa_id) | public: colaborador_id IN (SELECT id FROM colaboradores WHERE empresa_id = public.user_empresa_id()) AND auth.jwt() ->> 'role' IN ('admin', <br>authenticated: public.rls_tenant_or_admin(empresa_id)<br>authenticated: empresa_id = public.get_auth_empresa_id()<br>authenticated: public.pode_gerir_rh(empresa_id)<br>authenticated: public.pode_gerir_pessoas(empresa_id)<br>authenticated: public.pode_gerir_rh(empresa_id) | public: colaborador_id IN (SELECT id FROM colaboradores WHERE empresa_id = public.user_empresa_id()) AND auth.jwt() ->> 'role' IN ('admin', <br>authenticated: public.rls_tenant_or_admin(empresa_id)<br>authenticated: empresa_id = public.get_auth_empresa_id()<br>authenticated: public.pode_gerir_rh(empresa_id)<br>authenticated: public.pode_gerir_rh(empresa_id) |
 | `ferias_abono` | enabled | public: auth.role() = 'authenticated' | public: auth.role() = 'authenticated' | public: auth.role() = 'authenticated' | — |
 | `ferias_aprovacoes` | enabled | authenticated: ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))) | authenticated: ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))) | authenticated: ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))) | authenticated: ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))) |
 | `ferias_aprovacoes_log` | enabled | public: ("auth"."uid"() IN ( SELECT "user_roles"."user_id" FROM "public"."user_roles" WHERE ("user_roles"."role" = ANY (ARRAY['admin'::"publ | — | — | — |
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 321 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 322 arquivo(s)
 
 - `docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql`
 - `docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql`
@@ -472,7 +472,7 @@
 - `supabase/migrations/20260712214929_4971f364-3f69-48cd-9150-a55524b1025d.sql`
 - `supabase/migrations/20260712215539_349ae8a8-7ed9-41a5-b06c-ea4b8f35c7b5.sql`
 - `supabase/migrations/20260712215808_8c16ff4b-eb80-4fbb-a8c6-c15c62ed93c7.sql`
-- … +171 (lista completa em `context.json`)
+- … +172 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 

@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 890,
+ "migrations": 892,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -28332,6 +28332,12 @@
     {
      "nome": "ferias_gestor_read",
      "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "ferias_gestor_update",
+     "comando": "update",
      "para": "authenticated",
      "tipo": "permissive"
     },
