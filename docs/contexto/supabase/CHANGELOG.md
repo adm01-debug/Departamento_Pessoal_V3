@@ -2,6 +2,13 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-19 02:18 UTC
+
+- **functions** adicionado (1): `public.pagar_desligamento(_desligamento_id uuid, _comprovante_url text, _actor_id uuid)`
+- **functions** removido (1): `public.pagar_desligamento(_desligamento_id uuid, _comprovante_url text)`
+- **functions** alterado (2): `public.is_admin(_user_id uuid)`, `public.pode_gerir_rh_para(_user_id uuid, _empresa_id uuid)`
+- **realtime** removido (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_15`
+
 ## 2026-11-19 01:14 UTC
 
 - **functions** adicionado (1): `public.fn_consignado_valida_margem()`

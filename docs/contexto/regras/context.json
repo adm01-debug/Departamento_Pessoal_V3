@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "62748b375ac35eaf4f5ac3cafd6fc1804343877f",
+  "sha": "08a26cf246ac0abf67e5cfa276d51921144d3301",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 01:51 UTC",
+  "generated_at": "2026-11-19 02:18 UTC",
   "files_total": 3640,
   "code_files": 3061,
   "code_lines": 485731
@@ -329145,10 +329145,19 @@
   }
  },
  "git": {
-  "sha": "62748b375ac35eaf4f5ac3cafd6fc1804343877f",
+  "sha": "08a26cf246ac0abf67e5cfa276d51921144d3301",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "08a26cf",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "chore(auditoria): fecha a varredura com as 34 branches que só existiam no clone local (#721)",
+    "files": [
+     "docs/auditoria/VARREDURA_BRANCHES_E_LEDGER_2026-11-19.md"
+    ]
+   },
    {
     "sha": "62748b3",
     "date": "2026-11-18",
@@ -329460,15 +329469,6 @@
     "files": [
      "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md"
     ]
-   },
-   {
-    "sha": "e667066",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "chore: tria as 26 migrations restantes em 6 lotes de decisao (#689)",
-    "files": [
-     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md"
-    ]
    }
   ],
   "hot_files": [
@@ -329478,11 +329478,15 @@
    ],
    [
     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
-    6
+    5
    ],
    [
     "scripts/canonical-invariants.sql",
     4
+   ],
+   [
+    "docs/auditoria/VARREDURA_BRANCHES_E_LEDGER_2026-11-19.md",
+    2
    ],
    [
     "src/components/__tests__/AnalyticsSection.test.tsx",
@@ -329522,10 +329526,6 @@
    ],
    [
     "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.verify.sql",
-    1
-   ],
-   [
-    "docs/auditoria/VARREDURA_BRANCHES_E_LEDGER_2026-11-19.md",
     1
    ],
    [

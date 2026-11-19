@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "62748b375ac35eaf4f5ac3cafd6fc1804343877f",
+  "commit": "08a26cf246ac0abf67e5cfa276d51921144d3301",
   "branch": "main",
-  "data_commit": "2026-11-18T22:48:02-03:00",
+  "data_commit": "2026-11-18T23:06:27-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "08a26cf",
+    "data": "2026-11-18",
+    "assunto": "chore(auditoria): fecha a varredura com as 34 branches que só existiam no clone local (#721)"
+   },
    {
     "sha": "62748b3",
     "data": "2026-11-18",
@@ -126,11 +131,6 @@
     "sha": "8daa52d",
     "data": "2026-11-18",
     "assunto": "fix: cadastro de plano de benefício grava a empresa (403 em produção) (#696)"
-   },
-   {
-    "sha": "a48b81c",
-    "data": "2026-11-18",
-    "assunto": "infra: conserta a armadilha de DEFAULT x CHECK em public.faltas (#694)"
    }
   ],
   "arquivos_mudados_7d": 1147,

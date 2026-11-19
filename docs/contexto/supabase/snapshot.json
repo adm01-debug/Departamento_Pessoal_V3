@@ -97656,7 +97656,6 @@
             "public.get_user_scope_empresas",
             "public.listar_auditoria",
             "public.next_cnab_sequencial",
-            "public.pagar_desligamento",
             "public.pcs_pode_ver_plano",
             "public.pode_gerir_pessoas_para",
             "public.pode_gerir_rh_para",
@@ -98810,7 +98809,7 @@
         "volatility": "volatile"
       },
       {
-        "args": "_desligamento_id uuid, _comprovante_url text",
+        "args": "_desligamento_id uuid, _comprovante_url text, _actor_id uuid",
         "callers": {
           "code": [
             {
@@ -98826,11 +98825,11 @@
         },
         "comment": null,
         "config": [
-          "search_path=public"
+          "search_path=pg_catalog, public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "cd53282e5a8da265",
-        "execute_api_roles": "authenticated, service_role",
+        "definition_sha": "bb57994585e1105c",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
@@ -100067,6 +100066,7 @@
           "code_total_files": 9,
           "cron": [],
           "db": [
+            "public.pagar_desligamento",
             "public.pode_gerir_rh"
           ],
           "triggers": [],
@@ -146940,11 +146940,6 @@
           "publication": "supabase_realtime",
           "schema": "public",
           "table": "security_alerts"
-        },
-        {
-          "publication": "supabase_realtime_messages_publication",
-          "schema": "realtime",
-          "table": "messages_2026_11_15"
         },
         {
           "publication": "supabase_realtime_messages_publication",

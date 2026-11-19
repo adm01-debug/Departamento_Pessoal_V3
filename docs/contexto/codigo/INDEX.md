@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `62748b375ac35eaf4f5ac3cafd6fc1804343877f` (2026-11-18T22:48:02-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `08a26cf246ac0abf67e5cfa276d51921144d3301` (2026-11-18T23:06:27-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27549 nós · 62171 arestas · 2386 comunidades · grafo do commit `62748b37`
-- comunidades maiores: lucide-react (531), 20260831_corrected_public.sql (493), cn (486), canonical_schema.sql (475), @tanstack/react-query (435), button.tsx (424), useEmpresas (340), App.tsx (254), vitest (253), contract.ts (181), react (172), "public"."empresas" (159)
+- 27550 nós · 62173 arestas · 2417 comunidades · grafo do commit `08a26cf2`
+- comunidades maiores: cn (543), useEmpresas (528), 20260831_corrected_public.sql (493), canonical_schema.sql (475), sonner (403), card.tsx (358), App.tsx (347), vitest (338), contract.ts (191), ref_node_fs (165), "public"."empresas" (159), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-18 `08a26cf` chore(auditoria): fecha a varredura com as 34 branches que só existiam no clone local (#721)
 - 2026-11-18 `62748b3` chore(consignado): trava a coerência do teto da margem entre tela e banco (#719)
 - 2026-11-18 `09ea734` fix(baseline): whatsapp_config fail-closed no restore do baseline de DR (#718)
 - 2026-11-18 `6af99a6` chore: registra lote de higiene de 9 migrations no canonical-migrations (#717)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-18 `6670984` fix(colaboradores): campo opcional em branco virava "" e travava o 2o cadastro (#705)
 - 2026-11-18 `96ef3ed` feat(rescisão): a calculadora passa a LER o histórico que já gravava (#704)
 - 2026-11-18 `656863d` feat(desligamentos): paginação, ordenação e filtro por etapa resgatados da muri (#700)
-- 2026-11-18 `d9cc475` feat(dashboard): põe em tela os 2 widgets que nunca eram renderizados (#702)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
