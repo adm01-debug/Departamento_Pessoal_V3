@@ -217,6 +217,7 @@ async function main() {
         .insert({
           vaga_id: vagaId,
           candidato_id: candidatosIds[k],
+          empresa_id: empresaId,
           etapa: etapasCandidaturas[k],
           status: 'em_andamento',
         });
