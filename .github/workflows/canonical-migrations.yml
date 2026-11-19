@@ -134,19 +134,22 @@ jobs:
           # Versões já presentes no ledger do canônico são puladas: um
           # re-dispatch do mesmo lote não pode re-executar as migrações.
           applied="$(psql "$SUPABASE_DB_URL" -X -At -c "SELECT version FROM supabase_migrations.schema_migrations")"
-          # LOTE ATUAL: higiene do ledger. 11 migrations que estao EM VIGOR no
+          # LOTE ATUAL: higiene do ledger. 9 migrations que estao EM VIGOR no
           # banco canonico mas NAO tem registro em
           # supabase_migrations.schema_migrations. Conferido objeto por objeto em
           # 19/11/2026: as funcoes, colunas, triggers, indices, policies e
-          # revokes que elas declaram existem todos em producao. Nenhuma delas
-          # muda estado aqui -- o apply e no-op e serve para o ledger deixar de
-          # mentir, de modo que uma reconstrucao cronologica seja deterministica.
+          # revokes que elas declaram existem todos em producao. O apply e no-op
+          # em producao e serve para o ledger deixar de mentir, de modo que uma
+          # reconstrucao cronologica seja deterministica.
           #
-          # Todas as 11 sao idempotentes: cada CREATE POLICY e cada CREATE
-          # TRIGGER tem o DROP ... IF EXISTS correspondente no mesmo arquivo.
+          # Sao idempotentes: cada CREATE POLICY e cada CREATE TRIGGER tem o
+          # DROP ... IF EXISTS correspondente no mesmo arquivo.
           #
-          # DUAS das 13 sem registro ficaram DE FORA, de proposito, porque
-          # reaplica-las REVERTERIA producao para versoes antigas de funcao:
+          # QUATRO das 13 sem registro ficaram DE FORA. Nenhuma e reaplicavel
+          # isolada hoje, e registra-las afirmaria no ledger que o conteudo do
+          # arquivo foi o aplicado -- o que e falso.
+          #
+          # Duas REVERTERIAM funcao corrigida depois:
           #  - 20260912140000_replay_backfill_canonical_routines: declara
           #    contrato_assinar_por_token, que a 20260912204000 e a 20261005160000
           #    redefiniram depois;
@@ -154,9 +157,16 @@ jobs:
           #    drenar_fila_limpeza_lgpd, process_lgpd_cleanup_queue e
           #    fn_atualizar_status_ferias_diario, todas redefinidas depois pela
           #    20261013130000, 20261013140000 e 20261013152000.
-          # As duas estao SUPERADAS: o efeito delas vive no banco em versao mais
-          # nova. Registra-las no ledger afirmaria que o conteudo do arquivo foi
-          # o aplicado, o que seria falso. Ficam sem registro, documentadas aqui.
+          #
+          # Duas dependem de HELPER TRANSITORIO que nao existe mais no banco --
+          # medido no validate run 44433409640 (19/11/2026), que abortou em
+          # "requires routine public.dp_mig_set_search_path (aplique 20260912150000
+          # antes)", e confirmado por consulta a pg_proc: a rotina nao existe:
+          #  - 20260912151000_p1_function_search_path
+          #  - 20260912152000_p0_pgcrypto_routine_search_path
+          # As duas so rodam encadeadas logo apos a 20260912150000, que cria e
+          # descarta o helper na mesma transacao. Os gemeos delas
+          # (20260912143344 e 20260912144208) ja estao no ledger.
           #
           # O lote anterior (20261020120000 ninebox_permissoes_homologacao,
           # 20261118223000 whatsapp_config policy admin/rh e 20261118235000
@@ -174,8 +184,6 @@ jobs:
             20260911190000_p0_hash_trigger_search_path.sql \
             20260911192000_p0_views_revoke_public.sql \
             20260911195000_p0_payroll_upsert_contract.sql \
-            20260912151000_p1_function_search_path.sql \
-            20260912152000_p0_pgcrypto_routine_search_path.sql \
             20261028220000_pagar_desligamento_transacional.sql \
             20261114000300_fn_certificado_treinamento_sem_metadata.sql \
             20261114000400_adiciona_updated_at_faltante.sql \
@@ -352,7 +360,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 11 &&
+              Number(r.ledger_count) === 9 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
