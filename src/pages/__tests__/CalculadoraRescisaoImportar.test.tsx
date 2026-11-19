@@ -243,3 +243,29 @@ describe('CalculadoraRescisaoPage — importar colaborador', () => {
     expect(screen.queryByRole('button', { name: /remover colaborador importado/i })).not.toBeInTheDocument();
   });
 });
+
+/**
+ * Resíduo visual da PR #546 (muri), FormularioRescisao.tsx:183-209: o anel de
+ * foco do design system incidia só no `<input>`, então a borda começava DEPOIS
+ * da lupa e quem navega por teclado via o realce cortado no meio do campo.
+ */
+describe('CalculadoraRescisaoPage — foco do campo de busca', () => {
+  it('o contorno de foco envolve a caixa inteira, não só o input', async () => {
+    renderPagina();
+    await userEvent.click((await screen.findByText(/selecione para preencher/i)).closest('button')!);
+    const input = await screen.findByPlaceholderText(/buscar por nome/i);
+
+    // O wrapper do cmdk (lupa + input) é quem recebe borda e anel no foco.
+    const wrapper = input.closest('[cmdk-input-wrapper]');
+    expect(wrapper, 'o CommandInput deveria estar dentro de [cmdk-input-wrapper]').not.toBeNull();
+
+    const command = wrapper!.closest('[cmdk-root]');
+    expect(command, 'o wrapper deveria estar dentro do Command').not.toBeNull();
+    const classes = command!.className;
+    expect(classes).toContain('[&_[cmdk-input-wrapper]:focus-within]:border-primary');
+    expect(classes).toContain('[&_[cmdk-input-wrapper]:focus-within]:ring-1');
+
+    // e o input cancela o próprio anel, para não desenhar um segundo contorno
+    expect(input.className).toContain('focus-visible:ring-0');
+  });
+});

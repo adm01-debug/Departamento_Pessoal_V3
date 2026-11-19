@@ -48,6 +48,36 @@ function mapTipoDesligamentoDB(tipo: string): Database['public']['Enums']['tipo_
   }
 }
 
+/**
+ * Contorno de foco do campo de busca do combobox, resgatado da PR #546
+ * (muri), FormularioRescisao.tsx:183-209.
+ *
+ * O CommandInput do cmdk renderiza um wrapper [cmdk-input-wrapper] com a LUPA
+ * e o input como IRMAOS. O anel de foco global do design system
+ * (:focus-visible -> ring-2 ring-ring, em src/index.css) incide so no input,
+ * entao a borda de foco COMECAVA DEPOIS da lupa: quem navega por teclado via o
+ * realce cortado no meio do campo.
+ *
+ * O ajuste fica NO CALL SITE, nao em ui/command.tsx, porque aquele componente e
+ * compartilhado com outros comboboxes (Afastamentos, por exemplo) e mudar o
+ * global arrastaria telas fora desta tarefa. As variantes arbitrarias do
+ * Tailwind atingem o wrapper renderizado:
+ *   - m-2: respiro para o anel nao ser cortado pelo Command, que e overflow-hidden;
+ *   - rounded-lg + borda discreta: o wrapper vira um campo de verdade, com o
+ *     mesmo raio do gatilho do Popover;
+ *   - focus-within: o contorno envolve lupa + input como uma unica caixa.
+ *
+ * O input cancela o proprio :focus-visible (focus-visible:ring-0) para nao
+ * desenhar um SEGUNDO contorno por dentro. O indicador de foco continua visivel
+ * para acessibilidade; so muda de lugar, do input para o conjunto.
+ */
+const CAMPO_BUSCA_COLABORADOR =
+  '[&_[cmdk-input-wrapper]]:m-2 [&_[cmdk-input-wrapper]]:rounded-lg ' +
+  '[&_[cmdk-input-wrapper]]:border [&_[cmdk-input-wrapper]]:border-border/50 ' +
+  '[&_[cmdk-input-wrapper]]:px-3 [&_[cmdk-input-wrapper]]:transition-colors ' +
+  '[&_[cmdk-input-wrapper]:focus-within]:border-primary ' +
+  '[&_[cmdk-input-wrapper]:focus-within]:ring-1 [&_[cmdk-input-wrapper]:focus-within]:ring-primary';
+
 export default function CalculadoraRescisaoPage() {
   const { user } = useAuth();
   const { empresaAtual } = useEmpresas();
@@ -396,8 +426,11 @@ export default function CalculadoraRescisaoPage() {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
-                      <Command>
-                        <CommandInput placeholder="Buscar por nome, matrícula ou 4 últimos do CPF..." />
+                      <Command className={CAMPO_BUSCA_COLABORADOR}>
+                        <CommandInput
+                          placeholder="Buscar por nome, matrícula ou 4 últimos do CPF..."
+                          className="focus-visible:ring-0"
+                        />
                         <CommandList>
                           <CommandEmpty>Nenhum colaborador ativo encontrado.</CommandEmpty>
                           <CommandGroup>
