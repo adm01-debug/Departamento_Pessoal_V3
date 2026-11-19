@@ -9,6 +9,7 @@ import { useProximosEventos } from '@/hooks/useProximosEventos';
 import { useQuery } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AnimatedTabsList, AnimatedTabsTrigger } from '@/components/ui/animated-tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
@@ -319,35 +320,46 @@ export default function ColaboradorDetalhesPage() {
 
         {/* Master Tabs */}
         <Tabs value={activeMainTab} onValueChange={setActiveMainTab} className="space-y-6">
-          <TabsList className="bg-muted/50 rounded-xl p-1 border border-border/30 w-full justify-start overflow-x-auto no-scrollbar">
-            <TabsTrigger value="geral" className="rounded-lg font-body px-6 gap-2">
+          {/* Indicador deslizante entre abas, resgatado da PR #546 (muri),
+              AnimatedDossieTabs.tsx. A muri trazia um componente NOVO; a main já
+              tem o mesmo recurso em ui/animated-tabs.tsx, usado por Avaliação e
+              Premiações — então aqui se APLICA o que existe em vez de duplicar.
+              Os 9 valores, ícones e rótulos são os mesmos de antes. */}
+          <AnimatedTabsList
+            value={activeMainTab}
+            onValueChange={setActiveMainTab}
+            containerClassName="bg-muted/50 rounded-xl p-1 border border-border/30 w-full overflow-x-auto no-scrollbar"
+            highlightClassName="rounded-lg bg-background shadow-xs"
+            listClassName="flex w-full items-center justify-start text-muted-foreground"
+          >
+            <AnimatedTabsTrigger value="geral" className="rounded-lg font-body px-6 gap-2">
               <Info className="h-4 w-4" /> Resumo
-            </TabsTrigger>
-            <TabsTrigger value="pessoal" className="rounded-lg font-body px-6 gap-2">
+            </AnimatedTabsTrigger>
+            <AnimatedTabsTrigger value="pessoal" className="rounded-lg font-body px-6 gap-2">
               <Users className="h-4 w-4" /> Pessoal
-            </TabsTrigger>
-            <TabsTrigger value="profissional" className="rounded-lg font-body px-6 gap-2">
+            </AnimatedTabsTrigger>
+            <AnimatedTabsTrigger value="profissional" className="rounded-lg font-body px-6 gap-2">
               <Briefcase className="h-4 w-4" /> Carreira
-            </TabsTrigger>
-            <TabsTrigger value="jornada" className="rounded-lg font-body px-6 gap-2">
+            </AnimatedTabsTrigger>
+            <AnimatedTabsTrigger value="jornada" className="rounded-lg font-body px-6 gap-2">
               <Clock className="h-4 w-4" /> Jornada & Ponto
-            </TabsTrigger>
-            <TabsTrigger value="financeiro" className="rounded-lg font-body px-6 gap-2">
+            </AnimatedTabsTrigger>
+            <AnimatedTabsTrigger value="financeiro" className="rounded-lg font-body px-6 gap-2">
               <Landmark className="h-4 w-4" /> Financeiro
-            </TabsTrigger>
-            <TabsTrigger value="documentos" className="rounded-lg font-body px-6 gap-2">
+            </AnimatedTabsTrigger>
+            <AnimatedTabsTrigger value="documentos" className="rounded-lg font-body px-6 gap-2">
               <FileText className="h-4 w-4" /> Documentação
-            </TabsTrigger>
-            <TabsTrigger value="beneficios" className="rounded-lg font-body px-6 gap-2">
+            </AnimatedTabsTrigger>
+            <AnimatedTabsTrigger value="beneficios" className="rounded-lg font-body px-6 gap-2">
               <Gift className="h-4 w-4" /> Benefícios
-            </TabsTrigger>
-            <TabsTrigger value="historico" className="rounded-lg font-body px-6 gap-2">
+            </AnimatedTabsTrigger>
+            <AnimatedTabsTrigger value="historico" className="rounded-lg font-body px-6 gap-2">
               <HistoryIcon className="h-4 w-4" /> Histórico
-            </TabsTrigger>
-            <TabsTrigger value="timeline" className="rounded-lg font-body px-6 gap-2">
+            </AnimatedTabsTrigger>
+            <AnimatedTabsTrigger value="timeline" className="rounded-lg font-body px-6 gap-2">
               <GitCommitVertical className="h-4 w-4" /> Timeline
-            </TabsTrigger>
-          </TabsList>
+            </AnimatedTabsTrigger>
+          </AnimatedTabsList>
 
           <TabsContent value="geral">
             {activeMainTab === 'geral' && (
