@@ -18,6 +18,7 @@ import { contratacaoService } from '@/services/contratacaoService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AdmissoesDashboard } from '@/components/admissoes/AdmissoesDashboard';
 import { GestaoCandidatos } from '@/components/admissoes/GestaoCandidatos';
+import AuditoriaAdmissoesContent from '@/components/admissoes/AuditoriaAdmissoesContent';
 import type { Tables } from '@/integrations/supabase/types';
 
 export default function AdmissoesPage() {
@@ -215,22 +216,7 @@ export default function AdmissoesPage() {
           </TabsContent>
 
           <TabsContent value="auditoria">
-            <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-xs">
-              <CardHeader className="bg-muted/30">
-                <CardTitle className="text-sm font-display flex items-center gap-2">
-                  <History className="h-4 w-4 text-primary" /> Histórico de Auditoria - Admissões
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="py-8 text-center">
-                <History className="h-12 w-12 text-muted-foreground/20 mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground">
-                  O monitoramento de auditoria eSocial e admissão digital está ativo.
-                </p>
-                <Button variant="link" className="text-xs text-primary mt-2" onClick={() => navigate('/auditoria')}>
-                  Ver Logs Globais
-                </Button>
-              </CardContent>
-            </Card>
+            <AuditoriaAdmissoesContent />
           </TabsContent>
         </Tabs>
       </PageLayout>
