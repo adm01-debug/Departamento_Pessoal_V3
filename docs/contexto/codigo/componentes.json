@@ -2991,10 +2991,12 @@
   {
    "arquivo": "src/components/descontos/NewLoanDialog.tsx",
    "exports": [
+    "MARGEM_CONSIGNAVEL_BANCO",
+    "MARGEM_CONSIGNAVEL_TELA",
     "NewLoanDialog"
    ],
    "export_default": null,
-   "linhas": 239,
+   "linhas": 255,
    "dominio": "components/descontos",
    "hooks_locais": [],
    "tabelas": [

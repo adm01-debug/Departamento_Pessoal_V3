@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "09ea734ff75b1cca18558ec809ad9e64fed2cf45",
+  "commit": "62748b375ac35eaf4f5ac3cafd6fc1804343877f",
   "branch": "main",
-  "data_commit": "2026-11-18T22:47:55-03:00",
+  "data_commit": "2026-11-18T22:48:02-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "62748b3",
+    "data": "2026-11-18",
+    "assunto": "chore(consignado): trava a coerência do teto da margem entre tela e banco (#719)"
+   },
    {
     "sha": "09ea734",
     "data": "2026-11-18",
@@ -126,18 +131,13 @@
     "sha": "a48b81c",
     "data": "2026-11-18",
     "assunto": "infra: conserta a armadilha de DEFAULT x CHECK em public.faltas (#694)"
-   },
-   {
-    "sha": "3801d31",
-    "data": "2026-11-18",
-    "assunto": "infra: derruba a policy inerte das 5 tabelas de recrutamento, sem criar outra (#693)"
    }
   ],
-  "arquivos_mudados_7d": 1146,
+  "arquivos_mudados_7d": 1147,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 388
+    "mudancas": 389
    },
    {
     "pasta": "src/components/ui",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3627,
   "arquivos_codigo": 2105,
-  "linhas_codigo": 418111,
+  "linhas_codigo": 418137,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 994,
-   "linhas": 181943
+   "linhas": 181969
   },
   "src/constants": {
    "arquivos": 7,

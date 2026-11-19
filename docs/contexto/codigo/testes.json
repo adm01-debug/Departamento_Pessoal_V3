@@ -2656,11 +2656,11 @@
   {
    "arquivo": "src/components/__tests__/NewLoanDialog.test.tsx",
    "tipo": "unit",
-   "linhas": 198,
+   "linhas": 208,
    "testa": [
     "src/components/descontos/NewLoanDialog.tsx"
    ],
-   "casos": 12
+   "casos": 14
   },
   {
    "arquivo": "src/components/__tests__/NineBox360.test.tsx",

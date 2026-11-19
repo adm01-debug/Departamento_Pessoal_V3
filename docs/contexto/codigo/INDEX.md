@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `09ea734ff75b1cca18558ec809ad9e64fed2cf45` (2026-11-18T22:47:55-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `62748b375ac35eaf4f5ac3cafd6fc1804343877f` (2026-11-18T22:48:02-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3627 |
 | arquivos_codigo | 2105 |
-| linhas_codigo | 418111 |
+| linhas_codigo | 418137 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27546 nós · 62165 arestas · 2396 comunidades · grafo do commit `09ea734f`
-- comunidades maiores: 20260831_corrected_public.sql (485), canonical_schema.sql (475), useEmpresas (448), lucide-react (406), @tanstack/react-query (379), button.tsx (353), App.tsx (344), vitest (311), treinamentosDerivacoes.ts (168), "public"."empresas" (159), "public"."empresas" (158), react (157)
+- 27549 nós · 62171 arestas · 2386 comunidades · grafo do commit `62748b37`
+- comunidades maiores: lucide-react (531), 20260831_corrected_public.sql (493), cn (486), canonical_schema.sql (475), @tanstack/react-query (435), button.tsx (424), useEmpresas (340), App.tsx (254), vitest (253), contract.ts (181), react (172), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-18 `62748b3` chore(consignado): trava a coerência do teto da margem entre tela e banco (#719)
 - 2026-11-18 `09ea734` fix(baseline): whatsapp_config fail-closed no restore do baseline de DR (#718)
 - 2026-11-18 `6af99a6` chore: registra lote de higiene de 9 migrations no canonical-migrations (#717)
 - 2026-11-18 `7086dc9` chore(banco): registra no ledger as 11 migrations em vigor, excluindo as 2 que reverteriam produção (#716)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-18 `96ef3ed` feat(rescisão): a calculadora passa a LER o histórico que já gravava (#704)
 - 2026-11-18 `656863d` feat(desligamentos): paginação, ordenação e filtro por etapa resgatados da muri (#700)
 - 2026-11-18 `d9cc475` feat(dashboard): põe em tela os 2 widgets que nunca eram renderizados (#702)
-- 2026-11-18 `07742aa` fix(scripts): build-rebaseline diz qual arquivo de entrada falta (#706)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `09ea734ff7` · branch `main` · 2026-11-19 01:48 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `62748b375a` · branch `main` · 2026-11-19 01:51 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4205,7 +4205,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ delay: i * 0.05 }}` | `src/components/dashboard/analytics/widgets.tsx` |
 | `transition={{ delay: index * 0.1 }}` | `src/components/dashboard/analytics/widgets.tsx` |
 | `Colaboradores acima de 30% de desconto` | `src/components/descontos/FinancialSummaryCards.tsx` |
-| `const margin = colaboradorData.salario_base * 0.3; // 30% Law` | `src/components/descontos/NewLoanDialog.tsx` |
+| `* (tela, trigger e src/calculators, que usa 35% do líquido) está registrada em` | `src/components/descontos/NewLoanDialog.tsx` |
 | `// (`rescisaoCalc.ts:320-323`): 40% na dispensa sem justa causa e no término` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
 | `// antecipado pelo empregador (acompanha o art. 479), 20% no acordo mútuo e na` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
 | `transition={{ delay: atraso - ANDAMENTO_GAP * 0.5, duration: ANDAMENTO_GAP, ease: 'easeInOut' }}` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
@@ -4546,6 +4546,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `ROW_DURATION` | `0.28` | `src/components/colaboradores/ColaboradorTable.tsx` |
 | `ROW_MAX_STAGGER_INDEX` | `7` | `src/components/colaboradores/ColaboradorTable.tsx` |
 | `ROW_STAGGER_STEP` | `0.05` | `src/components/colaboradores/ColaboradorTable.tsx` |
+| `MARGEM_CONSIGNAVEL_TELA` | `0.3` | `src/components/descontos/NewLoanDialog.tsx` |
+| `MARGEM_CONSIGNAVEL_BANCO` | `0.35` | `src/components/descontos/NewLoanDialog.tsx` |
 | `BASE_CONTEUDO_ABA` | `4` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
 | `ANDAMENTO_GAP` | `0.22` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
 | `ANDAMENTO_INICIO` | `0.6` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
@@ -4710,9 +4712,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `NOME_MAX` | `120` | `src/services/trainingImages/briefing.ts` |
 | `TRAINING_IMAGES_LIMITE_BYTES` | `5` | `src/services/trainingImages/config.ts` |
 | `TRAINING_IMAGES_STALE_MS` | `15` | `src/services/trainingImages/config.ts` |
-| `TRAINING_IMAGES_GC_MS` | `30` | `src/services/trainingImages/config.ts` |
-| `TRAINING_IMAGES_BUCKET` | `'training-images'` | `src/services/trainingImages/paths.ts` |
-| … +124 linhas — lista completa em `context.json` | | |
+| … +126 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5424,7 +5424,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9540 testes em 748 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9542 testes em 748 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5601,6 +5601,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/passwordPolicy.test.ts` | 16 | validatePassword · returns valid for a strong password · rejects passwords shorter than 8 chars · rejects passwords longer than 128 chars … |
 | `src/calculators/__tests__/auditHelper.test.ts` | 15 | signCalculation · returns a hex string · returns the same hash for identical data · returns different hashes for different data … |
 | `src/components/__tests__/ESocialEventComponents.test.tsx` | 15 | S2200Admissao (NaoPeriodicos) · renders trabalhador name · renders CPF · renders admissao date … |
+| `src/components/__tests__/NewLoanDialog.test.tsx` | 15 | NewLoanDialog · renders Novo Empréstimo trigger button · renders Registrar Empréstimo Consignado title · renders Compliance L10.820 badge … |
 | `src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx` | 15 | TrilhaAuditoriaDesligamentos — coluna de ações uniforme · renderiza um  · usa um único container horizontal (flex-nowrap, items-center, justify-end) em TODOS os eventos · coloca o selo  … |
 | `src/components/integracoes/__tests__/ConfigPanels.test.tsx` | 15 | CnabConfigPanel · Salvar Configurações grava os dados editados e invalida a configuração · não salva sem os campos obrigatórios · Salvar Configurações fica desabilitado enquanto a config carrega … |
 | `src/components/recrutamento/__tests__/CandidatosPainel.test.tsx` | 15 | CandidatosPainel — indicadores e tabela · mostra as cinco contagens reais e oito linhas na primeira página · usa os indicadores como filtros e não perde a sincronização · mostra avatar (iniciais), origem, vaga, etapa, experiência, pretensão e avaliação reais … |
@@ -5640,7 +5641,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/ESocialTSVComponents.test.tsx` | 13 | S2300TSVInicio · renders trabalhador name · renders CPF · renders data de início … |
 | `src/components/__tests__/EntityPageContainer.test.tsx` | 13 | EntityPageContainer · renders page title and description · shows TableSkeleton when isLoading=true · shows SyncErrorState when error is present … |
 | `src/components/__tests__/MetasEtiquetas.test.tsx` | 13 | metasComum — tom do TIPO da meta · mapeia cada tipo real para o tom da sua família de cor · trata o tipo como texto livre: caixa/espaços não mudam o tom · joga o composto  … |
-| `src/components/__tests__/NewLoanDialog.test.tsx` | 13 | NewLoanDialog · renders Novo Empréstimo trigger button · renders Registrar Empréstimo Consignado title · renders Compliance L10.820 badge … |
 | `src/components/__tests__/TrabalhoHierarquiaTab.test.tsx` | 13 | TrabalhoHierarquiaTab · shows cargo from the cargos join when cargo_id is set · falls back to the plain text cargo column when cargo_id is not set · does not invent a gestor direto when supervisor_id is not set … |
 | `src/components/__tests__/desligamento-badges.test.tsx` | 13 | StatusBadge · renders  · renders  · renders  … |
 | `src/components/recrutamento/__tests__/PipelineBoard.test.tsx` | 13 | PipelineBoard — cinco etapas e cards ricos · renderiza as cinco colunas com a contagem e o card completo · abre o dossiê pelo card e pelo menu de ações · move a etapa pelo menu do card sem perder as opções … |
