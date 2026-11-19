@@ -167,3 +167,42 @@ Para cada símbolo que sobrar, o corte que decide é: o **arquivo** existe na `m
 absorção — compare o conteúdo. Se não existe, `git log origin/main -- <arquivo>` separa "foi mergeado e
 apagado de propósito" (leia a mensagem do commit de deleção) de "nunca chegou" (aí vale abrir o arquivo na
 cabeça da PR e medir capacidade por capacidade, como na seção 3).
+
+## 7. Por que a aba Auditoria de Admissões NÃO é um port de UI (medido no canônico, 2026-11-19)
+
+A §3.3(a) disse que a aba depende de "decidir a fonte do dado". Medido o banco, a resposta é mais dura:
+**o dado não existe ainda**, e portá-la agora entregaria a tela vazia — exatamente o que a #210 e a #471
+removeram deste sistema ("telas que mostravam sucesso falso", "card que mostrava dados inventados").
+
+Os três fatos, lidos do `frjbfeamybqsejlvmqbl`:
+
+| medição                | resultado                                                                                                                                                                                                                                                                                                                |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `audit_log` por tabela | `folhas_pagamento` 273, `registros_ponto` 120, `desligamentos` 69, `ferias` 28, `colaboradores` 21 … **`admissoes` 8**; **zero** linhas de `onboarding_colaborador`, `onboarding_tarefas` ou `esocial_eventos`                                                                                                           |
+| triggers de auditoria  | `admissoes` tem `audit_admissoes` → `log_audit_change` e `trigger_auditoria_admissao` → `registrar_auditoria_contratual`; `esocial_eventos` tem `tr_audit_esocial_transmission` → `log_esocial_transmission`. **`onboarding_colaborador` e `onboarding_tarefas` têm apenas trigger de `updated_at` — nenhuma auditoria** |
+| volume nos destinos    | `auditoria_logs` 317, **`auditoria_contratual` 0**, **`esocial_eventos` 0**, `admissoes` 8, `onboarding_colaborador` 6, `onboarding_tarefas` 27                                                                                                                                                                          |
+
+E há um quarto fato, que é o que realmente trava a tela:
+
+- `public.log_audit_change` **nunca preenche `empresa_id`** (`INSERT INTO public.audit_log (tabela,
+registro_id, acao, …, user_id, user_email)` — a coluna não entra em nenhum dos três ramos), então todas as
+  linhas nascem com tenant nulo;
+- e `audit_log` só tem leitura para **admin** (`is_admin(auth.uid())`) ou para **o próprio autor da ação**
+  (`user_id = auth.uid()`). Não existe leitura por empresa para RH ou gestor.
+
+Ou seja: mesmo que a trilha de admissões fosse gravada, o RH não conseguiria ler a trilha dos outros. A aba
+da muri não é uma camada de apresentação faltando — é a ponta visível de três lacunas de back end.
+
+**Sequência correta, nesta ordem:**
+
+1. **passar a gravar** — trigger de auditoria em `onboarding_colaborador` e `onboarding_tarefas` usando o
+   `log_audit_change` que já existe. Não muda acesso de ninguém, e o dado começa a acumular;
+2. **dar tenant ao registro** — preencher `empresa_id` em `log_audit_change` (ou um variante tenant-aware) e
+   abrir leitura por empresa para RH/gestor em `audit_log`. **Isto é decisão do dono, não minha:** mexe na
+   regra de leitura de uma tabela que carrega PII e que já teve policy `USING (true)` no passado
+   (`AUDITORIA.md:85`);
+3. **só então** portar a camada da muri (`auditoriaComum.ts` + `auditoriaDerivacoes.ts` +
+   `AuditoriaAdmissoesContent.tsx`), mapeando `audit_log` → `EventoAuditoria`.
+
+Enquanto o passo 2 não for decidido, portar a tela produz uma lista vazia com filtros bonitos. Fica parada
+de propósito, registrada aqui.
