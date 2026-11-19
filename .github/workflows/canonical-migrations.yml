@@ -134,40 +134,38 @@ jobs:
           # Versões já presentes no ledger do canônico são puladas: um
           # re-dispatch do mesmo lote não pode re-executar as migrações.
           applied="$(psql "$SUPABASE_DB_URL" -X -At -c "SELECT version FROM supabase_migrations.schema_migrations")"
-          # LOTE ATUAL: uma migration que garante isolamento multi-tenant por
-          #   banco nas tabelas de RH. SOMENTE DDL — nao apaga nem altera linha.
-          #   Medido em 18/11/2026: empresa_id era uuid NULLABLE em colaboradores,
-          #   folhas_pagamento, despesas, contas_bancarias, ferias, beneficios,
-          #   asos, batidas_ponto e desligamentos, com 0 linhas orfas em TODAS as
-          #   9. Ou seja: a tabela de rescisao (salario, valor liquido, hashes de
-          #   assinatura) nao tinha dono garantido por banco.
-          #  - 20261118160000_empresa_id_not_null_rh: SET NOT NULL nas 9.
+          # LOTE ATUAL: tres migrations. SOMENTE DDL — nao apaga nem altera linha.
           #
-          #   Termina o trabalho de duas migrations orfas sem levar o risco delas:
-          #   a 20260719191000 e DDL correto mas lista 'rescisoes' (tabela
-          #   inexistente) em vez de 'desligamentos' — erro de digitacao que
-          #   deixou a rescisao de fora; a 20260724000200 conserta isso mas na
-          #   linha 19 faz DELETE FROM desligamentos WHERE empresa_id IS NULL.
-          #   Hoje o DELETE atinge 0 de 2 linhas, mas apagaria uma rescisao com
-          #   salario sem backup se uma orfa nascer entre a medicao e o apply.
-          #   Esta migration verifica orfas PRIMEIRO e ABORTA nomeando tabela e
-          #   contagem, em vez de apagar. O sidecar prende isso: a assercao 3
-          #   exige que desligamentos continue com >= 2 linhas.
-          #   Ver docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md §18.
+          #  - 20261020120000_ninebox_permissoes_homologacao_versiona_tabela:
+          #    versiona ninebox_permissoes_homologacao, que existia SO em
+          #    producao (4 colunas, RLS ligada, 0 policies — medido em
+          #    18/11/2026). CREATE TABLE IF NOT EXISTS: em producao e no-op e
+          #    serve para registrar a versao no ledger; numa reconstrucao e o
+          #    que faz a tabela existir antes do preflight da 20261115150000.
+          #    Por isso a versao tem de ficar ANTES de 20261027090000. PR #708.
           #
-          #   beneficios ENTRA no lote. Eu havia tirado por achar que o NOT NULL
-          #   quebraria o cadastro de plano de beneficio; a Devin Review mostrou
-          #   que o supabase do front e Proxy para o external-db-bridge, e o
-          #   gateway ja recusa esse insert com 403 TENANT_SCOPE_REQUIRED desde
-          #   julho (validation.ts:105-110). Nao ha regressao a introduzir — ha um
-          #   botao que ja falha hoje, consertado em outra PR. Ver §18.2.
+          #  - 20261118223000_whatsapp_config_repoe_policy_admin_rh: a api_key da
+          #    Evolution API estava legivel e gravavel por QUALQUER vinculado a
+          #    empresa. Producao tinha uma unica policy, "Empresas gerenciam seu
+          #    proprio WhatsApp" (PERMISSIVE, role public, FOR ALL), com qual que
+          #    so exige vinculo em user_empresas. As versoes 20261012150000 e
+          #    20261013120000 estao no ledger mas a policy antiga esta de volta:
+          #    o estado foi reposto do baseline 20260831_canonical, que carrega a
+          #    permissiva. Como aquelas versoes ja constam no ledger, o step de
+          #    stage as pula — o conserto tem de ser versao nova. PR #710.
           #
-          #   dependentes e holerites NAO entram: nao tem a coluna em producao.
-          #   registros_ponto e admissoes tambem nao: nunca estiveram na lista
-          #   original e nao foram medidas.
+          #  - 20261118235000_consignado_margem_consignavel_trigger: a edge
+          #    emprestimo-consignado recusa parcela acima de 35% do salario
+          #    (index.ts:140-146), mas DescontosPage.tsx:74 grava direto na
+          #    tabela com a parcela digitada. A guarda vira trigger BEFORE
+          #    INSERT OR UPDATE, valendo para todo caminho de escrita. Medido
+          #    antes: 6 colaboradores com consignado ativo, NENHUM acima da
+          #    margem — nenhuma linha existente fica travada. PR #711.
           #
-          # O lote anterior (20260724000500 + 20260724001200, armadilha de
-          # public.faltas) saiu daqui porque foi APLICADO e esta no ledger:
+          # O lote anterior (20261118160000_empresa_id_not_null_rh) saiu daqui
+          # porque foi APLICADO e esta no ledger (conferido em 18/11/2026 em
+          # supabase_migrations.schema_migrations). O anterior a ele
+          # (20260724000500 + 20260724001200, armadilha de public.faltas) tambem:
           # validate run 44333923501, apply run 44334121411 e verify run
           # 44334327820 (ledger OK nas duas versoes + CANONICAL_VERIFY_OK).
           #
@@ -177,7 +175,9 @@ jobs:
           # supabase/migrations/ (o workflow prefixa; caminho completo gera
           # "supabase/migrations/supabase/migrations/..." e o sidecar nao e achado).
           for migration in \
-            20261118160000_empresa_id_not_null_rh.sql
+            20261020120000_ninebox_permissoes_homologacao_versiona_tabela.sql \
+            20261118223000_whatsapp_config_repoe_policy_admin_rh.sql \
+            20261118235000_consignado_margem_consignavel_trigger.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -348,7 +348,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 1 &&
+              Number(r.ledger_count) === 3 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
