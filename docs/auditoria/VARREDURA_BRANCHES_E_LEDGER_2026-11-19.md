@@ -105,3 +105,45 @@ higiene, a aplicar pelo canal canônico depois do lote atual.
   pelo ambiente. O workflow foi escrito pelo MCP do GitHub (caminho que o
   `AGENTS.md` §7 manda usar) e validado pelo job
   `Lint de workflows (actionlint)` do CI, que passou na PR #712.
+
+## 6. Branches que só existiam no clone local (fechamento de 19/11/2026)
+
+O remoto tem 4 refs (`main`, `contexto`, `computador_local` e a branch da PR
+#720). O clone local desta sessão guardava ainda **34** branches de agentes de
+sessões anteriores. Como squash-merge reescreve o SHA, `git rev-list
+origin/main..branch` acusa commits "fora da main" em todas elas — medida inútil.
+A conferência foi por **conteúdo**: para cada branch, os arquivos que ela tocou
+desde o merge-base, comparados com a `main`.
+
+| Resultado                           | Branches                         | Leitura                            |
+| ----------------------------------- | -------------------------------- | ---------------------------------- |
+| conteúdo idêntico à `main`          | 17                               | incorporada                        |
+| sem arquivo tocado                  | 2 (`_probe`, a branch da sessão) | nada a recuperar                   |
+| só atrás da `main` (0 linha a mais) | 4                                | incorporada, `main` seguiu adiante |
+| com linha ausente na `main`         | 11                               | analisadas uma a uma, abaixo       |
+
+As 11 com linha ausente se dividem em três grupos, nenhum deles perda:
+
+1. **Lista rotativa do lote canônico** (6 branches): divergem só em
+   `.github/workflows/canonical-migrations.yml` e `scripts/canonical-invariants.sql`,
+   que são substituídos a cada rodada por desenho (`docs/agentes/banco.md:44`).
+   As linhas "ausentes" são lotes antigos já aplicados.
+2. **Afirmação retratada depois** (4 branches): as linhas que faltam são
+   exatamente as frases que os commits `fix-retrata-*` derrubaram — "as 52 estão
+   aplicadas em produção", "o maior risco aberto: policy para role `public`",
+   "Lote 1 — funcionalidade morta", "as 70 são contíguas #607 a #680". A `main`
+   não as tem porque estavam erradas; repô-las seria reintroduzir afirmação falsa.
+3. **Código superado por versão melhor** (1 branch):
+   `claude/fix-gate-rls-bypasses-261118-0515` traz a guarda de RLS em três
+   passadas de regex; a `main` tem o tokenizador de passada única que a
+   substituiu (`scripts/audit-migration-style.mjs`), com as mesmas três fugas
+   fechadas e mais uma.
+
+Conferido também o caso oposto, de a `main` estar à frente: a branch
+`claude/feat-alertas-rh-dashboard-261118-1945` não tem o
+`AlertasPreditivosWidget` que a `main` já renderiza em
+`src/components/dashboard/AnalyticsSection.tsx`.
+
+**Conclusão:** nenhuma branch, local ou remota, guarda trabalho de agente
+ausente da `main`. A única exceção é a PR #720, aberta e aguardando o dono por
+ser caminho de code owner.
