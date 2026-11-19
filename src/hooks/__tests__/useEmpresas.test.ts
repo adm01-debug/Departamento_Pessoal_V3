@@ -70,7 +70,7 @@ function createWrapper() {
     React.createElement(QueryClientProvider, { client: qc }, children);
 }
 
-import { useEmpresas, useEmpresaStore } from '../useEmpresas';
+import { compararOrdemExibicao, useEmpresas, useEmpresaStore } from '../useEmpresas';
 
 describe('useEmpresas', () => {
   let empresasChain: ReturnType<typeof buildSelectChain>;
@@ -211,5 +211,83 @@ describe('useEmpresas', () => {
       'Apenas administradores'
     );
     expect(mockRpc).not.toHaveBeenCalledWith('admin_associar_usuario_empresa', expect.anything());
+  });
+
+  // Vínculo em duas empresas e NENHUMA com is_default: antes a abertura saía de
+  // `userEmpresas[0]`, a ordem do RPC get_my_user_empresas, que não tem ORDER BY
+  // — então mudava de login para login. Agora sai de `ordem_exibicao`.
+  describe('empresa de abertura sem is_default', () => {
+    const empresaOrdem1 = { ...sampleEmpresa, id: 'emp-1', razao_social: 'Zeta Operacional Ltda', ordem_exibicao: 1 };
+    const empresaOrdem9 = { ...sampleEmpresa, id: 'emp-9', razao_social: 'Alfa Descartavel Ltda', ordem_exibicao: 9 };
+
+    function montarComVinculosSemPadrao(ordemDoRpc: string[]) {
+      empresasChain = buildSelectChain([empresaOrdem9, empresaOrdem1]);
+      mockRpc.mockResolvedValue({
+        data: ordemDoRpc.map((id, i) => ({
+          id: `ue-${i}`,
+          user_id: 'user-1',
+          empresa_id: id,
+          is_default: false,
+          created_at: '2024-01-01',
+        })),
+        error: null,
+      });
+      mockFrom.mockImplementation((table: string) => {
+        if (table === 'empresas') return empresasChain;
+        return buildSelectChain([]);
+      });
+    }
+
+    it('abre na de menor ordem_exibicao, não na primeira que o RPC devolveu', async () => {
+      montarComVinculosSemPadrao(['emp-9', 'emp-1']);
+      const { result } = renderHook(() => useEmpresas(), { wrapper: createWrapper() });
+
+      await waitFor(() => expect(result.current.empresaAtual?.id).toBe('emp-1'));
+      expect(result.current.empresaAtual?.razao_social).toBe('Zeta Operacional Ltda');
+    });
+
+    it('mesma empresa quando o RPC devolve na ordem inversa (determinismo)', async () => {
+      montarComVinculosSemPadrao(['emp-1', 'emp-9']);
+      const { result } = renderHook(() => useEmpresas(), { wrapper: createWrapper() });
+
+      await waitFor(() => expect(result.current.empresaAtual?.id).toBe('emp-1'));
+    });
+
+    it('is_default continua vencendo a ordem_exibicao', async () => {
+      empresasChain = buildSelectChain([empresaOrdem9, empresaOrdem1]);
+      mockRpc.mockResolvedValue({
+        data: [
+          { id: 'ue-0', user_id: 'user-1', empresa_id: 'emp-1', is_default: false, created_at: '2024-01-01' },
+          { id: 'ue-1', user_id: 'user-1', empresa_id: 'emp-9', is_default: true, created_at: '2024-01-01' },
+        ],
+        error: null,
+      });
+      mockFrom.mockImplementation((table: string) => {
+        if (table === 'empresas') return empresasChain;
+        return buildSelectChain([]);
+      });
+      const { result } = renderHook(() => useEmpresas(), { wrapper: createWrapper() });
+
+      await waitFor(() => expect(result.current.empresaAtual?.id).toBe('emp-9'));
+    });
+  });
+
+  describe('compararOrdemExibicao', () => {
+    const comOrdem = (ordem: number | null, razao = 'Empresa X Ltda') =>
+      ({ ...sampleEmpresa, ordem_exibicao: ordem, razao_social: razao }) as Parameters<typeof compararOrdemExibicao>[0];
+
+    it('ordena pela ordem_exibicao crescente', () => {
+      expect(compararOrdemExibicao(comOrdem(1), comOrdem(9))).toBeLessThan(0);
+      expect(compararOrdemExibicao(comOrdem(9), comOrdem(1))).toBeGreaterThan(0);
+    });
+
+    it('joga ordem_exibicao nula para o fim', () => {
+      expect(compararOrdemExibicao(comOrdem(null), comOrdem(9))).toBeGreaterThan(0);
+      expect(compararOrdemExibicao(comOrdem(9), comOrdem(null))).toBeLessThan(0);
+    });
+
+    it('empate em ordem_exibicao cai no nome', () => {
+      expect(compararOrdemExibicao(comOrdem(0, 'Alfa Ltda'), comOrdem(0, 'Zeta Ltda'))).toBeLessThan(0);
+    });
   });
 });
