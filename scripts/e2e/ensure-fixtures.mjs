@@ -148,6 +148,82 @@ async function main() {
     if (cfgInsErr) throw cfgInsErr;
   }
 
+  // Recrutamento - o E2E do Pipeline (recrutamento-pipeline*.spec.ts) abre a
+  // aba Pipeline na vaga de maior id e precisa de, no minimo, 1 vaga + cards em
+  // triagem/entrevista. Idempotente igual aos blocos acima: nada e recriado se
+  // ja existir para a empresa.
+  const candidatosSeed = [
+    { nome: 'Mariana Alves Rodrigues', cpf: '00000000353' },
+    { nome: 'Bruno Carvalho Mendes', cpf: '00000000434' },
+    { nome: 'Diego Nascimento Lima', cpf: '00000000515' },
+  ];
+  const candidatosIds = [];
+  for (const cand of candidatosSeed) {
+    const { data: existente, error: selCandErr } = await client
+      .from('candidatos')
+      .select('id')
+      .eq('empresa_id', empresaId)
+      .eq('cpf', cand.cpf)
+      .maybeSingle();
+    if (selCandErr) throw selCandErr;
+    if (existente) {
+      candidatosIds.push(existente.id);
+      continue;
+    }
+    const { data: criado, error: insCandErr } = await client
+      .from('candidatos')
+      .insert({ empresa_id: empresaId, nome: cand.nome, cpf: cand.cpf, origem: 'site' })
+      .select('id')
+      .single();
+    if (insCandErr) throw insCandErr;
+    candidatosIds.push(criado.id);
+  }
+
+  const { data: vaga, error: vagaSelErr } = await client
+    .from('vagas')
+    .select('id')
+    .eq('empresa_id', empresaId)
+    .eq('titulo', 'Desenvolvedor(a) Full Stack Senior')
+    .maybeSingle();
+  if (vagaSelErr) throw vagaSelErr;
+  let vagaId = vaga?.id;
+  if (!vagaId) {
+    const { data: criada, error: vagaInsErr } = await client
+      .from('vagas')
+      .insert({
+        empresa_id: empresaId,
+        titulo: 'Desenvolvedor(a) Full Stack Senior',
+        departamento: 'Tecnologia',
+        requisitos: 'React, TypeScript, Node.js, AWS',
+        status: 'aberta',
+      })
+      .select('id')
+      .single();
+    if (vagaInsErr) throw vagaInsErr;
+    vagaId = criada.id;
+  }
+
+  const etapasCandidaturas = ['triagem', 'triagem', 'entrevista'];
+  for (let k = 0; k < candidatosIds.length; k += 1) {
+    const { data: candidatura } = await client
+      .from('candidaturas')
+      .select('id')
+      .eq('vaga_id', vagaId)
+      .eq('candidato_id', candidatosIds[k])
+      .maybeSingle();
+    if (!candidatura) {
+      const { error: candInsErr } = await client
+        .from('candidaturas')
+        .insert({
+          vaga_id: vagaId,
+          candidato_id: candidatosIds[k],
+          etapa: etapasCandidaturas[k],
+          status: 'em_andamento',
+        });
+      if (candInsErr) throw candInsErr;
+    }
+  }
+
   await client.auth.signOut({ scope: 'local' });
   console.log(`✅ Fixtures do E2E autenticado garantidos para a empresa ${empresaId}.`);
 }
