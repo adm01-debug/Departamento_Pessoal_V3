@@ -2,6 +2,13 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-19 12:19 UTC
+
+- **functions** adicionado (1): `public.ferias_bloquear_aprovacao_rh_sem_rh()`
+- **functions** alterado (3): `public.fn_consignado_valida_margem()`, `public.pode_gerir_pessoas(_empresa_id uuid)`, `public.pode_gerir_rh(_empresa_id uuid)`
+- **policies (RLS)** adicionado (1): `public.ferias.ferias_gestor_update`
+- **triggers** adicionado (1): `public.ferias.trg_ferias_bloquear_aprovacao_rh_sem_rh`
+
 ## 2026-11-19 02:18 UTC
 
 - **functions** adicionado (1): `public.pagar_desligamento(_desligamento_id uuid, _comprovante_url text, _actor_id uuid)`

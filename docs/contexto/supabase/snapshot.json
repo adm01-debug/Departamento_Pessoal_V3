@@ -93795,6 +93795,43 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.ferias.trg_ferias_bloquear_aprovacao_rh_sem_rh"
+          ],
+          "views": []
+        },
+        "comment": "Guarda de coluna para public.ferias: com ferias_gestor_update (RLS e por linha), impede que gestor forje a aprovacao do RH ou a assinatura do aviso. Ver 20261119140000.",
+        "config": [
+          "search_path=pg_catalog, public, pg_temp"
+        ],
+        "definition": null,
+        "definition_sha": "ced058d7e5d3d7a6",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "ferias_bloquear_aprovacao_rh_sem_rh",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
               "file": "supabase/migrations/20260912143344_p1_function_search_path.sql",
               "hits": 1
             },
@@ -94438,9 +94475,13 @@
             {
               "file": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.verify.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [
@@ -94448,12 +94489,12 @@
           ],
           "views": []
         },
-        "comment": "Aplica a margem consignável de 35% do salario_base em emprestimos_consignados, independente do caminho de escrita (tela, edge, MCP).",
+        "comment": "Aplica o teto de 30% do salario_base para emprestimo consignado (Lei 10.820 art. 1 §1, faixa do emprestimo; os outros 5% dos 35% totais sao exclusivos do cartao consignado), independente do caminho de escrita (tela, edge, MCP).",
         "config": [
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "5f6a8fb750a9367a",
+        "definition_sha": "14f34967de79d95e",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
@@ -99768,9 +99809,13 @@
             {
               "file": "supabase/migrations/20261114000600_rls_escrita_por_papel.verify.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261119130000_ferias_gestor_update.sql",
+              "hits": 3
             }
           ],
-          "code_total_files": 15,
+          "code_total_files": 16,
           "cron": [],
           "db": [
             "public.bloquear_aprovacao_ponto_sem_rh",
@@ -99976,9 +100021,13 @@
             {
               "file": "supabase/migrations/20261118223000_whatsapp_config_repoe_policy_admin_rh.sql",
               "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261119130000_ferias_gestor_update.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 29,
+          "code_total_files": 31,
           "cron": [],
           "db": [
             "public.admin_definir_pin_quiosque",
@@ -99988,6 +100037,7 @@
             "public.decrypt_dados_bancarios_tenant",
             "public.enforce_report_schedule_authorship",
             "public.fail_admission_esocial_event",
+            "public.ferias_bloquear_aprovacao_rh_sem_rh",
             "public.garantir_rubrica_suspensao",
             "public.gerar_canonical_espelho_ponto",
             "public.gerar_rubricas_ferias",
@@ -141951,6 +142001,18 @@
         "with_check": null
       },
       {
+        "cmd": "UPDATE",
+        "name": "ferias_gestor_update",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "ferias",
+        "using": "pode_gerir_pessoas(empresa_id)",
+        "with_check": "pode_gerir_pessoas(empresa_id)"
+      },
+      {
         "cmd": "ALL",
         "name": "ferias_rh_manage",
         "permissive": "PERMISSIVE",
@@ -155765,6 +155827,17 @@
         "function": "public.enforce_ferias_hash",
         "level": "ROW",
         "name": "trg_enforce_ferias_hash",
+        "schema": "public",
+        "status": "enabled",
+        "table": "ferias",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_ferias_bloquear_aprovacao_rh_sem_rh BEFORE UPDATE ON ferias FOR EACH ROW EXECUTE FUNCTION ferias_bloquear_aprovacao_rh_sem_rh()",
+        "events": "UPDATE",
+        "function": "public.ferias_bloquear_aprovacao_rh_sem_rh",
+        "level": "ROW",
+        "name": "trg_ferias_bloquear_aprovacao_rh_sem_rh",
         "schema": "public",
         "status": "enabled",
         "table": "ferias",

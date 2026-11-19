@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 3 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -145,6 +145,16 @@
 | USING | `pode_gerir_pessoas(empresa_id)` |
 | WITH CHECK |  |
 
+### `ferias_gestor_update`
+
+| campo | valor |
+|---|---|
+| comando | UPDATE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `pode_gerir_pessoas(empresa_id)` |
+| WITH CHECK | `pode_gerir_pessoas(empresa_id)` |
+
 ### `ferias_rh_manage`
 
 | campo | valor |
@@ -166,6 +176,7 @@
 | ferias_status_transition | BEFORE | UPDATE | ROW | enabled | public.trg_ferias_status_transition |
 | tr_update_ferias_status | BEFORE | INSERT OR UPDATE | ROW | enabled | public.fn_update_ferias_status_by_date |
 | trg_enforce_ferias_hash | BEFORE | INSERT OR UPDATE | ROW | enabled | public.enforce_ferias_hash |
+| trg_ferias_bloquear_aprovacao_rh_sem_rh | BEFORE | UPDATE | ROW | enabled | public.ferias_bloquear_aprovacao_rh_sem_rh |
 | trg_ferias_gerar_rubricas | AFTER | UPDATE | ROW | enabled | public.trg_ferias_gerar_rubricas |
 | trg_ferias_validar_aquisitivo | BEFORE | INSERT OR UPDATE | ROW | enabled | public.trg_ferias_validar_aquisitivo |
 | trg_ferias_validar_inicio | BEFORE | INSERT OR UPDATE | ROW | enabled | public.trg_ferias_validar_inicio |

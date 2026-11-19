@@ -155,7 +155,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.feedbacks_360_operacoes](tables/public/feedbacks_360_operacoes.md) | table | sim | 1 | 7 | não |  |
 | [public.feedbacks_360_validacoes_potencial](tables/public/feedbacks_360_validacoes_potencial.md) | table | sim | 1 | 10 | não |  |
 | [public.feriados](tables/public/feriados.md) | table | sim | 1 | 8 | não |  |
-| [public.ferias](tables/public/ferias.md) | table | sim | 2 | 68 | não |  |
+| [public.ferias](tables/public/ferias.md) | table | sim | 3 | 68 | não |  |
 | [public.ferias_aprovacoes](tables/public/ferias_aprovacoes.md) | table | sim | 1 | 9 | não |  |
 | [public.ferias_aprovacoes_log](tables/public/ferias_aprovacoes_log.md) | table | sim | 1 | 7 | não |  |
 | [public.ferias_arquivos](tables/public/ferias_arquivos.md) | table | sim | 1 | 7 | não |  |

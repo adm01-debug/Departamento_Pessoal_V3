@@ -244,6 +244,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.feedbacks_360_validacoes_potencial | fvp_select | SELECT | PERMISSIVE | authenticated | `(pode_gerir_avaliacoes() AND (empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas)))` |  |
 | public.feriados | tenant_feriados | ALL | PERMISSIVE | authenticated | `(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))` | `(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))` |
 | public.ferias | ferias_gestor_read | SELECT | PERMISSIVE | authenticated | `pode_gerir_pessoas(empresa_id)` |  |
+| public.ferias | ferias_gestor_update | UPDATE | PERMISSIVE | authenticated | `pode_gerir_pessoas(empresa_id)` | `pode_gerir_pessoas(empresa_id)` |
 | public.ferias | ferias_rh_manage | ALL | PERMISSIVE | authenticated | `pode_gerir_rh(empresa_id)` | `pode_gerir_rh(empresa_id)` |
 | public.ferias_aprovacoes | tenant_ferias_aprovacoes | ALL | PERMISSIVE | authenticated | `(ferias_id IN ( SELECT ferias.id    FROM ferias   WHERE (ferias.empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))))` | `(ferias_id IN ( SELECT ferias.id    FROM ferias   WHERE (ferias.empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))))` |
 | public.ferias_aprovacoes_log | Acesso aos logs de aprovação | SELECT | PERMISSIVE | public | `(auth.uid() IN ( SELECT user_roles.user_id    FROM user_roles   WHERE (user_roles.role = ANY (ARRAY['admin'::app_role, 'rh'::app_role, 'gestor'::app_role]))))` |  |

@@ -36,12 +36,12 @@ BEGIN
     AND e.status = 'ativo'
     AND (NEW.id IS NULL OR e.id <> NEW.id);
 
-  v_margem := round(v_salario * 0.35, 2);
+  v_margem := round(v_salario * 0.30, 2);
 
   IF v_comprometido + COALESCE(NEW.valor_parcela, 0) > v_margem THEN
     -- Mensagem sem termo que o filtro de src/utils/safeError.ts esconde, para
     -- que o RH leia o motivo real no toast da tela.
-    RAISE EXCEPTION 'Parcela excede a margem consignável de 35%% do salário: já comprometido R$ %, limite R$ %',
+    RAISE EXCEPTION 'Parcela excede a margem de empréstimo consignável de 30%% do salário: já comprometido R$ %, limite R$ %',
       to_char(v_comprometido, 'FM999999990.00'),
       to_char(v_margem, 'FM999999990.00');
   END IF;
