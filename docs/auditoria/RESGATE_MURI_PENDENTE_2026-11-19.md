@@ -396,3 +396,206 @@ credencial real contra o canônico.
 **Veredito: descarte correto.** Somar um teste de navegador não verificável ao portão da `main`, para um
 contrato que 48 casos unitários já provam, é risco sem ganho. Se o dono quiser cobertura de navegador nessas
 duas áreas, é decisão com custo (dispatch a partir da `main`, credencial real) e vira tarefa própria.
+
+## 9. Varredura exaustiva por SÍMBOLO (2026-11-19, depois da #746) — o universo de branches fechado
+
+As seções 3 e 8 compararam a muri com a `main` por **caminho de arquivo**. Isso subestima e superestima ao
+mesmo tempo: a `main` reaproveitou a muri renomeando arquivos, então caminho diferente não significa
+funcionalidade ausente — e `git diff` de três pontos marca como "adicionado na muri" o que a `main` também
+adicionou por conta própria (foi o que inflou uma contagem anterior de 117 para 577).
+
+Esta seção fecha o universo por um critério que renomeação não quebra: **símbolo exportado**.
+
+### 9.1 Método (reproduzível)
+
+```sh
+# arvore da muri extraida para fora do repo
+git archive pr/546 src supabase/functions | tar -x -C /tmp/muri
+# extrai `export (function|const|class|interface|type|enum) <nome>` dos dois lados
+# e subtrai; mock, teste e asset nao contam como funcionalidade
+```
+
+| Medida                                                                                | Valor                   |
+| ------------------------------------------------------------------------------------- | ----------------------- |
+| Símbolos exportados na muri (produção, sem mock/teste)                                | 3.331                   |
+| Símbolos exportados na `main` (inclusive teste e edge)                                | 3.651                   |
+| **Ausentes da `main` por nome**                                                       | **224**, em 58 arquivos |
+| Descartados por regra já estabelecida (mock: PRs #210/#471) + resolvidos nesta sessão | 185                     |
+| **Triados um a um**                                                                   | **39**                  |
+
+Arquivo × árvore (não três pontos): **117** caminhos existem só na muri — 31 componentes, 14 assets,
+13 migrations, 13 mocks, 9 serviços, 5 utils, 5 hooks, 4 edge, 3 lib, 2 calculators, 4 specs e avulsos.
+
+### 9.2 Resultado da triagem dos 39 símbolos de produção
+
+**Zero funcionalidade perdida.** 14 incorporados sob outro nome, 25 obsoletos — e **11 destes já eram código
+morto dentro da própria muri** (nenhum importador lá). Em dois casos a `main` é melhor: a provisão da muri
+usava alíquota fixa 0,348 (`provisoesService.ts:13`) contra cálculo por regime tributário em
+`supabase/functions/calcular-provisoes/index.ts:22-54`; e `metabaseService.ts:69` lia
+`VITE_METABASE_SECRET_KEY` **no browser**.
+
+Amostra dos vereditos com evidência:
+
+| Símbolo da muri           | Veredito    | Onde está / por quê                                                                                       |
+| ------------------------- | ----------- | --------------------------------------------------------------------------------------------------------- |
+| `calcularFolhaCompleta`   | INCORPORADO | `supabase/functions/calcular-folha/index.ts:451-556`, com INSS/IRRF por competência em `_shared/`         |
+| `cnabLayoutService`       | INCORPORADO | era wrapper puro; `CNABDialog.tsx:150` chama `cnabService.ts:225` direto                                  |
+| `maskPixKey`              | INCORPORADO | virou `maskGeneric` (`piiMask.ts:38-42`) + despacho por tipo em `usePiiMask.ts:25-31`, com gate por papel |
+| `gerarEventosMensais`     | INCORPORADO | era stub (`dados: {}`); real em `esocialService.ts:303-398`, ligado ao botão em `ESocialPage.tsx:238`     |
+| `HeadcountOverviewCard`   | INCORPORADO | resgatado nome a nome em `useExecutiveDashboard.ts:34,54` (o próprio arquivo cita a muri)                 |
+| `FGTSDigitalDashboard`    | OBSOLETO    | números hardcoded (`:65-73`); real em `ObrigacoesFiscaisPage.tsx:208-252` + `gerar-guias`                 |
+| `ESocialAIInsights`       | OBSOLETO    | conteúdo inventado; remoção travada por teste em `ESocialSemDadosFicticios.test.tsx:67-80`                |
+| `dominioAlterdataService` | OBSOLETO    | client HTTP no browser com `clientSecret`; nunca integrado nem na muri                                    |
+| `useStableCallback`       | OBSOLETO    | `useCallback(cb, [])` ignorando as deps recebidas — helper com bug                                        |
+| `pontoSchema`             | OBSOLETO    | `main` valida por allowlist (`GestaoRegistrosPonto.tsx:96` + `tableColumns.ts`)                           |
+
+Os 3 arquivos de backend exclusivos da muri: `enviar-esocial/signer.ts` era **mock** (`assinaturaMock`,
+`CERTIFICADO_MOCK`) e já era morto lá (o `index.ts` importava `./utils/signer.ts`), e a `main` tem o
+equivalente honestamente nomeado `assinarXmlSandboxNaoHomologado`; `metabase-embed/index.ts` nunca foi
+registrada no `config.toml` nem na muri; `esocialValidators.ts` era shim `@deprecated` de 9 linhas.
+
+### 9.3 Migrations da muri sem arquivo na `main` (13)
+
+6 estão aplicadas sob **outro número** (`atomic_rate_limit_rpc` → `20260724120001`,
+`codex_p1_function_overload_and_auth_gap` → `20260724130004`, `p2_037_deprecate_legacy_tables` →
+`20260818000001`, `document_upload_storage_columns` → `20261117170300`,
+`storage_documentos_delete_tenant_scope` → `20261117170000`, `onboarding_audit_trigger` →
+`20261117170100`). Das 7 restantes, nenhuma está no ledger, e o estado foi conferido objeto por objeto:
+
+| Versão da muri                                    | Veredito                                                                                                                                 |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `20260724140000_t007_backup_logs_rls`             | OBSOLETO — `public.backup_logs` **não existe** (391 tabelas, sem truncamento)                                                            |
+| `20260819000000_p0_fix_user_empresa_id_rls`       | ESTADO PRESENTE — `user_empresa_id()` existe; `main` chega mais estrito em `20260912190000:51-64`, **sem** o fallback de `user_metadata` |
+| `20260820000000_p0_fix_auditoria_rpc`             | ESTADO PRESENTE — e a policy `audit_log_all` (`USING(true)`) da muri **não** existe, corretamente: abriria a trilha de todas as empresas |
+| `20260821000000_p0_rls_dashboard_audit`           | ESTADO PRESENTE — 10 das 13 policies verbatim; 3 substituídas por versão **mais estreita** (`*_rh_manage`)                               |
+| `20261005000000_onboarding_kits_rls_additive`     | ESTADO PRESENTE — rejeição documentada na issue #628: as 3 policies da muri **ampliariam** o escopo                                      |
+| `20261005020000_onboarding_modelo_b_convergencia` | **ESTADO AUSENTE** — resgatada na PR #747                                                                                                |
+| `20261026090000_ciclos_exclusao_autorizada`       | ESTADO PRESENTE — trigger, função e policies vivos via `20261027090000`                                                                  |
+
+**Conclusão que inverte a intuição:** aplicar hoje as versões da muri para `audit_log`, para as 13
+`*_tenant_select` e para os kits de onboarding seria **afrouxar** isolamento multi-tenant, não corrigir.
+A versão da muri de `20260821000000` somava `OR empresa_id IS NULL OR auth.jwt()->>'role' IN (...)`, e
+policies permissivas combinam por **OR**.
+
+### 9.4 Universo de branches — fechado
+
+| Branch             | Veredito              | Prova                                                                                                      |
+| ------------------ | --------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `computador_local` | zero conteúdo próprio | `git merge-base --is-ancestor` passa; aponta para o merge da #744                                          |
+| `contexto`         | zero código           | órfã, sem base comum; 859 arquivos = 857 docs gerados + `vercel.json`/`README` **reduzidos**. Nunca fechar |
+| `pr/546` (muri)    | triada por símbolo    | 9.1–9.3                                                                                                    |
+
+### 9.5 O que esta sessão ainda NÃO provou
+
+- **Corpo de função e ACL**: nenhuma ferramenta MCP devolve `prosrc` ou privilégio de função, e
+  `supabase_db_query` está quebrado (vazio até para `select 1`); `pg_policies` não passa pelo PostgREST.
+  Mitigação real, não promessa: o job "Integridade do banco canônico (live)" (`ci.yml:478`) roda em **toda PR
+  interna** com role somente-leitura e inclui `audit-rls-tenant-open.mjs` (lê a expressão das policies e marca
+  o padrão traiçoeiro `empresa_id IS NOT NULL`, `:53`) e `audit-secdef-authz.mjs` (lê `prosecdef`, `prosrc` e
+  `has_function_privilege` para anon/authenticated, `:162-165`). Verde no merge da #746.
+- **Comportamento com dado real na tela**: a aba de Auditoria foi confirmada em produção por requisição HTTP
+  ao bundle servido (placeholder antigo com 0 ocorrências, `get_audit_trail` presente, zero
+  `from('audit_log')`), mas ninguém a abriu autenticado.
+
+## 10. Deriva ledger × repositório (2026-11-19) — o achado maior desta sessão
+
+A §9 fechou a muri. Esta seção é sobre coisa diferente e mais grave, que apareceu porque o check
+"Supabase Preview" reprovou na `main` com `Remote migration versions not found in local migrations directory`.
+
+### 10.1 Os números
+
+| Medida                                                                  | Valor                                                               |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Versões no ledger do canônico (`supabase_migrations.schema_migrations`) | 1.109                                                               |
+| Arquivos de migration na `main`                                         | 834                                                                 |
+| Versões no ledger **sem arquivo** na `main`                             | 316 — todas com `name` nulo, de 2026-05-11 a 2026-07-29 (bootstrap) |
+| Arquivos na `main` **sem versão** no ledger                             | 41 (37 nunca aplicadas, 4 renumeradas)                              |
+| **Versões cujo arquivo na `main` é um stub no-op**                      | **30**                                                              |
+
+As 30 são o problema. O arquivo existe (`<versao>_placeholder_ledger_remoto.sql`, 33 deles no repo, byte-idênticos,
+712 bytes), o check do Supabase passa a enxergar "fonte local", e o DDL de verdade não está em parte alguma do
+caminho versionado.
+
+### 10.2 A afirmação do stub é meia-verdade, e dá para mostrar onde
+
+O stub diz: _"o conteúdo real dessa versão já foi reconciliado fisicamente no schema canônico"_. Medido:
+`supabase/migrations/20260912140000_replay_backfill_canonical_routines.sql` fez backfill de **2 `CREATE TYPE` e
+26 `CREATE OR REPLACE FUNCTION`** — e **zero** `CREATE TABLE`, `CREATE VIEW`, `CREATE TRIGGER`, `CREATE INDEX`.
+
+Rotina e tipo foram reconciliados. **Tabela, view, índice e TRIGGER não.** O DDL deles existe só em
+`supabase/baseline/20260831_canonical/canonical_schema.sql`, que nenhum workflow aplica
+(`canonical-migrations.yml:215` copia apenas de `supabase/migrations/`) e cuja ativação o runbook
+`infra/runbooks/RECONCILIACAO_DRIFT_MIGRATIONS.md` mantém bloqueada.
+
+### 10.3 Veredito das 30, por tema
+
+Quatro frentes de verificação, cada objeto conferido no canônico com as ferramentas dedicadas do MCP:
+
+| Tema                                          | Versões | COBERTO       | PRESENTE SEM FONTE | SEM OBJETO |
+| --------------------------------------------- | ------- | ------------- | ------------------ | ---------- |
+| Audit log                                     | 5       | 0 (1 parcial) | 4                  | 0          |
+| PII / criptografia / views mascaradas         | 6       | 2             | 3                  | 1          |
+| Identidade / auth / guards / roles            | 6       | 1             | 5                  | 0          |
+| Retenção / convenções / observabilidade / doc | 13      | 3             | 6                  | 4          |
+
+A hipótese de que "boa parte é só documentação" estava **majoritariamente errada**, por um motivo específico: em
+quatro versões a documentação foi **materializada como tabela com dados** (`dp_backup_runbook`, `dp_environments`,
+`dp_audit_config`, `dp_data_catalog`) — nome de documentação, DDL e DML no banco, zero fonte na `main`.
+
+### 10.4 O replay da `main` não termina — dois pontos, medidos
+
+1. `20261115000000_revoke_dml_audit_log_anon_auth.sql:14-16` → `RAISE EXCEPTION 'preflight: nenhuma relação
+dp_audit_log* encontrada'`, e nenhuma migration cria `dp_audit_log` (`grep` por `CREATE TABLE ... dp_audit_log`
+   em `supabase/migrations`: vazio).
+2. `20261020120000_ninebox_permissoes_homologacao_versiona_tabela.sql:62` → `GRANT SELECT ... TO dp_mcp_role`
+   solto, com o sidecar exigindo esse grantee, e nenhuma migration cria o papel. O único `CREATE ROLE` de toda a
+   `main` é `ci_auditor` (`20261015160000:19`).
+
+### 10.5 O pior caso funcional, com contraprova
+
+As funções `dp_audit_log_immutable()` e `dp_audit_log_prevent_future()` **são** versionadas
+(`20260912140000:63,81`). Os **3 triggers** que as ligam à tabela **não**. Num banco recriado as funções nascem e
+nada as chama.
+
+Em Postgres 17 descartável, derrubei os dois triggers de imutabilidade — o estado em que um banco recriado pela
+`main` nasce hoje — e o log de auditoria aceitou `UPDATE ... SET event='ADULTERADO'` e em seguida `DELETE`,
+restando **zero linhas**. Com os triggers, as quatro tentativas (UPDATE, DELETE, timestamp futuro, `event` vazio)
+são recusadas.
+
+**Resgatado na PR #751**, com sidecar de 11 asserções: `dp_audit_log` (partições, PK, 5 CHECKs, 7 índices, RLS),
+os 3 triggers, `dp_retention_policy` (unique key + índice) e os papéis `dp_mcp_role`/`dp_mcp_user` — este último
+criado **sem senha**, porque papel com LOGIN e sem senha não autentica e segredo não entra em arquivo versionado.
+
+### 10.6 O que reduz a gravidade, e foi medido
+
+**O produto não consome nada da família `dp_*`.** `git grep` por `dp_data_catalog|dp_audit_log|dp_encrypt_pii|
+dp_decrypt_pii|dp_hash_pii|dp_track_pii_access|dp_retention_policy|dp_audit_config` em `src/` e
+`supabase/functions/`: **zero**. Quem toca são scripts e as migrations que endurecem ACL. O mascaramento que as
+telas usam é client-side (`src/utils/piiMask.ts`, `src/hooks/usePiiMask.ts`) e não depende desses objetos.
+
+Então: **não há vazamento corrente de dado de funcionário por causa desta deriva.** O risco é de
+**reconstrução/DR** e de **prova de conformidade**.
+
+### 10.7 Itens que exigem decisão do dono (nada feito por conta própria)
+
+- **Material de autenticação em tabela de configuração de produção** (`public.dp_mcp_config`), sem fonte
+  versionada e sem gate que acuse afrouxamento de ACL — o gate de PII casa por **nome de coluna**, e aqui o
+  conteúdo está em valor. Caminho: rotação + secret store do serviço. Não foi lido nem transcrito nesta
+  auditoria além do necessário para constatar o tipo do dado, e **nada foi alterado**.
+- **Papéis de banco com LOGIN sem fonte**: `dp_mcp_user` e `dp_ci_auditor` (confirmados em `pg_roles`).
+- **Retenção LGPD declarada e desligada**: as 2 políticas de `dp_retention_policy` estão `enabled=false`,
+  `dry_run=true`, `last_run_at=null` — anonimizar PII em 90 dias e expurgar em 730 **nunca executou**. Ligar ou
+  retirar a declaração são as duas opções defensáveis; deixar como está não é.
+- **`pgaudit` instalada com `pgaudit.log=none`**: auditoria de servidor desligada, e `dp_audit_config` (a tabela
+  que a declara) não é lida por nada.
+
+### 10.8 Limite duro deste ambiente
+
+Corpo de função (`prosrc`), ACL de função/tabela e expressão de policy (`qual`) **não são legíveis** por nenhuma
+ferramenta disponível nesta sessão: `pg_policies` não é exposta pelo PostgREST e o acesso administrativo do MCP
+devolve resultado vazio para qualquer SQL. Onde a resposta dependia disso, está marcado NÃO VERIFICADO nos
+relatórios de origem. A mitigação contínua que existe de fato é o job "Integridade do banco canônico (live)"
+(`ci.yml:478`), que roda em toda PR interna com role somente-leitura e inclui `audit-secdef-authz.mjs:162-165`
+(lê `prosecdef`, `prosrc` e `has_function_privilege`) e `audit-rls-tenant-open.mjs:53` (lê a expressão das
+policies). Ele **não** lê `pg_roles` nem ACL de tabela — por isso os papéis sem fonte passaram despercebidos até
+esta varredura.
