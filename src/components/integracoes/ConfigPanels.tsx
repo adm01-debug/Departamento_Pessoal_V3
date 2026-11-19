@@ -667,6 +667,13 @@ export function WebhookConfigPanel() {
 
 export function WhatsAppConfigPanel() {
   const { empresaAtual } = useEmpresas();
+  const { isAdmin, hasRole } = useAuth();
+  // whatsapp_config guarda a api_key da Evolution API. A policy
+  // whatsapp_config_admin_rh (migration 20261118223000) limita leitura e
+  // escrita a admin/rh — o mesmo escopo que a edge whatsapp-send exige. Sem
+  // este gate, quem não tem o papel via o formulário vazio e um erro mudo ao
+  // salvar.
+  const podeGerir = isAdmin || hasRole('rh');
   const [loading, setLoading] = useState(false);
   const [config, setConfig] = useState<Partial<WhatsAppConfig>>({
     instancia_url: '',
@@ -680,7 +687,7 @@ export function WhatsAppConfigPanel() {
   const { data: existingConfig, isLoading } = useQuery({
     queryKey: ['whatsapp_config', empresaAtual?.id],
     queryFn: () => whatsappService.getConfig(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
+    enabled: !!empresaAtual?.id && podeGerir,
   });
 
   useState(() => {
@@ -699,6 +706,16 @@ export function WhatsAppConfigPanel() {
       setLoading(false);
     }
   };
+
+  if (!podeGerir) {
+    return (
+      <div className="p-6" data-testid="whatsapp-sem-permissao">
+        <p className="text-sm text-muted-foreground">
+          A configuração do WhatsApp guarda a chave da Evolution API e é restrita a administradores e ao RH.
+        </p>
+      </div>
+    );
+  }
 
   if (isLoading) return <Spinner />;
 
