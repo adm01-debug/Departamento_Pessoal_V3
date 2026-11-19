@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `732d46f893` · branch `main` · 2026-11-19 12:29 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c658c6abfd` · branch `main` · 2026-11-19 12:38 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3398,7 +3398,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **CalculadoraRescisaoPage()** — `src/pages/CalculadoraRescisaoPage.tsx`
   ```
-  const { user } = useAuth(); const { empresaAtual } = useEmpresas(); const [loadingColab, setLoadingColab] = useState(false); const [selectedColabId, setSelectedColabId] = useState<string | undefined>(undefined); useDataAccessLog('colaboradores', selectedColabId, empresaAtual?.id); const [form, setForm] = useState({ nomeColaborador: '', cpf: '', cargo: '', salario: '', dataAdmissao: '', dataDesligamento: '', tipo: 'sem_justa_causa', avisoTrabalhado: false, feriasVencidas: false, saldoFGTS: '', di …
+  const { user } = useAuth(); const { empresaAtual } = useEmpresas(); const [loadingColab, setLoadingColab] = useState(false); const [selectedColabId, setSelectedColabId] = useState<string | undefined>(undefined); const [seletorAberto, setSeletorAberto] = useState(false); useDataAccessLog('colaboradores', selectedColabId, empresaAtual?.id); const [form, setForm] = useState({ nomeColaborador: '', cpf: '', cargo: '', salario: '', dataAdmissao: '', dataDesligamento: '', tipo: 'sem_justa_causa', aviso …
   ```
 - **formatCurrency(v: number | null)** — `src/pages/CargosPage.tsx`
   ```
@@ -5429,7 +5429,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9561 testes em 749 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9565 testes em 750 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5733,7 +5733,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/RejeitarDialog.test.tsx` | 10 | RejeitarDialog · renders nothing when open=false · renders title  · renders  … |
 | `src/components/__tests__/RelatoriosAgendadosTab.test.tsx` | 10 | RelatoriosAgendadosTab · renders Relatórios Agendados heading · renders Agendar Novo button · shows empty state when no agendamentos … |
 | `src/components/__tests__/RelatoriosExportTab.test.tsx` | 10 | RelatoriosExportTab · renders report titles · renders report descriptions · shows CSV button label when exportFormat is csv … |
-| … +449 linhas — lista completa em `context.json` | | |
+| … +450 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

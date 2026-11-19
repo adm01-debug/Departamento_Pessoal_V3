@@ -3920,6 +3920,7 @@
     "useGuidedTour",
     "useLocation",
     "useMemo",
+    "useMovimentoReduzido",
     "useMutation",
     "useNavigate",
     "useNotificacoes",
@@ -3946,6 +3947,7 @@
     "useEmpresas",
     "useGrupo",
     "useGuidedTour",
+    "useMovimentoReduzido",
     "useNotificacoes",
     "useNotification",
     "useOnMount",
@@ -4010,6 +4012,7 @@
    "papeis": [
     "admin",
     "banner",
+    "combobox",
     "list",
     "listitem",
     "main",
@@ -4018,7 +4021,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 88
+   "arquivos_puxados": 91
   },
   {
    "protegida": true,

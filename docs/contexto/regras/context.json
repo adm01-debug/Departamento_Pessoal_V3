@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "732d46f8935719d9bdf8fb03b4cfe8203679cc23",
+  "sha": "c658c6abfdeccec4f27a00faaa4643868966280e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 12:29 UTC",
-  "files_total": 3655,
-  "code_files": 3075,
-  "code_lines": 487170
+  "generated_at": "2026-11-19 12:38 UTC",
+  "files_total": 3656,
+  "code_files": 3076,
+  "code_lines": 487318
  },
  "version": "1.3.2",
- "facts_hash": "7af64af1028fd8f3",
+ "facts_hash": "356b2244434b7bfc",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,7 +387,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1021,
+   ".tsx": 1022,
    ".sql": 970,
    ".ts": 948,
    ".mjs": 108,
@@ -88853,7 +88853,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 83
+    "deps_count": 86
    },
    {
     "path": "",
@@ -102785,8 +102785,8 @@
   },
   {
    "module": "src/pages",
-   "files": 139,
-   "lines": 50133,
+   "files": 140,
+   "lines": 50281,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -161661,7 +161661,7 @@
     "file": "src/pages/CalculadoraRescisaoPage.tsx",
     "name": "CalculadoraRescisaoPage",
     "params": "",
-    "body": "const { user } = useAuth(); const { empresaAtual } = useEmpresas(); const [loadingColab, setLoadingColab] = useState(false); const [selectedColabId, setSelectedColabId] = useState<string | undefined>(undefined); useDataAccessLog('colaboradores', selectedColabId, empresaAtual?.id); const [form, setForm] = useState({ nomeColaborador: '', cpf: '', cargo: '', salario: '', dataAdmissao: '', dataDesligamento: '', tipo: 'sem_justa_causa', avisoTrabalhado: false, feriasVencidas: false, saldoFGTS: '', di …"
+    "body": "const { user } = useAuth(); const { empresaAtual } = useEmpresas(); const [loadingColab, setLoadingColab] = useState(false); const [selectedColabId, setSelectedColabId] = useState<string | undefined>(undefined); const [seletorAberto, setSeletorAberto] = useState(false); useDataAccessLog('colaboradores', selectedColabId, empresaAtual?.id); const [form, setForm] = useState({ nomeColaborador: '', cpf: '', cargo: '', salario: '', dataAdmissao: '', dataDesligamento: '', tipo: 'sem_justa_causa', aviso …"
    },
    {
     "file": "src/pages/CargosPage.tsx",
@@ -189336,6 +189336,22 @@
    {
     "file": "src/pages/__tests__/CalculadoraRescisaoHistorico.test.tsx",
     "name": "a data de desligamento não escorrega um dia por fuso"
+   },
+   {
+    "file": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+    "name": "CalculadoraRescisaoPage — importar colaborador"
+   },
+   {
+    "file": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+    "name": "o seletor é um combobox com busca, não uma lista de rolagem"
+   },
+   {
+    "file": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+    "name": "a busca filtra a lista pelo nome digitado"
+   },
+   {
+    "file": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+    "name": "não oferece o botão de remover antes de importar alguém"
    },
    {
     "file": "src/pages/__tests__/CanalEticaPage.test.tsx",
@@ -298327,7 +298343,7 @@
   },
   "src/pages/CalculadoraRescisaoPage.tsx": {
    "path": "src/pages/CalculadoraRescisaoPage.tsx",
-   "lines": 807,
+   "lines": 871,
    "exports": [
     "function CalculadoraRescisaoPage"
    ],
@@ -298461,7 +298477,7 @@
     {
      "name": "CalculadoraRescisaoPage",
      "params": "",
-     "body": "const { user } = useAuth(); const { empresaAtual } = useEmpresas(); const [loadingColab, setLoadingColab] = useState(false); const [selectedColabId, setSelectedColabId] = useState<string | undefined>(undefined); useDataAccessLog('colaboradores', selectedColabId, empresaAtual?.id); const [form, setForm] = useState({ nomeColaborador: '', cpf: '', cargo: '', salario: '', dataAdmissao: '', dataDesligamento: '', tipo: 'sem_justa_causa', avisoTrabalhado: false, feriasVencidas: false, saldoFGTS: '', di …"
+     "body": "const { user } = useAuth(); const { empresaAtual } = useEmpresas(); const [loadingColab, setLoadingColab] = useState(false); const [selectedColabId, setSelectedColabId] = useState<string | undefined>(undefined); const [seletorAberto, setSeletorAberto] = useState(false); useDataAccessLog('colaboradores', selectedColabId, empresaAtual?.id); const [form, setForm] = useState({ nomeColaborador: '', cpf: '', cargo: '', salario: '', dataAdmissao: '', dataDesligamento: '', tipo: 'sem_justa_causa', aviso …"
     }
    ],
    "pagination": [
@@ -302742,6 +302758,17 @@
     "com a tabela vazia, explica como preencher em vez de mostrar tabela em branco",
     "lista os cálculos salvos com colaborador, tipo, data e líquido",
     "a data de desligamento não escorrega um dia por fuso"
+   ]
+  },
+  "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx": {
+   "path": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+   "lines": 84,
+   "is_test": true,
+   "tests": [
+    "CalculadoraRescisaoPage — importar colaborador",
+    "o seletor é um combobox com busca, não uma lista de rolagem",
+    "a busca filtra a lista pelo nome digitado",
+    "não oferece o botão de remover antes de importar alguém"
    ]
   },
   "src/pages/__tests__/CanalEticaPage.test.tsx": {
@@ -329619,10 +329646,20 @@
   }
  },
  "git": {
-  "sha": "732d46f8935719d9bdf8fb03b4cfe8203679cc23",
+  "sha": "c658c6abfdeccec4f27a00faaa4643868966280e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "c658c6a",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "feat(rescisao): resgata a UX do import de colaborador da PR #546 (muri) (#738)",
+    "files": [
+     "src/pages/CalculadoraRescisaoPage.tsx",
+     "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx"
+    ]
+   },
    {
     "sha": "732d46f",
     "date": "2026-11-19",
@@ -329927,18 +329964,6 @@
      "src/pages/CalculadoraRescisaoPage.tsx",
      "src/pages/__tests__/CalculadoraRescisaoHistorico.test.tsx"
     ]
-   },
-   {
-    "sha": "656863d",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "feat(desligamentos): paginação, ordenação e filtro por etapa resgatados da muri (#700)",
-    "files": [
-     "src/components/__tests__/GestaoDesligamentos.test.tsx",
-     "src/components/desligamentos/GestaoDesligamentos.tsx",
-     "src/components/desligamentos/index.ts",
-     "src/pages/DesligamentosPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -329951,6 +329976,10 @@
     7
    ],
    [
+    "src/pages/CalculadoraRescisaoPage.tsx",
+    3
+   ],
+   [
     "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
     3
    ],
@@ -329960,10 +329989,6 @@
    ],
    [
     "src/utils/rescisaoPDF.ts",
-    2
-   ],
-   [
-    "src/pages/CalculadoraRescisaoPage.tsx",
     2
    ],
    [
@@ -329991,6 +330016,10 @@
     2
    ],
    [
+    "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+    1
+   ],
+   [
     "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql",
     1
    ],
@@ -330016,10 +330045,6 @@
    ],
    [
     "src/hooks/__tests__/useStaggerCards.test.tsx",
-    1
-   ],
-   [
-    "src/hooks/use-stagger-cards.ts",
     1
    ]
   ]

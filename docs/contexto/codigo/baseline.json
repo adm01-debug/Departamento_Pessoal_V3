@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "732d46f8935719d9bdf8fb03b4cfe8203679cc23",
+  "commit": "c658c6abfdeccec4f27a00faaa4643868966280e",
   "branch": "main",
-  "data_commit": "2026-11-19T09:29:10-03:00",
+  "data_commit": "2026-11-19T09:37:21-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "c658c6a",
+    "data": "2026-11-19",
+    "assunto": "feat(rescisao): resgata a UX do import de colaborador da PR #546 (muri) (#738)"
+   },
    {
     "sha": "732d46f",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "b8db9e5",
     "data": "2026-11-18",
     "assunto": "fix(segurança): restringe whatsapp_config a admin/rh em produção e na tela (#710)"
-   },
-   {
-    "sha": "a4e0aae",
-    "data": "2026-11-18",
-    "assunto": "infra(banco): versiona ninebox_permissoes_homologacao, que existia só em produção (#708)"
    }
   ],
-  "arquivos_mudados_7d": 1146,
+  "arquivos_mudados_7d": 1147,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -192,8 +192,8 @@
     "mudancas": 29
    },
    {
-    "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 28
+    "pasta": "src/pages/__tests__",
+    "mudancas": 29
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -286,15 +286,15 @@
     "mudancas": 5
    },
    {
+    "arquivo": "src/pages/CalculadoraRescisaoPage.tsx",
+    "mudancas": 5
+   },
+   {
     "arquivo": "src/pages/DashboardPage.tsx",
     "mudancas": 5
    },
    {
     "arquivo": "src/pages/DesligamentosPage.tsx",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/services/colaboradorService.ts",
     "mudancas": 5
    }
   ],
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3642,
-  "arquivos_codigo": 2107,
-  "linhas_codigo": 418632,
+  "arquivos_total": 3643,
+  "arquivos_codigo": 2108,
+  "linhas_codigo": 418780,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 427,
   "migrations": 896,
   "cron_jobs": 41,
-  "testes": 793,
+  "testes": 794,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 338
@@ -683,8 +683,8 @@
    "linhas": 3564
   },
   "src/pages": {
-   "arquivos": 139,
-   "linhas": 50133
+   "arquivos": 140,
+   "linhas": 50281
   },
   "src/providers": {
    "arquivos": 4,

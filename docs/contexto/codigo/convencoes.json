@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (662)",
+   "co-localizado (__tests__) (663)",
    "co-localizado (*.test) (73)",
    "e2e/ (33)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(rescisao): resgata a UX do import de colaborador da PR #546 (muri) (#738)",
    "feat(auditoria): passa a gravar a trilha de onboarding, com empresa_id (#737)",
    "fix(testes): congela a base de tempo do fixture de OnboardingParidade (#735)",
    "fix(rescisao): TRCT do desligamento declarava assinatura ausente tendo assinatura (#732)",
-   "chore(auditoria): torna reproduzivel a medicao do resgate da muri (#734)",
-   "fix(seguranca): gestor nao pode forjar a aprovacao do RH nas ferias (#733)"
+   "chore(auditoria): torna reproduzivel a medicao do resgate da muri (#734)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

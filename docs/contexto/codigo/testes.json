@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 793,
+ "total": 794,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 2,
-  "unit": 749
+  "unit": 750
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 662
+   "arquivos": 663
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -5380,6 +5380,15 @@
    "casos": 3
   },
   {
+   "arquivo": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+   "tipo": "unit",
+   "linhas": 84,
+   "testa": [
+    "src/pages/CalculadoraRescisaoPage.tsx"
+   ],
+   "casos": 3
+  },
+  {
    "arquivo": "src/pages/__tests__/CanalEticaPage.test.tsx",
    "tipo": "unit",
    "linhas": 131,
@@ -7876,7 +7885,7 @@
   "src/pages/AdminExtintoresPage.tsx": 1,
   "src/pages/AdminRegimentoInternoPage.tsx": 1,
   "src/pages/AdmissoesPage.tsx": 1,
-  "src/pages/CalculadoraRescisaoPage.tsx": 1,
+  "src/pages/CalculadoraRescisaoPage.tsx": 2,
   "src/pages/CanalEticaPage.tsx": 1,
   "src/pages/CienciaMedidaPage.tsx": 1,
   "src/pages/ColaboradoresPage.tsx": 1,

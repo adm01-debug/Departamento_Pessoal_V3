@@ -7536,7 +7536,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -7564,7 +7564,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -7896,7 +7896,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 17,
+   "usado_por": 18,
    "orfao": false
   },
   {
@@ -8909,7 +8909,7 @@
     "CalculadoraRescisaoPage"
    ],
    "export_default": "CalculadoraRescisaoPage",
-   "linhas": 807,
+   "linhas": 871,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
