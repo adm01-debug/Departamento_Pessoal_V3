@@ -195,8 +195,14 @@ describe('NewLoanDialog', () => {
   });
 
   it('o espelho do teto do banco acompanha a migration do trigger', () => {
-    const sql = readFileSync('supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql', 'utf8');
-    expect(sql).toContain(`v_salario * ${MARGEM_CONSIGNAVEL_BANCO}`);
+    // 20261119110000 é a migration que está em vigor; a 20261118235000 trouxe o
+    // teto de 35% e foi corrigida por ela. Apontar para o arquivo antigo faria
+    // o teste aprovar um espelho que não é o que o banco aplica.
+    const sql = readFileSync('supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql', 'utf8');
+    // A linha de ATRIBUIÇÃO, não qualquer menção: a própria migration cita
+    // 0.35 na pós-condição que proíbe o teto antigo de voltar.
+    expect(sql).toContain(`v_margem := round(v_salario * ${MARGEM_CONSIGNAVEL_BANCO.toFixed(2)}, 2);`);
+    expect(sql).not.toContain('v_margem := round(v_salario * 0.35');
   });
 
   it('renders Cancelar and Confirmar Registro buttons', () => {

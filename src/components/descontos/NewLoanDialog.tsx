@@ -19,12 +19,15 @@ export const MARGEM_CONSIGNAVEL_TELA = 0.3;
 
 /**
  * Espelho do teto do backstop no banco — trigger trg_consignado_valida_margem,
- * migration 20261118235000. Existe para o teste de coerência travar a dupla;
- * a tela não usa este valor. A divergência entre os três tetos do sistema
- * (tela, trigger e src/calculators, que usa 35% do líquido) está registrada em
- * docs/agentes/decisoes-e-gaps.md e aguarda decisão do dono.
+ * hoje na migration 20261119110000. Existe para o teste de coerência travar a
+ * dupla; a tela não usa este valor.
+ *
+ * Era 0.35 e virou 0.30: 35% é a margem TOTAL da Lei 10.820 art. 1º §1º, da
+ * qual 5% são exclusivos do cartão de crédito consignado. A faixa do
+ * empréstimo é 30%, que é o que esta tela sempre aplicou. Os 35% seguem
+ * corretos em src/calculators, onde o cálculo é o da margem total.
  */
-export const MARGEM_CONSIGNAVEL_BANCO = 0.35;
+export const MARGEM_CONSIGNAVEL_BANCO = 0.3;
 
 export function NewLoanDialog({
   colaboradores,

@@ -180,16 +180,13 @@ jobs:
           # decide. E no mode=verify ele quer NOME DE ARQUIVO, sem o prefixo
           # supabase/migrations/ (o workflow prefixa; caminho completo gera
           # "supabase/migrations/supabase/migrations/..." e o sidecar nao e achado).
+          # O lote de higiene de 9 migrations (20260911190000, 20260911192000,
+          # 20260911195000, 20261028220000, 20261114000300/400/500/600 e
+          # 20261115000000) saiu daqui porque foi APLICADO e esta no ledger:
+          # validate run 44436604208, apply run 44436798363 e verify run
+          # 44437087380, os tres success, com ledger_count === 9.
           for migration in \
-            20260911190000_p0_hash_trigger_search_path.sql \
-            20260911192000_p0_views_revoke_public.sql \
-            20260911195000_p0_payroll_upsert_contract.sql \
-            20261028220000_pagar_desligamento_transacional.sql \
-            20261114000300_fn_certificado_treinamento_sem_metadata.sql \
-            20261114000400_adiciona_updated_at_faltante.sql \
-            20261114000500_pensoes_empresa_id_drift.sql \
-            20261114000600_rls_escrita_por_papel.sql \
-            20261115000000_revoke_dml_audit_log_anon_auth.sql
+            20261119110000_consignado_teto_30_pct_lei_10820.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -360,7 +357,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 9 &&
+              Number(r.ledger_count) === 1 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
