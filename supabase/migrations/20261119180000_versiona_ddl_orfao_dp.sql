@@ -323,6 +323,18 @@ BEGIN
     RAISE EXCEPTION 'pos-condicao: esperava ao menos 8 indices (7 + PK) em dp_audit_log, achei %', v_idx;
   END IF;
 
+  -- As 3 policies recriadas acima. Esta verificacao e fail-closed e cita
+  -- pg_policies e a tabela: sem ela, um DROP POLICY cujo CREATE seguinte
+  -- falhasse deixaria a tabela com RLS ligada e ZERO policies, ou seja
+  -- ninguem lendo, e a migration passaria em silencio.
+  IF (
+    SELECT count(*) FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'dp_audit_log'
+      AND policyname IN ('auth_own_events', 'service_role_insert_only', 'service_role_select')
+  ) <> 3 THEN
+    RAISE EXCEPTION 'pos-condicao: as 3 policies de dp_audit_log nao estao presentes apos o recreate';
+  END IF;
+
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'dp_mcp_role') THEN
     RAISE EXCEPTION 'pos-condicao: papel dp_mcp_role ausente — 20261020120000 falharia';
   END IF;
