@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "055112b76ae928346795e95dcc3664010220ba45",
+  "commit": "68f349cffada975bf70e2ff5abf105a49a5e9fef",
   "branch": "main",
-  "data_commit": "2026-11-19T09:14:17-03:00",
+  "data_commit": "2026-11-19T09:15:09-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "68f349c",
+    "data": "2026-11-19",
+    "assunto": "fix(testes): congela a base de tempo do fixture de OnboardingParidade (#735)"
+   },
    {
     "sha": "055112b",
     "data": "2026-11-19",
@@ -126,11 +131,6 @@
     "sha": "2e210c4",
     "data": "2026-11-18",
     "assunto": "feat(dashboard): liga alertas-preditivos, que rodava em producao sem tela (#709)"
-   },
-   {
-    "sha": "778a5b4",
-    "data": "2026-11-18",
-    "assunto": "test(ferias): cobre FeriasResumoTab, que estava viva no dossie sem teste (#707)"
    }
   ],
   "arquivos_mudados_7d": 1144,
@@ -274,10 +274,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": "scripts/sync/mirror-github.sh",
-    "mudancas": 5
-   },
-   {
     "arquivo": "scripts/sync/run-all.sh",
     "mudancas": 5
    },
@@ -295,6 +291,10 @@
    },
    {
     "arquivo": "src/pages/DashboardPage.tsx",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/pages/DesligamentosPage.tsx",
     "mudancas": 5
    }
   ],
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3640,
   "arquivos_codigo": 2107,
-  "linhas_codigo": 418620,
+  "linhas_codigo": 418632,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 139,
-   "linhas": 50121
+   "linhas": 50133
   },
   "src/providers": {
    "arquivos": 4,

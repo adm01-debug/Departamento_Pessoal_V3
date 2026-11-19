@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "055112b76ae928346795e95dcc3664010220ba45",
+  "sha": "68f349cffada975bf70e2ff5abf105a49a5e9fef",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 12:15 UTC",
+  "generated_at": "2026-11-19 12:16 UTC",
   "files_total": 3653,
   "code_files": 3073,
-  "code_lines": 486930
+  "code_lines": 486942
  },
  "version": "1.3.2",
- "facts_hash": "5c3ac6e9bb87e9ab",
+ "facts_hash": "35834f5788511af2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -102740,7 +102740,7 @@
   {
    "module": "src/pages",
    "files": 139,
-   "lines": 50121,
+   "lines": 50133,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -302839,12 +302839,13 @@
   },
   "src/pages/__tests__/OnboardingParidade.test.tsx": {
    "path": "src/pages/__tests__/OnboardingParidade.test.tsx",
-   "lines": 483,
+   "lines": 495,
    "is_test": true,
    "rule_comments": [
     "* TESTES DE PARIDADE — regra ANTIGA (HEAD) × regra NOVA (domínio canônico).",
     "aqui como `antigo*()` — SOMENTE como oráculo de comparação. Nenhuma",
     "ação passou a ser determinística por prazo — FASE 4), o teste documenta a",
+    "justamente para exercitar o desempate por `id` (prazo → created_at → id);",
     "EM DIA: 1 de 2 concluídas (50%), próxima ação com prazo futuro.",
     "SEM TAREFAS: caso-limite — 0% mas NÃO concluído.",
     "O caso-limite (sem tarefas) NÃO é concluído em nenhuma das duas réguas.",
@@ -329519,10 +329520,19 @@
   }
  },
  "git": {
-  "sha": "055112b76ae928346795e95dcc3664010220ba45",
+  "sha": "68f349cffada975bf70e2ff5abf105a49a5e9fef",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "68f349c",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix(testes): congela a base de tempo do fixture de OnboardingParidade (#735)",
+    "files": [
+     "src/pages/__tests__/OnboardingParidade.test.tsx"
+    ]
+   },
    {
     "sha": "055112b",
     "date": "2026-11-19",
@@ -329829,15 +329839,6 @@
      "src/components/__tests__/AnalyticsSection.test.tsx",
      "src/components/dashboard/AnalyticsSection.tsx"
     ]
-   },
-   {
-    "sha": "07742aa",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "fix(scripts): build-rebaseline diz qual arquivo de entrada falta (#706)",
-    "files": [
-     "scripts/build-rebaseline.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -329898,6 +329899,10 @@
     2
    ],
    [
+    "src/pages/__tests__/OnboardingParidade.test.tsx",
+    1
+   ],
+   [
     "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql",
     1
    ],
@@ -329915,10 +329920,6 @@
    ],
    [
     "src/hooks/use-stagger-cards.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261119130000_ferias_gestor_update.sql",
     1
    ]
   ]

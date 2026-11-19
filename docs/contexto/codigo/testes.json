@@ -5498,7 +5498,7 @@
   {
    "arquivo": "src/pages/__tests__/OnboardingParidade.test.tsx",
    "tipo": "unit",
-   "linhas": 483,
+   "linhas": 495,
    "testa": [
     "src/components/admissoes/admissoesDerivacoes.ts",
     "src/components/admissoes/onboardingDerivacoes.ts",
