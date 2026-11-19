@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "21048ebf2f00ec2610d37be280a231d24993b3ba",
+  "sha": "16d4f17a72287c22c7b7baca181a00162a5cf9d4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 18:32 UTC",
+  "generated_at": "2026-11-19 19:04 UTC",
   "files_total": 3670,
   "code_files": 3090,
   "code_lines": 491380
@@ -330844,10 +330844,21 @@
   }
  },
  "git": {
-  "sha": "21048ebf2f00ec2610d37be280a231d24993b3ba",
+  "sha": "16d4f17a72287c22c7b7baca181a00162a5cf9d4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "16d4f17",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "chore(autofix): eslint --fix nas regras seguras (pdiComum, useAfastamentos, colaboradoresMock) (#754)",
+    "files": [
+     "src/components/avaliacao/pdiComum.ts",
+     "src/hooks/useAfastamentos.ts",
+     "src/mocks/colaboradoresMock.ts"
+    ]
+   },
    {
     "sha": "21048eb",
     "date": "2026-11-19",
@@ -331165,15 +331176,6 @@
      "src/hooks/__tests__/useEmpresas.test.ts",
      "src/hooks/useEmpresas.ts"
     ]
-   },
-   {
-    "sha": "f7681c0",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "docs(gaps): causa raiz das 11 falhas do E2E autenticado na main (#722)",
-    "files": [
-     "docs/agentes/decisoes-e-gaps.md"
-    ]
    }
   ],
   "hot_files": [
@@ -331238,23 +331240,23 @@
     2
    ],
    [
+    "src/components/avaliacao/pdiComum.ts",
+    1
+   ],
+   [
+    "src/hooks/useAfastamentos.ts",
+    1
+   ],
+   [
+    "src/mocks/colaboradoresMock.ts",
+    1
+   ],
+   [
     "src/pages/AvaliacaoPage.tsx",
     1
    ],
    [
     "e2e/authenticated/feedbacks-historico.spec.ts",
-    1
-   ],
-   [
-    "e2e/authenticated/feedbacks-padronizacao.spec.ts",
-    1
-   ],
-   [
-    "src/components/avaliacao/FeedbacksTab.tsx",
-    1
-   ],
-   [
-    "src/hooks/__tests__/useAdmissoes.test.ts",
     1
    ]
   ]

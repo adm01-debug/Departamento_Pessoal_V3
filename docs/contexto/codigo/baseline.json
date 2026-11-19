@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "21048ebf2f00ec2610d37be280a231d24993b3ba",
+  "commit": "16d4f17a72287c22c7b7baca181a00162a5cf9d4",
   "branch": "main",
-  "data_commit": "2026-11-19T15:31:29-03:00",
+  "data_commit": "2026-11-19T16:03:37-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "16d4f17",
+    "data": "2026-11-19",
+    "assunto": "chore(autofix): eslint --fix nas regras seguras (pdiComum, useAfastamentos, colaboradoresMock) (#754)"
+   },
    {
     "sha": "21048eb",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "92be4ce",
     "data": "2026-11-19",
     "assunto": "chore(auditoria): inventario do que falta resgatar da PR #546 (muri) (#728)"
-   },
-   {
-    "sha": "b027ad2",
-    "data": "2026-11-19",
-    "assunto": "feat(rescisao): carimba procedencia do calculo na tela e no TRCT (#727)"
    }
   ],
-  "arquivos_mudados_7d": 1133,
+  "arquivos_mudados_7d": 1126,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -157,7 +157,7 @@
    },
    {
     "pasta": "src/components/avaliacao",
-    "mudancas": 86
+    "mudancas": 87
    },
    {
     "pasta": "src/components/treinamentos",
