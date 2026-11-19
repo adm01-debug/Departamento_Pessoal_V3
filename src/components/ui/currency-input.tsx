@@ -42,6 +42,7 @@ export function CurrencyInput({ value: controlledValue, onChange, placeholder = 
       value={displayValue}
       onChange={handleChange}
       placeholder={placeholder}
+      inputMode="numeric"
       className={cn('text-right', className)}
       disabled={disabled}
     />
