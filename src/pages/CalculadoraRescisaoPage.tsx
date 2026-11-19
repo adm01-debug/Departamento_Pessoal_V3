@@ -48,6 +48,36 @@ function mapTipoDesligamentoDB(tipo: string): Database['public']['Enums']['tipo_
   }
 }
 
+/**
+ * Contorno de foco do campo de busca do combobox, resgatado da PR #546
+ * (muri), FormularioRescisao.tsx:183-209.
+ *
+ * O CommandInput do cmdk renderiza um wrapper [cmdk-input-wrapper] com a LUPA
+ * e o input como IRMAOS. O anel de foco global do design system
+ * (:focus-visible -> ring-2 ring-ring, em src/index.css) incide so no input,
+ * entao a borda de foco COMECAVA DEPOIS da lupa: quem navega por teclado via o
+ * realce cortado no meio do campo. Aqui o anel passa a envolver o conjunto.
+ *
+ * O ajuste fica NO CALL SITE, nao em ui/command.tsx, porque aquele componente e
+ * compartilhado com outros comboboxes (Afastamentos) e mudar o global
+ * arrastaria telas fora desta tarefa.
+ *
+ * Tres utilitarios, nao sete: a primeira versao desta constante adicionava
+ * m-2, rounded-lg, border, border-border/50, px-3 e transition-colors, e
+ * estourou o orcamento de CSS do repo em 1 KB (gate check-bundle-budget:
+ * css_total_kb 351 > 350). Encolhida em vez de levantar o limite — levantar o
+ * orcamento para caber acabamento visual e exatamente o que ele existe para
+ * impedir. O que saiu era redundante ou cosmetico: o wrapper do cmdk JA tem
+ * "flex items-center border-b px-3" (ui/command.tsx:45), e ring-inset dispensa
+ * a margem porque desenha o anel POR DENTRO, sem ser cortado pelo Command
+ * (que e overflow-hidden). ring-1/ring-inset/ring-primary ja sao usados pelo
+ * Input do design system, entao nao criam CSS novo.
+ */
+const CAMPO_BUSCA_COLABORADOR =
+  '[&_[cmdk-input-wrapper]:focus-within]:ring-1 ' +
+  '[&_[cmdk-input-wrapper]:focus-within]:ring-inset ' +
+  '[&_[cmdk-input-wrapper]:focus-within]:ring-primary';
+
 export default function CalculadoraRescisaoPage() {
   const { user } = useAuth();
   const { empresaAtual } = useEmpresas();
@@ -396,8 +426,11 @@ export default function CalculadoraRescisaoPage() {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
-                      <Command>
-                        <CommandInput placeholder="Buscar por nome, matrícula ou 4 últimos do CPF..." />
+                      <Command className={CAMPO_BUSCA_COLABORADOR}>
+                        <CommandInput
+                          placeholder="Buscar por nome, matrícula ou 4 últimos do CPF..."
+                          className="focus-visible:ring-0"
+                        />
                         <CommandList>
                           <CommandEmpty>Nenhum colaborador ativo encontrado.</CommandEmpty>
                           <CommandGroup>
