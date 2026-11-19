@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (663)",
+   "co-localizado (__tests__) (664)",
    "co-localizado (*.test) (73)",
    "e2e/ (33)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(colaboradores): status \"Desligado\" nao salvava e telefone fixo era inalcancavel (#741)",
    "feat(rescisão): busca por matrícula e 4 últimos do CPF no seletor de colaborador (#740)",
    "chore(auditoria): fecha o inventário de resgate — 6 lacunas reais, 6 descartes provados e o stash varrido (#739)",
    "feat(rescisao): resgata a UX do import de colaborador da PR #546 (muri) (#738)",
-   "feat(auditoria): passa a gravar a trilha de onboarding, com empresa_id (#737)",
-   "fix(testes): congela a base de tempo do fixture de OnboardingParidade (#735)"
+   "feat(auditoria): passa a gravar a trilha de onboarding, com empresa_id (#737)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

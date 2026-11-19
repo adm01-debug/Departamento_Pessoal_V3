@@ -7875,7 +7875,7 @@
     "PhoneInput"
    ],
    "export_default": null,
-   "linhas": 40,
+   "linhas": 65,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -9056,7 +9056,7 @@
     "ColaboradorFormPage"
    ],
    "export_default": "ColaboradorFormPage",
-   "linhas": 499,
+   "linhas": 478,
    "dominio": "pages",
    "hooks_locais": [
     "useCargos",

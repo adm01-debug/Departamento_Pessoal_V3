@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `58914234bd` · branch `main` · 2026-11-19 14:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b6129aab42` · branch `main` · 2026-11-19 14:26 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1970,7 +1970,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```ts
   { codigo_patrimonio: z.string().trim().min(1).max(50), tipo: z.enum(['AGUA', 'PO_QUIMICO_ABC', 'PO_QUIMICO_BC', 'CO2', 'ESPUMA', 'CLASSE_K']), capacidade_kg: z.number().positive().max(999), localizacao: z.string().trim().min(1).max(255), data_proxima_recarga: z.string().min(1), data_proximo_teste_hidrostatico: z.string().min(1), }
   ```
-- **schema** (`src/pages/ColaboradorFormPage.tsx`, z.object):
+- **colaboradorFormSchema** (`src/pages/colaboradorFormSchema.ts`, z.object):
   ```ts
   { // Geral nome_completo: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'), nome_social: z.string().optional(), cpf: z.string().length(11, 'CPF inválido'), email: z.string().email('Email inválido').optional().or(z.literal('')), telefone: z.string().optional(), celular: z.string().optional(), data_nascimento: z.string().min(1, 'Data de nascimento obrigatória'), sexo: z.enum(['masculino', 'feminino']).default('masculino'), estado_civil: z.enum(['solteiro', 'casado', 'divorciado', 'viuvo', 'separado', 'uniao_estavel']).default('solteiro'), nome_mae: z.string().min(1, 'Nome da mãe obrigatório'), nome_pai: z.string().optional(), // Endereço cep: z.string().optional(), logradouro: z.string().optional(), numero: z.string().optional(), complemento: z.string().optional(), bairro: z.string( …
   ```
@@ -2538,6 +2538,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `afd-fim` | type=date | `src/components/ponto/GerarAFDDialog.tsx` |
 | `valor-folha` | type=number, step=0.01 | `src/components/premiacoes/PagamentosDialogs.tsx` |
 | `nova-turma-capacidade` | type=number, min=1 | `src/components/treinamentos/NovaTurmaDialog.tsx` |
+| `id` | disabled=disabled | `src/components/ui/phone-input.tsx` |
 | `nova-data-agendada` | type=datetime-local | `src/pages/AdminAgendamentoExamesPage.tsx` |
 | `cargo-nivel` | type=number, min=1, step=1 | `src/pages/CargosPage.tsx` |
 | `banco_codigo` | required | `src/pages/FinanceiroBancarioPage.tsx` |
@@ -5429,7 +5430,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9570 testes em 750 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9576 testes em 751 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5733,7 +5734,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/RejeitarDialog.test.tsx` | 10 | RejeitarDialog · renders nothing when open=false · renders title  · renders  … |
 | `src/components/__tests__/RelatoriosAgendadosTab.test.tsx` | 10 | RelatoriosAgendadosTab · renders Relatórios Agendados heading · renders Agendar Novo button · shows empty state when no agendamentos … |
 | `src/components/__tests__/RelatoriosExportTab.test.tsx` | 10 | RelatoriosExportTab · renders report titles · renders report descriptions · shows CSV button label when exportFormat is csv … |
-| … +450 linhas — lista completa em `context.json` | | |
+| … +451 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6101,4 +6102,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | METAS & OKRs — derivações da aba (situação, prazo, ordem e filtros). | `src/components/avaliacao/metasComum.ts` |
 | exibem. Nada aqui inventa dado: TODAS as funções leem somente campos que já | `src/components/avaliacao/metasComum.ts` |
 | 2. `atrasada`  → prazo vencido e ainda não concluída — é EXATAMENTE o | `src/components/avaliacao/metasComum.ts` |
-| … +920 linhas — lista completa em `context.json` | |
+| … +923 linhas — lista completa em `context.json` | |

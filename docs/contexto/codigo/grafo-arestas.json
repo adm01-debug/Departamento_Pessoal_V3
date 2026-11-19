@@ -5789,6 +5789,7 @@
    "src/hooks/useDepartamentos.ts",
    "src/hooks/useFormGuard.ts",
    "src/hooks/useServerValidation.ts",
+   "src/pages/colaboradorFormSchema.ts",
    "src/pages/colaboradorPayload.ts",
    "src/services/index.ts"
   ],

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `58914234bdf23e344ded82094c5221b4f8f06e1b` (2026-11-19T11:15:40-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b6129aab4292ee19dfc901931600b2ab823e151c` (2026-11-19T11:25:43-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1970), SQL (970), Markdown (338), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1972), SQL (970), Markdown (338), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3643 |
-| arquivos_codigo | 2108 |
-| linhas_codigo | 418983 |
+| arquivos_total | 3645 |
+| arquivos_codigo | 2110 |
+| linhas_codigo | 419199 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 427 |
 | migrations | 896 |
 | cron_jobs | 41 |
-| testes | 794 |
+| testes | 795 |
 | workflows | 21 |
 | scripts | 135 |
 | docs_md | 338 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (522), src/pages (110), src/contexts (3)
 - hooks: src/hooks (101), src/components (10), src/contexts (4)
 - servicos_logica: src/services (96), src/utils (35), src/schemas (25)
-- testes: co-localizado (__tests__) (663), co-localizado (*.test) (73), e2e/ (33)
+- testes: co-localizado (__tests__) (664), co-localizado (*.test) (73), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -104,7 +104,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks/ferias | 0 | 0 | 6 | 11 | 0 | 7 |
 | integrations/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib | 0 | 0 | 14 | 1 | 0 | 0 |
-| pages | 96 | 114 | 114 | 220 | 50 | 271 |
+| pages | 96 | 114 | 115 | 220 | 50 | 271 |
 | schemas | 0 | 0 | 19 | 0 | 0 | 0 |
 | schemas/esocial | 0 | 0 | 6 | 0 | 0 | 0 |
 | services | 0 | 0 | 77 | 0 | 36 | 195 |
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27618 nós · 62285 arestas · 2439 comunidades · grafo do commit `58914234`
-- comunidades maiores: 20260831_corrected_public.sql (493), useEmpresas (484), canonical_schema.sql (475), lucide-react (460), button.tsx (451), cn (341), @tanstack/react-query (338), vitest (246), FeedbackAcoesRodape.tsx (187), services/index.ts (180), rateLimit.ts (164), DetalhesAdmissaoDialog.tsx (160)
+- 27628 nós · 62306 arestas · 2385 comunidades · grafo do commit `b6129aab`
+- comunidades maiores: lucide-react (543), 20260831_corrected_public.sql (485), canonical_schema.sql (475), button.tsx (405), useEmpresas (363), cn (336), vitest (271), @tanstack/react-query (246), contract.ts (206), services/index.ts (173), react (173), deepChain (162)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-19 `b6129aa` fix(colaboradores): status "Desligado" nao salvava e telefone fixo era inalcancavel (#741)
 - 2026-11-19 `5891423` feat(rescisão): busca por matrícula e 4 últimos do CPF no seletor de colaborador (#740)
 - 2026-11-19 `7189749` chore(auditoria): fecha o inventário de resgate — 6 lacunas reais, 6 descartes provados e o stash varrido (#739)
 - 2026-11-19 `c658c6a` feat(rescisao): resgata a UX do import de colaborador da PR #546 (muri) (#738)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `92be4ce` chore(auditoria): inventario do que falta resgatar da PR #546 (muri) (#728)
 - 2026-11-19 `b027ad2` feat(rescisao): carimba procedencia do calculo na tela e no TRCT (#727)
 - 2026-11-19 `26629de` fix(consignado): teto do emprestimo vai de 35% para 30% (Lei 10.820 art. 1 §1) (#725)
-- 2026-11-19 `d327ab7` fix(banco): sidecar conferia substring do search_path, não nome de schema (#724)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

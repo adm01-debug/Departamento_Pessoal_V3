@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 794,
+ "total": 795,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 2,
-  "unit": 750
+  "unit": 751
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 663
+   "arquivos": 664
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -5418,6 +5418,16 @@
    "casos": 5
   },
   {
+   "arquivo": "src/pages/__tests__/ColaboradorFormPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 149,
+   "testa": [
+    "src/pages/ColaboradorFormPage.tsx",
+    "src/pages/colaboradorFormSchema.ts"
+   ],
+   "casos": 5
+  },
+  {
    "arquivo": "src/pages/__tests__/colaboradorPayload.test.ts",
    "tipo": "unit",
    "linhas": 100,
@@ -7888,6 +7898,7 @@
   "src/pages/CalculadoraRescisaoPage.tsx": 2,
   "src/pages/CanalEticaPage.tsx": 1,
   "src/pages/CienciaMedidaPage.tsx": 1,
+  "src/pages/ColaboradorFormPage.tsx": 1,
   "src/pages/ColaboradoresPage.tsx": 1,
   "src/pages/ComunicacaoInternaPage.tsx": 1,
   "src/pages/ConveniosPage.tsx": 1,
@@ -7907,6 +7918,7 @@
   "src/pages/UsuariosPage.tsx": 1,
   "src/pages/ValesPage.tsx": 1,
   "src/pages/adminCatEdicao.ts": 1,
+  "src/pages/colaboradorFormSchema.ts": 1,
   "src/pages/colaboradorPayload.ts": 1,
   "src/pages/folhaResumo.ts": 1,
   "src/schemas/common.ts": 1,
@@ -8116,7 +8128,6 @@
    "src/pages/CargosPage.tsx",
    "src/pages/CentrosCustoPage.tsx",
    "src/pages/ColaboradorDetalhesPage.tsx",
-   "src/pages/ColaboradorFormPage.tsx",
    "src/pages/ConfiguracoesPage.tsx",
    "src/pages/ContabilidadePage.tsx",
    "src/pages/ContratacaoPage.tsx",

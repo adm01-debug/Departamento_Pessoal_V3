@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "58914234bdf23e344ded82094c5221b4f8f06e1b",
+  "sha": "b6129aab4292ee19dfc901931600b2ab823e151c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 14:16 UTC",
-  "files_total": 3656,
-  "code_files": 3076,
-  "code_lines": 487521
+  "generated_at": "2026-11-19 14:26 UTC",
+  "files_total": 3658,
+  "code_files": 3078,
+  "code_lines": 487737
  },
  "version": "1.3.2",
- "facts_hash": "0bd226d1e52b1155",
+ "facts_hash": "0f72118695d5cb16",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,9 +387,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1022,
+   ".tsx": 1023,
    ".sql": 970,
-   ".ts": 948,
+   ".ts": 949,
    ".mjs": 108,
    ".js": 15,
    ".cjs": 11,
@@ -89797,7 +89797,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 220
+    "deps_count": 221
    },
    {
     "path": "",
@@ -102089,7 +102089,7 @@
   {
    "module": "src/components",
    "files": 994,
-   "lines": 181978,
+   "lines": 182003,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102785,8 +102785,8 @@
   },
   {
    "module": "src/pages",
-   "files": 140,
-   "lines": 50484,
+   "files": 142,
+   "lines": 50675,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -111604,8 +111604,8 @@
     "chain": []
    },
    {
-    "file": "src/pages/ColaboradorFormPage.tsx",
-    "name": "schema",
+    "file": "src/pages/colaboradorFormSchema.ts",
+    "name": "colaboradorFormSchema",
     "kind": "object",
     "body": "{ // Geral nome_completo: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'), nome_social: z.string().optional(), cpf: z.string().length(11, 'CPF inválido'), email: z.string().email('Email inválido').optional().or(z.literal('')), telefone: z.string().optional(), celular: z.string().optional(), data_nascimento: z.string().min(1, 'Data de nascimento obrigatória'), sexo: z.enum(['masculino', 'feminino']).default('masculino'), estado_civil: z.enum(['solteiro', 'casado', 'divorciado', 'viuvo', 'separado', 'uniao_estavel']).default('solteiro'), nome_mae: z.string().min(1, 'Nome da mãe obrigatório'), nome_pai: z.string().optional(), // Endereço cep: z.string().optional(), logradouro: z.string().optional(), numero: z.string().optional(), complemento: z.string().optional(), bairro: z.string( …",
     "refines": [],
@@ -112893,6 +112893,11 @@
     "file": "src/components/treinamentos/NovaTurmaDialog.tsx",
     "field": "nova-turma-capacidade",
     "rules": "type=number, min=1"
+   },
+   {
+    "file": "src/components/ui/phone-input.tsx",
+    "field": "id",
+    "rules": "disabled=disabled"
    },
    {
     "file": "src/pages/AdminAgendamentoExamesPage.tsx",
@@ -121137,6 +121142,18 @@
    {
     "file": "src/pages/adminCatEdicao.ts",
     "text": "* Prazo legal de envio da CAT, mesma regra de `calcular_prazo_cat`"
+   },
+   {
+    "file": "src/pages/colaboradorFormSchema.ts",
+    "text": "arquivo de componente quebra a regra react-refresh/only-export-components, e"
+   },
+   {
+    "file": "src/pages/colaboradorFormSchema.ts",
+    "text": "essa validacao precisa ser exercida por teste — o `FormSelect` e Radix e"
+   },
+   {
+    "file": "src/pages/colaboradorFormSchema.ts",
+    "text": "usuário levava erro cru em vez de validação."
    },
    {
     "file": "src/pages/colaboradorPayload.ts",
@@ -189421,6 +189438,30 @@
    {
     "file": "src/pages/__tests__/CienciaMedidaPage.test.tsx",
     "name": "orienta a pedir novo link quando o token já foi usado"
+   },
+   {
+    "file": "src/pages/__tests__/ColaboradorFormPage.test.tsx",
+    "name": "ColaboradorFormPage — status e telefones"
+   },
+   {
+    "file": "src/pages/__tests__/ColaboradorFormPage.test.tsx",
+    "name": "o schema aceita exatamente os status do enum do banco e recusa "
+   },
+   {
+    "file": "src/pages/__tests__/ColaboradorFormPage.test.tsx",
+    "name": "telefone fixo e celular são campos independentes, cada um com o seu valor"
+   },
+   {
+    "file": "src/pages/__tests__/ColaboradorFormPage.test.tsx",
+    "name": "editar o celular não mexe no telefone fixo"
+   },
+   {
+    "file": "src/pages/__tests__/ColaboradorFormPage.test.tsx",
+    "name": "editar o telefone fixo não mexe no celular"
+   },
+   {
+    "file": "src/pages/__tests__/ColaboradorFormPage.test.tsx",
+    "name": "a edição é sempre carregada e gravada no escopo da empresa atual"
    },
    {
     "file": "src/pages/__tests__/ColaboradoresPage.test.tsx",
@@ -288814,9 +288855,15 @@
   },
   "src/components/ui/phone-input.tsx": {
    "path": "src/components/ui/phone-input.tsx",
-   "lines": 40,
+   "lines": 65,
    "exports": [
     "function PhoneInput"
+   ],
+   "html_constraints": [
+    {
+     "field": "id",
+     "rules": "disabled=disabled"
+    }
    ],
    "doc": "V15-189: src/components/ui/phone-input.tsx"
   },
@@ -298656,7 +298703,7 @@
   },
   "src/pages/ColaboradorFormPage.tsx": {
    "path": "src/pages/ColaboradorFormPage.tsx",
-   "lines": 499,
+   "lines": 478,
    "exports": [
     "function ColaboradorFormPage"
    ],
@@ -298665,15 +298712,6 @@
    ],
    "errors": [
     "Empresa atual não identificada"
-   ],
-   "zod": [
-    {
-     "name": "schema",
-     "kind": "object",
-     "body": "{ // Geral nome_completo: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'), nome_social: z.string().optional(), cpf: z.string().length(11, 'CPF inválido'), email: z.string().email('Email inválido').optional().or(z.literal('')), telefone: z.string().optional(), celular: z.string().optional(), data_nascimento: z.string().min(1, 'Data de nascimento obrigatória'), sexo: z.enum(['masculino', 'feminino']).default('masculino'), estado_civil: z.enum(['solteiro', 'casado', 'divorciado', 'viuvo', 'separado', 'uniao_estavel']).default('solteiro'), nome_mae: z.string().min(1, 'Nome da mãe obrigatório'), nome_pai: z.string().optional(), // Endereço cep: z.string().optional(), logradouro: z.string().optional(), numero: z.string().optional(), complemento: z.string().optional(), bairro: z.string( …",
-     "refines": [],
-     "chain": []
-    }
    ],
    "status_values": [
     {
@@ -302688,6 +302726,29 @@
     "if (houveObito) d.setTime(d.getTime() + 24 * 60 * 60 * 1000);"
    ]
   },
+  "src/pages/colaboradorFormSchema.ts": {
+   "path": "src/pages/colaboradorFormSchema.ts",
+   "lines": 63,
+   "exports": [
+    "const colaboradorFormSchema",
+    "type ColaboradorFormData",
+    "type ColaboradorFormInput"
+   ],
+   "zod": [
+    {
+     "name": "colaboradorFormSchema",
+     "kind": "object",
+     "body": "{ // Geral nome_completo: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'), nome_social: z.string().optional(), cpf: z.string().length(11, 'CPF inválido'), email: z.string().email('Email inválido').optional().or(z.literal('')), telefone: z.string().optional(), celular: z.string().optional(), data_nascimento: z.string().min(1, 'Data de nascimento obrigatória'), sexo: z.enum(['masculino', 'feminino']).default('masculino'), estado_civil: z.enum(['solteiro', 'casado', 'divorciado', 'viuvo', 'separado', 'uniao_estavel']).default('solteiro'), nome_mae: z.string().min(1, 'Nome da mãe obrigatório'), nome_pai: z.string().optional(), // Endereço cep: z.string().optional(), logradouro: z.string().optional(), numero: z.string().optional(), complemento: z.string().optional(), bairro: z.string( …",
+     "refines": [],
+     "chain": []
+    }
+   ],
+   "rule_comments": [
+    "arquivo de componente quebra a regra react-refresh/only-export-components, e",
+    "essa validacao precisa ser exercida por teste — o `FormSelect` e Radix e",
+    "usuário levava erro cru em vez de validação."
+   ]
+  },
   "src/pages/colaboradorPayload.ts": {
    "path": "src/pages/colaboradorPayload.ts",
    "lines": 72,
@@ -302826,6 +302887,19 @@
     "não gasta chamada ao servidor quando o token da URL é malformado",
     "explica a espera quando o limite de tentativas é atingido",
     "orienta a pedir novo link quando o token já foi usado"
+   ]
+  },
+  "src/pages/__tests__/ColaboradorFormPage.test.tsx": {
+   "path": "src/pages/__tests__/ColaboradorFormPage.test.tsx",
+   "lines": 149,
+   "is_test": true,
+   "tests": [
+    "ColaboradorFormPage — status e telefones",
+    "o schema aceita exatamente os status do enum do banco e recusa ",
+    "telefone fixo e celular são campos independentes, cada um com o seu valor",
+    "editar o celular não mexe no telefone fixo",
+    "editar o telefone fixo não mexe no celular",
+    "a edição é sempre carregada e gravada no escopo da empresa atual"
    ]
   },
   "src/pages/__tests__/ColaboradoresPage.test.tsx": {
@@ -329669,10 +329743,22 @@
   }
  },
  "git": {
-  "sha": "58914234bdf23e344ded82094c5221b4f8f06e1b",
+  "sha": "b6129aab4292ee19dfc901931600b2ab823e151c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "b6129aa",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix(colaboradores): status \"Desligado\" nao salvava e telefone fixo era inalcancavel (#741)",
+    "files": [
+     "src/components/ui/phone-input.tsx",
+     "src/pages/ColaboradorFormPage.tsx",
+     "src/pages/__tests__/ColaboradorFormPage.test.tsx",
+     "src/pages/colaboradorFormSchema.ts"
+    ]
+   },
    {
     "sha": "5891423",
     "date": "2026-11-19",
@@ -329976,15 +330062,6 @@
      "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
      "src/hooks/useAlertasPreditivos.ts"
     ]
-   },
-   {
-    "sha": "778a5b4",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "test(ferias): cobre FeriasResumoTab, que estava viva no dossie sem teste (#707)",
-    "files": [
-     "src/components/__tests__/FeriasResumoTab.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -330041,6 +330118,22 @@
     2
    ],
    [
+    "src/components/ui/phone-input.tsx",
+    1
+   ],
+   [
+    "src/pages/ColaboradorFormPage.tsx",
+    1
+   ],
+   [
+    "src/pages/__tests__/ColaboradorFormPage.test.tsx",
+    1
+   ],
+   [
+    "src/pages/colaboradorFormSchema.ts",
+    1
+   ],
+   [
     "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql",
     1
    ],
@@ -330050,22 +330143,6 @@
    ],
    [
     "src/pages/__tests__/OnboardingParidade.test.tsx",
-    1
-   ],
-   [
-    "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.verify.sql",
-    1
-   ],
-   [
-    "src/App.tsx",
-    1
-   ],
-   [
-    "src/hooks/__tests__/useStaggerCards.test.tsx",
     1
    ]
   ]
