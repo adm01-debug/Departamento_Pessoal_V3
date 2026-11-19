@@ -7,13 +7,26 @@ import { test, expect, type Page } from '@playwright/test';
 const DIR = 'tmp-feedbacks-historico';
 
 async function abrirFeedbacks(page: Page) {
-  await page.route('**/rest/v1/rpc/get_user_roles*', (rota) =>
-    rota.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(['admin', 'gestor']),
-    })
-  );
+  // Sessão com papel único `admin`: devolver também `gestor` para exercitar a
+    // carteira de gestor. O `supabase.rpc` do app passa pela bridge
+    // `/functions/v1/external-db-bridge` (payload `{action:'rpc', fn:'get_user_roles'}`),
+    // não pela URL clássica `/rest/v1/rpc/...` — por isso o stub é no payload.
+    await page.route('**/functions/v1/external-db-bridge*', (rota) => {
+      let fn = '';
+      try {
+        fn = String((rota.request().postDataJSON() as { fn?: unknown } | null)?.fn ?? '');
+      } catch {
+        // corpo vazio / não-JSON — deixa seguir.
+      }
+      if (fn === 'get_user_roles') {
+        return rota.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ data: ['admin', 'gestor'], error: null }),
+        });
+      }
+      return rota.continue();
+    });
   await page.goto('/avaliacao');
   await expect(page.getByRole('heading', { name: /Gestão de Desempenho/ })).toBeVisible();
   await page.getByRole('tab', { name: /Feedbacks/i }).click();
