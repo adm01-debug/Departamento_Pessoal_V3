@@ -17,7 +17,14 @@ export function useAdmissoes() {
     enabled: !!empresaId,
   });
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['admissoes', empresaId] });
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey: ['admissoes', empresaId] });
+    // A aba Auditoria da mesma página lê a trilha por OUTRA chave
+    // (['auditoria-admissoes', empresaId]) e o botão "Nova Admissão" continua
+    // disponível com ela aberta. Sem invalidar as duas, o RH cria a admissão e
+    // a trilha segue afirmando que nenhum evento foi registrado.
+    queryClient.invalidateQueries({ queryKey: ['auditoria-admissoes', empresaId] });
+  };
 
   const criarMutation = useMutation({
     mutationFn: (data: Insertable<'admissoes'>) => admissaoService.criar({ ...data, empresa_id: empresaId }),
