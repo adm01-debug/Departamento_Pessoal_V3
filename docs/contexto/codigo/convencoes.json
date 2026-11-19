@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(seguranca): gestor nao pode forjar a aprovacao do RH nas ferias (#733)",
+   "chore(auditoria): por que a trilha de Admissoes nao e port de UI (medido) (#731)",
    "feat(ui): cascata de entrada dos cards, resgatada da PR #546 (muri) (#730)",
    "fix(ferias): policy de UPDATE do gestor, fechando o hiato de aprovacao (#729)",
-   "chore(auditoria): inventario do que falta resgatar da PR #546 (muri) (#728)",
-   "feat(rescisao): carimba procedencia do calculo na tela e no TRCT (#727)",
-   "fix(consignado): teto do emprestimo vai de 35% para 30% (Lei 10.820 art. 1 §1) (#725)"
+   "chore(auditoria): inventario do que falta resgatar da PR #546 (muri) (#728)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

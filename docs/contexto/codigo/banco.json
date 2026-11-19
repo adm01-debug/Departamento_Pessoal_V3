@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 892,
+ "migrations": 894,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -362,6 +362,7 @@
   "enqueue_training_image_request",
   "ensure_single_default_filter",
   "enviar_avaliacao_ao_gestor",
+  "ferias_bloquear_aprovacao_rh_sem_rh",
   "fill_recrutamento_child_empresa",
   "fill_treinamento_certificados_empresa",
   "fill_treinamento_instancias_empresa",
@@ -1785,6 +1786,13 @@
    "evento": "insert or update",
    "tabela": "ferias",
    "funcao": "enforce_ferias_hash"
+  },
+  {
+   "nome": "trg_ferias_bloquear_aprovacao_rh_sem_rh",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "ferias",
+   "funcao": "ferias_bloquear_aprovacao_rh_sem_rh"
   },
   {
    "nome": "trg_impedir_alteracao_ferias_concluidas",
@@ -28432,6 +28440,7 @@
     "ferias_status_transition",
     "tr_update_ferias_status",
     "trg_enforce_ferias_hash",
+    "trg_ferias_bloquear_aprovacao_rh_sem_rh",
     "trg_impedir_alteracao_ferias_concluidas",
     "trg_proibir_delete_ferias_concluidas",
     "update_ferias_updated_at"

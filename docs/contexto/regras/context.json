@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d50c80f28059589068c2904d72cf4efbe20262e9",
+  "sha": "367ed1fb58d7c99b0694b937ee5296220adb0340",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 11:59 UTC",
-  "files_total": 3651,
-  "code_files": 3071,
-  "code_lines": 486680
+  "generated_at": "2026-11-19 12:08 UTC",
+  "files_total": 3653,
+  "code_files": 3073,
+  "code_lines": 486894
  },
  "version": "1.3.2",
- "facts_hash": "36c946a5627e0423",
+ "facts_hash": "e8c8de41c1f0a892",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1021,
-   ".sql": 966,
+   ".sql": 968,
    ".ts": 948,
    ".mjs": 108,
    ".js": 15,
@@ -54172,6 +54172,15 @@
     "src": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql"
    },
    {
+    "name": "trg_ferias_bloquear_aprovacao_rh_sem_rh",
+    "when": "BEFORE UPDATE",
+    "table": "ferias",
+    "function": "ferias_bloquear_aprovacao_rh_sem_rh",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
+   },
+   {
     "name": "ajuste_ponto_status_transition",
     "when": "BEFORE UPDATE OF \"STATUS\"",
     "table": "solicitacoes_ajuste_ponto",
@@ -64579,6 +64588,22 @@
      "v_salario"
     ]
    },
+   "ferias_bloquear_aprovacao_rh_sem_rh": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "BEGIN IF current_user NOT IN ('authenticated', 'anon') THEN RETURN NEW; END IF; IF public.pode_gerir_rh(NEW.empresa_id) THEN RETURN NEW; END IF; IF NEW.aprovado_rh IS DISTINCT FROM OLD.aprovado_rh OR NEW.aprovado_rh_em IS DISTINCT FROM OLD.aprovado_rh_em OR NEW.aprovado_rh_por IS DISTINCT FROM OLD.aprovado_rh_por OR NEW.status_aprovacao_rh IS DISTINCT FROM OLD.status_aprovacao_rh OR NEW.aprovado_em IS DISTINCT FROM OLD.aprovado_em OR NEW.aprovado_por IS DISTINCT FROM OLD.aprovado_por THEN RAISE EXCEPTION 'Somente RH ou admin pode registrar a aprovacao do RH nas ferias' USING ERRCODE = '42501'; END IF; IF NEW.aviso_assinatura_em IS DISTINCT FROM OLD.aviso_assinatura_em OR NEW.aviso_assinatura …",
+    "raises": [
+     "Somente RH ou admin pode registrar a aprovacao do RH nas ferias",
+     "Assinatura do aviso de ferias so pode ser gravada pelo fluxo de assinatura"
+    ],
+    "tables": [
+     "OLD"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -72117,6 +72142,8 @@
    "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.verify.sql",
    "supabase/migrations/20261119130000_ferias_gestor_update.sql",
    "supabase/migrations/20261119130000_ferias_gestor_update.verify.sql",
+   "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql",
+   "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -84141,6 +84168,14 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "ferias_bloquear_aprovacao_rh_sem_rh",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -85627,6 +85662,16 @@
     "function": "fn_consignado_valida_margem",
     "msg": "Parcela excede a margem de empréstimo consignável de 30%% do salário: já comprometido R$ %, limite R$ %",
     "src": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql"
+   },
+   {
+    "function": "ferias_bloquear_aprovacao_rh_sem_rh",
+    "msg": "Somente RH ou admin pode registrar a aprovacao do RH nas ferias",
+    "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
+   },
+   {
+    "function": "ferias_bloquear_aprovacao_rh_sem_rh",
+    "msg": "Assinatura do aviso de ferias so pode ser gravada pelo fluxo de assinatura",
+    "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -103948,8 +103993,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 892,
-   "lines": 80638,
+   "files": 894,
+   "lines": 80852,
    "tables": [
     "profiles",
     "user_roles"
@@ -215682,6 +215727,15 @@
     "src": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql"
    },
    {
+    "name": "trg_ferias_bloquear_aprovacao_rh_sem_rh",
+    "when": "BEFORE UPDATE",
+    "table": "ferias",
+    "function": "ferias_bloquear_aprovacao_rh_sem_rh",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
+   },
+   {
     "name": "ajuste_ponto_status_transition",
     "when": "BEFORE UPDATE OF \"STATUS\"",
     "table": "solicitacoes_ajuste_ponto",
@@ -226089,6 +226143,22 @@
      "v_salario"
     ]
    },
+   "ferias_bloquear_aprovacao_rh_sem_rh": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "BEGIN IF current_user NOT IN ('authenticated', 'anon') THEN RETURN NEW; END IF; IF public.pode_gerir_rh(NEW.empresa_id) THEN RETURN NEW; END IF; IF NEW.aprovado_rh IS DISTINCT FROM OLD.aprovado_rh OR NEW.aprovado_rh_em IS DISTINCT FROM OLD.aprovado_rh_em OR NEW.aprovado_rh_por IS DISTINCT FROM OLD.aprovado_rh_por OR NEW.status_aprovacao_rh IS DISTINCT FROM OLD.status_aprovacao_rh OR NEW.aprovado_em IS DISTINCT FROM OLD.aprovado_em OR NEW.aprovado_por IS DISTINCT FROM OLD.aprovado_por THEN RAISE EXCEPTION 'Somente RH ou admin pode registrar a aprovacao do RH nas ferias' USING ERRCODE = '42501'; END IF; IF NEW.aviso_assinatura_em IS DISTINCT FROM OLD.aviso_assinatura_em OR NEW.aviso_assinatura …",
+    "raises": [
+     "Somente RH ou admin pode registrar a aprovacao do RH nas ferias",
+     "Assinatura do aviso de ferias so pode ser gravada pelo fluxo de assinatura"
+    ],
+    "tables": [
+     "OLD"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -227199,6 +227269,16 @@
     "function": "fn_consignado_valida_margem",
     "msg": "Parcela excede a margem de empréstimo consignável de 30%% do salário: já comprometido R$ %, limite R$ %",
     "src": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql"
+   },
+   {
+    "function": "ferias_bloquear_aprovacao_rh_sem_rh",
+    "msg": "Somente RH ou admin pode registrar a aprovacao do RH nas ferias",
+    "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
+   },
+   {
+    "function": "ferias_bloquear_aprovacao_rh_sem_rh",
+    "msg": "Assinatura do aviso de ferias so pode ser gravada pelo fluxo de assinatura",
+    "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -241120,6 +241200,7 @@
    "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql",
    "supabase/migrations/20261118223000_whatsapp_config_repoe_policy_admin_rh.sql",
    "supabase/migrations/20261119130000_ferias_gestor_update.sql",
+   "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -252985,6 +253066,14 @@
     "objkind": "function",
     "roles": "PUBLIC, anon, authenticated",
     "src": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "ferias_bloquear_aprovacao_rh_sem_rh",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
    },
    {
     "kind": "revoke",
@@ -329088,6 +329177,15 @@
    "path": "supabase/migrations/20261119130000_ferias_gestor_update.verify.sql",
    "lines": 65
   },
+  "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql": {
+   "path": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql",
+   "lines": 121,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.verify.sql": {
+   "path": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.verify.sql",
+   "lines": 93
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -329406,10 +329504,31 @@
   }
  },
  "git": {
-  "sha": "d50c80f28059589068c2904d72cf4efbe20262e9",
+  "sha": "367ed1fb58d7c99b0694b937ee5296220adb0340",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "367ed1f",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix(seguranca): gestor nao pode forjar a aprovacao do RH nas ferias (#733)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql",
+     "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql",
+     "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.verify.sql"
+    ]
+   },
+   {
+    "sha": "c9398d2",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "chore(auditoria): por que a trilha de Admissoes nao e port de UI (medido) (#731)",
+    "files": [
+     "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md"
+    ]
+   },
    {
     "sha": "d50c80f",
     "date": "2026-11-19",
@@ -329706,39 +329825,20 @@
      "src/pages/__tests__/AdmissoesConsolidacao.test.tsx",
      "src/pages/__tests__/ColaboradoresPage.test.tsx"
     ]
-   },
-   {
-    "sha": "c328119",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "feat(contas-bancarias): resgata identidade visual de banco da muri (#699)",
-    "files": [
-     "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
-     "src/lib/bankBrand.ts"
-    ]
-   },
-   {
-    "sha": "5d9deb6",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "feat(dashboard): resgata Resumo Operacional e Próximas Atividades da muri (#698)",
-    "files": [
-     "src/components/dashboard/MorningBriefing.tsx",
-     "src/components/dashboard/ProximasAtividadesCard.tsx",
-     "src/components/dashboard/ResumoOperacionalCard.tsx",
-     "src/components/dashboard/useMorningBriefing.ts",
-     "src/pages/DashboardPage.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     ".github/workflows/canonical-migrations.yml",
-    5
+    6
    ],
    [
     "scripts/canonical-invariants.sql",
-    5
+    6
+   ],
+   [
+    "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
+    2
    ],
    [
     "src/pages/CalculadoraRescisaoPage.tsx",
@@ -329777,6 +329877,14 @@
     2
    ],
    [
+    "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.verify.sql",
+    1
+   ],
+   [
     "src/App.tsx",
     1
    ],
@@ -329797,19 +329905,7 @@
     1
    ],
    [
-    "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
-    1
-   ],
-   [
     "src/utils/__tests__/rescisaoPDF.test.ts",
-    1
-   ],
-   [
-    "src/utils/rescisaoPDF.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql",
     1
    ]
   ]

@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d50c80f28059589068c2904d72cf4efbe20262e9",
+  "commit": "367ed1fb58d7c99b0694b937ee5296220adb0340",
   "branch": "main",
-  "data_commit": "2026-11-19T08:58:22-03:00",
+  "data_commit": "2026-11-19T09:07:25-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "367ed1f",
+    "data": "2026-11-19",
+    "assunto": "fix(seguranca): gestor nao pode forjar a aprovacao do RH nas ferias (#733)"
+   },
+   {
+    "sha": "c9398d2",
+    "data": "2026-11-19",
+    "assunto": "chore(auditoria): por que a trilha de Admissoes nao e port de UI (medido) (#731)"
+   },
    {
     "sha": "d50c80f",
     "data": "2026-11-19",
@@ -121,19 +131,9 @@
     "sha": "96ef3ed",
     "data": "2026-11-18",
     "assunto": "feat(rescisão): a calculadora passa a LER o histórico que já gravava (#704)"
-   },
-   {
-    "sha": "656863d",
-    "data": "2026-11-18",
-    "assunto": "feat(desligamentos): paginação, ordenação e filtro por etapa resgatados da muri (#700)"
-   },
-   {
-    "sha": "d9cc475",
-    "data": "2026-11-18",
-    "assunto": "feat(dashboard): põe em tela os 2 widgets que nunca eram renderizados (#702)"
    }
   ],
-  "arquivos_mudados_7d": 1142,
+  "arquivos_mudados_7d": 1144,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 26
+    "mudancas": 27
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "arquivo": "package.json",
@@ -258,10 +258,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "scripts/sync/README.md",
-    "mudancas": 6
-   },
-   {
     "arquivo": "scripts/sync/run-all.sh",
     "mudancas": 6
    },
@@ -290,6 +286,10 @@
     "mudancas": 5
    },
    {
+    "arquivo": "scripts/sync/README.md",
+    "mudancas": 5
+   },
+   {
     "arquivo": "src/components/desligamentos/index.ts",
     "mudancas": 5
    },
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3638,
+  "arquivos_total": 3640,
   "arquivos_codigo": 2107,
   "linhas_codigo": 418584,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 121,
   "edge_functions": 67,
   "tabelas": 427,
-  "migrations": 892,
+  "migrations": 894,
   "cron_jobs": 41,
   "testes": 793,
   "workflows": 21,

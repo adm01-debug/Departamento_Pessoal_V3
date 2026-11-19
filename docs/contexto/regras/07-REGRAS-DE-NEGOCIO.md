@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d50c80f280` · branch `main` · 2026-11-19 11:59 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `367ed1fb58` · branch `main` · 2026-11-19 12:08 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -708,6 +708,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_pensoes_set_empresa | BEFORE INSERT OR UPDATE OF COLABORADOR_ID, EMPRESA_ID | `pensoes` | `fn_pensoes_set_empresa` |  |
 | tr_bloquear_aprovacao_ponto_sem_rh | BEFORE INSERT OR UPDATE | `registros_ponto` | `bloquear_aprovacao_ponto_sem_rh` |  |
 | trg_consignado_valida_margem | BEFORE INSERT OR UPDATE | `emprestimos_consignados` | `fn_consignado_valida_margem` |  |
+| trg_ferias_bloquear_aprovacao_rh_sem_rh | BEFORE UPDATE | `ferias` | `ferias_bloquear_aprovacao_rh_sem_rh` |  |
 | ajuste_ponto_status_transition | BEFORE UPDATE OF "STATUS" | `solicitacoes_ajuste_ponto` | `trg_ajuste_ponto_status_transition` |  |
 | audit_admissoes | AFTER INSERT OR DELETE OR UPDATE | `admissoes` | `log_audit_change` |  |
 | audit_afastamentos | AFTER INSERT OR DELETE OR UPDATE | `afastamentos` | `log_audit_change` |  |
@@ -922,8 +923,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_fwd_audit_unified | AFTER INSERT | `auditoria_contratual` | `fwd_to_audit_unified` |  |
 | trg_fwd_audit_unified | AFTER INSERT | `auditoria_logs` | `fwd_to_audit_unified` |  |
 | trg_fwd_audit_unified | AFTER INSERT | `ferias_audit_log` | `fwd_to_audit_unified` |  |
-| trg_fwd_audit_unified | AFTER INSERT | `folha_auditoria` | `fwd_to_audit_unified` |  |
-| … +163 linhas — lista completa em `context.json` | | | | |
+| … +164 linhas — lista completa em `context.json` | | | | |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -1073,6 +1073,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `replace_monthly_provisions` | monthly provision replacement row count mismatch | `supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql` |
 | `fn_consignado_valida_margem` | Salário base do colaborador não permite calcular a margem consignável | `supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql` |
 | `fn_consignado_valida_margem` | Parcela excede a margem de empréstimo consignável de 30%% do salário: já comprometido R$ %, limite R$ % | `supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql` |
+| `ferias_bloquear_aprovacao_rh_sem_rh` | Somente RH ou admin pode registrar a aprovacao do RH nas ferias | `supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql` |
+| `ferias_bloquear_aprovacao_rh_sem_rh` | Assinatura do aviso de ferias so pode ser gravada pelo fluxo de assinatura | `supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql` |
 | `_purge_audit_log_internal` | Retenção mínima de 30 dias | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_security_definer_rpcs` | access denied | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_user_roles` | Apenas administradores podem listar papéis de usuário | `supabase/rebaseline/20260831_corrected_public.sql` |
@@ -1227,9 +1229,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `pagar_desligamento` | Desligamento nao encontrado | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `pagar_desligamento` | Rescisao so pode ser paga apos homologacao (status atual: %) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `pagar_desligamento` | Rescisao precisa da assinatura da empresa e do colaborador antes do pagamento | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `programacao_ferias_aprovar_gestor` | Programação não encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `programacao_ferias_aprovar_gestor` | Sem permissão de escopo | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +163 linhas — lista completa em `context.json` | | |
+| … +165 linhas — lista completa em `context.json` | | |
 
 ## E. Estados, máquinas de estado e transições
 
