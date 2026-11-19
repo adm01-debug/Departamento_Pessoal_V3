@@ -125,7 +125,12 @@ export default function CalculadoraRescisaoPage() {
       if (!empresaAtual?.id) return [];
       const { data, error } = await supabase
         .from('colaboradores')
-        .select('id, nome_completo')
+        // `cpf_last4` e não `cpf`: a busca precisa desambiguar homônimos, não
+        // expor o CPF inteiro de toda a empresa no navegador. O log de acesso a
+        // PII desta tela é por colaborador selecionado (useDataAccessLog acima),
+        // então carregar a lista completa de CPFs seria leitura em massa sem
+        // registro — a coluna `cpf_last4` existe no banco exatamente para isso.
+        .select('id, nome_completo, matricula, cpf_last4')
         .eq('empresa_id', empresaAtual.id)
         .eq('status', 'ativo')
         .order('nome_completo');
@@ -369,14 +374,20 @@ export default function CalculadoraRescisaoPage() {
                     </PopoverTrigger>
                     <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
                       <Command>
-                        <CommandInput placeholder="Buscar por nome..." />
+                        <CommandInput placeholder="Buscar por nome, matrícula ou 4 últimos do CPF..." />
                         <CommandList>
                           <CommandEmpty>Nenhum colaborador ativo encontrado.</CommandEmpty>
                           <CommandGroup>
                             {colaboradores.map((c) => (
                               <CommandItem
                                 key={c.id}
-                                value={c.nome_completo}
+                                // O `value` é o texto que o cmdk usa para filtrar. Com
+                                // homônimos ("José Silva" duas vezes) o nome não
+                                // desambigua, e errar a pessoa numa tela de rescisão
+                                // gera homologação errada — então matrícula e os 4
+                                // últimos dígitos do CPF também entram no filtro. Só no
+                                // filtro: o CPF inteiro nunca é carregado.
+                                value={[c.nome_completo, c.matricula ?? '', c.cpf_last4 ?? ''].join(' ')}
                                 onSelect={() => {
                                   setSeletorAberto(false);
                                   void handleSelectColaborador(c.id);
@@ -385,7 +396,12 @@ export default function CalculadoraRescisaoPage() {
                                 <Check
                                   className={`mr-2 h-4 w-4 ${c.id === selectedColabId ? 'opacity-100' : 'opacity-0'}`}
                                 />
-                                {c.nome_completo}
+                                <span className="truncate">{c.nome_completo}</span>
+                                {c.matricula && (
+                                  <span className="ml-auto shrink-0 pl-2 text-[11px] text-muted-foreground">
+                                    {c.matricula}
+                                  </span>
+                                )}
                               </CommandItem>
                             ))}
                           </CommandGroup>
