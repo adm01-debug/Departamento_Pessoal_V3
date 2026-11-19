@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-19 00:39 UTC
+
+- **functions** alterado (3): `public.is_admin(_user_id uuid)`, `public.pode_gerir_rh(_empresa_id uuid)`, `public.pode_gerir_rh_para(_user_id uuid, _empresa_id uuid)`
+- **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_22`
+
 ## 2026-11-18 17:13 UTC
 
 - **colunas** alterado (9): `public.asos.empresa_id`, `public.batidas_ponto.empresa_id`, `public.beneficios.empresa_id`, `public.colaboradores.empresa_id`, `public.contas_bancarias.empresa_id`, `public.desligamentos.empresa_id`, `public.despesas.empresa_id`, `public.ferias.empresa_id`, `public.folhas_pagamento.empresa_id`

@@ -97600,7 +97600,7 @@
               "hits": 2
             }
           ],
-          "code_total_files": 77,
+          "code_total_files": 78,
           "cron": [],
           "db": [
             "public.admin_associar_usuario_empresa",
@@ -99932,9 +99932,13 @@
             {
               "file": "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.sql",
               "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261118223000_whatsapp_config_repoe_policy_admin_rh.sql",
+              "hits": 3
             }
           ],
-          "code_total_files": 28,
+          "code_total_files": 29,
           "cron": [],
           "db": [
             "public.admin_definir_pin_quiosque",
@@ -100013,9 +100017,13 @@
             {
               "file": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.verify.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261118223000_whatsapp_config_repoe_policy_admin_rh.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 8,
+          "code_total_files": 9,
           "cron": [],
           "db": [
             "public.pode_gerir_rh"
@@ -146932,6 +146940,11 @@
           "publication": "supabase_realtime_messages_publication",
           "schema": "realtime",
           "table": "messages_2026_11_21"
+        },
+        {
+          "publication": "supabase_realtime_messages_publication",
+          "schema": "realtime",
+          "table": "messages_2026_11_22"
         }
       ]
     },
