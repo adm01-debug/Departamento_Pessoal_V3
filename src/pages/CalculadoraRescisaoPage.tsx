@@ -99,10 +99,14 @@ export default function CalculadoraRescisaoPage() {
   const handleSelectColaborador = async (id: string) => {
     if (!id) return;
     setLoadingColab(true);
-    setSelectedColabId(id);
     try {
       const { data, error } = await supabase.from('colaboradores').select('*').eq('id', id).single();
       if (error) throw error;
+      // O id entra DEPOIS da consulta dar certo, junto com os dados. Marcá-lo
+      // antes deixava id e formulário apontando para pessoas diferentes quando
+      // a consulta falhava: com dois homônimos, o desligamento ia para o id da
+      // importação que falhou, carregando os dados da anterior.
+      setSelectedColabId(id);
       setForm((p) => ({
         ...p,
         nomeColaborador: data.nome_completo,
@@ -125,7 +129,12 @@ export default function CalculadoraRescisaoPage() {
       if (!empresaAtual?.id) return [];
       const { data, error } = await supabase
         .from('colaboradores')
-        .select('id, nome_completo')
+        // `cpf_last4` e não `cpf`: a busca precisa desambiguar homônimos, não
+        // expor o CPF inteiro de toda a empresa no navegador. O log de acesso a
+        // PII desta tela é por colaborador selecionado (useDataAccessLog acima),
+        // então carregar a lista completa de CPFs seria leitura em massa sem
+        // registro — a coluna `cpf_last4` existe no banco exatamente para isso.
+        .select('id, nome_completo, matricula, cpf_last4')
         .eq('empresa_id', empresaAtual.id)
         .eq('status', 'ativo')
         .order('nome_completo');
@@ -276,7 +285,26 @@ export default function CalculadoraRescisaoPage() {
       if (histError) throw histError;
 
       // 2. Integration with Desligamentos Table
-      const colabDesl = colaboradores.find((c) => c.nome_completo === form.nomeColaborador);
+      // Casar por NOME aqui registrava o desligamento na PESSOA ERRADA quando
+      // existem homônimos: `find` devolve o primeiro da lista, não o que o RH
+      // escolheu. Usa o id importado, e só cai no nome quando ele é único —
+      // nunca adivinha entre homônimos.
+      // O nome ainda tem de bater com o do colaborador importado: se o RH
+      // importou alguém e depois EDITOU o campo de nome, o id em memória já não
+      // corresponde a quem está na tela.
+      const colabPorId =
+        colaboradorSelecionado && colaboradorSelecionado.nome_completo === form.nomeColaborador
+          ? colaboradorSelecionado
+          : undefined;
+      const homonimos = colaboradores.filter((c) => c.nome_completo === form.nomeColaborador);
+      const colabDesl = colabPorId ?? (homonimos.length === 1 ? homonimos[0] : undefined);
+
+      if (form.dataDesligamento && !colabDesl && homonimos.length > 1 && mapTipoDesligamentoDB(form.tipo)) {
+        toast.info(
+          `Há ${homonimos.length} colaboradores com este nome. Importe a pessoa pelo seletor para registrar o desligamento.`
+        );
+      }
+
       if (form.dataDesligamento && colabDesl && mapTipoDesligamentoDB(form.tipo)) {
         const { error: deslError } = await supabase.from('desligamentos').insert(
           validateTablePayload(
@@ -313,7 +341,7 @@ export default function CalculadoraRescisaoPage() {
       setSaving(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [result, form, user]);
+  }, [result, form, user, colaboradorSelecionado, colaboradores]);
   const set = (k: keyof typeof form, v: string | boolean) => {
     // Qualquer edição nos inputs invalida o resultado exibido — mostrar o
     // cálculo velho ao lado dos dados novos já causou homologação errada.
@@ -369,14 +397,20 @@ export default function CalculadoraRescisaoPage() {
                     </PopoverTrigger>
                     <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
                       <Command>
-                        <CommandInput placeholder="Buscar por nome..." />
+                        <CommandInput placeholder="Buscar por nome, matrícula ou 4 últimos do CPF..." />
                         <CommandList>
                           <CommandEmpty>Nenhum colaborador ativo encontrado.</CommandEmpty>
                           <CommandGroup>
                             {colaboradores.map((c) => (
                               <CommandItem
                                 key={c.id}
-                                value={c.nome_completo}
+                                // O `value` é o texto que o cmdk usa para filtrar. Com
+                                // homônimos ("José Silva" duas vezes) o nome não
+                                // desambigua, e errar a pessoa numa tela de rescisão
+                                // gera homologação errada — então matrícula e os 4
+                                // últimos dígitos do CPF também entram no filtro. Só no
+                                // filtro: o CPF inteiro nunca é carregado.
+                                value={[c.nome_completo, c.matricula ?? '', c.cpf_last4 ?? ''].join(' ')}
                                 onSelect={() => {
                                   setSeletorAberto(false);
                                   void handleSelectColaborador(c.id);
@@ -385,7 +419,12 @@ export default function CalculadoraRescisaoPage() {
                                 <Check
                                   className={`mr-2 h-4 w-4 ${c.id === selectedColabId ? 'opacity-100' : 'opacity-0'}`}
                                 />
-                                {c.nome_completo}
+                                <span className="truncate">{c.nome_completo}</span>
+                                {c.matricula && (
+                                  <span className="ml-auto shrink-0 pl-2 text-[11px] text-muted-foreground">
+                                    {c.matricula}
+                                  </span>
+                                )}
                               </CommandItem>
                             ))}
                           </CommandGroup>
@@ -446,6 +485,7 @@ export default function CalculadoraRescisaoPage() {
                   <Label className="font-body text-xs">Data Admissão</Label>
                   <Input
                     type="date"
+                    aria-label="Data Admissão"
                     value={form.dataAdmissao}
                     onChange={(e) => set('dataAdmissao', e.target.value)}
                     className="rounded-xl"
@@ -455,6 +495,7 @@ export default function CalculadoraRescisaoPage() {
                   <Label className="font-body text-xs">Data Desligamento</Label>
                   <Input
                     type="date"
+                    aria-label="Data Desligamento"
                     value={form.dataDesligamento}
                     onChange={(e) => set('dataDesligamento', e.target.value)}
                     className="rounded-xl"
