@@ -104,3 +104,46 @@ banco acompanha o arquivo da migration.
 14.431/2022) trabalha com 35% no total, sendo a faixa de empréstimo menor que o total e o restante reservado
 ao cartão consignado — por isso 30% e 35% aparecem juntos na literatura. Escolhido o número e a base, a
 correção é de uma linha em cada um dos três pontos acima, mais o `.verify.sql` do trigger.
+
+## Aberto com o dono — E2E autenticado vermelho na main desde 18/11/2026
+
+Issue #667 acumula 48 comentários automáticos do CI sem nenhum diagnóstico. O run 44436569279 fecha em
+**76 passaram, 11 falharam**, e as 11 têm uma causa só: a empresa da sessão E2E não tem os dados que os
+specs leem.
+
+| Medição em 19/11/2026 (MCP do Supabase) | Resultado |
+| --- | --- |
+| `empresas` | 2: `66104399…` TIME PROMO BRINDES (CNPJ `00000000000100`) e `61e7d382…` "E2E SEED LTDA — NAO USAR EM PRODUCAO" (CNPJ `00000000000191`) |
+| `user_empresas` com `is_default` na empresa de seed | só `ed8ba796…` e `7d2cba38…`, criados em 15/10/2026 16:15 junto com a empresa — as contas do E2E |
+| `feedbacks_360` | 6 linhas, **todas** em `66104399…` |
+| `ciclos_avaliacao` | 5 linhas, **todas** em `66104399…` |
+| `candidatos` | 5 linhas, **todos** em `66104399…` |
+
+A empresa de seed tem **zero** ciclo, **zero** feedback 360 e **zero** candidato. Daí as duas cadeias de
+falha:
+
+- `/avaliacao` → a aba Feedbacks não renderiza card nenhum, então
+  `expect(getByText('Avaliado por').first()).toBeVisible()` estoura em 15 s no helper compartilhado
+  (`e2e/authenticated/feedbacks-padronizacao.spec.ts:38` e `feedbacks-historico.spec.ts:20`) — 9 falhas
+  (`feedbacks-padronizacao` ×4, `feedbacks-historico` ×1, `layout-protegido-desempenho` ×4).
+- `/recrutamento` → `[data-candidato-card]` nunca aparece (`recrutamento-pipeline.spec.ts:28`) — 2 falhas
+  (`recrutamento-pipeline`, `recrutamento-pipeline-animacao`).
+
+**Não é funcionalidade perdida nem regressão de código.** A coluna existe
+(`src/components/avaliacao/CartaoFeedbackCanonico.tsx:333`, com a largura de 216 px que o spec de layout
+cobra) e o teste unitário dela passa (`FeedbackPadronizacao.test.tsx`). O seed de W58/W59/W60 criou empresa,
+colaboradores e folha, mas nunca criou ciclo, feedback 360 nem candidato — e os specs que leem esses três
+ficaram na suíte.
+
+**Decisão do dono**, porque as duas saídas têm custo diferente:
+
+1. **Completar o seed** da empresa sintética com um ciclo, os feedbacks 360 nos estados que os specs cobram
+   (normal, fila do gestor, cancelado com justificativa) e 5 candidatos nas 5 etapas. Barato, mas grava dado
+   no banco canônico de produção — ainda que na empresa marcada "NAO USAR EM PRODUCAO".
+2. **Tornar os specs autossuficientes**, criando e derrubando o próprio dado em `beforeAll`/`afterAll`. É o
+   certo a longo prazo e acaba com a dependência de dado posto à mão, mas é reescrita dos 5 arquivos e grava
+   em produção a cada run do CI de qualquer jeito.
+
+Não dá para verificar nenhuma das duas neste container: a suíte autenticada precisa dos segredos
+`E2E_USER_*` e do Supabase real. Enquanto isso o `Playwright E2E` segue vermelho na `main` e **não é check
+obrigatório** — o merge não trava, mas nenhum teste de ponta a ponta protege o sistema.
