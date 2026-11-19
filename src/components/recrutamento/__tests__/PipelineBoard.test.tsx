@@ -136,16 +136,19 @@ describe('PipelineBoard — cinco etapas e cards ricos', () => {
     expect(props.onContatar).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
   });
 
-  it('não oferece inscrição pela coluna: o rodapé só existe em Contratado', () => {
+  it('mantém rodapé em todas as colunas (mesma anatomia de Admissão), sem botão de fachada', () => {
     renderBoard();
     expect(screen.queryByRole('button', { name: /Adicionar candidato/i })).toBeNull();
     expect(screen.queryByRole('button', { name: /etapas arquivadas/i })).toBeNull();
     const rodapesDeColuna = document.querySelectorAll('[data-pipeline-coluna] .kb-footer');
-    expect(rodapesDeColuna).toHaveLength(1);
-    expect(rodapesDeColuna[0]).toHaveTextContent('Processo concluído');
-    expect(rodapesDeColuna[0].closest('[data-pipeline-coluna]')).toHaveAttribute('data-pipeline-coluna', 'contratado');
-    const triagem = document.querySelector('[data-pipeline-coluna="triagem"]') as HTMLElement;
-    expect(triagem.querySelector('.kb-footer')).toBeNull();
+    expect(rodapesDeColuna).toHaveLength(5);
+    const contratado = document.querySelector('[data-pipeline-coluna="contratado"] .kb-footer') as HTMLElement;
+    const triagem = document.querySelector('[data-pipeline-coluna="triagem"] .kb-footer') as HTMLElement;
+    expect(contratado).toHaveTextContent('Processo concluído');
+    expect(triagem).toHaveTextContent('Arraste candidatos para esta etapa');
+    // Mesma altura externa do conteúdo do rodapé (h-8) — paridade com o footer
+    // de Admissão, que o E2E usa para medir `rodapeBottom` das 5 colunas.
+    expect(triagem.querySelector('div')).toHaveClass('h-8');
   });
 
   it('coloca o vocabulário REAL do banco na coluna certa (teste_tecnico / contratacao)', () => {

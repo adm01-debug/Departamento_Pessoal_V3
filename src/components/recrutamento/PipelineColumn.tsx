@@ -12,14 +12,15 @@
  *        ficam fixos. SEM `overscroll-behavior: contain`: ao chegar ao fim da
  *        lista a roda continua para a página (scroll chaining).
  * VAZIO  caixa tracejada pequena "Solte aqui", discreta como na referência.
- * RODAPÉ só existe em Contratado, com o aviso "Processo concluído". A inscrição
- *        de candidato é a da aba Candidatos, não da coluna — sem botão de
- *        fachada e sem espaçador para fingir simetria (a altura externa vem do
- *        slot, `.kanban-column-visual { height: 100% }`, não do conteúdo).
+ * RODAPÉ em TODAS as colunas (`.kb-footer`), com a MESMA altura externa — em
+ *        Contratado avisa "Processo concluído"; nas demais, rótulo informativo
+ *        "Arraste candidatos para esta etapa". Sem botão de fachada: a
+ *        inscrição de candidato é a da aba Candidatos, não da coluna (a altura
+ *        externa vem do slot, `.kanban-column-visual { height: 100% }`).
  * ============================================================================
  */
 import { useDroppable } from '@dnd-kit/core';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, UserPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEntradaKanbanColuna } from '@/components/kanban/entradaKanban';
 import type { CandidaturaComRelacoes } from '@/types/recrutamento';
@@ -139,14 +140,33 @@ export function PipelineColumn({
             )}
           </div>
 
-          {etapa.id === 'contratado' ? (
-            <footer className="kb-footer shrink-0 border-t border-border/40 p-2.5">
-              <div className="flex h-8 w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-success/40 bg-success/5 text-[11.5px] font-medium text-success">
-                <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
-                Processo concluído
-              </div>
-            </footer>
-          ) : null}
+          {/* RODAPÉ em TODAS as colunas (mesma anatomia do Kanban de Admissão:
+              entry identica via `.kb-footer` e altura externa do rodapé igual
+              entre colunas). Em Contratado avisa o encerramento; nas demais,
+              um rótulo informativo de mesma altura — NUNCA botão de fachada: a
+              inscrição de candidato é a da aba Candidatos, não da coluna. */}
+          <footer className="kb-footer shrink-0 border-t border-border/40 p-2.5">
+            <div
+              className={cn(
+                'flex h-8 w-full items-center justify-center gap-1.5 rounded-lg text-[11.5px] font-medium',
+                etapa.id === 'contratado'
+                  ? 'border border-dashed border-success/40 bg-success/5 text-success'
+                  : 'text-muted-foreground/70'
+              )}
+            >
+              {etapa.id === 'contratado' ? (
+                <>
+                  <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
+                  Processo concluído
+                </>
+              ) : (
+                <>
+                  <UserPlus className="h-3.5 w-3.5" aria-hidden />
+                  Arraste candidatos para esta etapa
+                </>
+              )}
+            </div>
+          </footer>
         </div>
       </section>
     </div>
