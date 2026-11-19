@@ -6458,7 +6458,7 @@
    "modulo": "hooks",
    "arquivos": 96,
    "testes": 0,
-   "linhas": 9479,
+   "linhas": 9511,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7880,7 +7880,7 @@
    "modulo": "pages",
    "arquivos": 115,
    "testes": 0,
-   "linhas": 46139,
+   "linhas": 46141,
    "itens_menu": [
     "Admissões",
     "Afastamentos",

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `36e144eaac` · branch `main` · 2026-11-19 14:41 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a9ea057baf` · branch `main` · 2026-11-19 14:43 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5430,7 +5430,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9576 testes em 751 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9582 testes em 751 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5536,6 +5536,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/safeUrl.test.ts` | 22 | isAllowedUrl · allows known supabase host · blocks non-canonical Supabase hosts · allows lovable.app subdomain … |
 | `scripts/autofix/regras/dados.test.mjs` | 21 | tokenizador: comentário de bloco aninhado e dollar-quote aninhado · tokenizador: em E · CREATE POLICY  · DO que só VERIFICA (cita pg_class e  … |
 | `src/components/treinamentos/__tests__/turmasDerivacoes.test.ts` | 21 | turmasDerivacoes — datas · lê YYYY-MM-DD no fuso local sem recuar um dia · expõe horário apenas quando o timestamp tem hora · inicia a semana na segunda-feira e formata o intervalo … |
+| `src/hooks/__tests__/useExecutiveDashboard.test.ts` | 21 | useExecutiveKPIs · is disabled when no empresaId · returns data when empresaId provided · returns totalAtivos=0 when no employees … |
 | `src/pages/__tests__/OrganogramaPage.test.tsx` | 21 | OrganogramaPage · shows a loading spinner while data is loading · shows the sync error state and allows retry · shows the empty state when there is no structure … |
 | `src/schemas/esocial/__tests__/crossFieldValidators.test.ts` | 21 | cronologia de datas · S-2200 rejeita admissão anterior ao nascimento · S-2230 rejeita término de afastamento anterior ao início · S-2299 rejeita desligamento anterior à admissão … |
 | `src/services/__tests__/notificacoesService.test.ts` | 21 | criarNotificacao · calls supabase.auth.getUser to get current user · inserts notification with provided fields · uses current user id when payload.user_id is not provided … |
@@ -5613,7 +5614,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/integracoes/__tests__/ConfigPanels.test.tsx` | 15 | CnabConfigPanel · Salvar Configurações grava os dados editados e invalida a configuração · não salva sem os campos obrigatórios · Salvar Configurações fica desabilitado enquanto a config carrega … |
 | `src/components/recrutamento/__tests__/CandidatosPainel.test.tsx` | 15 | CandidatosPainel — indicadores e tabela · mostra as cinco contagens reais e oito linhas na primeira página · usa os indicadores como filtros e não perde a sincronização · mostra avatar (iniciais), origem, vaga, etapa, experiência, pretensão e avaliação reais … |
 | `src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts` | 15 | montarInscricoes · faz join de colaborador, curso e certificado sem inventar dados · preserva o status original e não exibe underscore no rótulo · usa Não informado quando datas não existem e nunca transforma status em progresso … |
-| `src/hooks/__tests__/useExecutiveDashboard.test.ts` | 15 | useExecutiveKPIs · is disabled when no empresaId · returns data when empresaId provided · returns totalAtivos=0 when no employees … |
 | `src/hooks/__tests__/useGrupo.test.tsx` | 15 | useGrupo · initial state: isLoading=true, empty arrays · returns all empresas after query resolves · empresasAtivas only includes ativa=true entries … |
 | `src/lib/__tests__/queryClient.test.ts` | 15 | queryClient · is a QueryClient instance · has staleTime of 5 minutes · has gcTime of 30 minutes … |
 | `src/services/folha/__tests__/calculoLoteService.test.ts` | 15 | calculoLoteService.processarLote · usa somente relações existentes e lê jornada do colaborador canônico · aplica eventos variáveis da competência via rubrica e dependentes de IRRF · grava no cabeçalho os totais somados dos itens, só com a folha aberta … |

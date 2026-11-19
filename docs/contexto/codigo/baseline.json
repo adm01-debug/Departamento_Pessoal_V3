@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "36e144eaacde8ed9e390715e301ed515eb8064a5",
+  "commit": "a9ea057bafbfa5a5975af5c8d8d54391ae0dead3",
   "branch": "main",
-  "data_commit": "2026-11-19T11:40:35-03:00",
+  "data_commit": "2026-11-19T11:43:00-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "a9ea057",
+    "data": "2026-11-19",
+    "assunto": "feat(dashboard): variacao do quadro de pessoal no mes (#743)"
+   },
    {
     "sha": "36e144e",
     "data": "2026-11-19",
@@ -126,11 +131,6 @@
     "sha": "09ea734",
     "data": "2026-11-18",
     "assunto": "fix(baseline): whatsapp_config fail-closed no restore do baseline de DR (#718)"
-   },
-   {
-    "sha": "6af99a6",
-    "data": "2026-11-18",
-    "assunto": "chore: registra lote de higiene de 9 migrations no canonical-migrations (#717)"
    }
   ],
   "arquivos_mudados_7d": 1151,
@@ -141,7 +141,7 @@
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 110
+    "mudancas": 111
    },
    {
     "pasta": "src/components/ui",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3649,
   "arquivos_codigo": 2110,
-  "linhas_codigo": 419199,
+  "linhas_codigo": 419279,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -660,7 +660,7 @@
   },
   "src/hooks": {
    "arquivos": 206,
-   "linhas": 24002
+   "linhas": 24080
   },
   "src/i18n": {
    "arquivos": 2,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 142,
-   "linhas": 50675
+   "linhas": 50677
   },
   "src/providers": {
    "arquivos": 4,

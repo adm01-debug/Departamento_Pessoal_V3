@@ -9217,7 +9217,7 @@
     "DashboardExecutivoPage"
    ],
    "export_default": "DashboardExecutivoPage",
-   "linhas": 606,
+   "linhas": 608,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas",

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `36e144eaacde8ed9e390715e301ed515eb8064a5` (2026-11-19T11:40:35-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a9ea057bafbfa5a5975af5c8d8d54391ae0dead3` (2026-11-19T11:43:00-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3649 |
 | arquivos_codigo | 2110 |
-| linhas_codigo | 419199 |
+| linhas_codigo | 419279 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27634 nós · 62308 arestas · 2401 comunidades · grafo do commit `36e144ea`
-- comunidades maiores: lucide-react (525), 20260831_corrected_public.sql (485), canonical_schema.sql (475), button.tsx (460), useEmpresas (380), @tanstack/react-query (362), react (259), vitest (247), cn (222), contract.ts (181), "public"."empresas" (159), "public"."empresas" (158)
+- 27636 nós · 62314 arestas · 2439 comunidades · grafo do commit `a9ea057b`
+- comunidades maiores: lucide-react (555), 20260831_corrected_public.sql (485), canonical_schema.sql (475), client.ts (401), useEmpresas (393), button.tsx (374), @tanstack/react-query (323), vitest (307), cn (249), react (214), rateLimit.ts (181), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-19 `a9ea057` feat(dashboard): variacao do quadro de pessoal no mes (#743)
 - 2026-11-19 `36e144e` fix(ferias/folhas): policy UPDATE gestor (pode_gerir_pessoas) em ferias e folhas_pagamento (#726)
 - 2026-11-19 `c01144d` feat(auditoria): trilha ganha empresa_id e leitura por empresa para o RH (passo 2 de 3) (#742)
 - 2026-11-19 `b6129aa` fix(colaboradores): status "Desligado" nao salvava e telefone fixo era inalcancavel (#741)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `c9398d2` chore(auditoria): por que a trilha de Admissoes nao e port de UI (medido) (#731)
 - 2026-11-19 `d50c80f` feat(ui): cascata de entrada dos cards, resgatada da PR #546 (muri) (#730)
 - 2026-11-19 `df983c6` fix(ferias): policy de UPDATE do gestor, fechando o hiato de aprovacao (#729)
-- 2026-11-19 `92be4ce` chore(auditoria): inventario do que falta resgatar da PR #546 (muri) (#728)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

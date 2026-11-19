@@ -4633,11 +4633,11 @@
   {
    "arquivo": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
    "tipo": "unit",
-   "linhas": 197,
+   "linhas": 243,
    "testa": [
     "src/hooks/useExecutiveDashboard.ts"
    ],
-   "casos": 13
+   "casos": 18
   },
   {
    "arquivo": "src/hooks/__tests__/useFeriados.test.ts",

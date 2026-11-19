@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "36e144eaacde8ed9e390715e301ed515eb8064a5",
+  "sha": "a9ea057bafbfa5a5975af5c8d8d54391ae0dead3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 14:41 UTC",
+  "generated_at": "2026-11-19 14:43 UTC",
   "files_total": 3662,
   "code_files": 3082,
-  "code_lines": 488011
+  "code_lines": 488091
  },
  "version": "1.3.2",
- "facts_hash": "2f96a30483fec97a",
+ "facts_hash": "72a04256ab082e80",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -102456,7 +102456,7 @@
   {
    "module": "src/hooks",
    "files": 206,
-   "lines": 24002,
+   "lines": 24080,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102535,7 +102535,7 @@
     "useESocial.ts: useESocial",
     "useEmpresas.ts: Empresa, EmpresaModo, compararOrdemExibicao, UserEmpresa, useEmpresaStore, GLOBAL_QUERY_KEYS",
     "useExcelExport.ts: useExcelExport",
-    "useExecutiveDashboard.ts: useExecutiveKPIs, useStrategicFinancials",
+    "useExecutiveDashboard.ts: reconstruirHeadcountPorMes, variacaoUltimoMes, useExecutiveKPIs, useStrategicFinancials",
     "useFeriados.ts: useFeriados"
    ],
    "docs": [
@@ -102818,7 +102818,7 @@
   {
    "module": "src/pages",
    "files": 142,
-   "lines": 50675,
+   "lines": 50677,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -185610,6 +185610,30 @@
    {
     "file": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
     "name": "returns projections and budgets arrays"
+   },
+   {
+    "file": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
+    "name": "reconstruirHeadcountPorMes / variacaoUltimoMes"
+   },
+   {
+    "file": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
+    "name": "reconstrói o headcount descontando o saldo dos meses POSTERIORES"
+   },
+   {
+    "file": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
+    "name": "nunca devolve headcount negativo"
+   },
+   {
+    "file": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
+    "name": "calcula a variação do último mês contra o anterior"
+   },
+   {
+    "file": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
+    "name": "devolve undefined (não 0) quando não há base de comparação"
+   },
+   {
+    "file": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
+    "name": "ponta a ponta: 100 ativos com saldos 3 e 5 dá +5,3% no mês"
    },
    {
     "file": "src/hooks/__tests__/useFeriados.test.ts",
@@ -291112,8 +291136,10 @@
   },
   "src/hooks/useExecutiveDashboard.ts": {
    "path": "src/hooks/useExecutiveDashboard.ts",
-   "lines": 241,
+   "lines": 273,
    "exports": [
+    "function reconstruirHeadcountPorMes",
+    "function variacaoUltimoMes",
     "function useExecutiveKPIs",
     "function useStrategicFinancials"
    ],
@@ -293770,7 +293796,7 @@
   },
   "src/hooks/__tests__/useExecutiveDashboard.test.ts": {
    "path": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
-   "lines": 197,
+   "lines": 243,
    "is_test": true,
    "tests": [
     "useExecutiveKPIs",
@@ -293787,7 +293813,13 @@
     "useStrategicFinancials",
     "is disabled when no empresaId",
     "calls get_personnel_cost_projection rpc when empresaId provided",
-    "returns projections and budgets arrays"
+    "returns projections and budgets arrays",
+    "reconstruirHeadcountPorMes / variacaoUltimoMes",
+    "reconstrói o headcount descontando o saldo dos meses POSTERIORES",
+    "nunca devolve headcount negativo",
+    "calcula a variação do último mês contra o anterior",
+    "devolve undefined (não 0) quando não há base de comparação",
+    "ponta a ponta: 100 ativos com saldos 3 e 5 dá +5,3% no mês"
    ]
   },
   "src/hooks/__tests__/useFeriados.test.ts": {
@@ -299227,7 +299259,7 @@
   },
   "src/pages/DashboardExecutivoPage.tsx": {
    "path": "src/pages/DashboardExecutivoPage.tsx",
-   "lines": 606,
+   "lines": 608,
    "exports": [
     "function DashboardExecutivoPage"
    ],
@@ -329821,10 +329853,21 @@
   }
  },
  "git": {
-  "sha": "36e144eaacde8ed9e390715e301ed515eb8064a5",
+  "sha": "a9ea057bafbfa5a5975af5c8d8d54391ae0dead3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "a9ea057",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "feat(dashboard): variacao do quadro de pessoal no mes (#743)",
+    "files": [
+     "src/hooks/__tests__/useExecutiveDashboard.test.ts",
+     "src/hooks/useExecutiveDashboard.ts",
+     "src/pages/DashboardExecutivoPage.tsx"
+    ]
+   },
    {
     "sha": "36e144e",
     "date": "2026-11-19",
@@ -330126,18 +330169,6 @@
     "files": [
      "docs/auditoria/VARREDURA_BRANCHES_E_LEDGER_2026-11-19.md"
     ]
-   },
-   {
-    "sha": "b8db9e5",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "fix(segurança): restringe whatsapp_config a admin/rh em produção e na tela (#710)",
-    "files": [
-     "src/components/integracoes/ConfigPanels.tsx",
-     "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
-     "supabase/migrations/20261118223000_whatsapp_config_repoe_policy_admin_rh.sql",
-     "supabase/migrations/20261118223000_whatsapp_config_repoe_policy_admin_rh.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -330194,6 +330225,18 @@
     2
    ],
    [
+    "src/hooks/__tests__/useExecutiveDashboard.test.ts",
+    1
+   ],
+   [
+    "src/hooks/useExecutiveDashboard.ts",
+    1
+   ],
+   [
+    "src/pages/DashboardExecutivoPage.tsx",
+    1
+   ],
+   [
     "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
     1
    ],
@@ -330207,18 +330250,6 @@
    ],
    [
     "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.verify.sql",
-    1
-   ],
-   [
-    "src/components/ui/phone-input.tsx",
-    1
-   ],
-   [
-    "src/pages/ColaboradorFormPage.tsx",
-    1
-   ],
-   [
-    "src/pages/__tests__/ColaboradorFormPage.test.tsx",
     1
    ]
   ]
