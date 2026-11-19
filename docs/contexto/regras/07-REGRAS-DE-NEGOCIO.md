@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `26629deb63` · branch `main` · 2026-11-19 11:21 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b027ad2bbf` · branch `main` · 2026-11-19 11:38 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1939,6 +1939,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | TimelineEventType | vinculo \| salario \| contrato \| cargo \| promocao \| transferencia \| ferias \| afastamento \| treinamento \| avaliacao \| onboarding \| medida_disciplinar \| desligamento \| auditoria | `src/types/timelineEvent.ts` |
 | DocFileKind | pdf \| image \| word \| excel \| archive \| unknown | `src/utils/documentFileType.ts` |
 | SignedFileType | application/pdf \| image/jpeg \| image/png \| application/x-pkcs12 | `src/utils/fileSignature.ts` |
+| OrigemCalculoRescisao | local \| servidor | `src/utils/rescisaoPDF.ts` |
 | TEMPLATE_HEADERS | 'Nome Completo', 'CPF', 'Email', 'Telefone', 'Cargo', 'Departamento', 'Salário', 'Data Admissão', 'Data Nascimento', 'PIS', 'RG', | `src/utils/importacao/columnMap.ts` |
 | TEMPLATE_SAMPLE_ROW | 'João Silva', '123.456.789-00', 'joao@email.com', '(11)99999-9999', 'Analista', 'TI', '5000', '01/03/2024', '15/06/1990', '123.45678.90-1', '12.345.678-9', | `src/utils/importacao/columnMap.ts` |
 | IdempotencyReason | NEW \| REPLAY \| KEY_INVALID \| KEY_REUSE \| IN_PROGRESS \| INDETERMINATE \| PREVIOUS_FAILURE \| STORE_ERROR | `supabase/functions/_shared/idempotency.ts` |
@@ -3895,7 +3896,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   try { const result = calcularRescisaoCore(params); // Assinatura digital do resultado para auditoria e integridade result.assinaturaDigital = await signCalculation(result); return result; } catch (e: unknown) { if (e instanceof Error) throw e; throw new Error(String(e), { cause: e }); }
   ```
-- **gerarPDFRescisao(form: RescisaoPdfForm, result: RescisaoResult, auditoriaParam?: AuditoriaPdf | null)** — `src/utils/rescisaoPDF.ts`
+- **gerarPDFRescisao(form: RescisaoPdfForm, result: RescisaoResult, auditoriaParam?: AuditoriaPdf | null, origem?: OrigemCalculoRescisao)** — `src/utils/rescisaoPDF.ts`
   ```
   const { default: jsPDF } = await import('jspdf'); const { default: autoTable } = await import('jspdf-autotable'); // Buscar trilha de auditoria se não fornecida let auditoria = auditoriaParam; if (!auditoria && form.id && form.empresa_id) { try { const [registro] = await auditoriaService.listarTrilha({ empresa_id: form.empresa_id, tabela: 'desligamentos', registro_id: form.id, limite: 1, }); auditoria = registro; } catch { // Audit metadata enriches the PDF but is not required to generate an // …
   ```
@@ -5424,7 +5425,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9550 testes em 748 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9552 testes em 748 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -6096,4 +6097,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | METAS & OKRs — derivações da aba (situação, prazo, ordem e filtros). | `src/components/avaliacao/metasComum.ts` |
 | exibem. Nada aqui inventa dado: TODAS as funções leem somente campos que já | `src/components/avaliacao/metasComum.ts` |
 | 2. `atrasada`  → prazo vencido e ainda não concluída — é EXATAMENTE o | `src/components/avaliacao/metasComum.ts` |
-| … +919 linhas — lista completa em `context.json` | |
+| … +920 linhas — lista completa em `context.json` | |

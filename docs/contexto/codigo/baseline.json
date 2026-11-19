@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "26629deb63bd712438786f221c56559e4c296569",
+  "commit": "b027ad2bbf04e1db8dbb9cba9c711071946366e4",
   "branch": "main",
-  "data_commit": "2026-11-19T08:20:41-03:00",
+  "data_commit": "2026-11-19T08:37:43-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "b027ad2",
+    "data": "2026-11-19",
+    "assunto": "feat(rescisao): carimba procedencia do calculo na tela e no TRCT (#727)"
+   },
    {
     "sha": "26629de",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "6d44dd4",
     "data": "2026-11-18",
     "assunto": "fix(colaboradores): filtro de status oferecia valor inexistente no enum + 21 testes da muri (#701)"
-   },
-   {
-    "sha": "c328119",
-    "data": "2026-11-18",
-    "assunto": "feat(contas-bancarias): resgata identidade visual de banco da muri (#699)"
    }
   ],
-  "arquivos_mudados_7d": 1135,
+  "arquivos_mudados_7d": 1137,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -184,15 +184,15 @@
     "mudancas": 31
    },
    {
+    "pasta": "src/utils/__tests__",
+    "mudancas": 31
+   },
+   {
     "pasta": "src/components/admissoes",
     "mudancas": 30
    },
    {
     "pasta": "src/components/desligamentos",
-    "mudancas": 30
-   },
-   {
-    "pasta": "src/utils/__tests__",
     "mudancas": 30
    }
   ],
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3633,
   "arquivos_codigo": 2105,
-  "linhas_codigo": 418250,
+  "linhas_codigo": 418341,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 139,
-   "linhas": 50092
+   "linhas": 50121
   },
   "src/providers": {
    "arquivos": 4,
@@ -716,7 +716,7 @@
   },
   "src/utils": {
    "arquivos": 69,
-   "linhas": 8727
+   "linhas": 8789
   },
   "stylelint.config.js": {
    "arquivos": 1,

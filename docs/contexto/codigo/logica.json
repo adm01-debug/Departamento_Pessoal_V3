@@ -5783,11 +5783,14 @@
    "camada": "utils",
    "exports": [
     "AuditoriaPdf",
+    "LABEL_ORIGEM_CALCULO",
+    "OrigemCalculoRescisao",
+    "formatarMomentoCalculo",
     "gerarPDFRescisao",
     "mapearResultadoDeDesligamento"
    ],
    "export_default": null,
-   "linhas": 244,
+   "linhas": 280,
    "tabelas": [],
    "rpcs": [],
    "edges": [],

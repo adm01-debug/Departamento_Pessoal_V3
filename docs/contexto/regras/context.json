@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "26629deb63bd712438786f221c56559e4c296569",
+  "sha": "b027ad2bbf04e1db8dbb9cba9c711071946366e4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 11:21 UTC",
+  "generated_at": "2026-11-19 11:38 UTC",
   "files_total": 3646,
   "code_files": 3067,
-  "code_lines": 486192
+  "code_lines": 486283
  },
  "version": "1.3.2",
- "facts_hash": "a5d6314845b5c978",
+ "facts_hash": "139e1244c2968ed7",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -102679,7 +102679,7 @@
   {
    "module": "src/pages",
    "files": 139,
-   "lines": 50092,
+   "lines": 50121,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -103522,7 +103522,7 @@
   {
    "module": "src/utils",
    "files": 69,
-   "lines": 8727,
+   "lines": 8789,
    "tables": [
     "folha_itens",
     "rubricas_folha"
@@ -103549,7 +103549,7 @@
     "piiMask.ts: maskCpfDisplay, maskBankAccount, maskPisDisplay, maskEmail, maskGeneric, maskPiiDeep",
     "regrasSolicitacaoFerias.ts: DIAS_AVISO_FERIAS, FeriasLancada, UsoPeriodo, USO_VAZIO, resumirUsoPorPeriodo, validarSaldoFerias",
     "rescisaoCalc.ts: normalizarTipoRescisao, SeguroDesempregoInfo, RescisaoResult, LinhaBaseCalculo, aliquotaEfetiva, RescisaoParams",
-    "rescisaoPDF.ts: AuditoriaPdf, mapearResultadoDeDesligamento, gerarPDFRescisao",
+    "rescisaoPDF.ts: AuditoriaPdf, OrigemCalculoRescisao, LABEL_ORIGEM_CALCULO, formatarMomentoCalculo, mapearResultadoDeDesligamento, gerarPDFRescisao",
     "safeError.ts: safeErrorMessage",
     "safeUrl.ts: isAllowedUrl, assertAllowedUrl, safeHref",
     "sanitizeHtml.ts: SanitizeOptions, sanitizeHtml, sanitizeContractHtml, sanitizePlainText",
@@ -113779,6 +113779,11 @@
     "values": "application/pdf | image/jpeg | image/png | application/x-pkcs12"
    },
    {
+    "file": "src/utils/rescisaoPDF.ts",
+    "name": "OrigemCalculoRescisao",
+    "values": "local | servidor"
+   },
+   {
     "file": "src/utils/importacao/columnMap.ts",
     "name": "TEMPLATE_HEADERS",
     "values": "'Nome Completo', 'CPF', 'Email', 'Telefone', 'Cargo', 'Departamento', 'Salário', 'Data Admissão', 'Data Nascimento', 'PIS', 'RG',"
@@ -120880,6 +120885,10 @@
    {
     "file": "src/pages/AvaliacaoPage.tsx",
     "text": "• registros reais (UUID) usam SOMENTE `feedbacks_360_aprovacoes_gestor`;"
+   },
+   {
+    "file": "src/pages/CalculadoraRescisaoPage.tsx",
+    "text": "homologação feita com a regra \"errada\" não deixava rastro."
    },
    {
     "file": "src/pages/CienciaMedidaPage.tsx",
@@ -162284,7 +162293,7 @@
    {
     "file": "src/utils/rescisaoPDF.ts",
     "name": "gerarPDFRescisao",
-    "params": "form: RescisaoPdfForm, result: RescisaoResult, auditoriaParam?: AuditoriaPdf | null",
+    "params": "form: RescisaoPdfForm, result: RescisaoResult, auditoriaParam?: AuditoriaPdf | null, origem?: OrigemCalculoRescisao",
     "body": "const { default: jsPDF } = await import('jspdf'); const { default: autoTable } = await import('jspdf-autotable'); // Buscar trilha de auditoria se não fornecida let auditoria = auditoriaParam; if (!auditoria && form.id && form.empresa_id) { try { const [registro] = await auditoriaService.listarTrilha({ empresa_id: form.empresa_id, tabela: 'desligamentos', registro_id: form.id, limite: 1, }); auditoria = registro; } catch { // Audit metadata enriches the PDF but is not required to generate an // …"
    },
    {
@@ -201408,6 +201417,14 @@
    {
     "file": "src/utils/__tests__/rescisaoPDF.test.ts",
     "name": "gerarPDFRescisao"
+   },
+   {
+    "file": "src/utils/__tests__/rescisaoPDF.test.ts",
+    "name": "carimba data, motor e assinatura do cálculo no TRCT"
+   },
+   {
+    "file": "src/utils/__tests__/rescisaoPDF.test.ts",
+    "name": "declara motor e assinatura ausentes em vez de omitir o carimbo"
    },
    {
     "file": "src/utils/__tests__/rescisaoPDF.test.ts",
@@ -298010,7 +298027,7 @@
   },
   "src/pages/CalculadoraRescisaoPage.tsx": {
    "path": "src/pages/CalculadoraRescisaoPage.tsx",
-   "lines": 778,
+   "lines": 807,
    "exports": [
     "function CalculadoraRescisaoPage"
    ],
@@ -298136,6 +298153,9 @@
      "value": "falecimento",
      "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "homologação feita com a regra \"errada\" não deixava rastro."
    ],
    "calc_fns": [
     {
@@ -314971,11 +314991,20 @@
   },
   "src/utils/rescisaoPDF.ts": {
    "path": "src/utils/rescisaoPDF.ts",
-   "lines": 244,
+   "lines": 280,
    "exports": [
     "type AuditoriaPdf",
+    "type OrigemCalculoRescisao",
+    "const LABEL_ORIGEM_CALCULO",
+    "function formatarMomentoCalculo",
     "function mapearResultadoDeDesligamento",
     "function gerarPDFRescisao"
+   ],
+   "enums": [
+    {
+     "name": "OrigemCalculoRescisao",
+     "values": "local | servidor"
+    }
    ],
    "rule_comments": [
     "persistidos (indenizações 479/480, desconto de aviso, multa 477 e",
@@ -314984,7 +315013,7 @@
    "calc_fns": [
     {
      "name": "gerarPDFRescisao",
-     "params": "form: RescisaoPdfForm, result: RescisaoResult, auditoriaParam?: AuditoriaPdf | null",
+     "params": "form: RescisaoPdfForm, result: RescisaoResult, auditoriaParam?: AuditoriaPdf | null, origem?: OrigemCalculoRescisao",
      "body": "const { default: jsPDF } = await import('jspdf'); const { default: autoTable } = await import('jspdf-autotable'); // Buscar trilha de auditoria se não fornecida let auditoria = auditoriaParam; if (!auditoria && form.id && form.empresa_id) { try { const [registro] = await auditoriaService.listarTrilha({ empresa_id: form.empresa_id, tabela: 'desligamentos', registro_id: form.id, limite: 1, }); auditoria = registro; } catch { // Audit metadata enriches the PDF but is not required to generate an // …"
     }
    ]
@@ -315564,10 +315593,12 @@
   },
   "src/utils/__tests__/rescisaoPDF.test.ts": {
    "path": "src/utils/__tests__/rescisaoPDF.test.ts",
-   "lines": 139,
+   "lines": 165,
    "is_test": true,
    "tests": [
     "gerarPDFRescisao",
+    "carimba data, motor e assinatura do cálculo no TRCT",
+    "declara motor e assinatura ausentes em vez de omitir o carimbo",
     "creates a jsPDF instance and saves the PDF",
     "works without an auditoria record",
     "works when auditoria is provided directly",
@@ -329258,10 +329289,21 @@
   }
  },
  "git": {
-  "sha": "26629deb63bd712438786f221c56559e4c296569",
+  "sha": "b027ad2bbf04e1db8dbb9cba9c711071946366e4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "b027ad2",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "feat(rescisao): carimba procedencia do calculo na tela e no TRCT (#727)",
+    "files": [
+     "src/pages/CalculadoraRescisaoPage.tsx",
+     "src/utils/__tests__/rescisaoPDF.test.ts",
+     "src/utils/rescisaoPDF.ts"
+    ]
+   },
    {
     "sha": "26629de",
     "date": "2026-11-19",
@@ -329577,16 +329619,6 @@
      "supabase/migrations/20261118160000_empresa_id_not_null_rh.sql",
      "supabase/migrations/20261118160000_empresa_id_not_null_rh.verify.sql"
     ]
-   },
-   {
-    "sha": "8daa52d",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "fix: cadastro de plano de benefício grava a empresa (403 em produção) (#696)",
-    "files": [
-     "src/components/__tests__/BeneficiosSettingsTabCriar.test.tsx",
-     "src/components/settings/BeneficiosSettingsTab.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -329597,6 +329629,10 @@
    [
     "scripts/canonical-invariants.sql",
     5
+   ],
+   [
+    "src/pages/CalculadoraRescisaoPage.tsx",
+    2
    ],
    [
     "src/components/__tests__/NewLoanDialog.test.tsx",
@@ -329631,6 +329667,14 @@
     2
    ],
    [
+    "src/utils/__tests__/rescisaoPDF.test.ts",
+    1
+   ],
+   [
+    "src/utils/rescisaoPDF.ts",
+    1
+   ],
+   [
     "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql",
     1
    ],
@@ -329656,18 +329700,6 @@
    ],
    [
     "supabase/baseline/20260831_canonical/README.md",
-    1
-   ],
-   [
-    "supabase/baseline/20260831_canonical/manifest.sha256",
-    1
-   ],
-   [
-    "supabase/baseline/20260831_canonical/post_restore_hardening.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
     1
    ]
   ]
