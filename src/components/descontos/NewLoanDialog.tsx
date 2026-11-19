@@ -10,6 +10,22 @@ import { supabase } from '@/integrations/supabase/client';
 import { todayLocalISO } from '@/utils/dateLocal';
 import type { ColaboradorResumoBasico, NovoEmprestimoInput } from '@/types/descontos';
 
+/**
+ * Teto que esta tela aplica sobre o salário base: a faixa de empréstimo da Lei
+ * 10.820. Precisa ficar <= MARGEM_CONSIGNAVEL_BANCO, senão a tela libera um
+ * registro que o banco recusa e o usuário leva erro depois de confirmar.
+ */
+export const MARGEM_CONSIGNAVEL_TELA = 0.3;
+
+/**
+ * Espelho do teto do backstop no banco — trigger trg_consignado_valida_margem,
+ * migration 20261118235000. Existe para o teste de coerência travar a dupla;
+ * a tela não usa este valor. A divergência entre os três tetos do sistema
+ * (tela, trigger e src/calculators, que usa 35% do líquido) está registrada em
+ * docs/agentes/decisoes-e-gaps.md e aguarda decisão do dono.
+ */
+export const MARGEM_CONSIGNAVEL_BANCO = 0.35;
+
 export function NewLoanDialog({
   colaboradores,
   emprestimos = [],
@@ -63,7 +79,7 @@ export function NewLoanDialog({
     // Sem salário base não há como calcular a margem: bloqueia em vez de liberar.
     if (!colaboradorData?.salario_base) return { margin: 0, percent: 0, isValid: false };
     const valor_parcela = Number(form.valor_total) / (Number(form.numero_parcelas) || 1);
-    const margin = colaboradorData.salario_base * 0.3; // 30% Law
+    const margin = colaboradorData.salario_base * MARGEM_CONSIGNAVEL_TELA;
     const comprometido = parcelasAtivas + valor_parcela;
     const currentPercent = (comprometido / colaboradorData.salario_base) * 100;
 
@@ -162,7 +178,7 @@ export function NewLoanDialog({
             >
               <div className="flex items-center justify-between text-xs font-semibold">
                 <span className="flex items-center gap-1">
-                  <Info className="h-3 w-3" /> Margem Consignável (30%)
+                  <Info className="h-3 w-3" /> Margem Consignável ({MARGEM_CONSIGNAVEL_TELA * 100}%)
                 </span>
                 <span>Max: R$ {marginData.margin.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
               </div>

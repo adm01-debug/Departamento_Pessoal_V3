@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { readFileSync } from 'node:fs';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
@@ -66,7 +67,7 @@ vi.mock('@/utils/dateLocal', () => ({
   todayLocalISO: vi.fn(() => '2026-07-24'),
 }));
 
-import { NewLoanDialog } from '../descontos/NewLoanDialog';
+import { MARGEM_CONSIGNAVEL_BANCO, MARGEM_CONSIGNAVEL_TELA, NewLoanDialog } from '../descontos/NewLoanDialog';
 
 const COLABORADORES = [
   { id: 'c1', nome_completo: 'Ana Lima' },
@@ -187,6 +188,15 @@ describe('NewLoanDialog', () => {
     // nova parcela 500 → 1500 ≤ 1500
     fireEvent.change(valorTotal, { target: { value: '5000' } });
     expect(confirmar).not.toBeDisabled();
+  });
+
+  it('o teto da tela nunca libera o que o backstop do banco recusa', () => {
+    expect(MARGEM_CONSIGNAVEL_TELA).toBeLessThanOrEqual(MARGEM_CONSIGNAVEL_BANCO);
+  });
+
+  it('o espelho do teto do banco acompanha a migration do trigger', () => {
+    const sql = readFileSync('supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql', 'utf8');
+    expect(sql).toContain(`v_salario * ${MARGEM_CONSIGNAVEL_BANCO}`);
   });
 
   it('renders Cancelar and Confirmar Registro buttons', () => {
