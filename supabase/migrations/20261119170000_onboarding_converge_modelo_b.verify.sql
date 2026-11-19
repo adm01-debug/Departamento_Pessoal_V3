@@ -59,17 +59,44 @@ WITH dups AS (
 SELECT CASE WHEN n = 0 THEN 'ok' ELSE 'FALHOU: ' || n || ' tarefa(s) duplicada(s) no destino' END
 FROM dups;
 
+-- O CTE `vinculo_onboarding_admissao` âncora cada asserção na ADMISSÃO de
+-- destino (mesma regra de três camadas da migration). Sem esta âncora, o
+-- JOIN por `(titulo, created_at)` cruza tarefas de pessoas DIFERENTES que
+-- compartilham título e timestamp (o legado usa DEFAULT now(), então
+-- `created_at` é idêntico entre onboardings distintos) e reprova por
+-- construção — ver dry-run do lote dp/onboarding de 19/11/2026 (run
+-- 44608699082): "72 conclusao divergente" e "70 vencimento" com apenas 27
+-- linhas copiadas.
+WITH vinculo_onboarding_admissao AS (
+  SELECT oc.id AS onboarding_id, a.id AS admissao_id
+  FROM public.onboarding_colaborador oc
+  JOIN public.colaboradores c ON c.id = oc.colaborador_id
+  JOIN public.admissoes a ON a.id = (c.metadata ->> 'admissao_id')::uuid AND a.empresa_id = c.empresa_id
+  WHERE c.metadata ->> 'admissao_id' ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+  UNION ALL
+  SELECT oc.id, a.id
+  FROM public.onboarding_colaborador oc
+  JOIN public.colaboradores c ON c.id = oc.colaborador_id
+  JOIN public.admissoes a ON a.cpf = c.cpf AND a.empresa_id = c.empresa_id
+  WHERE c.metadata ->> 'admissao_id' IS NULL
+    AND c.cpf IS NOT NULL
+    AND (SELECT count(*) FROM public.admissoes a2 WHERE a2.cpf = c.cpf AND a2.empresa_id = c.empresa_id) = 1
+)
+
 -- 3. TENANT — a asserção mais importante. Olha cada linha GRAVADA que casa com
 --    uma tarefa legada e exige que a empresa da admissão de destino seja a
 --    mesma do colaborador de origem. É o que um vazamento entre empresas
---    violaria, e não dá para aprovar por construção: compara destino × origem.
-WITH copiadas AS (
+--    violaria, e não dá para aprovar por construção: compara destino × origem,
+--    com a admissão de destino âncora do vínculo.
+, copiadas AS (
   SELECT t.id, a.empresa_id AS empresa_destino, c.empresa_id AS empresa_origem
   FROM public.tarefas_onboarding t
+  JOIN vinculo_onboarding_admissao v ON v.admissao_id = t.admissao_id
   JOIN public.admissoes a ON a.id = t.admissao_id
   JOIN public.onboarding_tarefas ot
-    ON ot.titulo = t.titulo AND ot.created_at = t.created_at
-  JOIN public.onboarding_colaborador oc ON oc.id = ot.onboarding_id
+    ON ot.onboarding_id = v.onboarding_id
+   AND ot.titulo = t.titulo AND ot.created_at = t.created_at
+  JOIN public.onboarding_colaborador oc ON oc.id = v.onboarding_id
   JOIN public.colaboradores c ON c.id = oc.colaborador_id
 ), cruzadas AS (
   SELECT count(*) AS n FROM copiadas WHERE empresa_destino IS DISTINCT FROM empresa_origem
@@ -77,12 +104,29 @@ WITH copiadas AS (
 SELECT CASE WHEN n = 0 THEN 'ok' ELSE 'FALHOU: ' || n || ' tarefa(s) em admissao de OUTRA empresa' END
 FROM cruzadas;
 
--- 4. Conclusão preservada tarefa a tarefa: `concluida` e a data.
-WITH divergentes AS (
+-- 4. Conclusão preservada tarefa a tarefa: `concluida` e a data, sempre
+--    comparando dentro da MESMA admissão de destino.
+WITH vinculo_onboarding_admissao AS (
+  SELECT oc.id AS onboarding_id, a.id AS admissao_id
+  FROM public.onboarding_colaborador oc
+  JOIN public.colaboradores c ON c.id = oc.colaborador_id
+  JOIN public.admissoes a ON a.id = (c.metadata ->> 'admissao_id')::uuid AND a.empresa_id = c.empresa_id
+  WHERE c.metadata ->> 'admissao_id' ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+  UNION ALL
+  SELECT oc.id, a.id
+  FROM public.onboarding_colaborador oc
+  JOIN public.colaboradores c ON c.id = oc.colaborador_id
+  JOIN public.admissoes a ON a.cpf = c.cpf AND a.empresa_id = c.empresa_id
+  WHERE c.metadata ->> 'admissao_id' IS NULL
+    AND c.cpf IS NOT NULL
+    AND (SELECT count(*) FROM public.admissoes a2 WHERE a2.cpf = c.cpf AND a2.empresa_id = c.empresa_id) = 1
+), divergentes AS (
   SELECT count(*) AS n
   FROM public.tarefas_onboarding t
+  JOIN vinculo_onboarding_admissao v ON v.admissao_id = t.admissao_id
   JOIN public.onboarding_tarefas ot
-    ON ot.titulo = t.titulo AND ot.created_at = t.created_at
+    ON ot.onboarding_id = v.onboarding_id
+   AND ot.titulo = t.titulo AND ot.created_at = t.created_at
   WHERE COALESCE(t.concluida, false) IS DISTINCT FROM COALESCE(ot.concluida, false)
      OR t.concluida_em IS DISTINCT FROM ot.data_conclusao
 )
@@ -93,11 +137,27 @@ FROM divergentes;
 --    `created_at + prazo_dias`; esta asserção exige que isso reproduza a
 --    `data_prazo` da origem. É a asserção que `GREATEST(0, …)` violaria, porque
 --    prender o negativo em zero faria o vencimento virar a data de criação.
-WITH prazos AS (
+WITH vinculo_onboarding_admissao AS (
+  SELECT oc.id AS onboarding_id, a.id AS admissao_id
+  FROM public.onboarding_colaborador oc
+  JOIN public.colaboradores c ON c.id = oc.colaborador_id
+  JOIN public.admissoes a ON a.id = (c.metadata ->> 'admissao_id')::uuid AND a.empresa_id = c.empresa_id
+  WHERE c.metadata ->> 'admissao_id' ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+  UNION ALL
+  SELECT oc.id, a.id
+  FROM public.onboarding_colaborador oc
+  JOIN public.colaboradores c ON c.id = oc.colaborador_id
+  JOIN public.admissoes a ON a.cpf = c.cpf AND a.empresa_id = c.empresa_id
+  WHERE c.metadata ->> 'admissao_id' IS NULL
+    AND c.cpf IS NOT NULL
+    AND (SELECT count(*) FROM public.admissoes a2 WHERE a2.cpf = c.cpf AND a2.empresa_id = c.empresa_id) = 1
+), prazos AS (
   SELECT count(*) AS n
   FROM public.tarefas_onboarding t
+  JOIN vinculo_onboarding_admissao v ON v.admissao_id = t.admissao_id
   JOIN public.onboarding_tarefas ot
-    ON ot.titulo = t.titulo AND ot.created_at = t.created_at
+    ON ot.onboarding_id = v.onboarding_id
+   AND ot.titulo = t.titulo AND ot.created_at = t.created_at
   WHERE ot.data_prazo IS NOT NULL
     AND (t.created_at::date + t.prazo_dias) IS DISTINCT FROM ot.data_prazo
 )
@@ -105,11 +165,27 @@ SELECT CASE WHEN n = 0 THEN 'ok' ELSE 'FALHOU: ' || n || ' tarefa(s) com vencime
 FROM prazos;
 
 -- 6. Nada inventado em `responsavel_id`: as copiadas ficam NULL.
-WITH inventadas AS (
+WITH vinculo_onboarding_admissao AS (
+  SELECT oc.id AS onboarding_id, a.id AS admissao_id
+  FROM public.onboarding_colaborador oc
+  JOIN public.colaboradores c ON c.id = oc.colaborador_id
+  JOIN public.admissoes a ON a.id = (c.metadata ->> 'admissao_id')::uuid AND a.empresa_id = c.empresa_id
+  WHERE c.metadata ->> 'admissao_id' ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+  UNION ALL
+  SELECT oc.id, a.id
+  FROM public.onboarding_colaborador oc
+  JOIN public.colaboradores c ON c.id = oc.colaborador_id
+  JOIN public.admissoes a ON a.cpf = c.cpf AND a.empresa_id = c.empresa_id
+  WHERE c.metadata ->> 'admissao_id' IS NULL
+    AND c.cpf IS NOT NULL
+    AND (SELECT count(*) FROM public.admissoes a2 WHERE a2.cpf = c.cpf AND a2.empresa_id = c.empresa_id) = 1
+), inventadas AS (
   SELECT count(*) AS n
   FROM public.tarefas_onboarding t
+  JOIN vinculo_onboarding_admissao v ON v.admissao_id = t.admissao_id
   JOIN public.onboarding_tarefas ot
-    ON ot.titulo = t.titulo AND ot.created_at = t.created_at
+    ON ot.onboarding_id = v.onboarding_id
+   AND ot.titulo = t.titulo AND ot.created_at = t.created_at
   WHERE t.responsavel_id IS NOT NULL
 )
 SELECT CASE WHEN n = 0 THEN 'ok' ELSE 'FALHOU: ' || n || ' tarefa(s) copiada(s) com responsavel inventado' END
