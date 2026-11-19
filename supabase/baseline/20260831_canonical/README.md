@@ -22,6 +22,9 @@ como migration incremental.
   na imagem local usada no teste.
 - `post_restore_acl.sql`: corrige default privileges introduzidos pelo bootstrap
   local em três objetos PII.
+- `post_restore_hardening.sql`: fecha, depois do verify, a policy permissiva de
+  `whatsapp_config` que o corte carrega — deixa a tabela fail-closed até o
+  replay das migrations repor `whatsapp_config_admin_rh`.
 - `verify.sql`: gate estrutural mínimo, sem leitura/exibição de dados.
 - `manifest.sha256`: integridade dos artefatos versionados.
 
@@ -43,6 +46,10 @@ ser copiado para um cofre externo criptografado antes de qualquer promoção.
 6. Restaurar o dump de dados protegido como `supabase_admin`.
 7. Aplicar `post_restore_acl.sql` como `postgres`.
 8. Executar `verify.sql`, o inventário e os gates de segurança.
+9. Aplicar `post_restore_hardening.sql` como `postgres`. Roda depois do
+   verify de propósito: o verify afere a fidelidade do corte (598 policies em
+   `public`) e este passo então tira a policy que expunha a `api_key` da
+   Evolution API a qualquer colaborador da empresa.
 
 O restore de 31/08/2026 carregou exatamente 390 blocos `COPY`; as contagens
 por tabela do dump e do banco restaurado tiveram diff zero. O inventário do
