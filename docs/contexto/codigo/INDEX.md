@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `367ed1fb58d7c99b0694b937ee5296220adb0340` (2026-11-19T09:07:25-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `055112b76ae928346795e95dcc3664010220ba45` (2026-11-19T09:14:17-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3640 |
 | arquivos_codigo | 2107 |
-| linhas_codigo | 418584 |
+| linhas_codigo | 418620 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -396,7 +396,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27594 nós · 62237 arestas · 2378 comunidades · grafo do commit `367ed1fb`
+- 27594 nós · 62238 arestas · 2378 comunidades · grafo do commit `055112b7`
 - comunidades maiores: cn (634), @tanstack/react-query (493), 20260831_corrected_public.sql (493), canonical_schema.sql (475), vitest (446), button.tsx (424), useEmpresas (298), react (251), entradaCard (194), contract.ts (187), hooks/index.ts (176), ColaboradorDetalhesPage.tsx (167)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -408,15 +408,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package.json (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
-- scripts/sync/autocommit-local.sh (10)
 - docs/prod-readiness.md (9)
 - package-lock.json (9)
 - scripts/automation.config.json (8)
+- scripts/sync/autocommit-local.sh (8)
 - docs/auditoria/sql-preservado/README.md (7)
-- scripts/sync/mirror-github.sh (7)
 - src/App.tsx (7)
 - src/pages/ColaboradoresPage.tsx (7)
 - docs/auditoria/VEREDITO_MURI_2026-11-17.md (6)
+- src/components/colaborador-detalhes/index.ts (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -653,6 +653,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-19 `055112b` fix(rescisao): TRCT do desligamento declarava assinatura ausente tendo assinatura (#732)
+- 2026-11-19 `634058e` chore(auditoria): torna reproduzivel a medicao do resgate da muri (#734)
 - 2026-11-19 `367ed1f` fix(seguranca): gestor nao pode forjar a aprovacao do RH nas ferias (#733)
 - 2026-11-19 `c9398d2` chore(auditoria): por que a trilha de Admissoes nao e port de UI (medido) (#731)
 - 2026-11-19 `d50c80f` feat(ui): cascata de entrada dos cards, resgatada da PR #546 (muri) (#730)
@@ -666,8 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-18 `f7681c0` docs(gaps): causa raiz das 11 falhas do E2E autenticado na main (#722)
 - 2026-11-18 `08a26cf` chore(auditoria): fecha a varredura com as 34 branches que só existiam no clone local (#721)
 - 2026-11-18 `62748b3` chore(consignado): trava a coerência do teto da margem entre tela e banco (#719)
-- 2026-11-18 `09ea734` fix(baseline): whatsapp_config fail-closed no restore do baseline de DR (#718)
-- 2026-11-18 `6af99a6` chore: registra lote de higiene de 9 migrations no canonical-migrations (#717)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

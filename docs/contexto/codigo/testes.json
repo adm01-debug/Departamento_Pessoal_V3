@@ -6810,11 +6810,11 @@
   {
    "arquivo": "src/utils/__tests__/rescisaoPDF.test.ts",
    "tipo": "unit",
-   "linhas": 165,
+   "linhas": 193,
    "testa": [
     "src/utils/rescisaoPDF.ts"
    ],
-   "casos": 8
+   "casos": 10
   },
   {
    "arquivo": "src/utils/__tests__/safeError.test.ts",

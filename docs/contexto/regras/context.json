@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "367ed1fb58d7c99b0694b937ee5296220adb0340",
+  "sha": "055112b76ae928346795e95dcc3664010220ba45",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 12:08 UTC",
+  "generated_at": "2026-11-19 12:15 UTC",
   "files_total": 3653,
   "code_files": 3073,
-  "code_lines": 486894
+  "code_lines": 486930
  },
  "version": "1.3.2",
- "facts_hash": "e8c8de41c1f0a892",
+ "facts_hash": "5c3ac6e9bb87e9ab",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -103583,7 +103583,7 @@
   {
    "module": "src/utils",
    "files": 69,
-   "lines": 8789,
+   "lines": 8825,
    "tables": [
     "folha_itens",
     "rubricas_folha"
@@ -201550,6 +201550,18 @@
    {
     "file": "src/utils/__tests__/rescisaoPDF.test.ts",
     "name": "still generates an unsigned draft when audit enrichment is unavailable"
+   },
+   {
+    "file": "src/utils/__tests__/rescisaoPDF.test.ts",
+    "name": "mapearResultadoDeDesligamento"
+   },
+   {
+    "file": "src/utils/__tests__/rescisaoPDF.test.ts",
+    "name": "preserva a assinatura digital do cálculo salvo"
+   },
+   {
+    "file": "src/utils/__tests__/rescisaoPDF.test.ts",
+    "name": "cálculo antigo sem assinatura continua sem assinatura"
    },
    {
     "file": "src/utils/__tests__/safeError.test.ts",
@@ -315188,7 +315200,7 @@
   },
   "src/utils/rescisaoPDF.ts": {
    "path": "src/utils/rescisaoPDF.ts",
-   "lines": 280,
+   "lines": 288,
    "exports": [
     "type AuditoriaPdf",
     "type OrigemCalculoRescisao",
@@ -315790,7 +315802,7 @@
   },
   "src/utils/__tests__/rescisaoPDF.test.ts": {
    "path": "src/utils/__tests__/rescisaoPDF.test.ts",
-   "lines": 165,
+   "lines": 193,
    "is_test": true,
    "tests": [
     "gerarPDFRescisao",
@@ -315801,7 +315813,10 @@
     "works when auditoria is provided directly",
     "handles minimal form fields without throwing",
     "queries the tenant-scoped audit RPC when record and company are available",
-    "still generates an unsigned draft when audit enrichment is unavailable"
+    "still generates an unsigned draft when audit enrichment is unavailable",
+    "mapearResultadoDeDesligamento",
+    "preserva a assinatura digital do cálculo salvo",
+    "cálculo antigo sem assinatura continua sem assinatura"
    ]
   },
   "src/utils/__tests__/safeError.test.ts": {
@@ -329504,10 +329519,29 @@
   }
  },
  "git": {
-  "sha": "367ed1fb58d7c99b0694b937ee5296220adb0340",
+  "sha": "055112b76ae928346795e95dcc3664010220ba45",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "055112b",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix(rescisao): TRCT do desligamento declarava assinatura ausente tendo assinatura (#732)",
+    "files": [
+     "src/utils/__tests__/rescisaoPDF.test.ts",
+     "src/utils/rescisaoPDF.ts"
+    ]
+   },
+   {
+    "sha": "634058e",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "chore(auditoria): torna reproduzivel a medicao do resgate da muri (#734)",
+    "files": [
+     "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md"
+    ]
+   },
    {
     "sha": "367ed1f",
     "date": "2026-11-19",
@@ -329804,27 +329838,6 @@
     "files": [
      "scripts/build-rebaseline.mjs"
     ]
-   },
-   {
-    "sha": "72d1d6b",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "docs(auditoria): registro da reauditoria dos descartes (#703)",
-    "files": [
-     "docs/auditoria/REAUDITORIA_DESCARTES_2026-11-18.md"
-    ]
-   },
-   {
-    "sha": "6d44dd4",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "fix(colaboradores): filtro de status oferecia valor inexistente no enum + 21 testes da muri (#701)",
-    "files": [
-     "src/components/__tests__/PdiCard.test.tsx",
-     "src/pages/ColaboradoresPage.tsx",
-     "src/pages/__tests__/AdmissoesConsolidacao.test.tsx",
-     "src/pages/__tests__/ColaboradoresPage.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -329838,6 +329851,14 @@
    ],
    [
     "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
+    3
+   ],
+   [
+    "src/utils/__tests__/rescisaoPDF.test.ts",
+    2
+   ],
+   [
+    "src/utils/rescisaoPDF.ts",
     2
    ],
    [
@@ -329898,14 +329919,6 @@
    ],
    [
     "supabase/migrations/20261119130000_ferias_gestor_update.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261119130000_ferias_gestor_update.verify.sql",
-    1
-   ],
-   [
-    "src/utils/__tests__/rescisaoPDF.test.ts",
     1
    ]
   ]

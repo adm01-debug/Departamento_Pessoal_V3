@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(rescisao): TRCT do desligamento declarava assinatura ausente tendo assinatura (#732)",
+   "chore(auditoria): torna reproduzivel a medicao do resgate da muri (#734)",
    "fix(seguranca): gestor nao pode forjar a aprovacao do RH nas ferias (#733)",
    "chore(auditoria): por que a trilha de Admissoes nao e port de UI (medido) (#731)",
-   "feat(ui): cascata de entrada dos cards, resgatada da PR #546 (muri) (#730)",
-   "fix(ferias): policy de UPDATE do gestor, fechando o hiato de aprovacao (#729)",
-   "chore(auditoria): inventario do que falta resgatar da PR #546 (muri) (#728)"
+   "feat(ui): cascata de entrada dos cards, resgatada da PR #546 (muri) (#730)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

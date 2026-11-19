@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `367ed1fb58` · branch `main` · 2026-11-19 12:08 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `055112b76a` · branch `main` · 2026-11-19 12:15 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5429,7 +5429,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9558 testes em 749 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9561 testes em 749 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5685,6 +5685,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/onboardingJornadaService.test.ts` | 12 | listarKits · filtra por empresa_id e por ativo quando não inclui inativos · mantém o recorte de empresa e dispensa o filtro de ativo no modo gerenciador · normaliza  … |
 | `src/services/__tests__/pontosService.test.ts` | 12 | pontosService facade · exposes registrar from pontoService · exposes getSettings from pontoService · exposes buscarRegistroHoje from pontoService … |
 | `src/services/__tests__/webhookService.test.ts` | 12 | webhookService · listar · returns paginated records when found · applies empresa_id filter when provided … |
+| `src/utils/__tests__/rescisaoPDF.test.ts` | 12 | gerarPDFRescisao · carimba data, motor e assinatura do cálculo no TRCT · declara motor e assinatura ausentes em vez de omitir o carimbo · creates a jsPDF instance and saves the PDF … |
 | `src/utils/importacao/__tests__/excelDownload.test.ts` | 12 | XLSX_MIME · is the correct OOXML MIME type · downloadWorkbook · calls writeBuffer and creates object URL … |
 | `e2e/authenticated/recrutamento-pipeline.spec.ts` | 11 | Pipeline — estrutura e scroll no padrão de Admissão · 5 colunas de 272px, mesma altura, rodapés alinhados e scroll horizontal · A/B/C — lista rola, encadeia para a página; cabeçalho/espaço vazio rolam direto · D — arrasta de Triagem para Entrevista sem duplicar e atualiza contadores … |
 | `scripts/tests/contexto-publicacao.test.mjs` | 11 | cada upload fornece um ID e cada download usa destino explícito sem ocultar falhas · produtores independentes falham de verdade e o publisher ainda aceita as fontes disponíveis · falha fatal de ${failed} mantém sua versão anterior e publica as duas fontes saudáveis · publisher ${previousBranch ?  … |
@@ -5732,7 +5733,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/RejeitarDialog.test.tsx` | 10 | RejeitarDialog · renders nothing when open=false · renders title  · renders  … |
 | `src/components/__tests__/RelatoriosAgendadosTab.test.tsx` | 10 | RelatoriosAgendadosTab · renders Relatórios Agendados heading · renders Agendar Novo button · shows empty state when no agendamentos … |
 | `src/components/__tests__/RelatoriosExportTab.test.tsx` | 10 | RelatoriosExportTab · renders report titles · renders report descriptions · shows CSV button label when exportFormat is csv … |
-| `src/components/__tests__/RewardsSimulator.test.tsx` | 10 | RewardsSimulator · renderiza as quatro regiões do redesenho · mantém os cinco parâmetros do simulador · exibe os quatro KPIs de resultado … |
 | … +449 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)

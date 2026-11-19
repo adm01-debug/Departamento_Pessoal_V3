@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "367ed1fb58d7c99b0694b937ee5296220adb0340",
+  "commit": "055112b76ae928346795e95dcc3664010220ba45",
   "branch": "main",
-  "data_commit": "2026-11-19T09:07:25-03:00",
+  "data_commit": "2026-11-19T09:14:17-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "055112b",
+    "data": "2026-11-19",
+    "assunto": "fix(rescisao): TRCT do desligamento declarava assinatura ausente tendo assinatura (#732)"
+   },
+   {
+    "sha": "634058e",
+    "data": "2026-11-19",
+    "assunto": "chore(auditoria): torna reproduzivel a medicao do resgate da muri (#734)"
+   },
    {
     "sha": "367ed1f",
     "data": "2026-11-19",
@@ -121,16 +131,6 @@
     "sha": "778a5b4",
     "data": "2026-11-18",
     "assunto": "test(ferias): cobre FeriasResumoTab, que estava viva no dossie sem teste (#707)"
-   },
-   {
-    "sha": "6670984",
-    "data": "2026-11-18",
-    "assunto": "fix(colaboradores): campo opcional em branco virava \"\" e travava o 2o cadastro (#705)"
-   },
-   {
-    "sha": "96ef3ed",
-    "data": "2026-11-18",
-    "assunto": "feat(rescisão): a calculadora passa a LER o histórico que já gravava (#704)"
    }
   ],
   "arquivos_mudados_7d": 1144,
@@ -181,7 +181,7 @@
    },
    {
     "pasta": "src/utils/__tests__",
-    "mudancas": 31
+    "mudancas": 32
    },
    {
     "pasta": "src/components/desligamentos",
@@ -222,10 +222,6 @@
     "mudancas": 10
    },
    {
-    "arquivo": "scripts/sync/autocommit-local.sh",
-    "mudancas": 10
-   },
-   {
     "arquivo": "docs/prod-readiness.md",
     "mudancas": 9
    },
@@ -238,11 +234,11 @@
     "mudancas": 8
    },
    {
-    "arquivo": "docs/auditoria/sql-preservado/README.md",
-    "mudancas": 7
+    "arquivo": "scripts/sync/autocommit-local.sh",
+    "mudancas": 8
    },
    {
-    "arquivo": "scripts/sync/mirror-github.sh",
+    "arquivo": "docs/auditoria/sql-preservado/README.md",
     "mudancas": 7
    },
    {
@@ -255,14 +251,6 @@
    },
    {
     "arquivo": "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "scripts/sync/run-all.sh",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "scripts/sync/sync-github.sh",
     "mudancas": 6
    },
    {
@@ -286,7 +274,11 @@
     "mudancas": 5
    },
    {
-    "arquivo": "scripts/sync/README.md",
+    "arquivo": "scripts/sync/mirror-github.sh",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "scripts/sync/run-all.sh",
     "mudancas": 5
    },
    {
@@ -295,6 +287,14 @@
    },
    {
     "arquivo": "src/components/layout/AppSidebar.tsx",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/pages/DashboardPage.tsx",
     "mudancas": 5
    }
   ],
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3640,
   "arquivos_codigo": 2107,
-  "linhas_codigo": 418584,
+  "linhas_codigo": 418620,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -716,7 +716,7 @@
   },
   "src/utils": {
    "arquivos": 69,
-   "linhas": 8789
+   "linhas": 8825
   },
   "stylelint.config.js": {
    "arquivos": 1,
