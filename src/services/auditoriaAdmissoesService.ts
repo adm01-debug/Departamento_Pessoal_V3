@@ -86,18 +86,46 @@ export function statusDoEvento(linha: Record<string, unknown> | null): StatusAud
   if (etapa === 'cancelada') return 'falha';
   if (etapa === 'concluida') return 'sucesso';
 
-  if (esocial === 'pendente' || esocial === '') {
+  // `processando` é transmissão EM VOO: a claim foi gravada
+  // (20260912204000_p1_admission_esocial_claim.sql:189) e ainda não houve
+  // recibo nem recusa. Tratar como sucesso diria que o eSocial aceitou um
+  // evento que pode falhar em seguida — e o registro histórico ficaria verde.
+  if (esocial === 'pendente' || esocial === 'processando' || esocial === '') {
     // Etapa em curso é pendência de processo; sem etapa (onboarding) não é.
     return etapa === '' ? 'sucesso' : 'pendente';
   }
   return 'sucesso';
 }
 
-/** Descrição complementar: o que de fato mudou, segundo a trilha. */
+/**
+ * Descrição complementar: o que de fato mudou, segundo a trilha.
+ *
+ * A trilha unificada traz DUAS formas de linha, e confundi-las faz a aba
+ * mentir:
+ *   • linha de TRIGGER — snapshot completo, com `campos_alterados` preenchido
+ *     (array, podendo ser vazio). Vazio aí significa de fato "nada de negócio
+ *     mudou";
+ *   • linha de APLICAÇÃO — gravada por `registrar_auditoria`, onde
+ *     `get_audit_trail` só monta `campos_alterados` quando o payload traz um
+ *     array (`20260912195000_p1_scoped_audit_trail.sql:330-331`); caso
+ *     contrário vem NULL.
+ *
+ * Então NULL não é "nada mudou", é "a trilha não diz quais campos" — e uma
+ * validação de documento (`contratacaoService.validarDocumento`) caía
+ * justamente aí, aparecendo como "Atualização sem mudança de campo de
+ * negócio". Agora NULL descreve o que o evento registrou.
+ */
 export function detalheDoEvento(linha: LinhaAuditoria): string {
   if (linha.acao === 'INSERT') return 'Registro criado na trilha de auditoria.';
   if (linha.acao === 'DELETE') return 'Registro removido.';
-  const campos = (linha.campos_alterados ?? []).filter((c) => c !== 'updated_at');
+
+  if (linha.campos_alterados === null) {
+    const chaves = Object.keys(linha.dados_novos ?? {}).filter((k) => k !== 'updated_at');
+    if (chaves.length === 0) return 'Evento registrado pela aplicação.';
+    return `Evento registrado pela aplicação: ${chaves.join(', ')}.`;
+  }
+
+  const campos = linha.campos_alterados.filter((c) => c !== 'updated_at');
   if (campos.length === 0) return 'Atualização sem mudança de campo de negócio.';
   return `Campos alterados: ${campos.join(', ')}.`;
 }

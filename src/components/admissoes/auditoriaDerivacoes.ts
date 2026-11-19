@@ -184,7 +184,9 @@ export function possuiFiltrosAtivos(filtros: FiltrosAuditoria): boolean {
 /** Data (`YYYY-MM-DD`) no início/fim do dia — comparação estável com `hoje`. */
 function dataLimite(valor: string | null | undefined, fimDoDia: boolean): number | null {
   if (!valor) return null;
-  const data = new Date(`${valor}T${fimDoDia ? '23:59:59' : '00:00:00'}`);
+  // 23:59:59.999, não 23:59:59: com os milissegundos em zero o evento das
+  // 23:59:59.500 do próprio dia escolhido caía fora do filtro.
+  const data = new Date(`${valor}T${fimDoDia ? '23:59:59.999' : '00:00:00'}`);
   return Number.isNaN(data.getTime()) ? null : data.getTime();
 }
 
