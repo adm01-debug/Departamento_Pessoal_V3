@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "16d4f17a72287c22c7b7baca181a00162a5cf9d4",
+  "sha": "49cbb500f765beffcdb9761956b7a75a8fc08031",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 19:04 UTC",
-  "files_total": 3670,
-  "code_files": 3090,
-  "code_lines": 491380
+  "generated_at": "2026-11-19 20:00 UTC",
+  "files_total": 3672,
+  "code_files": 3092,
+  "code_lines": 491967
  },
  "version": "1.3.2",
- "facts_hash": "30db18f549de2263",
+ "facts_hash": "a1de331b8dac284e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1026,
-   ".sql": 974,
+   ".sql": 976,
    ".ts": 954,
    ".mjs": 108,
    ".js": 15,
@@ -41816,16 +41816,6 @@
     "src": "supabase/baseline/20260831_canonical/canonical_schema.sql"
    },
    {
-    "name": "auth_own_events",
-    "table": "dp_audit_log",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "(\"actor_user_id\" = \"auth\".\"uid\"())",
-    "check": "",
-    "src": "supabase/baseline/20260831_canonical/canonical_schema.sql"
-   },
-   {
     "name": "empresa_isolation_curriculos_arquivos",
     "table": "curriculos_arquivos",
     "cmd": "ALL",
@@ -41956,16 +41946,6 @@
     "src": "supabase/baseline/20260831_canonical/canonical_schema.sql"
    },
    {
-    "name": "service_role_insert_only",
-    "table": "dp_audit_log",
-    "cmd": "INSERT",
-    "roles": "service_role",
-    "mode": "permissive",
-    "using": "",
-    "check": "true",
-    "src": "supabase/baseline/20260831_canonical/canonical_schema.sql"
-   },
-   {
     "name": "service_role_mcp_config",
     "table": "dp_mcp_config",
     "cmd": "ALL",
@@ -41983,16 +41963,6 @@
     "mode": "permissive",
     "using": "true",
     "check": "true",
-    "src": "supabase/baseline/20260831_canonical/canonical_schema.sql"
-   },
-   {
-    "name": "service_role_select",
-    "table": "dp_audit_log",
-    "cmd": "SELECT",
-    "roles": "service_role",
-    "mode": "permissive",
-    "using": "true",
-    "check": "",
     "src": "supabase/baseline/20260831_canonical/canonical_schema.sql"
    },
    {
@@ -50064,6 +50034,36 @@
     "using": "true",
     "check": "",
     "src": "supabase/migrations/20261018130000_onda4e_objetos_ausentes.sql"
+   },
+   {
+    "name": "auth_own_events",
+    "table": "dp_audit_log",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "actor_user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
+   },
+   {
+    "name": "service_role_insert_only",
+    "table": "dp_audit_log",
+    "cmd": "INSERT",
+    "roles": "service_role",
+    "mode": "permissive",
+    "using": "",
+    "check": "true",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
+   },
+   {
+    "name": "service_role_select",
+    "table": "dp_audit_log",
+    "cmd": "SELECT",
+    "roles": "service_role",
+    "mode": "permissive",
+    "using": "true",
+    "check": "",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
    },
    {
     "name": "training_images_select_authenticated",
@@ -70695,6 +70695,70 @@
     "src": "supabase/migrations/20261018200000_qa2_pix_lote_idempotente.sql"
    },
    {
+    "name": "dp_audit_log_created_at_idx",
+    "table": "dp_audit_log",
+    "columns": "created_at DESC",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
+   },
+   {
+    "name": "dp_audit_log_event_idx",
+    "table": "dp_audit_log",
+    "columns": "event",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
+   },
+   {
+    "name": "dp_audit_log_event_type_idx",
+    "table": "dp_audit_log",
+    "columns": "event_type",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
+   },
+   {
+    "name": "dp_audit_log_actor_idx",
+    "table": "dp_audit_log",
+    "columns": "actor_user_id",
+    "unique": false,
+    "where": "WHERE (actor_user_id IS NOT NULL)",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
+   },
+   {
+    "name": "dp_audit_log_ip_idx",
+    "table": "dp_audit_log",
+    "columns": "ip_address",
+    "unique": false,
+    "where": "WHERE (ip_address IS NOT NULL)",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
+   },
+   {
+    "name": "dp_audit_log_request_idx",
+    "table": "dp_audit_log",
+    "columns": "request_id",
+    "unique": false,
+    "where": "WHERE (request_id IS NOT NULL)",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
+   },
+   {
+    "name": "dp_audit_log_payload_gin",
+    "table": "dp_audit_log",
+    "columns": "payload",
+    "unique": false,
+    "where": "WHERE (payload IS NOT NULL)",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
+   },
+   {
+    "name": "dp_retention_policy_enabled_idx",
+    "table": "dp_retention_policy",
+    "columns": "enabled",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
+   },
+   {
     "name": "uq_espelho_colab_competencia",
     "table": "ponto_espelhos_assinados",
     "columns": "colaborador_id, competencia",
@@ -72103,6 +72167,8 @@
    "supabase/migrations/20261018170000_default_privs_revoke_execute_public.verify.sql",
    "supabase/migrations/20261018200000_qa2_pix_lote_idempotente.sql",
    "supabase/migrations/20261019000000_qa3_db_fixes.sql",
+   "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql",
+   "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.verify.sql",
    "supabase/migrations/20261020000000_colaboradores_metadata.sql",
    "supabase/migrations/20261020090000_ninebox_edicao_feedback.sql",
    "supabase/migrations/20261020090000_ninebox_edicao_feedback.verify.sql",
@@ -83237,6 +83303,14 @@
     "objkind": "function",
     "roles": "authenticated",
     "src": "supabase/migrations/20261019000000_qa3_db_fixes.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "dp_audit_log",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
    },
    {
     "kind": "revoke",
@@ -104132,8 +104206,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 900,
-   "lines": 81375,
+   "files": 902,
+   "lines": 81962,
    "tables": [
     "profiles",
     "user_roles"
@@ -163917,6 +163991,14 @@
     "line": "DELETE FROM public.logs_sistema WHERE created_at < now() - interval '30 days';"
    },
    {
+    "file": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql",
+    "line": "v_mes := (v_mes + interval '1 month')::date;"
+   },
+   {
+    "file": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql",
+    "line": "v_nome, v_mes, (v_mes + interval '1 month')::date"
+   },
+   {
     "file": "supabase/migrations/20261022000000_qa5_db_fixes.sql",
     "line": "v_fim := (v_inicio + interval '1 month' - interval '1 day')::date;"
    },
@@ -204127,16 +204209,6 @@
     "src": "supabase/baseline/20260831_canonical/canonical_schema.sql"
    },
    {
-    "name": "auth_own_events",
-    "table": "dp_audit_log",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "(\"actor_user_id\" = \"auth\".\"uid\"())",
-    "check": "",
-    "src": "supabase/baseline/20260831_canonical/canonical_schema.sql"
-   },
-   {
     "name": "empresa_isolation_curriculos_arquivos",
     "table": "curriculos_arquivos",
     "cmd": "ALL",
@@ -204267,16 +204339,6 @@
     "src": "supabase/baseline/20260831_canonical/canonical_schema.sql"
    },
    {
-    "name": "service_role_insert_only",
-    "table": "dp_audit_log",
-    "cmd": "INSERT",
-    "roles": "service_role",
-    "mode": "permissive",
-    "using": "",
-    "check": "true",
-    "src": "supabase/baseline/20260831_canonical/canonical_schema.sql"
-   },
-   {
     "name": "service_role_mcp_config",
     "table": "dp_mcp_config",
     "cmd": "ALL",
@@ -204294,16 +204356,6 @@
     "mode": "permissive",
     "using": "true",
     "check": "true",
-    "src": "supabase/baseline/20260831_canonical/canonical_schema.sql"
-   },
-   {
-    "name": "service_role_select",
-    "table": "dp_audit_log",
-    "cmd": "SELECT",
-    "roles": "service_role",
-    "mode": "permissive",
-    "using": "true",
-    "check": "",
     "src": "supabase/baseline/20260831_canonical/canonical_schema.sql"
    },
    {
@@ -212375,6 +212427,36 @@
     "using": "true",
     "check": "",
     "src": "supabase/migrations/20261018130000_onda4e_objetos_ausentes.sql"
+   },
+   {
+    "name": "auth_own_events",
+    "table": "dp_audit_log",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "actor_user_id = auth.uid()",
+    "check": "",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
+   },
+   {
+    "name": "service_role_insert_only",
+    "table": "dp_audit_log",
+    "cmd": "INSERT",
+    "roles": "service_role",
+    "mode": "permissive",
+    "using": "",
+    "check": "true",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
+   },
+   {
+    "name": "service_role_select",
+    "table": "dp_audit_log",
+    "cmd": "SELECT",
+    "roles": "service_role",
+    "mode": "permissive",
+    "using": "true",
+    "check": "",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
    },
    {
     "name": "training_images_select_authenticated",
@@ -236870,7 +236952,7 @@
    "dp_audit_log": {
     "rls": "enabled",
     "SELECT": [
-     "authenticated: (\"actor_user_id\" = \"auth\".\"uid\"())",
+     "authenticated: actor_user_id = auth.uid()",
      "service_role: true"
     ],
     "INSERT": [
@@ -242031,6 +242113,8 @@
    "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql",
    "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.verify.sql",
    "supabase/migrations/20261018130000_onda4e_objetos_ausentes.sql",
+   "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql",
+   "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.verify.sql",
    "supabase/migrations/20261020120000_ninebox_permissoes_homologacao_versiona_tabela.sql",
    "supabase/migrations/20261020120000_ninebox_permissoes_homologacao_versiona_tabela.verify.sql",
    "supabase/migrations/20261022000000_qa5_db_fixes.sql",
@@ -252920,6 +253004,14 @@
     "objkind": "function",
     "roles": "authenticated",
     "src": "supabase/migrations/20261019000000_qa3_db_fixes.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "dp_audit_log",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql"
    },
    {
     "kind": "revoke",
@@ -329996,6 +330088,20 @@
    "path": "supabase/migrations/20261019000000_qa3_db_fixes.sql",
    "lines": 270
   },
+  "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql": {
+   "path": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql",
+   "lines": 358,
+   "temporal": [
+    "v_mes := (v_mes + interval '1 month')::date;",
+    "v_nome, v_mes, (v_mes + interval '1 month')::date"
+   ],
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.verify.sql": {
+   "path": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.verify.sql",
+   "lines": 229,
+   "uses_service_role": true
+  },
   "supabase/migrations/20261020000000_colaboradores_metadata.sql": {
    "path": "supabase/migrations/20261020000000_colaboradores_metadata.sql",
    "lines": 8
@@ -330844,10 +330950,20 @@
   }
  },
  "git": {
-  "sha": "16d4f17a72287c22c7b7baca181a00162a5cf9d4",
+  "sha": "49cbb500f765beffcdb9761956b7a75a8fc08031",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "49cbb50",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "infra(banco): versiona o DDL órfão da família dp_* (imutabilidade do log de auditoria) (#751)",
+    "files": [
+     "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql",
+     "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.verify.sql"
+    ]
+   },
    {
     "sha": "16d4f17",
     "date": "2026-11-19",
@@ -331166,16 +331282,6 @@
      "supabase/migrations/20260911195000_p0_payroll_upsert_contract.verify.sql",
      "supabase/migrations/20261028220000_pagar_desligamento_transacional.verify.sql"
     ]
-   },
-   {
-    "sha": "9048fce",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "fix(empresas): empresa de abertura deixa de ser sorteada pela ordem do RPC (#723)",
-    "files": [
-     "src/hooks/__tests__/useEmpresas.test.ts",
-     "src/hooks/useEmpresas.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -331240,6 +331346,14 @@
     2
    ],
    [
+    "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.verify.sql",
+    1
+   ],
+   [
     "src/components/avaliacao/pdiComum.ts",
     1
    ],
@@ -331249,14 +331363,6 @@
    ],
    [
     "src/mocks/colaboradoresMock.ts",
-    1
-   ],
-   [
-    "src/pages/AvaliacaoPage.tsx",
-    1
-   ],
-   [
-    "e2e/authenticated/feedbacks-historico.spec.ts",
     1
    ]
   ]

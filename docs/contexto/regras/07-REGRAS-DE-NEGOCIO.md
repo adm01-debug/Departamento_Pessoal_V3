@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `16d4f17a72` · branch `main` · 2026-11-19 19:04 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `49cbb500f7` · branch `main` · 2026-11-19 20:00 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -15,7 +15,6 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `user_empresas` | Usuários podem ver suas associações | SELECT | public | permissive | `("user_id" = "auth"."uid"())` |  |
 | `fila_notificacoes` | Usuários podem ver suas próprias notificações | SELECT | public | permissive | `("auth"."uid"() = "user_id")` |  |
 | `dp_user_roles` | admin_full | ALL | authenticated | permissive | `(("auth"."jwt"() ->> 'role'::"text") = ANY (ARRAY['admin'::"text", 'rh'::"text"]))` |  |
-| `dp_audit_log` | auth_own_events | SELECT | authenticated | permissive | `("actor_user_id" = "auth"."uid"())` |  |
 | `curriculos_arquivos` | empresa_isolation_curriculos_arquivos | ALL | authenticated | permissive | `("empresa_id" = "public"."get_auth_empresa_id"())` | `("empresa_id" = "public"."get_auth_empresa_id"())` |
 | `onboarding_documentos_obrigatorios` | empresa_isolation_onboarding_documentos_obrigatorios | ALL | authenticated | permissive | `("empresa_id" = "public"."get_auth_empresa_id"())` | `("empresa_id" = "public"."get_auth_empresa_id"())` |
 | `onboarding_kits` | empresa_isolation_onboarding_kits | ALL | authenticated | permissive | `("empresa_id" = "public"."get_auth_empresa_id"())` | `("empresa_id" = "public"."get_auth_empresa_id"())` |
@@ -29,10 +28,8 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `dp_data_catalog` | service_role_full | ALL | service_role | permissive | `true` | `true` |
 | `dp_audit_config` | service_role_full_audit_config | ALL | service_role | permissive | `true` | `true` |
 | `dp_backup_runbook` | service_role_full_runbook | ALL | service_role | permissive | `true` | `true` |
-| `dp_audit_log` | service_role_insert_only | INSERT | service_role | permissive |  | `true` |
 | `dp_mcp_config` | service_role_mcp_config | ALL | service_role | permissive | `true` | `true` |
 | `dp_retention_policy` | service_role_only_retention | ALL | service_role | permissive | `true` | `true` |
-| `dp_audit_log` | service_role_select | SELECT | service_role | permissive | `true` |  |
 | `medidas_disciplinares_integracao` | tenant_medidas_integracao_admin | ALL | authenticated | permissive | `(("empresa_id" IN ( SELECT "public"."get_user_empresas"("auth"."uid"()) AS "get_user_empresas")) AND ("public"."has_role"("auth"."uid"(), 'admin'::"public"."app_role") OR "public"."has_role"("auth"."uid"(), 'rh'::"public"."app_role")))` | `("empresa_id" IN ( SELECT "public"."get_user_empresas"("auth"."uid"()) AS "get_user_empresas"))` |
 | `medidas_disciplinares_integracao` | tenant_medidas_integracao_select | SELECT | authenticated | permissive | `("empresa_id" IN ( SELECT "public"."get_user_empresas"("auth"."uid"()) AS "get_user_empresas"))` |  |
 | `storage.objects` | tenant_delete_comprovantes_despesas | DELETE | authenticated | permissive | `(("bucket_id" = 'comprovantes-despesas'::"text") AND "public"."user_belongs_to_empresa"("auth"."uid"(), "public"."storage_path_empresa_id"("name")) AND (("owner" = "auth"."uid"()) OR "public"."user_can_manage_tenant_storage"("auth"."uid"(), "public"."storage_path_empresa_id"("name"))))` |  |
@@ -311,6 +308,9 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `vinculos` | tenant_vinculos | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `ferias_aprovacoes` | tenant_ferias_aprovacoes | ALL | authenticated | permissive | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `ferias_arquivos` | tenant_ferias_arquivos | ALL | authenticated | permissive | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
+| `historico_ferias` | tenant_historico_ferias | ALL | authenticated | permissive | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
+| `dependentes_beneficios` | tenant_dependentes_beneficios | ALL | authenticated | permissive | `dependente_id IN (SELECT id FROM public.dependentes WHERE colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))))` | `dependente_id IN (SELECT id FROM public.dependentes WHERE colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))))` |
+| `linhas_transporte` | tenant_linhas_transporte | ALL | authenticated | permissive | `vale_transporte_id IN (SELECT id FROM public.vales_transporte WHERE colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))))` | `vale_transporte_id IN (SELECT id FROM public.vales_transporte WHERE colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))))` |
 | … +866 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
@@ -4956,6 +4956,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `AND created_at > now() - interval '10 minutes';` | `supabase/migrations/20261005160000_wave7_audit_fixes.sql` |
 | `AND created_at > now() - interval '10 minutes';` | `supabase/migrations/20261006100000_fix_wave7_contrato_rpcs_regression.sql` |
 | `DELETE FROM public.logs_sistema WHERE created_at < now() - interval '30 days';` | `supabase/migrations/20261013130000_fix_broken_cron_jobs.sql` |
+| `v_mes := (v_mes + interval '1 month')::date;` | `supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql` |
+| `v_nome, v_mes, (v_mes + interval '1 month')::date` | `supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql` |
 | `v_fim := (v_inicio + interval '1 month' - interval '1 day')::date;` | `supabase/migrations/20261022000000_qa5_db_fixes.sql` |
 | `p_stale_after interval DEFAULT interval '10 minutes'` | `supabase/migrations/20261023120000_training_images_infrastructure.sql` |
 | `AND r.started_at < now() - interval '30 minutes'` | `supabase/migrations/20261023130000_training_image_autoqueue.sql` |

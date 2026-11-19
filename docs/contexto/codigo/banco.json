@@ -6,12 +6,12 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 900,
+ "migrations": 902,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
  "avisos": [
-  "188 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
+  "189 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
  ],
  "extensoes": [
   "pg_cron",
@@ -1570,6 +1570,27 @@
    "evento": "update",
    "tabela": "documentos_versoes",
    "funcao": "update_documentos_versoes_updated_at"
+  },
+  {
+   "nome": "dp_audit_log_integrity_check",
+   "quando": "before",
+   "evento": "insert",
+   "tabela": "dp_audit_log",
+   "funcao": "dp_audit_log_prevent_future"
+  },
+  {
+   "nome": "dp_audit_log_no_delete",
+   "quando": "before",
+   "evento": "delete",
+   "tabela": "dp_audit_log",
+   "funcao": "dp_audit_log_immutable"
+  },
+  {
+   "nome": "dp_audit_log_no_update",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "dp_audit_log",
+   "funcao": "dp_audit_log_immutable"
   },
   {
    "nome": "trg_auto_vincular_admins",
@@ -23431,6 +23452,266 @@
    "triggers": [
     "trigger_documentos_versoes_updated_at"
    ],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "dp_audit_log": {
+   "colunas": {
+    "actor_role": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "actor_user_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamp with time zone",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "event": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "event_type": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'system'::text",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "ip_address": {
+     "tipo": "inet",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "payload": {
+     "tipo": "jsonb",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "request_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "session_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "auth_own_events",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "service_role_insert_only",
+     "comando": "insert",
+     "para": "service_role",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "service_role_select",
+     "comando": "select",
+     "para": "service_role",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "dp_audit_log_actor_idx",
+     "colunas": "actor_user_id",
+     "unico": false
+    },
+    {
+     "nome": "dp_audit_log_created_at_idx",
+     "colunas": "created_at DESC",
+     "unico": false
+    },
+    {
+     "nome": "dp_audit_log_event_idx",
+     "colunas": "event",
+     "unico": false
+    },
+    {
+     "nome": "dp_audit_log_event_type_idx",
+     "colunas": "event_type",
+     "unico": false
+    },
+    {
+     "nome": "dp_audit_log_ip_idx",
+     "colunas": "ip_address",
+     "unico": false
+    },
+    {
+     "nome": "dp_audit_log_payload_gin",
+     "colunas": "payload",
+     "unico": false
+    },
+    {
+     "nome": "dp_audit_log_request_idx",
+     "colunas": "request_id",
+     "unico": false
+    }
+   ],
+   "fks": [],
+   "criada_em": "20261019235900_versiona_ddl_orfao_dp.sql",
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [
+    "dp_audit_log_integrity_check",
+    "dp_audit_log_no_delete",
+    "dp_audit_log_no_update"
+   ],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "dp_audit_log_default": {
+   "colunas": {},
+   "rls": true,
+   "policies": [],
+   "indices": [],
+   "fks": [],
+   "criada_em": "20261019235900_versiona_ddl_orfao_dp.sql",
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "dp_retention_policy": {
+   "colunas": {
+    "action": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'anonymize'::text",
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamp with time zone",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "dry_run": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "true",
+     "ref": null
+    },
+    "enabled": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "false",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "last_run_at": {
+     "tipo": "timestamp with time zone",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "last_run_count": {
+     "tipo": "integer",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "notes": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "retention_days": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "table_name": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "target_columns": {
+     "tipo": "jsonb",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamp with time zone",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [],
+   "indices": [
+    {
+     "nome": "dp_retention_policy_enabled_idx",
+     "colunas": "enabled",
+     "unico": false
+    }
+   ],
+   "fks": [],
+   "criada_em": "20261019235900_versiona_ddl_orfao_dp.sql",
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
    "sem_rls": false,
    "nao_usada": true
   },

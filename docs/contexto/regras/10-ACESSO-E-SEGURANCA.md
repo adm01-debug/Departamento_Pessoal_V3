@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `16d4f17a72` · branch `main` · 2026-11-19 19:04 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `49cbb500f7` · branch `main` · 2026-11-19 20:00 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -166,7 +166,7 @@
 | `documentos_pessoais_arquivos` | enabled | authenticated: public.pode_gerir_rh(public.empresa_do_colaborador(colaborador_id))<br>authenticated: public.sou_o_colaborador(colaborador_id)<br>authenticated: EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = documentos_pessoais_arquivos.colaborador_id AND public.pode_gerir_<br>authenticated: EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = documentos_pessoais_arquivos.colaborador_id AND public.pode_gerir_<br>authenticated: public.sou_o_colaborador(colaborador_id) | authenticated: public.pode_gerir_rh(public.empresa_do_colaborador(colaborador_id))<br>authenticated: EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = documentos_pessoais_arquivos.colaborador_id AND public.pode_gerir_<br>authenticated: EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = documentos_pessoais_arquivos.colaborador_id AND public.pode_gerir_ | authenticated: public.pode_gerir_rh(public.empresa_do_colaborador(colaborador_id))<br>authenticated: EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = documentos_pessoais_arquivos.colaborador_id AND public.pode_gerir_<br>authenticated: EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = documentos_pessoais_arquivos.colaborador_id AND public.pode_gerir_ | authenticated: public.pode_gerir_rh(public.empresa_do_colaborador(colaborador_id))<br>authenticated: EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = documentos_pessoais_arquivos.colaborador_id AND public.pode_gerir_<br>authenticated: EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = documentos_pessoais_arquivos.colaborador_id AND public.pode_gerir_ |
 | `documentos_versoes` | enabled | public: auth.role() = 'authenticated' | public: auth.role() = 'authenticated' | public: auth.role() = 'authenticated' | — |
 | `dp_audit_config` | enabled | service_role: true | service_role: true | service_role: true | service_role: true |
-| `dp_audit_log` | enabled | authenticated: ("actor_user_id" = "auth"."uid"())<br>service_role: true | service_role: true | — | — |
+| `dp_audit_log` | enabled | authenticated: actor_user_id = auth.uid()<br>service_role: true | service_role: true | — | — |
 | `dp_audit_log_2026_07` | enabled | — | — | — | — |
 | `dp_audit_log_2026_08` | enabled | — | — | — | — |
 | `dp_audit_log_2026_09` | enabled | — | — | — | — |
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 323 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 325 arquivo(s)
 
 - `docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql`
 - `docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql`
@@ -472,7 +472,7 @@
 - `supabase/migrations/20260712214929_4971f364-3f69-48cd-9150-a55524b1025d.sql`
 - `supabase/migrations/20260712215539_349ae8a8-7ed9-41a5-b06c-ea4b8f35c7b5.sql`
 - `supabase/migrations/20260712215808_8c16ff4b-eb80-4fbb-a8c6-c15c62ed93c7.sql`
-- … +173 (lista completa em `context.json`)
+- … +175 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -841,7 +841,7 @@ Middleware matcher (Next.js): nenhum
 | grant | authenticated | delete | `feedbacks_360` |
 | grant | authenticated | execute | `has_role`, `is_admin`, `get_user_roles`, `get_user_default_empresa`, `get_user_empresas`, `user_belongs_to_empresa`, `anonimizar_dados_pessoais`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `get_colaborador_banco_horas`, `get_user_empresas`, `get_auth_empresa_id`, `user_belongs_to_empresa`, `get_user_default_empresa`, `has_role` … +154 |
 | grant | authenticated | insert | `feedbacks_360` |
-| grant | authenticated | select | `vw_folha_compliance`, `v_idempotency_metrics`, `v_slow_queries_top50`, `audit_log_unified`, `audit_log_unified_archive`, `holerite_distribuicoes`, `v_audit_legacy`, `v_system_health`, `v_ferias_alerta_pagamento_d2`, `v_ferias_adiant13_elegibilidade`, `v_ferias_folha_reconciliacao`, `ferias_reconciliacao_logs`, `v_contratos_vencendo`, `v_contratos_assinatura_kpi`, `v_contratos_tokens_pendentes` … +27 |
+| grant | authenticated | select | `vw_folha_compliance`, `v_idempotency_metrics`, `v_slow_queries_top50`, `audit_log_unified`, `audit_log_unified_archive`, `holerite_distribuicoes`, `v_audit_legacy`, `v_system_health`, `v_ferias_alerta_pagamento_d2`, `v_ferias_adiant13_elegibilidade`, `v_ferias_folha_reconciliacao`, `ferias_reconciliacao_logs`, `v_contratos_vencendo`, `v_contratos_assinatura_kpi`, `v_contratos_tokens_pendentes` … +28 |
 | grant | authenticated | select, insert | `logs_sistema`, `folha_lock_conflicts`, `despesas_aprovacoes_log`, `aej_geracoes`, `ponto_espelhos_revogacoes`, `epis_fichas_assinaturas`, `sst_regimento_assinaturas`, `medidas_disciplinares_workflow_log`, `audit_log`, `folha_auditoria`, `afd_geracoes` |
 | grant | authenticated | select, insert, update | `login_lockouts`, `contrato_assinatura_tokens` |
 | grant | authenticated | select, insert, update, delete | `contabilidade_contatos`, `contabilidade_threads`, `contabilidade_mensagens`, `afdt_importacoes`, `afdt_registros_raw`, `afdt_divergencias`, `clinicas_partners`, `clinicas_partners_servicos`, `clinicas_partners_horarios`, `exames_agendamentos`, `sst_ordens_servico`, `sst_ltcat_laudos`, `epis_fichas`, `epis_fichas_itens`, `sst_extintores` … +20 |
