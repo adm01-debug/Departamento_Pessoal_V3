@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "f8a6976611f56ce0a12300ec85ef29eb5ecde2e0",
+  "sha": "fcce4ad0b584b071c6015266c246d541d6a91d95",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 16:13 UTC",
+  "generated_at": "2026-11-19 16:28 UTC",
   "files_total": 3670,
   "code_files": 3090,
-  "code_lines": 491238
+  "code_lines": 491348
  },
  "version": "1.3.2",
- "facts_hash": "19552d329998b799",
+ "facts_hash": "8f7ff954ae720a9e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -102181,7 +102181,7 @@
   {
    "module": "src/components",
    "files": 999,
-   "lines": 184640,
+   "lines": 184655,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102516,7 +102516,7 @@
   {
    "module": "src/hooks",
    "files": 206,
-   "lines": 24080,
+   "lines": 24122,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -103245,7 +103245,7 @@
   {
    "module": "src/services",
    "files": 195,
-   "lines": 41465,
+   "lines": 41518,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -121445,6 +121445,18 @@
    {
     "file": "src/services/auditoriaAdmissoesService.ts",
     "text": "`get_audit_trail` (SECURITY DEFINER, recorte por empresa, limite de 500) é"
+   },
+   {
+    "file": "src/services/auditoriaAdmissoesService.ts",
+    "text": "(array, podendo ser vazio). Vazio aí significa de fato \"nada de negócio"
+   },
+   {
+    "file": "src/services/auditoriaAdmissoesService.ts",
+    "text": "validação de documento (`contratacaoService.validarDocumento`) caía"
+   },
+   {
+    "file": "src/services/auditoriaAdmissoesService.ts",
+    "text": "negócio\". Agora NULL descreve o que o evento registrou."
    },
    {
     "file": "src/services/auditoriaAdmissoesService.ts",
@@ -161852,7 +161864,7 @@
     "file": "src/hooks/useAdmissoes.ts",
     "name": "invalidate",
     "params": "",
-    "body": "queryClient.invalidateQueries({ queryKey: ['admissoes', empresaId] });"
+    "body": "queryClient.invalidateQueries({ queryKey: ['admissoes', empresaId] }); // A aba Auditoria da mesma página lê a trilha por OUTRA chave // (['auditoria-admissoes', empresaId]) e o botão \"Nova Admissão\" continua // disponível com ela aberta. Sem invalidar as duas, o RH cria a admissão e // a trilha segue afirmando que nenhum evento foi registrado. queryClient.invalidateQueries({ queryKey: ['auditoria-admissoes', empresaId] });"
    },
    {
     "file": "src/hooks/useCalcular13Salario.ts",
@@ -181190,6 +181202,10 @@
    },
    {
     "file": "src/components/__tests__/auditoriaDerivacoes.test.ts",
+    "name": "a data final inclui o dia INTEIRO, até o último milissegundo"
+   },
+   {
+    "file": "src/components/__tests__/auditoriaDerivacoes.test.ts",
     "name": "conta por etapa, lista responsáveis e tipos de evento"
    },
    {
@@ -184531,6 +184547,10 @@
    {
     "file": "src/hooks/__tests__/useAdmissoes.test.ts",
     "name": "returns admissoes data from query"
+   },
+   {
+    "file": "src/hooks/__tests__/useAdmissoes.test.ts",
+    "name": "criar invalida TAMBÉM a trilha de auditoria da aba Auditoria"
    },
    {
     "file": "src/hooks/__tests__/useAdmissoes.test.ts",
@@ -192098,6 +192118,10 @@
    },
    {
     "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "eSocial em PROCESSAMENTO é pendência, não sucesso"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
     "name": "eSocial transmitido é sucesso mesmo com etapa em curso"
    },
    {
@@ -192115,6 +192139,14 @@
    {
     "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
     "name": "update que só tocou updated_at é dito como tal, não inventa mudança"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "evento de APLICAÇÃO (campos_alterados nulo) descreve o que registrou"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "trigger que diz lista VAZIA continua sendo "
    },
    {
     "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
@@ -273437,8 +273469,12 @@
   },
   "src/components/__tests__/auditoriaDerivacoes.test.ts": {
    "path": "src/components/__tests__/auditoriaDerivacoes.test.ts",
-   "lines": 163,
+   "lines": 176,
    "is_test": true,
+   "rule_comments": [
+    "O limite era 23:59:59.000: evento às 23:59:59.500 do próprio dia",
+    "SEM o \"Z\": `dataLimite` monta o limite em hora LOCAL, então o evento"
+   ],
    "tests": [
     "auditoriaDerivacoes",
     "conta os status e as fatias do resumo (nunca NaN)",
@@ -273447,6 +273483,7 @@
     "filtra por busca livre (candidato, ação, responsável, protocolo, cargo)",
     "filtra por status, etapa, tipo e recibo do eSocial",
     "filtra por período relativo e por intervalo de datas",
+    "a data final inclui o dia INTEIRO, até o último milissegundo",
     "conta por etapa, lista responsáveis e tipos de evento",
     "ordena por data, candidato e status (atenção primeiro)",
     "formata a data/hora com fallback para valor inválido"
@@ -274695,7 +274732,7 @@
   },
   "src/components/admissoes/auditoriaDerivacoes.ts": {
    "path": "src/components/admissoes/auditoriaDerivacoes.ts",
-   "lines": 378,
+   "lines": 380,
    "exports": [
     "type EtapaAdmissao",
     "type StatusAuditoria",
@@ -291107,7 +291144,7 @@
   },
   "src/hooks/useAdmissoes.ts": {
    "path": "src/hooks/useAdmissoes.ts",
-   "lines": 50,
+   "lines": 57,
    "exports": [
     "function useAdmissoes"
    ],
@@ -291118,7 +291155,7 @@
     {
      "name": "invalidate",
      "params": "",
-     "body": "queryClient.invalidateQueries({ queryKey: ['admissoes', empresaId] });"
+     "body": "queryClient.invalidateQueries({ queryKey: ['admissoes', empresaId] }); // A aba Auditoria da mesma página lê a trilha por OUTRA chave // (['auditoria-admissoes', empresaId]) e o botão \"Nova Admissão\" continua // disponível com ela aberta. Sem invalidar as duas, o RH cria a admissão e // a trilha segue afirmando que nenhum evento foi registrado. queryClient.invalidateQueries({ queryKey: ['auditoria-admissoes', empresaId] });"
     }
    ]
   },
@@ -294004,13 +294041,14 @@
   },
   "src/hooks/__tests__/useAdmissoes.test.ts": {
    "path": "src/hooks/__tests__/useAdmissoes.test.ts",
-   "lines": 179,
+   "lines": 214,
    "is_test": true,
    "tests": [
     "useAdmissoes",
     "returns empty admissoes when empresaAtual is null",
     "calls listarAdmissoes with empresaId",
     "returns admissoes data from query",
+    "criar invalida TAMBÉM a trilha de auditoria da aba Auditoria",
     "criar merges empresa_id into the payload",
     "shows success toast after criar",
     "atualizar calls service with id and data",
@@ -305915,7 +305953,7 @@
   },
   "src/services/auditoriaAdmissoesService.ts": {
    "path": "src/services/auditoriaAdmissoesService.ts",
-   "lines": 148,
+   "lines": 176,
    "exports": [
     "const TABELAS_TRILHA_ADMISSAO",
     "function statusDoEvento",
@@ -305944,6 +305982,9 @@
    "rule_comments": [
     "quando. Ela NÃO guarda semântica de negócio — não existe coluna de \"status do",
     "`get_audit_trail` (SECURITY DEFINER, recorte por empresa, limite de 500) é",
+    "(array, podendo ser vazio). Vazio aí significa de fato \"nada de negócio",
+    "validação de documento (`contratacaoService.validarDocumento`) caía",
+    "negócio\". Agora NULL descreve o que o evento registrou.",
     "* `limite` existe porque a trilha cresce para sempre: a aba é de consulta"
    ]
   },
@@ -311136,10 +311177,13 @@
   },
   "src/services/__tests__/auditoriaAdmissoesService.test.ts": {
    "path": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
-   "lines": 233,
+   "lines": 258,
    "is_test": true,
    "rule_comments": [
     "travam essa derivação — é a única parte com regra de negócio de verdade.",
+    "NULL. Antes isso virava \"sem mudança de campo de negócio\" e uma",
+    "validação de documento real aparecia como se nada tivesse acontecido.",
+    "Array vazio é afirmação do trigger: ele comparou e nada de negócio mudou.",
     "valor neutro do enum: a linha não tem etapa, e a aba não pode inventar uma"
    ],
    "tests": [
@@ -311148,11 +311192,14 @@
     "admissão cancelada é falha",
     "etapa concluída é sucesso",
     "etapa em curso com eSocial pendente é pendência de processo",
+    "eSocial em PROCESSAMENTO é pendência, não sucesso",
     "eSocial transmitido é sucesso mesmo com etapa em curso",
     "linha sem etapa e sem eSocial (onboarding) é sucesso: o evento aconteceu",
     "detalheDoEvento",
     "diz quais campos mudaram, ignorando updated_at",
     "update que só tocou updated_at é dito como tal, não inventa mudança",
+    "evento de APLICAÇÃO (campos_alterados nulo) descreve o que registrou",
+    "trigger que diz lista VAZIA continua sendo ",
     "INSERT e DELETE têm texto próprio",
     "mapearEvento",
     "monta o evento a partir de dados_novos de uma admissão",
@@ -330797,10 +330844,24 @@
   }
  },
  "git": {
-  "sha": "f8a6976611f56ce0a12300ec85ef29eb5ecde2e0",
+  "sha": "fcce4ad0b584b071c6015266c246d541d6a91d95",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "fcce4ad",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix(auditoria): 4 defeitos da aba de Auditoria apontados em revisão (#749)",
+    "files": [
+     "src/components/__tests__/auditoriaDerivacoes.test.ts",
+     "src/components/admissoes/auditoriaDerivacoes.ts",
+     "src/hooks/__tests__/useAdmissoes.test.ts",
+     "src/hooks/useAdmissoes.ts",
+     "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+     "src/services/auditoriaAdmissoesService.ts"
+    ]
+   },
    {
     "sha": "f8a6976",
     "date": "2026-11-19",
@@ -331115,26 +331176,16 @@
      "supabase/baseline/20260831_canonical/manifest.sha256",
      "supabase/baseline/20260831_canonical/post_restore_hardening.sql"
     ]
-   },
-   {
-    "sha": "6af99a6",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "chore: registra lote de higiene de 9 migrations no canonical-migrations (#717)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "scripts/canonical-invariants.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     ".github/workflows/canonical-migrations.yml",
-    6
+    5
    ],
    [
     "scripts/canonical-invariants.sql",
-    6
+    5
    ],
    [
     "src/pages/CalculadoraRescisaoPage.tsx",
@@ -331147,6 +331198,22 @@
    [
     "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
     3
+   ],
+   [
+    "src/components/__tests__/auditoriaDerivacoes.test.ts",
+    2
+   ],
+   [
+    "src/components/admissoes/auditoriaDerivacoes.ts",
+    2
+   ],
+   [
+    "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    2
+   ],
+   [
+    "src/services/auditoriaAdmissoesService.ts",
+    2
    ],
    [
     "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
@@ -331185,27 +331252,11 @@
     2
    ],
    [
-    "playwright.config.ts",
+    "src/hooks/__tests__/useAdmissoes.test.ts",
     1
    ],
    [
-    "src/components/ui/currency-input.tsx",
-    1
-   ],
-   [
-    "scripts/.bundle-budget.json",
-    1
-   ],
-   [
-    "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/auditoriaDerivacoes.test.ts",
-    1
-   ],
-   [
-    "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
+    "src/hooks/useAdmissoes.ts",
     1
    ]
   ]

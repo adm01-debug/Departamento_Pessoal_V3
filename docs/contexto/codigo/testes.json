@@ -916,11 +916,11 @@
   {
    "arquivo": "src/components/__tests__/auditoriaDerivacoes.test.ts",
    "tipo": "unit",
-   "linhas": 163,
+   "linhas": 176,
    "testa": [
     "src/components/admissoes/auditoriaDerivacoes.ts"
    ],
-   "casos": 9
+   "casos": 10
   },
   {
    "arquivo": "src/components/__tests__/AuditoriaDerivacoes.test.tsx",
@@ -4328,11 +4328,11 @@
   {
    "arquivo": "src/hooks/__tests__/useAdmissoes.test.ts",
    "tipo": "unit",
-   "linhas": 179,
+   "linhas": 214,
    "testa": [
     "src/hooks/useAdmissoes.ts"
    ],
-   "casos": 7
+   "casos": 8
   },
   {
    "arquivo": "src/hooks/__tests__/useAfastamentos.test.ts",
@@ -5715,12 +5715,12 @@
   {
    "arquivo": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
    "tipo": "unit",
-   "linhas": 233,
+   "linhas": 258,
    "testa": [
     "src/services/auditoriaAdmissoesService.ts",
     "src/services/auditoriaService.ts"
    ],
-   "casos": 15
+   "casos": 18
   },
   {
    "arquivo": "src/services/__tests__/auditoriaService.test.ts",

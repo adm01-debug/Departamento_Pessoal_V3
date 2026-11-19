@@ -840,7 +840,7 @@
    "hooks_exportados": [
     "useAdmissoes"
    ],
-   "linhas": 50,
+   "linhas": 57,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],

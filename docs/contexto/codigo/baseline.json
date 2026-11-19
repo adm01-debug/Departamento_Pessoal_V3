@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f8a6976611f56ce0a12300ec85ef29eb5ecde2e0",
+  "commit": "fcce4ad0b584b071c6015266c246d541d6a91d95",
   "branch": "main",
-  "data_commit": "2026-11-19T13:12:37-03:00",
+  "data_commit": "2026-11-19T13:27:42-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "fcce4ad",
+    "data": "2026-11-19",
+    "assunto": "fix(auditoria): 4 defeitos da aba de Auditoria apontados em revisão (#749)"
+   },
    {
     "sha": "f8a6976",
     "data": "2026-11-19",
@@ -126,22 +131,17 @@
     "sha": "7ecf0c0",
     "data": "2026-11-19",
     "assunto": "chore(banco): sidecar .verify.sql para as 4 migrations do lote que nao tinham (#720)"
-   },
-   {
-    "sha": "9048fce",
-    "data": "2026-11-18",
-    "assunto": "fix(empresas): empresa de abertura deixa de ser sorteada pela ordem do RPC (#723)"
    }
   ],
-  "arquivos_mudados_7d": 1138,
+  "arquivos_mudados_7d": 1140,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 392
+    "mudancas": 393
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 111
+    "mudancas": 112
    },
    {
     "pasta": "src/components/ui",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 97
+    "mudancas": 98
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -184,12 +184,12 @@
     "mudancas": 33
    },
    {
-    "pasta": "src/utils/__tests__",
+    "pasta": "src/components/admissoes",
     "mudancas": 32
    },
    {
-    "pasta": "src/components/admissoes",
-    "mudancas": 31
+    "pasta": "src/utils/__tests__",
+    "mudancas": 32
    },
    {
     "pasta": "src/components/desligamentos",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3657,
   "arquivos_codigo": 2118,
-  "linhas_codigo": 422417,
+  "linhas_codigo": 422527,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 999,
-   "linhas": 184640
+   "linhas": 184655
   },
   "src/constants": {
    "arquivos": 7,
@@ -660,7 +660,7 @@
   },
   "src/hooks": {
    "arquivos": 206,
-   "linhas": 24080
+   "linhas": 24122
   },
   "src/i18n": {
    "arquivos": 2,
@@ -696,7 +696,7 @@
   },
   "src/services": {
    "arquivos": 195,
-   "linhas": 41465
+   "linhas": 41518
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -918,7 +918,7 @@
   },
   {
    "arquivo": "src/components/admissoes/auditoriaDerivacoes.ts",
-   "linha": 286,
+   "linha": 288,
    "tipo": "TODO",
    "texto": "o resto (busca, responsável, período e o painel avançado), que"
   },
