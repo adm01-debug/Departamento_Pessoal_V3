@@ -12,7 +12,12 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: mockFrom, rpc: mockRpc },
 }));
 
-import { useExecutiveKPIs, useStrategicFinancials } from '../useExecutiveDashboard';
+import {
+  useExecutiveKPIs,
+  useStrategicFinancials,
+  reconstruirHeadcountPorMes,
+  variacaoUltimoMes,
+} from '../useExecutiveDashboard';
 
 function makeChain(result: unknown) {
   const chain: Record<string, unknown> = {};
@@ -192,5 +197,46 @@ describe('useStrategicFinancials', () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(Array.isArray(result.current.data?.projections)).toBe(true);
     expect(Array.isArray(result.current.data?.budgets)).toBe(true);
+  });
+});
+
+/**
+ * Variação do quadro de pessoal no painel — resgatada da PR #546 (muri),
+ * `HeadcountOverviewCard.tsx:26-32` e `:78-86`. Antes o painel mostrava o total
+ * de ativos de hoje e as barras de admissões/demissões, mas nenhum número
+ * dizendo se a empresa cresceu ou encolheu no mês.
+ */
+describe('reconstruirHeadcountPorMes / variacaoUltimoMes', () => {
+  it('reconstrói o headcount descontando o saldo dos meses POSTERIORES', () => {
+    // Hoje há 100 ativos. O último mês fechou +5 e o anterior +3.
+    const evolucao = [
+      { saldo: 2 }, // 100 - (3 + 5) = 92
+      { saldo: 3 }, // 100 - 5      = 95
+      { saldo: 5 }, // 100          = 100
+    ];
+    expect(reconstruirHeadcountPorMes(evolucao, 100)).toEqual([92, 95, 100]);
+  });
+
+  it('nunca devolve headcount negativo', () => {
+    // Saldo posterior maior que o total de hoje (base incompleta no período).
+    expect(reconstruirHeadcountPorMes([{ saldo: 50 }, { saldo: 80 }], 10)).toEqual([0, 10]);
+  });
+
+  it('calcula a variação do último mês contra o anterior', () => {
+    expect(variacaoUltimoMes([95, 100])).toBeCloseTo(5.263, 3);
+    expect(variacaoUltimoMes([100, 95])).toBeCloseTo(-5, 3);
+  });
+
+  it('devolve undefined (não 0) quando não há base de comparação', () => {
+    // 0 diria "estável" para quem não tem com o que comparar, e o painel
+    // mostraria um "+0,0%" falso.
+    expect(variacaoUltimoMes([])).toBeUndefined();
+    expect(variacaoUltimoMes([42])).toBeUndefined();
+    expect(variacaoUltimoMes([0, 7])).toBeUndefined();
+  });
+
+  it('ponta a ponta: 100 ativos com saldos 3 e 5 dá +5,3% no mês', () => {
+    const serie = reconstruirHeadcountPorMes([{ saldo: 2 }, { saldo: 3 }, { saldo: 5 }], 100);
+    expect(variacaoUltimoMes(serie)).toBeCloseTo(5.263, 3);
   });
 });

@@ -23,6 +23,33 @@ async function fetchAllPages<T>(
   }
 }
 
+/**
+ * Reconstrói o QUADRO DE PESSOAL mês a mês a partir do total de ativos de hoje,
+ * descontando o saldo (admissões − demissões) dos meses POSTERIORES a cada
+ * ponto. O banco não guarda histórico de headcount, e `evolucao` é o único dado
+ * real disponível — nada aqui é inventado.
+ *
+ * Resgatado da PR #546 (muri), `HeadcountOverviewCard.tsx:78-86`.
+ */
+export function reconstruirHeadcountPorMes(evolucao: { saldo: number }[], totalAtivos: number): number[] {
+  return evolucao.map((_, i) => Math.max(totalAtivos - evolucao.slice(i + 1).reduce((acc, p) => acc + p.saldo, 0), 0));
+}
+
+/**
+ * Variação percentual do último mês contra o anterior.
+ *
+ * `undefined` — e NÃO 0 — quando não há base de comparação: devolver zero diria
+ * "estável" para quem não tem com o que comparar, e o painel mostraria um
+ * "+0,0%" falso. Origem: PR #546, `HeadcountOverviewCard.tsx:26-32`.
+ */
+export function variacaoUltimoMes(serie: number[]): number | undefined {
+  if (serie.length < 2) return undefined;
+  const atual = serie[serie.length - 1];
+  const anterior = serie[serie.length - 2];
+  if (!anterior) return undefined;
+  return ((atual - anterior) / anterior) * 100;
+}
+
 export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
   return useQuery({
     queryKey: ['executive-kpis', empresaId, periodo],
@@ -187,12 +214,17 @@ export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
       const variacaoFolha =
         totalFolhaAnterior > 0 ? ((totalFolhaAtual - totalFolhaAnterior) / totalFolhaAnterior) * 100 : 0;
       const custoMedio = totalAtivos && totalAtivos > 0 ? totalFolhaAtual / totalAtivos : 0;
+      const headcountPorMes = reconstruirHeadcountPorMes(evolucao, totalAtivos || 0);
+      const variacaoHeadcount = variacaoUltimoMes(headcountPorMes);
+
       const demissoesPeriodo = evolucao.reduce((s, e) => s + e.demissoes, 0);
       const turnover = totalAtivos && totalAtivos > 0 ? (demissoesPeriodo / totalAtivos) * 100 : 0;
       const absenteismo = totalAtivos && totalAtivos > 0 ? ((diasFalta || 0) / (totalAtivos * 22)) * 100 : 0;
 
       return {
         totalAtivos: totalAtivos || 0,
+        variacaoHeadcount,
+        headcountPorMes,
         evolucao,
         departamentos,
         custosMensal,
