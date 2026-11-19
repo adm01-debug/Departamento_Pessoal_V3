@@ -960,7 +960,7 @@
     "FeedbacksTab"
    ],
    "export_default": null,
-   "linhas": 743,
+   "linhas": 742,
    "dominio": "components/avaliacao",
    "hooks_locais": [
     "useMovimentoReduzido"

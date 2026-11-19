@@ -104,14 +104,14 @@
   {
    "arquivo": "e2e/authenticated/feedbacks-historico.spec.ts",
    "tipo": "e2e",
-   "linhas": 87,
+   "linhas": 100,
    "testa": [],
    "casos": 1
   },
   {
    "arquivo": "e2e/authenticated/feedbacks-padronizacao.spec.ts",
    "tipo": "e2e",
-   "linhas": 252,
+   "linhas": 265,
    "testa": [],
    "casos": 4
   },

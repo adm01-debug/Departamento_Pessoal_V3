@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fcce4ad0b584b071c6015266c246d541d6a91d95",
+  "commit": "689351be0a63629b8ae745a3a5d616916c84b2d3",
   "branch": "main",
-  "data_commit": "2026-11-19T13:27:42-03:00",
+  "data_commit": "2026-11-19T14:07:26-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "689351b",
+    "data": "2026-11-19",
+    "assunto": "fix(e2e): corrige fila de gestor no stub da bridge e lista so com Editar (#752)"
+   },
+   {
+    "sha": "a2ab09a",
+    "data": "2026-11-19",
+    "assunto": "docs(auditoria): registra a varredura por símbolo e a deriva ledger × repositório (#750)"
+   },
    {
     "sha": "fcce4ad",
     "data": "2026-11-19",
@@ -121,16 +131,6 @@
     "sha": "26629de",
     "data": "2026-11-19",
     "assunto": "fix(consignado): teto do emprestimo vai de 35% para 30% (Lei 10.820 art. 1 §1) (#725)"
-   },
-   {
-    "sha": "d327ab7",
-    "data": "2026-11-19",
-    "assunto": "fix(banco): sidecar conferia substring do search_path, não nome de schema (#724)"
-   },
-   {
-    "sha": "7ecf0c0",
-    "data": "2026-11-19",
-    "assunto": "chore(banco): sidecar .verify.sql para as 4 migrations do lote que nao tinham (#720)"
    }
   ],
   "arquivos_mudados_7d": 1140,
@@ -157,7 +157,7 @@
    },
    {
     "pasta": "src/components/avaliacao",
-    "mudancas": 85
+    "mudancas": 86
    },
    {
     "pasta": "src/components/treinamentos",
@@ -165,7 +165,7 @@
    },
    {
     "pasta": "supabase/functions/_shared",
-    "mudancas": 57
+    "mudancas": 53
    },
    {
     "pasta": "src/components/layout",
@@ -266,11 +266,11 @@
     "mudancas": 6
    },
    {
-    "arquivo": "deno.lock",
+    "arquivo": "docs/agentes/banco.md",
     "mudancas": 5
    },
    {
-    "arquivo": "docs/agentes/banco.md",
+    "arquivo": "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
     "mudancas": 5
    },
    {
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3657,
   "arquivos_codigo": 2118,
-  "linhas_codigo": 422527,
+  "linhas_codigo": 422552,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -352,7 +352,7 @@
   },
   "e2e/authenticated": {
    "arquivos": 21,
-   "linhas": 2181
+   "linhas": 2207
   },
   "e2e/authenticated-non-admin": {
    "arquivos": 1,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 999,
-   "linhas": 184655
+   "linhas": 184654
   },
   "src/constants": {
    "arquivos": 7,
