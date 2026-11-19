@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(ferias/folhas): policy UPDATE gestor (pode_gerir_pessoas) em ferias e folhas_pagamento (#726)",
    "feat(auditoria): trilha ganha empresa_id e leitura por empresa para o RH (passo 2 de 3) (#742)",
    "fix(colaboradores): status \"Desligado\" nao salvava e telefone fixo era inalcancavel (#741)",
    "feat(rescisão): busca por matrícula e 4 últimos do CPF no seletor de colaborador (#740)",
-   "chore(auditoria): fecha o inventário de resgate — 6 lacunas reais, 6 descartes provados e o stash varrido (#739)",
-   "feat(rescisao): resgata a UX do import de colaborador da PR #546 (muri) (#738)"
+   "chore(auditoria): fecha o inventário de resgate — 6 lacunas reais, 6 descartes provados e o stash varrido (#739)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

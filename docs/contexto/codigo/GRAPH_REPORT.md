@@ -1,17 +1,17 @@
 # Graph Report - Departamento_Pessoal_V3  (2026-11-19)
 
 ## Corpus Check
-- 3545 files · ~3,513,653 words
+- 3547 files · ~3,513,907 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 37 file(s) not represented in the graph (top: (none) 16, .toml 5, .conf 4)
 
 ## Summary
-- 27632 nodes · 62308 edges · 2399 communities (1341 shown, 1058 thin omitted)
+- 27634 nodes · 62308 edges · 2401 communities (1341 shown, 1060 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 1582 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c01144db`
+- Built from commit: `36e144ea`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -1954,7 +1954,7 @@
 ## Import Cycles
 - 2-file cycle: `src/components/layout/MainLayout.tsx -> src/components/layout/index.ts -> src/components/layout/MainLayout.tsx`
 
-## Communities (2399 total, 1058 thin omitted)
+## Communities (2401 total, 1060 thin omitted)
 
 ### Community 0 - "lucide-react"
 Cohesion: 0.01
@@ -7403,8 +7403,8 @@ Nodes (3): "public"."sst_regimento_ass_imutavel", "trg_regimento_ass_no_delete",
 
 ## Knowledge Gaps
 - **7852 isolated node(s):** `session-start.sh script`, `PATH`, `capacitorConfig`, `nodeModulesDir`, `AUTH_FILE` (+7847 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 12046 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **1058 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 12048 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **1060 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
