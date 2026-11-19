@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "b6129aab4292ee19dfc901931600b2ab823e151c",
+  "sha": "c01144db975d1d68315bdcd081edfc68155c1f98",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 14:26 UTC",
-  "files_total": 3658,
-  "code_files": 3078,
-  "code_lines": 487737
+  "generated_at": "2026-11-19 14:32 UTC",
+  "files_total": 3660,
+  "code_files": 3080,
+  "code_lines": 487965
  },
  "version": "1.3.2",
- "facts_hash": "0f72118695d5cb16",
+ "facts_hash": "1b897220a832d587",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1023,
-   ".sql": 970,
+   ".sql": 972,
    ".ts": 949,
    ".mjs": 108,
    ".js": 15,
@@ -50575,6 +50575,16 @@
     "src": "supabase/migrations/20261119130000_ferias_gestor_update.sql"
    },
    {
+    "name": "audit_log_rh_read_empresa",
+    "table": "audit_log",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "empresa_id IS NOT NULL AND public.pode_gerir_rh(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql"
+   },
+   {
     "name": "Acesso aos itens via folha",
     "table": "itens_folha",
     "cmd": "ALL",
@@ -72182,6 +72192,8 @@
    "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.verify.sql",
    "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql",
    "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql",
+   "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql",
+   "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -84218,6 +84230,14 @@
     "objkind": "function",
     "roles": "PUBLIC, anon, authenticated",
     "src": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "log_audit_change",
+    "objkind": "function",
+    "roles": "authenticated, anon, PUBLIC",
+    "src": "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql"
    },
    {
     "kind": "revoke",
@@ -104039,8 +104059,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 896,
-   "lines": 81080,
+   "files": 898,
+   "lines": 81308,
    "tables": [
     "profiles",
     "user_roles"
@@ -212266,6 +212286,16 @@
     "src": "supabase/migrations/20261119130000_ferias_gestor_update.sql"
    },
    {
+    "name": "audit_log_rh_read_empresa",
+    "table": "audit_log",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "empresa_id IS NOT NULL AND public.pode_gerir_rh(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql"
+   },
+   {
     "name": "Acesso aos itens via folha",
     "table": "itens_folha",
     "cmd": "ALL",
@@ -234188,6 +234218,7 @@
      "authenticated: public.rls_tenant_or_admin(empresa_id)",
      "authenticated: user_id = auth.uid()",
      "authenticated: user_id = auth.uid()",
+     "authenticated: empresa_id IS NOT NULL AND public.pode_gerir_rh(empresa_id)",
      "authenticated: \"public\".\"is_admin\"(\"auth\".\"uid\"())"
     ],
     "INSERT": [
@@ -253255,6 +253286,14 @@
     "objkind": "function",
     "roles": "PUBLIC, anon, authenticated",
     "src": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "log_audit_change",
+    "objkind": "function",
+    "roles": "authenticated, anon, PUBLIC",
+    "src": "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql"
    },
    {
     "kind": "revoke",
@@ -329425,6 +329464,14 @@
    "path": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql",
    "lines": 77
   },
+  "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql": {
+   "path": "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql",
+   "lines": 135
+  },
+  "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.verify.sql": {
+   "path": "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.verify.sql",
+   "lines": 93
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -329743,10 +329790,22 @@
   }
  },
  "git": {
-  "sha": "b6129aab4292ee19dfc901931600b2ab823e151c",
+  "sha": "c01144db975d1d68315bdcd081edfc68155c1f98",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "c01144d",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "feat(auditoria): trilha ganha empresa_id e leitura por empresa para o RH (passo 2 de 3) (#742)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql",
+     "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql",
+     "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.verify.sql"
+    ]
+   },
    {
     "sha": "b6129aa",
     "date": "2026-11-19",
@@ -330049,29 +330108,16 @@
      "supabase/migrations/20261020120000_ninebox_permissoes_homologacao_versiona_tabela.sql",
      "supabase/migrations/20261020120000_ninebox_permissoes_homologacao_versiona_tabela.verify.sql"
     ]
-   },
-   {
-    "sha": "2e210c4",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "feat(dashboard): liga alertas-preditivos, que rodava em producao sem tela (#709)",
-    "files": [
-     "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
-     "src/components/__tests__/AnalyticsSection.test.tsx",
-     "src/components/dashboard/AnalyticsSection.tsx",
-     "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
-     "src/hooks/useAlertasPreditivos.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     ".github/workflows/canonical-migrations.yml",
-    7
+    8
    ],
    [
     "scripts/canonical-invariants.sql",
-    7
+    8
    ],
    [
     "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
@@ -330118,6 +330164,14 @@
     2
    ],
    [
+    "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.verify.sql",
+    1
+   ],
+   [
     "src/components/ui/phone-input.tsx",
     1
    ],
@@ -330135,14 +330189,6 @@
    ],
    [
     "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql",
-    1
-   ],
-   [
-    "src/pages/__tests__/OnboardingParidade.test.tsx",
     1
    ]
   ]

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b6129aab4292ee19dfc901931600b2ab823e151c",
+  "commit": "c01144db975d1d68315bdcd081edfc68155c1f98",
   "branch": "main",
-  "data_commit": "2026-11-19T11:25:43-03:00",
+  "data_commit": "2026-11-19T11:31:44-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "c01144d",
+    "data": "2026-11-19",
+    "assunto": "feat(auditoria): trilha ganha empresa_id e leitura por empresa para o RH (passo 2 de 3) (#742)"
+   },
    {
     "sha": "b6129aa",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "7086dc9",
     "data": "2026-11-18",
     "assunto": "chore(banco): registra no ledger as 11 migrations em vigor, excluindo as 2 que reverteriam produção (#716)"
-   },
-   {
-    "sha": "72514eb",
-    "data": "2026-11-18",
-    "assunto": "infra(banco): substitui a lista do lote canônico pelas 3 migrations pendentes (#712)"
    }
   ],
-  "arquivos_mudados_7d": 1147,
+  "arquivos_mudados_7d": 1149,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -192,14 +192,14 @@
     "mudancas": 30
    },
    {
-    "pasta": "src/components/premiacoes",
+    "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 29
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 28
+    "mudancas": 29
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 15
+    "mudancas": 16
    },
    {
     "arquivo": "package.json",
@@ -250,10 +250,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "scripts/sync/autocommit-local.sh",
-    "mudancas": 6
-   },
-   {
     "arquivo": "src/components/colaborador-detalhes/index.ts",
     "mudancas": 6
    },
@@ -275,6 +271,10 @@
    },
    {
     "arquivo": "scripts/audit-migration-style.mjs",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 5
    },
    {
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3645,
+  "arquivos_total": 3647,
   "arquivos_codigo": 2110,
   "linhas_codigo": 419199,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 121,
   "edge_functions": 67,
   "tabelas": 427,
-  "migrations": 896,
+  "migrations": 898,
   "cron_jobs": 41,
   "testes": 795,
   "workflows": 21,

@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 896,
+ "migrations": 898,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -6235,6 +6235,12 @@
     {
      "nome": "audit_log_privileged_insert",
      "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "audit_log_rh_read_empresa",
+     "comando": "select",
      "para": "authenticated",
      "tipo": "permissive"
     },
