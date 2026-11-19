@@ -185,8 +185,12 @@ jobs:
           # 20261115000000) saiu daqui porque foi APLICADO e esta no ledger:
           # validate run 44436604208, apply run 44436798363 e verify run
           # 44437087380, os tres success, com ledger_count === 9.
+          # O teto de 30% do consignado (20261119110000) saiu daqui porque foi
+          # APLICADO e esta no ledger: validate run 44514035146, apply run
+          # 44514808116 e verify run 44515333669, os tres success, com
+          # ledger_count === 1 e o sidecar devolvendo 'ok'.
           for migration in \
-            20261119110000_consignado_teto_30_pct_lei_10820.sql
+            20261119130000_ferias_gestor_update.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
