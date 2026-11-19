@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(banco): sidecar .verify.sql para as 4 migrations do lote que nao tinham (#720)",
    "fix(empresas): empresa de abertura deixa de ser sorteada pela ordem do RPC (#723)",
    "docs(gaps): causa raiz das 11 falhas do E2E autenticado na main (#722)",
    "chore(auditoria): fecha a varredura com as 34 branches que só existiam no clone local (#721)",
-   "chore(consignado): trava a coerência do teto da margem entre tela e banco (#719)",
-   "fix(baseline): whatsapp_config fail-closed no restore do baseline de DR (#718)"
+   "chore(consignado): trava a coerência do teto da margem entre tela e banco (#719)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
