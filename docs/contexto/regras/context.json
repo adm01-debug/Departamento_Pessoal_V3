@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "bdf533efc536b22821e2f0c9de9d2e98baf8418f",
+  "sha": "72514eb788df124c6ea3a704a8c32a0c1cf2caf2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 00:21 UTC",
+  "generated_at": "2026-11-19 00:42 UTC",
   "files_total": 3639,
   "code_files": 3060,
-  "code_lines": 485651
+  "code_lines": 485653
  },
  "version": "1.3.2",
- "facts_hash": "47e9a7af5195e90d",
+ "facts_hash": "d445cbd194619fbc",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -101659,7 +101659,7 @@
   {
    "module": "scripts",
    "files": 153,
-   "lines": 35015,
+   "lines": 35017,
    "tables": [
     "a",
     "anexos",
@@ -261120,7 +261120,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 448,
+   "lines": 450,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -329107,10 +329107,20 @@
   }
  },
  "git": {
-  "sha": "bdf533efc536b22821e2f0c9de9d2e98baf8418f",
+  "sha": "72514eb788df124c6ea3a704a8c32a0c1cf2caf2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "72514eb",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "infra(banco): substitui a lista do lote canônico pelas 3 migrations pendentes (#712)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql"
+    ]
+   },
    {
     "sha": "bdf533e",
     "date": "2026-11-18",
@@ -329417,26 +329427,20 @@
     "files": [
      "docs/auditoria/VEREDITO_MURI_2026-11-17.md"
     ]
-   },
-   {
-    "sha": "50a7966",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "chore: mede o eixo repo x ledger e explica o Supabase Preview vermelho (#683)",
-    "files": [
-     "docs/agentes/banco.md",
-     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
-    8
+    7
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    4
+    5
+   ],
+   [
+    "scripts/canonical-invariants.sql",
+    2
    ],
    [
     "src/components/__tests__/AnalyticsSection.test.tsx",
@@ -329444,10 +329448,6 @@
    ],
    [
     "src/components/dashboard/AnalyticsSection.tsx",
-    2
-   ],
-   [
-    "docs/agentes/banco.md",
     2
    ],
    [

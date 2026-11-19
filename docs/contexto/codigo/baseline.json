@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bdf533efc536b22821e2f0c9de9d2e98baf8418f",
+  "commit": "72514eb788df124c6ea3a704a8c32a0c1cf2caf2",
   "branch": "main",
-  "data_commit": "2026-11-18T21:19:46-03:00",
+  "data_commit": "2026-11-18T21:35:11-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "72514eb",
+    "data": "2026-11-18",
+    "assunto": "infra(banco): substitui a lista do lote canônico pelas 3 migrations pendentes (#712)"
+   },
    {
     "sha": "bdf533e",
     "data": "2026-11-18",
@@ -126,11 +131,6 @@
     "sha": "1025265",
     "data": "2026-11-18",
     "assunto": "fix: retrata o Lote 1 - nao era funcionalidade morta, era falta de consumidor (#690)"
-   },
-   {
-    "sha": "e667066",
-    "data": "2026-11-18",
-    "assunto": "chore: tria as 26 migrations restantes em 6 lotes de decisao (#689)"
    }
   ],
   "arquivos_mudados_7d": 1146,
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 21
+    "mudancas": 22
    },
    {
     "arquivo": "package.json",
@@ -230,11 +230,11 @@
     "mudancas": 9
    },
    {
-    "arquivo": "scripts/automation.config.json",
-    "mudancas": 8
+    "arquivo": "scripts/canonical-invariants.sql",
+    "mudancas": 9
    },
    {
-    "arquivo": "scripts/canonical-invariants.sql",
+    "arquivo": "scripts/automation.config.json",
     "mudancas": 8
    },
    {
