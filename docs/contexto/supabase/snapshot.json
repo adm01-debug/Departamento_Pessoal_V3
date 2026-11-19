@@ -91751,9 +91751,13 @@
             {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql",
+              "hits": 3
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 4,
           "cron": [],
           "db": [],
           "triggers": [
@@ -91809,9 +91813,13 @@
             {
               "file": "supabase/migrations/20260912150000_p0_secdef_search_path.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [
@@ -92026,9 +92034,13 @@
             {
               "file": "supabase/migrations/20261014120000_fix_cron_jobs_onda3b.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 4,
           "cron": [],
           "db": [],
           "triggers": [],
