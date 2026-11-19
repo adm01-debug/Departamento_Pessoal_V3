@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 640,
+ "total": 641,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -318,6 +318,22 @@
    ],
    "export_default": null,
    "linhas": 200,
+   "dominio": "components/admissoes",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
+   "exports": [
+    "AuditoriaAdmissoesContent"
+   ],
+   "export_default": "AuditoriaAdmissoesContent",
+   "linhas": 1231,
    "dominio": "components/admissoes",
    "hooks_locais": [
     "useEmpresas"
@@ -2795,7 +2811,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 33,
+   "usado_por": 34,
    "orfao": false
   },
   {
@@ -7375,7 +7391,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 362,
+   "usado_por": 363,
    "orfao": false
   },
   {
@@ -7440,7 +7456,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 5,
+   "usado_por": 6,
    "orfao": false
   },
   {
@@ -7644,7 +7660,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 153,
+   "usado_por": 154,
    "orfao": false
   },
   {
@@ -7670,7 +7686,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 35,
+   "usado_por": 36,
    "orfao": false
   },
   {
@@ -7718,7 +7734,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -7785,7 +7801,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 177,
+   "usado_por": 178,
    "orfao": false
   },
   {
@@ -7836,7 +7852,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 16,
+   "usado_por": 17,
    "orfao": false
   },
   {
@@ -7976,7 +7992,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 129,
+   "usado_por": 130,
    "orfao": false
   },
   {
@@ -8218,7 +8234,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 114,
+   "usado_por": 115,
    "orfao": false
   },
   {
@@ -8319,7 +8335,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 40,
+   "usado_por": 41,
    "orfao": false
   },
   {
@@ -8709,7 +8725,7 @@
     "AdmissoesPage"
    ],
    "export_default": "AdmissoesPage",
-   "linhas": 247,
+   "linhas": 233,
    "dominio": "pages",
    "hooks_locais": [
     "useAdmissoes",

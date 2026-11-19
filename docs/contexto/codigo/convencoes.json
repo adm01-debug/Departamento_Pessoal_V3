@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (522)",
+   "src/components (523)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
@@ -17,12 +17,12 @@
    "src/contexts (4)"
   ],
   "servicos_logica": [
-   "src/services (96)",
+   "src/services (97)",
    "src/utils (35)",
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (665)",
+   "co-localizado (__tests__) (668)",
    "co-localizado (*.test) (73)",
    "e2e/ (33)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (640)"
+  ".tsx (641)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(auditoria): aba de Auditoria de Admissões no ar, lendo a trilha real (#746)",
    "fix: remove folhas_gestor_update da 120000 para nao quebrar pos-condicao da 130000 (#745)",
    "feat(ui): resgata os 2 resíduos visuais da PR #546 (muri) (#744)",
    "feat(dashboard): variacao do quadro de pessoal no mes (#743)",
-   "fix(ferias/folhas): policy UPDATE gestor (pode_gerir_pessoas) em ferias e folhas_pagamento (#726)",
-   "feat(auditoria): trilha ganha empresa_id e leitura por empresa para o RH (passo 2 de 3) (#742)"
+   "fix(ferias/folhas): policy UPDATE gestor (pode_gerir_pessoas) em ferias e folhas_pagamento (#726)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

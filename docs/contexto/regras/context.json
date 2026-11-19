@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ddcecda891ea17891b42b0ee41ae7da92a1de0d1",
+  "sha": "0eb89d46b2d424ae89914cbf0456d683eaa2993b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 15:20 UTC",
-  "files_total": 3663,
-  "code_files": 3083,
-  "code_lines": 488230
+  "generated_at": "2026-11-19 15:42 UTC",
+  "files_total": 3670,
+  "code_files": 3090,
+  "code_lines": 491229
  },
  "version": "1.3.2",
- "facts_hash": "387e3995aaa91ea1",
+ "facts_hash": "9006280a84848e47",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,9 +387,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1024,
+   ".tsx": 1026,
    ".sql": 974,
-   ".ts": 949,
+   ".ts": 954,
    ".mjs": 108,
    ".js": 15,
    ".cjs": 11,
@@ -6019,6 +6019,27 @@
       "fk": "",
       "generated": "",
       "src": "supabase/rebaseline/20260831_corrected_public.sql"
+     },
+     {
+      "name": "justificativa",
+      "type": "string | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
+     },
+     {
+      "name": "status_anterior",
+      "type": "string | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
+     },
+     {
+      "name": "status_posterior",
+      "type": "string | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
      }
     ],
     "constraints": [
@@ -87920,14 +87941,18 @@
      "admissao_tokens",
      "admissoes",
      "afastamentos",
+     "anotacoes_colaborador",
+     "asos",
      "banco_horas",
      "banco_horas_config",
      "batidas_ponto",
      "beneficiarios_plano",
      "beneficios",
      "beneficios_colaborador",
+     "campos_customizados",
      "canal_etica",
      "catalogo_cursos",
+     "centros_custo",
      "certificados_digitais",
      "ciclos_avaliacao",
      "cid10",
@@ -87943,37 +87968,57 @@
      "configuracoes_intervalo",
      "configuracoes_ponto",
      "contas_bancarias",
+     "contatos_emergencia",
      "contrato_templates",
      "contrato_token_eventos",
      "contratos",
      "contratos_gerados",
      "controle_acesso",
+     "dados_estagiario",
+     "dados_estrangeiro",
+     "deficiencias",
      "dependentes",
+     "dependentes_beneficios",
      "despesas",
      "despesas_aprovacoes_log",
+     "documentos",
      "documentos_afastamento",
+     "documentos_pessoais_arquivos",
      "empresas",
      "epis",
      "epis_entregas",
      "escalas_trabalho",
      "esocial_eventos",
      "esocial_transmissao_logs",
+     "etnias",
      "faltas",
      "feedbacks_360",
      "feedbacks_360_aprovacoes_gestor",
      "feedbacks_360_consolidacoes",
      "feedbacks_360_validacoes_potencial",
+     "feriados",
      "ferias",
+     "ferias_aprovacoes",
      "ferias_aprovacoes_log",
+     "ferias_arquivos",
+     "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
+     "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
+     "historico_salarial",
+     "holerites",
+     "identidades_genero",
      "inscricoes_cursos",
      "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -87981,8 +88026,14 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
+     "periodos_experiencia",
      "periodos_ponto",
      "pesquisas",
      "pesquisas_perguntas",
@@ -87991,20 +88042,31 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "sst_cat",
+     "sst_exposicao_riscos",
+     "sst_incidentes",
+     "tarefas_onboarding",
+     "times",
+     "tipos_admissao",
+     "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
+     "valores_campos_customizados",
      "versao_banco",
      "vw_feedbacks_360_versao",
      "webhook_logs",
+     "webhooks_config",
      "workflows_definicoes",
      "workflows_etapas",
      "workflows_execucoes",
@@ -88016,6 +88078,7 @@
      "enviar-esocial",
      "gerar-contrato-pdf",
      "metricas",
+     "processar-ponto-offline",
      "upload-certificado"
     ],
     "rpc_transitive": [
@@ -88057,7 +88120,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 192
+    "deps_count": 248
    },
    {
     "path": "",
@@ -99371,6 +99434,13 @@
     "file": "src/App.tsx"
    },
    {
+    "path": "*",
+    "component": "",
+    "guard": "",
+    "roles": [],
+    "file": "src/components/admissoes/AuditoriaAdmissoesContent.tsx"
+   },
+   {
     "path": "/",
     "component": "A",
     "guard": "",
@@ -100483,7 +100553,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 994,
+  "components_count": 999,
   "hooks": [
    {
     "name": "useContacts",
@@ -102110,8 +102180,8 @@
   },
   {
    "module": "src/components",
-   "files": 994,
-   "lines": 182003,
+   "files": 999,
+   "lines": 184631,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102184,6 +102254,7 @@
     "SignaturePad.tsx: SignaturePad",
     "AdmissoesDashboard.tsx: AbaAdmissoes, AdmissoesDashboard",
     "AdmissoesKanban.tsx: AdmissoesKanbanProps, AdmissoesKanban",
+    "AuditoriaAdmissoesContent.tsx: AuditoriaAdmissoesContent",
     "DetalhesAdmissaoDialog.tsx: DetalhesAdmissaoDialog",
     "GestaoCandidatos.tsx: GestaoVisualizacao, GestaoCandidatosProps, GestaoCandidatos",
     "GestaoKits.tsx: GestaoKits",
@@ -102197,16 +102268,15 @@
     "admissoesComum.ts: Tone, TONE_CHIP, TONE_TEXT, ToneSelo, TONE_BADGE, ETAPA_LABELS",
     "admissoesDashboardModais.tsx: SlaSegmento, AdmissaoDetalhe, PrioridadeDetalhe, AreaDetalhe, AcoesPrioritariasDialog, ProximasAdmissoesDialog",
     "admissoesDerivacoes.ts: AdmissaoLike, DIA_MS, dataValida, inicioDoDia, iniciais, percentual",
+    "auditoriaComum.ts: PERIODOS_AUDITORIA, ORDENS_AUDITORIA, TOM_STATUS, LABEL_STATUS, ICONE_STATUS, seloStatus",
+    "auditoriaDerivacoes.ts: EtapaAdmissao, StatusAuditoria, EventoAuditoria, ResumoAuditoria, resumoAuditoria, PeriodoAuditoria",
     "kanbanComum.ts: AdmissaoKanban, TomEtapa, TomKanban, TOM_KANBAN, ColunaKanban, COLUNAS_KANBAN",
     "onboardingComum.ts: MARCOS_ONBOARDING, PALETA_AVATAR, corAvatar, TOM_PRAZO, TOM_PRAZO_VEU",
     "onboardingDerivacoes.ts: TarefaOnboarding, ColaboradorOnboarding, ProgressoOnboarding, progressoOnboarding, prazoDaTarefa, ordenarTarefas",
     "AfastamentoDocumentManager.tsx: AfastamentoDocumentManager",
     "AfastamentoForm.tsx: AfastamentoForm",
     "AfastamentoStats.tsx: AfastamentoStats",
-    "AfastamentoTable.tsx: AfastamentoTable",
-    "AfastamentoTimeline.tsx: AfastamentoTimeline",
-    "ProrrogacaoDialog.tsx: ProrrogacaoDialog",
-    "LoginForm.tsx: LoginForm"
+    "AfastamentoTable.tsx: AfastamentoTable"
    ],
    "docs": [
     "AdminRoute.tsx: Guarda de rota ADMIN — exige o papel `admin` E o MFA. RESPONSABILIDADES, AGORA SEPARADAS: este componente decide QUEM pode entrar (papel `admin`); o portao de MFA mora no `MfaGate`, compartilhado com o `PermissionRoute`. A maquina de estados e as telas do MFA foram movidas NA INTEGRA para la, entao …",
@@ -102290,6 +102360,7 @@
     "src/components/__tests__/AquisitivosTab.test.tsx",
     "src/components/__tests__/AssinarAvisoDialog.test.tsx",
     "src/components/__tests__/AssinarEspelhoDialog.test.tsx",
+    "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
     "src/components/__tests__/AuditoriaAnimacao.test.tsx",
     "src/components/__tests__/AuditoriaChips.test.tsx",
     "src/components/__tests__/AuditoriaComum.test.ts",
@@ -102337,8 +102408,7 @@
     "src/components/__tests__/DepartmentRow.test.tsx",
     "src/components/__tests__/DependentesTab.test.tsx",
     "src/components/__tests__/DesempenhoBarrasProgresso.test.tsx",
-    "src/components/__tests__/DesempenhoEntradaCascade.test.tsx",
-    "src/components/__tests__/DesenvolvimentoResumoTab.test.tsx"
+    "src/components/__tests__/DesempenhoEntradaCascade.test.tsx"
    ]
   },
   {
@@ -102808,7 +102878,7 @@
   {
    "module": "src/pages",
    "files": 143,
-   "lines": 50795,
+   "lines": 50781,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -103092,7 +103162,7 @@
   {
    "module": "src/schemas",
    "files": 33,
-   "lines": 8732,
+   "lines": 8736,
    "tables": [],
    "exports": [
     "admissao.ts: admissaoSchema, AdmissaoSchema",
@@ -103174,8 +103244,8 @@
   },
   {
    "module": "src/services",
-   "files": 193,
-   "lines": 41084,
+   "files": 195,
+   "lines": 41465,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -103385,6 +103455,7 @@
     "admissaoService.ts: admissaoService",
     "afastamentoService.ts: afastamentoService",
     "assistenteIAService.ts: ChatMessage, AssistentIARequest, AssistentIAResponse, TokenUsage, IAError, assistenteIAService",
+    "auditoriaAdmissoesService.ts: TABELAS_TRILHA_ADMISSAO, statusDoEvento, detalheDoEvento, mapearEvento, listarTrilhaAdmissoes",
     "auditoriaService.ts: AuditoriaFiltros, AuditoriaRegistro, TrilhaAuditoriaFiltros, TrilhaAuditoriaRegistro, auditoriaService, notificacaoService",
     "authService.ts: authService",
     "avaliacaoService.ts: avaliacaoService",
@@ -103420,8 +103491,7 @@
     "esocialService.ts: ESocialEvento, getEventoDescricao, listarEventos, listarEventosPorCompetencia, ESocialEstatisticas, obterEstatisticas",
     "exportService.ts: validateExportData, exportPontoCSV, PontoPdfLabels, exportPontoPDF, Portaria671Solicitacao, exportPortaria671PDF",
     "faltasService.ts: FaltaComColaborador, faltasService",
-    "feriasService.ts: feriasService",
-    "folhaPagamentoService.ts: FolhaItemDetalhes, HoleriteData, folhaPagamentoService"
+    "feriasService.ts: feriasService"
    ],
    "docs": [
     "assistenteIAService.ts: P5-081: Assistente IA — service layer Simulação de cenários: 1. Edge function timeout (30s) → AbortController + friendly error 2. Request em andamento → cancela anterior (same-key cancellation) 3. 401 Unauthorized → refresh token + retry 4. Resposta malformada → fallback com mensagem CLT 5. Offline …",
@@ -103464,6 +103534,7 @@
     "src/services/admissaoService.ts",
     "src/services/afastamentoService.ts",
     "src/services/assistenteIAService.ts",
+    "src/services/auditoriaAdmissoesService.ts",
     "src/services/auditoriaService.ts",
     "src/services/authService.ts",
     "src/services/avaliacaoService.ts",
@@ -103539,8 +103610,7 @@
     "src/services/whatsappService.ts",
     "src/services/workflowService.ts",
     "src/services/__tests__/admissaoService.test.ts",
-    "src/services/__tests__/afastamentoService.test.ts",
-    "src/services/__tests__/assistenteIAService.test.ts"
+    "src/services/__tests__/afastamentoService.test.ts"
    ]
   },
   {
@@ -113045,6 +113115,31 @@
     "values": "dentro | risco | atrasada"
    },
    {
+    "file": "src/components/admissoes/auditoriaComum.ts",
+    "name": "ChaveResumo",
+    "values": "eventos | sucesso | pendentes | falhas"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "name": "StatusAuditoria",
+    "values": "sucesso | pendente | falha"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "name": "PeriodoAuditoria",
+    "values": "todos | 7d | 30d | 90d | ano"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "name": "QuickFilter",
+    "values": "todos | sucesso | pendente | falha | esocial | documentos | contrato | validacao"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "name": "OrdemAuditoria",
+    "values": "recentes | antigos | candidato | status"
+   },
+   {
     "file": "src/components/admissoes/kanbanComum.ts",
     "name": "TomEtapa",
     "values": "info | warning | teal | violet | success | primary | destructive | aqua"
@@ -113820,6 +113915,11 @@
     "values": "'nome_social', 'telefone', 'celular', 'nome_pai', 'cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'matricula', 'banco_codigo', 'agencia', 'conta', 'pix_chave', 'rg', 'rg_orgao_emissor', 'pis_pasep', 'ctps_numero', 'ctps_serie',"
    },
    {
+    "file": "src/services/auditoriaAdmissoesService.ts",
+    "name": "TABELAS_TRILHA_ADMISSAO",
+    "values": "'admissoes', 'onboarding_colaborador', 'onboarding_tarefas'"
+   },
+   {
     "file": "src/services/canalContabilidadeService.ts",
     "name": "ThreadStatus",
     "values": "aberto | respondido | resolvido | arquivado"
@@ -114365,6 +114465,10 @@
    {
     "file": "src/components/admissoes/AdmissoesKanban.tsx",
     "msg": "Empresa ativa não carregada."
+   },
+   {
+    "file": "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
+    "msg": "Não foi possível copiar o protocolo."
    },
    {
     "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
@@ -118327,6 +118431,14 @@
     "text": "disso deve existir no board antes do primeiro clique."
    },
    {
+    "file": "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
+    "text": "Mesma regra da coluna: a badge NUNCA quebra em duas linhas. */}"
+   },
+   {
+    "file": "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
+    "text": "no máximo um fica aceso por vez (nunca Status + Etapa juntos)."
+   },
+   {
     "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     "text": "* REGRA DE IDENTIDADE: só permanecem fiéis ao sistema as CORES (tokens de"
    },
@@ -118489,6 +118601,34 @@
    {
     "file": "src/components/admissoes/admissoesDerivacoes.ts",
     "text": "* Registro mínimo que as telas do módulo leem (admissão real ou fictícia). */"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaComum.ts",
+    "text": "Admissões). Só rótulo, ícone e classe — nada de regra de negócio (essa fica em"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaComum.ts",
+    "text": "* REGRA DE OURO: nenhum token de cor novo e nenhuma segunda cópia de rótulo."
+   },
+   {
+    "file": "src/components/admissoes/auditoriaComum.ts",
+    "text": "\"Em Validação\" — a mesma que a referência da tela mostra) e"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "text": "admissionAL (prazo, checklist de documentos, progresso por etapa, risco);"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "text": "módulo inteiro usa, inclusive a regra de \"hoje\" (timestamp no início do dia,"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "text": "exclusiva por construção: no máximo UM chip casa com o `quickFilter`."
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "text": "\"eSocial\" depois de \"Falha\" não pode deixar `status: 'falha'` preso."
    },
    {
     "file": "src/components/admissoes/kanbanComum.ts",
@@ -121297,6 +121437,18 @@
    {
     "file": "src/services/assistenteIAService.ts",
     "text": "Máximo de mensagens no histórico"
+   },
+   {
+    "file": "src/services/auditoriaAdmissoesService.ts",
+    "text": "quando. Ela NÃO guarda semântica de negócio — não existe coluna de \"status do"
+   },
+   {
+    "file": "src/services/auditoriaAdmissoesService.ts",
+    "text": "`get_audit_trail` (SECURITY DEFINER, recorte por empresa, limite de 500) é"
+   },
+   {
+    "file": "src/services/auditoriaAdmissoesService.ts",
+    "text": "* `limite` existe porque a trilha cresce para sempre: a aba é de consulta"
    },
    {
     "file": "src/services/auditoriaService.ts",
@@ -146691,6 +146843,21 @@
     "value": "'text-[10px] leading-tight @max-[240px]:text-[9px]'"
    },
    {
+    "file": "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
+    "name": "VALOR_TODOS",
+    "value": "'__todos__'"
+   },
+   {
+    "file": "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
+    "name": "ROTA_LOGS_GLOBAIS",
+    "value": "'/auditoria'"
+   },
+   {
+    "file": "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
+    "name": "BLOCOS_CASCATA_EVENTO",
+    "value": "3"
+   },
+   {
     "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     "name": "FUNDO_PROGRESSO",
     "value": "'bg-background/60'"
@@ -146804,6 +146971,16 @@
     "file": "src/components/admissoes/admissoesDerivacoes.ts",
     "name": "DIA_MS",
     "value": "24"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaComum.ts",
+    "name": "ACAO_PROCESSO_CRIADO",
+    "value": "'Processo de admissão criado'"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "name": "QUICK_FILTER_PADRAO",
+    "value": "'todos'"
    },
    {
     "file": "src/components/admissoes/onboardingDerivacoes.ts",
@@ -149211,6 +149388,84 @@
     "file": "src/components/admissoes/OnboardingDashboard.tsx",
     "field": "etapa",
     "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "field": "status",
+    "value": "falha",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "field": "status",
+    "value": "sucesso",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "field": "status",
+    "value": "pendente",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "field": "status",
+    "value": "falha",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "field": "etapa",
+    "value": "esocial",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "field": "etapa",
+    "value": "documentos",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "field": "etapa",
+    "value": "contrato",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "field": "etapa",
+    "value": "validacao",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "field": "status",
+    "value": "sucesso",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "field": "status",
+    "value": "pendente",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "field": "status",
+    "value": "falha",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "field": "status",
+    "value": "falha",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "field": "etapa",
+    "value": "contrato",
     "kind": "compara"
    },
    {
@@ -157464,6 +157719,18 @@
     "kind": "escreve"
    },
    {
+    "file": "src/services/auditoriaAdmissoesService.ts",
+    "field": "etapa",
+    "value": "cancelada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/services/auditoriaAdmissoesService.ts",
+    "field": "etapa",
+    "value": "concluida",
+    "kind": "compara"
+   },
+   {
     "file": "src/services/avaliacaoService.ts",
     "field": "tipo",
     "value": "gestor",
@@ -160856,6 +161123,12 @@
     "body": "label: string; valor: number; icon: LucideIcon; tone: Tone; descricao: string; amostra: AdmissaoLike[]; comTendencia: boolean;"
    },
    {
+    "file": "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
+    "name": "totalDoChip",
+    "params": "quick: QuickFilter",
+    "body": "const { status, etapa } = QUICK_FILTER_VALORES[quick]; if (status) return totalPorStatus[status]; if (etapa) return contagemPorEtapa[etapa] ?? 0; return resumo.total;"
+   },
+   {
     "file": "src/components/admissoes/admissoesDashboardModais.tsx",
     "name": "responsaveisDaFila",
     "params": "candidatos: AdmissaoDetalhe[]",
@@ -160872,6 +161145,18 @@
     "name": "progressoValor",
     "params": "a: AdmissaoLike",
     "body": "return progressoDaAdmissao(a).valor;"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "name": "aplicarQuickFilter",
+    "params": "filtros: FiltrosAuditoria, quick: QuickFilter",
+    "body": "return { ...filtros, ...QUICK_FILTER_VALORES[quick] };"
+   },
+   {
+    "file": "src/components/admissoes/auditoriaDerivacoes.ts",
+    "name": "responsaveisDisponiveis",
+    "params": "eventos: EventoAuditoria[] | null | undefined",
+    "body": "const nomes = new Set<string>(); (eventos ?? []).forEach((evento) => { if (evento.responsavel) nomes.add(evento.responsavel); }); return [...nomes].sort((a, b) => a.localeCompare(b, 'pt-BR'));"
    },
    {
     "file": "src/components/afastamentos/AfastamentoDocumentManager.tsx",
@@ -163744,6 +164029,10 @@
    {
     "file": "src/components/admissoes/AdmissoesDashboard.tsx",
     "line": "{/* Coluna esquerda: largura fixa do donut, ~10% menor que os"
+   },
+   {
+    "file": "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
+    "line": "A faixa OCUPA 100% da largura útil: cada chip cresce por igual"
    },
    {
     "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
@@ -168298,6 +168587,130 @@
    {
     "file": "src/components/__tests__/AssinarEspelhoDialog.test.tsx",
     "name": "renders custom trigger when trigger prop provided"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "AuditoriaAdmissoesContent"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "renderiza os 4 KPI Cards no MESMO padrão do Dashboard de Admissões"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "coloca o tom semântico no ÍCONE e mantém o valor principal neutro"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "renderiza os 8 chips rápidos com a contagem real"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "filtra a trilha ao clicar no chip de status"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "filtra pela busca (protocolo) e volta tudo em "
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "filtra pelo select de status"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "renderiza as 7 colunas da tabela e o conteúdo rico de cada linha"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "abre o detalhe completo do evento na ação "
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "ordena a trilha pelo select "
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "mostra o cabeçalho refinado do bloco principal"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "mostra o estado vazio quando não há trilha de auditoria"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "o destaque de "
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "chips rápidos (mutuamente exclusivos)"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "1. "
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "2. "
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "3. "
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "4. "
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "5. select de Status manual funciona (e solta o chip rápido)"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "6. Status + Etapa manuais combinam normalmente"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "7. "
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "o atalho "
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "o atalho do ESTADO VAZIO também aparece sem depender de permissão"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "AuditoriaAdmissoesContent — estados da consulta real"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "carregando: mostra o esqueleto no lugar da tabela, sem KPI zerado"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "empresa ainda resolvendo também é carregamento, não ausência de empresa"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "sem empresa: pede a empresa e não consulta a trilha"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "erro: diz que a consulta falhou e que nada foi perdido, com nova tentativa"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "vazio: explica o corte de 19/11/2026 em vez de afirmar que não houve admissões"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "vazio: o atalho para os logs globais continua levando a /auditoria"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+    "name": "a trilha é lida pela empresa atual, nunca sem recorte"
    },
    {
     "file": "src/components/__tests__/AuditoriaAnimacao.test.tsx",
@@ -180748,6 +181161,46 @@
     "name": "renders composite score as number"
    },
    {
+    "file": "src/components/__tests__/auditoriaDerivacoes.test.ts",
+    "name": "auditoriaDerivacoes"
+   },
+   {
+    "file": "src/components/__tests__/auditoriaDerivacoes.test.ts",
+    "name": "conta os status e as fatias do resumo (nunca NaN)"
+   },
+   {
+    "file": "src/components/__tests__/auditoriaDerivacoes.test.ts",
+    "name": "conta os eventos dos últimos 30 dias"
+   },
+   {
+    "file": "src/components/__tests__/auditoriaDerivacoes.test.ts",
+    "name": "detecta filtros ativos (inclusive os do painel avançado)"
+   },
+   {
+    "file": "src/components/__tests__/auditoriaDerivacoes.test.ts",
+    "name": "filtra por busca livre (candidato, ação, responsável, protocolo, cargo)"
+   },
+   {
+    "file": "src/components/__tests__/auditoriaDerivacoes.test.ts",
+    "name": "filtra por status, etapa, tipo e recibo do eSocial"
+   },
+   {
+    "file": "src/components/__tests__/auditoriaDerivacoes.test.ts",
+    "name": "filtra por período relativo e por intervalo de datas"
+   },
+   {
+    "file": "src/components/__tests__/auditoriaDerivacoes.test.ts",
+    "name": "conta por etapa, lista responsáveis e tipos de evento"
+   },
+   {
+    "file": "src/components/__tests__/auditoriaDerivacoes.test.ts",
+    "name": "ordena por data, candidato e status (atenção primeiro)"
+   },
+   {
+    "file": "src/components/__tests__/auditoriaDerivacoes.test.ts",
+    "name": "formata a data/hora com fallback para valor inválido"
+   },
+   {
     "file": "src/components/__tests__/desligamento-badges.test.tsx",
     "name": "StatusBadge"
    },
@@ -191622,6 +192075,82 @@
    {
     "file": "src/services/__tests__/assistenteIAService.test.ts",
     "name": "isAuthenticated reflete a sessão; validateMessage aplica limites"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "statusDoEvento"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "eSocial recusado é falha, porque exige ação"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "admissão cancelada é falha"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "etapa concluída é sucesso"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "etapa em curso com eSocial pendente é pendência de processo"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "eSocial transmitido é sucesso mesmo com etapa em curso"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "linha sem etapa e sem eSocial (onboarding) é sucesso: o evento aconteceu"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "detalheDoEvento"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "diz quais campos mudaram, ignorando updated_at"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "update que só tocou updated_at é dito como tal, não inventa mudança"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "INSERT e DELETE têm texto próprio"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "mapearEvento"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "monta o evento a partir de dados_novos de uma admissão"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "no DELETE lê o estado de dados_anteriores, não de dados_novos"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "tabela de onboarding usa nome_completo e não finge ter etapa"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "campo ausente vira travessão, nunca texto inventado"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "listarTrilhaAdmissoes"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "lê pela RPC tenant-scoped, com as 3 tabelas do processo admissional"
+   },
+   {
+    "file": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+    "name": "converte cada linha da trilha em evento da aba"
    },
    {
     "file": "src/services/__tests__/auditoriaService.test.ts",
@@ -230161,6 +230690,22 @@
      "type": "\"text\" DEFAULT 'rascunho'::\"text\" NOT NULL"
     },
     {
+     "table": "audit_log",
+     "column": "status_anterior",
+     "enum": "",
+     "allowed": [],
+     "default": "",
+     "type": "string | null"
+    },
+    {
+     "table": "audit_log",
+     "column": "status_posterior",
+     "enum": "",
+     "allowed": [],
+     "default": "",
+     "type": "string | null"
+    },
+    {
      "table": "automacao_logs",
      "column": "status",
      "enum": "",
@@ -232552,6 +233097,7 @@
      ],
      "pendente": [
       "compara:src/components/admissao/AdmissaoChecklist.tsx",
+      "compara:src/components/admissoes/auditoriaDerivacoes.ts",
       "compara:src/components/avaliacao/OrigemHomologacao.tsx",
       "compara:src/components/descontos/AdiantamentosTable.tsx",
       "compara:src/components/descontos/FinancialSummaryCards.tsx",
@@ -232574,6 +233120,7 @@
       "compara:src/services/esocialService.ts",
       "compara:supabase/functions/metricas/index.ts",
       "escreve:src/components/admissao/AdmissaoChecklist.tsx",
+      "escreve:src/components/admissoes/auditoriaDerivacoes.ts",
       "escreve:src/components/avaliacao/NovoFeedbackDialog.tsx",
       "escreve:src/components/avaliacao/nineBoxConsolidacao.ts",
       "escreve:src/components/dashboard/AnalyticsSection.tsx",
@@ -232675,6 +233222,19 @@
      ],
      "inativos": [
       "compara:src/components/admissoes/GestaoKits.tsx"
+     ],
+     "falha": [
+      "compara:src/components/admissoes/auditoriaDerivacoes.ts",
+      "escreve:src/components/admissoes/auditoriaDerivacoes.ts",
+      "escreve:supabase/functions/processar-agendamentos/filaNotificacoes.ts"
+     ],
+     "sucesso": [
+      "compara:src/components/admissoes/auditoriaDerivacoes.ts",
+      "compara:src/components/relatorios/RelatoriosAgendadosTab.tsx",
+      "compara:src/components/settings/LogsIntegracoesTab.tsx",
+      "compara:supabase/functions/enviar-relatorio/deliveryStatus.ts",
+      "escreve:src/components/admissoes/auditoriaDerivacoes.ts",
+      "escreve:supabase/functions/gerar-guias/index.ts"
      ],
      "encerrado": [
       "compara:src/components/afastamentos/AfastamentoTable.tsx",
@@ -233162,12 +233722,6 @@
       "escreve:supabase/functions/reabrir-folha/index.ts",
       "filtra:supabase/functions/reabrir-folha/index.ts"
      ],
-     "sucesso": [
-      "compara:src/components/relatorios/RelatoriosAgendadosTab.tsx",
-      "compara:src/components/settings/LogsIntegracoesTab.tsx",
-      "compara:supabase/functions/enviar-relatorio/deliveryStatus.ts",
-      "escreve:supabase/functions/gerar-guias/index.ts"
-     ],
      "success": [
       "compara:src/components/settings/LogsIntegracoesTab.tsx",
       "compara:src/pages/ContratacaoPage.tsx",
@@ -233481,9 +234035,6 @@
      "aprovado_parcial": [
       "compara:supabase/functions/pix-lote/index.ts"
      ],
-     "falha": [
-      "escreve:supabase/functions/processar-agendamentos/filaNotificacoes.ts"
-     ],
      "skipped": [
       "compara:supabase/functions/processar-agendamentos/scheduleContract.ts",
       "escreve:supabase/functions/processar-agendamentos/index.ts"
@@ -233557,11 +234108,13 @@
       "compara:src/components/admissoes/OnboardingDashboard.tsx",
       "compara:src/components/admissoes/kanbanComum.ts",
       "compara:src/services/admissaoService.ts",
+      "compara:src/services/auditoriaAdmissoesService.ts",
       "escreve:src/services/admissaoService.ts"
      ],
      "esocial": [
       "compara:src/components/admissoes/AdmissoesDashboard.tsx",
-      "compara:src/components/admissoes/kanbanComum.ts"
+      "compara:src/components/admissoes/kanbanComum.ts",
+      "escreve:src/components/admissoes/auditoriaDerivacoes.ts"
      ],
      "cancelada": [
       "compara:src/components/admissoes/AdmissoesDashboard.tsx",
@@ -233572,11 +234125,13 @@
       "compara:src/components/admissoes/kanbanComum.ts",
       "compara:src/components/admissoes/onboardingDerivacoes.ts",
       "compara:src/services/admissaoService.ts",
+      "compara:src/services/auditoriaAdmissoesService.ts",
       "escreve:src/services/admissaoService.ts"
      ],
      "documentos": [
       "compara:src/components/admissoes/AdmissoesDashboard.tsx",
       "compara:src/components/admissoes/kanbanComum.ts",
+      "escreve:src/components/admissoes/auditoriaDerivacoes.ts",
       "escreve:src/hooks/useAdmissaoWorkflow.ts"
      ],
      "exame": [
@@ -233585,7 +234140,9 @@
      ],
      "contrato": [
       "compara:src/components/admissoes/AdmissoesDashboard.tsx",
-      "compara:src/components/admissoes/kanbanComum.ts"
+      "compara:src/components/admissoes/auditoriaDerivacoes.ts",
+      "compara:src/components/admissoes/kanbanComum.ts",
+      "escreve:src/components/admissoes/auditoriaDerivacoes.ts"
      ],
      "assinatura": [
       "compara:src/components/admissoes/AdmissoesDashboard.tsx",
@@ -233595,10 +234152,11 @@
       "compara:src/components/admissoes/GestaoCandidatos.tsx",
       "compara:src/components/desligamentos/GestaoDesligamentos.tsx"
      ],
-     "solicitacao": [
-      "compara:src/components/admissoes/kanbanComum.ts"
-     ],
      "validacao": [
+      "compara:src/components/admissoes/kanbanComum.ts",
+      "escreve:src/components/admissoes/auditoriaDerivacoes.ts"
+     ],
+     "solicitacao": [
       "compara:src/components/admissoes/kanbanComum.ts"
      ],
      "pendente": [
@@ -258161,13 +258719,6 @@
    },
    {
     "kind": "status",
-    "msg": "valor `falha` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "escreve:supabase/functions/processar-agendamentos/filaNotificacoes.ts"
-    ]
-   },
-   {
-    "kind": "status",
     "msg": "valor `sem_registro` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:supabase/functions/processar-ponto/index.ts",
@@ -260196,6 +260747,8 @@
    "`ferias_coletivas.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`admissoes.estado_civil` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`admissoes.status_esocial` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
+   "`audit_log.status_anterior` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
+   "`audit_log.status_posterior` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`automacao_logs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`beneficiarios_plano.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`beneficiarios_seguro.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
@@ -267367,6 +267920,56 @@
     "renders custom trigger when trigger prop provided"
    ]
   },
+  "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx": {
+   "path": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+   "lines": 632,
+   "is_test": true,
+   "errors": [
+    "select com a opção "
+   ],
+   "params": [
+    {
+     "name": "TITULO_BLOCO",
+     "value": "'Histórico de Auditoria – Admissões'"
+    }
+   ],
+   "rule_comments": [
+    "─── PONTO DE NAVEGAÇÃO: sempre visível, NÃO acoplado à permissão ─────────── */"
+   ],
+   "tests": [
+    "AuditoriaAdmissoesContent",
+    "renderiza os 4 KPI Cards no MESMO padrão do Dashboard de Admissões",
+    "coloca o tom semântico no ÍCONE e mantém o valor principal neutro",
+    "renderiza os 8 chips rápidos com a contagem real",
+    "filtra a trilha ao clicar no chip de status",
+    "filtra pela busca (protocolo) e volta tudo em ",
+    "filtra pelo select de status",
+    "renderiza as 7 colunas da tabela e o conteúdo rico de cada linha",
+    "abre o detalhe completo do evento na ação ",
+    "ordena a trilha pelo select ",
+    "mostra o cabeçalho refinado do bloco principal",
+    "mostra o estado vazio quando não há trilha de auditoria",
+    "o destaque de ",
+    "chips rápidos (mutuamente exclusivos)",
+    "1. ",
+    "2. ",
+    "3. ",
+    "4. ",
+    "5. select de Status manual funciona (e solta o chip rápido)",
+    "6. Status + Etapa manuais combinam normalmente",
+    "7. ",
+    "o atalho ",
+    "o atalho do ESTADO VAZIO também aparece sem depender de permissão",
+    "AuditoriaAdmissoesContent — estados da consulta real",
+    "carregando: mostra o esqueleto no lugar da tabela, sem KPI zerado",
+    "empresa ainda resolvendo também é carregamento, não ausência de empresa",
+    "sem empresa: pede a empresa e não consulta a trilha",
+    "erro: diz que a consulta falhou e que nada foi perdido, com nova tentativa",
+    "vazio: explica o corte de 19/11/2026 em vez de afirmar que não houve admissões",
+    "vazio: o atalho para os logs globais continua levando a /auditoria",
+    "a trilha é lida pela empresa atual, nunca sem recorte"
+   ]
+  },
   "src/components/__tests__/AuditoriaAnimacao.test.tsx": {
    "path": "src/components/__tests__/AuditoriaAnimacao.test.tsx",
    "lines": 269,
@@ -272832,6 +273435,23 @@
     "renders composite score as number"
    ]
   },
+  "src/components/__tests__/auditoriaDerivacoes.test.ts": {
+   "path": "src/components/__tests__/auditoriaDerivacoes.test.ts",
+   "lines": 163,
+   "is_test": true,
+   "tests": [
+    "auditoriaDerivacoes",
+    "conta os status e as fatias do resumo (nunca NaN)",
+    "conta os eventos dos últimos 30 dias",
+    "detecta filtros ativos (inclusive os do painel avançado)",
+    "filtra por busca livre (candidato, ação, responsável, protocolo, cargo)",
+    "filtra por status, etapa, tipo e recibo do eSocial",
+    "filtra por período relativo e por intervalo de datas",
+    "conta por etapa, lista responsáveis e tipos de evento",
+    "ordena por data, candidato e status (atenção primeiro)",
+    "formata a data/hora com fallback para valor inválido"
+   ]
+  },
   "src/components/__tests__/desligamento-badges.test.tsx": {
    "path": "src/components/__tests__/desligamento-badges.test.tsx",
    "lines": 63,
@@ -273415,6 +274035,52 @@
     "disso deve existir no board antes do primeiro clique."
    ]
   },
+  "src/components/admissoes/AuditoriaAdmissoesContent.tsx": {
+   "path": "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
+   "lines": 1231,
+   "exports": [
+    "function AuditoriaAdmissoesContent"
+   ],
+   "routes": [
+    {
+     "path": "*",
+     "component": "",
+     "guard": "",
+     "roles": []
+    }
+   ],
+   "errors": [
+    "Não foi possível copiar o protocolo."
+   ],
+   "params": [
+    {
+     "name": "VALOR_TODOS",
+     "value": "'__todos__'"
+    },
+    {
+     "name": "ROTA_LOGS_GLOBAIS",
+     "value": "'/auditoria'"
+    },
+    {
+     "name": "BLOCOS_CASCATA_EVENTO",
+     "value": "3"
+    }
+   ],
+   "rule_comments": [
+    "Mesma regra da coluna: a badge NUNCA quebra em duas linhas. */}",
+    "no máximo um fica aceso por vez (nunca Status + Etapa juntos)."
+   ],
+   "calc_fns": [
+    {
+     "name": "totalDoChip",
+     "params": "quick: QuickFilter",
+     "body": "const { status, etapa } = QUICK_FILTER_VALORES[quick]; if (status) return totalPorStatus[status]; if (etapa) return contagemPorEtapa[etapa] ?? 0; return resumo.total;"
+    }
+   ],
+   "percents": [
+    "A faixa OCUPA 100% da largura útil: cada chip cresce por igual"
+   ]
+  },
   "src/components/admissoes/DetalhesAdmissaoDialog.tsx": {
    "path": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
    "lines": 1442,
@@ -273985,6 +274651,185 @@
    ],
    "temporal": [
     "export const DIA_MS = 24 * 60 * 60 * 1000;"
+   ]
+  },
+  "src/components/admissoes/auditoriaComum.ts": {
+   "path": "src/components/admissoes/auditoriaComum.ts",
+   "lines": 224,
+   "exports": [
+    "const PERIODOS_AUDITORIA",
+    "const ORDENS_AUDITORIA",
+    "const TOM_STATUS",
+    "const LABEL_STATUS",
+    "const ICONE_STATUS",
+    "function seloStatus",
+    "type ChaveResumo",
+    "interface CardResumo",
+    "const CARDS_RESUMO",
+    "function pontoStatus",
+    "const ACAO_PROCESSO_CRIADO",
+    "interface EtapaTrilha",
+    "function etapaDaTrilha",
+    "const ICONE_EVENTO_CRIACAO",
+    "interface ChipRapido",
+    "function chipQuickFilter",
+    "const OPCOES_ETAPA"
+   ],
+   "enums": [
+    {
+     "name": "ChaveResumo",
+     "values": "eventos | sucesso | pendentes | falhas"
+    }
+   ],
+   "params": [
+    {
+     "name": "ACAO_PROCESSO_CRIADO",
+     "value": "'Processo de admissão criado'"
+    }
+   ],
+   "rule_comments": [
+    "Admissões). Só rótulo, ícone e classe — nada de regra de negócio (essa fica em",
+    "* REGRA DE OURO: nenhum token de cor novo e nenhuma segunda cópia de rótulo.",
+    "\"Em Validação\" — a mesma que a referência da tela mostra) e"
+   ]
+  },
+  "src/components/admissoes/auditoriaDerivacoes.ts": {
+   "path": "src/components/admissoes/auditoriaDerivacoes.ts",
+   "lines": 378,
+   "exports": [
+    "type EtapaAdmissao",
+    "type StatusAuditoria",
+    "interface EventoAuditoria",
+    "interface ResumoAuditoria",
+    "function resumoAuditoria",
+    "type PeriodoAuditoria",
+    "const DIAS_DO_PERIODO",
+    "interface FiltrosAuditoria",
+    "const FILTROS_AUDITORIA_VAZIOS",
+    "function possuiFiltrosAtivos",
+    "function filtrarAuditoria",
+    "type QuickFilter",
+    "const QUICK_FILTERS",
+    "const QUICK_FILTER_PADRAO",
+    "const QUICK_FILTER_VALORES",
+    "function aplicarQuickFilter",
+    "function contarPorEtapa",
+    "function responsaveisDisponiveis",
+    "interface TipoEvento",
+    "function tiposDeEvento",
+    "type OrdemAuditoria",
+    "function ordenarAuditoria",
+    "function hojeAuditoria",
+    "function formatarDataHora"
+   ],
+   "enums": [
+    {
+     "name": "StatusAuditoria",
+     "values": "sucesso | pendente | falha"
+    },
+    {
+     "name": "PeriodoAuditoria",
+     "values": "todos | 7d | 30d | 90d | ano"
+    },
+    {
+     "name": "QuickFilter",
+     "values": "todos | sucesso | pendente | falha | esocial | documentos | contrato | validacao"
+    },
+    {
+     "name": "OrdemAuditoria",
+     "values": "recentes | antigos | candidato | status"
+    }
+   ],
+   "params": [
+    {
+     "name": "QUICK_FILTER_PADRAO",
+     "value": "'todos'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "falha",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "sucesso",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "pendente",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "falha",
+     "kind": "escreve"
+    },
+    {
+     "field": "etapa",
+     "value": "esocial",
+     "kind": "escreve"
+    },
+    {
+     "field": "etapa",
+     "value": "documentos",
+     "kind": "escreve"
+    },
+    {
+     "field": "etapa",
+     "value": "contrato",
+     "kind": "escreve"
+    },
+    {
+     "field": "etapa",
+     "value": "validacao",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "sucesso",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "pendente",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "falha",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "falha",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "contrato",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "admissionAL (prazo, checklist de documentos, progresso por etapa, risco);",
+    "módulo inteiro usa, inclusive a regra de \"hoje\" (timestamp no início do dia,",
+    "exclusiva por construção: no máximo UM chip casa com o `quickFilter`.",
+    "\"eSocial\" depois de \"Falha\" não pode deixar `status: 'falha'` preso."
+   ],
+   "calc_fns": [
+    {
+     "name": "aplicarQuickFilter",
+     "params": "filtros: FiltrosAuditoria, quick: QuickFilter",
+     "body": "return { ...filtros, ...QUICK_FILTER_VALORES[quick] };"
+    },
+    {
+     "name": "responsaveisDisponiveis",
+     "params": "eventos: EventoAuditoria[] | null | undefined",
+     "body": "const nomes = new Set<string>(); (eventos ?? []).forEach((evento) => { if (evento.responsavel) nomes.add(evento.responsavel); }); return [...nomes].sort((a, b) => a.localeCompare(b, 'pt-BR'));"
+    }
    ]
   },
   "src/components/admissoes/kanbanComum.ts": {
@@ -298070,12 +298915,11 @@
   },
   "src/pages/AdmissoesPage.tsx": {
    "path": "src/pages/AdmissoesPage.tsx",
-   "lines": 247,
+   "lines": 233,
    "exports": [
     "function AdmissoesPage"
    ],
    "navigates": [
-    "/auditoria",
     "/onboarding"
    ],
    "errors": [
@@ -304017,7 +304861,7 @@
   },
   "src/schemas/tableColumns.ts": {
    "path": "src/schemas/tableColumns.ts",
-   "lines": 4171,
+   "lines": 4175,
    "exports": [
     "const TABLE_COLUMNS"
    ],
@@ -305067,6 +305911,40 @@
      "params": "text: string",
      "body": "ok: boolean; reason?: string"
     }
+   ]
+  },
+  "src/services/auditoriaAdmissoesService.ts": {
+   "path": "src/services/auditoriaAdmissoesService.ts",
+   "lines": 148,
+   "exports": [
+    "const TABELAS_TRILHA_ADMISSAO",
+    "function statusDoEvento",
+    "function detalheDoEvento",
+    "function mapearEvento",
+    "function listarTrilhaAdmissoes"
+   ],
+   "enums": [
+    {
+     "name": "TABELAS_TRILHA_ADMISSAO",
+     "values": "'admissoes', 'onboarding_colaborador', 'onboarding_tarefas'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "etapa",
+     "value": "cancelada",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "concluida",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "quando. Ela NÃO guarda semântica de negócio — não existe coluna de \"status do",
+    "`get_audit_trail` (SECURITY DEFINER, recorte por empresa, limite de 500) é",
+    "* `limite` existe porque a trilha cresce para sempre: a aba é de consulta"
    ]
   },
   "src/services/auditoriaService.ts": {
@@ -310254,6 +311132,36 @@
     "abort/timeout → TIMEOUT recoverable",
     "erro de rede genérico → NETWORK",
     "isAuthenticated reflete a sessão; validateMessage aplica limites"
+   ]
+  },
+  "src/services/__tests__/auditoriaAdmissoesService.test.ts": {
+   "path": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+   "lines": 233,
+   "is_test": true,
+   "rule_comments": [
+    "travam essa derivação — é a única parte com regra de negócio de verdade.",
+    "valor neutro do enum: a linha não tem etapa, e a aba não pode inventar uma"
+   ],
+   "tests": [
+    "statusDoEvento",
+    "eSocial recusado é falha, porque exige ação",
+    "admissão cancelada é falha",
+    "etapa concluída é sucesso",
+    "etapa em curso com eSocial pendente é pendência de processo",
+    "eSocial transmitido é sucesso mesmo com etapa em curso",
+    "linha sem etapa e sem eSocial (onboarding) é sucesso: o evento aconteceu",
+    "detalheDoEvento",
+    "diz quais campos mudaram, ignorando updated_at",
+    "update que só tocou updated_at é dito como tal, não inventa mudança",
+    "INSERT e DELETE têm texto próprio",
+    "mapearEvento",
+    "monta o evento a partir de dados_novos de uma admissão",
+    "no DELETE lê o estado de dados_anteriores, não de dados_novos",
+    "tabela de onboarding usa nome_completo e não finge ter etapa",
+    "campo ausente vira travessão, nunca texto inventado",
+    "listarTrilhaAdmissoes",
+    "lê pela RPC tenant-scoped, com as 3 tabelas do processo admissional",
+    "converte cada linha da trilha em evento da aba"
    ]
   },
   "src/services/__tests__/auditoriaService.test.ts": {
@@ -329889,10 +330797,29 @@
   }
  },
  "git": {
-  "sha": "ddcecda891ea17891b42b0ee41ae7da92a1de0d1",
+  "sha": "0eb89d46b2d424ae89914cbf0456d683eaa2993b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "0eb89d4",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "feat(auditoria): aba de Auditoria de Admissões no ar, lendo a trilha real (#746)",
+    "files": [
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+     "src/components/__tests__/auditoriaDerivacoes.test.ts",
+     "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
+     "src/components/admissoes/auditoriaComum.ts",
+     "src/components/admissoes/auditoriaDerivacoes.ts",
+     "src/integrations/supabase/types.ts",
+     "src/pages/AdmissoesPage.tsx",
+     "src/schemas/tableColumns.ts",
+     "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+     "src/services/auditoriaAdmissoesService.ts"
+    ]
+   },
    {
     "sha": "ddcecda",
     "date": "2026-11-19",
@@ -330198,26 +331125,16 @@
      ".github/workflows/canonical-migrations.yml",
      "scripts/canonical-invariants.sql"
     ]
-   },
-   {
-    "sha": "72514eb",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "infra(banco): substitui a lista do lote canônico pelas 3 migrations pendentes (#712)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "scripts/canonical-invariants.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     ".github/workflows/canonical-migrations.yml",
-    8
+    7
    ],
    [
     "scripts/canonical-invariants.sql",
-    8
+    7
    ],
    [
     "src/pages/CalculadoraRescisaoPage.tsx",
@@ -330268,27 +331185,27 @@
     2
    ],
    [
-    "src/pages/ColaboradorDetalhesPage.tsx",
+    "scripts/.bundle-budget.json",
     1
    ],
    [
-    "src/pages/__tests__/ColaboradorDetalhesAbas.test.tsx",
+    "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
     1
    ],
    [
-    "src/hooks/__tests__/useExecutiveDashboard.test.ts",
+    "src/components/__tests__/auditoriaDerivacoes.test.ts",
     1
    ],
    [
-    "src/hooks/useExecutiveDashboard.ts",
+    "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
     1
    ],
    [
-    "src/pages/DashboardExecutivoPage.tsx",
+    "src/components/admissoes/auditoriaComum.ts",
     1
    ],
    [
-    "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql",
+    "src/components/admissoes/auditoriaDerivacoes.ts",
     1
    ]
   ]

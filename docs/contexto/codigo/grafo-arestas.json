@@ -302,6 +302,27 @@
    "src/services/admissaoService.ts",
    "src/utils/safeError.ts"
   ],
+  "src/components/admissoes/AuditoriaAdmissoesContent.tsx": [
+   "src/components/admissoes/admissoesDerivacoes.ts",
+   "src/components/admissoes/auditoriaComum.ts",
+   "src/components/admissoes/auditoriaDerivacoes.ts",
+   "src/components/admissoes/kanbanComum.ts",
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/cascade-table.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/filter-chip.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/module-skeleton.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/table.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/hooks/index.ts",
+   "src/lib/utils.ts",
+   "src/services/auditoriaAdmissoesService.ts"
+  ],
   "src/components/admissoes/DetalhesAdmissaoDialog.tsx": [
    "src/components/admissao/AdmissaoChecklist.tsx",
    "src/components/admissoes/NovaAdmissaoDialog.tsx",
@@ -432,6 +453,15 @@
   ],
   "src/components/admissoes/admissoesDerivacoes.ts": [
    "src/components/admissoes/admissoesComum.ts"
+  ],
+  "src/components/admissoes/auditoriaComum.ts": [
+   "src/components/admissoes/admissoesComum.ts",
+   "src/components/admissoes/auditoriaDerivacoes.ts",
+   "src/components/admissoes/kanbanComum.ts"
+  ],
+  "src/components/admissoes/auditoriaDerivacoes.ts": [
+   "src/components/admissoes/admissoesDerivacoes.ts",
+   "src/integrations/supabase/types.ts"
   ],
   "src/components/admissoes/kanbanComum.ts": [
    "src/utils/format.ts"
@@ -5448,6 +5478,7 @@
    "src/components/PageTitle.tsx",
    "src/components/admissoes/AdmissoesDashboard.tsx",
    "src/components/admissoes/AdmissoesKanban.tsx",
+   "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
    "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
    "src/components/admissoes/GestaoCandidatos.tsx",
    "src/components/admissoes/NovaAdmissaoDialog.tsx",
@@ -7333,6 +7364,10 @@
   "src/services/assistenteIAService.ts": [
    "src/integrations/supabase/client.ts",
    "src/services/loggerService.ts"
+  ],
+  "src/services/auditoriaAdmissoesService.ts": [
+   "src/components/admissoes/auditoriaDerivacoes.ts",
+   "src/services/auditoriaService.ts"
   ],
   "src/services/auditoriaService.ts": [
    "src/integrations/supabase/client.ts",

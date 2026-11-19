@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ddcecda891` · branch `main` · 2026-11-19 15:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `0eb89d46b2` · branch `main` · 2026-11-19 15:42 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -22,7 +22,7 @@
 | `anotacoes_colaborador` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `asos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 29 colunas | migration |
 | `atrasos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `audit_log` | DEPRECATED — migrado para audit_log_unified na Etapa 8. Manter para observação; remover após janela de 90 dias. | 13 colunas | migration |
+| `audit_log` | DEPRECATED — migrado para audit_log_unified na Etapa 8. Manter para observação; remover após janela de 90 dias. | 16 colunas | migration |
 | `audit_log_unified` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `audit_log_unified_archive` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `audit_logs` | DEPRECATED — migrado para audit_log_unified na Etapa 8. | 12 colunas | migration |
@@ -307,7 +307,7 @@
 | `password_reset_requests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `pcs_avaliacoes_cargo` | Cargo evaluation whose total is always calculated by a trigger. | 10 colunas | migration |
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
-| … +394 linhas — lista completa em `context.json` | | | |
+| … +400 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -391,7 +391,6 @@
 | status | valor `very_slow` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/external-db-bridge/index.ts` |
 | status | valor `received` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/integracao/index.ts`<br>`escreve:supabase/functions/webhook/index.ts` |
 | status | valor `aprovado_parcial` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/pix-lote/index.ts` |
-| status | valor `falha` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/processar-agendamentos/filaNotificacoes.ts` |
 | status | valor `sem_registro` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/processar-ponto/index.ts`<br>`escreve:supabase/functions/processar-ponto/index.ts` |
 | status | valor `Ativo` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/sincronizar-bitrix/index.ts` |
 | status | valor `active` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/webhook/contract_test.ts` |
@@ -647,7 +646,8 @@
 | segurança | função `trg_medida_contestacao_notify_after` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_medida_esocial_on_aplicada` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `update_extintor_status_vencimento` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +36 linhas — lista completa em `context.json` | | |
+| segurança | função `user_empresa_id` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| … +35 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 
@@ -662,6 +662,8 @@
 - `ferias_coletivas.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `admissoes.estado_civil` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `admissoes.status_esocial` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `audit_log.status_anterior` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `audit_log.status_posterior` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `automacao_logs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `beneficiarios_plano.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `beneficiarios_seguro.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.

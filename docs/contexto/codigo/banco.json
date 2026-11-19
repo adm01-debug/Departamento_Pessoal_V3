@@ -6328,9 +6328,13 @@
     "created_at": "string",
     "dados_anteriores": "Json | null",
     "dados_novos": "Json | null",
+    "empresa_id": "string | null",
     "id": "string",
     "ip_address": "string | null",
+    "justificativa": "string | null",
     "registro_id": "string",
+    "status_anterior": "string | null",
+    "status_posterior": "string | null",
     "tabela": "string",
     "user_agent": "string | null",
     "user_email": "string | null",
@@ -6338,13 +6342,9 @@
    },
    "drift": {
     "so_na_migration": [
-     "empresa_id",
      "usuario_id",
      "dados_antigos",
-     "timestamp",
-     "justificativa",
-     "status_anterior",
-     "status_posterior"
+     "timestamp"
     ],
     "so_no_types": []
    },

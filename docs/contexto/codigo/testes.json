@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 796,
+ "total": 799,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 2,
-  "unit": 752
+  "unit": 755
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 665
+   "arquivos": 668
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -873,6 +873,16 @@
    "casos": 8
   },
   {
+   "arquivo": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
+   "tipo": "unit",
+   "linhas": 632,
+   "testa": [
+    "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
+    "src/components/admissoes/auditoriaDerivacoes.ts"
+   ],
+   "casos": 31
+  },
+  {
    "arquivo": "src/components/__tests__/AuditoriaAnimacao.test.tsx",
    "tipo": "unit",
    "linhas": 269,
@@ -900,6 +910,15 @@
    "testa": [
     "src/components/premiacoes/auditoriaComum.ts",
     "src/components/premiacoes/premiacoesComum.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/auditoriaDerivacoes.test.ts",
+   "tipo": "unit",
+   "linhas": 163,
+   "testa": [
+    "src/components/admissoes/auditoriaDerivacoes.ts"
    ],
    "casos": 9
   },
@@ -5694,6 +5713,16 @@
    "casos": 7
   },
   {
+   "arquivo": "src/services/__tests__/auditoriaAdmissoesService.test.ts",
+   "tipo": "unit",
+   "linhas": 233,
+   "testa": [
+    "src/services/auditoriaAdmissoesService.ts",
+    "src/services/auditoriaService.ts"
+   ],
+   "casos": 15
+  },
+  {
    "arquivo": "src/services/__tests__/auditoriaService.test.ts",
    "tipo": "unit",
    "linhas": 309,
@@ -7402,12 +7431,14 @@
   "src/components/admissao/SignaturePad.tsx": 1,
   "src/components/admissoes/AdmissoesDashboard.tsx": 1,
   "src/components/admissoes/AdmissoesKanban.tsx": 1,
+  "src/components/admissoes/AuditoriaAdmissoesContent.tsx": 1,
   "src/components/admissoes/DetalhesAdmissaoDialog.tsx": 1,
   "src/components/admissoes/GestaoCandidatos.tsx": 1,
   "src/components/admissoes/KitOnboardingDialog.tsx": 1,
   "src/components/admissoes/NovaAdmissaoDialog.tsx": 1,
   "src/components/admissoes/OnboardingDashboard.tsx": 1,
   "src/components/admissoes/admissoesDerivacoes.ts": 1,
+  "src/components/admissoes/auditoriaDerivacoes.ts": 2,
   "src/components/admissoes/onboardingComum.ts": 1,
   "src/components/admissoes/onboardingDerivacoes.ts": 1,
   "src/components/afastamentos/AfastamentoDocumentManager.tsx": 1,
@@ -7939,7 +7970,8 @@
   "src/services/admissaoService.ts": 1,
   "src/services/afastamentoService.ts": 1,
   "src/services/assistenteIAService.ts": 1,
-  "src/services/auditoriaService.ts": 1,
+  "src/services/auditoriaAdmissoesService.ts": 1,
+  "src/services/auditoriaService.ts": 2,
   "src/services/authService.ts": 1,
   "src/services/avaliacaoService.ts": 4,
   "src/services/backupService.ts": 1,

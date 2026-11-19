@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ddcecda891` · branch `main` · 2026-11-19 15:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `0eb89d46b2` · branch `main` · 2026-11-19 15:42 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1261,6 +1261,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `afdt_importacoes` | `status` | `concluido`, `erro`, `parcial`, `processando` | `processando` |
 | `ajustes_ponto` | `status` | `aprovado`, `pendente`, `rejeitado` | `pendente` |
 | `asos` | `status` | `arquivado`, `cancelado`, `emitido_clinica`, `rascunho`, `recebido_rh`, `validado` | `rascunho` |
+| `audit_log` | `status_anterior` | **livre (sem enum/CHECK)** |  |
+| `audit_log` | `status_posterior` | **livre (sem enum/CHECK)** |  |
 | `automacao_logs` | `status` | **livre (sem enum/CHECK)** | `pendente` |
 | `beneficiarios_plano` | `status` | **livre (sem enum/CHECK)** | `ativo` |
 | `beneficiarios_seguro` | `status` | **livre (sem enum/CHECK)** | `ativo` |
@@ -1765,6 +1767,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | CampoChecklist | checklist_documentos_pessoais \| checklist_comprovante_endereco \| checklist_foto \| checklist_ctps \| checklist_exame_admissional \| checklist_contrato_assinado \| checklist_esocial_enviado | `src/components/admissoes/admissoesComum.ts` |
 | ETAPA_FLUXO | 'solicitacao', 'documentos', 'validacao', 'pendente', 'exame', 'contrato', 'assinatura', 'esocial', | `src/components/admissoes/admissoesComum.ts` |
 | SlaSegmento | dentro \| risco \| atrasada | `src/components/admissoes/admissoesDashboardModais.tsx` |
+| ChaveResumo | eventos \| sucesso \| pendentes \| falhas | `src/components/admissoes/auditoriaComum.ts` |
+| StatusAuditoria | sucesso \| pendente \| falha | `src/components/admissoes/auditoriaDerivacoes.ts` |
+| PeriodoAuditoria | todos \| 7d \| 30d \| 90d \| ano | `src/components/admissoes/auditoriaDerivacoes.ts` |
+| QuickFilter | todos \| sucesso \| pendente \| falha \| esocial \| documentos \| contrato \| validacao | `src/components/admissoes/auditoriaDerivacoes.ts` |
+| OrdemAuditoria | recentes \| antigos \| candidato \| status | `src/components/admissoes/auditoriaDerivacoes.ts` |
 | TomEtapa | info \| warning \| teal \| violet \| success \| primary \| destructive \| aqua | `src/components/admissoes/kanbanComum.ts` |
 | TomLinha | neutro \| acento \| alerta \| ok | `src/components/admissoes/kanbanComum.ts` |
 | DOCS_CHECKLIST | 'checklist_documentos_pessoais', 'checklist_comprovante_endereco', 'checklist_foto', 'checklist_ctps', 'checklist_exame_admissional', 'checklist_contrato_assinado', | `src/components/admissoes/kanbanComum.ts` |
@@ -1920,6 +1927,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | CircuitState | CLOSED \| OPEN \| HALF_OPEN | `src/lib/circuitBreaker.ts` |
 | MotionReducedMode | user \| never | `src/lib/motionMode.ts` |
 | NULLABLE_TEXT_FIELDS | 'nome_social', 'telefone', 'celular', 'nome_pai', 'cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'matricula', 'banco_codigo', 'agencia', 'conta', 'pix_chave', 'rg', 'rg_orgao_emissor', 'pis_pasep', 'ctps_numero', 'ctps_serie', | `src/pages/colaboradorPayload.ts` |
+| TABELAS_TRILHA_ADMISSAO | 'admissoes', 'onboarding_colaborador', 'onboarding_tarefas' | `src/services/auditoriaAdmissoesService.ts` |
 | ThreadStatus | aberto \| respondido \| resolvido \| arquivado | `src/services/canalContabilidadeService.ts` |
 | ThreadCategoria | folha \| esocial \| admissao \| rescisao \| tributos \| ferias \| outro | `src/services/canalContabilidadeService.ts` |
 | ThreadPrioridade | baixa \| normal \| alta \| urgente | `src/services/canalContabilidadeService.ts` |
@@ -2829,6 +2837,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   label: string; valor: number; icon: LucideIcon; tone: Tone; descricao: string; amostra: AdmissaoLike[]; comTendencia: boolean;
   ```
+- **totalDoChip(quick: QuickFilter)** — `src/components/admissoes/AuditoriaAdmissoesContent.tsx`
+  ```
+  const { status, etapa } = QUICK_FILTER_VALORES[quick]; if (status) return totalPorStatus[status]; if (etapa) return contagemPorEtapa[etapa] ?? 0; return resumo.total;
+  ```
 - **responsaveisDaFila(candidatos: AdmissaoDetalhe[])** — `src/components/admissoes/admissoesDashboardModais.tsx`
   ```
   const nomes = [...new Set(candidatos.map((c) => c.responsavel).filter((nome) => nome && nome !== 'Não atribuído'))]; return nomes.length > 0 ? nomes.join(', ') : 'Não atribuído — nenhuma admissão desta fila tem responsável preenchido.';
@@ -2840,6 +2852,14 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 - **progressoValor(a: AdmissaoLike)** — `src/components/admissoes/admissoesDerivacoes.ts`
   ```
   return progressoDaAdmissao(a).valor;
+  ```
+- **aplicarQuickFilter(filtros: FiltrosAuditoria, quick: QuickFilter)** — `src/components/admissoes/auditoriaDerivacoes.ts`
+  ```
+  return { ...filtros, ...QUICK_FILTER_VALORES[quick] };
+  ```
+- **responsaveisDisponiveis(eventos: EventoAuditoria[] | null | undefined)** — `src/components/admissoes/auditoriaDerivacoes.ts`
+  ```
+  const nomes = new Set<string>(); (eventos ?? []).forEach((evento) => { if (evento.responsavel) nomes.add(evento.responsavel); }); return [...nomes].sort((a, b) => a.localeCompare(b, 'pt-BR'));
   ```
 - **validateFile(file: File)** — `src/components/afastamentos/AfastamentoDocumentManager.tsx`
   ```
@@ -4135,6 +4155,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `token `--success` já existente (142 71% 38% no claro /` | `src/components/admissoes/AdmissoesDashboard.tsx` |
 | `transition={{ duration: 0.6, delay: index * 0.05, ease: [0.25, 0.46, 0.45, 0.94] }}` | `src/components/admissoes/AdmissoesDashboard.tsx` |
 | `{/* Coluna esquerda: largura fixa do donut, ~10% menor que os` | `src/components/admissoes/AdmissoesDashboard.tsx` |
+| `A faixa OCUPA 100% da largura útil: cada chip cresce por igual` | `src/components/admissoes/AuditoriaAdmissoesContent.tsx` |
 | `// concluído = (nós concluídos − 1). Em 0% → 0 (nenhum trecho verde).` | `src/components/admissoes/DetalhesAdmissaoDialog.tsx` |
 | `* 0.94]`), importada de `dashboard/MetricCard.tsx`.` | `src/components/admissoes/GestaoCandidatos.tsx` |
 | `* LARGURA: a faixa ocupa 100% da coluna e os chips a dividem` | `src/components/admissoes/GestaoCandidatos.tsx` |
@@ -4409,8 +4430,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `// de horas_extras vira HE 50%, como o front faz. '00:00' gravado é` | `supabase/functions/calcular-folha/index.ts` |
 | `// folhaCalc.processar): HE a 50%/100% sobre a hora contratual,` | `supabase/functions/calcular-folha/index.ts` |
 | `const desc = v.valor_mensal ? Number(v.valor_mensal) * 0.2 : 0;` | `supabase/functions/calcular-folha/index.ts` |
-| `const descontoVT = Math.min(Number(v.valor ?? 0), salarioBase * 0.06);` | `supabase/functions/calcular-folha/index.ts` |
-| … +28 linhas — lista completa em `context.json` | |
+| … +29 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -4441,6 +4461,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `ALTURA_LISTA_WIDGET` | `'h-[136px]'` | `src/components/admissoes/AdmissoesDashboard.tsx` |
 | `HOVER_LINHA_WIDGET` | `'hover:bg-background/70'` | `src/components/admissoes/AdmissoesDashboard.tsx` |
 | `LEGENDA_AREA` | `'text-[10px] leading-tight @max-[240px]:text-[9px]'` | `src/components/admissoes/AdmissoesDashboard.tsx` |
+| `VALOR_TODOS` | `'__todos__'` | `src/components/admissoes/AuditoriaAdmissoesContent.tsx` |
+| `ROTA_LOGS_GLOBAIS` | `'/auditoria'` | `src/components/admissoes/AuditoriaAdmissoesContent.tsx` |
+| `BLOCOS_CASCATA_EVENTO` | `3` | `src/components/admissoes/AuditoriaAdmissoesContent.tsx` |
 | `FUNDO_PROGRESSO` | `'bg-background/60'` | `src/components/admissoes/DetalhesAdmissaoDialog.tsx` |
 | `MIOLO_STEPPER_OPACO` | `'bg-card'` | `src/components/admissoes/DetalhesAdmissaoDialog.tsx` |
 | `LIMITE_DESCRICAO` | `120` | `src/components/admissoes/DetalhesAdmissaoDialog.tsx` |
@@ -4464,6 +4487,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `BLOCOS_CASCATA` | `3` | `src/components/admissoes/NovaAdmissaoDialog.tsx` |
 | `BLOCOS_CASCATA` | `3` | `src/components/admissoes/OnboardingDetalheDialog.tsx` |
 | `DIA_MS` | `24` | `src/components/admissoes/admissoesDerivacoes.ts` |
+| `ACAO_PROCESSO_CRIADO` | `'Processo de admissão criado'` | `src/components/admissoes/auditoriaComum.ts` |
+| `QUICK_FILTER_PADRAO` | `'todos'` | `src/components/admissoes/auditoriaDerivacoes.ts` |
 | `PRAZO_DIAS_PADRAO` | `5` | `src/components/admissoes/onboardingDerivacoes.ts` |
 | `MARCOS` | `4` | `src/components/admissoes/onboardingDerivacoes.ts` |
 | `JANELA_RISCO_DIAS` | `3` | `src/components/admissoes/onboardingDerivacoes.ts` |
@@ -4713,12 +4738,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `REDACTED` | `'[REDACTED]'` | `src/services/loggerService.ts` |
 | `MAX_LOG_TEXT_LENGTH` | `2` | `src/services/loggerService.ts` |
 | `COLUNAS_KIT` | `'id, nome, itens, ativo, created_at'` | `src/services/onboardingJornadaService.ts` |
-| `MAX_ROWS` | `500` | `src/services/pcsService.ts` |
-| `PERIODO_SEM_DATA` | `'sem-data'` | `src/services/premiacoesService.ts` |
-| `PAGE` | `1000` | `src/services/premiacoesService.ts` |
-| `PROMPT_VERSION` | `'v2'` | `src/services/trainingImages/briefing.ts` |
-| `DESCRICAO_MAX` | `400` | `src/services/trainingImages/briefing.ts` |
-| … +129 linhas — lista completa em `context.json` | | |
+| … +134 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5153,6 +5173,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | [BOOT] Variáveis Supabase ausentes — inicialização abortada. | `src/main.tsx` |
 | Bridge instável | `src/components/admin/HealthTrendCard.tsx` |
 | Empresa ativa não carregada. | `src/components/admissoes/AdmissoesKanban.tsx` |
+| Não foi possível copiar o protocolo. | `src/components/admissoes/AuditoriaAdmissoesContent.tsx` |
 | Candidato sem e-mail cadastrado e sem link de portal vigente. | `src/components/admissoes/DetalhesAdmissaoDialog.tsx` |
 |              className= | `src/components/admissoes/GestaoKits.tsx` |
 | Erro de Segurança | `src/components/afastamentos/AfastamentoDocumentManager.tsx` |
@@ -5357,8 +5378,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | ; import { motion, AnimatePresence } from  | `src/components/ui/sync-error-state.tsx` |
 | Ciclo detectado no fluxo! | `src/components/workflows/WorkflowDesigner.tsx` |
 | Conexão já existe | `src/components/workflows/WorkflowDesigner.tsx` |
-| Corrija os erros antes de salvar | `src/components/workflows/WorkflowDesigner.tsx` |
-| … +670 linhas — lista completa em `context.json` | |
+| … +671 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5430,7 +5450,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9588 testes em 752 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9648 testes em 755 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5483,6 +5503,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/AcoesFeedback.test.ts` | 32 | perfilOperador (app_role real: admin\|gestor\|rh\|user) · mapeia os papéis administrativos e operacionais · papel ausente/desconhecido não vira permissão · podeValidarPotencial — exclusivo do RH … |
 | `src/components/__tests__/PagamentosComum.test.ts` | 32 | mapa status → etapa do fluxo · coloca cada status real em NO MÁXIMO uma das cinco etapas · mapeia a cadeia de aprovação como o quadro antigo (e deixa auditoria fora) · conta as etapas e fecha o total com o que está fora do fluxo … |
 | `src/pages/__tests__/OnboardingParidade.test.tsx` | 32 | PARIDADE — progresso, conclusão e contadores (mesma fixture) · percentual: a regra nova é idêntica à antiga em TODOS os registros · contadores do topo batem com o cálculo antigo da aba de Admissões · a divisão das abas (em andamento) bate com a régua antiga da Jornada … |
+| `src/components/__tests__/AuditoriaAdmissoesContent.test.tsx` | 31 | AuditoriaAdmissoesContent · renderiza os 4 KPI Cards no MESMO padrão do Dashboard de Admissões · coloca o tom semântico no ÍCONE e mantém o valor principal neutro · renderiza os 8 chips rápidos com a contagem real … |
 | `src/components/__tests__/FeedbacksDerivacoes.test.tsx` | 31 | feedbacksComum — tipo do feedback (texto livre) · normaliza os quatro tipos reais, aceitando caixa e rótulo por extenso · cai em gestor sem valor utilizável (nunca inventa categoria) · agrupa subordinado no chip de Gestor … |
 | `src/lib/cursor.test.ts` | 31 | encodeCursor · encode/decodes string values correctly · encode/decodes numeric values correctly · encode/decodes null values correctly … |
 | `src/services/__tests__/auditoriaService.test.ts` | 31 | auditoriaService.listarTrilha · usa a RPC unificada com tenant e filtros explícitos · aceita escopo global apenas como pedido explícito para a RPC autoritativa · rejeita limites fora do contrato antes de consultar o banco … |
@@ -5556,6 +5577,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/PendenciasAprovacao.test.tsx` | 19 | fila de aprovação — controles padronizados por vínculo · registro REAL com vínculo provado: Ver, Devolver e Aprovar habilitados (nesta ordem) · registro REAL SEM o vínculo: os controles continuam VISÍVEIS, porém desabilitados · registro REAL com vínculo não avaliável ( … |
 | `src/components/__tests__/PontoClockRegister.test.tsx` | 19 | PontoClockRegister · renders Registrar Ponto title · renders Entrada button · renders Saída Almoço button … |
 | `src/components/treinamentos/__tests__/TrainingCover.test.tsx` | 19 | TrainingCover — imagem real · exibe a URL válida com enquadramento cover e overlays de CSS · URL indisponível cai no fallback e não deixa a capa vazia · não usa URL externa quando não recebe imagem … |
+| `src/services/__tests__/auditoriaAdmissoesService.test.ts` | 19 | statusDoEvento · eSocial recusado é falha, porque exige ação · admissão cancelada é falha · etapa concluída é sucesso … |
 | `src/services/__tests__/pontoOfflineService.test.ts` | 19 | pontoOfflineService.generateIntegrityHash · returns a non-empty string · is deterministic for the same input · differs for different inputs … |
 | `src/services/tabelas/__tests__/viewsService.test.ts` | 19 | viewsService · alertasRH queries vw_alertas_rh and returns array · alertasRH distinguishes schema failure from an empty result · kpiTurnover queries vw_kpi_turnover … |
 | `src/utils/__tests__/piiMask.test.ts` | 19 | maskCpfDisplay · returns empty string for null · returns empty string for undefined · masks 11-digit CPF showing only last 2 digits … |
@@ -5732,9 +5754,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/PontoAuditTimeline.test.tsx` | 10 | PontoAuditTimeline · renders Trilha de Auditoria title · renders search input · shows empty state when no logs … |
 | `src/components/__tests__/PontoTodayCard.test.tsx` | 10 | PontoTodayCard · renders Hoje title · shows empty state when no registro · renders Progresso da Jornada when registro present … |
 | `src/components/__tests__/PontoWeekSummary.test.tsx` | 10 | PontoWeekSummary · renders Últimos 7 dias title · shows empty state when no registros · renders worked hours for each day … |
-| `src/components/__tests__/RejeitarDialog.test.tsx` | 10 | RejeitarDialog · renders nothing when open=false · renders title  · renders  … |
-| `src/components/__tests__/RelatoriosAgendadosTab.test.tsx` | 10 | RelatoriosAgendadosTab · renders Relatórios Agendados heading · renders Agendar Novo button · shows empty state when no agendamentos … |
-| … +452 linhas — lista completa em `context.json` | | |
+| … +455 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -5851,6 +5871,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | que ficam a validação do documento e o reenvio do link de contratação. O ASO | `src/components/admissoes/AdmissoesDashboard.tsx` |
 | Partição exata de `emAndamento` pela régua de prazo: todo processo cai em | `src/components/admissoes/AdmissoesDashboard.tsx` |
 | disso deve existir no board antes do primeiro clique. | `src/components/admissoes/AdmissoesKanban.tsx` |
+| Mesma regra da coluna: a badge NUNCA quebra em duas linhas. */} | `src/components/admissoes/AuditoriaAdmissoesContent.tsx` |
+| no máximo um fica aceso por vez (nunca Status + Etapa juntos). | `src/components/admissoes/AuditoriaAdmissoesContent.tsx` |
 | * REGRA DE IDENTIDADE: só permanecem fiéis ao sistema as CORES (tokens de | `src/components/admissoes/DetalhesAdmissaoDialog.tsx` |
 | * Texto curto de prazo a partir de `data_prevista` (usa a mesma régua `diasAteHoje`). */ | `src/components/admissoes/DetalhesAdmissaoDialog.tsx` |
 | * A tabela real (`workflows_historico`) guarda apenas `usuario_id` — um UUID — e | `src/components/admissoes/DetalhesAdmissaoDialog.tsx` |
@@ -5892,6 +5914,13 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | todos os processos de cada grupo com etapa, prazo, tempo restante/atraso, | `src/components/admissoes/admissoesDashboardModais.tsx` |
 | (aba "Dashboard"): prazo, progresso e iniciais do avatar. A aba "Gestão de | `src/components/admissoes/admissoesDerivacoes.ts` |
 | * Registro mínimo que as telas do módulo leem (admissão real ou fictícia). */ | `src/components/admissoes/admissoesDerivacoes.ts` |
+| Admissões). Só rótulo, ícone e classe — nada de regra de negócio (essa fica em | `src/components/admissoes/auditoriaComum.ts` |
+| * REGRA DE OURO: nenhum token de cor novo e nenhuma segunda cópia de rótulo. | `src/components/admissoes/auditoriaComum.ts` |
+| "Em Validação" — a mesma que a referência da tela mostra) e | `src/components/admissoes/auditoriaComum.ts` |
+| admissionAL (prazo, checklist de documentos, progresso por etapa, risco); | `src/components/admissoes/auditoriaDerivacoes.ts` |
+| módulo inteiro usa, inclusive a regra de "hoje" (timestamp no início do dia, | `src/components/admissoes/auditoriaDerivacoes.ts` |
+| exclusiva por construção: no máximo UM chip casa com o `quickFilter`. | `src/components/admissoes/auditoriaDerivacoes.ts` |
+| "eSocial" depois de "Falha" não pode deixar `status: 'falha'` preso. | `src/components/admissoes/auditoriaDerivacoes.ts` |
 | então mudá-los não pode mexer em nenhuma outra. | `src/components/admissoes/kanbanComum.ts` |
 | (Validação) e `violet` (Exame) saem de `--chart-2`/`--chart-4`; `aqua` | `src/components/admissoes/kanbanComum.ts` |
 | `teal` (Validação) e `violet` (Exame) saem de `--chart-2`/`--chart-4`; `aqua` | `src/components/admissoes/kanbanComum.ts` |
@@ -6093,13 +6122,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * HABILITAÇÃO (regra ÚNICA, a MESMA do servidor — `pode_aprovar_colaborador` | `src/components/avaliacao/feedbackCanonico.ts` |
 | ENCAMINHAMENTO (RH/admin) — visível apenas para quem pode encaminhar E na | `src/components/avaliacao/feedbackCanonico.ts` |
 | VALIDAÇÃO DO POTENCIAL (RH) — controle LEGADO. O fluxo atual termina na | `src/components/avaliacao/feedbackCanonico.ts` |
-| apenas ele mesmo; na fila consolidada contém gestor/par/auto/subordinado. | `src/components/avaliacao/feedbackCanonico.ts` |
-| aqui inventa dado: todas as funções leem SOMENTE campos que já existem em | `src/components/avaliacao/feedbacksComum.ts` |
-| (prazo) e nos `pdis` (competência em foco do avaliado). | `src/components/avaliacao/feedbacksComum.ts` |
-| * Prazo do ciclo do feedback, formatado (dd/mm/aaaa) ou `—`. */ | `src/components/avaliacao/feedbacksComum.ts` |
-| * Prazo do ciclo do feedback (`data_fim`), formatado. */ | `src/components/avaliacao/feedbacksComum.ts` |
-| * Leitura do prazo do ciclo para o banner ("Próximo prazo em 3 dias."). */ | `src/components/avaliacao/feedbacksComum.ts` |
-| METAS & OKRs — derivações da aba (situação, prazo, ordem e filtros). | `src/components/avaliacao/metasComum.ts` |
-| exibem. Nada aqui inventa dado: TODAS as funções leem somente campos que já | `src/components/avaliacao/metasComum.ts` |
-| 2. `atrasada`  → prazo vencido e ainda não concluída — é EXATAMENTE o | `src/components/avaliacao/metasComum.ts` |
-| … +924 linhas — lista completa em `context.json` | |
+| … +936 linhas — lista completa em `context.json` | |

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 182,
+ "total": 183,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
@@ -9,7 +9,7 @@
   "providers": 1,
   "python": 3,
   "schemas": 25,
-  "services": 96,
+  "services": 97,
   "utils": 35
  },
  "arquivos": [
@@ -499,7 +499,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 24922,
+   "linhas": 24934,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -508,7 +508,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 82,
+   "usado_por": 83,
    "usado_por_modulos": [
     "components/admin",
     "components/admissoes",
@@ -950,7 +950,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 287,
+   "usado_por": 288,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
@@ -1687,7 +1687,7 @@
     "TABLE_COLUMNS"
    ],
    "export_default": null,
-   "linhas": 4171,
+   "linhas": 4175,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -1866,6 +1866,33 @@
    "orfao": false
   },
   {
+   "arquivo": "src/services/auditoriaAdmissoesService.ts",
+   "camada": "services",
+   "exports": [
+    "TABELAS_TRILHA_ADMISSAO",
+    "detalheDoEvento",
+    "listarTrilhaAdmissoes",
+    "mapearEvento",
+    "statusDoEvento"
+   ],
+   "export_default": null,
+   "linhas": 148,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "components/admissoes"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/services/auditoriaService.ts",
    "camada": "services",
    "exports": [
@@ -1892,7 +1919,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 11,
+   "usado_por": 12,
    "usado_por_modulos": [
     "components/colaboradores",
     "components/dashboard",
@@ -1905,7 +1932,7 @@
     "services",
     "utils"
    ],
-   "coberto_por_testes": 1,
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ddcecda891ea17891b42b0ee41ae7da92a1de0d1",
+  "commit": "0eb89d46b2d424ae89914cbf0456d683eaa2993b",
   "branch": "main",
-  "data_commit": "2026-11-19T12:19:13-03:00",
+  "data_commit": "2026-11-19T12:41:17-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "0eb89d4",
+    "data": "2026-11-19",
+    "assunto": "feat(auditoria): aba de Auditoria de Admissões no ar, lendo a trilha real (#746)"
+   },
    {
     "sha": "ddcecda",
     "data": "2026-11-19",
@@ -126,18 +131,13 @@
     "sha": "f7681c0",
     "data": "2026-11-18",
     "assunto": "docs(gaps): causa raiz das 11 falhas do E2E autenticado na main (#722)"
-   },
-   {
-    "sha": "08a26cf",
-    "data": "2026-11-18",
-    "assunto": "chore(auditoria): fecha a varredura com as 34 branches que só existiam no clone local (#721)"
    }
   ],
-  "arquivos_mudados_7d": 1148,
+  "arquivos_mudados_7d": 1154,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 390
+    "mudancas": 392
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 96
+    "mudancas": 97
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -188,12 +188,12 @@
     "mudancas": 32
    },
    {
-    "pasta": "src/components/desligamentos",
-    "mudancas": 30
+    "pasta": "src/components/admissoes",
+    "mudancas": 31
    },
    {
-    "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 29
+    "pasta": "src/components/desligamentos",
+    "mudancas": 30
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -262,6 +262,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 6
+   },
+   {
     "arquivo": "deno.lock",
     "mudancas": 5
    },
@@ -282,7 +286,7 @@
     "mudancas": 5
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": "src/pages/AdmissoesPage.tsx",
     "mudancas": 5
    },
    {
@@ -291,10 +295,6 @@
    },
    {
     "arquivo": "src/pages/DashboardPage.tsx",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/pages/DesligamentosPage.tsx",
     "mudancas": 5
    }
   ],
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3650,
-  "arquivos_codigo": 2111,
-  "linhas_codigo": 419397,
+  "arquivos_total": 3657,
+  "arquivos_codigo": 2118,
+  "linhas_codigo": 422408,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
-  "componentes": 640,
+  "componentes": 641,
   "hooks": 121,
   "edge_functions": 67,
   "tabelas": 427,
   "migrations": 900,
   "cron_jobs": 41,
-  "testes": 796,
+  "testes": 799,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 338
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 994,
-   "linhas": 182003
+   "arquivos": 999,
+   "linhas": 184631
   },
   "src/constants": {
    "arquivos": 7,
@@ -668,7 +668,7 @@
   },
   "src/integrations": {
    "arquivos": 11,
-   "linhas": 26072
+   "linhas": 26084
   },
   "src/lib": {
    "arquivos": 22,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 143,
-   "linhas": 50795
+   "linhas": 50781
   },
   "src/providers": {
    "arquivos": 4,
@@ -692,11 +692,11 @@
   },
   "src/schemas": {
    "arquivos": 33,
-   "linhas": 8732
+   "linhas": 8736
   },
   "src/services": {
-   "arquivos": 193,
-   "linhas": 41084
+   "arquivos": 195,
+   "linhas": 41465
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -754,11 +754,11 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 24922
+   "linhas": 24934
   },
   {
    "arquivo": "src/schemas/tableColumns.ts",
-   "linhas": 4171
+   "linhas": 4175
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",
@@ -799,6 +799,10 @@
   {
    "arquivo": "src/pages/TreinamentosPage.tsx",
    "linhas": 1299
+  },
+  {
+   "arquivo": "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
+   "linhas": 1231
   },
   {
    "arquivo": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
@@ -847,10 +851,6 @@
   {
    "arquivo": "src/components/avaliacao/FeedbackAcoesRodape.tsx",
    "linhas": 914
-  },
-  {
-   "arquivo": "src/components/desligamentos/GestaoDesligamentos.tsx",
-   "linhas": 885
   }
  ],
  "qualidade": {
@@ -858,8 +858,8 @@
   "console_log": 414,
   "ts_ignore": 1,
   "eslint_disable": 4,
-  "todos": 23,
-  "arquivos_acima_500_linhas": 115
+  "todos": 24,
+  "arquivos_acima_500_linhas": 116
  },
  "todos": [
   {
@@ -915,6 +915,12 @@
    "linha": 287,
    "tipo": "TODO",
    "texto": "nó interno (nível ≥ 1, os"
+  },
+  {
+   "arquivo": "src/components/admissoes/auditoriaDerivacoes.ts",
+   "linha": 286,
+   "tipo": "TODO",
+   "texto": "o resto (busca, responsável, período e o painel avançado), que"
   },
   {
    "arquivo": "src/components/admissoes/kanbanComum.ts",

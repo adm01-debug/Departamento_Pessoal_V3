@@ -728,9 +728,10 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 57,
+   "usado_por": 58,
    "usado_por_arquivos": [
     "scripts/ai-context/cenarios.mjs",
+    "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
     "src/components/colaborador-detalhes/AfastamentosTab.tsx",
     "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
     "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
@@ -758,8 +759,7 @@
     "src/pages/CanalEticaPage.tsx",
     "src/pages/CentrosCustoPage.tsx",
     "src/pages/ColaboradorFormPage.tsx",
-    "src/pages/ComunicacaoInternaPage.tsx",
-    "src/pages/ControleAcessoPage.tsx"
+    "src/pages/ComunicacaoInternaPage.tsx"
    ],
    "coberto_por_testes": 3
   },
