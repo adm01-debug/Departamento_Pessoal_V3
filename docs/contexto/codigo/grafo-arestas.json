@@ -5614,6 +5614,7 @@
    "src/hooks/index.ts",
    "src/hooks/useAuth.ts",
    "src/lib/utils.ts",
+   "src/mocks/colaboradoresMock.ts",
    "src/mocks/desempenhoMock.ts",
    "src/services/avaliacaoService.ts",
    "src/services/index.ts"

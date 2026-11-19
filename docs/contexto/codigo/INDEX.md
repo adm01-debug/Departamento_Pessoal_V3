@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `689351be0a63629b8ae745a3a5d616916c84b2d3` (2026-11-19T14:07:26-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `21048ebf2f00ec2610d37be280a231d24993b3ba` (2026-11-19T15:31:29-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3657 |
 | arquivos_codigo | 2118 |
-| linhas_codigo | 422552 |
+| linhas_codigo | 422559 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -396,7 +396,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27733 nós · 62624 arestas · 2406 comunidades · grafo do commit `689351be`
+- 27733 nós · 62626 arestas · 2406 comunidades · grafo do commit `21048ebf`
 - comunidades maiores: cn (524), useEmpresas (499), 20260831_corrected_public.sql (485), canonical_schema.sql (475), button.tsx (442), lucide-react (411), client.ts (395), react (317), vitest (300), contract.ts (197), App.tsx (165), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-19 `21048eb` fix(avaliacao): mescla MOCK_COLABORADORES no modo demo para destravar aprovacao de feedback (E2E :210) (#753)
 - 2026-11-19 `689351b` fix(e2e): corrige fila de gestor no stub da bridge e lista so com Editar (#752)
 - 2026-11-19 `a2ab09a` docs(auditoria): registra a varredura por símbolo e a deriva ledger × repositório (#750)
 - 2026-11-19 `fcce4ad` fix(auditoria): 4 defeitos da aba de Auditoria apontados em revisão (#749)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `5891423` feat(rescisão): busca por matrícula e 4 últimos do CPF no seletor de colaborador (#740)
 - 2026-11-19 `7189749` chore(auditoria): fecha o inventário de resgate — 6 lacunas reais, 6 descartes provados e o stash varrido (#739)
 - 2026-11-19 `c658c6a` feat(rescisao): resgata a UX do import de colaborador da PR #546 (muri) (#738)
-- 2026-11-19 `732d46f` feat(auditoria): passa a gravar a trilha de onboarding, com empresa_id (#737)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

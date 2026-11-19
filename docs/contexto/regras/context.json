@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "689351be0a63629b8ae745a3a5d616916c84b2d3",
+  "sha": "21048ebf2f00ec2610d37be280a231d24993b3ba",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 17:08 UTC",
+  "generated_at": "2026-11-19 18:32 UTC",
   "files_total": 3670,
   "code_files": 3090,
-  "code_lines": 491373
+  "code_lines": 491380
  },
  "version": "1.3.2",
- "facts_hash": "cd42e5b8c5f21e0e",
+ "facts_hash": "30db18f549de2263",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -102878,7 +102878,7 @@
   {
    "module": "src/pages",
    "files": 143,
-   "lines": 50781,
+   "lines": 50788,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -299149,7 +299149,7 @@
   },
   "src/pages/AvaliacaoPage.tsx": {
    "path": "src/pages/AvaliacaoPage.tsx",
-   "lines": 1565,
+   "lines": 1572,
    "exports": [
     "function AvaliacaoPage"
    ],
@@ -330844,10 +330844,19 @@
   }
  },
  "git": {
-  "sha": "689351be0a63629b8ae745a3a5d616916c84b2d3",
+  "sha": "21048ebf2f00ec2610d37be280a231d24993b3ba",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "21048eb",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix(avaliacao): mescla MOCK_COLABORADORES no modo demo para destravar aprovacao de feedback (E2E :210) (#753)",
+    "files": [
+     "src/pages/AvaliacaoPage.tsx"
+    ]
+   },
    {
     "sha": "689351b",
     "date": "2026-11-19",
@@ -331165,15 +331174,6 @@
     "files": [
      "docs/agentes/decisoes-e-gaps.md"
     ]
-   },
-   {
-    "sha": "08a26cf",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "chore(auditoria): fecha a varredura com as 34 branches que só existiam no clone local (#721)",
-    "files": [
-     "docs/auditoria/VARREDURA_BRANCHES_E_LEDGER_2026-11-19.md"
-    ]
    }
   ],
   "hot_files": [
@@ -331238,6 +331238,10 @@
     2
    ],
    [
+    "src/pages/AvaliacaoPage.tsx",
+    1
+   ],
+   [
     "e2e/authenticated/feedbacks-historico.spec.ts",
     1
    ],
@@ -331251,10 +331255,6 @@
    ],
    [
     "src/hooks/__tests__/useAdmissoes.test.ts",
-    1
-   ],
-   [
-    "src/hooks/useAdmissoes.ts",
     1
    ]
   ]

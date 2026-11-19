@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "689351be0a63629b8ae745a3a5d616916c84b2d3",
+  "commit": "21048ebf2f00ec2610d37be280a231d24993b3ba",
   "branch": "main",
-  "data_commit": "2026-11-19T14:07:26-03:00",
+  "data_commit": "2026-11-19T15:31:29-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "21048eb",
+    "data": "2026-11-19",
+    "assunto": "fix(avaliacao): mescla MOCK_COLABORADORES no modo demo para destravar aprovacao de feedback (E2E :210) (#753)"
+   },
    {
     "sha": "689351b",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "b027ad2",
     "data": "2026-11-19",
     "assunto": "feat(rescisao): carimba procedencia do calculo na tela e no TRCT (#727)"
-   },
-   {
-    "sha": "26629de",
-    "data": "2026-11-19",
-    "assunto": "fix(consignado): teto do emprestimo vai de 35% para 30% (Lei 10.820 art. 1 §1) (#725)"
    }
   ],
-  "arquivos_mudados_7d": 1140,
+  "arquivos_mudados_7d": 1133,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3657,
   "arquivos_codigo": 2118,
-  "linhas_codigo": 422552,
+  "linhas_codigo": 422559,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 143,
-   "linhas": 50781
+   "linhas": 50788
   },
   "src/providers": {
    "arquivos": 4,
@@ -782,7 +782,7 @@
   },
   {
    "arquivo": "src/pages/AvaliacaoPage.tsx",
-   "linhas": 1565
+   "linhas": 1572
   },
   {
    "arquivo": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
@@ -960,7 +960,7 @@
   },
   {
    "arquivo": "src/pages/AvaliacaoPage.tsx",
-   "linha": 167,
+   "linha": 168,
    "tipo": "TODO",
    "texto": "reenvio da MESMA tentativa (duplo clique, erro de"
   },

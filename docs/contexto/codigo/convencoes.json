@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(avaliacao): mescla MOCK_COLABORADORES no modo demo para destravar aprovacao de feedback (E2E :210) (#753)",
    "fix(e2e): corrige fila de gestor no stub da bridge e lista so com Editar (#752)",
    "docs(auditoria): registra a varredura por símbolo e a deriva ledger × repositório (#750)",
    "fix(auditoria): 4 defeitos da aba de Auditoria apontados em revisão (#749)",
-   "fix(e2e): restaura sinal verde da main - liga vitrine de desempenho e expoe inputMode numerico (#748)",
-   "feat(auditoria): aba de Auditoria de Admissões no ar, lendo a trilha real (#746)"
+   "fix(e2e): restaura sinal verde da main - liga vitrine de desempenho e expoe inputMode numerico (#748)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

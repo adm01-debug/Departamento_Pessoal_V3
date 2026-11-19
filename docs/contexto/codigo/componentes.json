@@ -8841,7 +8841,7 @@
     "AvaliacaoPage"
    ],
    "export_default": "AvaliacaoPage",
-   "linhas": 1565,
+   "linhas": 1572,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

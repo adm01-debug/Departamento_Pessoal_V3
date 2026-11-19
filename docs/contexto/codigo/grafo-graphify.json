@@ -4,10 +4,10 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:update); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "689351be0a63629b8ae745a3a5d616916c84b2d3",
+ "commit_do_grafo": "21048ebf2f00ec2610d37be280a231d24993b3ba",
  "grafo_atual": true,
  "nos": 27733,
- "arestas": 62624,
+ "arestas": 62626,
  "comunidades_total": 2406,
  "relacoes": {
   "calls": 5993,
@@ -16,8 +16,8 @@
   "defines": 146,
   "dynamic_import": 174,
   "extends": 7,
-  "imports": 13421,
-  "imports_from": 11651,
+  "imports": 13422,
+  "imports_from": 11652,
   "indexes": 2263,
   "indirect_call": 313,
   "inherits": 41,
@@ -29,7 +29,7 @@
   "triggers": 1006
  },
  "origem": {
-  "EXTRACTED": 61033,
+  "EXTRACTED": 61035,
   "INFERRED": 1591
  },
  "comunidades": [
@@ -1632,18 +1632,18 @@
    "comunidade": "button.tsx"
   },
   {
+   "id": "src_pages_avaliacaopage",
+   "rotulo": "AvaliacaoPage.tsx",
+   "arquivo": "src/pages/AvaliacaoPage.tsx",
+   "grau": 116,
+   "comunidade": "react"
+  },
+  {
    "id": "src_components_admissoes_gestaocandidatos",
    "rotulo": "GestaoCandidatos.tsx",
    "arquivo": "src/components/admissoes/GestaoCandidatos.tsx",
    "grau": 115,
    "comunidade": "GestaoCandidatos.tsx"
-  },
-  {
-   "id": "src_components_ui_entrada_cards_entradacard",
-   "rotulo": "entradaCard()",
-   "arquivo": "src/components/ui/entrada-cards.tsx",
-   "grau": 115,
-   "comunidade": "entradaCard"
   }
  ],
  "mais_chamados": [
