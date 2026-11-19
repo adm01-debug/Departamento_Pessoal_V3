@@ -41,7 +41,12 @@ vi.mock('@/services/auditoriaService', () => ({
   auditoriaService: { listarTrilha: mockListarTrilha },
 }));
 
-import { LABEL_ORIGEM_CALCULO, formatarMomentoCalculo, gerarPDFRescisao } from '../rescisaoPDF';
+import {
+  LABEL_ORIGEM_CALCULO,
+  formatarMomentoCalculo,
+  gerarPDFRescisao,
+  mapearResultadoDeDesligamento,
+} from '../rescisaoPDF';
 import type { AuditoriaPdf } from '../rescisaoPDF';
 
 const sampleForm = {
@@ -160,5 +165,28 @@ describe('gerarPDFRescisao', () => {
       gerarPDFRescisao({ ...sampleForm, id: 'desl-1', empresa_id: 'empresa-1' }, sampleResult as never)
     ).resolves.toBeUndefined();
     expect(mockSave).toHaveBeenCalled();
+  });
+});
+
+/**
+ * O TRCT baixado pelo detalhe do desligamento passa pelo mapeamento, não pelo
+ * motor. Enquanto o mapeamento descartava `assinaturaDigital`, o carimbo de
+ * procedência declarava "Assinatura: ausente" para um cálculo ASSINADO — falso
+ * negativo num documento rescisório (achado da review na PR #727).
+ */
+describe('mapearResultadoDeDesligamento', () => {
+  it('preserva a assinatura digital do cálculo salvo', () => {
+    const r = mapearResultadoDeDesligamento({
+      valor_liquido: 9388,
+      detalhes_calculo: { assinaturaDigital: 'abc123', timestamp: '2026-11-19T10:00:00.000Z' },
+    });
+    expect(r.assinaturaDigital).toBe('abc123');
+    expect(r.timestamp).toBe('2026-11-19T10:00:00.000Z');
+  });
+
+  it('cálculo antigo sem assinatura continua sem assinatura', () => {
+    const r = mapearResultadoDeDesligamento({ valor_liquido: 100, detalhes_calculo: null });
+    expect(r.assinaturaDigital).toBeUndefined();
+    expect(r.timestamp).toBe('');
   });
 });

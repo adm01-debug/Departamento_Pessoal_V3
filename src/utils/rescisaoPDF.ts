@@ -104,6 +104,14 @@ export function mapearResultadoDeDesligamento(d: {
     diasAviso: n(dc?.diasAviso),
     diasAvisoNaoCumpridos: n(dc?.diasAvisoNaoCumpridos),
     timestamp: dc?.timestamp ?? '',
+    // Preservar a assinatura é obrigatório desde que o TRCT passou a carimbá-la:
+    // `calcularRescisao` assina o resultado (rescisaoCalc.ts:476) e
+    // `rescisaoService.calcularESalvar` grava o resultado inteiro em
+    // `detalhes_calculo`. Sem esta linha o mapeamento descartava a assinatura e
+    // o documento declarava "Assinatura: ausente" para um cálculo ASSINADO —
+    // falso negativo num documento rescisório. Cálculo antigo, gravado antes do
+    // campo existir, segue sem assinatura e aí "ausente" é verdade.
+    assinaturaDigital: dc?.assinaturaDigital,
   };
 }
 
