@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useEffect, useState } from 'react';
 import { PageLayout } from '@/components/layout';
 import { FormField, FormSelect } from '@/components/forms';
@@ -17,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { colaboradorService } from '@/services';
 import { normalizarPayloadColaborador } from './colaboradorPayload';
+import { colaboradorFormSchema, type ColaboradorFormData, type ColaboradorFormInput } from './colaboradorFormSchema';
 import { useNotification } from '@/contexts';
 import { User, MapPin, Landmark, Briefcase, FileText, Save, Loader2, Camera } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -28,55 +28,8 @@ import { useServerValidation } from '@/hooks/useServerValidation';
 import { useEmpresas } from '@/hooks';
 import { DefinirPinQuiosqueDialog } from '@/components/ponto/DefinirPinQuiosqueDialog';
 
-const schema = z.object({
-  // Geral
-  nome_completo: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
-  nome_social: z.string().optional(),
-  cpf: z.string().length(11, 'CPF inválido'),
-  email: z.string().email('Email inválido').optional().or(z.literal('')),
-  telefone: z.string().optional(),
-  celular: z.string().optional(),
-  data_nascimento: z.string().min(1, 'Data de nascimento obrigatória'),
-  sexo: z.enum(['masculino', 'feminino']).default('masculino'),
-  estado_civil: z.enum(['solteiro', 'casado', 'divorciado', 'viuvo', 'separado', 'uniao_estavel']).default('solteiro'),
-  nome_mae: z.string().min(1, 'Nome da mãe obrigatório'),
-  nome_pai: z.string().optional(),
-
-  // Endereço
-  cep: z.string().optional(),
-  logradouro: z.string().optional(),
-  numero: z.string().optional(),
-  complemento: z.string().optional(),
-  bairro: z.string().optional(),
-  cidade: z.string().optional(),
-  uf: z.string().optional(),
-
-  // Profissional
-  data_admissao: z.string().min(1, 'Data obrigatória'),
-  salario_base: z.number().positive('Salário deve ser positivo'),
-  cargo: z.string().min(1, 'Cargo obrigatório'),
-  departamento: z.string().min(1, 'Departamento obrigatório'),
-  tipo_contrato: z.enum(['clt', 'pj', 'estagiario', 'temporario', 'intermitente', 'aprendiz']).default('clt'),
-  status: z.string().default('ativo'),
-  matricula: z.string().optional(),
-
-  // Bancário
-  banco_codigo: z.string().optional(),
-  agencia: z.string().optional(),
-  conta: z.string().optional(),
-  tipo_conta: z.string().optional(),
-  pix_chave: z.string().optional(),
-
-  // Documentos
-  rg: z.string().optional(),
-  rg_orgao_emissor: z.string().optional(),
-  pis_pasep: z.string().optional(),
-  ctps_numero: z.string().optional(),
-  ctps_serie: z.string().optional(),
-});
-
-type FormData = z.infer<typeof schema>;
-type FormInput = z.input<typeof schema>;
+type FormData = ColaboradorFormData;
+type FormInput = ColaboradorFormInput;
 
 export default function ColaboradorFormPage() {
   const { id } = useParams();
@@ -108,7 +61,7 @@ export default function ColaboradorFormPage() {
     watch,
     setError,
   } = useForm<FormInput, unknown, FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(colaboradorFormSchema),
     defaultValues: {
       status: 'ativo',
       estado_civil: 'solteiro',
@@ -277,11 +230,31 @@ export default function ColaboradorFormPage() {
                         placeholder="joao@exemplo.com"
                       />
 
+                      {/* Dois campos independentes. Antes havia UM só, que
+                          mostrava `celular || telefone` e gravava apenas em
+                          `celular`: o telefone fixo do cadastro aparecia dentro
+                          da caixa do celular e não tinha como ser corrigido nem
+                          cadastrado pela tela — editar ali criava um celular e
+                          deixava o fixo desatualizado para sempre. */}
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Celular (WhatsApp)</label>
+                        <label className="text-sm font-medium" htmlFor="colaborador-celular">
+                          Celular (WhatsApp)
+                        </label>
                         <PhoneInput
-                          value={watch('celular') || watch('telefone')}
-                          onChange={(v) => setValue('celular', v)}
+                          id="colaborador-celular"
+                          value={watch('celular') ?? ''}
+                          onChange={(v) => setValue('celular', v, { shouldDirty: true })}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium" htmlFor="colaborador-telefone">
+                          Telefone fixo
+                        </label>
+                        <PhoneInput
+                          id="colaborador-telefone"
+                          value={watch('telefone') ?? ''}
+                          onChange={(v) => setValue('telefone', v, { shouldDirty: true })}
                         />
                       </div>
                     </div>
@@ -383,9 +356,15 @@ export default function ColaboradorFormPage() {
                         { value: 'ativo', label: 'Ativo' },
                         { value: 'afastado', label: 'Afastado' },
                         { value: 'ferias', label: 'Em Férias' },
-                        { value: 'inativo', label: 'Desligado' },
+                        // Era `inativo`, valor que NÃO existe no enum
+                        // `status_colaborador` do banco (ativo | ferias |
+                        // afastado | desligado | pendente): escolher
+                        // "Desligado" aqui fazia o salvamento falhar com erro
+                        // cru do Postgres.
+                        { value: 'desligado', label: 'Desligado' },
+                        { value: 'pendente', label: 'Pendente' },
                       ]}
-                      onChange={(v) => setValue('status', v)}
+                      onChange={(v) => setValue('status', v as FormData['status'])}
                     />
                   </div>
                 </CardContent>
