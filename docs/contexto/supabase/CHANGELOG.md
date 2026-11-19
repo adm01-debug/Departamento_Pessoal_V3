@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-19 21:12 UTC
+
+- **tabelas** alterado (1): `public.dp_audit_log`
+
 ## 2026-11-19 20:15 UTC
 
 - **functions** alterado (3): `public.dp_audit_log_immutable()`, `public.dp_audit_log_prevent_future()`, `public.dp_create_next_partition()`

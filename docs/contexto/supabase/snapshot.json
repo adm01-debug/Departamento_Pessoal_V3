@@ -149318,7 +149318,7 @@
         "schema": "public"
       },
       {
-        "comment": "Audit log Departamento Pessoal — IMUTÁVEL (sem UPDATE/DELETE de roles de aplicação).\nParticionado por mês para performance e retenção.\nLGPD Art.37: registro de operações de tratamento de dados.\nConteúdo: metadata de eventos — NÃO armazena PII raw no payload.",
+        "comment": "Audit log Departamento Pessoal — IMUTÁVEL (sem UPDATE/DELETE de roles de aplicação). Particionado por mês. LGPD Art.37. Conteúdo: metadata de eventos — NÃO armazena PII raw no payload.",
         "from_extension": false,
         "is_partition": false,
         "kind": "partitioned",

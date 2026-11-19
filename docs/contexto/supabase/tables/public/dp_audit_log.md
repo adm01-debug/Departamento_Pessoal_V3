@@ -1,9 +1,6 @@
 # public.dp_audit_log
 
-> Audit log Departamento Pessoal — IMUTÁVEL (sem UPDATE/DELETE de roles de aplicação).
-Particionado por mês para performance e retenção.
-LGPD Art.37: registro de operações de tratamento de dados.
-Conteúdo: metadata de eventos — NÃO armazena PII raw no payload.
+> Audit log Departamento Pessoal — IMUTÁVEL (sem UPDATE/DELETE de roles de aplicação). Particionado por mês. LGPD Art.37. Conteúdo: metadata de eventos — NÃO armazena PII raw no payload.
 
 | propriedade | valor |
 |---|---|
