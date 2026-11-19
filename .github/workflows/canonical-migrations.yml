@@ -189,8 +189,14 @@ jobs:
           # APLICADO e esta no ledger: validate run 44514035146, apply run
           # 44514808116 e verify run 44515333669, os tres success, com
           # ledger_count === 1 e o sidecar devolvendo 'ok'.
+          # A policy de UPDATE do gestor (20261119130000) saiu daqui porque foi
+          # APLICADA e esta no ledger: validate run 44517578669 e verify run
+          # 44517978789 (ambos success), e a policy foi lida viva no catalogo. A
+          # 20261119140000 e a guarda de
+          # coluna que fecha a escalada que ELA abriu (RLS e por linha): sem a
+          # guarda, gestor podia gravar aprovado_rh. Achado da review na #729.
           for migration in \
-            20261119130000_ferias_gestor_update.sql
+            20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
