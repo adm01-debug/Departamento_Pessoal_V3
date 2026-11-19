@@ -199,8 +199,13 @@ jobs:
           # APLICADA e esta no ledger: validate run 44520983381, apply confirmado
           # pelo catalogo (trg_ferias_bloquear_aprovacao_rh_sem_rh, tgtype 19) e a
           # logica inteira do sidecar rodada ao vivo devolveu ok.
+          # A trilha de onboarding (20261119150000) saiu daqui porque foi APLICADA
+          # e esta no ledger: validate run 44524332815, apply run 44524643008 e
+          # verify run 44525243641, os tres success, com os dois triggers
+          # (audit_onboarding_colaborador/_tarefas) lidos vivos no catalogo e o
+          # sidecar devolvendo CANONICAL_VERIFY_OK.
           for migration in \
-            20261119150000_onboarding_auditoria_grava_trilha.sql
+            20261119160000_audit_log_empresa_id_e_leitura_rh.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
