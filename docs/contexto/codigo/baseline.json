@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "23cd2e29477003c27fd6ba23deb68ebc4fafa9dc",
+  "commit": "893a2aa64fd54cea53899c3e88ab0a36feb21301",
   "branch": "main",
-  "data_commit": "2026-11-19T18:26:28-03:00",
+  "data_commit": "2026-11-19T18:51:23-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "893a2aa",
+    "data": "2026-11-19",
+    "assunto": "fix(e2e): seed de candidaturas envia empresa_id explícito (#758)"
+   },
    {
     "sha": "23cd2e2",
     "data": "2026-11-19",
@@ -126,11 +131,6 @@
     "sha": "055112b",
     "data": "2026-11-19",
     "assunto": "fix(rescisao): TRCT do desligamento declarava assinatura ausente tendo assinatura (#732)"
-   },
-   {
-    "sha": "634058e",
-    "data": "2026-11-19",
-    "assunto": "chore(auditoria): torna reproduzivel a medicao do resgate da muri (#734)"
    }
   ],
   "arquivos_mudados_7d": 1097,
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3661,
   "arquivos_codigo": 2118,
-  "linhas_codigo": 422658,
+  "linhas_codigo": 422659,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -504,7 +504,7 @@
   },
   "scripts/e2e": {
    "arquivos": 3,
-   "linhas": 724
+   "linhas": 725
   },
   "scripts/eslint-tests-any.config.mjs": {
    "arquivos": 1,

@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(e2e): seed de candidaturas envia empresa_id explícito (#758)",
    "fix(e2e): corrige as 2 falhas do pipeline de recrutamento na main (#757)",
    "fix(onboarding): ancora assercoes do verify na admissao de destino (#756)",
    "infra(banco): inclui a 20261019235900 (dp_*) e a 20261119170000 (onboarding) no lote do canônico (#755)",
-   "fix(onboarding): resgata a convergência do modelo legado, sem duplicar histórico (#747)",
-   "infra(banco): versiona o DDL órfão da família dp_* (imutabilidade do log de auditoria) (#751)"
+   "fix(onboarding): resgata a convergência do modelo legado, sem duplicar histórico (#747)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
