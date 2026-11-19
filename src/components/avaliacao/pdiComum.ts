@@ -150,7 +150,7 @@ export function descricaoPrazo(dias: number | null, situacao: SituacaoPrazo): st
  * interruptor único lido por `PdiCard` para decidir entre a barra com número
  * real (quando o dado existir) e a apresentação "não acompanhado".
  */
-export const PROGRESSO_PDI_DISPONIVEL: boolean = false;
+export const PROGRESSO_PDI_DISPONIVEL = false;
 
 /** Texto padrão da região de progresso quando o dado não existe. */
 export const TEXTO_PROGRESSO_AUSENTE = 'Progresso não acompanhado';
