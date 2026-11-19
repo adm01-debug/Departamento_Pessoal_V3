@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7ecf0c0c2a8adaca2c2cf4952d23463ea34ae8f8",
+  "commit": "d327ab7fd2ee3c2fb3f5f27603eb126e17334162",
   "branch": "main",
-  "data_commit": "2026-11-19T07:32:49-03:00",
+  "data_commit": "2026-11-19T08:00:52-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "d327ab7",
+    "data": "2026-11-19",
+    "assunto": "fix(banco): sidecar conferia substring do search_path, não nome de schema (#724)"
+   },
    {
     "sha": "7ecf0c0",
     "data": "2026-11-19",
@@ -126,11 +131,6 @@
     "sha": "5d9deb6",
     "data": "2026-11-18",
     "assunto": "feat(dashboard): resgata Resumo Operacional e Próximas Atividades da muri (#698)"
-   },
-   {
-    "sha": "364a215",
-    "data": "2026-11-18",
-    "assunto": "test: recupera 9 arquivos de teste da branch muri (#546) — 107 casos (#697)"
    }
   ],
   "arquivos_mudados_7d": 1138,
@@ -254,10 +254,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "scripts/audit-migration-style.mjs",
-    "mudancas": 6
-   },
-   {
     "arquivo": "scripts/sync/README.md",
     "mudancas": 6
    },
@@ -295,6 +291,10 @@
    },
    {
     "arquivo": "docs/agentes/banco.md",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "scripts/audit-migration-style.mjs",
     "mudancas": 5
    }
   ],
