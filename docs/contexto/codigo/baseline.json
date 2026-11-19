@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7189749d8577f552ecfa8a05d4f4a6f6c301cbe9",
+  "commit": "58914234bdf23e344ded82094c5221b4f8f06e1b",
   "branch": "main",
-  "data_commit": "2026-11-19T10:39:42-03:00",
+  "data_commit": "2026-11-19T11:15:40-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "5891423",
+    "data": "2026-11-19",
+    "assunto": "feat(rescisão): busca por matrícula e 4 últimos do CPF no seletor de colaborador (#740)"
+   },
    {
     "sha": "7189749",
     "data": "2026-11-19",
@@ -126,11 +131,6 @@
     "sha": "bdf533e",
     "data": "2026-11-18",
     "assunto": "fix(consignado): aplica a margem de 35% no banco, fechando o desvio pela tela (#711)"
-   },
-   {
-    "sha": "7320b38",
-    "data": "2026-11-18",
-    "assunto": "chore(auditoria): registra a varredura de branches, tags e ledger de 19/11 (#713)"
    }
   ],
   "arquivos_mudados_7d": 1144,
@@ -188,11 +188,11 @@
     "mudancas": 30
    },
    {
-    "pasta": "src/components/premiacoes",
-    "mudancas": 29
+    "pasta": "src/pages/__tests__",
+    "mudancas": 30
    },
    {
-    "pasta": "src/pages/__tests__",
+    "pasta": "src/components/premiacoes",
     "mudancas": 29
    }
   ],
@@ -238,10 +238,6 @@
     "mudancas": 7
    },
    {
-    "arquivo": "scripts/sync/autocommit-local.sh",
-    "mudancas": 7
-   },
-   {
     "arquivo": "src/App.tsx",
     "mudancas": 7
    },
@@ -254,11 +250,19 @@
     "mudancas": 6
    },
    {
+    "arquivo": "scripts/sync/autocommit-local.sh",
+    "mudancas": 6
+   },
+   {
     "arquivo": "src/components/colaborador-detalhes/index.ts",
     "mudancas": 6
    },
    {
     "arquivo": "src/index.css",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "src/pages/CalculadoraRescisaoPage.tsx",
     "mudancas": 6
    },
    {
@@ -283,10 +287,6 @@
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/pages/CalculadoraRescisaoPage.tsx",
     "mudancas": 5
    },
    {
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3643,
   "arquivos_codigo": 2108,
-  "linhas_codigo": 418780,
+  "linhas_codigo": 418983,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 140,
-   "linhas": 50281
+   "linhas": 50484
   },
   "src/providers": {
    "arquivos": 4,
@@ -845,12 +845,12 @@
    "linhas": 914
   },
   {
-   "arquivo": "src/components/desligamentos/GestaoDesligamentos.tsx",
-   "linhas": 885
+   "arquivo": "src/pages/CalculadoraRescisaoPage.tsx",
+   "linhas": 912
   },
   {
-   "arquivo": "src/components/dashboard/AnalyticsSection.tsx",
-   "linhas": 876
+   "arquivo": "src/components/desligamentos/GestaoDesligamentos.tsx",
+   "linhas": 885
   }
  ],
  "qualidade": {

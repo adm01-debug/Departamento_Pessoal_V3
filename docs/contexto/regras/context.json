@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7189749d8577f552ecfa8a05d4f4a6f6c301cbe9",
+  "sha": "58914234bdf23e344ded82094c5221b4f8f06e1b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 14:15 UTC",
+  "generated_at": "2026-11-19 14:16 UTC",
   "files_total": 3656,
   "code_files": 3076,
-  "code_lines": 487318
+  "code_lines": 487521
  },
  "version": "1.3.2",
- "facts_hash": "356b2244434b7bfc",
+ "facts_hash": "0bd226d1e52b1155",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -102786,7 +102786,7 @@
   {
    "module": "src/pages",
    "files": 140,
-   "lines": 50281,
+   "lines": 50484,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -104885,6 +104885,7 @@
      "src/services/admissaoService.ts"
     ],
     "ref": [
+     "src/pages/CalculadoraRescisaoPage.tsx",
      "src/services/folha/calculoLoteService.ts"
     ],
     "upsert": [
@@ -189348,6 +189349,26 @@
    {
     "file": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
     "name": "a busca filtra a lista pelo nome digitado"
+   },
+   {
+    "file": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+    "name": "a busca aceita a matrícula e separa homônimos"
+   },
+   {
+    "file": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+    "name": "a busca aceita os 4 últimos dígitos do CPF"
+   },
+   {
+    "file": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+    "name": "o desligamento é gravado no homônimo ESCOLHIDO, não no primeiro da lista"
+   },
+   {
+    "file": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+    "name": "import que falha não troca a pessoa do desligamento"
+   },
+   {
+    "file": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+    "name": "a matrícula aparece na linha, o CPF completo nunca é carregado"
    },
    {
     "file": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
@@ -298343,7 +298364,7 @@
   },
   "src/pages/CalculadoraRescisaoPage.tsx": {
    "path": "src/pages/CalculadoraRescisaoPage.tsx",
-   "lines": 871,
+   "lines": 912,
    "exports": [
     "function CalculadoraRescisaoPage"
    ],
@@ -298354,7 +298375,7 @@
     },
     {
      "table": "colaboradores",
-     "op": "select"
+     "op": "ref"
     },
     {
      "table": "historico_rescisoes",
@@ -298371,10 +298392,7 @@
    ],
    "table_cols": {
     "colaboradores": [
-     "empresa_id",
-     "id",
-     "nome_completo",
-     "status"
+     "id"
     ],
     "historico_rescisoes": [
      "cargo",
@@ -302762,12 +302780,17 @@
   },
   "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx": {
    "path": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
-   "lines": 84,
+   "lines": 246,
    "is_test": true,
    "tests": [
     "CalculadoraRescisaoPage — importar colaborador",
     "o seletor é um combobox com busca, não uma lista de rolagem",
     "a busca filtra a lista pelo nome digitado",
+    "a busca aceita a matrícula e separa homônimos",
+    "a busca aceita os 4 últimos dígitos do CPF",
+    "o desligamento é gravado no homônimo ESCOLHIDO, não no primeiro da lista",
+    "import que falha não troca a pessoa do desligamento",
+    "a matrícula aparece na linha, o CPF completo nunca é carregado",
     "não oferece o botão de remover antes de importar alguém"
    ]
   },
@@ -329646,10 +329669,20 @@
   }
  },
  "git": {
-  "sha": "7189749d8577f552ecfa8a05d4f4a6f6c301cbe9",
+  "sha": "58914234bdf23e344ded82094c5221b4f8f06e1b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "5891423",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "feat(rescisão): busca por matrícula e 4 últimos do CPF no seletor de colaborador (#740)",
+    "files": [
+     "src/pages/CalculadoraRescisaoPage.tsx",
+     "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx"
+    ]
+   },
    {
     "sha": "7189749",
     "date": "2026-11-19",
@@ -329952,17 +329985,6 @@
     "files": [
      "src/components/__tests__/FeriasResumoTab.test.tsx"
     ]
-   },
-   {
-    "sha": "6670984",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "fix(colaboradores): campo opcional em branco virava \"\" e travava o 2o cadastro (#705)",
-    "files": [
-     "src/pages/ColaboradorFormPage.tsx",
-     "src/pages/__tests__/colaboradorPayload.test.ts",
-     "src/pages/colaboradorPayload.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -329980,6 +330002,10 @@
    ],
    [
     "src/pages/CalculadoraRescisaoPage.tsx",
+    3
+   ],
+   [
+    "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
     2
    ],
    [
@@ -330013,10 +330039,6 @@
    [
     "docs/auditoria/VARREDURA_BRANCHES_E_LEDGER_2026-11-19.md",
     2
-   ],
-   [
-    "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
-    1
    ],
    [
     "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql",

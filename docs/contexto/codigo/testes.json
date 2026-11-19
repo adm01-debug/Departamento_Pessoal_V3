@@ -5382,11 +5382,11 @@
   {
    "arquivo": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
    "tipo": "unit",
-   "linhas": 84,
+   "linhas": 246,
    "testa": [
     "src/pages/CalculadoraRescisaoPage.tsx"
    ],
-   "casos": 3
+   "casos": 8
   },
   {
    "arquivo": "src/pages/__tests__/CanalEticaPage.test.tsx",
