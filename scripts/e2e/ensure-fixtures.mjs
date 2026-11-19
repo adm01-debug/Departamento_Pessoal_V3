@@ -207,11 +207,26 @@ async function main() {
   for (let k = 0; k < candidatosIds.length; k += 1) {
     const { data: candidatura } = await client
       .from('candidaturas')
-      .select('id')
+      .select('id, empresa_id')
       .eq('vaga_id', vagaId)
       .eq('candidato_id', candidatosIds[k])
       .maybeSingle();
-    if (!candidatura) {
+    if (candidatura) {
+      // Backfill idempotente do tenant: o canônico pode não ter o trigger
+      // trg_candidatura_set_empresa aplicado (drift DDL da migration
+      // 20260728214419), então candidaturas órfãs criadas antes ficam com
+      // empresa_id nulo e somem do board do Pipeline. Re-deriva aqui, como a
+      // migration faria, sem depender do trigger no banco.
+      if (candidatura.empresa_id !== empresaId) {
+        const { error: candUpdErr } = await client
+          .from('candidaturas')
+          .update({ empresa_id: empresaId })
+          .eq('id', candidatura.id);
+        if (candUpdErr) throw candUpdErr;
+      }
+      continue;
+    }
+    {
       const { error: candInsErr } = await client
         .from('candidaturas')
         .insert({
