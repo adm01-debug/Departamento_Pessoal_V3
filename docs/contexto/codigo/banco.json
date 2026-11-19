@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 882,
+ "migrations": 884,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -378,6 +378,7 @@
   "fn_cleanup_old_logs",
   "fn_colab_cpf_hash",
   "fn_colaborador_sync_cargo_texto",
+  "fn_consignado_valida_margem",
   "fn_consolidar_batidas",
   "fn_create_default_onboarding_tasks",
   "fn_documentos_afastamento_validacao",
@@ -1581,6 +1582,13 @@
    "evento": "update",
    "tabela": "empresas",
    "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "trg_consignado_valida_margem",
+   "quando": "before",
+   "evento": "insert or update",
+   "tabela": "emprestimos_consignados",
+   "funcao": "fn_consignado_valida_margem"
   },
   {
    "nome": "trigger_emprestimos_consignados_updated_at",
@@ -24099,6 +24107,7 @@
     "emprestimo-consignado"
    ],
    "triggers": [
+    "trg_consignado_valida_margem",
     "trigger_emprestimos_consignados_updated_at",
     "update_emprestimos_consignados_updated_at",
     "update_emprestimos_updated_at"

@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b8db9e5e842925a8fa07291d431f35362e1a10d6",
+  "commit": "bdf533efc536b22821e2f0c9de9d2e98baf8418f",
   "branch": "main",
-  "data_commit": "2026-11-18T20:59:25-03:00",
+  "data_commit": "2026-11-18T21:19:46-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "bdf533e",
+    "data": "2026-11-18",
+    "assunto": "fix(consignado): aplica a margem de 35% no banco, fechando o desvio pela tela (#711)"
+   },
+   {
+    "sha": "7320b38",
+    "data": "2026-11-18",
+    "assunto": "chore(auditoria): registra a varredura de branches, tags e ledger de 19/11 (#713)"
+   },
    {
     "sha": "b8db9e5",
     "data": "2026-11-18",
@@ -121,19 +131,9 @@
     "sha": "e667066",
     "data": "2026-11-18",
     "assunto": "chore: tria as 26 migrations restantes em 6 lotes de decisao (#689)"
-   },
-   {
-    "sha": "4bb5a24",
-    "data": "2026-11-18",
-    "assunto": "infra: poe a migration do gov.br no lote canonico para destravar o login (#687)"
-   },
-   {
-    "sha": "2271c4a",
-    "data": "2026-11-18",
-    "assunto": "fix: retrata \"as 52 estao aplicadas\" - 27 nao estao, e uma e bug de producao (#686)"
    }
   ],
-  "arquivos_mudados_7d": 1147,
+  "arquivos_mudados_7d": 1146,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3623,
+  "arquivos_total": 3626,
   "arquivos_codigo": 2105,
   "linhas_codigo": 418111,
   "rotas": 116,
@@ -326,12 +326,12 @@
   "hooks": 120,
   "edge_functions": 67,
   "tabelas": 427,
-  "migrations": 882,
+  "migrations": 884,
   "cron_jobs": 41,
   "testes": 792,
   "workflows": 21,
   "scripts": 135,
-  "docs_md": 336
+  "docs_md": 337
  },
  "por_pasta": {
   "capacitor.config.ts": {

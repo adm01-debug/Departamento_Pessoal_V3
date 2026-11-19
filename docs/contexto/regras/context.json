@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "b8db9e5e842925a8fa07291d431f35362e1a10d6",
+  "sha": "bdf533efc536b22821e2f0c9de9d2e98baf8418f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 00:00 UTC",
-  "files_total": 3636,
-  "code_files": 3058,
-  "code_lines": 485538
+  "generated_at": "2026-11-19 00:21 UTC",
+  "files_total": 3639,
+  "code_files": 3060,
+  "code_lines": 485651
  },
  "version": "1.3.2",
- "facts_hash": "f1721c21692859b1",
+ "facts_hash": "47e9a7af5195e90d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1020,
-   ".sql": 955,
+   ".sql": 957,
    ".ts": 947,
    ".mjs": 108,
    ".js": 15,
@@ -54153,6 +54153,15 @@
     "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
    },
    {
+    "name": "trg_consignado_valida_margem",
+    "when": "BEFORE INSERT OR UPDATE",
+    "table": "emprestimos_consignados",
+    "function": "fn_consignado_valida_margem",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
+   },
+   {
     "name": "ajuste_ponto_status_transition",
     "when": "BEFORE UPDATE OF \"STATUS\"",
     "table": "solicitacoes_ajuste_ponto",
@@ -64541,6 +64550,25 @@
      "OLD"
     ]
    },
+   "fn_consignado_valida_margem": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_salario numeric; v_comprometido numeric; v_margem numeric; BEGIN IF COALESCE(NEW.status, '') <> 'ativo' THEN RETURN NEW; END IF; IF TG_OP = 'UPDATE' AND COALESCE(OLD.status, '') = 'ativo' AND COALESCE(NEW.valor_parcela, 0) <= COALESCE(OLD.valor_parcela, 0) THEN RETURN NEW; END IF; SELECT c.salario_base INTO v_salario FROM public.colaboradores c WHERE c.id = NEW.colaborador_id; IF COALESCE(v_salario, 0) <= 0 THEN RAISE EXCEPTION 'Salário base do colaborador não permite calcular a margem consignável'; END IF; SELECT COALESCE(sum(e.valor_parcela), 0) INTO v_comprometido FROM public.emprestimos_consignados e WHERE e.colaborador_id = NEW.colaborador_id AND e.status = 'ativo' AND (NEW.id …",
+    "raises": [
+     "Salário base do colaborador não permite calcular a margem consignável",
+     "Parcela excede a margem consignável de 35%% do salário: já comprometido R$ %, limite R$ %"
+    ],
+    "tables": [
+     "colaboradores",
+     "emprestimos_consignados",
+     "v_comprometido",
+     "v_salario"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -72068,6 +72096,8 @@
    "supabase/migrations/20261118160000_empresa_id_not_null_rh.verify.sql",
    "supabase/migrations/20261118223000_whatsapp_config_repoe_policy_admin_rh.sql",
    "supabase/migrations/20261118223000_whatsapp_config_repoe_policy_admin_rh.verify.sql",
+   "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
+   "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -84076,6 +84106,14 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "fn_consignado_valida_margem",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -85552,6 +85590,16 @@
     "function": "replace_monthly_provisions",
     "msg": "monthly provision replacement row count mismatch",
     "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "function": "fn_consignado_valida_margem",
+    "msg": "Salário base do colaborador não permite calcular a margem consignável",
+    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
+   },
+   {
+    "function": "fn_consignado_valida_margem",
+    "msg": "Parcela excede a margem consignável de 35%% do salário: já comprometido R$ %, limite R$ %",
+    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -103868,8 +103916,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 882,
-   "lines": 80015,
+   "files": 884,
+   "lines": 80128,
    "tables": [
     "profiles",
     "user_roles"
@@ -160314,6 +160362,12 @@
     "field": "status",
     "value": "aprovado",
     "kind": "compara"
+   },
+   {
+    "file": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
+    "field": "status",
+    "value": "ativo",
+    "kind": "filtra"
    }
   ],
   "calc_fns": [
@@ -215456,6 +215510,15 @@
     "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
    },
    {
+    "name": "trg_consignado_valida_margem",
+    "when": "BEFORE INSERT OR UPDATE",
+    "table": "emprestimos_consignados",
+    "function": "fn_consignado_valida_margem",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
+   },
+   {
     "name": "ajuste_ponto_status_transition",
     "when": "BEFORE UPDATE OF \"STATUS\"",
     "table": "solicitacoes_ajuste_ponto",
@@ -225844,6 +225907,25 @@
      "OLD"
     ]
    },
+   "fn_consignado_valida_margem": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_salario numeric; v_comprometido numeric; v_margem numeric; BEGIN IF COALESCE(NEW.status, '') <> 'ativo' THEN RETURN NEW; END IF; IF TG_OP = 'UPDATE' AND COALESCE(OLD.status, '') = 'ativo' AND COALESCE(NEW.valor_parcela, 0) <= COALESCE(OLD.valor_parcela, 0) THEN RETURN NEW; END IF; SELECT c.salario_base INTO v_salario FROM public.colaboradores c WHERE c.id = NEW.colaborador_id; IF COALESCE(v_salario, 0) <= 0 THEN RAISE EXCEPTION 'Salário base do colaborador não permite calcular a margem consignável'; END IF; SELECT COALESCE(sum(e.valor_parcela), 0) INTO v_comprometido FROM public.emprestimos_consignados e WHERE e.colaborador_id = NEW.colaborador_id AND e.status = 'ativo' AND (NEW.id …",
+    "raises": [
+     "Salário base do colaborador não permite calcular a margem consignável",
+     "Parcela excede a margem consignável de 35%% do salário: já comprometido R$ %, limite R$ %"
+    ],
+    "tables": [
+     "colaboradores",
+     "emprestimos_consignados",
+     "v_comprometido",
+     "v_salario"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -226944,6 +227026,16 @@
     "function": "replace_monthly_provisions",
     "msg": "monthly provision replacement row count mismatch",
     "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "function": "fn_consignado_valida_margem",
+    "msg": "Salário base do colaborador não permite calcular a margem consignável",
+    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
+   },
+   {
+    "function": "fn_consignado_valida_margem",
+    "msg": "Parcela excede a margem consignável de 35%% do salário: já comprometido R$ %, limite R$ %",
+    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -232390,7 +232482,8 @@
       "filtra:supabase/functions/gerar-guias/index.ts",
       "filtra:supabase/functions/gerar-ltcat-os/index.ts",
       "filtra:supabase/functions/gerar-pgr/index.ts",
-      "filtra:supabase/functions/processar-ponto/index.ts"
+      "filtra:supabase/functions/processar-ponto/index.ts",
+      "filtra:supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
      ],
      "sem_colaboradores": [
       "compara:src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
@@ -240997,6 +241090,7 @@
    "fn_auto_generate_training_certificate",
    "fn_candidatura_set_empresa",
    "fn_colaborador_sync_cargo_texto",
+   "fn_consignado_valida_margem",
    "fn_consolidar_batidas",
    "fn_create_default_onboarding_tasks",
    "fn_documentos_afastamento_validacao",
@@ -252708,6 +252802,14 @@
     "objkind": "table",
     "roles": "authenticated",
     "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "fn_consignado_valida_margem",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
    },
    {
     "kind": "revoke",
@@ -328672,6 +328774,21 @@
    "path": "supabase/migrations/20261118223000_whatsapp_config_repoe_policy_admin_rh.verify.sql",
    "lines": 45
   },
+  "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql": {
+   "path": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
+   "lines": 79,
+   "status_values": [
+    {
+     "field": "status",
+     "value": "ativo",
+     "kind": "filtra"
+    }
+   ]
+  },
+  "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.verify.sql": {
+   "path": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.verify.sql",
+   "lines": 34
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -328990,10 +329107,29 @@
   }
  },
  "git": {
-  "sha": "b8db9e5e842925a8fa07291d431f35362e1a10d6",
+  "sha": "bdf533efc536b22821e2f0c9de9d2e98baf8418f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "bdf533e",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "fix(consignado): aplica a margem de 35% no banco, fechando o desvio pela tela (#711)",
+    "files": [
+     "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
+     "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.verify.sql"
+    ]
+   },
+   {
+    "sha": "7320b38",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "chore(auditoria): registra a varredura de branches, tags e ledger de 19/11 (#713)",
+    "files": [
+     "docs/auditoria/VARREDURA_BRANCHES_E_LEDGER_2026-11-19.md"
+    ]
+   },
    {
     "sha": "b8db9e5",
     "date": "2026-11-18",
@@ -329291,25 +329427,6 @@
      "docs/agentes/banco.md",
      "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md"
     ]
-   },
-   {
-    "sha": "4bab149",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "chore: corrige duas afirmações minhas que os revisores derrubaram (#682)",
-    "files": [
-     "docs/agentes/banco.md",
-     "docs/auditoria/VEREDITO_MURI_2026-11-17.md"
-    ]
-   },
-   {
-    "sha": "bb0fe99",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "fix: fecha quatro bypasses na guarda de RLS permissiva, com matriz de regressão (#681)",
-    "files": [
-     "scripts/audit-migration-style.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -329322,10 +329439,6 @@
     4
    ],
    [
-    "docs/agentes/banco.md",
-    3
-   ],
-   [
     "src/components/__tests__/AnalyticsSection.test.tsx",
     2
    ],
@@ -329334,12 +329447,20 @@
     2
    ],
    [
-    "scripts/audit-migration-style.mjs",
+    "docs/agentes/banco.md",
     2
    ],
    [
-    "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
-    2
+    "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.verify.sql",
+    1
+   ],
+   [
+    "docs/auditoria/VARREDURA_BRANCHES_E_LEDGER_2026-11-19.md",
+    1
    ],
    [
     "src/components/integracoes/ConfigPanels.tsx",
@@ -329387,10 +329508,6 @@
    ],
    [
     "src/pages/ColaboradorFormPage.tsx",
-    1
-   ],
-   [
-    "src/pages/__tests__/colaboradorPayload.test.ts",
     1
    ]
   ]
