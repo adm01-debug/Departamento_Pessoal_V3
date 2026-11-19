@@ -156,6 +156,25 @@ async function main() {
     { nome: 'Mariana Alves Rodrigues', cpf: '00000000353' },
     { nome: 'Bruno Carvalho Mendes', cpf: '00000000434' },
     { nome: 'Diego Nascimento Lima', cpf: '00000000515' },
+    // Cards extras em triagem: o teste A/B/C roda a roda sobre o PRIMEIRO card e
+    // espera a lista da triagem rolar (`scrollTop > 0`). Com poucos cards a lista
+    // não transborda o viewport e nunca rola — por isso o seed precisa de
+    // candidaturas suficientes em triagem para gerar transbordo real.
+    { nome: 'Ana Beatriz Costa', cpf: '00000000606' },
+    { nome: 'Lucas Ferreira Santos', cpf: '00000000707' },
+    { nome: 'Camila Ribeiro Souza', cpf: '00000000808' },
+    { nome: 'Rafael Oliveira Pinto', cpf: '00000000909' },
+    { nome: 'Juliana Martins Dias', cpf: '00000001010' },
+    { nome: 'Fernando Almeida Rocha', cpf: '00000001111' },
+    { nome: 'Patricia Gomes Lima', cpf: '00000001212' },
+    { nome: 'Rodrigo Barbosa Nunes', cpf: '00000001313' },
+  ];
+  // A etapa de cada card segue a ordem declarada; os extras vão todos para
+  // triagem (mais base para gerar transbordo), mantendo a paridade do fluxo.
+  const etapasCandidaturasBase = ['triagem', 'triagem', 'entrevista'];
+  const etapasCandidaturas = [
+    ...etapasCandidaturasBase,
+    ...Array(candidatosSeed.length - etapasCandidaturasBase.length).fill('triagem'),
   ];
   const candidatosIds = [];
   for (const cand of candidatosSeed) {
@@ -203,7 +222,6 @@ async function main() {
     vagaId = criada.id;
   }
 
-  const etapasCandidaturas = ['triagem', 'triagem', 'entrevista'];
   for (let k = 0; k < candidatosIds.length; k += 1) {
     const { data: candidatura } = await client
       .from('candidaturas')
