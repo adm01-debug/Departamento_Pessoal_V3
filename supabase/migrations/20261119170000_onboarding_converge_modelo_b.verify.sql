@@ -2,147 +2,123 @@
 --
 -- CONTRATO DO GATE (passo "Executar sidecars de verificação" do
 -- canonical-migrations.yml): saída VAZIA é falha, e toda linha não vazia tem de
--- ser literalmente `ok`. Por isso cada asserção abaixo é um
--- `CASE ... ELSE 'FALHOU: n' END` — ela SEMPRE emite uma linha. Um
--- `SELECT 'ok' WHERE <cond>` com várias condições emitiria zero linhas quando
--- falhasse, o que também reprova, mas esconde QUAL asserção caiu.
+-- ser literalmente `ok`. Cada asserção é um `CASE ... ELSE 'FALHOU: …' END`, que
+-- SEMPRE emite uma linha — assim o gate reprova E diz qual asserção caiu.
 --
--- Esta migration é DML (copia dados), não DDL. Então as asserções não olham
--- catálogo: olham o próprio dado, e principalmente o que NÃO pode ter
--- acontecido — duplicata, dado inventado e perda do legado.
+-- REGRA QUE AS ASSERÇÕES SEGUEM: toda asserção olha o DESTINO
+-- (`tarefas_onboarding`). Uma asserção que só recalcula o mesmo vínculo da
+-- migration e conta nele é tautológica: aprova por construção e não prova nada
+-- sobre o que foi gravado. (Foi o defeito da terceira asserção da versão
+-- anterior deste arquivo, apontado em revisão e corrigido aqui.)
+--
+-- O CTE do vínculo é repetido em cada asserção porque num arquivo .sql cada
+-- comando é independente — não há CTE compartilhado entre statements.
 
--- 1. Nenhuma tarefa do modelo legado ficou sem correspondente no canônico.
-WITH admissao_do_cpf AS (
-  SELECT DISTINCT ON (a.cpf) a.cpf, a.id AS admissao_id
-  FROM public.admissoes a
-  WHERE a.cpf IS NOT NULL
-  ORDER BY a.cpf, a.data_prevista DESC, a.created_at DESC, a.id
+-- 1. Toda tarefa legada COM vínculo resolvido tem destino no canônico.
+--    As sem vínculo são exclusão consciente (ambíguo/ausente), não falha.
+WITH vinculo AS (
+  SELECT oc.id AS onboarding_id, a.id AS admissao_id
+  FROM public.onboarding_colaborador oc
+  JOIN public.colaboradores c ON c.id = oc.colaborador_id
+  JOIN public.admissoes a ON a.id = (c.metadata ->> 'admissao_id')::uuid AND a.empresa_id = c.empresa_id
+  WHERE c.metadata ->> 'admissao_id' ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+  UNION ALL
+  SELECT oc.id, a.id
+  FROM public.onboarding_colaborador oc
+  JOIN public.colaboradores c ON c.id = oc.colaborador_id
+  JOIN public.admissoes a ON a.cpf = c.cpf AND a.empresa_id = c.empresa_id
+  WHERE c.metadata ->> 'admissao_id' IS NULL
+    AND c.cpf IS NOT NULL
+    AND (SELECT count(*) FROM public.admissoes a2 WHERE a2.cpf = c.cpf AND a2.empresa_id = c.empresa_id) = 1
 ), orfas AS (
   SELECT count(*) AS n
   FROM public.onboarding_tarefas ot
-  JOIN public.onboarding_colaborador oc ON oc.id = ot.onboarding_id
-  JOIN public.colaboradores c ON c.id = oc.colaborador_id
-  JOIN admissao_do_cpf ac ON ac.cpf = c.cpf
+  JOIN vinculo v ON v.onboarding_id = ot.onboarding_id
   WHERE ot.titulo IS NOT NULL
     AND NOT EXISTS (
       SELECT 1 FROM public.tarefas_onboarding t
-      WHERE t.admissao_id = ac.admissao_id AND t.titulo = ot.titulo
+      WHERE t.admissao_id = v.admissao_id AND t.titulo = ot.titulo AND t.created_at = ot.created_at
     )
 )
-SELECT CASE WHEN n = 0 THEN 'ok' ELSE 'FALHOU: ' || n || ' tarefa(s) do legado sem par no canonico' END
+SELECT CASE WHEN n = 0 THEN 'ok' ELSE 'FALHOU: ' || n || ' tarefa(s) com vinculo resolvido sem destino' END
 FROM orfas;
 
--- 2. Nenhuma duplicata: cada (admissao_id, titulo) aparece uma única vez.
---    É o que prova que o DISTINCT ON cumpriu o papel e que a reexecução não
---    duplicou nada.
+-- 2. Nenhuma duplicata NO DESTINO pela identidade real da tarefa
+--    (admissao_id, titulo, created_at). Título sozinho fundiria tarefas
+--    distintas de dois onboardings da mesma pessoa.
 WITH dups AS (
   SELECT count(*) AS n
   FROM (
-    SELECT admissao_id, titulo
+    SELECT admissao_id, titulo, created_at
     FROM public.tarefas_onboarding
     WHERE admissao_id IS NOT NULL
-    GROUP BY admissao_id, titulo
+    GROUP BY admissao_id, titulo, created_at
     HAVING count(*) > 1
   ) d
 )
-SELECT CASE WHEN n = 0 THEN 'ok' ELSE 'FALHOU: ' || n || ' par(es) (admissao,titulo) duplicado(s)' END
+SELECT CASE WHEN n = 0 THEN 'ok' ELSE 'FALHOU: ' || n || ' tarefa(s) duplicada(s) no destino' END
 FROM dups;
 
--- 3. Cada tarefa legada caiu em NO MÁXIMO uma admissão. Mesmo título em duas
---    admissões diferentes significaria histórico inventado na segunda.
-WITH admissao_do_cpf AS (
-  SELECT DISTINCT ON (a.cpf) a.cpf, a.id AS admissao_id
-  FROM public.admissoes a
-  WHERE a.cpf IS NOT NULL
-  ORDER BY a.cpf, a.data_prevista DESC, a.created_at DESC, a.id
-), espalhadas AS (
-  SELECT count(*) AS n
-  FROM (
-    SELECT ot.id
-    FROM public.onboarding_tarefas ot
-    JOIN public.onboarding_colaborador oc ON oc.id = ot.onboarding_id
-    JOIN public.colaboradores c ON c.id = oc.colaborador_id
-    JOIN admissao_do_cpf ac ON ac.cpf = c.cpf
-    GROUP BY ot.id
-    HAVING count(DISTINCT ac.admissao_id) > 1
-  ) e
-)
-SELECT CASE WHEN n = 0 THEN 'ok' ELSE 'FALHOU: ' || n || ' tarefa(s) do legado em mais de uma admissao' END
-FROM espalhadas;
-
--- 4. O estado de conclusão foi preservado tarefa a tarefa: nenhuma copiada
---    divergindo da origem em `concluida` ou na data de conclusão.
-WITH admissao_do_cpf AS (
-  SELECT DISTINCT ON (a.cpf) a.cpf, a.id AS admissao_id
-  FROM public.admissoes a
-  WHERE a.cpf IS NOT NULL
-  ORDER BY a.cpf, a.data_prevista DESC, a.created_at DESC, a.id
-), divergentes AS (
-  SELECT count(*) AS n
-  FROM public.onboarding_tarefas ot
+-- 3. TENANT — a asserção mais importante. Olha cada linha GRAVADA que casa com
+--    uma tarefa legada e exige que a empresa da admissão de destino seja a
+--    mesma do colaborador de origem. É o que um vazamento entre empresas
+--    violaria, e não dá para aprovar por construção: compara destino × origem.
+WITH copiadas AS (
+  SELECT t.id, a.empresa_id AS empresa_destino, c.empresa_id AS empresa_origem
+  FROM public.tarefas_onboarding t
+  JOIN public.admissoes a ON a.id = t.admissao_id
+  JOIN public.onboarding_tarefas ot
+    ON ot.titulo = t.titulo AND ot.created_at = t.created_at
   JOIN public.onboarding_colaborador oc ON oc.id = ot.onboarding_id
   JOIN public.colaboradores c ON c.id = oc.colaborador_id
-  JOIN admissao_do_cpf ac ON ac.cpf = c.cpf
-  JOIN public.tarefas_onboarding t
-    ON t.admissao_id = ac.admissao_id AND t.titulo = ot.titulo
+), cruzadas AS (
+  SELECT count(*) AS n FROM copiadas WHERE empresa_destino IS DISTINCT FROM empresa_origem
+)
+SELECT CASE WHEN n = 0 THEN 'ok' ELSE 'FALHOU: ' || n || ' tarefa(s) em admissao de OUTRA empresa' END
+FROM cruzadas;
+
+-- 4. Conclusão preservada tarefa a tarefa: `concluida` e a data.
+WITH divergentes AS (
+  SELECT count(*) AS n
+  FROM public.tarefas_onboarding t
+  JOIN public.onboarding_tarefas ot
+    ON ot.titulo = t.titulo AND ot.created_at = t.created_at
   WHERE COALESCE(t.concluida, false) IS DISTINCT FROM COALESCE(ot.concluida, false)
      OR t.concluida_em IS DISTINCT FROM ot.data_conclusao
 )
 SELECT CASE WHEN n = 0 THEN 'ok' ELSE 'FALHOU: ' || n || ' tarefa(s) com conclusao divergente da origem' END
 FROM divergentes;
 
--- 5. Nada inventado em `responsavel_id`: as copiadas ficam NULL, porque o
---    modelo legado não tem responsável (só quem concluiu).
-WITH admissao_do_cpf AS (
-  SELECT DISTINCT ON (a.cpf) a.cpf, a.id AS admissao_id
-  FROM public.admissoes a
-  WHERE a.cpf IS NOT NULL
-  ORDER BY a.cpf, a.data_prevista DESC, a.created_at DESC, a.id
-), inventadas AS (
+-- 5. PRAZO HISTÓRICO preservado. A tela calcula vencimento como
+--    `created_at + prazo_dias`; esta asserção exige que isso reproduza a
+--    `data_prazo` da origem. É a asserção que `GREATEST(0, …)` violaria, porque
+--    prender o negativo em zero faria o vencimento virar a data de criação.
+WITH prazos AS (
   SELECT count(*) AS n
-  FROM public.onboarding_tarefas ot
-  JOIN public.onboarding_colaborador oc ON oc.id = ot.onboarding_id
-  JOIN public.colaboradores c ON c.id = oc.colaborador_id
-  JOIN admissao_do_cpf ac ON ac.cpf = c.cpf
-  JOIN public.tarefas_onboarding t
-    ON t.admissao_id = ac.admissao_id AND t.titulo = ot.titulo
+  FROM public.tarefas_onboarding t
+  JOIN public.onboarding_tarefas ot
+    ON ot.titulo = t.titulo AND ot.created_at = t.created_at
+  WHERE ot.data_prazo IS NOT NULL
+    AND (t.created_at::date + t.prazo_dias) IS DISTINCT FROM ot.data_prazo
+)
+SELECT CASE WHEN n = 0 THEN 'ok' ELSE 'FALHOU: ' || n || ' tarefa(s) com vencimento diferente do historico' END
+FROM prazos;
+
+-- 6. Nada inventado em `responsavel_id`: as copiadas ficam NULL.
+WITH inventadas AS (
+  SELECT count(*) AS n
+  FROM public.tarefas_onboarding t
+  JOIN public.onboarding_tarefas ot
+    ON ot.titulo = t.titulo AND ot.created_at = t.created_at
   WHERE t.responsavel_id IS NOT NULL
 )
 SELECT CASE WHEN n = 0 THEN 'ok' ELSE 'FALHOU: ' || n || ' tarefa(s) copiada(s) com responsavel inventado' END
 FROM inventadas;
 
--- 6. O legado não está vazio. Esta asserção não é decorativa: sem ela a
---    asserção 1 passaria POR VACUIDADE se alguém tivesse apagado
---    `onboarding_tarefas` (sem linhas de origem não há órfã possível). É o que
---    transforma a 1 em prova de verdade.
+-- 7. O legado não está vazio. Sem isto a asserção 1 passaria POR VACUIDADE se
+--    alguém tivesse apagado `onboarding_tarefas`: sem linha de origem não há
+--    órfã possível. É o que torna a 1 uma prova.
 SELECT CASE
          WHEN (SELECT count(*) FROM public.onboarding_tarefas) > 0 THEN 'ok'
          ELSE 'FALHOU: onboarding_tarefas esta vazia — o legado foi perdido'
        END;
-
--- 7. Toda cópia tem a linha de origem VIVA no legado. Prova que a convergência
---    foi cópia e não movimentação: o legado segue sendo a fonte completa, com
---    as 5 colunas que o canônico não tem (categoria, ordem, concluida_por,
---    observacoes, template_tarefa_id).
-WITH admissao_do_cpf AS (
-  SELECT DISTINCT ON (a.cpf) a.cpf, a.id AS admissao_id
-  FROM public.admissoes a
-  WHERE a.cpf IS NOT NULL
-  ORDER BY a.cpf, a.data_prevista DESC, a.created_at DESC, a.id
-), copias AS (
-  SELECT ac.admissao_id, ot.titulo
-  FROM public.onboarding_tarefas ot
-  JOIN public.onboarding_colaborador oc ON oc.id = ot.onboarding_id
-  JOIN public.colaboradores c ON c.id = oc.colaborador_id
-  JOIN admissao_do_cpf ac ON ac.cpf = c.cpf
-), sem_origem AS (
-  SELECT count(*) AS n
-  FROM public.tarefas_onboarding t
-  WHERE EXISTS (SELECT 1 FROM copias cp WHERE cp.titulo = t.titulo)
-    AND NOT EXISTS (
-      SELECT 1 FROM copias cp
-      WHERE cp.admissao_id = t.admissao_id AND cp.titulo = t.titulo
-    )
-)
-SELECT CASE WHEN n = 0 THEN 'ok' ELSE 'FALHOU: ' || n || ' copia(s) sem origem viva no legado' END
-FROM sem_origem;
