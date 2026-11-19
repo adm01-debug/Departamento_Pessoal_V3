@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
 import type { ReactNode } from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import CalculadoraRescisaoPage from '@/pages/CalculadoraRescisaoPage';
@@ -40,12 +40,25 @@ vi.mock('@/components/PageTitle', () => ({ PageTitle: () => null }));
 // Guarda os builders de `colaboradores` para poder asserir QUAIS colunas a tela
 // pediu — a garantia de que o CPF inteiro não é carregado é o `select`, não a UI.
 const buildersColaboradores: ChainableQuery[] = [];
+/** Builders de `desligamentos`, para asserir EM QUEM o desligamento foi gravado. */
+const buildersDesligamentos: ChainableQuery[] = [];
+/** Linha completa devolvida por `.select('*').eq('id', …).single()` ao importar. */
+let colaboradorImportado: Record<string, unknown> | null = null;
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn((tabela: string) => {
+      if (tabela === 'desligamentos') {
+        const builder = createQueryBuilder({ data: null, error: null });
+        buildersDesligamentos.push(builder);
+        return builder;
+      }
       if (tabela !== 'colaboradores') return createQueryBuilder({ data: [], error: null });
-      const builder = createQueryBuilder({ data: ATIVOS, error: null });
+      // `.single()` do import precisa de UMA linha; a lista do seletor, do array.
+      const builder = createQueryBuilder<unknown>({
+        data: colaboradorImportado ?? ATIVOS,
+        error: null,
+      });
       buildersColaboradores.push(builder);
       return builder;
     }),
@@ -66,7 +79,33 @@ function renderPagina() {
   );
 }
 
+const MESES_ABREV = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+/**
+ * `Input type="date"` é o `DatePicker` do design system (`ui/input.tsx`): um
+ * botão que abre o calendário, não um `<input type="date">`. Mesmo caminho do
+ * helper já documentado em `src/components/__tests__/FeriasForm.test.tsx`.
+ */
+function selecionarData(rotulo: string, iso: string) {
+  const [ano, mes, dia] = iso.split('-').map(Number);
+  fireEvent.click(screen.getByLabelText(rotulo));
+  fireEvent.click(screen.getByRole('button', { name: /^[a-zç]+ \d{4}$/i }));
+  fireEvent.click(screen.getByRole('button', { name: String(new Date().getFullYear()) }));
+  fireEvent.click(screen.getByRole('button', { name: String(ano) }));
+  fireEvent.click(screen.getByRole('button', { name: MESES_ABREV[mes - 1] }));
+  const celula = screen
+    .getAllByRole('gridcell', { name: String(dia) })
+    .find((c) => !c.className.includes('day-outside'));
+  fireEvent.click(celula!.querySelector('button')!);
+}
+
 // jsdom nao implementa scrollIntoView, e o cmdk chama isso ao montar a lista.
+beforeEach(() => {
+  buildersColaboradores.length = 0;
+  buildersDesligamentos.length = 0;
+  colaboradorImportado = null;
+});
+
 beforeAll(() => {
   Element.prototype.scrollIntoView = vi.fn();
 });
@@ -109,6 +148,40 @@ describe('CalculadoraRescisaoPage — importar colaborador', () => {
     await waitFor(() => {
       expect(screen.getAllByText('José Silva')).toHaveLength(1);
       expect(screen.getByText('2002')).toBeInTheDocument();
+    });
+  });
+
+  it('o desligamento é gravado no homônimo ESCOLHIDO, não no primeiro da lista', async () => {
+    renderPagina();
+    await userEvent.click((await screen.findByText(/selecione para preencher/i)).closest('button')!);
+    await userEvent.type(await screen.findByPlaceholderText(/buscar por nome/i), '2002');
+
+    // A partir daqui o `.single()` do import devolve a linha do SEGUNDO José Silva.
+    colaboradorImportado = {
+      id: 'c2',
+      nome_completo: 'José Silva',
+      cpf: '00000000000',
+      cargo: 'Analista',
+      salario_base: 3000,
+      data_admissao: '2024-01-10',
+    };
+    await userEvent.click(await screen.findByText('2002'));
+
+    const nome = await screen.findByPlaceholderText('Nome completo');
+    await waitFor(() => expect(nome).toHaveValue('José Silva'));
+
+    // Sem data de desligamento o cálculo nem roda (guarda em handleCalc) e o
+    // fluxo não grava em `desligamentos`.
+    selecionarData('Data Desligamento', '2026-03-10');
+
+    await userEvent.click(await screen.findByRole('button', { name: /Calcular Local/i }));
+    await userEvent.click(await screen.findByRole('button', { name: /^Salvar$/i }));
+
+    await waitFor(() => {
+      const insert = buildersDesligamentos.flatMap((b) => b.__calls).find((c) => c.method === 'insert');
+      expect(insert, 'nenhum insert em desligamentos foi feito').toBeDefined();
+      expect(JSON.stringify(insert!.args[0])).toContain('"colaborador_id":"c2"');
+      expect(JSON.stringify(insert!.args[0])).not.toContain('"colaborador_id":"c1"');
     });
   });
 

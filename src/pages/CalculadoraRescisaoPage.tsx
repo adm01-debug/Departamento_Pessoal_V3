@@ -281,7 +281,26 @@ export default function CalculadoraRescisaoPage() {
       if (histError) throw histError;
 
       // 2. Integration with Desligamentos Table
-      const colabDesl = colaboradores.find((c) => c.nome_completo === form.nomeColaborador);
+      // Casar por NOME aqui registrava o desligamento na PESSOA ERRADA quando
+      // existem homônimos: `find` devolve o primeiro da lista, não o que o RH
+      // escolheu. Usa o id importado, e só cai no nome quando ele é único —
+      // nunca adivinha entre homônimos.
+      // O nome ainda tem de bater com o do colaborador importado: se o RH
+      // importou alguém e depois EDITOU o campo de nome, o id em memória já não
+      // corresponde a quem está na tela.
+      const colabPorId =
+        colaboradorSelecionado && colaboradorSelecionado.nome_completo === form.nomeColaborador
+          ? colaboradorSelecionado
+          : undefined;
+      const homonimos = colaboradores.filter((c) => c.nome_completo === form.nomeColaborador);
+      const colabDesl = colabPorId ?? (homonimos.length === 1 ? homonimos[0] : undefined);
+
+      if (form.dataDesligamento && !colabDesl && homonimos.length > 1 && mapTipoDesligamentoDB(form.tipo)) {
+        toast.info(
+          `Há ${homonimos.length} colaboradores com este nome. Importe a pessoa pelo seletor para registrar o desligamento.`
+        );
+      }
+
       if (form.dataDesligamento && colabDesl && mapTipoDesligamentoDB(form.tipo)) {
         const { error: deslError } = await supabase.from('desligamentos').insert(
           validateTablePayload(
@@ -318,7 +337,7 @@ export default function CalculadoraRescisaoPage() {
       setSaving(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [result, form, user]);
+  }, [result, form, user, colaboradorSelecionado, colaboradores]);
   const set = (k: keyof typeof form, v: string | boolean) => {
     // Qualquer edição nos inputs invalida o resultado exibido — mostrar o
     // cálculo velho ao lado dos dados novos já causou homologação errada.
@@ -462,6 +481,7 @@ export default function CalculadoraRescisaoPage() {
                   <Label className="font-body text-xs">Data Admissão</Label>
                   <Input
                     type="date"
+                    aria-label="Data Admissão"
                     value={form.dataAdmissao}
                     onChange={(e) => set('dataAdmissao', e.target.value)}
                     className="rounded-xl"
@@ -471,6 +491,7 @@ export default function CalculadoraRescisaoPage() {
                   <Label className="font-body text-xs">Data Desligamento</Label>
                   <Input
                     type="date"
+                    aria-label="Data Desligamento"
                     value={form.dataDesligamento}
                     onChange={(e) => set('dataDesligamento', e.target.value)}
                     className="rounded-xl"
