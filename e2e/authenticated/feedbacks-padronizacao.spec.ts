@@ -25,13 +25,26 @@ async function abrirFeedbacks(page: Page) {
   // A sessão E2E (`admin@teste.local`) tem papel único `admin`. Para exercitar a
   // fila do GESTOR sem tocar em permissões remotas, devolvemos a mesma conta com
   // `gestor` na leitura de papéis — exatamente o cenário admin+gestor.
-  await page.route('**/rest/v1/rpc/get_user_roles*', (rota) =>
-    rota.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(['admin', 'gestor']),
-    })
-  );
+    //
+      // IMPORTANTE: o `supabase.rpc` do app NÃO chama `/rest/v1/rpc/<fn>` direto (o
+      // roteador `external-db-bridge` intercepta e retorna ação rpc). Por isso o
+      // stub precisa casar com o PAYLOAD da bridge, não com a URL do REST clássico.
+      await page.route('**/functions/v1/external-db-bridge*', (rota) => {
+        let fn = '';
+        try {
+          fn = String((rota.request().postDataJSON() as { fn?: unknown } | null)?.fn ?? '');
+        } catch {
+          // corpo vazio / não-JSON — caminho sem fn, deixa seguir.
+        }
+        if (fn === 'get_user_roles') {
+          return rota.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({ data: ['admin', 'gestor'], error: null }),
+          });
+        }
+        return rota.continue();
+      });
   await page.goto('/avaliacao');
   await expect(page.getByRole('heading', { name: /Gestão de Desempenho/ })).toBeVisible();
   await page.getByRole('tab', { name: /Feedbacks/i }).click();

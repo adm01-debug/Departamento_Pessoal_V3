@@ -31,6 +31,7 @@ import { normalizarPapeis, capacidadesAvaliacao } from '@/components/avaliacao/p
 import { vinculosDemonstracao } from '@/components/avaliacao/servicoDemo';
 import { idDemonstrativo } from '@/components/avaliacao/escritaOperacional';
 import { impedimentoEdicaoFeedback } from '@/components/avaliacao/edicaoFeedback';
+import { MOCK_COLABORADORES } from '@/mocks/colaboradoresMock';
 import {
   CHAVE_REGISTROS_DEMO,
   aplicarEstadoDemo,
@@ -309,18 +310,24 @@ export default function AvaliacaoPage() {
       mesclar(getMockCompetencias(), () => avaliacaoService.listarCompetencias(empresaAtual!.id)),
     enabled: !!empresaAtual?.id || mockAtivo,
   });
+  // A key ['colaboradores', empresa] é COMPARTILHADA com Despesas e Movimentações
+  // (staleTime 5min). Só REAIS entram no cache: incluir `mock-*` vazaria IDs
+  // fictícios para telas reais. Os fictícios da demonstração ficam LOCAIS em
+  // `colaboradoresVisuais` (useMemo abaixo), que a UI consome para exibição.
   const { data: colaboradores = [] } = useQuery({
     queryKey: ['colaboradores', empresaAtual?.id],
-    // VISUAL: `mesclar` junta os fictícios da demonstração aos REAIS do banco,
-    // para que o formulário selecione colaborador/avaliador com IDs válidos.
-    // UMA chamada só: `colaboradorService.list(empresaId, _semMock)` ignora o
-    // segundo argumento (o `_` no nome denuncia) e delega sempre ao mesmo
-    // `listar`, então chamar duas vezes devolvia a lista repetida — cada pessoa
-    // aparecia duas vezes nos seletores de avaliado e avaliador, com duas
-    // leituras idênticas na bridge.
-    queryFn: () => mesclar(undefined, () => colaboradorService.list(empresaAtual!.id)),
+    queryFn: () => colaboradorService.list(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
+  /** Lista VISUAL da página: reais + fictícios da demonstração (local, sem poluir o cache compartilhado). */
+  const colaboradoresVisuais = useMemo(() => {
+    if (!mockAtivo) return colaboradores;
+    const idsReais = new Set(colaboradores.map((c) => String((c as { id?: unknown })?.id ?? '')));
+    return [
+      ...MOCK_COLABORADORES,
+      ...colaboradores.filter((c) => !idsReais.has(String((c as { id?: unknown })?.id ?? ''))),
+    ];
+  }, [mockAtivo, colaboradores]);
 
   /**
    * Opções dos FORMULÁRIOS. No modo real só entram UUIDs (a guarda de escrita
@@ -930,13 +937,13 @@ export default function AvaliacaoPage() {
             feedbackDe: (id) =>
               ((feedbacks ?? []) as Record<string, unknown>[]).find((f) => String(f?.id ?? '') === id) ?? null,
             feedbacks: (feedbacks ?? []) as Record<string, unknown>[],
-            colaboradoresIds: ((colaboradores ?? []) as { id?: unknown }[])
+            colaboradoresIds: ((colaboradoresVisuais ?? []) as { id?: unknown }[])
               .map((c) => String(c?.id ?? ''))
               .filter((id) => Boolean(id) && idDemonstrativo(id)),
             podeGerirAvaliacoes: podeExcluirCiclos,
           })
         : undefined,
-    [demoAtivo, user, feedbacks, colaboradores, podeExcluirCiclos]
+    [demoAtivo, user, feedbacks, colaboradoresVisuais, podeExcluirCiclos]
   );
   const { data: estadoDemo = estadoLocalVazio() } = useQuery<EstadoLocalDemo>({
     queryKey: [CHAVE_DEMO],
@@ -985,7 +992,7 @@ export default function AvaliacaoPage() {
     const demo = demoAtivo
       ? vinculosDemonstracao({
           usuarioId: user?.id ?? null,
-          colaboradoresIds: ((colaboradores ?? []) as { id?: unknown }[])
+          colaboradoresIds: ((colaboradoresVisuais ?? []) as { id?: unknown }[])
             .map((c) => String(c?.id ?? ''))
             .filter((id) => Boolean(id) && idDemonstrativo(id)),
         })
@@ -993,7 +1000,7 @@ export default function AvaliacaoPage() {
     const reais = vinculos ?? [];
     const idsReais = new Set(reais.map((v: { id?: unknown }) => String(v?.id ?? '')));
     return [...reais, ...demo.filter((v) => !idsReais.has(v.id))];
-  }, [demoAtivo, vinculos, user?.id, colaboradores]);
+  }, [demoAtivo, vinculos, user?.id, colaboradoresVisuais]);
   /** Encaminhamentos automáticos da vitrine (`chave → { em }`) — data do envio. */
   const encaminhamentosEfetivos = useMemo(() => {
     if (!demoAtivo) return {} as Record<string, { em?: string | null }>;
@@ -1374,7 +1381,7 @@ export default function AvaliacaoPage() {
               <MetasOKRsTab
                 metas={metas}
                 ciclos={ciclos}
-                colaboradores={colaboradores}
+                colaboradores={colaboradoresVisuais}
                 onAbrirCiclo={(cicloId) => {
                   setCicloSelecionadoId(cicloId);
                   setTab('ciclos');
@@ -1399,7 +1406,7 @@ export default function AvaliacaoPage() {
                 feedbacks={feedbacks}
                 ciclos={ciclos}
                 ciclo={cicloSelecionado}
-                colaboradores={colaboradores}
+                colaboradores={colaboradoresVisuais}
                 colaboradoresReais={colaboradoresReais}
                 ciclosReais={ciclosReais}
                 pdis={pdis}
@@ -1503,7 +1510,7 @@ export default function AvaliacaoPage() {
               </div>
               <PdiTab
                 pdis={pdis}
-                colaboradores={colaboradores}
+                colaboradores={colaboradoresVisuais}
                 onExcluir={(item) =>
                   setRegistroParaExcluir({
                     tipo: 'pdi',
@@ -1525,7 +1532,7 @@ export default function AvaliacaoPage() {
                 ciclos={ciclos}
                 cicloId={cicloSelecionado?.id ?? ''}
                 onCicloId={setCicloSelecionadoId}
-                colaboradores={colaboradores}
+                colaboradores={colaboradoresVisuais}
                 pdis={pdis}
                 /* Modo real (inerte com a flag desligada): a matriz passa a vir
                    da consolidação oficial sobre os feedbacks persistidos. */
@@ -1545,7 +1552,7 @@ export default function AvaliacaoPage() {
               {/* Aba redesenhada: filtros → chips por módulo → timeline agrupada
                   por dia. Mesma consulta de `audit_log`; `colaboradores` entra
                   apenas para resolver nome/cargo/foto do responsável. */}
-              <PerformanceAuditTimeline colaboradores={colaboradores} empresaId={empresaAtual?.id} />
+              <PerformanceAuditTimeline colaboradores={colaboradoresVisuais} empresaId={empresaAtual?.id} />
             </TabsContent>
           </Tabs>
           {/* TEMPORÁRIO (DEV/HOMOLOGAÇÃO): painel fora do layout aprovado,
@@ -1553,7 +1560,7 @@ export default function AvaliacaoPage() {
           <OrigemHomologacao
             visivel={tab === 'feedbacks'}
             feedbacks={feedbacks}
-            colaboradores={colaboradores}
+            colaboradores={colaboradoresVisuais}
             ciclos={ciclos}
             cicloId={cicloSelecionado?.id}
           />

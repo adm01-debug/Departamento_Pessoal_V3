@@ -137,7 +137,7 @@ export function useDocumentosAfastamento(afastamentoId?: string) {
  * Afastamentos recentes de um colaborador (Dossiê → Férias & Afastamentos).
  * Chave na família ['afastamentos'], que os writers da área já invalidam.
  */
-export function useAfastamentosRecentes(colaboradorId: string, dias: number = 60) {
+export function useAfastamentosRecentes(colaboradorId: string, dias = 60) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
     queryKey: ['afastamentos', 'recentes', colaboradorId, empresaAtual?.id, dias],
