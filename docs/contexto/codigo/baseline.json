@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c658c6abfdeccec4f27a00faaa4643868966280e",
+  "commit": "7189749d8577f552ecfa8a05d4f4a6f6c301cbe9",
   "branch": "main",
-  "data_commit": "2026-11-19T09:37:21-03:00",
+  "data_commit": "2026-11-19T10:39:42-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "7189749",
+    "data": "2026-11-19",
+    "assunto": "chore(auditoria): fecha o inventário de resgate — 6 lacunas reais, 6 descartes provados e o stash varrido (#739)"
+   },
    {
     "sha": "c658c6a",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "7320b38",
     "data": "2026-11-18",
     "assunto": "chore(auditoria): registra a varredura de branches, tags e ledger de 19/11 (#713)"
-   },
-   {
-    "sha": "b8db9e5",
-    "data": "2026-11-18",
-    "assunto": "fix(segurança): restringe whatsapp_config a admin/rh em produção e na tela (#710)"
    }
   ],
-  "arquivos_mudados_7d": 1147,
+  "arquivos_mudados_7d": 1144,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",

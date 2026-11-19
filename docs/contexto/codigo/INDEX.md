@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c658c6abfdeccec4f27a00faaa4643868966280e` (2026-11-19T09:37:21-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7189749d8577f552ecfa8a05d4f4a6f6c301cbe9` (2026-11-19T10:39:42-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27605 nós · 62269 arestas · 2396 comunidades · grafo do commit `c658c6ab`
-- comunidades maiores: useEmpresas (689), lucide-react (549), 20260831_corrected_public.sql (493), canonical_schema.sql (475), button.tsx (417), vitest (337), cn (285), contract.ts (189), DocumentosPessoaisCard.tsx (173), "public"."empresas" (159), training-image-generate/index.ts (158), "public"."colaboradores" (155)
+- 27613 nós · 62279 arestas · 2408 comunidades · grafo do commit `7189749d`
+- comunidades maiores: lucide-react (510), 20260831_corrected_public.sql (485), canonical_schema.sql (475), useEmpresas (441), button.tsx (438), App.tsx (356), cn (267), @tanstack/react-query (265), react (218), @testing-library/react (201), "public"."empresas" (159), services/index.ts (158)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-19 `7189749` chore(auditoria): fecha o inventário de resgate — 6 lacunas reais, 6 descartes provados e o stash varrido (#739)
 - 2026-11-19 `c658c6a` feat(rescisao): resgata a UX do import de colaborador da PR #546 (muri) (#738)
 - 2026-11-19 `732d46f` feat(auditoria): passa a gravar a trilha de onboarding, com empresa_id (#737)
 - 2026-11-19 `68f349c` fix(testes): congela a base de tempo do fixture de OnboardingParidade (#735)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `26629de` fix(consignado): teto do emprestimo vai de 35% para 30% (Lei 10.820 art. 1 §1) (#725)
 - 2026-11-19 `d327ab7` fix(banco): sidecar conferia substring do search_path, não nome de schema (#724)
 - 2026-11-19 `7ecf0c0` chore(banco): sidecar .verify.sql para as 4 migrations do lote que nao tinham (#720)
-- 2026-11-18 `9048fce` fix(empresas): empresa de abertura deixa de ser sorteada pela ordem do RPC (#723)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

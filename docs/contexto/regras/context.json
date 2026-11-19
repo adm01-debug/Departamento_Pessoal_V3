@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "c658c6abfdeccec4f27a00faaa4643868966280e",
+  "sha": "7189749d8577f552ecfa8a05d4f4a6f6c301cbe9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 12:38 UTC",
+  "generated_at": "2026-11-19 14:15 UTC",
   "files_total": 3656,
   "code_files": 3076,
   "code_lines": 487318
@@ -329646,10 +329646,19 @@
   }
  },
  "git": {
-  "sha": "c658c6abfdeccec4f27a00faaa4643868966280e",
+  "sha": "7189749d8577f552ecfa8a05d4f4a6f6c301cbe9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "7189749",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "chore(auditoria): fecha o inventário de resgate — 6 lacunas reais, 6 descartes provados e o stash varrido (#739)",
+    "files": [
+     "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md"
+    ]
+   },
    {
     "sha": "c658c6a",
     "date": "2026-11-19",
@@ -329954,16 +329963,6 @@
      "src/pages/__tests__/colaboradorPayload.test.ts",
      "src/pages/colaboradorPayload.ts"
     ]
-   },
-   {
-    "sha": "96ef3ed",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "feat(rescisão): a calculadora passa a LER o histórico que já gravava (#704)",
-    "files": [
-     "src/pages/CalculadoraRescisaoPage.tsx",
-     "src/pages/__tests__/CalculadoraRescisaoHistorico.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -329976,12 +329975,12 @@
     7
    ],
    [
-    "src/pages/CalculadoraRescisaoPage.tsx",
-    3
+    "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
+    4
    ],
    [
-    "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
-    3
+    "src/pages/CalculadoraRescisaoPage.tsx",
+    2
    ],
    [
     "src/utils/__tests__/rescisaoPDF.test.ts",
