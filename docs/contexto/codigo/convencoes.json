@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra(banco): inclui a 20261019235900 (dp_*) e a 20261119170000 (onboarding) no lote do canônico (#755)",
    "fix(onboarding): resgata a convergência do modelo legado, sem duplicar histórico (#747)",
    "infra(banco): versiona o DDL órfão da família dp_* (imutabilidade do log de auditoria) (#751)",
    "chore(autofix): eslint --fix nas regras seguras (pdiComum, useAfastamentos, colaboradoresMock) (#754)",
-   "fix(avaliacao): mescla MOCK_COLABORADORES no modo demo para destravar aprovacao de feedback (E2E :210) (#753)",
-   "fix(e2e): corrige fila de gestor no stub da bridge e lista so com Editar (#752)"
+   "fix(avaliacao): mescla MOCK_COLABORADORES no modo demo para destravar aprovacao de feedback (E2E :210) (#753)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "b2df382076dfcbce0a684428de5f8224dae78d7d",
+  "sha": "074c01e3837a6842943de8c996d6f6086b53299d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 20:13 UTC",
+  "generated_at": "2026-11-19 20:26 UTC",
   "files_total": 3674,
   "code_files": 3094,
   "code_lines": 492306
@@ -330960,10 +330960,19 @@
   }
  },
  "git": {
-  "sha": "b2df382076dfcbce0a684428de5f8224dae78d7d",
+  "sha": "074c01e3837a6842943de8c996d6f6086b53299d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "074c01e",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "infra(banco): inclui a 20261019235900 (dp_*) e a 20261119170000 (onboarding) no lote do canônico (#755)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml"
+    ]
+   },
    {
     "sha": "b2df382",
     "date": "2026-11-19",
@@ -331280,25 +331289,15 @@
      "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql",
      "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.verify.sql"
     ]
-   },
-   {
-    "sha": "d327ab7",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(banco): sidecar conferia substring do search_path, não nome de schema (#724)",
-    "files": [
-     "supabase/migrations/20260911190000_p0_hash_trigger_search_path.verify.sql",
-     "supabase/migrations/20261028220000_pagar_desligamento_transacional.verify.sql"
-    ]
    }
   ],
   "hot_files": [
    [
-    "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
-    5
+    ".github/workflows/canonical-migrations.yml",
+    6
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
+    "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
     5
    ],
    [
