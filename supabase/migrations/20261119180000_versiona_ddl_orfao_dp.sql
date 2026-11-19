@@ -6,7 +6,20 @@
 -- banco novo (preview, ambiente de teste, DR), onde hoje nada disso nasce.
 --
 -- ╔══════════════════════════════════════════════════════════════════════════╗
--- ║ POR QUE: hoje o replay da `main` NÃO TERMINA, por dois motivos           ║
+-- ║ ESCOPO, CORRIGIDO DEPOIS DE REVISÃO: esta migration NÃO destrava o       ║
+-- ║ replay por si só, e a primeira versão deste arquivo afirmava que sim.    ║
+-- ║ Ela é 20261119180000, ou seja roda DEPOIS dos dois arquivos que já       ║
+-- ║ dependem destes objetos — num banco zerado o replay aborta antes de      ║
+-- ║ chegar aqui. O que ela faz é tornar os objetos VERSIONADOS e             ║
+-- ║ reproduzíveis, e garantir a imutabilidade do log a partir do ponto em    ║
+-- ║ que roda. Consertar a ORDEM é decisão separada (renumerar para antes dos ║
+-- ║ dependentes, tornar os dependentes tolerantes, ou ativar o squash do     ║
+-- ║ baseline pelo Gate D do runbook) e envolve mexer em migration já         ║
+-- ║ aplicada — regra 8, fica para o dono.                                   ║
+-- ╚══════════════════════════════════════════════════════════════════════════╝
+--
+-- ╔══════════════════════════════════════════════════════════════════════════╗
+-- ║ OS DOIS PONTOS QUE HOJE ABORTAM O REPLAY, medidos                        ║
 -- ║ independentes, os dois medidos:                                          ║
 -- ║                                                                          ║
 -- ║  1. `20261115000000_revoke_dml_audit_log_anon_auth.sql:14-16` tem         ║
@@ -147,12 +160,17 @@ BEGIN
         v_nome, v_mes, (v_mes + interval '1 month')::date
       );
     END IF;
+    -- RLS em CADA partição, não só no pai: RLS do pai governa a consulta VIA
+    -- pai, mas consulta DIRETA a uma filha usa a RLS da filha. No canônico as
+    -- 9 relações têm RLS ligada, e o AGENTS.md §5 exige RLS em tabela nova.
+    EXECUTE format('ALTER TABLE public.%I ENABLE ROW LEVEL SECURITY', v_nome);
     v_mes := (v_mes + interval '1 month')::date;
   END LOOP;
 
   IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'dp_audit_log_default' AND relnamespace = 'public'::regnamespace) THEN
     CREATE TABLE public.dp_audit_log_default PARTITION OF public.dp_audit_log DEFAULT;
   END IF;
+  ALTER TABLE public.dp_audit_log_default ENABLE ROW LEVEL SECURITY;
 END
 $parts$;
 
@@ -166,6 +184,31 @@ CREATE INDEX IF NOT EXISTS dp_audit_log_request_idx ON public.dp_audit_log USING
 CREATE INDEX IF NOT EXISTS dp_audit_log_payload_gin ON public.dp_audit_log USING gin (payload) WHERE (payload IS NOT NULL);
 
 ALTER TABLE public.dp_audit_log ENABLE ROW LEVEL SECURITY;
+
+-- As 3 policies do canônico. Sem policy nenhuma, RLS ligada significa que
+-- NINGUÉM lê — e `20261115000000_revoke_dml_audit_log_anon_auth.sql:5,8`
+-- declara preservar "SELECT authenticated filtrado por actor_user_id
+-- (auth_own_events)". Versionar a RLS sem as policies deixaria um banco
+-- recriado contradizendo esse contrato.
+DROP POLICY IF EXISTS "auth_own_events" ON public.dp_audit_log;
+CREATE POLICY "auth_own_events" ON public.dp_audit_log
+  FOR SELECT TO authenticated
+  USING (actor_user_id = auth.uid());
+
+DROP POLICY IF EXISTS "service_role_insert_only" ON public.dp_audit_log;
+CREATE POLICY "service_role_insert_only" ON public.dp_audit_log
+  FOR INSERT TO service_role
+  WITH CHECK (true);
+
+DROP POLICY IF EXISTS "service_role_select" ON public.dp_audit_log;
+CREATE POLICY "service_role_select" ON public.dp_audit_log
+  FOR SELECT TO service_role
+  USING (true);
+
+-- GRANT MÍNIMO: só SELECT, só authenticated. A RLS filtra para o próprio
+-- evento. NÃO concede INSERT nem toca em anon — seria desfazer a
+-- 20261115000000, que revoga DML de anon/authenticated e ALL de anon.
+GRANT SELECT ON public.dp_audit_log TO authenticated;
 
 -- ============================================================
 -- 3. OS 3 TRIGGERS DE IMUTABILIDADE — o coração desta migration

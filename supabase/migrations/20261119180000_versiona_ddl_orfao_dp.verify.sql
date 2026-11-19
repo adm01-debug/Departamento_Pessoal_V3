@@ -108,6 +108,65 @@ WITH r AS (
 )
 SELECT CASE WHEN log AND ret THEN 'ok' ELSE 'FALHOU: RLS — dp_audit_log=' || log::text || ' dp_retention_policy=' || ret::text END FROM r;
 
+-- 7b. RLS em CADA partição, não só no pai. Consulta direta a uma filha usa a
+--     RLS da filha; no canônico as 9 relações têm RLS ligada.
+WITH f AS (
+  SELECT
+    count(*) AS total,
+    count(*) FILTER (WHERE c.relrowsecurity) AS com_rls
+  FROM pg_inherits i
+  JOIN pg_class c ON c.oid = i.inhrelid
+  WHERE i.inhparent = 'public.dp_audit_log'::regclass
+)
+SELECT CASE
+         WHEN total > 0 AND total = com_rls THEN 'ok'
+         ELSE 'FALHOU: ' || (total - com_rls) || ' de ' || total || ' particao(oes) sem RLS'
+       END
+FROM f;
+
+-- 7c. As 3 policies do canônico. RLS ligada SEM policy significa que ninguém
+--     lê — e a 20261115000000:5,8 declara preservar a leitura do próprio
+--     evento. Esta asserção impede versionar RLS sem o canal de leitura.
+WITH pol AS (
+  SELECT
+    count(*) FILTER (WHERE policyname = 'auth_own_events' AND cmd = 'SELECT') AS proprio,
+    count(*) FILTER (WHERE policyname = 'service_role_insert_only' AND cmd = 'INSERT') AS ins,
+    count(*) FILTER (WHERE policyname = 'service_role_select' AND cmd = 'SELECT') AS sel
+  FROM pg_policies
+  WHERE schemaname = 'public' AND tablename = 'dp_audit_log'
+)
+SELECT CASE
+         WHEN proprio = 1 AND ins = 1 AND sel = 1 THEN 'ok'
+         ELSE 'FALHOU: policies — auth_own_events=' || proprio || ' insert_only=' || ins || ' select=' || sel
+       END
+FROM pol;
+
+-- 7d. A policy do próprio evento filtra por auth.uid(), não é aberta.
+WITH q AS (
+  SELECT count(*) AS n
+  FROM pg_policies
+  WHERE schemaname = 'public' AND tablename = 'dp_audit_log'
+    AND policyname = 'auth_own_events'
+    AND qual LIKE '%actor_user_id%' AND qual LIKE '%uid()%'
+)
+SELECT CASE WHEN n = 1 THEN 'ok' ELSE 'FALHOU: auth_own_events nao filtra por actor_user_id = auth.uid()' END FROM q;
+
+-- 7e. authenticated tem SELECT e NAO tem INSERT/UPDATE/DELETE: a
+--     20261115000000 revoga DML de authenticated e preserva a leitura. Se esta
+--     migration tivesse concedido DML, teria desfeito aquela.
+WITH g AS (
+  SELECT
+    has_table_privilege('authenticated', 'public.dp_audit_log', 'SELECT') AS le,
+    (has_table_privilege('authenticated', 'public.dp_audit_log', 'INSERT')
+     OR has_table_privilege('authenticated', 'public.dp_audit_log', 'UPDATE')
+     OR has_table_privilege('authenticated', 'public.dp_audit_log', 'DELETE')) AS escreve
+)
+SELECT CASE
+         WHEN le AND NOT escreve THEN 'ok'
+         ELSE 'FALHOU: privilegio de authenticated — select=' || le::text || ' escrita=' || escreve::text
+       END
+FROM g;
+
 -- 8. O papel que 20261020120000 exige, e a herança do usuário de login.
 WITH p AS (
   SELECT
