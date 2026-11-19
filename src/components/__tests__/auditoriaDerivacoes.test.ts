@@ -133,7 +133,11 @@ describe('auditoriaDerivacoes', () => {
     // O limite era 23:59:59.000: evento às 23:59:59.500 do próprio dia
     // escolhido caía fora, e o filtro deixava de cobrir o dia que o usuário
     // pediu. Fixado em 23:59:59.999.
-    const fimDoDia = { ...EVENTOS[1], id: 'borda', data_hora: '2026-12-15T23:59:59.500Z' };
+    // SEM o "Z": `dataLimite` monta o limite em hora LOCAL, então o evento
+    // também precisa ser local para o caso valer em qualquer fuso. Com `Z` o
+    // teste passaria mesmo sem a correção em UTC-3 e falharia mesmo com ela em
+    // UTC+9 — provaria o fuso do runner, não o filtro.
+    const fimDoDia = { ...EVENTOS[1], id: 'borda', data_hora: '2026-12-15T23:59:59.500' };
     const ids = filtrarAuditoria([fimDoDia], comFiltro({ ate: '2026-12-15' }), HOJE).map((e) => e.id);
     expect(ids).toEqual(['borda']);
   });
