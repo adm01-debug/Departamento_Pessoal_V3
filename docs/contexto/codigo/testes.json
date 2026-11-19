@@ -358,7 +358,7 @@
   {
    "arquivo": "scripts/e2e/ensure-fixtures.mjs",
    "tipo": "e2e",
-   "linhas": 159,
+   "linhas": 235,
    "testa": [],
    "casos": 0
   },
@@ -3866,7 +3866,7 @@
   {
    "arquivo": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
    "tipo": "unit",
-   "linhas": 249,
+   "linhas": 252,
    "testa": [
     "src/components/recrutamento/PipelineBoard.tsx",
     "src/types/recrutamento.ts"

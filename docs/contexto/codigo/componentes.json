@@ -6141,7 +6141,7 @@
     "PipelineColumnProps"
    ],
    "export_default": null,
-   "linhas": 155,
+   "linhas": 175,
    "dominio": "components/recrutamento",
    "hooks_locais": [
     "useEntradaKanbanColuna"

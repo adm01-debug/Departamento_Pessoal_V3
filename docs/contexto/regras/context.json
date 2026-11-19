@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c60bf649a486d54050db45690744b3534f7e3228",
+  "sha": "23cd2e29477003c27fd6ba23deb68ebc4fafa9dc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 20:46 UTC",
+  "generated_at": "2026-11-19 21:27 UTC",
   "files_total": 3674,
   "code_files": 3094,
-  "code_lines": 492382
+  "code_lines": 492481
  },
  "version": "1.3.2",
- "facts_hash": "56832a2fd078521c",
+ "facts_hash": "733bf8d1f68e45c8",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -101949,12 +101949,14 @@
   {
    "module": "scripts",
    "files": 153,
-   "lines": 35015,
+   "lines": 35091,
    "tables": [
     "a",
     "anexos",
     "audit_log",
     "backups",
+    "candidatos",
+    "candidaturas",
     "colaboradores",
     "comentada_bloco",
     "comentada_jsx",
@@ -101983,7 +101985,8 @@
     "tools_runtime",
     "tx",
     "user_empresas",
-    "user_roles"
+    "user_roles",
+    "vagas"
    ],
    "exports": [
     "automation.mjs: parseArgs, validateConfig, execute, appendExclude, removeExclude, main",
@@ -102257,7 +102260,7 @@
   {
    "module": "src/components",
    "files": 999,
-   "lines": 184654,
+   "lines": 184677,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -104804,9 +104807,11 @@
    },
    "candidatos": {
     "select": [
+     "scripts/e2e/ensure-fixtures.mjs",
      "src/services/recrutamentoService.ts"
     ],
     "insert": [
+     "scripts/e2e/ensure-fixtures.mjs",
      "src/services/recrutamentoService.ts"
     ],
     "update": [
@@ -104818,9 +104823,11 @@
    },
    "candidaturas": {
     "select": [
+     "scripts/e2e/ensure-fixtures.mjs",
      "src/services/recrutamentoService.ts"
     ],
     "insert": [
+     "scripts/e2e/ensure-fixtures.mjs",
      "src/services/recrutamentoService.ts"
     ],
     "update": [
@@ -107495,9 +107502,11 @@
    },
    "vagas": {
     "select": [
+     "scripts/e2e/ensure-fixtures.mjs",
      "src/services/recrutamentoService.ts"
     ],
     "insert": [
+     "scripts/e2e/ensure-fixtures.mjs",
      "src/services/recrutamentoService.ts"
     ],
     "update": [
@@ -107932,12 +107941,15 @@
     "id"
    ],
    "candidatos": [
+    "cpf",
     "empresa_id",
     "id"
    ],
    "candidaturas": [
+    "candidato_id",
     "empresa_id",
-    "id"
+    "id",
+    "vaga_id"
    ],
    "cargos": [
     "cbo",
@@ -109105,7 +109117,8 @@
    ],
    "vagas": [
     "empresa_id",
-    "id"
+    "id",
+    "titulo"
    ],
    "vales_alimentacao": [
     "ativo",
@@ -182698,7 +182711,7 @@
    },
    {
     "file": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
-    "name": "não oferece inscrição pela coluna: o rodapé só existe em Contratado"
+    "name": "mantém rodapé em todas as colunas (mesma anatomia de Admissão), sem botão de fachada"
    },
    {
     "file": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
@@ -263808,7 +263821,7 @@
   },
   "scripts/e2e/ensure-fixtures.mjs": {
    "path": "scripts/e2e/ensure-fixtures.mjs",
-   "lines": 159,
+   "lines": 235,
    "is_test": true,
    "tables": [
     {
@@ -263842,6 +263855,30 @@
     {
      "table": "configuracoes_ponto",
      "op": "insert"
+    },
+    {
+     "table": "candidatos",
+     "op": "select"
+    },
+    {
+     "table": "candidatos",
+     "op": "insert,select"
+    },
+    {
+     "table": "vagas",
+     "op": "select"
+    },
+    {
+     "table": "vagas",
+     "op": "insert,select"
+    },
+    {
+     "table": "candidaturas",
+     "op": "select"
+    },
+    {
+     "table": "candidaturas",
+     "op": "insert"
     }
    ],
    "table_cols": {
@@ -263861,6 +263898,21 @@
     "configuracoes_ponto": [
      "empresa_id",
      "id"
+    ],
+    "candidatos": [
+     "cpf",
+     "empresa_id",
+     "id"
+    ],
+    "vagas": [
+     "empresa_id",
+     "id",
+     "titulo"
+    ],
+    "candidaturas": [
+     "candidato_id",
+     "id",
+     "vaga_id"
     ]
    },
    "env": [
@@ -263875,6 +263927,9 @@
      "name": "SEED_EMPRESA_CNPJ",
      "value": "'00000000000191'"
     }
+   ],
+   "rule_comments": [
+    "aba Pipeline na vaga de maior id e precisa de, no minimo, 1 vaga + cards em"
    ],
    "doc": "!/usr/bin/env node",
    "uses_service_role": true
@@ -286351,7 +286406,7 @@
   },
   "src/components/recrutamento/PipelineColumn.tsx": {
    "path": "src/components/recrutamento/PipelineColumn.tsx",
-   "lines": 155,
+   "lines": 175,
    "exports": [
     "interface PipelineColumnProps",
     "function PipelineColumn"
@@ -286891,7 +286946,7 @@
   },
   "src/components/recrutamento/__tests__/PipelineBoard.test.tsx": {
    "path": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
-   "lines": 249,
+   "lines": 252,
    "is_test": true,
    "errors": [
     ")).toHaveTextContent("
@@ -286902,7 +286957,7 @@
     "abre o dossiê pelo card e pelo menu de ações",
     "move a etapa pelo menu do card sem perder as opções",
     "contata o candidato pelo menu de ações",
-    "não oferece inscrição pela coluna: o rodapé só existe em Contratado",
+    "mantém rodapé em todas as colunas (mesma anatomia de Admissão), sem botão de fachada",
     "coloca o vocabulário REAL do banco na coluna certa (teste_tecnico / contratacao)",
     "declara no rodapé a candidatura fora das etapas monitoradas, sem descartá-la",
     "mostra a falha de leitura ANTES de qualquer coluna, contagem ou ",
@@ -330960,10 +331015,21 @@
   }
  },
  "git": {
-  "sha": "c60bf649a486d54050db45690744b3534f7e3228",
+  "sha": "23cd2e29477003c27fd6ba23deb68ebc4fafa9dc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "23cd2e2",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix(e2e): corrige as 2 falhas do pipeline de recrutamento na main (#757)",
+    "files": [
+     "scripts/e2e/ensure-fixtures.mjs",
+     "src/components/recrutamento/PipelineColumn.tsx",
+     "src/components/recrutamento/__tests__/PipelineBoard.test.tsx"
+    ]
+   },
    {
     "sha": "c60bf64",
     "date": "2026-11-19",
@@ -331273,17 +331339,6 @@
     "files": [
      "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md"
     ]
-   },
-   {
-    "sha": "b027ad2",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "feat(rescisao): carimba procedencia do calculo na tela e no TRCT (#727)",
-    "files": [
-     "src/pages/CalculadoraRescisaoPage.tsx",
-     "src/utils/__tests__/rescisaoPDF.test.ts",
-     "src/utils/rescisaoPDF.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -331296,12 +331351,12 @@
     5
    ],
    [
-    "src/pages/CalculadoraRescisaoPage.tsx",
+    "scripts/canonical-invariants.sql",
     4
    ],
    [
-    "scripts/canonical-invariants.sql",
-    4
+    "src/pages/CalculadoraRescisaoPage.tsx",
+    3
    ],
    [
     "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
@@ -331336,12 +331391,16 @@
     2
    ],
    [
-    "src/utils/__tests__/rescisaoPDF.test.ts",
-    2
+    "scripts/e2e/ensure-fixtures.mjs",
+    1
    ],
    [
-    "src/utils/rescisaoPDF.ts",
-    2
+    "src/components/recrutamento/PipelineColumn.tsx",
+    1
+   ],
+   [
+    "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
+    1
    ],
    [
     "supabase/migrations/20261119170000_onboarding_converge_modelo_b.sql",
@@ -331361,10 +331420,6 @@
    ],
    [
     "src/hooks/useAfastamentos.ts",
-    1
-   ],
-   [
-    "src/mocks/colaboradoresMock.ts",
     1
    ]
   ]

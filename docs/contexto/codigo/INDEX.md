@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c60bf649a486d54050db45690744b3534f7e3228` (2026-11-19T17:45:42-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `23cd2e29477003c27fd6ba23deb68ebc4fafa9dc` (2026-11-19T18:26:28-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3661 |
 | arquivos_codigo | 2118 |
-| linhas_codigo | 422559 |
+| linhas_codigo | 422658 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -396,7 +396,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27753 nós · 62650 arestas · 2397 comunidades · grafo do commit `c60bf649`
+- 27753 nós · 62650 arestas · 2397 comunidades · grafo do commit `23cd2e29`
 - comunidades maiores: lucide-react (510), 20260831_corrected_public.sql (493), useEmpresas (482), canonical_schema.sql (481), button.tsx (478), client.ts (425), vitest (310), cn (302), contract.ts (185), FeedbackAcoesRodape.tsx (176), "public"."empresas" (164), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -415,8 +415,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - src/pages/CalculadoraRescisaoPage.tsx (7)
 - src/pages/ColaboradoresPage.tsx (7)
 - docs/auditoria/VEREDITO_MURI_2026-11-17.md (6)
-- scripts/automation.config.json (6)
 - src/components/colaborador-detalhes/index.ts (6)
+- src/index.css (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-19 `23cd2e2` fix(e2e): corrige as 2 falhas do pipeline de recrutamento na main (#757)
 - 2026-11-19 `c60bf64` fix(onboarding): ancora assercoes do verify na admissao de destino (#756)
 - 2026-11-19 `074c01e` infra(banco): inclui a 20261019235900 (dp_*) e a 20261119170000 (onboarding) no lote do canônico (#755)
 - 2026-11-19 `b2df382` fix(onboarding): resgata a convergência do modelo legado, sem duplicar histórico (#747)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `ddcecda` fix: remove folhas_gestor_update da 120000 para nao quebrar pos-condicao da 130000 (#745)
 - 2026-11-19 `efcfc1d` feat(ui): resgata os 2 resíduos visuais da PR #546 (muri) (#744)
 - 2026-11-19 `a9ea057` feat(dashboard): variacao do quadro de pessoal no mes (#743)
-- 2026-11-19 `36e144e` fix(ferias/folhas): policy UPDATE gestor (pode_gerir_pessoas) em ferias e folhas_pagamento (#726)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

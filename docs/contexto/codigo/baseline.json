@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c60bf649a486d54050db45690744b3534f7e3228",
+  "commit": "23cd2e29477003c27fd6ba23deb68ebc4fafa9dc",
   "branch": "main",
-  "data_commit": "2026-11-19T17:45:42-03:00",
+  "data_commit": "2026-11-19T18:26:28-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "23cd2e2",
+    "data": "2026-11-19",
+    "assunto": "fix(e2e): corrige as 2 falhas do pipeline de recrutamento na main (#757)"
+   },
    {
     "sha": "c60bf64",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "634058e",
     "data": "2026-11-19",
     "assunto": "chore(auditoria): torna reproduzivel a medicao do resgate da muri (#734)"
-   },
-   {
-    "sha": "367ed1f",
-    "data": "2026-11-19",
-    "assunto": "fix(seguranca): gestor nao pode forjar a aprovacao do RH nas ferias (#733)"
    }
   ],
-  "arquivos_mudados_7d": 1096,
+  "arquivos_mudados_7d": 1097,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -173,7 +173,7 @@
    },
    {
     "pasta": "src/components/recrutamento",
-    "mudancas": 41
+    "mudancas": 43
    },
    {
     "pasta": "src/components/dashboard",
@@ -250,10 +250,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "scripts/automation.config.json",
-    "mudancas": 6
-   },
-   {
     "arquivo": "src/components/colaborador-detalhes/index.ts",
     "mudancas": 6
    },
@@ -271,6 +267,10 @@
    },
    {
     "arquivo": "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "scripts/automation.config.json",
     "mudancas": 5
    },
    {
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3661,
   "arquivos_codigo": 2118,
-  "linhas_codigo": 422559,
+  "linhas_codigo": 422658,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -504,7 +504,7 @@
   },
   "scripts/e2e": {
    "arquivos": 3,
-   "linhas": 648
+   "linhas": 724
   },
   "scripts/eslint-tests-any.config.mjs": {
    "arquivos": 1,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 999,
-   "linhas": 184654
+   "linhas": 184677
   },
   "src/constants": {
    "arquivos": 7,
