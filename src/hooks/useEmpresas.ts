@@ -51,6 +51,19 @@ export interface Empresa {
 /** Modo de visualização dos dados de empresa. */
 export type EmpresaModo = 'consolidado' | 'empresa_unica';
 
+/**
+ * Ordem de exibição do grupo: `ordem_exibicao` crescente, nulos no fim, empate
+ * resolvido pelo nome. Mesmo critério do `.order()` em `useGrupo.ts`, aplicado
+ * aqui em memória porque a escolha da empresa de abertura cruza duas consultas
+ * (empresas × vínculos do usuário).
+ */
+export function compararOrdemExibicao(a: Empresa, b: Empresa): number {
+  const ordemA = a.ordem_exibicao ?? Number.MAX_SAFE_INTEGER;
+  const ordemB = b.ordem_exibicao ?? Number.MAX_SAFE_INTEGER;
+  if (ordemA !== ordemB) return ordemA - ordemB;
+  return a.razao_social.localeCompare(b.razao_social, 'pt-BR');
+}
+
 export interface UserEmpresa {
   id: string;
   user_id: string;
@@ -186,13 +199,26 @@ export function useEmpresas(): UseEmpresasReturn {
   const empresaDefault = todasEmpresas?.find((e) => e.id === empresaDefaultVinculo?.empresa_id);
 
   // Determinamos a empresa "efetiva" (prioridade: Seleção atual > Padrão > Primeira da lista vinculada > Primeira da lista global)
-  const empresaPrimeiraVinculada = todasEmpresas?.find(
-    (e) => userEmpresas && userEmpresas[0] && e.id === userEmpresas[0].empresa_id
-  );
+  //
+  // A versão anterior usava `userEmpresas[0]`, isto é, a ordem em que o RPC
+  // get_my_user_empresas devolveu os vínculos — e esse RPC não tem ORDER BY.
+  // Para quem está vinculado a mais de uma empresa SEM `is_default` (há contas
+  // assim no canônico), a empresa de abertura mudava de login para login. Aqui
+  // a escolha passa pelo mesmo critério de ordenação que `useGrupo.ts` usa na
+  // lista de empresas do grupo: `ordem_exibicao` crescente, nulos no fim,
+  // empate pelo nome. Assim a abertura é sempre a mesma e o dono controla qual
+  // é, pelo campo que já existe para isso.
+  const empresaPrimeiraVinculada = todasEmpresas
+    ?.filter((e) => userEmpresas?.some((ue) => ue.empresa_id === e.id))
+    .sort(compararOrdemExibicao)[0];
   const empresaPrimeiraGlobal = todasEmpresas?.[0];
   const empresaEfetiva = empresaAtualData || empresaDefault || empresaPrimeiraVinculada || empresaPrimeiraGlobal;
 
-  const primeiraEmpresaId = userEmpresas?.[0]?.empresa_id ?? null;
+  // Mesmo motivo de `empresaPrimeiraVinculada`: este id é GRAVADO no store
+  // abaixo, então pegar `userEmpresas[0]` persistia a empresa sorteada pelo
+  // RPC. O `??` final mantém o gatilho de pé no caso em que há vínculo mas as
+  // empresas não vieram (RLS devolveu lista vazia) — aí não há o que escolher.
+  const primeiraEmpresaId = empresaPrimeiraVinculada?.id ?? userEmpresas?.[0]?.empresa_id ?? null;
   useEffect(() => {
     // Sincroniza o ID no store apenas se houver uma empresa disponível e NENHUMA seleção ativa
     if (primeiraEmpresaId && !empresaAtualId) {
