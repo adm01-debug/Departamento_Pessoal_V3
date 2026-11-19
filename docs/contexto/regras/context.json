@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "efcfc1daa69c1103cd2bfa49ff1a9d011ae72dcb",
+  "sha": "ddcecda891ea17891b42b0ee41ae7da92a1de0d1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 14:56 UTC",
+  "generated_at": "2026-11-19 15:20 UTC",
   "files_total": 3663,
   "code_files": 3083,
-  "code_lines": 488209
+  "code_lines": 488230
  },
  "version": "1.3.2",
- "facts_hash": "6aef68bdb2a27fbb",
+ "facts_hash": "387e3995aaa91ea1",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -50563,16 +50563,6 @@
     "using": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
     "check": "bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
     "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
-   },
-   {
-    "name": "folhas_gestor_update",
-    "table": "folhas_pagamento",
-    "cmd": "UPDATE",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "public.pode_gerir_pessoas(empresa_id)",
-    "check": "public.pode_gerir_pessoas(empresa_id)",
-    "src": "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql"
    },
    {
     "name": "ferias_gestor_update",
@@ -104073,7 +104063,7 @@
   {
    "module": "supabase/migrations",
    "files": 900,
-   "lines": 81354,
+   "lines": 81375,
    "tables": [
     "profiles",
     "user_roles"
@@ -212346,16 +212336,6 @@
     "src": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql"
    },
    {
-    "name": "folhas_gestor_update",
-    "table": "folhas_pagamento",
-    "cmd": "UPDATE",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "public.pode_gerir_pessoas(empresa_id)",
-    "check": "public.pode_gerir_pessoas(empresa_id)",
-    "src": "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql"
-   },
-   {
     "name": "ferias_gestor_update",
     "table": "ferias",
     "cmd": "UPDATE",
@@ -237252,7 +237232,6 @@
      "authenticated: public.rls_tenant_or_admin(empresa_id)",
      "authenticated: empresa_id = public.get_auth_empresa_id()",
      "authenticated: public.pode_gerir_rh(empresa_id)",
-     "authenticated: public.pode_gerir_pessoas(empresa_id)",
      "authenticated: public.pode_gerir_rh(empresa_id)"
     ],
     "DELETE": [
@@ -329556,7 +329535,7 @@
   },
   "supabase/migrations/20261119120000_ferias_folhas_gestor_update.verify.sql": {
    "path": "supabase/migrations/20261119120000_ferias_folhas_gestor_update.verify.sql",
-   "lines": 10
+   "lines": 31
   },
   "supabase/migrations/20261119130000_ferias_gestor_update.sql": {
    "path": "supabase/migrations/20261119130000_ferias_gestor_update.sql",
@@ -329910,10 +329889,20 @@
   }
  },
  "git": {
-  "sha": "efcfc1daa69c1103cd2bfa49ff1a9d011ae72dcb",
+  "sha": "ddcecda891ea17891b42b0ee41ae7da92a1de0d1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "ddcecda",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix: remove folhas_gestor_update da 120000 para nao quebrar pos-condicao da 130000 (#745)",
+    "files": [
+     "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
+     "supabase/migrations/20261119120000_ferias_folhas_gestor_update.verify.sql"
+    ]
+   },
    {
     "sha": "efcfc1d",
     "date": "2026-11-19",
@@ -330219,16 +330208,6 @@
      ".github/workflows/canonical-migrations.yml",
      "scripts/canonical-invariants.sql"
     ]
-   },
-   {
-    "sha": "bdf533e",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "fix(consignado): aplica a margem de 35% no banco, fechando o desvio pela tela (#711)",
-    "files": [
-     "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
-     "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -330251,6 +330230,14 @@
    [
     "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
     3
+   ],
+   [
+    "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
+    2
+   ],
+   [
+    "supabase/migrations/20261119120000_ferias_folhas_gestor_update.verify.sql",
+    2
    ],
    [
     "src/utils/__tests__/rescisaoPDF.test.ts",
@@ -330298,14 +330285,6 @@
    ],
    [
     "src/pages/DashboardExecutivoPage.tsx",
-    1
-   ],
-   [
-    "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261119120000_ferias_folhas_gestor_update.verify.sql",
     1
    ],
    [

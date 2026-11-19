@@ -32068,12 +32068,6 @@
      "tipo": "permissive"
     },
     {
-     "nome": "folhas_gestor_update",
-     "comando": "update",
-     "para": "authenticated",
-     "tipo": "permissive"
-    },
-    {
      "nome": "folhas_pagamento_tenant",
      "comando": "all",
      "para": "authenticated",

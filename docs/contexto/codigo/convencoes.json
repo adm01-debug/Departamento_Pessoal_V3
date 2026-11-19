@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: remove folhas_gestor_update da 120000 para nao quebrar pos-condicao da 130000 (#745)",
    "feat(ui): resgata os 2 resíduos visuais da PR #546 (muri) (#744)",
    "feat(dashboard): variacao do quadro de pessoal no mes (#743)",
    "fix(ferias/folhas): policy UPDATE gestor (pode_gerir_pessoas) em ferias e folhas_pagamento (#726)",
-   "feat(auditoria): trilha ganha empresa_id e leitura por empresa para o RH (passo 2 de 3) (#742)",
-   "fix(colaboradores): status \"Desligado\" nao salvava e telefone fixo era inalcancavel (#741)"
+   "feat(auditoria): trilha ganha empresa_id e leitura por empresa para o RH (passo 2 de 3) (#742)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
