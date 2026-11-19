@@ -2,6 +2,15 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-19 01:14 UTC
+
+- **functions** adicionado (1): `public.fn_consignado_valida_margem()`
+- **lints** removido (1): `policy_auth_fn_not_wrapped:public.whatsapp_config.Empresas gerenciam seu próprio WhatsApp`
+- **policies (RLS)** adicionado (1): `public.whatsapp_config.whatsapp_config_admin_rh`
+- **policies (RLS)** removido (1): `public.whatsapp_config.Empresas gerenciam seu próprio WhatsApp`
+- **tabelas** alterado (1): `public.ninebox_permissoes_homologacao`
+- **triggers** adicionado (1): `public.emprestimos_consignados.trg_consignado_valida_margem`
+
 ## 2026-11-19 00:39 UTC
 
 - **functions** alterado (3): `public.is_admin(_user_id uuid)`, `public.pode_gerir_rh(_empresa_id uuid)`, `public.pode_gerir_rh_para(_user_id uuid, _empresa_id uuid)`

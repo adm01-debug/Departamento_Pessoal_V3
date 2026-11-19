@@ -73,6 +73,7 @@
 
 | nome | timing | eventos | nível | status | função |
 |---|---|---|---|---|---|
+| trg_consignado_valida_margem | BEFORE | INSERT OR UPDATE | ROW | enabled | public.fn_consignado_valida_margem |
 | update_emprestimos_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 
 

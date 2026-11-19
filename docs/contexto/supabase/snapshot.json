@@ -94432,6 +94432,47 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.verify.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.emprestimos_consignados.trg_consignado_valida_margem"
+          ],
+          "views": []
+        },
+        "comment": "Aplica a margem consignável de 35% do salario_base em emprestimos_consignados, independente do caminho de escrita (tela, edge, MCP).",
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "5f6a8fb750a9367a",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "fn_consignado_valida_margem",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
               "file": "supabase/migrations/20260317003325_e3edf2b8-4ed4-4e91-9c04-9fc96d5cab81.sql",
               "hits": 1
             },
@@ -138699,12 +138740,6 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.whatsapp_config.Empresas gerenciam seu próprio WhatsApp",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.whatsapp_mensagens_logs.Gestores veem logs de mensagens WhatsApp",
         "severity": "BAIXA"
       },
@@ -146393,15 +146428,15 @@
       },
       {
         "cmd": "ALL",
-        "name": "Empresas gerenciam seu próprio WhatsApp",
+        "name": "whatsapp_config_admin_rh",
         "permissive": "PERMISSIVE",
         "roles": [
-          "public"
+          "authenticated"
         ],
         "schema": "public",
         "table": "whatsapp_config",
-        "using": "(auth.uid() IN ( SELECT user_empresas.user_id\n   FROM user_empresas\n  WHERE (user_empresas.empresa_id = whatsapp_config.empresa_id)))",
-        "with_check": null
+        "using": "pode_gerir_rh(empresa_id)",
+        "with_check": "pode_gerir_rh(empresa_id)"
       },
       {
         "cmd": "SELECT",
@@ -150877,7 +150912,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Excecao de homologacao do 9-box: quem, fora da regra padrao, pode aprovar avaliacao de colaborador, com validade por expira_em. Lida apenas por funcoes SECURITY DEFINER (pode_aprovar_colaborador). RLS habilitada sem policies e intencional: zero acesso via API.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -155397,6 +155432,17 @@
         "schema": "public",
         "status": "enabled",
         "table": "empresas",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_consignado_valida_margem BEFORE INSERT OR UPDATE ON emprestimos_consignados FOR EACH ROW EXECUTE FUNCTION fn_consignado_valida_margem()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.fn_consignado_valida_margem",
+        "level": "ROW",
+        "name": "trg_consignado_valida_margem",
+        "schema": "public",
+        "status": "enabled",
+        "table": "emprestimos_consignados",
         "timing": "BEFORE"
       },
       {

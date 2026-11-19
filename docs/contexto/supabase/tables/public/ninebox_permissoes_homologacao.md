@@ -1,5 +1,7 @@
 # public.ninebox_permissoes_homologacao
 
+> Excecao de homologacao do 9-box: quem, fora da regra padrao, pode aprovar avaliacao de colaborador, com validade por expira_em. Lida apenas por funcoes SECURITY DEFINER (pode_aprovar_colaborador). RLS habilitada sem policies e intencional: zero acesso via API.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |

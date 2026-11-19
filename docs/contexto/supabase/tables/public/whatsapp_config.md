@@ -48,15 +48,15 @@
 
 ## Policies (RLS)
 
-### `Empresas gerenciam seu próprio WhatsApp`
+### `whatsapp_config_admin_rh`
 
 | campo | valor |
 |---|---|
 | comando | ALL |
 | tipo | PERMISSIVE |
-| roles | public |
-| USING | `(auth.uid() IN ( SELECT user_empresas.user_id    FROM user_empresas   WHERE (user_empresas.empresa_id = whatsapp_config.empresa_id)))` |
-| WITH CHECK |  |
+| roles | authenticated |
+| USING | `pode_gerir_rh(empresa_id)` |
+| WITH CHECK | `pode_gerir_rh(empresa_id)` |
 
 
 ## Triggers

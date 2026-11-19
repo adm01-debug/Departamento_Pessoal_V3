@@ -230,7 +230,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.metricas_processamento](tables/public/metricas_processamento.md) | table | sim | 2 | 5 | não |  |
 | [public.motivos_afastamento](tables/public/motivos_afastamento.md) | table | sim | 1 | 4 | não |  |
 | [public.nacionalidades](tables/public/nacionalidades.md) | table | sim | 1 | 4 | não |  |
-| [public.ninebox_permissoes_homologacao](tables/public/ninebox_permissoes_homologacao.md) | table | sim | 0 | 4 | não |  |
+| [public.ninebox_permissoes_homologacao](tables/public/ninebox_permissoes_homologacao.md) | table | sim | 0 | 4 | não | Excecao de homologacao do 9-box: quem, fora da regra padrao, pode aprovar avaliacao de colaborador, com validade por expira_em. Lida apenas por funcoes SECURITY DEFINER (pode_aprovar_colaborador). RLS habilitada sem policies e intencional: zero acesso via API. |
 | [public.notificacoes](tables/public/notificacoes.md) | table | sim | 4 | 12 | não |  |
 | [public.notificacoes_admissao](tables/public/notificacoes_admissao.md) | table | sim | 1 | 9 | não |  |
 | [public.onboarding_colaborador](tables/public/onboarding_colaborador.md) | table | sim | 1 | 11 | não |  |
