@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "72514eb788df124c6ea3a704a8c32a0c1cf2caf2",
+  "sha": "7086dc94a6754a9b581a5418883b1104c2457d21",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 00:42 UTC",
+  "generated_at": "2026-11-19 01:06 UTC",
   "files_total": 3639,
   "code_files": 3060,
-  "code_lines": 485653
+  "code_lines": 485661
  },
  "version": "1.3.2",
- "facts_hash": "d445cbd194619fbc",
+ "facts_hash": "dc95b4dc5ecd1b4d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -101659,7 +101659,7 @@
   {
    "module": "scripts",
    "files": 153,
-   "lines": 35017,
+   "lines": 35025,
    "tables": [
     "a",
     "anexos",
@@ -261120,7 +261120,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 450,
+   "lines": 458,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -329107,10 +329107,20 @@
   }
  },
  "git": {
-  "sha": "72514eb788df124c6ea3a704a8c32a0c1cf2caf2",
+  "sha": "7086dc94a6754a9b581a5418883b1104c2457d21",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "7086dc9",
+    "date": "2026-11-18",
+    "author": "adm01-debug",
+    "subject": "chore(banco): registra no ledger as 11 migrations em vigor, excluindo as 2 que reverteriam produção (#716)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql"
+    ]
+   },
    {
     "sha": "72514eb",
     "date": "2026-11-18",
@@ -329418,15 +329428,6 @@
     "files": [
      "scripts/audit-migration-style.mjs"
     ]
-   },
-   {
-    "sha": "1512a40",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "fix: corrige a faixa de PRs da secao 7b, derrubada por aritmetica do revisor (#685)",
-    "files": [
-     "docs/auditoria/VEREDITO_MURI_2026-11-17.md"
-    ]
    }
   ],
   "hot_files": [
@@ -329436,11 +329437,11 @@
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    5
+    6
    ],
    [
     "scripts/canonical-invariants.sql",
-    2
+    3
    ],
    [
     "src/components/__tests__/AnalyticsSection.test.tsx",

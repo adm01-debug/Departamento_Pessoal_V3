@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `72514eb788df124c6ea3a704a8c32a0c1cf2caf2` (2026-11-18T21:35:11-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7086dc94a6754a9b581a5418883b1104c2457d21` (2026-11-18T21:59:18-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -396,21 +396,21 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27544 nós · 62165 arestas · 2394 comunidades · grafo do commit `72514eb7`
+- 27544 nós · 62165 arestas · 2394 comunidades · grafo do commit `7086dc94`
 - comunidades maiores: 20260831_corrected_public.sql (485), canonical_schema.sql (475), useEmpresas (448), lucide-react (406), @tanstack/react-query (379), button.tsx (353), App.tsx (344), vitest (311), treinamentosDerivacoes.ts (168), "public"."empresas" (159), "public"."empresas" (158), react (157)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
+- .github/workflows/canonical-migrations.yml (23)
 - inventario/estado/rotas.json (23)
-- .github/workflows/canonical-migrations.yml (22)
 - package.json (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
+- scripts/canonical-invariants.sql (10)
 - scripts/sync/autocommit-local.sh (10)
 - docs/prod-readiness.md (9)
 - package-lock.json (9)
-- scripts/canonical-invariants.sql (9)
 - scripts/automation.config.json (8)
 - src/pages/ColaboradoresPage.tsx (8)
 - docs/auditoria/sql-preservado/README.md (7)
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-18 `7086dc9` chore(banco): registra no ledger as 11 migrations em vigor, excluindo as 2 que reverteriam produção (#716)
 - 2026-11-18 `72514eb` infra(banco): substitui a lista do lote canônico pelas 3 migrations pendentes (#712)
 - 2026-11-18 `bdf533e` fix(consignado): aplica a margem de 35% no banco, fechando o desvio pela tela (#711)
 - 2026-11-18 `7320b38` chore(auditoria): registra a varredura de branches, tags e ledger de 19/11 (#713)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-18 `07742aa` fix(scripts): build-rebaseline diz qual arquivo de entrada falta (#706)
 - 2026-11-18 `72d1d6b` docs(auditoria): registro da reauditoria dos descartes (#703)
 - 2026-11-18 `6d44dd4` fix(colaboradores): filtro de status oferecia valor inexistente no enum + 21 testes da muri (#701)
-- 2026-11-18 `c328119` feat(contas-bancarias): resgata identidade visual de banco da muri (#699)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(banco): registra no ledger as 11 migrations em vigor, excluindo as 2 que reverteriam produção (#716)",
    "infra(banco): substitui a lista do lote canônico pelas 3 migrations pendentes (#712)",
    "fix(consignado): aplica a margem de 35% no banco, fechando o desvio pela tela (#711)",
    "chore(auditoria): registra a varredura de branches, tags e ledger de 19/11 (#713)",
-   "fix(segurança): restringe whatsapp_config a admin/rh em produção e na tela (#710)",
-   "infra(banco): versiona ninebox_permissoes_homologacao, que existia só em produção (#708)"
+   "fix(segurança): restringe whatsapp_config a admin/rh em produção e na tela (#710)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

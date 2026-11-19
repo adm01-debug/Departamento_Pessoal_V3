@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "72514eb788df124c6ea3a704a8c32a0c1cf2caf2",
+  "commit": "7086dc94a6754a9b581a5418883b1104c2457d21",
   "branch": "main",
-  "data_commit": "2026-11-18T21:35:11-03:00",
+  "data_commit": "2026-11-18T21:59:18-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "7086dc9",
+    "data": "2026-11-18",
+    "assunto": "chore(banco): registra no ledger as 11 migrations em vigor, excluindo as 2 que reverteriam produção (#716)"
+   },
    {
     "sha": "72514eb",
     "data": "2026-11-18",
@@ -126,11 +131,6 @@
     "sha": "b74d4c2",
     "data": "2026-11-18",
     "assunto": "chore: fecha 2 dos 3 casos sem veredito e sobe o risco de policy public (#691)"
-   },
-   {
-    "sha": "1025265",
-    "data": "2026-11-18",
-    "assunto": "fix: retrata o Lote 1 - nao era funcionalidade morta, era falta de consumidor (#690)"
    }
   ],
   "arquivos_mudados_7d": 1146,
@@ -198,12 +198,12 @@
   ],
   "arquivos_mais_mudados_90d": [
    {
-    "arquivo": "inventario/estado/rotas.json",
+    "arquivo": ".github/workflows/canonical-migrations.yml",
     "mudancas": 23
    },
    {
-    "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 22
+    "arquivo": "inventario/estado/rotas.json",
+    "mudancas": 23
    },
    {
     "arquivo": "package.json",
@@ -218,6 +218,10 @@
     "mudancas": 10
    },
    {
+    "arquivo": "scripts/canonical-invariants.sql",
+    "mudancas": 10
+   },
+   {
     "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 10
    },
@@ -227,10 +231,6 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 9
    },
    {
