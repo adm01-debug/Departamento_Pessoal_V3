@@ -24,6 +24,26 @@ interface RescisaoPdfForm {
 
 export type AuditoriaPdf = TrilhaAuditoriaRegistro & { hash?: string };
 
+/** Motor que fechou o cálculo. Mesmo texto na tela e no TRCT. */
+export type OrigemCalculoRescisao = 'local' | 'servidor';
+
+export const LABEL_ORIGEM_CALCULO: Record<OrigemCalculoRescisao, string> = {
+  local: 'Local (navegador)',
+  servidor: 'Servidor (edge)',
+};
+
+/**
+ * Momento em que o motor fechou o cálculo. Rescisão lida do histórico pode vir
+ * com `timestamp` vazio (gravada antes do campo existir), e aí dizer "não
+ * registrado" é melhor que imprimir "Invalid Date" num documento rescisório.
+ */
+export function formatarMomentoCalculo(timestamp: string | undefined): string {
+  if (!timestamp) return 'não registrado';
+  const d = new Date(timestamp);
+  if (Number.isNaN(d.getTime())) return 'não registrado';
+  return d.toLocaleString('pt-BR');
+}
+
 const TIPO_LABELS: Record<string, string> = {
   sem_justa_causa: 'Sem Justa Causa',
   justa_causa: 'Justa Causa',
@@ -90,7 +110,8 @@ export function mapearResultadoDeDesligamento(d: {
 export async function gerarPDFRescisao(
   form: RescisaoPdfForm,
   result: RescisaoResult,
-  auditoriaParam?: AuditoriaPdf | null
+  auditoriaParam?: AuditoriaPdf | null,
+  origem?: OrigemCalculoRescisao
 ) {
   const { default: jsPDF } = await import('jspdf');
   const { default: autoTable } = await import('jspdf-autotable');
@@ -231,8 +252,23 @@ export async function gerarPDFRescisao(
   doc.text('EMPREGADOR', 52, y, { align: 'center' });
   doc.text('EMPREGADO(A)', pw - 52, y, { align: 'center' });
 
+  // Procedência: o motor já produz `timestamp` e `assinaturaDigital`, e o TRCT
+  // não carimbava nenhum dos dois — uma homologação feita com um cálculo antigo
+  // ou com o outro motor não deixava rastro no documento.
+  y += 10;
+  doc.setFontSize(7);
+  doc.setTextColor(120);
+  doc.text(
+    `Cálculo: ${formatarMomentoCalculo(result.timestamp)} | Motor: ${
+      origem ? LABEL_ORIGEM_CALCULO[origem] : 'não registrado'
+    } | Assinatura: ${result.assinaturaDigital || 'ausente'}`,
+    14,
+    y
+  );
+  doc.setTextColor(0);
+
   if (auditoria) {
-    y += 10;
+    y += 5;
     doc.setFontSize(7);
     doc.setTextColor(180);
     doc.text(`Hash de Integridade: ${auditoria.hash || 'N/A'}`, 14, y);

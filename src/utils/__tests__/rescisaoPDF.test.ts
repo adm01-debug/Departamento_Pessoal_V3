@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const { MockJsPDF, mockSave, mockToastSuccess, mockListarTrilha } = vi.hoisted(() => {
+const { MockJsPDF, mockSave, mockText, mockToastSuccess, mockListarTrilha } = vi.hoisted(() => {
   const mockSave = vi.fn();
+  const mockText = vi.fn();
   // Vitest 4 requires 'function' or 'class' (not arrow) for constructor mocks
   const MockJsPDF = vi.fn().mockImplementation(function (this: Record<string, unknown>) {
     this.setFontSize = vi.fn();
@@ -9,7 +10,7 @@ const { MockJsPDF, mockSave, mockToastSuccess, mockListarTrilha } = vi.hoisted((
     this.setFont = vi.fn();
     this.setFillColor = vi.fn();
     this.rect = vi.fn();
-    this.text = vi.fn();
+    this.text = mockText;
     this.line = vi.fn();
     this.save = mockSave;
     this.splitTextToSize = vi.fn((t: string) => [t]);
@@ -19,7 +20,7 @@ const { MockJsPDF, mockSave, mockToastSuccess, mockListarTrilha } = vi.hoisted((
       this.lastAutoTable = { finalY: 100 };
     });
   });
-  return { MockJsPDF, mockSave, mockToastSuccess: vi.fn(), mockListarTrilha: vi.fn() };
+  return { MockJsPDF, mockSave, mockText, mockToastSuccess: vi.fn(), mockListarTrilha: vi.fn() };
 });
 
 vi.mock('jspdf', () => ({ default: MockJsPDF }));
@@ -40,7 +41,7 @@ vi.mock('@/services/auditoriaService', () => ({
   auditoriaService: { listarTrilha: mockListarTrilha },
 }));
 
-import { gerarPDFRescisao } from '../rescisaoPDF';
+import { LABEL_ORIGEM_CALCULO, formatarMomentoCalculo, gerarPDFRescisao } from '../rescisaoPDF';
 import type { AuditoriaPdf } from '../rescisaoPDF';
 
 const sampleForm = {
@@ -84,7 +85,7 @@ describe('gerarPDFRescisao', () => {
       this.setFont = vi.fn();
       this.setFillColor = vi.fn();
       this.rect = vi.fn();
-      this.text = vi.fn();
+      this.text = mockText;
       this.line = vi.fn();
       this.save = mockSave;
       this.splitTextToSize = vi.fn((t: string) => [t]);
@@ -94,6 +95,31 @@ describe('gerarPDFRescisao', () => {
         this.lastAutoTable = { finalY: 100 };
       });
     });
+  });
+
+  // Procedência: sem este carimbo o TRCT saía sem dizer de quando era o
+  // cálculo, se estava assinado e qual motor o produziu.
+  const linhaProcedencia = () => mockText.mock.calls.map((c) => String(c[0])).find((t) => t.startsWith('Cálculo: '));
+
+  it('carimba data, motor e assinatura do cálculo no TRCT', async () => {
+    await gerarPDFRescisao(
+      sampleForm,
+      { ...sampleResult, timestamp: '2026-11-19T10:00:00.000Z', assinaturaDigital: 'abc123' } as never,
+      null,
+      'servidor'
+    );
+    const linha = linhaProcedencia();
+    expect(linha).toBeDefined();
+    expect(linha).toContain(LABEL_ORIGEM_CALCULO.servidor);
+    expect(linha).toContain(formatarMomentoCalculo('2026-11-19T10:00:00.000Z'));
+    expect(linha).toContain('abc123');
+  });
+
+  it('declara motor e assinatura ausentes em vez de omitir o carimbo', async () => {
+    await gerarPDFRescisao(sampleForm, { ...sampleResult, timestamp: '' } as never);
+    const linha = linhaProcedencia();
+    expect(linha).toContain('não registrado');
+    expect(linha).toContain('Assinatura: ausente');
   });
 
   it('creates a jsPDF instance and saves the PDF', async () => {

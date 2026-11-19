@@ -13,7 +13,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { aliquotaEfetiva, calcularRescisao, fmt, type RescisaoResult } from '@/utils/rescisaoCalc';
-import { gerarPDFRescisao } from '@/utils/rescisaoPDF';
+import { LABEL_ORIGEM_CALCULO, formatarMomentoCalculo, gerarPDFRescisao } from '@/utils/rescisaoPDF';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useEmpresas } from '@/hooks/useEmpresas';
@@ -75,6 +75,10 @@ export default function CalculadoraRescisaoPage() {
   const [result, setResult] = useState<RescisaoResult | null>(null);
   const [saving, setSaving] = useState(false);
   const [calcServidor, setCalcServidor] = useState(false);
+  // Qual motor produziu o `result` em cena. Os dois botões escrevem no mesmo
+  // estado, e sem isto a tela e o TRCT não dizem de onde veio o número — uma
+  // homologação feita com a regra "errada" não deixava rastro.
+  const [origemCalculo, setOrigemCalculo] = useState<'local' | 'servidor' | null>(null);
 
   const handleSelectColaborador = async (id: string) => {
     if (!id) return;
@@ -182,6 +186,7 @@ export default function CalculadoraRescisaoPage() {
       const data = result;
       if (data?.resultado) {
         setResult(data.resultado);
+        setOrigemCalculo('servidor');
         toast.success('Rescisão calculada no servidor!');
       } else {
         toast.error('Servidor não retornou um resultado válido');
@@ -212,6 +217,7 @@ export default function CalculadoraRescisaoPage() {
     });
 
     setResult(result);
+    setOrigemCalculo('local');
     toast.success('Rescisão calculada com sucesso!');
   }, [form, validarForm]);
 
@@ -294,6 +300,7 @@ export default function CalculadoraRescisaoPage() {
     // Qualquer edição nos inputs invalida o resultado exibido — mostrar o
     // cálculo velho ao lado dos dados novos já causou homologação errada.
     setResult(null);
+    setOrigemCalculo(null);
     setForm((p) => ({ ...p, [k]: v }));
   };
 
@@ -655,10 +662,32 @@ export default function CalculadoraRescisaoPage() {
                       </div>
                     </div>
 
+                    {/* Procedência do número em cena. O motor já produz
+                        `timestamp` e `assinaturaDigital` (rescisaoCalc.ts) e a
+                        tela os descartava: o usuário gerava o TRCT sem saber de
+                        quando era o cálculo nem se ele estava assinado. */}
+                    <div className="space-y-1 rounded-xl border border-border/40 p-3">
+                      <p className="text-xs font-display font-semibold text-muted-foreground">PROCEDÊNCIA</p>
+                      <div className="flex justify-between text-xs font-body">
+                        <span className="text-muted-foreground">Calculado em</span>
+                        <span className="text-numeric">{formatarMomentoCalculo(result.timestamp)}</span>
+                      </div>
+                      <div className="flex justify-between text-xs font-body">
+                        <span className="text-muted-foreground">Motor</span>
+                        <span>{origemCalculo ? LABEL_ORIGEM_CALCULO[origemCalculo] : 'não registrado'}</span>
+                      </div>
+                      <div className="flex justify-between text-xs font-body">
+                        <span className="text-muted-foreground">Assinatura digital</span>
+                        <span className={result.assinaturaDigital ? 'text-numeric' : 'text-destructive font-medium'}>
+                          {result.assinaturaDigital ? `${result.assinaturaDigital.slice(0, 16)}…` : 'ausente'}
+                        </span>
+                      </div>
+                    </div>
+
                     <div className="flex gap-2">
                       <Button
                         onClick={() => {
-                          gerarPDFRescisao(form, result);
+                          gerarPDFRescisao(form, result, undefined, origemCalculo ?? undefined);
                           // Trilha LGPD — o TRCT carrega dados rescisórios do colaborador.
                           void registrarAcessoPII('rescisoes', 'export', {
                             empresaId: empresaAtual?.id,
