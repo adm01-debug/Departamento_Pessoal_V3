@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-19 15:14 UTC
+
+- **functions** alterado (3): `public.log_audit_change()`, `public.pode_gerir_pessoas(_empresa_id uuid)`, `public.pode_gerir_rh(_empresa_id uuid)`
+- **policies (RLS)** adicionado (1): `public.audit_log.audit_log_rh_read_empresa`
+
 ## 2026-11-19 13:14 UTC
 
 - **functions** adicionado (1): `public.onboarding_log_audit_change()`

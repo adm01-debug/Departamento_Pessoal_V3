@@ -25,6 +25,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.anotacoes_colaborador | anotacoes_colaborador_manage | ALL | PERMISSIVE | authenticated | `(EXISTS ( SELECT 1    FROM colaboradores c   WHERE ((c.id = anotacoes_colaborador.colaborador_id) AND (pode_gerir_rh(c.empresa_id) OR pode_gerir_pessoas(c.empresa_id)))))` | `(EXISTS ( SELECT 1    FROM colaboradores c   WHERE ((c.id = anotacoes_colaborador.colaborador_id) AND (pode_gerir_rh(c.empresa_id) OR pode_gerir_pessoas(c.empresa_id)))))` |
 | public.asos | asos_rh_manage | ALL | PERMISSIVE | authenticated | `pode_gerir_rh(empresa_id)` | `pode_gerir_rh(empresa_id)` |
 | public.audit_log | Admins podem ver todo audit_log | SELECT | PERMISSIVE | authenticated | `is_admin(auth.uid())` |  |
+| public.audit_log | audit_log_rh_read_empresa | SELECT | PERMISSIVE | authenticated | `((empresa_id IS NOT NULL) AND pode_gerir_rh(empresa_id))` |  |
 | public.audit_log | audit_log_self_insert | INSERT | PERMISSIVE | authenticated |  | `(user_id = auth.uid())` |
 | public.audit_log | audit_log_self_read | SELECT | PERMISSIVE | authenticated | `(user_id = auth.uid())` |  |
 | public.audit_log_unified | Admins can view unified audit log | SELECT | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` |  |

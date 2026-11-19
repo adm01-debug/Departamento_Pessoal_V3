@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 3 |
+| policies | 4 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -71,6 +71,16 @@
 | tipo | PERMISSIVE |
 | roles | authenticated |
 | USING | `is_admin(auth.uid())` |
+| WITH CHECK |  |
+
+### `audit_log_rh_read_empresa`
+
+| campo | valor |
+|---|---|
+| comando | SELECT |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `((empresa_id IS NOT NULL) AND pode_gerir_rh(empresa_id))` |
 | WITH CHECK |  |
 
 ### `audit_log_self_insert`

@@ -97992,9 +97992,13 @@
             {
               "file": "supabase/migrations/20261117170100_onboarding_audit_trigger.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 4,
+          "code_total_files": 5,
           "cron": [],
           "db": [],
           "triggers": [
@@ -98016,10 +98020,10 @@
         },
         "comment": null,
         "config": [
-          "search_path=public"
+          "search_path=pg_catalog, public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "26cfcca456a75833",
+        "definition_sha": "93628bf924cbc2ff",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
@@ -99849,11 +99853,19 @@
               "hits": 2
             },
             {
+              "file": "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
+              "hits": 4
+            },
+            {
               "file": "supabase/migrations/20261119130000_ferias_gestor_update.sql",
               "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.verify.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 16,
+          "code_total_files": 18,
           "cron": [],
           "db": [
             "public.bloquear_aprovacao_ponto_sem_rh",
@@ -100065,7 +100077,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 31,
+          "code_total_files": 32,
           "cron": [],
           "db": [
             "public.admin_definir_pin_quiosque",
@@ -139408,6 +139420,18 @@
         "schema": "public",
         "table": "audit_log",
         "using": "is_admin(auth.uid())",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "name": "audit_log_rh_read_empresa",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "audit_log",
+        "using": "((empresa_id IS NOT NULL) AND pode_gerir_rh(empresa_id))",
         "with_check": null
       },
       {

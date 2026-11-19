@@ -16,7 +16,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.ajustes_ponto](tables/public/ajustes_ponto.md) | table | sim | 1 | 12 | não |  |
 | [public.anotacoes_colaborador](tables/public/anotacoes_colaborador.md) | table | sim | 1 | 9 | não |  |
 | [public.asos](tables/public/asos.md) | table | sim | 1 | 29 | não |  |
-| [public.audit_log](tables/public/audit_log.md) | table | sim | 3 | 16 | não |  |
+| [public.audit_log](tables/public/audit_log.md) | table | sim | 4 | 16 | não |  |
 | [public.audit_log_unified](tables/public/audit_log_unified.md) | table | sim | 2 | 13 | não |  |
 | [public.audit_log_unified_archive](tables/public/audit_log_unified_archive.md) | table | sim | 1 | 13 | não |  |
 | [public.audit_logs](tables/public/audit_logs.md) | table | sim | 2 | 12 | não |  |
