@@ -12,7 +12,7 @@
    "src/contexts (3)"
   ],
   "hooks": [
-   "src/hooks (100)",
+   "src/hooks (101)",
    "src/components (10)",
    "src/contexts (4)"
   ],
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (661)",
+   "co-localizado (__tests__) (662)",
    "co-localizado (*.test) (73)",
    "e2e/ (33)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(ui): cascata de entrada dos cards, resgatada da PR #546 (muri) (#730)",
    "fix(ferias): policy de UPDATE do gestor, fechando o hiato de aprovacao (#729)",
    "chore(auditoria): inventario do que falta resgatar da PR #546 (muri) (#728)",
    "feat(rescisao): carimba procedencia do calculo na tela e no TRCT (#727)",
-   "fix(consignado): teto do emprestimo vai de 35% para 30% (Lei 10.820 art. 1 §1) (#725)",
-   "fix(banco): sidecar conferia substring do search_path, não nome de schema (#724)"
+   "fix(consignado): teto do emprestimo vai de 35% para 30% (Lei 10.820 art. 1 §1) (#725)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

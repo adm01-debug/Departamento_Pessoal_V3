@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `df983c6830` · branch `main` · 2026-11-19 11:45 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d50c80f280` · branch `main` · 2026-11-19 11:59 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3296,6 +3296,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   ```
+- **applyStagger(stepMs: number)** — `src/hooks/use-stagger-cards.ts`
+  ```
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.animate-squash')).filter( (card) => !card.hasAttribute(PROCESSED_ATTR) ); if (cards.length === 0) return; for (const siblings of groupByNearestSharedAncestor(cards)) { siblings.forEach((card, index) => { card.style.animationDelay = `${Math.min(index, MAX_STAGGER_INDEX) * stepMs}ms`; card.setAttribute(PROCESSED_ATTR, ''); }); }
+  ```
 - **invalidate()** — `src/hooks/useAdmissoes.ts`
   ```
   queryClient.invalidateQueries({ queryKey: ['admissoes', empresaId] });
@@ -4664,6 +4668,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `AUTH_INIT_TIMEOUT_MS` | `10000` | `src/contexts/AuthContext.tsx` |
 | `USER_ROLES_TIMEOUT_MS` | `5000` | `src/contexts/AuthContext.tsx` |
 | `MOBILE_BREAKPOINT` | `768` | `src/hooks/use-mobile.tsx` |
+| `PROCESSED_ATTR` | `'data-stagger-applied'` | `src/hooks/use-stagger-cards.ts` |
+| `MAX_STAGGER_INDEX` | `8` | `src/hooks/use-stagger-cards.ts` |
 | `ALPHABET` | `'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'` | `src/hooks/useAdmissaoWorkflow.ts` |
 | `LOCAL_MAX_ATTEMPTS` | `5` | `src/hooks/useBruteForceProtection.ts` |
 | `LOCAL_LOCKOUT_MS` | `5` | `src/hooks/useBruteForceProtection.ts` |
@@ -4711,9 +4717,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `PROMPT_VERSION` | `'v2'` | `src/services/trainingImages/briefing.ts` |
 | `DESCRICAO_MAX` | `400` | `src/services/trainingImages/briefing.ts` |
 | `NOME_MAX` | `120` | `src/services/trainingImages/briefing.ts` |
-| `TRAINING_IMAGES_LIMITE_BYTES` | `5` | `src/services/trainingImages/config.ts` |
-| `TRAINING_IMAGES_STALE_MS` | `15` | `src/services/trainingImages/config.ts` |
-| … +126 linhas — lista completa em `context.json` | | |
+| … +128 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5425,7 +5429,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9552 testes em 748 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9558 testes em 749 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5729,7 +5733,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/RelatoriosAgendadosTab.test.tsx` | 10 | RelatoriosAgendadosTab · renders Relatórios Agendados heading · renders Agendar Novo button · shows empty state when no agendamentos … |
 | `src/components/__tests__/RelatoriosExportTab.test.tsx` | 10 | RelatoriosExportTab · renders report titles · renders report descriptions · shows CSV button label when exportFormat is csv … |
 | `src/components/__tests__/RewardsSimulator.test.tsx` | 10 | RewardsSimulator · renderiza as quatro regiões do redesenho · mantém os cinco parâmetros do simulador · exibe os quatro KPIs de resultado … |
-| … +448 linhas — lista completa em `context.json` | | |
+| … +449 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

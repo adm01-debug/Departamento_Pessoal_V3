@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 120,
+ "total": 121,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -782,6 +782,26 @@
    "usado_por_arquivos": [
     "src/components/ui/sidebar.tsx",
     "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/use-stagger-cards.ts",
+   "hooks_exportados": [
+    "useStaggerCards"
+   ],
+   "linhas": 118,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/App.tsx"
    ],
    "coberto_por_testes": 1
   },

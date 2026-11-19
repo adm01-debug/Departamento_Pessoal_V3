@@ -62,6 +62,7 @@
    "src/components/RouteErrorBoundary.tsx",
    "src/components/layout/index.ts",
    "src/components/ui/skeleton.tsx",
+   "src/hooks/use-stagger-cards.ts",
    "src/hooks/useSecureVisibility.ts",
    "src/hooks/useSecurityMonitor.ts",
    "src/hooks/useSessionTimeout.ts",

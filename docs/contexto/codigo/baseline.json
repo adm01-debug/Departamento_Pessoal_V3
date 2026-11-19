@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "df983c683079821635093d3bf5ac3d11227d8c0d",
+  "commit": "d50c80f28059589068c2904d72cf4efbe20262e9",
   "branch": "main",
-  "data_commit": "2026-11-19T08:44:48-03:00",
+  "data_commit": "2026-11-19T08:58:22-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "d50c80f",
+    "data": "2026-11-19",
+    "assunto": "feat(ui): cascata de entrada dos cards, resgatada da PR #546 (muri) (#730)"
+   },
    {
     "sha": "df983c6",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "d9cc475",
     "data": "2026-11-18",
     "assunto": "feat(dashboard): põe em tela os 2 widgets que nunca eram renderizados (#702)"
-   },
-   {
-    "sha": "07742aa",
-    "data": "2026-11-18",
-    "assunto": "fix(scripts): build-rebaseline diz qual arquivo de entrada falta (#706)"
    }
   ],
-  "arquivos_mudados_7d": 1140,
+  "arquivos_mudados_7d": 1142,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -141,7 +141,7 @@
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 109
+    "mudancas": 110
    },
    {
     "pasta": "src/components/ui",
@@ -246,6 +246,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "src/App.tsx",
+    "mudancas": 7
+   },
+   {
     "arquivo": "src/pages/ColaboradoresPage.tsx",
     "mudancas": 7
    },
@@ -263,10 +267,6 @@
    },
    {
     "arquivo": "scripts/sync/sync-github.sh",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "src/App.tsx",
     "mudancas": 6
    },
    {
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3636,
-  "arquivos_codigo": 2105,
-  "linhas_codigo": 418341,
+  "arquivos_total": 3638,
+  "arquivos_codigo": 2107,
+  "linhas_codigo": 418584,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 81,
   "componentes": 640,
-  "hooks": 120,
+  "hooks": 121,
   "edge_functions": 67,
   "tabelas": 427,
   "migrations": 892,
   "cron_jobs": 41,
-  "testes": 792,
+  "testes": 793,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 338
@@ -632,7 +632,7 @@
   },
   "src/App.tsx": {
    "arquivos": 1,
-   "linhas": 523
+   "linhas": 528
   },
   "src/assets": {
    "arquivos": 1,
@@ -659,8 +659,8 @@
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 204,
-   "linhas": 23764
+   "arquivos": 206,
+   "linhas": 24002
   },
   "src/i18n": {
    "arquivos": 2,

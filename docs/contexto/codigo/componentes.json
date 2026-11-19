@@ -114,12 +114,13 @@
     "App"
    ],
    "export_default": "App",
-   "linhas": 523,
+   "linhas": 528,
    "dominio": null,
    "hooks_locais": [
     "useSecureVisibility",
     "useSecurityMonitor",
-    "useSessionTimeout"
+    "useSessionTimeout",
+    "useStaggerCards"
    ],
    "tabelas": [],
    "edges": [],

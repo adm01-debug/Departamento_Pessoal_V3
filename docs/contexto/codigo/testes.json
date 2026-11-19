@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 792,
+ "total": 793,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 2,
-  "unit": 748
+  "unit": 749
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 661
+   "arquivos": 662
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -5063,6 +5063,15 @@
    "casos": 6
   },
   {
+   "arquivo": "src/hooks/__tests__/useStaggerCards.test.tsx",
+   "tipo": "unit",
+   "linhas": 120,
+   "testa": [
+    "src/hooks/use-stagger-cards.ts"
+   ],
+   "casos": 5
+  },
+  {
    "arquivo": "src/hooks/__tests__/useSyncedState.test.tsx",
    "tipo": "unit",
    "linhas": 62,
@@ -7757,6 +7766,7 @@
   "src/hooks/ferias/useReconciliacaoLogs.ts": 2,
   "src/hooks/index.ts": 3,
   "src/hooks/use-mobile.tsx": 1,
+  "src/hooks/use-stagger-cards.ts": 1,
   "src/hooks/useAdmissaoWorkflow.ts": 1,
   "src/hooks/useAdmissoes.ts": 1,
   "src/hooks/useAfastamentos.ts": 4,
