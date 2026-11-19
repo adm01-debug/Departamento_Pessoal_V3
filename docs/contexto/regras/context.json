@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "68f349cffada975bf70e2ff5abf105a49a5e9fef",
+  "sha": "732d46f8935719d9bdf8fb03b4cfe8203679cc23",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 12:16 UTC",
-  "files_total": 3653,
-  "code_files": 3073,
-  "code_lines": 486942
+  "generated_at": "2026-11-19 12:29 UTC",
+  "files_total": 3655,
+  "code_files": 3075,
+  "code_lines": 487170
  },
  "version": "1.3.2",
- "facts_hash": "35834f5788511af2",
+ "facts_hash": "7af64af1028fd8f3",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1021,
-   ".sql": 968,
+   ".sql": 970,
    ".ts": 948,
    ".mjs": 108,
    ".js": 15,
@@ -54181,6 +54181,24 @@
     "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
    },
    {
+    "name": "audit_onboarding_colaborador",
+    "when": "AFTER INSERT OR UPDATE OR DELETE",
+    "table": "onboarding_colaborador",
+    "function": "onboarding_log_audit_change",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql"
+   },
+   {
+    "name": "audit_onboarding_tarefas",
+    "when": "AFTER INSERT OR UPDATE OR DELETE",
+    "table": "onboarding_tarefas",
+    "function": "onboarding_log_audit_change",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql"
+   },
+   {
     "name": "ajuste_ponto_status_transition",
     "when": "BEFORE UPDATE OF \"STATUS\"",
     "table": "solicitacoes_ajuste_ponto",
@@ -64604,6 +64622,24 @@
      "OLD"
     ]
    },
+   "onboarding_log_audit_change": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_old jsonb; v_new jsonb; v_campos text[]; v_user uuid; v_email text; v_empresa uuid; BEGIN v_user := auth.uid(); SELECT u.email INTO v_email FROM auth.users u WHERE u.id = v_user; IF TG_OP = 'DELETE' THEN v_old := to_jsonb(OLD); v_empresa := OLD.empresa_id; INSERT INTO public.audit_log (tabela, registro_id, acao, dados_anteriores, user_id, user_email, empresa_id) VALUES (TG_TABLE_NAME, OLD.id, 'DELETE', v_old, v_user, v_email, v_empresa); RETURN OLD; ELSIF TG_OP = 'UPDATE' THEN v_old := to_jsonb(OLD); v_new := to_jsonb(NEW); v_empresa := NEW.empresa_id; SELECT array_agg(c.key ORDER BY c.key) INTO v_campos FROM ( SELECT o.key FROM jsonb_each(v_old) AS o JOIN jsonb_each(v_new) AS n ON …",
+    "raises": [],
+    "tables": [
+     "audit_log",
+     "auth",
+     "jsonb_each",
+     "n",
+     "v_campos",
+     "v_email"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -72144,6 +72180,8 @@
    "supabase/migrations/20261119130000_ferias_gestor_update.verify.sql",
    "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql",
    "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.verify.sql",
+   "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql",
+   "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -84172,6 +84210,14 @@
     "objkind": "function",
     "roles": "PUBLIC, anon, authenticated",
     "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "onboarding_log_audit_change",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql"
    },
    {
     "kind": "revoke",
@@ -103993,8 +104039,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 894,
-   "lines": 80852,
+   "files": 896,
+   "lines": 81080,
    "tables": [
     "profiles",
     "user_roles"
@@ -215748,6 +215794,24 @@
     "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
    },
    {
+    "name": "audit_onboarding_colaborador",
+    "when": "AFTER INSERT OR UPDATE OR DELETE",
+    "table": "onboarding_colaborador",
+    "function": "onboarding_log_audit_change",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql"
+   },
+   {
+    "name": "audit_onboarding_tarefas",
+    "when": "AFTER INSERT OR UPDATE OR DELETE",
+    "table": "onboarding_tarefas",
+    "function": "onboarding_log_audit_change",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql"
+   },
+   {
     "name": "ajuste_ponto_status_transition",
     "when": "BEFORE UPDATE OF \"STATUS\"",
     "table": "solicitacoes_ajuste_ponto",
@@ -226169,6 +226233,24 @@
     ],
     "tables": [
      "OLD"
+    ]
+   },
+   "onboarding_log_audit_change": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_old jsonb; v_new jsonb; v_campos text[]; v_user uuid; v_email text; v_empresa uuid; BEGIN v_user := auth.uid(); SELECT u.email INTO v_email FROM auth.users u WHERE u.id = v_user; IF TG_OP = 'DELETE' THEN v_old := to_jsonb(OLD); v_empresa := OLD.empresa_id; INSERT INTO public.audit_log (tabela, registro_id, acao, dados_anteriores, user_id, user_email, empresa_id) VALUES (TG_TABLE_NAME, OLD.id, 'DELETE', v_old, v_user, v_email, v_empresa); RETURN OLD; ELSIF TG_OP = 'UPDATE' THEN v_old := to_jsonb(OLD); v_new := to_jsonb(NEW); v_empresa := NEW.empresa_id; SELECT array_agg(c.key ORDER BY c.key) INTO v_campos FROM ( SELECT o.key FROM jsonb_each(v_old) AS o JOIN jsonb_each(v_new) AS n ON …",
+    "raises": [],
+    "tables": [
+     "audit_log",
+     "auth",
+     "jsonb_each",
+     "n",
+     "v_campos",
+     "v_email"
     ]
    },
    "fn_trigger_whatsapp_on_event": {
@@ -241425,6 +241507,7 @@
    "notificar_divergencias_afdt",
    "notificar_ferias_pagamento_d5",
    "notificar_ferias_reconciliacao_sla_baixo",
+   "onboarding_log_audit_change",
    "pagar_desligamento",
    "pcs_enquadramento",
    "pcs_gerar_grades",
@@ -253086,6 +253169,14 @@
     "objkind": "function",
     "roles": "PUBLIC, anon, authenticated",
     "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "onboarding_log_audit_change",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql"
    },
    {
     "kind": "revoke",
@@ -329202,6 +329293,14 @@
    "path": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.verify.sql",
    "lines": 93
   },
+  "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql": {
+   "path": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql",
+   "lines": 151
+  },
+  "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql": {
+   "path": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql",
+   "lines": 77
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -329520,10 +329619,22 @@
   }
  },
  "git": {
-  "sha": "68f349cffada975bf70e2ff5abf105a49a5e9fef",
+  "sha": "732d46f8935719d9bdf8fb03b4cfe8203679cc23",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "732d46f",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "feat(auditoria): passa a gravar a trilha de onboarding, com empresa_id (#737)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql",
+     "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql",
+     "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql"
+    ]
+   },
    {
     "sha": "68f349c",
     "date": "2026-11-19",
@@ -329828,27 +329939,16 @@
      "src/components/desligamentos/index.ts",
      "src/pages/DesligamentosPage.tsx"
     ]
-   },
-   {
-    "sha": "d9cc475",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "feat(dashboard): põe em tela os 2 widgets que nunca eram renderizados (#702)",
-    "files": [
-     "scripts/.bundle-budget.json",
-     "src/components/__tests__/AnalyticsSection.test.tsx",
-     "src/components/dashboard/AnalyticsSection.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     ".github/workflows/canonical-migrations.yml",
-    6
+    7
    ],
    [
     "scripts/canonical-invariants.sql",
-    6
+    7
    ],
    [
     "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
@@ -329891,12 +329991,12 @@
     2
    ],
    [
-    "src/components/__tests__/AnalyticsSection.test.tsx",
-    2
+    "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql",
+    1
    ],
    [
-    "src/components/dashboard/AnalyticsSection.tsx",
-    2
+    "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql",
+    1
    ],
    [
     "src/pages/__tests__/OnboardingParidade.test.tsx",

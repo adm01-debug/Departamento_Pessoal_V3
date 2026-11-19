@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `68f349cffada975bf70e2ff5abf105a49a5e9fef` (2026-11-19T09:15:09-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `732d46f8935719d9bdf8fb03b4cfe8203679cc23` (2026-11-19T09:29:10-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1969), SQL (968), Markdown (338), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1969), SQL (970), Markdown (338), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3640 |
+| arquivos_total | 3642 |
 | arquivos_codigo | 2107 |
 | linhas_codigo | 418632 |
 | rotas | 116 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 121 |
 | edge_functions | 67 |
 | tabelas | 427 |
-| migrations | 894 |
+| migrations | 896 |
 | cron_jobs | 41 |
 | testes | 793 |
 | workflows | 21 |
@@ -396,23 +396,23 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27595 nós · 62239 arestas · 2431 comunidades · grafo do commit `68f349cf`
-- comunidades maiores: cn (580), 20260831_corrected_public.sql (485), canonical_schema.sql (475), button.tsx (460), useEmpresas (371), vitest (343), client.ts (340), App.tsx (202), react (198), "public"."empresas" (159), "public"."empresas" (158), "public"."colaboradores" (157)
+- 27602 nós · 62245 arestas · 2371 comunidades · grafo do commit `732d46f8`
+- comunidades maiores: 20260831_corrected_public.sql (493), useEmpresas (485), canonical_schema.sql (475), lucide-react (473), App.tsx (369), button.tsx (368), vitest (283), cn (243), supabase/types.ts (227), ref_https (226), react (193), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (27)
+- .github/workflows/canonical-migrations.yml (28)
 - inventario/estado/rotas.json (23)
-- scripts/canonical-invariants.sql (14)
+- scripts/canonical-invariants.sql (15)
 - package.json (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
 - docs/prod-readiness.md (9)
 - package-lock.json (9)
 - scripts/automation.config.json (8)
-- scripts/sync/autocommit-local.sh (8)
 - docs/auditoria/sql-preservado/README.md (7)
+- scripts/sync/autocommit-local.sh (7)
 - src/App.tsx (7)
 - src/pages/ColaboradoresPage.tsx (7)
 - docs/auditoria/VEREDITO_MURI_2026-11-17.md (6)
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-19 `732d46f` feat(auditoria): passa a gravar a trilha de onboarding, com empresa_id (#737)
 - 2026-11-19 `68f349c` fix(testes): congela a base de tempo do fixture de OnboardingParidade (#735)
 - 2026-11-19 `055112b` fix(rescisao): TRCT do desligamento declarava assinatura ausente tendo assinatura (#732)
 - 2026-11-19 `634058e` chore(auditoria): torna reproduzivel a medicao do resgate da muri (#734)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `7ecf0c0` chore(banco): sidecar .verify.sql para as 4 migrations do lote que nao tinham (#720)
 - 2026-11-18 `9048fce` fix(empresas): empresa de abertura deixa de ser sorteada pela ordem do RPC (#723)
 - 2026-11-18 `f7681c0` docs(gaps): causa raiz das 11 falhas do E2E autenticado na main (#722)
-- 2026-11-18 `08a26cf` chore(auditoria): fecha a varredura com as 34 branches que só existiam no clone local (#721)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

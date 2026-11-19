@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `68f349cffa` · branch `main` · 2026-11-19 12:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `732d46f893` · branch `main` · 2026-11-19 12:29 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -709,6 +709,8 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | tr_bloquear_aprovacao_ponto_sem_rh | BEFORE INSERT OR UPDATE | `registros_ponto` | `bloquear_aprovacao_ponto_sem_rh` |  |
 | trg_consignado_valida_margem | BEFORE INSERT OR UPDATE | `emprestimos_consignados` | `fn_consignado_valida_margem` |  |
 | trg_ferias_bloquear_aprovacao_rh_sem_rh | BEFORE UPDATE | `ferias` | `ferias_bloquear_aprovacao_rh_sem_rh` |  |
+| audit_onboarding_colaborador | AFTER INSERT OR UPDATE OR DELETE | `onboarding_colaborador` | `onboarding_log_audit_change` |  |
+| audit_onboarding_tarefas | AFTER INSERT OR UPDATE OR DELETE | `onboarding_tarefas` | `onboarding_log_audit_change` |  |
 | ajuste_ponto_status_transition | BEFORE UPDATE OF "STATUS" | `solicitacoes_ajuste_ponto` | `trg_ajuste_ponto_status_transition` |  |
 | audit_admissoes | AFTER INSERT OR DELETE OR UPDATE | `admissoes` | `log_audit_change` |  |
 | audit_afastamentos | AFTER INSERT OR DELETE OR UPDATE | `afastamentos` | `log_audit_change` |  |
@@ -921,9 +923,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_fwd_audit_unified | AFTER INSERT | `audit_logs` | `fwd_to_audit_unified` |  |
 | trg_fwd_audit_unified | AFTER INSERT | `auditoria` | `fwd_to_audit_unified` |  |
 | trg_fwd_audit_unified | AFTER INSERT | `auditoria_contratual` | `fwd_to_audit_unified` |  |
-| trg_fwd_audit_unified | AFTER INSERT | `auditoria_logs` | `fwd_to_audit_unified` |  |
-| trg_fwd_audit_unified | AFTER INSERT | `ferias_audit_log` | `fwd_to_audit_unified` |  |
-| … +164 linhas — lista completa em `context.json` | | | | |
+| … +166 linhas — lista completa em `context.json` | | | | |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 

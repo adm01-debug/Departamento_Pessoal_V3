@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 894,
+ "migrations": 896,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -480,6 +480,7 @@
   "notificar_divergencias_afdt",
   "notificar_ferias_pagamento_d5",
   "notificar_ferias_reconciliacao_sla_baixo",
+  "onboarding_log_audit_change",
   "pagar_desligamento",
   "pcs_enquadramento",
   "pcs_gerar_grades",
@@ -2208,11 +2209,25 @@
    "funcao": "update_notificacoes_templates_updated_at"
   },
   {
+   "nome": "audit_onboarding_colaborador",
+   "quando": "after",
+   "evento": "insert or update or delete",
+   "tabela": "onboarding_colaborador",
+   "funcao": "onboarding_log_audit_change"
+  },
+  {
    "nome": "update_onboarding_colaborador_updated_at",
    "quando": "before",
    "evento": "update",
    "tabela": "onboarding_colaborador",
    "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "audit_onboarding_tarefas",
+   "quando": "after",
+   "evento": "insert or update or delete",
+   "tabela": "onboarding_tarefas",
+   "funcao": "onboarding_log_audit_change"
   },
   {
    "nome": "tr_updated_at_parametros_sistema",
@@ -40972,6 +40987,7 @@
    "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [
+    "audit_onboarding_colaborador",
     "update_onboarding_colaborador_updated_at"
    ],
    "sem_rls": false,
@@ -41289,7 +41305,9 @@
    },
    "usada_no_front": 1,
    "usada_em_edges": [],
-   "triggers": [],
+   "triggers": [
+    "audit_onboarding_tarefas"
+   ],
    "sem_rls": false,
    "nao_usada": false
   },

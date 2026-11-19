@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "68f349cffada975bf70e2ff5abf105a49a5e9fef",
+  "commit": "732d46f8935719d9bdf8fb03b4cfe8203679cc23",
   "branch": "main",
-  "data_commit": "2026-11-19T09:15:09-03:00",
+  "data_commit": "2026-11-19T09:29:10-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "732d46f",
+    "data": "2026-11-19",
+    "assunto": "feat(auditoria): passa a gravar a trilha de onboarding, com empresa_id (#737)"
+   },
    {
     "sha": "68f349c",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "a4e0aae",
     "data": "2026-11-18",
     "assunto": "infra(banco): versiona ninebox_permissoes_homologacao, que existia só em produção (#708)"
-   },
-   {
-    "sha": "2e210c4",
-    "data": "2026-11-18",
-    "assunto": "feat(dashboard): liga alertas-preditivos, que rodava em producao sem tela (#709)"
    }
   ],
-  "arquivos_mudados_7d": 1144,
+  "arquivos_mudados_7d": 1146,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -192,14 +192,14 @@
     "mudancas": 29
    },
    {
-    "pasta": "src/components/admissoes",
+    "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 28
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 27
+    "mudancas": 28
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 14
+    "mudancas": 15
    },
    {
     "arquivo": "package.json",
@@ -234,11 +234,11 @@
     "mudancas": 8
    },
    {
-    "arquivo": "scripts/sync/autocommit-local.sh",
-    "mudancas": 8
+    "arquivo": "docs/auditoria/sql-preservado/README.md",
+    "mudancas": 7
    },
    {
-    "arquivo": "docs/auditoria/sql-preservado/README.md",
+    "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 7
    },
    {
@@ -274,10 +274,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": "scripts/sync/run-all.sh",
-    "mudancas": 5
-   },
-   {
     "arquivo": "src/components/desligamentos/index.ts",
     "mudancas": 5
    },
@@ -295,6 +291,10 @@
    },
    {
     "arquivo": "src/pages/DesligamentosPage.tsx",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/services/colaboradorService.ts",
     "mudancas": 5
    }
   ],
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3640,
+  "arquivos_total": 3642,
   "arquivos_codigo": 2107,
   "linhas_codigo": 418632,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 121,
   "edge_functions": 67,
   "tabelas": 427,
-  "migrations": 894,
+  "migrations": 896,
   "cron_jobs": 41,
   "testes": 793,
   "workflows": 21,

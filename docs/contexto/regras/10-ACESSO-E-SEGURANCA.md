@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `68f349cffa` · branch `main` · 2026-11-19 12:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `732d46f893` · branch `main` · 2026-11-19 12:29 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -675,6 +675,7 @@
 - `notificar_divergencias_afdt`
 - `notificar_ferias_pagamento_d5`
 - `notificar_ferias_reconciliacao_sla_baixo`
+- `onboarding_log_audit_change`
 - `pagar_desligamento`
 - `pcs_enquadramento`
 - `pcs_gerar_grades`
@@ -862,7 +863,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | PUBLIC, anon | all | `get_idempotency_health`, `check_idempotency_anomalies`, `v_slow_queries_top50`, `get_query_telemetry`, `get_dlq_stats`, `get_audit_trail_by_user`, `get_audit_trail_by_entity`, `search_audit_unified`, `rate_limit_logs`, `rate_limit_config`, `purge_audit_log_old`, `resolve_security_alert`, `refresh_dashboard_mvs`, `mv_status_change_daily`, `mv_anomalies_hourly` … +108 |
 | revoke | PUBLIC, anon | execute | `get_cron_jobs_health`, `get_security_alerts_summary`, `resolve_security_alert`, `pode_gerir_rh`, `pode_gerir_pessoas`, `sou_o_colaborador`, `empresa_do_colaborador`, `is_admin`, `sou_o_colaborador` |
 | revoke | PUBLIC, anon | select | `v_system_health` |
-| revoke | PUBLIC, anon, authenticated | all | `enforce_batida_ponto_hash`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash`, `enforce_desligamento_hash`, `enforce_ferias_hash`, `enforce_medida_disciplinar_hash`, `enforce_aso_hash`, `enforce_cat_hash`, `enforce_epi_entrega_hash`, `enforce_documento_assinatura_hash`, `enforce_afastamento_hash`, `purge_old_lock_conflicts` … +81 |
+| revoke | PUBLIC, anon, authenticated | all | `enforce_batida_ponto_hash`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash`, `enforce_desligamento_hash`, `enforce_ferias_hash`, `enforce_medida_disciplinar_hash`, `enforce_aso_hash`, `enforce_cat_hash`, `enforce_epi_entrega_hash`, `enforce_documento_assinatura_hash`, `enforce_afastamento_hash`, `purge_old_lock_conflicts` … +82 |
 | revoke | PUBLIC, anon, authenticated | execute | `check_processamento_timeout`, `fn_alert_severe_disciplinary_measure`, `fn_audit_biometric_failure`, `fn_auto_generate_training_certificate`, `fn_consolidar_batidas`, `fn_create_default_onboarding_tasks`, `fn_enqueue_notification`, `fn_trigger_whatsapp_on_event`, `fn_update_admissao_checklist`, `fn_update_candidatura_history`, `fn_workflow_admissao_auto`, `handle_new_user`, `handle_new_user_role`, `log_audit_change`, `log_esocial_transmission` … +42 |
 | revoke | PUBLIC, anon, authenticated | select | `v_audit_trail`, `mv_folha_summary`, `health_checks` |
 | revoke | anon | all | `detectar_fraude_ponto`, `contrato_estender_expiracao`, `pcs_pode_gerir_plano`, `pcs_pode_ver_plano`, `pcs_gerar_grades`, `pcs_enquadramento`, `pcs_simular_impacto`, `medidas_ciencia_tokens`, `audit_log`, `folha_auditoria`, `sst_regimento_interno`, `feedbacks_360_operacoes`, `feedbacks_360_validacoes_potencial`, `provisoes_competencia_tributaria` |
