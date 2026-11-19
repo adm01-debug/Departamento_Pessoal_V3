@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a9ea057bafbfa5a5975af5c8d8d54391ae0dead3",
+  "commit": "efcfc1daa69c1103cd2bfa49ff1a9d011ae72dcb",
   "branch": "main",
-  "data_commit": "2026-11-19T11:43:00-03:00",
+  "data_commit": "2026-11-19T11:55:56-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "efcfc1d",
+    "data": "2026-11-19",
+    "assunto": "feat(ui): resgata os 2 resíduos visuais da PR #546 (muri) (#744)"
+   },
    {
     "sha": "a9ea057",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "62748b3",
     "data": "2026-11-18",
     "assunto": "chore(consignado): trava a coerência do teto da margem entre tela e banco (#719)"
-   },
-   {
-    "sha": "09ea734",
-    "data": "2026-11-18",
-    "assunto": "fix(baseline): whatsapp_config fail-closed no restore do baseline de DR (#718)"
    }
   ],
-  "arquivos_mudados_7d": 1151,
+  "arquivos_mudados_7d": 1150,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -180,12 +180,12 @@
     "mudancas": 38
    },
    {
-    "pasta": "src/utils/__tests__",
-    "mudancas": 32
+    "pasta": "src/pages/__tests__",
+    "mudancas": 33
    },
    {
-    "pasta": "src/pages/__tests__",
-    "mudancas": 31
+    "pasta": "src/utils/__tests__",
+    "mudancas": 32
    },
    {
     "pasta": "src/components/desligamentos",
@@ -210,11 +210,11 @@
     "mudancas": 16
    },
    {
-    "arquivo": "package.json",
-    "mudancas": 11
+    "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
+    "mudancas": 12
    },
    {
-    "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
+    "arquivo": "package.json",
     "mudancas": 11
    },
    {
@@ -242,6 +242,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "src/pages/CalculadoraRescisaoPage.tsx",
+    "mudancas": 7
+   },
+   {
     "arquivo": "src/pages/ColaboradoresPage.tsx",
     "mudancas": 7
    },
@@ -255,10 +259,6 @@
    },
    {
     "arquivo": "src/index.css",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "src/pages/CalculadoraRescisaoPage.tsx",
     "mudancas": 6
    },
    {
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3649,
-  "arquivos_codigo": 2110,
-  "linhas_codigo": 419279,
+  "arquivos_total": 3650,
+  "arquivos_codigo": 2111,
+  "linhas_codigo": 419397,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 427,
   "migrations": 900,
   "cron_jobs": 41,
-  "testes": 795,
+  "testes": 796,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 338
@@ -683,8 +683,8 @@
    "linhas": 3564
   },
   "src/pages": {
-   "arquivos": 142,
-   "linhas": 50677
+   "arquivos": 143,
+   "linhas": 50795
   },
   "src/providers": {
    "arquivos": 4,
@@ -833,6 +833,10 @@
    "linhas": 977
   },
   {
+   "arquivo": "src/pages/CalculadoraRescisaoPage.tsx",
+   "linhas": 945
+  },
+  {
    "arquivo": "scripts/ai-context/gerar.mjs",
    "linhas": 940
   },
@@ -843,10 +847,6 @@
   {
    "arquivo": "src/components/avaliacao/FeedbackAcoesRodape.tsx",
    "linhas": 914
-  },
-  {
-   "arquivo": "src/pages/CalculadoraRescisaoPage.tsx",
-   "linhas": 912
   },
   {
    "arquivo": "src/components/desligamentos/GestaoDesligamentos.tsx",

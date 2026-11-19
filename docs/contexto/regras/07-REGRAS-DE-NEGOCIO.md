@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a9ea057baf` · branch `main` · 2026-11-19 14:43 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `efcfc1daa6` · branch `main` · 2026-11-19 14:56 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4689,6 +4689,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `RETRY_DELAY` | `250` | `src/integrations/supabase/previewAuthStorage.ts` |
 | `EMAIL_RH` | `'rh.promobrindes@empresa.com.br'` | `src/mocks/desempenhoMock.ts` |
 | `EMAIL_GESTOR` | `'gestor.regional@empresa.com.br'` | `src/mocks/desempenhoMock.ts` |
+| `CAMPO_BUSCA_COLABORADOR` | `'[&_[cmdk-input-wrapper]:focus-within]:ring-1 '` | `src/pages/CalculadoraRescisaoPage.tsx` |
 | `MOTIVO_MIN` | `10` | `src/pages/CienciaMedidaPage.tsx` |
 | `PAGE_SIZE` | `25` | `src/pages/ContratosGeradosPage.tsx` |
 | `BUCKET` | `'documentos'` | `src/pages/DocumentosPage.tsx` |
@@ -4717,8 +4718,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `PAGE` | `1000` | `src/services/premiacoesService.ts` |
 | `PROMPT_VERSION` | `'v2'` | `src/services/trainingImages/briefing.ts` |
 | `DESCRICAO_MAX` | `400` | `src/services/trainingImages/briefing.ts` |
-| `NOME_MAX` | `120` | `src/services/trainingImages/briefing.ts` |
-| … +128 linhas — lista completa em `context.json` | | |
+| … +129 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5430,7 +5430,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9582 testes em 751 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9588 testes em 752 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5709,6 +5709,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/contexts/__tests__/NotificationContext.test.tsx` | 11 | useNotification · throws when used outside provider · provides notifications from useNotificacoes · provides unreadCount from naoLidas … |
 | `src/hooks/__tests__/useBackGesture.test.ts` | 11 | useBackGesture · navigates back on left-edge swipe right · does not navigate when swipe starts away from left edge · does not navigate when horizontal distance is too small … |
 | `src/hooks/__tests__/useHistoricoColaborador.test.ts` | 11 | useHistoricoColaborador · merges events from every source and sorts them from most to least recent · preserves rich fields instead of flattening them into a single description string · includes audit entries as a filterable  … |
+| `src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx` | 11 | CalculadoraRescisaoPage — importar colaborador · o seletor é um combobox com busca, não uma lista de rolagem · a busca filtra a lista pelo nome digitado · a busca aceita a matrícula e separa homônimos … |
 | `src/services/__tests__/bancoHorasConfigService.test.ts` | 11 | bancoHorasConfigService.buscar · returns config for empresa · returns null when no config exists · filters by empresa_id … |
 | `src/services/__tests__/colaboradorService.recontratacao.test.ts` | 11 | colaboradorService.recontratar · exige empresaId (isolamento de tenant) · exige data_admissao · atualiza o MESMO colaborador.id (status ativo, data_desligamento null) e cria vínculo tipo  … |
 | `src/services/__tests__/pontoMonitorService.test.ts` | 11 | pontoMonitorService.logEvent · inserts event into ponto_auditoria · includes usuario_id from auth.getUser · swallows DB errors silently (no throw) … |
@@ -5733,8 +5734,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/PontoWeekSummary.test.tsx` | 10 | PontoWeekSummary · renders Últimos 7 dias title · shows empty state when no registros · renders worked hours for each day … |
 | `src/components/__tests__/RejeitarDialog.test.tsx` | 10 | RejeitarDialog · renders nothing when open=false · renders title  · renders  … |
 | `src/components/__tests__/RelatoriosAgendadosTab.test.tsx` | 10 | RelatoriosAgendadosTab · renders Relatórios Agendados heading · renders Agendar Novo button · shows empty state when no agendamentos … |
-| `src/components/__tests__/RelatoriosExportTab.test.tsx` | 10 | RelatoriosExportTab · renders report titles · renders report descriptions · shows CSV button label when exportFormat is csv … |
-| … +451 linhas — lista completa em `context.json` | | |
+| … +452 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6102,4 +6102,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | METAS & OKRs — derivações da aba (situação, prazo, ordem e filtros). | `src/components/avaliacao/metasComum.ts` |
 | exibem. Nada aqui inventa dado: TODAS as funções leem somente campos que já | `src/components/avaliacao/metasComum.ts` |
 | 2. `atrasada`  → prazo vencido e ainda não concluída — é EXATAMENTE o | `src/components/avaliacao/metasComum.ts` |
-| … +923 linhas — lista completa em `context.json` | |
+| … +924 linhas — lista completa em `context.json` | |

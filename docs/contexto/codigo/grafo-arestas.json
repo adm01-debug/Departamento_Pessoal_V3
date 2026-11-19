@@ -5754,6 +5754,7 @@
    "src/components/colaborador-detalhes/index.ts",
    "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
    "src/components/layout/index.ts",
+   "src/components/ui/animated-tabs.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",

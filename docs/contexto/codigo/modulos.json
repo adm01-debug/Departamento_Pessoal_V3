@@ -7880,7 +7880,7 @@
    "modulo": "pages",
    "arquivos": 115,
    "testes": 0,
-   "linhas": 46141,
+   "linhas": 46186,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -9007,7 +9007,7 @@
   {
    "modulo": "pages/__tests__",
    "arquivos": 0,
-   "testes": 27,
+   "testes": 28,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],

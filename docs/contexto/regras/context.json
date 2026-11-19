@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a9ea057bafbfa5a5975af5c8d8d54391ae0dead3",
+  "sha": "efcfc1daa69c1103cd2bfa49ff1a9d011ae72dcb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 14:43 UTC",
-  "files_total": 3662,
-  "code_files": 3082,
-  "code_lines": 488091
+  "generated_at": "2026-11-19 14:56 UTC",
+  "files_total": 3663,
+  "code_files": 3083,
+  "code_lines": 488209
  },
  "version": "1.3.2",
- "facts_hash": "72a04256ab082e80",
+ "facts_hash": "6aef68bdb2a27fbb",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,7 +387,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1023,
+   ".tsx": 1024,
    ".sql": 974,
    ".ts": 949,
    ".mjs": 108,
@@ -89645,7 +89645,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 309
+    "deps_count": 314
    },
    {
     "path": "",
@@ -102817,8 +102817,8 @@
   },
   {
    "module": "src/pages",
-   "files": 142,
-   "lines": 50677,
+   "files": 143,
+   "lines": 50795,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -102961,6 +102961,7 @@
     "framer-motion",
     "jspdf",
     "lucide-react",
+    "node:fs",
     "qrcode.react",
     "react",
     "react-hook-form",
@@ -121030,6 +121031,10 @@
    {
     "file": "src/pages/AvaliacaoPage.tsx",
     "text": "• registros reais (UUID) usam SOMENTE `feedbacks_360_aprovacoes_gestor`;"
+   },
+   {
+    "file": "src/pages/CalculadoraRescisaoPage.tsx",
+    "text": "css_total_kb 351 > 350). Encolhida em vez de levantar o limite — levantar o"
    },
    {
     "file": "src/pages/CalculadoraRescisaoPage.tsx",
@@ -147934,6 +147939,11 @@
     "file": "src/mocks/desempenhoMock.ts",
     "name": "EMAIL_GESTOR",
     "value": "'gestor.regional@empresa.com.br'"
+   },
+   {
+    "file": "src/pages/CalculadoraRescisaoPage.tsx",
+    "name": "CAMPO_BUSCA_COLABORADOR",
+    "value": "'[&_[cmdk-input-wrapper]:focus-within]:ring-1 '"
    },
    {
     "file": "src/pages/CienciaMedidaPage.tsx",
@@ -189448,6 +189458,14 @@
     "name": "não oferece o botão de remover antes de importar alguém"
    },
    {
+    "file": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+    "name": "CalculadoraRescisaoPage — foco do campo de busca"
+   },
+   {
+    "file": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+    "name": "o contorno de foco envolve a caixa inteira, não só o input"
+   },
+   {
     "file": "src/pages/__tests__/CanalEticaPage.test.tsx",
     "name": "CanalEticaPage — tratamento de denúncias"
    },
@@ -189494,6 +189512,22 @@
    {
     "file": "src/pages/__tests__/CienciaMedidaPage.test.tsx",
     "name": "orienta a pedir novo link quando o token já foi usado"
+   },
+   {
+    "file": "src/pages/__tests__/ColaboradorDetalhesAbas.test.tsx",
+    "name": "ColaboradorDetalhesPage — abas do dossiê"
+   },
+   {
+    "file": "src/pages/__tests__/ColaboradorDetalhesAbas.test.tsx",
+    "name": "usa o indicador deslizante compartilhado, não TabsList cru"
+   },
+   {
+    "file": "src/pages/__tests__/ColaboradorDetalhesAbas.test.tsx",
+    "name": "mantém as 9 abas do dossiê, com os mesmos valores"
+   },
+   {
+    "file": "src/pages/__tests__/ColaboradorDetalhesAbas.test.tsx",
+    "name": "o estado da aba continua ligado ao mesmo setter"
    },
    {
     "file": "src/pages/__tests__/ColaboradorFormPage.test.tsx",
@@ -298505,7 +298539,7 @@
   },
   "src/pages/CalculadoraRescisaoPage.tsx": {
    "path": "src/pages/CalculadoraRescisaoPage.tsx",
-   "lines": 912,
+   "lines": 945,
    "exports": [
     "function CalculadoraRescisaoPage"
    ],
@@ -298551,6 +298585,12 @@
     "Informe a data prevista de fim do contrato (arts. 479/480)",
     "Preencha salário, data de admissão e desligamento",
     "Servidor não retornou um resultado válido"
+   ],
+   "params": [
+    {
+     "name": "CAMPO_BUSCA_COLABORADOR",
+     "value": "'[&_[cmdk-input-wrapper]:focus-within]:ring-1 '"
+    }
    ],
    "status_values": [
     {
@@ -298630,6 +298670,7 @@
     }
    ],
    "rule_comments": [
+    "css_total_kb 351 > 350). Encolhida em vez de levantar o limite — levantar o",
     "homologação feita com a regra \"errada\" não deixava rastro."
    ],
    "calc_fns": [
@@ -298775,7 +298816,7 @@
   },
   "src/pages/ColaboradorDetalhesPage.tsx": {
    "path": "src/pages/ColaboradorDetalhesPage.tsx",
-   "lines": 784,
+   "lines": 796,
    "exports": [
     "function ColaboradorDetalhesPage"
    ],
@@ -302935,7 +302976,7 @@
   },
   "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx": {
    "path": "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
-   "lines": 246,
+   "lines": 272,
    "is_test": true,
    "tests": [
     "CalculadoraRescisaoPage — importar colaborador",
@@ -302946,7 +302987,9 @@
     "o desligamento é gravado no homônimo ESCOLHIDO, não no primeiro da lista",
     "import que falha não troca a pessoa do desligamento",
     "a matrícula aparece na linha, o CPF completo nunca é carregado",
-    "não oferece o botão de remover antes de importar alguém"
+    "não oferece o botão de remover antes de importar alguém",
+    "CalculadoraRescisaoPage — foco do campo de busca",
+    "o contorno de foco envolve a caixa inteira, não só o input"
    ]
   },
   "src/pages/__tests__/CanalEticaPage.test.tsx": {
@@ -302981,6 +303024,20 @@
     "não gasta chamada ao servidor quando o token da URL é malformado",
     "explica a espera quando o limite de tentativas é atingido",
     "orienta a pedir novo link quando o token já foi usado"
+   ]
+  },
+  "src/pages/__tests__/ColaboradorDetalhesAbas.test.tsx": {
+   "path": "src/pages/__tests__/ColaboradorDetalhesAbas.test.tsx",
+   "lines": 47,
+   "is_test": true,
+   "rule_comments": [
+    "a faixa MESTRA não pode mais ser TabsList cru"
+   ],
+   "tests": [
+    "ColaboradorDetalhesPage — abas do dossiê",
+    "usa o indicador deslizante compartilhado, não TabsList cru",
+    "mantém as 9 abas do dossiê, com os mesmos valores",
+    "o estado da aba continua ligado ao mesmo setter"
    ]
   },
   "src/pages/__tests__/ColaboradorFormPage.test.tsx": {
@@ -329853,10 +329910,22 @@
   }
  },
  "git": {
-  "sha": "a9ea057bafbfa5a5975af5c8d8d54391ae0dead3",
+  "sha": "efcfc1daa69c1103cd2bfa49ff1a9d011ae72dcb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "efcfc1d",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "feat(ui): resgata os 2 resíduos visuais da PR #546 (muri) (#744)",
+    "files": [
+     "src/pages/CalculadoraRescisaoPage.tsx",
+     "src/pages/ColaboradorDetalhesPage.tsx",
+     "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+     "src/pages/__tests__/ColaboradorDetalhesAbas.test.tsx"
+    ]
+   },
    {
     "sha": "a9ea057",
     "date": "2026-11-19",
@@ -330160,15 +330229,6 @@
      "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
      "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.verify.sql"
     ]
-   },
-   {
-    "sha": "7320b38",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "chore(auditoria): registra a varredura de branches, tags e ledger de 19/11 (#713)",
-    "files": [
-     "docs/auditoria/VARREDURA_BRANCHES_E_LEDGER_2026-11-19.md"
-    ]
    }
   ],
   "hot_files": [
@@ -330181,16 +330241,16 @@
     8
    ],
    [
+    "src/pages/CalculadoraRescisaoPage.tsx",
+    4
+   ],
+   [
     "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
     4
    ],
    [
-    "src/pages/CalculadoraRescisaoPage.tsx",
-    3
-   ],
-   [
     "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
-    2
+    3
    ],
    [
     "src/utils/__tests__/rescisaoPDF.test.ts",
@@ -330221,8 +330281,12 @@
     2
    ],
    [
-    "docs/auditoria/VARREDURA_BRANCHES_E_LEDGER_2026-11-19.md",
-    2
+    "src/pages/ColaboradorDetalhesPage.tsx",
+    1
+   ],
+   [
+    "src/pages/__tests__/ColaboradorDetalhesAbas.test.tsx",
+    1
    ],
    [
     "src/hooks/__tests__/useExecutiveDashboard.test.ts",
@@ -330246,10 +330310,6 @@
    ],
    [
     "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.verify.sql",
     1
    ]
   ]

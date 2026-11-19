@@ -7314,7 +7314,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -8909,7 +8909,7 @@
     "CalculadoraRescisaoPage"
    ],
    "export_default": "CalculadoraRescisaoPage",
-   "linhas": 912,
+   "linhas": 945,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
@@ -9014,7 +9014,7 @@
     "ColaboradorDetalhesPage"
    ],
    "export_default": "ColaboradorDetalhesPage",
-   "linhas": 784,
+   "linhas": 796,
    "dominio": "pages",
    "hooks_locais": [
     "useDataAccessLog",
