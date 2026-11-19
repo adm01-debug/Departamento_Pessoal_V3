@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 902,
+ "migrations": 904,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],

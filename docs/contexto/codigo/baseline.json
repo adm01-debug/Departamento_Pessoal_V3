@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "49cbb500f765beffcdb9761956b7a75a8fc08031",
+  "commit": "b2df382076dfcbce0a684428de5f8224dae78d7d",
   "branch": "main",
-  "data_commit": "2026-11-19T16:59:36-03:00",
+  "data_commit": "2026-11-19T17:12:18-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "b2df382",
+    "data": "2026-11-19",
+    "assunto": "fix(onboarding): resgata a convergência do modelo legado, sem duplicar histórico (#747)"
+   },
    {
     "sha": "49cbb50",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "d50c80f",
     "data": "2026-11-19",
     "assunto": "feat(ui): cascata de entrada dos cards, resgatada da PR #546 (muri) (#730)"
-   },
-   {
-    "sha": "df983c6",
-    "data": "2026-11-19",
-    "assunto": "fix(ferias): policy de UPDATE do gestor, fechando o hiato de aprovacao (#729)"
    }
   ],
-  "arquivos_mudados_7d": 1094,
+  "arquivos_mudados_7d": 1096,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -230,11 +230,11 @@
     "mudancas": 9
    },
    {
-    "arquivo": "scripts/automation.config.json",
-    "mudancas": 8
+    "arquivo": "docs/auditoria/sql-preservado/README.md",
+    "mudancas": 7
    },
    {
-    "arquivo": "docs/auditoria/sql-preservado/README.md",
+    "arquivo": "scripts/automation.config.json",
     "mudancas": 7
    },
    {
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3659,
+  "arquivos_total": 3661,
   "arquivos_codigo": 2118,
   "linhas_codigo": 422559,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 121,
   "edge_functions": 67,
   "tabelas": 430,
-  "migrations": 902,
+  "migrations": 904,
   "cron_jobs": 41,
   "testes": 799,
   "workflows": 21,

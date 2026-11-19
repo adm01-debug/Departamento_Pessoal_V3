@@ -1,17 +1,17 @@
 # Graph Report - Departamento_Pessoal_V3  (2026-11-19)
 
 ## Corpus Check
-- 3557 files · ~3,534,782 words
+- 3559 files · ~3,537,004 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 37 file(s) not represented in the graph (top: (none) 16, .toml 5, .conf 4)
 
 ## Summary
-- 27751 nodes · 62650 edges · 2395 communities (1340 shown, 1055 thin omitted)
+- 27753 nodes · 62650 edges · 2397 communities (1340 shown, 1057 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 1591 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `49cbb500`
+- Built from commit: `b2df3820`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -1946,7 +1946,7 @@
 ## Import Cycles
 - 2-file cycle: `src/components/layout/MainLayout.tsx -> src/components/layout/index.ts -> src/components/layout/MainLayout.tsx`
 
-## Communities (2395 total, 1055 thin omitted)
+## Communities (2397 total, 1057 thin omitted)
 
 ### Community 0 - "lucide-react"
 Cohesion: 0.01
@@ -7364,18 +7364,18 @@ Nodes (3): "public"."sst_regimento_ass_imutavel", "trg_regimento_ass_no_delete",
 
 ## Knowledge Gaps
 - **7877 isolated node(s):** `session-start.sh script`, `PATH`, `capacitorConfig`, `nodeModulesDir`, `AUTH_FILE` (+7872 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 12081 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **1055 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 12083 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **1057 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `vitest` connect `vitest` to `lucide-react`, `useEmpresas`, `clientBridge.test.ts`, `button.tsx`, `client.ts`, `AppPagination.test.tsx`, `cn`, `CalculoFolhaWizard.test.tsx`, `FeedbackAcoesRodape.tsx`, `ColaboradorTable.test.tsx`, `MFASetup.test.tsx`, `NotificationCenter.tsx`, `nineBoxComum.ts`, `ref_node_fs`, `StatusComplianceCardErro.test.tsx`, `ColaboradorDetalhesPage.tsx`, `App.tsx`, `useDocumentOCR.test.ts`, `react`, `useGenericCrud.test.ts`, `usePermissions.test.ts`, `turmasDerivacoes.ts`, `useSystemHealth.test.ts`, `previewAuthStorage.test.ts`, `AvaliacaoPage.tsx`, `useColaboradorDetalhes.ts`, `PerformanceAuditTimelineCascata.test.tsx`, `@testing-library/user-event`, `nineBoxConsolidacao.ts`, `colaboradoresMock.ts`, `pdiComum.ts`, `TrilhaAuditoriaDesligamentos.tsx`, `PerformanceAuditTimeline.tsx`, `AuditoriaAdmissoesContent.tsx`, `AuditoriaTab.tsx`, `regrasSolicitacaoFerias.ts`, `📋 IMPLEMENTATION NOTES — Commits de Referência (2026-07-23/24)`, `supabase/types.ts`, `useAssinaturaDigital.test.ts`, `vagasComum.ts`, `reciboAssinaturaPdf.ts`, `useBruteForceProtection.ts`, `recrutamentoService.test.ts`, `GestaoDesligamentos.tsx`, `CandidatosPainel.tsx`, `feedbackCanonico.ts`, `OnboardingPage.tsx`, `AnaliticosDesempenho.tsx`, `DetalhesAdmissaoDialog.tsx`, `TelemetryStatsCards.tsx`, `InlineTabs.tsx`, `PagamentosTab.tsx`, `episService.test.ts`, `treinamentosDerivacoes.ts`, `securityService.ts`, `metasComum.ts`, `useHistoricoColaborador.ts`, `colaboradorDetalhesService.ts`, `avisoFeriasPDF.ts`, `trainingImages/index.ts`, `FeriasPage.tsx`, `RewardsSimulator.tsx`, `esocial/index.ts`, `pesquisaService.test.ts`, `tabelasReferenciaService.ts`, `TreinamentosPage.tsx`, `InscricoesPainel.tsx`, `turnoService.test.ts`, `pipelineEtapas.ts`, `rhService.ts`, `feedbacksComum.ts`, `package.json`, `HistoricoFeedbackDialog.tsx`, `CampanhaTabela.tsx`, `makeChain`, `dropdown-menu.tsx`, `deepChain`, `PremiacoesPage.tsx`, `auditoriaFeedback.ts`, `useTabelasReferencia.ts`, `EmpresaContext.test.tsx`, `ESocialPagamentosAndSST.test.tsx`, `AnimatedTabs.test.tsx`, `RouteErrorBoundary`, `certificadosDerivacoes.ts`, `empresaMock.ts`, `CertificadoDetalheDialog.tsx`, `OrganogramaNode.test.tsx`, `analyticsComum.test.ts`, `useNotificacoes.test.ts`, `retry.ts`, `workflowService.ts`, `adminCatEdicao.ts`, `SegurosVidaPage.test.tsx`, `ContratosGeradosPage.tsx`, `admissaoService.test.ts`, `avaliacaoService.test.ts`, `canalContabilidadeService.test.ts`, `colaboradorLotacaoService.test.ts`, `src/schemas/common.ts`, `colaboradorService.test.ts`, `comunicacaoService.test.ts`, `faltasService.test.ts`, `TrilhaCard.tsx`, `intervaloService.test.ts`, `medidasDisciplinaresService.test.ts`, `validadorFolha.test.ts`, `ColaboradorFormPage.test.tsx`, `KanbanCard.tsx`, `pipeline-e2e.ts`, `afastamentos.ts`, `OrganogramaPage.tsx`, `2. Tabela de funcionalidades`, `EditarJornadaDialog.test.tsx`, `CalculadoraRescisaoImportar.test.tsx`, `format.ts`, `openaiProvider.ts`, `useSecurityMonitor.ts`, `onboardingJornadaService.ts`, `parser.ts`, `trabalhistas.ts`, `NineBoxMatrix.test.tsx`, `MiniSparkline.tsx`, `TelemetryTable.tsx`, `TrilhaAuditoriaDesligamentos.test.tsx`, `FeriasForm.test.tsx`, `invalidacaoColaborador.test.ts`, `useAdmissaoWorkflow.test.ts`, `useAdmissoes.test.ts`, `useContratosVencendo.test.ts`, `cursor.ts`, `contratoService.test.ts`, `esocialService.test.ts`, `lgpdService.test.ts`, `calculoFerias.ts`, `feriasService`, `WorkflowDesigner.tsx`, `SSTResumoTab.tsx`, `pipeline.ts`, `workflow-status.ts`, `TreinamentoBadges.tsx`, `calculoLoteService.ts`, `FeedbacksTimeline.tsx`, `masks.ts`, `rescisaoCalc.ts`, `useGrupo.ts`, `tabelas.ts`, `3. Achados graves`, `useToast.ts`, `usePendenciasColaborador.ts`, `layout.test.tsx`, `reportScheduleContract.ts`, `useAssinaturas.test.ts`, `useDocumentos.test.ts`, `useFeriados.test.ts`, `useImportacaoColaboradores.test.ts`, `useOrganograma.test.ts`, `usePeriodosAquisitivos.test.ts`, `usePontoMelhorado.test.ts`, `hooks/__tests__/validators.test.ts`, `encryptionService.test.ts`, `batidasPontoService.test.ts`, `contratoTemplateService.test.ts`, `horaExtraService.test.ts`, `3. Achados graves`, `request.ts`, `useOnMount`, `desligamentos/index.ts`, `useGerarComunicadoColetivas.ts`, `rescisao.ts`, `LayoutGridSection.test.tsx`, `OrganogramaToolbar.tsx`, `H — Infra/CI, Agendamentos, Observabilidade, Testes, Scripts, DB (complemento)`, `useOnboardingColaborador`, `AuditoriaAnimacao.test.tsx`, `LayoutPrimitives.test.tsx`, `GestaoCandidatos.test.tsx`, `OnboardingJornada.test.tsx`, `backupService.ts`, `TelemetryTopOffenders.tsx`, `ProximosEventosDialog.tsx`, `Container.tsx`, `FeriasResumoTab.test.tsx`, `HistoricoSimulacoesDialog.test.tsx`, `whatsappService.ts`, `folhaResumo.ts`, `pushNotificationService.test.ts`, `workflowService.test.ts`, `guardrails.test.ts`, `calculoBeneficiosService.ts`, `assistenteIAService.ts`, `@supabase/supabase-js`, `AppSidebar.menu.test.ts`, `afastamentoPDF.test.ts`, `sanitizeHtml.ts`, `usePcs.ts`, `useExecutiveDashboard.test.ts`, `Revisão de implementação — 50 etapas, código, GitHub e canônico`, `AdmissoesDashboard.test.tsx`, `AuthProvider`, `beneficioService.test.ts`, `AfastamentoTable.test.tsx`, `useBackGesture.test.ts`, `useColaboradorLotacao.test.ts`, `useEmpresas.test.ts`, `ColaboradoresPage.test.tsx`, `loggerService.test.ts`, `secureJsonParse`, `Simulação Exaustiva — Fluxo de Folha de Pagamento`, `CircuitBreaker`, `piiMask.ts`, `EmprestimosFinanceiros.test.tsx`, `trilhaReveal.ts`, `FolhaDashboard.tsx`, `NotificationItem.tsx`, `rescisaoPDF.ts`, `SEÇÃO 3: FALHAS MEDIUM (82 achados)`, `errors/index.ts`?**
-  _High betweenness centrality (0.137) - this node is a cross-community bridge._
-- **Why does `"public"."medida_gerar_link_ciencia"()` connect `public.medidas_disciplinares` to `"public"."user_empresas"`, `20260831_corrected_public.sql`, `vagasComum.ts`, `"public"."colaboradores"`?**
-  _High betweenness centrality (0.099) - this node is a cross-community bridge._
+  _High betweenness centrality (0.139) - this node is a cross-community bridge._
 - **Why does `resumo()` connect `vagasComum.ts` to `public.medidas_disciplinares`, `@testing-library/user-event`?**
-  _High betweenness centrality (0.099) - this node is a cross-community bridge._
+  _High betweenness centrality (0.100) - this node is a cross-community bridge._
+- **Why does `"public"."medida_gerar_link_ciencia"()` connect `public.medidas_disciplinares` to `"public"."user_empresas"`, `20260831_corrected_public.sql`, `vagasComum.ts`, `"public"."colaboradores"`?**
+  _High betweenness centrality (0.100) - this node is a cross-community bridge._
 - **What connects `session-start.sh script`, `PATH`, `capacitorConfig` to the rest of the system?**
   _7877 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `lucide-react` be split into smaller, more focused modules?**
