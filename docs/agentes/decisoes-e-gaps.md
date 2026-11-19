@@ -84,3 +84,23 @@ confirme no repo/GitHub antes de agir.
   keyset pagination para tabelas >100K; CSP headers no nginx.
 - Médio prazo: revisar `any` restantes (`grep -rn ": any" src/`); testes unitários do bridge; cache para
   tabelas estáticas; read replicas para queries analíticas.
+
+## Aberto com o dono — teto da margem consignável (19/11/2026)
+
+Três tetos diferentes convivem no sistema e nenhum deles cita a fonte legal escolhida:
+
+| Onde | Teto | Base |
+| --- | --- | --- |
+| `src/components/descontos/NewLoanDialog.tsx` (`MARGEM_CONSIGNAVEL_TELA`) | 30% | `colaboradores.salario_base` |
+| `supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql` | 35% | `colaboradores.salario_base` |
+| `src/calculators/rescisao.ts:157` e `beneficios` | 35% | salário **líquido** |
+
+Hoje não há perda de função: a tela é a mais restritiva, então ela nunca libera o que o trigger recusa — o
+trigger é só o backstop de quem escreve direto na tabela, sem passar pela tela. O teste
+`NewLoanDialog.test.tsx` trava esse par (teto da tela <= teto do banco) e confere que o espelho do teto do
+banco acompanha o arquivo da migration.
+
+**Decisão do dono:** qual é o teto oficial do consignado e sobre qual base. A Lei 10.820 (com a redação da
+14.431/2022) trabalha com 35% no total, sendo a faixa de empréstimo menor que o total e o restante reservado
+ao cartão consignado — por isso 30% e 35% aparecem juntos na literatura. Escolhido o número e a base, a
+correção é de uma linha em cada um dos três pontos acima, mais o `.verify.sql` do trigger.
