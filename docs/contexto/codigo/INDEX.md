@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `893a2aa64fd54cea53899c3e88ab0a36feb21301` (2026-11-19T18:51:23-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c351847294d339231cd050c6617bce9682128ae0` (2026-11-19T19:57:42-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3661 |
 | arquivos_codigo | 2118 |
-| linhas_codigo | 422659 |
+| linhas_codigo | 422693 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -396,7 +396,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27753 nós · 62650 arestas · 2397 comunidades · grafo do commit `893a2aa6`
+- 27753 nós · 62650 arestas · 2397 comunidades · grafo do commit `c3518472`
 - comunidades maiores: lucide-react (510), 20260831_corrected_public.sql (493), useEmpresas (482), canonical_schema.sql (481), button.tsx (478), client.ts (425), vitest (310), cn (302), contract.ts (185), FeedbackAcoesRodape.tsx (176), "public"."empresas" (164), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -653,6 +653,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-19 `c351847` fix(e2e): corrige scroll da lista e overflow do board do pipeline (#760)
+- 2026-11-19 `3b4e3cc` fix(e2e): backfill de empresa_id em candidaturas orfas do seed (#759)
 - 2026-11-19 `893a2aa` fix(e2e): seed de candidaturas envia empresa_id explícito (#758)
 - 2026-11-19 `23cd2e2` fix(e2e): corrige as 2 falhas do pipeline de recrutamento na main (#757)
 - 2026-11-19 `c60bf64` fix(onboarding): ancora assercoes do verify na admissao de destino (#756)
@@ -666,8 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `fcce4ad` fix(auditoria): 4 defeitos da aba de Auditoria apontados em revisão (#749)
 - 2026-11-19 `f8a6976` fix(e2e): restaura sinal verde da main - liga vitrine de desempenho e expoe inputMode numerico (#748)
 - 2026-11-19 `0eb89d4` feat(auditoria): aba de Auditoria de Admissões no ar, lendo a trilha real (#746)
-- 2026-11-19 `ddcecda` fix: remove folhas_gestor_update da 120000 para nao quebrar pos-condicao da 130000 (#745)
-- 2026-11-19 `efcfc1d` feat(ui): resgata os 2 resíduos visuais da PR #546 (muri) (#744)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

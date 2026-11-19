@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "893a2aa64fd54cea53899c3e88ab0a36feb21301",
+  "commit": "c351847294d339231cd050c6617bce9682128ae0",
   "branch": "main",
-  "data_commit": "2026-11-19T18:51:23-03:00",
+  "data_commit": "2026-11-19T19:57:42-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "c351847",
+    "data": "2026-11-19",
+    "assunto": "fix(e2e): corrige scroll da lista e overflow do board do pipeline (#760)"
+   },
+   {
+    "sha": "3b4e3cc",
+    "data": "2026-11-19",
+    "assunto": "fix(e2e): backfill de empresa_id em candidaturas orfas do seed (#759)"
+   },
    {
     "sha": "893a2aa",
     "data": "2026-11-19",
@@ -121,19 +131,9 @@
     "sha": "732d46f",
     "data": "2026-11-19",
     "assunto": "feat(auditoria): passa a gravar a trilha de onboarding, com empresa_id (#737)"
-   },
-   {
-    "sha": "68f349c",
-    "data": "2026-11-19",
-    "assunto": "fix(testes): congela a base de tempo do fixture de OnboardingParidade (#735)"
-   },
-   {
-    "sha": "055112b",
-    "data": "2026-11-19",
-    "assunto": "fix(rescisao): TRCT do desligamento declarava assinatura ausente tendo assinatura (#732)"
    }
   ],
-  "arquivos_mudados_7d": 1097,
+  "arquivos_mudados_7d": 1098,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -274,6 +274,10 @@
     "mudancas": 5
    },
    {
+    "arquivo": "scripts/e2e/ensure-fixtures.mjs",
+    "mudancas": 5
+   },
+   {
     "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 5
    },
@@ -291,10 +295,6 @@
    },
    {
     "arquivo": "src/pages/ColaboradorFormPage.tsx",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/pages/DashboardPage.tsx",
     "mudancas": 5
    }
   ],
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3661,
   "arquivos_codigo": 2118,
-  "linhas_codigo": 422659,
+  "linhas_codigo": 422693,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -504,7 +504,7 @@
   },
   "scripts/e2e": {
    "arquivos": 3,
-   "linhas": 725
+   "linhas": 758
   },
   "scripts/eslint-tests-any.config.mjs": {
    "arquivos": 1,
@@ -732,7 +732,7 @@
   },
   "tailwind.config.js": {
    "arquivos": 1,
-   "linhas": 107
+   "linhas": 108
   },
   "vite.analyze.config.ts": {
    "arquivos": 1,
