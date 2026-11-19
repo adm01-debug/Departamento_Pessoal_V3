@@ -31,6 +31,7 @@ import { normalizarPapeis, capacidadesAvaliacao } from '@/components/avaliacao/p
 import { vinculosDemonstracao } from '@/components/avaliacao/servicoDemo';
 import { idDemonstrativo } from '@/components/avaliacao/escritaOperacional';
 import { impedimentoEdicaoFeedback } from '@/components/avaliacao/edicaoFeedback';
+import { MOCK_COLABORADORES } from '@/mocks/colaboradoresMock';
 import {
   CHAVE_REGISTROS_DEMO,
   aplicarEstadoDemo,
@@ -318,8 +319,8 @@ export default function AvaliacaoPage() {
     // `listar`, então chamar duas vezes devolvia a lista repetida — cada pessoa
     // aparecia duas vezes nos seletores de avaliado e avaliador, com duas
     // leituras idênticas na bridge.
-    queryFn: () => mesclar(undefined, () => colaboradorService.list(empresaAtual!.id)),
-    enabled: !!empresaAtual?.id,
+    queryFn: () => mesclar(mockAtivo ? MOCK_COLABORADORES : undefined, () => colaboradorService.list(empresaAtual!.id)),
+    enabled: !!empresaAtual?.id || mockAtivo,
   });
 
   /**
