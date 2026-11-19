@@ -7575,7 +7575,7 @@
     "CurrencyInput"
    ],
    "export_default": null,
-   "linhas": 50,
+   "linhas": 59,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],

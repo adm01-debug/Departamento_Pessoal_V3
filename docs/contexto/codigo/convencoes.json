@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(e2e): restaura sinal verde da main - liga vitrine de desempenho e expoe inputMode numerico (#748)",
    "feat(auditoria): aba de Auditoria de Admissões no ar, lendo a trilha real (#746)",
    "fix: remove folhas_gestor_update da 120000 para nao quebrar pos-condicao da 130000 (#745)",
    "feat(ui): resgata os 2 resíduos visuais da PR #546 (muri) (#744)",
-   "feat(dashboard): variacao do quadro de pessoal no mes (#743)",
-   "fix(ferias/folhas): policy UPDATE gestor (pode_gerir_pessoas) em ferias e folhas_pagamento (#726)"
+   "feat(dashboard): variacao do quadro de pessoal no mes (#743)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

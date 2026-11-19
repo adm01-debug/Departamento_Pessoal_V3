@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0eb89d46b2d424ae89914cbf0456d683eaa2993b",
+  "commit": "f8a6976611f56ce0a12300ec85ef29eb5ecde2e0",
   "branch": "main",
-  "data_commit": "2026-11-19T12:41:17-03:00",
+  "data_commit": "2026-11-19T13:12:37-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "f8a6976",
+    "data": "2026-11-19",
+    "assunto": "fix(e2e): restaura sinal verde da main - liga vitrine de desempenho e expoe inputMode numerico (#748)"
+   },
    {
     "sha": "0eb89d4",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "9048fce",
     "data": "2026-11-18",
     "assunto": "fix(empresas): empresa de abertura deixa de ser sorteada pela ordem do RPC (#723)"
-   },
-   {
-    "sha": "f7681c0",
-    "data": "2026-11-18",
-    "assunto": "docs(gaps): causa raiz das 11 falhas do E2E autenticado na main (#722)"
    }
   ],
-  "arquivos_mudados_7d": 1154,
+  "arquivos_mudados_7d": 1138,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -145,7 +145,7 @@
    },
    {
     "pasta": "src/components/ui",
-    "mudancas": 105
+    "mudancas": 106
    },
    {
     "pasta": "src/services/__tests__",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3657,
   "arquivos_codigo": 2118,
-  "linhas_codigo": 422408,
+  "linhas_codigo": 422417,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 999,
-   "linhas": 184631
+   "linhas": 184640
   },
   "src/constants": {
    "arquivos": 7,
