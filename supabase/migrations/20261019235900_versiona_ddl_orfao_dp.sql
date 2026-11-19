@@ -5,7 +5,8 @@
 -- No canônico de hoje é NO-OP: tudo aqui já existe lá. O ganho é para QUALQUER
 -- banco novo (preview, ambiente de teste, DR), onde hoje nada disso nasce.
 --
--- ╔═══════════════════════════════════════════════════════════════════════-- ║ VERSÃO ESCOLHIDA DE PROPÓSITO: 20261019235900, ou seja ANTES do primeiro ║
+-- ╔══════════════════════════════════════════════════════════════════════════╗
+-- ║ VERSÃO ESCOLHIDA DE PROPÓSITO: 20261019235900, ou seja ANTES do primeiro ║
 -- ║ arquivo que depende destes objetos (20261020120000). A primeira versão   ║
 -- ║ deste arquivo era 20261119180000 e, por rodar DEPOIS dos dependentes,    ║
 -- ║ não destravava replay nenhum — achado de revisão, e estava certo.        ║
