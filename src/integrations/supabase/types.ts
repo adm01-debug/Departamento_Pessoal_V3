@@ -962,6 +962,10 @@ export type Database = {
           created_at: string
           dados_anteriores: Json | null
           dados_novos: Json | null
+          empresa_id: string | null
+          justificativa: string | null
+          status_anterior: string | null
+          status_posterior: string | null
           id: string
           ip_address: string | null
           registro_id: string
@@ -976,6 +980,10 @@ export type Database = {
           created_at?: string
           dados_anteriores?: Json | null
           dados_novos?: Json | null
+          empresa_id?: string | null
+          justificativa?: string | null
+          status_anterior?: string | null
+          status_posterior?: string | null
           id?: string
           ip_address?: string | null
           registro_id: string
@@ -990,6 +998,10 @@ export type Database = {
           created_at?: string
           dados_anteriores?: Json | null
           dados_novos?: Json | null
+          empresa_id?: string | null
+          justificativa?: string | null
+          status_anterior?: string | null
+          status_posterior?: string | null
           id?: string
           ip_address?: string | null
           registro_id?: string
