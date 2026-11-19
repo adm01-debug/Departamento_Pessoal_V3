@@ -2996,7 +2996,7 @@
     "NewLoanDialog"
    ],
    "export_default": null,
-   "linhas": 255,
+   "linhas": 258,
    "dominio": "components/descontos",
    "hooks_locais": [],
    "tabelas": [

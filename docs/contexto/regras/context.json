@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d327ab7fd2ee3c2fb3f5f27603eb126e17334162",
+  "sha": "26629deb63bd712438786f221c56559e4c296569",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-19 11:01 UTC",
-  "files_total": 3644,
-  "code_files": 3065,
-  "code_lines": 486014
+  "generated_at": "2026-11-19 11:21 UTC",
+  "files_total": 3646,
+  "code_files": 3067,
+  "code_lines": 486192
  },
  "version": "1.3.2",
- "facts_hash": "4ddaf6b126eb8e89",
+ "facts_hash": "a5d6314845b5c978",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1020,
-   ".sql": 962,
+   ".sql": 964,
    ".ts": 947,
    ".mjs": 108,
    ".js": 15,
@@ -54159,7 +54159,7 @@
     "function": "fn_consignado_valida_margem",
     "condition": "",
     "each": "row",
-    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
+    "src": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql"
    },
    {
     "name": "ajuste_ponto_status_transition",
@@ -64554,13 +64554,13 @@
     "args": "",
     "returns": "trigger",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
+    "src": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE v_salario numeric; v_comprometido numeric; v_margem numeric; BEGIN IF COALESCE(NEW.status, '') <> 'ativo' THEN RETURN NEW; END IF; IF TG_OP = 'UPDATE' AND COALESCE(OLD.status, '') = 'ativo' AND COALESCE(NEW.valor_parcela, 0) <= COALESCE(OLD.valor_parcela, 0) THEN RETURN NEW; END IF; SELECT c.salario_base INTO v_salario FROM public.colaboradores c WHERE c.id = NEW.colaborador_id; IF COALESCE(v_salario, 0) <= 0 THEN RAISE EXCEPTION 'Salário base do colaborador não permite calcular a margem consignável'; END IF; SELECT COALESCE(sum(e.valor_parcela), 0) INTO v_comprometido FROM public.emprestimos_consignados e WHERE e.colaborador_id = NEW.colaborador_id AND e.status = 'ativo' AND (NEW.id …",
     "raises": [
      "Salário base do colaborador não permite calcular a margem consignável",
-     "Parcela excede a margem consignável de 35%% do salário: já comprometido R$ %, limite R$ %"
+     "Parcela excede a margem de empréstimo consignável de 30%% do salário: já comprometido R$ %, limite R$ %"
     ],
     "tables": [
      "colaboradores",
@@ -72103,6 +72103,8 @@
    "supabase/migrations/20261118223000_whatsapp_config_repoe_policy_admin_rh.verify.sql",
    "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
    "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.verify.sql",
+   "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql",
+   "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -84119,6 +84121,14 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "fn_consignado_valida_margem",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -85599,12 +85609,12 @@
    {
     "function": "fn_consignado_valida_margem",
     "msg": "Salário base do colaborador não permite calcular a margem consignável",
-    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
+    "src": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql"
    },
    {
     "function": "fn_consignado_valida_margem",
-    "msg": "Parcela excede a margem consignável de 35%% do salário: já comprometido R$ %, limite R$ %",
-    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
+    "msg": "Parcela excede a margem de empréstimo consignável de 30%% do salário: já comprometido R$ %, limite R$ %",
+    "src": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -101664,7 +101674,7 @@
   {
    "module": "scripts",
    "files": 153,
-   "lines": 35023,
+   "lines": 35015,
    "tables": [
     "a",
     "anexos",
@@ -101972,7 +101982,7 @@
   {
    "module": "src/components",
    "files": 994,
-   "lines": 181969,
+   "lines": 181978,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -103922,8 +103932,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 888,
-   "lines": 80307,
+   "files": 890,
+   "lines": 80484,
    "tables": [
     "profiles",
     "user_roles"
@@ -147082,7 +147092,7 @@
    {
     "file": "src/components/descontos/NewLoanDialog.tsx",
     "name": "MARGEM_CONSIGNAVEL_BANCO",
-    "value": "0.35"
+    "value": "0.3"
    },
    {
     "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
@@ -160384,6 +160394,12 @@
     "field": "status",
     "value": "ativo",
     "kind": "filtra"
+   },
+   {
+    "file": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql",
+    "field": "status",
+    "value": "ativo",
+    "kind": "filtra"
    }
   ],
   "calc_fns": [
@@ -163853,7 +163869,15 @@
    },
    {
     "file": "src/components/descontos/NewLoanDialog.tsx",
-    "line": "* (tela, trigger e src/calculators, que usa 35% do líquido) está registrada em"
+    "line": "* Era 0.35 e virou 0.30: 35% é a margem TOTAL da Lei 10.820 art. 1º §1º, da"
+   },
+   {
+    "file": "src/components/descontos/NewLoanDialog.tsx",
+    "line": "* empréstimo é 30%, que é o que esta tela sempre aplicou. Os 35% seguem"
+   },
+   {
+    "file": "src/components/descontos/NewLoanDialog.tsx",
+    "line": "* qual 5% são exclusivos do cartão de crédito consignado. A faixa do"
    },
    {
     "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
@@ -215572,7 +215596,7 @@
     "function": "fn_consignado_valida_margem",
     "condition": "",
     "each": "row",
-    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
+    "src": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql"
    },
    {
     "name": "ajuste_ponto_status_transition",
@@ -225967,13 +225991,13 @@
     "args": "",
     "returns": "trigger",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
+    "src": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE v_salario numeric; v_comprometido numeric; v_margem numeric; BEGIN IF COALESCE(NEW.status, '') <> 'ativo' THEN RETURN NEW; END IF; IF TG_OP = 'UPDATE' AND COALESCE(OLD.status, '') = 'ativo' AND COALESCE(NEW.valor_parcela, 0) <= COALESCE(OLD.valor_parcela, 0) THEN RETURN NEW; END IF; SELECT c.salario_base INTO v_salario FROM public.colaboradores c WHERE c.id = NEW.colaborador_id; IF COALESCE(v_salario, 0) <= 0 THEN RAISE EXCEPTION 'Salário base do colaborador não permite calcular a margem consignável'; END IF; SELECT COALESCE(sum(e.valor_parcela), 0) INTO v_comprometido FROM public.emprestimos_consignados e WHERE e.colaborador_id = NEW.colaborador_id AND e.status = 'ativo' AND (NEW.id …",
     "raises": [
      "Salário base do colaborador não permite calcular a margem consignável",
-     "Parcela excede a margem consignável de 35%% do salário: já comprometido R$ %, limite R$ %"
+     "Parcela excede a margem de empréstimo consignável de 30%% do salário: já comprometido R$ %, limite R$ %"
     ],
     "tables": [
      "colaboradores",
@@ -227086,12 +227110,12 @@
    {
     "function": "fn_consignado_valida_margem",
     "msg": "Salário base do colaborador não permite calcular a margem consignável",
-    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
+    "src": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql"
    },
    {
     "function": "fn_consignado_valida_margem",
-    "msg": "Parcela excede a margem consignável de 35%% do salário: já comprometido R$ %, limite R$ %",
-    "src": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
+    "msg": "Parcela excede a margem de empréstimo consignável de 30%% do salário: já comprometido R$ %, limite R$ %",
+    "src": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -232539,7 +232563,8 @@
       "filtra:supabase/functions/gerar-ltcat-os/index.ts",
       "filtra:supabase/functions/gerar-pgr/index.ts",
       "filtra:supabase/functions/processar-ponto/index.ts",
-      "filtra:supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql"
+      "filtra:supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
+      "filtra:supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql"
      ],
      "sem_colaboradores": [
       "compara:src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
@@ -252871,6 +252896,14 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "fn_consignado_valida_margem",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -261177,7 +261210,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 456,
+   "lines": 448,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -270347,7 +270380,7 @@
   },
   "src/components/__tests__/NewLoanDialog.test.tsx": {
    "path": "src/components/__tests__/NewLoanDialog.test.tsx",
-   "lines": 208,
+   "lines": 214,
    "is_test": true,
    "tests": [
     "NewLoanDialog",
@@ -279083,7 +279116,7 @@
   },
   "src/components/descontos/NewLoanDialog.tsx": {
    "path": "src/components/descontos/NewLoanDialog.tsx",
-   "lines": 255,
+   "lines": 258,
    "exports": [
     "const MARGEM_CONSIGNAVEL_TELA",
     "const MARGEM_CONSIGNAVEL_BANCO",
@@ -279108,7 +279141,7 @@
     },
     {
      "name": "MARGEM_CONSIGNAVEL_BANCO",
-     "value": "0.35"
+     "value": "0.3"
     }
    ],
    "status_values": [
@@ -279119,7 +279152,9 @@
     }
    ],
    "percents": [
-    "* (tela, trigger e src/calculators, que usa 35% do líquido) está registrada em"
+    "* Era 0.35 e virou 0.30: 35% é a margem TOTAL da Lei 10.820 art. 1º §1º, da",
+    "* empréstimo é 30%, que é o que esta tela sempre aplicou. Os 35% seguem",
+    "* qual 5% são exclusivos do cartão de crédito consignado. A faixa do"
    ]
   },
   "src/components/desligamentos/DesligamentoAtencaoBanner.tsx": {
@@ -328890,6 +328925,21 @@
    "path": "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.verify.sql",
    "lines": 34
   },
+  "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql": {
+   "path": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql",
+   "lines": 130,
+   "status_values": [
+    {
+     "field": "status",
+     "value": "ativo",
+     "kind": "filtra"
+    }
+   ]
+  },
+  "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.verify.sql": {
+   "path": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.verify.sql",
+   "lines": 47
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -329208,10 +329258,24 @@
   }
  },
  "git": {
-  "sha": "d327ab7fd2ee3c2fb3f5f27603eb126e17334162",
+  "sha": "26629deb63bd712438786f221c56559e4c296569",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "26629de",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix(consignado): teto do emprestimo vai de 35% para 30% (Lei 10.820 art. 1 §1) (#725)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql",
+     "src/components/__tests__/NewLoanDialog.test.tsx",
+     "src/components/descontos/NewLoanDialog.tsx",
+     "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql",
+     "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.verify.sql"
+    ]
+   },
    {
     "sha": "d327ab7",
     "date": "2026-11-19",
@@ -329523,18 +329587,6 @@
      "src/components/__tests__/BeneficiosSettingsTabCriar.test.tsx",
      "src/components/settings/BeneficiosSettingsTab.tsx"
     ]
-   },
-   {
-    "sha": "a48b81c",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "infra: conserta a armadilha de DEFAULT x CHECK em public.faltas (#694)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
-     "supabase/migrations/20260724000500_fix_faltas_status_default.verify.sql",
-     "supabase/migrations/20260724001200_fix_faltas_tipo_default_and_constraint.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -329544,7 +329596,15 @@
    ],
    [
     "scripts/canonical-invariants.sql",
-    4
+    5
+   ],
+   [
+    "src/components/__tests__/NewLoanDialog.test.tsx",
+    2
+   ],
+   [
+    "src/components/descontos/NewLoanDialog.tsx",
+    2
    ],
    [
     "supabase/migrations/20260911190000_p0_hash_trigger_search_path.verify.sql",
@@ -329571,8 +329631,12 @@
     2
    ],
    [
-    "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
-    2
+    "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.verify.sql",
+    1
    ],
    [
     "supabase/migrations/20260911192000_p0_views_revoke_public.verify.sql",
@@ -329591,14 +329655,6 @@
     1
    ],
    [
-    "src/components/__tests__/NewLoanDialog.test.tsx",
-    1
-   ],
-   [
-    "src/components/descontos/NewLoanDialog.tsx",
-    1
-   ],
-   [
     "supabase/baseline/20260831_canonical/README.md",
     1
    ],
@@ -329612,10 +329668,6 @@
    ],
    [
     "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.verify.sql",
     1
    ]
   ]

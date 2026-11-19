@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d327ab7fd2` · branch `main` · 2026-11-19 11:01 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `26629deb63` · branch `main` · 2026-11-19 11:21 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1071,8 +1071,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `replace_monthly_provisions` | monthly provision collaborator is outside the company | `supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql` |
 | `replace_monthly_provisions` | monthly provision tax rate changed under lock: stored % bps, received % bps | `supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql` |
 | `replace_monthly_provisions` | monthly provision replacement row count mismatch | `supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql` |
-| `fn_consignado_valida_margem` | Salário base do colaborador não permite calcular a margem consignável | `supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql` |
-| `fn_consignado_valida_margem` | Parcela excede a margem consignável de 35%% do salário: já comprometido R$ %, limite R$ % | `supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.sql` |
+| `fn_consignado_valida_margem` | Salário base do colaborador não permite calcular a margem consignável | `supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql` |
+| `fn_consignado_valida_margem` | Parcela excede a margem de empréstimo consignável de 30%% do salário: já comprometido R$ %, limite R$ % | `supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql` |
 | `_purge_audit_log_internal` | Retenção mínima de 30 dias | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_security_definer_rpcs` | access denied | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_user_roles` | Apenas administradores podem listar papéis de usuário | `supabase/rebaseline/20260831_corrected_public.sql` |
@@ -1711,7 +1711,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `assinada` | compara, escreve | `src/pages/AdminEpisFichasPage.tsx` |
 | `status` | `assinado` | compara, escreve | `src/components/contratos/ContratosVencendoPanel.tsx`<br>`src/components/portal/PortalDocumentosTab.tsx`<br>`src/hooks/useAssinaturas.ts`<br>`src/pages/ContratosGeradosPage.tsx` |
 | `status` | `ativa` | compara, escreve, filtra | `src/pages/PesquisasClimaPage.tsx`<br>`supabase/functions/gerar-ltcat-os/index.ts` |
-| `status` | `ativo` | compara, escreve, filtra | `src/components/dashboard/useMorningBriefing.ts`<br>`src/components/descontos/EmprestimosTable.tsx`<br>`src/components/descontos/FinancialSummaryCards.tsx`<br>`src/components/descontos/NewLoanDialog.tsx`<br>`src/components/desligamentos/NovoDesligamentoDialog.tsx`<br>… +56 |
+| `status` | `ativo` | compara, escreve, filtra | `src/components/dashboard/useMorningBriefing.ts`<br>`src/components/descontos/EmprestimosTable.tsx`<br>`src/components/descontos/FinancialSummaryCards.tsx`<br>`src/components/descontos/NewLoanDialog.tsx`<br>`src/components/desligamentos/NovoDesligamentoDialog.tsx`<br>… +57 |
 | `status` | `ativos` | compara | `src/components/admissoes/GestaoKits.tsx` |
 | `status` | `calculada` | compara, escreve | `src/services/folhaPagamentoService.ts`<br>`supabase/functions/calcular-folha/index.ts`<br>`supabase/functions/fechar-folha/index.ts` |
 | `status` | `calculado` | compara, escreve | `src/components/desligamentos/trilhaDerivacoes.ts`<br>`src/components/premiacoes/PagamentosTabela.tsx`<br>`src/components/premiacoes/pagamentosComum.ts`<br>`src/services/rescisaoService.ts` |
@@ -4205,7 +4205,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ delay: i * 0.05 }}` | `src/components/dashboard/analytics/widgets.tsx` |
 | `transition={{ delay: index * 0.1 }}` | `src/components/dashboard/analytics/widgets.tsx` |
 | `Colaboradores acima de 30% de desconto` | `src/components/descontos/FinancialSummaryCards.tsx` |
-| `* (tela, trigger e src/calculators, que usa 35% do líquido) está registrada em` | `src/components/descontos/NewLoanDialog.tsx` |
+| `* Era 0.35 e virou 0.30: 35% é a margem TOTAL da Lei 10.820 art. 1º §1º, da` | `src/components/descontos/NewLoanDialog.tsx` |
+| `* empréstimo é 30%, que é o que esta tela sempre aplicou. Os 35% seguem` | `src/components/descontos/NewLoanDialog.tsx` |
+| `* qual 5% são exclusivos do cartão de crédito consignado. A faixa do` | `src/components/descontos/NewLoanDialog.tsx` |
 | `// (`rescisaoCalc.ts:320-323`): 40% na dispensa sem justa causa e no término` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
 | `// antecipado pelo empregador (acompanha o art. 479), 20% no acordo mútuo e na` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
 | `transition={{ delay: atraso - ANDAMENTO_GAP * 0.5, duration: ANDAMENTO_GAP, ease: 'easeInOut' }}` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
@@ -4402,9 +4404,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `// folhaCalc.processar): HE a 50%/100% sobre a hora contratual,` | `supabase/functions/calcular-folha/index.ts` |
 | `const desc = v.valor_mensal ? Number(v.valor_mensal) * 0.2 : 0;` | `supabase/functions/calcular-folha/index.ts` |
 | `const descontoVT = Math.min(Number(v.valor ?? 0), salarioBase * 0.06);` | `supabase/functions/calcular-folha/index.ts` |
-| `const descontoVT = Math.min(Number(vtLegacy.valor_mensal ?? 0), salarioBase * 0.06);` | `supabase/functions/calcular-folha/index.ts` |
-| `const fgts = trunc2(baseTributavel * 0.08);` | `supabase/functions/calcular-folha/index.ts` |
-| … +26 linhas — lista completa em `context.json` | |
+| … +28 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -4547,7 +4547,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `ROW_MAX_STAGGER_INDEX` | `7` | `src/components/colaboradores/ColaboradorTable.tsx` |
 | `ROW_STAGGER_STEP` | `0.05` | `src/components/colaboradores/ColaboradorTable.tsx` |
 | `MARGEM_CONSIGNAVEL_TELA` | `0.3` | `src/components/descontos/NewLoanDialog.tsx` |
-| `MARGEM_CONSIGNAVEL_BANCO` | `0.35` | `src/components/descontos/NewLoanDialog.tsx` |
+| `MARGEM_CONSIGNAVEL_BANCO` | `0.3` | `src/components/descontos/NewLoanDialog.tsx` |
 | `BASE_CONTEUDO_ABA` | `4` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
 | `ANDAMENTO_GAP` | `0.22` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |
 | `ANDAMENTO_INICIO` | `0.6` | `src/components/desligamentos/DesligamentoDetailSheet.tsx` |

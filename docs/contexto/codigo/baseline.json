@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d327ab7fd2ee3c2fb3f5f27603eb126e17334162",
+  "commit": "26629deb63bd712438786f221c56559e4c296569",
   "branch": "main",
-  "data_commit": "2026-11-19T08:00:52-03:00",
+  "data_commit": "2026-11-19T08:20:41-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "26629de",
+    "data": "2026-11-19",
+    "assunto": "fix(consignado): teto do emprestimo vai de 35% para 30% (Lei 10.820 art. 1 §1) (#725)"
+   },
    {
     "sha": "d327ab7",
     "data": "2026-11-19",
@@ -126,18 +131,13 @@
     "sha": "c328119",
     "data": "2026-11-18",
     "assunto": "feat(contas-bancarias): resgata identidade visual de banco da muri (#699)"
-   },
-   {
-    "sha": "5d9deb6",
-    "data": "2026-11-18",
-    "assunto": "feat(dashboard): resgata Resumo Operacional e Próximas Atividades da muri (#698)"
    }
   ],
-  "arquivos_mudados_7d": 1138,
+  "arquivos_mudados_7d": 1135,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 389
+    "mudancas": 390
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -199,18 +199,18 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 24
+    "mudancas": 25
    },
    {
     "arquivo": "inventario/estado/rotas.json",
     "mudancas": 23
    },
    {
-    "arquivo": "package.json",
-    "mudancas": 11
+    "arquivo": "scripts/canonical-invariants.sql",
+    "mudancas": 12
    },
    {
-    "arquivo": "scripts/canonical-invariants.sql",
+    "arquivo": "package.json",
     "mudancas": 11
    },
    {
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3631,
+  "arquivos_total": 3633,
   "arquivos_codigo": 2105,
-  "linhas_codigo": 418241,
+  "linhas_codigo": 418250,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -326,7 +326,7 @@
   "hooks": 120,
   "edge_functions": 67,
   "tabelas": 427,
-  "migrations": 888,
+  "migrations": 890,
   "cron_jobs": 41,
   "testes": 792,
   "workflows": 21,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 994,
-   "linhas": 181969
+   "linhas": 181978
   },
   "src/constants": {
    "arquivos": 7,

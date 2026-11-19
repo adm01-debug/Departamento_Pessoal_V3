@@ -2656,7 +2656,7 @@
   {
    "arquivo": "src/components/__tests__/NewLoanDialog.test.tsx",
    "tipo": "unit",
-   "linhas": 208,
+   "linhas": 214,
    "testa": [
     "src/components/descontos/NewLoanDialog.tsx"
    ],
