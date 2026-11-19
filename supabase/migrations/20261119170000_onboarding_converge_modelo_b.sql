@@ -186,6 +186,28 @@ BEGIN
   END IF;
 END $$;
 
--- Nenhum DELETE, nenhum DROP: `onboarding_tarefas` e `onboarding_colaborador`
--- seguem intactas, com `categoria`, `ordem`, `concluida_por`, `observacoes` e
--- `template_tarefa_id`, que não têm coluna no modelo canônico.
+-- Nenhum DELETE, nenhum DROP: \`onboarding_tarefas\` e \`onboarding_colaborador\`
+-- seguem intactas, com \`categoria\`, \`ordem\`, \`concluida_por\`, \`observacoes\` e
+-- \`template_tarefa_id\`, que não têm coluna no modelo canônico.
+--
+-- ============================================================================
+-- DECISÃO SOBRE ESSAS 5 COLUNAS: NÃO acrescentá-las ao modelo canônico.
+--
+-- Razões, nesta ordem:
+--   1. nenhuma tela lê qualquer uma delas. Conferido: \`git grep\` por
+--      \`concluida_por\` e \`template_tarefa_id\` em \`src/\` não acha consumidor, e a
+--      única menção a \`categoria\` em \`src/components/admissoes/\` é um COMENTÁRIO
+--      em \`GestaoKits.tsx:127\` sobre \`onboarding_kits\`, outra tabela. Coluna
+--      nova nasceria morta;
+--   2. o legado continua intacto com as 5, então NADA se perde — trazer
+--      qualquer uma depois é um ALTER TABLE mais um UPDATE, a qualquer momento;
+--   3. acrescentar coluna em tabela canônica para dado que nenhuma tela mostra
+--      é churn de schema; só teria efeito junto de trabalho de UI, o que é
+--      funcionalidade nova e não parte deste resgate;
+--   4. o objetivo do resgate se cumpre sem elas: o histórico que estava
+--      invisível — título, descrição, prazo e a data real de conclusão —
+--      passa a aparecer.
+--
+-- Se mais adiante o RH pedir categoria ou observação em tela, entra como
+-- feature própria, com coluna, UI e teste no mesmo PR.
+-- ============================================================================
