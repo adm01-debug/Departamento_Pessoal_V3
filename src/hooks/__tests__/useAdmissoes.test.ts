@@ -67,6 +67,17 @@ function makeWrapper() {
   };
 }
 
+/** Igual ao de cima, mas devolve o client junto — para espiar invalidações. */
+function makeWrapperComClient() {
+  const qc = new QueryClient({
+    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+  });
+  const wrapper = function Wrapper({ children }: { children: React.ReactNode }) {
+    return React.createElement(QueryClientProvider, { client: qc }, children);
+  };
+  return { qc, wrapper };
+}
+
 // ── tests ──────────────────────────────────────────────────────────────────────
 describe('useAdmissoes', () => {
   beforeEach(() => {
@@ -100,6 +111,30 @@ describe('useAdmissoes', () => {
     await waitFor(() => {
       expect(result.current.admissoes).toEqual(mockData);
     });
+  });
+
+  it('criar invalida TAMBÉM a trilha de auditoria da aba Auditoria', async () => {
+    // A aba Auditoria da mesma página lê por outra chave
+    // (['auditoria-admissoes', empresaId]) e o botão "Nova Admissão" fica
+    // disponível com ela aberta. Sem esta invalidação o RH cria a admissão e a
+    // trilha continua dizendo que nenhum evento foi registrado.
+    const { qc, wrapper } = makeWrapperComClient();
+    const espiao = vi.spyOn(qc, 'invalidateQueries');
+    const { result } = renderHook(() => useAdmissoes(), { wrapper });
+
+    await act(async () => {
+      await result.current.criar({
+        nome: 'Ana',
+        cargo: 'Analista',
+        departamento: 'TI',
+        data_prevista: '2026-12-01',
+        salario_proposto: 4000,
+      });
+    });
+
+    const chaves = espiao.mock.calls.map((c) => JSON.stringify(c[0]?.queryKey));
+    expect(chaves).toContain(JSON.stringify(['admissoes', 'empresa-1']));
+    expect(chaves).toContain(JSON.stringify(['auditoria-admissoes', 'empresa-1']));
   });
 
   it('criar merges empresa_id into the payload', async () => {

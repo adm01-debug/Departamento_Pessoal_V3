@@ -658,7 +658,6 @@ export function FeedbacksTab({
                   grupos={grupos}
                   apresentacao={apresentacao}
                   reduzirMovimento={reduzirMovimento}
-                  onVer={abrirDetalhe}
                   onEditar={abrirEdicao}
                   onFiltrarAvaliador={setAvaliador}
                   onFiltrarAvaliado={setBusca}

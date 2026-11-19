@@ -20,8 +20,16 @@ const parseCurrency = (value: string): number => {
   return parseInt(cleaned || '0', 10) / 100;
 };
 
-export function CurrencyInput({ value: controlledValue, onChange, placeholder = 'R$ 0,00', className, disabled }: CurrencyInputProps) {
-  const [displayValue, setDisplayValue] = useState(controlledValue !== undefined ? formatCurrency(controlledValue) : '');
+export function CurrencyInput({
+  value: controlledValue,
+  onChange,
+  placeholder = 'R$ 0,00',
+  className,
+  disabled,
+}: CurrencyInputProps) {
+  const [displayValue, setDisplayValue] = useState(
+    controlledValue !== undefined ? formatCurrency(controlledValue) : ''
+  );
   const [lastControlled, setLastControlled] = useState(controlledValue);
 
   // Sincroniza com a prop controlada durante o render (sem useEffect/setState-in-effect).
@@ -42,6 +50,7 @@ export function CurrencyInput({ value: controlledValue, onChange, placeholder = 
       value={displayValue}
       onChange={handleChange}
       placeholder={placeholder}
+      inputMode="numeric"
       className={cn('text-right', className)}
       disabled={disabled}
     />
