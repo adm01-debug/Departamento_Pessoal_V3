@@ -15,15 +15,7 @@ SELECT jsonb_build_object(
     -- por leitura direta do catalogo — mas ESTA assercao nao provou nada deles.
     -- Atualizada aqui; ver docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md §18.6.
     WHERE version IN (
-      '20260911190000',
-      '20260911192000',
-      '20260911195000',
-      '20261028220000',
-      '20261114000300',
-      '20261114000400',
-      '20261114000500',
-      '20261114000600',
-      '20261115000000'
+      '20261119110000'
     )
   ),
   'notificacoes_chk_wide', EXISTS (
