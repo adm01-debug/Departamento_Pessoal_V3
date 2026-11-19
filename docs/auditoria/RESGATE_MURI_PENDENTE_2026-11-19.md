@@ -253,7 +253,7 @@ varredura, e seu conteúdo (32 migrations NineBox + rota `ninebox-preview` em `s
 
 | #   | Pendência                                                                                                     | Evidência                                                                                                                                                                                                                                                                                                                                                             | Por que importa                                                                                                                                                                               |
 | --- | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Sidecar `supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.verify.sql`                    | existe em `pr/394` (commit `490f4fd12`); `git cat-file -e origin/main:<path>` → **ausente**, enquanto o `.sql` está na `main`                                                                                                                                                                                                                                         | `AGENTS.md` §5: "Ledger não prova DDL: exija o sidecar `.verify.sql`". A policy `configuracoes_ponto_tenant_manage` está aplicada sem nenhuma asserção que prove isso                         |
+| 1   | ~~Sidecar da `20261107203000`~~ — **conferido e descartado**, ver 8.6                                         | —                                                                                                                                                                                                                                                                                                                                                                     | portar o sidecar da `pr/394` criaria duas verificações contraditórias                                                                                                                         |
 | 2   | 3º resíduo de UX da rescisão: busca por **CPF e matrícula** no combobox                                       | `pr/546:src/components/calculadoraRescisao/FormularioRescisao.tsx:319` usa `value={\`${c.nome_completo} ${c.cpf ?? ''} ${c.matricula ?? ''}\`}`; a `main` (`src/pages/CalculadoraRescisaoPage.tsx:379`, entregue na #738) usa `value={c.nome_completo}`                                                                                                               | homônimos: com dois "José Silva" o RH não tem como desambiguar na tela de rescisão                                                                                                            |
 | 3   | 2 specs e2e: `e2e/authenticated/ninebox-aprovacao.spec.ts` e `e2e/authenticated/premiacoes-auditoria.spec.ts` | `git rev-list -1 --count origin/main -- <path>` = **0** nas duas; existem em `pr/546`                                                                                                                                                                                                                                                                                 | as duas áreas (NineBox e Premiações) foram portadas para a `main` **sem** a cobertura de ponta a ponta que a muri tinha                                                                       |
 | 4   | Aba Auditoria de Admissões (5 arquivos)                                                                       | `git ls-tree --name-only origin/main src/components/admissoes/ \| grep -i auditoria` → vazio                                                                                                                                                                                                                                                                          | §7 explica por que estava parada. **O bloqueio caiu**: a trilha passou a ser gravada em 2026-11-19 (migration `20261119150000`, aplicada e verificada). Falta o passo 2 (leitura por empresa) |
@@ -330,3 +330,35 @@ branch nem PR, ninguém olha, e um `git stash clear` apaga sem deixar `reflog` �
 Nenhuma linha do stash tem comportamento ausente da `main`. **Veredito: incorporado, pode ser descartado** — e
 mesmo assim não há pressa, porque os paths também vivem em 565+ refs `refs/pull/*/head`, que o GitHub guarda
 indefinidamente.
+
+### 8.6 Sidecar da `20261107203000` (pr/394) — descartado, e o motivo é importante
+
+O sidecar que falta na `main` afirma que a policy `configuracoes_ponto_tenant_manage` **existe**:
+
+```sql
+SELECT 'ok' WHERE EXISTS (SELECT 1 FROM pg_policies WHERE ... policyname = 'configuracoes_ponto_tenant_manage' AND cmd = 'ALL');
+```
+
+Essa policy **não existe mais, de propósito** — e duas migrations posteriores, ambas na `main` e no ledger,
+a removem:
+
+- `20261109000000_configuracoes_ponto_insert_policy.sql:9` → `DROP POLICY IF EXISTS "configuracoes_ponto_tenant_manage"`;
+- `20261112010000_configuracoes_ponto_corrige_policies_prod.sql:12` → o mesmo `DROP`, e troca a policy única
+  `FOR ALL` por quatro policies por papel, com o helper `pode_gerir_config_ponto`.
+
+E a `20261112010000` **já tem sidecar forte**, que assere exatamente o contrário:
+`... AND NOT EXISTS (SELECT 1 FROM pg_policies WHERE ... cmd IN ('ALL','DELETE') ...)`.
+
+Portar o sidecar da `pr/394` colocaria no repositório duas asserções contraditórias sobre a mesma tabela, e um
+`mode=verify` da `20261107203000` **reprovaria por projeto**.
+
+Estado real em produção, lido agora (`supabase_db_list_policies`, tabela `configuracoes_ponto`): **4 policies**
+— `Admins podem inserir configurações de ponto` (INSERT), `Configurações de ponto visíveis por membros da
+empresa` (SELECT), `Supervisor ou coordenador inserem configurações de ponto` (INSERT) e `Supervisor ou
+coordenador alteram configurações de ponto` (UPDATE). **Nenhuma** `ALL` ou `DELETE`, e
+`configuracoes_ponto_tenant_manage` ausente. Ou seja: o estado do banco é o que a `20261112010000` manda, e
+esse elo **está** provado por sidecar.
+
+**Veredito: descarte correto.** A regra do `AGENTS.md` §5 segue honrada pelo sidecar da migration que de fato
+governa a tabela hoje; a `20261107203000` é um elo intermediário cuja pós-condição foi substituída 5 dias
+depois.
