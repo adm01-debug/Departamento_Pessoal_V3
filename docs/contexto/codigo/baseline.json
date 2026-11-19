@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "074c01e3837a6842943de8c996d6f6086b53299d",
+  "commit": "c60bf649a486d54050db45690744b3534f7e3228",
   "branch": "main",
-  "data_commit": "2026-11-19T17:26:03-03:00",
+  "data_commit": "2026-11-19T17:45:42-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "c60bf64",
+    "data": "2026-11-19",
+    "assunto": "fix(onboarding): ancora assercoes do verify na admissao de destino (#756)"
+   },
    {
     "sha": "074c01e",
     "data": "2026-11-19",
@@ -126,11 +131,6 @@
     "sha": "367ed1f",
     "data": "2026-11-19",
     "assunto": "fix(seguranca): gestor nao pode forjar a aprovacao do RH nas ferias (#733)"
-   },
-   {
-    "sha": "c9398d2",
-    "data": "2026-11-19",
-    "assunto": "chore(auditoria): por que a trilha de Admissoes nao e port de UI (medido) (#731)"
    }
   ],
   "arquivos_mudados_7d": 1096,
@@ -192,14 +192,14 @@
     "mudancas": 32
    },
    {
-    "pasta": ".github/workflows/canonical-migrations.yml",
+    "pasta": "src/components/desligamentos",
     "mudancas": 30
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 30
+    "mudancas": 29
    },
    {
     "arquivo": "inventario/estado/rotas.json",
