@@ -129,6 +129,15 @@ describe('auditoriaDerivacoes', () => {
     expect(filtrarAuditoria(EVENTOS, comFiltro({ ate: '2026-12-15' }), HOJE).map((e) => e.id)).toEqual(['e2', 'e3']);
   });
 
+  it('a data final inclui o dia INTEIRO, até o último milissegundo', () => {
+    // O limite era 23:59:59.000: evento às 23:59:59.500 do próprio dia
+    // escolhido caía fora, e o filtro deixava de cobrir o dia que o usuário
+    // pediu. Fixado em 23:59:59.999.
+    const fimDoDia = { ...EVENTOS[1], id: 'borda', data_hora: '2026-12-15T23:59:59.500Z' };
+    const ids = filtrarAuditoria([fimDoDia], comFiltro({ ate: '2026-12-15' }), HOJE).map((e) => e.id);
+    expect(ids).toEqual(['borda']);
+  });
+
   it('conta por etapa, lista responsáveis e tipos de evento', () => {
     expect(contarPorEtapa(EVENTOS)).toEqual({ esocial: 1, cancelada: 1, pendente: 1 });
     expect(responsaveisDisponiveis(EVENTOS)).toEqual(['Bruno Cardoso', 'Renata Alves']);

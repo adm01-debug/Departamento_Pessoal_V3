@@ -38,6 +38,13 @@ describe('statusDoEvento', () => {
     expect(statusDoEvento({ etapa: 'contrato' })).toBe('pendente');
   });
 
+  it('eSocial em PROCESSAMENTO é pendência, não sucesso', () => {
+    // A claim de transmissão grava 'processando' antes de existir recibo
+    // (20260912204000_p1_admission_esocial_claim.sql:189). Dizer sucesso aí
+    // deixaria o evento verde para sempre mesmo se o envio falhasse depois.
+    expect(statusDoEvento({ etapa: 'esocial', status_esocial: 'processando' })).toBe('pendente');
+  });
+
   it('eSocial transmitido é sucesso mesmo com etapa em curso', () => {
     expect(statusDoEvento({ etapa: 'esocial', status_esocial: 'transmitido' })).toBe('sucesso');
   });
@@ -78,6 +85,24 @@ describe('detalheDoEvento', () => {
     expect(detalheDoEvento(linha({ campos_alterados: ['updated_at'] }))).toBe(
       'Atualização sem mudança de campo de negócio.'
     );
+  });
+
+  it('evento de APLICAÇÃO (campos_alterados nulo) descreve o que registrou', () => {
+    // get_audit_trail só monta campos_alterados quando o payload traz array
+    // (20260912195000:330-331); evento gravado por registrar_auditoria chega
+    // NULL. Antes isso virava "sem mudança de campo de negócio" e uma
+    // validação de documento real aparecia como se nada tivesse acontecido.
+    expect(
+      detalheDoEvento(
+        linha({ campos_alterados: null, dados_novos: { documento: 'ctps', status: 'validado', updated_at: 'x' } })
+      )
+    ).toBe('Evento registrado pela aplicação: documento, status.');
+  });
+
+  it('trigger que diz lista VAZIA continua sendo "sem mudança"', () => {
+    // Array vazio é afirmação do trigger: ele comparou e nada de negócio mudou.
+    // É diferente de NULL, que é ausência de informação.
+    expect(detalheDoEvento(linha({ campos_alterados: [] }))).toBe('Atualização sem mudança de campo de negócio.');
   });
 
   it('INSERT e DELETE têm texto próprio', () => {
