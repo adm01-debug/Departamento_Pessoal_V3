@@ -47,7 +47,19 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 const HOJE = inicioDoDia(new Date());
-const deslocar = (dias: number) => new Date(Date.now() + dias * DIA_MS).toISOString();
+/**
+ * Instante ÚNICO para todo o arquivo. Antes era `Date.now()` dentro da função,
+ * logo cada chamada pegava um relógio novo: duas tarefas que o teste declara
+ * com o MESMO `deslocar(-10)` acabavam com `created_at` diferente quando as
+ * chamadas atravessavam um milissegundo. O teste "é um contrato TOTAL" existe
+ * justamente para exercitar o desempate por `id` (prazo → created_at → id);
+ * com created_at diferente o desempate parava no created_at e a ordem saía na
+ * ordem de criação — verde na maioria das execuções e vermelho quando a
+ * máquina cruzava o milissegundo. Congelar a base torna o empate real e o
+ * teste determinístico.
+ */
+const AGORA = Date.now();
+const deslocar = (dias: number) => new Date(AGORA + dias * DIA_MS).toISOString();
 
 /* ─── ORÁCULO: as regras como estavam no HEAD ──────────────────────────────── */
 
