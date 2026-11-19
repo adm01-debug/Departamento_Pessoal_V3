@@ -98850,6 +98850,44 @@
         "volatility": "volatile"
       },
       {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.onboarding_colaborador.audit_onboarding_colaborador",
+            "public.onboarding_tarefas.audit_onboarding_tarefas"
+          ],
+          "views": []
+        },
+        "comment": "Auditoria das tabelas de onboarding em public.audit_log, COM empresa_id (o log_audit_change generico nao preenche tenant). Passo 1 da trilha de Auditoria de Admissoes; ver 20261119150000.",
+        "config": [
+          "search_path=pg_catalog, public, pg_temp"
+        ],
+        "definition": null,
+        "definition_sha": "372d898bcb4e8f9c",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "onboarding_log_audit_change",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
         "args": "_desligamento_id uuid, _comprovante_url text, _actor_id uuid",
         "callers": {
           "code": [
@@ -156790,6 +156828,17 @@
         "timing": "BEFORE"
       },
       {
+        "definition": "CREATE TRIGGER audit_onboarding_colaborador AFTER INSERT OR DELETE OR UPDATE ON onboarding_colaborador FOR EACH ROW EXECUTE FUNCTION onboarding_log_audit_change()",
+        "events": "INSERT OR DELETE OR UPDATE",
+        "function": "public.onboarding_log_audit_change",
+        "level": "ROW",
+        "name": "audit_onboarding_colaborador",
+        "schema": "public",
+        "status": "enabled",
+        "table": "onboarding_colaborador",
+        "timing": "AFTER"
+      },
+      {
         "definition": "CREATE TRIGGER tr_updated_at_onboarding_colaborador BEFORE UPDATE ON onboarding_colaborador FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()",
         "events": "UPDATE",
         "function": "public.update_updated_at_column",
@@ -156821,6 +156870,17 @@
         "status": "enabled",
         "table": "onboarding_documentos_obrigatorios",
         "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER audit_onboarding_tarefas AFTER INSERT OR DELETE OR UPDATE ON onboarding_tarefas FOR EACH ROW EXECUTE FUNCTION onboarding_log_audit_change()",
+        "events": "INSERT OR DELETE OR UPDATE",
+        "function": "public.onboarding_log_audit_change",
+        "level": "ROW",
+        "name": "audit_onboarding_tarefas",
+        "schema": "public",
+        "status": "enabled",
+        "table": "onboarding_tarefas",
+        "timing": "AFTER"
       },
       {
         "definition": "CREATE TRIGGER tr_updated_at_onboarding_tarefas BEFORE UPDATE ON onboarding_tarefas FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()",

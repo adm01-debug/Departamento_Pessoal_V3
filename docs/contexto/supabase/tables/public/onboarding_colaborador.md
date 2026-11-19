@@ -77,6 +77,7 @@
 
 | nome | timing | eventos | nível | status | função |
 |---|---|---|---|---|---|
+| audit_onboarding_colaborador | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.onboarding_log_audit_change |
 | tr_updated_at_onboarding_colaborador | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 | update_onboarding_colaborador_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 

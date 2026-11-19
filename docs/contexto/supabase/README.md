@@ -22,8 +22,8 @@ Gerado automaticamente a cada 10 min pelo workflow `contexto` (job `banco`). **N
 | tabelas | 391 |
 | colunas | 4946 |
 | views | 53 |
-| functions | 405 |
-| triggers | 444 |
+| functions | 406 |
+| triggers | 446 |
 | policies (RLS) | 653 |
 | índices | 1319 |
 | tipos/enums | 19 |

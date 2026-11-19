@@ -72,6 +72,7 @@
 
 | nome | timing | eventos | nível | status | função |
 |---|---|---|---|---|---|
+| audit_onboarding_tarefas | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.onboarding_log_audit_change |
 | tr_updated_at_onboarding_tarefas | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 
 

@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-19 13:14 UTC
+
+- **functions** adicionado (1): `public.onboarding_log_audit_change()`
+- **triggers** adicionado (2): `public.onboarding_colaborador.audit_onboarding_colaborador`, `public.onboarding_tarefas.audit_onboarding_tarefas`
+
 ## 2026-11-19 12:19 UTC
 
 - **functions** adicionado (1): `public.ferias_bloquear_aprovacao_rh_sem_rh()`
