@@ -195,8 +195,12 @@ jobs:
           # 20261119140000 e a guarda de
           # coluna que fecha a escalada que ELA abriu (RLS e por linha): sem a
           # guarda, gestor podia gravar aprovado_rh. Achado da review na #729.
+          # A guarda de coluna de ferias (20261119140000) saiu daqui porque foi
+          # APLICADA e esta no ledger: validate run 44520983381, apply confirmado
+          # pelo catalogo (trg_ferias_bloquear_aprovacao_rh_sem_rh, tgtype 19) e a
+          # logica inteira do sidecar rodada ao vivo devolveu ok.
           for migration in \
-            20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql
+            20261119150000_onboarding_auditoria_grava_trilha.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
