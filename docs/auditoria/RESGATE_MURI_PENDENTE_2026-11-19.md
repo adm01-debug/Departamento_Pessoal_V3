@@ -396,3 +396,103 @@ credencial real contra o canônico.
 **Veredito: descarte correto.** Somar um teste de navegador não verificável ao portão da `main`, para um
 contrato que 48 casos unitários já provam, é risco sem ganho. Se o dono quiser cobertura de navegador nessas
 duas áreas, é decisão com custo (dispatch a partir da `main`, credencial real) e vira tarefa própria.
+
+## 9. Varredura exaustiva por SÍMBOLO (2026-11-19, depois da #746) — o universo de branches fechado
+
+As seções 3 e 8 compararam a muri com a `main` por **caminho de arquivo**. Isso subestima e superestima ao
+mesmo tempo: a `main` reaproveitou a muri renomeando arquivos, então caminho diferente não significa
+funcionalidade ausente — e `git diff` de três pontos marca como "adicionado na muri" o que a `main` também
+adicionou por conta própria (foi o que inflou uma contagem anterior de 117 para 577).
+
+Esta seção fecha o universo por um critério que renomeação não quebra: **símbolo exportado**.
+
+### 9.1 Método (reproduzível)
+
+```sh
+# arvore da muri extraida para fora do repo
+git archive pr/546 src supabase/functions | tar -x -C /tmp/muri
+# extrai `export (function|const|class|interface|type|enum) <nome>` dos dois lados
+# e subtrai; mock, teste e asset nao contam como funcionalidade
+```
+
+| Medida                                                                                | Valor                   |
+| ------------------------------------------------------------------------------------- | ----------------------- |
+| Símbolos exportados na muri (produção, sem mock/teste)                                | 3.331                   |
+| Símbolos exportados na `main` (inclusive teste e edge)                                | 3.651                   |
+| **Ausentes da `main` por nome**                                                       | **224**, em 58 arquivos |
+| Descartados por regra já estabelecida (mock: PRs #210/#471) + resolvidos nesta sessão | 185                     |
+| **Triados um a um**                                                                   | **39**                  |
+
+Arquivo × árvore (não três pontos): **117** caminhos existem só na muri — 31 componentes, 14 assets,
+13 migrations, 13 mocks, 9 serviços, 5 utils, 5 hooks, 4 edge, 3 lib, 2 calculators, 4 specs e avulsos.
+
+### 9.2 Resultado da triagem dos 39 símbolos de produção
+
+**Zero funcionalidade perdida.** 14 incorporados sob outro nome, 25 obsoletos — e **11 destes já eram código
+morto dentro da própria muri** (nenhum importador lá). Em dois casos a `main` é melhor: a provisão da muri
+usava alíquota fixa 0,348 (`provisoesService.ts:13`) contra cálculo por regime tributário em
+`supabase/functions/calcular-provisoes/index.ts:22-54`; e `metabaseService.ts:69` lia
+`VITE_METABASE_SECRET_KEY` **no browser**.
+
+Amostra dos vereditos com evidência:
+
+| Símbolo da muri           | Veredito    | Onde está / por quê                                                                                       |
+| ------------------------- | ----------- | --------------------------------------------------------------------------------------------------------- |
+| `calcularFolhaCompleta`   | INCORPORADO | `supabase/functions/calcular-folha/index.ts:451-556`, com INSS/IRRF por competência em `_shared/`         |
+| `cnabLayoutService`       | INCORPORADO | era wrapper puro; `CNABDialog.tsx:150` chama `cnabService.ts:225` direto                                  |
+| `maskPixKey`              | INCORPORADO | virou `maskGeneric` (`piiMask.ts:38-42`) + despacho por tipo em `usePiiMask.ts:25-31`, com gate por papel |
+| `gerarEventosMensais`     | INCORPORADO | era stub (`dados: {}`); real em `esocialService.ts:303-398`, ligado ao botão em `ESocialPage.tsx:238`     |
+| `HeadcountOverviewCard`   | INCORPORADO | resgatado nome a nome em `useExecutiveDashboard.ts:34,54` (o próprio arquivo cita a muri)                 |
+| `FGTSDigitalDashboard`    | OBSOLETO    | números hardcoded (`:65-73`); real em `ObrigacoesFiscaisPage.tsx:208-252` + `gerar-guias`                 |
+| `ESocialAIInsights`       | OBSOLETO    | conteúdo inventado; remoção travada por teste em `ESocialSemDadosFicticios.test.tsx:67-80`                |
+| `dominioAlterdataService` | OBSOLETO    | client HTTP no browser com `clientSecret`; nunca integrado nem na muri                                    |
+| `useStableCallback`       | OBSOLETO    | `useCallback(cb, [])` ignorando as deps recebidas — helper com bug                                        |
+| `pontoSchema`             | OBSOLETO    | `main` valida por allowlist (`GestaoRegistrosPonto.tsx:96` + `tableColumns.ts`)                           |
+
+Os 3 arquivos de backend exclusivos da muri: `enviar-esocial/signer.ts` era **mock** (`assinaturaMock`,
+`CERTIFICADO_MOCK`) e já era morto lá (o `index.ts` importava `./utils/signer.ts`), e a `main` tem o
+equivalente honestamente nomeado `assinarXmlSandboxNaoHomologado`; `metabase-embed/index.ts` nunca foi
+registrada no `config.toml` nem na muri; `esocialValidators.ts` era shim `@deprecated` de 9 linhas.
+
+### 9.3 Migrations da muri sem arquivo na `main` (13)
+
+6 estão aplicadas sob **outro número** (`atomic_rate_limit_rpc` → `20260724120001`,
+`codex_p1_function_overload_and_auth_gap` → `20260724130004`, `p2_037_deprecate_legacy_tables` →
+`20260818000001`, `document_upload_storage_columns` → `20261117170300`,
+`storage_documentos_delete_tenant_scope` → `20261117170000`, `onboarding_audit_trigger` →
+`20261117170100`). Das 7 restantes, nenhuma está no ledger, e o estado foi conferido objeto por objeto:
+
+| Versão da muri                                    | Veredito                                                                                                                                 |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `20260724140000_t007_backup_logs_rls`             | OBSOLETO — `public.backup_logs` **não existe** (391 tabelas, sem truncamento)                                                            |
+| `20260819000000_p0_fix_user_empresa_id_rls`       | ESTADO PRESENTE — `user_empresa_id()` existe; `main` chega mais estrito em `20260912190000:51-64`, **sem** o fallback de `user_metadata` |
+| `20260820000000_p0_fix_auditoria_rpc`             | ESTADO PRESENTE — e a policy `audit_log_all` (`USING(true)`) da muri **não** existe, corretamente: abriria a trilha de todas as empresas |
+| `20260821000000_p0_rls_dashboard_audit`           | ESTADO PRESENTE — 10 das 13 policies verbatim; 3 substituídas por versão **mais estreita** (`*_rh_manage`)                               |
+| `20261005000000_onboarding_kits_rls_additive`     | ESTADO PRESENTE — rejeição documentada na issue #628: as 3 policies da muri **ampliariam** o escopo                                      |
+| `20261005020000_onboarding_modelo_b_convergencia` | **ESTADO AUSENTE** — resgatada na PR #747                                                                                                |
+| `20261026090000_ciclos_exclusao_autorizada`       | ESTADO PRESENTE — trigger, função e policies vivos via `20261027090000`                                                                  |
+
+**Conclusão que inverte a intuição:** aplicar hoje as versões da muri para `audit_log`, para as 13
+`*_tenant_select` e para os kits de onboarding seria **afrouxar** isolamento multi-tenant, não corrigir.
+A versão da muri de `20260821000000` somava `OR empresa_id IS NULL OR auth.jwt()->>'role' IN (...)`, e
+policies permissivas combinam por **OR**.
+
+### 9.4 Universo de branches — fechado
+
+| Branch             | Veredito              | Prova                                                                                                      |
+| ------------------ | --------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `computador_local` | zero conteúdo próprio | `git merge-base --is-ancestor` passa; aponta para o merge da #744                                          |
+| `contexto`         | zero código           | órfã, sem base comum; 859 arquivos = 857 docs gerados + `vercel.json`/`README` **reduzidos**. Nunca fechar |
+| `pr/546` (muri)    | triada por símbolo    | 9.1–9.3                                                                                                    |
+
+### 9.5 O que esta sessão ainda NÃO provou
+
+- **Corpo de função e ACL**: nenhuma ferramenta MCP devolve `prosrc` ou privilégio de função, e
+  `supabase_db_query` está quebrado (vazio até para `select 1`); `pg_policies` não passa pelo PostgREST.
+  Mitigação real, não promessa: o job "Integridade do banco canônico (live)" (`ci.yml:478`) roda em **toda PR
+  interna** com role somente-leitura e inclui `audit-rls-tenant-open.mjs` (lê a expressão das policies e marca
+  o padrão traiçoeiro `empresa_id IS NOT NULL`, `:53`) e `audit-secdef-authz.mjs` (lê `prosecdef`, `prosrc` e
+  `has_function_privilege` para anon/authenticated, `:162-165`). Verde no merge da #746.
+- **Comportamento com dado real na tela**: a aba de Auditoria foi confirmada em produção por requisição HTTP
+  ao bundle servido (placeholder antigo com 0 ocorrências, `get_audit_trail` presente, zero
+  `from('audit_log')`), mas ninguém a abriu autenticado.
