@@ -65,6 +65,25 @@ describe('CardFeedbacksPorStatus – contagem por status (item 13 da #571)', () 
     expect(valorDaLinha('Concluídos')).toContain('1');
     // Pre-Fix, "Pendentes" valia 3 (1 real `pendente` + 2 `cancelado`).
     expect(valorDaLinha('Pendentes')).toContain('1');
+    expect(valorDaLinha('Cancelados')).toContain('2');
+    // A soma das três categorias fecha o Total (donut não tem "buraco").
     expect(valorDaLinha('Total')).toContain('4');
+  });
+
+  it('com todos os feedbacks cancelados, mostra só Cancelados e zero no resto', () => {
+    render(
+      <AnaliticosDesempenho
+        feedbacks={[
+          { id: '1', nota_geral: 5, status: 'cancelado' },
+          { id: '2', nota_geral: 3, status: 'cancelado' },
+        ]}
+        metas={[]}
+      />
+    );
+
+    expect(valorDaLinha('Concluídos')).toContain('0');
+    expect(valorDaLinha('Pendentes')).toContain('0');
+    expect(valorDaLinha('Cancelados')).toContain('2');
+    expect(valorDaLinha('Total')).toContain('2');
   });
 });
