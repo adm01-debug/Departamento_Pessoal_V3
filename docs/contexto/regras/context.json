@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "32be71e516dc94e705510ed57b95a62faed35e44",
+  "sha": "c33db80722c9722eddda34d96e5f8bf3b96f3d95",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-20 15:19 UTC",
+  "generated_at": "2026-11-20 17:08 UTC",
   "files_total": 3675,
   "code_files": 3095,
   "code_lines": 492673
@@ -331066,10 +331066,19 @@
   }
  },
  "git": {
-  "sha": "32be71e516dc94e705510ed57b95a62faed35e44",
+  "sha": "c33db80722c9722eddda34d96e5f8bf3b96f3d95",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "c33db80",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix: passa empresaAtual.id para folhaService.list em FinanceiroBancarioPage (#765)",
+    "files": [
+     "src/pages/FinanceiroBancarioPage.tsx"
+    ]
+   },
    {
     "sha": "32be71e",
     "date": "2026-11-20",
@@ -331376,15 +331385,6 @@
      "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql",
      "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql"
     ]
-   },
-   {
-    "sha": "68f349c",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(testes): congela a base de tempo do fixture de OnboardingParidade (#735)",
-    "files": [
-     "src/pages/__tests__/OnboardingParidade.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -331449,6 +331449,10 @@
     2
    ],
    [
+    "src/pages/FinanceiroBancarioPage.tsx",
+    1
+   ],
+   [
     "src/components/__tests__/AnaliticosDesempenhoStatus.test.tsx",
     1
    ],
@@ -331462,10 +331466,6 @@
    ],
    [
     "src/components/recrutamento/CandidatoTimeline.tsx",
-    1
-   ],
-   [
-    "tailwind.config.js",
     1
    ]
   ]

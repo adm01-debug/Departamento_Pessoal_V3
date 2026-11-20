@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `32be71e516dc94e705510ed57b95a62faed35e44` (2026-11-20T12:18:43-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c33db80722c9722eddda34d96e5f8bf3b96f3d95` (2026-11-20T14:07:16-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -396,7 +396,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27755 nós · 62656 arestas · 2409 comunidades · grafo do commit `32be71e5`
+- 27755 nós · 62656 arestas · 2409 comunidades · grafo do commit `c33db807`
 - comunidades maiores: useEmpresas (655), 20260831_corrected_public.sql (485), canonical_schema.sql (481), vitest (454), lucide-react (426), button.tsx (424), cn (418), nineBoxComum.ts (208), hooks/index.ts (203), react (195), contract.ts (192), App.tsx (191)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-20 `c33db80` fix: passa empresaAtual.id para folhaService.list em FinanceiroBancarioPage (#765)
 - 2026-11-20 `32be71e` fix: itens 8, 13 e 14 da issue #571 (Avaliação/NineBox) (#764)
 - 2026-11-20 `e8fff0c` fix: limpa listarTrilhaMock no beforeEach dos estados da consulta (Auditoria de Admiss?es) (#763)
 - 2026-11-19 `cc9b25a` fix: restaura etapas canonicas do pipeline no seed do E2E (#762)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `49cbb50` infra(banco): versiona o DDL órfão da família dp_* (imutabilidade do log de auditoria) (#751)
 - 2026-11-19 `16d4f17` chore(autofix): eslint --fix nas regras seguras (pdiComum, useAfastamentos, colaboradoresMock) (#754)
 - 2026-11-19 `21048eb` fix(avaliacao): mescla MOCK_COLABORADORES no modo demo para destravar aprovacao de feedback (E2E :210) (#753)
-- 2026-11-19 `689351b` fix(e2e): corrige fila de gestor no stub da bridge e lista so com Editar (#752)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
