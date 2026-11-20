@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c33db80722` · branch `main` · 2026-11-20 17:08 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `cca632bdb8` · branch `main` · 2026-11-20 18:08 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -426,7 +426,6 @@
 | coluna | coluna `metadata` usada no código não existe no schema de `colaboradores` |  |
 | coluna | coluna `salario` usada no código não existe no schema de `colaboradores` |  |
 | coluna | coluna `data_fim` usada no código não existe no schema de `afastamentos` |  |
-| coluna | coluna `horas_falta` usada no código não existe no schema de `batidas_ponto` |  |
 | coluna | coluna `data_hora` usada no código não existe no schema de `registros_ponto` |  |
 | coluna | coluna `cei` usada no código não existe no schema de `empresas` |  |
 | coluna | coluna `endereco` usada no código não existe no schema de `empresas` |  |
@@ -647,7 +646,8 @@
 | segurança | função `trg_medida_esocial_on_aplicada` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `update_extintor_status_vencimento` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `user_empresa_id` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +35 linhas — lista completa em `context.json` | | |
+| segurança | função `validar_contrato_clt` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| … +34 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 

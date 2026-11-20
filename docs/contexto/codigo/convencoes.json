@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: corrige 12 erros BRIDGE_SCHEMA_ERROR (HTTP 400 no bridge) e destrava Dashboard Executivo e Passivo Trabalhista (#766)",
    "fix: passa empresaAtual.id para folhaService.list em FinanceiroBancarioPage (#765)",
    "fix: itens 8, 13 e 14 da issue #571 (Avaliação/NineBox) (#764)",
    "fix: limpa listarTrilhaMock no beforeEach dos estados da consulta (Auditoria de Admiss?es) (#763)",
-   "fix: restaura etapas canonicas do pipeline no seed do E2E (#762)",
-   "fix(recrutamento): restaura header 'Histórico do processo' no dossiê do candidato (#761)"
+   "fix: restaura etapas canonicas do pipeline no seed do E2E (#762)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

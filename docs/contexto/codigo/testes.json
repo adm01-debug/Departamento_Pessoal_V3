@@ -5247,11 +5247,11 @@
   {
    "arquivo": "src/integrations/supabase/__tests__/clientBridge.test.ts",
    "tipo": "unit",
-   "linhas": 230,
+   "linhas": 241,
    "testa": [
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 16
+   "casos": 17
   },
   {
    "arquivo": "src/integrations/supabase/__tests__/clientFunctionsProxy.test.ts",
@@ -6328,11 +6328,11 @@
   {
    "arquivo": "src/services/__tests__/premiacoesService.test.ts",
    "tipo": "unit",
-   "linhas": 502,
+   "linhas": 523,
    "testa": [
     "src/services/premiacoesService.ts"
    ],
-   "casos": 35
+   "casos": 36
   },
   {
    "arquivo": "src/services/__tests__/provisaoService.test.ts",
@@ -7260,13 +7260,13 @@
   {
    "arquivo": "supabase/functions/external-db-bridge/validation.test.ts",
    "tipo": "unit",
-   "linhas": 389,
+   "linhas": 420,
    "testa": [
     "supabase/functions/external-db-bridge/access.ts",
     "supabase/functions/external-db-bridge/request-schema.ts",
     "supabase/functions/external-db-bridge/validation.ts"
    ],
-   "casos": 27
+   "casos": 30
   },
   {
    "arquivo": "supabase/functions/fechar-folha/e2e_concorrencia.test.ts",

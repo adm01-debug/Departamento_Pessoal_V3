@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c33db80722c9722eddda34d96e5f8bf3b96f3d95` (2026-11-20T14:07:16-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `cca632bdb8b09e0a666bdd5d53aadc6627c0e6dd` (2026-11-20T15:07:25-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3662 |
 | arquivos_codigo | 2119 |
-| linhas_codigo | 422850 |
+| linhas_codigo | 422922 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -100,7 +100,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/sst | 0 | 0 | 11 | 6 | 2 | 8 |
 | components/treinamentos | 0 | 0 | 47 | 1 | 3 | 82 |
 | components/ui | 0 | 0 | 72 | 18 | 2 | 5 |
-| hooks | 0 | 0 | 96 | 206 | 13 | 163 |
+| hooks | 0 | 0 | 96 | 206 | 13 | 164 |
 | hooks/ferias | 0 | 0 | 6 | 11 | 0 | 7 |
 | integrations/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib | 0 | 0 | 14 | 1 | 0 | 0 |
@@ -396,13 +396,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27755 nós · 62656 arestas · 2409 comunidades · grafo do commit `c33db807`
+- 27755 nós · 62656 arestas · 2409 comunidades · grafo do commit `cca632bd`
 - comunidades maiores: useEmpresas (655), 20260831_corrected_public.sql (485), canonical_schema.sql (481), vitest (454), lucide-react (426), button.tsx (424), cn (418), nineBoxComum.ts (208), hooks/index.ts (203), react (195), contract.ts (192), App.tsx (191)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (28)
+- .github/workflows/canonical-migrations.yml (27)
 - inventario/estado/rotas.json (23)
 - scripts/canonical-invariants.sql (16)
 - src/pages/ColaboradorDetalhesPage.tsx (12)
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-20 `cca632b` fix: corrige 12 erros BRIDGE_SCHEMA_ERROR (HTTP 400 no bridge) e destrava Dashboard Executivo e Passivo Trabalhista (#76
 - 2026-11-20 `c33db80` fix: passa empresaAtual.id para folhaService.list em FinanceiroBancarioPage (#765)
 - 2026-11-20 `32be71e` fix: itens 8, 13 e 14 da issue #571 (Avaliação/NineBox) (#764)
 - 2026-11-20 `e8fff0c` fix: limpa listarTrilhaMock no beforeEach dos estados da consulta (Auditoria de Admiss?es) (#763)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `b2df382` fix(onboarding): resgata a convergência do modelo legado, sem duplicar histórico (#747)
 - 2026-11-19 `49cbb50` infra(banco): versiona o DDL órfão da família dp_* (imutabilidade do log de auditoria) (#751)
 - 2026-11-19 `16d4f17` chore(autofix): eslint --fix nas regras seguras (pdiComum, useAfastamentos, colaboradoresMock) (#754)
-- 2026-11-19 `21048eb` fix(avaliacao): mescla MOCK_COLABORADORES no modo demo para destravar aprovacao de feedback (E2E :210) (#753)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

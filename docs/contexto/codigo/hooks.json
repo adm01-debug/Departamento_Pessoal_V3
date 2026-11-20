@@ -1818,18 +1818,18 @@
     "useExecutiveKPIs",
     "useStrategicFinancials"
    ],
-   "linhas": 273,
+   "linhas": 276,
    "dominio": "hooks",
    "tabelas": [
     "afastamentos",
-    "batidas_ponto",
     "colaboradores",
     "desligamentos",
     "ferias",
     "folha_itens",
     "folhas_pagamento",
     "personnel_budget",
-    "solicitacoes_ajuste_ponto"
+    "solicitacoes_ajuste_ponto",
+    "vw_kpi_absenteismo"
    ],
    "rpcs": [
     "get_personnel_cost_projection"

@@ -334,7 +334,7 @@
     "supabaseBase"
    ],
    "export_default": null,
-   "linhas": 448,
+   "linhas": 450,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -3929,7 +3929,7 @@
     "premiacoesService"
    ],
    "export_default": null,
-   "linhas": 415,
+   "linhas": 417,
    "tabelas": [
     "notificacoes",
     "premiacoes_auditoria",

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c33db80722` · branch `main` · 2026-11-20 17:08 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `cca632bdb8` · branch `main` · 2026-11-20 18:08 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2392,7 +2392,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **BodySchema** (`supabase/functions/external-db-bridge/request-schema.ts`, z.object):
   ```ts
-  { action: z.enum(["select", "insert", "update", "delete", "upsert", "rpc"]), table: z.string().max(63).optional(), rpcName: z.string().max(63).optional(), fn: z.string().max(63).optional(), columns: z.string().max(2000).optional(), filters: z.array(FilterSchema).max(50).optional(), order: z.object({ column: z.string().max(120), ascending: z.boolean().optional() }).optional(), limit: z.number().int().optional(), offset: z.number().int().min(0).optional(), countMode: z.enum(["none", "exact", "planned", "estimated"]).optional(), single: z.boolean().optional(), onConflict: OnConflictSchema.optional(), data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(), params: z.record(z.unknown()).optional(), userId: z.string().max(64).optional(), // Correlação distribuída — era …
+  { action: z.enum(["select", "insert", "update", "delete", "upsert", "rpc"]), table: z.string().max(63).optional(), rpcName: z.string().max(63).optional(), fn: z.string().max(63).optional(), columns: z.string().max(2000).optional(), filters: z.array(FilterSchema).max(50).optional(), order: z.object({ column: z.string().max(120), ascending: z.boolean().optional() }).optional(), limit: z.number().int().optional(), offset: z.number().int().min(0).optional(), countMode: z.enum(["none", "exact", "planned", "estimated"]).optional(), single: z.boolean().optional(), maybeSingle: z.boolean().optional(), onConflict: OnConflictSchema.optional(), data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(), params: z.record(z.unknown()).optional(), userId: z.string().max(64).option …
   ```
 - **BodySchema** (`supabase/functions/fechar-folha/index.ts`, z.object):
   ```ts
@@ -5452,7 +5452,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9656 testes em 756 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9661 testes em 756 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5475,7 +5475,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/InlineTabs.test.tsx` | 54 | PreferenciasTab · renders Preferências de Interface title · renders Modo Escuro switch label · renders Salvar Alterações button … |
 | `src/hooks/__tests__/useTabelasReferencia.test.ts` | 54 | useNacionalidades · calls listarNacionalidades · useTiposDesligamento · calls listarTiposDesligamento and returns data … |
 | `src/services/__tests__/avaliacaoService.test.ts` | 50 | avaliacaoService.listarCiclos · returns ciclos without empresa filter · filters by empresa_id when provided · returns empty array when data is null … |
-| `src/services/__tests__/premiacoesService.test.ts` | 49 | premiacoesService.listarCampanhas · returns campanhas without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
+| `src/services/__tests__/premiacoesService.test.ts` | 50 | premiacoesService.listarCampanhas · returns campanhas without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/components/__tests__/NineBoxConsolidacao.test.tsx` | 48 | consolidação — escala e validação das notas · aceita apenas notas dentro da escala 1–5 e isola o resto · nota fora da escala não classifica e é contada como problema de dado · consolidação — cenários de avaliação por colaborador … |
 | `src/components/__tests__/OrganogramaNode.test.tsx` | 48 | OrganogramaNode · renders department name · shows colaborador count · pluralizes colaborador count correctly … |
 | `src/services/__tests__/feriasService.test.ts` | 46 | feriasService.listSolicitacoes · returns data and count from supabase · returns empty data when supabase returns null · filters by empresa_id when provided … |
@@ -5519,6 +5519,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/pesquisaService.test.ts` | 29 | pesquisaService.listar · returns pesquisas without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/whatsappService.test.ts` | 29 | whatsappService · getConfig · returns config data when found · returns null when no config found … |
 | `src/utils/__tests__/format.test.ts` | 28 | format — resiliência a entradas inválidas · formatDate(%p) → fallback · formatCurrency(%p) → fallback · respeita fallback customizado … |
+| `supabase/functions/external-db-bridge/validation.test.ts` | 28 | tabela: injeção rejeitada · tabela: nomes legítimos aceitos · denylist: tabelas sensíveis presentes · colunas: injeção/subquery rejeitada … |
 | `src/pages/__tests__/OnboardingJornada.test.tsx` | 27 | Jornada de Onboarding — card e estado (cobertura herdada) · shows loading spinner while fetching · shows empty state when no onboarding data · renders the collaborator header (name + cargo • departamento + % progress) … |
 | `src/schemas/esocial/__tests__/sstValidators.test.ts` | 27 | validarS2210 · returns valid for complete data · errors when cpfTrab is missing · errors for invalid CPF … |
 | `src/services/__tests__/admissaoService.test.ts` | 27 | admissaoService.listarAdmissoes · always scopes query by empresa_id (multi-tenant) · returns empty array when supabase returns null · filters by empresa_id when provided … |
@@ -5536,7 +5537,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/horaExtraService.test.ts` | 25 | horaExtraService.listar · returns records without empresa filter · returns empty array when data is null · applies empresa_id filter when provided … |
 | `src/services/__tests__/pontoService.test.ts` | 25 | pontoService.getSettings · returns settings for empresa · returns null when no settings found · throws on DB error … |
 | `src/utils/__tests__/folhaCalc.test.ts` | 25 | Motor de Cálculo de Folha (folhaCalc) · deve processar uma folha simples corretamente · deve incluir horas extras e DSR no cálculo · deve calcular 13º salário quando solicitado … |
-| `supabase/functions/external-db-bridge/validation.test.ts` | 25 | tabela: injeção rejeitada · tabela: nomes legítimos aceitos · denylist: tabelas sensíveis presentes · colunas: injeção/subquery rejeitada … |
 | `src/components/__tests__/PortalDocumentosTab.test.tsx` | 24 | PortalDocumentosTab · renders Gestão de Documentos title · renders Enviar Novo button · shows loading spinner when loading … |
 | `src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts` | 24 | título, nível e status · lê titulo ou nome (as duas colunas existentes) · traduz os três níveis reais e nunca inventa · distingue ativo=false de ativo ausente … |
 | `src/hooks/__tests__/validators.test.ts` | 24 | required · rejeita null, undefined e string vazia · aceita valores presentes, incluindo 0 e false · isValidEmail … |
@@ -5580,6 +5580,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/PendenciasAprovacao.test.tsx` | 19 | fila de aprovação — controles padronizados por vínculo · registro REAL com vínculo provado: Ver, Devolver e Aprovar habilitados (nesta ordem) · registro REAL SEM o vínculo: os controles continuam VISÍVEIS, porém desabilitados · registro REAL com vínculo não avaliável ( … |
 | `src/components/__tests__/PontoClockRegister.test.tsx` | 19 | PontoClockRegister · renders Registrar Ponto title · renders Entrada button · renders Saída Almoço button … |
 | `src/components/treinamentos/__tests__/TrainingCover.test.tsx` | 19 | TrainingCover — imagem real · exibe a URL válida com enquadramento cover e overlays de CSS · URL indisponível cai no fallback e não deixa a capa vazia · não usa URL externa quando não recebe imagem … |
+| `src/integrations/supabase/__tests__/clientBridge.test.ts` | 19 | client.ts — callBridge via query builder · select serializa action/table/filters/order/limit no body do bridge · filtro com valor  · ilike vazio e string  … |
 | `src/services/__tests__/pontoOfflineService.test.ts` | 19 | pontoOfflineService.generateIntegrityHash · returns a non-empty string · is deterministic for the same input · differs for different inputs … |
 | `src/services/tabelas/__tests__/viewsService.test.ts` | 19 | viewsService · alertasRH queries vw_alertas_rh and returns array · alertasRH distinguishes schema failure from an empty result · kpiTurnover queries vw_kpi_turnover … |
 | `src/utils/__tests__/piiMask.test.ts` | 19 | maskCpfDisplay · returns empty string for null · returns empty string for undefined · masks 11-digit CPF showing only last 2 digits … |
@@ -5591,7 +5592,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts` | 18 | classificação de validade · preserva a regra atual: data nula = vitalício · não presume vitalício para data inválida · usa a janela de 30 dias já adotada pelo sistema … |
 | `src/constants/__tests__/regimes.test.ts` | 18 | REGIMES_TRIBUTARIOS · defines all 4 regime types · each regime has required fields · simples_nacional does NOT collect INSS patronal … |
 | `src/hooks/ferias/__tests__/useProgramacaoFerias.test.ts` | 18 | useProgramacaoFerias · uses ferias-programacao queryKey with ano and filters · is enabled when empresaId is present · returns data from query … |
-| `src/integrations/supabase/__tests__/clientBridge.test.ts` | 18 | client.ts — callBridge via query builder · select serializa action/table/filters/order/limit no body do bridge · filtro com valor  · ilike vazio e string  … |
 | `src/services/__tests__/baseService.test.ts` | 18 | BaseService.listar · returns data and total from supabase · returns empty data with total 0 when supabase returns null · queries page 2 with correct range offset … |
 | `src/services/__tests__/documentUploadService.test.ts` | 18 | documentUploadService · uploadDocumentFile · valida, envia o arquivo pro bucket e devolve o storage_path/meta · o primeiro segmento do path é sempre a empresa … |
 | `src/services/trainingImages/__tests__/briefing.test.ts` | 18 | briefing por assunto · panificação → padaria, fermentação e pães · segurança do trabalho → proteção e ambiente sinalizado · programação/tecnologia → software e ambiente técnico … |

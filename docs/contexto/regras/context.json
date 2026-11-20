@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c33db80722c9722eddda34d96e5f8bf3b96f3d95",
+  "sha": "cca632bdb8b09e0a666bdd5d53aadc6627c0e6dd",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-20 17:08 UTC",
+  "generated_at": "2026-11-20 18:08 UTC",
   "files_total": 3675,
   "code_files": 3095,
-  "code_lines": 492673
+  "code_lines": 492745
  },
  "version": "1.3.2",
- "facts_hash": "570f354e70e33c6c",
+ "facts_hash": "e7591d71b1b4133e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -90945,7 +90945,6 @@
     "component": "DashboardExecutivoPage",
     "tables_transitive": [
      "afastamentos",
-     "batidas_ponto",
      "colaboradores",
      "conformidade_ponto_logs",
      "desligamentos",
@@ -90958,7 +90957,8 @@
      "periodos_aquisitivos",
      "personnel_budget",
      "solicitacoes_ajuste_ponto",
-     "versao_banco"
+     "versao_banco",
+     "vw_kpi_absenteismo"
     ],
     "invokes_transitive": [
      "calcular-folha",
@@ -102595,12 +102595,11 @@
   {
    "module": "src/hooks",
    "files": 206,
-   "lines": 24122,
+   "lines": 24125,
    "tables": [
     "admissao_tokens",
     "admissoes",
     "afastamentos",
-    "batidas_ponto",
     "beneficios_colaborador",
     "colaboradores",
     "departamentos",
@@ -102631,6 +102630,7 @@
     "v_ferias_alerta_pagamento_d2",
     "v_ferias_folha_reconciliacao",
     "versao_banco",
+    "vw_kpi_absenteismo",
     "workflows_etapas",
     "workflows_execucoes",
     "workflows_historico"
@@ -102818,7 +102818,7 @@
   {
    "module": "src/integrations",
    "files": 10,
-   "lines": 1150,
+   "lines": 1163,
    "tables": [
     "colaboradores",
     "empresas",
@@ -103324,7 +103324,7 @@
   {
    "module": "src/services",
    "files": 195,
-   "lines": 41518,
+   "lines": 41541,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -103965,7 +103965,7 @@
   {
    "module": "supabase/functions",
    "files": 188,
-   "lines": 27125,
+   "lines": 27158,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -104656,7 +104656,6 @@
     "select": [
      "src/components/dashboard/useMorningBriefing.ts",
      "src/components/ponto/GestaoRegistrosPonto.tsx",
-     "src/hooks/useExecutiveDashboard.ts",
      "src/services/batidasPontoService.ts",
      "src/services/pontoService.ts",
      "supabase/functions/gerar-aej/index.ts",
@@ -106711,7 +106710,7 @@
     "insert": [
      "src/services/premiacoesService.ts"
     ],
-    "ref": [
+    "select": [
      "src/services/premiacoesService.ts"
     ]
    },
@@ -107632,6 +107631,7 @@
    },
    "vw_kpi_absenteismo": {
     "select": [
+     "src/hooks/useExecutiveDashboard.ts",
      "src/pages/DashboardPage.tsx",
      "src/services/tabelas/viewsService.ts"
     ]
@@ -107888,7 +107888,6 @@
     "data",
     "empresa_id",
     "hora",
-    "horas_falta",
     "id",
     "ordem",
     "tipo"
@@ -109163,6 +109162,7 @@
    ],
    "vw_kpi_absenteismo": [
     "dias_faltados",
+    "empresa_id",
     "mes"
    ],
    "vw_kpi_turnover": [
@@ -111732,10 +111732,6 @@
     "column": "data_fim"
    },
    {
-    "table": "batidas_ponto",
-    "column": "horas_falta"
-   },
-   {
     "table": "registros_ponto",
     "column": "data_hora"
    },
@@ -112629,7 +112625,7 @@
     "file": "supabase/functions/external-db-bridge/request-schema.ts",
     "name": "BodySchema",
     "kind": "object",
-    "body": "{ action: z.enum([\"select\", \"insert\", \"update\", \"delete\", \"upsert\", \"rpc\"]), table: z.string().max(63).optional(), rpcName: z.string().max(63).optional(), fn: z.string().max(63).optional(), columns: z.string().max(2000).optional(), filters: z.array(FilterSchema).max(50).optional(), order: z.object({ column: z.string().max(120), ascending: z.boolean().optional() }).optional(), limit: z.number().int().optional(), offset: z.number().int().min(0).optional(), countMode: z.enum([\"none\", \"exact\", \"planned\", \"estimated\"]).optional(), single: z.boolean().optional(), onConflict: OnConflictSchema.optional(), data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(), params: z.record(z.unknown()).optional(), userId: z.string().max(64).optional(), // Correlação distribuída — era …",
+    "body": "{ action: z.enum([\"select\", \"insert\", \"update\", \"delete\", \"upsert\", \"rpc\"]), table: z.string().max(63).optional(), rpcName: z.string().max(63).optional(), fn: z.string().max(63).optional(), columns: z.string().max(2000).optional(), filters: z.array(FilterSchema).max(50).optional(), order: z.object({ column: z.string().max(120), ascending: z.boolean().optional() }).optional(), limit: z.number().int().optional(), offset: z.number().int().min(0).optional(), countMode: z.enum([\"none\", \"exact\", \"planned\", \"estimated\"]).optional(), single: z.boolean().optional(), maybeSingle: z.boolean().optional(), onConflict: OnConflictSchema.optional(), data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(), params: z.record(z.unknown()).optional(), userId: z.string().max(64).option …",
     "refines": [],
     "chain": []
    },
@@ -188981,6 +188977,10 @@
    },
    {
     "file": "src/integrations/supabase/__tests__/clientBridge.test.ts",
+    "name": "maybeSingle envia maybeSingle=true e acha o primeiro elemento"
+   },
+   {
+    "file": "src/integrations/supabase/__tests__/clientBridge.test.ts",
     "name": "write sem sessão aborta antes do fetch ("
    },
    {
@@ -198033,7 +198033,11 @@
    },
    {
     "file": "src/services/__tests__/premiacoesService.test.ts",
-    "name": "returns auditoria records"
+    "name": "returns auditoria records filtradas por tenant (ids de pagamento da empresa)"
+   },
+   {
+    "file": "src/services/__tests__/premiacoesService.test.ts",
+    "name": "filtra fora auditoria de pagamentos de OUTRA empresa"
    },
    {
     "file": "src/services/__tests__/premiacoesService.test.ts",
@@ -203826,6 +203830,18 @@
    {
     "file": "supabase/functions/external-db-bridge/validation.test.ts",
     "name": "single: ausente tem semântica de array (não-single)"
+   },
+   {
+    "file": "supabase/functions/external-db-bridge/validation.test.ts",
+    "name": "single: maybeSingle true é aceito em SELECT"
+   },
+   {
+    "file": "supabase/functions/external-db-bridge/validation.test.ts",
+    "name": "single: maybeSingle false explícito é aceito"
+   },
+   {
+    "file": "supabase/functions/external-db-bridge/validation.test.ts",
+    "name": "single: maybeSingle tipos não-boolean são rejeitados"
    },
    {
     "file": "supabase/functions/external-db-bridge/validation.test.ts",
@@ -259119,11 +259135,6 @@
    },
    {
     "kind": "coluna",
-    "msg": "coluna `horas_falta` usada no código não existe no schema de `batidas_ponto`",
-    "where": []
-   },
-   {
-    "kind": "coluna",
     "msg": "coluna `data_hora` usada no código não existe no schema de `registros_ponto`",
     "where": []
    },
@@ -292231,7 +292242,7 @@
   },
   "src/hooks/useExecutiveDashboard.ts": {
    "path": "src/hooks/useExecutiveDashboard.ts",
-   "lines": 273,
+   "lines": 276,
    "exports": [
     "function reconstruirHeadcountPorMes",
     "function variacaoUltimoMes",
@@ -292264,7 +292275,7 @@
      "op": "select"
     },
     {
-     "table": "batidas_ponto",
+     "table": "vw_kpi_absenteismo",
      "op": "select"
     },
     {
@@ -292324,10 +292335,10 @@
      "empresa_id",
      "status"
     ],
-    "batidas_ponto": [
-     "data",
+    "vw_kpi_absenteismo": [
+     "dias_faltados",
      "empresa_id",
-     "horas_falta"
+     "mes"
     ],
     "solicitacoes_ajuste_ponto": [
      "empresa_id",
@@ -296422,7 +296433,7 @@
   },
   "src/integrations/supabase/client.ts": {
    "path": "src/integrations/supabase/client.ts",
-   "lines": 448,
+   "lines": 450,
    "exports": [
     "const supabaseBase",
     "function fetchWithRetry",
@@ -296502,11 +296513,15 @@
   },
   "src/integrations/supabase/__tests__/clientBridge.test.ts": {
    "path": "src/integrations/supabase/__tests__/clientBridge.test.ts",
-   "lines": 230,
+   "lines": 241,
    "is_test": true,
    "tables": [
     {
      "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "t",
      "op": "select"
     },
     {
@@ -296608,6 +296623,7 @@
     "or() e match() acumulam filtros",
     "range(a,b) vira offset+limit e select count vira countMode",
     "single pega o primeiro elemento do array retornado",
+    "maybeSingle envia maybeSingle=true e acha o primeiro elemento",
     "write sem sessão aborta antes do fetch (",
     "write com sessão envia Bearer do JWT e Idempotency-Key",
     "erro do bridge vira {message} e dispara toast (exceto objeto ausente)",
@@ -310013,7 +310029,7 @@
   },
   "src/services/premiacoesService.ts": {
    "path": "src/services/premiacoesService.ts",
-   "lines": 415,
+   "lines": 417,
    "exports": [
     "const PERIODO_SEM_DATA",
     "interface CenarioROIInput",
@@ -310077,7 +310093,7 @@
     },
     {
      "table": "premiacoes_auditoria",
-     "op": "ref"
+     "op": "select"
     },
     {
      "table": "premiacoes_roi_cenarios",
@@ -313322,7 +313338,7 @@
   },
   "src/services/__tests__/premiacoesService.test.ts": {
    "path": "src/services/__tests__/premiacoesService.test.ts",
-   "lines": 502,
+   "lines": 523,
    "is_test": true,
    "rule_comments": [
     "* Builder mínimo com `range` que resolve uma página diferente por chamada. */"
@@ -313360,7 +313376,8 @@
     "sets status conciliado when valores match",
     "throws when fetch fails",
     "premiacoesService.listarAuditoria",
-    "returns auditoria records",
+    "returns auditoria records filtradas por tenant (ids de pagamento da empresa)",
+    "filtra fora auditoria de pagamentos de OUTRA empresa",
     "filters by entidade_id when provided",
     "premiacoesService.salvarCenarioROI",
     "inserts cenario and returns result",
@@ -322693,7 +322710,7 @@
   },
   "supabase/functions/external-db-bridge/index.ts": {
    "path": "supabase/functions/external-db-bridge/index.ts",
-   "lines": 810,
+   "lines": 811,
    "tables": [
     {
      "table": "query_telemetry",
@@ -322802,7 +322819,7 @@
   },
   "supabase/functions/external-db-bridge/request-schema.ts": {
    "path": "supabase/functions/external-db-bridge/request-schema.ts",
-   "lines": 57,
+   "lines": 58,
    "exports": [
     "const ON_CONFLICT_COLUMNS_RE",
     "const OnConflictSchema",
@@ -322827,7 +322844,7 @@
     {
      "name": "BodySchema",
      "kind": "object",
-     "body": "{ action: z.enum([\"select\", \"insert\", \"update\", \"delete\", \"upsert\", \"rpc\"]), table: z.string().max(63).optional(), rpcName: z.string().max(63).optional(), fn: z.string().max(63).optional(), columns: z.string().max(2000).optional(), filters: z.array(FilterSchema).max(50).optional(), order: z.object({ column: z.string().max(120), ascending: z.boolean().optional() }).optional(), limit: z.number().int().optional(), offset: z.number().int().min(0).optional(), countMode: z.enum([\"none\", \"exact\", \"planned\", \"estimated\"]).optional(), single: z.boolean().optional(), onConflict: OnConflictSchema.optional(), data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(), params: z.record(z.unknown()).optional(), userId: z.string().max(64).optional(), // Correlação distribuída — era …",
+     "body": "{ action: z.enum([\"select\", \"insert\", \"update\", \"delete\", \"upsert\", \"rpc\"]), table: z.string().max(63).optional(), rpcName: z.string().max(63).optional(), fn: z.string().max(63).optional(), columns: z.string().max(2000).optional(), filters: z.array(FilterSchema).max(50).optional(), order: z.object({ column: z.string().max(120), ascending: z.boolean().optional() }).optional(), limit: z.number().int().optional(), offset: z.number().int().min(0).optional(), countMode: z.enum([\"none\", \"exact\", \"planned\", \"estimated\"]).optional(), single: z.boolean().optional(), maybeSingle: z.boolean().optional(), onConflict: OnConflictSchema.optional(), data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(), params: z.record(z.unknown()).optional(), userId: z.string().max(64).option …",
      "refines": [],
      "chain": []
     }
@@ -322892,7 +322909,7 @@
   },
   "supabase/functions/external-db-bridge/validation.test.ts": {
    "path": "supabase/functions/external-db-bridge/validation.test.ts",
-   "lines": 389,
+   "lines": 420,
    "is_test": true,
    "errors": [
     "FALHOU: ",
@@ -322936,6 +322953,9 @@
     "single: false explícito é aceito",
     "single: tipos não-boolean são rejeitados",
     "single: ausente tem semântica de array (não-single)",
+    "single: maybeSingle true é aceito em SELECT",
+    "single: maybeSingle false explícito é aceito",
+    "single: maybeSingle tipos não-boolean são rejeitados",
     "single: zero rows com single=true resultaria em PGRST116",
     "upsert onConflict: lista de colunas legítima é preservada",
     "upsert onConflict: SQL, espaços e formatos inválidos são rejeitados",
@@ -331066,10 +331086,28 @@
   }
  },
  "git": {
-  "sha": "c33db80722c9722eddda34d96e5f8bf3b96f3d95",
+  "sha": "cca632bdb8b09e0a666bdd5d53aadc6627c0e6dd",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "cca632b",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix: corrige 12 erros BRIDGE_SCHEMA_ERROR (HTTP 400 no bridge) e destrava Dashboard Executivo e Passivo Trabalhista (#766)",
+    "files": [
+     "src/hooks/useExecutiveDashboard.ts",
+     "src/integrations/supabase/__tests__/clientBridge.test.ts",
+     "src/integrations/supabase/client.ts",
+     "src/pages/PassivoTrabalhistaPage.tsx",
+     "src/services/__tests__/premiacoesService.test.ts",
+     "src/services/beneficioService.ts",
+     "src/services/premiacoesService.ts",
+     "supabase/functions/external-db-bridge/index.ts",
+     "supabase/functions/external-db-bridge/request-schema.ts",
+     "supabase/functions/external-db-bridge/validation.test.ts"
+    ]
+   },
    {
     "sha": "c33db80",
     "date": "2026-11-20",
@@ -331373,18 +331411,6 @@
      "src/pages/CalculadoraRescisaoPage.tsx",
      "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx"
     ]
-   },
-   {
-    "sha": "732d46f",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "feat(auditoria): passa a gravar a trilha de onboarding, com empresa_id (#737)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "scripts/canonical-invariants.sql",
-     "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql",
-     "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -331393,16 +331419,16 @@
     5
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
-    3
-   ],
-   [
     "src/pages/CalculadoraRescisaoPage.tsx",
     3
    ],
    [
     "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
     3
+   ],
+   [
+    "src/hooks/useExecutiveDashboard.ts",
+    2
    ],
    [
     "src/pages/AvaliacaoPage.tsx",
@@ -331414,6 +331440,10 @@
    ],
    [
     "supabase/migrations/20261119170000_onboarding_converge_modelo_b.verify.sql",
+    2
+   ],
+   [
+    ".github/workflows/canonical-migrations.yml",
     2
    ],
    [
@@ -331445,27 +331475,23 @@
     2
    ],
    [
-    "scripts/canonical-invariants.sql",
-    2
-   ],
-   [
-    "src/pages/FinanceiroBancarioPage.tsx",
+    "src/integrations/supabase/__tests__/clientBridge.test.ts",
     1
    ],
    [
-    "src/components/__tests__/AnaliticosDesempenhoStatus.test.tsx",
+    "src/integrations/supabase/client.ts",
     1
    ],
    [
-    "src/components/avaliacao/AnaliticosDesempenho.tsx",
+    "src/pages/PassivoTrabalhistaPage.tsx",
     1
    ],
    [
-    "src/components/ui/motion-presets.ts",
+    "src/services/__tests__/premiacoesService.test.ts",
     1
    ],
    [
-    "src/components/recrutamento/CandidatoTimeline.tsx",
+    "src/services/beneficioService.ts",
     1
    ]
   ]
