@@ -290,17 +290,19 @@ export const premiacoesService = {
 
   async listarAuditoria(entidadeId?: string, empresaId?: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    // Scope via !inner join on pagamento → campanha → empresa_id
-    // (Requires entidade_tipo = 'pagamento' records; mixed types are excluded by !inner)
-    let q = supabase
-      .from('premiacoes_auditoria')
-      .select('*, pagamento:premiacoes_pagamentos!inner(campanha:premiacoes_campanhas!inner(empresa_id))')
-      .order('created_at', { ascending: false });
+    // premiacoes_auditoria é polimórfica (sem FK/coluna empresa_id): o embed
+    // !inner via premiacoes_pagamentos nunca resolve. Query simples + filtro de
+    // tenant no cliente pelos ids de pagamento da empresa.
+    let q = supabase.from('premiacoes_auditoria').select('*').order('created_at', { ascending: false });
     if (entidadeId) q = q.eq('entidade_id', entidadeId);
-    q = q.eq('pagamento.campanha.empresa_id', empresaId);
     const { data, error } = await q;
     if (error) throw error;
-    return data || [];
+
+    const pagamentos = await this.buscarPagamentosTodos(undefined, empresaId);
+    const pagamentoIds = new Set(pagamentos.map((p) => p.id));
+    return (data || []).filter(
+      (aud) => aud.entidade_tipo === 'pagamento' && pagamentoIds.has(aud.entidade_id as string)
+    );
   },
 
   async exportarRelatorio(filtros: { empresaId?: string; periodo?: string }) {

@@ -132,7 +132,7 @@ export default function PassivoTrabalhistaPage() {
         .from('provisoes_mensais')
         .select('colaborador_id, tipo, total')
         .eq('empresa_id', empresaAtualId!)
-        .eq('competencia', folhaAtual?.competencia ?? format(new Date(), 'yyyy-MM'));
+        .eq('competencia', folhaAtual?.competencia ? `${folhaAtual.competencia}-01` : format(new Date(), 'yyyy-MM-dd'));
       const provMap = new Map<string, number>();
       for (const p of provs ?? []) provMap.set(`${p.colaborador_id}_${p.tipo}`, Number(p.total));
 
