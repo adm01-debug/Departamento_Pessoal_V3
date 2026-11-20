@@ -108,9 +108,9 @@ describe('client.ts — callBridge via query builder', () => {
   });
 
   it('maybeSingle envia maybeSingle=true e acha o primeiro elemento', async () => {
-    const seen: any[] = [];
-    fetchMock.mockImplementation(async (_u: any, init: any) => {
-      seen.push(JSON.parse(String(init.body)));
+    const seen: Array<Record<string, unknown>> = [];
+    fetchMock.mockImplementation(async (_url: string, init: RequestInit) => {
+      seen.push(JSON.parse(String(init.body)) as Record<string, unknown>);
       return okJson({ data: [{ id: 'm' }] });
     });
     const res = await supabase.from('t').select().eq('id', 'm').maybeSingle();
