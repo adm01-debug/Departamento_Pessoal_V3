@@ -678,6 +678,7 @@ Deno.serve(async (req) => {
       }
       if (body.order) query = query.order(body.order.column, { ascending: body.order.ascending !== false });
       if (body.single) query = query.single();
+      else if (body.maybeSingle) query = query.maybeSingle();
 
       const { data: selectData, error, count } = await query;
       const durationMs = Math.round(performance.now() - t0);

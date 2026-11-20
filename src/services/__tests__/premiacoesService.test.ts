@@ -334,16 +334,37 @@ describe('premiacoesService.listarAuditoria', () => {
     vi.resetAllMocks();
   });
 
-  it('returns auditoria records', async () => {
-    const records = [{ id: 'a1', acao: 'INSERT' }];
-    setupOrderChain(records);
+  it('returns auditoria records filtradas por tenant (ids de pagamento da empresa)', async () => {
+    const records = [{ id: 'a1', acao: 'INSERT', entidade_tipo: 'pagamento', entidade_id: 'pg1' }];
+    mockFrom.mockReturnValueOnce(makeChain({ data: records, error: null }));
+    mockFrom.mockReturnValueOnce(makeChain({ data: [{ id: 'pg1' }], error: null }));
     expect(await premiacoesService.listarAuditoria(undefined, EMPRESA_ID)).toEqual(records);
   });
 
+  it('filtra fora auditoria de pagamentos de OUTRA empresa', async () => {
+    mockFrom.mockReturnValueOnce(
+      makeChain({
+        data: [
+          { id: 'a1', entidade_tipo: 'pagamento', entidade_id: 'pg-meu' },
+          { id: 'a2', entidade_tipo: 'pagamento', entidade_id: 'pg-outro' },
+        ],
+        error: null,
+      })
+    );
+    mockFrom.mockReturnValueOnce(makeChain({ data: [{ id: 'pg-meu' }], error: null }));
+    const result = await premiacoesService.listarAuditoria(undefined, EMPRESA_ID);
+    expect(result).toEqual([{ id: 'a1', entidade_tipo: 'pagamento', entidade_id: 'pg-meu' }]);
+  });
+
   it('filters by entidade_id when provided', async () => {
-    const { chain } = setupOrderChain([]);
+    const auditChain = makeChain({
+      data: [{ id: 'a2', acao: 'UPDATE', entidade_tipo: 'pagamento', entidade_id: 'pg1' }],
+      error: null,
+    });
+    mockFrom.mockReturnValueOnce(auditChain);
+    mockFrom.mockReturnValueOnce(makeChain({ data: [{ id: 'pg1' }], error: null }));
     await premiacoesService.listarAuditoria('pg1', EMPRESA_ID);
-    expect(chain.eq).toHaveBeenCalledWith('entidade_id', 'pg1');
+    expect(auditChain.eq).toHaveBeenCalledWith('entidade_id', 'pg1');
   });
 });
 

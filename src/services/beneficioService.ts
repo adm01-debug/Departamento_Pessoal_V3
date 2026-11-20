@@ -41,7 +41,7 @@ class BeneficioService extends BaseService<
   async listComAdesao(empresaId: string): Promise<BeneficioRow[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await this.getQuery()
-      .select('*, beneficios_colaborador(count)')
+      .select('*, beneficios_colaboradores(count)')
       .eq('empresa_id', empresaId);
     if (error) throw error;
     return (data as BeneficioRow[]) || [];

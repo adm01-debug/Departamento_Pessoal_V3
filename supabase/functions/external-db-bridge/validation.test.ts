@@ -336,6 +336,37 @@ Deno.test("single: ausente tem semântica de array (não-single)", () => {
   // O handler trata undefined como não-single (PostgREST default = array)
 });
 
+Deno.test("single: maybeSingle true é aceito em SELECT", () => {
+  const parsed = BodySchema.safeParse({
+    action: "select",
+    table: "colaboradores",
+    maybeSingle: true,
+  });
+  ok(parsed.success, "body com maybeSingle=true deve passar validação");
+  ok(parsed.data?.maybeSingle === true, "valor maybeSingle=true preservado");
+});
+
+Deno.test("single: maybeSingle false explícito é aceito", () => {
+  const parsed = BodySchema.safeParse({
+    action: "select",
+    table: "colaboradores",
+    maybeSingle: false,
+  });
+  ok(parsed.success, "body com maybeSingle=false deve passar validação");
+  ok(parsed.data?.maybeSingle === false, "valor maybeSingle=false preservado");
+});
+
+Deno.test("single: maybeSingle tipos não-boolean são rejeitados", () => {
+  for (const v of ["true", 1, 0, null, {}, [], "yes"]) {
+    const parsed = BodySchema.safeParse({
+      action: "select",
+      table: "colaboradores",
+      maybeSingle: v as unknown,
+    });
+    ok(!parsed.success, `maybeSingle=${JSON.stringify(v)} deve ser rejeitado`);
+  }
+});
+
 Deno.test("single: zero rows com single=true resultaria em PGRST116", () => {
   // Documenta comportamento: cliente deve estar preparado para PGRST116
   // quando single=true e 0 registros. Não testável aqui (precisa DB real),

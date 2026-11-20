@@ -60,7 +60,6 @@ export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
       const hoje = new Date();
       const mesAtual = format(hoje, 'yyyy-MM');
       const mesAnterior = format(subMonths(hoje, 1), 'yyyy-MM');
-      const inicioMes = format(startOfMonth(hoje), 'yyyy-MM-dd');
 
       const monthRanges = Array.from({ length: meses }, (_, i) => {
         const mesRef = subMonths(hoje, meses - 1 - i);
@@ -79,7 +78,7 @@ export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
         { data: folhaAnterior },
         { count: feriasPendentes },
         { count: afastamentosAtivos },
-        { count: diasFalta },
+        { data: absenteismoRow },
         { count: pontoPendentes },
         ...monthResults
       ] = await Promise.all([
@@ -118,11 +117,11 @@ export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
           .in('status', ['ativo', 'prorrogado'])
           .eq('empresa_id', empresaId!),
         supabase
-          .from('batidas_ponto')
-          .select('*', { count: 'exact', head: true })
+          .from('vw_kpi_absenteismo')
+          .select('dias_faltados, mes')
           .eq('empresa_id', empresaId!)
-          .gte('data', inicioMes)
-          .gt('horas_falta', '00:00:00'),
+          .order('mes', { ascending: false })
+          .limit(1),
         supabase
           .from('solicitacoes_ajuste_ponto')
           .select('*', { count: 'exact', head: true })
@@ -219,6 +218,10 @@ export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
 
       const demissoesPeriodo = evolucao.reduce((s, e) => s + e.demissoes, 0);
       const turnover = totalAtivos && totalAtivos > 0 ? (demissoesPeriodo / totalAtivos) * 100 : 0;
+      // AbsenteÃ­smo do mÃªs corrente: dias_faltados do Ãºltimo mÃªs da view
+      // vw_kpi_absenteismo (fonte canÃ´nica — DashboardPage usa a mesma view),
+      // base de dias Ãºteis = ativos * 22 (mesmo divisor do layout anterior).
+      const diasFalta = absenteismoRow?.[0]?.dias_faltados ?? 0;
       const absenteismo = totalAtivos && totalAtivos > 0 ? ((diasFalta || 0) / (totalAtivos * 22)) * 100 : 0;
 
       return {
