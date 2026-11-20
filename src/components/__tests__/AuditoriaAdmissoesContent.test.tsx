@@ -573,6 +573,7 @@ describe('AuditoriaAdmissoesContent — estados da consulta real', () => {
     consulta.isLoading = false;
     consulta.isError = false;
     listarTrilhaMock.mockReturnValue(MOCK_EVENTOS);
+    listarTrilhaMock.mockClear();
     navigateMock.mockClear();
     refetchMock.mockClear();
   });
