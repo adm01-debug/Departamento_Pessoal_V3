@@ -276,7 +276,8 @@ function CardFeedbacksPorStatus({
 }) {
   const total = feedbacks.length;
   const concluidos = feedbacks.filter((f) => normalizarStatus(f?.status) === 'concluido').length;
-  const pendentes = total - concluidos;
+  const cancelados = feedbacks.filter((f) => normalizarStatus(f?.status) === 'cancelado').length;
+  const pendentes = total - concluidos - cancelados;
   const pctConcluido = total ? limitarPercentual((concluidos / total) * 100) : 0;
 
   // Identidade ESTÁVEL do dataset: com o array recriado a cada render, o

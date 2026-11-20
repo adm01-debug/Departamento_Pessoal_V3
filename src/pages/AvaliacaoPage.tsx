@@ -286,14 +286,19 @@ export default function AvaliacaoPage() {
   const { data: metas = [], isLoading: loadMetas } = useQuery({
     queryKey: ['metas_okrs', empresaAtual?.id],
     queryFn: async (): Promise<any[]> =>
-      comEstadoDemo(await mesclar(getMockMetas(), () => avaliacaoService.listarMetas(empresaAtual!.id)), 'metas'),
+      comEstadoDemo(
+        await mesclar(getMockMetas(), () => avaliacaoService.listarMetas(empresaAtual!.id), { propagarErro: true }),
+        'metas'
+      ),
     enabled: !!empresaAtual?.id || mockAtivo,
   });
   const { data: feedbacks = [], isLoading: loadFeedbacks } = useQuery({
     queryKey: ['feedbacks_360', empresaAtual?.id],
     queryFn: async (): Promise<any[]> =>
       comEstadoDemo(
-        await mesclar(getMockFeedbacks(), () => avaliacaoService.listarFeedbacks(empresaAtual!.id)),
+        await mesclar(getMockFeedbacks(), () => avaliacaoService.listarFeedbacks(empresaAtual!.id), {
+          propagarErro: true,
+        }),
         'feedbacks'
       ),
     enabled: !!empresaAtual?.id || mockAtivo,
@@ -301,13 +306,18 @@ export default function AvaliacaoPage() {
   const { data: pdis = [], isLoading: loadPDIs } = useQuery({
     queryKey: ['pdis', empresaAtual?.id],
     queryFn: async (): Promise<any[]> =>
-      comEstadoDemo(await mesclar(getMockPdis(), () => avaliacaoService.listarPDIs(empresaAtual!.id)), 'pdis'),
+      comEstadoDemo(
+        await mesclar(getMockPdis(), () => avaliacaoService.listarPDIs(empresaAtual!.id), { propagarErro: true }),
+        'pdis'
+      ),
     enabled: !!empresaAtual?.id || mockAtivo,
   });
   const { data: competencias = [], isLoading: loadComp } = useQuery({
     queryKey: ['competencias', empresaAtual?.id],
     queryFn: (): Promise<any[]> =>
-      mesclar(getMockCompetencias(), () => avaliacaoService.listarCompetencias(empresaAtual!.id)),
+      mesclar(getMockCompetencias(), () => avaliacaoService.listarCompetencias(empresaAtual!.id), {
+        propagarErro: true,
+      }),
     enabled: !!empresaAtual?.id || mockAtivo,
   });
   // A key ['colaboradores', empresa] é COMPARTILHADA com Despesas e Movimentações

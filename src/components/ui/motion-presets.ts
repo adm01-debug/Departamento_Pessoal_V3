@@ -168,8 +168,20 @@ export const dropdownContentVariants: Variants = {
       duration: DROPDOWN_MOTION.openDurationMs / 1000,
       ease: 'easeOut',
       when: 'beforeChildren',
+      // `staggerChildren` fica SÓ como fallback conservador (quando alguém
+      // sobrescreve o `transition` e troca o `delayChildren` por número).
       staggerChildren: DROPDOWN_MOTION.staggerStepMs / 1000,
-      delayChildren: DROPDOWN_MOTION.delayChildrenMs / 1000,
+      // Atraso POR ÍNDICE com TETO (`maxStaggeredItems`): o Framer Motion v13
+      // aceita `(i, total)` em `delayChildren` e, quando é função, usa o
+      // retorno direto por filho (via `calcChildStagger`) em vez de aplicar
+      // `i × staggerChildren` — então este é o ÚNICO lugar que limita o
+      // atraso. Em lista grande de opções (ex.: select de colaboradores) o
+      // último item obedecia `i × 45ms` sem limite e levava ~9s pra aparecer;
+      // agora todo item além do teto entra junto, com o mesmo atraso do teto.
+      delayChildren: (index) =>
+        (DROPDOWN_MOTION.delayChildrenMs +
+          Math.min(index, DROPDOWN_MOTION.maxStaggeredItems - 1) * DROPDOWN_MOTION.staggerStepMs) /
+        1000,
     },
   },
 };
