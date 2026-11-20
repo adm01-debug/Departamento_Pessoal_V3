@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "92ac0090c619fbcbcd518778217be3df86054e25",
+  "commit": "cc9b25ae65213c7fcd632fcf12a4c173c270c295",
   "branch": "main",
-  "data_commit": "2026-11-19T20:23:56-03:00",
+  "data_commit": "2026-11-19T22:12:36-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "cc9b25a",
+    "data": "2026-11-19",
+    "assunto": "fix: restaura etapas canonicas do pipeline no seed do E2E (#762)"
+   },
    {
     "sha": "92ac009",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "7189749",
     "data": "2026-11-19",
     "assunto": "chore(auditoria): fecha o inventário de resgate — 6 lacunas reais, 6 descartes provados e o stash varrido (#739)"
-   },
-   {
-    "sha": "c658c6a",
-    "data": "2026-11-19",
-    "assunto": "feat(rescisao): resgata a UX do import de colaborador da PR #546 (muri) (#738)"
    }
   ],
-  "arquivos_mudados_7d": 1098,
+  "arquivos_mudados_7d": 1072,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -250,6 +250,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "scripts/e2e/ensure-fixtures.mjs",
+    "mudancas": 6
+   },
+   {
     "arquivo": "src/components/colaborador-detalhes/index.ts",
     "mudancas": 6
    },
@@ -271,10 +275,6 @@
    },
    {
     "arquivo": "scripts/automation.config.json",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "scripts/e2e/ensure-fixtures.mjs",
     "mudancas": 5
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 291
+    "commits": 292
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 6
+    "commits": 5
    },
    {
     "autor": "github-actions[bot]",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3661,
   "arquivos_codigo": 2118,
-  "linhas_codigo": 422708,
+  "linhas_codigo": 422723,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -504,7 +504,7 @@
   },
   "scripts/e2e": {
    "arquivos": 3,
-   "linhas": 758
+   "linhas": 773
   },
   "scripts/eslint-tests-any.config.mjs": {
    "arquivos": 1,

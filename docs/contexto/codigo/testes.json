@@ -358,7 +358,7 @@
   {
    "arquivo": "scripts/e2e/ensure-fixtures.mjs",
    "tipo": "e2e",
-   "linhas": 269,
+   "linhas": 284,
    "testa": [],
    "casos": 0
   },
