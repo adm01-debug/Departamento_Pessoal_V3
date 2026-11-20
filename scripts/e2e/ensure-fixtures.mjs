@@ -225,7 +225,7 @@ async function main() {
   for (let k = 0; k < candidatosIds.length; k += 1) {
     const { data: candidatura } = await client
       .from('candidaturas')
-      .select('id, empresa_id')
+      .select('id, empresa_id, etapa')
       .eq('vaga_id', vagaId)
       .eq('candidato_id', candidatosIds[k])
       .maybeSingle();
@@ -241,6 +241,21 @@ async function main() {
           .update({ empresa_id: empresaId })
           .eq('id', candidatura.id);
         if (candUpdErr) throw candUpdErr;
+      }
+      // Estado canônico das etapas em TODA execução: os testes de arraste
+      // (D/I) e de toque (J) movem cards de triagem -> entrevista e o menu
+      // move outros. Sem restaurar a etapa, runs consecutivos acumulam cards
+      // na entrevista e esvaziam a triagem — a triagem deixa de transbordar
+      // (A/B/C: `scrollTop` nunca sobe, flaky 44637322273) e a entrevista fica
+      // saturada (J: `data-pipeline-drop` nunca liga no `over`, 9 cards
+      // acumulados). Mesma política idempotente do bloco acima: só grava
+      // quando o valor diverge.
+      if (candidatura.etapa !== etapasCandidaturas[k]) {
+        const { error: etapaUpdErr } = await client
+          .from('candidaturas')
+          .update({ etapa: etapasCandidaturas[k] })
+          .eq('id', candidatura.id);
+        if (etapaUpdErr) throw etapaUpdErr;
       }
       continue;
     }
