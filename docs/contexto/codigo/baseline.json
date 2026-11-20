@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "cca632bdb8b09e0a666bdd5d53aadc6627c0e6dd",
+  "commit": "bfc7e3c9b2cd985857d5b9caa1d8c993cc711e72",
   "branch": "main",
-  "data_commit": "2026-11-20T15:07:25-03:00",
+  "data_commit": "2026-11-20T15:56:15-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "bfc7e3c",
+    "data": "2026-11-20",
+    "assunto": "chore: reconcilia funcionalidades.csv com o estado real da main (20/11) (#770)"
+   },
    {
     "sha": "cca632b",
     "data": "2026-11-20",
@@ -126,14 +131,9 @@
     "sha": "a9ea057",
     "data": "2026-11-19",
     "assunto": "feat(dashboard): variacao do quadro de pessoal no mes (#743)"
-   },
-   {
-    "sha": "36e144e",
-    "data": "2026-11-19",
-    "assunto": "fix(ferias/folhas): policy UPDATE gestor (pode_gerir_pessoas) em ferias e folhas_pagamento (#726)"
    }
   ],
-  "arquivos_mudados_7d": 1022,
+  "arquivos_mudados_7d": 1019,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3662,
+  "arquivos_total": 3663,
   "arquivos_codigo": 2119,
   "linhas_codigo": 422922,
   "rotas": 116,
@@ -331,7 +331,7 @@
   "testes": 800,
   "workflows": 21,
   "scripts": 135,
-  "docs_md": 338
+  "docs_md": 339
  },
  "por_pasta": {
   "capacitor.config.ts": {

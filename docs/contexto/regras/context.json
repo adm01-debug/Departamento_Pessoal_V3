@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "cca632bdb8b09e0a666bdd5d53aadc6627c0e6dd",
+  "sha": "bfc7e3c9b2cd985857d5b9caa1d8c993cc711e72",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-20 18:08 UTC",
-  "files_total": 3675,
+  "generated_at": "2026-11-20 19:12 UTC",
+  "files_total": 3676,
   "code_files": 3095,
   "code_lines": 492745
  },
@@ -331086,10 +331086,20 @@
   }
  },
  "git": {
-  "sha": "cca632bdb8b09e0a666bdd5d53aadc6627c0e6dd",
+  "sha": "bfc7e3c9b2cd985857d5b9caa1d8c993cc711e72",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "bfc7e3c",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "chore: reconcilia funcionalidades.csv com o estado real da main (20/11) (#770)",
+    "files": [
+     "analise-prs/RECONCILIACAO_FUNCIONALIDADES.md",
+     "analise-prs/funcionalidades.csv"
+    ]
+   },
    {
     "sha": "cca632b",
     "date": "2026-11-20",
@@ -331401,30 +331411,12 @@
     "files": [
      "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md"
     ]
-   },
-   {
-    "sha": "c658c6a",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "feat(rescisao): resgata a UX do import de colaborador da PR #546 (muri) (#738)",
-    "files": [
-     "src/pages/CalculadoraRescisaoPage.tsx",
-     "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/e2e/ensure-fixtures.mjs",
     5
-   ],
-   [
-    "src/pages/CalculadoraRescisaoPage.tsx",
-    3
-   ],
-   [
-    "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
-    3
    ],
    [
     "src/hooks/useExecutiveDashboard.ts",
@@ -331475,6 +331467,22 @@
     2
    ],
    [
+    "src/pages/CalculadoraRescisaoPage.tsx",
+    2
+   ],
+   [
+    "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
+    2
+   ],
+   [
+    "analise-prs/RECONCILIACAO_FUNCIONALIDADES.md",
+    1
+   ],
+   [
+    "analise-prs/funcionalidades.csv",
+    1
+   ],
+   [
     "src/integrations/supabase/__tests__/clientBridge.test.ts",
     1
    ],
@@ -331484,14 +331492,6 @@
    ],
    [
     "src/pages/PassivoTrabalhistaPage.tsx",
-    1
-   ],
-   [
-    "src/services/__tests__/premiacoesService.test.ts",
-    1
-   ],
-   [
-    "src/services/beneficioService.ts",
     1
    ]
   ]

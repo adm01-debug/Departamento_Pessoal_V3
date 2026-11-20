@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `cca632bdb8b09e0a666bdd5d53aadc6627c0e6dd` (2026-11-20T15:07:25-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bfc7e3c9b2cd985857d5b9caa1d8c993cc711e72` (2026-11-20T15:56:15-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1981), SQL (978), Markdown (338), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1981), SQL (978), Markdown (339), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3662 |
+| arquivos_total | 3663 |
 | arquivos_codigo | 2119 |
 | linhas_codigo | 422922 |
 | rotas | 116 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 800 |
 | workflows | 21 |
 | scripts | 135 |
-| docs_md | 338 |
+| docs_md | 339 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27755 nós · 62656 arestas · 2409 comunidades · grafo do commit `cca632bd`
-- comunidades maiores: useEmpresas (655), 20260831_corrected_public.sql (485), canonical_schema.sql (481), vitest (454), lucide-react (426), button.tsx (424), cn (418), nineBoxComum.ts (208), hooks/index.ts (203), react (195), contract.ts (192), App.tsx (191)
+- 27761 nós · 62662 arestas · 2398 comunidades · grafo do commit `bfc7e3c9`
+- comunidades maiores: lucide-react (531), useEmpresas (494), 20260831_corrected_public.sql (485), canonical_schema.sql (481), @tanstack/react-query (438), vitest (347), button.tsx (264), react (237), cn (205), App.tsx (170), "public"."empresas" (164), services/index.ts (161)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -653,6 +653,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-20 `bfc7e3c` chore: reconcilia funcionalidades.csv com o estado real da main (20/11) (#770)
 - 2026-11-20 `cca632b` fix: corrige 12 erros BRIDGE_SCHEMA_ERROR (HTTP 400 no bridge) e destrava Dashboard Executivo e Passivo Trabalhista (#76
 - 2026-11-20 `c33db80` fix: passa empresaAtual.id para folhaService.list em FinanceiroBancarioPage (#765)
 - 2026-11-20 `32be71e` fix: itens 8, 13 e 14 da issue #571 (Avaliação/NineBox) (#764)
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `074c01e` infra(banco): inclui a 20261019235900 (dp_*) e a 20261119170000 (onboarding) no lote do canônico (#755)
 - 2026-11-19 `b2df382` fix(onboarding): resgata a convergência do modelo legado, sem duplicar histórico (#747)
 - 2026-11-19 `49cbb50` infra(banco): versiona o DDL órfão da família dp_* (imutabilidade do log de auditoria) (#751)
-- 2026-11-19 `16d4f17` chore(autofix): eslint --fix nas regras seguras (pdiComum, useAfastamentos, colaboradoresMock) (#754)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
