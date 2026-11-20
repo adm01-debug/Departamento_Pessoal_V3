@@ -690,7 +690,7 @@
     "EstadoAnimacaoLegenda"
    ],
    "export_default": null,
-   "linhas": 731,
+   "linhas": 745,
    "dominio": "components/avaliacao",
    "hooks_locais": [
     "useMovimentoReduzido"
@@ -8841,7 +8841,7 @@
     "AvaliacaoPage"
    ],
    "export_default": "AvaliacaoPage",
-   "linhas": 1572,
+   "linhas": 1582,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

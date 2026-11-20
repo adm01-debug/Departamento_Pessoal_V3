@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e8fff0c74c72bdba745a0c2c8f963fd67d4b728f",
+  "sha": "32be71e516dc94e705510ed57b95a62faed35e44",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-20 13:25 UTC",
-  "files_total": 3674,
-  "code_files": 3094,
-  "code_lines": 492547
+  "generated_at": "2026-11-20 15:19 UTC",
+  "files_total": 3675,
+  "code_files": 3095,
+  "code_lines": 492673
  },
  "version": "1.3.2",
- "facts_hash": "d5795db106e6dd96",
+ "facts_hash": "570f354e70e33c6c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,7 +387,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1026,
+   ".tsx": 1027,
    ".sql": 978,
    ".ts": 954,
    ".mjs": 108,
@@ -100629,7 +100629,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 999,
+  "components_count": 1000,
   "hooks": [
    {
     "name": "useContacts",
@@ -102259,8 +102259,8 @@
   },
   {
    "module": "src/components",
-   "files": 999,
-   "lines": 184693,
+   "files": 1000,
+   "lines": 184809,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102429,6 +102429,7 @@
     "src/components/__tests__/AfastamentoTimeline.test.tsx",
     "src/components/__tests__/AfastamentosTab.test.tsx",
     "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
+    "src/components/__tests__/AnaliticosDesempenhoStatus.test.tsx",
     "src/components/__tests__/AnalyticsSection.test.tsx",
     "src/components/__tests__/AnimatedNumber.test.tsx",
     "src/components/__tests__/AnimatedTabs.test.tsx",
@@ -102486,8 +102487,7 @@
     "src/components/__tests__/DeclaracoesTable.test.tsx",
     "src/components/__tests__/DepartmentRow.test.tsx",
     "src/components/__tests__/DependentesTab.test.tsx",
-    "src/components/__tests__/DesempenhoBarrasProgresso.test.tsx",
-    "src/components/__tests__/DesempenhoEntradaCascade.test.tsx"
+    "src/components/__tests__/DesempenhoBarrasProgresso.test.tsx"
    ]
   },
   {
@@ -102957,7 +102957,7 @@
   {
    "module": "src/pages",
    "files": 143,
-   "lines": 50788,
+   "lines": 50798,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -120828,6 +120828,10 @@
    {
     "file": "src/components/ui/filter-chip.tsx",
     "text": "estados (a barra de filtros nunca quebra, então não pode haver"
+   },
+   {
+    "file": "src/components/ui/motion-presets.ts",
+    "text": "último item obedecia `i × 45ms` sem limite e levava ~9s pra aparecer;"
    },
    {
     "file": "src/components/workflows/WorkflowDesigner.tsx",
@@ -168006,6 +168010,18 @@
    {
     "file": "src/components/__tests__/AlertasPreditivosWidget.test.tsx",
     "name": "não exibe o bloco de resumo quando a IA não respondeu (fallback estatístico)"
+   },
+   {
+    "file": "src/components/__tests__/AnaliticosDesempenhoStatus.test.tsx",
+    "name": "CardFeedbacksPorStatus – contagem por status (item 13 da #571)"
+   },
+   {
+    "file": "src/components/__tests__/AnaliticosDesempenhoStatus.test.tsx",
+    "name": "não soma feedbacks "
+   },
+   {
+    "file": "src/components/__tests__/AnaliticosDesempenhoStatus.test.tsx",
+    "name": "com todos os feedbacks cancelados, mostra só Cancelados e zero no resto"
    },
    {
     "file": "src/components/__tests__/AnalyticsSection.test.tsx",
@@ -267839,6 +267855,26 @@
     "não exibe o bloco de resumo quando a IA não respondeu (fallback estatístico)"
    ]
   },
+  "src/components/__tests__/AnaliticosDesempenhoStatus.test.tsx": {
+   "path": "src/components/__tests__/AnaliticosDesempenhoStatus.test.tsx",
+   "lines": 90,
+   "is_test": true,
+   "rule_comments": [
+    "* Regressão do item 13 da #571: o donut \"Feedbacks por Status\" deve tratar"
+   ],
+   "calc_fns": [
+    {
+     "name": "valorDaLinha",
+     "params": "rotulo: string",
+     "body": "const label = screen.getByText(rotulo); const linha = label.closest('div.flex'); return linha?.textContent?.replace(rotulo, '').replace(/%/g, '').trim();"
+    }
+   ],
+   "tests": [
+    "CardFeedbacksPorStatus – contagem por status (item 13 da #571)",
+    "não soma feedbacks ",
+    "com todos os feedbacks cancelados, mostra só Cancelados e zero no resto"
+   ]
+  },
   "src/components/__tests__/AnalyticsSection.test.tsx": {
    "path": "src/components/__tests__/AnalyticsSection.test.tsx",
    "lines": 244,
@@ -275522,7 +275558,7 @@
   },
   "src/components/avaliacao/AnaliticosDesempenho.tsx": {
    "path": "src/components/avaliacao/AnaliticosDesempenho.tsx",
-   "lines": 731,
+   "lines": 745,
    "exports": [
     "type EstadoAnimacaoLegenda",
     "function AnaliticosDesempenho"
@@ -289965,7 +290001,7 @@
   },
   "src/components/ui/motion-presets.ts": {
    "path": "src/components/ui/motion-presets.ts",
-   "lines": 192,
+   "lines": 204,
    "exports": [
     "const DROPDOWN_MOTION",
     "function overlayContentCloseOnlyAnimClasses",
@@ -289975,6 +290011,9 @@
     "const dropdownContentVariants",
     "const dropdownItemVariants",
     "const submenuContentVariants"
+   ],
+   "rule_comments": [
+    "último item obedecia `i × 45ms` sem limite e levava ~9s pra aparecer;"
    ]
   },
   "src/components/ui/notification-center.tsx": {
@@ -299310,7 +299349,7 @@
   },
   "src/pages/AvaliacaoPage.tsx": {
    "path": "src/pages/AvaliacaoPage.tsx",
-   "lines": 1572,
+   "lines": 1582,
    "exports": [
     "function AvaliacaoPage"
    ],
@@ -331027,10 +331066,22 @@
   }
  },
  "git": {
-  "sha": "e8fff0c74c72bdba745a0c2c8f963fd67d4b728f",
+  "sha": "32be71e516dc94e705510ed57b95a62faed35e44",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "32be71e",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix: itens 8, 13 e 14 da issue #571 (Avaliação/NineBox) (#764)",
+    "files": [
+     "src/components/__tests__/AnaliticosDesempenhoStatus.test.tsx",
+     "src/components/avaliacao/AnaliticosDesempenho.tsx",
+     "src/components/ui/motion-presets.ts",
+     "src/pages/AvaliacaoPage.tsx"
+    ]
+   },
    {
     "sha": "e8fff0c",
     "date": "2026-11-20",
@@ -331334,16 +331385,6 @@
     "files": [
      "src/pages/__tests__/OnboardingParidade.test.tsx"
     ]
-   },
-   {
-    "sha": "055112b",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(rescisao): TRCT do desligamento declarava assinatura ausente tendo assinatura (#732)",
-    "files": [
-     "src/utils/__tests__/rescisaoPDF.test.ts",
-     "src/utils/rescisaoPDF.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -331362,6 +331403,10 @@
    [
     "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
     3
+   ],
+   [
+    "src/pages/AvaliacaoPage.tsx",
+    2
    ],
    [
     "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
@@ -331404,27 +331449,23 @@
     2
    ],
    [
+    "src/components/__tests__/AnaliticosDesempenhoStatus.test.tsx",
+    1
+   ],
+   [
+    "src/components/avaliacao/AnaliticosDesempenho.tsx",
+    1
+   ],
+   [
+    "src/components/ui/motion-presets.ts",
+    1
+   ],
+   [
     "src/components/recrutamento/CandidatoTimeline.tsx",
     1
    ],
    [
     "tailwind.config.js",
-    1
-   ],
-   [
-    "src/components/recrutamento/PipelineColumn.tsx",
-    1
-   ],
-   [
-    "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
-    1
-   ],
-   [
-    "supabase/migrations/20261119170000_onboarding_converge_modelo_b.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql",
     1
    ]
   ]

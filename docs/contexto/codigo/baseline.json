@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e8fff0c74c72bdba745a0c2c8f963fd67d4b728f",
+  "commit": "32be71e516dc94e705510ed57b95a62faed35e44",
   "branch": "main",
-  "data_commit": "2026-11-20T10:24:49-03:00",
+  "data_commit": "2026-11-20T12:18:43-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "32be71e",
+    "data": "2026-11-20",
+    "assunto": "fix: itens 8, 13 e 14 da issue #571 (Avaliação/NineBox) (#764)"
+   },
    {
     "sha": "e8fff0c",
     "data": "2026-11-20",
@@ -126,18 +131,13 @@
     "sha": "b6129aa",
     "data": "2026-11-19",
     "assunto": "fix(colaboradores): status \"Desligado\" nao salvava e telefone fixo era inalcancavel (#741)"
-   },
-   {
-    "sha": "5891423",
-    "data": "2026-11-19",
-    "assunto": "feat(rescisão): busca por matrícula e 4 últimos do CPF no seletor de colaborador (#740)"
    }
   ],
-  "arquivos_mudados_7d": 1064,
+  "arquivos_mudados_7d": 1022,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 394
+    "mudancas": 391
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -145,7 +145,7 @@
    },
    {
     "pasta": "src/components/ui",
-    "mudancas": 106
+    "mudancas": 107
    },
    {
     "pasta": "src/services/__tests__",
@@ -157,7 +157,7 @@
    },
    {
     "pasta": "src/components/avaliacao",
-    "mudancas": 87
+    "mudancas": 88
    },
    {
     "pasta": "src/components/treinamentos",
@@ -294,7 +294,7 @@
     "mudancas": 5
    },
    {
-    "arquivo": "src/pages/ColaboradorFormPage.tsx",
+    "arquivo": "src/pages/AvaliacaoPage.tsx",
     "mudancas": 5
    }
   ],
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3661,
-  "arquivos_codigo": 2118,
-  "linhas_codigo": 422724,
+  "arquivos_total": 3662,
+  "arquivos_codigo": 2119,
+  "linhas_codigo": 422850,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 430,
   "migrations": 904,
   "cron_jobs": 41,
-  "testes": 799,
+  "testes": 800,
   "workflows": 21,
   "scripts": 135,
   "docs_md": 338
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 999,
-   "linhas": 184693
+   "arquivos": 1000,
+   "linhas": 184809
   },
   "src/constants": {
    "arquivos": 7,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 143,
-   "linhas": 50788
+   "linhas": 50798
   },
   "src/providers": {
    "arquivos": 4,
@@ -782,7 +782,7 @@
   },
   {
    "arquivo": "src/pages/AvaliacaoPage.tsx",
-   "linhas": 1572
+   "linhas": 1582
   },
   {
    "arquivo": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
