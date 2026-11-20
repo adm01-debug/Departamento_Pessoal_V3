@@ -75,7 +75,7 @@ export default function FinanceiroBancarioPage() {
         cnabService.getConfig(empresaAtual.id),
         cnabService.listRemessas(empresaAtual.id),
         cnabService.listPixLotes(empresaAtual.id),
-        folhaService.list(),
+        folhaService.list(undefined, empresaAtual.id),
       ]);
       setConfig(conf);
       setRemessas(rem || []);
