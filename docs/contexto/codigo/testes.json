@@ -875,7 +875,7 @@
   {
    "arquivo": "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
    "tipo": "unit",
-   "linhas": 632,
+   "linhas": 633,
    "testa": [
     "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
     "src/components/admissoes/auditoriaDerivacoes.ts"

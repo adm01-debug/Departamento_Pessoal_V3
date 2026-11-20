@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: limpa listarTrilhaMock no beforeEach dos estados da consulta (Auditoria de Admiss?es) (#763)",
    "fix: restaura etapas canonicas do pipeline no seed do E2E (#762)",
    "fix(recrutamento): restaura header 'Histórico do processo' no dossiê do candidato (#761)",
    "fix(e2e): corrige scroll da lista e overflow do board do pipeline (#760)",
-   "fix(e2e): backfill de empresa_id em candidaturas orfas do seed (#759)",
-   "fix(e2e): seed de candidaturas envia empresa_id explícito (#758)"
+   "fix(e2e): backfill de empresa_id em candidaturas orfas do seed (#759)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

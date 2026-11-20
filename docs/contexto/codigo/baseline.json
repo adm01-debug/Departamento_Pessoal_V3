@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "cc9b25ae65213c7fcd632fcf12a4c173c270c295",
+  "commit": "e8fff0c74c72bdba745a0c2c8f963fd67d4b728f",
   "branch": "main",
-  "data_commit": "2026-11-19T22:12:36-03:00",
+  "data_commit": "2026-11-20T10:24:49-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "e8fff0c",
+    "data": "2026-11-20",
+    "assunto": "fix: limpa listarTrilhaMock no beforeEach dos estados da consulta (Auditoria de Admiss?es) (#763)"
+   },
    {
     "sha": "cc9b25a",
     "data": "2026-11-19",
@@ -126,18 +131,13 @@
     "sha": "5891423",
     "data": "2026-11-19",
     "assunto": "feat(rescisão): busca por matrícula e 4 últimos do CPF no seletor de colaborador (#740)"
-   },
-   {
-    "sha": "7189749",
-    "data": "2026-11-19",
-    "assunto": "chore(auditoria): fecha o inventário de resgate — 6 lacunas reais, 6 descartes provados e o stash varrido (#739)"
    }
   ],
-  "arquivos_mudados_7d": 1072,
+  "arquivos_mudados_7d": 1064,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 393
+    "mudancas": 394
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 29
+    "mudancas": 28
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3661,
   "arquivos_codigo": 2118,
-  "linhas_codigo": 422723,
+  "linhas_codigo": 422724,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 999,
-   "linhas": 184692
+   "linhas": 184693
   },
   "src/constants": {
    "arquivos": 7,
