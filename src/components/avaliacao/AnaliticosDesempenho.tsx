@@ -178,7 +178,7 @@ function CabecalhoCard({
 const ANIM_DONUT_MS = 1400;
 const ANIM_LEGENDA_MS = 550;
 /** Atraso de entrada de cada legenda, na ordem Concluídos → Pendentes → Total. */
-const ANIM_LEGENDA_ATRASOS_MS = [250, 430, 610];
+const ANIM_LEGENDA_ATRASOS_MS = [250, 430, 610, 790];
 /** Deslocamento horizontal inicial de cada linha (à ESQUERDA do lugar final). */
 const ANIM_LEGENDA_DESLOCAMENTO_PX = -12;
 /** Curva única da cascata (sem bounce, sem salto) — `[0.22, 1, 0.36, 1]`. */
@@ -276,19 +276,25 @@ function CardFeedbacksPorStatus({
 }) {
   const total = feedbacks.length;
   const concluidos = feedbacks.filter((f) => normalizarStatus(f?.status) === 'concluido').length;
-  const pendentes = total - concluidos;
+  const cancelados = feedbacks.filter((f) => normalizarStatus(f?.status) === 'cancelado').length;
+  const pendentes = total - concluidos - cancelados; //check
   const pctConcluido = total ? limitarPercentual((concluidos / total) * 100) : 0;
+  const pctPendentes = total ? limitarPercentual((pendentes / total) * 100) : 0;
+  const pctCancelados = total ? limitarPercentual((cancelados / total) * 100) : 0; // fix presente
 
   // Identidade ESTÁVEL do dataset: com o array recriado a cada render, o
   // Recharts trataria todo re-render como "dados atualizados" e reanimaria o
   // donut (movimento duplicado em hover/re-render). Com `useMemo` ele só muda
-  // quando os números mudam de fato.
+  // quando os números mudam de fato. Os três status somam sempre o `total`, então
+  // donut, percentuais e legendas compartilham o MESMO universo — sem o "buraco"
+  // que existia quando cancelados ficavam fora do anel (o donut não somava o total).
   const dados = useMemo(
     () => [
       { nome: 'Concluídos', valor: concluidos, cor: 'hsl(var(--success))' },
       { nome: 'Pendentes', valor: pendentes, cor: 'hsl(var(--warning))' },
+      { nome: 'Cancelados', valor: cancelados, cor: 'hsl(var(--muted-foreground))' },
     ],
-    [concluidos, pendentes]
+    [concluidos, pendentes, cancelados]
   );
 
   // ── GATILHO ÚNICO DA REVELAÇÃO ─────────────────────────────────────────
@@ -460,8 +466,16 @@ function CardFeedbacksPorStatus({
                 cor="bg-warning"
                 rotulo="Pendentes"
                 valor={pendentes}
-                percentual={total ? limitarPercentual((pendentes / total) * 100) : 0}
+                percentual={pctPendentes}
                 indice={1}
+                estado={estadoAnimacao}
+              />
+              <LinhaLegenda
+                cor="bg-muted-foreground/50"
+                rotulo="Cancelados"
+                valor={cancelados}
+                percentual={pctCancelados}
+                indice={2}
                 estado={estadoAnimacao}
               />
               <div className="border-t border-border/20 pt-1.5">
@@ -470,7 +484,7 @@ function CardFeedbacksPorStatus({
                   rotulo="Total"
                   valor={total}
                   percentual={100}
-                  indice={2}
+                  indice={3}
                   estado={estadoAnimacao}
                 />
               </div>
