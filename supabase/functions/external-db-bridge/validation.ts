@@ -152,6 +152,12 @@ export const RPC_ALLOWLIST = new Set<string>([
   "reconciliar_afdt", "notificar_divergencias_afdt",
   "resolver_divergencia_afdt", "criar_batida_da_divergencia_afdt",
   "associar_pis_colaborador_afdt", "aplicar_medida_folha_ponto",
+  // relógio de ponto Henry/AtecSoft (docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md).
+  // SECURITY DEFINER com checagem de papel e empresa por dentro.
+  "gerar_token_coletor_ponto", "revogar_coletor_ponto",
+  "vincular_funcionario_relogio", "desvincular_funcionario_relogio",
+  "definir_tipo_dia_justificativa_relogio",
+  "colaborador_usa_relogio", "colaborador_usa_relogio_por_id",
   // contratos por token e gestão autenticada
   "contrato_consultar_por_token", "contrato_preview_url_por_token",
   "contrato_assinar_por_token", "contrato_verificar_autenticidade_v2",
