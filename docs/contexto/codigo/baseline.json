@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3f0f032b6f44e34c4f06b4fef0e2b3d434715cf7",
+  "commit": "b9b1c05cfe0d8a2ef1785339fa628db772edb86a",
   "branch": "main",
-  "data_commit": "2026-11-21T18:18:23-03:00",
+  "data_commit": "2026-11-21T18:36:49-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "b9b1c05",
+    "data": "2026-11-21",
+    "assunto": "fix: corrige as duas falhas do mode=verify do ledger canônico (#793)"
+   },
    {
     "sha": "3f0f032",
     "data": "2026-11-21",
@@ -126,11 +131,6 @@
     "sha": "cc9b25a",
     "data": "2026-11-19",
     "assunto": "fix: restaura etapas canonicas do pipeline no seed do E2E (#762)"
-   },
-   {
-    "sha": "92ac009",
-    "data": "2026-11-19",
-    "assunto": "fix(recrutamento): restaura header 'Histórico do processo' no dossiê do candidato (#761)"
    }
   ],
   "arquivos_mudados_7d": 999,
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3670,
+  "arquivos_total": 3668,
   "arquivos_codigo": 2120,
   "linhas_codigo": 423036,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 121,
   "edge_functions": 67,
   "tabelas": 430,
-  "migrations": 906,
+  "migrations": 904,
   "cron_jobs": 41,
   "testes": 800,
   "workflows": 21,

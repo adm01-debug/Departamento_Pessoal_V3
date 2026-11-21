@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: corrige as duas falhas do mode=verify do ledger canônico (#793)",
    "infra: concede ci_auditor ao papel da conexão para destravar o diagnóstico SQL (#791)",
    "fix: auditoria contínua valida tabelas reais (folha_itens/desligamentos/pix) no lugar de legadas (#789)",
    "chore: registra no plano do ponto os achados do banco e do Promo Finance (#790)",
-   "chore: plano do ponto passa a mão dupla com o AtecSoft e registra D1–D5 (#788)",
-   "chore: plano em 100 etapas da integração do ponto Henry/AtecSoft (#786)"
+   "chore: plano do ponto passa a mão dupla com o AtecSoft e registra D1–D5 (#788)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

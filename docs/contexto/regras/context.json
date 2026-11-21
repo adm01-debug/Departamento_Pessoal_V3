@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3f0f032b6f44e34c4f06b4fef0e2b3d434715cf7",
+  "sha": "b9b1c05cfe0d8a2ef1785339fa628db772edb86a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 21:19 UTC",
-  "files_total": 3683,
-  "code_files": 3098,
-  "code_lines": 492906
+  "generated_at": "2026-11-21 21:37 UTC",
+  "files_total": 3681,
+  "code_files": 3096,
+  "code_lines": 492848
  },
  "version": "1.3.2",
- "facts_hash": "ac817a2d32dc7c49",
+ "facts_hash": "e1763c6f1e83408f",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1027,
-   ".sql": 980,
+   ".sql": 978,
    ".ts": 954,
    ".mjs": 109,
    ".js": 15,
@@ -72273,8 +72273,6 @@
    "supabase/migrations/20261118235000_consignado_margem_consignavel_trigger.verify.sql",
    "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql",
    "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.verify.sql",
-   "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
-   "supabase/migrations/20261119120000_ferias_folhas_gestor_update.verify.sql",
    "supabase/migrations/20261119130000_ferias_gestor_update.sql",
    "supabase/migrations/20261119130000_ferias_gestor_update.verify.sql",
    "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql",
@@ -104214,8 +104212,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 906,
-   "lines": 82422,
+   "files": 904,
+   "lines": 82364,
    "tables": [
     "profiles",
     "user_roles"
@@ -330740,14 +330738,6 @@
    "path": "supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.verify.sql",
    "lines": 47
   },
-  "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql": {
-   "path": "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
-   "lines": 36
-  },
-  "supabase/migrations/20261119120000_ferias_folhas_gestor_update.verify.sql": {
-   "path": "supabase/migrations/20261119120000_ferias_folhas_gestor_update.verify.sql",
-   "lines": 31
-  },
   "supabase/migrations/20261119130000_ferias_gestor_update.sql": {
    "path": "supabase/migrations/20261119130000_ferias_gestor_update.sql",
    "lines": 89,
@@ -330772,7 +330762,7 @@
   },
   "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql": {
    "path": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql",
-   "lines": 77
+   "lines": 86
   },
   "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql": {
    "path": "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql",
@@ -331116,10 +331106,22 @@
   }
  },
  "git": {
-  "sha": "3f0f032b6f44e34c4f06b4fef0e2b3d434715cf7",
+  "sha": "b9b1c05cfe0d8a2ef1785339fa628db772edb86a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "b9b1c05",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: corrige as duas falhas do mode=verify do ledger canônico (#793)",
+    "files": [
+     "docs/auditoria/MIGRATIONS_LEDGER_SEM_ARQUIVO_2026-11-17.md",
+     "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
+     "supabase/migrations/20261119120000_ferias_folhas_gestor_update.verify.sql",
+     "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql"
+    ]
+   },
    {
     "sha": "3f0f032",
     "date": "2026-11-21",
@@ -331411,15 +331413,6 @@
      "src/components/recrutamento/PipelineColumn.tsx",
      "src/components/recrutamento/__tests__/PipelineBoard.test.tsx"
     ]
-   },
-   {
-    "sha": "c60bf64",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(onboarding): ancora assercoes do verify na admissao de destino (#756)",
-    "files": [
-     "supabase/migrations/20261119170000_onboarding_converge_modelo_b.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -331464,6 +331457,22 @@
     2
    ],
    [
+    "docs/auditoria/MIGRATIONS_LEDGER_SEM_ARQUIVO_2026-11-17.md",
+    1
+   ],
+   [
+    "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261119120000_ferias_folhas_gestor_update.verify.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql",
+    1
+   ],
+   [
     "supabase/migrations/20261121200000_ci_auditor_grant_set_role.sql",
     1
    ],
@@ -331485,22 +331494,6 @@
    ],
    [
     "scripts/inventario/mudou-conteudo.mjs",
-    1
-   ],
-   [
-    ".github/workflows/post-deploy-smoke.yml",
-    1
-   ],
-   [
-    "docs/pendencias/README.md",
-    1
-   ],
-   [
-    "src/components/__tests__/RubricasDialog.test.tsx",
-    1
-   ],
-   [
-    "src/components/folha/RubricasDialog.tsx",
     1
    ]
   ]
