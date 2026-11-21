@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1ec032cef1` · branch `main` · 2026-11-21 23:19 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a3db5b8975` · branch `main` · 2026-11-21 23:21 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -316,11 +316,11 @@
 | `password_reset_requests` | enabled | authenticated: user_id = auth.uid()<br>authenticated: "public"."is_admin"("auth"."uid"()) | authenticated: "public"."is_admin"("auth"."uid"())<br>authenticated: ("user_id" = "auth"."uid"()) | authenticated: "public"."is_admin"("auth"."uid"()) | authenticated: "public"."is_admin"("auth"."uid"()) |
 | `pcs_avaliacoes_cargo` | enabled | — | — | — | — |
 | `pcs_fatores` | enabled | — | — | — | — |
-| … +175 linhas — lista completa em `context.json` | | | | | |
+| … +176 linhas — lista completa em `context.json` | | | | | |
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 329 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 331 arquivo(s)
 
 - `docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql`
 - `docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql`
@@ -472,7 +472,7 @@
 - `supabase/migrations/20260712214014_5ded020d-3162-4157-ba2e-724b53d8392b.sql`
 - `supabase/migrations/20260712214929_4971f364-3f69-48cd-9150-a55524b1025d.sql`
 - `supabase/migrations/20260712215539_349ae8a8-7ed9-41a5-b06c-ea4b8f35c7b5.sql`
-- … +179 (lista completa em `context.json`)
+- … +181 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -493,6 +493,7 @@
 - `admissao_marcar_documentos`
 - `admissao_registrar_documento`
 - `admissao_salvar_dados`
+- `alertar_coletores_ponto_parados`
 - `anonimizar_dados_pessoais`
 - `aplicar_medida_folha_ponto`
 - `aprovar_despesa`
@@ -697,6 +698,7 @@
 - `pode_gerir_rh`
 - `pode_gerir_rh_para`
 - `pode_validar_potencial`
+- `ponto_espelhos_papel_validar`
 - `ponto_rep_colaborador_usa_relogio`
 - `process_audit_log`
 - `process_ferias_audit`
@@ -854,7 +856,7 @@ Middleware matcher (Next.js): nenhum
 | grant | authenticated | select | `vw_folha_compliance`, `v_idempotency_metrics`, `v_slow_queries_top50`, `audit_log_unified`, `audit_log_unified_archive`, `holerite_distribuicoes`, `v_audit_legacy`, `v_system_health`, `v_ferias_alerta_pagamento_d2`, `v_ferias_adiant13_elegibilidade`, `v_ferias_folha_reconciliacao`, `ferias_reconciliacao_logs`, `v_contratos_vencendo`, `v_contratos_assinatura_kpi`, `v_contratos_tokens_pendentes` … +28 |
 | grant | authenticated | select, insert | `logs_sistema`, `folha_lock_conflicts`, `despesas_aprovacoes_log`, `aej_geracoes`, `ponto_espelhos_revogacoes`, `epis_fichas_assinaturas`, `sst_regimento_assinaturas`, `medidas_disciplinares_workflow_log`, `audit_log`, `folha_auditoria`, `afd_geracoes` |
 | grant | authenticated | select, insert, update | `login_lockouts`, `contrato_assinatura_tokens` |
-| grant | authenticated | select, insert, update, delete | `contabilidade_contatos`, `contabilidade_threads`, `contabilidade_mensagens`, `afdt_importacoes`, `afdt_registros_raw`, `afdt_divergencias`, `clinicas_partners`, `clinicas_partners_servicos`, `clinicas_partners_horarios`, `exames_agendamentos`, `sst_ordens_servico`, `sst_ltcat_laudos`, `epis_fichas`, `epis_fichas_itens`, `sst_extintores` … +20 |
+| grant | authenticated | select, insert, update, delete | `contabilidade_contatos`, `contabilidade_threads`, `contabilidade_mensagens`, `afdt_importacoes`, `afdt_registros_raw`, `afdt_divergencias`, `clinicas_partners`, `clinicas_partners_servicos`, `clinicas_partners_horarios`, `exames_agendamentos`, `sst_ordens_servico`, `sst_ltcat_laudos`, `epis_fichas`, `epis_fichas_itens`, `sst_extintores` … +21 |
 | grant | authenticated | update | `feedbacks_360` |
 | grant | authenticated, anon | execute | `distancia_haversine`, `user_empresa_id`, `get_auth_empresa_id` |
 | grant | authenticated, service_role | execute | `get_cron_jobs_health`, `get_security_alerts_summary`, `resolve_security_alert`, `search_audit_unified`, `purge_audit_log_old`, `resolve_security_alert`, `sst_regimento_notificar_pendentes`, `calcular_dias_direito_ferias`, `validar_split_ferias`, `eh_dia_valido_inicio_ferias`, `contrato_token_evento_registrar`, `pertence_a_empresa`, `sec_audit_policies`, `registrar_auditoria`, `listar_auditoria` … +45 |
@@ -863,8 +865,8 @@ Middleware matcher (Next.js): nenhum
 | grant | ci_auditor | execute | `extensions` |
 | grant | ci_auditor | select | `cron.job` |
 | grant | dp_mcp_role | select | `ninebox_permissoes_homologacao` |
-| grant | service_role | all | `logs_sistema`, `login_lockouts`, `idempotency_keys`, `folha_lock_conflicts`, `audit_log_unified`, `audit_log_unified_archive`, `rate_limits`, `rate_limit_logs`, `rate_limit_config`, `despesas_aprovacoes_log`, `contabilidade_contatos`, `contabilidade_threads`, `contabilidade_mensagens`, `holerite_distribuicoes`, `afdt_importacoes` … +56 |
-| grant | service_role | execute | `detectar_fraude_ponto`, `check_brute_force`, `check_rate_limit`, `is_ip_blocked`, `is_ip_whitelisted`, `is_country_allowed`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `purge_expired_idempotency_keys`, `check_idempotency_anomalies`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash` … +111 |
+| grant | service_role | all | `logs_sistema`, `login_lockouts`, `idempotency_keys`, `folha_lock_conflicts`, `audit_log_unified`, `audit_log_unified_archive`, `rate_limits`, `rate_limit_logs`, `rate_limit_config`, `despesas_aprovacoes_log`, `contabilidade_contatos`, `contabilidade_threads`, `contabilidade_mensagens`, `holerite_distribuicoes`, `afdt_importacoes` … +57 |
+| grant | service_role | execute | `detectar_fraude_ponto`, `check_brute_force`, `check_rate_limit`, `is_ip_blocked`, `is_ip_whitelisted`, `is_country_allowed`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `purge_expired_idempotency_keys`, `check_idempotency_anomalies`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash` … +112 |
 | grant | service_role | select | `vw_folha_compliance`, `v_idempotency_metrics`, `feedbacks_360_consolidacoes`, `feedbacks_360_aprovacoes_gestor`, `health_checks`, `mv_folha_summary`, `health_checks` |
 | grant | service_role | select, insert, delete | `pii_access_logs`, `pii_access_alerts` |
 | grant | service_role | select, insert, update, delete, truncate, references, trigger | `ninebox_permissoes_homologacao` |
@@ -873,7 +875,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | PUBLIC, anon | all | `get_idempotency_health`, `check_idempotency_anomalies`, `v_slow_queries_top50`, `get_query_telemetry`, `get_dlq_stats`, `get_audit_trail_by_user`, `get_audit_trail_by_entity`, `search_audit_unified`, `rate_limit_logs`, `rate_limit_config`, `purge_audit_log_old`, `resolve_security_alert`, `refresh_dashboard_mvs`, `mv_status_change_daily`, `mv_anomalies_hourly` … +115 |
 | revoke | PUBLIC, anon | execute | `get_cron_jobs_health`, `get_security_alerts_summary`, `resolve_security_alert`, `pode_gerir_rh`, `pode_gerir_pessoas`, `sou_o_colaborador`, `empresa_do_colaborador`, `is_admin`, `sou_o_colaborador` |
 | revoke | PUBLIC, anon | select | `v_system_health` |
-| revoke | PUBLIC, anon, authenticated | all | `enforce_batida_ponto_hash`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash`, `enforce_desligamento_hash`, `enforce_ferias_hash`, `enforce_medida_disciplinar_hash`, `enforce_aso_hash`, `enforce_cat_hash`, `enforce_epi_entrega_hash`, `enforce_documento_assinatura_hash`, `enforce_afastamento_hash`, `purge_old_lock_conflicts` … +85 |
+| revoke | PUBLIC, anon, authenticated | all | `enforce_batida_ponto_hash`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash`, `enforce_desligamento_hash`, `enforce_ferias_hash`, `enforce_medida_disciplinar_hash`, `enforce_aso_hash`, `enforce_cat_hash`, `enforce_epi_entrega_hash`, `enforce_documento_assinatura_hash`, `enforce_afastamento_hash`, `purge_old_lock_conflicts` … +88 |
 | revoke | PUBLIC, anon, authenticated | execute | `check_processamento_timeout`, `fn_alert_severe_disciplinary_measure`, `fn_audit_biometric_failure`, `fn_auto_generate_training_certificate`, `fn_consolidar_batidas`, `fn_create_default_onboarding_tasks`, `fn_enqueue_notification`, `fn_trigger_whatsapp_on_event`, `fn_update_admissao_checklist`, `fn_update_candidatura_history`, `fn_workflow_admissao_auto`, `handle_new_user`, `handle_new_user_role`, `log_audit_change`, `log_esocial_transmission` … +42 |
 | revoke | PUBLIC, anon, authenticated | select | `v_audit_trail`, `mv_folha_summary`, `health_checks` |
 | revoke | anon | all | `detectar_fraude_ponto`, `contrato_estender_expiracao`, `pcs_pode_gerir_plano`, `pcs_pode_ver_plano`, `pcs_gerar_grades`, `pcs_enquadramento`, `pcs_simular_impacto`, `medidas_ciencia_tokens`, `audit_log`, `folha_auditoria`, `sst_regimento_interno`, `feedbacks_360_operacoes`, `feedbacks_360_validacoes_potencial`, `provisoes_competencia_tributaria` |
@@ -927,6 +929,7 @@ Middleware matcher (Next.js): nenhum
 | `pcs_avaliacoes_cargo` | RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | `pcs_fatores` | RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | `pcs_grades` | RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
+| `ponto_espelhos_papel` | RLS ligado sem nenhuma política → só service_role acessa | `src/services/relogio/espelhosPapelService.ts` |
 | `ponto_rep_dias` | RLS ligado sem nenhuma política → só service_role acessa |  |
 | `ponto_rep_dispositivos` | RLS ligado sem nenhuma política → só service_role acessa | `src/services/relogio/coletoresService.ts` |
 | `ponto_rep_funcionarios` | RLS ligado sem nenhuma política → só service_role acessa | `src/services/relogio/vinculosService.ts` |
@@ -938,7 +941,7 @@ Middleware matcher (Next.js): nenhum
 
 ## Multi-tenancy
 
-- Chave de tenant: **`empresa_id`** presente em 215 tabela(s): `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs`, `batidas_ponto`, `ferias_coletivas`, `adiantamentos_salariais`, `admissoes`, `aej_geracoes`, `afastamentos`, `afdt_divergencias`, `afdt_importacoes`, `afdt_registros_raw`, `asos`, `audit_log`, `audit_log_unified`, `audit_log_unified_archive`, `audit_logs`, `auditoria`, `auditoria_logs`, `banco_horas`, `banco_horas_config`, `beneficio_arquivos`, `beneficio_regras_elegibilidade`, `beneficios`, `campos_customizados`, `canal_etica`, `candidatos`, `candidaturas`, `cargos`, `catalogo_cursos`, `catalogo_infracoes`, `centros_custo`, `certificados_digitais`, `ciclos_avaliacao`, `clinicas_partners`, `cnab_configuracoes`, `cnab_remessas`, `colaboradores`, `competencias_config`, `competencias_matriz`, `comunicados`, `configuracoes_esocial`, `configuracoes_intervalo`, `configuracoes_ponto`, `conformidade_ponto_logs`, `contabilidade_contatos`, `contabilidade_mensagens`, `contabilidade_threads`, `contas_bancarias`, `contrato_assinatura_tokens`, `contrato_templates`, `contrato_token_eventos`, `contratos`, `contratos_gerados`, `controle_acesso`, `convenios`, `curriculos_arquivos`, `dados_estagiario`, `dctfweb_declaracoes`, `departamentos`, `despesas_aprovacoes_log`, `documento_templates`, `documentos`, `documentos_assinatura`, `emprestimos_consignados`, `epis`, `epis_entregas`, `epis_fichas`, `escalas`, `escalas_trabalho`, `esocial_eventos`, `esocial_lotes`, `esocial_transmissao_logs`, `eventos_variaveis`, `exames_agendamentos`, `faltas`, `feedbacks_360`, `feriados`, `ferias_audit_log`, `ferias_solicitacoes`, `fgts_digital_logs`, `fila_processamento`, `folha_lock_conflicts`, `folhas_pagamento`, `guias_fgts`, `guias_fgts_digital`, `guias_inss`, `historico_calculos_folha`, `historico_contratos`, `historico_rescisoes`, `historico_salarial`, `ia_provisoes_alertas`, `idempotency_keys`, `inscricoes_cursos`, `jornadas`, `lancamentos_contabeis`, `lgpd_consentimentos`, `lgpd_solicitacoes`, `locais_trabalho`, `logs_sincronizacao`, `lotacoes`, `medidas_ciencia_tokens`, `medidas_disciplinares_contestacao_anexos`, `medidas_disciplinares_integracao`, `medidas_disciplinares_workflow_log`, `metas_okrs`, `notificacoes`, `onboarding_colaborador`, `onboarding_documentos_obrigatorios`, `onboarding_kits`, `onboarding_tarefas`, `onboarding_templates`, `parametros_sistema`, `pdi_plano_desenvolvimento`, `pdis`, `pendencias`, `pensoes`, `periodos_aquisitivos`, `permissao_perfis`, `personnel_budget`, `pesquisas`, `pii_access_alerts`, `pii_access_logs`, `pix_lotes`, `plano_contas`, `planos_saude`, `ponto_espelhos_assinados`, `ponto_regras_aprovacao`, `registros_ponto`, `premiacoes_campanhas`, `premiacoes_cenarios_simulacao`, `provisao_logs`, `provisoes_folha`, `provisoes_mensais`, `query_telemetry`, `recrutamento_agendamentos`, `recrutamento_anotacoes`, `recrutamento_entrevistas`, `recrutamento_testes`, `relatorios_agendados`, `rubricas_folha`, `sefip_arquivos`, `seguros_vida`, `simulacoes_fiscais`, `solicitacoes_ajuste_ponto`, `solicitacoes_hora_extra`, `sst_cat`, `sst_extintores`, `sst_extintores_inspecoes`, `sst_incidentes`, `sst_ltcat_laudos`, `sst_ordens_servico`, `sst_programas`, `sst_regimento_assinaturas`, `sst_regimento_documentos`, `sst_regimento_interno`, `sst_riscos_ambientais`, `times`, `treinamento_certificados`, `treinamento_instancias`, `treinamentos`, `triagem_notas`, `trilhas_aprendizado`, `turnos`, `user_empresas`, `vaga_entrevistas`, `vaga_etapas`, `vagas`, `vales_alimentacao`, `webhooks`, `webhooks_config`, `whatsapp_config`, `whatsapp_mensagens_logs`, `whatsapp_templates`, `workflows_config`, `workflows_definicoes`, `workflows_execucoes`, `rubricas`, `folha_pagamento`, `backup_logs`, `atrasos`, `adicionais`, `gratificacoes`, `comissoes`, `recibos_ferias`, `recibos_rescisao`, `darfs`, `grrf`, `trct`, `homologacoes`, `exames_medicos`, `cas`, `avaliacoes`, `ferias_programacao`, `pcs_planos`, `pcs_pesquisa_salarial`, `feriados_brasileiros`, `report_dispatch_attempts`, `colaborador_lotacoes`, `cnab_sequencias`, `feedbacks_360_operacoes`, `feedbacks_360_validacoes_potencial`, `training_images`, `training_image_requests`, `afd_geracoes`, `provisoes_competencia_tributaria`, `ponto_rep_dispositivos`, `ponto_rep_lotes`, `ponto_rep_funcionarios`, `ponto_rep_dias`, `ponto_rep_justificativas`, `feedbacks_360_aprovacoes_gestor`, `feedbacks_360_consolidacoes`
+- Chave de tenant: **`empresa_id`** presente em 216 tabela(s): `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs`, `batidas_ponto`, `ferias_coletivas`, `adiantamentos_salariais`, `admissoes`, `aej_geracoes`, `afastamentos`, `afdt_divergencias`, `afdt_importacoes`, `afdt_registros_raw`, `asos`, `audit_log`, `audit_log_unified`, `audit_log_unified_archive`, `audit_logs`, `auditoria`, `auditoria_logs`, `banco_horas`, `banco_horas_config`, `beneficio_arquivos`, `beneficio_regras_elegibilidade`, `beneficios`, `campos_customizados`, `canal_etica`, `candidatos`, `candidaturas`, `cargos`, `catalogo_cursos`, `catalogo_infracoes`, `centros_custo`, `certificados_digitais`, `ciclos_avaliacao`, `clinicas_partners`, `cnab_configuracoes`, `cnab_remessas`, `colaboradores`, `competencias_config`, `competencias_matriz`, `comunicados`, `configuracoes_esocial`, `configuracoes_intervalo`, `configuracoes_ponto`, `conformidade_ponto_logs`, `contabilidade_contatos`, `contabilidade_mensagens`, `contabilidade_threads`, `contas_bancarias`, `contrato_assinatura_tokens`, `contrato_templates`, `contrato_token_eventos`, `contratos`, `contratos_gerados`, `controle_acesso`, `convenios`, `curriculos_arquivos`, `dados_estagiario`, `dctfweb_declaracoes`, `departamentos`, `despesas_aprovacoes_log`, `documento_templates`, `documentos`, `documentos_assinatura`, `emprestimos_consignados`, `epis`, `epis_entregas`, `epis_fichas`, `escalas`, `escalas_trabalho`, `esocial_eventos`, `esocial_lotes`, `esocial_transmissao_logs`, `eventos_variaveis`, `exames_agendamentos`, `faltas`, `feedbacks_360`, `feriados`, `ferias_audit_log`, `ferias_solicitacoes`, `fgts_digital_logs`, `fila_processamento`, `folha_lock_conflicts`, `folhas_pagamento`, `guias_fgts`, `guias_fgts_digital`, `guias_inss`, `historico_calculos_folha`, `historico_contratos`, `historico_rescisoes`, `historico_salarial`, `ia_provisoes_alertas`, `idempotency_keys`, `inscricoes_cursos`, `jornadas`, `lancamentos_contabeis`, `lgpd_consentimentos`, `lgpd_solicitacoes`, `locais_trabalho`, `logs_sincronizacao`, `lotacoes`, `medidas_ciencia_tokens`, `medidas_disciplinares_contestacao_anexos`, `medidas_disciplinares_integracao`, `medidas_disciplinares_workflow_log`, `metas_okrs`, `notificacoes`, `onboarding_colaborador`, `onboarding_documentos_obrigatorios`, `onboarding_kits`, `onboarding_tarefas`, `onboarding_templates`, `parametros_sistema`, `pdi_plano_desenvolvimento`, `pdis`, `pendencias`, `pensoes`, `periodos_aquisitivos`, `permissao_perfis`, `personnel_budget`, `pesquisas`, `pii_access_alerts`, `pii_access_logs`, `pix_lotes`, `plano_contas`, `planos_saude`, `ponto_espelhos_assinados`, `ponto_regras_aprovacao`, `registros_ponto`, `premiacoes_campanhas`, `premiacoes_cenarios_simulacao`, `provisao_logs`, `provisoes_folha`, `provisoes_mensais`, `query_telemetry`, `recrutamento_agendamentos`, `recrutamento_anotacoes`, `recrutamento_entrevistas`, `recrutamento_testes`, `relatorios_agendados`, `rubricas_folha`, `sefip_arquivos`, `seguros_vida`, `simulacoes_fiscais`, `solicitacoes_ajuste_ponto`, `solicitacoes_hora_extra`, `sst_cat`, `sst_extintores`, `sst_extintores_inspecoes`, `sst_incidentes`, `sst_ltcat_laudos`, `sst_ordens_servico`, `sst_programas`, `sst_regimento_assinaturas`, `sst_regimento_documentos`, `sst_regimento_interno`, `sst_riscos_ambientais`, `times`, `treinamento_certificados`, `treinamento_instancias`, `treinamentos`, `triagem_notas`, `trilhas_aprendizado`, `turnos`, `user_empresas`, `vaga_entrevistas`, `vaga_etapas`, `vagas`, `vales_alimentacao`, `webhooks`, `webhooks_config`, `whatsapp_config`, `whatsapp_mensagens_logs`, `whatsapp_templates`, `workflows_config`, `workflows_definicoes`, `workflows_execucoes`, `rubricas`, `folha_pagamento`, `backup_logs`, `atrasos`, `adicionais`, `gratificacoes`, `comissoes`, `recibos_ferias`, `recibos_rescisao`, `darfs`, `grrf`, `trct`, `homologacoes`, `exames_medicos`, `cas`, `avaliacoes`, `ferias_programacao`, `pcs_planos`, `pcs_pesquisa_salarial`, `feriados_brasileiros`, `report_dispatch_attempts`, `colaborador_lotacoes`, `cnab_sequencias`, `feedbacks_360_operacoes`, `feedbacks_360_validacoes_potencial`, `training_images`, `training_image_requests`, `afd_geracoes`, `provisoes_competencia_tributaria`, `ponto_rep_dispositivos`, `ponto_rep_lotes`, `ponto_rep_funcionarios`, `ponto_rep_dias`, `ponto_rep_justificativas`, `ponto_espelhos_papel`, `feedbacks_360_aprovacoes_gestor`, `feedbacks_360_consolidacoes`
 - Cobertura: 45% das tabelas. Abaixo de 60% — isolamento provavelmente por usuário (auth.uid()) ou misto; não flagado por tabela.
 
 ## Soft delete (registros 'apagados' continuam na tabela — filtre!)
@@ -1311,7 +1314,7 @@ Middleware matcher (Next.js): nenhum
 | `sindicatos` | `created_at` |
 | `sinistros_seguro` | `created_at` |
 | `solicitacoes_ajuste_ponto` | `created_at`, `updated_at` |
-| … +139 linhas — lista completa em `context.json` | |
+| … +140 linhas — lista completa em `context.json` | |
 
 ## Dados pessoais / sensíveis (LGPD — cuidado em logs, exports, prompts de IA)
 

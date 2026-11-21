@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1ec032cef1` · branch `main` · 2026-11-21 23:19 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a3db5b8975` · branch `main` · 2026-11-21 23:21 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `desligamentos` | `total_descontos` | default 0 |
 | `desligamentos` | `valor_liquido` | default 0 |
 | `desligamentos` | `checklist_comunicacao` | default false |
-| … +4464 linhas — lista completa em `context.json` | | |
+| … +4472 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -713,6 +713,8 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | audit_onboarding_tarefas | AFTER INSERT OR UPDATE OR DELETE | `onboarding_tarefas` | `onboarding_log_audit_change` |  |
 | trg_batida_relogio_protecao | BEFORE INSERT OR UPDATE OR DELETE | `batidas_ponto` | `proteger_batida_relogio` |  |
 | trg_batida_relogio_autoatendimento | BEFORE INSERT | `batidas_ponto` | `bloquear_autoatendimento_quem_usa_relogio` |  |
+| trg_ponto_espelhos_papel_validar | BEFORE INSERT OR UPDATE | `ponto_espelhos_papel` | `ponto_espelhos_papel_validar` |  |
+| trg_ponto_espelhos_papel_updated_at | BEFORE UPDATE | `ponto_espelhos_papel` | `update_updated_at_column` |  |
 | ajuste_ponto_status_transition | BEFORE UPDATE OF "STATUS" | `solicitacoes_ajuste_ponto` | `trg_ajuste_ponto_status_transition` |  |
 | audit_admissoes | AFTER INSERT OR DELETE OR UPDATE | `admissoes` | `log_audit_change` |  |
 | audit_afastamentos | AFTER INSERT OR DELETE OR UPDATE | `afastamentos` | `log_audit_change` |  |
@@ -921,9 +923,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_folha_lock_conflicts_ao | BEFORE DELETE OR UPDATE | `folha_lock_conflicts` | `audit_log_append_only` |  |
 | trg_folha_optimistic_lock | BEFORE UPDATE | `folhas_pagamento` | `fn_folha_optimistic_lock` |  |
 | trg_fprog_updated_at | BEFORE UPDATE | `ferias_programacao` | `fprog_touch_updated_at` |  |
-| trg_fwd_audit_unified | AFTER INSERT | `audit_log` | `fwd_to_audit_unified` |  |
-| trg_fwd_audit_unified | AFTER INSERT | `audit_logs` | `fwd_to_audit_unified` |  |
-| … +168 linhas — lista completa em `context.json` | | | | |
+| … +170 linhas — lista completa em `context.json` | | | | |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -1095,6 +1095,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `proteger_batida_relogio` | Batida do relógio não pode ser %: corrija no Ponto AtecSoft. | `supabase/migrations/20261121222000_batidas_relogio_protecao.sql` |
 | `proteger_batida_relogio` | A origem relógio só pode ser atribuída pela integração do relógio. | `supabase/migrations/20261121222000_batidas_relogio_protecao.sql` |
 | `bloquear_autoatendimento_quem_usa_relogio` | Este colaborador registra o ponto no relógio da unidade. | `supabase/migrations/20261121222000_batidas_relogio_protecao.sql` |
+| `ponto_espelhos_papel_validar` | colaborador % não pertence à empresa % | `supabase/migrations/20261121224000_ponto_espelhos_papel.sql` |
 | `_purge_audit_log_internal` | Retenção mínima de 30 dias | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_security_definer_rpcs` | access denied | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_user_roles` | Apenas administradores podem listar papéis de usuário | `supabase/rebaseline/20260831_corrected_public.sql` |
@@ -1228,8 +1229,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `medida_gerar_link_ciencia` | Acesso negado à empresa | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_gerar_link_ciencia` | Medida deve estar aplicada/aprovada para gerar ciência | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_registrar_ciencia_publica` | Ação inválida | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_registrar_ciencia_publica` | rate_limit_exceeded | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +185 linhas — lista completa em `context.json` | | |
+| … +186 linhas — lista completa em `context.json` | | |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -3196,6 +3196,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
   ```
+- **aplicar(r: EspelhoPapel)** — `src/components/ponto/EspelhosPapelPanel.tsx`
+  ```
+  
+  ```
 - **GerarAEJDialog()** — `src/components/ponto/GerarAEJDialog.tsx`
   ```
   const { empresaAtual } = useEmpresas(); const [open, setOpen] = useState(false); const [loading, setLoading] = useState(false); const [inicio, setInicio] = useState(''); const [fim, setFim] = useState(''); const [resultado, setResultado] = useState<{ hash: string; bytes: number; marcacoes: number; colaboradores: number; sem_pis: number; } | null>(null); const handleGerar = async () => { if (!empresaAtual?.id) return toast.error('Selecione uma empresa'); if (!inicio || !fim) return toast.error('I …
@@ -4777,7 +4781,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `MAX_LINHAS_OPCOES_FILTRO` | `1000` | `src/services/colaboradorService.ts` |
 | `LIMITE_OR_BRIDGE` | `500` | `src/services/colaboradorService.ts` |
 | `MAX_LOGS_BUFFER` | `50` | `src/services/loggerService.ts` |
-| … +139 linhas — lista completa em `context.json` | | |
+| … +140 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5003,6 +5007,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `AND r.started_at < now() - interval '30 minutes'` | `supabase/migrations/20261023130000_training_image_autoqueue.sql` |
 | `WHERE scan_at < now() - interval '180 days';` | `supabase/migrations/20261024000000_qa_r4_fixes.sql` |
 | `CASE WHEN _validade_meses > 0 THEN (CURRENT_DATE + (_validade_meses * interval '1 month'))::DATE ELSE NULL END` | `supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.sql` |
+| `AND coalesce(d.ultimo_contato_em, d.created_at) < p_agora - interval '30 minutes'` | `supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql` |
 | `v_fim := (v_inicio + interval '1 month' - interval '1 day')::date;` | `supabase/rebaseline/20260902_secdef_authz_remediation.sql` |
 
 ### H.3 Limites de paginação
@@ -5334,6 +5339,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Divergência detectada: hash não bate | `src/components/ponto/AssinarEspelhoDialog.tsx` |
 | PIN deve ter de 4 a 6 dígitos | `src/components/ponto/DefinirPinQuiosqueDialog.tsx` |
 | PINs não conferem | `src/components/ponto/DefinirPinQuiosqueDialog.tsx` |
+| >             {erro}             <Button size= | `src/components/ponto/EspelhosPapelPanel.tsx` |
 | Data inicial não pode ser posterior à final | `src/components/ponto/GerarAEJDialog.tsx` |
 | Falha ao gerar AEJ:  | `src/components/ponto/GerarAEJDialog.tsx` |
 | Informe o período completo | `src/components/ponto/GerarAEJDialog.tsx` |
@@ -5420,8 +5426,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Erro ao vincular | `src/components/treinamentos/TrilhaCursosSection.tsx` |
 |        data-turmas-erro       className= | `src/components/treinamentos/TurmasPainel.tsx` |
 |  className={cn(alertVariants({ variant }), className)} {...props} /> )); Alert.displayName =  | `src/components/ui/alert.tsx` |
-| CEP não encontrado | `src/components/ui/cep-input.tsx` |
-| … +699 linhas — lista completa em `context.json` | |
+| … +701 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5494,7 +5499,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9706 testes em 761 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9716 testes em 762 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5792,13 +5797,13 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/EdicaoFeedbackDemo.test.ts` | 10 | edição de feedback cancelado na demonstração · reconhece todas as grafias de cancelamento · cancelado permanece cancelado após reler o armazenamento (F5/novo login) · cancelamento demonstrativo grava status + motivo e confirma a releitura local … |
 | `src/components/__tests__/EmpresaSettingsTab.test.tsx` | 10 | EmpresaSettingsTab · shows spinner when loading · renders Dados da Empresa title · renders form labels … |
 | `src/components/__tests__/EpiCatalogoTable.test.tsx` | 10 | EpiCatalogoTable · renders table headers · renders EPI names · renders CA badge when ca exists … |
+| `src/components/__tests__/EspelhosPapelPanel.test.tsx` | 10 | EspelhosPapelPanel · mostra carregando e depois lista devolvidos, pendentes e o contador · recarrega ao trocar a competência · marca como devolvido e zera o contador … |
 | `src/components/__tests__/FeriasReconciliacaoCard.test.tsx` | 10 | FeriasReconciliacaoCard · renders Reconciliação Férias ↔ Folha title · shows empty state when no divergences · shows skeleton when loading … |
 | `src/components/__tests__/FeriasReconciliacaoHistoricoCard.test.tsx` | 10 | FeriasReconciliacaoHistoricoCard · renders Reconciliação Automática — Histórico title · shows empty state when no logs · shows skeleton when loading … |
 | `src/components/__tests__/MedidasTimeline.test.tsx` | 10 | MedidasTimeline · returns null when medidas is empty · renders medida descricao · renders colaborador name … |
 | `src/components/__tests__/Notifications.test.tsx` | 10 | NotificationItem · renders Notificações header · shows empty state when no notifications · renders notification titles … |
 | `src/components/__tests__/PapeisAvaliacao.test.ts` | 10 | normalização da lista de papéis · aceita a lista do  · capacidades da conta admin+gestor (a conta de homologação) · mantém o admin E o gestor — um não anula o outro … |
-| `src/components/__tests__/PontoAuditTimeline.test.tsx` | 10 | PontoAuditTimeline · renders Trilha de Auditoria title · renders search input · shows empty state when no logs … |
-| … +461 linhas — lista completa em `context.json` | | |
+| … +462 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

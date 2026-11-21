@@ -198,7 +198,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 315,
+   "testes": 316,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -4277,13 +4277,13 @@
   },
   {
    "modulo": "components/ponto",
-   "arquivos": 23,
+   "arquivos": 24,
    "testes": 0,
-   "linhas": 5252,
+   "linhas": 5518,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 22,
+   "componentes": 23,
    "hooks_locais": [
     "useASOs",
     "useAdmissaoWorkflow",
@@ -4554,6 +4554,7 @@
     "pix_lotes",
     "plano_contas",
     "ponto_auditoria",
+    "ponto_espelhos_papel",
     "ponto_rep_dispositivos",
     "ponto_rep_funcionarios",
     "ponto_rep_justificativas",
@@ -7837,7 +7838,7 @@
    "modulo": "integrations/supabase",
    "arquivos": 6,
    "testes": 4,
-   "linhas": 25944,
+   "linhas": 26002,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -8083,7 +8084,7 @@
    "modulo": "pages",
    "arquivos": 115,
    "testes": 0,
-   "linhas": 46246,
+   "linhas": 46259,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -8751,6 +8752,7 @@
     "plano_contas",
     "planos_saude",
     "ponto_auditoria",
+    "ponto_espelhos_papel",
     "ponto_rep_dispositivos",
     "ponto_rep_lotes",
     "pontos_abertos",
@@ -9293,7 +9295,7 @@
    "modulo": "schemas",
    "arquivos": 19,
    "testes": 0,
-   "linhas": 5192,
+   "linhas": 5204,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -9983,6 +9985,7 @@
     "pages",
     "schemas",
     "services/folha",
+    "services/relogio",
     "services/tabelas",
     "utils"
    ],
@@ -10116,9 +10119,9 @@
   },
   {
    "modulo": "services/relogio",
-   "arquivos": 2,
+   "arquivos": 3,
    "testes": 0,
-   "linhas": 236,
+   "linhas": 325,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -10128,6 +10131,7 @@
    "edges": [],
    "tabelas": [
     "colaboradores",
+    "ponto_espelhos_papel",
     "ponto_rep_dispositivos",
     "ponto_rep_funcionarios",
     "ponto_rep_justificativas",
@@ -10155,6 +10159,7 @@
     "edges": [],
     "tabelas": [
      "colaboradores",
+     "ponto_espelhos_papel",
      "ponto_rep_dispositivos",
      "ponto_rep_funcionarios",
      "ponto_rep_justificativas",
@@ -10173,7 +10178,8 @@
     "hooks"
    ],
    "depende_de_modulos": [
-    "integrations/supabase"
+    "integrations/supabase",
+    "services"
    ],
    "pacotes_externos": []
   },

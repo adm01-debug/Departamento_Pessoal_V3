@@ -25082,6 +25082,7 @@
     "pix_lotes",
     "plano_contas",
     "ponto_auditoria",
+    "ponto_espelhos_papel",
     "pontos_abertos",
     "profiles",
     "prorrogacoes_afastamento",
@@ -25215,7 +25216,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 245
+   "arquivos_puxados": 248
   },
   {
    "protegida": true,

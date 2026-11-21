@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1ec032cef133d7af45f43bef37956c3de8014937",
+  "commit": "a3db5b8975c54f46dfa08be868679b4894c4b1b7",
   "branch": "main",
-  "data_commit": "2026-11-21T20:18:41-03:00",
+  "data_commit": "2026-11-21T20:18:44-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "a3db5b8",
+    "data": "2026-11-21",
+    "assunto": "feat: alerta de coletor do ponto parado e controle do espelho em papel (#804)"
+   },
    {
     "sha": "1ec032c",
     "data": "2026-11-21",
@@ -126,14 +131,9 @@
     "sha": "74db632",
     "data": "2026-11-21",
     "assunto": "chore: registra gap real de transporte eSocial (F-07) no backlog verificado (#779)"
-   },
-   {
-    "sha": "9073ea6",
-    "data": "2026-11-21",
-    "assunto": "infra: corrige cegueira do assert de ledger no canonical-migrations (#771)"
    }
   ],
-  "arquivos_mudados_7d": 1040,
+  "arquivos_mudados_7d": 1047,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -184,16 +184,16 @@
     "mudancas": 34
    },
    {
-    "pasta": "src/components/admissoes",
-    "mudancas": 32
-   },
-   {
     "pasta": "src/utils/__tests__",
     "mudancas": 32
    },
    {
-    "pasta": "src/components/desligamentos",
-    "mudancas": 30
+    "pasta": "src/components/admissoes",
+    "mudancas": 31
+   },
+   {
+    "pasta": "src/components/ponto",
+    "mudancas": 31
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -218,11 +218,11 @@
     "mudancas": 10
    },
    {
-    "arquivo": "docs/prod-readiness.md",
-    "mudancas": 9
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 10
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": "docs/prod-readiness.md",
     "mudancas": 9
    },
    {
@@ -254,6 +254,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "src/schemas/tableColumns.ts",
+    "mudancas": 7
+   },
+   {
     "arquivo": "docs/agentes/banco.md",
     "mudancas": 6
    },
@@ -271,10 +275,6 @@
    },
    {
     "arquivo": "src/index.css",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "src/schemas/tableColumns.ts",
     "mudancas": 6
    },
    {
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3697,
-  "arquivos_codigo": 2137,
-  "linhas_codigo": 426738,
+  "arquivos_total": 3704,
+  "arquivos_codigo": 2140,
+  "linhas_codigo": 427347,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 82,
-  "componentes": 644,
+  "componentes": 645,
   "hooks": 122,
   "edge_functions": 68,
-  "tabelas": 435,
-  "migrations": 912,
-  "cron_jobs": 41,
-  "testes": 806,
+  "tabelas": 436,
+  "migrations": 916,
+  "cron_jobs": 42,
+  "testes": 807,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 344
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1007,
-   "linhas": 186214
+   "arquivos": 1009,
+   "linhas": 186651
   },
   "src/constants": {
    "arquivos": 7,
@@ -668,7 +668,7 @@
   },
   "src/integrations": {
    "arquivos": 11,
-   "linhas": 26471
+   "linhas": 26529
   },
   "src/lib": {
    "arquivos": 22,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 144,
-   "linhas": 50953
+   "linhas": 50966
   },
   "src/providers": {
    "arquivos": 4,
@@ -692,11 +692,11 @@
   },
   "src/schemas": {
    "arquivos": 33,
-   "linhas": 8819
+   "linhas": 8831
   },
   "src/services": {
-   "arquivos": 197,
-   "linhas": 41777
+   "arquivos": 198,
+   "linhas": 41866
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -758,11 +758,11 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 25308
+   "linhas": 25366
   },
   {
    "arquivo": "src/schemas/tableColumns.ts",
-   "linhas": 4258
+   "linhas": 4270
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",

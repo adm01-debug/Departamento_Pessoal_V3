@@ -3220,6 +3220,16 @@
    "src/integrations/supabase/client.ts",
    "src/utils/safeError.ts"
   ],
+  "src/components/ponto/EspelhosPapelPanel.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/spinner.tsx",
+   "src/components/ui/table.tsx",
+   "src/services/relogio/espelhosPapelService.ts",
+   "src/utils/safeError.ts"
+  ],
   "src/components/ponto/GerarAEJDialog.tsx": [
    "src/components/ui/button.tsx",
    "src/components/ui/dialog.tsx",
@@ -6840,6 +6850,7 @@
    "src/components/PageTitle.tsx",
    "src/components/layout/index.ts",
    "src/components/ponto/AssinarEspelhoDialog.tsx",
+   "src/components/ponto/EspelhosPapelPanel.tsx",
    "src/components/ponto/GerarAEJDialog.tsx",
    "src/components/ponto/GerarAFDDialog.tsx",
    "src/components/ponto/GestaoPontoAnalytics.tsx",
@@ -7809,6 +7820,11 @@
   "src/services/relogio/coletoresService.ts": [
    "src/integrations/supabase/client.ts",
    "src/integrations/supabase/types.ts"
+  ],
+  "src/services/relogio/espelhosPapelService.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts",
+   "src/services/documentUploadService.ts"
   ],
   "src/services/relogio/vinculosService.ts": [
    "src/integrations/supabase/client.ts",

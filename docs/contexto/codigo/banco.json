@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 912,
+ "migrations": 916,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -241,6 +241,7 @@
   "admissao_salvar_dados",
   "agendar_limpeza_pos_desligamento",
   "alert_stale_backup",
+  "alertar_coletores_ponto_parados",
   "anonimizar_dados_pessoais",
   "aprovar_despesa",
   "asos_auto_marcar_agendamento_realizado",
@@ -512,6 +513,7 @@
   "pode_validar_potencial",
   "ponto_espelhos_assinados_guard_delete",
   "ponto_espelhos_assinados_guard_update",
+  "ponto_espelhos_papel_validar",
   "ponto_rep_colaborador_usa_relogio",
   "prevent_audit_log_modification",
   "prevent_empty_empresa_id",
@@ -2443,6 +2445,20 @@
    "funcao": "ponto_espelhos_assinados_guard_update"
   },
   {
+   "nome": "trg_ponto_espelhos_papel_updated_at",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "ponto_espelhos_papel",
+   "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "trg_ponto_espelhos_papel_validar",
+   "quando": "before",
+   "evento": "insert or update",
+   "tabela": "ponto_espelhos_papel",
+   "funcao": "ponto_espelhos_papel_validar"
+  },
+  {
    "nome": "tr_auditoria_premiacoes_campanhas",
    "quando": "after",
    "evento": "insert or update",
@@ -2885,6 +2901,11 @@
   }
  ],
  "cron_jobs": [
+  {
+   "nome": "alertar-coletores-ponto-parados",
+   "agenda": "*/15 * * * *",
+   "migration": "20261121223000_ponto_rep_alerta_coletor_parado.sql"
+  },
   {
    "nome": "audit_log_monthly_purge",
    "agenda": "0 3 1 * *",
@@ -15617,7 +15638,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 47,
+   "usada_no_front": 48,
    "usada_em_edges": [
     "adiantamento-salarial",
     "alertas-dp",
@@ -46610,6 +46631,143 @@
    ],
    "sem_rls": false,
    "nao_usada": true
+  },
+  "ponto_espelhos_papel": {
+   "colunas": {
+    "arquivo_path": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "colaborador_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "colaboradores"
+    },
+    "competencia": {
+     "tipo": "date",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "devolvido_em": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "empresa_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "empresas"
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "observacao": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "registrado_por": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "ponto_espelhos_papel_delete_rh",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "ponto_espelhos_papel_insert_rh",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "ponto_espelhos_papel_select_rh",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "ponto_espelhos_papel_update_rh",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_ponto_espelhos_papel_empresa_competencia",
+     "colunas": "empresa_id, competencia",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "colaborador_id->colaboradores",
+    "empresa_id->empresas"
+   ],
+   "criada_em": "20261121224000_ponto_espelhos_papel.sql",
+   "colunas_types": {
+    "arquivo_path": "string | null",
+    "colaborador_id": "string",
+    "competencia": "string",
+    "created_at": "string",
+    "devolvido_em": "string | null",
+    "empresa_id": "string",
+    "id": "string",
+    "observacao": "string | null",
+    "registrado_por": "string | null",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 1,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_ponto_espelhos_papel_updated_at",
+    "trg_ponto_espelhos_papel_validar"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
   },
   "ponto_espelhos_revogacoes": {
    "colunas": {

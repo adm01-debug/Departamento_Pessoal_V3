@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 806,
+ "total": 807,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 761
+  "unit": 762
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 673
+   "arquivos": 674
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -1802,6 +1802,15 @@
     "src/components/esocial/S2306TSVAlteracao.tsx"
    ],
    "casos": 11
+  },
+  {
+   "arquivo": "src/components/__tests__/EspelhosPapelPanel.test.tsx",
+   "tipo": "unit",
+   "linhas": 171,
+   "testa": [
+    "src/components/ponto/EspelhosPapelPanel.tsx"
+   ],
+   "casos": 10
   },
   {
    "arquivo": "src/components/__tests__/EstagiarioTab.test.tsx",
@@ -7762,6 +7771,7 @@
   "src/components/organograma/organogramaHeaderReveal.ts": 1,
   "src/components/organograma/organogramaReveal.ts": 3,
   "src/components/ponto/AssinarEspelhoDialog.tsx": 1,
+  "src/components/ponto/EspelhosPapelPanel.tsx": 1,
   "src/components/ponto/GerarAEJDialog.tsx": 1,
   "src/components/ponto/GestaoPontoAnalytics.tsx": 1,
   "src/components/ponto/GestaoRegistrosPonto.tsx": 1,
@@ -8357,6 +8367,7 @@
   "servicos": [
    "src/services/jornadaService.ts",
    "src/services/relogio/coletoresService.ts",
+   "src/services/relogio/espelhosPapelService.ts",
    "src/services/relogio/vinculosService.ts",
    "src/services/tabelas/index.ts",
    "src/services/tabelasComplementaresService.ts",

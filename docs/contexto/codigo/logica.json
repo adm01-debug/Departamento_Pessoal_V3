@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 187,
+ "total": 188,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
@@ -9,7 +9,7 @@
   "providers": 1,
   "python": 5,
   "schemas": 25,
-  "services": 99,
+  "services": 100,
   "utils": 35
  },
  "arquivos": [
@@ -350,7 +350,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 247,
+   "usado_por": 248,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -500,7 +500,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 25308,
+   "linhas": 25366,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -509,7 +509,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 85,
+   "usado_por": 86,
    "usado_por_modulos": [
     "components/admin",
     "components/admissoes",
@@ -1689,7 +1689,7 @@
     "TABLE_COLUMNS"
    ],
    "export_default": null,
-   "linhas": 4258,
+   "linhas": 4270,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -2797,9 +2797,10 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 4,
+   "usado_por": 5,
    "usado_por_modulos": [
-    "components/colaborador-detalhes"
+    "components/colaborador-detalhes",
+    "services/relogio"
    ],
    "coberto_por_testes": 1,
    "orfao": false
@@ -4072,6 +4073,40 @@
    "usado_por_modulos": [
     "components/ponto",
     "hooks"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/relogio/espelhosPapelService.ts",
+   "camada": "services",
+   "exports": [
+    "ColaboradorEspelho",
+    "ESPELHO_PAPEL_BUCKET",
+    "EspelhoPapel",
+    "anexarDigitalizacao",
+    "competenciaDoMes",
+    "listarColaboradoresAtivos",
+    "listarEspelhosPapel",
+    "salvarEspelhoPapel",
+    "urlDigitalizacao"
+   ],
+   "export_default": null,
+   "linhas": 89,
+   "tabelas": [
+    "colaboradores",
+    "ponto_espelhos_papel"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "components/ponto"
    ],
    "coberto_por_testes": 0,
    "orfao": false
@@ -5930,7 +5965,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 135,
+   "usado_por": 136,
    "usado_por_modulos": [
     "components/admissoes",
     "components/colaborador-detalhes",

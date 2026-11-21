@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "1ec032cef133d7af45f43bef37956c3de8014937",
+  "sha": "a3db5b8975c54f46dfa08be868679b4894c4b1b7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 23:19 UTC",
-  "files_total": 3711,
-  "code_files": 3121,
-  "code_lines": 496975
+  "generated_at": "2026-11-21 23:21 UTC",
+  "files_total": 3718,
+  "code_files": 3128,
+  "code_lines": 497799
  },
  "version": "1.3.2",
- "facts_hash": "2b2911f0afbd47c0",
+ "facts_hash": "8ec0f9eb015d0548",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,9 +387,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1034,
-   ".sql": 986,
-   ".ts": 961,
+   ".tsx": 1036,
+   ".sql": 990,
+   ".ts": 962,
    ".mjs": 109,
    ".js": 15,
    ".cjs": 11,
@@ -42098,6 +42098,87 @@
     "comment": "De-para das justificativas do AtecSoft para o tipo de dia do DP.",
     "origin": "migration"
    },
+   "ponto_espelhos_papel": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "uuid PRIMARY KEY DEFAULT gen_random_uuid()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+     },
+     {
+      "name": "empresa_id",
+      "type": "uuid NOT NULL REFERENCES public.empresas(id) ON DELETE RESTRICT",
+      "fk": "empresas.id ON DELETE RESTRICT",
+      "generated": "",
+      "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+     },
+     {
+      "name": "colaborador_id",
+      "type": "uuid NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE",
+      "fk": "colaboradores.id ON DELETE CASCADE",
+      "generated": "",
+      "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+     },
+     {
+      "name": "competencia",
+      "type": "date NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+     },
+     {
+      "name": "devolvido_em",
+      "type": "timestamptz",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+     },
+     {
+      "name": "registrado_por",
+      "type": "uuid",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+     },
+     {
+      "name": "observacao",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+     },
+     {
+      "name": "arquivo_path",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+     },
+     {
+      "name": "created_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+     }
+    ],
+    "constraints": [
+     "CONSTRAINT ponto_espelhos_papel_colaborador_competencia_key UNIQUE (colaborador_id, competencia)",
+     "CONSTRAINT ponto_espelhos_papel_competencia_mes_check CHECK (competencia = date_trunc('month', competencia)::date)"
+    ],
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
+    "comment": "Etapa 85: espelho de ponto devolvido assinado em papel, por colaborador e competência (1º dia do mês).",
+    "origin": "migration"
+   },
    "auth._test_uid": {
     "columns": [
      {
@@ -54815,6 +54896,24 @@
     "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
    },
    {
+    "name": "trg_ponto_espelhos_papel_validar",
+    "when": "BEFORE INSERT OR UPDATE",
+    "table": "ponto_espelhos_papel",
+    "function": "ponto_espelhos_papel_validar",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+   },
+   {
+    "name": "trg_ponto_espelhos_papel_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "ponto_espelhos_papel",
+    "function": "update_updated_at_column",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+   },
+   {
     "name": "ajuste_ponto_status_transition",
     "when": "BEFORE UPDATE OF \"STATUS\"",
     "table": "solicitacoes_ajuste_ponto",
@@ -65423,6 +65522,39 @@
     ],
     "tables": []
    },
+   "alertar_coletores_ponto_parados": {
+    "args": "p_agora timestamptz DEFAULT now(",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_local timestamp := p_agora AT TIME ZONE 'America/Sao_Paulo'; v_hoje date := (p_agora AT TIME ZONE 'America/Sao_Paulo')::date; v_disp record; v_ref_local timestamp; v_hora text; v_count integer := 0; v_ins integer; BEGIN IF extract(isodow FROM v_local) NOT BETWEEN 1 AND 5 OR v_local::time < time '07:00' OR v_local::time >= time '19:00' THEN RETURN 0; END IF; FOR v_disp IN SELECT d.id, d.empresa_id, d.unidade, coalesce(d.ultimo_contato_em, d.created_at) AS referencia FROM public.ponto_rep_dispositivos d WHERE d.ativo AND d.revogado_em IS NULL AND coalesce(d.ultimo_contato_em, d.created_at) < p_agora - interval '30 minutes' LOOP v_ref_local := v_disp.referencia AT TIME ZONE 'America/S …",
+    "raises": [],
+    "tables": [
+     "auth",
+     "notificacoes",
+     "ponto_rep_dispositivos",
+     "user_empresas",
+     "user_roles",
+     "v_local"
+    ]
+   },
+   "ponto_espelhos_papel_validar": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF NOT EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = NEW.colaborador_id AND c.empresa_id = NEW.empresa_id ) THEN RAISE EXCEPTION 'colaborador % não pertence à empresa %', NEW.colaborador_id, NEW.empresa_id USING ERRCODE = '42501'; END IF; IF auth.uid() IS NOT NULL THEN NEW.registrado_por := auth.uid(); END IF; RETURN NEW; END;",
+    "raises": [
+     "colaborador % não pertence à empresa %"
+    ],
+    "tables": [
+     "colaboradores"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -71669,6 +71801,14 @@
     "unique": false,
     "where": "",
     "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+   },
+   {
+    "name": "idx_ponto_espelhos_papel_empresa_competencia",
+    "table": "ponto_espelhos_papel",
+    "columns": "empresa_id, competencia",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
    }
   ],
   "cron_jobs": [
@@ -73093,6 +73233,10 @@
    "supabase/migrations/20261121221000_ponto_rep_vinculos.verify.sql",
    "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
    "supabase/migrations/20261121222000_batidas_relogio_protecao.verify.sql",
+   "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql",
+   "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.verify.sql",
+   "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
+   "supabase/migrations/20261121224000_ponto_espelhos_papel.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -73580,7 +73724,8 @@
    "ponto_rep_lotes": "enabled",
    "ponto_rep_funcionarios": "enabled",
    "ponto_rep_dias": "enabled",
-   "ponto_rep_justificativas": "enabled"
+   "ponto_rep_justificativas": "enabled",
+   "ponto_espelhos_papel": "enabled"
   },
   "grants": [
    {
@@ -85298,6 +85443,54 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "alertar_coletores_ponto_parados",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "alertar_coletores_ponto_parados",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "ponto_espelhos_papel_validar",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "ponto_espelhos_papel",
+    "objkind": "table",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select, insert, update, delete",
+    "object": "ponto_espelhos_papel",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "ponto_espelhos_papel",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -86894,6 +87087,11 @@
     "function": "bloquear_autoatendimento_quem_usa_relogio",
     "msg": "Este colaborador registra o ponto no relógio da unidade.",
     "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "function": "ponto_espelhos_papel_validar",
+    "msg": "colaborador % não pertence à empresa %",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -88815,7 +89013,8 @@
    "table:ponto_rep_lotes": "Cada envio recebido de um coletor do relógio de ponto.",
    "table:ponto_rep_funcionarios": "Cadastro de funcionários vindo do AtecSoft e vínculo com colaboradores.",
    "table:ponto_rep_dias": "Cópia fiel do cartão ponto diário do AtecSoft (tabela CP).",
-   "table:ponto_rep_justificativas": "De-para das justificativas do AtecSoft para o tipo de dia do DP."
+   "table:ponto_rep_justificativas": "De-para das justificativas do AtecSoft para o tipo de dia do DP.",
+   "table:ponto_espelhos_papel": "Etapa 85: espelho de ponto devolvido assinado em papel, por colaborador e competência (1º dia do mês)."
   },
   "types_file": "src/integrations/supabase/types.ts"
  },
@@ -96216,6 +96415,7 @@
      "pix_lotes",
      "plano_contas",
      "ponto_auditoria",
+     "ponto_espelhos_papel",
      "pontos_abertos",
      "profiles",
      "prorrogacoes_afastamento",
@@ -96300,7 +96500,7 @@
      "validar_potencial_avaliacao",
      "verificar_espelho_ponto"
     ],
-    "deps_count": 232
+    "deps_count": 235
    },
    {
     "path": "",
@@ -101731,7 +101931,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1007,
+  "components_count": 1009,
   "hooks": [
    {
     "name": "useContacts",
@@ -103378,8 +103578,8 @@
   },
   {
    "module": "src/components",
-   "files": 1007,
-   "lines": 186214,
+   "files": 1009,
+   "lines": 186651,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -104076,7 +104276,7 @@
   {
    "module": "src/pages",
    "files": 144,
-   "lines": 50953,
+   "lines": 50966,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -104360,7 +104560,7 @@
   {
    "module": "src/schemas",
    "files": 33,
-   "lines": 8819,
+   "lines": 8831,
    "tables": [],
    "exports": [
     "admissao.ts: admissaoSchema, AdmissaoSchema",
@@ -104442,8 +104642,8 @@
   },
   {
    "module": "src/services",
-   "files": 197,
-   "lines": 41777,
+   "files": 198,
+   "lines": 41866,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -104581,6 +104781,7 @@
     "pix_lotes",
     "plano_contas",
     "ponto_auditoria",
+    "ponto_espelhos_papel",
     "ponto_rep_dispositivos",
     "ponto_rep_funcionarios",
     "ponto_rep_justificativas",
@@ -105339,8 +105540,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 912,
-   "lines": 83165,
+   "files": 916,
+   "lines": 83438,
    "tables": [
     "profiles",
     "user_roles"
@@ -106173,6 +106374,7 @@
      "src/services/notificacoesService.ts",
      "src/services/onboardingJornadaService.ts",
      "src/services/pontoService.ts",
+     "src/services/relogio/espelhosPapelService.ts",
      "src/services/relogio/vinculosService.ts",
      "src/services/tabelasReferenciaService.ts",
      "supabase/functions/adiantamento-salarial/index.ts",
@@ -107843,6 +108045,14 @@
    "ponto_auditoria": {
     "ref": [
      "src/services/pontoMonitorService.ts"
+    ]
+   },
+   "ponto_espelhos_papel": {
+    "select": [
+     "src/services/relogio/espelhosPapelService.ts"
+    ],
+    "upsert": [
+     "src/services/relogio/espelhosPapelService.ts"
     ]
    },
    "ponto_rep_dias": {
@@ -109922,6 +110132,10 @@
    "planos_saude": [
     "empresa_id",
     "id"
+   ],
+   "ponto_espelhos_papel": [
+    "competencia",
+    "empresa_id"
    ],
    "ponto_rep_dias": [
     "data",
@@ -112404,7 +112618,8 @@
     "cas",
     "avaliacoes",
     "ferias_programacao",
-    "colaboradores_pin"
+    "colaboradores_pin",
+    "ponto_espelhos_papel"
    ],
    "empresas": [
     "ferias_reconciliacao_logs",
@@ -116377,6 +116592,10 @@
     "msg": "PINs não conferem"
    },
    {
+    "file": "src/components/ponto/EspelhosPapelPanel.tsx",
+    "msg": ">\n            {erro}\n            <Button size="
+   },
+   {
     "file": "src/components/ponto/GerarAEJDialog.tsx",
     "msg": "Data inicial não pode ser posterior à final"
    },
@@ -118715,6 +118934,10 @@
    {
     "file": "src/services/relogio/coletoresService.ts",
     "msg": "empresa_id obrigatório para isolamento de tenant"
+   },
+   {
+    "file": "src/services/relogio/espelhosPapelService.ts",
+    "msg": "Competência inválida."
    },
    {
     "file": "src/services/tabelas/adminService.ts",
@@ -148486,6 +148709,46 @@
     "rule": "CONSTRAINT ponto_rep_justificativas_tipo_dia_check CHECK ( tipo_dia IS NULL OR tipo_dia IN ('normal', 'feriado', 'compensado', 'folga', 'falta', 'atestado', 'ferias', 'licenca') )"
    },
    {
+    "table": "ponto_espelhos_papel",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "ponto_espelhos_papel",
+    "column": "empresa_id",
+    "rule": "obrigatório; FK → empresas.id ON DELETE RESTRICT"
+   },
+   {
+    "table": "ponto_espelhos_papel",
+    "column": "colaborador_id",
+    "rule": "obrigatório; FK → colaboradores.id ON DELETE CASCADE"
+   },
+   {
+    "table": "ponto_espelhos_papel",
+    "column": "competencia",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "ponto_espelhos_papel",
+    "column": "created_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "ponto_espelhos_papel",
+    "column": "updated_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "ponto_espelhos_papel",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_espelhos_papel_colaborador_competencia_key UNIQUE (colaborador_id, competencia)"
+   },
+   {
+    "table": "ponto_espelhos_papel",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_espelhos_papel_competencia_mes_check CHECK (competencia = date_trunc('month', competencia)::date)"
+   },
+   {
     "table": "_test_ctx",
     "column": "k",
     "rule": "PK"
@@ -150106,6 +150369,11 @@
     "file": "src/services/relogio/coletoresService.ts",
     "name": "LIMITE_LOTES",
     "value": "50"
+   },
+   {
+    "file": "src/services/relogio/espelhosPapelService.ts",
+    "name": "ESPELHO_PAPEL_BUCKET",
+    "value": "'documentos-colaboradores'"
    },
    {
     "file": "src/services/trainingImages/briefing.ts",
@@ -160429,6 +160697,12 @@
     "kind": "filtra"
    },
    {
+    "file": "src/services/relogio/espelhosPapelService.ts",
+    "field": "status",
+    "value": "desligado",
+    "kind": "filtra"
+   },
+   {
     "file": "src/services/tabelas/beneficiosService.ts",
     "field": "status",
     "value": "excluido",
@@ -163539,6 +163813,12 @@
     "body": "return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);"
    },
    {
+    "file": "src/components/ponto/EspelhosPapelPanel.tsx",
+    "name": "aplicar",
+    "params": "r: EspelhoPapel",
+    "body": ""
+   },
+   {
     "file": "src/components/ponto/GerarAEJDialog.tsx",
     "name": "GerarAEJDialog",
     "params": "",
@@ -165871,6 +166151,10 @@
    {
     "file": "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.sql",
     "line": "CASE WHEN _validade_meses > 0 THEN (CURRENT_DATE + (_validade_meses * interval '1 month'))::DATE ELSE NULL END"
+   },
+   {
+    "file": "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql",
+    "line": "AND coalesce(d.ultimo_contato_em, d.created_at) < p_agora - interval '30 minutes'"
    },
    {
     "file": "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -174295,6 +174579,46 @@
    {
     "file": "src/components/__tests__/EscritaOperacional.test.ts",
     "name": "a guarda de dado fictício não acusa campo vazio"
+   },
+   {
+    "file": "src/components/__tests__/EspelhosPapelPanel.test.tsx",
+    "name": "EspelhosPapelPanel"
+   },
+   {
+    "file": "src/components/__tests__/EspelhosPapelPanel.test.tsx",
+    "name": "mostra carregando e depois lista devolvidos, pendentes e o contador"
+   },
+   {
+    "file": "src/components/__tests__/EspelhosPapelPanel.test.tsx",
+    "name": "recarrega ao trocar a competência"
+   },
+   {
+    "file": "src/components/__tests__/EspelhosPapelPanel.test.tsx",
+    "name": "marca como devolvido e zera o contador"
+   },
+   {
+    "file": "src/components/__tests__/EspelhosPapelPanel.test.tsx",
+    "name": "desmarca enviando devolvido_em nulo"
+   },
+   {
+    "file": "src/components/__tests__/EspelhosPapelPanel.test.tsx",
+    "name": "salva a observação ao sair do campo"
+   },
+   {
+    "file": "src/components/__tests__/EspelhosPapelPanel.test.tsx",
+    "name": "anexa a digitalização"
+   },
+   {
+    "file": "src/components/__tests__/EspelhosPapelPanel.test.tsx",
+    "name": "mostra erro ao salvar sem quebrar a lista"
+   },
+   {
+    "file": "src/components/__tests__/EspelhosPapelPanel.test.tsx",
+    "name": "mostra estado vazio sem colaboradores"
+   },
+   {
+    "file": "src/components/__tests__/EspelhosPapelPanel.test.tsx",
+    "name": "mostra erro de carregamento e tenta de novo"
    },
    {
     "file": "src/components/__tests__/EstagiarioTab.test.tsx",
@@ -218707,6 +219031,24 @@
     "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
    },
    {
+    "name": "trg_ponto_espelhos_papel_validar",
+    "when": "BEFORE INSERT OR UPDATE",
+    "table": "ponto_espelhos_papel",
+    "function": "ponto_espelhos_papel_validar",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+   },
+   {
+    "name": "trg_ponto_espelhos_papel_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "ponto_espelhos_papel",
+    "function": "update_updated_at_column",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+   },
+   {
     "name": "ajuste_ponto_status_transition",
     "when": "BEFORE UPDATE OF \"STATUS\"",
     "table": "solicitacoes_ajuste_ponto",
@@ -229315,6 +229657,39 @@
     ],
     "tables": []
    },
+   "alertar_coletores_ponto_parados": {
+    "args": "p_agora timestamptz DEFAULT now(",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_local timestamp := p_agora AT TIME ZONE 'America/Sao_Paulo'; v_hoje date := (p_agora AT TIME ZONE 'America/Sao_Paulo')::date; v_disp record; v_ref_local timestamp; v_hora text; v_count integer := 0; v_ins integer; BEGIN IF extract(isodow FROM v_local) NOT BETWEEN 1 AND 5 OR v_local::time < time '07:00' OR v_local::time >= time '19:00' THEN RETURN 0; END IF; FOR v_disp IN SELECT d.id, d.empresa_id, d.unidade, coalesce(d.ultimo_contato_em, d.created_at) AS referencia FROM public.ponto_rep_dispositivos d WHERE d.ativo AND d.revogado_em IS NULL AND coalesce(d.ultimo_contato_em, d.created_at) < p_agora - interval '30 minutes' LOOP v_ref_local := v_disp.referencia AT TIME ZONE 'America/S …",
+    "raises": [],
+    "tables": [
+     "auth",
+     "notificacoes",
+     "ponto_rep_dispositivos",
+     "user_empresas",
+     "user_roles",
+     "v_local"
+    ]
+   },
+   "ponto_espelhos_papel_validar": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF NOT EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = NEW.colaborador_id AND c.empresa_id = NEW.empresa_id ) THEN RAISE EXCEPTION 'colaborador % não pertence à empresa %', NEW.colaborador_id, NEW.empresa_id USING ERRCODE = '42501'; END IF; IF auth.uid() IS NOT NULL THEN NEW.registrado_por := auth.uid(); END IF; RETURN NEW; END;",
+    "raises": [
+     "colaborador % não pertence à empresa %"
+    ],
+    "tables": [
+     "colaboradores"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -230535,6 +230910,11 @@
     "function": "bloquear_autoatendimento_quem_usa_relogio",
     "msg": "Este colaborador registra o ponto no relógio da unidade.",
     "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "function": "ponto_espelhos_papel_validar",
+    "msg": "colaborador % não pertence à empresa %",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -235910,7 +236290,8 @@
       "compara:supabase/functions/metricas/index.ts",
       "escreve:src/mocks/colaboradoresMock.ts",
       "filtra:src/services/colaboradorService.ts",
-      "filtra:src/services/departamentoService.ts"
+      "filtra:src/services/departamentoService.ts",
+      "filtra:src/services/relogio/espelhosPapelService.ts"
      ],
      "assinado": [
       "compara:src/components/contratos/ContratosVencendoPanel.tsx",
@@ -241989,6 +242370,13 @@
     "UPDATE": [],
     "DELETE": []
    },
+   "ponto_espelhos_papel": {
+    "rls": "enabled",
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
+   },
    "ponto_espelhos_revogacoes": {
     "rls": "enabled",
     "SELECT": [
@@ -244230,6 +244618,13 @@
     ]
    },
    {
+    "table": "ponto_espelhos_papel",
+    "issue": "RLS ligado sem nenhuma política → só service_role acessa",
+    "files": [
+     "src/services/relogio/espelhosPapelService.ts"
+    ]
+   },
+   {
     "table": "ponto_rep_dias",
     "issue": "RLS ligado sem nenhuma política → só service_role acessa",
     "files": []
@@ -244599,6 +244994,8 @@
    "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
    "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
    "supabase/migrations/20261121222000_batidas_relogio_protecao.verify.sql",
+   "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql",
+   "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -244629,6 +245026,7 @@
    "admissao_marcar_documentos",
    "admissao_registrar_documento",
    "admissao_salvar_dados",
+   "alertar_coletores_ponto_parados",
    "anonimizar_dados_pessoais",
    "aplicar_medida_folha_ponto",
    "aprovar_despesa",
@@ -244833,6 +245231,7 @@
    "pode_gerir_rh",
    "pode_gerir_rh_para",
    "pode_validar_potencial",
+   "ponto_espelhos_papel_validar",
    "ponto_rep_colaborador_usa_relogio",
    "process_audit_log",
    "process_ferias_audit",
@@ -256655,6 +257054,54 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "alertar_coletores_ponto_parados",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "alertar_coletores_ponto_parados",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "ponto_espelhos_papel_validar",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "ponto_espelhos_papel",
+    "objkind": "table",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select, insert, update, delete",
+    "object": "ponto_espelhos_papel",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "ponto_espelhos_papel",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -257998,6 +258445,7 @@
    "ponto_rep_funcionarios",
    "ponto_rep_dias",
    "ponto_rep_justificativas",
+   "ponto_espelhos_papel",
    "feedbacks_360_aprovacoes_gestor",
    "feedbacks_360_consolidacoes"
   ],
@@ -259896,6 +260344,10 @@
     "updated_at"
    ],
    "ponto_rep_justificativas": [
+    "created_at",
+    "updated_at"
+   ],
+   "ponto_espelhos_papel": [
     "created_at",
     "updated_at"
    ],
@@ -261818,6 +262270,13 @@
    },
    {
     "kind": "rls",
+    "msg": "`ponto_espelhos_papel`: RLS ligado sem nenhuma política → só service_role acessa",
+    "where": [
+     "src/services/relogio/espelhosPapelService.ts"
+    ]
+   },
+   {
+    "kind": "rls",
     "msg": "`ponto_rep_dias`: RLS ligado sem nenhuma política → só service_role acessa",
     "where": []
    },
@@ -263654,7 +264113,7 @@
    "`afd_geracoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`ponto_rep_funcionarios.situacao` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`feedbacks_360_consolidacoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "400/475 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …"
+   "400/476 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …"
   ]
  },
  "manual": [],
@@ -272508,6 +272967,33 @@
     "NÃO bloqueia ids reais quando a vitrine está ligada (tela mista)",
     "bloqueia registro criado na vitrine (",
     "a guarda de dado fictício não acusa campo vazio"
+   ]
+  },
+  "src/components/__tests__/EspelhosPapelPanel.test.tsx": {
+   "path": "src/components/__tests__/EspelhosPapelPanel.test.tsx",
+   "lines": 171,
+   "is_test": true,
+   "errors": [
+    ")).toBeInTheDocument();\n\n    fireEvent.click(screen.getByRole(",
+    "inválida"
+   ],
+   "params": [
+    {
+     "name": "EMPRESA",
+     "value": "'e1'"
+    }
+   ],
+   "tests": [
+    "EspelhosPapelPanel",
+    "mostra carregando e depois lista devolvidos, pendentes e o contador",
+    "recarrega ao trocar a competência",
+    "marca como devolvido e zera o contador",
+    "desmarca enviando devolvido_em nulo",
+    "salva a observação ao sair do campo",
+    "anexa a digitalização",
+    "mostra erro ao salvar sem quebrar a lista",
+    "mostra estado vazio sem colaboradores",
+    "mostra erro de carregamento e tenta de novo"
    ]
   },
   "src/components/__tests__/EstagiarioTab.test.tsx": {
@@ -287007,6 +287493,23 @@
    "errors": [
     "PIN deve ter de 4 a 6 dígitos",
     "PINs não conferem"
+   ]
+  },
+  "src/components/ponto/EspelhosPapelPanel.tsx": {
+   "path": "src/components/ponto/EspelhosPapelPanel.tsx",
+   "lines": 266,
+   "exports": [
+    "function EspelhosPapelPanel"
+   ],
+   "errors": [
+    ">\n            {erro}\n            <Button size="
+   ],
+   "calc_fns": [
+    {
+     "name": "aplicar",
+     "params": "r: EspelhoPapel",
+     "body": ""
+    }
    ]
   },
   "src/components/ponto/GerarAEJDialog.tsx": {
@@ -305516,7 +306019,7 @@
   },
   "src/pages/PontoPage.tsx": {
    "path": "src/pages/PontoPage.tsx",
-   "lines": 710,
+   "lines": 723,
    "exports": [
     "function PontoPage"
    ],
@@ -308007,7 +308510,7 @@
   },
   "src/schemas/tableColumns.ts": {
    "path": "src/schemas/tableColumns.ts",
-   "lines": 4258,
+   "lines": 4270,
    "exports": [
     "const TABLE_COLUMNS"
    ],
@@ -317128,6 +317631,63 @@
      "name": "gerarToken",
      "params": "empresaId: string, unidade: string, nome: string",
      "body": "exigirEmpresa(empresaId); const { data, error } = await supabase.rpc('gerar_token_coletor_ponto', { _empresa_id: empresaId, _unidade: unidade.trim(), _nome: nome.trim(), }); if (error) throw error; const linha = Array.isArray(data) ? data[0] : null; if (!linha?.token) throw new Error('O banco não devolveu o token do coletor.'); return { dispositivo_id: linha.dispositivo_id, token: linha.token };"
+    }
+   ]
+  },
+  "src/services/relogio/espelhosPapelService.ts": {
+   "path": "src/services/relogio/espelhosPapelService.ts",
+   "lines": 89,
+   "exports": [
+    "type EspelhoPapel",
+    "interface ColaboradorEspelho",
+    "const ESPELHO_PAPEL_BUCKET",
+    "function competenciaDoMes",
+    "function listarColaboradoresAtivos",
+    "function listarEspelhosPapel",
+    "function salvarEspelhoPapel",
+    "function anexarDigitalizacao",
+    "function urlDigitalizacao"
+   ],
+   "tables": [
+    {
+     "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "ponto_espelhos_papel",
+     "op": "select"
+    },
+    {
+     "table": "ponto_espelhos_papel",
+     "op": "select,upsert"
+    }
+   ],
+   "table_cols": {
+    "colaboradores": [
+     "empresa_id",
+     "id",
+     "nome_completo",
+     "status"
+    ],
+    "ponto_espelhos_papel": [
+     "competencia",
+     "empresa_id"
+    ]
+   },
+   "errors": [
+    "Competência inválida."
+   ],
+   "params": [
+    {
+     "name": "ESPELHO_PAPEL_BUCKET",
+     "value": "'documentos-colaboradores'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "desligado",
+     "kind": "filtra"
     }
    ]
   },
@@ -334044,6 +334604,27 @@
    "lines": 26,
    "uses_service_role": true
   },
+  "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql": {
+   "path": "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql",
+   "lines": 104,
+   "temporal": [
+    "AND coalesce(d.ultimo_contato_em, d.created_at) < p_agora - interval '30 minutes'"
+   ],
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.verify.sql": {
+   "path": "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.verify.sql",
+   "lines": 24
+  },
+  "supabase/migrations/20261121224000_ponto_espelhos_papel.sql": {
+   "path": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
+   "lines": 112,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261121224000_ponto_espelhos_papel.verify.sql": {
+   "path": "supabase/migrations/20261121224000_ponto_espelhos_papel.verify.sql",
+   "lines": 33
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -334437,10 +335018,28 @@
   }
  },
  "git": {
-  "sha": "1ec032cef133d7af45f43bef37956c3de8014937",
+  "sha": "a3db5b8975c54f46dfa08be868679b4894c4b1b7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "a3db5b8",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "feat: alerta de coletor do ponto parado e controle do espelho em papel (#804)",
+    "files": [
+     "src/components/__tests__/EspelhosPapelPanel.test.tsx",
+     "src/components/ponto/EspelhosPapelPanel.tsx",
+     "src/integrations/supabase/types.ts",
+     "src/pages/PontoPage.tsx",
+     "src/schemas/tableColumns.ts",
+     "src/services/relogio/espelhosPapelService.ts",
+     "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql",
+     "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.verify.sql",
+     "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
+     "supabase/migrations/20261121224000_ponto_espelhos_papel.verify.sql"
+    ]
+   },
    {
     "sha": "1ec032c",
     "date": "2026-11-21",
@@ -334765,27 +335364,16 @@
      "docs/pendencias/README.md",
      "docs/pendencias/_ordem.md"
     ]
-   },
-   {
-    "sha": "06ed2ca",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: rubricas_folha insert/delete/update sem empresa_id (#772)",
-    "files": [
-     "src/components/__tests__/RubricasDialog.test.tsx",
-     "src/components/folha/RubricasDialog.tsx",
-     "src/pages/RubricasPage.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
-    "docs/pendencias/_ordem.md",
+    "src/integrations/supabase/types.ts",
     5
    ],
    [
-    "src/integrations/supabase/types.ts",
-    4
+    "docs/pendencias/_ordem.md",
+    5
    ],
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
@@ -334798,6 +335386,14 @@
    [
     "scripts/canonical-invariants.sql",
     3
+   ],
+   [
+    "src/pages/PontoPage.tsx",
+    2
+   ],
+   [
+    "src/schemas/tableColumns.ts",
+    2
    ],
    [
     "scripts/automation.config.json",
@@ -334832,31 +335428,23 @@
     2
    ],
    [
-    "src/components/__tests__/RelogiosPanel.test.tsx",
+    "src/components/__tests__/EspelhosPapelPanel.test.tsx",
     1
    ],
    [
-    "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "src/components/ponto/EspelhosPapelPanel.tsx",
     1
    ],
    [
-    "src/components/ponto/relogio/statusColetor.ts",
+    "src/services/relogio/espelhosPapelService.ts",
     1
    ],
    [
-    "src/hooks/useColetoresPonto.ts",
+    "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql",
     1
    ],
    [
-    "src/pages/IntegracoesPage.tsx",
-    1
-   ],
-   [
-    "src/services/relogio/coletoresService.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql",
+    "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.verify.sql",
     1
    ]
   ]

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 644,
+ "total": 645,
  "orfaos": 27,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -5310,6 +5310,20 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/ponto/EspelhosPapelPanel.tsx",
+   "exports": [
+    "EspelhosPapelPanel"
+   ],
+   "export_default": null,
+   "linhas": 266,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/ponto/GerarAEJDialog.tsx",
    "exports": [
     "GerarAEJDialog"
@@ -7428,7 +7442,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 226,
+   "usado_por": 227,
    "orfao": false
   },
   {
@@ -7443,7 +7457,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 366,
+   "usado_por": 367,
    "orfao": false
   },
   {
@@ -7478,7 +7492,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 284,
+   "usado_por": 285,
    "orfao": false
   },
   {
@@ -7853,7 +7867,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 179,
+   "usado_por": 180,
    "orfao": false
   },
   {
@@ -8208,7 +8222,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 119,
+   "usado_por": 120,
    "orfao": false
   },
   {
@@ -8286,7 +8300,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 118,
+   "usado_por": 119,
    "orfao": false
   },
   {
@@ -10148,7 +10162,7 @@
     "PontoPage"
    ],
    "export_default": "PontoPage",
-   "linhas": 710,
+   "linhas": 723,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
