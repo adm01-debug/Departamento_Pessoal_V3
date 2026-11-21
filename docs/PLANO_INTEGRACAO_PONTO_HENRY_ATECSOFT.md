@@ -35,9 +35,10 @@ de uma batida original do relógio nunca é alterado.
 ### Achados de 21/11/2026 sobre o banco do DP V3 e o Promo_Finance_V2
 
 Fonte: `inventario/estado/banco.json` (medido em 16/11/2026, contagens estimadas) e
-`supabase/baseline/20260831_canonical/canonical_schema.sql`. **Não é consulta ao vivo**: o `canonical-sql-diag.yml`
-está quebrado no modo sem dados pessoais (`docs/agentes/banco.md`, seção "QUEBRADO em modo não-PII") e o conserto é
-decisão do dono (regra 8).
+`supabase/baseline/20260831_canonical/canonical_schema.sql`. As três primeiras linhas foram **confirmadas ao vivo**
+em 21/11/2026 pelo `canonical-sql-diag.yml` (run 44951290182), consertado na PR #791. O mesmo run mostrou que
+`registros_ponto.tipo_dia` aceita `normal`, `feriado`, `compensado`, `folga`, `falta`, `atestado`, `ferias` e `licenca`,
+que é o destino das justificativas do AtecSoft (etapas 13 e 68).
 
 | Achado | Evidência | Efeito no plano |
 | --- | --- | --- |
@@ -115,7 +116,7 @@ Princípios:
 - [ ] **13. Mapear `JUSTFICATIVA` e `JE*/JS*`.** Atestado, férias, folga, licenças, INSS. Pronto quando: tabela código → tipo do DP V3.
 - [ ] **14. Verificar coleta automática.** Ler `CONFIG.HAB_COM_AGEND`, `COM_AGEND`, `EQUIP.DATA_COM`, `NSR`. Pronto quando: resposta "o AtecSoft recolhe sozinho? de quanto em quanto tempo?" por unidade.
 - [ ] **15. Identificar os relógios.** Ler `EQUIP` (modelo, `NUM_REP`, IP). Pronto quando: modelo e número de série de cada relógio registrados neste arquivo.
-- [ ] **16. Diagnosticar o banco de produção do DP V3.** Parcial em 21/11/2026 pelo inventário e pelo baseline (seção 2); falta a consulta ao vivo, bloqueada até o dono decidir o conserto do diagnóstico. Via `canonical-sql-diag.yml` (somente leitura): colunas e constraints de `batidas_ponto`, `registros_ponto`, `afdt_*`, valores aceitos em `origem`, preenchimento de `codigo_firebird`/`pis_pasep`. Pronto quando: saída do workflow anexada.
+- [x] **16. Diagnosticar o banco de produção do DP V3.** Feito em 21/11/2026: constraints de `batidas_ponto` e `registros_ponto` lidas ao vivo (run 44951290182). O preenchimento de `codigo_firebird`/`pis_pasep` fica para a etapa 17, que depende do banco real do AtecSoft. Via `canonical-sql-diag.yml` (somente leitura): colunas e constraints de `batidas_ponto`, `registros_ponto`, `afdt_*`, valores aceitos em `origem`, preenchimento de `codigo_firebird`/`pis_pasep`. Pronto quando: saída do workflow anexada.
 - [ ] **17. Cruzar funcionários do AtecSoft com `colaboradores`.** Por CPF/PIS, sem gravar nada. Pronto quando: lista de casados, ambíguos e órfãos por unidade.
 - [ ] **18. Publicar o relatório de diagnóstico.** `docs/auditoria/ponto-henry-diagnostico.md`, sem dado pessoal. Pronto quando: PR mergeada.
 
@@ -126,8 +127,8 @@ Princípios:
 - [ ] **21. Desenhar `ponto_rep_dias`.** Cópia fiel de cada linha de `CP`: código do funcionário, data, 12 horários, referências, justificativas, abonos, hash do conteúdo. Único por (dispositivo, código, data). Pronto quando: DDL revisado.
 - [ ] **22. Desenhar `ponto_rep_funcionarios`.** Cópia de `FUNCIONARIO` + `colaborador_id` vinculado e como foi vinculado. Único por (dispositivo, código). Pronto quando: DDL revisado.
 - [ ] **23. Desenhar `ponto_rep_justificativas`.** De-para código AtecSoft → tipo do DP V3. Pronto quando: DDL revisado.
-- [ ] **24. Definir a origem "relógio" em `batidas_ponto`.** A coluna é texto livre (achados da seção 2): usar `relogio`, sem DDL. Pronto quando: valor confirmado por consulta ao vivo na etapa 16.
-- [ ] **25. Conferir a unicidade de batida.** As unicidades (colaborador, data, ordem) e (colaborador, data, hora, tipo) já existem no baseline. Pronto quando: confirmadas ao vivo na etapa 16; índice novo só se faltarem.
+- [x] **24. Definir a origem "relógio" em `batidas_ponto`.** A coluna é texto livre (achados da seção 2): usar `relogio`, sem DDL. Confirmado ao vivo (run 44951290182): nenhum CHECK sobre `origem`.
+- [x] **25. Conferir a unicidade de batida.** As unicidades (colaborador, data, ordem) e (colaborador, data, hora, tipo) já existem no baseline. Confirmadas ao vivo (run 44951290182): `batidas_ponto_colaborador_id_data_ordem_key` e `batidas_ponto_no_duplicate_batida`.
 - [ ] **26. Ligar RLS por `empresa_id` nas 5 tabelas novas.** Leitura para papéis de DP; escrita só `service_role`. Pronto quando: policies no DDL.
 - [ ] **27. Escrever a migration.** `supabase/migrations/<timestamp>_ponto_rep_ingestao.sql`, idempotente. Pronto quando: arquivo na PR.
 - [ ] **28. Escrever o sidecar `.verify.sql`.** Tabelas, policies, índices e grants. Pronto quando: arquivo na PR.
@@ -253,8 +254,8 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 | Fase | Etapas | Concluídas |
 | --- | --- | --- |
 | 0 — Decisões e insumos | 1–8 | 5/8 |
-| 1 — Diagnóstico | 9–18 | 0/10 |
-| 2 — Modelo de dados | 19–32 | 0/14 |
+| 1 — Diagnóstico | 9–18 | 1/10 |
+| 2 — Modelo de dados | 19–32 | 2/14 |
 | 3 — Função de ingestão | 33–46 | 0/14 |
 | 4 — Coletor Windows | 47–62 | 0/16 |
 | 5 — Processamento e cálculo | 63–72 | 0/10 |
@@ -262,7 +263,7 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 | 7 — Fechamento mensal | 83–90 | 0/8 |
 | 8 — Implantação e operação | 91–100 | 0/10 |
 | 9 — Escrita no AtecSoft | 101–120 | 0/20 |
-| **Total** | **1–120** | **5/120** |
+| **Total** | **1–120** | **8/120** |
 
 ## 8. Riscos
 
@@ -280,5 +281,4 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 | Gravação errada no registro legal | 111, 114, 115, 119 |
 | Cadastro novo não chega ao relógio sem alguém clicar em "Enviar" no AtecSoft | 106, 116 |
 | Digital do colaborador só pode ser cadastrada presencialmente no relógio | 117 |
-| Diagnóstico ao vivo do banco indisponível (`canonical-sql-diag.yml` quebrado) | 16 |
 | DP V3 ainda sem a filial e sem os colaboradores reais cadastrados | 17, 116 |
