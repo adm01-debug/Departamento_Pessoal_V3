@@ -1,0 +1,12 @@
+-- Conserta o canonical-sql-diag.yml no modo sem dados pessoais.
+--
+-- scripts/diag/run-sql-diag.mjs prefixa a consulta com `SET LOCAL ROLE ci_auditor`,
+-- mas a 20261015160000 criou o papel sem conceder a participação a ninguém, então o
+-- psql morre com "permission denied to set role ci_auditor" antes de qualquer consulta
+-- (docs/agentes/banco.md, runs 44235639541 e 44240698826).
+--
+-- CURRENT_USER é o papel da conexão SUPABASE_DB_URL: o mesmo secret é usado por
+-- canonical-migrations.yml (que aplica esta migration) e por canonical-sql-diag.yml.
+-- Não amplia privilégio: o papel da conexão já é administrador e passa a poder
+-- ASSUMIR um papel mais restrito. ci_auditor não ganha nada. Idempotente.
+GRANT ci_auditor TO CURRENT_USER;
