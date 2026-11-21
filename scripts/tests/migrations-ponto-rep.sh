@@ -85,7 +85,7 @@ for pass in 1 2; do
 done
 
 # Uma linha de cada tabela nas empresas A e B, gravada como o backend grava.
-run_psql -q <<'SQL'
+docker exec -i "$NAME" psql -X -U postgres -v ON_ERROR_STOP=1 -q <<'SQL'
 SET ROLE service_role;
 INSERT INTO public.ponto_rep_dispositivos(id, empresa_id, nome, unidade, token_hash, token_prefixo) VALUES
   ('20000000-0000-0000-0000-00000000000a', '10000000-0000-0000-0000-00000000000a', 'Henry A', 'Matriz', repeat('a', 64), 'dpa_'),
