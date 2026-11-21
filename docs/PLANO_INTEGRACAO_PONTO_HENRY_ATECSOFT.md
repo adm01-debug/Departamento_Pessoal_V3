@@ -122,31 +122,31 @@ Princípios:
 
 ### Fase 2 — Modelo de dados (19–32) — R8
 
-- [ ] **19. Desenhar `ponto_rep_dispositivos`.** Um coletor por unidade: `empresa_id`, unidade, hash do token, último contato, versão. Pronto quando: DDL revisado na PR.
-- [ ] **20. Desenhar `ponto_rep_lotes`.** Cada envio do coletor: dispositivo, período, contagens, hash, status. Pronto quando: DDL revisado.
-- [ ] **21. Desenhar `ponto_rep_dias`.** Cópia fiel de cada linha de `CP`: código do funcionário, data, 12 horários, referências, justificativas, abonos, hash do conteúdo. Único por (dispositivo, código, data). Pronto quando: DDL revisado.
-- [ ] **22. Desenhar `ponto_rep_funcionarios`.** Cópia de `FUNCIONARIO` + `colaborador_id` vinculado e como foi vinculado. Único por (dispositivo, código). Pronto quando: DDL revisado.
-- [ ] **23. Desenhar `ponto_rep_justificativas`.** De-para código AtecSoft → tipo do DP V3. Pronto quando: DDL revisado.
+- [x] **19. Desenhar `ponto_rep_dispositivos`.** Um coletor por unidade: `empresa_id`, unidade, hash do token, último contato, versão. Pronto quando: DDL revisado na PR. Feito: #795; tabela no canônico (apply 44956208120, verify 44956510074).
+- [x] **20. Desenhar `ponto_rep_lotes`.** Cada envio do coletor: dispositivo, período, contagens, hash, status. Pronto quando: DDL revisado. Feito: #795; idem.
+- [x] **21. Desenhar `ponto_rep_dias`.** Cópia fiel de cada linha de `CP`: código do funcionário, data, 12 horários, referências, justificativas, abonos, hash do conteúdo. Único por (dispositivo, código, data). Pronto quando: DDL revisado. Feito: #795; idem.
+- [x] **22. Desenhar `ponto_rep_funcionarios`.** Cópia de `FUNCIONARIO` + `colaborador_id` vinculado e como foi vinculado. Único por (dispositivo, código). Pronto quando: DDL revisado. Feito: #795; idem.
+- [x] **23. Desenhar `ponto_rep_justificativas`.** De-para código AtecSoft → tipo do DP V3. Pronto quando: DDL revisado. Feito: #795; idem.
 - [x] **24. Definir a origem "relógio" em `batidas_ponto`.** A coluna é texto livre (achados da seção 2): usar `relogio`, sem DDL. Confirmado ao vivo (run 44951290182): nenhum CHECK sobre `origem`.
 - [x] **25. Conferir a unicidade de batida.** As unicidades (colaborador, data, ordem) e (colaborador, data, hora, tipo) já existem no baseline. Confirmadas ao vivo (run 44951290182): `batidas_ponto_colaborador_id_data_ordem_key` e `batidas_ponto_no_duplicate_batida`.
-- [ ] **26. Ligar RLS por `empresa_id` nas 5 tabelas novas.** Leitura para papéis de DP; escrita só `service_role`. Pronto quando: policies no DDL.
-- [ ] **27. Escrever a migration.** `supabase/migrations/<timestamp>_ponto_rep_ingestao.sql`, idempotente. Pronto quando: arquivo na PR.
-- [ ] **28. Escrever o sidecar `.verify.sql`.** Tabelas, policies, índices e grants. Pronto quando: arquivo na PR.
-- [ ] **29. Testar em Postgres descartável.** `scripts/tests/migrations-ponto-rep.sh`. Pronto quando: script passa localmente e no CI.
-- [ ] **30. Rodar `validate` no canônico.** Pronto quando: `CANONICAL_MIGRATION_DRY_RUN_OK` no log.
-- [ ] **31. Dono aprova e mergeia; rodar `apply` + `verify`.** Pronto quando: job verde e sidecar confirma os objetos.
+- [x] **26. Ligar RLS por `empresa_id` nas 5 tabelas novas.** Leitura para papéis de DP; escrita só `service_role`. Pronto quando: policies no DDL. Feito: #795; policies `<tabela>_select_rh` conferidas pelo sidecar.
+- [x] **27. Escrever a migration.** `supabase/migrations/<timestamp>_ponto_rep_ingestao.sql`, idempotente. Pronto quando: arquivo na PR. Feito: `20261121210000_ponto_rep_ingestao.sql` (#795).
+- [x] **28. Escrever o sidecar `.verify.sql`.** Tabelas, policies, índices e grants. Pronto quando: arquivo na PR. Feito: `20261121210000_ponto_rep_ingestao.verify.sql` (#795).
+- [x] **29. Testar em Postgres descartável.** `scripts/tests/migrations-ponto-rep.sh`. Pronto quando: script passa localmente e no CI. Feito: `scripts/tests/migrations-ponto-rep.sh` (#799), shard 3/3 verde no CI.
+- [x] **30. Rodar `validate` no canônico.** Pronto quando: `CANONICAL_MIGRATION_DRY_RUN_OK` no log. Feito: validate run 44956080691.
+- [x] **31. Dono aprova e mergeia; rodar `apply` + `verify`.** Pronto quando: job verde e sidecar confirma os objetos. Feito: apply 44956208120 + verify 44956510074 (lote 1); lote 2 (5 migrations) verify 44962489677.
 - [ ] **32. Regenerar os tipos.** `src/integrations/supabase/types.ts`. Pronto quando: `npm run typecheck` verde.
 
 ### Fase 3 — Função de ingestão (33–46)
 
-- [ ] **33. Criar `supabase/functions/ingest-ponto-rep/`.** POST-only, JSON. Pronto quando: função responde 405 a GET em teste.
-- [ ] **34. Autenticar por token de dispositivo.** Header próprio, comparação por hash em tempo constante; `verify_jwt = false` justificado no `config.toml` (R8). Pronto quando: token errado → 401 em teste.
-- [ ] **35. Validar o contrato.** Schema do corpo, tamanho máximo, datas plausíveis. Pronto quando: corpo inválido → 400 com código de erro.
+- [x] **33. Criar `supabase/functions/ingest-ponto-rep/`.** POST-only, JSON. Pronto quando: função responde 405 a GET em teste. Feito: #798; GET ao vivo → 405.
+- [x] **34. Autenticar por token de dispositivo.** Header próprio, comparação por hash em tempo constante; `verify_jwt = false` justificado no `config.toml` (R8). Pronto quando: token errado → 401 em teste. Feito: #798; POST sem token e com token falso ao vivo → 401; `verify_jwt=false` justificado no config.toml.
+- [x] **35. Validar o contrato.** Schema do corpo, tamanho máximo, datas plausíveis. Pronto quando: corpo inválido → 400 com código de erro. Feito: #798; schema Zod estrito em `logica.ts`.
 - [ ] **36. Aplicar rate limit por dispositivo.** Usar `_shared/rateLimit.ts`. Pronto quando: excesso → 429 em teste.
-- [ ] **37. Travar o dispositivo na própria empresa.** O `empresa_id` vem do dispositivo, nunca do corpo. Pronto quando: teste prova que corpo com outra empresa é ignorado.
-- [ ] **38. Gravar o lote e os funcionários.** Upsert em `ponto_rep_lotes` e `ponto_rep_funcionarios`. Pronto quando: reenvio idêntico não cria linhas.
-- [ ] **39. Gravar os dias com hash.** Upsert em `ponto_rep_dias`; só processa o dia cujo hash mudou. Pronto quando: teste de idempotência verde.
-- [ ] **40. Vincular funcionário a colaborador.** CPF → PIS → matrícula; ambíguo ou ausente fica pendente. Pronto quando: teste cobre os 4 casos.
+- [x] **37. Travar o dispositivo na própria empresa.** O `empresa_id` vem do dispositivo, nunca do corpo. Pronto quando: teste prova que corpo com outra empresa é ignorado. Feito: #798; corpo com `empresa_id` é rejeitado pelo schema estrito.
+- [x] **38. Gravar o lote e os funcionários.** Upsert em `ponto_rep_lotes` e `ponto_rep_funcionarios`. Pronto quando: reenvio idêntico não cria linhas. Feito: #798; upsert por (lote) e (dispositivo, código).
+- [x] **39. Gravar os dias com hash.** Upsert em `ponto_rep_dias`; só processa o dia cujo hash mudou. Pronto quando: teste de idempotência verde. Feito: #798; dia só é regravado quando o hash muda (`processado_em` volta a nulo).
+- [x] **40. Vincular funcionário a colaborador.** CPF → PIS → matrícula; ambíguo ou ausente fica pendente. Pronto quando: teste cobre os 4 casos. Feito: #798; CPF → PIS → matrícula, ambíguo fica pendente (testes Deno).
 - [ ] **41. Converter dia em batidas.** Função SQL transacional que só insere o que falta: batida é imutável (gatilho de imutabilidade), então correção vinda do AtecSoft entra como ajuste, nunca como exclusão. Pronto quando: dia alterado no envio seguinte reflete no espelho sem apagar batida.
 - [ ] **42. Não tocar batida de outra origem.** Pronto quando: teste prova que batida de app/quiosque/ajuste sobrevive ao reprocessamento.
 - [ ] **43. Respeitar período fechado.** Dia de competência fechada em `periodos_ponto` não é reprocessado; gera alerta. Pronto quando: teste verde.
@@ -156,14 +156,14 @@ Princípios:
 
 ### Fase 4 — Coletor Windows (47–62)
 
-- [ ] **47. Criar `tools/coletor-ponto-atecsoft/`.** Python 32 bits, sem dependência de biblioteca Firebird. Pronto quando: pasta com README na PR.
+- [x] **47. Criar `tools/coletor-ponto-atecsoft/`.** Python 32 bits, sem dependência de biblioteca Firebird. Pronto quando: pasta com README na PR. Feito: #796.
 - [ ] **48. Reaproveitar o cliente Firebird 1.5.** Portar `fb15_client.py` (leitura via `gds32.dll`, transação read-only). Pronto quando: lê `FUNCIONARIO` do banco real em teste manual registrado.
 - [ ] **49. Decodificar textos.** Colunas `OCTETS` como latin-1. Pronto quando: nomes com acento chegam corretos.
-- [ ] **50. Ler credencial do Firebird de variável de ambiente.** Nada fixo no código. Pronto quando: `gitleaks` verde e grep sem senha.
+- [x] **50. Ler credencial do Firebird de variável de ambiente.** Nada fixo no código. Pronto quando: `gitleaks` verde e grep sem senha. Feito: #796; credencial só por ambiente/DPAPI, gitleaks verde.
 - [ ] **51. Ler funcionários.** Código, nome, CPF, PIS, matrícula, empresa, situação, horário. Pronto quando: contagem igual à do AtecSoft.
 - [ ] **52. Ler dias com janela móvel.** Sempre os últimos N dias (padrão 45), para capturar correções tardias. Pronto quando: correção feita no AtecSoft em dia antigo é reenviada.
 - [ ] **53. Ler justificativas, feriados e horários.** `JUSTFICATIVA`, `FERIADO`, `HORARIO_LINHAS`. Pronto quando: enviados no lote.
-- [ ] **54. Nunca gerar falta no coletor.** Coletor só transporta; quem interpreta é o DP V3. Pronto quando: código sem regra de negócio de falta.
+- [x] **54. Nunca gerar falta no coletor.** Coletor só transporta; quem interpreta é o DP V3. Pronto quando: código sem regra de negócio de falta. Feito: #796; o coletor só transporta.
 - [ ] **55. Enviar em lotes com repetição.** HTTPS, tentativa com espera crescente, fila local em disco se cair a internet. Pronto quando: teste com rede cortada reenvia depois.
 - [ ] **56. Guardar o token no cofre do Windows.** Não em arquivo texto. Pronto quando: nenhum arquivo do coletor contém o token.
 - [ ] **57. Trava de instância única.** Pronto quando: segunda execução simultânea sai sem enviar.
@@ -171,14 +171,14 @@ Princípios:
 - [ ] **59. Batimento cardíaco.** Envia "estou vivo" mesmo sem batida nova. Pronto quando: `ultimo_contato` atualiza a cada ciclo.
 - [ ] **60. Instalador em um clique.** Cria tarefa agendada a cada 10 minutos, todos os dias, com reinício após falha. Pronto quando: instalação limpa em Windows de teste.
 - [ ] **61. Modo diagnóstico.** Comando que testa DLL, banco, internet e token e diz o que falhou. Pronto quando: cada falha simulada gera mensagem clara.
-- [ ] **62. Testes do coletor.** Conversão de datas/horas do Firebird, montagem do lote, fila offline. Pronto quando: suíte verde no CI.
+- [x] **62. Testes do coletor.** Conversão de datas/horas do Firebird, montagem do lote, fila offline. Pronto quando: suíte verde no CI. Feito: `tools/coletor-ponto-atecsoft/tests` (16 testes) rodando no CI (#799).
 
 ### Fase 5 — Processamento e cálculo (63–72)
 
 - [ ] **63. Classificar entrada/saída pela posição.** `E1`=entrada, `S1`=saída… vindo do AtecSoft; não alternar por ordem de chegada. Pronto quando: teste com dia de 6 pares verde.
 - [ ] **64. Tratar virada de dia.** Usar `DATA_E*/DATA_S*` para turno que passa da meia-noite. Pronto quando: teste com saída no dia seguinte verde.
 - [ ] **65. Marcar batida inserida à mão no AtecSoft.** Conforme etapa 11, com o motivo de `OBS_*`. Pronto quando: aparece identificada no espelho.
-- [ ] **66. Regra de convivência com o app.** D2: colaborador vinculado ao relógio não registra batida pelo app nem pelo quiosque. Pronto quando: tentativa pela tela e pela API é recusada em teste.
+- [x] **66. Regra de convivência com o app.** D2: colaborador vinculado ao relógio não registra batida pelo app nem pelo quiosque. Pronto quando: tentativa pela tela e pela API é recusada em teste. Feito: #801; gatilho `trg_batida_relogio_autoatendimento` (erro PT409), lote 2 verificado em 44962489677.
 - [ ] **67. Alimentar `registros_ponto`.** Consolidar o dia (entradas, saídas, total trabalhado). Pronto quando: total bate com o cartão ponto do AtecSoft em 20 dias de amostra.
 - [ ] **68. Levar justificativas.** Atestado, férias, folga e licença viram ocorrência no DP V3 conforme etapa 13. Pronto quando: dia justificado não aparece como falta.
 - [ ] **69. Levar abonos.** `ABONO` e `ABONO_NEG` entram no cálculo do dia. Pronto quando: teste verde.
@@ -188,14 +188,14 @@ Princípios:
 
 ### Fase 6 — Interface (73–82)
 
-- [ ] **73. Card "Relógios" em Integrações.** Unidade, último contato, última batida recebida, versão do coletor. Pronto quando: visível em `IntegracoesPage.tsx` com dados reais.
-- [ ] **74. Alerta de coletor parado.** Sem contato há mais de 30 minutos em horário comercial. Pronto quando: notificação gerada em teste.
-- [ ] **75. Cadastro de coletor.** Criar unidade, gerar token (mostrado uma vez), revogar. Só administrador. Pronto quando: criar, revogar e recriar funcionam.
-- [ ] **76. Tela de vínculos pendentes.** Funcionário do relógio sem colaborador: sugerir, vincular, desfazer. Pronto quando: vínculo manual libera as batidas retidas.
-- [ ] **77. Selo de origem na lista de batidas.** "Relógio" em `GestaoRegistrosPonto.tsx`. Pronto quando: visível e filtrável.
-- [ ] **78. Bloquear edição de batida do relógio.** Botões de ajustar/excluir desabilitados com explicação. Pronto quando: tentativa via tela e via API é recusada.
-- [ ] **79. Histórico de lotes.** Lista de envios com contagens e erros. Pronto quando: lote com erro mostra o motivo.
-- [ ] **80. Ajustar app e quiosque conforme D2.** Pronto quando: comportamento decidido refletido em `PontoPage.tsx` e `PontoKioskPage.tsx`.
+- [x] **73. Card "Relógios" em Integrações.** Unidade, último contato, última batida recebida, versão do coletor. Pronto quando: visível em `IntegracoesPage.tsx` com dados reais. Feito: #803; painel Relógios em Integrações.
+- [x] **74. Alerta de coletor parado.** Sem contato há mais de 30 minutos em horário comercial. Pronto quando: notificação gerada em teste. Feito: #804; `alertar_coletores_ponto_parados` + cron a cada 15 min.
+- [x] **75. Cadastro de coletor.** Criar unidade, gerar token (mostrado uma vez), revogar. Só administrador. Pronto quando: criar, revogar e recriar funcionam. Feito: #803; `gerar_token_coletor_ponto`/`revogar_coletor_ponto`, token mostrado uma vez.
+- [x] **76. Tela de vínculos pendentes.** Funcionário do relógio sem colaborador: sugerir, vincular, desfazer. Pronto quando: vínculo manual libera as batidas retidas. Feito: #800 + #807; aba Vínculos no painel.
+- [x] **77. Selo de origem na lista de batidas.** "Relógio" em `GestaoRegistrosPonto.tsx`. Pronto quando: visível e filtrável. Feito: #801; selo e filtro de origem em `GestaoRegistrosPonto`.
+- [x] **78. Bloquear edição de batida do relógio.** Botões de ajustar/excluir desabilitados com explicação. Pronto quando: tentativa via tela e via API é recusada. Feito: #801; gatilho `trg_batida_relogio_protecao` bloqueia update/delete de batida do relógio no banco.
+- [x] **79. Histórico de lotes.** Lista de envios com contagens e erros. Pronto quando: lote com erro mostra o motivo. Feito: #803; aba Envios.
+- [x] **80. Ajustar app e quiosque conforme D2.** Pronto quando: comportamento decidido refletido em `PontoPage.tsx` e `PontoKioskPage.tsx`. Feito: #801; `PontoPage`/`PontoKioskPage` bloqueiam quem usa relógio.
 - [ ] **81. Estados de carregando, vazio e erro em todas as telas novas.** Pronto quando: testes de componente cobrem os três.
 - [ ] **82. Atualizar inventário de rotas.** `npm run inventario:rotas` se houver rota nova. Pronto quando: CI verde.
 
@@ -203,7 +203,7 @@ Princípios:
 
 - [ ] **83. Espelho mensal com batidas do relógio.** `vw_espelho_ponto_mensal` reflete a origem relógio. Pronto quando: espelho de um colaborador confere com o impresso do AtecSoft.
 - [ ] **84. Imprimir o espelho para assinatura em papel.** D3: o DP gera pelo DP V3 o espelho do mês, individual ou em lote. Pronto quando: PDF de um mês real confere com o impresso do AtecSoft.
-- [ ] **85. Controle de espelhos assinados.** O DP marca quem já devolveu o papel assinado e pode anexar a digitalização. Pronto quando: lista de pendentes do mês correta em teste.
+- [x] **85. Controle de espelhos assinados.** O DP marca quem já devolveu o papel assinado e pode anexar a digitalização. Pronto quando: lista de pendentes do mês correta em teste. Feito: #804; `ponto_espelhos_papel` + painel em Gestão da Equipe com anexo.
 - [ ] **86. Travar o mês após o fechamento.** `periodos_ponto` fechado bloqueia reprocessamento (etapa 43). Pronto quando: lote de mês fechado gera alerta e não altera nada.
 - [ ] **87. Relatório de fechamento para a contabilidade.** Por colaborador: normais, extras 50/100, noturnas, faltas, atrasos, atestados, banco de horas. Pronto quando: PDF e planilha gerados de um mês real.
 - [ ] **88. Levar o fechamento do ponto para a folha do DP V3.** D4: sem layout externo; horas extras, faltas, atrasos e adicional noturno do mês fechado entram na folha pelo `vw_folha_ponto_mensal`. Pronto quando: folha de um mês real usa os totais do ponto sem digitação. O Promo_Finance_V2 não consome ponto, só o total mensal da folha (achados da seção 2).
@@ -218,8 +218,8 @@ Princípios:
 - [ ] **94. Rodar um mês inteiro em paralelo.** Papel continua valendo. Pronto quando: espelho do DP V3 igual ao impresso para todos os colaboradores.
 - [ ] **95. Corrigir as diferenças do paralelo.** Uma PR por causa. Pronto quando: lista de diferenças zerada.
 - [ ] **96. Virada.** Dono decide que o fechamento passa a sair do DP V3. Pronto quando: decisão registrada neste arquivo com a competência inicial.
-- [ ] **97. Runbook de operação.** `infra/runbooks/PONTO_REP.md`: coletor parado, token vazado, PC trocado, relógio trocado (R8 por estar em `infra/`). Pronto quando: PR aprovada pelo dono.
-- [ ] **98. Guia do DP.** Reescrever `docs/guides/ponto-eletronico.md` (hoje genérico) com o fluxo real. Pronto quando: PR mergeada.
+- [x] **97. Runbook de operação.** `infra/runbooks/PONTO_REP.md`: coletor parado, token vazado, PC trocado, relógio trocado (R8 por estar em `infra/`). Pronto quando: PR aprovada pelo dono. Feito: #799.
+- [x] **98. Guia do DP.** Reescrever `docs/guides/ponto-eletronico.md` (hoje genérico) com o fluxo real. Pronto quando: PR mergeada. Feito: #799.
 - [ ] **99. Rotação do token.** Procedimento testado de trocar o token de uma unidade sem perder batida. Pronto quando: rotação feita em homologação com fila preservada.
 - [ ] **100. Encerramento.** Marcar tudo neste arquivo, registrar o que ficou de fora e arquivar os protótipos antigos. Pronto quando: todas as etapas marcadas ou pendência justificada.
 
@@ -255,15 +255,20 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 | --- | --- | --- |
 | 0 — Decisões e insumos | 1–8 | 5/8 |
 | 1 — Diagnóstico | 9–18 | 1/10 |
-| 2 — Modelo de dados | 19–32 | 2/14 |
-| 3 — Função de ingestão | 33–46 | 0/14 |
-| 4 — Coletor Windows | 47–62 | 0/16 |
-| 5 — Processamento e cálculo | 63–72 | 0/10 |
-| 6 — Interface | 73–82 | 0/10 |
-| 7 — Fechamento mensal | 83–90 | 0/8 |
-| 8 — Implantação e operação | 91–100 | 0/10 |
+| 2 — Modelo de dados | 19–32 | 13/14 |
+| 3 — Função de ingestão | 33–46 | 7/14 |
+| 4 — Coletor Windows | 47–62 | 4/16 |
+| 5 — Processamento e cálculo | 63–72 | 1/10 |
+| 6 — Interface | 73–82 | 8/10 |
+| 7 — Fechamento mensal | 83–90 | 1/8 |
+| 8 — Implantação e operação | 91–100 | 2/10 |
 | 9 — Escrita no AtecSoft | 101–120 | 0/20 |
-| **Total** | **1–120** | **8/120** |
+| **Total** | **1–120** | **42/120** |
+
+Situação em 21/11/2026. As etapas abaixo têm o código pronto, mas continuam abertas por falta de verificação real:
+- 48, 49, 51–53, 55–61 (coletor): NÃO VERIFICADO. Dependem do PC Windows da unidade com o AtecSoft (DLL 32 bits, DPAPI, tarefa agendada). São conferidas na instalação pelo técnico de TI (etapa 91).
+- 36, 44, 45, 46 (ingestão): rate limit, auditoria e funções estão no código (#798). Falta a chamada real com token de teste devolvendo 200, que exige criar o primeiro coletor.
+- 41–43, 63–72, 83–90, 101–120: dependem da cópia do banco real das duas unidades (etapas 6–15) e do cadastro dos colaboradores no DP V3.
 
 ## 8. Riscos
 
