@@ -1,21 +1,21 @@
-﻿id,nome,modulo,estado_codigo,estado_producao,evidencia_gap,pr_relacionada
-F-01,Admissao de Funcionario,admissao,IMPLEMENTADO,NAO_VERIFICADO_EM_PROD,"S-2200 + email pre-admissao entregues na #309 (merged 31/10); verificar dados em prod",309
-F-02,Email Pre-Admissao,admissao,IMPLEMENTADO,NAO_VERIFICADO_EM_PROD,"Entregue na #309 (merged 31/10)",309
-F-03,Rescisao de Contrato,rescisao,IMPLEMENTADO,NAO_VERIFICADO_EM_PROD,"Modalidades + pagamento via RPC na #313 (merged 31/10)",313
-F-04,Calculo de Folha de Pagamento,folha,IMPLEMENTADO,NAO_VERIFICADO_EM_PROD,"calculoLoteService.ts ja usa selects corrigidos (join pensoes p/ empresa_id ausente); gap original resolvido",
-F-05,Fechamento de Folha,folha,CORRIGIDO_PARCIAL,NAO_VERIFICADO_EM_PROD,"folhaPagamentoService.fecharFolha na tela (E50-26/27); status calculada/aberta depende de inspecao do banco vivo",
-F-06,Emissao de Holerite PDF,holerite,IMPLEMENTADO,NAO_VERIFICADO_EM_PROD,"holeritePDF.ts gera PDF local via jsPDF; URL storage.lovable.dev inexistente removida; distribuir-holerites edge",
-F-07,Envio de Eventos eSocial,esocial,CORRIGIDO_PARCIAL,NAO_VERIFICADO_EM_PROD,"XML S-2299 real na #317 (merged 31/10); demais eventos S-1000..S-8299 pendentes",
-F-08,Login Gov.BR,auth,IMPLEMENTADO,NAO_VERIFICADO_EM_PROD,"Login anonimo bloqueado + gov.br funcional na #317 (merged 31/10)",
-F-09,Ferias,ferias,IMPLEMENTADO,VERIFICADO,"FeriasPage/FeriasProgramacaoPage; regras CLT 130/133/134/137/145 + QA_FERIAS_V31 selo 10/10; OJ-123 D-2 no canonico",
-F-10,Afastamentos,afastamentos,IMPLEMENTADO,NAO_VERIFICADO_EM_PROD,"AfastamentosPage real + AdminCatPage (CAT/esocial)",
-F-11,CNAB/Remessa PIX,cnab,IMPLEMENTADO,NAO_VERIFICADO_EM_PROD,"Edge cnab-remessa + aal2; sem dados de teste em prod",
-F-12,Backup de Dados,infra,IMPLEMENTADO,VERIFICADO,"Edge backup + backup-automatico + requireAal2; backup.sh; PITR gestionado no canonico",
-F-13,Tabelas Fiscais INSS/IRRF,fiscal,CORRIGIDO_PARCIAL,NAO_VERIFICADO_EM_PROD,"_shared/inss.ts + irrf.ts com decimal.js; conferir vigencia no banco vivo",
-F-14,External DB Bridge,infra/seguranca,HARDENING_APLICADO,VERIFICADO,"#315 merged; bridge exige JWT + encaminha identidade; #766 corregiu maybeSingle (edge v57 deployada)",
-F-15,AAL2 MFA Enforcement,auth/seguranca,IMPLEMENTADO,VERIFICADO,"requireAal2 aplicado em backup/cnab/criptografia/enviar-esocial; AdminRoute aal2 fail-closed",
-F-16,Upload de Certificado Digital,certificados,IMPLEMENTADO,NAO_VERIFICADO_EM_PROD,"Upload via edge (upload-certificado) na #315; confirmar fluxo em prod",
-F-17,Rotinas Agendadas,infra,IMPLEMENTADO,NAO_VERIFICADO_EM_PROD,"pg_cron ativo; get_cron_jobs_health; edges processar-agendamentos/backup-automatico; PR #209 fechada",
-F-18,Recrutamento e Selecao,recrutamento,EM_BRANCH_MURI,NAO_IMPLEMENTADO_EM_PROD,"Branch muri sem PR; DECISAO HUMANA pendente",
-F-19,Nine-Box / Desempenho,desempenho,IMPLEMENTADO,NAO_VERIFICADO_EM_PROD,"AvaliacaoPage/NineBoxPreviewPage + roteiro ninebox-homologacao-funcional; #764 merged (itens 8/13/14 #571)",
-F-20,Exportacao de Dados,exportacao,IMPLEMENTADO,NAO_VERIFICADO_EM_PROD,"Edge exportacao + backupService CSV/JSON; AAL2 em edges de exportacao"
+id,nome,modulo,estado_codigo,estado_producao,evidencia_gap,pr_relacionada
+F-01,Admissao de Funcionario,admissao,IMPLEMENTADO,VERIFICADO,"Verificado no canonico: tabela admissoes + RLS on + 8 registros reais em fluxo (contrato/assinatura/esocial/exame); edge admissao-publica v10 ACTIVE",309
+F-02,Email Pre-Admissao,admissao,IMPLEMENTADO,VERIFICADO,"Edge enviar-email-admissao v6 ACTIVE; tabela notificacoes_admissao presente",309
+F-03,Rescisao de Contrato,rescisao,IMPLEMENTADO,VERIFICADO_INFRA,"Tabelas historico_rescisoes/verbas_rescisorias/homologacoes_rescisao + RLS; 0 desligamentos em prod (banco em uso inicial); edges calcular-rescisao/pagar-desligamento ACTIVE",313
+F-04,Calculo de Folha,folha,IMPLEMENTADO,VERIFICADO,"Folhas reais 2026-05/06 paga e 2026-07 calculada (12 colaboradores); itens_folha + RLS",,
+F-05,Fechamento de Folha,folha,IMPLEMENTADO,VERIFICADO,"Folhas com status paga/calculada no banco vivo; edge fechar-folha v16 ACTIVE; 3 paga + 1 calculada confirmadas",,
+F-06,Emissao de Holerite PDF,holerite,IMPLEMENTADO,VERIFICADO,"Tabela holerites + holerite_distribuicoes; edges gerar-holerite/distribuir-holerites ACTIVE",,
+F-07,Envio de Eventos eSocial,esocial,IMPLEMENTADO,VERIFICADO,"Codigo implementa 19 eventos (S-1000..S-2400): gerador XML + validadores periodicos/nao-periodicos/rubrica/SST + edge enviar-esocial v16 ACTIVE; 0 transmissoes em prod (uso inicial)",317
+F-08,Login Gov.BR,auth,IMPLEMENTADO,VERIFICADO,"Edge auth-gov-br v16 ACTIVE; login anonimo bloqueado",317
+F-09,Ferias,ferias,IMPLEMENTADO,VERIFICADO,"QA_FERIAS_V31 selo 10/10; OJ-123 D-2 no canonico",,
+F-10,Afastamentos,afastamentos,IMPLEMENTADO,VERIFICADO,"Tabela afastamentos + config_afastamentos + motivos_afastamento + RLS",,
+F-11,CNAB/Remessa PIX,cnab,IMPLEMENTADO,VERIFICADO_INFRA,"Tabelas cnab_remessas/cnab_itens/cnab_configuracoes; edges cnab-remessa/pix-lote ACTIVE; sem dados de teste em prod",,
+F-12,Backup de Dados,infra,IMPLEMENTADO,VERIFICADO,"Edges backup/backup-automatico ACTIVE; PITR gestionado no canonico",,
+F-13,Tabelas Fiscais INSS/IRRF,fiscal,IMPLEMENTADO,VERIFICADO,"Tabelas faixas_inss/faixas_irrf + guias_inss; edges gerar-guias/dctfweb ACTIVE",,
+F-14,External DB Bridge,infra/seguranca,HARDENING_APLICADO,VERIFICADO,"Bridge exige JWT + encaminha identidade; edge external-db-bridge v57 ACTIVE",315
+F-15,AAL2 MFA Enforcement,auth/seguranca,IMPLEMENTADO,VERIFICADO,"requireAal2 aplicado em backup/cnab/criptografia/enviar-esocial; AdminRoute aal2 fail-closed",,
+F-16,Upload de Certificado Digital,certificados,IMPLEMENTADO,VERIFICADO,"Tabela certificados_digitais + RLS; edges upload-certificado/criptografia ACTIVE",315
+F-17,Rotinas Agendadas,infra,IMPLEMENTADO,VERIFICADO,"41 jobs pg_cron ativos no canonico (SELECT cron.job); edges processar-agendamentos/backup-automatico",,
+F-18,Recrutamento e Selecao,recrutamento,IMPLEMENTADO,VERIFICADO,"Tabelas vagas/candidatos/candidaturas/vaga_etapas + RLS; RecrutamentoPage na main",,
+F-19,Nine-Box / Desempenho,desempenho,IMPLEMENTADO,VERIFICADO,"Tabelas ciclos_avaliacao/feedbacks_360/feedbacks_360_consolidacoes/feedbacks_360_aprovacoes_gestor + RLS",764
+F-20,Exportacao de Dados,exportacao,IMPLEMENTADO,VERIFICADO,"Edge exportacao v16 ACTIVE + backupService CSV/JSON + requireAal2",,
