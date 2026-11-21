@@ -17,21 +17,21 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.audit_log_unified | ~4.8k | 4.5 MB | 2.4 MB | 1.9 MB | ~80 | ~30 | ~1.2k | 2026-11-17 |
 | public.login_attempts | ~4.2k | 1.8 MB | 480.0 KB | 1.3 MB | 0 | ~170 | ~60 | 2026-11-13 |
 | public.pii_access_logs | ~2.8k | 1.6 MB | 760.0 KB | 824.0 KB | 0 | ~80 | ~60 | 2026-11-21 |
-| public.rate_limits | ~1.6k | 1.4 MB | 384.0 KB | 968.0 KB | ~30 | ~1.3k | ~840k | 2026-11-21 |
+| public.rate_limits | ~1.4k | 1.4 MB | 384.0 KB | 968.0 KB | ~60 | ~1.3k | ~845.5k | 2026-11-21 |
 | public.audit_log | ~660 | 1.2 MB | 720.0 KB | 352.0 KB | ~140 | ~90 | ~20.6k |  |
 | public.sec_policy_regressions | ~3.6k | 824.0 KB | 560.0 KB | 224.0 KB | 0 | 4 | ~20 | 2026-10-31 |
 | public.auditoria_logs | ~310 | 664.0 KB | 320.0 KB | 200.0 KB | 5 | ~40 | 5 |  |
-| public.colaboradores | ~20 | 408.0 KB | 8.0 KB | 392.0 KB | 4 | ~65.3k | ~141.3k |  |
-| public.notificacoes | ~60 | 240.0 KB | 32.0 KB | 176.0 KB | ~20 | ~15.7k | ~22.1k | 2026-11-05 |
-| public.query_telemetry | ~340 | 232.0 KB | 64.0 KB | 136.0 KB | 0 | ~3.7k | ~174k |  |
-| public.folhas_pagamento | 4 | 224.0 KB | 8.0 KB | 176.0 KB | 0 | ~1.4k | ~9k | 2026-11-21 |
+| public.colaboradores | ~20 | 408.0 KB | 8.0 KB | 392.0 KB | 4 | ~65.8k | ~141.6k |  |
+| public.notificacoes | ~60 | 240.0 KB | 32.0 KB | 176.0 KB | ~20 | ~15.8k | ~22.2k | 2026-11-05 |
+| public.query_telemetry | ~340 | 232.0 KB | 64.0 KB | 136.0 KB | 0 | ~3.7k | ~174.7k |  |
+| public.folhas_pagamento | 4 | 224.0 KB | 8.0 KB | 176.0 KB | 1 | ~1.4k | ~9k | 2026-11-21 |
 | public.registros_ponto | ~120 | 216.0 KB | 40.0 KB | 144.0 KB | 0 | ~60 | ~2.5k |  |
 | public.asos | 0 | 200.0 KB | 8.0 KB | 184.0 KB | 0 | ~50 | ~60 |  |
 | public.dp_audit_log_2026_07 | ~50 | 200.0 KB | 16.0 KB | 152.0 KB | 2 | ~50 | ~10 |  |
 | public.ferias_audit_log | 0 | 184.0 KB | 56.0 KB | 96.0 KB | ~40 | ~30 | 4 |  |
-| public.desligamentos | 0 | 176.0 KB | 8.0 KB | 160.0 KB | 0 | ~2.9k | ~9.1k |  |
+| public.candidaturas | ~20 | 176.0 KB | 64.0 KB | 80.0 KB | ~50 | ~1.1k | ~2k |  |
+| public.desligamentos | 0 | 176.0 KB | 8.0 KB | 160.0 KB | 0 | ~2.9k | ~9.2k |  |
 | public.ferias | 0 | 176.0 KB | 8.0 KB | 160.0 KB | 8 | ~1.4k | ~19.3k |  |
-| public.candidaturas | ~20 | 168.0 KB | 56.0 KB | 80.0 KB | ~40 | ~970 | ~1.9k |  |
 | public.dp_audit_log_2026_08 | 0 | 168.0 KB | 16.0 KB | 120.0 KB | 0 | ~50 | ~10 |  |
 | public.dp_audit_log_2026_09 | 0 | 168.0 KB | 16.0 KB | 120.0 KB | 0 | ~50 | ~10 |  |
 | public.dp_audit_log_2026_10 | 0 | 168.0 KB | 16.0 KB | 120.0 KB | 0 | ~50 | ~10 |  |
@@ -39,7 +39,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.sst_extintores | 0 | 160.0 KB | 8.0 KB | 144.0 KB | 0 | ~30 | ~20 |  |
 | public.afastamentos | 0 | 144.0 KB | 8.0 KB | 128.0 KB | 0 | ~60 | ~6.2k |  |
 | public.dp_audit_log_2026_11 | 0 | 136.0 KB | 8.0 KB | 120.0 KB | 0 | ~50 | ~10 |  |
-| public.beneficios_colaborador | 0 | 128.0 KB | 8.0 KB | 112.0 KB | 1 | ~60 | ~190 |  |
+| public.beneficios_colaborador | 0 | 128.0 KB | 8.0 KB | 112.0 KB | 1 | ~60 | ~200 |  |
 | public.batidas_ponto | 0 | 120.0 KB | 0 B | 112.0 KB | 0 | ~6.4k | ~1.6k |  |
 | public.cnab_remessas | 3 | 120.0 KB | 8.0 KB | 104.0 KB | 0 | ~800 | ~80 |  |
 | public.workflows_execucoes | 0 | 120.0 KB | 24.0 KB | 64.0 KB | ~40 | ~30 | ~20 |  |
@@ -58,7 +58,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.contabilidade_threads | 0 | 96.0 KB | 8.0 KB | 80.0 KB | 6 | ~20 | ~30 |  |
 | public.contas_bancarias | 0 | 96.0 KB | 16.0 KB | 48.0 KB | 5 | ~50 | ~230 |  |
 | public.departamentos | ~10 | 96.0 KB | 8.0 KB | 80.0 KB | 9 | ~2k | ~470 |  |
-| public.empresas | 1 | 96.0 KB | 8.0 KB | 80.0 KB | 5 | ~64k | 2 |  |
+| public.empresas | 1 | 96.0 KB | 8.0 KB | 80.0 KB | 5 | ~64.3k | 2 |  |
 | public.epis_fichas | 0 | 96.0 KB | 8.0 KB | 80.0 KB | 0 | ~20 | 3 |  |
 | public.exames_agendamentos | 0 | 96.0 KB | 8.0 KB | 80.0 KB | 0 | ~20 | 2 |  |
 | public.feedbacks_360 | 0 | 96.0 KB | 8.0 KB | 80.0 KB | ~20 | ~160 | ~8.2k |  |
@@ -84,7 +84,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.historico_alertas | ~50 | 80.0 KB | 16.0 KB | 32.0 KB | 0 | ~20 | 1 |  |
 | public.holerites | 0 | 80.0 KB | 0 B | 72.0 KB | 0 | ~50 | ~170 |  |
 | public.inscricoes_cursos | 0 | 80.0 KB | 8.0 KB | 64.0 KB | 4 | ~30 | ~40 |  |
-| public.login_lockouts | 7 | 80.0 KB | 8.0 KB | 32.0 KB | ~50 | ~7k | ~2.2k | 2026-11-21 |
+| public.login_lockouts | 7 | 80.0 KB | 8.0 KB | 32.0 KB | 9 | ~7k | ~2.2k | 2026-11-21 |
 | public.metas_okrs | 0 | 80.0 KB | 8.0 KB | 64.0 KB | ~10 | ~40 | ~3.8k |  |
 | public.onboarding_template_tarefas | 0 | 80.0 KB | 16.0 KB | 32.0 KB | ~40 | ~70 | ~80 | 2026-07-27 |
 | public.sst_extintores_inspecoes | 0 | 80.0 KB | 8.0 KB | 64.0 KB | 0 | ~20 | ~20 |  |
@@ -107,8 +107,8 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.permissions | 0 | 64.0 KB | 8.0 KB | 32.0 KB | ~40 | ~800 | ~200 | 2026-11-17 |
 | public.premiacoes_regras | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 1 | ~30 | ~20 |  |
 | public.profiles | 1 | 64.0 KB | 8.0 KB | 48.0 KB | 2 | ~4k | 3 |  |
-| public.recrutamento_anotacoes | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 2 | ~20 | ~60 |  |
-| public.recrutamento_entrevistas | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | ~20 | ~60 |  |
+| public.recrutamento_anotacoes | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 2 | ~20 | ~70 |  |
+| public.recrutamento_entrevistas | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | ~20 | ~70 |  |
 | public.solicitacoes_hora_extra | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | ~20 | ~30 |  |
 | public.sst_programas | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | ~20 | 2 |  |
 | public.sst_regimento_documentos | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | ~20 | ~60 |  |
@@ -120,24 +120,24 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.contrato_assinatura_tokens | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | ~30 | ~160 |  |
 | public.contratos_gerados | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | ~40 | ~1.1k |  |
 | public.dp_retention_policy | 2 | 56.0 KB | 8.0 KB | 40.0 KB | 0 | ~520 | 2 |  |
-| public.esocial_eventos | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | ~36.8k | ~14.8k |  |
+| public.esocial_eventos | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | ~37.1k | ~14.8k |  |
 | public.faltas | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | ~1.2k | ~770 |  |
 | public.ferias_programacao | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | ~40 | 4 |  |
 | public.idempotency_keys | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | ~16.1k | ~16k |  |
 | public.logs_sistema | 0 | 56.0 KB | 8.0 KB | 40.0 KB | ~50 | ~130 | 1 |  |
-| public.pix_lotes | 2 | 56.0 KB | 8.0 KB | 40.0 KB | 0 | ~750 | ~100 |  |
-| public.security_alerts | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | ~680 | ~40.3k |  |
+| public.pix_lotes | 2 | 56.0 KB | 8.0 KB | 40.0 KB | 0 | ~760 | ~100 |  |
+| public.security_alerts | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | ~680 | ~40.4k |  |
 | public.times_brindes | 1 | 56.0 KB | 8.0 KB | 48.0 KB | 0 | ~30 | 1 |  |
 | public.training_images | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | ~20 | 2 |  |
 | public.trilhas_cursos | 0 | 56.0 KB | 8.0 KB | 48.0 KB | 2 | ~20 | ~10 |  |
 | public.afdt_divergencias | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | ~20 | ~320 |  |
 | public.blocked_ips | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | ~160 | ~850 |  |
-| public.candidatos | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 5 | ~20 | ~13.4k |  |
+| public.candidatos | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 5 | ~20 | ~15.1k |  |
 | public.catalogo_cursos | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 3 | ~30 | ~110 |  |
 | public.ciclos_avaliacao | 5 | 48.0 KB | 8.0 KB | 32.0 KB | ~40 | ~2.9k | ~1.1k |  |
 | public.cid10 | 6 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~30 | 6 |  |
 | public.cnab_configuracoes | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~20 | ~660 |  |
-| public.colaborador_lotacoes | 0 | 48.0 KB | 0 B | 48.0 KB | 0 | 9 | 0 |  |
+| public.colaborador_lotacoes | 0 | 48.0 KB | 0 B | 48.0 KB | 0 | ~10 | 0 |  |
 | public.config_afastamentos | 6 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~20 | 6 |  |
 | public.despesas_aprovacoes_log | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~20 | 2 |  |
 | public.documentos_assinatura | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | ~40 | ~1.2k |  |
@@ -145,8 +145,8 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.dp_environments | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~20 | 3 |  |
 | public.epis | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~40 | ~70 |  |
 | public.feedbacks_360_validacoes_potencial | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~3k | ~20 |  |
-| public.fila_processamento | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | ~730 | 1 |  |
-| public.folha_auditoria | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | ~30 | ~340 |  |
+| public.fila_processamento | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | ~740 | 1 |  |
+| public.folha_auditoria | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | ~30 | ~350 |  |
 | public.historico_salarial | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | ~20 | ~20 |  |
 | public.jornadas | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~30 | ~20 |  |
 | public.lgpd_retencao_logs | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | 9 | ~80 |  |
@@ -158,7 +158,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.plano_contas | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~20 | ~500 |  |
 | public.premiacoes_campanhas | 0 | 48.0 KB | 8.0 KB | 32.0 KB | ~10 | ~50 | ~80 |  |
 | public.promo_brindes | 2 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~30 | 2 |  |
-| public.recrutamento_testes | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~20 | ~60 |  |
+| public.recrutamento_testes | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~20 | ~70 |  |
 | public.role_permissions | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | ~20 | 1 |  |
 | public.rubricas_folha | ~10 | 48.0 KB | 8.0 KB | 32.0 KB | ~40 | ~40 | ~70 |  |
 | public.sst_exposicao_riscos | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~20 | 0 |  |
@@ -170,7 +170,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.treinamentos | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 4 | ~40 | ~60 |  |
 | public.trilhas_aprendizado | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 2 | ~20 | ~30 |  |
 | public.turnos | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 9 | ~20 | ~240 |  |
-| public.vagas | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 3 | ~2.1k | ~4.2k |  |
+| public.vagas | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 3 | ~2.3k | ~4.4k |  |
 | public.workflows_definicoes | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 9 | ~20 | ~140 |  |
 | public.workflows_etapas | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 1 | ~20 | 9 |  |
 | public.aej_geracoes | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~20 | ~10 |  |
@@ -190,7 +190,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.ferias_reconciliacao_logs | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~1.9k | ~140 |  |
 | public.historico_calculos_folha | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~20 | ~150 |  |
 | public.historico_cargo | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~20 | 3 |  |
-| public.holerite_distribuicoes | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~20 | ~300 |  |
+| public.holerite_distribuicoes | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~20 | ~310 |  |
 | public.homologacoes_rescisao | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~20 | 1 |  |
 | public.ip_whitelist | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~20 | 9 |  |
 | public.jornadas_horarios | 0 | 40.0 KB | 8.0 KB | 32.0 KB | 0 | ~20 | ~10 |  |
@@ -230,7 +230,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.curriculos_arquivos | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~20 | 1 |  |
 | public.deficiencias | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~20 | ~210 |  |
 | public.documento_templates | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~20 | 5 |  |
-| public.documentos | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~40 | ~190 |  |
+| public.documentos | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~40 | ~200 |  |
 | public.documentos_historico | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~20 | 2 |  |
 | public.ferias_aprovacoes_log | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~20 | 5 |  |
 | public.ferias_solicitacoes | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~20 | 1 |  |
@@ -249,7 +249,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.medidas_disciplinares_anexos | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~20 | 2 |  |
 | public.medidas_disciplinares_contestacao_anexos | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~20 | 0 |  |
 | public.medidas_disciplinares_integracao | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~20 | 1 |  |
-| public.metricas_processamento | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~30 | ~24.4k |  |
+| public.metricas_processamento | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~30 | ~24.7k |  |
 | public.onboarding_documentos_obrigatorios | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~20 | 2 |  |
 | public.pcs_grades | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~10 | 0 |  |
 | public.pcs_pesquisa_salarial | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~20 | 1 |  |
@@ -278,7 +278,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.vales_alimentacao | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~20 | 4 |  |
 | public.valores_campos_customizados | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~20 | ~190 |  |
 | public.verbas_rescisorias | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~20 | 3 |  |
-| public.versao_banco | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~118k | 4 |  |
+| public.versao_banco | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~118.5k | 4 |  |
 | public.webauthn_challenges | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~20 | 2 |  |
 | public.afd_geracoes | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | 2 | 0 |  |
 | public.afdt_importacoes | 0 | 24.0 KB | 0 B | 16.0 KB | 0 | ~30 | ~20 |  |
@@ -437,29 +437,27 @@ _nenhum_
 ## Consultas mais custosas (pg_stat_statements, desde o último reset)
 | role | chamadas (~) | total ms (~) | média ms | query |
 |---|---|---|---|---|
-| ci_auditor | ~1.1k | ~2.3M | 2174.38 | `WITH ext AS ( SELECT e.extname, n.nspname AS sch FROM pg_extension e JOIN pg_namespace n ON n.oid = e.extnamespace WHERE n.nspname <> $1 ), ext_fn AS ( SELECT DISTINCT e.extname, e.sch, p.proname, p.oid AS ext_fn_oid FRO` |
+| ci_auditor | ~1.1k | ~2.4M | 2174.85 | `WITH ext AS ( SELECT e.extname, n.nspname AS sch FROM pg_extension e JOIN pg_namespace n ON n.oid = e.extnamespace WHERE n.nspname <> $1 ), ext_fn AS ( SELECT DISTINCT e.extname, e.sch, p.proname, p.oid AS ext_fn_oid FRO` |
 | ci_auditor | ~490 | ~1.2M | 2532.09 | `WITH ext AS ( SELECT e.extname, n.nspname AS sch FROM pg_extension e JOIN pg_namespace n ON n.oid = e.extnamespace WHERE n.nspname <> $1 ), ext_fn AS ( SELECT DISTINCT e.extname, e.sch, p.proname, p.oid AS ext_fn_oid FRO` |
-| ci_auditor | ~890 | ~623.8k | 700.87 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
-| ci_auditor | ~1.1k | ~356.8k | 332.88 | `WITH pii_tables AS ( -- Codex review (P1, PR #238): information_schema.columns só lista colunas -- de tabelas em que o role atual tem ALGUM privilégio concedido (regra do -- padrão SQL, aplicada pelo Postgres). ci_audito` |
-| ci_auditor | ~890 | ~331.9k | 372.45 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
-| ci_auditor | ~1.6k | ~264.3k | 170.05 | `SELECT p.tablename, p.policyname, p.cmd, array_to_string(p.roles, $1), replace(coalesce(p.qual, $2) \|\| $3 \|\| coalesce(p.with_check, $4), $5, $6) FROM pg_policies p WHERE p.schemaname = $7 ORDER BY p.tablename, p.policyna` |
-| ci_auditor | ~890 | ~261k | 292.91 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
-| ci_auditor | ~890 | ~174.4k | 195.79 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 ELSE $3 END AS kind, pg_get_viewdef(c.oid, $4) AS definition, c.reloptions AS options, pg_get_userbyid(c.relowner) AS owner, obj_description(c` |
+| ci_auditor | ~890 | ~624.7k | 701.08 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
+| ci_auditor | ~1.1k | ~359.3k | 333.60 | `WITH pii_tables AS ( -- Codex review (P1, PR #238): information_schema.columns só lista colunas -- de tabelas em que o role atual tem ALGUM privilégio concedido (regra do -- padrão SQL, aplicada pelo Postgres). ci_audito` |
+| ci_auditor | ~890 | ~332.4k | 372.61 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
+| ci_auditor | ~1.6k | ~265.5k | 170.31 | `SELECT p.tablename, p.policyname, p.cmd, array_to_string(p.roles, $1), replace(coalesce(p.qual, $2) \|\| $3 \|\| coalesce(p.with_check, $4), $5, $6) FROM pg_policies p WHERE p.schemaname = $7 ORDER BY p.tablename, p.policyna` |
+| ci_auditor | ~890 | ~261.3k | 292.93 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
+| ci_auditor | ~890 | ~174.7k | 195.84 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 ELSE $3 END AS kind, pg_get_viewdef(c.oid, $4) AS definition, c.reloptions AS options, pg_get_userbyid(c.relowner) AS owner, obj_description(c` |
 | ci_auditor | ~480 | ~154.4k | 321.69 | `WITH pii_tables AS ( -- Codex review (P1, PR #238): information_schema.columns só lista colunas -- de tabelas em que o role atual tem ALGUM privilégio concedido (regra do -- padrão SQL, aplicada pelo Postgres). ci_audito` |
-| ci_auditor | ~890 | ~149.1k | 167.29 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 END AS kind, c.relrowsecurity AS rls_enabled, c.relforcerowsecurity AS rls_forced, pg_get_userbyid(c.relowner)` |
-| ci_auditor | ~890 | ~139.9k | 157.06 | `SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH` |
-| ci_auditor | ~890 | ~128.1k | 143.76 | `SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.` |
-| ci_auditor | ~1.1k | ~105.6k | 98.52 | `WITH RECURSIVE alcanca_tenant(oid, profundidade) AS ( -- base: a tabela carrega o próprio tenant SELECT c.oid, $1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace JOIN pg_attribute a ON a.attrelid = c.oid AN` |
-| ci_auditor | ~890 | ~99.4k | 111.56 | `SELECT n.nspname AS schema, t.relname AS "table", ic.relname AS name, pg_get_indexdef(ix.indexrelid) AS definition, ix.indisunique AS is_unique, ix.indisprimary AS is_primary, ix.indisvalid AS is_valid, am.amname AS meth` |
-| ci_auditor | ~440 | ~54.9k | 124.76 | `SELECT n.nspname AS schema, c.relname AS "table", con.conname AS name, CASE con.contype WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 WHEN $7 THEN $8 WHEN $9 THEN $10 ELSE con.contype::text END AS type, pg_get_constrai` |
+| ci_auditor | ~890 | ~149.3k | 167.36 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 END AS kind, c.relrowsecurity AS rls_enabled, c.relforcerowsecurity AS rls_forced, pg_get_userbyid(c.relowner)` |
+| ci_auditor | ~890 | ~140.2k | 157.13 | `SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH` |
+| ci_auditor | ~890 | ~128.2k | 143.75 | `SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.` |
+| ci_auditor | ~1.1k | ~106.3k | 98.69 | `WITH RECURSIVE alcanca_tenant(oid, profundidade) AS ( -- base: a tabela carrega o próprio tenant SELECT c.oid, $1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace JOIN pg_attribute a ON a.attrelid = c.oid AN` |
+| ci_auditor | ~890 | ~99.5k | 111.58 | `SELECT n.nspname AS schema, t.relname AS "table", ic.relname AS name, pg_get_indexdef(ix.indexrelid) AS definition, ix.indisunique AS is_unique, ix.indisprimary AS is_primary, ix.indisvalid AS is_valid, am.amname AS meth` |
+| ci_auditor | ~440 | ~55k | 124.77 | `SELECT n.nspname AS schema, c.relname AS "table", con.conname AS name, CASE con.contype WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 WHEN $7 THEN $8 WHEN $9 THEN $10 ELSE con.contype::text END AS type, pg_get_constrai` |
 
 
 ## Conexões
 | usuário | estado | n |
 |---|---|---|
-| authenticator |  | 11 |
+| authenticator |  | 7 |
 | ci_auditor | active | 1 |
-| pgbouncer |  | 2 |
-| supabase_admin |  | 11 |
-| supabase_auth_admin |  | 5 |
-| supabase_storage_admin |  | 1 |
+| pgbouncer |  | 1 |
+| supabase_admin |  | 4 |

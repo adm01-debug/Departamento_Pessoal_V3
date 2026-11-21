@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bbdb6e3cba3c6bbae7b0632768e3a3fed4a2414c",
+  "commit": "77e63b15c2210a6a96db5469bedfa99222d8fe60",
   "branch": "main",
-  "data_commit": "2026-11-21T17:07:31-03:00",
+  "data_commit": "2026-11-21T17:47:25-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "77e63b1",
+    "data": "2026-11-21",
+    "assunto": "fix: auditoria contínua valida tabelas reais (folha_itens/desligamentos/pix) no lugar de legadas (#789)"
+   },
    {
     "sha": "bbdb6e3",
     "data": "2026-11-21",
@@ -126,11 +131,6 @@
     "sha": "c351847",
     "data": "2026-11-19",
     "assunto": "fix(e2e): corrige scroll da lista e overflow do board do pipeline (#760)"
-   },
-   {
-    "sha": "3b4e3cc",
-    "data": "2026-11-19",
-    "assunto": "fix(e2e): backfill de empresa_id em candidaturas orfas do seed (#759)"
    }
   ],
   "arquivos_mudados_7d": 997,
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3668,
   "arquivos_codigo": 2120,
-  "linhas_codigo": 423035,
+  "linhas_codigo": 423036,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -548,7 +548,7 @@
   },
   "scripts/inventario": {
    "arquivos": 5,
-   "linhas": 1065
+   "linhas": 1066
   },
   "scripts/load": {
    "arquivos": 1,

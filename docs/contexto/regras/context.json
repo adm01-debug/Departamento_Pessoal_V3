@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "bbdb6e3cba3c6bbae7b0632768e3a3fed4a2414c",
+  "sha": "77e63b15c2210a6a96db5469bedfa99222d8fe60",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 20:12 UTC",
+  "generated_at": "2026-11-21 21:11 UTC",
   "files_total": 3681,
   "code_files": 3096,
-  "code_lines": 492859
+  "code_lines": 492860
  },
  "version": "1.3.2",
- "facts_hash": "a7f509d909d81b55",
+ "facts_hash": "41c6ce1450b7b863",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -101949,7 +101949,7 @@
   {
    "module": "scripts",
    "files": 154,
-   "lines": 35232,
+   "lines": 35233,
    "tables": [
     "a",
     "anexos",
@@ -264325,7 +264325,7 @@
   },
   "scripts/inventario/validar-funcionalidades.mjs": {
    "path": "scripts/inventario/validar-funcionalidades.mjs",
-   "lines": 91,
+   "lines": 92,
    "exports": [
     "function validar"
    ],
@@ -331106,10 +331106,19 @@
   }
  },
  "git": {
-  "sha": "bbdb6e3cba3c6bbae7b0632768e3a3fed4a2414c",
+  "sha": "77e63b15c2210a6a96db5469bedfa99222d8fe60",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "77e63b1",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: auditoria contínua valida tabelas reais (folha_itens/desligamentos/pix) no lugar de legadas (#789)",
+    "files": [
+     "scripts/inventario/validar-funcionalidades.mjs"
+    ]
+   },
    {
     "sha": "bbdb6e3",
     "date": "2026-11-21",
@@ -331398,16 +331407,6 @@
     "files": [
      ".github/workflows/canonical-migrations.yml"
     ]
-   },
-   {
-    "sha": "b2df382",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(onboarding): resgata a convergência do modelo legado, sem duplicar histórico (#747)",
-    "files": [
-     "supabase/migrations/20261119170000_onboarding_converge_modelo_b.sql",
-     "supabase/migrations/20261119170000_onboarding_converge_modelo_b.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -331428,6 +331427,10 @@
     3
    ],
    [
+    "scripts/inventario/validar-funcionalidades.mjs",
+    2
+   ],
+   [
     ".github/workflows/canonical-migrations.yml",
     2
    ],
@@ -331444,10 +331447,6 @@
     2
    ],
    [
-    "supabase/migrations/20261119170000_onboarding_converge_modelo_b.verify.sql",
-    2
-   ],
-   [
     ".github/workflows/inventario-estado-semanal.yml",
     1
    ],
@@ -331461,10 +331460,6 @@
    ],
    [
     "scripts/inventario/mudou-conteudo.mjs",
-    1
-   ],
-   [
-    "scripts/inventario/validar-funcionalidades.mjs",
     1
    ],
    [
@@ -331489,6 +331484,10 @@
    ],
    [
     "src/pages/RubricasPage.tsx",
+    1
+   ],
+   [
+    "analise-prs/RECONCILIACAO_FUNCIONALIDADES.md",
     1
    ]
   ]

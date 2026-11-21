@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: auditoria contínua valida tabelas reais (folha_itens/desligamentos/pix) no lugar de legadas (#789)",
    "chore: registra no plano do ponto os achados do banco e do Promo Finance (#790)",
    "chore: plano do ponto passa a mão dupla com o AtecSoft e registra D1–D5 (#788)",
    "chore: plano em 100 etapas da integração do ponto Henry/AtecSoft (#786)",
-   "chore: auditoria contínua das funcionalidades F-01..F-20 (#785)",
-   "infra: torna login E2E não-admin obrigatório no smoke pós-deploy (REQUIRE_LOGIN=1) (#784)"
+   "chore: auditoria contínua das funcionalidades F-01..F-20 (#785)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

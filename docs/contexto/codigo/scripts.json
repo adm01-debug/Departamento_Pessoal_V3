@@ -823,7 +823,7 @@
   {
    "arquivo": "scripts/inventario/validar-funcionalidades.mjs",
    "descricao": "* Auditoria continua das funcionalidades F-01..F-20 contra o estado real do canonico.",
-   "linhas": 91,
+   "linhas": 92,
    "env": [],
    "npm_scripts": [],
    "workflows": [
