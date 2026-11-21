@@ -91,4 +91,4 @@ vazio, que serve de sinal de vida.
 python -m unittest discover -s tools/coletor-ponto-atecsoft/tests
 ```
 
-Rodam em qualquer sistema. Ainda não estão ligados ao CI.
+Rodam em qualquer sistema. No CI, rodam no job "Config de segurança" de `.github/workflows/ci.yml`.
