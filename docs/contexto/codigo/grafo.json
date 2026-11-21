@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 1321,
- "arestas": 6490,
+ "arestas": 6491,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -42,7 +42,7 @@
   },
   {
    "arquivo": "src/hooks/useEmpresas.ts",
-   "importado_por": 133
+   "importado_por": 134
   },
   {
    "arquivo": "src/components/ui/select.tsx",

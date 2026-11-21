@@ -1,17 +1,17 @@
-# Graph Report - Departamento_Pessoal_V3  (2026-11-20)
+# Graph Report - Departamento_Pessoal_V3  (2026-11-21)
 
 ## Corpus Check
-- 3561 files · ~3,539,681 words
+- 3561 files · ~3,539,749 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 37 file(s) not represented in the graph (top: (none) 16, .toml 5, .conf 4)
 
 ## Summary
-- 27761 nodes · 62662 edges · 2398 communities (1349 shown, 1049 thin omitted)
+- 27761 nodes · 62665 edges · 2398 communities (1349 shown, 1049 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 1592 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bfc7e3c9`
+- Built from commit: `06ed2ca4`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -1928,7 +1928,7 @@
 3. `vitest` - 680 edges
 4. `lucide-react` - 541 edges
 5. `@testing-library/react` - 447 edges
-6. `useEmpresas()` - 390 edges
+6. `useEmpresas()` - 392 edges
 7. `Button` - 363 edges
 8. `@tanstack/react-query` - 335 edges
 9. `safeErrorMessage()` - 295 edges
@@ -7428,6 +7428,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `lucide-react` be split into smaller, more focused modules?**
   _Cohesion score 0.013815158298688839 - nodes in this community are weakly interconnected._
 - **Should `useEmpresas` be split into smaller, more focused modules?**
-  _Cohesion score 0.010363715498764074 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.010371927634658499 - nodes in this community are weakly interconnected._
 - **Should `20260831_corrected_public.sql` be split into smaller, more focused modules?**
   _Cohesion score 0.005768083837437164 - nodes in this community are weakly interconnected._

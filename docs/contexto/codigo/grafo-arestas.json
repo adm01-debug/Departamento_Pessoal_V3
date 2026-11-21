@@ -2730,6 +2730,7 @@
    "src/components/ui/select.tsx",
    "src/components/ui/table.tsx",
    "src/constants/rubricas.ts",
+   "src/hooks/useEmpresas.ts",
    "src/integrations/supabase/client.ts",
    "src/lib/utils.ts",
    "src/schemas/esocial/index.ts",

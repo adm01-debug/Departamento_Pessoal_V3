@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bfc7e3c9b2cd985857d5b9caa1d8c993cc711e72",
+  "commit": "06ed2ca465bab5c0fc8141f70e9e2ccbdbbc324e",
   "branch": "main",
-  "data_commit": "2026-11-20T15:56:15-03:00",
+  "data_commit": "2026-11-21T09:14:14-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "06ed2ca",
+    "data": "2026-11-21",
+    "assunto": "fix: rubricas_folha insert/delete/update sem empresa_id (#772)"
+   },
    {
     "sha": "bfc7e3c",
     "data": "2026-11-20",
@@ -126,18 +131,13 @@
     "sha": "efcfc1d",
     "data": "2026-11-19",
     "assunto": "feat(ui): resgata os 2 resíduos visuais da PR #546 (muri) (#744)"
-   },
-   {
-    "sha": "a9ea057",
-    "data": "2026-11-19",
-    "assunto": "feat(dashboard): variacao do quadro de pessoal no mes (#743)"
    }
   ],
-  "arquivos_mudados_7d": 1019,
+  "arquivos_mudados_7d": 993,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 391
+    "mudancas": 392
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3663,
   "arquivos_codigo": 2119,
-  "linhas_codigo": 422922,
+  "linhas_codigo": 422944,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 1000,
-   "linhas": 184809
+   "linhas": 184830
   },
   "src/constants": {
    "arquivos": 7,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 143,
-   "linhas": 50798
+   "linhas": 50799
   },
   "src/providers": {
    "arquivos": 4,

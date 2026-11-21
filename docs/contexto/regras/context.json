@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "bfc7e3c9b2cd985857d5b9caa1d8c993cc711e72",
+  "sha": "06ed2ca465bab5c0fc8141f70e9e2ccbdbbc324e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-20 19:12 UTC",
+  "generated_at": "2026-11-21 12:15 UTC",
   "files_total": 3676,
   "code_files": 3095,
-  "code_lines": 492745
+  "code_lines": 492767
  },
  "version": "1.3.2",
- "facts_hash": "e7591d71b1b4133e",
+ "facts_hash": "4c5894ad7e1cf29a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -102260,7 +102260,7 @@
   {
    "module": "src/components",
    "files": 1000,
-   "lines": 184809,
+   "lines": 184830,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -102957,7 +102957,7 @@
   {
    "module": "src/pages",
    "files": 143,
-   "lines": 50798,
+   "lines": 50799,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -273141,7 +273141,7 @@
   },
   "src/components/__tests__/RubricasDialog.test.tsx": {
    "path": "src/components/__tests__/RubricasDialog.test.tsx",
-   "lines": 238,
+   "lines": 245,
    "is_test": true,
    "tests": [
     "RubricasDialog",
@@ -283035,7 +283035,7 @@
   },
   "src/components/folha/RubricasDialog.tsx": {
    "path": "src/components/folha/RubricasDialog.tsx",
-   "lines": 408,
+   "lines": 422,
    "exports": [
     "function RubricasDialog"
    ],
@@ -283068,6 +283068,7 @@
    "table_cols": {
     "rubricas_folha": [
      "codigo",
+     "empresa_id",
      "id"
     ]
    },
@@ -303217,7 +303218,7 @@
   },
   "src/pages/RubricasPage.tsx": {
    "path": "src/pages/RubricasPage.tsx",
-   "lines": 427,
+   "lines": 428,
    "exports": [
     "function RubricasPage"
    ],
@@ -331086,10 +331087,21 @@
   }
  },
  "git": {
-  "sha": "bfc7e3c9b2cd985857d5b9caa1d8c993cc711e72",
+  "sha": "06ed2ca465bab5c0fc8141f70e9e2ccbdbbc324e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "06ed2ca",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: rubricas_folha insert/delete/update sem empresa_id (#772)",
+    "files": [
+     "src/components/__tests__/RubricasDialog.test.tsx",
+     "src/components/folha/RubricasDialog.tsx",
+     "src/pages/RubricasPage.tsx"
+    ]
+   },
    {
     "sha": "bfc7e3c",
     "date": "2026-11-20",
@@ -331402,15 +331414,6 @@
      "src/pages/CalculadoraRescisaoPage.tsx",
      "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx"
     ]
-   },
-   {
-    "sha": "7189749",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "chore(auditoria): fecha o inventário de resgate — 6 lacunas reais, 6 descartes provados e o stash varrido (#739)",
-    "files": [
-     "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md"
-    ]
    }
   ],
   "hot_files": [
@@ -331436,10 +331439,6 @@
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    2
-   ],
-   [
-    "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
     2
    ],
    [
@@ -331475,6 +331474,18 @@
     2
    ],
    [
+    "src/components/__tests__/RubricasDialog.test.tsx",
+    1
+   ],
+   [
+    "src/components/folha/RubricasDialog.tsx",
+    1
+   ],
+   [
+    "src/pages/RubricasPage.tsx",
+    1
+   ],
+   [
     "analise-prs/RECONCILIACAO_FUNCIONALIDADES.md",
     1
    ],
@@ -331484,14 +331495,6 @@
    ],
    [
     "src/integrations/supabase/__tests__/clientBridge.test.ts",
-    1
-   ],
-   [
-    "src/integrations/supabase/client.ts",
-    1
-   ],
-   [
-    "src/pages/PassivoTrabalhistaPage.tsx",
     1
    ]
   ]

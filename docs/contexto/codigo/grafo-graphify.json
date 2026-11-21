@@ -4,20 +4,20 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:update); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "bfc7e3c9b2cd985857d5b9caa1d8c993cc711e72",
+ "commit_do_grafo": "06ed2ca465bab5c0fc8141f70e9e2ccbdbbc324e",
  "grafo_atual": true,
  "nos": 27761,
- "arestas": 62662,
+ "arestas": 62665,
  "comunidades_total": 2398,
  "relacoes": {
-  "calls": 5993,
+  "calls": 5994,
   "cites": 8,
   "contains": 21487,
   "defines": 146,
   "dynamic_import": 174,
   "extends": 7,
-  "imports": 13423,
-  "imports_from": 11656,
+  "imports": 13424,
+  "imports_from": 11657,
   "indexes": 2271,
   "indirect_call": 313,
   "inherits": 41,
@@ -29,7 +29,7 @@
   "triggers": 1009
  },
  "origem": {
-  "EXTRACTED": 61070,
+  "EXTRACTED": 61073,
   "INFERRED": 1592
  },
  "comunidades": [
@@ -1276,7 +1276,7 @@
    "id": "src_hooks_useempresas_useempresas",
    "rotulo": "useEmpresas()",
    "arquivo": "src/hooks/useEmpresas.ts",
-   "grau": 390,
+   "grau": 392,
    "comunidade": "useEmpresas"
   },
   {
@@ -1448,18 +1448,18 @@
    "comunidade": "lucide-react"
   },
   {
+   "id": "src_hooks_useempresas",
+   "rotulo": "useEmpresas.ts",
+   "arquivo": "src/hooks/useEmpresas.ts",
+   "grau": 161,
+   "comunidade": "useEmpresas"
+  },
+  {
    "id": "src_components_ui_label_label",
    "rotulo": "Label",
    "arquivo": "src/components/ui/label.tsx",
    "grau": 160,
    "comunidade": "@tanstack/react-query"
-  },
-  {
-   "id": "src_hooks_useempresas",
-   "rotulo": "useEmpresas.ts",
-   "arquivo": "src/hooks/useEmpresas.ts",
-   "grau": 160,
-   "comunidade": "useEmpresas"
   },
   {
    "id": "supabase_baseline_20260831_canonical_canonical_schema_public_colaboradores",
@@ -1651,7 +1651,7 @@
   },
   {
    "simbolo": "useEmpresas() (src/hooks/useEmpresas.ts)",
-   "chamadas": 205
+   "chamadas": 206
   },
   {
    "simbolo": "safeErrorMessage() (src/utils/safeError.ts)",

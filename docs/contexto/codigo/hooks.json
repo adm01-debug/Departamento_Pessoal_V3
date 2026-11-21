@@ -1728,7 +1728,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 127,
+   "usado_por": 128,
    "usado_por_arquivos": [
     "src/components/admissoes/AdmissoesKanban.tsx",
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",

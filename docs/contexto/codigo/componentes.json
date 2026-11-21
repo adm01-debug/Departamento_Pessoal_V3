@@ -4219,9 +4219,11 @@
     "RubricasDialog"
    ],
    "export_default": null,
-   "linhas": 408,
+   "linhas": 422,
    "dominio": "components/folha",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useEmpresas"
+   ],
    "tabelas": [
     "rubricas_folha"
    ],
@@ -10238,7 +10240,7 @@
     "RubricasPage"
    ],
    "export_default": "RubricasPage",
-   "linhas": 427,
+   "linhas": 428,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"

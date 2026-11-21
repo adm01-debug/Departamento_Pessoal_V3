@@ -3332,7 +3332,7 @@
   {
    "arquivo": "src/components/__tests__/RubricasDialog.test.tsx",
    "tipo": "unit",
-   "linhas": 238,
+   "linhas": 245,
    "testa": [
     "src/components/folha/RubricasDialog.tsx",
     "src/constants/rubricas.ts",
