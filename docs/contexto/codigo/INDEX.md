@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f74ddb614cec9001c365b78ae8f8e66ca69103ff` (2026-11-21T09:38:02-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9073ea6f463bace94b065c1c2bcd32a564a17909` (2026-11-21T11:03:06-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -396,13 +396,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27771 nós · 62673 arestas · 2381 comunidades · grafo do commit `f74ddb61`
+- 27771 nós · 62673 arestas · 2381 comunidades · grafo do commit `9073ea6f`
 - comunidades maiores: lucide-react (535), 20260831_corrected_public.sql (485), canonical_schema.sql (481), @tanstack/react-query (361), vitest (349), useEmpresas (319), App.tsx (224), client.ts (205), cn (183), ColaboradorDetalhesPage.tsx (180), services/index.ts (168), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (27)
+- .github/workflows/canonical-migrations.yml (26)
 - inventario/estado/rotas.json (23)
 - scripts/canonical-invariants.sql (16)
 - src/pages/ColaboradorDetalhesPage.tsx (12)
@@ -653,6 +653,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-21 `9073ea6` infra: corrige cegueira do assert de ledger no canonical-migrations (#771)
+- 2026-11-21 `76e6c55` chore: certifica F-01..F-20 como VERIFICADO em producao no canonico (#777)
+- 2026-11-21 `eb7dcf8` revert: remove specs resgatados na #774 que nao passam na main (descartados na auditoria muri) (#776)
+- 2026-11-21 `45af2a0` chore: preserva e2e/docs NineBox e Premiações da branch muri (resgate de trabalho de outro agente) (#774)
 - 2026-11-21 `f74ddb6` chore: cria docs/pendencias com estado verificado dos itens de auditoria (#773)
 - 2026-11-21 `06ed2ca` fix: rubricas_folha insert/delete/update sem empresa_id (#772)
 - 2026-11-20 `bfc7e3c` chore: reconcilia funcionalidades.csv com o estado real da main (20/11) (#770)
@@ -664,10 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `92ac009` fix(recrutamento): restaura header 'Histórico do processo' no dossiê do candidato (#761)
 - 2026-11-19 `c351847` fix(e2e): corrige scroll da lista e overflow do board do pipeline (#760)
 - 2026-11-19 `3b4e3cc` fix(e2e): backfill de empresa_id em candidaturas orfas do seed (#759)
-- 2026-11-19 `893a2aa` fix(e2e): seed de candidaturas envia empresa_id explícito (#758)
-- 2026-11-19 `23cd2e2` fix(e2e): corrige as 2 falhas do pipeline de recrutamento na main (#757)
-- 2026-11-19 `c60bf64` fix(onboarding): ancora assercoes do verify na admissao de destino (#756)
-- 2026-11-19 `074c01e` infra(banco): inclui a 20261019235900 (dp_*) e a 20261119170000 (onboarding) no lote do canônico (#755)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

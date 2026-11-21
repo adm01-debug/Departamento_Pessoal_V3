@@ -2,11 +2,31 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f74ddb614cec9001c365b78ae8f8e66ca69103ff",
+  "commit": "9073ea6f463bace94b065c1c2bcd32a564a17909",
   "branch": "main",
-  "data_commit": "2026-11-21T09:38:02-03:00",
+  "data_commit": "2026-11-21T11:03:06-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "9073ea6",
+    "data": "2026-11-21",
+    "assunto": "infra: corrige cegueira do assert de ledger no canonical-migrations (#771)"
+   },
+   {
+    "sha": "76e6c55",
+    "data": "2026-11-21",
+    "assunto": "chore: certifica F-01..F-20 como VERIFICADO em producao no canonico (#777)"
+   },
+   {
+    "sha": "eb7dcf8",
+    "data": "2026-11-21",
+    "assunto": "revert: remove specs resgatados na #774 que nao passam na main (descartados na auditoria muri) (#776)"
+   },
+   {
+    "sha": "45af2a0",
+    "data": "2026-11-21",
+    "assunto": "chore: preserva e2e/docs NineBox e Premiações da branch muri (resgate de trabalho de outro agente) (#774)"
+   },
    {
     "sha": "f74ddb6",
     "data": "2026-11-21",
@@ -111,33 +131,13 @@
     "sha": "a2ab09a",
     "data": "2026-11-19",
     "assunto": "docs(auditoria): registra a varredura por símbolo e a deriva ledger × repositório (#750)"
-   },
-   {
-    "sha": "fcce4ad",
-    "data": "2026-11-19",
-    "assunto": "fix(auditoria): 4 defeitos da aba de Auditoria apontados em revisão (#749)"
-   },
-   {
-    "sha": "f8a6976",
-    "data": "2026-11-19",
-    "assunto": "fix(e2e): restaura sinal verde da main - liga vitrine de desempenho e expoe inputMode numerico (#748)"
-   },
-   {
-    "sha": "0eb89d4",
-    "data": "2026-11-19",
-    "assunto": "feat(auditoria): aba de Auditoria de Admissões no ar, lendo a trilha real (#746)"
-   },
-   {
-    "sha": "ddcecda",
-    "data": "2026-11-19",
-    "assunto": "fix: remove folhas_gestor_update da 120000 para nao quebrar pos-condicao da 130000 (#745)"
    }
   ],
-  "arquivos_mudados_7d": 993,
+  "arquivos_mudados_7d": 995,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 392
+    "mudancas": 390
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 27
+    "mudancas": 26
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -262,10 +262,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 6
-   },
-   {
     "arquivo": "docs/agentes/banco.md",
     "mudancas": 5
    },
@@ -287,6 +283,10 @@
    },
    {
     "arquivo": "src/components/layout/AppSidebar.tsx",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 5
    },
    {

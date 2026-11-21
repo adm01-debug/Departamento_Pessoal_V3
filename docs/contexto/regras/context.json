@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "f74ddb614cec9001c365b78ae8f8e66ca69103ff",
+  "sha": "9073ea6f463bace94b065c1c2bcd32a564a17909",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 13:12 UTC",
+  "generated_at": "2026-11-21 14:05 UTC",
   "files_total": 3678,
   "code_files": 3095,
-  "code_lines": 492767
+  "code_lines": 492768
  },
  "version": "1.3.2",
- "facts_hash": "4c5894ad7e1cf29a",
+ "facts_hash": "c91051ff48037171",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -101949,7 +101949,7 @@
   {
    "module": "scripts",
    "files": 153,
-   "lines": 35140,
+   "lines": 35141,
    "tables": [
     "a",
     "anexos",
@@ -262385,7 +262385,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 448,
+   "lines": 449,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -331087,10 +331087,51 @@
   }
  },
  "git": {
-  "sha": "f74ddb614cec9001c365b78ae8f8e66ca69103ff",
+  "sha": "9073ea6f463bace94b065c1c2bcd32a564a17909",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "9073ea6",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "infra: corrige cegueira do assert de ledger no canonical-migrations (#771)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql"
+    ]
+   },
+   {
+    "sha": "76e6c55",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: certifica F-01..F-20 como VERIFICADO em producao no canonico (#777)",
+    "files": [
+     "analise-prs/funcionalidades.csv"
+    ]
+   },
+   {
+    "sha": "eb7dcf8",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "revert: remove specs resgatados na #774 que nao passam na main (descartados na auditoria muri) (#776)",
+    "files": [
+     "docs/ninebox-aprovacao-gestor-vinculo-abner.sql",
+     "e2e/authenticated/ninebox-aprovacao.spec.ts",
+     "e2e/authenticated/premiacoes-auditoria.spec.ts"
+    ]
+   },
+   {
+    "sha": "45af2a0",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: preserva e2e/docs NineBox e Premiações da branch muri (resgate de trabalho de outro agente) (#774)",
+    "files": [
+     "docs/ninebox-aprovacao-gestor-vinculo-abner.sql",
+     "e2e/authenticated/ninebox-aprovacao.spec.ts",
+     "e2e/authenticated/premiacoes-auditoria.spec.ts"
+    ]
+   },
    {
     "sha": "f74ddb6",
     "date": "2026-11-21",
@@ -331369,51 +331410,6 @@
      "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
      "src/pages/__tests__/ColaboradorDetalhesAbas.test.tsx"
     ]
-   },
-   {
-    "sha": "a9ea057",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "feat(dashboard): variacao do quadro de pessoal no mes (#743)",
-    "files": [
-     "src/hooks/__tests__/useExecutiveDashboard.test.ts",
-     "src/hooks/useExecutiveDashboard.ts",
-     "src/pages/DashboardExecutivoPage.tsx"
-    ]
-   },
-   {
-    "sha": "36e144e",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(ferias/folhas): policy UPDATE gestor (pode_gerir_pessoas) em ferias e folhas_pagamento (#726)",
-    "files": [
-     "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
-     "supabase/migrations/20261119120000_ferias_folhas_gestor_update.verify.sql"
-    ]
-   },
-   {
-    "sha": "c01144d",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "feat(auditoria): trilha ganha empresa_id e leitura por empresa para o RH (passo 2 de 3) (#742)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "scripts/canonical-invariants.sql",
-     "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql",
-     "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.verify.sql"
-    ]
-   },
-   {
-    "sha": "b6129aa",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(colaboradores): status \"Desligado\" nao salvava e telefone fixo era inalcancavel (#741)",
-    "files": [
-     "src/components/ui/phone-input.tsx",
-     "src/pages/ColaboradorFormPage.tsx",
-     "src/pages/__tests__/ColaboradorFormPage.test.tsx",
-     "src/pages/colaboradorFormSchema.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -331422,7 +331418,23 @@
     5
    ],
    [
-    "src/hooks/useExecutiveDashboard.ts",
+    ".github/workflows/canonical-migrations.yml",
+    2
+   ],
+   [
+    "analise-prs/funcionalidades.csv",
+    2
+   ],
+   [
+    "docs/ninebox-aprovacao-gestor-vinculo-abner.sql",
+    2
+   ],
+   [
+    "e2e/authenticated/ninebox-aprovacao.spec.ts",
+    2
+   ],
+   [
+    "e2e/authenticated/premiacoes-auditoria.spec.ts",
     2
    ],
    [
@@ -331435,10 +331447,6 @@
    ],
    [
     "supabase/migrations/20261119170000_onboarding_converge_modelo_b.verify.sql",
-    2
-   ],
-   [
-    ".github/workflows/canonical-migrations.yml",
     2
    ],
    [
@@ -331458,12 +331466,8 @@
     2
    ],
    [
-    "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
-    2
-   ],
-   [
-    "supabase/migrations/20261119120000_ferias_folhas_gestor_update.verify.sql",
-    2
+    "scripts/canonical-invariants.sql",
+    1
    ],
    [
     "docs/pendencias/README.md",
@@ -331487,14 +331491,6 @@
    ],
    [
     "analise-prs/RECONCILIACAO_FUNCIONALIDADES.md",
-    1
-   ],
-   [
-    "analise-prs/funcionalidades.csv",
-    1
-   ],
-   [
-    "src/integrations/supabase/__tests__/clientBridge.test.ts",
     1
    ]
   ]

@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
-   "chore: cria docs/pendencias com estado verificado dos itens de auditoria (#773)",
-   "fix: rubricas_folha insert/delete/update sem empresa_id (#772)",
-   "chore: reconcilia funcionalidades.csv com o estado real da main (20/11) (#770)",
-   "fix: corrige 12 erros BRIDGE_SCHEMA_ERROR (HTTP 400 no bridge) e destrava Dashboard Executivo e Passivo Trabalhista (#766)",
-   "fix: passa empresaAtual.id para folhaService.list em FinanceiroBancarioPage (#765)"
+   "infra: corrige cegueira do assert de ledger no canonical-migrations (#771)",
+   "chore: certifica F-01..F-20 como VERIFICADO em producao no canonico (#777)",
+   "revert: remove specs resgatados na #774 que nao passam na main (descartados na auditoria muri) (#776)",
+   "chore: preserva e2e/docs NineBox e Premiações da branch muri (resgate de trabalho de outro agente) (#774)",
+   "chore: cria docs/pendencias com estado verificado dos itens de auditoria (#773)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
