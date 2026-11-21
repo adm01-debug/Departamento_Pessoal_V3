@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "094e9e0549927d3df101dea0b688024af04d7457",
+  "sha": "5d0677cdf38061506186c6c9daa48ff6a1574af4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 15:12 UTC",
+  "generated_at": "2026-11-21 16:01 UTC",
   "files_total": 3678,
   "code_files": 3095,
   "code_lines": 492768
@@ -331087,10 +331087,37 @@
   }
  },
  "git": {
-  "sha": "094e9e0549927d3df101dea0b688024af04d7457",
+  "sha": "5d0677cdf38061506186c6c9daa48ff6a1574af4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "5d0677c",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "infra: torna login E2E não-admin obrigatório no smoke pós-deploy (REQUIRE_LOGIN=1) (#784)",
+    "files": [
+     ".github/workflows/post-deploy-smoke.yml"
+    ]
+   },
+   {
+    "sha": "50a87a9",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: marca smoke pós-deploy como automatizado no _ordem.md (#783)",
+    "files": [
+     "docs/pendencias/_ordem.md"
+    ]
+   },
+   {
+    "sha": "b09d76e",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: atualiza _ordem.md com evidência real de auditoria de mutações (#782)",
+    "files": [
+     "docs/pendencias/_ordem.md"
+    ]
+   },
    {
     "sha": "094e9e0",
     "date": "2026-11-21",
@@ -331363,52 +331390,19 @@
      "e2e/authenticated/feedbacks-padronizacao.spec.ts",
      "src/components/avaliacao/FeedbacksTab.tsx"
     ]
-   },
-   {
-    "sha": "a2ab09a",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "docs(auditoria): registra a varredura por símbolo e a deriva ledger × repositório (#750)",
-    "files": [
-     "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md"
-    ]
-   },
-   {
-    "sha": "fcce4ad",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(auditoria): 4 defeitos da aba de Auditoria apontados em revisão (#749)",
-    "files": [
-     "src/components/__tests__/auditoriaDerivacoes.test.ts",
-     "src/components/admissoes/auditoriaDerivacoes.ts",
-     "src/hooks/__tests__/useAdmissoes.test.ts",
-     "src/hooks/useAdmissoes.ts",
-     "src/services/__tests__/auditoriaAdmissoesService.test.ts",
-     "src/services/auditoriaAdmissoesService.ts"
-    ]
-   },
-   {
-    "sha": "f8a6976",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(e2e): restaura sinal verde da main - liga vitrine de desempenho e expoe inputMode numerico (#748)",
-    "files": [
-     "playwright.config.ts",
-     "src/components/ui/currency-input.tsx"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "docs/pendencias/_ordem.md",
+    5
+   ],
    [
     "scripts/e2e/ensure-fixtures.mjs",
     5
    ],
    [
     "analise-prs/funcionalidades.csv",
-    3
-   ],
-   [
-    "docs/pendencias/_ordem.md",
     3
    ],
    [
@@ -331434,6 +331428,10 @@
    [
     "supabase/migrations/20261119170000_onboarding_converge_modelo_b.verify.sql",
     2
+   ],
+   [
+    ".github/workflows/post-deploy-smoke.yml",
+    1
    ],
    [
     "scripts/canonical-invariants.sql",
@@ -331473,10 +331471,6 @@
    ],
    [
     "src/pages/PassivoTrabalhistaPage.tsx",
-    1
-   ],
-   [
-    "src/services/__tests__/premiacoesService.test.ts",
     1
    ]
   ]

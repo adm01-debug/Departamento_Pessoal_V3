@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "094e9e0549927d3df101dea0b688024af04d7457",
+  "commit": "5d0677cdf38061506186c6c9daa48ff6a1574af4",
   "branch": "main",
-  "data_commit": "2026-11-21T12:02:25-03:00",
+  "data_commit": "2026-11-21T13:01:15-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "5d0677c",
+    "data": "2026-11-21",
+    "assunto": "infra: torna login E2E não-admin obrigatório no smoke pós-deploy (REQUIRE_LOGIN=1) (#784)"
+   },
+   {
+    "sha": "50a87a9",
+    "data": "2026-11-21",
+    "assunto": "chore: marca smoke pós-deploy como automatizado no _ordem.md (#783)"
+   },
+   {
+    "sha": "b09d76e",
+    "data": "2026-11-21",
+    "assunto": "chore: atualiza _ordem.md com evidência real de auditoria de mutações (#782)"
+   },
    {
     "sha": "094e9e0",
     "data": "2026-11-21",
@@ -116,24 +131,9 @@
     "sha": "074c01e",
     "data": "2026-11-19",
     "assunto": "infra(banco): inclui a 20261019235900 (dp_*) e a 20261119170000 (onboarding) no lote do canônico (#755)"
-   },
-   {
-    "sha": "b2df382",
-    "data": "2026-11-19",
-    "assunto": "fix(onboarding): resgata a convergência do modelo legado, sem duplicar histórico (#747)"
-   },
-   {
-    "sha": "49cbb50",
-    "data": "2026-11-19",
-    "assunto": "infra(banco): versiona o DDL órfão da família dp_* (imutabilidade do log de auditoria) (#751)"
-   },
-   {
-    "sha": "16d4f17",
-    "data": "2026-11-19",
-    "assunto": "chore(autofix): eslint --fix nas regras seguras (pdiComum, useAfastamentos, colaboradoresMock) (#754)"
    }
   ],
-  "arquivos_mudados_7d": 995,
+  "arquivos_mudados_7d": 996,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -270,6 +270,10 @@
     "mudancas": 5
    },
    {
+    "arquivo": "docs/pendencias/_ordem.md",
+    "mudancas": 5
+   },
+   {
     "arquivo": "scripts/automation.config.json",
     "mudancas": 5
    },
@@ -291,10 +295,6 @@
    },
    {
     "arquivo": "src/pages/AdmissoesPage.tsx",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/pages/AvaliacaoPage.tsx",
     "mudancas": 5
    }
   ],

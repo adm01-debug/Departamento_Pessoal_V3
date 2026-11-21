@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra: torna login E2E não-admin obrigatório no smoke pós-deploy (REQUIRE_LOGIN=1) (#784)",
+   "chore: marca smoke pós-deploy como automatizado no _ordem.md (#783)",
+   "chore: atualiza _ordem.md com evidência real de auditoria de mutações (#782)",
    "chore: corrige evidência F-07 no CSV (gap é transporte governamental, não uso inicial) (#781)",
-   "chore: marca policy ferias_gestor_update como OK no backlog (já aplicada no canônico) (#780)",
-   "chore: registra gap real de transporte eSocial (F-07) no backlog verificado (#779)",
-   "infra: corrige cegueira do assert de ledger no canonical-migrations (#771)",
-   "chore: certifica F-01..F-20 como VERIFICADO em producao no canonico (#777)"
+   "chore: marca policy ferias_gestor_update como OK no backlog (já aplicada no canônico) (#780)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

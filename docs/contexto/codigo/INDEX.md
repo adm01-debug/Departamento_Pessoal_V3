@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `094e9e0549927d3df101dea0b688024af04d7457` (2026-11-21T12:02:25-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `5d0677cdf38061506186c6c9daa48ff6a1574af4` (2026-11-21T13:01:15-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -396,7 +396,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27771 nós · 62673 arestas · 2381 comunidades · grafo do commit `094e9e05`
+- 27771 nós · 62673 arestas · 2381 comunidades · grafo do commit `5d0677cd`
 - comunidades maiores: lucide-react (535), 20260831_corrected_public.sql (485), canonical_schema.sql (481), @tanstack/react-query (361), vitest (349), useEmpresas (319), App.tsx (224), client.ts (205), cn (183), ColaboradorDetalhesPage.tsx (180), services/index.ts (168), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -653,6 +653,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-21 `5d0677c` infra: torna login E2E não-admin obrigatório no smoke pós-deploy (REQUIRE_LOGIN=1) (#784)
+- 2026-11-21 `50a87a9` chore: marca smoke pós-deploy como automatizado no _ordem.md (#783)
+- 2026-11-21 `b09d76e` chore: atualiza _ordem.md com evidência real de auditoria de mutações (#782)
 - 2026-11-21 `094e9e0` chore: corrige evidência F-07 no CSV (gap é transporte governamental, não uso inicial) (#781)
 - 2026-11-21 `8b67020` chore: marca policy ferias_gestor_update como OK no backlog (já aplicada no canônico) (#780)
 - 2026-11-21 `74db632` chore: registra gap real de transporte eSocial (F-07) no backlog verificado (#779)
@@ -665,9 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-20 `bfc7e3c` chore: reconcilia funcionalidades.csv com o estado real da main (20/11) (#770)
 - 2026-11-20 `cca632b` fix: corrige 12 erros BRIDGE_SCHEMA_ERROR (HTTP 400 no bridge) e destrava Dashboard Executivo e Passivo Trabalhista (#76
 - 2026-11-20 `c33db80` fix: passa empresaAtual.id para folhaService.list em FinanceiroBancarioPage (#765)
-- 2026-11-20 `32be71e` fix: itens 8, 13 e 14 da issue #571 (Avaliação/NineBox) (#764)
-- 2026-11-20 `e8fff0c` fix: limpa listarTrilhaMock no beforeEach dos estados da consulta (Auditoria de Admiss?es) (#763)
-- 2026-11-19 `cc9b25a` fix: restaura etapas canonicas do pipeline no seed do E2E (#762)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
