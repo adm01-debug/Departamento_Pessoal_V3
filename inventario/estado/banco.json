@@ -23,7 +23,6 @@
     },
     {
       "detalhe": [
-        "audit_log",
         "audit_log_unified",
         "audit_log_unified_archive",
         "esocial_transmissao_logs",
@@ -69,7 +68,7 @@
   },
   "cron_execucoes": {
     "historico": {
-      "bytes": 7004160,
+      "bytes": 7290880,
       "linhas": 0,
       "mais_de_7_dias": 0
     },
@@ -84,7 +83,7 @@
     "visivel": false
   },
   "edge_functions": {
-    "no_repo": 65,
+    "no_repo": 67,
     "no_repo_sem_deploy": null,
     "publicadas": null,
     "publicadas_sem_codigo_no_repo": null
@@ -92,11 +91,11 @@
   "fonte": "scripts/inventario/banco.sql (por secao) + .from() em src/ e supabase/functions/ (scripts/inventario/gerar-banco.mjs)",
   "format_version": 1,
   "ledger": null,
-  "medido_em": "2026-11-16T10:30:41Z",
+  "medido_em": "2026-11-21T19:21:11Z",
   "origem": {
     "ledger_conferido": false,
-    "tabelas_do_types_ts_presentes": 363,
-    "tabelas_no_types_ts": 364
+    "tabelas_do_types_ts_presentes": 364,
+    "tabelas_no_types_ts": 365
   },
   "resumo": {
     "extensoes": [
@@ -109,17 +108,17 @@
       "supabase_vault",
       "uuid-ossp"
     ],
-    "funcoes_public": 404,
-    "funcoes_security_definer": 293,
+    "funcoes_public": 408,
+    "funcoes_security_definer": 295,
     "max_connections": 60,
     "papel": "ci_auditor",
     "papel_ignora_rls": false,
-    "policies": 631,
+    "policies": 629,
     "postgres": "17.6",
-    "tabelas_public": 389,
+    "tabelas_public": 391,
     "tabelas_sem_rls": 0,
-    "tamanho_bytes": 63245459,
-    "triggers_public": 428,
+    "tamanho_bytes": 69848211,
+    "triggers_public": 435,
     "views_public": 53
   },
   "tabelas": [
@@ -174,7 +173,7 @@
       "triggers": 7,
       "uso_no_codigo": {
         "edges": 2,
-        "src": 11
+        "src": 12
       }
     },
     {
@@ -210,7 +209,7 @@
       "triggers": 5,
       "uso_no_codigo": {
         "edges": 2,
-        "src": 8
+        "src": 9
       }
     },
     {
@@ -340,13 +339,13 @@
       }
     },
     {
-      "bytes": 901120,
+      "bytes": 1204224,
       "citada_no_banco": true,
-      "linhas": 370,
+      "linhas": 660,
       "linhas_exatas": false,
       "nome": "audit_log",
-      "policies": 3,
-      "policy_cita_empresa_id": false,
+      "policies": 4,
+      "policy_cita_empresa_id": true,
       "rls": true,
       "rls_forcado": false,
       "soft_delete": false,
@@ -358,9 +357,9 @@
       }
     },
     {
-      "bytes": 2826240,
+      "bytes": 4628480,
       "citada_no_banco": true,
-      "linhas": 2709,
+      "linhas": 4755,
       "linhas_exatas": false,
       "nome": "audit_log_unified",
       "policies": 2,
@@ -466,9 +465,9 @@
       }
     },
     {
-      "bytes": 442368,
+      "bytes": 679936,
       "citada_no_banco": true,
-      "linhas": 107,
+      "linhas": 309,
       "linhas_exatas": false,
       "nome": "auditoria_logs",
       "policies": 4,
@@ -570,7 +569,7 @@
       "triggers": 8,
       "uso_no_codigo": {
         "edges": 9,
-        "src": 11
+        "src": 10
       }
     },
     {
@@ -831,7 +830,7 @@
       "linhas": null,
       "linhas_exatas": false,
       "nome": "candidatos",
-      "policies": 2,
+      "policies": 1,
       "policy_cita_empresa_id": true,
       "rls": true,
       "rls_forcado": false,
@@ -844,12 +843,12 @@
       }
     },
     {
-      "bytes": 98304,
+      "bytes": 163840,
       "citada_no_banco": true,
-      "linhas": null,
+      "linhas": 16,
       "linhas_exatas": false,
       "nome": "candidaturas",
-      "policies": 2,
+      "policies": 1,
       "policy_cita_empresa_id": true,
       "rls": true,
       "rls_forcado": false,
@@ -911,7 +910,7 @@
       "tem_empresa_id": true,
       "triggers": 1,
       "uso_no_codigo": {
-        "edges": 0,
+        "edges": 1,
         "src": 5
       }
     },
@@ -1222,6 +1221,24 @@
       }
     },
     {
+      "bytes": 49152,
+      "citada_no_banco": true,
+      "linhas": null,
+      "linhas_exatas": false,
+      "nome": "colaborador_lotacoes",
+      "policies": 1,
+      "policy_cita_empresa_id": true,
+      "rls": true,
+      "rls_forcado": false,
+      "soft_delete": false,
+      "tem_empresa_id": true,
+      "triggers": 1,
+      "uso_no_codigo": {
+        "edges": 0,
+        "src": 4
+      }
+    },
+    {
       "bytes": 417792,
       "citada_no_banco": true,
       "linhas": 16,
@@ -1236,7 +1253,7 @@
       "triggers": 8,
       "uso_no_codigo": {
         "edges": 34,
-        "src": 62
+        "src": 65
       }
     },
     {
@@ -1560,7 +1577,7 @@
       "triggers": 2,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 7
+        "src": 8
       }
     },
     {
@@ -1578,7 +1595,7 @@
       "triggers": 1,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 3
+        "src": 4
       }
     },
     {
@@ -1899,10 +1916,10 @@
       "rls_forcado": false,
       "soft_delete": false,
       "tem_empresa_id": true,
-      "triggers": 8,
+      "triggers": 9,
       "uso_no_codigo": {
         "edges": 2,
-        "src": 11
+        "src": 12
       }
     },
     {
@@ -2194,7 +2211,7 @@
       }
     },
     {
-      "bytes": 131072,
+      "bytes": 139264,
       "citada_no_banco": false,
       "linhas": null,
       "linhas_exatas": false,
@@ -2387,13 +2404,13 @@
       "tem_empresa_id": false,
       "triggers": 2,
       "uso_no_codigo": {
-        "edges": 5,
+        "edges": 6,
         "src": 12
       }
     },
     {
       "bytes": 65536,
-      "citada_no_banco": false,
+      "citada_no_banco": true,
       "linhas": null,
       "linhas_exatas": false,
       "nome": "emprestimos_consignados",
@@ -2403,7 +2420,7 @@
       "rls_forcado": false,
       "soft_delete": false,
       "tem_empresa_id": true,
-      "triggers": 1,
+      "triggers": 2,
       "uso_no_codigo": {
         "edges": 3,
         "src": 4
@@ -2532,7 +2549,7 @@
       "triggers": 1,
       "uso_no_codigo": {
         "edges": 1,
-        "src": 3
+        "src": 5
       }
     },
     {
@@ -2721,7 +2738,7 @@
       "linhas": null,
       "linhas_exatas": false,
       "nome": "feedbacks_360",
-      "policies": 2,
+      "policies": 1,
       "policy_cita_empresa_id": true,
       "rls": true,
       "rls_forcado": false,
@@ -2754,7 +2771,7 @@
     {
       "bytes": 65536,
       "citada_no_banco": true,
-      "linhas": null,
+      "linhas": 4,
       "linhas_exatas": false,
       "nome": "feedbacks_360_consolidacoes",
       "policies": 1,
@@ -2829,16 +2846,16 @@
       "linhas": null,
       "linhas_exatas": false,
       "nome": "ferias",
-      "policies": 2,
+      "policies": 3,
       "policy_cita_empresa_id": true,
       "rls": true,
       "rls_forcado": false,
       "soft_delete": false,
       "tem_empresa_id": true,
-      "triggers": 13,
+      "triggers": 14,
       "uso_no_codigo": {
         "edges": 2,
-        "src": 10
+        "src": 11
       }
     },
     {
@@ -3132,7 +3149,7 @@
     {
       "bytes": 229376,
       "citada_no_banco": true,
-      "linhas": 4,
+      "linhas": 5,
       "linhas_exatas": false,
       "nome": "folhas_pagamento",
       "policies": 2,
@@ -3162,7 +3179,7 @@
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 3
+        "src": 4
       }
     },
     {
@@ -3238,7 +3255,7 @@
       }
     },
     {
-      "bytes": 24576,
+      "bytes": 32768,
       "citada_no_banco": true,
       "linhas": null,
       "linhas_exatas": false,
@@ -3378,7 +3395,7 @@
       "triggers": 1,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 1
+        "src": 2
       }
     },
     {
@@ -3432,7 +3449,7 @@
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 1
+        "src": 2
       }
     },
     {
@@ -3486,7 +3503,7 @@
       "triggers": 5,
       "uso_no_codigo": {
         "edges": 2,
-        "src": 3
+        "src": 4
       }
     },
     {
@@ -3576,7 +3593,7 @@
       "triggers": 1,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 3
+        "src": 4
       }
     },
     {
@@ -3666,7 +3683,7 @@
       "triggers": 1,
       "uso_no_codigo": {
         "edges": 1,
-        "src": 4
+        "src": 7
       }
     },
     {
@@ -3868,9 +3885,9 @@
       }
     },
     {
-      "bytes": 1458176,
+      "bytes": 1925120,
       "citada_no_banco": true,
-      "linhas": 2758,
+      "linhas": 4185,
       "linhas_exatas": false,
       "nome": "login_attempts",
       "policies": 2,
@@ -3977,7 +3994,7 @@
     },
     {
       "bytes": 32768,
-      "citada_no_banco": false,
+      "citada_no_banco": true,
       "linhas": null,
       "linhas_exatas": false,
       "nome": "lotacoes",
@@ -3990,7 +4007,7 @@
       "triggers": 1,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 4
+        "src": 5
       }
     },
     {
@@ -4192,9 +4209,9 @@
       }
     },
     {
-      "bytes": 229376,
+      "bytes": 245760,
       "citada_no_banco": true,
-      "linhas": 12,
+      "linhas": 60,
       "linhas_exatas": false,
       "nome": "notificacoes",
       "policies": 4,
@@ -4233,16 +4250,16 @@
       "linhas": null,
       "linhas_exatas": false,
       "nome": "onboarding_colaborador",
-      "policies": 2,
+      "policies": 1,
       "policy_cita_empresa_id": true,
       "rls": true,
       "rls_forcado": false,
       "soft_delete": false,
       "tem_empresa_id": true,
-      "triggers": 2,
+      "triggers": 3,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 2
+        "src": 3
       }
     },
     {
@@ -4264,7 +4281,7 @@
       }
     },
     {
-      "bytes": 16384,
+      "bytes": 24576,
       "citada_no_banco": false,
       "linhas": null,
       "linhas_exatas": false,
@@ -4278,7 +4295,7 @@
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 0
+        "src": 4
       }
     },
     {
@@ -4287,13 +4304,13 @@
       "linhas": 0,
       "linhas_exatas": false,
       "nome": "onboarding_tarefas",
-      "policies": 2,
+      "policies": 1,
       "policy_cita_empresa_id": true,
       "rls": true,
       "rls_forcado": false,
       "soft_delete": false,
       "tem_empresa_id": true,
-      "triggers": 1,
+      "triggers": 2,
       "uso_no_codigo": {
         "edges": 0,
         "src": 2
@@ -4714,9 +4731,9 @@
       }
     },
     {
-      "bytes": 24576,
+      "bytes": 65536,
       "citada_no_banco": false,
-      "linhas": null,
+      "linhas": 0,
       "linhas_exatas": false,
       "nome": "permissions",
       "policies": 2,
@@ -4728,7 +4745,7 @@
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 0
+        "src": 1
       }
     },
     {
@@ -4804,7 +4821,7 @@
       }
     },
     {
-      "bytes": 24576,
+      "bytes": 49152,
       "citada_no_banco": true,
       "linhas": null,
       "linhas_exatas": false,
@@ -4822,9 +4839,9 @@
       }
     },
     {
-      "bytes": 147456,
+      "bytes": 1630208,
       "citada_no_banco": true,
-      "linhas": 168,
+      "linhas": 2761,
       "linhas_exatas": false,
       "nome": "pii_access_logs",
       "policies": 1,
@@ -5196,7 +5213,7 @@
       "triggers": 1,
       "uso_no_codigo": {
         "edges": 3,
-        "src": 6
+        "src": 7
       }
     },
     {
@@ -5232,7 +5249,7 @@
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 8
+        "src": 9
       }
     },
     {
@@ -5290,6 +5307,24 @@
       }
     },
     {
+      "bytes": 16384,
+      "citada_no_banco": true,
+      "linhas": null,
+      "linhas_exatas": false,
+      "nome": "provisoes_competencia_tributaria",
+      "policies": 1,
+      "policy_cita_empresa_id": true,
+      "rls": true,
+      "rls_forcado": false,
+      "soft_delete": false,
+      "tem_empresa_id": true,
+      "triggers": 0,
+      "uso_no_codigo": {
+        "edges": 1,
+        "src": 0
+      }
+    },
+    {
       "bytes": 40960,
       "citada_no_banco": true,
       "linhas": null,
@@ -5344,9 +5379,9 @@
       }
     },
     {
-      "bytes": 204800,
+      "bytes": 237568,
       "citada_no_banco": true,
-      "linhas": 265,
+      "linhas": 342,
       "linhas_exatas": false,
       "nome": "query_telemetry",
       "policies": 3,
@@ -5398,9 +5433,9 @@
       }
     },
     {
-      "bytes": 1212416,
+      "bytes": 1425408,
       "citada_no_banco": true,
-      "linhas": 1546,
+      "linhas": 1466,
       "linhas_exatas": false,
       "nome": "rate_limits",
       "policies": 1,
@@ -5650,9 +5685,9 @@
       }
     },
     {
-      "bytes": 802816,
+      "bytes": 843776,
       "citada_no_banco": true,
-      "linhas": 3196,
+      "linhas": 3612,
       "linhas_exatas": false,
       "nome": "sec_policy_regressions",
       "policies": 1,
@@ -5862,7 +5897,7 @@
       "triggers": 6,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 4
+        "src": 5
       }
     },
     {
@@ -5916,7 +5951,7 @@
       "triggers": 1,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 0
+        "src": 1
       }
     },
     {
@@ -5970,7 +6005,7 @@
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 3
+        "src": 4
       }
     },
     {
@@ -6100,9 +6135,9 @@
       }
     },
     {
-      "bytes": 81920,
+      "bytes": 106496,
       "citada_no_banco": true,
-      "linhas": 0,
+      "linhas": 51,
       "linhas_exatas": false,
       "nome": "tarefas_onboarding",
       "policies": 1,
@@ -6111,7 +6146,7 @@
       "rls_forcado": false,
       "soft_delete": false,
       "tem_empresa_id": false,
-      "triggers": 0,
+      "triggers": 1,
       "uso_no_codigo": {
         "edges": 0,
         "src": 2
@@ -6401,8 +6436,8 @@
       "tem_empresa_id": true,
       "triggers": 2,
       "uso_no_codigo": {
-        "edges": 0,
-        "src": 0
+        "edges": 5,
+        "src": 1
       }
     },
     {
@@ -6420,7 +6455,7 @@
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 8
+        "src": 9
       }
     },
     {
@@ -6510,7 +6545,7 @@
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 2
+        "src": 4
       }
     },
     {
@@ -6581,7 +6616,7 @@
       "tem_empresa_id": true,
       "triggers": 3,
       "uso_no_codigo": {
-        "edges": 0,
+        "edges": 1,
         "src": 3
       }
     },
@@ -6599,7 +6634,7 @@
       "tem_empresa_id": false,
       "triggers": 0,
       "uso_no_codigo": {
-        "edges": 0,
+        "edges": 1,
         "src": 3
       }
     },
@@ -6635,7 +6670,7 @@
       "tem_empresa_id": true,
       "triggers": 0,
       "uso_no_codigo": {
-        "edges": 6,
+        "edges": 7,
         "src": 0
       }
     },
@@ -6671,7 +6706,7 @@
       "tem_empresa_id": false,
       "triggers": 0,
       "uso_no_codigo": {
-        "edges": 3,
+        "edges": 4,
         "src": 0
       }
     },
@@ -6735,7 +6770,7 @@
       "linhas": null,
       "linhas_exatas": false,
       "nome": "vagas",
-      "policies": 2,
+      "policies": 1,
       "policy_cita_empresa_id": true,
       "rls": true,
       "rls_forcado": false,
