@@ -32,6 +32,22 @@ de uma batida original do relógio nunca é alterado.
 | O coletor antigo pula dia já sincronizado e perde saídas e correções | `sync_ponto.py`: `if (cid, db) in es: sk += 1; continue` |
 | O coletor antigo guarda a chave `service_role` em arquivo texto no PC | `config.json` / `env_GO.txt` dos dois protótipos |
 
+### Achados de 21/11/2026 sobre o banco do DP V3 e o Promo_Finance_V2
+
+Fonte: `inventario/estado/banco.json` (medido em 16/11/2026, contagens estimadas) e
+`supabase/baseline/20260831_canonical/canonical_schema.sql`. **Não é consulta ao vivo**: o `canonical-sql-diag.yml`
+está quebrado no modo sem dados pessoais (`docs/agentes/banco.md`, seção "QUEBRADO em modo não-PII") e o conserto é
+decisão do dono (regra 8).
+
+| Achado | Evidência | Efeito no plano |
+| --- | --- | --- |
+| `batidas_ponto.origem` é texto livre, sem lista fechada de valores | baseline: `"origem" "text" DEFAULT 'manual'` e nenhum CHECK | etapa 24 não precisa de DDL |
+| Já existem as unicidades (colaborador, data, ordem) e (colaborador, data, hora, tipo) | baseline: `batidas_ponto_colaborador_id_data_ordem_key`, `batidas_ponto_no_duplicate_batida` | etapa 25 vira conferência, sem índice novo |
+| Batida não pode ser apagada: há gatilho de imutabilidade | baseline: `trigger_imutabilidade_ponto BEFORE DELETE` em `batidas_ponto` | etapa 41 não pode "apagar e recriar" |
+| Inserir batida dispara hash, validação e consolidação automática | baseline: `tr_gerar_hash_batida_ponto`, `trg_enforce_batida_ponto_hash`, `tr_validate_ponto`, `trg_consolidar_batidas` | etapas 41 e 67 precisam passar por esses gatilhos |
+| O banco tem 1 empresa, cerca de 16 colaboradores e 0 batidas | `inventario/estado/banco.json`: `empresas`=1, `colaboradores`=16, `batidas_ponto`=0 | matriz e filial e os colaboradores reais ainda precisam ser cadastrados (etapa 17) |
+| O Promo_Finance_V2 não consome ponto: ele pede o total mensal da folha (salários, pró-labore, encargos), hoje digitado ou por CSV | `Promo_Finance_V2`: `src/components/tributario/historico/FolhaTab.tsx:48-59` | etapa 88 fecha no DP V3; o envio da folha ao Finance é outra integração |
+
 **NÃO VERIFICADO** (vira etapa abaixo): conteúdo real do banco das duas unidades; se o AtecSoft recolhe do
 relógio sozinho ou só quando alguém clica em "Receber"; significado exato de `REF_*` e de `CP_T`; estado real do
 banco de produção do DP V3 (só o código foi lido); modelo e firmware dos relógios.
@@ -99,7 +115,7 @@ Princípios:
 - [ ] **13. Mapear `JUSTFICATIVA` e `JE*/JS*`.** Atestado, férias, folga, licenças, INSS. Pronto quando: tabela código → tipo do DP V3.
 - [ ] **14. Verificar coleta automática.** Ler `CONFIG.HAB_COM_AGEND`, `COM_AGEND`, `EQUIP.DATA_COM`, `NSR`. Pronto quando: resposta "o AtecSoft recolhe sozinho? de quanto em quanto tempo?" por unidade.
 - [ ] **15. Identificar os relógios.** Ler `EQUIP` (modelo, `NUM_REP`, IP). Pronto quando: modelo e número de série de cada relógio registrados neste arquivo.
-- [ ] **16. Diagnosticar o banco de produção do DP V3.** Via `canonical-sql-diag.yml` (somente leitura): colunas e constraints de `batidas_ponto`, `registros_ponto`, `afdt_*`, valores aceitos em `origem`, preenchimento de `codigo_firebird`/`pis_pasep`. Pronto quando: saída do workflow anexada.
+- [ ] **16. Diagnosticar o banco de produção do DP V3.** Parcial em 21/11/2026 pelo inventário e pelo baseline (seção 2); falta a consulta ao vivo, bloqueada até o dono decidir o conserto do diagnóstico. Via `canonical-sql-diag.yml` (somente leitura): colunas e constraints de `batidas_ponto`, `registros_ponto`, `afdt_*`, valores aceitos em `origem`, preenchimento de `codigo_firebird`/`pis_pasep`. Pronto quando: saída do workflow anexada.
 - [ ] **17. Cruzar funcionários do AtecSoft com `colaboradores`.** Por CPF/PIS, sem gravar nada. Pronto quando: lista de casados, ambíguos e órfãos por unidade.
 - [ ] **18. Publicar o relatório de diagnóstico.** `docs/auditoria/ponto-henry-diagnostico.md`, sem dado pessoal. Pronto quando: PR mergeada.
 
@@ -110,8 +126,8 @@ Princípios:
 - [ ] **21. Desenhar `ponto_rep_dias`.** Cópia fiel de cada linha de `CP`: código do funcionário, data, 12 horários, referências, justificativas, abonos, hash do conteúdo. Único por (dispositivo, código, data). Pronto quando: DDL revisado.
 - [ ] **22. Desenhar `ponto_rep_funcionarios`.** Cópia de `FUNCIONARIO` + `colaborador_id` vinculado e como foi vinculado. Único por (dispositivo, código). Pronto quando: DDL revisado.
 - [ ] **23. Desenhar `ponto_rep_justificativas`.** De-para código AtecSoft → tipo do DP V3. Pronto quando: DDL revisado.
-- [ ] **24. Definir a origem "relógio" em `batidas_ponto`.** Conforme a etapa 16: usar valor já aceito ou ampliar a constraint. Pronto quando: decisão escrita na PR com a evidência da etapa 16.
-- [ ] **25. Garantir unicidade de batida do relógio.** Índice único parcial (colaborador, data, hora) para a origem relógio. Pronto quando: DDL revisado e sem colisão nos dados atuais.
+- [ ] **24. Definir a origem "relógio" em `batidas_ponto`.** A coluna é texto livre (achados da seção 2): usar `relogio`, sem DDL. Pronto quando: valor confirmado por consulta ao vivo na etapa 16.
+- [ ] **25. Conferir a unicidade de batida.** As unicidades (colaborador, data, ordem) e (colaborador, data, hora, tipo) já existem no baseline. Pronto quando: confirmadas ao vivo na etapa 16; índice novo só se faltarem.
 - [ ] **26. Ligar RLS por `empresa_id` nas 5 tabelas novas.** Leitura para papéis de DP; escrita só `service_role`. Pronto quando: policies no DDL.
 - [ ] **27. Escrever a migration.** `supabase/migrations/<timestamp>_ponto_rep_ingestao.sql`, idempotente. Pronto quando: arquivo na PR.
 - [ ] **28. Escrever o sidecar `.verify.sql`.** Tabelas, policies, índices e grants. Pronto quando: arquivo na PR.
@@ -130,7 +146,7 @@ Princípios:
 - [ ] **38. Gravar o lote e os funcionários.** Upsert em `ponto_rep_lotes` e `ponto_rep_funcionarios`. Pronto quando: reenvio idêntico não cria linhas.
 - [ ] **39. Gravar os dias com hash.** Upsert em `ponto_rep_dias`; só processa o dia cujo hash mudou. Pronto quando: teste de idempotência verde.
 - [ ] **40. Vincular funcionário a colaborador.** CPF → PIS → matrícula; ambíguo ou ausente fica pendente. Pronto quando: teste cobre os 4 casos.
-- [ ] **41. Converter dia em batidas.** Função SQL transacional: apaga e recria as batidas de origem relógio daquele colaborador/dia. Pronto quando: dia alterado no envio seguinte reflete em `batidas_ponto`.
+- [ ] **41. Converter dia em batidas.** Função SQL transacional que só insere o que falta: batida é imutável (gatilho de imutabilidade), então correção vinda do AtecSoft entra como ajuste, nunca como exclusão. Pronto quando: dia alterado no envio seguinte reflete no espelho sem apagar batida.
 - [ ] **42. Não tocar batida de outra origem.** Pronto quando: teste prova que batida de app/quiosque/ajuste sobrevive ao reprocessamento.
 - [ ] **43. Respeitar período fechado.** Dia de competência fechada em `periodos_ponto` não é reprocessado; gera alerta. Pronto quando: teste verde.
 - [ ] **44. Registrar auditoria.** Cada lote em `ponto_auditoria`/log de edge, sem CPF em claro. Pronto quando: `audit:edge-audit-log` verde.
@@ -189,7 +205,7 @@ Princípios:
 - [ ] **85. Controle de espelhos assinados.** O DP marca quem já devolveu o papel assinado e pode anexar a digitalização. Pronto quando: lista de pendentes do mês correta em teste.
 - [ ] **86. Travar o mês após o fechamento.** `periodos_ponto` fechado bloqueia reprocessamento (etapa 43). Pronto quando: lote de mês fechado gera alerta e não altera nada.
 - [ ] **87. Relatório de fechamento para a contabilidade.** Por colaborador: normais, extras 50/100, noturnas, faltas, atrasos, atestados, banco de horas. Pronto quando: PDF e planilha gerados de um mês real.
-- [ ] **88. Levar o fechamento do ponto para a folha do DP V3.** D4: sem layout externo; horas extras, faltas, atrasos e adicional noturno do mês fechado entram na folha pelo `vw_folha_ponto_mensal`. Pronto quando: folha de um mês real usa os totais do ponto sem digitação. O que o Promo_Finance_V2 precisa receber está NÃO VERIFICADO (repositório não lido).
+- [ ] **88. Levar o fechamento do ponto para a folha do DP V3.** D4: sem layout externo; horas extras, faltas, atrasos e adicional noturno do mês fechado entram na folha pelo `vw_folha_ponto_mensal`. Pronto quando: folha de um mês real usa os totais do ponto sem digitação. O Promo_Finance_V2 não consome ponto, só o total mensal da folha (achados da seção 2).
 - [ ] **89. Envio do fechamento.** Botão que entrega o pacote (relatório + arquivo) ao contato da contabilidade. Pronto quando: envio registrado com data e destinatário.
 - [ ] **90. Conferência cruzada com AFD.** Importar o AFD do relógio e reconciliar com as batidas de origem relógio. Pronto quando: divergência zero ou explicada no mês de teste.
 
@@ -264,3 +280,5 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 | Gravação errada no registro legal | 111, 114, 115, 119 |
 | Cadastro novo não chega ao relógio sem alguém clicar em "Enviar" no AtecSoft | 106, 116 |
 | Digital do colaborador só pode ser cadastrada presencialmente no relógio | 117 |
+| Diagnóstico ao vivo do banco indisponível (`canonical-sql-diag.yml` quebrado) | 16 |
+| DP V3 ainda sem a filial e sem os colaboradores reais cadastrados | 17, 116 |
