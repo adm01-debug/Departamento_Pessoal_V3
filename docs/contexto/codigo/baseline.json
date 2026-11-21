@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5d0677cdf38061506186c6c9daa48ff6a1574af4",
+  "commit": "3c6b0a55909f8658cf214ca1806f3a48b277105a",
   "branch": "main",
-  "data_commit": "2026-11-21T13:01:15-03:00",
+  "data_commit": "2026-11-21T13:21:46-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "3c6b0a5",
+    "data": "2026-11-21",
+    "assunto": "chore: auditoria contínua das funcionalidades F-01..F-20 (#785)"
+   },
    {
     "sha": "5d0677c",
     "data": "2026-11-21",
@@ -126,14 +131,9 @@
     "sha": "c60bf64",
     "data": "2026-11-19",
     "assunto": "fix(onboarding): ancora assercoes do verify na admissao de destino (#756)"
-   },
-   {
-    "sha": "074c01e",
-    "data": "2026-11-19",
-    "assunto": "infra(banco): inclui a 20261019235900 (dp_*) e a 20261119170000 (onboarding) no lote do canônico (#755)"
    }
   ],
-  "arquivos_mudados_7d": 996,
+  "arquivos_mudados_7d": 1000,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -250,6 +250,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "scripts/automation.config.json",
+    "mudancas": 6
+   },
+   {
     "arquivo": "scripts/e2e/ensure-fixtures.mjs",
     "mudancas": 6
    },
@@ -271,10 +275,6 @@
    },
    {
     "arquivo": "docs/pendencias/_ordem.md",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "scripts/automation.config.json",
     "mudancas": 5
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 292
+    "commits": 293
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 5
+    "commits": 4
    },
    {
     "autor": "github-actions[bot]",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3665,
-  "arquivos_codigo": 2119,
-  "linhas_codigo": 422944,
+  "arquivos_total": 3667,
+  "arquivos_codigo": 2120,
+  "linhas_codigo": 423035,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -330,7 +330,7 @@
   "cron_jobs": 41,
   "testes": 800,
   "workflows": 21,
-  "scripts": 135,
+  "scripts": 136,
   "docs_md": 341
  },
  "por_pasta": {
@@ -547,8 +547,8 @@
    "linhas": 2
   },
   "scripts/inventario": {
-   "arquivos": 4,
-   "linhas": 974
+   "arquivos": 5,
+   "linhas": 1065
   },
   "scripts/load": {
    "arquivos": 1,
@@ -855,7 +855,7 @@
  ],
  "qualidade": {
   "any": 187,
-  "console_log": 414,
+  "console_log": 416,
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 24,

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 135,
+ "total": 136,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -813,6 +813,17 @@
    "arquivo": "scripts/inventario/mudou-conteudo.mjs",
    "descricao": "* O inventario mudou de verdade? Compara cada arquivo de inventario/estado/ com a versao do",
    "linhas": 83,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "inventario-estado-semanal.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/validar-funcionalidades.mjs",
+   "descricao": "* Auditoria continua das funcionalidades F-01..F-20 contra o estado real do canonico.",
+   "linhas": 91,
    "env": [],
    "npm_scripts": [],
    "workflows": [

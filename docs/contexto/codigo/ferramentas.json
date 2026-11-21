@@ -6,8 +6,8 @@
    "TypeScript (1981)",
    "SQL (978)",
    "Markdown (341)",
-   "JavaScript (134)",
-   "JSON (63)",
+   "JavaScript (135)",
+   "JSON (64)",
    "Shell (57)",
    "YAML (56)",
    "Python (5)"
@@ -654,7 +654,8 @@
     "scripts/inventario/gerar-banco.mjs",
     "scripts/inventario/gerar-repo.mjs",
     "scripts/inventario/gerar-rotas.mjs",
-    "scripts/inventario/mudou-conteudo.mjs"
+    "scripts/inventario/mudou-conteudo.mjs",
+    "scripts/inventario/validar-funcionalidades.mjs"
    ],
    "npm_scripts": [],
    "secrets": [
