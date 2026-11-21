@@ -15547,6 +15547,60 @@ export type Database = {
           },
         ]
       }
+      ponto_espelhos_papel: {
+        Row: {
+          arquivo_path: string | null
+          colaborador_id: string
+          competencia: string
+          created_at: string
+          devolvido_em: string | null
+          empresa_id: string
+          id: string
+          observacao: string | null
+          registrado_por: string | null
+          updated_at: string
+        }
+        Insert: {
+          arquivo_path?: string | null
+          colaborador_id: string
+          competencia: string
+          created_at?: string
+          devolvido_em?: string | null
+          empresa_id: string
+          id?: string
+          observacao?: string | null
+          registrado_por?: string | null
+          updated_at?: string
+        }
+        Update: {
+          arquivo_path?: string | null
+          colaborador_id?: string
+          competencia?: string
+          created_at?: string
+          devolvido_em?: string | null
+          empresa_id?: string
+          id?: string
+          observacao?: string | null
+          registrado_por?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_espelhos_papel_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_espelhos_papel_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ponto_espelhos_revogacoes: {
         Row: {
           espelho_id: string
@@ -23416,6 +23470,10 @@ export type Database = {
           _target_user_id: string
         }
         Returns: boolean
+      }
+      alertar_coletores_ponto_parados: {
+        Args: { p_agora?: string }
+        Returns: number
       }
       anonimizar_dados_pessoais: {
         Args: { target_id: string }

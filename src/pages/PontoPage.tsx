@@ -23,6 +23,7 @@ import {
   BrainCircuit,
   BarChart3,
   Map as MapIcon,
+  FileSignature,
 } from 'lucide-react';
 import { pontoService, batidasPontoService } from '@/services';
 import { useAuth } from '@/contexts';
@@ -44,6 +45,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PontoAuditTimeline } from '@/components/ponto/PontoAuditTimeline';
 import { GestaoPontoAnalytics } from '@/components/ponto/GestaoPontoAnalytics';
 import { PontoGeoAnalytics } from '@/components/ponto/PontoGeoAnalytics';
+import { EspelhosPapelPanel } from '@/components/ponto/EspelhosPapelPanel';
 import { formatDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
 import { loggerService } from '@/services/loggerService';
 
@@ -623,6 +625,9 @@ export default function PontoPage() {
                 <TabsTrigger value="auditoria" className="gap-2">
                   <ShieldCheck className="h-4 w-4" /> Auditoria
                 </TabsTrigger>
+                <TabsTrigger value="espelhos-papel" className="gap-2">
+                  <FileSignature className="h-4 w-4" /> Espelhos em papel
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="overview">
@@ -640,6 +645,14 @@ export default function PontoPage() {
 
               <TabsContent value="auditoria">
                 <PontoAuditTimeline />
+              </TabsContent>
+
+              <TabsContent value="espelhos-papel">
+                {empresaAtual ? (
+                  <EspelhosPapelPanel empresaId={empresaAtual.id} />
+                ) : (
+                  <p className="text-sm text-muted-foreground">Selecione uma empresa.</p>
+                )}
               </TabsContent>
             </Tabs>
           </TabsContent>
