@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c74e67d8d9766e3408f26bade62907420c64e7e1",
+  "sha": "151191883420949c75acb0eb6b5fbe238428912d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 23:23 UTC",
+  "generated_at": "2026-11-21 23:47 UTC",
   "files_total": 3718,
   "code_files": 3128,
-  "code_lines": 497804
+  "code_lines": 497808
  },
  "version": "1.3.2",
- "facts_hash": "54a5755eeba6bf98",
+ "facts_hash": "f0cd35901e71241f",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -103584,7 +103584,7 @@
   {
    "module": "src/components",
    "files": 1009,
-   "lines": 186655,
+   "lines": 186659,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -288123,7 +288123,7 @@
   },
   "src/components/ponto/relogio/RelogiosPanel.tsx": {
    "path": "src/components/ponto/relogio/RelogiosPanel.tsx",
-   "lines": 459,
+   "lines": 463,
    "exports": [
     "interface AbaRelogioProps",
     "interface AbaRelogio",
@@ -335023,10 +335023,19 @@
   }
  },
  "git": {
-  "sha": "c74e67d8d9766e3408f26bade62907420c64e7e1",
+  "sha": "151191883420949c75acb0eb6b5fbe238428912d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "1511918",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: formatação do painel de relógios (prettier) (#808)",
+    "files": [
+     "src/components/ponto/relogio/RelogiosPanel.tsx"
+    ]
+   },
    {
     "sha": "c74e67d",
     "date": "2026-11-21",
@@ -335356,17 +335365,6 @@
     "files": [
      "analise-prs/funcionalidades.csv"
     ]
-   },
-   {
-    "sha": "eb7dcf8",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "revert: remove specs resgatados na #774 que nao passam na main (descartados na auditoria muri) (#776)",
-    "files": [
-     "docs/ninebox-aprovacao-gestor-vinculo-abner.sql",
-     "e2e/authenticated/ninebox-aprovacao.spec.ts",
-     "e2e/authenticated/premiacoes-auditoria.spec.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -335392,7 +335390,7 @@
    ],
    [
     "src/components/ponto/relogio/RelogiosPanel.tsx",
-    2
+    3
    ],
    [
     "src/pages/PontoPage.tsx",

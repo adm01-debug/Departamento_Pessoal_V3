@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c74e67d8d9766e3408f26bade62907420c64e7e1` (2026-11-21T20:22:25-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `151191883420949c75acb0eb6b5fbe238428912d` (2026-11-21T20:46:26-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3704 |
 | arquivos_codigo | 2140 |
-| linhas_codigo | 427351 |
+| linhas_codigo | 427355 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -398,7 +398,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28102 nós · 63369 arestas · 2413 comunidades · grafo do commit `c74e67d8`
+- 28102 nós · 63369 arestas · 2413 comunidades · grafo do commit `15119188`
 - comunidades maiores: 20260831_corrected_public.sql (493), lucide-react (486), canonical_schema.sql (481), useEmpresas (475), cn (441), vitest (419), react (402), badge.tsx (295), client.ts (259), FeedbackAcoesRodape.tsx (190), contract.ts (168), hooks/index.ts (167)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -656,6 +656,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-21 `1511918` fix: formatação do painel de relógios (prettier) (#808)
 - 2026-11-21 `c74e67d` infra: lote canônico com as 5 migrations do relógio de ponto (#806)
 - 2026-11-21 `9aa259e` feat: abas Vínculos e Justificativas no painel do relógio de ponto (#807)
 - 2026-11-21 `a3db5b8` feat: alerta de coletor do ponto parado e controle do espelho em papel (#804)
@@ -670,7 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `db90472` fix: estabiliza arraste por toque no teste mobile do pipeline (#797)
 - 2026-11-21 `d5342ad` chore: inventario do estado real [auto] (#787)
 - 2026-11-21 `8518ebc` chore: registra o conserto do diagnóstico SQL e fecha as etapas 16, 24 e 25 do plano do ponto (#794)
-- 2026-11-21 `b9b1c05` fix: corrige as duas falhas do mode=verify do ledger canônico (#793)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

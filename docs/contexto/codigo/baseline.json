@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c74e67d8d9766e3408f26bade62907420c64e7e1",
+  "commit": "151191883420949c75acb0eb6b5fbe238428912d",
   "branch": "main",
-  "data_commit": "2026-11-21T20:22:25-03:00",
+  "data_commit": "2026-11-21T20:46:26-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1511918",
+    "data": "2026-11-21",
+    "assunto": "fix: formatação do painel de relógios (prettier) (#808)"
+   },
    {
     "sha": "c74e67d",
     "data": "2026-11-21",
@@ -126,11 +131,6 @@
     "sha": "b09d76e",
     "data": "2026-11-21",
     "assunto": "chore: atualiza _ordem.md com evidência real de auditoria de mutações (#782)"
-   },
-   {
-    "sha": "094e9e0",
-    "data": "2026-11-21",
-    "assunto": "chore: corrige evidência F-07 no CSV (gap é transporte governamental, não uso inicial) (#781)"
    }
   ],
   "arquivos_mudados_7d": 1047,
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 99
+    "mudancas": 98
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -185,7 +185,7 @@
    },
    {
     "pasta": "src/components/ponto",
-    "mudancas": 32
+    "mudancas": 33
    },
    {
     "pasta": "src/utils/__tests__",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3704,
   "arquivos_codigo": 2140,
-  "linhas_codigo": 427351,
+  "linhas_codigo": 427355,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 1009,
-   "linhas": 186655
+   "linhas": 186659
   },
   "src/constants": {
    "arquivos": 7,

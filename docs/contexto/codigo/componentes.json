@@ -5630,7 +5630,7 @@
     "RelogiosPanel"
    ],
    "export_default": null,
-   "linhas": 459,
+   "linhas": 463,
    "dominio": "components/ponto",
    "hooks_locais": [
     "useAuth",
