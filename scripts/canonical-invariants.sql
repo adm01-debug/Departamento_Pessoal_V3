@@ -1,9 +1,9 @@
 SELECT jsonb_build_object(
   'ledger_count', (
     SELECT count(*) FROM supabase_migrations.schema_migrations
-    -- LOTE ATUAL: a versao desta leva. Tem de andar junto com a lista do
+    -- LOTE ATUAL: as versoes desta leva. Tem de andar junto com a lista do
     -- passo "Preparar somente as migracoes aprovadas" no workflow e com o
-    -- `=== 1` da assercao: se ficar na versao do lote anterior, a assercao
+    -- `=== 2` da assercao: se ficar na versao do lote anterior, a assercao
     -- aprova por um registro ANTIGO e nao prova nada do lote novo.
     --
     -- Foi exatamente o que aconteceu: esta lista ficou parada em
@@ -15,7 +15,8 @@ SELECT jsonb_build_object(
     -- por leitura direta do catalogo — mas ESTA assercao nao provou nada deles.
     -- Atualizada aqui; ver docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md §18.6.
     WHERE version IN (
-      '20261119160000'
+      '20261019235900',
+      '20261119170000'
     )
   ),
   'notificacoes_chk_wide', EXISTS (
