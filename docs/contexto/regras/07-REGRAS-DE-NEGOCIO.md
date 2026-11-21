@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d5342ad1e0` · branch `main` · 2026-11-21 22:12 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a6548c3e17` · branch `main` · 2026-11-21 22:20 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `desligamentos` | `total_descontos` | default 0 |
 | `desligamentos` | `valor_liquido` | default 0 |
 | `desligamentos` | `checklist_comunicacao` | default false |
-| … +4409 linhas — lista completa em `context.json` | | |
+| … +4464 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -1404,6 +1404,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `training_images` | `status` | `disabled`, `failed`, `pending`, `processing`, `succeeded` | `disabled` |
 | `training_image_requests` | `status` | `done`, `failed`, `processing`, `queued`, `skipped` | `queued` |
 | `afd_geracoes` | `status` | **livre (sem enum/CHECK)** | `gerado` |
+| `ponto_rep_lotes` | `status` | `erro`, `parcial`, `processado`, `recebido` | `recebido` |
+| `ponto_rep_funcionarios` | `situacao` | **livre (sem enum/CHECK)** |  |
 | `feedbacks_360_consolidacoes` | `status` | **livre (sem enum/CHECK)** |  |
 
 ### E.2 Mapas de transição declarados no código
@@ -5380,7 +5382,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | ; import { motion, AnimatePresence } from  | `src/components/ui/sync-error-state.tsx` |
 | Ciclo detectado no fluxo! | `src/components/workflows/WorkflowDesigner.tsx` |
 | Conexão já existe | `src/components/workflows/WorkflowDesigner.tsx` |
-| … +671 linhas — lista completa em `context.json` | |
+| … +676 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

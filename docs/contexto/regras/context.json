@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d5342ad1e0078a330a4169be54be52545602074e",
+  "sha": "a6548c3e17a00cc07eff1ee435616cefb7500aaf",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 22:12 UTC",
-  "files_total": 3681,
-  "code_files": 3096,
-  "code_lines": 492848
+  "generated_at": "2026-11-21 22:20 UTC",
+  "files_total": 3689,
+  "code_files": 3101,
+  "code_lines": 494216
  },
  "version": "1.3.2",
- "facts_hash": "e1763c6f1e83408f",
+ "facts_hash": "87084927cbd56020",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,12 +388,12 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1027,
-   ".sql": 978,
+   ".sql": 980,
    ".ts": 954,
    ".mjs": 109,
    ".js": 15,
    ".cjs": 11,
-   ".py": 5
+   ".py": 8
   },
   "monorepo_packages": [],
   "supabase_config": {
@@ -41531,6 +41531,572 @@
     "comment": "Contrato tributario da competencia: aliquota de encargos (bps) e retrato do regime usados no calculo daquele mes. Sobrevive a substituicao com lote vazio, que apaga as linhas de provisoes_mensais. Escrita exclusiva de replace_monthly_provisions.",
     "origin": "migration"
    },
+   "ponto_rep_dispositivos": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "uuid PRIMARY KEY DEFAULT gen_random_uuid()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "empresa_id",
+      "type": "uuid NOT NULL REFERENCES public.empresas(id) ON DELETE RESTRICT",
+      "fk": "empresas.id ON DELETE RESTRICT",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "nome",
+      "type": "text NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "unidade",
+      "type": "text NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "token_hash",
+      "type": "text NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "token_prefixo",
+      "type": "text NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "ativo",
+      "type": "boolean NOT NULL DEFAULT true",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "revogado_em",
+      "type": "timestamptz",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "ultimo_contato_em",
+      "type": "timestamptz",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "ultima_marcacao_em",
+      "type": "timestamptz",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "versao_coletor",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "criado_por",
+      "type": "uuid",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "created_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     }
+    ],
+    "constraints": [
+     "CONSTRAINT ponto_rep_dispositivos_token_hash_key UNIQUE (token_hash)",
+     "CONSTRAINT ponto_rep_dispositivos_empresa_unidade_key UNIQUE (empresa_id, unidade)",
+     "CONSTRAINT ponto_rep_dispositivos_token_hash_fmt CHECK (token_hash ~ '^[0-9a-f]{64}$')"
+    ],
+    "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
+    "comment": "Coletores do relógio de ponto, um por unidade. Token só em hash.",
+    "origin": "migration"
+   },
+   "ponto_rep_lotes": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "uuid PRIMARY KEY DEFAULT gen_random_uuid()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "dispositivo_id",
+      "type": "uuid NOT NULL REFERENCES public.ponto_rep_dispositivos(id) ON DELETE RESTRICT",
+      "fk": "ponto_rep_dispositivos.id ON DELETE RESTRICT",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "empresa_id",
+      "type": "uuid NOT NULL REFERENCES public.empresas(id) ON DELETE RESTRICT",
+      "fk": "empresas.id ON DELETE RESTRICT",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "recebido_em",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "periodo_inicio",
+      "type": "date",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "periodo_fim",
+      "type": "date",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "total_funcionarios",
+      "type": "integer NOT NULL DEFAULT 0",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "total_dias",
+      "type": "integer NOT NULL DEFAULT 0",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "dias_alterados",
+      "type": "integer NOT NULL DEFAULT 0",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "status",
+      "type": "text NOT NULL DEFAULT 'recebido'",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "mensagem_erro",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "hash_sha256",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     }
+    ],
+    "constraints": [
+     "CONSTRAINT ponto_rep_lotes_status_check CHECK (status IN ('recebido', 'processado', 'parcial', 'erro'))"
+    ],
+    "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
+    "comment": "Cada envio recebido de um coletor do relógio de ponto.",
+    "origin": "migration"
+   },
+   "ponto_rep_funcionarios": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "uuid PRIMARY KEY DEFAULT gen_random_uuid()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "dispositivo_id",
+      "type": "uuid NOT NULL REFERENCES public.ponto_rep_dispositivos(id) ON DELETE RESTRICT",
+      "fk": "ponto_rep_dispositivos.id ON DELETE RESTRICT",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "empresa_id",
+      "type": "uuid NOT NULL REFERENCES public.empresas(id) ON DELETE RESTRICT",
+      "fk": "empresas.id ON DELETE RESTRICT",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "codigo",
+      "type": "integer NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "nome",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "matricula",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "cpf",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "pis",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "situacao",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "empresa_codigo",
+      "type": "integer",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "horario_codigo",
+      "type": "integer",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "data_admissao",
+      "type": "date",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "data_desligamento",
+      "type": "date",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "colaborador_id",
+      "type": "uuid REFERENCES public.colaboradores(id) ON DELETE SET NULL",
+      "fk": "colaboradores.id ON DELETE SET NULL",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "vinculo_metodo",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "vinculado_em",
+      "type": "timestamptz",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "hash_conteudo",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "created_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     }
+    ],
+    "constraints": [
+     "CONSTRAINT ponto_rep_funcionarios_dispositivo_codigo_key UNIQUE (dispositivo_id, codigo)",
+     "CONSTRAINT ponto_rep_funcionarios_vinculo_metodo_check CHECK (vinculo_metodo IS NULL OR vinculo_metodo IN ('cpf', 'pis', 'matricula', 'manual'))"
+    ],
+    "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
+    "comment": "Cadastro de funcionários vindo do AtecSoft e vínculo com colaboradores.",
+    "origin": "migration"
+   },
+   "ponto_rep_dias": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "uuid PRIMARY KEY DEFAULT gen_random_uuid()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "dispositivo_id",
+      "type": "uuid NOT NULL REFERENCES public.ponto_rep_dispositivos(id) ON DELETE RESTRICT",
+      "fk": "ponto_rep_dispositivos.id ON DELETE RESTRICT",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "empresa_id",
+      "type": "uuid NOT NULL REFERENCES public.empresas(id) ON DELETE RESTRICT",
+      "fk": "empresas.id ON DELETE RESTRICT",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "lote_id",
+      "type": "uuid REFERENCES public.ponto_rep_lotes(id) ON DELETE SET NULL",
+      "fk": "ponto_rep_lotes.id ON DELETE SET NULL",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "funcionario_codigo",
+      "type": "integer NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "data",
+      "type": "date NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "marcacoes",
+      "type": "jsonb NOT NULL DEFAULT '[]'::jsonb",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "abono",
+      "type": "time",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "abono_negativo",
+      "type": "time",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "folga",
+      "type": "boolean NOT NULL DEFAULT false",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "neutro",
+      "type": "boolean NOT NULL DEFAULT false",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "justificativa_abono",
+      "type": "integer",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "horario_codigo",
+      "type": "integer",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "hash_conteudo",
+      "type": "text NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "processado_em",
+      "type": "timestamptz",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "erro_processamento",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "created_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     }
+    ],
+    "constraints": [
+     "CONSTRAINT ponto_rep_dias_dispositivo_func_data_key UNIQUE (dispositivo_id, funcionario_codigo, data)",
+     "CONSTRAINT ponto_rep_dias_marcacoes_array CHECK (jsonb_typeof(marcacoes) = 'array')"
+    ],
+    "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
+    "comment": "Cópia fiel do cartão ponto diário do AtecSoft (tabela CP).",
+    "origin": "migration"
+   },
+   "ponto_rep_justificativas": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "uuid PRIMARY KEY DEFAULT gen_random_uuid()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "dispositivo_id",
+      "type": "uuid NOT NULL REFERENCES public.ponto_rep_dispositivos(id) ON DELETE RESTRICT",
+      "fk": "ponto_rep_dispositivos.id ON DELETE RESTRICT",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "empresa_id",
+      "type": "uuid NOT NULL REFERENCES public.empresas(id) ON DELETE RESTRICT",
+      "fk": "empresas.id ON DELETE RESTRICT",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "codigo",
+      "type": "integer NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "nome",
+      "type": "text NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "considera_normal",
+      "type": "boolean NOT NULL DEFAULT false",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "considera_falta",
+      "type": "boolean NOT NULL DEFAULT false",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "tipo_dia",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "created_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     }
+    ],
+    "constraints": [
+     "CONSTRAINT ponto_rep_justificativas_dispositivo_codigo_key UNIQUE (dispositivo_id, codigo)",
+     "CONSTRAINT ponto_rep_justificativas_tipo_dia_check CHECK ( tipo_dia IS NULL OR tipo_dia IN ('normal', 'feriado', 'compensado', 'folga', 'falta', 'atestado', 'ferias', 'licenca') )"
+    ],
+    "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
+    "comment": "De-para das justificativas do AtecSoft para o tipo de dia do DP.",
+    "origin": "migration"
+   },
    "auth._test_uid": {
     "columns": [
      {
@@ -70869,6 +71435,54 @@
     "unique": false,
     "where": "",
     "src": "supabase/migrations/20261117170200_onboarding_kits_indice_empresa.sql"
+   },
+   {
+    "name": "idx_ponto_rep_lotes_dispositivo_recebido",
+    "table": "ponto_rep_lotes",
+    "columns": "dispositivo_id, recebido_em DESC",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+   },
+   {
+    "name": "idx_ponto_rep_funcionarios_colaborador",
+    "table": "ponto_rep_funcionarios",
+    "columns": "colaborador_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+   },
+   {
+    "name": "idx_ponto_rep_funcionarios_empresa",
+    "table": "ponto_rep_funcionarios",
+    "columns": "empresa_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+   },
+   {
+    "name": "idx_ponto_rep_dias_empresa_data",
+    "table": "ponto_rep_dias",
+    "columns": "empresa_id, data",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+   },
+   {
+    "name": "idx_ponto_rep_dias_pendentes",
+    "table": "ponto_rep_dias",
+    "columns": "dispositivo_id, data",
+    "unique": false,
+    "where": "WHERE processado_em IS NULL",
+    "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+   },
+   {
+    "name": "idx_ponto_rep_justificativas_empresa",
+    "table": "ponto_rep_justificativas",
+    "columns": "empresa_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
    }
   ],
   "cron_jobs": [
@@ -72285,6 +72899,8 @@
    "supabase/migrations/20261119170000_onboarding_converge_modelo_b.verify.sql",
    "supabase/migrations/20261121200000_ci_auditor_grant_set_role.sql",
    "supabase/migrations/20261121200000_ci_auditor_grant_set_role.verify.sql",
+   "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
+   "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -72767,7 +73383,12 @@
    "training_image_settings": "enabled",
    "training_image_requests": "enabled",
    "afd_geracoes": "enabled",
-   "provisoes_competencia_tributaria": "enabled"
+   "provisoes_competencia_tributaria": "enabled",
+   "ponto_rep_dispositivos": "enabled",
+   "ponto_rep_lotes": "enabled",
+   "ponto_rep_funcionarios": "enabled",
+   "ponto_rep_dias": "enabled",
+   "ponto_rep_justificativas": "enabled"
   },
   "grants": [
    {
@@ -87753,7 +88374,12 @@
    "column:provisoes_mensais.regime_tributario": "Retrato do regime tributario da empresa no momento do calculo desta linha.",
    "column:provisoes_mensais.simples_anexo": "Retrato do anexo do Simples no momento do calculo desta linha; nulo fora do Simples ou quando o cadastro nao informa.",
    "table:provisoes_competencia_tributaria": "Contrato tributario da competencia: aliquota de encargos (bps) e retrato do regime usados no calculo daquele mes. Sobrevive a substituicao com lote vazio, que apaga as linhas de provisoes_mensais. Escrita exclusiva de replace_monthly_provisions.",
-   "column:documentos.storage_path": "Caminho do objeto no bucket `documentos`, padrao {empresa_id}/{colaborador_id}/{categoria}/{uuid}.{ext}. Lido por PortalDocumentosTab para remover o arquivo junto com a linha."
+   "column:documentos.storage_path": "Caminho do objeto no bucket `documentos`, padrao {empresa_id}/{colaborador_id}/{categoria}/{uuid}.{ext}. Lido por PortalDocumentosTab para remover o arquivo junto com a linha.",
+   "table:ponto_rep_dispositivos": "Coletores do relógio de ponto, um por unidade. Token só em hash.",
+   "table:ponto_rep_lotes": "Cada envio recebido de um coletor do relógio de ponto.",
+   "table:ponto_rep_funcionarios": "Cadastro de funcionários vindo do AtecSoft e vínculo com colaboradores.",
+   "table:ponto_rep_dias": "Cópia fiel do cartão ponto diário do AtecSoft (tabela CP).",
+   "table:ponto_rep_justificativas": "De-para das justificativas do AtecSoft para o tipo de dia do DP."
   },
   "types_file": "src/integrations/supabase/types.ts"
  },
@@ -101882,7 +102508,7 @@
   {
    "module": "e2e",
    "files": 33,
-   "lines": 3093,
+   "lines": 3109,
    "tables": [
     "colaboradores",
     "empresas",
@@ -101949,7 +102575,7 @@
   {
    "module": "scripts",
    "files": 154,
-   "lines": 35234,
+   "lines": 35232,
    "tables": [
     "a",
     "anexos",
@@ -103242,7 +103868,7 @@
   {
    "module": "src/schemas",
    "files": 33,
-   "lines": 8736,
+   "lines": 8819,
    "tables": [],
    "exports": [
     "admissao.ts: admissaoSchema, AdmissaoSchema",
@@ -104212,8 +104838,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 904,
-   "lines": 82364,
+   "files": 906,
+   "lines": 82617,
    "tables": [
     "profiles",
     "user_roles"
@@ -104395,6 +105021,28 @@
     "supabase/tests/storage_documentos_tenant_isolation.test.ts",
     "supabase/tests/plano100/00_setup_stubs.sql",
     "supabase/tests/plano100/20_asserts.sql"
+   ]
+  },
+  {
+   "module": "tools",
+   "files": 3,
+   "lines": 1018,
+   "tables": [],
+   "exports": [
+    "coletor.py: so_digitos, texto, inteiro, iso_data, iso_hora, marcado",
+    "fb15_client.py: ISC_TEB, XSQLVAR, make_xsqlda, build_dpb, decode_date, decode_time",
+    "test_coletor.py: linha_cp, Conversao, Envios, Rede, Consultas"
+   ],
+   "docs": [
+    "fb15_client.py: Cliente Firebird 1.5 somente leitura, via ctypes + gds32.dll (protocolo local). O Ponto AtecSoft grava em Firebird 1.5 (ODS 10.1) e traz a própria gds32.dll de 32 bits; nenhuma biblioteca Firebird atual abre esse banco. Este módulo fala direto com a DLL e só abre transações READ ONLY (isc_tpb_read): …",
+    "test_coletor.py: Testes da lógica pura do coletor. Rodam em qualquer sistema: python -m unittest discover -s tools/coletor-ponto-atecsoft/tests"
+   ],
+   "deps": [],
+   "imports_modules": [],
+   "file_list": [
+    "tools/coletor-ponto-atecsoft/coletor.py",
+    "tools/coletor-ponto-atecsoft/fb15_client.py",
+    "tools/coletor-ponto-atecsoft/tests/test_coletor.py"
    ]
   }
  ],
@@ -111657,6 +112305,11 @@
    "ponto_espelhos_revogacoes",
    "ponto_registros",
    "ponto_regras_aprovacao",
+   "ponto_rep_dias",
+   "ponto_rep_dispositivos",
+   "ponto_rep_funcionarios",
+   "ponto_rep_justificativas",
+   "ponto_rep_lotes",
    "ponto_seguranca_blacklist",
    "pontos",
    "premiacoes_alertas",
@@ -117705,6 +118358,26 @@
    {
     "file": "supabase/functions/sincronizar-bitrix/index.ts",
     "msg": "Bitrix API error: ${resp.status}"
+   },
+   {
+    "file": "tools/coletor-ponto-atecsoft/coletor.py",
+    "msg": "A URL precisa começar com https://"
+   },
+   {
+    "file": "tools/coletor-ponto-atecsoft/coletor.py",
+    "msg": "DPAPI recusou a operação"
+   },
+   {
+    "file": "tools/coletor-ponto-atecsoft/coletor.py",
+    "msg": "config.json sem "
+   },
+   {
+    "file": "tools/coletor-ponto-atecsoft/coletor.py",
+    "msg": "sem resposta do servidor após %d tentativas (%s)"
+   },
+   {
+    "file": "tools/coletor-ponto-atecsoft/coletor.py",
+    "msg": "servidor recusou o envio: HTTP %d"
    },
    {
     "file": "src/locales/en-US.json#auth.loginError",
@@ -146743,6 +147416,281 @@
     "table": "provisoes_competencia_tributaria",
     "column": "(tabela)",
     "rule": "constraint provisoes_competencia_tributaria_bps_faixa check (encargos_aliquota_bps >= 0 and encargos_aliquota_bps <= 1000)"
+   },
+   {
+    "table": "ponto_rep_dispositivos",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "ponto_rep_dispositivos",
+    "column": "empresa_id",
+    "rule": "obrigatório; FK → empresas.id ON DELETE RESTRICT"
+   },
+   {
+    "table": "ponto_rep_dispositivos",
+    "column": "nome",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "ponto_rep_dispositivos",
+    "column": "unidade",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "ponto_rep_dispositivos",
+    "column": "token_hash",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "ponto_rep_dispositivos",
+    "column": "token_prefixo",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "ponto_rep_dispositivos",
+    "column": "ativo",
+    "rule": "default true"
+   },
+   {
+    "table": "ponto_rep_dispositivos",
+    "column": "created_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "ponto_rep_dispositivos",
+    "column": "updated_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "ponto_rep_dispositivos",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_rep_dispositivos_token_hash_key UNIQUE (token_hash)"
+   },
+   {
+    "table": "ponto_rep_dispositivos",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_rep_dispositivos_empresa_unidade_key UNIQUE (empresa_id, unidade)"
+   },
+   {
+    "table": "ponto_rep_dispositivos",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_rep_dispositivos_token_hash_fmt CHECK (token_hash ~ '^[0-9a-f]{64}$')"
+   },
+   {
+    "table": "ponto_rep_lotes",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "ponto_rep_lotes",
+    "column": "dispositivo_id",
+    "rule": "obrigatório; FK → ponto_rep_dispositivos.id ON DELETE RESTRICT"
+   },
+   {
+    "table": "ponto_rep_lotes",
+    "column": "empresa_id",
+    "rule": "obrigatório; FK → empresas.id ON DELETE RESTRICT"
+   },
+   {
+    "table": "ponto_rep_lotes",
+    "column": "recebido_em",
+    "rule": "default now()"
+   },
+   {
+    "table": "ponto_rep_lotes",
+    "column": "total_funcionarios",
+    "rule": "default 0"
+   },
+   {
+    "table": "ponto_rep_lotes",
+    "column": "total_dias",
+    "rule": "default 0"
+   },
+   {
+    "table": "ponto_rep_lotes",
+    "column": "dias_alterados",
+    "rule": "default 0"
+   },
+   {
+    "table": "ponto_rep_lotes",
+    "column": "status",
+    "rule": "default 'recebido'"
+   },
+   {
+    "table": "ponto_rep_lotes",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_rep_lotes_status_check CHECK (status IN ('recebido', 'processado', 'parcial', 'erro'))"
+   },
+   {
+    "table": "ponto_rep_funcionarios",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "ponto_rep_funcionarios",
+    "column": "dispositivo_id",
+    "rule": "obrigatório; FK → ponto_rep_dispositivos.id ON DELETE RESTRICT"
+   },
+   {
+    "table": "ponto_rep_funcionarios",
+    "column": "empresa_id",
+    "rule": "obrigatório; FK → empresas.id ON DELETE RESTRICT"
+   },
+   {
+    "table": "ponto_rep_funcionarios",
+    "column": "codigo",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "ponto_rep_funcionarios",
+    "column": "colaborador_id",
+    "rule": "FK → colaboradores.id ON DELETE SET NULL"
+   },
+   {
+    "table": "ponto_rep_funcionarios",
+    "column": "created_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "ponto_rep_funcionarios",
+    "column": "updated_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "ponto_rep_funcionarios",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_rep_funcionarios_dispositivo_codigo_key UNIQUE (dispositivo_id, codigo)"
+   },
+   {
+    "table": "ponto_rep_funcionarios",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_rep_funcionarios_vinculo_metodo_check CHECK (vinculo_metodo IS NULL OR vinculo_metodo IN ('cpf', 'pis', 'matricula', 'manual'))"
+   },
+   {
+    "table": "ponto_rep_dias",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "ponto_rep_dias",
+    "column": "dispositivo_id",
+    "rule": "obrigatório; FK → ponto_rep_dispositivos.id ON DELETE RESTRICT"
+   },
+   {
+    "table": "ponto_rep_dias",
+    "column": "empresa_id",
+    "rule": "obrigatório; FK → empresas.id ON DELETE RESTRICT"
+   },
+   {
+    "table": "ponto_rep_dias",
+    "column": "lote_id",
+    "rule": "FK → ponto_rep_lotes.id ON DELETE SET NULL"
+   },
+   {
+    "table": "ponto_rep_dias",
+    "column": "funcionario_codigo",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "ponto_rep_dias",
+    "column": "data",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "ponto_rep_dias",
+    "column": "marcacoes",
+    "rule": "default '[]'::jsonb"
+   },
+   {
+    "table": "ponto_rep_dias",
+    "column": "folga",
+    "rule": "default false"
+   },
+   {
+    "table": "ponto_rep_dias",
+    "column": "neutro",
+    "rule": "default false"
+   },
+   {
+    "table": "ponto_rep_dias",
+    "column": "hash_conteudo",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "ponto_rep_dias",
+    "column": "created_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "ponto_rep_dias",
+    "column": "updated_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "ponto_rep_dias",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_rep_dias_dispositivo_func_data_key UNIQUE (dispositivo_id, funcionario_codigo, data)"
+   },
+   {
+    "table": "ponto_rep_dias",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_rep_dias_marcacoes_array CHECK (jsonb_typeof(marcacoes) = 'array')"
+   },
+   {
+    "table": "ponto_rep_justificativas",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "ponto_rep_justificativas",
+    "column": "dispositivo_id",
+    "rule": "obrigatório; FK → ponto_rep_dispositivos.id ON DELETE RESTRICT"
+   },
+   {
+    "table": "ponto_rep_justificativas",
+    "column": "empresa_id",
+    "rule": "obrigatório; FK → empresas.id ON DELETE RESTRICT"
+   },
+   {
+    "table": "ponto_rep_justificativas",
+    "column": "codigo",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "ponto_rep_justificativas",
+    "column": "nome",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "ponto_rep_justificativas",
+    "column": "considera_normal",
+    "rule": "default false"
+   },
+   {
+    "table": "ponto_rep_justificativas",
+    "column": "considera_falta",
+    "rule": "default false"
+   },
+   {
+    "table": "ponto_rep_justificativas",
+    "column": "created_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "ponto_rep_justificativas",
+    "column": "updated_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "ponto_rep_justificativas",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_rep_justificativas_dispositivo_codigo_key UNIQUE (dispositivo_id, codigo)"
+   },
+   {
+    "table": "ponto_rep_justificativas",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_rep_justificativas_tipo_dia_check CHECK ( tipo_dia IS NULL OR tipo_dia IN ('normal', 'feriado', 'compensado', 'folga', 'falta', 'atestado', 'ferias', 'licenca') )"
    },
    {
     "table": "_test_ctx",
@@ -232229,6 +233177,27 @@
      "type": "text DEFAULT 'gerado'"
     },
     {
+     "table": "ponto_rep_lotes",
+     "column": "status",
+     "enum": "",
+     "allowed": [
+      "erro",
+      "parcial",
+      "processado",
+      "recebido"
+     ],
+     "default": "recebido",
+     "type": "text NOT NULL DEFAULT 'recebido'"
+    },
+    {
+     "table": "ponto_rep_funcionarios",
+     "column": "situacao",
+     "enum": "",
+     "allowed": [],
+     "default": "",
+     "type": "text"
+    },
+    {
      "table": "feedbacks_360_consolidacoes",
      "column": "status",
      "enum": "",
@@ -239696,6 +240665,41 @@
      "authenticated: (\"empresa_id\" IN ( SELECT \"public\".\"get_user_empresas\"(\"auth\".\"uid\"()) AS \"get_user_empresas\"))"
     ]
    },
+   "ponto_rep_dias": {
+    "rls": "enabled",
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
+   },
+   "ponto_rep_dispositivos": {
+    "rls": "enabled",
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
+   },
+   "ponto_rep_funcionarios": {
+    "rls": "enabled",
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
+   },
+   "ponto_rep_justificativas": {
+    "rls": "enabled",
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
+   },
+   "ponto_rep_lotes": {
+    "rls": "enabled",
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
+   },
    "ponto_seguranca_blacklist": {
     "rls": "enabled",
     "SELECT": [
@@ -242188,6 +243192,7 @@
    "supabase/migrations/20261118223000_whatsapp_config_repoe_policy_admin_rh.sql",
    "supabase/migrations/20261119130000_ferias_gestor_update.sql",
    "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql",
+   "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -255428,6 +256433,11 @@
    "training_image_requests",
    "afd_geracoes",
    "provisoes_competencia_tributaria",
+   "ponto_rep_dispositivos",
+   "ponto_rep_lotes",
+   "ponto_rep_funcionarios",
+   "ponto_rep_dias",
+   "ponto_rep_justificativas",
    "feedbacks_360_aprovacoes_gestor",
    "feedbacks_360_consolidacoes"
   ],
@@ -255673,6 +256683,10 @@
    [
     "pcs_planos",
     "deleted_at"
+   ],
+   [
+    "ponto_rep_dispositivos",
+    "ativo"
    ]
   ],
   "audit": {
@@ -257307,6 +258321,24 @@
     "created_at"
    ],
    "provisoes_competencia_tributaria": [],
+   "ponto_rep_dispositivos": [
+    "created_at",
+    "criado_por",
+    "updated_at"
+   ],
+   "ponto_rep_lotes": [],
+   "ponto_rep_funcionarios": [
+    "created_at",
+    "updated_at"
+   ],
+   "ponto_rep_dias": [
+    "created_at",
+    "updated_at"
+   ],
+   "ponto_rep_justificativas": [
+    "created_at",
+    "updated_at"
+   ],
    "auth._test_uid": [],
    "_test_ctx": [],
    "feedbacks_360_aprovacoes_gestor": [],
@@ -257706,6 +258738,10 @@
    [
     "auditoria_acesso_bancario",
     "ip_address"
+   ],
+   [
+    "ponto_rep_funcionarios",
+    "cpf"
    ]
   ],
   "money_float": [],
@@ -258533,6 +259569,16 @@
    [
     "afd_geracoes",
     "total_marcacoes",
+    "integer"
+   ],
+   [
+    "ponto_rep_lotes",
+    "total_funcionarios",
+    "integer"
+   ],
+   [
+    "ponto_rep_lotes",
+    "total_dias",
     "integer"
    ]
   ]
@@ -261016,8 +262062,9 @@
    "`mv_refresh_log.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`health_checks.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`afd_geracoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
+   "`ponto_rep_funcionarios.situacao` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`feedbacks_360_consolidacoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "400/470 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …"
+   "400/475 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …"
   ]
  },
  "manual": [],
@@ -261725,17 +262772,19 @@
   },
   "e2e/authenticated/recrutamento-pipeline.spec.ts": {
    "path": "e2e/authenticated/recrutamento-pipeline.spec.ts",
-   "lines": 480,
+   "lines": 496,
    "is_test": true,
    "errors": [
     "a roda não rolou lista nem página após o arraste"
    ],
    "temporal": [
+    ".getAttribute('data-pipeline-drop', { timeout: 1_000 })",
     "await abaKanban.waitFor({ state: 'visible', timeout: 20_000 });",
     "await expect(page.locator('[data-candidato-card]').first()).toBeVisible({ timeout: 20_000 });",
     "await expect(page.locator('[data-pipeline-board]')).toBeVisible({ timeout: 20_000 });",
     "await slot.waitFor({ state: 'visible', timeout: 20_000 });",
-    "timeout: 25_000,"
+    "timeout: 25_000,",
+    "{ timeout: 15_000, intervals: [400, 400, 400, 600] }"
    ],
    "tests": [
     "Pipeline — estrutura e scroll no padrão de Admissão",
@@ -262386,7 +263435,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 450,
+   "lines": 448,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -305135,7 +306184,7 @@
   },
   "src/schemas/tableColumns.ts": {
    "path": "src/schemas/tableColumns.ts",
-   "lines": 4175,
+   "lines": 4258,
    "exports": [
     "const TABLE_COLUMNS"
    ],
@@ -330788,6 +331837,15 @@
    "path": "supabase/migrations/20261121200000_ci_auditor_grant_set_role.verify.sql",
    "lines": 13
   },
+  "supabase/migrations/20261121210000_ponto_rep_ingestao.sql": {
+   "path": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
+   "lines": 215,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql": {
+   "path": "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql",
+   "lines": 38
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -331103,13 +332161,125 @@
     "WHERE created_at > now() - interval '30 days';"
    ],
    "uses_service_role": true
+  },
+  "tools/coletor-ponto-atecsoft/coletor.py": {
+   "path": "tools/coletor-ponto-atecsoft/coletor.py",
+   "lines": 418,
+   "exports": [
+    "def so_digitos",
+    "def texto",
+    "def inteiro",
+    "def iso_data",
+    "def iso_hora",
+    "def marcado",
+    "def montar_funcionario",
+    "def montar_justificativa",
+    "def montar_dia",
+    "def hash_dia",
+    "def dia_valido",
+    "def montar_envios",
+    "class _Blob",
+    "def _dpapi",
+    "def gravar_segredo",
+    "def ler_segredo",
+    "def carregar_config",
+    "def configurar",
+    "def conectar",
+    "def ler_tudo",
+    "def enviar",
+    "def instancia_unica",
+    "def preparar_log",
+    "def executar",
+    "def diagnostico",
+    "def _exigir",
+    "def main"
+   ],
+   "errors": [
+    "A URL precisa começar com https://",
+    "DPAPI recusou a operação",
+    "config.json sem ",
+    "sem resposta do servidor após %d tentativas (%s)",
+    "servidor recusou o envio: HTTP %d"
+   ],
+   "temporal": [
+    "with urllib.request.urlopen(pedido, timeout=60) as resposta:"
+   ]
+  },
+  "tools/coletor-ponto-atecsoft/fb15_client.py": {
+   "path": "tools/coletor-ponto-atecsoft/fb15_client.py",
+   "lines": 440,
+   "exports": [
+    "class ISC_TEB",
+    "class XSQLVAR",
+    "def make_xsqlda",
+    "def build_dpb",
+    "def decode_date",
+    "def decode_time",
+    "def decode_timestamp",
+    "def encode_date",
+    "class Fb15Connection"
+   ],
+   "rule_comments": [
+    "mínimo 8 bytes"
+   ],
+   "doc": "Cliente Firebird 1.5 somente leitura, via ctypes + gds32.dll (protocolo local). O Ponto AtecSoft grava em Firebird 1.5 (ODS 10.1) e traz a própria gds32.dll de 32 bits; nenhuma biblioteca Firebird atual abre esse banco. Este módulo fala direto com a DLL e só abre transações READ ONLY (isc_tpb_read): …"
+  },
+  "tools/coletor-ponto-atecsoft/tests/test_coletor.py": {
+   "path": "tools/coletor-ponto-atecsoft/tests/test_coletor.py",
+   "lines": 160,
+   "is_test": true,
+   "exports": [
+    "def linha_cp",
+    "class Conversao",
+    "class Envios",
+    "class Rede",
+    "class Consultas"
+   ],
+   "doc": "Testes da lógica pura do coletor. Rodam em qualquer sistema: python -m unittest discover -s tools/coletor-ponto-atecsoft/tests"
   }
  },
  "git": {
-  "sha": "d5342ad1e0078a330a4169be54be52545602074e",
+  "sha": "a6548c3e17a00cc07eff1ee435616cefb7500aaf",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "a6548c3",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "feat: tabelas de entrada do relógio de ponto (ponto_rep_*) (#795)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql",
+     "src/integrations/supabase/types.ts",
+     "src/schemas/tableColumns.ts",
+     "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
+     "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql"
+    ]
+   },
+   {
+    "sha": "0696746",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "feat: coletor somente leitura do Ponto AtecSoft para o DP V3 (#796)",
+    "files": [
+     "tools/coletor-ponto-atecsoft/.gitignore",
+     "tools/coletor-ponto-atecsoft/README.md",
+     "tools/coletor-ponto-atecsoft/coletor.py",
+     "tools/coletor-ponto-atecsoft/fb15_client.py",
+     "tools/coletor-ponto-atecsoft/instalar.bat",
+     "tools/coletor-ponto-atecsoft/tests/test_coletor.py"
+    ]
+   },
+   {
+    "sha": "db90472",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: estabiliza arraste por toque no teste mobile do pipeline (#797)",
+    "files": [
+     "e2e/authenticated/recrutamento-pipeline.spec.ts"
+    ]
+   },
    {
     "sha": "d5342ad",
     "date": "2026-11-21",
@@ -331387,34 +332557,6 @@
     "files": [
      "scripts/e2e/ensure-fixtures.mjs"
     ]
-   },
-   {
-    "sha": "92ac009",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(recrutamento): restaura header 'Histórico do processo' no dossiê do candidato (#761)",
-    "files": [
-     "src/components/recrutamento/CandidatoTimeline.tsx"
-    ]
-   },
-   {
-    "sha": "c351847",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(e2e): corrige scroll da lista e overflow do board do pipeline (#760)",
-    "files": [
-     "scripts/e2e/ensure-fixtures.mjs",
-     "tailwind.config.js"
-    ]
-   },
-   {
-    "sha": "3b4e3cc",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(e2e): backfill de empresa_id em candidaturas orfas do seed (#759)",
-    "files": [
-     "scripts/e2e/ensure-fixtures.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -331427,23 +332569,19 @@
     4
    ],
    [
+    ".github/workflows/canonical-migrations.yml",
+    3
+   ],
+   [
+    "scripts/canonical-invariants.sql",
+    3
+   ],
+   [
     "analise-prs/funcionalidades.csv",
     3
    ],
    [
-    "scripts/e2e/ensure-fixtures.mjs",
-    3
-   ],
-   [
     "inventario/estado/funcionalidades.json",
-    2
-   ],
-   [
-    ".github/workflows/canonical-migrations.yml",
-    2
-   ],
-   [
-    "scripts/canonical-invariants.sql",
     2
    ],
    [
@@ -331463,39 +332601,43 @@
     2
    ],
    [
-    "inventario/estado/banco.json",
+    "src/integrations/supabase/types.ts",
     1
    ],
    [
-    "inventario/estado/edges.json",
+    "src/schemas/tableColumns.ts",
     1
    ],
    [
-    "inventario/estado/rotas.json",
+    "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
     1
    ],
    [
-    "docs/agentes/banco.md",
+    "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql",
     1
    ],
    [
-    "docs/auditoria/MIGRATIONS_LEDGER_SEM_ARQUIVO_2026-11-17.md",
+    "tools/coletor-ponto-atecsoft/.gitignore",
     1
    ],
    [
-    "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
+    "tools/coletor-ponto-atecsoft/README.md",
     1
    ],
    [
-    "supabase/migrations/20261119120000_ferias_folhas_gestor_update.verify.sql",
+    "tools/coletor-ponto-atecsoft/coletor.py",
     1
    ],
    [
-    "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql",
+    "tools/coletor-ponto-atecsoft/fb15_client.py",
     1
    ],
    [
-    "supabase/migrations/20261121200000_ci_auditor_grant_set_role.sql",
+    "tools/coletor-ponto-atecsoft/instalar.bat",
+    1
+   ],
+   [
+    "tools/coletor-ponto-atecsoft/tests/test_coletor.py",
     1
    ]
   ]

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1322,
+ "nos": 1324,
  "arestas": 6491,
  "hubs": [
   {
@@ -253,7 +253,9 @@
   "supabase/functions/processar-ponto/config.ts",
   "supabase/functions/sincronizar-bitrix/config.ts",
   "supabase/functions/webhook/contract_test.ts",
-  "supabase/functions/webhook/webhook_test.ts"
+  "supabase/functions/webhook/webhook_test.ts",
+  "tools/coletor-ponto-atecsoft/coletor.py",
+  "tools/coletor-ponto-atecsoft/fb15_client.py"
  ],
  "modulos_mais_acoplados": [
   {

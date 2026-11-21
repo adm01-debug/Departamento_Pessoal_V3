@@ -4,13 +4,13 @@
  "stack": {
   "linguagens": [
    "TypeScript (1981)",
-   "SQL (978)",
-   "Markdown (342)",
+   "SQL (980)",
+   "Markdown (343)",
    "JavaScript (135)",
    "JSON (64)",
    "Shell (57)",
    "YAML (56)",
-   "Python (5)"
+   "Python (8)"
   ],
   "linguagem_principal": "TypeScript",
   "framework": "React",

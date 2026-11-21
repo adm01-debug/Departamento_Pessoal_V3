@@ -1,13 +1,13 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 183,
+ "total": 185,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
   "lib": 14,
   "providers": 1,
-  "python": 3,
+  "python": 5,
   "schemas": 25,
   "services": 97,
   "utils": 35
@@ -499,7 +499,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 24934,
+   "linhas": 25280,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -1687,7 +1687,7 @@
     "TABLE_COLUMNS"
    ],
    "export_default": null,
-   "linhas": 4175,
+   "linhas": 4258,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -6017,6 +6017,94 @@
    ],
    "coberto_por_testes": 1,
    "orfao": false
+  },
+  {
+   "arquivo": "tools/coletor-ponto-atecsoft/coletor.py",
+   "camada": "python",
+   "exports": [
+    "_dpapi",
+    "_exigir",
+    "carregar_config",
+    "conectar",
+    "configurar",
+    "dia_valido",
+    "diagnostico",
+    "enviar",
+    "executar",
+    "gravar_segredo",
+    "hash_dia",
+    "instancia_unica",
+    "inteiro",
+    "iso_data",
+    "iso_hora",
+    "ler_segredo",
+    "ler_tudo",
+    "main",
+    "marcado",
+    "montar_dia",
+    "montar_envios",
+    "montar_funcionario",
+    "montar_justificativa",
+    "preparar_log",
+    "so_digitos",
+    "texto",
+    "_Blob"
+   ],
+   "linhas": 418,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "argparse",
+    "ctypes",
+    "datetime",
+    "fb15_client",
+    "getpass",
+    "hashlib",
+    "json",
+    "logging",
+    "msvcrt",
+    "os",
+    "sys",
+    "time",
+    "urllib"
+   ],
+   "rotas_http": 0,
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "tools/coletor-ponto-atecsoft/fb15_client.py",
+   "camada": "python",
+   "exports": [
+    "build_dpb",
+    "decode_date",
+    "decode_time",
+    "decode_timestamp",
+    "encode_date",
+    "make_xsqlda",
+    "Fb15Connection",
+    "ISC_TEB",
+    "XSQLVAR"
+   ],
+   "linhas": 440,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "ctypes",
+    "datetime",
+    "struct"
+   ],
+   "rotas_http": 0,
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
   }
  ]
 }

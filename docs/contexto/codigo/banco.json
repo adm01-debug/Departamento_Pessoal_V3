@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 904,
+ "migrations": 906,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -46941,6 +46941,775 @@
     "sla_horas": "number | null",
     "tipo_solicitacao": "string",
     "updated_at": "string | null"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "ponto_rep_dias": {
+   "colunas": {
+    "abono": {
+     "tipo": "time",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "abono_negativo": {
+     "tipo": "time",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "data": {
+     "tipo": "date",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "dispositivo_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "ponto_rep_dispositivos"
+    },
+    "empresa_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "empresas"
+    },
+    "erro_processamento": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "folga": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "false",
+     "ref": null
+    },
+    "funcionario_codigo": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "hash_conteudo": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "horario_codigo": {
+     "tipo": "integer",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "justificativa_abono": {
+     "tipo": "integer",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "lote_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "ponto_rep_lotes"
+    },
+    "marcacoes": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'[]'::jsonb",
+     "ref": null
+    },
+    "neutro": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "false",
+     "ref": null
+    },
+    "processado_em": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "ponto_rep_dias_select_rh",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_ponto_rep_dias_empresa_data",
+     "colunas": "empresa_id, data",
+     "unico": false
+    },
+    {
+     "nome": "idx_ponto_rep_dias_pendentes",
+     "colunas": "dispositivo_id, data",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "dispositivo_id->ponto_rep_dispositivos",
+    "empresa_id->empresas",
+    "lote_id->ponto_rep_lotes"
+   ],
+   "criada_em": "20261121210000_ponto_rep_ingestao.sql",
+   "colunas_types": {
+    "abono": "string | null",
+    "abono_negativo": "string | null",
+    "created_at": "string",
+    "data": "string",
+    "dispositivo_id": "string",
+    "empresa_id": "string",
+    "erro_processamento": "string | null",
+    "folga": "boolean",
+    "funcionario_codigo": "number",
+    "hash_conteudo": "string",
+    "horario_codigo": "number | null",
+    "id": "string",
+    "justificativa_abono": "number | null",
+    "lote_id": "string | null",
+    "marcacoes": "Json",
+    "neutro": "boolean",
+    "processado_em": "string | null",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "ponto_rep_dispositivos": {
+   "colunas": {
+    "ativo": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "true",
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "criado_por": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "empresa_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "empresas"
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "nome": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "revogado_em": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "token_hash": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "token_prefixo": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "ultima_marcacao_em": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "ultimo_contato_em": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "unidade": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "versao_coletor": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "ponto_rep_dispositivos_select_rh",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [
+    "empresa_id->empresas"
+   ],
+   "criada_em": "20261121210000_ponto_rep_ingestao.sql",
+   "colunas_types": {
+    "ativo": "boolean",
+    "created_at": "string",
+    "criado_por": "string | null",
+    "empresa_id": "string",
+    "id": "string",
+    "nome": "string",
+    "revogado_em": "string | null",
+    "token_hash": "string",
+    "token_prefixo": "string",
+    "ultima_marcacao_em": "string | null",
+    "ultimo_contato_em": "string | null",
+    "unidade": "string",
+    "updated_at": "string",
+    "versao_coletor": "string | null"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "ponto_rep_funcionarios": {
+   "colunas": {
+    "codigo": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "colaborador_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "colaboradores"
+    },
+    "cpf": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "data_admissao": {
+     "tipo": "date",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "data_desligamento": {
+     "tipo": "date",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "dispositivo_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "ponto_rep_dispositivos"
+    },
+    "empresa_codigo": {
+     "tipo": "integer",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "empresa_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "empresas"
+    },
+    "hash_conteudo": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "horario_codigo": {
+     "tipo": "integer",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "matricula": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "nome": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "pis": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "situacao": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "vinculado_em": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "vinculo_metodo": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "ponto_rep_funcionarios_select_rh",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_ponto_rep_funcionarios_colaborador",
+     "colunas": "colaborador_id",
+     "unico": false
+    },
+    {
+     "nome": "idx_ponto_rep_funcionarios_empresa",
+     "colunas": "empresa_id",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "colaborador_id->colaboradores",
+    "dispositivo_id->ponto_rep_dispositivos",
+    "empresa_id->empresas"
+   ],
+   "criada_em": "20261121210000_ponto_rep_ingestao.sql",
+   "colunas_types": {
+    "codigo": "number",
+    "colaborador_id": "string | null",
+    "cpf": "string | null",
+    "created_at": "string",
+    "data_admissao": "string | null",
+    "data_desligamento": "string | null",
+    "dispositivo_id": "string",
+    "empresa_codigo": "number | null",
+    "empresa_id": "string",
+    "hash_conteudo": "string | null",
+    "horario_codigo": "number | null",
+    "id": "string",
+    "matricula": "string | null",
+    "nome": "string | null",
+    "pis": "string | null",
+    "situacao": "string | null",
+    "updated_at": "string",
+    "vinculado_em": "string | null",
+    "vinculo_metodo": "string | null"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "ponto_rep_justificativas": {
+   "colunas": {
+    "codigo": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "considera_falta": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "false",
+     "ref": null
+    },
+    "considera_normal": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "false",
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "dispositivo_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "ponto_rep_dispositivos"
+    },
+    "empresa_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "empresas"
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "nome": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "tipo_dia": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "ponto_rep_justificativas_select_rh",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_ponto_rep_justificativas_empresa",
+     "colunas": "empresa_id",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "dispositivo_id->ponto_rep_dispositivos",
+    "empresa_id->empresas"
+   ],
+   "criada_em": "20261121210000_ponto_rep_ingestao.sql",
+   "colunas_types": {
+    "codigo": "number",
+    "considera_falta": "boolean",
+    "considera_normal": "boolean",
+    "created_at": "string",
+    "dispositivo_id": "string",
+    "empresa_id": "string",
+    "id": "string",
+    "nome": "string",
+    "tipo_dia": "string | null",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "ponto_rep_lotes": {
+   "colunas": {
+    "dias_alterados": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "dispositivo_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "ponto_rep_dispositivos"
+    },
+    "empresa_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "empresas"
+    },
+    "hash_sha256": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "mensagem_erro": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "periodo_fim": {
+     "tipo": "date",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "periodo_inicio": {
+     "tipo": "date",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "recebido_em": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "status": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'recebido'",
+     "ref": null
+    },
+    "total_dias": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "total_funcionarios": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "ponto_rep_lotes_select_rh",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_ponto_rep_lotes_dispositivo_recebido",
+     "colunas": "dispositivo_id, recebido_em DESC",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "dispositivo_id->ponto_rep_dispositivos",
+    "empresa_id->empresas"
+   ],
+   "criada_em": "20261121210000_ponto_rep_ingestao.sql",
+   "colunas_types": {
+    "dias_alterados": "number",
+    "dispositivo_id": "string",
+    "empresa_id": "string",
+    "hash_sha256": "string | null",
+    "id": "string",
+    "mensagem_erro": "string | null",
+    "periodo_fim": "string | null",
+    "periodo_inicio": "string | null",
+    "recebido_em": "string",
+    "status": "string",
+    "total_dias": "number",
+    "total_funcionarios": "number"
    },
    "drift": {
     "so_na_migration": [],

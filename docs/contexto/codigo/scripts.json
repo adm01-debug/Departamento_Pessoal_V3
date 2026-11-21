@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 136,
+ "total": 138,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -401,7 +401,7 @@
   {
    "arquivo": "scripts/canonical-invariants.sql",
    "descricao": null,
-   "linhas": 450,
+   "linhas": 448,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -1539,6 +1539,24 @@
    "npm_scripts": [
     "verificar:tipografia"
    ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "tools/coletor-ponto-atecsoft/coletor.py",
+   "descricao": null,
+   "linhas": 418,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "tools/coletor-ponto-atecsoft/fb15_client.py",
+   "descricao": null,
+   "linhas": 440,
+   "env": [],
+   "npm_scripts": [],
    "workflows": [],
    "orfao": false
   }

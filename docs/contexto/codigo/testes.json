@@ -5,11 +5,11 @@
   "vitest",
   "playwright"
  ],
- "total": 800,
+ "total": 801,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
-  "pytest": 2,
+  "pytest": 3,
   "unit": 756
  },
  "onde_ficam": [
@@ -27,7 +27,7 @@
   },
   {
    "padrao": "outro",
-   "arquivos": 23
+   "arquivos": 24
   }
  ],
  "arquivos": [
@@ -181,7 +181,7 @@
   {
    "arquivo": "e2e/authenticated/recrutamento-pipeline.spec.ts",
    "tipo": "e2e",
-   "linhas": 480,
+   "linhas": 496,
    "testa": [],
    "casos": 12
   },
@@ -7395,6 +7395,13 @@
    "linhas": 222,
    "testa": [],
    "casos": 5
+  },
+  {
+   "arquivo": "tools/coletor-ponto-atecsoft/tests/test_coletor.py",
+   "tipo": "pytest",
+   "linhas": 160,
+   "testa": [],
+   "casos": 0
   }
  ],
  "sql": [

@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d5342ad1e0078a330a4169be54be52545602074e",
+  "commit": "a6548c3e17a00cc07eff1ee435616cefb7500aaf",
   "branch": "main",
-  "data_commit": "2026-11-21T18:41:25-03:00",
+  "data_commit": "2026-11-21T19:18:36-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "a6548c3",
+    "data": "2026-11-21",
+    "assunto": "feat: tabelas de entrada do relógio de ponto (ponto_rep_*) (#795)"
+   },
+   {
+    "sha": "0696746",
+    "data": "2026-11-21",
+    "assunto": "feat: coletor somente leitura do Ponto AtecSoft para o DP V3 (#796)"
+   },
+   {
+    "sha": "db90472",
+    "data": "2026-11-21",
+    "assunto": "fix: estabiliza arraste por toque no teste mobile do pipeline (#797)"
+   },
    {
     "sha": "d5342ad",
     "data": "2026-11-21",
@@ -116,32 +131,17 @@
     "sha": "bfc7e3c",
     "data": "2026-11-20",
     "assunto": "chore: reconcilia funcionalidades.csv com o estado real da main (20/11) (#770)"
-   },
-   {
-    "sha": "cca632b",
-    "data": "2026-11-20",
-    "assunto": "fix: corrige 12 erros BRIDGE_SCHEMA_ERROR (HTTP 400 no bridge) e destrava Dashboard Executivo e Passivo Trabalhista (#76"
-   },
-   {
-    "sha": "c33db80",
-    "data": "2026-11-20",
-    "assunto": "fix: passa empresaAtual.id para folhaService.list em FinanceiroBancarioPage (#765)"
-   },
-   {
-    "sha": "32be71e",
-    "data": "2026-11-20",
-    "assunto": "fix: itens 8, 13 e 14 da issue #571 (Avaliação/NineBox) (#764)"
    }
   ],
-  "arquivos_mudados_7d": 999,
+  "arquivos_mudados_7d": 1007,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 389
+    "mudancas": 384
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 112
+    "mudancas": 111
    },
    {
     "pasta": "src/components/ui",
@@ -177,7 +177,7 @@
    },
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 38
+    "mudancas": 35
    },
    {
     "pasta": "src/pages/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 26
+    "mudancas": 27
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 17
+    "mudancas": 18
    },
    {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
@@ -270,6 +270,14 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "src/schemas/tableColumns.ts",
+    "mudancas": 6
+   },
+   {
     "arquivo": "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
     "mudancas": 5
    },
@@ -286,15 +294,7 @@
     "mudancas": 5
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 5
-   },
-   {
     "arquivo": "src/pages/AdmissoesPage.tsx",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/pages/AvaliacaoPage.tsx",
     "mudancas": 5
    }
   ],
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3668,
-  "arquivos_codigo": 2120,
-  "linhas_codigo": 423036,
+  "arquivos_total": 3675,
+  "arquivos_codigo": 2123,
+  "linhas_codigo": 424499,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -325,13 +325,13 @@
   "componentes": 641,
   "hooks": 121,
   "edge_functions": 67,
-  "tabelas": 430,
-  "migrations": 904,
+  "tabelas": 435,
+  "migrations": 906,
   "cron_jobs": 41,
-  "testes": 800,
+  "testes": 801,
   "workflows": 21,
-  "scripts": 136,
-  "docs_md": 342
+  "scripts": 138,
+  "docs_md": 343
  },
  "por_pasta": {
   "capacitor.config.ts": {
@@ -352,7 +352,7 @@
   },
   "e2e/authenticated": {
    "arquivos": 21,
-   "linhas": 2207
+   "linhas": 2223
   },
   "e2e/authenticated-non-admin": {
    "arquivos": 1,
@@ -668,7 +668,7 @@
   },
   "src/integrations": {
    "arquivos": 11,
-   "linhas": 26097
+   "linhas": 26443
   },
   "src/lib": {
    "arquivos": 22,
@@ -692,7 +692,7 @@
   },
   "src/schemas": {
    "arquivos": 33,
-   "linhas": 8736
+   "linhas": 8819
   },
   "src/services": {
    "arquivos": 195,
@@ -734,6 +734,10 @@
    "arquivos": 1,
    "linhas": 108
   },
+  "tools/coletor-ponto-atecsoft": {
+   "arquivos": 3,
+   "linhas": 1018
+  },
   "vite.analyze.config.ts": {
    "arquivos": 1,
    "linhas": 38
@@ -754,11 +758,11 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 24934
+   "linhas": 25280
   },
   {
    "arquivo": "src/schemas/tableColumns.ts",
-   "linhas": 4175
+   "linhas": 4258
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",

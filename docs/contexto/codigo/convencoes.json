@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: tabelas de entrada do relógio de ponto (ponto_rep_*) (#795)",
+   "feat: coletor somente leitura do Ponto AtecSoft para o DP V3 (#796)",
+   "fix: estabiliza arraste por toque no teste mobile do pipeline (#797)",
    "chore: inventario do estado real [auto] (#787)",
-   "chore: registra o conserto do diagnóstico SQL e fecha as etapas 16, 24 e 25 do plano do ponto (#794)",
-   "fix: corrige as duas falhas do mode=verify do ledger canônico (#793)",
-   "infra: concede ci_auditor ao papel da conexão para destravar o diagnóstico SQL (#791)",
-   "fix: auditoria contínua valida tabelas reais (folha_itens/desligamentos/pix) no lugar de legadas (#789)"
+   "chore: registra o conserto do diagnóstico SQL e fecha as etapas 16, 24 e 25 do plano do ponto (#794)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
