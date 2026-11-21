@@ -1,0 +1,31 @@
+-- Conserta o canonical-sql-diag.yml no modo sem dados pessoais.
+--
+-- scripts/diag/run-sql-diag.mjs prefixa a consulta com `SET LOCAL ROLE ci_auditor`,
+-- mas a 20261015160000 criou o papel sem conceder a participação a ninguém, então o
+-- psql morre com "permission denied to set role ci_auditor" antes de qualquer consulta
+-- (docs/agentes/banco.md, runs 44235639541 e 44240698826).
+--
+-- CURRENT_USER é o papel da conexão SUPABASE_DB_URL: o mesmo secret é usado por
+-- canonical-migrations.yml (que aplica esta migration) e por canonical-sql-diag.yml.
+-- Não amplia privilégio: o papel da conexão já é administrador e passa a poder
+-- ASSUMIR um papel mais restrito. ci_auditor não ganha nada. Idempotente.
+--
+-- SET TRUE é explícito e obrigatório: um `GRANT ci_auditor TO X` sem opções
+-- preserva as opções de uma associação já registrada pelo mesmo concedente.
+-- Se essa associação existisse com SET FALSE, o papel continuaria sem poder
+-- executar `SET ROLE ci_auditor` e o diagnóstico seguiria quebrado — enquanto
+-- pg_has_role(..., 'MEMBER') responderia verdadeiro. O sidecar passou a exigir
+-- 'SET' (ver o .verify.sql ao lado); aqui a opção é declarada para que o grant
+-- seja auto-suficiente.
+GRANT ci_auditor TO CURRENT_USER WITH SET TRUE;
+
+-- Baseline de recuperação: o snapshot `supabase/baseline/20260831_canonical/`
+-- é um dump datado de 31/08/2026, congelado por desenho e fora da cadeia
+-- ativa (PROMOCAO_BANCO_PRODUCAO.md:37). Grant não entra nele — a precedência
+-- é a mesma das outras migrations de privilégio de ci_auditor: nem
+-- `20261015160000_ci_auditor_readonly_role.sql` nem
+-- `20261015170000_ci_auditor_revoke_public_secdef.sql` alteraram o snapshot, e
+-- o `roles.json` de `supabase/baseline/20260924/` lista 37 roles sem
+-- `ci_auditor`. Depois de um restore, a recuperação reaplica a cadeia de
+-- `supabase/migrations/` sobre o snapshot, e é esta migration que devolve a
+-- associação — nada a duplicar no dump.

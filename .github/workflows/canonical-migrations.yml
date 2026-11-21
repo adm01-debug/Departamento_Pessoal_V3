@@ -217,9 +217,12 @@ jobs:
           #    unico. Idempotente, sem DROP/DELETE.
           # A 20261119160000 saiu daqui porque ja esta no ledger (apply run
           # 44544895486 e verify run 44545027860, ambos success).
+          #  - 20261121200000: concede ci_auditor ao papel da conexao, para o
+          #    canonical-sql-diag.yml voltar a rodar no modo sem dados pessoais.
           for migration in \
             20261019235900_versiona_ddl_orfao_dp.sql \
-            20261119170000_onboarding_converge_modelo_b.sql
+            20261119170000_onboarding_converge_modelo_b.sql \
+            20261121200000_ci_auditor_grant_set_role.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -390,7 +393,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 2 &&
+              Number(r.ledger_count) === 3 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
