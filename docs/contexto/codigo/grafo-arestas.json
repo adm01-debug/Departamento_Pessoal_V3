@@ -3390,6 +3390,8 @@
    "src/services/relogio/vinculosService.ts"
   ],
   "src/components/ponto/relogio/RelogiosPanel.tsx": [
+   "src/components/ponto/relogio/JustificativasRelogioTab.tsx",
+   "src/components/ponto/relogio/VinculosRelogioTab.tsx",
    "src/components/ponto/relogio/statusColetor.ts",
    "src/components/ui/alert-dialog.tsx",
    "src/components/ui/badge.tsx",

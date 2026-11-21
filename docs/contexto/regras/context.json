@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a3db5b8975c54f46dfa08be868679b4894c4b1b7",
+  "sha": "c74e67d8d9766e3408f26bade62907420c64e7e1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 23:21 UTC",
+  "generated_at": "2026-11-21 23:23 UTC",
   "files_total": 3718,
   "code_files": 3128,
-  "code_lines": 497799
+  "code_lines": 497804
  },
  "version": "1.3.2",
- "facts_hash": "8ec0f9eb015d0548",
+ "facts_hash": "54a5755eeba6bf98",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -94341,6 +94341,8 @@
      "periodos_aquisitivos",
      "periodos_ponto",
      "ponto_rep_dispositivos",
+     "ponto_rep_funcionarios",
+     "ponto_rep_justificativas",
      "ponto_rep_lotes",
      "relatorios_agendados",
      "rubricas_folha",
@@ -94378,15 +94380,18 @@
     ],
     "rpc_transitive": [
      "admin_associar_usuario_empresa",
+     "definir_tipo_dia_justificativa_relogio",
+     "desvincular_funcionario_relogio",
      "gerar_token_coletor_ponto",
      "get_my_user_empresas",
      "get_security_alerts_summary",
      "get_user_roles",
      "log_frontend_error",
      "revogar_coletor_ponto",
-     "set_own_default_empresa"
+     "set_own_default_empresa",
+     "vincular_funcionario_relogio"
     ],
-    "deps_count": 95
+    "deps_count": 101
    },
    {
     "path": "",
@@ -103267,7 +103272,7 @@
   {
    "module": "scripts",
    "files": 154,
-   "lines": 35232,
+   "lines": 35233,
    "tables": [
     "a",
     "anexos",
@@ -103579,7 +103584,7 @@
   {
    "module": "src/components",
    "files": 1009,
-   "lines": 186651,
+   "lines": 186655,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -265484,7 +265489,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 448,
+   "lines": 449,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -288118,7 +288123,7 @@
   },
   "src/components/ponto/relogio/RelogiosPanel.tsx": {
    "path": "src/components/ponto/relogio/RelogiosPanel.tsx",
-   "lines": 455,
+   "lines": 459,
    "exports": [
     "interface AbaRelogioProps",
     "interface AbaRelogio",
@@ -335018,10 +335023,29 @@
   }
  },
  "git": {
-  "sha": "a3db5b8975c54f46dfa08be868679b4894c4b1b7",
+  "sha": "c74e67d8d9766e3408f26bade62907420c64e7e1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "c74e67d",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "infra: lote canônico com as 5 migrations do relógio de ponto (#806)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql"
+    ]
+   },
+   {
+    "sha": "9aa259e",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "feat: abas Vínculos e Justificativas no painel do relógio de ponto (#807)",
+    "files": [
+     "src/components/ponto/relogio/RelogiosPanel.tsx"
+    ]
+   },
    {
     "sha": "a3db5b8",
     "date": "2026-11-21",
@@ -335343,27 +335367,6 @@
      "e2e/authenticated/ninebox-aprovacao.spec.ts",
      "e2e/authenticated/premiacoes-auditoria.spec.ts"
     ]
-   },
-   {
-    "sha": "45af2a0",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: preserva e2e/docs NineBox e Premiações da branch muri (resgate de trabalho de outro agente) (#774)",
-    "files": [
-     "docs/ninebox-aprovacao-gestor-vinculo-abner.sql",
-     "e2e/authenticated/ninebox-aprovacao.spec.ts",
-     "e2e/authenticated/premiacoes-auditoria.spec.ts"
-    ]
-   },
-   {
-    "sha": "f74ddb6",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: cria docs/pendencias com estado verificado dos itens de auditoria (#773)",
-    "files": [
-     "docs/pendencias/README.md",
-     "docs/pendencias/_ordem.md"
-    ]
    }
   ],
   "hot_files": [
@@ -335372,20 +335375,24 @@
     5
    ],
    [
-    "docs/pendencias/_ordem.md",
-    5
+    ".github/workflows/canonical-migrations.yml",
+    4
+   ],
+   [
+    "scripts/canonical-invariants.sql",
+    4
    ],
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
     4
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
-    3
+    "docs/pendencias/_ordem.md",
+    4
    ],
    [
-    "scripts/canonical-invariants.sql",
-    3
+    "src/components/ponto/relogio/RelogiosPanel.tsx",
+    2
    ],
    [
     "src/pages/PontoPage.tsx",
@@ -335416,18 +335423,6 @@
     2
    ],
    [
-    "docs/ninebox-aprovacao-gestor-vinculo-abner.sql",
-    2
-   ],
-   [
-    "e2e/authenticated/ninebox-aprovacao.spec.ts",
-    2
-   ],
-   [
-    "e2e/authenticated/premiacoes-auditoria.spec.ts",
-    2
-   ],
-   [
     "src/components/__tests__/EspelhosPapelPanel.test.tsx",
     1
    ],
@@ -335445,6 +335440,14 @@
    ],
    [
     "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.verify.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261121224000_ponto_espelhos_papel.verify.sql",
     1
    ]
   ]

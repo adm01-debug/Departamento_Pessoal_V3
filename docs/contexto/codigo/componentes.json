@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "total": 645,
- "orfaos": 27,
+ "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
    "src/components/dashboard/analytics/widgets.tsx",
@@ -5619,8 +5619,8 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 0,
-   "orfao": true
+   "usado_por": 1,
+   "orfao": false
   },
   {
    "arquivo": "src/components/ponto/relogio/RelogiosPanel.tsx",
@@ -5630,7 +5630,7 @@
     "RelogiosPanel"
    ],
    "export_default": null,
-   "linhas": 455,
+   "linhas": 459,
    "dominio": "components/ponto",
    "hooks_locais": [
     "useAuth",
@@ -5655,8 +5655,8 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 0,
-   "orfao": true
+   "usado_por": 1,
+   "orfao": false
   },
   {
    "arquivo": "src/components/portal/PortalDocumentosTab.tsx",

@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 1335,
- "arestas": 6543,
+ "arestas": 6545,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -225,8 +225,6 @@
   "src/components/notifications/NotificationCenter.tsx",
   "src/components/notifications/index.ts",
   "src/components/ponto/PontoLeaderboard.tsx",
-  "src/components/ponto/relogio/JustificativasRelogioTab.tsx",
-  "src/components/ponto/relogio/VinculosRelogioTab.tsx",
   "src/components/ui/data-table.tsx",
   "src/components/ui/flow-hover-button.tsx",
   "src/components/ui/form.tsx",

@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a3db5b8975c54f46dfa08be868679b4894c4b1b7",
+  "commit": "c74e67d8d9766e3408f26bade62907420c64e7e1",
   "branch": "main",
-  "data_commit": "2026-11-21T20:18:44-03:00",
+  "data_commit": "2026-11-21T20:22:25-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "c74e67d",
+    "data": "2026-11-21",
+    "assunto": "infra: lote canônico com as 5 migrations do relógio de ponto (#806)"
+   },
+   {
+    "sha": "9aa259e",
+    "data": "2026-11-21",
+    "assunto": "feat: abas Vínculos e Justificativas no painel do relógio de ponto (#807)"
+   },
    {
     "sha": "a3db5b8",
     "data": "2026-11-21",
@@ -121,16 +131,6 @@
     "sha": "094e9e0",
     "data": "2026-11-21",
     "assunto": "chore: corrige evidência F-07 no CSV (gap é transporte governamental, não uso inicial) (#781)"
-   },
-   {
-    "sha": "8b67020",
-    "data": "2026-11-21",
-    "assunto": "chore: marca policy ferias_gestor_update como OK no backlog (já aplicada no canônico) (#780)"
-   },
-   {
-    "sha": "74db632",
-    "data": "2026-11-21",
-    "assunto": "chore: registra gap real de transporte eSocial (F-07) no backlog verificado (#779)"
    }
   ],
   "arquivos_mudados_7d": 1047,
@@ -184,22 +184,22 @@
     "mudancas": 34
    },
    {
+    "pasta": "src/components/ponto",
+    "mudancas": 32
+   },
+   {
     "pasta": "src/utils/__tests__",
     "mudancas": 32
    },
    {
     "pasta": "src/components/admissoes",
     "mudancas": 31
-   },
-   {
-    "pasta": "src/components/ponto",
-    "mudancas": 31
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 27
+    "mudancas": 28
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 18
+    "mudancas": 19
    },
    {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3704,
   "arquivos_codigo": 2140,
-  "linhas_codigo": 427347,
+  "linhas_codigo": 427351,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 1009,
-   "linhas": 186651
+   "linhas": 186655
   },
   "src/constants": {
    "arquivos": 7,
@@ -1161,8 +1161,6 @@
    "src/components/layout/Stack.tsx",
    "src/components/notifications/NotificationCenter.tsx",
    "src/components/ponto/PontoLeaderboard.tsx",
-   "src/components/ponto/relogio/JustificativasRelogioTab.tsx",
-   "src/components/ponto/relogio/VinculosRelogioTab.tsx",
    "src/components/ui/data-table.tsx",
    "src/components/ui/flow-hover-button.tsx",
    "src/components/ui/form.tsx",

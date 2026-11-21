@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra: lote canônico com as 5 migrations do relógio de ponto (#806)",
+   "feat: abas Vínculos e Justificativas no painel do relógio de ponto (#807)",
    "feat: alerta de coletor do ponto parado e controle do espelho em papel (#804)",
    "feat: administração dos coletores do relógio de ponto em Integrações (#803)",
-   "feat: protege batida do relógio e bloqueia app/quiosque de quem usa o relógio (#801)",
-   "feat: vínculo de funcionários do relógio e de-para de justificativas (#800)",
-   "chore: testes do relógio de ponto no CI, guia do DP e runbook PONTO_REP (#799)"
+   "feat: protege batida do relógio e bloqueia app/quiosque de quem usa o relógio (#801)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

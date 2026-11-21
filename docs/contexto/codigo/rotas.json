@@ -18493,6 +18493,7 @@
     "useLocation",
     "useLotesColetores",
     "useMemo",
+    "useMovimentoReduzido",
     "useMutation",
     "useNavigate",
     "useNotificacoes",
@@ -18522,6 +18523,7 @@
     "useGrupo",
     "useGuidedTour",
     "useLotesColetores",
+    "useMovimentoReduzido",
     "useNotificacoes",
     "useNotification",
     "useOnMount",
@@ -18567,6 +18569,8 @@
     "periodos_aquisitivos",
     "periodos_ponto",
     "ponto_rep_dispositivos",
+    "ponto_rep_funcionarios",
+    "ponto_rep_justificativas",
     "ponto_rep_lotes",
     "relatorios_agendados",
     "rubricas_folha",
@@ -18598,6 +18602,8 @@
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
+    "definir_tipo_dia_justificativa_relogio",
+    "desvincular_funcionario_relogio",
     "gerar_token_coletor_ponto",
     "get_my_user_empresas",
     "get_security_alerts_summary",
@@ -18605,7 +18611,8 @@
     "log_frontend_error",
     "registrar_auditoria",
     "revogar_coletor_ponto",
-    "set_own_default_empresa"
+    "set_own_default_empresa",
+    "vincular_funcionario_relogio"
    ],
    "edges": [
     "OCR",
@@ -18642,15 +18649,17 @@
     "admin",
     "alert",
     "banner",
+    "group",
     "list",
     "listitem",
     "main",
     "rh",
+    "status",
     "tab",
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 104
+   "arquivos_puxados": 110
   },
   {
    "protegida": true,

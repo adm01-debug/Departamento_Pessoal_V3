@@ -4279,7 +4279,7 @@
    "modulo": "components/ponto",
    "arquivos": 24,
    "testes": 0,
-   "linhas": 5518,
+   "linhas": 5522,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -8754,6 +8754,8 @@
     "ponto_auditoria",
     "ponto_espelhos_papel",
     "ponto_rep_dispositivos",
+    "ponto_rep_funcionarios",
+    "ponto_rep_justificativas",
     "ponto_rep_lotes",
     "pontos_abertos",
     "portal_notificacoes_settings",
@@ -8886,6 +8888,8 @@
     "criar_batida_da_divergencia_afdt",
     "criar_feedback_seguro",
     "decidir_aprovacao_gestor",
+    "definir_tipo_dia_justificativa_relogio",
+    "desvincular_funcionario_relogio",
     "editar_feedback_seguro",
     "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
@@ -8955,7 +8959,8 @@
     "validar_potencial_avaliacao",
     "verificar_espelho_ponto",
     "verificar_pin_quiosque",
-    "vincular_colaborador_ao_usuario"
+    "vincular_colaborador_ao_usuario",
+    "vincular_funcionario_relogio"
    ],
    "buckets": [
     "afastamentos",
