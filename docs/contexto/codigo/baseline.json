@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e3986dc1b2bdf35ab1b45944d0c7d822c7abe95e",
+  "commit": "40b5cfe6945cff79f593f71f16bbd2f11f142722",
   "branch": "main",
-  "data_commit": "2026-11-21T19:46:28-03:00",
+  "data_commit": "2026-11-21T20:03:58-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "40b5cfe",
+    "data": "2026-11-21",
+    "assunto": "chore: testes do relógio de ponto no CI, guia do DP e runbook PONTO_REP (#799)"
+   },
    {
     "sha": "e3986dc",
     "data": "2026-11-21",
@@ -126,14 +131,9 @@
     "sha": "45af2a0",
     "data": "2026-11-21",
     "assunto": "chore: preserva e2e/docs NineBox e Premiações da branch muri (resgate de trabalho de outro agente) (#774)"
-   },
-   {
-    "sha": "f74ddb6",
-    "data": "2026-11-21",
-    "assunto": "chore: cria docs/pendencias com estado verificado dos itens de auditoria (#773)"
    }
   ],
-  "arquivos_mudados_7d": 1012,
+  "arquivos_mudados_7d": 1016,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
-    "mudancas": 12
+    "mudancas": 11
    },
    {
     "arquivo": "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
@@ -234,6 +234,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "scripts/automation.config.json",
+    "mudancas": 7
+   },
+   {
     "arquivo": "src/App.tsx",
     "mudancas": 7
    },
@@ -251,10 +255,6 @@
    },
    {
     "arquivo": "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "scripts/automation.config.json",
     "mudancas": 6
    },
    {
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3678,
+  "arquivos_total": 3680,
   "arquivos_codigo": 2126,
   "linhas_codigo": 424879,
   "rotas": 116,
@@ -331,7 +331,7 @@
   "testes": 802,
   "workflows": 21,
   "scripts": 138,
-  "docs_md": 343
+  "docs_md": 344
  },
  "por_pasta": {
   "capacitor.config.ts": {

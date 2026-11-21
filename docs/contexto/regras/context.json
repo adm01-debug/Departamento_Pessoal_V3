@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "e3986dc1b2bdf35ab1b45944d0c7d822c7abe95e",
+  "sha": "40b5cfe6945cff79f593f71f16bbd2f11f142722",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 22:50 UTC",
-  "files_total": 3692,
+  "generated_at": "2026-11-21 23:04 UTC",
+  "files_total": 3694,
   "code_files": 3104,
   "code_lines": 494596
  },
@@ -332782,10 +332782,24 @@
   }
  },
  "git": {
-  "sha": "e3986dc1b2bdf35ab1b45944d0c7d822c7abe95e",
+  "sha": "40b5cfe6945cff79f593f71f16bbd2f11f142722",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "40b5cfe",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: testes do relógio de ponto no CI, guia do DP e runbook PONTO_REP (#799)",
+    "files": [
+     ".github/workflows/ci.yml",
+     "docs/guides/ponto-eletronico.md",
+     "infra/runbooks/PONTO_REP.md",
+     "scripts/automation.config.json",
+     "scripts/tests/migrations-ponto-rep.sh",
+     "tools/coletor-ponto-atecsoft/README.md"
+    ]
+   },
    {
     "sha": "e3986dc",
     "date": "2026-11-21",
@@ -333092,18 +333106,6 @@
     "files": [
      "src/pages/FinanceiroBancarioPage.tsx"
     ]
-   },
-   {
-    "sha": "32be71e",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix: itens 8, 13 e 14 da issue #571 (Avaliação/NineBox) (#764)",
-    "files": [
-     "src/components/__tests__/AnaliticosDesempenhoStatus.test.tsx",
-     "src/components/avaliacao/AnaliticosDesempenho.tsx",
-     "src/components/ui/motion-presets.ts",
-     "src/pages/AvaliacaoPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -333128,6 +333130,14 @@
     3
    ],
    [
+    "scripts/automation.config.json",
+    2
+   ],
+   [
+    "tools/coletor-ponto-atecsoft/README.md",
+    2
+   ],
+   [
     "inventario/estado/funcionalidades.json",
     2
    ],
@@ -333148,6 +333158,22 @@
     2
    ],
    [
+    ".github/workflows/ci.yml",
+    1
+   ],
+   [
+    "docs/guides/ponto-eletronico.md",
+    1
+   ],
+   [
+    "infra/runbooks/PONTO_REP.md",
+    1
+   ],
+   [
+    "scripts/tests/migrations-ponto-rep.sh",
+    1
+   ],
+   [
     "supabase/functions/external-db-bridge/validation.ts",
     1
    ],
@@ -333161,30 +333187,6 @@
    ],
    [
     "supabase/functions/ingest-ponto-rep/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/ingest-ponto-rep/logica.test.ts",
-    1
-   ],
-   [
-    "supabase/functions/ingest-ponto-rep/logica.ts",
-    1
-   ],
-   [
-    "src/integrations/supabase/types.ts",
-    1
-   ],
-   [
-    "src/schemas/tableColumns.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql",
     1
    ]
   ]

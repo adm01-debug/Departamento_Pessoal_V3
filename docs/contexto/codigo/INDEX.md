@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e3986dc1b2bdf35ab1b45944d0c7d822c7abe95e` (2026-11-21T19:46:28-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `40b5cfe6945cff79f593f71f16bbd2f11f142722` (2026-11-21T20:03:58-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1984), SQL (980), Markdown (343), JavaScript (135), JSON (64), Shell (57), YAML (56), Python (8)
+- linguagens: TypeScript (1984), SQL (980), Markdown (344), JavaScript (135), JSON (64), Shell (58), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3678 |
+| arquivos_total | 3680 |
 | arquivos_codigo | 2126 |
 | linhas_codigo | 424879 |
 | rotas | 116 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 802 |
 | workflows | 21 |
 | scripts | 138 |
-| docs_md | 343 |
+| docs_md | 344 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
@@ -397,8 +397,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27948 nós · 62983 arestas · 2443 comunidades · grafo do commit `e3986dc1`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (481), cn (462), vitest (403), useEmpresas (401), button.tsx (377), @tanstack/react-query (367), react (338), FeedbackAcoesRodape.tsx (254), ColaboradorDetalhesPage.tsx (220), nineBoxComum.ts (204), BaseService (198)
+- 27960 nós · 62998 arestas · 2456 comunidades · grafo do commit `40b5cfe6`
+- comunidades maiores: 20260831_corrected_public.sql (485), canonical_schema.sql (481), cn (454), useEmpresas (405), card.tsx (395), react (304), client.ts (294), vitest (269), framer-motion (221), usePiiMask (194), App.tsx (188), ref_node_child_process (168)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -406,18 +406,18 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - .github/workflows/canonical-migrations.yml (27)
 - inventario/estado/rotas.json (23)
 - scripts/canonical-invariants.sql (18)
-- src/pages/ColaboradorDetalhesPage.tsx (12)
+- src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
 - docs/prod-readiness.md (9)
 - package.json (8)
 - docs/auditoria/sql-preservado/README.md (7)
 - package-lock.json (7)
+- scripts/automation.config.json (7)
 - src/App.tsx (7)
 - src/pages/CalculadoraRescisaoPage.tsx (7)
 - src/pages/ColaboradoresPage.tsx (7)
 - docs/agentes/banco.md (6)
 - docs/auditoria/VEREDITO_MURI_2026-11-17.md (6)
-- scripts/automation.config.json (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -655,6 +655,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-21 `40b5cfe` chore: testes do relógio de ponto no CI, guia do DP e runbook PONTO_REP (#799)
 - 2026-11-21 `e3986dc` infra: libera no bridge os RPCs do relógio de ponto (#802)
 - 2026-11-21 `598b48c` feat: função ingest-ponto-rep recebe e guarda os envios do relógio de ponto (#798)
 - 2026-11-21 `a6548c3` feat: tabelas de entrada do relógio de ponto (ponto_rep_*) (#795)
@@ -669,7 +670,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `123f387` chore: plano do ponto passa a mão dupla com o AtecSoft e registra D1–D5 (#788)
 - 2026-11-21 `06ab445` chore: plano em 100 etapas da integração do ponto Henry/AtecSoft (#786)
 - 2026-11-21 `3c6b0a5` chore: auditoria contínua das funcionalidades F-01..F-20 (#785)
-- 2026-11-21 `5d0677c` infra: torna login E2E não-admin obrigatório no smoke pós-deploy (REQUIRE_LOGIN=1) (#784)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
