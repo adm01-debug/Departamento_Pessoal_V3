@@ -16,8 +16,10 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { validateTablePayload } from '@/schemas/validate';
 import { RUBRICAS_PADRAO } from '@/constants/rubricas';
+import { useEmpresas } from '@/hooks/useEmpresas';
 
 export function RubricasDialog() {
+  const { empresaAtual } = useEmpresas();
   const [isOpen, setIsOpen] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [newRubrica, setNewRubrica] = useState({
@@ -51,7 +53,13 @@ export function RubricasDialog() {
 
       const { error } = await supabase
         .from('rubricas_folha')
-        .insert(validateTablePayload('rubricas_folha', rubrica, 'RubricasDialog:rubricas_folha'));
+        .insert(
+          validateTablePayload(
+            'rubricas_folha',
+            { ...rubrica, empresa_id: empresaAtual?.id ?? null },
+            'RubricasDialog:rubricas_folha'
+          )
+        );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -76,7 +84,11 @@ export function RubricasDialog() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('rubricas_folha').delete().eq('id', id);
+      const { error } = await supabase
+        .from('rubricas_folha')
+        .delete()
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual?.id ?? '');
       if (error) throw error;
     },
     onSuccess: () => {
@@ -102,6 +114,7 @@ export function RubricasDialog() {
         incide_irrf: r.incide_irrf,
         automatico: false,
         ativo: true,
+        empresa_id: empresaAtual?.id ?? null,
       }));
       if (novas.length === 0) return 0;
       const { error } = await supabase
@@ -147,6 +160,7 @@ export function RubricasDialog() {
           )
         )
         .eq('id', id)
+        .eq('empresa_id', empresaAtual?.id ?? '')
         .select('id');
       if (error) throw error;
       if (!data?.length) {

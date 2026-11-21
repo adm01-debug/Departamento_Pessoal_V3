@@ -82,6 +82,7 @@ export default function RubricasPage() {
         incide_fgts: form.incide_fgts,
         automatico: form.automatico,
         formula: form.formula || null,
+        empresa_id: empresaAtual?.id ?? null,
       };
       if (editId) {
         const { error } = await supabase
