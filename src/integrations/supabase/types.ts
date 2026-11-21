@@ -23642,6 +23642,11 @@ export type Database = {
           uf: string
         }[]
       }
+      colaborador_usa_relogio: { Args: never; Returns: boolean }
+      colaborador_usa_relogio_por_id: {
+        Args: { _colaborador_id: string }
+        Returns: boolean
+      }
       consumir_pendencias_medida_no_holerite: {
         Args: {
           p_colaborador_id: string
@@ -23726,6 +23731,14 @@ export type Database = {
       criar_batida_da_divergencia_afdt: {
         Args: { _divergencia_id: string; _tipo?: string }
         Returns: string
+      }
+      definir_tipo_dia_justificativa_relogio: {
+        Args: { _justificativa_id: string; _tipo_dia: string }
+        Returns: undefined
+      }
+      desvincular_funcionario_relogio: {
+        Args: { _funcionario_id: string }
+        Returns: undefined
       }
       detectar_fraude_ponto: {
         Args: {
@@ -25033,6 +25046,10 @@ export type Database = {
           colaborador_id: string
           empresa_id: string
         }[]
+      }
+      vincular_funcionario_relogio: {
+        Args: { _colaborador_id: string; _funcionario_id: string }
+        Returns: undefined
       }
     }
     Enums: {

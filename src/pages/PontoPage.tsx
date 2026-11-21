@@ -114,6 +114,18 @@ export default function PontoPage() {
     enabled: !!user?.email,
   });
 
+  // D2: quem bate no relógio da unidade não registra pelo app. Erro na consulta
+  // não bloqueia a tela — o banco recusa a batida de qualquer forma (gatilho).
+  const { data: usaRelogio = false } = useQuery({
+    queryKey: ['colaborador-usa-relogio', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('colaborador_usa_relogio');
+      if (error) throw error;
+      return data === true;
+    },
+    enabled: !!user?.id,
+  });
+
   const { data: registroHoje, refetch: refetchRegistro } = useQuery({
     queryKey: ['registro-ponto-hoje', user?.id, today],
     queryFn: async () => {
@@ -499,6 +511,7 @@ export default function PontoPage() {
                 onRegistrar={registrar}
                 ultimoRegistro={batidasHoje?.[0]}
                 exigeBiometria={pontoCfg?.exige_reconhecimento_facial ?? true}
+                usaRelogio={usaRelogio}
               />
               <PontoTodayCard registroHoje={registroHoje ?? null} />
               <div className="flex flex-col gap-6">
