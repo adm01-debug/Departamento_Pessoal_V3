@@ -4,6 +4,9 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { useMutation } from '@tanstack/react-query';
 
 vi.mock('@tanstack/react-query', () => ({
+  QueryClient: class QueryClient {
+    invalidateQueries = vi.fn();
+  },
   useQuery: vi.fn(() => ({ data: [], isLoading: false })),
   useMutation: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
   useQueryClient: vi.fn(() => ({ invalidateQueries: vi.fn() })),
@@ -17,6 +20,10 @@ vi.mock('@/integrations/supabase/client', () => ({
       delete: vi.fn(() => ({ eq: vi.fn(() => ({ data: null, error: null })) })),
     })),
   },
+}));
+
+vi.mock('@/hooks/useEmpresas', () => ({
+  useEmpresas: () => ({ empresaAtual: { id: 'emp-1', nome: 'Empresa Teste' } }),
 }));
 
 vi.mock('@/validators/esocial', () => ({
@@ -198,7 +205,7 @@ describe('RubricasDialog', () => {
       render(<RubricasDialog />);
       const corrigir = vi.mocked(useMutation).mock.calls[3][0] as unknown as CorrigirOpts;
       const select = vi.fn(() => Promise.resolve(selectResult));
-      const eq = vi.fn(() => ({ select }));
+      const eq = vi.fn(() => ({ eq, select }));
       const update = vi.fn(() => ({ eq }));
       vi.mocked(supabase.from).mockImplementation(() => ({ update }) as never);
       return { corrigir, update, eq, select };
