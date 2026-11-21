@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `06ed2ca465bab5c0fc8141f70e9e2ccbdbbc324e` (2026-11-21T09:14:14-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f74ddb614cec9001c365b78ae8f8e66ca69103ff` (2026-11-21T09:38:02-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1981), SQL (978), Markdown (339), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1981), SQL (978), Markdown (341), JavaScript (134), JSON (63), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3663 |
+| arquivos_total | 3665 |
 | arquivos_codigo | 2119 |
 | linhas_codigo | 422944 |
 | rotas | 116 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 800 |
 | workflows | 21 |
 | scripts | 135 |
-| docs_md | 339 |
+| docs_md | 341 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
@@ -396,8 +396,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27761 nós · 62665 arestas · 2398 comunidades · grafo do commit `06ed2ca4`
-- comunidades maiores: lucide-react (531), useEmpresas (494), 20260831_corrected_public.sql (485), canonical_schema.sql (481), @tanstack/react-query (438), vitest (347), button.tsx (264), react (237), cn (205), App.tsx (170), "public"."empresas" (164), services/index.ts (161)
+- 27771 nós · 62673 arestas · 2381 comunidades · grafo do commit `f74ddb61`
+- comunidades maiores: lucide-react (535), 20260831_corrected_public.sql (485), canonical_schema.sql (481), @tanstack/react-query (361), vitest (349), useEmpresas (319), App.tsx (224), client.ts (205), cn (183), ColaboradorDetalhesPage.tsx (180), services/index.ts (168), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -649,10 +649,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/treinamentos-imagens-fase3b-prep.md` — Fase 3B — preparação final (relatório) (133 linhas)
 - `docs/treinamentos-imagens-homologacao.md` — Homologação isolada — Hub de imagens (alternativa ao Docker) (233 linhas)
 - `docs/treinamentos-imagens.md` — Imagens do Hub de Treinamentos — Fase 2 (auditoria) + preparação da Fase 3 (426 linhas)
-- subpastas de docs/: docs/auditoria (67), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/protegido (1), docs/seguranca (1)
+- subpastas de docs/: docs/auditoria (67), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/pendencias (2), docs/contratos (1), docs/protegido (1), docs/seguranca (1)
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-21 `f74ddb6` chore: cria docs/pendencias com estado verificado dos itens de auditoria (#773)
 - 2026-11-21 `06ed2ca` fix: rubricas_folha insert/delete/update sem empresa_id (#772)
 - 2026-11-20 `bfc7e3c` chore: reconcilia funcionalidades.csv com o estado real da main (20/11) (#770)
 - 2026-11-20 `cca632b` fix: corrige 12 erros BRIDGE_SCHEMA_ERROR (HTTP 400 no bridge) e destrava Dashboard Executivo e Passivo Trabalhista (#76
@@ -667,7 +668,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-19 `23cd2e2` fix(e2e): corrige as 2 falhas do pipeline de recrutamento na main (#757)
 - 2026-11-19 `c60bf64` fix(onboarding): ancora assercoes do verify na admissao de destino (#756)
 - 2026-11-19 `074c01e` infra(banco): inclui a 20261019235900 (dp_*) e a 20261119170000 (onboarding) no lote do canônico (#755)
-- 2026-11-19 `b2df382` fix(onboarding): resgata a convergência do modelo legado, sem duplicar histórico (#747)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

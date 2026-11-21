@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "06ed2ca465bab5c0fc8141f70e9e2ccbdbbc324e",
+  "commit": "f74ddb614cec9001c365b78ae8f8e66ca69103ff",
   "branch": "main",
-  "data_commit": "2026-11-21T09:14:14-03:00",
+  "data_commit": "2026-11-21T09:38:02-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "f74ddb6",
+    "data": "2026-11-21",
+    "assunto": "chore: cria docs/pendencias com estado verificado dos itens de auditoria (#773)"
+   },
    {
     "sha": "06ed2ca",
     "data": "2026-11-21",
@@ -126,11 +131,6 @@
     "sha": "ddcecda",
     "data": "2026-11-19",
     "assunto": "fix: remove folhas_gestor_update da 120000 para nao quebrar pos-condicao da 130000 (#745)"
-   },
-   {
-    "sha": "efcfc1d",
-    "data": "2026-11-19",
-    "assunto": "feat(ui): resgata os 2 resíduos visuais da PR #546 (muri) (#744)"
    }
   ],
   "arquivos_mudados_7d": 993,
@@ -165,7 +165,7 @@
    },
    {
     "pasta": "supabase/functions/_shared",
-    "mudancas": 53
+    "mudancas": 51
    },
    {
     "pasta": "src/components/layout",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3663,
+  "arquivos_total": 3665,
   "arquivos_codigo": 2119,
   "linhas_codigo": 422944,
   "rotas": 116,
@@ -331,7 +331,7 @@
   "testes": 800,
   "workflows": 21,
   "scripts": 135,
-  "docs_md": 339
+  "docs_md": 341
  },
  "por_pasta": {
   "capacitor.config.ts": {

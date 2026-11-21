@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "06ed2ca465bab5c0fc8141f70e9e2ccbdbbc324e",
+  "sha": "f74ddb614cec9001c365b78ae8f8e66ca69103ff",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 12:15 UTC",
-  "files_total": 3676,
+  "generated_at": "2026-11-21 13:12 UTC",
+  "files_total": 3678,
   "code_files": 3095,
   "code_lines": 492767
  },
@@ -331087,10 +331087,20 @@
   }
  },
  "git": {
-  "sha": "06ed2ca465bab5c0fc8141f70e9e2ccbdbbc324e",
+  "sha": "f74ddb614cec9001c365b78ae8f8e66ca69103ff",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "f74ddb6",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: cria docs/pendencias com estado verificado dos itens de auditoria (#773)",
+    "files": [
+     "docs/pendencias/README.md",
+     "docs/pendencias/_ordem.md"
+    ]
+   },
    {
     "sha": "06ed2ca",
     "date": "2026-11-21",
@@ -331404,16 +331414,6 @@
      "src/pages/__tests__/ColaboradorFormPage.test.tsx",
      "src/pages/colaboradorFormSchema.ts"
     ]
-   },
-   {
-    "sha": "5891423",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "feat(rescisão): busca por matrícula e 4 últimos do CPF no seletor de colaborador (#740)",
-    "files": [
-     "src/pages/CalculadoraRescisaoPage.tsx",
-     "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -331466,12 +331466,12 @@
     2
    ],
    [
-    "src/pages/CalculadoraRescisaoPage.tsx",
-    2
+    "docs/pendencias/README.md",
+    1
    ],
    [
-    "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
-    2
+    "docs/pendencias/_ordem.md",
+    1
    ],
    [
     "src/components/__tests__/RubricasDialog.test.tsx",
