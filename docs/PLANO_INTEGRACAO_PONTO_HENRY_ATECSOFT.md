@@ -69,8 +69,8 @@ Princípios:
 | D6 | Batida esquecida: o DP pode incluir pelo DP V3 e ela é gravada no AtecSoft marcada como manual, com motivo? | etapa nova após a 11 |
 | D2 | **Decidido em 21/11/2026:** quem bate no relógio Henry bate só no relógio; app e quiosque do DP V3 não registram batida para essas pessoas | — |
 | D3 | **Decidido em 21/11/2026:** a assinatura do espelho continua no papel; o DP V3 mostra, calcula e imprime | — |
-| D4 | Qual sistema a contabilidade usa (define o layout de exportação) | 87–89 |
-| D5 | Quem instala o coletor nos PCs da matriz e da filial | 91–93 |
+| D4 | **Decidido em 21/11/2026:** não há layout de sistema contábil a seguir. O fechamento, a documentação e o processo ficam nos sistemas próprios (DP V3 e Promo_Finance_V2); a contabilidade recebe o relatório do DP V3 quando for o caso | — |
+| D5 | **Decidido em 21/11/2026:** o técnico de TI da empresa instala o coletor nos dois PCs | — |
 
 ## 5. Legenda
 
@@ -84,8 +84,8 @@ Princípios:
 - [x] **1. Registrar D1 (fonte da verdade).** Pronto quando: decisão escrita na seção 4 deste arquivo.
 - [x] **2. Registrar D2 (app/quiosque convive com o relógio).** Pronto quando: decisão escrita na seção 4.
 - [x] **3. Registrar D3 (assinatura eletrônica).** Pronto quando: decisão escrita na seção 4.
-- [ ] **4. Registrar D4 (sistema da contabilidade).** Pronto quando: nome do sistema e layout escritos na seção 4.
-- [ ] **5. Registrar D5 (responsável pela instalação).** Pronto quando: nome e unidade escritos na seção 4.
+- [x] **4. Registrar D4 (sistema da contabilidade).** Pronto quando: nome do sistema e layout escritos na seção 4.
+- [x] **5. Registrar D5 (responsável pela instalação).** Pronto quando: nome e unidade escritos na seção 4.
 - [ ] **6. Receber cópia do banco real da matriz.** Arquivo `C:\Ponto AtecSoft\DADOS\PONTO_ATECSOFT.FDB`. Pronto quando: arquivo abre no `isql` e `CP` tem linhas.
 - [ ] **7. Receber cópia do banco real da filial.** Pronto quando: idem etapa 6.
 - [ ] **8. Guardar os bancos fora do repositório.** Contêm CPF e PIS. Pronto quando: `git status` limpo e os arquivos só existem em ambiente de análise descartável.
@@ -189,7 +189,7 @@ Princípios:
 - [ ] **85. Controle de espelhos assinados.** O DP marca quem já devolveu o papel assinado e pode anexar a digitalização. Pronto quando: lista de pendentes do mês correta em teste.
 - [ ] **86. Travar o mês após o fechamento.** `periodos_ponto` fechado bloqueia reprocessamento (etapa 43). Pronto quando: lote de mês fechado gera alerta e não altera nada.
 - [ ] **87. Relatório de fechamento para a contabilidade.** Por colaborador: normais, extras 50/100, noturnas, faltas, atrasos, atestados, banco de horas. Pronto quando: PDF e planilha gerados de um mês real.
-- [ ] **88. Exportação no layout do sistema contábil.** Conforme D4. Pronto quando: arquivo importado com sucesso pela contabilidade em teste.
+- [ ] **88. Levar o fechamento do ponto para a folha do DP V3.** D4: sem layout externo; horas extras, faltas, atrasos e adicional noturno do mês fechado entram na folha pelo `vw_folha_ponto_mensal`. Pronto quando: folha de um mês real usa os totais do ponto sem digitação. O que o Promo_Finance_V2 precisa receber está NÃO VERIFICADO (repositório não lido).
 - [ ] **89. Envio do fechamento.** Botão que entrega o pacote (relatório + arquivo) ao contato da contabilidade. Pronto quando: envio registrado com data e destinatário.
 - [ ] **90. Conferência cruzada com AFD.** Importar o AFD do relógio e reconciliar com as batidas de origem relógio. Pronto quando: divergência zero ou explicada no mês de teste.
 
@@ -236,7 +236,7 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 
 | Fase | Etapas | Concluídas |
 | --- | --- | --- |
-| 0 — Decisões e insumos | 1–8 | 3/8 |
+| 0 — Decisões e insumos | 1–8 | 5/8 |
 | 1 — Diagnóstico | 9–18 | 0/10 |
 | 2 — Modelo de dados | 19–32 | 0/14 |
 | 3 — Função de ingestão | 33–46 | 0/14 |
@@ -246,7 +246,7 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 | 7 — Fechamento mensal | 83–90 | 0/8 |
 | 8 — Implantação e operação | 91–100 | 0/10 |
 | 9 — Escrita no AtecSoft | 101–120 | 0/20 |
-| **Total** | **1–120** | **3/120** |
+| **Total** | **1–120** | **5/120** |
 
 ## 8. Riscos
 
