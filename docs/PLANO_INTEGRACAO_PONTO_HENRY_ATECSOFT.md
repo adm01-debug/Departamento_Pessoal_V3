@@ -67,8 +67,8 @@ Princípios:
 | --- | --- | --- |
 | D1 | **Decidido em 21/11/2026:** mão dupla com o banco do AtecSoft. O DP V3 lê as batidas e grava de volta atestado, férias, afastamento/licenças, folga/abono e cadastro (admissão/desligamento). As pessoas usam só o DP V3 | — |
 | D6 | Batida esquecida: o DP pode incluir pelo DP V3 e ela é gravada no AtecSoft marcada como manual, com motivo? | etapa nova após a 11 |
-| D2 | Colaborador continua podendo bater ponto pelo app/quiosque do DP V3 ou só pelo relógio | 66, 80 |
-| D3 | Assinatura do espelho passa a ser eletrônica no DP V3 ou o papel continua em paralelo | 83–86 |
+| D2 | **Decidido em 21/11/2026:** quem bate no relógio Henry bate só no relógio; app e quiosque do DP V3 não registram batida para essas pessoas | — |
+| D3 | **Decidido em 21/11/2026:** a assinatura do espelho continua no papel; o DP V3 mostra, calcula e imprime | — |
 | D4 | Qual sistema a contabilidade usa (define o layout de exportação) | 87–89 |
 | D5 | Quem instala o coletor nos PCs da matriz e da filial | 91–93 |
 
@@ -82,8 +82,8 @@ Princípios:
 ### Fase 0 — Decisões e insumos (1–8)
 
 - [x] **1. Registrar D1 (fonte da verdade).** Pronto quando: decisão escrita na seção 4 deste arquivo.
-- [ ] **2. Registrar D2 (app/quiosque convive com o relógio).** Pronto quando: decisão escrita na seção 4.
-- [ ] **3. Registrar D3 (assinatura eletrônica).** Pronto quando: decisão escrita na seção 4.
+- [x] **2. Registrar D2 (app/quiosque convive com o relógio).** Pronto quando: decisão escrita na seção 4.
+- [x] **3. Registrar D3 (assinatura eletrônica).** Pronto quando: decisão escrita na seção 4.
 - [ ] **4. Registrar D4 (sistema da contabilidade).** Pronto quando: nome do sistema e layout escritos na seção 4.
 - [ ] **5. Registrar D5 (responsável pela instalação).** Pronto quando: nome e unidade escritos na seção 4.
 - [ ] **6. Receber cópia do banco real da matriz.** Arquivo `C:\Ponto AtecSoft\DADOS\PONTO_ATECSOFT.FDB`. Pronto quando: arquivo abre no `isql` e `CP` tem linhas.
@@ -161,7 +161,7 @@ Princípios:
 - [ ] **63. Classificar entrada/saída pela posição.** `E1`=entrada, `S1`=saída… vindo do AtecSoft; não alternar por ordem de chegada. Pronto quando: teste com dia de 6 pares verde.
 - [ ] **64. Tratar virada de dia.** Usar `DATA_E*/DATA_S*` para turno que passa da meia-noite. Pronto quando: teste com saída no dia seguinte verde.
 - [ ] **65. Marcar batida inserida à mão no AtecSoft.** Conforme etapa 11, com o motivo de `OBS_*`. Pronto quando: aparece identificada no espelho.
-- [ ] **66. Regra de convivência com o app.** Conforme D2: se o relógio é a única fonte, o app deixa de gravar batida para quem tem vínculo. Pronto quando: regra implementada e testada.
+- [ ] **66. Regra de convivência com o app.** D2: colaborador vinculado ao relógio não registra batida pelo app nem pelo quiosque. Pronto quando: tentativa pela tela e pela API é recusada em teste.
 - [ ] **67. Alimentar `registros_ponto`.** Consolidar o dia (entradas, saídas, total trabalhado). Pronto quando: total bate com o cartão ponto do AtecSoft em 20 dias de amostra.
 - [ ] **68. Levar justificativas.** Atestado, férias, folga e licença viram ocorrência no DP V3 conforme etapa 13. Pronto quando: dia justificado não aparece como falta.
 - [ ] **69. Levar abonos.** `ABONO` e `ABONO_NEG` entram no cálculo do dia. Pronto quando: teste verde.
@@ -185,8 +185,8 @@ Princípios:
 ### Fase 7 — Fechamento mensal (83–90)
 
 - [ ] **83. Espelho mensal com batidas do relógio.** `vw_espelho_ponto_mensal` reflete a origem relógio. Pronto quando: espelho de um colaborador confere com o impresso do AtecSoft.
-- [ ] **84. Fluxo de assinatura eletrônica.** Conforme D3: DP libera o mês, colaborador assina no portal. Pronto quando: assinatura registrada em `ponto_espelhos_assinados` em homologação.
-- [ ] **85. Painel de pendências de assinatura.** Quem assinou, quem falta, lembrete. Pronto quando: lembrete enviado em teste.
+- [ ] **84. Imprimir o espelho para assinatura em papel.** D3: o DP gera pelo DP V3 o espelho do mês, individual ou em lote. Pronto quando: PDF de um mês real confere com o impresso do AtecSoft.
+- [ ] **85. Controle de espelhos assinados.** O DP marca quem já devolveu o papel assinado e pode anexar a digitalização. Pronto quando: lista de pendentes do mês correta em teste.
 - [ ] **86. Travar o mês após o fechamento.** `periodos_ponto` fechado bloqueia reprocessamento (etapa 43). Pronto quando: lote de mês fechado gera alerta e não altera nada.
 - [ ] **87. Relatório de fechamento para a contabilidade.** Por colaborador: normais, extras 50/100, noturnas, faltas, atrasos, atestados, banco de horas. Pronto quando: PDF e planilha gerados de um mês real.
 - [ ] **88. Exportação no layout do sistema contábil.** Conforme D4. Pronto quando: arquivo importado com sucesso pela contabilidade em teste.
@@ -236,7 +236,7 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 
 | Fase | Etapas | Concluídas |
 | --- | --- | --- |
-| 0 — Decisões e insumos | 1–8 | 1/8 |
+| 0 — Decisões e insumos | 1–8 | 3/8 |
 | 1 — Diagnóstico | 9–18 | 0/10 |
 | 2 — Modelo de dados | 19–32 | 0/14 |
 | 3 — Função de ingestão | 33–46 | 0/14 |
@@ -246,7 +246,7 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 | 7 — Fechamento mensal | 83–90 | 0/8 |
 | 8 — Implantação e operação | 91–100 | 0/10 |
 | 9 — Escrita no AtecSoft | 101–120 | 0/20 |
-| **Total** | **1–120** | **1/120** |
+| **Total** | **1–120** | **3/120** |
 
 ## 8. Riscos
 
