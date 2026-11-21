@@ -302,4 +302,45 @@ describe('GestaoRegistrosPonto', () => {
       expect(screen.queryByRole('button', { name: 'Histórico' })).not.toBeInTheDocument();
     });
   });
+
+  describe('origem relógio', () => {
+    const REGISTROS = [
+      { ...MOCK_REGISTROS[0], id: 'r1', colaborador_id: 'c1', colaborador: { ...MOCK_REGISTROS[0].colaborador } },
+      {
+        ...MOCK_REGISTROS[0],
+        id: 'r2',
+        colaborador_id: 'c2',
+        colaborador: { ...MOCK_REGISTROS[0].colaborador, nome_completo: 'Maria App' },
+      },
+    ];
+    const BATIDAS = [
+      { colaborador_id: 'c1', data: '2026-07-24', origem: 'relogio' },
+      { colaborador_id: 'c2', data: '2026-07-24', origem: 'web' },
+    ];
+
+    beforeEach(() => {
+      vi.mocked(useQuery).mockImplementation(((opts: { queryKey: unknown[] }) =>
+        opts.queryKey[0] === 'gestao-batidas-ponto-geo'
+          ? { data: BATIDAS, isLoading: false }
+          : { data: REGISTROS, isLoading: false }) as never);
+    });
+
+    it('mostra o selo Relógio só no dia com batida do relógio, com a orientação de correção', () => {
+      render(<GestaoRegistrosPonto />);
+      const selos = screen.getAllByText('Relógio', { selector: 'div,span' });
+      expect(selos).toHaveLength(1);
+      expect(selos[0]).toHaveAttribute('title', 'Batida do relógio: corrija no Ponto AtecSoft');
+    });
+
+    it('filtro Origem = Relógio mostra só quem bateu no relógio; "App, quiosque e ajustes" o inverso', () => {
+      render(<GestaoRegistrosPonto />);
+      const filtro = screen.getByLabelText('Origem');
+      fireEvent.change(filtro, { target: { value: 'relogio' } });
+      expect(screen.getByText('João Silva')).toBeInTheDocument();
+      expect(screen.queryByText('Maria App')).not.toBeInTheDocument();
+      fireEvent.change(filtro, { target: { value: 'outras' } });
+      expect(screen.queryByText('João Silva')).not.toBeInTheDocument();
+      expect(screen.getByText('Maria App')).toBeInTheDocument();
+    });
+  });
 });

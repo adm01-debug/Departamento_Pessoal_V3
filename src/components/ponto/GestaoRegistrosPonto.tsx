@@ -50,6 +50,7 @@ export function GestaoRegistrosPonto() {
   const [filtroData, setFiltroData] = useState(todayLocalISO());
   const [filtroFim, setFiltroFim] = useState(todayLocalISO());
   const [tipoExcecao, setTipoExcecao] = useState('todas');
+  const [filtroOrigem, setFiltroOrigem] = useState<'todas' | 'relogio' | 'outras'>('todas');
   const [busca, setBusca] = useState('');
   const { data: registros = [], isLoading } = useQuery({
     queryKey: ['gestao-registros-ponto', empresaAtual?.id, filtroData, filtroFim],
@@ -139,13 +140,22 @@ export function GestaoRegistrosPonto() {
     return m ? `${m[1].padStart(2, '0')}:${m[2].padStart(2, '0')}` : '00:00';
   };
 
+  // Dias (colaborador|data) com batida vinda do relógio Henry/AtecSoft.
+  const diasRelogio = new Set(
+    batidas.filter((b) => b.origem === 'relogio').map((b) => `${b.colaborador_id}|${b.data}`)
+  );
+  const ehDoRelogio = (r: { colaborador_id: string | null; data: string }) =>
+    diasRelogio.has(`${r.colaborador_id}|${r.data}`);
+
   const filtrados = registros.filter((r) => {
     const nome = r.colaborador?.nome_completo?.toLowerCase() || '';
     const cargo = r.colaborador?.cargo?.toLowerCase() || '';
     const depto = r.colaborador?.departamento?.toLowerCase() || '';
     const query = busca.toLowerCase();
 
-    const buscaMatch = !busca || nome.includes(query) || cargo.includes(query) || depto.includes(query);
+    const origemMatch = filtroOrigem === 'todas' || (filtroOrigem === 'relogio' ? ehDoRelogio(r) : !ehDoRelogio(r));
+    const buscaMatch =
+      origemMatch && (!busca || nome.includes(query) || cargo.includes(query) || depto.includes(query));
 
     if (tipoExcecao === 'todas') return buscaMatch;
     if (tipoExcecao === 'atrasos') return buscaMatch && (r.atraso_minutos ?? 0) > 0;
@@ -246,6 +256,19 @@ export function GestaoRegistrosPonto() {
                           <option value="atrasos">Apenas Atrasos</option>
                           <option value="faltas">Apenas Faltas</option>
                           <option value="incompletos">Incompletos/Abertos</option>
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <h4 className="font-bold text-xs uppercase text-muted-foreground">Origem</h4>
+                        <select
+                          aria-label="Origem"
+                          value={filtroOrigem}
+                          onChange={(e) => setFiltroOrigem(e.target.value as 'todas' | 'relogio' | 'outras')}
+                          className="w-full h-8 rounded-lg border border-input bg-background px-2 py-1 text-[10px] shadow-xs focus:ring-1 focus:ring-primary"
+                        >
+                          <option value="todas">Todas as origens</option>
+                          <option value="relogio">Relógio</option>
+                          <option value="outras">App, quiosque e ajustes</option>
                         </select>
                       </div>
                     </div>
@@ -451,6 +474,15 @@ export function GestaoRegistrosPonto() {
                               </TableCell>
                               <TableCell>
                                 <div className="flex gap-1">
+                                  {ehDoRelogio(r) && (
+                                    <Badge
+                                      variant="outline"
+                                      className="text-[10px] h-5 px-1.5 text-info border-info/30"
+                                      title="Batida do relógio: corrija no Ponto AtecSoft"
+                                    >
+                                      Relógio
+                                    </Badge>
+                                  )}
                                   {r.aprovado && (
                                     <Badge
                                       variant="outline"

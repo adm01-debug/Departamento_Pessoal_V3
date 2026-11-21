@@ -43,7 +43,7 @@ export default function PontoKioskPage() {
   const [time, setTime] = useState(new Date());
   const [pin, setPin] = useState('');
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState<'pin' | 'segundo_fator' | 'action' | 'success'>('pin');
+  const [step, setStep] = useState<'pin' | 'segundo_fator' | 'action' | 'success' | 'relogio'>('pin');
   const [selectedColab, setSelectedColab] = useState<UiRecord | null>(null);
   const [offlineQueueSize, setOfflineQueueSize] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -104,6 +104,16 @@ export default function PontoKioskPage() {
 
       setSelectedColab(colab);
       const firstName = (colab.nome_completo ?? 'Colaborador').split(' ')[0];
+      // D2: quem usa o relógio da unidade não bate no quiosque. Falha na
+      // consulta não bloqueia — o banco recusa a batida de qualquer forma.
+      const { data: usaRelogio } = await supabase.rpc('colaborador_usa_relogio_por_id', {
+        _colaborador_id: colab.id,
+      });
+      if (usaRelogio === true) {
+        setStep('relogio');
+        speak(`Olá ${firstName}. Seu ponto é registrado no relógio da unidade.`);
+        return;
+      }
       if (empresaAtual.exigir_pin_quiosque) {
         // E50-33: matrícula é pública dentro da empresa — sozinha nunca
         // autoriza a ação, só identifica quem tenta. Fail-closed: se o
@@ -447,6 +457,32 @@ export default function PontoKioskPage() {
               </div>
               <Button variant="ghost" className="w-full mt-4" onClick={() => setStep('pin')}>
                 Cancelar
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {step === 'relogio' && selectedColab && (
+          <Card className="shadow-2xl border-primary/20">
+            <CardHeader className="text-center">
+              <CardTitle className="font-display">
+                Olá, {(selectedColab.nome_completo ?? 'Colaborador').split(' ')[0]}!
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p role="status" className="text-center text-lg font-medium">
+                Seu ponto é registrado no relógio da unidade.
+              </p>
+              <Button
+                variant="ghost"
+                className="w-full mt-4"
+                onClick={() => {
+                  setStep('pin');
+                  setPin('');
+                  setSelectedColab(null);
+                }}
+              >
+                Voltar
               </Button>
             </CardContent>
           </Card>

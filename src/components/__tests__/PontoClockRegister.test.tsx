@@ -256,4 +256,18 @@ describe('PontoClockRegister', () => {
     fireEvent.click(syncBtn!);
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith('3 registros offline sincronizados!'));
   });
+
+  it('usa relógio: esconde os botões de registro e mostra o aviso', () => {
+    renderClock({ usaRelogio: true });
+    expect(screen.getByText('Seu ponto é registrado no relógio da unidade.')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Entrada/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^Sa.*da$/i })).not.toBeInTheDocument();
+    expect(onRegistrar).not.toHaveBeenCalled();
+  });
+
+  it('não usa relógio: mantém os botões e não mostra o aviso', () => {
+    renderClock({ usaRelogio: false });
+    expect(screen.getByRole('button', { name: /Entrada/i })).toBeInTheDocument();
+    expect(screen.queryByText('Seu ponto é registrado no relógio da unidade.')).not.toBeInTheDocument();
+  });
 });
