@@ -2144,6 +2144,21 @@
                               "reason":  "Legado mantido no fluxo existente; referências literais: package.json:scripts, .github/workflows/ci.yml. O dispatcher não executa esta operação."
                           },
                           {
+                              "id":  "legacy-2620dbbd01a8eb61",
+                              "kind":  "legacy",
+                              "files":  [
+                                            "scripts/tests/migrations-ponto-rep.sh"
+                                        ],
+                              "manual":  [
+                                             "sh",
+                                             "scripts/tests/migrations-ponto-rep.sh"
+                                         ],
+                              "triggers":  [
+                                               "manual"
+                                           ],
+                              "reason":  "Teste de migration das tabelas ponto_rep_*; roda no CI pelo scripts/tests/run-shard.sh (job P0 database migration simulations). O dispatcher não executa esta operação."
+                          },
+                          {
                               "id":  "legacy-41daf3e7ed5418ab",
                               "kind":  "legacy",
                               "files":  [
