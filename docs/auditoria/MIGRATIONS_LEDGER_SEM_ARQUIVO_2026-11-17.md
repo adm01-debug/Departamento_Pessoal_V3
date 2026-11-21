@@ -66,3 +66,31 @@ As opções:
    não se faz sem a sua autorização explícita.
 
 Esta PR implementa a opção 1 e fica **aberta** para você decidir.
+
+## Reversão do caso inverso: arquivo na `main` sem versão no ledger — 21/11/2026
+
+O `mode=verify` do `canonical-migrations.yml` (run `44727601776`, 20/11/2026) provou
+que a divergência descrita acima tinha **um caso a mais**, e que ele derrubava a
+auditoria:
+
+| arquivo na `main` | está no ledger? |
+|---|---|
+| `20261119120000_ferias_folhas_gestor_update.sql` | **não** |
+
+Verificação byte a byte antes de removê-lo:
+
+- o DDL efetivo da `20261119120000` (as 2 instruções, sem comentários) tem
+  SHA256 `A103B1133093EC1AEFC32AA04276A619D238BFC3313359FEA2A928C5A3F25D35`;
+- o DDL efetivo da `20261119130000_ferias_gestor_update.sql`, que **está** no
+  ledger, tem o **mesmo** SHA256 — as duas emitem exatamente
+  `DROP POLICY IF EXISTS "ferias_gestor_update"` + o mesmo `CREATE POLICY`;
+- a `20261119130000` vai além: acrescenta um bloco `DO` de pós-condição que
+  verifica a policy criada e prova que `folhas_pagamento` **não** recebeu escrita
+  de gestor;
+- nenhum outro documento ou script do repositório referencia a `20261119120000`.
+
+Ou seja: a `120000` é um **subconjunto estrito** da `130000`. Registrá-la no
+ledger afirmaria que um conteúdo foi aplicado, quando o aplicado foi o da `130000`
+(que tem o `DO` extra). Por isso os dois arquivos dela (`.sql` e `.verify.sql`)
+foram **removidos**, não registrados. Nenhuma funcionalidade muda: a policy
+`ferias_gestor_update` continua garantida e auditada pela `130000`.
