@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `598b48c855cd34bfcdea04f01e03377c713cf238` (2026-11-21T19:37:01-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e3986dc1b2bdf35ab1b45944d0c7d822c7abe95e` (2026-11-21T19:46:28-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3678 |
 | arquivos_codigo | 2126 |
-| linhas_codigo | 424873 |
+| linhas_codigo | 424879 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -397,7 +397,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27948 nós · 62983 arestas · 2443 comunidades · grafo do commit `598b48c8`
+- 27948 nós · 62983 arestas · 2443 comunidades · grafo do commit `e3986dc1`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (481), cn (462), vitest (403), useEmpresas (401), button.tsx (377), @tanstack/react-query (367), react (338), FeedbackAcoesRodape.tsx (254), ColaboradorDetalhesPage.tsx (220), nineBoxComum.ts (204), BaseService (198)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -655,6 +655,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-21 `e3986dc` infra: libera no bridge os RPCs do relógio de ponto (#802)
 - 2026-11-21 `598b48c` feat: função ingest-ponto-rep recebe e guarda os envios do relógio de ponto (#798)
 - 2026-11-21 `a6548c3` feat: tabelas de entrada do relógio de ponto (ponto_rep_*) (#795)
 - 2026-11-21 `0696746` feat: coletor somente leitura do Ponto AtecSoft para o DP V3 (#796)
@@ -669,7 +670,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `06ab445` chore: plano em 100 etapas da integração do ponto Henry/AtecSoft (#786)
 - 2026-11-21 `3c6b0a5` chore: auditoria contínua das funcionalidades F-01..F-20 (#785)
 - 2026-11-21 `5d0677c` infra: torna login E2E não-admin obrigatório no smoke pós-deploy (REQUIRE_LOGIN=1) (#784)
-- 2026-11-21 `50a87a9` chore: marca smoke pós-deploy como automatizado no _ordem.md (#783)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

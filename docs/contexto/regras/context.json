@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "598b48c855cd34bfcdea04f01e03377c713cf238",
+  "sha": "e3986dc1b2bdf35ab1b45944d0c7d822c7abe95e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 22:37 UTC",
+  "generated_at": "2026-11-21 22:50 UTC",
   "files_total": 3692,
   "code_files": 3104,
-  "code_lines": 494590
+  "code_lines": 494596
  },
  "version": "1.3.2",
- "facts_hash": "ad41582bd8e3f056",
+ "facts_hash": "49184d45d81d547e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -104629,7 +104629,7 @@
   {
    "module": "supabase/functions",
    "files": 191,
-   "lines": 27532,
+   "lines": 27538,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -324359,7 +324359,7 @@
   },
   "supabase/functions/external-db-bridge/validation.ts": {
    "path": "supabase/functions/external-db-bridge/validation.ts",
-   "lines": 382,
+   "lines": 388,
    "exports": [
     "const IDENTIFIER_RE",
     "const COLUMNS_RE",
@@ -332782,10 +332782,19 @@
   }
  },
  "git": {
-  "sha": "598b48c855cd34bfcdea04f01e03377c713cf238",
+  "sha": "e3986dc1b2bdf35ab1b45944d0c7d822c7abe95e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "e3986dc",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "infra: libera no bridge os RPCs do relógio de ponto (#802)",
+    "files": [
+     "supabase/functions/external-db-bridge/validation.ts"
+    ]
+   },
    {
     "sha": "598b48c",
     "date": "2026-11-21",
@@ -333095,15 +333104,6 @@
      "src/components/ui/motion-presets.ts",
      "src/pages/AvaliacaoPage.tsx"
     ]
-   },
-   {
-    "sha": "e8fff0c",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix: limpa listarTrilhaMock no beforeEach dos estados da consulta (Auditoria de Admiss?es) (#763)",
-    "files": [
-     "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -333148,6 +333148,10 @@
     2
    ],
    [
+    "supabase/functions/external-db-bridge/validation.ts",
+    1
+   ],
+   [
     "scripts/audit-security-config.mjs",
     1
    ],
@@ -333181,10 +333185,6 @@
    ],
    [
     "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql",
-    1
-   ],
-   [
-    "tools/coletor-ponto-atecsoft/.gitignore",
     1
    ]
   ]

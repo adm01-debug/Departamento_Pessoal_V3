@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "598b48c855cd34bfcdea04f01e03377c713cf238",
+  "commit": "e3986dc1b2bdf35ab1b45944d0c7d822c7abe95e",
   "branch": "main",
-  "data_commit": "2026-11-21T19:37:01-03:00",
+  "data_commit": "2026-11-21T19:46:28-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "e3986dc",
+    "data": "2026-11-21",
+    "assunto": "infra: libera no bridge os RPCs do relógio de ponto (#802)"
+   },
    {
     "sha": "598b48c",
     "data": "2026-11-21",
@@ -126,11 +131,6 @@
     "sha": "f74ddb6",
     "data": "2026-11-21",
     "assunto": "chore: cria docs/pendencias com estado verificado dos itens de auditoria (#773)"
-   },
-   {
-    "sha": "06ed2ca",
-    "data": "2026-11-21",
-    "assunto": "fix: rubricas_folha insert/delete/update sem empresa_id (#772)"
    }
   ],
   "arquivos_mudados_7d": 1012,
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3678,
   "arquivos_codigo": 2126,
-  "linhas_codigo": 424873,
+  "linhas_codigo": 424879,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -724,7 +724,7 @@
   },
   "supabase/functions": {
    "arquivos": 191,
-   "linhas": 27532
+   "linhas": 27538
   },
   "supabase/tests": {
    "arquivos": 3,

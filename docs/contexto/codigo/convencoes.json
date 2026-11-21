@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra: libera no bridge os RPCs do relógio de ponto (#802)",
    "feat: função ingest-ponto-rep recebe e guarda os envios do relógio de ponto (#798)",
    "feat: tabelas de entrada do relógio de ponto (ponto_rep_*) (#795)",
    "feat: coletor somente leitura do Ponto AtecSoft para o DP V3 (#796)",
-   "fix: estabiliza arraste por toque no teste mobile do pipeline (#797)",
-   "chore: inventario do estado real [auto] (#787)"
+   "fix: estabiliza arraste por toque no teste mobile do pipeline (#797)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

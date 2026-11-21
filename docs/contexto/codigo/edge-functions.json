@@ -1243,7 +1243,7 @@
    "nome": "external-db-bridge",
    "entrada": "supabase/functions/external-db-bridge/index.ts",
    "arquivos": 6,
-   "linhas": 1513,
+   "linhas": 1519,
    "verify_jwt": true,
    "metodos": [
     "POST"
