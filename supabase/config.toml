@@ -47,6 +47,16 @@ verify_jwt = false
 [functions.admissao-publica]
 verify_jwt = false
 
+# ingest-ponto-rep: chamada máquina-a-máquina pelo coletor do Ponto AtecSoft
+# (tools/coletor-ponto-atecsoft), instalado no PC de cada unidade. Não há
+# usuário nem sessão, então não existe JWT. Autenticação própria por token de
+# dispositivo no cabeçalho x-coletor-token, comparado por SHA-256 com
+# ponto_rep_dispositivos.token_hash (revogável por unidade), fail-closed.
+# Rate limit por IP (120/min) e por dispositivo (60/min). A empresa vem do
+# dispositivo autenticado, nunca do corpo; o contrato Zod é estrito.
+[functions.ingest-ponto-rep]
+verify_jwt = false
+
 # Webhook inbound é chamado por sistemas externos sem JWT de usuário;
 # autenticação própria via HMAC (x-hub-signature-256) com fail-closed
 # (E-030: sem secret configurado → 503, nunca aceita sem verificar).
