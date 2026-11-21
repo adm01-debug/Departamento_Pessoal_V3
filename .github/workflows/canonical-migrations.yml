@@ -219,10 +219,14 @@ jobs:
           # 44544895486 e verify run 44545027860, ambos success).
           #  - 20261121200000: concede ci_auditor ao papel da conexao, para o
           #    canonical-sql-diag.yml voltar a rodar no modo sem dados pessoais.
+          # O lote anterior (20261019235900, 20261119170000 e 20261121200000) saiu
+          # daqui porque esta no ledger: no validate run 44950842956 as duas
+          # primeiras foram puladas como ja registradas e a terceira foi aplicada
+          # no apply run 44951018325 (success).
+          # LOTE ATUAL (21/11/2026): 20261121210000 cria as 5 tabelas ponto_rep_*
+          # (entrada do relogio de ponto Henry/AtecSoft). Aditiva e idempotente.
           for migration in \
-            20261019235900_versiona_ddl_orfao_dp.sql \
-            20261119170000_onboarding_converge_modelo_b.sql \
-            20261121200000_ci_auditor_grant_set_role.sql
+            20261121210000_ponto_rep_ingestao.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -393,7 +397,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 3 &&
+              Number(r.ledger_count) === 1 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
