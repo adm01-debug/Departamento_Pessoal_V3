@@ -177,6 +177,11 @@
 | public.pix_lotes | pix_lotes_empresa_id_fkey | empresa_id | CASCADE |
 | public.plano_contas | plano_contas_empresa_id_fkey | empresa_id | CASCADE |
 | public.planos_saude | planos_saude_empresa_id_fkey | empresa_id | NO ACTION |
+| public.ponto_rep_dias | ponto_rep_dias_empresa_id_fkey | empresa_id | RESTRICT |
+| public.ponto_rep_dispositivos | ponto_rep_dispositivos_empresa_id_fkey | empresa_id | RESTRICT |
+| public.ponto_rep_funcionarios | ponto_rep_funcionarios_empresa_id_fkey | empresa_id | RESTRICT |
+| public.ponto_rep_justificativas | ponto_rep_justificativas_empresa_id_fkey | empresa_id | RESTRICT |
+| public.ponto_rep_lotes | ponto_rep_lotes_empresa_id_fkey | empresa_id | RESTRICT |
 | public.premiacoes_campanhas | premiacoes_campanhas_empresa_id_fkey | empresa_id | CASCADE |
 | public.premiacoes_cenarios_simulacao | premiacoes_cenarios_simulacao_empresa_id_fkey | empresa_id | NO ACTION |
 | public.provisoes_competencia_tributaria | provisoes_competencia_tributaria_empresa_id_fkey | empresa_id | CASCADE |

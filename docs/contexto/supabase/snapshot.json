@@ -43734,6 +43734,955 @@
         "nullable": false,
         "position": 1,
         "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "dispositivo_id",
+        "nullable": false,
+        "position": 2,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": false,
+        "position": 3,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "lote_id",
+        "nullable": true,
+        "position": 4,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "funcionario_codigo",
+        "nullable": false,
+        "position": 5,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "data",
+        "nullable": false,
+        "position": 6,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "date"
+      },
+      {
+        "comment": null,
+        "default": "'[]'::jsonb",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "marcacoes",
+        "nullable": false,
+        "position": 7,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "jsonb"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "abono",
+        "nullable": true,
+        "position": 8,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "time without time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "abono_negativo",
+        "nullable": true,
+        "position": 9,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "time without time zone"
+      },
+      {
+        "comment": null,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "folga",
+        "nullable": false,
+        "position": 10,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "neutro",
+        "nullable": false,
+        "position": 11,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "justificativa_abono",
+        "nullable": true,
+        "position": 12,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "horario_codigo",
+        "nullable": true,
+        "position": 13,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "hash_conteudo",
+        "nullable": false,
+        "position": 14,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "processado_em",
+        "nullable": true,
+        "position": 15,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "erro_processamento",
+        "nullable": true,
+        "position": 16,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "created_at",
+        "nullable": false,
+        "position": 17,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 18,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "id",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": false,
+        "position": 2,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "nome",
+        "nullable": false,
+        "position": 3,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "unidade",
+        "nullable": false,
+        "position": 4,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "token_hash",
+        "nullable": false,
+        "position": 5,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "token_prefixo",
+        "nullable": false,
+        "position": 6,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "ativo",
+        "nullable": false,
+        "position": 7,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "revogado_em",
+        "nullable": true,
+        "position": 8,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "ultimo_contato_em",
+        "nullable": true,
+        "position": 9,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "ultima_marcacao_em",
+        "nullable": true,
+        "position": 10,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "versao_coletor",
+        "nullable": true,
+        "position": 11,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "criado_por",
+        "nullable": true,
+        "position": 12,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "created_at",
+        "nullable": false,
+        "position": 13,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 14,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "id",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "dispositivo_id",
+        "nullable": false,
+        "position": 2,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": false,
+        "position": 3,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "codigo",
+        "nullable": false,
+        "position": 4,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "nome",
+        "nullable": true,
+        "position": 5,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "matricula",
+        "nullable": true,
+        "position": 6,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "cpf",
+        "nullable": true,
+        "position": 7,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "pis",
+        "nullable": true,
+        "position": 8,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "situacao",
+        "nullable": true,
+        "position": 9,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_codigo",
+        "nullable": true,
+        "position": 10,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "horario_codigo",
+        "nullable": true,
+        "position": 11,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "data_admissao",
+        "nullable": true,
+        "position": 12,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "date"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "data_desligamento",
+        "nullable": true,
+        "position": 13,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "date"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "colaborador_id",
+        "nullable": true,
+        "position": 14,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "vinculo_metodo",
+        "nullable": true,
+        "position": 15,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "vinculado_em",
+        "nullable": true,
+        "position": 16,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "hash_conteudo",
+        "nullable": true,
+        "position": 17,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "created_at",
+        "nullable": false,
+        "position": 18,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 19,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "id",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "dispositivo_id",
+        "nullable": false,
+        "position": 2,
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": false,
+        "position": 3,
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "codigo",
+        "nullable": false,
+        "position": 4,
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "nome",
+        "nullable": false,
+        "position": 5,
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "considera_normal",
+        "nullable": false,
+        "position": 6,
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "considera_falta",
+        "nullable": false,
+        "position": 7,
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "tipo_dia",
+        "nullable": true,
+        "position": 8,
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "created_at",
+        "nullable": false,
+        "position": 9,
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 10,
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "id",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "dispositivo_id",
+        "nullable": false,
+        "position": 2,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": false,
+        "position": 3,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "recebido_em",
+        "nullable": false,
+        "position": 4,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "periodo_inicio",
+        "nullable": true,
+        "position": 5,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "date"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "periodo_fim",
+        "nullable": true,
+        "position": 6,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "date"
+      },
+      {
+        "comment": null,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "total_funcionarios",
+        "nullable": false,
+        "position": 7,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "total_dias",
+        "nullable": false,
+        "position": 8,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "dias_alterados",
+        "nullable": false,
+        "position": 9,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": "'recebido'::text",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "status",
+        "nullable": false,
+        "position": 10,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "mensagem_erro",
+        "nullable": true,
+        "position": 11,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "hash_sha256",
+        "nullable": true,
+        "position": 12,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "id",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
         "table": "ponto_seguranca_blacklist",
         "type": "uuid"
       },
@@ -81731,6 +82680,475 @@
       },
       {
         "columns": [
+          "dispositivo_id",
+          "funcionario_codigo",
+          "data"
+        ],
+        "deferrable": false,
+        "definition": "UNIQUE (dispositivo_id, funcionario_codigo, data)",
+        "name": "ponto_rep_dias_dispositivo_func_data_key",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "UNIQUE",
+        "validated": true
+      },
+      {
+        "columns": [
+          "dispositivo_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (dispositivo_id) REFERENCES ponto_rep_dispositivos(id) ON DELETE RESTRICT",
+        "name": "ponto_rep_dias_dispositivo_id_fkey",
+        "on_delete": "RESTRICT",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "ponto_rep_dispositivos",
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (empresa_id) REFERENCES empresas(id) ON DELETE RESTRICT",
+        "name": "ponto_rep_dias_empresa_id_fkey",
+        "on_delete": "RESTRICT",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "empresas",
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "lote_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (lote_id) REFERENCES ponto_rep_lotes(id) ON DELETE SET NULL",
+        "name": "ponto_rep_dias_lote_id_fkey",
+        "on_delete": "SET NULL",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "ponto_rep_lotes",
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "marcacoes"
+        ],
+        "deferrable": false,
+        "definition": "CHECK (jsonb_typeof(marcacoes) = 'array'::text)",
+        "name": "ponto_rep_dias_marcacoes_array",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "CHECK",
+        "validated": true
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (id)",
+        "name": "ponto_rep_dias_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (empresa_id) REFERENCES empresas(id) ON DELETE RESTRICT",
+        "name": "ponto_rep_dispositivos_empresa_id_fkey",
+        "on_delete": "RESTRICT",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "empresas",
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "empresa_id",
+          "unidade"
+        ],
+        "deferrable": false,
+        "definition": "UNIQUE (empresa_id, unidade)",
+        "name": "ponto_rep_dispositivos_empresa_unidade_key",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "UNIQUE",
+        "validated": true
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (id)",
+        "name": "ponto_rep_dispositivos_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "token_hash"
+        ],
+        "deferrable": false,
+        "definition": "CHECK (token_hash ~ '^[0-9a-f]{64}$'::text)",
+        "name": "ponto_rep_dispositivos_token_hash_fmt",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "CHECK",
+        "validated": true
+      },
+      {
+        "columns": [
+          "token_hash"
+        ],
+        "deferrable": false,
+        "definition": "UNIQUE (token_hash)",
+        "name": "ponto_rep_dispositivos_token_hash_key",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "type": "UNIQUE",
+        "validated": true
+      },
+      {
+        "columns": [
+          "colaborador_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (colaborador_id) REFERENCES colaboradores(id) ON DELETE SET NULL",
+        "name": "ponto_rep_funcionarios_colaborador_id_fkey",
+        "on_delete": "SET NULL",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "colaboradores",
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "dispositivo_id",
+          "codigo"
+        ],
+        "deferrable": false,
+        "definition": "UNIQUE (dispositivo_id, codigo)",
+        "name": "ponto_rep_funcionarios_dispositivo_codigo_key",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "UNIQUE",
+        "validated": true
+      },
+      {
+        "columns": [
+          "dispositivo_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (dispositivo_id) REFERENCES ponto_rep_dispositivos(id) ON DELETE RESTRICT",
+        "name": "ponto_rep_funcionarios_dispositivo_id_fkey",
+        "on_delete": "RESTRICT",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "ponto_rep_dispositivos",
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (empresa_id) REFERENCES empresas(id) ON DELETE RESTRICT",
+        "name": "ponto_rep_funcionarios_empresa_id_fkey",
+        "on_delete": "RESTRICT",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "empresas",
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (id)",
+        "name": "ponto_rep_funcionarios_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "vinculo_metodo"
+        ],
+        "deferrable": false,
+        "definition": "CHECK (vinculo_metodo IS NULL OR (vinculo_metodo = ANY (ARRAY['cpf'::text, 'pis'::text, 'matricula'::text, 'manual'::text])))",
+        "name": "ponto_rep_funcionarios_vinculo_metodo_check",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "CHECK",
+        "validated": true
+      },
+      {
+        "columns": [
+          "dispositivo_id",
+          "codigo"
+        ],
+        "deferrable": false,
+        "definition": "UNIQUE (dispositivo_id, codigo)",
+        "name": "ponto_rep_justificativas_dispositivo_codigo_key",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "type": "UNIQUE",
+        "validated": true
+      },
+      {
+        "columns": [
+          "dispositivo_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (dispositivo_id) REFERENCES ponto_rep_dispositivos(id) ON DELETE RESTRICT",
+        "name": "ponto_rep_justificativas_dispositivo_id_fkey",
+        "on_delete": "RESTRICT",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "ponto_rep_dispositivos",
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (empresa_id) REFERENCES empresas(id) ON DELETE RESTRICT",
+        "name": "ponto_rep_justificativas_empresa_id_fkey",
+        "on_delete": "RESTRICT",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "empresas",
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (id)",
+        "name": "ponto_rep_justificativas_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "tipo_dia"
+        ],
+        "deferrable": false,
+        "definition": "CHECK (tipo_dia IS NULL OR (tipo_dia = ANY (ARRAY['normal'::text, 'feriado'::text, 'compensado'::text, 'folga'::text, 'falta'::text, 'atestado'::text, 'ferias'::text, 'licenca'::text])))",
+        "name": "ponto_rep_justificativas_tipo_dia_check",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "type": "CHECK",
+        "validated": true
+      },
+      {
+        "columns": [
+          "dispositivo_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (dispositivo_id) REFERENCES ponto_rep_dispositivos(id) ON DELETE RESTRICT",
+        "name": "ponto_rep_lotes_dispositivo_id_fkey",
+        "on_delete": "RESTRICT",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "ponto_rep_dispositivos",
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (empresa_id) REFERENCES empresas(id) ON DELETE RESTRICT",
+        "name": "ponto_rep_lotes_empresa_id_fkey",
+        "on_delete": "RESTRICT",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "empresas",
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (id)",
+        "name": "ponto_rep_lotes_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "status"
+        ],
+        "deferrable": false,
+        "definition": "CHECK (status = ANY (ARRAY['recebido'::text, 'processado'::text, 'parcial'::text, 'erro'::text]))",
+        "name": "ponto_rep_lotes_status_check",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "CHECK",
+        "validated": true
+      },
+      {
+        "columns": [
           "colaborador_id"
         ],
         "deferrable": false,
@@ -91310,9 +92728,13 @@
             {
               "file": "src/pages/AdminPontoDivergenciasPage.tsx",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -96924,7 +98346,7 @@
               "hits": 6
             }
           ],
-          "code_total_files": 76,
+          "code_total_files": 78,
           "cron": [],
           "db": [
             "public._is_admin_bypass",
@@ -99410,9 +100832,17 @@
             {
               "file": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
+              "hits": 5
+            },
+            {
+              "file": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql",
+              "hits": 3
             }
           ],
-          "code_total_files": 22,
+          "code_total_files": 24,
           "cron": [],
           "db": [
             "public.clinicas_proximas",
@@ -99871,9 +101301,13 @@
             {
               "file": "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.verify.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 17,
+          "code_total_files": 18,
           "cron": [],
           "db": [
             "public.bloquear_aprovacao_ponto_sem_rh",
@@ -100085,7 +101519,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 32,
+          "code_total_files": 33,
           "cron": [],
           "db": [
             "public.admin_definir_pin_quiosque",
@@ -100519,9 +101953,13 @@
             {
               "file": "supabase/migrations/20260924240000_p0_fix_processar_ajuste_search_path.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 6,
+          "code_total_files": 7,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -102168,9 +103606,13 @@
             {
               "file": "supabase/migrations/20260924141500_p0_role_gate_bancarias_folha_ponto_logs.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 4,
+          "code_total_files": 5,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -103482,9 +104924,13 @@
             {
               "file": "supabase/migrations/20261024000000_qa_r4_fixes.sql",
               "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 11,
+          "code_total_files": 12,
           "cron": [],
           "db": [
             "public.gerar_canonical_espelho_ponto",
@@ -106423,7 +107869,92 @@
       }
     ],
     "grants": {
-      "columns": [],
+      "columns": [
+        {
+          "column": "ativo",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_dispositivos"
+        },
+        {
+          "column": "created_at",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_dispositivos"
+        },
+        {
+          "column": "empresa_id",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_dispositivos"
+        },
+        {
+          "column": "id",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_dispositivos"
+        },
+        {
+          "column": "nome",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_dispositivos"
+        },
+        {
+          "column": "revogado_em",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_dispositivos"
+        },
+        {
+          "column": "token_prefixo",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_dispositivos"
+        },
+        {
+          "column": "ultima_marcacao_em",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_dispositivos"
+        },
+        {
+          "column": "ultimo_contato_em",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_dispositivos"
+        },
+        {
+          "column": "unidade",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_dispositivos"
+        },
+        {
+          "column": "updated_at",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_dispositivos"
+        },
+        {
+          "column": "versao_coletor",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_dispositivos"
+        }
+      ],
       "default_privileges": [
         {
           "acl": [
@@ -113501,6 +115032,90 @@
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "ponto_regras_aprovacao"
+        },
+        {
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_dias"
+        },
+        {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_dias"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "ponto_rep_dias"
+        },
+        {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_dispositivos"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "ponto_rep_dispositivos"
+        },
+        {
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_justificativas"
+        },
+        {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_justificativas"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "ponto_rep_justificativas"
+        },
+        {
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_lotes"
+        },
+        {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_lotes"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "ponto_rep_lotes"
         },
         {
           "grantee": "anon",
@@ -130934,6 +132549,238 @@
       },
       {
         "columns": [
+          "empresa_id",
+          "data"
+        ],
+        "definition": "CREATE INDEX idx_ponto_rep_dias_empresa_data ON public.ponto_rep_dias USING btree (empresa_id, data)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_ponto_rep_dias_empresa_data",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_dias"
+      },
+      {
+        "columns": [
+          "dispositivo_id",
+          "data"
+        ],
+        "definition": "CREATE INDEX idx_ponto_rep_dias_pendentes ON public.ponto_rep_dias USING btree (dispositivo_id, data) WHERE (processado_em IS NULL)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_ponto_rep_dias_pendentes",
+        "predicate": "(processado_em IS NULL)",
+        "schema": "public",
+        "table": "ponto_rep_dias"
+      },
+      {
+        "columns": [
+          "dispositivo_id",
+          "funcionario_codigo",
+          "data"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_rep_dias_dispositivo_func_data_key ON public.ponto_rep_dias USING btree (dispositivo_id, funcionario_codigo, data)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_rep_dias_dispositivo_func_data_key",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_dias"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_rep_dias_pkey ON public.ponto_rep_dias USING btree (id)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_rep_dias_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_dias"
+      },
+      {
+        "columns": [
+          "empresa_id",
+          "unidade"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_rep_dispositivos_empresa_unidade_key ON public.ponto_rep_dispositivos USING btree (empresa_id, unidade)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_rep_dispositivos_empresa_unidade_key",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_rep_dispositivos_pkey ON public.ponto_rep_dispositivos USING btree (id)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_rep_dispositivos_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos"
+      },
+      {
+        "columns": [
+          "token_hash"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_rep_dispositivos_token_hash_key ON public.ponto_rep_dispositivos USING btree (token_hash)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_rep_dispositivos_token_hash_key",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_dispositivos"
+      },
+      {
+        "columns": [
+          "colaborador_id"
+        ],
+        "definition": "CREATE INDEX idx_ponto_rep_funcionarios_colaborador ON public.ponto_rep_funcionarios USING btree (colaborador_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_ponto_rep_funcionarios_colaborador",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios"
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "definition": "CREATE INDEX idx_ponto_rep_funcionarios_empresa ON public.ponto_rep_funcionarios USING btree (empresa_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_ponto_rep_funcionarios_empresa",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios"
+      },
+      {
+        "columns": [
+          "dispositivo_id",
+          "codigo"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_rep_funcionarios_dispositivo_codigo_key ON public.ponto_rep_funcionarios USING btree (dispositivo_id, codigo)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_rep_funcionarios_dispositivo_codigo_key",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_rep_funcionarios_pkey ON public.ponto_rep_funcionarios USING btree (id)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_rep_funcionarios_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios"
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "definition": "CREATE INDEX idx_ponto_rep_justificativas_empresa ON public.ponto_rep_justificativas USING btree (empresa_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_ponto_rep_justificativas_empresa",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_justificativas"
+      },
+      {
+        "columns": [
+          "dispositivo_id",
+          "codigo"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_rep_justificativas_dispositivo_codigo_key ON public.ponto_rep_justificativas USING btree (dispositivo_id, codigo)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_rep_justificativas_dispositivo_codigo_key",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_justificativas"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_rep_justificativas_pkey ON public.ponto_rep_justificativas USING btree (id)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_rep_justificativas_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_justificativas"
+      },
+      {
+        "columns": [
+          "dispositivo_id",
+          "recebido_em"
+        ],
+        "definition": "CREATE INDEX idx_ponto_rep_lotes_dispositivo_recebido ON public.ponto_rep_lotes USING btree (dispositivo_id, recebido_em DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_ponto_rep_lotes_dispositivo_recebido",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_lotes"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_rep_lotes_pkey ON public.ponto_rep_lotes USING btree (id)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_rep_lotes_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_lotes"
+      },
+      {
+        "columns": [
           "colaborador_id"
         ],
         "definition": "CREATE INDEX idx_ponto_seguranca_blacklist_colaborador_id ON public.ponto_seguranca_blacklist USING btree (colaborador_id)",
@@ -136176,6 +138023,18 @@
         "severity": "BAIXA"
       },
       {
+        "code": "fk_without_index",
+        "detail": "FK sem índice nas colunas ['lote_id']: joins e DELETE/UPDATE na tabela pai ficam lentos.",
+        "object": "public.ponto_rep_dias.ponto_rep_dias_lote_id_fkey",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "fk_without_index",
+        "detail": "FK sem índice nas colunas ['empresa_id']: joins e DELETE/UPDATE na tabela pai ficam lentos.",
+        "object": "public.ponto_rep_lotes.ponto_rep_lotes_empresa_id_fkey",
+        "severity": "BAIXA"
+      },
+      {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.admissao_tokens.Tenant scoped admissao_tokens",
@@ -137967,6 +139826,36 @@
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.ponto_regras_aprovacao.Ponto regras scoped by empresa",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.ponto_rep_dias.ponto_rep_dias_select_rh",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.ponto_rep_dispositivos.ponto_rep_dispositivos_select_rh",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.ponto_rep_funcionarios.ponto_rep_funcionarios_select_rh",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.ponto_rep_justificativas.ponto_rep_justificativas_select_rh",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.ponto_rep_lotes.ponto_rep_lotes_select_rh",
         "severity": "BAIXA"
       },
       {
@@ -144253,6 +146142,66 @@
         "table": "ponto_regras_aprovacao",
         "using": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))",
         "with_check": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "ponto_rep_dias_select_rh",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "ponto_rep_dias",
+        "using": "(pertence_a_empresa(empresa_id) AND (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'rh'::app_role)))",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "name": "ponto_rep_dispositivos_select_rh",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "ponto_rep_dispositivos",
+        "using": "(pertence_a_empresa(empresa_id) AND (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'rh'::app_role)))",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "name": "ponto_rep_funcionarios_select_rh",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "using": "(pertence_a_empresa(empresa_id) AND (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'rh'::app_role)))",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "name": "ponto_rep_justificativas_select_rh",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "ponto_rep_justificativas",
+        "using": "(pertence_a_empresa(empresa_id) AND (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'rh'::app_role)))",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "name": "ponto_rep_lotes_select_rh",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "using": "(pertence_a_empresa(empresa_id) AND (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'rh'::app_role)))",
+        "with_check": null
       },
       {
         "cmd": "ALL",
@@ -151735,6 +153684,81 @@
         "is_partition": false,
         "kind": "table",
         "name": "ponto_regras_aprovacao",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
+        "comment": "Cópia fiel do cartão ponto diário do AtecSoft (tabela CP).",
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "ponto_rep_dias",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
+        "comment": "Coletores do relógio de ponto, um por unidade. Token só em hash.",
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "ponto_rep_dispositivos",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
+        "comment": "Cadastro de funcionários vindo do AtecSoft e vínculo com colaboradores.",
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "ponto_rep_funcionarios",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
+        "comment": "De-para das justificativas do AtecSoft para o tipo de dia do DP.",
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "ponto_rep_justificativas",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
+        "comment": "Cada envio recebido de um coletor do relógio de ponto.",
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "ponto_rep_lotes",
         "owner": "postgres",
         "parent": null,
         "partition_bound": null,

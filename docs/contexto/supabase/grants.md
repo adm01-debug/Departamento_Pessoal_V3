@@ -1078,6 +1078,20 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.ponto_regras_aprovacao | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.ponto_regras_aprovacao | dp_mcp_role | SELECT |
 | public.ponto_regras_aprovacao | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.ponto_rep_dias | authenticated | SELECT |
+| public.ponto_rep_dias | dp_mcp_role | SELECT |
+| public.ponto_rep_dias | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.ponto_rep_dispositivos | dp_mcp_role | SELECT |
+| public.ponto_rep_dispositivos | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.ponto_rep_funcionarios | authenticated | SELECT |
+| public.ponto_rep_funcionarios | dp_mcp_role | SELECT |
+| public.ponto_rep_funcionarios | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.ponto_rep_justificativas | authenticated | SELECT |
+| public.ponto_rep_justificativas | dp_mcp_role | SELECT |
+| public.ponto_rep_justificativas | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.ponto_rep_lotes | authenticated | SELECT |
+| public.ponto_rep_lotes | dp_mcp_role | SELECT |
+| public.ponto_rep_lotes | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.ponto_seguranca_blacklist | anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.ponto_seguranca_blacklist | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.ponto_seguranca_blacklist | dp_mcp_role | SELECT |
@@ -1693,7 +1707,20 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 
 ## Colunas (grants parciais)
 
-_nenhum_
+| coluna | role | privilégios |
+|---|---|---|
+| public.ponto_rep_dispositivos.ativo | authenticated | SELECT |
+| public.ponto_rep_dispositivos.created_at | authenticated | SELECT |
+| public.ponto_rep_dispositivos.empresa_id | authenticated | SELECT |
+| public.ponto_rep_dispositivos.id | authenticated | SELECT |
+| public.ponto_rep_dispositivos.nome | authenticated | SELECT |
+| public.ponto_rep_dispositivos.revogado_em | authenticated | SELECT |
+| public.ponto_rep_dispositivos.token_prefixo | authenticated | SELECT |
+| public.ponto_rep_dispositivos.ultima_marcacao_em | authenticated | SELECT |
+| public.ponto_rep_dispositivos.ultimo_contato_em | authenticated | SELECT |
+| public.ponto_rep_dispositivos.unidade | authenticated | SELECT |
+| public.ponto_rep_dispositivos.updated_at | authenticated | SELECT |
+| public.ponto_rep_dispositivos.versao_coletor | authenticated | SELECT |
 
 
 ## Sequences (roles da API)

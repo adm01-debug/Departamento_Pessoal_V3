@@ -400,6 +400,17 @@
 | public.ponto_auditoria_fraude | batida_id | public.batidas_ponto | id | NO ACTION | NO ACTION |
 | public.ponto_espelhos_assinados | colaborador_id | public.colaboradores | id | NO ACTION | NO ACTION |
 | public.ponto_espelhos_revogacoes | espelho_id | public.ponto_espelhos_assinados | id | NO ACTION | NO ACTION |
+| public.ponto_rep_dias | dispositivo_id | public.ponto_rep_dispositivos | id | RESTRICT | NO ACTION |
+| public.ponto_rep_dias | empresa_id | public.empresas | id | RESTRICT | NO ACTION |
+| public.ponto_rep_dias | lote_id | public.ponto_rep_lotes | id | SET NULL | NO ACTION |
+| public.ponto_rep_dispositivos | empresa_id | public.empresas | id | RESTRICT | NO ACTION |
+| public.ponto_rep_funcionarios | colaborador_id | public.colaboradores | id | SET NULL | NO ACTION |
+| public.ponto_rep_funcionarios | dispositivo_id | public.ponto_rep_dispositivos | id | RESTRICT | NO ACTION |
+| public.ponto_rep_funcionarios | empresa_id | public.empresas | id | RESTRICT | NO ACTION |
+| public.ponto_rep_justificativas | dispositivo_id | public.ponto_rep_dispositivos | id | RESTRICT | NO ACTION |
+| public.ponto_rep_justificativas | empresa_id | public.empresas | id | RESTRICT | NO ACTION |
+| public.ponto_rep_lotes | dispositivo_id | public.ponto_rep_dispositivos | id | RESTRICT | NO ACTION |
+| public.ponto_rep_lotes | empresa_id | public.empresas | id | RESTRICT | NO ACTION |
 | public.ponto_seguranca_blacklist | colaborador_id | public.colaboradores | id | NO ACTION | NO ACTION |
 | public.portal_notificacoes_settings | user_id | auth.users | id | CASCADE | NO ACTION |
 | public.premiacoes_alertas | user_id | auth.users | id | SET NULL | NO ACTION |
