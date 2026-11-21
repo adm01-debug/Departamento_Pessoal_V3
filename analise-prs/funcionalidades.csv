@@ -5,7 +5,7 @@ F-03,Rescisao de Contrato,rescisao,IMPLEMENTADO,VERIFICADO_INFRA,"Tabelas histor
 F-04,Calculo de Folha,folha,IMPLEMENTADO,VERIFICADO,"Folhas reais 2026-05/06 paga e 2026-07 calculada (12 colaboradores); itens_folha + RLS",,
 F-05,Fechamento de Folha,folha,IMPLEMENTADO,VERIFICADO,"Folhas com status paga/calculada no banco vivo; edge fechar-folha v16 ACTIVE; 3 paga + 1 calculada confirmadas",,
 F-06,Emissao de Holerite PDF,holerite,IMPLEMENTADO,VERIFICADO,"Tabela holerites + holerite_distribuicoes; edges gerar-holerite/distribuir-holerites ACTIVE",,
-F-07,Envio de Eventos eSocial,esocial,IMPLEMENTADO,VERIFICADO,"Codigo implementa 19 eventos (S-1000..S-2400): gerador XML + validadores periodicos/nao-periodicos/rubrica/SST + edge enviar-esocial v16 ACTIVE; 0 transmissoes em prod (uso inicial)",317
+F-07,Envio de Eventos eSocial,esocial,IMPLEMENTADO,VERIFICADO_INFRA,"Codigo implementa 19 eventos (S-1000..S-2400) + edge enviar-esocial v16 ACTIVE; 0 eventos/0 lotes/0 certificados digitais em prod; edge recusa envio produtivo (503) sem SOAP/ICP-Brasil - requer certificado A1/A3 do cliente + endpoint homologado",317
 F-08,Login Gov.BR,auth,IMPLEMENTADO,VERIFICADO,"Edge auth-gov-br v16 ACTIVE; login anonimo bloqueado",317
 F-09,Ferias,ferias,IMPLEMENTADO,VERIFICADO,"QA_FERIAS_V31 selo 10/10; OJ-123 D-2 no canonico",,
 F-10,Afastamentos,afastamentos,IMPLEMENTADO,VERIFICADO,"Tabela afastamentos + config_afastamentos + motivos_afastamento + RLS",,
