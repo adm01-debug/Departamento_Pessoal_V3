@@ -1,6 +1,7 @@
 # Plano — Integração do ponto Henry / Ponto AtecSoft com o DP V3
 
-> Criado em 21/11/2026. Plano de execução em 100 etapas, com critério de conclusão por etapa.
+> Criado em 21/11/2026. Plano de execução em 120 etapas, com critério de conclusão por etapa.
+> Revisão 2 (21/11/2026): o dono decidiu integração de mão dupla — ver D1 e Fase 9.
 > Marque `[x]` no mesmo PR que conclui a etapa. Este arquivo é plano, não regra: `AGENTS.md` vence.
 
 ## 1. Objetivo
@@ -10,8 +11,10 @@ recolhe as batidas, e no fim do mês o DP imprime o espelho, colhe assinaturas e
 contabilidade apurar horas extras, atestados e faltas.
 
 Meta: as batidas do relógio aparecem sozinhas no DP V3, o espelho é conferido e assinado dentro do sistema e a
-contabilidade recebe o fechamento sem redigitação. **O relógio e o AtecSoft continuam sendo o registro legal e
-não são alterados**: o DP V3 só lê.
+contabilidade recebe o fechamento sem redigitação. **O DP V3 passa a ser a única tela que as pessoas usam**: o
+AtecSoft continua instalado e rodando em segundo plano como registro legal, o DP V3 lê as batidas dele e grava
+nele os lançamentos feitos no nosso sistema (atestado, férias, afastamento, folga, abono, cadastro). O horário
+de uma batida original do relógio nunca é alterado.
 
 ## 2. O que foi verificado (21/11/2026)
 
@@ -37,10 +40,10 @@ banco de produção do DP V3 (só o código foi lido); modelo e firmware dos rel
 
 ```
 Relógio Henry ──rede──> Ponto AtecSoft (PC da unidade) ──> PONTO_ATECSOFT.FDB
-                                                              │ somente leitura
+                                                              │ leitura (batidas) ▲ escrita (lançamentos)
                                                      Coletor Windows (1 por unidade)
-                                                              │ HTTPS + token da unidade
-                                              Edge Function `ingest-ponto-rep` (DP V3)
+                                                              │ HTTPS + token da unidade; o PC sempre inicia
+                                              Edge Function `ingest-ponto-rep` (DP V3) + fila de comandos
                                                               │
                               staging `ponto_rep_*` ──> `batidas_ponto` / `registros_ponto`
                                                               │
@@ -49,23 +52,25 @@ Relógio Henry ──rede──> Ponto AtecSoft (PC da unidade) ──> PONTO_AT
 
 Princípios:
 
-1. Coletor só lê o Firebird (transação read-only). Nunca escreve no banco do AtecSoft.
+1. Leitura em transação read-only. Escrita só pela fila de comandos da Fase 9, só nos campos mapeados, com
+   backup antes e conferência depois. Nunca altera nem apaga horário de batida original do relógio.
 2. Nenhuma chave mestra fora do Supabase: o PC guarda só um token por unidade, revogável, que serve apenas para
    enviar ponto.
 3. Idempotente: reenviar o mesmo dia não duplica; dia alterado no AtecSoft atualiza o DP V3.
 4. Vínculo de pessoa por CPF, depois PIS, depois matrícula. Nunca por nome.
-5. Batida vinda do relógio não é editável no DP V3; correção nasce no AtecSoft e chega na próxima coleta.
+5. Batida original do relógio não é editável. Lançamentos nascem no DP V3 e são gravados no AtecSoft pelo coletor.
 6. DDL só pelo `canonical-migrations.yml`; Edge Function só pelo `canonical-edge-functions.yml`.
 
 ## 4. Decisões do dono (bloqueiam as etapas indicadas)
 
 | # | Decisão | Bloqueia |
 | --- | --- | --- |
-| D1 | Fonte da verdade: ler o banco do AtecSoft (recomendado) ou só o arquivo AFD | 19 em diante |
-| D2 | Colaborador continua podendo bater ponto pelo app/quiosque do DP V3 ou só pelo relógio | 66, 80 |
-| D3 | Assinatura do espelho passa a ser eletrônica no DP V3 ou o papel continua em paralelo | 83–86 |
-| D4 | Qual sistema a contabilidade usa (define o layout de exportação) | 87–89 |
-| D5 | Quem instala o coletor nos PCs da matriz e da filial | 91–93 |
+| D1 | **Decidido em 21/11/2026:** mão dupla com o banco do AtecSoft. O DP V3 lê as batidas e grava de volta atestado, férias, afastamento/licenças, folga/abono e cadastro (admissão/desligamento). As pessoas usam só o DP V3 | — |
+| D6 | Batida esquecida: o DP pode incluir pelo DP V3 e ela é gravada no AtecSoft marcada como manual, com motivo? | etapa nova após a 11 |
+| D2 | **Decidido em 21/11/2026:** quem bate no relógio Henry bate só no relógio; app e quiosque do DP V3 não registram batida para essas pessoas | — |
+| D3 | **Decidido em 21/11/2026:** a assinatura do espelho continua no papel; o DP V3 mostra, calcula e imprime | — |
+| D4 | **Decidido em 21/11/2026:** não há layout de sistema contábil a seguir. O fechamento, a documentação e o processo ficam nos sistemas próprios (DP V3 e Promo_Finance_V2); a contabilidade recebe o relatório do DP V3 quando for o caso | — |
+| D5 | **Decidido em 21/11/2026:** o técnico de TI da empresa instala o coletor nos dois PCs | — |
 
 ## 5. Legenda
 
@@ -76,11 +81,11 @@ Princípios:
 
 ### Fase 0 — Decisões e insumos (1–8)
 
-- [ ] **1. Registrar D1 (fonte da verdade).** Pronto quando: decisão escrita na seção 4 deste arquivo.
-- [ ] **2. Registrar D2 (app/quiosque convive com o relógio).** Pronto quando: decisão escrita na seção 4.
-- [ ] **3. Registrar D3 (assinatura eletrônica).** Pronto quando: decisão escrita na seção 4.
-- [ ] **4. Registrar D4 (sistema da contabilidade).** Pronto quando: nome do sistema e layout escritos na seção 4.
-- [ ] **5. Registrar D5 (responsável pela instalação).** Pronto quando: nome e unidade escritos na seção 4.
+- [x] **1. Registrar D1 (fonte da verdade).** Pronto quando: decisão escrita na seção 4 deste arquivo.
+- [x] **2. Registrar D2 (app/quiosque convive com o relógio).** Pronto quando: decisão escrita na seção 4.
+- [x] **3. Registrar D3 (assinatura eletrônica).** Pronto quando: decisão escrita na seção 4.
+- [x] **4. Registrar D4 (sistema da contabilidade).** Pronto quando: nome do sistema e layout escritos na seção 4.
+- [x] **5. Registrar D5 (responsável pela instalação).** Pronto quando: nome e unidade escritos na seção 4.
 - [ ] **6. Receber cópia do banco real da matriz.** Arquivo `C:\Ponto AtecSoft\DADOS\PONTO_ATECSOFT.FDB`. Pronto quando: arquivo abre no `isql` e `CP` tem linhas.
 - [ ] **7. Receber cópia do banco real da filial.** Pronto quando: idem etapa 6.
 - [ ] **8. Guardar os bancos fora do repositório.** Contêm CPF e PIS. Pronto quando: `git status` limpo e os arquivos só existem em ambiente de análise descartável.
@@ -156,7 +161,7 @@ Princípios:
 - [ ] **63. Classificar entrada/saída pela posição.** `E1`=entrada, `S1`=saída… vindo do AtecSoft; não alternar por ordem de chegada. Pronto quando: teste com dia de 6 pares verde.
 - [ ] **64. Tratar virada de dia.** Usar `DATA_E*/DATA_S*` para turno que passa da meia-noite. Pronto quando: teste com saída no dia seguinte verde.
 - [ ] **65. Marcar batida inserida à mão no AtecSoft.** Conforme etapa 11, com o motivo de `OBS_*`. Pronto quando: aparece identificada no espelho.
-- [ ] **66. Regra de convivência com o app.** Conforme D2: se o relógio é a única fonte, o app deixa de gravar batida para quem tem vínculo. Pronto quando: regra implementada e testada.
+- [ ] **66. Regra de convivência com o app.** D2: colaborador vinculado ao relógio não registra batida pelo app nem pelo quiosque. Pronto quando: tentativa pela tela e pela API é recusada em teste.
 - [ ] **67. Alimentar `registros_ponto`.** Consolidar o dia (entradas, saídas, total trabalhado). Pronto quando: total bate com o cartão ponto do AtecSoft em 20 dias de amostra.
 - [ ] **68. Levar justificativas.** Atestado, férias, folga e licença viram ocorrência no DP V3 conforme etapa 13. Pronto quando: dia justificado não aparece como falta.
 - [ ] **69. Levar abonos.** `ABONO` e `ABONO_NEG` entram no cálculo do dia. Pronto quando: teste verde.
@@ -180,11 +185,11 @@ Princípios:
 ### Fase 7 — Fechamento mensal (83–90)
 
 - [ ] **83. Espelho mensal com batidas do relógio.** `vw_espelho_ponto_mensal` reflete a origem relógio. Pronto quando: espelho de um colaborador confere com o impresso do AtecSoft.
-- [ ] **84. Fluxo de assinatura eletrônica.** Conforme D3: DP libera o mês, colaborador assina no portal. Pronto quando: assinatura registrada em `ponto_espelhos_assinados` em homologação.
-- [ ] **85. Painel de pendências de assinatura.** Quem assinou, quem falta, lembrete. Pronto quando: lembrete enviado em teste.
+- [ ] **84. Imprimir o espelho para assinatura em papel.** D3: o DP gera pelo DP V3 o espelho do mês, individual ou em lote. Pronto quando: PDF de um mês real confere com o impresso do AtecSoft.
+- [ ] **85. Controle de espelhos assinados.** O DP marca quem já devolveu o papel assinado e pode anexar a digitalização. Pronto quando: lista de pendentes do mês correta em teste.
 - [ ] **86. Travar o mês após o fechamento.** `periodos_ponto` fechado bloqueia reprocessamento (etapa 43). Pronto quando: lote de mês fechado gera alerta e não altera nada.
 - [ ] **87. Relatório de fechamento para a contabilidade.** Por colaborador: normais, extras 50/100, noturnas, faltas, atrasos, atestados, banco de horas. Pronto quando: PDF e planilha gerados de um mês real.
-- [ ] **88. Exportação no layout do sistema contábil.** Conforme D4. Pronto quando: arquivo importado com sucesso pela contabilidade em teste.
+- [ ] **88. Levar o fechamento do ponto para a folha do DP V3.** D4: sem layout externo; horas extras, faltas, atrasos e adicional noturno do mês fechado entram na folha pelo `vw_folha_ponto_mensal`. Pronto quando: folha de um mês real usa os totais do ponto sem digitação. O que o Promo_Finance_V2 precisa receber está NÃO VERIFICADO (repositório não lido).
 - [ ] **89. Envio do fechamento.** Botão que entrega o pacote (relatório + arquivo) ao contato da contabilidade. Pronto quando: envio registrado com data e destinatário.
 - [ ] **90. Conferência cruzada com AFD.** Importar o AFD do relógio e reconciliar com as batidas de origem relógio. Pronto quando: divergência zero ou explicada no mês de teste.
 
@@ -199,13 +204,39 @@ Princípios:
 - [ ] **97. Runbook de operação.** `infra/runbooks/PONTO_REP.md`: coletor parado, token vazado, PC trocado, relógio trocado (R8 por estar em `infra/`). Pronto quando: PR aprovada pelo dono.
 - [ ] **98. Guia do DP.** Reescrever `docs/guides/ponto-eletronico.md` (hoje genérico) com o fluxo real. Pronto quando: PR mergeada.
 - [ ] **99. Rotação do token.** Procedimento testado de trocar o token de uma unidade sem perder batida. Pronto quando: rotação feita em homologação com fila preservada.
-- [ ] **100. Encerramento.** Marcar tudo neste arquivo, registrar o que ficou de fora e arquivar os protótipos antigos. Pronto quando: 100/100 ou pendência justificada.
+- [ ] **100. Encerramento.** Marcar tudo neste arquivo, registrar o que ficou de fora e arquivar os protótipos antigos. Pronto quando: todas as etapas marcadas ou pendência justificada.
+
+### Fase 9 — Escrita no AtecSoft (101–120)
+
+Só começa depois da Fase 4 em produção. O AtecSoft não tem API: a escrita é direto no banco Firebird, sem suporte
+do fabricante, por isso cada formato é descoberto por comparação antes/depois em uma cópia do banco.
+
+- [ ] **101. Comparar antes/depois de cada lançamento.** Em cópia do banco real, lançar à mão no AtecSoft um atestado, férias, afastamento, folga, abono positivo e abono negativo; comparar o banco antes e depois. Pronto quando: lista exata de tabelas e campos alterados por tipo de lançamento.
+- [ ] **102. Decifrar a numeração de códigos.** Como o programa usa `CHAVES` para gerar `CODIGO`. Pronto quando: regra reproduzida e conferida em 3 inclusões.
+- [ ] **103. Decifrar o `LOG` do AtecSoft.** Pronto quando: formato das linhas documentado para registrar as gravações do coletor.
+- [ ] **104. Testar gravação com o AtecSoft aberto.** Travas e transações do Firebird 1.5. Pronto quando: gravação com o programa aberto não trava a tela nem perde dado, ou a restrição fica documentada.
+- [ ] **105. Verificar recálculo.** Se o AtecSoft recalcula o dia ao abrir ou guarda o cálculo (`ME*/MS*`). Pronto quando: espelho do AtecSoft mostra o lançamento gravado pelo coletor sem intervenção manual.
+- [ ] **106. Decifrar o cadastro.** `FUNCIONARIO` + `UPD_FUNC` (fila de envio ao relógio) e se o envio ao relógio é automático ou exige o botão "Enviar". Pronto quando: resposta por dados reais.
+- [ ] **107. Publicar o mapa de escrita.** `docs/auditoria/ponto-atecsoft-mapa-escrita.md`. Pronto quando: PR mergeada.
+- [ ] **108. Criar a fila `ponto_rep_comandos` (R8).** Tipo, dados, status, tentativas, resultado, chave de idempotência, RLS por `empresa_id`. Pronto quando: migration aplicada e verificada pelo sidecar.
+- [ ] **109. Gerar comando a partir do DP V3.** Atestado, afastamento, férias, folga e abono aprovados no DP V3 entram na fila; cancelamento gera comando de desfazer. Pronto quando: cada tipo cria exatamente um comando em teste.
+- [ ] **110. Entregar e confirmar comandos.** O coletor busca pendentes e devolve o resultado, com o mesmo token da unidade. Pronto quando: comando confirmado não é entregue de novo.
+- [ ] **111. Backup antes de gravar.** Cópia do banco antes do primeiro comando de cada ciclo, com retenção definida. Pronto quando: restauração testada.
+- [ ] **112. Gravar atestado, férias e afastamento.** Dia inteiro e período. Pronto quando: aparecem no cartão ponto do AtecSoft iguais ao lançamento manual da etapa 101.
+- [ ] **113. Gravar folga e abono.** Pronto quando: idem etapa 112.
+- [ ] **114. Conferir depois de gravar.** Reler o registro e comparar com o comando; diferença desfaz a transação e marca erro. Pronto quando: teste com falha simulada não deixa gravação parcial.
+- [ ] **115. Desfazer lançamento.** Cancelamento no DP V3 remove o lançamento do AtecSoft. Pronto quando: banco volta ao estado anterior ao comando.
+- [ ] **116. Gravar cadastro.** Admissão cria o funcionário; desligamento muda a situação. Pronto quando: funcionário criado pelo DP V3 aparece no AtecSoft e chega ao relógio conforme a etapa 106.
+- [ ] **117. Tratar a digital.** A digital é cadastrada fisicamente no relógio. Pronto quando: o DP V3 mostra a pendência "cadastrar digital" para colaborador novo e a baixa quando chega a primeira batida.
+- [ ] **118. Mostrar o estado de cada lançamento.** Pendente, gravado ou erro, com botão de reenviar. Pronto quando: visível nas telas de atestado, férias, afastamento e ponto.
+- [ ] **119. Mês de prova em cópia do banco.** Todos os lançamentos de um mês feitos só no DP V3. Pronto quando: espelho gerado pelo AtecSoft confere com o do DP V3 para todos os colaboradores.
+- [ ] **120. Ligar a escrita em produção.** Por unidade e por tipo de lançamento, com chave liga/desliga. Pronto quando: primeiro lançamento real gravado e conferido em cada unidade.
 
 ## 7. Progresso
 
 | Fase | Etapas | Concluídas |
 | --- | --- | --- |
-| 0 — Decisões e insumos | 1–8 | 0/8 |
+| 0 — Decisões e insumos | 1–8 | 5/8 |
 | 1 — Diagnóstico | 9–18 | 0/10 |
 | 2 — Modelo de dados | 19–32 | 0/14 |
 | 3 — Função de ingestão | 33–46 | 0/14 |
@@ -214,7 +245,8 @@ Princípios:
 | 6 — Interface | 73–82 | 0/10 |
 | 7 — Fechamento mensal | 83–90 | 0/8 |
 | 8 — Implantação e operação | 91–100 | 0/10 |
-| **Total** | **1–100** | **0/100** |
+| 9 — Escrita no AtecSoft | 101–120 | 0/20 |
+| **Total** | **1–120** | **5/120** |
 
 ## 8. Riscos
 
@@ -228,3 +260,7 @@ Princípios:
 | Token do coletor vazado | 34, 75, 99 |
 | Dado pessoal em log ou em arquivo versionado | 8, 44, 58 |
 | Firebird 1.5 exige processo 32 bits e a DLL do próprio AtecSoft | 47, 48, 61 |
+| Escrita direta no banco do AtecSoft não tem suporte do fabricante e pode quebrar em atualização do programa | 101, 107, 111, 114 |
+| Gravação errada no registro legal | 111, 114, 115, 119 |
+| Cadastro novo não chega ao relógio sem alguém clicar em "Enviar" no AtecSoft | 106, 116 |
+| Digital do colaborador só pode ser cadastrada presencialmente no relógio | 117 |
