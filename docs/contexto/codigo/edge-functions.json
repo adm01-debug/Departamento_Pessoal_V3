@@ -2,12 +2,13 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "pasta": "supabase/functions",
- "total": 67,
+ "total": 68,
  "verify_jwt_false": [
   "admissao-publica",
   "auth-gov-br",
   "auth-login",
   "healthcheck",
+  "ingest-ponto-rep",
   "metrics",
   "webhook"
  ],
@@ -1794,6 +1795,43 @@
    "chamada_por_sql_ou_cron": false,
    "orfa": false,
    "testes": 6
+  },
+  {
+   "nome": "ingest-ponto-rep",
+   "entrada": "supabase/functions/ingest-ponto-rep/index.ts",
+   "arquivos": 2,
+   "linhas": 290,
+   "verify_jwt": false,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "ponto_rep_dias",
+    "ponto_rep_dispositivos",
+    "ponto_rep_funcionarios",
+    "ponto_rep_justificativas",
+    "ponto_rep_lotes"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "clientIp.ts",
+    "contract.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
   },
   {
    "nome": "integracao",

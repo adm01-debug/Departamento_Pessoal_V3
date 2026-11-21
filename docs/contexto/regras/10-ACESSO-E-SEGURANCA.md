@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a6548c3e17` · branch `main` · 2026-11-21 22:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `598b48c855` · branch `main` · 2026-11-21 22:37 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 326 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 327 arquivo(s)
 
 - `docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql`
 - `docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql`
@@ -413,6 +413,7 @@
 - `supabase/functions/gerar-pgr/index.ts`
 - `supabase/functions/healthcheck/index.ts`
 - `supabase/functions/importacao/index.ts`
+- `supabase/functions/ingest-ponto-rep/index.ts`
 - `supabase/functions/integracao/index.ts`
 - `supabase/functions/limpeza/index.ts`
 - `supabase/functions/metricas/index.ts`
@@ -471,8 +472,7 @@
 - `supabase/migrations/20260712214014_5ded020d-3162-4157-ba2e-724b53d8392b.sql`
 - `supabase/migrations/20260712214929_4971f364-3f69-48cd-9150-a55524b1025d.sql`
 - `supabase/migrations/20260712215539_349ae8a8-7ed9-41a5-b06c-ea4b8f35c7b5.sql`
-- `supabase/migrations/20260712215808_8c16ff4b-eb80-4fbb-a8c6-c15c62ed93c7.sql`
-- … +176 (lista completa em `context.json`)
+- … +177 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -791,6 +791,7 @@
 - `healthcheck`
 - `metrics`
 - `admissao-publica`
+- `ingest-ponto-rep`
 - `webhook`
 
 ## Rotas protegidas no front
@@ -917,6 +918,11 @@ Middleware matcher (Next.js): nenhum
 | `pcs_avaliacoes_cargo` | RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | `pcs_fatores` | RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | `pcs_grades` | RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
+| `ponto_rep_dias` | RLS ligado sem nenhuma política → só service_role acessa |  |
+| `ponto_rep_dispositivos` | RLS ligado sem nenhuma política → só service_role acessa |  |
+| `ponto_rep_funcionarios` | RLS ligado sem nenhuma política → só service_role acessa |  |
+| `ponto_rep_justificativas` | RLS ligado sem nenhuma política → só service_role acessa |  |
+| `ponto_rep_lotes` | RLS ligado sem nenhuma política → só service_role acessa |  |
 | `provisoes_competencia_tributaria` | RLS ligado sem nenhuma política → só service_role acessa |  |
 | `query_telemetry` | front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/pages/AdminTelemetriaPage.tsx` |
 | `report_dispatch_attempts` | RLS ligado sem nenhuma política → só service_role acessa |  |

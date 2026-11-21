@@ -15611,6 +15611,7 @@
     "gerar-holerite",
     "gerar-medida-disciplinar-pdf",
     "healthcheck",
+    "ingest-ponto-rep",
     "metricas",
     "metrics",
     "processar-ponto",
@@ -47133,10 +47134,12 @@
     "so_no_types": []
    },
    "usada_no_front": 0,
-   "usada_em_edges": [],
+   "usada_em_edges": [
+    "ingest-ponto-rep"
+   ],
    "triggers": [],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "ponto_rep_dispositivos": {
    "colunas": {
@@ -47274,10 +47277,12 @@
     "so_no_types": []
    },
    "usada_no_front": 0,
-   "usada_em_edges": [],
+   "usada_em_edges": [
+    "ingest-ponto-rep"
+   ],
    "triggers": [],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "ponto_rep_funcionarios": {
    "colunas": {
@@ -47468,10 +47473,12 @@
     "so_no_types": []
    },
    "usada_no_front": 0,
-   "usada_em_edges": [],
+   "usada_em_edges": [
+    "ingest-ponto-rep"
+   ],
    "triggers": [],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "ponto_rep_justificativas": {
    "colunas": {
@@ -47584,10 +47591,12 @@
     "so_no_types": []
    },
    "usada_no_front": 0,
-   "usada_em_edges": [],
+   "usada_em_edges": [
+    "ingest-ponto-rep"
+   ],
    "triggers": [],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "ponto_rep_lotes": {
    "colunas": {
@@ -47716,10 +47725,12 @@
     "so_no_types": []
    },
    "usada_no_front": 0,
-   "usada_em_edges": [],
+   "usada_em_edges": [
+    "ingest-ponto-rep"
+   ],
    "triggers": [],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "ponto_seguranca_blacklist": {
    "colunas": {

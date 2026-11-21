@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a6548c3e17` · branch `main` · 2026-11-21 22:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `598b48c855` · branch `main` · 2026-11-21 22:37 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2432,6 +2432,34 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```ts
   { action: z.enum(['validar', 'importar', 'template']), tabela: z.enum(ALLOWED_TABLES), formato: z.enum(['csv', 'json']).optional(), csvContent: z.string().max(5 * 1024 * 1024).optional(), // 5MB total dados: z.union([z.array(z.record(z.unknown())), z.record(z.unknown())]).optional(), empresaId: z.string().uuid().optional(), }
   ```
+- **data** (`supabase/functions/ingest-ponto-rep/logica.ts`, z.string):
+  ```ts
+  
+  ```
+- **hora** (`supabase/functions/ingest-ponto-rep/logica.ts`, z.string):
+  ```ts
+  
+  ```
+- **marcacaoSchema** (`supabase/functions/ingest-ponto-rep/logica.ts`, z.object):
+  ```ts
+  { pos: z.enum(POSICOES), hora: hora.nullable(), data: data.nullable(), ref: z.number().int().nullable(), obs: z.string().max(200).nullable(), justificativa: z.number().int().nullable(), equip: z.number().int().nullable(), }
+  ```
+- **diaSchema** (`supabase/functions/ingest-ponto-rep/logica.ts`, z.object):
+  ```ts
+  { funcionario_codigo: z.number().int().positive(), data, marcacoes: z.array(marcacaoSchema).max(12), abono: hora.nullable(), abono_negativo: hora.nullable(), folga: z.boolean(), neutro: z.boolean(), justificativa_abono: z.number().int().nullable(), horario_codigo: z.number().int().nullable(), hash: z.string().regex(/^[0-9a-f]{64}$/), }
+  ```
+- **funcionarioSchema** (`supabase/functions/ingest-ponto-rep/logica.ts`, z.object):
+  ```ts
+  { codigo: z.number().int().positive(), nome: z.string().max(120).nullable(), matricula: z.string().max(40).nullable(), cpf: z.string().regex(/^\d{1,20}$/).nullable(), pis: z.string().regex(/^\d{1,20}$/).nullable(), situacao: z.string().max(40).nullable(), empresa_codigo: z.number().int().nullable(), horario_codigo: z.number().int().nullable(), data_admissao: data.nullable(), data_desligamento: data.nullable(), }
+  ```
+- **justificativaSchema** (`supabase/functions/ingest-ponto-rep/logica.ts`, z.object):
+  ```ts
+  { codigo: z.number().int().positive(), nome: z.string().min(1).max(60), considera_normal: z.boolean(), considera_falta: z.boolean(), }
+  ```
+- **envioSchema** (`supabase/functions/ingest-ponto-rep/logica.ts`, z.object):
+  ```ts
+  { versao_coletor: z.string().min(1).max(20), periodo: z.object({ inicio: data, fim: data }).strict(), parte: z.number().int().positive(), partes: z.number().int().positive(), funcionarios: z.array(funcionarioSchema).max(5000), justificativas: z.array(justificativaSchema).max(500), dias: z.array(diaSchema).max(1000), }
+  ```
 - **BodySchema** (`supabase/functions/integracao/index.ts`, z.discriminatedUnion):
   ```ts
   'action', [ z.object({ action: z.literal('ping'), empresaId: z.string().uuid(), }), z.object({ action: z.literal('sync'), empresaId: z.string().uuid(), provider: z.enum(['bitrix24', 'esocial', 'resend', 'webhook_generic']), payload: z.record(z.unknown()).optional(), }), z.object({ action: z.literal('status'), empresaId: z.string().uuid(), provider: z.enum(['bitrix24', 'esocial', 'resend', 'webhook_generic']).optional(), }), ]
@@ -4740,7 +4768,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `REDACTED` | `'[REDACTED]'` | `src/services/loggerService.ts` |
 | `MAX_LOG_TEXT_LENGTH` | `2` | `src/services/loggerService.ts` |
 | `COLUNAS_KIT` | `'id, nome, itens, ativo, created_at'` | `src/services/onboardingJornadaService.ts` |
-| … +134 linhas — lista completa em `context.json` | | |
+| … +135 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5068,6 +5096,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | 1 | `supabase/functions/fgts-digital/index.ts` |
 | 1 | `supabase/functions/gerar-guias/index.ts` |
 | 1 | `supabase/functions/gerar-pgr/index.ts` |
+| 20000 | `supabase/functions/ingest-ponto-rep/index.ts` |
 | 50 | `supabase/functions/integracao/index.ts` |
 | 1 | `supabase/functions/limpeza/index.ts` |
 | 1 | `supabase/functions/metricas/index.ts` |
@@ -5382,7 +5411,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | ; import { motion, AnimatePresence } from  | `src/components/ui/sync-error-state.tsx` |
 | Ciclo detectado no fluxo! | `src/components/workflows/WorkflowDesigner.tsx` |
 | Conexão já existe | `src/components/workflows/WorkflowDesigner.tsx` |
-| … +676 linhas — lista completa em `context.json` | |
+| … +687 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5454,7 +5483,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9661 testes em 756 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9670 testes em 757 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5758,7 +5787,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/PapeisAvaliacao.test.ts` | 10 | normalização da lista de papéis · aceita a lista do  · capacidades da conta admin+gestor (a conta de homologação) · mantém o admin E o gestor — um não anula o outro … |
 | `src/components/__tests__/PontoAuditTimeline.test.tsx` | 10 | PontoAuditTimeline · renders Trilha de Auditoria title · renders search input · shows empty state when no logs … |
 | `src/components/__tests__/PontoTodayCard.test.tsx` | 10 | PontoTodayCard · renders Hoje title · shows empty state when no registro · renders Progresso da Jornada when registro present … |
-| … +456 linhas — lista completa em `context.json` | | |
+| … +457 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

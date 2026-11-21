@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a6548c3e17a00cc07eff1ee435616cefb7500aaf",
+  "sha": "598b48c855cd34bfcdea04f01e03377c713cf238",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 22:20 UTC",
-  "files_total": 3689,
-  "code_files": 3101,
-  "code_lines": 494216
+  "generated_at": "2026-11-21 22:37 UTC",
+  "files_total": 3692,
+  "code_files": 3104,
+  "code_lines": 494590
  },
  "version": "1.3.2",
- "facts_hash": "87084927cbd56020",
+ "facts_hash": "ad41582bd8e3f056",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   "languages": {
    ".tsx": 1027,
    ".sql": 980,
-   ".ts": 954,
+   ".ts": 957,
    ".mjs": 109,
    ".js": 15,
    ".cjs": 11,
@@ -403,6 +403,7 @@
     "healthcheck",
     "metrics",
     "admissao-publica",
+    "ingest-ponto-rep",
     "webhook"
    ],
    "auth": {}
@@ -99376,6 +99377,42 @@
     "idempotency": false
    },
    {
+    "name": "ingest-ponto-rep",
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "methods": [
+     "POST?"
+    ],
+    "auth": "PÚBLICA (verify_jwt=false em config.toml)",
+    "tables": [
+     "colaboradores",
+     "ponto_rep_dias",
+     "ponto_rep_dispositivos",
+     "ponto_rep_funcionarios",
+     "ponto_rep_justificativas",
+     "ponto_rep_lotes"
+    ],
+    "env": [
+     "SUPABASE_SERVICE_ROLE_KEY",
+     "SUPABASE_URL"
+    ],
+    "external": [],
+    "invokes": [],
+    "doc": "",
+    "errors": [
+     "colaboradores: ${erroColab.code ?? ",
+     "dias gravados: ${erroGrav.code ?? ",
+     "dias: ${error.code ?? ",
+     "dispositivo: ${erroDisp.code ?? ",
+     "fechar lote: ${erroFim.code ?? ",
+     "funcionarios: ${error.code ?? ",
+     "justificativas: ${error.code ?? ",
+     "lote: ${erroLote?.code ?? "
+    ],
+    "side_effects": [],
+    "webhook_events": [],
+    "idempotency": false
+   },
+   {
     "name": "integracao",
     "file": "supabase/functions/integracao/index.ts",
     "methods": [
@@ -104591,8 +104628,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 188,
-   "lines": 27158,
+   "files": 191,
+   "lines": 27532,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -104666,6 +104703,11 @@
     "pii_access_logs",
     "pix_itens",
     "pix_lotes",
+    "ponto_rep_dias",
+    "ponto_rep_dispositivos",
+    "ponto_rep_funcionarios",
+    "ponto_rep_justificativas",
+    "ponto_rep_lotes",
     "profiles",
     "provisao_logs",
     "provisoes_competencia_tributaria",
@@ -105691,6 +105733,7 @@
      "supabase/functions/gerar-holerite/index.ts",
      "supabase/functions/gerar-medida-disciplinar-pdf/index.ts",
      "supabase/functions/healthcheck/index.ts",
+     "supabase/functions/ingest-ponto-rep/index.ts",
      "supabase/functions/metricas/index.ts",
      "supabase/functions/metrics/index.ts",
      "supabase/functions/processar-ponto-offline/index.ts",
@@ -107340,6 +107383,49 @@
    "ponto_auditoria": {
     "ref": [
      "src/services/pontoMonitorService.ts"
+    ]
+   },
+   "ponto_rep_dias": {
+    "select": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ],
+    "ref": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ]
+   },
+   "ponto_rep_dispositivos": {
+    "select": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ],
+    "update": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ]
+   },
+   "ponto_rep_funcionarios": {
+    "ref": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ],
+    "select": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ],
+    "update": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ]
+   },
+   "ponto_rep_justificativas": {
+    "ref": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ]
+   },
+   "ponto_rep_lotes": {
+    "insert": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ],
+    "select": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ],
+    "update": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
     ]
    },
    "pontos_abertos": {
@@ -109370,6 +109456,37 @@
     "empresa_id",
     "id"
    ],
+   "ponto_rep_dias": [
+    "data",
+    "dispositivo_id",
+    "funcionario_codigo",
+    "hash_conteudo"
+   ],
+   "ponto_rep_dispositivos": [
+    "ativo",
+    "empresa_id",
+    "id",
+    "revogado_em",
+    "token_hash"
+   ],
+   "ponto_rep_funcionarios": [
+    "codigo",
+    "colaborador_id",
+    "cpf",
+    "data_admissao",
+    "data_desligamento",
+    "dispositivo_id",
+    "empresa_codigo",
+    "horario_codigo",
+    "id",
+    "matricula",
+    "nome",
+    "pis",
+    "situacao"
+   ],
+   "ponto_rep_lotes": [
+    "id"
+   ],
    "portal_notificacoes_settings": [
     "user_id"
    ],
@@ -110547,6 +110664,7 @@
     "supabase/functions/gerar-pgr/index.ts",
     "supabase/functions/healthcheck/index.ts",
     "supabase/functions/importacao/index.ts",
+    "supabase/functions/ingest-ponto-rep/index.ts",
     "supabase/functions/integracao/index.ts",
     "supabase/functions/limpeza/index.ts",
     "supabase/functions/metricas/index.ts",
@@ -110630,6 +110748,7 @@
     "supabase/functions/gerar-pgr/index.ts",
     "supabase/functions/healthcheck/index.ts",
     "supabase/functions/importacao/index.ts",
+    "supabase/functions/ingest-ponto-rep/index.ts",
     "supabase/functions/integracao/index.ts",
     "supabase/functions/limpeza/index.ts",
     "supabase/functions/metricas/index.ts",
@@ -112305,11 +112424,6 @@
    "ponto_espelhos_revogacoes",
    "ponto_registros",
    "ponto_regras_aprovacao",
-   "ponto_rep_dias",
-   "ponto_rep_dispositivos",
-   "ponto_rep_funcionarios",
-   "ponto_rep_justificativas",
-   "ponto_rep_lotes",
    "ponto_seguranca_blacklist",
    "pontos",
    "premiacoes_alertas",
@@ -113352,6 +113466,62 @@
     "name": "BodySchema",
     "kind": "object",
     "body": "{ action: z.enum(['validar', 'importar', 'template']), tabela: z.enum(ALLOWED_TABLES), formato: z.enum(['csv', 'json']).optional(), csvContent: z.string().max(5 * 1024 * 1024).optional(), // 5MB total dados: z.union([z.array(z.record(z.unknown())), z.record(z.unknown())]).optional(), empresaId: z.string().uuid().optional(), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.ts",
+    "name": "data",
+    "kind": "string",
+    "body": "",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.ts",
+    "name": "hora",
+    "kind": "string",
+    "body": "",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.ts",
+    "name": "marcacaoSchema",
+    "kind": "object",
+    "body": "{ pos: z.enum(POSICOES), hora: hora.nullable(), data: data.nullable(), ref: z.number().int().nullable(), obs: z.string().max(200).nullable(), justificativa: z.number().int().nullable(), equip: z.number().int().nullable(), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.ts",
+    "name": "diaSchema",
+    "kind": "object",
+    "body": "{ funcionario_codigo: z.number().int().positive(), data, marcacoes: z.array(marcacaoSchema).max(12), abono: hora.nullable(), abono_negativo: hora.nullable(), folga: z.boolean(), neutro: z.boolean(), justificativa_abono: z.number().int().nullable(), horario_codigo: z.number().int().nullable(), hash: z.string().regex(/^[0-9a-f]{64}$/), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.ts",
+    "name": "funcionarioSchema",
+    "kind": "object",
+    "body": "{ codigo: z.number().int().positive(), nome: z.string().max(120).nullable(), matricula: z.string().max(40).nullable(), cpf: z.string().regex(/^\\d{1,20}$/).nullable(), pis: z.string().regex(/^\\d{1,20}$/).nullable(), situacao: z.string().max(40).nullable(), empresa_codigo: z.number().int().nullable(), horario_codigo: z.number().int().nullable(), data_admissao: data.nullable(), data_desligamento: data.nullable(), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.ts",
+    "name": "justificativaSchema",
+    "kind": "object",
+    "body": "{ codigo: z.number().int().positive(), nome: z.string().min(1).max(60), considera_normal: z.boolean(), considera_falta: z.boolean(), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.ts",
+    "name": "envioSchema",
+    "kind": "object",
+    "body": "{ versao_coletor: z.string().min(1).max(20), periodo: z.object({ inicio: data, fim: data }).strict(), parte: z.number().int().positive(), partes: z.number().int().positive(), funcionarios: z.array(funcionarioSchema).max(5000), justificativas: z.array(justificativaSchema).max(500), dias: z.array(diaSchema).max(1000), }",
     "refines": [],
     "chain": []
    },
@@ -118306,6 +118476,50 @@
    {
     "file": "supabase/functions/importacao/index.ts",
     "msg": "CSV excede ${MAX_COLUMNS} colunas"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "colaboradores: ${erroColab.code ?? "
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "dias gravados: ${erroGrav.code ?? "
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "dias: ${error.code ?? "
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "dispositivo: ${erroDisp.code ?? "
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "fechar lote: ${erroFim.code ?? "
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "funcionarios: ${error.code ?? "
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "justificativas: ${error.code ?? "
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "lote: ${erroLote?.code ?? "
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "pendentes: ${erroSem.code ?? "
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "sinal de vida: ${erroVivo.code ?? "
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "vinculo: ${error.code ?? "
    },
    {
     "file": "supabase/functions/metrics/index.ts",
@@ -149825,6 +150039,11 @@
     "value": "50"
    },
    {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "name": "MAX_BYTES",
+    "value": "4"
+   },
+   {
     "file": "supabase/functions/metrics/index.ts",
     "name": "METRICS_VERSION",
     "value": "'1.0.0'"
@@ -161187,6 +161406,18 @@
     "field": "status",
     "value": "fulfilled",
     "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "field": "status",
+    "value": "processado",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "field": "status",
+    "value": "erro",
+    "kind": "escreve"
    },
    {
     "file": "supabase/functions/integracao/index.ts",
@@ -204829,6 +205060,42 @@
     "name": "INSS fails closed for a competence without a homologated table"
    },
    {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "vincula por CPF mesmo com formatação diferente"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "CPF sem zero à esquerda casa com CPF completo"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "sem CPF cai para PIS e depois matrícula"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "chave ambígua não vincula e não tenta a próxima"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "chave vazia ou zerada não identifica ninguém; nome nunca é usado"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "só dias com hash diferente ou novos são alterados"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "contrato aceita o envio do coletor e o sinal de vida vazio"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "contrato recusa campo extra, data torta e empresa_id vindo do coletor"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "token: forma mínima e hash"
+   },
+   {
     "file": "supabase/functions/metricas/contract.test.ts",
     "name": "metricas accepts a canonical company UUID"
    },
@@ -231478,6 +231745,10 @@
     "limit": "1"
    },
    {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "limit": "20000"
+   },
+   {
     "file": "supabase/functions/integracao/index.ts",
     "limit": "50"
    },
@@ -234605,6 +234876,7 @@
       "compara:supabase/functions/metricas/index.ts",
       "compara:supabase/functions/processar-agendamentos/scheduleContract.ts",
       "escreve:src/services/cnabService.ts",
+      "escreve:supabase/functions/ingest-ponto-rep/index.ts",
       "escreve:supabase/functions/parse-afdt/index.ts",
       "escreve:supabase/functions/processar-agendamentos/index.ts"
      ],
@@ -235081,6 +235353,7 @@
       "compara:supabase/functions/processar-agendamentos/scheduleContract.ts",
       "escreve:src/pages/ValesPage.tsx",
       "escreve:src/services/calculoBeneficiosService.ts",
+      "escreve:supabase/functions/ingest-ponto-rep/index.ts",
       "escreve:supabase/functions/processar-agendamentos/index.ts",
       "escreve:supabase/functions/processar-agendamentos/scheduleContract.ts"
      ],
@@ -242860,6 +243133,31 @@
     ]
    },
    {
+    "table": "ponto_rep_dias",
+    "issue": "RLS ligado sem nenhuma política → só service_role acessa",
+    "files": []
+   },
+   {
+    "table": "ponto_rep_dispositivos",
+    "issue": "RLS ligado sem nenhuma política → só service_role acessa",
+    "files": []
+   },
+   {
+    "table": "ponto_rep_funcionarios",
+    "issue": "RLS ligado sem nenhuma política → só service_role acessa",
+    "files": []
+   },
+   {
+    "table": "ponto_rep_justificativas",
+    "issue": "RLS ligado sem nenhuma política → só service_role acessa",
+    "files": []
+   },
+   {
+    "table": "ponto_rep_lotes",
+    "issue": "RLS ligado sem nenhuma política → só service_role acessa",
+    "files": []
+   },
+   {
     "table": "provisoes_competencia_tributaria",
     "issue": "RLS ligado sem nenhuma política → só service_role acessa",
     "files": []
@@ -242969,6 +243267,7 @@
    "supabase/functions/gerar-pgr/index.ts",
    "supabase/functions/healthcheck/index.ts",
    "supabase/functions/importacao/index.ts",
+   "supabase/functions/ingest-ponto-rep/index.ts",
    "supabase/functions/integracao/index.ts",
    "supabase/functions/limpeza/index.ts",
    "supabase/functions/metricas/index.ts",
@@ -243520,6 +243819,7 @@
    "healthcheck",
    "metrics",
    "admissao-publica",
+   "ingest-ponto-rep",
    "webhook"
   ],
   "auth_config": {},
@@ -260258,6 +260558,31 @@
     "where": [
      "src/services/pcsService.ts"
     ]
+   },
+   {
+    "kind": "rls",
+    "msg": "`ponto_rep_dias`: RLS ligado sem nenhuma política → só service_role acessa",
+    "where": []
+   },
+   {
+    "kind": "rls",
+    "msg": "`ponto_rep_dispositivos`: RLS ligado sem nenhuma política → só service_role acessa",
+    "where": []
+   },
+   {
+    "kind": "rls",
+    "msg": "`ponto_rep_funcionarios`: RLS ligado sem nenhuma política → só service_role acessa",
+    "where": []
+   },
+   {
+    "kind": "rls",
+    "msg": "`ponto_rep_justificativas`: RLS ligado sem nenhuma política → só service_role acessa",
+    "where": []
+   },
+   {
+    "kind": "rls",
+    "msg": "`ponto_rep_lotes`: RLS ligado sem nenhuma política → só service_role acessa",
+    "where": []
    },
    {
     "kind": "rls",
@@ -325276,6 +325601,224 @@
    "doc": "Onda 24 — Hardening avançado: CSRF + CSV parser RFC-4180 + anti-injection + caps por linha + empresa_id obrigatório para tabelas multi-tenant.",
    "uses_service_role": true
   },
+  "supabase/functions/ingest-ponto-rep/index.ts": {
+   "path": "supabase/functions/ingest-ponto-rep/index.ts",
+   "lines": 173,
+   "tables": [
+    {
+     "table": "ponto_rep_dispositivos",
+     "op": "select"
+    },
+    {
+     "table": "ponto_rep_lotes",
+     "op": "insert,select"
+    },
+    {
+     "table": "ponto_rep_funcionarios",
+     "op": "ref"
+    },
+    {
+     "table": "ponto_rep_justificativas",
+     "op": "ref"
+    },
+    {
+     "table": "ponto_rep_funcionarios",
+     "op": "select"
+    },
+    {
+     "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "ponto_rep_funcionarios",
+     "op": "update"
+    },
+    {
+     "table": "ponto_rep_dias",
+     "op": "select"
+    },
+    {
+     "table": "ponto_rep_dias",
+     "op": "ref"
+    },
+    {
+     "table": "ponto_rep_lotes",
+     "op": "update"
+    },
+    {
+     "table": "ponto_rep_dispositivos",
+     "op": "update"
+    },
+    {
+     "table": "ponto_rep_lotes",
+     "op": "update"
+    }
+   ],
+   "table_cols": {
+    "ponto_rep_dispositivos": [
+     "ativo",
+     "empresa_id",
+     "id",
+     "revogado_em",
+     "token_hash"
+    ],
+    "ponto_rep_lotes": [
+     "id"
+    ],
+    "ponto_rep_funcionarios": [
+     "codigo",
+     "colaborador_id",
+     "cpf",
+     "data_admissao",
+     "data_desligamento",
+     "dispositivo_id",
+     "empresa_codigo",
+     "horario_codigo",
+     "id",
+     "matricula",
+     "nome",
+     "pis",
+     "situacao"
+    ],
+    "colaboradores": [
+     "cpf",
+     "empresa_id",
+     "id",
+     "matricula",
+     "pis_pasep"
+    ],
+    "ponto_rep_dias": [
+     "data",
+     "dispositivo_id",
+     "funcionario_codigo",
+     "hash_conteudo"
+    ]
+   },
+   "env": [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "errors": [
+    "colaboradores: ${erroColab.code ?? ",
+    "dias gravados: ${erroGrav.code ?? ",
+    "dias: ${error.code ?? ",
+    "dispositivo: ${erroDisp.code ?? ",
+    "fechar lote: ${erroFim.code ?? ",
+    "funcionarios: ${error.code ?? ",
+    "justificativas: ${error.code ?? ",
+    "lote: ${erroLote?.code ?? ",
+    "pendentes: ${erroSem.code ?? ",
+    "sinal de vida: ${erroVivo.code ?? ",
+    "vinculo: ${error.code ?? "
+   ],
+   "params": [
+    {
+     "name": "MAX_BYTES",
+     "value": "4"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "processado",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "erro",
+     "kind": "escreve"
+    }
+   ],
+   "pagination": [
+    "20000"
+   ],
+   "uses_service_role": true
+  },
+  "supabase/functions/ingest-ponto-rep/logica.test.ts": {
+   "path": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+   "lines": 84,
+   "is_test": true,
+   "doc": "deno test supabase/functions/ingest-ponto-rep/logica.test.ts",
+   "tests": [
+    "vincula por CPF mesmo com formatação diferente",
+    "CPF sem zero à esquerda casa com CPF completo",
+    "sem CPF cai para PIS e depois matrícula",
+    "chave ambígua não vincula e não tenta a próxima",
+    "chave vazia ou zerada não identifica ninguém; nome nunca é usado",
+    "só dias com hash diferente ou novos são alterados",
+    "contrato aceita o envio do coletor e o sinal de vida vazio",
+    "contrato recusa campo extra, data torta e empresa_id vindo do coletor",
+    "token: forma mínima e hash"
+   ]
+  },
+  "supabase/functions/ingest-ponto-rep/logica.ts": {
+   "path": "supabase/functions/ingest-ponto-rep/logica.ts",
+   "lines": 117,
+   "exports": [
+    "const envioSchema",
+    "type Envio",
+    "type FuncionarioEnvio",
+    "function tokenPlausivel",
+    "function sha256Hex",
+    "function soDigitos",
+    "interface ColaboradorChave",
+    "type Vinculo",
+    "function vincular",
+    "function diasAlterados"
+   ],
+   "zod": [
+    {
+     "name": "data",
+     "kind": "string",
+     "body": "",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "hora",
+     "kind": "string",
+     "body": "",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "marcacaoSchema",
+     "kind": "object",
+     "body": "{ pos: z.enum(POSICOES), hora: hora.nullable(), data: data.nullable(), ref: z.number().int().nullable(), obs: z.string().max(200).nullable(), justificativa: z.number().int().nullable(), equip: z.number().int().nullable(), }",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "diaSchema",
+     "kind": "object",
+     "body": "{ funcionario_codigo: z.number().int().positive(), data, marcacoes: z.array(marcacaoSchema).max(12), abono: hora.nullable(), abono_negativo: hora.nullable(), folga: z.boolean(), neutro: z.boolean(), justificativa_abono: z.number().int().nullable(), horario_codigo: z.number().int().nullable(), hash: z.string().regex(/^[0-9a-f]{64}$/), }",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "funcionarioSchema",
+     "kind": "object",
+     "body": "{ codigo: z.number().int().positive(), nome: z.string().max(120).nullable(), matricula: z.string().max(40).nullable(), cpf: z.string().regex(/^\\d{1,20}$/).nullable(), pis: z.string().regex(/^\\d{1,20}$/).nullable(), situacao: z.string().max(40).nullable(), empresa_codigo: z.number().int().nullable(), horario_codigo: z.number().int().nullable(), data_admissao: data.nullable(), data_desligamento: data.nullable(), }",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "justificativaSchema",
+     "kind": "object",
+     "body": "{ codigo: z.number().int().positive(), nome: z.string().min(1).max(60), considera_normal: z.boolean(), considera_falta: z.boolean(), }",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "envioSchema",
+     "kind": "object",
+     "body": "{ versao_coletor: z.string().min(1).max(20), periodo: z.object({ inicio: data, fim: data }).strict(), parte: z.number().int().positive(), partes: z.number().int().positive(), funcionarios: z.array(funcionarioSchema).max(5000), justificativas: z.array(justificativaSchema).max(500), dias: z.array(diaSchema).max(1000), }",
+     "refines": [],
+     "chain": []
+    }
+   ],
+   "doc": "Lógica pura da ingestão do relógio de ponto: contrato, hash do token e vínculo funcionário -> colaborador. Sem I/O, para ser testável isolada."
+  },
   "supabase/functions/integracao/index.ts": {
    "path": "supabase/functions/integracao/index.ts",
    "lines": 152,
@@ -332239,10 +332782,23 @@
   }
  },
  "git": {
-  "sha": "a6548c3e17a00cc07eff1ee435616cefb7500aaf",
+  "sha": "598b48c855cd34bfcdea04f01e03377c713cf238",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "598b48c",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "feat: função ingest-ponto-rep recebe e guarda os envios do relógio de ponto (#798)",
+    "files": [
+     "scripts/audit-security-config.mjs",
+     "supabase/config.toml",
+     "supabase/functions/ingest-ponto-rep/index.ts",
+     "supabase/functions/ingest-ponto-rep/logica.test.ts",
+     "supabase/functions/ingest-ponto-rep/logica.ts"
+    ]
+   },
    {
     "sha": "a6548c3",
     "date": "2026-11-21",
@@ -332548,15 +333104,6 @@
     "files": [
      "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx"
     ]
-   },
-   {
-    "sha": "cc9b25a",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix: restaura etapas canonicas do pipeline no seed do E2E (#762)",
-    "files": [
-     "scripts/e2e/ensure-fixtures.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -332601,6 +333148,26 @@
     2
    ],
    [
+    "scripts/audit-security-config.mjs",
+    1
+   ],
+   [
+    "supabase/config.toml",
+    1
+   ],
+   [
+    "supabase/functions/ingest-ponto-rep/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    1
+   ],
+   [
+    "supabase/functions/ingest-ponto-rep/logica.ts",
+    1
+   ],
+   [
     "src/integrations/supabase/types.ts",
     1
    ],
@@ -332618,26 +333185,6 @@
    ],
    [
     "tools/coletor-ponto-atecsoft/.gitignore",
-    1
-   ],
-   [
-    "tools/coletor-ponto-atecsoft/README.md",
-    1
-   ],
-   [
-    "tools/coletor-ponto-atecsoft/coletor.py",
-    1
-   ],
-   [
-    "tools/coletor-ponto-atecsoft/fb15_client.py",
-    1
-   ],
-   [
-    "tools/coletor-ponto-atecsoft/instalar.bat",
-    1
-   ],
-   [
-    "tools/coletor-ponto-atecsoft/tests/test_coletor.py",
     1
    ]
   ]

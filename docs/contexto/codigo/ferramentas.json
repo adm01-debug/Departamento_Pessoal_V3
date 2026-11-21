@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1981)",
+   "TypeScript (1984)",
    "SQL (980)",
    "Markdown (343)",
    "JavaScript (135)",
@@ -2113,6 +2113,7 @@
    "auth-gov-br",
    "auth-login",
    "healthcheck",
+   "ingest-ponto-rep",
    "metrics",
    "webhook"
   ],

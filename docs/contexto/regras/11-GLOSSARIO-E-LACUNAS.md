@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a6548c3e17` · branch `main` · 2026-11-21 22:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `598b48c855` · branch `main` · 2026-11-21 22:37 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -439,6 +439,11 @@
 | rls | `pcs_avaliacoes_cargo`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | rls | `pcs_fatores`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | rls | `pcs_grades`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
+| rls | `ponto_rep_dias`: RLS ligado sem nenhuma política → só service_role acessa |  |
+| rls | `ponto_rep_dispositivos`: RLS ligado sem nenhuma política → só service_role acessa |  |
+| rls | `ponto_rep_funcionarios`: RLS ligado sem nenhuma política → só service_role acessa |  |
+| rls | `ponto_rep_justificativas`: RLS ligado sem nenhuma política → só service_role acessa |  |
+| rls | `ponto_rep_lotes`: RLS ligado sem nenhuma política → só service_role acessa |  |
 | rls | `provisoes_competencia_tributaria`: RLS ligado sem nenhuma política → só service_role acessa |  |
 | rls | `query_telemetry`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/pages/AdminTelemetriaPage.tsx` |
 | rls | `report_dispatch_attempts`: RLS ligado sem nenhuma política → só service_role acessa |  |
@@ -642,12 +647,7 @@
 | segurança | função `trg_ferias_reconciliacao_alert` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_medida_aplicada_integrar` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_medida_contestacao_notify` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `trg_medida_contestacao_notify_after` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `trg_medida_esocial_on_aplicada` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `update_extintor_status_vencimento` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `user_empresa_id` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `validar_contrato_clt` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +34 linhas — lista completa em `context.json` | | |
+| … +39 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 

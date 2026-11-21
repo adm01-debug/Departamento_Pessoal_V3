@@ -23,7 +23,7 @@
   ],
   "testes": [
    "co-localizado (__tests__) (669)",
-   "co-localizado (*.test) (73)",
+   "co-localizado (*.test) (74)",
    "e2e/ (33)"
   ],
   "edge_functions": "supabase/functions",
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: função ingest-ponto-rep recebe e guarda os envios do relógio de ponto (#798)",
    "feat: tabelas de entrada do relógio de ponto (ponto_rep_*) (#795)",
    "feat: coletor somente leitura do Ponto AtecSoft para o DP V3 (#796)",
    "fix: estabiliza arraste por toque no teste mobile do pipeline (#797)",
-   "chore: inventario do estado real [auto] (#787)",
-   "chore: registra o conserto do diagnóstico SQL e fecha as etapas 16, 24 e 25 do plano do ponto (#794)"
+   "chore: inventario do estado real [auto] (#787)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

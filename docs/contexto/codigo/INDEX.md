@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a6548c3e17a00cc07eff1ee435616cefb7500aaf` (2026-11-21T19:18:36-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `598b48c855cd34bfcdea04f01e03377c713cf238` (2026-11-21T19:37:01-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1981), SQL (980), Markdown (343), JavaScript (135), JSON (64), Shell (57), YAML (56), Python (8)
+- linguagens: TypeScript (1984), SQL (980), Markdown (343), JavaScript (135), JSON (64), Shell (57), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3675 |
-| arquivos_codigo | 2123 |
-| linhas_codigo | 424499 |
+| arquivos_total | 3678 |
+| arquivos_codigo | 2126 |
+| linhas_codigo | 424873 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -44,11 +44,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | modulos | 81 |
 | componentes | 641 |
 | hooks | 121 |
-| edge_functions | 67 |
+| edge_functions | 68 |
 | tabelas | 435 |
 | migrations | 906 |
 | cron_jobs | 41 |
-| testes | 801 |
+| testes | 802 |
 | workflows | 21 |
 | scripts | 138 |
 | docs_md | 343 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (523), src/pages (110), src/contexts (3)
 - hooks: src/hooks (101), src/components (10), src/contexts (4)
 - servicos_logica: src/services (97), src/utils (35), src/schemas (25)
-- testes: co-localizado (__tests__) (669), co-localizado (*.test) (73), e2e/ (33)
+- testes: co-localizado (__tests__) (669), co-localizado (*.test) (74), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -298,6 +298,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `gerar-pgr` — tabelas: empresas, sst_programas, sst_riscos_ambientais, user_empresas; chamada por 1 arquivo(s) do front
 - `healthcheck` (verify_jwt=false) — tabelas: colaboradores, health_checks, query_telemetry; chamada por 1 arquivo(s) do front
 - `importacao` — tabelas: audit_log; chamada por 1 arquivo(s) do front
+- `ingest-ponto-rep` (verify_jwt=false) — tabelas: colaboradores, ponto_rep_dias, ponto_rep_dispositivos, ponto_rep_funcionarios, ponto_rep_justificativas, ponto_rep_lotes; chamada por 0 arquivo(s) do front
 - `integracao` — tabelas: audit_log, integracao_logs, integracoes; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `limpeza` — tabelas: auditoria, blocked_ips, login_attempts, rate_limit_logs, user_roles, user_sessions, verification_tokens; chamada por 1 arquivo(s) do front
 - `metricas` — tabelas: colaboradores, esocial_eventos, metricas_processamento, mv_folha_summary, mv_telemetry_dashboard, query_telemetry; chamada por 2 arquivo(s) do front
@@ -369,7 +370,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
 - hosts mais citados: departamento-pessoal-v3.vercel.app, example.test, lovable.app, test.supabase.co, api.resend.com, unified-harmony-hub.lovable.app, api.openai.com, api.deepseek.com, brasilapi.com.br, example.invalid, frjbfeamybqsejlvmqbl.supabase.co, hooks.test, id-preview--6b75936b-47df-442a-8778-2840c71d84af.lovable.app, randomuser.me, signed.url
-- webhooks recebidos: admissao-publica, auth-gov-br, auth-login, healthcheck, metrics, webhook
+- webhooks recebidos: admissao-publica, auth-gov-br, auth-login, healthcheck, ingest-ponto-rep, metrics, webhook
 - env de integração (só nomes): AI_GATEWAY_API_KEY, CRON_SECRET, DEEPSEEK_API_KEY, E2E_PONTO_HASH_SECRET, GOVBR_CLIENT_ID, GOVBR_CLIENT_SECRET, OPENAI_API_KEY, PONTO_HASH_SECRET, REPORT_SCHEDULER_SECRET, RESEND_API_KEY, SENTRY_DSN, SENTRY_ENVIRONMENT, SENTRY_RELEASE, SLACK_WEBHOOK_URL, TRAINING_IMAGE_DISPATCH_SECRET, TURNSTILE_SECRET_KEY, VITE_AUTH_GOOGLE_ENABLED, VITE_SENTRY_DSN, VITE_SENTRY_ORG, VITE_SENTRY_PROJECT, VITE_SENTRY_RELEASE, WEBHOOK_REQUIRE_TIMESTAMP, WEBHOOK_SECRET
 
 ## Permissões / papéis
@@ -396,8 +397,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27922 nós · 62928 arestas · 2430 comunidades · grafo do commit `a6548c3e`
-- comunidades maiores: 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (435), cn (390), lucide-react (364), useEmpresas (326), react (325), framer-motion (296), vitest (279), services/index.ts (243), deepChain (239), nineBoxComum.ts (215)
+- 27948 nós · 62983 arestas · 2443 comunidades · grafo do commit `598b48c8`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (481), cn (462), vitest (403), useEmpresas (401), button.tsx (377), @tanstack/react-query (367), react (338), FeedbackAcoesRodape.tsx (254), ColaboradorDetalhesPage.tsx (220), nineBoxComum.ts (204), BaseService (198)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -654,6 +655,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-21 `598b48c` feat: função ingest-ponto-rep recebe e guarda os envios do relógio de ponto (#798)
 - 2026-11-21 `a6548c3` feat: tabelas de entrada do relógio de ponto (ponto_rep_*) (#795)
 - 2026-11-21 `0696746` feat: coletor somente leitura do Ponto AtecSoft para o DP V3 (#796)
 - 2026-11-21 `db90472` fix: estabiliza arraste por toque no teste mobile do pipeline (#797)
@@ -668,7 +670,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `3c6b0a5` chore: auditoria contínua das funcionalidades F-01..F-20 (#785)
 - 2026-11-21 `5d0677c` infra: torna login E2E não-admin obrigatório no smoke pós-deploy (REQUIRE_LOGIN=1) (#784)
 - 2026-11-21 `50a87a9` chore: marca smoke pós-deploy como automatizado no _ordem.md (#783)
-- 2026-11-21 `b09d76e` chore: atualiza _ordem.md com evidência real de auditoria de mutações (#782)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

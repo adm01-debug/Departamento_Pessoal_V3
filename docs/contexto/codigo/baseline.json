@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a6548c3e17a00cc07eff1ee435616cefb7500aaf",
+  "commit": "598b48c855cd34bfcdea04f01e03377c713cf238",
   "branch": "main",
-  "data_commit": "2026-11-21T19:18:36-03:00",
+  "data_commit": "2026-11-21T19:37:01-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "598b48c",
+    "data": "2026-11-21",
+    "assunto": "feat: função ingest-ponto-rep recebe e guarda os envios do relógio de ponto (#798)"
+   },
    {
     "sha": "a6548c3",
     "data": "2026-11-21",
@@ -126,14 +131,9 @@
     "sha": "06ed2ca",
     "data": "2026-11-21",
     "assunto": "fix: rubricas_folha insert/delete/update sem empresa_id (#772)"
-   },
-   {
-    "sha": "bfc7e3c",
-    "data": "2026-11-20",
-    "assunto": "chore: reconcilia funcionalidades.csv com o estado real da main (20/11) (#770)"
    }
   ],
-  "arquivos_mudados_7d": 1007,
+  "arquivos_mudados_7d": 1012,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3675,
-  "arquivos_codigo": 2123,
-  "linhas_codigo": 424499,
+  "arquivos_total": 3678,
+  "arquivos_codigo": 2126,
+  "linhas_codigo": 424873,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -324,11 +324,11 @@
   "modulos": 81,
   "componentes": 641,
   "hooks": 121,
-  "edge_functions": 67,
+  "edge_functions": 68,
   "tabelas": 435,
   "migrations": 906,
   "cron_jobs": 41,
-  "testes": 801,
+  "testes": 802,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 343
@@ -723,8 +723,8 @@
    "linhas": 9
   },
   "supabase/functions": {
-   "arquivos": 188,
-   "linhas": 27158
+   "arquivos": 191,
+   "linhas": 27532
   },
   "supabase/tests": {
    "arquivos": 3,

@@ -8413,6 +8413,13 @@
    "supabase/functions/_shared/rateLimit.ts",
    "supabase/functions/_shared/sentry.ts"
   ],
+  "supabase/functions/ingest-ponto-rep/index.ts": [
+   "supabase/functions/_shared/clientIp.ts",
+   "supabase/functions/_shared/contract.ts",
+   "supabase/functions/_shared/rateLimit.ts",
+   "supabase/functions/_shared/sentry.ts",
+   "supabase/functions/ingest-ponto-rep/logica.ts"
+  ],
   "supabase/functions/integracao/index.ts": [
    "supabase/functions/_shared/contract.ts",
    "supabase/functions/_shared/csrf.ts",

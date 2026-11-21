@@ -5,12 +5,12 @@
   "vitest",
   "playwright"
  ],
- "total": 801,
+ "total": 802,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 756
+  "unit": 757
  },
  "onde_ficam": [
   {
@@ -19,7 +19,7 @@
   },
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 73
+   "arquivos": 74
   },
   {
    "padrao": "e2e/",
@@ -7294,6 +7294,15 @@
    "casos": 3
   },
   {
+   "arquivo": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+   "tipo": "unit",
+   "linhas": 84,
+   "testa": [
+    "supabase/functions/ingest-ponto-rep/logica.ts"
+   ],
+   "casos": 9
+  },
+  {
    "arquivo": "supabase/functions/metricas/contract.test.ts",
    "tipo": "contrato",
    "linhas": 16,
@@ -8149,6 +8158,7 @@
   "supabase/functions/external-db-bridge/validation.ts": 1,
   "supabase/functions/folha-metrics/auditActions.ts": 1,
   "supabase/functions/gerar-holerite/inss.ts": 1,
+  "supabase/functions/ingest-ponto-rep/logica.ts": 1,
   "supabase/functions/metrics/metricsMath.ts": 1,
   "supabase/functions/notificacao/plainText.ts": 1,
   "supabase/functions/pagar-desligamento/rpcErrors.ts": 1,
