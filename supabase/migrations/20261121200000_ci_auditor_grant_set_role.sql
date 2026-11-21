@@ -9,4 +9,23 @@
 -- canonical-migrations.yml (que aplica esta migration) e por canonical-sql-diag.yml.
 -- Não amplia privilégio: o papel da conexão já é administrador e passa a poder
 -- ASSUMIR um papel mais restrito. ci_auditor não ganha nada. Idempotente.
-GRANT ci_auditor TO CURRENT_USER;
+--
+-- SET TRUE é explícito e obrigatório: um `GRANT ci_auditor TO X` sem opções
+-- preserva as opções de uma associação já registrada pelo mesmo concedente.
+-- Se essa associação existisse com SET FALSE, o papel continuaria sem poder
+-- executar `SET ROLE ci_auditor` e o diagnóstico seguiria quebrado — enquanto
+-- pg_has_role(..., 'MEMBER') responderia verdadeiro. O sidecar passou a exigir
+-- 'SET' (ver o .verify.sql ao lado); aqui a opção é declarada para que o grant
+-- seja auto-suficiente.
+GRANT ci_auditor TO CURRENT_USER WITH SET TRUE;
+
+-- Baseline de recuperação: o snapshot `supabase/baseline/20260831_canonical/`
+-- é um dump datado de 31/08/2026, congelado por desenho e fora da cadeia
+-- ativa (PROMOCAO_BANCO_PRODUCAO.md:37). Grant não entra nele — a precedência
+-- é a mesma das outras migrations de privilégio de ci_auditor: nem
+-- `20261015160000_ci_auditor_readonly_role.sql` nem
+-- `20261015170000_ci_auditor_revoke_public_secdef.sql` alteraram o snapshot, e
+-- o `roles.json` de `supabase/baseline/20260924/` lista 37 roles sem
+-- `ci_auditor`. Depois de um restore, a recuperação reaplica a cadeia de
+-- `supabase/migrations/` sobre o snapshot, e é esta migration que devolve a
+-- associação — nada a duplicar no dump.
