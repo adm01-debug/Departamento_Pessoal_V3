@@ -12,8 +12,12 @@
 --      razão de existir desta função em vez de reusar `log_audit_change`, que
 --      não preenche tenant. Se alguém reescrever deixando um ramo sem
 --      empresa_id, reprova;
---   4. `audit_log` segue com as 3 policies de antes: esta migration não muda
---      acesso de ninguém, só passa a gravar.
+--   4. `audit_log` segue com as 3 policies que já existiam: esta migration não
+--      muda acesso de ninguém, só passa a gravar. A asserção é por NOME, não
+--      por `count(*)` total da tabela — a 20261119160000 acrescenta
+--      legitimamente uma 4ª policy (`audit_log_rh_read_empresa`), e um
+--      `count(*) = 3` passaria a reprovar um estado correto (foi o que deixou
+--      o mode=verify vermelho na main, run 44727601776).
 SELECT 'ok'
 WHERE (
   SELECT count(*)
@@ -73,4 +77,9 @@ AND EXISTS (
 AND (
   SELECT count(*) FROM pg_policies
   WHERE schemaname = 'public' AND tablename = 'audit_log'
+    AND policyname IN (
+      'Admins podem ver todo audit_log',
+      'audit_log_self_read',
+      'audit_log_self_insert'
+    )
 ) = 3;
