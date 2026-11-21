@@ -415,7 +415,11 @@ const ABAS_RELOGIO: AbaRelogio[] = [
   { id: 'coletores', label: 'Coletores', render: (p) => <AbaColetores {...p} /> },
   { id: 'envios', label: 'Envios', render: (p) => <AbaEnvios {...p} /> },
   { id: 'vinculos', label: 'Vínculos', render: ({ empresaId }) => <VinculosRelogioTab empresaId={empresaId} /> },
-  { id: 'justificativas', label: 'Justificativas', render: ({ empresaId }) => <JustificativasRelogioTab empresaId={empresaId} /> },
+  {
+    id: 'justificativas',
+    label: 'Justificativas',
+    render: ({ empresaId }) => <JustificativasRelogioTab empresaId={empresaId} />,
+  },
 ];
 
 export function RelogiosPanel({
