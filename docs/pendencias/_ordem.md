@@ -33,3 +33,4 @@ Gerado em 2026-11-21 a partir de inspeção real (código + banco canônico). Ca
 | Gerar policy UPDATE para gestor em ferias/folhas                                   | Migration RLS    | canônico `supabase_migrations` |
 | Confirmar deploy pós-merge p/ cada regressão                                       | Smoke pós-deploy | CI                             |
 | Auditoria `logs_sistema` — ampliar hooks p/ mutações críticas (volume baixo: 5/7d) | a definir        | backend/edge                   |
+| eSocial F-07 transporte real — edge enviar-esocial recusa envio produtivo (503) sem SOAP/ICP-Brasil; 0 eventos/0 lotes/0 certificados em prod | configurar certificado A1/A3 + endpoint SOAP homologado (exige ICP-Brasil do cliente) | enviar-esocial/index.ts / canônico certificados_digitais |
