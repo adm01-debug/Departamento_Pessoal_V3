@@ -37,6 +37,8 @@ import {
 } from '@/hooks/useColetoresPonto';
 import type { ColetorPonto, LoteColetor } from '@/services/relogio/coletoresService';
 import { statusColetor, type StatusColetor } from './statusColetor';
+import { VinculosRelogioTab } from './VinculosRelogioTab';
+import { JustificativasRelogioTab } from './JustificativasRelogioTab';
 
 /** Contexto que toda aba do painel recebe. */
 export interface AbaRelogioProps {
@@ -412,6 +414,8 @@ function AbaEnvios({ empresaId }: AbaRelogioProps) {
 const ABAS_RELOGIO: AbaRelogio[] = [
   { id: 'coletores', label: 'Coletores', render: (p) => <AbaColetores {...p} /> },
   { id: 'envios', label: 'Envios', render: (p) => <AbaEnvios {...p} /> },
+  { id: 'vinculos', label: 'Vínculos', render: ({ empresaId }) => <VinculosRelogioTab empresaId={empresaId} /> },
+  { id: 'justificativas', label: 'Justificativas', render: ({ empresaId }) => <JustificativasRelogioTab empresaId={empresaId} /> },
 ];
 
 export function RelogiosPanel({
