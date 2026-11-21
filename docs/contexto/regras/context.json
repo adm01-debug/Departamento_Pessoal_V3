@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "77e63b15c2210a6a96db5469bedfa99222d8fe60",
+  "sha": "3f0f032b6f44e34c4f06b4fef0e2b3d434715cf7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 21:11 UTC",
-  "files_total": 3681,
-  "code_files": 3096,
-  "code_lines": 492860
+  "generated_at": "2026-11-21 21:19 UTC",
+  "files_total": 3683,
+  "code_files": 3098,
+  "code_lines": 492906
  },
  "version": "1.3.2",
- "facts_hash": "41c6ce1450b7b863",
+ "facts_hash": "ac817a2d32dc7c49",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1027,
-   ".sql": 978,
+   ".sql": 980,
    ".ts": 954,
    ".mjs": 109,
    ".js": 15,
@@ -72285,6 +72285,8 @@
    "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.verify.sql",
    "supabase/migrations/20261119170000_onboarding_converge_modelo_b.sql",
    "supabase/migrations/20261119170000_onboarding_converge_modelo_b.verify.sql",
+   "supabase/migrations/20261121200000_ci_auditor_grant_set_role.sql",
+   "supabase/migrations/20261121200000_ci_auditor_grant_set_role.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -101949,7 +101951,7 @@
   {
    "module": "scripts",
    "files": 154,
-   "lines": 35233,
+   "lines": 35234,
    "tables": [
     "a",
     "anexos",
@@ -104212,8 +104214,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 904,
-   "lines": 82377,
+   "files": 906,
+   "lines": 82422,
    "tables": [
     "profiles",
     "user_roles"
@@ -262386,7 +262388,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 449,
+   "lines": 450,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -330788,6 +330790,14 @@
    "path": "supabase/migrations/20261119170000_onboarding_converge_modelo_b.verify.sql",
    "lines": 201
   },
+  "supabase/migrations/20261121200000_ci_auditor_grant_set_role.sql": {
+   "path": "supabase/migrations/20261121200000_ci_auditor_grant_set_role.sql",
+   "lines": 32
+  },
+  "supabase/migrations/20261121200000_ci_auditor_grant_set_role.verify.sql": {
+   "path": "supabase/migrations/20261121200000_ci_auditor_grant_set_role.verify.sql",
+   "lines": 13
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -331106,10 +331116,22 @@
   }
  },
  "git": {
-  "sha": "77e63b15c2210a6a96db5469bedfa99222d8fe60",
+  "sha": "3f0f032b6f44e34c4f06b4fef0e2b3d434715cf7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "3f0f032",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "infra: concede ci_auditor ao papel da conexão para destravar o diagnóstico SQL (#791)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql",
+     "supabase/migrations/20261121200000_ci_auditor_grant_set_role.sql",
+     "supabase/migrations/20261121200000_ci_auditor_grant_set_role.verify.sql"
+    ]
+   },
    {
     "sha": "77e63b1",
     "date": "2026-11-21",
@@ -331398,15 +331420,6 @@
     "files": [
      "supabase/migrations/20261119170000_onboarding_converge_modelo_b.verify.sql"
     ]
-   },
-   {
-    "sha": "074c01e",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "infra(banco): inclui a 20261019235900 (dp_*) e a 20261119170000 (onboarding) no lote do canônico (#755)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -331427,11 +331440,15 @@
     3
    ],
    [
-    "scripts/inventario/validar-funcionalidades.mjs",
+    ".github/workflows/canonical-migrations.yml",
     2
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
+    "scripts/canonical-invariants.sql",
+    2
+   ],
+   [
+    "scripts/inventario/validar-funcionalidades.mjs",
     2
    ],
    [
@@ -331445,6 +331462,14 @@
    [
     "e2e/authenticated/premiacoes-auditoria.spec.ts",
     2
+   ],
+   [
+    "supabase/migrations/20261121200000_ci_auditor_grant_set_role.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261121200000_ci_auditor_grant_set_role.verify.sql",
+    1
    ],
    [
     ".github/workflows/inventario-estado-semanal.yml",
@@ -331467,10 +331492,6 @@
     1
    ],
    [
-    "scripts/canonical-invariants.sql",
-    1
-   ],
-   [
     "docs/pendencias/README.md",
     1
    ],
@@ -331480,14 +331501,6 @@
    ],
    [
     "src/components/folha/RubricasDialog.tsx",
-    1
-   ],
-   [
-    "src/pages/RubricasPage.tsx",
-    1
-   ],
-   [
-    "analise-prs/RECONCILIACAO_FUNCIONALIDADES.md",
     1
    ]
   ]

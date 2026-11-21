@@ -401,7 +401,7 @@
   {
    "arquivo": "scripts/canonical-invariants.sql",
    "descricao": null,
-   "linhas": 449,
+   "linhas": 450,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

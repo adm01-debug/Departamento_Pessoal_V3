@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "77e63b15c2210a6a96db5469bedfa99222d8fe60",
+  "commit": "3f0f032b6f44e34c4f06b4fef0e2b3d434715cf7",
   "branch": "main",
-  "data_commit": "2026-11-21T17:47:25-03:00",
+  "data_commit": "2026-11-21T18:18:23-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "3f0f032",
+    "data": "2026-11-21",
+    "assunto": "infra: concede ci_auditor ao papel da conexão para destravar o diagnóstico SQL (#791)"
+   },
    {
     "sha": "77e63b1",
     "data": "2026-11-21",
@@ -126,14 +131,9 @@
     "sha": "92ac009",
     "data": "2026-11-19",
     "assunto": "fix(recrutamento): restaura header 'Histórico do processo' no dossiê do candidato (#761)"
-   },
-   {
-    "sha": "c351847",
-    "data": "2026-11-19",
-    "assunto": "fix(e2e): corrige scroll da lista e overflow do board do pipeline (#760)"
    }
   ],
-  "arquivos_mudados_7d": 997,
+  "arquivos_mudados_7d": 999,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 25
+    "mudancas": 26
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 16
+    "mudancas": 17
    },
    {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3668,
+  "arquivos_total": 3670,
   "arquivos_codigo": 2120,
   "linhas_codigo": 423036,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 121,
   "edge_functions": 67,
   "tabelas": 430,
-  "migrations": 904,
+  "migrations": 906,
   "cron_jobs": 41,
   "testes": 800,
   "workflows": 21,
