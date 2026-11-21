@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `01d8cb6f8b` · branch `main` · 2026-11-21 23:07 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1ec032cef1` · branch `main` · 2026-11-21 23:19 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1075,6 +1075,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `fn_consignado_valida_margem` | Parcela excede a margem de empréstimo consignável de 30%% do salário: já comprometido R$ %, limite R$ % | `supabase/migrations/20261119110000_consignado_teto_30_pct_lei_10820.sql` |
 | `ferias_bloquear_aprovacao_rh_sem_rh` | Somente RH ou admin pode registrar a aprovacao do RH nas ferias | `supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql` |
 | `ferias_bloquear_aprovacao_rh_sem_rh` | Assinatura do aviso de ferias so pode ser gravada pelo fluxo de assinatura | `supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql` |
+| `gerar_token_coletor_ponto` | Apenas administradores da empresa podem gerenciar coletores do relógio de ponto | `supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql` |
+| `gerar_token_coletor_ponto` | Unidade obrigatória (até 60 caracteres) | `supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql` |
+| `gerar_token_coletor_ponto` | Nome obrigatório (até 60 caracteres) | `supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql` |
+| `revogar_coletor_ponto` | Apenas administradores da empresa podem gerenciar coletores do relógio de ponto | `supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql` |
 | `vincular_funcionario_relogio` | Sessao obrigatoria | `supabase/migrations/20261121221000_ponto_rep_vinculos.sql` |
 | `vincular_funcionario_relogio` | Funcionario e colaborador sao obrigatorios | `supabase/migrations/20261121221000_ponto_rep_vinculos.sql` |
 | `vincular_funcionario_relogio` | Sem permissao para vincular este funcionario do relogio | `supabase/migrations/20261121221000_ponto_rep_vinculos.sql` |
@@ -1225,11 +1229,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `medida_gerar_link_ciencia` | Medida deve estar aplicada/aprovada para gerar ciência | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_registrar_ciencia_publica` | Ação inválida | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_registrar_ciencia_publica` | rate_limit_exceeded | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_rejeitar` | não autenticado | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_rejeitar` | motivo da rejeição obrigatório (mín. 5 caracteres) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_rejeitar` | medida não encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_rejeitar` | acesso negado | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +181 linhas — lista completa em `context.json` | | |
+| … +185 linhas — lista completa em `context.json` | | |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -1652,7 +1652,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `remarcar` | compara, escreve | `src/pages/AdminAgendamentoExamesPage.tsx` |
 | `tipo` | `remoto` | compara | `src/components/recrutamento/CandidatoTimeline.tsx` |
 | `tipo` | `retorno_almoco` | compara, escreve | `src/components/ponto/PontoClockRegister.tsx`<br>`supabase/functions/processar-ponto-offline/index.ts` |
+| `tipo` | `revogar` | compara, escreve | `src/components/ponto/relogio/RelogiosPanel.tsx` |
 | `tipo` | `risco` | escreve | `src/components/avaliacao/nineBoxComum.ts` |
+| `tipo` | `rotacionar` | compara, escreve | `src/components/ponto/relogio/RelogiosPanel.tsx` |
 | `tipo` | `saida` | compara, escreve | `src/components/ponto/PontoClockRegister.tsx`<br>`src/pages/ControleAcessoPage.tsx`<br>`supabase/functions/processar-ponto/index.ts` |
 | `tipo` | `saida_almoco` | escreve | `src/components/ponto/PontoClockRegister.tsx` |
 | `tipo` | `saude` | escreve | `src/mocks/colaboradoresMock.ts`<br>`src/pages/PlanosSaudePage.tsx` |
@@ -1725,9 +1727,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `completo` | escreve | `src/services/backupService.ts` |
 | `status` | `comunicado` | compara | `src/components/desligamentos/desligamentosDerivacoes.ts`<br>`src/components/desligamentos/trilhaDerivacoes.ts` |
 | `status` | `concluida` | compara, escreve | `src/components/colaborador-detalhes/FeriasResumoTab.tsx`<br>`src/components/ferias/CalendarioFerias.tsx`<br>`src/mocks/colaboradoresMock.ts`<br>`src/pages/LGPDPage.tsx`<br>`src/pages/PassivoTrabalhistaPage.tsx`<br>… +1 |
-| `status` | `concluida_validada` | compara | `src/components/avaliacao/FeedbackAcoesRodape.tsx`<br>`src/components/avaliacao/aprovacaoGestor.ts`<br>`src/components/avaliacao/feedbackCanonico.ts` |
-| `status` | `concluido` | compara, escreve | `src/components/avaliacao/nineBoxMock.ts`<br>`src/components/dashboard/AnalyticsSection.tsx`<br>`src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/components/desligamentos/DesligamentoKPIs.tsx`<br>`src/components/desligamentos/desligamentosDerivacoes.ts`<br>… +9 |
-| … +209 linhas — lista completa em `context.json` | | | |
+| … +211 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -1843,6 +1843,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | TransitionDirection | left \| right \| up \| down | `src/components/layout/PageTransition.tsx` |
 | DarfIrrfSituacao | sem_folha \| nao_calculada \| sem_itens | `src/components/obrigacoes/DarfTab.tsx` |
 | GuiaTabela | guias_fgts \| guias_inss | `src/components/obrigacoes/GuiasTable.tsx` |
+| StatusColetor | online \| atrasado \| nunca \| revogado | `src/components/ponto/relogio/statusColetor.ts` |
 | ScenarioParameterUnit | integer \| currency \| percentage | `src/components/premiacoes/ScenarioParameterCard.tsx` |
 | CategoriaAuditoriaId | todas \| campanhas \| pagamentos \| regras \| conciliacao \| integracoes \| aprovacoes | `src/components/premiacoes/auditoriaComum.ts` |
 | TomAuditoria | success \| warning \| destructive \| info \| primary \| muted | `src/components/premiacoes/auditoriaComum.ts` |
@@ -2576,6 +2577,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `aej-fim` | type=date | `src/components/ponto/GerarAEJDialog.tsx` |
 | `afd-inicio` | type=date | `src/components/ponto/GerarAFDDialog.tsx` |
 | `afd-fim` | type=date | `src/components/ponto/GerarAFDDialog.tsx` |
+| `coletor-unidade` | max | `src/components/ponto/relogio/RelogiosPanel.tsx` |
+| `coletor-nome` | max | `src/components/ponto/relogio/RelogiosPanel.tsx` |
 | `valor-folha` | type=number, step=0.01 | `src/components/premiacoes/PagamentosDialogs.tsx` |
 | `nova-turma-capacidade` | type=number, min=1 | `src/components/treinamentos/NovaTurmaDialog.tsx` |
 | `id` | disabled=disabled | `src/components/ui/phone-input.tsx` |
@@ -3861,6 +3864,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   const config = etapa.config ?? {}; const slaHoras = config.sla_horas ?? 48; const started = execucao.sla_iniciado_em ?? execucao.updated_at; const deadlineMs = new Date(started).getTime() + slaHoras * 60 * 60 * 1000; const nowMs = Date.now(); const hoursRemaining = (deadlineMs - nowMs) / (60 * 60 * 1000); return { expired: nowMs > deadlineMs, hoursRemaining: Math.round(hoursRemaining * 10) / 10, deadlineUtc: new Date(deadlineMs).toISOString(), };
   ```
+- **gerarToken(empresaId: string, unidade: string, nome: string)** — `src/services/relogio/coletoresService.ts`
+  ```
+  exigirEmpresa(empresaId); const { data, error } = await supabase.rpc('gerar_token_coletor_ponto', { _empresa_id: empresaId, _unidade: unidade.trim(), _nome: nome.trim(), }); if (error) throw error; const linha = Array.isArray(data) ? data[0] : null; if (!linha?.token) throw new Error('O banco não devolveu o token do coletor.'); return { dispositivo_id: linha.dispositivo_id, token: linha.token };
+  ```
 - **validarCaminhoDaEmpresa(caminho: string | null | undefined, empresaId: string | null | undefined)** — `src/services/trainingImages/paths.ts`
   ```
   if (!caminho || !empresaId) return false; if (!segmentoSeguro(empresaId)) return false; // Recusa navegação de diretório e segmentos vazios. if (caminho.includes('..') || caminho.includes('//') || caminho.startsWith('/')) return false; return empresaDoCaminho(caminho) === empresaId;
@@ -4648,6 +4655,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `REVEAL_MAX_STAGGERED_CLOSE_BLOCKS` | `3` | `src/components/organograma/organogramaReveal.ts` |
 | `TILE` | `256` | `src/components/ponto/PontoGeoAnalytics.tsx` |
 | `SEM_EFEITO` | `'sem_efeito'` | `src/components/ponto/relogio/JustificativasRelogioTab.tsx` |
+| `MAX_CAMPO` | `60` | `src/components/ponto/relogio/RelogiosPanel.tsx` |
+| `ONLINE_MS` | `30` | `src/components/ponto/relogio/statusColetor.ts` |
 | `BUCKET` | `'documentos'` | `src/components/portal/PortalDocumentosTab.tsx` |
 | `LIMITE_ACOES` | `3` | `src/components/premiacoes/CampanhaLateral.tsx` |
 | `LARGURA_MINIMA_GRADE` | `'min-w-[906px]'` | `src/components/premiacoes/CampanhaTabela.tsx` |
@@ -4768,9 +4777,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `MAX_LINHAS_OPCOES_FILTRO` | `1000` | `src/services/colaboradorService.ts` |
 | `LIMITE_OR_BRIDGE` | `500` | `src/services/colaboradorService.ts` |
 | `MAX_LOGS_BUFFER` | `50` | `src/services/loggerService.ts` |
-| `REDACTED` | `'[REDACTED]'` | `src/services/loggerService.ts` |
-| `MAX_LOG_TEXT_LENGTH` | `2` | `src/services/loggerService.ts` |
-| … +136 linhas — lista completa em `context.json` | | |
+| … +139 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -4811,6 +4818,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `const diffHours = (inTime.getTime() - outTime.getTime()) / (1000 * 60 * 60);` | `src/components/ponto/GestaoPontoAnalytics.tsx` |
 | `setTimeout(() => setShowConfetti(false), 5000);` | `src/components/ponto/PontoClockRegister.tsx` |
 | `const diffHoras = (agora.getTime() - dataBatida.getTime()) / (1000 * 60 * 60);` | `src/components/ponto/PontoInconsistencyPanel.tsx` |
+| `export const ONLINE_MS = 30 * 60 * 1000;` | `src/components/ponto/relogio/statusColetor.ts` |
 | `const timer = window.setTimeout(limparBloqueioClique, 1500);` | `src/components/recrutamento/PipelineBoard.tsx` |
 | `timerBloqueio.current = window.setTimeout(() => setBloqueioInicial(false), 1200);` | `src/components/recrutamento/PipelineCard.tsx` |
 | `const DIA_MS = 24 * 60 * 60 * 1000;` | `src/components/recrutamento/analyticsComum.ts` |
@@ -5352,6 +5360,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Sessão expirada. Entre novamente. | `src/components/ponto/PontoInconsistencyPanel.tsx` |
 | >         <p className= | `src/components/ponto/relogio/JustificativasRelogioTab.tsx` |
 | Não foi possível salvar: ${mensagemErro(err)} | `src/components/ponto/relogio/JustificativasRelogioTab.tsx` |
+| >       <p className= | `src/components/ponto/relogio/RelogiosPanel.tsx` |
+| Falha ao gerar novo token: ${mensagemErro(err)} | `src/components/ponto/relogio/RelogiosPanel.tsx` |
+| Falha ao gerar token: ${mensagemErro(err)} | `src/components/ponto/relogio/RelogiosPanel.tsx` |
+| Falha ao revogar: ${mensagemErro(err)} | `src/components/ponto/relogio/RelogiosPanel.tsx` |
+| Não foi possível copiar. Selecione o texto e copie manualmente. | `src/components/ponto/relogio/RelogiosPanel.tsx` |
 | >         <p className= | `src/components/ponto/relogio/VinculosRelogioTab.tsx` |
 | Não foi possível desfazer: ${mensagemErro(err)} | `src/components/ponto/relogio/VinculosRelogioTab.tsx` |
 | Não foi possível vincular: ${mensagemErro(err)} | `src/components/ponto/relogio/VinculosRelogioTab.tsx` |
@@ -5408,12 +5421,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 |        data-turmas-erro       className= | `src/components/treinamentos/TurmasPainel.tsx` |
 |  className={cn(alertVariants({ variant }), className)} {...props} /> )); Alert.displayName =  | `src/components/ui/alert.tsx` |
 | CEP não encontrado | `src/components/ui/cep-input.tsx` |
-| Erro ao consultar CEP | `src/components/ui/cep-input.tsx` |
-| CNPJ inválido | `src/components/ui/cnpj-input.tsx` |
-| CNPJ não encontrado | `src/components/ui/cnpj-input.tsx` |
-| Erro ao consultar CNPJ | `src/components/ui/cnpj-input.tsx` |
-| useFormField should be used within <FormField> | `src/components/ui/form.tsx` |
-| … +692 linhas — lista completa em `context.json` | |
+| … +699 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5481,11 +5489,12 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `rh` | `supabase/migrations/20260912190000_p0_identity_rls_authz.sql` |
 | `gestor` | `supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql` |
 | `rh` | `supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql` |
+| `admin` | `supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql` |
 | `admin` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9694 testes em 760 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9706 testes em 761 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5729,6 +5738,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/NovaAdmissaoDialog.test.tsx` | 12 | NovaAdmissaoDialog · renders Nova Admissão trigger button by default · renders Nova Admissão dialog title · renders Nome completo label … |
 | `src/components/__tests__/NovoDepartamentoDialog.test.tsx` | 12 | NovoDepartamentoDialog · renders Novo Departamento title when no departamento prop · renders Editar Departamento title when departamento provided · renders description text … |
 | `src/components/__tests__/NovoDesligamentoDialog.test.tsx` | 12 | NovoDesligamentoDialog · renders Novo Desligamento title · renders dialog description · renders Colaborador * label … |
+| `src/components/__tests__/RelogiosPanel.test.tsx` | 12 | statusColetor · classifica online, atrasado, nunca e revogado · RelogiosPanel · mostra carregando e depois a lista de coletores com status … |
 | `src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx` | 12 | CamposCustomizadosTab · mostra carregando enquanto as consultas não respondem · mostra falha de consulta sem inventar ausência de dados · mostra estado vazio honesto quando a empresa não definiu campos … |
 | `src/components/recrutamento/__tests__/vagasComum.test.ts` | 12 | vagasComum — contadores, identidade e datas · conta todas/abertas/fechadas pelos status reais · resolve a identidade por departamento e especialidade de dados · preserva YYYY-MM-DD no fuso local e retorna null para data inválida … |
 | `src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx` | 12 | MaisTurmasCard · renderiza ícone de grupo, título e descrição da referência · usa borda tracejada, raio de 12px e altura da referência (sem largura fixa) · não apresenta botão quando não existe fluxo real de criação … |
@@ -5788,8 +5798,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/Notifications.test.tsx` | 10 | NotificationItem · renders Notificações header · shows empty state when no notifications · renders notification titles … |
 | `src/components/__tests__/PapeisAvaliacao.test.ts` | 10 | normalização da lista de papéis · aceita a lista do  · capacidades da conta admin+gestor (a conta de homologação) · mantém o admin E o gestor — um não anula o outro … |
 | `src/components/__tests__/PontoAuditTimeline.test.tsx` | 10 | PontoAuditTimeline · renders Trilha de Auditoria title · renders search input · shows empty state when no logs … |
-| `src/components/__tests__/PontoTodayCard.test.tsx` | 10 | PontoTodayCard · renders Hoje title · shows empty state when no registro · renders Progresso da Jornada when registro present … |
-| … +460 linhas — lista completa em `context.json` | | |
+| … +461 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

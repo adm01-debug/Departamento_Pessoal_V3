@@ -18480,15 +18480,18 @@
     "useAuth",
     "useBackGesture",
     "useCallback",
+    "useColetoresPonto",
     "useContext",
     "useDebounce",
     "useEffect",
     "useEmpresa",
     "useEmpresaStore",
     "useEmpresas",
+    "useGerarTokenColetor",
     "useGrupo",
     "useGuidedTour",
     "useLocation",
+    "useLotesColetores",
     "useMemo",
     "useMutation",
     "useNavigate",
@@ -18501,6 +18504,7 @@
     "useQueryClient",
     "useReducedMotion",
     "useRef",
+    "useRevogarColetor",
     "useState",
     "useSystemHealth",
     "useTheme",
@@ -18509,17 +18513,21 @@
    "hooks_locais": [
     "useAuth",
     "useBackGesture",
+    "useColetoresPonto",
     "useDebounce",
     "useEmpresa",
     "useEmpresaStore",
     "useEmpresas",
+    "useGerarTokenColetor",
     "useGrupo",
     "useGuidedTour",
+    "useLotesColetores",
     "useNotificacoes",
     "useNotification",
     "useOnMount",
     "usePWA",
     "usePiiMask",
+    "useRevogarColetor",
     "useSystemHealth",
     "useTheme",
     "useTranslation"
@@ -18558,6 +18566,8 @@
     "onboarding_templates",
     "periodos_aquisitivos",
     "periodos_ponto",
+    "ponto_rep_dispositivos",
+    "ponto_rep_lotes",
     "relatorios_agendados",
     "rubricas_folha",
     "saved_filters",
@@ -18588,11 +18598,13 @@
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
+    "gerar_token_coletor_ponto",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "log_frontend_error",
     "registrar_auditoria",
+    "revogar_coletor_ponto",
     "set_own_default_empresa"
    ],
    "edges": [
@@ -18628,6 +18640,7 @@
    "flags": [],
    "papeis": [
     "admin",
+    "alert",
     "banner",
     "list",
     "listitem",
@@ -18637,7 +18650,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 99
+   "arquivos_puxados": 104
   },
   {
    "protegida": true,

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "01d8cb6f8bd76299f935cc1fadd6162b525e0d2f",
+  "commit": "1ec032cef133d7af45f43bef37956c3de8014937",
   "branch": "main",
-  "data_commit": "2026-11-21T20:04:08-03:00",
+  "data_commit": "2026-11-21T20:18:41-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1ec032c",
+    "data": "2026-11-21",
+    "assunto": "feat: administração dos coletores do relógio de ponto em Integrações (#803)"
+   },
    {
     "sha": "01d8cb6",
     "data": "2026-11-21",
@@ -126,18 +131,13 @@
     "sha": "9073ea6",
     "data": "2026-11-21",
     "assunto": "infra: corrige cegueira do assert de ledger no canonical-migrations (#771)"
-   },
-   {
-    "sha": "76e6c55",
-    "data": "2026-11-21",
-    "assunto": "chore: certifica F-01..F-20 como VERIFICADO em producao no canonico (#777)"
    }
   ],
-  "arquivos_mudados_7d": 1032,
+  "arquivos_mudados_7d": 1040,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 387
+    "mudancas": 388
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -222,11 +222,11 @@
     "mudancas": 9
    },
    {
-    "arquivo": "package.json",
-    "mudancas": 8
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 9
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": "package.json",
     "mudancas": 8
    },
    {
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3690,
-  "arquivos_codigo": 2132,
-  "linhas_codigo": 425952,
+  "arquivos_total": 3697,
+  "arquivos_codigo": 2137,
+  "linhas_codigo": 426738,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 82,
-  "componentes": 643,
-  "hooks": 121,
+  "componentes": 644,
+  "hooks": 122,
   "edge_functions": 68,
   "tabelas": 435,
-  "migrations": 910,
+  "migrations": 912,
   "cron_jobs": 41,
-  "testes": 805,
+  "testes": 806,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 344
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1004,
-   "linhas": 185562
+   "arquivos": 1007,
+   "linhas": 186214
   },
   "src/constants": {
    "arquivos": 7,
@@ -659,8 +659,8 @@
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 206,
-   "linhas": 24125
+   "arquivos": 207,
+   "linhas": 24166
   },
   "src/i18n": {
    "arquivos": 2,
@@ -668,7 +668,7 @@
   },
   "src/integrations": {
    "arquivos": 11,
-   "linhas": 26460
+   "linhas": 26471
   },
   "src/lib": {
    "arquivos": 22,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 144,
-   "linhas": 50946
+   "linhas": 50953
   },
   "src/providers": {
    "arquivos": 4,
@@ -695,8 +695,8 @@
    "linhas": 8819
   },
   "src/services": {
-   "arquivos": 196,
-   "linhas": 41702
+   "arquivos": 197,
+   "linhas": 41777
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -758,7 +758,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 25297
+   "linhas": 25308
   },
   {
    "arquivo": "src/schemas/tableColumns.ts",

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 186,
+ "total": 187,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
@@ -9,7 +9,7 @@
   "providers": 1,
   "python": 5,
   "schemas": 25,
-  "services": 98,
+  "services": 99,
   "utils": 35
  },
  "arquivos": [
@@ -350,7 +350,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 246,
+   "usado_por": 247,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -500,7 +500,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 25297,
+   "linhas": 25308,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -509,7 +509,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 84,
+   "usado_por": 85,
    "usado_por_modulos": [
     "components/admin",
     "components/admissoes",
@@ -952,7 +952,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 288,
+   "usado_por": 289,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
@@ -4039,6 +4039,41 @@
     "pages"
    ],
    "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/relogio/coletoresService.ts",
+   "camada": "services",
+   "exports": [
+    "COLUNAS_COLETOR",
+    "ColetorPonto",
+    "LIMITE_LOTES",
+    "LoteColetor",
+    "TokenGerado",
+    "coletoresService"
+   ],
+   "export_default": null,
+   "linhas": 75,
+   "tabelas": [
+    "ponto_rep_dispositivos",
+    "ponto_rep_lotes"
+   ],
+   "rpcs": [
+    "gerar_token_coletor_ponto",
+    "revogar_coletor_ponto"
+   ],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "components/ponto",
+    "hooks"
+   ],
+   "coberto_por_testes": 0,
    "orfao": false
   },
   {

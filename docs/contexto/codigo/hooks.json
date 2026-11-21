@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 121,
+ "total": 122,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -996,7 +996,7 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 21,
+   "usado_por": 22,
    "usado_por_arquivos": [
     "src/components/AdminRoute.tsx",
     "src/components/MfaGate.tsx",
@@ -1008,6 +1008,7 @@
     "src/components/layout/Header.tsx",
     "src/components/layout/MobileBottomNav.tsx",
     "src/components/layout/MobileQuickActions.tsx",
+    "src/components/ponto/relogio/RelogiosPanel.tsx",
     "src/hooks/index.ts",
     "src/hooks/useAssinaturas.ts",
     "src/hooks/useHorasExtras.ts",
@@ -1341,6 +1342,31 @@
     "src/pages/PortalPage.tsx"
    ],
    "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useColetoresPonto.ts",
+   "hooks_exportados": [
+    "useColetoresPonto",
+    "useGerarTokenColetor",
+    "useLotesColetores",
+    "useRevogarColetor"
+   ],
+   "linhas": 41,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/ponto/relogio/RelogiosPanel.tsx"
+   ],
+   "coberto_por_testes": 0
   },
   {
    "arquivo": "src/hooks/useComplianceColaborador.ts",
@@ -1728,7 +1754,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 128,
+   "usado_por": 129,
    "usado_por_arquivos": [
     "src/components/admissoes/AdmissoesKanban.tsx",
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",

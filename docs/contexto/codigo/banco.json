@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 910,
+ "migrations": 912,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -414,6 +414,7 @@
   "gerar_qr_extintor",
   "gerar_relatorio_conformidade_ponto",
   "gerar_rubricas_ferias",
+  "gerar_token_coletor_ponto",
   "get_admissao_por_token",
   "get_audit_trail",
   "get_audit_trail_by_entity",
@@ -573,6 +574,7 @@
   "reset_login_attempts",
   "resolve_security_alert",
   "resolver_divergencia_afdt",
+  "revogar_coletor_ponto",
   "revogar_espelho_ponto",
   "rls_tenant_or_admin",
   "run_lgpd_purge",
@@ -47300,7 +47302,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 0,
+   "usada_no_front": 1,
    "usada_em_edges": [
     "ingest-ponto-rep"
    ],
@@ -47748,7 +47750,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 0,
+   "usada_no_front": 1,
    "usada_em_edges": [
     "ingest-ponto-rep"
    ],
@@ -64566,6 +64568,11 @@
    "usada_em": 1
   },
   {
+   "nome": "gerar_token_coletor_ponto",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
    "nome": "get_admissao_por_token",
    "definida": true,
    "usada_em": 2
@@ -64827,6 +64834,11 @@
   },
   {
    "nome": "resolver_divergencia_afdt",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "revogar_coletor_ponto",
    "definida": true,
    "usada_em": 1
   },

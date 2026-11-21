@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 643,
+ "total": 644,
  "orfaos": 27,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -5609,6 +5609,28 @@
    "orfao": true
   },
   {
+   "arquivo": "src/components/ponto/relogio/RelogiosPanel.tsx",
+   "exports": [
+    "AbaRelogio",
+    "AbaRelogioProps",
+    "RelogiosPanel"
+   ],
+   "export_default": null,
+   "linhas": 455,
+   "dominio": "components/ponto",
+   "hooks_locais": [
+    "useAuth",
+    "useColetoresPonto",
+    "useGerarTokenColetor",
+    "useLotesColetores",
+    "useRevogarColetor"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/ponto/relogio/VinculosRelogioTab.tsx",
    "exports": [
     "VinculosRelogioTab"
@@ -7311,7 +7333,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 19,
+   "usado_por": 20,
    "orfao": false
   },
   {
@@ -7406,7 +7428,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 225,
+   "usado_por": 226,
    "orfao": false
   },
   {
@@ -7421,7 +7443,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 365,
+   "usado_por": 366,
    "orfao": false
   },
   {
@@ -7456,7 +7478,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 283,
+   "usado_por": 284,
    "orfao": false
   },
   {
@@ -7690,7 +7712,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 154,
+   "usado_por": 155,
    "orfao": false
   },
   {
@@ -7831,7 +7853,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 178,
+   "usado_por": 179,
    "orfao": false
   },
   {
@@ -7845,7 +7867,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 158,
+   "usado_por": 159,
    "orfao": false
   },
   {
@@ -8126,7 +8148,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 30,
+   "usado_por": 31,
    "orfao": false
   },
   {
@@ -8264,7 +8286,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 117,
+   "usado_por": 118,
    "orfao": false
   },
   {
@@ -8281,7 +8303,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 49,
+   "usado_por": 50,
    "orfao": false
   },
   {
@@ -9738,9 +9760,11 @@
     "IntegracoesPage"
    ],
    "export_default": "IntegracoesPage",
-   "linhas": 290,
+   "linhas": 297,
    "dominio": "pages",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useEmpresas"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 2,

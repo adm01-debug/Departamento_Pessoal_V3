@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "01d8cb6f8bd76299f935cc1fadd6162b525e0d2f",
+  "sha": "1ec032cef133d7af45f43bef37956c3de8014937",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 23:07 UTC",
-  "files_total": 3704,
-  "code_files": 3114,
-  "code_lines": 496037
+  "generated_at": "2026-11-21 23:19 UTC",
+  "files_total": 3711,
+  "code_files": 3121,
+  "code_lines": 496975
  },
  "version": "1.3.2",
- "facts_hash": "3ea95b94b679b417",
+ "facts_hash": "2b2911f0afbd47c0",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,9 +387,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1032,
-   ".sql": 984,
-   ".ts": 958,
+   ".tsx": 1034,
+   ".sql": 986,
+   ".ts": 961,
    ".mjs": 109,
    ".js": 15,
    ".cjs": 11,
@@ -65256,6 +65256,42 @@
      "v_email"
     ]
    },
+   "gerar_token_coletor_ponto": {
+    "args": "_empresa_id uuid, _unidade text, _nome text",
+    "returns": "TABLE (dispositivo_id uuid, token text)",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_uid uuid := auth.uid(); v_unidade text := btrim(coalesce(_unidade, '')); v_nome text := btrim(coalesce(_nome, '')); v_token text; v_hash text; v_prefixo text; v_id uuid; BEGIN IF v_uid IS NULL OR NOT public.pertence_a_empresa(_empresa_id) OR NOT public.has_role(v_uid, 'admin') THEN RAISE EXCEPTION 'Apenas administradores da empresa podem gerenciar coletores do relógio de ponto' USING ERRCODE = '42501'; END IF; IF v_unidade = '' OR char_length(v_unidade) > 60 THEN RAISE EXCEPTION 'Unidade obrigatória (até 60 caracteres)' USING ERRCODE = '22023'; END IF; IF v_nome = '' OR char_length(v_nome) > 60 THEN RAISE EXCEPTION 'Nome obrigatório (até 60 caracteres)' USING ERRCODE = '22023'; END …",
+    "raises": [
+     "Apenas administradores da empresa podem gerenciar coletores do relógio de ponto",
+     "Unidade obrigatória (até 60 caracteres)",
+     "Nome obrigatório (até 60 caracteres)"
+    ],
+    "tables": [
+     "audit_log",
+     "ponto_rep_dispositivos",
+     "v_id"
+    ]
+   },
+   "revogar_coletor_ponto": {
+    "args": "_dispositivo_id uuid",
+    "returns": "void",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_uid uuid := auth.uid(); v_empresa_id uuid; BEGIN SELECT d.empresa_id INTO v_empresa_id FROM public.ponto_rep_dispositivos d WHERE d.id = _dispositivo_id FOR UPDATE; IF v_uid IS NULL OR v_empresa_id IS NULL OR NOT public.pertence_a_empresa(v_empresa_id) OR NOT public.has_role(v_uid, 'admin') THEN RAISE EXCEPTION 'Apenas administradores da empresa podem gerenciar coletores do relógio de ponto' USING ERRCODE = '42501'; END IF; UPDATE public.ponto_rep_dispositivos SET ativo = false, revogado_em = coalesce(revogado_em, now()), updated_at = now() WHERE id = _dispositivo_id; INSERT INTO public.audit_log (tabela, registro_id, acao, user_id, empresa_id, dados_novos) VALUES ('ponto_rep_dispo …",
+    "raises": [
+     "Apenas administradores da empresa podem gerenciar coletores do relógio de ponto"
+    ],
+    "tables": [
+     "audit_log",
+     "ponto_rep_dispositivos",
+     "v_empresa_id"
+    ]
+   },
    "vincular_funcionario_relogio": {
     "args": "_funcionario_id uuid, _colaborador_id uuid",
     "returns": "void",
@@ -73051,6 +73087,8 @@
    "supabase/migrations/20261121200000_ci_auditor_grant_set_role.verify.sql",
    "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
    "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql",
+   "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql",
+   "supabase/migrations/20261121220000_ponto_rep_coletores_admin.verify.sql",
    "supabase/migrations/20261121221000_ponto_rep_vinculos.sql",
    "supabase/migrations/20261121221000_ponto_rep_vinculos.verify.sql",
    "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
@@ -85116,6 +85154,38 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "gerar_token_coletor_ponto",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "revogar_coletor_ponto",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "gerar_token_coletor_ponto",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "revogar_coletor_ponto",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "vincular_funcionario_relogio",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -86724,6 +86794,26 @@
     "function": "ferias_bloquear_aprovacao_rh_sem_rh",
     "msg": "Assinatura do aviso de ferias so pode ser gravada pelo fluxo de assinatura",
     "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
+   },
+   {
+    "function": "gerar_token_coletor_ponto",
+    "msg": "Apenas administradores da empresa podem gerenciar coletores do relógio de ponto",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
+   },
+   {
+    "function": "gerar_token_coletor_ponto",
+    "msg": "Unidade obrigatória (até 60 caracteres)",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
+   },
+   {
+    "function": "gerar_token_coletor_ponto",
+    "msg": "Nome obrigatório (até 60 caracteres)",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
+   },
+   {
+    "function": "revogar_coletor_ponto",
+    "msg": "Apenas administradores da empresa podem gerenciar coletores do relógio de ponto",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
    },
    {
     "function": "vincular_funcionario_relogio",
@@ -94051,6 +94141,8 @@
      "onboarding_templates",
      "periodos_aquisitivos",
      "periodos_ponto",
+     "ponto_rep_dispositivos",
+     "ponto_rep_lotes",
      "relatorios_agendados",
      "rubricas_folha",
      "saved_filters",
@@ -94087,13 +94179,15 @@
     ],
     "rpc_transitive": [
      "admin_associar_usuario_empresa",
+     "gerar_token_coletor_ponto",
      "get_my_user_empresas",
      "get_security_alerts_summary",
      "get_user_roles",
      "log_frontend_error",
+     "revogar_coletor_ponto",
      "set_own_default_empresa"
     ],
-    "deps_count": 90
+    "deps_count": 95
    },
    {
     "path": "",
@@ -101637,7 +101731,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1004,
+  "components_count": 1007,
   "hooks": [
    {
     "name": "useContacts",
@@ -101974,6 +102068,22 @@
    {
     "name": "useColaboradores",
     "file": "src/hooks/useColaboradores.ts"
+   },
+   {
+    "name": "useColetoresPonto",
+    "file": "src/hooks/useColetoresPonto.ts"
+   },
+   {
+    "name": "useLotesColetores",
+    "file": "src/hooks/useColetoresPonto.ts"
+   },
+   {
+    "name": "useGerarTokenColetor",
+    "file": "src/hooks/useColetoresPonto.ts"
+   },
+   {
+    "name": "useRevogarColetor",
+    "file": "src/hooks/useColetoresPonto.ts"
    },
    {
     "name": "useConsentimentosColaborador",
@@ -103268,8 +103378,8 @@
   },
   {
    "module": "src/components",
-   "files": 1004,
-   "lines": 185562,
+   "files": 1007,
+   "lines": 186214,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -103603,8 +103713,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 206,
-   "lines": 24125,
+   "files": 207,
+   "lines": 24166,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -103665,6 +103775,7 @@
     "useColaboradorLotacao.ts: chaveCatalogoLotacoes, chaveLotacoesDoColaborador, useLotacoesCatalogo, useLotacaoPrincipal, useLotacoesDoColaborador, useDefinirLotacaoPrincipal",
     "useColaboradorVinculo.ts: useColaboradorVinculo",
     "useColaboradores.ts: useColaboradores",
+    "useColetoresPonto.ts: coletoresKeys, useColetoresPonto, useLotesColetores, useGerarTokenColetor, useRevogarColetor",
     "useComplianceColaborador.ts: useConsentimentosColaborador",
     "useConfiguracoesIntervalo.ts: useConfiguracoesIntervalo",
     "useContratacaoDigital.ts: useContratacaoDigital",
@@ -103683,8 +103794,7 @@
     "useESocial.ts: useESocial",
     "useEmpresas.ts: Empresa, EmpresaModo, compararOrdemExibicao, UserEmpresa, useEmpresaStore, GLOBAL_QUERY_KEYS",
     "useExcelExport.ts: useExcelExport",
-    "useExecutiveDashboard.ts: reconstruirHeadcountPorMes, variacaoUltimoMes, useExecutiveKPIs, useStrategicFinancials",
-    "useFeriados.ts: useFeriados"
+    "useExecutiveDashboard.ts: reconstruirHeadcountPorMes, variacaoUltimoMes, useExecutiveKPIs, useStrategicFinancials"
    ],
    "docs": [
     "useAlertasPreditivos.ts: useAlertasPreditivos — porta de entrada da edge `alertas-preditivos`. A edge existe e esta publicada em producao (sonda em 18/11/2026: POST /functions/v1/alertas-preditivos devolve 405 para GET, ou seja esta no ar), mas nenhum arquivo do `src` a invocava: o RH nunca via esses alertas. Deliberadament …",
@@ -103743,6 +103853,7 @@
     "src/hooks/useColaboradorLotacao.ts",
     "src/hooks/useColaboradorVinculo.ts",
     "src/hooks/useColaboradores.ts",
+    "src/hooks/useColetoresPonto.ts",
     "src/hooks/useComplianceColaborador.ts",
     "src/hooks/useConfiguracoesIntervalo.ts",
     "src/hooks/useContratacaoDigital.ts",
@@ -103799,8 +103910,7 @@
     "src/hooks/usePontosAbertos.ts",
     "src/hooks/useProximosEventos.ts",
     "src/hooks/useRealTimeSubscription.ts",
-    "src/hooks/useRealtimeDashboard.ts",
-    "src/hooks/useSSTColaborador.ts"
+    "src/hooks/useRealtimeDashboard.ts"
    ]
   },
   {
@@ -103966,7 +104076,7 @@
   {
    "module": "src/pages",
    "files": 144,
-   "lines": 50946,
+   "lines": 50953,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -104332,8 +104442,8 @@
   },
   {
    "module": "src/services",
-   "files": 196,
-   "lines": 41702,
+   "files": 197,
+   "lines": 41777,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -104471,8 +104581,10 @@
     "pix_lotes",
     "plano_contas",
     "ponto_auditoria",
+    "ponto_rep_dispositivos",
     "ponto_rep_funcionarios",
     "ponto_rep_justificativas",
+    "ponto_rep_lotes",
     "pontos_abertos",
     "premiacoes_auditoria",
     "premiacoes_campanhas",
@@ -105227,8 +105339,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 910,
-   "lines": 83002,
+   "files": 912,
+   "lines": 83165,
    "tables": [
     "profiles",
     "user_roles"
@@ -107743,6 +107855,7 @@
    },
    "ponto_rep_dispositivos": {
     "select": [
+     "src/services/relogio/coletoresService.ts",
      "supabase/functions/ingest-ponto-rep/index.ts"
     ],
     "update": [
@@ -107770,10 +107883,11 @@
     ]
    },
    "ponto_rep_lotes": {
-    "insert": [
+    "select": [
+     "src/services/relogio/coletoresService.ts",
      "supabase/functions/ingest-ponto-rep/index.ts"
     ],
-    "select": [
+    "insert": [
      "supabase/functions/ingest-ponto-rep/index.ts"
     ],
     "update": [
@@ -109851,6 +109965,7 @@
     "tipo_dia"
    ],
    "ponto_rep_lotes": [
+    "empresa_id",
     "id"
    ],
    "portal_notificacoes_settings": [
@@ -111514,6 +111629,9 @@
    "foo": [
     "eslint.config.js"
    ],
+   "gerar_token_coletor_ponto": [
+    "src/services/relogio/coletoresService.ts"
+   ],
    "get_admissao_por_token": [
     "src/components/contratacao/TokenInput.tsx",
     "src/pages/ContratacaoPage.tsx"
@@ -111718,6 +111836,9 @@
    ],
    "resolver_divergencia_afdt": [
     "src/pages/AdminPontoDivergenciasPage.tsx"
+   ],
+   "revogar_coletor_ponto": [
+    "src/services/relogio/coletoresService.ts"
    ],
    "run_lgpd_purge": [
     "supabase/functions/limpeza/index.ts"
@@ -114270,6 +114391,16 @@
     "rules": "type=date"
    },
    {
+    "file": "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "field": "coletor-unidade",
+    "rules": "max"
+   },
+   {
+    "file": "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "field": "coletor-nome",
+    "rules": "max"
+   },
+   {
     "file": "src/components/premiacoes/PagamentosDialogs.tsx",
     "field": "valor-folha",
     "rules": "type=number, step=0.01"
@@ -114775,6 +114906,11 @@
     "file": "src/components/obrigacoes/GuiasTable.tsx",
     "name": "GuiaTabela",
     "values": "guias_fgts | guias_inss"
+   },
+   {
+    "file": "src/components/ponto/relogio/statusColetor.ts",
+    "name": "StatusColetor",
+    "values": "online | atrasado | nunca | revogado"
    },
    {
     "file": "src/components/premiacoes/ScenarioParameterCard.tsx",
@@ -116343,6 +116479,26 @@
    {
     "file": "src/components/ponto/relogio/JustificativasRelogioTab.tsx",
     "msg": "Não foi possível salvar: ${mensagemErro(err)}"
+   },
+   {
+    "file": "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "msg": ">\n      <p className="
+   },
+   {
+    "file": "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "msg": "Falha ao gerar novo token: ${mensagemErro(err)}"
+   },
+   {
+    "file": "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "msg": "Falha ao gerar token: ${mensagemErro(err)}"
+   },
+   {
+    "file": "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "msg": "Falha ao revogar: ${mensagemErro(err)}"
+   },
+   {
+    "file": "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "msg": "Não foi possível copiar. Selecione o texto e copie manualmente."
    },
    {
     "file": "src/components/ponto/relogio/VinculosRelogioTab.tsx",
@@ -118553,6 +118709,14 @@
     "msg": "Nenhum colaborador ativo encontrado para esta empresa."
    },
    {
+    "file": "src/services/relogio/coletoresService.ts",
+    "msg": "O banco não devolveu o token do coletor."
+   },
+   {
+    "file": "src/services/relogio/coletoresService.ts",
+    "msg": "empresa_id obrigatório para isolamento de tenant"
+   },
+   {
     "file": "src/services/tabelas/adminService.ts",
     "msg": "empresa_id obrigatório para isolamento de tenant"
    },
@@ -119605,6 +119769,10 @@
    {
     "file": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
     "value": "rh"
+   },
+   {
+    "file": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql",
+    "value": "admin"
    },
    {
     "file": "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -149295,6 +149463,16 @@
     "value": "'sem_efeito'"
    },
    {
+    "file": "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "name": "MAX_CAMPO",
+    "value": "60"
+   },
+   {
+    "file": "src/components/ponto/relogio/statusColetor.ts",
+    "name": "ONLINE_MS",
+    "value": "30"
+   },
+   {
     "file": "src/components/portal/PortalDocumentosTab.tsx",
     "name": "BUCKET",
     "value": "'documentos'"
@@ -149923,6 +150101,11 @@
     "file": "src/services/premiacoesService.ts",
     "name": "PAGE",
     "value": "1000"
+   },
+   {
+    "file": "src/services/relogio/coletoresService.ts",
+    "name": "LIMITE_LOTES",
+    "value": "50"
    },
    {
     "file": "src/services/trainingImages/briefing.ts",
@@ -153895,6 +154078,48 @@
     "file": "src/components/ponto/PontoOcorrenciasCard.tsx",
     "field": "tipo",
     "value": "atraso",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "field": "tipo",
+    "value": "rotacionar",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "field": "tipo",
+    "value": "rotacionar",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "field": "tipo",
+    "value": "revogar",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "field": "tipo",
+    "value": "rotacionar",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "field": "tipo",
+    "value": "revogar",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "field": "tipo",
+    "value": "revogar",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "field": "tipo",
+    "value": "revogar",
     "kind": "compara"
    },
    {
@@ -164316,6 +164541,12 @@
     "body": "const config = etapa.config ?? {}; const slaHoras = config.sla_horas ?? 48; const started = execucao.sla_iniciado_em ?? execucao.updated_at; const deadlineMs = new Date(started).getTime() + slaHoras * 60 * 60 * 1000; const nowMs = Date.now(); const hoursRemaining = (deadlineMs - nowMs) / (60 * 60 * 1000); return { expired: nowMs > deadlineMs, hoursRemaining: Math.round(hoursRemaining * 10) / 10, deadlineUtc: new Date(deadlineMs).toISOString(), };"
    },
    {
+    "file": "src/services/relogio/coletoresService.ts",
+    "name": "gerarToken",
+    "params": "empresaId: string, unidade: string, nome: string",
+    "body": "exigirEmpresa(empresaId); const { data, error } = await supabase.rpc('gerar_token_coletor_ponto', { _empresa_id: empresaId, _unidade: unidade.trim(), _nome: nome.trim(), }); if (error) throw error; const linha = Array.isArray(data) ? data[0] : null; if (!linha?.token) throw new Error('O banco não devolveu o token do coletor.'); return { dispositivo_id: linha.dispositivo_id, token: linha.token };"
+   },
+   {
     "file": "src/services/trainingImages/paths.ts",
     "name": "validarCaminhoDaEmpresa",
     "params": "caminho: string | null | undefined, empresaId: string | null | undefined",
@@ -164900,6 +165131,10 @@
    {
     "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
     "line": "const diffHoras = (agora.getTime() - dataBatida.getTime()) / (1000 * 60 * 60);"
+   },
+   {
+    "file": "src/components/ponto/relogio/statusColetor.ts",
+    "line": "export const ONLINE_MS = 30 * 60 * 1000;"
    },
    {
     "file": "src/components/recrutamento/PipelineBoard.tsx",
@@ -181628,6 +181863,54 @@
    {
     "file": "src/components/__tests__/RelatoriosExportTab.test.tsx",
     "name": "renders empty grid for no relatorios"
+   },
+   {
+    "file": "src/components/__tests__/RelogiosPanel.test.tsx",
+    "name": "statusColetor"
+   },
+   {
+    "file": "src/components/__tests__/RelogiosPanel.test.tsx",
+    "name": "classifica online, atrasado, nunca e revogado"
+   },
+   {
+    "file": "src/components/__tests__/RelogiosPanel.test.tsx",
+    "name": "RelogiosPanel"
+   },
+   {
+    "file": "src/components/__tests__/RelogiosPanel.test.tsx",
+    "name": "mostra carregando e depois a lista de coletores com status"
+   },
+   {
+    "file": "src/components/__tests__/RelogiosPanel.test.tsx",
+    "name": "mostra estado vazio"
+   },
+   {
+    "file": "src/components/__tests__/RelogiosPanel.test.tsx",
+    "name": "mostra erro com tentar de novo"
+   },
+   {
+    "file": "src/components/__tests__/RelogiosPanel.test.tsx",
+    "name": "esconde as ações de quem não é admin"
+   },
+   {
+    "file": "src/components/__tests__/RelogiosPanel.test.tsx",
+    "name": "novo coletor: chama a RPC e mostra o token devolvido uma vez"
+   },
+   {
+    "file": "src/components/__tests__/RelogiosPanel.test.tsx",
+    "name": "gerar novo token pede confirmação e rotaciona a mesma unidade"
+   },
+   {
+    "file": "src/components/__tests__/RelogiosPanel.test.tsx",
+    "name": "revogar pede confirmação e chama a RPC com o id do coletor"
+   },
+   {
+    "file": "src/components/__tests__/RelogiosPanel.test.tsx",
+    "name": "aba Envios lista os lotes"
+   },
+   {
+    "file": "src/components/__tests__/RelogiosPanel.test.tsx",
+    "name": "aba Envios mostra vazio"
    },
    {
     "file": "src/components/__tests__/RewardsSimulator.test.tsx",
@@ -228865,6 +229148,42 @@
      "v_email"
     ]
    },
+   "gerar_token_coletor_ponto": {
+    "args": "_empresa_id uuid, _unidade text, _nome text",
+    "returns": "TABLE (dispositivo_id uuid, token text)",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_uid uuid := auth.uid(); v_unidade text := btrim(coalesce(_unidade, '')); v_nome text := btrim(coalesce(_nome, '')); v_token text; v_hash text; v_prefixo text; v_id uuid; BEGIN IF v_uid IS NULL OR NOT public.pertence_a_empresa(_empresa_id) OR NOT public.has_role(v_uid, 'admin') THEN RAISE EXCEPTION 'Apenas administradores da empresa podem gerenciar coletores do relógio de ponto' USING ERRCODE = '42501'; END IF; IF v_unidade = '' OR char_length(v_unidade) > 60 THEN RAISE EXCEPTION 'Unidade obrigatória (até 60 caracteres)' USING ERRCODE = '22023'; END IF; IF v_nome = '' OR char_length(v_nome) > 60 THEN RAISE EXCEPTION 'Nome obrigatório (até 60 caracteres)' USING ERRCODE = '22023'; END …",
+    "raises": [
+     "Apenas administradores da empresa podem gerenciar coletores do relógio de ponto",
+     "Unidade obrigatória (até 60 caracteres)",
+     "Nome obrigatório (até 60 caracteres)"
+    ],
+    "tables": [
+     "audit_log",
+     "ponto_rep_dispositivos",
+     "v_id"
+    ]
+   },
+   "revogar_coletor_ponto": {
+    "args": "_dispositivo_id uuid",
+    "returns": "void",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_uid uuid := auth.uid(); v_empresa_id uuid; BEGIN SELECT d.empresa_id INTO v_empresa_id FROM public.ponto_rep_dispositivos d WHERE d.id = _dispositivo_id FOR UPDATE; IF v_uid IS NULL OR v_empresa_id IS NULL OR NOT public.pertence_a_empresa(v_empresa_id) OR NOT public.has_role(v_uid, 'admin') THEN RAISE EXCEPTION 'Apenas administradores da empresa podem gerenciar coletores do relógio de ponto' USING ERRCODE = '42501'; END IF; UPDATE public.ponto_rep_dispositivos SET ativo = false, revogado_em = coalesce(revogado_em, now()), updated_at = now() WHERE id = _dispositivo_id; INSERT INTO public.audit_log (tabela, registro_id, acao, user_id, empresa_id, dados_novos) VALUES ('ponto_rep_dispo …",
+    "raises": [
+     "Apenas administradores da empresa podem gerenciar coletores do relógio de ponto"
+    ],
+    "tables": [
+     "audit_log",
+     "ponto_rep_dispositivos",
+     "v_empresa_id"
+    ]
+   },
    "vincular_funcionario_relogio": {
     "args": "_funcionario_id uuid, _colaborador_id uuid",
     "returns": "void",
@@ -230116,6 +230435,26 @@
     "function": "ferias_bloquear_aprovacao_rh_sem_rh",
     "msg": "Assinatura do aviso de ferias so pode ser gravada pelo fluxo de assinatura",
     "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
+   },
+   {
+    "function": "gerar_token_coletor_ponto",
+    "msg": "Apenas administradores da empresa podem gerenciar coletores do relógio de ponto",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
+   },
+   {
+    "function": "gerar_token_coletor_ponto",
+    "msg": "Unidade obrigatória (até 60 caracteres)",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
+   },
+   {
+    "function": "gerar_token_coletor_ponto",
+    "msg": "Nome obrigatório (até 60 caracteres)",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
+   },
+   {
+    "function": "revogar_coletor_ponto",
+    "msg": "Apenas administradores da empresa podem gerenciar coletores do relógio de ponto",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
    },
    {
     "function": "vincular_funcionario_relogio",
@@ -234786,6 +235125,14 @@
      ],
      "falta": [
       "escreve:src/components/ponto/PontoOcorrenciasCard.tsx"
+     ],
+     "rotacionar": [
+      "compara:src/components/ponto/relogio/RelogiosPanel.tsx",
+      "escreve:src/components/ponto/relogio/RelogiosPanel.tsx"
+     ],
+     "revogar": [
+      "compara:src/components/ponto/relogio/RelogiosPanel.tsx",
+      "escreve:src/components/ponto/relogio/RelogiosPanel.tsx"
      ],
      "Contrato": [
       "compara:src/components/portal/PortalDocumentosTab.tsx"
@@ -243890,7 +244237,9 @@
    {
     "table": "ponto_rep_dispositivos",
     "issue": "RLS ligado sem nenhuma política → só service_role acessa",
-    "files": []
+    "files": [
+     "src/services/relogio/coletoresService.ts"
+    ]
    },
    {
     "table": "ponto_rep_funcionarios",
@@ -243909,7 +244258,9 @@
    {
     "table": "ponto_rep_lotes",
     "issue": "RLS ligado sem nenhuma política → só service_role acessa",
-    "files": []
+    "files": [
+     "src/services/relogio/coletoresService.ts"
+    ]
    },
    {
     "table": "provisoes_competencia_tributaria",
@@ -244412,6 +244763,7 @@
    "gerar_canonical_espelho_ponto",
    "gerar_qr_extintor",
    "gerar_rubricas_ferias",
+   "gerar_token_coletor_ponto",
    "get_admissao_por_token",
    "get_audit_trail",
    "get_audit_trail_by_entity",
@@ -244525,6 +244877,7 @@
    "reset_login_attempts",
    "resolve_security_alert",
    "resolver_divergencia_afdt",
+   "revogar_coletor_ponto",
    "revogar_espelho_ponto",
    "rls_auto_enable",
    "rls_tenant_or_admin",
@@ -256158,6 +256511,38 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "gerar_token_coletor_ponto",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "revogar_coletor_ponto",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "gerar_token_coletor_ponto",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "revogar_coletor_ponto",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "vincular_funcionario_relogio",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -260772,16 +261157,6 @@
    },
    {
     "kind": "status",
-    "msg": "valor `online` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/components/admin/HealthTrendCard.tsx",
-     "compara:src/components/dashboard/SystemStatusCard.tsx",
-     "compara:src/components/layout/Header.tsx",
-     "compara:src/pages/AdminDiagnosticoMigracaoPage.tsx"
-    ]
-   },
-   {
-    "kind": "status",
     "msg": "valor `slow` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/components/admin/HealthTrendCard.tsx",
@@ -261449,7 +261824,9 @@
    {
     "kind": "rls",
     "msg": "`ponto_rep_dispositivos`: RLS ligado sem nenhuma política → só service_role acessa",
-    "where": []
+    "where": [
+     "src/services/relogio/coletoresService.ts"
+    ]
    },
    {
     "kind": "rls",
@@ -261468,7 +261845,9 @@
    {
     "kind": "rls",
     "msg": "`ponto_rep_lotes`: RLS ligado sem nenhuma política → só service_role acessa",
-    "where": []
+    "where": [
+     "src/services/relogio/coletoresService.ts"
+    ]
    },
    {
     "kind": "rls",
@@ -275407,6 +275786,34 @@
     "renders empty grid for no relatorios"
    ]
   },
+  "src/components/__tests__/RelogiosPanel.test.tsx": {
+   "path": "src/components/__tests__/RelogiosPanel.test.tsx",
+   "lines": 181,
+   "is_test": true,
+   "errors": [
+    ");\n    expect(alerta).toHaveTextContent("
+   ],
+   "params": [
+    {
+     "name": "EMPRESA",
+     "value": "'11111111-1111-1111-1111-111111111111'"
+    }
+   ],
+   "tests": [
+    "statusColetor",
+    "classifica online, atrasado, nunca e revogado",
+    "RelogiosPanel",
+    "mostra carregando e depois a lista de coletores com status",
+    "mostra estado vazio",
+    "mostra erro com tentar de novo",
+    "esconde as ações de quem não é admin",
+    "novo coletor: chama a RPC e mostra o token devolvido uma vez",
+    "gerar novo token pede confirmação e rotaciona a mesma unidade",
+    "revogar pede confirmação e chama a RPC com o id do coletor",
+    "aba Envios lista os lotes",
+    "aba Envios mostra vazio"
+   ]
+  },
   "src/components/__tests__/RewardsSimulator.test.tsx": {
    "path": "src/components/__tests__/RewardsSimulator.test.tsx",
    "lines": 186,
@@ -287206,6 +287613,75 @@
     }
    ]
   },
+  "src/components/ponto/relogio/RelogiosPanel.tsx": {
+   "path": "src/components/ponto/relogio/RelogiosPanel.tsx",
+   "lines": 455,
+   "exports": [
+    "interface AbaRelogioProps",
+    "interface AbaRelogio",
+    "function RelogiosPanel"
+   ],
+   "errors": [
+    ">\n      <p className=",
+    "Falha ao gerar novo token: ${mensagemErro(err)}",
+    "Falha ao gerar token: ${mensagemErro(err)}",
+    "Falha ao revogar: ${mensagemErro(err)}",
+    "Não foi possível copiar. Selecione o texto e copie manualmente."
+   ],
+   "html_constraints": [
+    {
+     "field": "coletor-unidade",
+     "rules": "max"
+    },
+    {
+     "field": "coletor-nome",
+     "rules": "max"
+    }
+   ],
+   "params": [
+    {
+     "name": "MAX_CAMPO",
+     "value": "60"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "rotacionar",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "rotacionar",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "revogar",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "rotacionar",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "revogar",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "revogar",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "revogar",
+     "kind": "compara"
+    }
+   ]
+  },
   "src/components/ponto/relogio/VinculosRelogioTab.tsx": {
    "path": "src/components/ponto/relogio/VinculosRelogioTab.tsx",
    "lines": 236,
@@ -287216,6 +287692,30 @@
     ">\n        <p className=",
     "Não foi possível desfazer: ${mensagemErro(err)}",
     "Não foi possível vincular: ${mensagemErro(err)}"
+   ]
+  },
+  "src/components/ponto/relogio/statusColetor.ts": {
+   "path": "src/components/ponto/relogio/statusColetor.ts",
+   "lines": 16,
+   "exports": [
+    "const ONLINE_MS",
+    "type StatusColetor",
+    "function statusColetor"
+   ],
+   "enums": [
+    {
+     "name": "StatusColetor",
+     "values": "online | atrasado | nunca | revogado"
+    }
+   ],
+   "params": [
+    {
+     "name": "ONLINE_MS",
+     "value": "30"
+    }
+   ],
+   "temporal": [
+    "export const ONLINE_MS = 30 * 60 * 1000;"
    ]
   },
   "src/components/portal/PortalDocumentosTab.tsx": {
@@ -294192,6 +294692,23 @@
    ],
    "hooks": [
     "useColaboradores"
+   ]
+  },
+  "src/hooks/useColetoresPonto.ts": {
+   "path": "src/hooks/useColetoresPonto.ts",
+   "lines": 41,
+   "exports": [
+    "const coletoresKeys",
+    "function useColetoresPonto",
+    "function useLotesColetores",
+    "function useGerarTokenColetor",
+    "function useRevogarColetor"
+   ],
+   "hooks": [
+    "useColetoresPonto",
+    "useLotesColetores",
+    "useGerarTokenColetor",
+    "useRevogarColetor"
    ]
   },
   "src/hooks/useComplianceColaborador.ts": {
@@ -303825,7 +304342,7 @@
   },
   "src/pages/IntegracoesPage.tsx": {
    "path": "src/pages/IntegracoesPage.tsx",
-   "lines": 290,
+   "lines": 297,
    "exports": [
     "function IntegracoesPage"
    ],
@@ -316561,6 +317078,57 @@
     "increments errors when colaborador processing fails",
     "counts an item upsert failure as an error instead of reporting false success",
     "uses the folha/colaborador compound conflict target for batch item writes"
+   ]
+  },
+  "src/services/relogio/coletoresService.ts": {
+   "path": "src/services/relogio/coletoresService.ts",
+   "lines": 75,
+   "exports": [
+    "const COLUNAS_COLETOR",
+    "type ColetorPonto",
+    "type LoteColetor",
+    "interface TokenGerado",
+    "const LIMITE_LOTES",
+    "const coletoresService"
+   ],
+   "tables": [
+    {
+     "table": "ponto_rep_dispositivos",
+     "op": "select"
+    },
+    {
+     "table": "ponto_rep_lotes",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "ponto_rep_dispositivos": [
+     "empresa_id"
+    ],
+    "ponto_rep_lotes": [
+     "empresa_id"
+    ]
+   },
+   "rpc": [
+    "gerar_token_coletor_ponto",
+    "revogar_coletor_ponto"
+   ],
+   "errors": [
+    "O banco não devolveu o token do coletor.",
+    "empresa_id obrigatório para isolamento de tenant"
+   ],
+   "params": [
+    {
+     "name": "LIMITE_LOTES",
+     "value": "50"
+    }
+   ],
+   "calc_fns": [
+    {
+     "name": "gerarToken",
+     "params": "empresaId: string, unidade: string, nome: string",
+     "body": "exigirEmpresa(empresaId); const { data, error } = await supabase.rpc('gerar_token_coletor_ponto', { _empresa_id: empresaId, _unidade: unidade.trim(), _nome: nome.trim(), }); if (error) throw error; const linha = Array.isArray(data) ? data[0] : null; if (!linha?.token) throw new Error('O banco não devolveu o token do coletor.'); return { dispositivo_id: linha.dispositivo_id, token: linha.token };"
+    }
    ]
   },
   "src/services/relogio/vinculosService.ts": {
@@ -333447,6 +334015,17 @@
    "path": "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql",
    "lines": 38
   },
+  "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql": {
+   "path": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql",
+   "lines": 134,
+   "role_checks": [
+    "admin"
+   ]
+  },
+  "supabase/migrations/20261121220000_ponto_rep_coletores_admin.verify.sql": {
+   "path": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.verify.sql",
+   "lines": 29
+  },
   "supabase/migrations/20261121221000_ponto_rep_vinculos.sql": {
    "path": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql",
    "lines": 141
@@ -333858,10 +334437,27 @@
   }
  },
  "git": {
-  "sha": "01d8cb6f8bd76299f935cc1fadd6162b525e0d2f",
+  "sha": "1ec032cef133d7af45f43bef37956c3de8014937",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "1ec032c",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "feat: administração dos coletores do relógio de ponto em Integrações (#803)",
+    "files": [
+     "src/components/__tests__/RelogiosPanel.test.tsx",
+     "src/components/ponto/relogio/RelogiosPanel.tsx",
+     "src/components/ponto/relogio/statusColetor.ts",
+     "src/hooks/useColetoresPonto.ts",
+     "src/integrations/supabase/types.ts",
+     "src/pages/IntegracoesPage.tsx",
+     "src/services/relogio/coletoresService.ts",
+     "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql",
+     "supabase/migrations/20261121220000_ponto_rep_coletores_admin.verify.sql"
+    ]
+   },
    {
     "sha": "01d8cb6",
     "date": "2026-11-21",
@@ -334180,16 +334776,6 @@
      "src/components/folha/RubricasDialog.tsx",
      "src/pages/RubricasPage.tsx"
     ]
-   },
-   {
-    "sha": "bfc7e3c",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "chore: reconcilia funcionalidades.csv com o estado real da main (20/11) (#770)",
-    "files": [
-     "analise-prs/RECONCILIACAO_FUNCIONALIDADES.md",
-     "analise-prs/funcionalidades.csv"
-    ]
    }
   ],
   "hot_files": [
@@ -334198,12 +334784,12 @@
     5
    ],
    [
-    "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+    "src/integrations/supabase/types.ts",
     4
    ],
    [
-    "src/integrations/supabase/types.ts",
-    3
+    "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+    4
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -334211,10 +334797,6 @@
    ],
    [
     "scripts/canonical-invariants.sql",
-    3
-   ],
-   [
-    "analise-prs/funcionalidades.csv",
     3
    ],
    [
@@ -334234,6 +334816,10 @@
     2
    ],
    [
+    "analise-prs/funcionalidades.csv",
+    2
+   ],
+   [
     "docs/ninebox-aprovacao-gestor-vinculo-abner.sql",
     2
    ],
@@ -334246,31 +334832,31 @@
     2
    ],
    [
-    "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
+    "src/components/__tests__/RelogiosPanel.test.tsx",
     1
    ],
    [
-    "src/components/__tests__/PontoClockRegister.test.tsx",
+    "src/components/ponto/relogio/RelogiosPanel.tsx",
     1
    ],
    [
-    "src/components/ponto/GestaoRegistrosPonto.tsx",
+    "src/components/ponto/relogio/statusColetor.ts",
     1
    ],
    [
-    "src/components/ponto/PontoClockRegister.tsx",
+    "src/hooks/useColetoresPonto.ts",
     1
    ],
    [
-    "src/pages/PontoKioskPage.tsx",
+    "src/pages/IntegracoesPage.tsx",
     1
    ],
    [
-    "src/pages/PontoPage.tsx",
+    "src/services/relogio/coletoresService.ts",
     1
    ],
    [
-    "src/pages/__tests__/PontoKioskPage.test.tsx",
+    "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql",
     1
    ]
   ]
