@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b9b1c05cfe0d8a2ef1785339fa628db772edb86a` (2026-11-21T18:36:49-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d5342ad1e0078a330a4169be54be52545602074e` (2026-11-21T18:41:25-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -396,14 +396,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27801 nós · 62704 arestas · 2471 comunidades · grafo do commit `b9b1c05c`
+- 27801 nós · 62704 arestas · 2471 comunidades · grafo do commit `d5342ad1`
 - comunidades maiores: 20260831_corrected_public.sql (485), canonical_schema.sql (481), cn (472), useEmpresas (394), card.tsx (384), vitest (351), react (288), lucide-react (272), client.ts (237), supabase/types.ts (198), checkRateLimit (167), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/canonical-migrations.yml (26)
-- inventario/estado/rotas.json (22)
+- inventario/estado/rotas.json (23)
 - scripts/canonical-invariants.sql (17)
 - src/pages/ColaboradorDetalhesPage.tsx (12)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
@@ -414,9 +414,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - src/App.tsx (7)
 - src/pages/CalculadoraRescisaoPage.tsx (7)
 - src/pages/ColaboradoresPage.tsx (7)
+- docs/agentes/banco.md (6)
 - docs/auditoria/VEREDITO_MURI_2026-11-17.md (6)
 - scripts/automation.config.json (6)
-- scripts/e2e/ensure-fixtures.mjs (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -654,6 +654,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-21 `d5342ad` chore: inventario do estado real [auto] (#787)
+- 2026-11-21 `8518ebc` chore: registra o conserto do diagnóstico SQL e fecha as etapas 16, 24 e 25 do plano do ponto (#794)
 - 2026-11-21 `b9b1c05` fix: corrige as duas falhas do mode=verify do ledger canônico (#793)
 - 2026-11-21 `3f0f032` infra: concede ci_auditor ao papel da conexão para destravar o diagnóstico SQL (#791)
 - 2026-11-21 `77e63b1` fix: auditoria contínua valida tabelas reais (folha_itens/desligamentos/pix) no lugar de legadas (#789)
@@ -667,8 +669,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `094e9e0` chore: corrige evidência F-07 no CSV (gap é transporte governamental, não uso inicial) (#781)
 - 2026-11-21 `8b67020` chore: marca policy ferias_gestor_update como OK no backlog (já aplicada no canônico) (#780)
 - 2026-11-21 `74db632` chore: registra gap real de transporte eSocial (F-07) no backlog verificado (#779)
-- 2026-11-21 `9073ea6` infra: corrige cegueira do assert de ledger no canonical-migrations (#771)
-- 2026-11-21 `76e6c55` chore: certifica F-01..F-20 como VERIFICADO em producao no canonico (#777)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -99865,10 +99865,6 @@
               "hits": 2
             },
             {
-              "file": "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
-              "hits": 2
-            },
-            {
               "file": "supabase/migrations/20261119130000_ferias_gestor_update.sql",
               "hits": 3
             },
@@ -99877,7 +99873,7 @@
               "hits": 2
             }
           ],
-          "code_total_files": 18,
+          "code_total_files": 17,
           "cron": [],
           "db": [
             "public.bloquear_aprovacao_ponto_sem_rh",
@@ -147308,6 +147304,7 @@
           "anon",
           "authenticated",
           "authenticator",
+          "ci_auditor",
           "ci_auditor",
           "dp_ci_auditor",
           "dp_mcp_role",

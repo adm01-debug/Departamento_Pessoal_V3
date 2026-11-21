@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-21 22:12 UTC
+
+- **functions** alterado (1): `public.pode_gerir_pessoas(_empresa_id uuid)`
+- **roles** alterado (1): `postgres`
+
 ## 2026-11-21 14:12 UTC
 
 - **realtime** removido (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_17`

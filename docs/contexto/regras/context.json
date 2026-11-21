@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "b9b1c05cfe0d8a2ef1785339fa628db772edb86a",
+  "sha": "d5342ad1e0078a330a4169be54be52545602074e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 21:37 UTC",
+  "generated_at": "2026-11-21 22:12 UTC",
   "files_total": 3681,
   "code_files": 3096,
   "code_lines": 492848
@@ -331106,10 +331106,32 @@
   }
  },
  "git": {
-  "sha": "b9b1c05cfe0d8a2ef1785339fa628db772edb86a",
+  "sha": "d5342ad1e0078a330a4169be54be52545602074e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "d5342ad",
+    "date": "2026-11-21",
+    "author": "github-actions[bot]",
+    "subject": "chore: inventario do estado real [auto] (#787)",
+    "files": [
+     "inventario/estado/banco.json",
+     "inventario/estado/edges.json",
+     "inventario/estado/funcionalidades.json",
+     "inventario/estado/rotas.json"
+    ]
+   },
+   {
+    "sha": "8518ebc",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: registra o conserto do diagnóstico SQL e fecha as etapas 16, 24 e 25 do plano do ponto (#794)",
+    "files": [
+     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+     "docs/agentes/banco.md"
+    ]
+   },
    {
     "sha": "b9b1c05",
     "date": "2026-11-21",
@@ -331393,26 +331415,6 @@
     "files": [
      "scripts/e2e/ensure-fixtures.mjs"
     ]
-   },
-   {
-    "sha": "893a2aa",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(e2e): seed de candidaturas envia empresa_id explícito (#758)",
-    "files": [
-     "scripts/e2e/ensure-fixtures.mjs"
-    ]
-   },
-   {
-    "sha": "23cd2e2",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(e2e): corrige as 2 falhas do pipeline de recrutamento na main (#757)",
-    "files": [
-     "scripts/e2e/ensure-fixtures.mjs",
-     "src/components/recrutamento/PipelineColumn.tsx",
-     "src/components/recrutamento/__tests__/PipelineBoard.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -331421,16 +331423,20 @@
     5
    ],
    [
-    "scripts/e2e/ensure-fixtures.mjs",
-    5
-   ],
-   [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    3
+    4
    ],
    [
     "analise-prs/funcionalidades.csv",
     3
+   ],
+   [
+    "scripts/e2e/ensure-fixtures.mjs",
+    3
+   ],
+   [
+    "inventario/estado/funcionalidades.json",
+    2
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -331457,6 +331463,22 @@
     2
    ],
    [
+    "inventario/estado/banco.json",
+    1
+   ],
+   [
+    "inventario/estado/edges.json",
+    1
+   ],
+   [
+    "inventario/estado/rotas.json",
+    1
+   ],
+   [
+    "docs/agentes/banco.md",
+    1
+   ],
+   [
     "docs/auditoria/MIGRATIONS_LEDGER_SEM_ARQUIVO_2026-11-17.md",
     1
    ],
@@ -331474,26 +331496,6 @@
    ],
    [
     "supabase/migrations/20261121200000_ci_auditor_grant_set_role.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261121200000_ci_auditor_grant_set_role.verify.sql",
-    1
-   ],
-   [
-    ".github/workflows/inventario-estado-semanal.yml",
-    1
-   ],
-   [
-    "inventario/estado/funcionalidades.json",
-    1
-   ],
-   [
-    "scripts/automation.config.json",
-    1
-   ],
-   [
-    "scripts/inventario/mudou-conteudo.mjs",
     1
    ]
   ]

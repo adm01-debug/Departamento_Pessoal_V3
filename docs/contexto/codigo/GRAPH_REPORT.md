@@ -1,7 +1,7 @@
 # Graph Report - Departamento_Pessoal_V3  (2026-11-21)
 
 ## Corpus Check
-- 3566 files · ~3,547,350 words
+- 3566 files · ~3,548,297 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 37 file(s) not represented in the graph (top: (none) 16, .toml 5, .conf 4)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b9b1c05c`
+- Built from commit: `d5342ad1`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -3824,7 +3824,7 @@ Nodes (12): Avaliação de impacto, Caminho alternativo (sem aprovação de work
 
 ### Community 439 - "Banco de dados — referência para agentes"
 Cohesion: 0.15
-Nodes (12): Banco CANÔNICO, Banco de dados — referência para agentes, Bancos que NÃO são deste projeto (não escrever neles), `canonical-sql-diag.yml` está QUEBRADO em modo não-PII (medido 2026-11-18), Duas armadilhas do guard W27, para quem for escrever uma consulta ali, Edge Functions, Onde se trabalha, Pré-requisitos do `mode=verify` como alternativa (não é consulta livre) (+4 more)
+Nodes (12): Banco CANÔNICO, Banco de dados — referência para agentes, Bancos que NÃO são deste projeto (não escrever neles), `canonical-sql-diag.yml` em modo não-PII: consertado em 21/11/2026, Duas armadilhas do guard W27, para quem for escrever uma consulta ali, Edge Functions, Onde se trabalha, Pré-requisitos do `mode=verify` como alternativa (não é consulta livre) (+4 more)
 
 ### Community 440 - "Decisões técnicas e gaps conhecidos"
 Cohesion: 0.15

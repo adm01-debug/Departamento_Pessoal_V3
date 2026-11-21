@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b9b1c05cfe0d8a2ef1785339fa628db772edb86a",
+  "commit": "d5342ad1e0078a330a4169be54be52545602074e",
   "branch": "main",
-  "data_commit": "2026-11-21T18:36:49-03:00",
+  "data_commit": "2026-11-21T18:41:25-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "d5342ad",
+    "data": "2026-11-21",
+    "assunto": "chore: inventario do estado real [auto] (#787)"
+   },
+   {
+    "sha": "8518ebc",
+    "data": "2026-11-21",
+    "assunto": "chore: registra o conserto do diagnóstico SQL e fecha as etapas 16, 24 e 25 do plano do ponto (#794)"
+   },
    {
     "sha": "b9b1c05",
     "data": "2026-11-21",
@@ -121,23 +131,13 @@
     "sha": "32be71e",
     "data": "2026-11-20",
     "assunto": "fix: itens 8, 13 e 14 da issue #571 (Avaliação/NineBox) (#764)"
-   },
-   {
-    "sha": "e8fff0c",
-    "data": "2026-11-20",
-    "assunto": "fix: limpa listarTrilhaMock no beforeEach dos estados da consulta (Auditoria de Admiss?es) (#763)"
-   },
-   {
-    "sha": "cc9b25a",
-    "data": "2026-11-19",
-    "assunto": "fix: restaura etapas canonicas do pipeline no seed do E2E (#762)"
    }
   ],
   "arquivos_mudados_7d": 999,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 390
+    "mudancas": 389
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 22
+    "mudancas": 23
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -246,6 +246,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "docs/agentes/banco.md",
+    "mudancas": 6
+   },
+   {
     "arquivo": "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
     "mudancas": 6
    },
@@ -264,10 +268,6 @@
    {
     "arquivo": "src/index.css",
     "mudancas": 6
-   },
-   {
-    "arquivo": "docs/agentes/banco.md",
-    "mudancas": 5
    },
    {
     "arquivo": "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 295
+    "commits": 294
    },
    {
     "autor": "dependabot[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 2
+    "commits": 3
    }
   ]
  },
