@@ -79,9 +79,16 @@ simulations" (3 shards) e "RLS live (pós-merge, não bloqueante)".
   allowlist de RPC. Detalhe e runbook de desempenho em `docs/agentes/arquitetura.md` e
   `infra/runbooks/BRIDGE_PERFORMANCE.md`.
 
-## `canonical-sql-diag.yml` está QUEBRADO em modo não-PII (medido 2026-11-18)
+## `canonical-sql-diag.yml` em modo não-PII: consertado em 21/11/2026
 
-Não confie nessa ferramenta até o grant abaixo existir. Com `allow_pii=false`, o
+**Estado atual: funciona.** A `20261121200000_ci_auditor_grant_set_role.sql` (PR #791) concedeu `ci_auditor` ao
+papel da conexão: validate run 44950842956 (`GRANT ROLE`, `CANONICAL_MIGRATION_DRY_RUN_OK`), apply run 44951018325
+e diagnóstico com `allow_pii=false` run 44951290182, os três success. O guard W27 continua valendo: escreva a
+consulta como manda a seção "Duas armadilhas" abaixo (o run 44951154557 reprovou por usar alias e `'public'`
+literal em comparação; o 44951397125, por `pg_class.oid`). O texto a seguir é o histórico do defeito.
+
+
+Até 21/11/2026, com `allow_pii=false`, o
 `scripts/diag/run-sql-diag.mjs` prefixa a consulta com `SET LOCAL ROLE ci_auditor;`
 (`:225`) e o psql morre antes de qualquer consulta:
 
