@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "9073ea6f463bace94b065c1c2bcd32a564a17909",
+  "sha": "094e9e0549927d3df101dea0b688024af04d7457",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 14:05 UTC",
+  "generated_at": "2026-11-21 15:12 UTC",
   "files_total": 3678,
   "code_files": 3095,
   "code_lines": 492768
@@ -331087,10 +331087,37 @@
   }
  },
  "git": {
-  "sha": "9073ea6f463bace94b065c1c2bcd32a564a17909",
+  "sha": "094e9e0549927d3df101dea0b688024af04d7457",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "094e9e0",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: corrige evidência F-07 no CSV (gap é transporte governamental, não uso inicial) (#781)",
+    "files": [
+     "analise-prs/funcionalidades.csv"
+    ]
+   },
+   {
+    "sha": "8b67020",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: marca policy ferias_gestor_update como OK no backlog (já aplicada no canônico) (#780)",
+    "files": [
+     "docs/pendencias/_ordem.md"
+    ]
+   },
+   {
+    "sha": "74db632",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: registra gap real de transporte eSocial (F-07) no backlog verificado (#779)",
+    "files": [
+     "docs/pendencias/_ordem.md"
+    ]
+   },
    {
     "sha": "9073ea6",
     "date": "2026-11-21",
@@ -331369,47 +331396,6 @@
      "playwright.config.ts",
      "src/components/ui/currency-input.tsx"
     ]
-   },
-   {
-    "sha": "0eb89d4",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "feat(auditoria): aba de Auditoria de Admissões no ar, lendo a trilha real (#746)",
-    "files": [
-     "scripts/.bundle-budget.json",
-     "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
-     "src/components/__tests__/auditoriaDerivacoes.test.ts",
-     "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
-     "src/components/admissoes/auditoriaComum.ts",
-     "src/components/admissoes/auditoriaDerivacoes.ts",
-     "src/integrations/supabase/types.ts",
-     "src/pages/AdmissoesPage.tsx",
-     "src/schemas/tableColumns.ts",
-     "src/services/__tests__/auditoriaAdmissoesService.test.ts",
-     "src/services/auditoriaAdmissoesService.ts"
-    ]
-   },
-   {
-    "sha": "ddcecda",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix: remove folhas_gestor_update da 120000 para nao quebrar pos-condicao da 130000 (#745)",
-    "files": [
-     "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
-     "supabase/migrations/20261119120000_ferias_folhas_gestor_update.verify.sql"
-    ]
-   },
-   {
-    "sha": "efcfc1d",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "feat(ui): resgata os 2 resíduos visuais da PR #546 (muri) (#744)",
-    "files": [
-     "src/pages/CalculadoraRescisaoPage.tsx",
-     "src/pages/ColaboradorDetalhesPage.tsx",
-     "src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx",
-     "src/pages/__tests__/ColaboradorDetalhesAbas.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -331418,11 +331404,15 @@
     5
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
-    2
+    "analise-prs/funcionalidades.csv",
+    3
    ],
    [
-    "analise-prs/funcionalidades.csv",
+    "docs/pendencias/_ordem.md",
+    3
+   ],
+   [
+    ".github/workflows/canonical-migrations.yml",
     2
    ],
    [
@@ -331442,27 +331432,7 @@
     2
    ],
    [
-    "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
-    2
-   ],
-   [
     "supabase/migrations/20261119170000_onboarding_converge_modelo_b.verify.sql",
-    2
-   ],
-   [
-    "src/components/__tests__/auditoriaDerivacoes.test.ts",
-    2
-   ],
-   [
-    "src/components/admissoes/auditoriaDerivacoes.ts",
-    2
-   ],
-   [
-    "src/services/__tests__/auditoriaAdmissoesService.test.ts",
-    2
-   ],
-   [
-    "src/services/auditoriaAdmissoesService.ts",
     2
    ],
    [
@@ -331471,10 +331441,6 @@
    ],
    [
     "docs/pendencias/README.md",
-    1
-   ],
-   [
-    "docs/pendencias/_ordem.md",
     1
    ],
    [
@@ -331491,6 +331457,26 @@
    ],
    [
     "analise-prs/RECONCILIACAO_FUNCIONALIDADES.md",
+    1
+   ],
+   [
+    "src/hooks/useExecutiveDashboard.ts",
+    1
+   ],
+   [
+    "src/integrations/supabase/__tests__/clientBridge.test.ts",
+    1
+   ],
+   [
+    "src/integrations/supabase/client.ts",
+    1
+   ],
+   [
+    "src/pages/PassivoTrabalhistaPage.tsx",
+    1
+   ],
+   [
+    "src/services/__tests__/premiacoesService.test.ts",
     1
    ]
   ]

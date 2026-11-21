@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: corrige evidência F-07 no CSV (gap é transporte governamental, não uso inicial) (#781)",
+   "chore: marca policy ferias_gestor_update como OK no backlog (já aplicada no canônico) (#780)",
+   "chore: registra gap real de transporte eSocial (F-07) no backlog verificado (#779)",
    "infra: corrige cegueira do assert de ledger no canonical-migrations (#771)",
-   "chore: certifica F-01..F-20 como VERIFICADO em producao no canonico (#777)",
-   "revert: remove specs resgatados na #774 que nao passam na main (descartados na auditoria muri) (#776)",
-   "chore: preserva e2e/docs NineBox e Premiações da branch muri (resgate de trabalho de outro agente) (#774)",
-   "chore: cria docs/pendencias com estado verificado dos itens de auditoria (#773)"
+   "chore: certifica F-01..F-20 como VERIFICADO em producao no canonico (#777)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

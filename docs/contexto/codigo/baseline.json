@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9073ea6f463bace94b065c1c2bcd32a564a17909",
+  "commit": "094e9e0549927d3df101dea0b688024af04d7457",
   "branch": "main",
-  "data_commit": "2026-11-21T11:03:06-03:00",
+  "data_commit": "2026-11-21T12:02:25-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "094e9e0",
+    "data": "2026-11-21",
+    "assunto": "chore: corrige evidência F-07 no CSV (gap é transporte governamental, não uso inicial) (#781)"
+   },
+   {
+    "sha": "8b67020",
+    "data": "2026-11-21",
+    "assunto": "chore: marca policy ferias_gestor_update como OK no backlog (já aplicada no canônico) (#780)"
+   },
+   {
+    "sha": "74db632",
+    "data": "2026-11-21",
+    "assunto": "chore: registra gap real de transporte eSocial (F-07) no backlog verificado (#779)"
+   },
    {
     "sha": "9073ea6",
     "data": "2026-11-21",
@@ -116,21 +131,6 @@
     "sha": "16d4f17",
     "data": "2026-11-19",
     "assunto": "chore(autofix): eslint --fix nas regras seguras (pdiComum, useAfastamentos, colaboradoresMock) (#754)"
-   },
-   {
-    "sha": "21048eb",
-    "data": "2026-11-19",
-    "assunto": "fix(avaliacao): mescla MOCK_COLABORADORES no modo demo para destravar aprovacao de feedback (E2E :210) (#753)"
-   },
-   {
-    "sha": "689351b",
-    "data": "2026-11-19",
-    "assunto": "fix(e2e): corrige fila de gestor no stub da bridge e lista so com Editar (#752)"
-   },
-   {
-    "sha": "a2ab09a",
-    "data": "2026-11-19",
-    "assunto": "docs(auditoria): registra a varredura por símbolo e a deriva ledger × repositório (#750)"
    }
   ],
   "arquivos_mudados_7d": 995,
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 26
+    "mudancas": 25
    },
    {
     "arquivo": "inventario/estado/rotas.json",

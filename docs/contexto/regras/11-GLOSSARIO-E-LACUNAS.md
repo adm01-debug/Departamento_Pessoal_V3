@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9073ea6f46` · branch `main` · 2026-11-21 14:05 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `094e9e0549` · branch `main` · 2026-11-21 15:12 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
