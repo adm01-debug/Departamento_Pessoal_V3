@@ -3101,6 +3101,18 @@ export const TABLE_COLUMNS: Record<string, readonly string[]> = {
     'total_batidas',
     'total_horas_trabalhadas',
   ],
+  ponto_espelhos_papel: [
+    'arquivo_path',
+    'colaborador_id',
+    'competencia',
+    'created_at',
+    'devolvido_em',
+    'empresa_id',
+    'id',
+    'observacao',
+    'registrado_por',
+    'updated_at',
+  ],
   ponto_espelhos_revogacoes: ['espelho_id', 'id', 'ip', 'motivo', 'revogado_em', 'revogado_por_user_id', 'user_agent'],
   ponto_regras_aprovacao: [
     'created_at',
