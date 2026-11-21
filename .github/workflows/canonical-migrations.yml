@@ -223,10 +223,22 @@ jobs:
           # daqui porque esta no ledger: no validate run 44950842956 as duas
           # primeiras foram puladas como ja registradas e a terceira foi aplicada
           # no apply run 44951018325 (success).
-          # LOTE ATUAL (21/11/2026): 20261121210000 cria as 5 tabelas ponto_rep_*
-          # (entrada do relogio de ponto Henry/AtecSoft). Aditiva e idempotente.
+          # O lote anterior (20261121210000, tabelas ponto_rep_*) saiu daqui
+          # porque esta no ledger: apply run 44956208120 e verify run
+          # 44956510074, ambos success.
+          # LOTE ATUAL (21/11/2026): relogio de ponto Henry/AtecSoft, parte 2.
+          #  - 20261121220000: RPCs gerar/revogar token do coletor (#803).
+          #  - 20261121221000: RPCs de vinculo funcionario x colaborador (#800).
+          #  - 20261121222000: protecao das batidas origem 'relogio' (#801).
+          #  - 20261121223000: alerta de coletor parado + cron (#804).
+          #  - 20261121224000: tabela ponto_espelhos_papel com RLS (#804).
+          # Todas aditivas e idempotentes.
           for migration in \
-            20261121210000_ponto_rep_ingestao.sql
+            20261121220000_ponto_rep_coletores_admin.sql \
+            20261121221000_ponto_rep_vinculos.sql \
+            20261121222000_batidas_relogio_protecao.sql \
+            20261121223000_ponto_rep_alerta_coletor_parado.sql \
+            20261121224000_ponto_espelhos_papel.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -397,7 +409,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 1 &&
+              Number(r.ledger_count) === 5 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
