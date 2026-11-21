@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (1981)",
    "SQL (978)",
-   "Markdown (341)",
+   "Markdown (342)",
    "JavaScript (135)",
    "JSON (64)",
    "Shell (57)",
@@ -1332,6 +1332,11 @@
    "arquivo": "docs/PERFORMANCE.md",
    "titulo": "⚡ PERFORMANCE.md - Guia de Performance",
    "linhas": 27
+  },
+  {
+   "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+   "titulo": "Plano — Integração do ponto Henry / Ponto AtecSoft com o DP V3",
+   "linhas": 285
   },
   {
    "arquivo": "docs/PONTO.md",

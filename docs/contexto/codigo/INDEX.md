@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3c6b0a55909f8658cf214ca1806f3a48b277105a` (2026-11-21T13:21:46-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bbdb6e3cba3c6bbae7b0632768e3a3fed4a2414c` (2026-11-21T17:07:31-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1981), SQL (978), Markdown (341), JavaScript (135), JSON (64), Shell (57), YAML (56), Python (5)
+- linguagens: TypeScript (1981), SQL (978), Markdown (342), JavaScript (135), JSON (64), Shell (57), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3667 |
+| arquivos_total | 3668 |
 | arquivos_codigo | 2120 |
 | linhas_codigo | 423035 |
 | rotas | 116 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 800 |
 | workflows | 21 |
 | scripts | 136 |
-| docs_md | 341 |
+| docs_md | 342 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
@@ -62,7 +62,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
-- docs: docs (95), (raiz) (32), .github (1)
+- docs: docs (96), (raiz) (32), .github (1)
 - nomenclatura: {"componentes":"PascalCase (89%)","hooks":"use + PascalCase","servicos":"camelCase (98%)","edge_functions":"kebab-case (69%)","tabelas":"snake_case (85%)"}
 - instruções para agentes no repo: .claude/CLAUDE.md, AGENTS.md, CLAUDE.md
 
@@ -396,21 +396,21 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 27779 nós · 62683 arestas · 2400 comunidades · grafo do commit `3c6b0a55`
-- comunidades maiores: 20260831_corrected_public.sql (485), canonical_schema.sql (481), react (454), button.tsx (392), cn (385), lucide-react (367), useEmpresas (335), vitest (248), date-fns (224), validate.ts (222), client.ts (215), FinanceiroResumoCards.tsx (167)
+- 27800 nós · 62703 arestas · 2426 comunidades · grafo do commit `bbdb6e3c`
+- comunidades maiores: 20260831_corrected_public.sql (485), canonical_schema.sql (481), lucide-react (478), react (452), @tanstack/react-query (420), vitest (386), useEmpresas (382), utils.ts (310), App.tsx (208), treinamentosDerivacoes.ts (194), cn (174), premiacoesComum.ts (172)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/canonical-migrations.yml (25)
-- inventario/estado/rotas.json (23)
+- inventario/estado/rotas.json (22)
 - scripts/canonical-invariants.sql (16)
 - src/pages/ColaboradorDetalhesPage.tsx (12)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
 - docs/prod-readiness.md (9)
-- package.json (9)
-- package-lock.json (8)
+- package.json (8)
 - docs/auditoria/sql-preservado/README.md (7)
+- package-lock.json (7)
 - src/App.tsx (7)
 - src/pages/CalculadoraRescisaoPage.tsx (7)
 - src/pages/ColaboradoresPage.tsx (7)
@@ -607,6 +607,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/ONBOARDING_MODELO_B_DEPRECATED.md` — MODELO B DE ONBOARDING — DEPRECATED (133 linhas)
 - `docs/P2-037_TABELAS_DUPLICADAS_ANALISE.md` — P2-037: Consolidação de Tabelas Duplicadas — Análise e Runbook (53 linhas)
 - `docs/PERFORMANCE.md` — ⚡ PERFORMANCE.md - Guia de Performance (27 linhas)
+- `docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md` — Plano — Integração do ponto Henry / Ponto AtecSoft com o DP V3 (285 linhas)
 - `docs/PONTO.md` — ⏰ PONTO.md - Guia de Ponto (23 linhas)
 - `docs/QA_EXHAUSTIVE_REPORT_V26.md` — 🔬 QA Exaustivo V26 — Relatório Final (146 linhas)
 - `docs/QA_EXHAUSTIVE_REPORT_V27.md` — QA Exaustivo V27 — Relatório Final (87 linhas)
@@ -653,6 +654,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-21 `bbdb6e3` chore: registra no plano do ponto os achados do banco e do Promo Finance (#790)
+- 2026-11-21 `123f387` chore: plano do ponto passa a mão dupla com o AtecSoft e registra D1–D5 (#788)
+- 2026-11-21 `06ab445` chore: plano em 100 etapas da integração do ponto Henry/AtecSoft (#786)
 - 2026-11-21 `3c6b0a5` chore: auditoria contínua das funcionalidades F-01..F-20 (#785)
 - 2026-11-21 `5d0677c` infra: torna login E2E não-admin obrigatório no smoke pós-deploy (REQUIRE_LOGIN=1) (#784)
 - 2026-11-21 `50a87a9` chore: marca smoke pós-deploy como automatizado no _ordem.md (#783)
@@ -665,9 +669,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `eb7dcf8` revert: remove specs resgatados na #774 que nao passam na main (descartados na auditoria muri) (#776)
 - 2026-11-21 `45af2a0` chore: preserva e2e/docs NineBox e Premiações da branch muri (resgate de trabalho de outro agente) (#774)
 - 2026-11-21 `f74ddb6` chore: cria docs/pendencias com estado verificado dos itens de auditoria (#773)
-- 2026-11-21 `06ed2ca` fix: rubricas_folha insert/delete/update sem empresa_id (#772)
-- 2026-11-20 `bfc7e3c` chore: reconcilia funcionalidades.csv com o estado real da main (20/11) (#770)
-- 2026-11-20 `cca632b` fix: corrige 12 erros BRIDGE_SCHEMA_ERROR (HTTP 400 no bridge) e destrava Dashboard Executivo e Passivo Trabalhista (#76
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

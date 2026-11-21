@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3c6b0a55909f8658cf214ca1806f3a48b277105a",
+  "commit": "bbdb6e3cba3c6bbae7b0632768e3a3fed4a2414c",
   "branch": "main",
-  "data_commit": "2026-11-21T13:21:46-03:00",
+  "data_commit": "2026-11-21T17:07:31-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "bbdb6e3",
+    "data": "2026-11-21",
+    "assunto": "chore: registra no plano do ponto os achados do banco e do Promo Finance (#790)"
+   },
+   {
+    "sha": "123f387",
+    "data": "2026-11-21",
+    "assunto": "chore: plano do ponto passa a mão dupla com o AtecSoft e registra D1–D5 (#788)"
+   },
+   {
+    "sha": "06ab445",
+    "data": "2026-11-21",
+    "assunto": "chore: plano em 100 etapas da integração do ponto Henry/AtecSoft (#786)"
+   },
    {
     "sha": "3c6b0a5",
     "data": "2026-11-21",
@@ -116,24 +131,9 @@
     "sha": "3b4e3cc",
     "data": "2026-11-19",
     "assunto": "fix(e2e): backfill de empresa_id em candidaturas orfas do seed (#759)"
-   },
-   {
-    "sha": "893a2aa",
-    "data": "2026-11-19",
-    "assunto": "fix(e2e): seed de candidaturas envia empresa_id explícito (#758)"
-   },
-   {
-    "sha": "23cd2e2",
-    "data": "2026-11-19",
-    "assunto": "fix(e2e): corrige as 2 falhas do pipeline de recrutamento na main (#757)"
-   },
-   {
-    "sha": "c60bf64",
-    "data": "2026-11-19",
-    "assunto": "fix(onboarding): ancora assercoes do verify na admissao de destino (#756)"
    }
   ],
-  "arquivos_mudados_7d": 1000,
+  "arquivos_mudados_7d": 997,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -169,7 +169,7 @@
    },
    {
     "pasta": "src/components/layout",
-    "mudancas": 47
+    "mudancas": 46
    },
    {
     "pasta": "src/components/recrutamento",
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 23
+    "mudancas": 22
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -223,14 +223,14 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "package-lock.json",
     "mudancas": 8
    },
    {
     "arquivo": "docs/auditoria/sql-preservado/README.md",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "package-lock.json",
     "mudancas": 7
    },
    {
@@ -286,35 +286,35 @@
     "mudancas": 5
    },
    {
-    "arquivo": "src/components/layout/AppSidebar.tsx",
-    "mudancas": 5
-   },
-   {
     "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 5
    },
    {
     "arquivo": "src/pages/AdmissoesPage.tsx",
     "mudancas": 5
+   },
+   {
+    "arquivo": "src/pages/AvaliacaoPage.tsx",
+    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 293
+    "commits": 295
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 4
+    "commits": 3
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 3
+    "commits": 2
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3667,
+  "arquivos_total": 3668,
   "arquivos_codigo": 2120,
   "linhas_codigo": 423035,
   "rotas": 116,
@@ -331,7 +331,7 @@
   "testes": 800,
   "workflows": 21,
   "scripts": 136,
-  "docs_md": 341
+  "docs_md": 342
  },
  "por_pasta": {
   "capacitor.config.ts": {

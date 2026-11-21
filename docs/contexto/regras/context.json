@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "3c6b0a55909f8658cf214ca1806f3a48b277105a",
+  "sha": "bbdb6e3cba3c6bbae7b0632768e3a3fed4a2414c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 16:22 UTC",
-  "files_total": 3680,
+  "generated_at": "2026-11-21 20:12 UTC",
+  "files_total": 3681,
   "code_files": 3096,
   "code_lines": 492859
  },
@@ -331106,10 +331106,37 @@
   }
  },
  "git": {
-  "sha": "3c6b0a55909f8658cf214ca1806f3a48b277105a",
+  "sha": "bbdb6e3cba3c6bbae7b0632768e3a3fed4a2414c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "bbdb6e3",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: registra no plano do ponto os achados do banco e do Promo Finance (#790)",
+    "files": [
+     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
+    ]
+   },
+   {
+    "sha": "123f387",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: plano do ponto passa a mão dupla com o AtecSoft e registra D1–D5 (#788)",
+    "files": [
+     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
+    ]
+   },
+   {
+    "sha": "06ab445",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: plano em 100 etapas da integração do ponto Henry/AtecSoft (#786)",
+    "files": [
+     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
+    ]
+   },
    {
     "sha": "3c6b0a5",
     "date": "2026-11-21",
@@ -331381,36 +331408,6 @@
      "supabase/migrations/20261119170000_onboarding_converge_modelo_b.sql",
      "supabase/migrations/20261119170000_onboarding_converge_modelo_b.verify.sql"
     ]
-   },
-   {
-    "sha": "49cbb50",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "infra(banco): versiona o DDL órfão da família dp_* (imutabilidade do log de auditoria) (#751)",
-    "files": [
-     "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.sql",
-     "supabase/migrations/20261019235900_versiona_ddl_orfao_dp.verify.sql"
-    ]
-   },
-   {
-    "sha": "16d4f17",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "chore(autofix): eslint --fix nas regras seguras (pdiComum, useAfastamentos, colaboradoresMock) (#754)",
-    "files": [
-     "src/components/avaliacao/pdiComum.ts",
-     "src/hooks/useAfastamentos.ts",
-     "src/mocks/colaboradoresMock.ts"
-    ]
-   },
-   {
-    "sha": "21048eb",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix(avaliacao): mescla MOCK_COLABORADORES no modo demo para destravar aprovacao de feedback (E2E :210) (#753)",
-    "files": [
-     "src/pages/AvaliacaoPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -331421,6 +331418,10 @@
    [
     "scripts/e2e/ensure-fixtures.mjs",
     5
+   ],
+   [
+    "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+    3
    ],
    [
     "analise-prs/funcionalidades.csv",
@@ -331440,10 +331441,6 @@
    ],
    [
     "e2e/authenticated/premiacoes-auditoria.spec.ts",
-    2
-   ],
-   [
-    "src/pages/AvaliacaoPage.tsx",
     2
    ],
    [
