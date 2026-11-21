@@ -84,6 +84,12 @@ jobs:
           # < /dev/null: sem lista de tabelas no stdin o script só grava edges.json (o uso de tabelas sai no banco.json)
           node scripts/inventario/gerar-repo.mjs < /dev/null
 
+      - name: Auditoria contínua das funcionalidades (F-01..F-20)
+        # Revalida cada funcionalidade contra banco.json (tabelas+RLS) e edges.json regerados acima;
+        # grava inventario/estado/funcionalidades.json. Exit 1 (job vermelho) se alguma regredir,
+        # sem abrir PR com a regressão: a flag abaixo aborta o job antes do passo de PR.
+        run: node scripts/inventario/validar-funcionalidades.mjs
+
       - name: Decidir se vale PR
         id: mudou
         # Compara o JSON sem carimbos de data, telemetria do cron e estimativas de linhas/bytes,
@@ -109,7 +115,7 @@ jobs:
           # Branch de uso exclusivo deste workflow: recriada a partir da main a cada run e enviada com
           # --force, então o PR aberto é atualizado no lugar em vez de ganhar um concorrente.
           git checkout -B "$BRANCH_PR"
-          git add inventario/estado/banco.json inventario/estado/rotas.json inventario/estado/edges.json
+          git add inventario/estado/banco.json inventario/estado/rotas.json inventario/estado/edges.json inventario/estado/funcionalidades.json
           git commit --quiet -m 'chore: inventario do estado real [auto]'
           git push --quiet --force "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$BRANCH_PR"
           numero="$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH_PR" --state open --json number --jq '.[0].number // empty')"

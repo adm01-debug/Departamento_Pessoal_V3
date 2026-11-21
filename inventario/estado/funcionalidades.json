@@ -1,0 +1,169 @@
+{
+  "gerado_em": "2026-11-21T16:09:48.038Z",
+  "total": 20,
+  "verificados": 20,
+  "regressoes": 0,
+  "resultado": "OK",
+  "funcionalidades": [
+    {
+      "id": "F-01",
+      "nome": "Admissao de Funcionario",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-02",
+      "nome": "Email Pre-Admissao",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-03",
+      "nome": "Rescisao de Contrato",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-04",
+      "nome": "Calculo de Folha",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-05",
+      "nome": "Fechamento de Folha",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-06",
+      "nome": "Emissao de Holerite PDF",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-07",
+      "nome": "Envio de Eventos eSocial",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-08",
+      "nome": "Login Gov.BR",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-09",
+      "nome": "Ferias",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-10",
+      "nome": "Afastamentos",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-11",
+      "nome": "CNAB/Remessa PIX",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-12",
+      "nome": "Backup de Dados",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-13",
+      "nome": "Tabelas Fiscais INSS/IRRF",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-14",
+      "nome": "External DB Bridge",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-15",
+      "nome": "AAL2 MFA Enforcement",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-16",
+      "nome": "Upload de Certificado Digital",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-17",
+      "nome": "Rotinas Agendadas",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-18",
+      "nome": "Recrutamento e Selecao",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-19",
+      "nome": "Nine-Box / Desempenho",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    },
+    {
+      "id": "F-20",
+      "nome": "Exportacao de Dados",
+      "status": "VERIFICADO",
+      "faltas_tabela": [],
+      "tabelas_sem_rls": [],
+      "faltas_edge": []
+    }
+  ]
+}
