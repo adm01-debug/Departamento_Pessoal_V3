@@ -23753,6 +23753,13 @@ export type Database = {
         Returns: Json
       }
       gerar_rubricas_ferias: { Args: { p_ferias_id: string }; Returns: number }
+      gerar_token_coletor_ponto: {
+        Args: { _empresa_id: string; _nome: string; _unidade: string }
+        Returns: {
+          dispositivo_id: string
+          token: string
+        }[]
+      }
       get_admissao_por_token: {
         Args: { _token: string }
         Returns: {
@@ -24822,6 +24829,10 @@ export type Database = {
           _user_agent?: string
         }
         Returns: Json
+      }
+      revogar_coletor_ponto: {
+        Args: { _dispositivo_id: string }
+        Returns: undefined
       }
       run_lgpd_purge: {
         Args: { p_dry_run?: boolean }

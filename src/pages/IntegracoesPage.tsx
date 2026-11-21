@@ -15,6 +15,8 @@ import {
   WebhookConfigPanel,
   WhatsAppConfigPanel,
 } from '@/components/integracoes/ConfigPanels';
+import { RelogiosPanel } from '@/components/ponto/relogio/RelogiosPanel';
+import { useEmpresas } from '@/hooks/useEmpresas';
 
 interface Integracao {
   id: string;
@@ -67,6 +69,7 @@ export default function IntegracoesPage() {
   const [cnabOpen, setCnabOpen] = useState(false);
   const [webhookOpen, setWebhookOpen] = useState(false);
   const [whatsappOpen, setWhatsappOpen] = useState(false);
+  const { empresaAtual } = useEmpresas();
 
   return (
     <>
@@ -282,6 +285,10 @@ export default function IntegracoesPage() {
               </motion.div>
             );
           })}
+        </div>
+
+        <div className="mt-6">
+          <RelogiosPanel empresaId={empresaAtual?.id} />
         </div>
       </PageLayout>
     </>
