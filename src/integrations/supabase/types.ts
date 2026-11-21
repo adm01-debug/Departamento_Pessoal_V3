@@ -23669,6 +23669,14 @@ export type Database = {
         Args: { _divergencia_id: string; _tipo?: string }
         Returns: string
       }
+      definir_tipo_dia_justificativa_relogio: {
+        Args: { _justificativa_id: string; _tipo_dia: string }
+        Returns: undefined
+      }
+      desvincular_funcionario_relogio: {
+        Args: { _funcionario_id: string }
+        Returns: undefined
+      }
       detectar_fraude_ponto: {
         Args: {
           _batida_id: string
@@ -24975,6 +24983,10 @@ export type Database = {
           colaborador_id: string
           empresa_id: string
         }[]
+      }
+      vincular_funcionario_relogio: {
+        Args: { _colaborador_id: string; _funcionario_id: string }
+        Returns: undefined
       }
     }
     Enums: {
