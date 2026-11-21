@@ -4,7 +4,7 @@
  *
  * Reprova o build quando encontra:
  *   1. Função com `verify_jwt = false` fora da allowlist documentada
- *      (auth-login, auth-gov-br, healthcheck, metrics, webhook, admissao-publica — ver supabase/config.toml).
+ *      (auth-login, auth-gov-br, healthcheck, metrics, webhook, admissao-publica, ingest-ponto-rep — ver supabase/config.toml).
  *   2. CORS wildcard (`Access-Control-Allow-Origin: *`) em edge functions.
  *      Também bloqueia allowlist implícita para qualquer `*.lovable.app/dev`
  *      e comparação de origem por prefixo.
@@ -33,7 +33,7 @@ const sectionClean = (m) => { if (failures.length === sectionStart) ok(m); };
 section('1. verify_jwt (config.toml)');
 const toml = readFileSync(join(ROOT, 'supabase/config.toml'), 'utf8');
 // auth-gov-br: login gov.br pré-autenticação (PR #317) — JWT opcional validado na função.
-const JWT_PUBLIC_ALLOWLIST = new Set(['auth-login', 'auth-gov-br', 'healthcheck', 'metrics', 'webhook', 'admissao-publica']);
+const JWT_PUBLIC_ALLOWLIST = new Set(['auth-login', 'auth-gov-br', 'healthcheck', 'metrics', 'webhook', 'admissao-publica', 'ingest-ponto-rep']);
 // Parser por linha, não regex de bloco: comentário ou outra chave entre o cabeçalho e o
 // verify_jwt, nome entre aspas e indentação escondiam a função do gate.
 const fnBlocks = [];
