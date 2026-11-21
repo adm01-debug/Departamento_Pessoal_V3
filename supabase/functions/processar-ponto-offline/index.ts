@@ -176,8 +176,9 @@ serve(async (req: Request): Promise<Response> => {
       error_count: number;
       rejected_invalid_hash: number;
       details: Array<{ id?: string; error: string; code?: string }>;
+      rejected_usa_relogio: Array<{ id?: string; error: string; code: string; status: number }>;
       batch_integrity_hash?: string;
-    } = { success_count: 0, error_count: 0, rejected_invalid_hash: 0, details: [] };
+    } = { success_count: 0, error_count: 0, rejected_invalid_hash: 0, details: [], rejected_usa_relogio: [] };
 
     const processedIds: string[] = [];
 
@@ -268,6 +269,9 @@ serve(async (req: Request): Promise<Response> => {
             precisao_metros: reg.precisao,
             dispositivo_id: reg.dispositivoId,
             is_offline: true,
+            // Origem de autoatendimento: o gatilho trg_batida_relogio_autoatendimento
+            // recusa (PT409) quem bate no relógio da unidade.
+            origem: 'offline',
             sync_at: new Date().toISOString(),
             // O selo de integridade (hash_integridade) é calculado pelo banco,
             // no gatilho enforce_batida_ponto_hash. Não enviamos daqui: o hash
@@ -296,6 +300,18 @@ serve(async (req: Request): Promise<Response> => {
         if (inserted?.id) processedIds.push(String(inserted.id));
         results.success_count++;
       } catch (err) {
+        // Colaborador do relógio: recusa definitiva (409), não erro interno.
+        // Fica fora de `details` para o cliente não reenfileirar para sempre.
+        if ((err as { code?: string })?.code === 'PT409') {
+          results.error_count++;
+          results.rejected_usa_relogio.push({
+            id: reg?.id,
+            error: 'Este colaborador registra o ponto no relógio da unidade.',
+            code: 'COLABORADOR_USA_RELOGIO',
+            status: 409,
+          });
+          continue;
+        }
         console.error('[processar-ponto-offline] item error:', err instanceof Error ? err.message : err);
         results.error_count++;
         results.details.push({ id: reg?.id, error: 'Falha ao processar registro' });
