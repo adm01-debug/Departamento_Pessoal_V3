@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 906,
+ "migrations": 910,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -256,6 +256,7 @@
   "auto_vincular_admins_empresa",
   "backfill_training_image_requests",
   "bloquear_aprovacao_ponto_sem_rh",
+  "bloquear_autoatendimento_quem_usa_relogio",
   "bloquear_exclusao_ciclo_com_dependencias",
   "calcular_dias_direito_ferias",
   "calcular_dias_ferias",
@@ -282,6 +283,8 @@
   "clinicas_proximas",
   "colaborador_id_do_usuario",
   "colaborador_lotacoes_valida_tenant",
+  "colaborador_usa_relogio",
+  "colaborador_usa_relogio_por_id",
   "consumir_pendencias_medida_no_holerite",
   "contrato_assinar_por_token",
   "contrato_consultar_por_token",
@@ -305,6 +308,8 @@
   "decrypt_dados_bancarios",
   "decrypt_dados_bancarios_tenant",
   "decrypt_pii",
+  "definir_tipo_dia_justificativa_relogio",
+  "desvincular_funcionario_relogio",
   "detectar_fraude_ponto",
   "distancia_haversine",
   "documento_listar",
@@ -506,6 +511,7 @@
   "pode_validar_potencial",
   "ponto_espelhos_assinados_guard_delete",
   "ponto_espelhos_assinados_guard_update",
+  "ponto_rep_colaborador_usa_relogio",
   "prevent_audit_log_modification",
   "prevent_empty_empresa_id",
   "process_audit_log",
@@ -533,6 +539,7 @@
   "proibir_delete_periodo_ponto_fechado",
   "proibir_delete_ponto",
   "protect_esocial_transport_fields",
+  "proteger_batida_relogio",
   "provisao_auditoria_set_empresa",
   "purge_audit_log_old",
   "purge_expired_idempotency_keys",
@@ -686,7 +693,8 @@
   "verificar_pin_quiosque",
   "versao_avaliacao_feedback",
   "versao_consolidada_avaliacao",
-  "vincular_colaborador_ao_usuario"
+  "vincular_colaborador_ao_usuario",
+  "vincular_funcionario_relogio"
  ],
  "triggers": [
   {
@@ -1010,6 +1018,20 @@
    "evento": "insert",
    "tabela": "batidas_ponto",
    "funcao": "validate_ponto_compliance"
+  },
+  {
+   "nome": "trg_batida_relogio_autoatendimento",
+   "quando": "before",
+   "evento": "insert",
+   "tabela": "batidas_ponto",
+   "funcao": "bloquear_autoatendimento_quem_usa_relogio"
+  },
+  {
+   "nome": "trg_batida_relogio_protecao",
+   "quando": "before",
+   "evento": "insert or update or delete",
+   "tabela": "batidas_ponto",
+   "funcao": "proteger_batida_relogio"
   },
   {
    "nome": "trg_consolidar_batidas",
@@ -8719,6 +8741,8 @@
     "tr_audit_biometric_failure",
     "tr_gerar_hash_batida_ponto",
     "tr_validate_ponto",
+    "trg_batida_relogio_autoatendimento",
+    "trg_batida_relogio_protecao",
     "trg_consolidar_batidas",
     "trg_enforce_batida_ponto_hash",
     "trg_impedir_alteracao_batida_periodo_fechado_upd",
@@ -15591,7 +15615,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 46,
+   "usada_no_front": 47,
    "usada_em_edges": [
     "adiantamento-salarial",
     "alertas-dp",
@@ -47472,7 +47496,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 0,
+   "usada_no_front": 1,
    "usada_em_edges": [
     "ingest-ponto-rep"
    ],
@@ -47590,7 +47614,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 0,
+   "usada_no_front": 1,
    "usada_em_edges": [
     "ingest-ponto-rep"
    ],
@@ -64402,6 +64426,16 @@
    "usada_em": 1
   },
   {
+   "nome": "colaborador_usa_relogio",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "colaborador_usa_relogio_por_id",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
    "nome": "complete_admission_esocial_event",
    "definida": false,
    "usada_em": 1
@@ -64463,6 +64497,16 @@
   },
   {
    "nome": "decidir_aprovacao_gestor",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "definir_tipo_dia_justificativa_relogio",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "desvincular_funcionario_relogio",
    "definida": true,
    "usada_em": 1
   },
@@ -64878,6 +64922,11 @@
   },
   {
    "nome": "vincular_colaborador_ao_usuario",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "vincular_funcionario_relogio",
    "definida": true,
    "usada_em": 1
   }

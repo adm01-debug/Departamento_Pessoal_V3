@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `40b5cfe694` · branch `main` · 2026-11-21 23:04 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `01d8cb6f8b` · branch `main` · 2026-11-21 23:07 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `password_reset_requests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `pcs_avaliacoes_cargo` | Cargo evaluation whose total is always calculated by a trigger. | 10 colunas | migration |
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
-| … +405 linhas — lista completa em `context.json` | | | |
+| … +407 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -417,6 +417,7 @@
 | status | valor `pin` para `step` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/PontoKioskPage.tsx` |
 | status | valor `segundo_fator` para `step` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/PontoKioskPage.tsx` |
 | status | valor `action` para `step` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/PontoKioskPage.tsx` |
+| status | valor `relogio` para `step` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/PontoKioskPage.tsx` |
 | status | valor `registrar_documento` para `step` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/admissao-publica/index.ts` |
 | status | valor `cleanup_orphan` para `step` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/admissao-publica/index.ts` |
 | status | valor `insert` para `step` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/gerar-contrato-pdf/index.ts`<br>`escreve:supabase/functions/upload-certificado/index.ts` |
@@ -441,8 +442,8 @@
 | rls | `pcs_grades`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | rls | `ponto_rep_dias`: RLS ligado sem nenhuma política → só service_role acessa |  |
 | rls | `ponto_rep_dispositivos`: RLS ligado sem nenhuma política → só service_role acessa |  |
-| rls | `ponto_rep_funcionarios`: RLS ligado sem nenhuma política → só service_role acessa |  |
-| rls | `ponto_rep_justificativas`: RLS ligado sem nenhuma política → só service_role acessa |  |
+| rls | `ponto_rep_funcionarios`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/relogio/vinculosService.ts` |
+| rls | `ponto_rep_justificativas`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/relogio/vinculosService.ts` |
 | rls | `ponto_rep_lotes`: RLS ligado sem nenhuma política → só service_role acessa |  |
 | rls | `provisoes_competencia_tributaria`: RLS ligado sem nenhuma política → só service_role acessa |  |
 | rls | `query_telemetry`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/pages/AdminTelemetriaPage.tsx` |
@@ -646,8 +647,7 @@
 | segurança | função `trg_ferias_gerar_rubricas` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_ferias_reconciliacao_alert` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_medida_aplicada_integrar` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `trg_medida_contestacao_notify` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +39 linhas — lista completa em `context.json` | | |
+| … +40 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 

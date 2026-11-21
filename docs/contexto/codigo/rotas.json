@@ -25111,6 +25111,7 @@
     "aprovar_despesa",
     "assinar_espelho_ponto",
     "claim_admission_esocial_event",
+    "colaborador_usa_relogio",
     "complete_admission_esocial_event",
     "criar_feedback_seguro",
     "decidir_aprovacao_gestor",
@@ -25196,6 +25197,7 @@
     "listitem",
     "main",
     "rh",
+    "status",
     "tab",
     "tablist",
     "user"
@@ -25249,6 +25251,7 @@
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
+    "colaborador_usa_relogio_por_id",
     "get_my_user_empresas",
     "get_user_roles",
     "log_frontend_error",
@@ -25263,6 +25266,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [
+    "status",
     "user"
    ],
    "arquivos_puxados": 31

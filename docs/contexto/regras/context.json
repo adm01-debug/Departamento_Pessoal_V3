@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "40b5cfe6945cff79f593f71f16bbd2f11f142722",
+  "sha": "01d8cb6f8bd76299f935cc1fadd6162b525e0d2f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 23:04 UTC",
-  "files_total": 3694,
-  "code_files": 3104,
-  "code_lines": 494596
+  "generated_at": "2026-11-21 23:07 UTC",
+  "files_total": 3704,
+  "code_files": 3114,
+  "code_lines": 496037
  },
  "version": "1.3.2",
- "facts_hash": "49184d45d81d547e",
+ "facts_hash": "3ea95b94b679b417",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,9 +387,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1027,
-   ".sql": 980,
-   ".ts": 957,
+   ".tsx": 1032,
+   ".sql": 984,
+   ".ts": 958,
    ".mjs": 109,
    ".js": 15,
    ".cjs": 11,
@@ -54797,6 +54797,24 @@
     "src": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql"
    },
    {
+    "name": "trg_batida_relogio_protecao",
+    "when": "BEFORE INSERT OR UPDATE OR DELETE",
+    "table": "batidas_ponto",
+    "function": "proteger_batida_relogio",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "name": "trg_batida_relogio_autoatendimento",
+    "when": "BEFORE INSERT",
+    "table": "batidas_ponto",
+    "function": "bloquear_autoatendimento_quem_usa_relogio",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
     "name": "ajuste_ponto_status_transition",
     "when": "BEFORE UPDATE OF \"STATUS\"",
     "table": "solicitacoes_ajuste_ponto",
@@ -65238,6 +65256,137 @@
      "v_email"
     ]
    },
+   "vincular_funcionario_relogio": {
+    "args": "_funcionario_id uuid, _colaborador_id uuid",
+    "returns": "void",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_func public.ponto_rep_funcionarios%ROWTYPE; v_colab_empresa uuid; BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Sessao obrigatoria' USING ERRCODE = '42501'; END IF; IF _funcionario_id IS NULL OR _colaborador_id IS NULL THEN RAISE EXCEPTION 'Funcionario e colaborador sao obrigatorios' USING ERRCODE = '22004'; END IF; SELECT * INTO v_func FROM public.ponto_rep_funcionarios WHERE id = _funcionario_id FOR UPDATE; IF NOT FOUND OR NOT public.pertence_a_empresa(v_func.empresa_id) OR NOT (public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'rh')) THEN RAISE EXCEPTION 'Sem permissao para vincular este funcionario do relogio' USING ERRCODE = '42501'; END IF; SELECT c.empr …",
+    "raises": [
+     "Sessao obrigatoria",
+     "Funcionario e colaborador sao obrigatorios",
+     "Sem permissao para vincular este funcionario do relogio",
+     "Colaborador nao pertence a empresa deste relogio",
+     "Colaborador ja vinculado a outro funcionario deste relogio"
+    ],
+    "tables": [
+     "colaboradores",
+     "ponto_rep_dias",
+     "ponto_rep_funcionarios",
+     "v_colab_empresa",
+     "v_func"
+    ]
+   },
+   "desvincular_funcionario_relogio": {
+    "args": "_funcionario_id uuid",
+    "returns": "void",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_func public.ponto_rep_funcionarios%ROWTYPE; BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Sessao obrigatoria' USING ERRCODE = '42501'; END IF; SELECT * INTO v_func FROM public.ponto_rep_funcionarios WHERE id = _funcionario_id FOR UPDATE; IF NOT FOUND OR NOT public.pertence_a_empresa(v_func.empresa_id) OR NOT (public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'rh')) THEN RAISE EXCEPTION 'Sem permissao para desvincular este funcionario do relogio' USING ERRCODE = '42501'; END IF; UPDATE public.ponto_rep_funcionarios SET colaborador_id = NULL, vinculo_metodo = NULL, vinculado_em = NULL, updated_at = now() WHERE id = v_func.id; UPDATE public.ponto_rep_dias SET pro …",
+    "raises": [
+     "Sessao obrigatoria",
+     "Sem permissao para desvincular este funcionario do relogio"
+    ],
+    "tables": [
+     "ponto_rep_dias",
+     "ponto_rep_funcionarios",
+     "v_func"
+    ]
+   },
+   "definir_tipo_dia_justificativa_relogio": {
+    "args": "_justificativa_id uuid, _tipo_dia text",
+    "returns": "void",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_empresa uuid; BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Sessao obrigatoria' USING ERRCODE = '42501'; END IF; SELECT j.empresa_id INTO v_empresa FROM public.ponto_rep_justificativas j WHERE j.id = _justificativa_id FOR UPDATE; IF NOT FOUND OR NOT public.pertence_a_empresa(v_empresa) OR NOT (public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'rh')) THEN RAISE EXCEPTION 'Sem permissao para alterar esta justificativa do relogio' USING ERRCODE = '42501'; END IF; UPDATE public.ponto_rep_justificativas SET tipo_dia = _tipo_dia, updated_at = now() WHERE id = _justificativa_id; END",
+    "raises": [
+     "Sessao obrigatoria",
+     "Sem permissao para alterar esta justificativa do relogio"
+    ],
+    "tables": [
+     "ponto_rep_justificativas",
+     "v_empresa"
+    ]
+   },
+   "ponto_rep_colaborador_usa_relogio": {
+    "args": "_colaborador_id uuid",
+    "returns": "boolean",
+    "lang": "sql",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "SELECT _colaborador_id IS NOT NULL AND EXISTS ( SELECT 1 FROM public.ponto_rep_funcionarios f JOIN public.ponto_rep_dispositivos d ON d.id = f.dispositivo_id WHERE f.colaborador_id = _colaborador_id AND d.ativo = true );",
+    "raises": [],
+    "tables": [
+     "ponto_rep_dispositivos",
+     "ponto_rep_funcionarios"
+    ]
+   },
+   "colaborador_usa_relogio": {
+    "args": "",
+    "returns": "boolean",
+    "lang": "sql",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "SELECT auth.uid() IS NOT NULL AND EXISTS ( SELECT 1 FROM public.colaboradores c WHERE (c.id = auth.uid() OR c.user_id = auth.uid()) AND public.ponto_rep_colaborador_usa_relogio(c.id) );",
+    "raises": [],
+    "tables": [
+     "colaboradores"
+    ]
+   },
+   "colaborador_usa_relogio_por_id": {
+    "args": "_colaborador_id uuid",
+    "returns": "boolean",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_empresa_id uuid; v_user_id uuid; BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Sessão obrigatória' USING ERRCODE = '42501'; END IF; SELECT c.empresa_id, c.user_id INTO v_empresa_id, v_user_id FROM public.colaboradores c WHERE c.id = _colaborador_id; IF v_empresa_id IS NULL THEN RAISE EXCEPTION 'Colaborador não encontrado' USING ERRCODE = '42501'; END IF; IF NOT COALESCE(public.sou_o_colaborador(_colaborador_id) OR (v_user_id IS NOT NULL AND v_user_id = auth.uid()) OR public.pode_gerir_rh(v_empresa_id) OR public.pode_gerir_pessoas(v_empresa_id), false) THEN RAISE EXCEPTION 'Sem permissão para consultar este colaborador' USING ERRCODE = '42501'; END IF; RETURN public.ponto_rep_co …",
+    "raises": [
+     "Sessão obrigatória",
+     "Colaborador não encontrado",
+     "Sem permissão para consultar este colaborador"
+    ],
+    "tables": [
+     "colaboradores",
+     "v_empresa_id"
+    ]
+   },
+   "proteger_batida_relogio": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_jwt_role text; BEGIN BEGIN v_jwt_role := current_setting('request.jwt.claims', true)::jsonb ->> 'role'; EXCEPTION WHEN OTHERS THEN v_jwt_role := NULL; END; IF current_user = 'service_role' OR v_jwt_role = 'service_role' THEN RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END; END IF; IF TG_OP = 'INSERT' THEN IF NEW.origem = 'relogio' THEN RAISE EXCEPTION 'Batida de origem relógio só pode ser gravada pela integração do relógio.' USING ERRCODE = '42501'; END IF; RETURN NEW; END IF; IF OLD.origem = 'relogio' THEN RAISE EXCEPTION 'Batida do relógio não pode ser %: corrija no Ponto AtecSoft.', CASE WHEN TG_OP = 'DELETE' THEN 'excluída' ELSE 'alterada' END USING ERRCODE = '42501'; E …",
+    "raises": [
+     "Batida de origem relógio só pode ser gravada pela integração do relógio.",
+     "Batida do relógio não pode ser %: corrija no Ponto AtecSoft.",
+     "A origem relógio só pode ser atribuída pela integração do relógio."
+    ],
+    "tables": []
+   },
+   "bloquear_autoatendimento_quem_usa_relogio": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF NEW.origem IN ('web', 'offline') AND public.ponto_rep_colaborador_usa_relogio(NEW.colaborador_id) THEN RAISE EXCEPTION 'Este colaborador registra o ponto no relógio da unidade.' USING ERRCODE = 'PT409', HINT = 'COLABORADOR_USA_RELOGIO'; END IF; RETURN NEW; END;",
+    "raises": [
+     "Este colaborador registra o ponto no relógio da unidade."
+    ],
+    "tables": []
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -72902,6 +73051,10 @@
    "supabase/migrations/20261121200000_ci_auditor_grant_set_role.verify.sql",
    "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
    "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql",
+   "supabase/migrations/20261121221000_ponto_rep_vinculos.sql",
+   "supabase/migrations/20261121221000_ponto_rep_vinculos.verify.sql",
+   "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+   "supabase/migrations/20261121222000_batidas_relogio_protecao.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -84963,6 +85116,118 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "vincular_funcionario_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "desvincular_funcionario_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "definir_tipo_dia_justificativa_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "vincular_funcionario_relogio",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "desvincular_funcionario_relogio",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "definir_tipo_dia_justificativa_relogio",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "ponto_rep_colaborador_usa_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "ponto_rep_colaborador_usa_relogio",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "colaborador_usa_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "colaborador_usa_relogio",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "colaborador_usa_relogio_por_id",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "colaborador_usa_relogio_por_id",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "proteger_batida_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "bloquear_autoatendimento_quem_usa_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -86459,6 +86724,86 @@
     "function": "ferias_bloquear_aprovacao_rh_sem_rh",
     "msg": "Assinatura do aviso de ferias so pode ser gravada pelo fluxo de assinatura",
     "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
+   },
+   {
+    "function": "vincular_funcionario_relogio",
+    "msg": "Sessao obrigatoria",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "vincular_funcionario_relogio",
+    "msg": "Funcionario e colaborador sao obrigatorios",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "vincular_funcionario_relogio",
+    "msg": "Sem permissao para vincular este funcionario do relogio",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "vincular_funcionario_relogio",
+    "msg": "Colaborador nao pertence a empresa deste relogio",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "vincular_funcionario_relogio",
+    "msg": "Colaborador ja vinculado a outro funcionario deste relogio",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "desvincular_funcionario_relogio",
+    "msg": "Sessao obrigatoria",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "desvincular_funcionario_relogio",
+    "msg": "Sem permissao para desvincular este funcionario do relogio",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "definir_tipo_dia_justificativa_relogio",
+    "msg": "Sessao obrigatoria",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "definir_tipo_dia_justificativa_relogio",
+    "msg": "Sem permissao para alterar esta justificativa do relogio",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "colaborador_usa_relogio_por_id",
+    "msg": "Sessão obrigatória",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "function": "colaborador_usa_relogio_por_id",
+    "msg": "Colaborador não encontrado",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "function": "colaborador_usa_relogio_por_id",
+    "msg": "Sem permissão para consultar este colaborador",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "function": "proteger_batida_relogio",
+    "msg": "Batida de origem relógio só pode ser gravada pela integração do relógio.",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "function": "proteger_batida_relogio",
+    "msg": "Batida do relógio não pode ser %: corrija no Ponto AtecSoft.",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "function": "proteger_batida_relogio",
+    "msg": "A origem relógio só pode ser atribuída pela integração do relógio.",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "function": "bloquear_autoatendimento_quem_usa_relogio",
+    "msg": "Este colaborador registra o ponto no relógio da unidade.",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -101292,7 +101637,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1000,
+  "components_count": 1004,
   "hooks": [
    {
     "name": "useContacts",
@@ -102923,8 +103268,8 @@
   },
   {
    "module": "src/components",
-   "files": 1000,
-   "lines": 184830,
+   "files": 1004,
+   "lines": 185562,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -103620,8 +103965,8 @@
   },
   {
    "module": "src/pages",
-   "files": 143,
-   "lines": 50799,
+   "files": 144,
+   "lines": 50946,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -103987,8 +104332,8 @@
   },
   {
    "module": "src/services",
-   "files": 195,
-   "lines": 41541,
+   "files": 196,
+   "lines": 41702,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -104126,6 +104471,8 @@
     "pix_lotes",
     "plano_contas",
     "ponto_auditoria",
+    "ponto_rep_funcionarios",
+    "ponto_rep_justificativas",
     "pontos_abertos",
     "premiacoes_auditoria",
     "premiacoes_campanhas",
@@ -104629,7 +104976,7 @@
   {
    "module": "supabase/functions",
    "files": 191,
-   "lines": 27538,
+   "lines": 27554,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -104880,8 +105227,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 906,
-   "lines": 82617,
+   "files": 910,
+   "lines": 83002,
    "tables": [
     "profiles",
     "user_roles"
@@ -105714,6 +106061,7 @@
      "src/services/notificacoesService.ts",
      "src/services/onboardingJornadaService.ts",
      "src/services/pontoService.ts",
+     "src/services/relogio/vinculosService.ts",
      "src/services/tabelasReferenciaService.ts",
      "supabase/functions/adiantamento-salarial/index.ts",
      "supabase/functions/alertas-dp/index.ts",
@@ -107402,10 +107750,11 @@
     ]
    },
    "ponto_rep_funcionarios": {
-    "ref": [
+    "select": [
+     "src/services/relogio/vinculosService.ts",
      "supabase/functions/ingest-ponto-rep/index.ts"
     ],
-    "select": [
+    "ref": [
      "supabase/functions/ingest-ponto-rep/index.ts"
     ],
     "update": [
@@ -107413,6 +107762,9 @@
     ]
    },
    "ponto_rep_justificativas": {
+    "select": [
+     "src/services/relogio/vinculosService.ts"
+    ],
     "ref": [
      "supabase/functions/ingest-ponto-rep/index.ts"
     ]
@@ -108756,6 +109108,7 @@
     "conta",
     "cpf",
     "cpf_hash",
+    "cpf_last4",
     "data_admissao",
     "data_nascimento",
     "departamento",
@@ -109477,12 +109830,25 @@
     "data_desligamento",
     "dispositivo_id",
     "empresa_codigo",
+    "empresa_id",
     "horario_codigo",
     "id",
     "matricula",
     "nome",
     "pis",
-    "situacao"
+    "situacao",
+    "vinculado_em",
+    "vinculo_metodo"
+   ],
+   "ponto_rep_justificativas": [
+    "codigo",
+    "considera_falta",
+    "considera_normal",
+    "dispositivo_id",
+    "empresa_id",
+    "id",
+    "nome",
+    "tipo_dia"
    ],
    "ponto_rep_lotes": [
     "id"
@@ -111042,6 +111408,12 @@
    "clinicas_proximas": [
     "src/pages/AdminAgendamentoExamesPage.tsx"
    ],
+   "colaborador_usa_relogio": [
+    "src/pages/PontoPage.tsx"
+   ],
+   "colaborador_usa_relogio_por_id": [
+    "src/pages/PontoKioskPage.tsx"
+   ],
    "complete_admission_esocial_event": [
     "src/services/esocialService.ts"
    ],
@@ -111084,8 +111456,14 @@
    "decidir_aprovacao_gestor": [
     "src/services/avaliacaoService.ts"
    ],
+   "definir_tipo_dia_justificativa_relogio": [
+    "src/services/relogio/vinculosService.ts"
+   ],
    "demo": [
     "scripts/supabase_snapshot/test_snapshot.py"
+   ],
+   "desvincular_funcionario_relogio": [
+    "src/services/relogio/vinculosService.ts"
    ],
    "drenar_fila_limpeza_lgpd": [
     "supabase/functions/limpeza/index.ts"
@@ -111414,6 +111792,9 @@
    ],
    "vincular_colaborador_ao_usuario": [
     "src/hooks/useColaboradorVinculo.ts"
+   ],
+   "vincular_funcionario_relogio": [
+    "src/services/relogio/vinculosService.ts"
    ],
    "x": [
     "scripts/inventario/gerar-rotas.mjs"
@@ -114876,6 +115257,16 @@
     "values": "select | export | print | download"
    },
    {
+    "file": "src/services/relogio/vinculosService.ts",
+    "name": "VinculoMetodo",
+    "values": "cpf | pis | matricula | manual"
+   },
+   {
+    "file": "src/services/relogio/vinculosService.ts",
+    "name": "TIPOS_DIA_RELOGIO",
+    "values": "'normal', 'feriado', 'compensado', 'folga', 'falta', 'atestado', 'ferias', 'licenca',"
+   },
+   {
     "file": "src/services/trainingImages/config.ts",
     "name": "TRAINING_IMAGES_MIME_TYPES",
     "values": "'image/webp', 'image/png', 'image/jpeg'"
@@ -115944,6 +116335,26 @@
    {
     "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
     "msg": "Sessão expirada. Entre novamente."
+   },
+   {
+    "file": "src/components/ponto/relogio/JustificativasRelogioTab.tsx",
+    "msg": ">\n        <p className="
+   },
+   {
+    "file": "src/components/ponto/relogio/JustificativasRelogioTab.tsx",
+    "msg": "Não foi possível salvar: ${mensagemErro(err)}"
+   },
+   {
+    "file": "src/components/ponto/relogio/VinculosRelogioTab.tsx",
+    "msg": ">\n        <p className="
+   },
+   {
+    "file": "src/components/ponto/relogio/VinculosRelogioTab.tsx",
+    "msg": "Não foi possível desfazer: ${mensagemErro(err)}"
+   },
+   {
+    "file": "src/components/ponto/relogio/VinculosRelogioTab.tsx",
+    "msg": "Não foi possível vincular: ${mensagemErro(err)}"
    },
    {
     "file": "src/components/portal/PortalDocumentosTab.tsx",
@@ -148879,6 +149290,11 @@
     "value": "256"
    },
    {
+    "file": "src/components/ponto/relogio/JustificativasRelogioTab.tsx",
+    "name": "SEM_EFEITO",
+    "value": "'sem_efeito'"
+   },
+   {
     "file": "src/components/portal/PortalDocumentosTab.tsx",
     "name": "BUCKET",
     "value": "'documentos'"
@@ -158489,6 +158905,12 @@
     "file": "src/pages/PontoKioskPage.tsx",
     "field": "step",
     "value": "action",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/PontoKioskPage.tsx",
+    "field": "step",
+    "value": "relogio",
     "kind": "compara"
    },
    {
@@ -175920,6 +176342,18 @@
     "name": "gestor vê Aprovar Lote mas não Histórico (trilha restrita a RH/admin)"
    },
    {
+    "file": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
+    "name": "origem relógio"
+   },
+   {
+    "file": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
+    "name": "mostra o selo Relógio só no dia com batida do relógio, com a orientação de correção"
+   },
+   {
+    "file": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
+    "name": "filtro Origem = Relógio mostra só quem bateu no relógio; "
+   },
+   {
     "file": "src/components/__tests__/GlobalAuditLogTab.test.tsx",
     "name": "GlobalAuditLogTab"
    },
@@ -176478,6 +176912,30 @@
    {
     "file": "src/components/__tests__/JornadaPontoTab.test.tsx",
     "name": "renders the ponto today and week summary widgets"
+   },
+   {
+    "file": "src/components/__tests__/JustificativasRelogioTab.test.tsx",
+    "name": "JustificativasRelogioTab"
+   },
+   {
+    "file": "src/components/__tests__/JustificativasRelogioTab.test.tsx",
+    "name": "mostra carregando"
+   },
+   {
+    "file": "src/components/__tests__/JustificativasRelogioTab.test.tsx",
+    "name": "mostra erro"
+   },
+   {
+    "file": "src/components/__tests__/JustificativasRelogioTab.test.tsx",
+    "name": "mostra vazio"
+   },
+   {
+    "file": "src/components/__tests__/JustificativasRelogioTab.test.tsx",
+    "name": "lista a justificativa com "
+   },
+   {
+    "file": "src/components/__tests__/JustificativasRelogioTab.test.tsx",
+    "name": "escolher um tipo chama definir_tipo_dia_justificativa_relogio com o valor"
    },
    {
     "file": "src/components/__tests__/KitOnboardingDialog.test.tsx",
@@ -180244,6 +180702,14 @@
     "name": "badge de fila offline aparece quando há pendências e sincroniza ao clicar"
    },
    {
+    "file": "src/components/__tests__/PontoClockRegister.test.tsx",
+    "name": "usa relógio: esconde os botões de registro e mostra o aviso"
+   },
+   {
+    "file": "src/components/__tests__/PontoClockRegister.test.tsx",
+    "name": "não usa relógio: mantém os botões e não mostra o aviso"
+   },
+   {
     "file": "src/components/__tests__/PontoGeoAnalytics.test.tsx",
     "name": "PontoGeoAnalytics"
    },
@@ -182426,6 +182892,38 @@
    {
     "file": "src/components/__tests__/UserRolesTab.test.tsx",
     "name": "renders Informação de Segurança card"
+   },
+   {
+    "file": "src/components/__tests__/VinculosRelogioTab.test.tsx",
+    "name": "VinculosRelogioTab"
+   },
+   {
+    "file": "src/components/__tests__/VinculosRelogioTab.test.tsx",
+    "name": "mostra carregando antes dos dados"
+   },
+   {
+    "file": "src/components/__tests__/VinculosRelogioTab.test.tsx",
+    "name": "mostra erro com opção de tentar de novo"
+   },
+   {
+    "file": "src/components/__tests__/VinculosRelogioTab.test.tsx",
+    "name": "mostra vazio quando o relógio ainda não mandou funcionários"
+   },
+   {
+    "file": "src/components/__tests__/VinculosRelogioTab.test.tsx",
+    "name": "lista pendentes por padrão, com contador e CPF mascarado (só últimos 4)"
+   },
+   {
+    "file": "src/components/__tests__/VinculosRelogioTab.test.tsx",
+    "name": "filtro Vinculados mostra colaborador e método"
+   },
+   {
+    "file": "src/components/__tests__/VinculosRelogioTab.test.tsx",
+    "name": "Vincular chama vincular_funcionario_relogio com funcionário e colaborador"
+   },
+   {
+    "file": "src/components/__tests__/VinculosRelogioTab.test.tsx",
+    "name": "Desfazer chama desvincular_funcionario_relogio"
    },
    {
     "file": "src/components/__tests__/WorkforceHealthScore.test.tsx",
@@ -191822,6 +192320,26 @@
    {
     "file": "src/pages/__tests__/PlanosSaudePage.test.tsx",
     "name": "PlanosSaudePage"
+   },
+   {
+    "file": "src/pages/__tests__/PontoKioskPage.test.tsx",
+    "name": "PontoKioskPage — colaborador do relógio"
+   },
+   {
+    "file": "src/pages/__tests__/PontoKioskPage.test.tsx",
+    "name": "quem usa o relógio não vê os botões de registro, só o aviso"
+   },
+   {
+    "file": "src/pages/__tests__/PontoKioskPage.test.tsx",
+    "name": "Voltar retorna à tela de matrícula"
+   },
+   {
+    "file": "src/pages/__tests__/PontoKioskPage.test.tsx",
+    "name": "quem não usa o relógio segue para os botões de registro"
+   },
+   {
+    "file": "src/pages/__tests__/PontoKioskPage.test.tsx",
+    "name": "falha na consulta não trava o quiosque (o banco recusa a batida se preciso)"
    },
    {
     "file": "src/pages/__tests__/PremiacoesPage.test.tsx",
@@ -217888,6 +218406,24 @@
     "src": "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.sql"
    },
    {
+    "name": "trg_batida_relogio_protecao",
+    "when": "BEFORE INSERT OR UPDATE OR DELETE",
+    "table": "batidas_ponto",
+    "function": "proteger_batida_relogio",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "name": "trg_batida_relogio_autoatendimento",
+    "when": "BEFORE INSERT",
+    "table": "batidas_ponto",
+    "function": "bloquear_autoatendimento_quem_usa_relogio",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
     "name": "ajuste_ponto_status_transition",
     "when": "BEFORE UPDATE OF \"STATUS\"",
     "table": "solicitacoes_ajuste_ponto",
@@ -228329,6 +228865,137 @@
      "v_email"
     ]
    },
+   "vincular_funcionario_relogio": {
+    "args": "_funcionario_id uuid, _colaborador_id uuid",
+    "returns": "void",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_func public.ponto_rep_funcionarios%ROWTYPE; v_colab_empresa uuid; BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Sessao obrigatoria' USING ERRCODE = '42501'; END IF; IF _funcionario_id IS NULL OR _colaborador_id IS NULL THEN RAISE EXCEPTION 'Funcionario e colaborador sao obrigatorios' USING ERRCODE = '22004'; END IF; SELECT * INTO v_func FROM public.ponto_rep_funcionarios WHERE id = _funcionario_id FOR UPDATE; IF NOT FOUND OR NOT public.pertence_a_empresa(v_func.empresa_id) OR NOT (public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'rh')) THEN RAISE EXCEPTION 'Sem permissao para vincular este funcionario do relogio' USING ERRCODE = '42501'; END IF; SELECT c.empr …",
+    "raises": [
+     "Sessao obrigatoria",
+     "Funcionario e colaborador sao obrigatorios",
+     "Sem permissao para vincular este funcionario do relogio",
+     "Colaborador nao pertence a empresa deste relogio",
+     "Colaborador ja vinculado a outro funcionario deste relogio"
+    ],
+    "tables": [
+     "colaboradores",
+     "ponto_rep_dias",
+     "ponto_rep_funcionarios",
+     "v_colab_empresa",
+     "v_func"
+    ]
+   },
+   "desvincular_funcionario_relogio": {
+    "args": "_funcionario_id uuid",
+    "returns": "void",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_func public.ponto_rep_funcionarios%ROWTYPE; BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Sessao obrigatoria' USING ERRCODE = '42501'; END IF; SELECT * INTO v_func FROM public.ponto_rep_funcionarios WHERE id = _funcionario_id FOR UPDATE; IF NOT FOUND OR NOT public.pertence_a_empresa(v_func.empresa_id) OR NOT (public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'rh')) THEN RAISE EXCEPTION 'Sem permissao para desvincular este funcionario do relogio' USING ERRCODE = '42501'; END IF; UPDATE public.ponto_rep_funcionarios SET colaborador_id = NULL, vinculo_metodo = NULL, vinculado_em = NULL, updated_at = now() WHERE id = v_func.id; UPDATE public.ponto_rep_dias SET pro …",
+    "raises": [
+     "Sessao obrigatoria",
+     "Sem permissao para desvincular este funcionario do relogio"
+    ],
+    "tables": [
+     "ponto_rep_dias",
+     "ponto_rep_funcionarios",
+     "v_func"
+    ]
+   },
+   "definir_tipo_dia_justificativa_relogio": {
+    "args": "_justificativa_id uuid, _tipo_dia text",
+    "returns": "void",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_empresa uuid; BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Sessao obrigatoria' USING ERRCODE = '42501'; END IF; SELECT j.empresa_id INTO v_empresa FROM public.ponto_rep_justificativas j WHERE j.id = _justificativa_id FOR UPDATE; IF NOT FOUND OR NOT public.pertence_a_empresa(v_empresa) OR NOT (public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'rh')) THEN RAISE EXCEPTION 'Sem permissao para alterar esta justificativa do relogio' USING ERRCODE = '42501'; END IF; UPDATE public.ponto_rep_justificativas SET tipo_dia = _tipo_dia, updated_at = now() WHERE id = _justificativa_id; END",
+    "raises": [
+     "Sessao obrigatoria",
+     "Sem permissao para alterar esta justificativa do relogio"
+    ],
+    "tables": [
+     "ponto_rep_justificativas",
+     "v_empresa"
+    ]
+   },
+   "ponto_rep_colaborador_usa_relogio": {
+    "args": "_colaborador_id uuid",
+    "returns": "boolean",
+    "lang": "sql",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "SELECT _colaborador_id IS NOT NULL AND EXISTS ( SELECT 1 FROM public.ponto_rep_funcionarios f JOIN public.ponto_rep_dispositivos d ON d.id = f.dispositivo_id WHERE f.colaborador_id = _colaborador_id AND d.ativo = true );",
+    "raises": [],
+    "tables": [
+     "ponto_rep_dispositivos",
+     "ponto_rep_funcionarios"
+    ]
+   },
+   "colaborador_usa_relogio": {
+    "args": "",
+    "returns": "boolean",
+    "lang": "sql",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "SELECT auth.uid() IS NOT NULL AND EXISTS ( SELECT 1 FROM public.colaboradores c WHERE (c.id = auth.uid() OR c.user_id = auth.uid()) AND public.ponto_rep_colaborador_usa_relogio(c.id) );",
+    "raises": [],
+    "tables": [
+     "colaboradores"
+    ]
+   },
+   "colaborador_usa_relogio_por_id": {
+    "args": "_colaborador_id uuid",
+    "returns": "boolean",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_empresa_id uuid; v_user_id uuid; BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Sessão obrigatória' USING ERRCODE = '42501'; END IF; SELECT c.empresa_id, c.user_id INTO v_empresa_id, v_user_id FROM public.colaboradores c WHERE c.id = _colaborador_id; IF v_empresa_id IS NULL THEN RAISE EXCEPTION 'Colaborador não encontrado' USING ERRCODE = '42501'; END IF; IF NOT COALESCE(public.sou_o_colaborador(_colaborador_id) OR (v_user_id IS NOT NULL AND v_user_id = auth.uid()) OR public.pode_gerir_rh(v_empresa_id) OR public.pode_gerir_pessoas(v_empresa_id), false) THEN RAISE EXCEPTION 'Sem permissão para consultar este colaborador' USING ERRCODE = '42501'; END IF; RETURN public.ponto_rep_co …",
+    "raises": [
+     "Sessão obrigatória",
+     "Colaborador não encontrado",
+     "Sem permissão para consultar este colaborador"
+    ],
+    "tables": [
+     "colaboradores",
+     "v_empresa_id"
+    ]
+   },
+   "proteger_batida_relogio": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_jwt_role text; BEGIN BEGIN v_jwt_role := current_setting('request.jwt.claims', true)::jsonb ->> 'role'; EXCEPTION WHEN OTHERS THEN v_jwt_role := NULL; END; IF current_user = 'service_role' OR v_jwt_role = 'service_role' THEN RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END; END IF; IF TG_OP = 'INSERT' THEN IF NEW.origem = 'relogio' THEN RAISE EXCEPTION 'Batida de origem relógio só pode ser gravada pela integração do relógio.' USING ERRCODE = '42501'; END IF; RETURN NEW; END IF; IF OLD.origem = 'relogio' THEN RAISE EXCEPTION 'Batida do relógio não pode ser %: corrija no Ponto AtecSoft.', CASE WHEN TG_OP = 'DELETE' THEN 'excluída' ELSE 'alterada' END USING ERRCODE = '42501'; E …",
+    "raises": [
+     "Batida de origem relógio só pode ser gravada pela integração do relógio.",
+     "Batida do relógio não pode ser %: corrija no Ponto AtecSoft.",
+     "A origem relógio só pode ser atribuída pela integração do relógio."
+    ],
+    "tables": []
+   },
+   "bloquear_autoatendimento_quem_usa_relogio": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF NEW.origem IN ('web', 'offline') AND public.ponto_rep_colaborador_usa_relogio(NEW.colaborador_id) THEN RAISE EXCEPTION 'Este colaborador registra o ponto no relógio da unidade.' USING ERRCODE = 'PT409', HINT = 'COLABORADOR_USA_RELOGIO'; END IF; RETURN NEW; END;",
+    "raises": [
+     "Este colaborador registra o ponto no relógio da unidade."
+    ],
+    "tables": []
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -229449,6 +230116,86 @@
     "function": "ferias_bloquear_aprovacao_rh_sem_rh",
     "msg": "Assinatura do aviso de ferias so pode ser gravada pelo fluxo de assinatura",
     "src": "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql"
+   },
+   {
+    "function": "vincular_funcionario_relogio",
+    "msg": "Sessao obrigatoria",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "vincular_funcionario_relogio",
+    "msg": "Funcionario e colaborador sao obrigatorios",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "vincular_funcionario_relogio",
+    "msg": "Sem permissao para vincular este funcionario do relogio",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "vincular_funcionario_relogio",
+    "msg": "Colaborador nao pertence a empresa deste relogio",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "vincular_funcionario_relogio",
+    "msg": "Colaborador ja vinculado a outro funcionario deste relogio",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "desvincular_funcionario_relogio",
+    "msg": "Sessao obrigatoria",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "desvincular_funcionario_relogio",
+    "msg": "Sem permissao para desvincular este funcionario do relogio",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "definir_tipo_dia_justificativa_relogio",
+    "msg": "Sessao obrigatoria",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "definir_tipo_dia_justificativa_relogio",
+    "msg": "Sem permissao para alterar esta justificativa do relogio",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "function": "colaborador_usa_relogio_por_id",
+    "msg": "Sessão obrigatória",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "function": "colaborador_usa_relogio_por_id",
+    "msg": "Colaborador não encontrado",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "function": "colaborador_usa_relogio_por_id",
+    "msg": "Sem permissão para consultar este colaborador",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "function": "proteger_batida_relogio",
+    "msg": "Batida de origem relógio só pode ser gravada pela integração do relógio.",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "function": "proteger_batida_relogio",
+    "msg": "Batida do relógio não pode ser %: corrija no Ponto AtecSoft.",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "function": "proteger_batida_relogio",
+    "msg": "A origem relógio só pode ser atribuída pela integração do relógio.",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "function": "bloquear_autoatendimento_quem_usa_relogio",
+    "msg": "Este colaborador registra o ponto no relógio da unidade.",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -235820,6 +236567,9 @@
       "compara:src/pages/PontoKioskPage.tsx"
      ],
      "action": [
+      "compara:src/pages/PontoKioskPage.tsx"
+     ],
+     "relogio": [
       "compara:src/pages/PontoKioskPage.tsx"
      ],
      "success": [
@@ -243145,12 +243895,16 @@
    {
     "table": "ponto_rep_funcionarios",
     "issue": "RLS ligado sem nenhuma política → só service_role acessa",
-    "files": []
+    "files": [
+     "src/services/relogio/vinculosService.ts"
+    ]
    },
    {
     "table": "ponto_rep_justificativas",
     "issue": "RLS ligado sem nenhuma política → só service_role acessa",
-    "files": []
+    "files": [
+     "src/services/relogio/vinculosService.ts"
+    ]
    },
    {
     "table": "ponto_rep_lotes",
@@ -243492,6 +244246,8 @@
    "supabase/migrations/20261119130000_ferias_gestor_update.sql",
    "supabase/migrations/20261119140000_ferias_gestor_nao_forja_aprovacao_rh.sql",
    "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
+   "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+   "supabase/migrations/20261121222000_batidas_relogio_protecao.verify.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -243532,6 +244288,7 @@
    "audit_delete_operation",
    "auto_vincular_admins_empresa",
    "backfill_training_image_requests",
+   "bloquear_autoatendimento_quem_usa_relogio",
    "calcular_prazo_cat",
    "candidatura_na_minha_empresa",
    "check_account_lockout",
@@ -243552,6 +244309,8 @@
    "cleanup_expired_rate_limits",
    "cleanup_old_login_attempts",
    "clinicas_proximas",
+   "colaborador_usa_relogio",
+   "colaborador_usa_relogio_por_id",
    "consumir_pendencias_medida_no_holerite",
    "contrato_assinar_por_token",
    "contrato_consultar_por_token",
@@ -243574,6 +244333,8 @@
    "decrypt_dados_bancarios",
    "decrypt_dados_bancarios_tenant",
    "decrypt_pii",
+   "definir_tipo_dia_justificativa_relogio",
+   "desvincular_funcionario_relogio",
    "detectar_fraude_ponto",
    "documento_listar",
    "documento_registrar",
@@ -243720,6 +244481,7 @@
    "pode_gerir_rh",
    "pode_gerir_rh_para",
    "pode_validar_potencial",
+   "ponto_rep_colaborador_usa_relogio",
    "process_audit_log",
    "process_ferias_audit",
    "process_lgpd_cleanup_queue",
@@ -243811,7 +244573,8 @@
    "validate_ponto_compliance",
    "verificar_espelho_ponto",
    "verificar_pin_quiosque",
-   "vincular_colaborador_ao_usuario"
+   "vincular_colaborador_ao_usuario",
+   "vincular_funcionario_relogio"
   ],
   "public_functions": [
    "auth-login",
@@ -255395,6 +256158,118 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "vincular_funcionario_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "desvincular_funcionario_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "definir_tipo_dia_justificativa_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "vincular_funcionario_relogio",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "desvincular_funcionario_relogio",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "definir_tipo_dia_justificativa_relogio",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "ponto_rep_colaborador_usa_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "ponto_rep_colaborador_usa_relogio",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "colaborador_usa_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "colaborador_usa_relogio",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "colaborador_usa_relogio_por_id",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "colaborador_usa_relogio_por_id",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "proteger_batida_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "bloquear_autoatendimento_quem_usa_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -260426,6 +261301,13 @@
    },
    {
     "kind": "status",
+    "msg": "valor `relogio` para `step` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "compara:src/pages/PontoKioskPage.tsx"
+    ]
+   },
+   {
+    "kind": "status",
     "msg": "valor `registrar_documento` para `step` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "escreve:supabase/functions/admissao-publica/index.ts"
@@ -260572,12 +261454,16 @@
    {
     "kind": "rls",
     "msg": "`ponto_rep_funcionarios`: RLS ligado sem nenhuma política → só service_role acessa",
-    "where": []
+    "where": [
+     "src/services/relogio/vinculosService.ts"
+    ]
    },
    {
     "kind": "rls",
     "msg": "`ponto_rep_justificativas`: RLS ligado sem nenhuma política → só service_role acessa",
-    "where": []
+    "where": [
+     "src/services/relogio/vinculosService.ts"
+    ]
    },
    {
     "kind": "rls",
@@ -272219,7 +273105,7 @@
   },
   "src/components/__tests__/GestaoRegistrosPonto.test.tsx": {
    "path": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
-   "lines": 306,
+   "lines": 347,
    "is_test": true,
    "role_checks": [
     "admin",
@@ -272242,7 +273128,10 @@
     "Aprovar Lote envia só os selecionados que continuam visíveis após filtrar",
     "Aprovar Lote informa quantos foram aprovados e quantos ignorados (já aprovados)",
     "usuário sem RH/admin/gestor não vê Aprovar Lote nem Histórico",
-    "gestor vê Aprovar Lote mas não Histórico (trilha restrita a RH/admin)"
+    "gestor vê Aprovar Lote mas não Histórico (trilha restrita a RH/admin)",
+    "origem relógio",
+    "mostra o selo Relógio só no dia com batida do relógio, com a orientação de correção",
+    "filtro Origem = Relógio mostra só quem bateu no relógio; "
    ]
   },
   "src/components/__tests__/GlobalAuditLogTab.test.tsx": {
@@ -272478,6 +273367,22 @@
     "shows jornada semanal from the colaborador record and escala from the jornada resolvida",
     "shows ",
     "renders the ponto today and week summary widgets"
+   ]
+  },
+  "src/components/__tests__/JustificativasRelogioTab.test.tsx": {
+   "path": "src/components/__tests__/JustificativasRelogioTab.test.tsx",
+   "lines": 125,
+   "is_test": true,
+   "errors": [
+    ")).toHaveTextContent("
+   ],
+   "tests": [
+    "JustificativasRelogioTab",
+    "mostra carregando",
+    "mostra erro",
+    "mostra vazio",
+    "lista a justificativa com ",
+    "escolher um tipo chama definir_tipo_dia_justificativa_relogio com o valor"
    ]
   },
   "src/components/__tests__/KitOnboardingDialog.test.tsx": {
@@ -274055,7 +274960,7 @@
   },
   "src/components/__tests__/PontoClockRegister.test.tsx": {
    "path": "src/components/__tests__/PontoClockRegister.test.tsx",
-   "lines": 260,
+   "lines": 274,
    "is_test": true,
    "errors": [
     ", async () => {\n    state.onLine = false;\n    state.colabChain = { data: null, error: null };\n    renderClock();\n    fireEvent.click(screen.getByRole("
@@ -274085,7 +274990,9 @@
     "câmera negada mostra toast.error e não registra",
     "modo offline: enfileira registro com hash e avisa",
     "offline sem colaborador identificado mostra toast.error",
-    "badge de fila offline aparece quando há pendências e sincroniza ao clicar"
+    "badge de fila offline aparece quando há pendências e sincroniza ao clicar",
+    "usa relógio: esconde os botões de registro e mostra o aviso",
+    "não usa relógio: mantém os botões e não mostra o aviso"
    ]
   },
   "src/components/__tests__/PontoGeoAnalytics.test.tsx": {
@@ -275050,6 +275957,30 @@
     "shows Tornar Admin for non-admin users",
     "oferece Adicionar perfil (supervisor/coordenador) para cada usuário",
     "renders Informação de Segurança card"
+   ]
+  },
+  "src/components/__tests__/VinculosRelogioTab.test.tsx": {
+   "path": "src/components/__tests__/VinculosRelogioTab.test.tsx",
+   "lines": 155,
+   "is_test": true,
+   "errors": [
+    ")).toHaveTextContent("
+   ],
+   "params": [
+    {
+     "name": "EMPRESA",
+     "value": "'emp-1'"
+    }
+   ],
+   "tests": [
+    "VinculosRelogioTab",
+    "mostra carregando antes dos dados",
+    "mostra erro com opção de tentar de novo",
+    "mostra vazio quando o relógio ainda não mandou funcionários",
+    "lista pendentes por padrão, com contador e CPF mascarado (só últimos 4)",
+    "filtro Vinculados mostra colaborador e método",
+    "Vincular chama vincular_funcionario_relogio com funcionário e colaborador",
+    "Desfazer chama desvincular_funcionario_relogio"
    ]
   },
   "src/components/__tests__/WorkforceHealthScore.test.tsx": {
@@ -285758,7 +286689,7 @@
   },
   "src/components/ponto/GestaoRegistrosPonto.tsx": {
    "path": "src/components/ponto/GestaoRegistrosPonto.tsx",
-   "lines": 539,
+   "lines": 571,
    "exports": [
     "function GestaoRegistrosPonto"
    ],
@@ -285974,7 +286905,7 @@
   },
   "src/components/ponto/PontoClockRegister.tsx": {
    "path": "src/components/ponto/PontoClockRegister.tsx",
-   "lines": 455,
+   "lines": 467,
    "exports": [
     "function PontoClockRegister"
    ],
@@ -286256,6 +287187,35 @@
    "lines": 87,
    "exports": [
     "function PontoWeekSummary"
+   ]
+  },
+  "src/components/ponto/relogio/JustificativasRelogioTab.tsx": {
+   "path": "src/components/ponto/relogio/JustificativasRelogioTab.tsx",
+   "lines": 117,
+   "exports": [
+    "function JustificativasRelogioTab"
+   ],
+   "errors": [
+    ">\n        <p className=",
+    "Não foi possível salvar: ${mensagemErro(err)}"
+   ],
+   "params": [
+    {
+     "name": "SEM_EFEITO",
+     "value": "'sem_efeito'"
+    }
+   ]
+  },
+  "src/components/ponto/relogio/VinculosRelogioTab.tsx": {
+   "path": "src/components/ponto/relogio/VinculosRelogioTab.tsx",
+   "lines": 236,
+   "exports": [
+    "function VinculosRelogioTab"
+   ],
+   "errors": [
+    ">\n        <p className=",
+    "Não foi possível desfazer: ${mensagemErro(err)}",
+    "Não foi possível vincular: ${mensagemErro(err)}"
    ]
   },
   "src/components/portal/PortalDocumentosTab.tsx": {
@@ -303964,7 +304924,7 @@
   },
   "src/pages/PontoKioskPage.tsx": {
    "path": "src/pages/PontoKioskPage.tsx",
-   "lines": 470,
+   "lines": 506,
    "exports": [
     "function PontoKioskPage"
    ],
@@ -303983,6 +304943,7 @@
     ]
    },
    "rpc": [
+    "colaborador_usa_relogio_por_id",
     "verificar_pin_quiosque"
    ],
    "errors": [
@@ -304014,6 +304975,11 @@
     },
     {
      "field": "step",
+     "value": "relogio",
+     "kind": "compara"
+    },
+    {
+     "field": "step",
      "value": "success",
      "kind": "compara"
     }
@@ -304033,7 +304999,7 @@
   },
   "src/pages/PontoPage.tsx": {
    "path": "src/pages/PontoPage.tsx",
-   "lines": 697,
+   "lines": 710,
    "exports": [
     "function PontoPage"
    ],
@@ -304103,6 +305069,9 @@
      "tipo"
     ]
    },
+   "rpc": [
+    "colaborador_usa_relogio"
+   ],
    "errors": [
     "Biometria não confirmou a identidade — ponto registrado, mas pendente de revisão pelo RH.",
     "Colaborador não encontrado",
@@ -305793,6 +306762,18 @@
    "is_test": true,
    "tests": [
     "PlanosSaudePage"
+   ]
+  },
+  "src/pages/__tests__/PontoKioskPage.test.tsx": {
+   "path": "src/pages/__tests__/PontoKioskPage.test.tsx",
+   "lines": 98,
+   "is_test": true,
+   "tests": [
+    "PontoKioskPage — colaborador do relógio",
+    "quem usa o relógio não vê os botões de registro, só o aviso",
+    "Voltar retorna à tela de matrícula",
+    "quem não usa o relógio segue para os botões de registro",
+    "falha na consulta não trava o quiosque (o banco recusa a batida se preciso)"
    ]
   },
   "src/pages/__tests__/PremiacoesPage.test.tsx": {
@@ -315580,6 +316561,83 @@
     "increments errors when colaborador processing fails",
     "counts an item upsert failure as an error instead of reporting false success",
     "uses the folha/colaborador compound conflict target for batch item writes"
+   ]
+  },
+  "src/services/relogio/vinculosService.ts": {
+   "path": "src/services/relogio/vinculosService.ts",
+   "lines": 161,
+   "exports": [
+    "type VinculoMetodo",
+    "const TIPOS_DIA_RELOGIO",
+    "type TipoDiaRelogio",
+    "interface FuncionarioRelogio",
+    "interface ColaboradorOpcao",
+    "interface JustificativaRelogio",
+    "function ultimos4Cpf",
+    "function mascararCpfLast4",
+    "const vinculosRelogioService"
+   ],
+   "tables": [
+    {
+     "table": "ponto_rep_funcionarios",
+     "op": "select"
+    },
+    {
+     "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "ponto_rep_justificativas",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "ponto_rep_funcionarios": [
+     "codigo",
+     "colaborador_id",
+     "cpf",
+     "dispositivo_id",
+     "empresa_id",
+     "id",
+     "matricula",
+     "nome",
+     "situacao",
+     "vinculado_em",
+     "vinculo_metodo"
+    ],
+    "colaboradores": [
+     "cpf_last4",
+     "empresa_id",
+     "id",
+     "matricula",
+     "nome_completo",
+     "status"
+    ],
+    "ponto_rep_justificativas": [
+     "codigo",
+     "considera_falta",
+     "considera_normal",
+     "dispositivo_id",
+     "empresa_id",
+     "id",
+     "nome",
+     "tipo_dia"
+    ]
+   },
+   "rpc": [
+    "definir_tipo_dia_justificativa_relogio",
+    "desvincular_funcionario_relogio",
+    "vincular_funcionario_relogio"
+   ],
+   "enums": [
+    {
+     "name": "VinculoMetodo",
+     "values": "cpf | pis | matricula | manual"
+    },
+    {
+     "name": "TIPOS_DIA_RELOGIO",
+     "values": "'normal', 'feriado', 'compensado', 'folga', 'falta', 'atestado', 'ferias', 'licenca',"
+    }
    ]
   },
   "src/services/tabelas/adminService.ts": {
@@ -327263,7 +328321,7 @@
   },
   "supabase/functions/processar-ponto-offline/index.ts": {
    "path": "supabase/functions/processar-ponto-offline/index.ts",
-   "lines": 325,
+   "lines": 341,
    "tables": [
     {
      "table": "colaboradores",
@@ -332389,6 +333447,24 @@
    "path": "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql",
    "lines": 38
   },
+  "supabase/migrations/20261121221000_ponto_rep_vinculos.sql": {
+   "path": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql",
+   "lines": 141
+  },
+  "supabase/migrations/20261121221000_ponto_rep_vinculos.verify.sql": {
+   "path": "supabase/migrations/20261121221000_ponto_rep_vinculos.verify.sql",
+   "lines": 35
+  },
+  "supabase/migrations/20261121222000_batidas_relogio_protecao.sql": {
+   "path": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+   "lines": 183,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261121222000_batidas_relogio_protecao.verify.sql": {
+   "path": "supabase/migrations/20261121222000_batidas_relogio_protecao.verify.sql",
+   "lines": 26,
+   "uses_service_role": true
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -332782,10 +333858,45 @@
   }
  },
  "git": {
-  "sha": "40b5cfe6945cff79f593f71f16bbd2f11f142722",
+  "sha": "01d8cb6f8bd76299f935cc1fadd6162b525e0d2f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "01d8cb6",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "feat: protege batida do relógio e bloqueia app/quiosque de quem usa o relógio (#801)",
+    "files": [
+     "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
+     "src/components/__tests__/PontoClockRegister.test.tsx",
+     "src/components/ponto/GestaoRegistrosPonto.tsx",
+     "src/components/ponto/PontoClockRegister.tsx",
+     "src/integrations/supabase/types.ts",
+     "src/pages/PontoKioskPage.tsx",
+     "src/pages/PontoPage.tsx",
+     "src/pages/__tests__/PontoKioskPage.test.tsx",
+     "supabase/functions/processar-ponto-offline/index.ts",
+     "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+     "supabase/migrations/20261121222000_batidas_relogio_protecao.verify.sql"
+    ]
+   },
+   {
+    "sha": "4008c60",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "feat: vínculo de funcionários do relógio e de-para de justificativas (#800)",
+    "files": [
+     "src/components/__tests__/JustificativasRelogioTab.test.tsx",
+     "src/components/__tests__/VinculosRelogioTab.test.tsx",
+     "src/components/ponto/relogio/JustificativasRelogioTab.tsx",
+     "src/components/ponto/relogio/VinculosRelogioTab.tsx",
+     "src/integrations/supabase/types.ts",
+     "src/services/relogio/vinculosService.ts",
+     "supabase/migrations/20261121221000_ponto_rep_vinculos.sql",
+     "supabase/migrations/20261121221000_ponto_rep_vinculos.verify.sql"
+    ]
+   },
    {
     "sha": "40b5cfe",
     "date": "2026-11-21",
@@ -333079,33 +334190,6 @@
      "analise-prs/RECONCILIACAO_FUNCIONALIDADES.md",
      "analise-prs/funcionalidades.csv"
     ]
-   },
-   {
-    "sha": "cca632b",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix: corrige 12 erros BRIDGE_SCHEMA_ERROR (HTTP 400 no bridge) e destrava Dashboard Executivo e Passivo Trabalhista (#766)",
-    "files": [
-     "src/hooks/useExecutiveDashboard.ts",
-     "src/integrations/supabase/__tests__/clientBridge.test.ts",
-     "src/integrations/supabase/client.ts",
-     "src/pages/PassivoTrabalhistaPage.tsx",
-     "src/services/__tests__/premiacoesService.test.ts",
-     "src/services/beneficioService.ts",
-     "src/services/premiacoesService.ts",
-     "supabase/functions/external-db-bridge/index.ts",
-     "supabase/functions/external-db-bridge/request-schema.ts",
-     "supabase/functions/external-db-bridge/validation.test.ts"
-    ]
-   },
-   {
-    "sha": "c33db80",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix: passa empresaAtual.id para folhaService.list em FinanceiroBancarioPage (#765)",
-    "files": [
-     "src/pages/FinanceiroBancarioPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -333116,6 +334200,10 @@
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
     4
+   ],
+   [
+    "src/integrations/supabase/types.ts",
+    3
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -333158,35 +334246,31 @@
     2
    ],
    [
-    ".github/workflows/ci.yml",
+    "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
     1
    ],
    [
-    "docs/guides/ponto-eletronico.md",
+    "src/components/__tests__/PontoClockRegister.test.tsx",
     1
    ],
    [
-    "infra/runbooks/PONTO_REP.md",
+    "src/components/ponto/GestaoRegistrosPonto.tsx",
     1
    ],
    [
-    "scripts/tests/migrations-ponto-rep.sh",
+    "src/components/ponto/PontoClockRegister.tsx",
     1
    ],
    [
-    "supabase/functions/external-db-bridge/validation.ts",
+    "src/pages/PontoKioskPage.tsx",
     1
    ],
    [
-    "scripts/audit-security-config.mjs",
+    "src/pages/PontoPage.tsx",
     1
    ],
    [
-    "supabase/config.toml",
-    1
-   ],
-   [
-    "supabase/functions/ingest-ponto-rep/index.ts",
+    "src/pages/__tests__/PontoKioskPage.test.tsx",
     1
    ]
   ]

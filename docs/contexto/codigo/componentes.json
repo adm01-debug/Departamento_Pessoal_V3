@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 641,
- "orfaos": 25,
+ "total": 643,
+ "orfaos": 27,
  "nomes_duplicados": {
   "AlertasRHWidget": [
    "src/components/dashboard/analytics/widgets.tsx",
@@ -5365,7 +5365,7 @@
     "GestaoRegistrosPonto"
    ],
    "export_default": null,
-   "linhas": 539,
+   "linhas": 571,
    "dominio": "components/ponto",
    "hooks_locais": [
     "useAuth",
@@ -5471,7 +5471,7 @@
     "PontoClockRegister"
    ],
    "export_default": null,
-   "linhas": 455,
+   "linhas": 467,
    "dominio": "components/ponto",
    "hooks_locais": [
     "useAuth",
@@ -5593,6 +5593,34 @@
    "edges": [],
    "usado_por": 2,
    "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/relogio/JustificativasRelogioTab.tsx",
+   "exports": [
+    "JustificativasRelogioTab"
+   ],
+   "export_default": null,
+   "linhas": 117,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/ponto/relogio/VinculosRelogioTab.tsx",
+   "exports": [
+    "VinculosRelogioTab"
+   ],
+   "export_default": null,
+   "linhas": 236,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
   },
   {
    "arquivo": "src/components/portal/PortalDocumentosTab.tsx",
@@ -7378,7 +7406,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 224,
+   "usado_por": 225,
    "orfao": false
   },
   {
@@ -7393,7 +7421,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 363,
+   "usado_por": 365,
    "orfao": false
   },
   {
@@ -7554,7 +7582,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -7914,7 +7942,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 18,
+   "usado_por": 19,
    "orfao": false
   },
   {
@@ -7994,7 +8022,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 130,
+   "usado_por": 131,
    "orfao": false
   },
   {
@@ -8158,7 +8186,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 117,
+   "usado_por": 119,
    "orfao": false
   },
   {
@@ -8236,7 +8264,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 115,
+   "usado_por": 117,
    "orfao": false
   },
   {
@@ -10077,7 +10105,7 @@
     "PontoKioskPage"
    ],
    "export_default": "PontoKioskPage",
-   "linhas": 470,
+   "linhas": 506,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas",
@@ -10096,7 +10124,7 @@
     "PontoPage"
    ],
    "export_default": "PontoPage",
-   "linhas": 697,
+   "linhas": 710,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

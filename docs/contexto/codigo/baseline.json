@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "40b5cfe6945cff79f593f71f16bbd2f11f142722",
+  "commit": "01d8cb6f8bd76299f935cc1fadd6162b525e0d2f",
   "branch": "main",
-  "data_commit": "2026-11-21T20:03:58-03:00",
+  "data_commit": "2026-11-21T20:04:08-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "01d8cb6",
+    "data": "2026-11-21",
+    "assunto": "feat: protege batida do relógio e bloqueia app/quiosque de quem usa o relógio (#801)"
+   },
+   {
+    "sha": "4008c60",
+    "data": "2026-11-21",
+    "assunto": "feat: vínculo de funcionários do relógio e de-para de justificativas (#800)"
+   },
    {
     "sha": "40b5cfe",
     "data": "2026-11-21",
@@ -121,27 +131,17 @@
     "sha": "76e6c55",
     "data": "2026-11-21",
     "assunto": "chore: certifica F-01..F-20 como VERIFICADO em producao no canonico (#777)"
-   },
-   {
-    "sha": "eb7dcf8",
-    "data": "2026-11-21",
-    "assunto": "revert: remove specs resgatados na #774 que nao passam na main (descartados na auditoria muri) (#776)"
-   },
-   {
-    "sha": "45af2a0",
-    "data": "2026-11-21",
-    "assunto": "chore: preserva e2e/docs NineBox e Premiações da branch muri (resgate de trabalho de outro agente) (#774)"
    }
   ],
-  "arquivos_mudados_7d": 1016,
+  "arquivos_mudados_7d": 1032,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 384
+    "mudancas": 387
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 111
+    "mudancas": 110
    },
    {
     "pasta": "src/components/ui",
@@ -181,7 +181,7 @@
    },
    {
     "pasta": "src/pages/__tests__",
-    "mudancas": 33
+    "mudancas": 34
    },
    {
     "pasta": "src/components/admissoes",
@@ -223,6 +223,10 @@
    },
    {
     "arquivo": "package.json",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 8
    },
    {
@@ -270,10 +274,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 6
-   },
-   {
     "arquivo": "src/schemas/tableColumns.ts",
     "mudancas": 6
    },
@@ -290,11 +290,11 @@
     "mudancas": 5
    },
    {
-    "arquivo": "src/components/desligamentos/index.ts",
+    "arquivo": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
     "mudancas": 5
    },
    {
-    "arquivo": "src/pages/AdmissoesPage.tsx",
+    "arquivo": "src/components/desligamentos/index.ts",
     "mudancas": 5
    }
   ],
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3680,
-  "arquivos_codigo": 2126,
-  "linhas_codigo": 424879,
+  "arquivos_total": 3690,
+  "arquivos_codigo": 2132,
+  "linhas_codigo": 425952,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
-  "modulos": 81,
-  "componentes": 641,
+  "modulos": 82,
+  "componentes": 643,
   "hooks": 121,
   "edge_functions": 68,
   "tabelas": 435,
-  "migrations": 906,
+  "migrations": 910,
   "cron_jobs": 41,
-  "testes": 802,
+  "testes": 805,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 344
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1000,
-   "linhas": 184830
+   "arquivos": 1004,
+   "linhas": 185562
   },
   "src/constants": {
    "arquivos": 7,
@@ -668,7 +668,7 @@
   },
   "src/integrations": {
    "arquivos": 11,
-   "linhas": 26443
+   "linhas": 26460
   },
   "src/lib": {
    "arquivos": 22,
@@ -683,8 +683,8 @@
    "linhas": 3564
   },
   "src/pages": {
-   "arquivos": 143,
-   "linhas": 50799
+   "arquivos": 144,
+   "linhas": 50946
   },
   "src/providers": {
    "arquivos": 4,
@@ -695,8 +695,8 @@
    "linhas": 8819
   },
   "src/services": {
-   "arquivos": 195,
-   "linhas": 41541
+   "arquivos": 196,
+   "linhas": 41702
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -724,7 +724,7 @@
   },
   "supabase/functions": {
    "arquivos": 191,
-   "linhas": 27538
+   "linhas": 27554
   },
   "supabase/tests": {
    "arquivos": 3,
@@ -758,7 +758,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 25280
+   "linhas": 25297
   },
   {
    "arquivo": "src/schemas/tableColumns.ts",
@@ -863,7 +863,7 @@
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 24,
-  "arquivos_acima_500_linhas": 116
+  "arquivos_acima_500_linhas": 117
  },
  "todos": [
   {
@@ -1161,6 +1161,8 @@
    "src/components/layout/Stack.tsx",
    "src/components/notifications/NotificationCenter.tsx",
    "src/components/ponto/PontoLeaderboard.tsx",
+   "src/components/ponto/relogio/JustificativasRelogioTab.tsx",
+   "src/components/ponto/relogio/VinculosRelogioTab.tsx",
    "src/components/ui/data-table.tsx",
    "src/components/ui/flow-hover-button.tsx",
    "src/components/ui/form.tsx",

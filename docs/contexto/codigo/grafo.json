@@ -1,12 +1,12 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1326,
- "arestas": 6496,
+ "nos": 1329,
+ "arestas": 6510,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 363
+   "importado_por": 365
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -18,11 +18,11 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 272
+   "importado_por": 273
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 224
+   "importado_por": 225
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -46,10 +46,14 @@
   },
   {
    "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 131
+   "importado_por": 132
   },
   {
    "arquivo": "src/components/ui/spinner.tsx",
+   "importado_por": 119
+  },
+  {
+   "arquivo": "src/components/ui/table.tsx",
    "importado_por": 117
   },
   {
@@ -57,12 +61,8 @@
    "importado_por": 117
   },
   {
-   "arquivo": "src/components/ui/table.tsx",
-   "importado_por": 115
-  },
-  {
    "arquivo": "src/integrations/supabase/types.ts",
-   "importado_por": 96
+   "importado_por": 97
   },
   {
    "arquivo": "src/components/PageTitle.tsx",
@@ -225,6 +225,8 @@
   "src/components/notifications/NotificationCenter.tsx",
   "src/components/notifications/index.ts",
   "src/components/ponto/PontoLeaderboard.tsx",
+  "src/components/ponto/relogio/JustificativasRelogioTab.tsx",
+  "src/components/ponto/relogio/VinculosRelogioTab.tsx",
   "src/components/ui/data-table.tsx",
   "src/components/ui/flow-hover-button.tsx",
   "src/components/ui/form.tsx",
@@ -276,7 +278,7 @@
   {
    "modulo": "integrations/supabase",
    "depende_de": 3,
-   "importado_por": 41
+   "importado_por": 42
   },
   {
    "modulo": "services",
@@ -339,6 +341,11 @@
    "importado_por": 6
   },
   {
+   "modulo": "components/ponto",
+   "depende_de": 10,
+   "importado_por": 2
+  },
+  {
    "modulo": "components/settings",
    "depende_de": 11,
    "importado_por": 1
@@ -347,11 +354,6 @@
    "modulo": "components/ferias",
    "depende_de": 10,
    "importado_por": 1
-  },
-  {
-   "modulo": "components/ponto",
-   "depende_de": 9,
-   "importado_por": 2
   },
   {
    "modulo": "components/colaboradores",

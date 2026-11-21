@@ -2287,7 +2287,7 @@
    "nome": "processar-ponto-offline",
    "entrada": "supabase/functions/processar-ponto-offline/index.ts",
    "arquivos": 1,
-   "linhas": 325,
+   "linhas": 341,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",

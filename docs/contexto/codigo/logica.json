@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 185,
+ "total": 186,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
@@ -9,7 +9,7 @@
   "providers": 1,
   "python": 5,
   "schemas": 25,
-  "services": 97,
+  "services": 98,
   "utils": 35
  },
  "arquivos": [
@@ -350,7 +350,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 245,
+   "usado_por": 246,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -385,6 +385,7 @@
     "pages",
     "services",
     "services/folha",
+    "services/relogio",
     "services/tabelas",
     "services/trainingImages",
     "utils",
@@ -499,7 +500,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 25280,
+   "linhas": 25297,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -508,7 +509,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 83,
+   "usado_por": 84,
    "usado_por_modulos": [
     "components/admin",
     "components/admissoes",
@@ -528,6 +529,7 @@
     "pages",
     "services",
     "services/folha",
+    "services/relogio",
     "services/tabelas",
     "types",
     "utils"
@@ -4037,6 +4039,45 @@
     "pages"
    ],
    "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/relogio/vinculosService.ts",
+   "camada": "services",
+   "exports": [
+    "ColaboradorOpcao",
+    "FuncionarioRelogio",
+    "JustificativaRelogio",
+    "TIPOS_DIA_RELOGIO",
+    "TipoDiaRelogio",
+    "VinculoMetodo",
+    "mascararCpfLast4",
+    "ultimos4Cpf",
+    "vinculosRelogioService"
+   ],
+   "export_default": null,
+   "linhas": 161,
+   "tabelas": [
+    "colaboradores",
+    "ponto_rep_funcionarios",
+    "ponto_rep_justificativas"
+   ],
+   "rpcs": [
+    "definir_tipo_dia_justificativa_relogio",
+    "desvincular_funcionario_relogio",
+    "vincular_funcionario_relogio"
+   ],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "components/ponto"
+   ],
+   "coberto_por_testes": 0,
    "orfao": false
   },
   {

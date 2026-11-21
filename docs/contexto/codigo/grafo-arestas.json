@@ -3372,6 +3372,22 @@
    "src/components/ui/card.tsx",
    "src/integrations/supabase/types.ts"
   ],
+  "src/components/ponto/relogio/JustificativasRelogioTab.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/spinner.tsx",
+   "src/components/ui/table.tsx",
+   "src/services/relogio/vinculosService.ts"
+  ],
+  "src/components/ponto/relogio/VinculosRelogioTab.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/command.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/spinner.tsx",
+   "src/components/ui/table.tsx",
+   "src/services/relogio/vinculosService.ts"
+  ],
   "src/components/portal/PortalDocumentosTab.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -7764,6 +7780,10 @@
    "src/schemas/recrutamento.ts",
    "src/schemas/validate.ts",
    "src/types/recrutamento.ts"
+  ],
+  "src/services/relogio/vinculosService.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts"
   ],
   "src/services/rescisaoService.ts": [
    "src/integrations/supabase/client.ts",

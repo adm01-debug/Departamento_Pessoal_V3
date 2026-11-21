@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 802,
+ "total": 805,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 757
+  "unit": 760
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 669
+   "arquivos": 672
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -2287,12 +2287,12 @@
   {
    "arquivo": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
    "tipo": "unit",
-   "linhas": 306,
+   "linhas": 347,
    "testa": [
     "src/components/ponto/GestaoRegistrosPonto.tsx",
     "src/integrations/supabase/client.ts"
    ],
-   "casos": 15
+   "casos": 17
   },
   {
    "arquivo": "src/components/__tests__/GlobalAuditLogTab.test.tsx",
@@ -2410,6 +2410,15 @@
     "src/components/colaborador-detalhes/JornadaPontoTab.tsx"
    ],
    "casos": 3
+  },
+  {
+   "arquivo": "src/components/__tests__/JustificativasRelogioTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 125,
+   "testa": [
+    "src/components/ponto/relogio/JustificativasRelogioTab.tsx"
+   ],
+   "casos": 6
   },
   {
    "arquivo": "src/components/__tests__/KitOnboardingDialog.test.tsx",
@@ -3099,13 +3108,13 @@
   {
    "arquivo": "src/components/__tests__/PontoClockRegister.test.tsx",
    "tipo": "unit",
-   "linhas": 260,
+   "linhas": 274,
    "testa": [
     "src/components/ponto/PontoClockRegister.tsx",
     "src/integrations/supabase/types.ts",
     "src/services/pontoOfflineService.ts"
    ],
-   "casos": 18
+   "casos": 20
   },
   {
    "arquivo": "src/components/__tests__/PontoGeoAnalytics.test.tsx",
@@ -3633,6 +3642,15 @@
     "src/components/settings/UserRolesTab.tsx"
    ],
    "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/VinculosRelogioTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 155,
+   "testa": [
+    "src/components/ponto/relogio/VinculosRelogioTab.tsx"
+   ],
+   "casos": 7
   },
   {
    "arquivo": "src/components/__tests__/WorkforceHealthScore.test.tsx",
@@ -5586,6 +5604,15 @@
     "src/pages/PlanosSaudePage.tsx"
    ],
    "casos": 1
+  },
+  {
+   "arquivo": "src/pages/__tests__/PontoKioskPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 98,
+   "testa": [
+    "src/pages/PontoKioskPage.tsx"
+   ],
+   "casos": 4
   },
   {
    "arquivo": "src/pages/__tests__/PremiacoesPage.test.tsx",
@@ -7739,6 +7766,8 @@
   "src/components/ponto/PontoStreakCard.tsx": 1,
   "src/components/ponto/PontoTodayCard.tsx": 1,
   "src/components/ponto/PontoWeekSummary.tsx": 1,
+  "src/components/ponto/relogio/JustificativasRelogioTab.tsx": 1,
+  "src/components/ponto/relogio/VinculosRelogioTab.tsx": 1,
   "src/components/portal/PortalDocumentosTab.tsx": 1,
   "src/components/portal/PortalFinanceiroTab.tsx": 1,
   "src/components/portal/PortalMeusDadosTab.tsx": 1,
@@ -7976,6 +8005,7 @@
   "src/pages/OrganogramaPage.tsx": 1,
   "src/pages/PensoesPage.tsx": 1,
   "src/pages/PlanosSaudePage.tsx": 1,
+  "src/pages/PontoKioskPage.tsx": 1,
   "src/pages/PremiacoesPage.tsx": 1,
   "src/pages/SegurosVidaPage.tsx": 1,
   "src/pages/UsuariosPage.tsx": 1,
@@ -8234,7 +8264,6 @@
    "src/pages/PerfilPage.tsx",
    "src/pages/PesquisasClimaPage.tsx",
    "src/pages/PlanoCargosSalariosPage.tsx",
-   "src/pages/PontoKioskPage.tsx",
    "src/pages/PontoPage.tsx",
    "src/pages/PortalPage.tsx",
    "src/pages/PromoBrindesPage.tsx",
@@ -8314,6 +8343,7 @@
   ],
   "servicos": [
    "src/services/jornadaService.ts",
+   "src/services/relogio/vinculosService.ts",
    "src/services/tabelas/index.ts",
    "src/services/tabelasComplementaresService.ts",
    "src/services/trainingImages/briefing.ts",

@@ -198,7 +198,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 312,
+   "testes": 314,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -4277,13 +4277,13 @@
   },
   {
    "modulo": "components/ponto",
-   "arquivos": 19,
+   "arquivos": 21,
    "testes": 0,
-   "linhas": 4384,
+   "linhas": 4781,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 19,
+   "componentes": 21,
    "hooks_locais": [
     "useASOs",
     "useAdmissaoWorkflow",
@@ -4391,6 +4391,7 @@
     "useMedidasDisciplinares",
     "useMedidasDisciplinaresColaborador",
     "useMetasColaborador",
+    "useMovimentoReduzido",
     "useNavigationGuard",
     "useNotificacoes",
     "useNotification",
@@ -4549,6 +4550,8 @@
     "pix_lotes",
     "plano_contas",
     "ponto_auditoria",
+    "ponto_rep_funcionarios",
+    "ponto_rep_justificativas",
     "pontos_abertos",
     "profiles",
     "prorrogacoes_afastamento",
@@ -4594,6 +4597,8 @@
     "complete_admission_esocial_event",
     "criar_feedback_seguro",
     "decidir_aprovacao_gestor",
+    "definir_tipo_dia_justificativa_relogio",
+    "desvincular_funcionario_relogio",
     "editar_feedback_seguro",
     "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
@@ -4623,7 +4628,8 @@
     "set_own_default_empresa",
     "sugerir_proxima_medida",
     "validar_potencial_avaliacao",
-    "verificar_espelho_ponto"
+    "verificar_espelho_ponto",
+    "vincular_funcionario_relogio"
    ],
    "buckets": [
     "afastamentos",
@@ -4647,7 +4653,9 @@
    "papeis": [
     "alert",
     "gestor",
+    "group",
     "rh",
+    "status",
     "user"
    ],
    "diretos": {
@@ -4685,6 +4693,7 @@
     "lib",
     "schemas",
     "services",
+    "services/relogio",
     "utils"
    ],
    "pacotes_externos": [
@@ -7807,7 +7816,7 @@
    "modulo": "integrations/supabase",
    "arquivos": 6,
    "testes": 4,
-   "linhas": 25916,
+   "linhas": 25933,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7871,6 +7880,7 @@
     "pages",
     "services",
     "services/folha",
+    "services/relogio",
     "services/tabelas",
     "services/trainingImages",
     "types",
@@ -8052,7 +8062,7 @@
    "modulo": "pages",
    "arquivos": 115,
    "testes": 0,
-   "linhas": 46190,
+   "linhas": 46239,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -8834,6 +8844,8 @@
     "associar_pis_colaborador_afdt",
     "claim_admission_esocial_event",
     "clinicas_proximas",
+    "colaborador_usa_relogio",
+    "colaborador_usa_relogio_por_id",
     "complete_admission_esocial_event",
     "contrato_assinar_por_token",
     "contrato_consultar_por_token",
@@ -9074,6 +9086,8 @@
      "admissao_salvar_dados",
      "associar_pis_colaborador_afdt",
      "clinicas_proximas",
+     "colaborador_usa_relogio",
+     "colaborador_usa_relogio_por_id",
      "contrato_assinar_por_token",
      "contrato_consultar_por_token",
      "contrato_preview_url_por_token",
@@ -9179,7 +9193,7 @@
   {
    "modulo": "pages/__tests__",
    "arquivos": 0,
-   "testes": 28,
+   "testes": 29,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -10070,6 +10084,60 @@
    "pacotes_externos": [
     "sonner"
    ]
+  },
+  {
+   "modulo": "services/relogio",
+   "arquivos": 1,
+   "testes": 0,
+   "linhas": 161,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 0,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [
+    "colaboradores",
+    "ponto_rep_funcionarios",
+    "ponto_rep_justificativas"
+   ],
+   "rpcs": [
+    "definir_tipo_dia_justificativa_relogio",
+    "desvincular_funcionario_relogio",
+    "log_frontend_error",
+    "vincular_funcionario_relogio"
+   ],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "DEV",
+    "VITE_SUPABASE_FUNCTIONS_BASE",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "flags": [],
+   "papeis": [],
+   "diretos": {
+    "edges": [],
+    "tabelas": [
+     "colaboradores",
+     "ponto_rep_funcionarios",
+     "ponto_rep_justificativas"
+    ],
+    "rpcs": [
+     "definir_tipo_dia_justificativa_relogio",
+     "desvincular_funcionario_relogio",
+     "vincular_funcionario_relogio"
+    ]
+   },
+   "importado_por_outros_modulos": [
+    "components/ponto"
+   ],
+   "depende_de_modulos": [
+    "integrations/supabase"
+   ],
+   "pacotes_externos": []
   },
   {
    "modulo": "services/tabelas",

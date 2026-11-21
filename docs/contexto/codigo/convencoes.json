@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (523)",
+   "src/components (525)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
@@ -17,12 +17,12 @@
    "src/contexts (4)"
   ],
   "servicos_logica": [
-   "src/services (97)",
+   "src/services (98)",
    "src/utils (35)",
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (669)",
+   "co-localizado (__tests__) (672)",
    "co-localizado (*.test) (74)",
    "e2e/ (33)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (641)"
+  ".tsx (643)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: protege batida do relógio e bloqueia app/quiosque de quem usa o relógio (#801)",
+   "feat: vínculo de funcionários do relógio e de-para de justificativas (#800)",
    "chore: testes do relógio de ponto no CI, guia do DP e runbook PONTO_REP (#799)",
    "infra: libera no bridge os RPCs do relógio de ponto (#802)",
-   "feat: função ingest-ponto-rep recebe e guarda os envios do relógio de ponto (#798)",
-   "feat: tabelas de entrada do relógio de ponto (ponto_rep_*) (#795)",
-   "feat: coletor somente leitura do Ponto AtecSoft para o DP V3 (#796)"
+   "feat: função ingest-ponto-rep recebe e guarda os envios do relógio de ponto (#798)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
