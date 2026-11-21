@@ -448,15 +448,31 @@ test.describe('Pipeline — mobile (toque)', () => {
     }
     await page.waitForTimeout(250);
     await expect(page.locator('[data-pipeline-arrastado]')).toHaveCount(1);
-    // O board pode auto-rolar durante o arraste: reposiciona no centro ATUAL da
-    // coluna de destino e espera o `over` do dnd-kit antes de soltar.
-    const alvoAtual = await page.locator(LISTA('entrevista')).boundingBox();
-    await mover(
-      Math.min(alvoAtual!.x + 24, viewportToque.width - 20),
-      Math.min(alvoAtual!.y + 60, viewportToque.height - 40)
-    );
-    await page.waitForTimeout(400);
-    await expect(page.locator(COLUNA('entrevista'))).toHaveAttribute('data-pipeline-drop', 'true');
+    // O `over` do dnd-kit é decidido pelo retângulo do CARD arrastado (default
+    // `rectIntersection`), não pelo ponto do dedo. Quando o board auto-rola na
+    // horizontal, a coluna de destino anda para baixo do card e a asserção
+    // falha de forma intermitente — daí o `expect.poll` com reposicionamento:
+    // a cada tentativa o card é recolocado sobre o centro ATUAL da coluna e só
+    // então o `over` é lido. A primeira tentativa mantém o caminho original.
+    await expect
+      .poll(
+        async () => {
+          const alvoAtual = await page.locator(LISTA('entrevista')).boundingBox();
+          const alturaAlvo = await page
+            .locator(`${COLUNA('entrevista')} > section`)
+            .evaluate((el) => el.getBoundingClientRect().height);
+          await mover(
+            Math.min(alvoAtual!.x + 24, viewportToque.width - 20),
+            Math.min(alvoAtual!.y + alturaAlvo / 2, viewportToque.height - 40)
+          );
+          return page
+            .locator(COLUNA('entrevista'))
+            .getAttribute('data-pipeline-drop', { timeout: 1_000 })
+            .catch(() => null);
+        },
+        { timeout: 15_000, intervals: [400, 400, 400, 600] }
+      )
+      .toBe('true');
     await soltar();
     await expect(page.locator('[data-pipeline-arrastado]')).toHaveCount(0);
     await expect(page.locator(`${COLUNA('entrevista')} [data-candidato-card="${idToque}"]`)).toHaveCount(1);

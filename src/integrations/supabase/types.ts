@@ -15621,6 +15621,352 @@ export type Database = {
         }
         Relationships: []
       }
+      ponto_rep_dias: {
+        Row: {
+          abono: string | null
+          abono_negativo: string | null
+          created_at: string
+          data: string
+          dispositivo_id: string
+          empresa_id: string
+          erro_processamento: string | null
+          folga: boolean
+          funcionario_codigo: number
+          hash_conteudo: string
+          horario_codigo: number | null
+          id: string
+          justificativa_abono: number | null
+          lote_id: string | null
+          marcacoes: Json
+          neutro: boolean
+          processado_em: string | null
+          updated_at: string
+        }
+        Insert: {
+          abono?: string | null
+          abono_negativo?: string | null
+          created_at?: string
+          data: string
+          dispositivo_id: string
+          empresa_id: string
+          erro_processamento?: string | null
+          folga?: boolean
+          funcionario_codigo: number
+          hash_conteudo: string
+          horario_codigo?: number | null
+          id?: string
+          justificativa_abono?: number | null
+          lote_id?: string | null
+          marcacoes?: Json
+          neutro?: boolean
+          processado_em?: string | null
+          updated_at?: string
+        }
+        Update: {
+          abono?: string | null
+          abono_negativo?: string | null
+          created_at?: string
+          data?: string
+          dispositivo_id?: string
+          empresa_id?: string
+          erro_processamento?: string | null
+          folga?: boolean
+          funcionario_codigo?: number
+          hash_conteudo?: string
+          horario_codigo?: number | null
+          id?: string
+          justificativa_abono?: number | null
+          lote_id?: string | null
+          marcacoes?: Json
+          neutro?: boolean
+          processado_em?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_rep_dias_dispositivo_id_fkey"
+            columns: ["dispositivo_id"]
+            isOneToOne: false
+            referencedRelation: "ponto_rep_dispositivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_dias_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_dias_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "ponto_rep_lotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ponto_rep_dispositivos: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          criado_por: string | null
+          empresa_id: string
+          id: string
+          nome: string
+          revogado_em: string | null
+          token_hash: string
+          token_prefixo: string
+          ultima_marcacao_em: string | null
+          ultimo_contato_em: string | null
+          unidade: string
+          updated_at: string
+          versao_coletor: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          criado_por?: string | null
+          empresa_id: string
+          id?: string
+          nome: string
+          revogado_em?: string | null
+          token_hash: string
+          token_prefixo: string
+          ultima_marcacao_em?: string | null
+          ultimo_contato_em?: string | null
+          unidade: string
+          updated_at?: string
+          versao_coletor?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          criado_por?: string | null
+          empresa_id?: string
+          id?: string
+          nome?: string
+          revogado_em?: string | null
+          token_hash?: string
+          token_prefixo?: string
+          ultima_marcacao_em?: string | null
+          ultimo_contato_em?: string | null
+          unidade?: string
+          updated_at?: string
+          versao_coletor?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_rep_dispositivos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ponto_rep_funcionarios: {
+        Row: {
+          codigo: number
+          colaborador_id: string | null
+          cpf: string | null
+          created_at: string
+          data_admissao: string | null
+          data_desligamento: string | null
+          dispositivo_id: string
+          empresa_codigo: number | null
+          empresa_id: string
+          hash_conteudo: string | null
+          horario_codigo: number | null
+          id: string
+          matricula: string | null
+          nome: string | null
+          pis: string | null
+          situacao: string | null
+          updated_at: string
+          vinculado_em: string | null
+          vinculo_metodo: string | null
+        }
+        Insert: {
+          codigo: number
+          colaborador_id?: string | null
+          cpf?: string | null
+          created_at?: string
+          data_admissao?: string | null
+          data_desligamento?: string | null
+          dispositivo_id: string
+          empresa_codigo?: number | null
+          empresa_id: string
+          hash_conteudo?: string | null
+          horario_codigo?: number | null
+          id?: string
+          matricula?: string | null
+          nome?: string | null
+          pis?: string | null
+          situacao?: string | null
+          updated_at?: string
+          vinculado_em?: string | null
+          vinculo_metodo?: string | null
+        }
+        Update: {
+          codigo?: number
+          colaborador_id?: string | null
+          cpf?: string | null
+          created_at?: string
+          data_admissao?: string | null
+          data_desligamento?: string | null
+          dispositivo_id?: string
+          empresa_codigo?: number | null
+          empresa_id?: string
+          hash_conteudo?: string | null
+          horario_codigo?: number | null
+          id?: string
+          matricula?: string | null
+          nome?: string | null
+          pis?: string | null
+          situacao?: string | null
+          updated_at?: string
+          vinculado_em?: string | null
+          vinculo_metodo?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_rep_funcionarios_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_funcionarios_dispositivo_id_fkey"
+            columns: ["dispositivo_id"]
+            isOneToOne: false
+            referencedRelation: "ponto_rep_dispositivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_funcionarios_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ponto_rep_justificativas: {
+        Row: {
+          codigo: number
+          considera_falta: boolean
+          considera_normal: boolean
+          created_at: string
+          dispositivo_id: string
+          empresa_id: string
+          id: string
+          nome: string
+          tipo_dia: string | null
+          updated_at: string
+        }
+        Insert: {
+          codigo: number
+          considera_falta?: boolean
+          considera_normal?: boolean
+          created_at?: string
+          dispositivo_id: string
+          empresa_id: string
+          id?: string
+          nome: string
+          tipo_dia?: string | null
+          updated_at?: string
+        }
+        Update: {
+          codigo?: number
+          considera_falta?: boolean
+          considera_normal?: boolean
+          created_at?: string
+          dispositivo_id?: string
+          empresa_id?: string
+          id?: string
+          nome?: string
+          tipo_dia?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_rep_justificativas_dispositivo_id_fkey"
+            columns: ["dispositivo_id"]
+            isOneToOne: false
+            referencedRelation: "ponto_rep_dispositivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_justificativas_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ponto_rep_lotes: {
+        Row: {
+          dias_alterados: number
+          dispositivo_id: string
+          empresa_id: string
+          hash_sha256: string | null
+          id: string
+          mensagem_erro: string | null
+          periodo_fim: string | null
+          periodo_inicio: string | null
+          recebido_em: string
+          status: string
+          total_dias: number
+          total_funcionarios: number
+        }
+        Insert: {
+          dias_alterados?: number
+          dispositivo_id: string
+          empresa_id: string
+          hash_sha256?: string | null
+          id?: string
+          mensagem_erro?: string | null
+          periodo_fim?: string | null
+          periodo_inicio?: string | null
+          recebido_em?: string
+          status?: string
+          total_dias?: number
+          total_funcionarios?: number
+        }
+        Update: {
+          dias_alterados?: number
+          dispositivo_id?: string
+          empresa_id?: string
+          hash_sha256?: string | null
+          id?: string
+          mensagem_erro?: string | null
+          periodo_fim?: string | null
+          periodo_inicio?: string | null
+          recebido_em?: string
+          status?: string
+          total_dias?: number
+          total_funcionarios?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_rep_lotes_dispositivo_id_fkey"
+            columns: ["dispositivo_id"]
+            isOneToOne: false
+            referencedRelation: "ponto_rep_dispositivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_lotes_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ponto_seguranca_blacklist: {
         Row: {
           bloqueado_ate: string | null
