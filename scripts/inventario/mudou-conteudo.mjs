@@ -12,7 +12,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-export const PADRAO = ['inventario/estado/banco.json', 'inventario/estado/rotas.json', 'inventario/estado/edges.json'];
+export const PADRAO = ['inventario/estado/banco.json', 'inventario/estado/rotas.json', 'inventario/estado/edges.json', 'inventario/estado/funcionalidades.json'];
 const CARIMBOS = new Set(['medido_em', 'gerado_em']);
 // Telemetria viva do cron: muda quase toda semana so pela janela rolante de 7 dias, sem mudanca
 // estrutural nenhuma (mesmo achado do Zapp Web V2 em 2026-11-02). No DP tambem entram `linhas`,
