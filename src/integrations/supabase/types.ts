@@ -23584,6 +23584,11 @@ export type Database = {
           uf: string
         }[]
       }
+      colaborador_usa_relogio: { Args: never; Returns: boolean }
+      colaborador_usa_relogio_por_id: {
+        Args: { _colaborador_id: string }
+        Returns: boolean
+      }
       consumir_pendencias_medida_no_holerite: {
         Args: {
           p_colaborador_id: string

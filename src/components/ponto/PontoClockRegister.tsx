@@ -38,6 +38,8 @@ interface PontoClockRegisterProps {
   // configuracoes_ponto.exige_reconhecimento_facial — antes o switch da
   // aba de Configurações não era consultado: a câmera abria sempre.
   exigeBiometria?: boolean;
+  // D2: colaborador vinculado a relógio ativo não registra pelo app.
+  usaRelogio?: boolean;
 }
 
 const buttons = [
@@ -54,6 +56,7 @@ export function PontoClockRegister({
   onRegistrar,
   ultimoRegistro,
   exigeBiometria = true,
+  usaRelogio = false,
 }: PontoClockRegisterProps) {
   const { user } = useAuth();
   const [offlineQueueSize, setOfflineQueueSize] = useState(0);
@@ -287,31 +290,40 @@ export function PontoClockRegister({
           <p className="text-center text-sm text-muted-foreground font-body mb-4">
             {time.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })}
           </p>
-          <div className="grid grid-cols-2 gap-3">
-            {buttons.map(({ tipo, label, icon: Icon, gradient }) => (
-              <Button
-                key={tipo}
-                onClick={() => startScan(tipo)}
-                disabled={loading !== null}
-                className={cn(
-                  'h-12 rounded-xl bg-gradient-to-r text-primary-foreground hover:opacity-90 shadow-lg transition-all font-body font-medium',
-                  gradient
-                )}
-              >
-                {loading === tipo && geoStatus === 'capturing' ? (
-                  <>
-                    <MapPin className="h-4 w-4 mr-2 animate-bounce" />
-                    Capturando GPS...
-                  </>
-                ) : (
-                  <>
-                    <Icon className="h-4 w-4 mr-2" />
-                    {loading === tipo ? 'Registrando...' : label}
-                  </>
-                )}
-              </Button>
-            ))}
-          </div>
+          {usaRelogio ? (
+            <p
+              role="status"
+              className="rounded-xl border border-info/30 bg-info/10 p-4 text-center text-sm font-medium text-info"
+            >
+              Seu ponto é registrado no relógio da unidade.
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {buttons.map(({ tipo, label, icon: Icon, gradient }) => (
+                <Button
+                  key={tipo}
+                  onClick={() => startScan(tipo)}
+                  disabled={loading !== null}
+                  className={cn(
+                    'h-12 rounded-xl bg-gradient-to-r text-primary-foreground hover:opacity-90 shadow-lg transition-all font-body font-medium',
+                    gradient
+                  )}
+                >
+                  {loading === tipo && geoStatus === 'capturing' ? (
+                    <>
+                      <MapPin className="h-4 w-4 mr-2 animate-bounce" />
+                      Capturando GPS...
+                    </>
+                  ) : (
+                    <>
+                      <Icon className="h-4 w-4 mr-2" />
+                      {loading === tipo ? 'Registrando...' : label}
+                    </>
+                  )}
+                </Button>
+              ))}
+            </div>
+          )}
 
           <AnimatePresence>
             {showConfetti && (
