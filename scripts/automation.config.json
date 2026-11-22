@@ -2189,6 +2189,21 @@
                                            ],
                               "reason":  "Legado mantido no fluxo existente; referências literais: .github/workflows/ci.yml. O dispatcher não executa esta operação."
                           },
+                              {
+                                  "id":  "legacy-guias-fgts-digital-rls",
+                                  "kind":  "legacy",
+                                  "files":  [
+                                                "scripts/tests/migrations-p1-guias-fgts-digital-rls.sh"
+                                            ],
+                                  "manual":  [
+                                                 "sh",
+                                                 "scripts/tests/migrations-p1-guias-fgts-digital-rls.sh"
+                                             ],
+                                  "triggers":  [
+                                                   "manual"
+                                               ],
+                                  "reason":  "Legado mantido no fluxo existente; referências literais: .github/workflows/ci.yml. O dispatcher não executa esta operação."
+                              },
                           {
                               "id":  "legacy-677e7464190ea52b",
                               "kind":  "legacy",
