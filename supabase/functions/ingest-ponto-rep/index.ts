@@ -109,6 +109,11 @@ serve(async (req: Request): Promise<Response> => {
           const { error } = await admin.from('ponto_rep_funcionarios')
             .update({ colaborador_id: achado.colaborador_id, vinculo_metodo: achado.metodo, vinculado_em: agora })
             .eq('id', id).is('colaborador_id', null);
+          // 23505 = colaborador já vinculado a outro funcionario_codigo
+          // (ux_ponto_rep_funcionarios_colaborador_por_empresa, dentro do
+          // próprio lote ou de um anterior): fica pendente, não aborta o
+          // lote -- é ambiguidade real (código reaproveitado), não erro.
+          if (error && error.code === '23505') continue;
           if (error) throw new Error(`vinculo: ${error.code ?? 'erro'}`);
           pendentesVinculo -= 1;
         }
