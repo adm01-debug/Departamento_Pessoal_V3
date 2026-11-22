@@ -6,12 +6,12 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 924,
+ "migrations": 926,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
  "avisos": [
-  "189 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
+  "190 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
  ],
  "extensoes": [
   "pg_cron",
@@ -33701,6 +33701,30 @@
      "nome": "Gestores e RH veem guias FGTS",
      "comando": "select",
      "para": "public",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "guias_fgts_digital_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "guias_fgts_digital_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "guias_fgts_digital_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "guias_fgts_digital_update",
+     "comando": "update",
+     "para": "authenticated",
      "tipo": "permissive"
     }
    ],

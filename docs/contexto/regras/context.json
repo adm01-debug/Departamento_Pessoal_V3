@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7084a10567da4dc13576bc23a1868edb6fc859a8",
+  "sha": "4715945815948841f4e1f6a16da9cb79bc3bc158",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 12:41 UTC",
-  "files_total": 3729,
-  "code_files": 3139,
-  "code_lines": 499011
+  "generated_at": "2026-11-22 12:55 UTC",
+  "files_total": 3732,
+  "code_files": 3141,
+  "code_lines": 499141
  },
  "version": "1.3.2",
- "facts_hash": "1596857ff5488695",
+ "facts_hash": "347ccb04da54b4a2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1038,
-   ".sql": 998,
+   ".sql": 1000,
    ".ts": 962,
    ".mjs": 110,
    ".js": 15,
@@ -51261,6 +51261,46 @@
     "src": "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql"
    },
    {
+    "name": "guias_fgts_digital_select",
+    "table": "guias_fgts_digital",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
+    "check": "",
+    "src": "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql"
+   },
+   {
+    "name": "guias_fgts_digital_insert",
+    "table": "guias_fgts_digital",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql"
+   },
+   {
+    "name": "guias_fgts_digital_update",
+    "table": "guias_fgts_digital",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql"
+   },
+   {
+    "name": "guias_fgts_digital_delete",
+    "table": "guias_fgts_digital",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql"
+   },
+   {
     "name": "Acesso aos itens via folha",
     "table": "itens_folha",
     "cmd": "ALL",
@@ -73345,6 +73385,8 @@
    "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.verify.sql",
    "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
    "supabase/migrations/20261121224000_ponto_espelhos_papel.verify.sql",
+   "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql",
+   "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.verify.sql",
    "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
    "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.verify.sql",
    "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql",
@@ -105720,8 +105762,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 924,
-   "lines": 83789,
+   "files": 926,
+   "lines": 83919,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -163308,6 +163350,12 @@
     "field": "status",
     "value": "ativo",
     "kind": "filtra"
+   },
+   {
+    "file": "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql",
+    "field": "status",
+    "value": "paga",
+    "kind": "escreve"
    }
   ],
   "calc_fns": [
@@ -215722,6 +215770,46 @@
     "src": "supabase/migrations/20261119160000_audit_log_empresa_id_e_leitura_rh.sql"
    },
    {
+    "name": "guias_fgts_digital_select",
+    "table": "guias_fgts_digital",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
+    "check": "",
+    "src": "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql"
+   },
+   {
+    "name": "guias_fgts_digital_insert",
+    "table": "guias_fgts_digital",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql"
+   },
+   {
+    "name": "guias_fgts_digital_update",
+    "table": "guias_fgts_digital",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql"
+   },
+   {
+    "name": "guias_fgts_digital_delete",
+    "table": "guias_fgts_digital",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql"
+   },
+   {
     "name": "Acesso aos itens via folha",
     "table": "itens_folha",
     "cmd": "ALL",
@@ -236925,7 +237013,8 @@
       "compara:src/components/obrigacoes/GuiasTable.tsx",
       "compara:src/pages/ObrigacoesFiscaisPage.tsx",
       "compara:supabase/migrations/20260724002800_fix_guias_fgts_inss_missing_competencia.sql",
-      "escreve:src/pages/ObrigacoesFiscaisPage.tsx"
+      "escreve:src/pages/ObrigacoesFiscaisPage.tsx",
+      "escreve:supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql"
      ],
      "PUBLICADO": [
       "compara:src/pages/AdminRegimentoInternoPage.tsx",
@@ -241230,11 +241319,18 @@
    "guias_fgts_digital": {
     "rls": "enabled",
     "SELECT": [
+     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
      "public: (\"auth\".\"uid\"() IN ( SELECT \"user_roles\".\"user_id\" FROM \"public\".\"user_roles\" WHERE (\"user_roles\".\"role\" = ANY (ARRAY['admin'::\"publ"
     ],
-    "INSERT": [],
-    "UPDATE": [],
-    "DELETE": []
+    "INSERT": [
+     "authenticated: public.pode_gerir_rh(empresa_id)"
+    ],
+    "UPDATE": [
+     "authenticated: public.pode_gerir_rh(empresa_id)"
+    ],
+    "DELETE": [
+     "authenticated: public.pode_gerir_rh(empresa_id)"
+    ]
    },
    "guias_inss": {
     "rls": "enabled",
@@ -244980,13 +245076,6 @@
     "issue": "front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários",
     "files": [
      "src/components/settings/ConfiguracoesGeraisTab.tsx"
-    ]
-   },
-   {
-    "table": "guias_fgts_digital",
-    "issue": "front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários",
-    "files": [
-     "src/pages/ObrigacoesFiscaisPage.tsx"
     ]
    },
    {
@@ -262691,13 +262780,6 @@
     "msg": "`configuracoes`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários",
     "where": [
      "src/components/settings/ConfiguracoesGeraisTab.tsx"
-    ]
-   },
-   {
-    "kind": "rls",
-    "msg": "`guias_fgts_digital`: front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários",
-    "where": [
-     "src/pages/ObrigacoesFiscaisPage.tsx"
     ]
    },
    {
@@ -335217,6 +335299,21 @@
    "path": "supabase/migrations/20261121224000_ponto_espelhos_papel.verify.sql",
    "lines": 33
   },
+  "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql": {
+   "path": "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql",
+   "lines": 90,
+   "status_values": [
+    {
+     "field": "status",
+     "value": "paga",
+     "kind": "escreve"
+    }
+   ]
+  },
+  "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.verify.sql": {
+   "path": "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.verify.sql",
+   "lines": 40
+  },
   "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql": {
    "path": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
    "lines": 151,
@@ -335651,10 +335748,23 @@
   }
  },
  "git": {
-  "sha": "7084a10567da4dc13576bc23a1868edb6fc859a8",
+  "sha": "4715945815948841f4e1f6a16da9cb79bc3bc158",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "4715945",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "fix: isola guias_fgts_digital por empresa e libera a baixa para RH (#824)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/automation.config.json",
+     "scripts/tests/migrations-p1-guias-fgts-digital-rls.sh",
+     "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql",
+     "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.verify.sql"
+    ]
+   },
    {
     "sha": "7084a10",
     "date": "2026-11-22",
@@ -335985,20 +336095,6 @@
      "supabase/migrations/20261121221000_ponto_rep_vinculos.sql",
      "supabase/migrations/20261121221000_ponto_rep_vinculos.verify.sql"
     ]
-   },
-   {
-    "sha": "40b5cfe",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: testes do relógio de ponto no CI, guia do DP e runbook PONTO_REP (#799)",
-    "files": [
-     ".github/workflows/ci.yml",
-     "docs/guides/ponto-eletronico.md",
-     "infra/runbooks/PONTO_REP.md",
-     "scripts/automation.config.json",
-     "scripts/tests/migrations-ponto-rep.sh",
-     "tools/coletor-ponto-atecsoft/README.md"
-    ]
    }
   ],
   "hot_files": [
@@ -336007,12 +336103,12 @@
     6
    ],
    [
-    "src/integrations/supabase/types.ts",
+    ".github/workflows/canonical-migrations.yml",
     5
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
-    4
+    "src/integrations/supabase/types.ts",
+    5
    ],
    [
     "src/pages/PontoKioskPage.tsx",
@@ -336021,6 +336117,10 @@
    [
     "src/components/ponto/relogio/RelogiosPanel.tsx",
     3
+   ],
+   [
+    "scripts/automation.config.json",
+    2
    ],
    [
     "supabase/functions/ingest-ponto-rep/index.ts",
@@ -336047,14 +336147,6 @@
     2
    ],
    [
-    ".github/workflows/ci.yml",
-    2
-   ],
-   [
-    "scripts/automation.config.json",
-    2
-   ],
-   [
     "scripts/canonical-invariants.sql",
     2
    ],
@@ -336071,15 +336163,19 @@
     2
    ],
    [
+    "scripts/tests/migrations-p1-guias-fgts-digital-rls.sh",
+    1
+   ],
+   [
+    "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.verify.sql",
+    1
+   ],
+   [
     "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.sql",
     1
    ]
   ]

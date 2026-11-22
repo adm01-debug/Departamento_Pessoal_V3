@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7084a10567da4dc13576bc23a1868edb6fc859a8",
+  "commit": "4715945815948841f4e1f6a16da9cb79bc3bc158",
   "branch": "main",
-  "data_commit": "2026-11-22T09:39:44-03:00",
+  "data_commit": "2026-11-22T09:54:07-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "4715945",
+    "data": "2026-11-22",
+    "assunto": "fix: isola guias_fgts_digital por empresa e libera a baixa para RH (#824)"
+   },
    {
     "sha": "7084a10",
     "data": "2026-11-22",
@@ -126,18 +131,13 @@
     "sha": "c74e67d",
     "data": "2026-11-21",
     "assunto": "infra: lote canônico com as 5 migrations do relógio de ponto (#806)"
-   },
-   {
-    "sha": "9aa259e",
-    "data": "2026-11-21",
-    "assunto": "feat: abas Vínculos e Justificativas no painel do relógio de ponto (#807)"
    }
   ],
-  "arquivos_mudados_7d": 1077,
+  "arquivos_mudados_7d": 1080,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 376
+    "mudancas": 374
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -185,11 +185,11 @@
    },
    {
     "pasta": "src/components/ponto",
-    "mudancas": 34
+    "mudancas": 33
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 31
+    "mudancas": 32
    },
    {
     "pasta": "src/utils/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 31
+    "mudancas": 32
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -231,7 +231,7 @@
    },
    {
     "arquivo": "scripts/automation.config.json",
-    "mudancas": 8
+    "mudancas": 9
    },
    {
     "arquivo": "src/schemas/tableColumns.ts",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3715,
+  "arquivos_total": 3718,
   "arquivos_codigo": 2143,
   "linhas_codigo": 428211,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 122,
   "edge_functions": 68,
   "tabelas": 436,
-  "migrations": 924,
+  "migrations": 926,
   "cron_jobs": 42,
   "testes": 809,
   "workflows": 21,

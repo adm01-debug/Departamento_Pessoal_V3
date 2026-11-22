@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7084a10567` · branch `main` · 2026-11-22 12:41 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4715945815` · branch `main` · 2026-11-22 12:55 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -243,7 +243,7 @@
 | `gratificacoes` | enabled | public: auth.uid() IS NOT NULL<br>authenticated: empresa_id = public.get_auth_empresa_id() | public: auth.uid() IS NOT NULL<br>authenticated: empresa_id = public.get_auth_empresa_id() | public: auth.uid() IS NOT NULL<br>authenticated: empresa_id = public.get_auth_empresa_id() | public: auth.uid() IS NOT NULL<br>authenticated: empresa_id = public.get_auth_empresa_id() |
 | `grrf` | enabled | authenticated: empresa_id = public.get_auth_empresa_id() | authenticated: empresa_id = public.get_auth_empresa_id() | authenticated: empresa_id = public.get_auth_empresa_id() | authenticated: empresa_id = public.get_auth_empresa_id() |
 | `guias_fgts` | enabled | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id() | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id() | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id() | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id() |
-| `guias_fgts_digital` | enabled | public: ("auth"."uid"() IN ( SELECT "user_roles"."user_id" FROM "public"."user_roles" WHERE ("user_roles"."role" = ANY (ARRAY['admin'::"publ | — | — | — |
+| `guias_fgts_digital` | enabled | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>public: ("auth"."uid"() IN ( SELECT "user_roles"."user_id" FROM "public"."user_roles" WHERE ("user_roles"."role" = ANY (ARRAY['admin'::"publ | authenticated: public.pode_gerir_rh(empresa_id) | authenticated: public.pode_gerir_rh(empresa_id) | authenticated: public.pode_gerir_rh(empresa_id) |
 | `guias_inss` | enabled | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id() | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id() | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id() | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id() |
 | `health_checks` | enabled | authenticated: true | — | — | — |
 | `historico_alertas` | enabled | authenticated: "public"."is_admin"("auth"."uid"()) | authenticated: "public"."is_admin"("auth"."uid"()) | — | — |
@@ -927,7 +927,6 @@ Middleware matcher (Next.js): nenhum
 | `config_afastamentos` | front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/services/tabelas/rhService.ts` |
 | `config_alertas_indicadores` | front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/InlineTabs.tsx` |
 | `configuracoes` | front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/ConfiguracoesGeraisTab.tsx` |
-| `guias_fgts_digital` | front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários | `src/pages/ObrigacoesFiscaisPage.tsx` |
 | `lancamentos_contabeis` | front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/services/contabilidadeService.ts` |
 | `pcs_avaliacoes_cargo` | RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | `pcs_fatores` | RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |

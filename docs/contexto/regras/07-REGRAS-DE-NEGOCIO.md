@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7084a10567` · branch `main` · 2026-11-22 12:41 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4715945815` · branch `main` · 2026-11-22 12:55 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -311,7 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `historico_ferias` | tenant_historico_ferias | ALL | authenticated | permissive | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `dependentes_beneficios` | tenant_dependentes_beneficios | ALL | authenticated | permissive | `dependente_id IN (SELECT id FROM public.dependentes WHERE colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))))` | `dependente_id IN (SELECT id FROM public.dependentes WHERE colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))))` |
 | `linhas_transporte` | tenant_linhas_transporte | ALL | authenticated | permissive | `vale_transporte_id IN (SELECT id FROM public.vales_transporte WHERE colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))))` | `vale_transporte_id IN (SELECT id FROM public.vales_transporte WHERE colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))))` |
-| … +866 linhas — lista completa em `context.json` | | | | | | |
+| … +870 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 

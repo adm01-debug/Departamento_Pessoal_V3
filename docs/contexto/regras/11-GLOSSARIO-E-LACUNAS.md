@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7084a10567` · branch `main` · 2026-11-22 12:41 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4715945815` · branch `main` · 2026-11-22 12:55 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -435,7 +435,6 @@
 | rls | `config_afastamentos`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/services/tabelas/rhService.ts` |
 | rls | `config_alertas_indicadores`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/InlineTabs.tsx` |
 | rls | `configuracoes`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/ConfiguracoesGeraisTab.tsx` |
-| rls | `guias_fgts_digital`: front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários | `src/pages/ObrigacoesFiscaisPage.tsx` |
 | rls | `lancamentos_contabeis`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/services/contabilidadeService.ts` |
 | rls | `pcs_avaliacoes_cargo`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | rls | `pcs_fatores`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
@@ -647,7 +646,8 @@
 | segurança | função `trg_detect_status_anomaly` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_ferias_gerar_rubricas` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_ferias_reconciliacao_alert` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +41 linhas — lista completa em `context.json` | | |
+| segurança | função `trg_medida_aplicada_integrar` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| … +40 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 
