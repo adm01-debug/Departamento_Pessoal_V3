@@ -25,6 +25,7 @@ import { DarfTab, type DarfIrrfSituacao } from '@/components/obrigacoes/DarfTab'
 import { SimuladorWhatIf } from '@/components/folha/SimuladorWhatIf';
 import { resumoSimulacao } from '@/components/obrigacoes/simulacaoResumo';
 import { validateTablePayload } from '@/schemas/validate';
+import { formatDateLocalISO } from '@/utils/dateLocal';
 
 function formatCurrency(v: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
@@ -264,7 +265,7 @@ export default function ObrigacoesFiscaisPage() {
         competencia: `${ano}-${mes}`,
         tipo: 'mensal',
         valorTotalCentavos: valorCentavos,
-        vencimento: venc.toISOString().slice(0, 10),
+        vencimento: formatDateLocalISO(venc),
       });
       qc.invalidateQueries({ queryKey: ['guias-fgts-digital'] });
       toast.success(`Guia FGTS Digital gerada — protocolo ${r?.protocolo ?? 'registrado'}`);
