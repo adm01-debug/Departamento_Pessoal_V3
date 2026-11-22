@@ -16,8 +16,8 @@ import { type ColaboradorChave, classificaErroVinculo, diasAlterados, envioSchem
  * ponto_rep_dispositivos.token_hash. A empresa vem SEMPRE do dispositivo
  * autenticado; o corpo não tem (e o contrato recusa) empresa_id.
  *
- * Esta versão só guarda e vincula. Transformar os dias em batidas_ponto é a
- * etapa 41 do plano e depende de dados reais do AtecSoft.
+  * Guarda e vincula o dia; ao final chama `ponto_rep_processar_dias` (etapa 41
+  * do plano), que transforma o staging em batidas_ponto de origem 'relogio'.
  */
 const MAX_BYTES = 4 * 1024 * 1024;
 const json = (corpo: unknown, status = 200) =>
@@ -148,6 +148,17 @@ serve(async (req: Request): Promise<Response> => {
         if (error) throw new Error(`dias: ${error.code ?? 'erro'}`);
       }
 
+      // Etapa 41 do plano: o dia guardado vira batida. Falha aqui não derruba o
+      // lote — o dia continua pendente (processado_em NULL) e é reprocessado.
+      let convertidos: { processados: number; batidas: number; com_erro: number } | null = null;
+      const { data: conversao, error: erroConversao } = await admin
+        .rpc('ponto_rep_processar_dias', { _limite: 500 });
+      if (erroConversao) {
+        console.error('conversao de batidas falhou', erroConversao.code);
+      } else {
+        convertidos = (conversao as { processados: number; batidas: number; com_erro: number }[] | null)?.[0] ?? null;
+      }
+
       const { error: erroFim } = await admin.from('ponto_rep_lotes')
         .update({ status: 'processado', dias_alterados: alterados.length }).eq('id', lote.id);
       if (erroFim) throw new Error(`fechar lote: ${erroFim.code ?? 'erro'}`);
@@ -169,6 +180,9 @@ serve(async (req: Request): Promise<Response> => {
           dias_recebidos: envio.dias.length,
           dias_alterados: alterados.length,
           pendentes_vinculo: pendentesVinculo,
+          dias_convertidos: convertidos?.processados ?? 0,
+          batidas_geradas: convertidos?.batidas ?? 0,
+          dias_com_erro_conversao: convertidos?.com_erro ?? 0,
         },
       });
 
@@ -178,6 +192,8 @@ serve(async (req: Request): Promise<Response> => {
         dias_recebidos: envio.dias.length,
         dias_alterados: alterados.length,
         pendentes_vinculo: pendentesVinculo,
+        dias_convertidos: convertidos?.processados ?? 0,
+        batidas_geradas: convertidos?.batidas ?? 0,
       });
     } catch (falha) {
       const mensagem = falha instanceof Error ? falha.message : String(falha);

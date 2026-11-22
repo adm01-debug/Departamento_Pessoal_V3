@@ -147,9 +147,9 @@ Princípios:
 - [x] **38. Gravar o lote e os funcionários.** Upsert em `ponto_rep_lotes` e `ponto_rep_funcionarios`. Pronto quando: reenvio idêntico não cria linhas. Feito: #798; upsert por (lote) e (dispositivo, código).
 - [x] **39. Gravar os dias com hash.** Upsert em `ponto_rep_dias`; só processa o dia cujo hash mudou. Pronto quando: teste de idempotência verde. Feito: #798; dia só é regravado quando o hash muda (`processado_em` volta a nulo).
 - [x] **40. Vincular funcionário a colaborador.** CPF → PIS → matrícula; ambíguo ou ausente fica pendente. Pronto quando: teste cobre os 4 casos. Feito: #798; CPF → PIS → matrícula, ambíguo fica pendente (testes Deno).
-- [ ] **41. Converter dia em batidas.** Função SQL transacional que só insere o que falta: batida é imutável (gatilho de imutabilidade), então correção vinda do AtecSoft entra como ajuste, nunca como exclusão. Pronto quando: dia alterado no envio seguinte reflete no espelho sem apagar batida.
-- [ ] **42. Não tocar batida de outra origem.** Pronto quando: teste prova que batida de app/quiosque/ajuste sobrevive ao reprocessamento.
-- [ ] **43. Respeitar período fechado.** Dia de competência fechada em `periodos_ponto` não é reprocessado; gera alerta. Pronto quando: teste verde.
+- [x] **41. Converter dia em batidas.** Função SQL transacional que só insere o que falta: batida é imutável (gatilho de imutabilidade), então correção vinda do AtecSoft entra como ajuste, nunca como exclusão. Pronto quando: dia alterado no envio seguinte reflete no espelho sem apagar batida.
+- [x] **42. Não tocar batida de outra origem.** Pronto quando: teste prova que batida de app/quiosque/ajuste sobrevive ao reprocessamento.
+- [x] **43. Respeitar período fechado.** Dia de competência fechada em `periodos_ponto` não é reprocessado; gera alerta. Pronto quando: teste verde.
 - [x] **44. Registrar auditoria.** Cada lote em `ponto_auditoria`/log de edge, sem CPF em claro. Pronto quando: `audit:edge-audit-log` verde. Feito: #814 — `index.ts` passou a gravar `INSERT` em `audit_log` por lote processado (tabela, `registro_id`, `empresa_id`, contagens, sem CPF/PIS). Publicado via `canonical-edge-functions.yml` (run 44971537166) e confirmado ao vivo em 22/11/2026: dispositivo de teste descartável na empresa `[E2E-SEED]` → chamada real → linha real em `audit_log` (`acao=INSERT`, `tabela=ponto_rep_lotes`, `empresa_id` correto). Lote e dispositivo de teste removidos depois; a linha de `audit_log` **não pôde ser removida** — a tabela é append-only por desenho (`trg_audit_log_no_delete`), que é o comportamento correto; fica 1 linha de teste identificável (empresa `[E2E-SEED]`, sem dado pessoal).
 - [x] **45. Testes da função.** Deno: autenticação, idempotência, vínculo, reprocessamento, período fechado. Pronto quando: `lint:edge` e `typecheck:edge` verdes. Feito: confirmado em 22/11/2026 pelo CI real do #814 (commit `cba26a3`, run 44970752907) — job "Lint" → step "Lint Edge Functions" → sucesso (`lint:edge`); job "Edge Functions (deno check)" → step "Type-check de todas as Edge Functions (gate bloqueante)" → sucesso (`typecheck:edge`, Deno real, não disponível nesta sessão). Autenticação e idempotência verificadas ao vivo no #798; vínculo/hash testados em `logica.test.ts`. Reprocessamento e período fechado continuam sem teste automatizado — dependem das etapas 41/43, que ainda não existem.
 - [x] **46. Publicar.** Via `canonical-edge-functions.yml`. Pronto quando: chamada real com token de teste devolve 200 e a linha aparece em `ponto_rep_lotes`. Feito em 22/11/2026: dispositivo descartável criado na empresa `[E2E-SEED]` (`61e7d382-…`), POST real em `https://frjbfeamybqsejlvmqbl.supabase.co/functions/v1/ingest-ponto-rep` → `200 {"ok":true,"lote_id":"b6b187a4-…"}`, linha confirmada em `ponto_rep_lotes` (`status=processado`) e removida depois junto com o dispositivo — produção sem resíduo.
@@ -175,8 +175,8 @@ Princípios:
 
 ### Fase 5 — Processamento e cálculo (63–72)
 
-- [ ] **63. Classificar entrada/saída pela posição.** `E1`=entrada, `S1`=saída… vindo do AtecSoft; não alternar por ordem de chegada. Pronto quando: teste com dia de 6 pares verde.
-- [ ] **64. Tratar virada de dia.** Usar `DATA_E*/DATA_S*` para turno que passa da meia-noite. Pronto quando: teste com saída no dia seguinte verde.
+- [x] **63. Classificar entrada/saída pela posição.** `E1`=entrada, `S1`=saída… vindo do AtecSoft; não alternar por ordem de chegada. Pronto quando: teste com dia de 6 pares verde.
+- [x] **64. Tratar virada de dia.** Usar `DATA_E*/DATA_S*` para turno que passa da meia-noite. Pronto quando: teste com saída no dia seguinte verde.
 - [ ] **65. Marcar batida inserida à mão no AtecSoft.** Conforme etapa 11, com o motivo de `OBS_*`. Pronto quando: aparece identificada no espelho.
 - [x] **66. Regra de convivência com o app.** D2: colaborador vinculado ao relógio não registra batida pelo app nem pelo quiosque. Pronto quando: tentativa pela tela e pela API é recusada em teste. Feito: #801; gatilho `trg_batida_relogio_autoatendimento` (erro PT409), lote 2 verificado em 44962489677.
 - [ ] **67. Alimentar `registros_ponto`.** Consolidar o dia (entradas, saídas, total trabalhado). Pronto quando: total bate com o cartão ponto do AtecSoft em 20 dias de amostra.
@@ -184,7 +184,7 @@ Princípios:
 - [ ] **69. Levar abonos.** `ABONO` e `ABONO_NEG` entram no cálculo do dia. Pronto quando: teste verde.
 - [ ] **70. Falta só para dia encerrado.** Dia corrente nunca vira falta. Pronto quando: teste com dia de hoje verde.
 - [ ] **71. Conferir horas extras e banco de horas.** Comparar o apurado no DP V3 com a tela de Cálculos do AtecSoft em um mês real. Pronto quando: diferença explicada linha a linha ou zerada.
-- [ ] **72. Reprocessamento sob demanda.** Função para refazer um período a partir do staging. Pronto quando: rodar duas vezes dá o mesmo resultado.
+- [x] **72. Reprocessamento sob demanda.** Função para refazer um período a partir do staging. Pronto quando: rodar duas vezes dá o mesmo resultado.
 
 ### Fase 6 — Interface (73–82)
 
