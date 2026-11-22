@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "cb4d78c597c70541129b3d77eae986de40d8b342",
+  "commit": "835bc4eaf03bfb9ab2571cb4f63acb816a2ddc70",
   "branch": "main",
-  "data_commit": "2026-11-22T02:19:26-03:00",
+  "data_commit": "2026-11-22T02:44:18-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "835bc4e",
+    "data": "2026-11-22",
+    "assunto": "fix: aborta remessa CNAB sem nenhum favorecido (marcava enviado com arquivo vazio) (#827)"
+   },
+   {
+    "sha": "6553243",
+    "data": "2026-11-22",
+    "assunto": "docs: recertifica F-03/F-07/F-11 com contagem real e marca cargos como feito (#826)"
+   },
    {
     "sha": "cb4d78c",
     "data": "2026-11-22",
@@ -121,23 +131,13 @@
     "sha": "40b5cfe",
     "data": "2026-11-21",
     "assunto": "chore: testes do relógio de ponto no CI, guia do DP e runbook PONTO_REP (#799)"
-   },
-   {
-    "sha": "e3986dc",
-    "data": "2026-11-21",
-    "assunto": "infra: libera no bridge os RPCs do relógio de ponto (#802)"
-   },
-   {
-    "sha": "598b48c",
-    "data": "2026-11-21",
-    "assunto": "feat: função ingest-ponto-rep recebe e guarda os envios do relógio de ponto (#798)"
    }
   ],
-  "arquivos_mudados_7d": 1069,
+  "arquivos_mudados_7d": 1071,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 377
+    "mudancas": 376
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 97
+    "mudancas": 98
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -282,6 +282,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "analise-prs/funcionalidades.csv",
+    "mudancas": 5
+   },
+   {
     "arquivo": "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
     "mudancas": 5
    },
@@ -291,10 +295,6 @@
    },
    {
     "arquivo": "scripts/sync/autocommit-local.sh",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
     "mudancas": 5
    }
   ],
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3709,
   "arquivos_codigo": 2143,
-  "linhas_codigo": 428139,
+  "linhas_codigo": 428165,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -696,7 +696,7 @@
   },
   "src/services": {
    "arquivos": 198,
-   "linhas": 41956
+   "linhas": 41982
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -809,12 +809,12 @@
    "linhas": 1231
   },
   {
-   "arquivo": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
-   "linhas": 1202
+   "arquivo": "src/services/cnabService.ts",
+   "linhas": 1209
   },
   {
-   "arquivo": "src/services/cnabService.ts",
-   "linhas": 1199
+   "arquivo": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+   "linhas": 1202
   },
   {
    "arquivo": "src/pages/OnboardingPage.tsx",

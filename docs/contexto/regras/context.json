@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "cb4d78c597c70541129b3d77eae986de40d8b342",
+  "sha": "835bc4eaf03bfb9ab2571cb4f63acb816a2ddc70",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 05:20 UTC",
+  "generated_at": "2026-11-22 05:45 UTC",
   "files_total": 3723,
   "code_files": 3133,
-  "code_lines": 498786
+  "code_lines": 498812
  },
  "version": "1.3.2",
- "facts_hash": "4a9d6dd9448e4506",
+ "facts_hash": "f30411b7ee10c346",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -104740,7 +104740,7 @@
   {
    "module": "src/services",
    "files": 198,
-   "lines": 41956,
+   "lines": 41982,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -118308,6 +118308,10 @@
    {
     "file": "src/services/cnabService.ts",
     "msg": "Nenhum colaborador com chave PIX cadastrada nesta folha."
+   },
+   {
+    "file": "src/services/cnabService.ts",
+    "msg": "Nenhum colaborador da folha tem conta bancária principal cadastrada — a remessa sairia sem favorecidos."
    },
    {
     "file": "src/services/cnabService.ts",
@@ -196429,6 +196433,10 @@
    {
     "file": "src/services/__tests__/cnabService.test.ts",
     "name": "pula itens sem conta bancária principal — arquivo sai só com quem tem conta"
+   },
+   {
+    "file": "src/services/__tests__/cnabService.test.ts",
+    "name": "aborta quando nenhum colaborador tem conta bancária principal"
    },
    {
     "file": "src/services/__tests__/cnabService.test.ts",
@@ -310848,7 +310856,7 @@
   },
   "src/services/cnabService.ts": {
    "path": "src/services/cnabService.ts",
-   "lines": 1199,
+   "lines": 1209,
    "exports": [
     "interface CNABConfig",
     "const cnabService"
@@ -311030,6 +311038,7 @@
     "Header CNAB400: tamanho ${header.length} ≠ 400 — abortar geração",
     "Lote PIX já está sendo gerado para esta folha — aguarde e tente novamente.",
     "Nenhum colaborador com chave PIX cadastrada nesta folha.",
+    "Nenhum colaborador da folha tem conta bancária principal cadastrada — a remessa sairia sem favorecidos.",
     "Nenhum pagamento encontrado para gerar CNAB.",
     "Nenhum pagamento encontrado para gerar lote PIX.",
     "Nenhum pagamento encontrado.",
@@ -315734,7 +315743,7 @@
   },
   "src/services/__tests__/cnabService.test.ts": {
    "path": "src/services/__tests__/cnabService.test.ts",
-   "lines": 950,
+   "lines": 966,
    "is_test": true,
    "params": [
     {
@@ -315785,6 +315794,7 @@
     "lança erro quando não há configuração CNAB",
     "lança erro quando a folha não tem itens",
     "pula itens sem conta bancária principal — arquivo sai só com quem tem conta",
+    "aborta quando nenhum colaborador tem conta bancária principal",
     "cnabService.generatePIXBatch",
     "gera CSV apenas com colaboradores que têm chave PIX",
     "usa pix_tipo CPF como default quando ausente",
@@ -335495,10 +335505,30 @@
   }
  },
  "git": {
-  "sha": "cb4d78c597c70541129b3d77eae986de40d8b342",
+  "sha": "835bc4eaf03bfb9ab2571cb4f63acb816a2ddc70",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "835bc4e",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "fix: aborta remessa CNAB sem nenhum favorecido (marcava enviado com arquivo vazio) (#827)",
+    "files": [
+     "src/services/__tests__/cnabService.test.ts",
+     "src/services/cnabService.ts"
+    ]
+   },
+   {
+    "sha": "6553243",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "docs: recertifica F-03/F-07/F-11 com contagem real e marca cargos como feito (#826)",
+    "files": [
+     "analise-prs/funcionalidades.csv",
+     "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md"
+    ]
+   },
    {
     "sha": "cb4d78c",
     "date": "2026-11-22",
@@ -335827,34 +335857,12 @@
     "files": [
      "e2e/authenticated/recrutamento-pipeline.spec.ts"
     ]
-   },
-   {
-    "sha": "d5342ad",
-    "date": "2026-11-21",
-    "author": "github-actions[bot]",
-    "subject": "chore: inventario do estado real [auto] (#787)",
-    "files": [
-     "inventario/estado/banco.json",
-     "inventario/estado/edges.json",
-     "inventario/estado/funcionalidades.json",
-     "inventario/estado/rotas.json"
-    ]
-   },
-   {
-    "sha": "8518ebc",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: registra o conserto do diagnóstico SQL e fecha as etapas 16, 24 e 25 do plano do ponto (#794)",
-    "files": [
-     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-     "docs/agentes/banco.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    7
+    6
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -335877,15 +335885,15 @@
     3
    ],
    [
+    "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md",
+    2
+   ],
+   [
     ".github/workflows/ci.yml",
     2
    ],
    [
     "scripts/automation.config.json",
-    2
-   ],
-   [
-    "inventario/estado/rotas.json",
     2
    ],
    [
@@ -335913,23 +335921,23 @@
     2
    ],
    [
+    "src/services/__tests__/cnabService.test.ts",
+    1
+   ],
+   [
+    "src/services/cnabService.ts",
+    1
+   ],
+   [
+    "analise-prs/funcionalidades.csv",
+    1
+   ],
+   [
     "scripts/audit-bridge-frontend-contract.mjs",
     1
    ],
    [
     "scripts/ratchet-any.mjs",
-    1
-   ],
-   [
-    "scripts/tests/audit-baseline-portabilidade.test.mjs",
-    1
-   ],
-   [
-    "supabase/functions/sincronizar-bitrix/index.ts",
-    1
-   ],
-   [
-    "src/components/obrigacoes/FgtsDigitalTable.tsx",
     1
    ]
   ]

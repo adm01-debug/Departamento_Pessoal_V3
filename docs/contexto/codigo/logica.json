@@ -2309,7 +2309,7 @@
     "cnabService"
    ],
    "export_default": null,
-   "linhas": 1199,
+   "linhas": 1209,
    "tabelas": [
     "cnab_configuracoes",
     "cnab_itens",

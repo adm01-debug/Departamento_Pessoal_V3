@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: aborta remessa CNAB sem nenhum favorecido (marcava enviado com arquivo vazio) (#827)",
+   "docs: recertifica F-03/F-07/F-11 com contagem real e marca cargos como feito (#826)",
    "fix: gates de baseline comparam chave com separador nativo (reprovavam no Windows sem regressão real) (#821)",
    "feat: sincroniza cargos do Bitrix a partir de WORK_POSITION dos usuarios (#825)",
-   "feat: conecta a aba FGTS Digital à edge fgts-digital (feature estava órfã a 1 passo do fim) (#822)",
-   "docs: reescreve a análise de pendentes com o estado real (9 dos 12 itens já estavam implementados) (#823)",
-   "fix: gerador de rotas resolve index.ts com separador nativo (inventario saia diferente no Windows) (#820)"
+   "feat: conecta a aba FGTS Digital à edge fgts-digital (feature estava órfã a 1 passo do fim) (#822)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

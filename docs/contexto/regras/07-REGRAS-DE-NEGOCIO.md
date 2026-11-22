@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `cb4d78c597` · branch `main` · 2026-11-22 05:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `835bc4eaf0` · branch `main` · 2026-11-22 05:45 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5434,7 +5434,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Erro ao vincular | `src/components/treinamentos/TrilhaCursosSection.tsx` |
 |        data-turmas-erro       className= | `src/components/treinamentos/TurmasPainel.tsx` |
 |  className={cn(alertVariants({ variant }), className)} {...props} /> )); Alert.displayName =  | `src/components/ui/alert.tsx` |
-| … +703 linhas — lista completa em `context.json` | |
+| … +704 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5508,7 +5508,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9730 testes em 764 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9731 testes em 764 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5527,7 +5527,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/calculators/__tests__/scenarios.test.ts` | 62 | Simulação — INSS (progressivo 2026, teto R$ 8.475,55) · zero e negativos retornam 0 · NaN não propaga (robustez) · piso (salário mínimo 1518) => 113,85 … |
 | `src/services/__tests__/afastamentoService.test.ts` | 62 | afastamentoService.listar · returns data and total from supabase · returns empty data when supabase returns null · filters by empresa_id from options.empresaId … |
 | `src/components/__tests__/trilhaDerivacoes.test.ts` | 61 | normalizarEvento · lê a linha crua do audit_log (payload achatado) · lê o registro do RPC com o payload aninhado · não quebra com linha vazia e recusa payload que não é objeto … |
-| `src/services/__tests__/cnabService.test.ts` | 56 | cnabService.getConfig · returns config when found · returns null when config not found · throws on DB error … |
+| `src/services/__tests__/cnabService.test.ts` | 57 | cnabService.getConfig · returns config when found · returns null when config not found · throws on DB error … |
 | `src/components/__tests__/InlineTabs.test.tsx` | 54 | PreferenciasTab · renders Preferências de Interface title · renders Modo Escuro switch label · renders Salvar Alterações button … |
 | `src/hooks/__tests__/useTabelasReferencia.test.ts` | 54 | useNacionalidades · calls listarNacionalidades · useTiposDesligamento · calls listarTiposDesligamento and returns data … |
 | `src/services/__tests__/avaliacaoService.test.ts` | 50 | avaliacaoService.listarCiclos · returns ciclos without empresa filter · filters by empresa_id when provided · returns empty array when data is null … |

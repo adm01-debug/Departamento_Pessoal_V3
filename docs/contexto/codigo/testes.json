@@ -5940,11 +5940,11 @@
   {
    "arquivo": "src/services/__tests__/cnabService.test.ts",
    "tipo": "unit",
-   "linhas": 950,
+   "linhas": 966,
    "testa": [
     "src/services/cnabService.ts"
    ],
-   "casos": 48
+   "casos": 49
   },
   {
    "arquivo": "src/services/__tests__/colaboradorDetalhesService.test.ts",
