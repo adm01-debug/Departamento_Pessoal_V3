@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c42efdd9972ba51f2b55dbc868038d090a74c14c",
+  "sha": "48284373fa06515b2f04e17a23a2abcea37957f2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 19:32 UTC",
-  "files_total": 3740,
-  "code_files": 3147,
-  "code_lines": 500050
+  "generated_at": "2026-11-22 19:50 UTC",
+  "files_total": 3742,
+  "code_files": 3149,
+  "code_lines": 500662
  },
  "version": "1.3.2",
- "facts_hash": "14c967202090c91e",
+ "facts_hash": "8a121bbe72e47c09",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1038,
-   ".sql": 1002,
+   ".sql": 1004,
    ".ts": 966,
    ".mjs": 110,
    ".js": 15,
@@ -41727,6 +41727,20 @@
       "fk": "",
       "generated": "",
       "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "total_feriados",
+      "type": "integer NOT NULL DEFAULT 0",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "total_horarios",
+      "type": "integer NOT NULL DEFAULT 0",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
      }
     ],
     "constraints": [
@@ -42184,6 +42198,231 @@
     ],
     "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
     "comment": "Etapa 85: espelho de ponto devolvido assinado em papel, por colaborador e competência (1º dia do mês).",
+    "origin": "migration"
+   },
+   "ponto_rep_feriados": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "uuid PRIMARY KEY DEFAULT gen_random_uuid()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "dispositivo_id",
+      "type": "uuid NOT NULL REFERENCES public.ponto_rep_dispositivos(id) ON DELETE RESTRICT",
+      "fk": "ponto_rep_dispositivos.id ON DELETE RESTRICT",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "empresa_id",
+      "type": "uuid NOT NULL REFERENCES public.empresas(id) ON DELETE RESTRICT",
+      "fk": "empresas.id ON DELETE RESTRICT",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "codigo",
+      "type": "integer NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "nome",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "data",
+      "type": "date NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "nao_computa_banco_horas",
+      "type": "boolean NOT NULL DEFAULT false",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "vinculo_cidade",
+      "type": "integer",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "vinculo_departamento",
+      "type": "integer",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "vinculo_empresa",
+      "type": "integer",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "created_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     }
+    ],
+    "constraints": [
+     "CONSTRAINT ponto_rep_feriados_dispositivo_codigo_key UNIQUE (dispositivo_id, codigo)"
+    ],
+    "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql",
+    "comment": "Feriados do AtecSoft (tabela FERIADO) por coletor.",
+    "origin": "migration"
+   },
+   "ponto_rep_horarios": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "uuid PRIMARY KEY DEFAULT gen_random_uuid()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "dispositivo_id",
+      "type": "uuid NOT NULL REFERENCES public.ponto_rep_dispositivos(id) ON DELETE RESTRICT",
+      "fk": "ponto_rep_dispositivos.id ON DELETE RESTRICT",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "empresa_id",
+      "type": "uuid NOT NULL REFERENCES public.empresas(id) ON DELETE RESTRICT",
+      "fk": "empresas.id ON DELETE RESTRICT",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "codigo",
+      "type": "integer NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "ident",
+      "type": "integer",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "dia_semana",
+      "type": "smallint NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "pares",
+      "type": "jsonb NOT NULL DEFAULT '[]'::jsonb",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "tipo_calculo",
+      "type": "integer",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "tolerancia_falta",
+      "type": "time",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "tolerancia_extra",
+      "type": "time",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "neutro",
+      "type": "boolean NOT NULL DEFAULT false",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "fecha",
+      "type": "boolean NOT NULL DEFAULT false",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "ajuste",
+      "type": "boolean NOT NULL DEFAULT false",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "folga",
+      "type": "boolean NOT NULL DEFAULT false",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "extra",
+      "type": "boolean NOT NULL DEFAULT false",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "created_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+     }
+    ],
+    "constraints": [
+     "CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key UNIQUE (dispositivo_id, codigo, dia_semana)",
+     "CONSTRAINT ponto_rep_horarios_dia_semana_check CHECK (dia_semana BETWEEN 1 AND 7)",
+     "CONSTRAINT ponto_rep_horarios_pares_array CHECK (jsonb_typeof(pares) = 'array')"
+    ],
+    "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql",
+    "comment": "Jornadas do AtecSoft (tabela HORARIO_LINHAS), uma linha por dia da semana.",
     "origin": "migration"
    },
    "auth._test_uid": {
@@ -72042,6 +72281,22 @@
     "unique": false,
     "where": "",
     "src": "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql"
+   },
+   {
+    "name": "idx_ponto_rep_feriados_empresa_data",
+    "table": "ponto_rep_feriados",
+    "columns": "empresa_id, data",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+   },
+   {
+    "name": "idx_ponto_rep_horarios_empresa",
+    "table": "ponto_rep_horarios",
+    "columns": "empresa_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
    }
   ],
   "cron_jobs": [
@@ -73482,6 +73737,8 @@
    "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.verify.sql",
    "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
    "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql",
+   "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql",
+   "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -73970,7 +74227,9 @@
    "ponto_rep_funcionarios": "enabled",
    "ponto_rep_dias": "enabled",
    "ponto_rep_justificativas": "enabled",
-   "ponto_espelhos_papel": "enabled"
+   "ponto_espelhos_papel": "enabled",
+   "ponto_rep_feriados": "enabled",
+   "ponto_rep_horarios": "enabled"
   },
   "grants": [
    {
@@ -89414,7 +89673,9 @@
    "table:ponto_rep_justificativas": "De-para das justificativas do AtecSoft para o tipo de dia do DP.",
    "table:ponto_espelhos_papel": "Etapa 85: espelho de ponto devolvido assinado em papel, por colaborador e competência (1º dia do mês).",
    "table:recibos_ferias": "Registro do recibo de férias baixado pelo RH (FeriasActions.tsx). Metadado de emissão — o PDF é gerado no navegador e não é arquivado aqui.",
-   "column:ponto_rep_funcionarios.cpf_last4": "Últimos 4 dígitos do CPF, mantidos pelo gatilho fn_ponto_rep_funcionario_cpf_last4 — único CPF que authenticated pode ler."
+   "column:ponto_rep_funcionarios.cpf_last4": "Últimos 4 dígitos do CPF, mantidos pelo gatilho fn_ponto_rep_funcionario_cpf_last4 — único CPF que authenticated pode ler.",
+   "table:ponto_rep_feriados": "Feriados do AtecSoft (tabela FERIADO) por coletor.",
+   "table:ponto_rep_horarios": "Jornadas do AtecSoft (tabela HORARIO_LINHAS), uma linha por dia da semana."
   },
   "types_file": "src/integrations/supabase/types.ts"
  },
@@ -100433,7 +100694,9 @@
      "colaboradores",
      "ponto_rep_dias",
      "ponto_rep_dispositivos",
+     "ponto_rep_feriados",
      "ponto_rep_funcionarios",
+     "ponto_rep_horarios",
      "ponto_rep_justificativas",
      "ponto_rep_lotes"
     ],
@@ -100445,14 +100708,14 @@
     "invokes": [],
     "doc": "",
     "errors": [
+     "${rotulo} gravados: ${error.code ?? ",
      "colaboradores: ${erroColab.code ?? ",
      "dias gravados: ${erroGrav.code ?? ",
      "dias: ${error.code ?? ",
      "dispositivo: ${erroDisp.code ?? ",
      "fechar lote: ${erroFim.code ?? ",
-     "funcionarios: ${error.code ?? ",
-     "justificativas: ${error.code ?? ",
-     "lote: ${erroLote?.code ?? "
+     "feriados removidos: ${error.code ?? ",
+     "feriados: ${error.code ?? "
     ],
     "side_effects": [],
     "webhook_events": [],
@@ -104969,7 +105232,7 @@
   {
    "module": "src/schemas",
    "files": 33,
-   "lines": 8832,
+   "lines": 8867,
    "tables": [],
    "exports": [
     "admissao.ts: admissaoSchema, AdmissaoSchema",
@@ -105702,7 +105965,7 @@
   {
    "module": "supabase/functions",
    "files": 193,
-   "lines": 27732,
+   "lines": 28012,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -105779,7 +106042,9 @@
     "pix_lotes",
     "ponto_rep_dias",
     "ponto_rep_dispositivos",
+    "ponto_rep_feriados",
     "ponto_rep_funcionarios",
+    "ponto_rep_horarios",
     "ponto_rep_justificativas",
     "ponto_rep_lotes",
     "profiles",
@@ -105954,8 +106219,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 928,
-   "lines": 84287,
+   "files": 930,
+   "lines": 84460,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -106143,7 +106408,7 @@
   {
    "module": "tools",
    "files": 3,
-   "lines": 1025,
+   "lines": 1149,
    "tables": [],
    "exports": [
     "coletor.py: so_digitos, texto, inteiro, iso_data, iso_hora, marcado",
@@ -108499,6 +108764,17 @@
      "supabase/functions/ingest-ponto-rep/index.ts"
     ]
    },
+   "ponto_rep_feriados": {
+    "ref": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ],
+    "select": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ],
+    "delete": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ]
+   },
    "ponto_rep_funcionarios": {
     "select": [
      "src/services/relogio/vinculosService.ts",
@@ -108508,6 +108784,17 @@
      "supabase/functions/ingest-ponto-rep/index.ts"
     ],
     "update": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ]
+   },
+   "ponto_rep_horarios": {
+    "ref": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ],
+    "select": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ],
+    "delete": [
      "supabase/functions/ingest-ponto-rep/index.ts"
     ]
    },
@@ -110595,6 +110882,10 @@
     "revogado_em",
     "token_hash"
    ],
+   "ponto_rep_feriados": [
+    "codigo",
+    "dispositivo_id"
+   ],
    "ponto_rep_funcionarios": [
     "codigo",
     "colaborador_id",
@@ -110613,6 +110904,11 @@
     "situacao",
     "vinculado_em",
     "vinculo_metodo"
+   ],
+   "ponto_rep_horarios": [
+    "codigo",
+    "dia_semana",
+    "dispositivo_id"
    ],
    "ponto_rep_justificativas": [
     "codigo",
@@ -114694,9 +114990,33 @@
    },
    {
     "file": "supabase/functions/ingest-ponto-rep/logica.ts",
+    "name": "feriadoSchema",
+    "kind": "object",
+    "body": "{ codigo: z.number().int().positive(), nome: z.string().max(80).nullable(), data, nao_computa_banco_horas: z.boolean(), vinculo_cidade: z.number().int().nullable(), vinculo_departamento: z.number().int().nullable(), vinculo_empresa: z.number().int().nullable(), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.ts",
+    "name": "parHorarioSchema",
+    "kind": "object",
+    "body": "{ entrada: hora.nullable(), saida: hora.nullable(), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.ts",
+    "name": "horarioSchema",
+    "kind": "object",
+    "body": "{ codigo: z.number().int().positive(), ident: z.number().int().nullable(), dia_semana: z.number().int().min(1).max(7), pares: z.array(parHorarioSchema).max(6), tipo_calculo: z.number().int().nullable(), tolerancia_falta: hora.nullable(), tolerancia_extra: hora.nullable(), neutro: z.boolean(), fecha: z.boolean(), ajuste: z.boolean(), folga: z.boolean(), extra: z.boolean(), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.ts",
     "name": "envioSchema",
     "kind": "object",
-    "body": "{ versao_coletor: z.string().min(1).max(20), periodo: z.object({ inicio: data, fim: data }).strict(), parte: z.number().int().positive(), partes: z.number().int().positive(), funcionarios: z.array(funcionarioSchema).max(5000), justificativas: z.array(justificativaSchema).max(500), dias: z.array(diaSchema).max(1000), }",
+    "body": "{ versao_coletor: z.string().min(1).max(20), periodo: z.object({ inicio: data, fim: data }).strict(), parte: z.number().int().positive(), partes: z.number().int().positive(), funcionarios: z.array(funcionarioSchema).max(5000), justificativas: z.array(justificativaSchema).max(500), // Coletor 1.0.0 não envia estas chaves: o default mantém o contrato antigo válido. feriados: z.array(feriadoSchema).max(2000).default([]), horarios: z.array(horarioSchema).max(5000).default([]), dias: z.array(diaSchema).max(1000), }",
     "refines": [],
     "chain": []
    },
@@ -119757,6 +120077,10 @@
    },
    {
     "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "${rotulo} gravados: ${error.code ?? "
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
     "msg": "colaboradores: ${erroColab.code ?? "
    },
    {
@@ -119777,7 +120101,23 @@
    },
    {
     "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "feriados removidos: ${error.code ?? "
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "feriados: ${error.code ?? "
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
     "msg": "funcionarios: ${error.code ?? "
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "horarios removidos: ${error.code ?? "
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "msg": "horarios: ${error.code ?? "
    },
    {
     "file": "supabase/functions/ingest-ponto-rep/index.ts",
@@ -125154,6 +125494,14 @@
    {
     "file": "supabase/functions/importacao/index.ts",
     "text": "Rate limit — importações são custosas: 10 execuções / min / usuário"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "text": "* Lê o catálogo gravado inteiro, página por página: `.limit()` sozinho"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "text": "1.0.0 nao envia estas chaves, e o lote dele nao pode depender das colunas"
    },
    {
     "file": "supabase/functions/integracao/index.ts",
@@ -149051,6 +149399,16 @@
    },
    {
     "table": "ponto_rep_lotes",
+    "column": "total_feriados",
+    "rule": "default 0"
+   },
+   {
+    "table": "ponto_rep_lotes",
+    "column": "total_horarios",
+    "rule": "default 0"
+   },
+   {
+    "table": "ponto_rep_lotes",
     "column": "(tabela)",
     "rule": "CONSTRAINT ponto_rep_lotes_status_check CHECK (status IN ('recebido', 'processado', 'parcial', 'erro'))"
    },
@@ -149263,6 +149621,131 @@
     "table": "ponto_espelhos_papel",
     "column": "(tabela)",
     "rule": "CONSTRAINT ponto_espelhos_papel_competencia_mes_check CHECK (competencia = date_trunc('month', competencia)::date)"
+   },
+   {
+    "table": "ponto_rep_feriados",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "ponto_rep_feriados",
+    "column": "dispositivo_id",
+    "rule": "obrigatório; FK → ponto_rep_dispositivos.id ON DELETE RESTRICT"
+   },
+   {
+    "table": "ponto_rep_feriados",
+    "column": "empresa_id",
+    "rule": "obrigatório; FK → empresas.id ON DELETE RESTRICT"
+   },
+   {
+    "table": "ponto_rep_feriados",
+    "column": "codigo",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "ponto_rep_feriados",
+    "column": "data",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "ponto_rep_feriados",
+    "column": "nao_computa_banco_horas",
+    "rule": "default false"
+   },
+   {
+    "table": "ponto_rep_feriados",
+    "column": "created_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "ponto_rep_feriados",
+    "column": "updated_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "ponto_rep_feriados",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_rep_feriados_dispositivo_codigo_key UNIQUE (dispositivo_id, codigo)"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "dispositivo_id",
+    "rule": "obrigatório; FK → ponto_rep_dispositivos.id ON DELETE RESTRICT"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "empresa_id",
+    "rule": "obrigatório; FK → empresas.id ON DELETE RESTRICT"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "codigo",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "dia_semana",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "pares",
+    "rule": "default '[]'::jsonb"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "neutro",
+    "rule": "default false"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "fecha",
+    "rule": "default false"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "ajuste",
+    "rule": "default false"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "folga",
+    "rule": "default false"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "extra",
+    "rule": "default false"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "created_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "updated_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key UNIQUE (dispositivo_id, codigo, dia_semana)"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_rep_horarios_dia_semana_check CHECK (dia_semana BETWEEN 1 AND 7)"
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT ponto_rep_horarios_pares_array CHECK (jsonb_typeof(pares) = 'array')"
    },
    {
     "table": "_test_ctx",
@@ -151420,6 +151903,11 @@
     "file": "supabase/functions/importacao/index.ts",
     "name": "BATCH",
     "value": "50"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/index.ts",
+    "name": "PAGINA",
+    "value": "1000"
    },
    {
     "file": "supabase/functions/ingest-ponto-rep/index.ts",
@@ -165863,6 +166351,12 @@
     "name": "gerarPdfPgr",
     "params": "empresa: Empresa, riscos: Risco[], meta: { versao: number; responsavel_tecnico: string; registro_profissional: string },",
     "body": "const pdf = await PDFDocument.create(); const font = await pdf.embedFont(StandardFonts.Helvetica); const fontBold = await pdf.embedFont(StandardFonts.HelveticaBold); const marginX = 50; const width = 595; // A4 const height = 842; let page = pdf.addPage([width, height]); let y = height - 60; const write = (text: string, opts: { bold?: boolean; size?: number; color?: [number, number, number] } = {}) => { const size = opts.size ?? 11; const useFont = opts.bold ? fontBold : font; const clean = text …"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.ts",
+    "name": "podeReconciliar",
+    "params": "versaoColetor: string, corpo: unknown, chave: 'feriados' | 'horarios',",
+    "body": "return compararVersao(versaoColetor, '1.0.1') >= 0 && trazCatalogo(corpo, chave);"
    },
    {
     "file": "supabase/functions/metrics/metricsMath.ts",
@@ -206950,6 +207444,10 @@
    },
    {
     "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "contrato aceita feriados e jornadas e recusa fora da faixa"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
     "name": "contrato recusa campo extra, data torta e empresa_id vindo do coletor"
    },
    {
@@ -206963,6 +207461,26 @@
    {
     "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
     "name": "erro que nao e de unicidade aborta o lote"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "catalogo que sumiu do AtecSoft e removido do staging"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "coletor antigo sem as chaves nao apaga o catalogo gravado"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "so reconcilia o catalogo quando versao e chave concordam"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "versao do coletor compara termo a termo, nao como texto"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "jornada que trocou de dia deixa a linha antiga fora do staging"
    },
    {
     "file": "supabase/functions/metricas/contract.test.ts",
@@ -243417,7 +243935,21 @@
     "UPDATE": [],
     "DELETE": []
    },
+   "ponto_rep_feriados": {
+    "rls": "enabled",
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
+   },
    "ponto_rep_funcionarios": {
+    "rls": "enabled",
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
+   },
+   "ponto_rep_horarios": {
     "rls": "enabled",
     "SELECT": [],
     "INSERT": [],
@@ -245617,11 +246149,21 @@
     ]
    },
    {
+    "table": "ponto_rep_feriados",
+    "issue": "RLS ligado sem nenhuma política → só service_role acessa",
+    "files": []
+   },
+   {
     "table": "ponto_rep_funcionarios",
     "issue": "RLS ligado sem nenhuma política → só service_role acessa",
     "files": [
      "src/services/relogio/vinculosService.ts"
     ]
+   },
+   {
+    "table": "ponto_rep_horarios",
+    "issue": "RLS ligado sem nenhuma política → só service_role acessa",
+    "files": []
    },
    {
     "table": "ponto_rep_justificativas",
@@ -245981,6 +246523,7 @@
    "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.verify.sql",
    "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
    "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql",
+   "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -259561,11 +260104,13 @@
    "ponto_rep_dias",
    "ponto_rep_justificativas",
    "ponto_espelhos_papel",
+   "ponto_rep_feriados",
+   "ponto_rep_horarios",
    "feedbacks_360_aprovacoes_gestor",
    "feedbacks_360_consolidacoes"
   ],
   "tenant_missing": [],
-  "tenant_cov": 0.45,
+  "tenant_cov": 0.46,
   "soft_delete": [
    [
     "auth.oauth_clients",
@@ -261466,6 +262011,14 @@
     "created_at",
     "updated_at"
    ],
+   "ponto_rep_feriados": [
+    "created_at",
+    "updated_at"
+   ],
+   "ponto_rep_horarios": [
+    "created_at",
+    "updated_at"
+   ],
    "auth._test_uid": [],
    "_test_ctx": [],
    "feedbacks_360_aprovacoes_gestor": [],
@@ -262707,6 +263260,16 @@
     "ponto_rep_lotes",
     "total_dias",
     "integer"
+   ],
+   [
+    "ponto_rep_lotes",
+    "total_feriados",
+    "integer"
+   ],
+   [
+    "ponto_rep_lotes",
+    "total_horarios",
+    "integer"
    ]
   ]
  },
@@ -263405,10 +263968,20 @@
    },
    {
     "kind": "rls",
+    "msg": "`ponto_rep_feriados`: RLS ligado sem nenhuma política → só service_role acessa",
+    "where": []
+   },
+   {
+    "kind": "rls",
     "msg": "`ponto_rep_funcionarios`: RLS ligado sem nenhuma política → só service_role acessa",
     "where": [
      "src/services/relogio/vinculosService.ts"
     ]
+   },
+   {
+    "kind": "rls",
+    "msg": "`ponto_rep_horarios`: RLS ligado sem nenhuma política → só service_role acessa",
+    "where": []
    },
    {
     "kind": "rls",
@@ -265229,7 +265802,7 @@
    "`afd_geracoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`ponto_rep_funcionarios.situacao` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`feedbacks_360_consolidacoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "399/476 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …"
+   "399/478 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …"
   ]
  },
  "manual": [],
@@ -309739,7 +310312,7 @@
   },
   "src/schemas/tableColumns.ts": {
    "path": "src/schemas/tableColumns.ts",
-   "lines": 4271,
+   "lines": 4306,
    "exports": [
     "const TABLE_COLUMNS"
    ],
@@ -329150,7 +329723,7 @@
   },
   "supabase/functions/ingest-ponto-rep/index.ts": {
    "path": "supabase/functions/ingest-ponto-rep/index.ts",
-   "lines": 208,
+   "lines": 287,
    "tables": [
     {
      "table": "ponto_rep_dispositivos",
@@ -329167,6 +329740,30 @@
     {
      "table": "ponto_rep_justificativas",
      "op": "ref"
+    },
+    {
+     "table": "ponto_rep_feriados",
+     "op": "ref"
+    },
+    {
+     "table": "ponto_rep_feriados",
+     "op": "select"
+    },
+    {
+     "table": "ponto_rep_feriados",
+     "op": "delete"
+    },
+    {
+     "table": "ponto_rep_horarios",
+     "op": "ref"
+    },
+    {
+     "table": "ponto_rep_horarios",
+     "op": "select"
+    },
+    {
+     "table": "ponto_rep_horarios",
+     "op": "delete"
     },
     {
      "table": "ponto_rep_funcionarios",
@@ -329216,6 +329813,15 @@
     "ponto_rep_lotes": [
      "id"
     ],
+    "ponto_rep_feriados": [
+     "codigo",
+     "dispositivo_id"
+    ],
+    "ponto_rep_horarios": [
+     "codigo",
+     "dia_semana",
+     "dispositivo_id"
+    ],
     "ponto_rep_funcionarios": [
      "codigo",
      "colaborador_id",
@@ -329253,12 +329859,17 @@
     "SUPABASE_URL"
    ],
    "errors": [
+    "${rotulo} gravados: ${error.code ?? ",
     "colaboradores: ${erroColab.code ?? ",
     "dias gravados: ${erroGrav.code ?? ",
     "dias: ${error.code ?? ",
     "dispositivo: ${erroDisp.code ?? ",
     "fechar lote: ${erroFim.code ?? ",
+    "feriados removidos: ${error.code ?? ",
+    "feriados: ${error.code ?? ",
     "funcionarios: ${error.code ?? ",
+    "horarios removidos: ${error.code ?? ",
+    "horarios: ${error.code ?? ",
     "justificativas: ${error.code ?? ",
     "lote: ${erroLote?.code ?? ",
     "pendentes: ${erroSem.code ?? ",
@@ -329266,6 +329877,10 @@
     "vinculo: ${error.code ?? "
    ],
    "params": [
+    {
+     "name": "PAGINA",
+     "value": "1000"
+    },
     {
      "name": "MAX_BYTES",
      "value": "4"
@@ -329283,6 +329898,10 @@
      "kind": "escreve"
     }
    ],
+   "rule_comments": [
+    "* Lê o catálogo gravado inteiro, página por página: `.limit()` sozinho",
+    "1.0.0 nao envia estas chaves, e o lote dele nao pode depender das colunas"
+   ],
    "pagination": [
     "20000"
    ],
@@ -329290,7 +329909,7 @@
   },
   "supabase/functions/ingest-ponto-rep/logica.test.ts": {
    "path": "supabase/functions/ingest-ponto-rep/logica.test.ts",
-   "lines": 97,
+   "lines": 182,
    "is_test": true,
    "doc": "deno test supabase/functions/ingest-ponto-rep/logica.test.ts",
    "tests": [
@@ -329301,19 +329920,27 @@
     "chave vazia ou zerada não identifica ninguém; nome nunca é usado",
     "só dias com hash diferente ou novos são alterados",
     "contrato aceita o envio do coletor e o sinal de vida vazio",
+    "contrato aceita feriados e jornadas e recusa fora da faixa",
     "contrato recusa campo extra, data torta e empresa_id vindo do coletor",
     "token: forma mínima e hash",
     "violacao da unicidade reversa deixa o vinculo pendente em vez de abortar o lote",
-    "erro que nao e de unicidade aborta o lote"
+    "erro que nao e de unicidade aborta o lote",
+    "catalogo que sumiu do AtecSoft e removido do staging",
+    "coletor antigo sem as chaves nao apaga o catalogo gravado",
+    "so reconcilia o catalogo quando versao e chave concordam",
+    "versao do coletor compara termo a termo, nao como texto",
+    "jornada que trocou de dia deixa a linha antiga fora do staging"
    ]
   },
   "supabase/functions/ingest-ponto-rep/logica.ts": {
    "path": "supabase/functions/ingest-ponto-rep/logica.ts",
-   "lines": 132,
+   "lines": 248,
    "exports": [
     "const envioSchema",
     "type Envio",
     "type FuncionarioEnvio",
+    "type FeriadoEnvio",
+    "type HorarioEnvio",
     "function tokenPlausivel",
     "function sha256Hex",
     "function soDigitos",
@@ -329321,6 +329948,11 @@
     "type Vinculo",
     "function vincular",
     "function diasAlterados",
+    "function codigosRemovidos",
+    "function trazCatalogo",
+    "function podeReconciliar",
+    "function compararVersao",
+    "function paresRemovidos",
     "type ErroVinculo",
     "function classificaErroVinculo"
    ],
@@ -329368,9 +330000,30 @@
      "chain": []
     },
     {
+     "name": "feriadoSchema",
+     "kind": "object",
+     "body": "{ codigo: z.number().int().positive(), nome: z.string().max(80).nullable(), data, nao_computa_banco_horas: z.boolean(), vinculo_cidade: z.number().int().nullable(), vinculo_departamento: z.number().int().nullable(), vinculo_empresa: z.number().int().nullable(), }",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "parHorarioSchema",
+     "kind": "object",
+     "body": "{ entrada: hora.nullable(), saida: hora.nullable(), }",
+     "refines": [],
+     "chain": []
+    },
+    {
+     "name": "horarioSchema",
+     "kind": "object",
+     "body": "{ codigo: z.number().int().positive(), ident: z.number().int().nullable(), dia_semana: z.number().int().min(1).max(7), pares: z.array(parHorarioSchema).max(6), tipo_calculo: z.number().int().nullable(), tolerancia_falta: hora.nullable(), tolerancia_extra: hora.nullable(), neutro: z.boolean(), fecha: z.boolean(), ajuste: z.boolean(), folga: z.boolean(), extra: z.boolean(), }",
+     "refines": [],
+     "chain": []
+    },
+    {
      "name": "envioSchema",
      "kind": "object",
-     "body": "{ versao_coletor: z.string().min(1).max(20), periodo: z.object({ inicio: data, fim: data }).strict(), parte: z.number().int().positive(), partes: z.number().int().positive(), funcionarios: z.array(funcionarioSchema).max(5000), justificativas: z.array(justificativaSchema).max(500), dias: z.array(diaSchema).max(1000), }",
+     "body": "{ versao_coletor: z.string().min(1).max(20), periodo: z.object({ inicio: data, fim: data }).strict(), parte: z.number().int().positive(), partes: z.number().int().positive(), funcionarios: z.array(funcionarioSchema).max(5000), justificativas: z.array(justificativaSchema).max(500), // Coletor 1.0.0 não envia estas chaves: o default mantém o contrato antigo válido. feriados: z.array(feriadoSchema).max(2000).default([]), horarios: z.array(horarioSchema).max(5000).default([]), dias: z.array(diaSchema).max(1000), }",
      "refines": [],
      "chain": []
     }
@@ -329381,7 +330034,14 @@
      "values": "ambiguidade | abortar"
     }
    ],
-   "doc": "Lógica pura da ingestão do relógio de ponto: contrato, hash do token e vínculo funcionário -> colaborador. Sem I/O, para ser testável isolada."
+   "doc": "Lógica pura da ingestão do relógio de ponto: contrato, hash do token e vínculo funcionário -> colaborador. Sem I/O, para ser testável isolada.",
+   "calc_fns": [
+    {
+     "name": "podeReconciliar",
+     "params": "versaoColetor: string, corpo: unknown, chave: 'feriados' | 'horarios',",
+     "body": "return compararVersao(versaoColetor, '1.0.1') >= 0 && trazCatalogo(corpo, chave);"
+    }
+   ]
   },
   "supabase/functions/integracao/index.ts": {
    "path": "supabase/functions/integracao/index.ts",
@@ -336000,7 +336660,7 @@
   },
   "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql": {
    "path": "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql",
-   "lines": 38
+   "lines": 40
   },
   "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql": {
    "path": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql",
@@ -336117,6 +336777,15 @@
    "path": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql",
    "lines": 41,
    "uses_service_role": true
+  },
+  "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql": {
+   "path": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql",
+   "lines": 102,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.verify.sql": {
+   "path": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.verify.sql",
+   "lines": 69
   },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
@@ -336436,7 +337105,7 @@
   },
   "tools/coletor-ponto-atecsoft/coletor.py": {
    "path": "tools/coletor-ponto-atecsoft/coletor.py",
-   "lines": 418,
+   "lines": 499,
    "exports": [
     "def so_digitos",
     "def texto",
@@ -336446,6 +337115,8 @@
     "def marcado",
     "def montar_funcionario",
     "def montar_justificativa",
+    "def montar_feriado",
+    "def montar_horario",
     "def montar_dia",
     "def hash_dia",
     "def dia_valido",
@@ -336498,7 +337169,7 @@
   },
   "tools/coletor-ponto-atecsoft/tests/test_coletor.py": {
    "path": "tools/coletor-ponto-atecsoft/tests/test_coletor.py",
-   "lines": 160,
+   "lines": 203,
    "is_test": true,
    "exports": [
     "def linha_cp",
@@ -336511,10 +337182,32 @@
   }
  },
  "git": {
-  "sha": "c42efdd9972ba51f2b55dbc868038d090a74c14c",
+  "sha": "48284373fa06515b2f04e17a23a2abcea37957f2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "4828437",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "feat: coletor le feriados e jornadas do AtecSoft (etapa 53) (#839)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+     "scripts/tests/migrations-ponto-rep.sh",
+     "src/integrations/supabase/types.ts",
+     "src/schemas/tableColumns.ts",
+     "supabase/functions/ingest-ponto-rep/index.ts",
+     "supabase/functions/ingest-ponto-rep/logica.test.ts",
+     "supabase/functions/ingest-ponto-rep/logica.ts",
+     "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql",
+     "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql",
+     "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.verify.sql",
+     "tools/coletor-ponto-atecsoft/README.md",
+     "tools/coletor-ponto-atecsoft/coletor.py",
+     "tools/coletor-ponto-atecsoft/tests/test_coletor.py"
+    ]
+   },
    {
     "sha": "c42efdd",
     "date": "2026-11-22",
@@ -336831,33 +337524,40 @@
     "files": [
      "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
     ]
-   },
-   {
-    "sha": "1511918",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: formatação do painel de relógios (prettier) (#808)",
-    "files": [
-     "src/components/ponto/relogio/RelogiosPanel.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    9
-   ],
-   [
-    "supabase/functions/ingest-ponto-rep/index.ts",
-    4
+    10
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    4
+    5
+   ],
+   [
+    "supabase/functions/ingest-ponto-rep/index.ts",
+    5
    ],
    [
     "scripts/automation.config.json",
     3
+   ],
+   [
+    "src/integrations/supabase/types.ts",
+    2
+   ],
+   [
+    "src/schemas/tableColumns.ts",
+    2
+   ],
+   [
+    "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    2
+   ],
+   [
+    "supabase/functions/ingest-ponto-rep/logica.ts",
+    2
    ],
    [
     "src/pages/ObrigacoesFiscaisPage.tsx",
@@ -336876,51 +337576,35 @@
     2
    ],
    [
+    "scripts/tests/migrations-ponto-rep.sh",
+    1
+   ],
+   [
+    "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.verify.sql",
+    1
+   ],
+   [
+    "tools/coletor-ponto-atecsoft/README.md",
+    1
+   ],
+   [
+    "tools/coletor-ponto-atecsoft/coletor.py",
+    1
+   ],
+   [
+    "tools/coletor-ponto-atecsoft/tests/test_coletor.py",
+    1
+   ],
+   [
     "supabase/functions/processar-ponto/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/processar-ponto/logica.test.ts",
-    1
-   ],
-   [
-    "supabase/functions/processar-ponto/logica.ts",
-    1
-   ],
-   [
-    "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
-    1
-   ],
-   [
-    "src/components/desligamentos/DesligamentoDetailSheet.tsx",
-    1
-   ],
-   [
-    "src/services/__tests__/rescisaoService.test.ts",
-    1
-   ],
-   [
-    "src/services/rescisaoService.ts",
-    1
-   ],
-   [
-    "src/utils/__tests__/rescisaoVerbas.test.ts",
-    1
-   ],
-   [
-    "src/utils/rescisaoVerbas.ts",
-    1
-   ],
-   [
-    "scripts/tests/migrations-ponto-rep-etapa41.sh",
-    1
-   ],
-   [
-    "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
     1
    ]
   ]

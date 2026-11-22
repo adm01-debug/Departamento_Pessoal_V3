@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c42efdd997` · branch `main` · 2026-11-22 19:32 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `48284373fa` · branch `main` · 2026-11-22 19:50 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `desligamentos` | `total_descontos` | default 0 |
 | `desligamentos` | `valor_liquido` | default 0 |
 | `desligamentos` | `checklist_comunicacao` | default false |
-| … +4472 linhas — lista completa em `context.json` | | |
+| … +4499 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -2461,9 +2461,21 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```ts
   { codigo: z.number().int().positive(), nome: z.string().min(1).max(60), considera_normal: z.boolean(), considera_falta: z.boolean(), }
   ```
+- **feriadoSchema** (`supabase/functions/ingest-ponto-rep/logica.ts`, z.object):
+  ```ts
+  { codigo: z.number().int().positive(), nome: z.string().max(80).nullable(), data, nao_computa_banco_horas: z.boolean(), vinculo_cidade: z.number().int().nullable(), vinculo_departamento: z.number().int().nullable(), vinculo_empresa: z.number().int().nullable(), }
+  ```
+- **parHorarioSchema** (`supabase/functions/ingest-ponto-rep/logica.ts`, z.object):
+  ```ts
+  { entrada: hora.nullable(), saida: hora.nullable(), }
+  ```
+- **horarioSchema** (`supabase/functions/ingest-ponto-rep/logica.ts`, z.object):
+  ```ts
+  { codigo: z.number().int().positive(), ident: z.number().int().nullable(), dia_semana: z.number().int().min(1).max(7), pares: z.array(parHorarioSchema).max(6), tipo_calculo: z.number().int().nullable(), tolerancia_falta: hora.nullable(), tolerancia_extra: hora.nullable(), neutro: z.boolean(), fecha: z.boolean(), ajuste: z.boolean(), folga: z.boolean(), extra: z.boolean(), }
+  ```
 - **envioSchema** (`supabase/functions/ingest-ponto-rep/logica.ts`, z.object):
   ```ts
-  { versao_coletor: z.string().min(1).max(20), periodo: z.object({ inicio: data, fim: data }).strict(), parte: z.number().int().positive(), partes: z.number().int().positive(), funcionarios: z.array(funcionarioSchema).max(5000), justificativas: z.array(justificativaSchema).max(500), dias: z.array(diaSchema).max(1000), }
+  { versao_coletor: z.string().min(1).max(20), periodo: z.object({ inicio: data, fim: data }).strict(), parte: z.number().int().positive(), partes: z.number().int().positive(), funcionarios: z.array(funcionarioSchema).max(5000), justificativas: z.array(justificativaSchema).max(500), // Coletor 1.0.0 não envia estas chaves: o default mantém o contrato antigo válido. feriados: z.array(feriadoSchema).max(2000).default([]), horarios: z.array(horarioSchema).max(5000).default([]), dias: z.array(diaSchema).max(1000), }
   ```
 - **BodySchema** (`supabase/functions/integracao/index.ts`, z.discriminatedUnion):
   ```ts
@@ -4142,6 +4154,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   const pdf = await PDFDocument.create(); const font = await pdf.embedFont(StandardFonts.Helvetica); const fontBold = await pdf.embedFont(StandardFonts.HelveticaBold); const marginX = 50; const width = 595; // A4 const height = 842; let page = pdf.addPage([width, height]); let y = height - 60; const write = (text: string, opts: { bold?: boolean; size?: number; color?: [number, number, number] } = {}) => { const size = opts.size ?? 11; const useFont = opts.bold ? fontBold : font; const clean = text …
   ```
+- **podeReconciliar(versaoColetor: string, corpo: unknown, chave: 'feriados' | 'horarios',)** — `supabase/functions/ingest-ponto-rep/logica.ts`
+  ```
+  return compararVersao(versaoColetor, '1.0.1') >= 0 && trazCatalogo(corpo, chave);
+  ```
 - **calculateErrorRate(errorCount: number, totalQueryCount: number)** — `supabase/functions/metrics/metricsMath.ts`
   ```
   if (!Number.isFinite(errorCount) || !Number.isFinite(totalQueryCount) || errorCount < 0 || totalQueryCount < 0) { throw new TypeError('Contagens de telemetria devem ser números finitos não negativos'); } if (totalQueryCount === 0) return 0; return Math.min(errorCount / totalQueryCount, 1);
@@ -4791,7 +4807,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `MAX_LINHAS_OPCOES_FILTRO` | `1000` | `src/services/colaboradorService.ts` |
 | `LIMITE_OR_BRIDGE` | `500` | `src/services/colaboradorService.ts` |
 | `MAX_LOGS_BUFFER` | `50` | `src/services/loggerService.ts` |
-| … +140 linhas — lista completa em `context.json` | | |
+| … +141 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5436,7 +5452,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Erro ao vincular | `src/components/treinamentos/TrilhaCursosSection.tsx` |
 |        data-turmas-erro       className= | `src/components/treinamentos/TurmasPainel.tsx` |
 |  className={cn(alertVariants({ variant }), className)} {...props} /> )); Alert.displayName =  | `src/components/ui/alert.tsx` |
-| … +704 linhas — lista completa em `context.json` | |
+| … +709 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5510,7 +5526,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9744 testes em 766 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9750 testes em 766 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5673,6 +5689,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/dateLocal.test.ts` | 17 | dateLocal · formata YYYY-MM-DD com zero-padding no fuso local · não sofre shift de UTC quando a hora local é próxima da meia-noite · retorna string vazia para entrada inválida (contrato defensivo) … |
 | `src/utils/importacao/__tests__/parser.test.ts` | 17 | validators · valida CPFs corretos e rejeita inválidos · normalizarCPF remove máscara e preenche zeros · parseDate lida com dd/mm/yyyy, ISO e serial Excel … |
 | `supabase/functions/calcular-rescisao/motor.test.ts` | 17 | sem justa causa: multa FGTS fora do líquido (GRRF) · aviso proporcional Lei 12.506: 6 anos → 48 dias · termino_contrato empregador → indenização art. 479 (50% dos dias restantes) · termino_contrato empregado → indenização art. 480 nos descontos, sem multa … |
+| `supabase/functions/ingest-ponto-rep/logica.test.ts` | 17 | vincula por CPF mesmo com formatação diferente · CPF sem zero à esquerda casa com CPF completo · sem CPF cai para PIS e depois matrícula · chave ambígua não vincula e não tenta a próxima … |
 | `src/calculators/__tests__/trabalhista-base.test.ts` | 16 | calcularHorasExtras (trabalhista-base) · returns 0 for 0 hours · returns 0 for negative hours · 50% adicional: 1 hour = (salary/jornada) * 1.5 … |
 | `src/components/__tests__/PageContainer.test.tsx` | 16 | PageContainer · renders children · renders title when provided · does not render h1 when title is omitted … |
 | `src/components/colaborador-detalhes/__tests__/EditarJornadaDialog.test.tsx` | 16 | EditarJornadaDialog — escala do dia · não renderiza a seção de escala sem colaboradorId · mostra carregando antes da escala do dia chegar · em falha de consulta mostra erro honesto, não  … |
@@ -5800,7 +5817,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/regrasSolicitacaoFerias.test.ts` | 11 | resumirUsoPorPeriodo · soma gozo, abono e partes; rejeitadas/canceladas contam só como parte · validarSaldoFerias · aceita 30 dias sem abono e 20 + 10 de abono … |
 | `src/utils/__tests__/safeError.test.ts` | 11 | safeErrorMessage · returns fallback for null/undefined error · returns custom fallback when specified · returns user-friendly message for duplicate key error … |
 | `src/utils/__tests__/secureJson.test.ts` | 11 | secureJsonParse · parses simple valid JSON · parses JSON arrays · strips __proto__ keys to prevent prototype pollution … |
-| `supabase/functions/ingest-ponto-rep/logica.test.ts` | 11 | vincula por CPF mesmo com formatação diferente · CPF sem zero à esquerda casa com CPF completo · sem CPF cai para PIS e depois matrícula · chave ambígua não vincula e não tenta a próxima … |
 | `src/components/__tests__/AfastamentoTable.test.tsx` | 10 | AfastamentoTable · renders Colaborador table header · renders Tipo / CID table header · renders Período table header … |
 | `src/components/__tests__/Breadcrumbs.test.tsx` | 10 | Breadcrumbs · returns null when path has only one segment · renders breadcrumb for two-segment path · shows  … |
 | `src/components/__tests__/DarfTab.test.tsx` | 10 | DarfTab · renders DARF title · renders IRRF label · does not render non-payroll taxes (PIS/COFINS, CSLL) … |
@@ -6182,4 +6198,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * HABILITAÇÃO (regra ÚNICA, a MESMA do servidor — `pode_aprovar_colaborador` | `src/components/avaliacao/feedbackCanonico.ts` |
 | ENCAMINHAMENTO (RH/admin) — visível apenas para quem pode encaminhar E na | `src/components/avaliacao/feedbackCanonico.ts` |
 | VALIDAÇÃO DO POTENCIAL (RH) — controle LEGADO. O fluxo atual termina na | `src/components/avaliacao/feedbackCanonico.ts` |
-| … +948 linhas — lista completa em `context.json` | |
+| … +950 linhas — lista completa em `context.json` | |

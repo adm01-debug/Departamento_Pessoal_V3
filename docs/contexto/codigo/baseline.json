@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c42efdd9972ba51f2b55dbc868038d090a74c14c",
+  "commit": "48284373fa06515b2f04e17a23a2abcea37957f2",
   "branch": "main",
-  "data_commit": "2026-11-22T16:31:16-03:00",
+  "data_commit": "2026-11-22T16:46:46-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "4828437",
+    "data": "2026-11-22",
+    "assunto": "feat: coletor le feriados e jornadas do AtecSoft (etapa 53) (#839)"
+   },
    {
     "sha": "c42efdd",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "8aa8e96",
     "data": "2026-11-21",
     "assunto": "fix: ingest-ponto-rep grava auditoria do lote (etapa 44 do plano do ponto) (#814)"
-   },
-   {
-    "sha": "6cf7a6b",
-    "data": "2026-11-21",
-    "assunto": "chore: verifica ao vivo etapas 36/44/46 do plano do ponto Henry/AtecSoft (#813)"
    }
   ],
-  "arquivos_mudados_7d": 929,
+  "arquivos_mudados_7d": 931,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 98
+    "mudancas": 97
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -188,18 +188,18 @@
     "mudancas": 33
    },
    {
-    "pasta": "src/utils/__tests__",
+    "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 32
    },
    {
-    "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 31
+    "pasta": "src/utils/__tests__",
+    "mudancas": 32
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 31
+    "mudancas": 32
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -211,11 +211,11 @@
    },
    {
     "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 11
+    "mudancas": 12
    },
    {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
@@ -230,11 +230,11 @@
     "mudancas": 10
    },
    {
-    "arquivo": "docs/prod-readiness.md",
-    "mudancas": 8
+    "arquivo": "src/schemas/tableColumns.ts",
+    "mudancas": 9
    },
    {
-    "arquivo": "src/schemas/tableColumns.ts",
+    "arquivo": "docs/prod-readiness.md",
     "mudancas": 8
    },
    {
@@ -282,6 +282,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "supabase/functions/ingest-ponto-rep/index.ts",
+    "mudancas": 6
+   },
+   {
     "arquivo": "analise-prs/funcionalidades.csv",
     "mudancas": 5
    },
@@ -291,10 +295,6 @@
    },
    {
     "arquivo": "docs/pendencias/_ordem.md",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/components/desligamentos/index.ts",
     "mudancas": 5
    }
   ],
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3726,
+  "arquivos_total": 3728,
   "arquivos_codigo": 2147,
-  "linhas_codigo": 428752,
+  "linhas_codigo": 429332,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -325,8 +325,8 @@
   "componentes": 646,
   "hooks": 122,
   "edge_functions": 68,
-  "tabelas": 436,
-  "migrations": 928,
+  "tabelas": 438,
+  "migrations": 930,
   "cron_jobs": 42,
   "testes": 811,
   "workflows": 21,
@@ -668,7 +668,7 @@
   },
   "src/integrations": {
    "arquivos": 11,
-   "linhas": 26532
+   "linhas": 26673
   },
   "src/lib": {
    "arquivos": 22,
@@ -692,7 +692,7 @@
   },
   "src/schemas": {
    "arquivos": 33,
-   "linhas": 8832
+   "linhas": 8867
   },
   "src/services": {
    "arquivos": 198,
@@ -724,7 +724,7 @@
   },
   "supabase/functions": {
    "arquivos": 193,
-   "linhas": 27732
+   "linhas": 28012
   },
   "supabase/tests": {
    "arquivos": 3,
@@ -736,7 +736,7 @@
   },
   "tools/coletor-ponto-atecsoft": {
    "arquivos": 3,
-   "linhas": 1025
+   "linhas": 1149
   },
   "vite.analyze.config.ts": {
    "arquivos": 1,
@@ -758,11 +758,11 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 25369
+   "linhas": 25510
   },
   {
    "arquivo": "src/schemas/tableColumns.ts",
-   "linhas": 4271
+   "linhas": 4306
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",

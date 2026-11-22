@@ -1547,7 +1547,7 @@
   {
    "arquivo": "tools/coletor-ponto-atecsoft/coletor.py",
    "descricao": null,
-   "linhas": 418,
+   "linhas": 499,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

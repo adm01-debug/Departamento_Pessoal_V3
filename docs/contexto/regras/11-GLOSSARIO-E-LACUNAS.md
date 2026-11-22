@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c42efdd997` · branch `main` · 2026-11-22 19:32 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `48284373fa` · branch `main` · 2026-11-22 19:50 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `password_reset_requests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `pcs_avaliacoes_cargo` | Cargo evaluation whose total is always calculated by a trigger. | 10 colunas | migration |
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
-| … +411 linhas — lista completa em `context.json` | | | |
+| … +413 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -442,7 +442,9 @@
 | rls | `ponto_espelhos_papel`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/relogio/espelhosPapelService.ts` |
 | rls | `ponto_rep_dias`: RLS ligado sem nenhuma política → só service_role acessa |  |
 | rls | `ponto_rep_dispositivos`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/relogio/coletoresService.ts` |
+| rls | `ponto_rep_feriados`: RLS ligado sem nenhuma política → só service_role acessa |  |
 | rls | `ponto_rep_funcionarios`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/relogio/vinculosService.ts` |
+| rls | `ponto_rep_horarios`: RLS ligado sem nenhuma política → só service_role acessa |  |
 | rls | `ponto_rep_justificativas`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/relogio/vinculosService.ts` |
 | rls | `ponto_rep_lotes`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/relogio/coletoresService.ts` |
 | rls | `provisoes_competencia_tributaria`: RLS ligado sem nenhuma política → só service_role acessa |  |
@@ -645,9 +647,7 @@
 | segurança | função `trg_contrato_token_auditar` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_detect_status_anomaly` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_ferias_gerar_rubricas` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `trg_ferias_reconciliacao_alert` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `trg_medida_aplicada_integrar` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +40 linhas — lista completa em `context.json` | | |
+| … +42 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 
@@ -764,7 +764,7 @@
 - `afd_geracoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `ponto_rep_funcionarios.situacao` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `feedbacks_360_consolidacoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- 399/476 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …
+- 399/478 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …
 
 ## Regras manuais presentes
 

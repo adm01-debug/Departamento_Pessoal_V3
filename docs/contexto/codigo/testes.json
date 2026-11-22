@@ -7368,11 +7368,11 @@
   {
    "arquivo": "supabase/functions/ingest-ponto-rep/logica.test.ts",
    "tipo": "unit",
-   "linhas": 97,
+   "linhas": 182,
    "testa": [
     "supabase/functions/ingest-ponto-rep/logica.ts"
    ],
-   "casos": 11
+   "casos": 17
   },
   {
    "arquivo": "supabase/functions/metricas/contract.test.ts",
@@ -7489,7 +7489,7 @@
   {
    "arquivo": "tools/coletor-ponto-atecsoft/tests/test_coletor.py",
    "tipo": "pytest",
-   "linhas": 160,
+   "linhas": 203,
    "testa": [],
    "casos": 0
   }

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c42efdd9972ba51f2b55dbc868038d090a74c14c` (2026-11-22T16:31:16-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `48284373fa06515b2f04e17a23a2abcea37957f2` (2026-11-22T16:46:46-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2004), SQL (1002), Markdown (345), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2004), SQL (1004), Markdown (345), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3726 |
+| arquivos_total | 3728 |
 | arquivos_codigo | 2147 |
-| linhas_codigo | 428752 |
+| linhas_codigo | 429332 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -45,8 +45,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | componentes | 646 |
 | hooks | 122 |
 | edge_functions | 68 |
-| tabelas | 436 |
-| migrations | 928 |
+| tabelas | 438 |
+| migrations | 930 |
 | cron_jobs | 42 |
 | testes | 811 |
 | workflows | 21 |
@@ -298,7 +298,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `gerar-pgr` — tabelas: empresas, sst_programas, sst_riscos_ambientais, user_empresas; chamada por 1 arquivo(s) do front
 - `healthcheck` (verify_jwt=false) — tabelas: colaboradores, health_checks, query_telemetry; chamada por 1 arquivo(s) do front
 - `importacao` — tabelas: audit_log; chamada por 1 arquivo(s) do front
-- `ingest-ponto-rep` (verify_jwt=false) — tabelas: audit_log, colaboradores, ponto_rep_dias, ponto_rep_dispositivos, ponto_rep_funcionarios, ponto_rep_justificativas, ponto_rep_lotes; chamada por 0 arquivo(s) do front
+- `ingest-ponto-rep` (verify_jwt=false) — tabelas: audit_log, colaboradores, ponto_rep_dias, ponto_rep_dispositivos, ponto_rep_feriados, ponto_rep_funcionarios, ponto_rep_horarios, ponto_rep_justificativas, ponto_rep_lotes; chamada por 0 arquivo(s) do front
 - `integracao` — tabelas: audit_log, integracao_logs, integracoes; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `limpeza` — tabelas: auditoria, blocked_ips, login_attempts, rate_limit_logs, user_roles, user_sessions, verification_tokens; chamada por 1 arquivo(s) do front
 - `metricas` — tabelas: colaboradores, esocial_eventos, metricas_processamento, mv_folha_summary, mv_telemetry_dashboard, query_telemetry; chamada por 2 arquivo(s) do front
@@ -398,22 +398,22 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28215 nós · 63586 arestas · 2442 comunidades · grafo do commit `c42efdd9`
-- comunidades maiores: cn (602), button.tsx (517), 20260831_corrected_public.sql (485), canonical_schema.sql (481), @tanstack/react-query (425), useEmpresas (399), vitest (344), react (275), App.tsx (200), contract.ts (181), "public"."empresas" (164), "public"."empresas" (158)
+- 28246 nós · 63643 arestas · 2486 comunidades · grafo do commit `48284373`
+- comunidades maiores: lucide-react (524), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (443), @tanstack/react-query (381), vitest (330), useEmpresas (327), cn (308), react (278), ColaboradorFormPage.tsx (174), App.tsx (166), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (31)
+- .github/workflows/canonical-migrations.yml (32)
 - inventario/estado/rotas.json (22)
 - scripts/canonical-invariants.sql (20)
-- docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (13)
-- src/integrations/supabase/types.ts (11)
+- docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (14)
+- src/integrations/supabase/types.ts (12)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
 - scripts/automation.config.json (10)
+- src/schemas/tableColumns.ts (9)
 - docs/prod-readiness.md (8)
-- src/schemas/tableColumns.ts (8)
 - docs/auditoria/sql-preservado/README.md (7)
 - package.json (7)
 - src/pages/CalculadoraRescisaoPage.tsx (7)
@@ -656,6 +656,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-22 `4828437` feat: coletor le feriados e jornadas do AtecSoft (etapa 53) (#839)
 - 2026-11-22 `c42efdd` test: prova a etapa 70 e marca 67/70 no plano do Ponto (#841)
 - 2026-11-22 `9c7a64a` feat: itemiza verbas rescisorias em verbas_rescisorias (#838)
 - 2026-11-22 `e3410c9` feat: converte dia do relogio em batidas (etapa 41 do Ponto AtecSoft) (#837)
@@ -670,7 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-22 `77500ff` fix: use-after-free e overread no cliente Firebird do coletor de ponto (#828)
 - 2026-11-22 `835bc4e` fix: aborta remessa CNAB sem nenhum favorecido (marcava enviado com arquivo vazio) (#827)
 - 2026-11-22 `6553243` docs: recertifica F-03/F-07/F-11 com contagem real e marca cargos como feito (#826)
-- 2026-11-22 `cb4d78c` fix: gates de baseline comparam chave com separador nativo (reprovavam no Windows sem regressão real) (#821)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
