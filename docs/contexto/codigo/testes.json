@@ -514,7 +514,7 @@
   {
    "arquivo": "scripts/tests/inventario-rotas.test.mjs",
    "tipo": "unit",
-   "linhas": 198,
+   "linhas": 214,
    "testa": [
     "scripts/inventario/gerar-rotas.mjs",
     "src/components/layout/index.ts",
@@ -525,7 +525,7 @@
     "src/pages/NotFoundPage.tsx",
     "src/pages/UsuariosPage.tsx"
    ],
-   "casos": 7
+   "casos": 8
   },
   {
    "arquivo": "scripts/tests/inventario-tipografia.test.mjs",

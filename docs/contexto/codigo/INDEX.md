@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `5a7dabb1ffb3b34d0a393e2c45e7cdf6fb1adefa` (2026-11-21T23:05:41-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bfd9db6abfe79ad9c1dfb7a0eee33ddbb20ce27d` (2026-11-21T23:45:29-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3706 |
 | arquivos_codigo | 2140 |
-| linhas_codigo | 427440 |
+| linhas_codigo | 427464 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -398,8 +398,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28117 nós · 63417 arestas · 2352 comunidades · grafo do commit `5a7dabb1`
-- comunidades maiores: cn (549), 20260831_corrected_public.sql (493), canonical_schema.sql (481), vitest (389), react (380), @tanstack/react-query (370), useEmpresas (369), App.tsx (327), nineBoxComum.ts (219), FeedbackAcoesRodape.tsx (205), contract.ts (191), ColaboradorDetalhesPage.tsx (182)
+- 28118 nós · 63419 arestas · 2423 comunidades · grafo do commit `bfd9db6a`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (481), lucide-react (465), button.tsx (452), @tanstack/react-query (424), useEmpresas (278), cn (276), vitest (252), ColaboradorDetalhesPage.tsx (217), App.tsx (167), "public"."empresas" (164), contract.ts (163)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -656,6 +656,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-21 `bfd9db6` fix: gerador de rotas resolve index.ts com separador nativo (inventario saia diferente no Windows) (#820)
 - 2026-11-21 `5a7dabb` chore: documenta o limite real das etapas 55 e 58 do plano do ponto (#816)
 - 2026-11-21 `73b2a05` chore: fecha etapa 45 do plano do ponto com evidencia real do CI (#819)
 - 2026-11-21 `60095b9` chore: fecha etapas 81/82 do plano do ponto (testes de UI + inventario de rotas) (#817)
@@ -670,7 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `c74e67d` infra: lote canônico com as 5 migrations do relógio de ponto (#806)
 - 2026-11-21 `9aa259e` feat: abas Vínculos e Justificativas no painel do relógio de ponto (#807)
 - 2026-11-21 `a3db5b8` feat: alerta de coletor do ponto parado e controle do espelho em papel (#804)
-- 2026-11-21 `1ec032c` feat: administração dos coletores do relógio de ponto em Integrações (#803)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

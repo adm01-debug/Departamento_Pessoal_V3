@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5a7dabb1ffb3b34d0a393e2c45e7cdf6fb1adefa",
+  "commit": "bfd9db6abfe79ad9c1dfb7a0eee33ddbb20ce27d",
   "branch": "main",
-  "data_commit": "2026-11-21T23:05:41-03:00",
+  "data_commit": "2026-11-21T23:45:29-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "bfd9db6",
+    "data": "2026-11-21",
+    "assunto": "fix: gerador de rotas resolve index.ts com separador nativo (inventario saia diferente no Windows) (#820)"
+   },
    {
     "sha": "5a7dabb",
     "data": "2026-11-21",
@@ -126,18 +131,13 @@
     "sha": "d5342ad",
     "data": "2026-11-21",
     "assunto": "chore: inventario do estado real [auto] (#787)"
-   },
-   {
-    "sha": "8518ebc",
-    "data": "2026-11-21",
-    "assunto": "chore: registra o conserto do diagnóstico SQL e fecha as etapas 16, 24 e 25 do plano do ponto (#794)"
    }
   ],
-  "arquivos_mudados_7d": 1055,
+  "arquivos_mudados_7d": 1057,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 381
+    "mudancas": 379
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3706,
   "arquivos_codigo": 2140,
-  "linhas_codigo": 427440,
+  "linhas_codigo": 427464,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -548,7 +548,7 @@
   },
   "scripts/inventario": {
    "arquivos": 5,
-   "linhas": 1066
+   "linhas": 1074
   },
   "scripts/load": {
    "arquivos": 1,
@@ -600,7 +600,7 @@
   },
   "scripts/tests": {
    "arquivos": 21,
-   "linhas": 2328
+   "linhas": 2344
   },
   "scripts/training-images-homolog": {
    "arquivos": 1,

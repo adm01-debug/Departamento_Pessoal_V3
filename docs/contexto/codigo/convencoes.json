@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: gerador de rotas resolve index.ts com separador nativo (inventario saia diferente no Windows) (#820)",
    "chore: documenta o limite real das etapas 55 e 58 do plano do ponto (#816)",
    "chore: fecha etapa 45 do plano do ponto com evidencia real do CI (#819)",
    "chore: fecha etapas 81/82 do plano do ponto (testes de UI + inventario de rotas) (#817)",
-   "chore: fecha etapa 44 do plano do ponto com evidencia pos-deploy (#815)",
-   "fix: ingest-ponto-rep grava auditoria do lote (etapa 44 do plano do ponto) (#814)"
+   "chore: fecha etapa 44 do plano do ponto com evidencia pos-deploy (#815)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
