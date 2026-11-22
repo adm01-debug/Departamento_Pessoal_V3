@@ -59,6 +59,15 @@ export function avisoRecusaRelogio(qtd: number): string {
   return `${qtd} batida(s) feita(s) sem internet não foram aceitas: seu ponto é registrado no relógio da unidade.`;
 }
 
+/**
+ * Variante para o quiosque: a fila offline é compartilhada por vários colaboradores
+ * e sincroniza em segundo plano, então quem lê o aviso na tela não é necessariamente
+ * quem teve a batida recusada. Texto neutro, sem segunda pessoa.
+ */
+export function avisoRecusaRelogioQuiosque(qtd: number): string {
+  return `${qtd} batida(s) offline não foram aceitas: o ponto desses colaboradores é registrado no relógio da unidade.`;
+}
+
 export const pontoOfflineService = {
   openDB: async () => {
     const { openDB } = await import('idb');

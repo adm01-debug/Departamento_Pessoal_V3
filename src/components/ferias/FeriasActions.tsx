@@ -7,6 +7,7 @@ import { AssinarAvisoDialog } from './AssinarAvisoDialog';
 import { useAssinarAvisoFerias } from '@/hooks/useAssinarAvisoFerias';
 import { useSolicitarAdiantamento13 } from '@/hooks/ferias/useAdiantamento13';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts';
 import { validateTablePayload } from '@/schemas/validate';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
@@ -26,6 +27,9 @@ export function FeriasActions(props: FeriasActionsProps) {
   const [assinarOpen, setAssinarOpen] = useState(false);
   const { baixarAvisoAssinado } = useAssinarAvisoFerias();
   const solicitarAdiant13 = useSolicitarAdiantamento13();
+  // Espelha a RLS de `recibos_ferias`: só admin ou RH da empresa grava recibo.
+  const { isAdmin, hasRole } = useAuth();
+  const podeGerirRH = isAdmin || hasRole('rh');
 
   if (solicitacao.cancelado || solicitacao.status === 'rejeitada') return null;
 
@@ -33,6 +37,8 @@ export function FeriasActions(props: FeriasActionsProps) {
   // o recibo existia só no PDF client-side — §6.2).
   const baixarRecibo = async () => {
     feriasPDF.gerarRecibo(solicitacao);
+    // Gestor sem papel `rh` baixa o PDF e não tenta registrar: a RLS recusaria.
+    if (!podeGerirRH) return;
     const { error } = await supabase.from('recibos_ferias').insert(
       validateTablePayload(
         'recibos_ferias',

@@ -17,13 +17,18 @@ const {
   mockToastError: vi.fn(),
 }));
 
-vi.mock('@/services/pontoOfflineService', () => ({
-  pontoOfflineService: {
-    getQueueSize: mockGetQueueSize,
-    queueRegistro: mockQueueRegistro,
-    syncOfflineQueue: mockSyncOfflineQueue,
-  },
-}));
+// `avisoRecusaRelogio` vem do módulo real: o texto do aviso é o contrato com o usuário.
+vi.mock('@/services/pontoOfflineService', async (importOriginal) => {
+  const actual = await importOriginal<Record<string, unknown>>();
+  return {
+    ...actual,
+    pontoOfflineService: {
+      getQueueSize: mockGetQueueSize,
+      queueRegistro: mockQueueRegistro,
+      syncOfflineQueue: mockSyncOfflineQueue,
+    },
+  };
+});
 
 vi.mock('sonner', () => ({
   toast: { warning: mockToastWarning, success: mockToastSuccess, error: mockToastError },
@@ -110,6 +115,23 @@ describe('usePontoOffline', () => {
     await waitFor(() =>
       expect(mockToastError).toHaveBeenCalledWith(expect.stringContaining('1 batida(s) não puderam ser sincronizadas'))
     );
+  });
+
+  it('reconexão com recusa do relógio: só o aviso do relógio aparece', async () => {
+    mockSyncOfflineQueue.mockResolvedValue({ synced: 0, errors: 0, recusadasRelogio: 1 });
+    Object.defineProperty(navigator, 'onLine', { value: true, configurable: true });
+    const { result } = renderHook(() => usePontoOffline());
+
+    await act(async () => {
+      window.dispatchEvent(new Event('online'));
+    });
+
+    await waitFor(() => expect(mockSyncOfflineQueue).toHaveBeenCalled());
+    await waitFor(() => expect(mockToastError).toHaveBeenCalledTimes(1));
+    expect(mockToastError).toHaveBeenCalledWith(expect.stringContaining('relógio da unidade'));
+    expect(mockToastError).not.toHaveBeenCalledWith(expect.stringContaining('permanecem na fila'));
+    expect(mockToastSuccess).not.toHaveBeenCalled();
+    expect(result.current.isSyncing).toBe(false);
   });
 
   it('sync does nothing when offline', async () => {
