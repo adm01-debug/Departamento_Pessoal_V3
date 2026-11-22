@@ -2,6 +2,16 @@ import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Check, Link2, Unlink } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
@@ -86,6 +96,7 @@ function SeletorColaborador({ colaboradores, carregando, desabilitado, onEscolhe
 export function VinculosRelogioTab({ empresaId }: { empresaId: string }) {
   const queryClient = useQueryClient();
   const [filtro, setFiltro] = useState<Filtro>('pendentes');
+  const [desfazendo, setDesfazendo] = useState<FuncionarioRelogio | null>(null);
   const chaveFuncionarios = ['relogio', 'vinculos', empresaId] as const;
 
   const funcionariosQuery = useQuery({
@@ -111,7 +122,10 @@ export function VinculosRelogioTab({ empresaId }: { empresaId: string }) {
   });
   const desvincular = useMutation({
     mutationFn: (funcionarioId: string) => vinculosRelogioService.desvincular(funcionarioId),
-    onSuccess: () => aoConcluir('Vínculo desfeito. Os dias dele serão reprocessados.'),
+    onSuccess: () => {
+      aoConcluir('Vínculo desfeito. Os dias dele serão reprocessados.');
+      setDesfazendo(null);
+    },
     onError: (err) => toast.error(`Não foi possível desfazer: ${mensagemErro(err)}`),
   });
 
@@ -212,7 +226,7 @@ export function VinculosRelogioTab({ empresaId }: { empresaId: string }) {
                 </TableCell>
                 <TableCell className="text-right">
                   {f.colaboradorId ? (
-                    <Button size="sm" variant="ghost" disabled={ocupado} onClick={() => desvincular.mutate(f.id)}>
+                    <Button size="sm" variant="ghost" disabled={ocupado} onClick={() => setDesfazendo(f)}>
                       <Unlink className="mr-1 h-4 w-4" />
                       Desfazer
                     </Button>
@@ -230,6 +244,22 @@ export function VinculosRelogioTab({ empresaId }: { empresaId: string }) {
           </TableBody>
         </Table>
       )}
+      <AlertDialog open={!!desfazendo} onOpenChange={(o) => !o && setDesfazendo(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Desfazer vínculo — {desfazendo?.nome ?? `código ${desfazendo?.codigo}`}</AlertDialogTitle>
+            <AlertDialogDescription>
+              O funcionário do relógio volta a ficar pendente de vínculo e os dias dele serão reprocessados.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={() => desfazendo && desvincular.mutate(desfazendo.id)}>
+              Desfazer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

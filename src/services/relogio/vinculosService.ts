@@ -26,7 +26,9 @@ export interface FuncionarioRelogio {
   dispositivoId: string;
   codigo: number;
   nome: string | null;
-  /** Só os 4 últimos dígitos: o CPF completo não sai do serviço. */
+  /** Só os 4 últimos dígitos: `authenticated` não tem GRANT de SELECT no CPF
+   * completo de `ponto_rep_funcionarios` (migration 20261122110000) — o banco
+   * nunca entrega o CPF inteiro, não é só mascaramento de UI. */
   cpfLast4: string | null;
   matricula: string | null;
   situacao: string | null;
@@ -57,11 +59,6 @@ export interface JustificativaRelogio {
 /** Colaboradores com contrato vigente (desligado/pendente não entram na escolha). */
 const STATUS_ELEGIVEIS = ['ativo', 'ferias', 'afastado'] as const;
 
-export function ultimos4Cpf(cpf: string | null | undefined): string | null {
-  const digitos = (cpf ?? '').replace(/\D/g, '');
-  return digitos.length >= 4 ? digitos.slice(-4) : null;
-}
-
 export function mascararCpfLast4(last4: string | null | undefined): string {
   return last4 ? `***.***.*${last4.slice(0, 2)}-${last4.slice(2)}` : '—';
 }
@@ -79,7 +76,7 @@ export const vinculosRelogioService = {
     const { data, error } = await supabase
       .from('ponto_rep_funcionarios')
       .select(
-        'id, dispositivo_id, codigo, nome, cpf, matricula, situacao, colaborador_id, vinculo_metodo, vinculado_em, colaborador:colaboradores!ponto_rep_funcionarios_colaborador_id_fkey(nome_completo)'
+        'id, dispositivo_id, codigo, nome, cpf_last4, matricula, situacao, colaborador_id, vinculo_metodo, vinculado_em, colaborador:colaboradores!ponto_rep_funcionarios_colaborador_id_fkey(nome_completo)'
       )
       .eq('empresa_id', empresaId)
       .order('nome', { ascending: true });
@@ -89,7 +86,7 @@ export const vinculosRelogioService = {
       dispositivoId: row.dispositivo_id,
       codigo: row.codigo,
       nome: row.nome,
-      cpfLast4: ultimos4Cpf(row.cpf),
+      cpfLast4: row.cpf_last4,
       matricula: row.matricula,
       situacao: row.situacao,
       colaboradorId: row.colaborador_id,
