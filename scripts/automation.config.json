@@ -2175,6 +2175,21 @@
                               "reason":  "Teste de migration das tabelas ponto_rep_*; roda no CI pelo scripts/tests/run-shard.sh (job P0 database migration simulations). O dispatcher não executa esta operação."
                           },
                           {
+                              "id":  "legacy-8b3f0a42c5d19e77",
+                              "kind":  "legacy",
+                              "files":  [
+                                            "scripts/tests/migrations-ponto-rep-etapa41.sh"
+                                        ],
+                              "manual":  [
+                                             "sh",
+                                             "scripts/tests/migrations-ponto-rep-etapa41.sh"
+                                         ],
+                              "triggers":  [
+                                               "manual"
+                                           ],
+                              "reason":  "Teste da conversao do dia do relogio em batidas (etapa 41 do plano do Ponto AtecSoft); roda no CI pelo scripts/tests/run-shard.sh (job P0 database migration simulations). O dispatcher nao executa esta operacao."
+                          },
+                          {
                               "id":  "legacy-41daf3e7ed5418ab",
                               "kind":  "legacy",
                               "files":  [
