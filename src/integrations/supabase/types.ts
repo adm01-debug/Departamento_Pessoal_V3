@@ -15910,6 +15910,141 @@ export type Database = {
           },
         ]
       }
+      ponto_rep_horarios: {
+        Row: {
+          ajuste: boolean
+          codigo: number
+          created_at: string
+          dia_semana: number
+          dispositivo_id: string
+          empresa_id: string
+          extra: boolean
+          fecha: boolean
+          folga: boolean
+          id: string
+          ident: number | null
+          neutro: boolean
+          pares: Json
+          tipo_calculo: number | null
+          tolerancia_extra: string | null
+          tolerancia_falta: string | null
+          updated_at: string
+        }
+        Insert: {
+          ajuste?: boolean
+          codigo: number
+          created_at?: string
+          dia_semana: number
+          dispositivo_id: string
+          empresa_id: string
+          extra?: boolean
+          fecha?: boolean
+          folga?: boolean
+          id?: string
+          ident?: number | null
+          neutro?: boolean
+          pares?: Json
+          tipo_calculo?: number | null
+          tolerancia_extra?: string | null
+          tolerancia_falta?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ajuste?: boolean
+          codigo?: number
+          created_at?: string
+          dia_semana?: number
+          dispositivo_id?: string
+          empresa_id?: string
+          extra?: boolean
+          fecha?: boolean
+          folga?: boolean
+          id?: string
+          ident?: number | null
+          neutro?: boolean
+          pares?: Json
+          tipo_calculo?: number | null
+          tolerancia_extra?: string | null
+          tolerancia_falta?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_rep_horarios_dispositivo_id_fkey"
+            columns: ["dispositivo_id"]
+            isOneToOne: false
+            referencedRelation: "ponto_rep_dispositivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_horarios_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ponto_rep_feriados: {
+        Row: {
+          codigo: number
+          created_at: string
+          data: string
+          dispositivo_id: string
+          empresa_id: string
+          id: string
+          nao_computa_banco_horas: boolean
+          nome: string | null
+          updated_at: string
+          vinculo_cidade: number | null
+          vinculo_departamento: number | null
+          vinculo_empresa: number | null
+        }
+        Insert: {
+          codigo: number
+          created_at?: string
+          data: string
+          dispositivo_id: string
+          empresa_id: string
+          id?: string
+          nao_computa_banco_horas?: boolean
+          nome?: string | null
+          updated_at?: string
+          vinculo_cidade?: number | null
+          vinculo_departamento?: number | null
+          vinculo_empresa?: number | null
+        }
+        Update: {
+          codigo?: number
+          created_at?: string
+          data?: string
+          dispositivo_id?: string
+          empresa_id?: string
+          id?: string
+          nao_computa_banco_horas?: boolean
+          nome?: string | null
+          updated_at?: string
+          vinculo_cidade?: number | null
+          vinculo_departamento?: number | null
+          vinculo_empresa?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_rep_feriados_dispositivo_id_fkey"
+            columns: ["dispositivo_id"]
+            isOneToOne: false
+            referencedRelation: "ponto_rep_dispositivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_feriados_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ponto_rep_justificativas: {
         Row: {
           codigo: number
@@ -15977,7 +16112,9 @@ export type Database = {
           recebido_em: string
           status: string
           total_dias: number
+          total_feriados: number
           total_funcionarios: number
+          total_horarios: number
         }
         Insert: {
           dias_alterados?: number
@@ -15991,7 +16128,9 @@ export type Database = {
           recebido_em?: string
           status?: string
           total_dias?: number
+          total_feriados?: number
           total_funcionarios?: number
+          total_horarios?: number
         }
         Update: {
           dias_alterados?: number
@@ -16005,7 +16144,9 @@ export type Database = {
           recebido_em?: string
           status?: string
           total_dias?: number
+          total_feriados?: number
           total_funcionarios?: number
+          total_horarios?: number
         }
         Relationships: [
           {

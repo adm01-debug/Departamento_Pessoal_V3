@@ -241,12 +241,16 @@ jobs:
           #  - 20261122090000: cria public.recibos_ferias, que nunca chegou ao
           #    canonico (PGRST205 em producao; FeriasActions.tsx grava o recibo
           #    depois de baixar o PDF e o insert falhava sempre). Aditiva.
+          # 23/11/2026: ponto_rep_feriados/ponto_rep_horarios (etapa 53 do plano
+          # do relogio de ponto). Aditiva; o coletor 1.0.1 so grava nestas
+          # tabelas depois que a Edge nova estiver publicada.
           for migration in \
             20261123090000_ponto_rep_converter_batidas.sql \
             20261122090000_recibos_ferias_criar_tabela_ausente.sql \
             20261122110000_ponto_rep_funcionarios_mascara_cpf.sql \
             20261122110500_ponto_rep_vinculo_unicidade_reversa.sql \
             20261122130000_indices_fk_join_ponto_pix.sql \
+            20261123150000_ponto_rep_feriados_horarios.sql \
             20261122041500_guias_fgts_digital_rls_por_empresa.sql
           do
             version="${migration%%_*}"
