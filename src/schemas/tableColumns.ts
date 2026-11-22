@@ -3165,6 +3165,7 @@ export const TABLE_COLUMNS: Record<string, readonly string[]> = {
     'codigo',
     'colaborador_id',
     'cpf',
+    'cpf_last4',
     'created_at',
     'data_admissao',
     'data_desligamento',
