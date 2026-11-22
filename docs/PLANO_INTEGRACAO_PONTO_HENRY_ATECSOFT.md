@@ -142,7 +142,7 @@ Princípios:
 - [x] **33. Criar `supabase/functions/ingest-ponto-rep/`.** POST-only, JSON. Pronto quando: função responde 405 a GET em teste. Feito: #798; GET ao vivo → 405.
 - [x] **34. Autenticar por token de dispositivo.** Header próprio, comparação por hash em tempo constante; `verify_jwt = false` justificado no `config.toml` (R8). Pronto quando: token errado → 401 em teste. Feito: #798; POST sem token e com token falso ao vivo → 401; `verify_jwt=false` justificado no config.toml.
 - [x] **35. Validar o contrato.** Schema do corpo, tamanho máximo, datas plausíveis. Pronto quando: corpo inválido → 400 com código de erro. Feito: #798; schema Zod estrito em `logica.ts`.
-- [x] **36. Aplicar rate limit por dispositivo.** Usar `_shared/rateLimit.ts`. Pronto quando: excesso → 429 em teste. Feito: #798; `index.ts:38-39,51-52` chama `checkRateLimit`/`rateLimitResponse` por IP (120/60s) e por dispositivo (60/60s) antes de qualquer acesso a dado; mecanismo de 429 testado em `_shared/rateLimit.test.ts`; confirmado ao vivo em 22/11/2026 que o fluxo não bloqueia tráfego normal (ver etapa 46).
+- [x] **36. Aplicar rate limit por dispositivo.** Usar `_shared/rateLimit.ts`. Pronto quando: excesso → 429 em teste. Feito: #798 implementou (`index.ts:38-39,51-52`); confirmado ao vivo em 22/11/2026 com dispositivo descartável — 65 chamadas seguidas: as 60 primeiras `200`, da 61ª em diante `429` (limite do dispositivo é 60/60s), batendo exato com o configurado; lote e dispositivo de teste removidos depois.
 - [x] **37. Travar o dispositivo na própria empresa.** O `empresa_id` vem do dispositivo, nunca do corpo. Pronto quando: teste prova que corpo com outra empresa é ignorado. Feito: #798; corpo com `empresa_id` é rejeitado pelo schema estrito.
 - [x] **38. Gravar o lote e os funcionários.** Upsert em `ponto_rep_lotes` e `ponto_rep_funcionarios`. Pronto quando: reenvio idêntico não cria linhas. Feito: #798; upsert por (lote) e (dispositivo, código).
 - [x] **39. Gravar os dias com hash.** Upsert em `ponto_rep_dias`; só processa o dia cujo hash mudou. Pronto quando: teste de idempotência verde. Feito: #798; dia só é regravado quando o hash muda (`processado_em` volta a nulo).
@@ -150,8 +150,8 @@ Princípios:
 - [ ] **41. Converter dia em batidas.** Função SQL transacional que só insere o que falta: batida é imutável (gatilho de imutabilidade), então correção vinda do AtecSoft entra como ajuste, nunca como exclusão. Pronto quando: dia alterado no envio seguinte reflete no espelho sem apagar batida.
 - [ ] **42. Não tocar batida de outra origem.** Pronto quando: teste prova que batida de app/quiosque/ajuste sobrevive ao reprocessamento.
 - [ ] **43. Respeitar período fechado.** Dia de competência fechada em `periodos_ponto` não é reprocessado; gera alerta. Pronto quando: teste verde.
-- [x] **44. Registrar auditoria.** Cada lote em `ponto_auditoria`/log de edge, sem CPF em claro. Pronto quando: `audit:edge-audit-log` verde. Feito: confirmado em 22/11/2026 — `npm run audit:edge-audit-log` → `EDGE_AUDIT_LOG_CONTRACT_OK checked_inserts=25`; erro de lote vira `captureException` (Sentry) sem CPF/PIS (`index.ts:163-170`).
-- [ ] **45. Testes da função.** Deno: autenticação, idempotência, vínculo, reprocessamento, período fechado. Pronto quando: `lint:edge` e `typecheck:edge` verdes. Em 22/11/2026: `lint:edge` e `audit:edge-syntax` verdes (sem Deno neste ambiente para `typecheck:edge`, inalterado desde a verificação do #798). Autenticação/idempotência/vínculo já testados (`logica.test.ts`, #798); reprocessamento e período fechado continuam bloqueados pelas etapas 41 e 43.
+- [ ] **44. Registrar auditoria.** Cada lote em `ponto_auditoria`/log de edge, sem CPF em claro. Pronto quando: `audit:edge-audit-log` verde. Corrigido em 22/11/2026 (apontado pelo Devin Review na PR #813): `index.ts` não grava em `audit_log` — só atualiza o próprio `ponto_rep_lotes.status` no sucesso e chama `captureException` (Sentry) no erro. `npm run audit:edge-audit-log` passa, mas valida o contrato de quem grava em `audit_log`; `ingest-ponto-rep` não é um desses 25 inserts, então o script passar não prova nada aqui. Falta decidir e implementar onde fica o registro por lote.
+- [ ] **45. Testes da função.** Deno: autenticação, idempotência, vínculo, reprocessamento, período fechado. Pronto quando: `lint:edge` e `typecheck:edge` verdes. Em 22/11/2026: `lint:edge` e `audit:edge-syntax` verdes (sem Deno neste ambiente para `typecheck:edge`, inalterado desde a verificação do #798). Corrigido (apontado pelo Devin Review): `logica.test.ts` só cobre vínculo, formato do token e seleção de dia alterado por hash — é lógica pura, sem I/O. Autenticação e idempotência foram verificadas ao vivo no #798 (401 com token errado/ausente; reenvio idêntico não duplica linha), não por essa suíte. Reprocessamento e período fechado continuam bloqueados pelas etapas 41 e 43; nenhum teste automatizado cobre o efeito de um lote no banco.
 - [x] **46. Publicar.** Via `canonical-edge-functions.yml`. Pronto quando: chamada real com token de teste devolve 200 e a linha aparece em `ponto_rep_lotes`. Feito em 22/11/2026: dispositivo descartável criado na empresa `[E2E-SEED]` (`61e7d382-…`), POST real em `https://frjbfeamybqsejlvmqbl.supabase.co/functions/v1/ingest-ponto-rep` → `200 {"ok":true,"lote_id":"b6b187a4-…"}`, linha confirmada em `ponto_rep_lotes` (`status=processado`) e removida depois junto com o dispositivo — produção sem resíduo.
 
 ### Fase 4 — Coletor Windows (47–62)
@@ -256,18 +256,18 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 | 0 — Decisões e insumos      | 1–8       | 5/8        |
 | 1 — Diagnóstico             | 9–18      | 1/10       |
 | 2 — Modelo de dados         | 19–32     | 13/14      |
-| 3 — Função de ingestão      | 33–46     | 10/14      |
+| 3 — Função de ingestão      | 33–46     | 9/14       |
 | 4 — Coletor Windows         | 47–62     | 8/16       |
 | 5 — Processamento e cálculo | 63–72     | 1/10       |
 | 6 — Interface               | 73–82     | 8/10       |
 | 7 — Fechamento mensal       | 83–90     | 1/8        |
 | 8 — Implantação e operação  | 91–100    | 2/10       |
 | 9 — Escrita no AtecSoft     | 101–120   | 0/20       |
-| **Total**                   | **1–120** | **49/120** |
+| **Total**                   | **1–120** | **48/120** |
 
 Situação em 22/11/2026. O dono vai enviar os bancos reais das duas unidades (etapas 6–7) amanhã; até lá:
 
-- 36, 44, 46 fechadas nesta sessão com chamada real ao canônico (dispositivo de teste descartável na empresa `[E2E-SEED]`, removido depois). 45 segue aberta: só falta teste de reprocessamento/período fechado, que dependem das etapas 41/43.
+- 36 e 46 fechadas nesta sessão com chamada real ao canônico (dispositivo de teste descartável na empresa `[E2E-SEED]`, removido depois, incluindo 65 chamadas seguidas para confirmar o 429 da etapa 36). 44 foi marcada e depois corrigida de volta para aberta — Devin Review apontou que `ingest-ponto-rep` não grava em `audit_log`; ver nota na própria etapa. 45 segue aberta.
 - Coletor (Fase 4): código revisado etapa a etapa nesta sessão. 55, 56, 58, 59 fechadas por evidência de código/teste (mecanismo já atende o critério sem precisar do Windows real). 48, 49, 51, 52, 57, 60, 61 têm código completo, mas o critério de cada uma pede um Windows/banco real — seguem abertas, conferidas na instalação pelo técnico de TI (etapa 91). 53 tem uma lacuna real: só `JUSTFICATIVA` foi lida; `FERIADO` e `HORARIO_LINHAS` não têm coluna documentada no repo para escrever a query sem chutar.
 - 41–43, 63–72, 83–90, 101–120: dependem da cópia do banco real das duas unidades (etapas 6–15) e do cadastro dos colaboradores no DP V3. Sem isso, qualquer código sobre `REF_*`/virada de dia seria suposição — não escrito por não ter como validar.
 - Atenção para amanhã: o banco do AtecSoft é Firebird 1.5 (ODS 10.1); o Ubuntu desta sessão só tem pacotes do Firebird 3.0, que não abre esse formato. Para ler o `.FDB` aqui vou precisar ou de um dump/CSV das tabelas, ou da própria `gds32.dll` do instalador — decido isso quando os arquivos chegarem.
