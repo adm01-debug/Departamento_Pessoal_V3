@@ -1752,7 +1752,23 @@
                                            ],
                               "reason":  "Legado mantido no fluxo existente; referências literais: .github/workflows/ci.yml. O dispatcher não executa esta operação."
                           },
-                          {
+                                                    {
+                              "id":  "legacy-audit-baseline-portabilidade",
+                              "kind":  "legacy",
+                              "files":  [
+                                             "scripts/tests/audit-baseline-portabilidade.test.mjs"
+                                         ],
+                              "manual":  [
+                                             "node",
+                                             "--test",
+                                             "scripts/tests/audit-baseline-portabilidade.test.mjs"
+                                         ],
+                              "triggers":  [
+                                               "manual"
+                                           ],
+                              "reason":  "Legado mantido no fluxo existente; referencias literais: .github/workflows/ci.yml. O dispatcher nao executa esta operacao."
+                          },
+{
                               "id":  "legacy-df1a6c08cd36bf19",
                               "kind":  "legacy",
                               "files":  [
