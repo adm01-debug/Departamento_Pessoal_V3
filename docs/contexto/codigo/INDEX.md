@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bfd9db6abfe79ad9c1dfb7a0eee33ddbb20ce27d` (2026-11-21T23:45:29-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d4b08fae773dfea0d9ecba39bd4b9c8e5784b60e` (2026-11-22T03:59:23Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -398,8 +398,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28118 nós · 63419 arestas · 2423 comunidades · grafo do commit `bfd9db6a`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (481), lucide-react (465), button.tsx (452), @tanstack/react-query (424), useEmpresas (278), cn (276), vitest (252), ColaboradorDetalhesPage.tsx (217), App.tsx (167), "public"."empresas" (164), contract.ts (163)
+- 28117 nós · 63420 arestas · 2438 comunidades · grafo do commit `d4b08fae`
+- comunidades maiores: cn (537), 20260831_corrected_public.sql (493), canonical_schema.sql (481), button.tsx (437), useEmpresas (418), vitest (383), react (263), supabase (196), FinanceiroResumoCards.tsx (170), App.tsx (165), "public"."empresas" (164), hooks/index.ts (163)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -558,7 +558,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `SECURITY_AUDIT_REPORT.md` — 🔐 Relatório de Auditoria de Segurança e Backend (801 linhas)
 - `docs/ACCESSIBILITY.md` — ♿ ACCESSIBILITY.md - Guia de Acessibilidade (22 linhas)
 - `docs/ANALISE_BACKEND_VS_FRONTEND.md` — Análise Exaustiva: Backend vs Frontend (105 linhas)
-- `docs/ANALISE_FUNCIONALIDADES_PENDENTES.md` — 🔍 ANÁLISE EXAUSTIVA - FUNCIONALIDADES SUGERIDAS MAS NÃO IMPLEMENTADAS (57 linhas)
+- `docs/ANALISE_FUNCIONALIDADES_PENDENTES.md` — 1. Gates estáticos de integridade (74 linhas)
 - `docs/AUDITORIA_SISTEMA_COMPLETA.md` — 📋 Auditoria Completa do Sistema — Departamento Pessoal (311 linhas)
 - `docs/AUDIT_APIS_EXTERNAS.md` — P1-015: Auditoria de Chamadas a APIs Externas (170 linhas)
 - `docs/AUDIT_REPORT.md` — 📋 RELATÓRIO DE AUDITORIA - DEPARTAMENTO PESSOAL (116 linhas)
@@ -656,6 +656,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-22 `d4b08fa` docs: reescreve a análise de pendentes com o estado real (9 dos 12 itens já estavam implementados) (#823)
 - 2026-11-21 `bfd9db6` fix: gerador de rotas resolve index.ts com separador nativo (inventario saia diferente no Windows) (#820)
 - 2026-11-21 `5a7dabb` chore: documenta o limite real das etapas 55 e 58 do plano do ponto (#816)
 - 2026-11-21 `73b2a05` chore: fecha etapa 45 do plano do ponto com evidencia real do CI (#819)
@@ -670,7 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `1511918` fix: formatação do painel de relógios (prettier) (#808)
 - 2026-11-21 `c74e67d` infra: lote canônico com as 5 migrations do relógio de ponto (#806)
 - 2026-11-21 `9aa259e` feat: abas Vínculos e Justificativas no painel do relógio de ponto (#807)
-- 2026-11-21 `a3db5b8` feat: alerta de coletor do ponto parado e controle do espelho em papel (#804)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -1080,8 +1080,8 @@
   },
   {
    "arquivo": "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md",
-   "titulo": "🔍 ANÁLISE EXAUSTIVA - FUNCIONALIDADES SUGERIDAS MAS NÃO IMPLEMENTADAS",
-   "linhas": 57
+   "titulo": "1. Gates estáticos de integridade",
+   "linhas": 74
   },
   {
    "arquivo": "docs/AUDITORIA_SISTEMA_COMPLETA.md",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bfd9db6abfe79ad9c1dfb7a0eee33ddbb20ce27d",
+  "commit": "d4b08fae773dfea0d9ecba39bd4b9c8e5784b60e",
   "branch": "main",
-  "data_commit": "2026-11-21T23:45:29-03:00",
+  "data_commit": "2026-11-22T03:59:23Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "d4b08fa",
+    "data": "2026-11-22",
+    "assunto": "docs: reescreve a análise de pendentes com o estado real (9 dos 12 itens já estavam implementados) (#823)"
+   },
    {
     "sha": "bfd9db6",
     "data": "2026-11-21",
@@ -126,18 +131,13 @@
     "sha": "db90472",
     "data": "2026-11-21",
     "assunto": "fix: estabiliza arraste por toque no teste mobile do pipeline (#797)"
-   },
-   {
-    "sha": "d5342ad",
-    "data": "2026-11-21",
-    "assunto": "chore: inventario do estado real [auto] (#787)"
    }
   ],
-  "arquivos_mudados_7d": 1057,
+  "arquivos_mudados_7d": 1058,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 379
+    "mudancas": 378
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -180,12 +180,12 @@
     "mudancas": 35
    },
    {
-    "pasta": "src/components/ponto",
+    "pasta": "src/pages/__tests__",
     "mudancas": 34
    },
    {
-    "pasta": "src/pages/__tests__",
-    "mudancas": 34
+    "pasta": "src/components/ponto",
+    "mudancas": 33
    },
    {
     "pasta": "src/utils/__tests__",

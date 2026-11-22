@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "bfd9db6abfe79ad9c1dfb7a0eee33ddbb20ce27d",
+  "sha": "d4b08fae773dfea0d9ecba39bd4b9c8e5784b60e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 03:16 UTC",
+  "generated_at": "2026-11-22 04:16 UTC",
   "files_total": 3720,
   "code_files": 3130,
   "code_lines": 498111
@@ -335233,10 +335233,19 @@
   }
  },
  "git": {
-  "sha": "bfd9db6abfe79ad9c1dfb7a0eee33ddbb20ce27d",
+  "sha": "d4b08fae773dfea0d9ecba39bd4b9c8e5784b60e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "d4b08fa",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "docs: reescreve a análise de pendentes com o estado real (9 dos 12 itens já estavam implementados) (#823)",
+    "files": [
+     "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md"
+    ]
+   },
    {
     "sha": "bfd9db6",
     "date": "2026-11-21",
@@ -335574,21 +335583,12 @@
     "files": [
      "scripts/inventario/validar-funcionalidades.mjs"
     ]
-   },
-   {
-    "sha": "bbdb6e3",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: registra no plano do ponto os achados do banco e do Promo Finance (#790)",
-    "files": [
-     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    8
+    7
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -335639,6 +335639,10 @@
     2
    ],
    [
+    "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md",
+    1
+   ],
+   [
     "scripts/inventario/gerar-rotas.mjs",
     1
    ],
@@ -335660,10 +335664,6 @@
    ],
    [
     "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.verify.sql",
-    1
-   ],
-   [
-    "src/hooks/__tests__/usePontoOffline.test.ts",
     1
    ]
   ]
