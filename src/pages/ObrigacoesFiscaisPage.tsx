@@ -19,6 +19,7 @@ import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { Receipt, DollarSign, Building2, Plus, FileText, Shield, Loader2, Zap, Calculator, Key } from 'lucide-react';
 import { ObrigacoesKPIs } from '@/components/obrigacoes/ObrigacoesKPIs';
 import { GuiasTable, type GuiaTabela } from '@/components/obrigacoes/GuiasTable';
+import { FgtsDigitalTable, type FgtsDigitalLinha } from '@/components/obrigacoes/FgtsDigitalTable';
 import { DctfTable, SefipTable } from '@/components/obrigacoes/DeclaracoesTable';
 import { DarfTab, type DarfIrrfSituacao } from '@/components/obrigacoes/DarfTab';
 import { SimuladorWhatIf } from '@/components/folha/SimuladorWhatIf';
@@ -47,6 +48,9 @@ export default function ObrigacoesFiscaisPage() {
   const [openGuia, setOpenGuia] = useState(false);
   const [guiaForm, setGuiaForm] = useState({ tipo: 'fgts', valor: '', vencimento: '' });
   const [gerandoServidor, setGerandoServidor] = useState(false);
+  const [openFgtsDigital, setOpenFgtsDigital] = useState(false);
+  const [gerandoFgtsDigital, setGerandoFgtsDigital] = useState(false);
+  const [fgtsDigitalValor, setFgtsDigitalValor] = useState('');
 
   const { data: dctf = [], isLoading: l1 } = useQuery({
     queryKey: ['dctfweb', empresaAtual?.id],
@@ -84,6 +88,19 @@ export default function ObrigacoesFiscaisPage() {
         .order('competencia', { ascending: false });
       if (error) throw error;
       return data || [];
+    },
+    enabled: !!empresaAtual?.id,
+  });
+  const { data: guiasFgtsDigital = [], isLoading: l3b } = useQuery({
+    queryKey: ['guias-fgts-digital', empresaAtual?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('guias_fgts_digital')
+        .select('id,competencia,tipo,valor_total,vencimento,status,gfd_protocolo,gfd_data_geracao')
+        .eq('empresa_id', empresaAtual!.id)
+        .order('competencia', { ascending: false });
+      if (error) throw error;
+      return (data || []) as unknown as FgtsDigitalLinha[];
     },
     enabled: !!empresaAtual?.id,
   });
@@ -204,6 +221,60 @@ export default function ObrigacoesFiscaisPage() {
       toast.success('Guia marcada como paga!');
     },
   });
+
+  const marcarPagaFgtsDigital = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('guias_fgts_digital')
+        .update({ status: 'paga' })
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['guias-fgts-digital'] });
+      toast.success('Guia FGTS Digital marcada como paga!');
+    },
+    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao marcar guia como paga.')),
+  });
+
+  /**
+   * Emite uma guia FGTS Digital de verdade pela edge `fgts-digital` (tabela
+   * `guias_fgts_digital` + `fgts_digital_logs`, com protocolo GFD e hash
+   * SHA-256 para auditoria). Distinto de `gerarGuiasServidor`, que calcula
+   * guias em `guias_fgts`/`guias_inss` — aquela rota não grava a guia GFD.
+   *
+   * O valor vem do total de FGTS apurado na competência selecionada; se não
+   * houver apuração, o usuário informa o valor no diálogo.
+   */
+  const gerarFgtsDigital = async (valorCentavos: number) => {
+    if (!empresaAtual?.id) return;
+    const [mes, ano] = competencia.split('/');
+    // Vencimento do FGTS Digital: dia 20 do mês seguinte à competência; se cair
+    // em fim de semana/prorrogação legal, o próprio usuário ajusta no diálogo.
+    const venc = new Date(Number(ano), Number(mes), 20);
+    if (venc < new Date()) {
+      toast.error('Vencimento já passou para esta competência. Selecione uma competência em aberto.');
+      return;
+    }
+    setGerandoFgtsDigital(true);
+    try {
+      const { data: r } = await edgeFunctionsService.gerarGuiaFgtsDigital({
+        empresaId: empresaAtual.id,
+        competencia: `${ano}-${mes}`,
+        tipo: 'mensal',
+        valorTotalCentavos: valorCentavos,
+        vencimento: venc.toISOString().slice(0, 10),
+      });
+      qc.invalidateQueries({ queryKey: ['guias-fgts-digital'] });
+      toast.success(`Guia FGTS Digital gerada — protocolo ${r?.protocolo ?? 'registrado'}`);
+      setOpenFgtsDigital(false);
+    } catch (err) {
+      toast.error(safeErrorMessage(err, 'Erro ao gerar guia FGTS Digital.'));
+    } finally {
+      setGerandoFgtsDigital(false);
+    }
+  };
 
   const gerarGuiasServidor = async () => {
     if (!empresaAtual?.id) return;
@@ -369,6 +440,10 @@ export default function ObrigacoesFiscaisPage() {
                 <DollarSign className="h-4 w-4 mr-1" />
                 FGTS
               </TabsTrigger>
+              <TabsTrigger value="fgts_digital" className="rounded-lg font-body">
+                <Zap className="h-4 w-4 mr-1" />
+                FGTS Digital
+              </TabsTrigger>
               <TabsTrigger value="inss" className="rounded-lg font-body">
                 <Building2 className="h-4 w-4 mr-1" />
                 INSS / GPS
@@ -401,6 +476,76 @@ export default function ObrigacoesFiscaisPage() {
                 emptyMessage="Nenhuma guia FGTS gerada"
                 onMarcarPaga={(id, t) => marcarPaga.mutate({ id, tabela: t })}
               />
+            </TabsContent>
+            <TabsContent value="fgts_digital">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <p className="text-sm font-body text-muted-foreground">
+                    Guia FGTS Digital (GFD) emitida pela edge <code className="font-mono">fgts-digital</code>, com
+                    protocolo e hash SHA-256 para auditoria.
+                  </p>
+                  <Dialog open={openFgtsDigital} onOpenChange={setOpenFgtsDigital}>
+                    <DialogTrigger asChild>
+                      <Button className="rounded-xl">
+                        <Plus className="h-4 w-4 mr-1" />
+                        Emitir guia GFD
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="rounded-2xl">
+                      <DialogHeader>
+                        <DialogTitle>Emitir guia FGTS Digital</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label>Competência</Label>
+                          <p className="font-body text-sm text-muted-foreground">{competencia}</p>
+                        </div>
+                        <div>
+                          <Label htmlFor="fgd-valor">Valor total (R$)</Label>
+                          <Input
+                            id="fgd-valor"
+                            inputMode="decimal"
+                            placeholder="0,00"
+                            value={fgtsDigitalValor}
+                            onChange={(e) => setFgtsDigitalValor(e.target.value)}
+                          />
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Total de FGTS apurado nesta competência ({formatCurrency(totalFgts)} em guias FGTS).
+                          </p>
+                        </div>
+                        <Button
+                          className="w-full rounded-xl"
+                          disabled={gerandoFgtsDigital || !(Number(fgtsDigitalValor.replace(',', '.')) > 0)}
+                          onClick={() => {
+                            const reais = Number(fgtsDigitalValor.replace(',', '.'));
+                            void gerarFgtsDigital(Math.round(reais * 100));
+                          }}
+                        >
+                          {gerandoFgtsDigital ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Emitindo…
+                            </>
+                          ) : (
+                            'Emitir guia'
+                          )}
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+                {l3b ? (
+                  <div className="flex justify-center p-8">
+                    <Spinner />
+                  </div>
+                ) : (
+                  <FgtsDigitalTable
+                    guias={guiasFgtsDigital}
+                    emptyMessage="Nenhuma guia FGTS Digital emitida nesta empresa"
+                    onMarcarPaga={(id) => marcarPagaFgtsDigital.mutate(id)}
+                  />
+                )}
+              </div>
             </TabsContent>
             <TabsContent value="inss">
               <GuiasTable
