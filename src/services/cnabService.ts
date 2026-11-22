@@ -509,6 +509,16 @@ export const cnabService = {
 
     const fullFile = lines.join('\r\n');
 
+    // Sem nenhum favorecido, o arquivo sai só com headers e trailers e a
+    // remessa era marcada 'enviado' — foi assim que o canônico ficou com 3
+    // remessas enviadas e 0 cnab_itens. Aborta antes de persistir: remessa
+    // sem pagamento não é remessa, e o banco rejeitaria o arquivo.
+    if (cnabItensToInsert.length === 0) {
+      throw new Error(
+        'Nenhum colaborador da folha tem conta bancária principal cadastrada — a remessa sairia sem favorecidos.'
+      );
+    }
+
     // Insert cnab_itens BEFORE marking remessa as 'enviado' (fixes C47):
     // if we crash after updating status but before inserting items, the remessa
     // would appear sent but have no payment records. Insert items first so the
