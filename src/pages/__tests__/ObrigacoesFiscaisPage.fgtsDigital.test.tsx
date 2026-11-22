@@ -29,12 +29,14 @@ vi.mock('@/integrations/supabase/client', () => ({
     from: (tabela: string) => {
       const chain: Record<string, unknown> = {};
       for (const m of ['select', 'eq', 'order', 'insert', 'update']) chain[m] = () => chain;
-      chain.then = (resolve: (v: unknown) => unknown) =>
-        resolve({
-          data:
-            (globalThis as { __gfdRows?: unknown[] }).__gfdRows ?? (tabela === 'guias_fgts_digital' ? [guiaGfd] : []),
+      chain.then = (resolve: (v: unknown) => unknown) => {
+        const byTable = (globalThis as { __rowsByTable?: Record<string, unknown[]> }).__rowsByTable;
+        const rows = byTable?.[tabela] ?? (tabela === 'guias_fgts_digital' ? [guiaGfd] : []);
+        return resolve({
+          data: (globalThis as { __gfdRows?: unknown[] }).__gfdRows ?? rows,
           error: (globalThis as { __gfdError?: unknown }).__gfdError ?? null,
         });
+      };
       return chain;
     },
   },
@@ -56,6 +58,7 @@ describe('ObrigacoesFiscaisPage — aba FGTS Digital (edge fgts-digital)', () =>
     vi.clearAllMocks();
     delete (globalThis as { __gfdRows?: unknown[] }).__gfdRows;
     delete (globalThis as { __gfdError?: unknown }).__gfdError;
+    delete (globalThis as { __rowsByTable?: Record<string, unknown[]> }).__rowsByTable;
   });
 
   it('expõe a aba FGTS Digital', async () => {
@@ -82,5 +85,52 @@ describe('ObrigacoesFiscaisPage — aba FGTS Digital (edge fgts-digital)', () =>
     // A mensagem de "nenhuma guia" mentiria sobre o estado real.
     expect(screen.queryByText(/Nenhuma guia FGTS Digital emitida/i)).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Tentar novamente/i })).toBeInTheDocument();
+  });
+
+  it('recupera a lista ao clicar em "Tentar novamente" depois de uma falha', async () => {
+    (globalThis as { __gfdError?: unknown }).__gfdError = { message: 'permission denied' };
+    renderPage();
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole('tab', { name: /FGTS Digital/i }));
+    await waitFor(() => expect(screen.getByText(/Falha ao carregar as guias FGTS Digital/i)).toBeInTheDocument());
+
+    // A leitura volta a funcionar; o botão precisa refazer a query, não só limpar o erro.
+    delete (globalThis as { __gfdError?: unknown }).__gfdError;
+    await user.click(screen.getByRole('button', { name: /Tentar novamente/i }));
+
+    await waitFor(() => expect(screen.getByText('FGD-17637792')).toBeInTheDocument());
+    expect(screen.queryByText(/Falha ao carregar as guias FGTS Digital/i)).not.toBeInTheDocument();
+  });
+
+  it('soma no diálogo apenas as guias da competência selecionada, não o histórico', async () => {
+    // Relógio fixo: a competência inicial da tela é o mês seguinte ao atual
+    // (12/2026), então a guia de 2026-11 não pode entrar no total do diálogo.
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.setSystemTime(new Date('2026-11-15T12:00:00Z'));
+    (globalThis as { __rowsByTable?: Record<string, unknown[]> }).__rowsByTable = {
+      guias_fgts: [
+        { id: 'f-11', competencia: '2026-11', valor_total: 500, status: 'paga', data_vencimento: '2026-12-07' },
+        { id: 'f-12', competencia: '2026-12', valor_total: 800, status: 'pendente', data_vencimento: '2027-01-07' },
+      ],
+    };
+    try {
+      renderPage();
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      await user.click(await screen.findByRole('tab', { name: /FGTS Digital/i }));
+      await user.click(screen.getByRole('button', { name: /Registrar guia GFD/i }));
+
+      await waitFor(() =>
+        expect(screen.getByText(/Total de FGTS apurado em 12\/2026:.*800,00 em guias FGTS\./)).toBeInTheDocument()
+      );
+      // Regressão: se o filtro voltar a comparar MM/AAAA com AAAA-MM, o diálogo
+      // cai em "Sem guias FGTS apuradas" e sugere digitar um valor que existe.
+      expect(screen.queryByText(/Sem guias FGTS apuradas/i)).not.toBeInTheDocument();
+      // 500 (2026-11) + 800 (2026-12) = 1.300 seria o total histórico.
+      expect(screen.queryByText(/1\.300,00 em guias FGTS\./)).not.toBeInTheDocument();
+      // 500 + 800 seria o total histórico; se aparecer, o filtro está quebrado.
+      expect(screen.queryByText(/13,00 em guias FGTS\./)).not.toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

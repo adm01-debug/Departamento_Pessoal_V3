@@ -343,10 +343,15 @@ export default function ObrigacoesFiscaisPage() {
   const totalFgts = guiasFgts.reduce((acc, g) => acc + (g.valor_total || 0), 0);
   // O diálogo da guia mensal precisa do total DA COMPETÊNCIA, não do histórico:
   // somar todas as guias sugeria a um mês o valor de vários.
-  const totalFgtsCompetencia = useMemo(
-    () => guiasFgts.filter((g) => g.competencia === competencia).reduce((acc, g) => acc + (g.valor_total || 0), 0),
-    [guiasFgts, competencia]
-  );
+  const totalFgtsCompetencia = useMemo(() => {
+    // O seletor usa MM/AAAA; as guias gravam AAAA-MM (gerar-guias e a edge
+    // fgts-digital). Comparar direto excluía todas as guias do mês.
+    const [mes, ano] = competencia.split('/');
+    const competenciaIso = `${ano}-${mes}`;
+    return guiasFgts
+      .filter((g) => g.competencia === competenciaIso)
+      .reduce((acc, g) => acc + (g.valor_total || 0), 0);
+  }, [guiasFgts, competencia]);
   const totalInss = guiasInss.reduce((acc, g) => acc + (g.valor_total || 0), 0);
   const hoje = new Date();
   const guiasVencidas = [...guiasFgts, ...guiasInss].filter(
