@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3a8e2ec8a32a9e4e7cc1b43354ac813aa1277c85",
+  "sha": "b77692d9010f6155ebbdd6fb67ebec6bb338f0b4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 11:54 UTC",
-  "files_total": 3725,
-  "code_files": 3135,
-  "code_lines": 498933
+  "generated_at": "2026-11-22 11:56 UTC",
+  "files_total": 3727,
+  "code_files": 3137,
+  "code_lines": 498974
  },
  "version": "1.3.2",
- "facts_hash": "c998d8bb88dd8181",
+ "facts_hash": "2c2ab55035021972",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1038,
-   ".sql": 994,
+   ".sql": 996,
    ".ts": 962,
    ".mjs": 110,
    ".js": 15,
@@ -71885,6 +71885,14 @@
     "unique": false,
     "where": "",
     "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
+    "name": "ux_ponto_rep_funcionarios_colaborador_por_empresa",
+    "table": "ponto_rep_funcionarios",
+    "columns": "empresa_id, colaborador_id",
+    "unique": true,
+    "where": "WHERE colaborador_id IS NOT NULL",
+    "src": "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.sql"
    }
   ],
   "cron_jobs": [
@@ -73317,6 +73325,8 @@
    "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.verify.sql",
    "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql",
    "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.verify.sql",
+   "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.sql",
+   "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -100190,7 +100200,7 @@
     ],
     "side_effects": [],
     "webhook_events": [],
-    "idempotency": false
+    "idempotency": true
    },
    {
     "name": "integracao",
@@ -105432,7 +105442,7 @@
   {
    "module": "supabase/functions",
    "files": 191,
-   "lines": 27633,
+   "lines": 27638,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -105684,8 +105694,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 920,
-   "lines": 83716,
+   "files": 922,
+   "lines": 83752,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -328324,7 +328334,7 @@
   },
   "supabase/functions/ingest-ponto-rep/index.ts": {
    "path": "supabase/functions/ingest-ponto-rep/index.ts",
-   "lines": 187,
+   "lines": 192,
    "tables": [
     {
      "table": "ponto_rep_dispositivos",
@@ -335206,6 +335216,14 @@
    "lines": 29,
    "uses_service_role": true
   },
+  "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.sql": {
+   "path": "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.sql",
+   "lines": 18
+  },
+  "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.verify.sql": {
+   "path": "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.verify.sql",
+   "lines": 18
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -335599,10 +335617,21 @@
   }
  },
  "git": {
-  "sha": "3a8e2ec8a32a9e4e7cc1b43354ac813aa1277c85",
+  "sha": "b77692d9010f6155ebbdd6fb67ebec6bb338f0b4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "b77692d",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "fix: vinculo do relogio ganha unicidade reversa por colaborador (R8) (#830)",
+    "files": [
+     "supabase/functions/ingest-ponto-rep/index.ts",
+     "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.sql",
+     "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.verify.sql"
+    ]
+   },
    {
     "sha": "3a8e2ec",
     "date": "2026-11-22",
@@ -335938,41 +335967,19 @@
      "supabase/functions/ingest-ponto-rep/logica.test.ts",
      "supabase/functions/ingest-ponto-rep/logica.ts"
     ]
-   },
-   {
-    "sha": "a6548c3",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "feat: tabelas de entrada do relógio de ponto (ponto_rep_*) (#795)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "scripts/canonical-invariants.sql",
-     "src/integrations/supabase/types.ts",
-     "src/schemas/tableColumns.ts",
-     "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
-     "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql"
-    ]
    }
   ],
   "hot_files": [
-   [
-    "src/integrations/supabase/types.ts",
-    6
-   ],
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
     6
    ],
    [
-    "src/schemas/tableColumns.ts",
-    3
+    "src/integrations/supabase/types.ts",
+    5
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
-    3
-   ],
-   [
-    "scripts/canonical-invariants.sql",
+    "supabase/functions/ingest-ponto-rep/index.ts",
     3
    ],
    [
@@ -335992,6 +335999,10 @@
     2
    ],
    [
+    "src/schemas/tableColumns.ts",
+    2
+   ],
+   [
     "src/services/relogio/vinculosService.ts",
     2
    ],
@@ -336008,7 +336019,11 @@
     2
    ],
    [
-    "supabase/functions/ingest-ponto-rep/index.ts",
+    ".github/workflows/canonical-migrations.yml",
+    2
+   ],
+   [
+    "scripts/canonical-invariants.sql",
     2
    ],
    [
@@ -336024,15 +336039,15 @@
     2
    ],
    [
+    "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.verify.sql",
+    1
+   ],
+   [
     "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.verify.sql",
-    1
-   ],
-   [
-    "tools/coletor-ponto-atecsoft/fb15_client.py",
     1
    ]
   ]

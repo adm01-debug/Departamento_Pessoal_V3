@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3a8e2ec8a32a9e4e7cc1b43354ac813aa1277c85",
+  "commit": "b77692d9010f6155ebbdd6fb67ebec6bb338f0b4",
   "branch": "main",
-  "data_commit": "2026-11-22T08:53:07-03:00",
+  "data_commit": "2026-11-22T08:53:25-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "b77692d",
+    "data": "2026-11-22",
+    "assunto": "fix: vinculo do relogio ganha unicidade reversa por colaborador (R8) (#830)"
+   },
    {
     "sha": "3a8e2ec",
     "data": "2026-11-22",
@@ -126,18 +131,13 @@
     "sha": "1ec032c",
     "data": "2026-11-21",
     "assunto": "feat: administração dos coletores do relógio de ponto em Integrações (#803)"
-   },
-   {
-    "sha": "01d8cb6",
-    "data": "2026-11-21",
-    "assunto": "feat: protege batida do relógio e bloqueia app/quiosque de quem usa o relógio (#801)"
    }
   ],
-  "arquivos_mudados_7d": 1073,
+  "arquivos_mudados_7d": 1075,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 377
+    "mudancas": 376
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3711,
+  "arquivos_total": 3713,
   "arquivos_codigo": 2143,
-  "linhas_codigo": 428206,
+  "linhas_codigo": 428211,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -326,7 +326,7 @@
   "hooks": 122,
   "edge_functions": 68,
   "tabelas": 436,
-  "migrations": 920,
+  "migrations": 922,
   "cron_jobs": 42,
   "testes": 809,
   "workflows": 21,
@@ -724,7 +724,7 @@
   },
   "supabase/functions": {
    "arquivos": 191,
-   "linhas": 27633
+   "linhas": 27638
   },
   "supabase/tests": {
    "arquivos": 3,

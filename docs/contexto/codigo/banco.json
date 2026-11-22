@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 920,
+ "migrations": 922,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -47656,6 +47656,11 @@
      "nome": "idx_ponto_rep_funcionarios_empresa",
      "colunas": "empresa_id",
      "unico": false
+    },
+    {
+     "nome": "ux_ponto_rep_funcionarios_colaborador_por_empresa",
+     "colunas": "empresa_id, colaborador_id",
+     "unico": true
     }
    ],
    "fks": [
