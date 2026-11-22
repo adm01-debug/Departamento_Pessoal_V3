@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4715945815948841f4e1f6a16da9cb79bc3bc158",
+  "commit": "f0f940baa562ab1135088052e6a1023e86f9989a",
   "branch": "main",
-  "data_commit": "2026-11-22T09:54:07-03:00",
+  "data_commit": "2026-11-22T10:15:12-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "f0f940b",
+    "data": "2026-11-22",
+    "assunto": "fix: baixa de guia falha alto quando nenhuma linha e atualizada (#834)"
+   },
    {
     "sha": "4715945",
     "data": "2026-11-22",
@@ -126,11 +131,6 @@
     "sha": "1511918",
     "data": "2026-11-21",
     "assunto": "fix: formatação do painel de relógios (prettier) (#808)"
-   },
-   {
-    "sha": "c74e67d",
-    "data": "2026-11-21",
-    "assunto": "infra: lote canônico com as 5 migrations do relógio de ponto (#806)"
    }
   ],
   "arquivos_mudados_7d": 1080,
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 23
+    "mudancas": 22
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3718,
   "arquivos_codigo": 2143,
-  "linhas_codigo": 428211,
+  "linhas_codigo": 428221,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 145,
-   "linhas": 51320
+   "linhas": 51330
   },
   "src/providers": {
    "arquivos": 4,

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4715945815948841f4e1f6a16da9cb79bc3bc158",
+  "sha": "f0f940baa562ab1135088052e6a1023e86f9989a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 12:55 UTC",
+  "generated_at": "2026-11-22 13:16 UTC",
   "files_total": 3732,
   "code_files": 3141,
-  "code_lines": 499141
+  "code_lines": 499151
  },
  "version": "1.3.2",
- "facts_hash": "347ccb04da54b4a2",
+ "facts_hash": "97089d416c93d33a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -104496,7 +104496,7 @@
   {
    "module": "src/pages",
    "files": 145,
-   "lines": 51320,
+   "lines": 51330,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -305968,7 +305968,7 @@
   },
   "src/pages/ObrigacoesFiscaisPage.tsx": {
    "path": "src/pages/ObrigacoesFiscaisPage.tsx",
-   "lines": 695,
+   "lines": 705,
    "exports": [
     "function ObrigacoesFiscaisPage"
    ],
@@ -335748,10 +335748,19 @@
   }
  },
  "git": {
-  "sha": "4715945815948841f4e1f6a16da9cb79bc3bc158",
+  "sha": "f0f940baa562ab1135088052e6a1023e86f9989a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "f0f940b",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "fix: baixa de guia falha alto quando nenhuma linha e atualizada (#834)",
+    "files": [
+     "src/pages/ObrigacoesFiscaisPage.tsx"
+    ]
+   },
    {
     "sha": "4715945",
     "date": "2026-11-22",
@@ -336079,22 +336088,6 @@
      "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
      "supabase/migrations/20261121222000_batidas_relogio_protecao.verify.sql"
     ]
-   },
-   {
-    "sha": "4008c60",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "feat: vínculo de funcionários do relógio e de-para de justificativas (#800)",
-    "files": [
-     "src/components/__tests__/JustificativasRelogioTab.test.tsx",
-     "src/components/__tests__/VinculosRelogioTab.test.tsx",
-     "src/components/ponto/relogio/JustificativasRelogioTab.tsx",
-     "src/components/ponto/relogio/VinculosRelogioTab.tsx",
-     "src/integrations/supabase/types.ts",
-     "src/services/relogio/vinculosService.ts",
-     "supabase/migrations/20261121221000_ponto_rep_vinculos.sql",
-     "supabase/migrations/20261121221000_ponto_rep_vinculos.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -336108,7 +336101,7 @@
    ],
    [
     "src/integrations/supabase/types.ts",
-    5
+    4
    ],
    [
     "src/pages/PontoKioskPage.tsx",
@@ -336119,6 +336112,10 @@
     3
    ],
    [
+    "src/pages/ObrigacoesFiscaisPage.tsx",
+    2
+   ],
+   [
     "scripts/automation.config.json",
     2
    ],
@@ -336127,19 +336124,7 @@
     2
    ],
    [
-    "src/components/__tests__/VinculosRelogioTab.test.tsx",
-    2
-   ],
-   [
-    "src/components/ponto/relogio/VinculosRelogioTab.tsx",
-    2
-   ],
-   [
     "src/schemas/tableColumns.ts",
-    2
-   ],
-   [
-    "src/services/relogio/vinculosService.ts",
     2
    ],
    [
@@ -336176,6 +336161,14 @@
    ],
    [
     "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.verify.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.sql",
     1
    ]
   ]

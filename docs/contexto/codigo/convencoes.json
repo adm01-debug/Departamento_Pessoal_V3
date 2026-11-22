@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: baixa de guia falha alto quando nenhuma linha e atualizada (#834)",
    "fix: isola guias_fgts_digital por empresa e libera a baixa para RH (#824)",
    "perf: cria indices nas 3 FKs de join do ponto e do PIX (#832)",
    "infra: adiciona migrations da #829/#830 a lista fechada do canonical-apply (#831)",
-   "fix: vinculo do relogio ganha unicidade reversa por colaborador (R8) (#830)",
-   "fix: CPF não trafega mais inteiro na tela de Vínculos do relógio (R8) (#829)"
+   "fix: vinculo do relogio ganha unicidade reversa por colaborador (R8) (#830)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

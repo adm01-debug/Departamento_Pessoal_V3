@@ -9987,7 +9987,7 @@
     "ObrigacoesFiscaisPage"
    ],
    "export_default": "ObrigacoesFiscaisPage",
-   "linhas": 695,
+   "linhas": 705,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
