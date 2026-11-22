@@ -114,3 +114,18 @@ export function diasAlterados<T extends { funcionario_codigo: number; data: stri
   const atual = new Map(gravados.map((g) => [`${g.funcionario_codigo}|${g.data}`, g.hash_conteudo]));
   return recebidos.filter((d) => atual.get(`${d.funcionario_codigo}|${d.data}`) !== d.hash);
 }
+
+/**
+ * Classifica o erro do UPDATE que grava o vínculo colaborador↔funcionário.
+ *
+ * `23505` viola `ux_ponto_rep_funcionarios_colaborador_por_empresa`: o
+ * colaborador já está vinculado a outro `funcionario_codigo` (código
+ * reaproveitado, no mesmo lote ou em um anterior). Isso é ambiguidade real,
+ * não falha: o funcionário fica pendente para decisão humana e o lote segue.
+ * Qualquer outro erro aborta o lote.
+ */
+export type ErroVinculo = 'ambiguidade' | 'abortar';
+
+export function classificaErroVinculo(error: { code?: string } | null): ErroVinculo {
+  return error?.code === '23505' ? 'ambiguidade' : 'abortar';
+}
