@@ -1980,7 +1980,7 @@
   {
    "arquivo": "src/components/__tests__/FeriasActions.test.tsx",
    "tipo": "unit",
-   "linhas": 125,
+   "linhas": 129,
    "testa": [
     "src/components/ferias/FeriasActions.tsx"
    ],

@@ -2400,6 +2400,7 @@
    "src/components/ferias/AssinarAvisoDialog.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/tooltip.tsx",
+   "src/contexts/index.ts",
    "src/hooks/ferias/useAdiantamento13.ts",
    "src/hooks/useAssinarAvisoFerias.ts",
    "src/integrations/supabase/client.ts",

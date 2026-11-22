@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 1335,
- "arestas": 6545,
+ "arestas": 6546,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -161,8 +161,8 @@
    "importado_por": 29
   },
   {
-   "arquivo": "src/components/ui/cascade-motion.ts",
-   "importado_por": 28
+   "arquivo": "src/contexts/index.ts",
+   "importado_por": 29
   }
  ],
  "ciclos": {

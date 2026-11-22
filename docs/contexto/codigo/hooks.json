@@ -348,8 +348,9 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 27,
+   "usado_por": 28,
    "usado_por_arquivos": [
+    "src/components/ferias/FeriasActions.tsx",
     "src/components/ferias/FeriasTable.tsx",
     "src/components/integracoes/ConfigPanels.tsx",
     "src/components/ponto/GestaoRegistrosPonto.tsx",

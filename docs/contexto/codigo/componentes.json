@@ -3655,10 +3655,11 @@
     "FeriasActions"
    ],
    "export_default": null,
-   "linhas": 216,
+   "linhas": 222,
    "dominio": "components/ferias",
    "hooks_locais": [
     "useAssinarAvisoFerias",
+    "useAuth",
     "useSolicitarAdiantamento13"
    ],
    "tabelas": [

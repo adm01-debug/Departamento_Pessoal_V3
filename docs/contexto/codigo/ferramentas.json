@@ -4,7 +4,7 @@
  "stack": {
   "linguagens": [
    "TypeScript (1998)",
-   "SQL (990)",
+   "SQL (992)",
    "Markdown (344)",
    "JavaScript (135)",
    "JSON (64)",
@@ -2133,11 +2133,11 @@
     "ocorrencias": 37
    },
    {
-    "papel": "alert",
-    "ocorrencias": 27
+    "papel": "rh",
+    "ocorrencias": 28
    },
    {
-    "papel": "rh",
+    "papel": "alert",
     "ocorrencias": 27
    },
    {

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `af23346218` · branch `main` · 2026-11-22 00:57 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f611296f8f` · branch `main` · 2026-11-22 00:59 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -715,6 +715,8 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_batida_relogio_autoatendimento | BEFORE INSERT | `batidas_ponto` | `bloquear_autoatendimento_quem_usa_relogio` |  |
 | trg_ponto_espelhos_papel_validar | BEFORE INSERT OR UPDATE | `ponto_espelhos_papel` | `ponto_espelhos_papel_validar` |  |
 | trg_ponto_espelhos_papel_updated_at | BEFORE UPDATE | `ponto_espelhos_papel` | `update_updated_at_column` |  |
+| trg_recibos_ferias_validar | BEFORE INSERT OR UPDATE | `recibos_ferias` | `recibos_ferias_validar` |  |
+| trg_recibos_ferias_updated_at | BEFORE UPDATE | `recibos_ferias` | `update_updated_at_column` |  |
 | ajuste_ponto_status_transition | BEFORE UPDATE OF "STATUS" | `solicitacoes_ajuste_ponto` | `trg_ajuste_ponto_status_transition` |  |
 | audit_admissoes | AFTER INSERT OR DELETE OR UPDATE | `admissoes` | `log_audit_change` |  |
 | audit_afastamentos | AFTER INSERT OR DELETE OR UPDATE | `afastamentos` | `log_audit_change` |  |
@@ -921,9 +923,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_folha_eventos_auditoria_no_delete | BEFORE DELETE | `folha_eventos_auditoria` | `audit_log_append_only` |  |
 | trg_folha_eventos_auditoria_no_update | BEFORE UPDATE | `folha_eventos_auditoria` | `audit_log_append_only` |  |
 | trg_folha_lock_conflicts_ao | BEFORE DELETE OR UPDATE | `folha_lock_conflicts` | `audit_log_append_only` |  |
-| trg_folha_optimistic_lock | BEFORE UPDATE | `folhas_pagamento` | `fn_folha_optimistic_lock` |  |
-| trg_fprog_updated_at | BEFORE UPDATE | `ferias_programacao` | `fprog_touch_updated_at` |  |
-| … +170 linhas — lista completa em `context.json` | | | | |
+| … +172 linhas — lista completa em `context.json` | | | | |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -1096,6 +1096,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `proteger_batida_relogio` | A origem relógio só pode ser atribuída pela integração do relógio. | `supabase/migrations/20261121222000_batidas_relogio_protecao.sql` |
 | `bloquear_autoatendimento_quem_usa_relogio` | Este colaborador registra o ponto no relógio da unidade. | `supabase/migrations/20261121222000_batidas_relogio_protecao.sql` |
 | `ponto_espelhos_papel_validar` | colaborador % não pertence à empresa % | `supabase/migrations/20261121224000_ponto_espelhos_papel.sql` |
+| `recibos_ferias_validar` | colaborador % não pertence à empresa % | `supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql` |
 | `_purge_audit_log_internal` | Retenção mínima de 30 dias | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_security_definer_rpcs` | access denied | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_user_roles` | Apenas administradores podem listar papéis de usuário | `supabase/rebaseline/20260831_corrected_public.sql` |
@@ -1228,8 +1229,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `medida_gerar_link_ciencia` | Medida não encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_gerar_link_ciencia` | Acesso negado à empresa | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_gerar_link_ciencia` | Medida deve estar aplicada/aprovada para gerar ciência | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_registrar_ciencia_publica` | Ação inválida | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +186 linhas — lista completa em `context.json` | | |
+| … +187 linhas — lista completa em `context.json` | | |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -5436,6 +5436,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `src/components/avaliacao/FeedbackAcoesRodape.tsx` |
 | `user` | `src/components/avaliacao/FeedbackAcoesRodape.tsx` |
 | `rh` | `src/components/dashboard/analytics/AlertasPreditivosWidget.tsx` |
+| `rh` | `src/components/ferias/FeriasActions.tsx` |
 | `rh` | `src/components/ferias/FeriasTable.tsx` |
 | `rh` | `src/components/integracoes/ConfigPanels.tsx` |
 | `rh` | `src/components/layout/MobileQuickActions.tsx` |

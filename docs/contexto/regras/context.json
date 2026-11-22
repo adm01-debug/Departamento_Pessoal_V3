@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "af23346218d9b605a19a495f5cbe073bd9be403d",
+  "sha": "f611296f8fd592befc7656fc84f1e1553fb09534",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 00:57 UTC",
-  "files_total": 3718,
-  "code_files": 3128,
-  "code_lines": 497869
+  "generated_at": "2026-11-22 00:59 UTC",
+  "files_total": 3720,
+  "code_files": 3130,
+  "code_lines": 498073
  },
  "version": "1.3.2",
- "facts_hash": "bdeefb5651656580",
+ "facts_hash": "2dee9446854abf1b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1036,
-   ".sql": 990,
+   ".sql": 992,
    ".ts": 962,
    ".mjs": 109,
    ".js": 15,
@@ -37686,99 +37686,99 @@
     "columns": [
      {
       "name": "id",
-      "type": "UUID PRIMARY KEY DEFAULT gen_random_uuid()",
+      "type": "uuid PRIMARY KEY DEFAULT gen_random_uuid()",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20251228131628_create_recibos_ferias.sql"
-     },
-     {
-      "name": "colaborador_id",
-      "type": "UUID REFERENCES public.colaboradores(id) ON DELETE CASCADE",
-      "fk": "colaboradores.id ON DELETE CASCADE",
-      "generated": "",
-      "src": "supabase/migrations/20251228131628_create_recibos_ferias.sql"
+      "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
      },
      {
       "name": "empresa_id",
-      "type": "UUID REFERENCES public.empresas(id) ON DELETE CASCADE",
+      "type": "uuid REFERENCES public.empresas(id) ON DELETE CASCADE",
       "fk": "empresas.id ON DELETE CASCADE",
       "generated": "",
-      "src": "supabase/migrations/20251228131628_create_recibos_ferias.sql"
+      "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+     },
+     {
+      "name": "colaborador_id",
+      "type": "uuid REFERENCES public.colaboradores(id) ON DELETE CASCADE",
+      "fk": "colaboradores.id ON DELETE CASCADE",
+      "generated": "",
+      "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
      },
      {
       "name": "descricao",
-      "type": "TEXT",
+      "type": "text",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20251228131628_create_recibos_ferias.sql"
+      "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
      },
      {
       "name": "valor",
-      "type": "DECIMAL(15,2) DEFAULT 0",
+      "type": "numeric(15,2) DEFAULT 0",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20251228131628_create_recibos_ferias.sql"
+      "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
      },
      {
       "name": "data_inicio",
-      "type": "DATE",
+      "type": "date",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20251228131628_create_recibos_ferias.sql"
+      "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
      },
      {
       "name": "data_fim",
-      "type": "DATE",
+      "type": "date",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20251228131628_create_recibos_ferias.sql"
+      "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
      },
      {
       "name": "ativo",
-      "type": "BOOLEAN DEFAULT true",
+      "type": "boolean DEFAULT true",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20251228131628_create_recibos_ferias.sql"
+      "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
      },
      {
       "name": "observacoes",
-      "type": "TEXT",
+      "type": "text",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20251228131628_create_recibos_ferias.sql"
+      "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
      },
      {
       "name": "created_at",
-      "type": "TIMESTAMPTZ DEFAULT NOW()",
+      "type": "timestamptz DEFAULT now()",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20251228131628_create_recibos_ferias.sql"
+      "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
      },
      {
       "name": "updated_at",
-      "type": "TIMESTAMPTZ DEFAULT NOW()",
+      "type": "timestamptz DEFAULT now()",
       "fk": "",
       "generated": "",
-      "src": "supabase/migrations/20251228131628_create_recibos_ferias.sql"
+      "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
      },
      {
       "name": "created_by",
-      "type": "UUID REFERENCES auth.users(id)",
-      "fk": "users.id",
+      "type": "uuid REFERENCES auth.users(id) ON DELETE SET NULL",
+      "fk": "users.id ON DELETE SET NULL",
       "generated": "",
-      "src": "supabase/migrations/20251228131628_create_recibos_ferias.sql"
+      "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
      },
      {
       "name": "updated_by",
-      "type": "UUID REFERENCES auth.users(id)",
-      "fk": "users.id",
+      "type": "uuid REFERENCES auth.users(id) ON DELETE SET NULL",
+      "fk": "users.id ON DELETE SET NULL",
       "generated": "",
-      "src": "supabase/migrations/20251228131628_create_recibos_ferias.sql"
+      "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
      }
     ],
     "constraints": [],
-    "src": "supabase/migrations/20251228131628_create_recibos_ferias.sql",
-    "comment": "",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
+    "comment": "Registro do recibo de férias baixado pelo RH (FeriasActions.tsx). Metadado de emissão — o PDF é gerado no navegador e não é arquivado aqui.",
     "origin": "migration"
    },
    "recibos_rescisao": {
@@ -54914,6 +54914,24 @@
     "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
    },
    {
+    "name": "trg_recibos_ferias_validar",
+    "when": "BEFORE INSERT OR UPDATE",
+    "table": "recibos_ferias",
+    "function": "recibos_ferias_validar",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
+    "name": "trg_recibos_ferias_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "recibos_ferias",
+    "function": "update_updated_at_column",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
     "name": "ajuste_ponto_status_transition",
     "when": "BEFORE UPDATE OF \"STATUS\"",
     "table": "solicitacoes_ajuste_ponto",
@@ -65555,6 +65573,21 @@
      "colaboradores"
     ]
    },
+   "recibos_ferias_validar": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF NOT EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = NEW.colaborador_id AND c.empresa_id = NEW.empresa_id ) THEN RAISE EXCEPTION 'colaborador % não pertence à empresa %', NEW.colaborador_id, NEW.empresa_id USING ERRCODE = '42501'; END IF; IF auth.uid() IS NOT NULL THEN IF TG_OP = 'INSERT' THEN NEW.created_by := auth.uid(); END IF; NEW.updated_by := auth.uid(); END IF; RETURN NEW; END;",
+    "raises": [
+     "colaborador % não pertence à empresa %"
+    ],
+    "tables": [
+     "colaboradores"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -71809,6 +71842,22 @@
     "unique": false,
     "where": "",
     "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+   },
+   {
+    "name": "idx_recibos_ferias_colaborador",
+    "table": "recibos_ferias",
+    "columns": "colaborador_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
+    "name": "idx_recibos_ferias_empresa_data",
+    "table": "recibos_ferias",
+    "columns": "empresa_id, data_inicio DESC",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
    }
   ],
   "cron_jobs": [
@@ -73237,6 +73286,8 @@
    "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.verify.sql",
    "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
    "supabase/migrations/20261121224000_ponto_espelhos_papel.verify.sql",
+   "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
+   "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -85491,6 +85542,38 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "recibos_ferias_validar",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "recibos_ferias",
+    "objkind": "table",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select, insert, update, delete",
+    "object": "recibos_ferias",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "recibos_ferias",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -87092,6 +87175,11 @@
     "function": "ponto_espelhos_papel_validar",
     "msg": "colaborador % não pertence à empresa %",
     "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+   },
+   {
+    "function": "recibos_ferias_validar",
+    "msg": "colaborador % não pertence à empresa %",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -89014,7 +89102,8 @@
    "table:ponto_rep_funcionarios": "Cadastro de funcionários vindo do AtecSoft e vínculo com colaboradores.",
    "table:ponto_rep_dias": "Cópia fiel do cartão ponto diário do AtecSoft (tabela CP).",
    "table:ponto_rep_justificativas": "De-para das justificativas do AtecSoft para o tipo de dia do DP.",
-   "table:ponto_espelhos_papel": "Etapa 85: espelho de ponto devolvido assinado em papel, por colaborador e competência (1º dia do mês)."
+   "table:ponto_espelhos_papel": "Etapa 85: espelho de ponto devolvido assinado em papel, por colaborador e competência (1º dia do mês).",
+   "table:recibos_ferias": "Registro do recibo de férias baixado pelo RH (FeriasActions.tsx). Metadado de emissão — o PDF é gerado no navegador e não é arquivado aqui."
   },
   "types_file": "src/integrations/supabase/types.ts"
  },
@@ -103272,7 +103361,7 @@
   {
    "module": "scripts",
    "files": 154,
-   "lines": 35233,
+   "lines": 35232,
    "tables": [
     "a",
     "anexos",
@@ -103584,7 +103673,7 @@
   {
    "module": "src/components",
    "files": 1009,
-   "lines": 186662,
+   "lines": 186672,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105545,10 +105634,11 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 916,
-   "lines": 83438,
+   "files": 918,
+   "lines": 83633,
    "tables": [
     "profiles",
+    "recibos_ferias",
     "user_roles"
    ],
    "exports": [],
@@ -108300,6 +108390,9 @@
    "recibos_ferias": {
     "insert": [
      "src/components/ferias/FeriasActions.tsx"
+    ],
+    "ref": [
+     "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
     ]
    },
    "recrutamento_anotacoes": {
@@ -119764,6 +119857,10 @@
    },
    {
     "file": "src/components/dashboard/analytics/AlertasPreditivosWidget.tsx",
+    "value": "rh"
+   },
+   {
+    "file": "src/components/ferias/FeriasActions.tsx",
     "value": "rh"
    },
    {
@@ -146380,13 +146477,13 @@
    },
    {
     "table": "recibos_ferias",
-    "column": "colaborador_id",
-    "rule": "FK → colaboradores.id ON DELETE CASCADE"
+    "column": "empresa_id",
+    "rule": "FK → empresas.id ON DELETE CASCADE"
    },
    {
     "table": "recibos_ferias",
-    "column": "empresa_id",
-    "rule": "FK → empresas.id ON DELETE CASCADE"
+    "column": "colaborador_id",
+    "rule": "FK → colaboradores.id ON DELETE CASCADE"
    },
    {
     "table": "recibos_ferias",
@@ -146401,22 +146498,22 @@
    {
     "table": "recibos_ferias",
     "column": "created_at",
-    "rule": "default NOW()"
+    "rule": "default now()"
    },
    {
     "table": "recibos_ferias",
     "column": "updated_at",
-    "rule": "default NOW()"
+    "rule": "default now()"
    },
    {
     "table": "recibos_ferias",
     "column": "created_by",
-    "rule": "FK → users.id"
+    "rule": "FK → users.id ON DELETE SET NULL"
    },
    {
     "table": "recibos_ferias",
     "column": "updated_by",
-    "rule": "FK → users.id"
+    "rule": "FK → users.id ON DELETE SET NULL"
    },
    {
     "table": "recibos_rescisao",
@@ -219062,6 +219159,24 @@
     "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
    },
    {
+    "name": "trg_recibos_ferias_validar",
+    "when": "BEFORE INSERT OR UPDATE",
+    "table": "recibos_ferias",
+    "function": "recibos_ferias_validar",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
+    "name": "trg_recibos_ferias_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "recibos_ferias",
+    "function": "update_updated_at_column",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
     "name": "ajuste_ponto_status_transition",
     "when": "BEFORE UPDATE OF \"STATUS\"",
     "table": "solicitacoes_ajuste_ponto",
@@ -229703,6 +229818,21 @@
      "colaboradores"
     ]
    },
+   "recibos_ferias_validar": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN IF NOT EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = NEW.colaborador_id AND c.empresa_id = NEW.empresa_id ) THEN RAISE EXCEPTION 'colaborador % não pertence à empresa %', NEW.colaborador_id, NEW.empresa_id USING ERRCODE = '42501'; END IF; IF auth.uid() IS NOT NULL THEN IF TG_OP = 'INSERT' THEN NEW.created_by := auth.uid(); END IF; NEW.updated_by := auth.uid(); END IF; RETURN NEW; END;",
+    "raises": [
+     "colaborador % não pertence à empresa %"
+    ],
+    "tables": [
+     "colaboradores"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -230928,6 +231058,11 @@
     "function": "ponto_espelhos_papel_validar",
     "msg": "colaborador % não pertence à empresa %",
     "src": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql"
+   },
+   {
+    "function": "recibos_ferias_validar",
+    "msg": "colaborador % não pertence à empresa %",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -245009,6 +245144,7 @@
    "supabase/migrations/20261121222000_batidas_relogio_protecao.verify.sql",
    "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql",
    "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
+   "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -245265,6 +245401,7 @@
    "purge_old_records",
    "purge_pii_access_logs",
    "purge_rate_limits",
+   "recibos_ferias_validar",
    "reconcile_training_image",
    "reconciliar_afdt",
    "reconciliar_ferias_folha_batch",
@@ -257115,6 +257252,38 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "recibos_ferias_validar",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "recibos_ferias",
+    "objkind": "table",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select, insert, update, delete",
+    "object": "recibos_ferias",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "recibos_ferias",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -261539,7 +261708,7 @@
    [
     "recibos_ferias",
     "valor",
-    "DECIMAL(15,2)"
+    "numeric(15,2)"
    ],
    [
     "recibos_rescisao",
@@ -264126,7 +264295,7 @@
    "`afd_geracoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`ponto_rep_funcionarios.situacao` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`feedbacks_360_consolidacoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "400/476 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …"
+   "399/476 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …"
   ]
  },
  "manual": [],
@@ -265497,7 +265666,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 449,
+   "lines": 448,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -273410,7 +273579,7 @@
   },
   "src/components/__tests__/FeriasActions.test.tsx": {
    "path": "src/components/__tests__/FeriasActions.test.tsx",
-   "lines": 125,
+   "lines": 129,
    "is_test": true,
    "tests": [
     "FeriasActions",
@@ -285309,7 +285478,7 @@
   },
   "src/components/ferias/FeriasActions.tsx": {
    "path": "src/components/ferias/FeriasActions.tsx",
-   "lines": 216,
+   "lines": 222,
    "exports": [
     "function FeriasActions"
    ],
@@ -285325,6 +285494,9 @@
      "value": "rejeitada",
      "kind": "compara"
     }
+   ],
+   "role_checks": [
+    "rh"
    ]
   },
   "src/components/ferias/FeriasAlertasPagamentoCard.tsx": {
@@ -334642,6 +334814,21 @@
    "path": "supabase/migrations/20261121224000_ponto_espelhos_papel.verify.sql",
    "lines": 33
   },
+  "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql": {
+   "path": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
+   "lines": 151,
+   "tables": [
+    {
+     "table": "recibos_ferias",
+     "op": "ref"
+    }
+   ],
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.verify.sql": {
+   "path": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.verify.sql",
+   "lines": 44
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -335035,10 +335222,24 @@
   }
  },
  "git": {
-  "sha": "af23346218d9b605a19a495f5cbe073bd9be403d",
+  "sha": "f611296f8fd592befc7656fc84f1e1553fb09534",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "f611296",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: cria recibos_ferias no canônico — recibo de férias nunca era gravado (#810)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql",
+     "src/components/__tests__/FeriasActions.test.tsx",
+     "src/components/ferias/FeriasActions.tsx",
+     "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
+     "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.verify.sql"
+    ]
+   },
    {
     "sha": "af23346",
     "date": "2026-11-21",
@@ -335373,15 +335574,6 @@
     "files": [
      "analise-prs/funcionalidades.csv"
     ]
-   },
-   {
-    "sha": "8b67020",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: marca policy ferias_gestor_update como OK no backlog (já aplicada no canônico) (#780)",
-    "files": [
-     "docs/pendencias/_ordem.md"
-    ]
    }
   ],
   "hot_files": [
@@ -335394,23 +335586,19 @@
     5
    ],
    [
+    ".github/workflows/canonical-migrations.yml",
+    4
+   ],
+   [
+    "scripts/canonical-invariants.sql",
+    4
+   ],
+   [
     "src/pages/PontoKioskPage.tsx",
     3
    ],
    [
     "src/components/ponto/relogio/RelogiosPanel.tsx",
-    3
-   ],
-   [
-    ".github/workflows/canonical-migrations.yml",
-    3
-   ],
-   [
-    "scripts/canonical-invariants.sql",
-    3
-   ],
-   [
-    "docs/pendencias/_ordem.md",
     3
    ],
    [
@@ -335446,23 +335634,27 @@
     2
    ],
    [
+    "docs/pendencias/_ordem.md",
+    2
+   ],
+   [
+    "src/components/__tests__/FeriasActions.test.tsx",
+    1
+   ],
+   [
+    "src/components/ferias/FeriasActions.tsx",
+    1
+   ],
+   [
+    "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.verify.sql",
+    1
+   ],
+   [
     "src/hooks/__tests__/usePontoOffline.test.ts",
-    1
-   ],
-   [
-    "src/hooks/usePontoOffline.ts",
-    1
-   ],
-   [
-    "src/services/__tests__/pontoOfflineService.test.ts",
-    1
-   ],
-   [
-    "src/components/__tests__/EspelhosPapelPanel.test.tsx",
-    1
-   ],
-   [
-    "src/components/ponto/EspelhosPapelPanel.tsx",
     1
    ]
   ]

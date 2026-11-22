@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 916,
+ "migrations": 918,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -551,6 +551,7 @@
   "purge_old_records",
   "purge_pii_access_logs",
   "purge_rate_limits",
+  "recibos_ferias_validar",
   "reconcile_training_image",
   "reconciliar_afdt",
   "reconciliar_ferias_folha_batch",
@@ -2527,6 +2528,20 @@
    "evento": "update",
    "tabela": "provisoes_mensais",
    "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "trg_recibos_ferias_updated_at",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "recibos_ferias",
+   "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "trg_recibos_ferias_validar",
+   "quando": "before",
+   "evento": "insert or update",
+   "tabela": "recibos_ferias",
+   "funcao": "recibos_ferias_validar"
   },
   {
    "nome": "trigger_recibos_ferias_updated_at",
@@ -51057,7 +51072,7 @@
      "tipo": "timestamptz",
      "nn": false,
      "pk": false,
-     "default": "NOW()",
+     "default": "now()",
      "ref": null
     },
     "created_by": {
@@ -51120,7 +51135,7 @@
      "tipo": "timestamptz",
      "nn": false,
      "pk": false,
-     "default": "NOW()",
+     "default": "now()",
      "ref": null
     },
     "updated_by": {
@@ -51131,7 +51146,7 @@
      "ref": "auth"
     },
     "valor": {
-     "tipo": "decimal(15,2)",
+     "tipo": "numeric(15,2)",
      "nn": false,
      "pk": false,
      "default": "0",
@@ -51141,8 +51156,26 @@
    "rls": true,
    "policies": [
     {
-     "nome": "recibos_ferias_tenant",
-     "comando": "all",
+     "nome": "recibos_ferias_rh_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "recibos_ferias_rh_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "recibos_ferias_rh_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "recibos_ferias_rh_update",
+     "comando": "update",
      "para": "authenticated",
      "tipo": "permissive"
     }
@@ -51161,6 +51194,11 @@
     {
      "nome": "idx_recibos_ferias_empresa",
      "colunas": "empresa_id",
+     "unico": false
+    },
+    {
+     "nome": "idx_recibos_ferias_empresa_data",
+     "colunas": "empresa_id, data_inicio DESC",
      "unico": false
     },
     {
@@ -51200,6 +51238,8 @@
    "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [
+    "trg_recibos_ferias_updated_at",
+    "trg_recibos_ferias_validar",
     "trigger_recibos_ferias_updated_at",
     "update_recibos_ferias_updated_at"
    ],

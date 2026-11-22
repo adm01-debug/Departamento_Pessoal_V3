@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "af23346218d9b605a19a495f5cbe073bd9be403d",
+  "commit": "f611296f8fd592befc7656fc84f1e1553fb09534",
   "branch": "main",
-  "data_commit": "2026-11-21T21:56:44-03:00",
+  "data_commit": "2026-11-21T21:56:57-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "f611296",
+    "data": "2026-11-21",
+    "assunto": "fix: cria recibos_ferias no canônico — recibo de férias nunca era gravado (#810)"
+   },
    {
     "sha": "af23346",
     "data": "2026-11-21",
@@ -126,18 +131,13 @@
     "sha": "06ab445",
     "data": "2026-11-21",
     "assunto": "chore: plano em 100 etapas da integração do ponto Henry/AtecSoft (#786)"
-   },
-   {
-    "sha": "3c6b0a5",
-    "data": "2026-11-21",
-    "assunto": "chore: auditoria contínua das funcionalidades F-01..F-20 (#785)"
    }
   ],
-  "arquivos_mudados_7d": 1051,
+  "arquivos_mudados_7d": 1055,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 383
+    "mudancas": 382
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 28
+    "mudancas": 29
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 19
+    "mudancas": 20
    },
    {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3704,
+  "arquivos_total": 3706,
   "arquivos_codigo": 2140,
-  "linhas_codigo": 427416,
+  "linhas_codigo": 427426,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -326,7 +326,7 @@
   "hooks": 122,
   "edge_functions": 68,
   "tabelas": 436,
-  "migrations": 916,
+  "migrations": 918,
   "cron_jobs": 42,
   "testes": 807,
   "workflows": 21,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 1009,
-   "linhas": 186662
+   "linhas": 186672
   },
   "src/constants": {
    "arquivos": 7,
