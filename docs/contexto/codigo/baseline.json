@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d4b08fae773dfea0d9ecba39bd4b9c8e5784b60e",
+  "commit": "bba91c5fe39cb197064c544cf13e8657ba89b40b",
   "branch": "main",
-  "data_commit": "2026-11-22T03:59:23Z",
+  "data_commit": "2026-11-22T02:17:50-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "bba91c5",
+    "data": "2026-11-22",
+    "assunto": "feat: conecta a aba FGTS Digital à edge fgts-digital (feature estava órfã a 1 passo do fim) (#822)"
+   },
    {
     "sha": "d4b08fa",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "0696746",
     "data": "2026-11-21",
     "assunto": "feat: coletor somente leitura do Ponto AtecSoft para o DP V3 (#796)"
-   },
-   {
-    "sha": "db90472",
-    "data": "2026-11-21",
-    "assunto": "fix: estabiliza arraste por toque no teste mobile do pipeline (#797)"
    }
   ],
-  "arquivos_mudados_7d": 1058,
+  "arquivos_mudados_7d": 1065,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 96
+    "mudancas": 97
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -181,7 +181,7 @@
    },
    {
     "pasta": "src/pages/__tests__",
-    "mudancas": 34
+    "mudancas": 35
    },
    {
     "pasta": "src/components/ponto",
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3706,
-  "arquivos_codigo": 2140,
-  "linhas_codigo": 427464,
+  "arquivos_total": 3708,
+  "arquivos_codigo": 2142,
+  "linhas_codigo": 428037,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 82,
-  "componentes": 645,
+  "componentes": 646,
   "hooks": 122,
   "edge_functions": 68,
   "tabelas": 436,
   "migrations": 918,
   "cron_jobs": 42,
-  "testes": 807,
+  "testes": 808,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 344
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1009,
-   "linhas": 186672
+   "arquivos": 1010,
+   "linhas": 186810
   },
   "src/constants": {
    "arquivos": 7,
@@ -683,8 +683,8 @@
    "linhas": 3564
   },
   "src/pages": {
-   "arquivos": 144,
-   "linhas": 50969
+   "arquivos": 145,
+   "linhas": 51320
   },
   "src/providers": {
    "arquivos": 4,
@@ -696,7 +696,7 @@
   },
   "src/services": {
    "arquivos": 198,
-   "linhas": 41896
+   "linhas": 41956
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -724,7 +724,7 @@
   },
   "supabase/functions": {
    "arquivos": 191,
-   "linhas": 27568
+   "linhas": 27592
   },
   "supabase/tests": {
    "arquivos": 3,
@@ -1024,7 +1024,6 @@
    "cnab-remessa",
    "dctfweb",
    "emprestimo-consignado",
-   "fgts-digital",
    "integracao",
    "pix-lote",
    "relatorio",

@@ -3083,6 +3083,13 @@
    "src/integrations/supabase/types.ts",
    "src/lib/utils.ts"
   ],
+  "src/components/obrigacoes/FgtsDigitalTable.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/table.tsx",
+   "src/lib/utils.ts"
+  ],
   "src/components/obrigacoes/GuiasTable.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -6678,6 +6685,7 @@
    "src/components/layout/index.ts",
    "src/components/obrigacoes/DarfTab.tsx",
    "src/components/obrigacoes/DeclaracoesTable.tsx",
+   "src/components/obrigacoes/FgtsDigitalTable.tsx",
    "src/components/obrigacoes/GuiasTable.tsx",
    "src/components/obrigacoes/ObrigacoesKPIs.tsx",
    "src/components/obrigacoes/simulacaoResumo.ts",
@@ -6694,6 +6702,7 @@
    "src/integrations/supabase/client.ts",
    "src/schemas/validate.ts",
    "src/services/edgeFunctionsService.ts",
+   "src/utils/dateLocal.ts",
    "src/utils/safeError.ts"
   ],
   "src/pages/OnboardingPage.tsx": [

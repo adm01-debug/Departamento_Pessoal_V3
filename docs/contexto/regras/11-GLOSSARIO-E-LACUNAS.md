@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d4b08fae77` · branch `main` · 2026-11-22 04:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bba91c5fe3` · branch `main` · 2026-11-22 05:18 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -380,7 +380,7 @@
 | status | valor `registrada` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/FaltasPage.tsx` |
 | status | valor `duplicado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/ImportacaoPage.tsx` |
 | status | valor `configurando` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/pages/IntegracoesPage.tsx` |
-| status | valor `gerada` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/pages/ObrigacoesFiscaisPage.tsx`<br>`escreve:supabase/functions/dctfweb/index.ts`<br>`escreve:supabase/functions/fgts-digital/index.ts` |
+| status | valor `gerada` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/pages/ObrigacoesFiscaisPage.tsx`<br>`escreve:supabase/functions/dctfweb/index.ts`<br>`escreve:supabase/functions/fgts-digital/index.ts`<br>`filtra:supabase/functions/gerar-guias/index.ts` |
 | status | valor `excluido` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/PlanosSaudePage.tsx`<br>`escreve:src/services/tabelas/beneficiosService.ts`<br>`filtra:src/services/calculoBeneficiosService.ts` |
 | status | valor `CONCLUIDO` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/ProvisoesPage.tsx`<br>`escreve:supabase/functions/calcular-provisoes/index.ts`<br>`filtra:src/pages/ProvisoesPage.tsx` |
 | status | valor `PROCESSANDO` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/ProvisoesPage.tsx`<br>`escreve:supabase/functions/calcular-provisoes/index.ts` |
@@ -435,6 +435,7 @@
 | rls | `config_afastamentos`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/services/tabelas/rhService.ts` |
 | rls | `config_alertas_indicadores`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/InlineTabs.tsx` |
 | rls | `configuracoes`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/ConfiguracoesGeraisTab.tsx` |
+| rls | `guias_fgts_digital`: front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários | `src/pages/ObrigacoesFiscaisPage.tsx` |
 | rls | `lancamentos_contabeis`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/services/contabilidadeService.ts` |
 | rls | `pcs_avaliacoes_cargo`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | rls | `pcs_fatores`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
@@ -646,8 +647,7 @@
 | segurança | função `trg_detect_status_anomaly` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_ferias_gerar_rubricas` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_ferias_reconciliacao_alert` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `trg_medida_aplicada_integrar` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +40 linhas — lista completa em `context.json` | | |
+| … +41 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 

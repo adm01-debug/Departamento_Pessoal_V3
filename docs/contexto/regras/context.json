@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d4b08fae773dfea0d9ecba39bd4b9c8e5784b60e",
+  "sha": "bba91c5fe39cb197064c544cf13e8657ba89b40b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 04:16 UTC",
-  "files_total": 3720,
-  "code_files": 3130,
-  "code_lines": 498111
+  "generated_at": "2026-11-22 05:18 UTC",
+  "files_total": 3722,
+  "code_files": 3132,
+  "code_lines": 498684
  },
  "version": "1.3.2",
- "facts_hash": "b9f4d235dc1beef6",
+ "facts_hash": "499471af2be55ae1",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,7 +387,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1036,
+   ".tsx": 1038,
    ".sql": 992,
    ".ts": 962,
    ".mjs": 109,
@@ -95657,7 +95657,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 212
+    "deps_count": 213
    },
    {
     "path": "",
@@ -99813,7 +99813,7 @@
     "errors": [],
     "side_effects": [],
     "webhook_events": [],
-    "idempotency": false
+    "idempotency": true
    },
    {
     "name": "folha-metrics",
@@ -102026,7 +102026,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1009,
+  "components_count": 1010,
   "hooks": [
    {
     "name": "useContacts",
@@ -103673,8 +103673,8 @@
   },
   {
    "module": "src/components",
-   "files": 1009,
-   "lines": 186672,
+   "files": 1010,
+   "lines": 186810,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -104370,8 +104370,8 @@
   },
   {
    "module": "src/pages",
-   "files": 144,
-   "lines": 50969,
+   "files": 145,
+   "lines": 51320,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -104410,6 +104410,7 @@
     "folha_itens",
     "folhas_pagamento",
     "guias_fgts",
+    "guias_fgts_digital",
     "guias_inss",
     "historico_alertas",
     "historico_rescisoes",
@@ -104738,7 +104739,7 @@
   {
    "module": "src/services",
    "files": 198,
-   "lines": 41896,
+   "lines": 41956,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -105384,7 +105385,7 @@
   {
    "module": "supabase/functions",
    "files": 191,
-   "lines": 27568,
+   "lines": 27592,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -107486,7 +107487,11 @@
    },
    "guias_fgts_digital": {
     "select": [
+     "src/pages/ObrigacoesFiscaisPage.tsx",
      "supabase/functions/fgts-digital/index.ts"
+    ],
+    "update": [
+     "src/pages/ObrigacoesFiscaisPage.tsx"
     ],
     "insert": [
      "supabase/functions/fgts-digital/index.ts"
@@ -109934,9 +109939,13 @@
    "guias_fgts_digital": [
     "competencia",
     "empresa_id",
+    "gfd_data_geracao",
+    "gfd_protocolo",
     "id",
     "status",
-    "tipo"
+    "tipo",
+    "valor_total",
+    "vencimento"
    ],
    "guias_inss": [
     "empresa_id"
@@ -117796,6 +117805,14 @@
     "msg": "Erro ao gerar guia"
    },
    {
+    "file": "src/pages/ObrigacoesFiscaisPage.tsx",
+    "msg": "Nenhuma guia foi atualizada: sem permissão de escrita nesta guia ou ela já não pertence a esta empresa."
+   },
+   {
+    "file": "src/pages/ObrigacoesFiscaisPage.tsx",
+    "msg": "Vencimento já passou para esta competência. Selecione uma competência em aberto."
+   },
+   {
     "file": "src/pages/OnboardingPage.tsx",
     "msg": "Não foi possível atualizar o perfil de kit."
    },
@@ -122096,6 +122113,14 @@
     "text": "apenas o hash, portanto não há como recuperá-lo depois. Ao fechar o diálogo o"
    },
    {
+    "file": "src/components/obrigacoes/FgtsDigitalTable.tsx",
+    "text": "edge `fgts-digital`). Diferente de `GuiasTable`: aqui a coluna de vencimento é"
+   },
+   {
+    "file": "src/components/obrigacoes/FgtsDigitalTable.tsx",
+    "text": "`vencimento` (não `data_vencimento`) e existe o protocolo GFD — por isso a"
+   },
+   {
     "file": "src/components/organograma/EmployeeRow.tsx",
     "text": "A coluna de contato reserva os 260px do e-mail apenas de `lg` para cima,"
    },
@@ -123110,6 +123135,10 @@
    {
     "file": "src/pages/NineBoxPreviewPage.tsx",
     "text": "• A rota é registrada em `App.tsx` apenas quando `import.meta.env.DEV` — e"
+   },
+   {
+    "file": "src/pages/ObrigacoesFiscaisPage.tsx",
+    "text": "Vencimento do FGTS Digital: dia 20 do mês seguinte à competência; se cair"
    },
    {
     "file": "src/pages/OnboardingPage.tsx",
@@ -124658,6 +124687,14 @@
    {
     "file": "supabase/functions/fgts-digital/index.ts",
     "text": "vencimento não pode ser retroativo"
+   },
+   {
+    "file": "supabase/functions/fgts-digital/index.ts",
+    "text": "no header e nao pode receber 409 nem uma segunda guia pela mesma"
+   },
+   {
+    "file": "supabase/functions/fgts-digital/index.ts",
+    "text": "O par (empresa, competencia, tipo) tem no maximo uma guia, entao"
    },
    {
     "file": "supabase/functions/folha-metrics/index.ts",
@@ -154207,6 +154244,18 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/obrigacoes/FgtsDigitalTable.tsx",
+    "field": "status",
+    "value": "paga",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/obrigacoes/FgtsDigitalTable.tsx",
+    "field": "status",
+    "value": "paga",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/obrigacoes/GuiasTable.tsx",
     "field": "status",
     "value": "paga",
@@ -159344,6 +159393,18 @@
    },
    {
     "file": "src/pages/ObrigacoesFiscaisPage.tsx",
+    "field": "status",
+    "value": "paga",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/ObrigacoesFiscaisPage.tsx",
+    "field": "tipo",
+    "value": "mensal",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/ObrigacoesFiscaisPage.tsx",
     "field": "tipo",
     "value": "todos",
     "kind": "escreve"
@@ -160354,6 +160415,12 @@
     "file": "src/services/edgeFunctionsService.ts",
     "field": "tipo",
     "value": "darf",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/services/edgeFunctionsService.ts",
+    "field": "tipo",
+    "value": "mensal",
     "kind": "escreve"
    },
    {
@@ -162211,12 +162278,6 @@
     "kind": "escreve"
    },
    {
-    "file": "supabase/functions/fgts-digital/index.ts",
-    "field": "status",
-    "value": "pendente",
-    "kind": "filtra"
-   },
-   {
     "file": "supabase/functions/gerar-aej/index.ts",
     "field": "status",
     "value": "gerado",
@@ -162303,7 +162364,7 @@
    {
     "file": "supabase/functions/gerar-guias/index.ts",
     "field": "status",
-    "value": "pendente",
+    "value": "gerada",
     "kind": "filtra"
    },
    {
@@ -163911,6 +163972,12 @@
     "body": "return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);"
    },
    {
+    "file": "src/components/obrigacoes/FgtsDigitalTable.tsx",
+    "name": "formatCurrency",
+    "params": "v: number",
+    "body": "return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);"
+   },
+   {
     "file": "src/components/obrigacoes/GuiasTable.tsx",
     "name": "formatCurrency",
     "params": "v: number",
@@ -164407,6 +164474,12 @@
     "name": "gerarCompetencias",
     "params": "",
     "body": "const items: string[] = []; const hoje = new Date(); for (let i = -6; i <= 1; i++) { const d = new Date(hoje.getFullYear(), hoje.getMonth() + i, 1); items.push(`${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`); } return items.reverse();"
+   },
+   {
+    "file": "src/pages/ObrigacoesFiscaisPage.tsx",
+    "name": "gerarFgtsDigital",
+    "params": "valorCentavos: number",
+    "body": "if (!empresaAtual?.id) return; const [mes, ano] = competencia.split('/'); // Vencimento do FGTS Digital: dia 20 do mês seguinte à competência; se cair // em fim de semana/prorrogação legal, o próprio usuário ajusta no diálogo. const venc = new Date(Number(ano), Number(mes), 20); if (venc < new Date()) { toast.error('Vencimento já passou para esta competência. Selecione uma competência em aberto.'); return; } setGerandoFgtsDigital(true); try { const { data: r } = await edgeFunctionsService.gerarG …"
    },
    {
     "file": "src/pages/ObrigacoesFiscaisPage.tsx",
@@ -192673,6 +192746,30 @@
     "name": "mostra o Google lado a lado com o Gov.br e inicia o OAuth quando a flag é "
    },
    {
+    "file": "src/pages/__tests__/ObrigacoesFiscaisPage.fgtsDigital.test.tsx",
+    "name": "ObrigacoesFiscaisPage — aba FGTS Digital (edge fgts-digital)"
+   },
+   {
+    "file": "src/pages/__tests__/ObrigacoesFiscaisPage.fgtsDigital.test.tsx",
+    "name": "expõe a aba FGTS Digital"
+   },
+   {
+    "file": "src/pages/__tests__/ObrigacoesFiscaisPage.fgtsDigital.test.tsx",
+    "name": "lê e exibe as guias de guias_fgts_digital com o protocolo GFD"
+   },
+   {
+    "file": "src/pages/__tests__/ObrigacoesFiscaisPage.fgtsDigital.test.tsx",
+    "name": "mostra estado de erro em vez de lista vazia quando a leitura falha"
+   },
+   {
+    "file": "src/pages/__tests__/ObrigacoesFiscaisPage.fgtsDigital.test.tsx",
+    "name": "recupera a lista ao clicar em "
+   },
+   {
+    "file": "src/pages/__tests__/ObrigacoesFiscaisPage.fgtsDigital.test.tsx",
+    "name": "soma no diálogo apenas as guias da competência selecionada, não o histórico"
+   },
+   {
     "file": "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx",
     "name": "ObrigacoesFiscaisPage — gerar guias via servidor"
    },
@@ -197963,6 +198060,10 @@
    {
     "file": "src/services/__tests__/edgeFunctionsService.test.ts",
     "name": "mapeia fgts_digital para FGTS_DIGITAL"
+   },
+   {
+    "file": "src/services/__tests__/edgeFunctionsService.test.ts",
+    "name": "gerarGuiaFgtsDigital chama a edge dedicada com contrato snake_case"
    },
    {
     "file": "src/services/__tests__/empresaService.test.ts",
@@ -235555,6 +235656,8 @@
      ],
      "mensal": [
       "escreve:src/hooks/useCalculoFolha.ts",
+      "escreve:src/pages/ObrigacoesFiscaisPage.tsx",
+      "escreve:src/services/edgeFunctionsService.ts",
       "escreve:src/services/folha/calculoLoteService.ts",
       "filtra:src/components/folha/FolhaDashboard.tsx",
       "filtra:src/hooks/useCalculoFolha.ts",
@@ -236183,9 +236286,7 @@
       "filtra:src/services/cnabService.ts",
       "filtra:src/services/workflowService.ts",
       "filtra:supabase/functions/adiantamento-salarial/index.ts",
-      "filtra:supabase/functions/dctfweb/index.ts",
-      "filtra:supabase/functions/fgts-digital/index.ts",
-      "filtra:supabase/functions/gerar-guias/index.ts"
+      "filtra:supabase/functions/dctfweb/index.ts"
      ],
      "validado": [
       "compara:src/components/admissao/AdmissaoChecklist.tsx",
@@ -236684,6 +236785,7 @@
       "escreve:src/pages/ContratacaoPage.tsx"
      ],
      "paga": [
+      "compara:src/components/obrigacoes/FgtsDigitalTable.tsx",
       "compara:src/components/obrigacoes/GuiasTable.tsx",
       "compara:src/pages/ObrigacoesFiscaisPage.tsx",
       "compara:supabase/migrations/20260724002800_fix_guias_fgts_inss_missing_competencia.sql",
@@ -236949,7 +237051,8 @@
      "gerada": [
       "escreve:src/pages/ObrigacoesFiscaisPage.tsx",
       "escreve:supabase/functions/dctfweb/index.ts",
-      "escreve:supabase/functions/fgts-digital/index.ts"
+      "escreve:supabase/functions/fgts-digital/index.ts",
+      "filtra:supabase/functions/gerar-guias/index.ts"
      ],
      "ativa": [
       "compara:src/pages/PesquisasClimaPage.tsx",
@@ -244741,6 +244844,13 @@
     "issue": "front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários",
     "files": [
      "src/components/settings/ConfiguracoesGeraisTab.tsx"
+    ]
+   },
+   {
+    "table": "guias_fgts_digital",
+    "issue": "front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários",
+    "files": [
+     "src/pages/ObrigacoesFiscaisPage.tsx"
     ]
    },
    {
@@ -262055,7 +262165,8 @@
     "where": [
      "escreve:src/pages/ObrigacoesFiscaisPage.tsx",
      "escreve:supabase/functions/dctfweb/index.ts",
-     "escreve:supabase/functions/fgts-digital/index.ts"
+     "escreve:supabase/functions/fgts-digital/index.ts",
+     "filtra:supabase/functions/gerar-guias/index.ts"
     ]
    },
    {
@@ -262426,6 +262537,13 @@
     "msg": "`configuracoes`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários",
     "where": [
      "src/components/settings/ConfiguracoesGeraisTab.tsx"
+    ]
+   },
+   {
+    "kind": "rls",
+    "msg": "`guias_fgts_digital`: front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários",
+    "where": [
+     "src/pages/ObrigacoesFiscaisPage.tsx"
     ]
    },
    {
@@ -287290,6 +287408,37 @@
     }
    ]
   },
+  "src/components/obrigacoes/FgtsDigitalTable.tsx": {
+   "path": "src/components/obrigacoes/FgtsDigitalTable.tsx",
+   "lines": 138,
+   "exports": [
+    "type FgtsDigitalLinha",
+    "function FgtsDigitalTable"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "paga",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "paga",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "edge `fgts-digital`). Diferente de `GuiasTable`: aqui a coluna de vencimento é",
+    "`vencimento` (não `data_vencimento`) e existe o protocolo GFD — por isso a"
+   ],
+   "calc_fns": [
+    {
+     "name": "formatCurrency",
+     "params": "v: number",
+     "body": "return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);"
+    }
+   ]
+  },
   "src/components/obrigacoes/GuiasTable.tsx": {
    "path": "src/components/obrigacoes/GuiasTable.tsx",
    "lines": 110,
@@ -305571,7 +305720,7 @@
   },
   "src/pages/ObrigacoesFiscaisPage.tsx": {
    "path": "src/pages/ObrigacoesFiscaisPage.tsx",
-   "lines": 507,
+   "lines": 695,
    "exports": [
     "function ObrigacoesFiscaisPage"
    ],
@@ -305589,6 +305738,10 @@
      "op": "select"
     },
     {
+     "table": "guias_fgts_digital",
+     "op": "select"
+    },
+    {
      "table": "guias_inss",
      "op": "select"
     },
@@ -305603,6 +305756,10 @@
     {
      "table": "folhas_pagamento",
      "op": "select"
+    },
+    {
+     "table": "guias_fgts_digital",
+     "op": "select,update"
     }
    ],
    "table_cols": {
@@ -305614,6 +305771,17 @@
     ],
     "guias_fgts": [
      "empresa_id"
+    ],
+    "guias_fgts_digital": [
+     "competencia",
+     "empresa_id",
+     "gfd_data_geracao",
+     "gfd_protocolo",
+     "id",
+     "status",
+     "tipo",
+     "valor_total",
+     "vencimento"
     ],
     "guias_inss": [
      "empresa_id"
@@ -305636,7 +305804,9 @@
    "dyn_from": 2,
    "errors": [
     "${naoSalvas.map((g) => g.tipo).join(",
-    "Erro ao gerar guia"
+    "Erro ao gerar guia",
+    "Nenhuma guia foi atualizada: sem permissão de escrita nesta guia ou ela já não pertence a esta empresa.",
+    "Vencimento já passou para esta competência. Selecione uma competência em aberto."
    ],
    "status_values": [
     {
@@ -305680,6 +305850,16 @@
      "kind": "escreve"
     },
     {
+     "field": "status",
+     "value": "paga",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "mensal",
+     "kind": "escreve"
+    },
+    {
      "field": "tipo",
      "value": "todos",
      "kind": "escreve"
@@ -305705,6 +305885,9 @@
      "kind": "filtra"
     }
    ],
+   "rule_comments": [
+    "Vencimento do FGTS Digital: dia 20 do mês seguinte à competência; se cair"
+   ],
    "calc_fns": [
     {
      "name": "formatCurrency",
@@ -305715,6 +305898,11 @@
      "name": "gerarCompetencias",
      "params": "",
      "body": "const items: string[] = []; const hoje = new Date(); for (let i = -6; i <= 1; i++) { const d = new Date(hoje.getFullYear(), hoje.getMonth() + i, 1); items.push(`${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`); } return items.reverse();"
+    },
+    {
+     "name": "gerarFgtsDigital",
+     "params": "valorCentavos: number",
+     "body": "if (!empresaAtual?.id) return; const [mes, ano] = competencia.split('/'); // Vencimento do FGTS Digital: dia 20 do mês seguinte à competência; se cair // em fim de semana/prorrogação legal, o próprio usuário ajusta no diálogo. const venc = new Date(Number(ano), Number(mes), 20); if (venc < new Date()) { toast.error('Vencimento já passou para esta competência. Selecione uma competência em aberto.'); return; } setGerandoFgtsDigital(true); try { const { data: r } = await edgeFunctionsService.gerarG …"
     },
     {
      "name": "gerarGuiasServidor",
@@ -307793,6 +307981,22 @@
     "oculta o Google e deixa o Gov.br em largura total quando a flag está ausente",
     "oculta o Google para qualquer valor diferente de ",
     "mostra o Google lado a lado com o Gov.br e inicia o OAuth quando a flag é "
+   ]
+  },
+  "src/pages/__tests__/ObrigacoesFiscaisPage.fgtsDigital.test.tsx": {
+   "path": "src/pages/__tests__/ObrigacoesFiscaisPage.fgtsDigital.test.tsx",
+   "lines": 163,
+   "is_test": true,
+   "rule_comments": [
+    "(12/2026), então a guia de 2026-11 não pode entrar no total do diálogo."
+   ],
+   "tests": [
+    "ObrigacoesFiscaisPage — aba FGTS Digital (edge fgts-digital)",
+    "expõe a aba FGTS Digital",
+    "lê e exibe as guias de guias_fgts_digital com o protocolo GFD",
+    "mostra estado de erro em vez de lista vazia quando a leitura falha",
+    "recupera a lista ao clicar em ",
+    "soma no diálogo apenas as guias da competência selecionada, não o histórico"
    ]
   },
   "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx": {
@@ -311994,7 +312198,7 @@
   },
   "src/services/edgeFunctionsService.ts": {
    "path": "src/services/edgeFunctionsService.ts",
-   "lines": 353,
+   "lines": 382,
    "exports": [
     "class EdgeFunctionInvokeError",
     "function isDefinitiveIdempotencyFailure",
@@ -312004,6 +312208,11 @@
     {
      "field": "tipo",
      "value": "darf",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "mensal",
      "kind": "escreve"
     }
    ],
@@ -316079,7 +316288,7 @@
   },
   "src/services/__tests__/edgeFunctionsService.test.ts": {
    "path": "src/services/__tests__/edgeFunctionsService.test.ts",
-   "lines": 298,
+   "lines": 329,
    "is_test": true,
    "errors": [
     "Folha bloqueada"
@@ -316109,7 +316318,8 @@
     "throws when breaker itself throws (circuit open)",
     "edgeFunctionsService.gerarGuias",
     "envia o contrato da edge: empresa_id + tipo em maiúsculas (todos → TODAS)",
-    "mapeia fgts_digital para FGTS_DIGITAL"
+    "mapeia fgts_digital para FGTS_DIGITAL",
+    "gerarGuiaFgtsDigital chama a edge dedicada com contrato snake_case"
    ]
   },
   "src/services/__tests__/empresaService.test.ts": {
@@ -326891,7 +327101,7 @@
   },
   "supabase/functions/fgts-digital/index.ts": {
    "path": "supabase/functions/fgts-digital/index.ts",
-   "lines": 185,
+   "lines": 202,
    "tables": [
     {
      "table": "guias_fgts_digital",
@@ -326914,6 +327124,7 @@
     "guias_fgts_digital": [
      "competencia",
      "empresa_id",
+     "gfd_protocolo",
      "id",
      "status",
      "tipo"
@@ -326938,18 +327149,15 @@
      "field": "status",
      "value": "gerada",
      "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "pendente",
-     "kind": "filtra"
     }
    ],
    "rule_comments": [
     "- Vencimento obrigatório e ≥ hoje",
     "Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)",
     "era um OU — pertencer à empresa já bastava, e o is_admin apenas somava",
-    "vencimento não pode ser retroativo"
+    "vencimento não pode ser retroativo",
+    "no header e nao pode receber 409 nem uma segunda guia pela mesma",
+    "O par (empresa, competencia, tipo) tem no maximo uma guia, entao"
    ],
    "doc": "Onda 31 — FGTS Digital hardened - JWT + CSRF + tenant scope - Competência AAAA-MM válida, não futura, ≤ 60 meses - Valor em BigInt centavos, > 0 - Bloqueia duplicidade por (empresa, competencia, tipo) ativo - Vencimento obrigatório e ≥ hoje - Hash SHA-256 em auditoria + log em fgts_digital_logs",
    "calc_fns": [
@@ -327308,7 +327516,7 @@
   },
   "supabase/functions/gerar-guias/index.ts": {
    "path": "supabase/functions/gerar-guias/index.ts",
-   "lines": 323,
+   "lines": 330,
    "tables": [
     {
      "table": "colaboradores",
@@ -327402,7 +327610,7 @@
     },
     {
      "field": "status",
-     "value": "pendente",
+     "value": "gerada",
      "kind": "filtra"
     }
    ],
@@ -335233,10 +335441,25 @@
   }
  },
  "git": {
-  "sha": "d4b08fae773dfea0d9ecba39bd4b9c8e5784b60e",
+  "sha": "bba91c5fe39cb197064c544cf13e8657ba89b40b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "bba91c5",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "feat: conecta a aba FGTS Digital à edge fgts-digital (feature estava órfã a 1 passo do fim) (#822)",
+    "files": [
+     "src/components/obrigacoes/FgtsDigitalTable.tsx",
+     "src/pages/ObrigacoesFiscaisPage.tsx",
+     "src/pages/__tests__/ObrigacoesFiscaisPage.fgtsDigital.test.tsx",
+     "src/services/__tests__/edgeFunctionsService.test.ts",
+     "src/services/edgeFunctionsService.ts",
+     "supabase/functions/fgts-digital/index.ts",
+     "supabase/functions/gerar-guias/index.ts"
+    ]
+   },
    {
     "sha": "d4b08fa",
     "date": "2026-11-22",
@@ -335574,15 +335797,6 @@
      "supabase/migrations/20261121200000_ci_auditor_grant_set_role.sql",
      "supabase/migrations/20261121200000_ci_auditor_grant_set_role.verify.sql"
     ]
-   },
-   {
-    "sha": "77e63b1",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: auditoria contínua valida tabelas reais (folha_itens/desligamentos/pix) no lugar de legadas (#789)",
-    "files": [
-     "scripts/inventario/validar-funcionalidades.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -335639,31 +335853,31 @@
     2
    ],
    [
-    "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md",
+    "src/components/obrigacoes/FgtsDigitalTable.tsx",
     1
    ],
    [
-    "scripts/inventario/gerar-rotas.mjs",
+    "src/pages/ObrigacoesFiscaisPage.tsx",
     1
    ],
    [
-    "scripts/tests/inventario-rotas.test.mjs",
+    "src/pages/__tests__/ObrigacoesFiscaisPage.fgtsDigital.test.tsx",
     1
    ],
    [
-    "src/components/__tests__/FeriasActions.test.tsx",
+    "src/services/__tests__/edgeFunctionsService.test.ts",
     1
    ],
    [
-    "src/components/ferias/FeriasActions.tsx",
+    "src/services/edgeFunctionsService.ts",
     1
    ],
    [
-    "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
+    "supabase/functions/fgts-digital/index.ts",
     1
    ],
    [
-    "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.verify.sql",
+    "supabase/functions/gerar-guias/index.ts",
     1
    ]
   ]

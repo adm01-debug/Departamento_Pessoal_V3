@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d4b08fae77` · branch `main` · 2026-11-22 04:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bba91c5fe3` · branch `main` · 2026-11-22 05:18 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1623,7 +1623,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `lista_colaboradores` | compara | `supabase/functions/enviar-relatorio/index.ts` |
 | `tipo` | `ltcat` | escreve | `src/components/sst/GerarLtcatOsButton.tsx` |
 | `tipo` | `media` | compara | `src/components/dashboard/analytics/widgets.tsx` |
-| `tipo` | `mensal` | escreve, filtra | `src/components/folha/FolhaDashboard.tsx`<br>`src/hooks/useCalculoFolha.ts`<br>`src/pages/FolhaPagamentoPage.tsx`<br>`src/pages/ObrigacoesFiscaisPage.tsx`<br>`src/services/folha/calculoLoteService.ts` |
+| `tipo` | `mensal` | escreve, filtra | `src/components/folha/FolhaDashboard.tsx`<br>`src/hooks/useCalculoFolha.ts`<br>`src/pages/FolhaPagamentoPage.tsx`<br>`src/pages/ObrigacoesFiscaisPage.tsx`<br>`src/services/edgeFunctionsService.ts`<br>… +1 |
 | `tipo` | `meta` | compara, escreve | `src/pages/AvaliacaoPage.tsx` |
 | `tipo` | `moeda` | escreve | `src/components/premiacoes/RewardsSimulator.tsx` |
 | `tipo` | `numero` | compara, escreve | `src/components/colaborador-detalhes/CamposCustomizadosTab.tsx`<br>`src/components/premiacoes/RewardsSimulator.tsx` |
@@ -3192,6 +3192,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
   ```
+- **formatCurrency(v: number)** — `src/components/obrigacoes/FgtsDigitalTable.tsx`
+  ```
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+  ```
 - **formatCurrency(v: number)** — `src/components/obrigacoes/GuiasTable.tsx`
   ```
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
@@ -3523,6 +3527,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 - **gerarCompetencias()** — `src/pages/ObrigacoesFiscaisPage.tsx`
   ```
   const items: string[] = []; const hoje = new Date(); for (let i = -6; i <= 1; i++) { const d = new Date(hoje.getFullYear(), hoje.getMonth() + i, 1); items.push(`${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`); } return items.reverse();
+  ```
+- **gerarFgtsDigital(valorCentavos: number)** — `src/pages/ObrigacoesFiscaisPage.tsx`
+  ```
+  if (!empresaAtual?.id) return; const [mes, ano] = competencia.split('/'); // Vencimento do FGTS Digital: dia 20 do mês seguinte à competência; se cair // em fim de semana/prorrogação legal, o próprio usuário ajusta no diálogo. const venc = new Date(Number(ano), Number(mes), 20); if (venc < new Date()) { toast.error('Vencimento já passou para esta competência. Selecione uma competência em aberto.'); return; } setGerandoFgtsDigital(true); try { const { data: r } = await edgeFunctionsService.gerarG …
   ```
 - **gerarGuiasServidor()** — `src/pages/ObrigacoesFiscaisPage.tsx`
   ```
@@ -5426,7 +5434,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Erro ao vincular | `src/components/treinamentos/TrilhaCursosSection.tsx` |
 |        data-turmas-erro       className= | `src/components/treinamentos/TurmasPainel.tsx` |
 |  className={cn(alertVariants({ variant }), className)} {...props} /> )); Alert.displayName =  | `src/components/ui/alert.tsx` |
-| … +701 linhas — lista completa em `context.json` | |
+| … +703 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5500,7 +5508,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9719 testes em 762 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9726 testes em 763 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5578,10 +5586,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/NineBox360.test.tsx` | 26 | fase E · consolidação 360 dos feedbacks persistidos · agrupa por categoria e aplica os pesos aprovados (4,26) · mapeia os tipos para as quatro categorias (inclui variações) · sem gestor não classifica, mesmo com as demais categorias presentes … |
 | `src/components/__tests__/NineBoxDerivacoes.test.tsx` | 26 | nineBoxComum — classificação (regra original preservada) · mantém os limiares do componente anterior · a tolerância a valor vazio saiu daqui: quem valida é  · nomeia os nove quadrantes com a leitura de posição … |
 | `src/services/__tests__/batidasPontoService.test.ts` | 26 | batidasPontoService.listar · returns batidas for colaborador · returns empty array when data is null · filters by colaborador_id … |
+| `src/services/__tests__/edgeFunctionsService.test.ts` | 26 | edgeFunctionsService.dispararAlertasDP · calls invoke with  · uses genericBreaker · edgeFunctionsService.enviarRelatorioEmail … |
 | `src/components/__tests__/CriacaoFeedbackIntegracao.test.ts` | 25 | textoOuNulo · apara e converte vazio em nulo · assinaturaFeedback (identifica a TENTATIVA) · é estável e ignora a ordem das chaves … |
 | `src/services/__tests__/contratoService.test.ts` | 25 | contratoService.listar · returns all contratos without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/contratoTemplateService.test.ts` | 25 | contratoTemplateService.listar · returns templates list · returns empty array when data is null · throws on DB error … |
-| `src/services/__tests__/edgeFunctionsService.test.ts` | 25 | edgeFunctionsService.dispararAlertasDP · calls invoke with  · uses genericBreaker · edgeFunctionsService.enviarRelatorioEmail … |
 | `src/services/__tests__/horaExtraService.test.ts` | 25 | horaExtraService.listar · returns records without empresa filter · returns empty array when data is null · applies empresa_id filter when provided … |
 | `src/services/__tests__/pontoService.test.ts` | 25 | pontoService.getSettings · returns settings for empresa · returns null when no settings found · throws on DB error … |
 | `src/utils/__tests__/folhaCalc.test.ts` | 25 | Motor de Cálculo de Folha (folhaCalc) · deve processar uma folha simples corretamente · deve incluir horas extras e DSR no cálculo · deve calcular 13º salário quando solicitado … |
@@ -5804,7 +5812,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/MedidasTimeline.test.tsx` | 10 | MedidasTimeline · returns null when medidas is empty · renders medida descricao · renders colaborador name … |
 | `src/components/__tests__/Notifications.test.tsx` | 10 | NotificationItem · renders Notificações header · shows empty state when no notifications · renders notification titles … |
 | `src/components/__tests__/PapeisAvaliacao.test.ts` | 10 | normalização da lista de papéis · aceita a lista do  · capacidades da conta admin+gestor (a conta de homologação) · mantém o admin E o gestor — um não anula o outro … |
-| … +462 linhas — lista completa em `context.json` | | |
+| … +463 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6172,4 +6180,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * HABILITAÇÃO (regra ÚNICA, a MESMA do servidor — `pode_aprovar_colaborador` | `src/components/avaliacao/feedbackCanonico.ts` |
 | ENCAMINHAMENTO (RH/admin) — visível apenas para quem pode encaminhar E na | `src/components/avaliacao/feedbackCanonico.ts` |
 | VALIDAÇÃO DO POTENCIAL (RH) — controle LEGADO. O fluxo atual termina na | `src/components/avaliacao/feedbackCanonico.ts` |
-| … +940 linhas — lista completa em `context.json` | |
+| … +945 linhas — lista completa em `context.json` | |

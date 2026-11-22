@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (527)",
+   "src/components (528)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (674)",
+   "co-localizado (__tests__) (675)",
    "co-localizado (*.test) (74)",
    "e2e/ (33)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (645)"
+  ".tsx (646)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: conecta a aba FGTS Digital à edge fgts-digital (feature estava órfã a 1 passo do fim) (#822)",
    "docs: reescreve a análise de pendentes com o estado real (9 dos 12 itens já estavam implementados) (#823)",
    "fix: gerador de rotas resolve index.ts com separador nativo (inventario saia diferente no Windows) (#820)",
    "chore: documenta o limite real das etapas 55 e 58 do plano do ponto (#816)",
-   "chore: fecha etapa 45 do plano do ponto com evidencia real do CI (#819)",
-   "chore: fecha etapas 81/82 do plano do ponto (testes de UI + inventario de rotas) (#817)"
+   "chore: fecha etapa 45 do plano do ponto com evidencia real do CI (#819)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

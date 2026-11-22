@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d4b08fae773dfea0d9ecba39bd4b9c8e5784b60e` (2026-11-22T03:59:23Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bba91c5fe39cb197064c544cf13e8657ba89b40b` (2026-11-22T02:17:50-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1998), SQL (992), Markdown (344), JavaScript (135), JSON (64), Shell (58), YAML (56), Python (8)
+- linguagens: TypeScript (2000), SQL (992), Markdown (344), JavaScript (135), JSON (64), Shell (58), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3706 |
-| arquivos_codigo | 2140 |
-| linhas_codigo | 427464 |
+| arquivos_total | 3708 |
+| arquivos_codigo | 2142 |
+| linhas_codigo | 428037 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
 | itens_menu | 97 |
 | modulos | 82 |
-| componentes | 645 |
+| componentes | 646 |
 | hooks | 122 |
 | edge_functions | 68 |
 | tabelas | 436 |
 | migrations | 918 |
 | cron_jobs | 42 |
-| testes | 807 |
+| testes | 808 |
 | workflows | 21 |
 | scripts | 138 |
 | docs_md | 344 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
-- componentes: src/components (527), src/pages (110), src/contexts (3)
+- componentes: src/components (528), src/pages (110), src/contexts (3)
 - hooks: src/hooks (102), src/components (10), src/contexts (4)
 - servicos_logica: src/services (100), src/utils (35), src/schemas (25)
-- testes: co-localizado (__tests__) (674), co-localizado (*.test) (74), e2e/ (33)
+- testes: co-localizado (__tests__) (675), co-localizado (*.test) (74), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -70,14 +70,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | módulo | itens de menu | telas/rotas | arquivos | hooks locais | edges | tabelas |
 |---|---|---|---|---|---|---|
 | calculators | 0 | 0 | 8 | 0 | 0 | 0 |
-| components | 0 | 0 | 7 | 18 | 24 | 7 |
+| components | 0 | 0 | 7 | 18 | 25 | 7 |
 | components/admin | 0 | 0 | 7 | 1 | 0 | 1 |
 | components/admissoes | 0 | 0 | 21 | 149 | 9 | 168 |
 | components/afastamentos | 0 | 0 | 6 | 9 | 0 | 7 |
 | components/avaliacao | 0 | 0 | 83 | 5 | 0 | 11 |
 | components/colaborador-detalhes | 0 | 0 | 62 | 160 | 8 | 173 |
 | components/colaboradores | 0 | 0 | 9 | 9 | 0 | 3 |
-| components/dashboard | 0 | 0 | 21 | 13 | 25 | 63 |
+| components/dashboard | 0 | 0 | 21 | 13 | 26 | 63 |
 | components/descontos | 0 | 0 | 5 | 0 | 0 | 1 |
 | components/desligamentos | 0 | 0 | 18 | 4 | 1 | 6 |
 | components/epis | 0 | 0 | 5 | 0 | 0 | 0 |
@@ -86,17 +86,17 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/ferias | 0 | 0 | 22 | 157 | 8 | 137 |
 | components/folha | 0 | 0 | 21 | 151 | 13 | 144 |
 | components/forms | 0 | 0 | 5 | 0 | 0 | 0 |
-| components/layout | 0 | 1 | 28 | 17 | 24 | 6 |
+| components/layout | 0 | 1 | 28 | 17 | 25 | 6 |
 | components/medidas-disciplinares | 0 | 0 | 9 | 147 | 8 | 132 |
 | components/notifications | 0 | 0 | 5 | 4 | 0 | 5 |
-| components/obrigacoes | 0 | 0 | 5 | 0 | 0 | 0 |
+| components/obrigacoes | 0 | 0 | 6 | 0 | 0 | 0 |
 | components/organograma | 0 | 0 | 10 | 2 | 0 | 2 |
 | components/pcs | 0 | 0 | 6 | 9 | 0 | 8 |
 | components/ponto | 0 | 0 | 24 | 153 | 11 | 139 |
 | components/portal | 0 | 0 | 5 | 4 | 3 | 86 |
 | components/premiacoes | 0 | 0 | 23 | 148 | 8 | 137 |
 | components/recrutamento | 0 | 0 | 26 | 4 | 0 | 5 |
-| components/settings | 0 | 0 | 11 | 150 | 32 | 173 |
+| components/settings | 0 | 0 | 11 | 150 | 33 | 173 |
 | components/sst | 0 | 0 | 11 | 6 | 2 | 8 |
 | components/treinamentos | 0 | 0 | 47 | 1 | 3 | 82 |
 | components/ui | 0 | 0 | 72 | 18 | 2 | 5 |
@@ -104,10 +104,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks/ferias | 0 | 0 | 6 | 11 | 0 | 7 |
 | integrations/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib | 0 | 0 | 14 | 1 | 0 | 0 |
-| pages | 96 | 114 | 115 | 224 | 50 | 276 |
+| pages | 96 | 114 | 115 | 224 | 51 | 277 |
 | schemas | 0 | 0 | 19 | 0 | 0 | 0 |
 | schemas/esocial | 0 | 0 | 6 | 0 | 0 | 0 |
-| services | 0 | 0 | 78 | 0 | 36 | 195 |
+| services | 0 | 0 | 78 | 0 | 37 | 195 |
 | services/tabelas | 0 | 0 | 8 | 0 | 0 | 47 |
 | services/trainingImages | 0 | 0 | 10 | 0 | 0 | 1 |
 | types | 0 | 0 | 13 | 0 | 0 | 0 |
@@ -286,7 +286,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `exportacao` — tabelas: audit_log, colaboradores, folhas_pagamento; chamada por 1 arquivo(s) do front
 - `external-db-bridge` — tabelas: query_telemetry; chamada por 1 arquivo(s) do front
 - `fechar-folha` — tabelas: audit_log, folhas_pagamento, provisoes_mensais; chamada por 1 arquivo(s) do front
-- `fgts-digital` — tabelas: auditoria, fgts_digital_logs, guias_fgts_digital; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `fgts-digital` — tabelas: auditoria, fgts_digital_logs, guias_fgts_digital; chamada por 1 arquivo(s) do front
 - `folha-metrics` — tabelas: audit_log, idempotency_keys; chamada por 1 arquivo(s) do front
 - `gerar-aej` — tabelas: aej_geracoes, batidas_ponto, colaboradores, empresas, pii_access_logs, registros_ponto; chamada por 1 arquivo(s) do front
 - `gerar-afd` — tabelas: afd_geracoes, batidas_ponto, colaboradores, empresas, pii_access_logs; chamada por 1 arquivo(s) do front
@@ -384,7 +384,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - rotas_sem_arquivo: 0
 - componentes_ambiguos: 0
 - menu_sem_destino: 1 — ex.: Ações -> /quick-actions
-- edges_orfas: 14 — ex.: assistente-ia, auditoria, backup
+- edges_orfas: 13 — ex.: assistente-ia, auditoria, backup
 - edges_chamadas_sem_pasta: 0
 - tabelas_sem_rls: 15 — ex.: cbo, cnae, config_retencao
 - tabelas_usadas_sem_definicao: 0
@@ -398,8 +398,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28117 nós · 63420 arestas · 2438 comunidades · grafo do commit `d4b08fae`
-- comunidades maiores: cn (537), 20260831_corrected_public.sql (493), canonical_schema.sql (481), button.tsx (437), useEmpresas (418), vitest (383), react (263), supabase (196), FinanceiroResumoCards.tsx (170), App.tsx (165), "public"."empresas" (164), hooks/index.ts (163)
+- 28127 nós · 63461 arestas · 2411 comunidades · grafo do commit `bba91c5f`
+- comunidades maiores: lucide-react (539), 20260831_corrected_public.sql (485), canonical_schema.sql (481), react (455), client.ts (442), button.tsx (416), cn (403), useEmpresas (368), ref_node_fs (219), App.tsx (198), FeedbackAcoesRodape.tsx (183), nineBoxComum.ts (168)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -656,6 +656,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-22 `bba91c5` feat: conecta a aba FGTS Digital à edge fgts-digital (feature estava órfã a 1 passo do fim) (#822)
 - 2026-11-22 `d4b08fa` docs: reescreve a análise de pendentes com o estado real (9 dos 12 itens já estavam implementados) (#823)
 - 2026-11-21 `bfd9db6` fix: gerador de rotas resolve index.ts com separador nativo (inventario saia diferente no Windows) (#820)
 - 2026-11-21 `5a7dabb` chore: documenta o limite real das etapas 55 e 58 do plano do ponto (#816)
@@ -670,7 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `2db7ac8` chore: progresso do plano do relógio de ponto com evidências (#809)
 - 2026-11-21 `1511918` fix: formatação do painel de relógios (prettier) (#808)
 - 2026-11-21 `c74e67d` infra: lote canônico com as 5 migrations do relógio de ponto (#806)
-- 2026-11-21 `9aa259e` feat: abas Vínculos e Justificativas no painel do relógio de ponto (#807)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

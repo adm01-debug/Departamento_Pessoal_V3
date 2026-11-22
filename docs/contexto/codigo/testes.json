@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 807,
+ "total": 808,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 762
+  "unit": 763
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 674
+   "arquivos": 675
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -5566,6 +5566,15 @@
    "casos": 3
   },
   {
+   "arquivo": "src/pages/__tests__/ObrigacoesFiscaisPage.fgtsDigital.test.tsx",
+   "tipo": "unit",
+   "linhas": 163,
+   "testa": [
+    "src/pages/ObrigacoesFiscaisPage.tsx"
+   ],
+   "casos": 5
+  },
+  {
    "arquivo": "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx",
    "tipo": "unit",
    "linhas": 74,
@@ -6087,12 +6096,12 @@
   {
    "arquivo": "src/services/__tests__/edgeFunctionsService.test.ts",
    "tipo": "unit",
-   "linhas": 298,
+   "linhas": 329,
    "testa": [
     "src/lib/circuitBreaker.ts",
     "src/services/edgeFunctionsService.ts"
    ],
-   "casos": 18
+   "casos": 19
   },
   {
    "arquivo": "src/services/__tests__/empresaService.test.ts",
@@ -8022,7 +8031,7 @@
   "src/pages/LoginPage.tsx": 2,
   "src/pages/NineBoxPreviewPage.tsx": 1,
   "src/pages/NotFoundPage.tsx": 1,
-  "src/pages/ObrigacoesFiscaisPage.tsx": 1,
+  "src/pages/ObrigacoesFiscaisPage.tsx": 2,
   "src/pages/OnboardingPage.tsx": 1,
   "src/pages/OrganogramaPage.tsx": 1,
   "src/pages/PensoesPage.tsx": 1,

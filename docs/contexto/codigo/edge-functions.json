@@ -1327,7 +1327,7 @@
    "nome": "fgts-digital",
    "entrada": "supabase/functions/fgts-digital/index.ts",
    "arquivos": 1,
-   "linhas": 185,
+   "linhas": 202,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1353,10 +1353,12 @@
     "rateLimit.ts",
     "sentry.ts"
    ],
-   "chamada_pelo_front": [],
+   "chamada_pelo_front": [
+    "src/services/edgeFunctionsService.ts"
+   ],
    "chamada_por_edges": [],
    "chamada_por_sql_ou_cron": false,
-   "orfa": true,
+   "orfa": false,
    "testes": 0
   },
   {
@@ -1528,7 +1530,7 @@
    "nome": "gerar-guias",
    "entrada": "supabase/functions/gerar-guias/index.ts",
    "arquivos": 2,
-   "linhas": 340,
+   "linhas": 347,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",

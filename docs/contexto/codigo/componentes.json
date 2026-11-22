@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 645,
+ "total": 646,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -5007,6 +5007,21 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/obrigacoes/FgtsDigitalTable.tsx",
+   "exports": [
+    "FgtsDigitalLinha",
+    "FgtsDigitalTable"
+   ],
+   "export_default": null,
+   "linhas": 138,
+   "dominio": "components/obrigacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/obrigacoes/GuiasTable.tsx",
    "exports": [
     "GuiaLinha",
@@ -7443,7 +7458,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 227,
+   "usado_por": 228,
    "orfao": false
   },
   {
@@ -7458,7 +7473,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 367,
+   "usado_por": 368,
    "orfao": false
   },
   {
@@ -7493,7 +7508,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 285,
+   "usado_por": 286,
    "orfao": false
   },
   {
@@ -8301,7 +8316,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 119,
+   "usado_por": 120,
    "orfao": false
   },
   {
@@ -9972,7 +9987,7 @@
     "ObrigacoesFiscaisPage"
    ],
    "export_default": "ObrigacoesFiscaisPage",
-   "linhas": 507,
+   "linhas": 695,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -9982,6 +9997,7 @@
     "dctfweb_declaracoes",
     "folhas_pagamento",
     "guias_fgts",
+    "guias_fgts_digital",
     "guias_inss",
     "sefip_arquivos",
     "simulacoes_fiscais"
