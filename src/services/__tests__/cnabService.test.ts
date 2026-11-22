@@ -720,6 +720,22 @@ describe('cnabService.generateCNAB240', () => {
     expect(lines).toHaveLength(6);
     expect(itensChain.insert).toHaveBeenCalledWith([expect.objectContaining({ colaborador_id: 'col-2' })]);
   });
+
+  // O canônico tinha 3 remessas com status 'enviado' e 0 cnab_itens: o arquivo
+  // era gerado só com headers/trailers e a remessa era marcada enviada. Sem
+  // favorecido o banco rejeitaria o arquivo e a folha pareceria paga.
+  it('aborta quando nenhum colaborador tem conta bancária principal', async () => {
+    const itensChain = makeChain({ data: null, error: null });
+    mockTables({
+      config: CONFIG,
+      itens: ITENS,
+      contas: [],
+      remessasSeq: [makeChain({ data: null, error: null }), makeChain({ data: REMESSA, error: null })],
+      cnabItens: itensChain,
+    });
+    await expect(cnabService.generateCNAB240(EMP, FOLHA)).rejects.toThrow('conta bancária principal');
+    expect(itensChain.insert).not.toHaveBeenCalled();
+  });
 });
 
 // ─── generatePIXBatch ────────────────────────────────────────────────────────
