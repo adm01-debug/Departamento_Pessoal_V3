@@ -151,7 +151,7 @@ Princípios:
 - [ ] **42. Não tocar batida de outra origem.** Pronto quando: teste prova que batida de app/quiosque/ajuste sobrevive ao reprocessamento.
 - [ ] **43. Respeitar período fechado.** Dia de competência fechada em `periodos_ponto` não é reprocessado; gera alerta. Pronto quando: teste verde.
 - [x] **44. Registrar auditoria.** Cada lote em `ponto_auditoria`/log de edge, sem CPF em claro. Pronto quando: `audit:edge-audit-log` verde. Feito: #814 — `index.ts` passou a gravar `INSERT` em `audit_log` por lote processado (tabela, `registro_id`, `empresa_id`, contagens, sem CPF/PIS). Publicado via `canonical-edge-functions.yml` (run 44971537166) e confirmado ao vivo em 22/11/2026: dispositivo de teste descartável na empresa `[E2E-SEED]` → chamada real → linha real em `audit_log` (`acao=INSERT`, `tabela=ponto_rep_lotes`, `empresa_id` correto). Lote e dispositivo de teste removidos depois; a linha de `audit_log` **não pôde ser removida** — a tabela é append-only por desenho (`trg_audit_log_no_delete`), que é o comportamento correto; fica 1 linha de teste identificável (empresa `[E2E-SEED]`, sem dado pessoal).
-- [ ] **45. Testes da função.** Deno: autenticação, idempotência, vínculo, reprocessamento, período fechado. Pronto quando: `lint:edge` e `typecheck:edge` verdes. Em 22/11/2026: `lint:edge` e `audit:edge-syntax` verdes (sem Deno neste ambiente para `typecheck:edge`, inalterado desde a verificação do #798). Corrigido (apontado pelo Devin Review): `logica.test.ts` só cobre vínculo, formato do token e seleção de dia alterado por hash — é lógica pura, sem I/O. Autenticação e idempotência foram verificadas ao vivo no #798 (401 com token errado/ausente; reenvio idêntico não duplica linha), não por essa suíte. Reprocessamento e período fechado continuam bloqueados pelas etapas 41 e 43; nenhum teste automatizado cobre o efeito de um lote no banco.
+- [x] **45. Testes da função.** Deno: autenticação, idempotência, vínculo, reprocessamento, período fechado. Pronto quando: `lint:edge` e `typecheck:edge` verdes. Feito: confirmado em 22/11/2026 pelo CI real do #814 (commit `cba26a3`, run 44970752907) — job "Lint" → step "Lint Edge Functions" → sucesso (`lint:edge`); job "Edge Functions (deno check)" → step "Type-check de todas as Edge Functions (gate bloqueante)" → sucesso (`typecheck:edge`, Deno real, não disponível nesta sessão). Autenticação e idempotência verificadas ao vivo no #798; vínculo/hash testados em `logica.test.ts`. Reprocessamento e período fechado continuam sem teste automatizado — dependem das etapas 41/43, que ainda não existem.
 - [x] **46. Publicar.** Via `canonical-edge-functions.yml`. Pronto quando: chamada real com token de teste devolve 200 e a linha aparece em `ponto_rep_lotes`. Feito em 22/11/2026: dispositivo descartável criado na empresa `[E2E-SEED]` (`61e7d382-…`), POST real em `https://frjbfeamybqsejlvmqbl.supabase.co/functions/v1/ingest-ponto-rep` → `200 {"ok":true,"lote_id":"b6b187a4-…"}`, linha confirmada em `ponto_rep_lotes` (`status=processado`) e removida depois junto com o dispositivo — produção sem resíduo.
 
 ### Fase 4 — Coletor Windows (47–62)
@@ -256,14 +256,14 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 | 0 — Decisões e insumos      | 1–8       | 5/8        |
 | 1 — Diagnóstico             | 9–18      | 1/10       |
 | 2 — Modelo de dados         | 19–32     | 13/14      |
-| 3 — Função de ingestão      | 33–46     | 10/14      |
+| 3 — Função de ingestão      | 33–46     | 11/14      |
 | 4 — Coletor Windows         | 47–62     | 8/16       |
 | 5 — Processamento e cálculo | 63–72     | 1/10       |
 | 6 — Interface               | 73–82     | 10/10      |
 | 7 — Fechamento mensal       | 83–90     | 1/8        |
 | 8 — Implantação e operação  | 91–100    | 2/10       |
 | 9 — Escrita no AtecSoft     | 101–120   | 0/20       |
-| **Total**                   | **1–120** | **51/120** |
+| **Total**                   | **1–120** | **52/120** |
 
 Situação em 22/11/2026. O dono vai enviar os bancos reais das duas unidades (etapas 6–7) amanhã; até lá:
 
