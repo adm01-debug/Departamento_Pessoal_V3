@@ -278,10 +278,11 @@ class Fb15Connection:
                 )
                 self._check_status("describe")
 
-            col_info, data_bufs, ind_bufs = self._allocate_output_buffers(out_da, num_cols)
+            col_info, data_bufs, ind_bufs, out_buf_refs = self._allocate_output_buffers(out_da, num_cols)
 
             # Input params
             in_da_ptr = None
+            in_refs = None
             if params:
                 in_da, in_refs = self._build_input_sqlda(params)
                 in_da_ptr = ctypes.byref(in_da)
@@ -292,7 +293,10 @@ class Fb15Connection:
             )
             self._check_status("execute")
 
-            # Fetch
+            # Fetch. out_buf_refs mantém os buffers de saída vivos (o driver
+            # escreve nos endereços guardados em data_bufs a cada fetch); sem
+            # essa referência o Python pode liberar/realocar a memória entre
+            # a alocação e a escrita da DLL (use-after-free).
             rows = []
             while True:
                 fetch_status = self._isc_dsql_fetch(
@@ -303,14 +307,15 @@ class Fb15Connection:
                     break
 
                 row = {}
-                for i, (name, sqltype, sqllen, scale) in enumerate(col_info):
+                for i, (name, sqltype, sqllen, scale, buf_size) in enumerate(col_info):
                     if ind_bufs[i].value == -1:
                         row[name] = None
                         continue
-                    raw = ctypes.string_at(data_bufs[i], max(sqllen + 2, 8))
+                    raw = ctypes.string_at(data_bufs[i], buf_size)
                     row[name] = self._decode_value(raw, sqltype, sqllen, scale)
                 rows.append(row)
 
+            del out_buf_refs, in_refs
             return rows
         finally:
             self._isc_dsql_free_statement(
@@ -321,6 +326,7 @@ class Fb15Connection:
         col_info = []
         data_bufs = []
         ind_bufs = []
+        buf_refs = []  # mantém os ctypes.create_string_buffer vivos (ver _execute_in_transaction)
 
         for i in range(num_cols):
             var = out_da.sqlvar[i]
@@ -351,11 +357,12 @@ class Fb15Connection:
             out_da.sqlvar[i].sqldata = ctypes.cast(data_buf, ctypes.c_void_p).value
             out_da.sqlvar[i].sqlind = ctypes.pointer(ind_buf)
 
-            col_info.append((name, sqltype, sqllen, scale))
+            col_info.append((name, sqltype, sqllen, scale, buf_size))
             data_bufs.append(ctypes.cast(data_buf, ctypes.c_void_p).value)
             ind_bufs.append(ind_buf)
+            buf_refs.append(data_buf)
 
-        return col_info, data_bufs, ind_bufs
+        return col_info, data_bufs, ind_bufs, buf_refs
 
     def _build_input_sqlda(self, params):
         """Constroi XSQLDA de entrada. Retorna (sqlda, refs) onde refs mantém buffers vivos."""
