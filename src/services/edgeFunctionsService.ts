@@ -169,6 +169,35 @@ export const edgeFunctionsService = {
     });
   },
 
+  /** Gera guia FGTS Digital (GFD) via edge dedicada — retry com idempotência. */
+  gerarGuiaFgtsDigital: async (params: {
+    empresaId: string;
+    competencia: string; // AAAA-MM
+    tipo: 'mensal' | 'rescisorio' | 'complementar';
+    valorTotalCentavos: number;
+    vencimento: string; // AAAA-MM-DD
+  }) => {
+    const idemKey = `fgts-digital:${params.empresaId}:${params.competencia}:${params.tipo}`;
+    return retryWithIdempotency<{ id: string; protocolo?: string } | undefined>({
+      // Contrato snake_case da edge (BodySchema em supabase/functions/fgts-digital/index.ts).
+      fn: () =>
+        handleInvoke<{ success: boolean; id: string; protocolo: string; payload_sha256: string }>('fgts-digital', {
+          // A chave viaja no header: a edge reapresenta a resposta anterior em
+          // vez de reinserir a guia quando o retry chega depois do commit.
+          headers: { 'Idempotency-Key': idemKey },
+          body: {
+            empresa_id: params.empresaId,
+            competencia: params.competencia,
+            tipo: params.tipo,
+            valor_total_centavos: params.valorTotalCentavos,
+            vencimento: params.vencimento,
+          },
+        }),
+      idempotencyKey: idemKey,
+      onRetry: (a, d, e) => loggerService.warn('gerarGuiaFgtsDigital retry', { attempt: a, delayMs: d, error: e }),
+    });
+  },
+
   /** Processa ponto do período — retry com idempotência. */
   processarPonto: async (params: { empresaId: string; dataInicio: string; dataFim: string }) => {
     // Chave por CLIQUE: um novo processamento deliberado deve reapurar (novas

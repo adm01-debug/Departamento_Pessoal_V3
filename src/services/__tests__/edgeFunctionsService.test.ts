@@ -294,4 +294,35 @@ describe('edgeFunctionsService.gerarGuias', () => {
     await edgeFunctionsService.gerarGuias({ empresaId: 'emp-1', competencia: '2026-10', tipo: 'fgts_digital' });
     expect(mockInvoke.mock.calls[0][1].body.tipo).toBe('FGTS_DIGITAL');
   });
+
+  // A edge `fgts-digital` (tabela guias_fgts_digital + protocolo GFD) ficou
+  // órfã por várias ondas: existia hardening, faltava o chamador. Este teste
+  // trava o contrato snake_case para que ela não volte a ficar sem consumidor.
+  it('gerarGuiaFgtsDigital chama a edge dedicada com contrato snake_case', async () => {
+    mockInvoke.mockResolvedValue({
+      data: { success: true, id: 'g1', protocolo: 'FGD-1', payload_sha256: 'a'.repeat(64) },
+      error: null,
+    });
+    await edgeFunctionsService.gerarGuiaFgtsDigital({
+      empresaId: '11111111-1111-4111-8111-111111111111',
+      competencia: '2026-11',
+      tipo: 'mensal',
+      valorTotalCentavos: 12345,
+      vencimento: '2026-12-20',
+    });
+    expect(mockInvoke).toHaveBeenCalledWith('fgts-digital', {
+      // A chave estável (empresa+competência+tipo) viaja no header: é ela que
+      // faz a edge reapresentar o registro em vez de reinserir a guia.
+      headers: {
+        'Idempotency-Key': 'fgts-digital:11111111-1111-4111-8111-111111111111:2026-11:mensal',
+      },
+      body: {
+        empresa_id: '11111111-1111-4111-8111-111111111111',
+        competencia: '2026-11',
+        tipo: 'mensal',
+        valor_total_centavos: 12345,
+        vencimento: '2026-12-20',
+      },
+    });
+  });
 });

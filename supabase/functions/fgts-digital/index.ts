@@ -98,17 +98,34 @@ Deno.serve(async (req) => {
       return createErrorResponse('Vencimento retroativo', 422, 'INVALID_DUE_DATE');
     }
 
-    // Duplicidade por competencia+tipo
+    // Duplicidade por competencia+tipo. Em retry a guia existente e
+    // reapresentada com o MESMO protocolo: o cliente reenvia a Idempotency-Key
+    // no header e nao pode receber 409 nem uma segunda guia pela mesma
+    // intencao (thread ANALYSIS ...0006 da PR #822).
     const { data: existente } = await service
       .from('guias_fgts_digital')
-      .select('id, status')
+      .select('id, status, gfd_protocolo')
       .eq('empresa_id', p.empresa_id)
       .eq('competencia', p.competencia)
       .eq('tipo', p.tipo)
-      .in('status', ['pendente', 'gerada', 'transmitida', 'paga'])
       .limit(1)
       .maybeSingle();
     if (existente) {
+      // O par (empresa, competencia, tipo) tem no maximo uma guia, entao
+      // devolver o protocolo existente e correto tanto para retry quanto para
+      // reenvio — e nunca soma valor em dobro.
+      if (existente.gfd_protocolo) {
+        return new Response(
+          JSON.stringify({
+            success: true,
+            id: existente.id,
+            protocolo: existente.gfd_protocolo,
+            status: existente.status,
+            replayed: true,
+          }),
+          { status: 200, headers: noStore },
+        );
+      }
       return createErrorResponse(
         `Guia FGTS ${p.tipo} ${p.competencia} já existe (${existente.status})`,
         409, 'DUPLICATE_GUIDE',
