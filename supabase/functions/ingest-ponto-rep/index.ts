@@ -153,6 +153,20 @@ serve(async (req: Request): Promise<Response> => {
         .eq('id', dispositivoId);
       if (erroVivo) throw new Error(`sinal de vida: ${erroVivo.code ?? 'erro'}`);
 
+      // Auditoria do lote: contagens só, sem CPF/PIS.
+      await admin.from('audit_log').insert({
+        tabela: 'ponto_rep_lotes',
+        registro_id: lote.id,
+        acao: 'INSERT',
+        empresa_id: empresaId,
+        dados_novos: {
+          dispositivo_id: dispositivoId,
+          dias_recebidos: envio.dias.length,
+          dias_alterados: alterados.length,
+          pendentes_vinculo: pendentesVinculo,
+        },
+      });
+
       return json({
         ok: true,
         lote_id: lote.id,
