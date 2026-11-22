@@ -1,10 +1,28 @@
-﻿import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
 import { createErrorResponse, createValidationErrorResponse, parseJsonBody, securityHeaders } from '../_shared/contract.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 import { getClientIp } from '../_shared/clientIp.ts';
-import { type ColaboradorChave, classificaErroVinculo, codigosRemovidos, diasAlterados, paresRemovidos, envioSchema, sha256Hex, tokenPlausivel, trazCatalogo, vincular } from './logica.ts';
+import { type ColaboradorChave, classificaErroVinculo, codigosRemovidos, diasAlterados, paresRemovidos, podeReconciliar, envioSchema, sha256Hex, tokenPlausivel, trazCatalogo, vincular } from './logica.ts';
+
+/** Lê o catálogo gravado inteiro, página por página: `.limit()` sozinho
+ * deixaria de ver linhas num catálogo grande e a reconciliação apagaria o que
+ * só não coube na consulta. */
+async function lerCatalogo<T>(
+  consultar: (inicio: number, fim: number) => PromiseLike<{ data: T[] | null; error: { code?: string } | null }>,
+  rotulo: string,
+): Promise<T[]> {
+  const PAGINA = 1000;
+  const linhas: T[] = [];
+  for (let inicio = 0; ; inicio += PAGINA) {
+    const { data, error } = await consultar(inicio, inicio + PAGINA - 1);
+    if (error) throw new Error(`${rotulo} gravados: ${error.code ?? 'erro'}`);
+    linhas.push(...(data ?? []));
+    if (!data || data.length < PAGINA) break;
+  }
+  return linhas;
+}
 
 /**
  * ingest-ponto-rep — recebe o envio do coletor do Ponto AtecSoft (um por
@@ -100,11 +118,13 @@ serve(async (req: Request): Promise<Response> => {
       }
 
       // Feriados e jornadas: mesmo padrao do cadastro, copia fiel do AtecSoft.
-      // O catalogo que sumiu do AtecSoft precisa sair do staging: upsert sozinho
-      // so acrescenta. A remocao acontece so na parte 1 (e onde o coletor manda o
-      // catalogo inteiro) e so quando a chave veio de verdade no corpo -- o
-      // coletor 1.0.0 nao envia estas chaves e o default do schema viraria [].
-      if (trazCatalogo(body, 'feriados')) {
+      // O catalogo completo viaja so na parte 1, entao e la que se grava. O
+      // catalogo que sumiu do AtecSoft precisa sair do staging: upsert sozinho
+      // so acrescenta. A remocao exige podeReconciliar -- coletor 1.0.1+ E chave
+      // presente no corpo: o coletor 1.0.0 nao envia estas chaves e o default do
+      // schema viraria [], e o diagnostico de conexao manda 1.0.1 sem consultar
+      // o catalogo. Sem essa guarda, qualquer um dos dois apagaria o catalogo.
+      if (envio.parte === 1 && trazCatalogo(body, 'feriados')) {
         if (envio.feriados.length) {
           const { error } = await admin.from('ponto_rep_feriados').upsert(
             envio.feriados.map((f) => ({ ...f, dispositivo_id: dispositivoId, empresa_id: empresaId, updated_at: agora })),
@@ -112,11 +132,13 @@ serve(async (req: Request): Promise<Response> => {
           );
           if (error) throw new Error(`feriados: ${error.code ?? 'erro'}`);
         }
-        if (envio.parte === 1) {
-          const { data: gravados, error: erroGravados } = await admin.from('ponto_rep_feriados')
-            .select('codigo').eq('dispositivo_id', dispositivoId).limit(5000);
-          if (erroGravados) throw new Error(`feriados gravados: ${erroGravados.code ?? 'erro'}`);
-          const removidos = codigosRemovidos(envio.feriados, gravados ?? []);
+        if (podeReconciliar(envio.versao_coletor, body, 'feriados')) {
+          const gravados = await lerCatalogo<{ codigo: number }>(
+            (inicio, fim) => admin.from('ponto_rep_feriados').select('codigo')
+              .eq('dispositivo_id', dispositivoId).order('id').range(inicio, fim),
+            'feriados',
+          );
+          const removidos = codigosRemovidos(envio.feriados, gravados);
           if (removidos.length) {
             const { error } = await admin.from('ponto_rep_feriados')
               .delete().eq('dispositivo_id', dispositivoId).in('codigo', removidos);
@@ -124,7 +146,7 @@ serve(async (req: Request): Promise<Response> => {
           }
         }
       }
-      if (trazCatalogo(body, 'horarios')) {
+      if (envio.parte === 1 && trazCatalogo(body, 'horarios')) {
         if (envio.horarios.length) {
           const { error } = await admin.from('ponto_rep_horarios').upsert(
             envio.horarios.map((h) => ({ ...h, dispositivo_id: dispositivoId, empresa_id: empresaId, updated_at: agora })),
@@ -132,11 +154,13 @@ serve(async (req: Request): Promise<Response> => {
           );
           if (error) throw new Error(`horarios: ${error.code ?? 'erro'}`);
         }
-        if (envio.parte === 1) {
-          const { data: gravados, error: erroGravados } = await admin.from('ponto_rep_horarios')
-            .select('codigo, dia_semana').eq('dispositivo_id', dispositivoId).limit(5000);
-          if (erroGravados) throw new Error(`horarios gravados: ${erroGravados.code ?? 'erro'}`);
-          for (const { codigo, dias } of paresRemovidos(envio.horarios, gravados ?? [])) {
+        if (podeReconciliar(envio.versao_coletor, body, 'horarios')) {
+          const gravados = await lerCatalogo<{ codigo: number; dia_semana: number }>(
+            (inicio, fim) => admin.from('ponto_rep_horarios').select('codigo, dia_semana')
+              .eq('dispositivo_id', dispositivoId).order('id').range(inicio, fim),
+            'horarios',
+          );
+          for (const { codigo, dias } of paresRemovidos(envio.horarios, gravados)) {
             const { error } = await admin.from('ponto_rep_horarios')
               .delete().eq('dispositivo_id', dispositivoId).eq('codigo', codigo).in('dia_semana', dias);
             if (error) throw new Error(`horarios removidos: ${error.code ?? 'erro'}`);

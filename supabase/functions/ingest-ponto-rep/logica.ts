@@ -170,11 +170,43 @@ export function codigosRemovidos(
  *
  * O coletor 1.0.0 não envia `feriados`/`horarios` e o default do schema as
  * transforma em `[]`. Tratar `[]` como "catálogo completo e vazio" apagaria o
- * catálogo já gravado nesse coletor antigo.
+ * catálogo já gravado nesse coletor antigo -- e o diagnóstico de conexão, que
+ * não consulta o catálogo, também manda listas vazias. Só o envio que trouxe a
+ * chave reconcilia.
  */
 export function trazCatalogo(corpo: unknown, chave: 'feriados' | 'horarios'): boolean {
   return typeof corpo === 'object' && corpo !== null
     && Object.prototype.hasOwnProperty.call(corpo, chave);
+}
+
+/**
+ * Este envio pode apagar do staging o catálogo que sumiu do AtecSoft?
+ *
+ * São duas condições, e as duas precisam valer: o coletor tem de ser da versão
+ * que sabe o que a chave significa (1.0.1+) e a chave tem de ter vindo no corpo.
+ * Versão sozinha não basta -- o diagnóstico manda 1.0.1 sem consultar o
+ * catálogo. Chave sozinha também não -- o default do schema inventa `[]`.
+ */
+export function podeReconciliar(
+  versaoColetor: string,
+  corpo: unknown,
+  chave: 'feriados' | 'horarios',
+): boolean {
+  return compararVersao(versaoColetor, '1.0.1') >= 0 && trazCatalogo(corpo, chave);
+}
+
+/** Compara `a.b.c` com `a.b.c` termo a termo; trecho não numérico vale 0. */
+export function compararVersao(a: string, b: string): number {
+  const partes = (v: string) => v.split('.').map((t) => {
+    const n = Number.parseInt(t, 10);
+    return Number.isNaN(n) ? 0 : n;
+  });
+  const [pa, pb] = [partes(a), partes(b)];
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const dif = (pa[i] ?? 0) - (pb[i] ?? 0);
+    if (dif !== 0) return dif;
+  }
+  return 0;
 }
 
 /**

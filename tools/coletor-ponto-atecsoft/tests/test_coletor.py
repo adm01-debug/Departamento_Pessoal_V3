@@ -88,14 +88,30 @@ class Envios(unittest.TestCase):
         dias = [{'n': i} for i in range(3)]
         envios = coletor.montar_envios([], [], dias, '2026-10-01', '2026-11-21', por_envio=2,
                                        feriados=[{'codigo': 1}], horarios=[{'codigo': 2}])
-        self.assertEqual([len(e['feriados']) for e in envios], [1, 0])
-        self.assertEqual([len(e['horarios']) for e in envios], [1, 0])
+        self.assertEqual([len(e['feriados']) for e in envios if 'feriados' in e], [1])
+        self.assertEqual([len(e['horarios']) for e in envios if 'horarios' in e], [1])
+        # Partes seguintes nao repetem o catalogo: se repetissem a chave com [] o
+        # servidor leria "catalogo completo e vazio" e apagaria o que gravou.
+        self.assertNotIn('feriados', envios[1])
+        self.assertNotIn('horarios', envios[1])
 
     def test_sem_dias_ainda_envia_sinal_de_vida(self):
         envios = coletor.montar_envios([], [], [], '2026-11-21', '2026-11-21')
         self.assertEqual(len(envios), 1)
         self.assertEqual(envios[0]['dias'], [])
-        self.assertEqual((envios[0]['feriados'], envios[0]['horarios']), ([], []))
+
+    def test_diagnostico_nao_manda_as_chaves_do_catalogo(self):
+        # O diagnostico de conexao nao consulta FERIADO/HORARIO_LINHAS: mandar as
+        # chaves com lista vazia faria o servidor apagar o catalogo ja gravado.
+        envio = coletor.montar_envios([], [], [], '2026-11-21', '2026-11-21')[0]
+        self.assertNotIn('feriados', envio)
+        self.assertNotIn('horarios', envio)
+
+    def test_catalogo_consultado_e_vazio_ainda_manda_as_chaves(self):
+        # Consulta real: catalogo vazio e informacao, e o que sumiu tem de sair.
+        envio = coletor.montar_envios([], [], [], '2026-11-21', '2026-11-21',
+                                      feriados=[], horarios=[])[0]
+        self.assertEqual((envio['feriados'], envio['horarios']), ([], []))
 
 
 class Rede(unittest.TestCase):

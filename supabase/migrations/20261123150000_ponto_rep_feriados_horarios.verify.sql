@@ -52,12 +52,26 @@ SELECT CASE
   WHEN NOT EXISTS (
     SELECT 1 FROM pg_constraint c
     WHERE c.conname = 'ponto_rep_feriados_dispositivo_codigo_key' AND c.contype = 'u'
-      AND c.conrelid = 'public.ponto_rep_feriados'::regclass
+      AND c.conrelid = 'public.ponto_rep_feriados'::regclass AND c.condeferrable = false
+      AND c.conkey = ARRAY[
+        (SELECT a.attnum FROM pg_attribute a
+         WHERE a.attrelid = c.conrelid AND a.attname = 'dispositivo_id'),
+        (SELECT a.attnum FROM pg_attribute a
+         WHERE a.attrelid = c.conrelid AND a.attname = 'codigo')
+      ]::smallint[]
   ) THEN 'FALHOU: ponto_rep_feriados sem unique (dispositivo_id, codigo)'
   WHEN NOT EXISTS (
     SELECT 1 FROM pg_constraint c
     WHERE c.conname = 'ponto_rep_horarios_dispositivo_codigo_dia_key' AND c.contype = 'u'
-      AND c.conrelid = 'public.ponto_rep_horarios'::regclass
+      AND c.conrelid = 'public.ponto_rep_horarios'::regclass AND c.condeferrable = false
+      AND c.conkey = ARRAY[
+        (SELECT a.attnum FROM pg_attribute a
+         WHERE a.attrelid = c.conrelid AND a.attname = 'dispositivo_id'),
+        (SELECT a.attnum FROM pg_attribute a
+         WHERE a.attrelid = c.conrelid AND a.attname = 'codigo'),
+        (SELECT a.attnum FROM pg_attribute a
+         WHERE a.attrelid = c.conrelid AND a.attname = 'dia_semana')
+      ]::smallint[]
   ) THEN 'FALHOU: ponto_rep_horarios sem unique (dispositivo_id, codigo, dia_semana)'
   ELSE 'ok'
 END;

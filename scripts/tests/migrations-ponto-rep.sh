@@ -166,4 +166,28 @@ case "$falha" in
 esac
 echo "sidecar reprova tabela existente sem as chaves unicas do upsert"
 
+# Nome certo nao basta: a constraint tem de cobrir as colunas do ON CONFLICT.
+# Recriar com o mesmo nome sobre outras colunas deixaria o upsert da Edge
+# quebrado (42P10) e o sidecar passaria feliz.
+run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios ADD CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key UNIQUE (dispositivo_id, codigo);'
+falha="$(run_psql -qAt -f /tmp/ponto-rep-feriados.verify.sql)"
+case "$falha" in
+  'FALHOU: ponto_rep_horarios sem unique'*) ;;
+  *) echo "sidecar aceitou unique de horarios sem dia_semana: $falha" >&2; exit 1;;
+esac
+# Constraint DEFERRABLE nao serve para ON CONFLICT (nao e verificada no momento
+# do insert): o sidecar tem de reprovar tambem.
+run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios DROP CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key;'
+run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios ADD CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key UNIQUE (dispositivo_id, codigo, dia_semana) DEFERRABLE;'
+falha="$(run_psql -qAt -f /tmp/ponto-rep-feriados.verify.sql)"
+case "$falha" in
+  'FALHOU: ponto_rep_horarios sem unique'*) ;;
+  *) echo "sidecar aceitou unique de horarios DEFERRABLE: $falha" >&2; exit 1;;
+esac
+run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios DROP CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key;'
+run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios ADD CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key UNIQUE (dispositivo_id, codigo, dia_semana);'
+falha="$(run_psql -qAt -f /tmp/ponto-rep-feriados.verify.sql)"
+[ "$falha" = 'ok' ] || { echo "sidecar nao voltou a ok com a unique correta: $falha" >&2; exit 1; }
+echo "sidecar confere as colunas e o carater nao-deferrable das chaves unicas"
+
 echo 'PONTO_REP_OK: migration reaplicável, sidecar ok, RLS por empresa, token_hash oculto, escrita só do backend.'

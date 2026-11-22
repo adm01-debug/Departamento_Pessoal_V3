@@ -1,6 +1,6 @@
-﻿// deno test supabase/functions/ingest-ponto-rep/logica.test.ts
+// deno test supabase/functions/ingest-ponto-rep/logica.test.ts
 import { assert, assertEquals } from 'https://deno.land/std@0.208.0/assert/mod.ts';
-import { classificaErroVinculo, codigosRemovidos, diasAlterados, envioSchema, sha256Hex, tokenPlausivel, paresRemovidos, trazCatalogo, vincular } from './logica.ts';
+import { classificaErroVinculo, codigosRemovidos, compararVersao, diasAlterados, envioSchema, podeReconciliar, sha256Hex, tokenPlausivel, paresRemovidos, trazCatalogo, vincular } from './logica.ts';
 
 const func = (extra: Record<string, unknown> = {}) => ({
   codigo: 7, nome: 'A', matricula: null, cpf: null, pis: null, situacao: 'ATIVO',
@@ -137,6 +137,30 @@ Deno.test('coletor antigo sem as chaves nao apaga o catalogo gravado', () => {
   assert(trazCatalogo(envio(), 'horarios'));
   // Corpo que nao e objeto nao tem catalogo.
   assert(!trazCatalogo(null, 'feriados'));
+});
+
+Deno.test('so reconcilia o catalogo quando versao e chave concordam', () => {
+  // Nenhuma das duas condicoes basta sozinha. Versao sozinha: o diagnostico de
+  // conexao manda 1.0.1 com as chaves vazias sem consultar FERIADO/HORARIO.
+  // Chave sozinha: o default do schema inventa [] para coletor 1.0.0.
+  assert(!podeReconciliar('1.0.1', { versao_coletor: '1.0.1', dias: [] }, 'feriados'));
+  assert(!podeReconciliar('1.0.0', { feriados: [] }, 'feriados'));
+  assert(!podeReconciliar('1.0.0', envio(), 'horarios'));
+  assert(podeReconciliar('1.0.1', envio(), 'feriados'));
+  assert(podeReconciliar('1.0.1', envio(), 'horarios'));
+  // Versao posterior continua podendo reconciliar.
+  assert(podeReconciliar('1.1.0', envio(), 'horarios'));
+  assert(podeReconciliar('2.0.0', envio(), 'feriados'));
+});
+
+Deno.test('versao do coletor compara termo a termo, nao como texto', () => {
+  // Comparacao de string diria que "1.0.10" < "1.0.9".
+  assert(compararVersao('1.0.10', '1.0.9') > 0);
+  assert(compararVersao('1.0.0', '1.0.1') < 0);
+  assert(compararVersao('1.0.1', '1.0.1') === 0);
+  assert(compararVersao('1.0', '1.0.1') < 0);
+  // Trecho nao numerico nao derruba a comparacao.
+  assert(compararVersao('1.0.1-beta', '1.0.0') > 0);
 });
 
 Deno.test('jornada que trocou de dia deixa a linha antiga fora do staging', () => {

@@ -234,7 +234,11 @@ def dia_valido(dia):
 def montar_envios(funcionarios, justificativas, dias, inicio, fim, por_envio=DIAS_POR_ENVIO,
                   feriados=None, horarios=None):
     """Divide em requisições. Cadastro, justificativas, feriados e horários vão
-    só na primeira. Sem dias, ainda sai um envio: é o sinal de vida do coletor."""
+    só na primeira. Sem dias, ainda sai um envio: é o sinal de vida do coletor.
+
+    `feriados`/`horarios` em None significam "catálogo não consultado" e a chave
+    sai do corpo: o servidor só reconcilia (apaga o que sumiu) quando a chave
+    veio, então o diagnóstico de conexão não pode apagar o catálogo."""
     base = {'versao_coletor': VERSAO, 'periodo': {'inicio': inicio, 'fim': fim}}
     partes = [dias[i:i + por_envio] for i in range(0, len(dias), por_envio)] or [[]]
     envios = []
@@ -244,8 +248,10 @@ def montar_envios(funcionarios, justificativas, dias, inicio, fim, por_envio=DIA
         envio['partes'] = len(partes)
         envio['funcionarios'] = funcionarios if indice == 0 else []
         envio['justificativas'] = justificativas if indice == 0 else []
-        envio['feriados'] = (feriados or []) if indice == 0 else []
-        envio['horarios'] = (horarios or []) if indice == 0 else []
+        if indice == 0 and feriados is not None:
+            envio['feriados'] = feriados
+        if indice == 0 and horarios is not None:
+            envio['horarios'] = horarios
         envio['dias'] = parte
         envios.append(envio)
     return envios
