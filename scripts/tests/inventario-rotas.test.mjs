@@ -205,10 +205,9 @@ test('resolverImport devolve caminho com separador nativo, senao a travessia par
   const alvo = resolverImport(raiz, path.join(raiz, 'src/pages/Tela.tsx'), '@/hooks');
 
   assert.ok(alvo, '@/hooks resolve para o barrel src/hooks/index.ts');
-  assert.ok(!alvo.includes('/index.ts'), 'nao pode sobrar "/" misturado com path.sep no caminho resolvido');
-
   // `fechoDaTela` compara alvo por prefixo (`startsWith(path.join(raiz, 'src/hooks') + path.sep)`).
-  // Caminho com barra solta nao casa no Windows e a travessia morre ali, perdendo os hooks do barrel.
-  const prefixo = path.join(raiz, 'src/hooks') + path.sep;
-  assert.ok(alvo.startsWith(prefixo), 'barrel resolvido tem que casar com o prefixo de PASTAS_LIVRES');
+  // Caminho com barra solta no meio nao casa no Windows e a travessia morre ali, perdendo os hooks
+  // do barrel. Igualdade com path.join pega o separador errado em qualquer plataforma.
+  assert.equal(alvo, path.join(raiz, 'src/hooks', 'index.ts'), 'barrel resolvido com separador nativo');
+  assert.ok(alvo.startsWith(path.join(raiz, 'src/hooks') + path.sep), 'precisa casar com o prefixo de PASTAS_LIVRES');
 });
