@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `48284373fa06515b2f04e17a23a2abcea37957f2` (2026-11-22T16:46:46-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `127ccc8e661c482d5909ce802588787d900dc9c9` (2026-11-22T17:01:34-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -398,15 +398,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28246 nós · 63643 arestas · 2486 comunidades · grafo do commit `48284373`
+- 28246 nós · 63643 arestas · 2486 comunidades · grafo do commit `127ccc8e`
 - comunidades maiores: lucide-react (524), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (443), @tanstack/react-query (381), vitest (330), useEmpresas (327), cn (308), react (278), ColaboradorFormPage.tsx (174), App.tsx (166), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (32)
+- .github/workflows/canonical-migrations.yml (33)
 - inventario/estado/rotas.json (22)
-- scripts/canonical-invariants.sql (20)
+- scripts/canonical-invariants.sql (21)
 - docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (14)
 - src/integrations/supabase/types.ts (12)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
@@ -656,6 +656,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-22 `127ccc8` infra: registra 20261123090000 no lote do canonical-migrations (#840)
 - 2026-11-22 `4828437` feat: coletor le feriados e jornadas do AtecSoft (etapa 53) (#839)
 - 2026-11-22 `c42efdd` test: prova a etapa 70 e marca 67/70 no plano do Ponto (#841)
 - 2026-11-22 `9c7a64a` feat: itemiza verbas rescisorias em verbas_rescisorias (#838)
@@ -670,7 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-22 `3a8e2ec` fix: CPF não trafega mais inteiro na tela de Vínculos do relógio (R8) (#829)
 - 2026-11-22 `77500ff` fix: use-after-free e overread no cliente Firebird do coletor de ponto (#828)
 - 2026-11-22 `835bc4e` fix: aborta remessa CNAB sem nenhum favorecido (marcava enviado com arquivo vazio) (#827)
-- 2026-11-22 `6553243` docs: recertifica F-03/F-07/F-11 com contagem real e marca cargos como feito (#826)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "48284373fa06515b2f04e17a23a2abcea37957f2",
+  "sha": "127ccc8e661c482d5909ce802588787d900dc9c9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 19:50 UTC",
+  "generated_at": "2026-11-22 20:02 UTC",
   "files_total": 3742,
   "code_files": 3149,
   "code_lines": 500662
@@ -337182,10 +337182,20 @@
   }
  },
  "git": {
-  "sha": "48284373fa06515b2f04e17a23a2abcea37957f2",
+  "sha": "127ccc8e661c482d5909ce802588787d900dc9c9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "127ccc8",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "infra: registra 20261123090000 no lote do canonical-migrations (#840)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql"
+    ]
+   },
    {
     "sha": "4828437",
     "date": "2026-11-22",
@@ -337515,25 +337525,16 @@
      "src/services/__tests__/pontoOfflineService.test.ts",
      "src/services/pontoOfflineService.ts"
     ]
-   },
-   {
-    "sha": "2db7ac8",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: progresso do plano do relógio de ponto com evidências (#809)",
-    "files": [
-     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    10
+    9
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    5
+    6
    ],
    [
     "supabase/functions/ingest-ponto-rep/index.ts",
@@ -337542,6 +337543,10 @@
    [
     "scripts/automation.config.json",
     3
+   ],
+   [
+    "scripts/canonical-invariants.sql",
+    2
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -337601,10 +337606,6 @@
    ],
    [
     "tools/coletor-ponto-atecsoft/tests/test_coletor.py",
-    1
-   ],
-   [
-    "supabase/functions/processar-ponto/index.ts",
     1
    ]
   ]

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "48284373fa06515b2f04e17a23a2abcea37957f2",
+  "commit": "127ccc8e661c482d5909ce802588787d900dc9c9",
   "branch": "main",
-  "data_commit": "2026-11-22T16:46:46-03:00",
+  "data_commit": "2026-11-22T17:01:34-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "127ccc8",
+    "data": "2026-11-22",
+    "assunto": "infra: registra 20261123090000 no lote do canonical-migrations (#840)"
+   },
    {
     "sha": "4828437",
     "data": "2026-11-22",
@@ -126,11 +131,6 @@
     "sha": "2313441",
     "data": "2026-11-21",
     "assunto": "chore: fecha etapa 44 do plano do ponto com evidencia pos-deploy (#815)"
-   },
-   {
-    "sha": "8aa8e96",
-    "data": "2026-11-21",
-    "assunto": "fix: ingest-ponto-rep grava auditoria do lote (etapa 44 do plano do ponto) (#814)"
    }
   ],
   "arquivos_mudados_7d": 931,
@@ -184,12 +184,12 @@
     "mudancas": 35
    },
    {
-    "pasta": "src/components/ponto",
+    "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 33
    },
    {
-    "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 32
+    "pasta": "src/components/ponto",
+    "mudancas": 33
    },
    {
     "pasta": "src/utils/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 32
+    "mudancas": 33
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 20
+    "mudancas": 21
    },
    {
     "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
