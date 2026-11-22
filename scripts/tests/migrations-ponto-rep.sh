@@ -188,6 +188,15 @@ run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios DROP CONSTRAINT ponto_rep_
 run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios ADD CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key UNIQUE (dispositivo_id, codigo, dia_semana);'
 falha="$(run_psql -qAt -f /tmp/ponto-rep-feriados.verify.sql)"
 [ "$falha" = 'ok' ] || { echo "sidecar nao voltou a ok com a unique correta: $falha" >&2; exit 1; }
-echo "sidecar confere as colunas e o carater nao-deferrable das chaves unicas"
+# Ordem das colunas na unique nao importa para o ON CONFLICT: comparar por
+# posicao daria falso alarme em tabela preexistente com a mesma chave em outra
+# ordem.
+run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios DROP CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key;'
+run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios ADD CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key UNIQUE (dia_semana, codigo, dispositivo_id);'
+falha="$(run_psql -qAt -f /tmp/ponto-rep-feriados.verify.sql)"
+[ "$falha" = 'ok' ] || { echo "sidecar rejeitou unique equivalente em outra ordem: $falha" >&2; exit 1; }
+run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios DROP CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key;'
+run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios ADD CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key UNIQUE (dispositivo_id, codigo, dia_semana);'
+echo "sidecar confere colunas e nao-deferrable, e aceita a chave em qualquer ordem"
 
 echo 'PONTO_REP_OK: migration reaplicável, sidecar ok, RLS por empresa, token_hash oculto, escrita só do backend.'
