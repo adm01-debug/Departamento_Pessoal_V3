@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f0f940baa562ab1135088052e6a1023e86f9989a` (2026-11-22T10:15:12-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a2f4ebe2c3159d8679b3f2f5a6acc7639a511662` (2026-11-22T10:33:21-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3718 |
 | arquivos_codigo | 2143 |
-| linhas_codigo | 428221 |
+| linhas_codigo | 428249 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -398,8 +398,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28153 nós · 63489 arestas · 2457 comunidades · grafo do commit `f0f940ba`
-- comunidades maiores: useEmpresas (596), lucide-react (552), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (459), react (297), cn (295), vitest (244), App.tsx (193), contract.ts (190), "public"."empresas" (164), "public"."empresas" (158)
+- 28155 nós · 63493 arestas · 2433 comunidades · grafo do commit `a2f4ebe2`
+- comunidades maiores: cn (492), lucide-react (485), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (426), useEmpresas (369), vitest (337), badge.tsx (288), @tanstack/react-query (281), App.tsx (217), contract.ts (182), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -656,6 +656,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-22 `a2f4ebe` fix: extrai e testa a regra do 23505 no vinculo do relogio (#835)
 - 2026-11-22 `f0f940b` fix: baixa de guia falha alto quando nenhuma linha e atualizada (#834)
 - 2026-11-22 `4715945` fix: isola guias_fgts_digital por empresa e libera a baixa para RH (#824)
 - 2026-11-22 `7084a10` perf: cria indices nas 3 FKs de join do ponto e do PIX (#832)
@@ -670,7 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-22 `bba91c5` feat: conecta a aba FGTS Digital à edge fgts-digital (feature estava órfã a 1 passo do fim) (#822)
 - 2026-11-22 `d4b08fa` docs: reescreve a análise de pendentes com o estado real (9 dos 12 itens já estavam implementados) (#823)
 - 2026-11-21 `bfd9db6` fix: gerador de rotas resolve index.ts com separador nativo (inventario saia diferente no Windows) (#820)
-- 2026-11-21 `5a7dabb` chore: documenta o limite real das etapas 55 e 58 do plano do ponto (#816)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

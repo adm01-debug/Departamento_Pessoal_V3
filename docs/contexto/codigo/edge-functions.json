@@ -1802,7 +1802,7 @@
    "nome": "ingest-ponto-rep",
    "entrada": "supabase/functions/ingest-ponto-rep/index.ts",
    "arquivos": 2,
-   "linhas": 309,
+   "linhas": 324,
    "verify_jwt": false,
    "metodos": [
     "POST"

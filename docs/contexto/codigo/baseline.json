@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f0f940baa562ab1135088052e6a1023e86f9989a",
+  "commit": "a2f4ebe2c3159d8679b3f2f5a6acc7639a511662",
   "branch": "main",
-  "data_commit": "2026-11-22T10:15:12-03:00",
+  "data_commit": "2026-11-22T10:33:21-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "a2f4ebe",
+    "data": "2026-11-22",
+    "assunto": "fix: extrai e testa a regra do 23505 no vinculo do relogio (#835)"
+   },
    {
     "sha": "f0f940b",
     "data": "2026-11-22",
@@ -126,11 +131,6 @@
     "sha": "2db7ac8",
     "data": "2026-11-21",
     "assunto": "chore: progresso do plano do relógio de ponto com evidências (#809)"
-   },
-   {
-    "sha": "1511918",
-    "data": "2026-11-21",
-    "assunto": "fix: formatação do painel de relógios (prettier) (#808)"
    }
   ],
   "arquivos_mudados_7d": 1080,
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3718,
   "arquivos_codigo": 2143,
-  "linhas_codigo": 428221,
+  "linhas_codigo": 428249,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -724,7 +724,7 @@
   },
   "supabase/functions": {
    "arquivos": 191,
-   "linhas": 27638
+   "linhas": 27666
   },
   "supabase/tests": {
    "arquivos": 3,

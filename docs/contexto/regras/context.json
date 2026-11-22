@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "f0f940baa562ab1135088052e6a1023e86f9989a",
+  "sha": "a2f4ebe2c3159d8679b3f2f5a6acc7639a511662",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 13:16 UTC",
+  "generated_at": "2026-11-22 13:34 UTC",
   "files_total": 3732,
   "code_files": 3141,
-  "code_lines": 499151
+  "code_lines": 499179
  },
  "version": "1.3.2",
- "facts_hash": "97089d416c93d33a",
+ "facts_hash": "d3584f5de1b15ff6",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -105510,7 +105510,7 @@
   {
    "module": "supabase/functions",
    "files": 191,
-   "lines": 27638,
+   "lines": 27666,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -115979,6 +115979,11 @@
     "file": "supabase/functions/folha-metrics/auditActions.ts",
     "name": "PAYROLL_AUDIT_READ_ACTIONS",
     "values": "'PAYROLL_CALC', 'PAYROLL_CLOSE', 'PAYROLL_REOPEN', // Read-only compatibility for rows created before the physical CHECK was // aligned with the Edge Function writers. 'CLOSE', 'REOPEN',"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.ts",
+    "name": "ErroVinculo",
+    "values": "ambiguidade | abortar"
    }
   ],
   "error_messages": [
@@ -206600,6 +206605,14 @@
    {
     "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
     "name": "token: forma mínima e hash"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "violacao da unicidade reversa deixa o vinculo pendente em vez de abortar o lote"
+   },
+   {
+    "file": "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "name": "erro que nao e de unicidade aborta o lote"
    },
    {
     "file": "supabase/functions/metricas/contract.test.ts",
@@ -328579,7 +328592,7 @@
   },
   "supabase/functions/ingest-ponto-rep/logica.test.ts": {
    "path": "supabase/functions/ingest-ponto-rep/logica.test.ts",
-   "lines": 84,
+   "lines": 97,
    "is_test": true,
    "doc": "deno test supabase/functions/ingest-ponto-rep/logica.test.ts",
    "tests": [
@@ -328591,12 +328604,14 @@
     "só dias com hash diferente ou novos são alterados",
     "contrato aceita o envio do coletor e o sinal de vida vazio",
     "contrato recusa campo extra, data torta e empresa_id vindo do coletor",
-    "token: forma mínima e hash"
+    "token: forma mínima e hash",
+    "violacao da unicidade reversa deixa o vinculo pendente em vez de abortar o lote",
+    "erro que nao e de unicidade aborta o lote"
    ]
   },
   "supabase/functions/ingest-ponto-rep/logica.ts": {
    "path": "supabase/functions/ingest-ponto-rep/logica.ts",
-   "lines": 117,
+   "lines": 132,
    "exports": [
     "const envioSchema",
     "type Envio",
@@ -328607,7 +328622,9 @@
     "interface ColaboradorChave",
     "type Vinculo",
     "function vincular",
-    "function diasAlterados"
+    "function diasAlterados",
+    "type ErroVinculo",
+    "function classificaErroVinculo"
    ],
    "zod": [
     {
@@ -328658,6 +328675,12 @@
      "body": "{ versao_coletor: z.string().min(1).max(20), periodo: z.object({ inicio: data, fim: data }).strict(), parte: z.number().int().positive(), partes: z.number().int().positive(), funcionarios: z.array(funcionarioSchema).max(5000), justificativas: z.array(justificativaSchema).max(500), dias: z.array(diaSchema).max(1000), }",
      "refines": [],
      "chain": []
+    }
+   ],
+   "enums": [
+    {
+     "name": "ErroVinculo",
+     "values": "ambiguidade | abortar"
     }
    ],
    "doc": "Lógica pura da ingestão do relógio de ponto: contrato, hash do token e vínculo funcionário -> colaborador. Sem I/O, para ser testável isolada."
@@ -335748,10 +335771,21 @@
   }
  },
  "git": {
-  "sha": "f0f940baa562ab1135088052e6a1023e86f9989a",
+  "sha": "a2f4ebe2c3159d8679b3f2f5a6acc7639a511662",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "a2f4ebe",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "fix: extrai e testa a regra do 23505 no vinculo do relogio (#835)",
+    "files": [
+     "supabase/functions/ingest-ponto-rep/index.ts",
+     "supabase/functions/ingest-ponto-rep/logica.test.ts",
+     "supabase/functions/ingest-ponto-rep/logica.ts"
+    ]
+   },
    {
     "sha": "f0f940b",
     "date": "2026-11-22",
@@ -336069,25 +336103,6 @@
      "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql",
      "supabase/migrations/20261121220000_ponto_rep_coletores_admin.verify.sql"
     ]
-   },
-   {
-    "sha": "01d8cb6",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "feat: protege batida do relógio e bloqueia app/quiosque de quem usa o relógio (#801)",
-    "files": [
-     "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
-     "src/components/__tests__/PontoClockRegister.test.tsx",
-     "src/components/ponto/GestaoRegistrosPonto.tsx",
-     "src/components/ponto/PontoClockRegister.tsx",
-     "src/integrations/supabase/types.ts",
-     "src/pages/PontoKioskPage.tsx",
-     "src/pages/PontoPage.tsx",
-     "src/pages/__tests__/PontoKioskPage.test.tsx",
-     "supabase/functions/processar-ponto-offline/index.ts",
-     "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
-     "supabase/migrations/20261121222000_batidas_relogio_protecao.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -336100,11 +336115,11 @@
     5
    ],
    [
-    "src/integrations/supabase/types.ts",
-    4
+    "supabase/functions/ingest-ponto-rep/index.ts",
+    3
    ],
    [
-    "src/pages/PontoKioskPage.tsx",
+    "src/integrations/supabase/types.ts",
     3
    ],
    [
@@ -336120,10 +336135,6 @@
     2
    ],
    [
-    "supabase/functions/ingest-ponto-rep/index.ts",
-    2
-   ],
-   [
     "src/schemas/tableColumns.ts",
     2
    ],
@@ -336136,16 +336147,20 @@
     2
    ],
    [
+    "src/pages/PontoKioskPage.tsx",
+    2
+   ],
+   [
     "src/services/pontoOfflineService.ts",
     2
    ],
    [
-    "src/components/ponto/PontoClockRegister.tsx",
-    2
+    "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    1
    ],
    [
-    "src/pages/PontoPage.tsx",
-    2
+    "supabase/functions/ingest-ponto-rep/logica.ts",
+    1
    ],
    [
     "scripts/tests/migrations-p1-guias-fgts-digital-rls.sh",

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f0f940baa5` · branch `main` · 2026-11-22 13:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a2f4ebe2c3` · branch `main` · 2026-11-22 13:34 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1966,6 +1966,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | BackupSnapshotErrorCode | BACKUP_TABLE_QUERY_FAILED \| BACKUP_INCOMPLETE | `supabase/functions/backup-automatico/backupSnapshot.ts` |
 | ReportDeliveryStatus | sucesso \| erro \| indisponivel | `supabase/functions/enviar-relatorio/deliveryStatus.ts` |
 | PAYROLL_AUDIT_READ_ACTIONS | 'PAYROLL_CALC', 'PAYROLL_CLOSE', 'PAYROLL_REOPEN', // Read-only compatibility for rows created before the physical CHECK was // aligned with the Edge Function writers. 'CLOSE', 'REOPEN', | `supabase/functions/folha-metrics/auditActions.ts` |
+| ErroVinculo | ambiguidade \| abortar | `supabase/functions/ingest-ponto-rep/logica.ts` |
 
 ## F. Validações de entrada
 
@@ -5508,7 +5509,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9731 testes em 764 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9733 testes em 764 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5798,6 +5799,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/regrasSolicitacaoFerias.test.ts` | 11 | resumirUsoPorPeriodo · soma gozo, abono e partes; rejeitadas/canceladas contam só como parte · validarSaldoFerias · aceita 30 dias sem abono e 20 + 10 de abono … |
 | `src/utils/__tests__/safeError.test.ts` | 11 | safeErrorMessage · returns fallback for null/undefined error · returns custom fallback when specified · returns user-friendly message for duplicate key error … |
 | `src/utils/__tests__/secureJson.test.ts` | 11 | secureJsonParse · parses simple valid JSON · parses JSON arrays · strips __proto__ keys to prevent prototype pollution … |
+| `supabase/functions/ingest-ponto-rep/logica.test.ts` | 11 | vincula por CPF mesmo com formatação diferente · CPF sem zero à esquerda casa com CPF completo · sem CPF cai para PIS e depois matrícula · chave ambígua não vincula e não tenta a próxima … |
 | `src/components/__tests__/AfastamentoTable.test.tsx` | 10 | AfastamentoTable · renders Colaborador table header · renders Tipo / CID table header · renders Período table header … |
 | `src/components/__tests__/Breadcrumbs.test.tsx` | 10 | Breadcrumbs · returns null when path has only one segment · renders breadcrumb for two-segment path · shows  … |
 | `src/components/__tests__/DarfTab.test.tsx` | 10 | DarfTab · renders DARF title · renders IRRF label · does not render non-payroll taxes (PIS/COFINS, CSLL) … |
@@ -5811,7 +5813,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/FeriasReconciliacaoHistoricoCard.test.tsx` | 10 | FeriasReconciliacaoHistoricoCard · renders Reconciliação Automática — Histórico title · shows empty state when no logs · shows skeleton when loading … |
 | `src/components/__tests__/MedidasTimeline.test.tsx` | 10 | MedidasTimeline · returns null when medidas is empty · renders medida descricao · renders colaborador name … |
 | `src/components/__tests__/Notifications.test.tsx` | 10 | NotificationItem · renders Notificações header · shows empty state when no notifications · renders notification titles … |
-| `src/components/__tests__/PapeisAvaliacao.test.ts` | 10 | normalização da lista de papéis · aceita a lista do  · capacidades da conta admin+gestor (a conta de homologação) · mantém o admin E o gestor — um não anula o outro … |
 | … +464 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)

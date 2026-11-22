@@ -7358,11 +7358,11 @@
   {
    "arquivo": "supabase/functions/ingest-ponto-rep/logica.test.ts",
    "tipo": "unit",
-   "linhas": 84,
+   "linhas": 97,
    "testa": [
     "supabase/functions/ingest-ponto-rep/logica.ts"
    ],
-   "casos": 9
+   "casos": 11
   },
   {
    "arquivo": "supabase/functions/metricas/contract.test.ts",
