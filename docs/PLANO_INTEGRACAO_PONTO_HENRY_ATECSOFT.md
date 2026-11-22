@@ -157,20 +157,20 @@ Princípios:
 ### Fase 4 — Coletor Windows (47–62)
 
 - [x] **47. Criar `tools/coletor-ponto-atecsoft/`.** Python 32 bits, sem dependência de biblioteca Firebird. Pronto quando: pasta com README na PR. Feito: #796.
-- [ ] **48. Reaproveitar o cliente Firebird 1.5.** Portar `fb15_client.py` (leitura via `gds32.dll`, transação read-only). Pronto quando: lê `FUNCIONARIO` do banco real em teste manual registrado.
-- [ ] **49. Decodificar textos.** Colunas `OCTETS` como latin-1. Pronto quando: nomes com acento chegam corretos.
+- [ ] **48. Reaproveitar o cliente Firebird 1.5.** Portar `fb15_client.py` (leitura via `gds32.dll`, transação read-only). Pronto quando: lê `FUNCIONARIO` do banco real em teste manual registrado. Código completo e revisado em 22/11/2026 (`fb15_client.py`: protocolo Firebird via ctypes, `isc_tpb_read` — sem caminho de escrita); falta o banco real para o teste manual.
+- [ ] **49. Decodificar textos.** Colunas `OCTETS` como latin-1. Pronto quando: nomes com acento chegam corretos. Código completo (`fb15_client.py:402,404`: `decode('latin-1', errors='replace')` em `SQL_TEXT`/`SQL_VARYING`); falta confirmar com nome acentuado real.
 - [x] **50. Ler credencial do Firebird de variável de ambiente.** Nada fixo no código. Pronto quando: `gitleaks` verde e grep sem senha. Feito: #796; credencial só por ambiente/DPAPI, gitleaks verde.
-- [ ] **51. Ler funcionários.** Código, nome, CPF, PIS, matrícula, empresa, situação, horário. Pronto quando: contagem igual à do AtecSoft.
-- [ ] **52. Ler dias com janela móvel.** Sempre os últimos N dias (padrão 45), para capturar correções tardias. Pronto quando: correção feita no AtecSoft em dia antigo é reenviada.
-- [ ] **53. Ler justificativas, feriados e horários.** `JUSTFICATIVA`, `FERIADO`, `HORARIO_LINHAS`. Pronto quando: enviados no lote.
+- [ ] **51. Ler funcionários.** Código, nome, CPF, PIS, matrícula, empresa, situação, horário. Pronto quando: contagem igual à do AtecSoft. Código completo (`coletor.py`: `SQL_FUNCIONARIOS` + `montar_funcionario`, testado com dados falsos em `tests/test_coletor.py`); falta a contagem contra o banco real.
+- [ ] **52. Ler dias com janela móvel.** Sempre os últimos N dias (padrão 45), para capturar correções tardias. Pronto quando: correção feita no AtecSoft em dia antigo é reenviada. Código completo (`coletor.py`: `config.setdefault('dias', 45)`, `ler_tudo` filtra `DATA_BATIDA >= hoje - dias`, testado em `test_leitura_usa_janela`); falta o teste com correção real.
+- [ ] **53. Ler justificativas, feriados e horários.** `JUSTFICATIVA`, `FERIADO`, `HORARIO_LINHAS`. Pronto quando: enviados no lote. `JUSTFICATIVA` pronta (`SQL_JUSTIFICATIVAS`/`montar_justificativa`). `FERIADO` e `HORARIO_LINHAS` NÃO escritos: os nomes de coluna dessas duas tabelas não estão documentados em nenhum arquivo do repo (só `CP`, `FUNCIONARIO`, `HORARIO_LINHAS`* e `JUSTFICATIVA` foram citados em prosa na PR #786, sem DDL anexado) — escrever a query seria chutar nome de coluna, proibido pela regra 3. Resolve com o DDL real que vem junto dos bancos das etapas 6–7.
 - [x] **54. Nunca gerar falta no coletor.** Coletor só transporta; quem interpreta é o DP V3. Pronto quando: código sem regra de negócio de falta. Feito: #796; o coletor só transporta.
-- [ ] **55. Enviar em lotes com repetição.** HTTPS, tentativa com espera crescente, fila local em disco se cair a internet. Pronto quando: teste com rede cortada reenvia depois.
-- [ ] **56. Guardar o token no cofre do Windows.** Não em arquivo texto. Pronto quando: nenhum arquivo do coletor contém o token.
-- [ ] **57. Trava de instância única.** Pronto quando: segunda execução simultânea sai sem enviar.
-- [ ] **58. Log local com rotação.** Sem CPF/PIS em claro. Pronto quando: log de 7 dias não passa do limite definido.
-- [ ] **59. Batimento cardíaco.** Envia "estou vivo" mesmo sem batida nova. Pronto quando: `ultimo_contato` atualiza a cada ciclo.
-- [ ] **60. Instalador em um clique.** Cria tarefa agendada a cada 10 minutos, todos os dias, com reinício após falha. Pronto quando: instalação limpa em Windows de teste.
-- [ ] **61. Modo diagnóstico.** Comando que testa DLL, banco, internet e token e diz o que falhou. Pronto quando: cada falha simulada gera mensagem clara.
+- [x] **55. Enviar em lotes com repetição.** HTTPS, tentativa com espera crescente, fila local em disco se cair a internet. Pronto quando: teste com rede cortada reenvia depois. Feito por outro desenho, documentado em `coletor.py:9-12`: sem fila em disco — o coletor não guarda estado e reenvia a janela inteira (45 dias) a cada ciclo de 10 min; o servidor dedup por hash (etapa 39), então uma queda menor que a janela não perde nada. Retentativa com espera crescente (2,4,8,16s) testada em `test_repete_em_falha_de_rede_e_entrega`; erro 4xx (exceto 429) não repete (`test_401_nao_repete`).
+- [x] **56. Guardar o token no cofre do Windows.** Não em arquivo texto. Pronto quando: nenhum arquivo do coletor contém o token. Feito: mesmo mecanismo DPAPI da etapa 50 (`gravar_segredo`/`ler_segredo`, `coletor.py:203-227`); token só é lido em memória (`ler_segredo(ARQ_TOKEN)`) e nunca logado (`test_token_vai_no_cabecalho_e_nao_no_corpo` confirma que não vai no corpo).
+- [ ] **57. Trava de instância única.** Pronto quando: segunda execução simultânea sai sem enviar. Código completo (`instancia_unica`, `coletor.py:311-320`, via `msvcrt.locking`); não testável neste ambiente Linux (`msvcrt` é exclusivo do Windows) — falta a instalação real (etapa 91).
+- [x] **58. Log local com rotação.** Sem CPF/PIS em claro. Pronto quando: log de 7 dias não passa do limite definido. Feito: `RotatingFileHandler` com limite fixo de 1 MB × 5 arquivos (`coletor.py:323-329`); `executar()` só loga contagens e datas (`coletor.py:342-343`), nunca nome/CPF/PIS/token.
+- [x] **59. Batimento cardíaco.** Envia "estou vivo" mesmo sem batida nova. Pronto quando: `ultimo_contato` atualiza a cada ciclo. Feito: cliente sempre envia pelo menos 1 requisição mesmo com 0 dias (`montar_envios`, testado em `test_sem_dias_ainda_envia_sinal_de_vida`); servidor atualiza `ultimo_contato_em` em todo lote processado (`ingest-ponto-rep/index.ts:151-154`), confirmado ao vivo na etapa 46.
+- [ ] **60. Instalador em um clique.** Cria tarefa agendada a cada 10 minutos, todos os dias, com reinício após falha. Pronto quando: instalação limpa em Windows de teste. Código completo (`instalar.bat`: checa Python 32-bit, roda `--configurar`/`--diagnostico`, cria a tarefa com `schtasks /sc minute /mo 10`; reinício após falha vem do próprio agendamento repetitivo, não de uma flag separada); falta a instalação real (etapa 91).
+- [ ] **61. Modo diagnóstico.** Comando que testa DLL, banco, internet e token e diz o que falhou. Pronto quando: cada falha simulada gera mensagem clara. Código completo (`diagnostico()`, `coletor.py:350-383`: testa Python 32-bit, `config.json`, `gds32.dll`, arquivo do banco, token gravado, leitura do banco e servidor+token, cada um com mensagem própria); falta simular as falhas num Windows real.
 - [x] **62. Testes do coletor.** Conversão de datas/horas do Firebird, montagem do lote, fila offline. Pronto quando: suíte verde no CI. Feito: `tools/coletor-ponto-atecsoft/tests` (16 testes) rodando no CI (#799).
 
 ### Fase 5 — Processamento e cálculo (63–72)
@@ -257,19 +257,20 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 | 1 — Diagnóstico             | 9–18      | 1/10       |
 | 2 — Modelo de dados         | 19–32     | 13/14      |
 | 3 — Função de ingestão      | 33–46     | 10/14      |
-| 4 — Coletor Windows         | 47–62     | 4/16       |
+| 4 — Coletor Windows         | 47–62     | 8/16       |
 | 5 — Processamento e cálculo | 63–72     | 1/10       |
 | 6 — Interface               | 73–82     | 8/10       |
 | 7 — Fechamento mensal       | 83–90     | 1/8        |
 | 8 — Implantação e operação  | 91–100    | 2/10       |
 | 9 — Escrita no AtecSoft     | 101–120   | 0/20       |
-| **Total**                   | **1–120** | **45/120** |
+| **Total**                   | **1–120** | **49/120** |
 
 Situação em 22/11/2026. O dono vai enviar os bancos reais das duas unidades (etapas 6–7) amanhã; até lá:
 
 - 36, 44, 46 fechadas nesta sessão com chamada real ao canônico (dispositivo de teste descartável na empresa `[E2E-SEED]`, removido depois). 45 segue aberta: só falta teste de reprocessamento/período fechado, que dependem das etapas 41/43.
-- 48, 49, 51–53, 55–61 (coletor): NÃO VERIFICADO. Dependem do PC Windows da unidade com o AtecSoft (DLL 32 bits, DPAPI, tarefa agendada). São conferidas na instalação pelo técnico de TI (etapa 91).
+- Coletor (Fase 4): código revisado etapa a etapa nesta sessão. 55, 56, 58, 59 fechadas por evidência de código/teste (mecanismo já atende o critério sem precisar do Windows real). 48, 49, 51, 52, 57, 60, 61 têm código completo, mas o critério de cada uma pede um Windows/banco real — seguem abertas, conferidas na instalação pelo técnico de TI (etapa 91). 53 tem uma lacuna real: só `JUSTFICATIVA` foi lida; `FERIADO` e `HORARIO_LINHAS` não têm coluna documentada no repo para escrever a query sem chutar.
 - 41–43, 63–72, 83–90, 101–120: dependem da cópia do banco real das duas unidades (etapas 6–15) e do cadastro dos colaboradores no DP V3. Sem isso, qualquer código sobre `REF_*`/virada de dia seria suposição — não escrito por não ter como validar.
+- Atenção para amanhã: o banco do AtecSoft é Firebird 1.5 (ODS 10.1); o Ubuntu desta sessão só tem pacotes do Firebird 3.0, que não abre esse formato. Para ler o `.FDB` aqui vou precisar ou de um dump/CSV das tabelas, ou da própria `gds32.dll` do instalador — decido isso quando os arquivos chegarem.
 
 ## 8. Riscos
 
