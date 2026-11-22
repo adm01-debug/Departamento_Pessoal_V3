@@ -8,6 +8,9 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 MIGRATION="$REPO_ROOT/supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
 VERIFY="$REPO_ROOT/supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql"
+# Etapa 53: staging de feriados e jornadas do AtecSoft.
+FERIADOS="$REPO_ROOT/supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+FERIADOS_VERIFY="$REPO_ROOT/supabase/migrations/20261123150000_ponto_rep_feriados_horarios.verify.sql"
 IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24}"
 NAME="dp-ponto-rep-$$"
 
@@ -40,6 +43,8 @@ docker run -d --name "$NAME" -e POSTGRES_PASSWORD=test "$IMAGE" >/dev/null
 bash "$REPO_ROOT/scripts/tests/wait-for-postgres-container.sh" "$NAME"
 docker cp "$MIGRATION" "$NAME":/tmp/ponto-rep.sql
 docker cp "$VERIFY" "$NAME":/tmp/ponto-rep.verify.sql
+docker cp "$FERIADOS" "$NAME":/tmp/ponto-rep-feriados.sql
+docker cp "$FERIADOS_VERIFY" "$NAME":/tmp/ponto-rep-feriados.verify.sql
 
 # Stubs mínimos do Supabase e das funções de autorização usadas pelas policies.
 docker exec -i "$NAME" psql -X -U postgres -v ON_ERROR_STOP=1 <<'SQL'
@@ -79,7 +84,10 @@ SQL
 
 for pass in 1 2; do
   run_psql -q -f /tmp/ponto-rep.sql
+  run_psql -q -f /tmp/ponto-rep-feriados.sql
   verify="$(run_psql -qAt -f /tmp/ponto-rep.verify.sql)"
+  verify_feriados="$(run_psql -qAt -f /tmp/ponto-rep-feriados.verify.sql)"
+  expect_eq "sidecar de feriados na passada $pass" "$verify_feriados" "ok"
   expect_eq "sidecar após passada $pass" "$verify" "ok"
   echo "ponto_rep migration pass $pass succeeded (sidecar: $verify)"
 done
@@ -102,10 +110,17 @@ INSERT INTO public.ponto_rep_dias(dispositivo_id, empresa_id, funcionario_codigo
 INSERT INTO public.ponto_rep_justificativas(dispositivo_id, empresa_id, codigo, nome) VALUES
   ('20000000-0000-0000-0000-00000000000a', '10000000-0000-0000-0000-00000000000a', 1, 'Atestado A'),
   ('20000000-0000-0000-0000-00000000000b', '10000000-0000-0000-0000-00000000000b', 1, 'Atestado B');
+INSERT INTO public.ponto_rep_feriados(dispositivo_id, empresa_id, codigo, nome, data) VALUES
+  ('20000000-0000-0000-0000-00000000000a', '10000000-0000-0000-0000-00000000000a', 3, 'Natal A', '2026-12-25'),
+  ('20000000-0000-0000-0000-00000000000b', '10000000-0000-0000-0000-00000000000b', 3, 'Natal B', '2026-12-25');
+INSERT INTO public.ponto_rep_horarios(dispositivo_id, empresa_id, codigo, dia_semana) VALUES
+  ('20000000-0000-0000-0000-00000000000a', '10000000-0000-0000-0000-00000000000a', 1, 2),
+  ('20000000-0000-0000-0000-00000000000b', '10000000-0000-0000-0000-00000000000b', 1, 2);
 SQL
 
 EMP_A='10000000-0000-0000-0000-00000000000a'
-for tabela in ponto_rep_dispositivos ponto_rep_lotes ponto_rep_funcionarios ponto_rep_dias ponto_rep_justificativas; do
+for tabela in ponto_rep_dispositivos ponto_rep_lotes ponto_rep_funcionarios ponto_rep_dias \
+  ponto_rep_justificativas ponto_rep_feriados ponto_rep_horarios; do
   # count(empresa_id): em dispositivos o GRANT é por coluna (sem token_hash).
   sql="SELECT count(empresa_id) || '/' || count(*) FILTER (WHERE empresa_id = '$EMP_A') FROM public.$tabela;"
   expect_eq "RH da empresa A em $tabela" "$(as_user authenticated "$RH_A" "$sql")" "1/1"
@@ -116,7 +131,7 @@ for tabela in ponto_rep_dispositivos ponto_rep_lotes ponto_rep_funcionarios pont
   expect_denied "SET ROLE authenticated; UPDATE public.$tabela SET empresa_id = empresa_id;" "permission denied"
   expect_denied "SET ROLE anon; UPDATE public.$tabela SET empresa_id = empresa_id;" "permission denied"
 done
-echo "leitura por empresa e bloqueio de escrita conferidos nas 5 tabelas"
+echo "leitura por empresa e bloqueio de escrita conferidos nas 7 tabelas"
 
 expect_denied "SET ROLE authenticated; SELECT set_config('request.jwt.claims','{\"sub\":\"$RH_A\"}',false); SELECT token_hash FROM public.ponto_rep_dispositivos;" "permission denied"
 expect_denied "SET ROLE authenticated; INSERT INTO public.ponto_rep_dispositivos(empresa_id, nome, unidade, token_hash, token_prefixo) VALUES ('$EMP_A','x','y',repeat('c',64),'x');" "permission denied"
@@ -127,5 +142,10 @@ for ruim in 'abc' "$(printf 'A%.0s' $(seq 64))" "$(printf 'a%.0s' $(seq 63))g"; 
   expect_denied "SET ROLE service_role; INSERT INTO public.ponto_rep_dispositivos(empresa_id, nome, unidade, token_hash, token_prefixo) VALUES ('$EMP_A','x','u-$RANDOM','$ruim','x');" "ponto_rep_dispositivos_token_hash_fmt"
 done
 echo "token_hash fora do formato SHA-256 hex minúsculo recusado"
+
+for ruim in 0 8; do
+  expect_denied "SET ROLE service_role; INSERT INTO public.ponto_rep_horarios(dispositivo_id, empresa_id, codigo, dia_semana) VALUES ('20000000-0000-0000-0000-00000000000a','$EMP_A',2,$ruim);" "ponto_rep_horarios_dia_semana_check"
+done
+echo "dia_semana fora de 1..7 recusado"
 
 echo 'PONTO_REP_OK: migration reaplicável, sidecar ok, RLS por empresa, token_hash oculto, escrita só do backend.'

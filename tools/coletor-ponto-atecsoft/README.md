@@ -1,14 +1,14 @@
 # Coletor do Ponto AtecSoft
 
 Programa pequeno que roda no PC onde o Ponto AtecSoft está instalado (um por unidade). A cada 10 minutos ele lê o
-banco do AtecSoft **somente para leitura** e envia para o DP V3 o cadastro de funcionários, as justificativas e o
-cartão ponto dos últimos 45 dias.
+banco do AtecSoft **somente para leitura** e envia para o DP V3 o cadastro de funcionários, as justificativas, os
+feriados, as jornadas e o cartão ponto dos últimos 45 dias.
 
 Plano completo: `docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md` (Fase 4).
 
 ## Estado
 
-- Pronto e testado: leitura, conversão, divisão em envios, repetição em falha de rede (16 testes).
+- Pronto e testado: leitura, conversão, divisão em envios, repetição em falha de rede (17 testes).
 - **Ainda não funciona de ponta a ponta**: a função `ingest-ponto-rep` que recebe os envios ainda não existe no DP V3.
 - **Não testado em Windows nem com banco real.** As três consultas foram validadas contra o banco vazio do instalador
   2.1.13; o caminho da DLL, a DPAPI e a tarefa agendada só podem ser provados no PC da unidade.
@@ -54,7 +54,7 @@ Nenhum desses arquivos é versionado (`.gitignore` desta pasta).
 
 ```json
 {
-  "versao_coletor": "1.0.0",
+  "versao_coletor": "1.0.1",
   "periodo": { "inicio": "2026-10-07", "fim": "2026-11-21" },
   "parte": 1,
   "partes": 1,
@@ -63,6 +63,16 @@ Nenhum desses arquivos é versionado (`.gitignore` desta pasta).
       "empresa_codigo": 1, "horario_codigo": 2, "data_admissao": "2021-03-01", "data_desligamento": null }
   ],
   "justificativas": [{ "codigo": 1, "nome": "Atestado", "considera_normal": true, "considera_falta": false }],
+  "feriados": [
+    { "codigo": 3, "nome": "Natal", "data": "2026-12-25", "nao_computa_banco_horas": false,
+      "vinculo_cidade": null, "vinculo_departamento": null, "vinculo_empresa": null }
+  ],
+  "horarios": [
+    { "codigo": 2, "ident": 1, "dia_semana": 2,
+      "pares": [{ "entrada": "08:00:00", "saida": "12:00:00" }, { "entrada": "14:00:00", "saida": "18:00:00" }],
+      "tipo_calculo": 2, "tolerancia_falta": "00:10:00", "tolerancia_extra": "00:10:00",
+      "neutro": false, "fecha": false, "ajuste": false, "folga": false, "extra": false }
+  ],
   "dias": [
     { "funcionario_codigo": 7, "data": "2026-11-20",
       "marcacoes": [{ "pos": "E1", "hora": "07:58:00", "data": null, "ref": null, "obs": null,
@@ -73,7 +83,7 @@ Nenhum desses arquivos é versionado (`.gitignore` desta pasta).
 }
 ```
 
-Cadastro e justificativas vão só na parte 1; os dias vão em blocos de 400. Sem nenhum dia na janela, sai um envio
+Cadastro, justificativas, feriados e jornadas vão só na parte 1; os dias vão em blocos de 400. Sem nenhum dia na janela, sai um envio
 vazio, que serve de sinal de vida.
 
 ## Decisões de desenho

@@ -84,10 +84,18 @@ class Envios(unittest.TestCase):
         self.assertEqual([e['parte'] for e in envios], [1, 2, 3])
         self.assertTrue(all(e['partes'] == 3 for e in envios))
 
+    def test_feriados_e_horarios_so_na_primeira_parte(self):
+        dias = [{'n': i} for i in range(3)]
+        envios = coletor.montar_envios([], [], dias, '2026-10-01', '2026-11-21', por_envio=2,
+                                       feriados=[{'codigo': 1}], horarios=[{'codigo': 2}])
+        self.assertEqual([len(e['feriados']) for e in envios], [1, 0])
+        self.assertEqual([len(e['horarios']) for e in envios], [1, 0])
+
     def test_sem_dias_ainda_envia_sinal_de_vida(self):
         envios = coletor.montar_envios([], [], [], '2026-11-21', '2026-11-21')
         self.assertEqual(len(envios), 1)
         self.assertEqual(envios[0]['dias'], [])
+        self.assertEqual((envios[0]['feriados'], envios[0]['horarios']), ([], []))
 
 
 class Rede(unittest.TestCase):
@@ -129,7 +137,8 @@ class Rede(unittest.TestCase):
 
 class Consultas(unittest.TestCase):
     def test_so_select(self):
-        for sql in (coletor.SQL_FUNCIONARIOS, coletor.SQL_JUSTIFICATIVAS, coletor.SQL_DIAS):
+        for sql in (coletor.SQL_FUNCIONARIOS, coletor.SQL_JUSTIFICATIVAS, coletor.SQL_DIAS,
+                    coletor.SQL_FERIADOS, coletor.SQL_HORARIOS):
             self.assertTrue(sql.startswith('SELECT '))
             for proibido in ('INSERT', 'UPDATE', 'DELETE', 'DROP', 'ALTER', ';'):
                 self.assertNotIn(proibido, sql.upper())
@@ -143,16 +152,34 @@ class Consultas(unittest.TestCase):
                 if 'FROM CP' in sql:
                     self.parametros = params
                     return [linha_cp(e1=time(8, 0)), linha_cp(ident=0)]
+                if 'FROM FERIADO' in sql:
+                    return [{'codigo': 3, 'nome': 'Natal', 'data': date(2026, 12, 25), 'nbh': 1,
+                             'vinc_cidade': None, 'vinc_depart': None, 'vinc_emp': None},
+                            {'codigo': 4, 'nome': 'sem data', 'data': None}]
+                if 'FROM HORARIO_LINHAS' in sql:
+                    return [{'codigo': 1, 'ident': 1, 'dia_semana': 2, 'ent1': time(8, 0),
+                             'sai1': time(12, 0), 'ent2': time(14, 0), 'sai2': time(18, 0),
+                             'tol_falta': time(0, 10), 'tol_extra': time(0, 10), 'tipo_calculo': 2},
+                            {'codigo': 1, 'ident': 1, 'dia_semana': 7}]
                 if 'FUNCIONARIO' in sql:
                     return [{'codigo': 7, 'nome': 'A'}, {'codigo': 0, 'nome': 'lixo'}]
                 return [{'codigo': 1, 'nome': 'Atestado', 'normal': 1, 'falta': 0}]
 
         falsa = Falsa()
-        f, j, d, inicio, fim = coletor.ler_tudo(falsa, 45, hoje=date(2026, 11, 21))
+        lido = coletor.ler_tudo(falsa, 45, hoje=date(2026, 11, 21))
         self.assertEqual(falsa.parametros, [date(2026, 10, 7)])
-        self.assertEqual((len(f), len(j), len(d)), (1, 1, 1))
-        self.assertEqual((inicio, fim), ('2026-10-07', '2026-11-21'))
-        self.assertTrue(j[0]['considera_normal'])
+        self.assertEqual((len(lido['funcionarios']), len(lido['justificativas']), len(lido['dias'])),
+                         (1, 1, 1))
+        self.assertEqual((lido['inicio'], lido['fim']), ('2026-10-07', '2026-11-21'))
+        self.assertTrue(lido['justificativas'][0]['considera_normal'])
+        self.assertEqual(len(lido['feriados']), 1)
+        self.assertTrue(lido['feriados'][0]['nao_computa_banco_horas'])
+        self.assertEqual(len(lido['horarios']), 2)
+        self.assertEqual(lido['horarios'][0]['pares'],
+                         [{'entrada': '08:00:00', 'saida': '12:00:00'},
+                          {'entrada': '14:00:00', 'saida': '18:00:00'}])
+        # dia 7 sem jornada continua no lote: o servidor precisa saber que é folga.
+        self.assertEqual(lido['horarios'][1]['pares'], [])
 
 
 if __name__ == '__main__':

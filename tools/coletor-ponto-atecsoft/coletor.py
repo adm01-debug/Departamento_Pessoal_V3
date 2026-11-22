@@ -29,7 +29,7 @@ import urllib.error
 import urllib.request
 from datetime import date, datetime, time, timedelta
 
-VERSAO = '1.0.0'
+VERSAO = '1.0.1'
 PASTA = os.path.dirname(os.path.abspath(__file__))
 ARQ_CONFIG = os.path.join(PASTA, 'config.json')
 ARQ_TOKEN = os.path.join(PASTA, 'token.dpapi')
@@ -46,6 +46,20 @@ SQL_FUNCIONARIOS = (
     'FROM FUNCIONARIO ORDER BY CODIGO'
 )
 SQL_JUSTIFICATIVAS = 'SELECT CODIGO, NOME, NORMAL, FALTA FROM JUSTFICATIVA ORDER BY CODIGO'
+SQL_FERIADOS = (
+    'SELECT CODIGO, NOME, DATA, NBH, VINC_CIDADE, VINC_DEPART, VINC_EMP '
+    'FROM FERIADO ORDER BY DATA, CODIGO'
+)
+# Só o que o DP V3 já sabe usar: os pares de jornada do dia e as tolerâncias.
+# TB_* e J_* (tolerância e justificativa por batida) ficam para quando o
+# significado de REF_* estiver provado (etapa 11).
+SQL_HORARIOS = (
+    'SELECT CODIGO, IDENT, DIA_SEMANA, '
+    + ', '.join('ENT' + str(n) for n in range(1, 7)) + ', '
+    + ', '.join('SAI' + str(n) for n in range(1, 7)) + ', '
+    + 'TIPO_CALCULO, TOL_FALTA, TOL_EXTRA, NEUTRO, FECHA, AJUSTE, FOLGA, EXTRA '
+    + 'FROM HORARIO_LINHAS ORDER BY CODIGO, DIA_SEMANA'
+)
 SQL_DIAS = (
     'SELECT IDENT, DATA_BATIDA, '
     + ', '.join(POSICOES) + ', '
@@ -132,6 +146,46 @@ def montar_justificativa(linha):
     }
 
 
+def montar_feriado(linha):
+    """Uma linha da FERIADO. `vinculo_*` diz para quem o feriado vale; NULL
+    significa "vale para todos", e o DP V3 decide com o cadastro real."""
+    return {
+        'codigo': inteiro(linha.get('codigo')),
+        'nome': texto(linha.get('nome')),
+        'data': iso_data(linha.get('data')),
+        'nao_computa_banco_horas': marcado(linha.get('nbh')),
+        'vinculo_cidade': inteiro(linha.get('vinc_cidade')) or None,
+        'vinculo_departamento': inteiro(linha.get('vinc_depart')) or None,
+        'vinculo_empresa': inteiro(linha.get('vinc_emp')) or None,
+    }
+
+
+def montar_horario(linha):
+    """Uma linha da HORARIO_LINHAS: a jornada de UM dia da semana. Só os pares
+    entrada/saída com hora; dia sem jornada (domingo) sai com `pares` vazio."""
+    pares = []
+    for n in range(1, 7):
+        entrada = iso_hora(linha.get('ent' + str(n)))
+        saida = iso_hora(linha.get('sai' + str(n)))
+        if entrada is None and saida is None:
+            continue
+        pares.append({'entrada': entrada, 'saida': saida})
+    return {
+        'codigo': inteiro(linha.get('codigo')),
+        'ident': inteiro(linha.get('ident')) or None,
+        'dia_semana': inteiro(linha.get('dia_semana')),
+        'pares': pares,
+        'tipo_calculo': inteiro(linha.get('tipo_calculo')),
+        'tolerancia_falta': iso_hora(linha.get('tol_falta')),
+        'tolerancia_extra': iso_hora(linha.get('tol_extra')),
+        'neutro': marcado(linha.get('neutro')),
+        'fecha': marcado(linha.get('fecha')),
+        'ajuste': marcado(linha.get('ajuste')),
+        'folga': marcado(linha.get('folga')),
+        'extra': marcado(linha.get('extra')),
+    }
+
+
 def montar_dia(linha):
     """Uma linha da tabela CP vira um dia. Só ficam de fora as posições sem
     hora (NULL no banco) e sem justificativa."""
@@ -177,9 +231,10 @@ def dia_valido(dia):
     return bool(dia['funcionario_codigo']) and dia['funcionario_codigo'] > 0 and dia['data'] is not None
 
 
-def montar_envios(funcionarios, justificativas, dias, inicio, fim, por_envio=DIAS_POR_ENVIO):
-    """Divide em requisições. Cadastro e justificativas vão só na primeira.
-    Sem dias, ainda sai um envio: é o sinal de vida do coletor."""
+def montar_envios(funcionarios, justificativas, dias, inicio, fim, por_envio=DIAS_POR_ENVIO,
+                  feriados=None, horarios=None):
+    """Divide em requisições. Cadastro, justificativas, feriados e horários vão
+    só na primeira. Sem dias, ainda sai um envio: é o sinal de vida do coletor."""
     base = {'versao_coletor': VERSAO, 'periodo': {'inicio': inicio, 'fim': fim}}
     partes = [dias[i:i + por_envio] for i in range(0, len(dias), por_envio)] or [[]]
     envios = []
@@ -189,6 +244,8 @@ def montar_envios(funcionarios, justificativas, dias, inicio, fim, por_envio=DIA
         envio['partes'] = len(partes)
         envio['funcionarios'] = funcionarios if indice == 0 else []
         envio['justificativas'] = justificativas if indice == 0 else []
+        envio['feriados'] = (feriados or []) if indice == 0 else []
+        envio['horarios'] = (horarios or []) if indice == 0 else []
         envio['dias'] = parte
         envios.append(envio)
     return envios
@@ -269,14 +326,28 @@ def conectar(config):
 
 
 def ler_tudo(conexao, dias_janela, hoje=None):
+    """Devolve um dict com tudo o que vai no lote. Cadastro, justificativas,
+    feriados e horários são pequenos e vão inteiros; os dias respeitam a janela."""
     hoje = hoje or date.today()
     inicio = hoje - timedelta(days=dias_janela)
     funcionarios = [f for f in map(montar_funcionario, conexao.execute(SQL_FUNCIONARIOS))
                     if f['codigo'] and f['codigo'] > 0]
     justificativas = [j for j in map(montar_justificativa, conexao.execute(SQL_JUSTIFICATIVAS))
                       if j['codigo'] and j['nome']]
+    feriados = [f for f in map(montar_feriado, conexao.execute(SQL_FERIADOS))
+                if f['codigo'] and f['data']]
+    horarios = [h for h in map(montar_horario, conexao.execute(SQL_HORARIOS))
+                if h['codigo'] is not None and h['codigo'] > 0 and h['dia_semana'] is not None]
     dias = [d for d in map(montar_dia, conexao.execute(SQL_DIAS, [inicio])) if dia_valido(d)]
-    return funcionarios, justificativas, dias, inicio.isoformat(), hoje.isoformat()
+    return {
+        'funcionarios': funcionarios,
+        'justificativas': justificativas,
+        'feriados': feriados,
+        'horarios': horarios,
+        'dias': dias,
+        'inicio': inicio.isoformat(),
+        'fim': hoje.isoformat(),
+    }
 
 
 def enviar(url, token, envio, esperar=None):
@@ -334,13 +405,17 @@ def executar():
     token = ler_segredo(ARQ_TOKEN)
     conexao = conectar(config)
     try:
-        funcionarios, justificativas, dias, inicio, fim = ler_tudo(conexao, int(config['dias']))
+        lido = ler_tudo(conexao, int(config['dias']))
     finally:
         conexao.close()
-    envios = montar_envios(funcionarios, justificativas, dias, inicio, fim)
+    envios = montar_envios(lido['funcionarios'], lido['justificativas'], lido['dias'],
+                           lido['inicio'], lido['fim'],
+                           feriados=lido['feriados'], horarios=lido['horarios'])
     # Só contagens no log: nome, CPF e PIS nunca são escritos aqui.
-    log.info('lidos: %d funcionários, %d justificativas, %d dias (%s a %s), %d envio(s)',
-             len(funcionarios), len(justificativas), len(dias), inicio, fim, len(envios))
+    log.info('lidos: %d funcionários, %d justificativas, %d feriados, %d jornadas, '
+             '%d dias (%s a %s), %d envio(s)',
+             len(lido['funcionarios']), len(lido['justificativas']), len(lido['feriados']),
+             len(lido['horarios']), len(lido['dias']), lido['inicio'], lido['fim'], len(envios))
     for envio in envios:
         resposta = enviar(config['url'], token, envio)
         log.info('envio %d/%d aceito: %s', envio['parte'], envio['partes'],

@@ -61,6 +61,9 @@ serve(async (req: Request): Promise<Response> => {
     const dispositivoId = dispositivo.id as string;
     const empresaId = dispositivo.empresa_id as string;
 
+    // total_feriados/total_horarios so entram quando ha o que contar: coletor
+    // 1.0.0 nao envia estas chaves e um lote sem elas nao pode depender da
+    // migration nova estar aplicada.
     const { data: lote, error: erroLote } = await admin.from('ponto_rep_lotes').insert({
       dispositivo_id: dispositivoId,
       empresa_id: empresaId,
@@ -68,6 +71,9 @@ serve(async (req: Request): Promise<Response> => {
       periodo_fim: envio.periodo.fim,
       total_funcionarios: envio.funcionarios.length,
       total_dias: envio.dias.length,
+      ...(envio.feriados.length || envio.horarios.length
+        ? { total_feriados: envio.feriados.length, total_horarios: envio.horarios.length }
+        : {}),
     }).select('id').single();
     if (erroLote || !lote) throw new Error(`lote: ${erroLote?.code ?? 'sem id'}`);
 
@@ -91,6 +97,22 @@ serve(async (req: Request): Promise<Response> => {
           { onConflict: 'dispositivo_id,codigo' },
         );
         if (error) throw new Error(`justificativas: ${error.code ?? 'erro'}`);
+      }
+
+      // Feriados e jornadas: mesmo padrao do cadastro, copia fiel do AtecSoft.
+      if (envio.feriados.length) {
+        const { error } = await admin.from('ponto_rep_feriados').upsert(
+          envio.feriados.map((f) => ({ ...f, dispositivo_id: dispositivoId, empresa_id: empresaId, updated_at: agora })),
+          { onConflict: 'dispositivo_id,codigo' },
+        );
+        if (error) throw new Error(`feriados: ${error.code ?? 'erro'}`);
+      }
+      if (envio.horarios.length) {
+        const { error } = await admin.from('ponto_rep_horarios').upsert(
+          envio.horarios.map((h) => ({ ...h, dispositivo_id: dispositivoId, empresa_id: empresaId, updated_at: agora })),
+          { onConflict: 'dispositivo_id,codigo,dia_semana' },
+        );
+        if (error) throw new Error(`horarios: ${error.code ?? 'erro'}`);
       }
 
       // Vínculo automático só de quem ainda não tem.
@@ -179,6 +201,8 @@ serve(async (req: Request): Promise<Response> => {
           dispositivo_id: dispositivoId,
           dias_recebidos: envio.dias.length,
           dias_alterados: alterados.length,
+          feriados_recebidos: envio.feriados.length,
+          horarios_recebidos: envio.horarios.length,
           pendentes_vinculo: pendentesVinculo,
           dias_convertidos: convertidos?.processados ?? 0,
           batidas_geradas: convertidos?.batidas ?? 0,
@@ -191,6 +215,8 @@ serve(async (req: Request): Promise<Response> => {
         lote_id: lote.id,
         dias_recebidos: envio.dias.length,
         dias_alterados: alterados.length,
+        feriados_recebidos: envio.feriados.length,
+        horarios_recebidos: envio.horarios.length,
         pendentes_vinculo: pendentesVinculo,
         dias_convertidos: convertidos?.processados ?? 0,
         batidas_geradas: convertidos?.batidas ?? 0,

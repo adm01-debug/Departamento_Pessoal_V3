@@ -14,8 +14,19 @@ const dia = (extra: Record<string, unknown> = {}) => ({
   folga: false, neutro: false, justificativa_abono: null, horario_codigo: 1, hash: 'a'.repeat(64), ...extra,
 });
 const envio = (extra: Record<string, unknown> = {}) => ({
-  versao_coletor: '1.0.0', periodo: { inicio: '2026-10-07', fim: '2026-11-21' }, parte: 1, partes: 1,
-  funcionarios: [], justificativas: [], dias: [], ...extra,
+  versao_coletor: '1.0.1', periodo: { inicio: '2026-10-07', fim: '2026-11-21' }, parte: 1, partes: 1,
+  funcionarios: [], justificativas: [], feriados: [], horarios: [], dias: [], ...extra,
+});
+
+const feriado = (extra: Record<string, unknown> = {}) => ({
+  codigo: 3, nome: 'Natal', data: '2026-12-25', nao_computa_banco_horas: false,
+  vinculo_cidade: null, vinculo_departamento: null, vinculo_empresa: null, ...extra,
+});
+const horario = (extra: Record<string, unknown> = {}) => ({
+  codigo: 1, ident: 1, dia_semana: 2,
+  pares: [{ entrada: '08:00:00', saida: '12:00:00' }, { entrada: '14:00:00', saida: '18:00:00' }],
+  tipo_calculo: 2, tolerancia_falta: '00:10:00', tolerancia_extra: '00:10:00',
+  neutro: false, fecha: false, ajuste: false, folga: false, extra: false, ...extra,
 });
 
 Deno.test('vincula por CPF mesmo com formatação diferente', () => {
@@ -64,6 +75,17 @@ Deno.test('contrato aceita o envio do coletor e o sinal de vida vazio', () => {
     dias: [dia({ marcacoes: [{ pos: 'E1', hora: '07:58:00', data: null, ref: null, obs: null, justificativa: null, equip: 4 }] })],
   });
   assert(envioSchema.safeParse(cheio).success);
+});
+
+Deno.test('contrato aceita feriados e jornadas e recusa fora da faixa', () => {
+  assert(envioSchema.safeParse(envio({ feriados: [feriado()], horarios: [horario()] })).success);
+  // Dia sem jornada (domingo): pares vazio é legítimo.
+  assert(envioSchema.safeParse(envio({ horarios: [horario({ pares: [] })] })).success);
+  assert(!envioSchema.safeParse(envio({ feriados: [feriado({ data: '25/12/2026' })] })).success);
+  assert(!envioSchema.safeParse(envio({ feriados: [feriado({ empresa_id: 'x' })] })).success);
+  assert(!envioSchema.safeParse(envio({ horarios: [horario({ dia_semana: 0 })] })).success);
+  assert(!envioSchema.safeParse(envio({ horarios: [horario({ dia_semana: 8 })] })).success);
+  assert(!envioSchema.safeParse(envio({ horarios: [horario({ pares: [{ entrada: '8h', saida: null }] })] })).success);
 });
 
 Deno.test('contrato recusa campo extra, data torta e empresa_id vindo do coletor', () => {

@@ -49,6 +49,36 @@ const justificativaSchema = z.object({
   considera_falta: z.boolean(),
 }).strict();
 
+const feriadoSchema = z.object({
+  codigo: z.number().int().positive(),
+  nome: z.string().max(80).nullable(),
+  data,
+  nao_computa_banco_horas: z.boolean(),
+  vinculo_cidade: z.number().int().nullable(),
+  vinculo_departamento: z.number().int().nullable(),
+  vinculo_empresa: z.number().int().nullable(),
+}).strict();
+
+const parHorarioSchema = z.object({
+  entrada: hora.nullable(),
+  saida: hora.nullable(),
+}).strict();
+
+const horarioSchema = z.object({
+  codigo: z.number().int().positive(),
+  ident: z.number().int().nullable(),
+  dia_semana: z.number().int().min(1).max(7),
+  pares: z.array(parHorarioSchema).max(6),
+  tipo_calculo: z.number().int().nullable(),
+  tolerancia_falta: hora.nullable(),
+  tolerancia_extra: hora.nullable(),
+  neutro: z.boolean(),
+  fecha: z.boolean(),
+  ajuste: z.boolean(),
+  folga: z.boolean(),
+  extra: z.boolean(),
+}).strict();
+
 export const envioSchema = z.object({
   versao_coletor: z.string().min(1).max(20),
   periodo: z.object({ inicio: data, fim: data }).strict(),
@@ -56,11 +86,16 @@ export const envioSchema = z.object({
   partes: z.number().int().positive(),
   funcionarios: z.array(funcionarioSchema).max(5000),
   justificativas: z.array(justificativaSchema).max(500),
+  // Coletor 1.0.0 não envia estas chaves: o default mantém o contrato antigo válido.
+  feriados: z.array(feriadoSchema).max(2000).default([]),
+  horarios: z.array(horarioSchema).max(5000).default([]),
   dias: z.array(diaSchema).max(1000),
 }).strict();
 
 export type Envio = z.infer<typeof envioSchema>;
 export type FuncionarioEnvio = z.infer<typeof funcionarioSchema>;
+export type FeriadoEnvio = z.infer<typeof feriadoSchema>;
+export type HorarioEnvio = z.infer<typeof horarioSchema>;
 
 /** Token do coletor: 32+ caracteres imprimíveis sem espaço. */
 export function tokenPlausivel(token: string | null): token is string {
