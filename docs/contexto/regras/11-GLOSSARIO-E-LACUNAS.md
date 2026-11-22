@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e3410c9cf5` · branch `main` · 2026-11-22 14:33 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9c7a64a541` · branch `main` · 2026-11-22 15:38 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `password_reset_requests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `pcs_avaliacoes_cargo` | Cargo evaluation whose total is always calculated by a trigger. | 10 colunas | migration |
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
-| … +410 linhas — lista completa em `context.json` | | | |
+| … +411 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 

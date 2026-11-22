@@ -12239,6 +12239,7 @@
     "homologacoes_rescisao",
     "notificacoes",
     "periodos_aquisitivos",
+    "verbas_rescisorias",
     "versao_banco"
    ],
    "rpcs": [
@@ -12298,7 +12299,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 147
+   "arquivos_puxados": 148
   },
   {
    "protegida": true,

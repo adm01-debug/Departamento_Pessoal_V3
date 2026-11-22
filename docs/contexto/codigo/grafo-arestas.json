@@ -7850,7 +7850,8 @@
    "src/services/loggerService.ts",
    "src/services/vinculoService.ts",
    "src/utils/auditLogger.ts",
-   "src/utils/rescisaoCalc.ts"
+   "src/utils/rescisaoCalc.ts",
+   "src/utils/rescisaoVerbas.ts"
   ],
   "src/services/securityService.ts": [
    "src/integrations/supabase/client.base.ts",
@@ -8057,6 +8058,9 @@
   ],
   "src/utils/rescisaoPDF.ts": [
    "src/services/auditoriaService.ts",
+   "src/utils/rescisaoCalc.ts"
+  ],
+  "src/utils/rescisaoVerbas.ts": [
    "src/utils/rescisaoCalc.ts"
   ],
   "supabase/functions/OCR/index.ts": [

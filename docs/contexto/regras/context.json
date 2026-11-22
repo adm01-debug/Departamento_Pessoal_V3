@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e3410c9cf505b10847186ea7beb4662e4b52e26d",
+  "sha": "9c7a64a5412090e3cf793228c2b4cb4c5e219d3e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 14:33 UTC",
-  "files_total": 3736,
-  "code_files": 3143,
-  "code_lines": 499563
+  "generated_at": "2026-11-22 15:38 UTC",
+  "files_total": 3738,
+  "code_files": 3145,
+  "code_lines": 500000
  },
  "version": "1.3.2",
- "facts_hash": "6fc69055391c15d6",
+ "facts_hash": "9cfd0e4366b980e5",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   "languages": {
    ".tsx": 1038,
    ".sql": 1002,
-   ".ts": 962,
+   ".ts": 964,
    ".mjs": 110,
    ".js": 15,
    ".cjs": 11,
@@ -92869,6 +92869,7 @@
      "homologacoes_rescisao",
      "notificacoes",
      "periodos_aquisitivos",
+     "verbas_rescisorias",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -92889,7 +92890,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 140
+    "deps_count": 141
    },
    {
     "path": "",
@@ -103986,7 +103987,7 @@
   {
    "module": "src/components",
    "files": 1010,
-   "lines": 186843,
+   "lines": 186878,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105051,7 +105052,7 @@
   {
    "module": "src/services",
    "files": 198,
-   "lines": 41979,
+   "lines": 42074,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -105234,6 +105235,7 @@
     "vales_alimentacao",
     "vales_transporte",
     "valores_campos_customizados",
+    "verbas_rescisorias",
     "vw_alertas_compensacao",
     "vw_alertas_rh",
     "vw_banco_horas_saldo",
@@ -105532,8 +105534,8 @@
   },
   {
    "module": "src/utils",
-   "files": 69,
-   "lines": 8825,
+   "files": 71,
+   "lines": 9132,
    "tables": [
     "folha_itens",
     "rubricas_folha"
@@ -105561,6 +105563,7 @@
     "regrasSolicitacaoFerias.ts: DIAS_AVISO_FERIAS, FeriasLancada, UsoPeriodo, USO_VAZIO, resumirUsoPorPeriodo, validarSaldoFerias",
     "rescisaoCalc.ts: normalizarTipoRescisao, SeguroDesempregoInfo, RescisaoResult, LinhaBaseCalculo, aliquotaEfetiva, RescisaoParams",
     "rescisaoPDF.ts: AuditoriaPdf, OrigemCalculoRescisao, LABEL_ORIGEM_CALCULO, formatarMomentoCalculo, mapearResultadoDeDesligamento, gerarPDFRescisao",
+    "rescisaoVerbas.ts: TipoVerbaRescisoria, VerbaRescisoria, somarVerbas, itemizarVerbasRescisorias",
     "safeError.ts: safeErrorMessage",
     "safeUrl.ts: isAllowedUrl, assertAllowedUrl, safeHref",
     "sanitizeHtml.ts: SanitizeOptions, sanitizeHtml, sanitizeContractHtml, sanitizePlainText",
@@ -105623,6 +105626,7 @@
     "src/utils/regrasSolicitacaoFerias.ts",
     "src/utils/rescisaoCalc.ts",
     "src/utils/rescisaoPDF.ts",
+    "src/utils/rescisaoVerbas.ts",
     "src/utils/safeError.ts",
     "src/utils/safeUrl.ts",
     "src/utils/sanitizeHtml.ts",
@@ -105650,6 +105654,7 @@
     "src/utils/__tests__/regrasSolicitacaoFerias.test.ts",
     "src/utils/__tests__/rescisaoCalc.test.ts",
     "src/utils/__tests__/rescisaoPDF.test.ts",
+    "src/utils/__tests__/rescisaoVerbas.test.ts",
     "src/utils/__tests__/safeError.test.ts",
     "src/utils/__tests__/safeUrl.test.ts",
     "src/utils/__tests__/sanitizeHtml.test.ts",
@@ -109386,6 +109391,17 @@
      "src/services/colaboradorDetalhesService.ts"
     ]
    },
+   "verbas_rescisorias": {
+    "delete": [
+     "src/services/rescisaoService.ts"
+    ],
+    "ref": [
+     "src/services/rescisaoService.ts"
+    ],
+    "select": [
+     "src/services/rescisaoService.ts"
+    ]
+   },
    "verification_tokens": {
     "delete": [
      "supabase/functions/limpeza/index.ts"
@@ -111028,6 +111044,16 @@
    ],
    "valores_campos_customizados": [
     "colaborador_id"
+   ],
+   "verbas_rescisorias": [
+    "codigo",
+    "descricao",
+    "desligamento_id",
+    "incide_fgts",
+    "incide_inss",
+    "incide_irrf",
+    "tipo",
+    "valor"
    ],
    "verification_tokens": [
     "expires_at",
@@ -113625,7 +113651,6 @@
    "vaga_entrevistas",
    "vaga_etapas",
    "vector_indexes",
-   "verbas_rescisorias",
    "vinculos",
    "webauthn_challenges",
    "webauthn_credentials",
@@ -116104,6 +116129,11 @@
     "file": "src/utils/rescisaoPDF.ts",
     "name": "OrigemCalculoRescisao",
     "values": "local | servidor"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "name": "TipoVerbaRescisoria",
+    "values": "provento | desconto"
    },
    {
     "file": "src/utils/importacao/columnMap.ts",
@@ -124240,6 +124270,18 @@
    {
     "file": "src/utils/rescisaoPDF.ts",
     "text": "Audit metadata enriches the PDF but is not required to generate an"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "text": "* Regra de ouro: a soma das linhas de provento tem de fechar EXATAMENTE com"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "text": "`resultado.totalProventos` e a das linhas de desconto com"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "text": "(`rescisaoCalc.ts:379-386`): INSS e IRRF incidem apenas sobre saldo de"
    },
    {
     "file": "src/utils/sanitizeHtml.ts",
@@ -153462,6 +153504,18 @@
    },
    {
     "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "field": "tipo",
+    "value": "provento",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "field": "tipo",
+    "value": "desconto",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
     "field": "etapa",
     "value": "finalizado",
     "kind": "compara"
@@ -161027,6 +161081,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/services/rescisaoService.ts",
+    "field": "tipo",
+    "value": "desconto",
+    "kind": "compara"
+   },
+   {
     "file": "src/services/vinculoService.ts",
     "field": "tipo",
     "value": "Admissão",
@@ -161529,6 +161589,78 @@
     "field": "tipo",
     "value": "fim_contrato",
     "kind": "compara"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "field": "tipo",
+    "value": "provento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "field": "tipo",
+    "value": "provento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "field": "tipo",
+    "value": "provento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "field": "tipo",
+    "value": "provento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "field": "tipo",
+    "value": "provento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "field": "tipo",
+    "value": "provento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "field": "tipo",
+    "value": "provento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "field": "tipo",
+    "value": "provento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "field": "tipo",
+    "value": "desconto",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "field": "tipo",
+    "value": "desconto",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "field": "tipo",
+    "value": "desconto",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/utils/rescisaoVerbas.ts",
+    "field": "tipo",
+    "value": "desconto",
+    "kind": "escreve"
    },
    {
     "file": "src/utils/folha/validadorFolha.ts",
@@ -205329,6 +205461,34 @@
     "name": "cálculo antigo sem assinatura continua sem assinatura"
    },
    {
+    "file": "src/utils/__tests__/rescisaoVerbas.test.ts",
+    "name": "itemizarVerbasRescisorias"
+   },
+   {
+    "file": "src/utils/__tests__/rescisaoVerbas.test.ts",
+    "name": "soma das linhas fecha exatamente com totalProventos e totalDescontos"
+   },
+   {
+    "file": "src/utils/__tests__/rescisaoVerbas.test.ts",
+    "name": "reancora no total oficial quando o truncamento do motor desvia 1 centavo"
+   },
+   {
+    "file": "src/utils/__tests__/rescisaoVerbas.test.ts",
+    "name": "não inclui a multa do FGTS — é depósito de GRRF, fora do líquido"
+   },
+   {
+    "file": "src/utils/__tests__/rescisaoVerbas.test.ts",
+    "name": "omite rubricas zeradas"
+   },
+   {
+    "file": "src/utils/__tests__/rescisaoVerbas.test.ts",
+    "name": "marca INCIDÊNCIA coerente com o que o motor reteve"
+   },
+   {
+    "file": "src/utils/__tests__/rescisaoVerbas.test.ts",
+    "name": "fecha com o motor real em cada modalidade de desligamento"
+   },
+   {
     "file": "src/utils/__tests__/safeError.test.ts",
     "name": "safeErrorMessage"
    },
@@ -236146,6 +236306,39 @@
      "media": [
       "compara:src/components/dashboard/analytics/widgets.tsx"
      ],
+     "provento": [
+      "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx",
+      "compara:src/components/folha/RelatorioContabilDialog.tsx",
+      "compara:src/components/folha/RubricasDialog.tsx",
+      "compara:src/pages/RubricasPage.tsx",
+      "compara:src/services/folha/calculoLoteService.ts",
+      "compara:src/services/folhaPagamentoService.ts",
+      "compara:src/utils/folhaCalc.ts",
+      "compara:supabase/functions/calcular-folha/index.ts",
+      "escreve:src/components/folha/RubricasDialog.tsx",
+      "escreve:src/constants/rubricas.ts",
+      "escreve:src/pages/RubricasPage.tsx",
+      "escreve:src/services/folha/calculoLoteService.ts",
+      "escreve:src/services/folhaPagamentoService.ts",
+      "escreve:src/utils/folhaCalc.ts",
+      "escreve:src/utils/rescisaoVerbas.ts",
+      "escreve:supabase/functions/calcular-folha/index.ts"
+     ],
+     "desconto": [
+      "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx",
+      "compara:src/components/folha/LancamentosDialog.tsx",
+      "compara:src/pages/RubricasPage.tsx",
+      "compara:src/services/folha/calculoLoteService.ts",
+      "compara:src/services/folhaPagamentoService.ts",
+      "compara:src/services/rescisaoService.ts",
+      "compara:src/utils/folhaCalc.ts",
+      "compara:supabase/functions/calcular-folha/index.ts",
+      "escreve:src/constants/rubricas.ts",
+      "escreve:src/services/folha/calculoLoteService.ts",
+      "escreve:src/utils/folhaCalc.ts",
+      "escreve:src/utils/rescisaoVerbas.ts",
+      "escreve:supabase/functions/calcular-folha/index.ts"
+     ],
      "todos": [
       "compara:src/components/desligamentos/GestaoDesligamentos.tsx",
       "compara:src/components/premiacoes/auditoriaComum.ts",
@@ -236196,34 +236389,6 @@
       "filtra:src/pages/FolhaPagamentoPage.tsx",
       "filtra:src/pages/ObrigacoesFiscaisPage.tsx",
       "filtra:src/services/folha/calculoLoteService.ts"
-     ],
-     "desconto": [
-      "compara:src/components/folha/LancamentosDialog.tsx",
-      "compara:src/pages/RubricasPage.tsx",
-      "compara:src/services/folha/calculoLoteService.ts",
-      "compara:src/services/folhaPagamentoService.ts",
-      "compara:src/utils/folhaCalc.ts",
-      "compara:supabase/functions/calcular-folha/index.ts",
-      "escreve:src/constants/rubricas.ts",
-      "escreve:src/services/folha/calculoLoteService.ts",
-      "escreve:src/utils/folhaCalc.ts",
-      "escreve:supabase/functions/calcular-folha/index.ts"
-     ],
-     "provento": [
-      "compara:src/components/folha/RelatorioContabilDialog.tsx",
-      "compara:src/components/folha/RubricasDialog.tsx",
-      "compara:src/pages/RubricasPage.tsx",
-      "compara:src/services/folha/calculoLoteService.ts",
-      "compara:src/services/folhaPagamentoService.ts",
-      "compara:src/utils/folhaCalc.ts",
-      "compara:supabase/functions/calcular-folha/index.ts",
-      "escreve:src/components/folha/RubricasDialog.tsx",
-      "escreve:src/constants/rubricas.ts",
-      "escreve:src/pages/RubricasPage.tsx",
-      "escreve:src/services/folha/calculoLoteService.ts",
-      "escreve:src/services/folhaPagamentoService.ts",
-      "escreve:src/utils/folhaCalc.ts",
-      "escreve:supabase/functions/calcular-folha/index.ts"
      ],
      "informativa": [
       "compara:src/components/folha/RubricasDialog.tsx",
@@ -273196,7 +273361,7 @@
   },
   "src/components/__tests__/DesligamentoDetailSheet.test.tsx": {
    "path": "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
-   "lines": 135,
+   "lines": 136,
    "is_test": true,
    "tests": [
     "DesligamentoDetailSheet",
@@ -273212,7 +273377,7 @@
   },
   "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx": {
    "path": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
-   "lines": 326,
+   "lines": 331,
    "is_test": true,
    "rule_comments": [
     "nenhum desconto de aviso não cumprido (art. 487 §2º), nenhuma indenização dos",
@@ -284883,7 +285048,7 @@
   },
   "src/components/desligamentos/DesligamentoDetailSheet.tsx": {
    "path": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
-   "lines": 1202,
+   "lines": 1231,
    "exports": [
     "function DesligamentoDetailSheet"
    ],
@@ -284926,6 +285091,16 @@
     }
    ],
    "status_values": [
+    {
+     "field": "tipo",
+     "value": "provento",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "desconto",
+     "kind": "compara"
+    },
     {
      "field": "etapa",
      "value": "finalizado",
@@ -314786,12 +314961,20 @@
   },
   "src/services/rescisaoService.ts": {
    "path": "src/services/rescisaoService.ts",
-   "lines": 358,
+   "lines": 429,
    "exports": [
     "interface CalcularRescisaoParams",
     "const rescisaoService"
    ],
    "tables": [
+    {
+     "table": "verbas_rescisorias",
+     "op": "delete"
+    },
+    {
+     "table": "verbas_rescisorias",
+     "op": "ref"
+    },
     {
      "table": "desligamentos",
      "op": "select"
@@ -314821,11 +315004,25 @@
      "op": "select,update"
     },
     {
+     "table": "verbas_rescisorias",
+     "op": "select"
+    },
+    {
      "table": "desligamentos",
      "op": "select"
     }
    ],
    "table_cols": {
+    "verbas_rescisorias": [
+     "codigo",
+     "descricao",
+     "desligamento_id",
+     "incide_fgts",
+     "incide_inss",
+     "incide_irrf",
+     "tipo",
+     "valor"
+    ],
     "desligamentos": [
      "assinado_colaborador",
      "assinado_empresa",
@@ -314915,6 +315112,11 @@
     {
      "field": "etapa",
      "value": "juridico",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "desconto",
      "kind": "compara"
     }
    ],
@@ -317952,7 +318154,7 @@
   },
   "src/services/__tests__/rescisaoService.test.ts": {
    "path": "src/services/__tests__/rescisaoService.test.ts",
-   "lines": 354,
+   "lines": 378,
    "is_test": true,
    "params": [
     {
@@ -321371,6 +321573,89 @@
     }
    ]
   },
+  "src/utils/rescisaoVerbas.ts": {
+   "path": "src/utils/rescisaoVerbas.ts",
+   "lines": 201,
+   "exports": [
+    "type TipoVerbaRescisoria",
+    "interface VerbaRescisoria",
+    "function somarVerbas",
+    "function itemizarVerbasRescisorias"
+   ],
+   "enums": [
+    {
+     "name": "TipoVerbaRescisoria",
+     "values": "provento | desconto"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "provento",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "provento",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "provento",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "provento",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "provento",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "provento",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "provento",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "provento",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "desconto",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "desconto",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "desconto",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "desconto",
+     "kind": "escreve"
+    }
+   ],
+   "rule_comments": [
+    "* Regra de ouro: a soma das linhas de provento tem de fechar EXATAMENTE com",
+    "`resultado.totalProventos` e a das linhas de desconto com",
+    "(`rescisaoCalc.ts:379-386`): INSS e IRRF incidem apenas sobre saldo de"
+   ]
+  },
   "src/utils/safeError.ts": {
    "path": "src/utils/safeError.ts",
    "lines": 67,
@@ -321961,6 +322246,20 @@
     "mapearResultadoDeDesligamento",
     "preserva a assinatura digital do cálculo salvo",
     "cálculo antigo sem assinatura continua sem assinatura"
+   ]
+  },
+  "src/utils/__tests__/rescisaoVerbas.test.ts": {
+   "path": "src/utils/__tests__/rescisaoVerbas.test.ts",
+   "lines": 106,
+   "is_test": true,
+   "tests": [
+    "itemizarVerbasRescisorias",
+    "soma das linhas fecha exatamente com totalProventos e totalDescontos",
+    "reancora no total oficial quando o truncamento do motor desvia 1 centavo",
+    "não inclui a multa do FGTS — é depósito de GRRF, fora do líquido",
+    "omite rubricas zeradas",
+    "marca INCIDÊNCIA coerente com o que o motor reteve",
+    "fecha com o motor real em cada modalidade de desligamento"
    ]
   },
   "src/utils/__tests__/safeError.test.ts": {
@@ -336162,10 +336461,25 @@
   }
  },
  "git": {
-  "sha": "e3410c9cf505b10847186ea7beb4662e4b52e26d",
+  "sha": "9c7a64a5412090e3cf793228c2b4cb4c5e219d3e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "9c7a64a",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "feat: itemiza verbas rescisorias em verbas_rescisorias (#838)",
+    "files": [
+     "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
+     "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+     "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+     "src/services/__tests__/rescisaoService.test.ts",
+     "src/services/rescisaoService.ts",
+     "src/utils/__tests__/rescisaoVerbas.test.ts",
+     "src/utils/rescisaoVerbas.ts"
+    ]
+   },
    {
     "sha": "e3410c9",
     "date": "2026-11-22",
@@ -336474,15 +336788,6 @@
      ".github/workflows/canonical-migrations.yml",
      "scripts/canonical-invariants.sql"
     ]
-   },
-   {
-    "sha": "9aa259e",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "feat: abas Vínculos e Justificativas no painel do relógio de ponto (#807)",
-    "files": [
-     "src/components/ponto/relogio/RelogiosPanel.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -336523,8 +336828,32 @@
     2
    ],
    [
-    "src/components/ponto/relogio/RelogiosPanel.tsx",
-    2
+    "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
+    1
+   ],
+   [
+    "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
+    1
+   ],
+   [
+    "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    1
+   ],
+   [
+    "src/services/__tests__/rescisaoService.test.ts",
+    1
+   ],
+   [
+    "src/services/rescisaoService.ts",
+    1
+   ],
+   [
+    "src/utils/__tests__/rescisaoVerbas.test.ts",
+    1
+   ],
+   [
+    "src/utils/rescisaoVerbas.ts",
+    1
    ],
    [
     "scripts/tests/migrations-ponto-rep-etapa41.sh",
@@ -336540,30 +336869,6 @@
    ],
    [
     "docs/auditoria/ponto-atecsoft-estrutura.md",
-    1
-   ],
-   [
-    "supabase/functions/ingest-ponto-rep/logica.test.ts",
-    1
-   ],
-   [
-    "supabase/functions/ingest-ponto-rep/logica.ts",
-    1
-   ],
-   [
-    "scripts/tests/migrations-p1-guias-fgts-digital-rls.sh",
-    1
-   ],
-   [
-    "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql",
     1
    ]
   ]

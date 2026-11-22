@@ -18,11 +18,11 @@
   ],
   "servicos_logica": [
    "src/services (100)",
-   "src/utils (35)",
+   "src/utils (36)",
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (675)",
+   "co-localizado (__tests__) (676)",
    "co-localizado (*.test) (75)",
    "e2e/ (33)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: itemiza verbas rescisorias em verbas_rescisorias (#838)",
    "feat: converte dia do relogio em batidas (etapa 41 do Ponto AtecSoft) (#837)",
    "chore: desmembra a estrutura do banco do Ponto AtecSoft (#836)",
    "fix: extrai e testa a regra do 23505 no vinculo do relogio (#835)",
-   "fix: baixa de guia falha alto quando nenhuma linha e atualizada (#834)",
-   "fix: isola guias_fgts_digital por empresa e libera a baixa para RH (#824)"
+   "fix: baixa de guia falha alto quando nenhuma linha e atualizada (#834)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

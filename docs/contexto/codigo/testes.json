@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 809,
+ "total": 810,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 764
+  "unit": 765
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 675
+   "arquivos": 676
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -1410,7 +1410,7 @@
   {
    "arquivo": "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
    "tipo": "unit",
-   "linhas": 135,
+   "linhas": 136,
    "testa": [
     "src/components/desligamentos/DesligamentoDetailSheet.tsx",
     "src/services/desligamentoService.ts"
@@ -1420,7 +1420,7 @@
   {
    "arquivo": "src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx",
    "tipo": "unit",
-   "linhas": 326,
+   "linhas": 331,
    "testa": [
     "src/components/desligamentos/DesligamentoDetailSheet.tsx"
    ],
@@ -6436,7 +6436,7 @@
   {
    "arquivo": "src/services/__tests__/rescisaoService.test.ts",
    "tipo": "unit",
-   "linhas": 354,
+   "linhas": 378,
    "testa": [
     "src/integrations/supabase/client.ts",
     "src/services/rescisaoService.ts",
@@ -6941,6 +6941,16 @@
     "src/utils/rescisaoPDF.ts"
    ],
    "casos": 10
+  },
+  {
+   "arquivo": "src/utils/__tests__/rescisaoVerbas.test.ts",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "src/utils/rescisaoCalc.ts",
+    "src/utils/rescisaoVerbas.ts"
+   ],
+   "casos": 6
   },
   {
    "arquivo": "src/utils/__tests__/safeError.test.ts",
@@ -8177,8 +8187,9 @@
   "src/utils/pgInterval.ts": 1,
   "src/utils/piiMask.ts": 5,
   "src/utils/regrasSolicitacaoFerias.ts": 1,
-  "src/utils/rescisaoCalc.ts": 1,
+  "src/utils/rescisaoCalc.ts": 2,
   "src/utils/rescisaoPDF.ts": 1,
+  "src/utils/rescisaoVerbas.ts": 1,
   "src/utils/safeError.ts": 1,
   "src/utils/safeUrl.ts": 1,
   "src/utils/sanitizeHtml.ts": 1,

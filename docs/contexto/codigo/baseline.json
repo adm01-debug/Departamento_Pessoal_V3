@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e3410c9cf505b10847186ea7beb4662e4b52e26d",
+  "commit": "9c7a64a5412090e3cf793228c2b4cb4c5e219d3e",
   "branch": "main",
-  "data_commit": "2026-11-22T11:32:54-03:00",
+  "data_commit": "2026-11-22T12:37:50-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "9c7a64a",
+    "data": "2026-11-22",
+    "assunto": "feat: itemiza verbas rescisorias em verbas_rescisorias (#838)"
+   },
    {
     "sha": "e3410c9",
     "data": "2026-11-22",
@@ -126,18 +131,13 @@
     "sha": "f611296",
     "data": "2026-11-21",
     "assunto": "fix: cria recibos_ferias no canônico — recibo de férias nunca era gravado (#810)"
-   },
-   {
-    "sha": "af23346",
-    "data": "2026-11-21",
-    "assunto": "fix: aviso neutro no quiosque e teste do aviso na reconexao (#812)"
    }
   ],
-  "arquivos_mudados_7d": 1082,
+  "arquivos_mudados_7d": 1084,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 374
+    "mudancas": 376
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 97
+    "mudancas": 98
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -188,18 +188,18 @@
     "mudancas": 33
    },
    {
-    "pasta": ".github/workflows/canonical-migrations.yml",
+    "pasta": "src/utils/__tests__",
     "mudancas": 32
    },
    {
-    "pasta": "src/utils/__tests__",
+    "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 31
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 32
+    "mudancas": 31
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3722,
-  "arquivos_codigo": 2143,
-  "linhas_codigo": 428265,
+  "arquivos_total": 3724,
+  "arquivos_codigo": 2145,
+  "linhas_codigo": 428702,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 436,
   "migrations": 928,
   "cron_jobs": 42,
-  "testes": 809,
+  "testes": 810,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 345
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 1010,
-   "linhas": 186843
+   "linhas": 186878
   },
   "src/constants": {
    "arquivos": 7,
@@ -696,7 +696,7 @@
   },
   "src/services": {
    "arquivos": 198,
-   "linhas": 41979
+   "linhas": 42074
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -715,8 +715,8 @@
    "linhas": 891
   },
   "src/utils": {
-   "arquivos": 69,
-   "linhas": 8825
+   "arquivos": 71,
+   "linhas": 9132
   },
   "stylelint.config.js": {
    "arquivos": 1,
@@ -809,12 +809,12 @@
    "linhas": 1231
   },
   {
-   "arquivo": "src/services/cnabService.ts",
-   "linhas": 1209
+   "arquivo": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+   "linhas": 1231
   },
   {
-   "arquivo": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
-   "linhas": 1202
+   "arquivo": "src/services/cnabService.ts",
+   "linhas": 1209
   },
   {
    "arquivo": "src/pages/OnboardingPage.tsx",

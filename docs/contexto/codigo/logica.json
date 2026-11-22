@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 188,
+ "total": 189,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
@@ -10,7 +10,7 @@
   "python": 5,
   "schemas": 25,
   "services": 100,
-  "utils": 35
+  "utils": 36
  },
  "arquivos": [
   {
@@ -4160,11 +4160,12 @@
     "rescisaoService"
    ],
    "export_default": null,
-   "linhas": 358,
+   "linhas": 429,
    "tabelas": [
     "dependentes",
     "desligamentos",
-    "homologacoes_rescisao"
+    "homologacoes_rescisao",
+    "verbas_rescisorias"
    ],
    "rpcs": [
     "assinar_desligamento"
@@ -5907,7 +5908,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 7,
+   "usado_por": 8,
    "usado_por_modulos": [
     "calculators",
     "components/desligamentos",
@@ -5915,7 +5916,7 @@
     "services",
     "utils"
    ],
-   "coberto_por_testes": 1,
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {
@@ -5947,6 +5948,32 @@
    "usado_por_modulos": [
     "components/desligamentos",
     "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/rescisaoVerbas.ts",
+   "camada": "utils",
+   "exports": [
+    "TipoVerbaRescisoria",
+    "VerbaRescisoria",
+    "itemizarVerbasRescisorias",
+    "somarVerbas"
+   ],
+   "export_default": null,
+   "linhas": 201,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
    ],
    "coberto_por_testes": 1,
    "orfao": false

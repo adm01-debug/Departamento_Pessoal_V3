@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e3410c9cf5` · branch `main` · 2026-11-22 14:33 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9c7a64a541` · branch `main` · 2026-11-22 15:38 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1570,7 +1570,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `data` | compara | `src/components/colaborador-detalhes/CamposCustomizadosTab.tsx` |
 | `tipo` | `debito` | compara | `src/pages/BancoHorasPage.tsx` |
 | `tipo` | `dependente` | escreve | `src/pages/PlanosSaudePage.tsx` |
-| `tipo` | `desconto` | compara, escreve | `src/components/folha/LancamentosDialog.tsx`<br>`src/constants/rubricas.ts`<br>`src/pages/RubricasPage.tsx`<br>`src/services/folha/calculoLoteService.ts`<br>`src/services/folhaPagamentoService.ts`<br>… +2 |
+| `tipo` | `desconto` | compara, escreve | `src/components/desligamentos/DesligamentoDetailSheet.tsx`<br>`src/components/folha/LancamentosDialog.tsx`<br>`src/constants/rubricas.ts`<br>`src/pages/RubricasPage.tsx`<br>`src/services/folha/calculoLoteService.ts`<br>… +5 |
 | `tipo` | `desconto_excessivo` | escreve | `src/utils/folha/validadorFolha.ts` |
 | `tipo` | `desistencia` | escreve | `src/components/recrutamento/analyticsComum.ts` |
 | `tipo` | `detalhes` | compara, escreve | `src/components/premiacoes/PagamentosTab.tsx`<br>`src/components/premiacoes/PagamentosTabela.tsx`<br>`src/components/premiacoes/pagamentosComum.ts` |
@@ -1643,7 +1643,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `potencial` | escreve | `src/components/avaliacao/nineBoxComum.ts` |
 | `tipo` | `pp` | compara, escreve | `src/components/premiacoes/RewardsSimulator.tsx` |
 | `tipo` | `premiacao_critica` | escreve | `src/services/premiacoesService.ts` |
-| `tipo` | `provento` | compara, escreve | `src/components/folha/RelatorioContabilDialog.tsx`<br>`src/components/folha/RubricasDialog.tsx`<br>`src/constants/rubricas.ts`<br>`src/pages/RubricasPage.tsx`<br>`src/services/folha/calculoLoteService.ts`<br>… +3 |
+| `tipo` | `provento` | compara, escreve | `src/components/desligamentos/DesligamentoDetailSheet.tsx`<br>`src/components/folha/RelatorioContabilDialog.tsx`<br>`src/components/folha/RubricasDialog.tsx`<br>`src/constants/rubricas.ts`<br>`src/pages/RubricasPage.tsx`<br>… +5 |
 | `tipo` | `push` | compara, escreve | `supabase/functions/notificacao/index.ts`<br>`supabase/functions/processar-agendamentos/filaNotificacoes.ts` |
 | `tipo` | `quase_acidente` | compara, escreve | `src/components/sst/SSTIncidentesTab.tsx`<br>`src/pages/SSTPage.tsx` |
 | `tipo` | `reembolso` | escreve | `src/pages/DespesasPage.tsx` |
@@ -1953,6 +1953,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | DocFileKind | pdf \| image \| word \| excel \| archive \| unknown | `src/utils/documentFileType.ts` |
 | SignedFileType | application/pdf \| image/jpeg \| image/png \| application/x-pkcs12 | `src/utils/fileSignature.ts` |
 | OrigemCalculoRescisao | local \| servidor | `src/utils/rescisaoPDF.ts` |
+| TipoVerbaRescisoria | provento \| desconto | `src/utils/rescisaoVerbas.ts` |
 | TEMPLATE_HEADERS | 'Nome Completo', 'CPF', 'Email', 'Telefone', 'Cargo', 'Departamento', 'Salário', 'Data Admissão', 'Data Nascimento', 'PIS', 'RG', | `src/utils/importacao/columnMap.ts` |
 | TEMPLATE_SAMPLE_ROW | 'João Silva', '123.456.789-00', 'joao@email.com', '(11)99999-9999', 'Analista', 'TI', '5000', '01/03/2024', '15/06/1990', '123.45678.90-1', '12.345.678-9', | `src/utils/importacao/columnMap.ts` |
 | IdempotencyReason | NEW \| REPLAY \| KEY_INVALID \| KEY_REUSE \| IN_PROGRESS \| INDETERMINATE \| PREVIOUS_FAILURE \| STORE_ERROR | `supabase/functions/_shared/idempotency.ts` |
@@ -5509,7 +5510,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9733 testes em 764 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9740 testes em 765 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5813,7 +5814,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/FeriasReconciliacaoHistoricoCard.test.tsx` | 10 | FeriasReconciliacaoHistoricoCard · renders Reconciliação Automática — Histórico title · shows empty state when no logs · shows skeleton when loading … |
 | `src/components/__tests__/MedidasTimeline.test.tsx` | 10 | MedidasTimeline · returns null when medidas is empty · renders medida descricao · renders colaborador name … |
 | `src/components/__tests__/Notifications.test.tsx` | 10 | NotificationItem · renders Notificações header · shows empty state when no notifications · renders notification titles … |
-| … +464 linhas — lista completa em `context.json` | | |
+| … +465 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6181,4 +6182,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * HABILITAÇÃO (regra ÚNICA, a MESMA do servidor — `pode_aprovar_colaborador` | `src/components/avaliacao/feedbackCanonico.ts` |
 | ENCAMINHAMENTO (RH/admin) — visível apenas para quem pode encaminhar E na | `src/components/avaliacao/feedbackCanonico.ts` |
 | VALIDAÇÃO DO POTENCIAL (RH) — controle LEGADO. O fluxo atual termina na | `src/components/avaliacao/feedbackCanonico.ts` |
-| … +945 linhas — lista completa em `context.json` | |
+| … +948 linhas — lista completa em `context.json` | |
