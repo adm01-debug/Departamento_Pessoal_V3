@@ -195,6 +195,20 @@ run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios DROP CONSTRAINT ponto_rep_
 run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios ADD CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key UNIQUE (dia_semana, codigo, dispositivo_id);'
 falha="$(run_psql -qAt -f /tmp/ponto-rep-feriados.verify.sql)"
 [ "$falha" = 'ok' ] || { echo "sidecar rejeitou unique equivalente em outra ordem: $falha" >&2; exit 1; }
+# E a chave reordenada tem de servir ao upsert de verdade: duas gravacoes do mesmo
+# (dispositivo, codigo, dia) tem de virar uma linha atualizada, nao violacao de
+# unicidade. Sem isso o sidecar provaria so que o catalogo de constraints casa.
+run_psql -q -c "INSERT INTO public.ponto_rep_horarios (dispositivo_id, empresa_id, codigo, dia_semana, ident)
+  VALUES ('20000000-0000-0000-0000-00000000000a','10000000-0000-0000-0000-00000000000a',9,1,10) ON CONFLICT (dispositivo_id, codigo, dia_semana)
+  DO UPDATE SET ident = EXCLUDED.ident;"
+run_psql -q -c "INSERT INTO public.ponto_rep_horarios (dispositivo_id, empresa_id, codigo, dia_semana, ident)
+  VALUES ('20000000-0000-0000-0000-00000000000a','10000000-0000-0000-0000-00000000000a',9,1,77) ON CONFLICT (dispositivo_id, codigo, dia_semana)
+  DO UPDATE SET ident = EXCLUDED.ident;"
+linhas="$(run_psql -qAt -c "SELECT count(*) || ':' || max(ident) FROM public.ponto_rep_horarios
+  WHERE dispositivo_id = '20000000-0000-0000-0000-00000000000a' AND codigo = 9 AND dia_semana = 1;")"
+[ "$linhas" = '1:77' ] || { echo "upsert nao casou a unique reordenada: $linhas" >&2; exit 1; }
+echo "upsert do coletor casa a unique mesmo com as colunas em outra ordem"
+run_psql -q -c "DELETE FROM public.ponto_rep_horarios WHERE dispositivo_id = '20000000-0000-0000-0000-00000000000a' AND codigo = 9;"
 run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios DROP CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key;'
 run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios ADD CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key UNIQUE (dispositivo_id, codigo, dia_semana);'
 echo "sidecar confere colunas e nao-deferrable, e aceita a chave em qualquer ordem"
