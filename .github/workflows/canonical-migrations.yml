@@ -229,7 +229,15 @@ jobs:
           # O lote do relogio de ponto parte 2 (20261121220000..224000) saiu
           # daqui porque esta no ledger: apply run 44961604370 e verify run
           # 44961830183, ambos success, ledger_count === 5.
-          # LOTE ATUAL (22/11/2026): recibos_ferias.
+          # LOTE ATUAL (22/11/2026): fechamento do laco do relogio de ponto.
+          #  - 20261123090000: etapa 41 do plano do Ponto (PR #837, mergeada em
+          #    22/11/2026) — cria ponto_rep_converter_dia,
+          #    ponto_rep_processar_dias e ponto_rep_reprocessar_periodo. Sem ela
+          #    o staging ponto_rep_dias nunca vira batida: a Edge
+          #    ingest-ponto-rep chama ponto_rep_processar_dias (index.ts:155) e
+          #    recebe PGRST202 em producao, entao o relogio nao alimenta o
+          #    espelho nem a folha. Diagnostico no canonico (22/11/2026):
+          #    ponto_rep_dias/ponto_rep_justificativas existem, as 3 funcoes nao.
           #  - 20261122090000: cria public.recibos_ferias, que nunca chegou ao
           #    canonico (PGRST205 em producao; FeriasActions.tsx grava o recibo
           #    depois de baixar o PDF e o insert falhava sempre). Aditiva.
@@ -237,6 +245,7 @@ jobs:
           # do relogio de ponto). Aditiva; o coletor 1.0.1 so grava nestas
           # tabelas depois que a Edge nova estiver publicada.
           for migration in \
+            20261123090000_ponto_rep_converter_batidas.sql \
             20261122090000_recibos_ferias_criar_tabela_ausente.sql \
             20261122110000_ponto_rep_funcionarios_mascara_cpf.sql \
             20261122110500_ponto_rep_vinculo_unicidade_reversa.sql \
