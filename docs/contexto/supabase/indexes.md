@@ -968,6 +968,9 @@ Uso e tamanho em `stats.md`.
 | public.ponto_espelhos_assinados | idx_ponto_espelhos_assinados_colaborador_id | btree | colaborador_id | não | sim |  |
 | public.ponto_espelhos_assinados | ponto_espelhos_assinados_pkey | btree | id | sim | sim |  |
 | public.ponto_espelhos_assinados | uq_espelho_colab_competencia | btree | colaborador_id, competencia | sim | sim | `((competencia IS NOT NULL) AND (revogado_em IS NULL))` |
+| public.ponto_espelhos_papel | idx_ponto_espelhos_papel_empresa_competencia | btree | empresa_id, competencia | não | sim |  |
+| public.ponto_espelhos_papel | ponto_espelhos_papel_colaborador_competencia_key | btree | colaborador_id, competencia | sim | sim |  |
+| public.ponto_espelhos_papel | ponto_espelhos_papel_pkey | btree | id | sim | sim |  |
 | public.ponto_espelhos_revogacoes | idx_revogacoes_espelho | btree | espelho_id | não | sim |  |
 | public.ponto_espelhos_revogacoes | ponto_espelhos_revogacoes_pkey | btree | id | sim | sim |  |
 | public.ponto_regras_aprovacao | ponto_regras_aprovacao_pkey | btree | id | sim | sim |  |

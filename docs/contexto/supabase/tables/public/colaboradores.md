@@ -276,6 +276,7 @@
 | public.pix_itens | pix_itens_colaborador_id_fkey | colaborador_id | SET NULL |
 | public.planos_saude | planos_saude_colaborador_id_fkey | colaborador_id | CASCADE |
 | public.ponto_espelhos_assinados | ponto_espelhos_assinados_colaborador_id_fkey | colaborador_id | NO ACTION |
+| public.ponto_espelhos_papel | ponto_espelhos_papel_colaborador_id_fkey | colaborador_id | CASCADE |
 | public.ponto_rep_funcionarios | ponto_rep_funcionarios_colaborador_id_fkey | colaborador_id | SET NULL |
 | public.ponto_seguranca_blacklist | ponto_seguranca_blacklist_colaborador_id_fkey | colaborador_id | NO ACTION |
 | public.premiacoes_pagamentos | premiacoes_pagamentos_colaborador_id_fkey | colaborador_id | CASCADE |

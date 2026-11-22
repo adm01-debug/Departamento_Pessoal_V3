@@ -160,6 +160,8 @@
 | tr_audit_biometric_failure | AFTER | INSERT OR UPDATE | ROW | enabled | public.fn_audit_biometric_failure |
 | tr_gerar_hash_batida_ponto | BEFORE | INSERT | ROW | enabled | public.gerar_hash_batida_ponto |
 | tr_validate_ponto | AFTER | INSERT | ROW | enabled | public.validate_ponto_compliance |
+| trg_batida_relogio_autoatendimento | BEFORE | INSERT | ROW | enabled | public.bloquear_autoatendimento_quem_usa_relogio |
+| trg_batida_relogio_protecao | BEFORE | INSERT OR DELETE OR UPDATE | ROW | enabled | public.proteger_batida_relogio |
 | trg_consolidar_batidas | AFTER | INSERT OR UPDATE | ROW | enabled | public.fn_consolidar_batidas |
 | trg_enforce_batida_ponto_hash | BEFORE | INSERT | ROW | enabled | public.enforce_batida_ponto_hash |
 | trg_impedir_alteracao_batida_periodo_fechado_upd | BEFORE | UPDATE | ROW | enabled | public.impedir_alteracao_batida_em_periodo_fechado |

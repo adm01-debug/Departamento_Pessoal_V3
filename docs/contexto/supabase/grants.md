@@ -1070,6 +1070,9 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.ponto_espelhos_assinados | authenticated | INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE |
 | public.ponto_espelhos_assinados | dp_mcp_role | SELECT |
 | public.ponto_espelhos_assinados | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.ponto_espelhos_papel | authenticated | DELETE, INSERT, SELECT, UPDATE |
+| public.ponto_espelhos_papel | dp_mcp_role | SELECT |
+| public.ponto_espelhos_papel | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.ponto_espelhos_revogacoes | anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.ponto_espelhos_revogacoes | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.ponto_espelhos_revogacoes | dp_mcp_role | SELECT |

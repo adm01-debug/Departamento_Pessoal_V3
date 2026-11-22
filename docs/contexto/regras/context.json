@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "151191883420949c75acb0eb6b5fbe238428912d",
+  "sha": "2db7ac81d710e309c9c7ccb3cc727335ae30ad06",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-21 23:47 UTC",
+  "generated_at": "2026-11-22 00:36 UTC",
   "files_total": 3718,
   "code_files": 3128,
   "code_lines": 497808
@@ -335023,10 +335023,19 @@
   }
  },
  "git": {
-  "sha": "151191883420949c75acb0eb6b5fbe238428912d",
+  "sha": "2db7ac81d710e309c9c7ccb3cc727335ae30ad06",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "2db7ac8",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: progresso do plano do relógio de ponto com evidências (#809)",
+    "files": [
+     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
+    ]
+   },
    {
     "sha": "1511918",
     "date": "2026-11-21",
@@ -335356,18 +335365,13 @@
      ".github/workflows/canonical-migrations.yml",
      "scripts/canonical-invariants.sql"
     ]
-   },
-   {
-    "sha": "76e6c55",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: certifica F-01..F-20 como VERIFICADO em producao no canonico (#777)",
-    "files": [
-     "analise-prs/funcionalidades.csv"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+    5
+   ],
    [
     "src/integrations/supabase/types.ts",
     5
@@ -335378,10 +335382,6 @@
    ],
    [
     "scripts/canonical-invariants.sql",
-    4
-   ],
-   [
-    "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
     4
    ],
    [
@@ -335417,10 +335417,6 @@
     2
    ],
    [
-    "analise-prs/funcionalidades.csv",
-    2
-   ],
-   [
     "src/components/__tests__/EspelhosPapelPanel.test.tsx",
     1
    ],
@@ -335446,6 +335442,10 @@
    ],
    [
     "supabase/migrations/20261121224000_ponto_espelhos_papel.verify.sql",
+    1
+   ],
+   [
+    "src/components/__tests__/RelogiosPanel.test.tsx",
     1
    ]
   ]

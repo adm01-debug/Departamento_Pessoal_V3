@@ -43526,6 +43526,136 @@
         "nullable": false,
         "position": 1,
         "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": false,
+        "position": 2,
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "colaborador_id",
+        "nullable": false,
+        "position": 3,
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "competencia",
+        "nullable": false,
+        "position": 4,
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "type": "date"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "devolvido_em",
+        "nullable": true,
+        "position": 5,
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "registrado_por",
+        "nullable": true,
+        "position": 6,
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "observacao",
+        "nullable": true,
+        "position": 7,
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "arquivo_path",
+        "nullable": true,
+        "position": 8,
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "created_at",
+        "nullable": false,
+        "position": 9,
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 10,
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "id",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
         "table": "ponto_espelhos_revogacoes",
         "type": "uuid"
       },
@@ -82627,6 +82757,96 @@
       },
       {
         "columns": [
+          "colaborador_id",
+          "competencia"
+        ],
+        "deferrable": false,
+        "definition": "UNIQUE (colaborador_id, competencia)",
+        "name": "ponto_espelhos_papel_colaborador_competencia_key",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "type": "UNIQUE",
+        "validated": true
+      },
+      {
+        "columns": [
+          "colaborador_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (colaborador_id) REFERENCES colaboradores(id) ON DELETE CASCADE",
+        "name": "ponto_espelhos_papel_colaborador_id_fkey",
+        "on_delete": "CASCADE",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "colaboradores",
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "competencia"
+        ],
+        "deferrable": false,
+        "definition": "CHECK (competencia = date_trunc('month'::text, competencia::timestamp with time zone)::date)",
+        "name": "ponto_espelhos_papel_competencia_mes_check",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "type": "CHECK",
+        "validated": true
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (empresa_id) REFERENCES empresas(id) ON DELETE RESTRICT",
+        "name": "ponto_espelhos_papel_empresa_id_fkey",
+        "on_delete": "RESTRICT",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "empresas",
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (id)",
+        "name": "ponto_espelhos_papel_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
           "espelho_id"
         ],
         "deferrable": false,
@@ -90448,6 +90668,45 @@
         "volatility": "volatile"
       },
       {
+        "args": "p_agora timestamp with time zone",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.verify.sql",
+              "hits": 6
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "Etapa 74: notifica admin/RH (1x por coletor por dia) quando o coletor do ponto fica >30 min sem contato em horário comercial. Chamada pelo pg_cron.",
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "5ebc9516263e1733",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "alertar_coletores_ponto_parados",
+        "owner": "postgres",
+        "returns": "integer",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
         "args": "target_id uuid",
         "callers": {
           "code": [
@@ -91122,6 +91381,43 @@
         "returns": "trigger",
         "schema": "public",
         "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.batidas_ponto.trg_batida_relogio_autoatendimento"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "9b95e8bd9dbb7e41",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "bloquear_autoatendimento_quem_usa_relogio",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": true,
         "strict": false,
         "volatility": "volatile"
       },
@@ -92094,6 +92390,84 @@
         "volatility": "volatile"
       },
       {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "src/pages/PontoPage.tsx",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261121222000_batidas_relogio_protecao.verify.sql",
+              "hits": 4
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "f47924583a203c9b",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "sql",
+        "leakproof": false,
+        "name": "colaborador_usa_relogio",
+        "owner": "postgres",
+        "returns": "boolean",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "stable"
+      },
+      {
+        "args": "_colaborador_id uuid",
+        "callers": {
+          "code": [
+            {
+              "file": "src/pages/PontoKioskPage.tsx",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261121222000_batidas_relogio_protecao.verify.sql",
+              "hits": 4
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "6a0788c9d9415a1b",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "colaborador_usa_relogio_por_id",
+        "owner": "postgres",
+        "returns": "boolean",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "stable"
+      },
+      {
         "args": "p_admissao_id uuid, p_empresa_id uuid, p_evento_id uuid, p_claim_token uuid, p_protocolo text, p_recibo text",
         "callers": {
           "code": [
@@ -92996,6 +93370,84 @@
         "name": "decrypt_dados_bancarios_tenant",
         "owner": "postgres",
         "returns": "text",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "_justificativa_id uuid, _tipo_dia text",
+        "callers": {
+          "code": [
+            {
+              "file": "src/services/relogio/vinculosService.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261121221000_ponto_rep_vinculos.verify.sql",
+              "hits": 3
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "RH/admin da empresa define o tipo de dia do DP para uma justificativa do relogio (NULL = sem efeito).",
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "cfdc8970e9b18126",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "definir_tipo_dia_justificativa_relogio",
+        "owner": "postgres",
+        "returns": "void",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "_funcionario_id uuid",
+        "callers": {
+          "code": [
+            {
+              "file": "src/services/relogio/vinculosService.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261121221000_ponto_rep_vinculos.verify.sql",
+              "hits": 3
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "RH/admin da empresa desfaz o vinculo de um funcionario do relogio; reprocessa os dias.",
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "3b82d6926386861e",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "desvincular_funcionario_relogio",
+        "owner": "postgres",
+        "returns": "void",
         "schema": "public",
         "security_definer": true,
         "strict": false,
@@ -97078,6 +97530,45 @@
         "volatility": "volatile"
       },
       {
+        "args": "_empresa_id uuid, _unidade text, _nome text",
+        "callers": {
+          "code": [
+            {
+              "file": "src/services/relogio/coletoresService.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.verify.sql",
+              "hits": 5
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "Admin da empresa cria o coletor da unidade ou rotaciona o token dele. Devolve o token em claro uma única vez; grava só SHA-256 hex e prefixo.",
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "f8be9ebe506c555a",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "gerar_token_coletor_ponto",
+        "owner": "postgres",
+        "returns": "TABLE(dispositivo_id uuid, token text)",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
         "args": "_token text",
         "callers": {
           "code": [
@@ -98346,7 +98837,7 @@
               "hits": 6
             }
           ],
-          "code_total_files": 78,
+          "code_total_files": 80,
           "cron": [],
           "db": [
             "public._is_admin_bypass",
@@ -98354,7 +98845,10 @@
             "public.assinar_aviso_ferias",
             "public.contrato_gerar_token_assinatura",
             "public.contrato_revogar_token",
+            "public.definir_tipo_dia_justificativa_relogio",
+            "public.desvincular_funcionario_relogio",
             "public.folha_conflict_stats",
+            "public.gerar_token_coletor_ponto",
             "public.get_audit_trail_by_entity",
             "public.get_audit_trail_by_user",
             "public.get_cron_jobs_health",
@@ -98377,6 +98871,7 @@
             "public.registrar_comunicado_ferias_coletivas",
             "public.registrar_pagamento_ferias",
             "public.resolve_security_alert",
+            "public.revogar_coletor_ponto",
             "public.revogar_espelho_ponto",
             "public.search_audit_unified",
             "public.sec_verify_seals_admin",
@@ -98384,7 +98879,8 @@
             "public.sst_regimento_notificar_pendentes",
             "public.sst_regimento_pendentes_lista",
             "public.sst_regimento_publicar",
-            "public.user_can_manage_tenant_storage"
+            "public.user_can_manage_tenant_storage",
+            "public.vincular_funcionario_relogio"
           ],
           "triggers": [],
           "views": [
@@ -100838,17 +101334,30 @@
               "hits": 5
             },
             {
+              "file": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql",
+              "hits": 2
+            },
+            {
               "file": "supabase/migrations/20261121221000_ponto_rep_vinculos.sql",
               "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
+              "hits": 5
             }
           ],
-          "code_total_files": 24,
+          "code_total_files": 26,
           "cron": [],
           "db": [
             "public.clinicas_proximas",
+            "public.definir_tipo_dia_justificativa_relogio",
+            "public.desvincular_funcionario_relogio",
+            "public.gerar_token_coletor_ponto",
             "public.listar_auditoria",
             "public.pode_gerir_config_ponto",
-            "public.registrar_auditoria"
+            "public.registrar_auditoria",
+            "public.revogar_coletor_ponto",
+            "public.vincular_funcionario_relogio"
           ],
           "triggers": [],
           "views": []
@@ -101311,6 +101820,7 @@
           "cron": [],
           "db": [
             "public.bloquear_aprovacao_ponto_sem_rh",
+            "public.colaborador_usa_relogio_por_id",
             "public.get_colaborador_banco_horas",
             "public.registrar_batida_ponto"
           ],
@@ -101524,6 +102034,7 @@
           "db": [
             "public.admin_definir_pin_quiosque",
             "public.claim_admission_esocial_event",
+            "public.colaborador_usa_relogio_por_id",
             "public.complete_admission_esocial_event",
             "public.consumir_pendencias_medida_no_holerite",
             "public.decrypt_dados_bancarios_tenant",
@@ -101756,6 +102267,86 @@
         "security_definer": false,
         "strict": false,
         "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.ponto_espelhos_papel.trg_ponto_espelhos_papel_validar"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "565b53687e065c4f",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "ponto_espelhos_papel_validar",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "_colaborador_id uuid",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+              "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261121222000_batidas_relogio_protecao.verify.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [
+            "public.bloquear_autoatendimento_quem_usa_relogio",
+            "public.colaborador_usa_relogio",
+            "public.colaborador_usa_relogio_por_id"
+          ],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "30800accfe57b833",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "sql",
+        "leakproof": false,
+        "name": "ponto_rep_colaborador_usa_relogio",
+        "owner": "postgres",
+        "returns": "boolean",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "stable"
       },
       {
         "args": "",
@@ -102754,6 +103345,43 @@
         "language": "plpgsql",
         "leakproof": false,
         "name": "protect_esocial_transport_fields",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261121222000_batidas_relogio_protecao.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.batidas_ponto.trg_batida_relogio_protecao"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "73241b0783c1f0dc",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "proteger_batida_relogio",
         "owner": "postgres",
         "returns": "trigger",
         "schema": "public",
@@ -103996,6 +104624,45 @@
         "volatility": "volatile"
       },
       {
+        "args": "_dispositivo_id uuid",
+        "callers": {
+          "code": [
+            {
+              "file": "src/services/relogio/coletoresService.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261121220000_ponto_rep_coletores_admin.verify.sql",
+              "hits": 5
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "Admin da empresa revoga o coletor: ativo=false e revogado_em=now().",
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "ecefc5869d2afc28",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "revogar_coletor_ponto",
+        "owner": "postgres",
+        "returns": "void",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
         "args": "_espelho_id uuid, _motivo text, _ip inet, _user_agent text",
         "callers": {
           "code": [
@@ -104933,6 +105600,7 @@
           "code_total_files": 12,
           "cron": [],
           "db": [
+            "public.colaborador_usa_relogio_por_id",
             "public.gerar_canonical_espelho_ponto",
             "public.get_colaborador_banco_horas",
             "public.registrar_batida_ponto",
@@ -106827,7 +107495,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 67,
+          "code_total_files": 68,
           "cron": [],
           "db": [],
           "triggers": [
@@ -106929,6 +107597,7 @@
             "public.pix_lotes.update_pix_lotes_updated_at",
             "public.plano_contas.update_plano_contas_updated_at",
             "public.planos_saude.update_planos_saude_updated_at",
+            "public.ponto_espelhos_papel.trg_ponto_espelhos_papel_updated_at",
             "public.premiacoes_campanhas.update_premiacoes_campanhas_updated_at",
             "public.premiacoes_pagamentos.update_premiacoes_pagamentos_updated_at",
             "public.profiles.update_profiles_updated_at",
@@ -107862,6 +108531,45 @@
         "name": "vincular_colaborador_ao_usuario",
         "owner": "postgres",
         "returns": "TABLE(colaborador_id uuid, empresa_id uuid)",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "_funcionario_id uuid, _colaborador_id uuid",
+        "callers": {
+          "code": [
+            {
+              "file": "src/services/relogio/vinculosService.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261121221000_ponto_rep_vinculos.verify.sql",
+              "hits": 3
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "RH/admin da empresa vincula manualmente um funcionario do relogio a um colaborador da mesma empresa; reprocessa os dias.",
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "879445b0bf389df4",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "vincular_funcionario_relogio",
+        "owner": "postgres",
+        "returns": "void",
         "schema": "public",
         "security_definer": true,
         "strict": false,
@@ -114984,6 +115692,24 @@
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "ponto_espelhos_assinados"
+        },
+        {
+          "grantee": "authenticated",
+          "privileges": "DELETE, INSERT, SELECT, UPDATE",
+          "schema": "public",
+          "table": "ponto_espelhos_papel"
+        },
+        {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_espelhos_papel"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "ponto_espelhos_papel"
         },
         {
           "grantee": "anon",
@@ -132507,6 +133233,50 @@
       },
       {
         "columns": [
+          "empresa_id",
+          "competencia"
+        ],
+        "definition": "CREATE INDEX idx_ponto_espelhos_papel_empresa_competencia ON public.ponto_espelhos_papel USING btree (empresa_id, competencia)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_ponto_espelhos_papel_empresa_competencia",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_espelhos_papel"
+      },
+      {
+        "columns": [
+          "colaborador_id",
+          "competencia"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_espelhos_papel_colaborador_competencia_key ON public.ponto_espelhos_papel USING btree (colaborador_id, competencia)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_espelhos_papel_colaborador_competencia_key",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_espelhos_papel"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_espelhos_papel_pkey ON public.ponto_espelhos_papel USING btree (id)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_espelhos_papel_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_espelhos_papel"
+      },
+      {
+        "columns": [
           "espelho_id"
         ],
         "definition": "CREATE INDEX idx_revogacoes_espelho ON public.ponto_espelhos_revogacoes USING btree (espelho_id)",
@@ -139813,6 +140583,30 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.ponto_espelhos_papel.ponto_espelhos_papel_delete_rh",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.ponto_espelhos_papel.ponto_espelhos_papel_insert_rh",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.ponto_espelhos_papel.ponto_espelhos_papel_select_rh",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.ponto_espelhos_papel.ponto_espelhos_papel_update_rh",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.ponto_espelhos_revogacoes.Admins inserem revogações",
         "severity": "BAIXA"
       },
@@ -146108,6 +146902,54 @@
         "with_check": null
       },
       {
+        "cmd": "DELETE",
+        "name": "ponto_espelhos_papel_delete_rh",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "using": "(pertence_a_empresa(empresa_id) AND (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'rh'::app_role)))",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "name": "ponto_espelhos_papel_insert_rh",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "using": null,
+        "with_check": "(pertence_a_empresa(empresa_id) AND (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'rh'::app_role)))"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "ponto_espelhos_papel_select_rh",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "using": "(pertence_a_empresa(empresa_id) AND (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'rh'::app_role)))",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "ponto_espelhos_papel_update_rh",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "ponto_espelhos_papel",
+        "using": "(pertence_a_empresa(empresa_id) AND (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'rh'::app_role)))",
+        "with_check": "(pertence_a_empresa(empresa_id) AND (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'rh'::app_role)))"
+      },
+      {
         "cmd": "INSERT",
         "name": "Admins inserem revogações",
         "permissive": "PERMISSIVE",
@@ -149025,11 +149867,6 @@
         {
           "publication": "supabase_realtime_messages_publication",
           "schema": "realtime",
-          "table": "messages_2026_11_18"
-        },
-        {
-          "publication": "supabase_realtime_messages_publication",
-          "schema": "realtime",
           "table": "messages_2026_11_19"
         },
         {
@@ -149056,6 +149893,11 @@
           "publication": "supabase_realtime_messages_publication",
           "schema": "realtime",
           "table": "messages_2026_11_24"
+        },
+        {
+          "publication": "supabase_realtime_messages_publication",
+          "schema": "realtime",
+          "table": "messages_2026_11_25"
         }
       ]
     },
@@ -153664,6 +154506,21 @@
         "schema": "public"
       },
       {
+        "comment": "Etapa 85: espelho de ponto devolvido assinado em papel, por colaborador e competência (1º dia do mês).",
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "ponto_espelhos_papel",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
         "comment": null,
         "from_extension": false,
         "is_partition": false,
@@ -156133,6 +156990,28 @@
         "status": "enabled",
         "table": "batidas_ponto",
         "timing": "AFTER"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_batida_relogio_autoatendimento BEFORE INSERT ON batidas_ponto FOR EACH ROW EXECUTE FUNCTION bloquear_autoatendimento_quem_usa_relogio()",
+        "events": "INSERT",
+        "function": "public.bloquear_autoatendimento_quem_usa_relogio",
+        "level": "ROW",
+        "name": "trg_batida_relogio_autoatendimento",
+        "schema": "public",
+        "status": "enabled",
+        "table": "batidas_ponto",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_batida_relogio_protecao BEFORE INSERT OR DELETE OR UPDATE ON batidas_ponto FOR EACH ROW EXECUTE FUNCTION proteger_batida_relogio()",
+        "events": "INSERT OR DELETE OR UPDATE",
+        "function": "public.proteger_batida_relogio",
+        "level": "ROW",
+        "name": "trg_batida_relogio_protecao",
+        "schema": "public",
+        "status": "enabled",
+        "table": "batidas_ponto",
+        "timing": "BEFORE"
       },
       {
         "definition": "CREATE TRIGGER trg_consolidar_batidas AFTER INSERT OR UPDATE ON batidas_ponto FOR EACH ROW EXECUTE FUNCTION fn_consolidar_batidas()",
@@ -159344,6 +160223,28 @@
         "schema": "public",
         "status": "enabled",
         "table": "ponto_espelhos_assinados",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_ponto_espelhos_papel_updated_at BEFORE UPDATE ON ponto_espelhos_papel FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()",
+        "events": "UPDATE",
+        "function": "public.update_updated_at_column",
+        "level": "ROW",
+        "name": "trg_ponto_espelhos_papel_updated_at",
+        "schema": "public",
+        "status": "enabled",
+        "table": "ponto_espelhos_papel",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_ponto_espelhos_papel_validar BEFORE INSERT OR UPDATE ON ponto_espelhos_papel FOR EACH ROW EXECUTE FUNCTION ponto_espelhos_papel_validar()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.ponto_espelhos_papel_validar",
+        "level": "ROW",
+        "name": "trg_ponto_espelhos_papel_validar",
+        "schema": "public",
+        "status": "enabled",
+        "table": "ponto_espelhos_papel",
         "timing": "BEFORE"
       },
       {

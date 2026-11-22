@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "151191883420949c75acb0eb6b5fbe238428912d",
+  "commit": "2db7ac81d710e309c9c7ccb3cc727335ae30ad06",
   "branch": "main",
-  "data_commit": "2026-11-21T20:46:26-03:00",
+  "data_commit": "2026-11-21T20:46:28-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2db7ac8",
+    "data": "2026-11-21",
+    "assunto": "chore: progresso do plano do relógio de ponto com evidências (#809)"
+   },
    {
     "sha": "1511918",
     "data": "2026-11-21",
@@ -126,18 +131,13 @@
     "sha": "50a87a9",
     "data": "2026-11-21",
     "assunto": "chore: marca smoke pós-deploy como automatizado no _ordem.md (#783)"
-   },
-   {
-    "sha": "b09d76e",
-    "data": "2026-11-21",
-    "assunto": "chore: atualiza _ordem.md com evidência real de auditoria de mutações (#782)"
    }
   ],
   "arquivos_mudados_7d": 1047,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 388
+    "mudancas": 386
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 98
+    "mudancas": 97
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -278,6 +278,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+    "mudancas": 5
+   },
+   {
     "arquivo": "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
     "mudancas": 5
    },
@@ -291,10 +295,6 @@
    },
    {
     "arquivo": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/components/desligamentos/index.ts",
     "mudancas": 5
    }
   ],

@@ -399,6 +399,8 @@
 | public.ponto_auditoria | usuario_id | auth.users | id | SET NULL | NO ACTION |
 | public.ponto_auditoria_fraude | batida_id | public.batidas_ponto | id | NO ACTION | NO ACTION |
 | public.ponto_espelhos_assinados | colaborador_id | public.colaboradores | id | NO ACTION | NO ACTION |
+| public.ponto_espelhos_papel | colaborador_id | public.colaboradores | id | CASCADE | NO ACTION |
+| public.ponto_espelhos_papel | empresa_id | public.empresas | id | RESTRICT | NO ACTION |
 | public.ponto_espelhos_revogacoes | espelho_id | public.ponto_espelhos_assinados | id | NO ACTION | NO ACTION |
 | public.ponto_rep_dias | dispositivo_id | public.ponto_rep_dispositivos | id | RESTRICT | NO ACTION |
 | public.ponto_rep_dias | empresa_id | public.empresas | id | RESTRICT | NO ACTION |

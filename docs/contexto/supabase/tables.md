@@ -275,6 +275,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.ponto_auditoria](tables/public/ponto_auditoria.md) | table | sim | 1 | 11 | não |  |
 | [public.ponto_auditoria_fraude](tables/public/ponto_auditoria_fraude.md) | table | sim | 1 | 6 | não |  |
 | [public.ponto_espelhos_assinados](tables/public/ponto_espelhos_assinados.md) | table | sim | 1 | 23 | não |  |
+| [public.ponto_espelhos_papel](tables/public/ponto_espelhos_papel.md) | table | sim | 4 | 10 | não | Etapa 85: espelho de ponto devolvido assinado em papel, por colaborador e competência (1º dia do mês). |
 | [public.ponto_espelhos_revogacoes](tables/public/ponto_espelhos_revogacoes.md) | table | sim | 2 | 7 | não |  |
 | [public.ponto_regras_aprovacao](tables/public/ponto_regras_aprovacao.md) | table | sim | 1 | 9 | não |  |
 | [public.ponto_rep_dias](tables/public/ponto_rep_dias.md) | table | sim | 1 | 18 | não | Cópia fiel do cartão ponto diário do AtecSoft (tabela CP). |

@@ -177,6 +177,7 @@
 | public.pix_lotes | pix_lotes_empresa_id_fkey | empresa_id | CASCADE |
 | public.plano_contas | plano_contas_empresa_id_fkey | empresa_id | CASCADE |
 | public.planos_saude | planos_saude_empresa_id_fkey | empresa_id | NO ACTION |
+| public.ponto_espelhos_papel | ponto_espelhos_papel_empresa_id_fkey | empresa_id | RESTRICT |
 | public.ponto_rep_dias | ponto_rep_dias_empresa_id_fkey | empresa_id | RESTRICT |
 | public.ponto_rep_dispositivos | ponto_rep_dispositivos_empresa_id_fkey | empresa_id | RESTRICT |
 | public.ponto_rep_funcionarios | ponto_rep_funcionarios_empresa_id_fkey | empresa_id | RESTRICT |

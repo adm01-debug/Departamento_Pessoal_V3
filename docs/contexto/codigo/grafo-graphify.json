@@ -4,10 +4,10 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:update); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "151191883420949c75acb0eb6b5fbe238428912d",
+ "commit_do_grafo": "2db7ac81d710e309c9c7ccb3cc727335ae30ad06",
  "grafo_atual": true,
  "nos": 28102,
- "arestas": 63369,
+ "arestas": 63372,
  "comunidades_total": 2413,
  "relacoes": {
   "calls": 6102,
@@ -25,12 +25,12 @@
   "rationale_for": 40,
   "re_exports": 869,
   "reads_from": 1300,
-  "references": 3577,
+  "references": 3580,
   "triggers": 1013
  },
  "origem": {
   "EXTRACTED": 61768,
-  "INFERRED": 1601
+  "INFERRED": 1604
  },
  "comunidades": [
   {
@@ -2269,7 +2269,7 @@
   "docs/auditoria/drift/20260831-relatorio-drift.md": "WorkflowDesigner.tsx",
   "docs/auditoria/estado/01-rotas-e-paginas-A-C.md": "backupService.ts",
   "docs/auditoria/estado/02-paginas-D-M.md": "lucide-react",
-  "docs/auditoria/estado/03-paginas-N-Z.md": "2. Tabela de funcionalidades",
+  "docs/auditoria/estado/03-paginas-N-Z.md": "3. Achados graves",
   "docs/auditoria/estado/04-services-a-f.md": "backupService.ts",
   "docs/auditoria/estado/05-services-g-z.md": "3. Achados graves",
   "docs/auditoria/estado/06-hooks-e-contextos.md": "hooks/index.ts",
