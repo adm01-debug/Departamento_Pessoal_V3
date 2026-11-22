@@ -4,7 +4,7 @@ import { createErrorResponse, createValidationErrorResponse, parseJsonBody, secu
 import { captureException } from '../_shared/sentry.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 import { getClientIp } from '../_shared/clientIp.ts';
-import { type ColaboradorChave, diasAlterados, envioSchema, sha256Hex, tokenPlausivel, vincular } from './logica.ts';
+import { type ColaboradorChave, classificaErroVinculo, diasAlterados, envioSchema, sha256Hex, tokenPlausivel, vincular } from './logica.ts';
 
 /**
  * ingest-ponto-rep — recebe o envio do coletor do Ponto AtecSoft (um por
@@ -113,7 +113,7 @@ serve(async (req: Request): Promise<Response> => {
           // (ux_ponto_rep_funcionarios_colaborador_por_empresa, dentro do
           // próprio lote ou de um anterior): fica pendente, não aborta o
           // lote -- é ambiguidade real (código reaproveitado), não erro.
-          if (error && error.code === '23505') continue;
+          if (classificaErroVinculo(error) === 'ambiguidade') continue;
           if (error) throw new Error(`vinculo: ${error.code ?? 'erro'}`);
           pendentesVinculo -= 1;
         }

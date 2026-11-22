@@ -1,6 +1,6 @@
 // deno test supabase/functions/ingest-ponto-rep/logica.test.ts
 import { assert, assertEquals } from 'https://deno.land/std@0.208.0/assert/mod.ts';
-import { diasAlterados, envioSchema, sha256Hex, tokenPlausivel, vincular } from './logica.ts';
+import { classificaErroVinculo, diasAlterados, envioSchema, sha256Hex, tokenPlausivel, vincular } from './logica.ts';
 
 const func = (extra: Record<string, unknown> = {}) => ({
   codigo: 7, nome: 'A', matricula: null, cpf: null, pis: null, situacao: 'ATIVO',
@@ -80,4 +80,18 @@ Deno.test('token: forma mínima e hash', async () => {
   assert(!tokenPlausivel('com espaco ' + 'a'.repeat(32)));
   assert(tokenPlausivel('a'.repeat(32)));
   assertEquals(await sha256Hex('abc'), 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad');
+});
+
+Deno.test('violacao da unicidade reversa deixa o vinculo pendente em vez de abortar o lote', () => {
+  // ux_ponto_rep_funcionarios_colaborador_por_empresa: o colaborador ja esta
+  // vinculado a outro funcionario_codigo. E ambiguidade (codigo reaproveitado),
+  // nao falha de infra: o lote segue e o funcionario fica pendente.
+  assertEquals(classificaErroVinculo({ code: '23505' }), 'ambiguidade');
+});
+
+Deno.test('erro que nao e de unicidade aborta o lote', () => {
+  assertEquals(classificaErroVinculo({ code: '08006' }), 'abortar');
+  assertEquals(classificaErroVinculo({ code: '42501' }), 'abortar');
+  assertEquals(classificaErroVinculo({}), 'abortar');
+  assertEquals(classificaErroVinculo(null), 'abortar');
 });
