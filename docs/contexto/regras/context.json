@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "2db7ac81d710e309c9c7ccb3cc727335ae30ad06",
+  "sha": "262426216a41037a415c2281a123ea238f22c62d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 00:36 UTC",
+  "generated_at": "2026-11-22 00:44 UTC",
   "files_total": 3718,
   "code_files": 3128,
-  "code_lines": 497808
+  "code_lines": 497838
  },
  "version": "1.3.2",
- "facts_hash": "f0cd35901e71241f",
+ "facts_hash": "1f87ce3251dd6804",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -103584,7 +103584,7 @@
   {
    "module": "src/components",
    "files": 1009,
-   "lines": 186659,
+   "lines": 186662,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -103919,7 +103919,7 @@
   {
    "module": "src/hooks",
    "files": 207,
-   "lines": 24166,
+   "lines": 24169,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -104281,7 +104281,7 @@
   {
    "module": "src/pages",
    "files": 144,
-   "lines": 50966,
+   "lines": 50969,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -104648,7 +104648,7 @@
   {
    "module": "src/services",
    "files": 198,
-   "lines": 41866,
+   "lines": 41887,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -200066,6 +200066,10 @@
     "name": "details: mantém na fila apenas os registros que falharam"
    },
    {
+    "file": "src/services/__tests__/pontoOfflineService.test.ts",
+    "name": "recusa do relógio: conta à parte, não vira erro e não volta à fila"
+   },
+   {
     "file": "src/services/__tests__/pontoService.test.ts",
     "name": "pontoService.getSettings"
    },
@@ -287820,7 +287824,7 @@
   },
   "src/components/ponto/PontoClockRegister.tsx": {
    "path": "src/components/ponto/PontoClockRegister.tsx",
-   "lines": 467,
+   "lines": 470,
    "exports": [
     "function PontoClockRegister"
    ],
@@ -296871,7 +296875,7 @@
   },
   "src/hooks/usePontoOffline.ts": {
    "path": "src/hooks/usePontoOffline.ts",
-   "lines": 105,
+   "lines": 108,
    "exports": [
     "function usePontoOffline"
    ],
@@ -305949,7 +305953,7 @@
   },
   "src/pages/PontoKioskPage.tsx": {
    "path": "src/pages/PontoKioskPage.tsx",
-   "lines": 506,
+   "lines": 509,
    "exports": [
     "function PontoKioskPage"
    ],
@@ -313328,9 +313332,10 @@
   },
   "src/services/pontoOfflineService.ts": {
    "path": "src/services/pontoOfflineService.ts",
-   "lines": 223,
+   "lines": 232,
    "exports": [
     "interface OfflineRegistro",
+    "function avisoRecusaRelogio",
     "const pontoOfflineService"
    ],
    "invokes": [
@@ -316661,7 +316666,7 @@
   },
   "src/services/__tests__/pontoOfflineService.test.ts": {
    "path": "src/services/__tests__/pontoOfflineService.test.ts",
-   "lines": 220,
+   "lines": 232,
    "is_test": true,
    "tests": [
     "pontoOfflineService.generateIntegrityHash",
@@ -316682,7 +316687,8 @@
     "dados corrompidos: errors:1 e remove a fila",
     "sucesso total: sincroniza e esvazia a fila",
     "falha de comunicação: errors = tamanho da fila e fila preservada",
-    "details: mantém na fila apenas os registros que falharam"
+    "details: mantém na fila apenas os registros que falharam",
+    "recusa do relógio: conta à parte, não vira erro e não volta à fila"
    ]
   },
   "src/services/__tests__/pontoService.test.ts": {
@@ -335023,10 +335029,23 @@
   }
  },
  "git": {
-  "sha": "2db7ac81d710e309c9c7ccb3cc727335ae30ad06",
+  "sha": "262426216a41037a415c2281a123ea238f22c62d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "2624262",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: avisa quando batida offline é recusada por usar o relógio da unidade (#811)",
+    "files": [
+     "src/components/ponto/PontoClockRegister.tsx",
+     "src/hooks/usePontoOffline.ts",
+     "src/pages/PontoKioskPage.tsx",
+     "src/services/__tests__/pontoOfflineService.test.ts",
+     "src/services/pontoOfflineService.ts"
+    ]
+   },
    {
     "sha": "2db7ac8",
     "date": "2026-11-21",
@@ -335355,16 +335374,6 @@
     "files": [
      "docs/pendencias/_ordem.md"
     ]
-   },
-   {
-    "sha": "9073ea6",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "infra: corrige cegueira do assert de ledger no canonical-migrations (#771)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "scripts/canonical-invariants.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -335377,20 +335386,28 @@
     5
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
-    4
-   ],
-   [
-    "scripts/canonical-invariants.sql",
-    4
-   ],
-   [
     "docs/pendencias/_ordem.md",
     4
    ],
    [
     "src/components/ponto/relogio/RelogiosPanel.tsx",
     3
+   ],
+   [
+    ".github/workflows/canonical-migrations.yml",
+    3
+   ],
+   [
+    "scripts/canonical-invariants.sql",
+    3
+   ],
+   [
+    "src/components/ponto/PontoClockRegister.tsx",
+    2
+   ],
+   [
+    "src/pages/PontoKioskPage.tsx",
+    2
    ],
    [
     "src/pages/PontoPage.tsx",
@@ -335417,6 +335434,18 @@
     2
    ],
    [
+    "src/hooks/usePontoOffline.ts",
+    1
+   ],
+   [
+    "src/services/__tests__/pontoOfflineService.test.ts",
+    1
+   ],
+   [
+    "src/services/pontoOfflineService.ts",
+    1
+   ],
+   [
     "src/components/__tests__/EspelhosPapelPanel.test.tsx",
     1
    ],
@@ -335426,26 +335455,6 @@
    ],
    [
     "src/services/relogio/espelhosPapelService.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261121224000_ponto_espelhos_papel.verify.sql",
-    1
-   ],
-   [
-    "src/components/__tests__/RelogiosPanel.test.tsx",
     1
    ]
   ]

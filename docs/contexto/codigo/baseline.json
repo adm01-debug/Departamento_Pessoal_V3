@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2db7ac81d710e309c9c7ccb3cc727335ae30ad06",
+  "commit": "262426216a41037a415c2281a123ea238f22c62d",
   "branch": "main",
-  "data_commit": "2026-11-21T20:46:28-03:00",
+  "data_commit": "2026-11-21T21:43:31-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2624262",
+    "data": "2026-11-21",
+    "assunto": "fix: avisa quando batida offline é recusada por usar o relógio da unidade (#811)"
+   },
    {
     "sha": "2db7ac8",
     "data": "2026-11-21",
@@ -126,18 +131,13 @@
     "sha": "5d0677c",
     "data": "2026-11-21",
     "assunto": "infra: torna login E2E não-admin obrigatório no smoke pós-deploy (REQUIRE_LOGIN=1) (#784)"
-   },
-   {
-    "sha": "50a87a9",
-    "data": "2026-11-21",
-    "assunto": "chore: marca smoke pós-deploy como automatizado no _ordem.md (#783)"
    }
   ],
-  "arquivos_mudados_7d": 1047,
+  "arquivos_mudados_7d": 1050,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 386
+    "mudancas": 385
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 97
+    "mudancas": 98
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -169,7 +169,7 @@
    },
    {
     "pasta": "src/components/layout",
-    "mudancas": 46
+    "mudancas": 45
    },
    {
     "pasta": "src/components/recrutamento",
@@ -180,12 +180,12 @@
     "mudancas": 35
    },
    {
-    "pasta": "src/pages/__tests__",
+    "pasta": "src/components/ponto",
     "mudancas": 34
    },
    {
-    "pasta": "src/components/ponto",
-    "mudancas": 33
+    "pasta": "src/pages/__tests__",
+    "mudancas": 34
    },
    {
     "pasta": "src/utils/__tests__",
@@ -193,7 +193,7 @@
    },
    {
     "pasta": "src/components/admissoes",
-    "mudancas": 31
+    "mudancas": 30
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 23
+    "mudancas": 22
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -242,10 +242,6 @@
     "mudancas": 7
    },
    {
-    "arquivo": "src/App.tsx",
-    "mudancas": 7
-   },
-   {
     "arquivo": "src/pages/CalculadoraRescisaoPage.tsx",
     "mudancas": 7
    },
@@ -267,6 +263,10 @@
    },
    {
     "arquivo": "scripts/e2e/ensure-fixtures.mjs",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "src/App.tsx",
     "mudancas": 6
    },
    {
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3704,
   "arquivos_codigo": 2140,
-  "linhas_codigo": 427355,
+  "linhas_codigo": 427385,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 1009,
-   "linhas": 186659
+   "linhas": 186662
   },
   "src/constants": {
    "arquivos": 7,
@@ -660,7 +660,7 @@
   },
   "src/hooks": {
    "arquivos": 207,
-   "linhas": 24166
+   "linhas": 24169
   },
   "src/i18n": {
    "arquivos": 2,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 144,
-   "linhas": 50966
+   "linhas": 50969
   },
   "src/providers": {
    "arquivos": 4,
@@ -696,7 +696,7 @@
   },
   "src/services": {
    "arquivos": 198,
-   "linhas": 41866
+   "linhas": 41887
   },
   "src/setupTests.ts": {
    "arquivos": 1,

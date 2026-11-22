@@ -2724,7 +2724,7 @@
    "hooks_exportados": [
     "usePontoOffline"
    ],
-   "linhas": 105,
+   "linhas": 108,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],

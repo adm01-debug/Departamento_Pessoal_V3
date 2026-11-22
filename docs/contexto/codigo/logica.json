@@ -3833,10 +3833,11 @@
    "camada": "services",
    "exports": [
     "OfflineRegistro",
+    "avisoRecusaRelogio",
     "pontoOfflineService"
    ],
    "export_default": null,
-   "linhas": 223,
+   "linhas": 232,
    "tabelas": [],
    "rpcs": [],
    "edges": [

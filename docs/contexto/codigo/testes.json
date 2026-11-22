@@ -6345,12 +6345,12 @@
   {
    "arquivo": "src/services/__tests__/pontoOfflineService.test.ts",
    "tipo": "unit",
-   "linhas": 220,
+   "linhas": 232,
    "testa": [
     "src/integrations/supabase/client.ts",
     "src/services/pontoOfflineService.ts"
    ],
-   "casos": 14
+   "casos": 15
   },
   {
    "arquivo": "src/services/__tests__/pontoService.test.ts",

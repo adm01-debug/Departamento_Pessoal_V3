@@ -5485,7 +5485,7 @@
     "PontoClockRegister"
    ],
    "export_default": null,
-   "linhas": 467,
+   "linhas": 470,
    "dominio": "components/ponto",
    "hooks_locais": [
     "useAuth",
@@ -10143,7 +10143,7 @@
     "PontoKioskPage"
    ],
    "export_default": "PontoKioskPage",
-   "linhas": 506,
+   "linhas": 509,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas",
