@@ -311,6 +311,11 @@ describe('edgeFunctionsService.gerarGuias', () => {
       vencimento: '2026-12-20',
     });
     expect(mockInvoke).toHaveBeenCalledWith('fgts-digital', {
+      // A chave estável (empresa+competência+tipo) viaja no header: é ela que
+      // faz a edge reapresentar o registro em vez de reinserir a guia.
+      headers: {
+        'Idempotency-Key': 'fgts-digital:11111111-1111-4111-8111-111111111111:2026-11:mensal',
+      },
       body: {
         empresa_id: '11111111-1111-4111-8111-111111111111',
         competencia: '2026-11',

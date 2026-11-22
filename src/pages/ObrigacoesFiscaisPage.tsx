@@ -348,9 +348,7 @@ export default function ObrigacoesFiscaisPage() {
     // fgts-digital). Comparar direto excluía todas as guias do mês.
     const [mes, ano] = competencia.split('/');
     const competenciaIso = `${ano}-${mes}`;
-    return guiasFgts
-      .filter((g) => g.competencia === competenciaIso)
-      .reduce((acc, g) => acc + (g.valor_total || 0), 0);
+    return guiasFgts.filter((g) => g.competencia === competenciaIso).reduce((acc, g) => acc + (g.valor_total || 0), 0);
   }, [guiasFgts, competencia]);
   const totalInss = guiasInss.reduce((acc, g) => acc + (g.valor_total || 0), 0);
   const hoje = new Date();
