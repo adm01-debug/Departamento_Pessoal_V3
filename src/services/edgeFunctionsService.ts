@@ -181,21 +181,17 @@ export const edgeFunctionsService = {
     return retryWithIdempotency<{ id: string; protocolo?: string } | undefined>({
       // Contrato snake_case da edge (BodySchema em supabase/functions/fgts-digital/index.ts).
       fn: () =>
-        handleInvoke<{ success: boolean; id: string; protocolo: string; payload_sha256: string }>(
-          'fgts-digital',
-          {
-            body: {
-              empresa_id: params.empresaId,
-              competencia: params.competencia,
-              tipo: params.tipo,
-              valor_total_centavos: params.valorTotalCentavos,
-              vencimento: params.vencimento,
-            },
-          }
-        ),
+        handleInvoke<{ success: boolean; id: string; protocolo: string; payload_sha256: string }>('fgts-digital', {
+          body: {
+            empresa_id: params.empresaId,
+            competencia: params.competencia,
+            tipo: params.tipo,
+            valor_total_centavos: params.valorTotalCentavos,
+            vencimento: params.vencimento,
+          },
+        }),
       idempotencyKey: idemKey,
-      onRetry: (a, d, e) =>
-        loggerService.warn('gerarGuiaFgtsDigital retry', { attempt: a, delayMs: d, error: e }),
+      onRetry: (a, d, e) => loggerService.warn('gerarGuiaFgtsDigital retry', { attempt: a, delayMs: d, error: e }),
     });
   },
 

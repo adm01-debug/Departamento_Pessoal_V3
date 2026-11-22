@@ -105,15 +105,10 @@ export function FgtsDigitalTable({ guias, emptyMessage, onMarcarPaga }: FgtsDigi
                     <Badge
                       className={cn(
                         'font-body text-xs',
-                        (vencida ? statusColors.vencida : g.status && statusColors[g.status]) ||
-                          statusColors.pendente
+                        (vencida ? statusColors.vencida : g.status && statusColors[g.status]) || statusColors.pendente
                       )}
                     >
-                      {vencida
-                        ? 'Vencida'
-                        : g.status
-                          ? g.status.charAt(0).toUpperCase() + g.status.slice(1)
-                          : '—'}
+                      {vencida ? 'Vencida' : g.status ? g.status.charAt(0).toUpperCase() + g.status.slice(1) : '—'}
                     </Badge>
                   </TableCell>
                   <TableCell>
