@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f611296f8fd592befc7656fc84f1e1553fb09534` (2026-11-21T21:56:57-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8aa8e96fa0f2e3ce383cebeab90dfe79ae44fcd7` (2026-11-21T22:27:17-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3706 |
 | arquivos_codigo | 2140 |
-| linhas_codigo | 427426 |
+| linhas_codigo | 427440 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -298,7 +298,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `gerar-pgr` — tabelas: empresas, sst_programas, sst_riscos_ambientais, user_empresas; chamada por 1 arquivo(s) do front
 - `healthcheck` (verify_jwt=false) — tabelas: colaboradores, health_checks, query_telemetry; chamada por 1 arquivo(s) do front
 - `importacao` — tabelas: audit_log; chamada por 1 arquivo(s) do front
-- `ingest-ponto-rep` (verify_jwt=false) — tabelas: colaboradores, ponto_rep_dias, ponto_rep_dispositivos, ponto_rep_funcionarios, ponto_rep_justificativas, ponto_rep_lotes; chamada por 0 arquivo(s) do front
+- `ingest-ponto-rep` (verify_jwt=false) — tabelas: audit_log, colaboradores, ponto_rep_dias, ponto_rep_dispositivos, ponto_rep_funcionarios, ponto_rep_justificativas, ponto_rep_lotes; chamada por 0 arquivo(s) do front
 - `integracao` — tabelas: audit_log, integracao_logs, integracoes; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `limpeza` — tabelas: auditoria, blocked_ips, login_attempts, rate_limit_logs, user_roles, user_sessions, verification_tokens; chamada por 1 arquivo(s) do front
 - `metricas` — tabelas: colaboradores, esocial_eventos, metricas_processamento, mv_folha_summary, mv_telemetry_dashboard, query_telemetry; chamada por 2 arquivo(s) do front
@@ -398,7 +398,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28117 nós · 63398 arestas · 2401 comunidades · grafo do commit `f611296f`
+- 28117 nós · 63412 arestas · 2401 comunidades · grafo do commit `8aa8e96f`
 - comunidades maiores: 20260831_corrected_public.sql (493), lucide-react (482), canonical_schema.sql (481), useEmpresas (395), vitest (389), @tanstack/react-query (364), cn (316), button.tsx (275), App.tsx (203), supabase (196), FeedbackAcoesRodape.tsx (192), ref_node_fs (188)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -418,7 +418,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - src/pages/CalculadoraRescisaoPage.tsx (7)
 - src/pages/ColaboradoresPage.tsx (7)
 - src/schemas/tableColumns.ts (7)
-- docs/agentes/banco.md (6)
+- docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -609,7 +609,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/ONBOARDING_MODELO_B_DEPRECATED.md` — MODELO B DE ONBOARDING — DEPRECATED (133 linhas)
 - `docs/P2-037_TABELAS_DUPLICADAS_ANALISE.md` — P2-037: Consolidação de Tabelas Duplicadas — Análise e Runbook (53 linhas)
 - `docs/PERFORMANCE.md` — ⚡ PERFORMANCE.md - Guia de Performance (27 linhas)
-- `docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md` — Plano — Integração do ponto Henry / Ponto AtecSoft com o DP V3 (290 linhas)
+- `docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md` — Plano — Integração do ponto Henry / Ponto AtecSoft com o DP V3 (292 linhas)
 - `docs/PONTO.md` — ⏰ PONTO.md - Guia de Ponto (23 linhas)
 - `docs/QA_EXHAUSTIVE_REPORT_V26.md` — 🔬 QA Exaustivo V26 — Relatório Final (146 linhas)
 - `docs/QA_EXHAUSTIVE_REPORT_V27.md` — QA Exaustivo V27 — Relatório Final (87 linhas)
@@ -656,6 +656,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-21 `8aa8e96` fix: ingest-ponto-rep grava auditoria do lote (etapa 44 do plano do ponto) (#814)
+- 2026-11-21 `6cf7a6b` chore: verifica ao vivo etapas 36/44/46 do plano do ponto Henry/AtecSoft (#813)
 - 2026-11-21 `f611296` fix: cria recibos_ferias no canônico — recibo de férias nunca era gravado (#810)
 - 2026-11-21 `af23346` fix: aviso neutro no quiosque e teste do aviso na reconexao (#812)
 - 2026-11-21 `2624262` fix: avisa quando batida offline é recusada por usar o relógio da unidade (#811)
@@ -669,8 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `4008c60` feat: vínculo de funcionários do relógio e de-para de justificativas (#800)
 - 2026-11-21 `40b5cfe` chore: testes do relógio de ponto no CI, guia do DP e runbook PONTO_REP (#799)
 - 2026-11-21 `e3986dc` infra: libera no bridge os RPCs do relógio de ponto (#802)
-- 2026-11-21 `598b48c` feat: função ingest-ponto-rep recebe e guarda os envios do relógio de ponto (#798)
-- 2026-11-21 `a6548c3` feat: tabelas de entrada do relógio de ponto (ponto_rep_*) (#795)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: ingest-ponto-rep grava auditoria do lote (etapa 44 do plano do ponto) (#814)",
+   "chore: verifica ao vivo etapas 36/44/46 do plano do ponto Henry/AtecSoft (#813)",
    "fix: cria recibos_ferias no canônico — recibo de férias nunca era gravado (#810)",
    "fix: aviso neutro no quiosque e teste do aviso na reconexao (#812)",
-   "fix: avisa quando batida offline é recusada por usar o relógio da unidade (#811)",
-   "chore: progresso do plano do relógio de ponto com evidências (#809)",
-   "fix: formatação do painel de relógios (prettier) (#808)"
+   "fix: avisa quando batida offline é recusada por usar o relógio da unidade (#811)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

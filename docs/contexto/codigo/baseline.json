@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f611296f8fd592befc7656fc84f1e1553fb09534",
+  "commit": "8aa8e96fa0f2e3ce383cebeab90dfe79ae44fcd7",
   "branch": "main",
-  "data_commit": "2026-11-21T21:56:57-03:00",
+  "data_commit": "2026-11-21T22:27:17-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "8aa8e96",
+    "data": "2026-11-21",
+    "assunto": "fix: ingest-ponto-rep grava auditoria do lote (etapa 44 do plano do ponto) (#814)"
+   },
+   {
+    "sha": "6cf7a6b",
+    "data": "2026-11-21",
+    "assunto": "chore: verifica ao vivo etapas 36/44/46 do plano do ponto Henry/AtecSoft (#813)"
+   },
    {
     "sha": "f611296",
     "data": "2026-11-21",
@@ -121,16 +131,6 @@
     "sha": "bbdb6e3",
     "data": "2026-11-21",
     "assunto": "chore: registra no plano do ponto os achados do banco e do Promo Finance (#790)"
-   },
-   {
-    "sha": "123f387",
-    "data": "2026-11-21",
-    "assunto": "chore: plano do ponto passa a mão dupla com o AtecSoft e registra D1–D5 (#788)"
-   },
-   {
-    "sha": "06ab445",
-    "data": "2026-11-21",
-    "assunto": "chore: plano em 100 etapas da integração do ponto Henry/AtecSoft (#786)"
    }
   ],
   "arquivos_mudados_7d": 1055,
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 98
+    "mudancas": 97
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -254,6 +254,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+    "mudancas": 6
+   },
+   {
     "arquivo": "docs/agentes/banco.md",
     "mudancas": 6
    },
@@ -276,10 +280,6 @@
    {
     "arquivo": "src/index.css",
     "mudancas": 6
-   },
-   {
-    "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    "mudancas": 5
    },
    {
     "arquivo": "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3706,
   "arquivos_codigo": 2140,
-  "linhas_codigo": 427426,
+  "linhas_codigo": 427440,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -724,7 +724,7 @@
   },
   "supabase/functions": {
    "arquivos": 191,
-   "linhas": 27554
+   "linhas": 27568
   },
   "supabase/tests": {
    "arquivos": 3,

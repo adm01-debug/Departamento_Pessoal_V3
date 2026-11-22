@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "f611296f8fd592befc7656fc84f1e1553fb09534",
+  "sha": "8aa8e96fa0f2e3ce383cebeab90dfe79ae44fcd7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 00:59 UTC",
+  "generated_at": "2026-11-22 01:28 UTC",
   "files_total": 3720,
   "code_files": 3130,
-  "code_lines": 498073
+  "code_lines": 498087
  },
  "version": "1.3.2",
- "facts_hash": "2dee9446854abf1b",
+ "facts_hash": "4fbb87b9ed3e0281",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -100117,6 +100117,7 @@
     ],
     "auth": "PÚBLICA (verify_jwt=false em config.toml)",
     "tables": [
+     "audit_log",
      "colaboradores",
      "ponto_rep_dias",
      "ponto_rep_dispositivos",
@@ -105383,7 +105384,7 @@
   {
    "module": "supabase/functions",
    "files": 191,
-   "lines": 27554,
+   "lines": 27568,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -106018,6 +106019,7 @@
      "supabase/functions/gerar-holerite/index.ts",
      "supabase/functions/gerar-medida-disciplinar-pdf/index.ts",
      "supabase/functions/importacao/index.ts",
+     "supabase/functions/ingest-ponto-rep/index.ts",
      "supabase/functions/integracao/index.ts",
      "supabase/functions/notificacao/index.ts",
      "supabase/functions/reabrir-folha/index.ts",
@@ -327978,7 +327980,7 @@
   },
   "supabase/functions/ingest-ponto-rep/index.ts": {
    "path": "supabase/functions/ingest-ponto-rep/index.ts",
-   "lines": 173,
+   "lines": 187,
    "tables": [
     {
      "table": "ponto_rep_dispositivos",
@@ -328023,6 +328025,10 @@
     {
      "table": "ponto_rep_dispositivos",
      "op": "update"
+    },
+    {
+     "table": "audit_log",
+     "op": "insert"
     },
     {
      "table": "ponto_rep_lotes",
@@ -335222,10 +335228,28 @@
   }
  },
  "git": {
-  "sha": "f611296f8fd592befc7656fc84f1e1553fb09534",
+  "sha": "8aa8e96fa0f2e3ce383cebeab90dfe79ae44fcd7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "8aa8e96",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: ingest-ponto-rep grava auditoria do lote (etapa 44 do plano do ponto) (#814)",
+    "files": [
+     "supabase/functions/ingest-ponto-rep/index.ts"
+    ]
+   },
+   {
+    "sha": "6cf7a6b",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: verifica ao vivo etapas 36/44/46 do plano do ponto Henry/AtecSoft (#813)",
+    "files": [
+     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
+    ]
+   },
    {
     "sha": "f611296",
     "date": "2026-11-21",
@@ -335556,30 +335580,12 @@
     "files": [
      "docs/pendencias/_ordem.md"
     ]
-   },
-   {
-    "sha": "b09d76e",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: atualiza _ordem.md com evidência real de auditoria de mutações (#782)",
-    "files": [
-     "docs/pendencias/_ordem.md"
-    ]
-   },
-   {
-    "sha": "094e9e0",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: corrige evidência F-07 no CSV (gap é transporte governamental, não uso inicial) (#781)",
-    "files": [
-     "analise-prs/funcionalidades.csv"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    5
+    6
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -335600,6 +335606,10 @@
    [
     "src/components/ponto/relogio/RelogiosPanel.tsx",
     3
+   ],
+   [
+    "supabase/functions/ingest-ponto-rep/index.ts",
+    2
    ],
    [
     "src/services/pontoOfflineService.ts",
@@ -335631,10 +335641,6 @@
    ],
    [
     "scripts/inventario/validar-funcionalidades.mjs",
-    2
-   ],
-   [
-    "docs/pendencias/_ordem.md",
     2
    ],
    [
