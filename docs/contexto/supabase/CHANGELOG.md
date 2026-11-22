@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-22 15:12 UTC
+
+- **functions** alterado (2): `public.has_role(_user_id uuid, _role app_role)`, `public.pode_gerir_rh(_empresa_id uuid)`
+
 ## 2026-11-22 13:13 UTC
 
 - **functions** alterado (2): `public.get_user_empresas(_user_id uuid)`, `public.pode_gerir_rh(_empresa_id uuid)`

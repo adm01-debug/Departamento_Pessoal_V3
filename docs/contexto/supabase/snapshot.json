@@ -99153,7 +99153,7 @@
               "hits": 6
             }
           ],
-          "code_total_files": 80,
+          "code_total_files": 81,
           "cron": [],
           "db": [
             "public._is_admin_bypass",
@@ -102345,7 +102345,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 37,
+          "code_total_files": 38,
           "cron": [],
           "db": [
             "public.admin_definir_pin_quiosque",
