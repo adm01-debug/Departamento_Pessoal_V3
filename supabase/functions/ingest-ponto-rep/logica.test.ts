@@ -1,6 +1,6 @@
 // deno test supabase/functions/ingest-ponto-rep/logica.test.ts
 import { assert, assertEquals } from 'https://deno.land/std@0.208.0/assert/mod.ts';
-import { classificaErroVinculo, diasAlterados, envioSchema, sha256Hex, tokenPlausivel, vincular } from './logica.ts';
+import { classificaErroVinculo, codigosRemovidos, compararVersao, diasAlterados, envioSchema, podeReconciliar, sha256Hex, tokenPlausivel, paresRemovidos, trazCatalogo, vincular } from './logica.ts';
 
 const func = (extra: Record<string, unknown> = {}) => ({
   codigo: 7, nome: 'A', matricula: null, cpf: null, pis: null, situacao: 'ATIVO',
@@ -14,8 +14,19 @@ const dia = (extra: Record<string, unknown> = {}) => ({
   folga: false, neutro: false, justificativa_abono: null, horario_codigo: 1, hash: 'a'.repeat(64), ...extra,
 });
 const envio = (extra: Record<string, unknown> = {}) => ({
-  versao_coletor: '1.0.0', periodo: { inicio: '2026-10-07', fim: '2026-11-21' }, parte: 1, partes: 1,
-  funcionarios: [], justificativas: [], dias: [], ...extra,
+  versao_coletor: '1.0.1', periodo: { inicio: '2026-10-07', fim: '2026-11-21' }, parte: 1, partes: 1,
+  funcionarios: [], justificativas: [], feriados: [], horarios: [], dias: [], ...extra,
+});
+
+const feriado = (extra: Record<string, unknown> = {}) => ({
+  codigo: 3, nome: 'Natal', data: '2026-12-25', nao_computa_banco_horas: false,
+  vinculo_cidade: null, vinculo_departamento: null, vinculo_empresa: null, ...extra,
+});
+const horario = (extra: Record<string, unknown> = {}) => ({
+  codigo: 1, ident: 1, dia_semana: 2,
+  pares: [{ entrada: '08:00:00', saida: '12:00:00' }, { entrada: '14:00:00', saida: '18:00:00' }],
+  tipo_calculo: 2, tolerancia_falta: '00:10:00', tolerancia_extra: '00:10:00',
+  neutro: false, fecha: false, ajuste: false, folga: false, extra: false, ...extra,
 });
 
 Deno.test('vincula por CPF mesmo com formatação diferente', () => {
@@ -66,6 +77,17 @@ Deno.test('contrato aceita o envio do coletor e o sinal de vida vazio', () => {
   assert(envioSchema.safeParse(cheio).success);
 });
 
+Deno.test('contrato aceita feriados e jornadas e recusa fora da faixa', () => {
+  assert(envioSchema.safeParse(envio({ feriados: [feriado()], horarios: [horario()] })).success);
+  // Dia sem jornada (domingo): pares vazio é legítimo.
+  assert(envioSchema.safeParse(envio({ horarios: [horario({ pares: [] })] })).success);
+  assert(!envioSchema.safeParse(envio({ feriados: [feriado({ data: '25/12/2026' })] })).success);
+  assert(!envioSchema.safeParse(envio({ feriados: [feriado({ empresa_id: 'x' })] })).success);
+  assert(!envioSchema.safeParse(envio({ horarios: [horario({ dia_semana: 0 })] })).success);
+  assert(!envioSchema.safeParse(envio({ horarios: [horario({ dia_semana: 8 })] })).success);
+  assert(!envioSchema.safeParse(envio({ horarios: [horario({ pares: [{ entrada: '8h', saida: null }] })] })).success);
+});
+
 Deno.test('contrato recusa campo extra, data torta e empresa_id vindo do coletor', () => {
   assert(!envioSchema.safeParse(envio({ empresa_id: 'x' })).success);
   assert(!envioSchema.safeParse(envio({ dias: [dia({ data: '20/11/2026' })] })).success);
@@ -94,4 +116,66 @@ Deno.test('erro que nao e de unicidade aborta o lote', () => {
   assertEquals(classificaErroVinculo({ code: '42501' }), 'abortar');
   assertEquals(classificaErroVinculo({}), 'abortar');
   assertEquals(classificaErroVinculo(null), 'abortar');
+});
+Deno.test('catalogo que sumiu do AtecSoft e removido do staging', () => {
+  // Feriado excluido no AtecSoft: o coletor reenvia so o que existe, e o
+  // upsert sozinho deixaria o codigo 3 valendo para sempre.
+  assertEquals(codigosRemovidos([{ codigo: 1 }, { codigo: 2 }], [{ codigo: 1 }, { codigo: 2 }, { codigo: 3 }]), [3]);
+  // Nada gravado ainda ou mesma lista: nada a remover.
+  assertEquals(codigosRemovidos([{ codigo: 1 }], []), []);
+  assertEquals(codigosRemovidos([{ codigo: 1 }, { codigo: 2 }], [{ codigo: 2 }, { codigo: 1 }]), []);
+  // Catalogo vazio com chave presente: o AtecSoft nao tem mais nenhum feriado.
+  assertEquals(codigosRemovidos([], [{ codigo: 3 }, { codigo: 3 }]), [3]);
+});
+
+Deno.test('coletor antigo sem as chaves nao apaga o catalogo gravado', () => {
+  // O schema transforma a chave ausente em []: confundir isso com "catalogo
+  // vazio" apagaria tudo que o coletor 1.0.0 nunca envia.
+  assert(!trazCatalogo({ versao_coletor: '1.0.0', dias: [] }, 'feriados'));
+  assert(!trazCatalogo({ versao_coletor: '1.0.0' }, 'horarios'));
+  assert(trazCatalogo({ feriados: [] }, 'feriados'));
+  assert(trazCatalogo(envio(), 'horarios'));
+  // Corpo que nao e objeto nao tem catalogo.
+  assert(!trazCatalogo(null, 'feriados'));
+});
+
+Deno.test('so reconcilia o catalogo quando versao e chave concordam', () => {
+  // Nenhuma das duas condicoes basta sozinha. Versao sozinha: o diagnostico de
+  // conexao manda 1.0.1 com as chaves vazias sem consultar FERIADO/HORARIO.
+  // Chave sozinha: o default do schema inventa [] para coletor 1.0.0.
+  assert(!podeReconciliar('1.0.1', { versao_coletor: '1.0.1', dias: [] }, 'feriados'));
+  assert(!podeReconciliar('1.0.0', { feriados: [] }, 'feriados'));
+  assert(!podeReconciliar('1.0.0', envio(), 'horarios'));
+  assert(podeReconciliar('1.0.1', envio(), 'feriados'));
+  assert(podeReconciliar('1.0.1', envio(), 'horarios'));
+  // Versao posterior continua podendo reconciliar.
+  assert(podeReconciliar('1.1.0', envio(), 'horarios'));
+  assert(podeReconciliar('2.0.0', envio(), 'feriados'));
+});
+
+Deno.test('versao do coletor compara termo a termo, nao como texto', () => {
+  // Comparacao de string diria que "1.0.10" < "1.0.9".
+  assert(compararVersao('1.0.10', '1.0.9') > 0);
+  assert(compararVersao('1.0.0', '1.0.1') < 0);
+  assert(compararVersao('1.0.1', '1.0.1') === 0);
+  assert(compararVersao('1.0', '1.0.1') < 0);
+  // Trecho nao numerico nao derruba a comparacao.
+  assert(compararVersao('1.0.1-beta', '1.0.0') > 0);
+});
+
+Deno.test('jornada que trocou de dia deixa a linha antiga fora do staging', () => {
+  // Uma linha por (codigo, dia_semana): remover so pelo codigo deixaria a
+  // jornada antiga valendo e a nova passaria a valer junto.
+  const gravados = [{ codigo: 1, dia_semana: 2 }, { codigo: 1, dia_semana: 3 }, { codigo: 2, dia_semana: 1 }];
+  assertEquals(paresRemovidos([{ codigo: 1, dia_semana: 2 }, { codigo: 2, dia_semana: 1 }], gravados),
+    [{ codigo: 1, dias: [3] }]);
+  // Jornada removida por inteiro: todos os dias dela saem.
+  assertEquals(paresRemovidos([{ codigo: 1, dia_semana: 2 }], gravados),
+    [{ codigo: 1, dias: [3] }, { codigo: 2, dias: [1] }]);
+  assertEquals(paresRemovidos(gravados, gravados), []);
+  assertEquals(paresRemovidos([], gravados).length, 2);
+  // Nada diferente: nenhum delete.
+  assertEquals(paresRemovidos([{ codigo: 1, dia_semana: 2 }], [{ codigo: 1, dia_semana: 2 }]), []);
+  // Catalogo vazio com chave presente: o AtecSoft nao tem mais nenhuma jornada.
+  assertEquals(paresRemovidos([], [{ codigo: 4, dia_semana: 1 }, { codigo: 4, dia_semana: 7 }]), [{ codigo: 4, dias: [1, 7] }]);
 });

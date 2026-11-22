@@ -10,14 +10,16 @@ SELECT CASE
   ) <> 5 THEN 'FALHOU: faltam tabelas ponto_rep_* com RLS ligada'
   WHEN (
     SELECT count(*) FROM pg_policies p
-    WHERE p.schemaname = 'public' AND p.tablename LIKE 'ponto\_rep\_%'
+    WHERE p.schemaname = 'public' AND p.tablename IN ('ponto_rep_dispositivos', 'ponto_rep_lotes', 'ponto_rep_funcionarios',
+                        'ponto_rep_dias', 'ponto_rep_justificativas')
       AND p.policyname = p.tablename || '_select_rh' AND p.cmd = 'SELECT'
       AND p.roles = '{authenticated}'
       AND p.qual LIKE '%pertence_a_empresa%' AND p.qual LIKE '%has_role%'
   ) <> 5 THEN 'FALHOU: policy de leitura admin/RH ausente ou diferente'
   WHEN (
     SELECT count(*) FROM pg_policies p
-    WHERE p.schemaname = 'public' AND p.tablename LIKE 'ponto\_rep\_%'
+    WHERE p.schemaname = 'public' AND p.tablename IN ('ponto_rep_dispositivos', 'ponto_rep_lotes', 'ponto_rep_funcionarios',
+                        'ponto_rep_dias', 'ponto_rep_justificativas')
   ) <> 5 THEN 'FALHOU: ha policy alem da leitura em ponto_rep_*'
   WHEN EXISTS (
     SELECT 1

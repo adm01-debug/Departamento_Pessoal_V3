@@ -49,6 +49,36 @@ const justificativaSchema = z.object({
   considera_falta: z.boolean(),
 }).strict();
 
+const feriadoSchema = z.object({
+  codigo: z.number().int().positive(),
+  nome: z.string().max(80).nullable(),
+  data,
+  nao_computa_banco_horas: z.boolean(),
+  vinculo_cidade: z.number().int().nullable(),
+  vinculo_departamento: z.number().int().nullable(),
+  vinculo_empresa: z.number().int().nullable(),
+}).strict();
+
+const parHorarioSchema = z.object({
+  entrada: hora.nullable(),
+  saida: hora.nullable(),
+}).strict();
+
+const horarioSchema = z.object({
+  codigo: z.number().int().positive(),
+  ident: z.number().int().nullable(),
+  dia_semana: z.number().int().min(1).max(7),
+  pares: z.array(parHorarioSchema).max(6),
+  tipo_calculo: z.number().int().nullable(),
+  tolerancia_falta: hora.nullable(),
+  tolerancia_extra: hora.nullable(),
+  neutro: z.boolean(),
+  fecha: z.boolean(),
+  ajuste: z.boolean(),
+  folga: z.boolean(),
+  extra: z.boolean(),
+}).strict();
+
 export const envioSchema = z.object({
   versao_coletor: z.string().min(1).max(20),
   periodo: z.object({ inicio: data, fim: data }).strict(),
@@ -56,11 +86,16 @@ export const envioSchema = z.object({
   partes: z.number().int().positive(),
   funcionarios: z.array(funcionarioSchema).max(5000),
   justificativas: z.array(justificativaSchema).max(500),
+  // Coletor 1.0.0 não envia estas chaves: o default mantém o contrato antigo válido.
+  feriados: z.array(feriadoSchema).max(2000).default([]),
+  horarios: z.array(horarioSchema).max(5000).default([]),
   dias: z.array(diaSchema).max(1000),
 }).strict();
 
 export type Envio = z.infer<typeof envioSchema>;
 export type FuncionarioEnvio = z.infer<typeof funcionarioSchema>;
+export type FeriadoEnvio = z.infer<typeof feriadoSchema>;
+export type HorarioEnvio = z.infer<typeof horarioSchema>;
 
 /** Token do coletor: 32+ caracteres imprimíveis sem espaço. */
 export function tokenPlausivel(token: string | null): token is string {
@@ -113,6 +148,87 @@ export function diasAlterados<T extends { funcionario_codigo: number; data: stri
 ): T[] {
   const atual = new Map(gravados.map((g) => [`${g.funcionario_codigo}|${g.data}`, g.hash_conteudo]));
   return recebidos.filter((d) => atual.get(`${d.funcionario_codigo}|${d.data}`) !== d.hash);
+}
+
+/**
+ * Códigos do catálogo que sumiram do AtecSoft.
+ *
+ * O coletor manda o catálogo inteiro na parte 1; upsert sozinho nunca remove,
+ * então feriado ou jornada excluída no AtecSoft continuaria valendo aqui. O que
+ * está gravado e não veio mais precisa sair do staging.
+ */
+export function codigosRemovidos(
+  recebidos: Array<{ codigo: number }>,
+  gravados: Array<{ codigo: number }>,
+): number[] {
+  const presentes = new Set(recebidos.map((r) => r.codigo));
+  return [...new Set(gravados.map((g) => g.codigo))].filter((c) => !presentes.has(c));
+}
+
+/**
+ * O corpo trouxe a chave do catálogo de verdade?
+ *
+ * O coletor 1.0.0 não envia `feriados`/`horarios` e o default do schema as
+ * transforma em `[]`. Tratar `[]` como "catálogo completo e vazio" apagaria o
+ * catálogo já gravado nesse coletor antigo -- e o diagnóstico de conexão, que
+ * não consulta o catálogo, também manda listas vazias. Só o envio que trouxe a
+ * chave reconcilia.
+ */
+export function trazCatalogo(corpo: unknown, chave: 'feriados' | 'horarios'): boolean {
+  return typeof corpo === 'object' && corpo !== null
+    && Object.prototype.hasOwnProperty.call(corpo, chave);
+}
+
+/**
+ * Este envio pode apagar do staging o catálogo que sumiu do AtecSoft?
+ *
+ * São duas condições, e as duas precisam valer: o coletor tem de ser da versão
+ * que sabe o que a chave significa (1.0.1+) e a chave tem de ter vindo no corpo.
+ * Versão sozinha não basta -- o diagnóstico manda 1.0.1 sem consultar o
+ * catálogo. Chave sozinha também não -- o default do schema inventa `[]`.
+ */
+export function podeReconciliar(
+  versaoColetor: string,
+  corpo: unknown,
+  chave: 'feriados' | 'horarios',
+): boolean {
+  return compararVersao(versaoColetor, '1.0.1') >= 0 && trazCatalogo(corpo, chave);
+}
+
+/** Compara `a.b.c` com `a.b.c` termo a termo; trecho não numérico vale 0. */
+export function compararVersao(a: string, b: string): number {
+  const partes = (v: string) => v.split('.').map((t) => {
+    const n = Number.parseInt(t, 10);
+    return Number.isNaN(n) ? 0 : n;
+  });
+  const [pa, pb] = [partes(a), partes(b)];
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const dif = (pa[i] ?? 0) - (pb[i] ?? 0);
+    if (dif !== 0) return dif;
+  }
+  return 0;
+}
+
+/**
+ * Jornadas do catálogo que sumiram do AtecSoft, agrupadas por código.
+ *
+ * `ponto_rep_horarios` tem uma linha por dia da semana, então o que pode sumir
+ * é o par (código, dia): jornada que trocou de dia deixa a linha antiga para
+ * trás. Código removido por inteiro sai com todos os dias.
+ */
+export function paresRemovidos(
+  recebidos: Array<{ codigo: number; dia_semana: number }>,
+  gravados: Array<{ codigo: number; dia_semana: number }>,
+): Array<{ codigo: number; dias: number[] }> {
+  const presentes = new Set(recebidos.map((r) => `${r.codigo}|${r.dia_semana}`));
+  const porCodigo = new Map<number, number[]>();
+  for (const g of gravados) {
+    if (presentes.has(`${g.codigo}|${g.dia_semana}`)) continue;
+    const dias = porCodigo.get(g.codigo) ?? [];
+    if (!dias.includes(g.dia_semana)) dias.push(g.dia_semana);
+    porCodigo.set(g.codigo, dias);
+  }
+  return [...porCodigo].map(([codigo, dias]) => ({ codigo, dias }));
 }
 
 /**
