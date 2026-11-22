@@ -50,6 +50,13 @@ interface OfflineSyncResponse {
   error_count?: number;
   errors?: number;
   details?: { id: string }[];
+  /** Batidas recusadas porque o colaborador registra no relógio da unidade (não voltam à fila). */
+  rejected_usa_relogio?: { id?: string }[];
+}
+
+/** Aviso ao usuário quando batidas offline foram recusadas por ele usar o relógio da unidade. */
+export function avisoRecusaRelogio(qtd: number): string {
+  return `${qtd} batida(s) feita(s) sem internet não foram aceitas: seu ponto é registrado no relógio da unidade.`;
 }
 
 export const pontoOfflineService = {
@@ -137,6 +144,7 @@ export const pontoOfflineService = {
 
     let synced = 0;
     let errors = 0;
+    let recusadasRelogio = 0;
     const remaining: OfflineRegistro[] = [];
 
     // Notificar monitoramento sobre início do sync
@@ -169,8 +177,9 @@ export const pontoOfflineService = {
       if (error) throw error;
 
       if (data.success) {
-        synced = data.success_count || Number(data.success);
-        errors = data.error_count || data.errors || 0;
+        synced = data.success_count ?? Number(data.success);
+        recusadasRelogio = data.rejected_usa_relogio?.length ?? 0;
+        errors = Math.max(0, (data.error_count || data.errors || 0) - recusadasRelogio);
 
         // Se houver erros específicos de registros, mantemos apenas os que falharam na fila
         if (data.details && data.details.length > 0) {
@@ -191,7 +200,7 @@ export const pontoOfflineService = {
     // Notificar monitoramento sobre conclusão
     await (await import('./pontoMonitorService')).pontoMonitorService.trackOfflineSync(synced, errors);
 
-    if (remaining.length === 0 && (synced > 0 || errors > 0)) {
+    if (remaining.length === 0 && (synced > 0 || errors > 0 || recusadasRelogio > 0)) {
       localStorage.removeItem(PONTO_OFFLINE_STORAGE_KEY);
       // Limpar fotos do IndexedDB após sync total
       await db.clear('photos');
@@ -206,7 +215,7 @@ export const pontoOfflineService = {
       const encrypted = encryptQueue(remaining);
       localStorage.setItem(PONTO_OFFLINE_STORAGE_KEY, encrypted);
     }
-    return { synced, errors };
+    return { synced, errors, recusadasRelogio };
   },
 
   getQueueSize: () => {

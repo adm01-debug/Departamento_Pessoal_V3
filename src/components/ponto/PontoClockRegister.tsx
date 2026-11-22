@@ -18,7 +18,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { pontoOfflineService } from '@/services/pontoOfflineService';
+import { avisoRecusaRelogio, pontoOfflineService } from '@/services/pontoOfflineService';
 import { loggerService } from '@/services/loggerService';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
@@ -78,6 +78,9 @@ export function PontoClockRegister({
       const result = await pontoOfflineService.syncOfflineQueue();
       if (result.synced > 0) {
         toast.success(`${result.synced} registros offline sincronizados!`);
+      }
+      if (result.recusadasRelogio) {
+        toast.error(avisoRecusaRelogio(result.recusadasRelogio));
       }
     } catch (e) {
       loggerService.error('Erro na sincronização automática', {}, e instanceof Error ? e : new Error(String(e)));

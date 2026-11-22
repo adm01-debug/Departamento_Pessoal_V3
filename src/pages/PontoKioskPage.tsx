@@ -6,7 +6,7 @@ import { Clock, User, Fingerprint, WifiOff, RefreshCw, Smartphone } from 'lucide
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { pontoService } from '@/services/pontoService';
-import { pontoOfflineService } from '@/services/pontoOfflineService';
+import { avisoRecusaRelogio, pontoOfflineService } from '@/services/pontoOfflineService';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -58,6 +58,9 @@ export default function PontoKioskPage() {
       const result = await pontoOfflineService.syncOfflineQueue();
       if (result.synced > 0) {
         toast.success(`${result.synced} registros sincronizados automaticamente.`);
+      }
+      if (result.recusadasRelogio) {
+        toast.error(avisoRecusaRelogio(result.recusadasRelogio));
       }
     } catch (e) {
       loggerService.error('Erro na sincronização do quiosque', {}, e instanceof Error ? e : new Error(String(e)));

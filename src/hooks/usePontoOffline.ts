@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
-import { pontoOfflineService } from '@/services/pontoOfflineService';
+import { avisoRecusaRelogio, pontoOfflineService } from '@/services/pontoOfflineService';
 import { loggerService } from '@/services/loggerService';
 import { useOnMount } from './useMountEffects';
 
@@ -67,6 +67,9 @@ export function usePontoOffline() {
 
       if (result.synced > 0) {
         toast.success(`${result.synced} batida(s) offline sincronizada(s) com sucesso!`);
+      }
+      if (result.recusadasRelogio) {
+        toast.error(avisoRecusaRelogio(result.recusadasRelogio));
       }
       if (result.errors > 0) {
         toast.error(`${result.errors} batida(s) não puderam ser sincronizadas e permanecem na fila.`);
