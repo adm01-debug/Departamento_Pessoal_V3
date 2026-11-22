@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { gerarRotas, lerTagsDeRota, juntarCaminho, casaRota, extrairChamadas, semComentarios, emDia, serializar } from '../inventario/gerar-rotas.mjs';
+import { gerarRotas, lerTagsDeRota, juntarCaminho, casaRota, extrairChamadas, semComentarios, emDia, serializar, resolverImport } from '../inventario/gerar-rotas.mjs';
 
 const raizReal = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -194,4 +194,21 @@ test('--check compara conteudo, nao bytes: rotas.json formatado pelo prettier (l
   assert.equal(emDia(serializar({ ...inv, a: [1] }), inv), false, 'conteudo diferente segue desatualizado');
   assert.equal(emDia('', inv), false, 'arquivo ausente/vazio');
   assert.equal(emDia('{ quebrado', inv), false, 'JSON invalido');
+});
+
+test('resolverImport devolve caminho com separador nativo, senao a travessia para no barrel no Windows', (t) => {
+  const raiz = repo(t, {
+    'src/hooks/useBarrel.ts': "export const useBarrel = () => null;\n",
+    'src/hooks/index.ts': "export * from './useBarrel';\n",
+    'src/pages/Tela.tsx': "export default () => null;\n",
+  });
+  const alvo = resolverImport(raiz, path.join(raiz, 'src/pages/Tela.tsx'), '@/hooks');
+
+  assert.ok(alvo, '@/hooks resolve para o barrel src/hooks/index.ts');
+  assert.ok(!alvo.includes('/index.ts'), 'nao pode sobrar "/" misturado com path.sep no caminho resolvido');
+
+  // `fechoDaTela` compara alvo por prefixo (`startsWith(path.join(raiz, 'src/hooks') + path.sep)`).
+  // Caminho com barra solta nao casa no Windows e a travessia morre ali, perdendo os hooks do barrel.
+  const prefixo = path.join(raiz, 'src/hooks') + path.sep;
+  assert.ok(alvo.startsWith(prefixo), 'barrel resolvido tem que casar com o prefixo de PASTAS_LIVRES');
 });
