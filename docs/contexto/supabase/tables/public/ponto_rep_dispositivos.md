@@ -50,7 +50,9 @@
 | tabela | constraint | colunas | on delete |
 |---|---|---|---|
 | public.ponto_rep_dias | ponto_rep_dias_dispositivo_id_fkey | dispositivo_id | RESTRICT |
+| public.ponto_rep_feriados | ponto_rep_feriados_dispositivo_id_fkey | dispositivo_id | RESTRICT |
 | public.ponto_rep_funcionarios | ponto_rep_funcionarios_dispositivo_id_fkey | dispositivo_id | RESTRICT |
+| public.ponto_rep_horarios | ponto_rep_horarios_dispositivo_id_fkey | dispositivo_id | RESTRICT |
 | public.ponto_rep_justificativas | ponto_rep_justificativas_dispositivo_id_fkey | dispositivo_id | RESTRICT |
 | public.ponto_rep_lotes | ponto_rep_lotes_dispositivo_id_fkey | dispositivo_id | RESTRICT |
 

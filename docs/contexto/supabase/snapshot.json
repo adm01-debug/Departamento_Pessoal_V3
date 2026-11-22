@@ -44280,6 +44280,162 @@
         "nullable": false,
         "position": 1,
         "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "dispositivo_id",
+        "nullable": false,
+        "position": 2,
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": false,
+        "position": 3,
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "codigo",
+        "nullable": false,
+        "position": 4,
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "nome",
+        "nullable": true,
+        "position": 5,
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "data",
+        "nullable": false,
+        "position": 6,
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "date"
+      },
+      {
+        "comment": null,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "nao_computa_banco_horas",
+        "nullable": false,
+        "position": 7,
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "vinculo_cidade",
+        "nullable": true,
+        "position": 8,
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "vinculo_departamento",
+        "nullable": true,
+        "position": 9,
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "vinculo_empresa",
+        "nullable": true,
+        "position": 10,
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "created_at",
+        "nullable": false,
+        "position": 11,
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 12,
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "id",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
         "table": "ponto_rep_funcionarios",
         "type": "uuid"
       },
@@ -44529,6 +44685,227 @@
         "schema": "public",
         "table": "ponto_rep_funcionarios",
         "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "id",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "dispositivo_id",
+        "nullable": false,
+        "position": 2,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": false,
+        "position": 3,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "codigo",
+        "nullable": false,
+        "position": 4,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "ident",
+        "nullable": true,
+        "position": 5,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "dia_semana",
+        "nullable": false,
+        "position": 6,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "smallint"
+      },
+      {
+        "comment": null,
+        "default": "'[]'::jsonb",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "pares",
+        "nullable": false,
+        "position": 7,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "jsonb"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "tipo_calculo",
+        "nullable": true,
+        "position": 8,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "tolerancia_falta",
+        "nullable": true,
+        "position": 9,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "time without time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "tolerancia_extra",
+        "nullable": true,
+        "position": 10,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "time without time zone"
+      },
+      {
+        "comment": null,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "neutro",
+        "nullable": false,
+        "position": 11,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "fecha",
+        "nullable": false,
+        "position": 12,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "ajuste",
+        "nullable": false,
+        "position": 13,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "folga",
+        "nullable": false,
+        "position": 14,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "extra",
+        "nullable": false,
+        "position": 15,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "created_at",
+        "nullable": false,
+        "position": 16,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 17,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "timestamp with time zone"
       },
       {
         "comment": null,
@@ -44815,6 +45192,32 @@
         "schema": "public",
         "table": "ponto_rep_lotes",
         "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "total_feriados",
+        "nullable": false,
+        "position": 13,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "total_horarios",
+        "nullable": false,
+        "position": 14,
+        "schema": "public",
+        "table": "ponto_rep_lotes",
+        "type": "integer"
       },
       {
         "comment": null,
@@ -83280,6 +83683,79 @@
       },
       {
         "columns": [
+          "dispositivo_id",
+          "codigo"
+        ],
+        "deferrable": false,
+        "definition": "UNIQUE (dispositivo_id, codigo)",
+        "name": "ponto_rep_feriados_dispositivo_codigo_key",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "UNIQUE",
+        "validated": true
+      },
+      {
+        "columns": [
+          "dispositivo_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (dispositivo_id) REFERENCES ponto_rep_dispositivos(id) ON DELETE RESTRICT",
+        "name": "ponto_rep_feriados_dispositivo_id_fkey",
+        "on_delete": "RESTRICT",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "ponto_rep_dispositivos",
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (empresa_id) REFERENCES empresas(id) ON DELETE RESTRICT",
+        "name": "ponto_rep_feriados_empresa_id_fkey",
+        "on_delete": "RESTRICT",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "empresas",
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (id)",
+        "name": "ponto_rep_feriados_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
           "colaborador_id"
         ],
         "deferrable": false,
@@ -83385,6 +83861,114 @@
         "schema": "public",
         "table": "ponto_rep_funcionarios",
         "type": "CHECK",
+        "validated": true
+      },
+      {
+        "columns": [
+          "dia_semana"
+        ],
+        "deferrable": false,
+        "definition": "CHECK (dia_semana >= 1 AND dia_semana <= 7)",
+        "name": "ponto_rep_horarios_dia_semana_check",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "CHECK",
+        "validated": true
+      },
+      {
+        "columns": [
+          "dispositivo_id",
+          "codigo",
+          "dia_semana"
+        ],
+        "deferrable": false,
+        "definition": "UNIQUE (dispositivo_id, codigo, dia_semana)",
+        "name": "ponto_rep_horarios_dispositivo_codigo_dia_key",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "UNIQUE",
+        "validated": true
+      },
+      {
+        "columns": [
+          "dispositivo_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (dispositivo_id) REFERENCES ponto_rep_dispositivos(id) ON DELETE RESTRICT",
+        "name": "ponto_rep_horarios_dispositivo_id_fkey",
+        "on_delete": "RESTRICT",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "ponto_rep_dispositivos",
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (empresa_id) REFERENCES empresas(id) ON DELETE RESTRICT",
+        "name": "ponto_rep_horarios_empresa_id_fkey",
+        "on_delete": "RESTRICT",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "empresas",
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "pares"
+        ],
+        "deferrable": false,
+        "definition": "CHECK (jsonb_typeof(pares) = 'array'::text)",
+        "name": "ponto_rep_horarios_pares_array",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "CHECK",
+        "validated": true
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (id)",
+        "name": "ponto_rep_horarios_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "ponto_rep_horarios",
+        "type": "PRIMARY KEY",
         "validated": true
       },
       {
@@ -99153,7 +99737,7 @@
               "hits": 6
             }
           ],
-          "code_total_files": 81,
+          "code_total_files": 82,
           "cron": [],
           "db": [
             "public._is_admin_bypass",
@@ -99186,6 +99770,7 @@
             "public.purge_audit_log_old",
             "public.registrar_comunicado_ferias_coletivas",
             "public.registrar_pagamento_ferias",
+            "public.reprocessar_ponto_relogio",
             "public.resolve_security_alert",
             "public.revogar_coletor_ponto",
             "public.revogar_espelho_ponto",
@@ -101660,9 +102245,13 @@
             {
               "file": "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
               "hits": 5
+            },
+            {
+              "file": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 26,
+          "code_total_files": 27,
           "cron": [],
           "db": [
             "public.clinicas_proximas",
@@ -102364,7 +102953,8 @@
             "public.get_colaborador_banco_horas",
             "public.pcs_pode_gerir_plano",
             "public.processar_ajuste_aprovado",
-            "public.registrar_batida_ponto"
+            "public.registrar_batida_ponto",
+            "public.reprocessar_ponto_relogio"
           ],
           "triggers": [],
           "views": [
@@ -102663,6 +103253,162 @@
         "security_definer": true,
         "strict": false,
         "volatility": "stable"
+      },
+      {
+        "args": "_dia_id uuid",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [
+            "public.ponto_rep_processar_dias"
+          ],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "Converte um dia do staging do relogio (ponto_rep_dias) em batidas_ponto. Etapa 41 do plano do Ponto AtecSoft.",
+        "config": [
+          "search_path=public, extensions, pg_temp"
+        ],
+        "definition": null,
+        "definition_sha": "591ff2b23decdf91",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "ponto_rep_converter_dia",
+        "owner": "postgres",
+        "returns": "integer",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "_pos text",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [
+            "public.ponto_rep_converter_dia"
+          ],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "Posicao do cartao ponto do AtecSoft (E1..S6) -> tipo e ordem da batida no DP.",
+        "config": [
+          "search_path=public, pg_temp"
+        ],
+        "definition": null,
+        "definition_sha": "35eef0a81f377c54",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "sql",
+        "leakproof": false,
+        "name": "ponto_rep_posicao_para_batida",
+        "owner": "postgres",
+        "returns": "TABLE(tipo text, ordem integer)",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "immutable"
+      },
+      {
+        "args": "_limite integer",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/functions/ingest-ponto-rep/index.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public, pg_temp"
+        ],
+        "definition": null,
+        "definition_sha": "60a8187fef3530ae",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "ponto_rep_processar_dias",
+        "owner": "postgres",
+        "returns": "TABLE(processados integer, batidas integer, com_erro integer)",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "_inicio date, _fim date",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public, pg_temp"
+        ],
+        "definition": null,
+        "definition_sha": "f7cc7a861e634fe4",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "ponto_rep_reprocessar_periodo",
+        "owner": "postgres",
+        "returns": "integer",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
       },
       {
         "args": "",
@@ -104799,6 +105545,41 @@
         "security_definer": true,
         "strict": false,
         "volatility": "stable"
+      },
+      {
+        "args": "_inicio date, _fim date, _empresa_id uuid",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public, pg_temp"
+        ],
+        "definition": null,
+        "definition_sha": "aa4b31d7b47fdbac",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "reprocessar_ponto_relogio",
+        "owner": "postgres",
+        "returns": "integer",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
       },
       {
         "args": "p_identifier text, p_identifier_type text",
@@ -116270,6 +117051,24 @@
           "table": "ponto_rep_dispositivos"
         },
         {
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_feriados"
+        },
+        {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_feriados"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "ponto_rep_feriados"
+        },
+        {
           "grantee": "dp_mcp_role",
           "privileges": "SELECT",
           "schema": "public",
@@ -116280,6 +117079,24 @@
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "ponto_rep_funcionarios"
+        },
+        {
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_horarios"
+        },
+        {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_horarios"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "ponto_rep_horarios"
         },
         {
           "grantee": "authenticated",
@@ -133942,6 +134759,50 @@
       },
       {
         "columns": [
+          "empresa_id",
+          "data"
+        ],
+        "definition": "CREATE INDEX idx_ponto_rep_feriados_empresa_data ON public.ponto_rep_feriados USING btree (empresa_id, data)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_ponto_rep_feriados_empresa_data",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_feriados"
+      },
+      {
+        "columns": [
+          "dispositivo_id",
+          "codigo"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_rep_feriados_dispositivo_codigo_key ON public.ponto_rep_feriados USING btree (dispositivo_id, codigo)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_rep_feriados_dispositivo_codigo_key",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_feriados"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_rep_feriados_pkey ON public.ponto_rep_feriados USING btree (id)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_rep_feriados_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_feriados"
+      },
+      {
+        "columns": [
           "colaborador_id"
         ],
         "definition": "CREATE INDEX idx_ponto_rep_funcionarios_colaborador ON public.ponto_rep_funcionarios USING btree (colaborador_id)",
@@ -134011,6 +134872,50 @@
         "predicate": "(colaborador_id IS NOT NULL)",
         "schema": "public",
         "table": "ponto_rep_funcionarios"
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "definition": "CREATE INDEX idx_ponto_rep_horarios_empresa ON public.ponto_rep_horarios USING btree (empresa_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_ponto_rep_horarios_empresa",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_horarios"
+      },
+      {
+        "columns": [
+          "dispositivo_id",
+          "codigo",
+          "dia_semana"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_rep_horarios_dispositivo_codigo_dia_key ON public.ponto_rep_horarios USING btree (dispositivo_id, codigo, dia_semana)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_rep_horarios_dispositivo_codigo_dia_key",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_horarios"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "definition": "CREATE UNIQUE INDEX ponto_rep_horarios_pkey ON public.ponto_rep_horarios USING btree (id)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ponto_rep_horarios_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_horarios"
       },
       {
         "columns": [
@@ -141223,7 +142128,19 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.ponto_rep_feriados.ponto_rep_feriados_select_rh",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.ponto_rep_funcionarios.ponto_rep_funcionarios_select_rh",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.ponto_rep_horarios.ponto_rep_horarios_select_rh",
         "severity": "BAIXA"
       },
       {
@@ -147633,6 +148550,18 @@
       },
       {
         "cmd": "SELECT",
+        "name": "ponto_rep_feriados_select_rh",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "ponto_rep_feriados",
+        "using": "(pertence_a_empresa(empresa_id) AND (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'rh'::app_role)))",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
         "name": "ponto_rep_funcionarios_select_rh",
         "permissive": "PERMISSIVE",
         "roles": [
@@ -147640,6 +148569,18 @@
         ],
         "schema": "public",
         "table": "ponto_rep_funcionarios",
+        "using": "(pertence_a_empresa(empresa_id) AND (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'rh'::app_role)))",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "name": "ponto_rep_horarios_select_rh",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "ponto_rep_horarios",
         "using": "(pertence_a_empresa(empresa_id) AND (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'rh'::app_role)))",
         "with_check": null
       },
@@ -155251,11 +156192,41 @@
         "schema": "public"
       },
       {
+        "comment": "Feriados do AtecSoft (tabela FERIADO) por coletor.",
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "ponto_rep_feriados",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
         "comment": "Cadastro de funcionários vindo do AtecSoft e vínculo com colaboradores.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
         "name": "ponto_rep_funcionarios",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
+        "comment": "Jornadas do AtecSoft (tabela HORARIO_LINHAS), uma linha por dia da semana.",
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "ponto_rep_horarios",
         "owner": "postgres",
         "parent": null,
         "partition_bound": null,

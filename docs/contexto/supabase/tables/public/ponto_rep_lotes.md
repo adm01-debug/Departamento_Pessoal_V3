@@ -30,6 +30,8 @@
 | 10 | `status` | `text` | não | `'recebido'::text` |  |  |
 | 11 | `mensagem_erro` | `text` | sim |  |  |  |
 | 12 | `hash_sha256` | `text` | sim |  |  |  |
+| 13 | `total_feriados` | `integer` | não | `0` |  |  |
+| 14 | `total_horarios` | `integer` | não | `0` |  |  |
 
 
 ## Constraints

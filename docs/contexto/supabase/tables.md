@@ -280,9 +280,11 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.ponto_regras_aprovacao](tables/public/ponto_regras_aprovacao.md) | table | sim | 1 | 9 | não |  |
 | [public.ponto_rep_dias](tables/public/ponto_rep_dias.md) | table | sim | 1 | 18 | não | Cópia fiel do cartão ponto diário do AtecSoft (tabela CP). |
 | [public.ponto_rep_dispositivos](tables/public/ponto_rep_dispositivos.md) | table | sim | 1 | 14 | não | Coletores do relógio de ponto, um por unidade. Token só em hash. |
+| [public.ponto_rep_feriados](tables/public/ponto_rep_feriados.md) | table | sim | 1 | 12 | não | Feriados do AtecSoft (tabela FERIADO) por coletor. |
 | [public.ponto_rep_funcionarios](tables/public/ponto_rep_funcionarios.md) | table | sim | 1 | 20 | não | Cadastro de funcionários vindo do AtecSoft e vínculo com colaboradores. |
+| [public.ponto_rep_horarios](tables/public/ponto_rep_horarios.md) | table | sim | 1 | 17 | não | Jornadas do AtecSoft (tabela HORARIO_LINHAS), uma linha por dia da semana. |
 | [public.ponto_rep_justificativas](tables/public/ponto_rep_justificativas.md) | table | sim | 1 | 10 | não | De-para das justificativas do AtecSoft para o tipo de dia do DP. |
-| [public.ponto_rep_lotes](tables/public/ponto_rep_lotes.md) | table | sim | 1 | 12 | não | Cada envio recebido de um coletor do relógio de ponto. |
+| [public.ponto_rep_lotes](tables/public/ponto_rep_lotes.md) | table | sim | 1 | 14 | não | Cada envio recebido de um coletor do relógio de ponto. |
 | [public.ponto_seguranca_blacklist](tables/public/ponto_seguranca_blacklist.md) | table | sim | 1 | 6 | não |  |
 | [public.portal_notificacoes_settings](tables/public/portal_notificacoes_settings.md) | table | sim | 1 | 7 | não |  |
 | [public.premiacoes_alertas](tables/public/premiacoes_alertas.md) | table | sim | 1 | 7 | não |  |

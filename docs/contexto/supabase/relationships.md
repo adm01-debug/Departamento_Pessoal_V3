@@ -406,9 +406,13 @@
 | public.ponto_rep_dias | empresa_id | public.empresas | id | RESTRICT | NO ACTION |
 | public.ponto_rep_dias | lote_id | public.ponto_rep_lotes | id | SET NULL | NO ACTION |
 | public.ponto_rep_dispositivos | empresa_id | public.empresas | id | RESTRICT | NO ACTION |
+| public.ponto_rep_feriados | dispositivo_id | public.ponto_rep_dispositivos | id | RESTRICT | NO ACTION |
+| public.ponto_rep_feriados | empresa_id | public.empresas | id | RESTRICT | NO ACTION |
 | public.ponto_rep_funcionarios | colaborador_id | public.colaboradores | id | SET NULL | NO ACTION |
 | public.ponto_rep_funcionarios | dispositivo_id | public.ponto_rep_dispositivos | id | RESTRICT | NO ACTION |
 | public.ponto_rep_funcionarios | empresa_id | public.empresas | id | RESTRICT | NO ACTION |
+| public.ponto_rep_horarios | dispositivo_id | public.ponto_rep_dispositivos | id | RESTRICT | NO ACTION |
+| public.ponto_rep_horarios | empresa_id | public.empresas | id | RESTRICT | NO ACTION |
 | public.ponto_rep_justificativas | dispositivo_id | public.ponto_rep_dispositivos | id | RESTRICT | NO ACTION |
 | public.ponto_rep_justificativas | empresa_id | public.empresas | id | RESTRICT | NO ACTION |
 | public.ponto_rep_lotes | dispositivo_id | public.ponto_rep_dispositivos | id | RESTRICT | NO ACTION |

@@ -180,7 +180,9 @@
 | public.ponto_espelhos_papel | ponto_espelhos_papel_empresa_id_fkey | empresa_id | RESTRICT |
 | public.ponto_rep_dias | ponto_rep_dias_empresa_id_fkey | empresa_id | RESTRICT |
 | public.ponto_rep_dispositivos | ponto_rep_dispositivos_empresa_id_fkey | empresa_id | RESTRICT |
+| public.ponto_rep_feriados | ponto_rep_feriados_empresa_id_fkey | empresa_id | RESTRICT |
 | public.ponto_rep_funcionarios | ponto_rep_funcionarios_empresa_id_fkey | empresa_id | RESTRICT |
+| public.ponto_rep_horarios | ponto_rep_horarios_empresa_id_fkey | empresa_id | RESTRICT |
 | public.ponto_rep_justificativas | ponto_rep_justificativas_empresa_id_fkey | empresa_id | RESTRICT |
 | public.ponto_rep_lotes | ponto_rep_lotes_empresa_id_fkey | empresa_id | RESTRICT |
 | public.premiacoes_campanhas | premiacoes_campanhas_empresa_id_fkey | empresa_id | CASCADE |

@@ -983,11 +983,17 @@ Uso e tamanho em `stats.md`.
 | public.ponto_rep_dispositivos | ponto_rep_dispositivos_empresa_unidade_key | btree | empresa_id, unidade | sim | sim |  |
 | public.ponto_rep_dispositivos | ponto_rep_dispositivos_pkey | btree | id | sim | sim |  |
 | public.ponto_rep_dispositivos | ponto_rep_dispositivos_token_hash_key | btree | token_hash | sim | sim |  |
+| public.ponto_rep_feriados | idx_ponto_rep_feriados_empresa_data | btree | empresa_id, data | não | sim |  |
+| public.ponto_rep_feriados | ponto_rep_feriados_dispositivo_codigo_key | btree | dispositivo_id, codigo | sim | sim |  |
+| public.ponto_rep_feriados | ponto_rep_feriados_pkey | btree | id | sim | sim |  |
 | public.ponto_rep_funcionarios | idx_ponto_rep_funcionarios_colaborador | btree | colaborador_id | não | sim |  |
 | public.ponto_rep_funcionarios | idx_ponto_rep_funcionarios_empresa | btree | empresa_id | não | sim |  |
 | public.ponto_rep_funcionarios | ponto_rep_funcionarios_dispositivo_codigo_key | btree | dispositivo_id, codigo | sim | sim |  |
 | public.ponto_rep_funcionarios | ponto_rep_funcionarios_pkey | btree | id | sim | sim |  |
 | public.ponto_rep_funcionarios | ux_ponto_rep_funcionarios_colaborador_por_empresa | btree | empresa_id, colaborador_id | sim | sim | `(colaborador_id IS NOT NULL)` |
+| public.ponto_rep_horarios | idx_ponto_rep_horarios_empresa | btree | empresa_id | não | sim |  |
+| public.ponto_rep_horarios | ponto_rep_horarios_dispositivo_codigo_dia_key | btree | dispositivo_id, codigo, dia_semana | sim | sim |  |
+| public.ponto_rep_horarios | ponto_rep_horarios_pkey | btree | id | sim | sim |  |
 | public.ponto_rep_justificativas | idx_ponto_rep_justificativas_empresa | btree | empresa_id | não | sim |  |
 | public.ponto_rep_justificativas | ponto_rep_justificativas_dispositivo_codigo_key | btree | dispositivo_id, codigo | sim | sim |  |
 | public.ponto_rep_justificativas | ponto_rep_justificativas_pkey | btree | id | sim | sim |  |

@@ -2,6 +2,18 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-22 20:13 UTC
+
+- **colunas** adicionado (31): `public.ponto_rep_feriados.codigo`, `public.ponto_rep_feriados.created_at`, `public.ponto_rep_feriados.data`, `public.ponto_rep_feriados.dispositivo_id`, `public.ponto_rep_feriados.empresa_id`, `public.ponto_rep_feriados.id`, `public.ponto_rep_feriados.nao_computa_banco_horas`, `public.ponto_rep_feriados.nome`, `public.ponto_rep_feriados.updated_at`, `public.ponto_rep_feriados.vinculo_cidade`, `public.ponto_rep_feriados.vinculo_departamento`, `public.ponto_rep_feriados.vinculo_empresa`, `public.ponto_rep_horarios.ajuste`, `public.ponto_rep_horarios.codigo`, `public.ponto_rep_horarios.created_at`, `public.ponto_rep_horarios.dia_semana`, `public.ponto_rep_horarios.dispositivo_id`, `public.ponto_rep_horarios.empresa_id`, `public.ponto_rep_horarios.extra`, `public.ponto_rep_horarios.fecha`, `public.ponto_rep_horarios.folga`, `public.ponto_rep_horarios.id`, `public.ponto_rep_horarios.ident`, `public.ponto_rep_horarios.neutro`, `public.ponto_rep_horarios.pares`, `public.ponto_rep_horarios.tipo_calculo`, `public.ponto_rep_horarios.tolerancia_extra`, `public.ponto_rep_horarios.tolerancia_falta`, `public.ponto_rep_horarios.updated_at`, `public.ponto_rep_lotes.total_feriados`, `public.ponto_rep_lotes.total_horarios`
+- **constraints** adicionado (10): `public.ponto_rep_feriados.ponto_rep_feriados_dispositivo_codigo_key`, `public.ponto_rep_feriados.ponto_rep_feriados_dispositivo_id_fkey`, `public.ponto_rep_feriados.ponto_rep_feriados_empresa_id_fkey`, `public.ponto_rep_feriados.ponto_rep_feriados_pkey`, `public.ponto_rep_horarios.ponto_rep_horarios_dia_semana_check`, `public.ponto_rep_horarios.ponto_rep_horarios_dispositivo_codigo_dia_key`, `public.ponto_rep_horarios.ponto_rep_horarios_dispositivo_id_fkey`, `public.ponto_rep_horarios.ponto_rep_horarios_empresa_id_fkey`, `public.ponto_rep_horarios.ponto_rep_horarios_pares_array`, `public.ponto_rep_horarios.ponto_rep_horarios_pkey`
+- **functions** adicionado (5): `public.ponto_rep_converter_dia(_dia_id uuid)`, `public.ponto_rep_posicao_para_batida(_pos text)`, `public.ponto_rep_processar_dias(_limite integer)`, `public.ponto_rep_reprocessar_periodo(_inicio date, _fim date)`, `public.reprocessar_ponto_relogio(_inicio date, _fim date, _empresa_id uuid)`
+- **functions** alterado (3): `public.has_role(_user_id uuid, _role app_role)`, `public.pertence_a_empresa(_empresa_id uuid)`, `public.pode_gerir_rh(_empresa_id uuid)`
+- **grants** adicionado (6): `public.ponto_rep_feriados:authenticated`, `public.ponto_rep_feriados:dp_mcp_role`, `public.ponto_rep_feriados:service_role`, `public.ponto_rep_horarios:authenticated`, `public.ponto_rep_horarios:dp_mcp_role`, `public.ponto_rep_horarios:service_role`
+- **indexes** adicionado (6): `public.idx_ponto_rep_feriados_empresa_data`, `public.idx_ponto_rep_horarios_empresa`, `public.ponto_rep_feriados_dispositivo_codigo_key`, `public.ponto_rep_feriados_pkey`, `public.ponto_rep_horarios_dispositivo_codigo_dia_key`, `public.ponto_rep_horarios_pkey`
+- **lints** adicionado (2): `policy_auth_fn_not_wrapped:public.ponto_rep_feriados.ponto_rep_feriados_select_rh`, `policy_auth_fn_not_wrapped:public.ponto_rep_horarios.ponto_rep_horarios_select_rh`
+- **policies (RLS)** adicionado (2): `public.ponto_rep_feriados.ponto_rep_feriados_select_rh`, `public.ponto_rep_horarios.ponto_rep_horarios_select_rh`
+- **tabelas** adicionado (2): `public.ponto_rep_feriados`, `public.ponto_rep_horarios`
+
 ## 2026-11-22 15:12 UTC
 
 - **functions** alterado (2): `public.has_role(_user_id uuid, _role app_role)`, `public.pode_gerir_rh(_empresa_id uuid)`

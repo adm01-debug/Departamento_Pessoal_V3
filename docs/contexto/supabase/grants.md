@@ -1086,8 +1086,14 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.ponto_rep_dias | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.ponto_rep_dispositivos | dp_mcp_role | SELECT |
 | public.ponto_rep_dispositivos | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.ponto_rep_feriados | authenticated | SELECT |
+| public.ponto_rep_feriados | dp_mcp_role | SELECT |
+| public.ponto_rep_feriados | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.ponto_rep_funcionarios | dp_mcp_role | SELECT |
 | public.ponto_rep_funcionarios | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.ponto_rep_horarios | authenticated | SELECT |
+| public.ponto_rep_horarios | dp_mcp_role | SELECT |
+| public.ponto_rep_horarios | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.ponto_rep_justificativas | authenticated | SELECT |
 | public.ponto_rep_justificativas | dp_mcp_role | SELECT |
 | public.ponto_rep_justificativas | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
