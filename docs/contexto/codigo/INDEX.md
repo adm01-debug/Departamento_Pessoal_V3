@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9c7a64a5412090e3cf793228c2b4cb4c5e219d3e` (2026-11-22T12:37:50-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c42efdd9972ba51f2b55dbc868038d090a74c14c` (2026-11-22T16:31:16-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2002), SQL (1002), Markdown (345), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2004), SQL (1002), Markdown (345), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3724 |
-| arquivos_codigo | 2145 |
-| linhas_codigo | 428702 |
+| arquivos_total | 3726 |
+| arquivos_codigo | 2147 |
+| linhas_codigo | 428752 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 436 |
 | migrations | 928 |
 | cron_jobs | 42 |
-| testes | 810 |
+| testes | 811 |
 | workflows | 21 |
 | scripts | 138 |
 | docs_md | 345 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (528), src/pages (110), src/contexts (3)
 - hooks: src/hooks (102), src/components (10), src/contexts (4)
 - servicos_logica: src/services (100), src/utils (36), src/schemas (25)
-- testes: co-localizado (__tests__) (676), co-localizado (*.test) (75), e2e/ (33)
+- testes: co-localizado (__tests__) (676), co-localizado (*.test) (76), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -398,8 +398,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28211 nós · 63566 arestas · 2451 comunidades · grafo do commit `9c7a64a5`
-- comunidades maiores: lucide-react (557), @tanstack/react-query (495), button.tsx (486), 20260831_corrected_public.sql (485), canonical_schema.sql (481), cn (446), useEmpresas (376), vitest (376), App.tsx (171), "public"."empresas" (164), "public"."empresas" (158), "public"."colaboradores" (157)
+- 28215 nós · 63586 arestas · 2442 comunidades · grafo do commit `c42efdd9`
+- comunidades maiores: cn (602), button.tsx (517), 20260831_corrected_public.sql (485), canonical_schema.sql (481), @tanstack/react-query (425), useEmpresas (399), vitest (344), react (275), App.tsx (200), contract.ts (181), "public"."empresas" (164), "public"."empresas" (158)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -407,7 +407,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - .github/workflows/canonical-migrations.yml (31)
 - inventario/estado/rotas.json (22)
 - scripts/canonical-invariants.sql (20)
-- docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (12)
+- docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (13)
 - src/integrations/supabase/types.ts (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
@@ -656,6 +656,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-22 `c42efdd` test: prova a etapa 70 e marca 67/70 no plano do Ponto (#841)
 - 2026-11-22 `9c7a64a` feat: itemiza verbas rescisorias em verbas_rescisorias (#838)
 - 2026-11-22 `e3410c9` feat: converte dia do relogio em batidas (etapa 41 do Ponto AtecSoft) (#837)
 - 2026-11-22 `108016d` chore: desmembra a estrutura do banco do Ponto AtecSoft (#836)
@@ -670,7 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-22 `835bc4e` fix: aborta remessa CNAB sem nenhum favorecido (marcava enviado com arquivo vazio) (#827)
 - 2026-11-22 `6553243` docs: recertifica F-03/F-07/F-11 com contagem real e marca cargos como feito (#826)
 - 2026-11-22 `cb4d78c` fix: gates de baseline comparam chave com separador nativo (reprovavam no Windows sem regressão real) (#821)
-- 2026-11-22 `e5a1e96` feat: sincroniza cargos do Bitrix a partir de WORK_POSITION dos usuarios (#825)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

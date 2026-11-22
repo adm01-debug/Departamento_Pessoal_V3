@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9c7a64a5412090e3cf793228c2b4cb4c5e219d3e",
+  "commit": "c42efdd9972ba51f2b55dbc868038d090a74c14c",
   "branch": "main",
-  "data_commit": "2026-11-22T12:37:50-03:00",
+  "data_commit": "2026-11-22T16:31:16-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "c42efdd",
+    "data": "2026-11-22",
+    "assunto": "test: prova a etapa 70 e marca 67/70 no plano do Ponto (#841)"
+   },
    {
     "sha": "9c7a64a",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "6cf7a6b",
     "data": "2026-11-21",
     "assunto": "chore: verifica ao vivo etapas 36/44/46 do plano do ponto Henry/AtecSoft (#813)"
-   },
-   {
-    "sha": "f611296",
-    "data": "2026-11-21",
-    "assunto": "fix: cria recibos_ferias no canônico — recibo de férias nunca era gravado (#810)"
    }
   ],
-  "arquivos_mudados_7d": 1084,
+  "arquivos_mudados_7d": 929,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -294,7 +294,7 @@
     "mudancas": 5
    },
    {
-    "arquivo": "scripts/sync/autocommit-local.sh",
+    "arquivo": "src/components/desligamentos/index.ts",
     "mudancas": 5
    }
   ],
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3724,
-  "arquivos_codigo": 2145,
-  "linhas_codigo": 428702,
+  "arquivos_total": 3726,
+  "arquivos_codigo": 2147,
+  "linhas_codigo": 428752,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 436,
   "migrations": 928,
   "cron_jobs": 42,
-  "testes": 810,
+  "testes": 811,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 345
@@ -723,8 +723,8 @@
    "linhas": 9
   },
   "supabase/functions": {
-   "arquivos": 191,
-   "linhas": 27682
+   "arquivos": 193,
+   "linhas": 27732
   },
   "supabase/tests": {
    "arquivos": 3,

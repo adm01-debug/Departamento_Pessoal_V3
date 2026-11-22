@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "9c7a64a5412090e3cf793228c2b4cb4c5e219d3e",
+  "sha": "c42efdd9972ba51f2b55dbc868038d090a74c14c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 15:38 UTC",
-  "files_total": 3738,
-  "code_files": 3145,
-  "code_lines": 500000
+  "generated_at": "2026-11-22 19:32 UTC",
+  "files_total": 3740,
+  "code_files": 3147,
+  "code_lines": 500050
  },
  "version": "1.3.2",
- "facts_hash": "9cfd0e4366b980e5",
+ "facts_hash": "14c967202090c91e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   "languages": {
    ".tsx": 1038,
    ".sql": 1002,
-   ".ts": 964,
+   ".ts": 966,
    ".mjs": 110,
    ".js": 15,
    ".cjs": 11,
@@ -105701,8 +105701,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 191,
-   "lines": 27682,
+   "files": 193,
+   "lines": 27732,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -151483,23 +151483,23 @@
    },
    {
     "file": "supabase/functions/processar-ponto/index.ts",
+    "name": "MOTIVO_AUTO",
+    "value": "'Horas extras processadas automaticamente'"
+   },
+   {
+    "file": "supabase/functions/processar-ponto/logica.ts",
     "name": "MINUTO",
     "value": "1"
    },
    {
-    "file": "supabase/functions/processar-ponto/index.ts",
+    "file": "supabase/functions/processar-ponto/logica.ts",
     "name": "NOITE_INI",
     "value": "22"
    },
    {
-    "file": "supabase/functions/processar-ponto/index.ts",
+    "file": "supabase/functions/processar-ponto/logica.ts",
     "name": "NOITE_FIM",
     "value": "5"
-   },
-   {
-    "file": "supabase/functions/processar-ponto/index.ts",
-    "name": "MOTIVO_AUTO",
-    "value": "'Horas extras processadas automaticamente'"
    },
    {
     "file": "supabase/functions/reabrir-folha/index.ts",
@@ -163357,18 +163357,6 @@
    {
     "file": "supabase/functions/processar-ponto/index.ts",
     "field": "tipo",
-    "value": "entrada",
-    "kind": "compara"
-   },
-   {
-    "file": "supabase/functions/processar-ponto/index.ts",
-    "field": "tipo",
-    "value": "saida",
-    "kind": "compara"
-   },
-   {
-    "file": "supabase/functions/processar-ponto/index.ts",
-    "field": "tipo",
     "value": "saida",
     "kind": "compara"
    },
@@ -163395,6 +163383,18 @@
     "field": "status",
     "value": "ativo",
     "kind": "filtra"
+   },
+   {
+    "file": "supabase/functions/processar-ponto/logica.ts",
+    "field": "tipo",
+    "value": "saida",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/processar-ponto/logica.ts",
+    "field": "tipo",
+    "value": "entrada",
+    "kind": "compara"
    },
    {
     "file": "supabase/functions/processar-ponto-offline/index.ts",
@@ -168108,14 +168108,6 @@
    },
    {
     "file": "supabase/functions/processar-ponto/index.ts",
-    "line": "// Domingo/feriado/folga trabalhado: tudo é HE 100% (DSR); sem falta/atraso."
-   },
-   {
-    "file": "supabase/functions/processar-ponto/index.ts",
-    "line": "// desconsiderada por inteiro; acima dela conta-se tudo), HE 100% em"
-   },
-   {
-    "file": "supabase/functions/processar-ponto/index.ts",
     "line": "// folga de jornada ALHEIA não pode virar HE 100% de quem tem escala"
    },
    {
@@ -168123,7 +168115,15 @@
     "line": "// virava 'falta' em vez de HE 100%."
    },
    {
-    "file": "supabase/functions/processar-ponto/index.ts",
+    "file": "supabase/functions/processar-ponto/logica.ts",
+    "line": "// Domingo/feriado/folga trabalhado: tudo é HE 100% (DSR); sem falta/atraso."
+   },
+   {
+    "file": "supabase/functions/processar-ponto/logica.ts",
+    "line": "// desconsiderada por inteiro; acima dela conta-se tudo), HE 100% em"
+   },
+   {
+    "file": "supabase/functions/processar-ponto/logica.ts",
     "line": "folga?: boolean; // grade marca o dia como não trabalhado → tudo é HE 100%"
    }
   ],
@@ -207045,6 +207045,22 @@
     "name": "cursor futuro, inválido ou atrasado mais de 24h não é despachado"
    },
    {
+    "file": "supabase/functions/processar-ponto/logica.test.ts",
+    "name": "etapa 70 — dia corrente aberto NAO vira falta"
+   },
+   {
+    "file": "supabase/functions/processar-ponto/logica.test.ts",
+    "name": "etapa 70 — dia passado com batida impar MEDE falta"
+   },
+   {
+    "file": "supabase/functions/processar-ponto/logica.test.ts",
+    "name": "etapa 70 — dia corrente completo nao vira falta nem sobra"
+   },
+   {
+    "file": "supabase/functions/processar-ponto/logica.test.ts",
+    "name": "etapa 70 — dia corrente com zero batidas nao vira falta pelo calculo"
+   },
+   {
     "file": "supabase/functions/upload-certificado/certRow.test.ts",
     "name": "certificados_digitais: só grava colunas que existem"
    },
@@ -236414,6 +236430,7 @@
       "compara:src/pages/ControleAcessoPage.tsx",
       "compara:supabase/functions/processar-ponto-offline/index.ts",
       "compara:supabase/functions/processar-ponto/index.ts",
+      "compara:supabase/functions/processar-ponto/logica.ts",
       "escreve:src/components/ponto/PontoClockRegister.tsx",
       "escreve:src/hooks/usePonto.ts",
       "escreve:src/hooks/usePontoOffline.ts",
@@ -236433,6 +236450,7 @@
      "saida": [
       "compara:src/pages/ControleAcessoPage.tsx",
       "compara:supabase/functions/processar-ponto/index.ts",
+      "compara:supabase/functions/processar-ponto/logica.ts",
       "escreve:src/components/ponto/PontoClockRegister.tsx"
      ],
      "forgotten_out": [
@@ -330570,7 +330588,7 @@
   },
   "supabase/functions/processar-ponto/index.ts": {
    "path": "supabase/functions/processar-ponto/index.ts",
-   "lines": 698,
+   "lines": 553,
    "tables": [
     {
      "table": "escalas_trabalho",
@@ -330696,18 +330714,6 @@
    ],
    "params": [
     {
-     "name": "MINUTO",
-     "value": "1"
-    },
-    {
-     "name": "NOITE_INI",
-     "value": "22"
-    },
-    {
-     "name": "NOITE_FIM",
-     "value": "5"
-    },
-    {
      "name": "MOTIVO_AUTO",
      "value": "'Horas extras processadas automaticamente'"
     }
@@ -330722,16 +330728,6 @@
      "field": "tipo",
      "value": "credito",
      "kind": "escreve"
-    },
-    {
-     "field": "tipo",
-     "value": "saida",
-     "kind": "compara"
-    },
-    {
-     "field": "tipo",
-     "value": "entrada",
-     "kind": "compara"
     },
     {
      "field": "tipo",
@@ -330778,16 +330774,70 @@
     "período com batidas. Limite defensivo de 31 dias por chamada."
    ],
    "percents": [
-    "// Domingo/feriado/folga trabalhado: tudo é HE 100% (DSR); sem falta/atraso.",
-    "// desconsiderada por inteiro; acima dela conta-se tudo), HE 100% em",
     "// folga de jornada ALHEIA não pode virar HE 100% de quem tem escala",
-    "// virava 'falta' em vez de HE 100%.",
-    "folga?: boolean; // grade marca o dia como não trabalhado → tudo é HE 100%"
+    "// virava 'falta' em vez de HE 100%."
    ],
    "pagination": [
     "1"
    ],
    "uses_service_role": true
+  },
+  "supabase/functions/processar-ponto/logica.test.ts": {
+   "path": "supabase/functions/processar-ponto/logica.test.ts",
+   "lines": 43,
+   "is_test": true,
+   "doc": "deno test supabase/functions/processar-ponto/logica.test.ts",
+   "tests": [
+    "etapa 70 — dia corrente aberto NAO vira falta",
+    "etapa 70 — dia passado com batida impar MEDE falta",
+    "etapa 70 — dia corrente completo nao vira falta nem sobra",
+    "etapa 70 — dia corrente com zero batidas nao vira falta pelo calculo"
+   ]
+  },
+  "supabase/functions/processar-ponto/logica.ts": {
+   "path": "supabase/functions/processar-ponto/logica.ts",
+   "lines": 152,
+   "exports": [
+    "const timeToMin",
+    "const fmt",
+    "const minutosNoturnos",
+    "interface JornadaDia",
+    "interface BatidaDia",
+    "interface ResultadoDia",
+    "const apurarDia"
+   ],
+   "params": [
+    {
+     "name": "MINUTO",
+     "value": "1"
+    },
+    {
+     "name": "NOITE_INI",
+     "value": "22"
+    },
+    {
+     "name": "NOITE_FIM",
+     "value": "5"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "saida",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "entrada",
+     "kind": "compara"
+    }
+   ],
+   "doc": "Logica pura da apuracao do dia (sem I/O) — extraida de index.ts para poder ser testada com `deno test`. index.ts reaproveita tudo daqui; nada de comportamento novo.",
+   "percents": [
+    "// Domingo/feriado/folga trabalhado: tudo é HE 100% (DSR); sem falta/atraso.",
+    "// desconsiderada por inteiro; acima dela conta-se tudo), HE 100% em",
+    "folga?: boolean; // grade marca o dia como não trabalhado → tudo é HE 100%"
+   ]
   },
   "supabase/functions/processar-ponto-offline/e2e_assinatura.test.ts": {
    "path": "supabase/functions/processar-ponto-offline/e2e_assinatura.test.ts",
@@ -336461,10 +336511,22 @@
   }
  },
  "git": {
-  "sha": "9c7a64a5412090e3cf793228c2b4cb4c5e219d3e",
+  "sha": "c42efdd9972ba51f2b55dbc868038d090a74c14c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "c42efdd",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "test: prova a etapa 70 e marca 67/70 no plano do Ponto (#841)",
+    "files": [
+     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+     "supabase/functions/processar-ponto/index.ts",
+     "supabase/functions/processar-ponto/logica.test.ts",
+     "supabase/functions/processar-ponto/logica.ts"
+    ]
+   },
    {
     "sha": "9c7a64a",
     "date": "2026-11-22",
@@ -336778,29 +336840,19 @@
     "files": [
      "src/components/ponto/relogio/RelogiosPanel.tsx"
     ]
-   },
-   {
-    "sha": "c74e67d",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "infra: lote canônico com as 5 migrations do relógio de ponto (#806)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "scripts/canonical-invariants.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    8
-   ],
-   [
-    ".github/workflows/canonical-migrations.yml",
-    5
+    9
    ],
    [
     "supabase/functions/ingest-ponto-rep/index.ts",
+    4
+   ],
+   [
+    ".github/workflows/canonical-migrations.yml",
     4
    ],
    [
@@ -336816,16 +336868,24 @@
     2
    ],
    [
-    "scripts/canonical-invariants.sql",
-    2
-   ],
-   [
     "src/pages/PontoKioskPage.tsx",
     2
    ],
    [
     "src/services/pontoOfflineService.ts",
     2
+   ],
+   [
+    "supabase/functions/processar-ponto/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/processar-ponto/logica.test.ts",
+    1
+   ],
+   [
+    "supabase/functions/processar-ponto/logica.ts",
+    1
    ],
    [
     "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
@@ -336861,14 +336921,6 @@
    ],
    [
     "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql",
-    1
-   ],
-   [
-    "docs/auditoria/ponto-atecsoft-estrutura.md",
     1
    ]
   ]

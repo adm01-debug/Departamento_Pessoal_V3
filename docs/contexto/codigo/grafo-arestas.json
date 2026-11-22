@@ -8594,7 +8594,8 @@
    "supabase/functions/_shared/idempotency.ts",
    "supabase/functions/_shared/integrityHash.ts",
    "supabase/functions/_shared/rateLimit.ts",
-   "supabase/functions/_shared/sentry.ts"
+   "supabase/functions/_shared/sentry.ts",
+   "supabase/functions/processar-ponto/logica.ts"
   ],
   "supabase/functions/rateLimit/index.ts": [
    "supabase/functions/_shared/contract.ts",

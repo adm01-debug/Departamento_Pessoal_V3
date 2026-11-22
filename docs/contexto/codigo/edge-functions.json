@@ -2244,8 +2244,8 @@
   {
    "nome": "processar-ponto",
    "entrada": "supabase/functions/processar-ponto/index.ts",
-   "arquivos": 2,
-   "linhas": 715,
+   "arquivos": 3,
+   "linhas": 722,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -2286,7 +2286,7 @@
    "chamada_por_edges": [],
    "chamada_por_sql_ou_cron": false,
    "orfa": false,
-   "testes": 1
+   "testes": 2
   },
   {
    "nome": "processar-ponto-offline",

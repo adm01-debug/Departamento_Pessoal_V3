@@ -5,12 +5,12 @@
   "vitest",
   "playwright"
  ],
- "total": 810,
+ "total": 811,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 765
+  "unit": 766
  },
  "onde_ficam": [
   {
@@ -19,7 +19,7 @@
   },
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 75
+   "arquivos": 76
   },
   {
    "padrao": "e2e/",
@@ -7434,6 +7434,15 @@
    "casos": 3
   },
   {
+   "arquivo": "supabase/functions/processar-ponto/logica.test.ts",
+   "tipo": "unit",
+   "linhas": 43,
+   "testa": [
+    "supabase/functions/processar-ponto/logica.ts"
+   ],
+   "casos": 4
+  },
+  {
    "arquivo": "supabase/functions/reabrir-folha/e2e_concorrencia.test.ts",
    "tipo": "unit",
    "linhas": 63,
@@ -8242,6 +8251,7 @@
   "supabase/functions/notificacao/plainText.ts": 1,
   "supabase/functions/pagar-desligamento/rpcErrors.ts": 1,
   "supabase/functions/processar-agendamentos/scheduleContract.ts": 1,
+  "supabase/functions/processar-ponto/logica.ts": 1,
   "supabase/functions/upload-certificado/certRow.ts": 1
  },
  "sem_teste": {
