@@ -25,9 +25,12 @@ vi.mock('../vinculoService', () => ({
   vinculoService: { fecharVinculoAberto: vi.fn().mockResolvedValue(undefined) },
 }));
 
-const { mockLoggerError } = vi.hoisted(() => ({ mockLoggerError: vi.fn() }));
+const { mockLoggerError, mockLoggerWarn } = vi.hoisted(() => ({
+  mockLoggerError: vi.fn(),
+  mockLoggerWarn: vi.fn(),
+}));
 vi.mock('../loggerService', () => ({
-  loggerService: { error: mockLoggerError },
+  loggerService: { error: mockLoggerError, warn: mockLoggerWarn },
 }));
 
 describe('rescisaoService', () => {
@@ -103,6 +106,7 @@ describe('rescisaoService', () => {
       const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
       const updateFn = vi.fn().mockReturnThis();
       const selectAnteriorFn = vi.fn().mockReturnThis();
+      const insertVerbasFn = vi.fn().mockResolvedValue({ error: null });
       fromMock
         // 1) select do desligamento + colaborador embutido
         .mockReturnValueOnce({
@@ -131,6 +135,14 @@ describe('rescisaoService', () => {
           eq: vi.fn().mockReturnThis(),
           select: vi.fn().mockReturnThis(),
           single: vi.fn().mockResolvedValue({ data: novo, error: null }),
+        })
+        // 5) delete do itemizado anterior em `verbas_rescisorias`
+        .mockReturnValueOnce({
+          delete: vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) }),
+        })
+        // 6) insert do itemizado novo
+        .mockReturnValueOnce({
+          insert: insertVerbasFn,
         });
 
       const result = await rescisaoService.calcularESalvar(
@@ -152,6 +164,18 @@ describe('rescisaoService', () => {
       expect(selectString).not.toMatch(/\bnome\b/);
       expect(selectString).not.toContain('dependentes_irrf');
       expect(selectString).toContain('data_admissao');
+
+      // Itemização: as linhas de `verbas_rescisorias` têm de fechar com os
+      // totais gravados em `desligamentos` (era o gap E-CAL-14 — tabela
+      // existia com RLS e nenhum escritor).
+      const linhas = insertVerbasFn.mock.calls[0][0] as Array<Record<string, unknown>>;
+      expect(linhas.length).toBeGreaterThan(0);
+      expect(linhas.every((l) => l.desligamento_id === 'd1')).toBe(true);
+      const centavos = (tipo: string) =>
+        linhas.filter((l) => l.tipo === tipo).reduce((acc, l) => acc + Math.round(Number(l.valor) * 100), 0);
+      const detalhes = payload.detalhes_calculo as { totalProventos: number; totalDescontos: number };
+      expect(centavos('provento')).toBe(Math.round(detalhes.totalProventos * 100));
+      expect(centavos('desconto')).toBe(Math.round(detalhes.totalDescontos * 100));
     });
   });
 
