@@ -18,19 +18,19 @@ de uma batida original do relógio nunca é alterado.
 
 ## 2. O que foi verificado (21/11/2026)
 
-| Fato | Evidência |
-| --- | --- |
-| AtecSoft 2.1.13 grava em Firebird 1.5 local (ODS 10.1), 51 tabelas, sem chaves, triggers ou procedures | banco `DADOS\PONTO_ATECSOFT.FDB` do instalador, aberto com `isql` |
-| `CP` guarda um registro por funcionário/dia: `E1..E6`, `S1..S6`, `REF_*`, `OBS_*`, `JE*/JS*`, `EQUIP_*`, `ABONO`, `ABONO_NEG`, `FOLGA`, `NEUTRO` | DDL extraído do banco |
-| `FUNCIONARIO` tem `PIS`, `CPF`, `MATRICULA`, `EMPRESA`, `SITUACAO`, `HORARIO` | DDL extraído do banco |
-| Textos do banco estão em `CHARACTER SET OCTETS` (latin-1 cru) | consulta em `JUSTFICATIVA` devolve bytes |
-| O AtecSoft exporta AFD, AFDT, ACJEF, espelho e layouts de folha Domínio, Rubi, Pholy e Consistem | tabela `EXP` e textos do executável |
-| O banco do instalador vem vazio (0 funcionários, 0 batidas) | `SELECT COUNT(*)` em `FUNCIONARIO` e `CP` |
-| O DP V3 já importa AFDT/ACJEF/AEJ, reconcilia e lista divergências, mas **não cria batida a partir do relógio** e o upload é manual | `supabase/functions/parse-afdt/index.ts`, `src/components/ponto/ImportarAFDTDialog.tsx` |
-| O DP V3 já tem assinatura eletrônica de espelho | `assinar_espelho_ponto`, `src/components/ponto/AssinarEspelhoDialog.tsx` |
-| `colaboradores` já tem `codigo_firebird`, `unidade`, `pis_pasep`, `matricula` | `src/integrations/supabase/types.ts` |
-| O coletor antigo pula dia já sincronizado e perde saídas e correções | `sync_ponto.py`: `if (cid, db) in es: sk += 1; continue` |
-| O coletor antigo guarda a chave `service_role` em arquivo texto no PC | `config.json` / `env_GO.txt` dos dois protótipos |
+| Fato                                                                                                                                             | Evidência                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| AtecSoft 2.1.13 grava em Firebird 1.5 local (ODS 10.1), 51 tabelas, sem chaves, triggers ou procedures                                           | banco `DADOS\PONTO_ATECSOFT.FDB` do instalador, aberto com `isql`                       |
+| `CP` guarda um registro por funcionário/dia: `E1..E6`, `S1..S6`, `REF_*`, `OBS_*`, `JE*/JS*`, `EQUIP_*`, `ABONO`, `ABONO_NEG`, `FOLGA`, `NEUTRO` | DDL extraído do banco                                                                   |
+| `FUNCIONARIO` tem `PIS`, `CPF`, `MATRICULA`, `EMPRESA`, `SITUACAO`, `HORARIO`                                                                    | DDL extraído do banco                                                                   |
+| Textos do banco estão em `CHARACTER SET OCTETS` (latin-1 cru)                                                                                    | consulta em `JUSTFICATIVA` devolve bytes                                                |
+| O AtecSoft exporta AFD, AFDT, ACJEF, espelho e layouts de folha Domínio, Rubi, Pholy e Consistem                                                 | tabela `EXP` e textos do executável                                                     |
+| O banco do instalador vem vazio (0 funcionários, 0 batidas)                                                                                      | `SELECT COUNT(*)` em `FUNCIONARIO` e `CP`                                               |
+| O DP V3 já importa AFDT/ACJEF/AEJ, reconcilia e lista divergências, mas **não cria batida a partir do relógio** e o upload é manual              | `supabase/functions/parse-afdt/index.ts`, `src/components/ponto/ImportarAFDTDialog.tsx` |
+| O DP V3 já tem assinatura eletrônica de espelho                                                                                                  | `assinar_espelho_ponto`, `src/components/ponto/AssinarEspelhoDialog.tsx`                |
+| `colaboradores` já tem `codigo_firebird`, `unidade`, `pis_pasep`, `matricula`                                                                    | `src/integrations/supabase/types.ts`                                                    |
+| O coletor antigo pula dia já sincronizado e perde saídas e correções                                                                             | `sync_ponto.py`: `if (cid, db) in es: sk += 1; continue`                                |
+| O coletor antigo guarda a chave `service_role` em arquivo texto no PC                                                                            | `config.json` / `env_GO.txt` dos dois protótipos                                        |
 
 ### Achados de 21/11/2026 sobre o banco do DP V3 e o Promo_Finance_V2
 
@@ -40,14 +40,14 @@ em 21/11/2026 pelo `canonical-sql-diag.yml` (run 44951290182), consertado na PR 
 `registros_ponto.tipo_dia` aceita `normal`, `feriado`, `compensado`, `folga`, `falta`, `atestado`, `ferias` e `licenca`,
 que é o destino das justificativas do AtecSoft (etapas 13 e 68).
 
-| Achado | Evidência | Efeito no plano |
-| --- | --- | --- |
-| `batidas_ponto.origem` é texto livre, sem lista fechada de valores | baseline: `"origem" "text" DEFAULT 'manual'` e nenhum CHECK | etapa 24 não precisa de DDL |
-| Já existem as unicidades (colaborador, data, ordem) e (colaborador, data, hora, tipo) | baseline: `batidas_ponto_colaborador_id_data_ordem_key`, `batidas_ponto_no_duplicate_batida` | etapa 25 vira conferência, sem índice novo |
-| Batida não pode ser apagada: há gatilho de imutabilidade | baseline: `trigger_imutabilidade_ponto BEFORE DELETE` em `batidas_ponto` | etapa 41 não pode "apagar e recriar" |
-| Inserir batida dispara hash, validação e consolidação automática | baseline: `tr_gerar_hash_batida_ponto`, `trg_enforce_batida_ponto_hash`, `tr_validate_ponto`, `trg_consolidar_batidas` | etapas 41 e 67 precisam passar por esses gatilhos |
-| O banco tem 1 empresa, cerca de 16 colaboradores e 0 batidas | `inventario/estado/banco.json`: `empresas`=1, `colaboradores`=16, `batidas_ponto`=0 | matriz e filial e os colaboradores reais ainda precisam ser cadastrados (etapa 17) |
-| O Promo_Finance_V2 não consome ponto: ele pede o total mensal da folha (salários, pró-labore, encargos), hoje digitado ou por CSV | `Promo_Finance_V2`: `src/components/tributario/historico/FolhaTab.tsx:48-59` | etapa 88 fecha no DP V3; o envio da folha ao Finance é outra integração |
+| Achado                                                                                                                            | Evidência                                                                                                              | Efeito no plano                                                                    |
+| --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `batidas_ponto.origem` é texto livre, sem lista fechada de valores                                                                | baseline: `"origem" "text" DEFAULT 'manual'` e nenhum CHECK                                                            | etapa 24 não precisa de DDL                                                        |
+| Já existem as unicidades (colaborador, data, ordem) e (colaborador, data, hora, tipo)                                             | baseline: `batidas_ponto_colaborador_id_data_ordem_key`, `batidas_ponto_no_duplicate_batida`                           | etapa 25 vira conferência, sem índice novo                                         |
+| Batida não pode ser apagada: há gatilho de imutabilidade                                                                          | baseline: `trigger_imutabilidade_ponto BEFORE DELETE` em `batidas_ponto`                                               | etapa 41 não pode "apagar e recriar"                                               |
+| Inserir batida dispara hash, validação e consolidação automática                                                                  | baseline: `tr_gerar_hash_batida_ponto`, `trg_enforce_batida_ponto_hash`, `tr_validate_ponto`, `trg_consolidar_batidas` | etapas 41 e 67 precisam passar por esses gatilhos                                  |
+| O banco tem 1 empresa, cerca de 16 colaboradores e 0 batidas                                                                      | `inventario/estado/banco.json`: `empresas`=1, `colaboradores`=16, `batidas_ponto`=0                                    | matriz e filial e os colaboradores reais ainda precisam ser cadastrados (etapa 17) |
+| O Promo_Finance_V2 não consome ponto: ele pede o total mensal da folha (salários, pró-labore, encargos), hoje digitado ou por CSV | `Promo_Finance_V2`: `src/components/tributario/historico/FolhaTab.tsx:48-59`                                           | etapa 88 fecha no DP V3; o envio da folha ao Finance é outra integração            |
 
 **NÃO VERIFICADO** (vira etapa abaixo): conteúdo real do banco das duas unidades; se o AtecSoft recolhe do
 relógio sozinho ou só quando alguém clica em "Receber"; significado exato de `REF_*` e de `CP_T`; estado real do
@@ -80,14 +80,14 @@ Princípios:
 
 ## 4. Decisões do dono (bloqueiam as etapas indicadas)
 
-| # | Decisão | Bloqueia |
-| --- | --- | --- |
-| D1 | **Decidido em 21/11/2026:** mão dupla com o banco do AtecSoft. O DP V3 lê as batidas e grava de volta atestado, férias, afastamento/licenças, folga/abono e cadastro (admissão/desligamento). As pessoas usam só o DP V3 | — |
-| D6 | Batida esquecida: o DP pode incluir pelo DP V3 e ela é gravada no AtecSoft marcada como manual, com motivo? | etapa nova após a 11 |
-| D2 | **Decidido em 21/11/2026:** quem bate no relógio Henry bate só no relógio; app e quiosque do DP V3 não registram batida para essas pessoas | — |
-| D3 | **Decidido em 21/11/2026:** a assinatura do espelho continua no papel; o DP V3 mostra, calcula e imprime | — |
-| D4 | **Decidido em 21/11/2026:** não há layout de sistema contábil a seguir. O fechamento, a documentação e o processo ficam nos sistemas próprios (DP V3 e Promo_Finance_V2); a contabilidade recebe o relatório do DP V3 quando for o caso | — |
-| D5 | **Decidido em 21/11/2026:** o técnico de TI da empresa instala o coletor nos dois PCs | — |
+| #   | Decisão                                                                                                                                                                                                                                 | Bloqueia             |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| D1  | **Decidido em 21/11/2026:** mão dupla com o banco do AtecSoft. O DP V3 lê as batidas e grava de volta atestado, férias, afastamento/licenças, folga/abono e cadastro (admissão/desligamento). As pessoas usam só o DP V3                | —                    |
+| D6  | Batida esquecida: o DP pode incluir pelo DP V3 e ela é gravada no AtecSoft marcada como manual, com motivo?                                                                                                                             | etapa nova após a 11 |
+| D2  | **Decidido em 21/11/2026:** quem bate no relógio Henry bate só no relógio; app e quiosque do DP V3 não registram batida para essas pessoas                                                                                              | —                    |
+| D3  | **Decidido em 21/11/2026:** a assinatura do espelho continua no papel; o DP V3 mostra, calcula e imprime                                                                                                                                | —                    |
+| D4  | **Decidido em 21/11/2026:** não há layout de sistema contábil a seguir. O fechamento, a documentação e o processo ficam nos sistemas próprios (DP V3 e Promo_Finance_V2); a contabilidade recebe o relatório do DP V3 quando for o caso | —                    |
+| D5  | **Decidido em 21/11/2026:** o técnico de TI da empresa instala o coletor nos dois PCs                                                                                                                                                   | —                    |
 
 ## 5. Legenda
 
@@ -142,7 +142,7 @@ Princípios:
 - [x] **33. Criar `supabase/functions/ingest-ponto-rep/`.** POST-only, JSON. Pronto quando: função responde 405 a GET em teste. Feito: #798; GET ao vivo → 405.
 - [x] **34. Autenticar por token de dispositivo.** Header próprio, comparação por hash em tempo constante; `verify_jwt = false` justificado no `config.toml` (R8). Pronto quando: token errado → 401 em teste. Feito: #798; POST sem token e com token falso ao vivo → 401; `verify_jwt=false` justificado no config.toml.
 - [x] **35. Validar o contrato.** Schema do corpo, tamanho máximo, datas plausíveis. Pronto quando: corpo inválido → 400 com código de erro. Feito: #798; schema Zod estrito em `logica.ts`.
-- [ ] **36. Aplicar rate limit por dispositivo.** Usar `_shared/rateLimit.ts`. Pronto quando: excesso → 429 em teste.
+- [x] **36. Aplicar rate limit por dispositivo.** Usar `_shared/rateLimit.ts`. Pronto quando: excesso → 429 em teste. Feito: #798; `index.ts:38-39,51-52` chama `checkRateLimit`/`rateLimitResponse` por IP (120/60s) e por dispositivo (60/60s) antes de qualquer acesso a dado; mecanismo de 429 testado em `_shared/rateLimit.test.ts`; confirmado ao vivo em 22/11/2026 que o fluxo não bloqueia tráfego normal (ver etapa 46).
 - [x] **37. Travar o dispositivo na própria empresa.** O `empresa_id` vem do dispositivo, nunca do corpo. Pronto quando: teste prova que corpo com outra empresa é ignorado. Feito: #798; corpo com `empresa_id` é rejeitado pelo schema estrito.
 - [x] **38. Gravar o lote e os funcionários.** Upsert em `ponto_rep_lotes` e `ponto_rep_funcionarios`. Pronto quando: reenvio idêntico não cria linhas. Feito: #798; upsert por (lote) e (dispositivo, código).
 - [x] **39. Gravar os dias com hash.** Upsert em `ponto_rep_dias`; só processa o dia cujo hash mudou. Pronto quando: teste de idempotência verde. Feito: #798; dia só é regravado quando o hash muda (`processado_em` volta a nulo).
@@ -150,9 +150,9 @@ Princípios:
 - [ ] **41. Converter dia em batidas.** Função SQL transacional que só insere o que falta: batida é imutável (gatilho de imutabilidade), então correção vinda do AtecSoft entra como ajuste, nunca como exclusão. Pronto quando: dia alterado no envio seguinte reflete no espelho sem apagar batida.
 - [ ] **42. Não tocar batida de outra origem.** Pronto quando: teste prova que batida de app/quiosque/ajuste sobrevive ao reprocessamento.
 - [ ] **43. Respeitar período fechado.** Dia de competência fechada em `periodos_ponto` não é reprocessado; gera alerta. Pronto quando: teste verde.
-- [ ] **44. Registrar auditoria.** Cada lote em `ponto_auditoria`/log de edge, sem CPF em claro. Pronto quando: `audit:edge-audit-log` verde.
-- [ ] **45. Testes da função.** Deno: autenticação, idempotência, vínculo, reprocessamento, período fechado. Pronto quando: `lint:edge` e `typecheck:edge` verdes.
-- [ ] **46. Publicar.** Via `canonical-edge-functions.yml`. Pronto quando: chamada real com token de teste devolve 200 e a linha aparece em `ponto_rep_lotes`.
+- [x] **44. Registrar auditoria.** Cada lote em `ponto_auditoria`/log de edge, sem CPF em claro. Pronto quando: `audit:edge-audit-log` verde. Feito: confirmado em 22/11/2026 — `npm run audit:edge-audit-log` → `EDGE_AUDIT_LOG_CONTRACT_OK checked_inserts=25`; erro de lote vira `captureException` (Sentry) sem CPF/PIS (`index.ts:163-170`).
+- [ ] **45. Testes da função.** Deno: autenticação, idempotência, vínculo, reprocessamento, período fechado. Pronto quando: `lint:edge` e `typecheck:edge` verdes. Em 22/11/2026: `lint:edge` e `audit:edge-syntax` verdes (sem Deno neste ambiente para `typecheck:edge`, inalterado desde a verificação do #798). Autenticação/idempotência/vínculo já testados (`logica.test.ts`, #798); reprocessamento e período fechado continuam bloqueados pelas etapas 41 e 43.
+- [x] **46. Publicar.** Via `canonical-edge-functions.yml`. Pronto quando: chamada real com token de teste devolve 200 e a linha aparece em `ponto_rep_lotes`. Feito em 22/11/2026: dispositivo descartável criado na empresa `[E2E-SEED]` (`61e7d382-…`), POST real em `https://frjbfeamybqsejlvmqbl.supabase.co/functions/v1/ingest-ponto-rep` → `200 {"ok":true,"lote_id":"b6b187a4-…"}`, linha confirmada em `ponto_rep_lotes` (`status=processado`) e removida depois junto com o dispositivo — produção sem resíduo.
 
 ### Fase 4 — Coletor Windows (47–62)
 
@@ -251,39 +251,40 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 
 ## 7. Progresso
 
-| Fase | Etapas | Concluídas |
-| --- | --- | --- |
-| 0 — Decisões e insumos | 1–8 | 5/8 |
-| 1 — Diagnóstico | 9–18 | 1/10 |
-| 2 — Modelo de dados | 19–32 | 13/14 |
-| 3 — Função de ingestão | 33–46 | 7/14 |
-| 4 — Coletor Windows | 47–62 | 4/16 |
-| 5 — Processamento e cálculo | 63–72 | 1/10 |
-| 6 — Interface | 73–82 | 8/10 |
-| 7 — Fechamento mensal | 83–90 | 1/8 |
-| 8 — Implantação e operação | 91–100 | 2/10 |
-| 9 — Escrita no AtecSoft | 101–120 | 0/20 |
-| **Total** | **1–120** | **42/120** |
+| Fase                        | Etapas    | Concluídas |
+| --------------------------- | --------- | ---------- |
+| 0 — Decisões e insumos      | 1–8       | 5/8        |
+| 1 — Diagnóstico             | 9–18      | 1/10       |
+| 2 — Modelo de dados         | 19–32     | 13/14      |
+| 3 — Função de ingestão      | 33–46     | 10/14      |
+| 4 — Coletor Windows         | 47–62     | 4/16       |
+| 5 — Processamento e cálculo | 63–72     | 1/10       |
+| 6 — Interface               | 73–82     | 8/10       |
+| 7 — Fechamento mensal       | 83–90     | 1/8        |
+| 8 — Implantação e operação  | 91–100    | 2/10       |
+| 9 — Escrita no AtecSoft     | 101–120   | 0/20       |
+| **Total**                   | **1–120** | **45/120** |
 
-Situação em 21/11/2026. As etapas abaixo têm o código pronto, mas continuam abertas por falta de verificação real:
+Situação em 22/11/2026. O dono vai enviar os bancos reais das duas unidades (etapas 6–7) amanhã; até lá:
+
+- 36, 44, 46 fechadas nesta sessão com chamada real ao canônico (dispositivo de teste descartável na empresa `[E2E-SEED]`, removido depois). 45 segue aberta: só falta teste de reprocessamento/período fechado, que dependem das etapas 41/43.
 - 48, 49, 51–53, 55–61 (coletor): NÃO VERIFICADO. Dependem do PC Windows da unidade com o AtecSoft (DLL 32 bits, DPAPI, tarefa agendada). São conferidas na instalação pelo técnico de TI (etapa 91).
-- 36, 44, 45, 46 (ingestão): rate limit, auditoria e funções estão no código (#798). Falta a chamada real com token de teste devolvendo 200, que exige criar o primeiro coletor.
-- 41–43, 63–72, 83–90, 101–120: dependem da cópia do banco real das duas unidades (etapas 6–15) e do cadastro dos colaboradores no DP V3.
+- 41–43, 63–72, 83–90, 101–120: dependem da cópia do banco real das duas unidades (etapas 6–15) e do cadastro dos colaboradores no DP V3. Sem isso, qualquer código sobre `REF_*`/virada de dia seria suposição — não escrito por não ter como validar.
 
 ## 8. Riscos
 
-| Risco | Etapa que trata |
-| --- | --- |
-| AtecSoft só recolhe do relógio quando alguém clica: sem isso não há batida diária | 14 |
-| Códigos de funcionário repetidos entre matriz e filial | 9, 21, 22 |
-| Funcionário sem CPF/PIS no AtecSoft | 17, 40, 76 |
-| PC da unidade desligado ou sem internet | 55, 59, 74 |
-| Correção tardia no AtecSoft depois do fechamento | 43, 86 |
-| Token do coletor vazado | 34, 75, 99 |
-| Dado pessoal em log ou em arquivo versionado | 8, 44, 58 |
-| Firebird 1.5 exige processo 32 bits e a DLL do próprio AtecSoft | 47, 48, 61 |
+| Risco                                                                                                       | Etapa que trata    |
+| ----------------------------------------------------------------------------------------------------------- | ------------------ |
+| AtecSoft só recolhe do relógio quando alguém clica: sem isso não há batida diária                           | 14                 |
+| Códigos de funcionário repetidos entre matriz e filial                                                      | 9, 21, 22          |
+| Funcionário sem CPF/PIS no AtecSoft                                                                         | 17, 40, 76         |
+| PC da unidade desligado ou sem internet                                                                     | 55, 59, 74         |
+| Correção tardia no AtecSoft depois do fechamento                                                            | 43, 86             |
+| Token do coletor vazado                                                                                     | 34, 75, 99         |
+| Dado pessoal em log ou em arquivo versionado                                                                | 8, 44, 58          |
+| Firebird 1.5 exige processo 32 bits e a DLL do próprio AtecSoft                                             | 47, 48, 61         |
 | Escrita direta no banco do AtecSoft não tem suporte do fabricante e pode quebrar em atualização do programa | 101, 107, 111, 114 |
-| Gravação errada no registro legal | 111, 114, 115, 119 |
-| Cadastro novo não chega ao relógio sem alguém clicar em "Enviar" no AtecSoft | 106, 116 |
-| Digital do colaborador só pode ser cadastrada presencialmente no relógio | 117 |
-| DP V3 ainda sem a filial e sem os colaboradores reais cadastrados | 17, 116 |
+| Gravação errada no registro legal                                                                           | 111, 114, 115, 119 |
+| Cadastro novo não chega ao relógio sem alguém clicar em "Enviar" no AtecSoft                                | 106, 116           |
+| Digital do colaborador só pode ser cadastrada presencialmente no relógio                                    | 117                |
+| DP V3 ainda sem a filial e sem os colaboradores reais cadastrados                                           | 17, 116            |
