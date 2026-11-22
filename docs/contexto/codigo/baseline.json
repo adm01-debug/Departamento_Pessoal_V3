@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "835bc4eaf03bfb9ab2571cb4f63acb816a2ddc70",
+  "commit": "77500ff38b99b4b308aad12e9c6ae4e2495b890c",
   "branch": "main",
-  "data_commit": "2026-11-22T02:44:18-03:00",
+  "data_commit": "2026-11-22T07:57:58-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "77500ff",
+    "data": "2026-11-22",
+    "assunto": "fix: use-after-free e overread no cliente Firebird do coletor de ponto (#828)"
+   },
    {
     "sha": "835bc4e",
     "data": "2026-11-22",
@@ -126,11 +131,6 @@
     "sha": "4008c60",
     "data": "2026-11-21",
     "assunto": "feat: vínculo de funcionários do relógio e de-para de justificativas (#800)"
-   },
-   {
-    "sha": "40b5cfe",
-    "data": "2026-11-21",
-    "assunto": "chore: testes do relógio de ponto no CI, guia do DP e runbook PONTO_REP (#799)"
    }
   ],
   "arquivos_mudados_7d": 1071,
@@ -141,11 +141,11 @@
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 111
+    "mudancas": 110
    },
    {
     "pasta": "src/components/ui",
-    "mudancas": 107
+    "mudancas": 106
    },
    {
     "pasta": "src/services/__tests__",
@@ -169,7 +169,7 @@
    },
    {
     "pasta": "src/components/layout",
-    "mudancas": 45
+    "mudancas": 44
    },
    {
     "pasta": "src/components/recrutamento",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3709,
   "arquivos_codigo": 2143,
-  "linhas_codigo": 428165,
+  "linhas_codigo": 428172,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -736,7 +736,7 @@
   },
   "tools/coletor-ponto-atecsoft": {
    "arquivos": 3,
-   "linhas": 1018
+   "linhas": 1025
   },
   "vite.analyze.config.ts": {
    "arquivos": 1,

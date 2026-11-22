@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "835bc4eaf03bfb9ab2571cb4f63acb816a2ddc70",
+  "sha": "77500ff38b99b4b308aad12e9c6ae4e2495b890c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 05:45 UTC",
+  "generated_at": "2026-11-22 11:11 UTC",
   "files_total": 3723,
   "code_files": 3133,
-  "code_lines": 498812
+  "code_lines": 498819
  },
  "version": "1.3.2",
- "facts_hash": "f30411b7ee10c346",
+ "facts_hash": "fad86b5be9c39ba8",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -105827,7 +105827,7 @@
   {
    "module": "tools",
    "files": 3,
-   "lines": 1018,
+   "lines": 1025,
    "tables": [],
    "exports": [
     "coletor.py: so_digitos, texto, inteiro, iso_data, iso_hora, marcado",
@@ -335473,7 +335473,7 @@
   },
   "tools/coletor-ponto-atecsoft/fb15_client.py": {
    "path": "tools/coletor-ponto-atecsoft/fb15_client.py",
-   "lines": 440,
+   "lines": 447,
    "exports": [
     "class ISC_TEB",
     "class XSQLVAR",
@@ -335505,10 +335505,19 @@
   }
  },
  "git": {
-  "sha": "835bc4eaf03bfb9ab2571cb4f63acb816a2ddc70",
+  "sha": "77500ff38b99b4b308aad12e9c6ae4e2495b890c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "77500ff",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "fix: use-after-free e overread no cliente Firebird do coletor de ponto (#828)",
+    "files": [
+     "tools/coletor-ponto-atecsoft/fb15_client.py"
+    ]
+   },
    {
     "sha": "835bc4e",
     "date": "2026-11-22",
@@ -335848,15 +335857,6 @@
      "tools/coletor-ponto-atecsoft/instalar.bat",
      "tools/coletor-ponto-atecsoft/tests/test_coletor.py"
     ]
-   },
-   {
-    "sha": "db90472",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: estabiliza arraste por toque no teste mobile do pipeline (#797)",
-    "files": [
-     "e2e/authenticated/recrutamento-pipeline.spec.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -335883,6 +335883,10 @@
    [
     "src/components/ponto/relogio/RelogiosPanel.tsx",
     3
+   ],
+   [
+    "tools/coletor-ponto-atecsoft/fb15_client.py",
+    2
    ],
    [
     "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md",
@@ -335934,10 +335938,6 @@
    ],
    [
     "scripts/audit-bridge-frontend-contract.mjs",
-    1
-   ],
-   [
-    "scripts/ratchet-any.mjs",
     1
    ]
   ]

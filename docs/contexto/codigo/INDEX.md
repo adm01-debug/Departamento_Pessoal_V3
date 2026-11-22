@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `835bc4eaf03bfb9ab2571cb4f63acb816a2ddc70` (2026-11-22T02:44:18-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `77500ff38b99b4b308aad12e9c6ae4e2495b890c` (2026-11-22T07:57:58-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3709 |
 | arquivos_codigo | 2143 |
-| linhas_codigo | 428165 |
+| linhas_codigo | 428172 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -398,7 +398,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28131 nós · 63468 arestas · 2454 comunidades · grafo do commit `835bc4ea`
+- 28131 nós · 63468 arestas · 2454 comunidades · grafo do commit `77500ff3`
 - comunidades maiores: useEmpresas (512), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (415), cn (393), vitest (300), lucide-react (298), contract.ts (261), TreinamentosPage.tsx (248), validate.ts (203), App.tsx (165), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -656,6 +656,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-22 `77500ff` fix: use-after-free e overread no cliente Firebird do coletor de ponto (#828)
 - 2026-11-22 `835bc4e` fix: aborta remessa CNAB sem nenhum favorecido (marcava enviado com arquivo vazio) (#827)
 - 2026-11-22 `6553243` docs: recertifica F-03/F-07/F-11 com contagem real e marca cargos como feito (#826)
 - 2026-11-22 `cb4d78c` fix: gates de baseline comparam chave com separador nativo (reprovavam no Windows sem regressão real) (#821)
@@ -670,7 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `8aa8e96` fix: ingest-ponto-rep grava auditoria do lote (etapa 44 do plano do ponto) (#814)
 - 2026-11-21 `6cf7a6b` chore: verifica ao vivo etapas 36/44/46 do plano do ponto Henry/AtecSoft (#813)
 - 2026-11-21 `f611296` fix: cria recibos_ferias no canônico — recibo de férias nunca era gravado (#810)
-- 2026-11-21 `af23346` fix: aviso neutro no quiosque e teste do aviso na reconexao (#812)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

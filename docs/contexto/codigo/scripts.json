@@ -1556,7 +1556,7 @@
   {
    "arquivo": "tools/coletor-ponto-atecsoft/fb15_client.py",
    "descricao": null,
-   "linhas": 440,
+   "linhas": 447,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
