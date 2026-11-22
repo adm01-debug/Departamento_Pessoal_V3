@@ -49,7 +49,7 @@ const funcionarios = [
     dispositivo_id: 'd-1',
     codigo: 10,
     nome: 'ANA RELOGIO',
-    cpf: '123.456.789-01',
+    cpf_last4: '8901',
     matricula: '0010',
     situacao: 'Ativo',
     colaborador_id: null,
@@ -62,7 +62,7 @@ const funcionarios = [
     dispositivo_id: 'd-1',
     codigo: 20,
     nome: 'BIA RELOGIO',
-    cpf: '98765432100',
+    cpf_last4: '2100',
     matricula: '0020',
     situacao: 'Ativo',
     colaborador_id: 'c-2',
@@ -142,11 +142,14 @@ describe('VinculosRelogioTab', () => {
     );
   });
 
-  it('Desfazer chama desvincular_funcionario_relogio', async () => {
+  it('Desfazer pede confirmação antes de chamar desvincular_funcionario_relogio', async () => {
     render();
     await screen.findByTestId('funcionario-10');
     await userEvent.click(screen.getByRole('button', { name: 'Todos' }));
     await userEvent.click(within(screen.getByTestId('funcionario-20')).getByRole('button', { name: /Desfazer/ }));
+    const dialogo = await screen.findByRole('alertdialog');
+    expect(rpcMock).not.toHaveBeenCalledWith('desvincular_funcionario_relogio', expect.anything());
+    await userEvent.click(within(dialogo).getByRole('button', { name: 'Desfazer' }));
     await waitFor(() =>
       expect(rpcMock).toHaveBeenCalledWith('desvincular_funcionario_relogio', { _funcionario_id: 'f-2' })
     );

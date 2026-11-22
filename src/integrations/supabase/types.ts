@@ -15824,6 +15824,7 @@ export type Database = {
           codigo: number
           colaborador_id: string | null
           cpf: string | null
+          cpf_last4: string | null
           created_at: string
           data_admissao: string | null
           data_desligamento: string | null
@@ -15845,6 +15846,7 @@ export type Database = {
           codigo: number
           colaborador_id?: string | null
           cpf?: string | null
+          cpf_last4?: string | null
           created_at?: string
           data_admissao?: string | null
           data_desligamento?: string | null
@@ -15866,6 +15868,7 @@ export type Database = {
           codigo?: number
           colaborador_id?: string | null
           cpf?: string | null
+          cpf_last4?: string | null
           created_at?: string
           data_admissao?: string | null
           data_desligamento?: string | null
