@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "262426216a41037a415c2281a123ea238f22c62d",
+  "commit": "af23346218d9b605a19a495f5cbe073bd9be403d",
   "branch": "main",
-  "data_commit": "2026-11-21T21:43:31-03:00",
+  "data_commit": "2026-11-21T21:56:44-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "af23346",
+    "data": "2026-11-21",
+    "assunto": "fix: aviso neutro no quiosque e teste do aviso na reconexao (#812)"
+   },
    {
     "sha": "2624262",
     "data": "2026-11-21",
@@ -126,22 +131,17 @@
     "sha": "3c6b0a5",
     "data": "2026-11-21",
     "assunto": "chore: auditoria contínua das funcionalidades F-01..F-20 (#785)"
-   },
-   {
-    "sha": "5d0677c",
-    "data": "2026-11-21",
-    "assunto": "infra: torna login E2E não-admin obrigatório no smoke pós-deploy (REQUIRE_LOGIN=1) (#784)"
    }
   ],
-  "arquivos_mudados_7d": 1050,
+  "arquivos_mudados_7d": 1051,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 385
+    "mudancas": 383
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 110
+    "mudancas": 111
    },
    {
     "pasta": "src/components/ui",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3704,
   "arquivos_codigo": 2140,
-  "linhas_codigo": 427385,
+  "linhas_codigo": 427416,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -660,7 +660,7 @@
   },
   "src/hooks": {
    "arquivos": 207,
-   "linhas": 24169
+   "linhas": 24191
   },
   "src/i18n": {
    "arquivos": 2,
@@ -696,7 +696,7 @@
   },
   "src/services": {
    "arquivos": 198,
-   "linhas": 41887
+   "linhas": 41896
   },
   "src/setupTests.ts": {
    "arquivos": 1,

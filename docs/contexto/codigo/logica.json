@@ -3834,10 +3834,11 @@
    "exports": [
     "OfflineRegistro",
     "avisoRecusaRelogio",
+    "avisoRecusaRelogioQuiosque",
     "pontoOfflineService"
    ],
    "export_default": null,
-   "linhas": 232,
+   "linhas": 241,
    "tabelas": [],
    "rpcs": [],
    "edges": [

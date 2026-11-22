@@ -5031,11 +5031,11 @@
   {
    "arquivo": "src/hooks/__tests__/usePontoOffline.test.ts",
    "tipo": "unit",
-   "linhas": 126,
+   "linhas": 148,
    "testa": [
     "src/hooks/usePontoOffline.ts"
    ],
-   "casos": 7
+   "casos": 8
   },
   {
    "arquivo": "src/hooks/__tests__/usePontosAbertos.test.ts",

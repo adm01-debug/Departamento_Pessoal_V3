@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: aviso neutro no quiosque e teste do aviso na reconexao (#812)",
    "fix: avisa quando batida offline é recusada por usar o relógio da unidade (#811)",
    "chore: progresso do plano do relógio de ponto com evidências (#809)",
    "fix: formatação do painel de relógios (prettier) (#808)",
-   "infra: lote canônico com as 5 migrations do relógio de ponto (#806)",
-   "feat: abas Vínculos e Justificativas no painel do relógio de ponto (#807)"
+   "infra: lote canônico com as 5 migrations do relógio de ponto (#806)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
