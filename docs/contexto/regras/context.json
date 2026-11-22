@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "8aa8e96fa0f2e3ce383cebeab90dfe79ae44fcd7",
+  "sha": "5a7dabb1ffb3b34d0a393e2c45e7cdf6fb1adefa",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 01:28 UTC",
+  "generated_at": "2026-11-22 02:19 UTC",
   "files_total": 3720,
   "code_files": 3130,
   "code_lines": 498087
@@ -335228,10 +335228,47 @@
   }
  },
  "git": {
-  "sha": "8aa8e96fa0f2e3ce383cebeab90dfe79ae44fcd7",
+  "sha": "5a7dabb1ffb3b34d0a393e2c45e7cdf6fb1adefa",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "5a7dabb",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: documenta o limite real das etapas 55 e 58 do plano do ponto (#816)",
+    "files": [
+     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
+    ]
+   },
+   {
+    "sha": "73b2a05",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: fecha etapa 45 do plano do ponto com evidencia real do CI (#819)",
+    "files": [
+     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
+    ]
+   },
+   {
+    "sha": "60095b9",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: fecha etapas 81/82 do plano do ponto (testes de UI + inventario de rotas) (#817)",
+    "files": [
+     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+     "inventario/estado/rotas.json"
+    ]
+   },
+   {
+    "sha": "2313441",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "chore: fecha etapa 44 do plano do ponto com evidencia pos-deploy (#815)",
+    "files": [
+     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
+    ]
+   },
    {
     "sha": "8aa8e96",
     "date": "2026-11-21",
@@ -335540,52 +335577,12 @@
     "files": [
      "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
     ]
-   },
-   {
-    "sha": "06ab445",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: plano em 100 etapas da integração do ponto Henry/AtecSoft (#786)",
-    "files": [
-     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
-    ]
-   },
-   {
-    "sha": "3c6b0a5",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: auditoria contínua das funcionalidades F-01..F-20 (#785)",
-    "files": [
-     ".github/workflows/inventario-estado-semanal.yml",
-     "inventario/estado/funcionalidades.json",
-     "scripts/automation.config.json",
-     "scripts/inventario/mudou-conteudo.mjs",
-     "scripts/inventario/validar-funcionalidades.mjs"
-    ]
-   },
-   {
-    "sha": "5d0677c",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "infra: torna login E2E não-admin obrigatório no smoke pós-deploy (REQUIRE_LOGIN=1) (#784)",
-    "files": [
-     ".github/workflows/post-deploy-smoke.yml"
-    ]
-   },
-   {
-    "sha": "50a87a9",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: marca smoke pós-deploy como automatizado no _ordem.md (#783)",
-    "files": [
-     "docs/pendencias/_ordem.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    6
+    9
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -335608,6 +335605,10 @@
     3
    ],
    [
+    "inventario/estado/rotas.json",
+    2
+   ],
+   [
     "supabase/functions/ingest-ponto-rep/index.ts",
     2
    ],
@@ -335628,19 +335629,7 @@
     2
    ],
    [
-    "scripts/automation.config.json",
-    2
-   ],
-   [
     "tools/coletor-ponto-atecsoft/README.md",
-    2
-   ],
-   [
-    "inventario/estado/funcionalidades.json",
-    2
-   ],
-   [
-    "scripts/inventario/validar-funcionalidades.mjs",
     2
    ],
    [
@@ -335661,6 +335650,14 @@
    ],
    [
     "src/hooks/__tests__/usePontoOffline.test.ts",
+    1
+   ],
+   [
+    "src/hooks/usePontoOffline.ts",
+    1
+   ],
+   [
+    "src/services/__tests__/pontoOfflineService.test.ts",
     1
    ]
   ]

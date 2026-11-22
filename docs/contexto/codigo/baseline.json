@@ -2,11 +2,31 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8aa8e96fa0f2e3ce383cebeab90dfe79ae44fcd7",
+  "commit": "5a7dabb1ffb3b34d0a393e2c45e7cdf6fb1adefa",
   "branch": "main",
-  "data_commit": "2026-11-21T22:27:17-03:00",
+  "data_commit": "2026-11-21T23:05:41-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "5a7dabb",
+    "data": "2026-11-21",
+    "assunto": "chore: documenta o limite real das etapas 55 e 58 do plano do ponto (#816)"
+   },
+   {
+    "sha": "73b2a05",
+    "data": "2026-11-21",
+    "assunto": "chore: fecha etapa 45 do plano do ponto com evidencia real do CI (#819)"
+   },
+   {
+    "sha": "60095b9",
+    "data": "2026-11-21",
+    "assunto": "chore: fecha etapas 81/82 do plano do ponto (testes de UI + inventario de rotas) (#817)"
+   },
+   {
+    "sha": "2313441",
+    "data": "2026-11-21",
+    "assunto": "chore: fecha etapa 44 do plano do ponto com evidencia pos-deploy (#815)"
+   },
    {
     "sha": "8aa8e96",
     "data": "2026-11-21",
@@ -111,33 +131,13 @@
     "sha": "8518ebc",
     "data": "2026-11-21",
     "assunto": "chore: registra o conserto do diagnóstico SQL e fecha as etapas 16, 24 e 25 do plano do ponto (#794)"
-   },
-   {
-    "sha": "b9b1c05",
-    "data": "2026-11-21",
-    "assunto": "fix: corrige as duas falhas do mode=verify do ledger canônico (#793)"
-   },
-   {
-    "sha": "3f0f032",
-    "data": "2026-11-21",
-    "assunto": "infra: concede ci_auditor ao papel da conexão para destravar o diagnóstico SQL (#791)"
-   },
-   {
-    "sha": "77e63b1",
-    "data": "2026-11-21",
-    "assunto": "fix: auditoria contínua valida tabelas reais (folha_itens/desligamentos/pix) no lugar de legadas (#789)"
-   },
-   {
-    "sha": "bbdb6e3",
-    "data": "2026-11-21",
-    "assunto": "chore: registra no plano do ponto os achados do banco e do Promo Finance (#790)"
    }
   ],
   "arquivos_mudados_7d": 1055,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 382
+    "mudancas": 381
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 97
+    "mudancas": 96
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -189,7 +189,7 @@
    },
    {
     "pasta": "src/utils/__tests__",
-    "mudancas": 32
+    "mudancas": 31
    },
    {
     "pasta": "src/components/admissoes",
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 22
+    "mudancas": 23
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -212,6 +212,10 @@
    {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
     "mudancas": 11
+   },
+   {
+    "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+    "mudancas": 10
    },
    {
     "arquivo": "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
@@ -252,10 +256,6 @@
    {
     "arquivo": "src/schemas/tableColumns.ts",
     "mudancas": 7
-   },
-   {
-    "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    "mudancas": 6
    },
    {
     "arquivo": "docs/agentes/banco.md",

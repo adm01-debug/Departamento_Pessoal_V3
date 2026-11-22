@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8aa8e96fa0f2e3ce383cebeab90dfe79ae44fcd7` (2026-11-21T22:27:17-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `5a7dabb1ffb3b34d0a393e2c45e7cdf6fb1adefa` (2026-11-21T23:05:41-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -398,16 +398,17 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28117 nós · 63412 arestas · 2401 comunidades · grafo do commit `8aa8e96f`
-- comunidades maiores: 20260831_corrected_public.sql (493), lucide-react (482), canonical_schema.sql (481), useEmpresas (395), vitest (389), @tanstack/react-query (364), cn (316), button.tsx (275), App.tsx (203), supabase (196), FeedbackAcoesRodape.tsx (192), ref_node_fs (188)
+- 28117 nós · 63417 arestas · 2352 comunidades · grafo do commit `5a7dabb1`
+- comunidades maiores: cn (549), 20260831_corrected_public.sql (493), canonical_schema.sql (481), vitest (389), react (380), @tanstack/react-query (370), useEmpresas (369), App.tsx (327), nineBoxComum.ts (219), FeedbackAcoesRodape.tsx (205), contract.ts (191), ColaboradorDetalhesPage.tsx (182)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/canonical-migrations.yml (29)
-- inventario/estado/rotas.json (22)
+- inventario/estado/rotas.json (23)
 - scripts/canonical-invariants.sql (20)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
+- docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (10)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
 - src/integrations/supabase/types.ts (10)
 - docs/prod-readiness.md (9)
@@ -418,7 +419,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - src/pages/CalculadoraRescisaoPage.tsx (7)
 - src/pages/ColaboradoresPage.tsx (7)
 - src/schemas/tableColumns.ts (7)
-- docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -656,6 +656,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-21 `5a7dabb` chore: documenta o limite real das etapas 55 e 58 do plano do ponto (#816)
+- 2026-11-21 `73b2a05` chore: fecha etapa 45 do plano do ponto com evidencia real do CI (#819)
+- 2026-11-21 `60095b9` chore: fecha etapas 81/82 do plano do ponto (testes de UI + inventario de rotas) (#817)
+- 2026-11-21 `2313441` chore: fecha etapa 44 do plano do ponto com evidencia pos-deploy (#815)
 - 2026-11-21 `8aa8e96` fix: ingest-ponto-rep grava auditoria do lote (etapa 44 do plano do ponto) (#814)
 - 2026-11-21 `6cf7a6b` chore: verifica ao vivo etapas 36/44/46 do plano do ponto Henry/AtecSoft (#813)
 - 2026-11-21 `f611296` fix: cria recibos_ferias no canônico — recibo de férias nunca era gravado (#810)
@@ -667,10 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `9aa259e` feat: abas Vínculos e Justificativas no painel do relógio de ponto (#807)
 - 2026-11-21 `a3db5b8` feat: alerta de coletor do ponto parado e controle do espelho em papel (#804)
 - 2026-11-21 `1ec032c` feat: administração dos coletores do relógio de ponto em Integrações (#803)
-- 2026-11-21 `01d8cb6` feat: protege batida do relógio e bloqueia app/quiosque de quem usa o relógio (#801)
-- 2026-11-21 `4008c60` feat: vínculo de funcionários do relógio e de-para de justificativas (#800)
-- 2026-11-21 `40b5cfe` chore: testes do relógio de ponto no CI, guia do DP e runbook PONTO_REP (#799)
-- 2026-11-21 `e3986dc` infra: libera no bridge os RPCs do relógio de ponto (#802)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
