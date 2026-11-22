@@ -98774,7 +98774,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 77,
+          "code_total_files": 79,
           "cron": [],
           "db": [
             "public.aplicar_medida_folha_ponto",
@@ -102345,7 +102345,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 35,
+          "code_total_files": 37,
           "cron": [],
           "db": [
             "public.admin_definir_pin_quiosque",
@@ -133469,6 +133469,20 @@
       },
       {
         "columns": [
+          "folha_id"
+        ],
+        "definition": "CREATE INDEX idx_pix_lotes_folha_id ON public.pix_lotes USING btree (folha_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_pix_lotes_folha_id",
+        "predicate": null,
+        "schema": "public",
+        "table": "pix_lotes"
+      },
+      {
+        "columns": [
           "empresa_id",
           "folha_id"
         ],
@@ -133826,6 +133840,20 @@
       },
       {
         "columns": [
+          "lote_id"
+        ],
+        "definition": "CREATE INDEX idx_ponto_rep_dias_lote_id ON public.ponto_rep_dias USING btree (lote_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_ponto_rep_dias_lote_id",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_dias"
+      },
+      {
+        "columns": [
           "dispositivo_id",
           "data"
         ],
@@ -134038,6 +134066,20 @@
         "is_valid": true,
         "method": "btree",
         "name": "idx_ponto_rep_lotes_dispositivo_recebido",
+        "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_lotes"
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "definition": "CREATE INDEX idx_ponto_rep_lotes_empresa_id ON public.ponto_rep_lotes USING btree (empresa_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_ponto_rep_lotes_empresa_id",
         "predicate": null,
         "schema": "public",
         "table": "ponto_rep_lotes"
@@ -139338,24 +139380,6 @@
       },
       {
         "code": "fk_without_index",
-        "detail": "FK sem índice nas colunas ['folha_id']: joins e DELETE/UPDATE na tabela pai ficam lentos.",
-        "object": "public.pix_lotes.pix_lotes_folha_id_fkey",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "fk_without_index",
-        "detail": "FK sem índice nas colunas ['lote_id']: joins e DELETE/UPDATE na tabela pai ficam lentos.",
-        "object": "public.ponto_rep_dias.ponto_rep_dias_lote_id_fkey",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "fk_without_index",
-        "detail": "FK sem índice nas colunas ['empresa_id']: joins e DELETE/UPDATE na tabela pai ficam lentos.",
-        "object": "public.ponto_rep_lotes.ponto_rep_lotes_empresa_id_fkey",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "fk_without_index",
         "detail": "FK sem índice nas colunas ['created_by']: joins e DELETE/UPDATE na tabela pai ficam lentos.",
         "object": "public.recibos_ferias.recibos_ferias_created_by_fkey",
         "severity": "BAIXA"
@@ -140521,7 +140545,7 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.guias_fgts_digital.Gestores e RH veem guias FGTS",
+        "object": "public.guias_fgts_digital.guias_fgts_digital_select",
         "severity": "BAIXA"
       },
       {
@@ -145700,16 +145724,52 @@
         "with_check": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))"
       },
       {
-        "cmd": "SELECT",
-        "name": "Gestores e RH veem guias FGTS",
+        "cmd": "DELETE",
+        "name": "guias_fgts_digital_delete",
         "permissive": "PERMISSIVE",
         "roles": [
-          "public"
+          "authenticated"
         ],
         "schema": "public",
         "table": "guias_fgts_digital",
-        "using": "(auth.uid() IN ( SELECT user_roles.user_id\n   FROM user_roles\n  WHERE (user_roles.role = ANY (ARRAY['admin'::app_role, 'gestor'::app_role, 'rh'::app_role]))))",
+        "using": "pode_gerir_rh(empresa_id)",
         "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "name": "guias_fgts_digital_insert",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "guias_fgts_digital",
+        "using": null,
+        "with_check": "pode_gerir_rh(empresa_id)"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "guias_fgts_digital_select",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "guias_fgts_digital",
+        "using": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "guias_fgts_digital_update",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "guias_fgts_digital",
+        "using": "pode_gerir_rh(empresa_id)",
+        "with_check": "pode_gerir_rh(empresa_id)"
       },
       {
         "cmd": "ALL",

@@ -2,6 +2,15 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-22 13:13 UTC
+
+- **functions** alterado (2): `public.get_user_empresas(_user_id uuid)`, `public.pode_gerir_rh(_empresa_id uuid)`
+- **indexes** adicionado (3): `public.idx_pix_lotes_folha_id`, `public.idx_ponto_rep_dias_lote_id`, `public.idx_ponto_rep_lotes_empresa_id`
+- **lints** adicionado (1): `policy_auth_fn_not_wrapped:public.guias_fgts_digital.guias_fgts_digital_select`
+- **lints** removido (4): `fk_without_index:public.pix_lotes.pix_lotes_folha_id_fkey`, `fk_without_index:public.ponto_rep_dias.ponto_rep_dias_lote_id_fkey`, `fk_without_index:public.ponto_rep_lotes.ponto_rep_lotes_empresa_id_fkey`, `policy_auth_fn_not_wrapped:public.guias_fgts_digital.Gestores e RH veem guias FGTS`
+- **policies (RLS)** adicionado (4): `public.guias_fgts_digital.guias_fgts_digital_delete`, `public.guias_fgts_digital.guias_fgts_digital_insert`, `public.guias_fgts_digital.guias_fgts_digital_select`, `public.guias_fgts_digital.guias_fgts_digital_update`
+- **policies (RLS)** removido (1): `public.guias_fgts_digital.Gestores e RH veem guias FGTS`
+
 ## 2026-11-22 12:18 UTC
 
 - **colunas** adicionado (1): `public.ponto_rep_funcionarios.cpf_last4`

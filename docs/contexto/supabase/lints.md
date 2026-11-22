@@ -46,9 +46,6 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | BAIXA | fk_without_index | public.medidas_disciplinares.medidas_disciplinares_rejeitado_por_fkey | FK sem índice nas colunas ['rejeitado_por']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
 | BAIXA | fk_without_index | public.medidas_disciplinares_integracao.medidas_disciplinares_integracao_colaborador_id_fkey | FK sem índice nas colunas ['colaborador_id']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
 | BAIXA | fk_without_index | public.medidas_disciplinares_workflow_log.medidas_disciplinares_workflow_log_ator_id_fkey | FK sem índice nas colunas ['ator_id']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
-| BAIXA | fk_without_index | public.pix_lotes.pix_lotes_folha_id_fkey | FK sem índice nas colunas ['folha_id']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
-| BAIXA | fk_without_index | public.ponto_rep_dias.ponto_rep_dias_lote_id_fkey | FK sem índice nas colunas ['lote_id']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
-| BAIXA | fk_without_index | public.ponto_rep_lotes.ponto_rep_lotes_empresa_id_fkey | FK sem índice nas colunas ['empresa_id']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
 | BAIXA | fk_without_index | public.recibos_ferias.recibos_ferias_created_by_fkey | FK sem índice nas colunas ['created_by']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
 | BAIXA | fk_without_index | public.recibos_ferias.recibos_ferias_updated_by_fkey | FK sem índice nas colunas ['updated_by']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
 | BAIXA | policy_auth_fn_not_wrapped | public.admissao_tokens.Tenant scoped admissao_tokens | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
@@ -243,7 +240,7 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | BAIXA | policy_auth_fn_not_wrapped | public.geo_blocked_attempts.Admins can view geo_blocked_attempts | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.geo_blocking_config.Admins can manage geo_blocking_config | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.guias_fgts.tenant_guias_fgts | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
-| BAIXA | policy_auth_fn_not_wrapped | public.guias_fgts_digital.Gestores e RH veem guias FGTS | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
+| BAIXA | policy_auth_fn_not_wrapped | public.guias_fgts_digital.guias_fgts_digital_select | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.guias_inss.tenant_guias_inss | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.historico_alertas.Admins can insert historico_alertas | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.historico_alertas.Admins can view historico_alertas | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |

@@ -54,6 +54,7 @@
 | nome | método | colunas | único | válido | predicado | definição |
 |---|---|---|---|---|---|---|
 | idx_ponto_rep_lotes_dispositivo_recebido | btree | dispositivo_id, recebido_em | não | sim |  | `CREATE INDEX idx_ponto_rep_lotes_dispositivo_recebido ON public.ponto_rep_lotes USING btree (dispositivo_id, recebido_em DESC)` |
+| idx_ponto_rep_lotes_empresa_id | btree | empresa_id | não | sim |  | `CREATE INDEX idx_ponto_rep_lotes_empresa_id ON public.ponto_rep_lotes USING btree (empresa_id)` |
 | ponto_rep_lotes_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX ponto_rep_lotes_pkey ON public.ponto_rep_lotes USING btree (id)` |
 
 

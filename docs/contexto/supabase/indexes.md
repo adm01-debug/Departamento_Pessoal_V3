@@ -950,6 +950,7 @@ Uso e tamanho em `stats.md`.
 | public.pix_itens | idx_pix_itens_lote_id | btree | lote_id | não | sim |  |
 | public.pix_itens | pix_itens_pkey | btree | id | sim | sim |  |
 | public.pix_lotes | idx_pix_lotes_empresa_id | btree | empresa_id | não | sim |  |
+| public.pix_lotes | idx_pix_lotes_folha_id | btree | folha_id | não | sim |  |
 | public.pix_lotes | pix_lotes_empresa_folha_uk | btree | empresa_id, folha_id | sim | sim | `(folha_id IS NOT NULL)` |
 | public.pix_lotes | pix_lotes_pkey | btree | id | sim | sim |  |
 | public.plano_contas | plano_contas_empresa_id_codigo_key | btree | empresa_id, codigo | sim | sim |  |
@@ -975,6 +976,7 @@ Uso e tamanho em `stats.md`.
 | public.ponto_espelhos_revogacoes | ponto_espelhos_revogacoes_pkey | btree | id | sim | sim |  |
 | public.ponto_regras_aprovacao | ponto_regras_aprovacao_pkey | btree | id | sim | sim |  |
 | public.ponto_rep_dias | idx_ponto_rep_dias_empresa_data | btree | empresa_id, data | não | sim |  |
+| public.ponto_rep_dias | idx_ponto_rep_dias_lote_id | btree | lote_id | não | sim |  |
 | public.ponto_rep_dias | idx_ponto_rep_dias_pendentes | btree | dispositivo_id, data | não | sim | `(processado_em IS NULL)` |
 | public.ponto_rep_dias | ponto_rep_dias_dispositivo_func_data_key | btree | dispositivo_id, funcionario_codigo, data | sim | sim |  |
 | public.ponto_rep_dias | ponto_rep_dias_pkey | btree | id | sim | sim |  |
@@ -990,6 +992,7 @@ Uso e tamanho em `stats.md`.
 | public.ponto_rep_justificativas | ponto_rep_justificativas_dispositivo_codigo_key | btree | dispositivo_id, codigo | sim | sim |  |
 | public.ponto_rep_justificativas | ponto_rep_justificativas_pkey | btree | id | sim | sim |  |
 | public.ponto_rep_lotes | idx_ponto_rep_lotes_dispositivo_recebido | btree | dispositivo_id, recebido_em | não | sim |  |
+| public.ponto_rep_lotes | idx_ponto_rep_lotes_empresa_id | btree | empresa_id | não | sim |  |
 | public.ponto_rep_lotes | ponto_rep_lotes_pkey | btree | id | sim | sim |  |
 | public.ponto_seguranca_blacklist | idx_ponto_seguranca_blacklist_colaborador_id | btree | colaborador_id | não | sim |  |
 | public.ponto_seguranca_blacklist | ponto_seguranca_blacklist_dispositivo_id_key | btree | dispositivo_id | sim | sim |  |

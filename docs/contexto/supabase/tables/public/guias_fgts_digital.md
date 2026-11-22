@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 1 |
+| policies | 4 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -54,15 +54,45 @@
 
 ## Policies (RLS)
 
-### `Gestores e RH veem guias FGTS`
+### `guias_fgts_digital_delete`
+
+| campo | valor |
+|---|---|
+| comando | DELETE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `pode_gerir_rh(empresa_id)` |
+| WITH CHECK |  |
+
+### `guias_fgts_digital_insert`
+
+| campo | valor |
+|---|---|
+| comando | INSERT |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING |  |
+| WITH CHECK | `pode_gerir_rh(empresa_id)` |
+
+### `guias_fgts_digital_select`
 
 | campo | valor |
 |---|---|
 | comando | SELECT |
 | tipo | PERMISSIVE |
-| roles | public |
-| USING | `(auth.uid() IN ( SELECT user_roles.user_id    FROM user_roles   WHERE (user_roles.role = ANY (ARRAY['admin'::app_role, 'gestor'::app_role, 'rh'::app_role]))))` |
+| roles | authenticated |
+| USING | `(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))` |
 | WITH CHECK |  |
+
+### `guias_fgts_digital_update`
+
+| campo | valor |
+|---|---|
+| comando | UPDATE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `pode_gerir_rh(empresa_id)` |
+| WITH CHECK | `pode_gerir_rh(empresa_id)` |
 
 
 ## Triggers

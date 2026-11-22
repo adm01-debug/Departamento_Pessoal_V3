@@ -277,7 +277,10 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.geo_blocking_config | Admins can manage geo_blocking_config | ALL | PERMISSIVE | authenticated | `is_admin(auth.uid())` |  |
 | public.govbr_auth_state | GovBR state service only | ALL | PERMISSIVE | service_role | `true` | `true` |
 | public.guias_fgts | tenant_guias_fgts | ALL | PERMISSIVE | authenticated | `(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))` | `(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))` |
-| public.guias_fgts_digital | Gestores e RH veem guias FGTS | SELECT | PERMISSIVE | public | `(auth.uid() IN ( SELECT user_roles.user_id    FROM user_roles   WHERE (user_roles.role = ANY (ARRAY['admin'::app_role, 'gestor'::app_role, 'rh'::app_role]))))` |  |
+| public.guias_fgts_digital | guias_fgts_digital_delete | DELETE | PERMISSIVE | authenticated | `pode_gerir_rh(empresa_id)` |  |
+| public.guias_fgts_digital | guias_fgts_digital_insert | INSERT | PERMISSIVE | authenticated |  | `pode_gerir_rh(empresa_id)` |
+| public.guias_fgts_digital | guias_fgts_digital_select | SELECT | PERMISSIVE | authenticated | `(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))` |  |
+| public.guias_fgts_digital | guias_fgts_digital_update | UPDATE | PERMISSIVE | authenticated | `pode_gerir_rh(empresa_id)` | `pode_gerir_rh(empresa_id)` |
 | public.guias_inss | tenant_guias_inss | ALL | PERMISSIVE | authenticated | `(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))` | `(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))` |
 | public.health_checks | health_checks_read_auth | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.historico_alertas | Admins can insert historico_alertas | INSERT | PERMISSIVE | authenticated |  | `is_admin(auth.uid())` |

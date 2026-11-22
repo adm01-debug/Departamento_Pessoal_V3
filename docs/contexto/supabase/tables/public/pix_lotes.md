@@ -49,6 +49,7 @@
 | nome | método | colunas | único | válido | predicado | definição |
 |---|---|---|---|---|---|---|
 | idx_pix_lotes_empresa_id | btree | empresa_id | não | sim |  | `CREATE INDEX idx_pix_lotes_empresa_id ON public.pix_lotes USING btree (empresa_id)` |
+| idx_pix_lotes_folha_id | btree | folha_id | não | sim |  | `CREATE INDEX idx_pix_lotes_folha_id ON public.pix_lotes USING btree (folha_id)` |
 | pix_lotes_empresa_folha_uk | btree | empresa_id, folha_id | sim | sim | `(folha_id IS NOT NULL)` | `CREATE UNIQUE INDEX pix_lotes_empresa_folha_uk ON public.pix_lotes USING btree (empresa_id, folha_id) WHERE (folha_id IS NOT NULL)` |
 | pix_lotes_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX pix_lotes_pkey ON public.pix_lotes USING btree (id)` |
 

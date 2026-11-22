@@ -55,6 +55,7 @@
 | nome | método | colunas | único | válido | predicado | definição |
 |---|---|---|---|---|---|---|
 | idx_ponto_rep_dias_empresa_data | btree | empresa_id, data | não | sim |  | `CREATE INDEX idx_ponto_rep_dias_empresa_data ON public.ponto_rep_dias USING btree (empresa_id, data)` |
+| idx_ponto_rep_dias_lote_id | btree | lote_id | não | sim |  | `CREATE INDEX idx_ponto_rep_dias_lote_id ON public.ponto_rep_dias USING btree (lote_id)` |
 | idx_ponto_rep_dias_pendentes | btree | dispositivo_id, data | não | sim | `(processado_em IS NULL)` | `CREATE INDEX idx_ponto_rep_dias_pendentes ON public.ponto_rep_dias USING btree (dispositivo_id, data) WHERE (processado_em IS NULL)` |
 | ponto_rep_dias_dispositivo_func_data_key | btree | dispositivo_id, funcionario_codigo, data | sim | sim |  | `CREATE UNIQUE INDEX ponto_rep_dias_dispositivo_func_data_key ON public.ponto_rep_dias USING btree (dispositivo_id, funcionario_codigo, data)` |
 | ponto_rep_dias_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX ponto_rep_dias_pkey ON public.ponto_rep_dias USING btree (id)` |
