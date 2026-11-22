@@ -307,6 +307,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.rate_limit_logs](tables/public/rate_limit_logs.md) | table | sim | 2 | 8 | não |  |
 | [public.rate_limits](tables/public/rate_limits.md) | table | sim | 1 | 4 | não |  |
 | [public.recargas_vale](tables/public/recargas_vale.md) | table | sim | 1 | 9 | não |  |
+| [public.recibos_ferias](tables/public/recibos_ferias.md) | table | sim | 4 | 13 | não | Registro do recibo de férias baixado pelo RH (FeriasActions.tsx). Metadado de emissão — o PDF é gerado no navegador e não é arquivado aqui. |
 | [public.recrutamento_agendamentos](tables/public/recrutamento_agendamentos.md) | table | sim | 1 | 12 | não |  |
 | [public.recrutamento_anotacoes](tables/public/recrutamento_anotacoes.md) | table | sim | 1 | 7 | não |  |
 | [public.recrutamento_entrevistas](tables/public/recrutamento_entrevistas.md) | table | sim | 1 | 12 | não |  |

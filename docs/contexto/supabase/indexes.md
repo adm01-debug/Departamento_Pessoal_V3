@@ -1060,6 +1060,9 @@ Uso e tamanho em `stats.md`.
 | public.recargas_vale | idx_recargas_vale_colaborador_id | btree | colaborador_id | não | sim |  |
 | public.recargas_vale | idx_recargas_vale_vale_id | btree | vale_id | não | sim |  |
 | public.recargas_vale | recargas_vale_pkey | btree | id | sim | sim |  |
+| public.recibos_ferias | idx_recibos_ferias_colaborador | btree | colaborador_id | não | sim |  |
+| public.recibos_ferias | idx_recibos_ferias_empresa_data | btree | empresa_id, data_inicio | não | sim |  |
+| public.recibos_ferias | recibos_ferias_pkey | btree | id | sim | sim |  |
 | public.recrutamento_agendamentos | idx_recrutamento_agendamentos_candidatura_id | btree | candidatura_id | não | sim |  |
 | public.recrutamento_agendamentos | idx_recrutamento_agendamentos_responsavel_id | btree | responsavel_id | não | sim |  |
 | public.recrutamento_agendamentos | recrutamento_agendamentos_pkey | btree | id | sim | sim |  |

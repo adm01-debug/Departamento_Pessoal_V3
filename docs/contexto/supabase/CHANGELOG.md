@@ -2,6 +2,19 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-22 01:14 UTC
+
+- **colunas** adicionado (13): `public.recibos_ferias.ativo`, `public.recibos_ferias.colaborador_id`, `public.recibos_ferias.created_at`, `public.recibos_ferias.created_by`, `public.recibos_ferias.data_fim`, `public.recibos_ferias.data_inicio`, `public.recibos_ferias.descricao`, `public.recibos_ferias.empresa_id`, `public.recibos_ferias.id`, `public.recibos_ferias.observacoes`, `public.recibos_ferias.updated_at`, `public.recibos_ferias.updated_by`, `public.recibos_ferias.valor`
+- **constraints** adicionado (5): `public.recibos_ferias.recibos_ferias_colaborador_id_fkey`, `public.recibos_ferias.recibos_ferias_created_by_fkey`, `public.recibos_ferias.recibos_ferias_empresa_id_fkey`, `public.recibos_ferias.recibos_ferias_pkey`, `public.recibos_ferias.recibos_ferias_updated_by_fkey`
+- **functions** adicionado (1): `public.recibos_ferias_validar()`
+- **functions** alterado (3): `public.get_auth_empresa_id()`, `public.pode_gerir_rh(_empresa_id uuid)`, `public.update_updated_at_column()`
+- **grants** adicionado (3): `public.recibos_ferias:authenticated`, `public.recibos_ferias:dp_mcp_role`, `public.recibos_ferias:service_role`
+- **indexes** adicionado (3): `public.idx_recibos_ferias_colaborador`, `public.idx_recibos_ferias_empresa_data`, `public.recibos_ferias_pkey`
+- **lints** adicionado (2): `fk_without_index:public.recibos_ferias.recibos_ferias_created_by_fkey`, `fk_without_index:public.recibos_ferias.recibos_ferias_updated_by_fkey`
+- **policies (RLS)** adicionado (4): `public.recibos_ferias.recibos_ferias_rh_delete`, `public.recibos_ferias.recibos_ferias_rh_insert`, `public.recibos_ferias.recibos_ferias_rh_select`, `public.recibos_ferias.recibos_ferias_rh_update`
+- **tabelas** adicionado (1): `public.recibos_ferias`
+- **triggers** adicionado (2): `public.recibos_ferias.trg_recibos_ferias_updated_at`, `public.recibos_ferias.trg_recibos_ferias_validar`
+
 ## 2026-11-22 00:36 UTC
 
 - **colunas** adicionado (10): `public.ponto_espelhos_papel.arquivo_path`, `public.ponto_espelhos_papel.colaborador_id`, `public.ponto_espelhos_papel.competencia`, `public.ponto_espelhos_papel.created_at`, `public.ponto_espelhos_papel.devolvido_em`, `public.ponto_espelhos_papel.empresa_id`, `public.ponto_espelhos_papel.id`, `public.ponto_espelhos_papel.observacao`, `public.ponto_espelhos_papel.registrado_por`, `public.ponto_espelhos_papel.updated_at`

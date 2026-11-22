@@ -47907,6 +47907,175 @@
         "nullable": false,
         "position": 1,
         "schema": "public",
+        "table": "recibos_ferias",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": true,
+        "position": 2,
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "colaborador_id",
+        "nullable": true,
+        "position": 3,
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "descricao",
+        "nullable": true,
+        "position": 4,
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "valor",
+        "nullable": true,
+        "position": 5,
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "numeric(15,2)"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "data_inicio",
+        "nullable": true,
+        "position": 6,
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "date"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "data_fim",
+        "nullable": true,
+        "position": 7,
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "date"
+      },
+      {
+        "comment": null,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "ativo",
+        "nullable": true,
+        "position": 8,
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "observacoes",
+        "nullable": true,
+        "position": 9,
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "created_at",
+        "nullable": true,
+        "position": 10,
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": true,
+        "position": 11,
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "created_by",
+        "nullable": true,
+        "position": 12,
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_by",
+        "nullable": true,
+        "position": 13,
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "id",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
         "table": "recrutamento_agendamentos",
         "type": "uuid"
       },
@@ -84623,6 +84792,99 @@
       },
       {
         "columns": [
+          "colaborador_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (colaborador_id) REFERENCES colaboradores(id) ON DELETE CASCADE",
+        "name": "recibos_ferias_colaborador_id_fkey",
+        "on_delete": "CASCADE",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "colaboradores",
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "created_by"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL",
+        "name": "recibos_ferias_created_by_fkey",
+        "on_delete": "SET NULL",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "auth",
+        "ref_table": "users",
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (empresa_id) REFERENCES empresas(id) ON DELETE CASCADE",
+        "name": "recibos_ferias_empresa_id_fkey",
+        "on_delete": "CASCADE",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "empresas",
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (id)",
+        "name": "recibos_ferias_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "updated_by"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (updated_by) REFERENCES auth.users(id) ON DELETE SET NULL",
+        "name": "recibos_ferias_updated_by_fkey",
+        "on_delete": "SET NULL",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "auth",
+        "ref_table": "users",
+        "schema": "public",
+        "table": "recibos_ferias",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
           "candidatura_id"
         ],
         "deferrable": false,
@@ -97813,9 +98075,13 @@
             {
               "file": "supabase/migrations/20261118110000_drop_policy_inerte_recrutamento.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 25,
+          "code_total_files": 26,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -102029,7 +102295,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 33,
+          "code_total_files": 35,
           "cron": [],
           "db": [
             "public.admin_definir_pin_quiosque",
@@ -103689,6 +103955,43 @@
         "name": "purge_rate_limits",
         "owner": "postgres",
         "returns": "integer",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.recibos_ferias.trg_recibos_ferias_validar"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "4d3bf833b89535fc",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "recibos_ferias_validar",
+        "owner": "postgres",
+        "returns": "trigger",
         "schema": "public",
         "security_definer": true,
         "strict": false,
@@ -107495,7 +107798,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 68,
+          "code_total_files": 69,
           "cron": [],
           "db": [],
           "triggers": [
@@ -107604,6 +107907,7 @@
             "public.promo_brindes.update_promo_brindes_updated_at",
             "public.provisoes_mensais.update_provisoes_mensais_updated_at",
             "public.provisoes_mensais.update_provisoes_updated_at",
+            "public.recibos_ferias.trg_recibos_ferias_updated_at",
             "public.recrutamento_entrevistas.set_timestamp_recrutamento_entrevistas",
             "public.recrutamento_testes.set_timestamp_recrutamento_testes",
             "public.registros_ponto.update_registros_ponto_updated_at",
@@ -116418,6 +116722,24 @@
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "recargas_vale"
+        },
+        {
+          "grantee": "authenticated",
+          "privileges": "DELETE, INSERT, SELECT, UPDATE",
+          "schema": "public",
+          "table": "recibos_ferias"
+        },
+        {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "recibos_ferias"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "recibos_ferias"
         },
         {
           "grantee": "anon",
@@ -134543,6 +134865,49 @@
       },
       {
         "columns": [
+          "colaborador_id"
+        ],
+        "definition": "CREATE INDEX idx_recibos_ferias_colaborador ON public.recibos_ferias USING btree (colaborador_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_recibos_ferias_colaborador",
+        "predicate": null,
+        "schema": "public",
+        "table": "recibos_ferias"
+      },
+      {
+        "columns": [
+          "empresa_id",
+          "data_inicio"
+        ],
+        "definition": "CREATE INDEX idx_recibos_ferias_empresa_data ON public.recibos_ferias USING btree (empresa_id, data_inicio DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_recibos_ferias_empresa_data",
+        "predicate": null,
+        "schema": "public",
+        "table": "recibos_ferias"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "definition": "CREATE UNIQUE INDEX recibos_ferias_pkey ON public.recibos_ferias USING btree (id)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "recibos_ferias_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "recibos_ferias"
+      },
+      {
+        "columns": [
           "candidatura_id"
         ],
         "definition": "CREATE INDEX idx_recrutamento_agendamentos_candidatura_id ON public.recrutamento_agendamentos USING btree (candidatura_id)",
@@ -138802,6 +139167,18 @@
         "code": "fk_without_index",
         "detail": "FK sem índice nas colunas ['empresa_id']: joins e DELETE/UPDATE na tabela pai ficam lentos.",
         "object": "public.ponto_rep_lotes.ponto_rep_lotes_empresa_id_fkey",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "fk_without_index",
+        "detail": "FK sem índice nas colunas ['created_by']: joins e DELETE/UPDATE na tabela pai ficam lentos.",
+        "object": "public.recibos_ferias.recibos_ferias_created_by_fkey",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "fk_without_index",
+        "detail": "FK sem índice nas colunas ['updated_by']: joins e DELETE/UPDATE na tabela pai ficam lentos.",
+        "object": "public.recibos_ferias.recibos_ferias_updated_by_fkey",
         "severity": "BAIXA"
       },
       {
@@ -147622,6 +147999,54 @@
         "with_check": "(colaborador_id IN ( SELECT colaboradores.id\n   FROM colaboradores\n  WHERE (colaboradores.empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))))"
       },
       {
+        "cmd": "DELETE",
+        "name": "recibos_ferias_rh_delete",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "recibos_ferias",
+        "using": "pode_gerir_rh(empresa_id)",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "name": "recibos_ferias_rh_insert",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "recibos_ferias",
+        "using": null,
+        "with_check": "pode_gerir_rh(empresa_id)"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "recibos_ferias_rh_select",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "recibos_ferias",
+        "using": "pode_gerir_rh(empresa_id)",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "recibos_ferias_rh_update",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "recibos_ferias",
+        "using": "pode_gerir_rh(empresa_id)",
+        "with_check": "pode_gerir_rh(empresa_id)"
+      },
+      {
         "cmd": "SELECT",
         "name": "Gestores veem seus agendamentos",
         "permissive": "PERMISSIVE",
@@ -154986,6 +155411,21 @@
         "schema": "public"
       },
       {
+        "comment": "Registro do recibo de férias baixado pelo RH (FeriasActions.tsx). Metadado de emissão — o PDF é gerado no navegador e não é arquivado aqui.",
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "recibos_ferias",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
         "comment": null,
         "from_extension": false,
         "is_partition": false,
@@ -160476,6 +160916,28 @@
         "schema": "public",
         "status": "enabled",
         "table": "provisoes_mensais",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_recibos_ferias_updated_at BEFORE UPDATE ON recibos_ferias FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()",
+        "events": "UPDATE",
+        "function": "public.update_updated_at_column",
+        "level": "ROW",
+        "name": "trg_recibos_ferias_updated_at",
+        "schema": "public",
+        "status": "enabled",
+        "table": "recibos_ferias",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_recibos_ferias_validar BEFORE INSERT OR UPDATE ON recibos_ferias FOR EACH ROW EXECUTE FUNCTION recibos_ferias_validar()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.recibos_ferias_validar",
+        "level": "ROW",
+        "name": "trg_recibos_ferias_validar",
+        "schema": "public",
+        "status": "enabled",
+        "table": "recibos_ferias",
         "timing": "BEFORE"
       },
       {

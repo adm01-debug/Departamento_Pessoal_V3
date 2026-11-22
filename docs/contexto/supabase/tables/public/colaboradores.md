@@ -284,6 +284,7 @@
 | public.provisoes_folha | provisoes_folha_colaborador_id_fkey | colaborador_id | CASCADE |
 | public.provisoes_mensais | provisoes_mensais_colaborador_id_fkey | colaborador_id | CASCADE |
 | public.recargas_vale | recargas_vale_colaborador_id_fkey | colaborador_id | CASCADE |
+| public.recibos_ferias | recibos_ferias_colaborador_id_fkey | colaborador_id | CASCADE |
 | public.registros_ponto | registros_ponto_colaborador_id_fkey | colaborador_id | CASCADE |
 | public.seguros_colaboradores | seguros_colaboradores_colaborador_id_fkey | colaborador_id | CASCADE |
 | public.seguros_vida | seguros_vida_colaborador_id_fkey | colaborador_id | CASCADE |

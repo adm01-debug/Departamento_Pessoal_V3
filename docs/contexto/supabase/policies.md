@@ -484,6 +484,10 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.rate_limit_logs | System can insert rate limit logs | INSERT | PERMISSIVE | authenticated |  | `(auth.uid() IS NOT NULL)` |
 | public.rate_limits | rate_limits_deny_all_non_service | ALL | RESTRICTIVE | public | `false` | `false` |
 | public.recargas_vale | tenant_recargas_vale | ALL | PERMISSIVE | authenticated | `(colaborador_id IN ( SELECT colaboradores.id    FROM colaboradores   WHERE (colaboradores.empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))))` | `(colaborador_id IN ( SELECT colaboradores.id    FROM colaboradores   WHERE (colaboradores.empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))))` |
+| public.recibos_ferias | recibos_ferias_rh_delete | DELETE | PERMISSIVE | authenticated | `pode_gerir_rh(empresa_id)` |  |
+| public.recibos_ferias | recibos_ferias_rh_insert | INSERT | PERMISSIVE | authenticated |  | `pode_gerir_rh(empresa_id)` |
+| public.recibos_ferias | recibos_ferias_rh_select | SELECT | PERMISSIVE | authenticated | `pode_gerir_rh(empresa_id)` |  |
+| public.recibos_ferias | recibos_ferias_rh_update | UPDATE | PERMISSIVE | authenticated | `pode_gerir_rh(empresa_id)` | `pode_gerir_rh(empresa_id)` |
 | public.recrutamento_agendamentos | Gestores veem seus agendamentos | SELECT | PERMISSIVE | public | `(auth.uid() IN ( SELECT user_roles.user_id    FROM user_roles   WHERE (user_roles.role = ANY (ARRAY['admin'::app_role, 'rh'::app_role, 'gestor'::app_role]))))` |  |
 | public.recrutamento_anotacoes | Anotações acessíveis por empresa | ALL | PERMISSIVE | public | `((empresa_id IS NULL) OR pertence_a_empresa(empresa_id))` | `((empresa_id IS NULL) OR pertence_a_empresa(empresa_id))` |
 | public.recrutamento_entrevistas | Entrevistas acessíveis por empresa | ALL | PERMISSIVE | public | `((empresa_id IS NULL) OR pertence_a_empresa(empresa_id))` | `((empresa_id IS NULL) OR pertence_a_empresa(empresa_id))` |

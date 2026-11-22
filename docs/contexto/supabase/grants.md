@@ -1191,6 +1191,9 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.recargas_vale | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.recargas_vale | dp_mcp_role | SELECT |
 | public.recargas_vale | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.recibos_ferias | authenticated | DELETE, INSERT, SELECT, UPDATE |
+| public.recibos_ferias | dp_mcp_role | SELECT |
+| public.recibos_ferias | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.recrutamento_agendamentos | anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.recrutamento_agendamentos | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.recrutamento_agendamentos | dp_mcp_role | SELECT |

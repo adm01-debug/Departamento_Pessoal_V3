@@ -442,6 +442,10 @@
 | public.rate_limit_logs | user_id | auth.users | id | SET NULL | NO ACTION |
 | public.recargas_vale | colaborador_id | public.colaboradores | id | CASCADE | NO ACTION |
 | public.recargas_vale | vale_id | public.vales_alimentacao | id | CASCADE | NO ACTION |
+| public.recibos_ferias | colaborador_id | public.colaboradores | id | CASCADE | NO ACTION |
+| public.recibos_ferias | created_by | auth.users | id | SET NULL | NO ACTION |
+| public.recibos_ferias | empresa_id | public.empresas | id | CASCADE | NO ACTION |
+| public.recibos_ferias | updated_by | auth.users | id | SET NULL | NO ACTION |
 | public.recrutamento_agendamentos | candidatura_id | public.candidaturas | id | CASCADE | NO ACTION |
 | public.recrutamento_agendamentos | responsavel_id | auth.users | id | SET NULL | NO ACTION |
 | public.recrutamento_anotacoes | candidatura_id | public.candidaturas | id | CASCADE | NO ACTION |

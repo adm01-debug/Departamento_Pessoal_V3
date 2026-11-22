@@ -49,6 +49,8 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | BAIXA | fk_without_index | public.pix_lotes.pix_lotes_folha_id_fkey | FK sem índice nas colunas ['folha_id']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
 | BAIXA | fk_without_index | public.ponto_rep_dias.ponto_rep_dias_lote_id_fkey | FK sem índice nas colunas ['lote_id']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
 | BAIXA | fk_without_index | public.ponto_rep_lotes.ponto_rep_lotes_empresa_id_fkey | FK sem índice nas colunas ['empresa_id']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
+| BAIXA | fk_without_index | public.recibos_ferias.recibos_ferias_created_by_fkey | FK sem índice nas colunas ['created_by']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
+| BAIXA | fk_without_index | public.recibos_ferias.recibos_ferias_updated_by_fkey | FK sem índice nas colunas ['updated_by']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
 | BAIXA | policy_auth_fn_not_wrapped | public.admissao_tokens.Tenant scoped admissao_tokens | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.admissoes.Admissoes scoped by empresa | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.admissoes.admissoes_tenant_select | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |

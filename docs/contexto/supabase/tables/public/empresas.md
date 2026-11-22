@@ -188,6 +188,7 @@
 | public.provisoes_competencia_tributaria | provisoes_competencia_tributaria_empresa_id_fkey | empresa_id | CASCADE |
 | public.provisoes_folha | provisoes_folha_empresa_id_fkey | empresa_id | CASCADE |
 | public.provisoes_mensais | provisoes_mensais_empresa_id_fkey | empresa_id | CASCADE |
+| public.recibos_ferias | recibos_ferias_empresa_id_fkey | empresa_id | CASCADE |
 | public.registros_ponto | registros_ponto_empresa_id_fkey | empresa_id | NO ACTION |
 | public.relatorios_agendados | relatorios_agendados_empresa_id_fkey | empresa_id | NO ACTION |
 | public.rubricas_folha | rubricas_folha_empresa_id_fkey | empresa_id | CASCADE |
