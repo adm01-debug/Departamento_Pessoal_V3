@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "bba91c5fe39cb197064c544cf13e8657ba89b40b",
+  "sha": "cb4d78c597c70541129b3d77eae986de40d8b342",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 05:18 UTC",
-  "files_total": 3722,
-  "code_files": 3132,
-  "code_lines": 498684
+  "generated_at": "2026-11-22 05:20 UTC",
+  "files_total": 3723,
+  "code_files": 3133,
+  "code_lines": 498786
  },
  "version": "1.3.2",
- "facts_hash": "499471af2be55ae1",
+ "facts_hash": "4a9d6dd9448e4506",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -390,7 +390,7 @@
    ".tsx": 1038,
    ".sql": 992,
    ".ts": 962,
-   ".mjs": 109,
+   ".mjs": 110,
    ".js": 15,
    ".cjs": 11,
    ".py": 8
@@ -100563,6 +100563,7 @@
      "audit_log",
      "bitrix24_config",
      "bitrix24_sync_logs",
+     "cargos",
      "colaboradores",
      "departamentos"
     ],
@@ -103361,8 +103362,8 @@
   },
   {
    "module": "scripts",
-   "files": 154,
-   "lines": 35256,
+   "files": 155,
+   "lines": 35317,
    "tables": [
     "a",
     "anexos",
@@ -105385,7 +105386,7 @@
   {
    "module": "supabase/functions",
    "files": 191,
-   "lines": 27592,
+   "lines": 27633,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -105406,6 +105407,7 @@
     "bitrix24_config",
     "bitrix24_sync_logs",
     "blocked_ips",
+    "cargos",
     "catalogo_cursos",
     "certificados_digitais",
     "cnab_itens",
@@ -106289,7 +106291,14 @@
    "cargos": {
     "select": [
      "src/components/pcs/PcsAvaliacaoTab.tsx",
-     "src/pages/MovimentacoesPage.tsx"
+     "src/pages/MovimentacoesPage.tsx",
+     "supabase/functions/sincronizar-bitrix/index.ts"
+    ],
+    "update": [
+     "supabase/functions/sincronizar-bitrix/index.ts"
+    ],
+    "insert": [
+     "supabase/functions/sincronizar-bitrix/index.ts"
     ]
    },
    "catalogo_cursos": {
@@ -168200,6 +168209,22 @@
    {
     "file": "scripts/autofix/regras/dados.test.mjs",
     "name": "policy aberta: true OR x e x OR true também são abertas; procedure SECURITY DEFINER é vista"
+   },
+   {
+    "file": "scripts/tests/audit-baseline-portabilidade.test.mjs",
+    "name": "ratchet-any deriva a chave do baseline separando os dois tipos de separador"
+   },
+   {
+    "file": "scripts/tests/audit-baseline-portabilidade.test.mjs",
+    "name": "ratchet-any mantém o baseline real casando com a chave normalizada"
+   },
+   {
+    "file": "scripts/tests/audit-baseline-portabilidade.test.mjs",
+    "name": "bridge-contract normaliza call.file para posix antes de montar a chave"
+   },
+   {
+    "file": "scripts/tests/audit-baseline-portabilidade.test.mjs",
+    "name": "baseline do bridge usa apenas separador posix"
    },
    {
     "file": "scripts/tests/contexto-indice-data.test.mjs",
@@ -268527,6 +268552,18 @@
     "notify"
    ]
   },
+  "scripts/tests/audit-baseline-portabilidade.test.mjs": {
+   "path": "scripts/tests/audit-baseline-portabilidade.test.mjs",
+   "lines": 61,
+   "is_test": true,
+   "doc": "Contrato de portabilidade das chaves de baseline dos gates. `ratchet-any.mjs` e `audit-bridge-frontend-contract.mjs` comparam a chave calculada em runtime com uma chave escrita à mão em JSON (sempre com `/`). No Windows `relative()` devolve `\\`, então qualquer chave derivada de path sem normalização …",
+   "tests": [
+    "ratchet-any deriva a chave do baseline separando os dois tipos de separador",
+    "ratchet-any mantém o baseline real casando com a chave normalizada",
+    "bridge-contract normaliza call.file para posix antes de montar a chave",
+    "baseline do bridge usa apenas separador posix"
+   ]
+  },
   "scripts/tests/audit-edge-audit-log-contract.test.mjs": {
    "path": "scripts/tests/audit-edge-audit-log-contract.test.mjs",
    "lines": 86,
@@ -330242,7 +330279,7 @@
   },
   "supabase/functions/sincronizar-bitrix/index.ts": {
    "path": "supabase/functions/sincronizar-bitrix/index.ts",
-   "lines": 219,
+   "lines": 260,
    "tables": [
     {
      "table": "bitrix24_config",
@@ -330255,6 +330292,18 @@
     {
      "table": "colaboradores",
      "op": "upsert"
+    },
+    {
+     "table": "cargos",
+     "op": "select"
+    },
+    {
+     "table": "cargos",
+     "op": "update"
+    },
+    {
+     "table": "cargos",
+     "op": "insert"
     },
     {
      "table": "bitrix24_sync_logs",
@@ -330270,6 +330319,11 @@
     }
    ],
    "table_cols": {
+    "cargos": [
+     "empresa_id",
+     "id",
+     "nome"
+    ],
     "bitrix24_config": [
      "id"
     ]
@@ -335441,10 +335495,32 @@
   }
  },
  "git": {
-  "sha": "bba91c5fe39cb197064c544cf13e8657ba89b40b",
+  "sha": "cb4d78c597c70541129b3d77eae986de40d8b342",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "cb4d78c",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "fix: gates de baseline comparam chave com separador nativo (reprovavam no Windows sem regressão real) (#821)",
+    "files": [
+     ".github/workflows/ci.yml",
+     "scripts/audit-bridge-frontend-contract.mjs",
+     "scripts/automation.config.json",
+     "scripts/ratchet-any.mjs",
+     "scripts/tests/audit-baseline-portabilidade.test.mjs"
+    ]
+   },
+   {
+    "sha": "e5a1e96",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "feat: sincroniza cargos do Bitrix a partir de WORK_POSITION dos usuarios (#825)",
+    "files": [
+     "supabase/functions/sincronizar-bitrix/index.ts"
+    ]
+   },
    {
     "sha": "bba91c5",
     "date": "2026-11-22",
@@ -335773,30 +335849,6 @@
      "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
      "docs/agentes/banco.md"
     ]
-   },
-   {
-    "sha": "b9b1c05",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: corrige as duas falhas do mode=verify do ledger canônico (#793)",
-    "files": [
-     "docs/auditoria/MIGRATIONS_LEDGER_SEM_ARQUIVO_2026-11-17.md",
-     "supabase/migrations/20261119120000_ferias_folhas_gestor_update.sql",
-     "supabase/migrations/20261119120000_ferias_folhas_gestor_update.verify.sql",
-     "supabase/migrations/20261119150000_onboarding_auditoria_grava_trilha.verify.sql"
-    ]
-   },
-   {
-    "sha": "3f0f032",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "infra: concede ci_auditor ao papel da conexão para destravar o diagnóstico SQL (#791)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "scripts/canonical-invariants.sql",
-     "supabase/migrations/20261121200000_ci_auditor_grant_set_role.sql",
-     "supabase/migrations/20261121200000_ci_auditor_grant_set_role.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -335810,11 +335862,11 @@
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    4
+    3
    ],
    [
     "scripts/canonical-invariants.sql",
-    4
+    3
    ],
    [
     "src/pages/PontoKioskPage.tsx",
@@ -335823,6 +335875,14 @@
    [
     "src/components/ponto/relogio/RelogiosPanel.tsx",
     3
+   ],
+   [
+    ".github/workflows/ci.yml",
+    2
+   ],
+   [
+    "scripts/automation.config.json",
+    2
    ],
    [
     "inventario/estado/rotas.json",
@@ -335853,31 +335913,23 @@
     2
    ],
    [
+    "scripts/audit-bridge-frontend-contract.mjs",
+    1
+   ],
+   [
+    "scripts/ratchet-any.mjs",
+    1
+   ],
+   [
+    "scripts/tests/audit-baseline-portabilidade.test.mjs",
+    1
+   ],
+   [
+    "supabase/functions/sincronizar-bitrix/index.ts",
+    1
+   ],
+   [
     "src/components/obrigacoes/FgtsDigitalTable.tsx",
-    1
-   ],
-   [
-    "src/pages/ObrigacoesFiscaisPage.tsx",
-    1
-   ],
-   [
-    "src/pages/__tests__/ObrigacoesFiscaisPage.fgtsDigital.test.tsx",
-    1
-   ],
-   [
-    "src/services/__tests__/edgeFunctionsService.test.ts",
-    1
-   ],
-   [
-    "src/services/edgeFunctionsService.ts",
-    1
-   ],
-   [
-    "supabase/functions/fgts-digital/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/gerar-guias/index.ts",
     1
    ]
   ]

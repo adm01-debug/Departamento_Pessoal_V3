@@ -23,7 +23,7 @@
   ],
   "testes": [
    "co-localizado (__tests__) (675)",
-   "co-localizado (*.test) (74)",
+   "co-localizado (*.test) (75)",
    "e2e/ (33)"
   ],
   "edge_functions": "supabase/functions",
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: gates de baseline comparam chave com separador nativo (reprovavam no Windows sem regressão real) (#821)",
+   "feat: sincroniza cargos do Bitrix a partir de WORK_POSITION dos usuarios (#825)",
    "feat: conecta a aba FGTS Digital à edge fgts-digital (feature estava órfã a 1 passo do fim) (#822)",
    "docs: reescreve a análise de pendentes com o estado real (9 dos 12 itens já estavam implementados) (#823)",
-   "fix: gerador de rotas resolve index.ts com separador nativo (inventario saia diferente no Windows) (#820)",
-   "chore: documenta o limite real das etapas 55 e 58 do plano do ponto (#816)",
-   "chore: fecha etapa 45 do plano do ponto com evidencia real do CI (#819)"
+   "fix: gerador de rotas resolve index.ts com separador nativo (inventario saia diferente no Windows) (#820)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

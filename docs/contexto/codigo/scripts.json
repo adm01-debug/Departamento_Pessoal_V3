@@ -956,7 +956,9 @@
    "npm_scripts": [
     "audit:ratchet-any"
    ],
-   "workflows": [],
+   "workflows": [
+    "ci.yml"
+   ],
    "orfao": false
   },
   {

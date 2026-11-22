@@ -2448,7 +2448,7 @@
    "nome": "sincronizar-bitrix",
    "entrada": "supabase/functions/sincronizar-bitrix/index.ts",
    "arquivos": 2,
-   "linhas": 236,
+   "linhas": 277,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -2458,6 +2458,7 @@
     "audit_log",
     "bitrix24_config",
     "bitrix24_sync_logs",
+    "cargos",
     "colaboradores",
     "departamentos"
    ],

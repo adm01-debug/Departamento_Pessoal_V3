@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bba91c5fe39cb197064c544cf13e8657ba89b40b",
+  "commit": "cb4d78c597c70541129b3d77eae986de40d8b342",
   "branch": "main",
-  "data_commit": "2026-11-22T02:17:50-03:00",
+  "data_commit": "2026-11-22T02:19:26-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "cb4d78c",
+    "data": "2026-11-22",
+    "assunto": "fix: gates de baseline comparam chave com separador nativo (reprovavam no Windows sem regressão real) (#821)"
+   },
+   {
+    "sha": "e5a1e96",
+    "data": "2026-11-22",
+    "assunto": "feat: sincroniza cargos do Bitrix a partir de WORK_POSITION dos usuarios (#825)"
+   },
    {
     "sha": "bba91c5",
     "data": "2026-11-22",
@@ -121,23 +131,13 @@
     "sha": "598b48c",
     "data": "2026-11-21",
     "assunto": "feat: função ingest-ponto-rep recebe e guarda os envios do relógio de ponto (#798)"
-   },
-   {
-    "sha": "a6548c3",
-    "data": "2026-11-21",
-    "assunto": "feat: tabelas de entrada do relógio de ponto (ponto_rep_*) (#795)"
-   },
-   {
-    "sha": "0696746",
-    "data": "2026-11-21",
-    "assunto": "feat: coletor somente leitura do Ponto AtecSoft para o DP V3 (#796)"
    }
   ],
-  "arquivos_mudados_7d": 1065,
+  "arquivos_mudados_7d": 1069,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 378
+    "mudancas": 377
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -230,7 +230,7 @@
     "mudancas": 9
    },
    {
-    "arquivo": "package.json",
+    "arquivo": "scripts/automation.config.json",
     "mudancas": 8
    },
    {
@@ -238,11 +238,7 @@
     "mudancas": 7
    },
    {
-    "arquivo": "package-lock.json",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "scripts/automation.config.json",
+    "arquivo": "package.json",
     "mudancas": 7
    },
    {
@@ -263,6 +259,10 @@
    },
    {
     "arquivo": "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "package-lock.json",
     "mudancas": 6
    },
    {
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3708,
-  "arquivos_codigo": 2142,
-  "linhas_codigo": 428037,
+  "arquivos_total": 3709,
+  "arquivos_codigo": 2143,
+  "linhas_codigo": 428139,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 436,
   "migrations": 918,
   "cron_jobs": 42,
-  "testes": 808,
+  "testes": 809,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 344
@@ -599,8 +599,8 @@
    "linhas": 2867
   },
   "scripts/tests": {
-   "arquivos": 21,
-   "linhas": 2344
+   "arquivos": 22,
+   "linhas": 2405
   },
   "scripts/training-images-homolog": {
    "arquivos": 1,
@@ -724,7 +724,7 @@
   },
   "supabase/functions": {
    "arquivos": 191,
-   "linhas": 27592
+   "linhas": 27633
   },
   "supabase/tests": {
    "arquivos": 3,

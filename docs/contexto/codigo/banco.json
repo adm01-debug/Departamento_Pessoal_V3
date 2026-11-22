@@ -11529,7 +11529,9 @@
     "so_no_types": []
    },
    "usada_no_front": 2,
-   "usada_em_edges": [],
+   "usada_em_edges": [
+    "sincronizar-bitrix"
+   ],
    "triggers": [
     "tr_increment_version_cargos"
    ],

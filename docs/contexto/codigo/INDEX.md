@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bba91c5fe39cb197064c544cf13e8657ba89b40b` (2026-11-22T02:17:50-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `cb4d78c597c70541129b3d77eae986de40d8b342` (2026-11-22T02:19:26-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2000), SQL (992), Markdown (344), JavaScript (135), JSON (64), Shell (58), YAML (56), Python (8)
+- linguagens: TypeScript (2000), SQL (992), Markdown (344), JavaScript (136), JSON (64), Shell (58), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3708 |
-| arquivos_codigo | 2142 |
-| linhas_codigo | 428037 |
+| arquivos_total | 3709 |
+| arquivos_codigo | 2143 |
+| linhas_codigo | 428139 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 436 |
 | migrations | 918 |
 | cron_jobs | 42 |
-| testes | 808 |
+| testes | 809 |
 | workflows | 21 |
 | scripts | 138 |
 | docs_md | 344 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (528), src/pages (110), src/contexts (3)
 - hooks: src/hooks (102), src/components (10), src/contexts (4)
 - servicos_logica: src/services (100), src/utils (35), src/schemas (25)
-- testes: co-localizado (__tests__) (675), co-localizado (*.test) (74), e2e/ (33)
+- testes: co-localizado (__tests__) (675), co-localizado (*.test) (75), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -314,7 +314,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `rateLimit` — tabelas: -; chamada por 1 arquivo(s) do front
 - `reabrir-folha` — tabelas: audit_log, folhas_pagamento; chamada por 1 arquivo(s) do front
 - `relatorio` — tabelas: audit_log, auditoria_logs, colaboradores, ferias_solicitacoes, folhas_pagamento, registros_ponto; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `sincronizar-bitrix` — tabelas: audit_log, bitrix24_config, bitrix24_sync_logs, colaboradores, departamentos; chamada por 2 arquivo(s) do front
+- `sincronizar-bitrix` — tabelas: audit_log, bitrix24_config, bitrix24_sync_logs, cargos, colaboradores, departamentos; chamada por 2 arquivo(s) do front
 - `tabelas-dominio` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `training-image-dispatch` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `training-image-generate` — tabelas: user_empresas, user_roles; chamada por 0 arquivo(s) do front — **ÓRFÃ**
@@ -398,8 +398,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28127 nós · 63461 arestas · 2411 comunidades · grafo do commit `bba91c5f`
-- comunidades maiores: lucide-react (539), 20260831_corrected_public.sql (485), canonical_schema.sql (481), react (455), client.ts (442), button.tsx (416), cn (403), useEmpresas (368), ref_node_fs (219), App.tsx (198), FeedbackAcoesRodape.tsx (183), nineBoxComum.ts (168)
+- 28131 nós · 63468 arestas · 2454 comunidades · grafo do commit `cb4d78c5`
+- comunidades maiores: useEmpresas (512), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (415), cn (393), vitest (300), lucide-react (298), contract.ts (261), TreinamentosPage.tsx (248), validate.ts (203), App.tsx (165), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -412,13 +412,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
 - src/integrations/supabase/types.ts (10)
 - docs/prod-readiness.md (9)
-- package.json (8)
+- scripts/automation.config.json (8)
 - docs/auditoria/sql-preservado/README.md (7)
-- package-lock.json (7)
-- scripts/automation.config.json (7)
+- package.json (7)
 - src/pages/CalculadoraRescisaoPage.tsx (7)
 - src/pages/ColaboradoresPage.tsx (7)
 - src/schemas/tableColumns.ts (7)
+- docs/agentes/banco.md (6)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -656,6 +656,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-22 `cb4d78c` fix: gates de baseline comparam chave com separador nativo (reprovavam no Windows sem regressão real) (#821)
+- 2026-11-22 `e5a1e96` feat: sincroniza cargos do Bitrix a partir de WORK_POSITION dos usuarios (#825)
 - 2026-11-22 `bba91c5` feat: conecta a aba FGTS Digital à edge fgts-digital (feature estava órfã a 1 passo do fim) (#822)
 - 2026-11-22 `d4b08fa` docs: reescreve a análise de pendentes com o estado real (9 dos 12 itens já estavam implementados) (#823)
 - 2026-11-21 `bfd9db6` fix: gerador de rotas resolve index.ts com separador nativo (inventario saia diferente no Windows) (#820)
@@ -669,8 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `af23346` fix: aviso neutro no quiosque e teste do aviso na reconexao (#812)
 - 2026-11-21 `2624262` fix: avisa quando batida offline é recusada por usar o relógio da unidade (#811)
 - 2026-11-21 `2db7ac8` chore: progresso do plano do relógio de ponto com evidências (#809)
-- 2026-11-21 `1511918` fix: formatação do painel de relógios (prettier) (#808)
-- 2026-11-21 `c74e67d` infra: lote canônico com as 5 migrations do relógio de ponto (#806)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

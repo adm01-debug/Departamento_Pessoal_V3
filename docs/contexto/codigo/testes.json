@@ -5,12 +5,12 @@
   "vitest",
   "playwright"
  ],
- "total": 808,
+ "total": 809,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 763
+  "unit": 764
  },
  "onde_ficam": [
   {
@@ -19,7 +19,7 @@
   },
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 74
+   "arquivos": 75
   },
   {
    "padrao": "e2e/",
@@ -408,6 +408,13 @@
    "linhas": 1065,
    "testa": [],
    "casos": 0
+  },
+  {
+   "arquivo": "scripts/tests/audit-baseline-portabilidade.test.mjs",
+   "tipo": "unit",
+   "linhas": 61,
+   "testa": [],
+   "casos": 6
   },
   {
    "arquivo": "scripts/tests/audit-edge-audit-log-contract.test.mjs",
