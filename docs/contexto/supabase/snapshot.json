@@ -44518,6 +44518,19 @@
         "type": "timestamp with time zone"
       },
       {
+        "comment": "Últimos 4 dígitos do CPF, mantidos pelo gatilho fn_ponto_rep_funcionario_cpf_last4 — único CPF que authenticated pode ler.",
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "cpf_last4",
+        "nullable": true,
+        "position": 20,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios",
+        "type": "text"
+      },
+      {
         "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
@@ -96976,6 +96989,43 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.ponto_rep_funcionarios.trg_ponto_rep_funcionario_cpf_last4"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "de97428da77451e3",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "fn_ponto_rep_funcionario_cpf_last4",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
               "file": "supabase/migrations/20260513165148_dba8acd2-8fa3-4894-9e35-5cd1e3954394.sql",
               "hits": 1
             },
@@ -108965,6 +109015,132 @@
           "privileges": "SELECT",
           "schema": "public",
           "table": "ponto_rep_dispositivos"
+        },
+        {
+          "column": "codigo",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "colaborador_id",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "cpf_last4",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "created_at",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "data_admissao",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "data_desligamento",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "dispositivo_id",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "empresa_codigo",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "empresa_id",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "hash_conteudo",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "horario_codigo",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "id",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "matricula",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "nome",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "situacao",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "updated_at",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "vinculado_em",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
+        },
+        {
+          "column": "vinculo_metodo",
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "ponto_rep_funcionarios"
         }
       ],
       "default_privileges": [
@@ -116092,12 +116268,6 @@
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "ponto_rep_dispositivos"
-        },
-        {
-          "grantee": "authenticated",
-          "privileges": "SELECT",
-          "schema": "public",
-          "table": "ponto_rep_funcionarios"
         },
         {
           "grantee": "dp_mcp_role",
@@ -133796,6 +133966,21 @@
         "method": "btree",
         "name": "ponto_rep_funcionarios_pkey",
         "predicate": null,
+        "schema": "public",
+        "table": "ponto_rep_funcionarios"
+      },
+      {
+        "columns": [
+          "empresa_id",
+          "colaborador_id"
+        ],
+        "definition": "CREATE UNIQUE INDEX ux_ponto_rep_funcionarios_colaborador_por_empresa ON public.ponto_rep_funcionarios USING btree (empresa_id, colaborador_id) WHERE (colaborador_id IS NOT NULL)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "ux_ponto_rep_funcionarios_colaborador_por_empresa",
+        "predicate": "(colaborador_id IS NOT NULL)",
         "schema": "public",
         "table": "ponto_rep_funcionarios"
       },
@@ -160685,6 +160870,17 @@
         "schema": "public",
         "status": "enabled",
         "table": "ponto_espelhos_papel",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_ponto_rep_funcionario_cpf_last4 BEFORE INSERT OR UPDATE OF cpf ON ponto_rep_funcionarios FOR EACH ROW EXECUTE FUNCTION fn_ponto_rep_funcionario_cpf_last4()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.fn_ponto_rep_funcionario_cpf_last4",
+        "level": "ROW",
+        "name": "trg_ponto_rep_funcionario_cpf_last4",
+        "schema": "public",
+        "status": "enabled",
+        "table": "ponto_rep_funcionarios",
         "timing": "BEFORE"
       },
       {

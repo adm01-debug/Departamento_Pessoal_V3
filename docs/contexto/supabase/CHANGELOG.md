@@ -2,6 +2,14 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-22 12:18 UTC
+
+- **colunas** adicionado (1): `public.ponto_rep_funcionarios.cpf_last4`
+- **functions** adicionado (1): `public.fn_ponto_rep_funcionario_cpf_last4()`
+- **grants** removido (1): `public.ponto_rep_funcionarios:authenticated`
+- **indexes** adicionado (1): `public.ux_ponto_rep_funcionarios_colaborador_por_empresa`
+- **triggers** adicionado (1): `public.ponto_rep_funcionarios.trg_ponto_rep_funcionario_cpf_last4`
+
 ## 2026-11-22 01:14 UTC
 
 - **colunas** adicionado (13): `public.recibos_ferias.ativo`, `public.recibos_ferias.colaborador_id`, `public.recibos_ferias.created_at`, `public.recibos_ferias.created_by`, `public.recibos_ferias.data_fim`, `public.recibos_ferias.data_inicio`, `public.recibos_ferias.descricao`, `public.recibos_ferias.empresa_id`, `public.recibos_ferias.id`, `public.recibos_ferias.observacoes`, `public.recibos_ferias.updated_at`, `public.recibos_ferias.updated_by`, `public.recibos_ferias.valor`

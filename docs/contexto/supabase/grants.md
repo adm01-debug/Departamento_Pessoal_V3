@@ -1086,7 +1086,6 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.ponto_rep_dias | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.ponto_rep_dispositivos | dp_mcp_role | SELECT |
 | public.ponto_rep_dispositivos | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.ponto_rep_funcionarios | authenticated | SELECT |
 | public.ponto_rep_funcionarios | dp_mcp_role | SELECT |
 | public.ponto_rep_funcionarios | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.ponto_rep_justificativas | authenticated | SELECT |
@@ -1727,6 +1726,24 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.ponto_rep_dispositivos.unidade | authenticated | SELECT |
 | public.ponto_rep_dispositivos.updated_at | authenticated | SELECT |
 | public.ponto_rep_dispositivos.versao_coletor | authenticated | SELECT |
+| public.ponto_rep_funcionarios.codigo | authenticated | SELECT |
+| public.ponto_rep_funcionarios.colaborador_id | authenticated | SELECT |
+| public.ponto_rep_funcionarios.cpf_last4 | authenticated | SELECT |
+| public.ponto_rep_funcionarios.created_at | authenticated | SELECT |
+| public.ponto_rep_funcionarios.data_admissao | authenticated | SELECT |
+| public.ponto_rep_funcionarios.data_desligamento | authenticated | SELECT |
+| public.ponto_rep_funcionarios.dispositivo_id | authenticated | SELECT |
+| public.ponto_rep_funcionarios.empresa_codigo | authenticated | SELECT |
+| public.ponto_rep_funcionarios.empresa_id | authenticated | SELECT |
+| public.ponto_rep_funcionarios.hash_conteudo | authenticated | SELECT |
+| public.ponto_rep_funcionarios.horario_codigo | authenticated | SELECT |
+| public.ponto_rep_funcionarios.id | authenticated | SELECT |
+| public.ponto_rep_funcionarios.matricula | authenticated | SELECT |
+| public.ponto_rep_funcionarios.nome | authenticated | SELECT |
+| public.ponto_rep_funcionarios.situacao | authenticated | SELECT |
+| public.ponto_rep_funcionarios.updated_at | authenticated | SELECT |
+| public.ponto_rep_funcionarios.vinculado_em | authenticated | SELECT |
+| public.ponto_rep_funcionarios.vinculo_metodo | authenticated | SELECT |
 
 
 ## Sequences (roles da API)

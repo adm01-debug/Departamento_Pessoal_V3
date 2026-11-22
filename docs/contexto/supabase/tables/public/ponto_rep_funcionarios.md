@@ -37,6 +37,7 @@
 | 17 | `hash_conteudo` | `text` | sim |  |  |  |
 | 18 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
 | 19 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 20 | `cpf_last4` | `text` | sim |  |  | Últimos 4 dígitos do CPF, mantidos pelo gatilho fn_ponto_rep_funcionario_cpf_last4 — único CPF que authenticated pode ler. |
 
 
 ## Constraints
@@ -59,6 +60,7 @@
 | idx_ponto_rep_funcionarios_empresa | btree | empresa_id | não | sim |  | `CREATE INDEX idx_ponto_rep_funcionarios_empresa ON public.ponto_rep_funcionarios USING btree (empresa_id)` |
 | ponto_rep_funcionarios_dispositivo_codigo_key | btree | dispositivo_id, codigo | sim | sim |  | `CREATE UNIQUE INDEX ponto_rep_funcionarios_dispositivo_codigo_key ON public.ponto_rep_funcionarios USING btree (dispositivo_id, codigo)` |
 | ponto_rep_funcionarios_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX ponto_rep_funcionarios_pkey ON public.ponto_rep_funcionarios USING btree (id)` |
+| ux_ponto_rep_funcionarios_colaborador_por_empresa | btree | empresa_id, colaborador_id | sim | sim | `(colaborador_id IS NOT NULL)` | `CREATE UNIQUE INDEX ux_ponto_rep_funcionarios_colaborador_por_empresa ON public.ponto_rep_funcionarios USING btree (empresa_id, colaborador_id) WHERE (colaborador_id IS NOT NULL)` |
 
 
 ## Policies (RLS)
@@ -76,13 +78,38 @@
 
 ## Triggers
 
-_nenhum_
+| nome | timing | eventos | nível | status | função |
+|---|---|---|---|---|---|
+| trg_ponto_rep_funcionario_cpf_last4 | BEFORE | INSERT OR UPDATE | ROW | enabled | public.fn_ponto_rep_funcionario_cpf_last4 |
 
 
 ## Grants
 
 | role | privilégios |
 |---|---|
-| authenticated | SELECT |
 | dp_mcp_role | SELECT |
 | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+
+
+Grants por coluna:
+
+| coluna | role | privilégios |
+|---|---|---|
+| codigo | authenticated | SELECT |
+| colaborador_id | authenticated | SELECT |
+| cpf_last4 | authenticated | SELECT |
+| created_at | authenticated | SELECT |
+| data_admissao | authenticated | SELECT |
+| data_desligamento | authenticated | SELECT |
+| dispositivo_id | authenticated | SELECT |
+| empresa_codigo | authenticated | SELECT |
+| empresa_id | authenticated | SELECT |
+| hash_conteudo | authenticated | SELECT |
+| horario_codigo | authenticated | SELECT |
+| id | authenticated | SELECT |
+| matricula | authenticated | SELECT |
+| nome | authenticated | SELECT |
+| situacao | authenticated | SELECT |
+| updated_at | authenticated | SELECT |
+| vinculado_em | authenticated | SELECT |
+| vinculo_metodo | authenticated | SELECT |
