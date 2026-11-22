@@ -1802,7 +1802,7 @@
    "nome": "ingest-ponto-rep",
    "entrada": "supabase/functions/ingest-ponto-rep/index.ts",
    "arquivos": 2,
-   "linhas": 324,
+   "linhas": 340,
    "verify_jwt": false,
    "metodos": [
     "POST"
@@ -1816,7 +1816,9 @@
     "ponto_rep_justificativas",
     "ponto_rep_lotes"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "ponto_rep_processar_dias"
+   ],
    "env": [
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"

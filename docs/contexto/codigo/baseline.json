@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "108016d61ceb7e921bd040145088a81f8463dd4b",
+  "commit": "e3410c9cf505b10847186ea7beb4662e4b52e26d",
   "branch": "main",
-  "data_commit": "2026-11-22T10:39:54-03:00",
+  "data_commit": "2026-11-22T11:32:54-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "e3410c9",
+    "data": "2026-11-22",
+    "assunto": "feat: converte dia do relogio em batidas (etapa 41 do Ponto AtecSoft) (#837)"
+   },
    {
     "sha": "108016d",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "af23346",
     "data": "2026-11-21",
     "assunto": "fix: aviso neutro no quiosque e teste do aviso na reconexao (#812)"
-   },
-   {
-    "sha": "2624262",
-    "data": "2026-11-21",
-    "assunto": "fix: avisa quando batida offline é recusada por usar o relógio da unidade (#811)"
    }
   ],
-  "arquivos_mudados_7d": 1079,
+  "arquivos_mudados_7d": 1082,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    "mudancas": 11
+    "mudancas": 12
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -226,12 +226,12 @@
     "mudancas": 10
    },
    {
-    "arquivo": "docs/prod-readiness.md",
-    "mudancas": 9
+    "arquivo": "scripts/automation.config.json",
+    "mudancas": 10
    },
    {
-    "arquivo": "scripts/automation.config.json",
-    "mudancas": 9
+    "arquivo": "docs/prod-readiness.md",
+    "mudancas": 8
    },
    {
     "arquivo": "src/schemas/tableColumns.ts",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3719,
+  "arquivos_total": 3722,
   "arquivos_codigo": 2143,
-  "linhas_codigo": 428249,
+  "linhas_codigo": 428265,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -326,7 +326,7 @@
   "hooks": 122,
   "edge_functions": 68,
   "tabelas": 436,
-  "migrations": 926,
+  "migrations": 928,
   "cron_jobs": 42,
   "testes": 809,
   "workflows": 21,
@@ -724,7 +724,7 @@
   },
   "supabase/functions": {
    "arquivos": 191,
-   "linhas": 27666
+   "linhas": 27682
   },
   "supabase/tests": {
    "arquivos": 3,

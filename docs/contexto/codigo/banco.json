@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 926,
+ "migrations": 928,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -516,6 +516,10 @@
   "ponto_espelhos_assinados_guard_update",
   "ponto_espelhos_papel_validar",
   "ponto_rep_colaborador_usa_relogio",
+  "ponto_rep_converter_dia",
+  "ponto_rep_posicao_para_batida",
+  "ponto_rep_processar_dias",
+  "ponto_rep_reprocessar_periodo",
   "prevent_audit_log_modification",
   "prevent_empty_empresa_id",
   "process_audit_log",
@@ -574,6 +578,7 @@
   "rejeitar_despesa",
   "replace_monthly_provisions",
   "report_destination_is_allowed",
+  "reprocessar_ponto_relogio",
   "reset_account_lockout",
   "reset_login_attempts",
   "resolve_security_alert",
@@ -65007,6 +65012,11 @@
   },
   {
    "nome": "pode_gerir_avaliacoes",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "ponto_rep_processar_dias",
    "definida": true,
    "usada_em": 1
   },

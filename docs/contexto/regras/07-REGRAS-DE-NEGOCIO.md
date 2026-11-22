@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `108016d61c` · branch `main` · 2026-11-22 14:13 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e3410c9cf5` · branch `main` · 2026-11-22 14:33 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1097,6 +1097,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `bloquear_autoatendimento_quem_usa_relogio` | Este colaborador registra o ponto no relógio da unidade. | `supabase/migrations/20261121222000_batidas_relogio_protecao.sql` |
 | `ponto_espelhos_papel_validar` | colaborador % não pertence à empresa % | `supabase/migrations/20261121224000_ponto_espelhos_papel.sql` |
 | `recibos_ferias_validar` | colaborador % não pertence à empresa % | `supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql` |
+| `ponto_rep_converter_dia` | ponto_rep_dias % nao existe | `supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql` |
+| `ponto_rep_reprocessar_periodo` | periodo invalido: % a % | `supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql` |
+| `reprocessar_ponto_relogio` | Sessao obrigatoria | `supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql` |
+| `reprocessar_ponto_relogio` | Sem permissao para reprocessar o ponto desta empresa | `supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql` |
 | `_purge_audit_log_internal` | Retenção mínima de 30 dias | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_security_definer_rpcs` | access denied | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_user_roles` | Apenas administradores podem listar papéis de usuário | `supabase/rebaseline/20260831_corrected_public.sql` |
@@ -1225,11 +1229,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `medida_enviar_aprovacao` | medida não encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_enviar_aprovacao` | acesso negado | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_enviar_aprovacao` | só é possível enviar medidas em rascunho (atual: %) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_gerar_link_ciencia` | Sem permissão para gerar link de ciência | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_gerar_link_ciencia` | Medida não encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_gerar_link_ciencia` | Acesso negado à empresa | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_gerar_link_ciencia` | Medida deve estar aplicada/aprovada para gerar ciência | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +187 linhas — lista completa em `context.json` | | |
+| … +191 linhas — lista completa em `context.json` | | |
 
 ## E. Estados, máquinas de estado e transições
 

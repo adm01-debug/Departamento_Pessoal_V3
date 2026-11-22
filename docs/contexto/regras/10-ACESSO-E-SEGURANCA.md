@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `108016d61c` · branch `main` · 2026-11-22 14:13 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e3410c9cf5` · branch `main` · 2026-11-22 14:33 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 334 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 336 arquivo(s)
 
 - `docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql`
 - `docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql`
@@ -472,7 +472,7 @@
 - `supabase/migrations/20260712214014_5ded020d-3162-4157-ba2e-724b53d8392b.sql`
 - `supabase/migrations/20260712214929_4971f364-3f69-48cd-9150-a55524b1025d.sql`
 - `supabase/migrations/20260712215539_349ae8a8-7ed9-41a5-b06c-ea4b8f35c7b5.sql`
-- … +184 (lista completa em `context.json`)
+- … +186 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -740,6 +740,7 @@
 - `rejeitar_despesa`
 - `replace_monthly_provisions`
 - `report_destination_is_allowed`
+- `reprocessar_ponto_relogio`
 - `reset_account_lockout`
 - `reset_login_attempts`
 - `resolve_security_alert`
@@ -860,23 +861,23 @@ Middleware matcher (Next.js): nenhum
 | grant | authenticated | select, insert, update, delete | `contabilidade_contatos`, `contabilidade_threads`, `contabilidade_mensagens`, `afdt_importacoes`, `afdt_registros_raw`, `afdt_divergencias`, `clinicas_partners`, `clinicas_partners_servicos`, `clinicas_partners_horarios`, `exames_agendamentos`, `sst_ordens_servico`, `sst_ltcat_laudos`, `epis_fichas`, `epis_fichas_itens`, `sst_extintores` … +22 |
 | grant | authenticated | update | `feedbacks_360` |
 | grant | authenticated, anon | execute | `distancia_haversine`, `user_empresa_id`, `get_auth_empresa_id` |
-| grant | authenticated, service_role | execute | `get_cron_jobs_health`, `get_security_alerts_summary`, `resolve_security_alert`, `search_audit_unified`, `purge_audit_log_old`, `resolve_security_alert`, `sst_regimento_notificar_pendentes`, `calcular_dias_direito_ferias`, `validar_split_ferias`, `eh_dia_valido_inicio_ferias`, `contrato_token_evento_registrar`, `pertence_a_empresa`, `sec_audit_policies`, `registrar_auditoria`, `listar_auditoria` … +45 |
+| grant | authenticated, service_role | execute | `get_cron_jobs_health`, `get_security_alerts_summary`, `resolve_security_alert`, `search_audit_unified`, `purge_audit_log_old`, `resolve_security_alert`, `sst_regimento_notificar_pendentes`, `calcular_dias_direito_ferias`, `validar_split_ferias`, `eh_dia_valido_inicio_ferias`, `contrato_token_evento_registrar`, `pertence_a_empresa`, `sec_audit_policies`, `registrar_auditoria`, `listar_auditoria` … +46 |
 | grant | authenticated, service_role | select | `v_audit_trail`, `mv_status_change_daily`, `mv_anomalies_hourly`, `v_ferias_alertas_criticos`, `v_pii_access_suspeitos`, `vw_folha_compliance`, `vw_feedbacks_360_versao` |
 | grant | authenticated, service_role | select, insert, update, delete | `storage.objects` |
 | grant | ci_auditor | execute | `extensions` |
 | grant | ci_auditor | select | `cron.job` |
 | grant | dp_mcp_role | select | `ninebox_permissoes_homologacao` |
 | grant | service_role | all | `logs_sistema`, `login_lockouts`, `idempotency_keys`, `folha_lock_conflicts`, `audit_log_unified`, `audit_log_unified_archive`, `rate_limits`, `rate_limit_logs`, `rate_limit_config`, `despesas_aprovacoes_log`, `contabilidade_contatos`, `contabilidade_threads`, `contabilidade_mensagens`, `holerite_distribuicoes`, `afdt_importacoes` … +58 |
-| grant | service_role | execute | `detectar_fraude_ponto`, `check_brute_force`, `check_rate_limit`, `is_ip_blocked`, `is_ip_whitelisted`, `is_country_allowed`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `purge_expired_idempotency_keys`, `check_idempotency_anomalies`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash` … +112 |
+| grant | service_role | execute | `detectar_fraude_ponto`, `check_brute_force`, `check_rate_limit`, `is_ip_blocked`, `is_ip_whitelisted`, `is_country_allowed`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `purge_expired_idempotency_keys`, `check_idempotency_anomalies`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash` … +116 |
 | grant | service_role | select | `vw_folha_compliance`, `v_idempotency_metrics`, `feedbacks_360_consolidacoes`, `feedbacks_360_aprovacoes_gestor`, `health_checks`, `mv_folha_summary`, `health_checks` |
 | grant | service_role | select, insert, delete | `pii_access_logs`, `pii_access_alerts` |
 | grant | service_role | select, insert, update, delete, truncate, references, trigger | `ninebox_permissoes_homologacao` |
 | revoke | PUBLIC | all | `_is_admin_bypass`, `_purge_audit_log_internal`, `_scan_status_anomalies_global`, `admin_list_security_definer_rpcs`, `admin_list_user_roles`, `admin_set_user_role`, `anonimizar_dados_pessoais`, `aplicar_medida_folha_ponto`, `aprovar_despesa`, `assinar_aviso_ferias`, `assinar_desligamento`, `assinar_espelho_ponto`, `associar_pis_colaborador_afdt`, `auto_vincular_admins_empresa`, `check_idempotency_anomalies` … +320 |
 | revoke | PUBLIC | execute | `has_role`, `is_admin`, `get_user_roles`, `get_user_default_empresa`, `get_user_empresas`, `user_belongs_to_empresa`, `anonimizar_dados_pessoais`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `get_colaborador_banco_horas`, `check_processamento_timeout`, `fn_alert_severe_disciplinary_measure`, `fn_audit_biometric_failure`, `fn_auto_generate_training_certificate`, `fn_consolidar_batidas` … +38 |
-| revoke | PUBLIC, anon | all | `get_idempotency_health`, `check_idempotency_anomalies`, `v_slow_queries_top50`, `get_query_telemetry`, `get_dlq_stats`, `get_audit_trail_by_user`, `get_audit_trail_by_entity`, `search_audit_unified`, `rate_limit_logs`, `rate_limit_config`, `purge_audit_log_old`, `resolve_security_alert`, `refresh_dashboard_mvs`, `mv_status_change_daily`, `mv_anomalies_hourly` … +116 |
+| revoke | PUBLIC, anon | all | `get_idempotency_health`, `check_idempotency_anomalies`, `v_slow_queries_top50`, `get_query_telemetry`, `get_dlq_stats`, `get_audit_trail_by_user`, `get_audit_trail_by_entity`, `search_audit_unified`, `rate_limit_logs`, `rate_limit_config`, `purge_audit_log_old`, `resolve_security_alert`, `refresh_dashboard_mvs`, `mv_status_change_daily`, `mv_anomalies_hourly` … +117 |
 | revoke | PUBLIC, anon | execute | `get_cron_jobs_health`, `get_security_alerts_summary`, `resolve_security_alert`, `pode_gerir_rh`, `pode_gerir_pessoas`, `sou_o_colaborador`, `empresa_do_colaborador`, `is_admin`, `sou_o_colaborador` |
 | revoke | PUBLIC, anon | select | `v_system_health` |
-| revoke | PUBLIC, anon, authenticated | all | `enforce_batida_ponto_hash`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash`, `enforce_desligamento_hash`, `enforce_ferias_hash`, `enforce_medida_disciplinar_hash`, `enforce_aso_hash`, `enforce_cat_hash`, `enforce_epi_entrega_hash`, `enforce_documento_assinatura_hash`, `enforce_afastamento_hash`, `purge_old_lock_conflicts` … +89 |
+| revoke | PUBLIC, anon, authenticated | all | `enforce_batida_ponto_hash`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash`, `enforce_desligamento_hash`, `enforce_ferias_hash`, `enforce_medida_disciplinar_hash`, `enforce_aso_hash`, `enforce_cat_hash`, `enforce_epi_entrega_hash`, `enforce_documento_assinatura_hash`, `enforce_afastamento_hash`, `purge_old_lock_conflicts` … +93 |
 | revoke | PUBLIC, anon, authenticated | execute | `check_processamento_timeout`, `fn_alert_severe_disciplinary_measure`, `fn_audit_biometric_failure`, `fn_auto_generate_training_certificate`, `fn_consolidar_batidas`, `fn_create_default_onboarding_tasks`, `fn_enqueue_notification`, `fn_trigger_whatsapp_on_event`, `fn_update_admissao_checklist`, `fn_update_candidatura_history`, `fn_workflow_admissao_auto`, `handle_new_user`, `handle_new_user_role`, `log_audit_change`, `log_esocial_transmission` … +42 |
 | revoke | PUBLIC, anon, authenticated | select | `v_audit_trail`, `mv_folha_summary`, `health_checks` |
 | revoke | anon | all | `detectar_fraude_ponto`, `contrato_estender_expiracao`, `pcs_pode_gerir_plano`, `pcs_pode_ver_plano`, `pcs_gerar_grades`, `pcs_enquadramento`, `pcs_simular_impacto`, `medidas_ciencia_tokens`, `audit_log`, `folha_auditoria`, `sst_regimento_interno`, `feedbacks_360_operacoes`, `feedbacks_360_validacoes_potencial`, `provisoes_competencia_tributaria` |

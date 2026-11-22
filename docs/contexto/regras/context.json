@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "108016d61ceb7e921bd040145088a81f8463dd4b",
+  "sha": "e3410c9cf505b10847186ea7beb4662e4b52e26d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 14:13 UTC",
-  "files_total": 3733,
-  "code_files": 3141,
-  "code_lines": 499179
+  "generated_at": "2026-11-22 14:33 UTC",
+  "files_total": 3736,
+  "code_files": 3143,
+  "code_lines": 499563
  },
  "version": "1.3.2",
- "facts_hash": "d3584f5de1b15ff6",
+ "facts_hash": "6fc69055391c15d6",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1038,
-   ".sql": 1000,
+   ".sql": 1002,
    ".ts": 962,
    ".mjs": 110,
    ".js": 15,
@@ -65655,6 +65655,91 @@
     "raises": [],
     "tables": []
    },
+   "ponto_rep_posicao_para_batida": {
+    "args": "_pos text",
+    "returns": "TABLE (tipo text, ordem integer)",
+    "lang": "sql",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "SELECT m.tipo, m.ordem FROM (VALUES ('E1', 'entrada', 1), ('S1', 'saida', 2), ('E2', 'entrada', 3), ('S2', 'saida', 4), ('E3', 'entrada', 5), ('S3', 'saida', 6), ('E4', 'entrada', 7), ('S4', 'saida', 8), ('E5', 'entrada', 9), ('S5', 'saida', 10), ('E6', 'entrada', 11), ('S6', 'saida', 12) ) AS m(pos, tipo, ordem) WHERE m.pos = upper(_pos);",
+    "raises": [],
+    "tables": []
+   },
+   "ponto_rep_converter_dia": {
+    "args": "_dia_id uuid",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_dia public.ponto_rep_dias%ROWTYPE; v_colaborador uuid; v_marcacao jsonb; v_tipo text; v_ordem integer; v_hora time; v_data date; v_afetadas integer := 0; v_anterior record; v_fechado boolean; v_conflitos text[] := ARRAY[]::text[]; v_hash_digital text; v_hash_integ text; BEGIN SELECT * INTO v_dia FROM public.ponto_rep_dias WHERE id = _dia_id; IF NOT FOUND THEN RAISE EXCEPTION 'ponto_rep_dias % nao existe', _dia_id USING ERRCODE = '22023'; END IF; SELECT f.colaborador_id INTO v_colaborador FROM public.ponto_rep_funcionarios f WHERE f.dispositivo_id = v_dia.dispositivo_id AND f.codigo = v_dia.funcionario_codigo; IF v_colaborador IS NULL THEN UPDATE public.ponto_rep_dias SET erro_proce …",
+    "raises": [
+     "ponto_rep_dias % nao existe"
+    ],
+    "tables": [
+     "batidas_ponto",
+     "jsonb_array_elements",
+     "periodos_ponto",
+     "ponto_auditoria",
+     "ponto_rep_dias",
+     "ponto_rep_funcionarios",
+     "ponto_rep_posicao_para_batida",
+     "v_anterior",
+     "v_colaborador",
+     "v_dia",
+     "v_fechado",
+     "v_tipo"
+    ]
+   },
+   "ponto_rep_processar_dias": {
+    "args": "_limite integer DEFAULT 200",
+    "returns": "TABLE (processados integer, batidas integer, com_erro integer)",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_id uuid; v_batidas integer; v_processados integer := 0; v_total integer := 0; v_erros integer := 0; BEGIN FOR v_id IN SELECT d.id FROM public.ponto_rep_dias d WHERE d.processado_em IS NULL ORDER BY d.data, d.id LIMIT GREATEST(COALESCE(_limite, 200), 1) LOOP v_batidas := public.ponto_rep_converter_dia(v_id); v_processados := v_processados + 1; v_total := v_total + COALESCE(v_batidas, 0); IF v_batidas = 0 AND EXISTS ( SELECT 1 FROM public.ponto_rep_dias d WHERE d.id = v_id AND d.processado_em IS NULL ) THEN v_erros := v_erros + 1; END IF; END LOOP; RETURN QUERY SELECT v_processados, v_total, v_erros; END;",
+    "raises": [],
+    "tables": [
+     "ponto_rep_dias"
+    ]
+   },
+   "ponto_rep_reprocessar_periodo": {
+    "args": "_inicio date, _fim date",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_total integer; BEGIN IF _inicio IS NULL OR _fim IS NULL OR _inicio > _fim THEN RAISE EXCEPTION 'periodo invalido: % a %', _inicio, _fim USING ERRCODE = '22023'; END IF; WITH alvo AS ( UPDATE public.ponto_rep_dias SET processado_em = NULL, erro_processamento = NULL, updated_at = now() WHERE data BETWEEN _inicio AND _fim RETURNING 1 ) SELECT count(*) INTO v_total FROM alvo; RETURN v_total; END;",
+    "raises": [
+     "periodo invalido: % a %"
+    ],
+    "tables": [
+     "alvo",
+     "ponto_rep_dias",
+     "v_total"
+    ]
+   },
+   "reprocessar_ponto_relogio": {
+    "args": "_inicio date, _fim date, _empresa_id uuid",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_total integer; BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Sessao obrigatoria' USING ERRCODE = '42501'; END IF; IF _empresa_id IS NULL OR NOT (public.has_role(auth.uid(), 'admin') OR public.pode_gerir_rh(_empresa_id)) THEN RAISE EXCEPTION 'Sem permissao para reprocessar o ponto desta empresa' USING ERRCODE = '42501'; END IF; WITH alvo AS ( UPDATE public.ponto_rep_dias SET processado_em = NULL, erro_processamento = NULL, updated_at = now() WHERE empresa_id = _empresa_id AND data BETWEEN _inicio AND _fim RETURNING 1 ) SELECT count(*) INTO v_total FROM alvo; RETURN v_total; END;",
+    "raises": [
+     "Sessao obrigatoria",
+     "Sem permissao para reprocessar o ponto desta empresa"
+    ],
+    "tables": [
+     "alvo",
+     "ponto_rep_dias",
+     "v_total"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -73395,6 +73480,8 @@
    "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.verify.sql",
    "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql",
    "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.verify.sql",
+   "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+   "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -85697,6 +85784,86 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "ponto_rep_posicao_para_batida",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "ponto_rep_posicao_para_batida",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "ponto_rep_converter_dia",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "ponto_rep_converter_dia",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "ponto_rep_processar_dias",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "ponto_rep_processar_dias",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "ponto_rep_reprocessar_periodo",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "ponto_rep_reprocessar_periodo",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "reprocessar_ponto_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "reprocessar_ponto_relogio",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -87303,6 +87470,26 @@
     "function": "recibos_ferias_validar",
     "msg": "colaborador % não pertence à empresa %",
     "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
+    "function": "ponto_rep_converter_dia",
+    "msg": "ponto_rep_dias % nao existe",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "function": "ponto_rep_reprocessar_periodo",
+    "msg": "periodo invalido: % a %",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "function": "reprocessar_ponto_relogio",
+    "msg": "Sessao obrigatoria",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "function": "reprocessar_ponto_relogio",
+    "msg": "Sem permissao para reprocessar o ponto desta empresa",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -105510,7 +105697,7 @@
   {
    "module": "supabase/functions",
    "files": 191,
-   "lines": 27666,
+   "lines": 27682,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -105762,8 +105949,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 926,
-   "lines": 83919,
+   "files": 928,
+   "lines": 84287,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -112231,6 +112418,9 @@
    ],
    "pode_gerir_avaliacoes": [
     "src/services/avaliacaoService.ts"
+   ],
+   "ponto_rep_processar_dias": [
+    "supabase/functions/ingest-ponto-rep/index.ts"
    ],
    "processar_ajuste_aprovado": [
     "src/components/ponto/PontoAdjustmentRequests.tsx"
@@ -230177,6 +230367,91 @@
     "raises": [],
     "tables": []
    },
+   "ponto_rep_posicao_para_batida": {
+    "args": "_pos text",
+    "returns": "TABLE (tipo text, ordem integer)",
+    "lang": "sql",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "SELECT m.tipo, m.ordem FROM (VALUES ('E1', 'entrada', 1), ('S1', 'saida', 2), ('E2', 'entrada', 3), ('S2', 'saida', 4), ('E3', 'entrada', 5), ('S3', 'saida', 6), ('E4', 'entrada', 7), ('S4', 'saida', 8), ('E5', 'entrada', 9), ('S5', 'saida', 10), ('E6', 'entrada', 11), ('S6', 'saida', 12) ) AS m(pos, tipo, ordem) WHERE m.pos = upper(_pos);",
+    "raises": [],
+    "tables": []
+   },
+   "ponto_rep_converter_dia": {
+    "args": "_dia_id uuid",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_dia public.ponto_rep_dias%ROWTYPE; v_colaborador uuid; v_marcacao jsonb; v_tipo text; v_ordem integer; v_hora time; v_data date; v_afetadas integer := 0; v_anterior record; v_fechado boolean; v_conflitos text[] := ARRAY[]::text[]; v_hash_digital text; v_hash_integ text; BEGIN SELECT * INTO v_dia FROM public.ponto_rep_dias WHERE id = _dia_id; IF NOT FOUND THEN RAISE EXCEPTION 'ponto_rep_dias % nao existe', _dia_id USING ERRCODE = '22023'; END IF; SELECT f.colaborador_id INTO v_colaborador FROM public.ponto_rep_funcionarios f WHERE f.dispositivo_id = v_dia.dispositivo_id AND f.codigo = v_dia.funcionario_codigo; IF v_colaborador IS NULL THEN UPDATE public.ponto_rep_dias SET erro_proce …",
+    "raises": [
+     "ponto_rep_dias % nao existe"
+    ],
+    "tables": [
+     "batidas_ponto",
+     "jsonb_array_elements",
+     "periodos_ponto",
+     "ponto_auditoria",
+     "ponto_rep_dias",
+     "ponto_rep_funcionarios",
+     "ponto_rep_posicao_para_batida",
+     "v_anterior",
+     "v_colaborador",
+     "v_dia",
+     "v_fechado",
+     "v_tipo"
+    ]
+   },
+   "ponto_rep_processar_dias": {
+    "args": "_limite integer DEFAULT 200",
+    "returns": "TABLE (processados integer, batidas integer, com_erro integer)",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_id uuid; v_batidas integer; v_processados integer := 0; v_total integer := 0; v_erros integer := 0; BEGIN FOR v_id IN SELECT d.id FROM public.ponto_rep_dias d WHERE d.processado_em IS NULL ORDER BY d.data, d.id LIMIT GREATEST(COALESCE(_limite, 200), 1) LOOP v_batidas := public.ponto_rep_converter_dia(v_id); v_processados := v_processados + 1; v_total := v_total + COALESCE(v_batidas, 0); IF v_batidas = 0 AND EXISTS ( SELECT 1 FROM public.ponto_rep_dias d WHERE d.id = v_id AND d.processado_em IS NULL ) THEN v_erros := v_erros + 1; END IF; END LOOP; RETURN QUERY SELECT v_processados, v_total, v_erros; END;",
+    "raises": [],
+    "tables": [
+     "ponto_rep_dias"
+    ]
+   },
+   "ponto_rep_reprocessar_periodo": {
+    "args": "_inicio date, _fim date",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_total integer; BEGIN IF _inicio IS NULL OR _fim IS NULL OR _inicio > _fim THEN RAISE EXCEPTION 'periodo invalido: % a %', _inicio, _fim USING ERRCODE = '22023'; END IF; WITH alvo AS ( UPDATE public.ponto_rep_dias SET processado_em = NULL, erro_processamento = NULL, updated_at = now() WHERE data BETWEEN _inicio AND _fim RETURNING 1 ) SELECT count(*) INTO v_total FROM alvo; RETURN v_total; END;",
+    "raises": [
+     "periodo invalido: % a %"
+    ],
+    "tables": [
+     "alvo",
+     "ponto_rep_dias",
+     "v_total"
+    ]
+   },
+   "reprocessar_ponto_relogio": {
+    "args": "_inicio date, _fim date, _empresa_id uuid",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_total integer; BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Sessao obrigatoria' USING ERRCODE = '42501'; END IF; IF _empresa_id IS NULL OR NOT (public.has_role(auth.uid(), 'admin') OR public.pode_gerir_rh(_empresa_id)) THEN RAISE EXCEPTION 'Sem permissao para reprocessar o ponto desta empresa' USING ERRCODE = '42501'; END IF; WITH alvo AS ( UPDATE public.ponto_rep_dias SET processado_em = NULL, erro_processamento = NULL, updated_at = now() WHERE empresa_id = _empresa_id AND data BETWEEN _inicio AND _fim RETURNING 1 ) SELECT count(*) INTO v_total FROM alvo; RETURN v_total; END;",
+    "raises": [
+     "Sessao obrigatoria",
+     "Sem permissao para reprocessar o ponto desta empresa"
+    ],
+    "tables": [
+     "alvo",
+     "ponto_rep_dias",
+     "v_total"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -231407,6 +231682,26 @@
     "function": "recibos_ferias_validar",
     "msg": "colaborador % não pertence à empresa %",
     "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
+    "function": "ponto_rep_converter_dia",
+    "msg": "ponto_rep_dias % nao existe",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "function": "ponto_rep_reprocessar_periodo",
+    "msg": "periodo invalido: % a %",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "function": "reprocessar_ponto_relogio",
+    "msg": "Sessao obrigatoria",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "function": "reprocessar_ponto_relogio",
+    "msg": "Sem permissao para reprocessar o ponto desta empresa",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -245501,6 +245796,8 @@
    "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
    "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql",
    "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.verify.sql",
+   "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+   "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -245778,6 +246075,7 @@
    "rejeitar_despesa",
    "replace_monthly_provisions",
    "report_destination_is_allowed",
+   "reprocessar_ponto_relogio",
    "reset_account_lockout",
    "reset_login_attempts",
    "resolve_security_alert",
@@ -257652,6 +257950,86 @@
     "objkind": "table",
     "roles": "authenticated",
     "src": "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "ponto_rep_posicao_para_batida",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "ponto_rep_posicao_para_batida",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "ponto_rep_converter_dia",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "ponto_rep_converter_dia",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "ponto_rep_processar_dias",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "ponto_rep_processar_dias",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "ponto_rep_reprocessar_periodo",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "ponto_rep_reprocessar_periodo",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "reprocessar_ponto_relogio",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "reprocessar_ponto_relogio",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
    },
    {
     "kind": "revoke",
@@ -328455,7 +328833,7 @@
   },
   "supabase/functions/ingest-ponto-rep/index.ts": {
    "path": "supabase/functions/ingest-ponto-rep/index.ts",
-   "lines": 192,
+   "lines": 208,
    "tables": [
     {
      "table": "ponto_rep_dispositivos",
@@ -328550,6 +328928,9 @@
      "hash_conteudo"
     ]
    },
+   "rpc": [
+    "ponto_rep_processar_dias"
+   ],
    "env": [
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
@@ -335378,6 +335759,16 @@
    "path": "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.verify.sql",
    "lines": 15
   },
+  "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql": {
+   "path": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+   "lines": 327,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql": {
+   "path": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql",
+   "lines": 41,
+   "uses_service_role": true
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -335771,10 +336162,24 @@
   }
  },
  "git": {
-  "sha": "108016d61ceb7e921bd040145088a81f8463dd4b",
+  "sha": "e3410c9cf505b10847186ea7beb4662e4b52e26d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "e3410c9",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "feat: converte dia do relogio em batidas (etapa 41 do Ponto AtecSoft) (#837)",
+    "files": [
+     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+     "scripts/automation.config.json",
+     "scripts/tests/migrations-ponto-rep-etapa41.sh",
+     "supabase/functions/ingest-ponto-rep/index.ts",
+     "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+     "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql"
+    ]
+   },
    {
     "sha": "108016d",
     "date": "2026-11-22",
@@ -336078,30 +336483,12 @@
     "files": [
      "src/components/ponto/relogio/RelogiosPanel.tsx"
     ]
-   },
-   {
-    "sha": "a3db5b8",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "feat: alerta de coletor do ponto parado e controle do espelho em papel (#804)",
-    "files": [
-     "src/components/__tests__/EspelhosPapelPanel.test.tsx",
-     "src/components/ponto/EspelhosPapelPanel.tsx",
-     "src/integrations/supabase/types.ts",
-     "src/pages/PontoPage.tsx",
-     "src/schemas/tableColumns.ts",
-     "src/services/relogio/espelhosPapelService.ts",
-     "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql",
-     "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.verify.sql",
-     "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
-     "supabase/migrations/20261121224000_ponto_espelhos_papel.verify.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    7
+    8
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -336109,22 +336496,14 @@
    ],
    [
     "supabase/functions/ingest-ponto-rep/index.ts",
+    4
+   ],
+   [
+    "scripts/automation.config.json",
     3
    ],
    [
     "src/pages/ObrigacoesFiscaisPage.tsx",
-    2
-   ],
-   [
-    "scripts/automation.config.json",
-    2
-   ],
-   [
-    "src/integrations/supabase/types.ts",
-    2
-   ],
-   [
-    "src/schemas/tableColumns.ts",
     2
    ],
    [
@@ -336146,6 +336525,18 @@
    [
     "src/components/ponto/relogio/RelogiosPanel.tsx",
     2
+   ],
+   [
+    "scripts/tests/migrations-ponto-rep-etapa41.sh",
+    1
+   ],
+   [
+    "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql",
+    1
    ],
    [
     "docs/auditoria/ponto-atecsoft-estrutura.md",
@@ -336173,10 +336564,6 @@
    ],
    [
     "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.verify.sql",
     1
    ]
   ]

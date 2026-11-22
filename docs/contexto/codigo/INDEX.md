@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `108016d61ceb7e921bd040145088a81f8463dd4b` (2026-11-22T10:39:54-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e3410c9cf505b10847186ea7beb4662e4b52e26d` (2026-11-22T11:32:54-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2000), SQL (1000), Markdown (345), JavaScript (136), JSON (64), Shell (59), YAML (56), Python (8)
+- linguagens: TypeScript (2000), SQL (1002), Markdown (345), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3719 |
+| arquivos_total | 3722 |
 | arquivos_codigo | 2143 |
-| linhas_codigo | 428249 |
+| linhas_codigo | 428265 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 122 |
 | edge_functions | 68 |
 | tabelas | 436 |
-| migrations | 926 |
+| migrations | 928 |
 | cron_jobs | 42 |
 | testes | 809 |
 | workflows | 21 |
@@ -398,8 +398,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28178 nós · 63516 arestas · 2467 comunidades · grafo do commit `108016d6`
-- comunidades maiores: useEmpresas (629), 20260831_corrected_public.sql (485), canonical_schema.sql (481), lucide-react (440), react (376), cn (372), App.tsx (363), vitest (316), ColaboradorDetalhesPage.tsx (183), "public"."empresas" (164), "public"."empresas" (158), "public"."colaboradores" (157)
+- 28198 nós · 63540 arestas · 2431 comunidades · grafo do commit `e3410c9c`
+- comunidades maiores: 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (453), useEmpresas (424), @tanstack/react-query (398), lucide-react (390), vitest (311), cn (222), nineBoxComum.ts (202), react (188), DetalhesAdmissaoDialog.tsx (167), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -407,12 +407,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - .github/workflows/canonical-migrations.yml (32)
 - inventario/estado/rotas.json (22)
 - scripts/canonical-invariants.sql (20)
-- docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (11)
+- docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (12)
 - src/integrations/supabase/types.ts (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
-- docs/prod-readiness.md (9)
-- scripts/automation.config.json (9)
+- scripts/automation.config.json (10)
+- docs/prod-readiness.md (8)
 - src/schemas/tableColumns.ts (8)
 - docs/auditoria/sql-preservado/README.md (7)
 - package.json (7)
@@ -656,6 +656,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-22 `e3410c9` feat: converte dia do relogio em batidas (etapa 41 do Ponto AtecSoft) (#837)
 - 2026-11-22 `108016d` chore: desmembra a estrutura do banco do Ponto AtecSoft (#836)
 - 2026-11-22 `a2f4ebe` fix: extrai e testa a regra do 23505 no vinculo do relogio (#835)
 - 2026-11-22 `f0f940b` fix: baixa de guia falha alto quando nenhuma linha e atualizada (#834)
@@ -670,7 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-22 `cb4d78c` fix: gates de baseline comparam chave com separador nativo (reprovavam no Windows sem regressão real) (#821)
 - 2026-11-22 `e5a1e96` feat: sincroniza cargos do Bitrix a partir de WORK_POSITION dos usuarios (#825)
 - 2026-11-22 `bba91c5` feat: conecta a aba FGTS Digital à edge fgts-digital (feature estava órfã a 1 passo do fim) (#822)
-- 2026-11-22 `d4b08fa` docs: reescreve a análise de pendentes com o estado real (9 dos 12 itens já estavam implementados) (#823)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
