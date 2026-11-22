@@ -22,6 +22,10 @@ vi.mock('@/contexts/AuthContext', async (importOriginal) => {
       session: { access_token: 'token' },
       isReady: true,
       loading: false,
+      // Contrato real do AuthContext: FeriasActions usa isAdmin/hasRole para
+      // espelhar a RLS de recibos_ferias.
+      isAdmin: false,
+      hasRole: () => true,
     }),
   };
 });
