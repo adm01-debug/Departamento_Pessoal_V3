@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { ComponentType, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
   BadgeCheck,
@@ -166,10 +166,22 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
     setParams((d.detalhes_calculo as { _parametros?: ParametrosCalculo } | null | undefined)?._parametros ?? {});
   }
 
+  // Itemizado das verbas: o cálculo passa a gravar a rescisão linha a linha em
+  // `verbas_rescisorias` (rescisaoService.calcularESalvar). Registros calculados
+  // antes disso têm a tabela vazia — a aba cai nas colunas decompostas de
+  // `desligamentos`, que seguem sendo a fonte dos totais.
+  const { data: verbas = [] } = useQuery({
+    queryKey: ['verbas-rescisorias', d?.id],
+    queryFn: () => (d ? rescisaoService.obterVerbas(d.id) : Promise.resolve([])),
+    enabled: Boolean(d?.id),
+    staleTime: 30_000,
+  });
+  const verbasProvento = verbas.filter((v) => v.tipo === 'provento');
+  const verbasDesconto = verbas.filter((v) => v.tipo === 'desconto');
+
   if (!d) return null;
 
   const tipoNormalizado = normalizarTipoRescisao(d.tipo || 'sem_justa_causa');
-
   // Percentual da multa do FGTS, derivado da MESMA condição do motor
   // (`rescisaoCalc.ts:320-323`): 40% na dispensa sem justa causa e no término
   // antecipado pelo empregador (acompanha o art. 479), 20% no acordo mútuo e na
@@ -307,6 +319,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
         d.empresa_id ?? ''
       );
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
+      queryClient.invalidateQueries({ queryKey: ['verbas-rescisorias', d.id] });
       toast.success('Rescisão calculada com sucesso');
     } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao calcular rescisão.'));
@@ -707,12 +720,20 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
                 tom="success"
                 total={formatCurrency(d.total_proventos)}
               >
-                <LinhaValor rotulo="Saldo de salário" valor={d.saldo_salario} />
-                <LinhaValor rotulo="13º proporcional" valor={d.decimo_terceiro} />
-                <LinhaValor rotulo="Férias proporcionais" valor={d.ferias_proporcionais} />
-                <LinhaValor rotulo="Férias vencidas" valor={d.ferias_vencidas} />
-                <LinhaValor rotulo="1/3 constitucional" valor={d.terco_constitucional} />
-                <LinhaValor rotulo="Aviso prévio indenizado" valor={d.aviso_previo} />
+                {verbasProvento.length > 0 ? (
+                  verbasProvento.map((verba) => (
+                    <LinhaValor key={verba.codigo || verba.descricao} rotulo={verba.descricao} valor={verba.valor} />
+                  ))
+                ) : (
+                  <>
+                    <LinhaValor rotulo="Saldo de salário" valor={d.saldo_salario} />
+                    <LinhaValor rotulo="13º proporcional" valor={d.decimo_terceiro} />
+                    <LinhaValor rotulo="Férias proporcionais" valor={d.ferias_proporcionais} />
+                    <LinhaValor rotulo="Férias vencidas" valor={d.ferias_vencidas} />
+                    <LinhaValor rotulo="1/3 constitucional" valor={d.terco_constitucional} />
+                    <LinhaValor rotulo="Aviso prévio indenizado" valor={d.aviso_previo} />
+                  </>
+                )}
               </BlocoValores>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -725,8 +746,16 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
                 >
                   {/* INSS e IRRF nao sao colunas de `desligamentos`: saem do
                       resultado do calculo, em `detalhes_calculo`. */}
-                  <LinhaValor rotulo="INSS" valor={d.detalhes_calculo?.inss ?? null} />
-                  <LinhaValor rotulo="IRRF" valor={d.detalhes_calculo?.irrf ?? null} />
+                  {verbasDesconto.length > 0 ? (
+                    verbasDesconto.map((verba) => (
+                      <LinhaValor key={verba.codigo || verba.descricao} rotulo={verba.descricao} valor={verba.valor} />
+                    ))
+                  ) : (
+                    <>
+                      <LinhaValor rotulo="INSS" valor={d.detalhes_calculo?.inss ?? null} />
+                      <LinhaValor rotulo="IRRF" valor={d.detalhes_calculo?.irrf ?? null} />
+                    </>
+                  )}
                 </BlocoValores>
 
                 <BlocoValores

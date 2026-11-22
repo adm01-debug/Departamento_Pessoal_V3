@@ -1,5 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { calcularRescisao } from '@/utils/rescisaoCalc';
+import { itemizarVerbasRescisorias } from '@/utils/rescisaoVerbas';
+import type { VerbaRescisoria } from '@/utils/rescisaoVerbas';
 import { auditLogger } from '@/utils/auditLogger';
 import { loggerService } from './loggerService';
 import { vinculoService } from './vinculoService';
@@ -15,6 +17,48 @@ async function sha256Hex(data: string): Promise<string> {
 
 // Ordem lógica das etapas para validação
 const ORDEM_ETAPAS = ['comunicacao', 'documentacao', 'calculo', 'homologacao', 'pagamento', 'finalizado'];
+
+/**
+ * Persiste o itemizado da rescisão em `verbas_rescisorias` (tabela criada na
+ * migration 20260512194353 e até aqui sem nenhum escritor — a rescisão só
+ * existia como jsonb em `desligamentos.detalhes_calculo`, então a folha não
+ * conseguia consumir as rubricas).
+ *
+ * Idempotente no recálculo: apaga as linhas do desligamento antes de inserir.
+ * Falha aqui NÃO derruba o cálculo — os totais já foram gravados em
+ * `desligamentos` e são a fonte de verdade; o itemizado é um detalhamento
+ * derivado deles.
+ */
+async function persistirVerbasRescisorias(desligamentoId: string, verbas: VerbaRescisoria[]): Promise<void> {
+  try {
+    const { error: deleteError } = await supabase
+      .from('verbas_rescisorias')
+      .delete()
+      .eq('desligamento_id', desligamentoId);
+    if (deleteError) throw deleteError;
+
+    if (verbas.length === 0) return;
+
+    const { error: insertError } = await supabase.from('verbas_rescisorias').insert(
+      verbas.map((verba) => ({
+        desligamento_id: desligamentoId,
+        codigo: verba.codigo,
+        descricao: verba.descricao,
+        tipo: verba.tipo,
+        valor: verba.valor,
+        incide_inss: verba.incide_inss,
+        incide_irrf: verba.incide_irrf,
+        incide_fgts: verba.incide_fgts,
+      }))
+    );
+    if (insertError) throw insertError;
+  } catch (e) {
+    loggerService.warn('Falha ao gravar o itemizado em verbas_rescisorias', {
+      desligamento_id: desligamentoId,
+      erro: e instanceof Error ? e.message : String(e),
+    });
+  }
+}
 
 export interface CalcularRescisaoParams {
   salario_base?: number;
@@ -160,6 +204,8 @@ export const rescisaoService = {
 
       if (updateError) throw updateError;
 
+      await persistirVerbasRescisorias(id, itemizarVerbasRescisorias(resultado));
+
       await auditLogger.log({
         tabela: 'desligamentos',
         registro_id: id,
@@ -267,6 +313,31 @@ export const rescisaoService = {
     } catch (e) {
       throw new Error(e instanceof Error ? e.message : 'Erro ao processar homologação', { cause: e });
     }
+  },
+
+  /**
+   * Lê o itemizado gravado em `verbas_rescisorias`. Retorna lista vazia quando
+   * o desligamento foi calculado antes da itemização existir — a tela cai no
+   * fallback das colunas de `desligamentos`.
+   */
+  async obterVerbas(desligamentoId: string): Promise<VerbaRescisoria[]> {
+    const { data, error } = await supabase
+      .from('verbas_rescisorias')
+      .select('codigo,descricao,tipo,valor,incide_inss,incide_irrf,incide_fgts')
+      .eq('desligamento_id', desligamentoId)
+      .order('tipo', { ascending: true });
+
+    if (error) throw error;
+
+    return (data ?? []).map((linha) => ({
+      codigo: linha.codigo ?? '',
+      descricao: linha.descricao,
+      tipo: linha.tipo === 'desconto' ? 'desconto' : 'provento',
+      valor: Number(linha.valor),
+      incide_inss: linha.incide_inss ?? false,
+      incide_irrf: linha.incide_irrf ?? false,
+      incide_fgts: linha.incide_fgts ?? false,
+    }));
   },
 
   async assinarDigitalmente(id: string, tipo: 'empresa' | 'colaborador', empresaId?: string): Promise<boolean> {

@@ -57,12 +57,17 @@ vi.mock('framer-motion', () => ({
 
 vi.mock('@tanstack/react-query', () => ({
   useQueryClient: () => ({ invalidateQueries: vi.fn() }),
+  useQuery: () => ({ data: [], isLoading: false }),
 }));
 
 vi.mock('react-router-dom', () => ({ useNavigate: () => vi.fn() }));
 
 vi.mock('@/services/rescisaoService', () => ({
-  rescisaoService: { calcularESalvar: mockCalcularESalvar, homologar: vi.fn() },
+  rescisaoService: {
+    calcularESalvar: mockCalcularESalvar,
+    homologar: vi.fn(),
+    obterVerbas: vi.fn().mockResolvedValue([]),
+  },
 }));
 
 vi.mock('@/services/desligamentoService', () => ({
