@@ -226,19 +226,15 @@ jobs:
           # O lote anterior (20261121210000, tabelas ponto_rep_*) saiu daqui
           # porque esta no ledger: apply run 44956208120 e verify run
           # 44956510074, ambos success.
-          # LOTE ATUAL (21/11/2026): relogio de ponto Henry/AtecSoft, parte 2.
-          #  - 20261121220000: RPCs gerar/revogar token do coletor (#803).
-          #  - 20261121221000: RPCs de vinculo funcionario x colaborador (#800).
-          #  - 20261121222000: protecao das batidas origem 'relogio' (#801).
-          #  - 20261121223000: alerta de coletor parado + cron (#804).
-          #  - 20261121224000: tabela ponto_espelhos_papel com RLS (#804).
-          # Todas aditivas e idempotentes.
+          # O lote do relogio de ponto parte 2 (20261121220000..224000) saiu
+          # daqui porque esta no ledger: apply run 44961604370 e verify run
+          # 44961830183, ambos success, ledger_count === 5.
+          # LOTE ATUAL (22/11/2026): recibos_ferias.
+          #  - 20261122090000: cria public.recibos_ferias, que nunca chegou ao
+          #    canonico (PGRST205 em producao; FeriasActions.tsx grava o recibo
+          #    depois de baixar o PDF e o insert falhava sempre). Aditiva.
           for migration in \
-            20261121220000_ponto_rep_coletores_admin.sql \
-            20261121221000_ponto_rep_vinculos.sql \
-            20261121222000_batidas_relogio_protecao.sql \
-            20261121223000_ponto_rep_alerta_coletor_parado.sql \
-            20261121224000_ponto_espelhos_papel.sql
+            20261122090000_recibos_ferias_criar_tabela_ausente.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -409,7 +405,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 5 &&
+              Number(r.ledger_count) === 1 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
