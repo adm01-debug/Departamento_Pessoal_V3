@@ -30,7 +30,11 @@ vi.mock('@/integrations/supabase/client', () => ({
       const chain: Record<string, unknown> = {};
       for (const m of ['select', 'eq', 'order', 'insert', 'update']) chain[m] = () => chain;
       chain.then = (resolve: (v: unknown) => unknown) =>
-        resolve({ data: tabela === 'guias_fgts_digital' ? [guiaGfd] : [], error: null });
+        resolve({
+          data:
+            (globalThis as { __gfdRows?: unknown[] }).__gfdRows ?? (tabela === 'guias_fgts_digital' ? [guiaGfd] : []),
+          error: (globalThis as { __gfdError?: unknown }).__gfdError ?? null,
+        });
       return chain;
     },
   },
@@ -48,7 +52,11 @@ function renderPage() {
 }
 
 describe('ObrigacoesFiscaisPage — aba FGTS Digital (edge fgts-digital)', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    delete (globalThis as { __gfdRows?: unknown[] }).__gfdRows;
+    delete (globalThis as { __gfdError?: unknown }).__gfdError;
+  });
 
   it('expõe a aba FGTS Digital', async () => {
     renderPage();
@@ -63,5 +71,16 @@ describe('ObrigacoesFiscaisPage — aba FGTS Digital (edge fgts-digital)', () =>
     await waitFor(() => expect(screen.getByText('2026-11')).toBeInTheDocument());
     expect(screen.getByText('FGD-17637792')).toBeInTheDocument();
     expect(screen.getByText('Gerada')).toBeInTheDocument();
+  });
+
+  it('mostra estado de erro em vez de lista vazia quando a leitura falha', async () => {
+    (globalThis as { __gfdError?: unknown }).__gfdError = { message: 'permission denied' };
+    renderPage();
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole('tab', { name: /FGTS Digital/i }));
+    await waitFor(() => expect(screen.getByText(/Falha ao carregar as guias FGTS Digital/i)).toBeInTheDocument());
+    // A mensagem de "nenhuma guia" mentiria sobre o estado real.
+    expect(screen.queryByText(/Nenhuma guia FGTS Digital emitida/i)).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Tentar novamente/i })).toBeInTheDocument();
   });
 });

@@ -92,7 +92,12 @@ export default function ObrigacoesFiscaisPage() {
     },
     enabled: !!empresaAtual?.id,
   });
-  const { data: guiasFgtsDigital = [], isLoading: l3b } = useQuery({
+  const {
+    data: guiasFgtsDigital = [],
+    isLoading: l3b,
+    error: erroFgtsDigital,
+    refetch: refetchFgtsDigital,
+  } = useQuery({
     queryKey: ['guias-fgts-digital', empresaAtual?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -225,12 +230,22 @@ export default function ObrigacoesFiscaisPage() {
 
   const marcarPagaFgtsDigital = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
+      // `.select('id')` devolve as linhas efetivamente alteradas. Sem isso a
+      // confirmação de baixa aparecia mesmo quando o RLS não deixava nenhuma
+      // linha elegível (0 linhas alteradas, `error` nulo).
+      const { data, error } = await supabase
         .from('guias_fgts_digital')
         .update({ status: 'paga' })
         .eq('id', id)
-        .eq('empresa_id', empresaAtual!.id);
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id');
       if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error(
+          'Nenhuma guia foi atualizada: sem permissão de escrita nesta guia ou ela já não pertence a esta empresa.'
+        );
+      }
+      return data[0];
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['guias-fgts-digital'] });
@@ -268,7 +283,9 @@ export default function ObrigacoesFiscaisPage() {
         vencimento: formatDateLocalISO(venc),
       });
       qc.invalidateQueries({ queryKey: ['guias-fgts-digital'] });
-      toast.success(`Guia FGTS Digital gerada — protocolo ${r?.protocolo ?? 'registrado'}`);
+      toast.success(
+        `Guia FGTS Digital registrada — protocolo ${r?.protocolo ?? 'registrado'}. A emissão oficial da guia pagável é feita no portal FGTS Digital.`
+      );
       setOpenFgtsDigital(false);
     } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao gerar guia FGTS Digital.'));
@@ -324,6 +341,12 @@ export default function ObrigacoesFiscaisPage() {
   };
 
   const totalFgts = guiasFgts.reduce((acc, g) => acc + (g.valor_total || 0), 0);
+  // O diálogo da guia mensal precisa do total DA COMPETÊNCIA, não do histórico:
+  // somar todas as guias sugeria a um mês o valor de vários.
+  const totalFgtsCompetencia = useMemo(
+    () => guiasFgts.filter((g) => g.competencia === competencia).reduce((acc, g) => acc + (g.valor_total || 0), 0),
+    [guiasFgts, competencia]
+  );
   const totalInss = guiasInss.reduce((acc, g) => acc + (g.valor_total || 0), 0);
   const hoje = new Date();
   const guiasVencidas = [...guiasFgts, ...guiasInss].filter(
@@ -489,12 +512,12 @@ export default function ObrigacoesFiscaisPage() {
                     <DialogTrigger asChild>
                       <Button className="rounded-xl">
                         <Plus className="h-4 w-4 mr-1" />
-                        Emitir guia GFD
+                        Registrar guia GFD
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="rounded-2xl">
                       <DialogHeader>
-                        <DialogTitle>Emitir guia FGTS Digital</DialogTitle>
+                        <DialogTitle>Registrar guia FGTS Digital</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4">
                         <div>
@@ -511,7 +534,9 @@ export default function ObrigacoesFiscaisPage() {
                             onChange={(e) => setFgtsDigitalValor(e.target.value)}
                           />
                           <p className="text-xs text-muted-foreground mt-1">
-                            Total de FGTS apurado nesta competência ({formatCurrency(totalFgts)} em guias FGTS).
+                            {totalFgtsCompetencia > 0
+                              ? `Total de FGTS apurado em ${competencia}: ${formatCurrency(totalFgtsCompetencia)} em guias FGTS.`
+                              : `Sem guias FGTS apuradas para ${competencia}. Informe o valor manualmente.`}
                           </p>
                         </div>
                         <Button
@@ -528,7 +553,7 @@ export default function ObrigacoesFiscaisPage() {
                               Emitindo…
                             </>
                           ) : (
-                            'Emitir guia'
+                            'Registrar guia'
                           )}
                         </Button>
                       </div>
@@ -538,6 +563,20 @@ export default function ObrigacoesFiscaisPage() {
                 {l3b ? (
                   <div className="flex justify-center p-8">
                     <Spinner />
+                  </div>
+                ) : erroFgtsDigital ? (
+                  <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-4">
+                    <p className="font-body text-sm text-destructive">
+                      Falha ao carregar as guias FGTS Digital desta empresa. Isso não significa que não existam guias.
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-3 rounded-xl"
+                      onClick={() => void refetchFgtsDigital()}
+                    >
+                      Tentar novamente
+                    </Button>
                   </div>
                 ) : (
                   <FgtsDigitalTable
