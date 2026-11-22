@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `77500ff38b` · branch `main` · 2026-11-22 11:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3a8e2ec8a3` · branch `main` · 2026-11-22 11:54 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 332 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 334 arquivo(s)
 
 - `docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql`
 - `docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql`
@@ -472,7 +472,7 @@
 - `supabase/migrations/20260712214014_5ded020d-3162-4157-ba2e-724b53d8392b.sql`
 - `supabase/migrations/20260712214929_4971f364-3f69-48cd-9150-a55524b1025d.sql`
 - `supabase/migrations/20260712215539_349ae8a8-7ed9-41a5-b06c-ea4b8f35c7b5.sql`
-- … +182 (lista completa em `context.json`)
+- … +184 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -871,7 +871,7 @@ Middleware matcher (Next.js): nenhum
 | grant | service_role | select | `vw_folha_compliance`, `v_idempotency_metrics`, `feedbacks_360_consolidacoes`, `feedbacks_360_aprovacoes_gestor`, `health_checks`, `mv_folha_summary`, `health_checks` |
 | grant | service_role | select, insert, delete | `pii_access_logs`, `pii_access_alerts` |
 | grant | service_role | select, insert, update, delete, truncate, references, trigger | `ninebox_permissoes_homologacao` |
-| revoke | PUBLIC | all | `_is_admin_bypass`, `_purge_audit_log_internal`, `_scan_status_anomalies_global`, `admin_list_security_definer_rpcs`, `admin_list_user_roles`, `admin_set_user_role`, `anonimizar_dados_pessoais`, `aplicar_medida_folha_ponto`, `aprovar_despesa`, `assinar_aviso_ferias`, `assinar_desligamento`, `assinar_espelho_ponto`, `associar_pis_colaborador_afdt`, `auto_vincular_admins_empresa`, `check_idempotency_anomalies` … +319 |
+| revoke | PUBLIC | all | `_is_admin_bypass`, `_purge_audit_log_internal`, `_scan_status_anomalies_global`, `admin_list_security_definer_rpcs`, `admin_list_user_roles`, `admin_set_user_role`, `anonimizar_dados_pessoais`, `aplicar_medida_folha_ponto`, `aprovar_despesa`, `assinar_aviso_ferias`, `assinar_desligamento`, `assinar_espelho_ponto`, `associar_pis_colaborador_afdt`, `auto_vincular_admins_empresa`, `check_idempotency_anomalies` … +320 |
 | revoke | PUBLIC | execute | `has_role`, `is_admin`, `get_user_roles`, `get_user_default_empresa`, `get_user_empresas`, `user_belongs_to_empresa`, `anonimizar_dados_pessoais`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `get_colaborador_banco_horas`, `check_processamento_timeout`, `fn_alert_severe_disciplinary_measure`, `fn_audit_biometric_failure`, `fn_auto_generate_training_certificate`, `fn_consolidar_batidas` … +38 |
 | revoke | PUBLIC, anon | all | `get_idempotency_health`, `check_idempotency_anomalies`, `v_slow_queries_top50`, `get_query_telemetry`, `get_dlq_stats`, `get_audit_trail_by_user`, `get_audit_trail_by_entity`, `search_audit_unified`, `rate_limit_logs`, `rate_limit_config`, `purge_audit_log_old`, `resolve_security_alert`, `refresh_dashboard_mvs`, `mv_status_change_daily`, `mv_anomalies_hourly` … +116 |
 | revoke | PUBLIC, anon | execute | `get_cron_jobs_health`, `get_security_alerts_summary`, `resolve_security_alert`, `pode_gerir_rh`, `pode_gerir_pessoas`, `sou_o_colaborador`, `empresa_do_colaborador`, `is_admin`, `sou_o_colaborador` |
@@ -904,6 +904,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | authenticated | insert | `feedbacks_360` |
 | revoke | authenticated | insert, update, delete | `folha_auditoria`, `admissao_tokens` |
 | revoke | authenticated | insert, update, delete, truncate, references | `log_envio_relatorios` |
+| revoke | authenticated | select | `ponto_rep_funcionarios` |
 | revoke | authenticated | truncate | `feedbacks_360`, `feedbacks_360`, `feedbacks_360` |
 | revoke | authenticated | update | `feedbacks_360`, `feedbacks_360`, `feedbacks_360`, `feedbacks_360` |
 | revoke | authenticated, anon | delete | `feedbacks_360` |

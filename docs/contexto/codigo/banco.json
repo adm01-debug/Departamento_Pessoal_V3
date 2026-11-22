@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 918,
+ "migrations": 920,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -395,6 +395,7 @@
   "fn_folha_optimistic_lock",
   "fn_link_gov_br_account",
   "fn_pensoes_set_empresa",
+  "fn_ponto_rep_funcionario_cpf_last4",
   "fn_processar_workflow_admissao",
   "fn_recalcular_dobra_e_alertas",
   "fn_start_workflow_on_colaborador_create",
@@ -2458,6 +2459,13 @@
    "evento": "insert or update",
    "tabela": "ponto_espelhos_papel",
    "funcao": "ponto_espelhos_papel_validar"
+  },
+  {
+   "nome": "trg_ponto_rep_funcionario_cpf_last4",
+   "quando": "before",
+   "evento": "insert or update of cpf",
+   "tabela": "ponto_rep_funcionarios",
+   "funcao": "fn_ponto_rep_funcionario_cpf_last4"
   },
   {
    "nome": "tr_auditoria_premiacoes_campanhas",
@@ -47509,6 +47517,13 @@
      "default": null,
      "ref": null
     },
+    "cpf_last4": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "created_at": {
      "tipo": "timestamptz",
      "nn": true,
@@ -47653,6 +47668,7 @@
     "codigo": "number",
     "colaborador_id": "string | null",
     "cpf": "string | null",
+    "cpf_last4": "string | null",
     "created_at": "string",
     "data_admissao": "string | null",
     "data_desligamento": "string | null",
@@ -47678,7 +47694,9 @@
    "usada_em_edges": [
     "ingest-ponto-rep"
    ],
-   "triggers": [],
+   "triggers": [
+    "trg_ponto_rep_funcionario_cpf_last4"
+   ],
    "sem_rls": false,
    "nao_usada": false
   },

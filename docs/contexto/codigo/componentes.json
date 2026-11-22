@@ -5666,7 +5666,7 @@
     "VinculosRelogioTab"
    ],
    "export_default": null,
-   "linhas": 236,
+   "linhas": 266,
    "dominio": "components/ponto",
    "hooks_locais": [],
    "tabelas": [],
@@ -7363,7 +7363,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 20,
+   "usado_por": 21,
    "orfao": false
   },
   {

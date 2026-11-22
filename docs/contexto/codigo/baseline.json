@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "77500ff38b99b4b308aad12e9c6ae4e2495b890c",
+  "commit": "3a8e2ec8a32a9e4e7cc1b43354ac813aa1277c85",
   "branch": "main",
-  "data_commit": "2026-11-22T07:57:58-03:00",
+  "data_commit": "2026-11-22T08:53:07-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "3a8e2ec",
+    "data": "2026-11-22",
+    "assunto": "fix: CPF não trafega mais inteiro na tela de Vínculos do relógio (R8) (#829)"
+   },
    {
     "sha": "77500ff",
     "data": "2026-11-22",
@@ -126,18 +131,13 @@
     "sha": "01d8cb6",
     "data": "2026-11-21",
     "assunto": "feat: protege batida do relógio e bloqueia app/quiosque de quem usa o relógio (#801)"
-   },
-   {
-    "sha": "4008c60",
-    "data": "2026-11-21",
-    "assunto": "feat: vínculo de funcionários do relógio e de-para de justificativas (#800)"
    }
   ],
-  "arquivos_mudados_7d": 1071,
+  "arquivos_mudados_7d": 1073,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 376
+    "mudancas": 377
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -145,7 +145,7 @@
    },
    {
     "pasta": "src/components/ui",
-    "mudancas": 106
+    "mudancas": 105
    },
    {
     "pasta": "src/services/__tests__",
@@ -185,7 +185,7 @@
    },
    {
     "pasta": "src/components/ponto",
-    "mudancas": 33
+    "mudancas": 34
    },
    {
     "pasta": "src/utils/__tests__",
@@ -210,6 +210,10 @@
     "mudancas": 20
    },
    {
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 11
+   },
+   {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
     "mudancas": 11
    },
@@ -222,15 +226,15 @@
     "mudancas": 10
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 10
-   },
-   {
     "arquivo": "docs/prod-readiness.md",
     "mudancas": 9
    },
    {
     "arquivo": "scripts/automation.config.json",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/schemas/tableColumns.ts",
     "mudancas": 8
    },
    {
@@ -247,10 +251,6 @@
    },
    {
     "arquivo": "src/pages/ColaboradoresPage.tsx",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "src/schemas/tableColumns.ts",
     "mudancas": 7
    },
    {
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3709,
+  "arquivos_total": 3711,
   "arquivos_codigo": 2143,
-  "linhas_codigo": 428172,
+  "linhas_codigo": 428206,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -326,7 +326,7 @@
   "hooks": 122,
   "edge_functions": 68,
   "tabelas": 436,
-  "migrations": 918,
+  "migrations": 920,
   "cron_jobs": 42,
   "testes": 809,
   "workflows": 21,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 1010,
-   "linhas": 186810
+   "linhas": 186843
   },
   "src/constants": {
    "arquivos": 7,
@@ -668,7 +668,7 @@
   },
   "src/integrations": {
    "arquivos": 11,
-   "linhas": 26529
+   "linhas": 26532
   },
   "src/lib": {
    "arquivos": 22,
@@ -692,11 +692,11 @@
   },
   "src/schemas": {
    "arquivos": 33,
-   "linhas": 8831
+   "linhas": 8832
   },
   "src/services": {
    "arquivos": 198,
-   "linhas": 41982
+   "linhas": 41979
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -758,11 +758,11 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 25366
+   "linhas": 25369
   },
   {
    "arquivo": "src/schemas/tableColumns.ts",
-   "linhas": 4270
+   "linhas": 4271
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",

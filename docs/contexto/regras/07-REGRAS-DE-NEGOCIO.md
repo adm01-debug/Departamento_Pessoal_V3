@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `77500ff38b` · branch `main` · 2026-11-22 11:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3a8e2ec8a3` · branch `main` · 2026-11-22 11:54 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -717,6 +717,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_ponto_espelhos_papel_updated_at | BEFORE UPDATE | `ponto_espelhos_papel` | `update_updated_at_column` |  |
 | trg_recibos_ferias_validar | BEFORE INSERT OR UPDATE | `recibos_ferias` | `recibos_ferias_validar` |  |
 | trg_recibos_ferias_updated_at | BEFORE UPDATE | `recibos_ferias` | `update_updated_at_column` |  |
+| trg_ponto_rep_funcionario_cpf_last4 | BEFORE INSERT OR UPDATE OF CPF | `ponto_rep_funcionarios` | `fn_ponto_rep_funcionario_cpf_last4` |  |
 | ajuste_ponto_status_transition | BEFORE UPDATE OF "STATUS" | `solicitacoes_ajuste_ponto` | `trg_ajuste_ponto_status_transition` |  |
 | audit_admissoes | AFTER INSERT OR DELETE OR UPDATE | `admissoes` | `log_audit_change` |  |
 | audit_afastamentos | AFTER INSERT OR DELETE OR UPDATE | `afastamentos` | `log_audit_change` |  |
@@ -922,8 +923,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_folha_eventos_auditoria_append_only | BEFORE DELETE OR UPDATE | `folha_eventos_auditoria` | `audit_log_append_only` |  |
 | trg_folha_eventos_auditoria_no_delete | BEFORE DELETE | `folha_eventos_auditoria` | `audit_log_append_only` |  |
 | trg_folha_eventos_auditoria_no_update | BEFORE UPDATE | `folha_eventos_auditoria` | `audit_log_append_only` |  |
-| trg_folha_lock_conflicts_ao | BEFORE DELETE OR UPDATE | `folha_lock_conflicts` | `audit_log_append_only` |  |
-| … +172 linhas — lista completa em `context.json` | | | | |
+| … +173 linhas — lista completa em `context.json` | | | | |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 

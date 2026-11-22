@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "77500ff38b99b4b308aad12e9c6ae4e2495b890c",
+  "sha": "3a8e2ec8a32a9e4e7cc1b43354ac813aa1277c85",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 11:11 UTC",
-  "files_total": 3723,
-  "code_files": 3133,
-  "code_lines": 498819
+  "generated_at": "2026-11-22 11:54 UTC",
+  "files_total": 3725,
+  "code_files": 3135,
+  "code_lines": 498933
  },
  "version": "1.3.2",
- "facts_hash": "fad86b5be9c39ba8",
+ "facts_hash": "c998d8bb88dd8181",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1038,
-   ".sql": 992,
+   ".sql": 994,
    ".ts": 962,
    ".mjs": 110,
    ".js": 15,
@@ -41870,6 +41870,13 @@
       "fk": "",
       "generated": "",
       "src": "supabase/migrations/20261121210000_ponto_rep_ingestao.sql"
+     },
+     {
+      "name": "cpf_last4",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql"
      }
     ],
     "constraints": [
@@ -54932,6 +54939,15 @@
     "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
    },
    {
+    "name": "trg_ponto_rep_funcionario_cpf_last4",
+    "when": "BEFORE INSERT OR UPDATE OF CPF",
+    "table": "ponto_rep_funcionarios",
+    "function": "fn_ponto_rep_funcionario_cpf_last4",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql"
+   },
+   {
     "name": "ajuste_ponto_status_transition",
     "when": "BEFORE UPDATE OF \"STATUS\"",
     "table": "solicitacoes_ajuste_ponto",
@@ -65588,6 +65604,17 @@
      "colaboradores"
     ]
    },
+   "fn_ponto_rep_funcionario_cpf_last4": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_norm text; BEGIN IF NEW.cpf IS NULL OR length(btrim(NEW.cpf)) = 0 THEN NEW.cpf_last4 := NULL; RETURN NEW; END IF; v_norm := regexp_replace(NEW.cpf, '\\D', '', 'g'); NEW.cpf_last4 := right(v_norm, LEAST(length(v_norm), 4)); RETURN NEW; END;",
+    "raises": [],
+    "tables": []
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -73288,6 +73315,8 @@
    "supabase/migrations/20261121224000_ponto_espelhos_papel.verify.sql",
    "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
    "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.verify.sql",
+   "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql",
+   "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -85574,6 +85603,22 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "fn_ponto_rep_funcionario_cpf_last4",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "select",
+    "object": "ponto_rep_funcionarios",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -89103,7 +89148,8 @@
    "table:ponto_rep_dias": "Cópia fiel do cartão ponto diário do AtecSoft (tabela CP).",
    "table:ponto_rep_justificativas": "De-para das justificativas do AtecSoft para o tipo de dia do DP.",
    "table:ponto_espelhos_papel": "Etapa 85: espelho de ponto devolvido assinado em papel, por colaborador e competência (1º dia do mês).",
-   "table:recibos_ferias": "Registro do recibo de férias baixado pelo RH (FeriasActions.tsx). Metadado de emissão — o PDF é gerado no navegador e não é arquivado aqui."
+   "table:recibos_ferias": "Registro do recibo de férias baixado pelo RH (FeriasActions.tsx). Metadado de emissão — o PDF é gerado no navegador e não é arquivado aqui.",
+   "column:ponto_rep_funcionarios.cpf_last4": "Últimos 4 dígitos do CPF, mantidos pelo gatilho fn_ponto_rep_funcionario_cpf_last4 — único CPF que authenticated pode ler."
   },
   "types_file": "src/integrations/supabase/types.ts"
  },
@@ -103675,7 +103721,7 @@
   {
    "module": "src/components",
    "files": 1010,
-   "lines": 186810,
+   "lines": 186843,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -104657,7 +104703,7 @@
   {
    "module": "src/schemas",
    "files": 33,
-   "lines": 8831,
+   "lines": 8832,
    "tables": [],
    "exports": [
     "admissao.ts: admissaoSchema, AdmissaoSchema",
@@ -104740,7 +104786,7 @@
   {
    "module": "src/services",
    "files": 198,
-   "lines": 41982,
+   "lines": 41979,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -105638,8 +105684,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 918,
-   "lines": 83633,
+   "files": 920,
+   "lines": 83716,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -110272,6 +110318,7 @@
     "codigo",
     "colaborador_id",
     "cpf",
+    "cpf_last4",
     "data_admissao",
     "data_desligamento",
     "dispositivo_id",
@@ -183740,7 +183787,7 @@
    },
    {
     "file": "src/components/__tests__/VinculosRelogioTab.test.tsx",
-    "name": "Desfazer chama desvincular_funcionario_relogio"
+    "name": "Desfazer pede confirmação antes de chamar desvincular_funcionario_relogio"
    },
    {
     "file": "src/components/__tests__/WorkforceHealthScore.test.tsx",
@@ -219317,6 +219364,15 @@
     "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
    },
    {
+    "name": "trg_ponto_rep_funcionario_cpf_last4",
+    "when": "BEFORE INSERT OR UPDATE OF CPF",
+    "table": "ponto_rep_funcionarios",
+    "function": "fn_ponto_rep_funcionario_cpf_last4",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql"
+   },
+   {
     "name": "ajuste_ponto_status_transition",
     "when": "BEFORE UPDATE OF \"STATUS\"",
     "table": "solicitacoes_ajuste_ponto",
@@ -229972,6 +230028,17 @@
     "tables": [
      "colaboradores"
     ]
+   },
+   "fn_ponto_rep_funcionario_cpf_last4": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_norm text; BEGIN IF NEW.cpf IS NULL OR length(btrim(NEW.cpf)) = 0 THEN NEW.cpf_last4 := NULL; RETURN NEW; END IF; v_norm := regexp_replace(NEW.cpf, '\\D', '', 'g'); NEW.cpf_last4 := right(v_norm, LEAST(length(v_norm), 4)); RETURN NEW; END;",
+    "raises": [],
+    "tables": []
    },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
@@ -245294,6 +245361,8 @@
    "supabase/migrations/20261121223000_ponto_rep_alerta_coletor_parado.sql",
    "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
    "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
+   "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql",
+   "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.verify.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -257429,6 +257498,22 @@
     "objkind": "table",
     "roles": "service_role",
     "src": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "fn_ponto_rep_funcionario_cpf_last4",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "select",
+    "object": "ponto_rep_funcionarios",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql"
    },
    {
     "kind": "revoke",
@@ -277206,7 +277291,7 @@
   },
   "src/components/__tests__/VinculosRelogioTab.test.tsx": {
    "path": "src/components/__tests__/VinculosRelogioTab.test.tsx",
-   "lines": 155,
+   "lines": 158,
    "is_test": true,
    "errors": [
     ")).toHaveTextContent("
@@ -277225,7 +277310,7 @@
     "lista pendentes por padrão, com contador e CPF mascarado (só últimos 4)",
     "filtro Vinculados mostra colaborador e método",
     "Vincular chama vincular_funcionario_relogio com funcionário e colaborador",
-    "Desfazer chama desvincular_funcionario_relogio"
+    "Desfazer pede confirmação antes de chamar desvincular_funcionario_relogio"
    ]
   },
   "src/components/__tests__/WorkforceHealthScore.test.tsx": {
@@ -288573,7 +288658,7 @@
   },
   "src/components/ponto/relogio/VinculosRelogioTab.tsx": {
    "path": "src/components/ponto/relogio/VinculosRelogioTab.tsx",
-   "lines": 236,
+   "lines": 266,
    "exports": [
     "function VinculosRelogioTab"
    ],
@@ -308952,7 +309037,7 @@
   },
   "src/schemas/tableColumns.ts": {
    "path": "src/schemas/tableColumns.ts",
-   "lines": 4270,
+   "lines": 4271,
    "exports": [
     "const TABLE_COLUMNS"
    ],
@@ -318146,7 +318231,7 @@
   },
   "src/services/relogio/vinculosService.ts": {
    "path": "src/services/relogio/vinculosService.ts",
-   "lines": 161,
+   "lines": 158,
    "exports": [
     "type VinculoMetodo",
     "const TIPOS_DIA_RELOGIO",
@@ -318154,7 +318239,6 @@
     "interface FuncionarioRelogio",
     "interface ColaboradorOpcao",
     "interface JustificativaRelogio",
-    "function ultimos4Cpf",
     "function mascararCpfLast4",
     "const vinculosRelogioService"
    ],
@@ -318176,7 +318260,7 @@
     "ponto_rep_funcionarios": [
      "codigo",
      "colaborador_id",
-     "cpf",
+     "cpf_last4",
      "dispositivo_id",
      "empresa_id",
      "id",
@@ -335112,6 +335196,16 @@
    "path": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.verify.sql",
    "lines": 44
   },
+  "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql": {
+   "path": "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql",
+   "lines": 54,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.verify.sql": {
+   "path": "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.verify.sql",
+   "lines": 29,
+   "uses_service_role": true
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -335505,10 +335599,25 @@
   }
  },
  "git": {
-  "sha": "77500ff38b99b4b308aad12e9c6ae4e2495b890c",
+  "sha": "3a8e2ec8a32a9e4e7cc1b43354ac813aa1277c85",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "3a8e2ec",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "fix: CPF não trafega mais inteiro na tela de Vínculos do relógio (R8) (#829)",
+    "files": [
+     "src/components/__tests__/VinculosRelogioTab.test.tsx",
+     "src/components/ponto/relogio/VinculosRelogioTab.tsx",
+     "src/integrations/supabase/types.ts",
+     "src/schemas/tableColumns.ts",
+     "src/services/relogio/vinculosService.ts",
+     "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql",
+     "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.verify.sql"
+    ]
+   },
    {
     "sha": "77500ff",
     "date": "2026-11-22",
@@ -335843,30 +335952,20 @@
      "supabase/migrations/20261121210000_ponto_rep_ingestao.sql",
      "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql"
     ]
-   },
-   {
-    "sha": "0696746",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "feat: coletor somente leitura do Ponto AtecSoft para o DP V3 (#796)",
-    "files": [
-     "tools/coletor-ponto-atecsoft/.gitignore",
-     "tools/coletor-ponto-atecsoft/README.md",
-     "tools/coletor-ponto-atecsoft/coletor.py",
-     "tools/coletor-ponto-atecsoft/fb15_client.py",
-     "tools/coletor-ponto-atecsoft/instalar.bat",
-     "tools/coletor-ponto-atecsoft/tests/test_coletor.py"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "src/integrations/supabase/types.ts",
+    6
+   ],
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
     6
    ],
    [
-    "src/integrations/supabase/types.ts",
-    5
+    "src/schemas/tableColumns.ts",
+    3
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -335885,7 +335984,15 @@
     3
    ],
    [
-    "tools/coletor-ponto-atecsoft/fb15_client.py",
+    "src/components/__tests__/VinculosRelogioTab.test.tsx",
+    2
+   ],
+   [
+    "src/components/ponto/relogio/VinculosRelogioTab.tsx",
+    2
+   ],
+   [
+    "src/services/relogio/vinculosService.ts",
     2
    ],
    [
@@ -335917,27 +336024,15 @@
     2
    ],
    [
-    "src/schemas/tableColumns.ts",
-    2
-   ],
-   [
-    "tools/coletor-ponto-atecsoft/README.md",
-    2
-   ],
-   [
-    "src/services/__tests__/cnabService.test.ts",
+    "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql",
     1
    ],
    [
-    "src/services/cnabService.ts",
+    "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.verify.sql",
     1
    ],
    [
-    "analise-prs/funcionalidades.csv",
-    1
-   ],
-   [
-    "scripts/audit-bridge-frontend-contract.mjs",
+    "tools/coletor-ponto-atecsoft/fb15_client.py",
     1
    ]
   ]

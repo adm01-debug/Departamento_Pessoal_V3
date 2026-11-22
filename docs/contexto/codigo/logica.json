@@ -500,7 +500,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 25366,
+   "linhas": 25369,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -1689,7 +1689,7 @@
     "TABLE_COLUMNS"
    ],
    "export_default": null,
-   "linhas": 4270,
+   "linhas": 4271,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -4125,11 +4125,10 @@
     "TipoDiaRelogio",
     "VinculoMetodo",
     "mascararCpfLast4",
-    "ultimos4Cpf",
     "vinculosRelogioService"
    ],
    "export_default": null,
-   "linhas": 161,
+   "linhas": 158,
    "tabelas": [
     "colaboradores",
     "ponto_rep_funcionarios",

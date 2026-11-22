@@ -3417,6 +3417,7 @@
    "src/services/relogio/coletoresService.ts"
   ],
   "src/components/ponto/relogio/VinculosRelogioTab.tsx": [
+   "src/components/ui/alert-dialog.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/command.tsx",

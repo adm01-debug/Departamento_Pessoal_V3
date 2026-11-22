@@ -3672,7 +3672,7 @@
   {
    "arquivo": "src/components/__tests__/VinculosRelogioTab.test.tsx",
    "tipo": "unit",
-   "linhas": 155,
+   "linhas": 158,
    "testa": [
     "src/components/ponto/relogio/VinculosRelogioTab.tsx"
    ],
