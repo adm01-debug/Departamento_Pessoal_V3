@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b77692d9010f6155ebbdd6fb67ebec6bb338f0b4",
+  "commit": "7bc68b491516e28a7ba46a6dc9ec37194e48f466",
   "branch": "main",
-  "data_commit": "2026-11-22T08:53:25-03:00",
+  "data_commit": "2026-11-22T09:11:40-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "7bc68b4",
+    "data": "2026-11-22",
+    "assunto": "infra: adiciona migrations da #829/#830 a lista fechada do canonical-apply (#831)"
+   },
    {
     "sha": "b77692d",
     "data": "2026-11-22",
@@ -126,11 +131,6 @@
     "sha": "a3db5b8",
     "data": "2026-11-21",
     "assunto": "feat: alerta de coletor do ponto parado e controle do espelho em papel (#804)"
-   },
-   {
-    "sha": "1ec032c",
-    "data": "2026-11-21",
-    "assunto": "feat: administração dos coletores do relógio de ponto em Integrações (#803)"
    }
   ],
   "arquivos_mudados_7d": 1075,
@@ -145,7 +145,7 @@
    },
    {
     "pasta": "src/components/ui",
-    "mudancas": 105
+    "mudancas": 104
    },
    {
     "pasta": "src/services/__tests__",
@@ -192,14 +192,14 @@
     "mudancas": 31
    },
    {
-    "pasta": "src/components/admissoes",
+    "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 30
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 29
+    "mudancas": 30
    },
    {
     "arquivo": "inventario/estado/rotas.json",

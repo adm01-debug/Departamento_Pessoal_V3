@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "b77692d9010f6155ebbdd6fb67ebec6bb338f0b4",
+  "sha": "7bc68b491516e28a7ba46a6dc9ec37194e48f466",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 11:56 UTC",
+  "generated_at": "2026-11-22 12:12 UTC",
   "files_total": 3727,
   "code_files": 3137,
   "code_lines": 498974
@@ -335617,10 +335617,19 @@
   }
  },
  "git": {
-  "sha": "b77692d9010f6155ebbdd6fb67ebec6bb338f0b4",
+  "sha": "7bc68b491516e28a7ba46a6dc9ec37194e48f466",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "7bc68b4",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "infra: adiciona migrations da #829/#830 a lista fechada do canonical-apply (#831)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml"
+    ]
+   },
    {
     "sha": "b77692d",
     "date": "2026-11-22",
@@ -335954,19 +335963,6 @@
     "files": [
      "supabase/functions/external-db-bridge/validation.ts"
     ]
-   },
-   {
-    "sha": "598b48c",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "feat: função ingest-ponto-rep recebe e guarda os envios do relógio de ponto (#798)",
-    "files": [
-     "scripts/audit-security-config.mjs",
-     "supabase/config.toml",
-     "supabase/functions/ingest-ponto-rep/index.ts",
-     "supabase/functions/ingest-ponto-rep/logica.test.ts",
-     "supabase/functions/ingest-ponto-rep/logica.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -335979,7 +335975,7 @@
     5
    ],
    [
-    "supabase/functions/ingest-ponto-rep/index.ts",
+    ".github/workflows/canonical-migrations.yml",
     3
    ],
    [
@@ -335989,6 +335985,10 @@
    [
     "src/components/ponto/relogio/RelogiosPanel.tsx",
     3
+   ],
+   [
+    "supabase/functions/ingest-ponto-rep/index.ts",
+    2
    ],
    [
     "src/components/__tests__/VinculosRelogioTab.test.tsx",
@@ -336016,10 +336016,6 @@
    ],
    [
     "scripts/automation.config.json",
-    2
-   ],
-   [
-    ".github/workflows/canonical-migrations.yml",
     2
    ],
    [
