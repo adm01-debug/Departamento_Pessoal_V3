@@ -1,9 +1,20 @@
-﻿import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ObrigacoesFiscaisPage from '@/pages/ObrigacoesFiscaisPage';
+
+// Radix Select depende de APIs de ponteiro que o jsdom não implementa; sem
+// isso o dropdown nunca abre e o teste de troca de competência não roda.
+beforeAll(() => {
+  Object.assign(Element.prototype, {
+    hasPointerCapture: () => false,
+    setPointerCapture: () => undefined,
+    releasePointerCapture: () => undefined,
+    scrollIntoView: () => undefined,
+  });
+});
 
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn(), info: vi.fn(), warning: vi.fn() } }));
 vi.mock('@/hooks', () => ({ useEmpresas: () => ({ empresaAtual: { id: 'emp-1' } }) }));
@@ -129,6 +140,21 @@ describe('ObrigacoesFiscaisPage — aba FGTS Digital (edge fgts-digital)', () =>
       expect(screen.queryByText(/1\.300,00 em guias FGTS\./)).not.toBeInTheDocument();
       // 500 + 800 seria o total histórico; se aparecer, o filtro está quebrado.
       expect(screen.queryByText(/13,00 em guias FGTS\./)).not.toBeInTheDocument();
+
+      // Trocar o seletor precisa mover o total junto: 11/2026 → R$ 500.
+      // Sem isso o teste só cobre a competência de abertura e não prova que o
+      // diálogo acompanha o seletor (thread ANALYSIS ...0001 da PR #822).
+      // O diálogo modal torna o resto da página inacessível, então fecha antes.
+      await user.keyboard('{Escape}');
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+      await user.click(screen.getAllByRole('combobox')[0]);
+      await user.click(await screen.findByText('11/2026'));
+      await user.click(screen.getByRole('button', { name: /Registrar guia GFD/i }));
+
+      await waitFor(() =>
+        expect(screen.getByText(/Total de FGTS apurado em 11\/2026:.*500,00 em guias FGTS\./)).toBeInTheDocument()
+      );
+      expect(screen.queryByText(/Total de FGTS apurado em 11\/2026:.*800,00/)).not.toBeInTheDocument();
     } finally {
       vi.useRealTimers();
     }

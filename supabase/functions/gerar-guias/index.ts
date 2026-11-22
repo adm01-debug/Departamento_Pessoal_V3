@@ -194,8 +194,15 @@ serve(async (req: Request): Promise<Response> => {
           .eq('empresa_id', empresa_id)
           .eq('competencia', competencia)
           .eq('tipo', t)
-          .in('status', ['pendente', 'emitida', 'ativa'])
+          .in('status', ['gerada', 'pendente', 'emitida', 'ativa', 'paga'])
           .limit(1);
+        // Os status reais gravados hoje sao `gerada` (tela e auto) e `paga`.
+        // O filtro antigo nao incluia nenhum dos dois, entao o proprio "Auto"
+        // reemitia por cima da guia que acabara de criar — e, com `paga` na
+        // lista, uma competencia ja quitada tambem deixa de ser reemitida,
+        // que era o valor em dobro apontado na thread BUG ...0001 da PR #822.
+        // Reemissao legitima (retificacao) e ato explicito, nao um clique em
+        // "Auto".
         if (existente?.length) { duplicatas.push(t); continue; }
       }
 

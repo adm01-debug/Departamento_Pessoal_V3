@@ -284,7 +284,7 @@ export default function ObrigacoesFiscaisPage() {
       });
       qc.invalidateQueries({ queryKey: ['guias-fgts-digital'] });
       toast.success(
-        `Guia FGTS Digital registrada — protocolo ${r?.protocolo ?? 'registrado'}. A emissão oficial da guia pagável é feita no portal FGTS Digital.`
+        `Guia FGTS Digital registrada — protocolo ${r?.protocolo ?? 'registrado'}. Este é o lançamento interno de RH; a guia pagável é emitida por você no portal FGTS Digital.`
       );
       setOpenFgtsDigital(false);
     } catch (err) {

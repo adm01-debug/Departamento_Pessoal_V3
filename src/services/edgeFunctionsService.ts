@@ -182,6 +182,9 @@ export const edgeFunctionsService = {
       // Contrato snake_case da edge (BodySchema em supabase/functions/fgts-digital/index.ts).
       fn: () =>
         handleInvoke<{ success: boolean; id: string; protocolo: string; payload_sha256: string }>('fgts-digital', {
+          // A chave viaja no header: a edge reapresenta a resposta anterior em
+          // vez de reinserir a guia quando o retry chega depois do commit.
+          headers: { 'Idempotency-Key': idemKey },
           body: {
             empresa_id: params.empresaId,
             competencia: params.competencia,
