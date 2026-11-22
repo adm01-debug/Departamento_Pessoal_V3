@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7bc68b491516e28a7ba46a6dc9ec37194e48f466",
+  "sha": "7084a10567da4dc13576bc23a1868edb6fc859a8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 12:12 UTC",
-  "files_total": 3727,
-  "code_files": 3137,
-  "code_lines": 498974
+  "generated_at": "2026-11-22 12:41 UTC",
+  "files_total": 3729,
+  "code_files": 3139,
+  "code_lines": 499011
  },
  "version": "1.3.2",
- "facts_hash": "2c2ab55035021972",
+ "facts_hash": "1596857ff5488695",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1038,
-   ".sql": 996,
+   ".sql": 998,
    ".ts": 962,
    ".mjs": 110,
    ".js": 15,
@@ -71893,6 +71893,30 @@
     "unique": true,
     "where": "WHERE colaborador_id IS NOT NULL",
     "src": "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.sql"
+   },
+   {
+    "name": "idx_ponto_rep_lotes_empresa_id",
+    "table": "ponto_rep_lotes",
+    "columns": "empresa_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql"
+   },
+   {
+    "name": "idx_ponto_rep_dias_lote_id",
+    "table": "ponto_rep_dias",
+    "columns": "lote_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql"
+   },
+   {
+    "name": "idx_pix_lotes_folha_id",
+    "table": "pix_lotes",
+    "columns": "folha_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql"
    }
   ],
   "cron_jobs": [
@@ -73327,6 +73351,8 @@
    "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.verify.sql",
    "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.sql",
    "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.verify.sql",
+   "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql",
+   "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -105694,8 +105720,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 922,
-   "lines": 83752,
+   "files": 924,
+   "lines": 83789,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -335224,6 +335250,14 @@
    "path": "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.verify.sql",
    "lines": 18
   },
+  "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql": {
+   "path": "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql",
+   "lines": 22
+  },
+  "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.verify.sql": {
+   "path": "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.verify.sql",
+   "lines": 15
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -335617,10 +335651,21 @@
   }
  },
  "git": {
-  "sha": "7bc68b491516e28a7ba46a6dc9ec37194e48f466",
+  "sha": "7084a10567da4dc13576bc23a1868edb6fc859a8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "7084a10",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "perf: cria indices nas 3 FKs de join do ponto e do PIX (#832)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql",
+     "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.verify.sql"
+    ]
+   },
    {
     "sha": "7bc68b4",
     "date": "2026-11-22",
@@ -335954,15 +335999,6 @@
      "scripts/tests/migrations-ponto-rep.sh",
      "tools/coletor-ponto-atecsoft/README.md"
     ]
-   },
-   {
-    "sha": "e3986dc",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "infra: libera no bridge os RPCs do relógio de ponto (#802)",
-    "files": [
-     "supabase/functions/external-db-bridge/validation.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -335976,7 +336012,7 @@
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    3
+    4
    ],
    [
     "src/pages/PontoKioskPage.tsx",
@@ -336035,15 +336071,15 @@
     2
    ],
    [
+    "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.verify.sql",
+    1
+   ],
+   [
     "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql",
     1
    ]
   ]

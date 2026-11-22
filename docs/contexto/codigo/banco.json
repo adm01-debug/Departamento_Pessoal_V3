@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 922,
+ "migrations": 924,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -45566,6 +45566,11 @@
    ],
    "indices": [
     {
+     "nome": "idx_pix_lotes_folha_id",
+     "colunas": "folha_id",
+     "unico": false
+    },
+    {
      "nome": "pix_lotes_empresa_folha_uk",
      "colunas": "empresa_id, folha_id",
      "unico": true
@@ -47308,6 +47313,11 @@
      "unico": false
     },
     {
+     "nome": "idx_ponto_rep_dias_lote_id",
+     "colunas": "lote_id",
+     "unico": false
+    },
+    {
      "nome": "idx_ponto_rep_dias_pendentes",
      "colunas": "dispositivo_id, data",
      "unico": false
@@ -47923,6 +47933,11 @@
     {
      "nome": "idx_ponto_rep_lotes_dispositivo_recebido",
      "colunas": "dispositivo_id, recebido_em DESC",
+     "unico": false
+    },
+    {
+     "nome": "idx_ponto_rep_lotes_empresa_id",
+     "colunas": "empresa_id",
      "unico": false
     }
    ],
