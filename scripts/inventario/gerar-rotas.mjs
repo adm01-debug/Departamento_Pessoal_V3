@@ -25,7 +25,8 @@ const RAIZ_PADRAO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 const SAIDA_REL = 'inventario/estado/rotas.json';
 const ARQ_ROTAS = 'src/App.tsx';
 const ARQ_MENU = 'src/components/layout/AppSidebar.tsx';
-const EXTENSOES = ['.tsx', '.ts', '.jsx', '.js', '/index.tsx', '/index.ts'];
+const EXTENSOES = ['.tsx', '.ts', '.jsx', '.js'];
+const EXTENSOES_INDICE = ['index.tsx', 'index.ts'];
 const INVOLUCROS = new Set(['ProtectedRoute', 'AdminRoute', 'Navigate', 'Route', 'Suspense', 'ErrorBoundary', 'RouteErrorBoundary', 'LazyPage']);
 
 const ler = (raiz, rel) => fs.readFileSync(path.join(raiz, rel), 'utf8');
@@ -40,6 +41,13 @@ export function resolverImport(raiz, deArquivoAbs, especificador) {
   else return null;
   if (fs.existsSync(base) && fs.statSync(base).isFile()) return base;
   for (const ext of EXTENSOES) if (fs.existsSync(base + ext)) return base + ext;
+  // Caminho sempre com path.sep: o predicado `dentro()` de fechoDaTela compara por prefixo e
+  // um alvo com '/' solto no meio (ex.: `.../src/hooks` + '/index.ts') nao casaria no Windows,
+  // cortando a travessia no barrel e gerando inventario diferente do Linux.
+  for (const nome of EXTENSOES_INDICE) {
+    const cand = path.join(base, nome);
+    if (fs.existsSync(cand) && fs.statSync(cand).isFile()) return cand;
+  }
   return undefined; // local, mas nao existe
 }
 
