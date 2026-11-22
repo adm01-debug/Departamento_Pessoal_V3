@@ -196,8 +196,8 @@ Princípios:
 - [x] **78. Bloquear edição de batida do relógio.** Botões de ajustar/excluir desabilitados com explicação. Pronto quando: tentativa via tela e via API é recusada. Feito: #801; gatilho `trg_batida_relogio_protecao` bloqueia update/delete de batida do relógio no banco.
 - [x] **79. Histórico de lotes.** Lista de envios com contagens e erros. Pronto quando: lote com erro mostra o motivo. Feito: #803; aba Envios.
 - [x] **80. Ajustar app e quiosque conforme D2.** Pronto quando: comportamento decidido refletido em `PontoPage.tsx` e `PontoKioskPage.tsx`. Feito: #801; `PontoPage`/`PontoKioskPage` bloqueiam quem usa relógio.
-- [ ] **81. Estados de carregando, vazio e erro em todas as telas novas.** Pronto quando: testes de componente cobrem os três.
-- [ ] **82. Atualizar inventário de rotas.** `npm run inventario:rotas` se houver rota nova. Pronto quando: CI verde.
+- [x] **81. Estados de carregando, vazio e erro em todas as telas novas.** Pronto quando: testes de componente cobrem os três. Feito: confirmado em 22/11/2026 — `RelogiosPanel`, `VinculosRelogioTab`, `JustificativasRelogioTab` e `EspelhosPapelPanel` já tinham os três estados testados; `npx vitest run` nos 4 arquivos → `32 passed`.
+- [x] **82. Atualizar inventário de rotas.** `npm run inventario:rotas` se houver rota nova. Pronto quando: CI verde. Nenhuma rota nova (nenhuma tela do relógio tem rota própria — tudo em abas de páginas existentes), mas os hooks novos (`useColetoresPonto`, `useGerarTokenColetor` etc.) não estavam no `inventario/estado/rotas.json`. Regenerado em 22/11/2026: `npm run inventario:rotas` → `0 problemas`.
 
 ### Fase 7 — Fechamento mensal (83–90)
 
@@ -259,11 +259,11 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 | 3 — Função de ingestão      | 33–46     | 10/14      |
 | 4 — Coletor Windows         | 47–62     | 8/16       |
 | 5 — Processamento e cálculo | 63–72     | 1/10       |
-| 6 — Interface               | 73–82     | 8/10       |
+| 6 — Interface               | 73–82     | 10/10      |
 | 7 — Fechamento mensal       | 83–90     | 1/8        |
 | 8 — Implantação e operação  | 91–100    | 2/10       |
 | 9 — Escrita no AtecSoft     | 101–120   | 0/20       |
-| **Total**                   | **1–120** | **49/120** |
+| **Total**                   | **1–120** | **51/120** |
 
 Situação em 22/11/2026. O dono vai enviar os bancos reais das duas unidades (etapas 6–7) amanhã; até lá:
 
