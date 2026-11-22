@@ -1,15 +1,15 @@
 id,nome,modulo,estado_codigo,estado_producao,evidencia_gap,pr_relacionada
 F-01,Admissao de Funcionario,admissao,IMPLEMENTADO,VERIFICADO,"Verificado no canonico: tabela admissoes + RLS on + 8 registros reais em fluxo (contrato/assinatura/esocial/exame); edge admissao-publica v10 ACTIVE",309
 F-02,Email Pre-Admissao,admissao,IMPLEMENTADO,VERIFICADO,"Edge enviar-email-admissao v6 ACTIVE; tabela notificacoes_admissao presente",309
-F-03,Rescisao de Contrato,rescisao,IMPLEMENTADO,VERIFICADO_INFRA,"Tabelas historico_rescisoes/verbas_rescisorias/homologacoes_rescisao + RLS; 0 desligamentos em prod (banco em uso inicial); edges calcular-rescisao/pagar-desligamento ACTIVE",313
+F-03,Rescisao de Contrato,rescisao,IMPLEMENTADO,VERIFICADO_INFRA,"Recontado em 22/11/2026: 2 desligamentos, 0 historico_rescisoes, 0 verbas_rescisorias, 0 homologacoes_rescisao -- o fluxo de rescisao nunca completou em prod; edges calcular-rescisao/pagar-desligamento ACTIVE",313
 F-04,Calculo de Folha,folha,IMPLEMENTADO,VERIFICADO,"Folhas reais 2026-05/06 paga e 2026-07 calculada (12 colaboradores); itens_folha + RLS",,
 F-05,Fechamento de Folha,folha,IMPLEMENTADO,VERIFICADO,"Folhas com status paga/calculada no banco vivo; edge fechar-folha v16 ACTIVE; 3 paga + 1 calculada confirmadas",,
 F-06,Emissao de Holerite PDF,holerite,IMPLEMENTADO,VERIFICADO,"Tabela holerites + holerite_distribuicoes; edges gerar-holerite/distribuir-holerites ACTIVE",,
-F-07,Envio de Eventos eSocial,esocial,IMPLEMENTADO,VERIFICADO_INFRA,"Codigo implementa 19 eventos (S-1000..S-2400) + edge enviar-esocial v16 ACTIVE; 0 eventos/0 lotes/0 certificados digitais em prod; edge recusa envio produtivo (503) sem SOAP/ICP-Brasil - requer certificado A1/A3 do cliente + endpoint homologado",317
+F-07,Envio de Eventos eSocial,esocial,IMPLEMENTADO,VERIFICADO_INFRA,"Recontado em 22/11/2026: 0 esocial_eventos, 0 esocial_lotes, 0 certificados_digitais, 0 configuracoes_esocial -- nenhuma transmissao real; codigo cobre 19 eventos (S-1000..S-2400) e a edge enviar-esocial recusa envio produtivo (503) sem cliente SOAP + assinatura ICP-Brasil",317
 F-08,Login Gov.BR,auth,IMPLEMENTADO,VERIFICADO,"Edge auth-gov-br v16 ACTIVE; login anonimo bloqueado",317
 F-09,Ferias,ferias,IMPLEMENTADO,VERIFICADO,"QA_FERIAS_V31 selo 10/10; OJ-123 D-2 no canonico",,
 F-10,Afastamentos,afastamentos,IMPLEMENTADO,VERIFICADO,"Tabela afastamentos + config_afastamentos + motivos_afastamento + RLS",,
-F-11,CNAB/Remessa PIX,cnab,IMPLEMENTADO,VERIFICADO_INFRA,"Tabelas cnab_remessas/cnab_itens/cnab_configuracoes; edges cnab-remessa/pix-lote ACTIVE; sem dados de teste em prod",,
+F-11,CNAB/Remessa PIX,cnab,IMPLEMENTADO,VERIFICADO_INFRA,"Recontado em 22/11/2026: 1 cnab_configuracoes preenchida (banco 001, TIME PROMO BRINDES), 3 cnab_remessas com status enviado, 0 cnab_itens -- as remessas foram geradas sem favorecidos, entao o caminho de pagamento nao fechou; edges cnab-remessa/pix-lote ACTIVE",,
 F-12,Backup de Dados,infra,IMPLEMENTADO,VERIFICADO,"Edges backup/backup-automatico ACTIVE; PITR gestionado no canonico",,
 F-13,Tabelas Fiscais INSS/IRRF,fiscal,IMPLEMENTADO,VERIFICADO,"Tabelas faixas_inss/faixas_irrf + guias_inss; edges gerar-guias/dctfweb ACTIVE",,
 F-14,External DB Bridge,infra/seguranca,HARDENING_APLICADO,VERIFICADO,"Bridge exige JWT + encaminha identidade; edge external-db-bridge v57 ACTIVE",315
