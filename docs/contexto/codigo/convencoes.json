@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: desmembra a estrutura do banco do Ponto AtecSoft (#836)",
    "fix: extrai e testa a regra do 23505 no vinculo do relogio (#835)",
    "fix: baixa de guia falha alto quando nenhuma linha e atualizada (#834)",
    "fix: isola guias_fgts_digital por empresa e libera a baixa para RH (#824)",
-   "perf: cria indices nas 3 FKs de join do ponto e do PIX (#832)",
-   "infra: adiciona migrations da #829/#830 a lista fechada do canonical-apply (#831)"
+   "perf: cria indices nas 3 FKs de join do ponto e do PIX (#832)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

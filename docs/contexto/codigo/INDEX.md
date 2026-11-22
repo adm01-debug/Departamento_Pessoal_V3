@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a2f4ebe2c3159d8679b3f2f5a6acc7639a511662` (2026-11-22T10:33:21-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `108016d61ceb7e921bd040145088a81f8463dd4b` (2026-11-22T10:39:54-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2000), SQL (1000), Markdown (344), JavaScript (136), JSON (64), Shell (59), YAML (56), Python (8)
+- linguagens: TypeScript (2000), SQL (1000), Markdown (345), JavaScript (136), JSON (64), Shell (59), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3718 |
+| arquivos_total | 3719 |
 | arquivos_codigo | 2143 |
 | linhas_codigo | 428249 |
 | rotas | 116 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 809 |
 | workflows | 21 |
 | scripts | 138 |
-| docs_md | 344 |
+| docs_md | 345 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
@@ -398,8 +398,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28155 nós · 63493 arestas · 2433 comunidades · grafo do commit `a2f4ebe2`
-- comunidades maiores: cn (492), lucide-react (485), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (426), useEmpresas (369), vitest (337), badge.tsx (288), @tanstack/react-query (281), App.tsx (217), contract.ts (182), "public"."empresas" (164)
+- 28178 nós · 63516 arestas · 2467 comunidades · grafo do commit `108016d6`
+- comunidades maiores: useEmpresas (629), 20260831_corrected_public.sql (485), canonical_schema.sql (481), lucide-react (440), react (376), cn (372), App.tsx (363), vitest (316), ColaboradorDetalhesPage.tsx (183), "public"."empresas" (164), "public"."empresas" (158), "public"."colaboradores" (157)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -407,9 +407,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - .github/workflows/canonical-migrations.yml (32)
 - inventario/estado/rotas.json (22)
 - scripts/canonical-invariants.sql (20)
+- docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (11)
 - src/integrations/supabase/types.ts (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
-- docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (10)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
 - docs/prod-readiness.md (9)
 - scripts/automation.config.json (9)
@@ -652,10 +652,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/treinamentos-imagens-fase3b-prep.md` — Fase 3B — preparação final (relatório) (133 linhas)
 - `docs/treinamentos-imagens-homologacao.md` — Homologação isolada — Hub de imagens (alternativa ao Docker) (233 linhas)
 - `docs/treinamentos-imagens.md` — Imagens do Hub de Treinamentos — Fase 2 (auditoria) + preparação da Fase 3 (426 linhas)
-- subpastas de docs/: docs/auditoria (67), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/pendencias (2), docs/contratos (1), docs/protegido (1), docs/seguranca (1)
+- subpastas de docs/: docs/auditoria (68), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/pendencias (2), docs/contratos (1), docs/protegido (1), docs/seguranca (1)
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-22 `108016d` chore: desmembra a estrutura do banco do Ponto AtecSoft (#836)
 - 2026-11-22 `a2f4ebe` fix: extrai e testa a regra do 23505 no vinculo do relogio (#835)
 - 2026-11-22 `f0f940b` fix: baixa de guia falha alto quando nenhuma linha e atualizada (#834)
 - 2026-11-22 `4715945` fix: isola guias_fgts_digital por empresa e libera a baixa para RH (#824)
@@ -670,7 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-22 `e5a1e96` feat: sincroniza cargos do Bitrix a partir de WORK_POSITION dos usuarios (#825)
 - 2026-11-22 `bba91c5` feat: conecta a aba FGTS Digital à edge fgts-digital (feature estava órfã a 1 passo do fim) (#822)
 - 2026-11-22 `d4b08fa` docs: reescreve a análise de pendentes com o estado real (9 dos 12 itens já estavam implementados) (#823)
-- 2026-11-21 `bfd9db6` fix: gerador de rotas resolve index.ts com separador nativo (inventario saia diferente no Windows) (#820)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

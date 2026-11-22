@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a2f4ebe2c3159d8679b3f2f5a6acc7639a511662",
+  "commit": "108016d61ceb7e921bd040145088a81f8463dd4b",
   "branch": "main",
-  "data_commit": "2026-11-22T10:33:21-03:00",
+  "data_commit": "2026-11-22T10:39:54-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "108016d",
+    "data": "2026-11-22",
+    "assunto": "chore: desmembra a estrutura do banco do Ponto AtecSoft (#836)"
+   },
    {
     "sha": "a2f4ebe",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "2624262",
     "data": "2026-11-21",
     "assunto": "fix: avisa quando batida offline é recusada por usar o relógio da unidade (#811)"
-   },
-   {
-    "sha": "2db7ac8",
-    "data": "2026-11-21",
-    "assunto": "chore: progresso do plano do relógio de ponto com evidências (#809)"
    }
   ],
-  "arquivos_mudados_7d": 1080,
+  "arquivos_mudados_7d": 1079,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -210,16 +210,16 @@
     "mudancas": 20
    },
    {
+    "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+    "mudancas": 11
+   },
+   {
     "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 11
    },
    {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
     "mudancas": 11
-   },
-   {
-    "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    "mudancas": 10
    },
    {
     "arquivo": "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3718,
+  "arquivos_total": 3719,
   "arquivos_codigo": 2143,
   "linhas_codigo": 428249,
   "rotas": 116,
@@ -331,7 +331,7 @@
   "testes": 809,
   "workflows": 21,
   "scripts": 138,
-  "docs_md": 344
+  "docs_md": 345
  },
  "por_pasta": {
   "capacitor.config.ts": {

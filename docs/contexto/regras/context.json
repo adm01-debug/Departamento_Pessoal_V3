@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "a2f4ebe2c3159d8679b3f2f5a6acc7639a511662",
+  "sha": "108016d61ceb7e921bd040145088a81f8463dd4b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 13:34 UTC",
-  "files_total": 3732,
+  "generated_at": "2026-11-22 14:13 UTC",
+  "files_total": 3733,
   "code_files": 3141,
   "code_lines": 499179
  },
@@ -335771,10 +335771,20 @@
   }
  },
  "git": {
-  "sha": "a2f4ebe2c3159d8679b3f2f5a6acc7639a511662",
+  "sha": "108016d61ceb7e921bd040145088a81f8463dd4b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "108016d",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "chore: desmembra a estrutura do banco do Ponto AtecSoft (#836)",
+    "files": [
+     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+     "docs/auditoria/ponto-atecsoft-estrutura.md"
+    ]
+   },
    {
     "sha": "a2f4ebe",
     "date": "2026-11-22",
@@ -336086,29 +336096,12 @@
      "supabase/migrations/20261121224000_ponto_espelhos_papel.sql",
      "supabase/migrations/20261121224000_ponto_espelhos_papel.verify.sql"
     ]
-   },
-   {
-    "sha": "1ec032c",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "feat: administração dos coletores do relógio de ponto em Integrações (#803)",
-    "files": [
-     "src/components/__tests__/RelogiosPanel.test.tsx",
-     "src/components/ponto/relogio/RelogiosPanel.tsx",
-     "src/components/ponto/relogio/statusColetor.ts",
-     "src/hooks/useColetoresPonto.ts",
-     "src/integrations/supabase/types.ts",
-     "src/pages/IntegracoesPage.tsx",
-     "src/services/relogio/coletoresService.ts",
-     "supabase/migrations/20261121220000_ponto_rep_coletores_admin.sql",
-     "supabase/migrations/20261121220000_ponto_rep_coletores_admin.verify.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    6
+    7
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -336119,19 +336112,15 @@
     3
    ],
    [
-    "src/integrations/supabase/types.ts",
-    3
-   ],
-   [
-    "src/components/ponto/relogio/RelogiosPanel.tsx",
-    3
-   ],
-   [
     "src/pages/ObrigacoesFiscaisPage.tsx",
     2
    ],
    [
     "scripts/automation.config.json",
+    2
+   ],
+   [
+    "src/integrations/supabase/types.ts",
     2
    ],
    [
@@ -336153,6 +336142,14 @@
    [
     "src/services/pontoOfflineService.ts",
     2
+   ],
+   [
+    "src/components/ponto/relogio/RelogiosPanel.tsx",
+    2
+   ],
+   [
+    "docs/auditoria/ponto-atecsoft-estrutura.md",
+    1
    ],
    [
     "supabase/functions/ingest-ponto-rep/logica.test.ts",
@@ -336180,10 +336177,6 @@
    ],
    [
     "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.sql",
     1
    ]
   ]
