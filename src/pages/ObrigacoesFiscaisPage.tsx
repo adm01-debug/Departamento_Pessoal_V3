@@ -208,7 +208,10 @@ export default function ObrigacoesFiscaisPage() {
 
   const marcarPaga = useMutation({
     mutationFn: async ({ id, tabela }: { id: string; tabela: GuiaTabela }) => {
-      const { error } = await supabase
+      // `.select('id')` devolve as linhas efetivamente alteradas: sem isso a
+      // confirmação de baixa aparecia mesmo quando o RLS não deixava nenhuma
+      // linha elegível (0 linhas alteradas, `error` nulo).
+      const { data, error } = await supabase
         .from(tabela)
         .update(
           validateTablePayload(
@@ -218,8 +221,15 @@ export default function ObrigacoesFiscaisPage() {
           )
         )
         .eq('id', id)
-        .eq('empresa_id', empresaAtual!.id);
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id');
       if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error(
+          'Nenhuma guia foi atualizada: sem permissão de escrita nesta guia ou ela já não pertence a esta empresa.'
+        );
+      }
+      return data[0];
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['guias-fgts'] });
