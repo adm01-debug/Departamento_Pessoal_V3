@@ -150,7 +150,7 @@ Princípios:
 - [ ] **41. Converter dia em batidas.** Função SQL transacional que só insere o que falta: batida é imutável (gatilho de imutabilidade), então correção vinda do AtecSoft entra como ajuste, nunca como exclusão. Pronto quando: dia alterado no envio seguinte reflete no espelho sem apagar batida.
 - [ ] **42. Não tocar batida de outra origem.** Pronto quando: teste prova que batida de app/quiosque/ajuste sobrevive ao reprocessamento.
 - [ ] **43. Respeitar período fechado.** Dia de competência fechada em `periodos_ponto` não é reprocessado; gera alerta. Pronto quando: teste verde.
-- [ ] **44. Registrar auditoria.** Cada lote em `ponto_auditoria`/log de edge, sem CPF em claro. Pronto quando: `audit:edge-audit-log` verde. Corrigido em 22/11/2026 (apontado pelo Devin Review na PR #813): `index.ts` não grava em `audit_log` — só atualiza o próprio `ponto_rep_lotes.status` no sucesso e chama `captureException` (Sentry) no erro. `npm run audit:edge-audit-log` passa, mas valida o contrato de quem grava em `audit_log`; `ingest-ponto-rep` não é um desses 25 inserts, então o script passar não prova nada aqui. Falta decidir e implementar onde fica o registro por lote.
+- [x] **44. Registrar auditoria.** Cada lote em `ponto_auditoria`/log de edge, sem CPF em claro. Pronto quando: `audit:edge-audit-log` verde. Feito: #814 — `index.ts` passou a gravar `INSERT` em `audit_log` por lote processado (tabela, `registro_id`, `empresa_id`, contagens, sem CPF/PIS). Publicado via `canonical-edge-functions.yml` (run 44971537166) e confirmado ao vivo em 22/11/2026: dispositivo de teste descartável na empresa `[E2E-SEED]` → chamada real → linha real em `audit_log` (`acao=INSERT`, `tabela=ponto_rep_lotes`, `empresa_id` correto). Lote e dispositivo de teste removidos depois; a linha de `audit_log` **não pôde ser removida** — a tabela é append-only por desenho (`trg_audit_log_no_delete`), que é o comportamento correto; fica 1 linha de teste identificável (empresa `[E2E-SEED]`, sem dado pessoal).
 - [ ] **45. Testes da função.** Deno: autenticação, idempotência, vínculo, reprocessamento, período fechado. Pronto quando: `lint:edge` e `typecheck:edge` verdes. Em 22/11/2026: `lint:edge` e `audit:edge-syntax` verdes (sem Deno neste ambiente para `typecheck:edge`, inalterado desde a verificação do #798). Corrigido (apontado pelo Devin Review): `logica.test.ts` só cobre vínculo, formato do token e seleção de dia alterado por hash — é lógica pura, sem I/O. Autenticação e idempotência foram verificadas ao vivo no #798 (401 com token errado/ausente; reenvio idêntico não duplica linha), não por essa suíte. Reprocessamento e período fechado continuam bloqueados pelas etapas 41 e 43; nenhum teste automatizado cobre o efeito de um lote no banco.
 - [x] **46. Publicar.** Via `canonical-edge-functions.yml`. Pronto quando: chamada real com token de teste devolve 200 e a linha aparece em `ponto_rep_lotes`. Feito em 22/11/2026: dispositivo descartável criado na empresa `[E2E-SEED]` (`61e7d382-…`), POST real em `https://frjbfeamybqsejlvmqbl.supabase.co/functions/v1/ingest-ponto-rep` → `200 {"ok":true,"lote_id":"b6b187a4-…"}`, linha confirmada em `ponto_rep_lotes` (`status=processado`) e removida depois junto com o dispositivo — produção sem resíduo.
 
@@ -256,18 +256,18 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 | 0 — Decisões e insumos      | 1–8       | 5/8        |
 | 1 — Diagnóstico             | 9–18      | 1/10       |
 | 2 — Modelo de dados         | 19–32     | 13/14      |
-| 3 — Função de ingestão      | 33–46     | 9/14       |
+| 3 — Função de ingestão      | 33–46     | 10/14      |
 | 4 — Coletor Windows         | 47–62     | 8/16       |
 | 5 — Processamento e cálculo | 63–72     | 1/10       |
 | 6 — Interface               | 73–82     | 8/10       |
 | 7 — Fechamento mensal       | 83–90     | 1/8        |
 | 8 — Implantação e operação  | 91–100    | 2/10       |
 | 9 — Escrita no AtecSoft     | 101–120   | 0/20       |
-| **Total**                   | **1–120** | **48/120** |
+| **Total**                   | **1–120** | **49/120** |
 
 Situação em 22/11/2026. O dono vai enviar os bancos reais das duas unidades (etapas 6–7) amanhã; até lá:
 
-- 36 e 46 fechadas nesta sessão com chamada real ao canônico (dispositivo de teste descartável na empresa `[E2E-SEED]`, removido depois, incluindo 65 chamadas seguidas para confirmar o 429 da etapa 36). 44 foi marcada e depois corrigida de volta para aberta — Devin Review apontou que `ingest-ponto-rep` não grava em `audit_log`; ver nota na própria etapa. 45 segue aberta.
+- 36, 44 e 46 fechadas nesta sessão com chamada real ao canônico (dispositivo de teste descartável na empresa `[E2E-SEED]`, removido depois, incluindo 65 chamadas seguidas para confirmar o 429 da etapa 36). 44 foi marcada, corrigida de volta para aberta pelo Devin Review (a função não gravava auditoria de verdade), corrigida em código no #814 e fechada de novo com evidência real pós-deploy. 45 segue aberta.
 - Coletor (Fase 4): código revisado etapa a etapa nesta sessão. 55, 56, 58, 59 fechadas por evidência de código/teste (mecanismo já atende o critério sem precisar do Windows real). 48, 49, 51, 52, 57, 60, 61 têm código completo, mas o critério de cada uma pede um Windows/banco real — seguem abertas, conferidas na instalação pelo técnico de TI (etapa 91). 53 tem uma lacuna real: só `JUSTFICATIVA` foi lida; `FERIADO` e `HORARIO_LINHAS` não têm coluna documentada no repo para escrever a query sem chutar.
 - 41–43, 63–72, 83–90, 101–120: dependem da cópia do banco real das duas unidades (etapas 6–15) e do cadastro dos colaboradores no DP V3. Sem isso, qualquer código sobre `REF_*`/virada de dia seria suposição — não escrito por não ter como validar.
 - Atenção para amanhã: o banco do AtecSoft é Firebird 1.5 (ODS 10.1); o Ubuntu desta sessão só tem pacotes do Firebird 3.0, que não abre esse formato. Para ler o `.FDB` aqui vou precisar ou de um dump/CSV das tabelas, ou da própria `gds32.dll` do instalador — decido isso quando os arquivos chegarem.
