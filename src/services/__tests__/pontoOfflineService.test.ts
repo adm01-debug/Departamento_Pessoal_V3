@@ -26,7 +26,7 @@ vi.mock('@/services/pontoMonitorService', () => ({
   },
 }));
 
-import { pontoOfflineService } from '../pontoOfflineService';
+import { avisoRecusaRelogio, pontoOfflineService } from '../pontoOfflineService';
 
 describe('pontoOfflineService.generateIntegrityHash', () => {
   it('returns a non-empty string', () => {
@@ -192,7 +192,7 @@ describe('pontoOfflineService.syncOfflineQueue — caminhos de sincronização',
   it('sucesso total: sincroniza e esvazia a fila', async () => {
     await pontoOfflineService.queueRegistro(baseReg);
     const r = await pontoOfflineService.syncOfflineQueue();
-    expect(r).toEqual({ synced: 1, errors: 0 });
+    expect(r).toEqual({ synced: 1, errors: 0, recusadasRelogio: 0 });
     expect(pontoOfflineService.getQueueSize()).toBe(0);
   });
 
@@ -212,8 +212,20 @@ describe('pontoOfflineService.syncOfflineQueue — caminhos de sincronização',
       error: null,
     });
     const r = await pontoOfflineService.syncOfflineQueue();
-    expect(r).toEqual({ synced: 1, errors: 1 });
+    expect(r).toEqual({ synced: 1, errors: 1, recusadasRelogio: 0 });
     expect(pontoOfflineService.getQueueSize()).toBe(1);
     expect(a.id).not.toBe(b.id);
+  });
+
+  it('recusa do relógio: conta à parte, não vira erro e não volta à fila', async () => {
+    const a = await pontoOfflineService.queueRegistro(baseReg);
+    (await mockInvoke()).mockResolvedValueOnce({
+      data: { success: true, success_count: 0, error_count: 1, details: [], rejected_usa_relogio: [{ id: a.id }] },
+      error: null,
+    });
+    const r = await pontoOfflineService.syncOfflineQueue();
+    expect(r).toEqual({ synced: 0, errors: 0, recusadasRelogio: 1 });
+    expect(pontoOfflineService.getQueueSize()).toBe(0);
+    expect(avisoRecusaRelogio(1)).toContain('relógio da unidade');
   });
 });
