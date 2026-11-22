@@ -236,7 +236,8 @@ jobs:
           for migration in \
             20261122090000_recibos_ferias_criar_tabela_ausente.sql \
             20261122110000_ponto_rep_funcionarios_mascara_cpf.sql \
-            20261122110500_ponto_rep_vinculo_unicidade_reversa.sql
+            20261122110500_ponto_rep_vinculo_unicidade_reversa.sql \
+            20261122130000_indices_fk_join_ponto_pix.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
