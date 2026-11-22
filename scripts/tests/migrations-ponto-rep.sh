@@ -148,4 +148,22 @@ for ruim in 0 8; do
 done
 echo "dia_semana fora de 1..7 recusado"
 
+# O sidecar precisa enxergar a chave unica ausente: CREATE TABLE IF NOT EXISTS nao
+# recria nada, e uma tabela preexistente sem a constraint faria o upsert da Edge
+# falhar em producao (42P10). Prova que o check nao e decorativo.
+run_psql -q -c 'ALTER TABLE public.ponto_rep_feriados DROP CONSTRAINT ponto_rep_feriados_dispositivo_codigo_key;'
+run_psql -q -c 'ALTER TABLE public.ponto_rep_horarios DROP CONSTRAINT ponto_rep_horarios_dispositivo_codigo_dia_key;'
+falha="$(run_psql -qAt -f /tmp/ponto-rep-feriados.verify.sql)"
+case "$falha" in
+  'FALHOU: ponto_rep_feriados sem unique'*) ;;
+  *) echo "sidecar nao viu a unique de feriados ausente: $falha" >&2; exit 1;;
+esac
+run_psql -q -c 'ALTER TABLE public.ponto_rep_feriados ADD CONSTRAINT ponto_rep_feriados_dispositivo_codigo_key UNIQUE (dispositivo_id, codigo);'
+falha="$(run_psql -qAt -f /tmp/ponto-rep-feriados.verify.sql)"
+case "$falha" in
+  'FALHOU: ponto_rep_horarios sem unique'*) ;;
+  *) echo "sidecar nao viu a unique de horarios ausente: $falha" >&2; exit 1;;
+esac
+echo "sidecar reprova tabela existente sem as chaves unicas do upsert"
+
 echo 'PONTO_REP_OK: migration reaplicável, sidecar ok, RLS por empresa, token_hash oculto, escrita só do backend.'

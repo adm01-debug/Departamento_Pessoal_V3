@@ -151,6 +151,55 @@ export function diasAlterados<T extends { funcionario_codigo: number; data: stri
 }
 
 /**
+ * Códigos do catálogo que sumiram do AtecSoft.
+ *
+ * O coletor manda o catálogo inteiro na parte 1; upsert sozinho nunca remove,
+ * então feriado ou jornada excluída no AtecSoft continuaria valendo aqui. O que
+ * está gravado e não veio mais precisa sair do staging.
+ */
+export function codigosRemovidos(
+  recebidos: Array<{ codigo: number }>,
+  gravados: Array<{ codigo: number }>,
+): number[] {
+  const presentes = new Set(recebidos.map((r) => r.codigo));
+  return [...new Set(gravados.map((g) => g.codigo))].filter((c) => !presentes.has(c));
+}
+
+/**
+ * O corpo trouxe a chave do catálogo de verdade?
+ *
+ * O coletor 1.0.0 não envia `feriados`/`horarios` e o default do schema as
+ * transforma em `[]`. Tratar `[]` como "catálogo completo e vazio" apagaria o
+ * catálogo já gravado nesse coletor antigo.
+ */
+export function trazCatalogo(corpo: unknown, chave: 'feriados' | 'horarios'): boolean {
+  return typeof corpo === 'object' && corpo !== null
+    && Object.prototype.hasOwnProperty.call(corpo, chave);
+}
+
+/**
+ * Jornadas do catálogo que sumiram do AtecSoft, agrupadas por código.
+ *
+ * `ponto_rep_horarios` tem uma linha por dia da semana, então o que pode sumir
+ * é o par (código, dia): jornada que trocou de dia deixa a linha antiga para
+ * trás. Código removido por inteiro sai com todos os dias.
+ */
+export function paresRemovidos(
+  recebidos: Array<{ codigo: number; dia_semana: number }>,
+  gravados: Array<{ codigo: number; dia_semana: number }>,
+): Array<{ codigo: number; dias: number[] }> {
+  const presentes = new Set(recebidos.map((r) => `${r.codigo}|${r.dia_semana}`));
+  const porCodigo = new Map<number, number[]>();
+  for (const g of gravados) {
+    if (presentes.has(`${g.codigo}|${g.dia_semana}`)) continue;
+    const dias = porCodigo.get(g.codigo) ?? [];
+    if (!dias.includes(g.dia_semana)) dias.push(g.dia_semana);
+    porCodigo.set(g.codigo, dias);
+  }
+  return [...porCodigo].map(([codigo, dias]) => ({ codigo, dias }));
+}
+
+/**
  * Classifica o erro do UPDATE que grava o vínculo colaborador↔funcionário.
  *
  * `23505` viola `ux_ponto_rep_funcionarios_colaborador_por_empresa`: o

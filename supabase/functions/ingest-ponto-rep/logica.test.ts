@@ -1,6 +1,6 @@
-// deno test supabase/functions/ingest-ponto-rep/logica.test.ts
+﻿// deno test supabase/functions/ingest-ponto-rep/logica.test.ts
 import { assert, assertEquals } from 'https://deno.land/std@0.208.0/assert/mod.ts';
-import { classificaErroVinculo, diasAlterados, envioSchema, sha256Hex, tokenPlausivel, vincular } from './logica.ts';
+import { classificaErroVinculo, codigosRemovidos, diasAlterados, envioSchema, sha256Hex, tokenPlausivel, paresRemovidos, trazCatalogo, vincular } from './logica.ts';
 
 const func = (extra: Record<string, unknown> = {}) => ({
   codigo: 7, nome: 'A', matricula: null, cpf: null, pis: null, situacao: 'ATIVO',
@@ -116,4 +116,42 @@ Deno.test('erro que nao e de unicidade aborta o lote', () => {
   assertEquals(classificaErroVinculo({ code: '42501' }), 'abortar');
   assertEquals(classificaErroVinculo({}), 'abortar');
   assertEquals(classificaErroVinculo(null), 'abortar');
+});
+Deno.test('catalogo que sumiu do AtecSoft e removido do staging', () => {
+  // Feriado excluido no AtecSoft: o coletor reenvia so o que existe, e o
+  // upsert sozinho deixaria o codigo 3 valendo para sempre.
+  assertEquals(codigosRemovidos([{ codigo: 1 }, { codigo: 2 }], [{ codigo: 1 }, { codigo: 2 }, { codigo: 3 }]), [3]);
+  // Nada gravado ainda ou mesma lista: nada a remover.
+  assertEquals(codigosRemovidos([{ codigo: 1 }], []), []);
+  assertEquals(codigosRemovidos([{ codigo: 1 }, { codigo: 2 }], [{ codigo: 2 }, { codigo: 1 }]), []);
+  // Catalogo vazio com chave presente: o AtecSoft nao tem mais nenhum feriado.
+  assertEquals(codigosRemovidos([], [{ codigo: 3 }, { codigo: 3 }]), [3]);
+});
+
+Deno.test('coletor antigo sem as chaves nao apaga o catalogo gravado', () => {
+  // O schema transforma a chave ausente em []: confundir isso com "catalogo
+  // vazio" apagaria tudo que o coletor 1.0.0 nunca envia.
+  assert(!trazCatalogo({ versao_coletor: '1.0.0', dias: [] }, 'feriados'));
+  assert(!trazCatalogo({ versao_coletor: '1.0.0' }, 'horarios'));
+  assert(trazCatalogo({ feriados: [] }, 'feriados'));
+  assert(trazCatalogo(envio(), 'horarios'));
+  // Corpo que nao e objeto nao tem catalogo.
+  assert(!trazCatalogo(null, 'feriados'));
+});
+
+Deno.test('jornada que trocou de dia deixa a linha antiga fora do staging', () => {
+  // Uma linha por (codigo, dia_semana): remover so pelo codigo deixaria a
+  // jornada antiga valendo e a nova passaria a valer junto.
+  const gravados = [{ codigo: 1, dia_semana: 2 }, { codigo: 1, dia_semana: 3 }, { codigo: 2, dia_semana: 1 }];
+  assertEquals(paresRemovidos([{ codigo: 1, dia_semana: 2 }, { codigo: 2, dia_semana: 1 }], gravados),
+    [{ codigo: 1, dias: [3] }]);
+  // Jornada removida por inteiro: todos os dias dela saem.
+  assertEquals(paresRemovidos([{ codigo: 1, dia_semana: 2 }], gravados),
+    [{ codigo: 1, dias: [3] }, { codigo: 2, dias: [1] }]);
+  assertEquals(paresRemovidos(gravados, gravados), []);
+  assertEquals(paresRemovidos([], gravados).length, 2);
+  // Nada diferente: nenhum delete.
+  assertEquals(paresRemovidos([{ codigo: 1, dia_semana: 2 }], [{ codigo: 1, dia_semana: 2 }]), []);
+  // Catalogo vazio com chave presente: o AtecSoft nao tem mais nenhuma jornada.
+  assertEquals(paresRemovidos([], [{ codigo: 4, dia_semana: 1 }, { codigo: 4, dia_semana: 7 }]), [{ codigo: 4, dias: [1, 7] }]);
 });

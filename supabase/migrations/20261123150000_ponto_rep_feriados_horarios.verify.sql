@@ -1,6 +1,7 @@
 ﻿-- ok so se as 2 tabelas existem com RLS ligada, cada uma tem exatamente a policy
--- de leitura de admin/RH por empresa, o navegador nao escreve e o lote passou a
--- contar feriados e horarios.
+-- de leitura de admin/RH por empresa, as chaves unicas alvo dos upserts existem
+-- (uma tabela preexistente sem elas passaria pelo CREATE TABLE IF NOT EXISTS), o
+-- navegador nao escreve e o lote passou a contar feriados e horarios.
 SELECT CASE
   WHEN (
     SELECT count(*) FROM pg_class c
@@ -45,5 +46,18 @@ SELECT CASE
     SELECT 1 FROM pg_constraint c
     WHERE c.conname = 'ponto_rep_horarios_dia_semana_check' AND c.contype = 'c'
   ) THEN 'FALHOU: dia_semana sem check de 1 a 7'
+  -- As chaves unicas sao o alvo dos upserts da Edge: uma tabela preexistente
+  -- sem elas faz o onConflict falhar em producao, e CREATE TABLE IF NOT EXISTS
+  -- nao recria nada.
+  WHEN NOT EXISTS (
+    SELECT 1 FROM pg_constraint c
+    WHERE c.conname = 'ponto_rep_feriados_dispositivo_codigo_key' AND c.contype = 'u'
+      AND c.conrelid = 'public.ponto_rep_feriados'::regclass
+  ) THEN 'FALHOU: ponto_rep_feriados sem unique (dispositivo_id, codigo)'
+  WHEN NOT EXISTS (
+    SELECT 1 FROM pg_constraint c
+    WHERE c.conname = 'ponto_rep_horarios_dispositivo_codigo_dia_key' AND c.contype = 'u'
+      AND c.conrelid = 'public.ponto_rep_horarios'::regclass
+  ) THEN 'FALHOU: ponto_rep_horarios sem unique (dispositivo_id, codigo, dia_semana)'
   ELSE 'ok'
 END;
