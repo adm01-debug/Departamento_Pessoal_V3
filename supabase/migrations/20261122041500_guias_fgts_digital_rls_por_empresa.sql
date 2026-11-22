@@ -23,12 +23,50 @@
 
 ALTER TABLE public.guias_fgts_digital ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Gestores e RH veem guias FGTS" ON public.guias_fgts_digital;
+-- Fail-closed (E50-12 / A-036): os nomes de policy sao lidos ao vivo em
+-- pg_policies antes do DROP, e o estado final e conferido depois. Um DROP
+-- silencioso que nao casa o nome deixaria a policy aberta viva ao lado das
+-- novas -- foi assim que a policy `Gestores e RH veem guias FGTS` sobreviveu
+-- em producao em lotes anteriores do projeto.
+DO $migration$
+DECLARE
+  policies text[] := ARRAY[
+    'Gestores e RH veem guias FGTS',
+    'guias_fgts_digital_select',
+    'guias_fgts_digital_insert',
+    'guias_fgts_digital_update',
+    'guias_fgts_digital_delete'
+  ];
+  alvo text;
+  existe boolean;
+  restantes integer;
+BEGIN
+  FOREACH alvo IN ARRAY policies LOOP
+    SELECT EXISTS (
+      SELECT 1 FROM pg_policies
+      WHERE schemaname = 'public'
+        AND tablename = 'guias_fgts_digital'
+        AND policyname = alvo
+    ) INTO existe;
 
-DROP POLICY IF EXISTS guias_fgts_digital_select ON public.guias_fgts_digital;
-DROP POLICY IF EXISTS guias_fgts_digital_insert ON public.guias_fgts_digital;
-DROP POLICY IF EXISTS guias_fgts_digital_update ON public.guias_fgts_digital;
-DROP POLICY IF EXISTS guias_fgts_digital_delete ON public.guias_fgts_digital;
+    IF existe THEN
+      EXECUTE format('DROP POLICY %I ON public.guias_fgts_digital', alvo);
+    END IF;
+  END LOOP;
+
+  SELECT count(*) INTO restantes
+  FROM pg_policies
+  WHERE schemaname = 'public'
+    AND tablename = 'guias_fgts_digital'
+    AND policyname = ANY (policies);
+
+  IF restantes > 0 THEN
+    RAISE EXCEPTION
+      'DROP das policies de public.guias_fgts_digital nao removeu % policy(ies) esperadas -- nome pode ter mudado, conferir o estado vivo (pg_policies) antes de reaplicar.',
+      restantes;
+  END IF;
+END
+$migration$;
 
 CREATE POLICY guias_fgts_digital_select ON public.guias_fgts_digital
   FOR SELECT TO authenticated
