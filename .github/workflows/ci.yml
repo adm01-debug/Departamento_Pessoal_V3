@@ -378,6 +378,8 @@ jobs:
           node scripts/audit-security-config.mjs
           node scripts/audit-required-checks.mjs
           node scripts/audit-bridge-frontend-contract.mjs
+          node scripts/ratchet-any.mjs
+          node --test scripts/tests/audit-baseline-portabilidade.test.mjs
           node scripts/validate-plan-50.mjs
           node scripts/audit-canonical-project.mjs
           node scripts/audit-migration-style.mjs
@@ -404,6 +406,7 @@ jobs:
             echo "| Script | Status |"
             echo "|--------|--------|"
             echo "| workflows-contract | ${{ job.status }} |"
+            echo "| baseline-portabilidade | ${{ job.status }} |"
             echo "| lockfile-single | ${{ job.status }} |"
             echo "| lockfile-parity | ${{ job.status }} |"
             echo "| coletor-ponto (python) | ${{ job.status }} |"

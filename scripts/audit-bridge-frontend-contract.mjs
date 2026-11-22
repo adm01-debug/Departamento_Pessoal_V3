@@ -17,7 +17,7 @@
  *    auditável pela allowlist.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative, sep } from 'node:path';
 
 const root = process.cwd();
 const validationPath = join(root, 'supabase/functions/external-db-bridge/validation.ts');
@@ -124,7 +124,7 @@ for (const file of srcFiles) {
       const entry = {
         table: match[1],
         location: `${relative(root, file)}:${lineAt(source, match.index)}`,
-        file: relative(root, file),
+        file: relative(root, file).split(sep).join('/'),
       };
       (alias.lane === 'base' ? baseTableCalls : bridgeTableCalls).push(entry);
     }

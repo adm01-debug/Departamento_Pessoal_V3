@@ -44,7 +44,7 @@ for (const result of results) {
 
   const relPath = relative(root, result.filePath);
   // Chave = primeiro segmento sob src/ (services, pages, hooks, components, ...).
-  const parts = relPath.split('/');
+  const parts = relPath.split(/[\\/]/);
   const key = parts[0] === 'src' ? parts[1] : parts[0];
   current[key] = (current[key] ?? 0) + anyMessages.length;
 
