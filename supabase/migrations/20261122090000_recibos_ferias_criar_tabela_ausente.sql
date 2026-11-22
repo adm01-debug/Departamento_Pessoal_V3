@@ -17,6 +17,12 @@
 -- RH que troca de empresa na tela gravaria com a empresa errada. O recibo é
 -- registro de RH: leitura e escrita só para quem gere RH na empresa da linha
 -- (admin ou papel `rh` com vínculo em `user_empresas`).
+--
+-- O gestor da empresa (`pode_gerir_pessoas`) lê a solicitação de férias, mas
+-- não emite recibo: `FeriasActions` só grava quando o usuário pode gerir RH.
+--
+-- `created_by`/`updated_by` usam `ON DELETE SET NULL`: excluir a conta de um
+-- usuário do RH não pode ficar bloqueada por causa de um recibo antigo.
 
 CREATE TABLE IF NOT EXISTS public.recibos_ferias (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -30,8 +36,8 @@ CREATE TABLE IF NOT EXISTS public.recibos_ferias (
   observacoes text,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now(),
-  created_by uuid REFERENCES auth.users(id),
-  updated_by uuid REFERENCES auth.users(id)
+  created_by uuid REFERENCES auth.users(id) ON DELETE SET NULL,
+  updated_by uuid REFERENCES auth.users(id) ON DELETE SET NULL
 );
 
 CREATE INDEX IF NOT EXISTS idx_recibos_ferias_colaborador
