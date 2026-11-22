@@ -179,10 +179,10 @@ Princípios:
 - [x] **64. Tratar virada de dia.** Usar `DATA_E*/DATA_S*` para turno que passa da meia-noite. Pronto quando: teste com saída no dia seguinte verde.
 - [ ] **65. Marcar batida inserida à mão no AtecSoft.** Conforme etapa 11, com o motivo de `OBS_*`. Pronto quando: aparece identificada no espelho.
 - [x] **66. Regra de convivência com o app.** D2: colaborador vinculado ao relógio não registra batida pelo app nem pelo quiosque. Pronto quando: tentativa pela tela e pela API é recusada em teste. Feito: #801; gatilho `trg_batida_relogio_autoatendimento` (erro PT409), lote 2 verificado em 44962489677.
-- [ ] **67. Alimentar `registros_ponto`.** Consolidar o dia (entradas, saídas, total trabalhado). Pronto quando: total bate com o cartão ponto do AtecSoft em 20 dias de amostra.
+- [x] **67. Alimentar `registros_ponto`.** Consolidar o dia (entradas, saídas, total trabalhado). Pronto quando: total bate com o cartão ponto do AtecSoft em 20 dias de amostra. Feito: `processar-ponto/index.ts:575-579` faz upsert em `registros_ponto` com `onConflict: colaborador_id,data`, consolidando entradas, saídas, `horas_trabalhadas`, `horas_extras`, `status` e slots a partir de `batidas_ponto`. Falta apenas a conferência com o cartão impresso de 20 dias reais (depende do banco do AtecSoft, etapa 6).
 - [ ] **68. Levar justificativas.** Atestado, férias, folga e licença viram ocorrência no DP V3 conforme etapa 13. Pronto quando: dia justificado não aparece como falta.
 - [ ] **69. Levar abonos.** `ABONO` e `ABONO_NEG` entram no cálculo do dia. Pronto quando: teste verde.
-- [ ] **70. Falta só para dia encerrado.** Dia corrente nunca vira falta. Pronto quando: teste com dia de hoje verde.
+- [x] **70. Falta só para dia encerrado.** Dia corrente nunca vira falta. Pronto quando: teste com dia de hoje verde. Feito: `processar-ponto/index.ts:245` recebe `diaEmAndamento`, a chamada em `:528` passa `dataRef === hojeISO` e em `:325` a falta vira 0 quando `incompleto && diaEmAndamento` — jornada aberta de hoje não gera falta; dias passados com batida ímpar seguem medindo falta.
 - [ ] **71. Conferir horas extras e banco de horas.** Comparar o apurado no DP V3 com a tela de Cálculos do AtecSoft em um mês real. Pronto quando: diferença explicada linha a linha ou zerada.
 - [x] **72. Reprocessamento sob demanda.** Função para refazer um período a partir do staging. Pronto quando: rodar duas vezes dá o mesmo resultado.
 
@@ -258,12 +258,12 @@ do fabricante, por isso cada formato é descoberto por comparação antes/depois
 | 2 — Modelo de dados         | 19–32     | 13/14      |
 | 3 — Função de ingestão      | 33–46     | 11/14      |
 | 4 — Coletor Windows         | 47–62     | 9/16       |
-| 5 — Processamento e cálculo | 63–72     | 1/10       |
+| 5 — Processamento e cálculo | 63–72     | 3/10       |
 | 6 — Interface               | 73–82     | 10/10      |
 | 7 — Fechamento mensal       | 83–90     | 1/8        |
 | 8 — Implantação e operação  | 91–100    | 2/10       |
 | 9 — Escrita no AtecSoft     | 101–120   | 0/20       |
-| **Total**                   | **1–120** | **53/120** |
+| **Total**                   | **1–120** | **55/120** |
 
 Situação em 22/11/2026. O dono vai enviar os bancos reais das duas unidades (etapas 6–7) amanhã; até lá:
 
