@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "99246308cb6b65fa59e4bc1172b1788acc86b755",
+  "sha": "20ff2260d36c22e91fd5fb45ee9e1df756f5e8df",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-23 14:05 UTC",
+  "generated_at": "2026-11-23 15:16 UTC",
   "files_total": 3742,
   "code_files": 3149,
-  "code_lines": 500746
+  "code_lines": 500740
  },
  "version": "1.3.2",
- "facts_hash": "80200156863124b4",
+ "facts_hash": "6f764447babd1df2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -106010,7 +106010,7 @@
   {
    "module": "supabase/functions",
    "files": 193,
-   "lines": 28012,
+   "lines": 28006,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -325214,7 +325214,7 @@
   },
   "supabase/functions/alertas-dp/index.ts": {
    "path": "supabase/functions/alertas-dp/index.ts",
-   "lines": 505,
+   "lines": 503,
    "tables": [
     {
      "table": "asos",
@@ -327891,7 +327891,7 @@
   },
   "supabase/functions/enviar-relatorio/index.ts": {
    "path": "supabase/functions/enviar-relatorio/index.ts",
-   "lines": 583,
+   "lines": 581,
    "tables": [
     {
      "table": "colaboradores",
@@ -331108,7 +331108,7 @@
   },
   "supabase/functions/processar-agendamentos/index.ts": {
    "path": "supabase/functions/processar-agendamentos/index.ts",
-   "lines": 328,
+   "lines": 326,
    "tables": [
     {
      "table": "log_envio_relatorios",
@@ -337231,10 +337231,30 @@
   }
  },
  "git": {
-  "sha": "99246308cb6b65fa59e4bc1172b1788acc86b755",
+  "sha": "20ff2260d36c22e91fd5fb45ee9e1df756f5e8df",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "20ff226",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: troca import dinamico de rateLimit por estatico nas edges que retornavam 500 (#849)",
+    "files": [
+     "supabase/functions/alertas-dp/index.ts",
+     "supabase/functions/enviar-relatorio/index.ts",
+     "supabase/functions/processar-agendamentos/index.ts"
+    ]
+   },
+   {
+    "sha": "3fface7",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "chore: registra notificacoes de workflow como resolvidas no doc (#848)",
+    "files": [
+     "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md"
+    ]
+   },
    {
     "sha": "9924630",
     "date": "2026-11-23",
@@ -337548,30 +337568,12 @@
     "files": [
      "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
     ]
-   },
-   {
-    "sha": "8aa8e96",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: ingest-ponto-rep grava auditoria do lote (etapa 44 do plano do ponto) (#814)",
-    "files": [
-     "supabase/functions/ingest-ponto-rep/index.ts"
-    ]
-   },
-   {
-    "sha": "6cf7a6b",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: verifica ao vivo etapas 36/44/46 do plano do ponto Henry/AtecSoft (#813)",
-    "files": [
-     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    9
+    8
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -337579,7 +337581,11 @@
    ],
    [
     "supabase/functions/ingest-ponto-rep/index.ts",
-    5
+    4
+   ],
+   [
+    "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md",
+    3
    ],
    [
     "scripts/automation.config.json",
@@ -337614,8 +337620,16 @@
     2
    ],
    [
-    "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md",
-    2
+    "supabase/functions/alertas-dp/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/enviar-relatorio/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/processar-agendamentos/index.ts",
+    1
    ],
    [
     "inventario/estado/banco.json",
@@ -337635,18 +337649,6 @@
    ],
    [
     "scripts/tests/migrations-ponto-rep.sh",
-    1
-   ],
-   [
-    "supabase/migrations/20261121210000_ponto_rep_ingestao.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.verify.sql",
     1
    ]
   ]

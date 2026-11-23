@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: troca import dinamico de rateLimit por estatico nas edges que retornavam 500 (#849)",
+   "chore: registra notificacoes de workflow como resolvidas no doc (#848)",
    "fix: usa enum valido no tipo de notificacao de workflow (#847)",
    "feat: notificacoes de workflow por e-mail e in-app (#843)",
-   "chore: inventario do estado real [auto] (#842)",
-   "infra: registra 20261123090000 no lote do canonical-migrations (#840)",
-   "feat: coletor le feriados e jornadas do AtecSoft (etapa 53) (#839)"
+   "chore: inventario do estado real [auto] (#842)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

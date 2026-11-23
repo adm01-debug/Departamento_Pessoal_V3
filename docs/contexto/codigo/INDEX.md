@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `99246308cb6b65fa59e4bc1172b1788acc86b755` (2026-11-23T10:58:53-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `20ff2260d36c22e91fd5fb45ee9e1df756f5e8df` (2026-11-23T12:09:50-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3728 |
 | arquivos_codigo | 2147 |
-| linhas_codigo | 429416 |
+| linhas_codigo | 429410 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -398,8 +398,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28249 nós · 63648 arestas · 2510 comunidades · grafo do commit `99246308`
-- comunidades maiores: lucide-react (588), button.tsx (494), 20260831_corrected_public.sql (485), canonical_schema.sql (481), useEmpresas (453), client.ts (338), cn (286), vitest (262), App.tsx (254), react (230), contract.ts (178), "public"."empresas" (164)
+- 28249 nós · 63650 arestas · 2512 comunidades · grafo do commit `20ff2260`
+- comunidades maiores: lucide-react (559), button.tsx (539), 20260831_corrected_public.sql (485), canonical_schema.sql (481), @tanstack/react-query (458), cn (425), useEmpresas (358), vitest (310), hooks/index.ts (233), contract.ts (179), "public"."empresas" (164), "public"."empresas" (158)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -656,6 +656,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-23 `20ff226` fix: troca import dinamico de rateLimit por estatico nas edges que retornavam 500 (#849)
+- 2026-11-23 `3fface7` chore: registra notificacoes de workflow como resolvidas no doc (#848)
 - 2026-11-23 `9924630` fix: usa enum valido no tipo de notificacao de workflow (#847)
 - 2026-11-23 `81693b2` feat: notificacoes de workflow por e-mail e in-app (#843)
 - 2026-11-23 `ee4d2de` chore: inventario do estado real [auto] (#842)
@@ -669,8 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-22 `f0f940b` fix: baixa de guia falha alto quando nenhuma linha e atualizada (#834)
 - 2026-11-22 `4715945` fix: isola guias_fgts_digital por empresa e libera a baixa para RH (#824)
 - 2026-11-22 `7084a10` perf: cria indices nas 3 FKs de join do ponto e do PIX (#832)
-- 2026-11-22 `7bc68b4` infra: adiciona migrations da #829/#830 a lista fechada do canonical-apply (#831)
-- 2026-11-22 `b77692d` fix: vinculo do relogio ganha unicidade reversa por colaborador (R8) (#830)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

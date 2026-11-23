@@ -181,7 +181,7 @@
    "nome": "alertas-dp",
    "entrada": "supabase/functions/alertas-dp/index.ts",
    "arquivos": 2,
-   "linhas": 534,
+   "linhas": 532,
    "verify_jwt": true,
    "metodos": [
     "POST"
@@ -1147,7 +1147,7 @@
    "nome": "enviar-relatorio",
    "entrada": "supabase/functions/enviar-relatorio/index.ts",
    "arquivos": 6,
-   "linhas": 789,
+   "linhas": 787,
    "verify_jwt": true,
    "metodos": [
     "POST"
@@ -2201,7 +2201,7 @@
    "nome": "processar-agendamentos",
    "entrada": "supabase/functions/processar-agendamentos/index.ts",
    "arquivos": 4,
-   "linhas": 637,
+   "linhas": 635,
    "verify_jwt": true,
    "metodos": [
     "POST"

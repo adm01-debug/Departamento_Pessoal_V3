@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "99246308cb6b65fa59e4bc1172b1788acc86b755",
+  "commit": "20ff2260d36c22e91fd5fb45ee9e1df756f5e8df",
   "branch": "main",
-  "data_commit": "2026-11-23T10:58:53-03:00",
+  "data_commit": "2026-11-23T12:09:50-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "20ff226",
+    "data": "2026-11-23",
+    "assunto": "fix: troca import dinamico de rateLimit por estatico nas edges que retornavam 500 (#849)"
+   },
+   {
+    "sha": "3fface7",
+    "data": "2026-11-23",
+    "assunto": "chore: registra notificacoes de workflow como resolvidas no doc (#848)"
+   },
    {
     "sha": "9924630",
     "data": "2026-11-23",
@@ -121,23 +131,13 @@
     "sha": "d4b08fa",
     "data": "2026-11-22",
     "assunto": "docs: reescreve a análise de pendentes com o estado real (9 dos 12 itens já estavam implementados) (#823)"
-   },
-   {
-    "sha": "bfd9db6",
-    "data": "2026-11-21",
-    "assunto": "fix: gerador de rotas resolve index.ts com separador nativo (inventario saia diferente no Windows) (#820)"
-   },
-   {
-    "sha": "5a7dabb",
-    "data": "2026-11-21",
-    "assunto": "chore: documenta o limite real das etapas 55 e 58 do plano do ponto (#816)"
    }
   ],
-  "arquivos_mudados_7d": 910,
+  "arquivos_mudados_7d": 900,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 375
+    "mudancas": 374
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 96
+    "mudancas": 95
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -181,18 +181,18 @@
    },
    {
     "pasta": "src/pages/__tests__",
-    "mudancas": 35
+    "mudancas": 34
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 33
    },
    {
-    "pasta": "src/utils/__tests__",
-    "mudancas": 32
+    "pasta": "src/components/desligamentos",
+    "mudancas": 31
    },
    {
-    "pasta": "src/components/desligamentos",
+    "pasta": "src/components/ponto",
     "mudancas": 31
    }
   ],
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3728,
   "arquivos_codigo": 2147,
-  "linhas_codigo": 429416,
+  "linhas_codigo": 429410,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -724,7 +724,7 @@
   },
   "supabase/functions": {
    "arquivos": 193,
-   "linhas": 28012
+   "linhas": 28006
   },
   "supabase/tests": {
    "arquivos": 3,
