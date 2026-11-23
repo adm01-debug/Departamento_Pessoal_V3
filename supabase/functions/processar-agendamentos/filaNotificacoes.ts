@@ -1,13 +1,14 @@
 import type { SupabaseClient } from "npm:@supabase/supabase-js@2.112.4";
 import { sendEmailResend, emailEntregavel } from "../_shared/outboundDelivery.ts";
+import { enviarWebPush, vapidDoAmbiente } from "../_shared/webPush.ts";
 
 // Dreno real da fila de notificações (fila_notificacoes). O edge `notificacao`
 // enfileira 'email' e 'push' a cada envio, mas nada consumia a fila — linhas
 // ficavam 'pendente' para sempre. Aqui cada linha sai com desfecho verdadeiro:
 //   - email  → Resend (destinatário resolvido via auth.users pelo user_id;
 //              `profiles` não tem coluna de e-mail)
-//   - push   → 'falha' honesta: não existe sender VAPID no sistema — fingir
-//              envio seria a simulação que a auditoria flagou
+//   - push   -> Web Push real (RFC 8291 aes128gcm + VAPID ES256), com
+//              desativacao de assinatura expirada (404/410)
 //   - outro  → 'falha' (sem canal implementado)
 // Falhas transitórias voltam a 'pendente' com backoff até MAX_TENTATIVAS.
 
@@ -65,8 +66,7 @@ export async function drenarFilaNotificacoes(supabase: SupabaseClient): Promise<
     let update: Record<string, unknown>;
 
     if (item.tipo === "push") {
-      update = { status: "falha", tentativas, erro_ultimo: "push_sem_vapid" };
-      resumo.falhas++;
+      update = await desfechoPush(supabase, item, resumo, tentativas);
     } else if (item.tipo !== "email") {
       update = { status: "falha", tentativas, erro_ultimo: `tipo_sem_canal:${item.tipo}` };
       resumo.falhas++;
@@ -123,4 +123,72 @@ export async function drenarFilaNotificacoes(supabase: SupabaseClient): Promise<
   }
 
   return resumo;
+}
+
+/**
+ * Desfecho real de uma notificacao 'push'. Sem par VAPID no ambiente mantem a
+ * falha honesta 'push_sem_vapid' (comportamento anterior, sem regressao).
+ */
+async function desfechoPush(
+  supabase: SupabaseClient,
+  item: FilaRow,
+  resumo: FilaResumo,
+  tentativas: number,
+): Promise<Record<string, unknown>> {
+  const vapid = vapidDoAmbiente();
+  if (!vapid) {
+    resumo.falhas++;
+    return { status: "falha", tentativas, erro_ultimo: "push_sem_vapid" };
+  }
+
+  const { data, error } = await supabase
+    .from("push_subscriptions")
+    .select("id, subscription")
+    .eq("user_id", item.user_id)
+    .eq("active", true)
+    .limit(10);
+  if (error) throw error;
+
+  const assinaturas = (data ?? []) as { id: string; subscription: unknown }[];
+  if (!assinaturas.length) {
+    resumo.falhas++;
+    return { status: "falha", tentativas, erro_ultimo: "push_sem_assinatura" };
+  }
+
+  const payload = { title: item.titulo, body: item.conteudo, url: "/" };
+  const resultados = await Promise.all(
+    assinaturas.map((a) => enviarWebPush(a.subscription, payload, vapid)),
+  );
+
+  // Assinatura que o servico de push declara inexistente (404/410) nunca mais
+  // entrega: desativa para nao repetir a chamada a cada notificacao.
+  const expiradas = assinaturas.filter((_, i) => resultados[i].expirada).map((a) => a.id);
+  if (expiradas.length) {
+    const { error: offErr } = await supabase
+      .from("push_subscriptions")
+      .update({ active: false })
+      .in("id", expiradas);
+    if (offErr) throw offErr;
+  }
+
+  if (resultados.some((r) => r.ok)) {
+    resumo.enviados++;
+    return { status: "enviado", tentativas, erro_ultimo: null };
+  }
+
+  const erro = resultados.find((r) => r.error)?.error ?? "push_sem_entrega";
+  const transitorio = resultados.some(
+    (r) => !r.expirada && (r.status === null || r.status === 429 || r.status >= 500),
+  );
+  if (transitorio && tentativas < MAX_TENTATIVAS) {
+    resumo.reagendados++;
+    return {
+      status: "pendente",
+      tentativas,
+      erro_ultimo: erro,
+      scheduled_for: new Date(Date.now() + RETRY_DELAY_MS).toISOString(),
+    };
+  }
+  resumo.falhas++;
+  return { status: "falha", tentativas, erro_ultimo: erro };
 }

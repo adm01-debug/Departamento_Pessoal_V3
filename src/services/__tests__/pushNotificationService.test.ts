@@ -1,19 +1,28 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const { mockUpsert, mockUpdate } = vi.hoisted(() => ({
-  mockUpsert: vi.fn().mockResolvedValue({ error: null }),
-  mockUpdate: vi.fn().mockReturnValue({
-    eq: vi.fn().mockReturnValue({
-      eq: vi.fn().mockResolvedValue({ error: null }),
+const { mockUpsert, mockUpdate, mockSelect, mockMaybeSingle } = vi.hoisted(() => {
+  const mockMaybeSingle = vi.fn();
+  const mockSelect = vi.fn(() => ({
+    not: () => ({ limit: () => ({ maybeSingle: mockMaybeSingle }) }),
+  }));
+  return {
+    mockUpsert: vi.fn().mockResolvedValue({ error: null }),
+    mockUpdate: vi.fn().mockReturnValue({
+      eq: vi.fn().mockReturnValue({
+        eq: vi.fn().mockResolvedValue({ error: null }),
+      }),
     }),
-  }),
-}));
+    mockSelect,
+    mockMaybeSingle,
+  };
+});
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn(() => ({
       upsert: mockUpsert,
       update: mockUpdate,
+      select: mockSelect,
     })),
   },
 }));
@@ -87,6 +96,31 @@ describe('pushNotificationService.getSubscription', () => {
   });
 });
 
+describe('pushNotificationService.getVapidPublicKey', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it('prefere a variável de ambiente quando definida', async () => {
+    vi.stubEnv('VITE_VAPID_PUBLIC_KEY', 'chave-do-ambiente');
+    await expect(pushNotificationService.getVapidPublicKey()).resolves.toBe('chave-do-ambiente');
+    expect(mockMaybeSingle).not.toHaveBeenCalled();
+  });
+
+  it('cai para configuracoes.vapid_public_key quando o env está vazio', async () => {
+    vi.stubEnv('VITE_VAPID_PUBLIC_KEY', '');
+    mockMaybeSingle.mockResolvedValue({ data: { vapid_public_key: '  chave-do-banco  ' }, error: null });
+    await expect(pushNotificationService.getVapidPublicKey()).resolves.toBe('chave-do-banco');
+  });
+
+  it('devolve null sem lançar quando a leitura do banco falha', async () => {
+    vi.stubEnv('VITE_VAPID_PUBLIC_KEY', '');
+    mockMaybeSingle.mockResolvedValue({ data: null, error: new Error('rls') });
+    await expect(pushNotificationService.getVapidPublicKey()).resolves.toBeNull();
+  });
+});
+
 describe('pushNotificationService.subscribeUser', () => {
   beforeEach(() => vi.clearAllMocks());
 
@@ -138,6 +172,31 @@ describe('pushNotificationService.subscribeUser', () => {
 
     // isSupported will return false (PushManager not in window), so it throws that error
     await expect(pushNotificationService.subscribeUser('user-1')).rejects.toThrow();
+  });
+
+  it('não cria inscrição sem chave pública VAPID', async () => {
+    vi.stubEnv('VITE_VAPID_PUBLIC_KEY', '');
+    mockMaybeSingle.mockResolvedValue({ data: null, error: null });
+    Object.defineProperty(globalThis, 'PushManager', {
+      value: class PushManager {},
+      configurable: true,
+      writable: true,
+    });
+    Object.defineProperty(globalThis, 'navigator', {
+      value: {
+        serviceWorker: { ready: mockReady },
+        userAgent: 'TestAgent',
+        language: 'pt-BR',
+        platform: 'TestPlatform',
+      },
+      configurable: true,
+      writable: true,
+    });
+    Object.assign(Notification, { requestPermission: vi.fn().mockResolvedValue('granted') });
+
+    await expect(pushNotificationService.subscribeUser('user-1')).rejects.toThrow(/VAPID/);
+    expect(mockSubscribe).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
   });
 });
 
