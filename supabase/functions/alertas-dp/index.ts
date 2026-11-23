@@ -33,6 +33,7 @@ import {
 import { safeFetch } from "../_shared/safe-fetch.ts";
 import { requireRh } from "../_shared/authz.ts";
 import { resendDeliveryId } from "../_shared/resendDelivery.ts";
+import { emailsEntregaveis } from "../_shared/outboundDelivery.ts";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 import {
   ALERT_EMAIL_UNAVAILABLE_MESSAGE,
@@ -336,6 +337,10 @@ serve(async (req: Request): Promise<Response> => {
         typeof email === "string" && email.length > 0
       )
       .slice(0, 50);
+    // O lote é único para a empresa: um endereço não-roteável (conta de teste
+    // @example.com, por exemplo) faz a Resend rejeitar a requisição inteira e
+    // NENHUM destinatário recebe. Só enviamos para quem um provedor entrega.
+    const destinatariosEntregaveis = emailsEntregaveis(recipientEmails);
 
     // ── Construir HTML do e-mail ──────────────────────────────────────────
     const URGENCY_COLOR: Record<string, { border: string; bg: string }> = {
@@ -442,7 +447,7 @@ serve(async (req: Request): Promise<Response> => {
     let providerMessageId: string | null = null;
     if (!resendApiKey) {
       emailDelivery = "not_configured";
-    } else if (recipientEmails.length === 0) {
+    } else if (destinatariosEntregaveis.length === 0) {
       emailDelivery = "no_recipients";
     } else {
       try {
@@ -454,7 +459,7 @@ serve(async (req: Request): Promise<Response> => {
           },
           body: JSON.stringify({
             from: Deno.env.get("EMAIL_FROM") || "DP Alertas <onboarding@resend.dev>",
-            to: recipientEmails,
+            to: destinatariosEntregaveis,
             subject: `${alertas.length} Alerta(s) DP — ${
               hoje.toLocaleDateString("pt-BR")
             }`,
@@ -481,7 +486,8 @@ serve(async (req: Request): Promise<Response> => {
       JSON.stringify({
         success: emailDelivery === "accepted",
         alertas_processados: alertas.length,
-        destinatarios: recipientEmails.length,
+        destinatarios: destinatariosEntregaveis.length,
+        destinatarios_ignorados: recipientEmails.length - destinatariosEntregaveis.length,
         email_delivery: emailDelivery,
         provider_message_id: providerMessageId,
         error: emailDelivery === "accepted"
