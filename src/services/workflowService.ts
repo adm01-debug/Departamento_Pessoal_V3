@@ -122,9 +122,7 @@ async function proximaEtapa(workflowId: string, ordemAtual: number): Promise<Eta
 
 // -- Notificacoes de workflow (best-effort) ------------------------------------
 
-type AppRole = Database['public']['Enums']['app_role'];
-
-/** Resolve destinatarios de uma etapa: por aprovador_id direto ou por papel via user_roles. */
+/** Resolve destinatarios de uma etapa: por aprovador_id direto ou por papel via RPC. */
 async function resolverDestinatariosEtapa(
   etapa: Etapa,
   empresaId: string
@@ -132,18 +130,10 @@ async function resolverDestinatariosEtapa(
   if (!etapa.aprovador_tipo) return [];
   if (etapa.aprovador_id) return [{ user_id: etapa.aprovador_id }];
 
-  const { data: roleUsers } = await supabase
-    .from('user_roles')
-    .select('user_id')
-    .eq('role', etapa.aprovador_tipo as AppRole);
-  if (!roleUsers?.length) return [];
-
-  const { data: companyUsers } = await supabase
-    .from('user_empresas')
-    .select('user_id')
-    .eq('empresa_id', empresaId)
-    .in('user_id', roleUsers.map((r) => r.user_id));
-  return (companyUsers ?? []).map((r) => ({ user_id: r.user_id }));
+  // Papel ? usa get_empresa_admin_ids (RPC SECURITY DEFINER, E-077 compliant).
+  // Retorna admin+gestor+rh da empresa; para notificacoes de workflow e suficiente.
+  const { data } = await supabase.rpc('get_empresa_admin_ids', { p_empresa_id: empresaId });
+  return (data ?? []).map((r: { user_id: string }) => ({ user_id: r.user_id }));
 }
 
 /** Envia notificacao de workflow via edge (best-effort). */
