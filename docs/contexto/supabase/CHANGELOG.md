@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-23 11:16 UTC
+
+- **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_26`
+
 ## 2026-11-22 20:13 UTC
 
 - **colunas** adicionado (31): `public.ponto_rep_feriados.codigo`, `public.ponto_rep_feriados.created_at`, `public.ponto_rep_feriados.data`, `public.ponto_rep_feriados.dispositivo_id`, `public.ponto_rep_feriados.empresa_id`, `public.ponto_rep_feriados.id`, `public.ponto_rep_feriados.nao_computa_banco_horas`, `public.ponto_rep_feriados.nome`, `public.ponto_rep_feriados.updated_at`, `public.ponto_rep_feriados.vinculo_cidade`, `public.ponto_rep_feriados.vinculo_departamento`, `public.ponto_rep_feriados.vinculo_empresa`, `public.ponto_rep_horarios.ajuste`, `public.ponto_rep_horarios.codigo`, `public.ponto_rep_horarios.created_at`, `public.ponto_rep_horarios.dia_semana`, `public.ponto_rep_horarios.dispositivo_id`, `public.ponto_rep_horarios.empresa_id`, `public.ponto_rep_horarios.extra`, `public.ponto_rep_horarios.fecha`, `public.ponto_rep_horarios.folga`, `public.ponto_rep_horarios.id`, `public.ponto_rep_horarios.ident`, `public.ponto_rep_horarios.neutro`, `public.ponto_rep_horarios.pares`, `public.ponto_rep_horarios.tipo_calculo`, `public.ponto_rep_horarios.tolerancia_extra`, `public.ponto_rep_horarios.tolerancia_falta`, `public.ponto_rep_horarios.updated_at`, `public.ponto_rep_lotes.total_feriados`, `public.ponto_rep_lotes.total_horarios`

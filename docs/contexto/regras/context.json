@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "127ccc8e661c482d5909ce802588787d900dc9c9",
+  "sha": "ee4d2de03a11855193da61a1a7ad0bbae6cbbaac",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-22 20:02 UTC",
+  "generated_at": "2026-11-23 11:16 UTC",
   "files_total": 3742,
   "code_files": 3149,
   "code_lines": 500662
@@ -337182,10 +337182,22 @@
   }
  },
  "git": {
-  "sha": "127ccc8e661c482d5909ce802588787d900dc9c9",
+  "sha": "ee4d2de03a11855193da61a1a7ad0bbae6cbbaac",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "ee4d2de",
+    "date": "2026-11-23",
+    "author": "github-actions[bot]",
+    "subject": "chore: inventario do estado real [auto] (#842)",
+    "files": [
+     "inventario/estado/banco.json",
+     "inventario/estado/edges.json",
+     "inventario/estado/funcionalidades.json",
+     "inventario/estado/rotas.json"
+    ]
+   },
    {
     "sha": "127ccc8",
     "date": "2026-11-22",
@@ -337512,19 +337524,6 @@
      "src/pages/PontoKioskPage.tsx",
      "src/services/pontoOfflineService.ts"
     ]
-   },
-   {
-    "sha": "2624262",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: avisa quando batida offline é recusada por usar o relógio da unidade (#811)",
-    "files": [
-     "src/components/ponto/PontoClockRegister.tsx",
-     "src/hooks/usePontoOffline.ts",
-     "src/pages/PontoKioskPage.tsx",
-     "src/services/__tests__/pontoOfflineService.test.ts",
-     "src/services/pontoOfflineService.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -337543,6 +337542,10 @@
    [
     "scripts/automation.config.json",
     3
+   ],
+   [
+    "inventario/estado/rotas.json",
+    2
    ],
    [
     "scripts/canonical-invariants.sql",
@@ -337573,12 +337576,16 @@
     2
    ],
    [
-    "src/pages/PontoKioskPage.tsx",
-    2
+    "inventario/estado/banco.json",
+    1
    ],
    [
-    "src/services/pontoOfflineService.ts",
-    2
+    "inventario/estado/edges.json",
+    1
+   ],
+   [
+    "inventario/estado/funcionalidades.json",
+    1
    ],
    [
     "scripts/tests/migrations-ponto-rep.sh",
@@ -337598,14 +337605,6 @@
    ],
    [
     "tools/coletor-ponto-atecsoft/README.md",
-    1
-   ],
-   [
-    "tools/coletor-ponto-atecsoft/coletor.py",
-    1
-   ],
-   [
-    "tools/coletor-ponto-atecsoft/tests/test_coletor.py",
     1
    ]
   ]

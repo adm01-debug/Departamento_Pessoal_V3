@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "127ccc8e661c482d5909ce802588787d900dc9c9",
+  "commit": "ee4d2de03a11855193da61a1a7ad0bbae6cbbaac",
   "branch": "main",
-  "data_commit": "2026-11-22T17:01:34-03:00",
+  "data_commit": "2026-11-23T10:33:19Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "ee4d2de",
+    "data": "2026-11-23",
+    "assunto": "chore: inventario do estado real [auto] (#842)"
+   },
    {
     "sha": "127ccc8",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "60095b9",
     "data": "2026-11-21",
     "assunto": "chore: fecha etapas 81/82 do plano do ponto (testes de UI + inventario de rotas) (#817)"
-   },
-   {
-    "sha": "2313441",
-    "data": "2026-11-21",
-    "assunto": "chore: fecha etapa 44 do plano do ponto com evidencia pos-deploy (#815)"
    }
   ],
-  "arquivos_mudados_7d": 931,
+  "arquivos_mudados_7d": 929,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 22
+    "mudancas": 23
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -301,14 +301,14 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 294
-   },
-   {
-    "autor": "dependabot[bot]",
-    "commits": 3
+    "commits": 293
    },
    {
     "autor": "github-actions[bot]",
+    "commits": 4
+   },
+   {
+    "autor": "dependabot[bot]",
     "commits": 3
    }
   ]
