@@ -27,6 +27,7 @@ import {
 } from "./internalDispatch.ts";
 import { requireCompleteReportRows, toCsv } from "./reportContent.ts";
 import { reportEmailPayload, scheduledReportPath, stableJson } from './dispatchPayload.ts';
+import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 
 /**
  * enviar-relatorio — Onda 20 hardening
@@ -278,9 +279,6 @@ serve(async (req: Request): Promise<Response> => {
       if (authz.denied) return authz.denied;
     }
 
-    const { checkRateLimit, rateLimitResponse } = await import(
-      "../_shared/rateLimit.ts"
-    );
     const rl = await checkRateLimit(admin, {
       key: `enviar-relatorio:${userId}`,
       limit: 5,

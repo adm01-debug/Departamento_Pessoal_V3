@@ -33,6 +33,7 @@ import {
 import { safeFetch } from "../_shared/safe-fetch.ts";
 import { requireRh } from "../_shared/authz.ts";
 import { resendDeliveryId } from "../_shared/resendDelivery.ts";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 import {
   ALERT_EMAIL_UNAVAILABLE_MESSAGE,
   alertDeliveryHttpStatus,
@@ -95,9 +96,6 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    const { checkRateLimit, rateLimitResponse } = await import(
-      "../_shared/rateLimit.ts"
-    );
     const rl = await checkRateLimit(supabase, {
       key: `alertas-dp:${userData.user.id}`,
       limit: 5,
