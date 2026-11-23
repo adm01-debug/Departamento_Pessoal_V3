@@ -11,6 +11,7 @@ import {
   type ScheduleResult,
 } from "./scheduleContract.ts";
 import { drenarFilaNotificacoes } from "./filaNotificacoes.ts";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 
 serve(async (req: Request): Promise<Response> => {
   const preflight = handlePreflight(req);
@@ -83,9 +84,6 @@ serve(async (req: Request): Promise<Response> => {
           auth: { persistSession: false, autoRefreshToken: false },
         });
 
-        const { checkRateLimit, rateLimitResponse } = await import(
-          "../_shared/rateLimit.ts"
-        );
         const rl = await checkRateLimit(admin, {
           key: `agendamentos:${userData.user.id}`,
           limit: 5,
