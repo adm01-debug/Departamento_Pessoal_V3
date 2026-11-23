@@ -9,7 +9,7 @@ import {
   RS_RECORD,
   vapidDoAmbiente,
 } from "./webPush.ts";
-import { pushBreaker } from "./circuitBreaker.ts";
+import { breakerDoPushService, resetarBreakersDePush } from "./circuitBreaker.ts";
 
 const te = new TextEncoder();
 
@@ -176,9 +176,22 @@ Deno.test("base64url: ida e volta preserva os bytes", () => {
   assertEquals(b64uParaBytes(bytesParaB64u(bytes)).length, 65);
 });
 
-// Circuito aberto e a defesa contra o push service inteiro fora: cada
-// inscricao custaria 8s de timeout, em serie. O breaker precisa falhar rapido
-// e a resposta do servico precisa ser classificada (404/410 e da inscricao).
+// Circuito aberto e a defesa contra um push service inteiro fora: cada
+// inscricao daquele provedor custaria 8s de timeout, em serie. O breaker e por
+// host — FCM caido nao pode bloquear entrega no Mozilla — e 404/410 sao da
+// inscricao, nao do servico.
+const ENDPOINT_FCM = "https://8.8.8.8/push/abc";
+
+function abrirCircuitoDoEndpoint(endpoint: string) {
+  const breaker = breakerDoPushService(endpoint);
+  for (let i = 0; i < 5; i++) {
+    const permissao = breaker.permite();
+    if (permissao === null) throw new Error("circuito fechou antes do limiar");
+    breaker.registrarFalha(permissao);
+  }
+  return breaker;
+}
+
 Deno.test("enviarWebPush: circuito aberto falha rapido sem tocar a rede", async () => {
   const par = await gerarParVapid();
   const { p256dh, auth } = await gerarAssinaturaDeTeste();
@@ -190,11 +203,11 @@ Deno.test("enviarWebPush: circuito aberto falha rapido sem tocar a rede", async 
   }) as typeof fetch;
 
   try {
-    pushBreaker.reset();
-    for (let i = 0; i < 5; i++) pushBreaker.registrarFalha();
+    resetarBreakersDePush();
+    const breaker = abrirCircuitoDoEndpoint(ENDPOINT_FCM);
     const resultado = await enviarWebPush(
       // IP publico literal: o guard de SSRF nao faz DNS e o fetch e stub.
-      { endpoint: "https://8.8.8.8/push/abc", keys: { p256dh, auth } },
+      { endpoint: ENDPOINT_FCM, keys: { p256dh, auth } },
       { title: "ola" },
       { ...par, subject: "https://exemplo.test" },
     );
@@ -205,9 +218,36 @@ Deno.test("enviarWebPush: circuito aberto falha rapido sem tocar a rede", async 
       error: "push_service_indisponivel",
     });
     assertEquals(chamadas, 0);
+    assertEquals(breaker.estado(), "OPEN");
   } finally {
     globalThis.fetch = original;
-    pushBreaker.reset();
+    resetarBreakersDePush();
+  }
+});
+
+Deno.test("enviarWebPush: provedor aberto nao bloqueia o provedor saudavel", async () => {
+  const par = await gerarParVapid();
+  const { p256dh, auth } = await gerarAssinaturaDeTeste();
+  const original = globalThis.fetch;
+  const endpoints: string[] = [];
+  globalThis.fetch = ((url: string) => {
+    endpoints.push(String(url));
+    return Promise.resolve(new Response(null, { status: 201 }));
+  }) as typeof fetch;
+
+  try {
+    resetarBreakersDePush();
+    abrirCircuitoDoEndpoint(ENDPOINT_FCM);
+    const resultado = await enviarWebPush(
+      { endpoint: "https://9.9.9.9/push/def", keys: { p256dh, auth } },
+      { title: "ola" },
+      { ...par, subject: "https://exemplo.test" },
+    );
+    assertEquals(resultado.ok, true);
+    assertEquals(endpoints.length, 1);
+  } finally {
+    globalThis.fetch = original;
+    resetarBreakersDePush();
   }
 });
 
@@ -218,20 +258,20 @@ Deno.test("enviarWebPush: 410 e inscricao expirada e nao abre o circuito", async
   globalThis.fetch = (() => Promise.resolve(new Response(null, { status: 410 }))) as typeof fetch;
 
   try {
-    pushBreaker.reset();
+    resetarBreakersDePush();
     for (let i = 0; i < 5; i++) {
       const resultado = await enviarWebPush(
-        { endpoint: "https://8.8.8.8/push/abc", keys: { p256dh, auth } },
+        { endpoint: ENDPOINT_FCM, keys: { p256dh, auth } },
         { title: "ola" },
         { ...par, subject: "https://exemplo.test" },
       );
       assertEquals(resultado.expirada, true);
       assertEquals(resultado.error, "assinatura_expirada");
     }
-    assertEquals(pushBreaker.estado(), "CLOSED");
+    assertEquals(breakerDoPushService(ENDPOINT_FCM).estado(), "CLOSED");
   } finally {
     globalThis.fetch = original;
-    pushBreaker.reset();
+    resetarBreakersDePush();
   }
 });
 
@@ -242,18 +282,18 @@ Deno.test("enviarWebPush: 5xx repetido abre o circuito", async () => {
   globalThis.fetch = (() => Promise.resolve(new Response(null, { status: 503 }))) as typeof fetch;
 
   try {
-    pushBreaker.reset();
+    resetarBreakersDePush();
     for (let i = 0; i < 5; i++) {
       await enviarWebPush(
-        { endpoint: "https://8.8.8.8/push/abc", keys: { p256dh, auth } },
+        { endpoint: ENDPOINT_FCM, keys: { p256dh, auth } },
         { title: "ola" },
         { ...par, subject: "https://exemplo.test" },
       );
     }
-    assertEquals(pushBreaker.estado(), "OPEN");
+    assertEquals(breakerDoPushService(ENDPOINT_FCM).estado(), "OPEN");
   } finally {
     globalThis.fetch = original;
-    pushBreaker.reset();
+    resetarBreakersDePush();
   }
 });
 
@@ -264,16 +304,16 @@ Deno.test("enviarWebPush: entrega 2xx registra sucesso e mantem o circuito fecha
   globalThis.fetch = (() => Promise.resolve(new Response(null, { status: 201 }))) as typeof fetch;
 
   try {
-    pushBreaker.reset();
+    resetarBreakersDePush();
     const resultado = await enviarWebPush(
-      { endpoint: "https://8.8.8.8/push/abc", keys: { p256dh, auth } },
+      { endpoint: ENDPOINT_FCM, keys: { p256dh, auth } },
       { title: "ola" },
       { ...par, subject: "https://exemplo.test" },
     );
     assertEquals(resultado, { ok: true, expirada: false, status: 201, error: null });
-    assertEquals(pushBreaker.estado(), "CLOSED");
+    assertEquals(breakerDoPushService(ENDPOINT_FCM).estado(), "CLOSED");
   } finally {
     globalThis.fetch = original;
-    pushBreaker.reset();
+    resetarBreakersDePush();
   }
 });

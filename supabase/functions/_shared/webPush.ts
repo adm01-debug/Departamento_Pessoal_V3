@@ -16,7 +16,7 @@
 
 import { safeFetch } from './safe-fetch.ts';
 import { sanitizarErro } from './outboundDelivery.ts';
-import { pushBreaker } from './circuitBreaker.ts';
+import { breakerDoPushService } from './circuitBreaker.ts';
 
 const te = new TextEncoder();
 
@@ -199,9 +199,12 @@ export async function enviarWebPush(
     return { ok: false, expirada: false, status: null, error: 'assinatura_incompleta' };
   }
 
-  // Push service fora derruba todas as inscricoes: sem breaker o dreno paga o
-  // timeout de 8s por dispositivo, em serie. Circuito aberto falha rapido.
-  if (!pushBreaker.permite()) {
+  // Provedor fora derruba todas as inscricoes dele: sem breaker o dreno paga o
+  // timeout de 8s por dispositivo, em serie. O breaker e por host do push
+  // service — FCM caido nao pode bloquear entrega no Mozilla.
+  const breaker = breakerDoPushService(endpoint);
+  const permissao = breaker.permite();
+  if (permissao === null) {
     return { ok: false, expirada: false, status: null, error: 'push_service_indisponivel' };
   }
 
@@ -221,12 +224,12 @@ export async function enviarWebPush(
       tag: 'webhook',
     });
     if (res.ok) {
-      pushBreaker.registrarSucesso();
+      breaker.registrarSucesso(permissao);
       return { ok: true, expirada: false, status: res.status, error: null };
     }
     const expirada = res.status === 404 || res.status === 410;
     // 404/410 sao da inscricao, nao do servico: nao podem abrir o circuito.
-    if (!expirada) pushBreaker.registrarFalha();
+    if (!expirada) breaker.registrarFalha(permissao);
     return {
       ok: false,
       expirada,
@@ -234,7 +237,7 @@ export async function enviarWebPush(
       error: expirada ? 'assinatura_expirada' : `push_service_respondeu_${res.status}`,
     };
   } catch (e) {
-    pushBreaker.registrarFalha();
+    breaker.registrarFalha(permissao);
     return {
       ok: false,
       expirada: false,

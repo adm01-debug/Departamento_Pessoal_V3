@@ -1,72 +1,113 @@
-import { assertEquals } from 'https://deno.land/std@0.208.0/assert/mod.ts';
-import { CircuitBreaker, pushBreaker } from './circuitBreaker.ts';
+import { assertEquals, assertNotEquals } from 'https://deno.land/std@0.208.0/assert/mod.ts';
+import { breakerDoPushService, CircuitBreaker, hostDoEndpoint, resetarBreakersDePush } from './circuitBreaker.ts';
+
+function permiteOuFalha(b: CircuitBreaker, agora?: number): number {
+  const g = agora === undefined ? b.permite() : b.permite(agora);
+  if (g === null) throw new Error('breaker recusou a chamada');
+  return g;
+}
 
 Deno.test('circuito comeca fechado e permanece fechado sob sucesso', () => {
   const b = new CircuitBreaker({ failureThreshold: 3, resetTimeoutMs: 1000 });
   assertEquals(b.estado(), 'CLOSED');
-  if (!b.permite()) throw new Error('deveria permitir');
-  b.registrarSucesso();
-  if (!b.permite()) throw new Error('deveria permitir');
+  b.registrarSucesso(permiteOuFalha(b));
   assertEquals(b.estado(), 'CLOSED');
 });
 
 Deno.test('abre no limiar de falhas e recusa chamadas enquanto aberto', () => {
   const b = new CircuitBreaker({ failureThreshold: 3, resetTimeoutMs: 1000 });
-  for (let i = 0; i < 3; i++) b.registrarFalha(1_000);
+  for (let i = 0; i < 3; i++) b.registrarFalha(permiteOuFalha(b, 1_000), 1_000);
   assertEquals(b.estado(), 'OPEN');
-  assertEquals(b.permite(1_500), false);
+  assertEquals(b.permite(1_500), null);
 });
 
 Deno.test('falha isolada nao abre o circuito (acumulado zera no primeiro sucesso)', () => {
   const b = new CircuitBreaker({ failureThreshold: 3, resetTimeoutMs: 1000 });
-  b.registrarFalha(1_000);
-  b.registrarFalha(1_000);
-  b.registrarSucesso();
-  b.registrarFalha(1_000);
-  b.registrarFalha(1_000);
+  b.registrarFalha(permiteOuFalha(b, 1_000), 1_000);
+  b.registrarFalha(permiteOuFalha(b, 1_000), 1_000);
+  b.registrarSucesso(permiteOuFalha(b, 1_000));
+  b.registrarFalha(permiteOuFalha(b, 1_000), 1_000);
+  b.registrarFalha(permiteOuFalha(b, 1_000), 1_000);
   assertEquals(b.estado(), 'CLOSED');
 });
 
 Deno.test('apos resetTimeoutMs libera uma sonda (HALF_OPEN)', () => {
   const b = new CircuitBreaker({ failureThreshold: 1, resetTimeoutMs: 1000, successThreshold: 2 });
-  b.registrarFalha(1_000);
-  assertEquals(b.permite(1_500), false);
-  assertEquals(b.permite(2_500), true);
+  b.registrarFalha(permiteOuFalha(b, 1_000), 1_000);
+  assertEquals(b.permite(1_500), null);
+  assertNotEquals(b.permite(2_500), null);
   assertEquals(b.estado(), 'HALF_OPEN');
-  // Segunda sonda concorrente tambem passa: o isolate nao tem mutex, e a
-  // contagem de sucessos (nao de tentativas) e o que fecha o circuito.
-  assertEquals(b.permite(2_500), true);
+  assertNotEquals(b.permite(2_500), null);
 });
 
 Deno.test('HALF_OPEN fecha so depois de successThreshold sucessos', () => {
   const b = new CircuitBreaker({ failureThreshold: 1, resetTimeoutMs: 1000, successThreshold: 2 });
-  b.registrarFalha(1_000);
-  b.permite(5_000);
-  b.registrarSucesso();
+  b.registrarFalha(permiteOuFalha(b, 1_000), 1_000);
+  b.registrarSucesso(permiteOuFalha(b, 5_000));
   assertEquals(b.estado(), 'HALF_OPEN');
-  b.registrarSucesso();
+  b.registrarSucesso(permiteOuFalha(b, 5_000));
   assertEquals(b.estado(), 'CLOSED');
-  assertEquals(b.permite(6_000), true);
+  assertNotEquals(b.permite(6_000), null);
 });
 
 Deno.test('uma falha em HALF_OPEN reabre o circuito na hora', () => {
   const b = new CircuitBreaker({ failureThreshold: 1, resetTimeoutMs: 1000, successThreshold: 2 });
-  b.registrarFalha(1_000);
-  b.permite(5_000);
+  b.registrarFalha(permiteOuFalha(b, 1_000), 1_000);
+  permiteOuFalha(b, 5_000);
   assertEquals(b.estado(), 'HALF_OPEN');
-  b.registrarFalha(5_000);
+  b.registrarFalha(permiteOuFalha(b, 5_000), 5_000);
   assertEquals(b.estado(), 'OPEN');
-  assertEquals(b.permite(5_999), false);
+  assertEquals(b.permite(5_999), null);
+});
+
+// O envio do dreno roda em paralelo: resultados de chamadas iniciadas antes da
+// transicao de estado nao podem fechar um circuito recem-aberto.
+Deno.test('resultado de permissao antiga e ignorado apos o circuito abrir', () => {
+  const b = new CircuitBreaker({ failureThreshold: 1, resetTimeoutMs: 60_000, successThreshold: 2 });
+  const antiga = permiteOuFalha(b);
+  b.registrarFalha(antiga);
+  assertEquals(b.estado(), 'OPEN');
+  b.registrarSucesso(antiga);
+  assertEquals(b.estado(), 'OPEN');
+  b.registrarFalha(antiga);
+  assertEquals(b.estado(), 'OPEN');
 });
 
 Deno.test('reset fecha o circuito e limpa o contador', () => {
   const b = new CircuitBreaker({ failureThreshold: 1, resetTimeoutMs: 60_000 });
-  b.registrarFalha();
+  b.registrarFalha(permiteOuFalha(b));
   b.reset();
   assertEquals(b.estado(), 'CLOSED');
-  assertEquals(b.permite(), true);
+  assertNotEquals(b.permite(), null);
 });
 
-Deno.test('breaker compartilhado do push usa limiar conservador', () => {
-  assertEquals(pushBreaker.estado(), 'CLOSED');
+Deno.test('hostDoEndpoint extrai o host e devolve null para URL invalida', () => {
+  assertEquals(hostDoEndpoint('https://fcm.googleapis.com/fcm/send/abc'), 'fcm.googleapis.com');
+  assertEquals(hostDoEndpoint('nao-e-url'), null);
+});
+
+Deno.test('breaker do push e por provedor: FCM caido nao bloqueia o Mozilla', () => {
+  resetarBreakersDePush();
+  const fcm = breakerDoPushService('https://fcm.googleapis.com/fcm/send/abc');
+  const mozilla = breakerDoPushService('https://updates.push.services.mozilla.com/wpush/v2/def');
+
+  for (let i = 0; i < 5; i++) {
+    const g = fcm.permite();
+    if (g === null) throw new Error('fcm deveria permitir antes do limiar');
+    fcm.registrarFalha(g);
+  }
+  assertEquals(fcm.estado(), 'OPEN');
+  assertEquals(mozilla.estado(), 'CLOSED');
+  assertNotEquals(mozilla.permite(), null);
+
+  // Mesmo host devolve sempre a mesma instancia; hosts diferentes, nao.
+  assertEquals(breakerDoPushService('https://fcm.googleapis.com/fcm/send/xyz'), fcm);
+  assertNotEquals(mozilla, fcm);
+  resetarBreakersDePush();
+});
+
+Deno.test('endpoint invalido cai no breaker geral em vez de criar host novo', () => {
+  resetarBreakersDePush();
+  assertEquals(breakerDoPushService('nao-e-url'), breakerDoPushService('tambem-nao'));
+  resetarBreakersDePush();
 });

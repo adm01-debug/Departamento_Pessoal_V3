@@ -7,6 +7,11 @@
  * o teste controlar a transicao sem esperar. O estado vive no isolate — serve
  * para parar de gastar timeout em serie quando o provedor esta fora, nao para
  * contabilidade durável.
+ *
+ * Cada transicao de estado incrementa a `geracao`. Quem chama guarda a
+ * geracao recebida em `permite()` e a devolve ao registrar o resultado: assim
+ * um resultado atrasado de uma chamada iniciada antes de o circuito abrir (o
+ * envio roda em paralelo) nao fecha um circuito recem-aberto.
  */
 
 export type CircuitState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
@@ -22,6 +27,7 @@ export interface CircuitOptions {
 
 export class CircuitBreaker {
   private state: CircuitState = 'CLOSED';
+  private geracao = 0;
   private failureCount = 0;
   private halfOpenSuccessCount = 0;
   private lastFailureTime?: number;
@@ -36,19 +42,22 @@ export class CircuitBreaker {
   }
 
   /**
-   * A chamada pode ser tentada agora? OPEN expirado vira HALF_OPEN e libera
-   * exatamente a sonda; um sucesso a fecha, uma falha reabre na hora.
+   * A chamada pode ser tentada agora? Devolve a geracao da permissao (para
+   * `registrarSucesso`/`registrarFalha`) ou `null` quando o circuito esta
+   * aberto. OPEN expirado vira HALF_OPEN e libera a sonda; um sucesso a fecha,
+   * uma falha reabre na hora.
    */
-  permite(agora: number = Date.now()): boolean {
-    if (this.state === 'CLOSED') return true;
+  permite(agora: number = Date.now()): number | null {
+    if (this.state === 'CLOSED') return this.geracao;
     if (this.state === 'OPEN' && agora - (this.lastFailureTime ?? 0) > this.resetTimeoutMs) {
-      this.state = 'HALF_OPEN';
-      return true;
+      this.abrirMeio(agora);
+      return this.geracao;
     }
-    return this.state === 'HALF_OPEN';
+    return this.state === 'HALF_OPEN' ? this.geracao : null;
   }
 
-  registrarSucesso(): void {
+  registrarSucesso(geracao: number): void {
+    if (geracao !== this.geracao) return;
     if (this.state === 'HALF_OPEN') {
       this.halfOpenSuccessCount++;
       if (this.halfOpenSuccessCount >= this.successThreshold) this.fechar();
@@ -57,12 +66,13 @@ export class CircuitBreaker {
     this.fechar();
   }
 
-  registrarFalha(agora: number = Date.now()): void {
-    this.halfOpenSuccessCount = 0;
+  registrarFalha(geracao: number, agora: number = Date.now()): void {
+    if (geracao !== this.geracao) return;
     this.failureCount++;
     this.lastFailureTime = agora;
-    if (this.failureCount >= this.failureThreshold || this.state === 'HALF_OPEN') {
+    if (this.state === 'HALF_OPEN' || this.failureCount >= this.failureThreshold) {
       this.state = 'OPEN';
+      this.geracao++;
     }
   }
 
@@ -74,8 +84,16 @@ export class CircuitBreaker {
     this.fechar();
   }
 
+  private abrirMeio(agora: number): void {
+    this.state = 'HALF_OPEN';
+    this.halfOpenSuccessCount = 0;
+    this.lastFailureTime = agora;
+    this.geracao++;
+  }
+
   private fechar(): void {
     this.state = 'CLOSED';
+    this.geracao++;
     this.failureCount = 0;
     this.halfOpenSuccessCount = 0;
     this.lastFailureTime = undefined;
@@ -83,11 +101,45 @@ export class CircuitBreaker {
 }
 
 /**
- * Push service fora afeta TODAS as inscricoes: sem breaker o dreno paga 8s de
- * timeout por dispositivo. 5 falhas seguidas em 1 minuto abrem o circuito.
+ * Push service fora derruba todas as inscricoes dele: sem breaker o dreno paga
+ * o timeout de 8s por dispositivo, em serie.
+ *
+ * O breaker e POR PROVEDOR: FCM, Mozilla e Apple sao independentes — cinco
+ * falhas do FCM nao podem bloquear quem entrega no Mozilla. Sem limite de
+ * hosts, o Map cresceria com qualquer endpoint forjado numa assinatura.
  */
-export const pushBreaker = new CircuitBreaker({
+const BREAKERS_POR_HOST = new Map<string, CircuitBreaker>();
+const MAX_HOSTS = 20;
+const OPCOES_PUSH: CircuitOptions = {
   failureThreshold: 5,
   resetTimeoutMs: 60_000,
   successThreshold: 2,
-});
+};
+const breakerGeral = new CircuitBreaker(OPCOES_PUSH);
+
+/** Host do endpoint do push service. `null` quando o endpoint e invalido. */
+export function hostDoEndpoint(endpoint: string): string | null {
+  try {
+    return new URL(endpoint).host || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Breaker do push service do endpoint; o geral cobre endpoint invalido/excedente. */
+export function breakerDoPushService(endpoint: string): CircuitBreaker {
+  const host = hostDoEndpoint(endpoint);
+  if (!host) return breakerGeral;
+  const existente = BREAKERS_POR_HOST.get(host);
+  if (existente) return existente;
+  if (BREAKERS_POR_HOST.size >= MAX_HOSTS) return breakerGeral;
+  const novo = new CircuitBreaker(OPCOES_PUSH);
+  BREAKERS_POR_HOST.set(host, novo);
+  return novo;
+}
+
+/** Uso operacional/teste: descarta o estado acumulado por host. */
+export function resetarBreakersDePush(): void {
+  BREAKERS_POR_HOST.clear();
+  breakerGeral.reset();
+}
