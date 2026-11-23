@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "npm:@supabase/supabase-js@2.112.4";
-import { sendEmailResend } from "../_shared/outboundDelivery.ts";
+import { sendEmailResend, emailEntregavel } from "../_shared/outboundDelivery.ts";
 
 // Dreno real da fila de notificações (fila_notificacoes). O edge `notificacao`
 // enfileira 'email' e 'push' a cada envio, mas nada consumia a fila — linhas
@@ -75,6 +75,11 @@ export async function drenarFilaNotificacoes(supabase: SupabaseClient): Promise<
       const destinatario = userErr ? null : (userData?.user?.email ?? null);
       if (!destinatario) {
         update = { status: "falha", tentativas, erro_ultimo: "destinatario_sem_email" };
+        resumo.falhas++;
+      } else if (!emailEntregavel(destinatario)) {
+        // Conta de teste (@example.com): nenhum provedor entrega, então não
+        // queima tentativas contra a Resend nem mascara o motivo real.
+        update = { status: "falha", tentativas, erro_ultimo: "destinatario_invalido" };
         resumo.falhas++;
       } else {
         const envio = await sendEmailResend({

@@ -1,5 +1,11 @@
 import { assertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
-import { normalizarTelefone, remetenteEmail, sanitizarErro } from "./outboundDelivery.ts";
+import {
+  emailEntregavel,
+  emailsEntregaveis,
+  normalizarTelefone,
+  remetenteEmail,
+  sanitizarErro,
+} from "./outboundDelivery.ts";
 
 Deno.test("normalizarTelefone prefixa DDI 55 em número BR sem país", () => {
   assertEquals(normalizarTelefone("11987654321"), "5511987654321");
@@ -29,4 +35,37 @@ Deno.test("remetenteEmail: explícito > EMAIL_FROM > sandbox da Resend", () => {
   } finally {
     prev === undefined ? Deno.env.delete("EMAIL_FROM") : Deno.env.set("EMAIL_FROM", prev);
   }
+});
+
+Deno.test("emailEntregavel recusa domínios reservados (RFC 2606/6761)", () => {
+  // Endereço de teste num lote faz a Resend rejeitar TODOS os destinatários.
+  assertEquals(emailEntregavel("qa.dreno.1898876129@example.com"), false);
+  assertEquals(emailEntregavel("a@example.net"), false);
+  assertEquals(emailEntregavel("a@example.org"), false);
+  assertEquals(emailEntregavel("a@exemplo.test"), false);
+  assertEquals(emailEntregavel("a@host.invalid"), false);
+  assertEquals(emailEntregavel("a@localhost"), false);
+  assertEquals(emailEntregavel("a@sub.example"), false);
+  assertEquals(emailEntregavel("sem-arroba"), false);
+  assertEquals(emailEntregavel("a@semtld"), false);
+  assertEquals(emailEntregavel("a@exemplo.com"), true);
+  assertEquals(emailEntregavel("notexample@exemplo.com.br"), true);
+  assertEquals(emailEntregavel("  ti@promobrindes.com.br  "), true);
+});
+
+Deno.test("emailsEntregaveis remove não-entregáveis e preserva os válidos", () => {
+  assertEquals(
+    emailsEntregaveis([
+      "adm01+dpv3-e2e-admin@promobrindes.com.br",
+      "qa.dreno.1898876129@example.com",
+      "rh.ninebox.teste@promobrindes.com.br",
+      "",
+      "ti@promobrindes.com.br",
+    ]),
+    [
+      "adm01+dpv3-e2e-admin@promobrindes.com.br",
+      "rh.ninebox.teste@promobrindes.com.br",
+      "ti@promobrindes.com.br",
+    ],
+  );
 });

@@ -19,6 +19,23 @@ export function sanitizarErro(msg: string, maxLen = 300): string {
   return msg.replace(/https?:\/\/\S+/g, '[url]').slice(0, maxLen);
 }
 
+// Domínios reservados (RFC 2606/6761) e sintaxe inválida. A Resend rejeita o
+// LOTE INTEIRO quando um destinatário é inválido: uma conta de teste
+// (@example.com) já bastou para nenhum destinatário real receber o alerta.
+const DOMINIO_RESERVADO =
+  /@(?:example\.(?:com|net|org)|[^@\s]*\.(?:test|invalid|localhost|example)|localhost)$/i;
+const EMAIL_SINTAXE = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
+
+/** false para endereços que nenhum provedor entrega (teste/local/inválido). */
+export function emailEntregavel(email: string): boolean {
+  const endereco = email.trim();
+  return EMAIL_SINTAXE.test(endereco) && !DOMINIO_RESERVADO.test(endereco);
+}
+
+export function emailsEntregaveis(emails: readonly string[]): string[] {
+  return emails.map((e) => e.trim()).filter(emailEntregavel);
+}
+
 export interface ResendResult {
   ok: boolean;
   /** false quando RESEND_API_KEY não existe — distinto de falha de envio. */
