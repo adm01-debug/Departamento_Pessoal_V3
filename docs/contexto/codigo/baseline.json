@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "81693b2511651329923e13d25a7f0e1de4dc98e4",
+  "commit": "99246308cb6b65fa59e4bc1172b1788acc86b755",
   "branch": "main",
-  "data_commit": "2026-11-23T09:12:02-03:00",
+  "data_commit": "2026-11-23T10:58:53-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "9924630",
+    "data": "2026-11-23",
+    "assunto": "fix: usa enum valido no tipo de notificacao de workflow (#847)"
+   },
    {
     "sha": "81693b2",
     "data": "2026-11-23",
@@ -126,18 +131,13 @@
     "sha": "5a7dabb",
     "data": "2026-11-21",
     "assunto": "chore: documenta o limite real das etapas 55 e 58 do plano do ponto (#816)"
-   },
-   {
-    "sha": "73b2a05",
-    "data": "2026-11-21",
-    "assunto": "chore: fecha etapa 45 do plano do ponto com evidencia real do CI (#819)"
    }
   ],
-  "arquivos_mudados_7d": 919,
+  "arquivos_mudados_7d": 910,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 376
+    "mudancas": 375
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -188,12 +188,12 @@
     "mudancas": 33
    },
    {
-    "pasta": "src/components/ponto",
-    "mudancas": 33
-   },
-   {
     "pasta": "src/utils/__tests__",
     "mudancas": 32
+   },
+   {
+    "pasta": "src/components/desligamentos",
+    "mudancas": 31
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3728,
   "arquivos_codigo": 2147,
-  "linhas_codigo": 429408,
+  "linhas_codigo": 429416,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -696,7 +696,7 @@
   },
   "src/services": {
    "arquivos": 198,
-   "linhas": 42150
+   "linhas": 42158
   },
   "src/setupTests.ts": {
    "arquivos": 1,

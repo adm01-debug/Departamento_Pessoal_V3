@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: usa enum valido no tipo de notificacao de workflow (#847)",
    "feat: notificacoes de workflow por e-mail e in-app (#843)",
    "chore: inventario do estado real [auto] (#842)",
    "infra: registra 20261123090000 no lote do canonical-migrations (#840)",
-   "feat: coletor le feriados e jornadas do AtecSoft (etapa 53) (#839)",
-   "test: prova a etapa 70 e marca 67/70 no plano do Ponto (#841)"
+   "feat: coletor le feriados e jornadas do AtecSoft (etapa 53) (#839)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

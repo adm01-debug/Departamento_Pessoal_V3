@@ -5095,7 +5095,7 @@
     "workflowService"
    ],
    "export_default": null,
-   "linhas": 620,
+   "linhas": 628,
    "tabelas": [
     "workflows_definicoes",
     "workflows_etapas",

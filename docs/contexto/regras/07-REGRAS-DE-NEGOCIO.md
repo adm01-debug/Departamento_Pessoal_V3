@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `81693b2511` · branch `main` · 2026-11-23 12:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `99246308cb` · branch `main` · 2026-11-23 14:05 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1681,7 +1681,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `variacao_salarial` | escreve | `src/utils/folha/validadorFolha.ts` |
 | `tipo` | `vida` | escreve, filtra | `src/mocks/colaboradoresMock.ts`<br>`src/services/calculoBeneficiosService.ts` |
 | `tipo` | `whatsapp` | escreve | `src/services/contratacaoService.ts` |
-| `tipo` | `workflow` | escreve | `src/services/workflowService.ts` |
 | `status` | `ARQUIVADO` | compara, escreve | `src/pages/AdminRegimentoInternoPage.tsx` |
 | `status` | `ATIVO` | escreve | `src/pages/AdminExtintoresPage.tsx` |
 | `status` | `Ativo` | escreve | `supabase/functions/sincronizar-bitrix/index.ts` |
@@ -1727,7 +1726,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `completed` | compara, filtra | `supabase/functions/_shared/idempotency.ts` |
 | `status` | `completo` | escreve | `src/services/backupService.ts` |
 | `status` | `comunicado` | compara | `src/components/desligamentos/desligamentosDerivacoes.ts`<br>`src/components/desligamentos/trilhaDerivacoes.ts` |
-| … +212 linhas — lista completa em `context.json` | | | |
+| `status` | `concluida` | compara, escreve | `src/components/colaborador-detalhes/FeriasResumoTab.tsx`<br>`src/components/ferias/CalendarioFerias.tsx`<br>`src/mocks/colaboradoresMock.ts`<br>`src/pages/LGPDPage.tsx`<br>`src/pages/PassivoTrabalhistaPage.tsx`<br>… +1 |
+| … +211 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
