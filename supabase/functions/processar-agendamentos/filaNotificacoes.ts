@@ -155,7 +155,10 @@ async function desfechoPush(
     return { status: "falha", tentativas, erro_ultimo: "push_sem_assinatura" };
   }
 
-  const payload = { title: item.titulo, body: item.conteudo, url: "/" };
+  // O corpo é cortado no tamanho que o service worker exibe (`public/sw-custom.js`):
+  // mandar 5.000 caracteres para o navegador descartar 4.700 engorda o payload
+  // e aproxima do limite de ~4 KB do Web Push.
+  const payload = { title: item.titulo, body: item.conteudo.slice(0, 300) };
   const resultados = await Promise.all(
     assinaturas.map((a) => enviarWebPush(a.subscription, payload, vapid)),
   );

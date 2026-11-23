@@ -20,26 +20,33 @@ export const pushNotificationService = {
   },
 
   /**
-   * Chave pública VAPID. Env primeiro (Vercel), com fallback em
-   * `configuracoes.vapid_public_key` — a chave PRIVADA nunca mora no banco
-   * (seria legível pela publishable key do bundle; ver `_shared/webPush.ts`).
+   * Chave pública VAPID. Só de variável de ambiente: `configuracoes` tem RLS e
+   * apenas admins têm policy de SELECT, então ler a chave de lá funcionaria
+   * para admins e falharia para o resto do time — inconsistência pior que
+   * exigir rebuild ao rotacionar a chave. A chave privada é secret de Edge
+   * Function (`VAPID_PRIVATE_KEY`), nunca do bundle.
    */
   async getVapidPublicKey(): Promise<string | null> {
-    const doAmbiente = import.meta.env.VITE_VAPID_PUBLIC_KEY?.trim();
-    if (doAmbiente) return doAmbiente;
+    return import.meta.env.VITE_VAPID_PUBLIC_KEY?.trim() || null;
+  },
 
-    const { data, error } = await supabase
-      .from('configuracoes')
-      .select('vapid_public_key')
-      .not('vapid_public_key', 'is', null)
-      .limit(1)
-      .maybeSingle();
+  /**
+   * A inscrição do navegador foi criada com a chave VAPID vigente? Uma
+   * inscrição sem chave (ou com chave antiga) existe, aparece como ativa no
+   * navegador, mas nenhum servidor consegue entregar nela.
+   */
+  async hasDeliverableSubscription(): Promise<boolean> {
+    const [subscription, chave] = [await this.getSubscription(), await this.getVapidPublicKey()];
+    if (!subscription || !chave) return false;
 
-    if (error) {
-      loggerService.error('Falha ao ler vapid_public_key de configuracoes', {}, error);
-      return null;
-    }
-    return data?.vapid_public_key?.trim() || null;
+    const atual = subscription.options?.applicationServerKey;
+    if (!atual) return false;
+
+    const esperada = urlBase64ToUint8Array(chave);
+    const bytes = new Uint8Array(atual);
+    if (bytes.length !== esperada.length) return false;
+    for (let i = 0; i < bytes.length; i++) if (bytes[i] !== esperada[i]) return false;
+    return true;
   },
 
   async getSubscription(): Promise<PushSubscription | null> {
@@ -123,17 +130,20 @@ export const pushNotificationService = {
     try {
       const subscription = await this.getSubscription();
       if (subscription) {
+        const endpoint = subscription.toJSON().endpoint;
         await subscription.unsubscribe();
 
-        // Não há coluna `endpoint` nem constraint única em `subscription`
-        // para localizar a assinatura exata deste dispositivo (ver nota em
-        // `subscribeUser`); desativa todas as assinaturas push do usuário.
+        // Desativa só a inscrição deste dispositivo. A tabela não tem coluna
+        // `endpoint` (a assinatura inteira está em `subscription: Json`), então
+        // o recorte é pelo caminho JSON — desativar todas silenciaria os
+        // outros navegadores da mesma conta, que continuariam "ativos" na tela.
         await supabase
           .from('push_subscriptions')
           .update(
             validateTablePayload('push_subscriptions', { active: false }, 'pushNotificationService:push_subscriptions')
           )
-          .eq('user_id', userId);
+          .eq('user_id', userId)
+          .eq('subscription->>endpoint', endpoint ?? '');
       }
       return true;
     } catch (e: unknown) {

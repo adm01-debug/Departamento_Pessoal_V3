@@ -1,10 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const { mockUpsert, mockUpdate, mockSelect, mockMaybeSingle } = vi.hoisted(() => {
-  const mockMaybeSingle = vi.fn();
-  const mockSelect = vi.fn(() => ({
-    not: () => ({ limit: () => ({ maybeSingle: mockMaybeSingle }) }),
-  }));
+const { mockUpsert, mockUpdate } = vi.hoisted(() => {
   return {
     mockUpsert: vi.fn().mockResolvedValue({ error: null }),
     mockUpdate: vi.fn().mockReturnValue({
@@ -12,8 +8,6 @@ const { mockUpsert, mockUpdate, mockSelect, mockMaybeSingle } = vi.hoisted(() =>
         eq: vi.fn().mockResolvedValue({ error: null }),
       }),
     }),
-    mockSelect,
-    mockMaybeSingle,
   };
 });
 
@@ -22,7 +16,6 @@ vi.mock('@/integrations/supabase/client', () => ({
     from: vi.fn(() => ({
       upsert: mockUpsert,
       update: mockUpdate,
-      select: mockSelect,
     })),
   },
 }));
@@ -102,22 +95,62 @@ describe('pushNotificationService.getVapidPublicKey', () => {
     vi.unstubAllEnvs();
   });
 
-  it('prefere a variável de ambiente quando definida', async () => {
-    vi.stubEnv('VITE_VAPID_PUBLIC_KEY', 'chave-do-ambiente');
+  it('lê a chave da variável de ambiente', async () => {
+    vi.stubEnv('VITE_VAPID_PUBLIC_KEY', '  chave-do-ambiente  ');
     await expect(pushNotificationService.getVapidPublicKey()).resolves.toBe('chave-do-ambiente');
-    expect(mockMaybeSingle).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
   });
 
-  it('cai para configuracoes.vapid_public_key quando o env está vazio', async () => {
+  it('devolve null quando o env está vazio', async () => {
     vi.stubEnv('VITE_VAPID_PUBLIC_KEY', '');
-    mockMaybeSingle.mockResolvedValue({ data: { vapid_public_key: '  chave-do-banco  ' }, error: null });
-    await expect(pushNotificationService.getVapidPublicKey()).resolves.toBe('chave-do-banco');
-  });
-
-  it('devolve null sem lançar quando a leitura do banco falha', async () => {
-    vi.stubEnv('VITE_VAPID_PUBLIC_KEY', '');
-    mockMaybeSingle.mockResolvedValue({ data: null, error: new Error('rls') });
     await expect(pushNotificationService.getVapidPublicKey()).resolves.toBeNull();
+    vi.unstubAllEnvs();
+  });
+});
+
+describe('pushNotificationService.hasDeliverableSubscription', () => {
+  // "AQID" em base64url decodifica para os bytes [1, 2, 3].
+  const CHAVE = 'AQID';
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+    vi.stubEnv('VITE_VAPID_PUBLIC_KEY', CHAVE);
+  });
+
+  it('é true quando a inscrição usa a chave VAPID vigente', async () => {
+    mockGetSubscription.mockResolvedValue({
+      options: { applicationServerKey: new Uint8Array([1, 2, 3]).buffer },
+      toJSON: () => ({ endpoint: 'https://push.example.com/1' }),
+    });
+    await expect(pushNotificationService.hasDeliverableSubscription()).resolves.toBe(true);
+  });
+
+  it('é false quando a inscrição foi criada com outra chave', async () => {
+    mockGetSubscription.mockResolvedValue({
+      options: { applicationServerKey: new Uint8Array([9, 9, 9]).buffer },
+      toJSON: () => ({ endpoint: 'https://push.example.com/1' }),
+    });
+    await expect(pushNotificationService.hasDeliverableSubscription()).resolves.toBe(false);
+  });
+
+  it('é false quando a inscrição não tem applicationServerKey', async () => {
+    mockGetSubscription.mockResolvedValue({ options: {}, toJSON: () => ({ endpoint: 'https://x' }) });
+    await expect(pushNotificationService.hasDeliverableSubscription()).resolves.toBe(false);
+  });
+
+  it('é false sem inscrição no navegador', async () => {
+    mockGetSubscription.mockResolvedValue(null);
+    await expect(pushNotificationService.hasDeliverableSubscription()).resolves.toBe(false);
+  });
+
+  it('é false quando não há chave pública configurada', async () => {
+    vi.stubEnv('VITE_VAPID_PUBLIC_KEY', '');
+    mockGetSubscription.mockResolvedValue({
+      options: { applicationServerKey: new Uint8Array([1, 2, 3]).buffer },
+      toJSON: () => ({ endpoint: 'https://push.example.com/1' }),
+    });
+    await expect(pushNotificationService.hasDeliverableSubscription()).resolves.toBe(false);
   });
 });
 
@@ -176,7 +209,6 @@ describe('pushNotificationService.subscribeUser', () => {
 
   it('não cria inscrição sem chave pública VAPID', async () => {
     vi.stubEnv('VITE_VAPID_PUBLIC_KEY', '');
-    mockMaybeSingle.mockResolvedValue({ data: null, error: null });
     Object.defineProperty(globalThis, 'PushManager', {
       value: class PushManager {},
       configurable: true,
@@ -218,6 +250,22 @@ describe('pushNotificationService.unsubscribeUser', () => {
     const result = await pushNotificationService.unsubscribeUser('user-1');
     expect(result).toBe(true);
     expect(mockUnsubscribe).toHaveBeenCalled();
+  });
+
+  it('desativa apenas a inscrição deste dispositivo', async () => {
+    const fakeSub = {
+      unsubscribe: mockUnsubscribe.mockResolvedValue(true),
+      toJSON: () => ({ endpoint: 'https://push.example.com/este' }),
+    };
+    mockGetSubscription.mockResolvedValue(fakeSub);
+    await pushNotificationService.unsubscribeUser('user-1');
+
+    const primeiroEq = mockUpdate.mock.results[0].value.eq;
+    expect(primeiroEq).toHaveBeenCalledWith('user_id', 'user-1');
+    expect(primeiroEq.mock.results[0].value.eq).toHaveBeenCalledWith(
+      'subscription->>endpoint',
+      'https://push.example.com/este'
+    );
   });
 
   it('returns false on error', async () => {
