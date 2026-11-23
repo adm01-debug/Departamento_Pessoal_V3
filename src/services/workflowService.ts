@@ -3,6 +3,7 @@ import type { QueryBuilderType } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import { validateInput, validateTablePayload } from '@/schemas/validate';
 import { workflowDefinicaoSchema, workflowEtapaSchema } from '@/schemas/workflowsPremiacoesCnab';
+import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 
 // ── Tipos ───────────────────────────────────────────────────────────────────
 
@@ -117,6 +118,46 @@ async function proximaEtapa(workflowId: string, ordemAtual: number): Promise<Eta
 }
 
 // ── Serviço ─────────────────────────────────────────────────────────────────
+
+
+// -- Notificacoes de workflow (best-effort) ------------------------------------
+
+type AppRole = Database['public']['Enums']['app_role'];
+
+/** Resolve destinatarios de uma etapa: por aprovador_id direto ou por papel via user_roles. */
+async function resolverDestinatariosEtapa(
+  etapa: Etapa,
+  empresaId: string
+): Promise<{ user_id: string }[]> {
+  if (!etapa.aprovador_tipo) return [];
+  if (etapa.aprovador_id) return [{ user_id: etapa.aprovador_id }];
+
+  const { data: roleUsers } = await supabase
+    .from('user_roles')
+    .select('user_id')
+    .eq('role', etapa.aprovador_tipo as AppRole);
+  if (!roleUsers?.length) return [];
+
+  const { data: companyUsers } = await supabase
+    .from('user_empresas')
+    .select('user_id')
+    .eq('empresa_id', empresaId)
+    .in('user_id', roleUsers.map((r) => r.user_id));
+  return (companyUsers ?? []).map((r) => ({ user_id: r.user_id }));
+}
+
+/** Envia notificacao de workflow via edge (best-effort). */
+function notificarWorkflow(
+  empresaId: string,
+  destinatarios: { user_id: string }[],
+  assunto: string,
+  conteudo: string
+): void {
+  if (!destinatarios.length) return;
+  void edgeFunctionsService
+    .enviarNotificacao({ action: 'enviar', empresaId, tipo: 'workflow', destinatarios, assunto, conteudo })
+    .catch(() => {});
+}
 
 export const workflowService = {
   // ── CRUD (já existente) ────────────────────────────────────────────────
@@ -365,6 +406,15 @@ export const workflowService = {
       )
     );
 
+    // Notifica o aprovador da primeira etapa (best-effort)
+    void resolverDestinatariosEtapa(primeiraEtapa as unknown as Etapa, empresaId).then((dest) => {
+      notificarWorkflow(
+        empresaId, dest,
+        `Aprovacao necessaria: ${primeiraEtapa.nome ?? 'etapa inicial'}`,
+        `Um novo workflow foi iniciado e aguarda sua aprovacao na etapa "${primeiraEtapa.nome ?? 'inicial'}".`
+      );
+    }).catch(() => {});
+
     return execucao as unknown as Execucao;
   },
 
@@ -500,6 +550,38 @@ export const workflowService = {
       )
       .select()
       .maybeSingle();
+
+    // Notificacoes pos-acao (best-effort)
+    if (!aprovado) {
+      // Rejeicao: notifica o solicitante
+      const solicitanteId = (execucao as unknown as { solicitante_id: string | null }).solicitante_id;
+      if (solicitanteId) {
+        notificarWorkflow(
+          empresaId, [{ user_id: solicitanteId }],
+          `Workflow rejeitado na etapa "${etapa.nome ?? 'etapa'}"`,
+          `Sua solicitacao foi rejeitada na etapa "${etapa.nome ?? 'etapa'}"${observacao ? ': ' + observacao : '.'}`
+        );
+      }
+    } else if (!proxima) {
+      // Conclusao: notifica o solicitante
+      const solicitanteId = (execucao as unknown as { solicitante_id: string | null }).solicitante_id;
+      if (solicitanteId) {
+        notificarWorkflow(
+          empresaId, [{ user_id: solicitanteId }],
+          'Workflow concluido com sucesso',
+          'Sua solicitacao foi aprovada em todas as etapas e esta concluida.'
+        );
+      }
+    } else {
+      // Avanco: notifica o aprovador da proxima etapa
+      void resolverDestinatariosEtapa(proxima as unknown as Etapa, empresaId).then((dest) => {
+        notificarWorkflow(
+          empresaId, dest,
+          `Aprovacao necessaria: ${proxima.nome ?? 'proxima etapa'}`,
+          `A etapa "${etapa.nome ?? 'anterior'}" foi aprovada. Aguarda sua aprovacao em "${proxima.nome ?? 'proxima etapa'}".`
+        );
+      }).catch(() => {});
+    }
 
     return { execucao: updated as unknown as Execucao, historico: historico as unknown as Historico };
   },
