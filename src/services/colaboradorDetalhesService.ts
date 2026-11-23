@@ -480,7 +480,7 @@ export interface HoleriteResumoColaborador {
 // caminho já usado em src/pages/PortalPage.tsx. Não toca a geração do holerite.
 export async function listarHoleritesColaborador(
   colaboradorId: string,
-  limite: number = 12
+  limite = 12
 ): Promise<HoleriteResumoColaborador[]> {
   const { data, error } = await supabase
     .from('holerites')
