@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "20ff2260d36c22e91fd5fb45ee9e1df756f5e8df",
+  "sha": "bd79c79f4d7f1165d3f36af3f02d1a9354373d98",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-23 15:16 UTC",
+  "generated_at": "2026-11-23 15:51 UTC",
   "files_total": 3742,
   "code_files": 3149,
-  "code_lines": 500740
+  "code_lines": 500748
  },
  "version": "1.3.2",
- "facts_hash": "6f764447babd1df2",
+ "facts_hash": "159c26d1cd43ba56",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -106010,7 +106010,7 @@
   {
    "module": "supabase/functions",
    "files": 193,
-   "lines": 28006,
+   "lines": 28014,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -325214,7 +325214,7 @@
   },
   "supabase/functions/alertas-dp/index.ts": {
    "path": "supabase/functions/alertas-dp/index.ts",
-   "lines": 503,
+   "lines": 511,
    "tables": [
     {
      "table": "asos",
@@ -337231,10 +337231,19 @@
   }
  },
  "git": {
-  "sha": "20ff2260d36c22e91fd5fb45ee9e1df756f5e8df",
+  "sha": "bd79c79f4d7f1165d3f36af3f02d1a9354373d98",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "bd79c79",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: filtra destinatarios orfaos em alertas-dp para nao violar FK (#850)",
+    "files": [
+     "supabase/functions/alertas-dp/index.ts"
+    ]
+   },
    {
     "sha": "20ff226",
     "date": "2026-11-23",
@@ -337559,21 +337568,12 @@
      "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
      "inventario/estado/rotas.json"
     ]
-   },
-   {
-    "sha": "2313441",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: fecha etapa 44 do plano do ponto com evidencia pos-deploy (#815)",
-    "files": [
-     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    8
+    7
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -337590,6 +337590,10 @@
    [
     "scripts/automation.config.json",
     3
+   ],
+   [
+    "supabase/functions/alertas-dp/index.ts",
+    2
    ],
    [
     "src/services/workflowService.ts",
@@ -337618,10 +337622,6 @@
    [
     "src/pages/ObrigacoesFiscaisPage.tsx",
     2
-   ],
-   [
-    "supabase/functions/alertas-dp/index.ts",
-    1
    ],
    [
     "supabase/functions/enviar-relatorio/index.ts",

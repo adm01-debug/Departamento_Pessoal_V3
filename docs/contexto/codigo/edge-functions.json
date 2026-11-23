@@ -181,7 +181,7 @@
    "nome": "alertas-dp",
    "entrada": "supabase/functions/alertas-dp/index.ts",
    "arquivos": 2,
-   "linhas": 532,
+   "linhas": 540,
    "verify_jwt": true,
    "metodos": [
     "POST"

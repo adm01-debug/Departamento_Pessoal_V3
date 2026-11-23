@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "20ff2260d36c22e91fd5fb45ee9e1df756f5e8df",
+  "commit": "bd79c79f4d7f1165d3f36af3f02d1a9354373d98",
   "branch": "main",
-  "data_commit": "2026-11-23T12:09:50-03:00",
+  "data_commit": "2026-11-23T12:45:06-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "bd79c79",
+    "data": "2026-11-23",
+    "assunto": "fix: filtra destinatarios orfaos em alertas-dp para nao violar FK (#850)"
+   },
    {
     "sha": "20ff226",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "bba91c5",
     "data": "2026-11-22",
     "assunto": "feat: conecta a aba FGTS Digital à edge fgts-digital (feature estava órfã a 1 passo do fim) (#822)"
-   },
-   {
-    "sha": "d4b08fa",
-    "data": "2026-11-22",
-    "assunto": "docs: reescreve a análise de pendentes com o estado real (9 dos 12 itens já estavam implementados) (#823)"
    }
   ],
-  "arquivos_mudados_7d": 900,
+  "arquivos_mudados_7d": 878,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3728,
   "arquivos_codigo": 2147,
-  "linhas_codigo": 429410,
+  "linhas_codigo": 429418,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -724,7 +724,7 @@
   },
   "supabase/functions": {
    "arquivos": 193,
-   "linhas": 28006
+   "linhas": 28014
   },
   "supabase/tests": {
    "arquivos": 3,

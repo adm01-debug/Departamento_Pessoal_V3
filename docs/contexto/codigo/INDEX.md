@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `20ff2260d36c22e91fd5fb45ee9e1df756f5e8df` (2026-11-23T12:09:50-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bd79c79f4d7f1165d3f36af3f02d1a9354373d98` (2026-11-23T12:45:06-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3728 |
 | arquivos_codigo | 2147 |
-| linhas_codigo | 429410 |
+| linhas_codigo | 429418 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -398,7 +398,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28249 nós · 63650 arestas · 2512 comunidades · grafo do commit `20ff2260`
+- 28249 nós · 63650 arestas · 2512 comunidades · grafo do commit `bd79c79f`
 - comunidades maiores: lucide-react (559), button.tsx (539), 20260831_corrected_public.sql (485), canonical_schema.sql (481), @tanstack/react-query (458), cn (425), useEmpresas (358), vitest (310), hooks/index.ts (233), contract.ts (179), "public"."empresas" (164), "public"."empresas" (158)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -656,6 +656,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-23 `bd79c79` fix: filtra destinatarios orfaos em alertas-dp para nao violar FK (#850)
 - 2026-11-23 `20ff226` fix: troca import dinamico de rateLimit por estatico nas edges que retornavam 500 (#849)
 - 2026-11-23 `3fface7` chore: registra notificacoes de workflow como resolvidas no doc (#848)
 - 2026-11-23 `9924630` fix: usa enum valido no tipo de notificacao de workflow (#847)
@@ -670,7 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-22 `a2f4ebe` fix: extrai e testa a regra do 23505 no vinculo do relogio (#835)
 - 2026-11-22 `f0f940b` fix: baixa de guia falha alto quando nenhuma linha e atualizada (#834)
 - 2026-11-22 `4715945` fix: isola guias_fgts_digital por empresa e libera a baixa para RH (#824)
-- 2026-11-22 `7084a10` perf: cria indices nas 3 FKs de join do ponto e do PIX (#832)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
