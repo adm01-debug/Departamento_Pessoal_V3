@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ee4d2de03a11855193da61a1a7ad0bbae6cbbaac",
+  "commit": "81693b2511651329923e13d25a7f0e1de4dc98e4",
   "branch": "main",
-  "data_commit": "2026-11-23T10:33:19Z",
+  "data_commit": "2026-11-23T09:12:02-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "81693b2",
+    "data": "2026-11-23",
+    "assunto": "feat: notificacoes de workflow por e-mail e in-app (#843)"
+   },
    {
     "sha": "ee4d2de",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "73b2a05",
     "data": "2026-11-21",
     "assunto": "chore: fecha etapa 45 do plano do ponto com evidencia real do CI (#819)"
-   },
-   {
-    "sha": "60095b9",
-    "data": "2026-11-21",
-    "assunto": "chore: fecha etapas 81/82 do plano do ponto (testes de UI + inventario de rotas) (#817)"
    }
   ],
-  "arquivos_mudados_7d": 929,
+  "arquivos_mudados_7d": 919,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 97
+    "mudancas": 96
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3728,
   "arquivos_codigo": 2147,
-  "linhas_codigo": 429332,
+  "linhas_codigo": 429408,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -696,7 +696,7 @@
   },
   "src/services": {
    "arquivos": 198,
-   "linhas": 42074
+   "linhas": 42150
   },
   "src/setupTests.ts": {
    "arquivos": 1,

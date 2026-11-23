@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ee4d2de03a11855193da61a1a7ad0bbae6cbbaac` (2026-11-23T10:33:19Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `81693b2511651329923e13d25a7f0e1de4dc98e4` (2026-11-23T09:12:02-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3728 |
 | arquivos_codigo | 2147 |
-| linhas_codigo | 429332 |
+| linhas_codigo | 429408 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -72,10 +72,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | calculators | 0 | 0 | 8 | 0 | 0 | 0 |
 | components | 0 | 0 | 7 | 18 | 25 | 7 |
 | components/admin | 0 | 0 | 7 | 1 | 0 | 1 |
-| components/admissoes | 0 | 0 | 21 | 149 | 9 | 168 |
+| components/admissoes | 0 | 0 | 21 | 149 | 34 | 168 |
 | components/afastamentos | 0 | 0 | 6 | 9 | 0 | 7 |
 | components/avaliacao | 0 | 0 | 83 | 5 | 0 | 11 |
-| components/colaborador-detalhes | 0 | 0 | 62 | 160 | 8 | 173 |
+| components/colaborador-detalhes | 0 | 0 | 62 | 160 | 33 | 173 |
 | components/colaboradores | 0 | 0 | 9 | 9 | 0 | 3 |
 | components/dashboard | 0 | 0 | 21 | 13 | 26 | 63 |
 | components/descontos | 0 | 0 | 5 | 0 | 0 | 1 |
@@ -83,24 +83,24 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/epis | 0 | 0 | 5 | 0 | 0 | 0 |
 | components/esocial | 0 | 0 | 21 | 2 | 2 | 7 |
 | components/exames | 0 | 0 | 5 | 0 | 0 | 0 |
-| components/ferias | 0 | 0 | 22 | 157 | 8 | 137 |
-| components/folha | 0 | 0 | 21 | 151 | 13 | 144 |
+| components/ferias | 0 | 0 | 22 | 157 | 33 | 137 |
+| components/folha | 0 | 0 | 21 | 151 | 38 | 144 |
 | components/forms | 0 | 0 | 5 | 0 | 0 | 0 |
 | components/layout | 0 | 1 | 28 | 17 | 25 | 6 |
-| components/medidas-disciplinares | 0 | 0 | 9 | 147 | 8 | 132 |
+| components/medidas-disciplinares | 0 | 0 | 9 | 147 | 33 | 132 |
 | components/notifications | 0 | 0 | 5 | 4 | 0 | 5 |
 | components/obrigacoes | 0 | 0 | 6 | 0 | 0 | 0 |
 | components/organograma | 0 | 0 | 10 | 2 | 0 | 2 |
 | components/pcs | 0 | 0 | 6 | 9 | 0 | 8 |
-| components/ponto | 0 | 0 | 24 | 153 | 11 | 139 |
-| components/portal | 0 | 0 | 5 | 4 | 3 | 86 |
-| components/premiacoes | 0 | 0 | 23 | 148 | 8 | 137 |
+| components/ponto | 0 | 0 | 24 | 153 | 36 | 139 |
+| components/portal | 0 | 0 | 5 | 4 | 28 | 86 |
+| components/premiacoes | 0 | 0 | 23 | 148 | 33 | 137 |
 | components/recrutamento | 0 | 0 | 26 | 4 | 0 | 5 |
 | components/settings | 0 | 0 | 11 | 150 | 33 | 173 |
 | components/sst | 0 | 0 | 11 | 6 | 2 | 8 |
-| components/treinamentos | 0 | 0 | 47 | 1 | 3 | 82 |
+| components/treinamentos | 0 | 0 | 47 | 1 | 28 | 82 |
 | components/ui | 0 | 0 | 72 | 18 | 2 | 5 |
-| hooks | 0 | 0 | 97 | 210 | 13 | 166 |
+| hooks | 0 | 0 | 97 | 210 | 37 | 166 |
 | hooks/ferias | 0 | 0 | 6 | 11 | 0 | 7 |
 | integrations/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib | 0 | 0 | 14 | 1 | 0 | 0 |
@@ -398,8 +398,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28246 nós · 63643 arestas · 2486 comunidades · grafo do commit `ee4d2de0`
-- comunidades maiores: lucide-react (524), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (443), @tanstack/react-query (381), vitest (330), useEmpresas (327), cn (308), react (278), ColaboradorFormPage.tsx (174), App.tsx (166), "public"."empresas" (164)
+- 28248 nós · 63647 arestas · 2471 comunidades · grafo do commit `81693b25`
+- comunidades maiores: useEmpresas (676), lucide-react (617), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (470), vitest (311), cn (308), react (232), App.tsx (183), "public"."empresas" (164), "public"."empresas" (158), contract.ts (157)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -656,6 +656,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-23 `81693b2` feat: notificacoes de workflow por e-mail e in-app (#843)
 - 2026-11-23 `ee4d2de` chore: inventario do estado real [auto] (#842)
 - 2026-11-22 `127ccc8` infra: registra 20261123090000 no lote do canonical-migrations (#840)
 - 2026-11-22 `4828437` feat: coletor le feriados e jornadas do AtecSoft (etapa 53) (#839)
@@ -670,7 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-22 `7bc68b4` infra: adiciona migrations da #829/#830 a lista fechada do canonical-apply (#831)
 - 2026-11-22 `b77692d` fix: vinculo do relogio ganha unicidade reversa por colaborador (R8) (#830)
 - 2026-11-22 `3a8e2ec` fix: CPF não trafega mais inteiro na tela de Vínculos do relógio (R8) (#829)
-- 2026-11-22 `77500ff` fix: use-after-free e overread no cliente Firebird do coletor de ponto (#828)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

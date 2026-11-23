@@ -65192,7 +65192,7 @@
   {
    "nome": "get_empresa_admin_ids",
    "definida": true,
-   "usada_em": 1
+   "usada_em": 2
   },
   {
    "nome": "get_idempotency_health",

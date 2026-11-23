@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: notificacoes de workflow por e-mail e in-app (#843)",
    "chore: inventario do estado real [auto] (#842)",
    "infra: registra 20261123090000 no lote do canonical-migrations (#840)",
    "feat: coletor le feriados e jornadas do AtecSoft (etapa 53) (#839)",
-   "test: prova a etapa 70 e marca 67/70 no plano do Ponto (#841)",
-   "feat: itemiza verbas rescisorias em verbas_rescisorias (#838)"
+   "test: prova a etapa 70 e marca 67/70 no plano do Ponto (#841)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

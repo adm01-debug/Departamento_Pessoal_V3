@@ -7980,7 +7980,8 @@
    "src/integrations/supabase/client.ts",
    "src/integrations/supabase/types.ts",
    "src/schemas/validate.ts",
-   "src/schemas/workflowsPremiacoesCnab.ts"
+   "src/schemas/workflowsPremiacoesCnab.ts",
+   "src/services/edgeFunctionsService.ts"
   ],
   "src/setupTests.ts": [
    "src/test/supabaseMock.ts"
