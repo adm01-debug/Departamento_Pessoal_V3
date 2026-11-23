@@ -121,6 +121,9 @@ async function proximaEtapa(workflowId: string, ordemAtual: number): Promise<Eta
 
 // -- Notificacoes de workflow (best-effort) ------------------------------------
 
+/** Enum aceito pela edge `notificacao` (schemas/common.ts notificacaoSchema). */
+type NotificacaoTipo = 'info' | 'aviso' | 'erro' | 'sucesso';
+
 /** Resolve destinatarios de uma etapa: por aprovador_id direto ou por papel via RPC. */
 async function resolverDestinatariosEtapa(etapa: Etapa, empresaId: string): Promise<{ user_id: string }[]> {
   if (!etapa.aprovador_tipo) return [];
@@ -137,12 +140,13 @@ function notificarWorkflow(
   empresaId: string,
   destinatarios: { user_id: string }[],
   assunto: string,
-  conteudo: string
+  conteudo: string,
+  tipo: NotificacaoTipo = 'info'
 ): void {
   if (!destinatarios.length) return;
   void edgeFunctionsService
-    .enviarNotificacao({ action: 'enviar', empresaId, tipo: 'workflow', destinatarios, assunto, conteudo })
-    .catch(() => {});
+    .enviarNotificacao({ action: 'enviar', empresaId, tipo, destinatarios, assunto, conteudo })
+    .catch((e) => console.warn('[workflowService] falha ao notificar workflow', e));
 }
 
 export const workflowService = {
@@ -399,7 +403,8 @@ export const workflowService = {
           empresaId,
           dest,
           `Aprovacao necessaria: ${primeiraEtapa.nome ?? 'etapa inicial'}`,
-          `Um novo workflow foi iniciado e aguarda sua aprovacao na etapa "${primeiraEtapa.nome ?? 'inicial'}".`
+          `Um novo workflow foi iniciado e aguarda sua aprovacao na etapa "${primeiraEtapa.nome ?? 'inicial'}".`,
+          'aviso'
         );
       })
       .catch(() => {});
@@ -549,7 +554,8 @@ export const workflowService = {
           empresaId,
           [{ user_id: solicitanteId }],
           `Workflow rejeitado na etapa "${etapa.nome ?? 'etapa'}"`,
-          `Sua solicitacao foi rejeitada na etapa "${etapa.nome ?? 'etapa'}"${observacao ? ': ' + observacao : '.'}`
+          `Sua solicitacao foi rejeitada na etapa "${etapa.nome ?? 'etapa'}"${observacao ? ': ' + observacao : '.'}`,
+          'erro'
         );
       }
     } else if (!proxima) {
@@ -560,7 +566,8 @@ export const workflowService = {
           empresaId,
           [{ user_id: solicitanteId }],
           'Workflow concluido com sucesso',
-          'Sua solicitacao foi aprovada em todas as etapas e esta concluida.'
+          'Sua solicitacao foi aprovada em todas as etapas e esta concluida.',
+          'sucesso'
         );
       }
     } else {
@@ -571,7 +578,8 @@ export const workflowService = {
             empresaId,
             dest,
             `Aprovacao necessaria: ${proxima.nome ?? 'proxima etapa'}`,
-            `A etapa "${etapa.nome ?? 'anterior'}" foi aprovada. Aguarda sua aprovacao em "${proxima.nome ?? 'proxima etapa'}".`
+            `A etapa "${etapa.nome ?? 'anterior'}" foi aprovada. Aguarda sua aprovacao em "${proxima.nome ?? 'proxima etapa'}".`,
+            'aviso'
           );
         })
         .catch(() => {});
