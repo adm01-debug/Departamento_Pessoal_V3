@@ -119,14 +119,10 @@ async function proximaEtapa(workflowId: string, ordemAtual: number): Promise<Eta
 
 // ── Serviço ─────────────────────────────────────────────────────────────────
 
-
 // -- Notificacoes de workflow (best-effort) ------------------------------------
 
 /** Resolve destinatarios de uma etapa: por aprovador_id direto ou por papel via RPC. */
-async function resolverDestinatariosEtapa(
-  etapa: Etapa,
-  empresaId: string
-): Promise<{ user_id: string }[]> {
+async function resolverDestinatariosEtapa(etapa: Etapa, empresaId: string): Promise<{ user_id: string }[]> {
   if (!etapa.aprovador_tipo) return [];
   if (etapa.aprovador_id) return [{ user_id: etapa.aprovador_id }];
 
@@ -397,13 +393,16 @@ export const workflowService = {
     );
 
     // Notifica o aprovador da primeira etapa (best-effort)
-    void resolverDestinatariosEtapa(primeiraEtapa as unknown as Etapa, empresaId).then((dest) => {
-      notificarWorkflow(
-        empresaId, dest,
-        `Aprovacao necessaria: ${primeiraEtapa.nome ?? 'etapa inicial'}`,
-        `Um novo workflow foi iniciado e aguarda sua aprovacao na etapa "${primeiraEtapa.nome ?? 'inicial'}".`
-      );
-    }).catch(() => {});
+    void resolverDestinatariosEtapa(primeiraEtapa as unknown as Etapa, empresaId)
+      .then((dest) => {
+        notificarWorkflow(
+          empresaId,
+          dest,
+          `Aprovacao necessaria: ${primeiraEtapa.nome ?? 'etapa inicial'}`,
+          `Um novo workflow foi iniciado e aguarda sua aprovacao na etapa "${primeiraEtapa.nome ?? 'inicial'}".`
+        );
+      })
+      .catch(() => {});
 
     return execucao as unknown as Execucao;
   },
@@ -547,7 +546,8 @@ export const workflowService = {
       const solicitanteId = (execucao as unknown as { solicitante_id: string | null }).solicitante_id;
       if (solicitanteId) {
         notificarWorkflow(
-          empresaId, [{ user_id: solicitanteId }],
+          empresaId,
+          [{ user_id: solicitanteId }],
           `Workflow rejeitado na etapa "${etapa.nome ?? 'etapa'}"`,
           `Sua solicitacao foi rejeitada na etapa "${etapa.nome ?? 'etapa'}"${observacao ? ': ' + observacao : '.'}`
         );
@@ -557,20 +557,24 @@ export const workflowService = {
       const solicitanteId = (execucao as unknown as { solicitante_id: string | null }).solicitante_id;
       if (solicitanteId) {
         notificarWorkflow(
-          empresaId, [{ user_id: solicitanteId }],
+          empresaId,
+          [{ user_id: solicitanteId }],
           'Workflow concluido com sucesso',
           'Sua solicitacao foi aprovada em todas as etapas e esta concluida.'
         );
       }
     } else {
       // Avanco: notifica o aprovador da proxima etapa
-      void resolverDestinatariosEtapa(proxima as unknown as Etapa, empresaId).then((dest) => {
-        notificarWorkflow(
-          empresaId, dest,
-          `Aprovacao necessaria: ${proxima.nome ?? 'proxima etapa'}`,
-          `A etapa "${etapa.nome ?? 'anterior'}" foi aprovada. Aguarda sua aprovacao em "${proxima.nome ?? 'proxima etapa'}".`
-        );
-      }).catch(() => {});
+      void resolverDestinatariosEtapa(proxima as unknown as Etapa, empresaId)
+        .then((dest) => {
+          notificarWorkflow(
+            empresaId,
+            dest,
+            `Aprovacao necessaria: ${proxima.nome ?? 'proxima etapa'}`,
+            `A etapa "${etapa.nome ?? 'anterior'}" foi aprovada. Aguarda sua aprovacao em "${proxima.nome ?? 'proxima etapa'}".`
+          );
+        })
+        .catch(() => {});
     }
 
     return { execucao: updated as unknown as Execucao, historico: historico as unknown as Historico };
