@@ -17,13 +17,13 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.audit_log_unified | ~5.7k | 5.1 MB | 2.8 MB | 2.1 MB | 0 | ~30 | ~1.2k | 2026-11-22 |
 | public.pii_access_logs | ~3.4k | 2.0 MB | 1.0 MB | 984.0 KB | 0 | ~80 | ~60 | 2026-11-21 |
 | public.login_attempts | ~4.2k | 2.0 MB | 520.0 KB | 1.4 MB | 0 | ~190 | ~60 | 2026-11-13 |
-| public.rate_limits | ~1.9k | 1.4 MB | 424.0 KB | 968.0 KB | ~230 | ~1.3k | ~988.2k | 2026-11-22 |
+| public.rate_limits | ~1.6k | 1.4 MB | 424.0 KB | 968.0 KB | ~70 | ~1.3k | ~988.2k | 2026-11-23 |
 | public.audit_log | ~820 | 1.3 MB | 848.0 KB | 392.0 KB | ~140 | ~90 | ~21k |  |
 | public.sec_policy_regressions | ~3.6k | 832.0 KB | 568.0 KB | 224.0 KB | 0 | 4 | ~20 | 2026-10-31 |
 | public.auditoria_logs | ~390 | 792.0 KB | 408.0 KB | 240.0 KB | 5 | ~40 | 5 |  |
 | public.colaboradores | ~20 | 408.0 KB | 8.0 KB | 392.0 KB | 4 | ~76.5k | ~153.3k |  |
 | public.candidaturas | ~20 | 320.0 KB | 80.0 KB | 80.0 KB | ~40 | ~2.5k | ~3.3k | 2026-11-22 |
-| public.query_telemetry | ~340 | 248.0 KB | 72.0 KB | 144.0 KB | 0 | ~4.2k | ~195.3k |  |
+| public.query_telemetry | ~340 | 248.0 KB | 72.0 KB | 144.0 KB | 0 | ~4.2k | ~195.4k |  |
 | public.notificacoes | ~70 | 240.0 KB | 32.0 KB | 176.0 KB | ~20 | ~16.2k | ~25.8k | 2026-11-05 |
 | public.batidas_ponto | 1 | 224.0 KB | 8.0 KB | 208.0 KB | 0 | ~7.1k | ~1.7k |  |
 | public.folhas_pagamento | 5 | 224.0 KB | 8.0 KB | 176.0 KB | ~40 | ~1.5k | ~9.6k | 2026-11-21 |
@@ -447,18 +447,18 @@ _nenhum_
 |---|---|---|---|---|
 | ci_auditor | ~1.2k | ~2.7M | 2202.35 | `WITH ext AS ( SELECT e.extname, n.nspname AS sch FROM pg_extension e JOIN pg_namespace n ON n.oid = e.extnamespace WHERE n.nspname <> $1 ), ext_fn AS ( SELECT DISTINCT e.extname, e.sch, p.proname, p.oid AS ext_fn_oid FRO` |
 | ci_auditor | ~490 | ~1.2M | 2532.09 | `WITH ext AS ( SELECT e.extname, n.nspname AS sch FROM pg_extension e JOIN pg_namespace n ON n.oid = e.extnamespace WHERE n.nspname <> $1 ), ext_fn AS ( SELECT DISTINCT e.extname, e.sch, p.proname, p.oid AS ext_fn_oid FRO` |
-| ci_auditor | ~920 | ~645.4k | 703.07 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
+| ci_auditor | ~920 | ~647.2k | 703.46 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
 | ci_auditor | ~1.2k | ~448.9k | 366.13 | `WITH pii_tables AS ( -- Codex review (P1, PR #238): information_schema.columns só lista colunas -- de tabelas em que o role atual tem ALGUM privilégio concedido (regra do -- padrão SQL, aplicada pelo Postgres). ci_audito` |
-| ci_auditor | ~920 | ~344.8k | 375.22 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
+| ci_auditor | ~920 | ~345.8k | 375.48 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
 | ci_auditor | ~1.7k | ~300.5k | 175.95 | `SELECT p.tablename, p.policyname, p.cmd, array_to_string(p.roles, $1), replace(coalesce(p.qual, $2) \|\| $3 \|\| coalesce(p.with_check, $4), $5, $6) FROM pg_policies p WHERE p.schemaname = $7 ORDER BY p.tablename, p.policyna` |
-| ci_auditor | ~920 | ~272k | 296.02 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
-| ci_auditor | ~920 | ~180.7k | 196.63 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 ELSE $3 END AS kind, pg_get_viewdef(c.oid, $4) AS definition, c.reloptions AS options, pg_get_userbyid(c.relowner) AS owner, obj_description(c` |
+| ci_auditor | ~920 | ~272.6k | 296.04 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
+| ci_auditor | ~920 | ~181.1k | 196.68 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 ELSE $3 END AS kind, pg_get_viewdef(c.oid, $4) AS definition, c.reloptions AS options, pg_get_userbyid(c.relowner) AS owner, obj_description(c` |
+| ci_auditor | ~920 | ~154.8k | 168.04 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 END AS kind, c.relrowsecurity AS rls_enabled, c.relforcerowsecurity AS rls_forced, pg_get_userbyid(c.relowner)` |
 | ci_auditor | ~480 | ~154.4k | 321.69 | `WITH pii_tables AS ( -- Codex review (P1, PR #238): information_schema.columns só lista colunas -- de tabelas em que o role atual tem ALGUM privilégio concedido (regra do -- padrão SQL, aplicada pelo Postgres). ci_audito` |
-| ci_auditor | ~920 | ~154.3k | 167.95 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 END AS kind, c.relrowsecurity AS rls_enabled, c.relforcerowsecurity AS rls_forced, pg_get_userbyid(c.relowner)` |
-| ci_auditor | ~920 | ~145k | 157.77 | `SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH` |
+| ci_auditor | ~920 | ~145.3k | 157.81 | `SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH` |
 | ci_auditor | ~1.2k | ~135k | 110.10 | `WITH RECURSIVE alcanca_tenant(oid, profundidade) AS ( -- base: a tabela carrega o próprio tenant SELECT c.oid, $1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace JOIN pg_attribute a ON a.attrelid = c.oid AN` |
-| ci_auditor | ~920 | ~132.2k | 143.89 | `SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.` |
-| ci_auditor | ~920 | ~102.8k | 111.90 | `SELECT n.nspname AS schema, t.relname AS "table", ic.relname AS name, pg_get_indexdef(ix.indexrelid) AS definition, ix.indisunique AS is_unique, ix.indisprimary AS is_primary, ix.indisvalid AS is_valid, am.amname AS meth` |
+| ci_auditor | ~920 | ~132.5k | 143.90 | `SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.` |
+| ci_auditor | ~920 | ~103.1k | 111.93 | `SELECT n.nspname AS schema, t.relname AS "table", ic.relname AS name, pg_get_indexdef(ix.indexrelid) AS definition, ix.indisunique AS is_unique, ix.indisprimary AS is_primary, ix.indisvalid AS is_valid, am.amname AS meth` |
 | ci_auditor | ~1.7k | ~59.3k | 34.78 | `SELECT p.proname, p.prosecdef::text, has_function_privilege($1, p.oid, $2)::text, has_function_privilege($3, p.oid, $4)::text, replace(coalesce(p.prosrc, $5), $6, $7) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.prona` |
 
 
