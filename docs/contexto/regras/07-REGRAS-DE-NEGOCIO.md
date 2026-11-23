@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bd79c79f4d` · branch `main` · 2026-11-23 15:51 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `59be355ff6` · branch `main` · 2026-11-23 19:24 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4950,7 +4950,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();` | `supabase/functions/folha-metrics/index.ts` |
 | `timeout: 30000,` | `supabase/functions/gerar-guias/config.ts` |
 | `timeout: 30000,` | `supabase/functions/gerar-holerite/config.ts` |
-| `timeout: 30000,` | `supabase/functions/processar-agendamentos/config.ts` |
 | `const DUE_WINDOW_MS = 30 * 60 * 1000;` | `supabase/functions/processar-agendamentos/scheduleContract.ts` |
 | `const MAX_CATCH_UP_DELAY_MS = 24 * 60 * 60 * 1000;` | `supabase/functions/processar-agendamentos/scheduleContract.ts` |
 | `target = { ...addDays(target, 1), ...time };` | `supabase/functions/processar-agendamentos/scheduleContract.ts` |

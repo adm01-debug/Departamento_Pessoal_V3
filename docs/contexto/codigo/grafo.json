@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1338,
+ "nos": 1337,
  "arestas": 6558,
  "hubs": [
   {
@@ -249,7 +249,6 @@
   "supabase/functions/enviar-relatorio/config.ts",
   "supabase/functions/gerar-guias/config.ts",
   "supabase/functions/gerar-holerite/config.ts",
-  "supabase/functions/processar-agendamentos/config.ts",
   "supabase/functions/processar-ponto/config.ts",
   "supabase/functions/sincronizar-bitrix/config.ts",
   "supabase/functions/webhook/contract_test.ts",

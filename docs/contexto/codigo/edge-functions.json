@@ -2200,8 +2200,8 @@
   {
    "nome": "processar-agendamentos",
    "entrada": "supabase/functions/processar-agendamentos/index.ts",
-   "arquivos": 4,
-   "linhas": 635,
+   "arquivos": 3,
+   "linhas": 618,
    "verify_jwt": true,
    "metodos": [
     "POST"
