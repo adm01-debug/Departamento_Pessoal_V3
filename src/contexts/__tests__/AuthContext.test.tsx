@@ -59,6 +59,14 @@ vi.mock('@/services/loggerService', () => ({
   loggerService: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 
+const { mockUnsubscribeCurrentDevice } = vi.hoisted(() => ({
+  mockUnsubscribeCurrentDevice: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock('@/services/pushNotificationService', () => ({
+  pushNotificationService: { unsubscribeCurrentDevice: mockUnsubscribeCurrentDevice },
+}));
+
 vi.mock('@/utils/passwordPolicy', () => ({
   validatePasswordFull: vi.fn(async (pw: string) =>
     pw.length >= 8
@@ -221,6 +229,26 @@ describe('useAuth', () => {
       await result.current.signOut();
     });
     expect(mockSignOut).toHaveBeenCalled();
+  });
+
+  it('signOut desativa o push do usuario logado (closure nao pode congelar user)', async () => {
+    mockGetSession.mockResolvedValue({
+      data: {
+        session: {
+          user: { id: 'user-1', email: 'logado@test.com', user_metadata: {} },
+          access_token: 'at',
+        },
+      },
+      error: null,
+    });
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    await waitFor(() => expect(result.current.user?.id).toBe('user-1'));
+
+    await act(async () => {
+      await result.current.signOut();
+    });
+
+    expect(mockUnsubscribeCurrentDevice).toHaveBeenCalledWith('user-1');
   });
 
   it('signUp calls supabase.auth.signUp with name in metadata', async () => {
