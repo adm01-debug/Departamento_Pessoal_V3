@@ -308,16 +308,24 @@ serve(async (req: Request): Promise<Response> => {
         .in("role", ["admin", "rh"])
       : { data: [], error: null };
     if (rolesError) throw rolesError;
-    const recipientUserIds = [
-      ...new Set((roles ?? []).map((item) => item.user_id)),
-    ];
-    const { data: recipients, error: recipientsError } = recipientUserIds.length
+    const { data: recipients, error: recipientsError } = (roles ?? []).length
       ? await supabase.rpc("get_company_rh_recipient_emails", {
         p_empresa_id: empresaId,
         p_limit: 50,
       })
       : { data: [], error: null };
     if (recipientsError) throw recipientsError;
+    // Fonte de destinatários: o RPC acima, que só devolve quem ainda existe em
+    // auth.users. `user_roles` guarda vínculos de contas já removidas, e usar
+    // esses ids no INSERT de `notificacoes` viola a FK `notificacoes_user_id_fkey`
+    // (usuário 4fe3f97b e outros 2 admins órfãos derrubavam a edge com 500).
+    const recipientUserIds = [
+      ...new Set(
+        (recipients ?? [])
+          .map((recipient: { user_id?: unknown }) => recipient.user_id)
+          .filter((id: unknown): id is string => typeof id === "string"),
+      ),
+    ];
     const recipientUserIdSet = new Set(recipientUserIds);
     const recipientEmails = (recipients ?? [])
       .filter((recipient: { user_id?: unknown }) =>
