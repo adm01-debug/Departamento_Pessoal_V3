@@ -28,7 +28,6 @@
         "esocial_transmissao_logs",
         "fgts_digital_logs",
         "fila_processamento",
-        "guias_fgts_digital",
         "idempotency_keys",
         "logs_sistema",
         "ponto_espelhos_assinados",
@@ -68,7 +67,7 @@
   },
   "cron_execucoes": {
     "historico": {
-      "bytes": 7290880,
+      "bytes": 7405568,
       "linhas": 0,
       "mais_de_7_dias": 0
     },
@@ -83,7 +82,7 @@
     "visivel": false
   },
   "edge_functions": {
-    "no_repo": 67,
+    "no_repo": 68,
     "no_repo_sem_deploy": null,
     "publicadas": null,
     "publicadas_sem_codigo_no_repo": null
@@ -91,11 +90,11 @@
   "fonte": "scripts/inventario/banco.sql (por secao) + .from() em src/ e supabase/functions/ (scripts/inventario/gerar-banco.mjs)",
   "format_version": 1,
   "ledger": null,
-  "medido_em": "2026-11-21T19:21:11Z",
+  "medido_em": "2026-11-23T10:27:10Z",
   "origem": {
     "ledger_conferido": false,
-    "tabelas_do_types_ts_presentes": 364,
-    "tabelas_no_types_ts": 365
+    "tabelas_do_types_ts_presentes": 373,
+    "tabelas_no_types_ts": 373
   },
   "resumo": {
     "extensoes": [
@@ -108,17 +107,17 @@
       "supabase_vault",
       "uuid-ossp"
     ],
-    "funcoes_public": 408,
-    "funcoes_security_definer": 295,
+    "funcoes_public": 427,
+    "funcoes_security_definer": 308,
     "max_connections": 60,
     "papel": "ci_auditor",
     "papel_ignora_rls": false,
-    "policies": 629,
+    "policies": 647,
     "postgres": "17.6",
-    "tabelas_public": 391,
+    "tabelas_public": 400,
     "tabelas_sem_rls": 0,
-    "tamanho_bytes": 69848211,
-    "triggers_public": 435,
+    "tamanho_bytes": 72969363,
+    "triggers_public": 442,
     "views_public": 53
   },
   "tabelas": [
@@ -339,9 +338,9 @@
       }
     },
     {
-      "bytes": 1204224,
+      "bytes": 1384448,
       "citada_no_banco": true,
-      "linhas": 660,
+      "linhas": 817,
       "linhas_exatas": false,
       "nome": "audit_log",
       "policies": 4,
@@ -352,14 +351,14 @@
       "tem_empresa_id": true,
       "triggers": 6,
       "uso_no_codigo": {
-        "edges": 29,
+        "edges": 30,
         "src": 0
       }
     },
     {
-      "bytes": 4628480,
+      "bytes": 5324800,
       "citada_no_banco": true,
-      "linhas": 4755,
+      "linhas": 5739,
       "linhas_exatas": false,
       "nome": "audit_log_unified",
       "policies": 2,
@@ -465,9 +464,9 @@
       }
     },
     {
-      "bytes": 679936,
+      "bytes": 811008,
       "citada_no_banco": true,
-      "linhas": 309,
+      "linhas": 390,
       "linhas_exatas": false,
       "nome": "auditoria_logs",
       "policies": 4,
@@ -555,9 +554,9 @@
       }
     },
     {
-      "bytes": 122880,
+      "bytes": 229376,
       "citada_no_banco": true,
-      "linhas": 0,
+      "linhas": 1,
       "linhas_exatas": false,
       "nome": "batidas_ponto",
       "policies": 5,
@@ -566,7 +565,7 @@
       "rls_forcado": false,
       "soft_delete": false,
       "tem_empresa_id": true,
-      "triggers": 8,
+      "triggers": 10,
       "uso_no_codigo": {
         "edges": 9,
         "src": 10
@@ -843,7 +842,7 @@
       }
     },
     {
-      "bytes": 163840,
+      "bytes": 327680,
       "citada_no_banco": true,
       "linhas": 16,
       "linhas_exatas": false,
@@ -892,7 +891,7 @@
       "tem_empresa_id": true,
       "triggers": 3,
       "uso_no_codigo": {
-        "edges": 0,
+        "edges": 3,
         "src": 2
       }
     },
@@ -1252,8 +1251,8 @@
       "tem_empresa_id": true,
       "triggers": 8,
       "uso_no_codigo": {
-        "edges": 34,
-        "src": 65
+        "edges": 35,
+        "src": 67
       }
     },
     {
@@ -2211,7 +2210,7 @@
       }
     },
     {
-      "bytes": 139264,
+      "bytes": 172032,
       "citada_no_banco": false,
       "linhas": null,
       "linhas_exatas": false,
@@ -3296,8 +3295,8 @@
       "linhas": null,
       "linhas_exatas": false,
       "nome": "guias_fgts_digital",
-      "policies": 1,
-      "policy_cita_empresa_id": false,
+      "policies": 4,
+      "policy_cita_empresa_id": true,
       "rls": true,
       "rls_forcado": false,
       "soft_delete": false,
@@ -3305,7 +3304,7 @@
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 2,
-        "src": 0
+        "src": 2
       }
     },
     {
@@ -3885,7 +3884,7 @@
       }
     },
     {
-      "bytes": 1925120,
+      "bytes": 2080768,
       "citada_no_banco": true,
       "linhas": 4185,
       "linhas_exatas": false,
@@ -4211,7 +4210,7 @@
     {
       "bytes": 245760,
       "citada_no_banco": true,
-      "linhas": 60,
+      "linhas": 72,
       "linhas_exatas": false,
       "nome": "notificacoes",
       "policies": 4,
@@ -4839,9 +4838,9 @@
       }
     },
     {
-      "bytes": 1630208,
+      "bytes": 2121728,
       "citada_no_banco": true,
-      "linhas": 2761,
+      "linhas": 3357,
       "linhas_exatas": false,
       "nome": "pii_access_logs",
       "policies": 1,
@@ -4875,7 +4874,7 @@
       }
     },
     {
-      "bytes": 57344,
+      "bytes": 73728,
       "citada_no_banco": false,
       "linhas": 2,
       "linhas_exatas": false,
@@ -5001,6 +5000,24 @@
       }
     },
     {
+      "bytes": 32768,
+      "citada_no_banco": false,
+      "linhas": null,
+      "linhas_exatas": false,
+      "nome": "ponto_espelhos_papel",
+      "policies": 4,
+      "policy_cita_empresa_id": true,
+      "rls": true,
+      "rls_forcado": false,
+      "soft_delete": false,
+      "tem_empresa_id": true,
+      "triggers": 2,
+      "uso_no_codigo": {
+        "edges": 0,
+        "src": 2
+      }
+    },
+    {
       "bytes": 24576,
       "citada_no_banco": true,
       "linhas": null,
@@ -5034,6 +5051,132 @@
       "uso_no_codigo": {
         "edges": 0,
         "src": 0
+      }
+    },
+    {
+      "bytes": 90112,
+      "citada_no_banco": true,
+      "linhas": null,
+      "linhas_exatas": false,
+      "nome": "ponto_rep_dias",
+      "policies": 1,
+      "policy_cita_empresa_id": true,
+      "rls": true,
+      "rls_forcado": false,
+      "soft_delete": false,
+      "tem_empresa_id": true,
+      "triggers": 0,
+      "uso_no_codigo": {
+        "edges": 2,
+        "src": 0
+      }
+    },
+    {
+      "bytes": 65536,
+      "citada_no_banco": true,
+      "linhas": 1,
+      "linhas_exatas": false,
+      "nome": "ponto_rep_dispositivos",
+      "policies": 1,
+      "policy_cita_empresa_id": true,
+      "rls": true,
+      "rls_forcado": false,
+      "soft_delete": false,
+      "tem_empresa_id": true,
+      "triggers": 0,
+      "uso_no_codigo": {
+        "edges": 2,
+        "src": 1
+      }
+    },
+    {
+      "bytes": 32768,
+      "citada_no_banco": false,
+      "linhas": null,
+      "linhas_exatas": false,
+      "nome": "ponto_rep_feriados",
+      "policies": 1,
+      "policy_cita_empresa_id": true,
+      "rls": true,
+      "rls_forcado": false,
+      "soft_delete": false,
+      "tem_empresa_id": true,
+      "triggers": 0,
+      "uso_no_codigo": {
+        "edges": 3,
+        "src": 0
+      }
+    },
+    {
+      "bytes": 90112,
+      "citada_no_banco": true,
+      "linhas": null,
+      "linhas_exatas": false,
+      "nome": "ponto_rep_funcionarios",
+      "policies": 1,
+      "policy_cita_empresa_id": true,
+      "rls": true,
+      "rls_forcado": false,
+      "soft_delete": false,
+      "tem_empresa_id": true,
+      "triggers": 1,
+      "uso_no_codigo": {
+        "edges": 3,
+        "src": 1
+      }
+    },
+    {
+      "bytes": 32768,
+      "citada_no_banco": false,
+      "linhas": null,
+      "linhas_exatas": false,
+      "nome": "ponto_rep_horarios",
+      "policies": 1,
+      "policy_cita_empresa_id": true,
+      "rls": true,
+      "rls_forcado": false,
+      "soft_delete": false,
+      "tem_empresa_id": true,
+      "triggers": 0,
+      "uso_no_codigo": {
+        "edges": 3,
+        "src": 0
+      }
+    },
+    {
+      "bytes": 65536,
+      "citada_no_banco": true,
+      "linhas": null,
+      "linhas_exatas": false,
+      "nome": "ponto_rep_justificativas",
+      "policies": 1,
+      "policy_cita_empresa_id": true,
+      "rls": true,
+      "rls_forcado": false,
+      "soft_delete": false,
+      "tem_empresa_id": true,
+      "triggers": 0,
+      "uso_no_codigo": {
+        "edges": 1,
+        "src": 1
+      }
+    },
+    {
+      "bytes": 65536,
+      "citada_no_banco": false,
+      "linhas": 0,
+      "linhas_exatas": false,
+      "nome": "ponto_rep_lotes",
+      "policies": 1,
+      "policy_cita_empresa_id": true,
+      "rls": true,
+      "rls_forcado": false,
+      "soft_delete": false,
+      "tem_empresa_id": true,
+      "triggers": 0,
+      "uso_no_codigo": {
+        "edges": 3,
+        "src": 1
       }
     },
     {
@@ -5379,7 +5522,7 @@
       }
     },
     {
-      "bytes": 237568,
+      "bytes": 253952,
       "citada_no_banco": true,
       "linhas": 342,
       "linhas_exatas": false,
@@ -5433,9 +5576,9 @@
       }
     },
     {
-      "bytes": 1425408,
+      "bytes": 1466368,
       "citada_no_banco": true,
-      "linhas": 1466,
+      "linhas": 1292,
       "linhas_exatas": false,
       "nome": "rate_limits",
       "policies": 1,
@@ -5466,6 +5609,24 @@
       "uso_no_codigo": {
         "edges": 0,
         "src": 3
+      }
+    },
+    {
+      "bytes": 32768,
+      "citada_no_banco": false,
+      "linhas": null,
+      "linhas_exatas": false,
+      "nome": "recibos_ferias",
+      "policies": 4,
+      "policy_cita_empresa_id": true,
+      "rls": true,
+      "rls_forcado": false,
+      "soft_delete": false,
+      "tem_empresa_id": true,
+      "triggers": 2,
+      "uso_no_codigo": {
+        "edges": 0,
+        "src": 1
       }
     },
     {
@@ -5541,9 +5702,9 @@
       }
     },
     {
-      "bytes": 221184,
+      "bytes": 229376,
       "citada_no_banco": true,
-      "linhas": 120,
+      "linhas": 121,
       "linhas_exatas": false,
       "nome": "registros_ponto",
       "policies": 2,
@@ -5685,7 +5846,7 @@
       }
     },
     {
-      "bytes": 843776,
+      "bytes": 860160,
       "citada_no_banco": true,
       "linhas": 3612,
       "linhas_exatas": false,
@@ -6851,7 +7012,7 @@
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 0
+        "src": 3
       }
     },
     {
