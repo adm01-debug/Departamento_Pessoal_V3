@@ -1,6 +1,7 @@
 CREATE OR REPLACE FUNCTION public.audit_log_append_only()
  RETURNS trigger
  LANGUAGE plpgsql
+ SET search_path TO 'pg_catalog', 'public', 'pg_temp'
 AS $function$
 BEGIN
   -- Bypass autorizado e restrito: o expurgo LGPD (só service_role) liga o

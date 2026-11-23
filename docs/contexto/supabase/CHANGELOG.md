@@ -2,6 +2,14 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-23 23:14 UTC
+
+- **functions** alterado (7): `public.audit_log_append_only()`, `public.dp_sync_empresa_from_colaborador()`, `public.enqueue_training_image_request()`, `public.get_user_empresas(_user_id uuid)`, `public.is_admin(_user_id uuid)`, `public.prevent_audit_log_modification()`, `public.tg_audit_log_enriquecer_feedback()`
+- **grants** removido (13): `public.admissao_tokens:anon`, `public.audit_log_unified:anon`, `public.audit_log_unified_archive:anon`, `public.configuracoes:anon`, `public.contrato_assinatura_tokens:anon`, `public.govbr_auth_state:anon`, `public.govbr_auth_state:authenticated`, `public.personnel_budget:anon`, `public.user_mfa:anon`, `public.user_sessions:anon`, `public.webhooks:anon`, `public.webhooks_config:anon`, `public.whatsapp_config:anon`
+- **lints** removido (3): `policy_auth_fn_not_wrapped:public.personnel_budget.Users can manage budgets of their own company`, `policy_auth_fn_not_wrapped:public.personnel_budget.Users can view budgets of their own company`, `rpc_anon_executable:public.get_user_empresas(_user_id uuid)`
+- **policies (RLS)** removido (1): `public.personnel_budget.Users can view budgets of their own company`
+- **policies (RLS)** alterado (1): `public.personnel_budget.Users can manage budgets of their own company`
+
 ## 2026-11-23 22:13 UTC
 
 - **extensions** adicionado (2): `pg_graphql`, `pg_net`

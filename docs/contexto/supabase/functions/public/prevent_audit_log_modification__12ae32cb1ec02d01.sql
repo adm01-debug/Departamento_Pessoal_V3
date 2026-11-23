@@ -1,6 +1,7 @@
 CREATE OR REPLACE FUNCTION public.prevent_audit_log_modification()
  RETURNS trigger
  LANGUAGE plpgsql
+ SET search_path TO 'pg_catalog', 'public', 'pg_temp'
 AS $function$
 BEGIN
   IF current_setting('app.audit_log_purge', true) = 'on' THEN

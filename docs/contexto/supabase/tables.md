@@ -261,7 +261,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.permissao_perfis](tables/public/permissao_perfis.md) | table | sim | 1 | 7 | não |  |
 | [public.permissao_recursos](tables/public/permissao_recursos.md) | table | sim | 1 | 6 | não |  |
 | [public.permissions](tables/public/permissions.md) | table | sim | 2 | 6 | não |  |
-| [public.personnel_budget](tables/public/personnel_budget.md) | table | sim | 2 | 9 | não |  |
+| [public.personnel_budget](tables/public/personnel_budget.md) | table | sim | 1 | 9 | não |  |
 | [public.pesquisas](tables/public/pesquisas.md) | table | sim | 1 | 12 | não |  |
 | [public.pesquisas_perguntas](tables/public/pesquisas_perguntas.md) | table | sim | 4 | 8 | não |  |
 | [public.pesquisas_respostas](tables/public/pesquisas_respostas.md) | table | sim | 4 | 7 | não |  |

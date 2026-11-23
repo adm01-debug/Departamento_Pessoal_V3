@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 1 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -52,19 +52,9 @@
 |---|---|
 | comando | ALL |
 | tipo | PERMISSIVE |
-| roles | public |
-| USING | `(EXISTS ( SELECT 1    FROM profiles   WHERE ((profiles.id = auth.uid()) AND (personnel_budget.empresa_id = personnel_budget.empresa_id))))` |
-| WITH CHECK |  |
-
-### `Users can view budgets of their own company`
-
-| campo | valor |
-|---|---|
-| comando | SELECT |
-| tipo | PERMISSIVE |
-| roles | public |
-| USING | `(EXISTS ( SELECT 1    FROM profiles   WHERE ((profiles.id = auth.uid()) AND (personnel_budget.empresa_id = personnel_budget.empresa_id))))` |
-| WITH CHECK |  |
+| roles | authenticated |
+| USING | `(is_admin(( SELECT auth.uid() AS uid)) OR user_belongs_to_empresa(( SELECT auth.uid() AS uid), empresa_id))` |
+| WITH CHECK | `(is_admin(( SELECT auth.uid() AS uid)) OR user_belongs_to_empresa(( SELECT auth.uid() AS uid), empresa_id))` |
 
 
 ## Triggers
@@ -76,7 +66,6 @@ _nenhum_
 
 | role | privilégios |
 |---|---|
-| anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | dp_mcp_role | SELECT |
 | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |

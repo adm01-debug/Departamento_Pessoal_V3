@@ -92125,11 +92125,13 @@
           "views": []
         },
         "comment": null,
-        "config": null,
+        "config": [
+          "search_path=pg_catalog, public, pg_temp"
+        ],
         "definition": null,
-        "definition_sha": "9f70eb08038052ce",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "definition_sha": "4477dbd6981bb057",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -95291,9 +95293,11 @@
           "views": []
         },
         "comment": null,
-        "config": null,
+        "config": [
+          "search_path=pg_catalog, public, pg_temp"
+        ],
         "definition": null,
-        "definition_sha": "9e6dcc8d2cd601d7",
+        "definition_sha": "35ba863d14c4b4e8",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
@@ -96451,8 +96455,8 @@
         ],
         "definition": null,
         "definition_sha": "731455d8ae39631d",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -99403,11 +99407,11 @@
         },
         "comment": null,
         "config": [
-          "search_path=public"
+          "search_path=pg_catalog, public"
         ],
         "definition": null,
-        "definition_sha": "9b2142e13d10bd9e",
-        "execute_api_roles": "anon, authenticated, service_role",
+        "definition_sha": "d3f3b5bfa9141dba",
+        "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
@@ -100541,6 +100545,7 @@
             "public.decrypt_dados_bancarios_tenant",
             "public.get_audit_trail",
             "public.get_empresa_admin_ids",
+            "public.get_user_empresas",
             "public.get_user_scope_empresas",
             "public.listar_auditoria",
             "public.next_cnab_sequencial",
@@ -103442,11 +103447,13 @@
           "views": []
         },
         "comment": null,
-        "config": null,
+        "config": [
+          "search_path=pg_catalog, public, pg_temp"
+        ],
         "definition": null,
-        "definition_sha": "9adab218c4daef8d",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "definition_sha": "0603a3240b61e253",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -107258,8 +107265,8 @@
         ],
         "definition": null,
         "definition_sha": "012f2f892525007f",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -110650,12 +110657,6 @@
           "table": "adiantamentos_salariais"
         },
         {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "admissao_tokens"
-        },
-        {
           "grantee": "authenticated",
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
@@ -110932,12 +110933,6 @@
           "table": "audit_log"
         },
         {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "audit_log_unified"
-        },
-        {
           "grantee": "authenticated",
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
@@ -110954,12 +110949,6 @@
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "audit_log_unified"
-        },
-        {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "audit_log_unified_archive"
         },
         {
           "grantee": "authenticated",
@@ -112264,12 +112253,6 @@
           "table": "config_alertas_indicadores"
         },
         {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "configuracoes"
-        },
-        {
           "grantee": "authenticated",
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
@@ -112544,12 +112527,6 @@
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "contatos_emergencia"
-        },
-        {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "contrato_assinatura_tokens"
         },
         {
           "grantee": "authenticated",
@@ -114766,18 +114743,6 @@
           "table": "geo_blocking_config"
         },
         {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "govbr_auth_state"
-        },
-        {
-          "grantee": "authenticated",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "govbr_auth_state"
-        },
-        {
           "grantee": "dp_mcp_role",
           "privileges": "SELECT",
           "schema": "public",
@@ -116684,12 +116649,6 @@
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "permissions"
-        },
-        {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "personnel_budget"
         },
         {
           "grantee": "authenticated",
@@ -119332,12 +119291,6 @@
           "table": "user_empresas"
         },
         {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "user_mfa"
-        },
-        {
           "grantee": "authenticated",
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
@@ -119378,12 +119331,6 @@
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "user_roles"
-        },
-        {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "user_sessions"
         },
         {
           "grantee": "authenticated",
@@ -120466,12 +120413,6 @@
           "table": "webhook_logs"
         },
         {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "webhooks"
-        },
-        {
           "grantee": "authenticated",
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
@@ -120488,12 +120429,6 @@
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "webhooks"
-        },
-        {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "webhooks_config"
         },
         {
           "grantee": "authenticated",
@@ -120536,12 +120471,6 @@
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "webhooks_logs"
-        },
-        {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "whatsapp_config"
         },
         {
           "grantee": "authenticated",
@@ -142015,18 +141944,6 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.personnel_budget.Users can manage budgets of their own company",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.personnel_budget.Users can view budgets of their own company",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.pesquisas.empresa_pesquisas",
         "severity": "BAIXA"
       },
@@ -143378,12 +143295,6 @@
         "code": "rpc_anon_executable",
         "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
         "object": "public.get_admissao_por_token(_token text)",
-        "severity": "INFO"
-      },
-      {
-        "code": "rpc_anon_executable",
-        "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
-        "object": "public.get_user_empresas(_user_id uuid)",
         "severity": "INFO"
       },
       {
@@ -148218,24 +148129,12 @@
         "name": "Users can manage budgets of their own company",
         "permissive": "PERMISSIVE",
         "roles": [
-          "public"
+          "authenticated"
         ],
         "schema": "public",
         "table": "personnel_budget",
-        "using": "(EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (personnel_budget.empresa_id = personnel_budget.empresa_id))))",
-        "with_check": null
-      },
-      {
-        "cmd": "SELECT",
-        "name": "Users can view budgets of their own company",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "public"
-        ],
-        "schema": "public",
-        "table": "personnel_budget",
-        "using": "(EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (personnel_budget.empresa_id = personnel_budget.empresa_id))))",
-        "with_check": null
+        "using": "(is_admin(( SELECT auth.uid() AS uid)) OR user_belongs_to_empresa(( SELECT auth.uid() AS uid), empresa_id))",
+        "with_check": "(is_admin(( SELECT auth.uid() AS uid)) OR user_belongs_to_empresa(( SELECT auth.uid() AS uid), empresa_id))"
       },
       {
         "cmd": "ALL",

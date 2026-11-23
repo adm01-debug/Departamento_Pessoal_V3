@@ -1,6 +1,7 @@
 CREATE OR REPLACE FUNCTION public.dp_sync_empresa_from_colaborador()
  RETURNS trigger
  LANGUAGE plpgsql
+ SET search_path TO 'pg_catalog', 'public', 'pg_temp'
 AS $function$
 DECLARE v_emp uuid;
 BEGIN
