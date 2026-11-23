@@ -232,6 +232,55 @@ describe('pushNotificationService.subscribeUser', () => {
   });
 });
 
+describe('pushNotificationService.unsubscribeCurrentDevice (logout)', () => {
+  const navigatorOriginal = globalThis.navigator;
+  beforeEach(() => vi.clearAllMocks());
+  afterEach(() => {
+    Object.defineProperty(globalThis, 'navigator', {
+      value: navigatorOriginal,
+      configurable: true,
+      writable: true,
+    });
+  });
+
+  function withRegistration(reg: unknown) {
+    Object.defineProperty(globalThis, 'navigator', {
+      value: { serviceWorker: { getRegistration: vi.fn().mockResolvedValue(reg) } },
+      configurable: true,
+      writable: true,
+    });
+  }
+
+  it('desativa a inscrição deste dispositivo e não toca nos outros', async () => {
+    const fakeSub = {
+      unsubscribe: mockUnsubscribe.mockResolvedValue(true),
+      toJSON: () => ({ endpoint: 'https://push.example.com/logout' }),
+    };
+    withRegistration({ pushManager: { getSubscription: vi.fn().mockResolvedValue(fakeSub) } });
+
+    await pushNotificationService.unsubscribeCurrentDevice('user-1');
+
+    expect(mockUnsubscribe).toHaveBeenCalled();
+    const primeiroEq = mockUpdate.mock.results[0].value.eq;
+    expect(primeiroEq).toHaveBeenCalledWith('user_id', 'user-1');
+    expect(primeiroEq.mock.results[0].value.eq).toHaveBeenCalledWith(
+      'subscription->>endpoint',
+      'https://push.example.com/logout'
+    );
+  });
+
+  it('sai sem tocar no banco quando não há service worker registrado', async () => {
+    withRegistration(undefined);
+    await pushNotificationService.unsubscribeCurrentDevice('user-1');
+    expect(mockUpdate).not.toHaveBeenCalled();
+  });
+
+  it('não trava o logout quando a limpeza demora mais que o teto', async () => {
+    withRegistration({ pushManager: { getSubscription: () => new Promise(() => {}) } });
+    await expect(pushNotificationService.unsubscribeCurrentDevice('user-1', 5)).resolves.toBeUndefined();
+  });
+});
+
 describe('pushNotificationService.unsubscribeUser', () => {
   beforeEach(() => vi.clearAllMocks());
 

@@ -4,10 +4,12 @@ import {
   bytesParaB64u,
   cifrarPush,
   criarVapidJwt,
+  enviarWebPush,
   gerarParVapid,
   RS_RECORD,
   vapidDoAmbiente,
 } from "./webPush.ts";
+import { pushBreaker } from "./circuitBreaker.ts";
 
 const te = new TextEncoder();
 
@@ -172,4 +174,106 @@ Deno.test("base64url: ida e volta preserva os bytes", () => {
   const bytes = crypto.getRandomValues(new Uint8Array(65));
   assertEquals(bytesParaB64u(b64uParaBytes(bytesParaB64u(bytes))), bytesParaB64u(bytes));
   assertEquals(b64uParaBytes(bytesParaB64u(bytes)).length, 65);
+});
+
+// Circuito aberto e a defesa contra o push service inteiro fora: cada
+// inscricao custaria 8s de timeout, em serie. O breaker precisa falhar rapido
+// e a resposta do servico precisa ser classificada (404/410 e da inscricao).
+Deno.test("enviarWebPush: circuito aberto falha rapido sem tocar a rede", async () => {
+  const par = await gerarParVapid();
+  const { p256dh, auth } = await gerarAssinaturaDeTeste();
+  const original = globalThis.fetch;
+  let chamadas = 0;
+  globalThis.fetch = (() => {
+    chamadas++;
+    return Promise.resolve(new Response(null, { status: 201 }));
+  }) as typeof fetch;
+
+  try {
+    pushBreaker.reset();
+    for (let i = 0; i < 5; i++) pushBreaker.registrarFalha();
+    const resultado = await enviarWebPush(
+      // IP publico literal: o guard de SSRF nao faz DNS e o fetch e stub.
+      { endpoint: "https://8.8.8.8/push/abc", keys: { p256dh, auth } },
+      { title: "ola" },
+      { ...par, subject: "https://exemplo.test" },
+    );
+    assertEquals(resultado, {
+      ok: false,
+      expirada: false,
+      status: null,
+      error: "push_service_indisponivel",
+    });
+    assertEquals(chamadas, 0);
+  } finally {
+    globalThis.fetch = original;
+    pushBreaker.reset();
+  }
+});
+
+Deno.test("enviarWebPush: 410 e inscricao expirada e nao abre o circuito", async () => {
+  const par = await gerarParVapid();
+  const { p256dh, auth } = await gerarAssinaturaDeTeste();
+  const original = globalThis.fetch;
+  globalThis.fetch = (() => Promise.resolve(new Response(null, { status: 410 }))) as typeof fetch;
+
+  try {
+    pushBreaker.reset();
+    for (let i = 0; i < 5; i++) {
+      const resultado = await enviarWebPush(
+        { endpoint: "https://8.8.8.8/push/abc", keys: { p256dh, auth } },
+        { title: "ola" },
+        { ...par, subject: "https://exemplo.test" },
+      );
+      assertEquals(resultado.expirada, true);
+      assertEquals(resultado.error, "assinatura_expirada");
+    }
+    assertEquals(pushBreaker.estado(), "CLOSED");
+  } finally {
+    globalThis.fetch = original;
+    pushBreaker.reset();
+  }
+});
+
+Deno.test("enviarWebPush: 5xx repetido abre o circuito", async () => {
+  const par = await gerarParVapid();
+  const { p256dh, auth } = await gerarAssinaturaDeTeste();
+  const original = globalThis.fetch;
+  globalThis.fetch = (() => Promise.resolve(new Response(null, { status: 503 }))) as typeof fetch;
+
+  try {
+    pushBreaker.reset();
+    for (let i = 0; i < 5; i++) {
+      await enviarWebPush(
+        { endpoint: "https://8.8.8.8/push/abc", keys: { p256dh, auth } },
+        { title: "ola" },
+        { ...par, subject: "https://exemplo.test" },
+      );
+    }
+    assertEquals(pushBreaker.estado(), "OPEN");
+  } finally {
+    globalThis.fetch = original;
+    pushBreaker.reset();
+  }
+});
+
+Deno.test("enviarWebPush: entrega 2xx registra sucesso e mantem o circuito fechado", async () => {
+  const par = await gerarParVapid();
+  const { p256dh, auth } = await gerarAssinaturaDeTeste();
+  const original = globalThis.fetch;
+  globalThis.fetch = (() => Promise.resolve(new Response(null, { status: 201 }))) as typeof fetch;
+
+  try {
+    pushBreaker.reset();
+    const resultado = await enviarWebPush(
+      { endpoint: "https://8.8.8.8/push/abc", keys: { p256dh, auth } },
+      { title: "ola" },
+      { ...par, subject: "https://exemplo.test" },
+    );
+    assertEquals(resultado, { ok: true, expirada: false, status: 201, error: null });
+    assertEquals(pushBreaker.estado(), "CLOSED");
+  } finally {
+    globalThis.fetch = original;
+    pushBreaker.reset();
+  }
 });

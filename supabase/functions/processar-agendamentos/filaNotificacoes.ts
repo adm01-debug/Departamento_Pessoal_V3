@@ -174,6 +174,9 @@ async function desfechoPush(
     if (offErr) throw offErr;
   }
 
+  // Entrega em qualquer dispositivo encerra a notificacao: o retry e por
+  // usuario, nao por dispositivo — reagendar porque um aparelho falhou
+  // duplicaria o push nos que ja receberam. Todos foram tentados acima.
   if (resultados.some((r) => r.ok)) {
     resumo.enviados++;
     return { status: "enviado", tentativas, erro_ultimo: null };

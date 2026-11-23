@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Session, AuthError } from '@supabase/supabase-js';
 import { sanitizePlainText } from '@/utils/sanitizeHtml';
 import { loggerService } from '@/services/loggerService';
+import { pushNotificationService } from '@/services/pushNotificationService';
 import { queryClient } from '@/lib/queryClient';
 import { validatePasswordFull } from '@/utils/passwordPolicy';
 
@@ -320,6 +321,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(async () => {
     try {
+      // Antes de matar a sessão: o cancelamento do push precisa do JWT para
+      // desativar a inscrição no banco (RLS por usuário).
+      if (user) await pushNotificationService.unsubscribeCurrentDevice(user.id);
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
     } catch (e) {

@@ -14,6 +14,25 @@ function urlBase64ToUint8Array(base64Url: string): Uint8Array<ArrayBuffer> {
   return bytes;
 }
 
+/** Cancela a inscrição push deste navegador. Usado no logout: não pode travar. */
+async function cancelarInscricaoDoDispositivo(userId: string): Promise<void> {
+  if (!('serviceWorker' in navigator)) return;
+
+  // `getRegistration()` resolve na hora; `serviceWorker.ready` nunca resolve
+  // quando não há service worker registrado — travaria o logout.
+  const registration = await navigator.serviceWorker.getRegistration();
+  const subscription = await registration?.pushManager?.getSubscription();
+  if (!subscription) return;
+
+  const endpoint = subscription.toJSON().endpoint;
+  await subscription.unsubscribe();
+  await supabase
+    .from('push_subscriptions')
+    .update(validateTablePayload('push_subscriptions', { active: false }, 'pushNotificationService:push_subscriptions'))
+    .eq('user_id', userId)
+    .eq('subscription->>endpoint', endpoint ?? '');
+}
+
 export const pushNotificationService = {
   async isSupported(): Promise<boolean> {
     return 'serviceWorker' in navigator && 'PushManager' in window;
@@ -71,7 +90,7 @@ export const pushNotificationService = {
       const vapidKey = await this.getVapidPublicKey();
       if (!vapidKey) {
         throw new Error(
-          'Chave pública VAPID não configurada: sem ela o navegador cria uma inscrição que nenhum servidor consegue entregar. Defina VITE_VAPID_PUBLIC_KEY ou configuracoes.vapid_public_key.'
+          'Chave pública VAPID não configurada: sem ela o navegador cria uma inscrição que nenhum servidor consegue entregar. Defina VITE_VAPID_PUBLIC_KEY no ambiente do front (Vercel) e reimplante.'
         );
       }
 
@@ -123,6 +142,22 @@ export const pushNotificationService = {
       const err = e instanceof Error ? e : new Error(String(e));
       loggerService.error('Erro ao subscrever para Push', { userId }, err);
       throw err;
+    }
+  },
+
+  /**
+   * Cancela a inscrição push no logout: em navegador compartilhado, sem isso o
+   * próximo usuário continua recebendo os avisos da conta anterior. O teto de
+   * tempo existe para o logout nunca ficar preso nessa limpeza.
+   */
+  async unsubscribeCurrentDevice(userId: string, timeoutMs = 2000): Promise<void> {
+    try {
+      await Promise.race([
+        cancelarInscricaoDoDispositivo(userId),
+        new Promise((resolve) => setTimeout(resolve, timeoutMs)),
+      ]);
+    } catch (e: unknown) {
+      loggerService.error('Erro ao cancelar push no logout', { userId }, e instanceof Error ? e : new Error(String(e)));
     }
   },
 
