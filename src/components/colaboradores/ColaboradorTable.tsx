@@ -12,8 +12,8 @@ import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { usePiiMask } from '@/hooks/usePiiMask';
-import { Colaborador } from '@/types/entities';
-import { VinculosResumo } from '@/services/vinculoService';
+import type { Colaborador } from '@/types/entities';
+import type { VinculosResumo } from '@/services/vinculoService';
 import { cardVariants } from '@/components/dashboard/MetricCard';
 
 // Mesmas classes base que `TableRow` (ui/table.tsx) aplicaria — replicadas

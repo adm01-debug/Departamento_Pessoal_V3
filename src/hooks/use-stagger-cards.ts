@@ -86,7 +86,7 @@ function applyStagger(stepMs: number) {
  * rota como mutação) e só custaria destruir/recriar o observer a cada
  * navegação à toa.
  */
-export function useStaggerCards(stepMs: number = 60) {
+export function useStaggerCards(stepMs = 60) {
   useEffect(() => {
     if (prefersReducedMotion()) return;
 

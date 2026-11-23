@@ -9,8 +9,8 @@ import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { usePiiMask } from '@/hooks/usePiiMask';
-import { Colaborador } from '@/types/entities';
-import { VinculosResumo } from '@/services/vinculoService';
+import type { Colaborador } from '@/types/entities';
+import type { VinculosResumo } from '@/services/vinculoService';
 // Mesma animação de entrada dos cards do Dashboard principal — ver
 // `ColaboradorKpiCards.tsx`. Índice limitado (`Math.min(i, 5)`): sem isso,
 // uma grade com 20+ colaboradores levaria segundos pro último card entrar.
