@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "066f553c320de7f7848a82bd26833f8de01ca553",
+  "commit": "132ece15f84e955927d5eb6849ccd1e3ff919445",
   "branch": "main",
-  "data_commit": "2026-11-23T17:06:47-03:00",
+  "data_commit": "2026-11-23T20:47:10-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "132ece1",
+    "data": "2026-11-23",
+    "assunto": "chore: resgata autofix de eslint (type-imports e inferrable-types) de agente interrompido (#854)"
+   },
    {
     "sha": "066f553",
     "data": "2026-11-23",
@@ -126,22 +131,17 @@
     "sha": "6553243",
     "data": "2026-11-22",
     "assunto": "docs: recertifica F-03/F-07/F-11 com contagem real e marca cargos como feito (#826)"
-   },
-   {
-    "sha": "cb4d78c",
-    "data": "2026-11-22",
-    "assunto": "fix: gates de baseline comparam chave com separador nativo (reprovavam no Windows sem regressão real) (#821)"
    }
   ],
-  "arquivos_mudados_7d": 828,
+  "arquivos_mudados_7d": 667,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 374
+    "mudancas": 371
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 110
+    "mudancas": 109
    },
    {
     "pasta": "src/components/ui",

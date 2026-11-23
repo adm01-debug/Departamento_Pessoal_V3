@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "066f553c320de7f7848a82bd26833f8de01ca553",
+  "sha": "132ece15f84e955927d5eb6849ccd1e3ff919445",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-23 20:07 UTC",
+  "generated_at": "2026-11-23 23:50 UTC",
   "files_total": 3741,
   "code_files": 3148,
   "code_lines": 500798
@@ -337239,10 +337239,22 @@
   }
  },
  "git": {
-  "sha": "066f553c320de7f7848a82bd26833f8de01ca553",
+  "sha": "132ece15f84e955927d5eb6849ccd1e3ff919445",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "132ece1",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "chore: resgata autofix de eslint (type-imports e inferrable-types) de agente interrompido (#854)",
+    "files": [
+     "src/components/colaboradores/ColaboradorDirectoryGrid.tsx",
+     "src/components/colaboradores/ColaboradorTable.tsx",
+     "src/hooks/use-stagger-cards.ts",
+     "src/services/colaboradorDetalhesService.ts"
+    ]
+   },
    {
     "sha": "066f553",
     "date": "2026-11-23",
@@ -337569,15 +337581,6 @@
      "scripts/inventario/gerar-rotas.mjs",
      "scripts/tests/inventario-rotas.test.mjs"
     ]
-   },
-   {
-    "sha": "5a7dabb",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: documenta o limite real das etapas 55 e 58 do plano do ponto (#816)",
-    "files": [
-     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
-    ]
    }
   ],
   "hot_files": [
@@ -337587,7 +337590,7 @@
    ],
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    5
+    4
    ],
    [
     "supabase/functions/ingest-ponto-rep/index.ts",
@@ -337630,6 +337633,22 @@
     2
    ],
    [
+    "src/components/colaboradores/ColaboradorDirectoryGrid.tsx",
+    1
+   ],
+   [
+    "src/components/colaboradores/ColaboradorTable.tsx",
+    1
+   ],
+   [
+    "src/hooks/use-stagger-cards.ts",
+    1
+   ],
+   [
+    "src/services/colaboradorDetalhesService.ts",
+    1
+   ],
+   [
     "supabase/functions/_shared/outboundDelivery.test.ts",
     1
    ],
@@ -337643,22 +337662,6 @@
    ],
    [
     "supabase/functions/processar-agendamentos/config.ts",
-    1
-   ],
-   [
-    "supabase/functions/enviar-relatorio/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/processar-agendamentos/index.ts",
-    1
-   ],
-   [
-    "inventario/estado/banco.json",
-    1
-   ],
-   [
-    "inventario/estado/edges.json",
     1
    ]
   ]

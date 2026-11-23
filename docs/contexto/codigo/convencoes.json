@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: resgata autofix de eslint (type-imports e inferrable-types) de agente interrompido (#854)",
    "fix: impede que destinatario nao-roteavel derrube o lote de alertas por e-mail (#852)",
    "chore: remove config.ts orfao de processar-agendamentos (#851)",
    "fix: filtra destinatarios orfaos em alertas-dp para nao violar FK (#850)",
-   "fix: troca import dinamico de rateLimit por estatico nas edges que retornavam 500 (#849)",
-   "chore: registra notificacoes de workflow como resolvidas no doc (#848)"
+   "fix: troca import dinamico de rateLimit por estatico nas edges que retornavam 500 (#849)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
