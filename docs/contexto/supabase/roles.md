@@ -17,11 +17,12 @@
 | pgsodium_keyholder | não | não | não | não | não | -1 |  | pgsodium_keyiduser |
 | pgsodium_keyiduser | não | não | não | não | não | -1 |  |  |
 | pgsodium_keymaker | não | não | não | não | não | -1 |  | pgsodium_keyholder, pgsodium_keyiduser |
-| postgres | não | sim | sim | sim | sim | -1 | search_path="\$user", public, extensions | anon, authenticated, authenticator, ci_auditor, ci_auditor, dp_ci_auditor, dp_mcp_role, dp_mcp_user, pg_create_subscription, pg_monitor, pg_read_all_data, pg_signal_backend, service_role, supabase_privileged_role |
+| postgres | não | sim | sim | sim | sim | -1 | search_path="\$user", public, extensions | anon, authenticated, authenticator, ci_auditor, ci_auditor, dp_ci_auditor, dp_mcp_role, dp_mcp_user, pg_create_subscription, pg_monitor, pg_read_all_data, pg_signal_backend, service_role, supabase_functions_admin, supabase_privileged_role |
 | service_role | não | não | sim | não | não | -1 |  |  |
 | supabase_admin | sim | sim | sim | sim | sim | -1 | search_path="$user", public, auth, extensions, log_statement=none |  |
 | supabase_auth_admin | não | sim | não | sim | não | -1 | search_path=auth, idle_in_transaction_session_timeout=60000, log_statement=none |  |
 | supabase_etl_admin | não | sim | sim | não | não | -1 |  | pg_monitor, pg_read_all_data, supabase_privileged_role |
+| supabase_functions_admin | não | sim | não | sim | não | -1 | search_path=supabase_functions |  |
 | supabase_privileged_role | não | não | não | não | não | -1 |  |  |
 | supabase_read_only_user | não | sim | sim | não | não | -1 | default_transaction_read_only=on | pg_monitor, pg_read_all_data |
 | supabase_realtime_admin | não | não | não | não | não | -1 |  |  |

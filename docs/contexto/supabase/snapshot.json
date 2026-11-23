@@ -90887,6 +90887,18 @@
         "version": "1.6.4"
       },
       {
+        "available_version": "1.6.1",
+        "name": "pg_graphql",
+        "schema": "graphql",
+        "version": "1.6.1"
+      },
+      {
+        "available_version": "0.20.4",
+        "name": "pg_net",
+        "schema": "extensions",
+        "version": "0.20.4"
+      },
+      {
         "available_version": "1.11",
         "name": "pg_stat_statements",
         "schema": "extensions",
@@ -102375,7 +102387,7 @@
           "search_path=public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "5865d876064a9d61",
+        "definition_sha": "ac05fc9272328bfd",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -110233,6 +110245,39 @@
           "object_type": "tables",
           "owner_role": "postgres",
           "schema": "storage"
+        },
+        {
+          "acl": [
+            "postgres=X/supabase_admin",
+            "anon=X/supabase_admin",
+            "authenticated=X/supabase_admin",
+            "service_role=X/supabase_admin"
+          ],
+          "object_type": "functions",
+          "owner_role": "supabase_admin",
+          "schema": "supabase_functions"
+        },
+        {
+          "acl": [
+            "postgres=rwU/supabase_admin",
+            "anon=rwU/supabase_admin",
+            "authenticated=rwU/supabase_admin",
+            "service_role=rwU/supabase_admin"
+          ],
+          "object_type": "sequences",
+          "owner_role": "supabase_admin",
+          "schema": "supabase_functions"
+        },
+        {
+          "acl": [
+            "postgres=arwdDxtm/supabase_admin",
+            "anon=arwdDxtm/supabase_admin",
+            "authenticated=arwdDxtm/supabase_admin",
+            "service_role=arwdDxtm/supabase_admin"
+          ],
+          "object_type": "tables",
+          "owner_role": "supabase_admin",
+          "schema": "supabase_functions"
         }
       ],
       "sequences": [
@@ -151720,6 +151765,7 @@
           "pg_read_all_data",
           "pg_signal_backend",
           "service_role",
+          "supabase_functions_admin",
           "supabase_privileged_role"
         ],
         "name": "postgres",
@@ -151782,6 +151828,20 @@
           "supabase_privileged_role"
         ],
         "name": "supabase_etl_admin",
+        "superuser": false
+      },
+      {
+        "bypass_rls": false,
+        "config": [
+          "search_path=supabase_functions"
+        ],
+        "conn_limit": -1,
+        "create_db": false,
+        "create_role": true,
+        "inherit": false,
+        "login": true,
+        "member_of": [],
+        "name": "supabase_functions_admin",
         "superuser": false
       },
       {

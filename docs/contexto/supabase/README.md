@@ -27,7 +27,7 @@ Gerado automaticamente a cada 10 min pelo workflow `contexto` (job `banco`). **N
 | policies (RLS) | 672 |
 | índices | 1351 |
 | tipos/enums | 19 |
-| extensões | 8 |
+| extensões | 10 |
 | cron jobs | n/d |
 | filas pgmq | 0 |
 | migrations | n/d |

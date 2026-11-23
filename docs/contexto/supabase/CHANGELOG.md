@@ -2,6 +2,13 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-23 22:13 UTC
+
+- **extensions** adicionado (2): `pg_graphql`, `pg_net`
+- **functions** alterado (1): `public.pode_aprovar_colaborador(p_colaborador_id uuid)`
+- **roles** adicionado (1): `supabase_functions_admin`
+- **roles** alterado (1): `postgres`
+
 ## 2026-11-23 13:16 UTC
 
 - **realtime** removido (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_19`
