@@ -152042,16 +152042,16 @@
       "exposed_schemas_hint": "ver project-config.md (postgrest db_schemas); default: public, graphql_public",
       "idle_in_transaction_session_timeout": "0",
       "log_min_duration_statement": "-1",
-      "maintenance_work_mem": "32768",
+      "maintenance_work_mem": "65536",
       "max_connections": "60",
       "max_parallel_workers": "2",
-      "max_wal_size": "1024",
+      "max_wal_size": "4096",
       "max_worker_processes": "6",
       "server_version": "17.6",
-      "shared_buffers": "28672",
+      "shared_buffers": "32768",
       "statement_timeout": "90000",
       "wal_level": "logical",
-      "work_mem": "2184"
+      "work_mem": "3500"
     },
     "storage": null,
     "tables": [
