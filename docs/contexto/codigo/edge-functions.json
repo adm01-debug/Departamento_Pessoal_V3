@@ -181,7 +181,7 @@
    "nome": "alertas-dp",
    "entrada": "supabase/functions/alertas-dp/index.ts",
    "arquivos": 2,
-   "linhas": 540,
+   "linhas": 546,
    "verify_jwt": true,
    "metodos": [
     "POST"
@@ -213,6 +213,7 @@
     "authz.ts",
     "contract.ts",
     "csrf.ts",
+    "outboundDelivery.ts",
     "rateLimit.ts",
     "resendDelivery.ts",
     "safe-fetch.ts",
@@ -2201,7 +2202,7 @@
    "nome": "processar-agendamentos",
    "entrada": "supabase/functions/processar-agendamentos/index.ts",
    "arquivos": 3,
-   "linhas": 618,
+   "linhas": 623,
    "verify_jwt": true,
    "metodos": [
     "POST"

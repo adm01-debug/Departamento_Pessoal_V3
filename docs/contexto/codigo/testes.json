@@ -7157,11 +7157,11 @@
   {
    "arquivo": "supabase/functions/_shared/outboundDelivery.test.ts",
    "tipo": "unit",
-   "linhas": 33,
+   "linhas": 72,
    "testa": [
     "supabase/functions/_shared/outboundDelivery.ts"
    ],
-   "casos": 3
+   "casos": 5
   },
   {
    "arquivo": "supabase/functions/_shared/rateLimit.test.ts",

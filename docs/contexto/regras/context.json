@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "59be355ff633b9207b24bf0f117806bf70bb34b0",
+  "sha": "066f553c320de7f7848a82bd26833f8de01ca553",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-23 19:24 UTC",
+  "generated_at": "2026-11-23 20:07 UTC",
   "files_total": 3741,
   "code_files": 3148,
-  "code_lines": 500731
+  "code_lines": 500798
  },
  "version": "1.3.2",
- "facts_hash": "f1871c6268821a84",
+ "facts_hash": "96c5ab1143367a28",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -99660,7 +99660,8 @@
      "notificacoes",
      "user_empresas",
      "user_roles",
-     "v_login_anomalies"
+     "v_login_anomalies",
+     "whatsapp_config"
     ],
     "env": [
      "EMAIL_FROM",
@@ -106010,7 +106011,7 @@
   {
    "module": "supabase/functions",
    "files": 192,
-   "lines": 27997,
+   "lines": 28064,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -106135,7 +106136,7 @@
     "irrf.ts: calcIRRF",
     "logger.ts: LogLevel, log",
     "monitor.ts: withMonitoring",
-    "outboundDelivery.ts: normalizarTelefone, sanitizarErro, ResendResult, remetenteEmail, sendEmailResend, EvolutionResult",
+    "outboundDelivery.ts: normalizarTelefone, sanitizarErro, emailEntregavel, emailsEntregaveis, ResendResult, remetenteEmail",
     "rateLimit.ts: RateLimitOptions, RateLimitResult, RateLimitRpcClient, checkRateLimit, rateLimitResponse, RateLimitDuploRpcClient",
     "resendDelivery.ts: resendDeliveryId",
     "rpc-error-logging.ts: PostgRESTRpcError, RpcErrorContext, logRpcError",
@@ -163777,6 +163778,12 @@
    {
     "file": "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
     "field": "status",
+    "value": "falha",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
+    "field": "status",
     "value": "enviado",
     "kind": "escreve"
    },
@@ -207027,6 +207034,14 @@
    {
     "file": "supabase/functions/_shared/outboundDelivery.test.ts",
     "name": "remetenteEmail: explícito > EMAIL_FROM > sandbox da Resend"
+   },
+   {
+    "file": "supabase/functions/_shared/outboundDelivery.test.ts",
+    "name": "emailEntregavel recusa domínios reservados (RFC 2606/6761)"
+   },
+   {
+    "file": "supabase/functions/_shared/outboundDelivery.test.ts",
+    "name": "emailsEntregaveis remove não-entregáveis e preserva os válidos"
    },
    {
     "file": "supabase/functions/_shared/rateLimit.test.ts",
@@ -324088,7 +324103,7 @@
   },
   "supabase/functions/_shared/outboundDelivery.test.ts": {
    "path": "supabase/functions/_shared/outboundDelivery.test.ts",
-   "lines": 33,
+   "lines": 72,
    "is_test": true,
    "env": [
     "EMAIL_FROM"
@@ -324096,15 +324111,19 @@
    "tests": [
     "normalizarTelefone prefixa DDI 55 em número BR sem país",
     "sanitizarErro remove URLs (possíveis credenciais em query param)",
-    "remetenteEmail: explícito > EMAIL_FROM > sandbox da Resend"
+    "remetenteEmail: explícito > EMAIL_FROM > sandbox da Resend",
+    "emailEntregavel recusa domínios reservados (RFC 2606/6761)",
+    "emailsEntregaveis remove não-entregáveis e preserva os válidos"
    ]
   },
   "supabase/functions/_shared/outboundDelivery.ts": {
    "path": "supabase/functions/_shared/outboundDelivery.ts",
-   "lines": 156,
+   "lines": 173,
    "exports": [
     "function normalizarTelefone",
     "function sanitizarErro",
+    "function emailEntregavel",
+    "function emailsEntregaveis",
     "interface ResendResult",
     "function remetenteEmail",
     "function sendEmailResend",
@@ -325210,7 +325229,7 @@
   },
   "supabase/functions/alertas-dp/index.ts": {
    "path": "supabase/functions/alertas-dp/index.ts",
-   "lines": 511,
+   "lines": 517,
    "tables": [
     {
      "table": "asos",
@@ -330986,7 +331005,7 @@
   },
   "supabase/functions/processar-agendamentos/filaNotificacoes.ts": {
    "path": "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
-   "lines": 122,
+   "lines": 127,
    "exports": [
     "interface FilaResumo",
     "function drenarFilaNotificacoes"
@@ -331038,6 +331057,11 @@
     {
      "field": "status",
      "value": "processando",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "falha",
      "kind": "escreve"
     },
     {
@@ -337215,10 +337239,22 @@
   }
  },
  "git": {
-  "sha": "59be355ff633b9207b24bf0f117806bf70bb34b0",
+  "sha": "066f553c320de7f7848a82bd26833f8de01ca553",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "066f553",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: impede que destinatario nao-roteavel derrube o lote de alertas por e-mail (#852)",
+    "files": [
+     "supabase/functions/_shared/outboundDelivery.test.ts",
+     "supabase/functions/_shared/outboundDelivery.ts",
+     "supabase/functions/alertas-dp/index.ts",
+     "supabase/functions/processar-agendamentos/filaNotificacoes.ts"
+    ]
+   },
    {
     "sha": "59be355",
     "date": "2026-11-23",
@@ -337542,29 +337578,24 @@
     "files": [
      "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
     ]
-   },
-   {
-    "sha": "73b2a05",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "chore: fecha etapa 45 do plano do ponto com evidencia real do CI (#819)",
-    "files": [
-     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md"
-    ]
    }
   ],
   "hot_files": [
-   [
-    "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    6
-   ],
    [
     ".github/workflows/canonical-migrations.yml",
     5
    ],
    [
+    "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
+    5
+   ],
+   [
     "supabase/functions/ingest-ponto-rep/index.ts",
     4
+   ],
+   [
+    "supabase/functions/alertas-dp/index.ts",
+    3
    ],
    [
     "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md",
@@ -337573,10 +337604,6 @@
    [
     "scripts/automation.config.json",
     3
-   ],
-   [
-    "supabase/functions/alertas-dp/index.ts",
-    2
    ],
    [
     "src/services/workflowService.ts",
@@ -337603,6 +337630,18 @@
     2
    ],
    [
+    "supabase/functions/_shared/outboundDelivery.test.ts",
+    1
+   ],
+   [
+    "supabase/functions/_shared/outboundDelivery.ts",
+    1
+   ],
+   [
+    "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
+    1
+   ],
+   [
     "supabase/functions/processar-agendamentos/config.ts",
     1
    ],
@@ -337620,18 +337659,6 @@
    ],
    [
     "inventario/estado/edges.json",
-    1
-   ],
-   [
-    "inventario/estado/funcionalidades.json",
-    1
-   ],
-   [
-    "inventario/estado/rotas.json",
-    1
-   ],
-   [
-    "scripts/canonical-invariants.sql",
     1
    ]
   ]

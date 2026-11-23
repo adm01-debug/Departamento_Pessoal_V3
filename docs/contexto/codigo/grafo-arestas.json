@@ -8156,6 +8156,7 @@
    "supabase/functions/_shared/authz.ts",
    "supabase/functions/_shared/contract.ts",
    "supabase/functions/_shared/csrf.ts",
+   "supabase/functions/_shared/outboundDelivery.ts",
    "supabase/functions/_shared/rateLimit.ts",
    "supabase/functions/_shared/resendDelivery.ts",
    "supabase/functions/_shared/safe-fetch.ts",

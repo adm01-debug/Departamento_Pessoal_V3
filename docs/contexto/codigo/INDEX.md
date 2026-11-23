@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `59be355ff633b9207b24bf0f117806bf70bb34b0` (2026-11-23T16:22:07-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `066f553c320de7f7848a82bd26833f8de01ca553` (2026-11-23T17:06:47-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3727 |
 | arquivos_codigo | 2146 |
-| linhas_codigo | 429401 |
+| linhas_codigo | 429468 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -398,8 +398,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28245 nós · 63647 arestas · 2456 comunidades · grafo do commit `59be355f`
-- comunidades maiores: 20260831_corrected_public.sql (485), lucide-react (483), canonical_schema.sql (481), cn (441), @tanstack/react-query (396), react (392), vitest (379), useEmpresas (293), validate.ts (239), colaboradoresMock.ts (204), validateTablePayload (181), contract.ts (180)
+- 28248 nós · 63657 arestas · 2450 comunidades · grafo do commit `066f553c`
+- comunidades maiores: lucide-react (493), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (467), useEmpresas (349), vitest (343), cn (304), @tanstack/react-query (287), App.tsx (217), contract.ts (198), react (177), ColaboradorDetalhesPage.tsx (167)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -656,6 +656,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-23 `066f553` fix: impede que destinatario nao-roteavel derrube o lote de alertas por e-mail (#852)
 - 2026-11-23 `59be355` chore: remove config.ts orfao de processar-agendamentos (#851)
 - 2026-11-23 `bd79c79` fix: filtra destinatarios orfaos em alertas-dp para nao violar FK (#850)
 - 2026-11-23 `20ff226` fix: troca import dinamico de rateLimit por estatico nas edges que retornavam 500 (#849)
@@ -670,7 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-22 `e3410c9` feat: converte dia do relogio em batidas (etapa 41 do Ponto AtecSoft) (#837)
 - 2026-11-22 `108016d` chore: desmembra a estrutura do banco do Ponto AtecSoft (#836)
 - 2026-11-22 `a2f4ebe` fix: extrai e testa a regra do 23505 no vinculo do relogio (#835)
-- 2026-11-22 `f0f940b` fix: baixa de guia falha alto quando nenhuma linha e atualizada (#834)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

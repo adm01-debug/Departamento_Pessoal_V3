@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "59be355ff633b9207b24bf0f117806bf70bb34b0",
+  "commit": "066f553c320de7f7848a82bd26833f8de01ca553",
   "branch": "main",
-  "data_commit": "2026-11-23T16:22:07-03:00",
+  "data_commit": "2026-11-23T17:06:47-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "066f553",
+    "data": "2026-11-23",
+    "assunto": "fix: impede que destinatario nao-roteavel derrube o lote de alertas por e-mail (#852)"
+   },
    {
     "sha": "59be355",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "cb4d78c",
     "data": "2026-11-22",
     "assunto": "fix: gates de baseline comparam chave com separador nativo (reprovavam no Windows sem regressão real) (#821)"
-   },
-   {
-    "sha": "e5a1e96",
-    "data": "2026-11-22",
-    "assunto": "feat: sincroniza cargos do Bitrix a partir de WORK_POSITION dos usuarios (#825)"
    }
   ],
-  "arquivos_mudados_7d": 825,
+  "arquivos_mudados_7d": 828,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -165,7 +165,7 @@
    },
    {
     "pasta": "supabase/functions/_shared",
-    "mudancas": 51
+    "mudancas": 53
    },
    {
     "pasta": "src/components/layout",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3727,
   "arquivos_codigo": 2146,
-  "linhas_codigo": 429401,
+  "linhas_codigo": 429468,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -724,7 +724,7 @@
   },
   "supabase/functions": {
    "arquivos": 192,
-   "linhas": 27997
+   "linhas": 28064
   },
   "supabase/tests": {
    "arquivos": 3,
