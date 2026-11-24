@@ -1,0 +1,1 @@
+SELECT CASE WHEN to_regclass('public.v_security_dashboard') IS NOT NULL AND to_regclass('public.v_security_brute_force_targets') IS NOT NULL AND to_regclass('public.v_audit_summary_7d') IS NOT NULL THEN 'ok' ELSE 'FALHOU: view de seguranca ausente' END;
