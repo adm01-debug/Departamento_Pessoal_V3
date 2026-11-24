@@ -10,6 +10,11 @@ interface ImportMetaEnv {
   readonly VITE_API_URL?: string;
   /** 'true' somente se o provider Google estiver habilitado no Supabase Auth. */
   readonly VITE_AUTH_GOOGLE_ENABLED?: string;
+  /**
+   * Chave PÚBLICA VAPID (base64url) do Web Push. A privada é segredo de
+   * servidor (`VAPID_PRIVATE_KEY` nas Edge Functions), nunca aqui.
+   */
+  readonly VITE_VAPID_PUBLIC_KEY?: string;
 }
 
 interface ImportMeta {

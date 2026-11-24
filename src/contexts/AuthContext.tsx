@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Session, AuthError } from '@supabase/supabase-js';
 import { sanitizePlainText } from '@/utils/sanitizeHtml';
 import { loggerService } from '@/services/loggerService';
+import { pushNotificationService } from '@/services/pushNotificationService';
 import { queryClient } from '@/lib/queryClient';
 import { validatePasswordFull } from '@/utils/passwordPolicy';
 
@@ -119,6 +120,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Ref espelha `isReady` para leitura no callback do timeout de inicialização
   // sem re-executar o useEffect (que re-subscreveria em onAuthStateChange).
   const isReadyRef = useRef(false);
+  // Ref espelha `user`: `signOut` mantem identidade estavel (nao pode depender de
+  // `user`, senao o callback do contexto e recriado a cada login) e ainda assim
+  // precisa do id atual — sem o ref, a closure do primeiro render veria null.
+  const userRef = useRef<User | null>(null);
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
 
   const markReady = useCallback(() => {
     setLoading(false);
@@ -320,6 +328,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(async () => {
     try {
+      // Antes de matar a sessão: o cancelamento do push precisa do JWT para
+      // desativar a inscrição no banco (RLS por usuário).
+      const userId = userRef.current?.id;
+      if (userId) await pushNotificationService.unsubscribeCurrentDevice(userId);
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
     } catch (e) {

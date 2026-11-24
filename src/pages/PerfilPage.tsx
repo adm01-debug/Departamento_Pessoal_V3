@@ -94,8 +94,7 @@ export default function PerfilPage() {
         return;
       }
       setPushStatus('supported');
-      const sub = await pushNotificationService.getSubscription();
-      setIsSubscribed(!!sub);
+      setIsSubscribed(await pushNotificationService.hasDeliverableSubscription());
     }
     checkPush();
   }, []);
