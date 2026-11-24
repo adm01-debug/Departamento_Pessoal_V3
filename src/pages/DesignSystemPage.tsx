@@ -51,7 +51,7 @@ function Section({ title, icon: Icon, children, delay = 0 }: {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4 }}
     >
-      <h2 className="flex items-center gap-2.5 text-xl font-display font-bold mb-4">
+      <h2 className="flex items-center gap-2.5 text-xl font-display font-medium mb-4">
         <div className="p-2 rounded-xl gradient-primary">
           <Icon className="h-5 w-5 text-primary-foreground" />
         </div>
@@ -78,7 +78,7 @@ export default function DesignSystemPage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-3xl font-display font-bold tracking-tight">Design System</h1>
+          <h1 className="text-3xl font-display font-medium tracking-tight">Design System</h1>
           <p className="text-muted-foreground font-body mt-1">Task Gifts — Living Styleguide</p>
         </div>
       </motion.div>
@@ -118,7 +118,7 @@ export default function DesignSystemPage() {
             return (
               <div key={g.name} className={cn('h-24 rounded-2xl bg-gradient-to-r flex items-center gap-3 px-5 shadow-elevated', g.gradient)}>
                 <Icon className="h-6 w-6 text-primary-foreground" />
-                <span className="text-primary-foreground font-display font-bold">{g.name}</span>
+                <span className="text-primary-foreground font-display font-medium">{g.name}</span>
               </div>
             );
           })}
@@ -129,20 +129,29 @@ export default function DesignSystemPage() {
       <Section title="Tipografia" icon={Type} delay={0.25}>
         <Card variant="elevated">
           <CardContent className="p-6 space-y-6">
+            {/* Escala oficial — a MESMA fonte usada pelo app: títulos em Outfit
+                e conteúdo/números em Plus Jakarta Sans (ver
+                docs/DESIGN-SYSTEM-TIPOGRAFIA.md). Aqui os exemplos usam os
+                tokens semânticos, não tamanhos soltos. */}
             <div className="space-y-3">
-              <p className="text-xs text-muted-foreground font-body uppercase tracking-wider">Display — Outfit</p>
-              <h1 className="text-4xl font-display font-bold tracking-tight">Heading 1 — Display Bold</h1>
-              <h2 className="text-3xl font-display font-semibold">Heading 2 — Display Semibold</h2>
-              <h3 className="text-2xl font-display font-medium">Heading 3 — Display Medium</h3>
-              <h4 className="text-xl font-display font-medium">Heading 4 — Display Medium</h4>
+              <p className="text-xs text-muted-foreground font-body uppercase tracking-wider">Títulos e display — Outfit</p>
+              <p className="text-display-xl">Display XL — 36 px</p>
+              <p className="text-display">Display — 30 px</p>
+              <p className="text-h1">Heading XL — 24 px</p>
+              <p className="text-h2">Heading LG — 20 px</p>
+              <p className="text-h3">Heading MD — 18 px</p>
+              <p className="text-heading">Heading MD compacto — 16 px</p>
             </div>
             <div className="border-t border-border/30 pt-4 space-y-2">
-              <p className="text-xs text-muted-foreground font-body uppercase tracking-wider">Body — Plus Jakarta Sans</p>
-              <p className="text-base font-body">Body Regular — The quick brown fox jumps over the lazy dog.</p>
-              <p className="text-base font-body font-medium">Body Medium — The quick brown fox jumps over the lazy dog.</p>
-              <p className="text-base font-body font-semibold">Body Semibold — The quick brown fox jumps over the lazy dog.</p>
-              <p className="text-sm font-body text-muted-foreground">Caption — Texto auxiliar e descrições.</p>
-              <p className="text-xs font-body uppercase tracking-wider text-muted-foreground">Overline — LABEL STYLE</p>
+              <p className="text-xs text-muted-foreground font-body uppercase tracking-wider">Corpo, rótulos e números — Plus Jakarta Sans</p>
+              <p className="text-body">Body — 14 px: o texto principal de qualquer tela.</p>
+              <p className="text-body-sm">Body Small — 13 px: informação secundária.</p>
+              <p className="text-label">Label — 12 px / 500: rótulos de campo e controle.</p>
+              <p className="text-caption text-muted-foreground">Caption — 12 px: metadados e datas.</p>
+              <p className="text-overline text-muted-foreground">Overline — 11 px</p>
+              <p className="text-data">R$ 12.345,67</p>
+              <p className="text-numeric">R$ 1.234,56 · 48:00 · 98,5%</p>
+              <p className="text-badge text-muted-foreground">BADGE · 10 PX</p>
             </div>
           </CardContent>
         </Card>

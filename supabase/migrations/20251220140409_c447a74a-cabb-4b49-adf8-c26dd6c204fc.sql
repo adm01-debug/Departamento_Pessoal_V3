@@ -93,15 +93,13 @@ ALTER TABLE public.user_empresas ENABLE ROW LEVEL SECURITY;
 
 -- Políticas para empresas (idempotent)
 DO $$ BEGIN
-  DROP POLICY IF EXISTS "Usuários podem ver suas empresas" ON public.empresas;
-CREATE POLICY "Usuários podem ver suas empresas"
+  CREATE POLICY "Usuários podem ver suas empresas"
     ON public.empresas FOR SELECT
     USING (id IN (SELECT public.get_user_empresas(auth.uid())));
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-  DROP POLICY IF EXISTS "Admins podem gerenciar empresas" ON public.empresas;
-CREATE POLICY "Admins podem gerenciar empresas"
+  CREATE POLICY "Admins podem gerenciar empresas"
     ON public.empresas FOR ALL
     USING (public.is_admin(auth.uid()))
     WITH CHECK (public.is_admin(auth.uid()));
@@ -109,15 +107,13 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- Políticas para user_empresas (idempotent)
 DO $$ BEGIN
-  DROP POLICY IF EXISTS "Usuários podem ver suas associações" ON public.user_empresas;
-CREATE POLICY "Usuários podem ver suas associações"
+  CREATE POLICY "Usuários podem ver suas associações"
     ON public.user_empresas FOR SELECT
     USING (user_id = auth.uid());
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-  DROP POLICY IF EXISTS "Admins podem gerenciar associações" ON public.user_empresas;
-CREATE POLICY "Admins podem gerenciar associações"
+  CREATE POLICY "Admins podem gerenciar associações"
     ON public.user_empresas FOR ALL
     USING (public.is_admin(auth.uid()))
     WITH CHECK (public.is_admin(auth.uid()));
@@ -130,29 +126,25 @@ DROP POLICY IF EXISTS "Authenticated users can update colaboradores" ON public.c
 DROP POLICY IF EXISTS "Authenticated users can delete colaboradores" ON public.colaboradores;
 
 DO $$ BEGIN
-  DROP POLICY IF EXISTS "Usuários podem ver colaboradores da sua empresa" ON public.colaboradores;
-CREATE POLICY "Usuários podem ver colaboradores da sua empresa"
+  CREATE POLICY "Usuários podem ver colaboradores da sua empresa"
     ON public.colaboradores FOR SELECT
     USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())) OR empresa_id IS NULL);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-  DROP POLICY IF EXISTS "Usuários podem inserir colaboradores na sua empresa" ON public.colaboradores;
-CREATE POLICY "Usuários podem inserir colaboradores na sua empresa"
+  CREATE POLICY "Usuários podem inserir colaboradores na sua empresa"
     ON public.colaboradores FOR INSERT
     WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())) OR empresa_id IS NULL);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-  DROP POLICY IF EXISTS "Usuários podem atualizar colaboradores da sua empresa" ON public.colaboradores;
-CREATE POLICY "Usuários podem atualizar colaboradores da sua empresa"
+  CREATE POLICY "Usuários podem atualizar colaboradores da sua empresa"
     ON public.colaboradores FOR UPDATE
     USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())) OR empresa_id IS NULL);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-  DROP POLICY IF EXISTS "Usuários podem deletar colaboradores da sua empresa" ON public.colaboradores;
-CREATE POLICY "Usuários podem deletar colaboradores da sua empresa"
+  CREATE POLICY "Usuários podem deletar colaboradores da sua empresa"
     ON public.colaboradores FOR DELETE
     USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())) OR empresa_id IS NULL);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;

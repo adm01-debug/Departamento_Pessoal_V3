@@ -139,7 +139,7 @@ export function FeriasColetivasTab() {
                 const emitido = !!c.comunicado_gerado_em;
                 return (
                   <TableRow key={c.id}>
-                    <TableCell className="font-mono text-sm">
+                    <TableCell className="text-numeric text-sm">
                       {format(new Date(c.data_inicio), 'dd/MM/yy', { locale: ptBR })} →{' '}
                       {format(new Date(c.data_fim), 'dd/MM/yy', { locale: ptBR })}
                     </TableCell>
@@ -199,7 +199,7 @@ export function FeriasColetivasTab() {
       </CardContent>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-md rounded-2xl">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="font-display">Gerar comunicados de férias coletivas</DialogTitle>
             <DialogDescription className="text-xs">

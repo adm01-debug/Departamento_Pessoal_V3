@@ -1,11 +1,10 @@
-import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CurrencyInput } from '../ui/currency-input';
 
 vi.mock('@/lib/utils', () => ({ cn: (...c: string[]) => c.filter(Boolean).join(' ') }));
 vi.mock('../ui/input', () => ({
-  Input: (props: React.ComponentProps<'input'>) => <input {...props} data-testid="currency-input" />,
+  Input: (props: any) => <input {...props} data-testid="currency-input" />,
 }));
 
 describe('CurrencyInput', () => {
@@ -41,6 +40,15 @@ describe('CurrencyInput', () => {
     render(<CurrencyInput value={1500} onChange={onChange} />);
     fireEvent.change(screen.getByTestId('currency-input'), { target: { value: '' } });
     expect(onChange).toHaveBeenCalledWith(0);
+  });
+
+  it('volta ao placeholder quando o valor controlado vira undefined (reset)', () => {
+    const { rerender } = render(<CurrencyInput value={4500} />);
+    const input = () => screen.getByTestId('currency-input') as HTMLInputElement;
+    expect(input().value).toContain('4.500');
+
+    rerender(<CurrencyInput value={undefined} />);
+    expect(input().value).toBe('');
   });
 
   it('is disabled when disabled prop is true', () => {

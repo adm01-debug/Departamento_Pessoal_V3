@@ -14,13 +14,6 @@ const state = vi.hoisted(() => ({
   storageUpload: vi.fn(async () => ({ error: null })),
 }));
 
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
-  },
-  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
-}));
-
 vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
 }));

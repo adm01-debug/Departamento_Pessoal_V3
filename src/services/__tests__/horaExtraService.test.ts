@@ -14,21 +14,21 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Helper: thenable chain for select → order → (optional eq) → await
-function setupListarChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupListarChain(data: any[], error: any = null) {
   const response = { data, error };
-  const chain: Record<string, unknown> = {};
+  const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: any) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
 }
 
 // Helper: update → eq → select → maybeSingle chain
-function setupUpdateChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupUpdateChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const eqFn = vi.fn();
@@ -42,9 +42,7 @@ function setupUpdateChain(data: unknown, error: { message: string; code?: string
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('horaExtraService.listar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns records without empresa filter', async () => {
     const records = [{ id: 'he-1', status: 'pendente' }];
@@ -54,7 +52,7 @@ describe('horaExtraService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListarChain(null as never);
+    setupListarChain(null as any);
     const result = await horaExtraService.listar(EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -80,7 +78,9 @@ describe('horaExtraService.listar', () => {
   it('selects with colaborador join', async () => {
     const { selectFn } = setupListarChain([]);
     await horaExtraService.listar(EMPRESA_ID);
-    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
+    expect(selectFn).toHaveBeenCalledWith(
+      expect.stringContaining('colaborador:colaboradores')
+    );
   });
 
   it('throws on DB error', async () => {
@@ -92,9 +92,7 @@ describe('horaExtraService.listar', () => {
 // ─── criar ────────────────────────────────────────────────────────────────────
 
 describe('horaExtraService.criar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns the created record', async () => {
     const created = { id: 'he-new', status: 'pendente' };
@@ -103,9 +101,8 @@ describe('horaExtraService.criar', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    const payload = { colaborador_id: 'c1', data: '2026-01-01', horas_solicitadas: 2, motivo: 'Fechamento mensal' };
-    const result = await horaExtraService.criar(payload);
-    expect(insertFn).toHaveBeenCalledWith(payload);
+    const result = await horaExtraService.criar({ colaborador_id: 'c1', horas: 2 });
+    expect(insertFn).toHaveBeenCalledWith({ colaborador_id: 'c1', horas: 2 });
     expect(result).toEqual(created);
   });
 
@@ -115,9 +112,7 @@ describe('horaExtraService.criar', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    await expect(
-      horaExtraService.criar({ colaborador_id: 'c1', data: '2026-01-01', horas_solicitadas: 2, motivo: 'Motivo' })
-    ).rejects.toThrow();
+    await expect(horaExtraService.criar({})).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
@@ -126,24 +121,20 @@ describe('horaExtraService.criar', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    await expect(
-      horaExtraService.criar({ colaborador_id: 'c1', data: '2026-01-01', horas_solicitadas: 2, motivo: 'Motivo' })
-    ).rejects.toBeDefined();
+    await expect(horaExtraService.criar({})).rejects.toBeDefined();
   });
 });
 
 // ─── aprovar ──────────────────────────────────────────────────────────────────
 
 describe('horaExtraService.aprovar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates status to aprovada with aprovado_por', async () => {
     const updated = { id: 'he-1', status: 'aprovada' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
     await horaExtraService.aprovar('he-1', 'user-1', EMPRESA_ID);
-    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
+    const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.status).toBe('aprovada');
     expect(updateArgs.aprovado_por).toBe('user-1');
     expect(eqFn).toHaveBeenCalledWith('id', 'he-1');
@@ -152,7 +143,7 @@ describe('horaExtraService.aprovar', () => {
   it('includes observacoes_aprovador when obs is provided', async () => {
     const { updateFn } = setupUpdateChain({ id: 'he-1', status: 'aprovada' });
     await horaExtraService.aprovar('he-1', 'user-1', EMPRESA_ID, 'Autorizado pelo gestor');
-    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
+    const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.observacoes_aprovador).toBe('Autorizado pelo gestor');
   });
 
@@ -170,14 +161,12 @@ describe('horaExtraService.aprovar', () => {
 // ─── rejeitar ─────────────────────────────────────────────────────────────────
 
 describe('horaExtraService.rejeitar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates status to rejeitada', async () => {
     const { updateFn } = setupUpdateChain({ id: 'he-1', status: 'rejeitada' });
     await horaExtraService.rejeitar('he-1', 'user-1', EMPRESA_ID);
-    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
+    const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.status).toBe('rejeitada');
     expect(updateArgs.aprovado_por).toBe('user-1');
   });
@@ -185,7 +174,7 @@ describe('horaExtraService.rejeitar', () => {
   it('includes motivo as observacoes_aprovador when provided', async () => {
     const { updateFn } = setupUpdateChain({ id: 'he-1', status: 'rejeitada' });
     await horaExtraService.rejeitar('he-1', 'user-1', EMPRESA_ID, 'Limite mensal atingido');
-    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
+    const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.observacoes_aprovador).toBe('Limite mensal atingido');
   });
 
@@ -203,14 +192,11 @@ describe('horaExtraService.rejeitar', () => {
 // ─── excluir ──────────────────────────────────────────────────────────────────
 
 describe('horaExtraService.excluir', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('calls delete with the given id', async () => {
     const chain = makeChain({ error: null });
-    const deleteFn = chain.delete;
-    const eqFn = chain.eq;
+    const deleteFn = chain.delete; const eqFn = chain.eq;
     mockFrom.mockReturnValue(chain);
 
     await horaExtraService.excluir('he-1', EMPRESA_ID);

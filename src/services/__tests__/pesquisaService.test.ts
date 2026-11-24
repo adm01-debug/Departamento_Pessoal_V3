@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { makeChain } from '@/test/chain';
 import { pesquisaService } from '../pesquisaService';
-import type { Insertable } from '@/integrations/supabase/database.types';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -12,20 +11,20 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
-function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupListChain(data: any[], error: any = null) {
   const response = { data, error };
-  const chain: Record<string, unknown> = {};
+  const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: any) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
 }
 
-function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupInsertChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -33,7 +32,7 @@ function setupInsertChain(data: unknown, error: { message: string; code?: string
   return { insertFn, selectFn, maybeSingle };
 }
 
-function setupUpdateChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupUpdateChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const eqFn = vi.fn();
@@ -44,14 +43,9 @@ function setupUpdateChain(data: unknown, error: { message: string; code?: string
   return { updateFn, eqFn, selectFn, maybeSingle };
 }
 
-function setupDeleteChain(error: { message: string; code?: string } | null = null) {
+function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = {
-    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
-    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
-    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
-    eq: eqFn,
-  };
+  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -59,7 +53,7 @@ function setupDeleteChain(error: { message: string; code?: string } | null = nul
 }
 
 // Eq chain for listarPerguntas/listarRespostas (select → eq → order → await)
-function setupEqOrderChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupEqOrderChain(data: any[], error: any = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ order: orderFn });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -68,7 +62,7 @@ function setupEqOrderChain(data: unknown, error: { message: string; code?: strin
 }
 
 // Simple eq chain (select → eq → await)
-function setupEqChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupEqChain(data: any[], error: any = null) {
   const eqFn = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ select: selectFn });
@@ -78,9 +72,7 @@ function setupEqChain(data: unknown, error: { message: string; code?: string } |
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('pesquisaService.listar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns pesquisas without empresa filter', async () => {
     const records = [{ id: 'p1', titulo: 'Clima Org' }];
@@ -89,7 +81,7 @@ describe('pesquisaService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     expect(await pesquisaService.listar(EMPRESA_ID)).toEqual([]);
   });
 
@@ -108,9 +100,7 @@ describe('pesquisaService.listar', () => {
 // ─── criar ────────────────────────────────────────────────────────────────────
 
 describe('pesquisaService.criar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns new pesquisa', async () => {
     const created = { id: 'p-new', titulo: 'NPS' };
@@ -122,16 +112,14 @@ describe('pesquisaService.criar', () => {
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(pesquisaService.criar({} as Insertable<'pesquisas'>)).rejects.toThrow();
+    await expect(pesquisaService.criar({})).rejects.toThrow();
   });
 });
 
 // ─── atualizar ────────────────────────────────────────────────────────────────
 
 describe('pesquisaService.atualizar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates and returns pesquisa', async () => {
     const updated = { id: 'p1', status: 'publicada' };
@@ -151,9 +139,7 @@ describe('pesquisaService.atualizar', () => {
 // ─── excluir ──────────────────────────────────────────────────────────────────
 
 describe('pesquisaService.excluir', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('deletes pesquisa by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
@@ -166,9 +152,7 @@ describe('pesquisaService.excluir', () => {
 // ─── listarPerguntas ──────────────────────────────────────────────────────────
 
 describe('pesquisaService.listarPerguntas', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns perguntas for given pesquisaId', async () => {
     const records = [{ id: 'q1', texto: 'Como você avalia?' }];
@@ -179,7 +163,7 @@ describe('pesquisaService.listarPerguntas', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupEqOrderChain(null as never);
+    setupEqOrderChain(null as any);
     expect(await pesquisaService.listarPerguntas('p1')).toEqual([]);
   });
 
@@ -192,38 +176,36 @@ describe('pesquisaService.listarPerguntas', () => {
 // ─── criarPergunta ────────────────────────────────────────────────────────────
 
 describe('pesquisaService.criarPergunta', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns new pergunta', async () => {
     const created = { id: 'q-new', texto: 'Nova pergunta' };
     const { insertFn } = setupInsertChain(created);
-    const payload = { texto: 'Nova pergunta', pesquisa_id: 'p1' };
-    const result = await pesquisaService.criarPergunta(payload);
-    expect(insertFn).toHaveBeenCalledWith(payload);
+    const result = await pesquisaService.criarPergunta({ texto: 'Nova pergunta' });
+    expect(insertFn).toHaveBeenCalledWith({ texto: 'Nova pergunta' });
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(pesquisaService.criarPergunta({} as Insertable<'pesquisas_perguntas'>)).rejects.toThrow();
+    await expect(pesquisaService.criarPergunta({})).rejects.toThrow();
   });
 });
 
 // ─── excluirPergunta ──────────────────────────────────────────────────────────
 
 describe('pesquisaService.excluirPergunta', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('deletes pergunta by id after cross-tenant ownership check', async () => {
     // 1) pergunta → pesquisa_id | 2) pesquisa → empresa_id | 3) delete
-    const pergChain = makeChain({ data: { pesquisa_id: 'p1' }, error: null });
-    const pesqChain = makeChain({ data: { empresa_id: EMPRESA_ID }, error: null });
-    const delChain = makeChain({ error: null });
-    mockFrom.mockReturnValueOnce(pergChain).mockReturnValueOnce(pesqChain).mockReturnValueOnce(delChain);
+    const pergChain: any = makeChain({ data: { pesquisa_id: 'p1' }, error: null });
+    const pesqChain: any = makeChain({ data: { empresa_id: EMPRESA_ID }, error: null });
+    const delChain: any = makeChain({ error: null });
+    mockFrom
+      .mockReturnValueOnce(pergChain)
+      .mockReturnValueOnce(pesqChain)
+      .mockReturnValueOnce(delChain);
 
     await pesquisaService.excluirPergunta('q1', EMPRESA_ID);
     expect(delChain.eq).toHaveBeenCalledWith('id', 'q1');
@@ -231,8 +213,8 @@ describe('pesquisaService.excluirPergunta', () => {
   });
 
   it('fail-closed: rejeita pergunta de outro tenant', async () => {
-    const pergChain = makeChain({ data: { pesquisa_id: 'p1' }, error: null });
-    const pesqChain = makeChain({ data: { empresa_id: 'outra-empresa' }, error: null });
+    const pergChain: any = makeChain({ data: { pesquisa_id: 'p1' }, error: null });
+    const pesqChain: any = makeChain({ data: { empresa_id: 'outra-empresa' }, error: null });
     mockFrom.mockReturnValueOnce(pergChain).mockReturnValueOnce(pesqChain);
 
     await expect(pesquisaService.excluirPergunta('q1', EMPRESA_ID)).rejects.toThrow(/outro tenant/);
@@ -242,31 +224,26 @@ describe('pesquisaService.excluirPergunta', () => {
 // ─── enviarResposta ───────────────────────────────────────────────────────────
 
 describe('pesquisaService.enviarResposta', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns new resposta', async () => {
     const created = { id: 'r-new' };
     const { insertFn } = setupInsertChain(created);
-    const payload = { pesquisa_id: 'p1', pergunta_id: 'q1', valor_numerico: 8 };
-    const result = await pesquisaService.enviarResposta(payload);
-    expect(insertFn).toHaveBeenCalledWith(payload);
+    const result = await pesquisaService.enviarResposta({ pesquisa_id: 'p1', nota: 8 });
+    expect(insertFn).toHaveBeenCalledWith({ pesquisa_id: 'p1', nota: 8 });
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(pesquisaService.enviarResposta({} as Insertable<'pesquisas_respostas'>)).rejects.toThrow();
+    await expect(pesquisaService.enviarResposta({})).rejects.toThrow();
   });
 });
 
 // ─── listarRespostas ──────────────────────────────────────────────────────────
 
 describe('pesquisaService.listarRespostas', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns respostas for given pesquisaId', async () => {
     const records = [{ id: 'r1', nota: 9 }];
@@ -277,7 +254,7 @@ describe('pesquisaService.listarRespostas', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupEqChain(null as never);
+    setupEqChain(null as any);
     expect(await pesquisaService.listarRespostas('p1')).toEqual([]);
   });
 });

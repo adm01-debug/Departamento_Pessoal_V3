@@ -24,26 +24,11 @@
  * personificar qualquer pessoa. Só o backend as alcança.
  */
 
+// deno-lint-ignore-file no-explicit-any
 import { createErrorResponse } from './contract.ts';
 
-/**
- * Cliente Supabase com service_role (tipagem mínima necessária aqui).
- *
- * Deliberadamente não genérico sobre `Database`: um caller que tipa seu
- * próprio client como `SupabaseClient<Database>` (RPC overloads restritos
- * a nomes/args reais) precisa de um downcast explícito e local
- * (`admin as unknown as AdminClient`) para passá-lo aqui, já que um método
- * `rpc` com overloads genéricos não é estruturalmente atribuível a esta
- * assinatura simples. Isso é esperado e seguro: em runtime é a mesma
- * chamada HTTP; só o TypeScript perde a checagem fina de nome/args de RPC
- * dentro deste módulo, que nunca chama RPCs por literal de string aqui.
- */
-export type AdminClient = {
-  rpc: (
-    fn: string,
-    args: Record<string, unknown>,
-  ) => PromiseLike<{ data: unknown; error: unknown | null }>;
-};
+/** Cliente Supabase com service_role (tipagem mínima necessária aqui). */
+type AdminClient = { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: any; error: any }> };
 
 export interface AuthzResult {
   /** Pronto para `if (denied) return denied;` — nulo quando autorizado. */
@@ -101,10 +86,9 @@ export async function requireRh(
   admin: AdminClient,
   userId: string,
   empresaId: string | null | undefined,
-  req?: Request,
 ): Promise<AuthzResult> {
   if (!empresaId) {
-    return { denied: createErrorResponse('Empresa não identificada', 400, 'EMPRESA_REQUIRED', undefined, req), isAdmin: false, isRh: false };
+    return { denied: createErrorResponse('Empresa não identificada', 400, 'EMPRESA_REQUIRED'), isAdmin: false, isRh: false };
   }
   const rh = await podeGerirRh(admin, userId, empresaId);
   if (rh) return { denied: null, isAdmin: false, isRh: true };
@@ -115,7 +99,7 @@ export async function requireRh(
   // Mensagem deliberadamente uniforme: distinguir "empresa inexistente" de
   // "sem permissão" permitiria enumerar empresas e papéis por tentativa.
   return {
-    denied: createErrorResponse('Ação restrita a RH ou administrador', 403, 'FORBIDDEN', undefined, req),
+    denied: createErrorResponse('Ação restrita a RH ou administrador', 403, 'FORBIDDEN'),
     isAdmin: false,
     isRh: false,
   };
@@ -132,10 +116,9 @@ export async function requireSelfOrRh(
   userId: string,
   donoUserId: string | null | undefined,
   empresaId: string | null | undefined,
-  req?: Request,
 ): Promise<AuthzResult> {
   if (donoUserId && donoUserId === userId) {
     return { denied: null, isAdmin: false, isRh: false };
   }
-  return requireRh(admin, userId, empresaId, req);
+  return requireRh(admin, userId, empresaId);
 }

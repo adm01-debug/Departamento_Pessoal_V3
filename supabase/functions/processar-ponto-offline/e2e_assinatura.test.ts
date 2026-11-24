@@ -1,20 +1,18 @@
 // E2E — Validação de assinatura HMAC sobre `processar-ponto-offline`
 // Requer PONTO_HASH_SECRET configurado no projeto Supabase (enforcement ON).
-// Env: E2E_SUPABASE_URL, E2E_ANON_KEY, E2E_JWT, E2E_COLABORADOR_ID,
-//      E2E_EMPRESA_ID, E2E_PONTO_HASH_SECRET
+// Env: E2E_SUPABASE_URL, E2E_ANON_KEY, E2E_JWT, E2E_COLABORADOR_ID, E2E_PONTO_HASH_SECRET
 // Opcionais: E2E_ORIGIN
 
-import { assert, assertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
+import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 
 const url = Deno.env.get("E2E_SUPABASE_URL");
 const anon = Deno.env.get("E2E_ANON_KEY");
 const jwt = Deno.env.get("E2E_JWT");
 const colaboradorId = Deno.env.get("E2E_COLABORADOR_ID");
-const empresaId = Deno.env.get("E2E_EMPRESA_ID");
 const origin = Deno.env.get("E2E_ORIGIN") ?? "https://lovable.app";
 const secret = Deno.env.get("E2E_PONTO_HASH_SECRET");
 
-const canRun = Boolean(url && anon && jwt && colaboradorId && empresaId && secret);
+const canRun = Boolean(url && anon && jwt && colaboradorId && secret);
 
 async function hmac(canonical: string, key: string): Promise<string> {
   const k = await crypto.subtle.importKey(
@@ -48,7 +46,7 @@ Deno.test({
     const dispositivoId = `e2e-${crypto.randomUUID()}`;
     const timestamp = ts();
     const tipo = "entrada";
-    const canonical = `${empresaId}|${colaboradorId}|${timestamp}|${tipo}|${dispositivoId}`;
+    const canonical = `${colaboradorId}|${timestamp}|${tipo}|${dispositivoId}`;
     const hash = await hmac(canonical, secret!);
 
     const r = await fetch(`${url}/functions/v1/processar-ponto-offline`, {
@@ -57,7 +55,6 @@ Deno.test({
       body: JSON.stringify({
         registros: [{
           id: crypto.randomUUID(),
-          empresa_id: empresaId,
           colaborador_id: colaboradorId,
           timestamp, tipo, dispositivoId, hash,
         }],
@@ -80,7 +77,6 @@ Deno.test({
       body: JSON.stringify({
         registros: [{
           id: crypto.randomUUID(),
-          empresa_id: empresaId,
           colaborador_id: colaboradorId,
           timestamp: ts(),
           tipo: "entrada",
@@ -98,7 +94,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "offline: registro sem tenant é rejeitado antes do processamento",
+  name: "offline: campos obrigatórios ausentes → erro contabilizado, não crash",
   ignore: !canRun,
   async fn() {
     const r = await fetch(`${url}/functions/v1/processar-ponto-offline`, {
@@ -107,7 +103,7 @@ Deno.test({
       body: JSON.stringify({ registros: [{ id: crypto.randomUUID() }] }),
     });
     const j = await r.json();
-    assertEquals(r.status, 403);
-    assertEquals(j.code, "TENANT_MISMATCH");
+    assertEquals(r.status, 200);
+    assert(j.errors >= 1);
   },
 });

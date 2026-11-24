@@ -10,20 +10,20 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
-function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupListChain(data: any[], error: any = null) {
   const response = { data, error };
-  const chain: Record<string, unknown> = {};
+  const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: any) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
 }
 
-function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupInsertChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -31,7 +31,7 @@ function setupInsertChain(data: unknown, error: { message: string; code?: string
   return { insertFn, selectFn, maybeSingle };
 }
 
-function setupUpdateChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupUpdateChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const eqFn = vi.fn();
@@ -42,14 +42,9 @@ function setupUpdateChain(data: unknown, error: { message: string; code?: string
   return { updateFn, eqFn, selectFn, maybeSingle };
 }
 
-function setupDeleteChain(error: { message: string; code?: string } | null = null) {
+function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = {
-    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
-    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
-    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
-    eq: eqFn,
-  };
+  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -59,9 +54,7 @@ function setupDeleteChain(error: { message: string; code?: string } | null = nul
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('intervaloService.listar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns intervalos without empresa filter', async () => {
     const records = [{ id: 'i1', nome: 'Almoço 1h' }];
@@ -70,7 +63,7 @@ describe('intervaloService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     expect(await intervaloService.listar(EMPRESA_ID)).toEqual([]);
   });
 
@@ -95,9 +88,7 @@ describe('intervaloService.listar', () => {
 // ─── criar ────────────────────────────────────────────────────────────────────
 
 describe('intervaloService.criar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns new intervalo', async () => {
     const created = { id: 'i-new', nome: 'Descanso 15min' };
@@ -109,21 +100,19 @@ describe('intervaloService.criar', () => {
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(intervaloService.criar({ nome: 'Descanso 15min' })).rejects.toThrow();
+    await expect(intervaloService.criar({})).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(intervaloService.criar({ nome: 'Descanso 15min' })).rejects.toBeDefined();
+    await expect(intervaloService.criar({})).rejects.toBeDefined();
   });
 });
 
 // ─── atualizar ────────────────────────────────────────────────────────────────
 
 describe('intervaloService.atualizar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates and returns intervalo', async () => {
     const updated = { id: 'i1', duracao_minutos: 60 };
@@ -143,9 +132,7 @@ describe('intervaloService.atualizar', () => {
 // ─── excluir ──────────────────────────────────────────────────────────────────
 
 describe('intervaloService.excluir', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('deletes intervalo by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();

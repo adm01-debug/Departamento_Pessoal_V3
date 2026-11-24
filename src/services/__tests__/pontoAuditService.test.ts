@@ -8,10 +8,7 @@ vi.mock('@/utils/auditLogger', () => ({
 }));
 
 describe('pontoAuditService.logAdjustment', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockLog.mockResolvedValue(undefined);
-  });
+  beforeEach(() => { vi.clearAllMocks(); mockLog.mockResolvedValue(undefined); });
 
   it('calls auditLogger.log with UPDATE action', async () => {
     const anterior = { id: 'bp1', hora: '08:00' };
@@ -28,10 +25,7 @@ describe('pontoAuditService.logAdjustment', () => {
 });
 
 describe('pontoAuditService.logExclusion', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockLog.mockResolvedValue(undefined);
-  });
+  beforeEach(() => { vi.clearAllMocks(); mockLog.mockResolvedValue(undefined); });
 
   it('calls auditLogger.log with DELETE action', async () => {
     const anterior = { id: 'bp1', hora: '08:00' };
@@ -46,10 +40,7 @@ describe('pontoAuditService.logExclusion', () => {
 });
 
 describe('pontoAuditService.logMassAction', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockLog.mockResolvedValue(undefined);
-  });
+  beforeEach(() => { vi.clearAllMocks(); mockLog.mockResolvedValue(undefined); });
 
   it('calls auditLogger.log with EXECUTE_CALC action and detalhes spread', async () => {
     await pontoAuditService.logMassAction('emp-1', 'fechar_periodo', { total: 10 });
@@ -57,7 +48,6 @@ describe('pontoAuditService.logMassAction', () => {
       tabela: 'registros_ponto',
       registro_id: 'emp-1',
       acao: 'EXECUTE_CALC',
-      empresa_id: 'emp-1',
       dados_novos: { action: 'fechar_periodo', total: 10 },
     });
   });

@@ -1,11 +1,10 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   },
 }));
 
@@ -15,20 +14,9 @@ vi.mock('sonner', () => ({
 
 vi.mock('@/services/edgeFunctionsService', () => ({
   edgeFunctionsService: {
-    healthcheck: vi.fn().mockResolvedValue({
-      status: 'healthy',
-      services: {},
-      total_latency_ms: 12,
-      timestamp: new Date().toISOString(),
-    }),
+    healthcheck: vi.fn().mockResolvedValue({ status: 'healthy', services: {}, total_latency_ms: 12, timestamp: new Date().toISOString() }),
     limpezaDados: vi.fn().mockResolvedValue({ total_cleaned: 5, results: {} }),
-    backupServidor: vi.fn().mockResolvedValue({
-      counts: { colaboradores: 100 },
-      path: 'emp/backup.json',
-      signed_url: null,
-      sha256: 'a'.repeat(64),
-      integrity_verified: true,
-    }),
+    backupServidor: vi.fn().mockResolvedValue({ message: 'Backup OK', total_records: 100, tables: {} }),
     dispararAlertasDP: vi.fn().mockResolvedValue({}),
     processarAgendamentos: vi.fn().mockResolvedValue({ processados: 3 }),
     sincronizarBitrix: vi.fn().mockResolvedValue({}),

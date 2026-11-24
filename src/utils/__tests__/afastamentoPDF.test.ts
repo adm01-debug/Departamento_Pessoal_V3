@@ -2,27 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const { MockJsPDF, mockSave, mockAutoTable } = vi.hoisted(() => {
   const mockSave = vi.fn();
-  const MockJsPDF = vi.fn().mockImplementation(function () {
-    return {
-      setFontSize: vi.fn(),
-      setTextColor: vi.fn(),
-      setFont: vi.fn(),
-      setFillColor: vi.fn(),
-      rect: vi.fn(),
-      text: vi.fn(),
-      line: vi.fn(),
-      save: mockSave,
-      setPage: vi.fn(),
-      splitTextToSize: vi.fn((t: string) => [t]),
+  const MockJsPDF = vi.fn().mockImplementation(function () { return ({
+    setFontSize: vi.fn(), setTextColor: vi.fn(), setFont: vi.fn(),
+    setFillColor: vi.fn(), rect: vi.fn(), text: vi.fn(), line: vi.fn(),
+    save: mockSave, setPage: vi.fn(), splitTextToSize: vi.fn((t: string) => [t]),
+    internal: {
+      pageSize: { getWidth: () => 210, getHeight: () => 297 },
       getNumberOfPages: () => 1,
-      internal: {
-        pageSize: { getWidth: () => 210, getHeight: () => 297 },
-        getNumberOfPages: () => 1,
-      },
-      lastAutoTable: { finalY: 80 },
-    };
-  });
-  const mockAutoTable = vi.fn().mockImplementation(function (doc: Record<string, unknown>) {
+    },
+    lastAutoTable: { finalY: 80 },
+  }); });
+  const mockAutoTable = vi.fn().mockImplementation(function(doc: any) {
     doc.lastAutoTable = { finalY: 80 };
   });
   return { MockJsPDF, mockSave, mockAutoTable };
@@ -51,27 +41,17 @@ describe('gerarAfastamentosPDF', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     const mockDoc = {
-      setFontSize: vi.fn(),
-      setTextColor: vi.fn(),
-      setFont: vi.fn(),
-      setFillColor: vi.fn(),
-      rect: vi.fn(),
-      text: vi.fn(),
-      line: vi.fn(),
-      save: mockSave,
-      setPage: vi.fn(),
-      splitTextToSize: vi.fn((t: string) => [t]),
-      getNumberOfPages: () => 1,
+      setFontSize: vi.fn(), setTextColor: vi.fn(), setFont: vi.fn(),
+      setFillColor: vi.fn(), rect: vi.fn(), text: vi.fn(), line: vi.fn(),
+      save: mockSave, setPage: vi.fn(), splitTextToSize: vi.fn((t: string) => [t]),
       internal: {
         pageSize: { getWidth: () => 210, getHeight: () => 297 },
         getNumberOfPages: () => 1,
       },
       lastAutoTable: { finalY: 80 },
     };
-    MockJsPDF.mockImplementation(function () {
-      return mockDoc as never;
-    });
-    mockAutoTable.mockImplementation(function (doc: Record<string, unknown>) {
+    MockJsPDF.mockImplementation(function () { return mockDoc as any; });
+    mockAutoTable.mockImplementation(function(doc: any) {
       doc.lastAutoTable = { finalY: 80 };
     });
   });

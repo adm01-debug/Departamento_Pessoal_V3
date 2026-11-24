@@ -7,53 +7,51 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { ScrollText, Search, Download, Calendar, User, Tag, Filter } from 'lucide-react';
-import { auditoriaService } from '@/services/auditoriaService';
+import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { exportPontoCSV } from '@/services/exportService';
-import { usePiiMask } from '@/hooks/usePiiMask';
+import { maskEmail } from '@/utils/piiMask';
 
 export function GlobalAuditLogTab() {
-  const pii = usePiiMask();
   const [search, setSearch] = useState('');
   const [tabelaFilter, setTabelaFilter] = useState('todas');
 
   const { data: logs = [], isLoading } = useQuery({
     queryKey: ['global-audit-logs', tabelaFilter],
-    queryFn: () =>
-      auditoriaService.listarTrilha({
-        empresa_id: null,
-        tabela: tabelaFilter === 'todas' ? undefined : tabelaFilter,
-        limite: 200,
-      }),
-    refetchInterval: 30_000,
+    queryFn: async () => {
+      let query = (supabase as any).from('audit_log').select('*').order('created_at', { ascending: false }).limit(200);
+      if (tabelaFilter !== 'todas') {
+        query = query.eq('tabela', tabelaFilter);
+      }
+      const { data, error } = await query;
+      if (error) throw error;
+      return data || [];
+    }
   });
 
-  const filtered = logs.filter(
-    (l) =>
-      !search ||
-      l.tabela?.toLowerCase().includes(search.toLowerCase()) ||
-      l.user_email?.toLowerCase().includes(search.toLowerCase()) ||
-      l.acao?.toLowerCase().includes(search.toLowerCase()) ||
-      JSON.stringify(pii.deep(l.dados_novos) || {})
-        .toLowerCase()
-        .includes(search.toLowerCase())
+  const filtered = logs.filter((l: any) => 
+    !search || 
+    l.tabela?.toLowerCase().includes(search.toLowerCase()) ||
+    l.user_email?.toLowerCase().includes(search.toLowerCase()) ||
+    l.acao?.toLowerCase().includes(search.toLowerCase()) ||
+    JSON.stringify(l.dados_novos || {}).toLowerCase().includes(search.toLowerCase())
   );
 
   const handleExport = () => {
-    const data = filtered.map((l) => ({
+    const data = filtered.map((l: any) => ({
       data: format(new Date(l.created_at), 'dd/MM/yyyy HH:mm:ss'),
       usuario: l.user_email || 'Sistema',
       acao: l.acao,
       tabela: l.tabela,
       id_registro: l.registro_id,
-      dados: JSON.stringify(pii.deep(l.dados_novos)),
+      dados: JSON.stringify(l.dados_novos)
     }));
     exportPontoCSV(data, 'auditoria-global-dp.csv');
   };
 
   const getTabelas = () => {
-    const set = new Set(logs.map((l) => l.tabela));
+    const set = new Set(logs.map((l: any) => l.tabela));
     return Array.from(set);
   };
 
@@ -67,9 +65,7 @@ export function GlobalAuditLogTab() {
               <CardTitle className="font-display flex items-center gap-2">
                 <ScrollText className="h-5 w-5 text-primary" /> Central de Auditoria & Compliance
               </CardTitle>
-              <CardDescription className="font-body">
-                Trilha completa de alterações e execuções em todo o sistema
-              </CardDescription>
+              <CardDescription className="font-body">Trilha completa de alterações e execuções em todo o sistema</CardDescription>
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" className="rounded-xl gap-2 h-9" onClick={handleExport}>
@@ -82,8 +78,8 @@ export function GlobalAuditLogTab() {
           <div className="flex flex-col md:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar por usuário, ação ou dados..."
+              <Input 
+                placeholder="Buscar por usuário, ação ou dados..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9 rounded-xl border-border/30"
@@ -91,26 +87,23 @@ export function GlobalAuditLogTab() {
             </div>
             <div className="flex items-center gap-2 bg-muted/30 px-3 py-1 rounded-xl border border-border/30">
               <Filter className="h-3.5 w-3.5 text-muted-foreground" />
-              <select
+              <select 
                 value={tabelaFilter}
                 onChange={(e) => setTabelaFilter(e.target.value)}
                 className="bg-transparent border-none text-xs font-body focus:ring-0 outline-hidden"
               >
                 <option value="todas">Todas as Entidades</option>
-                {getTabelas().map((t) => (
-                  <option key={String(t)} value={String(t)}>
-                    {String(t)}
-                  </option>
+                {getTabelas().map((t: any) => (
+                  <option key={String(t)} value={String(t)}>{String(t)}</option>
                 ))}
+
               </select>
             </div>
           </div>
 
           <div className="rounded-xl border border-border/30 overflow-hidden bg-card">
             {isLoading ? (
-              <div className="p-12 flex justify-center">
-                <Spinner size="lg" />
-              </div>
+              <div className="p-12 flex justify-center"><Spinner size="lg" /></div>
             ) : (
               <Table>
                 <TableHeader>
@@ -123,7 +116,7 @@ export function GlobalAuditLogTab() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filtered.map((log) => (
+                  {filtered.map((log: any) => (
                     <TableRow key={log.id} className="hover:bg-accent/30 transition-colors group">
                       <TableCell className="font-mono text-[10px] whitespace-nowrap">
                         <div className="flex items-center gap-1.5">
@@ -136,22 +129,15 @@ export function GlobalAuditLogTab() {
                           <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
                             <User className="h-3 w-3 text-primary" />
                           </div>
-                          <span className="text-xs font-medium truncate max-w-[150px]">
-                            {log.user_email ? pii.email(log.user_email) : 'Sistema'}
-                          </span>
+                          <span className="text-xs font-medium truncate max-w-[150px]">{log.user_email ? maskEmail(log.user_email) : 'Sistema'}</span>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={`text-[9px] uppercase font-bold tracking-tight ${
-                            log.acao === 'DELETE'
-                              ? 'border-destructive/30 text-destructive bg-destructive/5'
-                              : log.acao === 'EXECUTE_CALC'
-                                ? 'border-primary/30 text-primary bg-primary/5'
-                                : 'border-info/30 text-info bg-info/5'
-                          }`}
-                        >
+                        <Badge variant="outline" className={`text-[9px] uppercase font-medium tracking-tight ${
+                          log.acao === 'DELETE' ? 'border-destructive/30 text-destructive bg-destructive/5' :
+                          log.acao === 'EXECUTE_CALC' ? 'border-primary/30 text-primary bg-primary/5' :
+                          'border-info/30 text-info bg-info/5'
+                        }`}>
                           {log.acao}
                         </Badge>
                       </TableCell>
@@ -163,7 +149,7 @@ export function GlobalAuditLogTab() {
                       </TableCell>
                       <TableCell>
                         <div className="text-[10px] text-muted-foreground max-w-[250px] truncate group-hover:whitespace-normal group-hover:overflow-visible group-hover:max-w-none transition-all">
-                          {log.dados_novos ? JSON.stringify(pii.deep(log.dados_novos)) : '-'}
+                          {log.dados_novos ? JSON.stringify(log.dados_novos) : '-'}
                         </div>
                       </TableCell>
                     </TableRow>
@@ -185,10 +171,10 @@ export function GlobalAuditLogTab() {
       <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10 flex items-start gap-3">
         <ShieldText className="h-5 w-5 text-primary shrink-0" />
         <div className="space-y-1">
-          <p className="text-xs font-bold text-primary">Conformidade LGPD & REP-P</p>
+          <p className="text-xs font-medium text-primary">Conformidade LGPD & REP-P</p>
           <p className="text-[10px] text-muted-foreground leading-relaxed">
-            Esta trilha de auditoria é imutável e registra todas as operações sensíveis do sistema. Em caso de
-            fiscalização, os dados aqui apresentados servem como prova de integridade dos processos de Folha e Ponto.
+            Esta trilha de auditoria é imutável e registra todas as operações sensíveis do sistema. 
+            Em caso de fiscalização, os dados aqui apresentados servem como prova de integridade dos processos de Folha e Ponto.
           </p>
         </div>
       </div>
@@ -198,16 +184,16 @@ export function GlobalAuditLogTab() {
 
 function ShieldText({ className }: { className?: string }) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="24" 
+      height="24" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
       className={className}
     >
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />

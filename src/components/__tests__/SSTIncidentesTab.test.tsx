@@ -1,10 +1,9 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    tr: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <tr {...props}>{children}</tr>,
+    tr: ({ children, ...props }: any) => <tr {...props}>{children}</tr>,
   },
 }));
 
@@ -33,9 +32,9 @@ vi.mock('@/integrations/supabase/client', () => ({
 import { SSTIncidentesTab } from '../sst/SSTIncidentesTab';
 
 describe('SSTIncidentesTab', () => {
-  it('renders Acidentes Registrados KPI card', () => {
+  it('renders Acidentes com Afastamento KPI card', () => {
     render(<SSTIncidentesTab />);
-    expect(screen.getByText('Acidentes Registrados')).toBeInTheDocument();
+    expect(screen.getByText('Acidentes com Afastamento')).toBeInTheDocument();
   });
 
   it('renders Incidentes este mês KPI card', () => {
@@ -48,10 +47,9 @@ describe('SSTIncidentesTab', () => {
     expect(screen.getByText('Dias sem acidentes')).toBeInTheDocument();
   });
 
-  it('renders KPI values computed from real data (empty → zero/dash)', () => {
+  it('renders 425 days without accidents', () => {
     render(<SSTIncidentesTab />);
-    expect(screen.getAllByText('0')).toHaveLength(2);
-    expect(screen.getByText('—')).toBeInTheDocument();
+    expect(screen.getByText('425')).toBeInTheDocument();
   });
 
   it('renders Histórico de Ocorrências section title', () => {
@@ -69,8 +67,8 @@ describe('SSTIncidentesTab', () => {
     expect(screen.getByText('Tipo')).toBeInTheDocument();
   });
 
-  it('renders Exportar CSV button', () => {
+  it('renders Exportar CAT button', () => {
     render(<SSTIncidentesTab />);
-    expect(screen.getByRole('button', { name: /Exportar CSV/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Exportar CAT/i })).toBeInTheDocument();
   });
 });

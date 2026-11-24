@@ -50,7 +50,6 @@ DROP POLICY IF EXISTS "Instâncias acessíveis por empresa" ON public.treinament
 CREATE POLICY "Instâncias acessíveis por empresa" ON public.treinamento_instancias
     FOR ALL USING (true); -- Ajustado via join na app
 
-DROP POLICY IF EXISTS "Feedbacks acessíveis por inscrição" ON public.treinamento_feedback;
 CREATE POLICY "Feedbacks acessíveis por inscrição" ON public.treinamento_feedback
     FOR ALL USING (true);
 

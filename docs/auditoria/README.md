@@ -1,22 +1,5 @@
 # Auditoria Exaustiva do Sistema — Departamento Pessoal v2
 
-> **Plano de workflows de 14/10/2026:** [`PLANO_100_WORKFLOWS_2026-10-14.md`](./PLANO_100_WORKFLOWS_2026-10-14.md) — auditoria dos 11 workflows, ruleset, environments, secrets e histórico real de runs; 28 achados (D1–D28) e 100 etapas (W01–W100). Sucede `PLANO_100_WORKFLOWS_2026-09-27.md`; **só plano, nada executado.**
-
-> **Levantamento de pendências de 12/10/2026:** [`LEVANTAMENTO_PENDENCIAS_2026-10-12.md`](./LEVANTAMENTO_PENDENCIAS_2026-10-12.md) consolida tudo o que foi planejado (planos, docs, tabelas, telas, edge functions) e não foi executado, ou foi só parcialmente ou de forma simulada, conferido contra o código de `bb6756cb5` e o banco de produção. Evidência completa nos anexos em [`LEVANTAMENTO_PENDENCIAS_2026-10-12/`](./LEVANTAMENTO_PENDENCIAS_2026-10-12/).
-
-> **Atualização canônica de 10/09/2026:** a auditoria abaixo, de 18/07, é histórica. A avaliação atual acessou diretamente o banco `frjbfeamybqsejlvmqbl`, reduziu a nota para **4,11/10** e bloqueou dados reais por vazamentos anônimos, RPCs privilegiadas, falhas de hash e drift de schema. Use estes documentos como fonte corrente:
->
-> - [`AUDITORIA_TECNICA_EXAUSTIVA_2026-09-10.md`](./AUDITORIA_TECNICA_EXAUSTIVA_2026-09-10.md);
-> - [`AUDITORIA_BANCO_CANONICO_AO_VIVO_2026-09-10.md`](./AUDITORIA_BANCO_CANONICO_AO_VIVO_2026-09-10.md);
-> - [`PLANO_100_ETAPAS_2026-09-10.md`](./PLANO_100_ETAPAS_2026-09-10.md);
-> - [`PLANO_MELHORIAS_50_ETAPAS_2026-09-10.md`](./PLANO_MELHORIAS_50_ETAPAS_2026-09-10.md) — versão executiva consolidada, com 500 subetapas e 200 checkpoints;
-
-- [`PLANO_MELHORIAS_50_ETAPAS_2026-09-13.md`](./PLANO_MELHORIAS_50_ETAPAS_2026-09-13.md) — **ciclo 2 (E51)**: continuação do E50 a partir da análise de sincronização de 13/09; publica o lote local, promove ao canônico com ledger exato, encerra os RV-01…RV-16 e converte dívida de tipos/cobertura em gates decrescentes;
-
-> - [`REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md`](./REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md) — validação das 50 etapas e inventário de funcionalidades parciais, sugeridas, simuladas ou órfãs;
-> - [`SIMULACAO_PRE_EXECUCAO_2026-09-10.md`](./SIMULACAO_PRE_EXECUCAO_2026-09-10.md) — gates validados antes da execução, cenários de regressão e ordem segura;
-> - [`HANDOFF_CLINE_REMEDIACAO_2026-09-10.md`](./HANDOFF_CLINE_REMEDIACAO_2026-09-10.md).
-
 Auditoria independente conduzida em 2026-07-18 sobre 662 arquivos TS/TSX (~106k LOC), 102 páginas, ~90 services, ~66 hooks, 54 Edge Functions e 405 migrations. **Fase atual: descoberta e documentação — nenhuma correção aplicada.**
 
 ## Documentos

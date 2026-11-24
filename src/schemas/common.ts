@@ -6,28 +6,17 @@
  */
 import { z } from 'zod';
 
-/**
- * Forma de uuid aceita pelo Postgres — `z.string().uuid()` (zod v4) exige os
- * nibbles de versão/variante do RFC 9562 e rejeitaria ids legados válidos para
- * o banco (ex.: seeds `11110000-...`). Use para campos alimentados por dados
- * vindos do banco.
- */
-export const uuidPg = (message = 'UUID inválido') =>
-  z.string().regex(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/, message);
-
 export const metricasSchema = z.object({
-  empresaId: uuidPg('ID da empresa deve ser um UUID válido'),
+  empresaId: z.string().uuid('ID da empresa deve ser um UUID válido').optional(),
 });
 
-export const webhookSchema = z
-  .object({
-    event_id: z.string().min(1, 'event_id é obrigatório para idempotência').max(128),
-    event: z.string().min(1, 'Evento é obrigatório').max(128),
-    data: z.record(z.string(), z.unknown()),
-    timestamp: z.string().datetime().optional(),
-    version: z.string().optional().default('v1'),
-  })
-  .strict();
+export const webhookSchema = z.object({
+  event_id: z.string().min(1, 'event_id é obrigatório para idempotência').max(128),
+  event: z.string().min(1, 'Evento é obrigatório').max(128),
+  data: z.record(z.string(), z.unknown()),
+  timestamp: z.string().datetime().optional(),
+  version: z.string().optional().default('v1'),
+}).strict();
 
 export const healthcheckSchema = z.object({}).strict();
 
@@ -40,60 +29,46 @@ export const cnpjSchema = z.object({
 });
 
 export const holeriteSchema = z.object({
-  colaboradorId: uuidPg('ID do colaborador deve ser um UUID válido'),
-  competencia: z
-    .string()
-    .regex(/^\d{4}-(?:0[1-9]|1[0-2])$/, 'Competência deve estar no formato AAAA-MM')
-    .refine((value) => value.startsWith('2025-') || value.startsWith('2026-'), {
-      message: 'Tabela INSS homologada somente para competências de 2025 e 2026',
-    }),
+  colaboradorId: z.string().uuid('ID do colaborador deve ser um UUID válido'),
+  competencia: z.string().regex(/^\d{4}-\d{2}$/, 'Competência deve estar no formato AAAA-MM'),
 });
 
 export const calcularFolhaSchema = z.object({
-  empresa_id: uuidPg('ID da empresa inválido'),
-  competencia: z.string().regex(/^\d{4}-(?:0[1-9]|1[0-2])$/, 'Formato de competência inválido (AAAA-MM)'),
+  empresa_id: z.string().uuid('ID da empresa inválido'),
+  competencia: z.string().regex(/^\d{4}-\d{2}$/, 'Formato de competência inválido (AAAA-MM)'),
 });
 
 export const notificacaoSchema = z.discriminatedUnion('action', [
-  z
-    .object({
-      action: z.literal('enviar'),
-      empresaId: uuidPg(),
-      tipo: z.enum(['info', 'aviso', 'erro', 'sucesso']).default('info'),
-      destinatarios: z
-        .array(z.object({ user_id: uuidPg() }).strict())
-        .min(1)
-        .max(500),
-      assunto: z.string().trim().min(1).max(200),
-      conteudo: z.string().trim().min(1).max(5000),
-    })
-    .strict(),
-  z
-    .object({
-      action: z.literal('listar'),
-      empresaId: uuidPg().optional(),
-    })
-    .strict(),
+  z.object({
+    action: z.literal('enviar'),
+    empresaId: z.string().uuid(),
+    tipo: z.enum(['info', 'aviso', 'erro', 'sucesso']).default('info'),
+    destinatarios: z.array(
+      z.object({ user_id: z.string().uuid() }).strict()
+    ).min(1).max(500),
+    assunto: z.string().trim().min(1).max(200),
+    conteudo: z.string().trim().min(1).max(5000),
+  }).strict(),
+  z.object({
+    action: z.literal('listar'),
+    empresaId: z.string().uuid().optional(),
+  }).strict(),
 ]);
 
-export const auditoriaSchema = z
-  .object({
-    action: z.enum(['registrar', 'listar', 'resumo']),
-    empresaId: uuidPg().optional(),
-    data: z
-      .object({
-        acao: z.string(),
-        entidade: z.string(),
-        entidade_id: z.string().optional(),
-        usuario_id: z.string().optional(),
-        usuario_nome: z.string().optional(),
-        descricao: z.string().optional(),
-        dados_anteriores: z.unknown().optional(),
-        dados_novos: z.unknown().optional(),
-        ip_address: z.union([z.ipv4(), z.ipv6()]).optional(),
-        data_inicio: z.string().datetime().optional(),
-        data_fim: z.string().datetime().optional(),
-      })
-      .optional(),
-  })
-  .strict();
+export const auditoriaSchema = z.object({
+  action: z.enum(['registrar', 'listar', 'resumo']),
+  empresaId: z.string().uuid().optional(),
+  data: z.object({
+    acao: z.string(),
+    entidade: z.string(),
+    entidade_id: z.string().optional(),
+    usuario_id: z.string().optional(),
+    usuario_nome: z.string().optional(),
+    descricao: z.string().optional(),
+    dados_anteriores: z.unknown().optional(),
+    dados_novos: z.unknown().optional(),
+    ip_address: z.string().refine((v) => /^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$|^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/.test(v), { message: 'IP inválido' }).optional(),
+    data_inicio: z.string().datetime().optional(),
+    data_fim: z.string().datetime().optional(),
+  }).optional(),
+}).strict();

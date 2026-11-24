@@ -7,7 +7,9 @@ const { mockUseMutation, mockUseQueryClient, mockStorage } = vi.hoisted(() => ({
   mockStorage: {
     from: vi.fn().mockReturnValue({
       upload: vi.fn().mockResolvedValue({ error: null }),
-      createSignedUrl: vi.fn().mockResolvedValue({ data: { signedUrl: 'https://signed.url' }, error: null }),
+      createSignedUrl: vi
+        .fn()
+        .mockResolvedValue({ data: { signedUrl: 'https://signed.url' }, error: null }),
     }),
   },
 }));
@@ -47,7 +49,9 @@ describe('useGerarComunicadoColetivas', () => {
 
   it('calls useMutation with mutationFn', () => {
     renderHook(() => useGerarComunicadoColetivas());
-    expect(mockUseMutation).toHaveBeenCalledWith(expect.objectContaining({ mutationFn: expect.any(Function) }));
+    expect(mockUseMutation).toHaveBeenCalledWith(
+      expect.objectContaining({ mutationFn: expect.any(Function) })
+    );
   });
 
   it('exposes mutate function', () => {
@@ -63,19 +67,23 @@ describe('useGerarComunicadoColetivas', () => {
   it('invalidates ferias_coletivas on success', () => {
     const invalidate = vi.fn();
     mockUseQueryClient.mockReturnValue({ invalidateQueries: invalidate });
-    let capturedOnSuccess: (...args: unknown[]) => void = () => {};
-    mockUseMutation.mockImplementation(({ onSuccess }: { onSuccess: (...args: unknown[]) => void }) => {
+    let capturedOnSuccess: Function;
+    mockUseMutation.mockImplementation(({ onSuccess }: any) => {
       capturedOnSuccess = onSuccess;
       return { mutate: vi.fn(), isPending: false };
     });
     renderHook(() => useGerarComunicadoColetivas());
     capturedOnSuccess!();
-    expect(invalidate).toHaveBeenCalledWith(expect.objectContaining({ queryKey: ['ferias_coletivas'] }));
+    expect(invalidate).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: ['ferias_coletivas'] })
+    );
   });
 
   it('passes onError to useMutation', () => {
     renderHook(() => useGerarComunicadoColetivas());
-    expect(mockUseMutation).toHaveBeenCalledWith(expect.objectContaining({ onError: expect.any(Function) }));
+    expect(mockUseMutation).toHaveBeenCalledWith(
+      expect.objectContaining({ onError: expect.any(Function) })
+    );
   });
 });
 
@@ -86,18 +94,18 @@ describe('baixarComunicadoColetivas', () => {
 
   it('returns signed URL for given path', async () => {
     const { supabase } = await import('@/integrations/supabase/client');
-    vi.mocked(supabase.storage.from).mockReturnValue({
+    (supabase.storage.from as any).mockReturnValue({
       createSignedUrl: vi.fn().mockResolvedValue({ data: { signedUrl: 'https://example.com/pdf' }, error: null }),
-    } as unknown as ReturnType<typeof supabase.storage.from>);
+    });
     const url = await baixarComunicadoColetivas('emp/col/mte.pdf');
     expect(url).toBe('https://example.com/pdf');
   });
 
   it('throws on storage error', async () => {
     const { supabase } = await import('@/integrations/supabase/client');
-    vi.mocked(supabase.storage.from).mockReturnValue({
+    (supabase.storage.from as any).mockReturnValue({
       createSignedUrl: vi.fn().mockResolvedValue({ data: null, error: new Error('storage fail') }),
-    } as unknown as ReturnType<typeof supabase.storage.from>);
+    });
     await expect(baixarComunicadoColetivas('bad/path.pdf')).rejects.toBeDefined();
   });
 });

@@ -1,8 +1,4 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { Database, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
-import { validateTablePayload } from '@/schemas/validate';
-
-type Functions = Database['public']['Functions'];
 
 export type TipoContrato =
   | 'clt_indeterminado'
@@ -59,7 +55,7 @@ export interface ContratoGerado {
 export const contratoTemplateService = {
   async listar(empresaId: string): Promise<ContratoTemplate[]> {
     const { data, error } = await supabase
-      .from('contrato_templates')
+      .from('contrato_templates' as any)
       .select('*')
       .eq('empresa_id', empresaId)
       .order('tipo_contrato')
@@ -69,30 +65,21 @@ export const contratoTemplateService = {
   },
 
   async obter(id: string): Promise<ContratoTemplate | null> {
-    const { data, error } = await supabase.from('contrato_templates').select('*').eq('id', id).maybeSingle();
+    const { data, error } = await supabase
+      .from('contrato_templates' as any)
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
     if (error) throw error;
     return (data ?? null) as unknown as ContratoTemplate | null;
   },
 
-  async salvar(
-    payload: Partial<ContratoTemplate> & {
-      empresa_id: string;
-      nome: string;
-      tipo_contrato: TipoContrato;
-      corpo_html: string;
-    }
-  ): Promise<ContratoTemplate> {
+  async salvar(payload: Partial<ContratoTemplate> & { empresa_id: string; nome: string; tipo_contrato: TipoContrato; corpo_html: string }): Promise<ContratoTemplate> {
     const { id, ...rest } = payload;
     if (id) {
       const { data, error } = await supabase
-        .from('contrato_templates')
-        .update(
-          validateTablePayload(
-            'contrato_templates',
-            rest as unknown as TablesUpdate<'contrato_templates'>,
-            'contratoTemplateService:contrato_templates'
-          )
-        )
+        .from('contrato_templates' as any)
+        .update(rest as any)
         .eq('id', id)
         .select()
         .single();
@@ -100,14 +87,8 @@ export const contratoTemplateService = {
       return data as unknown as ContratoTemplate;
     }
     const { data, error } = await supabase
-      .from('contrato_templates')
-      .insert(
-        validateTablePayload(
-          'contrato_templates',
-          rest as unknown as TablesInsert<'contrato_templates'>,
-          'contratoTemplateService:contrato_templates'
-        )
-      )
+      .from('contrato_templates' as any)
+      .insert(rest as any)
       .select()
       .single();
     if (error) throw error;
@@ -117,26 +98,16 @@ export const contratoTemplateService = {
   async duplicarNovaVersao(id: string): Promise<ContratoTemplate> {
     const atual = await this.obter(id);
     if (!atual) throw new Error('Template não encontrado');
-    await supabase
-      .from('contrato_templates')
-      .update(
-        validateTablePayload('contrato_templates', { ativo: false }, 'contratoTemplateService:contrato_templates')
-      )
-      .eq('id', id);
-    const clone: Partial<ContratoTemplate> & {
-      empresa_id: string;
-      nome: string;
-      tipo_contrato: TipoContrato;
-      corpo_html: string;
-    } = { ...atual, versao: atual.versao + 1, ativo: true };
+    await supabase.from('contrato_templates' as any).update({ ativo: false } as any).eq('id', id);
+    const clone = { ...atual, versao: atual.versao + 1, ativo: true } as Partial<ContratoTemplate>;
     delete (clone as { id?: string }).id;
     delete (clone as { created_at?: string }).created_at;
     delete (clone as { updated_at?: string }).updated_at;
-    return this.salvar(clone);
+    return this.salvar(clone as any);
   },
 
   async excluir(id: string): Promise<void> {
-    const { error } = await supabase.from('contrato_templates').delete().eq('id', id);
+    const { error } = await supabase.from('contrato_templates' as any).delete().eq('id', id);
     if (error) throw error;
   },
 
@@ -145,23 +116,11 @@ export const contratoTemplateService = {
       body: { admissao_id, template_id },
     });
     if (error) throw error;
-    return data as {
-      contrato_id: string;
-      template_id: string;
-      template_nome: string;
-      template_versao: number;
-      path: string;
-      hash: string;
-      signed_url: string;
-    };
+    return data as { contrato_id: string; template_id: string; template_nome: string; template_versao: number; path: string; hash: string; signed_url: string };
   },
 
   async listarGerados(empresaId: string, admissaoId?: string): Promise<ContratoGerado[]> {
-    let q = supabase
-      .from('contratos_gerados')
-      .select('*')
-      .eq('empresa_id', empresaId)
-      .order('created_at', { ascending: false });
+    let q = supabase.from('contratos_gerados' as any).select('*').eq('empresa_id', empresaId).order('created_at', { ascending: false });
     if (admissaoId) q = q.eq('admissao_id', admissaoId);
     const { data, error } = await q;
     if (error) throw error;
@@ -178,33 +137,34 @@ export const contratoTemplateService = {
     contratoId: string,
     opts: { email?: string; cpf?: string; validadeDias?: number } = {}
   ): Promise<{ token: string; url: string; expira_em: string }> {
-    const { data, error } = await supabase.rpc('contrato_gerar_token_assinatura', {
+    const { data, error } = await supabase.rpc('contrato_gerar_token_assinatura' as any, {
       p_contrato_id: contratoId,
       p_email: opts.email ?? null,
       p_cpf: opts.cpf ?? null,
       p_validade_dias: opts.validadeDias ?? 7,
-    } as unknown as Functions['contrato_gerar_token_assinatura']['Args']);
+    } as any);
     if (error) throw error;
-    const row = Array.isArray(data)
-      ? (data[0] as { token: string; expira_em: string })
-      : (data as { token: string; expira_em: string });
+    const row = Array.isArray(data) ? (data[0] as { token: string; expira_em: string }) : (data as { token: string; expira_em: string });
     const url = `${window.location.origin}/assinar-contrato/${row.token}`;
     return { token: row.token, url, expira_em: row.expira_em };
   },
 
   async revogarToken(tokenId: string, motivo?: string): Promise<void> {
-    const { error } = await supabase.rpc('contrato_revogar_token', {
+    const { error } = await supabase.rpc('contrato_revogar_token' as any, {
       p_token_id: tokenId,
       p_motivo: motivo ?? null,
-    } as unknown as Functions['contrato_revogar_token']['Args']);
+    } as any);
     if (error) throw error;
   },
 
-  async estenderExpiracaoToken(tokenId: string, dias = 7): Promise<{ id: string; expira_em: string }> {
-    const { data, error } = await supabase.rpc('contrato_estender_expiracao', {
+  async estenderExpiracaoToken(
+    tokenId: string,
+    dias = 7
+  ): Promise<{ id: string; expira_em: string }> {
+    const { data, error } = await supabase.rpc('contrato_estender_expiracao' as any, {
       p_token_id: tokenId,
       p_dias: dias,
-    });
+    } as any);
     if (error) throw error;
     const row = Array.isArray(data)
       ? (data[0] as { id: string; expira_em: string })
@@ -212,30 +172,21 @@ export const contratoTemplateService = {
     return row;
   },
 
-  async listarEventos(contratoId: string): Promise<
-    Array<{
-      id: string;
-      evento: string;
-      detalhes: Record<string, unknown> | null;
-      ip: string | null;
-      user_agent: string | null;
-      created_at: string;
-    }>
-  > {
+  async listarEventos(contratoId: string): Promise<Array<{
+    id: string;
+    evento: string;
+    detalhes: Record<string, unknown> | null;
+    ip: string | null;
+    user_agent: string | null;
+    created_at: string;
+  }>> {
     const { data, error } = await supabase
-      .from('contrato_token_eventos')
+      .from('contrato_token_eventos' as any)
       .select('id, evento, detalhes, ip, user_agent, created_at')
       .eq('contrato_id', contratoId)
       .order('created_at', { ascending: false })
       .limit(200);
     if (error) throw error;
-    return (data ?? []) as unknown as Array<{
-      id: string;
-      evento: string;
-      detalhes: Record<string, unknown> | null;
-      ip: string | null;
-      user_agent: string | null;
-      created_at: string;
-    }>;
+    return (data ?? []) as any;
   },
 };

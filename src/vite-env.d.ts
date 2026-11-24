@@ -1,12 +1,9 @@
 // V15-234: src/vite-env.d.ts
 /// <reference types="vite/client" />
-/// <reference types="vitest/globals" />
 
 interface ImportMetaEnv {
   readonly VITE_SUPABASE_URL: string;
-  /** Chave pública canônica do projeto (única suportada). */
-  readonly VITE_SUPABASE_PUBLISHABLE_KEY: string;
-  readonly VITE_SUPABASE_PROJECT_ID?: string;
+  readonly VITE_SUPABASE_ANON_KEY: string;
   readonly VITE_API_URL?: string;
   /** 'true' somente se o provider Google estiver habilitado no Supabase Auth. */
   readonly VITE_AUTH_GOOGLE_ENABLED?: string;

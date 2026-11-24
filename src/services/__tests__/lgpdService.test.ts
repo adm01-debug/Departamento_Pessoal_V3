@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { lgpdService } from '../lgpdService';
-import type { Insertable } from '@/integrations/supabase/database.types';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -14,21 +13,21 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Thenable list chain (select → order → optional eq → await)
-function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupListChain(data: any[], error: any = null) {
   const response = { data, error };
-  const chain: Record<string, unknown> = {};
+  const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: any) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
 }
 
 // Insert chain (insert → select → maybeSingle)
-function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupInsertChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -37,7 +36,7 @@ function setupInsertChain(data: unknown, error: { message: string; code?: string
 }
 
 // Update chain (update → eq → select → maybeSingle)
-function setupUpdateChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupUpdateChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const eqFn = vi.fn();
@@ -51,9 +50,7 @@ function setupUpdateChain(data: unknown, error: { message: string; code?: string
 // ─── listarConsentimentos ─────────────────────────────────────────────────────
 
 describe('lgpdService.listarConsentimentos', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns consentimentos without empresa filter', async () => {
     const records = [{ id: 'lgc-1', aceito: true }];
@@ -63,7 +60,7 @@ describe('lgpdService.listarConsentimentos', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     const result = await lgpdService.listarConsentimentos(EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -83,7 +80,9 @@ describe('lgpdService.listarConsentimentos', () => {
   it('selects with colaborador join', async () => {
     const { selectFn } = setupListChain([]);
     await lgpdService.listarConsentimentos(EMPRESA_ID);
-    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
+    expect(selectFn).toHaveBeenCalledWith(
+      expect.stringContaining('colaborador:colaboradores')
+    );
   });
 
   it('throws on DB error', async () => {
@@ -108,42 +107,37 @@ describe('lgpdService.listarConsentimentos', () => {
 // ─── criarConsentimento ───────────────────────────────────────────────────────
 
 describe('lgpdService.criarConsentimento', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns the new consentimento', async () => {
     const created = { id: 'lgc-new', aceito: true };
     const { insertFn } = setupInsertChain(created);
-    const payload = { aceito: true, colaborador_id: 'c1', tipo: 'cookies' };
-    const result = await lgpdService.criarConsentimento(payload);
-    expect(insertFn).toHaveBeenCalledWith(payload);
+    const result = await lgpdService.criarConsentimento({ aceito: true, colaborador_id: 'c1' });
+    expect(insertFn).toHaveBeenCalledWith({ aceito: true, colaborador_id: 'c1' });
     expect(result).toEqual(created);
   });
 
   it('throws when data is null (no record returned)', async () => {
     setupInsertChain(null);
-    await expect(lgpdService.criarConsentimento({} as Insertable<'lgpd_consentimentos'>)).rejects.toThrow();
+    await expect(lgpdService.criarConsentimento({})).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(lgpdService.criarConsentimento({} as Insertable<'lgpd_consentimentos'>)).rejects.toBeDefined();
+    await expect(lgpdService.criarConsentimento({})).rejects.toBeDefined();
   });
 });
 
 // ─── revogarConsentimento ─────────────────────────────────────────────────────
 
 describe('lgpdService.revogarConsentimento', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates aceito=false and sets revogado_em', async () => {
     const updated = { id: 'lgc-1', aceito: false };
     const { updateFn, eqFn } = setupUpdateChain(updated);
     await lgpdService.revogarConsentimento('lgc-1', EMPRESA_ID);
-    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
+    const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.aceito).toBe(false);
     expect(updateArgs.revogado_em).toBeDefined();
     expect(eqFn).toHaveBeenCalledWith('id', 'lgc-1');
@@ -163,9 +157,7 @@ describe('lgpdService.revogarConsentimento', () => {
 // ─── listarSolicitacoes ───────────────────────────────────────────────────────
 
 describe('lgpdService.listarSolicitacoes', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns solicitacoes without empresa filter', async () => {
     const records = [{ id: 'lgs-1', tipo: 'exclusao' }];
@@ -175,7 +167,7 @@ describe('lgpdService.listarSolicitacoes', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     const result = await lgpdService.listarSolicitacoes(EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -195,9 +187,7 @@ describe('lgpdService.listarSolicitacoes', () => {
 // ─── criarSolicitacao ─────────────────────────────────────────────────────────
 
 describe('lgpdService.criarSolicitacao', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns the new solicitacao', async () => {
     const created = { id: 'lgs-new', tipo: 'portabilidade' };
@@ -209,16 +199,14 @@ describe('lgpdService.criarSolicitacao', () => {
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(lgpdService.criarSolicitacao({} as Insertable<'lgpd_solicitacoes'>)).rejects.toThrow();
+    await expect(lgpdService.criarSolicitacao({})).rejects.toThrow();
   });
 });
 
 // ─── atualizarSolicitacao ─────────────────────────────────────────────────────
 
 describe('lgpdService.atualizarSolicitacao', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates and returns the updated solicitacao', async () => {
     const updated = { id: 'lgs-1', status: 'concluida' };

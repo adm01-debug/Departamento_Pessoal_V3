@@ -24,21 +24,19 @@ vi.mock('sonner', () => ({
 
 import { useFeriados } from '../useFeriados';
 
-function buildSelectChain(data: unknown = []) {
+function buildSelectChain(data: any[] = []) {
   const response = { data, error: null };
-  const chain: Record<string, unknown> = {};
+  const chain: any = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.or = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: any) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
   const insertFn = vi.fn().mockResolvedValue({ error: null });
   const eqFn = vi.fn().mockResolvedValue({ error: null });
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
-  mockFrom.mockReturnValue(
-    deepChain({ select: vi.fn().mockReturnValue(chain), insert: insertFn, delete: deleteFn }) as never
-  );
+  mockFrom.mockReturnValue(deepChain({ select: vi.fn().mockReturnValue(chain), insert: insertFn, delete: deleteFn }) as any);
   return { chain, insertFn, deleteFn, eqFn };
 }
 
@@ -74,14 +72,14 @@ describe('useFeriados', () => {
 
   it('criarFeriado inserts into feriados and shows success toast', async () => {
     const insertFn = vi.fn().mockResolvedValue({ error: null });
-    const selectChain = {
+    const selectChain: any = {
       order: vi.fn().mockReturnThis(),
       or: vi.fn().mockReturnThis(),
-      then: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn),
-      catch: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).catch(fn),
-      finally: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).finally(fn),
+      then: (fn: any) => Promise.resolve({ data: [], error: null }).then(fn),
+      catch: (fn: any) => Promise.resolve({ data: [], error: null }).catch(fn),
+      finally: (fn: any) => Promise.resolve({ data: [], error: null }).finally(fn),
     };
-    mockFrom.mockReturnValue(deepChain({ select: vi.fn().mockReturnValue(selectChain), insert: insertFn }) as never);
+    mockFrom.mockReturnValue(deepChain({ select: vi.fn().mockReturnValue(selectChain), insert: insertFn }) as any);
 
     const { result } = renderHook(() => useFeriados(), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -97,14 +95,14 @@ describe('useFeriados', () => {
   it('excluirFeriado deletes by id and shows success toast', async () => {
     const eqFn = vi.fn().mockResolvedValue({ error: null });
     const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
-    const selectChain = {
+    const selectChain: any = {
       order: vi.fn().mockReturnThis(),
       or: vi.fn().mockReturnThis(),
-      then: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn),
-      catch: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).catch(fn),
-      finally: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).finally(fn),
+      then: (fn: any) => Promise.resolve({ data: [], error: null }).then(fn),
+      catch: (fn: any) => Promise.resolve({ data: [], error: null }).catch(fn),
+      finally: (fn: any) => Promise.resolve({ data: [], error: null }).finally(fn),
     };
-    mockFrom.mockReturnValue(deepChain({ select: vi.fn().mockReturnValue(selectChain), delete: deleteFn }) as never);
+    mockFrom.mockReturnValue(deepChain({ select: vi.fn().mockReturnValue(selectChain), delete: deleteFn }) as any);
 
     const { result } = renderHook(() => useFeriados(), { wrapper });
 

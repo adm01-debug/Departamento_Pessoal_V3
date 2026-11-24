@@ -66,15 +66,13 @@ describe('useContratos', () => {
     const { result } = renderHook(() => useContratos(), { wrapper });
 
     await act(async () => {
-      await result.current.criar({ colaborador_id: 'col1', tipo: 'clt', data_inicio: '2024-01-01' });
+      await result.current.criar({ colaborador_id: 'col1', tipo: 'clt' });
     });
 
-    expect(mockCriar).toHaveBeenCalledWith(
-      expect.objectContaining({
-        colaborador_id: 'col1',
-        empresa_id: 'emp-1',
-      })
-    );
+    expect(mockCriar).toHaveBeenCalledWith(expect.objectContaining({
+      colaborador_id: 'col1',
+      empresa_id: 'emp-1',
+    }));
   });
 
   it('criar shows success toast', async () => {
@@ -83,7 +81,7 @@ describe('useContratos', () => {
     const { result } = renderHook(() => useContratos(), { wrapper });
 
     await act(async () => {
-      await result.current.criar({ colaborador_id: 'col1', data_inicio: '2024-01-01' });
+      await result.current.criar({ colaborador_id: 'col1' });
     });
 
     expect(mockToastSuccess).toHaveBeenCalledWith('Contrato criado');
@@ -95,7 +93,7 @@ describe('useContratos', () => {
     const { result } = renderHook(() => useContratos(), { wrapper });
 
     await act(async () => {
-      await result.current.criar({ colaborador_id: 'col1', data_inicio: '2024-01-01' }).catch(() => {});
+      await result.current.criar({ colaborador_id: 'col1' }).catch(() => {});
     });
 
     await waitFor(() => expect(mockToastError).toHaveBeenCalledWith('failed to create'));

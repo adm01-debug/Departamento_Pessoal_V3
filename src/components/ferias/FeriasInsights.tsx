@@ -94,7 +94,7 @@ export function FeriasInsights({ stats }: FeriasInsightsProps) {
   return (
     <Card className="border-primary/20 shadow-lg shadow-primary/5 rounded-2xl overflow-hidden bg-gradient-to-br from-background to-primary/5 h-full">
       <CardHeader className="border-b border-primary/10 bg-primary/5 py-4">
-        <CardTitle className="text-xs font-display font-bold flex items-center justify-between text-primary uppercase tracking-widest">
+        <CardTitle className="text-xs font-display font-medium flex items-center justify-between text-primary uppercase tracking-widest">
           <div className="flex items-center gap-2">
             <BrainCircuit className="h-4 w-4" /> Insights IA & Analytics
           </div>
@@ -121,7 +121,7 @@ export function FeriasInsights({ stats }: FeriasInsightsProps) {
                   <insight.icon className={`h-4 w-4 ${insight.color}`} />
                 </div>
                 <div className="space-y-1">
-                  <h4 className={`text-sm font-bold font-display ${insight.color}`}>{insight.title}</h4>
+                  <h4 className={`text-sm font-medium font-display ${insight.color}`}>{insight.title}</h4>
                   <p className="text-xs text-muted-foreground leading-relaxed font-body">{insight.description}</p>
                 </div>
               </div>
@@ -129,7 +129,7 @@ export function FeriasInsights({ stats }: FeriasInsightsProps) {
               <div className="bg-background/40 rounded-lg p-3 space-y-2 border border-current/5">
                 <div className="flex items-center gap-1.5">
                   <Info className="h-3 w-3 text-muted-foreground" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Evidências e Justificativa IA</span>
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Evidências e Justificativa IA</span>
                 </div>
                 <p className="text-[10px] text-muted-foreground/80 leading-relaxed italic border-l-2 border-primary/20 pl-2">
                   {insight.justification}
@@ -170,7 +170,7 @@ export function FeriasInsights({ stats }: FeriasInsightsProps) {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className={`h-7 px-2 text-[10px] gap-1 font-bold ${insight.color} hover:${insight.bgColor} rounded-lg transition-all`}
+                  className={`h-7 px-2 text-[10px] gap-1 font-medium ${insight.color} hover:${insight.bgColor} rounded-lg transition-all`}
                   onClick={() => handleLink(insight.link)}
                 >
                   {insight.action} <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />

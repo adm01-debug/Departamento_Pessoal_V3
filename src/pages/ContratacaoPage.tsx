@@ -13,6 +13,7 @@ import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { loggerService } from '@/services/loggerService';
+import { useOnMount } from '@/hooks/useMountEffects';
 import {
   FileText,
   Upload,
@@ -48,7 +49,7 @@ const STEPS = [
   { id: 'assinatura', label: 'Assinatura', icon: PenTool },
 ] as const;
 
-function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInvalidToken: () => void }) {
+function ContratacaoWorkflow({ token }: { token: string }) {
   const [step, setStep] = useState(0);
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
@@ -69,7 +70,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
   const [uploadedDocs, setUploadedDocs] = useState<
     Record<string, { name: string; status: 'uploading' | 'success' | 'error'; result?: OCRResult }>
   >({});
-  const { processDocument } = useDocumentOCR();
+  const { processDocument, isProcessing: isOCRProcessing } = useDocumentOCR();
 
   const { data: tokenData, isLoading } = useQuery({
     queryKey: ['contratacao-token', token],
@@ -87,14 +88,10 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
     },
   });
 
-  useEffect(() => {
-    let cancelled = false;
-    const hydrate = async () => {
-      if (!tokenData?.admissao) return;
+  useOnMount(() => {
+    if (tokenData?.admissao) {
       const adm = tokenData.admissao as Record<string, unknown>;
-      await Promise.resolve();
-      if (cancelled) return;
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
         nome_completo: (adm.nome as string) || '',
         cpf: (adm.cpf as string) || '',
@@ -105,31 +102,57 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
       if (tokenData.contrato_assinado) setStep(3);
       else if (tokenData.documentos_enviados) setStep(2);
       else if (tokenData.dados_preenchidos) setStep(1);
-      const template = await contratacaoService.gerarTemplateContrato(adm.id as string);
-      if (!cancelled) setContractHtml(template);
-    };
-    void hydrate();
-    return () => {
-      cancelled = true;
-    };
+      contratacaoService.gerarTemplateContrato(adm.id as string).then(setContractHtml);
+    }
+  });
+
+  useEffect(() => {
+    if (tokenData?.admissao) {
+      const adm = tokenData.admissao as Record<string, unknown>;
+      setFormData(prev => ({
+        ...prev,
+        nome_completo: (adm.nome as string) || '',
+        cpf: (adm.cpf as string) || '',
+        data_nascimento: (adm.data_nascimento as string) || '',
+        email: (adm.email as string) || '',
+        telefone: (adm.telefone as string) || '',
+      }));
+      if (tokenData.contrato_assinado) setStep(3);
+      else if (tokenData.documentos_enviados) setStep(2);
+      else if (tokenData.dados_preenchidos) setStep(1);
+      contratacaoService.gerarTemplateContrato(adm.id as string).then(setContractHtml);
+    }
   }, [tokenData]);
 
   const saveDados = useMutation({
     mutationFn: async () => {
       if (!tokenData?.id) return;
 
-      // Writes vão por RPCs SECURITY DEFINER token-scoped — INSERT/UPDATE
-      // direto em admissao_tokens/admissoes é revogado desde o P0-004.
-      const { error } = await supabase.rpc('admissao_salvar_dados', {
-        _token: token,
-        _nome: formData.nome_completo,
-        _cpf: formData.cpf,
-        _data_nascimento: formData.data_nascimento || null,
-        _email: formData.email,
-        _telefone: formData.telefone,
-      });
+      // Update tokens status
+      const { error: tokenError } = await supabase
+        .from('admissao_tokens')
+        .update({
+          dados_preenchidos: true,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', tokenData.id);
 
-      if (error) throw error;
+      if (tokenError) throw tokenError;
+
+      // Also update the admission record with the new data
+      const { error: admError } = await supabase
+        .from('admissoes')
+        .update({
+          nome: formData.nome_completo,
+          cpf: formData.cpf,
+          data_nascimento: formData.data_nascimento,
+          email: formData.email,
+          telefone: formData.telefone,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', tokenData.admissao_id);
+
+      if (admError) throw admError;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contratacao-token'] });
@@ -137,13 +160,19 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
       setStep(1);
       window.scrollTo(0, 0);
     },
-    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao salvar dados.')),
+    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao salvar dados.')),
   });
 
   const markDocsUploaded = useMutation({
     mutationFn: async () => {
       if (!tokenData?.id) return;
-      const { error } = await supabase.rpc('admissao_marcar_documentos', { _token: token });
+      const { error } = await supabase
+        .from('admissao_tokens')
+        .update({
+          documentos_enviados: true,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', tokenData.id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -152,18 +181,22 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
       setStep(2);
       window.scrollTo(0, 0);
     },
-    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao processar contratação.')),
+    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao processar contratação.')),
   });
 
   const signContract = useMutation({
     mutationFn: async () => {
       if (!tokenData?.id || !signature) return;
-      // O IP da assinatura é derivado server-side a partir do XFF real do
-      // gateway — um IP enviado pelo cliente não vale como evidência (forjável).
-      const { error } = await supabase.rpc('admissao_assinar_contrato', {
-        _token: token,
-        _assinatura_base64: signature,
-      });
+      const { error } = await supabase
+        .from('admissao_tokens')
+        .update({
+          contrato_assinado: true,
+          assinado_em: new Date().toISOString(),
+          assinatura_base64: signature,
+          ip_assinatura: 'client-ip', // In production, this would be the actual IP
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', tokenData.id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -172,7 +205,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
       setStep(3);
       window.scrollTo(0, 0);
     },
-    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao processar contratação.')),
+    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao processar contratação.')),
   });
 
   const handleAddressFound = (addr: Address) => {
@@ -191,19 +224,29 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
       const result = await processDocument(file, docType);
 
       if (result.valid) {
-        // Upload via edge function admissao-publica — uploads anônimos
-        // diretos no Storage foram revogados; a função valida o token e
-        // registra em documentos_admissao via RPC token-scoped.
-        const uploadForm = new FormData();
-        uploadForm.append('token', token ?? '');
-        uploadForm.append('tipo', docType);
-        uploadForm.append('file', file);
+        // 1. Upload real para o storage
+        const ext = file.name.split('.').pop();
+        // eslint-disable-next-line react-hooks/purity
+        const storagePath = `admissao_${tokenData?.admissao_id}/${docType}_${Date.now()}.${ext}`;
 
-        const { error: uploadErr } = await supabase.functions.invoke('admissao-publica', {
-          body: uploadForm,
-        });
+        const { error: uploadErr } = await supabase.storage.from('documentos').upload(storagePath, file);
 
         if (uploadErr) throw uploadErr;
+
+        // 2. Registrar na tabela documentos_admissao.
+        // As colunas reais são tipo/url/nome_arquivo/validado — o insert
+        // anterior usava tipo_documento/storage_path/status (inexistentes),
+        // e o `as any` escondia o erro do TypeScript: todo upload falhava.
+        const { error: dbErr } = await supabase.from('documentos_admissao').insert({
+          admissao_id: tokenData!.admissao_id,
+          tipo: docType,
+          nome_arquivo: file.name,
+          url: storagePath,
+          tamanho_bytes: file.size,
+          validado: false,
+        });
+
+        if (dbErr) throw dbErr;
 
         setUploadedDocs((prev) => ({
           ...prev,
@@ -225,12 +268,8 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
         toast.error(`Atenção: ${result.error || 'Não foi possível validar o documento.'}`);
       }
     } catch (error) {
-      loggerService.error(
-        'Erro no upload de documento',
-        { docId },
-        error instanceof Error ? error : new Error(String(error))
-      );
-      setUploadedDocs((prev) => ({ ...prev, [docId]: { name: file.name, status: 'error' } }));
+      loggerService.error('Erro no upload de documento', { docId }, error instanceof Error ? error : new Error(String(error)));
+      setUploadedDocs(prev => ({ ...prev, [docId]: { name: file.name, status: 'error' } }));
       toast.error(safeErrorMessage(error, 'Erro no upload do documento.'));
     }
   };
@@ -239,24 +278,6 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-10 h-10 animate-spin text-primary" />
-      </div>
-    );
-
-  // Token da URL que não resolve (inválido/expirado): mostra erro em vez de
-  // montar o workflow — sem isso os passos andavam sem salvar nada.
-  if (!tokenData)
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50">
-        <Card className="w-full max-w-md border-0 shadow-xl rounded-3xl">
-          <CardContent className="p-8 text-center space-y-4">
-            <ShieldCheck className="w-12 h-12 text-destructive mx-auto" />
-            <h2 className="font-display font-bold text-xl text-slate-800">Link inválido ou expirado</h2>
-            <p className="text-sm text-muted-foreground">Confira o link recebido por e-mail ou peça um novo ao RH.</p>
-            <Button onClick={onInvalidToken} className="w-full">
-              Digitar código manualmente
-            </Button>
-          </CardContent>
-        </Card>
       </div>
     );
 
@@ -271,7 +292,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <ShieldCheck className="w-5 h-5 text-white" />
             </div>
-            <span className="font-display font-bold text-slate-800">Contratação Digital</span>
+            <span className="font-display font-medium text-slate-800">Contratação Digital</span>
           </div>
           <Badge variant="secondary" className="font-mono text-[10px] tracking-widest bg-slate-100">
             #{token.slice(0, 8).toUpperCase()}
@@ -285,10 +306,10 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
           <CardContent className="p-6">
             <div className="space-y-4">
               <div className="flex justify-between items-center px-2">
-                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Etapa {step + 1} de {STEPS.length}
                 </span>
-                <span className="text-xs font-bold text-primary">{Math.round(progress)}% Concluído</span>
+                <span className="text-xs font-medium text-primary">{Math.round(progress)}% Concluído</span>
               </div>
               <Progress value={progress} className="h-2 bg-slate-100" />
               <div className="flex justify-between relative pt-2">
@@ -296,7 +317,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                   <div key={s.id} className="flex flex-col items-center gap-2 z-10">
                     <div
                       className={cn(
-                        'w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-500',
+                        'w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-slower',
                         i < step
                           ? 'bg-success text-white shadow-success/20 shadow-lg'
                           : i === step
@@ -308,7 +329,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                     </div>
                     <span
                       className={cn(
-                        'text-[10px] font-bold uppercase tracking-tight hidden sm:block',
+                        'text-[10px] font-medium uppercase tracking-tight hidden sm:block',
                         i <= step ? 'text-slate-800' : 'text-slate-400'
                       )}
                     >
@@ -328,7 +349,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.35 }}
           >
             <Card className="border-0 shadow-xl rounded-3xl overflow-hidden bg-white min-h-[400px]">
               <CardContent className="p-6 md:p-8">
@@ -339,14 +360,14 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                         <User className="w-5 h-5" />
                       </div>
                       <div>
-                        <h2 className="text-xl font-display font-bold">Dados Pessoais</h2>
+                        <h2 className="text-xl font-display font-medium">Dados Pessoais</h2>
                         <p className="text-xs text-muted-foreground">Confirme e complete suas informações básicas.</p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2 md:col-span-2">
-                        <Label className="font-bold flex items-center gap-2">
+                        <Label className="font-medium flex items-center gap-2">
                           <Fingerprint className="w-4 h-4 text-muted-foreground" /> Nome Completo
                         </Label>
                         <Input
@@ -357,7 +378,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="font-bold flex items-center gap-2">
+                        <Label className="font-medium flex items-center gap-2">
                           <Fingerprint className="w-4 h-4 text-muted-foreground" /> CPF
                         </Label>
                         <CPFInput
@@ -368,7 +389,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="font-bold flex items-center gap-2">
+                        <Label className="font-medium flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-muted-foreground" /> Data de Nascimento
                         </Label>
                         <Input
@@ -380,7 +401,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="font-bold flex items-center gap-2">
+                        <Label className="font-medium flex items-center gap-2">
                           <Mail className="w-4 h-4 text-muted-foreground" /> E-mail
                         </Label>
                         <Input
@@ -392,7 +413,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="font-bold flex items-center gap-2">
+                        <Label className="font-medium flex items-center gap-2">
                           <Phone className="w-4 h-4 text-muted-foreground" /> Celular
                         </Label>
                         <PhoneInput
@@ -404,7 +425,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
 
                       <div className="space-y-2 md:col-span-2">
                         <div className="h-px bg-slate-100 my-2" />
-                        <Label className="font-bold flex items-center gap-2">
+                        <Label className="font-medium flex items-center gap-2">
                           <MapPin className="w-4 h-4 text-muted-foreground" /> CEP para busca de Endereço
                         </Label>
                         <CEPInput
@@ -418,11 +439,11 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                       {formData.logradouro && (
                         <>
                           <div className="space-y-2 md:col-span-2">
-                            <Label className="font-bold">Logradouro</Label>
+                            <Label className="font-medium">Logradouro</Label>
                             <Input value={formData.logradouro} readOnly className="h-12 rounded-xl bg-slate-50" />
                           </div>
                           <div className="space-y-2">
-                            <Label className="font-bold text-primary">Número *</Label>
+                            <Label className="font-medium text-primary">Número *</Label>
                             <Input
                               value={formData.numero}
                               onChange={(e) => setFormData((p) => ({ ...p, numero: e.target.value }))}
@@ -431,7 +452,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label className="font-bold">Cidade / UF</Label>
+                            <Label className="font-medium">Cidade / UF</Label>
                             <Input
                               value={`${formData.cidade} - ${formData.uf}`}
                               readOnly
@@ -446,7 +467,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                       <Button
                         onClick={() => saveDados.mutate()}
                         disabled={saveDados.isPending || !formData.nome_completo || !formData.cpf}
-                        className="h-14 px-10 rounded-2xl text-lg font-bold shadow-glow"
+                        className="h-14 px-10 rounded-2xl text-lg font-medium shadow-glow"
                       >
                         {saveDados.isPending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                         Próxima Etapa <ArrowRight className="w-5 h-5 ml-2" />
@@ -462,7 +483,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                         <Upload className="w-5 h-5" />
                       </div>
                       <div>
-                        <h2 className="text-xl font-display font-bold">Documentos Digitais</h2>
+                        <h2 className="text-xl font-display font-medium">Documentos Digitais</h2>
                         <p className="text-xs text-muted-foreground">Tire fotos legíveis ou envie arquivos PDF.</p>
                       </div>
                     </div>
@@ -518,7 +539,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                                 )}
                               </div>
                               <div>
-                                <p className="font-bold text-slate-800">{doc.label}</p>
+                                <p className="font-medium text-slate-800">{doc.label}</p>
                                 <div className="flex gap-2 items-center">
                                   {doc.required && (
                                     <Badge
@@ -529,12 +550,12 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                                     </Badge>
                                   )}
                                   {status?.status === 'uploading' && (
-                                    <span className="text-[10px] text-primary animate-pulse font-bold uppercase">
+                                    <span className="text-[10px] text-primary animate-pulse font-medium uppercase">
                                       Validando IA...
                                     </span>
                                   )}
                                   {status?.status === 'success' && (
-                                    <span className="text-[10px] text-success font-bold uppercase">Validado</span>
+                                    <span className="text-[10px] text-success font-medium uppercase">Validado</span>
                                   )}
                                 </div>
                               </div>
@@ -576,7 +597,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                       <Button
                         onClick={() => markDocsUploaded.mutate()}
                         disabled={markDocsUploaded.isPending}
-                        className="h-14 px-10 rounded-2xl text-lg font-bold shadow-glow"
+                        className="h-14 px-10 rounded-2xl text-lg font-medium shadow-glow"
                       >
                         Tudo Pronto <ArrowRight className="w-5 h-5 ml-2" />
                       </Button>
@@ -591,7 +612,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                         <FileText className="w-5 h-5" />
                       </div>
                       <div>
-                        <h2 className="text-xl font-display font-bold">Contrato de Trabalho</h2>
+                        <h2 className="text-xl font-display font-medium">Contrato de Trabalho</h2>
                         <p className="text-xs text-muted-foreground">Leia atentamente as cláusulas do seu contrato.</p>
                       </div>
                     </div>
@@ -612,7 +633,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                       <div className="h-px bg-slate-200 my-8" />
 
                       <div className="space-y-6">
-                        <h4 className="font-bold text-sm uppercase text-slate-800 tracking-wider">
+                        <h4 className="font-medium text-sm uppercase text-slate-800 tracking-wider">
                           Assinatura Eletrônica
                         </h4>
                         <p className="text-sm italic">
@@ -631,7 +652,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                         onClick={() => signContract.mutate()}
                         disabled={signContract.isPending || !signature}
                         className={cn(
-                          'h-14 px-10 rounded-2xl text-lg font-bold transition-all',
+                          'h-14 px-10 rounded-2xl text-lg font-medium transition-all',
                           signature
                             ? 'bg-success hover:bg-success/90 text-white shadow-success/20 shadow-lg'
                             : 'bg-slate-200 text-slate-400'
@@ -661,7 +682,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                     </motion.div>
 
                     <div className="space-y-3">
-                      <h2 className="text-3xl font-display font-bold text-slate-800">Tudo Pronto!</h2>
+                      <h2 className="text-3xl font-display font-medium text-slate-800">Tudo Pronto!</h2>
                       <p className="text-lg text-muted-foreground max-w-md mx-auto">
                         Sua admissão digital foi concluída com sucesso. Seus dados e o contrato assinado já estão com o
                         RH.
@@ -669,22 +690,22 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                     </div>
 
                     <div className="p-6 bg-slate-50 rounded-3xl border-2 border-slate-100 max-w-sm mx-auto space-y-4">
-                      <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Próximos Passos</p>
+                      <p className="text-sm font-medium text-slate-500 uppercase tracking-widest">Próximos Passos</p>
                       <div className="space-y-3 text-left">
                         <div className="flex gap-3 items-center">
-                          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium text-primary">
                             1
                           </div>
                           <p className="text-xs font-medium">Análise de documentos pelo RH</p>
                         </div>
                         <div className="flex gap-3 items-center opacity-50">
-                          <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold">
+                          <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-medium">
                             2
                           </div>
                           <p className="text-xs font-medium">Envio ao eSocial</p>
                         </div>
                         <div className="flex gap-3 items-center opacity-50">
-                          <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold">
+                          <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-medium">
                             3
                           </div>
                           <p className="text-xs font-medium">Liberação de acessos aos sistemas</p>
@@ -707,7 +728,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
       <div className="p-8 text-center text-slate-400">
         <div className="flex items-center justify-center gap-2 mb-2">
           <ShieldCheck className="w-4 h-4" />
-          <span className="text-[10px] font-bold uppercase tracking-widest">Processo Seguro & Criptografado</span>
+          <span className="text-[10px] font-medium uppercase tracking-widest">Processo Seguro & Criptografado</span>
         </div>
         <p className="text-[10px]">
           © {new Date().getFullYear()} Plataforma DP Inteligente. Todos os direitos reservados.
@@ -725,11 +746,7 @@ export default function ContratacaoPage(): React.ReactElement {
   return (
     <>
       <PageTitle title="Admissão Digital" description="Portal de Contratação do Candidato" />
-      {!validToken ? (
-        <TokenInput onValidToken={setValidToken} />
-      ) : (
-        <ContratacaoWorkflow token={validToken} onInvalidToken={() => setValidToken(null)} />
-      )}
+      {!validToken ? <TokenInput onValidToken={setValidToken} /> : <ContratacaoWorkflow token={validToken} />}
     </>
   );
 }

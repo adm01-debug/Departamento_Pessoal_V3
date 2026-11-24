@@ -16,11 +16,9 @@ DROP POLICY IF EXISTS "dependentes_select" ON public.dependentes;
 DROP POLICY IF EXISTS "dependentes_insert" ON public.dependentes;
 DROP POLICY IF EXISTS "dependentes_update" ON public.dependentes;
 DROP POLICY IF EXISTS "dependentes_delete" ON public.dependentes;
-DROP POLICY IF EXISTS "dependentes_tenant_select" ON public.dependentes;
 CREATE POLICY "dependentes_tenant_select" ON public.dependentes
   FOR SELECT TO authenticated
   USING (empresa_id = public.get_auth_empresa_id());
-DROP POLICY IF EXISTS "dependentes_tenant_write" ON public.dependentes;
 CREATE POLICY "dependentes_tenant_write" ON public.dependentes
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -28,7 +26,6 @@ CREATE POLICY "dependentes_tenant_write" ON public.dependentes
 
 -- jornadas
 DROP POLICY IF EXISTS "Authenticated users can manage jornadas" ON public.jornadas;
-DROP POLICY IF EXISTS "jornadas_tenant_all" ON public.jornadas;
 CREATE POLICY "jornadas_tenant_all" ON public.jornadas
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -36,7 +33,6 @@ CREATE POLICY "jornadas_tenant_all" ON public.jornadas
 
 -- escalas
 DROP POLICY IF EXISTS "Authenticated users can manage escalas" ON public.escalas;
-DROP POLICY IF EXISTS "escalas_tenant_all" ON public.escalas;
 CREATE POLICY "escalas_tenant_all" ON public.escalas
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -44,7 +40,6 @@ CREATE POLICY "escalas_tenant_all" ON public.escalas
 
 -- turnos
 DROP POLICY IF EXISTS "Authenticated users can manage turnos" ON public.turnos;
-DROP POLICY IF EXISTS "turnos_tenant_all" ON public.turnos;
 CREATE POLICY "turnos_tenant_all" ON public.turnos
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -52,7 +47,6 @@ CREATE POLICY "turnos_tenant_all" ON public.turnos
 
 -- faltas
 DROP POLICY IF EXISTS "Authenticated users can manage faltas" ON public.faltas;
-DROP POLICY IF EXISTS "faltas_tenant_all" ON public.faltas;
 CREATE POLICY "faltas_tenant_all" ON public.faltas
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -60,7 +54,6 @@ CREATE POLICY "faltas_tenant_all" ON public.faltas
 
 -- atrasos
 DROP POLICY IF EXISTS "Authenticated users can manage atrasos" ON public.atrasos;
-DROP POLICY IF EXISTS "atrasos_tenant_all" ON public.atrasos;
 CREATE POLICY "atrasos_tenant_all" ON public.atrasos
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -68,7 +61,6 @@ CREATE POLICY "atrasos_tenant_all" ON public.atrasos
 
 -- adicionais
 DROP POLICY IF EXISTS "Authenticated users can manage adicionais" ON public.adicionais;
-DROP POLICY IF EXISTS "adicionais_tenant_all" ON public.adicionais;
 CREATE POLICY "adicionais_tenant_all" ON public.adicionais
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -76,7 +68,6 @@ CREATE POLICY "adicionais_tenant_all" ON public.adicionais
 
 -- gratificacoes
 DROP POLICY IF EXISTS "Authenticated users can manage gratificacoes" ON public.gratificacoes;
-DROP POLICY IF EXISTS "gratificacoes_tenant_all" ON public.gratificacoes;
 CREATE POLICY "gratificacoes_tenant_all" ON public.gratificacoes
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -84,7 +75,6 @@ CREATE POLICY "gratificacoes_tenant_all" ON public.gratificacoes
 
 -- comissoes
 DROP POLICY IF EXISTS "Authenticated users can manage comissoes" ON public.comissoes;
-DROP POLICY IF EXISTS "comissoes_tenant_all" ON public.comissoes;
 CREATE POLICY "comissoes_tenant_all" ON public.comissoes
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -92,7 +82,6 @@ CREATE POLICY "comissoes_tenant_all" ON public.comissoes
 
 -- pensoes
 DROP POLICY IF EXISTS "Authenticated users can manage pensoes" ON public.pensoes;
-DROP POLICY IF EXISTS "pensoes_tenant_all" ON public.pensoes;
 CREATE POLICY "pensoes_tenant_all" ON public.pensoes
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -100,7 +89,6 @@ CREATE POLICY "pensoes_tenant_all" ON public.pensoes
 
 -- emprestimos_consignados
 DROP POLICY IF EXISTS "Authenticated users can manage emprestimos" ON public.emprestimos_consignados;
-DROP POLICY IF EXISTS "emprestimos_consignados_tenant_all" ON public.emprestimos_consignados;
 CREATE POLICY "emprestimos_consignados_tenant_all" ON public.emprestimos_consignados
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -135,4 +123,6 @@ BEGIN
 END $$;
 
 COMMENT ON SCHEMA public IS
-  '[P0-001] Multi-tenant RLS aplicado em todas as tabelas. Zero policies USING (true) ou WITH CHECK (true). Source of truth: public.get_auth_empresa_id().';
+  '[P0-001] Multi-tenant RLS aplicado em todas as tabelas. ' ||
+  'Zero policies USING (true) ou WITH CHECK (true). ' ||
+  'Source of truth: public.get_auth_empresa_id().';

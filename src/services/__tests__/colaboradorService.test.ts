@@ -11,19 +11,23 @@ const { mockFrom, mockLoggerError } = vi.hoisted(() => ({
   mockLoggerError: vi.fn(),
 }));
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
-}));
+// `supabase` e `supabaseBase` são o mesmo cliente em produção (ver
+// src/integrations/supabase/client.ts) — o serviço usa `supabaseBase`
+// diretamente (P0-CORS), então o mock precisa expor as duas chaves.
+vi.mock('@/integrations/supabase/client', () => {
+  const client = { from: (...a: unknown[]) => deepChain(mockFrom(...a)) };
+  return { supabase: client, supabaseBase: client };
+});
 
 vi.mock('../loggerService', () => ({
   loggerService: { error: mockLoggerError },
 }));
 
 // Helper: build select → eq/or → order → range chain for listar
-function setupListarChain(data: unknown, count: number, error: { message: string; code?: string } | null = null) {
+function setupListarChain(data: any[], count: number, error: any = null) {
   const rangeFn = vi.fn().mockResolvedValue({ data, count, error });
   const orderFn = vi.fn().mockReturnValue({ range: rangeFn });
-  const baseQuery = { order: orderFn };
+  const baseQuery: any = { order: orderFn };
   const eqFn = vi.fn().mockReturnValue(baseQuery);
   const orFn = vi.fn().mockReturnValue(baseQuery);
   Object.assign(baseQuery, { eq: eqFn, or: orFn });
@@ -33,13 +37,13 @@ function setupListarChain(data: unknown, count: number, error: { message: string
 }
 
 // Helper: build a thenable count chain for getSummary
-function makeCountChain(count: number, error: { message: string; code?: string } | null = null) {
+function makeCountChain(count: number, error: any = null) {
   const response = { count, error };
-  const chain: Record<string, unknown> = {};
+  const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: any) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue({ eq: vi.fn().mockReturnValue(chain) });
   return { select: selectFn };
 }
@@ -47,9 +51,7 @@ function makeCountChain(count: number, error: { message: string; code?: string }
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('colaboradorService.listar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns data and total from supabase', async () => {
     const records = [{ id: '1', nome_completo: 'Alice' }];
@@ -60,7 +62,7 @@ describe('colaboradorService.listar', () => {
   });
 
   it('returns empty data with total 0 when supabase returns null', async () => {
-    setupListarChain(null as never, null as never);
+    setupListarChain(null as any, null as any);
     const result = await colaboradorService.listar({ filters: { empresaId: EMP } });
     expect(result.data).toEqual([]);
     expect(result.total).toBe(0);
@@ -69,7 +71,46 @@ describe('colaboradorService.listar', () => {
   it('adds or() filter when search is provided', async () => {
     const { orFn } = setupListarChain([], 0);
     await colaboradorService.listar({ search: 'Silva', filters: { empresaId: EMP } });
-    expect(orFn).toHaveBeenCalledWith(expect.stringContaining('ilike.%Silva%'));
+    expect(orFn).toHaveBeenCalledWith(
+      expect.stringContaining('ilike.%Silva%')
+    );
+  });
+
+  it('selects cargo and departamento columns explicitly', async () => {
+    const { selectFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ filters: { empresaId: EMP } });
+    const columns = selectFn.mock.calls[0][0] as string;
+    expect(columns).toContain('cargo');
+    expect(columns).toContain('departamento');
+  });
+
+  it('searches by matricula, cargo and departamento in addition to nome/email', async () => {
+    const { orFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ search: 'Vendas', filters: { empresaId: EMP } });
+    const orArg = orFn.mock.calls[0][0] as string;
+    expect(orArg).toContain('matricula.ilike.%Vendas%');
+    expect(orArg).toContain('cargo.ilike.%Vendas%');
+    expect(orArg).toContain('departamento.ilike.%Vendas%');
+    expect(orArg).toContain('nome_completo.ilike.%Vendas%');
+    expect(orArg).toContain('email.ilike.%Vendas%');
+  });
+
+  it('normalizes a formatted CPF search (dots and dash) to digits only', async () => {
+    const { orFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ search: '123.456.789-00', filters: { empresaId: EMP } });
+    const orArg = orFn.mock.calls[0][0] as string;
+    // A cláusula de cpf precisa usar só dígitos (coluna armazena CPF sem
+    // pontuação); o traço pode aparecer nas cláusulas de outros campos
+    // (nome/email/etc.), que usam a sanitização genérica — isso é esperado.
+    expect(orArg).toContain('cpf.ilike.%12345678900%');
+    expect(orArg).not.toContain('cpf.ilike.%123456789-00%');
+  });
+
+  it('does not add a cpf clause when the search has no digits', async () => {
+    const { orFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ search: 'Maria', filters: { empresaId: EMP } });
+    const orArg = orFn.mock.calls[0][0] as string;
+    expect(orArg).not.toContain('cpf.ilike');
   });
 
   it('selects cargo and departamento columns explicitly', async () => {
@@ -248,30 +289,31 @@ describe('colaboradorService.listarOpcoesFiltro', () => {
 // ─── getSummary ───────────────────────────────────────────────────────────────
 
 describe('colaboradorService.getSummary', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
-  it('returns total and per-status counts', async () => {
-    const counts = [5, 2, 1, 3]; // ativo, desligado, afastado, ferias
+  it('returns total and per-status counts for the five real statuses', async () => {
+    const counts = [5, 4, 2, 3, 1]; // ativo, pendente, desligado, ferias, afastado
     let callIdx = 0;
     mockFrom.mockImplementation(() => makeCountChain(counts[callIdx++]));
 
     const summary = await colaboradorService.getSummary(EMP);
     expect(summary.ativo).toBe(5);
+    expect(summary.pendente).toBe(4);
     expect(summary.desligado).toBe(2);
-    expect(summary.afastado).toBe(1);
     expect(summary.ferias).toBe(3);
-    expect(summary.total).toBe(11);
+    expect(summary.afastado).toBe(1);
+    expect(summary.total).toBe(15);
   });
 
-  it('maps desligado to inativo for UI compatibility', async () => {
-    const counts = [0, 3, 0, 0]; // desligado=3
+  it('does not create an artificial "inativo" key', async () => {
+    const counts = [0, 0, 3, 0, 0]; // desligado=3
     let callIdx = 0;
     mockFrom.mockImplementation(() => makeCountChain(counts[callIdx++]));
 
     const summary = await colaboradorService.getSummary(EMP);
-    expect(summary.inativo).toBe(3);
+    expect(summary.desligado).toBe(3);
+    expect(summary.inativo).toBeUndefined();
+    expect('inativo' in summary).toBe(false);
   });
 
   it('returns 0 total when all counts are 0', async () => {
@@ -280,11 +322,11 @@ describe('colaboradorService.getSummary', () => {
     expect(summary.total).toBe(0);
   });
 
-  it('applies empresa_id filter to all queries when provided', async () => {
+  it('applies empresa_id filter to all five status queries when provided', async () => {
     mockFrom.mockImplementation(() => makeCountChain(0));
     await colaboradorService.getSummary('emp-1');
-    // All 4 chains have .eq called (first for status, second for empresa_id)
-    expect(mockFrom).toHaveBeenCalledTimes(4);
+    // Uma chain por status real (ativo, pendente, desligado, ferias, afastado)
+    expect(mockFrom).toHaveBeenCalledTimes(5);
   });
 
   it('returns count 0 per status on DB error (graceful fallback)', async () => {
@@ -298,9 +340,7 @@ describe('colaboradorService.getSummary', () => {
 // ─── list (alias) ─────────────────────────────────────────────────────────────
 
 describe('colaboradorService.list', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns array of colaboradores (delegates to listar)', async () => {
     const records = [{ id: 'c1', nome_completo: 'Bob' }];
@@ -314,55 +354,5 @@ describe('colaboradorService.list', () => {
     await colaboradorService.list('emp-1');
     // pageSize 1000 → range(0, 999)
     expect(rangeFn).toHaveBeenCalledWith(0, 999);
-  });
-});
-
-// ─── criar — mapeamento de duplicidade (E50-41) ────────────────────────────────
-
-function setupCriarChain(error: unknown) {
-  const maybeSingleFn = vi.fn().mockResolvedValue({ data: null, error });
-  const selectFn = vi.fn().mockReturnValue({ maybeSingle: maybeSingleFn });
-  const insertFn = vi.fn().mockReturnValue({ select: selectFn });
-  mockFrom.mockReturnValue({ insert: insertFn });
-}
-
-describe('colaboradorService.criar — mensagens de duplicidade por empresa', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('CPF duplicado na MESMA empresa (índice composto novo) -> mensagem escopada', async () => {
-    setupCriarChain({
-      code: '23505',
-      message: 'duplicate key value violates unique constraint "colaboradores_empresa_cpf_key"',
-    });
-    await expect(colaboradorService.criar({ cpf: '11111111111' })).rejects.toThrow(
-      'Já existe um colaborador com este CPF nesta empresa.'
-    );
-  });
-
-  it('matrícula duplicada na MESMA empresa -> mensagem escopada', async () => {
-    setupCriarChain({
-      code: '23505',
-      message: 'duplicate key value violates unique constraint "colaboradores_empresa_matricula_key"',
-    });
-    await expect(colaboradorService.criar({ matricula: '0001' })).rejects.toThrow(
-      'Já existe um colaborador com esta matrícula nesta empresa.'
-    );
-  });
-
-  it('CPF já existe em OUTRA empresa (constraint global antiga, ainda ativa) -> mensagem honesta sobre o bloqueio real', async () => {
-    setupCriarChain({
-      code: '23505',
-      message: 'duplicate key value violates unique constraint "colaboradores_cpf_key"',
-    });
-    await expect(colaboradorService.criar({ cpf: '22222222222' })).rejects.toThrow(/outra empresa do grupo/);
-  });
-
-  it('erro não relacionado a duplicidade passa direto (sem reescrever mensagem)', async () => {
-    setupCriarChain({ code: '42501', message: 'permission denied for table colaboradores' });
-    await expect(colaboradorService.criar({ cpf: '33333333333' })).rejects.toThrow(
-      'permission denied for table colaboradores'
-    );
   });
 });

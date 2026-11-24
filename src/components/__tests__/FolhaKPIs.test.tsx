@@ -1,20 +1,17 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
-    span: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
-      <span {...props}>{children}</span>
-    ),
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    span: ({ children, ...props }: any) => <span {...props}>{children}</span>,
   },
   useInView: () => true,
 }));
 
 vi.mock('@/components/dashboard/AnimatedNumber', () => ({
-  AnimatedNumber: ({ value, format }: { value?: number; format?: (v: number) => string }) => (
-    <span>{format ? format(value ?? 0) : String(value)}</span>
+  AnimatedNumber: ({ value, format }: any) => (
+    <span>{format ? format(value) : String(value)}</span>
   ),
 }));
 

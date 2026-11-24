@@ -2,12 +2,6 @@ import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
-  },
-}));
-
 import { PontoWeekSummary } from '../ponto/PontoWeekSummary';
 
 const REGISTROS = [

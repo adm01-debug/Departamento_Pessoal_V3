@@ -15,18 +15,16 @@ type UpdateChain = { eq: ReturnType<typeof vi.fn> };
 type DeleteChain = { eq: ReturnType<typeof vi.fn> };
 
 const { mockFrom, mockLog, mockLoggerError } = vi.hoisted<{
-  mockFrom: Mock;
+  mockFrom: Mock<(...args: any[]) => any>;
   mockLog: ReturnType<typeof vi.fn>;
   mockLoggerError: ReturnType<typeof vi.fn>;
 }>(() => ({
-  mockFrom: vi.fn<
-    (table: string) => {
-      select: () => SelectChain;
-      insert: (data: unknown) => InsertChain;
-      update: (data: unknown) => UpdateChain;
-      delete: () => DeleteChain;
-    }
-  >(),
+  mockFrom: vi.fn<(table: string) => {
+    select: () => SelectChain;
+    insert: (data: unknown) => InsertChain;
+    update: (data: unknown) => UpdateChain;
+    delete: () => DeleteChain;
+  }>(),
   mockLog: vi.fn<() => Promise<void>>(),
   mockLoggerError: vi.fn<() => void>(),
 }));
@@ -49,8 +47,8 @@ vi.mock('../loggerService', () => ({
  * encadeamento PostgREST — inclusive os `.eq()` extras introduzidos pelo
  * isolamento multi-tenant.
  */
-function setupChain(data: unknown = null, extra: Record<string, unknown> = {}) {
-  const chain = makeChain({ data, ...extra } as never);
+function setupChain(data: any = null, extra: Record<string, unknown> = {}) {
+  const chain = makeChain({ data, ...extra } as any);
   mockFrom.mockReturnValue(chain);
   return {
     chain,
@@ -67,7 +65,7 @@ function setupChain(data: unknown = null, extra: Record<string, unknown> = {}) {
 }
 
 /** Chain isolado, para uso com `mockReturnValueOnce`. */
-function standaloneChain(data: unknown = null, error: { message: string; code?: string } | null = null) {
+function standaloneChain(data: any = null, error: any = null) {
   const chain = makeChain({ data, error });
   return {
     chain,
@@ -82,24 +80,20 @@ function standaloneChain(data: unknown = null, error: { message: string; code?: 
   };
 }
 
-const setupListarChain = (data: unknown, count = 0, error: { message: string; code?: string } | null = null) =>
+const setupListarChain = (data: any[], count = 0, error: any = null) =>
   setupChain(data, { count, error });
-const setupListComAdesaoChain = (data: unknown, error: { message: string; code?: string } | null = null) =>
-  setupChain(data, { error });
+const setupListComAdesaoChain = (data: any[], error: any = null) => setupChain(data, { error });
 const makeInsertMaybeSingleMock = standaloneChain;
 const makeBuscarMock = standaloneChain;
 const makeUpdateMaybeSingleMock = standaloneChain;
-const makeDeleteEqMock = (error: { message: string; code?: string } | null = null) => standaloneChain(null, error);
+const makeDeleteEqMock = (error: any = null) => standaloneChain(null, error);
 const makeInsertSingleMock = standaloneChain;
-const makeSelectEqMock = (data: unknown, error: { message: string; code?: string } | null = null, _eqCount = 1) =>
-  standaloneChain(data, error);
+const makeSelectEqMock = (data: any[], error: any = null, _eqCount = 1) => standaloneChain(data, error);
 
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('beneficioService.listar', () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns data and total without filters', async () => {
     const records = [{ id: 'b1', nome: 'VT' }];
@@ -109,7 +103,7 @@ describe('beneficioService.listar', () => {
   });
 
   it('returns empty data when null', async () => {
-    setupListarChain(null as never, 0);
+    setupListarChain(null as any, 0);
     const result = await beneficioService.listar({ filters: { empresa_id: EMPRESA_ID } });
     expect(result).toEqual({ data: [], total: 0 });
   });
@@ -141,9 +135,7 @@ describe('beneficioService.listar', () => {
 // ─── listComAdesao ────────────────────────────────────────────────────────────
 
 describe('beneficioService.listComAdesao', () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('queries with empresa_id and returns data', async () => {
     const records = [{ id: 'b1', beneficios_colaborador: [{ count: 3 }] }];
@@ -154,7 +146,7 @@ describe('beneficioService.listComAdesao', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListComAdesaoChain(null as never);
+    setupListComAdesaoChain(null as any);
     const result = await beneficioService.listComAdesao('emp-1');
     expect(result).toEqual([]);
   });
@@ -168,10 +160,7 @@ describe('beneficioService.listComAdesao', () => {
 // ─── criar ────────────────────────────────────────────────────────────────────
 
 describe('beneficioService.criar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockLog.mockResolvedValue(undefined);
-  });
+  beforeEach(() => { vi.clearAllMocks(); mockLog.mockResolvedValue(undefined); });
 
   it('inserts beneficio and logs audit INSERT', async () => {
     const created = { id: 'b-new', nome: 'VR', tipo: 'alimentacao' };
@@ -180,29 +169,24 @@ describe('beneficioService.criar', () => {
 
     const result = await beneficioService.criar({ nome: 'VR' });
     expect(result).toEqual(created);
-    expect(mockLog).toHaveBeenCalledWith(
-      expect.objectContaining({
-        tabela: 'beneficios',
-        acao: 'INSERT',
-        dados_novos: created,
-      })
-    );
+    expect(mockLog).toHaveBeenCalledWith(expect.objectContaining({
+      tabela: 'beneficios',
+      acao: 'INSERT',
+      dados_novos: created,
+    }));
   });
 
   it('throws wrapped error on DB failure', async () => {
     const { insertFn } = makeInsertMaybeSingleMock(null, { message: 'DB fail' });
     mockFrom.mockReturnValue({ insert: insertFn });
-    await expect(beneficioService.criar({ nome: 'VT', empresa_id: 'emp-1' })).rejects.toThrow();
+    await expect(beneficioService.criar({})).rejects.toThrow();
   });
 });
 
 // ─── atualizar ────────────────────────────────────────────────────────────────
 
 describe('beneficioService.atualizar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockLog.mockResolvedValue(undefined);
-  });
+  beforeEach(() => { vi.clearAllMocks(); mockLog.mockResolvedValue(undefined); });
 
   it('fetches anterior, updates and logs audit UPDATE', async () => {
     const anterior = { id: 'b1', nome: 'VT' };
@@ -211,18 +195,18 @@ describe('beneficioService.atualizar', () => {
     const buscarMock = makeBuscarMock(anterior);
     const updateMock = makeUpdateMaybeSingleMock(updated);
 
-    mockFrom.mockReturnValueOnce({ select: buscarMock.selectFn }).mockReturnValueOnce({ update: updateMock.updateFn });
+    mockFrom
+      .mockReturnValueOnce({ select: buscarMock.selectFn })
+      .mockReturnValueOnce({ update: updateMock.updateFn });
 
     const result = await beneficioService.atualizar('b1', { nome: 'VT Plus' }, EMPRESA_ID);
     expect(result).toEqual(updated);
-    expect(mockLog).toHaveBeenCalledWith(
-      expect.objectContaining({
-        tabela: 'beneficios',
-        acao: 'UPDATE',
-        dados_anteriores: anterior,
-        dados_novos: updated,
-      })
-    );
+    expect(mockLog).toHaveBeenCalledWith(expect.objectContaining({
+      tabela: 'beneficios',
+      acao: 'UPDATE',
+      dados_anteriores: anterior,
+      dados_novos: updated,
+    }));
   });
 
   it('throws wrapped error when buscarPorId fails', async () => {
@@ -235,27 +219,24 @@ describe('beneficioService.atualizar', () => {
 // ─── excluir ──────────────────────────────────────────────────────────────────
 
 describe('beneficioService.excluir', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockLog.mockResolvedValue(undefined);
-  });
+  beforeEach(() => { vi.clearAllMocks(); mockLog.mockResolvedValue(undefined); });
 
   it('fetches anterior, deletes and logs audit DELETE', async () => {
     const anterior = { id: 'b1', nome: 'VT' };
     const buscarMock = makeBuscarMock(anterior);
     const deleteMock = makeDeleteEqMock();
 
-    mockFrom.mockReturnValueOnce({ select: buscarMock.selectFn }).mockReturnValueOnce({ delete: deleteMock.deleteFn });
+    mockFrom
+      .mockReturnValueOnce({ select: buscarMock.selectFn })
+      .mockReturnValueOnce({ delete: deleteMock.deleteFn });
 
     await beneficioService.excluir('b1', EMPRESA_ID);
     expect(deleteMock.eqFn).toHaveBeenCalledWith('id', 'b1');
-    expect(mockLog).toHaveBeenCalledWith(
-      expect.objectContaining({
-        tabela: 'beneficios',
-        acao: 'DELETE',
-        dados_anteriores: anterior,
-      })
-    );
+    expect(mockLog).toHaveBeenCalledWith(expect.objectContaining({
+      tabela: 'beneficios',
+      acao: 'DELETE',
+      dados_anteriores: anterior,
+    }));
   });
 
   it('throws wrapped error on DB failure', async () => {
@@ -268,23 +249,19 @@ describe('beneficioService.excluir', () => {
 // ─── vincularColaborador ──────────────────────────────────────────────────────
 
 describe('beneficioService.vincularColaborador', () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('inserts into beneficios_colaborador and returns data', async () => {
-    const vinculo = { id: 'v1', tipo_beneficio_id: 'b1', colaborador_id: 'c1' };
+    const vinculo = { id: 'v1', beneficio_id: 'b1', colaborador_id: 'c1' };
     const { insertFn, singleFn } = makeInsertSingleMock(vinculo);
     mockFrom.mockReturnValue({ insert: insertFn });
 
     const result = await beneficioService.vincularColaborador('b1', 'c1', { valor: 100 }, EMPRESA_ID);
-    expect(insertFn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        tipo_beneficio_id: 'b1',
-        colaborador_id: 'c1',
-        valor: 100,
-      })
-    );
+    expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({
+      beneficio_id: 'b1',
+      colaborador_id: 'c1',
+      valor: 100,
+    }));
     expect(result).toEqual(vinculo);
   });
 
@@ -298,9 +275,7 @@ describe('beneficioService.vincularColaborador', () => {
 // ─── listarPorColaborador ─────────────────────────────────────────────────────
 
 describe('beneficioService.listarPorColaborador', () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('queries by colaborador_id and returns data', async () => {
     const records = [{ id: 'v1', beneficio: { nome: 'VT' } }];
@@ -325,11 +300,9 @@ describe('beneficioService.listarPorColaborador', () => {
 // ─── obterResumoCustos ────────────────────────────────────────────────────────
 
 describe('beneficioService.obterResumoCustos', () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
+  beforeEach(() => { vi.resetAllMocks(); });
 
-  function setupResumoCustos(data: unknown, error: { message: string; code?: string } | null = null) {
+  function setupResumoCustos(data: any[], error: any = null) {
     const { chain, selectFn } = setupChain(data, { error });
     return { selectFn, eq1Fn: chain.eq, eq2Fn: chain.eq };
   }
@@ -342,32 +315,34 @@ describe('beneficioService.obterResumoCustos', () => {
 
   it('groups costs by tipo', async () => {
     const data = [
-      { valor: 150, tipo_beneficio: { nome: 'alimentacao', desconto_colaborador: 0.5 } },
-      { valor: 300, tipo_beneficio: { nome: 'alimentacao', desconto_colaborador: 0.5 } },
-      { valor: 300, tipo_beneficio: { nome: 'transporte', desconto_colaborador: 0 } },
+      { valor_empresa: 100, valor_colaborador: 50, beneficio: { tipo: 'alimentacao' } },
+      { valor_empresa: 200, valor_colaborador: 100, beneficio: { tipo: 'alimentacao' } },
+      { valor_empresa: 300, valor_colaborador: 0, beneficio: { tipo: 'transporte' } },
     ];
     setupResumoCustos(data);
     const result = await beneficioService.obterResumoCustos('emp-1');
-    expect(result.alimentacao).toEqual({ empresa: 225, colaborador: 225, total: 450 });
+    expect(result.alimentacao).toEqual({ empresa: 300, colaborador: 150, total: 450 });
     expect(result.transporte).toEqual({ empresa: 300, colaborador: 0, total: 300 });
   });
 
   it('groups null tipo as Outros', async () => {
-    const data = [{ valor: 75, tipo_beneficio: { nome: null, desconto_colaborador: 0.5 } }];
+    const data = [
+      { valor_empresa: 50, valor_colaborador: 25, beneficio: { tipo: null } },
+    ];
     setupResumoCustos(data);
     const result = await beneficioService.obterResumoCustos('emp-1');
-    expect(result['Outros']).toEqual({ empresa: 37.5, colaborador: 37.5, total: 75 });
+    expect(result['Outros']).toEqual({ empresa: 50, colaborador: 25, total: 75 });
   });
 
   it('filters by empresa_id and status_vinculo', async () => {
     const { eq1Fn, eq2Fn } = setupResumoCustos([]);
     await beneficioService.obterResumoCustos('emp-1');
-    expect(eq1Fn).toHaveBeenCalledWith('colaborador.empresa_id', 'emp-1');
+    expect(eq1Fn).toHaveBeenCalledWith('beneficio.empresa_id', 'emp-1');
     expect(eq2Fn).toHaveBeenCalledWith('status_vinculo', 'ativo');
   });
 
   it('returns empty object when data is null', async () => {
-    setupResumoCustos(null as never);
+    setupResumoCustos(null as any);
     const result = await beneficioService.obterResumoCustos('emp-1');
     expect(result).toEqual({});
   });

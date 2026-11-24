@@ -8,13 +8,17 @@
  *  - MEI: LC 128/2008
  *
  * Para encargos patronais sobre folha:
- *  - Simples Nacional: CPP normalmente no DAS; no Anexo IV, CPP e RAT/FAP
- *    são recolhidos fora do DAS. FGTS 8% segue obrigatório.
+ *  - Simples Nacional: NÃO recolhe INSS patronal (20%) — incluso no DAS.
+ *    FGTS 8% segue obrigatório.
  *  - Lucro Real/Presumido: INSS 20% + RAT (1-3%) × FAP + Terceiros (~5,8%) + FGTS 8%.
- *  - MEI com empregado: CPP patronal 3% + FGTS 8%.
+ *  - MEI: apenas FGTS 8% (sem INSS patronal).
  */
 
-export type RegimeTributario = 'simples_nacional' | 'lucro_presumido' | 'lucro_real' | 'mei';
+export type RegimeTributario =
+  | 'simples_nacional'
+  | 'lucro_presumido'
+  | 'lucro_real'
+  | 'mei';
 
 export interface RegimeInfo {
   readonly value: RegimeTributario;
@@ -30,7 +34,7 @@ export const REGIMES_TRIBUTARIOS: Readonly<Record<RegimeTributario, RegimeInfo>>
     value: 'simples_nacional',
     label: 'Simples Nacional',
     labelCurto: 'Simples',
-    descricao: 'CPP no DAS, exceto Anexo IV; FGTS 8% obrigatório.',
+    descricao: 'INSS patronal incluso no DAS; FGTS 8% obrigatório.',
     cor: 'hsl(142 76% 36%)',
     recolheINSSPatronal: false,
   },
@@ -54,7 +58,7 @@ export const REGIMES_TRIBUTARIOS: Readonly<Record<RegimeTributario, RegimeInfo>>
     value: 'mei',
     label: 'MEI',
     labelCurto: 'MEI',
-    descricao: 'MEI com empregado — CPP 3% + FGTS 8%.',
+    descricao: 'Microempreendedor — apenas FGTS 8%.',
     cor: 'hsl(38 92% 50%)',
     recolheINSSPatronal: false,
   },

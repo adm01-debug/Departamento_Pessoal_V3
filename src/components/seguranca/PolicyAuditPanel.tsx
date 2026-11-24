@@ -111,7 +111,7 @@ export function PolicyAuditPanel() {
                   <TableCell className="font-mono text-xs font-semibold">{row.tabela}</TableCell>
                   <TableCell className="text-xs">{row.policy_name}</TableCell>
                   <TableCell>
-                    <Badge variant="outline" className="text-[10px] uppercase font-bold">
+                    <Badge variant="outline" className="text-[10px] uppercase font-medium">
                       {row.cmd}
                     </Badge>
                   </TableCell>

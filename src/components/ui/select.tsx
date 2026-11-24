@@ -119,9 +119,9 @@ const SelectItem = React.forwardRef<
     <SelectPrimitive.Item
       ref={ref}
       className={cn(
-        // `transition-colors duration-150`: só o background/cor do texto anima
+        // `transition-colors duration-fast`: só o background/cor do texto anima
         // suavemente no hover/foco — nada de posição/tamanho se move.
-        'relative flex w-full cursor-default select-none items-center rounded-xs py-1.5 pl-8 pr-2 text-control outline-hidden transition-colors duration-150 focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+        'relative flex w-full cursor-default select-none items-center rounded-xs py-1.5 pl-8 pr-2 text-control outline-hidden transition-colors duration-fast focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
         acao && 'group/ciclo pr-1.5',
         className
       )}

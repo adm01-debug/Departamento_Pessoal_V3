@@ -70,7 +70,9 @@ describe('useAssinaturaDigital', () => {
 
     await waitFor(() => expect(result.current.assinarContrato.isSuccess).toBe(true));
 
-    expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ contrato_assinado: true }));
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ contrato_assinado: true })
+    );
   });
 
   it('shows success toast on successful signature', async () => {
@@ -81,7 +83,9 @@ describe('useAssinaturaDigital', () => {
       result.current.assinarContrato.mutate({ tokenId: 'tok1' });
     });
 
-    await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith('Assinatura digital realizada com sucesso'));
+    await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith(
+      'Assinatura digital realizada com sucesso'
+    ));
   });
 
   it('invalidates queries after success', async () => {
@@ -108,21 +112,21 @@ describe('useAssinaturaDigital', () => {
     await waitFor(() => expect(mockToastError).toHaveBeenCalledWith('token not found'));
   });
 
-  it('stores provided ip in ip_assinatura', async () => {
+  it('uses navigator.userAgent when userAgent not provided', async () => {
     mockSingle.mockResolvedValueOnce({ data: { id: 'tok1' }, error: null });
     const { result } = renderHook(() => useAssinaturaDigital(), { wrapper });
 
     await act(async () => {
-      result.current.assinarContrato.mutate({ tokenId: 'tok1', ip: '127.0.0.1' });
+      result.current.assinarContrato.mutate({ tokenId: 'tok1' });
     });
 
     await waitFor(() => expect(mockUpdate).toHaveBeenCalled());
 
     const updateArg = mockUpdate.mock.calls[0][0];
-    expect(updateArg.ip_assinatura).toBe('127.0.0.1');
+    expect(updateArg.metadata.assinatura_digital.userAgent).toBe(navigator.userAgent);
   });
 
-  it('stores null ip when ip not provided', async () => {
+  it('uses "unknown" ip when ip not provided', async () => {
     mockSingle.mockResolvedValueOnce({ data: { id: 'tok1' }, error: null });
     const { result } = renderHook(() => useAssinaturaDigital(), { wrapper });
 
@@ -132,6 +136,6 @@ describe('useAssinaturaDigital', () => {
 
     await waitFor(() => expect(mockUpdate).toHaveBeenCalled());
     const updateArg = mockUpdate.mock.calls[0][0];
-    expect(updateArg.ip_assinatura).toBeNull();
+    expect(updateArg.metadata.assinatura_digital.ip).toBe('unknown');
   });
 });

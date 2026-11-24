@@ -103,7 +103,7 @@ export function AssinarEspelhoDialog({ colaboradorId, colaboradorNome, competenc
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-lg">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Assinatura digital de espelho de ponto</DialogTitle>
           <DialogDescription>

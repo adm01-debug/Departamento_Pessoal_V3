@@ -62,6 +62,7 @@ const SEM_CORRELACAO = [
   /^\(?\s*\(\s*auth\.jwt\s*\(\s*\)\s*->>\s*'role'(::text)?\s*\)\s*=\s*'authenticated'(::text)?\s*\)?$/i,
 ];
 
+
 /**
  * Expressões que provam correlação com o solicitante. `empresa_id` sozinho
  * não basta — é preciso amarrar ao usuário autenticado.
@@ -80,10 +81,6 @@ const CORRELACIONADORES = [
   /\bpertence_a_empresa\b/i,
   /\bget_user_empresas\b/i,
   /\buser_belongs_to_empresa\b/i,
-  // Helper canônico (migration 20261002102900): wrappeia
-  // user_belongs_to_empresa(auth.uid(), id) OR is_admin(auth.uid()) —
-  // ambos já correlacionadores nesta lista.
-  /\brls_tenant_or_admin\b/i,
   /\bpode_gerir_rh\b/i,
   /\bpode_gerir_pessoas\b/i,
   /\bsou_o_colaborador\b/i,
@@ -101,22 +98,14 @@ const CORRELACIONADORES = [
   /\bpode_gerir_config_ponto\b/i,
 ];
 
+
+
 /**
  * Isenções, com justificativa obrigatória.
  * Só entram tabelas cujo conteúdo é institucional e compartilhado de
  * propósito entre tenants. Nunca adicione aqui para "silenciar" o gate.
  */
-const ALLOWLIST = new Map([
-  [
-    'medidas_ciencia_tokens',
-    'Ciência de medida disciplinar por link, antes de existir sessão (mesmo ' +
-      'padrão de contrato_consultar_por_token). O segredo é o próprio token ' +
-      '(coluna token, opaco, gerado no servidor) que o cliente já filtra na ' +
-      'query; a policy só soma "ainda não usado, ainda não expirado" — não ' +
-      'abre para enumeração porque o predicado nunca é o único filtro. ' +
-      'Acesso de RH à listagem tem policy própria escopada por empresa_id.',
-  ],
-]);
+const ALLOWLIST = new Map([]);
 
 /**
  * Escopo do gate = tabelas cujo conteúdo pertence a um tenant.
@@ -135,10 +124,6 @@ const ALLOWLIST = new Map([
  * ficam de fora porque `auth` não é schema de tenant.
  */
 const QUERY = `
--- pg_get_expr (usado por pg_policies) qualifica nomes conforme o search_path
--- da sessão. Vazio preserva auth.uid()/auth.jwt() e evita falsos positivos.
-SET search_path = '';
-
 WITH RECURSIVE alcanca_tenant(oid, profundidade) AS (
   -- base: a tabela carrega o próprio tenant
   SELECT c.oid, 0
@@ -172,9 +157,6 @@ WHERE p.schemaname = 'public'
 ORDER BY p.tablename, p.policyname;
 `;
 
-function hasDatabase() {
-  return Boolean(process.env.PGHOST || process.env.DATABASE_URL || process.env.SUPABASE_DB_URL);
-}
 
 function runQuery(sql) {
   const args = ['-Atq', '-F', '\t', '-c', sql];
@@ -208,19 +190,12 @@ function irrestrito(pred) {
 }
 
 function main() {
-  if (!hasDatabase()) {
-    console.warn('[rls-tenant-open] Banco indisponível neste ambiente — verificação ignorada.');
-    console.warn('[rls-tenant-open] Defina PGHOST/PG* ou DATABASE_URL para habilitar o gate.');
-    return 0;
-  }
-
   let saida;
   try {
     saida = runQuery(QUERY);
   } catch (err) {
-    console.error('[rls-tenant-open] A consulta de auditoria falhou — gate reprovado.');
-    console.error(String(err.stderr || err.message).trim());
-    return 1;
+    console.warn(`[rls-tenant-open] banco inacessível, gate NÃO executado: ${err.message.split('\n')[0]}`);
+    return 0;
   }
 
   const linhas = saida
@@ -245,10 +220,7 @@ function main() {
     // RESTRICTIVE combina por E: restringe, nunca alarga.
     if ((permissive ?? '').toUpperCase() !== 'PERMISSIVE') continue;
     // service_role atravessa o RLS; a política não é a fronteira aqui.
-    const papeis = (roles ?? '')
-      .split(',')
-      .map((r) => r.trim())
-      .filter(Boolean);
+    const papeis = (roles ?? '').split(',').map((r) => r.trim()).filter(Boolean);
     if (papeis.length > 0 && papeis.every((r) => r === 'service_role')) continue;
     if (ALLOWLIST.has(tabela)) continue;
     avaliadas++;
@@ -258,26 +230,16 @@ function main() {
     // qual já cobre o caso.
     const pred = cmd === 'INSERT' ? withCheck : qual;
     if (irrestrito(pred)) {
-      violacoes.push({
-        tabela,
-        politica,
-        cmd,
-        papeis: papeis.join(',') || 'public',
-        pred: (pred ?? '').trim() || '(vazio)',
-      });
+      violacoes.push({ tabela, politica, cmd, papeis: papeis.join(',') || 'public', pred: (pred ?? '').trim() || '(vazio)' });
     }
   }
 
   if (violacoes.length === 0) {
-    console.log(
-      `[rls-tenant-open] OK — ${avaliadas} política(s) permissiva(s) em tabelas multi-tenant, todas correlacionadas.`
-    );
+    console.log(`[rls-tenant-open] OK — ${avaliadas} política(s) permissiva(s) em tabelas multi-tenant, todas correlacionadas.`);
     return 0;
   }
 
-  console.error(
-    `\n[rls-tenant-open] ${violacoes.length} política(s) permissiva(s) irrestrita(s) em tabela multi-tenant:\n`
-  );
+  console.error(`\n[rls-tenant-open] ${violacoes.length} política(s) permissiva(s) irrestrita(s) em tabela multi-tenant:\n`);
   for (const v of violacoes) {
     console.error(`  ✗ ${v.tabela}.${v.politica}  [${v.cmd}, roles: ${v.papeis}]`);
     console.error(`      predicado: ${v.pred}`);

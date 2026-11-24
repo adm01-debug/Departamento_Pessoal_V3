@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -21,8 +21,8 @@ vi.mock('sonner', () => ({ toast: { success: mockToastSuccess, error: mockToastE
 
 import { useAdmissaoWorkflow } from '../useAdmissaoWorkflow';
 
-function buildSelectChain(data: unknown) {
-  const chain: Record<string, unknown> = {};
+function buildSelectChain(data: any) {
+  const chain: any = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.maybeSingle = vi.fn().mockResolvedValue({ data, error: null });
