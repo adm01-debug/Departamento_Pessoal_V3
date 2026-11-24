@@ -153,7 +153,7 @@ jobs:
         env:
           GRAPHIFY_VERSION: '0.9.68'
         run: |
-          if ! command -v uvx >/dev/null 2>&1; then pip install --quiet --user uv && export PATH="$HOME/.local/bin:$PATH"; fi
+          if ! command -v uvx >/dev/null 2>&1; then pip install --quiet --user --only-binary :all: --require-hashes -r scripts/uv-pin.txt && export PATH="$HOME/.local/bin:$PATH"; fi
           uvx --from "graphifyy[sql]==${GRAPHIFY_VERSION}" graphify update . --force
           rm -f graphify-out/graph.html
 
@@ -195,7 +195,7 @@ jobs:
 
       - name: Dependências Python (runner ubuntu-24.04 já tem python3)
         run: |
-          python3 -m pip install --quiet --break-system-packages --only-binary :all: -r scripts/supabase_snapshot/requirements.txt
+          python3 -m pip install --quiet --break-system-packages --only-binary :all: --require-hashes -r scripts/supabase_snapshot/requirements.txt
 
       - name: Recuperar snapshot anterior da branch contexto (CHANGELOG precisa do estado anterior)
         env:
