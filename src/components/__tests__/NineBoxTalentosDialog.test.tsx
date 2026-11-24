@@ -83,25 +83,32 @@ const RANKING = [
 
 describe('NineBoxTalentosDialog — a MESMA janela de "Pendências"', () => {
   it('monta véu, casca e conteúdo com a receita do `AnimatedCascadeDialog`', async () => {
-    const { container } = render(<NineBoxTalentosDialog aberto onOpenChange={() => {}} ranking={RANKING} />);
+    render(<NineBoxTalentosDialog aberto onOpenChange={() => {}} ranking={RANKING} />);
     // A montagem passa pelo AnimatePresence: em máquina lenta o conteúdo entra
     // um tick depois do render, então cada consulta ao DOM espera aparecer.
     const achar = (sel: string) =>
-      waitFor(() => {
-        const el = container.querySelector(sel);
-        if (!el) throw new Error(`não montou ainda: ${sel}`);
-        return el;
-      });
+      waitFor(
+        () => {
+          const el = document.querySelector(sel);
+          if (!el) throw new Error(`não montou ainda: ${sel}`);
+          return el;
+        },
+        { timeout: 5000 }
+      );
     // Véu: mesmas classes da referência (escurecimento + blur juntos).
     await achar('.bg-black\\/60');
     await achar('.backdrop-blur-sm');
     // Casca: a caixa que nasce quadrada e estica, ancorada no TOPO.
-    const shell = (await achar('div[style*="transform-origin: top center"]')) as HTMLElement;
+    const shell = (await achar('div[class*="max-w-[460px]"]')) as HTMLElement;
+    // A origem do crescimento vem do `style` inline do Framer; o texto exato
+    // varia entre versoes (`transform-origin: top center` x `top center`), entao
+    // a checagem normaliza o espaco depois dos dois-pontos.
+    expect(shell.getAttribute('style') ?? '').toMatch(/transform-origin:\s*top center/);
     // Largura compacta padrão da referência (`max-w-[460px]`) — a mesma do
     // popup "Pendências", não uma largura própria.
     expect(shell.className).toContain('max-w-[460px]');
     // X de fechar com o rótulo acessível da referência.
-    expect(await screen.findByText('Fechar')).toBeInTheDocument();
+    expect(await screen.findByText('Fechar', {}, { timeout: 5000 })).toBeInTheDocument();
   });
 
   it('tem o título do card e o ícone de destaque', () => {
