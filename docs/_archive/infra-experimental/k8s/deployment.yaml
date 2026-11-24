@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: departamento-pessoal
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: departamento-pessoal
+  template:
+    metadata:
+      labels:
+        app: departamento-pessoal
+    spec:
+      containers:
+      - name: app
+        image: departamento-pessoal:latest
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10

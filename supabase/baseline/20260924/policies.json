@@ -1,0 +1,4214 @@
+{
+  "rows": [
+    {
+      "tablename": "adiantamentos_salariais",
+      "policyname": "adiantamentos_salariais_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "admissao_tokens",
+      "policyname": "Tenant scoped admissao_tokens",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "admissoes",
+      "policyname": "Admissoes scoped by empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "admissoes",
+      "policyname": "admissoes_tenant_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "admissoes",
+      "policyname": "tenant_admissoes_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "admissoes",
+      "policyname": "tenant_admissoes_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "admissoes",
+      "policyname": "tenant_admissoes_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "admissoes",
+      "policyname": "tenant_admissoes_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "aej_geracoes",
+      "policyname": "aej_geracoes_insert_membros",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "aej_geracoes",
+      "policyname": "aej_geracoes_select_membros",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "afastamentos",
+      "policyname": "afastamentos_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "afdt_divergencias",
+      "policyname": "afdt_div_tenant_all",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "afdt_importacoes",
+      "policyname": "afdt_imp_tenant_all",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "afdt_registros_raw",
+      "policyname": "afdt_raw_tenant_all",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "ajustes_ponto",
+      "policyname": "tenant_ajustes_ponto",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "anotacoes_colaborador",
+      "policyname": "anotacoes_colaborador_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "asos",
+      "policyname": "asos_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "audit_log",
+      "policyname": "Admins podem ver todo audit_log",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "audit_log",
+      "policyname": "audit_log_self_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "audit_log",
+      "policyname": "audit_log_self_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "audit_log_unified",
+      "policyname": "Admins can view unified audit log",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "audit_log_unified",
+      "policyname": "Service role manages unified audit log",
+      "permissive": "PERMISSIVE",
+      "roles": ["service_role"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "audit_log_unified_archive",
+      "policyname": "Admins podem ler audit archive",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "audit_logs",
+      "policyname": "Users can insert their own logs",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "audit_logs",
+      "policyname": "Users can view logs of their companies",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "auditoria",
+      "policyname": "audit_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "auditoria",
+      "policyname": "tenant_auditoria_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "auditoria",
+      "policyname": "tenant_auditoria_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "auditoria_contratual",
+      "policyname": "Users can view their company contract audit",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "auditoria_logs",
+      "policyname": "Admins can view audit logs",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "auditoria_logs",
+      "policyname": "Multi-tenant access for auditoria_logs",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "auditoria_logs",
+      "policyname": "Usuários autenticados podem ver auditoria_logs",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "auditoria_logs",
+      "policyname": "auditoria_logs_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "auth_gov_br_sessions",
+      "policyname": "Usuários veem suas próprias sessões Gov.br",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "automacao_logs",
+      "policyname": "Logs de automação visíveis para gestores",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "banco_horas",
+      "policyname": "banco_horas_tenant_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "banco_horas",
+      "policyname": "empresa_banco_horas",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "banco_horas_config",
+      "policyname": "banco_horas_config_modify",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "banco_horas_config",
+      "policyname": "banco_horas_config_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "batidas_ponto",
+      "policyname": "batidas_ponto_tenant_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "batidas_ponto",
+      "policyname": "bp_del",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "batidas_ponto",
+      "policyname": "bp_ins",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "batidas_ponto",
+      "policyname": "bp_sel",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "batidas_ponto",
+      "policyname": "bp_upd",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "beneficiarios_plano",
+      "policyname": "beneficiarios_plano_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "beneficiarios_seguro",
+      "policyname": "tenant_beneficiarios_seguro",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "beneficio_arquivos",
+      "policyname": "Arquivos acessíveis por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "beneficio_movimentacoes",
+      "policyname": "Movimentações acessíveis por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "beneficio_regras_elegibilidade",
+      "policyname": "Regras acessíveis por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "beneficio_utilizacao",
+      "policyname": "Colaboradores podem ver seu próprio extrato de benefícios",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "beneficios",
+      "policyname": "Empresa vê seus benefícios",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "beneficios",
+      "policyname": "tenant_beneficios",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "beneficios_colaborador",
+      "policyname": "Users can manage beneficios_colaborador",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "beneficios_colaboradores",
+      "policyname": "Empresa vê benefícios dos colaboradores",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "bitrix24_config",
+      "policyname": "Admins can manage bitrix24_config",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "bitrix24_sync_logs",
+      "policyname": "Admins can view bitrix24_sync_logs",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "bitrix24_sync_logs",
+      "policyname": "bitrix24_sync_logs_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "blocked_ips",
+      "policyname": "Admins can manage blocked IPs",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "campos_customizados",
+      "policyname": "tenant_campos_customizados",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "canal_etica",
+      "policyname": "canal_etica_reportar",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "canal_etica",
+      "policyname": "canal_etica_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "candidatos",
+      "policyname": "Multi-tenant access",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "candidatos",
+      "policyname": "Users can manage candidatos of their empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "candidaturas",
+      "policyname": "Multi-tenant access",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "candidaturas",
+      "policyname": "Users can manage candidaturas via vaga empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "cargo_faixas_salariais",
+      "policyname": "Faixas acessíveis por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "cargos",
+      "policyname": "tenant_cargos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "catalogo_cursos",
+      "policyname": "catalogo_cursos_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "catalogo_cursos",
+      "policyname": "catalogo_cursos_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "catalogo_cursos",
+      "policyname": "catalogo_cursos_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "catalogo_cursos",
+      "policyname": "catalogo_cursos_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "catalogo_infracoes",
+      "policyname": "catalogo_infracoes_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "catalogo_infracoes",
+      "policyname": "catalogo_infracoes_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "catalogo_infracoes",
+      "policyname": "catalogo_infracoes_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "catalogo_infracoes",
+      "policyname": "catalogo_infracoes_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "categorias_trabalhador",
+      "policyname": "categorias_trabalhador_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "centros_custo",
+      "policyname": "tenant_centros_custo",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "certificados_digitais",
+      "policyname": "Certificados scoped by empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "ciclos_avaliacao",
+      "policyname": "ciclos_avaliacao_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "ciclos_avaliacao",
+      "policyname": "ciclos_avaliacao_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "ciclos_avaliacao",
+      "policyname": "ciclos_avaliacao_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "ciclos_avaliacao",
+      "policyname": "ciclos_avaliacao_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "cid10",
+      "policyname": "Leitura CID10 publica",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "ciencia_rate_limits",
+      "policyname": "Admins podem auditar rate limits",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "clinicas_partners",
+      "policyname": "clinicas_partners_select_empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "clinicas_partners_horarios",
+      "policyname": "clinicas_horarios_via_clinica",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "clinicas_partners_servicos",
+      "policyname": "clinicas_servicos_via_clinica",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "cnab_configuracoes",
+      "policyname": "CNAB config scoped by empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "cnab_itens",
+      "policyname": "cnab_itens_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "cnab_itens",
+      "policyname": "cnab_itens_tenant_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "cnab_remessas",
+      "policyname": "cnab_remessas_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "cnab_remessas",
+      "policyname": "cnab_remessas_tenant_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "colaborador_beneficios",
+      "policyname": "colaborador_beneficios_tenant_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "colaborador_beneficios",
+      "policyname": "tenant_colaborador_beneficios",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "colaboradores",
+      "policyname": "colaboradores_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "colaboradores",
+      "policyname": "colaboradores_tenant_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "competencias_config",
+      "policyname": "Competências acessíveis por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "competencias_matriz",
+      "policyname": "competencias_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "competencias_matriz",
+      "policyname": "competencias_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "competencias_matriz",
+      "policyname": "competencias_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "competencias_matriz",
+      "policyname": "competencias_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "comunicados",
+      "policyname": "empresa_comunicados",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "comunicados_leituras",
+      "policyname": "comunicados_leituras_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "comunicados_leituras",
+      "policyname": "comunicados_leituras_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "comunicados_leituras",
+      "policyname": "comunicados_leituras_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "comunicados_leituras",
+      "policyname": "comunicados_leituras_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "condicoes_ingresso",
+      "policyname": "condicoes_ingresso_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "config_afastamentos",
+      "policyname": "Authenticated users can view config_afastamentos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "config_alertas_indicadores",
+      "policyname": "Admins can insert config_alertas",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "config_alertas_indicadores",
+      "policyname": "Admins can update config_alertas",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "config_alertas_indicadores",
+      "policyname": "Authenticated users can view config_alertas",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "configuracoes",
+      "policyname": "Admins can insert configuracoes",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "configuracoes",
+      "policyname": "Admins can read configuracoes",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "configuracoes",
+      "policyname": "Admins can update configuracoes",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "configuracoes_alertas",
+      "policyname": "Admins can manage alert configs",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "configuracoes_esocial",
+      "policyname": "Empresas podem gerenciar suas configurações de eSocial",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "configuracoes_intervalo",
+      "policyname": "tenant_configuracoes_intervalo",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "configuracoes_ponto",
+      "policyname": "Apenas admins podem atualizar configurações de ponto",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "configuracoes_ponto",
+      "policyname": "Configurações de ponto visíveis por membros da empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "conformidade_ponto_logs",
+      "policyname": "View logs by company",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "contabilidade_contatos",
+      "policyname": "contabilidade_contatos_tenant_all",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "contabilidade_mensagens",
+      "policyname": "contab_msgs_tenant_all",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "contabilidade_threads",
+      "policyname": "contab_threads_tenant_all",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "contas_bancarias",
+      "policyname": "contas_bancarias_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "contatos_emergencia",
+      "policyname": "contatos_emergencia_self_or_rh",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "contrato_assinatura_tokens",
+      "policyname": "contrato_tokens_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "contrato_assinatura_tokens",
+      "policyname": "contrato_tokens_write",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "contrato_templates",
+      "policyname": "contrato_templates_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "contrato_templates",
+      "policyname": "contrato_templates_write",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "contrato_token_eventos",
+      "policyname": "contrato_token_eventos_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "contratos",
+      "policyname": "tenant_contratos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "contratos_gerados",
+      "policyname": "contratos_gerados_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "contratos_gerados",
+      "policyname": "contratos_gerados_write",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "controle_acesso",
+      "policyname": "empresa_controle_acesso",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "convenios",
+      "policyname": "tenant_convenios",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "convenios_colaboradores",
+      "policyname": "tenant_convenios_colaboradores",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "curriculos_arquivos",
+      "policyname": "empresa_isolation_curriculos_arquivos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "dados_estagiario",
+      "policyname": "tenant_dados_estagiario",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "dados_estrangeiro",
+      "policyname": "tenant_dados_estrangeiro",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "dctfweb_declaracoes",
+      "policyname": "tenant_dctfweb_declaracoes",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "deficiencias",
+      "policyname": "tenant_deficiencias",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "departamentos",
+      "policyname": "tenant_departamentos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "dependentes",
+      "policyname": "dependentes_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "dependentes",
+      "policyname": "dependentes_tenant_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "dependentes_beneficios",
+      "policyname": "tenant_dependentes_beneficios",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "descricoes_logradouro",
+      "policyname": "descricoes_logradouro_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "desligamentos",
+      "policyname": "desligamentos_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "despesas",
+      "policyname": "empresa_despesas",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "despesas_aprovacoes_log",
+      "policyname": "empresa_despesas_log_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "despesas_aprovacoes_log",
+      "policyname": "empresa_despesas_log_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "documento_templates",
+      "policyname": "Templates acessíveis por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "documento_templates",
+      "policyname": "tenant_documento_templates",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "documentos",
+      "policyname": "tenant_documentos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "documentos_admissao",
+      "policyname": "Gestores veem documentos de admissão",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "documentos_admissao",
+      "policyname": "Tenant scoped documentos_admissao",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "documentos_afastamento",
+      "policyname": "Users can manage their company docs",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "documentos_afastamento",
+      "policyname": "tenant_documentos_afastamento",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "documentos_assinatura",
+      "policyname": "Assinaturas acessíveis por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "documentos_assinatura",
+      "policyname": "documentos_assinatura_tenant_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "documentos_assinatura",
+      "policyname": "tenant_documentos_assinatura",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "documentos_colaborador",
+      "policyname": "documentos_colaborador_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "documentos_colaborador",
+      "policyname": "documentos_colaborador_self_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "documentos_historico",
+      "policyname": "Documentos historico authenticated",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "documentos_pessoais_arquivos",
+      "policyname": "documentos_pessoais_arquivos_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "dp_audit_config",
+      "policyname": "service_role_full_audit_config",
+      "permissive": "PERMISSIVE",
+      "roles": ["service_role"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "dp_audit_log",
+      "policyname": "auth_own_events",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "dp_audit_log",
+      "policyname": "service_role_insert_only",
+      "permissive": "PERMISSIVE",
+      "roles": ["service_role"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "dp_audit_log",
+      "policyname": "service_role_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["service_role"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "dp_backup_runbook",
+      "policyname": "service_role_full_runbook",
+      "permissive": "PERMISSIVE",
+      "roles": ["service_role"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "dp_data_catalog",
+      "policyname": "rh_readonly",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "dp_data_catalog",
+      "policyname": "service_role_full",
+      "permissive": "PERMISSIVE",
+      "roles": ["service_role"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "dp_environments",
+      "policyname": "service_role_env",
+      "permissive": "PERMISSIVE",
+      "roles": ["service_role"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "dp_mcp_config",
+      "policyname": "service_role_mcp_config",
+      "permissive": "PERMISSIVE",
+      "roles": ["service_role"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "dp_retention_policy",
+      "policyname": "service_role_only_retention",
+      "permissive": "PERMISSIVE",
+      "roles": ["service_role"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "dp_user_roles",
+      "policyname": "admin_full",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "dp_user_roles",
+      "policyname": "own_roles",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "dp_user_roles",
+      "policyname": "service_full",
+      "permissive": "PERMISSIVE",
+      "roles": ["service_role"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "empresas",
+      "policyname": "Admins podem gerenciar empresas",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "empresas",
+      "policyname": "Usuários podem ver suas empresas",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "emprestimos_consignados",
+      "policyname": "emprestimos_consignados_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "epis",
+      "policyname": "Empresas can manage their own epis",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "epis",
+      "policyname": "epis_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "epis",
+      "policyname": "epis_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "epis",
+      "policyname": "epis_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "epis",
+      "policyname": "epis_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "epis_entregas",
+      "policyname": "epis_entregas_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "epis_entregas",
+      "policyname": "epis_entregas_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "epis_entregas",
+      "policyname": "epis_entregas_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "epis_entregas",
+      "policyname": "epis_entregas_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "epis_fichas",
+      "policyname": "Ficha EPI gerenciável por admin/rh",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "epis_fichas",
+      "policyname": "Ficha EPI visível para membros da empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "epis_fichas_assinaturas",
+      "policyname": "Assinatura inserida por admin/rh",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "epis_fichas_assinaturas",
+      "policyname": "Assinatura visível para membros da empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "epis_fichas_itens",
+      "policyname": "Itens EPI seguem ficha",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "escalas",
+      "policyname": "escalas_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "escalas",
+      "policyname": "escalas_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "escalas",
+      "policyname": "escalas_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "escalas",
+      "policyname": "escalas_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "escalas_trabalho",
+      "policyname": "empresa_escalas_trabalho",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "esocial_eventos",
+      "policyname": "esocial_eventos_tenant_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "esocial_eventos",
+      "policyname": "tenant_esocial_eventos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "esocial_lotes",
+      "policyname": "tenant_esocial_lotes",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "esocial_transmissao_logs",
+      "policyname": "Gestores e RH podem ver logs de transmissão",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "etnias",
+      "policyname": "Authenticated users can read etnias",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "eventos_variaveis",
+      "policyname": "tenant_eventos_variaveis",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "exames",
+      "policyname": "exames_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "exames_agendamentos",
+      "policyname": "RH/Admin gerenciam agendamentos da empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "faltas",
+      "policyname": "faltas_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "faltas",
+      "policyname": "faltas_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "faltas",
+      "policyname": "faltas_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "faltas",
+      "policyname": "faltas_tenant_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "faltas",
+      "policyname": "faltas_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "feedbacks_360",
+      "policyname": "feedbacks_360_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "feedbacks_360",
+      "policyname": "feedbacks_360_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "feedbacks_360",
+      "policyname": "feedbacks_360_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "feedbacks_360",
+      "policyname": "feedbacks_360_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "feriados",
+      "policyname": "tenant_feriados",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "ferias",
+      "policyname": "ferias_gestor_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "ferias",
+      "policyname": "ferias_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "ferias_aprovacoes",
+      "policyname": "tenant_ferias_aprovacoes",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "ferias_aprovacoes_log",
+      "policyname": "Acesso aos logs de aprovação",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "ferias_arquivos",
+      "policyname": "tenant_ferias_arquivos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "ferias_audit_log",
+      "policyname": "View ferias audit by company",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "ferias_coletivas",
+      "policyname": "tenant_ferias_coletivas",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "ferias_programacao",
+      "policyname": "fprog_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "ferias_programacao",
+      "policyname": "fprog_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "ferias_programacao",
+      "policyname": "fprog_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "ferias_programacao",
+      "policyname": "fprog_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "ferias_reconciliacao_logs",
+      "policyname": "reconciliacao_logs_admin_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "ferias_solicitacoes",
+      "policyname": "tenant_ferias_solicitacoes",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "fgts_digital_logs",
+      "policyname": "Gestores veem logs FGTS",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "fila_notificacoes",
+      "policyname": "Usuários podem ver suas próprias notificações",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "fila_processamento",
+      "policyname": "Usuários podem ver suas próprias tarefas",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "folha_assinaturas",
+      "policyname": "Users can view their own signatures",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "folha_auditoria",
+      "policyname": "Usuários autenticados podem inserir auditoria",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "folha_auditoria",
+      "policyname": "Usuários autenticados podem visualizar auditoria",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "folha_eventos_auditoria",
+      "policyname": "Admins can view audit logs",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "folha_itens",
+      "policyname": "folha_itens_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "folha_lock_conflicts",
+      "policyname": "admins veem conflitos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "folha_lock_conflicts",
+      "policyname": "sistema registra conflitos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "folhas_pagamento",
+      "policyname": "folhas_gestor_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "folhas_pagamento",
+      "policyname": "folhas_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "formacoes_academicas",
+      "policyname": "formacoes_academicas_self_or_rh",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "generos_documento",
+      "policyname": "generos_documento_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "geo_allowed_countries",
+      "policyname": "Admins can manage geo_allowed_countries",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "geo_blocked_attempts",
+      "policyname": "Admins can view geo_blocked_attempts",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "geo_blocking_config",
+      "policyname": "Admins can manage geo_blocking_config",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "govbr_auth_state",
+      "policyname": "GovBR state service only",
+      "permissive": "PERMISSIVE",
+      "roles": ["service_role"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "guias_fgts",
+      "policyname": "tenant_guias_fgts",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "guias_fgts_digital",
+      "policyname": "Gestores e RH veem guias FGTS",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "guias_inss",
+      "policyname": "tenant_guias_inss",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "historico_alertas",
+      "policyname": "Admins can insert historico_alertas",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "historico_alertas",
+      "policyname": "Admins can view historico_alertas",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "historico_calculos_folha",
+      "policyname": "Acesso por empresa historico",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "historico_calculos_folha",
+      "policyname": "Inserção por empresa historico",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "historico_cargo",
+      "policyname": "tenant_historico_cargo",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "historico_contratos",
+      "policyname": "tenant_historico_contratos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "historico_ferias",
+      "policyname": "tenant_historico_ferias",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "historico_rescisoes",
+      "policyname": "historico_rescisoes_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "historico_salarial",
+      "policyname": "historico_salarial_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "holerite_distribuicoes",
+      "policyname": "Distribuicoes visiveis por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "holerites",
+      "policyname": "holerites_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "holerites",
+      "policyname": "holerites_self_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "homologacoes_rescisao",
+      "policyname": "Acesso homologacoes por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "ia_provisoes_alertas",
+      "policyname": "Gestores podem ver alertas de IA",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "idempotency_keys",
+      "policyname": "idempotency service role only",
+      "permissive": "PERMISSIVE",
+      "roles": ["service_role"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "identidades_genero",
+      "policyname": "Authenticated users can read gender identities",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "inscricoes_cursos",
+      "policyname": "inscricoes_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "inscricoes_cursos",
+      "policyname": "inscricoes_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "inscricoes_cursos",
+      "policyname": "inscricoes_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "inscricoes_cursos",
+      "policyname": "inscricoes_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "integracao_logs",
+      "policyname": "integracao_logs_admin_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "integracoes",
+      "policyname": "Admins can manage integracoes",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "ip_whitelist",
+      "policyname": "Admins can manage IP whitelist",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "itens_folha",
+      "policyname": "Acesso aos itens via folha",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "jornadas",
+      "policyname": "tenant_jornadas",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "jornadas_horarios",
+      "policyname": "jh_mod",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "lancamentos_contabeis",
+      "policyname": "Empresas can view their own lancamentos",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "lancamentos_folha",
+      "policyname": "lancamentos_folha_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "lgpd_consentimentos",
+      "policyname": "empresa_lgpd_consentimentos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "lgpd_fila_limpeza",
+      "policyname": "Service role only for cleanup queue",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "lgpd_politicas_retencao",
+      "policyname": "Leitura para autenticados",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "lgpd_retencao_logs",
+      "policyname": "Admins gerenciam retencao de logs",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "lgpd_solicitacoes",
+      "policyname": "lgpd_solicitacoes_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "linhas_transporte",
+      "policyname": "tenant_linhas_transporte",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "locais_trabalho",
+      "policyname": "tenant_locais_trabalho",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "log_envio_relatorios",
+      "policyname": "Tenant scoped log_envio_relatorios",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "log_envio_relatorios",
+      "policyname": "Users can view their company's delivery logs",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "login_attempts",
+      "policyname": "Admins can view login attempts",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "login_attempts",
+      "policyname": "System can insert login attempts",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "login_lockouts",
+      "policyname": "login_lockouts_service_role_all",
+      "permissive": "PERMISSIVE",
+      "roles": ["service_role"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "login_rate_limits",
+      "policyname": "Admins can manage rate limits",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "logs_integracoes",
+      "policyname": "Admins can insert logs_integracoes",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "logs_integracoes",
+      "policyname": "Admins can view logs_integracoes",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "logs_sincronizacao",
+      "policyname": "Users can view their company sync logs",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "logs_sistema",
+      "policyname": "Admins can see all logs",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "logs_sistema",
+      "policyname": "Apenas administradores veem logs do sistema",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "logs_sistema",
+      "policyname": "Users can insert their own logs",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "lotacoes",
+      "policyname": "tenant_lotacoes",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "medidas_ciencia_tokens",
+      "policyname": "RH gera tokens da empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "medidas_ciencia_tokens",
+      "policyname": "RH visualiza tokens da empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "medidas_disciplinares",
+      "policyname": "medidas_disciplinares_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "medidas_disciplinares_anexos",
+      "policyname": "Gestores e RH gerenciam anexos disciplinares",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "medidas_disciplinares_contestacao_anexos",
+      "policyname": "contest_anexos_delete_empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "medidas_disciplinares_contestacao_anexos",
+      "policyname": "contest_anexos_insert_empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "medidas_disciplinares_contestacao_anexos",
+      "policyname": "contest_anexos_select_empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "medidas_disciplinares_integracao",
+      "policyname": "tenant_medidas_integracao_admin",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "medidas_disciplinares_integracao",
+      "policyname": "tenant_medidas_integracao_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "medidas_disciplinares_workflow_log",
+      "policyname": "medidas_wf_log_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "metas_okrs",
+      "policyname": "Metas acessíveis por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "metas_okrs",
+      "policyname": "metas_okrs_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "metas_okrs",
+      "policyname": "metas_okrs_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "metas_okrs",
+      "policyname": "metas_okrs_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "metas_okrs",
+      "policyname": "metas_okrs_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "metricas_processamento",
+      "policyname": "Admins can view processing metrics",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "metricas_processamento",
+      "policyname": "Service role full access",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "motivos_afastamento",
+      "policyname": "motivos_afastamento_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "nacionalidades",
+      "policyname": "Authenticated users can read nationalities",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "notificacoes",
+      "policyname": "Users can manage scoped notifications",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "notificacoes",
+      "policyname": "Usuários deletam suas próprias notificações lidas",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "notificacoes",
+      "policyname": "notificacoes_select_policy",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "notificacoes",
+      "policyname": "notificacoes_update_policy",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "notificacoes_admissao",
+      "policyname": "Tenant scoped notificacoes_admissao",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "onboarding_colaborador",
+      "policyname": "Multi-tenant access",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "onboarding_colaborador",
+      "policyname": "Tenant scoped onboarding_colaborador",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "onboarding_documentos_obrigatorios",
+      "policyname": "empresa_isolation_onboarding_documentos_obrigatorios",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "onboarding_kits",
+      "policyname": "empresa_isolation_onboarding_kits",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "onboarding_tarefas",
+      "policyname": "Multi-tenant access",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "onboarding_tarefas",
+      "policyname": "Tenant scoped onboarding_tarefas",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "onboarding_template_tarefas",
+      "policyname": "Tenant scoped onboarding_template_tarefas",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "onboarding_templates",
+      "policyname": "tenant_onboarding_templates",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "paises",
+      "policyname": "Authenticated users can read countries",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "parametros_fiscais",
+      "policyname": "Authenticated users can view parametros",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "parametros_sistema",
+      "policyname": "Users can view system parameters",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "password_history",
+      "policyname": "Users can view own password history",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "password_policies",
+      "policyname": "Admins can manage password policies",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "password_policies",
+      "policyname": "All can read password policies",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "password_reset_config",
+      "policyname": "Admins can manage password_reset_config",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "password_reset_requests",
+      "policyname": "Admins can manage password_reset_requests",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "password_reset_requests",
+      "policyname": "Users can create their own requests",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "password_reset_requests",
+      "policyname": "Users can view their own requests",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "pcs_avaliacoes_cargo",
+      "policyname": "pcs_avaliacoes_cargo_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "pcs_avaliacoes_cargo",
+      "policyname": "pcs_avaliacoes_cargo_write",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "pcs_fatores",
+      "policyname": "pcs_fatores_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "pcs_fatores",
+      "policyname": "pcs_fatores_write",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "pcs_grades",
+      "policyname": "pcs_grades_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "pcs_grades",
+      "policyname": "pcs_grades_write",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "pcs_pesquisa_salarial",
+      "policyname": "pcs_pesquisa_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "pcs_pesquisa_salarial",
+      "policyname": "pcs_pesquisa_write",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "pcs_planos",
+      "policyname": "pcs_planos_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "pcs_planos",
+      "policyname": "pcs_planos_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "pcs_planos",
+      "policyname": "pcs_planos_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "pcs_planos",
+      "policyname": "pcs_planos_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "pdi_plano_desenvolvimento",
+      "policyname": "PDIs acessíveis por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "pdis",
+      "policyname": "pdis_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "pdis",
+      "policyname": "pdis_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "pdis",
+      "policyname": "pdis_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "pdis",
+      "policyname": "pdis_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "pendencias",
+      "policyname": "Pendencias scoped by empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "pendencias",
+      "policyname": "view_pendencias",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "pensoes",
+      "policyname": "tenant_pensoes",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "periodos_aquisitivos",
+      "policyname": "Users can manage periodos by empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "periodos_experiencia",
+      "policyname": "tenant_periodos_experiencia",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "periodos_ponto",
+      "policyname": "Admins can delete periodos_ponto",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "periodos_ponto",
+      "policyname": "Admins can manage periodos_ponto",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "periodos_ponto",
+      "policyname": "Admins can update periodos_ponto",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "periodos_ponto",
+      "policyname": "Authenticated can read periodos_ponto",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "permissao_perfis",
+      "policyname": "Users can view profiles",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "permissao_recursos",
+      "policyname": "Admin can manage permissions",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "permissions",
+      "policyname": "Admins can manage permissions",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "permissions",
+      "policyname": "Authenticated users can view permissions",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "personnel_budget",
+      "policyname": "Users can manage budgets of their own company",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "personnel_budget",
+      "policyname": "Users can view budgets of their own company",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "pesquisas",
+      "policyname": "empresa_pesquisas",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "pesquisas_perguntas",
+      "policyname": "pesquisas_perguntas_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "pesquisas_perguntas",
+      "policyname": "pesquisas_perguntas_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "pesquisas_perguntas",
+      "policyname": "pesquisas_perguntas_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "pesquisas_perguntas",
+      "policyname": "pesquisas_perguntas_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "pesquisas_respostas",
+      "policyname": "pesquisas_respostas_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "pesquisas_respostas",
+      "policyname": "pesquisas_respostas_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "pesquisas_respostas",
+      "policyname": "pesquisas_respostas_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "pesquisas_respostas",
+      "policyname": "pesquisas_respostas_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "pii_access_logs",
+      "policyname": "pii_access_logs_select_admin",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "pix_itens",
+      "policyname": "pix_itens_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "pix_itens",
+      "policyname": "pix_itens_tenant_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "pix_lotes",
+      "policyname": "pix_lotes_rh_manage",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "pix_lotes",
+      "policyname": "pix_lotes_tenant_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "plano_contas",
+      "policyname": "Empresas can view their own plano de contas",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "planos_saude",
+      "policyname": "tenant_planos_saude",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "ponto_ajustes",
+      "policyname": "Colaboradores podem solicitar ajustes",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "ponto_ajustes",
+      "policyname": "Colaboradores podem ver seus próprios ajustes",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "ponto_auditoria",
+      "policyname": "Users can view their own point audit",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "ponto_auditoria_fraude",
+      "policyname": "Admins can view fraud audit",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "ponto_espelhos_assinados",
+      "policyname": "Colaboradores podem ver seus próprios espelhos",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "ponto_espelhos_revogacoes",
+      "policyname": "Admins inserem revogações",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "ponto_espelhos_revogacoes",
+      "policyname": "Admins/RH visualizam revogações da sua empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "ponto_regras_aprovacao",
+      "policyname": "Ponto regras scoped by empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "ponto_seguranca_blacklist",
+      "policyname": "Admins can manage blacklist",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "portal_notificacoes_settings",
+      "policyname": "Users can manage their own portal settings",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "premiacoes_alertas",
+      "policyname": "Users can view their own alerts",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "premiacoes_auditoria",
+      "policyname": "Usuários autenticados podem ver auditoria de premiações",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "premiacoes_campanhas",
+      "policyname": "Users can manage their own company campaigns",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "premiacoes_campanhas",
+      "policyname": "Users can view their own company campaigns",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "premiacoes_cenarios_simulacao",
+      "policyname": "Usuários podem ver seus próprios cenários de simulação",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "premiacoes_pagamentos",
+      "policyname": "Premiacoes pagamentos scoped",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "premiacoes_pagamentos",
+      "policyname": "Premiacoes pagamentos update admin",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "premiacoes_pagamentos",
+      "policyname": "Premiacoes pagamentos write admin",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "premiacoes_regras",
+      "policyname": "Premiacoes regras scoped",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "premiacoes_regras",
+      "policyname": "Premiacoes regras update admin",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "premiacoes_regras",
+      "policyname": "Premiacoes regras write admin",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "premiacoes_roi_cenarios",
+      "policyname": "Users can manage their own scenarios",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "profiles",
+      "policyname": "Profiles are viewable by own user",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "profiles",
+      "policyname": "Users can insert their own profile",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "profiles",
+      "policyname": "Users can update their own profile",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "profiles",
+      "policyname": "Users can view their own profile",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "promo_brindes",
+      "policyname": "Enable read access for all users",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "promo_brindes",
+      "policyname": "Promo brindes admin delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "promo_brindes",
+      "policyname": "Promo brindes admin update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "promo_brindes",
+      "policyname": "Promo brindes admin write",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "promocoes",
+      "policyname": "tenant_promocoes",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "prorrogacoes_afastamento",
+      "policyname": "Users can manage their company prorrogacoes",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "prorrogacoes_afastamento",
+      "policyname": "tenant_prorrogacoes_afastamento",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "provisao_auditoria",
+      "policyname": "Gestores podem ver auditoria de provisão",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "provisao_logs",
+      "policyname": "Gestores podem ver logs de provisão",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "provisao_logs",
+      "policyname": "Provisao logs scoped by empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "provisoes_folha",
+      "policyname": "provisoes_folha_rh_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "provisoes_mensais",
+      "policyname": "Provisoes scoped by empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "provisoes_mensais",
+      "policyname": "Users can manage provisoes of their companies",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "provisoes_mensais",
+      "policyname": "Users can view provisoes of their companies",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "provisoes_mensais",
+      "policyname": "Usuários podem atualizar provisões da sua empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "provisoes_mensais",
+      "policyname": "Usuários podem deletar provisões da sua empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "provisoes_mensais",
+      "policyname": "Usuários podem inserir provisões na sua empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "provisoes_mensais",
+      "policyname": "Usuários podem ver provisões da sua empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "provisoes_mensais",
+      "policyname": "provisoes_mensais_tenant_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "push_subscriptions",
+      "policyname": "Usuários gerenciam suas próprias assinaturas",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "push_subscriptions",
+      "policyname": "Usuários podem gerenciar suas próprias inscrições push",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "query_telemetry",
+      "policyname": "Service role and admins can view telemetry",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "query_telemetry",
+      "policyname": "Telemetria insert service role",
+      "permissive": "PERMISSIVE",
+      "roles": ["service_role"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "query_telemetry",
+      "policyname": "Telemetria visível apenas para admins",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "rate_limit_config",
+      "policyname": "Admins can manage rate limit config",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "rate_limit_logs",
+      "policyname": "Admins can view rate limit logs",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "rate_limit_logs",
+      "policyname": "System can insert rate limit logs",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "rate_limits",
+      "policyname": "rate_limits_deny_all_non_service",
+      "permissive": "RESTRICTIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "recargas_vale",
+      "policyname": "tenant_recargas_vale",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "recrutamento_agendamentos",
+      "policyname": "Gestores veem seus agendamentos",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "recrutamento_anotacoes",
+      "policyname": "Anotações acessíveis por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "recrutamento_entrevistas",
+      "policyname": "Entrevistas acessíveis por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "recrutamento_testes",
+      "policyname": "Testes acessíveis por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "registros_ponto",
+      "policyname": "registros_ponto_tenant_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "registros_ponto",
+      "policyname": "registros_ponto_write",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "relacionamentos_contato_emergencia",
+      "policyname": "relacionamentos_contato_emergencia_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "relacionamentos_dependentes",
+      "policyname": "relacionamentos_dependentes_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "relatorios_agendados",
+      "policyname": "relatorios_agendados_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "relatorios_agendados",
+      "policyname": "relatorios_agendados_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "relatorios_agendados",
+      "policyname": "relatorios_agendados_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "relatorios_agendados",
+      "policyname": "relatorios_agendados_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "role_permissions",
+      "policyname": "Admins podem gerenciar role_permissions",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "role_permissions",
+      "policyname": "Usuários autenticados podem visualizar role_permissions",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "rubricas_folha",
+      "policyname": "Admins can delete rubricas_folha",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "rubricas_folha",
+      "policyname": "Admins can manage rubricas_folha",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "rubricas_folha",
+      "policyname": "Admins can update rubricas_folha",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "rubricas_folha",
+      "policyname": "Empresa vê suas próprias rubricas",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "rubricas_folha",
+      "policyname": "Empresas podem ver suas rubricas",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "rubricas_folha",
+      "policyname": "Gerenciamento por admin",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "rubricas_folha",
+      "policyname": "Visualização por empresa ou global",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "saved_filters",
+      "policyname": "Users manage own filters",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "sec_policy_regressions",
+      "policyname": "sec_policy_regressions_admin_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "sec_seal_events",
+      "policyname": "sec_seal_events_admin_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "security_alerts",
+      "policyname": "Admins can insert security alerts",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "security_alerts",
+      "policyname": "Admins can update security alerts",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "security_alerts",
+      "policyname": "Admins can view security alerts",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "sefip_arquivos",
+      "policyname": "tenant_sefip_arquivos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "seguros_colaboradores",
+      "policyname": "tenant_seguros_colaboradores",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "seguros_vida",
+      "policyname": "tenant_seguros_vida",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "simulacoes_fiscais",
+      "policyname": "Simulacoes scoped by empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "sindicatos",
+      "policyname": "Admins can delete sindicatos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "sindicatos",
+      "policyname": "Admins can manage sindicatos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "sindicatos",
+      "policyname": "Admins can update sindicatos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "sindicatos",
+      "policyname": "Authenticated can read sindicatos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "sinistros_seguro",
+      "policyname": "tenant_sinistros_seguro",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "solicitacoes_ajuste_ponto",
+      "policyname": "Colaboradores criam rascunho ou enviada",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "solicitacoes_ajuste_ponto",
+      "policyname": "Colaboradores deletam seus rascunhos",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "solicitacoes_ajuste_ponto",
+      "policyname": "Colaboradores editam seus rascunhos",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "solicitacoes_ajuste_ponto",
+      "policyname": "Colaboradores veem suas próprias solicitações",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "solicitacoes_ajuste_ponto",
+      "policyname": "Gestores e RH aprovam solicitações",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "solicitacoes_ajuste_ponto",
+      "policyname": "Gestores veem solicitações da empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "solicitacoes_ajuste_ponto",
+      "policyname": "solicitacoes_ajuste_ponto_tenant_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "solicitacoes_ajuste_ponto",
+      "policyname": "solicitacoes_delete_policy",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "solicitacoes_ajuste_ponto",
+      "policyname": "solicitacoes_select_policy",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "solicitacoes_ajuste_ponto",
+      "policyname": "solicitacoes_update_policy",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "solicitacoes_hora_extra",
+      "policyname": "tenant_solicitacoes_hora_extra",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "sst_cat",
+      "policyname": "cat_insert_por_empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "sst_cat",
+      "policyname": "cat_select_por_empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "sst_cat",
+      "policyname": "cat_update_por_empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "sst_cat_anexos",
+      "policyname": "cat_anexos_por_empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "sst_cat_testemunhas",
+      "policyname": "cat_testemunhas_por_empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "sst_exposicao_riscos",
+      "policyname": "Gestores de RH podem ver Riscos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "sst_extintores",
+      "policyname": "Users manage extintores from their empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "sst_extintores_inspecoes",
+      "policyname": "Users manage inspecoes from their empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "sst_incidentes",
+      "policyname": "Gestores e RH gerenciam incidentes",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "sst_ltcat_laudos",
+      "policyname": "LTCAT gerenciável por admin/rh",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "sst_ltcat_laudos",
+      "policyname": "LTCAT visível para membros da empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "sst_ordens_servico",
+      "policyname": "OS gerenciáveis por admin/rh",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "sst_ordens_servico",
+      "policyname": "OS visíveis para membros da empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "sst_programas",
+      "policyname": "Gestores veem programas de SST",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "sst_regimento_assinaturas",
+      "policyname": "Insercao por RH/Admin ou proprio",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "sst_regimento_assinaturas",
+      "policyname": "Leitura por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "sst_regimento_documentos",
+      "policyname": "Leitura por empresa do usuario",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "sst_regimento_documentos",
+      "policyname": "RH/Admin gerenciam documentos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "sst_regimento_interno",
+      "policyname": "Leitura para autenticados",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "sst_riscos_ambientais",
+      "policyname": "Acesso aos riscos da empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "tarefas_onboarding",
+      "policyname": "Tenant scoped onboarding tasks",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "taxas_cambio",
+      "policyname": "Public can view exchange rates",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "taxas_cambio",
+      "policyname": "Users can view exchange rates",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "tempos_residencia",
+      "policyname": "tempos_residencia_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "times",
+      "policyname": "Enable read access for all users",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "times",
+      "policyname": "Times delete scoped",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "times",
+      "policyname": "Times insert scoped",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "times",
+      "policyname": "Times update scoped",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "times",
+      "policyname": "tenant_times",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "times_brindes",
+      "policyname": "Enable read for all",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "times_brindes",
+      "policyname": "Times brindes admin delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "times_brindes",
+      "policyname": "Times brindes admin update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "times_brindes",
+      "policyname": "Times brindes admin write",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "tipos_admissao",
+      "policyname": "Read tipos_admissao",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "tipos_aviso_previo",
+      "policyname": "tipos_aviso_previo_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "tipos_beneficio",
+      "policyname": "Admins can delete tipos_beneficio",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "tipos_beneficio",
+      "policyname": "Admins can manage tipos_beneficio",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "tipos_beneficio",
+      "policyname": "Admins can update tipos_beneficio",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "tipos_beneficio",
+      "policyname": "Authenticated can read tipos_beneficio",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "tipos_deficiencia",
+      "policyname": "tipos_deficiencia_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "tipos_desligamento",
+      "policyname": "tipos_desligamento_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "tipos_estabilidade",
+      "policyname": "Read tipos_estabilidade",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "tipos_pagamento",
+      "policyname": "tipos_pagamento_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "tipos_salario",
+      "policyname": "tipos_salario_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "tipos_visto",
+      "policyname": "tipos_visto_read",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "transferencias",
+      "policyname": "tenant_transferencias",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "treinamento_certificados",
+      "policyname": "Colaboradores veem seus próprios certificados",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "treinamento_certificados",
+      "policyname": "RH e Gestores veem todos os certificados",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "treinamento_feedback",
+      "policyname": "Treinamento feedback authenticated",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "treinamento_feedbacks",
+      "policyname": "Usuários criam feedbacks de suas inscrições",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "treinamento_instancias",
+      "policyname": "Treinamento instancias authenticated",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "treinamento_participantes",
+      "policyname": "tenant_treinamento_participantes",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "treinamentos",
+      "policyname": "tenant_treinamentos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "triagem_notas",
+      "policyname": "empresa_isolation_triagem_notas",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "trilha_auditoria_ponto",
+      "policyname": "Acesso à trilha de auditoria",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "trilhas_aprendizado",
+      "policyname": "Trilhas acessíveis por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "trilhas_aprendizado",
+      "policyname": "trilhas_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "trilhas_aprendizado",
+      "policyname": "trilhas_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "trilhas_aprendizado",
+      "policyname": "trilhas_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "trilhas_aprendizado",
+      "policyname": "trilhas_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "trilhas_cursos",
+      "policyname": "trilhas_cursos_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "trilhas_cursos",
+      "policyname": "trilhas_cursos_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "trilhas_cursos",
+      "policyname": "trilhas_cursos_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "turnos",
+      "policyname": "empresa_turnos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "user_empresas",
+      "policyname": "Admins podem gerenciar associações",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "user_empresas",
+      "policyname": "Usuários podem ver suas associações",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "user_mfa",
+      "policyname": "Users can manage own MFA",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "user_roles",
+      "policyname": "Admins can delete roles",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "user_roles",
+      "policyname": "Admins can insert roles",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "user_roles",
+      "policyname": "Admins can manage roles",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "user_roles",
+      "policyname": "Admins can update roles",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "user_roles",
+      "policyname": "Admins can view all roles",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "user_sessions",
+      "policyname": "Users can manage own sessions",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "user_sessions",
+      "policyname": "Users can view own sessions",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "vaga_entrevistas",
+      "policyname": "empresa_isolation_vaga_entrevistas",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "vaga_etapas",
+      "policyname": "empresa_isolation_vaga_etapas",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "vagas",
+      "policyname": "Multi-tenant access",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "vagas",
+      "policyname": "Users can manage vagas of their empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "vales_alimentacao",
+      "policyname": "tenant_vales_alimentacao",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "vales_transporte",
+      "policyname": "tenant_vales_transporte",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "valores_campos_customizados",
+      "policyname": "tenant_valores_campos_customizados",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "verbas_rescisorias",
+      "policyname": "Acesso verbas por empresa",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "verification_tokens",
+      "policyname": "Users can manage own tokens",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "versao_banco",
+      "policyname": "Anyone authenticated can view DB version",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "versao_banco",
+      "policyname": "Anyone can read versao_banco",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "vinculos",
+      "policyname": "tenant_vinculos",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "webauthn_challenges",
+      "policyname": "Users can manage own webauthn challenges",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "webauthn_credentials",
+      "policyname": "Users can delete their own credentials",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "webauthn_credentials",
+      "policyname": "Users can insert their own credentials",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "webauthn_credentials",
+      "policyname": "Users can update their own credentials",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "webauthn_credentials",
+      "policyname": "Users can view their own credentials",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "webhook_logs",
+      "policyname": "tenant_webhook_logs",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "webhooks",
+      "policyname": "tenant_webhooks",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "webhooks_config",
+      "policyname": "tenant_webhooks_config",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "webhooks_logs",
+      "policyname": "tenant_webhooks_logs",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "whatsapp_config",
+      "policyname": "Empresas gerenciam seu próprio WhatsApp",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "whatsapp_mensagens_logs",
+      "policyname": "Gestores veem logs de mensagens WhatsApp",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "whatsapp_templates",
+      "policyname": "Gestores veem templates WhatsApp",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "workflows_config",
+      "policyname": "Users can manage their company workflows",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "workflows_config",
+      "policyname": "Users can view their company workflows",
+      "permissive": "PERMISSIVE",
+      "roles": ["public"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "workflows_definicoes",
+      "policyname": "empresa_workflows_def",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "workflows_etapas",
+      "policyname": "workflows_etapas_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "workflows_etapas",
+      "policyname": "workflows_etapas_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "workflows_etapas",
+      "policyname": "workflows_etapas_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "workflows_etapas",
+      "policyname": "workflows_etapas_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    },
+    {
+      "tablename": "workflows_execucoes",
+      "policyname": "empresa_workflows_exec",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "ALL"
+    },
+    {
+      "tablename": "workflows_historico",
+      "policyname": "workflows_historico_delete",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "DELETE"
+    },
+    {
+      "tablename": "workflows_historico",
+      "policyname": "workflows_historico_insert",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "INSERT"
+    },
+    {
+      "tablename": "workflows_historico",
+      "policyname": "workflows_historico_select",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "SELECT"
+    },
+    {
+      "tablename": "workflows_historico",
+      "policyname": "workflows_historico_update",
+      "permissive": "PERMISSIVE",
+      "roles": ["authenticated"],
+      "cmd": "UPDATE"
+    }
+  ],
+  "count": 601,
+  "truncated": false,
+  "limit": 1000
+}

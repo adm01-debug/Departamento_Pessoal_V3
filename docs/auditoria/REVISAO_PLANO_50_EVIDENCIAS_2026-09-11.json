@@ -1,0 +1,822 @@
+{
+  "schema_version": 1,
+  "project_ref": "frjbfeamybqsejlvmqbl",
+  "source_sha": "706e29194918521bd33eb2e6137be3f3215a324c",
+  "main_sha": "1dfd6d3a7f29132b23d6e2dc6f4382a4dae515e3",
+  "observed_at": "2026-09-11T18:47:31.153573+00:00",
+  "methodology": {
+    "remote_sql": "Read-only catalog queries; no business data exported.",
+    "edge_comparison": "All 59 deployed entrypoints compared to local source after CRLF normalization and trimEnd. Shared dependencies, secrets and bundle equivalence are not certified.",
+    "types_comparison": "Names only; live-only functions include triggers and need not be PostgREST RPCs.",
+    "git": "Fetched origin; branch SHA equals published PR #100; PR OPEN and BLOCKED."
+  },
+  "inventory": {
+    "tables_including_partitioned": 363,
+    "views": 44,
+    "views_anon_select": 43,
+    "views_security_invoker": 2,
+    "secdef_anon_execute": 23,
+    "policies_all_schemas": 624,
+    "public_true_policies": 55,
+    "unvalidated_checks": 12,
+    "disabled_folha_triggers": 2,
+    "buckets": 18,
+    "expected_buckets": 19,
+    "missing_buckets": ["backups"],
+    "cron_jobs": 50,
+    "duplicate_cron_command_groups": 8,
+    "p0_migration_in_remote_ledger": false
+  },
+  "differences": {
+    "migrations": {
+      "files": 645,
+      "unique": 641,
+      "duplicates": ["20260724120000", "20260724130000", "20260724140000", "20260818000000"],
+      "local_only": 625,
+      "remote_only": 346
+    },
+    "tables": {
+      "live_only": [
+        "dp_audit_config",
+        "dp_audit_log",
+        "dp_audit_log_2026_07",
+        "dp_audit_log_2026_08",
+        "dp_audit_log_2026_09",
+        "dp_audit_log_2026_10",
+        "dp_audit_log_2026_11",
+        "dp_audit_log_2026_12",
+        "dp_audit_log_default",
+        "dp_backup_runbook",
+        "dp_data_catalog",
+        "dp_environments",
+        "dp_mcp_config",
+        "dp_retention_policy",
+        "dp_user_roles",
+        "pii_access_alerts",
+        "pii_access_logs"
+      ],
+      "types_only": [
+        "pcs_avaliacoes_cargo",
+        "pcs_fatores",
+        "pcs_grades",
+        "pcs_pesquisa_salarial",
+        "pcs_planos",
+        "sec_policy_regressions",
+        "sec_seal_events"
+      ]
+    },
+    "functions": {
+      "live_only": [
+        "agendar_limpeza_pos_desligamento",
+        "asos_auto_marcar_agendamento_realizado",
+        "asos_validar_restricoes",
+        "asos_validar_transicao_status",
+        "audit_log_append_only",
+        "auto_vincular_admins_empresa",
+        "calcular_prazo_cat",
+        "calcular_provisao_mensal",
+        "calcular_total_provisao",
+        "check_processamento_timeout",
+        "dp_assert_rls",
+        "dp_audit_log_immutable",
+        "dp_audit_log_prevent_future",
+        "dp_catalog_pii",
+        "dp_check_log_rotation",
+        "dp_check_rls_index_coverage",
+        "dp_connection_health",
+        "dp_create_next_partition",
+        "dp_decrypt_pii",
+        "dp_encrypt_pii",
+        "dp_has_role",
+        "dp_hash_pii",
+        "dp_missing_indexes",
+        "dp_post_migration_check",
+        "dp_pre_deploy_gate",
+        "dp_require_role",
+        "dp_run_retention",
+        "dp_set_updated_at",
+        "dp_soft_delete_trigger",
+        "dp_table_template",
+        "dp_track_pii_access",
+        "enforce_afastamento_hash",
+        "enforce_aso_hash",
+        "enforce_batida_ponto_hash",
+        "enforce_cat_hash",
+        "enforce_cnab_remessa_hash",
+        "enforce_desligamento_hash",
+        "enforce_documento_assinatura_hash",
+        "enforce_epi_entrega_hash",
+        "enforce_esocial_evento_hash",
+        "enforce_ferias_hash",
+        "enforce_folha_pagamento_hash",
+        "enforce_holerite_signed_hash",
+        "enforce_medida_disciplinar_hash",
+        "fill_recrutamento_child_empresa",
+        "fill_treinamento_certificados_empresa",
+        "fill_treinamento_instancias_empresa",
+        "fn_alert_pii_access_anomaly",
+        "fn_alert_severe_disciplinary_measure",
+        "fn_audit_biometric_failure",
+        "fn_auto_generate_training_certificate",
+        "fn_colab_cpf_hash",
+        "fn_consolidar_batidas",
+        "fn_create_default_onboarding_tasks",
+        "fn_enqueue_notification",
+        "fn_fila_dlq_check",
+        "fn_folha_optimistic_lock",
+        "fn_processar_workflow_admissao",
+        "fn_start_workflow_on_colaborador_create",
+        "fn_trigger_whatsapp_on_event",
+        "fn_update_admissao_checklist",
+        "fn_update_candidatura_history",
+        "fn_update_ferias_status_by_date",
+        "fn_validar_medida_disciplinar_clt",
+        "fn_workflow_admissao_auto",
+        "fprog_touch_updated_at",
+        "fwd_to_audit_unified",
+        "gerar_hash_batida_ponto",
+        "gerar_hash_ponto",
+        "gerar_qr_extintor",
+        "gerar_relatorio_conformidade_ponto",
+        "get_my_permissions",
+        "get_user_tenants",
+        "handle_new_user",
+        "handle_new_user_role",
+        "impedir_alteracao_afastamento_encerrado",
+        "impedir_alteracao_aso_emitido",
+        "impedir_alteracao_batida_em_periodo_fechado",
+        "impedir_alteracao_cat_transmitida",
+        "impedir_alteracao_cnab_transmitida",
+        "impedir_alteracao_desligamento_homologado",
+        "impedir_alteracao_documento_assinado",
+        "impedir_alteracao_epi_entrega_assinada",
+        "impedir_alteracao_esocial_transmitido",
+        "impedir_alteracao_ferias_concluidas",
+        "impedir_alteracao_folha_fechada",
+        "impedir_alteracao_holerite_assinado",
+        "impedir_alteracao_medida_aplicada",
+        "impedir_alteracao_periodo_ponto_fechado",
+        "increment_version",
+        "log_audit_change",
+        "log_despesa_status_change",
+        "log_esocial_transmission",
+        "pgaudit_ddl_command_end",
+        "pgaudit_sql_drop",
+        "process_audit_log",
+        "process_ferias_audit",
+        "processar_auditoria_premiacao",
+        "proibir_delete_afastamento_encerrado",
+        "proibir_delete_aso_emitido",
+        "proibir_delete_cat_transmitida",
+        "proibir_delete_cnab_transmitida",
+        "proibir_delete_desligamento_homologado",
+        "proibir_delete_documento_assinado",
+        "proibir_delete_epi_entrega_assinada",
+        "proibir_delete_esocial_transmitido",
+        "proibir_delete_ferias_concluidas",
+        "proibir_delete_folha_fechada",
+        "proibir_delete_holerite_assinado",
+        "proibir_delete_medida_aplicada",
+        "proibir_delete_periodo_ponto_fechado",
+        "proibir_delete_ponto",
+        "purge_pii_access_logs",
+        "registrar_auditoria_contratual",
+        "registrar_auditoria_ponto",
+        "registrar_auditoria_sst",
+        "resolve_security_alert",
+        "rls_auto_enable",
+        "set_updated_at_sst_cat",
+        "sst_regimento_ass_imutavel",
+        "storage_path_empresa_id",
+        "tg_catalogo_infracoes_updated_at",
+        "trg_ajuste_ponto_status_transition",
+        "trg_audit_status_change",
+        "trg_ciclos_status_transition",
+        "trg_contab_msg_bump_thread",
+        "trg_contrato_token_auditar",
+        "trg_desligamentos_status_transition",
+        "trg_detect_status_anomaly",
+        "trg_faltas_status_transition",
+        "trg_ferias_bloquear_gozo_sem_pagamento",
+        "trg_ferias_gerar_rubricas",
+        "trg_ferias_reconciliacao_alert",
+        "trg_ferias_status_transition",
+        "trg_ferias_validar_aquisitivo",
+        "trg_ferias_validar_inicio",
+        "trg_ferias_validar_split",
+        "trg_medida_aplicada_integrar",
+        "trg_medida_contestacao_notify",
+        "trg_medida_contestacao_notify_after",
+        "trg_medida_esocial_on_aplicada",
+        "trg_pdis_status_transition",
+        "trg_periodos_aquisitivos_dobra",
+        "trg_periodos_aquisitivos_recalc_dias",
+        "trg_pesquisas_status_transition",
+        "trg_protect_assinatura_rescisao",
+        "trg_vagas_status_transition",
+        "trigger_workflow_automation",
+        "update_extintor_status_vencimento",
+        "update_fila_processamento_updated_at",
+        "update_folha_updated_at",
+        "update_updated_at_column",
+        "user_can_manage_tenant_storage",
+        "user_empresa_id",
+        "validar_contrato_clt",
+        "validar_suspensao_beneficio_obrigatorio",
+        "validate_epi_item_ca",
+        "validate_ponto_compliance",
+        "verificar_divergencias_folha"
+      ],
+      "types_only": [
+        "candidatura_na_minha_empresa",
+        "check_account_lockout",
+        "drenar_fila_limpeza_lgpd",
+        "edge_rate_limit_check",
+        "empresa_do_colaborador",
+        "pcs_enquadramento",
+        "pcs_gerar_grades",
+        "pcs_grades_mercado",
+        "pcs_pode_gerir_plano",
+        "pcs_pode_ver_plano",
+        "pcs_simular_impacto",
+        "pode_gerir_pessoas",
+        "pode_gerir_pessoas_para",
+        "pode_gerir_rh",
+        "pode_gerir_rh_para",
+        "purge_rate_limits",
+        "record_login_attempt",
+        "run_lgpd_purge",
+        "seal_enforce",
+        "sec_audit_policies_scan",
+        "sec_policy_regressions_purge",
+        "sec_verify_seals",
+        "sec_verify_seals_admin",
+        "sec_verify_seals_scan",
+        "sou_o_colaborador",
+        "vincular_colaborador_ao_usuario"
+      ]
+    },
+    "edges": {
+      "local_count": 60,
+      "remote_count": 59,
+      "local_only": ["metabase-embed"],
+      "remote_only": []
+    }
+  },
+  "edge_entrypoints": [
+    {
+      "slug": "adiantamento-salarial",
+      "version": 6,
+      "updated_at": 1785081719375,
+      "match": false,
+      "local_chars": 6180,
+      "remote_chars": 6229
+    },
+    {
+      "slug": "alertas-dp",
+      "version": 6,
+      "updated_at": 1785427848902,
+      "match": false,
+      "local_chars": 14399,
+      "remote_chars": 14855
+    },
+    {
+      "slug": "assinaturaDigital",
+      "version": 5,
+      "updated_at": 1785079410337,
+      "match": false,
+      "local_chars": 7358,
+      "remote_chars": 7352
+    },
+    {
+      "slug": "assistente-ia",
+      "version": 6,
+      "updated_at": 1785427806019,
+      "match": false,
+      "local_chars": 6596,
+      "remote_chars": 6842
+    },
+    {
+      "slug": "auditoria",
+      "version": 6,
+      "updated_at": 1785081724795,
+      "match": false,
+      "local_chars": 6844,
+      "remote_chars": 6908
+    },
+    {
+      "slug": "auth-gov-br",
+      "version": 6,
+      "updated_at": 1788185704276,
+      "match": true,
+      "local_chars": 7381,
+      "remote_chars": 7381
+    },
+    {
+      "slug": "auth-login",
+      "version": 19,
+      "updated_at": 1785422941365,
+      "match": false,
+      "local_chars": 6986,
+      "remote_chars": 7018
+    },
+    {
+      "slug": "backup",
+      "version": 5,
+      "updated_at": 1785079440239,
+      "match": false,
+      "local_chars": 4756,
+      "remote_chars": 4790
+    },
+    {
+      "slug": "backup-automatico",
+      "version": 6,
+      "updated_at": 1785081730521,
+      "match": false,
+      "local_chars": 9318,
+      "remote_chars": 9503
+    },
+    {
+      "slug": "cache",
+      "version": 6,
+      "updated_at": 1785081735892,
+      "match": false,
+      "local_chars": 9245,
+      "remote_chars": 8549
+    },
+    {
+      "slug": "calcular-13-salario",
+      "version": 5,
+      "updated_at": 1785079458357,
+      "match": false,
+      "local_chars": 10939,
+      "remote_chars": 10925
+    },
+    {
+      "slug": "calcular-ferias",
+      "version": 6,
+      "updated_at": 1785081742192,
+      "match": false,
+      "local_chars": 6984,
+      "remote_chars": 7043
+    },
+    {
+      "slug": "calcular-folha",
+      "version": 6,
+      "updated_at": 1785081747871,
+      "match": false,
+      "local_chars": 13873,
+      "remote_chars": 13917
+    },
+    {
+      "slug": "calcular-provisoes",
+      "version": 5,
+      "updated_at": 1785079475006,
+      "match": false,
+      "local_chars": 10457,
+      "remote_chars": 10443
+    },
+    {
+      "slug": "calcular-rescisao",
+      "version": 5,
+      "updated_at": 1785079481153,
+      "match": false,
+      "local_chars": 13876,
+      "remote_chars": 13853
+    },
+    {
+      "slug": "cnab-remessa",
+      "version": 6,
+      "updated_at": 1785081753788,
+      "match": false,
+      "local_chars": 7681,
+      "remote_chars": 7698
+    },
+    {
+      "slug": "consultarCEP",
+      "version": 7,
+      "updated_at": 1785428039085,
+      "match": false,
+      "local_chars": 4118,
+      "remote_chars": 4307
+    },
+    {
+      "slug": "consultarCNPJ",
+      "version": 7,
+      "updated_at": 1785428045025,
+      "match": false,
+      "local_chars": 3974,
+      "remote_chars": 4158
+    },
+    {
+      "slug": "criptografia",
+      "version": 6,
+      "updated_at": 1785081771472,
+      "match": false,
+      "local_chars": 6870,
+      "remote_chars": 6969
+    },
+    {
+      "slug": "dctfweb",
+      "version": 6,
+      "updated_at": 1785081778906,
+      "match": false,
+      "local_chars": 6485,
+      "remote_chars": 6518
+    },
+    {
+      "slug": "distribuir-holerites",
+      "version": 6,
+      "updated_at": 1785081784381,
+      "match": false,
+      "local_chars": 7058,
+      "remote_chars": 7200
+    },
+    {
+      "slug": "emprestimo-consignado",
+      "version": 6,
+      "updated_at": 1785081790331,
+      "match": false,
+      "local_chars": 7880,
+      "remote_chars": 7929
+    },
+    {
+      "slug": "enviar-esocial",
+      "version": 6,
+      "updated_at": 1785081795833,
+      "match": false,
+      "local_chars": 12335,
+      "remote_chars": 12414
+    },
+    {
+      "slug": "enviar-relatorio",
+      "version": 5,
+      "updated_at": 1785079532328,
+      "match": false,
+      "local_chars": 13706,
+      "remote_chars": 13584
+    },
+    {
+      "slug": "exportacao",
+      "version": 6,
+      "updated_at": 1785081801760,
+      "match": false,
+      "local_chars": 8394,
+      "remote_chars": 8506
+    },
+    {
+      "slug": "external-db-bridge",
+      "version": 45,
+      "updated_at": 1788529371118,
+      "match": false,
+      "local_chars": 36906,
+      "remote_chars": 37496
+    },
+    {
+      "slug": "fechar-folha",
+      "version": 6,
+      "updated_at": 1785081807052,
+      "match": false,
+      "local_chars": 9361,
+      "remote_chars": 9529
+    },
+    {
+      "slug": "fgts-digital",
+      "version": 6,
+      "updated_at": 1785081813859,
+      "match": false,
+      "local_chars": 6590,
+      "remote_chars": 6639
+    },
+    {
+      "slug": "folha-metrics",
+      "version": 7,
+      "updated_at": 1785427489375,
+      "match": false,
+      "local_chars": 5783,
+      "remote_chars": 6104
+    },
+    {
+      "slug": "gerar-aej",
+      "version": 6,
+      "updated_at": 1785428265154,
+      "match": false,
+      "local_chars": 10127,
+      "remote_chars": 10412
+    },
+    {
+      "slug": "gerar-contrato-pdf",
+      "version": 6,
+      "updated_at": 1785081825525,
+      "match": false,
+      "local_chars": 9804,
+      "remote_chars": 9620
+    },
+    {
+      "slug": "gerar-guias",
+      "version": 5,
+      "updated_at": 1785079578258,
+      "match": false,
+      "local_chars": 12655,
+      "remote_chars": 12641
+    },
+    {
+      "slug": "gerar-holerite",
+      "version": 6,
+      "updated_at": 1785081831368,
+      "match": false,
+      "local_chars": 7445,
+      "remote_chars": 7483
+    },
+    {
+      "slug": "gerar-ltcat-os",
+      "version": 5,
+      "updated_at": 1785079589947,
+      "match": false,
+      "local_chars": 14370,
+      "remote_chars": 14404
+    },
+    {
+      "slug": "gerar-medida-disciplinar-pdf",
+      "version": 6,
+      "updated_at": 1785081837258,
+      "match": false,
+      "local_chars": 11436,
+      "remote_chars": 11449
+    },
+    {
+      "slug": "gerar-pgr",
+      "version": 5,
+      "updated_at": 1785079600801,
+      "match": false,
+      "local_chars": 9727,
+      "remote_chars": 9746
+    },
+    {
+      "slug": "healthcheck",
+      "version": 7,
+      "updated_at": 1788178345115,
+      "match": true,
+      "local_chars": 3547,
+      "remote_chars": 3547
+    },
+    {
+      "slug": "importacao",
+      "version": 7,
+      "updated_at": 1785427968663,
+      "match": false,
+      "local_chars": 10665,
+      "remote_chars": 11164
+    },
+    {
+      "slug": "integracao",
+      "version": 5,
+      "updated_at": 1785079616554,
+      "match": false,
+      "local_chars": 5528,
+      "remote_chars": 5547
+    },
+    {
+      "slug": "limpeza",
+      "version": 5,
+      "updated_at": 1785079621942,
+      "match": false,
+      "local_chars": 6810,
+      "remote_chars": 5504
+    },
+    {
+      "slug": "metricas",
+      "version": 9,
+      "updated_at": 1788272106642,
+      "match": false,
+      "local_chars": 10933,
+      "remote_chars": 11376
+    },
+    {
+      "slug": "notificacao",
+      "version": 6,
+      "updated_at": 1785081862991,
+      "match": false,
+      "local_chars": 8912,
+      "remote_chars": 9059
+    },
+    {
+      "slug": "OCR",
+      "version": 5,
+      "updated_at": 1785079392290,
+      "match": false,
+      "local_chars": 7055,
+      "remote_chars": 6857
+    },
+    {
+      "slug": "parse-afdt",
+      "version": 5,
+      "updated_at": 1785079639537,
+      "match": false,
+      "local_chars": 8141,
+      "remote_chars": 8166
+    },
+    {
+      "slug": "pix-lote",
+      "version": 6,
+      "updated_at": 1785081868822,
+      "match": false,
+      "local_chars": 12144,
+      "remote_chars": 12190
+    },
+    {
+      "slug": "process-document-ocr",
+      "version": 5,
+      "updated_at": 1785079651282,
+      "match": false,
+      "local_chars": 5819,
+      "remote_chars": 5680
+    },
+    {
+      "slug": "processar-agendamentos",
+      "version": 5,
+      "updated_at": 1785079656708,
+      "match": false,
+      "local_chars": 8463,
+      "remote_chars": 8377
+    },
+    {
+      "slug": "processar-ponto",
+      "version": 7,
+      "updated_at": 1785428270795,
+      "match": false,
+      "local_chars": 8384,
+      "remote_chars": 8697
+    },
+    {
+      "slug": "processar-ponto-offline",
+      "version": 6,
+      "updated_at": 1788185708191,
+      "match": false,
+      "local_chars": 13658,
+      "remote_chars": 13781
+    },
+    {
+      "slug": "rateLimit",
+      "version": 6,
+      "updated_at": 1785081875085,
+      "match": false,
+      "local_chars": 5019,
+      "remote_chars": 5105
+    },
+    {
+      "slug": "reabrir-folha",
+      "version": 6,
+      "updated_at": 1785081880849,
+      "match": false,
+      "local_chars": 10595,
+      "remote_chars": 10679
+    },
+    {
+      "slug": "relatorio",
+      "version": 6,
+      "updated_at": 1785081887009,
+      "match": false,
+      "local_chars": 11910,
+      "remote_chars": 12108
+    },
+    {
+      "slug": "sincronizar-bitrix",
+      "version": 5,
+      "updated_at": 1785079691874,
+      "match": false,
+      "local_chars": 7728,
+      "remote_chars": 7622
+    },
+    {
+      "slug": "validar-biometria",
+      "version": 6,
+      "updated_at": 1785427926569,
+      "match": false,
+      "local_chars": 8338,
+      "remote_chars": 8645
+    },
+    {
+      "slug": "warmup",
+      "version": 5,
+      "updated_at": 1785079703120,
+      "match": false,
+      "local_chars": 2587,
+      "remote_chars": 2618
+    },
+    {
+      "slug": "webhook",
+      "version": 6,
+      "updated_at": 1785081892850,
+      "match": false,
+      "local_chars": 7713,
+      "remote_chars": 7834
+    },
+    {
+      "slug": "alertas-preditivos",
+      "version": 2,
+      "updated_at": 1785427886301,
+      "match": false,
+      "local_chars": 16330,
+      "remote_chars": 16799
+    },
+    {
+      "slug": "metrics",
+      "version": 1,
+      "updated_at": 1788185705975,
+      "match": false,
+      "local_chars": 8586,
+      "remote_chars": 7775
+    },
+    {
+      "slug": "tabelas-dominio",
+      "version": 1,
+      "updated_at": 1788185706991,
+      "match": true,
+      "local_chars": 4089,
+      "remote_chars": 4089
+    }
+  ],
+  "security_advisors": [
+    {
+      "name": "auth_users_exposed",
+      "level": "ERROR",
+      "count": 1,
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0002_auth_users_exposed"
+    },
+    {
+      "name": "rls_enabled_no_policy",
+      "level": "INFO",
+      "count": 8,
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy"
+    },
+    {
+      "name": "security_definer_view",
+      "level": "ERROR",
+      "count": 42,
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0010_security_definer_view"
+    },
+    {
+      "name": "function_search_path_mutable",
+      "level": "WARN",
+      "count": 28,
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0011_function_search_path_mutable"
+    },
+    {
+      "name": "extension_in_public",
+      "level": "WARN",
+      "count": 1,
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0014_extension_in_public"
+    },
+    {
+      "name": "anon_security_definer_function_executable",
+      "level": "WARN",
+      "count": 23,
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable"
+    },
+    {
+      "name": "authenticated_security_definer_function_executable",
+      "level": "WARN",
+      "count": 113,
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable"
+    },
+    {
+      "name": "auth_leaked_password_protection",
+      "level": "WARN",
+      "count": 1,
+      "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection"
+    }
+  ],
+  "tests": {
+    "github": {
+      "run_id": "34631912692",
+      "files_passed": 462,
+      "files_skipped": 1,
+      "tests_passed": 4857,
+      "tests_skipped": 9,
+      "coverage_statements": 60.9,
+      "coverage_branches": 56.12,
+      "edge_functions_type_errors_informational": 54,
+      "e2e": "failed before execution: four credentials absent",
+      "db_integrity": "failed before canonical audit: SUPABASE_DB_URL absent"
+    },
+    "local_this_review": {
+      "plan_checks": 231,
+      "audit_canonical_project": "passed",
+      "rebaseline_artifact": "passed: 5 layers and 42 forward-migration views",
+      "db_audit_fail_closed_contracts": 7,
+      "migration_assertions": 28,
+      "migration_scope": "20260830000001..00003, twice, PostgreSQL container",
+      "p0_simulation": "42 views on synthetic RLS fixture, applied twice; anonymous rejection, T1/T2/no-tenant counts checked",
+      "digest_public_path": "SQLSTATE 42883 reproduced with synthetic string; no business write",
+      "p0_hash_trigger_migration": "20260911190000: PostgreSQL 17 fixture reproduced digest failure before migration; all 13 trigger functions succeeded after two idempotent applications; missing pgcrypto and missing expected function failed closed",
+      "playwright_discovery": "71 tests in 24 files; two root specs excluded"
+    }
+  },
+  "limitations": [
+    "No new full restore or hosted staging certification.",
+    "No authenticated tenant journeys, provider homologation, load/pentest or WCAG certification in this review.",
+    "Existing authorization permits canonical changes, but this turn performs a review and no remote mutation.",
+    "Local AUDIT_REPORT.pdf remains user-modified and preserved."
+  ]
+}

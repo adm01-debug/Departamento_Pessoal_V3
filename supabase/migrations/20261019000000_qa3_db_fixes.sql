@@ -1,0 +1,270 @@
+-- ============================================================================
+-- QA-3: 4 bugs de produção encontrados pela validação exaustiva
+-- ----------------------------------------------------------------------------
+-- 1) colaboradores.metadata não existe no canônico, mas é escrita por
+--    anonimizar_dados_pessoais (versões antigas) e vincular_gov_br → a fila
+--    LGPD falhava em todo item. A coluna é útil (flags de anonimização) —
+--    criada aqui em vez de remover os writes.
+-- 2) contas_bancarias_decrypted morta: decrypt_dados_bancarios foi revogado
+--    de authenticated, mas a view o chama como invoker → ERRO para RH/admin.
+--    O filtro de tenant vive no RLS da tabela e na view (pode_gerir_rh) —
+--    o EXECUTE no decrypt não amplia exposição além das linhas já legíveis.
+-- 3) ferias.status default 'programada' violava chk_ferias_status (lista sem
+--    'programada'/'pendente' adicionada em 20260713) → INSERT sem status
+--    explícito falhava. Constraint recriada com a união dos dois conjuntos.
+-- 4) fn_consolidar_batidas: versões antigas usavam colaboradores.jornada_id
+--    (inexistente) e inseriam TEXT em colunas time. Se o canônico ficou com
+--    uma versão antiga (ledger marcado como aplicado sem execução real),
+--    toda batida_ponto INSERT falhava. Re-assert da versão corrigida abaixo.
+-- ============================================================================
+
+-- (1) coluna metadata em colaboradores
+ALTER TABLE public.colaboradores ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}'::jsonb;
+
+-- (2) view decrypted volta a funcionar SEM abrir o decrypt para qualquer
+-- autenticado: o wrapper amarra ciphertext→empresa (o valor precisa existir
+-- numa linha daquele tenant) e confirma RH/admin sobre a empresa — um
+-- usuário não consegue decriptar blob de outra empresa nem inventar tenant.
+CREATE OR REPLACE FUNCTION public.decrypt_dados_bancarios_tenant(p_ciphertext text, p_empresa_id uuid)
+RETURNS text
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, extensions
+AS $fn$
+BEGIN
+  IF p_ciphertext IS NULL THEN RETURN NULL; END IF;
+  IF NOT (public.is_admin(auth.uid()) OR public.pode_gerir_rh(p_empresa_id)) THEN
+    RAISE EXCEPTION 'Acesso negado.';
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM public.contas_bancarias cb
+     WHERE cb.empresa_id = p_empresa_id
+       AND (cb.agencia_encrypted = p_ciphertext OR cb.conta_encrypted = p_ciphertext
+            OR cb.digito_encrypted = p_ciphertext OR cb.pix_chave_encrypted = p_ciphertext)
+  ) THEN
+    RAISE EXCEPTION 'Acesso negado.';
+  END IF;
+  RETURN public.decrypt_dados_bancarios(p_ciphertext);
+END;
+$fn$;
+REVOKE ALL ON FUNCTION public.decrypt_dados_bancarios_tenant(text, uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.decrypt_dados_bancarios_tenant(text, uuid) TO authenticated;
+
+-- A view passa a chamar o wrapper com a empresa da própria linha (o mesmo
+-- gate pode_gerir_rh/is_admin do WHERE segue valendo na leitura).
+CREATE OR REPLACE VIEW public.contas_bancarias_decrypted AS
+SELECT
+  id, colaborador_id, empresa_id,
+  banco_nome, banco_codigo,
+  public.decrypt_dados_bancarios_tenant(agencia_encrypted, empresa_id)   AS agencia,
+  public.decrypt_dados_bancarios_tenant(conta_encrypted, empresa_id)     AS conta,
+  public.decrypt_dados_bancarios_tenant(digito_encrypted, empresa_id)    AS digito,
+  tipo_conta,
+  public.decrypt_dados_bancarios_tenant(pix_chave_encrypted, empresa_id) AS pix_chave,
+  pix_tipo, modalidade, principal, ativo, created_at, updated_at
+FROM public.contas_bancarias
+WHERE public.pode_gerir_rh(empresa_id)
+   OR public.is_admin(auth.uid());
+
+-- (3) chk_ferias_status reconciliado (inclui 'pendente' e 'programada', os
+-- dois defaults históricos) — NOT VALID preserva linhas legadas.
+ALTER TABLE public.ferias DROP CONSTRAINT IF EXISTS chk_ferias_status;
+ALTER TABLE public.ferias ADD CONSTRAINT chk_ferias_status
+  CHECK (status IS NULL OR status IN (
+    'pendente','programada','solicitada','em_analise','aprovada','rejeitada',
+    'cancelada','agendada','em_gozo','concluida','pendente_aprovacao','vencida'
+  )) NOT VALID;
+
+-- A baseline também criou ferias_status_check (sem 'pendente'/'programada'):
+-- programacao_ferias_converter insere 'pendente' após aprovação do RH e
+-- falhava nesse SEGUNDO check. Mesma união de vocabulário, NOT VALID.
+ALTER TABLE public.ferias DROP CONSTRAINT IF EXISTS ferias_status_check;
+ALTER TABLE public.ferias ADD CONSTRAINT ferias_status_check
+  CHECK (status IS NULL OR status IN (
+    'pendente','programada','solicitada','em_analise','aprovada','rejeitada',
+    'cancelada','agendada','em_gozo','concluida','pendente_aprovacao','vencida'
+  )) NOT VALID;
+
+-- (4) fn_consolidar_batidas — versão de 20260728213348 (sem jornada_id,
+-- casts ::time, EXCEPTION que nunca bloqueia a batida).
+-- ---------------------------------------------------------------------------
+-- fn_consolidar_batidas: correção de tipos.
+-- registros_ponto.entrada_*/saida_* são `time without time zone`, mas as
+-- variáveis locais são TEXT (vêm de hora::text nos MAX/CASE). Sem cast
+-- explícito o INSERT falhava com:
+--   column "entrada_1" is of type time ... but expression is of type text
+-- O bloco EXCEPTION adicionado na migração anterior segurou a batida, mas o
+-- espelho nunca era gravado. Aqui aplicamos os casts.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.fn_consolidar_batidas()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public'
+AS $function$
+DECLARE
+  v_total_batidas INTEGER;
+  v_entrada_1 TEXT; v_saida_1 TEXT;
+  v_entrada_2 TEXT; v_saida_2 TEXT;
+  v_entrada_3 TEXT; v_saida_3 TEXT;
+  v_entrada_4 TEXT; v_saida_4 TEXT;
+  v_entrada_5 TEXT; v_saida_5 TEXT;
+  v_entrada_6 TEXT; v_saida_6 TEXT;
+  v_total_minutos INTEGER := 0;
+  v_jornada RECORD;
+  v_jornada_minutos INTEGER;
+  v_atraso_minutos INTEGER := 0;
+  v_extras_minutos INTEGER := 0;
+  v_falta_minutos INTEGER := 0;
+  v_saida_antecipada INTEGER := 0;
+  v_horas_trab INTERVAL;
+  v_horas_ext INTERVAL;
+  v_horas_fal INTERVAL;
+BEGIN
+  SELECT COUNT(*) INTO v_total_batidas
+  FROM public.batidas_ponto
+  WHERE colaborador_id = NEW.colaborador_id AND data = NEW.data;
+
+  SELECT
+    MAX(CASE WHEN ordem = 1  AND tipo = 'entrada' THEN hora::text END),
+    MAX(CASE WHEN ordem = 2  AND tipo = 'saida'   THEN hora::text END),
+    MAX(CASE WHEN ordem = 3  AND tipo = 'entrada' THEN hora::text END),
+    MAX(CASE WHEN ordem = 4  AND tipo = 'saida'   THEN hora::text END),
+    MAX(CASE WHEN ordem = 5  AND tipo = 'entrada' THEN hora::text END),
+    MAX(CASE WHEN ordem = 6  AND tipo = 'saida'   THEN hora::text END),
+    MAX(CASE WHEN ordem = 7  AND tipo = 'entrada' THEN hora::text END),
+    MAX(CASE WHEN ordem = 8  AND tipo = 'saida'   THEN hora::text END),
+    MAX(CASE WHEN ordem = 9  AND tipo = 'entrada' THEN hora::text END),
+    MAX(CASE WHEN ordem = 10 AND tipo = 'saida'   THEN hora::text END),
+    MAX(CASE WHEN ordem = 11 AND tipo = 'entrada' THEN hora::text END),
+    MAX(CASE WHEN ordem = 12 AND tipo = 'saida'   THEN hora::text END)
+  INTO v_entrada_1, v_saida_1, v_entrada_2, v_saida_2, v_entrada_3, v_saida_3,
+       v_entrada_4, v_saida_4, v_entrada_5, v_saida_5, v_entrada_6, v_saida_6
+  FROM public.batidas_ponto
+  WHERE colaborador_id = NEW.colaborador_id AND data = NEW.data;
+
+  -- Cada turno com modulo 1440: saída < entrada é virada de dia (ex.: 22h→06h
+  -- dura 8h, não -16h). Par com entrada=saida conta 0 (batida duplicada).
+  IF v_entrada_1 IS NOT NULL AND v_saida_1 IS NOT NULL THEN
+    v_total_minutos := v_total_minutos + ((EXTRACT(EPOCH FROM (v_saida_1::time - v_entrada_1::time))::INTEGER / 60 + 1440) % 1440);
+  END IF;
+  IF v_entrada_2 IS NOT NULL AND v_saida_2 IS NOT NULL THEN
+    v_total_minutos := v_total_minutos + ((EXTRACT(EPOCH FROM (v_saida_2::time - v_entrada_2::time))::INTEGER / 60 + 1440) % 1440);
+  END IF;
+  IF v_entrada_3 IS NOT NULL AND v_saida_3 IS NOT NULL THEN
+    v_total_minutos := v_total_minutos + ((EXTRACT(EPOCH FROM (v_saida_3::time - v_entrada_3::time))::INTEGER / 60 + 1440) % 1440);
+  END IF;
+  IF v_entrada_4 IS NOT NULL AND v_saida_4 IS NOT NULL THEN
+    v_total_minutos := v_total_minutos + ((EXTRACT(EPOCH FROM (v_saida_4::time - v_entrada_4::time))::INTEGER / 60 + 1440) % 1440);
+  END IF;
+  IF v_entrada_5 IS NOT NULL AND v_saida_5 IS NOT NULL THEN
+    v_total_minutos := v_total_minutos + ((EXTRACT(EPOCH FROM (v_saida_5::time - v_entrada_5::time))::INTEGER / 60 + 1440) % 1440);
+  END IF;
+  IF v_entrada_6 IS NOT NULL AND v_saida_6 IS NOT NULL THEN
+    v_total_minutos := v_total_minutos + ((EXTRACT(EPOCH FROM (v_saida_6::time - v_entrada_6::time))::INTEGER / 60 + 1440) % 1440);
+  END IF;
+
+  v_horas_trab := (v_total_minutos || ' minutes')::INTERVAL;
+
+  SELECT j.horario_entrada,
+         j.horario_saida,
+         COALESCE(c.jornada_semanal, j.carga_horaria_semanal) AS carga_horaria_semanal
+  INTO v_jornada
+  FROM public.colaboradores c
+  LEFT JOIN LATERAL (
+    SELECT jj.horario_entrada, jj.horario_saida, jj.carga_horaria_semanal
+    FROM public.jornadas jj
+    WHERE jj.empresa_id = c.empresa_id
+      AND jj.ativa
+    ORDER BY (jj.carga_horaria_semanal = c.jornada_semanal) DESC NULLS LAST,
+             jj.created_at ASC,
+             jj.id ASC
+    LIMIT 1
+  ) j ON TRUE
+  WHERE c.id = NEW.colaborador_id;
+
+  IF v_jornada.carga_horaria_semanal IS NOT NULL THEN
+    v_jornada_minutos := (v_jornada.carga_horaria_semanal * 60) / 5;
+
+    IF v_entrada_1 IS NOT NULL AND v_jornada.horario_entrada IS NOT NULL THEN
+      v_atraso_minutos := GREATEST(0,
+        EXTRACT(EPOCH FROM (v_entrada_1::time - v_jornada.horario_entrada::time))::INTEGER / 60 - 10
+      );
+    END IF;
+
+    IF v_jornada.horario_saida IS NOT NULL THEN
+      DECLARE v_ultima_saida TEXT;
+      BEGIN
+        v_ultima_saida := COALESCE(v_saida_6, v_saida_5, v_saida_4, v_saida_3, v_saida_2, v_saida_1);
+        IF v_ultima_saida IS NOT NULL THEN
+          v_saida_antecipada := GREATEST(0,
+            EXTRACT(EPOCH FROM (v_jornada.horario_saida::time - v_ultima_saida::time))::INTEGER / 60
+          );
+        END IF;
+      END;
+    END IF;
+
+    IF v_total_minutos > v_jornada_minutos THEN
+      v_extras_minutos := v_total_minutos - v_jornada_minutos;
+    ELSE
+      v_falta_minutos := v_jornada_minutos - v_total_minutos;
+    END IF;
+  END IF;
+
+  v_horas_ext := (v_extras_minutos || ' minutes')::INTERVAL;
+  v_horas_fal := (v_falta_minutos || ' minutes')::INTERVAL;
+
+  INSERT INTO public.registros_ponto (
+    colaborador_id, empresa_id, data,
+    entrada_1, saida_1, entrada_2, saida_2, entrada_3, saida_3,
+    entrada_4, saida_4, entrada_5, saida_5, entrada_6, saida_6,
+    saida_intervalo, retorno_intervalo,
+    horas_trabalhadas, horas_extras, horas_falta,
+    atraso_minutos, saida_antecipada_minutos, total_batidas,
+    entrada_esperada, saida_esperada, tipo_dia
+  ) VALUES (
+    NEW.colaborador_id, NEW.empresa_id, NEW.data,
+    v_entrada_1::time, v_saida_1::time, v_entrada_2::time, v_saida_2::time,
+    v_entrada_3::time, v_saida_3::time, v_entrada_4::time, v_saida_4::time,
+    v_entrada_5::time, v_saida_5::time, v_entrada_6::time, v_saida_6::time,
+    v_saida_1::time, v_entrada_2::time,
+    v_horas_trab, v_horas_ext, v_horas_fal,
+    v_atraso_minutos, v_saida_antecipada, v_total_batidas,
+    v_jornada.horario_entrada, v_jornada.horario_saida, 'normal'
+  )
+  ON CONFLICT (colaborador_id, data)
+  DO UPDATE SET
+    entrada_1 = EXCLUDED.entrada_1, saida_1 = EXCLUDED.saida_1,
+    entrada_2 = EXCLUDED.entrada_2, saida_2 = EXCLUDED.saida_2,
+    entrada_3 = EXCLUDED.entrada_3, saida_3 = EXCLUDED.saida_3,
+    entrada_4 = EXCLUDED.entrada_4, saida_4 = EXCLUDED.saida_4,
+    entrada_5 = EXCLUDED.entrada_5, saida_5 = EXCLUDED.saida_5,
+    entrada_6 = EXCLUDED.entrada_6, saida_6 = EXCLUDED.saida_6,
+    saida_intervalo = EXCLUDED.saida_intervalo,
+    retorno_intervalo = EXCLUDED.retorno_intervalo,
+    horas_trabalhadas = EXCLUDED.horas_trabalhadas,
+    horas_extras = EXCLUDED.horas_extras,
+    horas_falta = EXCLUDED.horas_falta,
+    atraso_minutos = EXCLUDED.atraso_minutos,
+    saida_antecipada_minutos = EXCLUDED.saida_antecipada_minutos,
+    total_batidas = EXCLUDED.total_batidas,
+    entrada_esperada = EXCLUDED.entrada_esperada,
+    saida_esperada = EXCLUDED.saida_esperada,
+    updated_at = now();
+
+  RETURN NEW;
+EXCEPTION WHEN OTHERS THEN
+  -- A consolidação é um resumo derivado. Uma falha aqui NUNCA pode impedir o
+  -- registro da batida, que é o documento com valor legal (Portaria 671).
+  INSERT INTO public.logs_sistema (nivel, mensagem, contexto)
+  VALUES ('error',
+          'Falha ao consolidar espelho do dia; batida preservada',
+          jsonb_build_object(
+            'origem', 'fn_consolidar_batidas',
+            'colaborador_id', NEW.colaborador_id,
+            'data', NEW.data,
+            'erro', SQLERRM,
+            'sqlstate', SQLSTATE));
+  RETURN NEW;
+END;
+$function$;

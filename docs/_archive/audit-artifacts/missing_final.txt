@@ -1,0 +1,47 @@
+adicionais
+atrasos
+avaliacoes
+backup_logs
+beneficios_elegibilidade
+beneficios_movimentacoes
+cache_tabelas
+cas
+colaboradores_historico
+comissoes
+darfs
+documentos_assinaturas
+documentos_versoes
+emprestimos_consignados
+entity_versions
+esocial_retornos
+eventos_rh
+exames_medicos
+ferias_abono
+ferias_programacao
+folha_calculos
+folha_competencias
+folha_pagamento
+folha_rubricas
+folhas
+gratificacoes
+grrf
+homologacoes
+notificacoes_templates
+ponto_banco_horas
+ponto_compensacoes
+ponto_escalas
+ponto_registros
+pontos
+recibos_ferias
+recibos_rescisao
+rescisao_homologacoes
+rescisao_simulacoes
+rubricas
+sst_epis
+sst_exames
+supabase/migrations/20251216174532_38e4cf29-773d-45ec-b021-2e5693734797.sql:-- create table for indicator alert limits configuration
+supabase/migrations/20251216174736_d4e02fb7-340d-4111-b73b-03788b004098.sql:-- create table for alert history
+supabase/migrations/20251231132429_b93cf26f-825e-4c56-a5c0-6cefdcc24bb8.sql:-- create table to track login attempts with lockout
+trct
+treinamentos_avaliacoes
+treinamentos_certificados
