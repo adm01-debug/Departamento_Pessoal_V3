@@ -63,7 +63,13 @@ export class CircuitBreaker {
       if (this.halfOpenSuccessCount >= this.successThreshold) this.fechar();
       return;
     }
-    this.fechar();
+    // Ja fechado: zera os contadores SEM trocar a geracao. Trocando, o sucesso
+    // de um dispositivo invalidaria as falhas dos envios paralelos ao mesmo
+    // provedor que ainda estao em voo — o circuito nunca abriria e a fila
+    // seguiria batendo num provedor degradado.
+    this.failureCount = 0;
+    this.halfOpenSuccessCount = 0;
+    this.lastFailureTime = undefined;
   }
 
   registrarFalha(geracao: number, agora: number = Date.now()): void {
@@ -107,8 +113,11 @@ export class CircuitBreaker {
  * O breaker e POR PROVEDOR: FCM, Mozilla e Apple sao independentes — cinco
  * falhas do FCM nao podem bloquear quem entrega no Mozilla. Sem limite de
  * hosts, o Map cresceria com qualquer endpoint forjado numa assinatura.
+ * Ao estourar o teto sai o host usado ha mais tempo (nao o mais novo), para um
+ * provedor novo nunca herdar o circuito do vizinho e um provedor que voltou a
+ * receber notificacoes recuperar o proprio circuito.
  */
-const BREAKERS_POR_HOST = new Map<string, CircuitBreaker>();
+const BREAKERS_POR_HOST = new Map<string, { breaker: CircuitBreaker; ultimoUso: number }>();
 const MAX_HOSTS = 20;
 const OPCOES_PUSH: CircuitOptions = {
   failureThreshold: 5,
@@ -126,15 +135,28 @@ export function hostDoEndpoint(endpoint: string): string | null {
   }
 }
 
-/** Breaker do push service do endpoint; o geral cobre endpoint invalido/excedente. */
+/** Breaker do push service do endpoint; o geral cobre endpoint invalido. */
 export function breakerDoPushService(endpoint: string): CircuitBreaker {
   const host = hostDoEndpoint(endpoint);
   if (!host) return breakerGeral;
   const existente = BREAKERS_POR_HOST.get(host);
-  if (existente) return existente;
-  if (BREAKERS_POR_HOST.size >= MAX_HOSTS) return breakerGeral;
+  if (existente) {
+    existente.ultimoUso = Date.now();
+    return existente.breaker;
+  }
+  if (BREAKERS_POR_HOST.size >= MAX_HOSTS) {
+    let maisAntigo: string | null = null;
+    let piorUso = Infinity;
+    for (const [h, entrada] of BREAKERS_POR_HOST) {
+      if (entrada.ultimoUso < piorUso) {
+        piorUso = entrada.ultimoUso;
+        maisAntigo = h;
+      }
+    }
+    if (maisAntigo !== null) BREAKERS_POR_HOST.delete(maisAntigo);
+  }
   const novo = new CircuitBreaker(OPCOES_PUSH);
-  BREAKERS_POR_HOST.set(host, novo);
+  BREAKERS_POR_HOST.set(host, { breaker: novo, ultimoUso: Date.now() });
   return novo;
 }
 

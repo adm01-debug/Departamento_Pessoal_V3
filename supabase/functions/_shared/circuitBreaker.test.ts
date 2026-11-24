@@ -81,6 +81,17 @@ Deno.test('reset fecha o circuito e limpa o contador', () => {
   assertNotEquals(b.permite(), null);
 });
 
+// O dreno envia em paralelo para as assinaturas do mesmo provedor: o sucesso de
+// um dispositivo nao pode invalidar as falhas dos envios que ainda estao em voo,
+// senao cinco falhas do provedor degradado nunca abrem o circuito.
+Deno.test('sucesso em circuito fechado nao descarta as falhas paralelas', () => {
+  const b = new CircuitBreaker({ failureThreshold: 5, resetTimeoutMs: 60_000, successThreshold: 2 });
+  const permissoes = Array.from({ length: 6 }, () => permiteOuFalha(b));
+  b.registrarSucesso(permissoes[0]);
+  for (const g of permissoes.slice(1)) b.registrarFalha(g);
+  assertEquals(b.estado(), 'OPEN');
+});
+
 Deno.test('hostDoEndpoint extrai o host e devolve null para URL invalida', () => {
   assertEquals(hostDoEndpoint('https://fcm.googleapis.com/fcm/send/abc'), 'fcm.googleapis.com');
   assertEquals(hostDoEndpoint('nao-e-url'), null);
@@ -109,5 +120,18 @@ Deno.test('breaker do push e por provedor: FCM caido nao bloqueia o Mozilla', ()
 Deno.test('endpoint invalido cai no breaker geral em vez de criar host novo', () => {
   resetarBreakersDePush();
   assertEquals(breakerDoPushService('nao-e-url'), breakerDoPushService('tambem-nao'));
+  resetarBreakersDePush();
+});
+
+// Teto de hosts: quem chega depois do 20o nao pode compartilhar o circuito geral
+// (um provedor degradado bloquearia todos os provedores novos).
+Deno.test('acima do teto de hosts o mais antigo sai e o novo tem circuito proprio', () => {
+  resetarBreakersDePush();
+  const geral = breakerDoPushService('nao-e-url');
+  for (let i = 1; i <= 20; i++) breakerDoPushService(`https://h${i}.example/push`);
+
+  const excedente = breakerDoPushService('https://h21.example/push');
+  assertNotEquals(excedente, geral);
+  assertEquals(breakerDoPushService('https://h21.example/push'), excedente);
   resetarBreakersDePush();
 });
