@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bb8ebe2cd4f7aeadfaf7c2522737e9afdc9015f5",
+  "commit": "8893aba19201573487a2d3aa80144e83b9c30110",
   "branch": "main",
-  "data_commit": "2026-11-24T09:30:50-03:00",
+  "data_commit": "2026-11-24T09:46:07-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "8893aba",
+    "data": "2026-11-24",
+    "assunto": "fix: sidecar do dreno devolve 'ok' literal no caso inerte (#864)"
+   },
    {
     "sha": "bb8ebe2",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "e3410c9",
     "data": "2026-11-22",
     "assunto": "feat: converte dia do relogio em batidas (etapa 41 do Ponto AtecSoft) (#837)"
-   },
-   {
-    "sha": "108016d",
-    "data": "2026-11-22",
-    "assunto": "chore: desmembra a estrutura do banco do Ponto AtecSoft (#836)"
    }
   ],
-  "arquivos_mudados_7d": 524,
+  "arquivos_mudados_7d": 503,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -262,10 +262,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "docs/prod-readiness.md",
-    "mudancas": 6
-   },
-   {
     "arquivo": "scripts/e2e/ensure-fixtures.mjs",
     "mudancas": 6
    },
@@ -295,6 +291,10 @@
    },
    {
     "arquivo": "docs/pendencias/_ordem.md",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "docs/prod-readiness.md",
     "mudancas": 5
    }
   ],

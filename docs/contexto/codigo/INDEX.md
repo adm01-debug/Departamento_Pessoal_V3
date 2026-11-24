@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bb8ebe2cd4f7aeadfaf7c2522737e9afdc9015f5` (2026-11-24T09:30:50-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8893aba19201573487a2d3aa80144e83b9c30110` (2026-11-24T09:46:07-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -399,7 +399,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28309 nós · 63773 arestas · 2489 comunidades · grafo do commit `bb8ebe2c`
+- 28309 nós · 63773 arestas · 2489 comunidades · grafo do commit `8893aba1`
 - comunidades maiores: lucide-react (552), useEmpresas (496), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (441), client.ts (364), vitest (337), cn (264), ColaboradorDetalhesPage.tsx (218), react (212), contract.ts (185), ref_node_path (165)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -657,6 +657,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-24 `8893aba` fix: sidecar do dreno devolve 'ok' literal no caso inerte (#864)
 - 2026-11-24 `bb8ebe2` fix: nao reexecuta o script da extensao pg_cron/pg_net no canonico (#862)
 - 2026-11-24 `084b528` chore: pina por hash os tres pip install sinalizados pelo Scorecard (#861)
 - 2026-11-24 `7245d10` infra: inclui a migration do cron do dreno no lote canonico (#860)
@@ -671,7 +672,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `066f553` fix: impede que destinatario nao-roteavel derrube o lote de alertas por e-mail (#852)
 - 2026-11-23 `59be355` chore: remove config.ts orfao de processar-agendamentos (#851)
 - 2026-11-23 `bd79c79` fix: filtra destinatarios orfaos em alertas-dp para nao violar FK (#850)
-- 2026-11-23 `20ff226` fix: troca import dinamico de rateLimit por estatico nas edges que retornavam 500 (#849)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

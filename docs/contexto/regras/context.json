@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "bb8ebe2cd4f7aeadfaf7c2522737e9afdc9015f5",
+  "sha": "8893aba19201573487a2d3aa80144e83b9c30110",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-24 12:31 UTC",
+  "generated_at": "2026-11-24 12:47 UTC",
   "files_total": 3748,
   "code_files": 3154,
-  "code_lines": 502199
+  "code_lines": 502204
  },
  "version": "1.3.2",
- "facts_hash": "33f4e9f11458843b",
+ "facts_hash": "eed6970e8f9ae2b5",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -106416,7 +106416,7 @@
   {
    "module": "supabase/migrations",
    "files": 932,
-   "lines": 84626,
+   "lines": 84631,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -337611,7 +337611,7 @@
   },
   "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql": {
    "path": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql",
-   "lines": 40
+   "lines": 45
   },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
@@ -338008,10 +338008,19 @@
   }
  },
  "git": {
-  "sha": "bb8ebe2cd4f7aeadfaf7c2522737e9afdc9015f5",
+  "sha": "8893aba19201573487a2d3aa80144e83b9c30110",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "8893aba",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: sidecar do dreno devolve 'ok' literal no caso inerte (#864)",
+    "files": [
+     "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql"
+    ]
+   },
    {
     "sha": "bb8ebe2",
     "date": "2026-11-24",
@@ -338340,21 +338349,12 @@
      "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql",
      "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.verify.sql"
     ]
-   },
-   {
-    "sha": "7bc68b4",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "infra: adiciona migrations da #829/#830 a lista fechada do canonical-apply (#831)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml"
-    ]
    }
   ],
   "hot_files": [
    [
     ".github/workflows/canonical-migrations.yml",
-    6
+    5
    ],
    [
     "package-lock.json",
@@ -338375,6 +338375,10 @@
    [
     "supabase/functions/ingest-ponto-rep/index.ts",
     3
+   ],
+   [
+    "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql",
+    2
    ],
    [
     "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
@@ -338414,10 +338418,6 @@
    ],
    [
     "scripts/uv-pin.txt",
-    1
-   ],
-   [
-    "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql",
     1
    ],
    [
