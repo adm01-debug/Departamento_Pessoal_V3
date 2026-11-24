@@ -13,15 +13,15 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Helper: thenable chain for select → order → limit → (optional eq) → await
-function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupListChain(data: any[], error: any = null) {
   const response = { data, error };
-  const chain: Record<string, unknown> = {};
+  const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.limit = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: any) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
@@ -30,9 +30,7 @@ function setupListChain(data: unknown, error: { message: string; code?: string }
 // ─── folhaService.list ────────────────────────────────────────────────────────
 
 describe('folhaService.list', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns folhas from supabase', async () => {
     const records = [{ id: 'f1', competencia: '2026-01' }];
@@ -42,7 +40,7 @@ describe('folhaService.list', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     const result = await folhaService.list(undefined, EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -87,9 +85,7 @@ describe('folhaService.list', () => {
 // ─── folhaService.listar ──────────────────────────────────────────────────────
 
 describe('folhaService.listar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns { data, total } delegating to list', async () => {
     const records = [{ id: 'f2', competencia: '2026-03' }];
@@ -121,9 +117,7 @@ describe('folhaService.listar', () => {
 // ─── folhaService.listarFolhas ────────────────────────────────────────────────
 
 describe('folhaService.listarFolhas', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('is an alias for list() with same arguments', async () => {
     const records = [{ id: 'f3' }];

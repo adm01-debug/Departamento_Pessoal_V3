@@ -6,6 +6,17 @@ import { overlayContentCloseOnlyAnimClasses, dropdownContentVariants } from '@/c
 
 const Popover = PopoverPrimitive.Root;
 const PopoverTrigger = PopoverPrimitive.Trigger;
+/**
+ * `PopoverAnchor` — âncora SEM gatilho: posiciona o `PopoverContent` em um
+ * elemento que NÃO abre o popover (quem controla `open` é o chamador).
+ *
+ * É o primitive do Radix que já existia no pacote e só faltava reexportar aqui.
+ * Uso real: `banco-horas/FiltrosCabecalhoBancoHoras.tsx` — o seletor de período
+ * é um `Select` (o dropdown padronizado) e o painel de datas personalizadas
+ * ancora nele sem transformá-lo em `PopoverTrigger` (um elemento não pode ser
+ * gatilho de dois overlays).
+ */
+const PopoverAnchor = PopoverPrimitive.Anchor;
 
 const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
@@ -28,7 +39,7 @@ const PopoverContent = React.forwardRef<
           // a animação é só do container, serve pra qualquer conteúdo sem
           // presumir que é uma lista.
           overlayContentCloseOnlyAnimClasses('popover-content-anim'),
-          className
+          className,
         )}
         {...props}
       >
@@ -46,4 +57,4 @@ const PopoverContent = React.forwardRef<
 });
 PopoverContent.displayName = PopoverPrimitive.Content.displayName;
 
-export { Popover, PopoverTrigger, PopoverContent };
+export { Popover, PopoverTrigger, PopoverAnchor, PopoverContent };

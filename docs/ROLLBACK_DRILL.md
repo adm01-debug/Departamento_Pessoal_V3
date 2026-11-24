@@ -32,7 +32,7 @@ Substituir apenas a linha `project_id = "…"` pelo valor antigo
 ### 4. Rebuild / redeploy do front-end (2 min)
 
 - No Lovable, publique novamente (frontend precisa de build).
-- Locally: `npm ci && npm run build`.
+- Locally: `bun install --frozen-lockfile && bun run build`.
 
 ### 5. Verificação (1 min)
 

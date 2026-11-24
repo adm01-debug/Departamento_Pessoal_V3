@@ -76,7 +76,7 @@ export function PcsAvaliacaoTab({ planoId }: { planoId: string | null }) {
               const aval = porCargo.get(cargo.id);
               return (
                 <TableRow key={cargo.id} className="border-b border-border/10 last:border-0">
-                  <TableCell className="py-3 pl-6 text-sm font-bold">{cargo.nome}</TableCell>
+                  <TableCell className="py-3 pl-6 text-sm font-medium">{cargo.nome}</TableCell>
                   <TableCell className="font-mono text-[11px]">{cargo.cbo || '—'}</TableCell>
                   <TableCell className="text-right">
                     {aval ? (
@@ -142,9 +142,11 @@ export function PcsAvaliacaoTab({ planoId }: { planoId: string | null }) {
               <span className="text-muted-foreground">Prévia ponderada</span>
               <strong>{previa.toLocaleString('pt-BR')} pts</strong>
             </div>
-            <Button className="w-full" onClick={salvarAvaliacao} disabled={salvar.isPending}>
-              Salvar avaliação
-            </Button>
+            <div className="flex justify-end pt-1">
+              <Button size="sm" className="rounded-lg px-4" onClick={salvarAvaliacao} disabled={salvar.isPending}>
+                Salvar avaliação
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

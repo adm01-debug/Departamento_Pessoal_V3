@@ -64,10 +64,10 @@ Traduzir via `safeErrorMessage`:
 
 ## Cron Jobs
 
-| Nome                             | Schedule     | Função                                                                                                    |
-| -------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------- |
-| `ferias-recalcular-dobra-diario` | `15 3 * * *` | `fn_recalcular_dobra_e_alertas()`                                                                         |
-| `ferias-atualizar-status-diario` | `30 3 * * *` | `fn_atualizar_status_ferias_diario()` (wrapper — `fn_update_ferias_status_by_date` é trigger, não rotina) |
+| Nome                             | Schedule     | Função                              |
+| -------------------------------- | ------------ | ----------------------------------- |
+| `ferias-recalcular-dobra-diario` | `15 3 * * *` | `fn_recalcular_dobra_e_alertas()`   |
+| `ferias-atualizar-status-diario` | `30 3 * * *` | `fn_update_ferias_status_by_date()` |
 
 ## Pendências para próxima onda
 

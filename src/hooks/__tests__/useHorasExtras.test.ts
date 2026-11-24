@@ -3,17 +3,15 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const { mockListar, mockCriar, mockAprovar, mockRejeitar, mockExcluir, mockToastSuccess, mockToastError } = vi.hoisted(
-  () => ({
-    mockListar: vi.fn(),
-    mockCriar: vi.fn(),
-    mockAprovar: vi.fn(),
-    mockRejeitar: vi.fn(),
-    mockExcluir: vi.fn(),
-    mockToastSuccess: vi.fn(),
-    mockToastError: vi.fn(),
-  })
-);
+const { mockListar, mockCriar, mockAprovar, mockRejeitar, mockExcluir, mockToastSuccess, mockToastError } = vi.hoisted(() => ({
+  mockListar: vi.fn(),
+  mockCriar: vi.fn(),
+  mockAprovar: vi.fn(),
+  mockRejeitar: vi.fn(),
+  mockExcluir: vi.fn(),
+  mockToastSuccess: vi.fn(),
+  mockToastError: vi.fn(),
+}));
 
 vi.mock('@/services/horaExtraService', () => ({
   horaExtraService: {
@@ -80,16 +78,14 @@ describe('useHorasExtras', () => {
     const { result } = renderHook(() => useHorasExtras(), { wrapper });
 
     await act(async () => {
-      await result.current.criar({ colaborador_id: 'c1', horas_solicitadas: 2, data: '2024-01-01', motivo: 'teste' });
+      await result.current.criar({ colaborador_id: 'c1', horas: 2 });
     });
 
-    expect(mockCriar).toHaveBeenCalledWith(
-      expect.objectContaining({
-        colaborador_id: 'c1',
-        empresa_id: 'emp-1',
-        created_by: 'user-1',
-      })
-    );
+    expect(mockCriar).toHaveBeenCalledWith(expect.objectContaining({
+      colaborador_id: 'c1',
+      empresa_id: 'emp-1',
+      created_by: 'user-1',
+    }));
   });
 
   it('criar shows success toast', async () => {
@@ -97,7 +93,7 @@ describe('useHorasExtras', () => {
     const { result } = renderHook(() => useHorasExtras(), { wrapper });
 
     await act(async () => {
-      await result.current.criar({ colaborador_id: 'c1', horas_solicitadas: 2, data: '2024-01-01', motivo: 'teste' });
+      await result.current.criar({ colaborador_id: 'c1', horas: 2 });
     });
 
     expect(mockToastSuccess).toHaveBeenCalledWith(expect.stringContaining('hora extra'));
@@ -141,9 +137,7 @@ describe('useHorasExtras', () => {
     const { result } = renderHook(() => useHorasExtras(), { wrapper });
 
     await act(async () => {
-      await result.current
-        .criar({ colaborador_id: 'c1', horas_solicitadas: 1, data: '2024-01-01', motivo: 'teste' })
-        .catch(() => {});
+      await result.current.criar({ colaborador_id: 'c1' }).catch(() => {});
     });
 
     await waitFor(() => expect(mockToastError).toHaveBeenCalledWith('DB error'));

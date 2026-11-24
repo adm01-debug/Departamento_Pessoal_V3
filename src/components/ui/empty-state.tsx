@@ -58,13 +58,27 @@ export function EmptyState({
   );
 }
 
-export function EmptySearch({ search, onClear }: { search?: string; onClear?: () => void }) {
+/**
+ * `className` (opcional) desce para o `EmptyState`: quem usa o componente dentro
+ * de um card denso precisa de menos respiro vertical do que a página inteira
+ * (o Banco de Horas passa `py-[26px]` na tabela de extrato).
+ */
+export function EmptySearch({
+  search,
+  onClear,
+  className,
+}: {
+  search?: string;
+  onClear?: () => void;
+  className?: string;
+}) {
   return (
     <EmptyState
       icon={Search}
       title="Nenhum resultado encontrado"
       description={search ? `Não encontramos resultados para "${search}"` : 'Tente ajustar seus filtros'}
       action={onClear ? { label: 'Limpar busca', onClick: onClear } : undefined}
+      className={className}
     />
   );
 }

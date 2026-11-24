@@ -3,6 +3,60 @@
 @import 'tailwindcss';
 @config "../tailwind.config.js";
 
+/* ============================================================================
+   MOTION — RÉGUA GLOBAL DE DURAÇÃO E CURVA (fonte única do ritmo do sistema).
+
+   Todo `transition-*`/`transition-colors`/`transition-all` do Tailwind SEM
+   `duration-*` explícito lê `--default-transition-duration`. Antes este valor
+   era o default do Tailwind (150ms) e era ele o responsável pela sensação de
+   "a animação acontece rápido demais, não dá pra perceber": a maior parte dos
+   hovers/cards do app é `transition-colors` puro, sem duração escrita. Mudar
+   ESTA linha move centenas de usos de uma vez, sem tocar componente por
+   componente.
+
+   Escala (alinhada à régua pedida pelo produto):
+     fast   220ms → micro-interações: hover, foco, chips, chevrons, fechamento
+                    de overlay
+     base   280ms → transições de componentes: sombra/elevação, cores de
+                    estado, abertura de overlay
+     slow   360ms → transições maiores: trilhas, tabelas
+     slower 500ms → animações longas que já existiam (largura de barra etc.)
+     progresso 1200ms → PREENCHIMENTO de barra de progresso (`duration-progresso`)
+
+   Curvas:
+     --ease-standard  simétrica (entrada e saída suaves) → padrão do sistema
+     --ease-entrance  ease-out acentuado → entradas (cards, modais, páginas)
+     --ease-exit      ease-in → saídas (nunca usada para entrada)
+
+   `prefers-reduced-motion` continua tratado como já era: os blocos de
+   `@media (prefers-reduced-motion: reduce)` deste arquivo + `useReducedMotion()`
+   nos componentes Motion. Nada aqui impede o "desligar" do movimento.
+   ========================================================================== */
+@theme {
+  --default-transition-duration: 220ms;
+  /* Aponta para o token da curva padrão (mesmo cubic-bezier de antes): uma
+     curva só, declarada em um lugar só. */
+  --default-transition-timing-function: var(--ease-standard);
+
+  --transition-duration-fast: 220ms;
+  --transition-duration-base: 280ms;
+  --transition-duration-slow: 360ms;
+  --transition-duration-slower: 500ms;
+  /* Preenchimento de BARRA DE PROGRESSO (`duration-progresso`). Passo próprio,
+     bem acima dos demais: a barra precisa de tempo para o olho ACOMPANHAR o
+     enchimento (0 → N%), sem chegar a incomodar (nada de segundos). Em JS, o
+     mesmo número vive em `src/components/ui/progressMotion.ts`. */
+  --transition-duration-progresso: 1200ms;
+  /* Entrada dos TOOLTIPS DE GRÁFICO (`ui/tooltipGrafico.tsx`): só opacidade,
+     150ms (faixa pedida: 120–180ms). O deslocamento da tooltip até o ponto é
+     aplicado direto, sem transição — aqui o único movimento é o fade. */
+  --transition-duration-tooltip: 150ms;
+
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-entrance: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+}
+
 @layer base {
   :root {
     /* ─── LIGHT MODE (Bombon Lime — Clean & Modern) ─── */
@@ -43,6 +97,21 @@
     --warning-foreground: 240 20% 10%;
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
+    /* ─── HORAS EXTRAS — vermelho VIBRANTE e veredito do histórico ───
+       `danger` e `status-*` (registrados no tailwind.config.js) são
+       consumidos SÓ pela área de Horas Extras — nenhuma outra tela os
+       referencia, então nada muda fora dela. Existem por dois motivos:
+       (1) o `--destructive` é o vermelho de COMPONENTE e no tema escuro fica
+       quase ilegível sobre o navy; (2) o "Aprovada" do histórico não deve usar
+       o lime da marca (`--primary`), que é cor de AÇÃO, não de VEREDITO.
+       No tema claro os dois vermelhos convergem para o mesmo tom, acessível
+       sobre branco — mesma lógica do `--destructive-vivid`. O alfa NÃO mora
+       aqui: fica nas utilities (`bg-danger/10`, `border-status-rejeitada/45`),
+       que o Tailwind resolve com `color-mix`. */
+    --danger-primary: 350 89% 44%;
+    --danger-hover: 350 89% 38%;
+    --status-aprovada: 152 76% 28%;
+    --status-rejeitada: 350 89% 44%;
     --border: 240 8% 87%;
     --input: 240 8% 87%;
     --ring: 68 100% 48%;
@@ -73,13 +142,12 @@
     --text-h3: 1.125rem;
     --text-body: 0.875rem;
     --text-caption: 0.75rem;
-    /* `overline` fica no valor que a main já tem aplicado (10px): a muri
-       propunha 11px, e subir aqui deslocaria todo overline já em produção. */
-    --text-overline: 0.625rem;
-    /* Dado/KPI em destaque: nenhum token existente batia 24px com peso 500. */
-    --text-data: 1.5rem;
-    /* Título de card dentro de card de altura fixa: 16px/500. */
+    --text-overline: 0.6875rem;
+    /* Nível 1 (compacto) — títulos de card dentro de cards de altura fixa;
+       Nível 2 — dados/KPI em destaque (nenhum token existente batia com
+       24px/700 ao mesmo tempo). Ver plano de padronização tipográfica. */
     --text-heading: 1rem;
+    --text-data: 1.5rem;
     /* Escala semântica COMPLEMENTAR — mesmos pixels já usados nas telas
        aprovadas, agora com nome. `control` = altura ótima dos controles
        (Button/Input/Select); `body-sm` = texto secundário; `label` = rótulo de
@@ -135,7 +203,6 @@
     --sidebar-border: 240 8% 90%;
     --sidebar-ring: 68 100% 48%;
 
-    /* Tinta do valor numerico em destaque (.text-data). */
     --data-foreground: 240 20% 10%;
   }
 
@@ -178,6 +245,14 @@
     --warning-foreground: 240 20% 6%;
     --info: 199 89% 50%;
     --info-foreground: 60 10% 92%;
+    /* Horas Extras — ver a nota do `:root`. No escuro os valores são os da
+       referência aprovada: vermelho do botão Rejeitar (#FF334B), hover
+       (#FF5265), verde do veredito "Aprovada" (#00E676) e vermelho do
+       veredito "Rejeitada" (#FF4055). */
+    --danger-primary: 353 100% 60%;
+    --danger-hover: 353 100% 66%;
+    --status-aprovada: 151 100% 45%;
+    --status-rejeitada: 353 100% 63%;
     --border: 216 37% 16%;
     --input: 216 37% 16%;
     --ring: 68 100% 48%;
@@ -198,15 +273,41 @@
     --sidebar-accent-foreground: 60 10% 92%;
     --sidebar-border: 216 37% 14%;
     --sidebar-ring: 68 100% 48%;
-
-    /* Tinta do valor numerico em destaque (.text-data). */
-    --data-foreground: 0 0% 95%;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+  }
+
+  /* ─── ESCALA GLOBAL DO DESIGN SYSTEM (base rem) ───
+     Toda a malha do sistema é declarada em `rem`: o espaçamento do Tailwind
+     (`p-*`, `gap-*`, `w-64`…), a escala tipográfica (`--text-*`), os raios
+     (`--radius`), o respiro do shell (`--space-page`) e as larguras de card,
+     sidebar e grid. Logo, o `font-size` do `<html>` é o ÚNICO ponto de verdade
+     da densidade visual da aplicação — exatamente como funciona o zoom do
+     navegador, mas declarado no produto.
+
+     O produto foi desenhado e aprovado na base de 20px (125% do default de
+     16px do navegador): é essa a escala em que sidebar, cards, tipografia e
+     grids ocupam a tela inteira em 100% de zoom. Com a base de 16px o layout
+     encolhia ~20% e sobrava vão morto nas laterais. Fixar a base aqui corrige
+     TODAS as telas de uma vez — sem `zoom`, sem `transform: scale()`, sem
+     override por página:
+
+     • não distorce elementos posicionados (`fixed`/`sticky` continuam
+       ancorados à viewport, coisa que `zoom`/`scale` quebram);
+     • mantém os breakpoints do Tailwind (declarados em px) intactos;
+     • as utilities com `px` arbitrário (`w-[150px]`, `text-[11px]`…) também
+       acompanham a régua: `scripts/postcss-escala-rem.mjs` as converte para
+       `rem` no CSS gerado (hairlines abaixo de 2px continuam em px);
+     • segue a preferência do usuário: `125%` é relativo ao default do
+       navegador, não um pixel cravado.
+
+     Régua completa, pegadinhas e validação: docs/ESCALA-GLOBAL-DESIGN-SYSTEM.md. */
+  html {
+    font-size: 125%;
   }
 
   body {
@@ -269,30 +370,6 @@
     line-height: 1.4;
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
-  /* VALOR NUMERICO EM DESTAQUE (KPI). Estava DOCUMENTADO em
-     docs/DESIGN-SYSTEM-TIPOGRAFIA.md e USADO na main (DonutChart.tsx), mas nunca
-     foi definido: a classe saia no HTML sem pintar nada. A definicao vem da
-     branch muri junto do MetricCard que a consome. */
-  .text-data {
-    font-size: var(--text-data);
-    line-height: 1;
-    font-family: 'Outfit', sans-serif;
-    font-weight: 500;
-    letter-spacing: -0.025em;
-    color: hsl(var(--data-foreground));
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* NUMERO DA INTERFACE (dinheiro, horas, percentuais, contagens): familia
-     oficial do sistema, alinhamento por `tabular-nums` em vez de monoespacada.
-     Mesmo caso do `.text-data` — a main ja usa em 7 arquivos / 18 ocorrencias
-     (avaliacao, premiacoes) e a classe nao existia. */
-  .text-numeric {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-variant-numeric: tabular-nums;
-    font-feature-settings: 'tnum' 1;
-  }
-
   .text-overline {
     font-size: var(--text-overline);
     line-height: 1.4;
@@ -393,20 +470,38 @@
   /**
    * HUB DE PREMIAÇÕES → AUDITORIA — segunda faixa da barra de filtros.
    *
-   * Duas áreas com responsabilidades distintas:
-   *   • ESQUERDA  — os 6 chips de categoria (`minmax(0,1fr)`, `min-width: 0`)
-   *                 podem encolher/quebrar DENTRO da própria área;
-   *   • DIREITA   — Ordenar por + Limpar filtros + CSV/PDF mantêm a largura
-   *                 necessária (`auto`) e nunca são empurrados para uma
-   *                 terceira linha.
+   * DUAS ÁREAS, UMA LINHA SÓ:
+   *   • ESQUERDA  — os chips de categoria (`flex: 1 1 0` + `min-width: 0`);
+   *   • DIREITA   — Ordenar por + Limpar filtros + CSV/PDF (`auto`, `flex-shrink: 0`).
    *
-   * Abaixo de 1440 o gap cai para 12px e abaixo de 1280 a faixa passa a uma
-   * coluna (tablet/mobile): aí a reorganização é planejada, não um estouro.
+   * Era um GRID `minmax(0,1fr) auto`. O grid não é o problema em si — o defeito
+   * era o dimensionamento dos chips: eles cresciam por BREAKPOINT DE VIEWPORT
+   * (`min-[1600px]:px-[14px]`, `min-[1800px]:px-[15px]`), enquanto a coluna real
+   * encolhe por causa da sidebar. Resultado: em telas ≥1600 as pílulas ficavam
+   * largas demais para a coluna e a última ("Aprovações") caía sozinha na
+   * segunda linha, desalinhando o grupo da direita.
+   *
+   * Agora a faixa é FLEX (`items-center` + `justify-between`) e o grupo da
+   * esquerda é `min-w-0` + `grow`: ele ocupa o espaço que sobra depois dos
+   * controles da direita. Essa largura é o container das próprias pílulas
+   * (`@container` no wrapper em `AuditoriaTab.tsx`), então o padding/gap delas
+   * encolhe pela LARGURA DISPONÍVEL — nunca pela viewport.
+   *
+   * QUEM CEDE É O GRUPO DA DIREITA, NUNCA OS CHIPS (`flex-wrap: wrap` aqui):
+   * o wrapper dos chips tem `flex-basis: 42rem` (840px — a largura mínima em que
+   * as seis pílulas cabem folgadas; ver `AuditoriaTab.tsx`) e `flex-shrink: 0`,
+   * então, quando não há espaço para as duas áreas, Ordenar/Limpar/CSV/PDF
+   * descem como BLOCO para a segunda linha e, pelo `margin-left: auto` deles,
+   * continuam colados à direita. As categorias permanecem sempre na MESMA linha.
+   * Abaixo de 1280px a faixa inteira vira uma coluna (reorganização planejada
+   * para tablet/mobile, não um estouro).
    */
   .audit-filter-secondary {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: space-between;
     gap: 16px;
   }
 
@@ -418,7 +513,8 @@
 
   @media (max-width: 1279px) {
     .audit-filter-secondary {
-      grid-template-columns: minmax(0, 1fr);
+      flex-direction: column;
+      align-items: stretch;
       gap: 10px;
     }
   }
@@ -571,8 +667,11 @@
   }
 
   /* Hover effects */
+  /* Hovers utilitários (usados por vários módulos): 220–280ms — a faixa pedida
+     para hover/interação simples (180–250ms) e para transição de componente
+     (250–350ms). Antes eram 200/300/300ms sem token; agora leem a régua. */
   .hover-scale {
-    @apply transition-transform duration-200 hover:scale-105;
+    @apply transition-transform duration-base hover:scale-105;
   }
 
   /* ─── Global Scrollbar Styles ─── */
@@ -610,11 +709,11 @@
   }
 
   .hover-glow {
-    @apply transition-shadow duration-300 hover:shadow-glow;
+    @apply transition-shadow duration-base hover:shadow-glow;
   }
 
   .hover-lift {
-    @apply transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated;
+    @apply transition-all duration-base hover:-translate-y-0.5 hover:shadow-elevated;
   }
 }
 
@@ -637,15 +736,36 @@
    `className` do primeiro render não depende de JS pra tocar nem pra
    terminar, o browser cuida disso sozinho. É só uma escolha estética: o card
    já nasce visível e "assenta" no lugar, em vez de sofrer fade-in. */
-@keyframes squashInSafe {
-  0% {
-    transform: scale(1.05, 0.95) translateY(12px);
+/* ─── ENTRADA PADRÃO DE CARD — RÉGUA GLOBAL DO SISTEMA ─────────────────────
+   Os números abaixo são os do Dashboard Executivo (a referência aprovada) e a
+   fonte de verdade deles é `src/components/ui/entradaGlobal.ts`
+   (`CONFIG_ENTRADA_CARD_GLOBAL`): fade de opacidade + subida de 14px, 520ms por
+   card, ease-out puro `cubic-bezier(0, 0, 0.58, 1)`.
+
+   POR QUE AQUI: TODO `Card` do design system carrega `.animate-squash`
+   (`ui/card.tsx`), inclusive os cards "burros" (sem Motion) de qualquer página.
+   Manter a entrada neste nó é o que faz a MESMA animação valer em todas as
+   páginas sem que cada uma declare a sua. O escalonamento entre cards vem de
+   `hooks/use-stagger-cards.ts`, que lê o MESMO módulo.
+
+   `backwards`, não `both`: com `both` o `transform`/`opacity` do último keyframe
+   ficam presos em prioridade de cascata de "animação" para sempre — mais alta
+   que qualquer `transform` que o Framer Motion escreva depois (ex.:
+   `whileHover={{ y: -2 }}` no MetricCard, que usa `motion.create(Card)` direto
+   neste mesmo nó). `backwards` mantém o estado inicial durante o próprio atraso
+   (sem "pulo") e devolve o controle assim que a animação termina.
+
+   `will-change: transform` continua: só `transform` + `opacity`, ambos
+   compostos na GPU — nenhum `scale`, `blur` ou `filter` (o card não "incha",
+   não desfoca e não anima tamanho). */
+@keyframes entradaCardGlobal {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
   }
-  60% {
-    transform: scale(0.98, 1.02) translateY(-3px);
-  }
-  100% {
-    transform: scale(1, 1) translateY(0);
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -661,12 +781,310 @@
      o controle de `transform` ao normal assim que a animação termina de
      tocar — sem salto perceptível na troca, porque o keyframe final
      (`scale(1,1) translateY(0)`) já É o "sem transform nenhum" padrão. */
-  animation: squashInSafe 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  /* RÉGUA GLOBAL: os mesmos números do Dashboard Executivo (14px / 520ms /
+     ease-out puro). `backwards` mantém o estado inicial durante o atraso da
+     cascata (sem pulo) e devolve `transform`/`opacity` ao controle do Framer
+     assim que termina — ver o bloco acima. */
+  animation: entradaCardGlobal 520ms cubic-bezier(0, 0, 0.58, 1) backwards;
   will-change: transform;
+}
+
+/* GESTÃO DE DESEMPENHO (`/avaliacao`) — deixou de ser exceção em 29/10/2026.
+ * Até essa data esta rota tinha escopo próprio (`desempenho-congelado`): o
+ * `MainLayout` escrevia o atributo e uma regra aqui restaurava o squash com
+ * overshoot elástico (0,7s) + cascata de 60ms, porque `.clinerules` §1 congela o
+ * movimento daquela área. A padronização foi AUTORIZADA pelo usuário ("aplicar a
+ * mesma animação de entrada do Dashboard Executivo a todos os cards e KPI cards
+ * do módulo Avaliação e Performance"): o módulo passou a consumir a régua global
+ * (`ui/entradaGlobal.ts`) e esta regra — junto com o `@keyframes squashInSafe` e
+ * o passo de 60ms do `useStaggerCards` — foi removida. Nenhum `scale` de entrada
+ * existe mais no sistema: só fade + 14px, 520ms, 120ms, `ease-out`. */
+
+/* ENTRADA DO DASHBOARD EXECUTIVO — opt-out do squash (escopo por atributo).
+ *
+ * Os cards e KPI Cards do Dashboard Executivo têm uma cascata PRÓPRIA, em
+ * Framer Motion (`components/ui/entradaGlobal.ts`: fade + subida de 14px, 520ms
+ * por card, 120ms entre cards, ease-out `cubic-bezier(0,0,.58,1)`). São DOIS
+ * grupos independentes: os KPI Cards e a cascata do conteúdo partem do MESMO
+ * instante — nenhum espera o outro.
+ *
+ * Coerência de projeto: a régua global de `.animate-squash` (acima) usa
+ * EXATAMENTE esses números. Mesmo assim esta rota mantém o opt-out, porque os
+ * cards dela já animam por Framer: deixar as duas rodando no mesmo nó animaria
+ * `opacity`/`transform` duas vezes. Os cards desta rota declaram
+ * `data-entrada="cascata"` e não rodam a entrada por CSS.
+ *
+ * Nada global muda: a regra exige o atributo (nenhum outro Card do sistema o
+ * tem). O `useStaggerCards` continua marcando esses elementos com
+ * `animation-delay`, que fica inerte junto com a animação desligada. Escrita
+ * fora de `@layer` de propósito: é assim que ela vence `.animate-squash`
+ * (especificidade 0,2,0 contra 0,1,0) sem precisar de `!important`.
+ */
+.animate-squash[data-entrada='cascata'] {
+  animation: none;
+  /* O `Card` carrega `transition-all` (0,22s aqui). Isso re-suavizava CADA frame
+     que a Motion escrevia em `transform`/`opacity`: a subida de 450ms só
+     terminava ~220ms depois do previsto (medido: ~670ms) e a cascata lia como
+     arrastada. A transição continua para o que é interação de verdade
+     (sombra/borda/fundo/cor); `transform` e `opacity` ficam exclusivamente com
+     a Motion, que já interpola frame a frame. */
+  transition-property: box-shadow, border-color, background-color, color, filter;
+}
+
+/* ENTRADA DO DASHBOARD PRINCIPAL — a ÚNICA animação dos cards daquela rota.
+ *
+ * Fonte de verdade dos números: `components/ui/entradaGlobal.ts`
+ * (`CONFIG_ENTRADA_CARD_GLOBAL`: 14px de subida, 520ms, `ease-out` =
+ * cubic-bezier(0,0,.58,1); 120ms entre o início de um card e o do próximo, nos
+ * dois grupos). Aqui só existe a metade CSS dela: os cards
+ * do Dashboard Principal que NÃO são componentes Framer Motion (Headcount,
+ * Departamentos, Status do Sistema, Morning Briefing, Resumo Operacional,
+ * Próximas Atividades, Atividade Recente) não têm onde pendurar um `y`, e criar
+ * um wrapper `<motion.div>` em volta mudaria o item de grid/flex de cada card
+ * (layout). A animação roda neste próprio nó.
+ *
+ * 1) O swap da entrada: todo `Card` do sistema carrega `.animate-squash`, que é
+ *    a entrada global (fade + 14px, 520ms). Nesta página o driver desliga essa
+ *    regra e escreve a SUA (`[data-entrada-cascata]` abaixo), na ordem visual
+ *    medida — as duas animam `transform`/`opacity` no mesmo nó, então só uma
+ *    pode rodar. As demais rotas usam a entrada global do próprio `Card`.
+ *
+ * 2) `[data-entrada-cascata]`: o driver (`useEntradaCascataDashboard`) marca o
+ *    card e escreve o atraso (120ms × posição na ordem VISUAL de leitura, dentro
+ *    do grupo `kpi` ou do grupo `conteudo`) — inline e com `!important`, para
+ *    que nem o `.animate-squash` nem o `animation-delay` do `useStaggerCards`
+ *    consigam sobrepor-se. Esta regra é o FALLBACK (mesma animação, mesmos
+ *    números): se o JS falhar em escrever os longhands inline, o card ainda
+ *    entra certo. `both` mantém o card em `opacity: 0`/`y: 14px` durante o
+ *    próprio atraso — sem isso ele apareceria na posição final e "pularia" para
+ *    baixo ao começar. Quando a animação termina, o driver remove atributo e
+ *    estilos inline e o card volta ao controle normal (hover/exit continuam
+ *    funcionando).
+ *
+ * Escritas fora de `@layer` e com especificidade 0,2,0 / 0,3,0 de propósito: é
+ * assim que vencem `.animate-squash` (0,1,0) sem `!important`. */
+[data-entrada-escopo='dashboard-principal'] .animate-squash {
+  animation: none;
+  /* O `Card` carrega `transition-all`: ele re-suavizaria cada frame de
+     `transform`/`opacity` (a subida de 550ms terminaria ~220ms depois do
+     previsto, arrastada). Sombra/borda/fundo/cor — o que é interação de
+     verdade — seguem transicionando. */
+  transition-property: box-shadow, border-color, background-color, color, filter;
+}
+
+[data-entrada-escopo='dashboard-principal'] .animate-squash[data-entrada-cascata] {
+  animation: entradaCascataDashboard 520ms cubic-bezier(0, 0, 0.58, 1) both;
+}
+
+/* Mesmos números da régua global (`entradaCardGlobal`, acima): 14px / 520ms.
+   Nome próprio só porque o driver escreve `animation-name` inline com ele. */
+@keyframes entradaCascataDashboard {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* ─── HOVER DE CARD — RÉGUA DO DASHBOARD PRINCIPAL ─────────────────────────
+   Fonte de verdade: `src/components/ui/interacao-cards.ts`. Reproduz o hover
+   do card do Dashboard Principal (`dashboard/MetricCard.tsx`): o card sobe
+   2px e a borda acende em `primary/40`.
+
+   POR QUE FORA DE `@layer` (como a entrada, acima): o `Card` do design system
+   carrega a utility `transition-all` (`ui/card.tsx`). Utility mora na camada
+   `utilities`, e a CAMADA vence a especificidade — uma regra escrita dentro de
+   `@layer components` perderia para ela mesmo com seletor mais forte. Sem
+   `@layer`, esta regra entra na camada implícita (a de maior prioridade) e
+   sobrescreve `transition-all` sem `!important`.
+
+   POR QUE `translate` E NÃO `transform`: a ENTRADA do card é escrita pelo
+   Framer Motion como `transform` inline (`opacity` + `translate3d` de 14px).
+   `translate` é uma propriedade INDEPENDENTE (composta antes de `transform`),
+   então o hover sobe o card sem disputar a mesma propriedade com a Motion:
+   nenhum inline style ganha da classe e nada precisa de `!important`.
+
+   POR QUE DURAÇÕES POR PROPRIEDADE: no Dashboard a elevação leva 250ms (o
+   `whileHover` da Motion) e a borda 500ms (`duration-slower`, o passo de
+   "transição de componente" do `@theme`). Uma `transition-duration` única não
+   reproduziria as duas.
+
+   A SAÍDA é simétrica (250ms) de propósito: no card do Dashboard a saída herda
+   a transição da VARIANTE de entrada, que carrega o `delay` do slot da cascata
+   — inofensivo no 1º card, mas um card no slot 7 (os painéis da Analytics)
+   ficaria 840ms parado antes de descer. Aqui o hover fecha na mesma duração em
+   que abre, como o olho espera.
+
+   EFEITOS: só `translate` (2px, GPU) e cor de borda. Nenhuma sombra, escala,
+   filtro ou tamanho — igual ao card do Dashboard. `translate` não participa do
+   layout: nenhuma caixa muda de posição no fluxo (`next sibling` não anda). */
+.card-interacao {
+  transition-property: var(--card-interacao-propriedades);
+  transition-duration: 250ms, 500ms, 500ms, 500ms, 500ms, 500ms;
+  transition-timing-function: var(--default-transition-timing-function);
+}
+
+.card-interacao:hover {
+  translate: 0 -2px;
+}
+
+/* Lista de propriedades do hover de card, em UM lugar: as duas regras de
+   escopo de entrada abaixo (Dashboard Principal e Dashboard Executivo)
+   ESTREITAM a transição dos cards — se elas vencerem a `.card-interacao`, o
+   `translate` sai da lista e a elevação volta a ser instantânea. */
+:root {
+  --card-interacao-propriedades: translate, box-shadow, border-color, background-color, color, filter;
+}
+
+/* Dentro dos escopos que estreitam a transição do `Card`, o card de interação
+   recupera a lista completa (com `translate`); as durações por propriedade
+   continuam vindo de `.card-interacao`. Especificidade 0,3,0 vence as regras
+   de escopo (0,2,0) sem `!important`. */
+.animate-squash[data-entrada='cascata'].card-interacao,
+[data-entrada-escopo='dashboard-principal'] .animate-squash.card-interacao {
+  transition-property: var(--card-interacao-propriedades);
+}
+
+/* ─── TRILHA DE AUDITORIA (Desligamentos): entrada dos eventos ─────────────
+   POR QUE AQUI (CSS) E NÃO NO FRAMER: a trilha monta junto com a aba — ~20
+   linhas densas, cada uma com quatro blocos, três tooltips do Radix e o trilho
+   da timeline. Nos primeiros quadros depois desse mount a main thread está
+   ocupada (estilo, layout, handlers) e uma animação dirigida por JS (o rAF da
+   Motion) não recebe quadro: ela anda aos pulos justamente no trecho que o olho
+   está acompanhando. Keyframe CSS de `transform`/`opacity` é resolvida pelo
+   COMPOSITOR contra a linha do tempo do documento e mantém o ritmo mesmo com a
+   main thread ocupada — mesmo motivo que levou o Kanban de Admissões/Recrutamento
+   para keyframes (ver `components/kanban/entradaKanban.ts`).
+
+   Números daqui são ESPELHO de `components/desligamentos/trilhaReveal.ts`
+   (`TRILHA_ENTRADA_DURACAO_MS` = 620, `TRILHA_ENTRADA_OFFSET_PX` = -8,
+   `TRILHA_ENTRADA_EASE` = cubic-bezier(0.2, 0, 0, 1)): duração, deslocamento,
+   curva e atraso de cada linha chegam por custom property, escritos por
+   `estiloEntrada()`, e o atraso é a única coisa que varia por nó. O fallback das
+   variáveis repete os mesmos valores para o caso de o CSS rodar sozinho (classe
+   usada sem o `style`).
+
+   CURVA: `cubic-bezier(0.2, 0, 0, 1)` (a "emphasized decelerate" do Material 3),
+   e NÃO mais a curva de abertura do Organograma `(0.22, 1, 0.36, 1)`. A antiga
+   entregava ~75% do percurso em 100ms — numa linha de ~120px isso se lia como
+   piscada, e o trecho visível do movimento caía justamente sobre os primeiros
+   quadros do mount da aba (os mais caros). A curva nova arranca quase parada e
+   desacelera por mais tempo: em 620ms metade da opacidade só chega aos ~124ms e
+   o movimento segue legível até ~400ms. O mecanismo não mudou (continua 100%
+   compositor); mudou a distribuição do tempo dentro dele. A curva de abertura do
+   Organograma segue em uso no painel "Mais filtros" (`TRILHA_EASE`).
+
+   Só `translate3d` + `opacity`: nenhuma propriedade de layout (altura, margem,
+   padding) participa da entrada, então nada abaixo da linha é empurrado e não há
+   reflow por quadro.
+
+   `backwards`, não `both`: mantém o keyframe inicial durante o próprio atraso
+   (sem o "pulo" de nascer visível) e DEVOLVE `transform`/`opacity` ao Framer no
+   fim — a SAÍDA (que recolhe a altura) roda no mesmo nó, via `AnimatePresence`.
+
+   SEM `will-change` aqui de propósito: seria uma promoção de camada permanente
+   em ~20 linhas de tabela. `transform`/`opacity` animados já são promovidos pelo
+   browser enquanto a animação está rodando, e voltam ao normal depois. */
+@keyframes trilhaEventoEntrada {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--trilha-entrada-offset, -8px), 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Entrada "só fade", para `prefers-reduced-motion` (ver a media query abaixo). */
+@keyframes trilhaEventoFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.trilha-evento-entrada {
+  animation: trilhaEventoEntrada var(--trilha-entrada-duracao, 620ms)
+    var(--trilha-entrada-curva, cubic-bezier(0.2, 0, 0, 1)) backwards;
+  animation-delay: var(--trilha-entrada-delay, 0ms);
+}
+
+/* `prefers-reduced-motion`: mantém o fade (a lista não pode aparecer pronta no
+   meio de uma troca de filtro), mas zera deslocamento e cascata. Escrever
+   `animation-delay` aqui vence o `var(...)` da regra base (mesma
+   especificidade, declarada depois) e o atraso inline não conflita, porque o
+   inline carrega só a CUSTOM PROPERTY. */
+@media (prefers-reduced-motion: reduce) {
+  .trilha-evento-entrada {
+    animation: trilhaEventoFade 120ms ease-out backwards;
+    animation-delay: 0ms;
+  }
+}
+
+/* ─── TOOLTIP DOS GRÁFICOS (Recharts): entrada SÓ por opacidade ────────────
+   O Recharts posiciona a tooltip por `transform: translate(x, y)` e, com
+   `isAnimationActive` (padrão `'auto'`), injeta `transition: transform 400ms
+   ease` no wrapper — como a posição só é conhecida depois da primeira
+   medição, o elemento nascia na origem/anterior e DESLIZAVA até o ponto ativo
+   ("aparece na lateral e voa até o mouse").
+
+   A régua (`components/ui/tooltipGrafico.tsx`) desliga essa animação de
+   posição e deixa só este fade, aplicado ao bloco de conteúdo que MONTA
+   quando o ponto fica ativo. Sem translate, sem escala, sem bounce: a posição
+   final é calculada antes da exibição. Vale também para os conteúdos
+   customizados de cada gráfico (mesma classe). */
+@keyframes tooltipGraficoFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.tooltip-grafico-entrada {
+  animation: tooltipGraficoFade var(--transition-duration-tooltip) ease-out both;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-squash {
+    animation: none;
+  }
+
+  /* Hover de card (ver o bloco acima): sem deslocamento. A borda continua
+     acendendo — mudança de cor não é movimento, e é ela que sinaliza o foco do
+     mouse para quem pediu movimento reduzido. */
+  .card-interacao:hover {
+    translate: none;
+  }
+
+  /* Ações do cabeçalho do Controle de Ponto
+     (`components/ponto/acoesCabecalhoPonto.ts`): o `-2px` do hover e a escala
+     de pressão são utilidades do Tailwind (`hover:-translate-y-0.5`,
+     `active:scale-[0.98]`), zeradas aqui por inteiro em movimento reduzido. O
+     halo (`shadow-glow*`) e a troca de cor CONTINUAM — são eles que sinalizam o
+     foco do mouse, e nenhum dos dois é movimento. Como esta regra está fora de
+     qualquer `@layer`, vence as utilidades (que vivem em `@layer utilities`)
+     sem precisar de `!important`. */
+  .ponto-acao-cabecalho:hover,
+  .ponto-acao-cabecalho:active {
+    translate: none;
+    scale: none;
+  }
+
+  /* Entrada do Dashboard Principal (ver o bloco acima): sem cascata. O driver
+     já não marca card nenhum quando o usuário pede movimento reduzido; esta
+     regra cobre o CSS e garante a página estática em qualquer caminho. */
+  [data-entrada-escopo='dashboard-principal'] .animate-squash {
     animation: none;
   }
 
@@ -693,6 +1111,22 @@
   .select-chevron,
   .dp-dropdown-anim-chevron {
     transition: none;
+  }
+
+  /* Preenchimento de barra de progresso (compartilhada, `ui/progress.tsx`):
+     sem animação — o indicador já nasce no valor final (`translateX` do
+     próprio componente). As barras que crescem por `width` em CSS puro usam
+     `duration-progresso`; aqui elas também são zeradas. */
+  .progress-indicator,
+  .barra-progresso-preenchimento {
+    transition-duration: 0.01ms;
+  }
+
+  /* Tooltip de gráfico (`components/ui/tooltipGrafico.tsx`): aparece direto no
+     ponto, sem fade. A posição já não anima (nada de `transform`), então a
+     tooltip fica estática como o resto do sistema pede em movimento reduzido. */
+  .tooltip-grafico-entrada {
+    animation: none;
   }
 }
 
@@ -911,7 +1345,8 @@
 
 .roi-grafico .recharts-label-list {
   opacity: var(--roi-rotulos-opacity, 1);
-  transition: opacity 200ms ease-out;
+  /* Régua global (ver `@theme` no topo): 200ms -> 220ms, o passo `fast`. */
+  transition: opacity var(--transition-duration-fast) ease-out;
 }
 
 /* ─── Simulador ROI: evolução temporal (desenho das linhas) ────────────────
@@ -945,7 +1380,8 @@
    (`--roi-ponto-fracao`, medida pelo controlador no path real). */
 .roi-grafico .roi-ponto {
   opacity: 0;
-  transition: opacity 200ms ease-out;
+  /* Régua global (ver `@theme` no topo): 200ms -> 220ms, o passo `fast`. */
+  transition: opacity var(--transition-duration-fast) ease-out;
 }
 
 .roi-grafico .roi-ponto-payout {
@@ -971,3 +1407,215 @@
    preferência que fazia a entrada automática saltar direto para a altura
    final e parecer que a animação não existia. Não há override de `transform`
    aqui para não anular a reprodução manual. */
+
+/* ============================================================================
+   LOGIN — AUTOFILL DO NAVEGADOR (o campo que "aparece preenchido sozinho")
+
+   Sintoma relatado: os campos de e-mail e senha do login nasciam com
+   "ti@promobrindes.com.br" e "••••••••" dentro, sobre um fundo claro, embora
+   o React renderize `value=""` (o estado começa vazio) e o projeto esteja no
+   tema escuro. O que pinta esse estado NÃO é o código: é o gerenciador de
+   senhas do Chrome/Edge, que preenche credenciais salvas da origem e aplica
+   `background: rgb(232, 240, 254)` + texto preto por cima do tema.
+
+   Aqui só a PINTURA é corrigida: o campo autofillado volta a ser
+   `--background` com texto `--foreground`, coerente com o card escuro e
+   legível. `autocomplete` continua com os valores corretos (`username` /
+   `current-password`) em `LoginPage` — o recurso do gerenciador de senhas
+   segue funcionando para quem o usa.
+
+   Classe aplicada em: `src/pages/LoginPage.tsx` (`className="campo-login …"`).
+   ========================================================================== */
+.campo-login:-webkit-autofill,
+.campo-login:-webkit-autofill:hover,
+.campo-login:-webkit-autofill:focus,
+.campo-login:-webkit-autofill:active {
+  -webkit-text-fill-color: hsl(var(--foreground));
+  caret-color: hsl(var(--foreground));
+  -webkit-box-shadow: 0 0 0 1000px hsl(var(--background)) inset;
+  box-shadow: 0 0 0 1000px hsl(var(--background)) inset;
+  /* O Chrome reaplica o próprio fundo a cada frame de autofill; uma transição
+     longa o impede de "piscar" azul-claro antes do box-shadow acima cobrir. */
+  transition: background-color 600000s ease-in-out 0s;
+}
+
+/* ============================================================================
+   MAPA GEOGRÁFICO DO CONTROLE DE PONTO (aba Geofencing)
+   ----------------------------------------------------------------------------
+   Pele do Leaflet dentro do card escuro do sistema. O componente
+   (`components/ponto/PontoGeoMapa.tsx`) monta mapa, perímetro (círculo
+   tracejado) e marcadores; aqui ficam só as cores/tokens que o Leaflet não
+   consegue ler de classe Tailwind (as camadas de tile e os ícones de marcador
+   são criados fora do JSX).
+
+   TINTING DOS TILES: o CARTO "dark" é cinza-azulado neutro e destoava do navy
+   do card. O filtro abaixo puxa o matiz para o azul do `--background`/`--card`
+   sem inventar cor: matiz girado para ~200°, saturação contida e brilho
+   rebaixado — o mesmo tom das grades e bordas do painel. O modo Satélite
+   desliga o filtro (imagem de satélite tem de parecer satélite).
+
+   MOVIMENTO: entrada do marcador é uma animação de 260 ms (escala + fade) e
+   respeita `prefers-reduced-motion` pela guarda global do projeto
+   (`html:not(.dp-force-motion)`), a MESMA dos outros blocos deste arquivo.
+   ========================================================================== */
+.geo-mapa .leaflet-container {
+  background: hsl(var(--background));
+  font-family: inherit;
+  outline: none;
+}
+
+/* Tiles CLAROS (OpenStreetMap) escurecidos para o navy do tema: inverter +
+   girar o matiz devolve ruas claras sobre fundo escuro mantendo a legibilidade
+   dos rótulos — o mesmo resultado visual do basemap escuro pago, sem chave de
+   API e com dados até o zoom 19 (necessário para um perímetro de 100 m).
+   O filtro vive no `leaflet-tile-pane` e é desligado no modo Satélite
+   (`.geo-mapa--satelite`), onde a imagem tem de continuar sendo satélite. */
+.geo-mapa:not(.geo-mapa--satelite) .leaflet-tile-pane {
+  filter: invert(1) grayscale(0.85) brightness(0.95) contrast(1.05);
+}
+
+/* PREFLIGHT x LEAFLET: o `img { max-width: 100% }` do Tailwind zera a largura
+   dos tiles (o pane é um `div` posicionado de 0px), e o mapa fica sem base
+   cartográfica. O Leaflet já define `width/height` inline por tile — aqui só
+   devolvemos a esses `img` o direito de crescer. */
+.geo-mapa .leaflet-tile {
+  max-width: none;
+  max-height: none;
+}
+
+/* Satélite: imagem real, sem tinting. */
+.geo-mapa--satelite .leaflet-tile-pane {
+  filter: none;
+}
+
+/* Créditos e escala: legíveis sobre o mapa. Mesmo tratamento dos controles
+   flutuantes do componente (`PELE_SOBRE_MAPA`): superfície quase sólida, borda
+   de contraste e sombra curta — antes eram `0.72` de opacidade e as ruas do
+   tile atravessavam o texto.
+
+   ATENÇÃO ao seletor dos créditos: o `leaflet.css` (importado pelo componente)
+   declara `.leaflet-container .leaflet-control-attribution { background: #fff;
+   background: rgba(255,255,255,0.8) }` e, como entra DEPOIS deste arquivo no
+   bundle, vencia uma regra de mesma especificidade — a barra ficava branca em
+   cima do mapa escuro. `.geo-mapa .leaflet-container …` tem especificidade
+   maior e resolve sem `!important`. */
+.geo-mapa .leaflet-container .leaflet-control-attribution {
+  background: hsl(var(--background) / 0.95);
+  color: hsl(var(--muted-foreground));
+  border: 1px solid hsl(var(--muted-foreground) / 0.25);
+  border-right: none;
+  border-bottom: none;
+  border-top-left-radius: 6px;
+  padding: 1px 6px;
+  font-size: 9px;
+  line-height: 1.4;
+  box-shadow: 0 10px 24px -16px hsl(0 0% 0% / 0.95);
+  backdrop-filter: blur(8px);
+}
+
+.geo-mapa .leaflet-control-attribution a {
+  color: hsl(var(--muted-foreground));
+  text-decoration: none;
+}
+
+.geo-mapa .leaflet-control-scale-line {
+  background: hsl(var(--background) / 0.95);
+  border-color: hsl(var(--muted-foreground) / 0.4);
+  border-top: none;
+  color: hsl(var(--foreground) / 0.85);
+  font-size: 9px;
+  line-height: 1.4;
+  padding: 1px 6px;
+  box-shadow: 0 10px 24px -16px hsl(0 0% 0% / 0.95);
+  backdrop-filter: blur(8px);
+}
+
+/* O perímetro tracejado é desenhado pelo Leaflet em SVG: a cor vem dos tokens
+   via `hsl(...)` no próprio componente (não dá para usar classe aqui porque o
+   Leaflet reescreve os atributos `stroke`/`fill` a cada zoom). */
+
+/* ─── MARCADORES DE BATIDA ─────────────────────────────────────────────── */
+.geo-marcador {
+  background: transparent;
+  border: 0;
+}
+
+.geo-marcador__ponto {
+  display: block;
+  height: 12px;
+  width: 12px;
+  border-radius: 9999px;
+  background: hsl(var(--success));
+  box-shadow:
+    0 0 0 3px hsl(var(--success) / 0.22),
+    0 0 12px hsl(var(--success) / 0.55);
+  transition:
+    transform var(--transition-duration-base, 220ms) ease-out,
+    box-shadow var(--transition-duration-base, 220ms) ease-out;
+  animation: geoMarcadorEntrada 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--geo-atraso, 0ms);
+}
+
+/* Fora do perímetro: vermelho vivo do sistema (o `--destructive` do tema
+   escuro é escuro demais sobre o mapa e sumiria no fundo). */
+.geo-marcador--fora .geo-marcador__ponto {
+  background: hsl(var(--destructive-vivid));
+  box-shadow:
+    0 0 0 3px hsl(var(--destructive-vivid) / 0.25),
+    0 0 12px hsl(var(--destructive-vivid) / 0.6);
+}
+
+.geo-marcador:hover .geo-marcador__ponto,
+.geo-marcador:focus-visible .geo-marcador__ponto {
+  transform: scale(1.35);
+}
+
+@keyframes geoMarcadorEntrada {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ─── MARCADOR DA UNIDADE (pino lime com o prédio) ─────────────────────── */
+.geo-unidade {
+  background: transparent;
+  border: 0;
+}
+
+.geo-unidade__pinho {
+  display: grid;
+  height: 34px;
+  width: 34px;
+  place-items: center;
+  border-radius: 50% 50% 50% 4px;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  transform: rotate(-45deg);
+  box-shadow: 0 8px 20px hsl(var(--primary) / 0.35);
+}
+
+.geo-unidade__pinho svg {
+  transform: rotate(45deg);
+}
+
+/* Unidade secundária (empresa com mais de um local): só o contorno, sem
+   competir com o marcador da unidade de referência. */
+.geo-unidade--secundaria .geo-unidade__pinho {
+  height: 26px;
+  width: 26px;
+  background: hsl(var(--background) / 0.9);
+  color: hsl(var(--primary));
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not(.dp-force-motion) .geo-marcador__ponto {
+    animation: none;
+  }
+}

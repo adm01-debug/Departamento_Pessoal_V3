@@ -3,8 +3,8 @@ import { render } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    polygon: (props: React.ComponentProps<'polygon'>) => <polygon {...props} />,
-    polyline: (props: React.ComponentProps<'polyline'>) => <polyline {...props} />,
+    polygon: (props: any) => <polygon {...props} />,
+    polyline: (props: any) => <polyline {...props} />,
   },
   useInView: vi.fn(() => true),
 }));

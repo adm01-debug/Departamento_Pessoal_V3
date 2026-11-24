@@ -25,28 +25,26 @@ vi.mock('sonner', () => ({
 
 import { useBeneficiosColaborador } from '../useBeneficiosColaborador';
 
-function buildChains(selectData: unknown[] = [], insertData: unknown = null) {
+function buildChains(selectData: any[] = [], insertData: any = null) {
   const selectResponse = { data: selectData, error: null };
-  const selectChain = {
+  const selectChain: any = {
     eq: vi.fn().mockReturnThis(),
-    then: (fn: (v?: unknown) => unknown) => Promise.resolve(selectResponse).then(fn),
-    catch: (fn: (v?: unknown) => unknown) => Promise.resolve(selectResponse).catch(fn),
-    finally: (fn: (v?: unknown) => unknown) => Promise.resolve(selectResponse).finally(fn),
+    then: (fn: any) => Promise.resolve(selectResponse).then(fn),
+    catch: (fn: any) => Promise.resolve(selectResponse).catch(fn),
+    finally: (fn: any) => Promise.resolve(selectResponse).finally(fn),
   };
-  const insertChain = {
+  const insertChain: any = {
     select: vi.fn().mockReturnThis(),
     single: vi.fn().mockResolvedValue({ data: insertData, error: null }),
   };
-  const deleteChain = {
+  const deleteChain: any = {
     eq: vi.fn().mockResolvedValue({ error: null }),
   };
-  mockFrom.mockReturnValue(
-    deepChain({
-      select: vi.fn().mockReturnValue(selectChain),
-      insert: vi.fn().mockReturnValue(insertChain),
-      delete: vi.fn().mockReturnValue(deleteChain),
-    }) as never
-  );
+  mockFrom.mockReturnValue(deepChain({
+    select: vi.fn().mockReturnValue(selectChain),
+    insert: vi.fn().mockReturnValue(insertChain),
+    delete: vi.fn().mockReturnValue(deleteChain),
+  }) as any);
   return { selectChain, insertChain, deleteChain };
 }
 
@@ -92,17 +90,17 @@ describe('useBeneficiosColaborador', () => {
           single: vi.fn().mockResolvedValue({ data: { id: 'b1' }, error: null }),
         }),
       });
-      const selectChain = {
+      const selectChain: any = {
         eq: vi.fn().mockReturnThis(),
-        then: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn),
-        catch: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).catch(fn),
-        finally: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).finally(fn),
+        then: (fn: any) => Promise.resolve({ data: [], error: null }).then(fn),
+        catch: (fn: any) => Promise.resolve({ data: [], error: null }).catch(fn),
+        finally: (fn: any) => Promise.resolve({ data: [], error: null }).finally(fn),
       };
       return { select: vi.fn().mockReturnValue(selectChain), insert: insertFn! };
     });
 
     await act(async () => {
-      await result.current.vincularBeneficio({ tipo_beneficio_id: 'ben-1' });
+      await result.current.vincularBeneficio({ beneficio_id: 'ben-1' });
     });
 
     await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith('Benefício vinculado com sucesso!'));
@@ -113,11 +111,11 @@ describe('useBeneficiosColaborador', () => {
     const eqFn = vi.fn().mockResolvedValue({ error: null });
     const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockImplementation(() => {
-      const selectChain = {
+      const selectChain: any = {
         eq: vi.fn().mockReturnThis(),
-        then: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn),
-        catch: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).catch(fn),
-        finally: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).finally(fn),
+        then: (fn: any) => Promise.resolve({ data: [], error: null }).then(fn),
+        catch: (fn: any) => Promise.resolve({ data: [], error: null }).catch(fn),
+        finally: (fn: any) => Promise.resolve({ data: [], error: null }).finally(fn),
       };
       return { select: vi.fn().mockReturnValue(selectChain), delete: deleteFn };
     });

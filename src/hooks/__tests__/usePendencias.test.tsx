@@ -25,7 +25,7 @@ function createWrapper() {
     React.createElement(QueryClientProvider, { client: queryClient }, children);
 }
 
-function setupSelectMock(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupSelectMock(data: any[], error: any = null) {
   const order = vi.fn().mockResolvedValue({ data, error });
   const eqSelect = vi.fn().mockReturnValue({ order });
   const select = vi.fn().mockReturnValue({ eq: eqSelect });
@@ -101,7 +101,9 @@ describe('usePendencias', () => {
     await act(async () => {
       await result.current.updateStatus.mutateAsync({ id: 'p1', status: 'concluido' });
     });
-    expect(update).toHaveBeenCalledWith(expect.objectContaining({ status: 'concluido' }));
+    expect(update).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'concluido' })
+    );
     expect(eqUpdate).toHaveBeenCalledWith('id', 'p1');
   });
 
@@ -113,7 +115,9 @@ describe('usePendencias', () => {
     await act(async () => {
       await result.current.updateStatus.mutateAsync({ id: 'p1', status: 'concluido' });
     });
-    expect(mockToastFn).toHaveBeenCalledWith(expect.objectContaining({ title: 'Sucesso' }));
+    expect(mockToastFn).toHaveBeenCalledWith(
+      expect.objectContaining({ title: 'Sucesso' })
+    );
   });
 
   it('updateStatus shows error toast when supabase returns error', async () => {
@@ -125,9 +129,7 @@ describe('usePendencias', () => {
       if (table === 'pendencias') {
         // distinguish select vs update by checking if code calls select or update
         return {
-          select: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({ order: vi.fn().mockResolvedValue({ data: mockPendencias, error: null }) }),
-          }),
+          select: vi.fn().mockReturnValue({ eq: vi.fn().mockReturnValue({ order: vi.fn().mockResolvedValue({ data: mockPendencias, error: null }) }) }),
           update,
         };
       }
@@ -139,11 +141,13 @@ describe('usePendencias', () => {
     await act(async () => {
       try {
         await result.current.updateStatus.mutateAsync({ id: 'p1', status: 'concluido' });
-      } catch {
-        /* mutation error expected */
-      }
+      } catch { /* mutation error expected */ }
     });
-    await waitFor(() => expect(mockToastFn).toHaveBeenCalledWith(expect.objectContaining({ title: 'Erro' })));
+    await waitFor(() =>
+      expect(mockToastFn).toHaveBeenCalledWith(
+        expect.objectContaining({ title: 'Erro' })
+      )
+    );
   });
 
   it('isLoading is true initially when empresaId is provided', () => {

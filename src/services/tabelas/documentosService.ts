@@ -1,89 +1,66 @@
-import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
-import type { Insertable, Tables } from '@/integrations/supabase/database.types';
-import { validateTablePayload } from '@/schemas/validate';
+import { supabase } from '@/integrations/supabase/client';
 
 export const documentoTemplatesService = {
-  listar: async (empresaId?: string): Promise<Tables<'documento_templates'>[]> => {
+  listar: async (empresaId?: string) => {
     let q = supabase.from('documento_templates').select('*').order('created_at', { ascending: false });
     if (empresaId) q = q.eq('empresa_id', empresaId);
     const { data, error } = await q;
     if (error) throw error;
-    return (data as Tables<'documento_templates'>[] | null) || [];
+    return data || [];
   },
-  criar: async (d: Insertable<'documento_templates'>): Promise<void> => {
-    const { error } = await supabase
-      .from('documento_templates')
-      .insert(validateTablePayload('documento_templates', d, 'documentosService:documento_templates'));
+  criar: async (d: any) => {
+    const { error } = await supabase.from('documento_templates').insert(d);
     if (error) throw error;
   },
 };
 
 export const documentosAdmissaoService = {
-  listar: async (admissaoId: string): Promise<Tables<'documentos_admissao'>[]> => {
-    const { data, error } = await supabase
-      .from('documentos_admissao')
-      .select('*')
-      .eq('admissao_id', admissaoId)
-      .order('created_at', { ascending: false });
+  listar: async (admissaoId: string) => {
+    const { data, error } = await supabase.from('documentos_admissao').select('*').eq('admissao_id', admissaoId).order('created_at', { ascending: false });
     if (error) throw error;
-    return (data as Tables<'documentos_admissao'>[] | null) || [];
+    return data || [];
   },
-  criar: async (d: Insertable<'documentos_admissao'>): Promise<void> => {
-    const { error } = await supabase
-      .from('documentos_admissao')
-      .insert(validateTablePayload('documentos_admissao', d, 'documentosService:documentos_admissao'));
+  criar: async (d: any) => {
+    const { error } = await supabase.from('documentos_admissao').insert(d);
     if (error) throw error;
   },
 };
 
 export const documentosAfastamentoService = {
-  listar: async (afastamentoId: string): Promise<Tables<'documentos_afastamento'>[]> => {
-    const { data, error } = await supabase
-      .from('documentos_afastamento')
-      .select('*')
-      .eq('afastamento_id', afastamentoId)
-      .order('created_at', { ascending: false });
+  listar: async (afastamentoId: string) => {
+    const { data, error } = await supabase.from('documentos_afastamento').select('*').eq('afastamento_id', afastamentoId).order('created_at', { ascending: false });
     if (error) throw error;
-    return (data as Tables<'documentos_afastamento'>[] | null) || [];
+    return data || [];
   },
-  criar: async (d: Insertable<'documentos_afastamento'>): Promise<void> => {
-    const { error } = await supabase
-      .from('documentos_afastamento')
-      .insert(validateTablePayload('documentos_afastamento', d, 'documentosService:documentos_afastamento'));
+  criar: async (d: any) => {
+    const { error } = await supabase.from('documentos_afastamento').insert(d);
     if (error) throw error;
   },
 };
 
 export const documentosAssinaturaService = {
-  listar: async (empresaId?: string): Promise<Tables<'documentos_assinatura'>[]> => {
+  listar: async (empresaId?: string) => {
     let q = supabase.from('documentos_assinatura').select('*').order('created_at', { ascending: false });
     if (empresaId) q = q.eq('empresa_id', empresaId);
     const { data, error } = await q;
     if (error) throw error;
-    return (data as Tables<'documentos_assinatura'>[] | null) || [];
+    return data || [];
   },
-  criar: async (d: Insertable<'documentos_assinatura'>): Promise<void> => {
-    const { error } = await supabase
-      .from('documentos_assinatura')
-      .insert(validateTablePayload('documentos_assinatura', d, 'documentosService:documentos_assinatura'));
+  criar: async (d: any) => {
+    const { error } = await supabase.from('documentos_assinatura').insert(d);
     if (error) throw error;
   },
 };
 
 export const documentosColaboradorService = {
-  listar: async (colaboradorId: string, empresaId: string): Promise<Tables<'documentos_colaborador'>[]> => {
+  listar: async (colaboradorId: string, empresaId: string) => {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await (supabase.from('documentos_colaborador').select('*') as unknown as QueryBuilderType)
-      .eq('colaborador_id', colaboradorId)
-      .eq('empresa_id', empresaId)
-      .order('created_at', { ascending: false });
+    const { data, error } = await (supabase as any).from('documentos_colaborador').select('*').eq('colaborador_id', colaboradorId).eq('empresa_id', empresaId).order('created_at', { ascending: false });
     if (error) throw error;
-    return (data as Tables<'documentos_colaborador'>[] | null) || [];
+    return data || [];
   },
-  criar: async (d: Insertable<'documentos_colaborador'>): Promise<void> => {
-    const { error } = await supabase
-      .from('documentos_colaborador')
-      .insert(validateTablePayload('documentos_colaborador', d, 'documentosService:documentos_colaborador'));
+  criar: async (d: any) => {
+    const { error } = await supabase.from('documentos_colaborador').insert(d);
     if (error) throw error;
   },
 };

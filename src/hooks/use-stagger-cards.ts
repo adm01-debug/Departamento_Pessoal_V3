@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
+import { CONFIG_ENTRADA_CARD_GLOBAL, MAX_SLOT_ENTRADA_CARD_GLOBAL } from '@/components/ui/entradaGlobal';
 
 const PROCESSED_ATTR = 'data-stagger-applied';
-/** Acima do 9º card de um grupo, o atraso para de crescer — evita que uma
+/** Acima do 12º card de um grupo, o atraso para de crescer — evita que uma
  * lista longa (ex.: uma tabela renderizada como cards) leve segundos
- * inteiros para terminar de entrar. */
-const MAX_STAGGER_INDEX = 8;
+ * inteiros para terminar de entrar. Teto ÚNICO, o mesmo da régua global. */
+const MAX_STAGGER_INDEX = MAX_SLOT_ENTRADA_CARD_GLOBAL;
 
 function prefersReducedMotion(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -51,25 +52,29 @@ function groupByNearestSharedAncestor(cards: HTMLElement[]): HTMLElement[][] {
   return Array.from(groups.values());
 }
 
-function applyStagger(stepMs: number) {
-  const cards = Array.from(document.querySelectorAll<HTMLElement>('.animate-squash')).filter(
-    (card) => !card.hasAttribute(PROCESSED_ATTR)
-  );
+function applyStagger() {
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.animate-squash'))
+    .filter((card) => !card.hasAttribute(PROCESSED_ATTR));
   if (cards.length === 0) return;
 
   for (const siblings of groupByNearestSharedAncestor(cards)) {
     siblings.forEach((card, index) => {
-      card.style.animationDelay = `${Math.min(index, MAX_STAGGER_INDEX) * stepMs}ms`;
+      // Passo ÚNICO do sistema (120 ms): nenhuma rota sobrescreve mais o
+      // intervalo desde que `/avaliacao` passou a usar a régua global.
+      card.style.animationDelay = `${Math.min(index, MAX_STAGGER_INDEX) * CONFIG_ENTRADA_CARD_GLOBAL.intervaloMs}ms`;
       card.setAttribute(PROCESSED_ATTR, '');
     });
   }
 }
 
 /**
- * Escalona a entrada de qualquer `Card` (`.animate-squash` — o
- * squash-and-stretch já aplicado globalmente em
- * `src/components/ui/card.tsx`) em cascata, sem precisar editar página por
- * página.
+ * Escalona a entrada de qualquer `Card` do sistema em cascata, sem precisar
+ * editar página por página: o `Card` (`src/components/ui/card.tsx`) carrega
+ * `.animate-squash`, cuja animação é a RÉGUA GLOBAL de entrada
+ * (`ui/entradaGlobal.ts` → fade + 14px, 520ms, `ease-out`), e este hook escreve
+ * o `animation-delay` de cada card (120 ms × posição no grupo). É a mesma
+ * animação do Dashboard Executivo, aplicada a TODAS as páginas dos módulos
+ * Principal e Gestão de Pessoas (e ao resto do app, que compartilha o `Card`).
  *
  * Chame uma única vez no componente raiz do app (`App.tsx`), fora de
  * qualquer coisa que desmonte durante a navegação.
@@ -85,8 +90,12 @@ function applyStagger(stepMs: number) {
  * escutar `useLocation()`: seria redundante (o observer já vê a troca de
  * rota como mutação) e só custaria destruir/recriar o observer a cada
  * navegação à toa.
+ *
+ * Não há parâmetro de passo: o intervalo vem de `ui/entradaGlobal.ts`
+ * (`CONFIG_ENTRADA_CARD_GLOBAL.intervaloMs`) — calibrar a cascata do app é
+ * mexer lá, nunca no call site.
  */
-export function useStaggerCards(stepMs = 60) {
+export function useStaggerCards() {
   useEffect(() => {
     if (prefersReducedMotion()) return;
 
@@ -96,7 +105,7 @@ export function useStaggerCards(stepMs = 60) {
       pending = true;
       requestAnimationFrame(() => {
         pending = false;
-        applyStagger(stepMs);
+        applyStagger();
       });
     };
 
@@ -113,5 +122,5 @@ export function useStaggerCards(stepMs = 60) {
     observer.observe(document.body, { childList: true, subtree: true });
 
     return () => observer.disconnect();
-  }, [stepMs]);
+  }, []);
 }

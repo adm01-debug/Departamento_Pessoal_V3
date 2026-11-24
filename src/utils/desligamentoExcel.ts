@@ -1,7 +1,10 @@
 import { toast } from 'sonner';
-import { buildTabularWorkbook, downloadWorkbook } from './importacao/excelDownload';
+import {
+  buildTabularWorkbook,
+  downloadWorkbook,
+} from './importacao/excelDownload';
 import { todayLocalISO } from '@/utils/dateLocal';
-import type { DesligamentoComColaborador } from '@/services/desligamentoService';
+
 
 const TIPO_LABELS: Record<string, string> = {
   sem_justa_causa: 'Sem Justa Causa',
@@ -20,23 +23,13 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 const HEADERS = [
-  'Colaborador',
-  'Data Desligamento',
-  'Tipo',
-  'Status',
-  'Motivo',
-  'Salário Base',
-  'Valor Líquido',
-  'Aviso Prévio',
-  'Saldo Salário',
-  '13º Proporcional',
-  'Férias Proporcionais',
-  'Multa FGTS',
-  'Total Proventos',
-  'Total Descontos',
+  'Colaborador', 'Data Desligamento', 'Tipo', 'Status', 'Motivo',
+  'Salário Base', 'Valor Líquido', 'Aviso Prévio', 'Saldo Salário',
+  '13º Proporcional', 'Férias Proporcionais', 'Multa FGTS',
+  'Total Proventos', 'Total Descontos',
 ];
 
-function rowFor(d: DesligamentoComColaborador): unknown[] {
+function rowFor(d: any): unknown[] {
   return [
     d.colaborador?.nome_completo || '—',
     d.data_desligamento ? new Date(d.data_desligamento).toLocaleDateString('pt-BR') : '—',
@@ -55,7 +48,7 @@ function rowFor(d: DesligamentoComColaborador): unknown[] {
   ];
 }
 
-export async function exportarDesligamentosExcel(desligamentos: DesligamentoComColaborador[]) {
+export async function exportarDesligamentosExcel(desligamentos: any[]) {
   if (desligamentos.length === 0) {
     toast.error('Nenhum desligamento para exportar');
     return;

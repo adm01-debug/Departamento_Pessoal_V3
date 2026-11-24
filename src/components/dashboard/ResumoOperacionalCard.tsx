@@ -12,16 +12,8 @@ interface ResumoOperacionalCardProps {
   bare?: boolean;
 }
 
-function Stat({
-  icon: Icon,
-  label,
-  value,
-  percent,
-  className,
-}: {
-  icon: React.ElementType;
-  label: string;
-  value: string;
+function Stat({ icon: Icon, label, value, percent, className }: {
+  icon: React.ElementType; label: string; value: string;
   /** Barra fina abaixo do valor — só renderiza quando um percentual real (0-100) é passado. */
   percent?: number;
   /** Padding do quadrante — abre espaço para as barras divisórias sobrepostas no grid 2×2. */
@@ -39,7 +31,7 @@ function Stat({
         {percent !== undefined && (
           <div className="mt-1 h-1 max-w-[72px] rounded-full bg-primary/10 overflow-hidden">
             <div
-              className="h-full rounded-full bg-primary"
+              className="barra-progresso-preenchimento h-full rounded-full bg-primary transition-[width] duration-progresso ease-out"
               style={{ width: `${Math.min(Math.max(percent, 0), 100)}%` }}
             />
           </div>
@@ -54,24 +46,18 @@ export function ResumoOperacionalCard({ briefing, pendencias, isLoading, bare = 
   // Percentual derivado dos dois números reais já usados acima (mesmo
   // `briefing` do MorningBriefing) — não é um dado novo, só a razão entre
   // dois valores que já existem. Sem dividir por zero quando não há ativos.
-  const presentesPct =
-    briefing && briefing.totalAtivos > 0 ? (briefing.pontosRegistradosHoje / briefing.totalAtivos) * 100 : undefined;
+  const presentesPct = briefing && briefing.totalAtivos > 0
+    ? (briefing.pontosRegistradosHoje / briefing.totalAtivos) * 100
+    : undefined;
   const processos = pendencias?.reduce((acc, p) => acc + p.quantidade, 0) ?? 0;
-  const documentos = pendencias?.find((p) => p.tipo === 'assinaturas')?.quantidade ?? 0;
+  const documentos = pendencias?.find(p => p.tipo === 'assinaturas')?.quantidade ?? 0;
   const tarefas = briefing
-    ? briefing.admissoesHoje.length +
-      briefing.feriasPeriodo.length +
-      briefing.afastadosHoje.length +
-      briefing.vencimentosHoje.length
+    ? briefing.admissoesHoje.length + briefing.feriasPeriodo.length + briefing.afastadosHoje.length + briefing.vencimentosHoje.length
     : 0;
 
   const grid = isLoading ? (
     <div className="grid grid-cols-2 gap-3">
-      {Array(4)
-        .fill(0)
-        .map((_, i) => (
-          <CardSkeleton key={i} className="h-9 border-0 p-0" />
-        ))}
+      {Array(4).fill(0).map((_, i) => <CardSkeleton key={i} className="h-9 border-0 p-0" />)}
     </div>
   ) : bare ? (
     // `SaudeResumoCard`, que reaproveita esta lista embutida (`bare`) — layout original, intocado.
@@ -93,13 +79,7 @@ export function ResumoOperacionalCard({ briefing, pendencias, isLoading, bare = 
     <div className="relative flex flex-1 flex-col justify-evenly">
       <div className="absolute left-1/2 top-1 bottom-1 w-1 -translate-x-1/2 rounded-full bg-border/60" />
       <div className="flex items-center gap-3">
-        <Stat
-          icon={Users}
-          label="Colaboradores presentes"
-          value={presentes}
-          percent={presentesPct}
-          className="flex-1 pr-3"
-        />
+        <Stat icon={Users} label="Colaboradores presentes" value={presentes} percent={presentesPct} className="flex-1 pr-3" />
         <Stat icon={Workflow} label="Processos em andamento" value={String(processos)} className="flex-1 pl-3" />
       </div>
       <div className="mx-2 h-1 rounded-full bg-border/60" />
@@ -135,7 +115,9 @@ export function ResumoOperacionalCard({ briefing, pendencias, isLoading, bare = 
       {/* Divisória de cabeçalho — mesma barrinha arredondada da cruz abaixo,
           separando o bloco título/subtítulo da área de dados. */}
       <div className="mx-3 mb-2 h-1 shrink-0 rounded-full bg-border/60" />
-      <CardContent className="flex min-h-0 flex-1 flex-col p-3 pt-0">{grid}</CardContent>
+      <CardContent className="flex min-h-0 flex-1 flex-col p-3 pt-0">
+        {grid}
+      </CardContent>
     </Card>
   );
 }

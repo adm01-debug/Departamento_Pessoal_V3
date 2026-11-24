@@ -76,7 +76,7 @@ registrados no `security-memory` não foram reabertos.
 
 5. **Smoke Playwright**
    ```bash
-   npx playwright test e2e/authenticated/post-cutover-smoke.spec.ts
+   bunx playwright test e2e/authenticated/post-cutover-smoke.spec.ts
    ```
 
 Concluídos os 5 passos, o cutover atinge oficialmente **10/10**.

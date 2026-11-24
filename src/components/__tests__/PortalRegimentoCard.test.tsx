@@ -18,27 +18,13 @@ vi.mock('dompurify', () => ({
 }));
 
 vi.mock('@/components/ui/checkbox', () => ({
-  Checkbox: ({ checked, onCheckedChange }: { checked?: boolean; onCheckedChange?: (checked: boolean) => void }) => (
-    <input type="checkbox" checked={checked} onChange={(e) => onCheckedChange?.(e.target.checked)} />
+  Checkbox: ({ checked, onCheckedChange }: any) => (
+    <input type="checkbox" checked={checked} onChange={e => onCheckedChange(e.target.checked)} />
   ),
 }));
 
-// Vínculo colaborador↔login: o card passou a consumir o hook compartilhado
-// `useColaboradorVinculo` (react-query). Mockamos o hook — em vez de embrulhar
-// em QueryClientProvider — para manter o teste focado no card e evitar
-// acoplamento à ordem das chamadas internas do hook.
-let vinculoId: string | null = 'col-1';
-vi.mock('@/hooks/useColaboradorVinculo', () => ({
-  useColaboradorVinculo: () => ({
-    colaboradorId: vinculoId,
-    isLoading: false,
-    error: null,
-    refetch: vi.fn(),
-  }),
-}));
-
 // Mutable call tracking for maybySingle responses
-let maybeResponses: unknown[] = [];
+let maybeResponses: any[] = [];
 let callIdx = 0;
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -59,13 +45,14 @@ import { PortalRegimentoCard } from '../portal/PortalRegimentoCard';
 beforeEach(() => {
   callIdx = 0;
   maybeResponses = [];
-  vinculoId = 'col-1';
 });
 
 describe('PortalRegimentoCard', () => {
   it('shows no-document message when no regimento published', async () => {
+    // All calls return null: colaborador=null, documento=null
     maybeResponses = [
-      { data: null, error: null }, // sst_regimento_documentos → null
+      { data: { id: 'col-1' }, error: null }, // colaboradores
+      { data: null, error: null },              // sst_regimento_documentos → null
     ];
     render(<PortalRegimentoCard />);
     await waitFor(() => {
@@ -74,7 +61,10 @@ describe('PortalRegimentoCard', () => {
   });
 
   it('shows Regimento Interno de SST title in no-document state', async () => {
-    maybeResponses = [{ data: null, error: null }];
+    maybeResponses = [
+      { data: { id: 'col-1' }, error: null },
+      { data: null, error: null },
+    ];
     render(<PortalRegimentoCard />);
     await waitFor(() => {
       expect(screen.getAllByText(/Regimento Interno de SST/).length).toBeGreaterThanOrEqual(1);
@@ -82,39 +72,20 @@ describe('PortalRegimentoCard', () => {
   });
 
   it('shows no-vinculo message when no colaborador linked', async () => {
-    vinculoId = null; // sem cadastro trabalhista vinculado ao login
     maybeResponses = [
-      {
-        data: {
-          id: 'doc-1',
-          titulo: 'Regimento SST',
-          versao: 1,
-          conteudo_html: '',
-          hash_sha256: null,
-          publicado_em: null,
-        },
-        error: null,
-      },
+      { data: null, error: null }, // colaboradores → null (no link)
+      { data: { id: 'doc-1', titulo: 'Regimento SST', versao: 1, conteudo_html: '', hash_sha256: null, publicado_em: null }, error: null }, // document exists but no cid
     ];
     render(<PortalRegimentoCard />);
     await waitFor(() => {
-      expect(screen.getByText(/Não encontramos um cadastro de colaborador/)).toBeInTheDocument();
+      expect(screen.getByText(/não está vinculado/)).toBeInTheDocument();
     });
   });
 
   it('renders document title and version when document is available', async () => {
     maybeResponses = [
-      {
-        data: {
-          id: 'doc-1',
-          titulo: 'Regimento SST 2024',
-          versao: 2,
-          conteudo_html: '<p>Conteudo</p>',
-          hash_sha256: null,
-          publicado_em: '2024-01-01T00:00:00Z',
-        },
-        error: null,
-      },
+      { data: { id: 'col-1' }, error: null },
+      { data: { id: 'doc-1', titulo: 'Regimento SST 2024', versao: 2, conteudo_html: '<p>Conteudo</p>', hash_sha256: null, publicado_em: '2024-01-01T00:00:00Z' }, error: null },
       { data: null, error: null }, // assinatura → not signed
     ];
     render(<PortalRegimentoCard />);
@@ -125,17 +96,8 @@ describe('PortalRegimentoCard', () => {
 
   it('renders Versão badge for documents', async () => {
     maybeResponses = [
-      {
-        data: {
-          id: 'doc-1',
-          titulo: 'Regimento SST 2024',
-          versao: 2,
-          conteudo_html: '<p>Conteudo</p>',
-          hash_sha256: null,
-          publicado_em: '2024-01-01T00:00:00Z',
-        },
-        error: null,
-      },
+      { data: { id: 'col-1' }, error: null },
+      { data: { id: 'doc-1', titulo: 'Regimento SST 2024', versao: 2, conteudo_html: '<p>Conteudo</p>', hash_sha256: null, publicado_em: '2024-01-01T00:00:00Z' }, error: null },
       { data: null, error: null },
     ];
     render(<PortalRegimentoCard />);
@@ -146,17 +108,8 @@ describe('PortalRegimentoCard', () => {
 
   it('shows sign button when document not signed', async () => {
     maybeResponses = [
-      {
-        data: {
-          id: 'doc-1',
-          titulo: 'Regimento SST',
-          versao: 1,
-          conteudo_html: '<p>Text</p>',
-          hash_sha256: null,
-          publicado_em: null,
-        },
-        error: null,
-      },
+      { data: { id: 'col-1' }, error: null },
+      { data: { id: 'doc-1', titulo: 'Regimento SST', versao: 1, conteudo_html: '<p>Text</p>', hash_sha256: null, publicado_em: null }, error: null },
       { data: null, error: null }, // not signed
     ];
     render(<PortalRegimentoCard />);
@@ -167,17 +120,8 @@ describe('PortalRegimentoCard', () => {
 
   it('shows Assinado badge when already signed', async () => {
     maybeResponses = [
-      {
-        data: {
-          id: 'doc-1',
-          titulo: 'Regimento SST',
-          versao: 1,
-          conteudo_html: '<p>Text</p>',
-          hash_sha256: null,
-          publicado_em: null,
-        },
-        error: null,
-      },
+      { data: { id: 'col-1' }, error: null },
+      { data: { id: 'doc-1', titulo: 'Regimento SST', versao: 1, conteudo_html: '<p>Text</p>', hash_sha256: null, publicado_em: null }, error: null },
       { data: { documento_id: 'doc-1', assinado_em: '2024-06-01T10:00:00Z', hash_documento: null }, error: null },
     ];
     render(<PortalRegimentoCard />);

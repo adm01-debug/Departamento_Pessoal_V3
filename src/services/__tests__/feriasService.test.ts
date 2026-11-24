@@ -18,10 +18,10 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Helper: build select → eq/ilike → order → range chain for listSolicitacoes
-function setupListChain(data: unknown, count: number, error: { message: string; code?: string } | null = null) {
+function setupListChain(data: any[], count: number, error: any = null) {
   const rangeFn = vi.fn().mockResolvedValue({ data, count, error });
   const orderFn = vi.fn().mockReturnValue({ range: rangeFn });
-  const baseQuery = { order: orderFn };
+  const baseQuery: any = { order: orderFn };
   const eqFn = vi.fn().mockReturnValue(baseQuery);
   const ilikeFn = vi.fn().mockReturnValue(baseQuery);
   Object.assign(baseQuery, { eq: eqFn, ilike: ilikeFn });
@@ -31,14 +31,9 @@ function setupListChain(data: unknown, count: number, error: { message: string; 
 }
 
 // Helper: build a simple update → eq chain (resolves to { error })
-function setupUpdateChain(error: { message: string; code?: string } | null = null) {
+function setupUpdateChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = {
-    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
-    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
-    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
-    eq: eqFn,
-  };
+  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
   eqFn.mockReturnValue(__delChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
@@ -48,9 +43,7 @@ function setupUpdateChain(error: { message: string; code?: string } | null = nul
 // ─── listSolicitacoes ─────────────────────────────────────────────────────────
 
 describe('feriasService.listSolicitacoes', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns data and count from supabase', async () => {
     const records = [{ id: 'f1', status: 'pendente' }];
@@ -61,7 +54,7 @@ describe('feriasService.listSolicitacoes', () => {
   });
 
   it('returns empty data when supabase returns null', async () => {
-    setupListChain(null as never, null as never);
+    setupListChain(null as any, null as any);
     const result = await feriasService.listSolicitacoes(EMPRESA_ID);
     expect(result.data).toEqual([]);
     expect(result.count).toBe(0);
@@ -88,7 +81,7 @@ describe('feriasService.listSolicitacoes', () => {
   it('adds ilike filter when search has 3+ characters', async () => {
     const { ilikeFn } = setupListChain([], 0);
     await feriasService.listSolicitacoes(EMPRESA_ID, { search: 'Silva' });
-    expect(ilikeFn).toHaveBeenCalledWith('colaborador.nome_completo', '%Silva%');
+    expect(ilikeFn).toHaveBeenCalledWith('colaborador_nome', '%Silva%');
   });
 
   it('does NOT add ilike filter when search has fewer than 3 characters', async () => {
@@ -118,9 +111,7 @@ describe('feriasService.listSolicitacoes', () => {
 // ─── listar (delegate) ────────────────────────────────────────────────────────
 
 describe('feriasService.listar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns { data, total } delegating to listSolicitacoes', async () => {
     const records = [{ id: 'f2', status: 'pendente' }];
@@ -134,9 +125,7 @@ describe('feriasService.listar', () => {
 // ─── aprovar ──────────────────────────────────────────────────────────────────
 
 describe('feriasService.aprovar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('calls update with status aprovada and eq on id', async () => {
     const { updateFn, eqFn } = setupUpdateChain();
@@ -154,9 +143,7 @@ describe('feriasService.aprovar', () => {
 // ─── rejeitar ─────────────────────────────────────────────────────────────────
 
 describe('feriasService.rejeitar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('calls update with status rejeitada', async () => {
     const { updateFn } = setupUpdateChain();
@@ -173,14 +160,12 @@ describe('feriasService.rejeitar', () => {
 // ─── cancelar ────────────────────────────────────────────────────────────────
 
 describe('feriasService.cancelar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('calls update with cancelado=true and status=cancelada', async () => {
     const { updateFn } = setupUpdateChain();
     await feriasService.cancelar('ferias-3', EMPRESA_ID, 'user-1');
-    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
+    const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.cancelado).toBe(true);
     expect(updateArgs.status).toBe('cancelada');
     expect(updateArgs.cancelado_por).toBe('user-1');
@@ -189,7 +174,7 @@ describe('feriasService.cancelar', () => {
   it('sets cancelado_por to null when userId not provided', async () => {
     const { updateFn } = setupUpdateChain();
     await feriasService.cancelar('ferias-3', EMPRESA_ID);
-    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
+    const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.cancelado_por).toBeNull();
   });
 
@@ -202,14 +187,12 @@ describe('feriasService.cancelar', () => {
 // ─── aprovarGestor ───────────────────────────────────────────────────────────
 
 describe('feriasService.aprovarGestor', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('calls update with aprovado_gestor=true and userId', async () => {
     const { updateFn } = setupUpdateChain();
     await feriasService.aprovarGestor('ferias-1', EMPRESA_ID, 'gestor-1');
-    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
+    const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.aprovado_gestor).toBe(true);
     expect(updateArgs.status_aprovacao_gestor).toBe('aprovado');
     expect(updateArgs.aprovado_gestor_por).toBe('gestor-1');
@@ -224,14 +207,12 @@ describe('feriasService.aprovarGestor', () => {
 // ─── aprovarRH ───────────────────────────────────────────────────────────────
 
 describe('feriasService.aprovarRH', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('calls update with aprovado_rh=true and status aprovada', async () => {
     const { updateFn } = setupUpdateChain();
     await feriasService.aprovarRH('ferias-1', EMPRESA_ID, 'rh-1');
-    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
+    const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.aprovado_rh).toBe(true);
     expect(updateArgs.status).toBe('aprovada');
     expect(updateArgs.aprovado_rh_por).toBe('rh-1');
@@ -246,9 +227,7 @@ describe('feriasService.aprovarRH', () => {
 // ─── getAprovacoesLog ─────────────────────────────────────────────────────────
 
 describe('feriasService.getAprovacoesLog', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns log entries for a ferias record', async () => {
     const logs = [{ id: 'log-1', ferias_id: 'f1', acao: 'aprovado' }];
@@ -285,9 +264,7 @@ describe('feriasService.getAprovacoesLog', () => {
 // ─── criarPeriodoAquisitivo ───────────────────────────────────────────────────
 
 describe('feriasService.criarPeriodoAquisitivo', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns the created period', async () => {
     const created = { id: 'pa-1', colaborador_id: 'c1' };
@@ -296,17 +273,9 @@ describe('feriasService.criarPeriodoAquisitivo', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    const result = await feriasService.criarPeriodoAquisitivo({
-      colaborador_id: 'c1',
-      data_inicio: '2026-01-01',
-      data_fim: '2026-12-31',
-    });
+    const result = await feriasService.criarPeriodoAquisitivo({ colaborador_id: 'c1' });
     expect(result).toEqual(created);
-    expect(insertFn).toHaveBeenCalledWith({
-      colaborador_id: 'c1',
-      data_inicio: '2026-01-01',
-      data_fim: '2026-12-31',
-    });
+    expect(insertFn).toHaveBeenCalledWith({ colaborador_id: 'c1' });
   });
 
   it('throws on DB error', async () => {
@@ -315,30 +284,22 @@ describe('feriasService.criarPeriodoAquisitivo', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    await expect(
-      feriasService.criarPeriodoAquisitivo({
-        colaborador_id: 'c1',
-        data_inicio: '2026-01-01',
-        data_fim: '2026-12-31',
-      })
-    ).rejects.toBeDefined();
+    await expect(feriasService.criarPeriodoAquisitivo({})).rejects.toBeDefined();
   });
 });
 
 // ─── atualizarPeriodoAquisitivo ───────────────────────────────────────────────
 
 describe('feriasService.atualizarPeriodoAquisitivo', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates and returns the period', async () => {
     const updated = { id: 'pa-1', status: 'usado' };
     const maybeSingle = vi.fn().mockResolvedValue({ data: updated, error: null });
     const selectFn = vi.fn().mockReturnValue({ maybeSingle });
     const eqFn = vi.fn();
-    const __eqChain = { select: selectFn, eq: eqFn };
-    eqFn.mockReturnValue(__eqChain);
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
     const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ update: updateFn });
 
@@ -351,8 +312,8 @@ describe('feriasService.atualizarPeriodoAquisitivo', () => {
     const maybeSingle = vi.fn().mockResolvedValue({ data: null, error: { message: 'fail' } });
     const selectFn = vi.fn().mockReturnValue({ maybeSingle });
     const eqFn = vi.fn();
-    const __eqChain = { select: selectFn, eq: eqFn };
-    eqFn.mockReturnValue(__eqChain);
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
     const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ update: updateFn });
 
@@ -363,13 +324,11 @@ describe('feriasService.atualizarPeriodoAquisitivo', () => {
 // ─── excluirPeriodoAquisitivo ─────────────────────────────────────────────────
 
 describe('feriasService.excluirPeriodoAquisitivo', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('calls delete with the given id', async () => {
     const eqFn = vi.fn();
-    const delChain = { eq: eqFn, then: (r: (v?: unknown) => unknown) => Promise.resolve({ error: null }).then(r) };
+    const delChain: any = { eq: eqFn, then: (r: any) => Promise.resolve({ error: null }).then(r) };
     eqFn.mockReturnValue(delChain);
     const deleteFn = vi.fn().mockReturnValue(delChain);
     mockFrom.mockReturnValue({ delete: deleteFn });
@@ -381,10 +340,7 @@ describe('feriasService.excluirPeriodoAquisitivo', () => {
 
   it('throws on DB error', async () => {
     const eqFn = vi.fn();
-    const delChain = {
-      eq: eqFn,
-      then: (r: (v?: unknown) => unknown) => Promise.resolve({ error: { message: 'fail' } }).then(r),
-    };
+    const delChain: any = { eq: eqFn, then: (r: any) => Promise.resolve({ error: { message: 'fail' } }).then(r) };
     eqFn.mockReturnValue(delChain);
     const deleteFn = vi.fn().mockReturnValue(delChain);
     mockFrom.mockReturnValue({ delete: deleteFn });

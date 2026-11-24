@@ -1,15 +1,14 @@
 import { useEmpresas } from './useEmpresas';
 import { useGenericCrud } from './useGenericCrud';
-import { folhaService, type FolhaRecord } from '@/services/folhaService';
+import { folhaService } from '@/services/folhaService';
 
 export function useFolha(competencia?: string) {
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id;
 
-  const crud = useGenericCrud<FolhaRecord>({
+  const crud = useGenericCrud<unknown>({
     queryKey: 'folhas',
     service: folhaService,
-    empresaId,
     filters: { empresa_id: empresaId, competencia },
   });
 

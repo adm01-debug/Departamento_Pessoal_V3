@@ -7,31 +7,22 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
-function makeChain(data: unknown = [], error: { message: string; code?: string } | null = null) {
+function makeChain(data: any = [], error: any = null) {
   const result = { data, error };
   const order = vi.fn().mockResolvedValue(result);
-  const eqResult: Record<string, unknown> = {
-    order,
-    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
-  };
+  const eqResult: any = { order, then: (fn: any) => Promise.resolve(result).then(fn) };
   const eq = vi.fn().mockReturnValue(eqResult);
   eqResult.eq = eq;
-  const deleteEqResult: Record<string, unknown> = {
-    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
-  };
+  const deleteEqResult: any = { then: (fn: any) => Promise.resolve(result).then(fn) };
   const deleteEq = vi.fn().mockReturnValue(deleteEqResult);
   deleteEqResult.eq = deleteEq;
   const delete_ = vi.fn().mockReturnValue({ eq: deleteEq });
-  const updateEqResult: Record<string, unknown> = {
-    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
-  };
+  const updateEqResult: any = { then: (fn: any) => Promise.resolve(result).then(fn) };
   const updateEq = vi.fn().mockReturnValue(updateEqResult);
   updateEqResult.eq = updateEq;
   const update = vi.fn().mockReturnValue({ eq: updateEq });
   const insert = vi.fn().mockResolvedValue(result);
-  const select = vi
-    .fn()
-    .mockReturnValue({ order, eq, then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) });
+  const select = vi.fn().mockReturnValue({ order, eq, then: (fn: any) => Promise.resolve(result).then(fn) });
   return { select, eq, order, insert, delete: delete_, update };
 }
 
@@ -40,12 +31,11 @@ import {
   eventosVariaveisService,
   lancamentosFolhaService,
   rubricasFolhaService,
+  parametrosFiscaisService,
 } from '../folhaService';
 
 describe('esocialLotesService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('listar queries esocial_lotes', async () => {
     const chain = makeChain([{ id: 'el1' }]);
@@ -71,9 +61,7 @@ describe('esocialLotesService', () => {
 });
 
 describe('eventosVariaveisService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('listar queries eventos_variaveis', async () => {
     const chain = makeChain([{ id: 'ev1' }]);
@@ -86,12 +74,7 @@ describe('eventosVariaveisService', () => {
   it('criar calls insert on eventos_variaveis', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await eventosVariaveisService.criar({
-      colaborador_id: 'c1',
-      competencia: '2026-01',
-      rubrica_id: 'r1',
-      valor: 10,
-    });
+    await eventosVariaveisService.criar({ tipo: 'horas_extra', valor: 10 });
     expect(chain.insert).toHaveBeenCalled();
   });
 
@@ -104,9 +87,7 @@ describe('eventosVariaveisService', () => {
 });
 
 describe('lancamentosFolhaService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('listar queries lancamentos_folha by folha_id', async () => {
     const chain = makeChain([{ id: 'lf1' }]);
@@ -126,22 +107,13 @@ describe('lancamentosFolhaService', () => {
   it('criar calls insert on lancamentos_folha', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await lancamentosFolhaService.criar({
-      holerite_id: 'h1',
-      rubrica_id: 'r1',
-      rubrica_codigo: '1000',
-      rubrica_descricao: 'Salário Base',
-      tipo: 'provento',
-      valor: 3000,
-    });
+    await lancamentosFolhaService.criar({ folha_id: 'f1', rubrica: '1000' });
     expect(chain.insert).toHaveBeenCalled();
   });
 });
 
 describe('rubricasFolhaService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('listar queries rubricas_folha', async () => {
     const chain = makeChain([{ id: 'rf1', codigo: '1000' }]);
@@ -154,7 +126,7 @@ describe('rubricasFolhaService', () => {
   it('criar calls insert on rubricas_folha', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await rubricasFolhaService.criar({ codigo: '9999', descricao: 'Extra', tipo: 'provento' });
+    await rubricasFolhaService.criar({ codigo: '9999', descricao: 'Extra' });
     expect(chain.insert).toHaveBeenCalled();
   });
 
@@ -163,5 +135,24 @@ describe('rubricasFolhaService', () => {
     mockFrom.mockReturnValue(chain);
     await rubricasFolhaService.atualizar('rf-1', { descricao: 'Atualizado' }, 'emp-1');
     expect(chain.update).toHaveBeenCalled();
+  });
+});
+
+describe('parametrosFiscaisService', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it('listar queries parametros_fiscais', async () => {
+    const chain = makeChain([{ id: 'pf1' }]);
+    mockFrom.mockReturnValue(chain);
+    const result = await parametrosFiscaisService.listar();
+    expect(mockFrom).toHaveBeenCalledWith('parametros_fiscais');
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it('criar calls insert on parametros_fiscais', async () => {
+    const chain = makeChain();
+    mockFrom.mockReturnValue(chain);
+    await parametrosFiscaisService.criar({ vigencia_inicio: '2024-01-01' });
+    expect(chain.insert).toHaveBeenCalled();
   });
 });

@@ -1,9 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as esocialService from '@/services/esocialService';
-import type { ESocialTransmissionResult } from '@/services/esocialService';
 import { toast } from 'sonner';
 import { useServerValidation } from './useServerValidation';
 import { useEmpresas } from './useEmpresas';
+// MOCK VISUAL — ver src/mocks/admissoesMock.ts
+import { mockTransmitirESocial } from '@/mocks/admissoesMock';
 
 export function useESocial() {
   const queryClient = useQueryClient();
@@ -34,17 +35,21 @@ export function useESocial() {
 
   const enviarMutation = useMutation({
     mutationFn: async ({ eventoId, empresaId }: { eventoId: string; empresaId: string }) => {
+      // MOCK VISUAL — transmite o evento fictício em memória e devolve um recibo
+      // demonstrativo (o backend do eSocial nunca é chamado nestes ids).
+      const mock = mockTransmitirESocial(eventoId);
+      if (mock) return mock;
       return await esocialService.enviarEvento(eventoId, empresaId);
     },
     onSuccess: (data) => {
-      if (data.simulated) {
-        toast.info(`Simulação concluída — não transmitida ao Governo (${data.protocolo})`);
-      } else {
+      if (data?.success) {
         toast.success(`Evento enviado — Protocolo: ${data.protocolo}`);
+      } else {
+        toast.error(`Falha no envio: ${data?.error}`);
       }
       invalidate();
     },
-    onError: (err) => handleServerError(err),
+    onError: (err: any) => handleServerError(err),
   });
 
   const reenviarMutation = useMutation({
@@ -52,14 +57,11 @@ export function useESocial() {
       return await esocialService.reenviarEvento(eventoId, empresaId);
     },
     onSuccess: (data) => {
-      if (data.simulated) {
-        toast.info(`Simulação repetida — não transmitida ao Governo (${data.protocolo})`);
-      } else {
-        toast.success(`Evento reenviado — Protocolo: ${data.protocolo}`);
-      }
+      if (data?.success) toast.success('Evento reenviado com sucesso');
+      else toast.error(`Falha ao reenviar: ${data?.error}`);
       invalidate();
     },
-    onError: (err) => handleServerError(err),
+    onError: (err: any) => handleServerError(err),
   });
 
   const gerarEventosMutation = useMutation({
@@ -70,7 +72,7 @@ export function useESocial() {
       toast.success(`Geração concluída: ${data.criados} criados, ${data.pulados} já existentes.`);
       invalidate();
     },
-    onError: (err) => handleServerError(err),
+    onError: (err: any) => handleServerError(err),
   });
 
   const configQuery = useQuery({
@@ -93,31 +95,22 @@ export function useESocial() {
 
   const enviarLoteMutation = useMutation({
     mutationFn: async ({ eventoIds, empresaId }: { eventoIds: string[]; empresaId: string }) => {
-      const results: ESocialTransmissionResult[] = [];
+      const results: any[] = [];
       for (const id of eventoIds) {
         results.push(await esocialService.enviarEvento(id, empresaId));
       }
       return results;
     },
-    onSuccess: (results) => {
-      const simulatedCount = results.filter((result) => result.simulated === true).length;
-      if (simulatedCount === results.length && results.length > 0) {
-        toast.info(`Lote simulado: ${simulatedCount} evento(s), sem transmissão ao Governo`);
-      } else if (simulatedCount > 0) {
-        toast.warning(
-          `Lote concluído parcialmente: ${results.length - simulatedCount} transmitido(s) e ${simulatedCount} simulado(s)`
-        );
-      } else {
-        toast.success('Lote enviado com sucesso');
-      }
-      invalidate();
+    onSuccess: () => { 
+      toast.success('Lote enviado com sucesso'); 
+      invalidate(); 
     },
-    onError: (err) => handleServerError(err),
+    onError: (err: any) => handleServerError(err),
   });
 
   return {
     eventos: eventosQuery.data || [],
-    stats: statsQuery.data || { enviados: 0, pendentes: 0, erros: 0, conformidade: null },
+    stats: statsQuery.data || { enviados: 0, pendentes: 0, erros: 0, conformidade: 100 },
     config: configQuery.data,
     certificados: certificadosQuery.data || [],
     logs: logsQuery.data || [],
@@ -133,3 +126,4 @@ export function useESocial() {
     isSending: enviarMutation.isPending || reenviarMutation.isPending || gerarEventosMutation.isPending,
   };
 }
+

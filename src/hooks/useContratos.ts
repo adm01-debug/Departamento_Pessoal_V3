@@ -1,5 +1,4 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { TablesInsert } from '@/integrations/supabase/types';
 import { contratoService } from '@/services/contratoService';
 import { useEmpresas } from './useEmpresas';
 import { toast } from 'sonner';
@@ -17,8 +16,7 @@ export function useContratos() {
   });
 
   const criarMutation = useMutation({
-    mutationFn: (data: Omit<TablesInsert<'contratos'>, 'empresa_id'>) =>
-      contratoService.criar({ ...data, empresa_id: empresaId ?? null }),
+    mutationFn: (data: any) => contratoService.criar({ ...data, empresa_id: empresaId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contratos'] });
       toast.success('Contrato criado');

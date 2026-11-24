@@ -25,7 +25,7 @@ vi.mock('@/services/folhaService', () => ({
 
 import { useFolha } from '../useFolha';
 
-function makeCrudReturn(overrides: Record<string, unknown> = {}) {
+function makeCrudReturn(overrides: Record<string, any> = {}) {
   return { items: [], isLoading: false, isCreating: false, ...overrides };
 }
 

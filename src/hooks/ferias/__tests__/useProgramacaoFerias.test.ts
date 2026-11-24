@@ -4,12 +4,7 @@ import { renderHook } from '@testing-library/react';
 const { mockUseQuery, mockUseMutation, mockUseQueryClient } = vi.hoisted(() => ({
   mockUseQuery: vi.fn(),
   mockUseMutation: vi.fn(),
-  mockUseQueryClient: vi.fn(() => ({
-    invalidateQueries: vi.fn(),
-    cancelQueries: vi.fn(),
-    getQueriesData: vi.fn(() => []),
-    setQueryData: vi.fn(),
-  })),
+  mockUseQueryClient: vi.fn(() => ({ invalidateQueries: vi.fn(), cancelQueries: vi.fn(), getQueriesData: vi.fn(() => []), setQueryData: vi.fn() })),
 }));
 
 vi.mock('@tanstack/react-query', () => ({
@@ -29,7 +24,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 vi.mock('@/utils/safeError', () => ({
-  safeErrorMessage: vi.fn((e: unknown, fallback: string) => fallback),
+  safeErrorMessage: vi.fn((e: any, fallback: string) => fallback),
 }));
 
 import { useProgramacaoFerias, useProgramacaoMutations } from '../useProgramacaoFerias';
@@ -65,7 +60,9 @@ describe('useProgramacaoFerias', () => {
 
   it('is enabled when empresaId is present', () => {
     renderHook(() => useProgramacaoFerias(2026));
-    expect(mockUseQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: true }));
+    expect(mockUseQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ enabled: true })
+    );
   });
 
   it('returns data from query', () => {
@@ -152,7 +149,9 @@ describe('useProgramacaoMutations', () => {
 
   it('criar calls useMutation with mutationFn', () => {
     renderHook(() => useProgramacaoMutations(2026));
-    expect(mockUseMutation).toHaveBeenCalledWith(expect.objectContaining({ mutationFn: expect.any(Function) }));
+    expect(mockUseMutation).toHaveBeenCalledWith(
+      expect.objectContaining({ mutationFn: expect.any(Function) })
+    );
   });
 
   it('criar invalidates ferias-programacao on success', () => {
@@ -164,7 +163,7 @@ describe('useProgramacaoMutations', () => {
       setQueryData: vi.fn(),
     });
     const onSuccessCalls: Function[] = [];
-    mockUseMutation.mockImplementation(({ onSuccess }: { onSuccess?: (v: unknown) => void }) => {
+    mockUseMutation.mockImplementation(({ onSuccess }: any) => {
       if (onSuccess) onSuccessCalls.push(onSuccess);
       return { mutate: vi.fn(), isPending: false };
     });

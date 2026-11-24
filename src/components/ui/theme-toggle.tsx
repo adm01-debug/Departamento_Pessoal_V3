@@ -25,7 +25,7 @@ export function ThemeToggle({ className }: { className?: string }) {
                 initial={{ rotate: -90, scale: 0 }}
                 animate={{ rotate: 0, scale: 1 }}
                 exit={{ rotate: 90, scale: 0 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.25 }}
               >
                 <Moon className="h-5 w-5" />
               </motion.div>
@@ -35,7 +35,7 @@ export function ThemeToggle({ className }: { className?: string }) {
                 initial={{ rotate: 90, scale: 0 }}
                 animate={{ rotate: 0, scale: 1 }}
                 exit={{ rotate: -90, scale: 0 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.25 }}
               >
                 <Sun className="h-5 w-5" />
               </motion.div>

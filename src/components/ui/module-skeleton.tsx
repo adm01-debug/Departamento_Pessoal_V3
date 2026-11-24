@@ -117,7 +117,10 @@ export function CardSkeleton({ className }: { className?: string }) {
 /* ─── Dashboard Full Skeleton ─── */
 export function DashboardSkeleton() {
   return (
-    <div className="space-y-section max-w-[1400px] mx-auto">
+    // Largura útil = mesmo contrato do `PageLayout` (ver `PAGE_WIDTH` lá):
+    // o esqueleto precisa ocupar exatamente a área do conteúdo real, senão a
+    // tela "salta" de largura quando os dados chegam.
+    <div className="space-y-section w-full">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-2">

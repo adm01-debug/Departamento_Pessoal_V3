@@ -17,6 +17,40 @@ import { test, expect, devices, type Page } from '@playwright/test';
 const COLUNA = (etapa: string) => `[data-pipeline-coluna="${etapa}"]`;
 const LISTA = (etapa: string) => `${COLUNA(etapa)} [data-pipeline-lista]`;
 
+/**
+ * Largura da lane na RÉGUA do Design System: `w-[272px]` em `PipelineColumn`
+ * (a mesma classe do Kanban de Admissão).
+ *
+ * A medida renderizada NÃO é 272: a escala global do DS declara
+ * `html { font-size: 125% }` (`src/index.css`) e o `scripts/postcss-escala-rem.mjs`
+ * converte px arbitrário em `rem` — ou seja, 272px da régua viram
+ * 17rem = 340px na base de 20px (ver `docs/ESCALA-GLOBAL-DESIGN-SYSTEM.md`).
+ * Por isso a expectativa é calculada a partir do `font-size` da raiz em vez de
+ * ficar cravada em px: o teste continua válido se a base do DS mudar.
+ */
+const LANE_PX = 272;
+
+/** Fator da escala global (base de 16px = 1). */
+const escalaDaRaiz = (page: Page) =>
+  page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).fontSize) / 16);
+
+/**
+ * Ponto DENTRO da viewport e dentro do elemento — a fração 1 é o mais perto
+ * possível do rodapé do elemento (espaço vazio), mas sempre visível.
+ *
+ * Necessário porque a roda do mouse só age quando há um elemento sob o cursor:
+ * a coluna do pipeline (`h-[calc(100vh-19rem)]`) passa da dobra em 900px de
+ * altura de viewport, e o ponto calculado direto pela caixa caía em y≈934 —
+ * fora da tela, com `elementFromPoint` devolvendo `null`.
+ */
+async function pontoVisivel(page: Page, seletor: string) {
+  const caixa = await page.locator(seletor).boundingBox();
+  const vista = page.viewportSize()!;
+  const topo = Math.max(caixa!.y, 0);
+  const base = Math.min(caixa!.y + caixa!.height, vista.height - 4);
+  return { x: caixa!.x + caixa!.width / 2, y: base - Math.min(2, (base - topo) / 2) };
+}
+
 /** A ordem dos testes move cards de verdade; em série não há corrida de sessão. */
 test.describe.configure({ mode: 'serial' });
 
@@ -121,7 +155,10 @@ test.describe('Pipeline — estrutura e scroll no padrão de Admissão', () => {
     expect(dados.colunas.map((c) => c.id)).toEqual(['triagem', 'entrevista', 'teste', 'proposta', 'contratado']);
 
     const larguras = dados.colunas.map((c) => c.width);
-    expect(new Set(larguras)).toEqual(new Set([272]));
+    const escala = await escalaDaRaiz(page);
+    expect(new Set(larguras), `lane de ${LANE_PX}px na escala ${escala}`).toEqual(
+      new Set([Math.round(LANE_PX * escala)]),
+    );
 
     const alturas = dados.colunas.map((c) => c.height);
     const topos = dados.colunas.map((c) => c.top);
@@ -193,8 +230,10 @@ test.describe('Pipeline — estrutura e scroll no padrão de Admissão', () => {
     });
     await page.waitForTimeout(250);
     await zerarScroll(page);
-    const vazio = await page.locator(LISTA('contratado')).boundingBox();
-    await page.mouse.move(vazio!.x + vazio!.width / 2, vazio!.y + vazio!.height - 50);
+    // O ponto é limitado à viewport: o board pode passar da dobra, e a roda só
+    // rola quando há um elemento sob o cursor.
+    const vazio = await pontoVisivel(page, LISTA('contratado'));
+    await page.mouse.move(vazio.x, vazio.y);
     const antesVazio = await scrollDaPagina(page);
     await page.mouse.wheel(0, 400);
     await expect.poll(() => scrollDaPagina(page)).toBeGreaterThan(antesVazio);
@@ -422,10 +461,6 @@ test.describe('Pipeline — mobile (toque)', () => {
 
     // Arraste por toque de verdade: card -> Entrevista (touch-pan-y preserva o
     // scroll vertical e libera o arraste horizontal intencional).
-    await page.evaluate(() => {
-      const board = document.querySelector('[data-pipeline-board]') as HTMLElement | null;
-      if (board) board.scrollLeft = 0;
-    });
     await page.waitForTimeout(400);
     const cardToque = page.locator(`${COLUNA('triagem')} [data-candidato-card]`).first();
     // Os swipes anteriores podem ter deixado a lista/página roladas: volta ao
@@ -436,43 +471,81 @@ test.describe('Pipeline — mobile (toque)', () => {
     await zerarScroll(page);
     await cardToque.scrollIntoViewIfNeeded();
     await page.waitForTimeout(350);
+
+    /**
+     * A lane renderiza ~340px (272px × escala global do DS), então em 390px de
+     * viewport Triagem e Entrevista não cabem lado a lado. Antes de arrastar:
+     *
+     * 1. rola a faixa até a borda direita do card de origem ficar `zona + 26`
+     *    px adentro da faixa (o card continua tocável e a Entrevista entra na
+     *    área visível);
+     * 2. toca na ÁREA DO NOME do card — a faixa do botão "Mais ações" (Radix)
+     *    abre o menu e não inicia arraste;
+     * 3. o alvo é o x que maximiza a interseção do OVERLAY com a lane de
+     *    destino, porque a colisão padrão (`rectIntersection` do dnd-kit) usa o
+     *    rect do card arrastado — quase uma lane inteira — e não o ponto do
+     *    dedo. O y fica na lista de destino.
+     *
+     * Os dois pontos ficam fora das zonas de auto-scroll do dnd-kit (20% de
+     * cada borda), então o board não rola sozinho durante o gesto.
+     */
+    const pontos = await page.evaluate(
+      ([seletorOrigem, seletorDestino]) => {
+        const board = document.querySelector('[data-pipeline-board]') as HTMLElement;
+        const card = document.querySelector(`${seletorOrigem} [data-candidato-card]`) as HTMLElement;
+        const laneOrigem = document.querySelector(seletorOrigem) as HTMLElement;
+        const laneDestino = document.querySelector(seletorDestino) as HTMLElement;
+        const listaDestino = document.querySelector(`${seletorDestino} [data-pipeline-lista]`) as HTMLElement;
+        const faixa = board.getBoundingClientRect();
+        const zona = faixa.width * 0.2;
+
+        board.scrollLeft = 0;
+        const cardInicial = card.getBoundingClientRect();
+        board.scrollLeft = Math.max(0, cardInicial.right - faixa.left - (zona + 26));
+
+        const cardBox = card.getBoundingClientRect();
+        const listaBox = listaDestino.getBoundingClientRect();
+        const origem = {
+          x: Math.max(cardBox.left, faixa.left) + 20,
+          y: Math.min(cardBox.top + 50, listaBox.top + 60, window.innerHeight - 60),
+        };
+
+        const sobreposicao = (inicio: number, alvo: DOMRect) =>
+          Math.max(0, Math.min(inicio + cardBox.width, alvo.right) - Math.max(inicio, alvo.left));
+        const destinoLane = laneDestino.getBoundingClientRect();
+        const origemLane = laneOrigem.getBoundingClientRect();
+        let melhor = { x: origem.x, folga: -Infinity };
+        for (let x = origem.x + 1; x <= faixa.right - zona - 4; x += 1) {
+          const inicio = cardBox.left + (x - origem.x);
+          const folga = sobreposicao(inicio, destinoLane) - sobreposicao(inicio, origemLane);
+          if (folga > melhor.folga) melhor = { x, folga };
+        }
+
+        return {
+          origem,
+          destino: {
+            x: melhor.x,
+            y: Math.min(listaBox.top + 60, window.innerHeight - 60),
+          },
+        };
+      },
+      [COLUNA('triagem'), COLUNA('entrevista')]
+    );
+    await page.waitForTimeout(350);
+
     const idToque = await cardToque.getAttribute('data-candidato-card');
-    const inicio = await cardToque.boundingBox();
-    const alvoLista = await page.locator(LISTA('entrevista')).boundingBox();
-    const viewportToque = page.viewportSize()!;
-    const xAlvo = Math.min(alvoLista!.x + 24, viewportToque.width - 20);
-    await toque(inicio!.x + 50, inicio!.y + 50);
+    const { origem, destino } = pontos;
+    await toque(origem.x, origem.y);
     for (let i = 1; i <= 14; i += 1) {
-      await mover(inicio!.x + 50 + ((xAlvo - (inicio!.x + 50)) * i) / 14, inicio!.y + 50 + (20 * i) / 14);
+      await mover(
+        origem.x + ((destino.x - origem.x) * i) / 14,
+        origem.y + ((destino.y - origem.y) * i) / 14
+      );
       await page.waitForTimeout(24);
     }
     await page.waitForTimeout(250);
     await expect(page.locator('[data-pipeline-arrastado]')).toHaveCount(1);
-    // O `over` do dnd-kit é decidido pelo retângulo do CARD arrastado (default
-    // `rectIntersection`), não pelo ponto do dedo. Quando o board auto-rola na
-    // horizontal, a coluna de destino anda para baixo do card e a asserção
-    // falha de forma intermitente — daí o `expect.poll` com reposicionamento:
-    // a cada tentativa o card é recolocado sobre o centro ATUAL da coluna e só
-    // então o `over` é lido. A primeira tentativa mantém o caminho original.
-    await expect
-      .poll(
-        async () => {
-          const alvoAtual = await page.locator(LISTA('entrevista')).boundingBox();
-          const alturaAlvo = await page
-            .locator(`${COLUNA('entrevista')} > section`)
-            .evaluate((el) => el.getBoundingClientRect().height);
-          await mover(
-            Math.min(alvoAtual!.x + 24, viewportToque.width - 20),
-            Math.min(alvoAtual!.y + alturaAlvo / 2, viewportToque.height - 40)
-          );
-          return page
-            .locator(COLUNA('entrevista'))
-            .getAttribute('data-pipeline-drop', { timeout: 1_000 })
-            .catch(() => null);
-        },
-        { timeout: 15_000, intervals: [400, 400, 400, 600] }
-      )
-      .toBe('true');
+    await expect(page.locator(COLUNA('entrevista'))).toHaveAttribute('data-pipeline-drop', 'true');
     await soltar();
     await expect(page.locator('[data-pipeline-arrastado]')).toHaveCount(0);
     await expect(page.locator(`${COLUNA('entrevista')} [data-candidato-card="${idToque}"]`)).toHaveCount(1);

@@ -17,17 +17,15 @@ describe('localTrabalhoService', () => {
   });
 
   it('targets the locais_trabalho table', () => {
-    expect((localTrabalhoService as unknown as { table: string }).table).toBe('locais_trabalho');
+    expect((localTrabalhoService as any).table).toBe('locais_trabalho');
   });
 
   it('orders by nome by default', () => {
-    expect((localTrabalhoService as unknown as { options: Record<string, unknown> }).options.defaultOrderBy).toBe(
-      'nome'
-    );
+    expect((localTrabalhoService as any).options.defaultOrderBy).toBe('nome');
   });
 
   it('searches by nome column', () => {
-    expect((localTrabalhoService as unknown as { options: Record<string, unknown> }).options.searchColumn).toBe('nome');
+    expect((localTrabalhoService as any).options.searchColumn).toBe('nome');
   });
 
   it('exposes listar method', () => {

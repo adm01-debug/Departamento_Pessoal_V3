@@ -11,7 +11,6 @@ import type {
   SugestaoProximaMedida,
 } from '@/types/medidasDisciplinares';
 
-import { validateTablePayload } from '@/schemas/validate';
 /**
  * Serviço de Medidas Disciplinares (CLT).
  * Todas as leituras/escritas são escopadas por `empresa_id` (defesa em profundidade
@@ -31,7 +30,10 @@ export const medidasDisciplinaresService = {
     return data ?? [];
   },
 
-  async buscarPorColaborador(colaboradorId: string, empresaId: string): Promise<MedidaDisciplinarRow[]> {
+  async buscarPorColaborador(
+    colaboradorId: string,
+    empresaId: string,
+  ): Promise<MedidaDisciplinarRow[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('medidas_disciplinares')
@@ -47,7 +49,7 @@ export const medidasDisciplinaresService = {
   async criar(d: MedidaDisciplinarInsert): Promise<MedidaDisciplinarRow> {
     const { data, error } = await supabase
       .from('medidas_disciplinares')
-      .insert(validateTablePayload('medidas_disciplinares', d, 'medidasDisciplinaresService:medidas_disciplinares'))
+      .insert(d)
       .select()
       .maybeSingle<MedidaDisciplinarRow>();
     if (error) throw error;
@@ -55,11 +57,15 @@ export const medidasDisciplinaresService = {
     return data;
   },
 
-  async atualizar(id: string, d: MedidaDisciplinarUpdate, empresaId: string): Promise<MedidaDisciplinarRow> {
+  async atualizar(
+    id: string,
+    d: MedidaDisciplinarUpdate,
+    empresaId: string,
+  ): Promise<MedidaDisciplinarRow> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('medidas_disciplinares')
-      .update(validateTablePayload('medidas_disciplinares', d, 'medidasDisciplinaresService:medidas_disciplinares'))
+      .update(d)
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -71,11 +77,18 @@ export const medidasDisciplinaresService = {
 
   async excluir(id: string, empresaId: string): Promise<void> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { error } = await supabase.from('medidas_disciplinares').delete().eq('id', id).eq('empresa_id', empresaId);
+    const { error } = await supabase
+      .from('medidas_disciplinares')
+      .delete()
+      .eq('id', id)
+      .eq('empresa_id', empresaId);
     if (error) throw error;
   },
 
-  async sugerirProxima(colaboradorId: string, empresaId: string): Promise<SugestaoProximaMedida | null> {
+  async sugerirProxima(
+    colaboradorId: string,
+    empresaId: string,
+  ): Promise<SugestaoProximaMedida | null> {
     if (!colaboradorId || !empresaId) return null;
     const { data, error } = await supabase.rpc('sugerir_proxima_medida', {
       p_colaborador_id: colaboradorId,
@@ -101,7 +114,9 @@ export const medidasDisciplinaresService = {
   },
 
   async obterSignedUrl(path: string, expiresIn = 3600): Promise<string> {
-    const { data, error } = await supabase.storage.from('medidas-disciplinares').createSignedUrl(path, expiresIn);
+    const { data, error } = await supabase.storage
+      .from('medidas-disciplinares')
+      .createSignedUrl(path, expiresIn);
     if (error) throw error;
     return data.signedUrl;
   },
@@ -114,13 +129,13 @@ export const medidasDisciplinaresService = {
     if (error) throw error;
     return data;
   },
-  async aprovar(medidaId: string, observacao?: string): Promise<{ status?: string } | null> {
+  async aprovar(medidaId: string, observacao?: string): Promise<unknown> {
     const { data, error } = await supabase.rpc('medida_aprovar', {
       _medida_id: medidaId,
       _observacao: observacao ?? null,
     });
     if (error) throw error;
-    return (data as { status?: string } | null) ?? null;
+    return data;
   },
   async rejeitar(medidaId: string, motivo: string): Promise<unknown> {
     const { data, error } = await supabase.rpc('medida_rejeitar', {
@@ -158,7 +173,11 @@ export const medidasDisciplinaresService = {
     if (error) throw error;
     return data;
   },
-  async responderContestacao(medidaId: string, resposta: string, aceita: boolean): Promise<unknown> {
+  async responderContestacao(
+    medidaId: string,
+    resposta: string,
+    aceita: boolean,
+  ): Promise<unknown> {
     const { data, error } = await supabase.rpc('medida_responder_contestacao', {
       _medida_id: medidaId,
       _resposta: resposta,
@@ -167,7 +186,11 @@ export const medidasDisciplinaresService = {
     if (error) throw error;
     return data;
   },
-  async uploadAnexoContestacao(medidaId: string, empresaId: string, file: File): Promise<MedidaContestacaoAnexoRow> {
+  async uploadAnexoContestacao(
+    medidaId: string,
+    empresaId: string,
+    file: File,
+  ): Promise<MedidaContestacaoAnexoRow> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const path = `${empresaId}/${medidaId}/${crypto.randomUUID()}-${file.name}`;
     const { error: upErr } = await supabase.storage
@@ -184,22 +207,16 @@ export const medidasDisciplinaresService = {
     const { data: userData } = await supabase.auth.getUser();
     const { data, error } = await supabase
       .from('medidas_disciplinares_contestacao_anexos')
-      .insert(
-        validateTablePayload(
-          'medidas_disciplinares_contestacao_anexos',
-          {
-            medida_id: medidaId,
-            empresa_id: empresaId,
-            storage_path: path,
-            nome_arquivo: file.name,
-            mime_type: file.type,
-            tamanho_bytes: file.size,
-            hash_sha256: hash,
-            uploaded_by: userData.user?.id ?? null,
-          },
-          'medidasDisciplinaresService:medidas_disciplinares_contestacao_anexos'
-        )
-      )
+      .insert({
+        medida_id: medidaId,
+        empresa_id: empresaId,
+        storage_path: path,
+        nome_arquivo: file.name,
+        mime_type: file.type,
+        tamanho_bytes: file.size,
+        hash_sha256: hash,
+        uploaded_by: userData.user?.id ?? null,
+      })
       .select()
       .maybeSingle<MedidaContestacaoAnexoRow>();
     if (error) throw error;
@@ -217,7 +234,9 @@ export const medidasDisciplinaresService = {
     return data ?? [];
   },
   async signedUrlAnexoContestacao(path: string, expiresIn = 3600): Promise<string> {
-    const { data, error } = await supabase.storage.from('medidas-contestacoes').createSignedUrl(path, expiresIn);
+    const { data, error } = await supabase.storage
+      .from('medidas-contestacoes')
+      .createSignedUrl(path, expiresIn);
     if (error) throw error;
     return data.signedUrl;
   },

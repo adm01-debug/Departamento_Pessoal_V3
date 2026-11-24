@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
@@ -9,11 +8,7 @@ vi.mock('@tanstack/react-query', () => ({
   // Mock fiel ao contrato do useMutation: `mutate` executa a mutationFn e
   // encaminha sucesso/erro para onSuccess/onError, permitindo testar as
   // validações que vivem dentro da mutation.
-  useMutation: (opts: {
-    mutationFn?: (vars?: unknown) => Promise<unknown>;
-    onSuccess?: (data: unknown, vars: unknown, ctx: unknown) => void;
-    onError?: (err: unknown, vars: unknown, ctx: unknown) => void;
-  }) => ({
+  useMutation: (opts: any) => ({
     mutate: (vars?: unknown) => {
       mockMutate(opts);
       Promise.resolve()
@@ -24,7 +19,7 @@ vi.mock('@tanstack/react-query', () => ({
     mutateAsync: async () => opts.mutationFn?.(),
     isPending: false,
   }),
-  useQuery: ({ queryFn }: { queryFn?: () => unknown }) => ({
+  useQuery: ({ queryFn }: any) => ({
     data: queryFn ? [] : undefined,
   }),
   useQueryClient: () => ({ invalidateQueries: mockInvalidateQueries }),
@@ -64,55 +59,37 @@ vi.mock('@/integrations/supabase/client', () => ({
   },
 }));
 
-vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((_e: unknown, f: string) => f) }));
+vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((_e: any, f: string) => f) }));
 vi.mock('@/utils/safeUrl', () => ({ safeHref: vi.fn((u: string) => u) }));
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({
-    children,
-    onClick,
-    disabled,
-    ...p
-  }: {
-    children?: ReactNode;
-    onClick?: () => void;
-    disabled?: boolean;
-    [key: string]: unknown;
-  }) => (
-    <button onClick={onClick} disabled={disabled} {...p}>
-      {children}
-    </button>
+  Button: ({ children, onClick, disabled, ...p }: any) => (
+    <button onClick={onClick} disabled={disabled} {...p}>{children}</button>
   ),
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({
-    children,
-    open,
-    onOpenChange,
-  }: {
-    children?: ReactNode;
-    open?: boolean;
-    onOpenChange?: (open: boolean) => void;
-  }) => <div data-open={open}>{children}</div>,
-  DialogTrigger: ({ children }: { children?: ReactNode }) => <div data-testid="trigger">{children}</div>,
-  DialogContent: ({ children }: { children?: ReactNode }) => <div data-testid="dialog-content">{children}</div>,
-  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
-  DialogFooter: ({ children }: { children?: ReactNode }) => <div data-testid="footer">{children}</div>,
+  Dialog: ({ children, open, onOpenChange }: any) => (
+    <div data-open={open}>{children}</div>
+  ),
+  DialogTrigger: ({ children }: any) => <div data-testid="trigger">{children}</div>,
+  DialogContent: ({ children }: any) => <div data-testid="dialog-content">{children}</div>,
+  DialogHeader: ({ children }: any) => <div>{children}</div>,
+  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
+  DialogFooter: ({ children }: any) => <div data-testid="footer">{children}</div>,
 }));
 
 vi.mock('@/components/ui/input', () => ({
-  Input: (props: React.ComponentProps<'input'>) => <input data-testid="input" {...props} />,
+  Input: (props: any) => <input data-testid="input" {...props} />,
 }));
 
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children }: { children?: ReactNode }) => <label>{children}</label>,
+  Label: ({ children }: any) => <label>{children}</label>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: { children?: ReactNode }) => <span data-testid="badge">{children}</span>,
+  Badge: ({ children }: any) => <span data-testid="badge">{children}</span>,
 }));
 
 vi.mock('lucide-react', () => ({

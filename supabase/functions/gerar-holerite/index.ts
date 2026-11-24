@@ -5,8 +5,25 @@ import { holeriteSchema } from '../_shared/schemas/common.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { requireSelfOrRh } from '../_shared/authz.ts';
-import { calcularInssEmpregado } from './inss.ts';
-import { calcIRRF } from '../_shared/irrf.ts';
+
+// Tabelas INSS 2026
+const calcularINSS = (base: number): number => {
+  let inss = 0;
+  if (base <= 1518) inss = base * 0.075;
+  else if (base <= 2793.88) inss = 113.85 + (base - 1518) * 0.09;
+  else if (base <= 4190.83) inss = 228.68 + (base - 2793.88) * 0.12;
+  else inss = 396.31 + (Math.min(base, 8157.41) - 4190.83) * 0.14;
+  return Number(Math.min(inss, 951.63).toFixed(2));
+};
+
+const calcularIRRF = (base: number, dependentes: number = 0): number => {
+  const baseCalculo = base - (dependentes * 189.59);
+  if (baseCalculo <= 2259.20) return 0;
+  if (baseCalculo <= 2826.65) return Number(Math.max(0, baseCalculo * 0.075 - 169.44).toFixed(2));
+  if (baseCalculo <= 3751.05) return Number(Math.max(0, baseCalculo * 0.15 - 381.44).toFixed(2));
+  if (baseCalculo <= 4664.68) return Number(Math.max(0, baseCalculo * 0.225 - 662.77).toFixed(2));
+  return Number(Math.max(0, baseCalculo * 0.275 - 896.00).toFixed(2));
+};
 
 serve(async (req: Request): Promise<Response> => {
   const __pf = handlePreflight(req); if (__pf) return __pf;
@@ -62,16 +79,16 @@ serve(async (req: Request): Promise<Response> => {
     // para QUALQUER colega — bastava o id do colaborador para obter salário,
     // CPF, banco, agência e conta de outra pessoa. Pertencer à empresa é
     // pré-requisito, não permissão.
-    const authz = await requireSelfOrRh(supabase, userId, colaborador.user_id, colaborador.empresa_id, req);
+    const authz = await requireSelfOrRh(supabase, userId, colaborador.user_id, colaborador.empresa_id);
     if (authz.denied) return authz.denied;
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `gerar-holerite:${userId}`, limit: 30, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     // Audit log — leitura de PII sensível
     await supabase.from('audit_log').insert({
-      tabela: 'holerite', registro_id: colaboradorId, acao: 'VISUALIZACAO',
+      tabela: 'holerite', registro_id: colaboradorId, acao: 'READ_HOLERITE',
       user_id: userId,
       dados_novos: { competencia, empresa_id: colaborador.empresa_id },
     });
@@ -92,37 +109,24 @@ serve(async (req: Request): Promise<Response> => {
     // Buscar benefícios ativos
     const { data: beneficios } = await supabase
       .from('beneficios_colaborador')
-      .select('*, tipo:tipo_beneficio_id(nome, codigo)')
+      .select('*, tipo:tipo_beneficio_id(nome)')
       .eq('colaborador_id', colaboradorId)
       .eq('ativo', true);
 
-    // Dependentes para IRRF (para_irrf) — mesmo critério do motor canônico.
-    const { count: dependentes } = await supabase
-      .from('dependentes')
-      .select('id', { count: 'exact', head: true })
-      .eq('colaborador_id', colaboradorId)
-      .eq('para_irrf', true);
-
-    // Proventos: salário-base integral — mesmo tratamento do motor canônico
-    // (lote/edge), sem proporcionalidade por dias de registro de ponto.
+    // Calcular proventos
     const salarioBase = colaborador.salario_base;
     const diasTrabalhados = registrosPonto?.length || 30;
+    const salarioProporcional = Number(((salarioBase / 30) * diasTrabalhados).toFixed(2));
 
-    // Descontos canônicos: INSS progressivo por competência + IRRF com
-    // deduções legais x desconto simplificado e Lei 15.270 (_shared/irrf.ts).
-    const inss = calcularInssEmpregado(salarioBase, competencia);
-    const irrf = calcIRRF(salarioBase, dependentes ?? 0, competencia);
-    const fgts = Number((salarioBase * 0.08).toFixed(2));
+    // Calcular descontos
+    const inss = calcularINSS(salarioProporcional);
+    const irrf = calcularIRRF(salarioProporcional - inss);
+    const fgts = Number((salarioProporcional * 0.08).toFixed(2));
 
-    // Descontos de benefícios — regra do canônico: VT limitado a 6% do
-    // salário-base; demais benefícios valem o campo `desconto`.
-    const beneficioDesconto = (b: any): number => {
-      if (b.tipo?.codigo === 'VT') return Math.min(Number(b.valor ?? 0), salarioBase * 0.06);
-      return Number(b.desconto ?? 0);
-    };
-    const totalDescontosBeneficios = (beneficios || []).reduce((acc: number, b: any) => acc + beneficioDesconto(b), 0);
+    // Descontos de benefícios
+    const totalDescontosBeneficios = (beneficios || []).reduce((acc: number, b: any) => acc + (b.desconto || 0), 0);
 
-    const totalProventos = salarioBase;
+    const totalProventos = salarioProporcional;
     const totalDescontos = Number((inss + irrf + totalDescontosBeneficios).toFixed(2));
     const liquido = Number((totalProventos - totalDescontos).toFixed(2));
 
@@ -139,25 +143,23 @@ serve(async (req: Request): Promise<Response> => {
       },
       competencia,
       proventos: [
-        { codigo: '001', descricao: 'Salário Base', referencia: diasTrabalhados, valor: salarioBase },
+        { codigo: '001', descricao: 'Salário Base', referencia: diasTrabalhados, valor: salarioProporcional },
       ],
       descontos: [
         { codigo: '101', descricao: 'INSS', referencia: null, valor: inss },
         { codigo: '102', descricao: 'IRRF', referencia: null, valor: irrf },
-        ...(beneficios || []).map((b: any) => ({ b, valor: beneficioDesconto(b) }))
-          .filter((x) => x.valor > 0)
-          .map((x, i: number) => ({
-            codigo: `1${10 + i}`, descricao: x.b.tipo?.nome || 'Benefício', referencia: null, valor: x.valor,
-          })),
+        ...(beneficios || []).filter((b: any) => b.desconto > 0).map((b: any, i: number) => ({
+          codigo: `1${10 + i}`, descricao: b.tipo?.nome || 'Benefício', referencia: null, valor: b.desconto,
+        })),
       ],
       totais: {
         totalProventos,
         totalDescontos,
         liquido,
         fgts,
-        baseINSS: salarioBase,
-        baseIRRF: Number((salarioBase - inss).toFixed(2)),
-        baseFGTS: salarioBase,
+        baseINSS: salarioProporcional,
+        baseIRRF: Number((salarioProporcional - inss).toFixed(2)),
+        baseFGTS: salarioProporcional,
       },
       geradoEm: new Date().toISOString(),
     };

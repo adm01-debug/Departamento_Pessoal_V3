@@ -3,6 +3,7 @@ import { ETAPAS } from './pipelineEtapas';
 import { TONS_PIPELINE } from './pipelineVisual';
 import type { TempoEtapa } from './analyticsComum';
 import { AnalyticsPainel } from './AnalyticsPainel';
+import { SUPERFICIE_SUAVE } from './analyticsVisual';
 import { cn } from '@/lib/utils';
 
 /**
@@ -10,7 +11,10 @@ import { cn } from '@/lib/utils';
  *
  * Não é uma soma histórica de durações (o modelo não expõe `historico_etapas`
  * na leitura da página): é a idade média dos candidatos que ESTÃO na etapa.
- * O rodapé do painel deixa essa régua explícita para a leitura ser honesta.
+ * O painel mostra SÓ o cabeçalho e os cinco cartões (nome · ícone · dias); a
+ * régua "dias desde a última movimentação" e a amostra de cada etapa continuam
+ * acessíveis no `title` de cada cartão — as legendas que repetiam isso no
+ * rodapé saíram da tela a pedido da revisão de layout.
  */
 const ROTULO_CURTO: Record<string, string> = {
   triagem: 'Triagem',
@@ -23,9 +27,7 @@ const ROTULO_CURTO: Record<string, string> = {
 export function AnalyticsTempo({ tempos, index }: { tempos: TempoEtapa[]; index: number }) {
   const temDados = tempos.some((tempo) => tempo.dias !== null);
   const iconePorEtapa = new Map(ETAPAS.map((etapa) => [etapa.id, etapa.icone]));
-  const comDias = tempos.filter((tempo): tempo is TempoEtapa & { dias: number } => tempo.dias !== null);
-  const maior = [...comDias].sort((a, b) => b.dias - a.dias)[0];
-  const menor = [...comDias].sort((a, b) => a.dias - b.dias)[0];
+  const tokenPorEtapa = new Map(ETAPAS.map((etapa) => [etapa.id, etapa.token]));
 
   return (
     <AnalyticsPainel
@@ -34,9 +36,20 @@ export function AnalyticsTempo({ tempos, index }: { tempos: TempoEtapa[]; index:
       subtitle="Permanência média na etapa atual"
       tom="warning"
       index={index}
+      /* Respiro vertical da faixa de três cards da referência: 10px até os
+         ladrilhos e 12px até a borda inferior. Só ESTE painel recebe o padding —
+         o casco (`AnalyticsPainel`) é compartilhado por sete painéis da aba.
+         `justify-center`: com os cards da faixa em `items-stretch`, quem define a
+         altura da linha é o painel de atenção (três alertas de duas linhas). Os
+         ladrilhos crescem com a faixa até 155px reais (ver `max-h` abaixo) e o
+         vão que sobra se reparte em cima e embaixo — o card lê como um bloco
+         único, sem ladrilho esticado nem sobra morta no pé. */
+      contentClassName="justify-center pb-3 pt-2.5"
     >
       {!temDados ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-border/40 bg-background/30 px-4 py-7 text-center">
+        <div
+          className={`flex min-h-[100px] flex-col items-center justify-center gap-1.5 rounded-[7px] px-4 py-3 text-center ${SUPERFICIE_SUAVE}`}
+        >
           <Timer className="h-5 w-5 text-muted-foreground/40" aria-hidden />
           <p className="text-[12px] font-medium text-foreground/80">Sem tempo registrado</p>
           <p className="max-w-[210px] text-[10.5px] leading-snug text-muted-foreground">
@@ -45,67 +58,71 @@ export function AnalyticsTempo({ tempos, index }: { tempos: TempoEtapa[]; index:
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-5">
+          {/* Cinco ladrilhos VERTICAIS, na composição da referência: nome no topo,
+              ícone no centro e permanência LOGO ABAIXO do ícone — as três
+              regiões formam UM grupo centrado (`justify-center` + `gap-2`), como
+              um bloco só.
+              O que saiu: `justify-between` + `flex-1`. Com eles o nome ia para a
+              borda de cima, o número para a de baixo e o grupo ficava com ~40px
+              de ar no meio — o "número no rodapé" que a revisão apontou.
+              `grid-cols-5` = `repeat(5, minmax(0, 1fr))`: cinco colunas IGUAIS que
+              ocupam toda a largura interna sem ultrapassar o painel (o `minmax(0,…)`
+              é o que impede um rótulo longo de empurrar a coluna além de 1/5).
+              `gap-2` (10px reais) é o vão entre os ladrilhos.
+              ALTURA ELÁSTICA `h-full` com piso de `min-h-[108px]` (135px reais) e
+              teto de `max-h-[124px]` (155px reais): o ladrilho acompanha a altura
+              da faixa (quem manda é o painel de atenção, com três alertas) até o
+              teto, e o que sobrar fica repartido em cima e embaixo. Sem o teto os
+              cinco virariam colunas de 270px; sem o piso, em telas estreitas o
+              retângulo encolheria abaixo do chip de 35px + valor.
+              `px-0.5` (2,5px reais) e rótulo de 9px (11,25px reais): no pior caso
+              (main de 1060px) o ladrilho fica com ~53px úteis e "Entrevista" pede
+              ~55px — o nome completo segue no `title`. */}
+          <div className="grid flex-1 grid-cols-5 items-center gap-2">
             {tempos.map((tempo) => {
               const tom = TONS_PIPELINE[tempo.id];
+              const token = tokenPorEtapa.get(tempo.id) ?? 'primary';
               const Icone = iconePorEtapa.get(tempo.id) ?? Timer;
               return (
                 <div
                   key={tempo.id}
-                  className="flex min-h-[86px] min-w-0 flex-col items-center justify-center rounded-xl border border-border/40 bg-background/40 px-1.5 py-2 text-center"
+                  className={cn(
+                    'flex h-full max-h-[124px] min-h-[108px] min-w-0 flex-col items-center justify-center gap-2 rounded-[9px] border px-0.5 py-2.5 text-center',
+                    tom.borda
+                  )}
+                  /* Tonalidade sutil derivada da cor da etapa: o `fundo` do
+                     Pipeline é um `background-image` (brilho no topo +
+                     gradiente vertical), não uma classe — antes ele era passado
+                     como `className` e o cartão ficava sem cor nenhuma. */
+                  style={{ backgroundImage: tom.fundo }}
                   title={`${tempo.label}: ${tempo.dias ?? '—'} dias (${tempo.amostra} ${tempo.amostra === 1 ? 'candidato' : 'candidatos'})`}
                 >
-                  <span
-                    className={cn('flex h-6 w-6 items-center justify-center rounded-md border', tom.chip, tom.borda)}
-                  >
-                    <Icone className="h-3 w-3" aria-hidden />
-                  </span>
-                  <span className="mt-1 w-full text-[9px] leading-tight text-muted-foreground">
+                  {/* Região 1 — nome da etapa (11,25px reais), em UMA linha. */}
+                  <span className="w-full truncate text-[9px] font-medium leading-tight text-foreground/85">
                     {ROTULO_CURTO[tempo.id] ?? tempo.label}
                   </span>
-                  <span className="mt-0.5 font-display text-[15px] font-semibold leading-none tabular-nums">
+                  {/* Região 2 — ícone (22,5px reais) dentro do chip CIRCULAR de
+                      35px reais na cor da etapa, como na referência. */}
+                  <span className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-full', tom.chip)}>
+                    <Icone className="h-[18px] w-[18px]" aria-hidden />
+                  </span>
+                  {/* Região 3 — permanência: número de 22px reais com "dias" de
+                      11,25px reais ao lado, na MESMA linha, encostado no ícone. O
+                      tamanho do número é o maior que cabe no ladrilho de ~53px
+                      reais do painel (o mais estreito da aba) com dois dígitos e a
+                      unidade; a unidade usa `ml-0.5` porque `ml-1` estourava a
+                      largura em "56 dias". */}
+                  <span
+                    className="whitespace-nowrap font-display text-[17.5px] font-semibold leading-none tracking-tight tabular-nums"
+                    style={{ color: `hsl(var(--${token}))` }}
+                  >
                     {tempo.dias ?? '—'}
-                    {tempo.dias !== null && (
-                      <span className="ml-0.5 text-[9px] font-normal text-muted-foreground">d</span>
-                    )}
+                    {tempo.dias !== null && <span className="ml-0.5 text-[9px] font-normal">dias</span>}
                   </span>
                 </div>
               );
             })}
           </div>
-
-          {/* Extremos da base (não há recorte de período) — quem segura o funil. */}
-          <div className="mt-2 grid grid-cols-2 gap-1.5">
-            <div className="min-w-0 rounded-lg border border-border/40 bg-background/40 px-2 py-1.5">
-              <p className="text-[8.5px] font-semibold uppercase tracking-widest text-muted-foreground">
-                Maior permanência
-              </p>
-              <p className="mt-0.5 truncate text-[10.5px] font-semibold leading-tight text-foreground">
-                {maior?.label} · {maior?.dias}d
-              </p>
-            </div>
-            <div className="min-w-0 rounded-lg border border-border/40 bg-background/40 px-2 py-1.5">
-              <p className="text-[8.5px] font-semibold uppercase tracking-widest text-muted-foreground">
-                Menor permanência
-              </p>
-              <p className="mt-0.5 truncate text-[10.5px] font-semibold leading-tight text-foreground">
-                {menor?.label} · {menor?.dias}d
-              </p>
-            </div>
-          </div>
-
-          <p className="mt-2 text-[9.5px] leading-snug text-muted-foreground">
-            A maior permanência está em <span className="font-medium text-foreground/80">{maior?.label}</span>, com{' '}
-            {maior?.amostra} {maior?.amostra === 1 ? 'candidato' : 'candidatos'} na etapa.
-          </p>
-          <p className="mt-1 text-[9px] leading-snug text-muted-foreground/70">
-            {tempos.reduce((soma, tempo) => soma + tempo.amostra, 0)} candidaturas em {comDias.length} etapas
-            monitoradas.
-          </p>
-
-          <p className="mt-auto pt-2.5 text-[10px] leading-snug text-muted-foreground">
-            Dias desde a última movimentação registrada de quem está na etapa.
-          </p>
         </>
       )}
     </AnalyticsPainel>

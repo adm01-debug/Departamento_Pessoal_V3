@@ -1,12 +1,6 @@
-// Tabelas de segurança estão deliberadamente fora do gateway genérico. Este
-// cliente fala com o PostgREST canônico usando o JWT do usuário, portanto as
-// policies RLS admin-only continuam sendo a fronteira de autorização.
-import { z } from 'zod';
-import { supabase } from '@/integrations/supabase/client.base';
-import { uuidPg } from '@/schemas/common';
+import { supabase } from '@/integrations/supabase/client';
 import { loggerService } from './loggerService';
 
-const resolutionNoteSchema = z.string().trim().min(1).max(500);
 
 export interface SecurityAlert {
   id: string;
@@ -14,7 +8,7 @@ export interface SecurityAlert {
   severity: string;
   ip_address: string;
   user_id: string | null;
-  details: Record<string, unknown> | null;
+  details: any;
   resolved: boolean;
   resolved_by: string | null;
   resolved_at: string | null;
@@ -68,8 +62,11 @@ export const securityService = {
   },
 
   async unblockIp(id: string) {
-    const validId = uuidPg('ID do IP bloqueado inválido').parse(id);
-    const { error } = await supabase.from('blocked_ips').delete().eq('id', validId);
+    if (!id) throw new Error('ID é obrigatório');
+    const { error } = await supabase
+      .from('blocked_ips')
+      .delete()
+      .eq('id', id);
     if (error) {
       loggerService.error('Error unblocking IP', { id }, error);
       throw error;
@@ -129,21 +126,21 @@ export const securityService = {
     return data || [];
   },
 
-  async resolveAlert(id: string, note?: string) {
-    const validId = uuidPg('ID do alerta inválido').parse(id);
-    // `note || undefined` preservado: string vazia/só espaços segue como
-    // ausência de nota, não como nota inválida.
-    const validNote = note?.trim() ? resolutionNoteSchema.parse(note) : undefined;
-    // A autoria é derivada de auth.uid() dentro da RPC. Aceitar `resolved_by`
-    // vindo do browser permitiria a um admin forjar o autor da resolução.
-    const { error } = await supabase.rpc('resolve_security_alert', {
-      _alert_id: validId,
-      _note: validNote,
-    });
+  async resolveAlert(id: string, userId: string) {
+    if (!id) throw new Error('ID do alerta é obrigatório');
+    if (!userId) throw new Error('ID do usuário é obrigatório');
+    const { error } = await supabase
+      .from('security_alerts')
+      .update({
+        resolved: true,
+        resolved_by: userId,
+        resolved_at: new Date().toISOString()
+      } as any)
+      .eq('id', id);
     if (error) {
-      loggerService.error('Error resolving alert', { id }, error);
+      loggerService.error('Error resolving alert', { id, userId }, error);
       throw error;
     }
-    loggerService.info('Security alert resolved', { alertId: id });
-  },
+    loggerService.info('Security alert resolved', { alertId: id, resolvedBy: userId });
+  }
 };

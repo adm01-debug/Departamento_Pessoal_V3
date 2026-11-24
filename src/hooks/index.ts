@@ -1,4 +1,5 @@
 export { useDebounce } from './useDebounce';
+export { useTrainingImages } from './useTrainingImages';
 export { useLocalStorage } from './useLocalStorage';
 export { useMediaQuery } from './useMediaQuery';
 export { useToast } from './useToast';
@@ -8,6 +9,10 @@ export { useNotificacoes } from './useNotificacoes';
 export { useIsMobile } from './use-mobile';
 export { useColaboradores } from './useColaboradores';
 export { useAdmissoes } from './useAdmissoes';
+export { useAdmissaoWorkflow } from './useAdmissaoWorkflow';
+export { useContratacaoDigital } from './useContratacaoDigital';
+export { useAssinaturaDigital } from './useAssinaturaDigital';
+export { useAfastamentos, useAfastamentosRecentes } from './useAfastamentos';
 export {
   useMetasColaborador,
   usePDIsColaborador,
@@ -17,10 +22,6 @@ export {
   useOnboardingColaborador,
   useCompetenciasColaborador,
 } from './useDesenvolvimentoColaborador';
-export { useAdmissaoWorkflow } from './useAdmissaoWorkflow';
-export { useContratacaoDigital } from './useContratacaoDigital';
-export { useAssinaturaDigital } from './useAssinaturaDigital';
-export { useAfastamentos, useAfastamentosRecentes } from './useAfastamentos';
 export { useCargos } from './useCargos';
 export { useDepartamentos } from './useDepartamentos';
 export { useFerias } from './useFerias';
@@ -31,12 +32,14 @@ export { useValeTransporte } from './useValeTransporte';
 export { useContratos } from './useContratos';
 export { useDesligamentos } from './useDesligamentos';
 export { usePonto } from './usePonto';
+export { usePontoGeofencing } from './usePontoGeofencing';
 export { useDocumentos } from './useDocumentos';
 export { useFeriados } from './useFeriados';
 export { usePDFExport } from './usePDFExport';
 export { useExcelExport } from './useExcelExport';
 export { useESocial } from './useESocial';
 export { useLocaisTrabalho } from './useLocaisTrabalho';
+export { useLotacoesCatalogo, useLotacaoPrincipal, useDefinirLotacaoPrincipal } from './useColaboradorLotacao';
 export { useHistoricoContratos } from './useHistoricoContratos';
 export { useHorasExtras } from './useHorasExtras';
 export { useConfiguracoesIntervalo } from './useConfiguracoesIntervalo';
@@ -46,6 +49,12 @@ export { useNavigationGuard } from './useNavigationGuard';
 export { useNow } from './useNow';
 export { usePeriodosAquisitivos } from './usePeriodosAquisitivos';
 export { usePontoOffline } from './usePontoOffline';
+export {
+  useColaboradoresEquipePonto,
+  useRegistrosPontoEmpresa,
+  useSolicitacoesAjustePontoPendentes,
+  periodoDoMesCorrente,
+} from './usePontoDashboard';
 
 // Novas tabelas (doc externo)
 export {
@@ -71,10 +80,10 @@ export {
   useDevolverEpi,
   useJornadaHorarios,
   useSalvarGradeHorarios,
-  useSaldoBancoHoras,
-  useRegistrosPontoSemana,
   useBancoHorasConfig,
   useSalvarBancoHorasConfig,
+  useSaldoBancoHoras,
+  useRegistrosPontoSemana,
 } from './useNovasTabelas';
 
 // Colaborador Detalhes
@@ -93,6 +102,7 @@ export {
   useFormacoes,
   useCriarFormacao,
   useExcluirFormacao,
+  useAtualizarFormacao,
   useDadosEstrangeiro,
   useSalvarDadosEstrangeiro,
   useDeficiencia,
@@ -112,12 +122,10 @@ export {
   useFeriasColetivas,
   useCriarFeriasColetivas,
   useCamposCustomizados,
-  useFeriasResumoColaborador,
-  useAtualizarContatoEmergencia,
-  useAtualizarFormacao,
-  useHoleritesColaborador,
   useValoresCamposCustomizados,
   useSalvarValorCampoCustomizado,
+  useFeriasResumoColaborador,
+  useHoleritesColaborador,
 } from './useColaboradorDetalhes';
 
 // Tabelas de Referência
@@ -160,9 +168,3 @@ export {
   useVincularDependenteBeneficio,
   useDesvincularDependenteBeneficio,
 } from './useTabelasReferencia';
-
-// Vinculos do colaborador (passagens pela empresa, recontratacao)
-export { useVinculosResumo, useVinculosColaborador, useRecontratarColaborador } from './useVinculos';
-
-// SST por colaborador (incidentes, CAT, riscos)
-export { useIncidentesColaborador, useCatColaborador, useRiscosColaborador } from './useSSTColaborador';

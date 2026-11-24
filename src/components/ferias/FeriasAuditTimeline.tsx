@@ -1,31 +1,30 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { auditoriaService, feriasService } from '@/services';
-import type { AuditoriaRegistro } from '@/services/auditoriaService';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { CheckCircle2, Clock, User, Shield, History, Loader2, XCircle, Check } from 'lucide-react';
+import { 
+  CheckCircle2, 
+  Clock, 
+  User, 
+  
+  Shield, 
+  History,
+  Loader2,
+  XCircle,
+  Check
+} from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  Tabs, 
+  TabsList, 
+  TabsTrigger 
+} from '@/components/ui/tabs';
 
 interface FeriasAuditTimelineProps {
   solicitacaoId: string;
-}
-
-type DadosAuditoriaFerias = {
-  aprovado_rh?: boolean;
-  aprovado_gestor?: boolean;
-  enviado_contabilidade?: boolean;
-  status?: string;
-  cancelado?: boolean;
-};
-
-// payload pode ser o snapshot da linha ou um envelope { dados_novos }, dependendo do writer.
-function dadosDe(log: AuditoriaRegistro): DadosAuditoriaFerias {
-  const p = log.payload as Record<string, unknown> | null;
-  return (p?.dados_novos as DadosAuditoriaFerias) ?? (p as DadosAuditoriaFerias) ?? {};
 }
 
 export function FeriasAuditTimeline({ solicitacaoId }: FeriasAuditTimelineProps) {
@@ -35,19 +34,18 @@ export function FeriasAuditTimeline({ solicitacaoId }: FeriasAuditTimelineProps)
 
   const { data: logs, isLoading: loadingAudit } = useQuery({
     queryKey: ['ferias-audit', solicitacaoId, empresaId],
-    queryFn: () =>
-      auditoriaService.listar(empresaId, {
-        registro_id: solicitacaoId,
-        tabela: 'ferias',
-        limite: 50,
-      }),
-    enabled: !!solicitacaoId && !!empresaId,
+    queryFn: () => auditoriaService.listar(empresaId, {
+      registro_id: solicitacaoId,
+      tabela: 'ferias',
+      limite: 50
+    }),
+    enabled: !!solicitacaoId && !!empresaId
   });
 
   const { data: aprovacoes, isLoading: loadingAprov } = useQuery({
     queryKey: ['ferias-aprovacoes-log', solicitacaoId],
     queryFn: () => feriasService.getAprovacoesLog(solicitacaoId),
-    enabled: !!solicitacaoId,
+    enabled: !!solicitacaoId
   });
 
   const isLoading = loadingAudit || loadingAprov;
@@ -55,8 +53,8 @@ export function FeriasAuditTimeline({ solicitacaoId }: FeriasAuditTimelineProps)
   const filteredLogs = React.useMemo(() => {
     if (!logs) return [];
     if (filtro === 'all') return logs;
-    return logs.filter((log) => {
-      const dados = dadosDe(log);
+    return logs.filter((log: any) => {
+      const dados = (log.dados_novos as any) || {};
       if (filtro === 'aprovacao') return dados.aprovado_rh || dados.aprovado_gestor;
       if (filtro === 'criacao') return log.acao === 'INSERT';
       if (filtro === 'alteracao') return log.acao === 'UPDATE' && !dados.aprovado_rh && !dados.aprovado_gestor;
@@ -64,29 +62,25 @@ export function FeriasAuditTimeline({ solicitacaoId }: FeriasAuditTimelineProps)
     });
   }, [logs, filtro]);
 
-  if (isLoading)
-    return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-6 w-6 animate-spin text-primary/50" />
-      </div>
-    );
+  if (isLoading) return (
+    <div className="flex items-center justify-center p-8">
+      <Loader2 className="h-6 w-6 animate-spin text-primary/50" />
+    </div>
+  );
 
-  const getIcon = (acao: string | null, dados: DadosAuditoriaFerias) => {
+  const getIcon = (acao: string, dados: any) => {
     if (dados?.aprovado_rh || dados?.aprovado_gestor) return <CheckCircle2 className="h-4 w-4 text-green-500" />;
     if (dados?.status === 'rejeitada') return <Shield className="h-4 w-4 text-destructive" />;
     switch (acao) {
-      case 'INSERT':
-        return <Clock className="h-4 w-4 text-amber-500" />;
-      case 'UPDATE':
-        return <History className="h-4 w-4 text-primary" />;
-      default:
-        return <History className="h-4 w-4 text-muted-foreground" />;
+      case 'INSERT': return <Clock className="h-4 w-4 text-amber-500" />;
+      case 'UPDATE': return <History className="h-4 w-4 text-primary" />;
+      default: return <History className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
-  const formatPayload = (log: AuditoriaRegistro) => {
+  const formatPayload = (log: any) => {
     try {
-      const dados = dadosDe(log);
+      const dados = (log.dados_novos as any) || {};
       if (dados.aprovado_rh) return 'Aprovação final confirmada pelo RH';
       if (dados.aprovado_gestor) return 'Solicitação aprovada pelo gestor direto';
       if (dados.enviado_contabilidade) return 'Enviado para processamento na contabilidade';
@@ -102,18 +96,10 @@ export function FeriasAuditTimeline({ solicitacaoId }: FeriasAuditTimelineProps)
     <div className="space-y-4">
       <Tabs value={filtro} onValueChange={setFiltro} className="w-full">
         <TabsList className="grid grid-cols-4 bg-muted/50 rounded-xl h-8 p-1">
-          <TabsTrigger value="all" className="text-[10px] rounded-lg">
-            Tudo
-          </TabsTrigger>
-          <TabsTrigger value="criacao" className="text-[10px] rounded-lg">
-            Criação
-          </TabsTrigger>
-          <TabsTrigger value="aprovacao" className="text-[10px] rounded-lg">
-            Aprovação
-          </TabsTrigger>
-          <TabsTrigger value="alteracao" className="text-[10px] rounded-lg">
-            Ajustes
-          </TabsTrigger>
+          <TabsTrigger value="all" className="text-[10px] rounded-lg">Tudo</TabsTrigger>
+          <TabsTrigger value="criacao" className="text-[10px] rounded-lg">Criação</TabsTrigger>
+          <TabsTrigger value="aprovacao" className="text-[10px] rounded-lg">Aprovação</TabsTrigger>
+          <TabsTrigger value="alteracao" className="text-[10px] rounded-lg">Ajustes</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -125,39 +111,31 @@ export function FeriasAuditTimeline({ solicitacaoId }: FeriasAuditTimelineProps)
         ) : (
           <div className="space-y-6 relative ml-2 before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-px before:bg-border/30">
             {/* Logs de Aprovação Real */}
-            {aprovacoes?.map((aprov) => (
+            {aprovacoes?.map((aprov: any) => (
               <div key={aprov.id} className="relative pl-12">
-                <div
-                  className={cn(
-                    'absolute left-0 p-2 rounded-full border shadow-xs z-10 transition-transform hover:scale-110 bg-background',
-                    aprov.status === 'aprovado'
-                      ? 'border-green-500 text-green-500'
-                      : 'border-destructive text-destructive'
-                  )}
-                >
+                <div className={cn(
+                  "absolute left-0 p-2 rounded-full border shadow-xs z-10 transition-transform hover:scale-110 bg-background",
+                  aprov.status === 'aprovado' ? "border-green-500 text-green-500" : "border-destructive text-destructive"
+                )}>
                   {aprov.status === 'aprovado' ? <Check className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
                 </div>
                 <div className="p-3 rounded-xl border border-border/20 bg-muted/10 hover:bg-muted/20 transition-colors space-y-2">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-bold font-display uppercase tracking-tight">Aprovação {aprov.nivel}</p>
+                    <p className="text-sm font-medium font-display uppercase tracking-tight">
+                      Aprovação {aprov.nivel}
+                    </p>
                     <span className="text-[10px] text-muted-foreground font-body bg-background px-1.5 py-0.5 rounded-md border border-border/40">
-                      {aprov.created_at
-                        ? format(new Date(aprov.created_at), "dd 'de' MMM, HH:mm", { locale: ptBR })
-                        : '—'}
+                      {format(new Date(aprov.created_at), "dd 'de' MMM, HH:mm", { locale: ptBR })}
                     </span>
                   </div>
-                  {aprov.observacao && (
-                    <p className="text-xs text-muted-foreground bg-background/50 p-2 rounded-lg italic">
-                      "{aprov.observacao}"
-                    </p>
-                  )}
+                  {aprov.observacao && <p className="text-xs text-muted-foreground bg-background/50 p-2 rounded-lg italic">"{aprov.observacao}"</p>}
                 </div>
               </div>
             ))}
 
             {/* Logs de Auditoria de Sistema */}
-            {filteredLogs.map((log, i) => {
-              const dados = dadosDe(log);
+            {filteredLogs.map((log: any, i: number) => {
+              const dados = (log.dados_novos as any) || {};
               return (
                 <div key={log.id} className="relative pl-12">
                   <div className="absolute left-0 p-2 rounded-full bg-background border border-border shadow-xs z-10 transition-transform hover:scale-110">
@@ -165,7 +143,7 @@ export function FeriasAuditTimeline({ solicitacaoId }: FeriasAuditTimelineProps)
                   </div>
                   <div className="p-3 rounded-xl border border-border/20 bg-muted/10 hover:bg-muted/20 transition-colors space-y-2">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm font-bold font-display">{formatPayload(log)}</p>
+                      <p className="text-sm font-medium font-display">{formatPayload(log)}</p>
                       <span className="text-[10px] text-muted-foreground font-body bg-background px-1.5 py-0.5 rounded-md border border-border/40">
                         {format(new Date(log.created_at), "dd 'de' MMM, HH:mm", { locale: ptBR })}
                       </span>
@@ -173,9 +151,7 @@ export function FeriasAuditTimeline({ solicitacaoId }: FeriasAuditTimelineProps)
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-body">
                         <User className="h-3 w-3" />
-                        <span className="truncate max-w-[150px]">
-                          {(log as { user_email?: string }).user_email || 'Sistema'}
-                        </span>
+                        <span className="truncate max-w-[150px]">{log.user_email || 'Sistema'}</span>
                       </div>
                     </div>
                   </div>

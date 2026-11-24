@@ -87,13 +87,11 @@ GRANT EXECUTE ON FUNCTION public.empresa_do_colaborador(uuid) TO authenticated, 
 DROP POLICY IF EXISTS "tenant_holerites" ON public.holerites;
 DROP POLICY IF EXISTS "Colaboradores podem ver seus próprios holerites" ON public.holerites;
 
-DROP POLICY IF EXISTS "holerites_rh_manage" ON public.holerites;
 CREATE POLICY "holerites_rh_manage" ON public.holerites
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(public.empresa_do_colaborador(colaborador_id)))
   WITH CHECK (public.pode_gerir_rh(public.empresa_do_colaborador(colaborador_id)));
 
-DROP POLICY IF EXISTS "holerites_self_read" ON public.holerites;
 CREATE POLICY "holerites_self_read" ON public.holerites
   FOR SELECT TO authenticated
   USING (public.sou_o_colaborador(colaborador_id));
@@ -103,13 +101,11 @@ CREATE POLICY "holerites_self_read" ON public.holerites
 -- ============================================================
 DROP POLICY IF EXISTS "tenant_contas_bancarias" ON public.contas_bancarias;
 
-DROP POLICY IF EXISTS "contas_bancarias_rh_manage" ON public.contas_bancarias;
 CREATE POLICY "contas_bancarias_rh_manage" ON public.contas_bancarias
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(empresa_id))
   WITH CHECK (public.pode_gerir_rh(empresa_id));
 
-DROP POLICY IF EXISTS "contas_bancarias_self_read" ON public.contas_bancarias;
 CREATE POLICY "contas_bancarias_self_read" ON public.contas_bancarias
   FOR SELECT TO authenticated
   USING (public.sou_o_colaborador(colaborador_id));
@@ -119,13 +115,11 @@ CREATE POLICY "contas_bancarias_self_read" ON public.contas_bancarias
 -- ============================================================
 DROP POLICY IF EXISTS "tenant_historico_salarial" ON public.historico_salarial;
 
-DROP POLICY IF EXISTS "historico_salarial_rh_manage" ON public.historico_salarial;
 CREATE POLICY "historico_salarial_rh_manage" ON public.historico_salarial
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(empresa_id))
   WITH CHECK (public.pode_gerir_rh(empresa_id));
 
-DROP POLICY IF EXISTS "historico_salarial_self_read" ON public.historico_salarial;
 CREATE POLICY "historico_salarial_self_read" ON public.historico_salarial
   FOR SELECT TO authenticated
   USING (public.sou_o_colaborador(colaborador_id));
@@ -135,13 +129,11 @@ CREATE POLICY "historico_salarial_self_read" ON public.historico_salarial
 -- ============================================================
 DROP POLICY IF EXISTS "Emprestimos por empresa" ON public.emprestimos_consignados;
 
-DROP POLICY IF EXISTS "emprestimos_rh_manage" ON public.emprestimos_consignados;
 CREATE POLICY "emprestimos_rh_manage" ON public.emprestimos_consignados
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(empresa_id))
   WITH CHECK (public.pode_gerir_rh(empresa_id));
 
-DROP POLICY IF EXISTS "emprestimos_self_read" ON public.emprestimos_consignados;
 CREATE POLICY "emprestimos_self_read" ON public.emprestimos_consignados
   FOR SELECT TO authenticated
   USING (public.sou_o_colaborador(colaborador_id));
@@ -152,13 +144,11 @@ CREATE POLICY "emprestimos_self_read" ON public.emprestimos_consignados
 DROP POLICY IF EXISTS "tenant_documentos_colaborador" ON public.documentos_colaborador;
 DROP POLICY IF EXISTS "Colaboradores podem ver seus próprios documentos" ON public.documentos_colaborador;
 
-DROP POLICY IF EXISTS "documentos_colaborador_rh_manage" ON public.documentos_colaborador;
 CREATE POLICY "documentos_colaborador_rh_manage" ON public.documentos_colaborador
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(public.empresa_do_colaborador(colaborador_id)))
   WITH CHECK (public.pode_gerir_rh(public.empresa_do_colaborador(colaborador_id)));
 
-DROP POLICY IF EXISTS "documentos_colaborador_self_read" ON public.documentos_colaborador;
 CREATE POLICY "documentos_colaborador_self_read" ON public.documentos_colaborador
   FOR SELECT TO authenticated
   USING (public.sou_o_colaborador(colaborador_id));

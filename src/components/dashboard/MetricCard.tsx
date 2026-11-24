@@ -1,22 +1,36 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { AnimatedNumber } from './AnimatedNumber';
 import { MiniSparkline } from './MiniSparkline';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
+import { entradaCardGlobal } from '@/components/ui/entradaGlobal';
+import { CARD_INTERACAO, CARD_INTERACAO_ICONE } from '@/components/ui/interacao-cards';
 
 const MotionCard = motion.create(Card);
 
+/**
+ * ENTRADA DE CARD DO SISTEMA — `cardVariants` é, hoje, a RÉGUA GLOBAL.
+ *
+ * O objeto abaixo é literalmente `entradaCardGlobal`
+ * (`components/ui/entradaGlobal.ts`): fade de opacidade + subida de 14px, 520ms
+ * por card, 120ms entre o início de um card e o do próximo, `ease-out` puro —
+ * os números validados no Dashboard Executivo (a referência do sistema).
+ *
+ * O NOME foi mantido porque ~70 arquivos (Admissões, Desligamentos,
+ * Recrutamento, Colaboradores, Premiações, Ponto, Treinamentos…) o importam:
+ * trocar o import de todos eles não mudaria um pixel de animação, então não foi
+ * feito. Nenhum componente deve declarar números próprios de entrada — calibrar
+ * a cascata do app é mexer em `ui/entradaGlobal.ts`.
+ *
+ * A ÚNICA exceção do sistema é a área CONGELADA de Gestão de Desempenho
+ * (`avaliacao/entradaCards.tsx`), que fixa os seus números (20px / 0,4s /
+ * 0,08s) localmente, porque aquele movimento foi aprovado e protegido por
+ * `.clinerules` §1.
+ */
 // eslint-disable-next-line react-refresh/only-export-components
-export const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.08, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const },
-  }),
-};
+export const cardVariants: Variants = entradaCardGlobal;
 
 /**
  * Tom do ícone. Neutro por padrão (primary): vermelho fica reservado a risco e
@@ -84,6 +98,63 @@ interface MetricCardProps {
    * então nenhum call site existente muda de aparência.
    */
   decimals?: number;
+  /**
+   * Quando `true`, o card NÃO executa a entrada própria: monta já no estado final
+   * (`initial={false}`) e quem anima é o driver da página
+   * (`components/dashboard/entradaDashboard.ts` → `useEntradaCascataDashboard`),
+   * junto com TODOS os outros cards da tela, na ordem visual de leitura. Existe
+   * para que o Dashboard Principal tenha UMA animação por card — sem duas
+   * concorrendo pelo mesmo nó.
+   *
+   * Default `false`: os demais call sites usam a entrada padrão do sistema
+   * (`cardVariants` = régua global: 14px / 0,52 s / 0,12 s).
+   */
+  entradaExterna?: boolean;
+  /**
+   * Quando `true`, o card entra pela RÉGUA GLOBAL de animação
+   * (`components/ui/entradaGlobal.ts` → `CONFIG_ENTRADA_CARD_GLOBAL`: fade +
+   * subida de 14px, 520 ms, 120 ms entre cards, ease-out, sem escala/spring),
+   * informando a posição na fila em `indexForCascata`.
+   *
+   * Hoje é equivalente à entrada padrão (o `cardVariants` passou a SER a régua
+   * global); a prop continua existindo porque as telas já a usam e porque
+   * `indexForCascata` deixa a posição na fila explícita, sem depender do
+   * `index` histórico de cada tela.
+   *
+   * Default `false`.
+   */
+  animarEntrada?: boolean;
+  /**
+   * Posição do card na FILA global de entrada (0 = primeiro). Só tem efeito com
+   * `animarEntrada`. Sem valor, cai em `index` — que é o que as telas já
+   * numeravam.
+   */
+  indexForCascata?: number;
+  /**
+   * Variante COMPACTA — faixa de KPI de tela OPERACIONAL (Central de Ajustes).
+   *
+   * O card padrão é o do Dashboard Executivo: ícone de 36 px, valor em
+   * `text-data` (24 px) e linha de apoio, o que dá ~110–130 px de altura. Numa
+   * tela de trabalho — onde a lista de solicitações começa logo abaixo — esse
+   * volume empurra a tabela para fora da primeira dobra. A variante compacta
+   * mantém a MESMA peça (ícone em chip semântico, título, valor, tooltip,
+   * cascata de entrada e hover `card-interacao`) em 58–68 px:
+   *
+   *   [ícone 36]  Título        [ +20% ]
+   *               Valor
+   *
+   * Três decisões fecham essa altura:
+   *  · padding de 10 px (`px-2.5 py-2`) e `min-h-[62px]` — o piso da faixa;
+   *  · selo de variação na MESMA linha do título (`ml-auto`), e não absoluto no
+   *    canto — some a reserva de `pr-12` que encolhia o título;
+   *  · a linha de apoio sai de cena e continua no DOM em `sr-only`, porque é o
+   *    texto que explica o número para leitor de tela (a explicação do KPI
+   *    segue no `[i]` → `tooltip`).
+   *
+   * Nada de dado muda: valor, descrição e variação são os mesmos, no mesmo
+   * formato. Default `false`: nenhum call site existente muda de aparência.
+   */
+  compact?: boolean;
 }
 
 const defaultRoutes: Record<string, string> = {
@@ -110,30 +181,120 @@ export function MetricCard({
   vividRed = false,
   dense = false,
   decimals = 0,
+  entradaExterna = false,
+  animarEntrada = false,
+  indexForCascata,
+  compact = false,
 }: MetricCardProps) {
   const isPositive = trend && trend.value >= 0;
   const target = route ?? defaultRoutes[title];
   /** Tinta vermelha do card (chip + tendência) — variante vibrante em Admissões. */
-  // `--destructive-vivid` existe em src/index.css mas NAO esta registrado em
-  // tailwind.config.js, entao `text-destructive-vivid` nao gera CSS nenhum (a
-  // classe sai no HTML e nao pinta nada). Enquanto o token nao for registrado no
-  // tema, a forma com valor arbitrario e a unica que funciona.
-  const red = vividRed ? 'text-[hsl(var(--destructive-vivid))]' : 'text-destructive';
+  const red = vividRed ? 'text-destructive-vivid' : 'text-destructive';
   const chipTone =
-    tone === 'destructive' && vividRed
-      ? 'bg-[hsl(var(--destructive-vivid)/0.1)] text-[hsl(var(--destructive-vivid))]'
-      : toneStyles[tone];
+    tone === 'destructive' && vividRed ? 'bg-destructive-vivid/10 text-destructive-vivid' : toneStyles[tone];
+  /** Régua de entrada: a GLOBAL (padrão) ou, por compatibilidade, a mesma. */
+  const variantesEntrada = animarEntrada ? entradaCardGlobal : cardVariants;
+  /** Posição na fila: explícita (`indexForCascata`) ou o `index` histórico. */
+  const posicaoEntrada = indexForCascata ?? index;
+
+  /**
+   * VARIANTE COMPACTA — ver `compact` nas props.
+   *
+   * Retorno antecipado de propósito: o corpo do card padrão (linhas abaixo)
+   * tem ~90 linhas de JSX validado por 70 telas e não deve ser reescrito para
+   * hospedar uma condicional. O invólucro (`MotionCard` + entrada + hover +
+   * clique) é IDÊNTICO nos dois caminhos — o que muda é só o conteúdo interno.
+   */
+  if (compact) {
+    return (
+      <MotionCard
+        custom={posicaoEntrada}
+        variants={variantesEntrada}
+        initial={entradaExterna ? false : 'hidden'}
+        animate="visible"
+        className={cn(
+          'group relative h-full min-h-[62px] overflow-hidden border border-border/60',
+          CARD_INTERACAO,
+          'rounded-xl',
+          target && 'cursor-pointer',
+          className
+        )}
+        onClick={() => {
+          if (target) window.location.assign(target);
+        }}
+      >
+        <CardContent className="relative flex h-full items-center gap-2 px-2.5 py-2">
+          {/* Ícone no chip semântico do tom — bloco de 36 px (a faixa pede
+              36–40 px) com raio de card pequeno, e não círculo: em 62 px de
+              altura o círculo dava ao KPI cara de avatar de lista. */}
+          <div
+            className={cn('grid h-9 w-9 shrink-0 place-items-center rounded-[10px]', CARD_INTERACAO_ICONE, chipTone)}
+          >
+            <Icon className="h-4 w-4" />
+          </div>
+
+          <div className="min-w-0 flex-1">
+            {/* Título e selo na MESMA linha: o percentual fica no canto superior
+                direito sem `absolute` e sem reserva de padding — não há como o
+                título passar por baixo dele, ele apenas trunca. */}
+            <div className="flex items-center gap-1">
+              <p className="flex min-w-0 items-center gap-1 text-[10.5px] leading-tight tracking-wide text-muted-foreground normal-case">
+                <span className="truncate">{title}</span>
+                {tooltip && (
+                  <span className="shrink-0" onClick={(e) => e.stopPropagation()}>
+                    <InfoTooltip content={tooltip} />
+                  </span>
+                )}
+              </p>
+              {trend && (
+                <span
+                  className={cn(
+                    'ml-auto inline-flex shrink-0 items-center rounded-full px-1.5 py-px text-[9.5px] font-semibold tabular-nums',
+                    isPositive ? 'bg-success/15 text-success' : `bg-destructive/15 ${red}`
+                  )}
+                >
+                  {isPositive ? <ArrowUpRight className="h-2.5 w-2.5" /> : <ArrowDownRight className="h-2.5 w-2.5" />}
+                  {Math.abs(trend.value)}%
+                </span>
+              )}
+            </div>
+            {/* Valor em destaque (21 px) em UMA linha: `leading-none` mantém a
+                faixa em 62 px mesmo com o selo ao lado do título. */}
+            <div className="mt-0.5 text-[21px] leading-none font-semibold tracking-tight text-foreground tabular-nums">
+              {rawValue !== undefined ? (
+                <AnimatedNumber
+                  value={rawValue}
+                  decimals={decimals}
+                  format={
+                    formatFn ||
+                    (typeof value === 'string' && value.includes('R$') ? (n) => formatCurrency(n) : undefined)
+                  }
+                />
+              ) : (
+                value
+              )}
+            </div>
+            {/* Linha de apoio: NÃO é desenhada no compacto (a referência mostra
+                só título + valor + variação). O texto continua no DOM em
+                `sr-only` — é ele que explica o número para leitor de tela — e o
+                `[i]` ao lado do título segue com a explicação do KPI. */}
+            {description && <span className="sr-only">{description}</span>}
+          </div>
+        </CardContent>
+      </MotionCard>
+    );
+  }
 
   return (
     <MotionCard
-      custom={index}
-      variants={cardVariants}
-      initial="hidden"
+      custom={posicaoEntrada}
+      variants={variantesEntrada}
+      initial={entradaExterna ? false : 'hidden'}
       animate="visible"
-      whileHover={{ y: -2, transition: { duration: 0.2 } }}
       className={cn(
-        'group relative h-full overflow-hidden border border-border/60 hover:border-primary/40',
-        'transition-all duration-500 rounded-xl',
+        'group relative h-full overflow-hidden border border-border/60',
+        CARD_INTERACAO,
+        'rounded-xl',
         target && 'cursor-pointer',
         className
       )}
@@ -142,12 +303,7 @@ export function MetricCard({
       }}
     >
       <CardContent className="relative flex h-full items-center gap-2.5 p-3">
-        <div
-          className={cn(
-            'grid h-9 w-9 shrink-0 place-items-center rounded-full transition-transform duration-300 group-hover:scale-105',
-            chipTone
-          )}
-        >
+        <div className={cn('grid h-9 w-9 shrink-0 place-items-center rounded-full', CARD_INTERACAO_ICONE, chipTone)}>
           <Icon className="h-4 w-4" />
         </div>
 
@@ -163,19 +319,13 @@ export function MetricCard({
               </span>
             )}
           </p>
-          {/* `title`: se mesmo assim a largura não bastar, o truncate deixa de
-              esconder o número — ele aparece inteiro ao passar o mouse. */}
-          <div
-            className={cn('text-data truncate', dense ? 'mt-1' : 'mt-1.5')}
-            title={typeof value === 'string' || typeof value === 'number' ? String(value) : undefined}
-          >
+          <div className={cn('text-data truncate', dense ? 'mt-1' : 'mt-1.5')}>
             {rawValue !== undefined ? (
               <AnimatedNumber
                 value={rawValue}
                 decimals={decimals}
                 format={
-                  formatFn ||
-                  (typeof value === 'string' && value.includes('R$') ? (n) => formatCurrency(n, decimals) : undefined)
+                  formatFn || (typeof value === 'string' && value.includes('R$') ? (n) => formatCurrency(n) : undefined)
                 }
               />
             ) : (
@@ -234,30 +384,18 @@ export function MetricCard({
         </div>
 
         {sparkline && sparkline.length > 0 && (
-          // O valor é o produto do cartão; a sparkline é acessório. Na faixa
-          // 4-up do Dashboard (`lg:grid-cols-4`) com a sidebar de 256px, o
-          // cartão tem ~168px em 1024px: ícone (36) + paddings/gaps (44) + os
-          // 80px fixos da sparkline não deixavam largura para o número, e a
-          // folha mensal saía como reticências. Entra só a partir de `2xl`, e
-          // aí mesmo pode encolher (sem `shrink-0`) — a coluna de texto tem
-          // `flex-1` com base 0, então o encolhimento recai todo aqui.
-          <MiniSparkline
-            data={sparkline}
-            className="hidden min-w-0 opacity-60 transition-opacity group-hover:opacity-100 2xl:block"
-          />
+          <MiniSparkline data={sparkline} className="opacity-60 group-hover:opacity-100 transition-opacity shrink-0" />
         )}
       </CardContent>
     </MotionCard>
   );
 }
 
-// `decimals` vem do card: com 0 (padrão histórico) o valor sai inteiro; com 2
-// os centavos são preservados — senão `R$ 1.234,56` era exibido como `R$ 1.235`.
-function formatCurrency(value: number, decimals = 0): string {
+function formatCurrency(value: number): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(value);
 }

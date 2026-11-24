@@ -6,15 +6,16 @@ import {
   construirConversoes,
   construirEvolucao,
   construirFunil,
-  contarForaDasEtapas,
+  construirIndicadores,
   formatarPercentual,
 } from '../analyticsComum';
 
 /**
- * Fixture LOCAL com o MESMO recorte do mock demonstrativo (12 candidaturas,
- * 5 vagas, 10 candidatos, datas de junho a setembro/2026). Ela existe para
- * provar as derivações com números conhecidos — o mock da aplicação não é
- * alterado e continua sendo a fonte da vitrine.
+ * Fixture LOCAL com o recorte CONGELADO de 12 candidaturas, 5 vagas e 10
+ * candidatos (datas de junho a setembro/2026). Ela existe para provar as
+ * derivações com números conhecidos e NÃO depende do mock demonstrativo — que
+ * é a vitrine e pode mudar (hoje são 18 candidaturas e 18 candidatos) sem
+ * reescrever estas expectativas.
  */
 const iso = (ymd: string) => `${ymd}T12:00:00Z`;
 
@@ -58,41 +59,11 @@ function candidatos(): CandidatoRow[] {
 
 function vagas(): VagaRow[] {
   return [
-    criarVaga({
-      id: 'vaga-1',
-      titulo: 'Desenvolvedor(a) Full Stack Sênior',
-      status: 'aberta',
-      data_abertura: '2026-08-01',
-      created_at: iso('2026-08-01'),
-    }),
-    criarVaga({
-      id: 'vaga-2',
-      titulo: 'Analista de RH Pleno',
-      status: 'aberta',
-      data_abertura: '2026-08-10',
-      created_at: iso('2026-08-10'),
-    }),
-    criarVaga({
-      id: 'vaga-3',
-      titulo: 'Assistente Administrativo',
-      status: 'aberta',
-      data_abertura: '2026-07-15',
-      created_at: iso('2026-07-15'),
-    }),
-    criarVaga({
-      id: 'vaga-4',
-      titulo: 'Vendedor(a) Interno',
-      status: 'fechada',
-      data_abertura: '2026-06-01',
-      created_at: iso('2026-06-01'),
-    }),
-    criarVaga({
-      id: 'vaga-5',
-      titulo: 'Analista de Dados',
-      status: 'aberta',
-      data_abertura: '2026-09-01',
-      created_at: iso('2026-09-01'),
-    }),
+    criarVaga({ id: 'vaga-1', titulo: 'Desenvolvedor(a) Full Stack Sênior', status: 'aberta', data_abertura: '2026-08-01', created_at: iso('2026-08-01') }),
+    criarVaga({ id: 'vaga-2', titulo: 'Analista de RH Pleno', status: 'aberta', data_abertura: '2026-08-10', created_at: iso('2026-08-10') }),
+    criarVaga({ id: 'vaga-3', titulo: 'Assistente Administrativo', status: 'aberta', data_abertura: '2026-07-15', created_at: iso('2026-07-15') }),
+    criarVaga({ id: 'vaga-4', titulo: 'Vendedor(a) Interno', status: 'fechada', data_abertura: '2026-06-01', created_at: iso('2026-06-01') }),
+    criarVaga({ id: 'vaga-5', titulo: 'Analista de Dados', status: 'aberta', data_abertura: '2026-09-01', created_at: iso('2026-09-01') }),
   ];
 }
 
@@ -181,8 +152,16 @@ describe('analyticsComum', () => {
     expect(atencao).toHaveLength(3);
     expect(atencao[0].titulo).toContain('4 candidatos');
     expect(atencao[0].titulo).toContain('Triagem');
-    expect(atencao.some((alerta) => alerta.titulo.includes('Assistente Administrativo'))).toBe(true);
-    expect(atencao.some((alerta) => alerta.titulo.includes('Proposta → Contratado'))).toBe(true);
+    // O resumo do card é CURTO: o nome da vaga e a passagem do funil vivem no
+    // `detalhe` (tooltip / leitura detalhada), não no título truncado.
+    expect(atencao.some((alerta) => alerta.detalhe.includes('Assistente Administrativo'))).toBe(true);
+    expect(atencao.some((alerta) => alerta.detalhe.includes('Proposta → Contratado'))).toBe(true);
+    expect(atencao.every((alerta) => alerta.titulo.length <= 34 && alerta.descricao.length <= 36)).toBe(true);
+    expect(atencao.map((alerta) => alerta.descricao)).toEqual([
+      'Priorize a análise desta etapa.',
+      'Revise o andamento da vaga.',
+      'Revise os critérios de aprovação.',
+    ]);
   });
 
   it('calcula conversão e volume por vaga', () => {
@@ -197,25 +176,20 @@ describe('analyticsComum', () => {
     expect(indicadores.map((indicador) => indicador.label)).toEqual([
       'Tempo médio de contratação',
       'Candidatos por vaga',
-      'Desistências e cancelamentos',
-      'Contratados sobre propostas na base',
+      'Taxa de desistência',
+      'Taxa de aceitação de proposta',
     ]);
-    // A única contratação da base entrou e foi movida em 05/08 — zero dia, e
-    // não os 32 dias até a referência da base (05/08 → 06/09).
-    expect(indicadores[0].valor).toBe('0 dias');
+    expect(indicadores[0].valor).toBe('32 dias');
     expect(indicadores[1].valor).toBe('2,5');
     expect(indicadores[2].valor).toBe('0,0%');
     expect(indicadores[3].valor).toBe('33,3%');
-  });
-
-  it('mede o tempo de contratação até a movimentação da contratação', () => {
-    const base = candidaturas();
-    const contratada = base.find((candidatura) => candidatura.etapa === 'contratado')!;
-    contratada.created_at = iso('2026-07-01');
-    contratada.updated_at = iso('2026-07-31');
-    const analytics = construirAnalytics({ candidaturas: base, vagas: vagas(), candidatos: candidatos() });
-    // 30 dias entre entrada e contratação; a referência da base (06/09) não entra.
-    expect(analytics.indicadores[0].valor).toBe('30 dias');
+    // Variação das MESMAS réguas na janela de 45 dias: só há base anterior para
+    // candidatos por vaga (2 → 2,3) e desistência (0% → 0%); as outras duas não
+    // têm amostra nas duas janelas, então não exibem selo.
+    expect(indicadores[0].tendencia).toBeNull();
+    expect(indicadores[1].tendencia?.texto).toBe('+16,7%');
+    expect(indicadores[2].tendencia).toMatchObject({ texto: '0,0 p.p.', neutra: true });
+    expect(indicadores[3].tendencia).toBeNull();
   });
 
   it('compara KPIs com a janela anterior usando os dados da base', () => {
@@ -230,6 +204,91 @@ describe('analyticsComum', () => {
     expect(conversaoKpi.tendencia?.texto).toBe('+11,1 p.p.');
   });
 
+  it('compara os indicadores com a janela anterior na mesma régua', () => {
+    // Base dedicada: o valor grande continua sendo a foto de tudo; a variação
+    // vem do que aconteceu em cada janela de 45 dias.
+    // Referência 10/09/2026 → atual [27/07, 11/09) · anterior [12/06, 27/07).
+    const referencia = new Date(iso('2026-09-10'));
+    const base = criarCandidatura().candidato as CandidatoRow;
+
+    const candidato = (id: string, criadoEm: string): CandidatoRow => ({
+      ...base,
+      id,
+      nome: `Candidato ${id}`,
+      created_at: iso(criadoEm),
+      updated_at: iso(criadoEm),
+    });
+
+    const vaga = (id: string, abertaEm: string): VagaRow =>
+      criarVaga({ id, titulo: `Vaga ${id}`, status: 'aberta', data_abertura: abertaEm, created_at: iso(abertaEm) });
+
+    const processo = (
+      id: string,
+      etapa: CandidaturaComRelacoes['etapa'],
+      status: string,
+      entradaEm: string,
+      movimentadoEm: string
+    ): CandidaturaComRelacoes =>
+      criarCandidatura({ id, etapa, status, created_at: iso(entradaEm), updated_at: iso(movimentadoEm) });
+
+    const indicadores = construirIndicadores({
+      referencia,
+      candidatos: [
+        candidato('c1', '2026-08-01'),
+        candidato('c2', '2026-08-15'),
+        candidato('c3', '2026-09-01'),
+        candidato('c4', '2026-07-01'),
+      ],
+      vagas: [vaga('v1', '2026-08-05'), vaga('v2', '2026-09-02'), vaga('v3', '2026-07-01')],
+      candidaturas: [
+        // Janela atual: uma contratação concluída em 21 dias e uma desistência.
+        processo('p1', 'contratado', 'contratado', '2026-07-20', '2026-08-10'),
+        processo('p2', 'triagem', 'desistente', '2026-08-12', '2026-08-12'),
+        // Janela anterior: uma contratação em 20 dias e uma proposta emitida.
+        processo('p3', 'contratado', 'contratado', '2026-06-20', '2026-07-10'),
+        processo('p4', 'proposta', 'em_andamento', '2026-07-05', '2026-07-05'),
+      ],
+    });
+
+    // 21 dias na janela atual × 20 dias na anterior → +1 dia (piorou).
+    expect(indicadores[0].tendencia).toMatchObject({ texto: '+1 dia', positiva: false, neutra: false });
+    // 3 candidatos / 2 vagas abertas × 1 candidato / 1 vaga → +50%.
+    expect(indicadores[1].tendencia).toMatchObject({ texto: '+50,0%', positiva: true });
+    // 1 desistência em 2 processos (50%) × 0 em 2 (0%) → +50 p.p. (piorou).
+    expect(indicadores[2].tendencia).toMatchObject({ texto: '+50,0 p.p.', positiva: false });
+    // 1 contratado em 1 proposta (100%) × 1 em 2 (50%) → +50 p.p. (melhorou).
+    expect(indicadores[3].tendencia).toMatchObject({ texto: '+50,0 p.p.', positiva: true });
+    expect(indicadores.every((indicador) => indicador.tendencia?.label.includes('45 dias anteriores'))).toBe(true);
+  });
+
+  it('não inventa variação dos indicadores quando falta a janela anterior', () => {
+    const referencia = new Date(iso('2026-09-05'));
+    const base = criarCandidatura().candidato as CandidatoRow;
+    const indicadores = construirIndicadores({
+      referencia,
+      candidatos: [{ ...base, id: 'cand-novo', created_at: iso('2026-09-01'), updated_at: iso('2026-09-01') }],
+      vagas: [
+        criarVaga({
+          id: 'vaga-nova',
+          titulo: 'Vaga nova',
+          status: 'aberta',
+          data_abertura: '2026-09-01',
+          created_at: iso('2026-09-01'),
+        }),
+      ],
+      candidaturas: [
+        criarCandidatura({
+          id: 'candt-nova',
+          etapa: 'contratado',
+          status: 'contratado',
+          created_at: iso('2026-08-30'),
+          updated_at: iso('2026-09-01'),
+        }),
+      ],
+    });
+    expect(indicadores.map((indicador) => indicador.tendencia)).toEqual([null, null, null, null]);
+  });
+
   it('não quebra nem inventa número com a base vazia', () => {
     const analytics = construirAnalytics({ candidaturas: [], vagas: [], candidatos: [] });
     expect(analytics.funil.map((item) => item.total)).toEqual([0, 0, 0, 0, 0]);
@@ -238,16 +297,9 @@ describe('analyticsComum', () => {
     expect(analytics.origens).toEqual([]);
     expect(analytics.atencao).toEqual([]);
     expect(analytics.vagas).toEqual([]);
-    expect(analytics.foraDasEtapas).toBe(0);
-    // Vagas/candidatos/processos são CONTAGENS (zero é verdade); a conversão é
-    // uma razão sem denominador — afirmar "0,0% · 0 de 0" seria invenção.
-    expect(analytics.kpis.slice(0, 3).every((kpi) => Number.isFinite(kpi.valor))).toBe(true);
-    expect(analytics.kpis[3].valor).toBeNull();
-    expect(analytics.kpis[3].exibicao).toBe('—');
-    expect(analytics.kpis[3].apoio).toBe('Nenhuma candidatura na base');
+    expect(analytics.kpis.every((kpi) => Number.isFinite(kpi.valor))).toBe(true);
     expect(analytics.indicadores[0].valor).toBe('—');
-    expect(analytics.indicadores[2].valor).toBe('—');
-    expect(analytics.indicadores[2].apoio).toBe('Nenhuma candidatura na base');
+    expect(analytics.indicadores[2].valor).toBe('0,0%');
   });
 
   it('não exibe variação quando não há base de comparação', () => {
@@ -261,73 +313,5 @@ describe('analyticsComum', () => {
     });
     expect(analytics.kpis[0].tendencia?.texto).toBe('+1');
     expect(analytics.kpis[0].tendencia?.label).toBe('novas no período');
-    // A janela anterior não teve NENHUMA candidatura: sem amostra não há
-    // "+X p.p." contra um período que não existiu.
-    expect(analytics.kpis[3].tendencia).toBeNull();
-  });
-
-  it('normaliza o vocabulário real do banco (teste_tecnico e contratacao)', () => {
-    const doBanco = ['triagem', 'entrevista', 'teste_tecnico', 'proposta', 'contratacao'].map((etapa, indice) =>
-      criarCandidatura({
-        id: `banco-${indice + 1}`,
-        etapa,
-        status: 'ativo',
-        created_at: iso('2026-08-10'),
-        updated_at: iso('2026-08-10'),
-      })
-    );
-    const funil = construirFunil(doBanco);
-    // Sem normalização o funil fechava 3 de 5 e os contratados liam zero.
-    expect(funil.map((item) => item.total)).toEqual([1, 1, 1, 1, 1]);
-    expect(contarForaDasEtapas(doBanco)).toBe(0);
-
-    const analytics = construirAnalytics({ candidaturas: doBanco, vagas: [], candidatos: [] });
-    expect(analytics.foraDasEtapas).toBe(0);
-    expect(analytics.kpis[3].exibicao).toBe('20,0%');
-    expect(analytics.tempos[4].amostra).toBe(1);
-  });
-
-  it('declara a etapa desconhecida em vez de descartá-la', () => {
-    const base = [
-      criarCandidatura({
-        id: 'fora-1',
-        etapa: 'triagem',
-        created_at: iso('2026-08-10'),
-        updated_at: iso('2026-08-10'),
-      }),
-      criarCandidatura({
-        id: 'fora-2',
-        etapa: 'banco_de_talentos',
-        created_at: iso('2026-08-10'),
-        updated_at: iso('2026-08-10'),
-      }),
-    ];
-    const analytics = construirAnalytics({ candidaturas: base, vagas: [], candidatos: [] });
-    expect(analytics.totalCandidaturas).toBe(2);
-    expect(analytics.funil.reduce((soma, item) => soma + item.total, 0)).toBe(1);
-    expect(analytics.foraDasEtapas).toBe(1);
-  });
-
-  it('preserva a vaga sem status fora da contagem de abertas', () => {
-    const semStatus = criarVaga({ id: 'vaga-nula', titulo: 'Vaga sem status', status: null });
-    const analytics = construirAnalytics({
-      candidaturas: [],
-      vagas: [vagas()[0], semStatus],
-      candidatos: [],
-    });
-    expect(analytics.vagas.find((vaga) => vaga.id === 'vaga-nula')?.status).toBeNull();
-    // O KPI conta só `status === 'aberta'`: os dois painéis não podem discordar.
-    expect(analytics.kpis[0].valor).toBe(1);
-  });
-
-  it('não conta duas vezes quem está em proposta e já é contratado', () => {
-    const base = [
-      criarCandidatura({ id: 'dupla-1', etapa: 'proposta', status: 'contratado' }),
-      criarCandidatura({ id: 'dupla-2', etapa: 'proposta', status: 'em_andamento' }),
-    ];
-    const indicadores = construirAnalytics({ candidaturas: base, vagas: [], candidatos: [] }).indicadores;
-    // 1 contratado sobre (1 contratado + 1 em proposta), não sobre 3.
-    expect(indicadores[3].valor).toBe('50,0%');
-    expect(indicadores[3].apoio).toBe('1 de 2 (contratados + 1 em proposta agora)');
   });
 });

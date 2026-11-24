@@ -4,7 +4,6 @@ import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
-import { checkRateLimit } from '../_shared/rateLimit.ts';
 
 // Onda 23: rate limit hardening.
 // Bugs originais:
@@ -15,7 +14,7 @@ import { checkRateLimit } from '../_shared/rateLimit.ts';
 // server-side (limit ≤ 1000/janela, window ≤ 3600s), min = 1.
 
 const BodySchema = z.object({
-  key: z.string().min(1).max(128).regex(/^[a-zA-Z0-9:_.-]+$/, 'chave inválida'),
+  key: z.string().min(1).max(128).regex(/^[a-zA-Z0-9:_\-\.]+$/, 'chave inválida'),
   limit: z.number().int().min(1).max(1000).optional(),
   window_seconds: z.number().int().min(1).max(3600).optional(),
 });
@@ -24,6 +23,20 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
 
+const selfRateBuckets = new Map<string, { count: number; resetAt: number }>();
+const SELF_LIMIT = 30;
+const SELF_WINDOW = 60_000;
+
+function selfRateCheck(userId: string): boolean {
+  const now = Date.now();
+  const b = selfRateBuckets.get(userId);
+  if (!b || b.resetAt <= now) {
+    selfRateBuckets.set(userId, { count: 1, resetAt: now + SELF_WINDOW });
+    return true;
+  }
+  b.count++;
+  return b.count <= SELF_LIMIT;
+}
 
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') {
@@ -48,18 +61,7 @@ serve(async (req: Request): Promise<Response> => {
     }
     const userId = userData.user.id;
 
-    const admin = createClient(SUPABASE_URL, SERVICE_KEY, {
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
-
-    // Self-throttle do próprio endpoint — agora via RPC atômica (o bucket
-    // em memória anterior não era compartilhado entre isolates).
-    const self = await checkRateLimit(admin as never, {
-      key: `rateLimit:self:${userId}`,
-      limit: 30,
-      windowSec: 60,
-    });
-    if (!self.allowed) {
+    if (!selfRateCheck(userId)) {
       return new Response(JSON.stringify({
         success: false, error: 'Rate limit endpoint abuse detected',
       }), {
@@ -68,28 +70,52 @@ serve(async (req: Request): Promise<Response> => {
       });
     }
 
-    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
-    if (_pe) return _pe;
+    const { body: _pb } = await parseJsonBody(req);
     const parsed = BodySchema.safeParse(_pb ?? {});
-    if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
+    if (!parsed.success) return createValidationErrorResponse(parsed.error);
 
     const limit = parsed.data.limit ?? 100;
     const windowSec = parsed.data.window_seconds ?? 60;
     // Namespacing forçado: quota é sempre por usuário
     const key = `u:${userId}:${parsed.data.key}`;
 
-    // Decisão atômica via edge_rate_limit_check (pg_advisory_xact_lock) —
-    // o SELECT+INSERT anterior tinha corrida TOCTOU entre chamadas
-    // concorrentes da mesma chave.
-    const rl = await checkRateLimit(admin as never, { key, limit, windowSec });
-    const allowed = rl.allowed;
+    const admin = createClient(SUPABASE_URL, SERVICE_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+
+    const now = Math.floor(Date.now() / 1000);
+    const windowStart = now - windowSec;
+
+    // Best-effort cleanup — não bloqueia decisão se falhar
+    admin.from('rate_limits').delete().lt('timestamp', windowStart).then(
+      () => {}, (e) => console.warn('rate_limits cleanup falhou:', e?.message),
+    );
+
+    const { count, error: countError } = await admin
+      .from('rate_limits')
+      .select('id', { count: 'exact', head: true })
+      .eq('key', key)
+      .gte('timestamp', windowStart);
+
+    if (countError) {
+      await captureException(countError, { function: 'rateLimit' });
+      return createErrorResponse('Falha ao verificar rate limit', 500, 'RATE_LIMIT_ERROR');
+    }
+
+    const currentCount = count ?? 0;
+    const allowed = currentCount < limit;
+
+    if (allowed) {
+      const { error: insErr } = await admin.from('rate_limits').insert({ key, timestamp: now });
+      if (insErr) console.warn('rate_limits insert falhou:', insErr.message);
+    }
 
     return new Response(
       JSON.stringify({
         success: true,
         allowed,
-        remaining: rl.remaining,
-        reset: rl.reset,
+        remaining: Math.max(0, limit - currentCount - (allowed ? 1 : 0)),
+        reset: windowStart + windowSec,
         limit,
         window_seconds: windowSec,
       }),

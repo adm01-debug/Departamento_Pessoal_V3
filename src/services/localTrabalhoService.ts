@@ -1,16 +1,18 @@
 import { BaseService } from './baseService';
-import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
+import { mockOr, getMockLocalTrabalho } from '@/mocks/colaboradoresMock';
 
-class LocalTrabalhoService extends BaseService<
-  Tables<'locais_trabalho'>,
-  Insertable<'locais_trabalho'>,
-  Updatable<'locais_trabalho'>
-> {
+class LocalTrabalhoService extends BaseService<any> {
   constructor() {
     super('locais_trabalho', {
       searchColumn: 'nome',
-      defaultOrderBy: 'nome',
+      defaultOrderBy: 'nome'
     });
+  }
+
+  async buscarPorId(id: string, empresaId?: string) {
+    const mock = mockOr(getMockLocalTrabalho(id));
+    if (mock) return mock;
+    return super.buscarPorId(id, empresaId);
   }
 }
 

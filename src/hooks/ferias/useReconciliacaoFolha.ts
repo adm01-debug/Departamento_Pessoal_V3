@@ -38,7 +38,7 @@ export function useReconciliacaoFolha() {
     staleTime: 60_000,
     queryFn: async (): Promise<ReconciliacaoRow[]> => {
       const { data, error } = await supabase
-        .from('v_ferias_folha_reconciliacao')
+        .from('v_ferias_folha_reconciliacao' as any)
         .select('*')
         .eq('empresa_id', empresaId!)
         .neq('situacao', 'ok')

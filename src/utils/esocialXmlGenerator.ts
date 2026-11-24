@@ -3,45 +3,17 @@
  * Gera a estrutura básica seguindo os esquemas XSD do governo
  */
 
-import type { Tables } from '@/integrations/supabase/types';
-
-export interface ESocialDados {
-  iniValid?: string;
-  classTrib?: string;
-  natJurid?: string;
-  indCoop?: string;
-  indConstr?: string;
-  indDesFolha?: string;
-  indOptRegEletron?: string;
-  indEntidadeEducacional?: string;
-  indEtt?: string;
-  contato?: { nome?: string; cpf?: string };
-  cpfTrab?: string;
-  nmTrab?: string;
-  sexo?: string;
-  racaCor?: string;
-  estCiv?: string;
-  grauInstr?: string;
-  dtNascto?: string;
-  matricula?: string;
-  tpRegTrab?: string;
-  tpRegPrev?: string;
-  codCargo?: string;
-  vrSalFx?: number | string;
-  dtAdm?: string;
-}
-
 export interface ESocialXmlParams {
   tipo: string;
-  dados: ESocialDados;
-  empresa: Pick<Tables<'empresas'>, 'cnpj' | 'razao_social' | 'nome_fantasia' | 'telefone' | 'email'>;
+  dados: any;
+  empresa: any;
   ambiente?: '1' | '2'; // 1-Produção, 2-Produção Restrita (Testes)
 }
 
 export function gerarXmlESocial({ tipo, dados, empresa, ambiente = '2' }: ESocialXmlParams): string {
   const now = new Date().toISOString();
-  const id = `ID1${(empresa.cnpj ?? '').replace(/\D/g, '').padStart(14, '0')}${now.replace(/[-T:.Z]/g, '').slice(0, 14)}`;
-
+  const id = `ID1${empresa.cnpj.replace(/\D/g, '').padStart(14, '0')}${now.replace(/[-T:.Z]/g, '').slice(0, 14)}`;
+  
   let content: string;
 
   switch (tipo) {
@@ -61,7 +33,7 @@ export function gerarXmlESocial({ tipo, dados, empresa, ambiente = '2' }: ESocia
 </eSocial>`;
 }
 
-function generateS1000(id: string, dados: ESocialDados, empresa: ESocialXmlParams['empresa'], ambiente: string) {
+function generateS1000(id: string, dados: any, empresa: any, ambiente: string) {
   return `
   <evtInfoEmpregador Id="${id}">
     <ideEvento>
@@ -71,7 +43,7 @@ function generateS1000(id: string, dados: ESocialDados, empresa: ESocialXmlParam
     </ideEvento>
     <ideEmpregador>
       <tpInsc>1</tpInsc>
-      <nrInsc>${(empresa.cnpj ?? '').replace(/\D/g, '')}</nrInsc>
+      <nrInsc>${empresa.cnpj.replace(/\D/g, '')}</nrInsc>
     </ideEmpregador>
     <infoEmpregador>
       <inclusao>
@@ -100,7 +72,7 @@ function generateS1000(id: string, dados: ESocialDados, empresa: ESocialXmlParam
   </evtInfoEmpregador>`;
 }
 
-function generateS2200(id: string, dados: ESocialDados, empresa: ESocialXmlParams['empresa'], ambiente: string) {
+function generateS2200(id: string, dados: any, empresa: any, ambiente: string) {
   return `
   <evtAdmissao Id="${id}">
     <ideEvento>
@@ -111,10 +83,10 @@ function generateS2200(id: string, dados: ESocialDados, empresa: ESocialXmlParam
     </ideEvento>
     <ideEmpregador>
       <tpInsc>1</tpInsc>
-      <nrInsc>${(empresa.cnpj ?? '').replace(/\D/g, '')}</nrInsc>
+      <nrInsc>${empresa.cnpj.replace(/\D/g, '')}</nrInsc>
     </ideEmpregador>
     <trabalhador>
-      <cpfTrab>${(dados.cpfTrab ?? '').replace(/\D/g, '')}</cpfTrab>
+      <cpfTrab>${dados.cpfTrab.replace(/\D/g, '')}</cpfTrab>
       <nmTrab>${dados.nmTrab}</nmTrab>
       <sexo>${dados.sexo || 'M'}</sexo>
       <racaCor>${dados.racaCor || '1'}</racaCor>
@@ -146,13 +118,7 @@ function generateS2200(id: string, dados: ESocialDados, empresa: ESocialXmlParam
   </evtAdmissao>`;
 }
 
-function generateGeneric(
-  id: string,
-  _tipo: string,
-  dados: ESocialDados,
-  empresa: ESocialXmlParams['empresa'],
-  ambiente: string
-) {
+function generateGeneric(id: string, _tipo: string, dados: any, empresa: any, ambiente: string) {
   return `
   <evento Id="${id}">
     <ideEvento>
@@ -162,7 +128,7 @@ function generateGeneric(
     </ideEvento>
     <ideEmpregador>
       <tpInsc>1</tpInsc>
-      <nrInsc>${(empresa.cnpj ?? '').replace(/\D/g, '')}</nrInsc>
+      <nrInsc>${empresa.cnpj.replace(/\D/g, '')}</nrInsc>
     </ideEmpregador>
     <dados>
       ${JSON.stringify(dados)}

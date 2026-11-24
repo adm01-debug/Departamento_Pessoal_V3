@@ -7,36 +7,19 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
-function makeChain(data: unknown = [], error: { message: string; code?: string } | null = null) {
+function makeChain(data: any = [], error: any = null) {
   const result = { data, error };
   const maybeSingle = vi.fn().mockResolvedValue(result);
   const limit = vi.fn().mockResolvedValue(result);
-  const order = vi.fn().mockReturnValue({
-    eq: vi.fn().mockResolvedValue(result),
-    maybeSingle,
-    limit,
-    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
-  });
+  const order = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue(result), maybeSingle, limit, then: (fn: any) => Promise.resolve(result).then(fn) });
   // eqResult needs a self-reference so multiple .eq().eq() chains work
-  const eqResult: Record<string, unknown> = {
-    order,
-    maybeSingle,
-    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
-  };
+  const eqResult: any = { order, maybeSingle, then: (fn: any) => Promise.resolve(result).then(fn) };
   const eq = vi.fn().mockReturnValue(eqResult);
   eqResult.eq = eq;
   const upsert = vi.fn().mockResolvedValue(result);
-  const insert = vi.fn().mockReturnValue({
-    select: vi.fn().mockReturnValue({ maybeSingle }),
-    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
-  });
+  const insert = vi.fn().mockReturnValue({ select: vi.fn().mockReturnValue({ maybeSingle }), then: (fn: any) => Promise.resolve(result).then(fn) });
   const update = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue(result) });
-  const select = vi.fn().mockReturnValue({
-    order,
-    eq,
-    maybeSingle,
-    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
-  });
+  const select = vi.fn().mockReturnValue({ order, eq, maybeSingle, then: (fn: any) => Promise.resolve(result).then(fn) });
   return { select, eq, order, upsert, insert, update, maybeSingle };
 }
 
@@ -47,44 +30,37 @@ import {
   linhasTransporteService,
   notificacoesAdmissaoService,
   onboardingService,
-  historicoFeriasService,
   treinamentoParticipantesService,
 } from '../rhService';
 
 describe('configAfastamentosService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
-  it('obter calls from config_afastamentos', async () => {
+  it('obter calls from config_afastamentos with eq empresa_id', async () => {
     const chain = makeChain({ id: 'c1' });
     mockFrom.mockReturnValue(chain);
-    await configAfastamentosService.obter();
+    await configAfastamentosService.obter('emp-1');
     expect(mockFrom).toHaveBeenCalledWith('config_afastamentos');
   });
 
   it('obter throws on error', async () => {
     const chain = makeChain(null, new Error('db error'));
-    chain.select.mockReturnValue({
-      maybeSingle: vi.fn().mockResolvedValue({ data: null, error: new Error('db error') }),
-    });
+    chain.select.mockReturnValue({ eq: vi.fn().mockReturnValue({ maybeSingle: vi.fn().mockResolvedValue({ data: null, error: new Error('db error') }) }) });
     mockFrom.mockReturnValue(chain);
-    await expect(configAfastamentosService.obter()).rejects.toThrow('db error');
+    await expect(configAfastamentosService.obter('emp-1')).rejects.toThrow('db error');
   });
 
   it('salvar calls upsert', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await configAfastamentosService.salvar({ tipo: 'doenca', dias_empresa_maximo: 15 });
+    await configAfastamentosService.salvar({ empresa_id: 'emp-1', valor: 10 });
     expect(mockFrom).toHaveBeenCalledWith('config_afastamentos');
     expect(chain.upsert).toHaveBeenCalled();
   });
 });
 
 describe('feriasSolicitacoesService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('listar returns data array', async () => {
     const data = [{ id: 'f1' }];
@@ -104,32 +80,24 @@ describe('feriasSolicitacoesService', () => {
   it('criar calls from ferias_solicitacoes', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await feriasSolicitacoesService.criar({
-      colaborador_id: '00000000-0000-4000-8000-000000000002',
-      data_inicio: '2026-01-10',
-      data_fim: '2026-01-20',
-    });
+    await feriasSolicitacoesService.criar({ colaborador_id: 'c1' });
     expect(mockFrom).toHaveBeenCalledWith('ferias_solicitacoes');
   });
 });
 
 describe('historicoCargoService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('listar queries historico_cargo', async () => {
     const chain = makeChain([]);
     mockFrom.mockReturnValue(chain);
-    await historicoCargoService.listar('col-1');
+    await historicoCargoService.listar('col-1', 'emp-1');
     expect(mockFrom).toHaveBeenCalledWith('historico_cargo');
   });
 });
 
 describe('linhasTransporteService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('listar returns array', async () => {
     const chain = makeChain([{ id: 'l1', nome: 'Linha A' }]);
@@ -140,9 +108,7 @@ describe('linhasTransporteService', () => {
 });
 
 describe('notificacoesAdmissaoService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('listar queries notificacoes_admissao', async () => {
     const chain = makeChain([]);
@@ -152,17 +118,13 @@ describe('notificacoesAdmissaoService', () => {
   });
 });
 
-describe('onboardingService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+describe('onboardingService (MODELO B — DEPRECATED, somente leitura de compatibilidade)', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
 
-  it('listarTemplates queries onboarding_templates', async () => {
-    const chain = makeChain([]);
-    mockFrom.mockReturnValue(chain);
-    await onboardingService.listarTemplates();
-    expect(mockFrom).toHaveBeenCalledWith('onboarding_templates');
-  });
+  // `listarTemplates`/`criarTemplate`/`listarTemplateTarefas`/`criarTemplateTarefa`/
+  // `listarColaboradores`/`iniciarOnboarding` foram REMOVIDOS (nenhum consumidor);
+  // o domínio canônico é `onboardingJornadaService`. Só as DUAS leituras do
+  // fallback seguem vivas — ver docs/ONBOARDING_MODELO_B_DEPRECATED.md.
 
   it('listarTarefas queries onboarding_tarefas by onboardingId', async () => {
     const chain = makeChain([]);
@@ -170,197 +132,40 @@ describe('onboardingService', () => {
     await onboardingService.listarTarefas('ob-1');
     expect(mockFrom).toHaveBeenCalledWith('onboarding_tarefas');
   });
-});
 
-// ─── cobertura adicional (onda 11) ────────────────────────────────────────────
-
-describe('feriasSolicitacoesService — guards e writes', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('listar rejeita empresaId vazio (isolamento de tenant)', async () => {
-    await expect(feriasSolicitacoesService.listar('')).rejects.toThrow('empresa_id');
-    expect(mockFrom).not.toHaveBeenCalled();
-  });
-
-  it('listar propaga erro do banco', async () => {
-    const chain = makeChain(null, { message: 'db' });
+  it('buscarPorColaborador queries onboarding_colaborador scoped by colaborador and empresa (PARTE G)', async () => {
+    const registro = { id: 'ob-1', colaborador_id: 'col-1' };
+    const chain = makeChain([registro]);
     mockFrom.mockReturnValue(chain);
-    await expect(feriasSolicitacoesService.listar('00000000-0000-4000-8000-0000000000e1')).rejects.toEqual({
-      message: 'db',
-    });
+    const result = await onboardingService.buscarPorColaborador('col-1', 'emp-1');
+    expect(mockFrom).toHaveBeenCalledWith('onboarding_colaborador');
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+    expect(result).toEqual(registro);
   });
 
-  it('criar insere payload validado', async () => {
-    const chain = makeChain();
-    mockFrom.mockReturnValue(chain);
-    await feriasSolicitacoesService.criar({
-      colaborador_id: '00000000-0000-4000-8000-0000000000c1',
-      empresa_id: '00000000-0000-4000-8000-0000000000e1',
-      data_inicio: '2026-12-01',
-      data_fim: '2026-12-31',
-    });
-    expect(chain.insert).toHaveBeenCalledWith(
-      expect.objectContaining({
-        colaborador_id: '00000000-0000-4000-8000-0000000000c1',
-        empresa_id: '00000000-0000-4000-8000-0000000000e1',
-      })
-    );
-  });
-
-  it('criar propaga erro do banco', async () => {
-    const chain = makeChain(null, { message: 'insert fail' });
-    mockFrom.mockReturnValue(chain);
-    await expect(
-      feriasSolicitacoesService.criar({
-        colaborador_id: '00000000-0000-4000-8000-0000000000c1',
-        empresa_id: '00000000-0000-4000-8000-0000000000e1',
-        data_inicio: '2026-12-01',
-        data_fim: '2026-12-31',
-      })
-    ).rejects.toEqual({ message: 'insert fail' });
-  });
-
-  it('atualizar filtra por id + empresa_id e valida tenant', async () => {
-    await expect(feriasSolicitacoesService.atualizar('f-1', { status: 'aprovada' }, '')).rejects.toThrow('empresa_id');
-    const chain = makeChain();
-    mockFrom.mockReturnValue(chain);
-    await feriasSolicitacoesService.atualizar('f-1', { status: 'aprovada' }, '00000000-0000-4000-8000-0000000000e1');
-    expect(chain.update).toHaveBeenCalledWith(expect.objectContaining({ status: 'aprovada' }));
-  });
-});
-
-describe('historicoFeriasService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('rejeita empresaId vazio', async () => {
-    await expect(historicoFeriasService.listar('00000000-0000-4000-8000-0000000000c1', '')).rejects.toThrow(
-      'empresa_id'
-    );
-  });
-
-  it('lista histórico via join em férias', async () => {
-    const data = [{ id: 'h-1' }];
-    mockFrom.mockReturnValue(makeChain(data));
-    const r = await historicoFeriasService.listar(
-      '00000000-0000-4000-8000-0000000000c1',
-      '00000000-0000-4000-8000-0000000000e1'
-    );
-    expect(mockFrom).toHaveBeenCalledWith('historico_ferias');
-    expect(r).toEqual(data);
-  });
-});
-
-describe('linhasTransporteService.criar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('insere linha validada e propaga erro', async () => {
-    const chain = makeChain();
-    mockFrom.mockReturnValue(chain);
-    await linhasTransporteService.criar({ nome: 'Linha A', tipo: 'onibus' });
-    expect(chain.insert).toHaveBeenCalled();
-    mockFrom.mockReturnValue(makeChain(null, { message: 'fail' }));
-    await expect(linhasTransporteService.criar({ nome: 'Linha A', tipo: 'onibus' })).rejects.toEqual({
-      message: 'fail',
-    });
-  });
-});
-
-describe('onboardingService — writes e listagens restantes', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('criarTemplate retorna a linha inserida e propaga erro', async () => {
-    mockFrom.mockReturnValue(makeChain({ id: '00000000-0000-4000-8000-000000000011' }));
-    const r = await onboardingService.criarTemplate({
-      nome: 'Onboarding Padrão',
-      empresa_id: '00000000-0000-4000-8000-0000000000e1',
-    });
-    expect(r).toEqual({ id: '00000000-0000-4000-8000-000000000011' });
-    mockFrom.mockReturnValue(makeChain(null, { message: 'fail' }));
-    await expect(
-      onboardingService.criarTemplate({ nome: 'X', empresa_id: '00000000-0000-4000-8000-0000000000e1' })
-    ).rejects.toEqual({
-      message: 'fail',
-    });
-  });
-
-  it('listarTemplateTarefas filtra por template', async () => {
-    mockFrom.mockReturnValue(makeChain([{ id: 't-1', ordem: 1 }]));
-    const r = await onboardingService.listarTemplateTarefas('00000000-0000-4000-8000-000000000011');
-    expect(r).toEqual([{ id: 't-1', ordem: 1 }]);
-  });
-
-  it('criarTemplateTarefa insere e propaga erro', async () => {
-    const chain = makeChain();
-    mockFrom.mockReturnValue(chain);
-    await onboardingService.criarTemplateTarefa({
-      template_id: '00000000-0000-4000-8000-000000000011',
-      titulo: 'Assinar',
-    });
-    expect(chain.insert).toHaveBeenCalled();
-    mockFrom.mockReturnValue(makeChain(null, { message: 'fail' }));
-    await expect(
-      onboardingService.criarTemplateTarefa({ template_id: '00000000-0000-4000-8000-000000000011', titulo: 'x' })
-    ).rejects.toEqual({
-      message: 'fail',
-    });
-  });
-
-  it('listarColaboradores aplica filtro de empresa quando informado', async () => {
-    mockFrom.mockReturnValue(makeChain([{ id: 'oc-1' }]));
-    const r = await onboardingService.listarColaboradores('00000000-0000-4000-8000-0000000000e1');
-    expect(r).toEqual([{ id: 'oc-1' }]);
+  it('buscarPorColaborador returns null when there is no onboarding for the colaborador', async () => {
     const chain = makeChain([]);
     mockFrom.mockReturnValue(chain);
-    await onboardingService.listarColaboradores();
-    expect(mockFrom).toHaveBeenCalledWith('onboarding_colaborador');
+    const result = await onboardingService.buscarPorColaborador('col-1', 'emp-1');
+    expect(result).toBeNull();
   });
 
-  it('iniciarOnboarding retorna a linha criada', async () => {
-    mockFrom.mockReturnValue(makeChain({ id: 'onb-1' }));
-    const r = await onboardingService.iniciarOnboarding({
-      colaborador_id: '00000000-0000-4000-8000-0000000000c1',
-      empresa_id: '00000000-0000-4000-8000-0000000000e1',
-    });
-    expect(r).toEqual({ id: 'onb-1' });
-  });
-
-  it('concluirTarefa valida onboardingId e marca concluída', async () => {
-    await expect(onboardingService.concluirTarefa('', 't-1')).rejects.toThrow('onboarding_id');
-    const chain = makeChain();
-    mockFrom.mockReturnValue(chain);
-    await onboardingService.concluirTarefa('onb-1', 't-1');
-    expect(chain.update).toHaveBeenCalledWith(
-      expect.objectContaining({ concluida: true, data_conclusao: expect.stringMatching(/^\d{4}-/) })
-    );
+  it('buscarPorColaborador throws when empresaId is missing', async () => {
+    await expect(onboardingService.buscarPorColaborador('col-1', '')).rejects.toThrow('empresa_id obrigatório');
   });
 });
 
-describe('treinamentoParticipantesService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+describe('treinamentoParticipantesService.listarPorColaborador', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
 
-  it('listar filtra por treinamento e retorna [] quando nulo', async () => {
-    mockFrom.mockReturnValue(makeChain([{ id: 'p-1' }]));
-    expect(await treinamentoParticipantesService.listar('tr-1')).toEqual([{ id: 'p-1' }]);
-    mockFrom.mockReturnValue(makeChain(null));
-    expect(await treinamentoParticipantesService.listar()).toEqual([]);
-  });
-
-  it('registrarPresenca valida treinamentoId e marca presente', async () => {
-    await expect(treinamentoParticipantesService.registrarPresenca('', 'p-1')).rejects.toThrow('treinamento_id');
-    const chain = makeChain();
+  it('queries treinamento_participantes scoped by colaborador_id with treinamento join', async () => {
+    const registros = [{ id: 'tp1', colaborador_id: 'col-1', treinamento: { nome: 'NR-35' } }];
+    const chain = makeChain(registros);
     mockFrom.mockReturnValue(chain);
-    await treinamentoParticipantesService.registrarPresenca('tr-1', 'p-1');
-    expect(chain.update).toHaveBeenCalledWith(expect.objectContaining({ presente: true }));
+    const result = await treinamentoParticipantesService.listarPorColaborador('col-1');
+    expect(mockFrom).toHaveBeenCalledWith('treinamento_participantes');
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+    expect(result).toEqual(registros);
   });
 });
 

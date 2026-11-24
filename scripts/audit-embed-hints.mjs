@@ -137,26 +137,8 @@ function main() {
     process.exit(0);
   }
 
-  let constraintsOutput;
-  let duplicatesOutput;
-  try {
-    constraintsOutput = runQuery(`SELECT conname FROM pg_constraint WHERE contype = 'f'`);
-    duplicatesOutput = runQuery(`
-      SELECT c.conrelid::regclass::text, count(*)
-      FROM pg_constraint c
-      JOIN pg_namespace n ON n.oid = c.connamespace
-      WHERE c.contype = 'f' AND n.nspname = 'public'
-      GROUP BY c.conrelid, c.conkey, c.confrelid, c.confkey
-      HAVING count(*) > 1
-    `);
-  } catch (error) {
-    console.error('[embed-hints] A consulta de auditoria falhou — gate reprovado.');
-    console.error(String(error.stderr || error.message).trim());
-    process.exit(1);
-  }
-
   const existentes = new Set(
-    constraintsOutput
+    runQuery(`SELECT conname FROM pg_constraint WHERE contype = 'f'`)
       .split('\n')
       .map((s) => s.trim())
       .filter(Boolean)
@@ -166,13 +148,24 @@ function main() {
 
   // Regressão de duplicação: mais de uma FK ligando o mesmo par de tabelas
   // pelas mesmas colunas reintroduz a ambiguidade do PostgREST.
-  const dupOut = duplicatesOutput.split('\n').filter((l) => l.trim());
+  const dupOut = runQuery(`
+    SELECT c.conrelid::regclass::text, count(*)
+    FROM pg_constraint c
+    JOIN pg_namespace n ON n.oid = c.connamespace
+    WHERE c.contype = 'f' AND n.nspname = 'public'
+    GROUP BY c.conrelid, c.conkey, c.confrelid, c.confkey
+    HAVING count(*) > 1
+  `)
+    .split('\n')
+    .filter((l) => l.trim());
 
   let falhou = false;
 
   if (violacoes.length > 0) {
     falhou = true;
-    console.error(`[embed-hints] FALHA — ${violacoes.length} dica(s) apontam para constraint inexistente:`);
+    console.error(
+      `[embed-hints] FALHA — ${violacoes.length} dica(s) apontam para constraint inexistente:`
+    );
     for (const v of violacoes) {
       console.error(`  ${v.file}:${v.line}  ${v.table}!${v.constraint}`);
     }
@@ -187,7 +180,7 @@ function main() {
     console.error(
       `\n[embed-hints] FALHA — ${dupOut.length} par(es) de tabelas com FK duplicada (ambiguidade no PostgREST):`
     );
-    for (const l of dupOut) console.error(`  ${l.replace(/\t/g, ' — ')} constraints para a mesma coluna`);
+    for (const l of dupOut) console.error(`  ${l.replace('\t', ' — ')} constraints para a mesma coluna`);
   }
 
   if (falhou) process.exit(1);

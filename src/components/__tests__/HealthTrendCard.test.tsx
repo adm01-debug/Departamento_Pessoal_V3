@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -13,10 +12,10 @@ vi.mock('@/hooks/useSystemHealthHistory', () => ({
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
+  Card: ({ children }: any) => <div>{children}</div>,
+  CardContent: ({ children }: any) => <div>{children}</div>,
+  CardHeader: ({ children }: any) => <div>{children}</div>,
+  CardTitle: ({ children }: any) => <h3>{children}</h3>,
 }));
 
 vi.mock('sonner', () => ({
@@ -64,8 +63,8 @@ describe('HealthTrendCard', () => {
   it('renders last status when samples exist', async () => {
     const { useSystemHealthHistory } = await import('@/hooks/useSystemHealthHistory');
     vi.mocked(useSystemHealthHistory).mockReturnValueOnce({
-      samples: MOCK_SAMPLES as never,
-      last: { at: '2026-07-01T10:01:00', status: 'online', latencyMs: 95 } as never,
+      samples: MOCK_SAMPLES as any,
+      last: { at: '2026-07-01T10:01:00', status: 'online', latencyMs: 95 } as any,
       p95: 120,
       avg: 107,
       failRate: 0,
@@ -77,8 +76,8 @@ describe('HealthTrendCard', () => {
   it('renders Média text when avg is present', async () => {
     const { useSystemHealthHistory } = await import('@/hooks/useSystemHealthHistory');
     vi.mocked(useSystemHealthHistory).mockReturnValueOnce({
-      samples: MOCK_SAMPLES as never,
-      last: { at: '2026-07-01T10:01:00', status: 'online', latencyMs: 95 } as never,
+      samples: MOCK_SAMPLES as any,
+      last: { at: '2026-07-01T10:01:00', status: 'online', latencyMs: 95 } as any,
       p95: 120,
       avg: 107,
       failRate: 0,

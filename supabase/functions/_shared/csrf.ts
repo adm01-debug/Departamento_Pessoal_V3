@@ -4,25 +4,28 @@
 //   const csrf = await verifyCsrf(req);
 //   if (!csrf.ok) return csrf.response;
 
-import { getCorsHeaders } from './contract.ts';
-
 // EXTRA_ALLOWED_ORIGINS permite adicionar origens via env sem alterar código.
 // Formato: lista separada por vírgulas, ex: "https://app.exemplo.com,https://staging.exemplo.com"
+import { getCorsHeaders } from './contract.ts';
+
 const _extraOrigins = (Deno.env.get('EXTRA_ALLOWED_ORIGINS') ?? '')
   .split(',')
   .map((o) => o.trim())
   .filter(Boolean);
 
 const ALLOWED_ORIGINS = [
-  'https://departamento-pessoal-v3.vercel.app',
+  'https://sistema-dp.lovable.app',
+  'https://unified-harmony-hub.lovable.app',
   ..._extraOrigins,
 ];
 
+const LOVABLE_HOST_RE = /\.lovable\.(app|dev)$/;
+
 // Localhost only allowed when running Supabase locally (SUPABASE_URL points to localhost)
 const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-const IS_LOCAL_DEV = supabaseUrl.includes('localhost') || supabaseUrl.includes('127.0.0.1') ||
-                     Deno.env.get('SUPABASE_ENV') === 'local';
-
+const IS_LOCAL_DEV = supabaseUrl.includes("localhost") || supabaseUrl.includes("127.0.0.1") ||
+                     Deno.env.get("SUPABASE_ENV") === "local" ||
+                     !!Deno.env.get("EXTRA_ALLOWED_LOCAL_PORTS");
 export interface CsrfResult {
   ok: boolean;
   response?: Response;
@@ -58,8 +61,10 @@ export async function verifyCsrf(req: Request): Promise<CsrfResult> {
     const url = new URL(source);
     const host = url.hostname;
     const isAllowed =
-      ALLOWED_ORIGINS.includes(url.origin) ||
-      (IS_LOCAL_DEV && (host === 'localhost' || host === '127.0.0.1'));
+      ALLOWED_ORIGINS.some((o) => source.startsWith(o)) ||
+
+      LOVABLE_HOST_RE.test(host) ||
+      (IS_LOCAL_DEV && (host === "localhost" || host === "127.0.0.1"));
 
     if (!isAllowed) {
       return {

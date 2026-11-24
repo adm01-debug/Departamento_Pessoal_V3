@@ -26,15 +26,18 @@ export interface PageTransitionConfig {
 const DEFAULT_CONFIG: Required<PageTransitionConfig> = {
   effect: 'slide',
   direction: 'right',
-  duration: 0.35,
+  // 0,42 s: faixa pedida para entrada de página (350–450 ms). Junto do deslize
+  // de 24 px + blur, 350 ms (valor anterior) lia como um "corte" em vez de
+  // transição. O movimento reduzido continua em 0,15 s (ver `resolved` abaixo).
+  duration: 0.42,
   ease: [0.32, 0.72, 0, 1],
   opacityFrom: 0,
 };
 
 /** Mapeamento opcional por rota (base segment). Permite efeitos distintos. */
 const ROUTE_EFFECTS: Record<string, PageTransitionConfig> = {
-  '/dashboard': { effect: 'fade', duration: 0.3 },
-  '/login': { effect: 'zoom', duration: 0.4 },
+  '/dashboard': { effect: 'fade', duration: 0.4 },
+  '/login': { effect: 'zoom', duration: 0.45 },
   '/relatorios': { effect: 'slide', direction: 'right' },
   '/configuracoes': { effect: 'slide', direction: 'left' },
   '/perfil': { effect: 'flip', direction: 'right', duration: 0.5 },
@@ -71,28 +74,28 @@ function buildVariants(cfg: Required<PageTransitionConfig>, axisDirection: numbe
         exit: { opacity: opacityFrom, scale: 1.02 },
       };
     case 'flip': {
-      const axis: 'rotateX' | 'rotateY' = axisX ? 'rotateY' : 'rotateX';
+      const axis = axisX ? 'rotateY' : 'rotateX';
       return {
-        enter: { opacity: opacityFrom, [axis]: 12 * sign, transformPerspective: 1200 },
-        center: { opacity: 1, [axis]: 0, transformPerspective: 1200 },
-        exit: { opacity: opacityFrom, [axis]: -12 * sign, transformPerspective: 1200 },
+        enter: { opacity: opacityFrom, [axis]: 12 * sign, transformPerspective: 1200 } as never,
+        center: { opacity: 1, [axis]: 0, transformPerspective: 1200 } as never,
+        exit: { opacity: opacityFrom, [axis]: -12 * sign, transformPerspective: 1200 } as never,
       };
     }
     case 'parallax': {
-      const k: 'x' | 'y' = axisX ? 'x' : 'y';
+      const k = axisX ? 'x' : 'y';
       return {
-        enter: { opacity: opacityFrom, [k]: delta * 2 * sign },
-        center: { opacity: 1, [k]: 0 },
-        exit: { opacity: opacityFrom, [k]: -delta * 2 * sign },
+        enter: { opacity: opacityFrom, [k]: delta * 2 * sign } as never,
+        center: { opacity: 1, [k]: 0 } as never,
+        exit: { opacity: opacityFrom, [k]: -delta * 2 * sign } as never,
       };
     }
     case 'slide':
     default: {
-      const k: 'x' | 'y' = axisX ? 'x' : 'y';
+      const k = axisX ? 'x' : 'y';
       return {
-        enter: { opacity: opacityFrom, [k]: delta * sign, filter: 'blur(4px)' },
-        center: { opacity: 1, [k]: 0, filter: 'blur(0px)' },
-        exit: { opacity: opacityFrom, [k]: -delta * sign, filter: 'blur(4px)' },
+        enter: { opacity: opacityFrom, [k]: delta * sign, filter: 'blur(4px)' } as never,
+        center: { opacity: 1, [k]: 0, filter: 'blur(0px)' } as never,
+        exit: { opacity: opacityFrom, [k]: -delta * sign, filter: 'blur(4px)' } as never,
       };
     }
   }

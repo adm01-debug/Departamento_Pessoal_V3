@@ -1,6 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { exportarDesligamentosExcel } from '../desligamentoExcel';
 
+
+
 // Mock sonner
 vi.mock('sonner', () => ({
   toast: {
@@ -10,7 +12,6 @@ vi.mock('sonner', () => ({
 }));
 
 import { toast } from 'sonner';
-import type { DesligamentoComColaborador } from '@/services/desligamentoService';
 
 describe('exportarDesligamentosExcel', () => {
   it('should show error toast when array is empty', async () => {
@@ -38,7 +39,7 @@ describe('exportarDesligamentosExcel', () => {
         total_descontos: 3000,
       },
     ];
-    await exportarDesligamentosExcel(data as unknown as DesligamentoComColaborador[]);
+    await exportarDesligamentosExcel(data);
     expect(toast.success).toHaveBeenCalledWith('Planilha exportada com sucesso!');
   });
 
@@ -55,6 +56,6 @@ describe('exportarDesligamentosExcel', () => {
         valor_liquido: null,
       },
     ];
-    await expect(exportarDesligamentosExcel(data as unknown as DesligamentoComColaborador[])).resolves.not.toThrow();
+    await expect(exportarDesligamentosExcel(data)).resolves.not.toThrow();
   });
 });

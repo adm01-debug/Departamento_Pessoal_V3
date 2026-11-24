@@ -1,11 +1,10 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    circle: (props: React.ComponentProps<'circle'>) => <circle {...props} />,
-    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
+    circle: (props: any) => <circle {...props} />,
+    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
   },
 }));
 
@@ -17,15 +16,14 @@ describe('ESocialComplianceScore', () => {
     expect(screen.getByText('95%')).toBeInTheDocument();
   });
 
-  it('renders an explicit no-data state when conformidade is missing', () => {
+  it('renders zero score when conformidade missing', () => {
     render(<ESocialComplianceScore stats={{ enviados: 0, erros: 0 }} />);
-    expect(screen.getByText('—')).toBeInTheDocument();
-    expect(screen.getByText('Sem eventos avaliados')).toBeInTheDocument();
+    expect(screen.getByText('0%')).toBeInTheDocument();
   });
 
   it('shows "Ambiente Seguro" when score >= 95', () => {
     render(<ESocialComplianceScore stats={{ conformidade: 97, enviados: 100, erros: 0 }} />);
-    expect(screen.getByText('Eventos sem erro')).toBeInTheDocument();
+    expect(screen.getByText('Ambiente Seguro')).toBeInTheDocument();
   });
 
   it('shows "Riscos Detectados" when score < 95', () => {

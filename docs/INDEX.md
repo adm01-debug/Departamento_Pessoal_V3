@@ -8,8 +8,8 @@ Este repositório contém o sistema completo de Departamento Pessoal, focado em 
 
 ### Core & Arquitetura
 
-- [Arquitetura do Sistema](../ARCHITECTURE.md)
-- [ADRs (decisões arquiteturais)](adr/)
+- [Arquitetura do Sistema](mem://arquitetura/organizacao-diretorios-feature-based)
+- [Convenções de Nomenclatura](mem://arquitetura/convencoes-nomenclatura-db)
 - [Segurança & RBAC](mem://auth/rbac-protecao-rotas-admin)
 
 ### Módulos de Negócio
@@ -28,10 +28,9 @@ Este repositório contém o sistema completo de Departamento Pessoal, focado em 
 
 ### Técnico & DevOps
 
-- [Mapa de API](MAPA_API.md)
-- [Deploy](../README.md) (Vercel + workflows `canonical-*`)
-- [Runbooks operacionais](../infra/runbooks/)
-- [Monitoring & Observabilidade](../DOCS_MONITORING.md)
+- [API Reference](docs/API.md)
+- [Deployment Guide](docs/DEPLOYMENT.md)
+- [Monitoring & Observabilidade](docs/guides/monitoring.md)
 
 ---
 

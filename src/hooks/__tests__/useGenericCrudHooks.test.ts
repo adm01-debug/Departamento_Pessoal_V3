@@ -40,7 +40,7 @@ import { useDepartamentos } from '../useDepartamentos';
 import { useDesligamentos } from '../useDesligamentos';
 import { useLocaisTrabalho } from '../useLocaisTrabalho';
 
-function makeCrudReturn(overrides: Record<string, unknown> = {}) {
+function makeCrudReturn(overrides: Record<string, any> = {}) {
   return {
     items: [],
     isLoading: false,

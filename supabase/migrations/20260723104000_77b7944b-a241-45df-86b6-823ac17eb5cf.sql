@@ -62,7 +62,6 @@ FOR EACH ROW EXECUTE FUNCTION public.fprog_touch_updated_at();
 ALTER TABLE public.ferias_programacao ENABLE ROW LEVEL SECURITY;
 
 -- SELECT: colaborador vê os próprios; membros da empresa veem tudo da empresa
-DROP POLICY IF EXISTS "fprog_select" ON public.ferias_programacao;
 CREATE POLICY fprog_select ON public.ferias_programacao
 FOR SELECT TO authenticated
 USING (
@@ -73,13 +72,11 @@ USING (
 );
 
 -- INSERT: qualquer membro da empresa (gestor cria sugestão, RH cria direto)
-DROP POLICY IF EXISTS "fprog_insert" ON public.ferias_programacao;
 CREATE POLICY fprog_insert ON public.ferias_programacao
 FOR INSERT TO authenticated
 WITH CHECK (public.user_belongs_to_empresa(auth.uid(), empresa_id));
 
 -- UPDATE: gestor/rh/admin da empresa
-DROP POLICY IF EXISTS "fprog_update" ON public.ferias_programacao;
 CREATE POLICY fprog_update ON public.ferias_programacao
 FOR UPDATE TO authenticated
 USING (
@@ -89,7 +86,6 @@ USING (
 WITH CHECK (public.user_belongs_to_empresa(auth.uid(), empresa_id));
 
 -- DELETE: apenas rh/admin
-DROP POLICY IF EXISTS "fprog_delete" ON public.ferias_programacao;
 CREATE POLICY fprog_delete ON public.ferias_programacao
 FOR DELETE TO authenticated
 USING (

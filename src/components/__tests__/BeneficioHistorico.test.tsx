@@ -1,20 +1,17 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('@/components/ui/table', () => ({
-  Table: ({ children }: { children?: ReactNode }) => <table>{children}</table>,
-  TableHeader: ({ children }: { children?: ReactNode }) => <thead>{children}</thead>,
-  TableBody: ({ children }: { children?: ReactNode }) => <tbody>{children}</tbody>,
-  TableHead: ({ children }: { children?: ReactNode }) => <th>{children}</th>,
-  TableRow: ({ children }: { children?: ReactNode }) => <tr>{children}</tr>,
-  TableCell: ({ children, colSpan }: { children?: ReactNode; colSpan?: number }) => (
-    <td colSpan={colSpan}>{children}</td>
-  ),
+  Table: ({ children }: any) => <table>{children}</table>,
+  TableHeader: ({ children }: any) => <thead>{children}</thead>,
+  TableBody: ({ children }: any) => <tbody>{children}</tbody>,
+  TableHead: ({ children }: any) => <th>{children}</th>,
+  TableRow: ({ children }: any) => <tr>{children}</tr>,
+  TableCell: ({ children, colSpan }: any) => <td colSpan={colSpan}>{children}</td>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
+  Badge: ({ children }: any) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/spinner', () => ({
@@ -65,56 +62,56 @@ const MOCK_MOVIMENTACOES = [
 describe('BeneficioHistorico', () => {
   it('renders Spinner when loading', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: undefined, isLoading: true } as never);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: undefined, isLoading: true } as any);
     render(<BeneficioHistorico beneficioId="ben-001" />);
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
 
   it('renders Data column header', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as never);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as any);
     render(<BeneficioHistorico beneficioId="ben-001" />);
     expect(screen.getByText('Data')).toBeInTheDocument();
   });
 
   it('renders Tipo column header', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as never);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as any);
     render(<BeneficioHistorico beneficioId="ben-001" />);
     expect(screen.getByText('Tipo')).toBeInTheDocument();
   });
 
   it('renders Colaborador header when beneficioId is set', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as never);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as any);
     render(<BeneficioHistorico beneficioId="ben-001" />);
     expect(screen.getByText('Colaborador')).toBeInTheDocument();
   });
 
   it('renders Benefício header when colaboradorId is set', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as never);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as any);
     render(<BeneficioHistorico colaboradorId="col-001" />);
     expect(screen.getByText('Benefício')).toBeInTheDocument();
   });
 
   it('renders empty state message when no movimentacoes', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as never);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as any);
     render(<BeneficioHistorico beneficioId="ben-001" />);
     expect(screen.getByText(/Nenhuma movimentação registrada/i)).toBeInTheDocument();
   });
 
   it('renders adesao badge', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_MOVIMENTACOES, isLoading: false } as never);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_MOVIMENTACOES, isLoading: false } as any);
     render(<BeneficioHistorico beneficioId="ben-001" />);
     expect(screen.getByText('adesao')).toBeInTheDocument();
   });
 
   it('renders colaborador name when beneficioId provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_MOVIMENTACOES, isLoading: false } as never);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_MOVIMENTACOES, isLoading: false } as any);
     render(<BeneficioHistorico beneficioId="ben-001" />);
     expect(screen.getByText('Pedro Alves')).toBeInTheDocument();
   });

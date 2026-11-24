@@ -5,6 +5,13 @@ import { resolve } from 'node:path';
 import { cardVariants } from '@/components/dashboard/MetricCard';
 import { HEADER_REVEAL } from '../organograma/organogramaHeaderReveal';
 
+/** `visible` é função do `custom` na régua global — o tipo do Framer é união. */
+const visivelDoSlot = cardVariants.visible as unknown as (posicao: number) => {
+  opacity: number;
+  y: number;
+  transition: { delay: number; duration: number; ease: number[] };
+};
+
 /**
  * Fila do cabeçalho, na ordem em que o olho encontra os itens (esquerda →
  * direita). É a mesma ordem declarada em `organogramaHeaderReveal.ts`: os três
@@ -20,24 +27,25 @@ describe('organogramaHeaderReveal', () => {
     expect(new Set(Object.values(HEADER_REVEAL)).size).toBe(ORDEM_VISUAL.length);
   });
 
-  it('não recria a animação: os slots valem o exato `cardVariants` dos KPIs do Dashboard', () => {
-    // Referência: `cardVariants` de `dashboard/MetricCard.tsx` — o MESMO objeto
-    // usado pelos KPI Cards do Dashboard Executivo (fade + subida de 20px).
-    expect(cardVariants.hidden).toEqual({ opacity: 0, y: 20 });
+  it('não recria a animação: os slots valem o exato `cardVariants` da régua global', () => {
+    // Referência: `cardVariants` de `dashboard/MetricCard.tsx`, que hoje É a
+    // régua global (`ui/entradaGlobal.ts`): fade + subida de 14px, 520ms e
+    // 120ms entre inícios.
+    expect(cardVariants.hidden).toEqual({ opacity: 0, y: 14 });
 
     for (const slot of Object.values(HEADER_REVEAL)) {
-      expect(cardVariants.visible(slot)).toEqual({
+      expect(visivelDoSlot(slot)).toEqual({
         opacity: 1,
         y: 0,
-        transition: { delay: slot * 0.08, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
+        transition: { delay: slot * 0.12, duration: 0.52, ease: [0, 0, 0.58, 1] },
       });
     }
   });
 
-  it('fecha a cascata do cabeçalho em 0.8s, no mesmo compasso dos KPIs', () => {
-    // "Recolher tudo" é o último item: entra em 0.40s e dura 0.4s.
-    const ultimo = cardVariants.visible(HEADER_REVEAL.recolherTudo);
-    expect(ultimo.transition.delay + ultimo.transition.duration).toBeCloseTo(0.8, 5);
+  it('fecha a cascata do cabeçalho em 1.12s, no compasso dos cards do sistema', () => {
+    // "Recolher tudo" é o último item: entra em 0.60s e dura 0.52s.
+    const ultimo = visivelDoSlot(HEADER_REVEAL.recolherTudo);
+    expect(ultimo.transition.delay + ultimo.transition.duration).toBeCloseTo(1.12, 5);
   });
 
   it('os dois componentes do cabeçalho leem os slots daqui, na ordem visual (sem índice solto)', () => {

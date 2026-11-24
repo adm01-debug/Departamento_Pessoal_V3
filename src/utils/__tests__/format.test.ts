@@ -15,12 +15,15 @@ import {
 
 describe('format — resiliência a entradas inválidas', () => {
   it.each([null, undefined, '', 'not-a-date', NaN])('formatDate(%p) → fallback', (v) => {
-    expect(formatDate(v as never)).toBe('—');
+    expect(formatDate(v as any)).toBe('—');
   });
 
-  it.each([null, undefined, '', NaN, Infinity, -Infinity, 'abc'])('formatCurrency(%p) → fallback', (v) => {
-    expect(formatCurrency(v as never)).toBe('—');
-  });
+  it.each([null, undefined, '', NaN, Infinity, -Infinity, 'abc'])(
+    'formatCurrency(%p) → fallback',
+    (v) => {
+      expect(formatCurrency(v as any)).toBe('—');
+    },
+  );
 
   it('respeita fallback customizado', () => {
     expect(formatDate(null, 'N/D')).toBe('N/D');

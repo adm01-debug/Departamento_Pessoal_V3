@@ -193,7 +193,7 @@ export function JornadaPontoTab({ colaboradorId }: { colaboradorId: string }) {
         colaboradorId={colaboradorId}
       />
 
-      {isLoadingSemana ? <Spinner /> : <PontoTodayCard registroHoje={registroHoje} />}
+      {isLoadingSemana ? <Spinner /> : <PontoTodayCard registroHoje={registroHoje} colaboradorId={colaboradorId} />}
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-4 items-start">
         {isLoadingSemana ? <Spinner /> : <PontoWeekSummary registrosSemana={registrosSemana || []} />}

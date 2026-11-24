@@ -9,13 +9,20 @@ import { ptBR } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { useState, useMemo } from 'react';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+// MOCK DE LAYOUT — ver src/mocks/feriasPeriodosAquisitivosMock.ts. Ligado só em
+// dev (constante local `ATIVAR_MOCK`); com ele desligado, a tela usa 100% a
+// fonte real. Não grava nada no Supabase.
+import {
+  USE_MOCK_PERIODOS_AQUISITIVOS,
+  MOCK_FERIAS_COLABORADORES,
+  getMockPeriodosAquisitivos,
+} from '@/mocks/feriasPeriodosAquisitivosMock';
 interface GerenciamentoPeriodosProps {
   colaboradorId?: string;
 }
@@ -23,64 +30,73 @@ interface GerenciamentoPeriodosProps {
 export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: GerenciamentoPeriodosProps) {
   const { empresaAtual } = useEmpresas();
   const qc = useQueryClient();
-  const [selectedColabId, setSelectedColabId] = useState(initialColaboradorId || '');
+  // MOCK DE LAYOUT — quando ligado, a tela mostra dados fictícios e não toca o banco.
+  const mockAtivo = USE_MOCK_PERIODOS_AQUISITIVOS;
+  const [selectedColabId, setSelectedColabId] = useState(
+    initialColaboradorId || (mockAtivo ? (MOCK_FERIAS_COLABORADORES[0]?.id ?? '') : '')
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingPeriodo, setEditingPeriodo] = useState<Tables<'periodos_aquisitivos'> | null>(null);
+  const [editingPeriodo, setEditingPeriodo] = useState<{ id: string; [key: string]: unknown } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [form, setForm] = useState({
     data_inicio: '',
     data_fim: '',
     dias_direito: '30',
     status: 'aberto',
-    numero_periodo: '1',
+    numero_periodo: '1'
   });
 
-  const { data: colaboradores } = useQuery({
+  const { data: colaboradoresReais } = useQuery({
     queryKey: ['colaboradores-ferias', empresaAtual?.id],
     queryFn: () => colaboradorService.list(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !mockAtivo && !!empresaAtual?.id});
 
-  const { data: periodos, isLoading } = useQuery({
+  const { data: periodosReais, isLoading: carregandoPeriodos } = useQuery({
     queryKey: ['periodos-aquisitivos', selectedColabId, empresaAtual?.id],
     queryFn: () => feriasService.listPeriodosAquisitivos(selectedColabId, empresaAtual!.id),
-    enabled: !!selectedColabId && !!empresaAtual?.id,
-  });
+    enabled: !mockAtivo && !!selectedColabId && !!empresaAtual?.id});
+
+  // MOCK DE LAYOUT — com a flag ligada, as consultas acima ficam desabilitadas
+  // e a lista abaixo substitui os dados reais (sem tocar o Supabase).
+  const colaboradores = mockAtivo ? MOCK_FERIAS_COLABORADORES : colaboradoresReais;
+  const periodos = mockAtivo ? getMockPeriodosAquisitivos(selectedColabId) : periodosReais;
+  const isLoading = mockAtivo ? false : carregandoPeriodos;
 
   const createMutation = useMutation({
-    mutationFn: (data: Insertable<'periodos_aquisitivos'>) => feriasService.criarPeriodoAquisitivo(data),
+    mutationFn: (data: any) => feriasService.criarPeriodoAquisitivo(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos', selectedColabId] });
       toast.success('Período aquisitivo criado');
       setIsDialogOpen(false);
-    },
-  });
+    }});
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Updatable<'periodos_aquisitivos'> }) =>
-      feriasService.atualizarPeriodoAquisitivo(id, data, empresaAtual!.id),
+    mutationFn: ({ id, data }: { id: string; data: any }) => feriasService.atualizarPeriodoAquisitivo(id, data, empresaAtual!.id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos', selectedColabId] });
       toast.success('Período aquisitivo atualizado');
       setIsDialogOpen(false);
-    },
-  });
+    }});
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => feriasService.excluirPeriodoAquisitivo(id, empresaAtual!.id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos', selectedColabId] });
       toast.success('Período aquisitivo excluído');
-    },
-  });
+    }});
 
   const handleSave = () => {
+    // MOCK DE LAYOUT — não grava: apenas fecha o diálogo.
+    if (mockAtivo) {
+      toast.info('Modo demonstração: alterações não são salvas.');
+      setIsDialogOpen(false);
+      return;
+    }
     const data = {
       ...form,
       colaborador_id: selectedColabId,
       dias_direito: parseInt(form.dias_direito),
-      numero_periodo: parseInt(form.numero_periodo),
-    };
+      numero_periodo: parseInt(form.numero_periodo)};
 
     if (editingPeriodo) {
       updateMutation.mutate({ id: editingPeriodo.id, data });
@@ -96,46 +112,32 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
       data_fim: '',
       dias_direito: '30',
       status: 'aberto',
-      numero_periodo: ((periodos?.length || 0) + 1).toString(),
+      numero_periodo: ((periodos?.length || 0) + 1).toString()
     });
     setIsDialogOpen(true);
   };
 
-  const openEdit = (p: Tables<'periodos_aquisitivos'>) => {
+  const openEdit = (p: any) => {
     setEditingPeriodo(p);
     setForm({
       data_inicio: p.data_inicio,
       data_fim: p.data_fim,
-      dias_direito: (p.dias_direito ?? 30).toString(),
-      status: p.status ?? 'aberto',
-      numero_periodo: (p.numero_periodo ?? 1).toString(),
+      dias_direito: p.dias_direito.toString(),
+      status: p.status,
+      numero_periodo: p.numero_periodo.toString()
     });
     setIsDialogOpen(true);
   };
 
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'aberto':
-        return (
-          <Badge variant="outline" className="gap-1">
-            <Clock className="h-3 w-3" />
-            Aberto
-          </Badge>
-        );
+        return <Badge variant="outline" className="gap-1"><Clock className="h-3 w-3" />Aberto</Badge>;
       case 'vencido':
-        return (
-          <Badge variant="destructive" className="gap-1">
-            <AlertTriangle className="h-3 w-3" />
-            Vencido
-          </Badge>
-        );
+        return <Badge variant="destructive" className="gap-1"><AlertTriangle className="h-3 w-3" />Vencido</Badge>;
       case 'concluido':
-        return (
-          <Badge variant="default" className="bg-green-500 hover:bg-green-600 gap-1">
-            <CheckCircle2 className="h-3 w-3" />
-            Concluído
-          </Badge>
-        );
+        return <Badge variant="default" className="bg-green-500 hover:bg-green-600 gap-1"><CheckCircle2 className="h-3 w-3" />Concluído</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -143,8 +145,9 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
 
   const filteredColaboradores = useMemo(() => {
     if (!colaboradores) return [];
-    return colaboradores.filter(
-      (c) => c.nome_completo.toLowerCase().includes(searchTerm.toLowerCase()) || c.cpf?.includes(searchTerm)
+    return colaboradores.filter(c => 
+      c.nome_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.cpf?.includes(searchTerm)
     );
   }, [colaboradores, searchTerm]);
 
@@ -155,17 +158,15 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
           <div className="flex flex-col md:flex-row items-stretch border-b border-border/40">
             <div className="flex-1 p-4 border-b md:border-b-0 md:border-r border-border/40 bg-muted/10">
               <div className="space-y-3">
-                <Label className="font-display text-xs text-muted-foreground uppercase tracking-wider">
-                  Colaborador
-                </Label>
+                <Label className="font-display text-xs text-muted-foreground uppercase tracking-wider">Colaborador</Label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Buscar por nome ou CPF..."
+                    <Input 
+                      placeholder="Buscar por nome ou CPF..." 
                       className="pl-9 rounded-xl bg-background border-border/40 focus:ring-primary/20"
                       value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onChange={e => setSearchTerm(e.target.value)}
                     />
                   </div>
                   <Select value={selectedColabId} onValueChange={setSelectedColabId}>
@@ -173,11 +174,11 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
                       <SelectValue placeholder="Selecionar..." />
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px]">
-                      {filteredColaboradores.map((c) => (
+                      {filteredColaboradores.map(c => (
                         <SelectItem key={c.id} value={c.id}>
                           <div className="flex items-center gap-2">
                             <Avatar className="h-5 w-5">
-                              <AvatarImage src={c.foto_url ?? undefined} />
+                              <AvatarImage src={(c as any).foto_url} />
                               <AvatarFallback className="text-[8px]">{c.nome_completo[0]}</AvatarFallback>
                             </Avatar>
                             <span className="truncate">{c.nome_completo}</span>
@@ -190,8 +191,8 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
               </div>
             </div>
             <div className="p-4 flex items-end justify-center bg-muted/5">
-              <Button
-                onClick={openCreate}
+              <Button 
+                onClick={openCreate} 
                 disabled={!selectedColabId}
                 className="rounded-xl bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 gap-2 font-display py-6 px-8"
               >
@@ -245,40 +246,34 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
                   <TableRow key={p.id} className="hover:bg-muted/20 border-border/40 transition-colors group">
                     <TableCell className="font-body font-medium">
                       <div className="flex flex-col">
-                        <span className="text-sm font-bold">#{p.numero_periodo}</span>
+                        <span className="text-sm font-medium">#{p.numero_periodo}</span>
                         <span className="text-[10px] text-muted-foreground">
                           {differenceInDays(new Date(p.data_fim), new Date(p.data_inicio)) + 1} dias corridos
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="font-body text-sm">
-                      {format(new Date(p.data_inicio), 'dd/MM/yyyy', { locale: ptBR })}
-                    </TableCell>
-                    <TableCell className="font-body text-sm">
-                      {format(new Date(p.data_fim), 'dd/MM/yyyy', { locale: ptBR })}
-                    </TableCell>
+                    <TableCell className="font-body text-sm">{format(new Date(p.data_inicio), 'dd/MM/yyyy', { locale: ptBR })}</TableCell>
+                    <TableCell className="font-body text-sm">{format(new Date(p.data_fim), 'dd/MM/yyyy', { locale: ptBR })}</TableCell>
                     <TableCell className="font-body">
-                      <Badge variant="outline" className="bg-primary/5 border-primary/20 text-primary font-bold">
+                      <Badge variant="outline" className="bg-primary/5 border-primary/20 text-primary font-medium">
                         {p.dias_direito} dias
                       </Badge>
                     </TableCell>
                     <TableCell>{getStatusBadge(p.status || '')}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          aria-label="Editar"
-                          onClick={() => openEdit(p)}
-                          className="h-8 w-8"
-                        >
+                        <Button variant="ghost" size="icon" aria-label="Editar" onClick={() => openEdit(p)} className="h-8 w-8">
                           <Edit2 className="h-3.5 w-3.5" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
                           aria-label="Excluir"
-                          onClick={() => deleteMutation.mutate(p.id)}
+                          onClick={() =>
+                            mockAtivo
+                              ? toast.info('Modo demonstração: exclusão desabilitada.')
+                              : deleteMutation.mutate(p.id)
+                          }
                           className="h-8 w-8 text-destructive"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -294,24 +289,23 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
       </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="rounded-2xl">
+        <DialogContent className="max-w-[460px]">
           <DialogHeader>
             <DialogTitle>{editingPeriodo ? 'Editar Período' : 'Novo Período'}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 py-4">
+          <div className="grid grid-cols-2 gap-3 py-2">
             <div className="space-y-2">
               <Label>Número Período</Label>
               <Input
                 type="number"
                 value={form.numero_periodo}
-                onChange={(e) => setForm((p) => ({ ...p, numero_periodo: e.target.value }))}
-                className="rounded-xl"
+                onChange={e => setForm(p => ({ ...p, numero_periodo: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
               <Label>Status</Label>
-              <Select value={form.status} onValueChange={(v) => setForm((p) => ({ ...p, status: v }))}>
-                <SelectTrigger className="rounded-xl">
+              <Select value={form.status} onValueChange={v => setForm(p => ({ ...p, status: v }))}>
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -326,8 +320,7 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
               <Input
                 type="date"
                 value={form.data_inicio}
-                onChange={(e) => setForm((p) => ({ ...p, data_inicio: e.target.value }))}
-                className="rounded-xl"
+                onChange={e => setForm(p => ({ ...p, data_inicio: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
@@ -335,8 +328,7 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
               <Input
                 type="date"
                 value={form.data_fim}
-                onChange={(e) => setForm((p) => ({ ...p, data_fim: e.target.value }))}
-                className="rounded-xl"
+                onChange={e => setForm(p => ({ ...p, data_fim: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
@@ -344,23 +336,18 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
               <Input
                 type="number"
                 value={form.dias_direito}
-                onChange={(e) => setForm((p) => ({ ...p, dias_direito: e.target.value }))}
-                className="rounded-xl"
+                onChange={e => setForm(p => ({ ...p, dias_direito: e.target.value }))}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="rounded-xl">
-              Cancelar
-            </Button>
+            <Button variant="outline" size="sm" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
             <Button
+              size="sm"
               onClick={handleSave}
               disabled={createMutation.isPending || updateMutation.isPending}
-              className="rounded-xl"
             >
-              {createMutation.isPending || updateMutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              ) : null}
+              {createMutation.isPending || updateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
               Salvar
             </Button>
           </DialogFooter>
@@ -369,3 +356,4 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
     </div>
   );
 }
+

@@ -26,9 +26,7 @@ export function PontoAjustesCard({ totalPendentes, isLoading }: PontoAjustesCard
               </p>
             </div>
           </div>
-          <Button asChild size="sm" className="shrink-0 rounded-full">
-            <Link to="/ponto">Revisar</Link>
-          </Button>
+          <Button asChild size="sm" className="shrink-0 rounded-full"><Link to="/ponto">Revisar</Link></Button>
         </CardContent>
       </Card>
     </motion.div>

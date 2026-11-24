@@ -107,7 +107,6 @@ USING (
   )
 );
 
-DROP POLICY IF EXISTS "ferias_avisos_insert_tenant" ON storage.objects;
 CREATE POLICY "ferias_avisos_insert_tenant"
 ON storage.objects FOR INSERT TO authenticated
 WITH CHECK (
@@ -120,7 +119,6 @@ WITH CHECK (
   )
 );
 
-DROP POLICY IF EXISTS "ferias_avisos_update_tenant" ON storage.objects;
 CREATE POLICY "ferias_avisos_update_tenant"
 ON storage.objects FOR UPDATE TO authenticated
 USING (

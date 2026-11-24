@@ -27,7 +27,9 @@ describe('useSolicitarAdiantamento13', () => {
 
   it('calls useMutation with a mutationFn', () => {
     renderHook(() => useSolicitarAdiantamento13());
-    expect(mockUseMutation).toHaveBeenCalledWith(expect.objectContaining({ mutationFn: expect.any(Function) }));
+    expect(mockUseMutation).toHaveBeenCalledWith(
+      expect.objectContaining({ mutationFn: expect.any(Function) })
+    );
   });
 
   it('exposes mutate function', () => {
@@ -38,14 +40,16 @@ describe('useSolicitarAdiantamento13', () => {
   it('invalidates ferias queries on success', () => {
     const invalidate = vi.fn();
     mockUseQueryClient.mockReturnValue({ invalidateQueries: invalidate });
-    let capturedOnSuccess: (...args: unknown[]) => void = () => {};
-    mockUseMutation.mockImplementation(({ onSuccess }: { onSuccess: (...args: unknown[]) => void }) => {
+    let capturedOnSuccess: Function;
+    mockUseMutation.mockImplementation(({ onSuccess }: any) => {
       capturedOnSuccess = onSuccess;
       return { mutate: vi.fn(), isPending: false };
     });
     renderHook(() => useSolicitarAdiantamento13());
     capturedOnSuccess!({ ok: true, ano: 2026, valor: 1500, meses_avos: 12 });
-    expect(invalidate).toHaveBeenCalledWith(expect.objectContaining({ queryKey: ['ferias'] }));
+    expect(invalidate).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: ['ferias'] })
+    );
   });
 
   it('isPending is false by default', () => {

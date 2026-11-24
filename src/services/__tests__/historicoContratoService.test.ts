@@ -10,7 +10,7 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
-function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupListChain(data: any[], error: any = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ order: orderFn });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -18,7 +18,7 @@ function setupListChain(data: unknown, error: { message: string; code?: string }
   return { selectFn, eqFn, orderFn };
 }
 
-function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupInsertChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -26,14 +26,9 @@ function setupInsertChain(data: unknown, error: { message: string; code?: string
   return { insertFn, selectFn, maybeSingle };
 }
 
-function setupDeleteChain(error: { message: string; code?: string } | null = null) {
+function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = {
-    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
-    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
-    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
-    eq: eqFn,
-  };
+  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -43,9 +38,7 @@ function setupDeleteChain(error: { message: string; code?: string } | null = nul
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('historicoContratoService.listar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns historico for given colaboradorId', async () => {
     const records = [{ id: 'h1', colaborador_id: 'c1', data_inicio: '2020-01-01' }];
@@ -55,7 +48,7 @@ describe('historicoContratoService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     expect(await historicoContratoService.listar('c1', EMPRESA_ID)).toEqual([]);
   });
 
@@ -80,37 +73,31 @@ describe('historicoContratoService.listar', () => {
 // ─── criar ────────────────────────────────────────────────────────────────────
 
 describe('historicoContratoService.criar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  const historicoInsert = { colaborador_id: 'c1', data_inicio: '2026-01-01' };
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns new historico', async () => {
-    const created = { id: 'h-new', ...historicoInsert };
+    const created = { id: 'h-new', colaborador_id: 'c1' };
     const { insertFn } = setupInsertChain(created);
-    const result = await historicoContratoService.criar(historicoInsert);
-    expect(insertFn).toHaveBeenCalledWith(historicoInsert);
+    const result = await historicoContratoService.criar({ colaborador_id: 'c1' });
+    expect(insertFn).toHaveBeenCalledWith({ colaborador_id: 'c1' });
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(historicoContratoService.criar(historicoInsert)).rejects.toThrow();
+    await expect(historicoContratoService.criar({})).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(historicoContratoService.criar(historicoInsert)).rejects.toBeDefined();
+    await expect(historicoContratoService.criar({})).rejects.toBeDefined();
   });
 });
 
 // ─── excluir ──────────────────────────────────────────────────────────────────
 
 describe('historicoContratoService.excluir', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('deletes historico by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();

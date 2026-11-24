@@ -1,7 +1,5 @@
-import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client';
 import { formatDateLocalISO } from '@/utils/dateLocal';
-import { validateInput, validateTablePayload } from '@/schemas/validate';
-import { cnabConfiguracaoSchema } from '@/schemas/workflowsPremiacoesCnab';
 
 export interface CNABConfig {
   banco_codigo: string;
@@ -27,8 +25,6 @@ interface CnabConfigRecord {
   nome_empresa?: string;
 }
 
-const onlyDigits = (v: unknown) => String(v ?? '').replace(/\D/g, '');
-
 interface CnabRemessaRecord {
   id: string;
   empresa_id: string;
@@ -39,6 +35,17 @@ interface CnabRemessaRecord {
   arquivo_remessa?: string;
   folha_id?: string;
   created_at?: string;
+}
+
+interface CnabRemessaInsert {
+  empresa_id: string;
+  folha_id: string;
+  banco_codigo: string;
+  status: string;
+  valor_total: number;
+  total_pagamentos: number;
+  arquivo_remessa?: string;
+  sequencial_arquivo?: number;
 }
 
 interface ContaBancariaRecord {
@@ -79,85 +86,6 @@ interface FolhaItemRecord {
 
 type DataRecord = Record<string, unknown>;
 
-// Uma remessa por folha é garantida por índice único parcial. O bridge troca o
-// código pg 23505 por INSERT_ERROR, então o detect da corrida é o re-query:
-// achou remessa do mesmo banco → reusa arquivo 'enviado' ou aborta com geração
-// em andamento; banco diferente → rejeita (nunca devolve arquivo de outro
-// banco); não achou → o erro era outro e volta a propagar.
-async function remessaConcorrente(
-  empresaId: string,
-  folhaId: string,
-  original: unknown,
-  bancoCodigo: string
-): Promise<string> {
-  const { data } = await supabase
-    .from('cnab_remessas')
-    .select('status, arquivo_remessa, banco_codigo')
-    .eq('empresa_id', empresaId)
-    .eq('folha_id', folhaId)
-    .maybeSingle();
-  const rec = data as Pick<CnabRemessaRecord, 'status' | 'arquivo_remessa' | 'banco_codigo'> | null;
-  if (rec?.status === 'enviado' && rec.arquivo_remessa && rec.banco_codigo === bancoCodigo) {
-    return rec.arquivo_remessa;
-  }
-  if (rec?.status === 'enviado') {
-    throw new Error(`Folha já possui remessa enviada para outro banco (${rec.banco_codigo}).`);
-  }
-  if (rec) throw new Error('Remessa já está sendo gerada para esta folha — aguarde e tente novamente.');
-  throw original instanceof Error ? original : new Error('Falha ao criar remessa');
-}
-
-// Claim atômico de remessa pendente: só o primeiro UPDATE que casa
-// status='pendente' leva a linha (o bridge devolve as linhas atualizadas).
-// 'processando' parado >10min é tentativa abortada e pode ser retomado.
-// O filtro de banco impede retomar remessa de outro banco (config trocada):
-// sem claim, cai no re-query que rejeita banco divergente.
-async function claimRemessa(remessaId: string, bancoCodigo: string): Promise<CnabRemessaRecord | null> {
-  const payload = validateTablePayload(
-    'cnab_remessas',
-    { status: 'processando' } as Partial<CnabRemessaRecord>,
-    'cnabService:cnab_remessas'
-  );
-  const table = () => supabase.from('cnab_remessas') as unknown as QueryBuilderType;
-  const fresh = await table()
-    .update(payload)
-    .eq('id', remessaId)
-    .eq('status', 'pendente')
-    .eq('banco_codigo', bancoCodigo);
-  const freshRows = (fresh.data ?? []) as CnabRemessaRecord[];
-  if (freshRows.length > 0) return freshRows[0];
-  // O bridge rejeita filtros não-eq em writes — o claim stale fazia
-  // .lt('updated_at') num UPDATE e falhava sempre, travando a remessa em
-  // 'processando' para sempre. Em dois passos: SELECT stale (leitura aceita
-  // .lt) → UPDATE por eq, com o updated_at lido como lock otimista.
-  const staleBefore = new Date(Date.now() - 10 * 60 * 1000).toISOString();
-  const staleFound = await table()
-    .select('id, updated_at')
-    .eq('id', remessaId)
-    .eq('status', 'processando')
-    .eq('banco_codigo', bancoCodigo)
-    .lt('updated_at', staleBefore);
-  const staleRow = ((staleFound.data ?? []) as { id: string; updated_at: string }[])[0];
-  if (!staleRow) return null;
-  const stale = await table()
-    .update(payload)
-    .eq('id', remessaId)
-    .eq('status', 'processando')
-    .eq('banco_codigo', bancoCodigo)
-    .eq('updated_at', staleRow.updated_at);
-  const staleRows = (stale.data ?? []) as CnabRemessaRecord[];
-  return staleRows[0] ?? null;
-}
-
-// Recovery de tentativa abortada pode ter deixado itens gravados; sob o claim
-// exclusivo, limpar e regravar mantém a remessa idempotente.
-async function limparItensRemessa(remessaId: string): Promise<void> {
-  const { error } = await (supabase.from('cnab_itens') as unknown as QueryBuilderType)
-    .delete()
-    .eq('remessa_id', remessaId);
-  if (error) throw error;
-}
-
 export const cnabService = {
   async getConfig(empresaId: string): Promise<CNABConfig | null> {
     const { data, error } = await supabase
@@ -165,13 +93,12 @@ export const cnabService = {
       .select('*')
       .eq('empresa_id', empresaId)
       .maybeSingle();
-
+    
     if (error) throw error;
-    return data as CnabConfigRecord | null as CNABConfig | null;
+    return (data as CnabConfigRecord | null) as CNABConfig | null;
   },
 
   async saveConfig(empresaId: string, config: CNABConfig) {
-    validateInput(cnabConfiguracaoSchema, config, 'cnab.saveConfig');
     const { data: existing } = await supabase
       .from('cnab_configuracoes')
       .select('id')
@@ -182,20 +109,14 @@ export const cnabService = {
       const existingRecord = existing as DataRecord;
       const { error } = await supabase
         .from('cnab_configuracoes')
-        .update(validateTablePayload('cnab_configuracoes', config, 'cnabService:cnab_configuracoes'))
+        .update(config)
         .eq('id', String(existingRecord.id))
         .eq('empresa_id', empresaId);
       if (error) throw error;
     } else {
       const { error } = await supabase
         .from('cnab_configuracoes')
-        .insert(
-          validateTablePayload(
-            'cnab_configuracoes',
-            [{ ...config, empresa_id: empresaId }],
-            'cnabService:cnab_configuracoes'
-          )
-        );
+        .insert([{ empresa_id: empresaId, ...config }]);
       if (error) throw error;
     }
   },
@@ -206,7 +127,7 @@ export const cnabService = {
       .select('*')
       .eq('empresa_id', empresaId)
       .order('created_at', { ascending: false });
-
+    
     if (error) throw error;
     return data || [];
   },
@@ -217,7 +138,7 @@ export const cnabService = {
       .select('*')
       .eq('empresa_id', empresaId)
       .order('created_at', { ascending: false });
-
+    
     if (error) throw error;
     return data || [];
   },
@@ -229,7 +150,8 @@ export const cnabService = {
     // Idempotency guard (C46/C47): reject if a remessa already exists in 'enviado'
     // status for this folha to prevent double-payment. Allow recovery if 'pendente'
     // (previous attempt failed before sending).
-    const { data: existingRemessa } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
+    const { data: existingRemessa } = await (supabase as any)
+      .from('cnab_remessas')
       .select('id, status, arquivo_remessa')
       .eq('empresa_id', empresaId)
       .eq('folha_id', folhaId)
@@ -244,19 +166,17 @@ export const cnabService = {
 
     const { data: itens, error: hError } = await supabase
       .from('folha_itens')
-      .select(
-        `
+      .select(`
         *,
         colaborador:colaboradores(id, nome_completo, cpf)
-      `
-      )
+      `)
       .eq('folha_id', folhaId);
 
     if (hError) throw hError;
     if (!itens?.length) throw new Error('Nenhum pagamento encontrado para gerar CNAB.');
 
     const typedItens = itens as FolhaItemRecord[];
-    const colaboradorIds = typedItens.map((i) => i.colaborador_id);
+    const colaboradorIds = typedItens.map(i => i.colaborador_id);
     const { data: contas, error: cError } = await supabase
       .from('contas_bancarias')
       .select('*')
@@ -265,152 +185,63 @@ export const cnabService = {
 
     if (cError) throw cError;
 
-    // Fetch monotonically increasing sequence per (empresa, banco) — fixes C46
-    // hardcoded=1. Alocado antes do insert: sequencial_arquivo é NOT NULL sem
-    // default no canônico.
-    const { data: seqData, error: seqError } = await supabase.rpc('next_cnab_sequencial', {
-      p_empresa_id: empresaId,
-      p_banco_codigo: config.banco_codigo,
-    });
-    if (seqError || seqData == null) throw seqError ?? new Error('Falha ao alocar sequencial CNAB');
-    const sequence = seqData as number;
-
     // Re-use pending remessa from a failed previous attempt; otherwise create new.
     let remessaRecord: CnabRemessaRecord;
-    const existingRec = existingRemessa as CnabRemessaRecord | null;
-    if (existingRec && (existingRec.status === 'pendente' || existingRec.status === 'processando')) {
-      const claimed = await claimRemessa(existingRec.id, config.banco_codigo);
-      if (!claimed)
-        return remessaConcorrente(empresaId, folhaId, new Error('Remessa em geração concorrente'), config.banco_codigo);
-      remessaRecord = claimed;
-      await limparItensRemessa(remessaRecord.id);
+    if (existingRemessa && (existingRemessa as CnabRemessaRecord).status === 'pendente') {
+      remessaRecord = existingRemessa as CnabRemessaRecord;
     } else {
-      const { data: remessa, error: rError } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
-        .insert(
-          validateTablePayload(
-            'cnab_remessas',
-            [
-              {
-                empresa_id: empresaId,
-                folha_id: folhaId,
-                banco_codigo: config.banco_codigo,
-                status: 'pendente',
-                valor_total: typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0),
-                total_pagamentos: typedItens.length,
-                sequencial_arquivo: sequence,
-              },
-            ],
-            'cnabService:cnab_remessas'
-          )
-        )
+      const { data: remessa, error: rError } = await (supabase as any)
+        .from('cnab_remessas')
+        .insert([{
+          empresa_id: empresaId,
+          folha_id: folhaId,
+          banco_codigo: config.banco_codigo,
+          status: 'pendente',
+          valor_total: typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0),
+          total_pagamentos: typedItens.length
+        }] as CnabRemessaInsert[])
         .select()
         .single();
 
-      if (rError || !remessa) return remessaConcorrente(empresaId, folhaId, rError, config.banco_codigo);
+      if (rError || !remessa) throw rError || new Error('Falha ao criar remessa');
       remessaRecord = remessa as CnabRemessaRecord;
     }
 
     const lines: string[] = [];
+    // Fetch monotonically increasing sequence per (empresa, banco) — fixes C46 hardcoded=1
+    const { data: seqData } = await supabase.rpc('next_cnab_sequencial', {
+      p_empresa_id: empresaId,
+      p_banco_codigo: config.banco_codigo,
+    });
+    const sequence = (seqData as number) || 1;
 
     const pad = (val: unknown, len: number, char = ' ', side: 'left' | 'right' = 'right') => {
-      // CNAB é ASCII posicional: diacríticos viram 2+ bytes em UTF-8 e
-      // deslocariam todos os campos seguintes — remove antes de medir.
-      const s = String(val || '')
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^\x20-\x7E]/g, '')
-        .substring(0, len);
+      const s = String(val || '').substring(0, len);
       return side === 'right' ? s.padEnd(len, char) : s.padStart(len, char);
     };
 
-    // QA-r4: Math.trunc(9.95*100) perdia 1 centavo (~5,9% dos valores) —
-    // FEBRABAN espera valor em centavos arredondado, igual ao CNAB400.
-    const formatAmount = (val: number) => pad(Math.round(val * 100), 15, '0', 'left');
+    const formatAmount = (val: number) => pad(Math.trunc(val * 100), 15, '0', 'left');
 
     const today = new Date();
-    const dateStr = formatDateLocalISO(today).split('-').reverse().join(''); // DDMMAAAA — FEBRABAN
+    const dateStr = formatDateLocalISO(today).replace(/-/g, '');
     const timeStr = today.toTimeString().slice(0, 8).replace(/:/g, '');
 
-    // CNPJ da empresa — inscrição dos headers de arquivo e lote (FEBRABAN).
-    // Falha de leitura ou CNPJ ausente/inválido aborta: remessa com inscrição
-    // zerada é inválida no banco e ficaria persistida como 'enviado'.
-    const { data: empresaRow, error: empresaError } = await supabase
-      .from('empresas')
-      .select('cnpj')
-      .eq('id', empresaId)
-      .maybeSingle();
-    if (empresaError) throw empresaError;
-    const cnpjEmpresa = onlyDigits((empresaRow as DataRecord | null)?.cnpj ?? '');
-    if (!/^\d{14}$/.test(cnpjEmpresa) || /^0+$/.test(cnpjEmpresa)) {
-      throw new Error('CNPJ da empresa ausente ou inválido — regularize o cadastro antes de gerar a remessa.');
-    }
-
-    const header =
-      pad(config.banco_codigo, 3, '0', 'left') +
-      '00000' +
-      pad('', 9) +
-      '2' +
-      pad(cnpjEmpresa, 14, '0', 'left') +
-      pad(config.convenio, 20) +
-      pad(config.agencia, 5, '0', 'left') +
-      pad(config.agencia_digito || '', 1) +
-      pad(config.conta, 12, '0', 'left') +
-      pad(config.conta_digito, 1) +
-      ' ' +
-      pad(config.nome_empresa || 'EMPRESA', 30) +
-      pad('BANCO', 30) +
-      pad('', 10) +
-      '1' +
-      dateStr +
-      timeStr +
-      pad(sequence, 6, '0', 'left') +
-      '081' +
-      '00000' +
-      pad('', 69);
+    const header = pad(config.banco_codigo, 3, '0', 'left') + '00000' + pad('', 9) + '2' + pad('', 14, '0') + pad(config.convenio, 20) + pad(config.agencia, 5, '0', 'left') + pad(config.agencia_digito || '', 1) + pad(config.conta, 12, '0', 'left') + pad(config.conta_digito, 1) + ' ' + pad(config.nome_empresa || 'EMPRESA', 30) + pad('BANCO', 30) + pad('', 10) + '1' + dateStr + timeStr + pad(sequence, 6, '0', 'left') + '081' + '00000' + pad('', 69);
     lines.push(header.padEnd(240, ' '));
 
     let detailSequence = 1;
     let totalValue = 0;
     const cnabItensToInsert: DataRecord[] = [];
 
-    // Header de Lote (Tipo 1) — posições FEBRABAN CNAB240:
-    // 14-16 versão '040' · 17 uso FEBRABAN · 18-19 tipo+nº inscrição
-    // (1+14) · 33-52 convênio · 53-57 agência · 59-70 conta.
-    const lotHeader =
-      pad(config.banco_codigo, 3, '0', 'left') +
-      '0001' +
-      '1' +
-      'C' +
-      '30' +
-      '01' +
-      '040' +
-      ' ' +
-      '2' + // tipo inscrição: 2 = CNPJ
-      pad(cnpjEmpresa, 14, '0', 'left') +
-      pad(config.convenio, 20) +
-      pad(config.agencia, 5, '0', 'left') +
-      pad(config.agencia_digito || '', 1) +
-      pad(config.conta, 12, '0', 'left') +
-      pad(config.conta_digito, 1) +
-      ' ' +
-      pad(config.nome_empresa || 'EMPRESA', 30) +
-      pad('', 40) + // mensagem
-      pad('', 30) + // logradouro
-      pad('', 5) + // número
-      pad('', 15) + // complemento
-      pad('', 20) + // cidade
-      pad('', 5) + // CEP
-      pad('', 3) + // complemento CEP
-      pad('', 2) + // UF
-      dateStr + // 223-230
-      pad('', 10); // 231-240 uso FEBRABAN
+    // Header de Lote (Tipo 1)
+    const lotHeader = pad(config.banco_codigo, 3, '0', 'left') + '00011' + 'C' + '30' + '01' + ' ' + '040' + pad(config.agencia, 5, '0', 'left') + pad(config.agencia_digito || '', 1) + pad(config.conta, 12, '0', 'left') + pad(config.conta_digito, 1) + ' ' + pad(config.nome_empresa || 'EMPRESA', 30) + pad('', 40) + pad('', 30) + pad('', 10) + dateStr + pad('', 8, '0') + pad('', 33);
     lines.push(lotHeader.padEnd(240, ' '));
 
     const typedContas = (contas as ContaBancariaRecord[]) || [];
 
     for (const item of typedItens) {
       const colab = item.colaborador;
-      const conta = typedContas.find((c) => c.colaborador_id === item.colaborador_id);
+      const conta = typedContas.find(c => c.colaborador_id === item.colaborador_id);
       if (!conta) continue;
 
       const valor = Number(item.total_liquido);
@@ -424,87 +255,27 @@ export const cnabService = {
         nome_favorecido: colab?.nome_completo ?? '',
         cpf_cnpj_favorecido: colab?.cpf ?? '',
         valor_pagamento: valor,
-        data_pagamento: formatDateLocalISO(today),
         seu_numero: seuNumero,
-        status: 'processando',
+        status: 'processando'
       });
 
       // Segmento A (Crédito em Conta)
-      const segA =
-        pad(config.banco_codigo, 3, '0', 'left') +
-        '00013' +
-        pad(detailSequence++, 5, '0', 'left') +
-        'A' +
-        '000' +
-        '000' +
-        pad(conta.banco_codigo || '000', 3, '0', 'left') +
-        pad(conta.agencia || '', 5, '0', 'left') +
-        pad(conta.agencia_digito || '', 1) +
-        pad(conta.conta || '', 12, '0', 'left') +
-        pad(conta.digito || '', 1) +
-        ' ' +
-        pad(colab?.nome_completo || '', 30) +
-        pad(seuNumero, 20) +
-        dateStr +
-        'BRL' +
-        pad('', 15, '0') +
-        formatAmount(valor) +
-        pad('', 20) +
-        pad('', 8, '0') +
-        pad('', 15, '0') +
-        pad('', 40) +
-        '00' +
-        pad('', 10);
+      const segA = pad(config.banco_codigo, 3, '0', 'left') + '00013' + pad(detailSequence++, 5, '0', 'left') + 'A' + '000' + '000' + pad(conta.banco_codigo || '000', 3, '0', 'left') + pad(conta.agencia || '', 5, '0', 'left') + pad(conta.agencia_digito || '', 1) + pad(conta.conta || '', 12, '0', 'left') + pad(conta.digito || '', 1) + ' ' + pad(colab?.nome_completo || '', 30) + pad(seuNumero, 20) + dateStr + 'BRL' + pad('', 15, '0') + formatAmount(valor) + pad('', 20) + pad('', 8, '0') + pad('', 15, '0') + pad('', 40) + '00' + pad('', 10);
       lines.push(segA.padEnd(240, ' '));
 
-      // Se tiver chave PIX, adiciona Segmento B (PIX). Tipo de inscrição
-      // segue o documento: 1=CPF (11), 2=CNPJ (14) — antes declarava '2'
-      // carregando CPF, e o banco rejeitava a inscrição.
+      // Se tiver chave PIX, adiciona Segmento B (PIX)
       if (conta.pix_chave) {
-        const docFav = onlyDigits(colab?.cpf || '');
-        const segB =
-          pad(config.banco_codigo, 3, '0', 'left') +
-          '00013' +
-          pad(detailSequence++, 5, '0', 'left') +
-          'B' +
-          pad('', 3) +
-          (docFav.length > 11 ? '2' : '1') +
-          pad(docFav, 14, '0', 'left') +
-          pad('', 30) +
-          pad('', 30) +
-          pad('', 30) +
-          pad('', 30) +
-          pad(conta.pix_chave, 60) +
-          pad('', 25);
+        const segB = pad(config.banco_codigo, 3, '0', 'left') + '00013' + pad(detailSequence++, 5, '0', 'left') + 'B' + pad('', 3) + '2' + pad(colab?.cpf || '', 14, '0', 'left') + pad('', 30) + pad('', 30) + pad('', 30) + pad('', 30) + pad(conta.pix_chave, 60) + pad('', 25);
         lines.push(segB.padEnd(240, ' '));
       }
     }
 
-    // Trailer de Lote (Tipo 5) — FEBRABAN: somatória dos valores é pos.
-    // 24-41 (18 dígitos), depois qtd. moeda (18), aviso débito (6), uso
-    // FEBRABAN (165) e ocorrências (10). A soma de 15 dígitos desalinhava
-    // o trailer inteiro.
-    const lotTrailer =
-      pad(config.banco_codigo, 3, '0', 'left') +
-      '00015' +
-      pad('', 9) +
-      pad(detailSequence + 1, 6, '0', 'left') +
-      pad(Math.round(totalValue * 100), 18, '0', 'left') +
-      pad('', 18, '0') +
-      pad('', 6) +
-      pad('', 165) +
-      pad('', 10);
+    // Trailer de Lote (Tipo 5)
+    const lotTrailer = pad(config.banco_codigo, 3, '0', 'left') + '00015' + pad('', 9) + pad(detailSequence + 1, 6, '0', 'left') + formatAmount(totalValue) + pad('', 18, '0') + pad('', 183);
     lines.push(lotTrailer.padEnd(240, ' '));
 
     // Trailer de Arquivo (Tipo 9)
-    const trailer =
-      pad(config.banco_codigo, 3, '0', 'left') +
-      '99999' +
-      pad('', 9) +
-      '000001' +
-      pad(lines.length + 1, 6, '0', 'left') +
-      pad('', 6, '0') +
-      pad('', 205);
+    const trailer = pad(config.banco_codigo, 3, '0', 'left') + '99999' + pad('', 9) + '000001' + pad(lines.length + 1, 6, '0', 'left') + pad('', 6, '0') + pad('', 205);
     lines.push(trailer.padEnd(240, ' '));
 
     const fullFile = lines.join('\r\n');
@@ -524,241 +295,95 @@ export const cnabService = {
     // would appear sent but have no payment records. Insert items first so the
     // DB is always consistent — a pending remessa with items is recoverable.
     if (cnabItensToInsert.length > 0) {
-      const { error: itensError } = await (supabase.from('cnab_itens') as unknown as QueryBuilderType).insert(
-        validateTablePayload('cnab_itens', cnabItensToInsert, 'cnabService:cnab_itens')
-      );
-      if (itensError) throw itensError;
+      await (supabase as any).from('cnab_itens').insert(cnabItensToInsert);
     }
 
     // Only after items are persisted, mark remessa as sent with the full file
-    await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
-      .update(
-        validateTablePayload(
-          'cnab_remessas',
-          {
-            arquivo_remessa: fullFile,
-            status: 'enviado',
-            sequencial_arquivo: sequence,
-          } as Partial<CnabRemessaRecord>,
-          'cnabService:cnab_remessas'
-        )
-      )
-      .eq('id', remessaRecord.id)
-      .eq('empresa_id', empresaId)
-      .eq('status', 'processando');
+    await (supabase as any).from('cnab_remessas').update({
+      arquivo_remessa: fullFile,
+      status: 'enviado',
+      sequencial_arquivo: sequence,
+    } as Partial<CnabRemessaRecord>).eq('id', remessaRecord.id).eq('empresa_id', empresaId);
 
     return fullFile;
   },
 
   async parseRetornoCNAB(empresaId: string, fileContent: string) {
-    // CR-only (mainframe legado) também separa registros — antes só o 1º
-    // era processado em silêncio.
-    const lines = fileContent.split(/\r\n|[\r\n]/);
+    const lines = fileContent.split(/\r?\n/);
     const results = {
       sucesso: 0,
-      // erro = rejeição do banco; falhasTecnicas = falha de leitura/update no
-      // banco de dados — separado para a UI não chamar falha interna de
-      // 'rejeitado pelo banco'.
       erro: 0,
-      falhasTecnicas: 0,
-      // Item marcado pago mas sem folha_item_id — reimportar não restaura o
-      // vínculo; precisa de conciliação manual (bucket separado).
-      semVinculoFolha: 0,
-      naoEncontrados: 0,
-      detalhes: [] as Array<{ nome: string; status: string; ocorrencia: string }>,
-    };
-
-    // cnab_itens não tem empresa_id — o tenant é conferido item a item via
-    // cnab_remessas (cache por remessa; evita listar todas as remessas da
-    // empresa, que estouraria a paginação do bridge).
-    const remessaEmpresa = new Map<string, string>();
-    const empresaDaRemessa = async (id: string): Promise<string> => {
-      const cached = remessaEmpresa.get(id);
-      if (cached !== undefined) return cached;
-      const { data, error } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
-        .select('empresa_id')
-        .eq('id', id)
-        .maybeSingle();
-      // Falha de leitura propaga — nunca é cacheada como 'empresa vazia'
-      // (senão itens válidos virariam 'não encontrado' em silêncio).
-      if (error) throw error;
-      const emp = (data as { empresa_id?: string } | null)?.empresa_id ?? '';
-      remessaEmpresa.set(id, emp);
-      return emp;
+      detalhes: [] as Array<{ nome: string; status: string; ocorrencia: string }>
     };
 
     for (const line of lines) {
       if (line.length < 240) continue;
+      
+      const tipoRegistro = line.substring(7, 8);
+      const segmento = line.substring(13, 14);
 
-      // CNAB 240: registro detalhe tipo '3' + segmento 'A' (pos 8 e 14).
-      // CNAB 400: registro detalhe tipo '1' em linha de 400 posições.
-      const is240 = line.substring(7, 8) === '3' && line.substring(13, 14) === 'A';
-      const is400 = !is240 && line.length === 400 && line.substring(0, 1) === '1';
-      if (!is240 && !is400) continue;
+      if (tipoRegistro === '3' && segmento === 'A') {
+        const seuNumero = line.substring(73, 93).trim();
+        const codigoOcorrencia = line.substring(230, 232);
+        
+        const { data: item } = await (supabase as any)
+          .from('cnab_itens')
+          .select('id, folha_item_id, nome_favorecido')
+          .eq('seu_numero', seuNumero)
+          .eq('empresa_id', empresaId)
+          .maybeSingle();
 
-      const codigoOcorrencia = is240 ? line.substring(230, 232) : line.substring(108, 110);
-      // CNAB400: primário = pos 68-77 (onde generateCNAB400 grava seu_numero);
-      // secundário = pos 63-72 (só fallback — pode invadir o campo do nome).
-      const candidatos = is240
-        ? [line.substring(73, 93).trim()]
-        : [...new Set([line.substring(67, 77).trim(), line.substring(62, 72).trim()])].filter(Boolean);
-      if (candidatos.length === 0) continue;
+        if (item) {
+          const itemRecord = item as CnabItemRecord;
+          const isSuccess = ['00', '02'].includes(codigoOcorrencia);
+          const status = isSuccess ? 'pago' : 'erro';
 
-      // CNAB400: o arquivo ecoa só 10 posições de `seu_numero`; remessas antigas
-      // gravaram 12 — casa por prefixo (stored LIKE 'candidato%'). CNAB240: eq.
-      let query = (supabase.from('cnab_itens') as unknown as QueryBuilderType).select(
-        'id, remessa_id, folha_item_id, nome_favorecido, seu_numero'
-      );
-      // Bancos ecoam seu_numero em caixa diferente do gravado — ilike é
-      // case-insensitive nos dois lados (240: eq case-insensitive; 400:
-      // prefixo case-insensitive). O match final também normaliza caixa.
-      if (is240) {
-        query = query.ilike('seu_numero', candidatos[0]);
-      } else {
-        query = query.or(candidatos.map((c) => `seu_numero.ilike.${c}%`).join(','));
-      }
-      const { data: itens, error: findError } = await query;
-      // Tenant ANTES do match: dois tenants podem compartilhar o mesmo
-      // seu_numero — sem o filtro, o match pegaria (ou rejeitaria por
-      // ambiguidade) o item da outra empresa e deixaria o desta pendente.
-      // Falha de leitura de uma remessa conta erro NA LINHA (não aborta o
-      // arquivo nem vira 'não encontrado' em silêncio) e nunca é cacheada.
-      const itemList: CnabItemRecord[] = [];
-      let lookupFailed = false;
-      for (const i of (itens ?? []) as CnabItemRecord[]) {
-        try {
-          if ((await empresaDaRemessa(i.remessa_id)) === empresaId) itemList.push(i);
-        } catch {
-          lookupFailed = true;
-          break;
-        }
-      }
-      if (lookupFailed) {
-        results.falhasTecnicas++;
-        results.detalhes.push({
-          nome: '—',
-          status: 'erro',
-          ocorrencia: 'Falha ao verificar a remessa do item (leitura do banco)',
-        });
-        continue;
-      }
-      // Match só aceito quando inequívoco: exato primeiro; prefixo só com
-      // candidato de 10 posições completas (fragmento de padding do nome nunca
-      // casa — evita creditar o pagamento de outro favorecido/remessa).
-      const matchFor = (cand: string) => {
-        const candUp = cand.toUpperCase();
-        const exact = itemList.filter((i) => i.seu_numero.toUpperCase() === candUp);
-        if (exact.length === 1) return exact[0];
-        if (exact.length > 1 || cand.length !== 10) return undefined;
-        const prefix = itemList.filter((i) => i.seu_numero.toUpperCase().startsWith(candUp));
-        return prefix.length === 1 ? prefix[0] : undefined;
-      };
-      const item = is240
-        ? itemList[0]
-        : (matchFor(candidatos[0]) ?? (candidatos[1] !== undefined ? matchFor(candidatos[1]) : undefined));
-
-      if (findError) {
-        results.falhasTecnicas++;
-        results.detalhes.push({ nome: candidatos[0], status: 'erro', ocorrencia: 'FALHA_CONSULTA' });
-        continue;
-      }
-      if (!item) {
-        results.naoEncontrados++;
-        continue;
-      }
-
-      const isSuccess = ['00', '02'].includes(codigoOcorrencia);
-      const status = isSuccess ? 'pago' : 'erro';
-
-      const { error: updError } = await (supabase.from('cnab_itens') as unknown as QueryBuilderType)
-        .update(
-          validateTablePayload(
-            'cnab_itens',
-            {
+          await (supabase as any)
+            .from('cnab_itens')
+            .update({
               status,
               codigo_ocorrencia: codigoOcorrencia,
-              mensagem_ocorrencia: isSuccess ? 'Confirmado' : 'Rejeitado pelo banco',
-            },
-            'cnabService:cnab_itens'
-          )
-        )
-        .eq('id', item.id);
+              mensagem_ocorrencia: isSuccess ? 'Confirmado' : 'Rejeitado pelo banco'
+            })
+            .eq('id', itemRecord.id)
+            .eq('empresa_id', empresaId);
 
-      let folhaOk = true;
-      if (!updError && isSuccess && item.folha_item_id) {
-        const { error: fiError } = await (supabase.from('folha_itens') as unknown as QueryBuilderType)
-          .update(validateTablePayload('folha_itens', { status_pagamento: 'pago' }, 'cnabService:folha_itens'))
-          .eq('id', item.folha_item_id);
-        folhaOk = !fiError;
+          if (isSuccess && itemRecord.folha_item_id) {
+            await (supabase as any)
+              .from('folha_itens')
+              .update({ status_pagamento: 'pago' })
+              .eq('id', itemRecord.folha_item_id)
+              .eq('empresa_id', empresaId);
+            results.sucesso++;
+          } else {
+            results.erro++;
+          }
+
+          results.detalhes.push({
+            nome: itemRecord.nome_favorecido,
+            status,
+            ocorrencia: codigoOcorrencia
+          });
+        }
       }
-
-      if (updError) {
-        results.falhasTecnicas++;
-      } else if (isSuccess && !item.folha_item_id) {
-        // Pago confirmado no cnab_itens mas sem folha_itens pra atualizar —
-        // reimportar não resolve: é conciliação manual, não falha transitória.
-        results.semVinculoFolha++;
-      } else if (isSuccess && !folhaOk) {
-        results.falhasTecnicas++;
-      } else if (isSuccess) {
-        results.sucesso++;
-      } else {
-        results.erro++;
-      }
-
-      results.detalhes.push({
-        nome: item.nome_favorecido,
-        status: updError ? 'erro' : status,
-        ocorrencia: updError ? 'FALHA_UPDATE' : codigoOcorrencia,
-      });
     }
     return results;
   },
 
   async generatePIXBatch(empresaId: string, folhaId: string): Promise<string> {
-    // Idempotência (BUG-2.5): o CSV PIX pagável fica registrado em pix_lotes
-    // igual ao CNAB240 — um lote por (empresa, folha). Remessa finalizada é
-    // reutilizada; uma segunda geração nunca cria arquivo paralelo.
-    const { data: existingLote } = await (supabase.from('pix_lotes') as unknown as QueryBuilderType)
-      .select('id, status, arquivo_lote')
-      .eq('empresa_id', empresaId)
-      .eq('folha_id', folhaId)
-      .maybeSingle();
-
-    if (existingLote) {
-      const rec = existingLote as { id: string; status: string; arquivo_lote?: string | null };
-      if (rec.status === 'finalizado' && rec.arquivo_lote) return rec.arquivo_lote;
-      if (rec.status === 'aberto')
-        throw new Error('Lote PIX já está sendo gerado para esta folha — aguarde e tente novamente.');
-    }
-
-    // Titularidade: a folha precisa pertencer a esta empresa — gravar pagamentos
-    // de outro tenant sob este empresa_id exporia dados bancários alheios.
-    const { data: folhaRow, error: folhaError } = await supabase
-      .from('folhas_pagamento')
-      .select('empresa_id')
-      .eq('id', folhaId)
-      .maybeSingle();
-    if (folhaError) throw folhaError;
-    if ((folhaRow as { empresa_id?: string } | null)?.empresa_id !== empresaId) {
-      throw new Error('Folha não pertence a esta empresa.');
-    }
-
     const { data: itens, error: hError } = await supabase
       .from('folha_itens')
-      .select(
-        `
+      .select(`
         *, 
         colaborador:colaboradores(id, nome_completo, cpf)
-      `
-      )
+      `)
       .eq('folha_id', folhaId);
-
+    
     if (hError) throw hError;
     if (!itens?.length) throw new Error('Nenhum pagamento encontrado para gerar lote PIX.');
 
     const typedItens = itens as FolhaItemRecord[];
-    const colaboradorIds = typedItens.map((i) => i.colaborador_id);
+    const colaboradorIds = typedItens.map(i => i.colaborador_id);
     const { data: contas, error: cError } = await supabase
       .from('contas_bancarias')
       .select('*')
@@ -769,67 +394,17 @@ export const cnabService = {
 
     const typedContas = (contas as ContaBancariaRecord[]) || [];
 
-    // QA-r4: campos concatenados crus permitiam injeção — ';' criava coluna
-    // extra e '\n' na chave PIX injetava uma linha pagável no arquivo.
-    const csvField = (v: unknown) =>
-      String(v ?? '')
-        .replace(/[;\r\n]/g, ' ')
-        .trim();
     const csvLines = ['Nome;CPF/CNPJ;Chave Pix;Tipo Chave;Valor;Descricao;ID_Folha_Item'];
     for (const item of typedItens) {
       const colab = item.colaborador;
-      const conta = typedContas.find((c) => c.colaborador_id === item.colaborador_id);
+      const conta = typedContas.find(c => c.colaborador_id === item.colaborador_id);
       if (!conta || !conta.pix_chave) continue;
       const valor = Number(item.total_liquido);
-      csvLines.push(
-        `${csvField(colab?.nome_completo)};${csvField(colab?.cpf)};${csvField(conta.pix_chave)};${csvField(conta.pix_tipo || 'CPF')};${valor.toFixed(2).replace('.', ',')};Pagamento Salarial;${item.id}`
-      );
+      csvLines.push(`${colab?.nome_completo ?? ''};${colab?.cpf || ''};${conta.pix_chave};${conta.pix_tipo || 'CPF'};${valor.toFixed(2).replace('.', ',')};Pagamento Salarial;${item.id}`);
     }
 
     if (csvLines.length === 1) throw new Error('Nenhum colaborador com chave PIX cadastrada nesta folha.');
-
-    const csv = csvLines.join('\n');
-    const totalPix = typedItens
-      .filter((i) => typedContas.some((c) => c.colaborador_id === i.colaborador_id && c.pix_chave))
-      .reduce((acc, i) => acc + Number(i.total_liquido), 0);
-
-    // Persiste o lote com o arquivo — o unique (empresa_id, folha_id) rejeita
-    // concorrentes: quem perde a corrida reusa o arquivo do vencedor.
-    if (existingLote) {
-      const rec = existingLote as { id: string };
-      const { error: updErr } = await (supabase.from('pix_lotes') as unknown as QueryBuilderType)
-        .update({
-          status: 'finalizado',
-          arquivo_lote: csv,
-          valor_total: totalPix,
-          quantidade_pagamentos: csvLines.length - 1,
-        })
-        .eq('id', rec.id);
-      if (updErr) throw updErr;
-    } else {
-      const { error: insErr } = await (supabase.from('pix_lotes') as unknown as QueryBuilderType).insert({
-        empresa_id: empresaId,
-        folha_id: folhaId,
-        status: 'finalizado',
-        arquivo_lote: csv,
-        valor_total: totalPix,
-        quantidade_pagamentos: csvLines.length - 1,
-      });
-      if (insErr) {
-        // Perdeu a corrida (o bridge devolve INSERT_ERROR, não 23505 — o
-        // único índice único em pix_lotes é (empresa_id, folha_id)): re-lê
-        // o lote e devolve o arquivo do vencedor se já está finalizado.
-        const { data: won } = await (supabase.from('pix_lotes') as unknown as QueryBuilderType)
-          .select('status, arquivo_lote')
-          .eq('empresa_id', empresaId)
-          .eq('folha_id', folhaId)
-          .maybeSingle();
-        const wonRec = won as { status?: string; arquivo_lote?: string | null } | null;
-        if (wonRec?.status === 'finalizado' && wonRec.arquivo_lote) return wonRec.arquivo_lote;
-        throw insErr;
-      }
-    }
-    return csv;
+    return csvLines.join('\n');
   },
 
   /**
@@ -855,25 +430,18 @@ export const cnabService = {
   async generateCNAB400(
     empresaId: string,
     folhaId: string,
-    opts: { banco_codigo?: string; convenio?: string; nome_empresa?: string } = {}
+    opts: { banco_codigo?: string; convenio?: string; nome_empresa?: string } = {},
   ): Promise<string> {
     // ── 1. Carregar config ────────────────────────────────────────────
     const config = opts.banco_codigo
-      ? {
-          banco_codigo: opts.banco_codigo,
-          convenio: opts.convenio ?? '',
-          nome_empresa: opts.nome_empresa ?? '',
-          agencia: '',
-          agencia_digito: '',
-          conta: '',
-          conta_digito: '',
-        }
+      ? { banco_codigo: opts.banco_codigo, convenio: opts.convenio ?? '', nome_empresa: opts.nome_empresa ?? '', agencia: '', agencia_digito: '', conta: '', conta_digito: '' }
       : await this.getConfig(empresaId);
 
     if (!config) throw new Error('Configuração CNAB não encontrada.');
 
     // ── 2. Idempotency: se já enviado, retorna arquivo existente ───────
-    const { data: existingRemessa } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
+    const { data: existingRemessa } = await (supabase as any)
+      .from('cnab_remessas')
       .select('id, status, arquivo_remessa')
       .eq('empresa_id', empresaId)
       .eq('folha_id', folhaId)
@@ -886,7 +454,7 @@ export const cnabService = {
     }
 
     // ── 3. Carregar itens ─────────────────────────────────────────────
-    const { data: itens, error: hError } = await supabase
+    const { data: itens, error: hError } = await (supabase as any)
       .from('folha_itens')
       .select('*, colaborador:colaboradores(id, nome_completo, cpf)')
       .eq('folha_id', folhaId);
@@ -897,7 +465,7 @@ export const cnabService = {
     const typedItens = itens as FolhaItemRecord[];
     const colaboradorIds = typedItens.map((i) => i.colaborador_id);
 
-    const { data: contas, error: cError } = await supabase
+    const { data: contas, error: cError } = await (supabase as any)
       .from('contas_bancarias')
       .select('*')
       .in('colaborador_id', colaboradorIds)
@@ -906,50 +474,23 @@ export const cnabService = {
     if (cError) throw cError;
     const typedContas = (contas as ContaBancariaRecord[]) || [];
 
-    // ── 4. Sequencial + remessa pendente ────────────────────────────
-    // sequencial_arquivo é NOT NULL sem default no canônico — alocar via RPC
-    // monotônica por (empresa, banco), igual ao CNAB240.
-    const { data: seqData400, error: seqError400 } = await supabase.rpc('next_cnab_sequencial', {
-      p_empresa_id: empresaId,
-      p_banco_codigo: config.banco_codigo,
-    });
-    if (seqError400 || seqData400 == null) throw seqError400 ?? new Error('Falha ao alocar sequencial CNAB');
-    const sequence = seqData400 as number;
-
+    // ── 4. Criar remessa pendente ────────────────────────────────────
     const valorTotal = typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0);
-    let remessaRecord: CnabRemessaRecord;
-    const existingRec400 = existingRemessa as CnabRemessaRecord | null;
-    if (existingRec400 && (existingRec400.status === 'pendente' || existingRec400.status === 'processando')) {
-      const claimed = await claimRemessa(existingRec400.id, config.banco_codigo);
-      if (!claimed)
-        return remessaConcorrente(empresaId, folhaId, new Error('Remessa em geração concorrente'), config.banco_codigo);
-      remessaRecord = claimed;
-      await limparItensRemessa(remessaRecord.id);
-    } else {
-      const { data: remessa, error: rError } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
-        .insert(
-          validateTablePayload(
-            'cnab_remessas',
-            [
-              {
-                empresa_id: empresaId,
-                folha_id: folhaId,
-                banco_codigo: config.banco_codigo,
-                status: 'pendente',
-                valor_total: valorTotal,
-                total_pagamentos: typedItens.length,
-                sequencial_arquivo: sequence,
-              },
-            ],
-            'cnabService:cnab_remessas'
-          )
-        )
-        .select()
-        .single();
+    const { data: remessa, error: rError } = await (supabase as any)
+      .from('cnab_remessas')
+      .insert([{
+        empresa_id: empresaId,
+        folha_id: folhaId,
+        banco_codigo: config.banco_codigo,
+        status: 'pendente',
+        valor_total: valorTotal,
+        total_pagamentos: typedItens.length,
+      }])
+      .select()
+      .single();
 
-      if (rError || !remessa) return remessaConcorrente(empresaId, folhaId, rError, config.banco_codigo);
-      remessaRecord = remessa as CnabRemessaRecord;
-    }
+    if (rError || !remessa) throw rError || new Error('Falha ao criar remessa');
+    const remessaRecord = remessa as CnabRemessaRecord;
 
     // ── 5. Helpers de formatação CNAB 400 ─────────────────────────────
     /**
@@ -968,14 +509,11 @@ export const cnabService = {
         const scaled = decimals > 0 ? Math.round(n * Math.pow(10, decimals)) : Math.round(n);
         s = String(scaled);
       } else {
-        s = String(val ?? '')
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-          .replace(/[^\x20-\x7E]/g, '')
-          .toUpperCase()
-          .substring(0, len);
+        s = String(val ?? '').normalize('NFC').toUpperCase().substring(0, len);
       }
-      return type === 'N' ? s.padStart(len, '0') : s.padEnd(len, ' ');
+      return type === 'N'
+        ? s.padStart(len, '0')
+        : s.padEnd(len, ' ');
     };
 
     /**
@@ -1005,13 +543,11 @@ export const cnabService = {
       if (/^(\d)\1+$/.test(clean)) return false;
       let s = 0;
       for (let i = 0; i < 9; i++) s += parseInt(clean[i], 10) * (10 - i);
-      let d = 11 - (s % 11);
-      if (d >= 10) d = 0;
+      let d = 11 - (s % 11); if (d >= 10) d = 0;
       if (parseInt(clean[9], 10) !== d) return false;
       s = 0;
       for (let i = 0; i < 10; i++) s += parseInt(clean[i], 10) * (11 - i);
-      d = 11 - (s % 11);
-      if (d >= 10) d = 0;
+      d = 11 - (s % 11); if (d >= 10) d = 0;
       return parseInt(clean[10], 10) === d;
     };
 
@@ -1019,11 +555,11 @@ export const cnabService = {
     const dd = String(today.getDate()).padStart(2, '0');
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const yy = String(today.getFullYear()).slice(2);
-    const dateStr = dd + mm + yy; // DDMMAA (6)
-    const dateDMA = dd + mm + yy; // mesmo formato para data crédito
+    const dateStr = dd + mm + yy;            // DDMMAA (6)
+    const dateDMA = dd + mm + yy;            // mesmo formato para data crédito
 
-    // Sequencial do arquivo via RPC monotônica (mesma do CNAB240)
-    const seqFile = String(sequence).padStart(5, '0');
+    // Sequencial do arquivo (deveria vir de RPC em produção)
+    const seqFile = String(1).padStart(5, '0');
 
     // Sequencial de linha (2..99999)
     let seqLine = 2;
@@ -1054,19 +590,19 @@ export const cnabService = {
     // 395-400: sequencial
 
     const header = [
-      '0', // 001-001: tipo registro
-      '1', // 002-002: código operação
-      'REMESSA', // 003-009: literal
-      '01', // 010-011: código serviço
-      fmt(config.banco_codigo, 3, 'N'), // 012-014: banco
-      '        ', // 015-022: brancos
+      '0',                                      // 001-001: tipo registro
+      '1',                                      // 002-002: código operação
+      'REMESSA',                                // 003-009: literal
+      '01',                                     // 010-011: código serviço
+      fmt(config.banco_codigo, 3, 'N'),         // 012-014: banco
+      '        ',                               // 015-022: brancos
       fmt(config.nome_empresa ?? 'EMPRESA', 30, 'A'), // 023-052: nome empresa
-      fmt('', 7, 'A'), // 053-059: brancos
-      dateStr, // 060-065: data DDMMAA
-      fmt('', 295, 'A'), // 066-360: brancos
-      '000001', // 361-366: endereco banco? não — sequencial 6dig
-      seqFile, // 367-371: sequencial 5dig
-      fmt('', 29, 'A'), // 372-400: brancos
+      fmt('', 7, 'A'),                          // 053-059: brancos
+      dateStr,                                  // 060-065: data DDMMAA
+      fmt('', 294, 'A'),                        // 066-359: brancos
+      '000001',                                  // 360-365: endereco banco? não — sequencial 6dig
+      seqFile,                                  // 366-371: sequencial 5dig
+      fmt('', 29, 'A'),                        // 372-400: brancos
     ].join('');
 
     if (header.length !== 400) {
@@ -1097,9 +633,7 @@ export const cnabService = {
       }
       somaValores += valor;
 
-      // Exatamente 10 posições: o campo no arquivo é 068-077 e o banco devolve
-      // só essas 10 — mais caracteres ficariam truncados e o retorno não casaria.
-      const seuNumero = `${remessaRecord.id.slice(0, 6)}${String(idx + 1).padStart(4, '0')}`;
+      const seuNumero = `${remessaRecord.id.slice(0, 8)}${String(idx + 1).padStart(4, '0')}`;
       const nomeFav = (colab?.nome_completo ?? '').normalize('NFC').toUpperCase().substring(0, 40);
       const agenciaFmt = fmt(conta.agencia, 4, 'N');
       const contaFmt = fmt(conta.conta, 10, 'N');
@@ -1108,28 +642,28 @@ export const cnabService = {
 
       // Segmento A — dados do favorecido
       const segA = [
-        '1', // 001-001: tipo registro = detalhe
-        fmt('', 1, 'A'), // 002-002: código movimento (0=inserir)
-        fmt('', 2, 'A'), // 003-004: brancos
+        '1',                                   // 001-001: tipo registro = detalhe
+        fmt('', 1, 'A'),                       // 002-002: código movimento (0=inserir)
+        fmt('', 2, 'A'),                        // 003-004: brancos
         fmt(conta.banco_codigo || '001', 3, 'N'), // 005-007: banco favorecido
-        fmt(agenciaFmt, 5, 'N'), // 008-012: agência (5)
-        fmt(dvAgencia, 1, 'A'), // 013-013: dígito agência
-        fmt(contaFmt, 12, 'N'), // 014-025: conta (12)
-        fmt(dvConta, 1, 'A'), // 026-026: dígito conta
-        fmt('', 1, 'A'), // 027-027: dígito conjunto? brancos
-        fmt(nomeFav, 40, 'A'), // 028-067: nome favorecido
-        fmt(seuNumero, 10, 'A'), // 068-077: seu número
-        fmt('', 20, 'A'), // 078-097: brancos
+        fmt(agenciaFmt, 5, 'N'),               // 008-012: agência (5)
+        fmt(dvAgencia, 1, 'A'),                // 013-013: dígito agência
+        fmt(contaFmt, 12, 'N'),                // 014-025: conta (12)
+        fmt(dvConta, 1, 'A'),                  // 026-026: dígito conta
+        fmt('', 1, 'A'),                        // 027-027: dígito conjunto? brancos
+        fmt(nomeFav, 40, 'A'),                // 028-067: nome favorecido
+        fmt(seuNumero, 10, 'A'),               // 068-077: seu número
+        fmt('', 20, 'A'),                       // 078-097: brancos
         fmt(String(valor.toFixed(2)).replace('.', ''), 15, 'N'), // 098-112: valor (2 dec)
-        fmt('', 5, 'A'), // 113-117: brancos
-        dateDMA, // 118-123: data crédito DDMMAA
-        fmt('', 19, 'A'), // 124-142: brancos
-        fmt('', 3, 'A'), // 143-145: brancos
-        cpfFav.padStart(14, '0'), // 146-159: CPF favorecido
-        fmt('', 18, 'A'), // 160-177: brancos
-        fmt('', 40, 'A'), // 178-217: brancos
-        fmt('', 3, 'A'), // 218-220: brancos
-        fmt('', 180, 'A'), // 221-400: brancos
+        fmt('', 5, 'A'),                        // 113-117: brancos
+        dateDMA,                               // 118-123: data crédito DDMMAA
+        fmt('', 19, 'A'),                       // 124-142: brancos
+        fmt('', 3, 'A'),                        // 143-145: brancos
+        cpfFav.padStart(14, '0'),             // 146-159: CPF favorecido
+        fmt('', 18, 'A'),                       // 160-177: brancos
+        fmt('', 40, 'A'),                       // 178-217: brancos
+        fmt('', 3, 'A'),                        // 218-220: brancos
+        fmt('', 180, 'A'),                      // 221-400: brancos
       ].join('');
 
       if (segA.length !== 400) {
@@ -1147,10 +681,7 @@ export const cnabService = {
         nome_favorecido: nomeFav,
         cpf_cnpj_favorecido: cpfFav,
         valor_pagamento: valor,
-        data_pagamento: formatDateLocalISO(today),
-        // O arquivo escreve fmt(...,'A') → uppercase; gravar o mesmo casing
-        // senão parseRetornoCNAB (LIKE case-sensitive) nunca casa.
-        seu_numero: seuNumero.toUpperCase(),
+        seu_numero: seuNumero,
         status: 'processando',
       });
     }
@@ -1166,10 +697,10 @@ export const cnabService = {
     }
 
     // ── 8. Trailer de arquivo (tipo 9) ─────────────────────────────
-    // Layout: 1 ('9') + 376 brancos + 17 soma valores + 6 total registros = 400
+    // Layout: 1 ('9') + 392 brancos + 17 soma valores + 6 total registros = 400
     const somaFmt = fmt(String(Math.round(somaValores * 100)), 17, 'N');
     const totalRegistros = String(seqLine).padStart(6, '0');
-    const blanks = ''.padEnd(376, ' ');
+    const blanks = ''.padEnd(392, ' ');
     const trailer = '9' + blanks + somaFmt + totalRegistros;
     if (trailer.length !== 400) {
       lines.push(trailer.substring(0, 400).padEnd(400, ' '));
@@ -1179,29 +710,20 @@ export const cnabService = {
 
     // ── 9. Persistir e retornar ──────────────────────────────────────
     if (itensParaInsert.length > 0) {
-      const { error: itensError } = await (supabase.from('cnab_itens') as unknown as QueryBuilderType).insert(
-        validateTablePayload('cnab_itens', itensParaInsert, 'cnabService:cnab_itens')
-      );
-      if (itensError) throw itensError;
+      await (supabase as any).from('cnab_itens').insert(itensParaInsert);
     }
 
     const fullFile = lines.join('\r\n');
 
-    await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
-      .update(
-        validateTablePayload(
-          'cnab_remessas',
-          {
-            arquivo_remessa: fullFile,
-            status: 'enviado',
-            sequencial_arquivo: sequence,
-          },
-          'cnabService:cnab_remessas'
-        )
-      )
+    await (supabase as any)
+      .from('cnab_remessas')
+      .update({
+        arquivo_remessa: fullFile,
+        status: 'enviado',
+        sequencial_arquivo: Number(seqFile),
+      })
       .eq('id', remessaRecord.id)
-      .eq('empresa_id', empresaId)
-      .eq('status', 'processando');
+      .eq('empresa_id', empresaId);
 
     return fullFile;
   },

@@ -3,10 +3,15 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { validateTablePayload } from '@/schemas/validate';
 
 export type ProgramacaoStatus =
-  'rascunho' | 'sugerido_gestor' | 'aprovado_gestor' | 'aprovado_rh' | 'convertido' | 'rejeitado' | 'cancelado';
+  | 'rascunho'
+  | 'sugerido_gestor'
+  | 'aprovado_gestor'
+  | 'aprovado_rh'
+  | 'convertido'
+  | 'rejeitado'
+  | 'cancelado';
 
 export interface ProgramacaoFerias {
   id: string;
@@ -61,14 +66,14 @@ export function useProgramacaoFerias(ano: number, filters: ProgramacaoFilters = 
     queryKey: KEY(empresaId, ano, filters),
     enabled: !!empresaId,
     queryFn: async () => {
-      let q = supabase
+      let q = (supabase as any)
         .from('ferias_programacao')
         .select(
           `*,
            colaborador:colaboradores!ferias_programacao_colaborador_id_fkey(id,nome_completo,foto_url,departamento_id),
            periodo_aquisitivo:periodos_aquisitivos(id,data_inicio,data_fim,data_limite_concessao)`
         )
-        .eq('empresa_id', empresaId!)
+        .eq('empresa_id', empresaId)
         .eq('ano', ano)
         .order('mes_previsto', { ascending: true })
         .limit(500);
@@ -76,7 +81,7 @@ export function useProgramacaoFerias(ano: number, filters: ProgramacaoFilters = 
       if (filters.status && filters.status !== 'all') q = q.eq('status', filters.status);
       const { data, error } = await q;
       if (error) throw error;
-      let list = (data as unknown as ProgramacaoFerias[]) || [];
+      let list = (data as ProgramacaoFerias[]) || [];
       if (filters.departamentoId) {
         list = list.filter((p) => p.colaborador?.departamento_id === filters.departamentoId);
       }
@@ -101,7 +106,8 @@ export function useProgramacaoMutations(ano: number) {
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id;
 
-  const invalidate = () => qc.invalidateQueries({ queryKey: ['ferias-programacao', empresaId, ano] });
+  const invalidate = () =>
+    qc.invalidateQueries({ queryKey: ['ferias-programacao', empresaId, ano] });
 
   const criar = useMutation({
     mutationFn: async (input: {
@@ -112,15 +118,9 @@ export function useProgramacaoMutations(ano: number) {
       periodo_aquisitivo_id?: string | null;
       observacoes?: string;
     }) => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('ferias_programacao')
-        .insert(
-          validateTablePayload(
-            'ferias_programacao',
-            { ...input, empresa_id: empresaId!, status: 'sugerido_gestor' },
-            'useProgramacaoFerias:ferias_programacao'
-          )
-        )
+        .insert({ ...input, empresa_id: empresaId, status: 'sugerido_gestor' })
         .select()
         .single();
       if (error) throw error;
@@ -135,7 +135,7 @@ export function useProgramacaoMutations(ano: number) {
 
   const mover = useMutation({
     mutationFn: async (input: { id: string; novo_mes: number; nova_data_inicio?: string | null }) => {
-      const { data, error } = await supabase.rpc('programacao_ferias_mover', {
+      const { data, error } = await (supabase as any).rpc('programacao_ferias_mover', {
         _id: input.id,
         _novo_mes: input.novo_mes,
         _nova_data_inicio: input.nova_data_inicio ?? null,
@@ -168,7 +168,7 @@ export function useProgramacaoMutations(ano: number) {
 
   const aprovarGestor = useMutation({
     mutationFn: async (id: string) => {
-      const { data, error } = await supabase.rpc('programacao_ferias_aprovar_gestor', { _id: id });
+      const { data, error } = await (supabase as any).rpc('programacao_ferias_aprovar_gestor', { _id: id });
       if (error) throw error;
       return data;
     },
@@ -181,7 +181,7 @@ export function useProgramacaoMutations(ano: number) {
 
   const aprovarRH = useMutation({
     mutationFn: async (id: string) => {
-      const { data, error } = await supabase.rpc('programacao_ferias_aprovar_rh', { _id: id });
+      const { data, error } = await (supabase as any).rpc('programacao_ferias_aprovar_rh', { _id: id });
       if (error) throw error;
       return data;
     },
@@ -194,7 +194,7 @@ export function useProgramacaoMutations(ano: number) {
 
   const rejeitar = useMutation({
     mutationFn: async (input: { id: string; motivo: string }) => {
-      const { data, error } = await supabase.rpc('programacao_ferias_rejeitar', {
+      const { data, error } = await (supabase as any).rpc('programacao_ferias_rejeitar', {
         _id: input.id,
         _motivo: input.motivo,
       });
@@ -210,7 +210,7 @@ export function useProgramacaoMutations(ano: number) {
 
   const converter = useMutation({
     mutationFn: async (id: string) => {
-      const { data, error } = await supabase.rpc('programacao_ferias_converter', { _id: id });
+      const { data, error } = await (supabase as any).rpc('programacao_ferias_converter', { _id: id });
       if (error) throw error;
       return data;
     },
