@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra: agenda o dreno da fila de notificacoes quando os segredos existirem (#855)",
+   "chore(security): pina node:22-alpine e nginx:alpine por digest (#859)",
    "chore(deps): bump the minor-patch group across 1 directory with 3 updates (#858)",
    "chore(deps): bump minor-patch group (18 updates, resgate da #846) (#857)",
-   "chore(deps-dev): bump the testing group with 2 updates (#845)",
-   "chore(deps): bump the react-ecosystem group with 2 updates (#844)",
-   "feat: entrega real de Web Push (VAPID) na fila de notificacoes (#853)"
+   "chore(deps-dev): bump the testing group with 2 updates (#845)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

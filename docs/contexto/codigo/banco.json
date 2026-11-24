@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 930,
+ "migrations": 932,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -239,6 +239,7 @@
   "admissao_marcar_documentos",
   "admissao_registrar_documento",
   "admissao_salvar_dados",
+  "agendar_dreno_fila_notificacoes",
   "agendar_limpeza_pos_desligamento",
   "alert_stale_backup",
   "alertar_coletores_ponto_parados",
@@ -2988,6 +2989,11 @@
    "nome": "contratos-lembretes-assinatura",
    "agenda": "0 12 * * *",
    "migration": "20260723150213_fc3a2a61-bdf1-4e5f-ad3b-b1da5024d07a.sql"
+  },
+  {
+   "nome": "drenar-fila-notificacoes",
+   "agenda": "*/5 * * * *",
+   "migration": "20261123180000_dreno_fila_notificacoes_cron.sql"
   },
   {
    "nome": "ferias_reconciliacao_sla_alert_daily",

@@ -4,7 +4,7 @@
  "stack": {
   "linguagens": [
    "TypeScript (2007)",
-   "SQL (1004)",
+   "SQL (1006)",
    "Markdown (345)",
    "JavaScript (136)",
    "JSON (64)",
@@ -1772,8 +1772,8 @@
    {
     "arquivo": "Dockerfile",
     "base": [
-     "nginx:alpine",
-     "node:22-alpine"
+     "nginx:alpine@sha256:b50897d5c7b1aa08067c3d90c5e8b3e47ec4e3c91c91446f67820228f7b41e34",
+     "node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a"
     ],
     "portas": [
      "80"
@@ -1782,8 +1782,8 @@
    {
     "arquivo": "Dockerfile.prod",
     "base": [
-     "nginx:alpine",
-     "node:22-alpine"
+     "nginx:alpine@sha256:b50897d5c7b1aa08067c3d90c5e8b3e47ec4e3c91c91446f67820228f7b41e34",
+     "node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a"
     ],
     "portas": [
      "80"

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fb2d3e0441` · branch `main` · 2026-11-24 01:57 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7069f54c21` · branch `main` · 2026-11-24 10:04 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1101,6 +1101,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `ponto_rep_reprocessar_periodo` | periodo invalido: % a % | `supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql` |
 | `reprocessar_ponto_relogio` | Sessao obrigatoria | `supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql` |
 | `reprocessar_ponto_relogio` | Sem permissao para reprocessar o ponto desta empresa | `supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql` |
+| `agendar_dreno_fila_notificacoes` | pg_net sem http_post(text,jsonb,jsonb,jsonb,integer): sem pg_net nao ha como o cron chamar a funcao. | `supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql` |
 | `_purge_audit_log_internal` | Retenção mínima de 30 dias | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_security_definer_rpcs` | access denied | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_user_roles` | Apenas administradores podem listar papéis de usuário | `supabase/rebaseline/20260831_corrected_public.sql` |
@@ -1228,8 +1229,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `medida_enviar_aprovacao` | não autenticado | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_enviar_aprovacao` | medida não encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_enviar_aprovacao` | acesso negado | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_enviar_aprovacao` | só é possível enviar medidas em rascunho (atual: %) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +191 linhas — lista completa em `context.json` | | |
+| … +192 linhas — lista completa em `context.json` | | |
 
 ## E. Estados, máquinas de estado e transições
 

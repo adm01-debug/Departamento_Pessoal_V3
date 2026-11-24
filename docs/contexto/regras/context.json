@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "fb2d3e0441c50d613cd846be621042e7263df9f3",
+  "sha": "7069f54c21b258baa857049d8ba764b9e4451bf9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-24 01:57 UTC",
-  "files_total": 3745,
-  "code_files": 3152,
-  "code_lines": 502033
+  "generated_at": "2026-11-24 10:04 UTC",
+  "files_total": 3747,
+  "code_files": 3154,
+  "code_lines": 502187
  },
  "version": "1.3.2",
- "facts_hash": "b9db933efd7a5622",
+ "facts_hash": "abaeddaf7eed5d93",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1038,
-   ".sql": 1004,
+   ".sql": 1006,
    ".ts": 969,
    ".mjs": 110,
    ".js": 15,
@@ -65979,6 +65979,26 @@
      "v_total"
     ]
    },
+   "agendar_dreno_fila_notificacoes": {
+    "args": "",
+    "returns": "text",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_proc text; v_url text; v_secret text; BEGIN SELECT format('%I.%I', n.nspname, p.proname) INTO v_proc FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace WHERE p.oid::regprocedure::text LIKE '%.http_post(text,jsonb,jsonb,jsonb,integer)' ORDER BY (n.nspname = 'net') DESC, (n.nspname = 'extensions') DESC, n.nspname LIMIT 1; IF v_proc IS NULL THEN RAISE EXCEPTION 'pg_net sem http_post(text,jsonb,jsonb,jsonb,integer): sem pg_net nao ha como o cron chamar a funcao.'; END IF; SELECT decrypted_secret INTO v_url FROM vault.decrypted_secrets WHERE name = 'agendamentos_dispatch_url'; SELECT decrypted_secret INTO v_secret FROM vault.decrypted_secrets WHERE name = …",
+    "raises": [
+     "pg_net sem http_post(text,jsonb,jsonb,jsonb,integer): sem pg_net nao ha como o cron chamar a funcao."
+    ],
+    "tables": [
+     "cron",
+     "pg_catalog",
+     "v_proc",
+     "v_secret",
+     "v_url",
+     "vault"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -73739,6 +73759,8 @@
    "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql",
    "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql",
    "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.verify.sql",
+   "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
+   "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -86123,6 +86145,30 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "agendar_dreno_fila_notificacoes",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "agendar_dreno_fila_notificacoes",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "agendar_dreno_fila_notificacoes",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -87749,6 +87795,11 @@
     "function": "reprocessar_ponto_relogio",
     "msg": "Sem permissao para reprocessar o ponto desta empresa",
     "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "function": "agendar_dreno_fila_notificacoes",
+    "msg": "pg_net sem http_post(text,jsonb,jsonb,jsonb,integer): sem pg_net nao ha como o cron chamar a funcao.",
+    "src": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -106364,8 +106415,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 930,
-   "lines": 84460,
+   "files": 932,
+   "lines": 84614,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -231613,6 +231664,26 @@
      "v_total"
     ]
    },
+   "agendar_dreno_fila_notificacoes": {
+    "args": "",
+    "returns": "text",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_proc text; v_url text; v_secret text; BEGIN SELECT format('%I.%I', n.nspname, p.proname) INTO v_proc FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace WHERE p.oid::regprocedure::text LIKE '%.http_post(text,jsonb,jsonb,jsonb,integer)' ORDER BY (n.nspname = 'net') DESC, (n.nspname = 'extensions') DESC, n.nspname LIMIT 1; IF v_proc IS NULL THEN RAISE EXCEPTION 'pg_net sem http_post(text,jsonb,jsonb,jsonb,integer): sem pg_net nao ha como o cron chamar a funcao.'; END IF; SELECT decrypted_secret INTO v_url FROM vault.decrypted_secrets WHERE name = 'agendamentos_dispatch_url'; SELECT decrypted_secret INTO v_secret FROM vault.decrypted_secrets WHERE name = …",
+    "raises": [
+     "pg_net sem http_post(text,jsonb,jsonb,jsonb,integer): sem pg_net nao ha como o cron chamar a funcao."
+    ],
+    "tables": [
+     "cron",
+     "pg_catalog",
+     "v_proc",
+     "v_secret",
+     "v_url",
+     "vault"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -232863,6 +232934,11 @@
     "function": "reprocessar_ponto_relogio",
     "msg": "Sem permissao para reprocessar o ponto desta empresa",
     "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "function": "agendar_dreno_fila_notificacoes",
+    "msg": "pg_net sem http_post(text,jsonb,jsonb,jsonb,integer): sem pg_net nao ha como o cron chamar a funcao.",
+    "src": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -246998,6 +247074,7 @@
    "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
    "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql",
    "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql",
+   "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -247028,6 +247105,7 @@
    "admissao_marcar_documentos",
    "admissao_registrar_documento",
    "admissao_salvar_dados",
+   "agendar_dreno_fila_notificacoes",
    "alertar_coletores_ponto_parados",
    "anonimizar_dados_pessoais",
    "aplicar_medida_folha_ponto",
@@ -259230,6 +259308,30 @@
     "objkind": "function",
     "roles": "authenticated, service_role",
     "src": "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "agendar_dreno_fila_notificacoes",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "agendar_dreno_fila_notificacoes",
+    "objkind": "function",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "agendar_dreno_fila_notificacoes",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql"
    },
    {
     "kind": "revoke",
@@ -337502,6 +337604,15 @@
    "path": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.verify.sql",
    "lines": 69
   },
+  "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql": {
+   "path": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
+   "lines": 114,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql": {
+   "path": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql",
+   "lines": 40
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -337897,10 +338008,30 @@
   }
  },
  "git": {
-  "sha": "fb2d3e0441c50d613cd846be621042e7263df9f3",
+  "sha": "7069f54c21b258baa857049d8ba764b9e4451bf9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "7069f54",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "infra: agenda o dreno da fila de notificacoes quando os segredos existirem (#855)",
+    "files": [
+     "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
+     "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql"
+    ]
+   },
+   {
+    "sha": "347a2ba",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "chore(security): pina node:22-alpine e nginx:alpine por digest (#859)",
+    "files": [
+     "Dockerfile",
+     "Dockerfile.prod"
+    ]
+   },
    {
     "sha": "fb2d3e0",
     "date": "2026-11-23",
@@ -338223,26 +338354,6 @@
     "files": [
      "tools/coletor-ponto-atecsoft/fb15_client.py"
     ]
-   },
-   {
-    "sha": "835bc4e",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: aborta remessa CNAB sem nenhum favorecido (marcava enviado com arquivo vazio) (#827)",
-    "files": [
-     "src/services/__tests__/cnabService.test.ts",
-     "src/services/cnabService.ts"
-    ]
-   },
-   {
-    "sha": "6553243",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "docs: recertifica F-03/F-07/F-11 com contagem real e marca cargos como feito (#826)",
-    "files": [
-     "analise-prs/funcionalidades.csv",
-     "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md"
-    ]
    }
   ],
   "hot_files": [
@@ -338275,10 +338386,6 @@
     2
    ],
    [
-    "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md",
-    2
-   ],
-   [
     "src/services/workflowService.ts",
     2
    ],
@@ -338303,6 +338410,22 @@
     2
    ],
    [
+    "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql",
+    1
+   ],
+   [
+    "Dockerfile",
+    1
+   ],
+   [
+    "Dockerfile.prod",
+    1
+   ],
+   [
     ".env.example",
     1
    ],
@@ -338312,18 +338435,6 @@
    ],
    [
     "src/contexts/__tests__/AuthContext.test.tsx",
-    1
-   ],
-   [
-    "src/pages/PerfilPage.tsx",
-    1
-   ],
-   [
-    "src/services/__tests__/pushNotificationService.test.ts",
-    1
-   ],
-   [
-    "src/services/pushNotificationService.ts",
     1
    ]
   ]

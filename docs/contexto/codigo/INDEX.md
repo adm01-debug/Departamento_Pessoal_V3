@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `fb2d3e0441c50d613cd846be621042e7263df9f3` (2026-11-23T22:55:39-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7069f54c21b258baa857049d8ba764b9e4451bf9` (2026-11-24T07:03:20-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2007), SQL (1004), Markdown (345), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2007), SQL (1006), Markdown (345), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3731 |
+| arquivos_total | 3733 |
 | arquivos_codigo | 2150 |
 | linhas_codigo | 430698 |
 | rotas | 116 |
@@ -46,8 +46,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 122 |
 | edge_functions | 68 |
 | tabelas | 438 |
-| migrations | 930 |
-| cron_jobs | 42 |
+| migrations | 932 |
+| cron_jobs | 43 |
 | testes | 813 |
 | workflows | 21 |
 | scripts | 138 |
@@ -337,6 +337,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `contrato_lembretes_diario` 0 12 * * * (20260723153630_589ecf53-494d-4834-9e63-d6f4fa1c7822.sql)
 - `contratos-alertar-vencimentos` 0 11 * * * (20260723145602_c2a61f2e-7f49-48f4-9c44-b2fec580f43f.sql)
 - `contratos-lembretes-assinatura` 0 12 * * * (20260723150213_fc3a2a61-bdf1-4e5f-ad3b-b1da5024d07a.sql)
+- `drenar-fila-notificacoes` */5 * * * * (20261123180000_dreno_fila_notificacoes_cron.sql)
 - `ferias_reconciliacao_sla_alert_daily` 15 11 * * * (20260723123724_8ddc1fd5-3f13-4300-a3b0-7252e47bd6a7.sql)
 - `ferias_reconciliar_folha_daily` 15 6 * * * (20260723122004_a4ca3997-6386-4cc6-b575-576a9434188d.sql)
 - `ferias-atualizar-status-diario` 30 3 * * * (20261012130000_rotinas_agendadas_falhando.sql)
@@ -398,8 +399,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28302 nós · 63768 arestas · 2475 comunidades · grafo do commit `fb2d3e04`
-- comunidades maiores: 20260831_corrected_public.sql (493), react (487), canonical_schema.sql (481), lucide-react (454), useEmpresas (430), cn (384), vitest (347), contract.ts (197), App.tsx (189), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154)
+- 28309 nós · 63773 arestas · 2489 comunidades · grafo do commit `7069f54c`
+- comunidades maiores: lucide-react (552), useEmpresas (496), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (441), client.ts (364), vitest (337), cn (264), ColaboradorDetalhesPage.tsx (218), react (212), contract.ts (185), ref_node_path (165)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -415,8 +416,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package-lock.json (10)
 - scripts/automation.config.json (10)
 - src/schemas/tableColumns.ts (9)
-- docs/prod-readiness.md (8)
 - docs/auditoria/sql-preservado/README.md (7)
+- docs/prod-readiness.md (7)
 - src/pages/CalculadoraRescisaoPage.tsx (7)
 - src/pages/ColaboradoresPage.tsx (7)
 
@@ -656,6 +657,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-24 `7069f54` infra: agenda o dreno da fila de notificacoes quando os segredos existirem (#855)
+- 2026-11-24 `347a2ba` chore(security): pina node:22-alpine e nginx:alpine por digest (#859)
 - 2026-11-23 `fb2d3e0` chore(deps): bump the minor-patch group across 1 directory with 3 updates (#858)
 - 2026-11-23 `0cec124` chore(deps): bump minor-patch group (18 updates, resgate da #846) (#857)
 - 2026-11-23 `c058153` chore(deps-dev): bump the testing group with 2 updates (#845)
@@ -669,8 +672,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `3fface7` chore: registra notificacoes de workflow como resolvidas no doc (#848)
 - 2026-11-23 `9924630` fix: usa enum valido no tipo de notificacao de workflow (#847)
 - 2026-11-23 `81693b2` feat: notificacoes de workflow por e-mail e in-app (#843)
-- 2026-11-23 `ee4d2de` chore: inventario do estado real [auto] (#842)
-- 2026-11-22 `127ccc8` infra: registra 20261123090000 no lote do canonical-migrations (#840)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

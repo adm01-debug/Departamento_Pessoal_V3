@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fb2d3e0441` · branch `main` · 2026-11-24 01:57 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7069f54c21` · branch `main` · 2026-11-24 10:04 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 337 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 338 arquivo(s)
 
 - `docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql`
 - `docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql`
@@ -472,7 +472,7 @@
 - `supabase/migrations/20260712214014_5ded020d-3162-4157-ba2e-724b53d8392b.sql`
 - `supabase/migrations/20260712214929_4971f364-3f69-48cd-9150-a55524b1025d.sql`
 - `supabase/migrations/20260712215539_349ae8a8-7ed9-41a5-b06c-ea4b8f35c7b5.sql`
-- … +187 (lista completa em `context.json`)
+- … +188 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -493,6 +493,7 @@
 - `admissao_marcar_documentos`
 - `admissao_registrar_documento`
 - `admissao_salvar_dados`
+- `agendar_dreno_fila_notificacoes`
 - `alertar_coletores_ponto_parados`
 - `anonimizar_dados_pessoais`
 - `aplicar_medida_folha_ponto`
@@ -868,11 +869,11 @@ Middleware matcher (Next.js): nenhum
 | grant | ci_auditor | select | `cron.job` |
 | grant | dp_mcp_role | select | `ninebox_permissoes_homologacao` |
 | grant | service_role | all | `logs_sistema`, `login_lockouts`, `idempotency_keys`, `folha_lock_conflicts`, `audit_log_unified`, `audit_log_unified_archive`, `rate_limits`, `rate_limit_logs`, `rate_limit_config`, `despesas_aprovacoes_log`, `contabilidade_contatos`, `contabilidade_threads`, `contabilidade_mensagens`, `holerite_distribuicoes`, `afdt_importacoes` … +58 |
-| grant | service_role | execute | `detectar_fraude_ponto`, `check_brute_force`, `check_rate_limit`, `is_ip_blocked`, `is_ip_whitelisted`, `is_country_allowed`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `purge_expired_idempotency_keys`, `check_idempotency_anomalies`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash` … +116 |
+| grant | service_role | execute | `detectar_fraude_ponto`, `check_brute_force`, `check_rate_limit`, `is_ip_blocked`, `is_ip_whitelisted`, `is_country_allowed`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `purge_expired_idempotency_keys`, `check_idempotency_anomalies`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash` … +117 |
 | grant | service_role | select | `vw_folha_compliance`, `v_idempotency_metrics`, `feedbacks_360_consolidacoes`, `feedbacks_360_aprovacoes_gestor`, `health_checks`, `mv_folha_summary`, `health_checks` |
 | grant | service_role | select, insert, delete | `pii_access_logs`, `pii_access_alerts` |
 | grant | service_role | select, insert, update, delete, truncate, references, trigger | `ninebox_permissoes_homologacao` |
-| revoke | PUBLIC | all | `_is_admin_bypass`, `_purge_audit_log_internal`, `_scan_status_anomalies_global`, `admin_list_security_definer_rpcs`, `admin_list_user_roles`, `admin_set_user_role`, `anonimizar_dados_pessoais`, `aplicar_medida_folha_ponto`, `aprovar_despesa`, `assinar_aviso_ferias`, `assinar_desligamento`, `assinar_espelho_ponto`, `associar_pis_colaborador_afdt`, `auto_vincular_admins_empresa`, `check_idempotency_anomalies` … +320 |
+| revoke | PUBLIC | all | `_is_admin_bypass`, `_purge_audit_log_internal`, `_scan_status_anomalies_global`, `admin_list_security_definer_rpcs`, `admin_list_user_roles`, `admin_set_user_role`, `anonimizar_dados_pessoais`, `aplicar_medida_folha_ponto`, `aprovar_despesa`, `assinar_aviso_ferias`, `assinar_desligamento`, `assinar_espelho_ponto`, `associar_pis_colaborador_afdt`, `auto_vincular_admins_empresa`, `check_idempotency_anomalies` … +321 |
 | revoke | PUBLIC | execute | `has_role`, `is_admin`, `get_user_roles`, `get_user_default_empresa`, `get_user_empresas`, `user_belongs_to_empresa`, `anonimizar_dados_pessoais`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `get_colaborador_banco_horas`, `check_processamento_timeout`, `fn_alert_severe_disciplinary_measure`, `fn_audit_biometric_failure`, `fn_auto_generate_training_certificate`, `fn_consolidar_batidas` … +38 |
 | revoke | PUBLIC, anon | all | `get_idempotency_health`, `check_idempotency_anomalies`, `v_slow_queries_top50`, `get_query_telemetry`, `get_dlq_stats`, `get_audit_trail_by_user`, `get_audit_trail_by_entity`, `search_audit_unified`, `rate_limit_logs`, `rate_limit_config`, `purge_audit_log_old`, `resolve_security_alert`, `refresh_dashboard_mvs`, `mv_status_change_daily`, `mv_anomalies_hourly` … +117 |
 | revoke | PUBLIC, anon | execute | `get_cron_jobs_health`, `get_security_alerts_summary`, `resolve_security_alert`, `pode_gerir_rh`, `pode_gerir_pessoas`, `sou_o_colaborador`, `empresa_do_colaborador`, `is_admin`, `sou_o_colaborador` |
@@ -892,7 +893,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | anon | update | `feedbacks_360` |
 | revoke | anon, PUBLIC | execute | `rls_tenant_or_admin`, `contrato_verificar_autenticidade`, `get_empresa_admin_ids`, `get_empresa_admin_ids` |
 | revoke | anon, authenticated | all | `edge_rate_limit_check`, `purge_rate_limits`, `check_account_lockout`, `record_login_attempt`, `run_lgpd_purge`, `drenar_fila_limpeza_lgpd`, `run_lgpd_purge`, `drenar_fila_limpeza_lgpd`, `process_lgpd_cleanup_queue`, `run_lgpd_purge`, `training_image_settings`, `training_image_requests` |
-| revoke | anon, authenticated | execute | `maintenance_archive_old_audit`, `_admissao_token_row`, `claim_training_image`, `reconcile_training_image`, `claim_training_image_requests`, `finish_training_image_request`, `set_training_image_autoqueue`, `backfill_training_image_requests`, `edge_rate_limit_check_dual` |
+| revoke | anon, authenticated | execute | `maintenance_archive_old_audit`, `_admissao_token_row`, `claim_training_image`, `reconcile_training_image`, `claim_training_image_requests`, `finish_training_image_request`, `set_training_image_autoqueue`, `backfill_training_image_requests`, `edge_rate_limit_check_dual`, `agendar_dreno_fila_notificacoes` |
 | revoke | anon, authenticated | insert, update, delete | `training_images` |
 | revoke | anon, authenticated | references, trigger, truncate, maintain | `pii_access_logs` |
 | revoke | anon, authenticated | update, delete | `ponto_espelhos_assinados` |

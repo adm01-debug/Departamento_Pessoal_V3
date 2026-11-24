@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fb2d3e0441c50d613cd846be621042e7263df9f3",
+  "commit": "7069f54c21b258baa857049d8ba764b9e4451bf9",
   "branch": "main",
-  "data_commit": "2026-11-23T22:55:39-03:00",
+  "data_commit": "2026-11-24T07:03:20-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "7069f54",
+    "data": "2026-11-24",
+    "assunto": "infra: agenda o dreno da fila de notificacoes quando os segredos existirem (#855)"
+   },
+   {
+    "sha": "347a2ba",
+    "data": "2026-11-24",
+    "assunto": "chore(security): pina node:22-alpine e nginx:alpine por digest (#859)"
+   },
    {
     "sha": "fb2d3e0",
     "data": "2026-11-23",
@@ -121,19 +131,9 @@
     "sha": "4715945",
     "data": "2026-11-22",
     "assunto": "fix: isola guias_fgts_digital por empresa e libera a baixa para RH (#824)"
-   },
-   {
-    "sha": "7084a10",
-    "data": "2026-11-22",
-    "assunto": "perf: cria indices nas 3 FKs de join do ponto e do PIX (#832)"
-   },
-   {
-    "sha": "7bc68b4",
-    "data": "2026-11-22",
-    "assunto": "infra: adiciona migrations da #829/#830 a lista fechada do canonical-apply (#831)"
    }
   ],
-  "arquivos_mudados_7d": 653,
+  "arquivos_mudados_7d": 568,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -242,11 +242,11 @@
     "mudancas": 9
    },
    {
-    "arquivo": "docs/prod-readiness.md",
-    "mudancas": 8
+    "arquivo": "docs/auditoria/sql-preservado/README.md",
+    "mudancas": 7
    },
    {
-    "arquivo": "docs/auditoria/sql-preservado/README.md",
+    "arquivo": "docs/prod-readiness.md",
     "mudancas": 7
    },
    {
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3731,
+  "arquivos_total": 3733,
   "arquivos_codigo": 2150,
   "linhas_codigo": 430698,
   "rotas": 116,
@@ -326,8 +326,8 @@
   "hooks": 122,
   "edge_functions": 68,
   "tabelas": 438,
-  "migrations": 930,
-  "cron_jobs": 42,
+  "migrations": 932,
+  "cron_jobs": 43,
   "testes": 813,
   "workflows": 21,
   "scripts": 138,
