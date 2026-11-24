@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a036a9581b63101774be32cc36740a07f69cde02",
+  "commit": "c05815354a5eb891d28318f265161b0bcea1877d",
   "branch": "main",
-  "data_commit": "2026-11-23T22:09:42-03:00",
+  "data_commit": "2026-11-23T22:09:50-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "c058153",
+    "data": "2026-11-23",
+    "assunto": "chore(deps-dev): bump the testing group with 2 updates (#845)"
+   },
    {
     "sha": "a036a95",
     "data": "2026-11-23",
@@ -126,18 +131,13 @@
     "sha": "3a8e2ec",
     "data": "2026-11-22",
     "assunto": "fix: CPF não trafega mais inteiro na tela de Vínculos do relógio (R8) (#829)"
-   },
-   {
-    "sha": "77500ff",
-    "data": "2026-11-22",
-    "assunto": "fix: use-after-free e overread no cliente Firebird do coletor de ponto (#828)"
    }
   ],
   "arquivos_mudados_7d": 666,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 370
+    "mudancas": 369
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -168,12 +168,12 @@
     "mudancas": 57
    },
    {
-    "pasta": "src/components/layout",
+    "pasta": "src/components/recrutamento",
     "mudancas": 44
    },
    {
-    "pasta": "src/components/recrutamento",
-    "mudancas": 44
+    "pasta": "src/components/layout",
+    "mudancas": 43
    },
    {
     "pasta": "src/components/dashboard",
@@ -230,6 +230,10 @@
     "mudancas": 10
    },
    {
+    "arquivo": "package.json",
+    "mudancas": 9
+   },
+   {
     "arquivo": "src/schemas/tableColumns.ts",
     "mudancas": 9
    },
@@ -238,15 +242,11 @@
     "mudancas": 8
    },
    {
-    "arquivo": "package.json",
+    "arquivo": "package-lock.json",
     "mudancas": 8
    },
    {
     "arquivo": "docs/auditoria/sql-preservado/README.md",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "package-lock.json",
     "mudancas": 7
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 292
+    "commits": 291
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 4
+    "commits": 5
    },
    {
     "autor": "github-actions[bot]",
