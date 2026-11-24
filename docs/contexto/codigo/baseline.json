@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "90a640d77a780d91de7000230d3964ccb4d8e100",
+  "commit": "3ffaebd8910312fc6460078fc76790a79dd72b38",
   "branch": "main",
-  "data_commit": "2026-11-24T10:41:05-03:00",
+  "data_commit": "2026-11-24T10:59:37-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "3ffaebd",
+    "data": "2026-11-24",
+    "assunto": "fix: guard to_regclass nas policies de backup_logs (apply abortava) (#867)"
+   },
    {
     "sha": "90a640d",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "c42efdd",
     "data": "2026-11-22",
     "assunto": "test: prova a etapa 70 e marca 67/70 no plano do Ponto (#841)"
-   },
-   {
-    "sha": "9c7a64a",
-    "data": "2026-11-22",
-    "assunto": "feat: itemiza verbas rescisorias em verbas_rescisorias (#838)"
    }
   ],
-  "arquivos_mudados_7d": 495,
+  "arquivos_mudados_7d": 496,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",

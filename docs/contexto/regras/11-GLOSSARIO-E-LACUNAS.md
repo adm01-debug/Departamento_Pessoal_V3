@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `90a640d77a` · branch `main` · 2026-11-24 13:43 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3ffaebd891` · branch `main` · 2026-11-24 14:00 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -57,7 +57,7 @@
 | `auth_gov_br_sessions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `automacao_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `avaliacoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
-| `backup_logs` | [P1-024] Policy default adicionada (tenant-scoped). | 13 colunas | migration |
+| `backup_logs` |        \|\| quote_literal( | 13 colunas | migration |
 | `banco_horas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `banco_horas_config` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `batidas_ponto` | _(sem COMMENT ON TABLE — significado não documentado)_ | 38 colunas | migration |
