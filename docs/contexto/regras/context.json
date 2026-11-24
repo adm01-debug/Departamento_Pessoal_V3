@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "7069f54c21b258baa857049d8ba764b9e4451bf9",
+  "sha": "7245d109b36bcfd844b62e387872d4afc140b5ea",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-24 10:04 UTC",
+  "generated_at": "2026-11-24 10:41 UTC",
   "files_total": 3747,
   "code_files": 3154,
   "code_lines": 502187
@@ -338008,10 +338008,19 @@
   }
  },
  "git": {
-  "sha": "7069f54c21b258baa857049d8ba764b9e4451bf9",
+  "sha": "7245d109b36bcfd844b62e387872d4afc140b5ea",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "7245d10",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "infra: inclui a migration do cron do dreno no lote canonico (#860)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml"
+    ]
+   },
    {
     "sha": "7069f54",
     "date": "2026-11-24",
@@ -338345,21 +338354,12 @@
      "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql",
      "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.verify.sql"
     ]
-   },
-   {
-    "sha": "77500ff",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: use-after-free e overread no cliente Firebird do coletor de ponto (#828)",
-    "files": [
-     "tools/coletor-ponto-atecsoft/fb15_client.py"
-    ]
    }
   ],
   "hot_files": [
    [
     ".github/workflows/canonical-migrations.yml",
-    5
+    6
    ],
    [
     "package-lock.json",

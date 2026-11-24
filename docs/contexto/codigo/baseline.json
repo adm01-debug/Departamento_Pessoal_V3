@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7069f54c21b258baa857049d8ba764b9e4451bf9",
+  "commit": "7245d109b36bcfd844b62e387872d4afc140b5ea",
   "branch": "main",
-  "data_commit": "2026-11-24T07:03:20-03:00",
+  "data_commit": "2026-11-24T07:40:55-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "7245d10",
+    "data": "2026-11-24",
+    "assunto": "infra: inclui a migration do cron do dreno no lote canonico (#860)"
+   },
    {
     "sha": "7069f54",
     "data": "2026-11-24",
@@ -126,11 +131,6 @@
     "sha": "f0f940b",
     "data": "2026-11-22",
     "assunto": "fix: baixa de guia falha alto quando nenhuma linha e atualizada (#834)"
-   },
-   {
-    "sha": "4715945",
-    "data": "2026-11-22",
-    "assunto": "fix: isola guias_fgts_digital por empresa e libera a baixa para RH (#824)"
    }
   ],
   "arquivos_mudados_7d": 568,
