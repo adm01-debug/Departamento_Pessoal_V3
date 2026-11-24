@@ -91506,6 +91506,41 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
+              "hits": 3
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "Cria/revalida o cron de 5 min que chama processar-agendamentos. Inerte (sem_segredos) enquanto o par de segredos do Vault nao existir.",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "definition": null,
+        "definition_sha": "50f4c8c971d5b9af",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "agendar_dreno_fila_notificacoes",
+        "owner": "postgres",
+        "returns": "text",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
               "file": "supabase/migrations/20260513194604_d9a9515d-c19d-4c95-9be2-50e5d2c70c92.sql",
               "hits": 1
             }
