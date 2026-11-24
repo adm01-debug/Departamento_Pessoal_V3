@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3ffaebd8910312fc6460078fc76790a79dd72b38",
+  "commit": "252cc8071e69b9f6a54c9b25329c958c87327e7a",
   "branch": "main",
-  "data_commit": "2026-11-24T10:59:37-03:00",
+  "data_commit": "2026-11-24T10:59:57-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "252cc80",
+    "data": "2026-11-24",
+    "assunto": "chore: placeholders no-op para as 316 versoes do ledger sem fonte local (#865)"
+   },
    {
     "sha": "3ffaebd",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "4828437",
     "data": "2026-11-22",
     "assunto": "feat: coletor le feriados e jornadas do AtecSoft (etapa 53) (#839)"
-   },
-   {
-    "sha": "c42efdd",
-    "data": "2026-11-22",
-    "assunto": "test: prova a etapa 70 e marca 67/70 no plano do Ponto (#841)"
    }
   ],
-  "arquivos_mudados_7d": 496,
+  "arquivos_mudados_7d": 812,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3736,
+  "arquivos_total": 4052,
   "arquivos_codigo": 2150,
   "linhas_codigo": 430698,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 122,
   "edge_functions": 68,
   "tabelas": 438,
-  "migrations": 934,
+  "migrations": 1250,
   "cron_jobs": 43,
   "testes": 813,
   "workflows": 21,

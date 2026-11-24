@@ -1,17 +1,17 @@
 # Graph Report - Departamento_Pessoal_V3  (2026-11-24)
 
 ## Corpus Check
-- 3632 files · ~3,604,647 words
+- 3948 files · ~3,636,563 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 39 file(s) not represented in the graph (top: (none) 17, .toml 5, .conf 4)
 
 ## Summary
-- 28311 nodes · 63773 edges · 2491 communities (1412 shown, 1079 thin omitted)
+- 28627 nodes · 63773 edges · 2807 communities (1412 shown, 1395 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 1640 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3ffaebd8`
+- Built from commit: `252cc807`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -2023,7 +2023,7 @@
 ## Import Cycles
 - 2-file cycle: `src/components/layout/MainLayout.tsx -> src/components/layout/index.ts -> src/components/layout/MainLayout.tsx`
 
-## Communities (2491 total, 1079 thin omitted)
+## Communities (2807 total, 1395 thin omitted)
 
 ### Community 0 - "lucide-react"
 Cohesion: 0.01
@@ -7703,18 +7703,18 @@ Nodes (3): "public"."sst_regimento_ass_imutavel", "trg_regimento_ass_no_delete",
 
 ## Knowledge Gaps
 - **8004 isolated node(s):** `session-start.sh script`, `PATH`, `capacitorConfig`, `nodeModulesDir`, `AUTH_FILE` (+7999 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 12341 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **1079 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 12657 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **1395 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `vitest` connect `vitest` to `lucide-react`, `useEmpresas`, `button.tsx`, `client.ts`, `cn`, `ColaboradorDetalhesPage.tsx`, `react`, `deepChain`, `makeChain`, `turmasDerivacoes.ts`, `regrasSolicitacaoFerias.ts`, `FeedbackAcoesRodape.tsx`, `useBruteForceProtection.ts`, `turnoService.test.ts`, `ref_node_fs`, `AvaliacaoPage.tsx`, `useColaboradorDetalhes.ts`, `nineBoxComum.ts`, `PerformanceAuditTimeline.tsx`, `TrilhaAuditoriaDesligamentos.tsx`, `AnaliticosDesempenho.tsx`, `AuditoriaTab.tsx`, `colaboradorDetalhesService.ts`, `HoleritesTab.test.tsx`, `DetalhesAdmissaoDialog.tsx`, `CandidatoTimeline.test.tsx`, `DepartmentRow.tsx`, `feedbackCanonico.ts`, `feedbacksComum.ts`, `PerformanceAuditTimelineCascata.test.tsx`, `RelogiosPanel.test.tsx`, `CalculadoraRescisaoPage.tsx`, `certificadosDerivacoes.ts`, `aprovacaoGestor.ts`, `logExecucao.ts`, `pdiComum.ts`, `previewAuthStorage.test.ts`, `treinamentosDerivacoes.ts`, `OnboardingPage.tsx`, `GestaoDesligamentos.tsx`, `pipelineEtapas.ts`, `reciboAssinaturaPdf.ts`, `AuditoriaAdmissoesContent.tsx`, `metasComum.ts`, `rhService.ts`, `RewardsSimulator.tsx`, `episService.test.ts`, `entradaCard`, `PagamentosTab.tsx`, `recrutamentoService.test.ts`, `package.json`, `CandidatosPainel.tsx`, `training-image-generate/index.ts`, `webPush.ts`, `HistoricoFeedbackDialog.tsx`, `format.ts`, `statusFeedback.ts`, `AdminDiagnosticoMigracaoPage.tsx`, `dropdown-menu.tsx`, `pipeline.ts`, `InscricoesPainel.tsx`, `nineBoxConsolidacao.ts`, `service.ts`, `premiacoesComum.ts`, `useTabelasReferencia.ts`, `EspelhosPapelPanel.tsx`, `7. A prova byte a byte, depois de as branches terem sido apagadas`, `tabelasReferenciaService.ts`, `trabalhistas.ts`, `nineBox360.ts`, `ESocialEventViewer.tsx`, `TrilhaCard.tsx`, `CertificadoDetalheDialog.tsx`, `KanbanCard.tsx`, `pcs.ts`, `HistoricoColaborador.tsx`, `AnimatedTabs.test.tsx`, `useNotificacoes.test.ts`, `LoginPage`, `useStaggerCards.test.tsx`, `retry.ts`, `pontoOfflineService.ts`, `adminCatEdicao.ts`, `SegurosVidaPage.test.tsx`, `src/schemas/common.ts`, `admissaoService.test.ts`, `avaliacaoService.test.ts`, `AdminRoute`, `vagasComum.ts`, `canalContabilidadeService.test.ts`, `catalogoCursoService.test.ts`, `colaboradorLotacaoService.test.ts`, `colaboradorService.test.ts`, `comunicacaoService.test.ts`, `faltasService.test.ts`, `intervaloService.test.ts`, `rescisaoCalc.ts`, `esocialService.ts`, `medidasDisciplinaresService.test.ts`, `trainingImages/index.ts`, `rescisaoPDF.ts`, `2. Tabela de funcionalidades (por domínio)`, `FeriasResumoTab.tsx`, `onboardingJornadaService.ts`, `ListOptions`, `afastamentoService.ts`, `useDesenvolvimentoColaborador.ts`, `WorkflowDesigner.tsx`, `use-toast.ts`, `desempenhoDemoStore.ts`, `OrganogramaNode.test.tsx`, `3. Achados graves`, `TelemetryTable.tsx`, `FeriasForm.test.tsx`, `workflow-status.ts`, `PARTE 2 — Itens ainda ABERTOS (ou DOC_DESATUALIZADA) das auditorias/relatórios de apoio`, `esocialXmlGenerator.ts`, `ContratoTemplatesPage.tsx`, `CalculadoraRescisaoImportar.test.tsx`, `errors/index.ts`, `FeedbacksTimeline.tsx`, `masks.ts`, `calculoFerias.ts`, `toError`, `useGrupo.ts`, `useAssinaturaDigital.test.ts`, `AuditoriaAnimacao.test.tsx`, `OrganogramaToolbar.tsx`, `3. Achados graves`, `premiacoesService.ts`, `Testes End-to-End (E2E) — Playwright`, `useToast.ts`, `notificacoesService.ts`, `desligamentoExcel.ts`, `tabelas.ts`, `esocial/index.ts`, `SEÇÃO 2: FALHAS HIGH (68 achados)`, `main.tsx`, `SSTResumoTab.tsx`, `sstValidators.ts`, `feriasService`, `18. Veredito das 21 migrations restantes (medido 2026-11-18)`, `useReconciliacaoLogs.ts`, `reportScheduleContract.ts`, `useAssinaturas.test.ts`, `useImportacaoColaboradores.test.ts`, `usePontoMelhorado.test.ts`, `usePendenciasColaborador.ts`, `Ferias`, `hooks/__tests__/validators.test.ts`, `encryptionService.test.ts`, `pushNotificationService.test.ts`, `validadorFolha.ts`, `colaboradorLotacaoService.ts`, `1. Achados prioritários confirmados`, `criacaoFeedback.ts`, `calculoBeneficiosService.ts`, `useSecurityMonitor.ts`, `calculoLoteService.ts`, `LayoutGridSection.test.tsx`, `VagaCard.test.tsx`, `useGerarComunicadoColetivas.ts`, `GestaoCandidatos.test.tsx`, `desligamentoService.ts`, `folhaCalc.ts`, `OnboardingJornada.test.tsx`, `naoPeriodicosValidators.ts`, `parser.ts`, `LayoutPrimitives.test.tsx`, `TrainingCover.test.tsx`, `backupService.ts`, `OrganogramaPage.tsx`, `useHistoricoColaborador.ts`, `whatsappService.ts`, `Container.tsx`, `queryClient.ts`, `folhaResumo.ts`, `guardrails.test.ts`, `assistenteIAService.ts`, `sanitizeHtml.ts`, `AuthProvider`, `vinculoService.ts`, `desligamentoService`, `hooks/useTranslation.ts`, `secureJsonParse`, `auditoriaAdmissoesService.ts`, `AdmissoesDashboard.test.tsx`, `usePermissions.test.ts`, `EmprestimosFinanceiros.test.tsx`, `trilhaReveal.ts`, `FolhaDashboard.tsx`, `NotificationItem.tsx`, `OrganogramaRevealBlock.test.tsx`, `useAdiantamento13.ts`, `useBackGesture.test.ts`, `useEmpresas.test.ts`, `ColaboradoresPage.test.tsx`, `OrganogramaPage.test.tsx`, `SEÇÃO 3: FALHAS MEDIUM (82 achados)`, `ColaboradorFormPage.test.tsx`?**
-  _High betweenness centrality (0.112) - this node is a cross-community bridge._
+  _High betweenness centrality (0.119) - this node is a cross-community bridge._
 - **Why does `resumo()` connect `public.medidas_disciplinares` to `vagasComum.ts`, `VagaCard.test.tsx`?**
-  _High betweenness centrality (0.083) - this node is a cross-community bridge._
+  _High betweenness centrality (0.085) - this node is a cross-community bridge._
 - **Why does `"public"."medida_gerar_link_ciencia"()` connect `public.medidas_disciplinares` to `public.ferias`, `20260831_corrected_public.sql`, `"public"."colaboradores"`?**
-  _High betweenness centrality (0.083) - this node is a cross-community bridge._
+  _High betweenness centrality (0.085) - this node is a cross-community bridge._
 - **What connects `session-start.sh script`, `PATH`, `capacitorConfig` to the rest of the system?**
   _8004 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `lucide-react` be split into smaller, more focused modules?**
