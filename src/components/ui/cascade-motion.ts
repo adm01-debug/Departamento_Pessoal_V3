@@ -165,10 +165,7 @@ function cascadeExitContentDuration(blocos: number, perfil: PerfilSaidaCascata):
  * véu usa este número para desaparecer no mesmo compasso (e não antes de a
  * janela terminar de sair).
  */
-export function cascadeCloseDuration(
-  blocos: number,
-  perfil: PerfilSaidaCascata = CASCADE_SAIDA_PADRAO
-): number {
+export function cascadeCloseDuration(blocos: number, perfil: PerfilSaidaCascata = CASCADE_SAIDA_PADRAO): number {
   return cascadeExitContentDuration(blocos, perfil) + perfil.duracaoCaixa;
 }
 
@@ -185,10 +182,7 @@ export function cascadeCloseDuration(
  * a propriedade `translate`, não `transform`) e por isso não briga com o
  * `transform` que o Framer escreve.
  */
-export function cascadeShellVariants(
-  blocos: number,
-  perfil: PerfilSaidaCascata = CASCADE_SAIDA_PADRAO
-): Variants {
+export function cascadeShellVariants(blocos: number, perfil: PerfilSaidaCascata = CASCADE_SAIDA_PADRAO): Variants {
   return {
     closed: {
       // Canal de OPACIDADE (ver "MOVIMENTO REDUZIDO" no topo do arquivo). Na
@@ -219,10 +213,7 @@ export function cascadeShellVariants(
 }
 
 /** Véu por trás: entra rápido, sai junto com a saída inteira da janela. */
-export function cascadeOverlayVariants(
-  blocos: number,
-  perfil: PerfilSaidaCascata = CASCADE_SAIDA_PADRAO
-): Variants {
+export function cascadeOverlayVariants(blocos: number, perfil: PerfilSaidaCascata = CASCADE_SAIDA_PADRAO): Variants {
   return {
     closed: { opacity: 0, transition: { duration: cascadeCloseDuration(blocos, perfil), ease: 'easeInOut' } },
     open: { opacity: 1, transition: { duration: CASCADE_OVERLAY_OPEN_DURATION } },

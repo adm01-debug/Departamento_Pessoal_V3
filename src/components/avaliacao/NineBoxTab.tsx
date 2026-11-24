@@ -387,12 +387,7 @@ export function NineBoxTab({
             porQuadrante={(chave) => pontosDoQuadrante(filtrados, chave)}
             onAbrirQuadrante={abrirQuadrante}
           />
-          <NineBoxLateral
-            indice={7}
-            ranking={ranking}
-            insights={insights}
-            onVerTodos={() => setTalentosAberto(true)}
-          />
+          <NineBoxLateral indice={7} ranking={ranking} insights={insights} onVerTodos={() => setTalentosAberto(true)} />
         </div>
 
         <NineBoxQuadranteDialog
@@ -411,13 +406,11 @@ export function NineBoxTab({
             não as 3 linhas da vitrine. */}
 
         <NineBoxTalentosDialog
-
           aberto={talentosAberto}
 
           onOpenChange={setTalentosAberto}
 
           ranking={ranking}
-
         />
       </div>
     </EntradaPresenca>
