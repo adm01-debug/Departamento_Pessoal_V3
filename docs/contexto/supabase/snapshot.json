@@ -92659,7 +92659,7 @@
         ],
         "definition": null,
         "definition_sha": "a47ff35fa9fea289",
-        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
@@ -92875,7 +92875,7 @@
         ],
         "definition": null,
         "definition_sha": "88530769fca64759",
-        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
@@ -143247,18 +143247,6 @@
         "code": "rpc_anon_executable",
         "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
         "object": "public.admissao_salvar_dados(_token text, _nome text, _cpf text, _data_nascimento date, _email text, _telefone text)",
-        "severity": "INFO"
-      },
-      {
-        "code": "rpc_anon_executable",
-        "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
-        "object": "public.check_brute_force(check_email text, check_ip text)",
-        "severity": "INFO"
-      },
-      {
-        "code": "rpc_anon_executable",
-        "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
-        "object": "public.check_rate_limit(check_ip text, check_endpoint text, check_user_id uuid)",
         "severity": "INFO"
       },
       {

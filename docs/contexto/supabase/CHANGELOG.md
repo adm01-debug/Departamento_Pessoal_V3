@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-24 11:13 UTC
+
+- **functions** alterado (2): `public.check_brute_force(check_email text, check_ip text)`, `public.check_rate_limit(check_ip text, check_endpoint text, check_user_id uuid)`
+- **lints** removido (2): `rpc_anon_executable:public.check_brute_force(check_email text, check_ip text)`, `rpc_anon_executable:public.check_rate_limit(check_ip text, check_endpoint text, check_user_id uuid)`
+
 ## 2026-11-24 10:13 UTC
 
 - **functions** alterado (2): `public._admissao_token_row(_token text)`, `public.admissao_assinar_contrato(_token text, _assinatura_base64 text, _ip text)`

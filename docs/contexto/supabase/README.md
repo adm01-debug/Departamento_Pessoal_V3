@@ -35,7 +35,7 @@ Gerado automaticamente a cada 10 min pelo workflow `contexto` (job `banco`). **N
 | edge functions | n/d |
 | webhooks | 0 |
 | lints ALTA | 3 |
-| lints total | 554 |
+| lints total | 552 |
 
 ## Estado das fontes do mapa de referências
 
