@@ -1,15 +1,24 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEmpresas } from './useEmpresas';
 import * as service from '@/services/colaboradorDetalhesService';
-import { mockOr, getMockFerias } from '@/mocks/colaboradoresMock';
-import type { Updatable, Insertable } from '@/integrations/supabase/database.types';
+import {
+  mockOr, getMockDependentes, getMockContatosEmergencia, getMockHistoricoSalarial,
+  getMockASOs, getMockFormacoes, getMockDadosEstrangeiro, getMockDeficiencia,
+  getMockPeriodoExperiencia, getMockAnotacoes, getMockPeriodosAquisitivos,
+  getMockHolerites, getMockFerias, getMockLotacoes, getMockCamposCustomizados,
+  getMockValoresCamposCustomizados, getMockTimes,
+} from '@/mocks/colaboradoresMock';
+
+// Cada hook abaixo faz um curto-circuito `mockOr(getMockX(...)) ?? service.x(...)`
+// antes da query real — ativo só em dev com VITE_COLABORADORES_MOCK=true (ver
+// src/mocks/colaboradoresMock.ts). Desligado, o comportamento é 100% real.
 
 // Dependentes
 export function useDependentes(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
     queryKey: ['dependentes', colaboradorId, empresaAtual?.id],
-    queryFn: () => service.listarDependentes(colaboradorId, empresaAtual!.id),
+    queryFn: async () => mockOr(getMockDependentes(colaboradorId)) ?? service.listarDependentes(colaboradorId, empresaAtual!.id),
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }
@@ -18,7 +27,7 @@ export function useCriarDependente() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: service.criarDependente,
-    onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['dependentes', vars.colaborador_id] }),
+    onSuccess: (_, vars: any) => qc.invalidateQueries({ queryKey: ['dependentes', vars.colaborador_id] }),
   });
 }
 
@@ -26,7 +35,7 @@ export function useAtualizarDependente() {
   const qc = useQueryClient();
   const { empresaAtual } = useEmpresas();
   return useMutation({
-    mutationFn: ({ id, dados }: { id: string; dados: Updatable<'dependentes'> }) =>
+    mutationFn: ({ id, dados }: { id: string; dados: Record<string, unknown> }) =>
       service.atualizarDependente(id, dados, empresaAtual!.id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['dependentes'] }),
   });
@@ -45,7 +54,7 @@ export function useExcluirDependente(colaboradorId: string) {
 export function useContatosEmergencia(colaboradorId: string) {
   return useQuery({
     queryKey: ['contatos-emergencia', colaboradorId],
-    queryFn: () => service.listarContatosEmergencia(colaboradorId),
+    queryFn: async () => mockOr(getMockContatosEmergencia(colaboradorId)) ?? service.listarContatosEmergencia(colaboradorId),
     enabled: !!colaboradorId,
   });
 }
@@ -54,7 +63,16 @@ export function useCriarContatoEmergencia() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: service.criarContatoEmergencia,
-    onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['contatos-emergencia', vars.colaborador_id] }),
+    onSuccess: (_, vars: any) => qc.invalidateQueries({ queryKey: ['contatos-emergencia', vars.colaborador_id] }),
+  });
+}
+
+export function useAtualizarContatoEmergencia(colaboradorId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, dados }: { id: string; dados: Record<string, unknown> }) =>
+      service.atualizarContatoEmergencia(id, dados, colaboradorId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['contatos-emergencia', colaboradorId] }),
   });
 }
 
@@ -80,7 +98,7 @@ export function useHistoricoSalarial(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
     queryKey: ['historico-salarial', colaboradorId, empresaAtual?.id],
-    queryFn: () => service.listarHistoricoSalarial(colaboradorId, empresaAtual!.id),
+    queryFn: async () => mockOr(getMockHistoricoSalarial(colaboradorId)) ?? service.listarHistoricoSalarial(colaboradorId, empresaAtual!.id),
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }
@@ -89,7 +107,7 @@ export function useCriarRegistroSalarial() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: service.criarRegistroSalarial,
-    onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['historico-salarial', vars.colaborador_id] }),
+    onSuccess: (_, vars: any) => qc.invalidateQueries({ queryKey: ['historico-salarial', vars.colaborador_id] }),
   });
 }
 
@@ -98,7 +116,7 @@ export function useASOs(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
     queryKey: ['asos', colaboradorId, empresaAtual?.id],
-    queryFn: () => service.listarASOs(colaboradorId, empresaAtual!.id),
+    queryFn: async () => mockOr(getMockASOs(colaboradorId)) ?? service.listarASOs(colaboradorId, empresaAtual!.id),
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }
@@ -107,7 +125,7 @@ export function useCriarASO() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: service.criarASO,
-    onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['asos', vars.colaborador_id] }),
+    onSuccess: (_, vars: any) => qc.invalidateQueries({ queryKey: ['asos', vars.colaborador_id] }),
   });
 }
 
@@ -115,7 +133,7 @@ export function useCriarASO() {
 export function useFormacoes(colaboradorId: string) {
   return useQuery({
     queryKey: ['formacoes', colaboradorId],
-    queryFn: () => service.listarFormacoes(colaboradorId),
+    queryFn: async () => mockOr(getMockFormacoes(colaboradorId)) ?? service.listarFormacoes(colaboradorId),
     enabled: !!colaboradorId,
   });
 }
@@ -124,7 +142,7 @@ export function useCriarFormacao() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: service.criarFormacao,
-    onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['formacoes', vars.colaborador_id] }),
+    onSuccess: (_, vars: any) => qc.invalidateQueries({ queryKey: ['formacoes', vars.colaborador_id] }),
   });
 }
 
@@ -145,11 +163,22 @@ export function useExcluirFormacao(colaboradorId: string) {
   });
 }
 
+export function useAtualizarFormacao(colaboradorId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, dados }: { id: string; dados: Record<string, any> }) => service.atualizarFormacao(colaboradorId, id, dados),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['formacoes', colaboradorId] }),
+  });
+}
+
 // Dados Estrangeiro
 export function useDadosEstrangeiro(colaboradorId: string) {
   return useQuery({
     queryKey: ['dados-estrangeiro', colaboradorId],
-    queryFn: () => service.obterDadosEstrangeiro(colaboradorId),
+    queryFn: async () => {
+      const mock = mockOr(getMockDadosEstrangeiro(colaboradorId));
+      return mock !== undefined ? mock : service.obterDadosEstrangeiro(colaboradorId);
+    },
     enabled: !!colaboradorId,
   });
 }
@@ -157,7 +186,7 @@ export function useDadosEstrangeiro(colaboradorId: string) {
 export function useSalvarDadosEstrangeiro() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ colaboradorId, dados }: { colaboradorId: string; dados: Updatable<'dados_estrangeiro'> }) =>
+    mutationFn: ({ colaboradorId, dados }: { colaboradorId: string; dados: Record<string, unknown> }) =>
       service.salvarDadosEstrangeiro(colaboradorId, dados),
     onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['dados-estrangeiro', vars.colaboradorId] }),
   });
@@ -167,7 +196,10 @@ export function useSalvarDadosEstrangeiro() {
 export function useDeficiencia(colaboradorId: string) {
   return useQuery({
     queryKey: ['deficiencia', colaboradorId],
-    queryFn: () => service.obterDeficiencia(colaboradorId),
+    queryFn: async () => {
+      const mock = mockOr(getMockDeficiencia(colaboradorId));
+      return mock !== undefined ? mock : service.obterDeficiencia(colaboradorId);
+    },
     enabled: !!colaboradorId,
   });
 }
@@ -175,13 +207,8 @@ export function useDeficiencia(colaboradorId: string) {
 export function useSalvarDeficiencia() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      colaboradorId,
-      dados,
-    }: {
-      colaboradorId: string;
-      dados: Omit<Insertable<'deficiencias'>, 'colaborador_id'>;
-    }) => service.salvarDeficiencia(colaboradorId, dados),
+    mutationFn: ({ colaboradorId, dados }: { colaboradorId: string; dados: Record<string, unknown> }) =>
+      service.salvarDeficiencia(colaboradorId, dados),
     onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['deficiencia', vars.colaboradorId] }),
   });
 }
@@ -190,7 +217,10 @@ export function useSalvarDeficiencia() {
 export function usePeriodoExperiencia(colaboradorId: string) {
   return useQuery({
     queryKey: ['periodo-experiencia', colaboradorId],
-    queryFn: () => service.obterPeriodoExperiencia(colaboradorId),
+    queryFn: async () => {
+      const mock = mockOr(getMockPeriodoExperiencia(colaboradorId));
+      return mock !== undefined ? mock : service.obterPeriodoExperiencia(colaboradorId);
+    },
     enabled: !!colaboradorId,
   });
 }
@@ -198,13 +228,8 @@ export function usePeriodoExperiencia(colaboradorId: string) {
 export function useSalvarPeriodoExperiencia() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      colaboradorId,
-      dados,
-    }: {
-      colaboradorId: string;
-      dados: Omit<Insertable<'periodos_experiencia'>, 'colaborador_id'>;
-    }) => service.salvarPeriodoExperiencia(colaboradorId, dados),
+    mutationFn: ({ colaboradorId, dados }: { colaboradorId: string; dados: Record<string, unknown> }) =>
+      service.salvarPeriodoExperiencia(colaboradorId, dados),
     onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['periodo-experiencia', vars.colaboradorId] }),
   });
 }
@@ -213,7 +238,7 @@ export function useSalvarPeriodoExperiencia() {
 export function useAnotacoes(colaboradorId: string) {
   return useQuery({
     queryKey: ['anotacoes', colaboradorId],
-    queryFn: () => service.listarAnotacoes(colaboradorId),
+    queryFn: async () => mockOr(getMockAnotacoes(colaboradorId)) ?? service.listarAnotacoes(colaboradorId),
     enabled: !!colaboradorId,
   });
 }
@@ -222,7 +247,7 @@ export function useCriarAnotacao() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: service.criarAnotacao,
-    onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['anotacoes', vars.colaborador_id] }),
+    onSuccess: (_, vars: any) => qc.invalidateQueries({ queryKey: ['anotacoes', vars.colaborador_id] }),
   });
 }
 
@@ -260,7 +285,7 @@ export function usePeriodosAquisitivos(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
     queryKey: ['periodos-aquisitivos', colaboradorId, empresaAtual?.id],
-    queryFn: () => service.listarPeriodosAquisitivos(colaboradorId, empresaAtual!.id),
+    queryFn: async () => mockOr(getMockPeriodosAquisitivos(colaboradorId)) ?? service.listarPeriodosAquisitivos(colaboradorId, empresaAtual!.id),
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }
@@ -286,7 +311,7 @@ export function useTiposEstabilidade() {
 export function useTimes(empresaId?: string) {
   return useQuery({
     queryKey: ['times', empresaId],
-    queryFn: () => service.listarTimes(empresaId!),
+    queryFn: async () => mockOr(getMockTimes(empresaId)) ?? service.listarTimes(empresaId!),
     enabled: !!empresaId,
   });
 }
@@ -305,6 +330,33 @@ export function useCriarWebhook() {
   return useMutation({
     mutationFn: service.criarWebhook,
     onSuccess: () => qc.invalidateQueries({ queryKey: ['webhooks'] }),
+  });
+}
+
+// Holerites — resumo por colaborador (PARTE F)
+export function useHoleritesColaborador(colaboradorId: string) {
+  return useQuery({
+    queryKey: ['holerites-colaborador', colaboradorId],
+    queryFn: async () => mockOr(getMockHolerites(colaboradorId)) ?? service.listarHoleritesColaborador(colaboradorId),
+    enabled: !!colaboradorId,
+  });
+}
+
+// Férias — resumo por colaborador (PARTE E)
+export function useFeriasResumoColaborador(colaboradorId: string, empresaId?: string) {
+  return useQuery({
+    queryKey: ['ferias-resumo-colaborador', colaboradorId, empresaId],
+    queryFn: async () => mockOr(getMockFerias(colaboradorId)) ?? service.listarFeriasColaborador(colaboradorId, empresaId!),
+    enabled: !!colaboradorId && !!empresaId,
+  });
+}
+
+// Lotações
+export function useLotacoes(colaboradorId: string, empresaId?: string) {
+  return useQuery({
+    queryKey: ['lotacoes', colaboradorId, empresaId],
+    queryFn: async () => mockOr(getMockLotacoes(colaboradorId)) ?? service.listarLotacoes(colaboradorId, empresaId!),
+    enabled: !!colaboradorId && !!empresaId,
   });
 }
 
@@ -328,15 +380,8 @@ export function useCriarFeriasColetivas() {
 // Campos Customizados
 export function useCamposCustomizados(empresaId?: string) {
   return useQuery({
-    // `ativos` no meio da chave de proposito: `listarCamposCustomizados` filtra
-    // `ativo = true`, enquanto src/components/settings/CamposCustomizadosTab.tsx
-    // consulta a MESMA tabela sem esse filtro. Com a chave identica e staleTime de
-    // 5 min, quem montasse primeiro servia o conjunto errado para a outra tela (o
-    // dossie deixaria preencher campo desativado; as configuracoes parariam de
-    // mostrar os desativados para reativar). O prefixo segue sendo
-    // `campos-customizados`, entao o invalidateQueries daquela tela cobre as duas.
-    queryKey: ['campos-customizados', 'ativos', empresaId],
-    queryFn: () => service.listarCamposCustomizados(empresaId!),
+    queryKey: ['campos-customizados', empresaId],
+    queryFn: async () => mockOr(getMockCamposCustomizados(empresaId)) ?? service.listarCamposCustomizados(empresaId!),
     enabled: !!empresaId,
   });
 }
@@ -344,7 +389,7 @@ export function useCamposCustomizados(empresaId?: string) {
 export function useValoresCamposCustomizados(colaboradorId?: string) {
   return useQuery({
     queryKey: ['valores-campos-customizados', colaboradorId],
-    queryFn: () => service.obterValoresCamposCustomizados(colaboradorId!),
+    queryFn: async () => mockOr(getMockValoresCamposCustomizados(colaboradorId)) ?? service.obterValoresCamposCustomizados(colaboradorId!),
     enabled: !!colaboradorId,
   });
 }

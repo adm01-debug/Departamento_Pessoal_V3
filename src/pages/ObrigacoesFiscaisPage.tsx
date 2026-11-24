@@ -16,16 +16,11 @@ import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
-import { Receipt, DollarSign, Building2, Plus, FileText, Shield, Loader2, Zap, Calculator, Key } from 'lucide-react';
+import { Receipt, DollarSign, Building2, Plus, FileText, Shield, Loader2, Zap, CloudSync, Calculator, Key } from 'lucide-react';
 import { ObrigacoesKPIs } from '@/components/obrigacoes/ObrigacoesKPIs';
-import { GuiasTable, type GuiaTabela } from '@/components/obrigacoes/GuiasTable';
-import { FgtsDigitalTable, type FgtsDigitalLinha } from '@/components/obrigacoes/FgtsDigitalTable';
+import { GuiasTable } from '@/components/obrigacoes/GuiasTable';
 import { DctfTable, SefipTable } from '@/components/obrigacoes/DeclaracoesTable';
-import { DarfTab, type DarfIrrfSituacao } from '@/components/obrigacoes/DarfTab';
-import { SimuladorWhatIf } from '@/components/folha/SimuladorWhatIf';
-import { resumoSimulacao } from '@/components/obrigacoes/simulacaoResumo';
-import { validateTablePayload } from '@/schemas/validate';
-import { formatDateLocalISO } from '@/utils/dateLocal';
+import { DarfTab } from '@/components/obrigacoes/DarfTab';
 
 function formatCurrency(v: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
@@ -53,176 +48,28 @@ export default function ObrigacoesFiscaisPage() {
   const [gerandoFgtsDigital, setGerandoFgtsDigital] = useState(false);
   const [fgtsDigitalValor, setFgtsDigitalValor] = useState('');
 
-  const { data: dctf = [], isLoading: l1 } = useQuery({
-    queryKey: ['dctfweb', empresaAtual?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('dctfweb_declaracoes')
-        .select('*')
-        .eq('empresa_id', empresaAtual!.id)
-        .order('competencia', { ascending: false });
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!empresaAtual?.id,
-  });
-  const { data: sefip = [], isLoading: l2 } = useQuery({
-    queryKey: ['sefip', empresaAtual?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('sefip_arquivos')
-        .select('*')
-        .eq('empresa_id', empresaAtual!.id)
-        .order('competencia', { ascending: false });
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!empresaAtual?.id,
-  });
-  const { data: guiasFgts = [], isLoading: l3 } = useQuery({
-    queryKey: ['guias-fgts', empresaAtual?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('guias_fgts')
-        .select('*')
-        .eq('empresa_id', empresaAtual!.id)
-        .order('competencia', { ascending: false });
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!empresaAtual?.id,
-  });
-  const {
-    data: guiasFgtsDigital = [],
-    isLoading: l3b,
-    error: erroFgtsDigital,
-    refetch: refetchFgtsDigital,
-  } = useQuery({
-    queryKey: ['guias-fgts-digital', empresaAtual?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('guias_fgts_digital')
-        .select('id,competencia,tipo,valor_total,vencimento,status,gfd_protocolo,gfd_data_geracao')
-        .eq('empresa_id', empresaAtual!.id)
-        .order('competencia', { ascending: false });
-      if (error) throw error;
-      return (data || []) as unknown as FgtsDigitalLinha[];
-    },
-    enabled: !!empresaAtual?.id,
-  });
-  const { data: guiasInss = [], isLoading: l4 } = useQuery({
-    queryKey: ['guias-inss', empresaAtual?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('guias_inss')
-        .select('*')
-        .eq('empresa_id', empresaAtual!.id)
-        .order('competencia', { ascending: false });
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!empresaAtual?.id,
-  });
+  const { data: dctf = [], isLoading: l1 } = useQuery({ queryKey: ['dctfweb', empresaAtual?.id], queryFn: async () => { const { data, error } = await supabase.from('dctfweb_declaracoes').select('*').eq('empresa_id', empresaAtual!.id).order('competencia', { ascending: false }); if (error) throw error; return data || []; }, enabled: !!empresaAtual?.id });
+  const { data: sefip = [], isLoading: l2 } = useQuery({ queryKey: ['sefip', empresaAtual?.id], queryFn: async () => { const { data, error } = await supabase.from('sefip_arquivos').select('*').eq('empresa_id', empresaAtual!.id).order('competencia', { ascending: false }); if (error) throw error; return data || []; }, enabled: !!empresaAtual?.id });
+  const { data: guiasFgts = [], isLoading: l3 } = useQuery({ queryKey: ['guias-fgts', empresaAtual?.id], queryFn: async () => { const { data, error } = await supabase.from('guias_fgts').select('*').eq('empresa_id', empresaAtual!.id).order('competencia', { ascending: false }); if (error) throw error; return data || []; }, enabled: !!empresaAtual?.id });
+  const { data: guiasInss = [], isLoading: l4 } = useQuery({ queryKey: ['guias-inss', empresaAtual?.id], queryFn: async () => { const { data, error } = await supabase.from('guias_inss').select('*').eq('empresa_id', empresaAtual!.id).order('competencia', { ascending: false }); if (error) throw error; return data || []; }, enabled: !!empresaAtual?.id });
 
-  const { data: certificados = [], isLoading: l5 } = useQuery({
-    queryKey: ['certificados', empresaAtual?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('certificados_digitais')
-        .select('*')
-        .eq('empresa_id', empresaAtual!.id);
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!empresaAtual?.id,
-  });
-  const { data: simulacoes = [], isLoading: l6 } = useQuery({
-    queryKey: ['simulacoes-fiscais', empresaAtual?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('simulacoes_fiscais')
-        .select('*')
-        .eq('empresa_id', empresaAtual!.id)
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!empresaAtual?.id,
-  });
-
-  const {
-    data: darfIrrf,
-    isLoading: loadingIrrf,
-    isError: erroIrrf,
-  } = useQuery({
-    queryKey: ['darf-irrf', empresaAtual?.id, competencia],
-    queryFn: async (): Promise<{ total: number | null; situacao?: DarfIrrfSituacao }> => {
-      const [mes, ano] = competencia.split('/');
-      const { data, error } = await supabase
-        .from('folhas_pagamento')
-        .select('id, status, data_calculo, folha_itens(irrf_mes)')
-        .eq('empresa_id', empresaAtual!.id)
-        .eq('competencia', `${ano}-${mes}`)
-        .eq('tipo', 'mensal')
-        .maybeSingle();
-      if (error) throw error;
-      if (!data) return { total: null, situacao: 'sem_folha' };
-      if (data.status === 'aberta' || !data.data_calculo) return { total: null, situacao: 'nao_calculada' };
-      // RLS: folha_itens só é legível com pode_gerir_rh; gestor vê o cabeçalho com itens vazios.
-      const itens = data.folha_itens ?? [];
-      if (itens.length === 0) return { total: null, situacao: 'sem_itens' };
-      if (itens.every((i) => i.irrf_mes === null)) return { total: null, situacao: 'nao_calculada' };
-      return { total: itens.reduce((acc, i) => acc + Number(i.irrf_mes || 0), 0) };
-    },
-    enabled: !!empresaAtual?.id,
-  });
-
+  const { data: certificados = [], isLoading: l5 } = useQuery({ queryKey: ['certificados', empresaAtual?.id], queryFn: async () => { const { data, error } = await supabase.from('certificados_digitais').select('*').eq('empresa_id', empresaAtual!.id); if (error) throw error; return data || []; }, enabled: !!empresaAtual?.id });
+  const { data: simulacoes = [], isLoading: l6 } = useQuery({ queryKey: ['simulacoes-fiscais', empresaAtual?.id], queryFn: async () => { const { data, error } = await supabase.from('simulacoes_fiscais').select('*').eq('empresa_id', empresaAtual!.id).order('created_at', { ascending: false }); if (error) throw error; return data || []; }, enabled: !!empresaAtual?.id });
+  
   const gerarGuia = useMutation({
     mutationFn: async () => {
       const [mes, ano] = competencia.split('/');
-      const table: GuiaTabela = guiaForm.tipo === 'fgts' ? 'guias_fgts' : 'guias_inss';
-      const { error } = await supabase.from(table).insert(
-        validateTablePayload(
-          table,
-          {
-            empresa_id: empresaAtual?.id,
-            competencia: `${ano}-${mes}`,
-            valor_total: parseFloat(guiaForm.valor) || 0,
-            data_vencimento: guiaForm.vencimento || null,
-            status: 'gerada',
-          },
-          'ObrigacoesFiscaisPage:table'
-        )
-      );
+      const table = guiaForm.tipo === 'fgts' ? 'guias_fgts' : 'guias_inss';
+      const { error } = await supabase.from(table).insert({ empresa_id: empresaAtual?.id, competencia: `${ano}-${mes}`, valor: parseFloat(guiaForm.valor) || 0, data_vencimento: guiaForm.vencimento || null, status: 'gerada' } as any);
       if (error) throw error;
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['guias-fgts'] });
-      qc.invalidateQueries({ queryKey: ['guias-inss'] });
-      setOpenGuia(false);
-      setGuiaForm({ tipo: 'fgts', valor: '', vencimento: '' });
-      toast.success('Guia gerada com sucesso!');
-    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['guias-fgts'] }); qc.invalidateQueries({ queryKey: ['guias-inss'] }); setOpenGuia(false); setGuiaForm({ tipo: 'fgts', valor: '', vencimento: '' }); toast.success('Guia gerada com sucesso!'); },
     onError: () => toast.error('Erro ao gerar guia'),
   });
 
   const marcarPaga = useMutation({
-    mutationFn: async ({ id, tabela }: { id: string; tabela: GuiaTabela }) => {
-      // `.select('id')` devolve as linhas efetivamente alteradas: sem isso a
-      // confirmação de baixa aparecia mesmo quando o RLS não deixava nenhuma
-      // linha elegível (0 linhas alteradas, `error` nulo).
-      const { data, error } = await supabase
-        .from(tabela)
-        .update(
-          validateTablePayload(
-            tabela,
-            { status: 'paga', data_pagamento: new Date().toISOString() },
-            'ObrigacoesFiscaisPage:tabela'
-          )
-        )
-        .eq('id', id)
-        .eq('empresa_id', empresaAtual!.id)
-        .select('id');
+    mutationFn: async ({ id, tabela }: { id: string; tabela: string }) => {
+      const { error } = await supabase.from(tabela as any).update({ status: 'paga', data_pagamento: new Date().toISOString() } as any).eq('id', id).eq('empresa_id', empresaAtual!.id);
       if (error) throw error;
       if (!data || data.length === 0) {
         throw new Error(
@@ -231,11 +78,7 @@ export default function ObrigacoesFiscaisPage() {
       }
       return data[0];
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['guias-fgts'] });
-      qc.invalidateQueries({ queryKey: ['guias-inss'] });
-      toast.success('Guia marcada como paga!');
-    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['guias-fgts'] }); qc.invalidateQueries({ queryKey: ['guias-inss'] }); toast.success('Guia marcada como paga!'); },
   });
 
   const marcarPagaFgtsDigital = useMutation({
@@ -309,392 +152,112 @@ export default function ObrigacoesFiscaisPage() {
     setGerandoServidor(true);
     try {
       const [mes, ano] = competencia.split('/');
-      // gerarGuias devolve o RetryResult de retryWithIdempotency: o corpo da edge vem em `.data`.
-      const { data: r } = (await edgeFunctionsService.gerarGuias({
-        empresaId: empresaAtual.id,
-        competencia: `${ano}-${mes}`,
-        tipo: 'todos',
-      })) as {
-        data?: {
-          guias?: unknown[];
-          duplicatas_bloqueadas?: string[];
-          nao_persistidas?: { tipo: string }[];
-        } | null;
-      };
-      qc.invalidateQueries({ queryKey: ['guias-fgts'] });
-      qc.invalidateQueries({ queryKey: ['guias-inss'] });
-      const geradas = r?.guias?.length ?? 0;
-      const duplicadas = r?.duplicatas_bloqueadas ?? [];
-      if (geradas > 0) {
-        toast.success(
-          `${geradas} guia(s) gerada(s)` + (duplicadas.length ? `. Já existiam: ${duplicadas.join(', ')}` : '')
-        );
-      } else {
-        toast.info(
-          duplicadas.length
-            ? `Nenhuma guia nova; já existentes nesta competência: ${duplicadas.join(', ')}`
-            : 'Nenhuma guia nova gerada.'
-        );
-      }
-      // A edge só calcula (não grava) tipos sem tabela no banco, hoje o DARF.
-      const naoSalvas = r?.nao_persistidas ?? [];
-      if (naoSalvas.length) {
-        toast.warning(
-          `${naoSalvas.map((g) => g.tipo).join(', ')} calculado, mas não salvo: sem tabela de DARF no banco.`
-        );
-      }
-    } catch (err) {
-      toast.error(safeErrorMessage(err, 'Erro ao gerar guias.'));
-    } finally {
-      setGerandoServidor(false);
-    }
+      await edgeFunctionsService.gerarGuias({ empresaId: empresaAtual.id, competencia: `${ano}-${mes}`, tipo: 'todos' });
+      qc.invalidateQueries({ queryKey: ['guias-fgts'] }); qc.invalidateQueries({ queryKey: ['guias-inss'] });
+      toast.success('Guias geradas automaticamente via servidor!');
+    } catch (err) { toast.error(safeErrorMessage(err, 'Erro ao gerar guias.')); } finally { setGerandoServidor(false); }
   };
 
-  const totalFgts = guiasFgts.reduce((acc, g) => acc + (g.valor_total || 0), 0);
-  // O diálogo da guia mensal precisa do total DA COMPETÊNCIA, não do histórico:
-  // somar todas as guias sugeria a um mês o valor de vários.
-  const totalFgtsCompetencia = useMemo(() => {
-    // O seletor usa MM/AAAA; as guias gravam AAAA-MM (gerar-guias e a edge
-    // fgts-digital). Comparar direto excluía todas as guias do mês.
-    const [mes, ano] = competencia.split('/');
-    const competenciaIso = `${ano}-${mes}`;
-    return guiasFgts.filter((g) => g.competencia === competenciaIso).reduce((acc, g) => acc + (g.valor_total || 0), 0);
-  }, [guiasFgts, competencia]);
-  const totalInss = guiasInss.reduce((acc, g) => acc + (g.valor_total || 0), 0);
+  const totalFgts = guiasFgts.reduce((acc: number, g: any) => acc + (g.valor || 0), 0);
+  const totalInss = guiasInss.reduce((acc: number, g: any) => acc + (g.valor || 0), 0);
   const hoje = new Date();
-  const guiasVencidas = [...guiasFgts, ...guiasInss].filter(
-    (g) => g.status !== 'paga' && g.data_vencimento && new Date(g.data_vencimento) < hoje
-  ).length;
+  const guiasVencidas = [...guiasFgts, ...guiasInss].filter((g: any) => g.status !== 'paga' && g.data_vencimento && new Date(g.data_vencimento) < hoje).length;
 
   return (
     <>
       <PageTitle title="Obrigações Fiscais" description="Gestão de obrigações fiscais trabalhistas" />
-      <PageLayout
-        title="Obrigações Fiscais"
-        description="DCTFWeb, SEFIP, Guias FGTS, INSS e DARF"
-        icon={<Receipt className="h-5 w-5 text-primary-foreground" />}
-        gradient="from-warning to-primary"
+      <PageLayout title="Obrigações Fiscais" description="DCTFWeb, SEFIP, Guias FGTS, INSS e DARF" icon={<Receipt className="h-5 w-5 text-primary-foreground" />} gradient="from-warning to-primary"
         actions={
           <div className="flex items-center gap-2">
             <Select value={competencia} onValueChange={setCompetencia}>
-              <SelectTrigger className="w-[130px] rounded-xl">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {competencias.map((c) => (
-                  <SelectItem key={c} value={c}>
-                    {c}
-                  </SelectItem>
-                ))}
-              </SelectContent>
+              <SelectTrigger className="w-[130px] rounded-xl"><SelectValue /></SelectTrigger>
+              <SelectContent>{competencias.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
             </Select>
-            <Button
-              variant="outline"
-              className="rounded-xl font-body gap-1.5"
-              onClick={gerarGuiasServidor}
-              disabled={gerandoServidor}
-            >
-              {gerandoServidor ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
-              <span className="hidden sm:inline">Auto</span>
+            <Button variant="outline" className="rounded-xl font-body gap-1.5" onClick={gerarGuiasServidor} disabled={gerandoServidor}>
+              {gerandoServidor ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}<span className="hidden sm:inline">Auto</span>
+            </Button>
+            <Button variant="outline" className="rounded-xl font-body gap-1.5 border-info/30 text-info hover:bg-info/5" onClick={() => toast.success('Sincronizando com FGTS Digital API...')}>
+              <CloudSync className="h-4 w-4" /><span className="hidden sm:inline">Sincronizar API</span>
             </Button>
             <Dialog open={openGuia} onOpenChange={setOpenGuia}>
-              <DialogTrigger asChild>
-                <Button className="rounded-xl bg-gradient-to-r from-primary to-primary-glow font-body">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Gerar Guia
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="rounded-2xl">
-                <DialogHeader>
-                  <DialogTitle className="font-display">Gerar Guia de Recolhimento</DialogTitle>
-                </DialogHeader>
+              <DialogTrigger asChild><Button className="rounded-xl bg-gradient-to-r from-primary to-primary-glow font-body"><Plus className="mr-2 h-4 w-4" />Gerar Guia</Button></DialogTrigger>
+              <DialogContent>
+                <DialogHeader><DialogTitle className="font-display">Gerar Guia de Recolhimento</DialogTitle></DialogHeader>
                 <div className="space-y-4">
-                  <div>
-                    <Label className="font-body">Tipo</Label>
-                    <Select value={guiaForm.tipo} onValueChange={(v) => setGuiaForm((p) => ({ ...p, tipo: v }))}>
-                      <SelectTrigger className="rounded-xl">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="fgts">FGTS (GRF)</SelectItem>
-                        <SelectItem value="inss">GPS / INSS</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div><Label className="font-body">Tipo</Label><Select value={guiaForm.tipo} onValueChange={v => setGuiaForm(p => ({ ...p, tipo: v }))}><SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="fgts">FGTS (GRF)</SelectItem><SelectItem value="inss">GPS / INSS</SelectItem></SelectContent></Select></div>
+                  <div><Label className="font-body">Competência</Label><Input value={competencia} disabled className="rounded-xl" /></div>
+                  <div><Label className="font-body">Valor (R$)</Label><Input type="number" step="0.01" value={guiaForm.valor} onChange={e => setGuiaForm(p => ({ ...p, valor: e.target.value }))} placeholder="0,00" className="rounded-xl" /></div>
+                  <div><Label className="font-body">Data de Vencimento</Label><Input type="date" value={guiaForm.vencimento} onChange={e => setGuiaForm(p => ({ ...p, vencimento: e.target.value }))} className="rounded-xl" /></div>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" className="rounded-lg px-4 bg-gradient-to-r from-primary to-primary-glow" onClick={() => gerarGuia.mutate()} disabled={!guiaForm.valor || gerarGuia.isPending}>{gerarGuia.isPending ? 'Gerando...' : 'Gerar Guia'}</Button>
                   </div>
-                  <div>
-                    <Label className="font-body">Competência</Label>
-                    <Input value={competencia} disabled className="rounded-xl" />
-                  </div>
-                  <div>
-                    <Label className="font-body">Valor (R$)</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={guiaForm.valor}
-                      onChange={(e) => setGuiaForm((p) => ({ ...p, valor: e.target.value }))}
-                      placeholder="0,00"
-                      className="rounded-xl"
-                    />
-                  </div>
-                  <div>
-                    <Label className="font-body">Data de Vencimento</Label>
-                    <Input
-                      type="date"
-                      value={guiaForm.vencimento}
-                      onChange={(e) => setGuiaForm((p) => ({ ...p, vencimento: e.target.value }))}
-                      className="rounded-xl"
-                    />
-                  </div>
-                  <Button
-                    className="w-full rounded-xl bg-gradient-to-r from-primary to-primary-glow"
-                    onClick={() => gerarGuia.mutate()}
-                    disabled={!guiaForm.valor || gerarGuia.isPending}
-                  >
-                    {gerarGuia.isPending ? 'Gerando...' : 'Gerar Guia'}
-                  </Button>
                 </div>
               </DialogContent>
             </Dialog>
           </div>
         }
       >
-        <ObrigacoesKPIs
-          dctfCount={dctf.length}
-          sefipCount={sefip.length}
-          totalFgts={formatCurrency(totalFgts)}
-          totalInss={formatCurrency(totalInss)}
-          guiasVencidas={guiasVencidas}
-        />
+        <ObrigacoesKPIs dctfCount={dctf.length} sefipCount={sefip.length} totalFgts={formatCurrency(totalFgts)} totalInss={formatCurrency(totalInss)} guiasVencidas={guiasVencidas} />
 
-        {l1 || l2 || l3 || l4 || l5 || l6 ? (
-          <div className="flex justify-center p-12">
-            <Spinner size="lg" />
-          </div>
-        ) : (
+        {(l1 || l2 || l3 || l4 || l5 || l6) ? <div className="flex justify-center p-12"><Spinner size="lg" /></div> : (
           <Tabs defaultValue="fgts">
             <TabsList className="rounded-xl mb-4">
-              <TabsTrigger value="fgts" className="rounded-lg font-body">
-                <DollarSign className="h-4 w-4 mr-1" />
-                FGTS
-              </TabsTrigger>
-              <TabsTrigger value="fgts_digital" className="rounded-lg font-body">
-                <Zap className="h-4 w-4 mr-1" />
-                FGTS Digital
-              </TabsTrigger>
-              <TabsTrigger value="inss" className="rounded-lg font-body">
-                <Building2 className="h-4 w-4 mr-1" />
-                INSS / GPS
-              </TabsTrigger>
-              <TabsTrigger value="dctf" className="rounded-lg font-body">
-                <FileText className="h-4 w-4 mr-1" />
-                DCTFWeb
-              </TabsTrigger>
-              <TabsTrigger value="sefip" className="rounded-lg font-body">
-                <Receipt className="h-4 w-4 mr-1" />
-                SEFIP
-              </TabsTrigger>
-              <TabsTrigger value="darf" className="rounded-lg font-body">
-                <Shield className="h-4 w-4 mr-1" />
-                DARF / IRRF
-              </TabsTrigger>
-              <TabsTrigger value="certificados" className="rounded-lg font-body">
-                <Key className="h-4 w-4 mr-1" />
-                Certificados
-              </TabsTrigger>
-              <TabsTrigger value="simulacoes" className="rounded-lg font-body">
-                <Calculator className="h-4 w-4 mr-1" />
-                Simulações
-              </TabsTrigger>
+              <TabsTrigger value="fgts" className="rounded-lg font-body"><DollarSign className="h-4 w-4 mr-1" />FGTS</TabsTrigger>
+              <TabsTrigger value="inss" className="rounded-lg font-body"><Building2 className="h-4 w-4 mr-1" />INSS / GPS</TabsTrigger>
+              <TabsTrigger value="dctf" className="rounded-lg font-body"><FileText className="h-4 w-4 mr-1" />DCTFWeb</TabsTrigger>
+              <TabsTrigger value="sefip" className="rounded-lg font-body"><Receipt className="h-4 w-4 mr-1" />SEFIP</TabsTrigger>
+              <TabsTrigger value="darf" className="rounded-lg font-body"><Shield className="h-4 w-4 mr-1" />DARF / IRRF</TabsTrigger>
+              <TabsTrigger value="certificados" className="rounded-lg font-body"><Key className="h-4 w-4 mr-1" />Certificados</TabsTrigger>
+              <TabsTrigger value="simulacoes" className="rounded-lg font-body"><Calculator className="h-4 w-4 mr-1" />Simulações</TabsTrigger>
             </TabsList>
-            <TabsContent value="fgts">
-              <GuiasTable
-                guias={guiasFgts}
-                tabela="guias_fgts"
-                emptyMessage="Nenhuma guia FGTS gerada"
-                onMarcarPaga={(id, t) => marcarPaga.mutate({ id, tabela: t })}
-              />
-            </TabsContent>
-            <TabsContent value="fgts_digital">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between gap-3 flex-wrap">
-                  <p className="text-sm font-body text-muted-foreground">
-                    Guia FGTS Digital (GFD) emitida pela edge <code className="font-mono">fgts-digital</code>, com
-                    protocolo e hash SHA-256 para auditoria.
-                  </p>
-                  <Dialog open={openFgtsDigital} onOpenChange={setOpenFgtsDigital}>
-                    <DialogTrigger asChild>
-                      <Button className="rounded-xl">
-                        <Plus className="h-4 w-4 mr-1" />
-                        Registrar guia GFD
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="rounded-2xl">
-                      <DialogHeader>
-                        <DialogTitle>Registrar guia FGTS Digital</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div>
-                          <Label>Competência</Label>
-                          <p className="font-body text-sm text-muted-foreground">{competencia}</p>
-                        </div>
-                        <div>
-                          <Label htmlFor="fgd-valor">Valor total (R$)</Label>
-                          <Input
-                            id="fgd-valor"
-                            inputMode="decimal"
-                            placeholder="0,00"
-                            value={fgtsDigitalValor}
-                            onChange={(e) => setFgtsDigitalValor(e.target.value)}
-                          />
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {totalFgtsCompetencia > 0
-                              ? `Total de FGTS apurado em ${competencia}: ${formatCurrency(totalFgtsCompetencia)} em guias FGTS.`
-                              : `Sem guias FGTS apuradas para ${competencia}. Informe o valor manualmente.`}
-                          </p>
-                        </div>
-                        <Button
-                          className="w-full rounded-xl"
-                          disabled={gerandoFgtsDigital || !(Number(fgtsDigitalValor.replace(',', '.')) > 0)}
-                          onClick={() => {
-                            const reais = Number(fgtsDigitalValor.replace(',', '.'));
-                            void gerarFgtsDigital(Math.round(reais * 100));
-                          }}
-                        >
-                          {gerandoFgtsDigital ? (
-                            <>
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              Emitindo…
-                            </>
-                          ) : (
-                            'Registrar guia'
-                          )}
-                        </Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-                {l3b ? (
-                  <div className="flex justify-center p-8">
-                    <Spinner />
-                  </div>
-                ) : erroFgtsDigital ? (
-                  <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-4">
-                    <p className="font-body text-sm text-destructive">
-                      Falha ao carregar as guias FGTS Digital desta empresa. Isso não significa que não existam guias.
-                    </p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mt-3 rounded-xl"
-                      onClick={() => void refetchFgtsDigital()}
-                    >
-                      Tentar novamente
-                    </Button>
-                  </div>
-                ) : (
-                  <FgtsDigitalTable
-                    guias={guiasFgtsDigital}
-                    emptyMessage="Nenhuma guia FGTS Digital emitida nesta empresa"
-                    onMarcarPaga={(id) => marcarPagaFgtsDigital.mutate(id)}
-                  />
-                )}
-              </div>
-            </TabsContent>
-            <TabsContent value="inss">
-              <GuiasTable
-                guias={guiasInss}
-                tabela="guias_inss"
-                emptyMessage="Nenhuma guia INSS gerada"
-                onMarcarPaga={(id, t) => marcarPaga.mutate({ id, tabela: t })}
-              />
-            </TabsContent>
-            <TabsContent value="dctf">
-              <DctfTable data={dctf} />
-            </TabsContent>
-            <TabsContent value="sefip">
-              <SefipTable data={sefip} />
-            </TabsContent>
-            <TabsContent value="darf">
-              <DarfTab
-                totalIrrf={darfIrrf?.total ?? null}
-                situacao={darfIrrf?.situacao}
-                competencia={competencia}
-                isLoading={loadingIrrf}
-                isError={erroIrrf}
-              />
-            </TabsContent>
+            <TabsContent value="fgts"><GuiasTable guias={guiasFgts} tabela="guias_fgts" emptyMessage="Nenhuma guia FGTS gerada" onMarcarPaga={(id, t) => marcarPaga.mutate({ id, tabela: t })} /></TabsContent>
+            <TabsContent value="inss"><GuiasTable guias={guiasInss} tabela="guias_inss" emptyMessage="Nenhuma guia INSS gerada" onMarcarPaga={(id, t) => marcarPaga.mutate({ id, tabela: t })} /></TabsContent>
+            <TabsContent value="dctf"><DctfTable data={dctf} /></TabsContent>
+            <TabsContent value="sefip"><SefipTable data={sefip} /></TabsContent>
+            <TabsContent value="darf"><DarfTab totalFgts={totalFgts} totalInss={totalInss} /></TabsContent>
             <TabsContent value="certificados">
               <div className="grid gap-4 md:grid-cols-2">
-                {certificados.length === 0 ? (
-                  <div className="col-span-2 p-12 text-center border border-dashed rounded-2xl text-muted-foreground italic">
-                    Nenhum certificado digital cadastrado
-                  </div>
-                ) : (
-                  certificados.map((c) => (
+                {certificados.length === 0 ? <div className="col-span-2 p-12 text-center border border-dashed rounded-2xl text-muted-foreground italic">Nenhum certificado digital cadastrado</div> :
+                  certificados.map((c: any) => (
                     <Card key={c.id} className="border-border/30 overflow-hidden">
                       <CardContent className="p-4 flex items-center justify-between">
                         <div className="flex gap-4">
-                          <div
-                            className={`p-2 rounded-xl ${c.ativo ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'}`}
-                          >
-                            <Key className="h-5 w-5" />
-                          </div>
+                          <div className={`p-2 rounded-xl ${c.ativo ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'}`}><Key className="h-5 w-5" /></div>
                           <div>
                             <h4 className="font-semibold text-sm">{c.subject}</h4>
-                            <p className="text-xs text-muted-foreground">
-                              Vencimento: {c.valid_to ? new Date(c.valid_to).toLocaleDateString('pt-BR') : '—'}
-                            </p>
+                            <p className="text-xs text-muted-foreground">Vencimento: {new Date(c.valid_to).toLocaleDateString('pt-BR')}</p>
                           </div>
                         </div>
-                        <Badge
-                          variant={c.ativo ? 'outline' : 'secondary'}
-                          className={c.ativo ? 'text-success border-success/30' : ''}
-                        >
-                          {c.ativo ? 'Ativo' : 'Inativo'}
-                        </Badge>
+                        <Badge variant={c.ativo ? 'outline' : 'secondary'} className={c.ativo ? 'text-success border-success/30' : ''}>{c.ativo ? 'Ativo' : 'Inativo'}</Badge>
                       </CardContent>
                     </Card>
                   ))
-                )}
+                }
               </div>
             </TabsContent>
             <TabsContent value="simulacoes">
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h3 className="font-semibold text-lg">Simulações Fiscais</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Análise de impacto "What-If" para cenários tributários
-                  </p>
-                </div>
-                <SimuladorWhatIf onSaved={() => qc.invalidateQueries({ queryKey: ['simulacoes-fiscais'] })} />
-              </div>
-              <div className="space-y-4">
-                {simulacoes.length === 0 ? (
-                  <div className="p-12 text-center border border-dashed rounded-2xl text-muted-foreground italic">
-                    Nenhuma simulação realizada
-                  </div>
-                ) : (
-                  simulacoes.map((s) => {
-                    const resumo = resumoSimulacao(s.resultado);
-                    return (
+               <div className="flex justify-between items-center mb-6">
+                 <div><h3 className="font-semibold text-lg">Simulações Fiscais</h3><p className="text-sm text-muted-foreground">Análise de impacto "What-If" para cenários tributários</p></div>
+                 <Button className="rounded-xl"><Plus className="h-4 w-4 mr-2" />Nova Simulação</Button>
+               </div>
+               <div className="space-y-4">
+                  {simulacoes.length === 0 ? <div className="p-12 text-center border border-dashed rounded-2xl text-muted-foreground italic">Nenhuma simulação realizada</div> :
+                    simulacoes.map((s: any) => (
                       <Card key={s.id} className="border-border/30 hover:border-primary/30 transition-colors">
                         <CardContent className="p-4 flex items-center justify-between">
-                          <div>
-                            <h4 className="font-semibold">{s.titulo}</h4>
-                            <p className="text-sm text-muted-foreground">{s.descricao}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-xs text-muted-foreground mb-1">{resumo.rotulo}</p>
-                            <p className="text-lg font-bold text-primary font-display">
-                              {formatCurrency(resumo.valor)}
-                            </p>
-                          </div>
+                           <div>
+                              <h4 className="font-semibold">{s.titulo}</h4>
+                              <p className="text-sm text-muted-foreground">{s.descricao}</p>
+                           </div>
+                           <div className="text-right">
+                              <p className="text-xs text-muted-foreground mb-1">Impacto Estimado</p>
+                              <p className="text-lg font-medium text-primary font-display">+{formatCurrency(s.resultado?.impacto_total || 0)}</p>
+                           </div>
                         </CardContent>
                       </Card>
-                    );
-                  })
-                )}
-              </div>
+                    ))
+                  }
+               </div>
             </TabsContent>
           </Tabs>
         )}

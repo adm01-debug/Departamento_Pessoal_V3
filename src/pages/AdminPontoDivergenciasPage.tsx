@@ -21,7 +21,7 @@ import { AlertTriangle, CheckCircle2, UserPlus, Clock, Ban, Loader2, Search, Ref
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { formatDateTime } from '@/utils/format';
-import { usePiiMask } from '@/hooks/usePiiMask';
+import { maskPisDisplay } from '@/utils/piiMask';
 
 type TipoDiv = 'ok' | 'sem_colaborador' | 'sem_batida' | 'duplicado';
 
@@ -54,7 +54,6 @@ const TIPO_LABEL: Record<TipoDiv, { label: string; variant: 'default' | 'seconda
 };
 
 export default function AdminPontoDivergenciasPage() {
-  const pii = usePiiMask();
   const { empresaAtual } = useEmpresas();
   const qc = useQueryClient();
   const [tipoFiltro, setTipoFiltro] = useState<'todos' | TipoDiv>('sem_batida');
@@ -153,9 +152,8 @@ export default function AdminPontoDivergenciasPage() {
 
   const mIgnorar = useMutation({
     mutationFn: async ({ id, obs }: { id: string; obs: string }) => {
-      const { error } = await supabase.rpc('resolver_divergencia_afdt', {
-        _divergencia_id: id,
-        _observacao: obs || null,
+      const { error } = await (supabase as any).rpc('resolver_divergencia_afdt', {
+        _divergencia_id: id, _observacao: obs || null,
       });
       if (error) throw error;
     },
@@ -170,9 +168,8 @@ export default function AdminPontoDivergenciasPage() {
 
   const mCriarBatida = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.rpc('criar_batida_da_divergencia_afdt', {
-        _divergencia_id: id,
-        _tipo: 'entrada',
+      const { error } = await (supabase as any).rpc('criar_batida_da_divergencia_afdt', {
+        _divergencia_id: id, _tipo: 'entrada',
       });
       if (error) throw error;
     },
@@ -185,9 +182,8 @@ export default function AdminPontoDivergenciasPage() {
 
   const mAssociar = useMutation({
     mutationFn: async ({ id, colaboradorId }: { id: string; colaboradorId: string }) => {
-      const { error } = await supabase.rpc('associar_pis_colaborador_afdt', {
-        _divergencia_id: id,
-        _colaborador_id: colaboradorId,
+      const { error } = await (supabase as any).rpc('associar_pis_colaborador_afdt', {
+        _divergencia_id: id, _colaborador_id: colaboradorId,
       });
       if (error) throw error;
     },
@@ -205,12 +201,9 @@ export default function AdminPontoDivergenciasPage() {
     if (!ids.length) return;
     toast.info(`Resolvendo ${ids.length} divergências...`);
     const results = await Promise.allSettled(
-      ids.map((id) =>
-        supabase.rpc('resolver_divergencia_afdt', {
-          _divergencia_id: id,
-          _observacao: 'Ignorada em massa',
-        })
-      )
+      ids.map(id => (supabase as any).rpc('resolver_divergencia_afdt', {
+        _divergencia_id: id, _observacao: 'Ignorada em massa',
+      }))
     );
     const ok = results.filter((r) => r.status === 'fulfilled').length;
     toast.success(`${ok}/${ids.length} divergências resolvidas`);
@@ -226,14 +219,14 @@ export default function AdminPontoDivergenciasPage() {
   };
 
   if (!empresaId) {
-    return <div className="p-8 text-muted-foreground">Selecione uma empresa.</div>;
+    return <div className="py-8 text-muted-foreground">Selecione uma empresa.</div>;
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 py-6">
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Divergências AFDT</h1>
+          <h1 className="text-3xl font-medium tracking-tight">Divergências AFDT</h1>
           <p className="text-sm text-muted-foreground">
             Conciliação entre arquivo legal de ponto e batidas registradas no sistema.
           </p>
@@ -255,7 +248,7 @@ export default function AdminPontoDivergenciasPage() {
               <s.icon className={`h-8 w-8 ${s.color}`} />
               <div>
                 <p className="text-xs text-muted-foreground">{s.label}</p>
-                <p className="text-2xl font-bold tabular-nums">{s.value}</p>
+                <p className="text-2xl font-medium tabular-nums">{s.value}</p>
               </div>
             </CardContent>
           </Card>
@@ -347,7 +340,7 @@ export default function AdminPontoDivergenciasPage() {
                     <TableCell>
                       <Badge variant={TIPO_LABEL[d.tipo].variant}>{TIPO_LABEL[d.tipo].label}</Badge>
                     </TableCell>
-                    <TableCell className="font-mono text-xs">{d.pis ? pii.pis(d.pis) : '—'}</TableCell>
+                    <TableCell className="font-mono text-xs">{d.pis ? maskPisDisplay(d.pis) : '—'}</TableCell>
                     <TableCell className="tabular-nums text-xs">
                       {d.data_hora_afdt ? formatDateTime(d.data_hora_afdt) : '—'}
                     </TableCell>
@@ -432,7 +425,7 @@ export default function AdminPontoDivergenciasPage() {
           <DialogHeader>
             <DialogTitle>Associar PIS ao colaborador</DialogTitle>
             <DialogDescription>
-              PIS: <span className="font-mono">{pii.pis(dialogAssociar?.pis)}</span>
+              PIS: <span className="font-mono">{maskPisDisplay(dialogAssociar?.pis)}</span>
             </DialogDescription>
           </DialogHeader>
           <Select value={colabParaAssociar} onValueChange={setColabParaAssociar}>

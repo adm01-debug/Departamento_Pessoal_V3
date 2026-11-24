@@ -113,7 +113,7 @@ const CommandItem = React.forwardRef<
       // variante com valor isola os itens realmente desabilitados.
       className={cn(
         'relative flex cursor-default select-none items-center rounded-xs px-2 py-1.5 text-sm outline-hidden aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
-        className
+        className,
       )}
       {...props}
     >

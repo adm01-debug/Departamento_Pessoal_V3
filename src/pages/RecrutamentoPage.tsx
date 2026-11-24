@@ -1,21 +1,28 @@
 import { PageTitle } from '@/components/PageTitle';
 import { PageLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+// TABLIST — mesma skin da área de Admissões. Não há classe de aba escrita nesta
+// página: o container (`bg-muted/50 rounded-xl p-1 border border-border/30`), o
+// indicador deslizante (`rounded-lg bg-background shadow-xs`) e o trigger
+// (`data-[state=active]:bg-transparent data-[state=active]:text-primary`) vêm
+// de `colaboradores/AnimatedDossieTabs`, que é a FONTE ÚNICA da tablist do app
+// (o Dossiê de Colaboradores, Admissões e esta área consomem o mesmo par).
+// O `<Tabs>`/`<TabsContent>` do Radix continua por fora controlando o conteúdo,
+// pelo mesmo `value`/`onValueChange` — troca-se só a aparência, não a navegação.
+import {
+  AnimatedDossieTabsList as AnimatedTabsList,
+  AnimatedDossieTabsTrigger as AnimatedTabsTrigger,
+} from '@/components/colaboradores/AnimatedDossieTabs';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { recrutamentoService } from '@/services/recrutamentoService';
 import { useEmpresas } from '@/hooks';
-import { usePiiMask } from '@/hooks/usePiiMask';
-import { UserSearch, Plus, Filter, Mail, Phone, Search, X } from 'lucide-react';
-import { MotionConfig } from 'framer-motion';
+import { UserSearch, Plus, Briefcase, Users, Filter, BarChart3, Search, X, LayoutGrid } from 'lucide-react';
+import { motion, MotionConfig } from 'framer-motion';
 import { MOTION_REDUCED_MODE } from '@/lib/motionMode';
 import { Spinner } from '@/components/ui/spinner';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
-import { safeErrorMessage } from '@/utils/safeError';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,24 +32,49 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+// ENTRADA DE CARD — MESMO mecanismo do Dashboard Executivo (`cardVariants` de
+// `components/dashboard/MetricCard.tsx`, empacotado aqui): fade + subida de
+// 20px, 0.4s, ease `[0.25, 0.46, 0.45, 0.94]` e stagger de 0.08s por índice
+// (teto no 9º item). Nenhum valor de animação é escrito nesta página: os cards
+// usam `MotionCard`/`entradaCard(i)` e os blocos que NÃO são `Card` (card do
+// kanban, cabeçalho de coluna, item da timeline) usam `motion.*` com o MESMO
+// `{...entradaCard(i)}` — a cascata inteira sai de um único lugar.
 import { EntradaPresenca } from '@/components/ui/entrada-cards';
-import { AnalyticsRecrutamento } from '@/components/recrutamento/AnalyticsRecrutamento';
 import { CandidatoDetalhesDialog } from '@/components/recrutamento/CandidatoDetalhesDialog';
+import { NovaVagaDialog } from '@/components/recrutamento/NovaVagaDialog';
+import { montarPayloadVaga, type NovaVagaStatus, type RascunhoVaga } from '@/components/recrutamento/novaVagaRascunho';
+import { opcoesDepartamento } from '@/components/recrutamento/vagasComum';
+import { AnalyticsRecrutamento } from '@/components/recrutamento/AnalyticsRecrutamento';
+import { VagasPainel } from '@/components/recrutamento/VagasPainel';
 import { CandidatosPainel } from '@/components/recrutamento/CandidatosPainel';
 import { PipelineBoard } from '@/components/recrutamento/PipelineBoard';
-import { VagasPainel } from '@/components/recrutamento/VagasPainel';
-import { ETAPAS, filtrarCandidaturas, normalizarEtapa } from '@/components/recrutamento/pipelineEtapas';
+import { ETAPAS, filtrarCandidaturas } from '@/components/recrutamento/pipelineEtapas';
 import type { CandidaturaComRelacoes, VagaRow, CandidatoRow } from '@/types/recrutamento';
-
-const VAGA_FORM_VAZIO = { titulo: '', departamento: '', modalidade: '', quantidade: '1', requisitos: '' };
+// MOCK VISUAL — ver src/mocks/recrutamentoMock.ts.
+import {
+  avancarEtapaCandidaturaMock,
+  excluirVagaMock,
+  getMockCandidatos,
+  getMockCandidaturas,
+  getMockVagas,
+  isRecrutamentoMockEnabled,
+  moverCandidaturaMock,
+  publicarVagaMock,
+  simularAcaoRecrutamento,
+} from '@/mocks/recrutamentoMock';
+const TABS_PIPELINE = [
+  { value: 'pipeline', label: 'Pipeline', icone: LayoutGrid },
+  { value: 'vagas', label: 'Vagas', icone: Briefcase },
+  { value: 'candidatos', label: 'Candidatos', icone: Users },
+  { value: 'analytics', label: 'Analytics', icone: BarChart3 },
+] as const;
 
 export default function RecrutamentoPage() {
   const { empresaAtual } = useEmpresas();
-  const pii = usePiiMask();
   const qc = useQueryClient();
   const [activeTab, setActiveTab] = useState('pipeline');
   const [selectedVagaId, setSelectedVagaId] = useState<string>('all');
@@ -50,71 +82,18 @@ export default function RecrutamentoPage() {
   const buscaRef = useRef<HTMLInputElement>(null);
   const [selectedCandidatura, setSelectedCandidatura] = useState<CandidaturaComRelacoes | null>(null);
   /**
-   * `selectedCandidatura` guarda os dados do dossiê e `detalhesAbertos` manda no
-   * `open` do diálogo: fechar não descarta os dados, então o conteúdo continua
-   * na tela durante a animação de saída.
+   * `selectedCandidatura` guarda o DOSSÊ do candidato (dados) e `detalhesAbertos`
+   * é quem manda no `open` do diálogo — o mesmo par usado pela janela de
+   * Detalhes da Admissão (`admissaoDoModal` + `selectedAdmissao`). Fechar NÃO
+   * descarta os dados: assim o conteúdo permanece na tela durante a animação de
+   * saída do `AnimatePresence` e o próximo clique só troca o candidato.
    */
   const [detalhesAbertos, setDetalhesAbertos] = useState(false);
-  const [vagaDialogOpen, setVagaDialogOpen] = useState(false);
-  const [vagaEditandoId, setVagaEditandoId] = useState<string | null>(null);
-  const [vagaForm, setVagaForm] = useState(VAGA_FORM_VAZIO);
-  const [vagaParaExcluir, setVagaParaExcluir] = useState<VagaRow | null>(null);
-  const [candidatoParaVaga, setCandidatoParaVaga] = useState<CandidatoRow | null>(null);
-  const [vagaDaCandidatura, setVagaDaCandidatura] = useState('');
+  // "Nova Vaga": diálogo CONTROLADO pelo botão do cabeçalho. O formulário em si
+  // mora no `NovaVagaDialog` — a página só guarda se ele está aberto.
+  const [novaVagaAberta, setNovaVagaAberta] = useState(false);
 
-  const {
-    data: vagas = [],
-    isLoading: loadVagas,
-    isError: erroVagas,
-    error: falhaVagas,
-    refetch: recarregarVagas,
-  } = useQuery({
-    queryKey: ['vagas', empresaAtual?.id],
-    queryFn: () => recrutamentoService.listarVagas(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
-  });
-
-  const {
-    data: candidaturas = [],
-    isLoading: loadCandidaturas,
-    isError: erroCandidaturas,
-    refetch: recarregarCandidaturas,
-  } = useQuery({
-    queryKey: ['candidaturas', empresaAtual?.id, selectedVagaId],
-    queryFn: () =>
-      recrutamentoService.listarCandidaturas(empresaAtual!.id, selectedVagaId === 'all' ? undefined : selectedVagaId),
-    enabled: !!empresaAtual?.id,
-  });
-
-  const {
-    data: candidatos = [],
-    isLoading: loadCandidatos,
-    error: falhaCandidatos,
-  } = useQuery({
-    queryKey: ['candidatos', empresaAtual?.id],
-    queryFn: () => recrutamentoService.listarCandidatos(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
-  });
-
-  /**
-   * Candidaturas SEM o filtro por vaga. O seletor do topo é o filtro do KANBAN
-   * (só aparece na aba Pipeline); Vagas, Candidatos e Analytics são números de
-   * TODO o processo — sem esta leitura separada, filtrar o Pipeline mudava os
-   * KPIs das outras abas.
-   */
-  const {
-    data: candidaturasTodas = [],
-    isLoading: loadCandidaturasTodas,
-    isError: erroCandidaturasTodas,
-    error: falhaCandidaturasTodas,
-    refetch: recarregarCandidaturasTodas,
-  } = useQuery({
-    queryKey: ['candidaturas-todas', empresaAtual?.id],
-    queryFn: () => recrutamentoService.listarCandidaturas(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
-  });
-
-  // Atalho ⌘/Ctrl+K leva o foco à busca do pipeline (o mesmo hint do campo).
+  // Atalho ⌘/Ctrl+K leva o foco à busca do pipeline (o mesmo hint exibido no campo).
   useEffect(() => {
     const aoTeclar = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
@@ -126,101 +105,77 @@ export default function RecrutamentoPage() {
     return () => window.removeEventListener('keydown', aoTeclar);
   }, []);
 
+  // MOCK VISUAL — ver src/mocks/recrutamentoMock.ts. Com o mock ligado, cada
+  // leitura curto-circuita o Supabase e `enabled` também vale sem empresa ativa.
+  const mockAtivo = isRecrutamentoMockEnabled();
+  const { data: vagas = [], isLoading: loadVagas } = useQuery<VagaRow[]>({
+    queryKey: ['vagas', empresaAtual?.id],
+    queryFn: async () => (getMockVagas() as VagaRow[] | undefined) ?? recrutamentoService.listarVagas(empresaAtual!.id),
+    enabled: !!empresaAtual?.id || mockAtivo,
+  });
+
+  const { data: candidaturas = [], isLoading: loadCandidaturas } = useQuery<CandidaturaComRelacoes[]>({
+    queryKey: ['candidaturas', empresaAtual?.id, selectedVagaId],
+    queryFn: async () =>
+      (getMockCandidaturas(selectedVagaId === 'all' ? undefined : selectedVagaId) as
+        CandidaturaComRelacoes[] | undefined) ??
+      recrutamentoService.listarCandidaturas(empresaAtual!.id, selectedVagaId === 'all' ? undefined : selectedVagaId),
+    enabled: !!empresaAtual?.id || mockAtivo,
+  });
+
+  const { data: candidatos = [], isLoading: loadCandidatos } = useQuery<CandidatoRow[]>({
+    queryKey: ['candidatos', empresaAtual?.id],
+    queryFn: async () =>
+      (getMockCandidatos() as CandidatoRow[] | undefined) ?? recrutamentoService.listarCandidatos(empresaAtual!.id),
+    enabled: !!empresaAtual?.id || mockAtivo,
+  });
+
+  /**
+   * Candidaturas SEM o filtro por vaga. O seletor do topo é o filtro do
+   * KANBAN (ele só aparece na aba Pipeline); as Analytics, a contagem por vaga
+   * dos cards de vaga e a distribuição por etapa são números de TODO o
+   * processo — sem esta leitura separada, filtrar o Pipeline mudava os KPIs das
+   * outras abas.
+   */
+  const {
+    data: candidaturasTodas = [],
+    isLoading: loadCandidaturasTodas,
+    isError: erroCandidaturasTodas,
+    refetch: recarregarCandidaturasTodas,
+  } = useQuery<CandidaturaComRelacoes[]>({
+    queryKey: ['candidaturas-todas', empresaAtual?.id],
+    queryFn: async () =>
+      (getMockCandidaturas() as CandidaturaComRelacoes[] | undefined) ??
+      recrutamentoService.listarCandidaturas(empresaAtual!.id),
+    enabled: !!empresaAtual?.id || mockAtivo,
+  });
+
+  // MOCK VISUAL: com o mock ligado a etapa muda no store em memória
+  // (`moverCandidaturaMock`) e nada vai ao Supabase — os ids são fictícios.
   const updateEtapa = useMutation({
-    mutationFn: ({ id, etapa }: { id: string; etapa: string }) =>
-      recrutamentoService.atualizarCandidatura(id, { etapa }, empresaAtual!.id),
+    mutationFn: async ({ id, etapa }: { id: string; etapa: string }) => {
+      const daDemo = moverCandidaturaMock(id, etapa);
+      return daDemo ?? recrutamentoService.atualizarCandidatura(id, { etapa }, empresaAtual!.id);
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
       qc.invalidateQueries({ queryKey: ['candidaturas-todas', empresaAtual?.id] });
       toast.success('Etapa atualizada!');
     },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar etapa.')),
+    onError: () => toast.error('Não foi possível mover o candidato de etapa. Tente novamente.'),
   });
 
-  const quantidadeVaga = Number.parseInt(vagaForm.quantidade, 10);
-  const vagaFormValido = !!vagaForm.titulo.trim() && Number.isInteger(quantidadeVaga) && quantidadeVaga >= 1;
-
-  const abrirNovaVaga = () => {
-    setVagaEditandoId(null);
-    setVagaForm(VAGA_FORM_VAZIO);
-    setVagaDialogOpen(true);
-  };
-
-  const abrirEdicaoVaga = (vaga: VagaRow) => {
-    setVagaEditandoId(vaga.id);
-    setVagaForm({
-      titulo: vaga.titulo ?? '',
-      departamento: vaga.departamento ?? '',
-      modalidade: vaga.modalidade ?? '',
-      quantidade: String(vaga.quantidade ?? 1),
-      requisitos: vaga.requisitos ?? '',
-    });
-    setVagaDialogOpen(true);
-  };
-
-  const salvarVaga = useMutation({
-    mutationFn: () => {
-      const dados = {
-        titulo: vagaForm.titulo.trim(),
-        departamento: vagaForm.departamento.trim() || null,
-        modalidade: vagaForm.modalidade.trim() || null,
-        quantidade: quantidadeVaga,
-        requisitos: vagaForm.requisitos.trim() || null,
-      };
-      return vagaEditandoId
-        ? recrutamentoService.atualizarVaga(vagaEditandoId, dados, empresaAtual!.id)
-        : recrutamentoService.criarVaga({ ...dados, empresa_id: empresaAtual!.id });
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['vagas', empresaAtual?.id] });
-      qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
-      qc.invalidateQueries({ queryKey: ['candidaturas-todas', empresaAtual?.id] });
-      toast.success(vagaEditandoId ? 'Vaga atualizada!' : 'Vaga publicada!');
-      setVagaDialogOpen(false);
-    },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar vaga.')),
-  });
-
-  const excluirVaga = useMutation({
-    mutationFn: (id: string) => recrutamentoService.excluirVaga(id, empresaAtual!.id),
-    onSuccess: (_data, id) => {
-      if (selectedVagaId === id) setSelectedVagaId('all');
-      qc.invalidateQueries({ queryKey: ['vagas', empresaAtual?.id] });
-      qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
-      qc.invalidateQueries({ queryKey: ['candidaturas-todas', empresaAtual?.id] });
-      toast.success('Vaga excluída!');
-      setVagaParaExcluir(null);
-    },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao excluir vaga.')),
-  });
-
-  const adicionarAVaga = useMutation({
-    mutationFn: ({ candidatoId, vagaId }: { candidatoId: string; vagaId: string }) =>
-      recrutamentoService.criarCandidatura({
-        candidato_id: candidatoId,
-        vaga_id: vagaId,
-        empresa_id: empresaAtual!.id,
-        etapa: 'triagem',
-      }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
-      qc.invalidateQueries({ queryKey: ['candidaturas-todas', empresaAtual?.id] });
-      toast.success('Candidato adicionado à vaga!');
-      setCandidatoParaVaga(null);
-    },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao adicionar candidato.')),
-  });
-
-  /** Abre o dossiê do candidato (card do kanban e painel de processos). */
+  /** Abre o dossiê do candidato (card do kanban e listagem de candidatos). */
   const abrirDetalhes = (cand: CandidaturaComRelacoes) => {
     setSelectedCandidatura(cand);
     setDetalhesAbertos(true);
   };
 
   /**
-   * Move a candidatura (menu do card E arrastar-e-soltar). Devolve `false`
-   * quando a gravação falha, para o board desfazer o movimento otimista e
-   * restaurar a coluna de origem.
+   * Move a candidatura (menu do card E arrastar-e-soltar). No modo demonstração
+   * a escrita acontece no store do mock (nada de rede); fora dele vai para o
+   * Supabase como sempre. Devolve `false` quando a gravação falha para o board
+   * desfazer a movimentação otimista e restaurar a coluna de origem.
    */
   const moverEtapa = async (id: string, etapa: string): Promise<boolean> => {
     try {
@@ -238,14 +193,24 @@ export default function RecrutamentoPage() {
   const avancarEtapa = () => {
     const cand = selectedCandidatura;
     if (!cand) return;
-    // `etapa` no banco usa `teste_tecnico`/`contratacao`: sem normalizar, o
-    // findIndex devolvia -1 e "avançar" jogava o candidato de volta na Triagem.
-    const atual = normalizarEtapa(cand.etapa || 'triagem');
-    if (atual === 'outras') {
-      toast.info('Este candidato está fora das etapas monitoradas — mova-o pelo pipeline antes de avançar.');
+    // MOCK VISUAL: avança no store do mock e devolve de/para para o feedback.
+    if (mockAtivo) {
+      const resultado = avancarEtapaCandidaturaMock(cand.id);
+      if (!resultado.ok) {
+        toast.info(`${cand.candidato?.nome ?? 'Candidato'} já está na última etapa do processo.`);
+        return;
+      }
+      qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
+      qc.invalidateQueries({ queryKey: ['candidaturas-todas', empresaAtual?.id] });
+      qc.invalidateQueries({ queryKey: ['candidato-timeline', cand.id] });
+      // Relê a linha do store: além da etapa, o avanço pode mexer no score.
+      const atualizada = getMockCandidaturas()?.find((c) => c.id === cand.id) as CandidaturaComRelacoes | undefined;
+      setSelectedCandidatura(atualizada ?? { ...cand, etapa: resultado.para! });
+      toast.success(`${resultado.candidato} avançou para "${ETAPAS.find((e) => e.id === resultado.para)?.label}"!`);
       return;
     }
-    const proxima = ETAPAS[ETAPAS.findIndex((e) => e.id === atual) + 1];
+    const i = ETAPAS.findIndex((e) => e.id === (cand.etapa || 'triagem'));
+    const proxima = ETAPAS[i + 1];
     if (!proxima) {
       toast.info('Este candidato já está na última etapa do processo.');
       return;
@@ -254,26 +219,82 @@ export default function RecrutamentoPage() {
     setSelectedCandidatura({ ...cand, etapa: proxima.id });
   };
 
+  /**
+   * Cria a vaga a partir do assistente "Anunciar Nova Vaga".
+   *
+   * A página continua dona da escrita (o diálogo é só apresentação): o rascunho
+   * do formulário vira payload de `vagas` em `montarPayloadVaga`, o mock em
+   * memória responde primeiro quando a demonstração está ligada e, fora dela, o
+   * INSERT vai para o Supabase — mesmo desenho das outras mutações desta página.
+   * `status` decide o destino: `aberta` (publicar) ou `rascunho` (salvar para
+   * depois).
+   */
+  const criarVaga = useMutation({
+    mutationFn: async ({ rascunho, status }: { rascunho: RascunhoVaga; status: NovaVagaStatus }) => {
+      const payload = montarPayloadVaga(rascunho, { empresaId: empresaAtual?.id, status });
+      const daDemo = publicarVagaMock({
+        titulo: payload.titulo,
+        departamento: payload.departamento,
+        modalidade: payload.modalidade,
+        quantidade: payload.quantidade,
+        requisitos: payload.requisitos,
+        status,
+        tipoContrato: payload.tipo_contrato,
+        descricao: payload.descricao,
+        beneficios: payload.beneficios_oferecidos ?? undefined,
+        faixaMin: payload.faixa_salarial_min ?? 0,
+        faixaMax: payload.faixa_salarial_max ?? 0,
+      });
+      return daDemo ?? recrutamentoService.criarVaga(payload);
+    },
+    onSuccess: (vaga, { status }) => {
+      qc.invalidateQueries({ queryKey: ['vagas', empresaAtual?.id] });
+      setNovaVagaAberta(false);
+      const titulo = vaga?.titulo ?? 'Nova vaga';
+      if (status === 'rascunho') {
+        toast.success(`Rascunho de "${titulo}" salvo!`);
+      } else {
+        toast.success(`Vaga "${titulo}" publicada!`);
+      }
+    },
+    onError: (_erro, { status }) =>
+      toast.error(
+        status === 'rascunho'
+          ? 'Não foi possível salvar o rascunho. Tente novamente.'
+          : 'Não foi possível publicar a vaga. Tente novamente.'
+      ),
+  });
+
+  /** Exclui a vaga (e, no mock, as candidaturas dela em cascata). */
+  const excluirVaga = useMutation({
+    mutationFn: async (id: string) => {
+      if (excluirVagaMock(id)) return;
+      return recrutamentoService.excluirVaga(id, empresaAtual!.id);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['vagas', empresaAtual?.id] });
+      qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
+      qc.invalidateQueries({ queryKey: ['candidaturas-todas', empresaAtual?.id] });
+      setSelectedVagaId('all');
+      toast.success('Vaga excluída!');
+    },
+    onError: () => toast.error('Não foi possível excluir a vaga.'),
+  });
+
   const isLoading = loadVagas || loadCandidaturas || loadCandidatos || loadCandidaturasTodas;
 
   /**
-   * Analytics multiplica a MESMA base em funil, conversão, tempo de contratação
-   * e taxa de aceitação: se qualquer uma das três leituras falhou, a aba recebe
-   * a mensagem do erro em vez de apresentar zeros como realidade.
+   * Sugestões de departamento do assistente: os departamentos que as vagas da
+   * empresa já usam. É o MESMO critério do filtro de departamento das outras
+   * telas (`opcoesDepartamento`) — não há catálogo fixo no repositório.
    */
-  const falhaBaseAnalytics = falhaVagas ?? falhaCandidatos ?? falhaCandidaturasTodas;
-  const erroAnalytics = falhaBaseAnalytics
-    ? safeErrorMessage(falhaBaseAnalytics, 'Não foi possível carregar a base do recrutamento.')
-    : null;
+  const departamentosConhecidos = useMemo(() => opcoesDepartamento(vagas), [vagas]);
 
-  /**
-   * Kanban: respeita o filtro de vaga (query) + a busca do topo (client-side).
-   * As habilidades vêm das vagas já carregadas — o join de `listarCandidaturas`
-   * não traz `requisitos`, então o enriquecimento acontece aqui, sem nova consulta.
-   */
+  // Kanban: respeita o filtro da vaga (query) + a busca do topo (client-side).
+  // As habilidades vêm da vaga já carregada pela página (sem consulta nova).
   const candidaturasPipeline = useMemo(() => {
-    const requisitosPorVaga = new Map(vagas.map((vaga: VagaRow) => [vaga.id, vaga.requisitos]));
-    const enriquecidas = candidaturas.map((cand: CandidaturaComRelacoes) => ({
+    const requisitosPorVaga = new Map(vagas.map((vaga) => [vaga.id, vaga.requisitos]));
+    const enriquecidas = candidaturas.map((cand) => ({
       ...cand,
       vaga: cand.vaga
         ? { ...cand.vaga, requisitos: requisitosPorVaga.get(cand.vaga_id) ?? cand.vaga.requisitos ?? null }
@@ -283,154 +304,141 @@ export default function RecrutamentoPage() {
   }, [candidaturas, vagas, busca]);
 
   return (
+    // `reducedMotion` vem da FONTE ÚNICA (`src/lib/motionMode.ts`): em produção
+    // é `'user'` (respeita a preferência de acessibilidade); no dev o modo
+    // completo é forçado centralmente, em vez de um `"user"` literal local que
+    // ignorava o override.
     <MotionConfig reducedMotion={MOTION_REDUCED_MODE}>
       <PageTitle title="Recrutamento" description="Gestão de talentos e processos seletivos" />
       <PageLayout
         title="Recrutamento & Seleção"
-        description="Gestão de vagas, candidatos e pipeline 10/10"
+        description="Gestão de vagas, candidatos e pipeline"
         icon={<UserSearch className="h-5 w-5 text-primary-foreground" />}
-        gradient="from-success to-info"
+        gradient="from-[hsl(var(--aqua))] to-[hsl(var(--info))]"
         actions={
           <div className="flex gap-2">
-            <Dialog open={vagaDialogOpen} onOpenChange={setVagaDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="rounded-xl shadow-lg" onClick={abrirNovaVaga}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nova Vaga
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-xl">
-                <DialogHeader>
-                  <DialogTitle>{vagaEditandoId ? 'Editar Vaga' : 'Anunciar Nova Vaga'}</DialogTitle>
-                </DialogHeader>
-                <div className="grid grid-cols-2 gap-4 pt-4">
-                  <div className="grid gap-1">
-                    <Label>Título da Vaga</Label>
-                    <Input
-                      placeholder="Ex: Desenvolvedor Senior"
-                      value={vagaForm.titulo}
-                      onChange={(e) => setVagaForm((f) => ({ ...f, titulo: e.target.value }))}
-                    />
-                  </div>
-                  <div className="grid gap-1">
-                    <Label>Departamento</Label>
-                    <Input
-                      placeholder="Ex: Tecnologia"
-                      value={vagaForm.departamento}
-                      onChange={(e) => setVagaForm((f) => ({ ...f, departamento: e.target.value }))}
-                    />
-                  </div>
-                  <div className="grid gap-1">
-                    <Label>Modalidade</Label>
-                    <Input
-                      placeholder="Remoto, Híbrido, Presencial"
-                      value={vagaForm.modalidade}
-                      onChange={(e) => setVagaForm((f) => ({ ...f, modalidade: e.target.value }))}
-                    />
-                  </div>
-                  <div className="grid gap-1">
-                    <Label>Quantidade</Label>
-                    <Input
-                      type="number"
-                      min={1}
-                      value={vagaForm.quantidade}
-                      onChange={(e) => setVagaForm((f) => ({ ...f, quantidade: e.target.value }))}
-                    />
-                  </div>
-                  <div className="grid gap-1 col-span-2">
-                    <Label>Requisitos (separados por vírgula)</Label>
-                    <Input
-                      placeholder="React, TypeScript, Node.js..."
-                      value={vagaForm.requisitos}
-                      onChange={(e) => setVagaForm((f) => ({ ...f, requisitos: e.target.value }))}
-                    />
-                  </div>
-                  <Button
-                    className="col-span-2 mt-2"
-                    disabled={!vagaFormValido || salvarVaga.isPending || !empresaAtual?.id}
-                    onClick={() => salvarVaga.mutate()}
-                  >
-                    {salvarVaga.isPending ? 'Salvando...' : vagaEditandoId ? 'Salvar Alterações' : 'Publicar Vaga'}
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            {/* Único gatilho da criação: o assistente do cabeçalho (o grid de
+                vagas aponta para cá no estado vazio). */}
+            <Button
+              type="button"
+              onClick={() => setNovaVagaAberta(true)}
+              className="h-10 gap-2 rounded-xl px-4 text-sm font-semibold shadow-none transition-transform hover:-translate-y-0.5 hover:shadow-none"
+            >
+              <Plus className="h-4 w-4" />
+              Nova Vaga
+            </Button>
           </div>
         }
       >
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-            <TabsList className="bg-muted/50 p-1 rounded-xl">
-              <TabsTrigger value="pipeline" className="rounded-lg">
-                Pipeline
-              </TabsTrigger>
-              <TabsTrigger value="vagas" className="rounded-lg">
-                Vagas
-              </TabsTrigger>
-              <TabsTrigger value="candidatos" className="rounded-lg">
-                Candidatos
-              </TabsTrigger>
-              <TabsTrigger value="processos" className="rounded-lg">
-                Processos
-              </TabsTrigger>
-              <TabsTrigger value="analytics" className="rounded-lg">
-                Analytics
-              </TabsTrigger>
-            </TabsList>
+        {activeTab === 'pipeline' ? (
+          <div
+            data-pipeline-toolbar
+            className="flex flex-col gap-2 rounded-2xl border border-border/50 bg-card/30 p-2 shadow-[inset_0_1px_0_hsl(var(--foreground)/0.03)] backdrop-blur-xs lg:flex-row lg:items-center"
+          >
+            <div className="relative min-w-0 lg:w-[400px] lg:flex-none">
+              <Search
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                aria-hidden
+              />
+              <Input
+                ref={buscaRef}
+                value={busca}
+                onChange={(event) => setBusca(event.target.value)}
+                placeholder="Buscar candidatos por nome, vaga, habilidade..."
+                aria-label="Buscar candidatos"
+                className="h-10 rounded-xl border-border/50 bg-background/60 pl-9 pr-20 text-[12px] placeholder:text-muted-foreground/70 focus-visible:ring-primary/40"
+              />
+              {busca ? (
+                <button
+                  type="button"
+                  onClick={() => setBusca('')}
+                  aria-label="Limpar busca"
+                  className="absolute right-11 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              ) : null}
+              <kbd className="pointer-events-none absolute right-2 top-1/2 hidden h-5 -translate-y-1/2 items-center rounded border border-border/60 bg-muted/40 px-1.5 text-[9px] font-medium text-muted-foreground sm:flex">
+                ⌘K
+              </kbd>
+            </div>
 
-            {activeTab === 'pipeline' && (
-              <div data-pipeline-toolbar className="flex w-full flex-col gap-2 md:w-auto md:flex-row md:items-center">
-                <div className="relative min-w-0 md:w-80">
-                  <Search
-                    className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-                    aria-hidden
-                  />
-                  <Input
-                    ref={buscaRef}
-                    value={busca}
-                    onChange={(event) => setBusca(event.target.value)}
-                    placeholder="Buscar candidatos por nome, vaga, habilidade..."
-                    aria-label="Buscar candidatos"
-                    className="h-10 rounded-xl pl-9 pr-20 text-xs"
-                  />
-                  {busca ? (
-                    <button
-                      type="button"
-                      onClick={() => setBusca('')}
-                      aria-label="Limpar busca"
-                      className="absolute right-11 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  ) : null}
-                  <kbd className="pointer-events-none absolute right-2 top-1/2 hidden h-5 -translate-y-1/2 items-center rounded border border-border/60 bg-muted/40 px-1.5 text-[9px] font-medium text-muted-foreground sm:flex">
-                    ⌘K
-                  </kbd>
-                </div>
-
-                <div className="flex items-center gap-2 md:w-64">
-                  <Filter className="h-4 w-4 text-muted-foreground" aria-hidden />
-                  <Select value={selectedVagaId} onValueChange={setSelectedVagaId}>
-                    <SelectTrigger aria-label="Filtrar por vaga" className="rounded-xl">
-                      <SelectValue placeholder="Filtrar por Vaga" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todas as Vagas</SelectItem>
-                      {vagas.map((v: VagaRow) => (
-                        <SelectItem key={v.id} value={v.id}>
-                          {v.titulo}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            )}
+            <div className="flex items-center gap-2 lg:ml-auto lg:shrink-0">
+              <Filter className="hidden h-4 w-4 text-muted-foreground sm:block" aria-hidden />
+              <Select value={selectedVagaId} onValueChange={setSelectedVagaId}>
+                <SelectTrigger
+                  aria-label="Filtrar por vaga"
+                  className="h-10 w-full rounded-xl border-border/50 bg-background/60 text-[12px] lg:w-[210px]"
+                >
+                  <SelectValue placeholder="Todas as Vagas" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas as Vagas</SelectItem>
+                  {vagas.map((v: VagaRow) => (
+                    <SelectItem key={v.id} value={v.id}>
+                      {v.titulo}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
+        ) : null}
 
-          {/* Entrada em cascata das abas: `EntradaPresenca` dá o contexto de
-              presença à subárvore sem renderizar DOM nem animar por conta
-              própria — quem cascateia são os cards de cada aba. */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          {/* Tablist PADRONIZADA com a de Admissões — é o mesmo par de
+            componentes, portanto a mesma altura, o mesmo raio, o mesmo fundo de
+            container (`bg-muted/50 rounded-xl p-1 border border-border/30`), o
+            mesmo trigger transparente com `text-primary` no estado ativo e o
+            MESMO indicador deslizante (`rounded-lg bg-background shadow-xs`,
+            mola `stiffness 220 / damping 24 / mass 0.7`). Quem pinta a aba ativa
+            é o indicador, nunca o botão.
+
+            O que NÃO existe mais aqui (era só desta área): a linha Lime de 2px
+            no topo do trigger ativo (`<span>` absoluto), o fundo esverdeado
+            `data-[state=active]:bg-primary/10`, a sombra interna Lime, o
+            container `bg-card/35 p-1.5` e o `grid-cols-2 sm:grid-cols-4` — o
+            layout agora é `flex w-full` com `flex-1` por aba, exatamente como em
+            Admissões. Nada mais mudou: os quatro valores, os rótulos e os ícones
+            (`LayoutGrid`, `Briefcase`, `Users`, `BarChart3`) continuam os de
+            `TABS_PIPELINE`, e a navegação segue no `<Tabs>` do Radix acima.
+
+            Mesma leitura responsiva da referência: `flex-1` ( = `flex: 1 1 0%` )
+            mantém o `min-width: auto`, então em telas estreitas a aba para no
+            tamanho natural do conteúdo em vez de cortar o rótulo, e o
+            `overflow-x-auto` do container assume com scroll. */}
+          <AnimatedTabsList value={activeTab} onValueChange={setActiveTab} listClassName="flex w-full items-stretch">
+            {TABS_PIPELINE.map((tab) => {
+              const Icone = tab.icone;
+              return (
+                <AnimatedTabsTrigger key={tab.value} value={tab.value} className="flex-1">
+                  <Icone className="h-3.5 w-3.5" aria-hidden />
+                  {tab.label}
+                </AnimatedTabsTrigger>
+              );
+            })}
+          </AnimatedTabsList>
+
+          {/* ────────────────────────────────────────────────────────────────
+              ENTRADA EM CASCATA DAS ABAS — e não `AnimatePresence mode="wait"`.
+
+              `EntradaPresenca` é o `AnimatePresence` sem props:
+               • dá à subárvore o contexto de presença com `initial` VERDADEIRO,
+                 que o `initial={false}` do `PageTransition` bloqueava — sem ele
+                 nenhum `motion.*` abaixo toca o keyframe `hidden` numa carga
+                 direta da página e tudo nasce pronto (o mesmo bloqueio já
+                 contornado em Admissões, Auditoria e Desligamentos);
+               • NÃO renderiza DOM e NÃO anima nada por conta própria: quem
+                 cascateia são os cards e os blocos de cada aba, cada um com o
+                 seu índice.
+
+              O `mode="wait"` que existia aqui foi REMOVIDO de propósito: ele
+              segurava a montagem do conteúdo novo até o anterior terminar de
+              sair, e o "anterior" era a página inteira (todos os cards do
+              kanban com `exit`), então trocar de aba piscava/atrasava. Sem ele,
+              a aba nova monta e cascateia na hora, e nada reanima por hover,
+              refetch do react-query, resize ou re-render — a entrada é por
+              montagem, com `animate` constante. */}
           <EntradaPresenca>
             {isLoading ? (
               <div className="flex justify-center py-20">
@@ -438,30 +446,24 @@ export default function RecrutamentoPage() {
               </div>
             ) : (
               <>
-                {/* PIPELINE KANBAN */}
-                <TabsContent value="pipeline" className="mt-0">
+                {/* PIPELINE — board visual (5 etapas) */}
+                <TabsContent value="pipeline" className="mt-5 sm:mt-6">
                   <PipelineBoard
                     candidaturas={candidaturasPipeline}
                     isActive={activeTab === 'pipeline'}
                     onAbrir={abrirDetalhes}
                     onMoverEtapa={moverEtapa}
-                    erro={erroCandidaturas}
-                    onTentarNovamente={() => void recarregarCandidaturas()}
-                    onContatar={(cand) => {
-                      // Abre o e-mail COMPLETO do candidato para quem clicar, sem checar papel;
-                      // herdado da main — fechar isso é decisão do dono.
-                      const email = cand.candidato?.email;
-                      if (!email) {
-                        toast.info('Este candidato não tem e-mail cadastrado.');
-                        return;
-                      }
-                      window.location.href = `mailto:${email}`;
-                    }}
+                    onContatar={(cand) =>
+                      simularAcaoRecrutamento(
+                        `contato por e-mail com ${cand.candidato?.email || cand.candidato?.nome || 'o candidato'}`
+                      )
+                    }
+                    onSimular={simularAcaoRecrutamento}
                   />
                 </TabsContent>
 
                 {/* VAGAS */}
-                <TabsContent value="vagas" className="mt-0">
+                <TabsContent value="vagas" className="mt-4">
                   <VagasPainel
                     vagas={vagas}
                     candidaturas={candidaturasTodas}
@@ -470,102 +472,11 @@ export default function RecrutamentoPage() {
                       setActiveTab('pipeline');
                     }}
                     onVerAnalises={() => setActiveTab('analytics')}
-                    onEditar={abrirEdicaoVaga}
-                    onExcluir={(vaga) => setVagaParaExcluir(vaga)}
-                    erro={erroVagas}
-                    onTentarNovamente={() => void recarregarVagas()}
+                    onExcluir={(vaga) => excluirVaga.mutate(vaga.id)}
                   />
                 </TabsContent>
-
                 {/* CANDIDATOS */}
-                <TabsContent value="candidatos" className="mt-0">
-                  <Card className="rounded-3xl border-border/40 overflow-hidden shadow-xs">
-                    <CardContent className="p-0">
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                          <thead>
-                            <tr className="bg-muted/30 border-b">
-                              <th className="px-6 py-4 text-left font-bold text-[11px] uppercase tracking-wider text-muted-foreground">
-                                Candidato
-                              </th>
-                              <th className="px-6 py-4 text-left font-bold text-[11px] uppercase tracking-wider text-muted-foreground">
-                                Contato
-                              </th>
-                              <th className="px-6 py-4 text-left font-bold text-[11px] uppercase tracking-wider text-muted-foreground">
-                                Experiência
-                              </th>
-                              <th className="px-6 py-4 text-left font-bold text-[11px] uppercase tracking-wider text-muted-foreground">
-                                Pretensão
-                              </th>
-                              <th className="px-6 py-4 text-right font-bold text-[11px] uppercase tracking-wider text-muted-foreground">
-                                Ações
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-border/30">
-                            {candidatos.map((cand: CandidatoRow) => (
-                              <tr key={cand.id} className="hover:bg-primary/[0.02] transition-colors group">
-                                <td className="px-6 py-4">
-                                  <div className="flex items-center gap-3">
-                                    <div className="h-9 w-9 rounded-xl bg-primary/5 flex items-center justify-center text-primary font-bold">
-                                      {cand.nome?.charAt(0)}
-                                    </div>
-                                    <div>
-                                      <p className="font-bold text-sm text-foreground">{cand.nome}</p>
-                                      <p className="text-[10px] text-muted-foreground">{cand.origem || 'Website'}</p>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                  <div className="flex flex-col gap-0.5">
-                                    <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                      <Mail className="h-3 w-3" /> {cand.email ? pii.email(cand.email) : ''}
-                                    </span>
-                                    {cand.telefone && (
-                                      <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                        <Phone className="h-3 w-3" /> {pii.phone(cand.telefone)}
-                                      </span>
-                                    )}
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                  <Badge variant="secondary" className="rounded-lg bg-slate-100 font-medium">
-                                    {cand.experiencia_anos} anos
-                                  </Badge>
-                                </td>
-                                <td className="px-6 py-4 font-display font-bold text-success">
-                                  {cand.pretensao_salarial
-                                    ? `R$ ${cand.pretensao_salarial.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-                                    : 'N/D'}
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    aria-label="Adicionar"
-                                    disabled={vagas.length === 0}
-                                    onClick={() => {
-                                      setVagaDaCandidatura('');
-                                      setCandidatoParaVaga(cand);
-                                    }}
-                                    className="rounded-xl hover:bg-primary/10 text-primary opacity-0 group-hover:opacity-100 transition-all"
-                                  >
-                                    <Plus className="h-4 w-4" />
-                                  </Button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                {/* PROCESSOS — candidaturas em andamento (filtros, seleção e
-                    paginação). A aba "Candidatos" continua sendo o CADASTRO:
-                    candidato sem candidatura só aparece (e só é inscrito) lá. */}
-                <TabsContent value="processos" className="mt-0">
+                <TabsContent value="candidatos" className="mt-4">
                   <CandidatosPainel
                     candidaturas={candidaturasTodas}
                     vagas={vagas}
@@ -576,24 +487,21 @@ export default function RecrutamentoPage() {
                   />
                 </TabsContent>
 
-                {/* ANALYTICS */}
-                <TabsContent value="analytics" className="mt-0">
-                  <AnalyticsRecrutamento
-                    candidaturas={candidaturasTodas}
-                    vagas={vagas}
-                    candidatos={candidatos}
-                    carregando={loadVagas || loadCandidatos || loadCandidaturasTodas}
-                    erro={erroAnalytics}
-                  />
+                {/* ANALYTICS — dashboard completo; toda a matemática e os
+                    painéis vivem em `components/recrutamento/Analytics*`. A
+                    página só entrega as listas que já carregou (sem consulta
+                    nova e sem filtro do kanban). */}
+                <TabsContent value="analytics" className="mt-4">
+                  <AnalyticsRecrutamento candidaturas={candidaturasTodas} vagas={vagas} candidatos={candidatos} />
                 </TabsContent>
               </>
             )}
           </EntradaPresenca>
         </Tabs>
 
-        {/* Detalhes do Candidato — o componente concentra a apresentação (e a
-            máscara de PII); a página continua dona dos dados, do fechamento e
-            de `avancarEtapa`. */}
+        {/* Detalhes do Candidato — janela compacta em faixas. O componente
+            concentra a apresentação; a página continua dona dos dados, do
+            fechamento e de `avancarEtapa` (nenhuma regra de etapa é duplicada). */}
         <CandidatoDetalhesDialog
           open={detalhesAbertos}
           candidatura={selectedCandidatura}
@@ -601,74 +509,17 @@ export default function RecrutamentoPage() {
           onAvancar={avancarEtapa}
         />
 
-        {/* Confirmação de exclusão de vaga */}
-        <AlertDialog
-          open={!!vagaParaExcluir}
-          onOpenChange={(o) => {
-            if (!o) setVagaParaExcluir(null);
-          }}
-        >
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Excluir a vaga "{vagaParaExcluir?.titulo}"?</AlertDialogTitle>
-              <AlertDialogDescription>
-                As candidaturas vinculadas a esta vaga também serão excluídas. Esta ação não pode ser desfeita.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel disabled={excluirVaga.isPending}>Cancelar</AlertDialogCancel>
-              <AlertDialogAction
-                disabled={excluirVaga.isPending}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (vagaParaExcluir) excluirVaga.mutate(vagaParaExcluir.id);
-                }}
-              >
-                {excluirVaga.isPending ? 'Excluindo...' : 'Excluir vaga'}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-
-        {/* Adicionar candidato a uma vaga */}
-        <Dialog
-          open={!!candidatoParaVaga}
-          onOpenChange={(o) => {
-            if (!o) setCandidatoParaVaga(null);
-          }}
-        >
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Adicionar {candidatoParaVaga?.nome} a uma vaga</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 pt-2">
-              <div className="grid gap-1">
-                <Label>Vaga</Label>
-                <Select value={vagaDaCandidatura} onValueChange={setVagaDaCandidatura}>
-                  <SelectTrigger className="rounded-xl">
-                    <SelectValue placeholder="Selecione a vaga" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {vagas.map((v: VagaRow) => (
-                      <SelectItem key={v.id} value={v.id}>
-                        {v.titulo}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button
-                disabled={!vagaDaCandidatura || adicionarAVaga.isPending || !empresaAtual?.id}
-                onClick={() => {
-                  if (candidatoParaVaga && vagaDaCandidatura)
-                    adicionarAVaga.mutate({ candidatoId: candidatoParaVaga.id, vagaId: vagaDaCandidatura });
-                }}
-              >
-                {adicionarAVaga.isPending ? 'Adicionando...' : 'Adicionar à Vaga'}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        {/* Anunciar Nova Vaga — assistente de 3 etapas. A página segue dona da
+            escrita (`criarVaga`): o diálogo só monta o rascunho e devolve por
+            `onPublicar`/`onSalvarRascunho`. */}
+        <NovaVagaDialog
+          open={novaVagaAberta}
+          onOpenChange={setNovaVagaAberta}
+          departamentos={departamentosConhecidos}
+          salvando={criarVaga.isPending}
+          onPublicar={(rascunho) => criarVaga.mutate({ rascunho, status: 'aberta' })}
+          onSalvarRascunho={(rascunho) => criarVaga.mutate({ rascunho, status: 'rascunho' })}
+        />
       </PageLayout>
     </MotionConfig>
   );

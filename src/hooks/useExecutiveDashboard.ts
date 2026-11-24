@@ -1,56 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseBase } from '@/integrations/supabase/client';
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-type FolhaResumo = {
-  total_proventos: number | null;
-  total_liquido: number | null;
-  total_descontos: number | null;
-};
-
-// PostgREST corta respostas em max-rows (1000 por padrão): busca todas as páginas.
-const PAGE_SIZE = 1000;
-async function fetchAllPages<T>(
-  buildPage: (from: number, to: number) => PromiseLike<{ data: T[] | null; error: unknown }>
-): Promise<T[]> {
-  const rows: T[] = [];
-  for (let from = 0; ; from += PAGE_SIZE) {
-    const { data, error } = await buildPage(from, from + PAGE_SIZE - 1);
-    if (error) throw error;
-    rows.push(...(data ?? []));
-    if (!data || data.length < PAGE_SIZE) return rows;
-  }
-}
-
-/**
- * Reconstrói o QUADRO DE PESSOAL mês a mês a partir do total de ativos de hoje,
- * descontando o saldo (admissões − demissões) dos meses POSTERIORES a cada
- * ponto. O banco não guarda histórico de headcount, e `evolucao` é o único dado
- * real disponível — nada aqui é inventado.
- *
- * Resgatado da PR #546 (muri), `HeadcountOverviewCard.tsx:78-86`.
- */
-export function reconstruirHeadcountPorMes(evolucao: { saldo: number }[], totalAtivos: number): number[] {
-  return evolucao.map((_, i) => Math.max(totalAtivos - evolucao.slice(i + 1).reduce((acc, p) => acc + p.saldo, 0), 0));
-}
-
-/**
- * Variação percentual do último mês contra o anterior.
- *
- * `undefined` — e NÃO 0 — quando não há base de comparação: devolver zero diria
- * "estável" para quem não tem com o que comparar, e o painel mostraria um
- * "+0,0%" falso. Origem: PR #546, `HeadcountOverviewCard.tsx:26-32`.
- */
-export function variacaoUltimoMes(serie: number[]): number | undefined {
-  if (serie.length < 2) return undefined;
-  const atual = serie[serie.length - 1];
-  const anterior = serie[serie.length - 2];
-  if (!anterior) return undefined;
-  return ((atual - anterior) / anterior) * 100;
-}
-
-export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
+export function useExecutiveKPIs(empresaId?: string, periodo: string = '6') {
   return useQuery({
     queryKey: ['executive-kpis', empresaId, periodo],
     enabled: !!empresaId,
@@ -82,85 +35,34 @@ export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
         { count: pontoPendentes },
         ...monthResults
       ] = await Promise.all([
-        supabase
-          .from('colaboradores')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'ativo')
-          .eq('empresa_id', empresaId!),
-        fetchAllPages((from, to) =>
-          supabase
-            .from('colaboradores')
-            .select('id, departamento')
-            .eq('status', 'ativo')
-            .eq('empresa_id', empresaId!)
-            .order('id')
-            .range(from, to)
-        ),
-        supabase
-          .from('folhas_pagamento')
-          .select('id, total_liquido')
-          .eq('competencia', mesAtual)
-          .eq('empresa_id', empresaId!),
-        supabase
-          .from('folhas_pagamento')
-          .select('total_liquido')
-          .eq('competencia', mesAnterior)
-          .eq('empresa_id', empresaId!),
-        supabase
-          .from('ferias')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'pendente')
-          .eq('empresa_id', empresaId!),
-        supabase
-          .from('afastamentos')
-          .select('*', { count: 'exact', head: true })
-          .in('status', ['ativo', 'prorrogado'])
-          .eq('empresa_id', empresaId!),
-        supabase
-          .from('vw_kpi_absenteismo')
-          .select('dias_faltados, mes')
-          .eq('empresa_id', empresaId!)
-          .order('mes', { ascending: false })
-          .limit(1),
-        supabase
-          .from('solicitacoes_ajuste_ponto')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'enviado')
-          .eq('empresa_id', empresaId!),
-        ...monthRanges.flatMap((m) => [
-          supabase
-            .from('colaboradores')
-            .select('*', { count: 'exact', head: true })
-            .eq('empresa_id', empresaId!)
-            .gte('data_admissao', m.inicio)
-            .lte('data_admissao', m.fim),
-          supabase
-            .from('desligamentos')
-            .select('*', { count: 'exact', head: true })
-            .eq('empresa_id', empresaId!)
-            .gte('data_desligamento', m.inicio)
-            .lte('data_desligamento', m.fim),
-          supabase
-            .from('folhas_pagamento')
-            .select('total_proventos, total_liquido, total_descontos')
-            .eq('competencia', m.comp)
-            .eq('empresa_id', empresaId!),
+        supabaseBase.from('colaboradores').select('*', { count: 'exact', head: true }).eq('status', 'ativo').eq('empresa_id', empresaId!),
+        supabaseBase.from('colaboradores').select('departamento').eq('status', 'ativo').eq('empresa_id', empresaId!),
+        supabaseBase.from('folhas_pagamento').select('total_liquido').eq('competencia', mesAtual).eq('empresa_id', empresaId!),
+        supabaseBase.from('folhas_pagamento').select('total_liquido').eq('competencia', mesAnterior).eq('empresa_id', empresaId!),
+        supabaseBase.from('ferias').select('*', { count: 'exact', head: true }).eq('status', 'pendente').eq('empresa_id', empresaId!),
+        supabaseBase.from('afastamentos').select('*', { count: 'exact', head: true }).in('status', ['ativo', 'prorrogado']).eq('empresa_id', empresaId!),
+        supabaseBase.from('faltas').select('*', { count: 'exact', head: true }).eq('empresa_id', empresaId!).eq('tipo', 'injustificada').gte('data', inicioMes),
+        supabaseBase.from('solicitacoes_ajuste_ponto').select('*', { count: 'exact', head: true }).eq('status', 'enviado').eq('empresa_id', empresaId!),
+        ...monthRanges.flatMap(m => [
+          supabaseBase.from('colaboradores').select('*', { count: 'exact', head: true }).eq('empresa_id', empresaId!).gte('data_admissao', m.inicio).lte('data_admissao', m.fim),
+          supabaseBase.from('desligamentos').select('*', { count: 'exact', head: true }).eq('empresa_id', empresaId!).gte('data_desligamento', m.inicio).lte('data_desligamento', m.fim),
+          supabaseBase.from('folhas_pagamento').select('total_proventos, total_liquido, total_descontos').eq('competencia', m.comp).eq('empresa_id', empresaId!),
         ]),
       ]);
 
       const evolucao = monthRanges.map((m, i) => {
-        const admissoes = monthResults[i * 3]?.count || 0;
-        const demissoes = monthResults[i * 3 + 1]?.count || 0;
+        const admissoes = (monthResults[i * 3] as any)?.count || 0;
+        const demissoes = (monthResults[i * 3 + 1] as any)?.count || 0;
         return { mes: m.label, admissoes, demissoes, saldo: admissoes - demissoes };
       });
 
       const custosMensal = monthRanges.map((m, i) => {
-        const fl = (monthResults[i * 3 + 2]?.data ?? []) as FolhaResumo[];
+        const fl = (monthResults[i * 3 + 2] as any)?.data || [];
         return {
           mes: m.label,
-          bruto: fl.reduce((s, f) => s + (f.total_proventos || 0), 0),
-          liquido: fl.reduce((s, f) => s + (f.total_liquido || 0), 0),
-          descontos: fl.reduce((s, f) => s + (f.total_descontos || 0), 0),
+          bruto: fl.reduce((s: number, f: any) => s + (f.total_proventos || 0), 0),
+          liquido: fl.reduce((s: number, f: any) => s + (f.total_liquido || 0), 0),
+          descontos: fl.reduce((s: number, f: any) => s + (f.total_descontos || 0), 0),
         };
       });
 
@@ -178,66 +80,24 @@ export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
         : [];
 
       const deptMap: Record<string, number> = {};
-      const deptPorColab: Record<string, string> = {};
-      colabs.forEach((c) => {
-        const dept = c.departamento ?? 'Sem departamento';
-        deptMap[dept] = (deptMap[dept] || 0) + 1;
-        deptPorColab[c.id] = dept;
-      });
-      // Itens de quem saiu no mês (não está mais ativo) também entram no custo do departamento
-      const semDept = [...new Set(itensFolha.map((it) => it.colaborador_id).filter((id) => !deptPorColab[id]))];
-      if (semDept.length) {
-        const { data: desligados, error } = await supabase
-          .from('colaboradores')
-          .select('id, departamento')
-          .eq('empresa_id', empresaId!)
-          .in('id', semDept);
-        if (error) throw error;
-        desligados?.forEach((c) => {
-          deptPorColab[c.id] = c.departamento ?? 'Sem departamento';
-        });
-      }
-      const custoDept: Record<string, number> = {};
-      itensFolha.forEach((it) => {
-        const dept = deptPorColab[it.colaborador_id] ?? 'Sem departamento';
-        custoDept[dept] = (custoDept[dept] || 0) + (it.total_liquido || 0);
-        if (!(dept in deptMap)) deptMap[dept] = 0;
-      });
-      const departamentos = Object.entries(deptMap)
-        .map(([nome, value]) => ({ nome, value, custo: custoDept[nome] || 0 }))
-        .sort((a, b) => b.value - a.value)
-        .slice(0, 8);
+      colabs?.forEach((c: any) => { deptMap[c.departamento] = (deptMap[c.departamento] || 0) + 1; });
+      const departamentos = Object.entries(deptMap).map(([nome, value]) => ({ nome, value })).sort((a, b) => b.value - a.value).slice(0, 8);
 
       const totalFolhaAtual = folhaAtual?.reduce((s, f) => s + (f.total_liquido || 0), 0) || 0;
       const totalFolhaAnterior = folhaAnterior?.reduce((s, f) => s + (f.total_liquido || 0), 0) || 0;
-      const variacaoFolha =
-        totalFolhaAnterior > 0 ? ((totalFolhaAtual - totalFolhaAnterior) / totalFolhaAnterior) * 100 : 0;
+      const variacaoFolha = totalFolhaAnterior > 0 ? ((totalFolhaAtual - totalFolhaAnterior) / totalFolhaAnterior * 100) : 0;
       const custoMedio = totalAtivos && totalAtivos > 0 ? totalFolhaAtual / totalAtivos : 0;
       const headcountPorMes = reconstruirHeadcountPorMes(evolucao, totalAtivos || 0);
       const variacaoHeadcount = variacaoUltimoMes(headcountPorMes);
 
       const demissoesPeriodo = evolucao.reduce((s, e) => s + e.demissoes, 0);
-      const turnover = totalAtivos && totalAtivos > 0 ? (demissoesPeriodo / totalAtivos) * 100 : 0;
-      // AbsenteÃ­smo do mÃªs corrente: dias_faltados do Ãºltimo mÃªs da view
-      // vw_kpi_absenteismo (fonte canÃ´nica — DashboardPage usa a mesma view),
-      // base de dias Ãºteis = ativos * 22 (mesmo divisor do layout anterior).
-      const diasFalta = absenteismoRow?.[0]?.dias_faltados ?? 0;
-      const absenteismo = totalAtivos && totalAtivos > 0 ? ((diasFalta || 0) / (totalAtivos * 22)) * 100 : 0;
+      const turnover = totalAtivos && totalAtivos > 0 ? (demissoesPeriodo / totalAtivos * 100) : 0;
+      const absenteismo = totalAtivos && totalAtivos > 0 ? ((diasFalta || 0) / (totalAtivos * 22) * 100) : 0;
 
       return {
-        totalAtivos: totalAtivos || 0,
-        variacaoHeadcount,
-        headcountPorMes,
-        evolucao,
-        departamentos,
-        custosMensal,
-        totalFolhaAtual,
-        variacaoFolha,
-        feriasPendentes: feriasPendentes || 0,
-        afastamentosAtivos: afastamentosAtivos || 0,
-        custoMedio,
-        turnover,
-        absenteismo,
+        totalAtivos: totalAtivos || 0, evolucao, departamentos, custosMensal,
+        totalFolhaAtual, variacaoFolha, feriasPendentes: feriasPendentes || 0,
+        afastamentosAtivos: afastamentosAtivos || 0, custoMedio, turnover, absenteismo,
         pontoPendentes: pontoPendentes || 0,
       };
     },
@@ -249,16 +109,16 @@ export function useStrategicFinancials(empresaId?: string) {
     queryKey: ['strategic-financials', empresaId],
     enabled: !!empresaId,
     queryFn: async () => {
-      const { data: projections } = await supabase.rpc('get_personnel_cost_projection', {
+      const { data: projections } = await supabaseBase.rpc('get_personnel_cost_projection', {
         p_empresa_id: empresaId!,
         p_months: 6,
       });
-      const { data: budgets } = await supabase
+      const { data: budgets } = await supabaseBase
         .from('personnel_budget')
         .select('*')
         .eq('empresa_id', empresaId!)
         .eq('ano', new Date().getFullYear());
-      const { data: actuals } = await supabase
+      const { data: actuals } = await supabaseBase
         .from('folhas_pagamento')
         .select('total_proventos, total_liquido, total_descontos')
         .eq('empresa_id', empresaId!)

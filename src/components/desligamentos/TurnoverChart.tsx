@@ -1,7 +1,8 @@
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line, ComposedChart } from 'recharts';
+import { Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Line, ComposedChart } from 'recharts';
+import { CLASSE_ENTRADA_TOOLTIP, TooltipGrafico } from '@/components/ui/tooltipGrafico';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { MOTION_REDUCED_MODE, useMovimentoReduzido } from '@/lib/motionMode';
 import { ChartColumn } from 'lucide-react';
@@ -15,23 +16,16 @@ interface TurnoverChartProps {
 }
 
 /**
- * Séries secundárias (motivos), na ordem da legenda e com as cores do design
- * system. A lista segue os valores REAIS do enum `tipo_desligamento`: entrou
- * `Sem Justa Causa` (o tipo MAIS comum, que antes caía em "Outros" porque a
- * derivação comparava com chaves inexistentes) e os rótulos de acordo e fim de
- * contrato passaram a dizer o que o banco grava. `Outros` cobre agora
- * `falecimento` e tipo desconhecido.
- *
- * O vermelho vibrante vem por valor arbitrário: `--destructive-vivid` nao esta
- * registrado em tailwind.config.js — mas aqui ja era `hsl(var(...))` dentro de
- * uma prop de cor do SVG, que funciona.
+ * Séries secundárias (motivos), na ordem da legenda e com as cores pedidas na
+ * referência (tokens do design system): azul/ciano = pedido de demissão, âmbar =
+ * acordo mútuo, vermelho = justa causa, violeta = término de contrato e
+ * cinza-azulado = outros.
  */
 const CATEGORIAS = [
-  { key: 'semJusta', label: 'Sem Justa Causa', color: 'hsl(var(--destructive-vivid))' },
-  { key: 'justa', label: 'Justa Causa', color: 'hsl(var(--destructive))' },
   { key: 'pedido', label: 'Pedido de Demissão', color: 'hsl(var(--info))' },
-  { key: 'acordo', label: 'Acordo', color: 'hsl(var(--warning))' },
-  { key: 'termino', label: 'Fim de Contrato', color: 'hsl(var(--xp))' },
+  { key: 'acordo', label: 'Acordo Mútuo', color: 'hsl(var(--warning))' },
+  { key: 'justa', label: 'Justa Causa', color: 'hsl(var(--destructive-vivid))' },
+  { key: 'termino', label: 'Término de Contrato', color: 'hsl(var(--xp))' },
   { key: 'outros', label: 'Outros', color: 'hsl(var(--muted-foreground))' },
 ] as const;
 
@@ -88,7 +82,7 @@ function TooltipEvolucao({
   if (!active || !payload || payload.length === 0) return null;
   const total = payload[0]?.payload?.total ?? 0;
   return (
-    <div className="min-w-[176px] rounded-lg border border-border/60 bg-card p-2.5 shadow-elevated">
+    <div className={`min-w-[176px] rounded-lg border border-border/60 bg-card p-2.5 shadow-elevated ${CLASSE_ENTRADA_TOOLTIP}`}>
       <p className="mb-1.5 font-display text-[11px] font-medium text-foreground">{label}</p>
       <div className="space-y-1">
         {CATEGORIAS.map((c) => {
@@ -194,6 +188,7 @@ export function TurnoverChart({ desligamentos, index = 0 }: TurnoverChartProps) 
       document.removeEventListener('visibilitychange', aoMudarVisibilidade);
     };
   }, [reduzMovimento]);
+
 
   // Antes de animar ('aguardando'), os traçados já vêm ocultos pelo `dash`, mas a
   // ÁREA do total não tem dash — então a escondemos com o clip horizontal de
@@ -331,158 +326,157 @@ export function TurnoverChart({ desligamentos, index = 0 }: TurnoverChartProps) 
     };
   }, [fase, reduzMovimento, idReveal]);
 
+
   return (
     <MotionConfig reducedMotion={MOTION_REDUCED_MODE}>
       {/* `EntradaPresenca` (ver entradaCards.tsx): libera o keyframe `hidden` que o
           `initial={false}` do PageTransition bloqueia. O `MotionConfig` de fora
           segue mandando no movimento reduzido — a entrada respeita o sistema. */}
       <EntradaPresenca>
-        <motion.div
-          // Entrada de container = MESMA animação dos KPI do Dashboard (`cardVariants`).
-          // Só o CONTAINER do card anima: as animações internas do gráfico (linhas
-          // sendo desenhadas e revelação progressiva das áreas, controladas por
-          // `fase`/RAF abaixo) ficam intocadas — e, como o card não remonta em
-          // re-render/filtro, a entrada não reinicia o desenho.
-          {...entradaCard(index)}
-        >
-          <Card variant="flat" className="rounded-xl border-border/40">
-            <div className="flex flex-wrap items-center justify-between gap-3 px-4 pb-2 pt-3">
-              <div className="flex items-center gap-2.5">
-                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-info/10 text-info">
-                  <ChartColumn className="h-[18px] w-[18px]" />
-                </div>
-                <div className="min-w-0">
-                  <h2 className="text-[15px] font-semibold leading-tight tracking-tight">Evolução dos Desligamentos</h2>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    Quantidade de desligamentos por tipo (últimos {meses} meses)
-                  </p>
-                </div>
+      <motion.div
+        // Entrada de container = MESMA animação dos KPI do Dashboard (`cardVariants`).
+        // Só o CONTAINER do card anima: as animações internas do gráfico (linhas
+        // sendo desenhadas e revelação progressiva das áreas, controladas por
+        // `fase`/RAF abaixo) ficam intocadas — e, como o card não remonta em
+        // re-render/filtro, a entrada não reinicia o desenho.
+        {...entradaCard(index)}
+      >
+        <Card variant="flat" className="rounded-xl border-border/40">
+          <div className="flex flex-wrap items-center justify-between gap-3 px-4 pb-2 pt-3">
+            <div className="flex items-center gap-2.5">
+              <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-info/10 text-info">
+                <ChartColumn className="h-[18px] w-[18px]" />
               </div>
-              <Select value={meses} onValueChange={setMeses}>
-                <SelectTrigger className="h-8 w-[168px] rounded-lg border-border/40 text-xs">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {PERIODOS.map((p) => (
-                    <SelectItem key={p.value} value={p.value}>
-                      {p.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="min-w-0">
+                <h2 className="text-[15px] font-semibold leading-tight tracking-tight">Evolução dos Desligamentos</h2>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Quantidade de desligamentos por tipo (últimos {meses} meses)
+                </p>
+              </div>
             </div>
+            <Select value={meses} onValueChange={setMeses}>
+              <SelectTrigger className="h-8 w-[168px] rounded-lg border-border/40 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PERIODOS.map((p) => (
+                  <SelectItem key={p.value} value={p.value}>
+                    {p.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-            <CardContent className="px-4 pb-3 pt-0">
-              <div className="flex flex-col gap-3 md:flex-row">
-                <div ref={hostRef} className="min-w-0 flex-1">
-                  <AnimatePresence>
-                    <ResponsiveContainer width="100%" height={145}>
-                      <ComposedChart data={dados} margin={{ top: 6, right: 6, left: -12, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id={idArea} x1="0" y1="0" x2="0" y2="1">
-                            {/* Degradê vertical da área do Total: junto à linha a cor
+          <CardContent className="px-4 pb-3 pt-0">
+            <div className="flex flex-col gap-3 md:flex-row">
+              <div ref={hostRef} className="min-w-0 flex-1">
+                <AnimatePresence>
+                  <ResponsiveContainer width="100%" height={145}>
+                    <ComposedChart data={dados} margin={{ top: 6, right: 6, left: -12, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id={idArea} x1="0" y1="0" x2="0" y2="1">
+                          {/* Degradê vertical da área do Total: junto à linha a cor
                               aparece com opacidade moderada e vai desaparecendo até a
                               base (sem stops brancos/pretos, sem faixas). */}
-                            <stop offset="0%" stopColor={COR_TOTAL} stopOpacity={0.25} />
-                            <stop offset="45%" stopColor={COR_TOTAL} stopOpacity={0.1} />
-                            <stop offset="100%" stopColor={COR_TOTAL} stopOpacity={0} />
-                          </linearGradient>
-                          {/* Clip horizontal (largura 0 → plot inteiro) que revela a
+                          <stop offset="0%" stopColor={COR_TOTAL} stopOpacity={0.25} />
+                          <stop offset="45%" stopColor={COR_TOTAL} stopOpacity={0.1} />
+                          <stop offset="100%" stopColor={COR_TOTAL} stopOpacity={0} />
+                        </linearGradient>
+                        {/* Clip horizontal (largura 0 → plot inteiro) que revela a
                             área junto com o avanço da linha do Total. y/height
                             folgados: só o eixo X importa aqui. */}
-                          <clipPath id={idReveal}>
-                            <rect data-ev-reveal x={0} y={-1000} width={0} height={3000} />
-                          </clipPath>
-                        </defs>
-                        <CartesianGrid stroke="hsl(var(--border))" strokeOpacity={0.35} />
-                        <XAxis
-                          dataKey="mes"
-                          tickLine={false}
-                          axisLine={{ stroke: 'hsl(var(--border))', opacity: 0.4 }}
-                          interval="preserveStartEnd"
-                          tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
-                        />
-                        <YAxis
-                          allowDecimals={false}
-                          tickLine={false}
-                          axisLine={false}
-                          width={30}
-                          tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
-                        />
-                        <Tooltip
-                          cursor={{ stroke: 'hsl(var(--border))', strokeOpacity: 0.5 }}
-                          content={<TooltipEvolucao />}
-                          wrapperStyle={{ zIndex: 30, outline: 'none' }}
-                        />
+                        <clipPath id={idReveal}>
+                          <rect data-ev-reveal x={0} y={-1000} width={0} height={3000} />
+                        </clipPath>
+                      </defs>
+                      <CartesianGrid stroke="hsl(var(--border))" strokeOpacity={0.35} />
+                      <XAxis
+                        dataKey="mes"
+                        tickLine={false}
+                        axisLine={{ stroke: 'hsl(var(--border))', opacity: 0.4 }}
+                        interval="preserveStartEnd"
+                        tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                      />
+                      <YAxis
+                        allowDecimals={false}
+                        tickLine={false}
+                        axisLine={false}
+                        width={30}
+                        tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                      />
+                      <TooltipGrafico
+                        cursor={{ stroke: 'hsl(var(--border))', strokeOpacity: 0.5 }}
+                        content={<TooltipEvolucao />}
+                        wrapperStyle={{ zIndex: 30, outline: 'none' }}
+                      />
 
-                        {/* Motivos: linhas finas, cor própria, mais discretas. */}
-                        {CATEGORIAS.map((c) => (
-                          <Line
-                            key={c.key}
-                            type="monotone"
-                            dataKey={c.key}
-                            name={c.label}
-                            stroke={c.color}
-                            strokeWidth={1.5}
-                            strokeOpacity={0.8}
-                            strokeLinecap="round"
-                            strokeDasharray={dashEntrada}
-                            strokeDashoffset={dashEntrada}
-                            dot={false}
-                            activeDot={{ r: 3, strokeWidth: 0, fill: c.color }}
-                            isAnimationActive={false}
-                          />
-                        ))}
-                        {/* Total: a série dominante (linha + área translúcida). */}
-                        <Area
+                      {/* Motivos: linhas finas, cor própria, mais discretas. */}
+                      {CATEGORIAS.map((c) => (
+                        <Line
+                          key={c.key}
                           type="monotone"
-                          dataKey="total"
-                          name="Total"
-                          stroke={COR_TOTAL}
-                          strokeWidth={2.6}
+                          dataKey={c.key}
+                          name={c.label}
+                          stroke={c.color}
+                          strokeWidth={1.5}
+                          strokeOpacity={0.8}
                           strokeLinecap="round"
-                          fill={`url(#${idArea})`}
-                          fillOpacity={1}
                           strokeDasharray={dashEntrada}
                           strokeDashoffset={dashEntrada}
                           dot={false}
-                          activeDot={{ r: 4.5, strokeWidth: 0, fill: COR_TOTAL }}
+                          activeDot={{ r: 3, strokeWidth: 0, fill: c.color }}
                           isAnimationActive={false}
                         />
-                      </ComposedChart>
-                    </ResponsiveContainer>
-                  </AnimatePresence>
-                </div>
-
-                {/* Legenda lateral no desktop; quebra para baixo em telas pequenas. */}
-                <ul className="flex flex-wrap gap-x-4 gap-y-1.5 md:w-[150px] md:flex-none md:flex-col md:flex-nowrap md:justify-center md:gap-x-0 md:gap-y-2">
-                  {LEGENDA.map((item) => (
-                    <li key={item.label} className="flex items-center gap-2 text-[11px]">
-                      {item.tipo === 'total' ? (
-                        <span className="relative inline-flex h-2.5 w-4 shrink-0 items-center">
-                          <span
-                            className="absolute inset-x-0 h-[3px] rounded-full"
-                            style={{ backgroundColor: item.color }}
-                          />
-                          <span
-                            className="absolute left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full"
-                            style={{ backgroundColor: item.color }}
-                          />
-                        </span>
-                      ) : (
-                        <span className="inline-flex h-2.5 w-4 shrink-0 items-center">
-                          <span className="h-[3px] w-full rounded-full" style={{ backgroundColor: item.color }} />
-                        </span>
-                      )}
-                      <span className="text-muted-foreground">{item.label}</span>
-                    </li>
-                  ))}
-                </ul>
+                      ))}
+                      {/* Total: a série dominante (linha + área translúcida). */}
+                      <Area
+                        type="monotone"
+                        dataKey="total"
+                        name="Total"
+                        stroke={COR_TOTAL}
+                        strokeWidth={2.6}
+                        strokeLinecap="round"
+                        fill={`url(#${idArea})`}
+                        fillOpacity={1}
+                        strokeDasharray={dashEntrada}
+                        strokeDashoffset={dashEntrada}
+                        dot={false}
+                        activeDot={{ r: 4.5, strokeWidth: 0, fill: COR_TOTAL }}
+                        isAnimationActive={false}
+                      />
+                    </ComposedChart>
+                  </ResponsiveContainer>
+                </AnimatePresence>
               </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+
+              {/* Legenda lateral no desktop; quebra para baixo em telas pequenas. */}
+              <ul className="flex flex-wrap gap-x-4 gap-y-1.5 md:w-[150px] md:flex-none md:flex-col md:flex-nowrap md:justify-center md:gap-x-0 md:gap-y-2">
+                {LEGENDA.map((item) => (
+                  <li key={item.label} className="flex items-center gap-2 text-[11px]">
+                    {item.tipo === 'total' ? (
+                      <span className="relative inline-flex h-2.5 w-4 shrink-0 items-center">
+                        <span className="absolute inset-x-0 h-[3px] rounded-full" style={{ backgroundColor: item.color }} />
+                        <span
+                          className="absolute left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full"
+                          style={{ backgroundColor: item.color }}
+                        />
+                      </span>
+                    ) : (
+                      <span className="inline-flex h-2.5 w-4 shrink-0 items-center">
+                        <span className="h-[3px] w-full rounded-full" style={{ backgroundColor: item.color }} />
+                      </span>
+                    )}
+                    <span className="text-muted-foreground">{item.label}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
       </EntradaPresenca>
     </MotionConfig>
   );
 }
+

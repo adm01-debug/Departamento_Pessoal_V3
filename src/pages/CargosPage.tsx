@@ -54,6 +54,7 @@ export default function CargosPage() {
     page,
     setPage,
     pageSize,
+    setPageSize,
     search,
     setSearch,
     refetch,
@@ -149,182 +150,80 @@ export default function CargosPage() {
   const formatCurrency = (v: number | null) => (v ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
   return (
-    <>
-      <EntityPageContainer<Cargo>
-        pageTitle="Gestão de Cargos"
-        pageDescription="Definição de funções e faixas salariais"
-        title="Cargos"
-        description="Gestão de estratégia de cargos, CBO e remuneração sincronizada"
-        icon={<Briefcase className="h-5 w-5 text-primary-foreground" />}
-        gradient="from-warning to-info"
-        entityName="cargo"
-        searchPlaceholder="Buscar por nome ou CBO..."
-        items={cargos}
-        total={total}
-        isLoading={isLoading}
-        isFetching={isFetching}
-        error={error}
-        page={page}
-        pageSize={pageSize}
-        search={search}
-        onPageChange={handlePageChange}
-        onSearchChange={handleSearchChange}
-        onRefetch={refetch}
-        isRefreshing={isRefreshing}
-        onAdd={openNovo}
-        addLabel="Novo Cargo"
-        actions={<div className="flex gap-2">{/* Outras ações específicas se necessário */}</div>}
-        stats={
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
-            <Card className="border-border/30 rounded-2xl bg-card/50 shadow-xs">
-              <CardContent className="p-4">
-                <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Total Cargos</p>
-                <h3 className="text-2xl font-display font-bold">{total}</h3>
-              </CardContent>
-            </Card>
-          </div>
-        }
-        columns={[
-          { header: 'Cargo', className: 'pl-6' },
-          { header: 'CBO' },
-          { header: 'Nível' },
-          { header: 'Salário Base', className: 'text-right' },
-          { header: 'Status' },
-          { header: '', width: '80px' },
-        ]}
-        renderRow={(cargo) => (
-          <TableRow
-            key={cargo.id}
-            className="hover:bg-accent/20 transition-colors group border-b border-border/10 last:border-0"
-          >
-            <TableCell className="py-4 pl-6">
-              <div className="flex flex-col">
-                <span className="font-body font-bold text-sm text-foreground">{cargo.nome}</span>
-                {cargo.descricao && (
-                  <span className="text-[10px] text-muted-foreground truncate max-w-[250px]">{cargo.descricao}</span>
-                )}
-              </div>
-            </TableCell>
-            <TableCell className="font-mono text-[11px] font-medium">{cargo.cbo || 'Não inf.'}</TableCell>
-            <TableCell>
-              <Badge variant="outline" className="text-[10px] font-bold border-border/50 bg-muted/30">
-                Lvl {cargo.nivel_hierarquico || 1}
-              </Badge>
-            </TableCell>
-            <TableCell className="font-body text-right text-sm font-bold text-success">
-              {cargo.salario_base ? formatCurrency(cargo.salario_base) : '-'}
-            </TableCell>
-            <TableCell>
-              <Badge
-                className={
-                  cargo.ativo !== false
-                    ? 'bg-success/10 text-success border-0 text-[10px]'
-                    : 'bg-muted text-muted-foreground border-0 text-[10px]'
-                }
-              >
-                {cargo.ativo !== false ? 'Ativo' : 'Inativo'}
-              </Badge>
-            </TableCell>
-            <TableCell className="text-right pr-6">
-              <div className="flex justify-end gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label="Editar cargo"
-                  title="Editar"
-                  onClick={() => openEditar(cargo)}
-                  className="h-8 w-8 rounded-lg"
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label={cargo.ativo !== false ? 'Inativar cargo' : 'Ativar cargo'}
-                  title={cargo.ativo !== false ? 'Inativar' : 'Ativar'}
-                  disabled={isUpdating}
-                  onClick={() => void handleToggleAtivo(cargo)}
-                  className="h-8 w-8 rounded-lg"
-                >
-                  <Power className="h-4 w-4" />
-                </Button>
-              </div>
-            </TableCell>
-          </TableRow>
-        )}
-      />
-      <Dialog open={dialogOpen} onOpenChange={(o) => !isSaving && setDialogOpen(o)}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{editing ? 'Editar Cargo' : 'Novo Cargo'}</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="cargo-nome">Nome *</Label>
-              <Input
-                id="cargo-nome"
-                value={form.nome}
-                onChange={(e) => setForm((f) => ({ ...f, nome: e.target.value }))}
-                required
-              />
+    <EntityPageContainer<Cargo>
+      pageTitle="Gestão de Cargos"
+      pageDescription="Definição de funções e faixas salariais"
+      title="Cargos"
+      description="Gestão de estratégia de cargos, CBO e remuneração sincronizada"
+      icon={<Briefcase className="h-5 w-5 text-primary-foreground" />}
+      gradient="from-warning to-info"
+      entityName="cargo"
+      searchPlaceholder="Buscar por nome ou CBO..."
+      items={cargos}
+      total={total}
+      isLoading={isLoading}
+      isFetching={isFetching}
+      error={error}
+      page={page}
+      pageSize={pageSize}
+      search={search}
+      onPageChange={handlePageChange}
+      onPageSizeChange={setPageSize}
+      onSearchChange={handleSearchChange}
+      onRefetch={refetch}
+      isRefreshing={isRefreshing}
+      onAdd={() => {}}
+      addLabel="Novo Cargo"
+      actions={
+        <div className="flex gap-2">
+          {/* Outras ações específicas se necessário */}
+        </div>
+      }
+      stats={
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
+          <Card className="border-border/30 rounded-2xl bg-card/50 shadow-xs">
+            <CardContent className="p-4">
+              <p className="text-[10px] uppercase font-medium text-muted-foreground tracking-widest">Total Cargos</p>
+              <h3 className="text-2xl font-display font-medium">{total}</h3>
+            </CardContent>
+          </Card>
+        </div>
+      }
+      columns={[
+        { header: 'Cargo', className: 'pl-6' },
+        { header: 'CBO' },
+        { header: 'Nível' },
+        { header: 'Salário Base', className: 'text-right' },
+        { header: 'Status' },
+        { header: '', width: '80px' }
+      ]}
+      renderRow={(cargo) => (
+        <TableRow key={cargo.id} className="hover:bg-accent/20 transition-colors group border-b border-border/10 last:border-0">
+          <TableCell className="py-4 pl-6">
+            <div className="flex flex-col">
+              <span className="font-body font-medium text-sm text-foreground">{cargo.nome}</span>
+              {cargo.descricao && <span className="text-[10px] text-muted-foreground truncate max-w-[250px]">{cargo.descricao}</span>}
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="cargo-cbo">CBO</Label>
-                <Input
-                  id="cargo-cbo"
-                  value={form.cbo}
-                  onChange={(e) => setForm((f) => ({ ...f, cbo: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cargo-nivel">Nível hierárquico</Label>
-                <Input
-                  id="cargo-nivel"
-                  type="number"
-                  min={1}
-                  step={1}
-                  value={form.nivel_hierarquico}
-                  onChange={(e) => setForm((f) => ({ ...f, nivel_hierarquico: e.target.value }))}
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="cargo-salario">Salário base (R$)</Label>
-              <Input
-                id="cargo-salario"
-                inputMode="decimal"
-                value={form.salario_base}
-                onChange={(e) => setForm((f) => ({ ...f, salario_base: e.target.value }))}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="cargo-descricao">Descrição</Label>
-              <Textarea
-                id="cargo-descricao"
-                value={form.descricao}
-                onChange={(e) => setForm((f) => ({ ...f, descricao: e.target.value }))}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <Switch
-                id="cargo-ativo"
-                checked={form.ativo}
-                onCheckedChange={(v) => setForm((f) => ({ ...f, ativo: v }))}
-              />
-              <Label htmlFor="cargo-ativo">Ativo</Label>
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" disabled={isSaving} onClick={() => setDialogOpen(false)}>
-                Cancelar
-              </Button>
-              <Button type="submit" disabled={isSaving}>
-                {isSaving ? 'Salvando...' : 'Salvar'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </>
+          </TableCell>
+          <TableCell className="font-mono text-[11px] font-medium">{cargo.cbo || 'Não inf.'}</TableCell>
+          <TableCell>
+            <Badge variant="outline" className="text-[10px] font-medium border-border/50 bg-muted/30">Lvl {cargo.nivel_hierarquico || 1}</Badge>
+          </TableCell>
+          <TableCell className="font-body text-right text-sm font-medium text-success">
+            {cargo.salario_base ? formatCurrency(cargo.salario_base) : '-'}
+          </TableCell>
+          <TableCell>
+            <Badge className={cargo.ativo !== false ? 'bg-success/10 text-success border-0 text-[10px]' : 'bg-muted text-muted-foreground border-0 text-[10px]'}>
+              {cargo.ativo !== false ? 'Ativo' : 'Inativo'}
+            </Badge>
+          </TableCell>
+          <TableCell className="text-right pr-6">
+            <Button variant="ghost" size="icon" aria-label="Informações" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+              <Info className="h-4 w-4" />
+            </Button>
+          </TableCell>
+        </TableRow>
+      )}
+    />
   );
 }

@@ -22,7 +22,7 @@ export function TelemetryStatsCards({ verySlow, slow, errors, avgDuration }: Tel
             <AlertTriangle className="h-5 w-5 text-destructive" />
           </div>
           <div>
-            <p className="text-2xl font-bold">{verySlow}</p>
+            <p className="text-2xl font-medium">{verySlow}</p>
             <p className="text-[11px] text-muted-foreground">Muito Lentas (&gt;8s)</p>
           </div>
         </CardContent>
@@ -33,7 +33,7 @@ export function TelemetryStatsCards({ verySlow, slow, errors, avgDuration }: Tel
             <Clock className="h-5 w-5 text-yellow-600" />
           </div>
           <div>
-            <p className="text-2xl font-bold">{slow}</p>
+            <p className="text-2xl font-medium">{slow}</p>
             <p className="text-[11px] text-muted-foreground">Lentas (&gt;3s)</p>
           </div>
         </CardContent>
@@ -44,7 +44,7 @@ export function TelemetryStatsCards({ verySlow, slow, errors, avgDuration }: Tel
             <Zap className="h-5 w-5 text-destructive" />
           </div>
           <div>
-            <p className="text-2xl font-bold">{errors}</p>
+            <p className="text-2xl font-medium">{errors}</p>
             <p className="text-[11px] text-muted-foreground">Erros</p>
           </div>
         </CardContent>
@@ -55,7 +55,7 @@ export function TelemetryStatsCards({ verySlow, slow, errors, avgDuration }: Tel
             <Database className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <p className="text-2xl font-bold">{formatDuration(avgDuration)}</p>
+            <p className="text-2xl font-medium">{formatDuration(avgDuration)}</p>
             <p className="text-[11px] text-muted-foreground">Média de duração</p>
           </div>
         </CardContent>

@@ -16,12 +16,9 @@ const buttonVariants = cva(
         link: 'text-primary underline-offset-4 hover:underline',
         // Premium variants (gamificação — mantidos com identidade própria,
         // só com a escala de movimento reduzida pra não "pular")
-        premium:
-          'bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-glow-sm hover:shadow-glow hover:scale-[1.01] active:scale-[0.99]',
-        'gradient-xp':
-          'bg-gradient-to-r from-primary/80 to-primary text-xp-foreground shadow-glow-xp hover:shadow-glow hover:scale-[1.01] active:scale-[0.99]',
-        'gradient-success':
-          'bg-gradient-to-r from-primary to-primary-glow text-success-foreground shadow-glow-success hover:shadow-glow hover:scale-[1.01] active:scale-[0.99]',
+        premium: 'bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-glow-sm hover:shadow-glow hover:scale-[1.01] active:scale-[0.99]',
+        'gradient-xp': 'bg-gradient-to-r from-primary/80 to-primary text-xp-foreground shadow-glow-xp hover:shadow-glow hover:scale-[1.01] active:scale-[0.99]',
+        'gradient-success': 'bg-gradient-to-r from-primary to-primary-glow text-success-foreground shadow-glow-success hover:shadow-glow hover:scale-[1.01] active:scale-[0.99]',
         glass: 'glass hover:bg-card/80 text-foreground',
       },
       size: {

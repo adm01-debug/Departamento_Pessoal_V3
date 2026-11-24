@@ -34,12 +34,6 @@ export function TrilhaCursosSection({
   className,
 }: {
   trilhaId: string;
-  /**
-   * Catálogo já carregado pela página. Shape estrutural (não
-   * `Tables<'catalogo_cursos'>`) porque o único chamador, `TrilhaDetalheDialog`,
-   * declara `cursos` nesta forma frouxa — só `id`, `nome` e `carga_horaria` são
-   * usados aqui. Sem `any`: a tipagem do vínculo vem de `listarTrilhasCursos`.
-   */
   cursos: { id: string; nome?: string | null; carga_horaria?: number | string | null }[];
   /** Categoria real do curso no catálogo → ícone/família do Design System. */
   categoriaPorCurso?: ReadonlyMap<string, string | null>;
@@ -81,8 +75,8 @@ export function TrilhaCursosSection({
     onError: () => toast.error('Erro ao desvincular curso'),
   });
 
-  const vinculadosOrdenados = ordenarVinculos(vinculados);
-  const cursosDisponiveis = cursos.filter((c) => !vinculados.some((v) => v.curso_id === c.id));
+  const vinculadosOrdenados = ordenarVinculos(vinculados as any[]);
+  const cursosDisponiveis = cursos.filter((c) => !vinculados.some((v: any) => v.curso_id === c.id));
 
   return (
     <div className={className}>

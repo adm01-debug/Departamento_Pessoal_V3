@@ -41,13 +41,15 @@ export function AfastamentoStats({ stats }: AfastamentoStatsProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
           >
-            <Card className="border-none shadow-xs hover:shadow-md transition-all duration-300 rounded-2xl overflow-hidden group">
+            <Card className="border-none shadow-xs hover:shadow-md transition-all duration-slow rounded-2xl overflow-hidden group">
               <CardContent className="p-5 flex flex-col items-center text-center relative">
                 <div className={cn('p-3 rounded-xl mb-3 transition-transform group-hover:scale-110', kpi.bg)}>
                   <kpi.icon className={cn('h-6 w-6', kpi.color)} />
                 </div>
-                <p className={cn('text-2xl font-display font-bold', kpi.color)}>{kpi.value}</p>
-                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mt-1">
+                <p className={cn("text-2xl font-display font-medium", kpi.color)}>
+                  {kpi.value}
+                </p>
+                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest mt-1">
                   {kpi.label}
                 </p>
               </CardContent>
@@ -63,9 +65,7 @@ export function AfastamentoStats({ stats }: AfastamentoStatsProps) {
               <div className="space-y-1 flex-1">
                 <div className="flex items-center gap-2">
                   <Percent className="h-4 w-4 text-primary" />
-                  <h4 className="text-sm font-bold uppercase tracking-wider text-foreground">
-                    Distribuição de Encaminhamentos
-                  </h4>
+                  <h4 className="text-sm font-medium uppercase tracking-wider text-foreground">Distribuição de Encaminhamentos</h4>
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Proporção de colaboradores que excederam o limite de 15 dias pagos pela empresa.

@@ -77,12 +77,7 @@ function FiltroSelect({
           <SelectValue />
         </div>
       </SelectTrigger>
-      <SelectContent
-        side="bottom"
-        align="start"
-        avoidCollisions={false}
-        className="max-h-[var(--radix-select-content-available-height)]"
-      >
+      <SelectContent side="bottom" align="start" avoidCollisions={false} className="max-h-[var(--radix-select-content-available-height)]">
         {options.map((o) => (
           <SelectItem key={o.value} value={o.value}>
             {o.label}
@@ -125,7 +120,10 @@ export function DesligamentoFilters({
         {/* Cada peça da barra recebe UM único controle de entrada, com o índice
             corrido da seção (`entradaCard` — a MESMA régua dos KPI Cards do
             Dashboard Executivo). O `motion.div` é o mesmo nó `div` de antes. */}
-        <motion.div {...entradaCard(indexBase)} className="relative min-w-[140px] flex-1">
+        <motion.div
+          {...entradaCard(indexBase)}
+          className="relative min-w-[140px] flex-1"
+        >
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={search}
@@ -137,42 +135,20 @@ export function DesligamentoFilters({
         </motion.div>
 
         <motion.div {...entradaCard(indexBase + 1)}>
-          <FiltroSelect
-            label="Status"
-            value={statusFilter}
-            onChange={onStatusChange}
-            options={STATUS_OPTIONS}
-            className="w-[168px] min-w-[120px]"
-          />
+          <FiltroSelect label="Status" value={statusFilter} onChange={onStatusChange} options={STATUS_OPTIONS} className="w-[168px] min-w-[120px]" />
         </motion.div>
         <motion.div {...entradaCard(indexBase + 2)}>
+          <FiltroSelect label="Tipo de Desligamento" value={tipoFilter} onChange={onTipoChange} options={TIPO_OPTIONS} className="w-[190px] min-w-[130px]" />
+        </motion.div>
+        <motion.div {...entradaCard(indexBase + 3)}>
           <FiltroSelect
-            label="Tipo de Desligamento"
-            value={tipoFilter}
-            onChange={onTipoChange}
-            options={TIPO_OPTIONS}
-            className="w-[190px] min-w-[130px]"
+            label="Departamento"
+            value={departamentoFilter}
+            onChange={onDepartamentoChange ?? (() => {})}
+            options={departamentoOpts}
+            className="w-[176px] min-w-[124px]"
           />
         </motion.div>
-        {/* Departamento e "Mais filtros" (período) só existem quando o chamador
-            oferece o callback correspondente. A página de Desligamentos de hoje
-            passa busca, status e tipo — nos outros dois o controle cairia num
-            handler vazio: o usuário escolheria "Últimos 3 meses" e a lista não
-            mudaria, com o seletor voltando sozinho para "Todo o período".
-            Controle que aceita clique e não faz nada é pior que controle ausente;
-            quando a nova Gestão de Desligamentos entrar e passar os callbacks,
-            os dois aparecem sem mudar nada aqui. */}
-        {onDepartamentoChange && (
-          <motion.div {...entradaCard(indexBase + 3)}>
-            <FiltroSelect
-              label="Departamento"
-              value={departamentoFilter}
-              onChange={onDepartamentoChange}
-              options={departamentoOpts}
-              className="w-[176px] min-w-[124px]"
-            />
-          </motion.div>
-        )}
 
         {/* Fecho da barra: os dois botões de AÇÃO entram como UM grupo (índice
             seguinte ao do Departamento), mantendo a geometria original — em
@@ -180,45 +156,42 @@ export function DesligamentoFilters({
             única vez, então "Limpar filtros" (que aparece/some conforme o estado
             dos filtros) NÃO reanima a cada mudança: a animação é de
             apresentação, não de estado. */}
-        <motion.div {...entradaCard(indexBase + 4)} className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          {filtroAtivo && onLimpar && (
-            <Button
-              variant="default"
-              size="sm"
-              onClick={onLimpar}
-              className="h-10 w-[168px] shrink-0 gap-1.5 rounded-lg font-body"
-            >
-              <X className="h-3.5 w-3.5" />
-              Limpar filtros
-            </Button>
-          )}
+        <motion.div
+          {...entradaCard(indexBase + 4)}
+          className="flex flex-col gap-2 sm:flex-row sm:items-center"
+        >
+        {filtroAtivo && onLimpar && (
+          <Button
+            variant="default"
+            size="sm"
+            onClick={onLimpar}
+            className="h-10 w-[168px] shrink-0 gap-1.5 rounded-lg font-body"
+          >
+            <X className="h-3.5 w-3.5" />
+            Limpar filtros
+          </Button>
+        )}
 
-          {onPeriodoChange && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setMaisFiltros((v) => !v)}
-              className="h-10 w-[168px] shrink-0 gap-2 rounded-lg border-border/40 bg-card font-body"
-              aria-expanded={maisFiltros}
-            >
-              <SlidersHorizontal className="h-3.5 w-3.5" />
-              Mais filtros
-            </Button>
-          )}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setMaisFiltros((v) => !v)}
+          className="h-10 w-[168px] shrink-0 gap-2 rounded-lg border-border/40 bg-card font-body"
+          aria-expanded={maisFiltros}
+        >
+          <SlidersHorizontal className="h-3.5 w-3.5" />
+          Mais filtros
+        </Button>
         </motion.div>
       </div>
 
-      {maisFiltros && onPeriodoChange && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          className="overflow-hidden"
-        >
+      {maisFiltros && (
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="overflow-hidden">
           <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border/30 bg-muted/20 p-2.5">
             <FiltroSelect
               label="Período"
               value={periodoFilter}
-              onChange={onPeriodoChange}
+              onChange={onPeriodoChange ?? (() => {})}
               options={PERIODO_OPTIONS}
               className="w-[168px] min-w-[120px]"
             />

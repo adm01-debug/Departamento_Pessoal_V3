@@ -21,12 +21,7 @@ export function useColaboradores() {
 
   // Opções dos dropdowns de filtro — ver colaboradorService.listarOpcoesFiltro.
   const { data: opcoesFiltro } = useQuery({
-    // Prefixo 'colaboradores' de proposito: o react-query casa por prefixo, entao
-    // os invalidateQueries(['colaboradores']) que o formulario, a importacao, as
-    // movimentacoes e o kanban de admissoes ja fazem passam a atualizar tambem as
-    // opcoes — sem isto um departamento novo levava os 5 min de staleTime para
-    // aparecer no filtro.
-    queryKey: ['colaboradores', 'opcoes-filtro', empresaId],
+    queryKey: ['colaboradores-opcoes-filtro', empresaId],
     queryFn: () => colaboradorService.listarOpcoesFiltro(empresaId!),
     enabled: !!empresaId,
   });
@@ -35,18 +30,18 @@ export function useColaboradores() {
     queryKey: 'colaboradores',
     service: colaboradorService,
     initialPageSize: 25,
-    empresaId,
+    enabled: !!empresaId,
     filters: {
       empresaId,
       status,
       departamento,
-      cargo,
+      cargo
     },
     successMessages: {
       create: 'Colaborador criado com sucesso',
       update: 'Colaborador atualizado',
-      delete: 'Colaborador excluído',
-    },
+      delete: 'Colaborador excluído'
+    }
   });
 
   return {
@@ -60,8 +55,8 @@ export function useColaboradores() {
     setCargo,
     summary,
     isLoadingSummary,
-    departamentosDisponiveis: opcoesFiltro?.departamentos ?? [],
-    cargosDisponiveis: opcoesFiltro?.cargos ?? [],
-    criar: (data: Record<string, unknown>) => crud.criar({ ...data, empresa_id: empresaId }),
+    departamentosDisponiveis: opcoesFiltro?.departamentos || [],
+    cargosDisponiveis: opcoesFiltro?.cargos || [],
+    criar: (data: any) => crud.criar({ ...data, empresa_id: empresaId }),
   };
 }

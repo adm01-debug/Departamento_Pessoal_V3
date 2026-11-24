@@ -53,7 +53,7 @@ const DropdownMenuItem = React.forwardRef<
       className={cn(
         'relative flex cursor-default select-none items-center rounded-xs px-2 py-1.5 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
         inset && 'pl-8',
-        className
+        className,
       )}
       {...props}
     >
@@ -89,7 +89,7 @@ const DropdownMenuContent = React.forwardRef<
           // por ser `animation`, não `transition` competindo pela mesma
           // propriedade o tempo todo).
           overlayContentCloseOnlyAnimClasses('dp-dropdown-anim-content'),
-          className
+          className,
         )}
         {...props}
       >
@@ -149,7 +149,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
       className={cn(
         'flex cursor-default select-none items-center rounded-xs px-2 py-1.5 text-sm outline-hidden focus:bg-accent data-[state=open]:bg-accent',
         inset && 'pl-8',
-        className
+        className,
       )}
       {...props}
     >
@@ -178,7 +178,7 @@ const DropdownMenuSubContent = React.forwardRef<
       className={cn(
         'z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg',
         overlaySubmenuAnimClasses('dp-dropdown-anim-submenu'),
-        className
+        className,
       )}
       {...props}
     />
@@ -203,8 +203,8 @@ const DropdownMenuRadioItem = React.forwardRef<
     <DropdownMenuPrimitive.RadioItem
       ref={ref}
       className={cn(
-        'relative flex cursor-default select-none items-center rounded-xs py-1.5 pl-8 pr-2 text-sm outline-hidden transition-colors duration-150 focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-        className
+        'relative flex cursor-default select-none items-center rounded-xs py-1.5 pl-8 pr-2 text-sm outline-hidden transition-colors duration-fast focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+        className,
       )}
       {...props}
     >

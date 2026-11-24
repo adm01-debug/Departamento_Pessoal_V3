@@ -1,14 +1,15 @@
 import { useGenericCrud } from './useGenericCrud';
 import { cargoService } from '@/services/cargoService';
 import { useEmpresas } from './useEmpresas';
-import type { Cargo } from '@/types/entities';
+import { Cargo } from '@/types/entities';
+import { getMockCargos } from '@/mocks/colaboradoresMock';
 
 interface UseCargosOptions {
   /**
-   * Sobrescreve o pageSize inicial (padrão: 15, usado pela tela
-   * administrativa). Dropdowns de filtro que precisam listar todos os
-   * registros da empresa passam um valor maior (limitado a 100 pelo
-   * BaseService) sem afetar a paginação padrão das demais telas.
+   * Sobrescreve o pageSize inicial (padrão: 15, usado pela tela administrativa
+   * de Cargos). Dropdowns de filtro que precisam listar todos os cargos da
+   * empresa podem passar um valor maior (limitado a 100 pelo BaseService) sem
+   * afetar a paginação padrão das demais telas.
    */
   pageSize?: number;
 }
@@ -27,17 +28,19 @@ export function useCargos(options: UseCargosOptions = {}) {
     successMessages: {
       create: 'Cargo criado com sucesso',
       update: 'Cargo atualizado',
-      delete: 'Cargo excluído',
-    },
+      delete: 'Cargo excluído'
+    }
   });
+
+  // Empresa fictícia (VITE_COLABORADORES_MOCK): `cargos` reais não existem no
+  // banco para o `empresa_id` fictício — sem isso, o select de Cargo do
+  // formulário de colaborador fica vazio no modo demo. Só entra quando a
+  // consulta real não trouxe nada, nunca esconde cargos reais.
+  const mockCargos = crud.items.length === 0 ? getMockCargos(empresaId) : undefined;
 
   return {
     ...crud,
-    // Com `enabled: !!empresaId` a query fica desabilitada enquanto a empresa
-    // nao resolve, e o react-query devolve isLoading=false — a tela trocaria o
-    // skeleton pelo estado vazio. Sem empresa resolvida, ainda e carregando.
-    isLoading: crud.isLoading || !empresaId,
-    cargos: crud.items,
-    criar: (data: Record<string, unknown>) => crud.criar({ ...data, empresa_id: empresaId }),
+    cargos: (mockCargos as Cargo[] | undefined) ?? crud.items,
+    criar: (data: any) => crud.criar({ ...data, empresa_id: empresaId }),
   };
 }

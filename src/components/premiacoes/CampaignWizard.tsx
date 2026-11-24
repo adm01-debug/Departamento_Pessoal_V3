@@ -11,6 +11,8 @@ import { Trophy, Plus, Trash2, Sparkles } from 'lucide-react';
 import { premiacoesService } from '@/services/premiacoesService';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
+// MOCK VISUAL — ver src/mocks/premiacoesMock.ts.
+import { bloquearEscritaPremiacoes } from '@/mocks/premiacoesMock';
 
 const REGRAS_INICIAIS = [
   {
@@ -41,33 +43,13 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
   };
   const [formData, setFormData] = React.useState(formInicial);
 
-  const [rules, setRules] = React.useState(REGRAS_INICIAIS);
-  const [saving, setSaving] = React.useState(false);
+  const [rules, setRules] = React.useState([
+    { nome: 'Bônus de Batimento', tipo_calculo: 'valor_fixo', valor_base: 500, condicao_metrica: 'atingimento_meta' }
+  ]);
 
-  const fechar = () => {
-    if (saving) return;
-    setStep(1);
-    setFormData(formInicial);
-    setRules(REGRAS_INICIAIS);
-    onClose();
-  };
-
-  const handleSave = async (status: 'rascunho' | 'ativo') => {
-    if (saving) return;
-    if (!empresaId) {
-      toast.error('Empresa não identificada.');
-      return;
-    }
-    if (!formData.nome.trim() || !formData.data_inicio || !formData.data_fim) {
-      toast.error('Preencha nome, início e fim da campanha.');
-      return;
-    }
-    if (rules.some((r) => !r.titulo.trim())) {
-      toast.error('Toda regra precisa de um nome.');
-      return;
-    }
-    setSaving(true);
-    let campanhaCriada = false;
+  const handleSave = async () => {
+    // MOCK VISUAL — ver src/mocks/premiacoesMock.ts. Aborta a escrita no modo demo.
+    if (bloquearEscritaPremiacoes('Criar campanha')) return;
     try {
       const campanha = await premiacoesService.criarCampanha({
         ...formData,
@@ -108,7 +90,7 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
        formulário — nenhuma animação nova. */
     <CascadeDialogFrame
       open={isOpen}
-      onOpenChange={(aberto) => !aberto && fechar()}
+      onOpenChange={(aberto) => !aberto && onClose()}
       blocks={3}
       className="sm:max-w-[600px]"
     >
@@ -123,7 +105,7 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
       </motion.div>
 
       <motion.div variants={cascadeItemVariants}>
-        <div className="grid gap-6 py-4">
+        <div className="grid gap-4 py-4">
           {step === 1 ? (
             <div className="space-y-4">
               <div className="grid grid-cols-1 gap-2">
@@ -167,49 +149,23 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
               <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 flex items-start gap-3">
                 <Sparkles className="h-5 w-5 text-primary mt-1" />
                 <div>
-                  <h4 className="text-sm font-bold text-primary">Regras-modelo</h4>
-                  <p className="text-[10px] text-muted-foreground">
-                    Adiciona regras de exemplo de meta de vendas; ajuste nomes, valores e critérios antes de salvar.
-                  </p>
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto text-[10px] font-bold text-primary"
-                    onClick={() => {
-                      setRules([
-                        ...rules,
-                        {
-                          titulo: 'Atingimento Meta Vendas',
-                          tipo_calculo: 'percentual_comissao',
-                          valor_base: 5,
-                          configuracao: { condicao_metrica: 'meta_vendas > 100%' },
-                        },
-                        {
-                          titulo: 'Superação de Meta (Kicker)',
-                          tipo_calculo: 'valor_fixo',
-                          valor_base: 1000,
-                          configuracao: { condicao_metrica: 'meta_vendas > 120%' },
-                        },
-                      ]);
-                      toast.success('Regras-modelo adicionadas.');
-                    }}
-                  >
-                    Adicionar regras-modelo
+                  <h4 className="text-sm font-medium text-primary">Inteligência de Incentivos</h4>
+                  <p className="text-[10px] text-muted-foreground">Analise as metas atuais para sugerir as melhores regras de premiação.</p>
+                  <Button variant="link" className="p-0 h-auto text-[10px] font-medium text-primary" onClick={() => {
+                    setRules([
+                      ...rules,
+                      { nome: 'Atingimento Meta Vendas', tipo_calculo: 'percentual_comissao', valor_base: 5, condicao_metrica: 'meta_vendas > 100%' },
+                      { nome: 'Superação de Meta (Kicker)', tipo_calculo: 'valor_fixo', valor_base: 1000, condicao_metrica: 'meta_vendas > 120%' }
+                    ]);
+                    toast.success("Regras sugeridas aplicadas!");
+                  }}>
+                    Aplicar sugestões baseadas em OKRs
                   </Button>
                 </div>
               </div>
               <div className="flex justify-between items-center pt-2">
-                <Label className="text-sm font-bold">Regras de Premiação</Label>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="h-8 text-[10px]"
-                  onClick={() =>
-                    setRules([
-                      ...rules,
-                      { titulo: '', tipo_calculo: 'valor_fixo', valor_base: 0, configuracao: { condicao_metrica: '' } },
-                    ])
-                  }
-                >
+                <Label className="text-sm font-medium">Regras de Premiação</Label>
+                <Button size="sm" variant="outline" className="h-8 text-[10px]" onClick={() => setRules([...rules, { nome: '', tipo_calculo: 'valor_fixo', valor_base: 0, condicao_metrica: '' }])}>
                   <Plus className="h-3 w-3 mr-1" /> Adicionar Regra
                 </Button>
               </div>
@@ -217,49 +173,27 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
                 const patch = (changes: Record<string, unknown>) =>
                   setRules(rules.map((r, i) => (i === idx ? { ...r, ...changes } : r)));
                 return (
-                  <div key={idx} className="p-3 border rounded-xl space-y-3 relative group">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Excluir"
-                      className="h-6 w-6 absolute right-2 top-2 text-destructive opacity-0 group-hover:opacity-100"
-                      onClick={() => setRules(rules.filter((_, i) => i !== idx))}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
-                    <div className="grid grid-cols-2 gap-3">
-                      <Input
-                        placeholder="Nome da Regra"
-                        value={rule.titulo}
-                        onChange={(e) => patch({ titulo: e.target.value })}
-                      />
-                      <Select value={rule.tipo_calculo} onValueChange={(v) => patch({ tipo_calculo: v })}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Tipo" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="valor_fixo">Valor Fixo</SelectItem>
-                          <SelectItem value="percentual_salario">% do Salário Base</SelectItem>
-                          <SelectItem value="percentual_comissao">% de Comissão</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <Input
-                        type="number"
-                        placeholder="Valor/Base"
-                        value={rule.valor_base}
-                        onChange={(e) => patch({ valor_base: Number(e.target.value) })}
-                      />
-                      <Input
-                        placeholder="Critério (Ex: Meta > 100%)"
-                        value={rule.configuracao?.condicao_metrica ?? ''}
-                        onChange={(e) => patch({ configuracao: { condicao_metrica: e.target.value } })}
-                      />
-                    </div>
+                <div key={idx} className="p-3 border rounded-xl space-y-3 relative group">
+                  <Button variant="ghost" size="icon" aria-label="Excluir" className="h-6 w-6 absolute right-2 top-2 text-destructive opacity-0 group-hover:opacity-100" onClick={() => setRules(rules.filter((_, i) => i !== idx))}>
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input placeholder="Nome da Regra" value={rule.nome} onChange={e => patch({ nome: e.target.value })} />
+                    <Select value={rule.tipo_calculo} onValueChange={v => patch({ tipo_calculo: v })}>
+                      <SelectTrigger><SelectValue placeholder="Tipo" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="valor_fixo">Valor Fixo</SelectItem>
+                        <SelectItem value="percentual_salario">% do Salário Base</SelectItem>
+                        <SelectItem value="percentual_comissao">% de Comissão</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                );
-              })}
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input type="number" placeholder="Valor/Base" value={rule.valor_base} onChange={e => patch({ valor_base: Number(e.target.value) })} />
+                    <Input placeholder="Critério (Ex: Meta > 100%)" value={rule.condicao_metrica} onChange={e => patch({ condicao_metrica: e.target.value })} />
+                  </div>
+                </div>
+              );})}
             </div>
           )}
         </div>

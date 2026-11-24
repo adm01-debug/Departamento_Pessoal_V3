@@ -3,7 +3,10 @@ import { DepartmentRow } from '@/components/organograma/DepartmentRow';
 import { EmployeeRow } from '@/components/organograma/EmployeeRow';
 import { OrganogramaRevealBlock } from '@/components/organograma/OrganogramaRevealBlock';
 import { cascadeVariants, type CascadeOrder } from '@/components/organograma/organogramaCascade';
-import { revealItemExitDelay, type RevealWave } from '@/components/organograma/organogramaReveal';
+import {
+  revealItemExitDelay,
+  type RevealWave,
+} from '@/components/organograma/organogramaReveal';
 import { cn } from '@/lib/utils';
 import type { OrgDepartamento, RevealWaveIndex } from '@/lib/organogramaTree';
 
@@ -31,7 +34,14 @@ interface OrganogramaNodeProps {
   waveIndex?: RevealWaveIndex;
 }
 
-export function OrganogramaNode({ node, level, expandedIds, onToggle, cascadeIndex, waveIndex }: OrganogramaNodeProps) {
+export function OrganogramaNode({
+  node,
+  level,
+  expandedIds,
+  onToggle,
+  cascadeIndex,
+  waveIndex,
+}: OrganogramaNodeProps) {
   const expanded = expandedIds.has(node.id);
   const colaboradores = node.colaboradores || [];
   const subDepartamentos = node.sub_departamentos || [];
@@ -184,7 +194,12 @@ export function OrganogramaNode({ node, level, expandedIds, onToggle, cascadeInd
           item do bloco (como as rows): a linha sobe e desaparece antes de o vão
           fechar. */}
       <OrganogramaRevealBlock open={showEmptyMessage} wave={emptyBlockWave}>
-        <motion.div variants={cascadeVariants} initial={false} exit="closed" custom={exitOrder(emptyBlockWave, 0, 1)}>
+        <motion.div
+          variants={cascadeVariants}
+          initial={false}
+          exit="closed"
+          custom={exitOrder(emptyBlockWave, 0, 1)}
+        >
           <p className="text-[11px] text-muted-foreground italic py-2 pl-6">Nenhum colaborador vinculado.</p>
         </motion.div>
       </OrganogramaRevealBlock>

@@ -46,7 +46,7 @@ export const BarChartWidget = memo(function BarChartWidget({
               animate={{ height: `${barHeight}%` }}
               transition={{ duration: 0.6, delay: i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
               className={cn(
-                'w-full rounded-t-lg min-h-[4px] transition-all duration-200 group-hover:opacity-100',
+                'w-full rounded-t-lg min-h-[4px] transition-all duration-base group-hover:opacity-100',
                 item.color || 'bg-gradient-to-t from-primary to-primary-glow',
                 'opacity-80 group-hover:shadow-glow-sm'
               )}

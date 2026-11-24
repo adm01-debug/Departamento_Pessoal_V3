@@ -1,12 +1,12 @@
 /**
- * Guarda de rota ADMIN — exige o papel `admin` E o MFA.
+ * Guarda de rota ADMIN — exige o papel `admin` E MFA.
  *
- * RESPONSABILIDADES, AGORA SEPARADAS: este componente decide QUEM pode entrar
- * (papel `admin`); o portao de MFA mora no `MfaGate`, compartilhado com o
- * `PermissionRoute`. A maquina de estados e as telas do MFA foram movidas NA
- * INTEGRA para la, entao o comportamento desta rota e EXATAMENTE o de antes:
- * mesmos textos, mesmas condicoes, mesmo fail-closed e o mesmo
- * `VITE_E2E_BYPASS_MFA`.
+ * RESPONSABILIDADES, AGORA SEPARADAS: este componente decide **QUEM** pode entrar
+ * (papel `admin` — para acesso por permissão granular existe o `PermissionRoute`);
+ * o portão de **MFA** mora no `MfaGate`, compartilhado pelas duas guardas. A
+ * máquina de estados e as telas do MFA foram movidas na íntegra para lá, então o
+ * comportamento desta rota é EXATAMENTE o de antes (mesmos textos, mesmas
+ * condições, mesmo fail-closed).
  */
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';

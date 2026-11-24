@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { Tables } from '@/integrations/supabase/types';
 
 const statusColors: Record<string, string> = {
   pendente: 'bg-warning/15 text-warning border-0',
@@ -19,7 +18,7 @@ function formatCurrency(v: number) {
 }
 
 interface DctfTableProps {
-  data: Tables<'dctfweb_declaracoes'>[];
+  data: any[];
 }
 
 export function DctfTable({ data }: DctfTableProps) {
@@ -36,29 +35,16 @@ export function DctfTable({ data }: DctfTableProps) {
         </TableHeader>
         <TableBody>
           {data.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={4} className="text-center text-muted-foreground py-8 font-body">
-                Nenhuma declaração DCTFWeb
-              </TableCell>
+            <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8 font-body">Nenhuma declaração DCTFWeb</TableCell></TableRow>
+          ) : data.map((d: any) => (
+            <TableRow key={d.id} className="hover:bg-accent/30 transition-colors">
+              <TableCell className="font-body font-medium">{d.competencia}</TableCell>
+              <TableCell><Badge className={cn("font-body text-xs", statusColors[d.status] || statusColors.pendente)}>{d.status}</Badge></TableCell>
+              <TableCell className="font-body text-sm">{d.data_envio ? new Date(d.data_envio).toLocaleDateString('pt-BR') : '—'}</TableCell>
+              <TableCell className="font-body font-semibold">{d.valor_total ? formatCurrency(Number(d.valor_total)) : '—'}</TableCell>
+              <TableCell><Button size="sm" variant="ghost" className="rounded-lg text-xs h-7"><Download className="h-3 w-3" /></Button></TableCell>
             </TableRow>
-          ) : (
-            data.map((d) => (
-              <TableRow key={d.id} className="hover:bg-accent/30 transition-colors">
-                <TableCell className="font-body font-medium">{d.competencia}</TableCell>
-                <TableCell>
-                  <Badge className={cn('font-body text-xs', statusColors[d.status ?? ''] || statusColors.pendente)}>
-                    {d.status}
-                  </Badge>
-                </TableCell>
-                <TableCell className="font-body text-sm">
-                  {d.data_transmissao ? new Date(d.data_transmissao).toLocaleDateString('pt-BR') : '—'}
-                </TableCell>
-                <TableCell className="font-body font-semibold">
-                  {d.total_debitos ? formatCurrency(Number(d.total_debitos)) : '—'}
-                </TableCell>
-              </TableRow>
-            ))
-          )}
+          ))}
         </TableBody>
       </Table>
     </Card>
@@ -75,7 +61,7 @@ function baixarSefip(competencia: string, conteudo: string) {
 }
 
 interface SefipTableProps {
-  data: Tables<'sefip_arquivos'>[];
+  data: any[];
 }
 
 export function SefipTable({ data }: SefipTableProps) {
@@ -92,37 +78,17 @@ export function SefipTable({ data }: SefipTableProps) {
         </TableHeader>
         <TableBody>
           {data.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={4} className="text-center text-muted-foreground py-8 font-body">
-                Nenhum arquivo SEFIP
+            <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-8 font-body">Nenhum arquivo SEFIP</TableCell></TableRow>
+          ) : data.map((s: any) => (
+            <TableRow key={s.id} className="hover:bg-accent/30 transition-colors">
+              <TableCell className="font-body font-medium">{s.competencia}</TableCell>
+              <TableCell><Badge className={cn("font-body text-xs", statusColors[s.status] || statusColors.pendente)}>{s.status}</Badge></TableCell>
+              <TableCell className="font-body text-sm">{s.arquivo_url ? '✅ Disponível' : '—'}</TableCell>
+              <TableCell>
+                {s.arquivo_url && <Button size="sm" variant="ghost" className="rounded-lg text-xs h-7"><Download className="h-3 w-3 mr-1" />Baixar</Button>}
               </TableCell>
             </TableRow>
-          ) : (
-            data.map((s) => (
-              <TableRow key={s.id} className="hover:bg-accent/30 transition-colors">
-                <TableCell className="font-body font-medium">{s.competencia}</TableCell>
-                <TableCell>
-                  <Badge className={cn('font-body text-xs', statusColors[s.status ?? ''] || statusColors.pendente)}>
-                    {s.status}
-                  </Badge>
-                </TableCell>
-                <TableCell className="font-body text-sm">{s.conteudo ? '✅ Disponível' : '—'}</TableCell>
-                <TableCell>
-                  {s.conteudo && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="rounded-lg text-xs h-7"
-                      onClick={() => baixarSefip(s.competencia, s.conteudo ?? '')}
-                    >
-                      <Download className="h-3 w-3 mr-1" />
-                      Baixar
-                    </Button>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))
-          )}
+          ))}
         </TableBody>
       </Table>
     </Card>

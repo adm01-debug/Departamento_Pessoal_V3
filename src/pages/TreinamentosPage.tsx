@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { PageTitle } from '@/components/PageTitle';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   TreinamentosCascadeDialog,
@@ -14,23 +16,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Switch } from '@/components/ui/switch';
 import { EntradaPresenca, entradaCard } from '@/components/ui/entrada-cards';
 import { supabase } from '@/integrations/supabase/client';
 import { catalogoCursoService, colaboradorService } from '@/services';
-import type { CertificadoComJoins, InscricaoComJoins } from '@/services/catalogoCursoService';
-import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { chaveConteudo } from '@/services/trainingImages';
 import { useEmpresas } from '@/hooks';
 import { useTrainingImages } from '@/hooks/useTrainingImages';
+import { usePermissions } from '@/hooks/usePermissions';
 import { toast } from 'sonner';
 import { motion, MotionConfig } from 'framer-motion';
 import { MOTION_REDUCED_MODE } from '@/lib/motionMode';
-import { AlertTriangle, Eraser, GraduationCap, Layers, Plus, RefreshCw, Search } from 'lucide-react';
-import { jsPDF } from 'jspdf';
-import { format, parseISO } from 'date-fns';
-import type { Tables } from '@/integrations/supabase/database.types';
-import { validateTablePayload } from '@/schemas/validate';
+import { Eraser, GraduationCap, Layers, Plus, Search, Trash2, Video } from 'lucide-react';
 import { TreinamentosFiltros } from '@/components/treinamentos/TreinamentosFiltros';
 import { TreinamentosKpis } from '@/components/treinamentos/TreinamentosKpis';
 import { TreinamentosTabela } from '@/components/treinamentos/TreinamentosTabela';
@@ -107,9 +105,7 @@ const treinamentosService = {
     carga_horaria?: number;
     empresa_id?: string;
   }) => {
-    const { error } = await supabase
-      .from('treinamentos')
-      .insert(validateTablePayload('treinamentos', d, 'TreinamentosPage:treinamentos'));
+    const { error } = await supabase.from('treinamentos').insert(d);
     if (error) throw error;
   },
   excluir: async (id: string, empresaId?: string) => {
@@ -132,110 +128,30 @@ const treinamentosService = {
 const ACAO_CABECALHO_CLASS =
   'h-11 w-auto shrink-0 gap-2 rounded-[10px] px-4 text-sm font-semibold shadow-sm transition-shadow hover:shadow-md sm:h-10';
 
-// Certificado sem arquivo digitalizado é gerado em PDF com os dados do
-// registro — "Ver" sempre produz um documento real, nunca um toast fake.
-function gerarCertificadoPdf(cert: CertificadoComJoins, empresaNome?: string) {
-  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-  const cx = doc.internal.pageSize.getWidth() / 2;
-
-  doc.setDrawColor(60);
-  doc.setLineWidth(1.2);
-  doc.rect(12, 12, doc.internal.pageSize.getWidth() - 24, doc.internal.pageSize.getHeight() - 24);
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(30);
-  doc.text('CERTIFICADO', cx, 45, { align: 'center' });
-
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(13);
-  doc.text('Certificamos que', cx, 65, { align: 'center' });
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(20);
-  doc.text(cert.colaborador?.nome_completo ?? '—', cx, 80, { align: 'center' });
-
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(13);
-  doc.text(
-    `concluiu o treinamento "${cert.curso?.nome ?? '—'}"${cert.curso?.carga_horaria ? `, com carga horária de ${cert.curso.carga_horaria} horas` : ''}.`,
-    cx,
-    95,
-    { align: 'center', maxWidth: 240 }
-  );
-
-  doc.setFontSize(11);
-  const linhas = [
-    `Emitido em ${parseISO(cert.data_emissao).toLocaleDateString('pt-BR')}`,
-    cert.data_validade
-      ? `Válido até ${parseISO(cert.data_validade).toLocaleDateString('pt-BR')}`
-      : 'Validade: vitalício',
-    empresaNome ? `Empresa: ${empresaNome}` : '',
-  ].filter(Boolean);
-  doc.text(linhas.join('   ·   '), cx, 120, { align: 'center' });
-
-  doc.setFontSize(9);
-  doc.setTextColor(100);
-  doc.text(`Código de autenticação: ${cert.codigo_autenticacao}`, cx, doc.internal.pageSize.getHeight() - 20, {
-    align: 'center',
-  });
-
-  return doc;
-}
-
 export default function TreinamentosPage() {
   const { empresaAtual } = useEmpresas();
-  const abrirCertificado = (cert: CertificadoComJoins) => {
-    // Só abrimos URLs http(s) — um arquivo_url 'javascript:' gravado no banco
-    // executaria script na origem do app; nesse caso caímos no PDF gerado.
-    if (cert.arquivo_url && /^https?:\/\//i.test(cert.arquivo_url)) {
-      window.open(cert.arquivo_url, '_blank', 'noopener,noreferrer');
-    } else {
-      gerarCertificadoPdf(cert, empresaAtual?.nome_fantasia ?? empresaAtual?.razao_social).save(
-        `certificado-${cert.codigo_autenticacao}.pdf`
-      );
-    }
-    void registrarAcessoPII('treinamento_certificados', 'download', {
-      empresaId: empresaAtual?.id,
-      registroId: cert.id,
-    });
-  };
-
+  const { pode } = usePermissions();
   const qc = useQueryClient();
   const [tab, setTab] = useState('treinamentos');
-  // O hook de permissões é de outra área da muri e ainda não foi portado para a main.
-  const podeCriarTurma = true;
+  /** Autorização real da matriz `permissions` (admin tem atalho true). */
+  const podeCriarTurma = pode('treinamentos', 'create');
 
   // === Queries ===
   // MOCK VISUAL — ver src/mocks/treinamentosMock.ts. Com o mock ligado, cada
   // leitura curto-circuita o Supabase e `enabled` também vale sem empresa ativa.
   const mockAtivo = isTreinamentosMockEnabled();
-  const {
-    data: treinamentos = [],
-    isLoading: loadTrein,
-    isError: erroTrein,
-    refetch: recarregarTrein,
-  } = useQuery({
+  const { data: treinamentos = [], isLoading: loadTrein } = useQuery({
     queryKey: ['treinamentos', empresaAtual?.id],
     queryFn: async (): Promise<any[]> =>
       getMockTreinamentosLista() ?? (await treinamentosService.listar(empresaAtual?.id)),
     enabled: !!empresaAtual?.id || mockAtivo,
   });
-  const {
-    data: cursos = [],
-    isLoading: loadCursos,
-    isError: erroCursos,
-    refetch: recarregarCursos,
-  } = useQuery({
+  const { data: cursos = [], isLoading: loadCursos } = useQuery({
     queryKey: ['catalogo_cursos', empresaAtual?.id],
     queryFn: async (): Promise<any[]> => getMockCursos() ?? (await catalogoCursoService.listarCursos(empresaAtual!.id)),
     enabled: !!empresaAtual?.id || mockAtivo,
   });
-  const {
-    data: trilhas = [],
-    isLoading: loadTrilhas,
-    isError: erroTrilhas,
-    refetch: recarregarTrilhas,
-  } = useQuery({
+  const { data: trilhas = [], isLoading: loadTrilhas } = useQuery({
     queryKey: ['trilhas', empresaAtual?.id],
     queryFn: async (): Promise<any[]> =>
       getMockTrilhas() ?? (await catalogoCursoService.listarTrilhas(empresaAtual!.id)),
@@ -252,14 +168,10 @@ export default function TreinamentosPage() {
       getMockInscricoes() ?? (await catalogoCursoService.listarInscricoes(empresaAtual!.id)),
     enabled: !!empresaAtual?.id || mockAtivo,
   });
-  const {
-    data: instancias = [],
-    isLoading: loadInst,
-    isError: erroInst,
-    refetch: recarregarInst,
-  } = useQuery({
+  const { data: instancias = [], isLoading: loadInst } = useQuery({
     queryKey: ['treinamento_instancias', empresaAtual?.id],
-    queryFn: async (): Promise<any[]> => getMockInstancias() ?? (await catalogoCursoService.listarInstancias()),
+    queryFn: async (): Promise<any[]> =>
+      getMockInstancias() ?? (await catalogoCursoService.listarInstancias(empresaAtual!.id)),
     enabled: !!empresaAtual?.id || mockAtivo,
   });
   const {
@@ -448,7 +360,8 @@ export default function TreinamentosPage() {
   };
 
   // === Cursos ===
-  const cursoFormVazio = {
+  const [openCurso, setOpenCurso] = useState(false);
+  const [cursoForm, setCursoForm] = useState({
     nome: '',
     descricao: '',
     categoria: '',
@@ -456,43 +369,30 @@ export default function TreinamentosPage() {
     carga_horaria: '',
     obrigatorio: false,
     nr_relacionada: '',
-  };
-  const [openCurso, setOpenCurso] = useState(false);
-  const [cursoEditId, setCursoEditId] = useState<string | null>(null);
-  const [cursoForm, setCursoForm] = useState(cursoFormVazio);
+  });
   const criarCurso = useMutation({
-    mutationFn: () => {
-      const payload = {
+    mutationFn: () =>
+      catalogoCursoService.criarCurso({
         ...cursoForm,
         carga_horaria: cursoForm.carga_horaria ? Number(cursoForm.carga_horaria) : null,
-      };
-      return cursoEditId
-        ? catalogoCursoService.atualizarCurso(cursoEditId, payload, empresaAtual!.id)
-        : catalogoCursoService.criarCurso({ ...payload, empresa_id: empresaAtual?.id });
-    },
+        empresa_id: empresaAtual?.id,
+      }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['catalogo_cursos'] });
-      qc.invalidateQueries({ queryKey: ['inscricoes_cursos'] });
       setOpenCurso(false);
-      setCursoForm(cursoFormVazio);
-      toast.success(cursoEditId ? 'Curso atualizado!' : 'Curso criado!');
-      setCursoEditId(null);
+      setCursoForm({
+        nome: '',
+        descricao: '',
+        categoria: '',
+        modalidade: 'presencial',
+        carga_horaria: '',
+        obrigatorio: false,
+        nr_relacionada: '',
+      });
+      toast.success('Curso criado!');
     },
-    onError: () => toast.error(cursoEditId ? 'Erro ao atualizar curso' : 'Erro ao criar curso'),
+    onError: () => toast.error('Erro ao criar curso'),
   });
-  const editarCurso = (c: Tables<'catalogo_cursos'>) => {
-    setCursoEditId(c.id);
-    setCursoForm({
-      nome: c.nome,
-      descricao: c.descricao ?? '',
-      categoria: c.categoria ?? '',
-      modalidade: c.modalidade ?? 'presencial',
-      carga_horaria: c.carga_horaria != null ? String(c.carga_horaria) : '',
-      obrigatorio: !!c.obrigatorio,
-      nr_relacionada: c.nr_relacionada ?? '',
-    });
-    setOpenCurso(true);
-  };
   const excluirCurso = useMutation({
     mutationFn: (id: string) => catalogoCursoService.excluirCurso(id, empresaAtual!.id),
     onSuccess: () => {
@@ -509,13 +409,13 @@ export default function TreinamentosPage() {
 
   // === Trilhas ===
   const [openTrilha, setOpenTrilha] = useState(false);
-  const [trilhaForm, setTrilhaForm] = useState({ nome: '', descricao: '', nivel: 'basico' });
+  const [trilhaForm, setTrilhaForm] = useState({ titulo: '', descricao: '', nivel: 'basico' });
   const criarTrilha = useMutation({
     mutationFn: () => catalogoCursoService.criarTrilha({ ...trilhaForm, empresa_id: empresaAtual?.id }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['trilhas'] });
       setOpenTrilha(false);
-      setTrilhaForm({ nome: '', descricao: '', nivel: 'basico' });
+      setTrilhaForm({ titulo: '', descricao: '', nivel: 'basico' });
       toast.success('Trilha criada!');
     },
     onError: () => toast.error('Erro ao criar trilha'),
@@ -608,25 +508,6 @@ export default function TreinamentosPage() {
     },
     onError: () => toast.error('Erro ao inscrever'),
   });
-  const atualizarInsc = useMutation({
-    mutationFn: ({ insc, status }: { insc: InscricaoComJoins; status: string }) =>
-      catalogoCursoService.atualizarInscricao(
-        insc.id,
-        {
-          colaborador_id: insc.colaborador_id,
-          curso_id: insc.curso_id,
-          status,
-          ...(status === 'concluido' ? { data_conclusao: format(new Date(), 'yyyy-MM-dd') } : {}),
-        },
-        empresaAtual!.id
-      ),
-    onSuccess: (_d, { status }) => {
-      qc.invalidateQueries({ queryKey: ['inscricoes_cursos'] });
-      if (status === 'concluido') qc.invalidateQueries({ queryKey: ['treinamento_certificados'] });
-      toast.success('Status da inscrição atualizado!');
-    },
-    onError: () => toast.error('Erro ao atualizar inscrição'),
-  });
 
   // === Turmas / Instâncias ===
   // A criação usa a operação JÁ existente `criarInstancia`; não há API nova.
@@ -646,7 +527,7 @@ export default function TreinamentosPage() {
   return (
     <MotionConfig reducedMotion={MOTION_REDUCED_MODE}>
       <PageTitle
-        title="Treinamentos"
+        title="Treinamentos 10/10"
         description="Gerencie os treinamentos da sua organização e acompanhe o desenvolvimento dos colaboradores."
       />
       <PageLayout
@@ -840,20 +721,10 @@ export default function TreinamentosPage() {
               {/* NOVO CURSO — ação PRÓPRIA do catálogo (`catalogo_cursos`), distinta
               de “Novo Treinamento”. O formulário e a mutation são os mesmos de
               antes; só mudou o lugar do gatilho. */}
-              <TreinamentosCascadeDialog
-                open={openCurso}
-                onOpenChange={(aberto) => {
-                  setOpenCurso(aberto);
-                  if (!aberto && cursoEditId) {
-                    setCursoEditId(null);
-                    setCursoForm(cursoFormVazio);
-                  }
-                }}
-                blocks={2}
-              >
+              <TreinamentosCascadeDialog open={openCurso} onOpenChange={setOpenCurso} blocks={2}>
                 <TreinamentosCascadeItem>
                   <DialogHeader>
-                    <DialogTitle>{cursoEditId ? 'Editar Curso' : 'Novo Curso'}</DialogTitle>
+                    <DialogTitle>Novo Curso</DialogTitle>
                   </DialogHeader>
                 </TreinamentosCascadeItem>
                 <TreinamentosCascadeItem>
@@ -943,12 +814,7 @@ export default function TreinamentosPage() {
           )
         }
       >
-        <TreinamentosKpis
-          indicadores={indicadores}
-          erroInscricoes={erroInsc}
-          erroCertificados={erroCert}
-          erroCursos={erroCursos}
-        />
+        <TreinamentosKpis indicadores={indicadores} />
 
         {isLoading && tab !== 'catalogo' ? (
           <div className="flex justify-center py-12">
@@ -1003,8 +869,6 @@ export default function TreinamentosPage() {
                   participantesPorTreinamento={participantesPorTreinamento}
                   onExcluir={excluirTreinamento}
                   filtroAtivo={filtroAtivo}
-                  erro={erroTrein}
-                  onTentarNovamente={() => void recarregarTrein()}
                 />
               </div>
             </TabsContent>
@@ -1018,7 +882,6 @@ export default function TreinamentosPage() {
                 carregando={loadCert}
                 erro={erroCert}
                 onTentarNovamente={() => void recarregarCert()}
-                onVer={(certificado) => abrirCertificado(certificado as unknown as CertificadoComJoins)}
               />
             </TabsContent>
 
@@ -1030,9 +893,6 @@ export default function TreinamentosPage() {
                 cursos={cursosComImagem as CursoCatalogo[]}
                 participantesPorCurso={participantesPorCurso}
                 carregando={loadCursos}
-                erro={erroCursos}
-                onTentarNovamente={() => void recarregarCursos()}
-                onEditar={(curso) => editarCurso(curso as unknown as Tables<'catalogo_cursos'>)}
                 onExcluir={excluirCursoCatalogo}
               />
             </TabsContent>
@@ -1066,28 +926,6 @@ export default function TreinamentosPage() {
                     {[0, 1, 2].map((i) => (
                       <div key={i} className="h-[372px] animate-pulse rounded-2xl border border-border/60 bg-card" />
                     ))}
-                  </div>
-                ) : erroTrilhas ? (
-                  <div
-                    role="alert"
-                    className="flex flex-col items-center justify-center rounded-2xl border border-destructive/25 bg-destructive/[0.04] px-6 py-10 text-center"
-                  >
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full border border-destructive/25 bg-destructive/10 text-destructive">
-                      <AlertTriangle className="h-4 w-4" aria-hidden />
-                    </span>
-                    <p className="mt-3 text-sm font-semibold text-foreground">Não foi possível carregar as trilhas</p>
-                    <p className="mt-1 max-w-md text-xs text-muted-foreground">
-                      A listagem existente continua preservada; tente novamente sem alterar filtros ou dados.
-                    </p>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => void recarregarTrilhas()}
-                      className="mt-4 h-9 gap-2 rounded-lg px-3.5 text-[11.5px]"
-                    >
-                      <RefreshCw className="h-3.5 w-3.5" aria-hidden />
-                      Tentar novamente
-                    </Button>
                   </div>
                 ) : trilhas.length === 0 ? (
                   <div className="flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-border/70 bg-card/40 px-4 py-16 text-center">
@@ -1184,8 +1022,8 @@ export default function TreinamentosPage() {
                     <div>
                       <Label>Título *</Label>
                       <Input
-                        value={trilhaForm.nome}
-                        onChange={(e) => setTrilhaForm((p) => ({ ...p, nome: e.target.value }))}
+                        value={trilhaForm.titulo}
+                        onChange={(e) => setTrilhaForm((p) => ({ ...p, titulo: e.target.value }))}
                       />
                     </div>
                     <div>
@@ -1219,7 +1057,7 @@ export default function TreinamentosPage() {
                           if (bloquearEscritaTreinamentos('Criar trilha')) return;
                           criarTrilha.mutate();
                         }}
-                        disabled={!trilhaForm.nome || criarTrilha.isPending}
+                        disabled={!trilhaForm.titulo || criarTrilha.isPending}
                       >
                         {criarTrilha.isPending ? 'Salvando...' : 'Salvar'}
                       </Button>
@@ -1247,10 +1085,6 @@ export default function TreinamentosPage() {
                 erro={erroInsc}
                 onTentarNovamente={() => void recarregarInsc()}
                 onVerCertificado={setCertificadoInscricao}
-                onAlterarStatus={(insc, status) =>
-                  atualizarInsc.mutate({ insc: insc as unknown as InscricaoComJoins, status })
-                }
-                salvandoStatus={atualizarInsc.isPending}
               />
               <CertificadoDetalheDialog
                 certificado={certificadoInscricao}
@@ -1267,8 +1101,6 @@ export default function TreinamentosPage() {
                 cursos={cursosComImagem as any[]}
                 colaboradores={colaboradores as any[]}
                 carregando={loadInst}
-                erro={erroInst}
-                onTentarNovamente={() => void recarregarInst()}
                 onNovaTurma={() => setOpenTurma(true)}
                 podeCriarTurma={podeCriarTurma}
               />
@@ -1279,7 +1111,6 @@ export default function TreinamentosPage() {
         <NovaTurmaDialog
           open={openTurma}
           cursos={cursos as any[]}
-          erroCursos={erroCursos}
           colaboradores={colaboradores as any[]}
           onOpenChange={setOpenTurma}
           onCriar={(dados) => {

@@ -58,8 +58,6 @@ import { getMockDesempenhoAudit } from '@/mocks/desempenhoMock';
  */
 
 interface PerformanceAuditTimelineProps {
-  /** Empresa ativa (tenant). Sem ela o modo demo Ã© o Ãºnico caminho de dados. */
-  empresaId?: string | null;
   /**
    * Colaboradores já carregados pela página — usados SOMENTE para resolver
    * nome/cargo/foto do e-mail do responsável. Sem correspondência, o evento
@@ -295,9 +293,7 @@ type PropsItemCascata = {
   recolhendo?: boolean;
   /** Variantes da cascata (movimento normal ou suave). */
   variantes: Variants;
-} & (
-  { como: 'cabecalho'; indice: number; fechado: boolean; onAlternar: () => void } | { como: 'evento'; indice: number }
-);
+} & ({ como: 'cabecalho'; indice: number; fechado: boolean; onAlternar: () => void } | { como: 'evento'; indice: number });
 
 function ItemCascata(props: PropsItemCascata & { children: ReactNode }) {
   const { atrasoInicial, variantes, como, indice, children } = props;
@@ -361,24 +357,23 @@ function ItemCascata(props: PropsItemCascata & { children: ReactNode }) {
   );
 }
 
-export function PerformanceAuditTimeline({ colaboradores = [], empresaId }: PerformanceAuditTimelineProps) {
+export function PerformanceAuditTimeline({ colaboradores = [] }: PerformanceAuditTimelineProps) {
   const { data: logs = [], isLoading } = useQuery({
-    // A empresa FAZ PARTE da identidade do cache: a queryFn passa
-    // `p_empresa_id`, entao sem ela no key trocar de empresa reusa a trilha da
-    // anterior e a auditoria aparece atribuida a empresa errada. O mock visual
-    // nao depende de empresa, mas o caminho real sim.
-    queryKey: ['performance-audit-logs', empresaId ?? null],
+    queryKey: ['performance-audit-logs'],
     queryFn: async () => {
       // MOCK VISUAL — ver src/mocks/desempenhoMock.ts. Sem isto a trilha ficaria
       // vazia no modo demonstração (a `audit_log` real não tem registros do módulo).
       const ficticios = getMockDesempenhoAudit();
       if (ficticios) return ficticios;
 
-      const { data, error } = await supabase.rpc('get_audit_trail', {
-        p_empresa_id: empresaId ?? null,
-        p_tabelas: ['ciclos_avaliacao', 'metas_okrs', 'feedbacks_360', 'pdis', 'competencias_matriz'],
-        p_limit: 30,
-      });
+      const { data, error } = await (supabase as any)
+        .from('audit_log')
+        .select('*')
+        .or(
+          'tabela.eq.ciclos_avaliacao,tabela.eq.metas_okrs,tabela.eq.feedbacks_360,tabela.eq.pdis,tabela.eq.competencias_matriz'
+        )
+        .order('created_at', { ascending: false })
+        .limit(30);
       if (error) throw error;
       return data || [];
     },
@@ -728,7 +723,9 @@ export function PerformanceAuditTimeline({ colaboradores = [], empresaId }: Perf
                           recolhendo={recolhendo}
                           variantes={movimentoReduzido ? VARIANTE_EVENTO_SUAVE : VARIANTE_EVENTO}
                           atrasoSaida={
-                            movimentoReduzido ? 0 : (grupo.eventos.length - 1 - indiceEvento) * INTERVALO_EVENTO
+                            movimentoReduzido
+                              ? 0
+                              : (grupo.eventos.length - 1 - indiceEvento) * INTERVALO_EVENTO
                           }
                           atrasoInicial={
                             movimentoReduzido
@@ -758,7 +755,11 @@ export function PerformanceAuditTimeline({ colaboradores = [], empresaId }: Perf
         )}
       </div>
 
-      <AuditoriaDetalheDialog derivado={detalhe} aberto={detalheAberto} onOpenChange={setDetalheAberto} />
+      <AuditoriaDetalheDialog
+        derivado={detalhe}
+        aberto={detalheAberto}
+        onOpenChange={setDetalheAberto}
+      />
     </div>
   );
 }

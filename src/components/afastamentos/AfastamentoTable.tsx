@@ -2,27 +2,16 @@ import { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  MoreHorizontal,
-  FileText,
-  Calendar,
-  Trash2,
-  Edit2,
-  AlertCircle,
-  History,
-  Copy,
-  CheckCircle2,
-} from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+import { MoreHorizontal, FileText, Calendar, Trash2, Edit2, AlertCircle, History, Copy, CheckCircle2 } from 'lucide-react';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { useAfastamentos } from '@/hooks/useAfastamentos';
-import type { AfastamentoCrudItem } from '@/types/afastamentos';
 import { format } from 'date-fns';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -31,8 +20,7 @@ const statusColors: Record<string, string> = {
   aprovado: 'bg-green-100 text-green-700 border-green-200',
   finalizado: 'bg-gray-100 text-gray-700 border-gray-200',
   pendente: 'bg-orange-100 text-orange-700 border-orange-200',
-  rejeitado: 'bg-red-100 text-red-700 border-red-200',
-};
+  rejeitado: 'bg-red-100 text-red-700 border-red-200'};
 
 const tipoLabels: Record<string, string> = {
   doenca: 'Doença',
@@ -46,21 +34,18 @@ const tipoLabels: Record<string, string> = {
   servico_militar: 'Serviço Militar',
   mandato_sindical: 'Mandato Sindical',
   suspensao_disciplinar: 'Suspensão Disc.',
-  outros: 'Outros',
-};
-
-type AfastamentoItem = AfastamentoCrudItem & { documentos_count?: number | null };
+  outros: 'Outros'};
 
 /** Espelha o trigger tr_impedir_alteracao_afastamento_encerrado: encerrado/cancelado/aprovado é imutável. */
 const podeProrrogar = (af: AfastamentoItem): boolean =>
   af.status !== 'encerrado' && af.status !== 'cancelado' && !af.aprovado_em;
 
 interface AfastamentoTableProps {
-  data: AfastamentoItem[];
-  onEdit: (afastamento: AfastamentoItem) => void;
-  onProrrogacao: (afastamento: AfastamentoItem) => void;
-  onDocuments: (afastamento: AfastamentoItem) => void;
-  onTimeline: (afastamento: AfastamentoItem) => void;
+  data: any[];
+  onEdit: (afastamento: any) => void;
+  onProrrogacao: (afastamento: any) => void;
+  onDocuments: (afastamento: any) => void;
+  onTimeline: (afastamento: any) => void;
 }
 
 export function AfastamentoTable({ data, onEdit, onProrrogacao, onDocuments, onTimeline }: AfastamentoTableProps) {
@@ -109,22 +94,18 @@ export function AfastamentoTable({ data, onEdit, onProrrogacao, onDocuments, onT
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span
-                            className={`text-xs font-mono px-1.5 py-0.5 rounded cursor-help border transition-all duration-300 ${
-                              af.cid?.toLowerCase().includes(window.location.search.toLowerCase()) ||
-                              af.cid_descricao?.toLowerCase().includes(window.location.search.toLowerCase())
-                                ? 'bg-orange-500 text-white border-orange-600 scale-110 shadow-xs'
-                                : 'bg-muted text-muted-foreground border-border/50'
-                            }`}
-                          >
-                            {af.cid}
+                          <span className={`text-xs font-mono px-1.5 py-0.5 rounded cursor-help border transition-all duration-slow ${
+                            af.cid?.codigo?.toLowerCase().includes(window.location.search.toLowerCase()) || 
+                            af.cid?.descricao?.toLowerCase().includes(window.location.search.toLowerCase())
+                              ? "bg-orange-500 text-white border-orange-600 scale-110 shadow-xs"
+                              : "bg-muted text-muted-foreground border-border/50"
+                          }`}>
+                            {af.cid?.codigo || af.cid}
                           </span>
                         </TooltipTrigger>
                         <TooltipContent side="top" className="bg-popover border-border shadow-xl">
-                          <p className="font-bold text-primary">{af.cid}</p>
-                          <p className="text-xs max-w-[220px] leading-relaxed">
-                            {af.cid_descricao || 'Sem descrição detalhada'}
-                          </p>
+                          <p className="font-medium text-primary">{af.cid?.codigo}</p>
+                          <p className="text-xs max-w-[220px] leading-relaxed">{af.cid?.descricao || 'Sem descrição detalhada'}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -133,17 +114,17 @@ export function AfastamentoTable({ data, onEdit, onProrrogacao, onDocuments, onT
               </TableCell>
               <TableCell>
                 <div className="text-sm">
-                  {format(new Date(af.data_inicio), 'dd/MM/yyyy')}
+                  {format(new Date(af.data_inicio), 'dd/MM/yyyy')} 
                   <span className="text-muted-foreground mx-1">→</span>
                   {format(new Date(af.data_fim_prevista), 'dd/MM/yyyy')}
                 </div>
               </TableCell>
               <TableCell className="text-center">
-                <div className="font-bold text-primary">{af.dias_total}</div>
+                <div className="font-medium text-primary">{af.dias_total}</div>
                 <div className="text-[10px] text-muted-foreground">dias totais</div>
               </TableCell>
               <TableCell>
-                {(af.dias_inss ?? 0) > 0 ? (
+                {af.dias_inss > 0 ? (
                   <div className="flex flex-col gap-1">
                     <TooltipProvider>
                       <Tooltip>
@@ -155,25 +136,19 @@ export function AfastamentoTable({ data, onEdit, onProrrogacao, onDocuments, onT
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>O colaborador deve ser encaminhado ao INSS.</p>
-                          <p className="text-xs text-muted-foreground">
-                            Excedeu o limite de {af.dias_empresa} dias pagos pela empresa.
-                          </p>
+                          <p className="text-xs text-muted-foreground">Excedeu o limite de {af.dias_empresa} dias pagos pela empresa.</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    {af.numero_beneficio && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
+                    {af.protocolo_inss && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
                         className="h-6 px-1.5 text-[10px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
-                        onClick={() => copyToClipboard(af.numero_beneficio!, af.id)}
+                        onClick={() => copyToClipboard(af.protocolo_inss, af.id)}
                       >
-                        {copiedId === af.id ? (
-                          <CheckCircle2 className="h-3 w-3 text-green-500" />
-                        ) : (
-                          <Copy className="h-3 w-3" />
-                        )}
-                        {af.numero_beneficio}
+                        {copiedId === af.id ? <CheckCircle2 className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
+                        {af.protocolo_inss}
                       </Button>
                     )}
                   </div>
@@ -183,12 +158,10 @@ export function AfastamentoTable({ data, onEdit, onProrrogacao, onDocuments, onT
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
-                  <Badge
-                    className={`capitalize shadow-none ${statusColors[af.status ?? ''] || 'bg-muted text-muted-foreground'}`}
-                  >
+                  <Badge className={`capitalize shadow-none ${statusColors[af.status] || 'bg-muted text-muted-foreground'}`}>
                     {af.status}
                   </Badge>
-                  {(af.documentos_count ?? 0) > 0 && (
+                  {af.documentos_count > 0 && (
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -234,7 +207,7 @@ export function AfastamentoTable({ data, onEdit, onProrrogacao, onDocuments, onT
                       <Calendar className="mr-2 h-4 w-4" /> Prorrogar
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem
+                    <DropdownMenuItem 
                       onClick={() => handleExcluir(af.id)}
                       className="text-destructive focus:text-destructive"
                     >

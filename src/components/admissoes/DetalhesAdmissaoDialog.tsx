@@ -6,7 +6,7 @@
  * a leitura do processo. Agora: uma única janela compacta (~1040px, 85vh) que
  * reúne, na ordem em que o RH decide, tudo o que antes estava separado:
  *   1. HEADER     — avatar, nome, etapa, cargo/departamento, datas, responsável
- *                   e "Copiar link do Portal" (a janela tem o X do Radix).
+ *                   e "Ver Portal" (a janela tem o X próprio do Radix).
  *   2. PROGRESSO  — stepper horizontal de 7 etapas + "Concluída", com o número
  *                   real de etapas concluídas e o percentual do processo.
  *   3. PRÓXIMA AÇÃO — bloco destacado; o texto vem de `proximaAcaoDaEtapa`
@@ -32,23 +32,15 @@
  * "ROLAGEM DO MIOLO" junto ao corpo).
  *
  * FUNCIONALIDADE: nenhum botão é decorativo — cada um reusa um caminho real:
- *   • Copiar link do Portal → token vigente (ou novo, via
- *                             `contratacaoService.enviarLinkCandidato`) COPIADO
- *                             para a área de transferência. O RH não abre o
- *                             portal: ele autentica só pelo token e permite
- *                             assinar o contrato como o candidato (correção da
- *                             main preservada aqui);
+ *   • Ver Portal            → `contratacaoService.enviarLinkCandidato` + rota
+ *                             pública `/contratacao?token=…` (portal do candidato);
  *   • Ir para ação         → salto DENTRO desta janela até a seção onde a próxima
  *                             ação acontece (ver `DESTINO_POR_ETAPA`), com
  *                             destaque temporário; some quando a etapa não tem
  *                             destino real (nunca um botão morto);
  *   • Editar / Editar infos → `NovaAdmissaoDialog` em modo edição (reusa
  *                             `useAdmissoes().atualizar`);
- *   • Transmitir agora      → `contratacaoService.transmitirESocial` (S-2200):
- *                             claim_admission_esocial_event cria/reutiliza o
- *                             evento e devolve o evento_id REAL — mandar
- *                             `admissao.id` como eventoId falhava sempre;
- *   • Gerar contrato        → `contratoTemplateService.gerarPdf` (template ativo);
+ *   • Transmitir agora      → `useESocial().enviarEvento` (S-2200);
  *   • Ver detalhes (eSocial)→ rota `/esocial` (módulo real do evento/protocolo);
  *   • Validar / Rejeitar    → `useContratacaoDigital().validarDocumento` (a MESMA
  *                             ação que o antigo diálogo de documentos oferecia,
@@ -91,12 +83,10 @@ import {
 import { NovaAdmissaoDialog } from './NovaAdmissaoDialog';
 import { useContratacaoDigital } from '@/hooks/useContratacaoDigital';
 import { useAdmissaoWorkflow } from '@/hooks/useAdmissaoWorkflow';
+import { useESocial } from '@/hooks/useESocial';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { admissaoService } from '@/services/admissaoService';
 import { contratacaoService } from '@/services/contratacaoService';
-import { contratoTemplateService } from '@/services/contratoTemplateService';
-import { supabase } from '@/integrations/supabase/client';
-import type { Tables } from '@/integrations/supabase/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -121,7 +111,6 @@ import {
   FileCheck2,
   FileText,
   History,
-  Link2,
   Pencil,
   Send,
   ShieldCheck,
@@ -135,27 +124,8 @@ import {
 
 /* ─── Contrato de dados e derivações (puras — mesma entrada, mesma saída) ──── */
 
-/** Registro real da admissão (a MESMA assinatura que `AssinaturasPage` passa). */
-type AdmissaoDetalhe = Tables<'admissoes'>;
-
-/**
- * Evento do histórico do workflow. Os campos de autor NÃO existem na tabela
- * (`workflows_historico` só guarda `usuario_id`); ficam opcionais aqui porque o
- * `select` do hook pede `historico:workflows_historico(*)` e um campo textual
- * novo apareceria sozinho — ver `responsavelDoEvento`.
- */
-type EventoHistorico = Tables<'workflows_historico'> & {
-  responsavel?: string | null;
-  responsavel_nome?: string | null;
-  usuario_nome?: string | null;
-  usuario_email?: string | null;
-};
-
-/** JSON livre da admissão — é dele que saem responsável e tipo de contratação. */
-type MetadataAdmissao = { responsavel?: string | null; tipo_contratacao?: string | null };
-
 interface DetalhesAdmissaoDialogProps {
-  admissao: AdmissaoDetalhe | null;
+  admissao: any;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -187,27 +157,27 @@ const DOC_STATUS: Record<string, { label: string; className: string; Icon: typeo
 };
 
 /** Checklist real da admissão (colunas booleanas) na forma que o checklist espera. */
-function documentosDaAdmissao(a: AdmissaoDetalhe | null): Documento[] {
-  const item = (id: string, nome: string, ok: boolean | null, obrigatorio: boolean, tipo: string): Documento => ({
+function documentosDaAdmissao(a: any): Documento[] {
+  const item = (id: string, nome: string, campo: string, obrigatorio: boolean, tipo: string): Documento => ({
     id,
     nome,
     obrigatorio,
     tipo,
-    status: ok === true ? 'validado' : 'pendente',
+    status: a?.[campo] === true ? 'validado' : 'pendente',
   });
   return [
-    item('doc_pessoais', 'RG / CPF', a?.checklist_documentos_pessoais ?? null, true, 'documentos_pessoais'),
+    item('doc_pessoais', 'RG / CPF', 'checklist_documentos_pessoais', true, 'documentos_pessoais'),
     item(
       'comprovante_res',
       'Comprovante de residência',
-      a?.checklist_comprovante_endereco ?? null,
+      'checklist_comprovante_endereco',
       true,
       'comprovante_endereco'
     ),
-    item('foto', 'Foto 3x4', a?.checklist_foto ?? null, false, 'foto'),
-    item('ctps', 'CTPS / PIS', a?.checklist_ctps ?? null, false, 'ctps'),
-    item('exame', 'Exame admissional (ASO)', a?.checklist_exame_admissional ?? null, true, 'exame_admissional'),
-    item('contrato', 'Contrato', a?.checklist_contrato_assinado ?? null, true, 'contrato_assinado'),
+    item('foto', 'Foto 3x4', 'checklist_foto', false, 'foto'),
+    item('ctps', 'CTPS / PIS', 'checklist_ctps', false, 'ctps'),
+    item('exame', 'Exame admissional (ASO)', 'checklist_exame_admissional', true, 'exame_admissional'),
+    item('contrato', 'Contrato', 'checklist_contrato_assinado', true, 'contrato_assinado'),
   ];
 }
 
@@ -216,7 +186,7 @@ function documentosDaAdmissao(a: AdmissaoDetalhe | null): Documento[] {
  * Kanban move): etapas antes da atual = concluídas, a atual = ativa, as demais
  * futuro. `concluida` fecha em 100%; `cancelada` zera.
  */
-function progressoDaAdmissao(a: AdmissaoDetalhe | null) {
+function progressoDaAdmissao(a: any) {
   const etapa = a?.etapa ?? 'solicitacao';
   if (etapa === 'cancelada') {
     return { concluidas: 0, indiceAtual: -1, percentual: 0, cancelada: true, concluida: false };
@@ -262,8 +232,8 @@ function prazoTexto(dias: number | null): string {
  * textual novo apareceria sozinho). Sem valor legível, a linha simplesmente não
  * mostra "Responsável" — nada é inventado e nenhuma consulta nova é feita.
  */
-function responsavelDoEvento(h: EventoHistorico): string {
-  const candidato = h.responsavel ?? h.responsavel_nome ?? h.usuario_nome ?? h.usuario_email ?? '';
+function responsavelDoEvento(h: any): string {
+  const candidato = h?.responsavel ?? h?.responsavel_nome ?? h?.usuario_nome ?? h?.usuario_email ?? '';
   const texto = typeof candidato === 'string' ? candidato.trim() : '';
   // Um UUID não é um nome: melhor omitir do que exibir o hash.
   return /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(texto) ? '' : texto;
@@ -287,9 +257,9 @@ function dataCurta(iso?: string | null): string | null {
  *     `data_transmissao_esocial` em "eSocial", `updated_at` em "Concluída").
  * Sem data → `''` (a UI mostra "–").
  */
-function datasDasEtapas(a: AdmissaoDetalhe | null, historico: EventoHistorico[]): string[] {
+function datasDasEtapas(a: any, historico: any[]): string[] {
   const timeline = [...historico]
-    .map((h) => h.created_at)
+    .map((h) => h?.created_at as string | undefined)
     .filter((v): v is string => !!v)
     .sort();
 
@@ -410,7 +380,7 @@ const MIOLO_STEPPER_OPACO = 'bg-card';
 const LIMITE_DESCRICAO = 120;
 
 /**
- * Faixa reservada ao botão X do Radix, para o botão do portal NÃO encostar nele.
+ * Faixa reservada ao botão X do Radix, para o "Ver Portal" NÃO encostar nele.
  *
  * O X não é nosso: ele vem do `DialogContent` (`src/components/ui/dialog.tsx`)
  * como `absolute right-3 top-3 h-7 w-7` — 28px de lado a 12px da borda, com o
@@ -418,7 +388,7 @@ const LIMITE_DESCRICAO = 120;
  * clicável ocupa de 12px a 40px e o DESENHO do X de 18px a 34px, sempre no
  * `top-3` (o centro vertical cai a 26px do topo do modal).
  *
- * Com o `px-6` do header (24px), o botão terminava a 24px da borda — só
+ * Com o `px-6` do header (24px), o "Ver Portal" terminava a 24px da borda — só
  * 10px do desenho do X, e era isso que fazia os dois parecerem um único grupo de
  * ações. Somando `pr-9` (36px) ao grupo de ações, o botão passa a terminar a
  * 60px da borda: 20px da caixa do X e 26px do desenho — separação clara, com o
@@ -427,7 +397,7 @@ const LIMITE_DESCRICAO = 120;
 const ACOES_HEADER = 'shrink-0 pr-9';
 
 /**
- * Alinha o botão do portal ao MESMO eixo do X: o centro do X está a 26px do topo,
+ * Alinha o "Ver Portal" ao MESMO eixo do X: o centro do X está a 26px do topo,
  * então o botão de 36px (`h-9`) precisa começar em 26 − 18 = 8px, ou seja, 8px
  * acima do `py-4` (16px) do header. Margem negativa não mexe na ALTURA do header
  * (quem manda nela continua sendo o avatar de 48px) — só reencosta o botão no
@@ -530,25 +500,19 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { validarDocumento } = useContratacaoDigital();
-  const { workflow, isLoading: historicoCarregando, isError: historicoErro } = useAdmissaoWorkflow(admissao?.id);
+  const { workflow } = useAdmissaoWorkflow(admissao?.id);
+  const { enviarEvento, isSending } = useESocial();
   const { empresaAtual } = useEmpresas();
 
-  /**
-   * Campos recém-gravados pela edição, para a janela refletir sem esperar o
-   * refetch do pai. Ficam AMARRADOS ao `id` da admissão editada: a
-   * `AssinaturasPage` reusa a MESMA instância do modal (não tem o `key` da
-   * `AdmissoesPage`), e uma cópia solta do registro faria a admissão B abrir
-   * com os dados da A.
-   */
-  const [edicao, setEdicao] = useState<{ id: string; dados: Record<string, unknown> } | null>(null);
+  // Cópia local para refletir a edição sem esperar o refetch do pai (a página
+  // remonta esta janela por `key` a cada admissão — ver `AdmissoesPage.tsx`).
+  const [registroLocal, setRegistroLocal] = useState<any>(admissao);
 
   const [docExpandido, setDocExpandido] = useState<string | null>(null);
   const [eventoExpandido, setEventoExpandido] = useState<string | null>(null);
   const [cancelamentoAberto, setCancelamentoAberto] = useState(false);
   const [editando, setEditando] = useState(false);
-  const [copiandoLink, setCopiandoLink] = useState(false);
-  const [gerandoContrato, setGerandoContrato] = useState(false);
-  const [enviandoESocial, setEnviandoESocial] = useState(false);
+  const [gerandoPortal, setGerandoPortal] = useState(false);
 
   /** Viewport rolável do corpo — é ELA que o "Ir para ação" movimenta. */
   const corpoRef = useRef<HTMLDivElement>(null);
@@ -566,16 +530,11 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
     []
   );
 
-  // Memoizado porque o ramo de edição cria objeto novo a cada render, e `a` é
-  // dependência dos useMemo de documentos/progresso logo abaixo.
-  const a = useMemo(
-    () => (admissao && edicao?.id === admissao.id ? ({ ...admissao, ...edicao.dados } as AdmissaoDetalhe) : admissao),
-    [admissao, edicao]
-  );
+  const a = registroLocal ?? admissao;
 
   const documentos = useMemo(() => documentosDaAdmissao(a), [a]);
   const progresso = useMemo(() => progressoDaAdmissao(a), [a]);
-  const historico = (workflow?.historico ?? []) as EventoHistorico[];
+  const historico = (workflow?.historico ?? []) as any[];
 
   /**
    * Histórico COMPLETO do workflow, do mais recente para o mais antigo — a MESMA
@@ -596,12 +555,28 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
     [a, workflow]
   );
 
-  // `a` só é nulo quando o pai não passou admissão — nada a mostrar.
-  if (!a) return null;
+  // Fluxo correto: claim_admission_esocial_event cria/reutiliza o evento S-2200
+  // vinculado à admissão (esocial_eventos.admissao_id) e devolve o evento_id
+  // real + concessão exclusiva. O botão antigo enviava admissao.id como
+  // eventoId e o lookup em esocial_eventos falhava sempre.
+  const handleEnvioESocial = async () => {
+    if (!empresaAtual?.id) return;
+    setEnviandoESocial(true);
+    try {
+      await contratacaoService.transmitirESocial(a.id, empresaAtual.id);
+      toast.success('Evento S-2200 transmitido e confirmado.');
+      await queryClient.invalidateQueries({ queryKey: ['admissoes'] });
+      await queryClient.invalidateQueries({ queryKey: ['esocial-eventos'] });
+    } catch (e) {
+      toast.error(safeErrorMessage(e, 'Falha ao transmitir para o eSocial.'));
+      await queryClient.invalidateQueries({ queryKey: ['admissoes'] });
+    } finally {
+      setEnviandoESocial(false);
+    }
+  };
 
-  const meta = (a.metadata ?? null) as MetadataAdmissao | null;
-  const responsavel = (meta?.responsavel ?? '').trim() || 'Não atribuído';
-  const proximaAcao = proximaAcaoDaEtapa(a.etapa);
+  const responsavel = (a?.metadata?.responsavel ?? '').trim() || 'Não atribuído';
+  const proximaAcao = proximaAcaoDaEtapa(a?.etapa);
   const docsConcluidos = documentos.filter((d) => d.status === 'validado').length;
   /**
    * Janela do RH: o antigo diálogo aninhado de documentos passava `isAdmin` fixo
@@ -610,9 +585,9 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
    * lugar — agora vive na linha expandida do próprio documento.
    */
   const isAdmin = true;
-  const esocialEnviado = a.status_esocial === 'enviado';
-  const terminal = a.etapa === 'concluida' || a.etapa === 'cancelada';
-  const dias = diasAteHoje(a.data_prevista, inicioDoDia(new Date()));
+  const esocialEnviado = a?.status_esocial === 'enviado';
+  const terminal = a?.etapa === 'concluida' || a?.etapa === 'cancelada';
+  const dias = diasAteHoje(a?.data_prevista, inicioDoDia(new Date()));
 
   // Nós do stepper: as 7 etapas operacionais + o nó terminal "Concluída", cada um
   // com seu estado visual (mesma régua de `progresso` — nada é recalculado aqui).
@@ -641,55 +616,24 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
    * etapa (`a.etapa`), não do texto. `null` quando não há destino real dentro
    * desta janela (etapa terminal ou desconhecida): o "Ir para ação" some.
    */
-  const destino = DESTINO_POR_ETAPA[a.etapa] ?? null;
+  const destino = DESTINO_POR_ETAPA[a?.etapa] ?? null;
 
-  // O RH não abre o portal do candidato: o portal autentica só pelo token e
-  // permite assinar o contrato (admissao_assinar_contrato) como o candidato.
-  // Aqui só se copia o link (token vigente ou novo) para enviar ao candidato;
-  // admissão concluída/cancelada não gera nem expõe token.
-  const handleCopiarLinkPortal = async () => {
-    if (a.etapa === 'concluida' || a.etapa === 'cancelada') return;
-    setCopiandoLink(true);
-    try {
-      const { data: vigente, error } = await supabase
-        .from('admissao_tokens')
-        .select('token')
-        .eq('admissao_id', a.id)
-        .gt('data_expiracao', new Date().toISOString())
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (error) throw error;
-      let token = vigente?.token;
-      if (!token) {
-        if (!a.email) {
-          toast.error('Candidato sem e-mail cadastrado e sem link de portal vigente.');
-          return;
-        }
-        token = (await contratacaoService.enviarLinkCandidato(a.id, a.email)).token;
-      }
-      await navigator.clipboard.writeText(`${window.location.origin}/contratacao?token=${encodeURIComponent(token)}`);
-      toast.success('Link copiado — envie ao candidato');
-    } catch (e) {
-      toast.error(safeErrorMessage(e, 'Falha ao copiar o link do portal do candidato.'));
-    } finally {
-      setCopiandoLink(false);
+  const handleVerPortal = async () => {
+    if (!a?.email) {
+      toast.error('Candidato sem e-mail cadastrado');
+      return;
     }
-  };
-
-  // gerarPdf sem template_id resolve o template ativo pela RPC
-  // contrato_resolver_template na edge. Único caminho de UI que gera o contrato
-  // da admissão — sem ele a etapa "Contrato" fica sem artefato.
-  const handleGerarContrato = async () => {
-    setGerandoContrato(true);
+    setGerandoPortal(true);
     try {
-      const contrato = await contratoTemplateService.gerarPdf(a.id);
-      toast.success(`Contrato gerado (${contrato.template_nome} v${contrato.template_versao}).`);
-      if (contrato.signed_url) window.open(contrato.signed_url, '_blank', 'noopener');
-    } catch (e) {
-      toast.error(safeErrorMessage(e, 'Falha ao gerar o contrato.'));
+      // Mesmo service usado pelo "Enviar link" da listagem: gera/reaproveita o
+      // token do candidato e abre o portal público em nova aba.
+      const token = await contratacaoService.enviarLinkCandidato(a.id, a.email);
+      const url = `${window.location.origin}/contratacao?token=${token?.token ?? ''}`;
+      window.open(url, '_blank', 'noopener');
+    } catch (error) {
+      toast.error(safeErrorMessage(error, 'Erro ao abrir o portal do candidato.'));
     } finally {
-      setGerandoContrato(false);
+      setGerandoPortal(false);
     }
   };
 
@@ -697,24 +641,10 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
     validarDocumento.mutate({ admissaoId: a.id, docType, status });
   };
 
-  // Fluxo correto: claim_admission_esocial_event cria/reutiliza o evento S-2200
-  // vinculado à admissão (esocial_eventos.admissao_id) e devolve o evento_id
-  // real + concessão exclusiva. O botão antigo enviava admissao.id como
-  // eventoId e o lookup em esocial_eventos falhava sempre.
-  const handleEnvioESocial = async () => {
-    if (!empresaAtual?.id) return;
-    setEnviandoESocial(true);
-    try {
-      await contratacaoService.transmitirESocial(a.id, empresaAtual.id);
-      toast.success('Evento S-2200 transmitido e confirmado.');
-      await queryClient.invalidateQueries({ queryKey: ['admissoes'] });
-      await queryClient.invalidateQueries({ queryKey: ['esocial-eventos'] });
-    } catch (e) {
-      toast.error(safeErrorMessage(e, 'Falha ao transmitir para o eSocial.'));
-      await queryClient.invalidateQueries({ queryKey: ['admissoes'] });
-    } finally {
-      setEnviandoESocial(false);
-    }
+  const handleTransmitir = () => {
+    if (!empresaAtual?.id || !a) return;
+    // Transmissão real do S-2200 (mesmo caminho do botão da aba geral antiga).
+    enviarEvento({ eventoId: a.id, empresaId: empresaAtual.id });
   };
 
   const handleCancelar = async () => {
@@ -730,7 +660,8 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
     }
   };
 
-  const handleEdicaoSalva = (dados: Record<string, unknown>) => setEdicao({ id: a.id, dados });
+  const handleEdicaoSalva = (dados: Record<string, unknown>) =>
+    setRegistroLocal((prev: any) => ({ ...prev, ...dados }));
 
   /**
    * "Ir para ação" — leva a viewport do corpo até a seção onde a próxima ação
@@ -857,14 +788,12 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                             variant="outline"
                             size="sm"
                             className="h-9 shrink-0 gap-2 text-xs"
-                            onClick={handleCopiarLinkPortal}
-                            disabled={copiandoLink || terminal}
-                            title={
-                              terminal ? 'Admissão encerrada — o portal do candidato não está disponível' : undefined
-                            }
+                            onClick={handleVerPortal}
+                            disabled={gerandoPortal || !a.email}
+                            title={!a.email ? 'Candidato sem e-mail cadastrado' : undefined}
                           >
-                            {copiandoLink ? <Spinner size="sm" /> : <Link2 className="h-4 w-4" />}
-                            Copiar link do Portal
+                            {gerandoPortal ? <Spinner size="sm" /> : <ExternalLink className="h-4 w-4" />}
+                            Ver Portal
                           </Button>
                         </div>
                       </div>
@@ -919,7 +848,7 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                           {/* Sobre a track: o trecho CONCLUÍDO em `success`, do centro do 1º
                     nó até o centro do último nó concluído. */}
                           <div
-                            className="pointer-events-none absolute left-[6.25%] top-[11px] h-0.5 -translate-y-1/2 rounded-full bg-success"
+                            className="barra-progresso-preenchimento pointer-events-none absolute left-[6.25%] top-[11px] h-0.5 -translate-y-1/2 rounded-full bg-success transition-[width] duration-progresso ease-out"
                             style={{ width: `${(transicoesVerdes / (nosStepper.length - 1)) * 87.5}%` }}
                           />
                           <div className="grid grid-cols-8 justify-items-center">
@@ -1062,7 +991,7 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                             <LinhaCampo
                               icon={FileCheck2}
                               rotulo="Tipo de contratação"
-                              valor={meta?.tipo_contratacao || '—'}
+                              valor={a.metadata?.tipo_contratacao || a.tipo_contratacao || '—'}
                             />
                           </dl>
                         </section>
@@ -1078,23 +1007,13 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                           }}
                           className={cn(CARD_PANEL, 'flex flex-col', destaque === 'documentos' && DESTAQUE_DESTINO)}
                         >
-                          <div className="mb-3 flex items-center justify-between">
+                          <div className="mb-3 flex items-center">
                             <h3 className="inline-flex items-center gap-2 font-display text-sm font-medium">
                               <FileText className="h-4 w-4 text-info" /> Documentos
                               <span className="text-muted-foreground">
                                 ({docsConcluidos}/{documentos.length})
                               </span>
                             </h3>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-8 gap-1.5 text-xs"
-                              onClick={handleGerarContrato}
-                              disabled={gerandoContrato || terminal}
-                            >
-                              {gerandoContrato ? <Spinner size="sm" /> : <FileCheck2 className="h-3.5 w-3.5" />}
-                              {gerandoContrato ? 'Gerando...' : 'Gerar contrato'}
-                            </Button>
                           </div>
                           <ul className="-mx-2 divide-y divide-border/10">
                             {documentos.map((doc) => {
@@ -1226,11 +1145,10 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                                 variant="outline"
                                 size="sm"
                                 className="flex-1 gap-1.5"
-                                onClick={handleEnvioESocial}
-                                disabled={enviandoESocial}
+                                onClick={handleTransmitir}
+                                disabled={isSending}
                               >
-                                {enviandoESocial ? <Spinner size="sm" /> : <Send className="h-3.5 w-3.5" />} Transmitir
-                                agora
+                                {isSending ? <Spinner size="sm" /> : <Send className="h-3.5 w-3.5" />} Transmitir agora
                               </Button>
                             )}
                             <Button
@@ -1260,20 +1178,7 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                               <History className="h-4 w-4 text-primary" /> Histórico
                             </h3>
                           </div>
-                          {/* Três estados DISTINTOS: a frase de vazio só aparece
-                      quando a consulta terminou SEM erro — a linha do tempo
-                      tem peso de auditoria no eSocial e não pode afirmar
-                      ausência de evento quando a leitura falhou. */}
-                          {historicoCarregando ? (
-                            <p className="flex items-center justify-center gap-2 py-4 text-xs text-muted-foreground">
-                              <Spinner size="sm" /> Carregando histórico…
-                            </p>
-                          ) : historicoErro ? (
-                            <p className="py-4 text-center text-xs text-destructive">
-                              Não foi possível carregar o histórico. Isso NÃO significa que não houve evento — a leitura
-                              falhou; feche e abra a janela para tentar de novo.
-                            </p>
-                          ) : historicoCompleto.length === 0 ? (
+                          {historicoCompleto.length === 0 ? (
                             <p className="py-4 text-center text-xs text-muted-foreground">
                               Nenhum evento registrado para esta admissão.
                             </p>

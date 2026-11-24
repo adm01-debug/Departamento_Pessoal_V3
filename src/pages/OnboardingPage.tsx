@@ -1,38 +1,39 @@
 /**
  * JORNADA DE ONBOARDING — rota `/onboarding` (item "Onboarding" da sidebar).
  *
- * Tela de acompanhamento da integração: lista, filtra, ordena, pagina, detalha e
- * opera (concluir tarefa) a jornada do colaborador. Admissões termina no
- * processo admissional (Solicitação → … → Concluída); o que acontece DEPOIS da
- * admissão formal é jornada, e é isto aqui.
+ * ⚠️ FONTE ÚNICA DO ONBOARDING (consolidação do módulo de Admissões). A aba
+ * "Onboarding" de `AdmissoesPage` deixou de existir: aqui está a ÚNICA tela que
+ * lista, filtra, detalha e opera a integração do colaborador. Admissões termina
+ * no processo admissionAL (Solicitação → … → Concluída) e aponta para cá; o que
+ * acontece DEPOIS da admissão formal é jornada, e jornada só existe aqui.
  *
- * FONTE DE DADOS: nada de Supabase direto nesta página — tudo vem de
- * `useJornadaOnboarding` (hooks) → `onboardingJornadaService` (service), que lê
- * `admissoes` com `tarefas:tarefas_onboarding(*)` na MESMA chave de cache
- * `['onboarding-list']` de antes e resolve `tarefas_onboarding.responsavel_id`
- * em `profiles.nome`. A régua de negócio (progresso, prazo, risco, situação,
- * marco) fica em `onboardingDerivacoes.ts`, lida UMA vez por lista por
- * `projetarOnboarding` — cards, contadores, filtros e chips leem a MESMA
- * projeção, então nada na tela discorda do card.
+ * MESMA FONTE DE DADOS das duas telas antigas — nada foi copiado entre bancos:
+ * `admissoes` com `tarefas:tarefas_onboarding(*)` (mesma query, mesma chave
+ * `['onboarding-list']`, mesmo mock). A régua de negócio (progresso, prazo,
+ * risco, situação, marco) fica em `onboardingDerivacoes.ts`, lida UMA vez por
+ * lista por `projetarOnboarding` — cards, contadores, filtros e chips leem a
+ * MESMA projeção, então nada na tela discorda do card.
  *
- * ERRO DE LEITURA ≠ LISTA VAZIA: a jornada é tela de RH. Quando a consulta
- * falha, a página mostra o estado de ERRO com "Tentar novamente" e NÃO renderiza
- * abas, chips, contadores nem "nenhum colaborador" — nenhum número em 0 pode
- * passar por "nada pendente" (ver `EstadoErroJornada`).
+ * O QUE VEIO DE ADMISSÕES NA CONSOLIDAÇÃO:
+ *   • a leitura de situação por colaborador (`situacaoOnboarding`), que antes
+ *     vivia implícita no pill do card;
+ *   • os TOTAIS da jornada (em andamento / concluídos) — na consolidação
+ *     apareciam num bloco de resumo isolado no topo; no redesenho de layout eles
+ *     passaram a viver de forma CONTEXTUAL dentro dos próprios tabs
+ *     ("Em andamento (n)" / "Concluídos (n)") e dos chips ("Em risco", etc.),
+ *     sem área dedicada (ver `resumoGeralOnboarding`).
  *
- * TOTAIS: os contadores da jornada (em andamento / concluídos) vivem de forma
- * CONTEXTUAL dentro dos próprios tabs ("Em andamento (n)" / "Concluídos (n)") e
- * dos chips ("Em risco", etc.), sem bloco de resumo dedicado no topo (ver
- * `resumoGeralOnboarding`).
+ * O QUE JÁ ERA DAQUI: as abas "Em Andamento"/"Concluídos", a grade de cards
+ * (`OnboardingCard`), o detalhe (`OnboardingDetalheDialog`) e "Gestão de Kits".
  *
- * GESTÃO DE KITS é AÇÃO INDEPENDENTE do cabeçalho, fora do grupo de tabs de
- * status: ela é ferramenta auxiliar da jornada (equipamentos/kits), não um
- * estado do colaborador.
+ * GESTÃO DE KITS: deixou de ser uma aba do MESMO grupo de status e virou AÇÃO
+ * INDEPENDENTE no cabeçalho — ela é ferramenta auxiliar da jornada
+ * (equipamentos/kits), não um estado do colaborador. Continua fora de Admissões,
+ * como sempre esteve.
  */
 
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Rocket,
@@ -48,7 +49,6 @@ import {
   ArrowUpDown,
   ArrowLeft,
   Plus,
-  AlertTriangle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { AppPagination } from '@/components/ui/app-pagination';
@@ -59,14 +59,21 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FilterChip } from '@/components/ui/filter-chip';
+import { FilterChip, type TomChipBrilho } from '@/components/ui/filter-chip';
 import { SlidingIndicator } from '@/components/ui/sliding-indicator';
 import { cardVariants } from '@/components/dashboard/MetricCard';
 import { cn } from '@/lib/utils';
 import { useEmpresas } from '@/hooks/useEmpresas';
 // DOMÍNIO CANÔNICO: a página não fala mais com o Supabase direto — ver
 // `src/services/onboardingJornadaService.ts` e `src/hooks/useJornadaOnboarding.ts`.
-import { useJornadas, useKits, useConcluirTarefa, useCriarKit, useAtualizarKit } from '@/hooks/useJornadaOnboarding';
+import {
+  useJornadas,
+  useKits,
+  useConcluirTarefa,
+  useCriarKit,
+  useAtualizarKit,
+  jornadaEmModoDemonstracao,
+} from '@/hooks/useJornadaOnboarding';
 import { OnboardingCard, type OnboardingAcoes } from '@/components/admissoes/OnboardingCard';
 import { GestaoKits } from '@/components/admissoes/GestaoKits';
 import { OnboardingDetalheDialog } from '@/components/admissoes/OnboardingDetalheDialog';
@@ -146,21 +153,49 @@ type ChipAtivo = SituacaoOnboarding | 'todos';
 type ChipConcluido = 'todos' | 'mes' | 'no_prazo' | 'fora_prazo';
 type PeriodoOnboarding = 'todos' | '7' | '30' | '90';
 
+/**
+ * Anatomia de um chip rápido da jornada — uma só para as DUAS abas (o componente
+ * de render também é único; trocar de aba troca o CONJUNTO de chips, nunca o
+ * desenho da pílula).
+ *
+ * `tom`  → família de COR DO STATUS: é ela que pinta o chip INTEIRO nos dois
+ *          estados (repouso com borda 25% + tinta 10% + texto 90%; aceso com
+ *          borda 55–60% + tinta 20% + texto cheio + halo) — o MESMO tema dos
+ *          chips do Hub de Premiações (`avaliacao/chipFiltroComum`). `undefined`
+ *          cai no neutro do componente.
+ * `ponto`→ classe da bolinha, nos MESMOS tokens da família (`bg-primary`,
+ *          `bg-warning`, `bg-destructive-vivid`, `bg-slate-400`): a bolinha é
+ *          sólida nos dois estados, então ela e a tinta do chip têm de sair do
+ *          mesmo token — senão o mesmo status aparece em duas cores.
+ */
+interface ChipRapido {
+  label: string;
+  tom?: TomChipBrilho;
+  ponto?: string;
+}
+
 /** Chips rápidos da aba "Em Andamento" — o mapa de SITUAÇÃO da jornada. */
-const CHIPS_ATIVOS: { value: ChipAtivo; label: string; ponto?: string }[] = [
-  { value: 'todos', label: 'Todos' },
-  { value: 'em_dia', label: 'Em dia', ponto: 'bg-primary' },
-  { value: 'em_risco', label: 'Em risco', ponto: 'bg-warning' },
-  { value: 'atrasado', label: 'Atrasados', ponto: 'bg-[hsl(var(--destructive-vivid))]' },
-  { value: 'sem_proxima_acao', label: 'Sem próxima ação' },
+const CHIPS_ATIVOS: ({ value: ChipAtivo } & ChipRapido)[] = [
+  // Todos: lime da marca (o agregador acende em verde como no Hub).
+  { value: 'todos', label: 'Todos', tom: 'primary' },
+  // Em dia: verde/lima = jornada em ordem.
+  { value: 'em_dia', label: 'Em dia', tom: 'primary', ponto: 'bg-primary' },
+  // Em risco: laranja = atenção.
+  { value: 'em_risco', label: 'Em risco', tom: 'warning', ponto: 'bg-warning' },
+  // Atrasados: vermelho vivo = prazo estourado.
+  { value: 'atrasado', label: 'Atrasados', tom: 'destructive', ponto: 'bg-destructive-vivid' },
+  // Sem próxima ação: neutro (nem bom nem ruim) — família cinza, sem bolinha.
+  { value: 'sem_proxima_acao', label: 'Sem próxima ação', tom: 'neutro' },
 ];
 
 /** Chips rápidos da aba "Concluídos" — prazo de fechamento e recência. */
-const CHIPS_CONCLUIDOS: { value: ChipConcluido; label: string; ponto?: string }[] = [
-  { value: 'todos', label: 'Todos' },
-  { value: 'mes', label: 'Este mês', ponto: 'bg-primary' },
-  { value: 'no_prazo', label: 'No prazo', ponto: 'bg-success' },
-  { value: 'fora_prazo', label: 'Fora do prazo', ponto: 'bg-[hsl(var(--destructive-vivid))]' },
+const CHIPS_CONCLUIDOS: ({ value: ChipConcluido } & ChipRapido)[] = [
+  { value: 'todos', label: 'Todos', tom: 'primary' },
+  // Este mês: recorte de tempo, não de qualidade → família neutra (cinza).
+  { value: 'mes', label: 'Este mês', tom: 'neutro', ponto: 'bg-slate-400' },
+  // No prazo: concluído dentro do prazo é o caso BOM → verde/lima.
+  { value: 'no_prazo', label: 'No prazo', tom: 'primary', ponto: 'bg-primary' },
+  { value: 'fora_prazo', label: 'Fora do prazo', tom: 'destructive', ponto: 'bg-destructive-vivid' },
 ];
 
 const PERIODOS_ONBOARDING: { value: PeriodoOnboarding; label: string }[] = [
@@ -256,46 +291,20 @@ function EstadoVazioJornada({
   tomIcone?: string;
 }) {
   return (
-    <motion.div custom={REVELA.cartoes} variants={cardVariants} initial="hidden" animate="visible">
+    <div>
       <Card className="rounded-2xl border-2 border-dashed border-border/50 p-12 text-center text-muted-foreground">
         <Icone className={cn('mx-auto mb-4 h-12 w-12 opacity-20', tomIcone)} />
         <p className="font-display font-medium">{titulo}</p>
         <p className="text-sm">{descricao}</p>
       </Card>
-    </motion.div>
-  );
-}
-
-/**
- * ESTADO DE ERRO DA JORNADA — a leitura de `['onboarding-list']` falhou.
- *
- * Substitui a tela inteira (abas, filtros, chips, grade e paginação): sem dado
- * não existe contador honesto, e "nenhum colaborador em onboarding" ou um total
- * em 0 seriam uma AFIRMAÇÃO FALSA sobre o RH. Aqui só cabe o que é verdade —
- * não foi possível carregar — e a ação de tentar de novo (`refetch`).
- */
-function EstadoErroJornada({ onTentarNovamente }: { onTentarNovamente: () => void }) {
-  return (
-    <motion.div custom={REVELA.cartoes} variants={cardVariants} initial="hidden" animate="visible">
-      <Card
-        data-testid="onboarding-erro"
-        className="rounded-2xl border-2 border-dashed border-[hsl(var(--destructive-vivid)/0.4)] p-12 text-center"
-      >
-        <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-[hsl(var(--destructive-vivid))] opacity-70" />
-        <p className="font-display font-medium text-foreground">Não foi possível carregar a jornada de onboarding</p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Os dados não chegaram, então nada aqui pode ser lido como situação real dos colaboradores.
-        </p>
-        <Button variant="outline" size="sm" onClick={onTentarNovamente} className="mt-4 h-9 gap-1.5 rounded-xl text-xs">
-          <RotateCcw className="h-3.5 w-3.5" /> Tentar novamente
-        </Button>
-      </Card>
-    </motion.div>
+    </div>
   );
 }
 
 export default function OnboardingPage() {
   const [activeTab, setActiveTab] = useState('ativos');
+  // MODO DEMONSTRAÇÃO — ver src/mocks/admissoesMock.ts (dev + VITE_ADMISSOES_MOCK=true).
+  const emDemonstracao = jornadaEmModoDemonstracao();
   const { empresaAtual } = useEmpresas();
   // Deep link `/onboarding?colaborador=<id>` — o atalho contextual de Admissões
   // chega aqui já focado no colaborador certo.
@@ -314,6 +323,10 @@ export default function OnboardingPage() {
   const [kitsAbertos, setKitsAbertos] = useState(false);
   // Formulário de perfil de kit: `null` = fechado; `{kit: null}` = criar.
   const [kitEmEdicao, setKitEmEdicao] = useState<{ kit: KitOnboarding | null } | null>(null);
+  // IMAGEM DO KIT — overlay de SESSÃO (id do kit → URL da imagem). Não é
+  // persistido: `onboarding_kits` ainda não tem coluna de imagem, então a imagem
+  // vive apenas enquanto a página estiver montada (nada é gravado no banco).
+  const [imagensKit, setImagensKit] = useState<Record<string, string>>({});
 
   // ── FILTROS combináveis (busca/selects/painel) ────────────────────────────
   const [termo, setTermo] = useState('');
@@ -330,59 +343,40 @@ export default function OnboardingPage() {
   const [ordem, setOrdem] = useState<OrdemOnboarding>(ORDEM_ONBOARDING_PADRAO);
   const [pagina, setPagina] = useState(1);
 
-  const qc = useQueryClient();
-  /** Empresa do escopo: toda leitura da jornada/kits é isolada por ela. */
-  const empresaId = empresaAtual?.id ?? '';
-  // `isError`/`refetch` são os estados do React Query: a jornada NUNCA desenha
-  // lista, contador ou vazio quando a leitura falhou (ver `EstadoErroJornada`).
-  const {
-    data: onboarding = [],
-    isLoading,
-    isError: jornadaComErro,
-    refetch: recarregarJornada,
-  } = useJornadas(empresaId);
-  /**
-   * GESTÃO DE KITS — a leitura vem do `useKits()` (domínio canônico →
-   * `onboarding_kits`), com `incluirInativos` LIGADO: este é o gerenciador, e
-   * sem os inativos o filtro "Somente inativos" ficaria vazio e um kit
-   * desativado desapareceria sem caminho de volta. O `GestaoKits` distingue as
-   * QUATRO situações (carregando / erro / nenhum perfil / grade), então nem um
-   * erro nem uma leitura em andamento aparece como "nenhum kit".
-   */
-  const {
-    data: kits = [],
-    isLoading: kitsCarregando,
-    isError: kitsComErro,
-    refetch: recarregarKits,
-  } = useKits(empresaId, true);
+  const { data: onboarding = [], isLoading } = useJornadas();
+  const { data: kits = [], isError: kitsComErro } = useKits();
   const concluirTarefa = useConcluirTarefa(() => setTarefaConcluindo(null));
   const criarKit = useCriarKit();
   const atualizarKit = useAtualizarKit();
 
+  /**
+   * KITS EXIBIDOS NA GRADE — os perfis do banco + o overlay de imagem da SESSÃO
+   * (ver `imagensKit`). Nenhum dado fictício: o que vem do banco permanece como
+   * está; só a imagem (que ainda não tem coluna) é acrescentada em memória.
+   */
+  const kitsComImagem = useMemo(
+    () => kits.map((kit) => ({ ...kit, imagem_url: imagensKit[kit.id] ?? kit.imagem_url ?? null })),
+    [kits, imagensKit]
+  );
+
+  /**
+   * GESTÃO DE KITS — a leitura (ativa/erro) vem do `useKits()` (domínio
+   * canônico → `onboarding_kits`). A tela distingue TRÊS situações, e um erro
+   * NUNCA é apresentado como "nenhum kit": ver `EstadoErroKits` na grade.
+   */
   const concluir = (tarefaId: string) => {
     setTarefaConcluindo(tarefaId);
-    concluirTarefa.mutate(tarefaId, {
-      onSuccess: () => {
-        // O dossiê (Timeline e card de Desenvolvimento) lê por OUTRAS chaves.
-        // Sem invalidá-las, o staleTime de 5 min de `queryClient.ts` e o
-        // `refetchOnWindowFocus` desligado deixam a tarefa como pendente lá
-        // mesmo depois de concluída aqui.
-        qc.invalidateQueries({ queryKey: ['onboarding-tarefas-colaborador'] });
-        qc.invalidateQueries({ queryKey: ['onboarding-colaborador'] });
-        toast.success('Tarefa concluída!');
-      },
-      onError: () => toast.error('Não foi possível concluir a tarefa.'),
-    });
+    concluirTarefa.mutate(tarefaId);
   };
 
   /**
-   * COMUNICAÇÃO COM O COLABORADOR — HONESTIDADE.
+   * COMUNICAÇÃO COM O COLABORADOR — HONESTIDADE (correção da auditoria).
    *
-   * O projeto só tem envio de e-mail para o LINK DE PRÉ-ADMISSÃO (edge
-   * `enviar-email-admissao`, via Resend), que é outro fluxo e outro
-   * destinatário. Não existe envio de mensagem de boas-vindas da jornada, então
-   * esta ação NÃO diz "enviado": copia o texto para a área de transferência —
-   * ação REAL e verificável — e informa exatamente o que aconteceu.
+   * Não existe NENHUMA infraestrutura de e-mail no projeto (nenhuma edge
+   * function de envio, nenhum provider/Resend/SMTP — auditado). Então a ação
+   * NÃO pode dizer "enviado": ela copia a mensagem de boas-vindas para a área de
+   * transferência, o que é uma ação REAL e verificável pelo usuário, e informa
+   * exatamente o que aconteceu.
    */
   const copiarMensagemBoasVindas = async (colaborador: ColaboradorOnboarding) => {
     const nome = colaborador.nome ?? 'colaborador';
@@ -409,16 +403,8 @@ export default function OnboardingPage() {
   /** FONTE ÚNICA de leitura: uma projeção por lista (ver doc do topo). */
   const linhas = useMemo(() => projetarOnboarding(listaLimpa, hoje), [listaLimpa, hoje]);
   const resumo = useMemo(() => resumoGeralOnboarding(linhas), [linhas]);
-  /**
-   * CONCLUÍDO PARA AS ABAS = 100% E NÃO CANCELADA — a MESMA régua que
-   * `resumoGeralOnboarding` usa nos rótulos ("Concluídos (n)"). Sem o recorte da
-   * cancelada, uma admissão cancelada com todas as tarefas feitas virava card na
-   * aba "Concluídos" enquanto o rótulo dizia "(0)" e ela era somada em "Em
-   * andamento". Ela continua listada (histórico preservado), na aba que o
-   * contador afirma: "Em andamento".
-   */
-  const emAndamento = useMemo(() => linhas.filter((l) => !l.concluido || l.cancelada), [linhas]);
-  const concluidos = useMemo(() => linhas.filter((l) => l.concluido && !l.cancelada), [linhas]);
+  const emAndamento = useMemo(() => linhas.filter((l) => !l.concluido), [linhas]);
+  const concluidos = useMemo(() => linhas.filter((l) => l.concluido), [linhas]);
 
   /** Filtros combináveis — tudo MENOS o chip rápido (o chip é a última camada). */
   const passaFiltros = (linha: LinhaOnboarding): boolean => {
@@ -447,7 +433,7 @@ export default function OnboardingPage() {
    * contagens dos chips saem da base FILTRADA (nunca da página).
    */
   const baseDaAba = activeTab === 'ativos' ? emAndamento : concluidos;
-  const chips: { value: ChipAtivo | ChipConcluido; label: string; ponto?: string }[] =
+  const chips: ({ value: ChipAtivo | ChipConcluido } & ChipRapido)[] =
     activeTab === 'ativos' ? CHIPS_ATIVOS : CHIPS_CONCLUIDOS;
 
   const termoNormalizado = termo.trim().toLowerCase();
@@ -512,20 +498,55 @@ export default function OnboardingPage() {
   };
 
   /**
+   * REGISTRA A IMAGEM DO KIT NA SESSÃO — `onboarding_kits` ainda NÃO tem coluna
+   * de imagem, então NADA é gravado: guardamos a URL (imagem de sessão) em
+   * memória apenas para a grade exibir o kit com imagem. Ao recarregar a página
+   * a imagem some — o que é a verdade, não uma persistência fingida.
+   */
+  const registrarImagemSessao = (id: string, imagemUrl: string | null) => {
+    setImagensKit((atual) => {
+      const copia = { ...atual };
+      if (imagemUrl) copia[id] = imagemUrl;
+      else delete copia[id];
+      return copia;
+    });
+  };
+
+  /**
    * SALVAR PERFIL DE KIT (criar/editar) — o diálogo devolve o payload e a
    * gravação vai para o serviço canônico (via mutation do hook).
+   *
+   * Em MODO DEMONSTRAÇÃO a gravação acontece no estado em memória do mock: o kit
+   * entra na grade até a página recarregar (e o toast diz isso). Antes a escrita
+   * era BLOQUEADA aqui, o que impedia testar o formulário e a imagem.
+   *
+   * A IMAGEM não é gravada (não existe coluna): ela é mantida só na SESSÃO, com
+   * aviso explícito — nada de persistência fingida.
    */
   const salvarKit = (entrada: KitOnboardingInput) => {
-    if (!empresaId) {
+    // Em demonstração não há empresa real a exigir; no modo real ela é pré-requisito.
+    if (!emDemonstracao && !empresaAtual?.id) {
       toast.error('Selecione uma empresa antes de salvar o perfil de kit.');
       return;
     }
+    /** Aviso honesto do que ACABOU de acontecer (demo × imagem de sessão). */
+    const avisarExtras = () => {
+      if (emDemonstracao) {
+        toast.info('Modo demonstração: o perfil aparece na grade só nesta sessão — nada foi gravado no banco.');
+      }
+      if (entrada.imagem_url !== undefined) {
+        toast.info('Imagem exibida nesta sessão: a gravação permanente depende de autorização para a coluna no banco.');
+      }
+    };
     if (kitEmEdicao?.kit) {
+      const id = kitEmEdicao.kit.id;
       atualizarKit.mutate(
-        { id: kitEmEdicao.kit.id, entrada },
+        { id, entrada },
         {
           onSuccess: () => {
+            registrarImagemSessao(id, entrada.imagem_url ?? null);
             toast.success('Perfil de kit atualizado.');
+            avisarExtras();
             setKitEmEdicao(null);
           },
           onError: () => toast.error('Não foi possível atualizar o perfil de kit.'),
@@ -534,10 +555,12 @@ export default function OnboardingPage() {
       return;
     }
     criarKit.mutate(
-      { empresaId, entrada },
+      { empresaId: empresaAtual?.id ?? '', entrada },
       {
-        onSuccess: () => {
+        onSuccess: (novoKit) => {
+          registrarImagemSessao(novoKit.id, entrada.imagem_url ?? null);
           toast.success('Perfil de kit criado.');
+          avisarExtras();
           setKitEmEdicao(null);
         },
         onError: () => toast.error('Não foi possível criar o perfil de kit.'),
@@ -685,30 +708,18 @@ export default function OnboardingPage() {
               </div>
 
               {/* GESTÃO DE KITS — grade redesenhada em `GestaoKits`: busca, filtro
-                  de status, ordenação e resumo com contagens reais. Os quatro
-                  estados (carregando / erro de leitura / nenhum perfil / grade)
-                  vivem dentro do componente. */}
+                  de status, ordenação e resumo com contagens reais. Os três
+                  estados (grade / nenhum perfil / erro de leitura) vivem dentro
+                  do componente. */}
               <GestaoKits
                 key="kits-grade"
-                kits={kits}
-                isLoading={kitsCarregando}
+                kits={kitsComImagem}
                 isError={kitsComErro}
-                onTentarNovamente={() => void recarregarKits()}
                 departamentos={opcoesDepartamento}
                 revealOffset={REVELA_KITS.conteudo}
                 onEditar={(kit) => setKitEmEdicao({ kit })}
               />
             </AnimatePresence>
-          ) : jornadaComErro ? (
-            <AnimatePresence>
-              <EstadoErroJornada key="jornada-erro" onTentarNovamente={() => void recarregarJornada()} />
-            </AnimatePresence>
-          ) : isLoading ? (
-            // Enquanto a consulta não respondeu nada é afirmado: as abas, os
-            // chips e os contadores (que sairiam todos em 0) ficam fora da tela.
-            <div className="flex justify-center py-20">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
           ) : (
             <AnimatePresence>
               <Tabs key="jornada" value={activeTab} onValueChange={trocarAba} className="w-full space-y-3">
@@ -933,8 +944,13 @@ export default function OnboardingPage() {
                   da barra de filtros e veio para cá). Em telas estreitas só a
                   faixa de chips rola; a ordenação fica ancorada à direita. */}
                 <div className="flex items-center gap-3">
-                  <div className="min-w-0 flex-1 overflow-x-auto py-0.5">
-                    <div className="flex items-center gap-2">
+                  {/* SEM `overflow` neste container: `overflow-x-auto` obriga o eixo
+                      Y a virar `auto` e RECORTA o halo do chip (era o que engolia o
+                      glow mesmo com as classes certas). Como no Hub de Premiações, a
+                      faixa QUEBRA em vez de rolar — o brilho de 14px aparece inteiro
+                      em qualquer largura e nada sai da tela. */}
+                  <div className="min-w-0 flex-1 py-0.5">
+                    <div className="flex flex-wrap items-center gap-2">
                       {chips.map((opcao) => (
                         <motion.div
                           key={opcao.value}
@@ -945,7 +961,20 @@ export default function OnboardingPage() {
                           className="flex min-w-fit"
                         >
                           <FilterChip
+                            // PÍLULAS COLORIDAS DO HUB: a cor do STATUS aparece
+                            // nos DOIS estados — repouso com borda 25% + tinta
+                            // 10% + texto 90% + pílula do contador a 15%;
+                            // selecionado com borda 55–60% + tinta 20% + texto
+                            // cheio + HALO `shadow-glow*` do tema. É o MESMO
+                            // desenho dos filtros do Hub de Premiações
+                            // (`avaliacao/ColoredFilterChip` + `PALETAS_CHIP`).
+                            // O componente é o MESMO das duas abas, então "Em
+                            // andamento" e "Concluídos" não podem divergir. A
+                            // contagem entra SEM parênteses — só o número na
+                            // pílula —, como nos chips do Hub.
+                            variante="brilho"
                             label={opcao.label}
+                            tom={opcao.tom}
                             total={totalDoChip(opcao.value)}
                             ativo={chip === opcao.value}
                             ponto={opcao.ponto}
@@ -984,7 +1013,11 @@ export default function OnboardingPage() {
                   contexto novo devolve a entrada em cascata (`cardVariants`). */}
                 <AnimatePresence>
                   <TabsContent key="aba-ativos" value="ativos">
-                    {baseDaAba.length === 0 ? (
+                    {isLoading ? (
+                      <div className="flex justify-center py-20">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                      </div>
+                    ) : baseDaAba.length === 0 ? (
                       <EstadoVazioJornada
                         icone={Rocket}
                         titulo="Nenhum onboarding ativo"
@@ -1005,8 +1038,8 @@ export default function OnboardingPage() {
                     {concluidos.length === 0 ? (
                       <EstadoVazioJornada
                         icone={CheckCircle2}
-                        titulo="Nenhuma integração concluída"
-                        descricao="Quando uma jornada chegar a 100%, ela aparece aqui."
+                        titulo="Histórico de Integrações Concluídas"
+                        descricao="Todos os colaboradores recentes já estão 100% integrados."
                         tomIcone="text-success"
                       />
                     ) : listaOrdenada.length === 0 ? (

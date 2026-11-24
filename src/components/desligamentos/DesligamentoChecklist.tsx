@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import type { Tables } from '@/integrations/supabase/types';
 import { CheckCircle2, Circle, ListChecks } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -25,52 +24,20 @@ import { entradaCard, EntradaPresenca } from './entradaCards';
  */
 
 const CHECKLIST_ITEMS = [
-  {
-    key: 'checklist_comunicacao',
-    label: 'Comunicação ao colaborador',
-    descricao: 'Registrar e oficializar a comunicação do desligamento.',
-  },
-  {
-    key: 'checklist_documentacao',
-    label: 'Documentação preparada',
-    descricao: 'Reunir e validar os documentos necessários do processo.',
-  },
-  {
-    key: 'checklist_calculo_rescisao',
-    label: 'Cálculo de rescisão',
-    descricao: 'Conferir as verbas e os valores calculados no sistema.',
-  },
-  {
-    key: 'checklist_revogacao_acessos',
-    label: 'Revogação de acessos',
-    descricao: 'Bloquear acessos, sistemas e credenciais do colaborador.',
-  },
-  {
-    key: 'checklist_devolucao_equipamentos',
-    label: 'Devolução de equipamentos',
-    descricao: 'Registrar a devolução dos itens sob responsabilidade.',
-  },
-  {
-    key: 'checklist_esocial',
-    label: 'Envio eSocial (S-2299)',
-    descricao: 'Transmitir o evento de desligamento ao eSocial.',
-  },
-  {
-    key: 'checklist_homologacao',
-    label: 'Homologação',
-    descricao: 'Homologar a rescisão junto ao sindicato, quando aplicável.',
-  },
-  {
-    key: 'checklist_pagamento',
-    label: 'Pagamento efetuado',
-    descricao: 'Confirmar o pagamento das verbas rescisórias.',
-  },
+  { key: 'checklist_comunicacao', label: 'Comunicação ao colaborador', descricao: 'Registrar e oficializar a comunicação do desligamento.' },
+  { key: 'checklist_documentacao', label: 'Documentação preparada', descricao: 'Reunir e validar os documentos necessários do processo.' },
+  { key: 'checklist_calculo_rescisao', label: 'Cálculo de rescisão', descricao: 'Conferir as verbas e os valores calculados no sistema.' },
+  { key: 'checklist_revogacao_acessos', label: 'Revogação de acessos', descricao: 'Bloquear acessos, sistemas e credenciais do colaborador.' },
+  { key: 'checklist_devolucao_equipamentos', label: 'Devolução de equipamentos', descricao: 'Registrar a devolução dos itens sob responsabilidade.' },
+  { key: 'checklist_esocial', label: 'Envio eSocial (S-2299)', descricao: 'Transmitir o evento de desligamento ao eSocial.' },
+  { key: 'checklist_homologacao', label: 'Homologação', descricao: 'Homologar a rescisão junto ao sindicato, quando aplicável.' },
+  { key: 'checklist_pagamento', label: 'Pagamento efetuado', descricao: 'Confirmar o pagamento das verbas rescisórias.' },
 ] as const;
 
 type FiltroChecklist = 'todos' | 'pendentes' | 'concluidas';
 
 interface ChecklistProps {
-  desligamento: Tables<'desligamentos'>;
+  desligamento: any;
   onToggle?: (key: string, value: boolean) => void;
   /**
    * Conclui de uma só vez todos os itens ainda pendentes. Recebe as chaves
@@ -114,123 +81,128 @@ export function DesligamentoChecklist({ desligamento, onToggle, onConcluirPenden
        devolve o keyframe `hidden` a TODOS os blocos do checklist de uma vez —
        sem ele, o `initial={false}` do PageTransition bloquearia a cascata. */
     <EntradaPresenca>
-      <div className="space-y-4 font-body">
-        {/* ── Cabeçalho da seção ─────────────────────────────────────────── */}
-        <div className="flex items-start gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
-            <ListChecks className="h-4 w-4" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <h3 className="font-display text-sm font-semibold leading-tight text-foreground">
-              Checklist de Desligamento
-            </h3>
-            <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
-              Conclua as etapas operacionais do processo.
-            </p>
-          </div>
-          <span className="shrink-0 rounded-full border border-border/40 bg-card/60 px-2.5 py-1 font-display text-xs font-semibold tabular-nums text-foreground">
-            {`${completed}/${total}`}
-          </span>
+    <div className="space-y-4 font-body">
+      {/* ── Cabeçalho da seção ─────────────────────────────────────────── */}
+      <div className="flex items-start gap-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+          <ListChecks className="h-4 w-4" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <h3 className="font-display text-sm font-semibold leading-tight text-foreground">
+            Checklist de Desligamento
+          </h3>
+          <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
+            Conclua as etapas operacionais do processo.
+          </p>
         </div>
+        <span className="shrink-0 rounded-full border border-border/40 bg-card/60 px-2.5 py-1 font-display text-xs font-semibold tabular-nums text-foreground">
+          {`${completed}/${total}`}
+        </span>
+      </div>
 
-        {/* ── Progresso geral ────────────────────────────────────────────── */}
-        {/* Cards do checklist com a entrada de referência (a mesma dos KPI do
+      {/* ── Progresso geral ────────────────────────────────────────────── */}
+      {/* Cards do checklist com a entrada de referência (a mesma dos KPI do
           Dashboard Executivo), em cascata pela ordem de leitura. As LINHAS de
           tarefa ficam de fora de propósito: ao marcar uma tarefa ela troca de
           grupo (remonta) e a entrada tocaria de novo a cada clique — o que a
           regra de "entrada única por apresentação" proíbe. */}
-        <motion.div {...entradaCard(0)} className="rounded-2xl border border-border/40 bg-card/50 p-3.5">
-          <div className="mb-2 flex items-baseline justify-between gap-2">
-            <span className="font-display text-xs font-medium text-foreground">Progresso geral</span>
-            <span className="text-[10px] text-muted-foreground">
-              {completed} de {total} tarefas concluídas
-            </span>
-          </div>
-          <Progress value={progress} className="h-1.5 bg-muted/60" />
-          <div className="mt-2 flex items-center justify-between gap-2 text-[10px] text-muted-foreground">
-            <span>
-              {pendentes.length > 0
-                ? `${pendentes.length} tarefa${pendentes.length > 1 ? 's' : ''} pendente${pendentes.length > 1 ? 's' : ''}`
-                : 'Nenhuma pendência'}
-            </span>
-            <span className="tabular-nums">{`${progress}%`}</span>
-          </div>
-        </motion.div>
-
-        {/* ── Filtros ────────────────────────────────────────────────────── */}
-        <div className="flex items-center gap-1 rounded-xl border border-border/40 bg-card/40 p-1">
-          {filtros.map((f) => {
-            const ativo = filtro === f.value;
-            return (
-              <button
-                key={f.value}
-                type="button"
-                onClick={() => setFiltro(f.value)}
-                aria-pressed={ativo}
-                className={cn(
-                  'flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg px-1.5 py-1.5 text-[11px] font-medium transition-colors',
-                  ativo ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-                )}
-              >
-                <span className="truncate">{f.label}</span>
-                <span className="shrink-0 rounded-full bg-muted/60 px-1.5 text-[10px] tabular-nums">{f.count}</span>
-              </button>
-            );
-          })}
+      <motion.div
+        {...entradaCard(0)}
+        className="rounded-2xl border border-border/40 bg-card/50 p-3.5"
+      >
+        <div className="mb-2 flex items-baseline justify-between gap-2">
+          <span className="font-display text-xs font-medium text-foreground">Progresso geral</span>
+          <span className="text-[10px] text-muted-foreground">
+            {completed} de {total} tarefas concluídas
+          </span>
         </div>
-
-        {/* ── Grupos ─────────────────────────────────────────────────────── */}
-        <div className="space-y-3">
-          {mostrarPendentes && (
-            <motion.div {...entradaCard(1)} className="space-y-2">
-              <GrupoHeader titulo="Pendentes" count={pendentes.length} tom="pendente" />
-              {pendentes.map((item) => (
-                <ChecklistItemRow key={item.key} item={item} readOnly={readOnly} onAlternar={alternar} />
-              ))}
-            </motion.div>
-          )}
-
-          {mostrarConcluidas && (
-            <motion.div {...entradaCard(2)} className="space-y-2">
-              <GrupoHeader titulo="Concluídas" count={concluidas.length} tom="concluida" />
-              {concluidas.map((item) => (
-                <ChecklistItemRow key={item.key} item={item} readOnly={readOnly} onAlternar={alternar} />
-              ))}
-            </motion.div>
-          )}
-
-          {!mostrarPendentes && !mostrarConcluidas && (
-            <p className="rounded-xl border border-border/40 bg-card/40 p-4 text-center text-[11px] text-muted-foreground">
-              Nenhuma tarefa neste filtro.
-            </p>
-          )}
-        </div>
-
-        {/* ── Ação de fechamento ─────────────────────────────────────────── */}
-        <motion.div
-          {...entradaCard(3)}
-          className="flex items-center justify-between gap-3 rounded-2xl border border-border/40 bg-card/40 p-3"
-        >
-          <p className="min-w-0 text-[10px] leading-snug text-muted-foreground">
+        <Progress value={progress} className="h-1.5 bg-muted/60" indicatorClassName="bg-primary" />
+        <div className="mt-2 flex items-center justify-between gap-2 text-[10px] text-muted-foreground">
+          <span>
             {pendentes.length > 0
-              ? `${pendentes.length} tarefa${pendentes.length > 1 ? 's' : ''} aguardando conclusão`
-              : 'Todas as tarefas foram concluídas'}
-          </p>
-          <Button
-            type="button"
-            size="sm"
-            onClick={() => onConcluirPendencias?.(pendentes.map((p) => p.key))}
-            disabled={readOnly || pendentes.length === 0}
-            className="shrink-0 gap-1.5 font-body text-xs"
-          >
-            <CheckCircle2 className="h-3.5 w-3.5" />
-            Concluir pendências
-          </Button>
-        </motion.div>
+              ? `${pendentes.length} tarefa${pendentes.length > 1 ? 's' : ''} pendente${pendentes.length > 1 ? 's' : ''}`
+              : 'Nenhuma pendência'}
+          </span>
+          <span className="tabular-nums">{`${progress}%`}</span>
+        </div>
+      </motion.div>
+
+      {/* ── Filtros ────────────────────────────────────────────────────── */}
+      <div className="flex items-center gap-1 rounded-xl border border-border/40 bg-card/40 p-1">
+        {filtros.map((f) => {
+          const ativo = filtro === f.value;
+          return (
+            <button
+              key={f.value}
+              type="button"
+              onClick={() => setFiltro(f.value)}
+              aria-pressed={ativo}
+              className={cn(
+                'flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg px-1.5 py-1.5 text-[11px] font-medium transition-colors',
+                ativo ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+              )}
+            >
+              <span className="truncate">{f.label}</span>
+              <span className="shrink-0 rounded-full bg-muted/60 px-1.5 text-[10px] tabular-nums">{f.count}</span>
+            </button>
+          );
+        })}
       </div>
+
+
+      {/* ── Grupos ─────────────────────────────────────────────────────── */}
+      <div className="space-y-3">
+        {mostrarPendentes && (
+          <motion.div {...entradaCard(1)} className="space-y-2">
+            <GrupoHeader titulo="Pendentes" count={pendentes.length} tom="pendente" />
+            {pendentes.map((item) => (
+              <ChecklistItemRow key={item.key} item={item} readOnly={readOnly} onAlternar={alternar} />
+            ))}
+          </motion.div>
+        )}
+
+        {mostrarConcluidas && (
+          <motion.div {...entradaCard(2)} className="space-y-2">
+            <GrupoHeader titulo="Concluídas" count={concluidas.length} tom="concluida" />
+            {concluidas.map((item) => (
+              <ChecklistItemRow key={item.key} item={item} readOnly={readOnly} onAlternar={alternar} />
+            ))}
+          </motion.div>
+        )}
+
+        {!mostrarPendentes && !mostrarConcluidas && (
+          <p className="rounded-xl border border-border/40 bg-card/40 p-4 text-center text-[11px] text-muted-foreground">
+            Nenhuma tarefa neste filtro.
+          </p>
+        )}
+      </div>
+
+      {/* ── Ação de fechamento ─────────────────────────────────────────── */}
+      <motion.div
+        {...entradaCard(3)}
+        className="flex items-center justify-between gap-3 rounded-2xl border border-border/40 bg-card/40 p-3"
+      >
+        <p className="min-w-0 text-[10px] leading-snug text-muted-foreground">
+          {pendentes.length > 0
+            ? `${pendentes.length} tarefa${pendentes.length > 1 ? 's' : ''} aguardando conclusão`
+            : 'Todas as tarefas foram concluídas'}
+        </p>
+        <Button
+          type="button"
+          size="sm"
+          onClick={() => onConcluirPendencias?.(pendentes.map((p) => p.key))}
+          disabled={readOnly || pendentes.length === 0}
+          className="shrink-0 gap-1.5 font-body text-xs"
+        >
+          <CheckCircle2 className="h-3.5 w-3.5" />
+          Concluir pendências
+        </Button>
+      </motion.div>
+    </div>
     </EntradaPresenca>
   );
 }
+
 
 /* ─── Peças internas ───────────────────────────────────────────────────────── */
 
@@ -302,3 +274,4 @@ function ChecklistItemRow({ item, readOnly, onAlternar }: ChecklistItemRowProps)
     </button>
   );
 }
+

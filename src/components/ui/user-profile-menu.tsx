@@ -50,23 +50,19 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          aria-label="Abrir menu do usuário"
-          variant="ghost"
-          className="gap-2.5 hover:bg-accent/50 rounded-xl px-2 transition-all duration-200"
-        >
+        <Button variant="ghost" className="gap-2.5 hover:bg-accent/50 rounded-xl px-2 transition-all duration-base">
           <div className="relative">
             <Avatar className="h-8 w-8 ring-2 ring-border/50 transition-all group-hover:ring-primary/30">
               {user?.avatar && <AvatarImage src={user.avatar} />}
-              <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-xs font-bold">
+              <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-xs font-medium">
                 {initials}
               </AvatarFallback>
             </Avatar>
             <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-success border-2 border-card" />
           </div>
-          <div className="hidden md:flex flex-col items-start">
-            <span className="text-sm font-medium font-body leading-tight">{user?.name || 'Usuário'}</span>
-            <span className="text-[11px] text-muted-foreground font-body leading-tight">{user?.email || ''}</span>
+          <div className="hidden lg:flex flex-col items-start min-w-0">
+            <span className="text-sm font-medium font-body leading-tight truncate max-w-[10rem] w-full">{user?.name || 'Usuário'}</span>
+            <span className="text-[11px] text-muted-foreground font-body leading-tight truncate max-w-[10rem] w-full">{user?.email || ''}</span>
           </div>
         </Button>
       </DropdownMenuTrigger>
@@ -75,7 +71,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10 ring-2 ring-border/30">
               {user?.avatar && <AvatarImage src={user.avatar} />}
-              <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-sm font-bold">
+              <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-sm font-medium">
                 {initials}
               </AvatarFallback>
             </Avatar>
@@ -85,9 +81,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
             </div>
           </div>
           <div className="mt-2.5 flex items-center gap-1.5">
-            <span className="px-2 py-0.5 rounded-full bg-success/15 text-success text-text-[10px] font-bold uppercase tracking-wider">
-              Online
-            </span>
+            <span className="px-2 py-0.5 rounded-full bg-success/15 text-success text-[10px] font-medium uppercase tracking-wider">Online</span>
           </div>
         </div>
 

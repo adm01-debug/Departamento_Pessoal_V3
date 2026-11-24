@@ -1,15 +1,11 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { CalculoResultado, CalculoParams } from '@/utils/folhaCalc';
-import { folhaCalc } from '@/utils/folhaCalc';
-import type { BatchProgress } from '@/services/folha/calculoLoteService';
-import { calculoLoteService } from '@/services/folha/calculoLoteService';
+import { folhaCalc, CalculoResultado } from '@/utils/folhaCalc';
+import { calculoLoteService, BatchProgress } from '@/services/folha/calculoLoteService';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { loggerService } from '@/services/loggerService';
-import type { Json } from '@/integrations/supabase/database.types';
-import { validateTablePayload } from '@/schemas/validate';
 
 export function useCalculoFolha() {
   const [resultado, setResultado] = useState<CalculoResultado | null>(null);
@@ -18,21 +14,21 @@ export function useCalculoFolha() {
   const queryClient = useQueryClient();
 
   const calcularEGuardar = useMutation({
-    mutationFn: async ({
-      colaboradorId,
-      empresaId,
-      competencia,
+    mutationFn: async ({ 
+      colaboradorId, 
+      empresaId, 
+      competencia, 
       salarioBase,
-      params,
-    }: {
-      colaboradorId: string;
-      empresaId: string;
+      params 
+    }: { 
+      colaboradorId: string; 
+      empresaId: string; 
       competencia: string;
       salarioBase: number;
-      params?: CalculoParams;
+      params?: any;
     }) => {
       setIsCalculando(true);
-
+      
       try {
         const res = folhaCalc.processar(salarioBase, params);
         setResultado(res);
@@ -43,7 +39,6 @@ export function useCalculoFolha() {
           .select('id')
           .eq('empresa_id', empresaId)
           .eq('competencia', competencia)
-          .eq('tipo', 'mensal')
           .maybeSingle();
 
         if (headerError) throw headerError;
@@ -53,21 +48,15 @@ export function useCalculoFolha() {
         if (!folhaId) {
           const { data: newHeader, error: createError } = await supabase
             .from('folhas_pagamento')
-            .insert(
-              validateTablePayload(
-                'folhas_pagamento',
-                {
-                  empresa_id: empresaId,
-                  competencia,
-                  status: 'aberta',
-                  tipo: 'mensal',
-                },
-                'useCalculoFolha:folhas_pagamento'
-              )
-            )
+            .insert({
+              empresa_id: empresaId,
+              competencia,
+              status: 'aberta',
+              tipo: 'Mensal'
+            })
             .select('id')
             .single();
-
+          
           if (createError) throw createError;
           folhaId = newHeader.id;
         }
@@ -75,49 +64,36 @@ export function useCalculoFolha() {
         // 2. Salvar ou atualizar o item da folha
         const { data, error } = await supabase
           .from('folha_itens')
-          .upsert(
-            validateTablePayload(
-              'folha_itens',
-              {
-                folha_id: folhaId,
-                colaborador_id: colaboradorId,
-                salario_base: salarioBase,
-                total_proventos: res.proventos,
-                total_descontos: res.descontos,
-                total_liquido: res.liquido,
-                inss_mes: res.inss,
-                irrf_mes: res.irrf,
-                fgts_mes: res.fgts,
-                detalhes: res as unknown as Json,
-              },
-              'useCalculoFolha:folha_itens'
-            ),
-            { onConflict: 'folha_id,colaborador_id' }
-          )
+          .upsert({
+            folha_id: folhaId,
+            colaborador_id: colaboradorId,
+            salario_base: salarioBase,
+            total_proventos: res.proventos,
+            total_descontos: res.descontos,
+            total_liquido: res.liquido,
+            inss_mes: res.inss,
+            irrf_mes: res.irrf,
+            fgts_mes: res.fgts,
+            detalhes: res as any
+          })
           .select()
           .single();
 
         if (error) throw error;
 
         // 3. Registrar auditoria
-        await supabase.from('folha_auditoria').insert(
-          validateTablePayload(
-            'folha_auditoria',
-            {
-              folha_id: folhaId,
-              colaborador_id: colaboradorId,
-              tipo_evento: 'CALCULO',
-              mensagem: 'Cálculo de folha individual realizado com sucesso',
-              severidade: 'INFO',
-              detalhes: {
-                liquido: res.liquido,
-                base: salarioBase,
-                params_used: params,
-              } as unknown as Json,
-            },
-            'useCalculoFolha:folha_auditoria'
-          )
-        );
+        await supabase.from('folha_auditoria').insert({
+          folha_id: folhaId,
+          colaborador_id: colaboradorId,
+          tipo_evento: 'CALCULO',
+          mensagem: 'Cálculo de folha individual realizado com sucesso',
+          severidade: 'INFO',
+          detalhes: { 
+            liquido: res.liquido, 
+            base: salarioBase,
+            params_used: params 
+          } as any
+        });
 
         return data;
       } catch (err: unknown) {
@@ -133,7 +109,7 @@ export function useCalculoFolha() {
     onError: (error: Error) => {
       toast.error(safeErrorMessage(error, 'Falha no processamento da folha.'));
     },
-    onSettled: () => setIsCalculando(false),
+    onSettled: () => setIsCalculando(false)
   });
 
   const calcularLote = useMutation({
@@ -150,7 +126,7 @@ export function useCalculoFolha() {
     onSettled: () => {
       setIsCalculando(false);
       setTimeout(() => setProgressoLote(null), 3000);
-    },
+    }
   });
 
   return {
@@ -159,6 +135,6 @@ export function useCalculoFolha() {
     progressoLote,
     executarCalculo: calcularEGuardar.mutateAsync,
     executarCalculoLote: calcularLote.mutateAsync,
-    resetResultado: () => setResultado(null),
+    resetResultado: () => setResultado(null)
   };
 }

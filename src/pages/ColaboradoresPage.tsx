@@ -1,21 +1,19 @@
 import { useCallback, useState } from 'react';
-import { cn } from '@/lib/utils';
 import { ColaboradorFilters } from '@/components/colaboradores/ColaboradorFilters';
-import type { ActiveFilter } from '@/components/colaboradores/ColaboradorActiveFilterChips';
-import { TableCell, TableRow } from '@/components/ui/table';
-import { ColaboradorStatus } from '@/components/ui/status-badge';
-import { Badge } from '@/components/ui/badge';
-import { useVinculosResumo } from '@/hooks/useVinculos';
-import { Button } from '@/components/ui/button';
-import { UserAvatar } from '@/components/ui/user-avatar';
-import { Eye, Edit, Users, Download, FileSpreadsheet, FileText } from 'lucide-react';
+import { ColaboradorKpiCards } from '@/components/colaboradores/ColaboradorKpiCards';
+import { ColaboradorTable } from '@/components/colaboradores/ColaboradorTable';
+import { AppPagination } from '@/components/ui/app-pagination';
+import { ColaboradorDirectoryGrid } from '@/components/colaboradores/ColaboradorDirectoryGrid';
+import { ColaboradorViewMode } from '@/components/colaboradores/ColaboradorViewSwitcher';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { FlowHoverButton } from '@/components/ui/flow-hover-button';
+import { cn } from '@/lib/utils';
+import { Users, Download, FileSpreadsheet, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useExcelExport } from '@/hooks/useExcelExport';
 import { usePDFExport } from '@/hooks/usePDFExport';
 import { useColaboradores } from '@/hooks/useColaboradores';
-import { usePiiMask } from '@/hooks/usePiiMask';
-import { registrarAcessoPII } from '@/services/piiAccessLogService';
+import { useVinculosResumo } from '@/hooks/useVinculos';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { colaboradorService } from '@/services/colaboradorService';
 import { toast } from 'sonner';
@@ -25,23 +23,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
-import { ColaboradorKpiCards } from '@/components/colaboradores/ColaboradorKpiCards';
-import { ColaboradorDirectoryGrid } from '@/components/colaboradores/ColaboradorDirectoryGrid';
-import { ColaboradorTable, COLABORADOR_TABLE_COLUMNS } from '@/components/colaboradores/ColaboradorTable';
-import { ColaboradorViewSwitcher, type ColaboradorViewMode } from '@/components/colaboradores/ColaboradorViewSwitcher';
-import type { Colaborador } from '@/types/entities';
+import { PageLayout } from '@/components/layout';
+import { PageTitle } from '@/components/PageTitle';
+import { EmptyList, EmptySearch } from '@/components/ui/empty-state';
+import { SyncErrorState } from '@/components/ui/sync-error-state';
+import { TableSkeleton } from '@/components/ui/module-skeleton';
 import { loggerService } from '@/services/loggerService';
 
 export default function ColaboradoresPage() {
   const navigate = useNavigate();
+  // pageSize alto (limite do BaseService) para que o dropdown de filtro liste
+  // todos os departamentos/cargos da empresa, sem afetar a paginação padrão
+  // usada pelas telas administrativas de Departamentos/Cargos.
+  const { departamentos } = useDepartamentos({ pageSize: 100 });
+  const { cargos } = useCargos({ pageSize: 100 });
   const { exportarExcel } = useExcelExport();
   const { exportarPDF } = usePDFExport();
   const { empresaAtual } = useEmpresas();
-  const pii = usePiiMask();
-  // Tabela segue sendo o padrão (é o que o RH já conhece); a grade de cartões
-  // da `muri` entra como alternativa, não como substituta.
-  const [viewMode, setViewMode] = useState<ColaboradorViewMode>('tabela');
 
   const {
     colaboradores,
@@ -52,6 +50,7 @@ export default function ColaboradoresPage() {
     page,
     setPage,
     pageSize,
+    setPageSize,
     search,
     setSearch,
     status,
@@ -63,71 +62,57 @@ export default function ColaboradoresPage() {
     refetch,
     summary,
     departamentosDisponiveis,
-    cargosDisponiveis,
+    cargosDisponiveis
   } = useColaboradores();
 
-  // Uma consulta so para a pagina inteira (`.in('colaborador_id', ids)`), nao
-  // uma por linha — ver vinculoService.contarPassagensPorColaboradores. Alimenta
-  // o selo de recontratacao na tabela E na grade: a grade ja sabia desenhar o
-  // selo, mas ninguem passava o dado, entao ele nunca aparecia.
-  const { data: passagensPorId } = useVinculosResumo(colaboradores.map((c) => c.id));
+  // Une os departamentos/cargos cadastrados nas telas administrativas com os
+  // valores realmente usados pelos colaboradores (colaboradorService.listarOpcoesFiltro).
+  // As duas fontes podem divergir — texto livre em `colaboradores` vs. tabelas
+  // mestre `departamentos`/`cargos` — e a união garante que o dropdown nunca
+  // fique vazio quando uma delas não tem dados para a empresa ativa.
+  const departamentosFiltro = Array.from(
+    new Set([...(departamentos ?? []).map((d) => d.nome), ...(departamentosDisponiveis ?? [])])
+  ).sort((a, b) => a.localeCompare(b, 'pt-BR'));
 
-  const handlePageChange = useCallback(
-    (p: number) => {
-      setPage(p);
-    },
-    [setPage]
-  );
+  const cargosFiltro = Array.from(
+    new Set([...(cargos ?? []).map((c) => c.nome), ...(cargosDisponiveis ?? [])])
+  ).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+  const [viewMode, setViewMode] = useState<ColaboradorViewMode>('tabela');
+
+  const handlePageChange = useCallback((p: number) => {
+    setPage(p);
+  }, [setPage]);
+
+  const handlePageSizeChange = useCallback((size: number) => {
+    setPageSize(size);
+    setPage(1);
+  }, [setPageSize, setPage]);
 
   // Reset page when search or filters change
-  const handleSearchChange = useCallback(
-    (val: string) => {
-      setSearch(val);
-      setPage(1);
-    },
-    [setSearch, setPage]
-  );
-
-  const handleStatusChange = useCallback(
-    (val: string) => {
-      setStatus(val);
-      setPage(1);
-    },
-    [setStatus, setPage]
-  );
-
-  const handleDeptoChange = useCallback(
-    (val: string) => {
-      setDepartamento(val);
-      setPage(1);
-    },
-    [setDepartamento, setPage]
-  );
-
-  const handleCargoChange = useCallback(
-    (val: string) => {
-      setCargo(val);
-      setPage(1);
-    },
-    [setCargo, setPage]
-  );
-
-  // Limpa os 4 filtros de uma vez e volta para a primeira pagina (senao o
-  // usuario cairia numa pagina que pode nao existir mais no conjunto sem filtro).
-  const handleClearAllFilters = useCallback(() => {
-    setSearch('');
-    setStatus('all');
-    setDepartamento('all');
-    setCargo('all');
+  const handleSearchChange = useCallback((val: string) => {
+    setSearch(val);
     setPage(1);
-  }, [setSearch, setStatus, setDepartamento, setCargo, setPage]);
+  }, [setSearch, setPage]);
 
+  const handleStatusChange = useCallback((val: string) => {
+    setStatus(val);
+    setPage(1);
+  }, [setStatus, setPage]);
+
+  const handleDeptoChange = useCallback((val: string) => {
+    setDepartamento(val);
+    setPage(1);
+  }, [setDepartamento, setPage]);
+
+  const handleCargoChange = useCallback((val: string) => {
+    setCargo(val);
+    setPage(1);
+  }, [setCargo, setPage]);
+
+  // Os cinco status refletem exatamente o enum `status_colaborador` do banco.
   const statusOptions = [
     { value: 'ativo', label: 'Ativos' },
-    // 'inativo' NAO existe no enum `status_colaborador` (ativo, ferias,
-    // afastado, desligado, pendente): a opcao filtrava por um valor que nenhuma
-    // linha pode ter, e 'pendente' — que existe e o hook ja conta em `summary` —
-    // nao tinha como ser filtrado. Correcao resgatada da branch `muri`.
     { value: 'pendente', label: 'Pendentes' },
     { value: 'desligado', label: 'Desligados' },
     { value: 'ferias', label: 'Em Férias' },
@@ -159,18 +144,18 @@ export default function ColaboradoresPage() {
     if (!empresaAtual?.id) return;
     try {
       toast.info('Preparando exportação completa...', {
-        description: 'Isso pode levar alguns segundos dependendo do tamanho da base.',
+        description: 'Isso pode levar alguns segundos dependendo do tamanho da base.'
       });
-
+      
       const { data } = await colaboradorService.listar({
         pageSize: 5000,
         filters: {
           empresaId: empresaAtual.id,
           status: status === 'all' ? undefined : status,
           departamento: departamento === 'all' ? undefined : departamento,
-          cargo: cargo === 'all' ? undefined : cargo,
+          cargo: cargo === 'all' ? undefined : cargo
         },
-        search: search || undefined,
+        search: search || undefined
       });
 
       if (!data.length) {
@@ -178,21 +163,11 @@ export default function ColaboradoresPage() {
         return;
       }
 
-      void registrarAcessoPII('colaboradores', 'export', {
-        empresaId: empresaAtual.id,
-        registroCount: data.length,
-      });
-      // Sem papel de PII o export leva a mesma visão mascarada da tela.
-      const linhas = data.map((r) => pii.deep(r) as Record<string, unknown>);
-      exportarExcel('Relatório de Colaboradores', linhas, [
-        'nome_completo',
-        'cpf',
-        'cargo',
-        'departamento',
-        'status',
-        'data_admissao',
-        'email',
-      ]);
+      exportarExcel(
+        'Relatório de Colaboradores',
+        data,
+        ['nome_completo', 'cpf', 'cargo', 'departamento', 'status', 'data_admissao', 'email']
+      );
     } catch (err) {
       loggerService.error('Falha ao exportar dados', {}, err instanceof Error ? err : new Error(String(err)));
       toast.error('Falha ao exportar dados');
@@ -203,7 +178,7 @@ export default function ColaboradoresPage() {
     if (!empresaAtual?.id) return;
     try {
       toast.info('Preparando PDF...', {
-        description: 'Gerando documento com os filtros atuais.',
+        description: 'Gerando documento com os filtros atuais.'
       });
 
       const { data } = await colaboradorService.listar({
@@ -212,9 +187,9 @@ export default function ColaboradoresPage() {
           empresaId: empresaAtual.id,
           status: status === 'all' ? undefined : status,
           departamento: departamento === 'all' ? undefined : departamento,
-          cargo: cargo === 'all' ? undefined : cargo,
+          cargo: cargo === 'all' ? undefined : cargo
         },
-        search: search || undefined,
+        search: search || undefined
       });
 
       if (!data.length) {
@@ -222,122 +197,165 @@ export default function ColaboradoresPage() {
         return;
       }
 
-      void registrarAcessoPII('colaboradores', 'export', {
-        empresaId: empresaAtual.id,
-        registroCount: data.length,
-      });
-      const linhas = data.map((r) => pii.deep(r) as Record<string, unknown>);
-      exportarPDF('Relatório de Colaboradores', linhas, ['nome_completo', 'cpf', 'cargo', 'departamento', 'status']);
-    } catch (err) {
-      loggerService.error(
-        'Falha ao exportar PDF',
-        { empresaId: empresaAtual?.id },
-        err instanceof Error ? err : new Error(String(err))
+      exportarPDF(
+        'Relatório de Colaboradores',
+        data,
+        ['nome_completo', 'cpf', 'cargo', 'departamento', 'status']
       );
+    } catch (err) {
+      loggerService.error('Falha ao exportar PDF', { empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err)));
       toast.error('Falha ao exportar PDF');
     }
   };
 
+  // colaboradorService.listar/getSummary caem nos 12 colaboradores fictícios
+  // de src/mocks/colaboradoresMock.ts quando VITE_COLABORADORES_MOCK=true (dev only).
+  const itemsExibidos = colaboradores;
+  const totalExibido = total;
+  const summaryExibido = summary as Record<string, number> | undefined;
+  const isLoadingExibido = isLoading;
+
+  // Resumo de passagens/recontratação (coluna Vínculo) — 1 query para os ids
+  // da página atual, nunca uma por linha (ver useVinculosResumo).
+  const colaboradorIdsExibidos = itemsExibidos.map((c) => c.id);
+  const { data: passagensPorId } = useVinculosResumo(colaboradorIdsExibidos);
+
+  const activeFilterChips = [
+    status !== 'all' && {
+      key: 'status',
+      label: `Status: ${statusOptions.find(o => o.value === status)?.label ?? status}`,
+      onRemove: () => handleStatusChange('all'),
+    },
+    departamento !== 'all' && {
+      key: 'departamento',
+      label: `Departamento: ${departamento}`,
+      onRemove: () => handleDeptoChange('all'),
+    },
+    cargo !== 'all' && {
+      key: 'cargo',
+      label: `Cargo: ${cargo}`,
+      onRemove: () => handleCargoChange('all'),
+    },
+  ].filter((f): f is { key: string; label: string; onRemove: () => void } => !!f);
+
+  const handleClearAllFilters = () => {
+    handleStatusChange('all');
+    handleDeptoChange('all');
+    handleCargoChange('all');
+  };
+
   return (
-    <EntityPageContainer<Colaborador>
-      pageTitle="Colaboradores"
-      pageDescription="Gestão de colaboradores"
-      title="Colaboradores"
-      description={`Gestão analítica de ${total} talentos da organização`}
-      icon={<Users className="h-5 w-5 text-primary-foreground" />}
-      gradient="from-primary to-primary-glow"
-      entityName="colaborador"
-      items={colaboradores}
-      total={total}
-      isLoading={isLoading}
-      isFetching={isFetching}
-      error={error}
-      page={page}
-      pageSize={pageSize}
-      search={search}
-      onPageChange={handlePageChange}
-      onSearchChange={handleSearchChange}
-      onRefetch={refetch}
-      actions={
-        <div className="flex items-center gap-2">
-          <ColaboradorViewSwitcher value={viewMode} onChange={setViewMode} />
+    <>
+      <PageTitle title="Colaboradores" description="Gestão de colaboradores" />
+      <PageLayout
+        title="Colaboradores"
+        description={`Gestão analítica de ${totalExibido} talentos da organização`}
+        icon={<Users className="h-5 w-5 text-primary-foreground" />}
+        gradient="from-primary to-primary-glow"
+        actions={
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                {/* Mesma animação "flow" (círculo que preenche o botão no hover) do
+                    botão "Sincronizar" do Dashboard principal — ver DashboardHeader.tsx. */}
+                <FlowHoverButton
+                  className={cn(
+                    buttonVariants({ variant: 'outline', size: 'sm' }),
+                    'gap-2 rounded-xl border-border/50 hover:border-primary/30 hover:bg-primary/5 transition-all font-body h-8 shadow-xs before:bg-primary hover:text-primary-foreground transition-colors',
+                  )}
+                  icon={<Download className="h-4 w-4" />}
+                >
+                  <span>Exportar Dados</span>
+                </FlowHoverButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="rounded-xl w-48">
+                <DropdownMenuItem onClick={handleExportExcel} className="gap-2 cursor-pointer py-2.5">
+                  <FileSpreadsheet className="h-4 w-4 text-success" />
+                  Excel (.xlsx)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportPDF} className="gap-2 cursor-pointer py-2.5">
+                  <FileText className="h-4 w-4 text-destructive" />
+                  PDF (.pdf)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="h-11 rounded-xl gap-2 px-4 shadow-xs bg-card/50">
-                <Download className="h-4 w-4" />
-                <span>Exportar Dados</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-xl w-48">
-              <DropdownMenuItem onClick={handleExportExcel} className="gap-2 cursor-pointer py-2.5">
-                <FileSpreadsheet className="h-4 w-4 text-success" />
-                Excel (.xlsx)
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleExportPDF} className="gap-2 cursor-pointer py-2.5">
-                <FileText className="h-4 w-4 text-destructive" />
-                PDF (.pdf)
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Button
-            onClick={() => navigate('/colaboradores/novo')}
-            className="h-11 rounded-xl px-6 gap-2 bg-primary text-primary-foreground shadow-glow hover:shadow-glow-lg transition-all"
-          >
-            <Users className="h-4 w-4" />
-            Novo Colaborador
-          </Button>
-        </div>
-      }
-      stats={
+            <Button
+              size="sm"
+              onClick={() => navigate('/colaboradores/novo')}
+              className="h-8 rounded-xl gap-2 bg-primary text-primary-foreground shadow-glow hover:shadow-glow-lg transition-all"
+            >
+              <Users className="h-4 w-4" />
+              Novo Colaborador
+            </Button>
+          </div>
+        }
+      >
         <ColaboradorKpiCards
           statusOptions={statusOptions}
           activeStatus={status}
-          /* Mesmo comportamento do bloco inline anterior: clicar no KPI já
-             ativo volta o filtro para "all". A decisão fica aqui porque é a
-             página que é dona do estado do filtro. */
-          onToggle={(statusKey) => setStatus(status === statusKey ? 'all' : statusKey)}
-          summary={summary as Record<string, number> | null | undefined}
-          isLoading={isLoading}
+          onToggle={(s) => setStatus(status === s ? 'all' : s)}
+          summary={summaryExibido}
+          isLoading={isLoadingExibido}
         />
-      }
-      customFilters={
+
         <ColaboradorFilters
           onSearchChange={handleSearchChange}
           onStatusChange={handleStatusChange}
           onDeptoChange={handleDeptoChange}
           onCargoChange={handleCargoChange}
-          /* Opções vindas dos valores gravados em `colaboradores` (texto livre),
-             não das tabelas mestre: ver colaboradorService.listarOpcoesFiltro.
-             O componente espera {id, nome} — o próprio nome serve de id aqui. */
-          departamentos={departamentosDisponiveis.map((nome) => ({ id: nome, nome }))}
-          cargos={cargosDisponiveis.map((nome) => ({ id: nome, nome }))}
-          currentFilters={{
-            search,
-            status,
-            departamento,
-            cargo,
-          }}
+          departamentos={departamentosFiltro}
+          cargos={cargosFiltro}
+          currentFilters={{ search, status, departamento, cargo }}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
           activeFilterChips={activeFilterChips}
           onClearAllFilters={handleClearAllFilters}
         />
-      }
-      /* Contagem de colunas do esqueleto de carregamento. A tabela que desenha
-         de fato e a `ColaboradorTable`, entao as colunas vem dela — assim o
-         esqueleto nunca fica com numero de colunas diferente do conteudo. */
-      columns={COLABORADOR_TABLE_COLUMNS}
-      /* As DUAS visoes entram por `renderBody`: a grade de cartoes e a tabela
-         densa da `muri` (6 colunas, com Admissao e o selo de recontratacao).
-         A tabela genérica do container nao e mais usada nesta pagina; o resto
-         (paginacao, filtros, KPIs, estados de erro/vazio) segue igual. */
-      renderBody={
-        viewMode === 'diretorio' ? (
-          <ColaboradorDirectoryGrid items={colaboradores} isFetching={isFetching} passagensPorId={passagensPorId} />
+
+        {error ? (
+          <SyncErrorState error={error} onRetry={refetch} entityName="colaboradores" />
+        ) : isLoadingExibido ? (
+          <div className="space-y-4">
+            <TableSkeleton columns={6} rows={pageSize} />
+          </div>
+        ) : totalExibido === 0 ? (
+          <div className="flex flex-col items-center justify-center border border-dashed rounded-2xl bg-muted/10 p-4">
+            {search ? (
+              <EmptySearch search={search} onClear={() => handleSearchChange('')} />
+            ) : (
+              <EmptyList entityName="colaborador" onCreate={() => navigate('/colaboradores/novo')} />
+            )}
+          </div>
         ) : (
-          <ColaboradorTable items={colaboradores} isFetching={isFetching} passagensPorId={passagensPorId} />
-        )
-      }
-    />
+          <div className="space-y-4">
+            {viewMode === 'diretorio' ? (
+              <ColaboradorDirectoryGrid items={itemsExibidos} isFetching={isFetching} passagensPorId={passagensPorId} />
+            ) : (
+              <ColaboradorTable items={itemsExibidos} isFetching={isFetching} passagensPorId={passagensPorId} />
+            )}
+            <AppPagination
+              page={page}
+              pageSize={pageSize}
+              total={totalExibido}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+              label={
+                totalExibido === 0 ? (
+                  '0 colaboradores'
+                ) : (
+                  <>
+                    <span className="font-semibold text-foreground">
+                      {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalExibido)}
+                    </span>{' '}
+                    de <span className="font-semibold text-foreground">{totalExibido}</span> colaboradores
+                  </>
+                )
+              }
+            />
+          </div>
+        )}
+      </PageLayout>
+    </>
   );
 }

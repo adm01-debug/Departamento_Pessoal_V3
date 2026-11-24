@@ -4,7 +4,6 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { notificarAjustePonto } from '@/services/notificacoesService';
 import CryptoJS from 'crypto-js';
-import { validateTablePayload } from '@/schemas/validate';
 
 export interface SolicitacaoAjuste {
   id: string;
@@ -34,17 +33,13 @@ export function usePontoMelhorado(empresaId?: string, colaboradorId?: string) {
 
   const { data: solicitacoes = [], isLoading } = useQuery({
     queryKey: ['solicitacoes-ajuste-ponto', empresaId, colaboradorId],
-    // Sem empresa selecionada a query NAO sai. Com `enabled: true` e o
-    // `empresaId!` abaixo, a requisicao ia com `empresa_id=eq.undefined` e o
-    // Postgres respondia erro de uuid invalido — o usuario via falha de banco
-    // em vez de uma tela vazia.
     enabled: !!empresaId,
     queryFn: async () => {
       if (!empresaId) return [];
       let query = supabase
         .from('solicitacoes_ajuste_ponto')
         .select('*, colaborador:colaboradores(nome_completo)')
-        .eq('empresa_id', empresaId!)
+        .eq('empresa_id', empresaId)
         .order('created_at', { ascending: false });
 
       if (colaboradorId) {
@@ -58,35 +53,25 @@ export function usePontoMelhorado(empresaId?: string, colaboradorId?: string) {
   });
 
   const criarSolicitacao = useMutation({
-    mutationFn: async (
-      payload: Omit<SolicitacaoAjuste, 'id' | 'status' | 'created_at'> & { status?: SolicitacaoAjuste['status'] }
-    ) => {
+    mutationFn: async (payload: Omit<SolicitacaoAjuste, 'id' | 'status' | 'created_at'> & { status?: SolicitacaoAjuste['status'] }) => {
       // Calcular conformidade básica
       const relatorio_conformidade = {
         timestamp_validacao: new Date().toISOString(),
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        geofencing: true,
+        geofencing: true, 
         divergencia_minutos: 0,
-        sha256_integridade: CryptoJS.SHA256(
-          `${payload.colaborador_id}|${payload.data_ponto}|${payload.hora_sugerida}|CONFORM_PORTARIA_671`
-        ).toString(),
-        portaria_671_conformidade: true,
+        sha256_integridade: CryptoJS.SHA256(`${payload.colaborador_id}|${payload.data_ponto}|${payload.hora_sugerida}|CONFORM_PORTARIA_671`).toString(),
+        portaria_671_conformidade: true
       };
 
       const { data, error } = await supabase
         .from('solicitacoes_ajuste_ponto')
-        .insert(
-          validateTablePayload(
-            'solicitacoes_ajuste_ponto',
-            {
-              ...payload,
-              status: payload.status || 'enviado',
-              rascunho: payload.status === 'rascunho',
-              relatorio_conformidade,
-            },
-            'usePontoMelhorado:solicitacoes_ajuste_ponto'
-          )
-        )
+        .insert({
+          ...payload,
+          status: payload.status || 'enviado',
+          rascunho: payload.status === 'rascunho',
+          relatorio_conformidade
+        })
         .select()
         .single();
 
@@ -101,45 +86,26 @@ export function usePontoMelhorado(empresaId?: string, colaboradorId?: string) {
   });
 
   const responderSolicitacao = useMutation({
-    mutationFn: async ({
-      id,
-      status,
-      observacoes,
-    }: {
-      id: string;
-      status: 'aprovado' | 'recusado';
-      observacoes?: string;
-    }) => {
-      // Aprovar/recusar ajuste de ponto e escrita: sem empresa no contexto a
-      // clausula de isolamento seria `empresa_id=eq.undefined`. Falha explicita.
-      if (!empresaId) throw new Error('empresa_id obrigatório para responder solicitação de ajuste.');
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    mutationFn: async ({ id, status, observacoes }: { id: string; status: 'aprovado' | 'recusado'; observacoes?: string }) => {
+      if (!empresaId) throw new Error('empresa_id obrigatório para responder solicitação');
+      const { data: { user } } = await supabase.auth.getUser();
 
       const { data, error } = await supabase
         .from('solicitacoes_ajuste_ponto')
-        .update(
-          validateTablePayload(
-            'solicitacoes_ajuste_ponto',
-            {
-              status,
-              observacoes_gestor: observacoes,
-              analisado_por: user?.id,
-              data_analise: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            },
-            'usePontoMelhorado:solicitacoes_ajuste_ponto'
-          )
-        )
+        .update({
+          status,
+          observacoes_gestor: observacoes,
+          analisado_por: user?.id,
+          data_analise: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
         .eq('id', id)
-        .eq('empresa_id', empresaId!)
+        .eq('empresa_id', empresaId)
         .select()
         .single();
 
       if (error) throw error;
-
+      
       // Notificar o colaborador sobre o resultado
       if (status === 'aprovado' || status === 'recusado') {
         await notificarAjustePonto(data.colaborador_id, status, observacoes);
@@ -158,6 +124,6 @@ export function usePontoMelhorado(empresaId?: string, colaboradorId?: string) {
     solicitacoes,
     isLoading,
     criarSolicitacao,
-    responderSolicitacao,
+    responderSolicitacao
   };
 }

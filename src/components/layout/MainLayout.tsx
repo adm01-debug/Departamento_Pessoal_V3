@@ -18,8 +18,23 @@ interface MainLayoutProps {
 const MemoizedSidebar = memo(Sidebar);
 const MemoizedHeader = memo(Header);
 
+/**
+ * ENTRADA DE CARD DAS ROTAS — um único caminho desde 29/10/2026.
+ *
+ * Não existe mais escopo de entrada declarado pelo layout: `/avaliacao` (Gestão
+ * de Desempenho) deixou de ser exceção por autorização explícita do usuário
+ * ("aplicar a mesma animação de entrada do Dashboard Executivo a todos os cards
+ * e KPI cards do módulo Avaliação e Performance") e passou a usar a régua global
+ * como todas as outras rotas. O que segue com tratamento próprio é só o
+ * Dashboard Principal, cujo escopo (`data-entrada-escopo="dashboard-principal"`)
+ * é escrito pela PRÓPRIA página, em `components/dashboard/entradaDashboard.ts`.
+ *
+ * Consequência prática: `#main-content` não carrega mais atributo de escopo em
+ * rota nenhuma, então o CSS (`src/index.css`) e `hooks/use-stagger-cards.ts`
+ * aplicam 14 px / 520 ms / 120 ms em todo `Card` do sistema.
+ */
 export function MainLayout({ children }: MainLayoutProps) {
-  const [sidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const { user } = useAuth();
@@ -38,15 +53,19 @@ export function MainLayout({ children }: MainLayoutProps) {
   // Canal Realtime 'system-health' removido — era código morto (callback vazio)
   // e causava acúmulo de WebSockets em Strict Mode/HMR.
 
+
   return (
     <div className="flex h-screen bg-background">
       {/* Command Palette (global) */}
-      <CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} />
+      <CommandPalette 
+        open={commandPaletteOpen} 
+        onOpenChange={setCommandPaletteOpen} 
+      />
 
       {/* Guided Tour (first visit) */}
       <GuidedTour />
 
-      <div className={cn('hidden md:block transition-all duration-500 ease-in-out', sidebarOpen ? 'w-64' : 'w-16')}>
+      <div className={cn('hidden md:block transition-all duration-slower ease-in-out', sidebarOpen ? 'w-64' : 'w-16')}>
         <MemoizedSidebar onSearchOpen={() => setCommandPaletteOpen(true)} />
       </div>
 
@@ -54,27 +73,25 @@ export function MainLayout({ children }: MainLayoutProps) {
         <div className="fixed inset-0 z-40 md:hidden" onClick={() => setMobileSidebarOpen(false)}>
           <div className="absolute inset-0 bg-black/50 backdrop-blur-xs" />
           <div className="absolute left-0 top-0 h-full w-64" onClick={(e) => e.stopPropagation()}>
-            <MemoizedSidebar
-              onSearchOpen={() => {
-                setMobileSidebarOpen(false);
-                setCommandPaletteOpen(true);
-              }}
-            />
+            <MemoizedSidebar onSearchOpen={() => {
+              setMobileSidebarOpen(false);
+              setCommandPaletteOpen(true);
+            }} />
           </div>
         </div>
       )}
 
       <div className="flex-1 flex flex-col min-w-0">
-        <MemoizedHeader onMenuClick={() => setMobileSidebarOpen(true)} user={headerUser} />
+        <MemoizedHeader
+          onMenuClick={() => setMobileSidebarOpen(true)}
+          user={headerUser}
+        />
         <main role="main" className="flex-1 overflow-auto p-page pb-20 lg:pb-page">
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-primary focus:text-primary-foreground"
-          >
-            Pular para conteúdo
-          </a>
+          <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-primary focus:text-primary-foreground">Pular para conteúdo</a>
           <div id="main-content" className="flex flex-col min-h-full">
-            <PageTransition>{children || <Outlet />}</PageTransition>
+            <PageTransition>
+              {children || <Outlet />}
+            </PageTransition>
           </div>
         </main>
       </div>

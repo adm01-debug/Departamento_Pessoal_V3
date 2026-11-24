@@ -36,7 +36,7 @@ const MaskedInput = React.forwardRef<HTMLInputElement, MaskedInputProps>(
         type="text"
         inputMode="numeric"
         className={cn(
-          'flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1.5 text-base file:border-0 file:bg-transparent file:text-[13px] file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset disabled:cursor-not-allowed disabled:opacity-50 md:text-[13px]',
+          "flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1.5 text-base file:border-0 file:bg-transparent file:text-[13px] file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset disabled:cursor-not-allowed disabled:opacity-50 md:text-[13px]",
           className
         )}
         ref={ref}

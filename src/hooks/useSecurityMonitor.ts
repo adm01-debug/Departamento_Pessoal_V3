@@ -21,10 +21,9 @@ function computeSessionFingerprint(): string {
 
 function forceLogout(reason: string) {
   queryClient.clear();
-  // Remove somente token/verifier do Supabase e o fingerprint de sessao: nunca
-  // localStorage.clear(), que apagaria a fila offline do ponto e rascunhos.
+  // Preserva dados de trabalho locais; remove apenas token/verifier e fingerprint.
   limparSessaoLocal();
-  supabase.auth.signOut().catch(() => {});
+  (supabase as any).auth.signOut().catch(() => {});
   window.location.href = `/login?reason=${encodeURIComponent(reason)}`;
 }
 
@@ -32,35 +31,35 @@ export function useSecurityMonitor() {
   const lastUserId = useRef<string | null>(null);
 
   useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session?.user?.id) {
-        lastUserId.current = null;
-        return;
+    const { data: { subscription } } = (supabase as any).auth.onAuthStateChange(
+      (_event: string, session: any) => {
+        if (!session?.user?.id) {
+          lastUserId.current = null;
+          return;
+        }
+
+        const currentId = session.user.id;
+
+        // Detect unexpected user change mid-session (potential session fixation)
+        if (lastUserId.current && lastUserId.current !== currentId) {
+          forceLogout('session_anomaly');
+          return;
+        }
+
+        lastUserId.current = currentId;
+
+        // Session fingerprint binding — detect token theft across browsers
+        const currentFp = computeSessionFingerprint();
+        const storedFp = sessionStorage.getItem(SESSION_FP_KEY);
+
+        if (!storedFp) {
+          sessionStorage.setItem(SESSION_FP_KEY, currentFp);
+        } else if (storedFp !== currentFp) {
+          forceLogout('session_anomaly');
+          return;
+        }
       }
-
-      const currentId = session.user.id;
-
-      // Detect unexpected user change mid-session (potential session fixation)
-      if (lastUserId.current && lastUserId.current !== currentId) {
-        forceLogout('session_anomaly');
-        return;
-      }
-
-      lastUserId.current = currentId;
-
-      // Session fingerprint binding — detect token theft across browsers
-      const currentFp = computeSessionFingerprint();
-      const storedFp = sessionStorage.getItem(SESSION_FP_KEY);
-
-      if (!storedFp) {
-        sessionStorage.setItem(SESSION_FP_KEY, currentFp);
-      } else if (storedFp !== currentFp) {
-        forceLogout('session_anomaly');
-        return;
-      }
-    });
+    );
 
     return () => subscription?.unsubscribe();
   }, []);

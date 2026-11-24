@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useForm, useWatch, type Resolver } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
@@ -15,15 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { AlertTriangle, FileText, Plus, Send, ShieldAlert, Clock, Skull, Pencil } from 'lucide-react';
-import { validateTablePayload } from '@/schemas/validate';
-import { catParaForm, opcaoValida, podeEditarCat, prazoLimiteCat, vazioParaNull } from './adminCatEdicao';
-
-const CAT_FORM_COLUMNS =
-  'colaborador_id,data_acidente,hora_acidente,tipo_acidente,tipo_cat,cid_principal,parte_corpo_atingida,agente_causador,local_acidente,tipo_local,situacao_geradora,minutos_trabalhados_antes,houve_afastamento,dias_afastamento_estimado,houve_obito,houve_internacao,ultimo_dia_trabalhado,observacoes';
-
-// Input numérico limpo ('') vira null: z.coerce mandaria 0 e o UPDATE gravaria 0 no lugar de vazio.
-const numeroOpcional = z.preprocess((v) => (v === '' ? null : v), z.coerce.number().min(0).nullable().optional());
+import { AlertTriangle, FileText, Plus, Send, ShieldAlert, Clock, Skull } from 'lucide-react';
 
 const catSchema = z.object({
   colaborador_id: z.string().uuid('Colaborador obrigatório'),
@@ -73,7 +65,7 @@ export default function AdminCatPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const form = useForm<CatForm>({
-    resolver: zodResolver(catSchema) as unknown as Resolver<CatForm>,
+    resolver: zodResolver(catSchema) as never,
     defaultValues: {
       tipo_cat: 'inicial',
       tipo_acidente: 'tipico',
@@ -99,21 +91,19 @@ export default function AdminCatPage() {
       const [{ data: cs, error: e1 }, { data: cols, error: e2 }, { data: dash, error: e3 }] = await Promise.all([
         supabase
           .from('sst_cat')
-          .select(
-            'id,numero_cat,data_acidente,tipo_acidente,tipo_cat,cid_principal,houve_obito,houve_afastamento,status_esocial,prazo_limite_envio,data_envio_esocial,protocolo_esocial,colaborador_id'
-          )
+          .select('id,numero_cat,data_acidente,tipo_acidente,tipo_cat,cid_principal,houve_obito,houve_afastamento,status_esocial,prazo_limite_envio,data_envio_esocial,protocolo_esocial,colaborador_id')
           .eq('empresa_id', empresaId!)
           .order('data_acidente', { ascending: false })
           .limit(500),
         supabase.from('colaboradores').select('id,nome_completo').eq('empresa_id', empresaId!).limit(500),
         supabase.rpc('sst_cat_dashboard', { p_empresa_id: empresaId! }),
       ]);
-      if (e1 || e2 || e3) throw e1 ?? e2 ?? e3;
+      if (e1 || e2 || e3) throw (e1 ?? e2 ?? e3);
       const colsData = (cols as { id: string; nome_completo: string }[] | null) ?? [];
       return {
-        cats: (cs as CatRow[] | null) ?? [],
+        cats: ((cs as CatRow[] | null) ?? []),
         colaboradores: colsData.map((c) => ({ id: c.id, nome: c.nome_completo })),
-        dashboard: (dash as Record<string, unknown> | null) ?? {},
+        dashboard: ((dash as Record<string, unknown> | null) ?? {}),
       };
     },
   });
@@ -126,52 +116,19 @@ export default function AdminCatPage() {
   const dashboard = catsQuery.data?.dashboard ?? EMPTY_DASH;
   const loading = catsQuery.isPending && !!empresaId;
 
-  const carregar = () => {
-    void catsQuery.refetch();
-  };
+  const carregar = () => { void catsQuery.refetch(); };
+
 
   const onSubmit = async (values: CatForm) => {
     if (!empresaId) return;
     try {
-      if (editingId) {
-        // Filtro por status 'pendente' evita sobrescrever CAT transmitida entre abrir e salvar.
-        const dataAcidente = new Date(values.data_acidente).toISOString();
-        const { data, error } = await supabase
-          .from('sst_cat')
-          .update(
-            validateTablePayload(
-              'sst_cat',
-              {
-                ...vazioParaNull(values, CAMPOS_DATA_HORA_OPCIONAIS),
-                data_acidente: dataAcidente,
-                prazo_limite_envio: prazoLimiteCat(dataAcidente, values.houve_obito),
-              },
-              'AdminCatPage:sst_cat:update'
-            )
-          )
-          .eq('id', editingId)
-          .eq('empresa_id', empresaId)
-          .eq('status_esocial', 'pendente')
-          .select('id');
-        if (error) throw error;
-        if (!data?.length) throw new Error('Esta CAT já foi transmitida ao eSocial e não pode mais ser corrigida.');
-        toast.success('CAT corrigida.');
-        setEditingId(null);
-      } else {
-        const { error } = await supabase.from('sst_cat').insert(
-          validateTablePayload(
-            'sst_cat',
-            {
-              ...vazioParaNull(values, CAMPOS_DATA_HORA_OPCIONAIS),
-              empresa_id: empresaId,
-              data_acidente: new Date(values.data_acidente).toISOString(),
-            },
-            'AdminCatPage:sst_cat'
-          )
-        );
-        if (error) throw error;
-        toast.success('CAT registrada. Prazo legal calculado automaticamente.');
-      }
+      const { error } = await supabase.from('sst_cat').insert({
+        ...values,
+        empresa_id: empresaId,
+        data_acidente: new Date(values.data_acidente).toISOString(),
+      });
+      if (error) throw error;
+      toast.success('CAT registrada. Prazo legal calculado automaticamente.');
       setOpen(false);
       form.reset();
       carregar();
@@ -180,42 +137,7 @@ export default function AdminCatPage() {
     }
   };
 
-  const abrirEdicao = async (id: string) => {
-    if (!empresaId) return;
-    try {
-      const { data, error } = await supabase
-        .from('sst_cat')
-        .select(CAT_FORM_COLUMNS)
-        .eq('id', id)
-        .eq('empresa_id', empresaId)
-        .single();
-      if (error) throw error;
-      // keepDefaultValues: o form.reset() ao salvar/fechar volta aos padrões de "Nova CAT", não a esta CAT.
-      const valores = catParaForm(data);
-      form.reset(
-        {
-          ...valores,
-          tipo_acidente: opcaoValida(valores.tipo_acidente, catSchema.shape.tipo_acidente.options),
-        } as Partial<CatForm>,
-        { keepDefaultValues: true }
-      );
-      setEditingId(id);
-      setOpen(true);
-    } catch (e) {
-      toast.error(safeErrorMessage(e, 'Erro ao carregar CAT para edição.'));
-    }
-  };
-
-  const onOpenChange = (v: boolean) => {
-    setOpen(v);
-    // Ao fechar uma correção, o formulário volta ao estado de "Nova CAT".
-    if (!v && editingId) {
-      setEditingId(null);
-      form.reset();
-    }
-  };
-
-  const nomeColab = useMemo(() => new Map(colaboradores.map((c) => [c.id, c.nome])), [colaboradores]);
+  const nomeColab = useMemo(() => new Map(colaboradores.map(c => [c.id, c.nome])), [colaboradores]);
 
   const kpi = (label: string, value: unknown, Icon: typeof AlertTriangle, tone: string) => (
     <Card>
@@ -223,66 +145,36 @@ export default function AdminCatPage() {
         <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
         <Icon className={`h-4 w-4 ${tone}`} />
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{String(value ?? 0)}</div>
-      </CardContent>
+      <CardContent><div className="text-2xl font-medium">{String(value ?? 0)}</div></CardContent>
     </Card>
   );
 
+  // padding horizontal agora vem do <main> global (p-page)
   return (
-    <div className="p-6 space-y-6">
+    <div className="py-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <ShieldAlert className="h-7 w-7 text-destructive" />
-            CAT Eletrônica (S-2210)
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Comunicação de Acidente de Trabalho — envio ao eSocial dentro do prazo legal.
-          </p>
+          <h1 className="text-3xl font-medium flex items-center gap-2"><ShieldAlert className="h-7 w-7 text-destructive" />CAT Eletrônica (S-2210)</h1>
+          <p className="text-muted-foreground text-sm">Comunicação de Acidente de Trabalho — envio ao eSocial dentro do prazo legal.</p>
         </div>
-        <Dialog open={open} onOpenChange={onOpenChange}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Nova CAT
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>{editingId ? 'Corrigir CAT (antes da transmissão)' : 'Registrar CAT'}</DialogTitle>
-            </DialogHeader>
-            <form
-              onSubmit={form.handleSubmit(onSubmit, (erros) =>
-                toast.error(Object.values(erros)[0]?.message ?? 'Revise os campos obrigatórios.')
-              )}
-              className="space-y-4"
-            >
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild><Button><Plus className="h-4 w-4 mr-2" />Nova CAT</Button></DialogTrigger>
+          <DialogContent className="max-w-[540px] max-h-[90vh] overflow-y-auto">
+            <DialogHeader><DialogTitle>Registrar CAT</DialogTitle></DialogHeader>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Colaborador *</Label>
-                  <Select value={colaboradorSel ?? ''} onValueChange={(v) => form.setValue('colaborador_id', v)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {colaboradores.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>
-                          {c.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
+                  <Select onValueChange={(v) => form.setValue('colaborador_id', v)}>
+                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                    <SelectContent>{colaboradores.map(c => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}</SelectContent>
                   </Select>
-                  {form.formState.errors.colaborador_id && (
-                    <p className="text-xs text-destructive">{form.formState.errors.colaborador_id.message}</p>
-                  )}
+                  {form.formState.errors.colaborador_id && <p className="text-xs text-destructive">{form.formState.errors.colaborador_id.message}</p>}
                 </div>
                 <div>
                   <Label>Tipo de CAT *</Label>
-                  <Select value={tipoCatSel} onValueChange={(v) => form.setValue('tipo_cat', v as CatForm['tipo_cat'])}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
+                  <Select defaultValue="inicial" onValueChange={(v) => form.setValue('tipo_cat', v as CatForm['tipo_cat'])}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="inicial">Inicial</SelectItem>
                       <SelectItem value="reabertura">Reabertura</SelectItem>
@@ -296,15 +188,8 @@ export default function AdminCatPage() {
                 </div>
                 <div>
                   <Label>Tipo de acidente *</Label>
-                  <Select
-                    value={tipoAcidenteSel ?? ''}
-                    onValueChange={(v) =>
-                      form.setValue('tipo_acidente', v as CatForm['tipo_acidente'], { shouldValidate: true })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
+                  <Select defaultValue="tipico" onValueChange={(v) => form.setValue('tipo_acidente', v as CatForm['tipo_acidente'])}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="tipico">Típico</SelectItem>
                       <SelectItem value="trajeto">Trajeto</SelectItem>
@@ -317,10 +202,8 @@ export default function AdminCatPage() {
                 </div>
                 <div>
                   <Label>CID Principal *</Label>
-                  <Input placeholder="E: S60.9" {...form.register('cid_principal')} />
-                  {form.formState.errors.cid_principal && (
-                    <p className="text-xs text-destructive">{form.formState.errors.cid_principal.message}</p>
-                  )}
+                  <Input placeholder="Ex: S60.9" {...form.register('cid_principal')} />
+                  {form.formState.errors.cid_principal && <p className="text-xs text-destructive">{form.formState.errors.cid_principal.message}</p>}
                 </div>
                 <div>
                   <Label>Parte do corpo atingida</Label>
@@ -332,13 +215,8 @@ export default function AdminCatPage() {
                 </div>
                 <div>
                   <Label>Tipo de local</Label>
-                  <Select
-                    value={tipoLocalSel ?? ''}
-                    onValueChange={(v) => form.setValue('tipo_local', v as NonNullable<CatForm['tipo_local']>)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
+                  <Select onValueChange={(v) => form.setValue('tipo_local', v as NonNullable<CatForm['tipo_local']>)}>
+                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="estabelecimento_empregador">Estabelecimento do empregador</SelectItem>
                       <SelectItem value="via_publica">Via pública</SelectItem>
@@ -363,8 +241,7 @@ export default function AdminCatPage() {
                   <Input type="number" min={0} {...form.register('dias_afastamento_estimado')} />
                 </div>
                 <div className="flex items-center gap-2">
-                  <input type="checkbox" {...form.register('houve_obito')} />{' '}
-                  <Label className="text-destructive">Óbito (prazo 24h)</Label>
+                  <input type="checkbox" {...form.register('houve_obito')} /> <Label className="text-destructive">Óbito (prazo 24h)</Label>
                 </div>
                 <div className="flex items-center gap-2">
                   <input type="checkbox" {...form.register('houve_internacao')} /> <Label>Houve internação</Label>
@@ -375,12 +252,8 @@ export default function AdminCatPage() {
                 </div>
               </div>
               <div className="flex justify-end gap-2">
-                <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-                  Cancelar
-                </Button>
-                <Button type="submit" disabled={form.formState.isSubmitting}>
-                  {editingId ? 'Salvar correção' : 'Registrar CAT'}
-                </Button>
+                <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Cancelar</Button>
+                <Button type="submit" disabled={form.formState.isSubmitting}>Registrar CAT</Button>
               </div>
             </form>
           </DialogContent>
@@ -397,53 +270,38 @@ export default function AdminCatPage() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>CATs registradas</CardTitle>
-        </CardHeader>
+        <CardHeader><CardTitle>CATs registradas</CardTitle></CardHeader>
         <CardContent>
-          {loading ? (
-            <p className="text-muted-foreground">Carregando…</p>
-          ) : cats.length === 0 ? (
+          {loading ? <p className="text-muted-foreground">Carregando…</p> : cats.length === 0 ? (
             <p className="text-muted-foreground text-sm">Nenhuma CAT registrada.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="text-left border-b">
                   <tr>
-                    <th className="py-2">Número</th>
-                    <th>Colaborador</th>
-                    <th>Data</th>
-                    <th>Tipo</th>
-                    <th>CID</th>
-                    <th>Prazo</th>
-                    <th>Status</th>
-                    <th className="text-right">Ações</th>
+                    <th className="py-2">Número</th><th>Colaborador</th><th>Data</th><th>Tipo</th><th>CID</th>
+                    <th>Prazo</th><th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {cats.map((c) => {
-                    const atrasada =
-                      !c.data_envio_esocial && c.prazo_limite_envio && new Date(c.prazo_limite_envio) < new Date();
+                  {cats.map(c => {
+                    const atrasada = !c.data_envio_esocial && c.prazo_limite_envio && new Date(c.prazo_limite_envio) < new Date();
                     return (
                       <tr key={c.id} className="border-b hover:bg-muted/50">
                         <td className="py-2 font-mono text-xs">{c.numero_cat}</td>
-                        <td>{c.colaborador_id ? (nomeColab.get(c.colaborador_id) ?? '—') : '—'}</td>
+                        <td>{c.colaborador_id ? nomeColab.get(c.colaborador_id) ?? '—' : '—'}</td>
                         <td>{new Date(c.data_acidente).toLocaleString('pt-BR')}</td>
-                        <td>
-                          <Badge variant="outline">{c.tipo_acidente}</Badge>
-                        </td>
+                        <td><Badge variant="outline">{c.tipo_acidente}</Badge></td>
                         <td className="font-mono text-xs">{c.cid_principal ?? '—'}</td>
                         <td className={atrasada ? 'text-destructive font-medium' : ''}>
                           {c.prazo_limite_envio ? new Date(c.prazo_limite_envio).toLocaleString('pt-BR') : '—'}
                         </td>
                         <td>
-                          {c.data_envio_esocial ? (
-                            <Badge className="bg-success text-success-foreground">Transmitida</Badge>
-                          ) : atrasada ? (
-                            <Badge variant="destructive">Em atraso</Badge>
-                          ) : (
-                            <Badge variant="secondary">Pendente</Badge>
-                          )}
+                          {c.data_envio_esocial
+                            ? <Badge className="bg-success text-success-foreground">Transmitida</Badge>
+                            : atrasada
+                              ? <Badge variant="destructive">Em atraso</Badge>
+                              : <Badge variant="secondary">Pendente</Badge>}
                         </td>
                         <td className="text-right">
                           {podeEditarCat(c) && (

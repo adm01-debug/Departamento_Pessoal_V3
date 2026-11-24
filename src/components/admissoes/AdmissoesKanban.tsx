@@ -10,17 +10,15 @@
  * BOARD x COLUNA x CARD: só a faixa rola na horizontal (`overflow-x-auto`); cada
  * coluna rola na vertical quando a lista passa do teto; o card não rola nunca. O
  * gutter da faixa é `-mx-2 px-2` (o realce/sombra das colunas não é cortado na
- * borda do container) e `gap-3` = 12px entre colunas. `items-end` alinha as
- * colunas pelo RODAPÉ (a altura fixa vive na coluna, que cresce por `height`).
+ * borda do container) e `gap-3` = 12px entre colunas — mais estreito que os 16px
+ * do board anterior para dar a densidade da referência. `items-stretch` alinha
+ * todas as colunas na MESMA altura (a altura fixa vive na coluna).
  *
  * ARRASTE: `PointerSensor` com `distance: 6` — clique curto (inclusive no menu de
- * três pontos do card) não vira arraste. O drop NÃO é um simples `update` da
- * coluna: `concluida` e `cancelada` passam por `admissaoService.concluir` /
- * `.cancelar`, porque concluir uma admissão CRIA o colaborador (e por isso as
- * duas etapas terminais também não voltam a ser arrastáveis — ver `KanbanCard`).
- * As outras etapas gravam por `admissaoService.atualizar` (a MESMA escrita de
- * Nova Admissão/edição). Enquanto a gravação corre, o card fica na coluna de
- * destino pelo estado otimista, desfeito se falhar.
+ * três pontos do card) não vira arraste. No drop a etapa é gravada pelo
+ * `admissaoService.atualizar` (a MESMA escrita de Nova Admissão/edição) e a query
+ * é invalidada; enquanto isso o card fica na coluna de destino pelo estado
+ * otimista, que é desfeito se a gravação falhar.
  * O `DragOverlay` é PORTALADO para `document.body` (`createPortal`): o wrapper de
  * transição de página (`PageTransition`) usa `will-change: transform` — o que o
  * torna bloco contentor de `position: fixed` — e, sem o portal, o card arrastado
@@ -42,20 +40,24 @@
  */
 import { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 import { safeErrorMessage } from '@/utils/safeError';
 import { admissaoService } from '@/services/admissaoService';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import type { Database, Tables } from '@/integrations/supabase/database.types';
 import { KanbanCard, type KanbanAcoes } from './KanbanCard';
 import { KanbanColumn } from './KanbanColumn';
 import { NovaAdmissaoDialog } from './NovaAdmissaoDialog';
 import { COLUNAS_KANBAN, type AdmissaoKanban } from './kanbanComum';
-
-type EtapaAdmissao = Database['public']['Enums']['etapa_admissao'];
 
 /**
  * Props do board: a lista + as ações do card, que chegam da página exatamente
@@ -64,12 +66,7 @@ type EtapaAdmissao = Database['public']['Enums']['etapa_admissao'];
  * lista.
  */
 export interface AdmissoesKanbanProps extends KanbanAcoes {
-  /**
-   * A lista como a página a tem: a linha do banco (`Tables<'admissoes'>`, cujo
-   * `metadata: Json` é mais largo que o do board) ou já na forma frouxa do
-   * Kanban. Os derivados de `kanbanComum` toleram campo faltando.
-   */
-  admissoes: readonly (AdmissaoKanban | Tables<'admissoes'>)[];
+  admissoes: AdmissaoKanban[];
   /**
    * A aba do Kanban está ATIVA? A entrada só roda quando `true` (e é resetada
    * quando `false`) — ver `AdmissoesPage`, que passa `activeTab === 'kanban'`.
@@ -83,20 +80,17 @@ export function AdmissoesKanban({ admissoes, isActive = true, ...acoes }: Admiss
   const { empresaAtual } = useEmpresas();
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [optimistic, setOptimistic] = useState<Record<string, EtapaAdmissao>>({});
+  const [optimistic, setOptimistic] = useState<Record<string, string>>({});
   /** "+ Adicionar candidato" (rodapé de qualquer coluna) → Nova Admissão. */
   const [novaAberta, setNovaAberta] = useState(false);
-
-  /** A linha do banco é mais larga que `AdmissaoKanban` só no `metadata`. */
-  const lista = admissoes as readonly AdmissaoKanban[];
 
   const grouped = useMemo(() => {
     const map: Record<string, AdmissaoKanban[]> = {};
     COLUNAS_KANBAN.forEach((c) => (map[c.key] = []));
-    for (const a of lista) {
+    for (const a of admissoes) {
       const etapa = optimistic[a.id] ?? a.etapa;
       if (!map[etapa]) map[etapa] = [];
-      map[etapa].push({ ...a, etapa });
+      map[etapa].push(a);
     }
     return map;
   }, [lista, optimistic]);
@@ -108,37 +102,16 @@ export function AdmissoesKanban({ admissoes, isActive = true, ...acoes }: Admiss
   const handleDragEnd = async (e: DragEndEvent) => {
     setActiveId(null);
     const id = String(e.active.id);
-    const target = e.over?.id ? (String(e.over.id) as EtapaAdmissao) : null;
+    const target = e.over?.id ? String(e.over.id) : null;
     if (!target) return;
     const current = lista.find((a) => a.id === id);
     if (!current || current.etapa === target) return;
 
-    if (!empresaAtual?.id) {
-      toast.error('Empresa ativa não carregada.');
-      return;
-    }
-
     setOptimistic((s) => ({ ...s, [id]: target }));
     try {
-      if (target === 'concluida') {
-        const r = await admissaoService.concluir(id, empresaAtual.id);
-        toast.success(r.colaboradorId ? 'Admissão concluída — colaborador criado.' : 'Admissão concluída.');
-      } else if (target === 'cancelada') {
-        await admissaoService.cancelar(id, empresaAtual.id);
-        toast.success('Admissão cancelada.');
-      } else {
-        await admissaoService.atualizar(id, { etapa: target }, empresaAtual.id);
-        toast.success(`Movido para ${COLUNAS_KANBAN.find((c) => c.key === target)?.label ?? target}`);
-      }
+      await admissaoService.atualizar(id, { etapa: target }, empresaAtual?.id);
+      toast.success(`Movido para ${COLUNAS_KANBAN.find((c) => c.key === target)?.label ?? target}`);
       await qc.invalidateQueries({ queryKey: ['admissoes'] });
-      if (target === 'concluida') {
-        await Promise.all([
-          qc.invalidateQueries({ queryKey: ['colaboradores'] }),
-          qc.invalidateQueries({ queryKey: ['colaboradores-summary'] }),
-          // ver ColaboradorFormPage: a chave singular do dossiê é outra família.
-          qc.invalidateQueries({ queryKey: ['colaborador'] }),
-        ]);
-      }
     } catch (err) {
       setOptimistic((s) => {
         const next = { ...s };

@@ -17,127 +17,39 @@ import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { Plus, ArrowRightLeft, TrendingUp, Pencil, Trash2 } from 'lucide-react';
-import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
-import { validateTablePayload } from '@/schemas/validate';
-import { todayLocalISO } from '@/utils/dateLocal';
-import { criarRegistroSalarial } from '@/services/colaboradorDetalhesService';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-
-type TransferenciaComJoins = Tables<'transferencias'> & {
-  colaborador: { nome_completo: string; empresa_id: string | null } | null;
-  departamento_anterior: { nome: string } | null;
-  departamento_novo: { nome: string } | null;
-};
-
-type PromocaoComJoins = Tables<'promocoes'> & {
-  colaborador: { nome_completo: string; empresa_id: string | null } | null;
-  cargo_anterior: { nome: string } | null;
-  cargo_novo: { nome: string } | null;
-};
-
-const initialFormTransf = {
-  colaborador_id: '',
-  departamento_anterior_id: '',
-  departamento_novo_id: '',
-  data_vigencia: '',
-  motivo: '',
-};
-const initialFormPromo = {
-  colaborador_id: '',
-  cargo_anterior_id: '',
-  cargo_novo_id: '',
-  salario_anterior: '',
-  salario_novo: '',
-  data_vigencia: '',
-  motivo: '',
-};
+import { Plus, ArrowRightLeft, TrendingUp } from 'lucide-react';
 
 export default function MovimentacoesPage() {
   const { empresaAtual } = useEmpresas();
   const qc = useQueryClient();
   const [openTransf, setOpenTransf] = useState(false);
   const [openPromo, setOpenPromo] = useState(false);
-  const [formTransf, setFormTransf] = useState(initialFormTransf);
-  const [formPromo, setFormPromo] = useState(initialFormPromo);
-  const [editTransfId, setEditTransfId] = useState<string | null>(null);
-  const [editPromoId, setEditPromoId] = useState<string | null>(null);
-  const [excluirAlvo, setExcluirAlvo] = useState<{ tabela: 'transferencias' | 'promocoes'; id: string } | null>(null);
+  const [formTransf, setFormTransf] = useState({ colaborador_id: '', tipo: 'transferencia', origem: '', destino: '', data_efetivacao: '', motivo: '' });
+  const [formPromo, setFormPromo] = useState({ colaborador_id: '', cargo_anterior: '', cargo_novo: '', data_promocao: '', novo_salario: '', motivo: '' });
 
-  const { data: colaboradores = [] } = useQuery({
-    queryKey: ['colaboradores', empresaAtual?.id],
-    queryFn: () => colaboradorService.list(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
-  });
+  const { data: colaboradores = [] } = useQuery({ queryKey: ['colaboradores', empresaAtual?.id], queryFn: () => colaboradorService.list(empresaAtual!.id), enabled: !!empresaAtual?.id });
 
-  const { data: departamentos = [] } = useQuery({
-    queryKey: ['departamentos', empresaAtual?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('departamentos')
-        .select('id, nome')
-        .eq('empresa_id', empresaAtual!.id)
-        .order('nome');
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!empresaAtual?.id,
-  });
-
-  const { data: cargos = [] } = useQuery({
-    queryKey: ['cargos', empresaAtual?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('cargos')
-        .select('id, nome')
-        .eq('empresa_id', empresaAtual!.id)
-        .order('nome');
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!empresaAtual?.id,
-  });
-
-  const { data: transferencias = [], isLoading: loadTransf } = useQuery<TransferenciaComJoins[]>({
+  const { data: transferencias = [], isLoading: loadTransf } = useQuery({
     queryKey: ['transferencias', empresaAtual?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('transferencias')
-        .select(
-          '*, colaborador:colaboradores!inner(nome_completo, empresa_id), departamento_anterior:departamentos!transferencias_departamento_anterior_id_fkey(nome), departamento_novo:departamentos!transferencias_departamento_novo_id_fkey(nome)'
-        )
-        .eq('colaborador.empresa_id', empresaAtual!.id)
-        .order('data_vigencia', { ascending: false });
+      let q = supabase.from('transferencias').select('*, colaborador:colaboradores(nome_completo)').order('data_efetivacao', { ascending: false });
+      if (empresaAtual?.id) q = (q as any).eq('empresa_id', empresaAtual.id);
+      const { data, error } = await q;
       if (error) throw error;
-      return (data as TransferenciaComJoins[] | null) || [];
+      return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
-  const { data: promocoes = [], isLoading: loadPromo } = useQuery<PromocaoComJoins[]>({
+  const { data: promocoes = [], isLoading: loadPromo } = useQuery({
     queryKey: ['promocoes', empresaAtual?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('promocoes')
-        .select(
-          '*, colaborador:colaboradores!inner(nome_completo, empresa_id), cargo_anterior:cargos!promocoes_cargo_anterior_id_fkey(nome), cargo_novo:cargos!promocoes_cargo_novo_id_fkey(nome)'
-        )
-        .eq('colaborador.empresa_id', empresaAtual!.id)
-        .order('data_vigencia', { ascending: false });
+      let q = supabase.from('promocoes').select('*, colaborador:colaboradores(nome_completo)').order('data_promocao', { ascending: false });
+      if (empresaAtual?.id) q = (q as any).eq('empresa_id', empresaAtual.id);
+      const { data, error } = await q;
       if (error) throw error;
-      return (data as PromocaoComJoins[] | null) || [];
+      return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   // Aplica a movimentação no cadastro do colaborador (cargo/salário/departamento).
   // Sem linha afetada = RLS bloqueou (perfil sem gestão de RH): falha explícita, nunca sucesso falso.
@@ -184,33 +96,8 @@ export default function MovimentacoesPage() {
     'O cadastro do colaborador não foi atualizado e não foi possível desfazer a alteração no histórico. Revise o registro.';
 
   const criarTransf = useMutation({
-    mutationFn: async ({ d, id }: { d: typeof initialFormTransf; id: string | null }) => {
-      const payload: Insertable<'transferencias'> = {
-        colaborador_id: d.colaborador_id,
-        departamento_anterior_id: d.departamento_anterior_id || null,
-        departamento_novo_id: d.departamento_novo_id || null,
-        data_vigencia: d.data_vigencia,
-        motivo: d.motivo || null,
-      };
-      const validado = validateTablePayload('transferencias', payload, 'MovimentacoesPage:transferencias');
-      if (!colaboradores.some((c) => c.id === d.colaborador_id))
-        throw new Error('Colaborador não pertence à empresa selecionada.');
-      let original: Tables<'transferencias'> | null = null;
-      if (id) {
-        const { data: atual, error: errAtual } = await supabase
-          .from('transferencias')
-          .select('*, colaborador:colaboradores!inner(empresa_id)')
-          .eq('id', id)
-          .eq('colaborador.empresa_id', empresaAtual!.id)
-          .maybeSingle();
-        if (errAtual) throw errAtual;
-        if (!atual) throw new Error('Transferência não encontrada nesta empresa.');
-        const { colaborador: _c, ...linha } = atual;
-        original = linha;
-      }
-      const { data, error } = id
-        ? await supabase.from('transferencias').update(validado).eq('id', id).select().maybeSingle()
-        : await supabase.from('transferencias').insert(validado).select().maybeSingle();
+    mutationFn: async (d: any) => {
+      const { data, error } = await supabase.from('transferencias').insert({ ...d, empresa_id: empresaAtual?.id }).select().maybeSingle();
       if (error) throw error;
       if (!data) throw new Error('Transferência não encontrada ou sem permissão para salvar.');
       const deptoNovo = departamentos.find((x) => x.id === d.departamento_novo_id);
@@ -249,59 +136,12 @@ export default function MovimentacoesPage() {
         temMaisRecente: vigente && !!deptoNovo && mudou && !maisRecente,
       };
     },
-    onSuccess: (r) => {
-      qc.invalidateQueries({ queryKey: ['transferencias'] });
-      qc.invalidateQueries({ queryKey: ['colaboradores'] });
-      // ['colaboradores'] (plural) NÃO casa com ['colaborador', id, empresaId]:
-      // o React Query compara segmento a segmento e o primeiro já difere. Sem
-      // esta linha, o dossiê do colaborador seguia mostrando o dado antigo por
-      // até 5 minutos (staleTime) depois de uma edição.
-      qc.invalidateQueries({ queryKey: ['colaborador'] });
-      setOpenTransf(false);
-      setEditTransfId(null);
-      toast.success(
-        r.aplicado
-          ? 'Transferência salva e aplicada ao cadastro do colaborador.'
-          : r.futura
-            ? 'Transferência salva. Vigência futura: o cadastro do colaborador não foi alterado.'
-            : r.temMaisRecente
-              ? 'Transferência salva. Há transferência mais recente: o cadastro do colaborador não foi alterado.'
-              : 'Transferência salva.'
-      );
-    },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.')),
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['transferencias'] }); setOpenTransf(false); toast.success('Transferência registrada!'); },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.'))});
 
   const criarPromo = useMutation({
-    mutationFn: async ({ d, id }: { d: typeof initialFormPromo; id: string | null }) => {
-      const payload: Insertable<'promocoes'> = {
-        colaborador_id: d.colaborador_id || null,
-        cargo_anterior_id: d.cargo_anterior_id || null,
-        cargo_novo_id: d.cargo_novo_id || null,
-        salario_anterior: d.salario_anterior ? Number(d.salario_anterior) : null,
-        salario_novo: d.salario_novo ? Number(d.salario_novo) : null,
-        data_vigencia: d.data_vigencia,
-        motivo: d.motivo || null,
-      };
-      const validado = validateTablePayload('promocoes', payload, 'MovimentacoesPage:promocoes');
-      if (!colaboradores.some((c) => c.id === d.colaborador_id))
-        throw new Error('Colaborador não pertence à empresa selecionada.');
-      let original: Tables<'promocoes'> | null = null;
-      if (id) {
-        const { data: atual, error: errAtual } = await supabase
-          .from('promocoes')
-          .select('*, colaborador:colaboradores!inner(empresa_id)')
-          .eq('id', id)
-          .eq('colaborador.empresa_id', empresaAtual!.id)
-          .maybeSingle();
-        if (errAtual) throw errAtual;
-        if (!atual) throw new Error('Promoção não encontrada nesta empresa.');
-        const { colaborador: _c, ...linha } = atual;
-        original = linha;
-      }
-      const { data, error } = id
-        ? await supabase.from('promocoes').update(validado).eq('id', id).select().maybeSingle()
-        : await supabase.from('promocoes').insert(validado).select().maybeSingle();
+    mutationFn: async (d: any) => {
+      const { data, error } = await supabase.from('promocoes').insert({ ...d, empresa_id: empresaAtual?.id, novo_salario: d.novo_salario ? Number(d.novo_salario) : null }).select().maybeSingle();
       if (error) throw error;
       if (!data) throw new Error('Promoção não encontrada ou sem permissão para salvar.');
       const patch: Updatable<'colaboradores'> = {};
@@ -369,28 +209,8 @@ export default function MovimentacoesPage() {
         temMaisRecente: vigente && temAlteracao && mudou && !maisRecente,
       };
     },
-    onSuccess: (r) => {
-      qc.invalidateQueries({ queryKey: ['promocoes'] });
-      qc.invalidateQueries({ queryKey: ['colaboradores'] });
-      // ['colaboradores'] (plural) NÃO casa com ['colaborador', id, empresaId]:
-      // o React Query compara segmento a segmento e o primeiro já difere. Sem
-      // esta linha, o dossiê do colaborador seguia mostrando o dado antigo por
-      // até 5 minutos (staleTime) depois de uma edição.
-      qc.invalidateQueries({ queryKey: ['colaborador'] });
-      setOpenPromo(false);
-      setEditPromoId(null);
-      toast.success(
-        r.aplicado
-          ? 'Promoção salva e aplicada ao cadastro do colaborador.'
-          : r.futura
-            ? 'Promoção salva. Vigência futura: o cadastro do colaborador não foi alterado.'
-            : r.temMaisRecente
-              ? 'Promoção salva. Há promoção mais recente: o cadastro do colaborador não foi alterado.'
-              : 'Promoção salva.'
-      );
-    },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.')),
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['promocoes'] }); setOpenPromo(false); toast.success('Promoção registrada!'); },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.'))});
 
   const excluir = useMutation({
     mutationFn: async (alvo: { tabela: 'transferencias' | 'promocoes'; id: string }) => {
@@ -441,386 +261,113 @@ export default function MovimentacoesPage() {
   };
 
   const isLoading = loadTransf || loadPromo;
-  if (isLoading)
-    return (
-      <PageLayout title="Movimentações">
-        <Spinner />
-      </PageLayout>
-    );
+  if (isLoading) return <PageLayout title="Movimentações"><Spinner /></PageLayout>;
 
   return (
     <>
-      <PageTitle title="Movimentações" description="Histórico de movimentações" />
-      <PageLayout title="Movimentações de Pessoal" description="Transferências, promoções e lotações">
-        <Tabs defaultValue="transferencias">
-          <TabsList>
-            <TabsTrigger value="transferencias">
-              <ArrowRightLeft className="h-4 w-4 mr-1" />
-              Transferências ({transferencias.length})
-            </TabsTrigger>
-            <TabsTrigger value="promocoes">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              Promoções ({promocoes.length})
-            </TabsTrigger>
-          </TabsList>
+    <PageTitle title="Movimentações" description="Histórico de movimentações" />
+    <PageLayout title="Movimentações de Pessoal" description="Transferências, promoções e lotações">
+      <Tabs defaultValue="transferencias">
+        <TabsList>
+          <TabsTrigger value="transferencias"><ArrowRightLeft className="h-4 w-4 mr-1" />Transferências ({transferencias.length})</TabsTrigger>
+          <TabsTrigger value="promocoes"><TrendingUp className="h-4 w-4 mr-1" />Promoções ({promocoes.length})</TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="transferencias">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex justify-between mb-4">
-                  <h3 className="text-lg font-semibold">Transferências</h3>
-                  <Dialog open={openTransf} onOpenChange={setOpenTransf}>
-                    <DialogTrigger asChild>
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          setEditTransfId(null);
-                          setFormTransf(initialFormTransf);
-                        }}
-                      >
-                        <Plus className="h-4 w-4 mr-1" />
-                        Nova Transferência
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>{editTransfId ? 'Editar Transferência' : 'Registrar Transferência'}</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-3">
-                        <div>
-                          <Label>Colaborador *</Label>
-                          <Select
-                            value={formTransf.colaborador_id}
-                            onValueChange={(v) => setFormTransf((p) => ({ ...p, colaborador_id: v }))}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {colaboradores.map((c) => (
-                                <SelectItem key={c.id} value={c.id}>
-                                  {c.nome_completo}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <Label>Departamento Anterior</Label>
-                            <Select
-                              value={formTransf.departamento_anterior_id}
-                              onValueChange={(v) => setFormTransf((p) => ({ ...p, departamento_anterior_id: v }))}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Selecione" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {departamentos.map((d) => (
-                                  <SelectItem key={d.id} value={d.id}>
-                                    {d.nome}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Label>Departamento Novo</Label>
-                            <Select
-                              value={formTransf.departamento_novo_id}
-                              onValueChange={(v) => setFormTransf((p) => ({ ...p, departamento_novo_id: v }))}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Selecione" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {departamentos.map((d) => (
-                                  <SelectItem key={d.id} value={d.id}>
-                                    {d.nome}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                        <div>
-                          <Label>Data de Vigência *</Label>
-                          <Input
-                            type="date"
-                            value={formTransf.data_vigencia}
-                            onChange={(e) => setFormTransf((p) => ({ ...p, data_vigencia: e.target.value }))}
-                          />
-                        </div>
-                        <div>
-                          <Label>Motivo</Label>
-                          <Textarea
-                            value={formTransf.motivo}
-                            onChange={(e) => setFormTransf((p) => ({ ...p, motivo: e.target.value }))}
-                          />
-                        </div>
-                        <Button
-                          className="w-full"
-                          onClick={() => criarTransf.mutate({ d: formTransf, id: editTransfId })}
-                          disabled={!formTransf.colaborador_id || !formTransf.data_vigencia || criarTransf.isPending}
-                        >
-                          Salvar
-                        </Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Colaborador</TableHead>
-                      <TableHead>De</TableHead>
-                      <TableHead>Para</TableHead>
-                      <TableHead>Data</TableHead>
-                      <TableHead className="w-24 text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {transferencias.map((t) => (
-                      <TableRow key={t.id}>
-                        <TableCell>{t.colaborador?.nome_completo || '—'}</TableCell>
-                        <TableCell>{t.departamento_anterior?.nome || '—'}</TableCell>
-                        <TableCell>{t.departamento_novo?.nome || '—'}</TableCell>
-                        <TableCell>{t.data_vigencia}</TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            aria-label="Editar transferência"
-                            onClick={() => editarTransf(t)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            aria-label="Excluir transferência"
-                            onClick={() => setExcluirAlvo({ tabela: 'transferencias', id: t.id })}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    {transferencias.length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={5} className="text-center text-muted-foreground">
-                          Nenhuma transferência
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+        <TabsContent value="transferencias">
+          <Card><CardContent className="pt-6">
+            <div className="flex justify-between mb-4">
+              <h3 className="text-lg font-semibold">Transferências</h3>
+              <Dialog open={openTransf} onOpenChange={setOpenTransf}>
+                <DialogTrigger asChild><Button size="sm"><Plus className="h-4 w-4 mr-1" />Nova Transferência</Button></DialogTrigger>
+                <DialogContent>
+                  <DialogHeader><DialogTitle>Registrar Transferência</DialogTitle></DialogHeader>
+                  <div className="space-y-3">
+                    <div><Label>Colaborador *</Label>
+                      <Select value={formTransf.colaborador_id} onValueChange={v => setFormTransf(p => ({ ...p, colaborador_id: v }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent>{colaboradores.map((c: any) => <SelectItem key={c.id} value={c.id}>{c.nome_completo}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div><Label>Origem</Label><Input value={formTransf.origem} onChange={e => setFormTransf(p => ({ ...p, origem: e.target.value }))} /></div>
+                      <div><Label>Destino</Label><Input value={formTransf.destino} onChange={e => setFormTransf(p => ({ ...p, destino: e.target.value }))} /></div>
+                    </div>
+                    <div><Label>Data *</Label><Input type="date" value={formTransf.data_efetivacao} onChange={e => setFormTransf(p => ({ ...p, data_efetivacao: e.target.value }))} /></div>
+                    <div><Label>Motivo</Label><Textarea value={formTransf.motivo} onChange={e => setFormTransf(p => ({ ...p, motivo: e.target.value }))} /></div>
+                    <div className="flex justify-end pt-1">
+                      <Button size="sm" className="rounded-lg px-4" onClick={() => criarTransf.mutate(formTransf)} disabled={!formTransf.colaborador_id || !formTransf.data_efetivacao}>Salvar</Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <Table>
+              <TableHeader><TableRow><TableHead>Colaborador</TableHead><TableHead>Origem</TableHead><TableHead>Destino</TableHead><TableHead>Data</TableHead></TableRow></TableHeader>
+              <TableBody>
+                {transferencias.map((t: any) => (
+                  <TableRow key={t.id}>
+                    <TableCell>{t.colaborador?.nome_completo || '—'}</TableCell>
+                    <TableCell>{t.origem || '—'}</TableCell>
+                    <TableCell>{t.destino || '—'}</TableCell>
+                    <TableCell>{t.data_efetivacao}</TableCell>
+                  </TableRow>
+                ))}
+                {transferencias.length === 0 && <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground">Nenhuma transferência</TableCell></TableRow>}
+              </TableBody>
+            </Table>
+          </CardContent></Card>
+        </TabsContent>
 
-          <TabsContent value="promocoes">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex justify-between mb-4">
-                  <h3 className="text-lg font-semibold">Promoções</h3>
-                  <Dialog open={openPromo} onOpenChange={setOpenPromo}>
-                    <DialogTrigger asChild>
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          setEditPromoId(null);
-                          setFormPromo(initialFormPromo);
-                        }}
-                      >
-                        <Plus className="h-4 w-4 mr-1" />
-                        Nova Promoção
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>{editPromoId ? 'Editar Promoção' : 'Registrar Promoção'}</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-3">
-                        <div>
-                          <Label>Colaborador *</Label>
-                          <Select
-                            value={formPromo.colaborador_id}
-                            onValueChange={(v) => setFormPromo((p) => ({ ...p, colaborador_id: v }))}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {colaboradores.map((c) => (
-                                <SelectItem key={c.id} value={c.id}>
-                                  {c.nome_completo}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <Label>Cargo Anterior</Label>
-                            <Select
-                              value={formPromo.cargo_anterior_id}
-                              onValueChange={(v) => setFormPromo((p) => ({ ...p, cargo_anterior_id: v }))}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Selecione" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {cargos.map((c) => (
-                                  <SelectItem key={c.id} value={c.id}>
-                                    {c.nome}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Label>Cargo Novo</Label>
-                            <Select
-                              value={formPromo.cargo_novo_id}
-                              onValueChange={(v) => setFormPromo((p) => ({ ...p, cargo_novo_id: v }))}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Selecione" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {cargos.map((c) => (
-                                  <SelectItem key={c.id} value={c.id}>
-                                    {c.nome}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <Label>Salário Anterior</Label>
-                            <Input
-                              type="number"
-                              value={formPromo.salario_anterior}
-                              onChange={(e) => setFormPromo((p) => ({ ...p, salario_anterior: e.target.value }))}
-                            />
-                          </div>
-                          <div>
-                            <Label>Novo Salário</Label>
-                            <Input
-                              type="number"
-                              value={formPromo.salario_novo}
-                              onChange={(e) => setFormPromo((p) => ({ ...p, salario_novo: e.target.value }))}
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <Label>Data de Vigência *</Label>
-                          <Input
-                            type="date"
-                            value={formPromo.data_vigencia}
-                            onChange={(e) => setFormPromo((p) => ({ ...p, data_vigencia: e.target.value }))}
-                          />
-                        </div>
-                        <div>
-                          <Label>Motivo</Label>
-                          <Textarea
-                            value={formPromo.motivo}
-                            onChange={(e) => setFormPromo((p) => ({ ...p, motivo: e.target.value }))}
-                          />
-                        </div>
-                        <Button
-                          className="w-full"
-                          onClick={() => criarPromo.mutate({ d: formPromo, id: editPromoId })}
-                          disabled={!formPromo.colaborador_id || !formPromo.data_vigencia || criarPromo.isPending}
-                        >
-                          Salvar
-                        </Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Colaborador</TableHead>
-                      <TableHead>De</TableHead>
-                      <TableHead>Para</TableHead>
-                      <TableHead>Salário</TableHead>
-                      <TableHead>Data</TableHead>
-                      <TableHead className="w-24 text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {promocoes.map((p) => (
-                      <TableRow key={p.id}>
-                        <TableCell>{p.colaborador?.nome_completo || '—'}</TableCell>
-                        <TableCell>{p.cargo_anterior?.nome || '—'}</TableCell>
-                        <TableCell className="font-medium">{p.cargo_novo?.nome || '—'}</TableCell>
-                        <TableCell>
-                          {p.salario_novo ? `R$ ${Number(p.salario_novo).toLocaleString('pt-BR')}` : '—'}
-                        </TableCell>
-                        <TableCell>{p.data_vigencia}</TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            aria-label="Editar promoção"
-                            onClick={() => editarPromo(p)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            aria-label="Excluir promoção"
-                            onClick={() => setExcluirAlvo({ tabela: 'promocoes', id: p.id })}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    {promocoes.length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={6} className="text-center text-muted-foreground">
-                          Nenhuma promoção
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-
-        <AlertDialog open={!!excluirAlvo} onOpenChange={(o) => !o && setExcluirAlvo(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Excluir movimentação do histórico?</AlertDialogTitle>
-              <AlertDialogDescription>
-                O registro será removido do histórico. O cadastro atual do colaborador (cargo, salário e departamento)
-                não é revertido automaticamente.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction
-                disabled={excluir.isPending}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (excluirAlvo) excluir.mutate(excluirAlvo);
-                }}
-              >
-                Excluir
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </PageLayout>
+        <TabsContent value="promocoes">
+          <Card><CardContent className="pt-6">
+            <div className="flex justify-between mb-4">
+              <h3 className="text-lg font-semibold">Promoções</h3>
+              <Dialog open={openPromo} onOpenChange={setOpenPromo}>
+                <DialogTrigger asChild><Button size="sm"><Plus className="h-4 w-4 mr-1" />Nova Promoção</Button></DialogTrigger>
+                <DialogContent>
+                  <DialogHeader><DialogTitle>Registrar Promoção</DialogTitle></DialogHeader>
+                  <div className="space-y-3">
+                    <div><Label>Colaborador *</Label>
+                      <Select value={formPromo.colaborador_id} onValueChange={v => setFormPromo(p => ({ ...p, colaborador_id: v }))}>
+                        <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                        <SelectContent>{colaboradores.map((c: any) => <SelectItem key={c.id} value={c.id}>{c.nome_completo}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div><Label>Cargo Anterior</Label><Input value={formPromo.cargo_anterior} onChange={e => setFormPromo(p => ({ ...p, cargo_anterior: e.target.value }))} /></div>
+                      <div><Label>Cargo Novo</Label><Input value={formPromo.cargo_novo} onChange={e => setFormPromo(p => ({ ...p, cargo_novo: e.target.value }))} /></div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div><Label>Data *</Label><Input type="date" value={formPromo.data_promocao} onChange={e => setFormPromo(p => ({ ...p, data_promocao: e.target.value }))} /></div>
+                      <div><Label>Novo Salário</Label><Input type="number" value={formPromo.novo_salario} onChange={e => setFormPromo(p => ({ ...p, novo_salario: e.target.value }))} /></div>
+                    </div>
+                    <div><Label>Motivo</Label><Textarea value={formPromo.motivo} onChange={e => setFormPromo(p => ({ ...p, motivo: e.target.value }))} /></div>
+                    <div className="flex justify-end pt-1">
+                      <Button size="sm" className="rounded-lg px-4" onClick={() => criarPromo.mutate(formPromo)} disabled={!formPromo.colaborador_id || !formPromo.data_promocao}>Salvar</Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <Table>
+              <TableHeader><TableRow><TableHead>Colaborador</TableHead><TableHead>De</TableHead><TableHead>Para</TableHead><TableHead>Salário</TableHead><TableHead>Data</TableHead></TableRow></TableHeader>
+              <TableBody>
+                {promocoes.map((p: any) => (
+                  <TableRow key={p.id}>
+                    <TableCell>{p.colaborador?.nome_completo || '—'}</TableCell>
+                    <TableCell>{p.cargo_anterior || '—'}</TableCell>
+                    <TableCell className="font-medium">{p.cargo_novo || '—'}</TableCell>
+                    <TableCell>{p.novo_salario ? `R$ ${Number(p.novo_salario).toLocaleString('pt-BR')}` : '—'}</TableCell>
+                    <TableCell>{p.data_promocao}</TableCell>
+                  </TableRow>
+                ))}
+                {promocoes.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Nenhuma promoção</TableCell></TableRow>}
+              </TableBody>
+            </Table>
+          </CardContent></Card>
+        </TabsContent>
+      </Tabs>
+    </PageLayout>
     </>
   );
 }

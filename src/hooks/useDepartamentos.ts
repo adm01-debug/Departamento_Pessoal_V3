@@ -1,13 +1,14 @@
 import { useGenericCrud } from './useGenericCrud';
 import { departamentoService } from '@/services/departamentoService';
 import { useEmpresas } from './useEmpresas';
-import type { Departamento } from '@/types/entities';
+import { Departamento } from '@/types/entities';
+import { getMockDepartamentos } from '@/mocks/colaboradoresMock';
 
 interface UseDepartamentosOptions {
   /**
-   * Sobrescreve o pageSize inicial (padrão: 10, usado pela tela
-   * administrativa). Dropdowns de filtro que precisam listar todos os
-   * registros da empresa passam um valor maior (limitado a 100 pelo
+   * Sobrescreve o pageSize inicial (padrão: 10, usado pela tela administrativa
+   * de Departamentos). Dropdowns de filtro que precisam listar todos os
+   * departamentos da empresa podem passar um valor maior (limitado a 100 pelo
    * BaseService) sem afetar a paginação padrão das demais telas.
    */
   pageSize?: number;
@@ -31,13 +32,15 @@ export function useDepartamentos(options: UseDepartamentosOptions = {}) {
     },
   });
 
+  // Empresa fictícia (VITE_COLABORADORES_MOCK): `departamentos` reais não
+  // existem no banco para o `empresa_id` fictício — sem isso, o select de
+  // Departamento do formulário de colaborador fica vazio no modo demo. Só
+  // entra quando a consulta real não trouxe nada, nunca esconde
+  // departamentos reais.
+  const mockDepartamentos = crud.items.length === 0 ? getMockDepartamentos(empresaId) : undefined;
+
   return {
     ...crud,
-    // Com `enabled: !!empresaId` a query fica desabilitada enquanto a empresa
-    // nao resolve, e o react-query devolve isLoading=false — a tela trocaria o
-    // skeleton pelo estado vazio. Sem empresa resolvida, ainda e carregando.
-    isLoading: crud.isLoading || !empresaId,
-    departamentos: crud.items,
-    empresaId,
+    departamentos: (mockDepartamentos as Departamento[] | undefined) ?? crud.items,
   };
 }

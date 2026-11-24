@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { ComponentType, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
   BadgeCheck,
@@ -21,17 +21,12 @@ import {
   ShieldAlert,
   TrendingDown,
   TrendingUp,
-  SlidersHorizontal,
   Wallet,
 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserAvatar } from '@/components/ui/user-avatar';
 import { StatusBadge, TipoBadge } from './DesligamentoStatusBadge';
 import { DesligamentoChecklist } from './DesligamentoChecklist';
@@ -39,12 +34,11 @@ import { ETAPA_FLUXO, ETAPA_LABELS, TIPO_LABELS } from './desligamentosComum';
 import { dataValida, indiceEtapa } from './desligamentosDerivacoes';
 import { formatCPF, formatCurrency, formatDate, formatDateTime } from '@/utils/format';
 import { desligamentoService } from '@/services/desligamentoService';
-import type { DesligamentoComColaborador } from '@/services/desligamentoService';
-import type { Updatable } from '@/integrations/supabase/database.types';
 import { rescisaoService } from '@/services/rescisaoService';
-import { gerarPDFRescisao, mapearResultadoDeDesligamento } from '@/utils/rescisaoPDF';
+import { gerarPDFRescisao } from '@/utils/rescisaoPDF';
 import { safeErrorMessage } from '@/utils/safeError';
-import { normalizarTipoRescisao } from '@/utils/rescisaoCalc';
+// MOCK VISUAL — ver src/mocks/desligamentosMock.ts.
+import { bloquearEscritaDesligamento } from '@/mocks/desligamentosMock';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { entradaCard, EntradaPresenca } from './entradaCards';
@@ -70,16 +64,6 @@ import { entradaCard, EntradaPresenca } from './entradaCards';
  * `desligamentosDerivacoes`, `@/utils/format`).
  * ============================================================================
  */
-
-interface ParametrosCalculo {
-  aviso_trabalhado?: boolean;
-  ferias_vencidas?: boolean;
-  saldo_fgts?: number;
-  dias_aviso_nao_cumpridos?: number;
-  data_fim_contrato?: string;
-  termino_iniciativa?: 'empregador' | 'empregado' | 'natural';
-  indenizacao_art_480_prejuizo?: number;
-}
 
 type Icone = ComponentType<{ className?: string }>;
 type Tom = 'primary' | 'info' | 'success' | 'warning' | 'destructive';
@@ -128,11 +112,7 @@ const ANDAMENTO_GAP = 0.22;
 const ANDAMENTO_INICIO = 0.6;
 
 interface DetailSheetProps {
-  desligamento:
-    | (DesligamentoComColaborador & {
-        detalhes_calculo?: Partial<import('@/utils/rescisaoCalc').RescisaoResult> | null;
-      })
-    | null;
+  desligamento: any | null;
   open: boolean;
   onClose: () => void;
 }
@@ -181,29 +161,11 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
 
   if (!d) return null;
 
-  const tipoNormalizado = normalizarTipoRescisao(d.tipo || 'sem_justa_causa');
-  // Percentual da multa do FGTS, derivado da MESMA condição do motor
-  // (`rescisaoCalc.ts:320-323`): 40% na dispensa sem justa causa e no término
-  // antecipado pelo empregador (acompanha o art. 479), 20% no acordo mútuo e na
-  // culpa recíproca, nada nos demais. Um rótulo fixo em "40%" descrevia errado
-  // o valor já calculado nessas duas modalidades.
-  const art479 = Number(
-    (d.detalhes_calculo as { indenizacaoArt479?: number } | null | undefined)?.indenizacaoArt479 ?? 0
-  );
-  const percentualMultaFgts =
-    tipoNormalizado === 'sem_justa_causa' || art479 > 0
-      ? 40
-      : tipoNormalizado === 'acordo_mutuo' || tipoNormalizado === 'culpa_reciproca'
-        ? 20
-        : null;
-
   /* ── Derivados de exibição (só leitura do registro) ───────────────────── */
   const nome = d.colaborador?.nome_completo || 'Colaborador';
   const cargo = d.colaborador?.cargo || 'Cargo não informado';
   const departamento = d.colaborador?.departamento || 'Departamento não informado';
-  // A admissao vem do colaborador; `desligamentos` nao tem essa coluna (o
-  // fallback `d.data_admissao` da versao anterior era codigo morto).
-  const admissao = d.colaborador?.data_admissao ?? '';
+  const admissao = d.colaborador?.data_admissao || d.data_admissao;
   const tempoEmpresa = tempoDeEmpresa(admissao, d.data_desligamento);
   const etapasConcluidas = d.etapa === 'finalizado' ? ETAPA_FLUXO.length : Math.max(0, indiceEtapa(d.etapa));
 
@@ -223,10 +185,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
     {
       nome: 'Termo de Homologação',
       descricao: 'Registro da homologação da rescisão',
-      // `pago` também preserva a disponibilidade: a RPC `pagar_desligamento`
-      // exige homologação concluída antes de pagar e troca o status para `pago`
-      // sem desfazê-la — sem este caso o termo voltava a aparecer "Pendente".
-      disponivel: d.status === 'homologado' || d.status === 'finalizado' || d.status === 'pago',
+      disponivel: d.status === 'homologado' || d.status === 'finalizado',
     },
     {
       nome: 'Comprovante eSocial (S-2299)',
@@ -239,8 +198,10 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
 
   const handleChecklistToggle = async (key: string, value: boolean) => {
     try {
+      // MOCK VISUAL — ver src/mocks/desligamentosMock.ts.
+      if (bloquearEscritaDesligamento('Atualizar o checklist')) return;
       // Regras de transição de etapa baseadas no checklist
-      const updates: Updatable<'desligamentos'> = { [key]: value };
+      const updates: any = { [key]: value };
 
       if (key === 'checklist_comunicacao' && value) {
         updates.etapa = 'documentacao';
@@ -250,7 +211,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
         if (d.etapa === 'documentacao') updates.etapa = 'calculo';
       }
 
-      await desligamentoService.atualizar(d.id, updates, d.empresa_id ?? '');
+      await desligamentoService.atualizar(d.id, updates, d.empresa_id);
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Checklist atualizado');
     } catch (err) {
@@ -261,29 +222,14 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
   /** Conclui todas as pendências numa única gravação (mesma rota do toggle). */
   const handleConcluirPendencias = async (keys: string[]) => {
     if (!keys.length) return;
+    // MOCK VISUAL — ver src/mocks/desligamentosMock.ts.
+    if (bloquearEscritaDesligamento('Concluir as pendências do checklist')) return;
     const updates: Record<string, unknown> = {};
     keys.forEach((k) => {
       updates[k] = true;
     });
-
-    // As mesmas transições do toggle individual, aplicadas em sequência sobre o
-    // estado resultante das duas marcações. Sem isto o cadastro ficava em
-    // `comunicacao` com o checklist cheio e o cálculo seguinte era recusado por
-    // `rescisaoService.validarTransicao` (salto de duas etapas). Só avança a
-    // partir da etapa em que o registro está: nunca rebaixa uma etapa posterior
-    // nem transforma a conclusão operacional em cálculo, homologação ou
-    // pagamento reais.
-    let etapa = d.etapa || 'comunicacao';
-    if (updates.checklist_comunicacao === true && etapa === 'comunicacao') {
-      etapa = 'documentacao';
-      updates.status = 'comunicado';
-    }
-    const documentacaoConcluida = updates.checklist_documentacao === true || d.checklist_documentacao === true;
-    if (documentacaoConcluida && etapa === 'documentacao') etapa = 'calculo';
-    if (etapa !== (d.etapa || 'comunicacao')) updates.etapa = etapa;
-
     try {
-      await desligamentoService.atualizar(d.id, updates, d.empresa_id ?? '');
+      await desligamentoService.atualizar(d.id, updates, d.empresa_id);
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Pendências do checklist concluídas');
     } catch (err) {
@@ -296,27 +242,22 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
       toast.error('Salário base e data de desligamento são obrigatórios para o cálculo');
       return;
     }
+    // MOCK VISUAL — ver src/mocks/desligamentosMock.ts.
+    if (bloquearEscritaDesligamento('Calcular a rescisão')) return;
     setCalculating(true);
     try {
       await rescisaoService.calcularESalvar(
         d.id,
         {
           salario_base: d.salario_base,
-          data_admissao: d.colaborador?.data_admissao ?? '',
+          data_admissao: admissao, // Fallback
           data_desligamento: d.data_desligamento,
           tipo: d.tipo || 'sem_justa_causa',
-          aviso_trabalhado: params.aviso_trabalhado ?? false,
-          ferias_vencidas: params.ferias_vencidas ?? false,
-          saldo_fgts: params.saldo_fgts ?? 0,
-          dias_aviso_nao_cumpridos: params.dias_aviso_nao_cumpridos,
-          data_fim_contrato: params.data_fim_contrato,
-          termino_iniciativa: params.termino_iniciativa,
-          indenizacao_art_480_prejuizo: params.indenizacao_art_480_prejuizo,
-          // Com data_pagamento registrada, o motor aplica a multa do
-          // art. 477 §8º quando a quitação passou de 10 dias corridos.
-          data_pagamento: d.data_pagamento ?? undefined,
+          aviso_trabalhado: (d as Record<string, unknown>).aviso_trabalhado ?? false,
+          ferias_vencidas: (d as Record<string, unknown>).ferias_vencidas_check ?? false,
+          saldo_fgts: (d as Record<string, unknown>).saldo_fgts ?? 0,
         },
-        d.empresa_id ?? ''
+        d.empresa_id
       );
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       queryClient.invalidateQueries({ queryKey: ['verbas-rescisorias', d.id] });
@@ -329,9 +270,11 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
   };
 
   const handleHomologar = async () => {
+    // MOCK VISUAL — ver src/mocks/desligamentosMock.ts.
+    if (bloquearEscritaDesligamento('Homologar a rescisão')) return;
     setHomologating(true);
     try {
-      await rescisaoService.homologar(d.id, d.empresa_id ?? '');
+      await rescisaoService.homologar(d.id, d.empresa_id);
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Homologação concluída');
     } catch (err) {
@@ -343,17 +286,17 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
 
   const handleBaixarTRCT = () => {
     const form = {
-      ...d,
-      empresa_id: d.empresa_id ?? '',
-      nomeColaborador: d.colaborador?.nome_completo ?? null,
-      cpf: d.colaborador?.cpf ?? null,
-      cargo: d.colaborador?.cargo ?? null,
-      dataAdmissao: d.colaborador?.data_admissao ?? null,
+      nomeColaborador: d.colaborador?.nome_completo,
+      cpf: d.colaborador?.cpf,
+      cargo: d.colaborador?.cargo,
+      dataAdmissao: admissao,
       dataDesligamento: d.data_desligamento,
       tipo: d.tipo,
+      ...d,
     };
-    gerarPDFRescisao(form, mapearResultadoDeDesligamento(d));
+    gerarPDFRescisao(form, d.detalhes_calculo || d);
   };
+
 
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
@@ -419,6 +362,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+
             {/* ══ Aba: Detalhes ═══════════════════════════════════════════
                 Cada card da aba leva o seu `index` na cascata de entrada (a
                 ORDEM em que aparecem na tela). O container da aba não anima:
@@ -472,20 +416,11 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
               </SecaoCard>
 
               <div className="grid grid-cols-2 gap-2">
-                <MetaCard
-                  index={BASE_CONTEUDO_ABA + 4}
-                  icon={CalendarDays}
-                  label="Criado em"
-                  valor={formatDate(d.created_at)}
-                />
-                <MetaCard
-                  index={BASE_CONTEUDO_ABA + 5}
-                  icon={RefreshCw}
-                  label="Atualizado em"
-                  valor={formatDate(d.updated_at)}
-                />
+                <MetaCard index={BASE_CONTEUDO_ABA + 4} icon={CalendarDays} label="Criado em" valor={formatDate(d.created_at)} />
+                <MetaCard index={BASE_CONTEUDO_ABA + 5} icon={RefreshCw} label="Atualizado em" valor={formatDate(d.updated_at)} />
               </div>
             </TabsContent>
+
 
             {/* ══ Aba: Checklist ══════════════════════════════════════════ */}
             <TabsContent value="checklist" className="mt-0">
@@ -501,145 +436,6 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
                 de leitura da aba (cálculo → KPIs → blocos de verba → resumo →
                 documentos), com cascata de 0.08s entre eles. */}
             <TabsContent value="rescisao" className="mt-0 space-y-3.5">
-              {/* Parametros do calculo — bloco da main, com a UI desta tela.
-                  Sem ele a rescisao volta a ser calculada com defaults fixos
-                  (aviso sempre indenizado, ferias simples, FGTS zero). */}
-              {d.status !== 'homologado' && d.status !== 'finalizado' && d.status !== 'pago' && (
-                <SecaoCard index={BASE_CONTEUDO_ABA} titulo="Parâmetros do cálculo" icon={SlidersHorizontal}>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        id="aviso-trabalhado"
-                        checked={params.aviso_trabalhado === true}
-                        onCheckedChange={(v) => setParams((p) => ({ ...p, aviso_trabalhado: v === true }))}
-                      />
-                      <Label htmlFor="aviso-trabalhado" className="text-xs font-body">
-                        Aviso prévio trabalhado
-                      </Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        id="ferias-vencidas"
-                        checked={params.ferias_vencidas === true}
-                        onCheckedChange={(v) => setParams((p) => ({ ...p, ferias_vencidas: v === true }))}
-                      />
-                      <Label htmlFor="ferias-vencidas" className="text-xs font-body">
-                        Férias vencidas em dobro
-                      </Label>
-                    </div>
-                    <div>
-                      <Label htmlFor="saldo-fgts" className="text-xs">
-                        Saldo FGTS para multa (R$)
-                      </Label>
-                      <Input
-                        id="saldo-fgts"
-                        type="number"
-                        min={0}
-                        step="0.01"
-                        value={params.saldo_fgts ?? ''}
-                        onChange={(e) =>
-                          setParams((p) => ({
-                            ...p,
-                            saldo_fgts: e.target.value === '' ? undefined : Number(e.target.value),
-                          }))
-                        }
-                        placeholder="0,00"
-                      />
-                    </div>
-                    {tipoNormalizado === 'pedido_demissao' && !params.aviso_trabalhado && (
-                      <div>
-                        <Label htmlFor="dias-aviso" className="text-xs">
-                          Dias de aviso prévio não cumpridos (0–30)
-                        </Label>
-                        <Input
-                          id="dias-aviso"
-                          type="number"
-                          min={0}
-                          max={30}
-                          value={params.dias_aviso_nao_cumpridos ?? ''}
-                          onChange={(e) =>
-                            setParams((p) => ({
-                              ...p,
-                              dias_aviso_nao_cumpridos: e.target.value === '' ? undefined : Number(e.target.value),
-                            }))
-                          }
-                          placeholder="30"
-                        />
-                        <p className="text-[10px] text-muted-foreground mt-1">
-                          Desconto do aviso não cumprido (art. 487, §2º) — proporcional aos dias faltantes.
-                        </p>
-                      </div>
-                    )}
-                    {tipoNormalizado === 'termino_contrato' && (
-                      <>
-                        <div>
-                          <Label htmlFor="termino-iniciativa" className="text-xs">
-                            Iniciativa do término antecipado
-                          </Label>
-                          <Select
-                            value={params.termino_iniciativa ?? 'empregador'}
-                            onValueChange={(v) =>
-                              setParams((p) => ({
-                                ...p,
-                                termino_iniciativa: v as 'empregador' | 'empregado' | 'natural',
-                              }))
-                            }
-                          >
-                            <SelectTrigger id="termino-iniciativa">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="empregador">Empregador (art. 479)</SelectItem>
-                              <SelectItem value="empregado">Empregado (art. 480)</SelectItem>
-                              <SelectItem value="natural">Término natural do contrato</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        {params.termino_iniciativa !== 'natural' && (
-                          <div>
-                            <Label htmlFor="data-fim-contrato" className="text-xs">
-                              Data prevista de fim do contrato *
-                            </Label>
-                            <Input
-                              id="data-fim-contrato"
-                              type="date"
-                              value={params.data_fim_contrato ?? ''}
-                              onChange={(e) =>
-                                setParams((p) => ({ ...p, data_fim_contrato: e.target.value || undefined }))
-                              }
-                            />
-                          </div>
-                        )}
-                        {params.termino_iniciativa === 'empregado' && (
-                          <div>
-                            <Label htmlFor="prejuizo-480" className="text-xs">
-                              Prejuízo apurado do empregador — art. 480 (R$)
-                            </Label>
-                            <Input
-                              id="prejuizo-480"
-                              type="number"
-                              min={0}
-                              step="0.01"
-                              value={params.indenizacao_art_480_prejuizo ?? ''}
-                              onChange={(e) =>
-                                setParams((p) => ({
-                                  ...p,
-                                  indenizacao_art_480_prejuizo:
-                                    e.target.value === '' ? undefined : Number(e.target.value),
-                                }))
-                              }
-                              placeholder="0,00"
-                            />
-                            <p className="text-[10px] text-muted-foreground mt-1">
-                              A indenização é limitada às perdas comprovadas (teto = metade do período restante).
-                            </p>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </SecaoCard>
-              )}
               <SecaoCard
                 index={BASE_CONTEUDO_ABA + 0}
                 titulo="Cálculo da Rescisão"
@@ -689,112 +485,55 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
               </SecaoCard>
 
               <div className="grid grid-cols-3 gap-2">
-                <KpiCard
-                  index={BASE_CONTEUDO_ABA + 1}
-                  icon={TrendingUp}
-                  tom="success"
-                  rotulo="Proventos"
-                  valor={formatCurrency(d.total_proventos)}
-                />
-                <KpiCard
-                  index={BASE_CONTEUDO_ABA + 2}
-                  icon={TrendingDown}
-                  tom="destructive"
-                  rotulo="Descontos"
-                  valor={formatCurrency(d.total_descontos)}
-                />
-                <KpiCard
-                  index={BASE_CONTEUDO_ABA + 3}
-                  icon={Wallet}
-                  tom="primary"
-                  rotulo="Líquido"
-                  valor={formatCurrency(d.valor_liquido)}
-                  destaque
-                />
+                <KpiCard index={BASE_CONTEUDO_ABA + 1} icon={TrendingUp} tom="success" rotulo="Proventos" valor={formatCurrency(d.total_proventos)} />
+                <KpiCard index={BASE_CONTEUDO_ABA + 2} icon={TrendingDown} tom="destructive" rotulo="Descontos" valor={formatCurrency(d.total_descontos)} />
+                <KpiCard index={BASE_CONTEUDO_ABA + 3} icon={Wallet} tom="primary" rotulo="Líquido" valor={formatCurrency(d.valor_liquido)} destaque />
               </div>
 
-              <BlocoValores
-                index={BASE_CONTEUDO_ABA + 4}
-                titulo="Proventos"
-                icon={TrendingUp}
-                tom="success"
-                total={formatCurrency(d.total_proventos)}
-              >
-                {verbasProvento.length > 0 ? (
-                  verbasProvento.map((verba) => (
-                    <LinhaValor key={verba.codigo || verba.descricao} rotulo={verba.descricao} valor={verba.valor} />
-                  ))
-                ) : (
-                  <>
-                    <LinhaValor rotulo="Saldo de salário" valor={d.saldo_salario} />
-                    <LinhaValor rotulo="13º proporcional" valor={d.decimo_terceiro} />
-                    <LinhaValor rotulo="Férias proporcionais" valor={d.ferias_proporcionais} />
-                    <LinhaValor rotulo="Férias vencidas" valor={d.ferias_vencidas} />
-                    <LinhaValor rotulo="1/3 constitucional" valor={d.terco_constitucional} />
-                    <LinhaValor rotulo="Aviso prévio indenizado" valor={d.aviso_previo} />
-                  </>
-                )}
+              <BlocoValores index={BASE_CONTEUDO_ABA + 4} titulo="Proventos" icon={TrendingUp} tom="success" total={formatCurrency(d.total_proventos)}>
+                <LinhaValor rotulo="Saldo de salário" valor={d.saldo_salario} />
+                <LinhaValor rotulo="13º proporcional" valor={d.decimo_terceiro} />
+                <LinhaValor rotulo="Férias proporcionais" valor={d.ferias_proporcionais} />
+                <LinhaValor rotulo="Férias vencidas" valor={d.ferias_vencidas} />
+                <LinhaValor rotulo="1/3 constitucional" valor={d.terco_constitucional} />
+                <LinhaValor rotulo="Aviso prévio indenizado" valor={d.aviso_previo} />
               </BlocoValores>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <BlocoValores
-                  index={BASE_CONTEUDO_ABA + 5}
-                  titulo="Descontos"
-                  icon={TrendingDown}
-                  tom="destructive"
-                  total={formatCurrency(d.total_descontos)}
-                >
-                  {/* INSS e IRRF nao sao colunas de `desligamentos`: saem do
-                      resultado do calculo, em `detalhes_calculo`. */}
-                  {verbasDesconto.length > 0 ? (
-                    verbasDesconto.map((verba) => (
-                      <LinhaValor key={verba.codigo || verba.descricao} rotulo={verba.descricao} valor={verba.valor} />
-                    ))
-                  ) : (
-                    <>
-                      <LinhaValor rotulo="INSS" valor={d.detalhes_calculo?.inss ?? null} />
-                      <LinhaValor rotulo="IRRF" valor={d.detalhes_calculo?.irrf ?? null} />
-                    </>
-                  )}
+                <BlocoValores index={BASE_CONTEUDO_ABA + 5} titulo="Descontos" icon={TrendingDown} tom="destructive" total={formatCurrency(d.total_descontos)}>
+                  <LinhaValor rotulo="INSS" valor={d.inss} />
+                  <LinhaValor rotulo="IRRF" valor={d.irrf} />
                 </BlocoValores>
 
-                <BlocoValores
-                  index={BASE_CONTEUDO_ABA + 6}
-                  titulo="Multas e depósitos"
-                  icon={ShieldAlert}
-                  tom="warning"
-                  total={formatCurrency(d.multa_fgts)}
-                >
-                  <LinhaValor
-                    rotulo={percentualMultaFgts ? `Multa FGTS (${percentualMultaFgts}%)` : 'Multa FGTS'}
-                    valor={d.multa_fgts}
-                  />
+                <BlocoValores index={BASE_CONTEUDO_ABA + 6} titulo="Multas e depósitos" icon={ShieldAlert} tom="warning" total={formatCurrency(d.multa_fgts)}>
+                  <LinhaValor rotulo="Multa FGTS (40%)" valor={d.multa_fgts} />
                 </BlocoValores>
               </div>
 
+
               {/* Resumo final */}
               <EntradaPresenca>
-                <motion.div
-                  {...entradaCard(BASE_CONTEUDO_ABA + 7)}
-                  className="rounded-2xl border border-primary/30 bg-primary/[0.07] p-3.5"
-                >
-                  <div className="mb-2 flex items-center gap-1.5">
-                    <FileCheck2 className="h-3.5 w-3.5 text-primary" />
-                    <span className="font-display text-[11px] font-semibold uppercase tracking-wide text-primary">
-                      Resumo final
-                    </span>
-                  </div>
-                  <LinhaValor rotulo="Total de proventos" valor={d.total_proventos} />
-                  <LinhaValor rotulo="Total de descontos" valor={d.total_descontos} tom="negativo" />
-                  <LinhaValor rotulo="Multa FGTS" valor={d.multa_fgts} />
-                  <Separator className="my-2.5 bg-primary/20" />
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="font-display text-xs font-semibold text-foreground">Valor líquido a receber</span>
-                    <span className="shrink-0 font-display text-lg font-semibold tabular-nums text-primary">
-                      {formatCurrency(d.valor_liquido)}
-                    </span>
-                  </div>
-                </motion.div>
+              <motion.div
+                {...entradaCard(BASE_CONTEUDO_ABA + 7)}
+                className="rounded-2xl border border-primary/30 bg-primary/[0.07] p-3.5"
+              >
+                <div className="mb-2 flex items-center gap-1.5">
+                  <FileCheck2 className="h-3.5 w-3.5 text-primary" />
+                  <span className="font-display text-[11px] font-semibold uppercase tracking-wide text-primary">
+                    Resumo final
+                  </span>
+                </div>
+                <LinhaValor rotulo="Total de proventos" valor={d.total_proventos} />
+                <LinhaValor rotulo="Total de descontos" valor={d.total_descontos} tom="negativo" />
+                <LinhaValor rotulo="Multa FGTS" valor={d.multa_fgts} />
+                <Separator className="my-2.5 bg-primary/20" />
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-display text-xs font-semibold text-foreground">Valor líquido a receber</span>
+                  <span className="shrink-0 font-display text-lg font-semibold tabular-nums text-primary">
+                    {formatCurrency(d.valor_liquido)}
+                  </span>
+                </div>
+              </motion.div>
               </EntradaPresenca>
 
               <SecaoCard index={BASE_CONTEUDO_ABA + 8} titulo="Observações" icon={FileText}>
@@ -852,6 +591,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
   );
 }
 
+
 /* ══════════════════════════════════════════════════════════════════════════
  * Peças internas do drawer (nenhuma delas inventa dado: só formatam/mostram o
  * que vem do registro `desligamento`).
@@ -897,18 +637,21 @@ function SecaoCard({
 }) {
   return (
     <EntradaPresenca>
-      <motion.section {...entradaCard(index)} className="rounded-2xl border border-border/40 bg-card/40 p-3.5">
-        <header className="mb-3 flex items-center justify-between gap-2">
-          <span className="flex min-w-0 items-center gap-1.5">
-            <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-            <span className="truncate font-display text-[11px] font-semibold uppercase tracking-wide text-foreground">
-              {titulo}
-            </span>
+    <motion.section
+      {...entradaCard(index)}
+      className="rounded-2xl border border-border/40 bg-card/40 p-3.5"
+    >
+      <header className="mb-3 flex items-center justify-between gap-2">
+        <span className="flex min-w-0 items-center gap-1.5">
+          <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+          <span className="truncate font-display text-[11px] font-semibold uppercase tracking-wide text-foreground">
+            {titulo}
           </span>
-          {aside}
-        </header>
-        {children}
-      </motion.section>
+        </span>
+        {aside}
+      </header>
+      {children}
+    </motion.section>
     </EntradaPresenca>
   );
 }
@@ -941,55 +684,49 @@ function ResumoCard({
 }) {
   return (
     <EntradaPresenca>
-      <motion.div
-        {...entradaCard(index)}
+    <motion.div
+      {...entradaCard(index)}
+      className={cn(
+        'min-w-0 rounded-xl border p-2.5',
+        destaque ? 'border-primary/30 bg-primary/10' : 'border-border/40 bg-card/50'
+      )}
+    >
+      <span className="flex items-center gap-1.5 text-muted-foreground">
+        <Icon className={cn('h-3 w-3 shrink-0', destaque && 'text-primary')} />
+        <span className="truncate text-[9px] uppercase tracking-wide">{label}</span>
+      </span>
+      <p
         className={cn(
-          'min-w-0 rounded-xl border p-2.5',
-          destaque ? 'border-primary/30 bg-primary/10' : 'border-border/40 bg-card/50'
+          'mt-1 truncate font-display text-[11px] font-semibold tabular-nums',
+          destaque ? 'text-primary' : 'text-foreground'
         )}
+        title={valor}
       >
-        <span className="flex items-center gap-1.5 text-muted-foreground">
-          <Icon className={cn('h-3 w-3 shrink-0', destaque && 'text-primary')} />
-          <span className="truncate text-[9px] uppercase tracking-wide">{label}</span>
-        </span>
-        <p
-          className={cn(
-            'mt-1 truncate font-display text-[11px] font-semibold tabular-nums',
-            destaque ? 'text-primary' : 'text-foreground'
-          )}
-          title={valor}
-        >
-          {valor}
-        </p>
-      </motion.div>
+        {valor}
+      </p>
+    </motion.div>
     </EntradaPresenca>
   );
 }
 
 /** Rodapé informacional (auditoria leve do registro). */
-function MetaCard({
-  icon: Icon,
-  label,
-  valor,
-  index = 0,
-}: {
-  icon: Icone;
-  label: string;
-  valor: string;
-  index?: number;
-}) {
+function MetaCard({ icon: Icon, label, valor, index = 0 }: { icon: Icone; label: string; valor: string; index?: number }) {
   return (
     <EntradaPresenca>
-      <motion.div {...entradaCard(index)} className="min-w-0 rounded-xl border border-border/40 bg-card/40 p-2.5">
-        <span className="flex items-center gap-1.5 text-[9px] uppercase tracking-wide text-muted-foreground">
-          <Icon className="h-3 w-3 shrink-0" />
-          {label}
-        </span>
-        <p className="mt-1 truncate text-[11px] font-medium tabular-nums text-foreground">{valor}</p>
-      </motion.div>
+    <motion.div
+      {...entradaCard(index)}
+      className="min-w-0 rounded-xl border border-border/40 bg-card/40 p-2.5"
+    >
+      <span className="flex items-center gap-1.5 text-[9px] uppercase tracking-wide text-muted-foreground">
+        <Icon className="h-3 w-3 shrink-0" />
+        {label}
+      </span>
+      <p className="mt-1 truncate text-[11px] font-medium tabular-nums text-foreground">{valor}</p>
+    </motion.div>
     </EntradaPresenca>
   );
 }
+
 
 /**
  * Stepper horizontal do fluxo real de desligamento (`ETAPA_FLUXO`).
@@ -1083,13 +820,22 @@ function EtapaStepper({ etapa }: { etapa: string }) {
 }
 
 /** Lista "Documentos vinculados" — status derivado de campos reais. */
-function DocumentosLista({ documentos, onBaixarTRCT }: { documentos: DocumentoProcesso[]; onBaixarTRCT?: () => void }) {
+function DocumentosLista({
+  documentos,
+  onBaixarTRCT,
+}: {
+  documentos: DocumentoProcesso[];
+  onBaixarTRCT?: () => void;
+}) {
   return (
     <div className="space-y-2">
       {documentos.map((doc) => {
         const podeBaixar = doc.disponivel && doc.baixavel && Boolean(onBaixarTRCT);
         return (
-          <div key={doc.nome} className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/40 p-2.5">
+          <div
+            key={doc.nome}
+            className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/40 p-2.5"
+          >
             <span
               className={cn(
                 'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg',
@@ -1131,6 +877,7 @@ function DocumentosLista({ documentos, onBaixarTRCT }: { documentos: DocumentoPr
   );
 }
 
+
 /** Card de KPI do cálculo (proventos / descontos / líquido). */
 function KpiCard({
   icon: Icon,
@@ -1149,27 +896,27 @@ function KpiCard({
 }) {
   return (
     <EntradaPresenca>
-      <motion.div
-        {...entradaCard(index)}
+    <motion.div
+      {...entradaCard(index)}
+      className={cn(
+        'min-w-0 rounded-2xl border p-2.5',
+        destaque ? 'border-primary/30 bg-primary/10' : 'border-border/40 bg-card/40'
+      )}
+    >
+      <span className={cn('flex h-7 w-7 items-center justify-center rounded-lg', TOM_BG[tom])}>
+        <Icon className="h-3.5 w-3.5" />
+      </span>
+      <p
         className={cn(
-          'min-w-0 rounded-2xl border p-2.5',
-          destaque ? 'border-primary/30 bg-primary/10' : 'border-border/40 bg-card/40'
+          'mt-2 truncate font-display text-xs font-semibold tabular-nums',
+          destaque ? 'text-primary' : 'text-foreground'
         )}
+        title={valor}
       >
-        <span className={cn('flex h-7 w-7 items-center justify-center rounded-lg', TOM_BG[tom])}>
-          <Icon className="h-3.5 w-3.5" />
-        </span>
-        <p
-          className={cn(
-            'mt-2 truncate font-display text-xs font-semibold tabular-nums',
-            destaque ? 'text-primary' : 'text-foreground'
-          )}
-          title={valor}
-        >
-          {valor}
-        </p>
-        <p className="mt-0.5 truncate text-[10px] text-muted-foreground">{rotulo}</p>
-      </motion.div>
+        {valor}
+      </p>
+      <p className="mt-0.5 truncate text-[10px] text-muted-foreground">{rotulo}</p>
+    </motion.div>
     </EntradaPresenca>
   );
 }
@@ -1192,22 +939,25 @@ function BlocoValores({
 }) {
   return (
     <EntradaPresenca>
-      <motion.section {...entradaCard(index)} className="rounded-2xl border border-border/40 bg-card/40 p-3.5">
-        <header className="mb-2.5 flex items-center justify-between gap-2">
-          <span className="flex min-w-0 items-center gap-1.5">
-            <Icon className={cn('h-3.5 w-3.5 shrink-0', TOM_TEXTO[tom])} />
-            <span className="truncate font-display text-[11px] font-semibold uppercase tracking-wide text-foreground">
-              {titulo}
-            </span>
+    <motion.section
+      {...entradaCard(index)}
+      className="rounded-2xl border border-border/40 bg-card/40 p-3.5"
+    >
+      <header className="mb-2.5 flex items-center justify-between gap-2">
+        <span className="flex min-w-0 items-center gap-1.5">
+          <Icon className={cn('h-3.5 w-3.5 shrink-0', TOM_TEXTO[tom])} />
+          <span className="truncate font-display text-[11px] font-semibold uppercase tracking-wide text-foreground">
+            {titulo}
           </span>
-          {total && (
-            <span className={cn('shrink-0 font-display text-[11px] font-semibold tabular-nums', TOM_TEXTO[tom])}>
-              {total}
-            </span>
-          )}
-        </header>
-        <div className="space-y-1.5">{children}</div>
-      </motion.section>
+        </span>
+        {total && (
+          <span className={cn('shrink-0 font-display text-[11px] font-semibold tabular-nums', TOM_TEXTO[tom])}>
+            {total}
+          </span>
+        )}
+      </header>
+      <div className="space-y-1.5">{children}</div>
+    </motion.section>
     </EntradaPresenca>
   );
 }
@@ -1228,3 +978,4 @@ function LinhaValor({ rotulo, valor, tom }: { rotulo: string; valor?: number | n
     </div>
   );
 }
+

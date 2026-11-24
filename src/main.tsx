@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { version as versaoReactDom } from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import * as Sentry from '@sentry/react';
@@ -7,6 +8,7 @@ import { QueryProvider, ThemeProvider, ToastProvider } from '@/providers';
 import { AuthProvider, NotificationProvider, EmpresaProvider } from '@/contexts';
 import { ErrorBoundary } from '@/errors';
 import { loggerService } from '@/services/loggerService';
+import { instalarDetectorReactDuplicado } from '@/lib/detectorReactDuplicado';
 import App from './App';
 import './index.css';
 
@@ -139,12 +141,25 @@ if (import.meta.env.PROD) {
   });
 }
 
+// Chunk-load recovery: depois de um novo deploy, o index.html antigo ainda em
+// cache do navegador referencia hashes de chunk que não existem mais no
+// servidor. O helper de preload dinâmico do Vite (usado nos import()
+// lazy das rotas) emite este evento em vez de deixar a Promise rejeitada
+// travar a UI — um reload busca o index.html/manifest atual e resolve.
+// Guard em sessionStorage evita loop caso o problema não seja esse chunk.
+window.addEventListener('vite:preloadError', () => {
+  const key = 'chunk-reload-attempted';
+  if (sessionStorage.getItem(key)) return;
+  sessionStorage.setItem(key, '1');
+  window.location.reload();
+});
+
 // PWA Service Worker Registration — produção apenas. Um SW ativo em dev
-// intercepta as próprias requisições de módulo do Vite: o fetch do
-// `sw-custom.js` reconstrói a Response lendo o stream e recriando os headers,
-// o que não preserva content-encoding/length de forma confiável para conteúdo
-// arbitrário. Resultado: "Failed to fetch dynamically imported module" só no
-// navegador (nunca via curl, que não passa pelo SW).
+// intercepta as próprias requisições de módulo do Vite (fetch do `sw-custom.js`
+// reconstrói a Response manualmente lendo o stream e recriando com os headers
+// originais — não preserva content-encoding/length de forma confiável para
+// conteúdo arbitrário). Resultado: "Failed to fetch dynamically imported
+// module" só no browser (nunca via curl/rede direta, que não passa pelo SW).
 if (import.meta.env.PROD && !isInIframe && !isPreviewHost && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
@@ -160,6 +175,34 @@ if (import.meta.env.PROD && !isInIframe && !isPreviewHost && 'serviceWorker' in 
         )
       );
   });
+} else if (import.meta.env.DEV && 'serviceWorker' in navigator) {
+  // Limpeza defensiva: um SW registrado numa sessão anterior (ex.: testando
+  // `vite preview`/build de produção nesta mesma porta) continua ativo e
+  // controlando a aba mesmo depois de voltar para `vite dev` — a guarda acima
+  // só evita um NOVO registro, não desfaz um já existente. Sem isso, o
+  // sintoma persiste indefinidamente até o SW ser removido manualmente via
+  // DevTools, o que não é óbvio para quem está apenas rodando `bun dev`.
+  //
+  // AUTO-CURA: se havia SW/caches, a carga atual PODE ter vindo do cache antigo
+  // (foi o SW que respondeu o HTML). Desregistrar e limpar não troca o que já
+  // está renderizado — por isso recarregamos UMA única vez (flag de sessão),
+  // garantindo que a tela exibida passe a ser a do dev server.
+  const FLAG_AUTOCURA = 'dp-sw-cleanup-reload';
+  navigator.serviceWorker
+    .getRegistrations()
+    .then(async (regs) => {
+      const tinhaServiceWorker = regs.length > 0;
+      await Promise.all(regs.map((reg) => reg.unregister()));
+      const nomesDeCache = 'caches' in window ? await caches.keys() : [];
+      await Promise.all(nomesDeCache.map((nome) => caches.delete(nome)));
+      if ((tinhaServiceWorker || nomesDeCache.length > 0) && !sessionStorage.getItem(FLAG_AUTOCURA)) {
+        sessionStorage.setItem(FLAG_AUTOCURA, '1');
+        window.location.reload();
+      }
+    })
+    .catch(() => {
+      /* cleanup é best-effort: nunca deve derrubar o boot do app */
+    });
 }
 
 // Env-var guard fail-fast: se VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY
@@ -168,7 +211,7 @@ if (import.meta.env.PROD && !isInIframe && !isPreviewHost && 'serviceWorker' in 
 // silenciosamente incorreta.
 (() => {
   const url = import.meta.env.VITE_SUPABASE_URL;
-  const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
   if (url && key) return;
   const banner = document.createElement('div');
   banner.setAttribute('role', 'alert');
@@ -186,6 +229,22 @@ if (import.meta.env.PROD && !isInIframe && !isPreviewHost && 'serviceWorker' in 
   document.body.appendChild(banner);
   throw new Error('[BOOT] Variáveis Supabase ausentes — inicialização abortada.');
 })();
+
+
+// Detector dev-only de React duplicado: explica "Cannot read properties of null
+// (reading 'useState')" no console quando a aba carrega dois React (cache de
+// deps do Vite re-otimizado com a aba aberta) ou quando react/react-dom estão em
+// versões diferentes. Ver `src/lib/detectorReactDuplicado.ts`.
+// Em produção é inerte: `import.meta.env.DEV` vira `false` no build, a chamada e
+// o módulo saem do bundle (o módulo não importa react/react-dom — as referências
+// vêm por parâmetro).
+if (import.meta.env.DEV) {
+  instalarDetectorReactDuplicado({
+    modulo: React,
+    versaoReact: React.version,
+    versaoReactDom,
+  });
+}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

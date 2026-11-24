@@ -19,13 +19,13 @@ interface EntityPageContainerProps<T> {
   icon: ReactNode;
   gradient: string;
   actions?: ReactNode;
-
+  
   // Query State
   items: T[];
   total: number;
   isLoading: boolean;
   isFetching: boolean;
-  error: unknown;
+  error: any;
   isRefreshing?: boolean;
   page: number;
   pageSize: number;
@@ -33,9 +33,13 @@ interface EntityPageContainerProps<T> {
   onPageChange: (page: number) => void;
   onSearchChange: (search: string) => void;
   onRefetch: () => void;
+  /** Troca de "linhas por página" (opcional: sem ele o seletor não aparece). */
+  onPageSizeChange?: (pageSize: number) => void;
+  /** Opções do seletor de linhas por página. */
+  pageSizeOptions?: readonly number[];
   onAdd?: () => void;
   addLabel?: string;
-
+  
   // Customization
   searchPlaceholder?: string;
   entityName: string; // e.g., "cargo", "departamento"
@@ -47,6 +51,7 @@ interface EntityPageContainerProps<T> {
   stats?: ReactNode;
   customFilters?: ReactNode;
 }
+
 
 export function EntityPageContainer<T extends { id: string | number }>({
   title,
@@ -66,6 +71,8 @@ export function EntityPageContainer<T extends { id: string | number }>({
   pageSize,
   search,
   onPageChange,
+  onPageSizeChange,
+  pageSizeOptions,
   onSearchChange,
   onRefetch,
   searchPlaceholder,
@@ -76,21 +83,28 @@ export function EntityPageContainer<T extends { id: string | number }>({
   stats,
   customFilters,
   onAdd,
-  addLabel,
+  addLabel
 }: EntityPageContainerProps<T>) {
+
   const totalPages = Math.ceil(total / pageSize);
   const hasFilters = search !== '';
 
   return (
     <>
       <PageTitle title={pageTitle} description={pageDescription} />
-      <PageLayout title={title} description={description} icon={icon} gradient={gradient} actions={actions}>
+      <PageLayout
+        title={title}
+        description={description}
+        icon={icon}
+        gradient={gradient}
+        actions={actions}
+      >
         {stats}
 
         {customFilters || (
-          <DataTableToolbar
-            search={search}
-            onSearchChange={onSearchChange}
+          <DataTableToolbar 
+            search={search} 
+            onSearchChange={onSearchChange} 
             searchPlaceholder={searchPlaceholder || `Buscar por nome...`}
             onRefresh={onRefetch}
             isRefreshing={isRefreshing}
@@ -99,11 +113,12 @@ export function EntityPageContainer<T extends { id: string | number }>({
           />
         )}
 
+
         {error ? (
           <SyncErrorState error={error} onRetry={onRefetch} entityName={entityName + 's'} />
         ) : isLoading ? (
           <div className="space-y-4">
-            <TableSkeleton columns={columns.filter((c) => !c.hidden).length} rows={pageSize} />
+            <TableSkeleton columns={columns.filter(c => !c.hidden).length} rows={pageSize} />
           </div>
         ) : total === 0 ? (
           <div className="flex flex-col items-center justify-center border border-dashed rounded-2xl bg-muted/10 p-4">
@@ -115,9 +130,9 @@ export function EntityPageContainer<T extends { id: string | number }>({
           </div>
         ) : (
           <div className="space-y-4">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }} 
+              animate={{ opacity: 1, y: 0 }} 
               className="rounded-2xl border border-border/30 overflow-hidden shadow-elevated bg-card relative"
             >
               {isFetching && !isLoading && (
@@ -125,38 +140,31 @@ export function EntityPageContainer<T extends { id: string | number }>({
                   <Spinner size="md" />
                 </div>
               )}
-              {/* `renderBody` é a saída para quem precisa de outra forma de
-                  listar (grade de cartões, por exemplo) sem abandonar este
-                  container: paginação, filtros, stats, estados de erro/vazio e
-                  o overlay de refetch continuam valendo. Ausente — o caso de
-                  todos os chamadores de hoje — nada muda: a tabela por
-                  `columns`/`renderRow` é renderizada igual. */}
-              {renderBody ?? (
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-muted/30 hover:bg-muted/30 border-b border-border/20">
-                      {columns.map((col, idx) => (
-                        <TableHead
-                          key={idx}
-                          className={`font-display font-semibold py-4 ${col.className || ''}`}
-                          style={{ width: col.width }}
-                        >
-                          {col.header}
-                        </TableHead>
-                      ))}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>{renderRow ? items.map(renderRow) : null}</TableBody>
-                </Table>
-              )}
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/30 hover:bg-muted/30 border-b border-border/20">
+                    {columns.map((col, idx) => (
+                      <TableHead key={idx} className={`font-display font-semibold py-4 ${col.className || ''}`} style={{ width: col.width }}>
+                        {col.header}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {items.map(renderRow)}
+                </TableBody>
+              </Table>
             </motion.div>
 
-            <DataTablePagination
+            <DataTablePagination 
               currentPage={page}
               totalPages={totalPages}
               totalItems={total}
               pageSize={pageSize}
               onPageChange={onPageChange}
+              onPageSizeChange={onPageSizeChange}
+              pageSizeOptions={pageSizeOptions}
+              isLoading={isFetching}
             />
           </div>
         )}

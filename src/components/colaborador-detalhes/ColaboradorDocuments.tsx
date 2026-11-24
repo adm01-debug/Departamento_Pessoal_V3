@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { LucideIcon } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,18 +9,81 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Spinner } from '@/components/ui/spinner';
-import { Plus, Trash2, FileText, ExternalLink, Shield } from 'lucide-react';
+import { Plus, Trash2, FileText, FileImage, FileSpreadsheet, FileArchive, File as FileIcon, ExternalLink, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDocumentos } from '@/hooks/useDocumentos';
+import { useEmpresas } from '@/hooks/useEmpresas';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { safeHref } from '@/utils/safeUrl';
 import { safeErrorMessage } from '@/utils/safeError';
-import { useEmpresas } from '@/hooks/useEmpresas';
 import { FileUploadField } from './documentos/FileUploadField';
 import { uploadDocumentFile, removeDocumentFile, resolveDocumentUrl } from '@/services/documentUploadService';
 
 const BUCKET = 'documentos';
+
+/** Extensões de arquivo agrupadas por "família" visual (cor + ícone). */
+type DocFileKind = 'pdf' | 'image' | 'word' | 'excel' | 'archive' | 'unknown';
+
+const EXTENSION_KIND: Record<string, DocFileKind> = {
+  pdf: 'pdf',
+  jpg: 'image', jpeg: 'image', png: 'image', webp: 'image', gif: 'image',
+  doc: 'word', docx: 'word',
+  xls: 'excel', xlsx: 'excel', csv: 'excel',
+  zip: 'archive', rar: 'archive', '7z': 'archive',
+};
+
+// Fallback usado apenas quando não há extensão identificável (nem por URL,
+// nem por mime_type) — tipos contratuais/textuais tendem a ser PDF na prática.
+const TIPO_FALLBACK_KIND: Record<string, DocFileKind> = {
+  'Contrato de Trabalho': 'pdf',
+  'Aditivo Contratual': 'pdf',
+  'Acordo de Confidencialidade': 'pdf',
+  'Exame Médico (ASO)': 'pdf',
+};
+
+const KIND_STYLE: Record<DocFileKind, { icon: LucideIcon; className: string }> = {
+  pdf: { icon: FileText, className: 'text-destructive' },
+  image: { icon: FileImage, className: 'text-success' },
+  word: { icon: FileText, className: 'text-info' },
+  excel: { icon: FileSpreadsheet, className: 'text-success' },
+  archive: { icon: FileArchive, className: 'text-warning' },
+  unknown: { icon: FileIcon, className: 'text-muted-foreground' },
+};
+
+const MIME_EXTENSION: Record<string, string> = {
+  'application/pdf': 'pdf',
+  'image/jpeg': 'jpg',
+  'image/jpg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/gif': 'gif',
+  'application/msword': 'doc',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+  'application/vnd.ms-excel': 'xls',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+  'text/csv': 'csv',
+  'application/zip': 'zip',
+  'application/x-rar-compressed': 'rar',
+};
+
+/** Extrai a extensão do nome do arquivo a partir da URL, ignorando query
+ * string/hash (signed URLs do Supabase costumam ter `?token=...`). */
+function getUrlExtension(url?: string | null): string {
+  if (!url) return '';
+  const withoutParams = url.split(/[?#]/)[0];
+  const fileName = withoutParams.split('/').pop() || '';
+  const dotIndex = fileName.lastIndexOf('.');
+  return dotIndex > 0 ? fileName.slice(dotIndex + 1).toLowerCase() : '';
+}
+
+/** Determina ícone + cor do documento: 1) extensão real da URL, 2) mime_type
+ * (quando disponível), 3) heurística pelo `tipo` cadastrado, 4) genérico. */
+function getDocumentFileType(doc: { url?: string | null; mime_type?: string | null; tipo?: string | null }) {
+  const ext = getUrlExtension(doc.url) || MIME_EXTENSION[doc.mime_type || ''] || '';
+  const kind = EXTENSION_KIND[ext] ?? TIPO_FALLBACK_KIND[doc.tipo || ''] ?? 'unknown';
+  return KIND_STYLE[kind];
+}
 
 export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string }) {
   const { documentos, isLoading, criarDocumento, excluirDocumento } = useDocumentos(colaboradorId);
@@ -30,10 +94,11 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
   const [form, setForm] = useState({
     nome: '',
     tipo: 'Outros',
-    url: '',
     observacoes: '',
     data_validade: '',
   });
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const TIPOS = [
     'Contrato de Trabalho',
@@ -44,20 +109,37 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
     'Exame Médico (ASO)',
     'EPI',
     'Treinamento',
-    'Outros',
+    'Outros'
   ];
+
+  const resetForm = () => {
+    setForm({ nome: '', tipo: 'Outros', observacoes: '', data_validade: '' });
+    setFile(null);
+  };
 
   const handleSubmit = async () => {
     if (!form.nome) {
       toast.error('Nome do documento é obrigatório');
       return;
     }
-    if (file && !empresaAtualId) {
-      toast.error('Selecione uma empresa antes de enviar o arquivo.');
+    if (!empresaAtualId) {
+      toast.error('Empresa não identificada.');
       return;
     }
 
-    let enviado: Awaited<ReturnType<typeof uploadDocumentFile>> | null = null;
+    let uploaded: Awaited<ReturnType<typeof uploadDocumentFile>> | null = null;
+    if (file) {
+      setUploading(true);
+      try {
+        uploaded = await uploadDocumentFile(file, { bucket: BUCKET, empresaId: empresaAtualId, colaboradorId, categoria: 'documentos-digitais' });
+      } catch (e) {
+        setUploading(false);
+        toast.error(safeErrorMessage(e, 'Erro ao enviar arquivo.'));
+        return;
+      }
+      setUploading(false);
+    }
+
     try {
       if (file && empresaAtualId) {
         setUploading(true);
@@ -74,48 +156,37 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
         ...form,
         data_validade: form.data_validade.trim() === '' ? null : form.data_validade,
         colaborador_id: colaboradorId,
-        ...(enviado
-          ? {
-              storage_path: enviado.storage_path,
-              nome_arquivo: enviado.nome_arquivo,
-              tamanho: enviado.tamanho,
-              mime_type: enviado.mime_type,
-            }
-          : {}),
+        ...(uploaded ? { storage_path: uploaded.storage_path, nome_arquivo: uploaded.nome_arquivo, tamanho: uploaded.tamanho, mime_type: uploaded.mime_type } : {}),
       });
       setOpen(false);
-      setFile(null);
-      setForm({ nome: '', tipo: 'Outros', url: '', observacoes: '', data_validade: '' });
+      resetForm();
     } catch (e) {
-      setUploading(false);
-      // Arquivo subiu e a linha nao entrou: sem rollback o objeto fica orfao.
-      if (enviado) await removeDocumentFile(BUCKET, enviado.storage_path).catch(() => {});
+      if (uploaded) await removeDocumentFile(BUCKET, uploaded.storage_path).catch(() => {});
       toast.error(safeErrorMessage(e, 'Erro ao salvar documento.'));
     }
   };
 
-  const handleAbrir = async (doc: { storage_path?: string | null; url?: string | null }) => {
+  const handleAbrir = async (doc: any) => {
     try {
-      const url = await resolveDocumentUrl({ storage_path: doc.storage_path, url: doc.url }, BUCKET);
-      if (!url) {
-        toast.error('Arquivo não encontrado.');
-        return;
-      }
+      const url = await resolveDocumentUrl(doc, BUCKET);
+      if (!url) { toast.error('Arquivo não encontrado.'); return; }
       window.open(safeHref(url), '_blank', 'noopener');
     } catch (e) {
-      toast.error(safeErrorMessage(e, 'Não foi possível abrir o arquivo.'));
+      toast.error(safeErrorMessage(e, 'Erro ao abrir documento.'));
     }
   };
 
-  const handleExcluir = async (doc: { id: string; storage_path?: string | null }) => {
+  const handleExcluir = async (doc: any) => {
     if (!confirm('Tem certeza que deseja excluir este documento permanentemente?')) return;
     try {
-      // Arquivo primeiro: Storage recusou, a linha fica — melhor documento
-      // visivel que objeto orfao com PII.
-      if (doc.storage_path) await removeDocumentFile(BUCKET, doc.storage_path);
       await excluirDocumento.mutateAsync(doc.id);
-    } catch (e) {
-      toast.error(safeErrorMessage(e, 'Erro ao excluir documento.'));
+    } catch {
+      return; // excluirDocumento já mostra o toast de erro
+    }
+    if (doc.storage_path) {
+      removeDocumentFile(BUCKET, doc.storage_path).catch(() =>
+        toast.error('Documento excluído, mas houve falha ao remover o arquivo do armazenamento.')
+      );
     }
   };
 
@@ -123,76 +194,66 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-display font-bold">Gestão de Documentos Digitais</h3>
+          <h3 className="text-lg font-display font-medium">Gestão de Documentos Digitais</h3>
           <p className="text-sm text-muted-foreground">Repositório central de arquivos e contratos do colaborador</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="rounded-xl shadow-glow">
+            <Button>
               <Plus className="h-4 w-4 mr-2" /> Novo Documento
             </Button>
           </DialogTrigger>
-          <DialogContent className="rounded-2xl max-w-md">
+          <DialogContent className="max-w-[460px]">
             <DialogHeader>
               <DialogTitle className="font-display">Adicionar Novo Documento</DialogTitle>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="space-y-2">
+            <div className="grid gap-3">
+              <div className="space-y-1">
                 <Label>Nome do Documento *</Label>
                 <Input
                   placeholder="Ex: Contrato de Trabalho 2024"
                   value={form.nome}
-                  onChange={(e) => setForm((f) => ({ ...f, nome: e.target.value }))}
-                  className="rounded-xl"
+                  onChange={e => setForm(f => ({ ...f, nome: e.target.value }))}
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label>Tipo de Documento</Label>
-                <Select value={form.tipo} onValueChange={(v) => setForm((f) => ({ ...f, tipo: v }))}>
-                  <SelectTrigger className="rounded-xl">
+                <Select value={form.tipo} onValueChange={v => setForm(f => ({ ...f, tipo: v }))}>
+                  <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    {TIPOS.map((t) => (
-                      <SelectItem key={t} value={t}>
-                        {t}
-                      </SelectItem>
-                    ))}
+                  <SelectContent>
+                    {TIPOS.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label>Data de Validade (opcional)</Label>
                 <Input
                   type="date"
                   value={form.data_validade}
-                  onChange={(e) => setForm((f) => ({ ...f, data_validade: e.target.value }))}
-                  className="rounded-xl"
+                  onChange={e => setForm(f => ({ ...f, data_validade: e.target.value }))}
                 />
               </div>
-              <div className="space-y-2">
-                <Label>Arquivo (opcional)</Label>
-                <FileUploadField
-                  file={file}
-                  onFileChange={setFile}
-                  uploading={uploading}
-                  disabled={criarDocumento.isPending}
-                />
+              <div className="space-y-1">
+                <Label>Arquivo</Label>
+                <FileUploadField file={file} onFileChange={setFile} uploading={uploading} disabled={criarDocumento.isPending} />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label>Observações</Label>
                 <Input
                   placeholder="Notas internas..."
                   value={form.observacoes}
-                  onChange={(e) => setForm((f) => ({ ...f, observacoes: e.target.value }))}
-                  className="rounded-xl"
+                  onChange={e => setForm(f => ({ ...f, observacoes: e.target.value }))}
                 />
               </div>
             </div>
-            <Button onClick={handleSubmit} className="w-full rounded-xl" disabled={criarDocumento.isPending}>
-              {criarDocumento.isPending ? <Spinner className="mr-2" /> : <Shield className="h-4 w-4 mr-2" />}
-              Salvar Documento com Segurança
-            </Button>
+            <div className="flex justify-end pt-1">
+              <Button size="sm" className="rounded-lg px-4" onClick={handleSubmit} disabled={criarDocumento.isPending || uploading}>
+                {(criarDocumento.isPending || uploading) ? <Spinner className="mr-1.5 h-3.5 w-3.5" /> : <Shield className="h-3.5 w-3.5 mr-1.5" />}
+                {uploading ? 'Enviando arquivo...' : 'Salvar Documento com Segurança'}
+              </Button>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
@@ -210,26 +271,18 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-32 text-center">
-                  <Spinner />
-                </TableCell>
-              </TableRow>
+              <TableRow><TableCell colSpan={5} className="h-32 text-center"><Spinner /></TableCell></TableRow>
             ) : documentos.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-32 text-center text-muted-foreground font-body italic">
-                  Nenhum documento anexado.
-                </TableCell>
-              </TableRow>
+              <TableRow><TableCell colSpan={5} className="h-32 text-center text-muted-foreground font-body italic">Nenhum documento anexado.</TableCell></TableRow>
             ) : (
-              documentos.map((doc) => (
+              documentos.map((doc: any) => {
+                const { icon: DocIcon, className: docIconClassName } = getDocumentFileType({ ...doc, url: doc.nome_arquivo || doc.url });
+                return (
                 <TableRow key={doc.id} className="group transition-colors hover:bg-muted/10">
                   <TableCell className="py-4 pl-6">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <FileText className="h-5 w-5 text-primary" />
-                      </div>
-                      <span className="font-bold text-sm">{doc.nome}</span>
+                      <DocIcon className={`h-5 w-5 shrink-0 ${docIconClassName}`} aria-hidden="true" />
+                      <span className="font-medium text-sm">{doc.nome}</span>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -238,18 +291,12 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
                     </Badge>
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
-                    {format(new Date(doc.created_at), 'dd/MM/yyyy', { locale: ptBR })}
+                    {format(new Date(doc.created_at), "dd/MM/yyyy", { locale: ptBR })}
                   </TableCell>
                   <TableCell className="text-xs">
                     {doc.data_validade ? (
-                      <span
-                        className={
-                          new Date(doc.data_validade) < new Date()
-                            ? 'text-destructive font-bold'
-                            : 'text-success font-bold'
-                        }
-                      >
-                        {format(new Date(doc.data_validade), 'dd/MM/yyyy', { locale: ptBR })}
+                      <span className={new Date(doc.data_validade) < new Date() ? 'text-destructive font-medium' : 'text-success font-medium'}>
+                        {format(new Date(doc.data_validade), "dd/MM/yyyy", { locale: ptBR })}
                       </span>
                     ) : (
                       <span className="text-muted-foreground opacity-50">—</span>
@@ -280,7 +327,8 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
                     </div>
                   </TableCell>
                 </TableRow>
-              ))
+                );
+              })
             )}
           </TableBody>
         </Table>

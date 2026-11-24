@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { FileText, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { BARRA_PROGRESSO_DURACAO_S } from '@/components/ui/progressMotion';
 import { cn } from '@/lib/utils';
 
 function formatCurrency(value: number): string {
@@ -128,15 +129,15 @@ export function FolhaComposicao({
                 <span className="text-body font-body">{item.label}</span>
                 <div className="flex items-center gap-2">
                   <span className="text-caption text-muted-foreground">{item.pct.toFixed(1)}%</span>
-                  <span className="text-body font-display font-bold">{formatCurrency(item.value)}</span>
+                  <span className="text-body font-display font-medium">{formatCurrency(item.value)}</span>
                 </div>
               </div>
               <div className="h-2 bg-muted/50 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min(item.pct, 100)}%` }}
-                  transition={{ duration: 0.8, delay: 0.3 + i * 0.08 }}
-                  className={cn('h-full rounded-full', item.color)}
+                  transition={{ duration: BARRA_PROGRESSO_DURACAO_S, delay: 0.3 + i * 0.08 }}
+                  className={cn("h-full rounded-full", item.color)}
                 />
               </div>
             </motion.div>

@@ -68,16 +68,7 @@ const statusColors = {
   critical: 'bg-destructive/15 text-destructive',
 };
 
-export function WorkforceHealthScore({
-  turnover,
-  absenteismo,
-  cadastrosCompletos,
-  totalColaboradores,
-  feriasPendentes,
-  passivoTotal = 0,
-  variant = 'default',
-  bare = false,
-}: WorkforceHealthScoreProps) {
+export function WorkforceHealthScore({ turnover, absenteismo, cadastrosCompletos, totalColaboradores, feriasPendentes, passivoTotal = 0, variant = 'default', bare = false }: WorkforceHealthScoreProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });
   const navigate = useNavigate();
@@ -146,34 +137,19 @@ export function WorkforceHealthScore({
   const center = size / 2;
 
   const body = (
-    <div
-      className={cn(
-        'flex items-center gap-4',
-        !bare && 'flex-col sm:flex-row gap-6',
-        isCompact && !bare && 'w-full gap-5'
-      )}
-    >
+    <div className={cn('flex items-center gap-4', !bare && 'flex-col sm:flex-row gap-6', isCompact && !bare && 'w-full gap-5')}>
       {/* Score Ring */}
       <div className="relative shrink-0">
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="transform -rotate-[135deg]">
           <circle
-            cx={center}
-            cy={center}
-            r={radius}
-            fill="none"
-            stroke="hsl(var(--muted))"
-            strokeWidth={strokeWidth}
+            cx={center} cy={center} r={radius}
+            fill="none" stroke="hsl(var(--muted))" strokeWidth={strokeWidth}
             strokeDasharray={`${circumference * 0.75} ${circumference * 0.25}`}
-            strokeLinecap="round"
-            opacity={0.3}
+            strokeLinecap="round" opacity={0.3}
           />
           <motion.circle
-            cx={center}
-            cy={center}
-            r={radius}
-            fill="none"
-            stroke={scoreInfo.ring}
-            strokeWidth={strokeWidth}
+            cx={center} cy={center} r={radius}
+            fill="none" stroke={scoreInfo.ring} strokeWidth={strokeWidth}
             strokeDasharray={`${arcLength} ${circumference - arcLength}`}
             strokeLinecap="round"
             initial={{ strokeDasharray: `0 ${circumference}` }}
@@ -190,9 +166,7 @@ export function WorkforceHealthScore({
           >
             {compositeScore}
           </motion.span>
-          {!bare && (
-            <span className="text-[10px] text-muted-foreground font-body uppercase tracking-wider">de 100</span>
-          )}
+          {!bare && <span className="text-[10px] text-muted-foreground font-body uppercase tracking-wider">de 100</span>}
         </div>
       </div>
 
@@ -200,32 +174,24 @@ export function WorkforceHealthScore({
       <div className={cn('flex-1 space-y-3 w-full min-w-0', isCompact && 'space-y-3', bare && 'space-y-2')}>
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            {!bare && <Shield className={cn('h-5 w-5 shrink-0', scoreInfo.color)} />}
+            {!bare && <Shield className={cn("h-5 w-5 shrink-0", scoreInfo.color)} />}
             {/* Sem `cn()`: `text-h3` disputava o mesmo grupo de conflito do
                 tailwind-merge que `scoreInfo.color` e era descartado — o
                 título renderizava no tamanho padrão do navegador (16px)
                 sem a cor de status (verde/âmbar/vermelho). */}
-            <span
-              className={`${bare ? 'text-caption' : 'text-h3'} font-display font-medium truncate ${scoreInfo.color}`}
-            >
-              {scoreInfo.label}
-            </span>
+            <span className={`${bare ? 'text-caption' : 'text-h3'} font-display font-medium truncate ${scoreInfo.color}`}>{scoreInfo.label}</span>
           </div>
-          <Badge variant="outline" className="shrink-0 text-[10px] font-medium border-primary/20 bg-primary/5">
-            Saúde RH
-          </Badge>
+          <Badge variant="outline" className="shrink-0 text-[10px] font-medium border-primary/20 bg-primary/5">Saúde RH</Badge>
         </div>
         {/* Sem parágrafo de descrição nem grade de métricas no modo `bare`:
             a coluna é compartilhada com o Resumo Operacional abaixo — só o
             essencial (anel + rótulo) cabe sem sobrar vazio nem espremer o
             resto. */}
         {!bare && (
-          <p
-            className={cn(
-              'text-caption text-muted-foreground font-body leading-relaxed',
-              isCompact && 'text-overline normal-case tracking-normal'
-            )}
-          >
+          <p className={cn(
+            'text-caption text-muted-foreground font-body leading-relaxed',
+            isCompact && 'text-overline normal-case tracking-normal',
+          )}>
             Resumo automatizado da conformidade do RH. Considera turnover, absenteísmo e integridade de dados.
           </p>
         )}
@@ -244,16 +210,8 @@ export function WorkforceHealthScore({
                 onClick={() => navigate(m.route)}
                 className="flex items-center gap-2 p-2.5 rounded-lg hover:bg-accent/50 transition-colors text-left group"
               >
-                <span className={cn('text-[10px] font-medium px-1.5 py-0.5 rounded', statusColors[m.status])}>
-                  {m.label === 'Cadastros'
-                    ? `${m.value.toFixed(0)}%`
-                    : m.label === 'Férias'
-                      ? m.value
-                      : m.label === 'Passivo'
-                        ? m.value > 1000
-                          ? `${(m.value / 1000).toFixed(0)}k`
-                          : m.value
-                        : `${m.value.toFixed(1)}%`}
+                <span className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded", statusColors[m.status])}>
+                  {m.label === 'Cadastros' ? `${m.value.toFixed(0)}%` : m.label === 'Férias' ? m.value : m.label === 'Passivo' ? (m.value > 1000 ? `${(m.value/1000).toFixed(0)}k` : m.value) : `${m.value.toFixed(1)}%`}
                 </span>
                 <span className="text-caption text-muted-foreground font-body flex-1 truncate">{m.label}</span>
                 <ChevronRight className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -270,22 +228,12 @@ export function WorkforceHealthScore({
   }
 
   return (
-    <Card
-      ref={ref}
-      className={cn(
-        'border overflow-hidden relative',
-        isCompact
-          ? 'border-border/60 rounded-xl flex h-full min-h-[260px] flex-col'
-          : 'border-border/30 shadow-elevated rounded-2xl'
-      )}
-    >
-      <div
-        className={cn(
-          'absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r',
-          scoreInfo.bg.replace('/20', '').replace('/5', '')
-        )}
-      />
-      <div className={cn('absolute inset-0 bg-gradient-to-br opacity-[0.04] pointer-events-none', scoreInfo.bg)} />
+    <Card ref={ref} className={cn(
+      'border overflow-hidden relative',
+      isCompact ? 'border-border/60 rounded-xl flex h-full min-h-[260px] flex-col' : 'border-border/30 shadow-elevated rounded-2xl',
+    )}>
+      <div className={cn("absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r", scoreInfo.bg.replace('/20', '').replace('/5', ''))} />
+      <div className={cn("absolute inset-0 bg-gradient-to-br opacity-[0.04] pointer-events-none", scoreInfo.bg)} />
       <CardContent className={cn('relative p-6', isCompact && 'flex min-h-0 flex-1 items-center p-5')}>
         {body}
       </CardContent>

@@ -1,17 +1,17 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import type { ListOptions, ListResponse } from '@/services/baseService';
 import { loggerService } from '@/services/loggerService';
 import { auditLogger } from '@/utils/auditLogger';
 import { safeErrorMessage } from '@/utils/safeError';
-import { TABLE_COLUMNS } from '@/schemas/tableColumns';
+import { useOnMount } from './useMountEffects';
 
 interface ServiceInterface<T> {
   listar(options: ListOptions): Promise<ListResponse<T>>;
   criar(data: unknown): Promise<T>;
-  atualizar(id: string, data: unknown, empresaId: string): Promise<T>;
-  excluir(id: string, empresaId: string): Promise<void>;
+  atualizar(id: string, data: unknown, empresaId?: string): Promise<T>;
+  excluir(id: string, empresaId?: string): Promise<void>;
 }
 
 interface UseGenericCrudOptions<T> {
@@ -26,25 +26,7 @@ interface UseGenericCrudOptions<T> {
   filters?: Record<string, unknown>;
   searchColumn?: string;
   empresaId?: string;
-  /**
-   * false suspende a query (ex.: enquanto a empresa atual nao foi resolvida),
-   * sem desmontar o hook. Default true.
-   */
   enabled?: boolean;
-  /**
-   * false apenas para services sem isolamento por empresa (ex.: EmpresaService,
-   * RequireEmpresa=false no BaseService). Default true: atualizar/excluir exigem
-   * empresaId, senão o service (tipado via ServiceInterface) perderia a garantia
-   * de compilação que o BaseService dá — achado de auditoria adversarial (24/09/2026).
-   */
-  requireEmpresaId?: boolean;
-  /**
-   * Fallback para services que não expõem `table` (objetos fora do
-   * BaseService): força a injeção de `empresa_id: empresaId` no create quando
-   * o caller não o passou. Services do BaseService já têm injeção automática
-   * via TABLE_COLUMNS quando a tabela tem a coluna empresa_id.
-   */
-  injectEmpresaIdOnCreate?: boolean;
 }
 
 export function useGenericCrud<T>({
@@ -55,8 +37,6 @@ export function useGenericCrud<T>({
   filters = {},
   searchColumn,
   empresaId,
-  requireEmpresaId = true,
-  injectEmpresaIdOnCreate = false,
   enabled = true,
 }: UseGenericCrudOptions<T>) {
   const queryClient = useQueryClient();
@@ -64,21 +44,15 @@ export function useGenericCrud<T>({
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [search, setSearch] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const filterKey = JSON.stringify(filters);
-  const [previousFilterKey, setPreviousFilterKey] = useState(filterKey);
 
-  // A mudança de filtros precisa invalidar a página antes de criar a query.
-  // O update guardado durante o render reinicia a renderização sem disparar uma
-  // requisição intermediária com os filtros novos e a página antiga.
-  if (previousFilterKey !== filterKey) {
-    setPreviousFilterKey(filterKey);
+  // Reset page on mount and when search/filters change
+  useOnMount(() => {
     setPage(1);
-  }
+  });
 
-  const setSearchAndResetPage = useCallback((nextSearch: string) => {
-    setSearch(nextSearch);
+  useEffect(() => {
     setPage(1);
-  }, []);
+  }, [search, JSON.stringify(filters)]);
 
   // Trocar "linhas por pagina" reinicia a paginacao, como busca/filtros ja fazem:
   // sair de 10 por pagina na pagina 4 para 50 cairia numa pagina inexistente.
@@ -95,74 +69,48 @@ export function useGenericCrud<T>({
         const result = await service.listar({ search, page, pageSize, filters, searchColumn });
         return result;
       } catch (e) {
-        void loggerService.error(`Error fetching ${queryKey}`, { filters, search, page }, e as Error);
+        loggerService.error(`Error fetching ${queryKey}`, { filters, search, page }, e as Error);
         throw e;
       }
     },
   });
 
   const criarMutation = useMutation({
-    mutationFn: (data: unknown) => {
-      const table = (service as { table?: string }).table;
-      const hasEmpresaCol = !!table && (TABLE_COLUMNS[table]?.includes('empresa_id') ?? false);
-      if (
-        (injectEmpresaIdOnCreate || hasEmpresaCol) &&
-        empresaId &&
-        typeof data === 'object' &&
-        data !== null &&
-        !('empresa_id' in data)
-      ) {
-        return service.criar({ ...(data as Record<string, unknown>), empresa_id: empresaId });
-      }
-      return service.criar(data);
-    },
+    mutationFn: (data: any) => service.criar(data),
     onSuccess: (data) => {
       void queryClient.invalidateQueries({ queryKey: [queryKey] });
       toast.success(successMessages.create || 'Registro criado com sucesso');
-      void loggerService.info(`${queryKey} created`, { id: (data as { id?: string } | null)?.id });
+      loggerService.info(`${queryKey} created`, { id: (data as any)?.id });
     },
     onError: (err: Error) => {
-      void loggerService.error(`Failed to create ${queryKey}`, {}, err);
+      loggerService.error(`Failed to create ${queryKey}`, {}, err);
       toast.error(safeErrorMessage(err, 'Erro ao criar registro.'));
     },
   });
 
   const atualizarMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: unknown }) => {
-      if (requireEmpresaId && !empresaId) {
-        throw new Error('empresaId obrigatório para atualizar (isolamento de tenant).');
-      }
-      // Cast: só chega aqui com empresaId undefined quando requireEmpresaId=false
-      // (exceção documentada, ex.: EmpresaService, cujo atualizar real aceita
-      // empresaId opcional apesar do ServiceInterface exigi-lo).
-      return service.atualizar(id, data, empresaId as string);
-    },
+    mutationFn: ({ id, data }: { id: string; data: any }) => service.atualizar(id, data, empresaId),
     onSuccess: (_, variables) => {
       void queryClient.invalidateQueries({ queryKey: [queryKey] });
       toast.success(successMessages.update || 'Registro atualizado com sucesso');
-      void loggerService.info(`${queryKey} updated`, { id: variables.id });
+      loggerService.info(`${queryKey} updated`, { id: variables.id });
     },
     onError: (err: Error) => {
-      void loggerService.error(`Failed to update ${queryKey}`, {}, err);
+      loggerService.error(`Failed to update ${queryKey}`, {}, err);
       toast.error(safeErrorMessage(err, 'Erro ao atualizar registro.'));
     },
   });
 
   const excluirMutation = useMutation({
-    mutationFn: (id: string) => {
-      if (requireEmpresaId && !empresaId) {
-        throw new Error('empresaId obrigatório para excluir (isolamento de tenant).');
-      }
-      return service.excluir(id, empresaId as string);
-    },
+    mutationFn: (id: string) => service.excluir(id, empresaId),
     onSuccess: (_, id) => {
       void queryClient.invalidateQueries({ queryKey: [queryKey] });
       toast.success(successMessages.delete || 'Registro excluído com sucesso');
-      void loggerService.info(`${queryKey} deleted`, { id });
-      void auditLogger.log({ tabela: queryKey, registro_id: id, acao: 'DELETE', empresa_id: empresaId });
+      loggerService.info(`${queryKey} deleted`, { id });
+      void auditLogger.log({ tabela: queryKey, registro_id: id, acao: 'DELETE' });
     },
     onError: (err: Error) => {
-      void loggerService.error(`Failed to delete ${queryKey}`, {}, err);
+      loggerService.error(`Failed to delete ${queryKey}`, {}, err);
       toast.error(safeErrorMessage(err, 'Erro ao excluir registro.'));
     },
   });
@@ -176,6 +124,16 @@ export function useGenericCrud<T>({
     }
   }, [query]);
 
+  /**
+   * Troca de "linhas por página": reinicia a paginação na primeira página, como
+   * a busca/filtros já fazem — sem isso, sair de 10 por página na página 4 para
+   * 50 por página deixaria o usuário numa página que não existe mais.
+   */
+  const alterarPageSize = useCallback((tamanho: number) => {
+    setPageSize(tamanho);
+    setPage(1);
+  }, []);
+
   return {
     items: query.data?.data || [],
     total: query.data?.total || 0,
@@ -187,18 +145,17 @@ export function useGenericCrud<T>({
     pageSize,
     setPageSize: alterarPageSize,
     search,
-    setSearch: setSearchAndResetPage,
+    setSearch,
     criar: criarMutation.mutateAsync,
     atualizar: atualizarMutation.mutateAsync,
     excluir: excluirMutation.mutateAsync,
-    criarMutate: criarMutation.mutate,
-    atualizarMutate: atualizarMutation.mutate,
-    excluirMutate: excluirMutation.mutate,
     refetch,
     isRefreshing,
     isCreating: criarMutation.isPending,
     isUpdating: atualizarMutation.isPending,
     isDeleting: excluirMutation.isPending,
-    query,
+    query
   };
 }
+
+

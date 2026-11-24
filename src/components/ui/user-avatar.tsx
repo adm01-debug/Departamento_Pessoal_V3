@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { tomDoAvatar } from '@/lib/avatarTons';
 import { cn } from '@/lib/utils';
 import { tomDoAvatar } from '@/lib/avatarTons';
 
@@ -25,25 +26,17 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
-// O gradiente anterior (`bg-gradient-to-br` + `from-chart-N to-chart-M`) nao
-// gerava CSS: `--color-chart-*` nao esta registrado no tema do Tailwind v4,
-// entao 4 dos 5 tons sorteados saiam SEM fundo nenhum — iniciais soltas sobre
-// o navy. Conferido no CSS compilado: `from-chart-1` tem 0 ocorrencias,
-// enquanto os 5 tons de `avatarTons` (`bg-primary/20`, `bg-info/20`,
-// `bg-success/20`, `bg-xp/20`, `bg-warning/20`) tem 1 cada.
-//
-// `tomDoAvatar` ja existia em `src/lib/avatarTons.ts`, documentado como a
-// paleta do UserAvatar, e era usado so pela pilha de participantes das
-// campanhas. Aqui ele passa a servir o componente para o qual foi escrito.
-
 export function UserAvatar({ name, imageUrl, size = 'md', className }: UserAvatarProps) {
   const initials = getInitials(name);
-  const tom = tomDoAvatar(name);
 
   return (
     <Avatar className={cn(sizeClasses[size], 'ring-1 ring-border/20', className)}>
       {imageUrl && <AvatarImage src={imageUrl} alt={name} />}
-      <AvatarFallback className={cn('font-medium', tom)}>{initials}</AvatarFallback>
+      {/* Fallback com a paleta estável de `lib/avatarTons` (fundo translúcido +
+          texto na cor cheia do token). Antes usava `bg-gradient-to-br` com
+          `from-/to-`, sintaxe da v3 do Tailwind que não gera CSS nenhum na v4 —
+          o avatar ficava sem fundo e com tinta quase preta sobre o navy. */}
+      <AvatarFallback className={cn('font-semibold', tomDoAvatar(name))}>{initials}</AvatarFallback>
     </Avatar>
   );
 }

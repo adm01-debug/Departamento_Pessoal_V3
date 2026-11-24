@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Plus, X } from 'lucide-react';
 import { useAdmissoes } from '@/hooks/useAdmissoes';
-import type { Tables } from '@/integrations/supabase/types';
 import {
   cascadeContainerVariants,
   cascadeItemVariants,
@@ -48,14 +47,8 @@ const departamentos = [
   'Outro',
 ];
 
-/**
- * Formulário vazio (criar) ou preenchido com a admissão (editar).
- *
- * `data_nascimento`, `nome_mae` e `sexo` ficam aqui porque são os dados
- * cadastrais que o S-2200 exige e que `admissaoService.concluir` cobra antes de
- * gerar o colaborador — sem eles a edição apagaria o que o RH já preencheu.
- */
-function formDe(admissao?: Tables<'admissoes'> | null) {
+/** Formulário vazio (criar) ou preenchido com a admissão (editar). */
+function formDe(admissao?: any | null) {
   return {
     nome: admissao?.nome ?? '',
     cargo: admissao?.cargo ?? '',
@@ -65,9 +58,6 @@ function formDe(admissao?: Tables<'admissoes'> | null) {
     email: admissao?.email ?? '',
     telefone: admissao?.telefone ?? '',
     cpf: admissao?.cpf ?? '',
-    data_nascimento: (admissao?.data_nascimento ?? '').slice(0, 10),
-    nome_mae: admissao?.nome_mae ?? '',
-    sexo: admissao?.sexo ?? '',
     observacoes: admissao?.observacoes ?? '',
   };
 }
@@ -79,7 +69,7 @@ interface NovaAdmissaoDialogProps {
    * formulário com os dados da admissão e grava via `useAdmissoes().atualizar`
    * (mesmo service/regra da criação — nada de um segundo caminho de escrita).
    */
-  admissao?: Tables<'admissoes'> | null;
+  admissao?: any | null;
   /**
    * Quando informado, o diálogo vira CONTROLADO e não renderiza trigger próprio:
    * é assim que a janela de detalhes abre a edição a partir de "Editar".
@@ -131,12 +121,9 @@ export function NovaAdmissaoDialog({
         email: form.email || null,
         telefone: form.telefone || null,
         cpf: form.cpf || null,
-        data_nascimento: form.data_nascimento || null,
-        nome_mae: form.nome_mae || null,
-        sexo: form.sexo || null,
         observacoes: form.observacoes || null,
       };
-      if (admissao) {
+      if (editando) {
         await atualizar({ id: admissao.id, data: dados });
       } else {
         await criar(dados);
@@ -294,36 +281,6 @@ export function NovaAdmissaoDialog({
                             value={form.cpf}
                             onChange={(e) => handleChange('cpf', e.target.value)}
                             placeholder="000.000.000-00"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="data_nascimento">Data de nascimento</Label>
-                          <Input
-                            id="data_nascimento"
-                            type="date"
-                            value={form.data_nascimento}
-                            onChange={(e) => handleChange('data_nascimento', e.target.value)}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="sexo">Sexo</Label>
-                          <Select value={form.sexo} onValueChange={(v) => handleChange('sexo', v)}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="masculino">Masculino</SelectItem>
-                              <SelectItem value="feminino">Feminino</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="col-span-2">
-                          <Label htmlFor="nome_mae">Nome da mãe</Label>
-                          <Input
-                            id="nome_mae"
-                            value={form.nome_mae}
-                            onChange={(e) => handleChange('nome_mae', e.target.value)}
-                            placeholder="Obrigatório p/ gerar o colaborador na conclusão"
                           />
                         </div>
                       </div>

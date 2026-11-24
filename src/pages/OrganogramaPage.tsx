@@ -119,7 +119,9 @@ export default function OrganogramaPage() {
       if (index === stages.length - 1) return;
 
       const nextStage = stages[index + 1];
-      collapseTimers.current.push(setTimeout(() => dropStage(nextStage.ids), elapsed * 1000));
+      collapseTimers.current.push(
+        setTimeout(() => dropStage(nextStage.ids), elapsed * 1000)
+      );
     });
   };
 
@@ -158,7 +160,6 @@ export default function OrganogramaPage() {
               onSearchChange={setSearch}
               onExpandAll={handleExpandAll}
               onCollapseAll={handleCollapseAll}
-              acoesDesabilitadas={isSearching}
             />
           </div>
         </AnimatePresence>

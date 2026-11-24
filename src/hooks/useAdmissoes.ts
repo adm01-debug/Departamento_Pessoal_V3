@@ -1,33 +1,31 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
 import { admissaoService } from '@/services';
 import { useEmpresas } from './useEmpresas';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+// MOCK VISUAL — ver src/mocks/admissoesMock.ts
+import { isAdmissoesMockEnabled, getMockAdmissoes } from '@/mocks/admissoesMock';
 
 export function useAdmissoes() {
   const { empresaAtual } = useEmpresas();
   const queryClient = useQueryClient();
   const empresaId = empresaAtual?.id;
+  // MOCK VISUAL — ver src/mocks/admissoesMock.ts (dev + VITE_ADMISSOES_MOCK=true).
+  const mockAtivo = isAdmissoesMockEnabled();
 
-  const query = useQuery<Tables<'admissoes'>[]>({
-    queryKey: ['admissoes', empresaId],
-    queryFn: () => admissaoService.listarAdmissoes(empresaId!),
+  const query = useQuery<any[]>({
+    queryKey: ['admissoes', empresaId, mockAtivo ? 'mock' : 'real'],
+    queryFn: async () => (mockAtivo ? getMockAdmissoes() : admissaoService.listarAdmissoes(empresaId!)),
     // Guard: evita fetch sem tenant (possível vazamento cross-empresa via RLS frouxa).
-    enabled: !!empresaId,
+    // No modo mock não há fetch (apenas a lista fictícia em memória).
+    enabled: mockAtivo || !!empresaId,
   });
 
-  const invalidate = () => {
+  const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: ['admissoes', empresaId] });
-    // A aba Auditoria da mesma página lê a trilha por OUTRA chave
-    // (['auditoria-admissoes', empresaId]) e o botão "Nova Admissão" continua
-    // disponível com ela aberta. Sem invalidar as duas, o RH cria a admissão e
-    // a trilha segue afirmando que nenhum evento foi registrado.
-    queryClient.invalidateQueries({ queryKey: ['auditoria-admissoes', empresaId] });
-  };
 
   const criarMutation = useMutation({
-    mutationFn: (data: Insertable<'admissoes'>) => admissaoService.criar({ ...data, empresa_id: empresaId }),
+    mutationFn: (data: any) => admissaoService.criar({ ...data, empresa_id: empresaId }),
     onSuccess: () => {
       void invalidate();
       toast.success('Admissão criada com sucesso');
@@ -36,8 +34,7 @@ export function useAdmissoes() {
   });
 
   const atualizarMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Updatable<'admissoes'> }) =>
-      admissaoService.atualizar(id, data, empresaId!),
+    mutationFn: ({ id, data }: { id: string; data: any }) => admissaoService.atualizar(id, data, empresaId!),
     onSuccess: () => {
       void invalidate();
       toast.success('Admissão atualizada');
