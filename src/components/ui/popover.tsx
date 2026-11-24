@@ -6,6 +6,15 @@ import { overlayContentCloseOnlyAnimClasses, dropdownContentVariants } from '@/c
 
 const Popover = PopoverPrimitive.Root;
 const PopoverTrigger = PopoverPrimitive.Trigger;
+/**
+ * `PopoverAnchor` — âncora SEM gatilho: posiciona o `PopoverContent` num
+ * elemento que NÃO abre o popover (quem controla `open` é o chamador).
+ * Necessário quando o elemento já é gatilho de outro overlay — ex.: o seletor
+ * de período do Banco de Horas é um `Select`, e o painel de datas personalizadas
+ * ancora nele sem transformá-lo em `PopoverTrigger` (um elemento não pode ser
+ * gatilho de dois overlays). É o primitive do Radix que já vinha no pacote.
+ */
+const PopoverAnchor = PopoverPrimitive.Anchor;
 
 const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
@@ -46,4 +55,4 @@ const PopoverContent = React.forwardRef<
 });
 PopoverContent.displayName = PopoverPrimitive.Content.displayName;
 
-export { Popover, PopoverTrigger, PopoverContent };
+export { Popover, PopoverTrigger, PopoverAnchor, PopoverContent };
