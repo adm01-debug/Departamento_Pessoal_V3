@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "084b5284b552b208aaa7ecfd059b685f187863f8",
+  "sha": "bb8ebe2cd4f7aeadfaf7c2522737e9afdc9015f5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-24 11:01 UTC",
+  "generated_at": "2026-11-24 12:31 UTC",
   "files_total": 3748,
   "code_files": 3154,
-  "code_lines": 502187
+  "code_lines": 502199
  },
  "version": "1.3.2",
- "facts_hash": "abaeddaf7eed5d93",
+ "facts_hash": "33f4e9f11458843b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -106416,7 +106416,7 @@
   {
    "module": "supabase/migrations",
    "files": 932,
-   "lines": 84614,
+   "lines": 84626,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -337606,7 +337606,7 @@
   },
   "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql": {
    "path": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
-   "lines": 114,
+   "lines": 126,
    "uses_service_role": true
   },
   "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql": {
@@ -338008,10 +338008,19 @@
   }
  },
  "git": {
-  "sha": "084b5284b552b208aaa7ecfd059b685f187863f8",
+  "sha": "bb8ebe2cd4f7aeadfaf7c2522737e9afdc9015f5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "bb8ebe2",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: nao reexecuta o script da extensao pg_cron/pg_net no canonico (#862)",
+    "files": [
+     "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql"
+    ]
+   },
    {
     "sha": "084b528",
     "date": "2026-11-24",
@@ -338340,17 +338349,6 @@
     "files": [
      ".github/workflows/canonical-migrations.yml"
     ]
-   },
-   {
-    "sha": "b77692d",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: vinculo do relogio ganha unicidade reversa por colaborador (R8) (#830)",
-    "files": [
-     "supabase/functions/ingest-ponto-rep/index.ts",
-     "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.sql",
-     "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -338371,12 +338369,16 @@
     4
    ],
    [
-    "supabase/functions/ingest-ponto-rep/index.ts",
-    4
-   ],
-   [
     "supabase/functions/alertas-dp/index.ts",
     3
+   ],
+   [
+    "supabase/functions/ingest-ponto-rep/index.ts",
+    3
+   ],
+   [
+    "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
+    2
    ],
    [
     "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
@@ -338412,10 +338414,6 @@
    ],
    [
     "scripts/uv-pin.txt",
-    1
-   ],
-   [
-    "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
     1
    ],
    [
