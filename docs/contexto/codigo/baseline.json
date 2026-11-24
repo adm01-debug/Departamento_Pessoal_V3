@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7245d109b36bcfd844b62e387872d4afc140b5ea",
+  "commit": "084b5284b552b208aaa7ecfd059b685f187863f8",
   "branch": "main",
-  "data_commit": "2026-11-24T07:40:55-03:00",
+  "data_commit": "2026-11-24T08:00:36-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "084b528",
+    "data": "2026-11-24",
+    "assunto": "chore: pina por hash os tres pip install sinalizados pelo Scorecard (#861)"
+   },
    {
     "sha": "7245d10",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "a2f4ebe",
     "data": "2026-11-22",
     "assunto": "fix: extrai e testa a regra do 23505 no vinculo do relogio (#835)"
-   },
-   {
-    "sha": "f0f940b",
-    "data": "2026-11-22",
-    "assunto": "fix: baixa de guia falha alto quando nenhuma linha e atualizada (#834)"
    }
   ],
-  "arquivos_mudados_7d": 568,
+  "arquivos_mudados_7d": 572,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -246,10 +246,6 @@
     "mudancas": 7
    },
    {
-    "arquivo": "docs/prod-readiness.md",
-    "mudancas": 7
-   },
-   {
     "arquivo": "src/pages/CalculadoraRescisaoPage.tsx",
     "mudancas": 7
    },
@@ -263,6 +259,10 @@
    },
    {
     "arquivo": "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "docs/prod-readiness.md",
     "mudancas": 6
    },
    {
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3733,
+  "arquivos_total": 3734,
   "arquivos_codigo": 2150,
   "linhas_codigo": 430698,
   "rotas": 116,

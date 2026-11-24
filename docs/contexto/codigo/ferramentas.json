@@ -154,7 +154,8 @@
  },
  "python": {
   "dependencias": [
-   "psycopg"
+   "psycopg",
+   "psycopg-binary"
   ]
  },
  "configs": [

@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "7245d109b36bcfd844b62e387872d4afc140b5ea",
+  "sha": "084b5284b552b208aaa7ecfd059b685f187863f8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-24 10:41 UTC",
-  "files_total": 3747,
+  "generated_at": "2026-11-24 11:01 UTC",
+  "files_total": 3748,
   "code_files": 3154,
   "code_lines": 502187
  },
@@ -338008,10 +338008,22 @@
   }
  },
  "git": {
-  "sha": "7245d109b36bcfd844b62e387872d4afc140b5ea",
+  "sha": "084b5284b552b208aaa7ecfd059b685f187863f8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "084b528",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "chore: pina por hash os tres pip install sinalizados pelo Scorecard (#861)",
+    "files": [
+     ".claude/hooks/session-start.sh",
+     ".github/workflows/contexto.yml",
+     "scripts/supabase_snapshot/requirements.txt",
+     "scripts/uv-pin.txt"
+    ]
+   },
    {
     "sha": "7245d10",
     "date": "2026-11-24",
@@ -338339,21 +338351,6 @@
      "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.sql",
      "supabase/migrations/20261122110500_ponto_rep_vinculo_unicidade_reversa.verify.sql"
     ]
-   },
-   {
-    "sha": "3a8e2ec",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: CPF não trafega mais inteiro na tela de Vínculos do relógio (R8) (#829)",
-    "files": [
-     "src/components/__tests__/VinculosRelogioTab.test.tsx",
-     "src/components/ponto/relogio/VinculosRelogioTab.tsx",
-     "src/integrations/supabase/types.ts",
-     "src/schemas/tableColumns.ts",
-     "src/services/relogio/vinculosService.ts",
-     "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql",
-     "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -338390,14 +338387,6 @@
     2
    ],
    [
-    "src/integrations/supabase/types.ts",
-    2
-   ],
-   [
-    "src/schemas/tableColumns.ts",
-    2
-   ],
-   [
     "supabase/functions/ingest-ponto-rep/logica.test.ts",
     2
    ],
@@ -338408,6 +338397,22 @@
    [
     "scripts/automation.config.json",
     2
+   ],
+   [
+    ".claude/hooks/session-start.sh",
+    1
+   ],
+   [
+    ".github/workflows/contexto.yml",
+    1
+   ],
+   [
+    "scripts/supabase_snapshot/requirements.txt",
+    1
+   ],
+   [
+    "scripts/uv-pin.txt",
+    1
    ],
    [
     "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
@@ -338427,14 +338432,6 @@
    ],
    [
     ".env.example",
-    1
-   ],
-   [
-    "src/contexts/AuthContext.tsx",
-    1
-   ],
-   [
-    "src/contexts/__tests__/AuthContext.test.tsx",
     1
    ]
   ]
