@@ -133,7 +133,7 @@
    "@tanstack/react-query": "^5.105.3",
    "@tanstack/react-query-devtools": "5.107.1",
    "date-fns": "^4.4.0",
-   "framer-motion": "14.11.0",
+   "framer-motion": "14.14.0",
    "react": "19.3.1",
    "react-day-picker": "^10.0.2",
    "react-dom": "19.3.1",
@@ -1843,7 +1843,7 @@
    {
     "pacote": "@sentry/react",
     "servico": "Sentry",
-    "versao": "11.11.0"
+    "versao": "11.12.0"
    },
    {
     "pacote": "@supabase/supabase-js",

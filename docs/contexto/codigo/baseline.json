@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c05815354a5eb891d28318f265161b0bcea1877d",
+  "commit": "0cec124ea16981cd9c9f7bb1c8021357ceda9745",
   "branch": "main",
-  "data_commit": "2026-11-23T22:09:50-03:00",
+  "data_commit": "2026-11-23T22:37:15-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "0cec124",
+    "data": "2026-11-23",
+    "assunto": "chore(deps): bump minor-patch group (18 updates, resgate da #846) (#857)"
+   },
    {
     "sha": "c058153",
     "data": "2026-11-23",
@@ -126,11 +131,6 @@
     "sha": "b77692d",
     "data": "2026-11-22",
     "assunto": "fix: vinculo do relogio ganha unicidade reversa por colaborador (R8) (#830)"
-   },
-   {
-    "sha": "3a8e2ec",
-    "data": "2026-11-22",
-    "assunto": "fix: CPF não trafega mais inteiro na tela de Vínculos do relógio (R8) (#829)"
    }
   ],
   "arquivos_mudados_7d": 666,
@@ -226,11 +226,15 @@
     "mudancas": 10
    },
    {
+    "arquivo": "package.json",
+    "mudancas": 10
+   },
+   {
     "arquivo": "scripts/automation.config.json",
     "mudancas": 10
    },
    {
-    "arquivo": "package.json",
+    "arquivo": "package-lock.json",
     "mudancas": 9
    },
    {
@@ -239,10 +243,6 @@
    },
    {
     "arquivo": "docs/prod-readiness.md",
-    "mudancas": 8
-   },
-   {
-    "arquivo": "package-lock.json",
     "mudancas": 8
    },
    {

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c05815354a5eb891d28318f265161b0bcea1877d` (2026-11-23T22:09:50-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `0cec124ea16981cd9c9f7bb1c8021357ceda9745` (2026-11-23T22:37:15-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -398,7 +398,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28302 nós · 63768 arestas · 2475 comunidades · grafo do commit `c0581535`
+- 28302 nós · 63768 arestas · 2475 comunidades · grafo do commit `0cec124e`
 - comunidades maiores: 20260831_corrected_public.sql (493), react (487), canonical_schema.sql (481), lucide-react (454), useEmpresas (430), cn (384), vitest (347), contract.ts (197), App.tsx (189), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -411,11 +411,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - src/integrations/supabase/types.ts (12)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
+- package.json (10)
 - scripts/automation.config.json (10)
-- package.json (9)
+- package-lock.json (9)
 - src/schemas/tableColumns.ts (9)
 - docs/prod-readiness.md (8)
-- package-lock.json (8)
 - docs/auditoria/sql-preservado/README.md (7)
 - src/pages/CalculadoraRescisaoPage.tsx (7)
 - src/pages/ColaboradoresPage.tsx (7)
@@ -656,6 +656,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-23 `0cec124` chore(deps): bump minor-patch group (18 updates, resgate da #846) (#857)
 - 2026-11-23 `c058153` chore(deps-dev): bump the testing group with 2 updates (#845)
 - 2026-11-23 `a036a95` chore(deps): bump the react-ecosystem group with 2 updates (#844)
 - 2026-11-23 `2489b55` feat: entrega real de Web Push (VAPID) na fila de notificacoes (#853)
@@ -670,7 +671,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `ee4d2de` chore: inventario do estado real [auto] (#842)
 - 2026-11-22 `127ccc8` infra: registra 20261123090000 no lote do canonical-migrations (#840)
 - 2026-11-22 `4828437` feat: coletor le feriados e jornadas do AtecSoft (etapa 53) (#839)
-- 2026-11-22 `c42efdd` test: prova a etapa 70 e marca 67/70 no plano do Ponto (#841)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
