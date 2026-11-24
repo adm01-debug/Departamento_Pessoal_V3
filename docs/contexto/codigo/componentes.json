@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 647,
+ "total": 659,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -831,7 +831,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 6,
+   "usado_por": 7,
    "orfao": false
   },
   {
@@ -1443,6 +1443,155 @@
    "export_default": null,
    "linhas": 420,
    "dominio": "components/avaliacao",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/banco-horas/AlertaSaldoNegativoCard.tsx",
+   "exports": [
+    "AlertaSaldoNegativoCard",
+    "AlertaSaldoNegativoCardProps"
+   ],
+   "export_default": null,
+   "linhas": 194,
+   "dominio": "components/banco-horas",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/banco-horas/BancoHorasKpis.tsx",
+   "exports": [
+    "BancoHorasKpis",
+    "BancoHorasKpisProps"
+   ],
+   "export_default": null,
+   "linhas": 415,
+   "dominio": "components/banco-horas",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/banco-horas/CabecalhoBancoHoras.tsx",
+   "exports": [
+    "CabecalhoBancoHoras",
+    "CabecalhoBancoHorasProps"
+   ],
+   "export_default": null,
+   "linhas": 188,
+   "dominio": "components/banco-horas",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/banco-horas/CartaoSecaoBancoHoras.tsx",
+   "exports": [
+    "CartaoSecaoBancoHoras",
+    "CartaoSecaoBancoHorasProps"
+   ],
+   "export_default": null,
+   "linhas": 127,
+   "dominio": "components/banco-horas",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 4,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/banco-horas/EvolucaoSaldoCard.tsx",
+   "exports": [
+    "EvolucaoSaldoCard",
+    "EvolucaoSaldoCardProps"
+   ],
+   "export_default": null,
+   "linhas": 228,
+   "dominio": "components/banco-horas",
+   "hooks_locais": [
+    "useEntradaCardConcluida",
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/banco-horas/ExtratoBancoHoras.tsx",
+   "exports": [
+    "ExtratoBancoHoras",
+    "ExtratoBancoHorasProps"
+   ],
+   "export_default": null,
+   "linhas": 758,
+   "dominio": "components/banco-horas",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
+   "exports": [
+    "BotaoMaisFiltros",
+    "BotaoMaisFiltrosProps",
+    "SeletorPeriodoBancoHoras",
+    "SeletorPeriodoBancoHorasProps"
+   ],
+   "export_default": null,
+   "linhas": 462,
+   "dominio": "components/banco-horas",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/banco-horas/SituacaoSaldosCard.tsx",
+   "exports": [
+    "SituacaoSaldosCard",
+    "SituacaoSaldosCardProps"
+   ],
+   "export_default": null,
+   "linhas": 188,
+   "dominio": "components/banco-horas",
+   "hooks_locais": [
+    "useEntradaCardConcluida",
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/banco-horas/TotaisHorasCard.tsx",
+   "exports": [
+    "TotaisHorasCard",
+    "TotaisHorasCardProps"
+   ],
+   "export_default": null,
+   "linhas": 158,
+   "dominio": "components/banco-horas",
    "hooks_locais": [
     "useMovimentoReduzido"
    ],
@@ -2791,7 +2940,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 5,
+   "usado_por": 6,
    "orfao": false
   },
   {
@@ -4332,6 +4481,20 @@
    "export_default": null,
    "linhas": 29,
    "dominio": "components/forms",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/horas-extras/FiltroSelectConteudo.tsx",
+   "exports": [
+    "ConteudoFiltro"
+   ],
+   "export_default": null,
+   "linhas": 49,
+   "dominio": "components/horas-extras",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
@@ -7441,7 +7604,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 13,
+   "usado_por": 14,
    "orfao": false
   },
   {
@@ -7487,7 +7650,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 368,
+   "usado_por": 372,
    "orfao": false
   },
   {
@@ -7522,7 +7685,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 286,
+   "usado_por": 285,
    "orfao": false
   },
   {
@@ -7552,7 +7715,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 6,
+   "usado_por": 7,
    "orfao": false
   },
   {
@@ -7585,7 +7748,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 20,
+   "usado_por": 21,
    "orfao": false
   },
   {
@@ -7733,7 +7896,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 6,
+   "usado_por": 7,
    "orfao": false
   },
   {
@@ -7756,7 +7919,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 155,
+   "usado_por": 156,
    "orfao": false
   },
   {
@@ -7782,7 +7945,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 36,
+   "usado_por": 37,
    "orfao": false
   },
   {
@@ -7793,12 +7956,12 @@
     "EmptyState"
    ],
    "export_default": null,
-   "linhas": 83,
+   "linhas": 93,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 18,
+   "usado_por": 19,
    "orfao": false
   },
   {
@@ -7814,7 +7977,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 29,
+   "usado_por": 33,
    "orfao": false
   },
   {
@@ -7897,7 +8060,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 180,
+   "usado_por": 181,
    "orfao": false
   },
   {
@@ -7999,16 +8162,17 @@
    "arquivo": "src/components/ui/popover.tsx",
    "exports": [
     "Popover",
+    "PopoverAnchor",
     "PopoverContent",
     "PopoverTrigger"
    ],
    "export_default": null,
-   "linhas": 50,
+   "linhas": 59,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 19,
+   "usado_por": 20,
    "orfao": false
   },
   {
@@ -8038,6 +8202,22 @@
    "tabelas": [],
    "edges": [],
    "usado_por": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/revelacaoGrafico.tsx",
+   "exports": [
+    "CONFIG_REVELACAO_GRAFICO",
+    "ClipRevelacaoGrafico",
+    "ClipRevelacaoGraficoProps"
+   ],
+   "export_default": null,
+   "linhas": 119,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -8088,7 +8268,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 131,
+   "usado_por": 133,
    "orfao": false
   },
   {
@@ -8252,7 +8432,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 120,
+   "usado_por": 119,
    "orfao": false
   },
   {
@@ -8435,6 +8615,25 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/ui/tooltipGrafico.tsx",
+   "exports": [
+    "CLASSE_ENTRADA_TOOLTIP",
+    "ConteudoTooltipGrafico",
+    "ConteudoTooltipRosca",
+    "ConteudoTooltipRoscaProps",
+    "ItemTooltipRosca",
+    "TooltipGrafico"
+   ],
+   "export_default": null,
+   "linhas": 145,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/ui/user-avatar.tsx",
    "exports": [
     "UserAvatar"
@@ -8445,7 +8644,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 6,
+   "usado_por": 8,
    "orfao": false
   },
   {
@@ -8970,14 +9169,12 @@
     "BancoHorasPage"
    ],
    "export_default": "BancoHorasPage",
-   "linhas": 132,
+   "linhas": 212,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
    ],
-   "tabelas": [
-    "banco_horas"
-   ],
+   "tabelas": [],
    "edges": [],
    "usado_por": 1,
    "orfao": false

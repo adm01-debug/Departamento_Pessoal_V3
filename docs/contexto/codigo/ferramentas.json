@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2012)",
+   "TypeScript (2034)",
    "SQL (1324)",
    "Markdown (346)",
    "JavaScript (136)",
@@ -2182,7 +2182,7 @@
    },
    {
     "papel": "group",
-    "ocorrencias": 8
+    "ocorrencias": 9
    },
    {
     "papel": "progressbar",
@@ -2234,6 +2234,10 @@
    },
    {
     "papel": "grid",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "img",
     "ocorrencias": 2
    },
    {
@@ -2290,10 +2294,6 @@
    },
    {
     "papel": "heading",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "img",
     "ocorrencias": 1
    },
    {

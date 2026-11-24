@@ -201,7 +201,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 320,
+   "testes": 321,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -1024,6 +1024,7 @@
     ]
    },
    "importado_por_outros_modulos": [
+    "components/banco-horas",
     "components/premiacoes",
     "components/recrutamento",
     "hooks",
@@ -1043,6 +1044,64 @@
    "pacotes_externos": [
     "@radix-ui/react-dialog",
     "@tanstack/react-query",
+    "date-fns",
+    "framer-motion",
+    "lucide-react",
+    "recharts",
+    "sonner"
+   ]
+  },
+  {
+   "modulo": "components/banco-horas",
+   "arquivos": 11,
+   "testes": 0,
+   "linhas": 3609,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 9,
+   "hooks_locais": [
+    "useEntradaCardConcluida",
+    "useMovimentoReduzido"
+   ],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [],
+   "rpcs": [
+    "log_frontend_error"
+   ],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "DEV",
+    "VITE_SUPABASE_FUNCTIONS_BASE",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "flags": [],
+   "papeis": [
+    "group",
+    "img"
+   ],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "pages"
+   ],
+   "depende_de_modulos": [
+    "components/avaliacao",
+    "components/dashboard",
+    "components/horas-extras",
+    "components/ui",
+    "hooks",
+    "lib",
+    "services",
+    "utils"
+   ],
+   "pacotes_externos": [
     "date-fns",
     "framer-motion",
     "lucide-react",
@@ -1787,9 +1846,9 @@
   },
   {
    "modulo": "components/dashboard",
-   "arquivos": 21,
+   "arquivos": 23,
    "testes": 0,
-   "linhas": 4475,
+   "linhas": 4617,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1952,6 +2011,7 @@
    },
    "importado_por_outros_modulos": [
     "components/admissoes",
+    "components/banco-horas",
     "components/colaborador-detalhes",
     "components/colaboradores",
     "components/desligamentos",
@@ -3375,6 +3435,40 @@
     "lib"
    ],
    "pacotes_externos": []
+  },
+  {
+   "modulo": "components/horas-extras",
+   "arquivos": 2,
+   "testes": 0,
+   "linhas": 588,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 1,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [],
+   "flags": [],
+   "papeis": [],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "components/banco-horas"
+   ],
+   "depende_de_modulos": [
+    "utils"
+   ],
+   "pacotes_externos": [
+    "lucide-react"
+   ]
   },
   {
    "modulo": "components/i18n",
@@ -6544,13 +6638,13 @@
   },
   {
    "modulo": "components/ui",
-   "arquivos": 72,
+   "arquivos": 77,
    "testes": 7,
-   "linhas": 7019,
+   "linhas": 7686,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 66,
+   "componentes": 68,
    "hooks_locais": [
     "useAuth",
     "useDebounce",
@@ -6633,6 +6727,7 @@
     "components/afastamentos",
     "components/auth",
     "components/avaliacao",
+    "components/banco-horas",
     "components/beneficios",
     "components/colaborador-detalhes",
     "components/colaboradores",
@@ -6708,6 +6803,7 @@
     "react-day-picker",
     "react-hook-form",
     "react-router-dom",
+    "recharts",
     "sonner"
    ]
   },
@@ -6941,9 +7037,9 @@
   },
   {
    "modulo": "hooks",
-   "arquivos": 97,
+   "arquivos": 98,
    "testes": 0,
-   "linhas": 9565,
+   "linhas": 9662,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7037,6 +7133,7 @@
     "useEmpresa",
     "useEmpresaStore",
     "useEmpresas",
+    "useEntradaCardConcluida",
     "useEpis",
     "useEpisEntregas",
     "useEpisEntregasColaborador",
@@ -7411,6 +7508,7 @@
     "useDocumentos",
     "useEmpresaStore",
     "useEmpresas",
+    "useEntradaCardConcluida",
     "useESocial",
     "useExcelExport",
     "useExecutiveKPIs",
@@ -7890,6 +7988,7 @@
     "components/admissoes",
     "components/afastamentos",
     "components/avaliacao",
+    "components/banco-horas",
     "components/colaborador-detalhes",
     "components/colaboradores",
     "components/contratos",
@@ -8286,6 +8385,7 @@
     "components/afastamentos",
     "components/animate-ui",
     "components/avaliacao",
+    "components/banco-horas",
     "components/colaborador-detalhes",
     "components/colaboradores",
     "components/dashboard",
@@ -8409,7 +8509,7 @@
    "modulo": "pages",
    "arquivos": 115,
    "testes": 0,
-   "linhas": 46459,
+   "linhas": 46539,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -8718,6 +8818,7 @@
     "useEmpresa",
     "useEmpresaStore",
     "useEmpresas",
+    "useEntradaCardConcluida",
     "useEntradaKanbanColuna",
     "useEpis",
     "useEpisEntregas",
@@ -9492,6 +9593,7 @@
     "components/admissoes",
     "components/afastamentos",
     "components/avaliacao",
+    "components/banco-horas",
     "components/beneficios",
     "components/colaborador-detalhes",
     "components/colaboradores",
@@ -9746,7 +9848,7 @@
    "modulo": "services",
    "arquivos": 78,
    "testes": 0,
-   "linhas": 14813,
+   "linhas": 14843,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -10298,6 +10400,7 @@
     "components/admissoes",
     "components/afastamentos",
     "components/avaliacao",
+    "components/banco-horas",
     "components/colaborador-detalhes",
     "components/colaboradores",
     "components/contratos",
@@ -10860,6 +10963,7 @@
     "components/admissoes",
     "components/afastamentos",
     "components/avaliacao",
+    "components/banco-horas",
     "components/colaborador-detalhes",
     "components/colaboradores",
     "components/dashboard",
@@ -10870,6 +10974,7 @@
     "components/esocial",
     "components/ferias",
     "components/folha",
+    "components/horas-extras",
     "components/integracoes",
     "components/layout",
     "components/medidas-disciplinares",

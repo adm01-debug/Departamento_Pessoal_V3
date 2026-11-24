@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 817,
+ "total": 818,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 772
+  "unit": 773
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 680
+   "arquivos": 681
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -986,6 +986,15 @@
     "src/components/premiacoes/premiacoesComum.ts"
    ],
    "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/BancoHorasComum.test.ts",
+   "tipo": "unit",
+   "linhas": 418,
+   "testa": [
+    "src/components/banco-horas/bancoHorasComum.ts"
+   ],
+   "casos": 29
   },
   {
    "arquivo": "src/components/__tests__/BarChartWidget.test.tsx",
@@ -7667,6 +7676,7 @@
   "src/components/avaliacao/pdiProgressoMock.ts": 1,
   "src/components/avaliacao/servicoDemo.ts": 1,
   "src/components/avaliacao/statusFeedback.ts": 1,
+  "src/components/banco-horas/bancoHorasComum.ts": 1,
   "src/components/beneficios/BeneficioHistorico.tsx": 1,
   "src/components/beneficios/BeneficiosDashboard.tsx": 1,
   "src/components/colaborador-detalhes/ASOTab.tsx": 1,
@@ -8416,6 +8426,7 @@
    "src/components/ui/sidebar.tsx",
    "src/components/ui/use-toast.ts",
    "src/hooks/useColetoresPonto.ts",
+   "src/hooks/useEntradaCardConcluida.ts",
    "src/hooks/useJornadaOnboarding.ts",
    "src/hooks/useVinculos.ts",
    "src/i18n/useTranslation.ts",

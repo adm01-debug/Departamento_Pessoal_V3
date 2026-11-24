@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "2669333c56291999ebacbbd18e8d797e000f4ed0",
+  "sha": "ce83bb09db43457e17167e0cae7fb3e9cd001681",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-24 22:27 UTC",
-  "files_total": 4072,
-  "code_files": 3477,
-  "code_lines": 505597
+  "generated_at": "2026-11-24 23:26 UTC",
+  "files_total": 4094,
+  "code_files": 3499,
+  "code_lines": 511228
  },
  "version": "1.3.2",
- "facts_hash": "b1228b1b5bdfe85b",
+ "facts_hash": "db086aae96a0ab57",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,8 +388,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1324,
-   ".tsx": 1042,
-   ".ts": 970,
+   ".tsx": 1054,
+   ".ts": 980,
    ".mjs": 110,
    ".js": 15,
    ".cjs": 11,
@@ -90961,6 +90961,7 @@
      "afastamentos",
      "anotacoes_colaborador",
      "asos",
+     "banco_horas",
      "banco_horas_config",
      "batidas_ponto",
      "beneficiarios_plano",
@@ -91132,7 +91133,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 195
+    "deps_count": 238
    },
    {
     "path": "",
@@ -103105,7 +103106,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1015,
+  "components_count": 1036,
   "hooks": [
    {
     "name": "useContacts",
@@ -103554,6 +103555,10 @@
    {
     "name": "useEmpresas",
     "file": "src/hooks/useEmpresas.ts"
+   },
+   {
+    "name": "useEntradaCardConcluida",
+    "file": "src/hooks/useEntradaCardConcluida.ts"
    },
    {
     "name": "useExcelExport",
@@ -104752,8 +104757,8 @@
   },
   {
    "module": "src/components",
-   "files": 1015,
-   "lines": 187696,
+   "files": 1036,
+   "lines": 193120,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -104942,6 +104947,7 @@
     "src/components/__tests__/AuditoriaEventoDialog.test.tsx",
     "src/components/__tests__/AuditoriaFeedback.test.tsx",
     "src/components/__tests__/AuditoriaTab.test.tsx",
+    "src/components/__tests__/BancoHorasComum.test.ts",
     "src/components/__tests__/BarChartWidget.test.tsx",
     "src/components/__tests__/BeneficioHistorico.test.tsx",
     "src/components/__tests__/BeneficiosDashboard.test.tsx",
@@ -104979,8 +104985,7 @@
     "src/components/__tests__/DarfTab.test.tsx",
     "src/components/__tests__/DashboardHeader.test.tsx",
     "src/components/__tests__/DashboardWidgets.test.tsx",
-    "src/components/__tests__/DeclaracoesTable.test.tsx",
-    "src/components/__tests__/DepartmentRow.test.tsx"
+    "src/components/__tests__/DeclaracoesTable.test.tsx"
    ]
   },
   {
@@ -105087,8 +105092,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 207,
-   "lines": 24191,
+   "files": 208,
+   "lines": 24288,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105167,8 +105172,8 @@
     "useDocumentos.ts: useDocumentos",
     "useESocial.ts: useESocial",
     "useEmpresas.ts: Empresa, EmpresaModo, compararOrdemExibicao, UserEmpresa, useEmpresaStore, GLOBAL_QUERY_KEYS",
-    "useExcelExport.ts: useExcelExport",
-    "useExecutiveDashboard.ts: reconstruirHeadcountPorMes, variacaoUltimoMes, useExecutiveKPIs, useStrategicFinancials"
+    "useEntradaCardConcluida.ts: ControleEntradaCard, useEntradaCardConcluida",
+    "useExcelExport.ts: useExcelExport"
    ],
    "docs": [
     "useAlertasPreditivos.ts: useAlertasPreditivos — porta de entrada da edge `alertas-preditivos`. A edge existe e esta publicada em producao (sonda em 18/11/2026: POST /functions/v1/alertas-preditivos devolve 405 para GET, ou seja esta no ar), mas nenhum arquivo do `src` a invocava: o RH nunca via esses alertas. Deliberadament …",
@@ -105245,6 +105250,7 @@
     "src/hooks/useDocumentos.ts",
     "src/hooks/useESocial.ts",
     "src/hooks/useEmpresas.ts",
+    "src/hooks/useEntradaCardConcluida.ts",
     "src/hooks/useExcelExport.ts",
     "src/hooks/useExecutiveDashboard.ts",
     "src/hooks/useFeriados.ts",
@@ -105283,8 +105289,7 @@
     "src/hooks/usePontoOffline.ts",
     "src/hooks/usePontosAbertos.ts",
     "src/hooks/useProximosEventos.ts",
-    "src/hooks/useRealTimeSubscription.ts",
-    "src/hooks/useRealtimeDashboard.ts"
+    "src/hooks/useRealTimeSubscription.ts"
    ]
   },
   {
@@ -105450,7 +105455,7 @@
   {
    "module": "src/pages",
    "files": 145,
-   "lines": 51329,
+   "lines": 51409,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -105818,7 +105823,7 @@
   {
    "module": "src/services",
    "files": 198,
-   "lines": 42404,
+   "lines": 42434,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -106040,7 +106045,7 @@
     "avaliacaoService.ts: avaliacaoService",
     "backupService.ts: BackupRecord, exportarBackupCSV, exportarBackupJSON, downloadBlob",
     "bancoHorasConfigService.ts: bancoHorasConfigService",
-    "bancoHorasService.ts: bancoHorasService",
+    "bancoHorasService.ts: RegistroBancoHorasDaEmpresa, bancoHorasService",
     "baseService.ts: ListOptions, ListResponse, BaseService",
     "batidasPontoService.ts: batidasPontoService",
     "beneficioService.ts: beneficioService",
@@ -107159,7 +107164,6 @@
    },
    "banco_horas": {
     "select": [
-     "src/pages/BancoHorasPage.tsx",
      "src/pages/DashboardPage.tsx",
      "src/pages/PontoPage.tsx",
      "src/services/bancoHorasService.ts",
@@ -116338,6 +116342,26 @@
     "values": "operacao_ausente | operacao_sem_idempotencia | feedback_ausente | id_operacao_ausente"
    },
    {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "name": "TipoMovimento",
+    "values": "credito | debito"
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "name": "OrdemExtrato",
+    "values": "recentes | antigos"
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "name": "DirecaoVariacao",
+    "values": "aumento | queda | estavel | sem-base"
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "name": "MetricaMiniBarra",
+    "values": "movimentacoes | credito | debito"
+   },
+   {
     "file": "src/components/colaborador-detalhes/destinosDossie.ts",
     "name": "AbaPrincipal",
     "values": "geral | pessoal | profissional | jornada | financeiro | documentos | beneficios | historico | timeline"
@@ -116351,6 +116375,11 @@
     "file": "src/components/dashboard/MetricCard.tsx",
     "name": "MetricTone",
     "values": "primary | warning | destructive | muted | info | accent | success"
+   },
+   {
+    "file": "src/components/dashboard/estruturaAnimacoes.ts",
+    "name": "CORES_TIPO_VINCULO",
+    "values": "'hsl(var(--primary))', 'hsl(var(--warning))', 'hsl(var(--success))', 'hsl(var(--info))', 'hsl(var(--destructive))', 'hsl(var(--accent))',"
    },
    {
     "file": "src/components/desligamentos/GestaoDesligamentos.tsx",
@@ -116391,6 +116420,26 @@
     "file": "src/components/desligamentos/trilhaDerivacoes.ts",
     "name": "OrdemTrilha",
     "values": "recentes | antigos"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "name": "StatusHoraExtra",
+    "values": "pendente | aprovada | rejeitada"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "name": "FiltroStatus",
+    "values": "aprovadasRejeitadas | pendente | aprovada | rejeitada | todas"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "name": "OrdemHistorico",
+    "values": "recentes | antigas | nome | horas"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "name": "PeriodoId",
+    "values": "todos | 7d | 30d | mesAtual | mesAnterior"
    },
    {
     "file": "src/components/layout/PageTransition.tsx",
@@ -117515,6 +117564,14 @@
    {
     "file": "src/components/avaliacao/servicoDemo.ts",
     "msg": "transicao_invalida"
+   },
+   {
+    "file": "src/components/banco-horas/ExtratoBancoHoras.tsx",
+    "msg": "Não foi possível copiar o lançamento"
+   },
+   {
+    "file": "src/components/banco-horas/exportarBancoHoras.ts",
+    "msg": "Nenhum lançamento para exportar neste recorte"
    },
    {
     "file": "src/components/colaborador-detalhes/ASOTab.tsx",
@@ -123005,6 +123062,66 @@
     "text": "* Empacota a operação inteira (validação → destino → idempotência → auditoria)."
    },
    {
+    "file": "src/components/banco-horas/AlertaSaldoNegativoCard.tsx",
+    "text": "* A lista mostra no máximo `LIMITE_VISIVEL` nomes (o card não pode crescer até"
+   },
+   {
+    "file": "src/components/banco-horas/CabecalhoBancoHoras.tsx",
+    "text": "* Nada além de apresentação mora aqui: o botão apenas chama `onExportar` e a"
+   },
+   {
+    "file": "src/components/banco-horas/EvolucaoSaldoCard.tsx",
+    "text": "(mínimo de 80 px, que cresce com a coluna) sem cobri-lo."
+   },
+   {
+    "file": "src/components/banco-horas/ExtratoBancoHoras.tsx",
+    "text": "automática. Aí entra a regra de tabela do CSS: a altura de uma tabela é o"
+   },
+   {
+    "file": "src/components/banco-horas/ExtratoBancoHoras.tsx",
+    "text": "vice-versa, então o estado não pode morar em dois lugares."
+   },
+   {
+    "file": "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
+    "text": "extrato) e o atalho \"Somente saldos negativos\", que é o MESMO estado do chip"
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "text": "divergirem na primeira alteração de regra."
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "text": "* Linha de `banco_horas` como a tela consome (apenas os campos usados). */"
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "text": "é débito — mesma regra de `bancoHorasService.getSaldo()`."
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "text": "* Somente quem está no vermelho — a lista do card de alerta. */"
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "text": "que a área não pode se dar ao luxo de ter."
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "text": "* Regra: o comparativo usa a MESMA quantidade de dias imediatamente antes do"
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "text": "* Devolve os valores dos ÚLTIMOS `limite` dias que têm lançamento, em ordem"
+   },
+   {
+    "file": "src/components/banco-horas/exportarBancoHoras.ts",
+    "text": "que exportar. Espalhar isso no `onClick` duplicaria a regra em qualquer nova"
+   },
+   {
+    "file": "src/components/banco-horas/exportarBancoHoras.ts",
+    "text": "* Devolve `true` quando o arquivo foi gerado — a página usa o retorno apenas"
+   },
+   {
     "file": "src/components/colaborador-detalhes/AfastamentosTab.tsx",
     "text": "mostra APENAS tipo, datas e status. Nada de CID, atestado, médico ou"
    },
@@ -123103,6 +123220,10 @@
    {
     "file": "src/components/dashboard/WorkforceHealthScore.tsx",
     "text": "o mínimo forçado pela antiga altura travada à viewport. `bare` usa um"
+   },
+   {
+    "file": "src/components/dashboard/donutMotion.ts",
+    "text": "fim do loading) não é prop nenhuma: cada card monta o gráfico apenas quando"
    },
    {
     "file": "src/components/dashboard/useMorningBriefing.ts",
@@ -123323,6 +123444,26 @@
    {
     "file": "src/components/folha/RelatorioContabilDialog.tsx",
     "text": "Lançamento de Desconto (D: Salários a Pagar, C: Conta de Passivo/Desconto)"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "text": "regra do sistema é nunca chamar `toLocaleDateString` direto."
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "text": "apenas um contador discreto de registros):"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "text": "container) em vez de cortar. O `truncate` do valor continua existindo apenas"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "text": "e não pode entrar no denominador (senão a taxa cairia a cada pedido novo,"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "text": "é filtro (o \"Limpar\" não deve acender só porque a lista foi reordenada)."
    },
    {
     "file": "src/components/integracoes/ConfigPanels.tsx",
@@ -123877,6 +124018,10 @@
     "text": "de novo apenas quando o componente é genuinamente montado outra vez: troca de"
    },
    {
+    "file": "src/components/ui/entradaGlobal.ts",
+    "text": "* FILA CRUZADA — tira de KPI Cards: 0, 1, 3, 5, 6… (e, de 6 em diante, apenas"
+   },
+   {
     "file": "src/components/ui/filter-chip.tsx",
     "text": "telas não mantenham duas cópias que possam divergir (a regra de ouro da"
    },
@@ -123893,8 +124038,16 @@
     "text": "estados (a barra de filtros nunca quebra, então não pode haver"
    },
    {
+    "file": "src/components/ui/linha-tabela-hover.ts",
+    "text": "`transition-colors` (e não `all`): o realce não pode arrastar uma sanfona de"
+   },
+   {
     "file": "src/components/ui/motion-presets.ts",
     "text": "último item obedecia `i × 45ms` sem limite e levava ~9s pra aparecer;"
+   },
+   {
+    "file": "src/components/ui/popover.tsx",
+    "text": "ancora nele sem transformá-lo em `PopoverTrigger` (um elemento não pode ser"
    },
    {
     "file": "src/components/workflows/WorkflowDesigner.tsx",
@@ -124007,6 +124160,10 @@
    {
     "file": "src/hooks/useEmpresas.ts",
     "text": "The generic bridge must authorize tenant writes before Postgres"
+   },
+   {
+    "file": "src/hooks/useEntradaCardConcluida.ts",
+    "text": "Identidade estável: o `MotionCard` não pode receber um handler novo a cada"
    },
    {
     "file": "src/hooks/useGenericCrud.ts",
@@ -124323,6 +124480,10 @@
    {
     "file": "src/pages/AvaliacaoPage.tsx",
     "text": "• registros reais (UUID) usam SOMENTE `feedbacks_360_aprovacoes_gestor`;"
+   },
+   {
+    "file": "src/pages/BancoHorasPage.tsx",
+    "text": "`items-stretch` (padrão da grade, declarado para ficar explícito) é a regra:"
    },
    {
     "file": "src/pages/CalculadoraRescisaoPage.tsx",
@@ -124647,6 +124808,10 @@
    {
     "file": "src/services/backupService.ts",
     "text": "este limite. Backups maiores devem usar o fluxo server-side auditável."
+   },
+   {
+    "file": "src/services/bancoHorasService.ts",
+    "text": "agregados da tela de Banco de Horas. `limite` é teto de segurança da"
    },
    {
     "file": "src/services/batidasPontoService.ts",
@@ -151031,6 +151196,41 @@
     "value": "'historico_feedback'"
    },
    {
+    "file": "src/components/banco-horas/AlertaSaldoNegativoCard.tsx",
+    "name": "LIMITE_VISIVEL",
+    "value": "3"
+   },
+   {
+    "file": "src/components/banco-horas/BancoHorasKpis.tsx",
+    "name": "LINHA_CARTAO",
+    "value": "'flex items-center gap-[10px] border p-[13px]'"
+   },
+   {
+    "file": "src/components/banco-horas/BancoHorasKpis.tsx",
+    "name": "COLUNA_TEXTO",
+    "value": "'flex min-w-0 flex-1 flex-col items-start gap-[3px]'"
+   },
+   {
+    "file": "src/components/banco-horas/ExtratoBancoHoras.tsx",
+    "name": "POR_PAGINA_PADRAO",
+    "value": "8"
+   },
+   {
+    "file": "src/components/banco-horas/ExtratoBancoHoras.tsx",
+    "name": "COLAPSO_SALDO_ANTES",
+    "value": "'max-2xl:invisible max-2xl:overflow-hidden max-2xl:p-0'"
+   },
+   {
+    "file": "src/components/banco-horas/ExtratoBancoHoras.tsx",
+    "name": "COLAPSO_SALDO_ATUAL",
+    "value": "'max-md:invisible max-md:overflow-hidden max-md:p-0'"
+   },
+   {
+    "file": "src/components/banco-horas/ExtratoBancoHoras.tsx",
+    "name": "COLAPSO_MOTIVO",
+    "value": "'max-lg:invisible max-lg:overflow-hidden max-lg:p-0'"
+   },
+   {
     "file": "src/components/colaborador-detalhes/AfastamentosTab.tsx",
     "name": "DIAS_HISTORICO",
     "value": "365"
@@ -151209,6 +151409,31 @@
     "file": "src/components/ferias/FeriasReconciliacaoHistoricoCard.tsx",
     "name": "SLA_ALERT_THRESHOLD",
     "value": "80"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "name": "MEDIDA_SELECT_PERIODO",
+    "value": "'sm:min-w-[138px]'"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "name": "MEDIDA_FILTRO_DEPARTAMENTO",
+    "value": "'sm:min-w-[150px]'"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "name": "MEDIDA_FILTRO_STATUS",
+    "value": "'sm:min-w-[194px] sm:max-w-[260px]'"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "name": "MEDIDA_FILTRO_ORDEM",
+    "value": "'sm:min-w-[170px] sm:max-w-[240px]'"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "name": "TODOS_DEPARTAMENTOS",
+    "value": "'todos'"
    },
    {
     "file": "src/components/kanban/entradaKanban.ts",
@@ -151626,6 +151851,36 @@
     "value": "8"
    },
    {
+    "file": "src/components/ui/entradaGlobal.ts",
+    "name": "MAX_SLOT_ENTRADA_CARD_GLOBAL",
+    "value": "11"
+   },
+   {
+    "file": "src/components/ui/entradaGlobal.ts",
+    "name": "ATTR_ESCOPO_ENTRADA",
+    "value": "'data-entrada-escopo'"
+   },
+   {
+    "file": "src/components/ui/progressMotion.ts",
+    "name": "BARRA_PROGRESSO_DURACAO_S",
+    "value": "1.2"
+   },
+   {
+    "file": "src/components/ui/progressMotion.ts",
+    "name": "BARRA_PROGRESSO_EASE",
+    "value": "'easeOut'"
+   },
+   {
+    "file": "src/components/ui/progressMotion.ts",
+    "name": "BARRA_PROGRESSO_ATRASO_S",
+    "value": "0.15"
+   },
+   {
+    "file": "src/components/ui/progressMotion.ts",
+    "name": "BARRA_PROGRESSO_PASSO_CASCATA_S",
+    "value": "0.1"
+   },
+   {
     "file": "src/components/ui/sidebar.tsx",
     "name": "SIDEBAR_COOKIE_MAX_AGE",
     "value": "60"
@@ -151736,6 +151991,11 @@
     "value": "5"
    },
    {
+    "file": "src/hooks/useEntradaCardConcluida.ts",
+    "name": "MARGEM_REDE_SEGURANCA_MS",
+    "value": "250"
+   },
+   {
     "file": "src/hooks/useExecutiveDashboard.ts",
     "name": "PAGE_SIZE",
     "value": "1000"
@@ -151809,6 +152069,11 @@
     "file": "src/mocks/desempenhoMock.ts",
     "name": "EMAIL_GESTOR",
     "value": "'gestor.regional@empresa.com.br'"
+   },
+   {
+    "file": "src/pages/BancoHorasPage.tsx",
+    "name": "PILHA_LATERAL",
+    "value": "'flex min-w-0 flex-col gap-[11px]'"
    },
    {
     "file": "src/pages/CalculadoraRescisaoPage.tsx",
@@ -153939,6 +154204,54 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/banco-horas/ExtratoBancoHoras.tsx",
+    "field": "tipo",
+    "value": "todos",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/banco-horas/ExtratoBancoHoras.tsx",
+    "field": "tipo",
+    "value": "debito",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/banco-horas/ExtratoBancoHoras.tsx",
+    "field": "tipo",
+    "value": "debito",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
+    "field": "tipo",
+    "value": "negativos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "field": "tipo",
+    "value": "todos",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "field": "tipo",
+    "value": "negativos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "field": "tipo",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "field": "tipo",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/colaborador-detalhes/AnotacoesTab.tsx",
     "field": "tipo",
     "value": "geral",
@@ -155628,6 +155941,42 @@
     "file": "src/components/folha/RubricasDialog.tsx",
     "field": "tipo",
     "value": "provento",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "field": "status",
+    "value": "pendente",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "field": "status",
+    "value": "aprovadasRejeitadas",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "field": "status",
+    "value": "aprovada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "field": "status",
+    "value": "rejeitada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "field": "status",
+    "value": "aprovada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "field": "status",
+    "value": "rejeitada",
     "kind": "compara"
    },
    {
@@ -159822,24 +160171,6 @@
     "file": "src/pages/AvaliacaoPage.tsx",
     "field": "status",
     "value": "devolvida",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/BancoHorasPage.tsx",
-    "field": "tipo",
-    "value": "credito",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/BancoHorasPage.tsx",
-    "field": "tipo",
-    "value": "debito",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/BancoHorasPage.tsx",
-    "field": "tipo",
-    "value": "credito",
     "kind": "compara"
    },
    {
@@ -165413,6 +165744,24 @@
     "body": "const impedimentos: ImpedimentoReabertura[] = []; const texto = String(justificativa ?? '').trim(); if (texto === '') impedimentos.push('justificativa_ausente'); else if (texto.length < MIN_CARACTERES_JUSTIFICATIVA) impedimentos.push('justificativa_curta'); return { podeReabrir: impedimentos.length === 0, impedimentos };"
    },
    {
+    "file": "src/components/banco-horas/ExtratoBancoHoras.tsx",
+    "name": "aplicar",
+    "params": "mudanca: Partial<FiltrosExtrato>",
+    "body": "onFiltrosChange({ ...filtros, ...mudanca }); setPagina(1);"
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "name": "saldosPorColaborador",
+    "params": "registros: readonly RegistroBancoHoras[]",
+    "body": "interface Acumulado { ultimo: RegistroBancoHoras; registros: number; liquido: number; } const mapa = new Map<string, Acumulado>(); for (const registro of registros) { const chave = chaveDoColaborador(registro); const liquido = horasComSinal(registro); const atual = mapa.get(chave); if (!atual) { mapa.set(chave, { ultimo: registro, registros: 1, liquido }); continue; } atual.registros += 1; atual.liquido += liquido; if (compararRecencia(registro, atual.ultimo) > 0) atual.ultimo = registro; } retu …"
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "name": "evolucaoSaldo",
+    "params": "registros: readonly RegistroBancoHoras[]",
+    "body": "const porDia = new Map<string, number>(); for (const registro of registros) { const data = (registro.data ?? '').slice(0, 10); if (!data) continue; porDia.set(data, (porDia.get(data) ?? 0) + horasComSinal(registro)); } let acumulado = 0; return Array.from(porDia.entries()) .sort((a, b) => (a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0)) .map(([data, variacao]) => { acumulado += variacao; return { data, eixo: rotuloEixoData(data), saldo: acumulado, variacao }; });"
+   },
+   {
     "file": "src/components/beneficios/BeneficiosDashboard.tsx",
     "name": "formatCurrency",
     "params": "v: number",
@@ -165555,6 +165904,18 @@
     "name": "calcularImpacto",
     "params": "",
     "body": "setLoading(true); const salario = parseFloat(form.salario) || 0; const inss = salario * (parseFloat(form.percentualInssPatronal) / 100); const fgts = salario * (parseFloat(form.percentualFgts) / 100); const rat = salario * (parseFloat(form.percentualRat) / 100); const terceiros = salario * (parseFloat(form.percentualTerceiros) / 100); const provisaoFerias = (salario * 1.3333) / 12; const provisao13 = salario / 12; const encargosProvisoes = (provisaoFerias + provisao13) * ((parseFloat(form.percen …"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "name": "rotuloTaxaAprovacao",
+    "params": "taxa: number | null",
+    "body": "return taxa === null ? '—' : `${taxa}%`;"
+   },
+   {
+    "file": "src/components/horas-extras/horasExtrasComum.ts",
+    "name": "descricaoTaxaAprovacao",
+    "params": "resumo: ResumoDecisoes",
+    "body": "if (resumo.decididas === 0) return 'Nenhuma decisão no período'; const sufixo = resumo.decididas === 1 ? 'solicitação decidida' : 'solicitações decididas'; return `${resumo.aprovadas} de ${resumo.decididas} ${sufixo}`;"
    },
    {
     "file": "src/components/medidas-disciplinares/GerarLinkCienciaDialog.tsx",
@@ -165837,6 +166198,18 @@
     "name": "formatCurrency",
     "params": "value: number",
     "body": "return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });"
+   },
+   {
+    "file": "src/components/ui/entradaGlobal.ts",
+    "name": "posicaoValida",
+    "params": "posicao: number",
+    "body": "if (!Number.isFinite(posicao)) return 0; return Math.min(Math.max(Math.round(posicao), 0), 999);"
+   },
+   {
+    "file": "src/components/ui/tooltipGrafico.tsx",
+    "name": "valorPadraoRosca",
+    "params": "valor: number",
+    "body": "return valor.toLocaleString('pt-BR');"
    },
    {
     "file": "src/hooks/use-stagger-cards.ts",
@@ -167125,6 +167498,14 @@
     "line": "window.setTimeout(() => setCopiado(false), 1500);"
    },
    {
+    "file": "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
+    "line": "* quem está olhando a tela), então `subMonths(hoje, 12)` devolve 12 meses reais"
+   },
+   {
+    "file": "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
+    "line": "const inicio = preset === '12m' ? subMonths(hoje, 12) : subDays(hoje, (DIAS_POR_PRESET[preset] ?? 1) - 1);"
+   },
+   {
     "file": "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
     "line": "Math.round((dataLocalDoEvento(validade).getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));"
    },
@@ -168267,6 +168648,74 @@
     "line": "// Secundário coerente com a faixa: em 100% \"andamento\" não faz sentido."
    },
    {
+    "file": "src/components/banco-horas/BancoHorasKpis.tsx",
+    "line": "* Proporção da faixa: o protagonista leva ~28% da largura e divide a linha com"
+   },
+   {
+    "file": "src/components/banco-horas/BancoHorasKpis.tsx",
+    "line": "* │ ↑ +12% vs. anterior │ └──────────────┘ └──────────────┘"
+   },
+   {
+    "file": "src/components/banco-horas/BancoHorasKpis.tsx",
+    "line": "* │ ↑ +20% vs. anterior │ ← leitura auxiliar"
+   },
+   {
+    "file": "src/components/banco-horas/CabecalhoBancoHoras.tsx",
+    "line": "* 10% + borda 50% + texto lime), o mesmo dos chips compactos"
+   },
+   {
+    "file": "src/components/banco-horas/CabecalhoBancoHoras.tsx",
+    "line": "* `--primary-foreground` (240 20% 6%, o quase-preto do fundo principal) —"
+   },
+   {
+    "file": "src/components/banco-horas/CabecalhoBancoHoras.tsx",
+    "line": "* claro, 60% no escuro; é o token que os degradês do DS já usam) — e acende"
+   },
+   {
+    "file": "src/components/banco-horas/CabecalhoBancoHoras.tsx",
+    "line": "* • hover sobe UM DEGRAU de brilho no lime — `--primary-glow` (58% no tema"
+   },
+   {
+    "file": "src/components/banco-horas/ExtratoBancoHoras.tsx",
+    "line": "da tabela resolver em 100% da faixa."
+   },
+   {
+    "file": "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
+    "line": "* (`CLASSE_MAIS_FILTROS_ATIVO`): borda lime 50%, tinta 10%,"
+   },
+   {
+    "file": "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
+    "line": "* 2. HOVER ..... borda lime + véu lime 5% + `shadow-glow` (ver"
+   },
+   {
+    "file": "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
+    "line": "* `FilterChip` (`ui/filter-chip.tsx`, ramo `compacto`): borda lime a 50%, tinta"
+   },
+   {
+    "file": "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
+    "line": "* lime a 10% e texto/ícone no lime. É o mesmo desenho que marca filtro ativo"
+   },
+   {
+    "file": "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
+    "line": "* • `hover:bg-primary/5` — véu de lime a 5% (destaque sem virar botão cheio);"
+   },
+   {
+    "file": "src/components/banco-horas/SituacaoSaldosCard.tsx",
+    "line": "* │ │ 8 │ ● Negativos 2 25% │"
+   },
+   {
+    "file": "src/components/banco-horas/SituacaoSaldosCard.tsx",
+    "line": "* │ │ Total │ ● Zerados 1 12% │"
+   },
+   {
+    "file": "src/components/banco-horas/SituacaoSaldosCard.tsx",
+    "line": "* │ ╭───────╮ ● Positivos 5 63% │"
+   },
+   {
+    "file": "src/components/banco-horas/bancoHorasComum.ts",
+    "line": "* ocupa 100% e o outro fica proporcional. Escalas independentes (cada barra"
+   },
+   {
     "file": "src/components/beneficios/BeneficiosDashboard.tsx",
     "line": "O custo total de benefícios representa aproximadamente 12% da folha bruta total. Considere revisar o plano"
    },
@@ -168731,12 +169180,40 @@
     "line": "`select.tsx`, não uma cópia. Content acima continua 100% Radix"
    },
    {
+    "file": "src/components/ui/entradaGlobal.ts",
+    "line": "* ~23% do percurso: sobreposição clara, cascata percebida card a card, e uma"
+   },
+   {
     "file": "src/components/ui/flow-hover-button.tsx",
     "line": "* deslocado 150% + escalado 2.5x) e desliza para o centro no hover,"
    },
    {
     "file": "src/components/ui/flow-hover-button.tsx",
     "line": "before:rounded-[100%] before:transition-transform before:duration-700 before:content-['']"
+   },
+   {
+    "file": "src/components/ui/linha-tabela-hover.ts",
+    "line": "* A COR: `--background` (216 48% 8% no tema escuro) é o token mais ESCURO do"
+   },
+   {
+    "file": "src/components/ui/linha-tabela-hover.ts",
+    "line": "* cai para ~216 40% 10%: a linha afunda discretamente sem competir com o"
+   },
+   {
+    "file": "src/components/ui/linha-tabela-hover.ts",
+    "line": "* conteúdo. `--muted`/`--secondary`/`--accent` (14% de luz) clareariam — o"
+   },
+   {
+    "file": "src/components/ui/linha-tabela-hover.ts",
+    "line": "* pedido é o oposto. No tema claro o mesmo par se repete (card 100% →"
+   },
+   {
+    "file": "src/components/ui/linha-tabela-hover.ts",
+    "line": "* sistema e já fica ABAIXO de `--card` (214 42% 12%, a superfície das tabelas) —"
+   },
+   {
+    "file": "src/components/ui/linha-tabela-hover.ts",
+    "line": "* é o único jeito de escurecer usando o design system. A 60% de alfa o composto"
    },
    {
     "file": "src/components/ui/module-skeleton.tsx",
@@ -168749,6 +169226,22 @@
    {
     "file": "src/components/ui/notification-center.tsx",
     "line": "transition={{ delay: i * 0.03 }}"
+   },
+   {
+    "file": "src/components/ui/progressMotion.ts",
+    "line": "* O valor que chega aqui é o dado real (27,8% de participação, 33,3% de"
+   },
+   {
+    "file": "src/components/ui/progressMotion.ts",
+    "line": "* delay: 0.15 + i * 0.1, ease: 'easeOut' }}"
+   },
+   {
+    "file": "src/components/ui/revelacaoGrafico.tsx",
+    "line": "* Um `<clipPath>` cujo `<rect>` cresce de 0 a 100% da largura do desenho:"
+   },
+   {
+    "file": "src/components/ui/revelacaoGrafico.tsx",
+    "line": "* em 100% (`initial={false}`), sem espera e sem varredura."
    },
    {
     "file": "src/components/ui/select.tsx",
@@ -168829,6 +169322,10 @@
    {
     "file": "src/pages/BackupPage.tsx",
     "line": "transition={{ delay: i * 0.1 }}"
+   },
+   {
+    "file": "src/pages/BancoHorasPage.tsx",
+    "line": "* 2,6 / 3,6 ≈ 72% para o extrato — a tabela de 7 colunas precisa da largura, e a"
    },
    {
     "file": "src/pages/ComunicacaoInternaPage.tsx",
@@ -173079,6 +173576,162 @@
    {
     "file": "src/components/__tests__/AuditoriaTab.test.tsx",
     "name": "exibe skeleton durante o carregamento e erro com tentativa novamente"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "leitura de um lançamento"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "trata "
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "converte o interval textual e aplica o sinal do tipo"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "distingue valor AUSENTE de valor ZERO"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "formata horas no padrão da família de horas do sistema"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "recorte e filtros do extrato"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "recorta pelas duas pontas, deixando as pontas vazias abertas"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "busca sem acento e sem caixa em colaborador, departamento e motivo"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "filtra por tipo sem perder os lançamentos do outro tipo"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "resumo do período (créditos − débitos)"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "soma cada tipo e devolve o saldo do período"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "zera tudo numa base vazia (sem NaN e sem divisão por zero)"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "coloca as duas barras na MESMA escala"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "foto dos saldos atuais"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "usa o saldo_atual do lançamento mais recente de cada colaborador"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "cai no líquido do colaborador quando o último lançamento não traz saldo"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "resume positivos, negativos, zerados, total e o rombo"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "ordena do mais negativo para o mais positivo"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "evolução do saldo"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "acumula dia a dia e fecha exatamente no saldo do período"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "ignora lançamentos sem data e devolve série vazia quando não há base"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "data curta do extrato"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "converte YYYY-MM-DD em dd/mm/aaaa sem passar por Date"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "recortes do extrato (tipo negativo, contagem e ordem)"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "trata saldo ausente como "
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "filtra só quem ficou no vermelho e ainda aceita a busca"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "conta os quatro recortes sobre a MESMA lista"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "ordena por data nos dois sentidos sem mexer na lista original"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "acende o "
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "remonta a cascata quando muda página, por-página, tipo ou ordem — não na busca"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "comparativo com a janela anterior"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "usa a janela IMEDIATAMENTE anterior com o mesmo número de dias"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "não inventa percentual quando a janela anterior está vazia"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "devolve comparativo zerado (sem NaN) numa base vazia"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "micro-séries dos KPI Cards"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "conta movimentações por dia, em ordem cronológica"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "soma horas de cada tipo e pula os dias sem aquele tipo"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "exportação do extrato"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasComum.test.ts",
+    "name": "entrega colaborador/data obrigatórios e horas no formato da tela"
    },
    {
     "file": "src/components/__tests__/BarChartWidget.test.tsx",
@@ -235429,10 +236082,6 @@
     "limit": "500"
    },
    {
-    "file": "src/pages/BancoHorasPage.tsx",
-    "limit": "200"
-   },
-   {
     "file": "src/pages/CalculadoraRescisaoPage.tsx",
     "limit": "10"
    },
@@ -237715,6 +238364,22 @@
       "escreve:src/pages/NineBoxPreviewPage.tsx",
       "escreve:src/services/avaliacaoService.ts"
      ],
+     "todos": [
+      "compara:src/components/banco-horas/bancoHorasComum.ts",
+      "compara:src/components/desligamentos/GestaoDesligamentos.tsx",
+      "compara:src/components/premiacoes/auditoriaComum.ts",
+      "escreve:src/components/banco-horas/ExtratoBancoHoras.tsx",
+      "escreve:src/components/banco-horas/bancoHorasComum.ts",
+      "escreve:src/components/premiacoes/auditoriaComum.ts",
+      "escreve:src/pages/ObrigacoesFiscaisPage.tsx"
+     ],
+     "debito": [
+      "compara:src/components/banco-horas/ExtratoBancoHoras.tsx"
+     ],
+     "negativos": [
+      "compara:src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
+      "compara:src/components/banco-horas/bancoHorasComum.ts"
+     ],
      "geral": [
       "escreve:src/components/colaborador-detalhes/AnotacoesTab.tsx",
       "escreve:src/components/colaborador-detalhes/documentos/AnotacoesInternasCard.tsx",
@@ -237841,12 +238506,6 @@
       "escreve:src/utils/folhaCalc.ts",
       "escreve:src/utils/rescisaoVerbas.ts",
       "escreve:supabase/functions/calcular-folha/index.ts"
-     ],
-     "todos": [
-      "compara:src/components/desligamentos/GestaoDesligamentos.tsx",
-      "compara:src/components/premiacoes/auditoriaComum.ts",
-      "escreve:src/components/premiacoes/auditoriaComum.ts",
-      "escreve:src/pages/ObrigacoesFiscaisPage.tsx"
      ],
      "linha": [
       "escreve:src/components/desligamentos/TurnoverChart.tsx"
@@ -238207,18 +238866,6 @@
       "compara:src/pages/AvaliacaoPage.tsx",
       "escreve:src/pages/AvaliacaoPage.tsx"
      ],
-     "credito": [
-      "compara:src/pages/BancoHorasPage.tsx",
-      "compara:src/pages/DashboardPage.tsx",
-      "compara:src/pages/PontoPage.tsx",
-      "compara:src/services/bancoHorasService.ts",
-      "escreve:src/pages/PontoPage.tsx",
-      "escreve:supabase/functions/processar-ponto/index.ts",
-      "filtra:supabase/functions/processar-ponto/index.ts"
-     ],
-     "debito": [
-      "compara:src/pages/BancoHorasPage.tsx"
-     ],
      "termino_contrato": [
       "compara:src/pages/CalculadoraRescisaoPage.tsx",
       "compara:src/utils/rescisaoCalc.ts",
@@ -238240,6 +238887,14 @@
      ],
      "admissoes": [
       "escreve:src/pages/DashboardPage.tsx"
+     ],
+     "credito": [
+      "compara:src/pages/DashboardPage.tsx",
+      "compara:src/pages/PontoPage.tsx",
+      "compara:src/services/bancoHorasService.ts",
+      "escreve:src/pages/PontoPage.tsx",
+      "escreve:supabase/functions/processar-ponto/index.ts",
+      "filtra:supabase/functions/processar-ponto/index.ts"
      ],
      "reembolso": [
       "escreve:src/pages/DespesasPage.tsx"
@@ -238463,6 +239118,7 @@
       "escreve:src/components/dashboard/AnalyticsSection.tsx",
       "escreve:src/components/desligamentos/NovoDesligamentoDialog.tsx",
       "escreve:src/components/esocial/ESocialTimeline.tsx",
+      "escreve:src/components/horas-extras/horasExtrasComum.ts",
       "escreve:src/components/ponto/PontoAdjustmentRequests.tsx",
       "escreve:src/hooks/useAssinaturas.ts",
       "escreve:src/hooks/usePendencias.ts",
@@ -238673,6 +239329,7 @@
       "compara:src/components/colaborador-detalhes/FeriasResumoTab.tsx",
       "compara:src/components/ferias/CalendarioFerias.tsx",
       "compara:src/components/ferias/FeriasDashboard.tsx",
+      "compara:src/components/horas-extras/horasExtrasComum.ts",
       "compara:src/components/portal/PortalOverviewTab.tsx",
       "compara:src/hooks/useProximosEventos.ts",
       "compara:src/pages/FeriasPage.tsx",
@@ -238709,6 +239366,7 @@
       "compara:src/components/ferias/CalendarioFerias.tsx",
       "compara:src/components/ferias/FeriasActions.tsx",
       "compara:src/components/ferias/FeriasAuditTimeline.tsx",
+      "compara:src/components/horas-extras/horasExtrasComum.ts",
       "compara:src/pages/FaltasPage.tsx",
       "compara:src/pages/WorkflowsPage.tsx",
       "compara:src/utils/regrasSolicitacaoFerias.ts",
@@ -238985,6 +239643,9 @@
       "compara:src/pages/ContratacaoPage.tsx",
       "compara:supabase/functions/external-db-bridge/index.ts",
       "escreve:src/pages/ContratacaoPage.tsx"
+     ],
+     "aprovadasRejeitadas": [
+      "escreve:src/components/horas-extras/horasExtrasComum.ts"
      ],
      "paga": [
       "compara:src/components/obrigacoes/FgtsDigitalTable.tsx",
@@ -274190,6 +274851,52 @@
     "exibe skeleton durante o carregamento e erro com tentativa novamente"
    ]
   },
+  "src/components/__tests__/BancoHorasComum.test.ts": {
+   "path": "src/components/__tests__/BancoHorasComum.test.ts",
+   "lines": 418,
+   "is_test": true,
+   "tests": [
+    "leitura de um lançamento",
+    "trata ",
+    "converte o interval textual e aplica o sinal do tipo",
+    "distingue valor AUSENTE de valor ZERO",
+    "formata horas no padrão da família de horas do sistema",
+    "recorte e filtros do extrato",
+    "recorta pelas duas pontas, deixando as pontas vazias abertas",
+    "busca sem acento e sem caixa em colaborador, departamento e motivo",
+    "filtra por tipo sem perder os lançamentos do outro tipo",
+    "resumo do período (créditos − débitos)",
+    "soma cada tipo e devolve o saldo do período",
+    "zera tudo numa base vazia (sem NaN e sem divisão por zero)",
+    "coloca as duas barras na MESMA escala",
+    "foto dos saldos atuais",
+    "usa o saldo_atual do lançamento mais recente de cada colaborador",
+    "cai no líquido do colaborador quando o último lançamento não traz saldo",
+    "resume positivos, negativos, zerados, total e o rombo",
+    "ordena do mais negativo para o mais positivo",
+    "evolução do saldo",
+    "acumula dia a dia e fecha exatamente no saldo do período",
+    "ignora lançamentos sem data e devolve série vazia quando não há base",
+    "data curta do extrato",
+    "converte YYYY-MM-DD em dd/mm/aaaa sem passar por Date",
+    "recortes do extrato (tipo negativo, contagem e ordem)",
+    "trata saldo ausente como ",
+    "filtra só quem ficou no vermelho e ainda aceita a busca",
+    "conta os quatro recortes sobre a MESMA lista",
+    "ordena por data nos dois sentidos sem mexer na lista original",
+    "acende o ",
+    "remonta a cascata quando muda página, por-página, tipo ou ordem — não na busca",
+    "comparativo com a janela anterior",
+    "usa a janela IMEDIATAMENTE anterior com o mesmo número de dias",
+    "não inventa percentual quando a janela anterior está vazia",
+    "devolve comparativo zerado (sem NaN) numa base vazia",
+    "micro-séries dos KPI Cards",
+    "conta movimentações por dia, em ordem cronológica",
+    "soma horas de cada tipo e pula os dias sem aquele tipo",
+    "exportação do extrato",
+    "entrega colaborador/data obrigatórios e horas no formato da tela"
+   ]
+  },
   "src/components/__tests__/BarChartWidget.test.tsx": {
    "path": "src/components/__tests__/BarChartWidget.test.tsx",
    "lines": 72,
@@ -284485,6 +285192,337 @@
     "useHistoricoFeedback"
    ]
   },
+  "src/components/banco-horas/AlertaSaldoNegativoCard.tsx": {
+   "path": "src/components/banco-horas/AlertaSaldoNegativoCard.tsx",
+   "lines": 194,
+   "exports": [
+    "interface AlertaSaldoNegativoCardProps",
+    "function AlertaSaldoNegativoCard"
+   ],
+   "params": [
+    {
+     "name": "LIMITE_VISIVEL",
+     "value": "3"
+    }
+   ],
+   "rule_comments": [
+    "* A lista mostra no máximo `LIMITE_VISIVEL` nomes (o card não pode crescer até"
+   ]
+  },
+  "src/components/banco-horas/BancoHorasKpis.tsx": {
+   "path": "src/components/banco-horas/BancoHorasKpis.tsx",
+   "lines": 415,
+   "exports": [
+    "interface BancoHorasKpisProps",
+    "function BancoHorasKpis"
+   ],
+   "params": [
+    {
+     "name": "LINHA_CARTAO",
+     "value": "'flex items-center gap-[10px] border p-[13px]'"
+    },
+    {
+     "name": "COLUNA_TEXTO",
+     "value": "'flex min-w-0 flex-1 flex-col items-start gap-[3px]'"
+    }
+   ],
+   "percents": [
+    "* Proporção da faixa: o protagonista leva ~28% da largura e divide a linha com",
+    "* │ ↑ +12% vs. anterior │ └──────────────┘ └──────────────┘",
+    "* │ ↑ +20% vs. anterior │ ← leitura auxiliar"
+   ]
+  },
+  "src/components/banco-horas/CabecalhoBancoHoras.tsx": {
+   "path": "src/components/banco-horas/CabecalhoBancoHoras.tsx",
+   "lines": 188,
+   "exports": [
+    "interface CabecalhoBancoHorasProps",
+    "function CabecalhoBancoHoras"
+   ],
+   "rule_comments": [
+    "* Nada além de apresentação mora aqui: o botão apenas chama `onExportar` e a"
+   ],
+   "percents": [
+    "* 10% + borda 50% + texto lime), o mesmo dos chips compactos",
+    "* `--primary-foreground` (240 20% 6%, o quase-preto do fundo principal) —",
+    "* claro, 60% no escuro; é o token que os degradês do DS já usam) — e acende",
+    "* • hover sobe UM DEGRAU de brilho no lime — `--primary-glow` (58% no tema"
+   ]
+  },
+  "src/components/banco-horas/CartaoSecaoBancoHoras.tsx": {
+   "path": "src/components/banco-horas/CartaoSecaoBancoHoras.tsx",
+   "lines": 127,
+   "exports": [
+    "interface CartaoSecaoBancoHorasProps",
+    "function CartaoSecaoBancoHoras"
+   ]
+  },
+  "src/components/banco-horas/EvolucaoSaldoCard.tsx": {
+   "path": "src/components/banco-horas/EvolucaoSaldoCard.tsx",
+   "lines": 228,
+   "exports": [
+    "interface EvolucaoSaldoCardProps",
+    "function EvolucaoSaldoCard"
+   ],
+   "rule_comments": [
+    "(mínimo de 80 px, que cresce com a coluna) sem cobri-lo."
+   ]
+  },
+  "src/components/banco-horas/ExtratoBancoHoras.tsx": {
+   "path": "src/components/banco-horas/ExtratoBancoHoras.tsx",
+   "lines": 758,
+   "exports": [
+    "interface ExtratoBancoHorasProps",
+    "function ExtratoBancoHoras"
+   ],
+   "errors": [
+    "Não foi possível copiar o lançamento"
+   ],
+   "params": [
+    {
+     "name": "POR_PAGINA_PADRAO",
+     "value": "8"
+    },
+    {
+     "name": "COLAPSO_SALDO_ANTES",
+     "value": "'max-2xl:invisible max-2xl:overflow-hidden max-2xl:p-0'"
+    },
+    {
+     "name": "COLAPSO_SALDO_ATUAL",
+     "value": "'max-md:invisible max-md:overflow-hidden max-md:p-0'"
+    },
+    {
+     "name": "COLAPSO_MOTIVO",
+     "value": "'max-lg:invisible max-lg:overflow-hidden max-lg:p-0'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "todos",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "debito",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "debito",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "automática. Aí entra a regra de tabela do CSS: a altura de uma tabela é o",
+    "vice-versa, então o estado não pode morar em dois lugares."
+   ],
+   "calc_fns": [
+    {
+     "name": "aplicar",
+     "params": "mudanca: Partial<FiltrosExtrato>",
+     "body": "onFiltrosChange({ ...filtros, ...mudanca }); setPagina(1);"
+    }
+   ],
+   "percents": [
+    "da tabela resolver em 100% da faixa."
+   ]
+  },
+  "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx": {
+   "path": "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
+   "lines": 462,
+   "exports": [
+    "interface SeletorPeriodoBancoHorasProps",
+    "function SeletorPeriodoBancoHoras",
+    "interface BotaoMaisFiltrosProps",
+    "function BotaoMaisFiltros"
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "negativos",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "extrato) e o atalho \"Somente saldos negativos\", que é o MESMO estado do chip"
+   ],
+   "temporal": [
+    "* quem está olhando a tela), então `subMonths(hoje, 12)` devolve 12 meses reais",
+    "const inicio = preset === '12m' ? subMonths(hoje, 12) : subDays(hoje, (DIAS_POR_PRESET[preset] ?? 1) - 1);"
+   ],
+   "percents": [
+    "* (`CLASSE_MAIS_FILTROS_ATIVO`): borda lime 50%, tinta 10%,",
+    "* 2. HOVER ..... borda lime + véu lime 5% + `shadow-glow` (ver",
+    "* `FilterChip` (`ui/filter-chip.tsx`, ramo `compacto`): borda lime a 50%, tinta",
+    "* lime a 10% e texto/ícone no lime. É o mesmo desenho que marca filtro ativo",
+    "* • `hover:bg-primary/5` — véu de lime a 5% (destaque sem virar botão cheio);"
+   ]
+  },
+  "src/components/banco-horas/SituacaoSaldosCard.tsx": {
+   "path": "src/components/banco-horas/SituacaoSaldosCard.tsx",
+   "lines": 188,
+   "exports": [
+    "interface SituacaoSaldosCardProps",
+    "function SituacaoSaldosCard"
+   ],
+   "percents": [
+    "* │ │ 8 │ ● Negativos 2 25% │",
+    "* │ │ Total │ ● Zerados 1 12% │",
+    "* │ ╭───────╮ ● Positivos 5 63% │"
+   ]
+  },
+  "src/components/banco-horas/TotaisHorasCard.tsx": {
+   "path": "src/components/banco-horas/TotaisHorasCard.tsx",
+   "lines": 158,
+   "exports": [
+    "interface TotaisHorasCardProps",
+    "function TotaisHorasCard"
+   ]
+  },
+  "src/components/banco-horas/bancoHorasComum.ts": {
+   "path": "src/components/banco-horas/bancoHorasComum.ts",
+   "lines": 831,
+   "exports": [
+    "type TipoMovimento",
+    "interface ColaboradorDoBancoHoras",
+    "interface RegistroBancoHoras",
+    "function tipoDoRegistro",
+    "function horasDoRegistro",
+    "function horasComSinal",
+    "function lerIntervalo",
+    "function formatarHorasBanco",
+    "function formatarIntervaloBanco",
+    "function dataDoRegistro",
+    "function formatarDataBR",
+    "function nomeDoColaborador",
+    "function departamentoDoColaborador",
+    "const ROTULO_TIPO",
+    "function rotuloTipo",
+    "const SELO_TIPO",
+    "function seloTipo",
+    "interface PeriodoExtrato",
+    "const PERIODO_EXTRATO_PADRAO",
+    "type FiltroTipo",
+    "interface FiltrosExtrato",
+    "const FILTROS_EXTRATO_PADRAO",
+    "const OPCOES_TIPO",
+    "function registroComSaldoNegativo",
+    "function temPeriodoAtivo",
+    "function recortarPorPeriodo",
+    "function filtrarExtrato",
+    "interface ContagemTipos",
+    "function contarTiposExtrato",
+    "type OrdemExtrato",
+    "const ORDENS_EXTRATO",
+    "function ordenarExtrato",
+    "function temFiltroExtratoAtivo",
+    "interface ResumoHoras",
+    "function resumirHoras",
+    "interface SaldoDoColaborador",
+    "function saldosPorColaborador",
+    "interface SituacaoSaldos",
+    "function resumirSituacaoSaldos",
+    "function colaboradoresNegativos",
+    "interface PontoEvolucao",
+    "function rotuloEixoData",
+    "function evolucaoSaldo",
+    "interface BarraTotais",
+    "function percentualDe",
+    "function barrasDeTotais",
+    "function chaveCascataExtrato",
+    "function linhasParaExportacao",
+    "function pluralRegistros",
+    "function pluralMovimentacoes",
+    "function somarDias",
+    "interface JanelaComparacao",
+    "function janelaDeComparacao",
+    "type DirecaoVariacao",
+    "interface VariacaoMetrica",
+    "interface ComparativoPeriodo",
+    "function compararPeriodos",
+    "type MetricaMiniBarra",
+    "function miniBarras"
+   ],
+   "enums": [
+    {
+     "name": "TipoMovimento",
+     "values": "credito | debito"
+    },
+    {
+     "name": "OrdemExtrato",
+     "values": "recentes | antigos"
+    },
+    {
+     "name": "DirecaoVariacao",
+     "values": "aumento | queda | estavel | sem-base"
+    },
+    {
+     "name": "MetricaMiniBarra",
+     "values": "movimentacoes | credito | debito"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "todos",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "negativos",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "todos",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "divergirem na primeira alteração de regra.",
+    "* Linha de `banco_horas` como a tela consome (apenas os campos usados). */",
+    "é débito — mesma regra de `bancoHorasService.getSaldo()`.",
+    "* Somente quem está no vermelho — a lista do card de alerta. */",
+    "que a área não pode se dar ao luxo de ter.",
+    "* Regra: o comparativo usa a MESMA quantidade de dias imediatamente antes do",
+    "* Devolve os valores dos ÚLTIMOS `limite` dias que têm lançamento, em ordem"
+   ],
+   "calc_fns": [
+    {
+     "name": "saldosPorColaborador",
+     "params": "registros: readonly RegistroBancoHoras[]",
+     "body": "interface Acumulado { ultimo: RegistroBancoHoras; registros: number; liquido: number; } const mapa = new Map<string, Acumulado>(); for (const registro of registros) { const chave = chaveDoColaborador(registro); const liquido = horasComSinal(registro); const atual = mapa.get(chave); if (!atual) { mapa.set(chave, { ultimo: registro, registros: 1, liquido }); continue; } atual.registros += 1; atual.liquido += liquido; if (compararRecencia(registro, atual.ultimo) > 0) atual.ultimo = registro; } retu …"
+    },
+    {
+     "name": "evolucaoSaldo",
+     "params": "registros: readonly RegistroBancoHoras[]",
+     "body": "const porDia = new Map<string, number>(); for (const registro of registros) { const data = (registro.data ?? '').slice(0, 10); if (!data) continue; porDia.set(data, (porDia.get(data) ?? 0) + horasComSinal(registro)); } let acumulado = 0; return Array.from(porDia.entries()) .sort((a, b) => (a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0)) .map(([data, variacao]) => { acumulado += variacao; return { data, eixo: rotuloEixoData(data), saldo: acumulado, variacao }; });"
+    }
+   ],
+   "percents": [
+    "* ocupa 100% e o outro fica proporcional. Escalas independentes (cada barra"
+   ]
+  },
+  "src/components/banco-horas/exportarBancoHoras.ts": {
+   "path": "src/components/banco-horas/exportarBancoHoras.ts",
+   "lines": 60,
+   "exports": [
+    "function exportarExtratoBancoHoras"
+   ],
+   "errors": [
+    "Nenhum lançamento para exportar neste recorte"
+   ],
+   "rule_comments": [
+    "que exportar. Espalhar isso no `onClick` duplicaria a regra em qualquer nova",
+    "* Devolve `true` quando o arquivo foi gerado — a página usa o retorno apenas"
+   ]
+  },
   "src/components/beneficios/BeneficioHistorico.tsx": {
    "path": "src/components/beneficios/BeneficioHistorico.tsx",
    "lines": 100,
@@ -286206,6 +287244,32 @@
     "strokeDasharray={`${circumference * 0.75} ${circumference * 0.25}`}",
     "transition={{ delay: 0.8 + i * 0.1 }}",
     "turnoverScore * 0.3 + absenteismoScore * 0.25 + cadastroScore * 0.2 + feriasScore * 0.15 - passivoPenalty"
+   ]
+  },
+  "src/components/dashboard/donutMotion.ts": {
+   "path": "src/components/dashboard/donutMotion.ts",
+   "lines": 50,
+   "exports": [
+    "const ANIMACAO_DONUT_CARD"
+   ],
+   "rule_comments": [
+    "fim do loading) não é prop nenhuma: cada card monta o gráfico apenas quando"
+   ]
+  },
+  "src/components/dashboard/estruturaAnimacoes.ts": {
+   "path": "src/components/dashboard/estruturaAnimacoes.ts",
+   "lines": 92,
+   "exports": [
+    "const ESTRUTURA_MAPA_CARD",
+    "const VINCULO_LEGENDA",
+    "function atrasoLegenda",
+    "const CORES_TIPO_VINCULO"
+   ],
+   "enums": [
+    {
+     "name": "CORES_TIPO_VINCULO",
+     "values": "'hsl(var(--primary))', 'hsl(var(--warning))', 'hsl(var(--success))', 'hsl(var(--info))', 'hsl(var(--destructive))', 'hsl(var(--accent))',"
+    }
    ]
   },
   "src/components/dashboard/index.ts": {
@@ -289213,6 +290277,159 @@
    "path": "src/components/forms/index.ts",
    "lines": 6,
    "doc": "V25: Forms Index - Active exports only"
+  },
+  "src/components/horas-extras/FiltroSelectConteudo.tsx": {
+   "path": "src/components/horas-extras/FiltroSelectConteudo.tsx",
+   "lines": 49,
+   "exports": [
+    "function ConteudoFiltro"
+   ]
+  },
+  "src/components/horas-extras/horasExtrasComum.ts": {
+   "path": "src/components/horas-extras/horasExtrasComum.ts",
+   "lines": 539,
+   "exports": [
+    "type StatusHoraExtra",
+    "interface ColaboradorDaSolicitacao",
+    "interface SolicitacaoHoraExtra",
+    "const STATUS_LABELS",
+    "const SELO_STATUS",
+    "function statusDe",
+    "function rotuloStatus",
+    "function seloStatus",
+    "const CLASSE_CONTROLE_SECAO",
+    "const CLASSE_BOTAO_SECUNDARIO_INFO",
+    "const CLASSE_SELECT_PERIODO",
+    "const MEDIDA_SELECT_PERIODO",
+    "const CLASSE_CONTROLE_FILTRO",
+    "const MEDIDA_FILTRO_DEPARTAMENTO",
+    "const MEDIDA_FILTRO_STATUS",
+    "const MEDIDA_FILTRO_ORDEM",
+    "const CLASSE_CAMPO_BUSCA",
+    "function classeBotaoLimpar",
+    "function formatarHoras",
+    "function somarHoras",
+    "interface ResumoDecisoes",
+    "function resumoDecisoes",
+    "function rotuloTaxaAprovacao",
+    "function descricaoTaxaAprovacao",
+    "function nomeDoColaborador",
+    "function departamentoDoColaborador",
+    "function dataDaRealizacao",
+    "function dataDaSolicitacao",
+    "function combinaBusca",
+    "type FiltroStatus",
+    "type OrdemHistorico",
+    "const STATUS_FILTRO_OPCOES",
+    "const ORDEM_OPCOES",
+    "const TODOS_DEPARTAMENTOS",
+    "interface FiltrosHistorico",
+    "const FILTROS_PADRAO",
+    "function casaStatus",
+    "function casaDepartamento",
+    "function chaveData",
+    "function departamentosDisponiveis",
+    "function filtrarSolicitacoes",
+    "function temFiltroAtivo",
+    "type PeriodoId",
+    "const PERIODO_OPCOES",
+    "interface IntervaloPeriodo",
+    "function resolverPeriodo",
+    "function rotuloOpcaoPeriodo",
+    "function rotuloPeriodo",
+    "function recortarPorPeriodo"
+   ],
+   "enums": [
+    {
+     "name": "StatusHoraExtra",
+     "values": "pendente | aprovada | rejeitada"
+    },
+    {
+     "name": "FiltroStatus",
+     "values": "aprovadasRejeitadas | pendente | aprovada | rejeitada | todas"
+    },
+    {
+     "name": "OrdemHistorico",
+     "values": "recentes | antigas | nome | horas"
+    },
+    {
+     "name": "PeriodoId",
+     "values": "todos | 7d | 30d | mesAtual | mesAnterior"
+    }
+   ],
+   "params": [
+    {
+     "name": "MEDIDA_SELECT_PERIODO",
+     "value": "'sm:min-w-[138px]'"
+    },
+    {
+     "name": "MEDIDA_FILTRO_DEPARTAMENTO",
+     "value": "'sm:min-w-[150px]'"
+    },
+    {
+     "name": "MEDIDA_FILTRO_STATUS",
+     "value": "'sm:min-w-[194px] sm:max-w-[260px]'"
+    },
+    {
+     "name": "MEDIDA_FILTRO_ORDEM",
+     "value": "'sm:min-w-[170px] sm:max-w-[240px]'"
+    },
+    {
+     "name": "TODOS_DEPARTAMENTOS",
+     "value": "'todos'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "pendente",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "aprovadasRejeitadas",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "aprovada",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "rejeitada",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aprovada",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "rejeitada",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "regra do sistema é nunca chamar `toLocaleDateString` direto.",
+    "apenas um contador discreto de registros):",
+    "container) em vez de cortar. O `truncate` do valor continua existindo apenas",
+    "e não pode entrar no denominador (senão a taxa cairia a cada pedido novo,",
+    "é filtro (o \"Limpar\" não deve acender só porque a lista foi reordenada)."
+   ],
+   "calc_fns": [
+    {
+     "name": "rotuloTaxaAprovacao",
+     "params": "taxa: number | null",
+     "body": "return taxa === null ? '—' : `${taxa}%`;"
+    },
+    {
+     "name": "descricaoTaxaAprovacao",
+     "params": "resumo: ResumoDecisoes",
+     "body": "if (resumo.decididas === 0) return 'Nenhuma decisão no período'; const sufixo = resumo.decididas === 1 ? 'solicitação decidida' : 'solicitações decididas'; return `${resumo.aprovadas} de ${resumo.decididas} ${sufixo}`;"
+    }
+   ]
   },
   "src/components/i18n/LanguageSelector.tsx": {
    "path": "src/components/i18n/LanguageSelector.tsx",
@@ -296059,7 +297276,7 @@
   },
   "src/components/ui/empty-state.tsx": {
    "path": "src/components/ui/empty-state.tsx",
-   "lines": 83,
+   "lines": 93,
    "exports": [
     "function EmptyState",
     "function EmptySearch",
@@ -296090,6 +297307,50 @@
    ],
    "rule_comments": [
     "de novo apenas quando o componente é genuinamente montado outra vez: troca de"
+   ]
+  },
+  "src/components/ui/entradaGlobal.ts": {
+   "path": "src/components/ui/entradaGlobal.ts",
+   "lines": 227,
+   "exports": [
+    "const CURVA_ENTRADA_EASE_OUT",
+    "const CONFIG_ENTRADA_CARD_GLOBAL",
+    "const MAX_SLOT_ENTRADA_CARD_GLOBAL",
+    "const ATTR_ESCOPO_ENTRADA",
+    "type MapaSlotsEntrada",
+    "function slotSequencial",
+    "function slotKpiIntercalado",
+    "function slotConteudoIntercalado",
+    "function atrasoDoSlot",
+    "function criarVariantesEntradaCard",
+    "const entradaCardGlobal",
+    "const entradaKpiGlobal",
+    "const entradaConteudoGlobal",
+    "function propsEntradaGlobal",
+    "function atrasoEntradaCardGlobal"
+   ],
+   "params": [
+    {
+     "name": "MAX_SLOT_ENTRADA_CARD_GLOBAL",
+     "value": "11"
+    },
+    {
+     "name": "ATTR_ESCOPO_ENTRADA",
+     "value": "'data-entrada-escopo'"
+    }
+   ],
+   "rule_comments": [
+    "* FILA CRUZADA — tira de KPI Cards: 0, 1, 3, 5, 6… (e, de 6 em diante, apenas"
+   ],
+   "calc_fns": [
+    {
+     "name": "posicaoValida",
+     "params": "posicao: number",
+     "body": "if (!Number.isFinite(posicao)) return 0; return Math.min(Math.max(Math.round(posicao), 0), 999);"
+    }
+   ],
+   "percents": [
+    "* ~23% do percurso: sobreposição clara, cascata percebida card a card, e uma"
    ]
   },
   "src/components/ui/filter-chip.tsx": {
@@ -296171,6 +297432,24 @@
    "path": "src/components/ui/label.tsx",
    "lines": 2
   },
+  "src/components/ui/linha-tabela-hover.ts": {
+   "path": "src/components/ui/linha-tabela-hover.ts",
+   "lines": 35,
+   "exports": [
+    "const CLASSE_LINHA_HOVER"
+   ],
+   "rule_comments": [
+    "`transition-colors` (e não `all`): o realce não pode arrastar uma sanfona de"
+   ],
+   "percents": [
+    "* A COR: `--background` (216 48% 8% no tema escuro) é o token mais ESCURO do",
+    "* cai para ~216 40% 10%: a linha afunda discretamente sem competir com o",
+    "* conteúdo. `--muted`/`--secondary`/`--accent` (14% de luz) clareariam — o",
+    "* pedido é o oposto. No tema claro o mesmo par se repete (card 100% →",
+    "* sistema e já fica ABAIXO de `--card` (214 42% 12%, a superfície das tabelas) —",
+    "* é o único jeito de escurecer usando o design system. A 60% de alfa o composto"
+   ]
+  },
   "src/components/ui/masked-input.tsx": {
    "path": "src/components/ui/masked-input.tsx",
    "lines": 55,
@@ -296248,15 +297527,65 @@
   },
   "src/components/ui/popover.tsx": {
    "path": "src/components/ui/popover.tsx",
-   "lines": 50
+   "lines": 59,
+   "rule_comments": [
+    "ancora nele sem transformá-lo em `PopoverTrigger` (um elemento não pode ser"
+   ]
   },
   "src/components/ui/progress.tsx": {
    "path": "src/components/ui/progress.tsx",
    "lines": 21
   },
+  "src/components/ui/progressMotion.ts": {
+   "path": "src/components/ui/progressMotion.ts",
+   "lines": 122,
+   "exports": [
+    "const BARRA_PROGRESSO_DURACAO_S",
+    "const BARRA_PROGRESSO_EASE",
+    "function propsPreenchimentoBarra",
+    "const BARRA_PROGRESSO_ATRASO_S",
+    "const BARRA_PROGRESSO_PASSO_CASCATA_S",
+    "function propsPreenchimentoBarraCascata"
+   ],
+   "params": [
+    {
+     "name": "BARRA_PROGRESSO_DURACAO_S",
+     "value": "1.2"
+    },
+    {
+     "name": "BARRA_PROGRESSO_EASE",
+     "value": "'easeOut'"
+    },
+    {
+     "name": "BARRA_PROGRESSO_ATRASO_S",
+     "value": "0.15"
+    },
+    {
+     "name": "BARRA_PROGRESSO_PASSO_CASCATA_S",
+     "value": "0.1"
+    }
+   ],
+   "percents": [
+    "* O valor que chega aqui é o dado real (27,8% de participação, 33,3% de",
+    "* delay: 0.15 + i * 0.1, ease: 'easeOut' }}"
+   ]
+  },
   "src/components/ui/radio-group.tsx": {
    "path": "src/components/ui/radio-group.tsx",
    "lines": 2
+  },
+  "src/components/ui/revelacaoGrafico.tsx": {
+   "path": "src/components/ui/revelacaoGrafico.tsx",
+   "lines": 119,
+   "exports": [
+    "const CONFIG_REVELACAO_GRAFICO",
+    "interface ClipRevelacaoGraficoProps",
+    "function ClipRevelacaoGrafico"
+   ],
+   "percents": [
+    "* Um `<clipPath>` cujo `<rect>` cresce de 0 a 100% da largura do desenho:",
+    "* em 100% (`initial={false}`), sem espera e sem varredura."
+   ]
   },
   "src/components/ui/scroll-area.tsx": {
    "path": "src/components/ui/scroll-area.tsx",
@@ -296457,6 +297786,25 @@
    "path": "src/components/ui/tooltip.tsx",
    "lines": 29,
    "doc": "V15-460"
+  },
+  "src/components/ui/tooltipGrafico.tsx": {
+   "path": "src/components/ui/tooltipGrafico.tsx",
+   "lines": 145,
+   "exports": [
+    "const CLASSE_ENTRADA_TOOLTIP",
+    "function ConteudoTooltipGrafico",
+    "interface ItemTooltipRosca",
+    "interface ConteudoTooltipRoscaProps",
+    "function ConteudoTooltipRosca",
+    "function TooltipGrafico"
+   ],
+   "calc_fns": [
+    {
+     "name": "valorPadraoRosca",
+     "params": "valor: number",
+     "body": "return valor.toLocaleString('pt-BR');"
+    }
+   ]
   },
   "src/components/ui/use-toast.ts": {
    "path": "src/components/ui/use-toast.ts",
@@ -298431,6 +299779,26 @@
    "temporal": [
     "gcTime: 30 * 60 * 1000,",
     "staleTime: 5 * 60 * 1000,"
+   ]
+  },
+  "src/hooks/useEntradaCardConcluida.ts": {
+   "path": "src/hooks/useEntradaCardConcluida.ts",
+   "lines": 97,
+   "exports": [
+    "interface ControleEntradaCard",
+    "function useEntradaCardConcluida"
+   ],
+   "params": [
+    {
+     "name": "MARGEM_REDE_SEGURANCA_MS",
+     "value": "250"
+    }
+   ],
+   "rule_comments": [
+    "Identidade estável: o `MotionCard` não pode receber um handler novo a cada"
+   ],
+   "hooks": [
+    "useEntradaCardConcluida"
    ]
   },
   "src/hooks/useExcelExport.ts": {
@@ -305734,40 +307102,21 @@
   },
   "src/pages/BancoHorasPage.tsx": {
    "path": "src/pages/BancoHorasPage.tsx",
-   "lines": 132,
+   "lines": 212,
    "exports": [
     "function BancoHorasPage"
    ],
-   "tables": [
+   "params": [
     {
-     "table": "banco_horas",
-     "op": "select"
+     "name": "PILHA_LATERAL",
+     "value": "'flex min-w-0 flex-col gap-[11px]'"
     }
    ],
-   "table_cols": {
-    "banco_horas": [
-     "empresa_id"
-    ]
-   },
-   "status_values": [
-    {
-     "field": "tipo",
-     "value": "credito",
-     "kind": "compara"
-    },
-    {
-     "field": "tipo",
-     "value": "debito",
-     "kind": "compara"
-    },
-    {
-     "field": "tipo",
-     "value": "credito",
-     "kind": "compara"
-    }
+   "rule_comments": [
+    "`items-stretch` (padrão da grade, declarado para ficar explícito) é a regra:"
    ],
-   "pagination": [
-    "200"
+   "percents": [
+    "* 2,6 / 3,6 ≈ 72% para o extrato — a tabela de 7 colunas precisa da largura, e a"
    ]
   },
   "src/pages/BeneficioFormPage.tsx": {
@@ -312786,11 +314135,16 @@
   },
   "src/services/bancoHorasService.ts": {
    "path": "src/services/bancoHorasService.ts",
-   "lines": 50,
+   "lines": 80,
    "exports": [
+    "type RegistroBancoHorasDaEmpresa",
     "const bancoHorasService"
    ],
    "tables": [
+    {
+     "table": "banco_horas",
+     "op": "select"
+    },
     {
      "table": "banco_horas",
      "op": "select"
@@ -312821,6 +314175,9 @@
      "value": "credito",
      "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "agregados da tela de Banco de Horas. `limite` é teto de segurança da"
    ]
   },
   "src/services/baseService.ts": {
@@ -339788,10 +341145,46 @@
   }
  },
  "git": {
-  "sha": "2669333c56291999ebacbbd18e8d797e000f4ed0",
+  "sha": "ce83bb09db43457e17167e0cae7fb3e9cd001681",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "ce83bb0",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "feat: banco de horas com extrato filtravel, KPIs e exportacao CSV (#873)",
+    "files": [
+     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/BancoHorasComum.test.ts",
+     "src/components/banco-horas/AlertaSaldoNegativoCard.tsx",
+     "src/components/banco-horas/BancoHorasKpis.tsx",
+     "src/components/banco-horas/CabecalhoBancoHoras.tsx",
+     "src/components/banco-horas/CartaoSecaoBancoHoras.tsx",
+     "src/components/banco-horas/EvolucaoSaldoCard.tsx",
+     "src/components/banco-horas/ExtratoBancoHoras.tsx",
+     "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
+     "src/components/banco-horas/SituacaoSaldosCard.tsx",
+     "src/components/banco-horas/TotaisHorasCard.tsx",
+     "src/components/banco-horas/bancoHorasComum.ts",
+     "src/components/banco-horas/exportarBancoHoras.ts",
+     "src/components/dashboard/donutMotion.ts",
+     "src/components/dashboard/estruturaAnimacoes.ts",
+     "src/components/horas-extras/FiltroSelectConteudo.tsx",
+     "src/components/horas-extras/horasExtrasComum.ts",
+     "src/components/ui/empty-state.tsx",
+     "src/components/ui/entradaGlobal.ts",
+     "src/components/ui/linha-tabela-hover.ts",
+     "src/components/ui/popover.tsx",
+     "src/components/ui/progressMotion.ts",
+     "src/components/ui/revelacaoGrafico.tsx",
+     "src/components/ui/tooltipGrafico.tsx",
+     "src/hooks/useEntradaCardConcluida.ts",
+     "src/pages/BancoHorasPage.tsx",
+     "src/services/bancoHorasService.ts"
+    ]
+   },
    {
     "sha": "2669333",
     "date": "2026-11-24",
@@ -340433,20 +341826,6 @@
      "src/utils/__tests__/rescisaoVerbas.test.ts",
      "src/utils/rescisaoVerbas.ts"
     ]
-   },
-   {
-    "sha": "e3410c9",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "feat: converte dia do relogio em batidas (etapa 41 do Ponto AtecSoft) (#837)",
-    "files": [
-     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-     "scripts/automation.config.json",
-     "scripts/tests/migrations-ponto-rep-etapa41.sh",
-     "supabase/functions/ingest-ponto-rep/index.ts",
-     "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
-     "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -340467,8 +341846,8 @@
     3
    ],
    [
-    "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    3
+    "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+    2
    ],
    [
     "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql",
@@ -340487,47 +341866,47 @@
     2
    ],
    [
-    "supabase/functions/ingest-ponto-rep/index.ts",
+    "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
     2
    ],
    [
-    "src/components/__tests__/CascadeSaidaPerfis.test.ts",
+    "scripts/.bundle-budget.json",
     1
    ],
    [
-    "src/components/__tests__/CascadeSaidaRapidaAnimacao.test.tsx",
+    "src/components/__tests__/BancoHorasComum.test.ts",
     1
    ],
    [
-    "src/components/__tests__/FeedbackAcoesRodape.test.tsx",
+    "src/components/banco-horas/AlertaSaldoNegativoCard.tsx",
     1
    ],
    [
-    "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
+    "src/components/banco-horas/BancoHorasKpis.tsx",
     1
    ],
    [
-    "src/components/__tests__/NineBoxTalentosDialogSaidaRapida.test.tsx",
+    "src/components/banco-horas/CabecalhoBancoHoras.tsx",
     1
    ],
    [
-    "src/components/avaliacao/NineBoxLateral.tsx",
+    "src/components/banco-horas/CartaoSecaoBancoHoras.tsx",
     1
    ],
    [
-    "src/components/avaliacao/NineBoxTab.tsx",
+    "src/components/banco-horas/EvolucaoSaldoCard.tsx",
     1
    ],
    [
-    "src/components/avaliacao/NineBoxTalentosDialog.tsx",
+    "src/components/banco-horas/ExtratoBancoHoras.tsx",
     1
    ],
    [
-    "src/components/ui/animated-cascade-dialog.tsx",
+    "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
     1
    ],
    [
-    "src/components/ui/cascade-dialog.tsx",
+    "src/components/banco-horas/SituacaoSaldosCard.tsx",
     1
    ]
   ]

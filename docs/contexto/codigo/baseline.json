@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2669333c56291999ebacbbd18e8d797e000f4ed0",
+  "commit": "ce83bb09db43457e17167e0cae7fb3e9cd001681",
   "branch": "main",
-  "data_commit": "2026-11-24T19:26:43-03:00",
+  "data_commit": "2026-11-24T20:26:11-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "ce83bb0",
+    "data": "2026-11-24",
+    "assunto": "feat: banco de horas com extrato filtravel, KPIs e exportacao CSV (#873)"
+   },
    {
     "sha": "2669333",
     "data": "2026-11-24",
@@ -126,26 +131,21 @@
     "sha": "81693b2",
     "data": "2026-11-23",
     "assunto": "feat: notificacoes de workflow por e-mail e in-app (#843)"
-   },
-   {
-    "sha": "ee4d2de",
-    "data": "2026-11-23",
-    "assunto": "chore: inventario do estado real [auto] (#842)"
    }
   ],
-  "arquivos_mudados_7d": 687,
+  "arquivos_mudados_7d": 699,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 374
+    "mudancas": 375
+   },
+   {
+    "pasta": "src/components/ui",
+    "mudancas": 114
    },
    {
     "pasta": "src/hooks/__tests__",
     "mudancas": 109
-   },
-   {
-    "pasta": "src/components/ui",
-    "mudancas": 107
    },
    {
     "pasta": "src/services/__tests__",
@@ -177,7 +177,7 @@
    },
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 35
+    "mudancas": 37
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4058,
-  "arquivos_codigo": 2155,
-  "linhas_codigo": 431516,
+  "arquivos_total": 4080,
+  "arquivos_codigo": 2177,
+  "linhas_codigo": 437147,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
-  "modulos": 82,
-  "componentes": 647,
-  "hooks": 122,
+  "modulos": 84,
+  "componentes": 659,
+  "hooks": 123,
   "edge_functions": 68,
   "tabelas": 438,
   "migrations": 1250,
   "cron_jobs": 43,
-  "testes": 817,
+  "testes": 818,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 346
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1015,
-   "linhas": 187696
+   "arquivos": 1036,
+   "linhas": 193120
   },
   "src/constants": {
    "arquivos": 7,
@@ -659,8 +659,8 @@
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 207,
-   "linhas": 24191
+   "arquivos": 208,
+   "linhas": 24288
   },
   "src/i18n": {
    "arquivos": 2,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 145,
-   "linhas": 51329
+   "linhas": 51409
   },
   "src/providers": {
    "arquivos": 4,
@@ -696,7 +696,7 @@
   },
   "src/services": {
    "arquivos": 198,
-   "linhas": 42404
+   "linhas": 42434
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -862,8 +862,8 @@
   "console_log": 416,
   "ts_ignore": 1,
   "eslint_disable": 4,
-  "todos": 24,
-  "arquivos_acima_500_linhas": 117
+  "todos": 26,
+  "arquivos_acima_500_linhas": 120
  },
  "todos": [
   {
@@ -939,6 +939,12 @@
    "texto": "identificador fictício do módulo (`mock-empresa-1`, ...). */"
   },
   {
+   "arquivo": "src/components/banco-horas/SituacaoSaldosCard.tsx",
+   "linha": 25,
+   "tipo": "TODO",
+   "texto": "o sistema (`dashboard/DonutChart.tsx`), com o"
+  },
+  {
    "arquivo": "src/components/organograma/DepartmentRow.tsx",
    "linha": 58,
    "tipo": "TODO",
@@ -955,6 +961,12 @@
    "linha": 2,
    "tipo": "FIXME",
    "texto": "(dep-fantasma) que exigia @ts-nocheck."
+  },
+  {
+   "arquivo": "src/components/ui/entradaGlobal.ts",
+   "linha": 47,
+   "tipo": "TODO",
+   "texto": "o sistema, **inclusive Gestão de Desempenho** (`/avaliacao`) desde"
   },
   {
    "arquivo": "src/lib/motionMode.ts",

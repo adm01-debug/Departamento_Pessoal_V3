@@ -350,7 +350,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 248,
+   "usado_por": 247,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -743,9 +743,10 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 17,
+   "usado_por": 22,
    "usado_por_modulos": [
     "components/avaliacao",
+    "components/banco-horas",
     "components/dashboard",
     "components/desligamentos",
     "components/premiacoes",
@@ -952,13 +953,14 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 291,
+   "usado_por": 300,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
     "components/afastamentos",
     "components/animate-ui",
     "components/avaliacao",
+    "components/banco-horas",
     "components/colaborador-detalhes",
     "components/colaboradores",
     "components/dashboard",
@@ -2066,10 +2068,11 @@
    "arquivo": "src/services/bancoHorasService.ts",
    "camada": "services",
    "exports": [
+    "RegistroBancoHorasDaEmpresa",
     "bancoHorasService"
    ],
    "export_default": null,
-   "linhas": 50,
+   "linhas": 80,
    "tabelas": [
     "banco_horas"
    ],
@@ -2080,9 +2083,10 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_modulos": [
     "hooks",
+    "pages",
     "services"
    ],
    "coberto_por_testes": 1,
@@ -3029,9 +3033,10 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 12,
+   "usado_por": 13,
    "usado_por_modulos": [
     "components/avaliacao",
+    "components/banco-horas",
     "components/dashboard",
     "components/desligamentos",
     "components/ponto",
@@ -5307,9 +5312,10 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 60,
+   "usado_por": 61,
    "usado_por_modulos": [
     "components/admissoes",
+    "components/banco-horas",
     "components/colaborador-detalhes",
     "components/colaboradores",
     "components/descontos",
@@ -5596,7 +5602,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 42,
+   "usado_por": 43,
    "usado_por_modulos": [
     "components/admissoes",
     "components/afastamentos",
@@ -5604,6 +5610,7 @@
     "components/desligamentos",
     "components/esocial",
     "components/folha",
+    "components/horas-extras",
     "components/premiacoes",
     "components/recrutamento",
     "pages"
@@ -5822,8 +5829,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_modulos": [
+    "components/banco-horas",
     "services"
    ],
    "coberto_por_testes": 1,
@@ -6000,9 +6008,10 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 136,
+   "usado_por": 137,
    "usado_por_modulos": [
     "components/admissoes",
+    "components/banco-horas",
     "components/colaborador-detalhes",
     "components/dashboard",
     "components/departamentos",

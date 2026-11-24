@@ -1096,6 +1096,100 @@
    "src/components/avaliacao/historicoFeedback.ts",
    "src/services/avaliacaoService.ts"
   ],
+  "src/components/banco-horas/AlertaSaldoNegativoCard.tsx": [
+   "src/components/banco-horas/CartaoSecaoBancoHoras.tsx",
+   "src/components/banco-horas/bancoHorasComum.ts",
+   "src/components/dashboard/estruturaAnimacoes.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/user-avatar.tsx",
+   "src/lib/motionMode.ts"
+  ],
+  "src/components/banco-horas/BancoHorasKpis.tsx": [
+   "src/components/banco-horas/bancoHorasComum.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/entradaGlobal.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/banco-horas/CabecalhoBancoHoras.tsx": [
+   "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
+   "src/components/banco-horas/bancoHorasComum.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/banco-horas/CartaoSecaoBancoHoras.tsx": [
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/entradaGlobal.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/banco-horas/EvolucaoSaldoCard.tsx": [
+   "src/components/banco-horas/CartaoSecaoBancoHoras.tsx",
+   "src/components/banco-horas/bancoHorasComum.ts",
+   "src/components/ui/revelacaoGrafico.tsx",
+   "src/components/ui/tooltipGrafico.tsx",
+   "src/hooks/useEntradaCardConcluida.ts",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/banco-horas/ExtratoBancoHoras.tsx": [
+   "src/components/avaliacao/ColoredFilterChip.tsx",
+   "src/components/avaliacao/chipFiltroComum.ts",
+   "src/components/banco-horas/bancoHorasComum.ts",
+   "src/components/horas-extras/FiltroSelectConteudo.tsx",
+   "src/components/ui/app-pagination.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-table.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/empty-state.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/entradaGlobal.ts",
+   "src/components/ui/input.tsx",
+   "src/components/ui/linha-tabela-hover.ts",
+   "src/components/ui/select.tsx",
+   "src/components/ui/table-row-reveal.ts",
+   "src/components/ui/table.tsx",
+   "src/components/ui/user-avatar.tsx",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx": [
+   "src/components/banco-horas/bancoHorasComum.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/date-picker.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/utils.ts",
+   "src/utils/dateLocal.ts"
+  ],
+  "src/components/banco-horas/SituacaoSaldosCard.tsx": [
+   "src/components/banco-horas/CartaoSecaoBancoHoras.tsx",
+   "src/components/banco-horas/bancoHorasComum.ts",
+   "src/components/dashboard/DonutChart.tsx",
+   "src/components/dashboard/donutMotion.ts",
+   "src/components/dashboard/estruturaAnimacoes.ts",
+   "src/hooks/useEntradaCardConcluida.ts",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/banco-horas/TotaisHorasCard.tsx": [
+   "src/components/banco-horas/CartaoSecaoBancoHoras.tsx",
+   "src/components/banco-horas/bancoHorasComum.ts",
+   "src/components/ui/progressMotion.ts",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/banco-horas/bancoHorasComum.ts": [
+   "src/components/horas-extras/horasExtrasComum.ts",
+   "src/utils/pgInterval.ts"
+  ],
+  "src/components/banco-horas/exportarBancoHoras.ts": [
+   "src/components/banco-horas/bancoHorasComum.ts",
+   "src/services/exportService.ts",
+   "src/utils/safeError.ts"
+  ],
   "src/components/beneficios/BeneficioHistorico.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/spinner.tsx",
@@ -2808,6 +2902,9 @@
    "src/components/forms/FormSection.tsx",
    "src/components/forms/FormSelect.tsx",
    "src/components/forms/FormSwitch.tsx"
+  ],
+  "src/components/horas-extras/horasExtrasComum.ts": [
+   "src/utils/format.ts"
   ],
   "src/components/i18n/LanguageSelector.tsx": [
    "src/components/ui/button.tsx",
@@ -4717,6 +4814,9 @@
   "src/components/ui/tooltip.tsx": [
    "src/lib/utils.ts"
   ],
+  "src/components/ui/tooltipGrafico.tsx": [
+   "src/lib/utils.ts"
+  ],
   "src/components/ui/user-avatar.tsx": [
    "src/components/ui/avatar.tsx",
    "src/lib/avatarTons.ts",
@@ -5040,6 +5140,9 @@
    "src/integrations/supabase/types.ts",
    "src/schemas/validate.ts",
    "src/utils/safeError.ts"
+  ],
+  "src/hooks/useEntradaCardConcluida.ts": [
+   "src/components/ui/entradaGlobal.ts"
   ],
   "src/hooks/useExcelExport.ts": [
    "src/utils/importacao/excelDownload.ts",
@@ -5703,13 +5806,18 @@
   ],
   "src/pages/BancoHorasPage.tsx": [
    "src/components/PageTitle.tsx",
+   "src/components/banco-horas/AlertaSaldoNegativoCard.tsx",
+   "src/components/banco-horas/BancoHorasKpis.tsx",
+   "src/components/banco-horas/CabecalhoBancoHoras.tsx",
+   "src/components/banco-horas/EvolucaoSaldoCard.tsx",
+   "src/components/banco-horas/ExtratoBancoHoras.tsx",
+   "src/components/banco-horas/SituacaoSaldosCard.tsx",
+   "src/components/banco-horas/TotaisHorasCard.tsx",
+   "src/components/banco-horas/bancoHorasComum.ts",
+   "src/components/banco-horas/exportarBancoHoras.ts",
    "src/components/layout/index.ts",
-   "src/components/ui/badge.tsx",
-   "src/components/ui/card.tsx",
-   "src/components/ui/spinner.tsx",
-   "src/components/ui/table.tsx",
    "src/hooks/index.ts",
-   "src/integrations/supabase/client.ts"
+   "src/services/bancoHorasService.ts"
   ],
   "src/pages/BeneficioFormPage.tsx": [
    "src/components/PageTitle.tsx",

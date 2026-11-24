@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 122,
+ "total": 123,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -1791,6 +1791,29 @@
    "coberto_por_testes": 6
   },
   {
+   "arquivo": "src/hooks/useEntradaCardConcluida.ts",
+   "hooks_exportados": [
+    "useEntradaCardConcluida"
+   ],
+   "linhas": 97,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/banco-horas/EvolucaoSaldoCard.tsx",
+    "src/components/banco-horas/SituacaoSaldosCard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
    "arquivo": "src/hooks/useESocial.ts",
    "hooks_exportados": [
     "useESocial"
@@ -3319,7 +3342,7 @@
     "useReducedMotion"
    ],
    "canais_realtime": [],
-   "usado_por": 17,
+   "usado_por": 22,
    "usado_por_arquivos": [
     "src/components/avaliacao/AnaliticosDesempenho.tsx",
     "src/components/avaliacao/CicloAtivoPanel.tsx",
@@ -3329,6 +3352,11 @@
     "src/components/avaliacao/PdiTab.tsx",
     "src/components/avaliacao/PerformanceAuditTimeline.tsx",
     "src/components/avaliacao/TodosCiclosTable.tsx",
+    "src/components/banco-horas/AlertaSaldoNegativoCard.tsx",
+    "src/components/banco-horas/EvolucaoSaldoCard.tsx",
+    "src/components/banco-horas/ExtratoBancoHoras.tsx",
+    "src/components/banco-horas/SituacaoSaldosCard.tsx",
+    "src/components/banco-horas/TotaisHorasCard.tsx",
     "src/components/dashboard/DonutChart.tsx",
     "src/components/desligamentos/TurnoverChart.tsx",
     "src/components/premiacoes/AuditoriaTab.tsx",
