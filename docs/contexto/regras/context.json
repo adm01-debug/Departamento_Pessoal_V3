@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a19e496ff4bc4c4adb0746e4afcb9e7c06b07f57",
+  "sha": "2669333c56291999ebacbbd18e8d797e000f4ed0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-24 21:13 UTC",
-  "files_total": 4067,
-  "code_files": 3472,
-  "code_lines": 504779
+  "generated_at": "2026-11-24 22:27 UTC",
+  "files_total": 4072,
+  "code_files": 3477,
+  "code_lines": 505597
  },
  "version": "1.3.2",
- "facts_hash": "78ead056b2d917b9",
+ "facts_hash": "b1228b1b5bdfe85b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,8 +388,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1324,
-   ".tsx": 1038,
-   ".ts": 969,
+   ".tsx": 1042,
+   ".ts": 970,
    ".mjs": 110,
    ".js": 15,
    ".cjs": 11,
@@ -90921,7 +90921,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 310
+    "deps_count": 312
    },
    {
     "path": "",
@@ -103105,7 +103105,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1010,
+  "components_count": 1015,
   "hooks": [
    {
     "name": "useContacts",
@@ -104752,8 +104752,8 @@
   },
   {
    "module": "src/components",
-   "files": 1010,
-   "lines": 186878,
+   "files": 1015,
+   "lines": 187696,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -104957,6 +104957,8 @@
     "src/components/__tests__/CamposCustomizadosTab.test.tsx",
     "src/components/__tests__/CandidatoTimeline.test.tsx",
     "src/components/__tests__/CardProgramacao.test.tsx",
+    "src/components/__tests__/CascadeSaidaPerfis.test.ts",
+    "src/components/__tests__/CascadeSaidaRapidaAnimacao.test.tsx",
     "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
     "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx",
     "src/components/__tests__/ColaboradorDocuments.test.tsx",
@@ -104978,9 +104980,7 @@
     "src/components/__tests__/DashboardHeader.test.tsx",
     "src/components/__tests__/DashboardWidgets.test.tsx",
     "src/components/__tests__/DeclaracoesTable.test.tsx",
-    "src/components/__tests__/DepartmentRow.test.tsx",
-    "src/components/__tests__/DependentesTab.test.tsx",
-    "src/components/__tests__/DesempenhoBarrasProgresso.test.tsx"
+    "src/components/__tests__/DepartmentRow.test.tsx"
    ]
   },
   {
@@ -123859,6 +123859,10 @@
    {
     "file": "src/components/ui/cascade-motion.ts",
     "text": "* Mora fora do componente de propósito (a regra `react-refresh/only-export-"
+   },
+   {
+    "file": "src/components/ui/cascade-motion.ts",
+    "text": "* ── PERFIL DE SAÍDA: o fechamento NÃO pode crescer com o tamanho da lista ────"
    },
    {
     "file": "src/components/ui/cascade-motion.ts",
@@ -151599,22 +151603,22 @@
    {
     "file": "src/components/ui/cascade-motion.ts",
     "name": "CASCADE_ITEM_STAGGER",
-    "value": "0.1"
+    "value": "0.12"
    },
    {
     "file": "src/components/ui/cascade-motion.ts",
     "name": "CASCADE_ITEM_DURATION_OUT",
-    "value": "0.22"
+    "value": "0.28"
    },
    {
     "file": "src/components/ui/cascade-motion.ts",
     "name": "CASCADE_ITEM_DURATION_IN",
-    "value": "0.35"
+    "value": "0.4"
    },
    {
     "file": "src/components/ui/cascade-motion.ts",
     "name": "CASCADE_OVERLAY_OPEN_DURATION",
-    "value": "0.25"
+    "value": "0.3"
    },
    {
     "file": "src/components/ui/entrada-cards.tsx",
@@ -168711,6 +168715,18 @@
     "line": "* (\"—\") em vez de 0%, que seria uma afirmação falsa."
    },
    {
+    "file": "src/components/ui/cascade-motion.ts",
+    "line": "// (22% da abertura). Com movimento normal é imperceptível — nesse instante"
+   },
+   {
+    "file": "src/components/ui/cascade-motion.ts",
+    "line": "// ela ainda tem 16% do tamanho e está crescendo. Com movimento REDUZIDO é"
+   },
+   {
+    "file": "src/components/ui/cascade-motion.ts",
+    "line": "// saída ele só cai depois da 1ª fase — quando a caixa já está com 16% da"
+   },
+   {
     "file": "src/components/ui/dropdown-menu.tsx",
     "line": "`select.tsx`, não uma cópia. Content acima continua 100% Radix"
    },
@@ -173735,6 +173751,54 @@
    {
     "file": "src/components/__tests__/CardProgramacao.test.tsx",
     "name": "shows data_inicio_prevista in formatted form"
+   },
+   {
+    "file": "src/components/__tests__/CascadeSaidaPerfis.test.ts",
+    "name": "cascade-motion — perfil PADRÃO (comportamento histórico intacto)"
+   },
+   {
+    "file": "src/components/__tests__/CascadeSaidaPerfis.test.ts",
+    "name": "mantém 0,12 s por bloco, sem teto, e 0,55 s de caixa"
+   },
+   {
+    "file": "src/components/__tests__/CascadeSaidaPerfis.test.ts",
+    "name": "é o mesmo "
+   },
+   {
+    "file": "src/components/__tests__/CascadeSaidaPerfis.test.ts",
+    "name": "a caixa só encolhe depois da cascata (delay) e em 0,55 s"
+   },
+   {
+    "file": "src/components/__tests__/CascadeSaidaPerfis.test.ts",
+    "name": "cascade-motion — perfil RÁPIDO (janelas de lista)"
+   },
+   {
+    "file": "src/components/__tests__/CascadeSaidaPerfis.test.ts",
+    "name": "fecha em 0,62 s e NÃO cresce com o número de linhas"
+   },
+   {
+    "file": "src/components/__tests__/CascadeSaidaPerfis.test.ts",
+    "name": "é ao menos 2,5× mais rápido que o padrão na janela relatada"
+   },
+   {
+    "file": "src/components/__tests__/CascadeSaidaPerfis.test.ts",
+    "name": "espalha os blocos em no máximo "
+   },
+   {
+    "file": "src/components/__tests__/CascadeSaidaPerfis.test.ts",
+    "name": "mantém a ABERTURA idêntica à do perfil padrão"
+   },
+   {
+    "file": "src/components/__tests__/CascadeSaidaPerfis.test.ts",
+    "name": "véu e caixa saem no mesmo compasso (uma única duração total)"
+   },
+   {
+    "file": "src/components/__tests__/CascadeSaidaRapidaAnimacao.test.tsx",
+    "name": "Fechamento da janela de lista — perfil rápido vs padrão (Framer real)"
+   },
+   {
+    "file": "src/components/__tests__/CascadeSaidaRapidaAnimacao.test.tsx",
+    "name": "o perfil rápido fecha bem abaixo de 1 s e o padrão continua em 1,67 s"
    },
    {
     "file": "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
@@ -181387,6 +181451,66 @@
    {
     "file": "src/components/__tests__/NineBoxQuadranteDialog.test.tsx",
     "name": "mostra a mensagem de quadrante vazio"
+   },
+   {
+    "file": "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
+    "name": "NineBoxTalentosDialog — a MESMA janela de "
+   },
+   {
+    "file": "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
+    "name": "monta véu, casca e conteúdo com a receita do "
+   },
+   {
+    "file": "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
+    "name": "tem o título do card e o ícone de destaque"
+   },
+   {
+    "file": "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
+    "name": "não renderiza nada com a janela fechada"
+   },
+   {
+    "file": "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
+    "name": "NineBoxTalentosDialog — todos os talentos, não só os 3 do card"
+   },
+   {
+    "file": "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
+    "name": "lista o ranking COMPLETO, na ordem do ranking"
+   },
+   {
+    "file": "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
+    "name": "cada linha traz cargo · departamento, quadrante e as duas notas"
+   },
+   {
+    "file": "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
+    "name": "mostra a mensagem de recorte vazio"
+   },
+   {
+    "file": "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
+    "name": "NineBoxLateral — "
+   },
+   {
+    "file": "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
+    "name": "o card continua com 3 linhas e o botão apenas pede a abertura"
+   },
+   {
+    "file": "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
+    "name": "sem ranking suficiente (≤ 3), o botão fica desabilitado"
+   },
+   {
+    "file": "src/components/__tests__/NineBoxTalentosDialogSaidaRapida.test.tsx",
+    "name": "NineBoxTalentosDialog — fechamento rápido (perfil de saída)"
+   },
+   {
+    "file": "src/components/__tests__/NineBoxTalentosDialogSaidaRapida.test.tsx",
+    "name": "pede "
+   },
+   {
+    "file": "src/components/__tests__/NineBoxTalentosDialogSaidaRapida.test.tsx",
+    "name": "o fechamento real fica abaixo de 1 s com 7 talentos (era 1,67 s)"
+   },
+   {
+    "file": "src/components/__tests__/NineBoxTalentosDialogSaidaRapida.test.tsx",
+    "name": "a fonte da janela passa o perfil (sem duração escrita à mão)"
    },
    {
     "file": "src/components/__tests__/NotificationBell.test.tsx",
@@ -274370,6 +274494,41 @@
     "shows data_inicio_prevista in formatted form"
    ]
   },
+  "src/components/__tests__/CascadeSaidaPerfis.test.ts": {
+   "path": "src/components/__tests__/CascadeSaidaPerfis.test.ts",
+   "lines": 125,
+   "is_test": true,
+   "params": [
+    {
+     "name": "BLOCOS_TALENTOS",
+     "value": "8"
+    }
+   ],
+   "rule_comments": [
+    "PERFIS DE SAÍDA DA CASCATA — o fechamento não pode crescer com o tamanho da"
+   ],
+   "tests": [
+    "cascade-motion — perfil PADRÃO (comportamento histórico intacto)",
+    "mantém 0,12 s por bloco, sem teto, e 0,55 s de caixa",
+    "é o mesmo ",
+    "a caixa só encolhe depois da cascata (delay) e em 0,55 s",
+    "cascade-motion — perfil RÁPIDO (janelas de lista)",
+    "fecha em 0,62 s e NÃO cresce com o número de linhas",
+    "é ao menos 2,5× mais rápido que o padrão na janela relatada",
+    "espalha os blocos em no máximo ",
+    "mantém a ABERTURA idêntica à do perfil padrão",
+    "véu e caixa saem no mesmo compasso (uma única duração total)"
+   ]
+  },
+  "src/components/__tests__/CascadeSaidaRapidaAnimacao.test.tsx": {
+   "path": "src/components/__tests__/CascadeSaidaRapidaAnimacao.test.tsx",
+   "lines": 94,
+   "is_test": true,
+   "tests": [
+    "Fechamento da janela de lista — perfil rápido vs padrão (Framer real)",
+    "o perfil rápido fecha bem abaixo de 1 s e o padrão continua em 1,67 s"
+   ]
+  },
   "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx": {
    "path": "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
    "lines": 71,
@@ -275733,7 +275892,7 @@
   },
   "src/components/__tests__/FeedbackAcoesRodape.test.tsx": {
    "path": "src/components/__tests__/FeedbackAcoesRodape.test.tsx",
-   "lines": 1260,
+   "lines": 1268,
    "is_test": true,
    "role_checks": [
     "role"
@@ -275749,6 +275908,9 @@
     "Pendente ⇒ sem validação."
    ],
    "doc": "CONTROLES FUNCIONAIS DO MODAL (rodapé) — testes de integração local. O serviço é mockado (nenhuma rede): o que se verifica aqui é a INTERFACE — quais controles aparecem por status/papel, obrigatoriedade da justificativa, bloqueio durante a operação, erro real, idempotência do reenvio, invalidação de …",
+   "temporal": [
+    "timeout: 2500,"
+   ],
    "tests": [
     "modo demonstração — experiência atual preservada",
     "registro FICTÍCIO (mock-*) não renderiza NENHUM controle e não chama o serviço",
@@ -277692,6 +277854,42 @@
     "mostra nome do quadrante, leitura, contagem e o PDI de cada pessoa",
     "usa o singular com um só colaborador",
     "mostra a mensagem de quadrante vazio"
+   ]
+  },
+  "src/components/__tests__/NineBoxTalentosDialog.test.tsx": {
+   "path": "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
+   "lines": 183,
+   "is_test": true,
+   "errors": [
+    "não montou ainda: ${sel}"
+   ],
+   "temporal": [
+    "expect(await screen.findByText('Fechar', {}, { timeout: 5000 })).toBeInTheDocument();",
+    "{ timeout: 5000 }"
+   ],
+   "tests": [
+    "NineBoxTalentosDialog — a MESMA janela de ",
+    "monta véu, casca e conteúdo com a receita do ",
+    "tem o título do card e o ícone de destaque",
+    "não renderiza nada com a janela fechada",
+    "NineBoxTalentosDialog — todos os talentos, não só os 3 do card",
+    "lista o ranking COMPLETO, na ordem do ranking",
+    "cada linha traz cargo · departamento, quadrante e as duas notas",
+    "mostra a mensagem de recorte vazio",
+    "NineBoxLateral — ",
+    "o card continua com 3 linhas e o botão apenas pede a abertura",
+    "sem ranking suficiente (≤ 3), o botão fica desabilitado"
+   ]
+  },
+  "src/components/__tests__/NineBoxTalentosDialogSaidaRapida.test.tsx": {
+   "path": "src/components/__tests__/NineBoxTalentosDialogSaidaRapida.test.tsx",
+   "lines": 115,
+   "is_test": true,
+   "tests": [
+    "NineBoxTalentosDialog — fechamento rápido (perfil de saída)",
+    "pede ",
+    "o fechamento real fica abaixo de 1 s com 7 talentos (era 1,67 s)",
+    "a fonte da janela passa o perfil (sem duração escrita à mão)"
    ]
   },
   "src/components/__tests__/NotificationBell.test.tsx": {
@@ -282048,7 +282246,7 @@
   },
   "src/components/avaliacao/NineBoxLateral.tsx": {
    "path": "src/components/avaliacao/NineBoxLateral.tsx",
-   "lines": 301,
+   "lines": 310,
    "exports": [
     "function NineBoxLateral"
    ],
@@ -282102,7 +282300,7 @@
   },
   "src/components/avaliacao/NineBoxTab.tsx": {
    "path": "src/components/avaliacao/NineBoxTab.tsx",
-   "lines": 399,
+   "lines": 419,
    "exports": [
     "function NineBoxTab"
    ],
@@ -282111,6 +282309,13 @@
     "(`desempenho_aprovado`/`potencial_aprovado`) é a fonte oficial; a validação",
     "gestor + validação do Potencial vigentes, o colaborador não é classificado.",
     "podem ser classificados antes de aprovação + validação; as fixtures"
+   ]
+  },
+  "src/components/avaliacao/NineBoxTalentosDialog.tsx": {
+   "path": "src/components/avaliacao/NineBoxTalentosDialog.tsx",
+   "lines": 111,
+   "exports": [
+    "function NineBoxTalentosDialog"
    ]
   },
   "src/components/avaliacao/NovaMetaDialog.tsx": {
@@ -295527,7 +295732,7 @@
   },
   "src/components/ui/animated-cascade-dialog.tsx": {
    "path": "src/components/ui/animated-cascade-dialog.tsx",
-   "lines": 67,
+   "lines": 77,
    "exports": [
     "interface AnimatedCascadeDialogProps",
     "function AnimatedCascadeDialog"
@@ -295608,7 +295813,7 @@
   },
   "src/components/ui/cascade-dialog.tsx": {
    "path": "src/components/ui/cascade-dialog.tsx",
-   "lines": 111,
+   "lines": 134,
    "exports": [
     "interface CascadeDialogFrameProps",
     "function CascadeDialogFrame"
@@ -295616,7 +295821,7 @@
   },
   "src/components/ui/cascade-motion.ts": {
    "path": "src/components/ui/cascade-motion.ts",
-   "lines": 102,
+   "lines": 222,
    "exports": [
     "const CASCADE_SHELL_OPEN_DURATION",
     "const CASCADE_SHELL_CLOSE_DURATION",
@@ -295624,7 +295829,12 @@
     "const CASCADE_ITEM_DURATION_OUT",
     "const CASCADE_ITEM_DURATION_IN",
     "const CASCADE_OVERLAY_OPEN_DURATION",
+    "interface PerfilSaidaCascata",
+    "const CASCADE_SAIDA_PADRAO",
+    "const CASCADE_SAIDA_RAPIDA",
     "const cascadeItemVariants",
+    "function cascadeExitStagger",
+    "function cascadeContainerVariantsPara",
     "const cascadeContainerVariants",
     "function cascadeCloseDuration",
     "function cascadeShellVariants",
@@ -295641,24 +295851,30 @@
     },
     {
      "name": "CASCADE_ITEM_STAGGER",
-     "value": "0.1"
+     "value": "0.12"
     },
     {
      "name": "CASCADE_ITEM_DURATION_OUT",
-     "value": "0.22"
+     "value": "0.28"
     },
     {
      "name": "CASCADE_ITEM_DURATION_IN",
-     "value": "0.35"
+     "value": "0.4"
     },
     {
      "name": "CASCADE_OVERLAY_OPEN_DURATION",
-     "value": "0.25"
+     "value": "0.3"
     }
    ],
    "rule_comments": [
     "* Mora fora do componente de propósito (a regra `react-refresh/only-export-",
+    "* ── PERFIL DE SAÍDA: o fechamento NÃO pode crescer com o tamanho da lista ────",
     "* IMPORTANTE: quem anima `scaleX/scaleY` NÃO pode ter `scale-*` do Tailwind no"
+   ],
+   "percents": [
+    "// (22% da abertura). Com movimento normal é imperceptível — nesse instante",
+    "// ela ainda tem 16% do tamanho e está crescendo. Com movimento REDUZIDO é",
+    "// saída ele só cai depois da 1ª fase — quando a caixa já está com 16% da"
    ]
   },
   "src/components/ui/cascade-table.tsx": {
@@ -339572,10 +339788,29 @@
   }
  },
  "git": {
-  "sha": "a19e496ff4bc4c4adb0746e4afcb9e7c06b07f57",
+  "sha": "2669333c56291999ebacbbd18e8d797e000f4ed0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "2669333",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "feat(avaliacao): Ver todos dos Talentos em destaque abre a janela completa (resgate do trabalho do Muri) (#870)",
+    "files": [
+     "src/components/__tests__/CascadeSaidaPerfis.test.ts",
+     "src/components/__tests__/CascadeSaidaRapidaAnimacao.test.tsx",
+     "src/components/__tests__/FeedbackAcoesRodape.test.tsx",
+     "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
+     "src/components/__tests__/NineBoxTalentosDialogSaidaRapida.test.tsx",
+     "src/components/avaliacao/NineBoxLateral.tsx",
+     "src/components/avaliacao/NineBoxTab.tsx",
+     "src/components/avaliacao/NineBoxTalentosDialog.tsx",
+     "src/components/ui/animated-cascade-dialog.tsx",
+     "src/components/ui/cascade-dialog.tsx",
+     "src/components/ui/cascade-motion.ts"
+    ]
+   },
    {
     "sha": "a19e496",
     "date": "2026-11-24",
@@ -340212,16 +340447,6 @@
      "supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql",
      "supabase/migrations/20261123090000_ponto_rep_converter_batidas.verify.sql"
     ]
-   },
-   {
-    "sha": "108016d",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "chore: desmembra a estrutura do banco do Ponto AtecSoft (#836)",
-    "files": [
-     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-     "docs/auditoria/ponto-atecsoft-estrutura.md"
-    ]
    }
   ],
   "hot_files": [
@@ -340238,11 +340463,11 @@
     4
    ],
    [
-    "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
-    4
+    "supabase/functions/alertas-dp/index.ts",
+    3
    ],
    [
-    "supabase/functions/alertas-dp/index.ts",
+    "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
     3
    ],
    [
@@ -340266,43 +340491,43 @@
     2
    ],
    [
-    "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+    "src/components/__tests__/CascadeSaidaPerfis.test.ts",
     1
    ],
    [
-    "supabase/migrations/20260511141726_placeholder_ledger_remoto.sql",
+    "src/components/__tests__/CascadeSaidaRapidaAnimacao.test.tsx",
     1
    ],
    [
-    "supabase/migrations/20260511141751_placeholder_ledger_remoto.sql",
+    "src/components/__tests__/FeedbackAcoesRodape.test.tsx",
     1
    ],
    [
-    "supabase/migrations/20260511141836_placeholder_ledger_remoto.sql",
+    "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
     1
    ],
    [
-    "supabase/migrations/20260511141859_placeholder_ledger_remoto.sql",
+    "src/components/__tests__/NineBoxTalentosDialogSaidaRapida.test.tsx",
     1
    ],
    [
-    "supabase/migrations/20260511141935_placeholder_ledger_remoto.sql",
+    "src/components/avaliacao/NineBoxLateral.tsx",
     1
    ],
    [
-    "supabase/migrations/20260511142000_placeholder_ledger_remoto.sql",
+    "src/components/avaliacao/NineBoxTab.tsx",
     1
    ],
    [
-    "supabase/migrations/20260511202937_placeholder_ledger_remoto.sql",
+    "src/components/avaliacao/NineBoxTalentosDialog.tsx",
     1
    ],
    [
-    "supabase/migrations/20260511203842_placeholder_ledger_remoto.sql",
+    "src/components/ui/animated-cascade-dialog.tsx",
     1
    ],
    [
-    "supabase/migrations/20260511205215_placeholder_ledger_remoto.sql",
+    "src/components/ui/cascade-dialog.tsx",
     1
    ]
   ]

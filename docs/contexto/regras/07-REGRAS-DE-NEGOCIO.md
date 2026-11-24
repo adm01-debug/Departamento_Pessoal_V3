@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a19e496ff4` · branch `main` · 2026-11-24 21:13 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2669333c56` · branch `main` · 2026-11-24 22:27 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4392,6 +4392,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `* para “Não informado”. Fundos em 8% e bordas em 20%.` | `src/components/treinamentos/TreinamentoBadges.tsx` |
 | `* 0.08 s por índice). O objeto é IMPORTADO da referência (não é uma cópia), então` | `src/components/treinamentos/TrilhaCard.tsx` |
 | `* ("—") em vez de 0%, que seria uma afirmação falsa.` | `src/components/treinamentos/treinamentosDerivacoes.ts` |
+| `// (22% da abertura). Com movimento normal é imperceptível — nesse instante` | `src/components/ui/cascade-motion.ts` |
+| `// ela ainda tem 16% do tamanho e está crescendo. Com movimento REDUZIDO é` | `src/components/ui/cascade-motion.ts` |
+| `// saída ele só cai depois da 1ª fase — quando a caixa já está com 16% da` | `src/components/ui/cascade-motion.ts` |
 | ``select.tsx`, não uma cópia. Content acima continua 100% Radix` | `src/components/ui/dropdown-menu.tsx` |
 | `* deslocado 150% + escalado 2.5x) e desliza para o centro no hover,` | `src/components/ui/flow-hover-button.tsx` |
 | `before:rounded-[100%] before:transition-transform before:duration-700 before:content-['']` | `src/components/ui/flow-hover-button.tsx` |
@@ -4501,10 +4504,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `// Apuração de ponto aprovada da competência (HE 50%/100%, adicional` | `supabase/functions/calcular-folha/index.ts` |
 | `// Descontos cadastrais: benefícios (VT 6% + coparticipação),` | `supabase/functions/calcular-folha/index.ts` |
 | `// adicional noturno 20% com hora reduzida (52min30s), DSR só` | `supabase/functions/calcular-folha/index.ts` |
-| `// de horas_extras vira HE 50%, como o front faz. '00:00' gravado é` | `supabase/functions/calcular-folha/index.ts` |
-| `// folhaCalc.processar): HE a 50%/100% sobre a hora contratual,` | `supabase/functions/calcular-folha/index.ts` |
-| `const desc = v.valor_mensal ? Number(v.valor_mensal) * 0.2 : 0;` | `supabase/functions/calcular-folha/index.ts` |
-| … +29 linhas — lista completa em `context.json` | |
+| … +32 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -4749,10 +4749,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `YEAR_WINDOW` | `12` | `src/components/ui/calendar.tsx` |
 | `CASCADE_SHELL_OPEN_DURATION` | `0.9` | `src/components/ui/cascade-motion.ts` |
 | `CASCADE_SHELL_CLOSE_DURATION` | `0.55` | `src/components/ui/cascade-motion.ts` |
-| `CASCADE_ITEM_STAGGER` | `0.1` | `src/components/ui/cascade-motion.ts` |
-| `CASCADE_ITEM_DURATION_OUT` | `0.22` | `src/components/ui/cascade-motion.ts` |
-| `CASCADE_ITEM_DURATION_IN` | `0.35` | `src/components/ui/cascade-motion.ts` |
-| `CASCADE_OVERLAY_OPEN_DURATION` | `0.25` | `src/components/ui/cascade-motion.ts` |
+| `CASCADE_ITEM_STAGGER` | `0.12` | `src/components/ui/cascade-motion.ts` |
+| `CASCADE_ITEM_DURATION_OUT` | `0.28` | `src/components/ui/cascade-motion.ts` |
+| `CASCADE_ITEM_DURATION_IN` | `0.4` | `src/components/ui/cascade-motion.ts` |
+| `CASCADE_OVERLAY_OPEN_DURATION` | `0.3` | `src/components/ui/cascade-motion.ts` |
 | `MAX_ENTRADA_INDEX` | `8` | `src/components/ui/entrada-cards.tsx` |
 | `SIDEBAR_COOKIE_MAX_AGE` | `60` | `src/components/ui/sidebar.tsx` |
 | `SIDEBAR_WIDTH` | `'16rem'` | `src/components/ui/sidebar.tsx` |
@@ -5532,7 +5532,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9793 testes em 768 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (9820 testes em 772 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5808,6 +5808,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/MedidaContestacaoDialog.test.tsx` | 11 | MedidaContestacaoDialog · returns null when medida is null · does not render dialog content when open is false · renders dialog when open is true with medida … |
 | `src/components/__tests__/MobileBottomNav.test.tsx` | 11 | MobileBottomNav · renders nav with aria-label · renders Home link · renders Equipe link … |
 | `src/components/__tests__/MorningBriefing.test.tsx` | 11 | MorningBriefing · separa o cache por empresa e não consulta sem tenant selecionado · shows skeleton when loading · renders error state when error occurs … |
+| `src/components/__tests__/NineBoxTalentosDialog.test.tsx` | 11 | NineBoxTalentosDialog — a MESMA janela de  · monta véu, casca e conteúdo com a receita do  · tem o título do card e o ícone de destaque · não renderiza nada com a janela fechada … |
 | `src/components/__tests__/PontoInconsistencyPanel.test.tsx` | 11 | PontoInconsistencyPanel · renders without crash when registros is empty · shows Insights de Inteligência when inconsistency detected · shows Resolução Assistida Ativa badge when inconsistencies exist … |
 | `src/components/__tests__/QuickActionsGrid.test.tsx` | 11 | QuickActionsGrid · renders Ações Rápidas heading · renders Novo Colaborador action · renders Lançar Ponto action … |
 | `src/components/__tests__/auditoriaDerivacoes.test.ts` | 11 | auditoriaDerivacoes · conta os status e as fatias do resumo (nunca NaN) · conta os eventos dos últimos 30 dias · detecta filtros ativos (inclusive os do painel avançado) … |
@@ -5827,6 +5828,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/secureJson.test.ts` | 11 | secureJsonParse · parses simple valid JSON · parses JSON arrays · strips __proto__ keys to prevent prototype pollution … |
 | `src/components/__tests__/AfastamentoTable.test.tsx` | 10 | AfastamentoTable · renders Colaborador table header · renders Tipo / CID table header · renders Período table header … |
 | `src/components/__tests__/Breadcrumbs.test.tsx` | 10 | Breadcrumbs · returns null when path has only one segment · renders breadcrumb for two-segment path · shows  … |
+| `src/components/__tests__/CascadeSaidaPerfis.test.ts` | 10 | cascade-motion — perfil PADRÃO (comportamento histórico intacto) · mantém 0,12 s por bloco, sem teto, e 0,55 s de caixa · é o mesmo  · a caixa só encolhe depois da cascata (delay) e em 0,55 s … |
 | `src/components/__tests__/DarfTab.test.tsx` | 10 | DarfTab · renders DARF title · renders IRRF label · does not render non-payroll taxes (PIS/COFINS, CSLL) … |
 | `src/components/__tests__/DesempenhoBarrasProgresso.test.tsx` | 10 | barra de progresso — paridade com  · a régua do módulo é, número por número, a do card de referência · props da barra: 0 → pct%, com o stagger por índice · normaliza o percentual (limites 0–100 e valor inválido) … |
 | `src/components/__tests__/ESocialAuditDialog.test.tsx` | 10 | ESocialAuditDialog · renders honest dialog title when open (sem alegar IA) · renders description with the number of eventos checked · shows results immediately, without fake progress bar … |
@@ -5834,9 +5836,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/EmpresaSettingsTab.test.tsx` | 10 | EmpresaSettingsTab · shows spinner when loading · renders Dados da Empresa title · renders form labels … |
 | `src/components/__tests__/EpiCatalogoTable.test.tsx` | 10 | EpiCatalogoTable · renders table headers · renders EPI names · renders CA badge when ca exists … |
 | `src/components/__tests__/EspelhosPapelPanel.test.tsx` | 10 | EspelhosPapelPanel · mostra carregando e depois lista devolvidos, pendentes e o contador · recarrega ao trocar a competência · marca como devolvido e zera o contador … |
-| `src/components/__tests__/FeriasReconciliacaoCard.test.tsx` | 10 | FeriasReconciliacaoCard · renders Reconciliação Férias ↔ Folha title · shows empty state when no divergences · shows skeleton when loading … |
-| `src/components/__tests__/FeriasReconciliacaoHistoricoCard.test.tsx` | 10 | FeriasReconciliacaoHistoricoCard · renders Reconciliação Automática — Histórico title · shows empty state when no logs · shows skeleton when loading … |
-| … +468 linhas — lista completa em `context.json` | | |
+| … +472 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6204,4 +6204,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * HABILITAÇÃO (regra ÚNICA, a MESMA do servidor — `pode_aprovar_colaborador` | `src/components/avaliacao/feedbackCanonico.ts` |
 | ENCAMINHAMENTO (RH/admin) — visível apenas para quem pode encaminhar E na | `src/components/avaliacao/feedbackCanonico.ts` |
 | VALIDAÇÃO DO POTENCIAL (RH) — controle LEGADO. O fluxo atual termina na | `src/components/avaliacao/feedbackCanonico.ts` |
-| … +959 linhas — lista completa em `context.json` | |
+| … +960 linhas — lista completa em `context.json` | |

@@ -842,6 +842,7 @@
    "src/components/avaliacao/NineBoxLateral.tsx",
    "src/components/avaliacao/NineBoxMatriz.tsx",
    "src/components/avaliacao/NineBoxQuadranteDialog.tsx",
+   "src/components/avaliacao/NineBoxTalentosDialog.tsx",
    "src/components/avaliacao/aprovacaoLocal.ts",
    "src/components/avaliacao/entradaCards.tsx",
    "src/components/avaliacao/escritaOperacional.ts",
@@ -849,6 +850,13 @@
    "src/components/avaliacao/nineBox360.ts",
    "src/components/avaliacao/nineBoxComum.ts",
    "src/components/avaliacao/nineBoxMock.ts"
+  ],
+  "src/components/avaliacao/NineBoxTalentosDialog.tsx": [
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/nineBoxComum.ts",
+   "src/components/ui/animated-cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/lib/utils.ts"
   ],
   "src/components/avaliacao/NovaMetaDialog.tsx": [
    "src/components/ui/button.tsx",

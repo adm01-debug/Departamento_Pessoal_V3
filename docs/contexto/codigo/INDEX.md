@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a19e496ff4bc4c4adb0746e4afcb9e7c06b07f57` (2026-11-24T17:54:09-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2669333c56291999ebacbbd18e8d797e000f4ed0` (2026-11-24T19:26:43-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2007), SQL (1324), Markdown (346), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2012), SQL (1324), Markdown (346), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 4053 |
-| arquivos_codigo | 2150 |
-| linhas_codigo | 430698 |
+| arquivos_total | 4058 |
+| arquivos_codigo | 2155 |
+| linhas_codigo | 431516 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
 | itens_menu | 97 |
 | modulos | 82 |
-| componentes | 646 |
+| componentes | 647 |
 | hooks | 122 |
 | edge_functions | 68 |
 | tabelas | 438 |
 | migrations | 1250 |
 | cron_jobs | 43 |
-| testes | 813 |
+| testes | 817 |
 | workflows | 21 |
 | scripts | 138 |
 | docs_md | 346 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
-- componentes: src/components (528), src/pages (110), src/contexts (3)
+- componentes: src/components (529), src/pages (110), src/contexts (3)
 - hooks: src/hooks (102), src/components (10), src/contexts (4)
 - servicos_logica: src/services (100), src/utils (36), src/schemas (25)
-- testes: co-localizado (__tests__) (676), co-localizado (*.test) (78), e2e/ (33)
+- testes: co-localizado (__tests__) (680), co-localizado (*.test) (78), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -74,7 +74,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/admin | 0 | 0 | 7 | 1 | 0 | 1 |
 | components/admissoes | 0 | 0 | 21 | 149 | 34 | 169 |
 | components/afastamentos | 0 | 0 | 6 | 9 | 0 | 8 |
-| components/avaliacao | 0 | 0 | 83 | 5 | 0 | 12 |
+| components/avaliacao | 0 | 0 | 84 | 5 | 0 | 12 |
 | components/colaborador-detalhes | 0 | 0 | 62 | 160 | 33 | 174 |
 | components/colaboradores | 0 | 0 | 9 | 9 | 0 | 4 |
 | components/dashboard | 0 | 0 | 21 | 13 | 26 | 64 |
@@ -399,8 +399,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28636 nós · 63784 arestas · 2777 comunidades · grafo do commit `a19e496f`
-- comunidades maiores: cn (626), button.tsx (528), 20260831_corrected_public.sql (485), canonical_schema.sql (481), useEmpresas (452), client.ts (342), vitest (332), App.tsx (255), rateLimit.ts (189), "public"."empresas" (164), "public"."empresas" (158), "public"."colaboradores" (157)
+- 28662 nós · 63878 arestas · 2797 comunidades · grafo do commit `2669333c`
+- comunidades maiores: useEmpresas (585), 20260831_corrected_public.sql (485), canonical_schema.sql (481), cn (421), lucide-react (398), react (331), ColaboradorDetalhesPage.tsx (234), contract.ts (230), vitest (228), services/index.ts (169), "public"."empresas" (164), ref_node_fs (161)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -657,6 +657,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-24 `2669333` feat(avaliacao): Ver todos dos Talentos em destaque abre a janela completa (resgate do trabalho do Muri) (#870)
 - 2026-11-24 `a19e496` docs(auditoria): registra o resgate do trabalho do agente Muri e a regra que evita regressao (#871)
 - 2026-11-24 `252cc80` chore: placeholders no-op para as 316 versoes do ledger sem fonte local (#865)
 - 2026-11-24 `3ffaebd` fix: guard to_regclass nas policies de backup_logs (apply abortava) (#867)
@@ -671,7 +672,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `0cec124` chore(deps): bump minor-patch group (18 updates, resgate da #846) (#857)
 - 2026-11-23 `c058153` chore(deps-dev): bump the testing group with 2 updates (#845)
 - 2026-11-23 `a036a95` chore(deps): bump the react-ecosystem group with 2 updates (#844)
-- 2026-11-23 `2489b55` feat: entrega real de Web Push (VAPID) na fila de notificacoes (#853)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

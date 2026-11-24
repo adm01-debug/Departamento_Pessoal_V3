@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1339,
- "arestas": 6564,
+ "nos": 1340,
+ "arestas": 6570,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -10,7 +10,7 @@
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 291
+   "importado_por": 292
   },
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -145,6 +145,10 @@
    "importado_por": 33
   },
   {
+   "arquivo": "src/components/ui/cascade-motion.ts",
+   "importado_por": 32
+  },
+  {
    "arquivo": "src/services/piiAccessLogService.ts",
    "importado_por": 32
   },
@@ -158,10 +162,6 @@
   },
   {
    "arquivo": "src/components/ui/entrada-cards.tsx",
-   "importado_por": 29
-  },
-  {
-   "arquivo": "src/contexts/index.ts",
    "importado_por": 29
   }
  ],

@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 813,
+ "total": 817,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 768
+  "unit": 772
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 676
+   "arquivos": 680
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -1111,6 +1111,25 @@
    "casos": 22
   },
   {
+   "arquivo": "src/components/__tests__/CascadeSaidaPerfis.test.ts",
+   "tipo": "unit",
+   "linhas": 125,
+   "testa": [
+    "src/components/ui/cascade-motion.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/CascadeSaidaRapidaAnimacao.test.tsx",
+   "tipo": "unit",
+   "linhas": 94,
+   "testa": [
+    "src/components/ui/cascade-dialog.tsx",
+    "src/components/ui/cascade-motion.ts"
+   ],
+   "casos": 1
+  },
+  {
    "arquivo": "src/components/__tests__/CNABDialog.test.tsx",
    "tipo": "unit",
    "linhas": 388,
@@ -1909,7 +1928,7 @@
   {
    "arquivo": "src/components/__tests__/FeedbackAcoesRodape.test.tsx",
    "tipo": "unit",
-   "linhas": 1260,
+   "linhas": 1268,
    "testa": [
     "src/components/avaliacao/FeedbackAcoesRodape.tsx",
     "src/components/avaliacao/FeedbackDetalheDialog.tsx",
@@ -2795,6 +2814,28 @@
     "src/components/avaliacao/nineBoxComum.ts"
    ],
    "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 183,
+   "testa": [
+    "src/components/avaliacao/NineBoxLateral.tsx",
+    "src/components/avaliacao/NineBoxTalentosDialog.tsx",
+    "src/components/avaliacao/nineBoxComum.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/NineBoxTalentosDialogSaidaRapida.test.tsx",
+   "tipo": "unit",
+   "linhas": 115,
+   "testa": [
+    "src/components/avaliacao/NineBoxTalentosDialog.tsx",
+    "src/components/avaliacao/nineBoxComum.ts",
+    "src/components/ui/cascade-motion.ts"
+   ],
+   "casos": 3
   },
   {
    "arquivo": "src/components/__tests__/NotificationBell.test.tsx",
@@ -7586,9 +7627,11 @@
   "src/components/avaliacao/MetasFiltros.tsx": 1,
   "src/components/avaliacao/MetasOKRsTab.tsx": 1,
   "src/components/avaliacao/NineBoxFocoBanner.tsx": 1,
+  "src/components/avaliacao/NineBoxLateral.tsx": 1,
   "src/components/avaliacao/NineBoxMatrix.tsx": 1,
   "src/components/avaliacao/NineBoxQuadrante.tsx": 1,
   "src/components/avaliacao/NineBoxQuadranteDialog.tsx": 1,
+  "src/components/avaliacao/NineBoxTalentosDialog.tsx": 2,
   "src/components/avaliacao/NovoFeedbackDialog.tsx": 1,
   "src/components/avaliacao/OrigemHomologacao.tsx": 1,
   "src/components/avaliacao/PdiCard.tsx": 1,
@@ -7615,7 +7658,7 @@
   "src/components/avaliacao/metasComum.ts": 3,
   "src/components/avaliacao/motorAvaliacao360.ts": 1,
   "src/components/avaliacao/nineBox360.ts": 1,
-  "src/components/avaliacao/nineBoxComum.ts": 8,
+  "src/components/avaliacao/nineBoxComum.ts": 10,
   "src/components/avaliacao/nineBoxConsolidacao.ts": 3,
   "src/components/avaliacao/nineBoxMock.ts": 1,
   "src/components/avaliacao/nineBoxModo.ts": 3,
@@ -7921,7 +7964,8 @@
   "src/components/ui/animated-cascade-dialog.tsx": 1,
   "src/components/ui/animated-tabs.tsx": 1,
   "src/components/ui/app-pagination.tsx": 1,
-  "src/components/ui/cascade-motion.ts": 1,
+  "src/components/ui/cascade-dialog.tsx": 1,
+  "src/components/ui/cascade-motion.ts": 4,
   "src/components/ui/command.tsx": 1,
   "src/components/ui/cpf-input.tsx": 1,
   "src/components/ui/currency-input.tsx": 1,

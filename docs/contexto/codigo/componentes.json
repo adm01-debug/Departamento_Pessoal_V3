@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 646,
+ "total": 647,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -1123,7 +1123,7 @@
     "NineBoxLateral"
    ],
    "export_default": null,
-   "linhas": 301,
+   "linhas": 310,
    "dominio": "components/avaliacao",
    "hooks_locais": [
     "useMovimentoReduzido"
@@ -1196,7 +1196,21 @@
     "NineBoxTab"
    ],
    "export_default": null,
-   "linhas": 399,
+   "linhas": 419,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/NineBoxTalentosDialog.tsx",
+   "exports": [
+    "NineBoxTalentosDialog"
+   ],
+   "export_default": null,
+   "linhas": 111,
    "dominio": "components/avaliacao",
    "hooks_locais": [],
    "tabelas": [],
@@ -7389,12 +7403,12 @@
     "AnimatedCascadeDialogProps"
    ],
    "export_default": null,
-   "linhas": 67,
+   "linhas": 77,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 15,
+   "usado_por": 16,
    "orfao": false
   },
   {
@@ -7518,7 +7532,7 @@
     "CascadeDialogFrameProps"
    ],
    "export_default": null,
-   "linhas": 111,
+   "linhas": 134,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
