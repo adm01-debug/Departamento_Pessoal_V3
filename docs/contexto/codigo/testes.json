@@ -5,12 +5,12 @@
   "vitest",
   "playwright"
  ],
- "total": 811,
+ "total": 813,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 766
+  "unit": 768
  },
  "onde_ficam": [
   {
@@ -19,7 +19,7 @@
   },
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 76
+   "arquivos": 78
   },
   {
    "padrao": "e2e/",
@@ -4320,11 +4320,11 @@
   {
    "arquivo": "src/contexts/__tests__/AuthContext.test.tsx",
    "tipo": "unit",
-   "linhas": 266,
+   "linhas": 294,
    "testa": [
     "src/contexts/AuthContext.tsx"
    ],
-   "casos": 15
+   "casos": 16
   },
   {
    "arquivo": "src/contexts/__tests__/EmpresaContext.test.tsx",
@@ -6409,11 +6409,11 @@
   {
    "arquivo": "src/services/__tests__/pushNotificationService.test.ts",
    "tipo": "unit",
-   "linhas": 170,
+   "linhas": 326,
    "testa": [
     "src/services/pushNotificationService.ts"
    ],
-   "casos": 9
+   "casos": 21
   },
   {
    "arquivo": "src/services/__tests__/recrutamentoService.test.ts",
@@ -7091,6 +7091,15 @@
    "casos": 2
   },
   {
+   "arquivo": "supabase/functions/_shared/circuitBreaker.test.ts",
+   "tipo": "unit",
+   "linhas": 137,
+   "testa": [
+    "supabase/functions/_shared/circuitBreaker.ts"
+   ],
+   "casos": 13
+  },
+  {
    "arquivo": "supabase/functions/_shared/clientIp.test.ts",
    "tipo": "unit",
    "linhas": 42,
@@ -7189,6 +7198,16 @@
     "supabase/functions/_shared/ssrf-guard.ts"
    ],
    "casos": 5
+  },
+  {
+   "arquivo": "supabase/functions/_shared/webPush.test.ts",
+   "tipo": "unit",
+   "linhas": 319,
+   "testa": [
+    "supabase/functions/_shared/circuitBreaker.ts",
+    "supabase/functions/_shared/webPush.ts"
+   ],
+   "casos": 12
   },
   {
    "arquivo": "supabase/functions/alertas-dp/deliveryStatus.test.ts",
@@ -8207,6 +8226,7 @@
   "src/utils/uploadValidation.ts": 1,
   "supabase/functions/_shared/aal2.ts": 1,
   "supabase/functions/_shared/aiProvider.ts": 1,
+  "supabase/functions/_shared/circuitBreaker.ts": 2,
   "supabase/functions/_shared/clientIp.ts": 1,
   "supabase/functions/_shared/contract.ts": 2,
   "supabase/functions/_shared/csrf.ts": 1,
@@ -8227,6 +8247,7 @@
   "supabase/functions/_shared/trainingImages/simulatedProvider.ts": 2,
   "supabase/functions/_shared/trainingImages/types.ts": 2,
   "supabase/functions/_shared/trainingImages/uuid.ts": 1,
+  "supabase/functions/_shared/webPush.ts": 1,
   "supabase/functions/alertas-dp/deliveryStatus.ts": 1,
   "supabase/functions/auth-gov-br/govbrIdentity.ts": 1,
   "supabase/functions/auth-login/lockoutContract.ts": 1,

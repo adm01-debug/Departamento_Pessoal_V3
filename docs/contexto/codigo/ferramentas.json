@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2003)",
+   "TypeScript (2007)",
    "SQL (1004)",
    "Markdown (345)",
    "JavaScript (136)",
@@ -1608,7 +1608,8 @@
    "VITE_SUPABASE_FUNCTIONS_BASE",
    "VITE_SUPABASE_PUBLISHABLE_KEY",
    "VITE_SUPABASE_URL",
-   "VITE_TRAINING_IMAGES"
+   "VITE_TRAINING_IMAGES",
+   "VITE_VAPID_PUBLIC_KEY"
   ],
   "usadas_no_front": [
    "CI",
@@ -1637,7 +1638,8 @@
    "VITE_SUPABASE_URL",
    "VITE_TRAINING_IMAGES",
    "VITE_TREINAMENTOS_MOCK",
-   "VITE_TREINAMENTOS_PREVIEW_PROGRESSO"
+   "VITE_TREINAMENTOS_PREVIEW_PROGRESSO",
+   "VITE_VAPID_PUBLIC_KEY"
   ],
   "usadas_nas_edges": [
    "AI_GATEWAY_API_KEY",
@@ -1857,7 +1859,7 @@
   "hosts_externos": [
    {
     "host": "departamento-pessoal-v3.vercel.app",
-    "arquivos": 7
+    "arquivos": 9
    },
    {
     "host": "example.test",
@@ -1893,6 +1895,10 @@
    },
    {
     "host": "example.invalid",
+    "arquivos": 2
+   },
+   {
+    "host": "fcm.googleapis.com",
     "arquivos": 2
    },
    {
@@ -2004,11 +2010,19 @@
     "arquivos": 1
    },
    {
+    "host": "exemplo.test",
+    "arquivos": 1
+   },
+   {
     "host": "fonts.gstatic.com",
     "arquivos": 1
    },
    {
     "host": "functions.example.test",
+    "arquivos": 1
+   },
+   {
+    "host": "h21.example",
     "arquivos": 1
    },
    {
@@ -2069,6 +2083,10 @@
    },
    {
     "host": "tile.openstreetmap.org",
+    "arquivos": 1
+   },
+   {
+    "host": "updates.push.services.mozilla.com",
     "arquivos": 1
    },
    {

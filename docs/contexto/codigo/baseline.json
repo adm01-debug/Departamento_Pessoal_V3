@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "132ece15f84e955927d5eb6849ccd1e3ff919445",
+  "commit": "2489b550341cd96ea8e7a495ec8e18c14d128b70",
   "branch": "main",
-  "data_commit": "2026-11-23T20:47:10-03:00",
+  "data_commit": "2026-11-23T21:27:37-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2489b55",
+    "data": "2026-11-23",
+    "assunto": "feat: entrega real de Web Push (VAPID) na fila de notificacoes (#853)"
+   },
    {
     "sha": "132ece1",
     "data": "2026-11-23",
@@ -126,18 +131,13 @@
     "sha": "835bc4e",
     "data": "2026-11-22",
     "assunto": "fix: aborta remessa CNAB sem nenhum favorecido (marcava enviado com arquivo vazio) (#827)"
-   },
-   {
-    "sha": "6553243",
-    "data": "2026-11-22",
-    "assunto": "docs: recertifica F-03/F-07/F-11 com contagem real e marca cargos como feito (#826)"
    }
   ],
-  "arquivos_mudados_7d": 667,
+  "arquivos_mudados_7d": 677,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 371
+    "mudancas": 370
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 95
+    "mudancas": 96
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -165,7 +165,7 @@
    },
    {
     "pasta": "supabase/functions/_shared",
-    "mudancas": 53
+    "mudancas": 57
    },
    {
     "pasta": "src/components/layout",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3727,
-  "arquivos_codigo": 2146,
-  "linhas_codigo": 429468,
+  "arquivos_total": 3731,
+  "arquivos_codigo": 2150,
+  "linhas_codigo": 430698,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 438,
   "migrations": 930,
   "cron_jobs": 42,
-  "testes": 811,
+  "testes": 813,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 345
@@ -652,7 +652,7 @@
   },
   "src/contexts": {
    "arquivos": 7,
-   "linhas": 1015
+   "linhas": 1055
   },
   "src/errors": {
    "arquivos": 4,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 145,
-   "linhas": 51330
+   "linhas": 51329
   },
   "src/providers": {
    "arquivos": 4,
@@ -696,7 +696,7 @@
   },
   "src/services": {
    "arquivos": 198,
-   "linhas": 42158
+   "linhas": 42404
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -723,8 +723,8 @@
    "linhas": 9
   },
   "supabase/functions": {
-   "arquivos": 192,
-   "linhas": 28064
+   "arquivos": 196,
+   "linhas": 29009
   },
   "supabase/tests": {
    "arquivos": 3,

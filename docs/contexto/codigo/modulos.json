@@ -137,6 +137,7 @@
     "notificacoes",
     "periodos_aquisitivos",
     "permissions",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -157,7 +158,8 @@
     "VITE_E2E_BYPASS_MFA",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -632,6 +634,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "relatorios_agendados",
@@ -736,7 +739,8 @@
     "VITE_NINEBOX_MODO_REAL",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -809,7 +813,8 @@
     "config_afastamentos",
     "documentos_afastamento",
     "empresas",
-    "prorrogacoes_afastamento"
+    "prorrogacoes_afastamento",
+    "push_subscriptions"
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
@@ -830,7 +835,8 @@
     "VITE_COLABORADORES_MOCK",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -969,6 +975,7 @@
     "feedbacks_360_validacoes_potencial",
     "metas_okrs",
     "pdi_plano_desenvolvimento",
+    "push_subscriptions",
     "vw_feedbacks_360_versao"
    ],
    "rpcs": [
@@ -997,7 +1004,8 @@
     "VITE_PDI_MOCK",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -1422,6 +1430,7 @@
     "promocoes",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "relatorios_agendados",
@@ -1525,7 +1534,8 @@
     "VITE_NINEBOX_MODO_REAL",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -1596,7 +1606,8 @@
    "tabelas": [
     "colaboradores",
     "empresas",
-    "notificacoes"
+    "notificacoes",
+    "push_subscriptions"
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
@@ -1617,7 +1628,8 @@
     "VITE_COLABORADORES_MOCK",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -1725,6 +1737,7 @@
     "contrato_token_eventos",
     "contratos_gerados",
     "empresas",
+    "push_subscriptions",
     "v_contrato_token_timeline",
     "v_contratos_assinatura_kpi",
     "v_contratos_tokens_pendentes",
@@ -1748,7 +1761,8 @@
     "DEV",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -1867,6 +1881,7 @@
     "onboarding_templates",
     "pendencias",
     "periodos_ponto",
+    "push_subscriptions",
     "relatorios_agendados",
     "rubricas_folha",
     "saved_filters",
@@ -1911,7 +1926,8 @@
     "DEV",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -1988,7 +2004,8 @@
    "edges": [],
    "tabelas": [
     "colaboradores",
-    "empresas"
+    "empresas",
+    "push_subscriptions"
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
@@ -2004,7 +2021,8 @@
     "DEV",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -2105,6 +2123,7 @@
     "empresas",
     "homologacoes_rescisao",
     "notificacoes",
+    "push_subscriptions",
     "verbas_rescisorias"
    ],
    "rpcs": [
@@ -2127,7 +2146,8 @@
     "VITE_COLABORADORES_MOCK",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -2231,7 +2251,8 @@
    "edges": [],
    "tabelas": [
     "colaboradores",
-    "empresas"
+    "empresas",
+    "push_subscriptions"
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
@@ -2246,7 +2267,8 @@
     "DEV",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -2330,7 +2352,8 @@
     "empresas",
     "esocial_eventos",
     "esocial_transmissao_logs",
-    "folha_itens"
+    "folha_itens",
+    "push_subscriptions"
    ],
    "rpcs": [
     "claim_admission_esocial_event",
@@ -2345,7 +2368,8 @@
     "DEV",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -2723,6 +2747,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "recibos_ferias",
     "registros_ponto",
@@ -2816,7 +2841,8 @@
     "VITE_NINEBOX_MODO_REAL",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -3176,6 +3202,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "rubricas_folha",
@@ -3260,7 +3287,8 @@
     "VITE_NINEBOX_MODO_REAL",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -3442,6 +3470,7 @@
     "onboarding_templates",
     "periodos_aquisitivos",
     "periodos_ponto",
+    "push_subscriptions",
     "relatorios_agendados",
     "rubricas_folha",
     "saved_filters",
@@ -3482,7 +3511,8 @@
     "DEV",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -3614,6 +3644,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -3633,7 +3664,8 @@
     "DEV",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -4019,6 +4051,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -4100,7 +4133,8 @@
     "VITE_NINEBOX_MODO_REAL",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -4157,7 +4191,8 @@
     "empresas",
     "ferias",
     "notificacoes",
-    "periodos_aquisitivos"
+    "periodos_aquisitivos",
+    "push_subscriptions"
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
@@ -4172,7 +4207,8 @@
     "DEV",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -4291,7 +4327,8 @@
    "edges": [],
    "tabelas": [
     "colaboradores",
-    "empresas"
+    "empresas",
+    "push_subscriptions"
    ],
    "rpcs": [
     "get_user_roles",
@@ -4303,7 +4340,8 @@
     "DEV",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -4361,7 +4399,8 @@
     "pcs_fatores",
     "pcs_grades",
     "pcs_pesquisa_salarial",
-    "pcs_planos"
+    "pcs_planos",
+    "push_subscriptions"
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
@@ -4380,7 +4419,8 @@
     "DEV",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -4723,6 +4763,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_ajuste_ponto",
@@ -4817,7 +4858,8 @@
     "VITE_NINEBOX_MODO_REAL",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -4992,6 +5034,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -5060,7 +5103,8 @@
     "VITE_NINEBOX_MODO_REAL",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -5406,6 +5450,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -5486,7 +5531,8 @@
     "VITE_NINEBOX_MODO_REAL",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -5545,6 +5591,7 @@
    "tabelas": [
     "colaboradores",
     "empresas",
+    "push_subscriptions",
     "recrutamento_anotacoes",
     "recrutamento_entrevistas",
     "recrutamento_testes"
@@ -5559,7 +5606,8 @@
     "DEV",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -6026,6 +6074,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "relatorios_agendados",
@@ -6130,7 +6179,8 @@
     "VITE_NINEBOX_MODO_REAL",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -6216,6 +6266,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "sst_incidentes",
     "sst_programas",
     "sst_riscos_ambientais"
@@ -6236,7 +6287,8 @@
     "DEV",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -6533,7 +6585,8 @@
     "empresas",
     "ferias",
     "notificacoes",
-    "periodos_aquisitivos"
+    "periodos_aquisitivos",
+    "push_subscriptions"
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
@@ -6548,7 +6601,8 @@
     "DEV",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -6733,7 +6787,7 @@
    "modulo": "contexts",
    "arquivos": 4,
    "testes": 0,
-   "linhas": 562,
+   "linhas": 574,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6761,7 +6815,8 @@
     "empresas",
     "ferias",
     "notificacoes",
-    "periodos_aquisitivos"
+    "periodos_aquisitivos",
+    "push_subscriptions"
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
@@ -6776,7 +6831,8 @@
     "DEV",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -7660,6 +7716,7 @@
     "promocoes",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_ajuste_ponto",
@@ -7767,7 +7824,8 @@
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
     "VITE_SUPABASE_URL",
-    "VITE_TRAINING_IMAGES"
+    "VITE_TRAINING_IMAGES",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -7961,6 +8019,7 @@
     "ferias_coletivas",
     "ferias_programacao",
     "ferias_reconciliacao_logs",
+    "push_subscriptions",
     "v_ferias_alerta_pagamento_d2",
     "v_ferias_folha_reconciliacao"
    ],
@@ -7985,7 +8044,8 @@
     "DEV",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -8349,7 +8409,7 @@
    "modulo": "pages",
    "arquivos": 115,
    "testes": 0,
-   "linhas": 46460,
+   "linhas": 46459,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -9264,7 +9324,8 @@
     "VITE_SUPABASE_URL",
     "VITE_TRAINING_IMAGES",
     "VITE_TREINAMENTOS_MOCK",
-    "VITE_TREINAMENTOS_PREVIEW_PROGRESSO"
+    "VITE_TREINAMENTOS_PREVIEW_PROGRESSO",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [
@@ -9685,7 +9746,7 @@
    "modulo": "services",
    "arquivos": 78,
    "testes": 0,
-   "linhas": 14723,
+   "linhas": 14813,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -9986,7 +10047,8 @@
     "VITE_NINEBOX_MODO_REAL",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_VAPID_PUBLIC_KEY"
    ],
    "flags": [],
    "papeis": [

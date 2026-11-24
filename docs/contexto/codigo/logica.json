@@ -3998,19 +3998,22 @@
     "pushNotificationService"
    ],
    "export_default": null,
-   "linhas": 104,
+   "linhas": 194,
    "tabelas": [
     "push_subscriptions"
    ],
    "rpcs": [],
    "edges": [],
-   "env": [],
+   "env": [
+    "VITE_VAPID_PUBLIC_KEY"
+   ],
    "externos": [],
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_modulos": [
+    "contexts",
     "pages"
    ],
    "coberto_por_testes": 1,

@@ -266,7 +266,7 @@
    "hooks_exportados": [
     "useAuth"
    ],
-   "linhas": 426,
+   "linhas": 438,
    "dominio": "contexts",
    "tabelas": [
     "colaboradores",

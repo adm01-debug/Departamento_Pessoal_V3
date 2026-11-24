@@ -77,6 +77,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -130,7 +131,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 72
+   "arquivos_puxados": 74
   },
   {
    "protegida": true,
@@ -253,6 +254,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -307,7 +309,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 76
+   "arquivos_puxados": 78
   },
   {
    "protegida": true,
@@ -420,7 +422,8 @@
    "tabelas": [
     "afdt_divergencias",
     "colaboradores",
-    "empresas"
+    "empresas",
+    "push_subscriptions"
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
@@ -442,7 +445,7 @@
     "rh",
     "user"
    ],
-   "arquivos_puxados": 32
+   "arquivos_puxados": 34
   },
   {
    "protegida": true,
@@ -549,6 +552,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -603,7 +607,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 82
+   "arquivos_puxados": 84
   },
   {
    "protegida": true,
@@ -643,7 +647,8 @@
    "tabelas": [
     "asos",
     "colaboradores",
-    "empresas"
+    "empresas",
+    "push_subscriptions"
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
@@ -658,7 +663,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 32
+   "arquivos_puxados": 34
   },
   {
    "protegida": true,
@@ -699,6 +704,7 @@
    "tabelas": [
     "colaboradores",
     "empresas",
+    "push_subscriptions",
     "sst_cat"
    ],
    "rpcs": [
@@ -715,7 +721,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 30
+   "arquivos_puxados": 32
   },
   {
    "protegida": true,
@@ -787,6 +793,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -840,7 +847,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 84
+   "arquivos_puxados": 85
   },
   {
    "protegida": true,
@@ -878,7 +885,8 @@
    ],
    "tabelas": [
     "colaboradores",
-    "empresas"
+    "empresas",
+    "push_subscriptions"
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
@@ -894,7 +902,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 19
+   "arquivos_puxados": 21
   },
   {
    "protegida": true,
@@ -938,7 +946,8 @@
     "epis_entregas",
     "epis_fichas",
     "epis_fichas_assinaturas",
-    "epis_fichas_itens"
+    "epis_fichas_itens",
+    "push_subscriptions"
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
@@ -954,7 +963,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 42
+   "arquivos_puxados": 43
   },
   {
    "protegida": true,
@@ -994,6 +1003,7 @@
    "tabelas": [
     "colaboradores",
     "empresas",
+    "push_subscriptions",
     "sst_extintores",
     "sst_extintores_inspecoes"
    ],
@@ -1011,7 +1021,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 32
+   "arquivos_puxados": 34
   },
   {
    "protegida": true,
@@ -1053,6 +1063,7 @@
    "tabelas": [
     "colaboradores",
     "empresas",
+    "push_subscriptions",
     "sst_regimento_documentos"
    ],
    "rpcs": [
@@ -1075,7 +1086,7 @@
     "rh",
     "user"
    ],
-   "arquivos_puxados": 33
+   "arquivos_puxados": 35
   },
   {
    "protegida": true,
@@ -1587,6 +1598,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "relatorios_agendados",
@@ -1729,7 +1741,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 269
+   "arquivos_puxados": 270
   },
   {
    "protegida": true,
@@ -1816,6 +1828,7 @@
     "notificacoes",
     "periodos_aquisitivos",
     "prorrogacoes_afastamento",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -1871,7 +1884,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 116
+   "arquivos_puxados": 117
   },
   {
    "protegida": false,
@@ -2031,6 +2044,7 @@
     "pontos_abertos",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -2129,7 +2143,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 138
+   "arquivos_puxados": 139
   },
   {
    "protegida": true,
@@ -2199,6 +2213,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -2253,7 +2268,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 80
+   "arquivos_puxados": 82
   },
   {
    "protegida": true,
@@ -2326,6 +2341,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -2382,7 +2398,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 90
+   "arquivos_puxados": 92
   },
   {
    "protegida": true,
@@ -2880,6 +2896,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -3003,7 +3020,7 @@
     "tabpanel",
     "user"
    ],
-   "arquivos_puxados": 327
+   "arquivos_puxados": 328
   },
   {
    "protegida": true,
@@ -3045,6 +3062,7 @@
     "feedbacks_360_validacoes_potencial",
     "metas_okrs",
     "pdi_plano_desenvolvimento",
+    "push_subscriptions",
     "vw_feedbacks_360_versao"
    ],
    "rpcs": [
@@ -3069,7 +3087,7 @@
     "status",
     "user"
    ],
-   "arquivos_puxados": 46
+   "arquivos_puxados": 49
   },
   {
    "protegida": true,
@@ -3140,6 +3158,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -3194,7 +3213,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 79
+   "arquivos_puxados": 81
   },
   {
    "protegida": true,
@@ -3647,6 +3666,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -3764,7 +3784,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 218
+   "arquivos_puxados": 219
   },
   {
    "protegida": true,
@@ -3896,6 +3916,7 @@
     "pontos_abertos",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -3992,7 +4013,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 157
+   "arquivos_puxados": 158
   },
   {
    "protegida": true,
@@ -4065,6 +4086,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -4118,7 +4140,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 91
+   "arquivos_puxados": 93
   },
   {
    "protegida": true,
@@ -4191,6 +4213,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -4244,7 +4267,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 91
+   "arquivos_puxados": 93
   },
   {
    "protegida": true,
@@ -4320,6 +4343,7 @@
     "historico_rescisoes",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -4377,7 +4401,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 91
+   "arquivos_puxados": 93
   },
   {
    "protegida": true,
@@ -4830,6 +4854,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -4947,7 +4972,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 221
+   "arquivos_puxados": 222
   },
   {
    "protegida": true,
@@ -5019,6 +5044,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -5073,7 +5099,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 102
+   "arquivos_puxados": 103
   },
   {
    "protegida": true,
@@ -5161,6 +5187,7 @@
     "pcs_pesquisa_salarial",
     "pcs_planos",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -5218,7 +5245,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 93
+   "arquivos_puxados": 95
   },
   {
    "protegida": true,
@@ -5671,6 +5698,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -5788,7 +5816,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 223
+   "arquivos_puxados": 224
   },
   {
    "protegida": false,
@@ -5905,6 +5933,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -5960,7 +5989,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 116
+   "arquivos_puxados": 117
   },
   {
    "protegida": true,
@@ -6466,6 +6495,7 @@
     "promocoes",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "relatorios_agendados",
@@ -6610,7 +6640,7 @@
     "tabpanel",
     "user"
    ],
-   "arquivos_puxados": 356
+   "arquivos_puxados": 357
   },
   {
    "protegida": true,
@@ -7066,6 +7096,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -7185,7 +7216,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 237
+   "arquivos_puxados": 238
   },
   {
    "protegida": true,
@@ -7641,6 +7672,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -7760,7 +7792,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 237
+   "arquivos_puxados": 238
   },
   {
    "protegida": true,
@@ -8213,6 +8245,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -8331,7 +8364,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 226
+   "arquivos_puxados": 227
   },
   {
    "protegida": true,
@@ -8807,6 +8840,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "relatorios_agendados",
@@ -8950,7 +8984,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 253
+   "arquivos_puxados": 254
   },
   {
    "protegida": true,
@@ -9001,6 +9035,7 @@
     "contrato_token_eventos",
     "contratos_gerados",
     "empresas",
+    "push_subscriptions",
     "v_contrato_token_timeline",
     "v_contratos_assinatura_kpi",
     "v_contratos_tokens_pendentes",
@@ -9024,7 +9059,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 39
+   "arquivos_puxados": 41
   },
   {
    "protegida": true,
@@ -9155,6 +9190,7 @@
     "pontos_abertos",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -9251,7 +9287,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 150
+   "arquivos_puxados": 151
   },
   {
    "protegida": true,
@@ -9707,6 +9743,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -9824,7 +9861,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 226
+   "arquivos_puxados": 227
   },
   {
    "protegida": false,
@@ -9937,7 +9974,8 @@
     "contrato_templates",
     "contrato_token_eventos",
     "contratos_gerados",
-    "empresas"
+    "empresas",
+    "push_subscriptions"
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
@@ -9958,7 +9996,7 @@
    "papeis": [
     "user"
    ],
-   "arquivos_puxados": 32
+   "arquivos_puxados": 34
   },
   {
    "protegida": true,
@@ -10412,6 +10450,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -10529,7 +10568,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 223
+   "arquivos_puxados": 224
   },
   {
    "protegida": true,
@@ -10984,6 +11023,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -11101,7 +11141,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 225
+   "arquivos_puxados": 226
   },
   {
    "protegida": true,
@@ -11198,6 +11238,7 @@
     "onboarding_templates",
     "pendencias",
     "periodos_ponto",
+    "push_subscriptions",
     "relatorios_agendados",
     "rubricas_folha",
     "saved_filters",
@@ -11269,7 +11310,7 @@
     "rh",
     "user"
    ],
-   "arquivos_puxados": 90
+   "arquivos_puxados": 91
   },
   {
    "protegida": true,
@@ -11389,6 +11430,7 @@
     "periodos_aquisitivos",
     "periodos_ponto",
     "personnel_budget",
+    "push_subscriptions",
     "relatorios_agendados",
     "rubricas_folha",
     "saved_filters",
@@ -11472,7 +11514,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 126
+   "arquivos_puxados": 127
   },
   {
    "protegida": true,
@@ -11546,6 +11588,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -11600,7 +11643,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 101
+   "arquivos_puxados": 102
   },
   {
    "protegida": true,
@@ -12055,6 +12098,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -12172,7 +12216,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 231
+   "arquivos_puxados": 232
   },
   {
    "protegida": true,
@@ -12281,6 +12325,7 @@
     "homologacoes_rescisao",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "verbas_rescisorias",
     "versao_banco"
    ],
@@ -12341,7 +12386,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 148
+   "arquivos_puxados": 149
   },
   {
    "protegida": true,
@@ -12794,6 +12839,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -12911,7 +12957,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 225
+   "arquivos_puxados": 226
   },
   {
    "protegida": true,
@@ -13046,6 +13092,7 @@
     "pontos_abertos",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -13142,7 +13189,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 157
+   "arquivos_puxados": 158
   },
   {
    "protegida": true,
@@ -13214,6 +13261,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -13268,7 +13316,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 95
+   "arquivos_puxados": 96
   },
   {
    "protegida": true,
@@ -13404,6 +13452,7 @@
     "pontos_abertos",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -13502,7 +13551,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 180
+   "arquivos_puxados": 181
   },
   {
    "protegida": true,
@@ -13638,6 +13687,7 @@
     "pontos_abertos",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -13736,7 +13786,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 180
+   "arquivos_puxados": 181
   },
   {
    "protegida": true,
@@ -14189,6 +14239,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -14306,7 +14357,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 232
+   "arquivos_puxados": 233
   },
   {
    "protegida": true,
@@ -14760,6 +14811,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -14877,7 +14929,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 223
+   "arquivos_puxados": 224
   },
   {
    "protegida": true,
@@ -14956,6 +15008,7 @@
     "folha_itens",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -15015,7 +15068,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 123
+   "arquivos_puxados": 124
   },
   {
    "protegida": true,
@@ -15469,6 +15522,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -15586,7 +15640,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 231
+   "arquivos_puxados": 232
   },
   {
    "protegida": true,
@@ -16039,6 +16093,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -16156,7 +16211,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 225
+   "arquivos_puxados": 226
   },
   {
    "protegida": true,
@@ -16227,6 +16282,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -16280,7 +16336,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 82
+   "arquivos_puxados": 84
   },
   {
    "protegida": true,
@@ -16753,6 +16809,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "recibos_ferias",
     "registros_ponto",
@@ -16879,7 +16936,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 267
+   "arquivos_puxados": 268
   },
   {
    "protegida": true,
@@ -16931,7 +16988,8 @@
     "colaboradores",
     "empresas",
     "ferias_programacao",
-    "periodos_aquisitivos"
+    "periodos_aquisitivos",
+    "push_subscriptions"
    ],
    "rpcs": [
     "admin_associar_usuario_empresa",
@@ -16956,7 +17014,7 @@
     "rh",
     "user"
    ],
-   "arquivos_puxados": 53
+   "arquivos_puxados": 54
   },
   {
    "protegida": true,
@@ -17087,6 +17145,7 @@
     "pontos_abertos",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -17183,7 +17242,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 154
+   "arquivos_puxados": 155
   },
   {
    "protegida": true,
@@ -17281,6 +17340,7 @@
     "pensoes",
     "periodos_aquisitivos",
     "pix_lotes",
+    "push_subscriptions",
     "registros_ponto",
     "rubricas_folha",
     "vales_alimentacao",
@@ -17341,7 +17401,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 122
+   "arquivos_puxados": 123
   },
   {
    "protegida": true,
@@ -17811,6 +17871,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "rubricas_folha",
@@ -17935,7 +17996,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 266
+   "arquivos_puxados": 267
   },
   {
    "protegida": true,
@@ -18005,6 +18066,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco",
     "vw_folha_compliance"
    ],
@@ -18061,7 +18123,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 83
+   "arquivos_puxados": 85
   },
   {
    "protegida": true,
@@ -18131,6 +18193,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -18185,7 +18248,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 79
+   "arquivos_puxados": 81
   },
   {
    "protegida": true,
@@ -18259,6 +18322,7 @@
     "holerite_distribuicoes",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -18314,7 +18378,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 87
+   "arquivos_puxados": 88
   },
   {
    "protegida": true,
@@ -18388,6 +18452,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "solicitacoes_hora_extra",
     "versao_banco"
    ],
@@ -18443,7 +18508,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 97
+   "arquivos_puxados": 98
   },
   {
    "protegida": true,
@@ -18515,6 +18580,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -18568,7 +18634,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 84
+   "arquivos_puxados": 86
   },
   {
    "protegida": true,
@@ -18680,6 +18746,7 @@
     "ponto_rep_funcionarios",
     "ponto_rep_justificativas",
     "ponto_rep_lotes",
+    "push_subscriptions",
     "relatorios_agendados",
     "rubricas_folha",
     "saved_filters",
@@ -18768,7 +18835,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 110
+   "arquivos_puxados": 111
   },
   {
    "protegida": true,
@@ -19221,6 +19288,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -19338,7 +19406,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 223
+   "arquivos_puxados": 224
   },
   {
    "protegida": true,
@@ -19793,6 +19861,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -19910,7 +19979,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 222
+   "arquivos_puxados": 223
   },
   {
    "protegida": true,
@@ -19982,6 +20051,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -20036,7 +20106,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 96
+   "arquivos_puxados": 97
   },
   {
    "protegida": false,
@@ -20071,7 +20141,8 @@
    ],
    "tabelas": [
     "colaboradores",
-    "empresas"
+    "empresas",
+    "push_subscriptions"
    ],
    "rpcs": [
     "get_user_roles",
@@ -20086,7 +20157,7 @@
     "alert",
     "user"
    ],
-   "arquivos_puxados": 27
+   "arquivos_puxados": 31
   },
   {
    "protegida": true,
@@ -20540,6 +20611,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -20657,7 +20729,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 222
+   "arquivos_puxados": 223
   },
   {
    "protegida": true,
@@ -21114,6 +21186,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -21233,7 +21306,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 241
+   "arquivos_puxados": 242
   },
   {
    "protegida": true,
@@ -21689,6 +21762,7 @@
     "promocoes",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -21807,7 +21881,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 225
+   "arquivos_puxados": 226
   },
   {
    "protegida": true,
@@ -21878,6 +21952,7 @@
     "historico_alertas",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -21932,7 +22007,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 84
+   "arquivos_puxados": 85
   },
   {
    "protegida": true,
@@ -22389,6 +22464,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "sefip_arquivos",
@@ -22508,7 +22584,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 233
+   "arquivos_puxados": 234
   },
   {
    "protegida": true,
@@ -22593,6 +22669,7 @@
     "onboarding_kits",
     "periodos_aquisitivos",
     "profiles",
+    "push_subscriptions",
     "tarefas_onboarding",
     "versao_banco"
    ],
@@ -22650,7 +22727,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 104
+   "arquivos_puxados": 106
   },
   {
    "protegida": true,
@@ -22724,6 +22801,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -22778,7 +22856,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 97
+   "arquivos_puxados": 99
   },
   {
    "protegida": true,
@@ -22850,6 +22928,7 @@
     "notificacoes",
     "periodos_aquisitivos",
     "provisoes_mensais",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -22904,7 +22983,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 80
+   "arquivos_puxados": 82
   },
   {
    "protegida": true,
@@ -23358,6 +23437,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -23475,7 +23555,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 223
+   "arquivos_puxados": 224
   },
   {
    "protegida": true,
@@ -24053,6 +24133,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -24170,7 +24251,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 224
+   "arquivos_puxados": 225
   },
   {
    "protegida": true,
@@ -24637,6 +24718,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "relatorios_agendados",
@@ -24775,7 +24857,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 232
+   "arquivos_puxados": 233
   },
   {
    "protegida": true,
@@ -25230,6 +25312,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_ajuste_ponto",
@@ -25361,7 +25444,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 248
+   "arquivos_puxados": 249
   },
   {
    "protegida": true,
@@ -25406,6 +25489,7 @@
     "configuracoes_ponto",
     "empresas",
     "ponto_auditoria",
+    "push_subscriptions",
     "registros_ponto"
    ],
    "rpcs": [
@@ -25428,7 +25512,7 @@
     "status",
     "user"
    ],
-   "arquivos_puxados": 31
+   "arquivos_puxados": 32
   },
   {
    "protegida": true,
@@ -25566,6 +25650,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -25666,7 +25751,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 164
+   "arquivos_puxados": 165
   },
   {
    "protegida": true,
@@ -26134,6 +26219,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -26258,7 +26344,7 @@
     "tabpanel",
     "user"
    ],
-   "arquivos_puxados": 271
+   "arquivos_puxados": 272
   },
   {
    "protegida": true,
@@ -26329,6 +26415,7 @@
     "notificacoes",
     "periodos_aquisitivos",
     "promo_brindes",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -26382,7 +26469,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 82
+   "arquivos_puxados": 84
   },
   {
    "protegida": true,
@@ -26453,6 +26540,7 @@
     "notificacoes",
     "periodos_aquisitivos",
     "promo_brindes",
+    "push_subscriptions",
     "times",
     "times_brindes",
     "versao_banco"
@@ -26508,7 +26596,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 82
+   "arquivos_puxados": 84
   },
   {
    "protegida": true,
@@ -26641,6 +26729,7 @@
     "prorrogacoes_afastamento",
     "provisao_logs",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -26737,7 +26826,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 152
+   "arquivos_puxados": 153
   },
   {
    "protegida": true,
@@ -27202,6 +27291,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "recrutamento_anotacoes",
     "recrutamento_entrevistas",
@@ -27325,7 +27415,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 267
+   "arquivos_puxados": 268
   },
   {
    "protegida": true,
@@ -27403,6 +27493,7 @@
     "log_envio_relatorios",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "relatorios_agendados",
     "versao_banco"
    ],
@@ -27460,7 +27551,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 93
+   "arquivos_puxados": 95
   },
   {
    "protegida": true,
@@ -27913,6 +28004,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "rubricas_folha",
@@ -28031,7 +28123,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 224
+   "arquivos_puxados": 225
   },
   {
    "protegida": true,
@@ -28105,6 +28197,7 @@
     "login_attempts",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "rate_limit_logs",
     "security_alerts",
     "versao_banco"
@@ -28162,7 +28255,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 81
+   "arquivos_puxados": 83
   },
   {
    "protegida": true,
@@ -28628,6 +28721,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "relatorios_agendados",
@@ -28767,7 +28861,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 233
+   "arquivos_puxados": 234
   },
   {
    "protegida": true,
@@ -29220,6 +29314,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "sindicatos",
@@ -29338,7 +29433,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 222
+   "arquivos_puxados": 223
   },
   {
    "protegida": true,
@@ -29411,6 +29506,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "sst_incidentes",
     "sst_programas",
     "sst_riscos_ambientais",
@@ -29470,7 +29566,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 102
+   "arquivos_puxados": 103
   },
   {
    "protegida": true,
@@ -29923,6 +30019,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -30040,7 +30137,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 224
+   "arquivos_puxados": 225
   },
   {
    "protegida": true,
@@ -30498,6 +30595,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -30625,7 +30723,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 297
+   "arquivos_puxados": 298
   },
   {
    "protegida": true,
@@ -31078,6 +31176,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -31195,7 +31294,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 223
+   "arquivos_puxados": 224
   },
   {
    "protegida": true,
@@ -31266,6 +31365,7 @@
     "ferias",
     "notificacoes",
     "periodos_aquisitivos",
+    "push_subscriptions",
     "versao_banco"
    ],
    "rpcs": [
@@ -31320,7 +31420,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 76
+   "arquivos_puxados": 78
   },
   {
    "protegida": true,
@@ -31773,6 +31873,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -31892,7 +31993,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 224
+   "arquivos_puxados": 225
   },
   {
    "protegida": false,
@@ -32409,6 +32510,7 @@
     "profiles",
     "prorrogacoes_afastamento",
     "provisoes_mensais",
+    "push_subscriptions",
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
@@ -32527,7 +32629,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 231
+   "arquivos_puxados": 232
   }
  ],
  "rotas_http_backend": [

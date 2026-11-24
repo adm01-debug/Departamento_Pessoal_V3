@@ -19,6 +19,8 @@
   "supabase/functions/_shared/aiProvider.ts",
   "supabase/functions/_shared/authz.ts",
   "supabase/functions/_shared/cache.ts",
+  "supabase/functions/_shared/circuitBreaker.test.ts",
+  "supabase/functions/_shared/circuitBreaker.ts",
   "supabase/functions/_shared/clientIp.test.ts",
   "supabase/functions/_shared/clientIp.ts",
   "supabase/functions/_shared/contract.test.ts",
@@ -62,7 +64,9 @@
   "supabase/functions/_shared/trainingImages/storagePath.ts",
   "supabase/functions/_shared/trainingImages/supabaseDeps.ts",
   "supabase/functions/_shared/trainingImages/types.ts",
-  "supabase/functions/_shared/trainingImages/uuid.ts"
+  "supabase/functions/_shared/trainingImages/uuid.ts",
+  "supabase/functions/_shared/webPush.test.ts",
+  "supabase/functions/_shared/webPush.ts"
  ],
  "edges": [
   {
@@ -2202,14 +2206,15 @@
    "nome": "processar-agendamentos",
    "entrada": "supabase/functions/processar-agendamentos/index.ts",
    "arquivos": 3,
-   "linhas": 623,
+   "linhas": 697,
    "verify_jwt": true,
    "metodos": [
     "POST"
    ],
    "tabelas": [
     "fila_notificacoes",
-    "log_envio_relatorios"
+    "log_envio_relatorios",
+    "push_subscriptions"
    ],
    "rpcs": [
     "claim_due_report_schedules",
@@ -2234,7 +2239,8 @@
     "outboundDelivery.ts",
     "rateLimit.ts",
     "safe-fetch.ts",
-    "sentry.ts"
+    "sentry.ts",
+    "webPush.ts"
    ],
    "chamada_pelo_front": [
     "src/services/edgeFunctionsService.ts"

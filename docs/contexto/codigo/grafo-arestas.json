@@ -4742,6 +4742,7 @@
    "src/integrations/supabase/client.ts",
    "src/lib/queryClient.ts",
    "src/services/loggerService.ts",
+   "src/services/pushNotificationService.ts",
    "src/utils/passwordPolicy.ts",
    "src/utils/sanitizeHtml.ts"
   ],
@@ -8138,6 +8139,11 @@
    "supabase/functions/_shared/trainingImages/storagePath.ts",
    "supabase/functions/_shared/trainingImages/types.ts"
   ],
+  "supabase/functions/_shared/webPush.ts": [
+   "supabase/functions/_shared/circuitBreaker.ts",
+   "supabase/functions/_shared/outboundDelivery.ts",
+   "supabase/functions/_shared/safe-fetch.ts"
+  ],
   "supabase/functions/adiantamento-salarial/index.ts": [
    "supabase/functions/_shared/authz.ts",
    "supabase/functions/_shared/contract.ts",
@@ -8571,7 +8577,8 @@
    "supabase/functions/_shared/sentry.ts"
   ],
   "supabase/functions/processar-agendamentos/filaNotificacoes.ts": [
-   "supabase/functions/_shared/outboundDelivery.ts"
+   "supabase/functions/_shared/outboundDelivery.ts",
+   "supabase/functions/_shared/webPush.ts"
   ],
   "supabase/functions/processar-agendamentos/index.ts": [
    "supabase/functions/_shared/contract.ts",

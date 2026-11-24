@@ -8493,7 +8493,7 @@
     "User"
    ],
    "export_default": null,
-   "linhas": 426,
+   "linhas": 438,
    "dominio": "contexts",
    "hooks_locais": [
     "useAuth"
@@ -10090,7 +10090,7 @@
     "PerfilPage"
    ],
    "export_default": "PerfilPage",
-   "linhas": 516,
+   "linhas": 515,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth"

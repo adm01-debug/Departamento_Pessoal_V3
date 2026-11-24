@@ -23,7 +23,7 @@
   ],
   "testes": [
    "co-localizado (__tests__) (676)",
-   "co-localizado (*.test) (76)",
+   "co-localizado (*.test) (78)",
    "e2e/ (33)"
   ],
   "edge_functions": "supabase/functions",
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: entrega real de Web Push (VAPID) na fila de notificacoes (#853)",
    "chore: resgata autofix de eslint (type-imports e inferrable-types) de agente interrompido (#854)",
    "fix: impede que destinatario nao-roteavel derrube o lote de alertas por e-mail (#852)",
    "chore: remove config.ts orfao de processar-agendamentos (#851)",
-   "fix: filtra destinatarios orfaos em alertas-dp para nao violar FK (#850)",
-   "fix: troca import dinamico de rateLimit por estatico nas edges que retornavam 500 (#849)"
+   "fix: filtra destinatarios orfaos em alertas-dp para nao violar FK (#850)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

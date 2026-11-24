@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "132ece15f84e955927d5eb6849ccd1e3ff919445",
+  "sha": "2489b550341cd96ea8e7a495ec8e18c14d128b70",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-23 23:50 UTC",
-  "files_total": 3741,
-  "code_files": 3148,
-  "code_lines": 500798
+  "generated_at": "2026-11-24 00:30 UTC",
+  "files_total": 3745,
+  "code_files": 3152,
+  "code_lines": 502033
  },
  "version": "1.3.2",
- "facts_hash": "96c5ab1143367a28",
+ "facts_hash": "1ed6b079b8b2d0ba",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   "languages": {
    ".tsx": 1038,
    ".sql": 1004,
-   ".ts": 965,
+   ".ts": 969,
    ".mjs": 110,
    ".js": 15,
    ".cjs": 11,
@@ -89690,67 +89690,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
-     "versao_banco"
-    ],
-    "invokes_transitive": [
-     "calcular-folha",
-     "metricas"
-    ],
-    "rpc_transitive": [
-     "admin_associar_usuario_empresa",
-     "get_my_user_empresas",
-     "get_security_alerts_summary",
-     "get_user_roles",
-     "log_frontend_error",
-     "set_own_default_empresa"
-    ],
-    "deps_count": 73
-   },
-   {
-    "path": "",
-    "file": "src/pages/AdminAsoWorkflowPage.tsx",
-    "component": "AdminAsoWorkflowPage",
-    "tables_transitive": [
-     "colaboradores",
-     "empresas"
-    ],
-    "invokes_transitive": [],
-    "rpc_transitive": [
-     "admin_associar_usuario_empresa",
-     "get_my_user_empresas",
-     "get_user_roles",
-     "log_frontend_error",
-     "set_own_default_empresa"
-    ],
-    "deps_count": 31
-   },
-   {
-    "path": "",
-    "file": "src/pages/AdminCatPage.tsx",
-    "component": "AdminCatPage",
-    "tables_transitive": [
-     "empresas"
-    ],
-    "invokes_transitive": [],
-    "rpc_transitive": [
-     "admin_associar_usuario_empresa",
-     "get_my_user_empresas",
-     "get_user_roles",
-     "log_frontend_error",
-     "set_own_default_empresa"
-    ],
-    "deps_count": 29
-   },
-   {
-    "path": "",
-    "file": "src/pages/AdminClinicasPartnersPage.tsx",
-    "component": "AdminClinicasPartnersPage",
-    "tables_transitive": [
-     "colaboradores",
-     "empresas",
-     "ferias",
-     "notificacoes",
-     "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -89769,14 +89709,52 @@
    },
    {
     "path": "",
-    "file": "src/pages/AdminDiagnosticoMigracaoPage.tsx",
-    "component": "AdminDiagnosticoMigracaoPage",
+    "file": "src/pages/AdminAsoWorkflowPage.tsx",
+    "component": "AdminAsoWorkflowPage",
+    "tables_transitive": [
+     "colaboradores",
+     "empresas",
+     "push_subscriptions"
+    ],
+    "invokes_transitive": [],
+    "rpc_transitive": [
+     "admin_associar_usuario_empresa",
+     "get_my_user_empresas",
+     "get_user_roles",
+     "log_frontend_error",
+     "set_own_default_empresa"
+    ],
+    "deps_count": 33
+   },
+   {
+    "path": "",
+    "file": "src/pages/AdminCatPage.tsx",
+    "component": "AdminCatPage",
+    "tables_transitive": [
+     "empresas",
+     "push_subscriptions"
+    ],
+    "invokes_transitive": [],
+    "rpc_transitive": [
+     "admin_associar_usuario_empresa",
+     "get_my_user_empresas",
+     "get_user_roles",
+     "log_frontend_error",
+     "set_own_default_empresa"
+    ],
+    "deps_count": 31
+   },
+   {
+    "path": "",
+    "file": "src/pages/AdminClinicasPartnersPage.tsx",
+    "component": "AdminClinicasPartnersPage",
     "tables_transitive": [
      "colaboradores",
      "empresas",
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -89791,7 +89769,34 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 66
+    "deps_count": 76
+   },
+   {
+    "path": "",
+    "file": "src/pages/AdminDiagnosticoMigracaoPage.tsx",
+    "component": "AdminDiagnosticoMigracaoPage",
+    "tables_transitive": [
+     "colaboradores",
+     "empresas",
+     "ferias",
+     "notificacoes",
+     "periodos_aquisitivos",
+     "push_subscriptions",
+     "versao_banco"
+    ],
+    "invokes_transitive": [
+     "calcular-folha",
+     "metricas"
+    ],
+    "rpc_transitive": [
+     "admin_associar_usuario_empresa",
+     "get_my_user_empresas",
+     "get_security_alerts_summary",
+     "get_user_roles",
+     "log_frontend_error",
+     "set_own_default_empresa"
+    ],
+    "deps_count": 67
    },
    {
     "path": "",
@@ -89801,7 +89806,8 @@
      "colaboradores",
      "empresas",
      "epis",
-     "epis_entregas"
+     "epis_entregas",
+     "push_subscriptions"
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
@@ -89812,7 +89818,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 41
+    "deps_count": 42
    },
    {
     "path": "",
@@ -89820,7 +89826,8 @@
     "component": "AdminExtintoresPage",
     "tables_transitive": [
      "colaboradores",
-     "empresas"
+     "empresas",
+     "push_subscriptions"
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
@@ -89830,7 +89837,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 31
+    "deps_count": 33
    },
    {
     "path": "",
@@ -89860,7 +89867,8 @@
     "file": "src/pages/AdminPontoDivergenciasPage.tsx",
     "component": "AdminPontoDivergenciasPage",
     "tables_transitive": [
-     "empresas"
+     "empresas",
+     "push_subscriptions"
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
@@ -89870,7 +89878,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 31
+    "deps_count": 33
    },
    {
     "path": "",
@@ -89878,7 +89886,8 @@
     "component": "AdminRegimentoInternoPage",
     "tables_transitive": [
      "colaboradores",
-     "empresas"
+     "empresas",
+     "push_subscriptions"
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
@@ -89889,7 +89898,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 32
+    "deps_count": 34
    },
    {
     "path": "",
@@ -89908,7 +89917,8 @@
     "component": "AdminSstDashboardPage",
     "tables_transitive": [
      "colaboradores",
-     "empresas"
+     "empresas",
+     "push_subscriptions"
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
@@ -89918,7 +89928,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 18
+    "deps_count": 20
    },
    {
     "path": "",
@@ -90043,6 +90053,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -90119,7 +90130,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 248
+    "deps_count": 249
    },
    {
     "path": "",
@@ -90136,6 +90147,7 @@
      "notificacoes",
      "periodos_aquisitivos",
      "prorrogacoes_afastamento",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -90152,7 +90164,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 107
+    "deps_count": 109
    },
    {
     "path": "",
@@ -90246,6 +90258,7 @@
      "pontos_abertos",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -90307,7 +90320,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 122
+    "deps_count": 123
    },
    {
     "path": "",
@@ -90319,6 +90332,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -90333,7 +90347,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 70
+    "deps_count": 73
    },
    {
     "path": "",
@@ -90345,6 +90359,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -90363,7 +90378,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 82
+    "deps_count": 84
    },
    {
     "path": "",
@@ -90474,6 +90489,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -90546,7 +90562,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 309
+    "deps_count": 310
    },
    {
     "path": "",
@@ -90558,6 +90574,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -90573,7 +90590,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 71
+    "deps_count": 72
    },
    {
     "path": "",
@@ -90683,6 +90700,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -90755,7 +90773,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 194
+    "deps_count": 195
    },
    {
     "path": "",
@@ -90768,6 +90786,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -90783,7 +90802,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 81
+    "deps_count": 83
    },
    {
     "path": "",
@@ -90857,6 +90876,7 @@
      "pontos_abertos",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -90912,7 +90932,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 148
+    "deps_count": 149
    },
    {
     "path": "",
@@ -90923,6 +90943,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -90941,7 +90962,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 86
+    "deps_count": 88
    },
    {
     "path": "",
@@ -91055,6 +91076,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -91127,7 +91149,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 203
+    "deps_count": 204
    },
    {
     "path": "",
@@ -91237,6 +91259,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -91309,7 +91332,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 197
+    "deps_count": 198
    },
    {
     "path": "",
@@ -91318,6 +91341,7 @@
     "tables_transitive": [
      "colaboradores",
      "empresas",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -91332,7 +91356,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 78
+    "deps_count": 79
    },
    {
     "path": "",
@@ -91442,6 +91466,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -91514,7 +91539,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 199
+    "deps_count": 200
    },
    {
     "path": "",
@@ -91630,6 +91655,7 @@
      "promocoes",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_ajuste_ponto",
@@ -91705,7 +91731,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 314
+    "deps_count": 315
    },
    {
     "path": "",
@@ -91816,6 +91842,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -91890,7 +91917,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 221
+    "deps_count": 222
    },
    {
     "path": "",
@@ -91899,6 +91926,7 @@
     "tables_transitive": [
      "colaboradores",
      "empresas",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -91914,7 +91942,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 99
+    "deps_count": 100
    },
    {
     "path": "",
@@ -92024,6 +92052,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -92096,7 +92125,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 202
+    "deps_count": 203
    },
    {
     "path": "",
@@ -92203,6 +92232,7 @@
      "pontos_abertos",
      "profiles",
      "prorrogacoes_afastamento",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "relatorios_agendados",
@@ -92292,7 +92322,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 200
+    "deps_count": 201
    },
    {
     "path": "",
@@ -92365,6 +92395,7 @@
      "pontos_abertos",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -92420,7 +92451,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 141
+    "deps_count": 142
    },
    {
     "path": "",
@@ -92464,6 +92495,7 @@
      "contrato_token_eventos",
      "contratos_gerados",
      "empresas",
+     "push_subscriptions",
      "v_contrato_token_timeline",
      "v_contratos_assinatura_kpi",
      "v_contratos_tokens_pendentes",
@@ -92482,7 +92514,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 38
+    "deps_count": 39
    },
    {
     "path": "",
@@ -92492,7 +92524,8 @@
      "contrato_templates",
      "contrato_token_eventos",
      "contratos_gerados",
-     "empresas"
+     "empresas",
+     "push_subscriptions"
     ],
     "invokes_transitive": [
      "gerar-contrato-pdf"
@@ -92508,7 +92541,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 31
+    "deps_count": 33
    },
    {
     "path": "",
@@ -92619,6 +92652,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -92691,7 +92725,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 206
+    "deps_count": 207
    },
    {
     "path": "",
@@ -92801,6 +92835,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -92873,7 +92908,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 202
+    "deps_count": 203
    },
    {
     "path": "",
@@ -92892,6 +92927,7 @@
      "pendencias",
      "periodos_aquisitivos",
      "personnel_budget",
+     "push_subscriptions",
      "solicitacoes_ajuste_ponto",
      "versao_banco",
      "vw_kpi_absenteismo"
@@ -92913,7 +92949,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 101
+    "deps_count": 103
    },
    {
     "path": "",
@@ -92925,6 +92961,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -92939,7 +92976,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 81
+    "deps_count": 83
    },
    {
     "path": "",
@@ -93049,6 +93086,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -93121,7 +93159,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 210
+    "deps_count": 211
    },
    {
     "path": "",
@@ -93145,6 +93183,7 @@
      "homologacoes_rescisao",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "verbas_rescisorias",
      "versao_banco"
     ],
@@ -93166,7 +93205,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 141
+    "deps_count": 142
    },
    {
     "path": "",
@@ -93277,6 +93316,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -93349,7 +93389,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 209
+    "deps_count": 210
    },
    {
     "path": "",
@@ -93423,6 +93463,7 @@
      "pontos_abertos",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -93478,7 +93519,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 152
+    "deps_count": 153
    },
    {
     "path": "",
@@ -93589,6 +93630,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -93661,7 +93703,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 215
+    "deps_count": 216
    },
    {
     "path": "",
@@ -93678,6 +93720,7 @@
      "folha_itens",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -93698,7 +93741,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 113
+    "deps_count": 114
    },
    {
     "path": "",
@@ -93771,6 +93814,7 @@
      "pontos_abertos",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -93828,7 +93872,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 173
+    "deps_count": 174
    },
    {
     "path": "",
@@ -93962,6 +94006,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -94034,7 +94079,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 199
+    "deps_count": 200
    },
    {
     "path": "",
@@ -94145,6 +94190,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -94217,7 +94263,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 214
+    "deps_count": 215
    },
    {
     "path": "",
@@ -94328,6 +94374,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -94400,7 +94447,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 208
+    "deps_count": 209
    },
    {
     "path": "",
@@ -94412,6 +94459,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -94426,7 +94474,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 75
+    "deps_count": 77
    },
    {
     "path": "",
@@ -94505,6 +94553,7 @@
      "pontos_abertos",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "recibos_ferias",
      "registros_ponto",
@@ -94570,7 +94619,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 233
+    "deps_count": 234
    },
    {
     "path": "",
@@ -94580,7 +94629,8 @@
      "colaboradores",
      "empresas",
      "ferias_programacao",
-     "periodos_aquisitivos"
+     "periodos_aquisitivos",
+     "push_subscriptions"
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
@@ -94597,7 +94647,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 52
+    "deps_count": 53
    },
    {
     "path": "",
@@ -94670,6 +94720,7 @@
      "pontos_abertos",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -94725,7 +94776,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 145
+    "deps_count": 146
    },
    {
     "path": "",
@@ -94737,6 +94788,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -94753,7 +94805,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 75
+    "deps_count": 77
    },
    {
     "path": "",
@@ -94788,6 +94840,7 @@
      "pensoes",
      "periodos_aquisitivos",
      "pix_lotes",
+     "push_subscriptions",
      "registros_ponto",
      "rubricas_folha",
      "simulacoes_fiscais",
@@ -94824,7 +94877,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 173
+    "deps_count": 174
    },
    {
     "path": "",
@@ -94853,6 +94906,7 @@
      "pensoes",
      "periodos_aquisitivos",
      "pix_lotes",
+     "push_subscriptions",
      "registros_ponto",
      "rubricas_folha",
      "vales_alimentacao",
@@ -94875,7 +94929,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 112
+    "deps_count": 113
    },
    {
     "path": "",
@@ -94886,6 +94940,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -94901,7 +94956,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 72
+    "deps_count": 74
    },
    {
     "path": "",
@@ -94915,6 +94970,7 @@
      "holerite_distribuicoes",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -94931,7 +94987,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 79
+    "deps_count": 80
    },
    {
     "path": "",
@@ -94943,6 +94999,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "solicitacoes_hora_extra",
      "versao_banco"
     ],
@@ -94960,7 +95017,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 89
+    "deps_count": 90
    },
    {
     "path": "",
@@ -94972,6 +95029,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -94986,7 +95044,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 78
+    "deps_count": 80
    },
    {
     "path": "",
@@ -95030,6 +95088,7 @@
      "ponto_rep_funcionarios",
      "ponto_rep_justificativas",
      "ponto_rep_lotes",
+     "push_subscriptions",
      "relatorios_agendados",
      "rubricas_folha",
      "saved_filters",
@@ -95077,7 +95136,7 @@
      "set_own_default_empresa",
      "vincular_funcionario_relogio"
     ],
-    "deps_count": 101
+    "deps_count": 102
    },
    {
     "path": "",
@@ -95187,6 +95246,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -95259,7 +95319,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 199
+    "deps_count": 200
    },
    {
     "path": "",
@@ -95369,6 +95429,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -95441,7 +95502,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 205
+    "deps_count": 206
    },
    {
     "path": "",
@@ -95450,6 +95511,7 @@
     "tables_transitive": [
      "colaboradores",
      "empresas",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -95464,7 +95526,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 72
+    "deps_count": 73
    },
    {
     "path": "",
@@ -95575,6 +95637,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -95647,7 +95710,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 198
+    "deps_count": 199
    },
    {
     "path": "",
@@ -95758,6 +95821,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -95831,7 +95895,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 224
+    "deps_count": 225
    },
    {
     "path": "",
@@ -95940,6 +96004,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -96012,7 +96077,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 208
+    "deps_count": 209
    },
    {
     "path": "",
@@ -96029,6 +96094,7 @@
      "feedbacks_360_validacoes_potencial",
      "metas_okrs",
      "pdi_plano_desenvolvimento",
+     "push_subscriptions",
      "vw_feedbacks_360_versao"
     ],
     "invokes_transitive": [],
@@ -96045,7 +96111,7 @@
      "pode_gerir_avaliacoes",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 43
+    "deps_count": 44
    },
    {
     "path": "",
@@ -96065,6 +96131,7 @@
      "empresas",
      "ferias",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -96079,7 +96146,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 75
+    "deps_count": 76
    },
    {
     "path": "",
@@ -96188,6 +96255,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -96260,7 +96328,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 213
+    "deps_count": 214
    },
    {
     "path": "",
@@ -96275,6 +96343,7 @@
      "onboarding_kits",
      "periodos_aquisitivos",
      "profiles",
+     "push_subscriptions",
      "tarefas_onboarding",
      "versao_banco"
     ],
@@ -96290,7 +96359,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 95
+    "deps_count": 97
    },
    {
     "path": "",
@@ -96303,6 +96372,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -96317,7 +96387,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 88
+    "deps_count": 89
    },
    {
     "path": "",
@@ -96327,6 +96397,7 @@
      "empresas",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -96342,7 +96413,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 71
+    "deps_count": 73
    },
    {
     "path": "",
@@ -96453,6 +96524,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -96525,7 +96597,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 208
+    "deps_count": 209
    },
    {
     "path": "",
@@ -96663,6 +96735,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -96735,7 +96808,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 200
+    "deps_count": 201
    },
    {
     "path": "",
@@ -96753,6 +96826,7 @@
      "pcs_pesquisa_salarial",
      "pcs_planos",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -96771,7 +96845,7 @@
      "pcs_simular_impacto",
      "set_own_default_empresa"
     ],
-    "deps_count": 84
+    "deps_count": 85
    },
    {
     "path": "",
@@ -96895,6 +96969,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "relatorios_agendados",
@@ -96987,7 +97062,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 209
+    "deps_count": 210
    },
    {
     "path": "",
@@ -96998,6 +97073,7 @@
      "configuracoes_ponto",
      "empresas",
      "ponto_auditoria",
+     "push_subscriptions",
      "registros_ponto"
     ],
     "invokes_transitive": [
@@ -97011,7 +97087,7 @@
      "registrar_batida_ponto",
      "set_own_default_empresa"
     ],
-    "deps_count": 30
+    "deps_count": 31
    },
    {
     "path": "",
@@ -97120,6 +97196,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "solicitacoes_ajuste_ponto",
      "solicitacoes_hora_extra",
@@ -97201,7 +97278,7 @@
      "validar_potencial_avaliacao",
      "verificar_espelho_ponto"
     ],
-    "deps_count": 235
+    "deps_count": 236
    },
    {
     "path": "",
@@ -97272,6 +97349,7 @@
      "portal_notificacoes_settings",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "solicitacoes_hora_extra",
      "sst_regimento_assinaturas",
@@ -97330,7 +97408,7 @@
      "validar_potencial_avaliacao",
      "vincular_colaborador_ao_usuario"
     ],
-    "deps_count": 153
+    "deps_count": 154
    },
    {
     "path": "",
@@ -97446,6 +97524,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -97518,7 +97597,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 251
+    "deps_count": 252
    },
    {
     "path": "",
@@ -97530,6 +97609,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -97544,7 +97624,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 73
+    "deps_count": 74
    },
    {
     "path": "",
@@ -97616,6 +97696,7 @@
      "pontos_abertos",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -97671,7 +97752,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 143
+    "deps_count": 144
    },
    {
     "path": "",
@@ -97784,6 +97865,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "recrutamento_anotacoes",
      "recrutamento_entrevistas",
@@ -97860,7 +97942,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 245
+    "deps_count": 246
    },
    {
     "path": "",
@@ -97871,6 +97953,7 @@
      "log_envio_relatorios",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "relatorios_agendados",
      "versao_banco"
     ],
@@ -97890,7 +97973,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 89
+    "deps_count": 91
    },
    {
     "path": "",
@@ -98001,6 +98084,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -98073,7 +98157,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 200
+    "deps_count": 201
    },
    {
     "path": "",
@@ -98085,6 +98169,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "sst_programas",
      "sst_riscos_ambientais",
      "versao_banco"
@@ -98104,7 +98189,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 94
+    "deps_count": 96
    },
    {
     "path": "",
@@ -98119,6 +98204,7 @@
      "login_attempts",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "rate_limit_logs",
      "security_alerts",
      "versao_banco"
@@ -98137,7 +98223,7 @@
      "sec_audit_policies",
      "set_own_default_empresa"
     ],
-    "deps_count": 71
+    "deps_count": 72
    },
    {
     "path": "",
@@ -98260,6 +98346,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "relatorios_agendados",
@@ -98352,7 +98439,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 211
+    "deps_count": 212
    },
    {
     "path": "",
@@ -98463,6 +98550,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -98535,7 +98623,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 198
+    "deps_count": 199
    },
    {
     "path": "",
@@ -98646,6 +98734,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -98717,7 +98806,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 200
+    "deps_count": 201
    },
    {
     "path": "",
@@ -98828,6 +98917,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -98900,7 +98990,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 280
+    "deps_count": 281
    },
    {
     "path": "",
@@ -99011,6 +99101,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -99083,7 +99174,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 199
+    "deps_count": 200
    },
    {
     "path": "",
@@ -99095,6 +99186,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -99109,7 +99201,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 66
+    "deps_count": 67
    },
    {
     "path": "",
@@ -99219,6 +99311,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "registros_ponto",
      "solicitacoes_hora_extra",
      "sst_cat",
@@ -99290,7 +99383,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 200
+    "deps_count": 201
    },
    {
     "path": "",
@@ -99313,6 +99406,7 @@
      "ferias",
      "notificacoes",
      "periodos_aquisitivos",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -99327,7 +99421,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 73
+    "deps_count": 74
    },
    {
     "path": "",
@@ -99438,6 +99532,7 @@
      "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
+     "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
@@ -99510,7 +99605,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 212
+    "deps_count": 213
    },
    {
     "path": "/auth/callback",
@@ -99540,14 +99635,15 @@
     "component": "LoginPage",
     "tables_transitive": [
      "colaboradores",
-     "empresas"
+     "empresas",
+     "push_subscriptions"
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
      "get_user_roles",
      "log_frontend_error"
     ],
-    "deps_count": 25
+    "deps_count": 29
    },
    {
     "path": "dashboard",
@@ -99560,6 +99656,7 @@
      "exames",
      "notificacoes",
      "pendencias",
+     "push_subscriptions",
      "versao_banco"
     ],
     "invokes_transitive": [
@@ -99574,7 +99671,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 76
+    "deps_count": 78
    }
   ],
   "edge_functions": [
@@ -101013,6 +101110,7 @@
     "tables": [
      "fila_notificacoes",
      "log_envio_relatorios",
+     "push_subscriptions",
      "whatsapp_config"
     ],
     "env": [
@@ -104196,7 +104294,7 @@
   {
    "module": "src",
    "files": 4,
-   "lines": 822,
+   "lines": 827,
    "tables": [],
    "exports": [
     "App.tsx: App"
@@ -104561,7 +104659,7 @@
   {
    "module": "src/contexts",
    "files": 7,
-   "lines": 1015,
+   "lines": 1055,
    "tables": [
     "colaboradores",
     "empresas"
@@ -104993,7 +105091,7 @@
   {
    "module": "src/pages",
    "files": 145,
-   "lines": 51330,
+   "lines": 51329,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -105361,7 +105459,7 @@
   {
    "module": "src/services",
    "files": 198,
-   "lines": 42158,
+   "lines": 42404,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -106010,8 +106108,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 192,
-   "lines": 28064,
+   "files": 196,
+   "lines": 29009,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -106097,6 +106195,7 @@
     "provisao_logs",
     "provisoes_competencia_tributaria",
     "provisoes_mensais",
+    "push_subscriptions",
     "query_telemetry",
     "rate_limit_logs",
     "registros_ponto",
@@ -106126,6 +106225,7 @@
     "aiProvider.ts: AI_CHAT_URL, aiApiKey, AI_NO_THINKING, aiModel",
     "authz.ts: AdminClient, AuthzResult, isAdmin, podeGerirRh, podeGerirPessoas, pertenceAEmpresa",
     "cache.ts: CachePolicy, cachePublic, cachePrivate, cacheNone, computeETag, CacheStats",
+    "circuitBreaker.ts: CircuitState, CircuitOptions, CircuitBreaker, hostDoEndpoint, breakerDoPushService, resetarBreakersDePush",
     "clientIp.ts: getClientIp",
     "contract.ts: StandardErrorResponse, securityHeaders, getCorsHeaders, corsHeaders, enforceOrigin, handlePreflight",
     "csrf.ts: CsrfResult, verifyCsrf, generateCsrfToken",
@@ -106144,6 +106244,7 @@
     "sentry.ts: SentryContext, captureException, withSentry",
     "ssrf-guard.ts: UnsafeUrlError, assertPublicHttpsUrl",
     "trace.ts: TraceContext, getOrCreateTraceId, getTraceContext",
+    "webPush.ts: RS_RECORD, b64uParaBytes, bytesParaB64u, VapidConfig, vapidDoAmbiente, gerarParVapid",
     "colaborador.ts: colaboradorSchema",
     "common.ts: uuidPg, metricasSchema, webhookSchema, healthcheckSchema, cepSchema, cnpjSchema",
     "allowlist.ts: ALLOWLIST_EMPRESA_ENV, ALLOWLIST_CONTENT_ENV, EntradaAllowlist, ConfigAllowlist, ResultadoAllowlist, validarAllowlist",
@@ -106159,9 +106260,7 @@
     "supabaseDeps.ts: TrainingAdminClient, carregarConteudoTreinamento, criarDepsSupabase",
     "types.ts: TrainingContentType, TRAINING_CONTENT_TYPES, TrainingImageArtDirection, TrainingImageRequest, GeneratedTrainingImage, TrainingImageProvider",
     "uuid.ts: UUID_RE, isUuid",
-    "deliveryStatus.ts: AlertEmailDeliveryStatus, alertDeliveryHttpStatus, ALERT_EMAIL_UNAVAILABLE_MESSAGE",
-    "govbrIdentity.ts: GovbrLookups, Resolucao, cpfDoSub, sha256Hex, resolverLogin, validarVinculo",
-    "lockoutContract.ts: LockoutState, parseLockoutState"
+    "deliveryStatus.ts: AlertEmailDeliveryStatus, alertDeliveryHttpStatus, ALERT_EMAIL_UNAVAILABLE_MESSAGE"
    ],
    "docs": [
     "index.ts: Remediação de auditoria (achado E3 / CRÍTICO): • JWT obrigatório (antes: sem autenticação alguma, service_role exposto) • Bucket restrito a uma allowlist de documentos (antes: qualquer bucket) • Remove o parâmetro `fileUrl` livre (antes: SSRF — URL arbitrária repassada como image_url para o gateway …",
@@ -106188,6 +106287,8 @@
     "supabase/functions/_shared/aiProvider.ts",
     "supabase/functions/_shared/authz.ts",
     "supabase/functions/_shared/cache.ts",
+    "supabase/functions/_shared/circuitBreaker.test.ts",
+    "supabase/functions/_shared/circuitBreaker.ts",
     "supabase/functions/_shared/clientIp.test.ts",
     "supabase/functions/_shared/clientIp.ts",
     "supabase/functions/_shared/contract.test.ts",
@@ -106217,6 +106318,8 @@
     "supabase/functions/_shared/ssrf-guard.test.ts",
     "supabase/functions/_shared/ssrf-guard.ts",
     "supabase/functions/_shared/trace.ts",
+    "supabase/functions/_shared/webPush.test.ts",
+    "supabase/functions/_shared/webPush.ts",
     "supabase/functions/_shared/schemas/colaborador.ts",
     "supabase/functions/_shared/schemas/common.ts",
     "supabase/functions/_shared/trainingImages/allowlist.ts",
@@ -106256,11 +106359,7 @@
     "supabase/functions/cache/index.ts",
     "supabase/functions/calcular-13-salario/config.ts",
     "supabase/functions/calcular-13-salario/index.ts",
-    "supabase/functions/calcular-ferias/config.ts",
-    "supabase/functions/calcular-ferias/index.ts",
-    "supabase/functions/calcular-folha/config.ts",
-    "supabase/functions/calcular-folha/e2e_concorrencia.test.ts",
-    "supabase/functions/calcular-folha/index.test.ts"
+    "supabase/functions/calcular-ferias/config.ts"
    ]
   },
   {
@@ -109013,11 +109112,15 @@
     ]
    },
    "push_subscriptions": {
+    "update": [
+     "src/services/pushNotificationService.ts",
+     "supabase/functions/processar-agendamentos/filaNotificacoes.ts"
+    ],
     "ref": [
      "src/services/pushNotificationService.ts"
     ],
-    "update": [
-     "src/services/pushNotificationService.ts"
+    "select": [
+     "supabase/functions/processar-agendamentos/filaNotificacoes.ts"
     ]
    },
    "query_telemetry": {
@@ -111033,6 +111136,9 @@
     "total"
    ],
    "push_subscriptions": [
+    "active",
+    "id",
+    "subscription",
     "user_id"
    ],
    "query_telemetry": [
@@ -116513,6 +116619,11 @@
     "values": "'João Silva', '123.456.789-00', 'joao@email.com', '(11)99999-9999', 'Analista', 'TI', '5000', '01/03/2024', '15/06/1990', '123.45678.90-1', '12.345.678-9',"
    },
    {
+    "file": "supabase/functions/_shared/circuitBreaker.ts",
+    "name": "CircuitState",
+    "values": "CLOSED | OPEN | HALF_OPEN"
+   },
+   {
     "file": "supabase/functions/_shared/idempotency.ts",
     "name": "IdempotencyReason",
     "values": "NEW | REPLAY | KEY_INVALID | KEY_REUSE | IN_PROGRESS | INDETERMINATE | PREVIOUS_FAILURE | STORE_ERROR"
@@ -119911,6 +120022,26 @@
     "msg": "Tabela INSS não homologada para a referência ${referencia}"
    },
    {
+    "file": "supabase/functions/_shared/webPush.ts",
+    "msg": "VAPID_PRIVATE_KEY invalida: esperado escalar P-256 de 32 bytes"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.ts",
+    "msg": "VAPID_PUBLIC_KEY invalida: esperado ponto nao comprimido P-256 de 65 bytes"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.ts",
+    "msg": "WebCrypto nao devolveu o componente privado "
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.ts",
+    "msg": "auth invalido: esperado segredo de 16 bytes"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.ts",
+    "msg": "p256dh invalido: esperado ponto nao comprimido de 65 bytes"
+   },
+   {
     "file": "supabase/functions/_shared/trainingImages/imageValidation.ts",
     "msg": "base64 inválido na resposta do provedor"
    },
@@ -120767,6 +120898,10 @@
    {
     "file": "src/services/pushNotificationService.ts",
     "value": "granted"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.ts",
+    "value": "null"
    },
    {
     "file": "supabase/functions/external-db-bridge/access.ts",
@@ -123444,6 +123579,10 @@
    },
    {
     "file": "src/contexts/AuthContext.tsx",
+    "text": "Ref espelha `user`: `signOut` mantem identidade estavel (nao pode depender de"
+   },
+   {
+    "file": "src/contexts/AuthContext.tsx",
     "text": "H20: o cliente do produto usa a Edge para aplicar rate-limit e lockout"
    },
    {
@@ -124356,6 +124495,14 @@
    },
    {
     "file": "src/services/pushNotificationService.ts",
+    "text": "* Cancela a inscrição push deste navegador. Usado no logout: não pode travar. */"
+   },
+   {
+    "file": "src/services/pushNotificationService.ts",
+    "text": "apenas admins têm policy de SELECT, então ler a chave de lá funcionaria"
+   },
+   {
+    "file": "src/services/pushNotificationService.ts",
     "text": "Request permission"
    },
    {
@@ -124751,6 +124898,14 @@
     "text": "Loader é chamado no máximo 1x por key TTL window."
    },
    {
+    "file": "supabase/functions/_shared/circuitBreaker.ts",
+    "text": "* A chamada pode ser tentada agora? Devolve a geracao da permissao (para"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.ts",
+    "text": "falhas do FCM nao podem bloquear quem entrega no Mozilla. Sem limite de"
+   },
+   {
     "file": "supabase/functions/_shared/clientIp.ts",
     "text": "compartilhado no rate limit — fail-closed, não bypass)."
    },
@@ -124837,6 +124992,18 @@
    {
     "file": "supabase/functions/_shared/sentry.ts",
     "text": "fields to Sentry: they may contain PII. Callers must opt in via `extra`."
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.ts",
+    "text": "* A chave privada vive SOMENTE em variavel de ambiente do runtime das Edge"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.ts",
+    "text": "* Tamanho maximo de registro do RFC 8188 (os navegadores usam 4096). */"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.ts",
+    "text": "service — FCM caido nao pode bloquear entrega no Mozilla."
    },
    {
     "file": "supabase/functions/_shared/schemas/common.ts",
@@ -125625,6 +125792,10 @@
    {
     "file": "supabase/functions/pix-lote/index.ts",
     "text": "era um OU — pertencer à empresa já bastava, e o is_admin apenas somava"
+   },
+   {
+    "file": "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
+    "text": "e aproxima do limite de ~4 KB do Web Push."
    },
    {
     "file": "supabase/functions/processar-agendamentos/index.ts",
@@ -151532,6 +151703,11 @@
     "value": "5"
    },
    {
+    "file": "supabase/functions/_shared/circuitBreaker.ts",
+    "name": "MAX_HOSTS",
+    "value": "20"
+   },
+   {
     "file": "supabase/functions/_shared/contract.ts",
     "name": "DEFAULT_MAX_PAYLOAD_BYTES",
     "value": "256"
@@ -151585,6 +151761,16 @@
     "file": "supabase/functions/_shared/safe-fetch.ts",
     "name": "MAX_REDIRECTS",
     "value": "5"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.ts",
+    "name": "RS_RECORD",
+    "value": "4096"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.ts",
+    "name": "VAPID_SUBJECT_PADRAO",
+    "value": "'https://departamento-pessoal-v3.vercel.app'"
    },
    {
     "file": "supabase/functions/_shared/trainingImages/allowlist.ts",
@@ -162288,6 +162474,36 @@
     "kind": "escreve"
    },
    {
+    "file": "supabase/functions/_shared/circuitBreaker.ts",
+    "field": "state",
+    "value": "CLOSED",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.ts",
+    "field": "state",
+    "value": "OPEN",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.ts",
+    "field": "state",
+    "value": "HALF_OPEN",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.ts",
+    "field": "state",
+    "value": "HALF_OPEN",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.ts",
+    "field": "state",
+    "value": "HALF_OPEN",
+    "kind": "compara"
+   },
+   {
     "file": "supabase/functions/_shared/idempotency.ts",
     "field": "status",
     "value": "in_progress",
@@ -163778,12 +163994,6 @@
    {
     "file": "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
     "field": "status",
-    "value": "falha",
-    "kind": "escreve"
-   },
-   {
-    "file": "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
-    "field": "status",
     "value": "enviado",
     "kind": "escreve"
    },
@@ -163803,6 +164013,36 @@
     "file": "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
     "field": "status",
     "value": "pendente",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
+    "field": "status",
+    "value": "falha",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
+    "field": "status",
+    "value": "falha",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
+    "field": "status",
+    "value": "enviado",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
+    "field": "status",
+    "value": "pendente",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
+    "field": "status",
+    "value": "falha",
     "kind": "escreve"
    },
    {
@@ -166236,6 +166476,12 @@
     "name": "shouldLog",
     "params": "level: LogLevel",
     "body": "return LEVEL_RANK[level] >= LEVEL_RANK[MIN_LEVEL];"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.ts",
+    "name": "gerarParVapid",
+    "params": "",
+    "body": "publicKey: string; privateKey: string"
    },
    {
     "file": "supabase/functions/_shared/trainingImages/allowlist.ts",
@@ -187981,6 +188227,10 @@
    },
    {
     "file": "src/contexts/__tests__/AuthContext.test.tsx",
+    "name": "signOut desativa o push do usuario logado (closure nao pode congelar user)"
+   },
+   {
+    "file": "src/contexts/__tests__/AuthContext.test.tsx",
     "name": "signUp calls supabase.auth.signUp with name in metadata"
    },
    {
@@ -201713,6 +201963,42 @@
    },
    {
     "file": "src/services/__tests__/pushNotificationService.test.ts",
+    "name": "pushNotificationService.getVapidPublicKey"
+   },
+   {
+    "file": "src/services/__tests__/pushNotificationService.test.ts",
+    "name": "lê a chave da variável de ambiente"
+   },
+   {
+    "file": "src/services/__tests__/pushNotificationService.test.ts",
+    "name": "devolve null quando o env está vazio"
+   },
+   {
+    "file": "src/services/__tests__/pushNotificationService.test.ts",
+    "name": "pushNotificationService.hasDeliverableSubscription"
+   },
+   {
+    "file": "src/services/__tests__/pushNotificationService.test.ts",
+    "name": "é true quando a inscrição usa a chave VAPID vigente"
+   },
+   {
+    "file": "src/services/__tests__/pushNotificationService.test.ts",
+    "name": "é false quando a inscrição foi criada com outra chave"
+   },
+   {
+    "file": "src/services/__tests__/pushNotificationService.test.ts",
+    "name": "é false quando a inscrição não tem applicationServerKey"
+   },
+   {
+    "file": "src/services/__tests__/pushNotificationService.test.ts",
+    "name": "é false sem inscrição no navegador"
+   },
+   {
+    "file": "src/services/__tests__/pushNotificationService.test.ts",
+    "name": "é false quando não há chave pública configurada"
+   },
+   {
+    "file": "src/services/__tests__/pushNotificationService.test.ts",
     "name": "pushNotificationService.subscribeUser"
    },
    {
@@ -201725,6 +202011,26 @@
    },
    {
     "file": "src/services/__tests__/pushNotificationService.test.ts",
+    "name": "não cria inscrição sem chave pública VAPID"
+   },
+   {
+    "file": "src/services/__tests__/pushNotificationService.test.ts",
+    "name": "pushNotificationService.unsubscribeCurrentDevice (logout)"
+   },
+   {
+    "file": "src/services/__tests__/pushNotificationService.test.ts",
+    "name": "desativa a inscrição deste dispositivo e não toca nos outros"
+   },
+   {
+    "file": "src/services/__tests__/pushNotificationService.test.ts",
+    "name": "sai sem tocar no banco quando não há service worker registrado"
+   },
+   {
+    "file": "src/services/__tests__/pushNotificationService.test.ts",
+    "name": "não trava o logout quando a limpeza demora mais que o teto"
+   },
+   {
+    "file": "src/services/__tests__/pushNotificationService.test.ts",
     "name": "pushNotificationService.unsubscribeUser"
    },
    {
@@ -201734,6 +202040,10 @@
    {
     "file": "src/services/__tests__/pushNotificationService.test.ts",
     "name": "calls unsubscribe and returns true on success"
+   },
+   {
+    "file": "src/services/__tests__/pushNotificationService.test.ts",
+    "name": "desativa apenas a inscrição deste dispositivo"
    },
    {
     "file": "src/services/__tests__/pushNotificationService.test.ts",
@@ -206868,6 +207178,58 @@
     "name": "aiProvider: chamadas à DeepSeek desligam o modo thinking"
    },
    {
+    "file": "supabase/functions/_shared/circuitBreaker.test.ts",
+    "name": "circuito comeca fechado e permanece fechado sob sucesso"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.test.ts",
+    "name": "abre no limiar de falhas e recusa chamadas enquanto aberto"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.test.ts",
+    "name": "falha isolada nao abre o circuito (acumulado zera no primeiro sucesso)"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.test.ts",
+    "name": "apos resetTimeoutMs libera uma sonda (HALF_OPEN)"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.test.ts",
+    "name": "HALF_OPEN fecha so depois de successThreshold sucessos"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.test.ts",
+    "name": "uma falha em HALF_OPEN reabre o circuito na hora"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.test.ts",
+    "name": "resultado de permissao antiga e ignorado apos o circuito abrir"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.test.ts",
+    "name": "reset fecha o circuito e limpa o contador"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.test.ts",
+    "name": "sucesso em circuito fechado nao descarta as falhas paralelas"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.test.ts",
+    "name": "hostDoEndpoint extrai o host e devolve null para URL invalida"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.test.ts",
+    "name": "breaker do push e por provedor: FCM caido nao bloqueia o Mozilla"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.test.ts",
+    "name": "endpoint invalido cai no breaker geral em vez de criar host novo"
+   },
+   {
+    "file": "supabase/functions/_shared/circuitBreaker.test.ts",
+    "name": "acima do teto de hosts o mais antigo sai e o novo tem circuito proprio"
+   },
+   {
     "file": "supabase/functions/_shared/clientIp.test.ts",
     "name": "getClientIp: usa o ÚLTIMO elemento de x-forwarded-for (peer real)"
    },
@@ -207106,6 +207468,54 @@
    {
     "file": "supabase/functions/_shared/ssrf-guard.test.ts",
     "name": "assertPublicHttpsUrl recusa hostname bloqueado explicitamente"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.test.ts",
+    "name": "cifrarPush: payload cifrado volta inteiro pelas chaves da assinatura"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.test.ts",
+    "name": "cifrarPush: salt e chave efemera mudam a cada chamada"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.test.ts",
+    "name": "cifrarPush: assinatura malformada falha em vez de gerar corpo invalido"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.test.ts",
+    "name": "criarVapidJwt: assinatura ES256 verificavel e claims corretos"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.test.ts",
+    "name": "criarVapidJwt: aud segue a origem do endpoint, nao a do app"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.test.ts",
+    "name": "vapidDoAmbiente: null sem par completo e sem vazar segredo no retorno parcial"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.test.ts",
+    "name": "base64url: ida e volta preserva os bytes"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.test.ts",
+    "name": "enviarWebPush: circuito aberto falha rapido sem tocar a rede"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.test.ts",
+    "name": "enviarWebPush: provedor aberto nao bloqueia o provedor saudavel"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.test.ts",
+    "name": "enviarWebPush: 410 e inscricao expirada e nao abre o circuito"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.test.ts",
+    "name": "enviarWebPush: 5xx repetido abre o circuito"
+   },
+   {
+    "file": "supabase/functions/_shared/webPush.test.ts",
+    "name": "enviarWebPush: entrega 2xx registra sucesso e mantem o circuito fechado"
    },
    {
     "file": "supabase/functions/alertas-dp/deliveryStatus.test.ts",
@@ -234781,6 +235191,10 @@
     "limit": "50"
    },
    {
+    "file": "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
+    "limit": "10"
+   },
+   {
     "file": "supabase/functions/processar-ponto/index.ts",
     "limit": "1"
    },
@@ -238794,14 +239208,17 @@
       "compara:src/hooks/useNavigationGuard.tsx"
      ],
      "OPEN": [
-      "compara:src/lib/circuitBreaker.ts"
+      "compara:src/lib/circuitBreaker.ts",
+      "compara:supabase/functions/_shared/circuitBreaker.ts"
      ],
      "HALF_OPEN": [
       "compara:src/lib/circuitBreaker.ts",
-      "compara:src/pages/AdminDiagnosticoMigracaoPage.tsx"
+      "compara:src/pages/AdminDiagnosticoMigracaoPage.tsx",
+      "compara:supabase/functions/_shared/circuitBreaker.ts"
      ],
      "CLOSED": [
-      "compara:src/pages/AdminDiagnosticoMigracaoPage.tsx"
+      "compara:src/pages/AdminDiagnosticoMigracaoPage.tsx",
+      "compara:supabase/functions/_shared/circuitBreaker.ts"
      ],
      "already_sent": [
       "compara:src/services/esocialService.ts"
@@ -271493,7 +271910,7 @@
   },
   "src/vite-env.d.ts": {
    "path": "src/vite-env.d.ts",
-   "lines": 18,
+   "lines": 23,
    "rule_comments": [
     "* 'true' somente se o provider Google estiver habilitado no Supabase Auth. */"
    ],
@@ -296116,7 +296533,7 @@
   },
   "src/contexts/AuthContext.tsx": {
    "path": "src/contexts/AuthContext.tsx",
-   "lines": 426,
+   "lines": 438,
    "exports": [
     "type AppRole",
     "interface User",
@@ -296204,6 +296621,7 @@
    "rule_comments": [
     "Restrito\" — o usuario legitimo acha que perdeu permissao. Com ele, a guarda",
     "* Ver `RolesStatus`: `error` NAO significa \"sem permissao\". */",
+    "Ref espelha `user`: `signOut` mantem identidade estavel (nao pode depender de",
     "H20: o cliente do produto usa a Edge para aplicar rate-limit e lockout",
     "Check if MFA challenge is required (user enrolled TOTP → nextLevel = aal2)"
    ],
@@ -296256,7 +296674,7 @@
   },
   "src/contexts/__tests__/AuthContext.test.tsx": {
    "path": "src/contexts/__tests__/AuthContext.test.tsx",
-   "lines": 266,
+   "lines": 294,
    "is_test": true,
    "role_checks": [
     "admin"
@@ -296278,6 +296696,7 @@
     "signIn exibe mensagem estruturada da proteção de login, sem mascará-la como credencial inválida",
     "signIn exige MFA quando o nextLevel é aal2",
     "signOut calls supabase.auth.signOut",
+    "signOut desativa o push do usuario logado (closure nao pode congelar user)",
     "signUp calls supabase.auth.signUp with name in metadata",
     "signUp rejeita senha fraca antes de chamar o backend",
     "resetPassword calls supabase.auth.resetPasswordForEmail",
@@ -307604,7 +308023,7 @@
   },
   "src/pages/PerfilPage.tsx": {
    "path": "src/pages/PerfilPage.tsx",
-   "lines": 516,
+   "lines": 515,
    "exports": [
     "function PerfilPage"
    ],
@@ -315483,11 +315902,15 @@
   },
   "src/services/pushNotificationService.ts": {
    "path": "src/services/pushNotificationService.ts",
-   "lines": 104,
+   "lines": 194,
    "exports": [
     "const pushNotificationService"
    ],
    "tables": [
+    {
+     "table": "push_subscriptions",
+     "op": "update"
+    },
     {
      "table": "push_subscriptions",
      "op": "ref"
@@ -315514,6 +315937,8 @@
     "granted"
    ],
    "rule_comments": [
+    "* Cancela a inscrição push deste navegador. Usado no logout: não pode travar. */",
+    "apenas admins têm policy de SELECT, então ler a chave de lá funcionaria",
     "Request permission"
    ]
   },
@@ -318707,8 +319132,14 @@
   },
   "src/services/__tests__/pushNotificationService.test.ts": {
    "path": "src/services/__tests__/pushNotificationService.test.ts",
-   "lines": 170,
+   "lines": 326,
    "is_test": true,
+   "params": [
+    {
+     "name": "CHAVE",
+     "value": "'AQID'"
+    }
+   ],
    "tests": [
     "pushNotificationService.isSupported",
     "returns false when serviceWorker is absent",
@@ -318716,12 +319147,27 @@
     "pushNotificationService.getSubscription",
     "returns result from pushManager.getSubscription",
     "returns null when no subscription exists",
+    "pushNotificationService.getVapidPublicKey",
+    "lê a chave da variável de ambiente",
+    "devolve null quando o env está vazio",
+    "pushNotificationService.hasDeliverableSubscription",
+    "é true quando a inscrição usa a chave VAPID vigente",
+    "é false quando a inscrição foi criada com outra chave",
+    "é false quando a inscrição não tem applicationServerKey",
+    "é false sem inscrição no navegador",
+    "é false quando não há chave pública configurada",
     "pushNotificationService.subscribeUser",
     "returns true on successful subscription",
     "throws when notification permission is denied",
+    "não cria inscrição sem chave pública VAPID",
+    "pushNotificationService.unsubscribeCurrentDevice (logout)",
+    "desativa a inscrição deste dispositivo e não toca nos outros",
+    "sai sem tocar no banco quando não há service worker registrado",
+    "não trava o logout quando a limpeza demora mais que o teto",
     "pushNotificationService.unsubscribeUser",
     "returns true when no subscription exists",
     "calls unsubscribe and returns true on success",
+    "desativa apenas a inscrição deste dispositivo",
     "returns false on error"
    ]
   },
@@ -323636,6 +324082,92 @@
     "const DEFAULT_TTL_MS = 5 * 60 * 1000; // 5 min"
    ]
   },
+  "supabase/functions/_shared/circuitBreaker.test.ts": {
+   "path": "supabase/functions/_shared/circuitBreaker.test.ts",
+   "lines": 137,
+   "is_test": true,
+   "errors": [
+    "breaker recusou a chamada",
+    "fcm deveria permitir antes do limiar"
+   ],
+   "rule_comments": [
+    "um dispositivo nao pode invalidar as falhas dos envios que ainda estao em voo,",
+    "Teto de hosts: quem chega depois do 20o nao pode compartilhar o circuito geral"
+   ],
+   "tests": [
+    "circuito comeca fechado e permanece fechado sob sucesso",
+    "abre no limiar de falhas e recusa chamadas enquanto aberto",
+    "falha isolada nao abre o circuito (acumulado zera no primeiro sucesso)",
+    "apos resetTimeoutMs libera uma sonda (HALF_OPEN)",
+    "HALF_OPEN fecha so depois de successThreshold sucessos",
+    "uma falha em HALF_OPEN reabre o circuito na hora",
+    "resultado de permissao antiga e ignorado apos o circuito abrir",
+    "reset fecha o circuito e limpa o contador",
+    "sucesso em circuito fechado nao descarta as falhas paralelas",
+    "hostDoEndpoint extrai o host e devolve null para URL invalida",
+    "breaker do push e por provedor: FCM caido nao bloqueia o Mozilla",
+    "endpoint invalido cai no breaker geral em vez de criar host novo",
+    "acima do teto de hosts o mais antigo sai e o novo tem circuito proprio"
+   ],
+   "side_effects": [
+    "fcm."
+   ]
+  },
+  "supabase/functions/_shared/circuitBreaker.ts": {
+   "path": "supabase/functions/_shared/circuitBreaker.ts",
+   "lines": 167,
+   "exports": [
+    "type CircuitState",
+    "interface CircuitOptions",
+    "class CircuitBreaker",
+    "function hostDoEndpoint",
+    "function breakerDoPushService",
+    "function resetarBreakersDePush"
+   ],
+   "enums": [
+    {
+     "name": "CircuitState",
+     "values": "CLOSED | OPEN | HALF_OPEN"
+    }
+   ],
+   "params": [
+    {
+     "name": "MAX_HOSTS",
+     "value": "20"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "state",
+     "value": "CLOSED",
+     "kind": "compara"
+    },
+    {
+     "field": "state",
+     "value": "OPEN",
+     "kind": "compara"
+    },
+    {
+     "field": "state",
+     "value": "HALF_OPEN",
+     "kind": "compara"
+    },
+    {
+     "field": "state",
+     "value": "HALF_OPEN",
+     "kind": "compara"
+    },
+    {
+     "field": "state",
+     "value": "HALF_OPEN",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "* A chamada pode ser tentada agora? Devolve a geracao da permissao (para",
+    "falhas do FCM nao podem bloquear quem entrega no Mozilla. Sem limite de"
+   ]
+  },
   "supabase/functions/_shared/clientIp.test.ts": {
    "path": "supabase/functions/_shared/clientIp.test.ts",
    "lines": 42,
@@ -324373,6 +324905,92 @@
     "interface TraceContext",
     "function getOrCreateTraceId",
     "function getTraceContext"
+   ]
+  },
+  "supabase/functions/_shared/webPush.test.ts": {
+   "path": "supabase/functions/_shared/webPush.test.ts",
+   "lines": 319,
+   "is_test": true,
+   "errors": [
+    "circuito fechou antes do limiar"
+   ],
+   "role_checks": [
+    "null"
+   ],
+   "rule_comments": [
+    "host — FCM caido nao pode bloquear entrega no Mozilla — e 404/410 sao da"
+   ],
+   "calc_fns": [
+    {
+     "name": "gerarAssinaturaDeTeste",
+     "params": "",
+     "body": "const ua = await crypto.subtle.generateKey({ name: \"ECDH\", namedCurve: \"P-256\" }, true, [\"deriveBits\"]); const p256dh = bytesParaB64u(new Uint8Array(await crypto.subtle.exportKey(\"raw\", ua.publicKey))); const auth = bytesParaB64u(crypto.getRandomValues(new Uint8Array(16))); return { ua, p256dh, auth };"
+    }
+   ],
+   "tests": [
+    "cifrarPush: payload cifrado volta inteiro pelas chaves da assinatura",
+    "cifrarPush: salt e chave efemera mudam a cada chamada",
+    "cifrarPush: assinatura malformada falha em vez de gerar corpo invalido",
+    "criarVapidJwt: assinatura ES256 verificavel e claims corretos",
+    "criarVapidJwt: aud segue a origem do endpoint, nao a do app",
+    "vapidDoAmbiente: null sem par completo e sem vazar segredo no retorno parcial",
+    "base64url: ida e volta preserva os bytes",
+    "enviarWebPush: circuito aberto falha rapido sem tocar a rede",
+    "enviarWebPush: provedor aberto nao bloqueia o provedor saudavel",
+    "enviarWebPush: 410 e inscricao expirada e nao abre o circuito",
+    "enviarWebPush: 5xx repetido abre o circuito",
+    "enviarWebPush: entrega 2xx registra sucesso e mantem o circuito fechado"
+   ],
+   "side_effects": [
+    "fcm."
+   ]
+  },
+  "supabase/functions/_shared/webPush.ts": {
+   "path": "supabase/functions/_shared/webPush.ts",
+   "lines": 248,
+   "exports": [
+    "const RS_RECORD",
+    "function b64uParaBytes",
+    "function bytesParaB64u",
+    "interface VapidConfig",
+    "function vapidDoAmbiente",
+    "function gerarParVapid",
+    "function criarVapidJwt",
+    "function cifrarPush",
+    "interface ResultadoPush",
+    "function enviarWebPush"
+   ],
+   "errors": [
+    "VAPID_PRIVATE_KEY invalida: esperado escalar P-256 de 32 bytes",
+    "VAPID_PUBLIC_KEY invalida: esperado ponto nao comprimido P-256 de 65 bytes",
+    "WebCrypto nao devolveu o componente privado ",
+    "auth invalido: esperado segredo de 16 bytes",
+    "p256dh invalido: esperado ponto nao comprimido de 65 bytes"
+   ],
+   "params": [
+    {
+     "name": "RS_RECORD",
+     "value": "4096"
+    },
+    {
+     "name": "VAPID_SUBJECT_PADRAO",
+     "value": "'https://departamento-pessoal-v3.vercel.app'"
+    }
+   ],
+   "role_checks": [
+    "null"
+   ],
+   "rule_comments": [
+    "* A chave privada vive SOMENTE em variavel de ambiente do runtime das Edge",
+    "* Tamanho maximo de registro do RFC 8188 (os navegadores usam 4096). */",
+    "service — FCM caido nao pode bloquear entrega no Mozilla."
+   ],
+   "calc_fns": [
+    {
+     "name": "gerarParVapid",
+     "params": "",
+     "body": "publicKey: string; privateKey: string"
+    }
    ]
   },
   "supabase/functions/_shared/schemas/colaborador.ts": {
@@ -331005,7 +331623,7 @@
   },
   "supabase/functions/processar-agendamentos/filaNotificacoes.ts": {
    "path": "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
-   "lines": 127,
+   "lines": 201,
    "exports": [
     "interface FilaResumo",
     "function drenarFilaNotificacoes"
@@ -331022,6 +331640,14 @@
     {
      "table": "fila_notificacoes",
      "op": "update"
+    },
+    {
+     "table": "push_subscriptions",
+     "op": "select"
+    },
+    {
+     "table": "push_subscriptions",
+     "op": "update"
     }
    ],
    "table_cols": {
@@ -331032,6 +331658,12 @@
      "tentativas",
      "tipo",
      "titulo",
+     "user_id"
+    ],
+    "push_subscriptions": [
+     "active",
+     "id",
+     "subscription",
      "user_id"
     ]
    },
@@ -331076,11 +331708,6 @@
     },
     {
      "field": "status",
-     "value": "falha",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
      "value": "enviado",
      "kind": "escreve"
     },
@@ -331100,6 +331727,31 @@
      "kind": "escreve"
     },
     {
+     "field": "status",
+     "value": "falha",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "falha",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "enviado",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "pendente",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "falha",
+     "kind": "escreve"
+    },
+    {
      "field": "tipo",
      "value": "push",
      "kind": "compara"
@@ -331110,8 +331762,14 @@
      "kind": "compara"
     }
    ],
+   "rule_comments": [
+    "e aproxima do limite de ~4 KB do Web Push."
+   ],
    "side_effects": [
     "sendEmail"
+   ],
+   "pagination": [
+    "10"
    ]
   },
   "supabase/functions/processar-agendamentos/index.ts": {
@@ -337239,10 +337897,30 @@
   }
  },
  "git": {
-  "sha": "132ece15f84e955927d5eb6849ccd1e3ff919445",
+  "sha": "2489b550341cd96ea8e7a495ec8e18c14d128b70",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "2489b55",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "feat: entrega real de Web Push (VAPID) na fila de notificacoes (#853)",
+    "files": [
+     ".env.example",
+     "src/contexts/AuthContext.tsx",
+     "src/contexts/__tests__/AuthContext.test.tsx",
+     "src/pages/PerfilPage.tsx",
+     "src/services/__tests__/pushNotificationService.test.ts",
+     "src/services/pushNotificationService.ts",
+     "src/vite-env.d.ts",
+     "supabase/functions/_shared/circuitBreaker.test.ts",
+     "supabase/functions/_shared/circuitBreaker.ts",
+     "supabase/functions/_shared/webPush.test.ts",
+     "supabase/functions/_shared/webPush.ts",
+     "supabase/functions/processar-agendamentos/filaNotificacoes.ts"
+    ]
+   },
    {
     "sha": "132ece1",
     "date": "2026-11-23",
@@ -337571,16 +338249,6 @@
     "files": [
      "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md"
     ]
-   },
-   {
-    "sha": "bfd9db6",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: gerador de rotas resolve index.ts com separador nativo (inventario saia diferente no Windows) (#820)",
-    "files": [
-     "scripts/inventario/gerar-rotas.mjs",
-     "scripts/tests/inventario-rotas.test.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -337609,6 +338277,10 @@
     3
    ],
    [
+    "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
+    2
+   ],
+   [
     "src/services/workflowService.ts",
     2
    ],
@@ -337633,35 +338305,31 @@
     2
    ],
    [
-    "src/components/colaboradores/ColaboradorDirectoryGrid.tsx",
+    ".env.example",
     1
    ],
    [
-    "src/components/colaboradores/ColaboradorTable.tsx",
+    "src/contexts/AuthContext.tsx",
     1
    ],
    [
-    "src/hooks/use-stagger-cards.ts",
+    "src/contexts/__tests__/AuthContext.test.tsx",
     1
    ],
    [
-    "src/services/colaboradorDetalhesService.ts",
+    "src/pages/PerfilPage.tsx",
     1
    ],
    [
-    "supabase/functions/_shared/outboundDelivery.test.ts",
+    "src/services/__tests__/pushNotificationService.test.ts",
     1
    ],
    [
-    "supabase/functions/_shared/outboundDelivery.ts",
+    "src/services/pushNotificationService.ts",
     1
    ],
    [
-    "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
-    1
-   ],
-   [
-    "supabase/functions/processar-agendamentos/config.ts",
+    "src/vite-env.d.ts",
     1
    ]
   ]
