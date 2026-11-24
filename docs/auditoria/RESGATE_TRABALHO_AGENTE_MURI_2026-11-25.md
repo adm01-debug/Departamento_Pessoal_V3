@@ -46,16 +46,49 @@ Divergentes por pasta: 713 `src/components`, 163 `src/services`, 137 `src/hooks`
 
 ## 5. Resgatado até aqui
 
-- **#870** — "Ver todos" dos Talentos em destaque abre a janela completa (aba Nine-Box). 11 arquivos: `NineBoxTalentosDialog` novo, `onVerTodos` no card, perfis de saída (`CASCADE_SAIDA_RAPIDA`) no `cascade-motion`, 4 arquivos de teste novos. Verificado: `tsc --noEmit` 0 erros, 322 testes em 18 arquivos verdes, `audit:ratchet-any-tests` e `audit:ratchet-warnings` sem regressão.
+Do port do Muri (`296a01873`) saíram **289 arquivos novos** em `src/`. A branch da **#872** entrega hoje **119** deles, todos compilando, testados e sem código morto:
 
-## 6. Fila de resgate (valor × risco)
+- **#870** — "Ver todos" dos Talentos em destaque abre a janela completa (aba Nine-Box). 11 arquivos: `NineBoxTalentosDialog` novo, `onVerTodos` no card, perfis de saída (`CASCADE_SAIDA_RAPIDA`) no `cascade-motion`, 4 testes novos. `tsc` 0, 322 testes verdes, ratchets sem regressão.
+- **#872 camada 1** — 21 arquivos: 11 módulos de regra pura (ponto, turnos, horas extras, banco de horas) + 10 testes.
+- **#872 camada 2** — 200 arquivos: serviços (automação, CNAB, provisões, Domínio/Altendata, Metabase), utils (eSocial SST/periódicos, geofencing, equipe), esquema `schemas/ponto.ts`, calculadora de folha, hooks, mocks com teste e os componentes de UI que a main **já consome** (Nine-Box, cascade, central de ajustes, estrutura/organograma, dossiê).
+- Poda de escopo nesta rodada: 102 arquivos de UI sem consumidor saíram da PR (não da história — continuam no commit do port e nomeados abaixo) e 27 arquivos de camada de negócio foram mantidos com as correções de `any` reaplicadas.
+- Validação: `tsc --noEmit` 0 erros; suíte completa **722 arquivos / 8.408 testes verdes** (10 skipped); os 3 ratchets (`ratchet-any`, `ratchet-any-tests`, `ratchet-warnings`) sem regressão; auditorias estruturais verdes.
 
-1. **Ponto / geofencing** — `src/utils/pontoGeofencing.ts`, `src/hooks/usePontoGeofencing.ts`, `PontoGeofencingPainel`, `PontoGeoMapa`, `PontoGeoRegistros` + testes. Entra junto com os consumidores; isolado vira código morto.
-2. **Turnos** — `src/components/turnos/*` (30 arquivos novos) + `turnoService`, grade semanal e seletor de cor.
-3. **Banco de horas** — `src/components/banco-horas/*` (11 arquivos) + `bancoHorasComum.exportarBancoHoras`; depende dos primitivos de UI do port.
-4. **Horas extras** — refatora `HorasExtrasPage` em componentes (`horas-extras/*`, 19 arquivos com 14 testes). Exige revisar a página modificada, não substituí-la.
-5. **104 `supabase/migrations` divergentes** — DDL: exige autorização explícita antes de qualquer `apply` (as 316 versões do ledger sem fonte local já têm placeholder no-op desde a #865).
+## 6. Fila de resgate — 170 arquivos ainda fora (104 fontes + 66 testes)
 
+### 6.1 Aditivo pequeno em arquivo existente — destrava 18 módulos
+
+Cada linha é a mudança exata no arquivo de destino; feito o aditivo, o módulo do port entra junto com o teste dele.
+
+- `src/components/ui/popover.tsx` — exportar `PopoverAnchor` (re-export do Radix; o pacote já é dependência) → destrava `src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx`, `src/components/ponto/CentralAuditoriaCabecalho.tsx`
+- `leaflet` + `@types/leaflet` — **dependência nova, precisa da sua decisão** (só `PontoGeoMapa.tsx` usa) → destrava `src/components/ponto/PontoGeoMapa.tsx`
+- O restante dos erros é tipagem local dos próprios arquivos do port (ex.: `Parameter 'etapa' implicitly has an 'any' type`), corrigível na integração.
+
+### 6.2 UI sem consumidor — 54 componentes que exigem a tela/tab correspondente
+
+Compilam e têm teste, mas a tela que os usa, na versão do Muri, é arquivo que a main **já tem com outra implementação** (divergência medida; substituir = regressão): `PontoPage` +338/−431, `BancoHorasPage` +111/−193, `HorasExtrasPage` +147/−189, `AuditoriaPage` +289/−1477, `RecrutamentoPage` +462/−395, `PesquisasClimaPage` +198/−711, `TurnosPage` (a main tem implementação inline).
+
+- `src/components/admissoes/` — ChipFiltroAuditoria.tsx
+- `src/components/banco-horas/` — AlertaSaldoNegativoCard.tsx, BancoHorasKpis.tsx, EvolucaoSaldoCard.tsx, SituacaoSaldosCard.tsx, TotaisHorasCard.tsx, exportarBancoHoras.ts
+- `src/components/calculadoraRescisao/` — ResultadoRescisao.tsx
+- `src/components/colaborador-detalhes/` — CampoInfo.tsx, ComplianceTab.tsx
+- `src/components/colaboradores/` — AnimatedDossieTabs.tsx
+- `src/components/dashboard/` — DepartmentsCard.tsx, HeadcountOverviewCard.tsx, MapaEstruturaCard.tsx, QuickActionsMenu.tsx, TipoVinculoCard.tsx, anelDonut.tsx, entradaDashboard.ts
+- `src/components/esocial/` — ESocialAIInsights.tsx
+- `src/components/folha/` — FGTSDigitalDashboard.tsx
+- `src/components/horas-extras/` — AprovacoesPendentes.tsx, CabecalhoSolicitacoes.tsx, HistoricoSolicitacoes.tsx, HorasExtrasKpis.tsx, NovaSolicitacaoDialog.tsx, SolicitacaoDetalhesDialog.tsx
+- `src/components/metabase/` — MetabaseEmbed.tsx
+- `src/components/pesquisas/` — CardPesquisa.tsx, IndicadorPesquisa.tsx, PilulaFiltroPesquisa.tsx
+- `src/components/ponto/` — CentralAjustesBuscaFiltros.tsx, CentralAjustesCabecalho.tsx, CentralAjustesFiltros.tsx, CentralAjustesPaginacao.tsx, CentralAjustesPainel.tsx, CentralAjustesTabela.tsx, EditarEscalaDialog.tsx, PontoBancoHorasCard.tsx, PontoEquipeStatusCard.tsx, PontoFechamentoCard.tsx, PontoFluxoEntradasDica.tsx, PontoHorasSemanaCard.tsx, PontoIndicadoresKpi.tsx, PontoPendenciasCard.tsx, PontoUltimasBatidasCard.tsx, acoesCabecalhoPonto.ts, jornadaEtapas.ts
+- `src/components/premiacoes/` — PainelAuditoriaRoi.tsx
+- `src/components/recrutamento/` — AnalyticsBarraFiltros.tsx, AnalyticsVariacao.tsx, NovaVagaDialog.tsx, OrigemLogotipo.tsx, analyticsFunilAnimacao.ts
+- `src/components/ui/` — timelineReveal.ts
+
+Ficam fora também 14 assets de banco (`src/assets/banks/`) — o próprio `src/lib/bankBrand.ts` documenta que a main usa os PNGs de produção e a versão do Muri trazia 304 KB a mais —, 9 mocks sem teste que os consuma e `src/validators/esocialValidators.ts`.
+
+### 6.3 Testes-especificação
+
+Dos 66 testes que ficaram fora, a maioria é a especificação das mudanças de 6.1/6.2 (ex.: régua global das barras em 1200 ms, entrada dos cards, placeholder do Login, pílula do `ColaboradorViewSwitcher`, ordem dos widgets, exports novos de `analyticsComum.ts`). Eles voltam junto com o arquivo que os destrava.
 ## 7. Auditoria das refs remotas
 
 - `origin/pr/304` … `origin/pr/321` (9 refs): **todas as PRs estão `MERGED`**. O conteúdo está na main via _squash-merge_, por isso `git merge-base --is-ancestor` dá falso negativo. Provas por `git log origin/main --grep='(#N)'`: 304→`e8febd257`, 315→`57054a5ff`, 316→`231cdb74b`, 320→`a90a4feaf`, 321→`529a8d6c5`, 319→`e1a18efd7` (squash de #309+#313+#317+#319).
