@@ -40,6 +40,19 @@ interface AnalyticsPainelProps {
   tom?: TomAnalytics;
   className?: string;
   contentClassName?: string;
+  /**
+   * Excecao ao titulo padrao do casco, para quem precisa de outro degrau
+   * tipografico (o painel de vagas pede 15px para acompanhar o de atencao).
+   */
+  titleClassName?: string;
+  /** Excecao ao subtitulo padrao, pelo mesmo motivo do `titleClassName`. */
+  subtitleClassName?: string;
+  /**
+   * Repassa o `onAnimationComplete` do card — o FIM da entrada da cascata.
+   * E a fonte primaria de `useEntradaCardConcluida()`: a coreografia interna
+   * (contadores, barras) espera a entrada externa estabilizar.
+   */
+  aoConcluirEntrada?: () => void;
 }
 
 export function AnalyticsPainel({
@@ -52,11 +65,15 @@ export function AnalyticsPainel({
   tom = 'primary',
   className,
   contentClassName,
+  titleClassName,
+  subtitleClassName,
+  aoConcluirEntrada,
 }: AnalyticsPainelProps) {
   const tons = TONS[tom];
   return (
     <MotionCard
       {...entradaCard(index)}
+      onAnimationComplete={aoConcluirEntrada}
       data-analytics-painel={title}
       className={cn(
         'relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border-border/40 bg-card/70 shadow-card',
@@ -74,10 +91,19 @@ export function AnalyticsPainel({
             <Icon className="h-3.5 w-3.5" aria-hidden />
           </span>
           <div className="min-w-0">
-            <CardTitle className="font-display text-[13px] font-semibold leading-tight tracking-tight">
+            <CardTitle
+              className={cn(
+                'font-display text-[13px] font-semibold leading-tight tracking-tight',
+                titleClassName
+              )}
+            >
               {title}
             </CardTitle>
-            {subtitle && <CardDescription className="mt-0.5 text-[10.5px] leading-snug">{subtitle}</CardDescription>}
+            {subtitle && (
+              <CardDescription className={cn('mt-0.5 text-[10.5px] leading-snug', subtitleClassName)}>
+                {subtitle}
+              </CardDescription>
+            )}
           </div>
         </div>
         {action && <div className="shrink-0">{action}</div>}

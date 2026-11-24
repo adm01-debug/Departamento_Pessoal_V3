@@ -38,6 +38,31 @@ export const batidasPontoService = {
     if (error) throw error;
     return (result || []) as unknown as BatidaComColaborador[];
   },
+  /**
+   * Batidas de TODA a empresa numa janela de datas — usado pelo mapa de
+   * geofencing (`usePontoGeofencing`), que precisa da empresa inteira e nao de
+   * um colaborador so (isso e o `listar`). Mesmo isolamento de tenant e mesmo
+   * join do `listarPorData`; apenas sem o filtro de um dia.
+   */
+  async listarPorPeriodo(
+    empresaId: string,
+    dataInicio: string,
+    dataFim: string
+  ): Promise<BatidaComColaborador[]> {
+    if (!empresaId) throw new Error('empresa_id obrigatorio para isolamento de tenant');
+    if (!dataInicio || !dataFim) throw new Error('intervalo de datas obrigatorio para listar batidas');
+
+    const { data, error } = await supabase
+      .from('batidas_ponto')
+      .select('*, colaborador:colaboradores!batidas_ponto_colaborador_id_fkey(nome_completo, foto_url)')
+      .eq('empresa_id', empresaId)
+      .gte('data', dataInicio)
+      .lte('data', dataFim)
+      .order('data')
+      .order('ordem');
+    if (error) throw error;
+    return (data || []) as unknown as BatidaComColaborador[];
+  },
   async registrar(d: TablesInsert<'batidas_ponto'>): Promise<BatidaPonto> {
     const { data, error } = await supabase
       .from('batidas_ponto')

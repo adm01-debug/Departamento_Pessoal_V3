@@ -11,6 +11,15 @@ export type EscalaDoDia = Tables<'escalas_trabalho'> & {
   turno: Pick<Tables<'turnos'>, 'id' | 'nome' | 'horario_inicio' | 'horario_fim' | 'cor'> | null;
 };
 
+/** Escala com o cabecalho do colaborador (nome + departamento) e do turno, para o calendario de Turnos. */
+export type EscalaDoPeriodo = Tables<'escalas_trabalho'> & {
+  colaborador: Pick<Tables<'colaboradores'>, 'nome_completo' | 'departamento'> | null;
+  turno: Pick<Tables<'turnos'>, 'nome' | 'horario_inicio' | 'horario_fim' | 'cor'> | null;
+};
+
+/** Colaborador ativo, no minimo que a grade de Turnos precisa (sem PII). */
+export type MembroDaEquipe = Pick<Tables<'colaboradores'>, 'id' | 'nome_completo' | 'departamento'>;
+
 export const turnoService = {
   async listarTurnos(empresaId: string): Promise<Tables<'turnos'>[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
@@ -120,5 +129,43 @@ export const turnoService = {
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de escala foi retornado.');
     return data;
+  },
+
+  /**
+   * Escalas da empresa numa janela de datas — o calendario (semana ou mes) nao
+   * cabe em `listarEscalas(empresaId, data?)`, que resolve UM dia. O
+   * `limit(5000)` e teto de seguranca: 300 pessoas x 31 dias ~ 9.300 linhas,
+   * entao e o filtro de periodo que mantem a consulta no tamanho esperado.
+   */
+  async listarEscalasPeriodo(empresaId: string, inicio: string, fim: string): Promise<EscalaDoPeriodo[]> {
+    if (!empresaId) throw new Error('empresa_id obrigatorio para isolamento de tenant');
+
+    const { data, error } = await supabase
+      .from('escalas_trabalho')
+      .select(
+        'id, data, status, colaborador_id, turno_id, colaborador:colaboradores(nome_completo, departamento), turno:turnos(nome, horario_inicio, horario_fim, cor)'
+      )
+      .eq('empresa_id', empresaId)
+      .gte('data', inicio)
+      .lte('data', fim)
+      .order('data')
+      .limit(5000);
+    if (error) throw error;
+    return (data || []) as unknown as EscalaDoPeriodo[];
+  },
+
+  /** Equipe ativa da empresa — as linhas do calendario e o denominador do KPI de escalados. */
+  async listarEquipe(empresaId: string): Promise<MembroDaEquipe[]> {
+    if (!empresaId) throw new Error('empresa_id obrigatorio para isolamento de tenant');
+
+    const { data, error } = await supabase
+      .from('colaboradores')
+      .select('id, nome_completo, departamento')
+      .eq('empresa_id', empresaId)
+      .eq('status', 'ativo')
+      .order('nome_completo')
+      .limit(1000);
+    if (error) throw error;
+    return (data || []) as unknown as MembroDaEquipe[];
   },
 };

@@ -84,6 +84,10 @@ interface MetricCardProps {
    * então nenhum call site existente muda de aparência.
    */
   decimals?: number;
+  /** Variante DENSE de faixa (58-68 px): padding de 10 px, `min-h-[62px]`, selo
+   * de variacao na MESMA linha do titulo e linha de apoio apenas em `sr-only`.
+   * Opt-in: default `false` nao altera nenhum call site existente. */
+  compact?: boolean;
 }
 
 const defaultRoutes: Record<string, string> = {
@@ -110,6 +114,7 @@ export function MetricCard({
   vividRed = false,
   dense = false,
   decimals = 0,
+  compact = false,
 }: MetricCardProps) {
   const isPositive = trend && trend.value >= 0;
   const target = route ?? defaultRoutes[title];
@@ -123,6 +128,71 @@ export function MetricCard({
     tone === 'destructive' && vividRed
       ? 'bg-[hsl(var(--destructive-vivid)/0.1)] text-[hsl(var(--destructive-vivid))]'
       : toneStyles[tone];
+
+  if (compact) {
+    return (
+      <MotionCard
+        custom={index}
+        variants={cardVariants}
+        initial="hidden"
+        animate="visible"
+        whileHover={{ y: -2, transition: { duration: 0.2 } }}
+        className={cn(
+          'group relative h-full min-h-[62px] overflow-hidden border border-border/60 hover:border-primary/40',
+          'transition-all duration-500 rounded-xl',
+          target && 'cursor-pointer',
+          className
+        )}
+        onClick={() => {
+          if (target) window.location.assign(target);
+        }}
+      >
+        <CardContent className="relative flex h-full items-center gap-2 px-2.5 py-2">
+          <div className={cn('grid h-9 w-9 shrink-0 place-items-center rounded-[10px]', chipTone)}>
+            <Icon className="h-4 w-4" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1">
+              <p className="flex min-w-0 items-center gap-1 text-[10.5px] leading-tight tracking-wide text-muted-foreground normal-case">
+                <span className="truncate">{title}</span>
+                {tooltip && (
+                  <span className="shrink-0" onClick={(e) => e.stopPropagation()}>
+                    <InfoTooltip content={tooltip} />
+                  </span>
+                )}
+              </p>
+              {trend && (
+                <span
+                  className={cn(
+                    'ml-auto inline-flex shrink-0 items-center rounded-full px-1.5 py-px text-[9.5px] font-semibold tabular-nums',
+                    isPositive ? 'bg-success/15 text-success' : `bg-destructive/15 ${red}`
+                  )}
+                >
+                  {isPositive ? <ArrowUpRight className="h-2.5 w-2.5" /> : <ArrowDownRight className="h-2.5 w-2.5" />}
+                  {Math.abs(trend.value)}%
+                </span>
+              )}
+            </div>
+            <div className="mt-0.5 text-[21px] leading-none font-semibold tracking-tight text-foreground tabular-nums">
+              {rawValue !== undefined ? (
+                <AnimatedNumber
+                  value={rawValue}
+                  decimals={decimals}
+                  format={
+                    formatFn ||
+                    (typeof value === 'string' && value.includes('R$') ? (n) => formatCurrency(n, decimals) : undefined)
+                  }
+                />
+              ) : (
+                value
+              )}
+            </div>
+            {description && <span className="sr-only">{description}</span>}
+          </div>
+        </CardContent>
+      </MotionCard>
+    );
+  }
 
   return (
     <MotionCard

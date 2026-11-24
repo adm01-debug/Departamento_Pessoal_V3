@@ -19,7 +19,7 @@ import { AnimatedNumber } from '@/components/dashboard/AnimatedNumber';
 import { MotionCard, entradaCard } from '@/components/ui/entrada-cards';
 import { cn } from '@/lib/utils';
 import type { CandidatoRow, CandidaturaComRelacoes, VagaRow } from '@/types/recrutamento';
-import { construirAnalytics, type KpiRecrutamento } from './analyticsComum';
+import { construirAnalytics, construirDetalheVagas, type KpiRecrutamento } from './analyticsComum';
 import { AnalyticsFunil } from './AnalyticsFunil';
 import { AnalyticsEvolucao } from './AnalyticsEvolucao';
 import { AnalyticsOrigens } from './AnalyticsOrigens';
@@ -195,6 +195,17 @@ export function AnalyticsRecrutamento({
     () => construirAnalytics({ candidaturas, vagas, candidatos }),
     [candidaturas, vagas, candidatos]
   );
+  /**
+   * DETALHAMENTO DA JANELA "VER TODAS". Sai da MESMA base do card e parte de
+   * `construirDesempenhoVagas`, entao candidatos, contratacoes, conversao e
+   * ordem sao identicos aos do resumo. So o que a janela acrescenta — situacao,
+   * departamento, "em processo", etapas e tempo medio — vem de campos que a
+   * pagina ja carrega. Nenhuma consulta nova.
+   */
+  const detalhesVagas = useMemo(
+    () => construirDetalheVagas(vagas, candidaturas, analytics.referencia),
+    [vagas, candidaturas, analytics.referencia]
+  );
   // Sem nenhum registro não existe "data de referência": o módulo usaria o
   // relógio do navegador, e o selo afirmaria uma base que não foi lida.
   const temBase = candidaturas.length + vagas.length + candidatos.length > 0;
@@ -274,7 +285,7 @@ export function AnalyticsRecrutamento({
             <AnalyticsTempo tempos={analytics.tempos} index={7} />
             <AnalyticsAtencao atencao={analytics.atencao} index={8} />
             <div className="h-full md:col-span-2 xl:col-span-1">
-              <AnalyticsVagas vagas={analytics.vagas} index={9} />
+              <AnalyticsVagas vagas={analytics.vagas} detalhes={detalhesVagas} index={9} />
             </div>
           </div>
 
