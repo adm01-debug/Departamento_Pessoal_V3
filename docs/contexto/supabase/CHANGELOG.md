@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-24 14:15 UTC
+
+- **functions** alterado (1): `public.agendar_dreno_fila_notificacoes()`
+
 ## 2026-11-24 13:15 UTC
 
 - **functions** adicionado (1): `public.agendar_dreno_fila_notificacoes()`

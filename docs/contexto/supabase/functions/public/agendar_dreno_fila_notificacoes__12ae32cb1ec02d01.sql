@@ -2,7 +2,7 @@ CREATE OR REPLACE FUNCTION public.agendar_dreno_fila_notificacoes()
  RETURNS text
  LANGUAGE plpgsql
  SECURITY DEFINER
- SET search_path TO 'pg_catalog', 'public'
+ SET search_path TO 'pg_catalog', 'public', 'extensions', 'net'
 AS $function$
 DECLARE
   v_proc text;
