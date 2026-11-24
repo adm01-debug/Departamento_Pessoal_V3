@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import type { PontoNineBox } from '@/components/avaliacao/nineBoxComum';
 
@@ -82,19 +82,26 @@ const RANKING = [
 ];
 
 describe('NineBoxTalentosDialog — a MESMA janela de "Pendências"', () => {
-  it('monta véu, casca e conteúdo com a receita do `AnimatedCascadeDialog`', () => {
+  it('monta véu, casca e conteúdo com a receita do `AnimatedCascadeDialog`', async () => {
     const { container } = render(<NineBoxTalentosDialog aberto onOpenChange={() => {}} ranking={RANKING} />);
+    // A montagem passa pelo AnimatePresence: em máquina lenta o conteúdo entra
+    // um tick depois do render, então cada consulta ao DOM espera aparecer.
+    const achar = (sel: string) =>
+      waitFor(() => {
+        const el = container.querySelector(sel);
+        if (!el) throw new Error(`não montou ainda: ${sel}`);
+        return el;
+      });
     // Véu: mesmas classes da referência (escurecimento + blur juntos).
-    expect(container.querySelector('.bg-black\\/60')).toBeTruthy();
-    expect(container.querySelector('.backdrop-blur-sm')).toBeTruthy();
+    await achar('.bg-black\\/60');
+    await achar('.backdrop-blur-sm');
     // Casca: a caixa que nasce quadrada e estica, ancorada no TOPO.
-    const shell = container.querySelector('div[style*="transform-origin: top center"]') as HTMLElement;
-    expect(shell).toBeTruthy();
+    const shell = (await achar('div[style*="transform-origin: top center"]')) as HTMLElement;
     // Largura compacta padrão da referência (`max-w-[460px]`) — a mesma do
     // popup "Pendências", não uma largura própria.
     expect(shell.className).toContain('max-w-[460px]');
     // X de fechar com o rótulo acessível da referência.
-    expect(screen.getByText('Fechar')).toBeInTheDocument();
+    expect(await screen.findByText('Fechar')).toBeInTheDocument();
   });
 
   it('tem o título do card e o ícone de destaque', () => {
