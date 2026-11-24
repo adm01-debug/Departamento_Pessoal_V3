@@ -1,13 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { Tables, Insertable } from '@/integrations/supabase/database.types';
-import { validateTablePayload } from '@/schemas/validate';
-
-type SolicitacaoComColaborador = Tables<'solicitacoes_hora_extra'> & {
-  colaborador: Pick<Tables<'colaboradores'>, 'nome_completo'> | null;
-};
-
 export const horaExtraService = {
-  async listar(empresaId: string): Promise<SolicitacaoComColaborador[]> {
+  async listar(empresaId: string): Promise<any[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     let query = supabase
@@ -17,83 +10,48 @@ export const horaExtraService = {
     query = query.eq('empresa_id', empresaId);
     const { data, error } = await query;
     if (error) throw error;
-    return (data as SolicitacaoComColaborador[]) || [];
-  },
+    return data || [];
 
-  async criar(d: Insertable<'solicitacoes_hora_extra'>): Promise<Tables<'solicitacoes_hora_extra'>> {
-    const { data, error } = await supabase
-      .from('solicitacoes_hora_extra')
-      .insert(validateTablePayload('solicitacoes_hora_extra', d, 'horaExtraService:solicitacoes_hora_extra'))
-      .select()
-      .maybeSingle();
+  },
+  
+  async criar(d: any): Promise<any> {
+    
+    const { data, error } = await supabase.from('solicitacoes_hora_extra').insert(d).select().maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de solicitação de hora extra foi retornado.');
     return data;
+  
   },
-
-  async aprovar(
-    id: string,
-    aprovadoPor: string,
-    empresaId: string,
-    obs?: string
-  ): Promise<Tables<'solicitacoes_hora_extra'>> {
+  
+  async aprovar(id: string, aprovadoPor: string, empresaId: string, obs?: string): Promise<any> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('solicitacoes_hora_extra')
-      .update(
-        validateTablePayload(
-          'solicitacoes_hora_extra',
-          {
-            status: 'aprovada',
-            aprovado_por: aprovadoPor,
-            aprovado_em: new Date().toISOString(),
-            observacoes_aprovador: obs,
-          },
-          'horaExtraService:solicitacoes_hora_extra'
-        )
-      )
-      .eq('id', id)
-      .eq('empresa_id', empresaId)
-      .select()
-      .maybeSingle();
+      .update({ status: 'aprovada', aprovado_por: aprovadoPor, aprovado_em: new Date().toISOString(), observacoes_aprovador: obs })
+      .eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de solicitação foi retornado.');
     return data;
+
   },
 
-  async rejeitar(
-    id: string,
-    aprovadoPor: string,
-    empresaId: string,
-    obs?: string
-  ): Promise<Tables<'solicitacoes_hora_extra'>> {
+  async rejeitar(id: string, aprovadoPor: string, empresaId: string, obs?: string): Promise<any> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('solicitacoes_hora_extra')
-      .update(
-        validateTablePayload(
-          'solicitacoes_hora_extra',
-          {
-            status: 'rejeitada',
-            aprovado_por: aprovadoPor,
-            aprovado_em: new Date().toISOString(),
-            observacoes_aprovador: obs,
-          },
-          'horaExtraService:solicitacoes_hora_extra'
-        )
-      )
-      .eq('id', id)
-      .eq('empresa_id', empresaId)
-      .select()
-      .maybeSingle();
+      .update({ status: 'rejeitada', aprovado_por: aprovadoPor, aprovado_em: new Date().toISOString(), observacoes_aprovador: obs })
+      .eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de solicitação foi retornado.');
     return data;
+
   },
 
   async excluir(id: string, empresaId: string): Promise<void> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { error } = await supabase.from('solicitacoes_hora_extra').delete().eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
+
   },
 };
+

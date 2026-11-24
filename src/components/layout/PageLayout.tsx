@@ -7,6 +7,21 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Breadcrumbs } from './Breadcrumbs';
 
+/**
+ * Largura útil do conteúdo das páginas.
+ *
+ * Antes existia aqui um teto fixo (`max-w-[1400px] mx-auto`): em telas largas
+ * (1600px+) o conteúdo parava em 1400px e o `mx-auto` distribuía o resto como
+ * vão morto nas duas laterais — lado direito do `main` vazio, cards estreitos e
+ * a sensação de interface "reduzida/centralizada". A área útil agora é 100% do
+ * que o shell oferece (`main` menos o respiro de `p-page`), então cards, grids e
+ * tabelas acompanham a largura da janela em qualquer monitor. Páginas que
+ * realmente precisam de coluna curta (formulário, chat, importação) continuam
+ * declarando seu próprio `max-w-* mx-auto` no conteúdo — o teto por página é
+ * decisão local, não do shell.
+ */
+const PAGE_WIDTH = 'space-y-6 w-full';
+
 interface PageLayoutProps {
   children: React.ReactNode;
   title?: string;
@@ -18,6 +33,16 @@ interface PageLayoutProps {
   gradient?: string;
   /** Override the default back behavior. Pass false to hide the back button. */
   backTo?: string | false;
+  /**
+   * Animação de ENTRADA do container da página. Default `true` (comportamento de
+   * sempre). Com `false`, o conteúdo entra já no estado final — `opacity: 1` e
+   * `transform: none` desde o 1º frame, sem fade nem subida do bloco inteiro.
+   * Usado pela Auditoria (`AuditoriaPage`), cujo ÚNICO movimento de entrada deve
+   * ser a cascata das linhas da tabela (`ui/table-row-reveal.ts`): se o
+   * container da página animasse, o card + cabeçalho + tabela piscariam juntos,
+   * competindo com a cascata. Não muda nada para as demais páginas.
+   */
+  animate?: boolean;
 }
 
 export function PageLayout({
@@ -30,6 +55,7 @@ export function PageLayout({
   icon,
   gradient = 'from-primary to-primary-glow',
   backTo,
+  animate = true,
 }: PageLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,13 +82,8 @@ export function PageLayout({
     );
   }
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className={cn('space-y-6 max-w-[1400px] mx-auto', className)}
-    >
+  const conteudo = (
+    <>
       {(title || actions) && (
         <div className="space-y-2">
           <Breadcrumbs className="mb-2" />
@@ -99,6 +120,24 @@ export function PageLayout({
         </div>
       )}
       {children}
+    </>
+  );
+
+  // Sem animação de container (ver prop `animate`): entra no estado final desde
+  // o 1º frame — sem fade, sem subida. O wrapper é um `div` puro para não deixar
+  // nenhum `motion` na árvore (a única fonte de movimento fica nas linhas).
+  if (!animate) {
+    return <div className={cn(PAGE_WIDTH, className)}>{conteudo}</div>;
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35 }}
+      className={cn(PAGE_WIDTH, className)}
+    >
+      {conteudo}
     </motion.div>
   );
 }

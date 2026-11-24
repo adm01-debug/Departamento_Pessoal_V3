@@ -16,8 +16,15 @@
  * largura de UMA coluna. Assim `translate3d(100%,0,0)` (100% da PRÓPRIA largura)
  * cai exatamente sobre a coluna seguinte. `willChange: transform` promove a
  * camada a GPU e evita microtravadas durante o slide.
+ *
+ * `prefers-reduced-motion`: pelo caminho ÚNICO do sistema (`lib/motionMode` →
+ * `useMovimentoReduzido()`), a transição de `transform` é desligada e o contorno
+ * SALTA direto para a coluna ativa — sem slide, sem espera. Para quem não pediu
+ * movimento reduzido nada muda: mesma duração (420ms) e mesma curva
+ * (cubic-bezier(0.22, 1, 0.36, 1)) da referência da Jornada de Onboarding.
  */
 import { cn } from '@/lib/utils';
+import { useMovimentoReduzido } from '@/lib/motionMode';
 
 interface SlidingIndicatorProps {
   /** Índice da opção ATIVA (0-based): quantas colunas deslizar. */
@@ -29,6 +36,10 @@ interface SlidingIndicatorProps {
 }
 
 export function SlidingIndicator({ atual, total = 2, className }: SlidingIndicatorProps) {
+  // Movimento reduzido pelo caminho único do sistema: sem slide, o contorno
+  // apenas aparece na coluna ativa (a cor/borda continua sinalizando o estado).
+  const reduzirMovimento = useMovimentoReduzido();
+
   return (
     <div
       aria-hidden
@@ -36,7 +47,7 @@ export function SlidingIndicator({ atual, total = 2, className }: SlidingIndicat
       style={{
         width: `calc(${(100 / total).toFixed(4)}% - 4px)`,
         transform: `translate3d(${atual * 100}%, 0, 0)`,
-        transition: 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1)',
+        transition: reduzirMovimento ? 'none' : 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1)',
         willChange: 'transform',
       }}
     />

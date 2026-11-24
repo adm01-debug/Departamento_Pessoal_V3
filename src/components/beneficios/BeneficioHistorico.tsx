@@ -54,7 +54,7 @@ export function BeneficioHistorico({ beneficioId, colaboradorId }: BeneficioHist
           {movimentacoes && movimentacoes.length > 0 ? (
             movimentacoes.map((mov) => (
               <TableRow key={mov.id} className="hover:bg-accent/20 transition-colors">
-                <TableCell className="text-[10px] font-mono">
+                <TableCell className="text-numeric text-[10px]">
                   {format(new Date(mov.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
                 </TableCell>
                 <TableCell>

@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -12,24 +11,20 @@ vi.mock('@/hooks/useEmpresas', () => ({
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, disabled, ...props }: { children?: ReactNode; disabled?: boolean; [key: string]: unknown }) => (
-    <button disabled={disabled} {...props}>
-      {children}
-    </button>
+  Button: ({ children, disabled, ...props }: any) => (
+    <button disabled={disabled} {...props}>{children}</button>
   ),
 }));
 
 vi.mock('@/components/ui/dropdown-menu', () => ({
-  DropdownMenu: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DropdownMenuContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DropdownMenuItem: ({ children, onClick }: { children?: ReactNode; onClick?: () => void }) => (
-    <div onClick={onClick}>{children}</div>
-  ),
-  DropdownMenuTrigger: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DropdownMenu: ({ children }: any) => <div>{children}</div>,
+  DropdownMenuContent: ({ children }: any) => <div>{children}</div>,
+  DropdownMenuItem: ({ children, onClick }: any) => <div onClick={onClick}>{children}</div>,
+  DropdownMenuTrigger: ({ children }: any) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
+  Badge: ({ children }: any) => <span>{children}</span>,
 }));
 
 import { EmpresaSelector } from '../empresa/EmpresaSelector';
@@ -50,10 +45,10 @@ describe('EmpresaSelector', () => {
     const { useEmpresas } = await import('@/hooks/useEmpresas');
     vi.mocked(useEmpresas).mockReturnValueOnce({
       userEmpresas: [],
-      todasEmpresas: [{ id: 'e1', nome_fantasia: 'Tech Corp', razao_social: 'Tech Corp LTDA' } as never],
-      empresaAtual: { id: 'e1', nome_fantasia: 'Tech Corp', razao_social: 'Tech Corp LTDA' } as never,
+      todasEmpresas: [{ id: 'e1', nome_fantasia: 'Tech Corp', razao_social: 'Tech Corp LTDA' } as any],
+      empresaAtual: { id: 'e1', nome_fantasia: 'Tech Corp', razao_social: 'Tech Corp LTDA' } as any,
       trocarEmpresa: vi.fn(),
-    } as never);
+    } as any);
     render(<EmpresaSelector />);
     expect(screen.getByText('Tech Corp')).toBeInTheDocument();
   });
@@ -63,12 +58,12 @@ describe('EmpresaSelector', () => {
     vi.mocked(useEmpresas).mockReturnValueOnce({
       userEmpresas: [],
       todasEmpresas: [
-        { id: 'e1', nome_fantasia: 'Empresa A', razao_social: 'A LTDA' } as never,
-        { id: 'e2', nome_fantasia: 'Empresa B', razao_social: 'B LTDA' } as never,
+        { id: 'e1', nome_fantasia: 'Empresa A', razao_social: 'A LTDA' } as any,
+        { id: 'e2', nome_fantasia: 'Empresa B', razao_social: 'B LTDA' } as any,
       ],
-      empresaAtual: { id: 'e1', nome_fantasia: 'Empresa A', razao_social: 'A LTDA' } as never,
+      empresaAtual: { id: 'e1', nome_fantasia: 'Empresa A', razao_social: 'A LTDA' } as any,
       trocarEmpresa: vi.fn(),
-    } as never);
+    } as any);
     render(<EmpresaSelector />);
     expect(screen.getAllByText('Empresa A').length).toBeGreaterThanOrEqual(1);
   });
@@ -78,12 +73,12 @@ describe('EmpresaSelector', () => {
     vi.mocked(useEmpresas).mockReturnValueOnce({
       userEmpresas: [],
       todasEmpresas: [
-        { id: 'e1', nome_fantasia: 'Empresa A', razao_social: 'A LTDA' } as never,
-        { id: 'e2', nome_fantasia: 'Empresa B', razao_social: 'B LTDA' } as never,
+        { id: 'e1', nome_fantasia: 'Empresa A', razao_social: 'A LTDA' } as any,
+        { id: 'e2', nome_fantasia: 'Empresa B', razao_social: 'B LTDA' } as any,
       ],
       empresaAtual: null,
       trocarEmpresa: vi.fn(),
-    } as never);
+    } as any);
     render(<EmpresaSelector />);
     expect(screen.getByText('Selecionar')).toBeInTheDocument();
   });
@@ -91,16 +86,14 @@ describe('EmpresaSelector', () => {
   it('shows Padrão badge for default empresa', async () => {
     const { useEmpresas } = await import('@/hooks/useEmpresas');
     vi.mocked(useEmpresas).mockReturnValueOnce({
-      userEmpresas: [
-        { empresa_id: 'e1', empresa: { id: 'e1', nome_fantasia: 'Empresa A' }, is_default: true },
-      ] as never,
+      userEmpresas: [{ empresa_id: 'e1', empresa: { id: 'e1', nome_fantasia: 'Empresa A' }, is_default: true }] as any,
       todasEmpresas: [
-        { id: 'e1', nome_fantasia: 'Empresa A', razao_social: 'A LTDA' } as never,
-        { id: 'e2', nome_fantasia: 'Empresa B', razao_social: 'B LTDA' } as never,
+        { id: 'e1', nome_fantasia: 'Empresa A', razao_social: 'A LTDA' } as any,
+        { id: 'e2', nome_fantasia: 'Empresa B', razao_social: 'B LTDA' } as any,
       ],
       empresaAtual: null,
       trocarEmpresa: vi.fn(),
-    } as never);
+    } as any);
     render(<EmpresaSelector />);
     expect(screen.getByText('Padrão')).toBeInTheDocument();
   });
@@ -110,12 +103,12 @@ describe('EmpresaSelector', () => {
     vi.mocked(useEmpresas).mockReturnValueOnce({
       userEmpresas: [],
       todasEmpresas: [
-        { id: 'e1', nome_fantasia: 'Empresa A', razao_social: 'A LTDA' } as never,
-        { id: 'e2', nome_fantasia: 'Empresa B', razao_social: 'B LTDA' } as never,
+        { id: 'e1', nome_fantasia: 'Empresa A', razao_social: 'A LTDA' } as any,
+        { id: 'e2', nome_fantasia: 'Empresa B', razao_social: 'B LTDA' } as any,
       ],
       empresaAtual: null,
       trocarEmpresa: vi.fn(),
-    } as never);
+    } as any);
     render(<EmpresaSelector />);
     const adminBadges = screen.getAllByText('Acesso Admin');
     expect(adminBadges.length).toBeGreaterThanOrEqual(1);
@@ -125,10 +118,10 @@ describe('EmpresaSelector', () => {
     const { useEmpresas } = await import('@/hooks/useEmpresas');
     vi.mocked(useEmpresas).mockReturnValueOnce({
       userEmpresas: [],
-      todasEmpresas: [{ id: 'e1', nome_fantasia: null, razao_social: 'Razão Social SA' } as never],
-      empresaAtual: { id: 'e1', nome_fantasia: null, razao_social: 'Razão Social SA' } as never,
+      todasEmpresas: [{ id: 'e1', nome_fantasia: null, razao_social: 'Razão Social SA' } as any],
+      empresaAtual: { id: 'e1', nome_fantasia: null, razao_social: 'Razão Social SA' } as any,
       trocarEmpresa: vi.fn(),
-    } as never);
+    } as any);
     render(<EmpresaSelector />);
     expect(screen.getByText('Razão Social SA')).toBeInTheDocument();
   });

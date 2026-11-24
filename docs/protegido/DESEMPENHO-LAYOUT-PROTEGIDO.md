@@ -145,6 +145,95 @@ altura e edição com F5; capturas em `tmp-feedbacks-edicao/`).
 ciclo, ação primária), os filtros, os widgets laterais, a timeline/trilho, as
 animações de entrada e as demais abas.
 
+### 2.7 Donut do card "Feedbacks por Status" (AUTORIZADA em 29/10/2026)
+
+Pedido explícito do usuário: **"a porcentagem está muito grande, precisamos
+diminuir a porcentagem e a escrita 'concluídos'"** — o miolo do donut estava
+apertado, com o número e o rótulo encostando no anel verde.
+
+| Elemento                                                                                  | Antes                                  | Depois                                            |
+| ----------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------- |
+| Percentual central (`CLASSE_VALOR_DONUT`, nos três estados: valor final, contagem e `0%`) | `text-2xl` (24 px)                     | `text-lg` (18 px)                                 |
+| Rótulo "concluídos" do miolo                                                              | `text-[11px] uppercase tracking-wider` | `text-[9px] font-medium uppercase tracking-wider` |
+
+Medições no navegador com o CSS real (`html` em 125%, miolo do anel com 104 px de
+diâmetro): o número caiu de **76,7 × 30 px** para **57,6 × 22,5 px**; o rótulo,
+de **90,8 px** de largura para **75,8 px** — antes ele era mais largo que a corda
+do anel na altura em que fica (~89,7 px) e as letras atravessavam o verde; agora
+sobram ~10 px de folga de cada lado.
+
+Nada mais do card mudou: donut de 140 px (`innerRadius` 52 / `outerRadius` 70,
+`paddingAngle` 2), cores, legendas (`Concluídos` · `Pendentes` · `Total`),
+cabeçalho, ação "Ver feedbacks" e a régua de revelação (donut e percentual em
+1.400 ms; cascata das legendas em 250 · 430 · 610 ms) seguem intactos.
+`AnaliticosDesempenho.tsx` **não** tem âncoras no baseline — a proteção efetiva
+aqui é este registro mais a revisão humana.
+
+Provas: `src/components/__tests__/PerformanceDashboard.test.tsx` e
+`src/components/__tests__/DesempenhoEntradaCascade.test.tsx` (render e cascata),
+typecheck, lint, `npm run verificar:layout` e `npm run verificar:tipografia`.
+
+### 2.8 Ordem dos widgets da coluna lateral de Feedbacks (AUTORIZADA em 29/10/2026)
+
+Pedido explícito do usuário: **"o card 'Dica' deve ser o primeiro, ele deve vir
+primeiro que o card 'Distribuição de notas'"**.
+
+| Widget                | Antes | Depois |
+| --------------------- | ----- | ------ |
+| Dica + CTA            | 3º    | **1º** |
+| Distribuição de notas | 1º    | 2º     |
+| Tipos de feedback     | 2º    | 3º     |
+
+Só a **ordem** mudou. Nenhuma classe, cor, dimensão, texto, ícone, dado ou ação
+foi tocada: os três blocos são os mesmos, com o mesmo conteúdo e a mesma pele
+(`CardResumo` nos dois widgets de dado e o card destacado em `primary/5` na
+Dica). O CTA `Novo Feedback` continua dentro da Dica — ele viaja junto com o
+card para o topo da coluna.
+
+A cascata de entrada acompanhou a ordem de leitura: `Dica = indiceBase`,
+`Distribuição = indiceBase + 1`, `Tipos = indiceBase + 2` (antes a Dica recebia
+`indiceBase + 2`). Sem isso a coluna animaria de baixo para cima. O
+`xl:pt-[30px]` de `FeedbacksTab` (alinhamento com o primeiro card da timeline)
+passou a valer para a Dica, que agora é o widget do topo — os números
+`DESLOCAMENTO_LATERAL` seguem os mesmos.
+
+**Não alterado:** cards da timeline, banner "Foco agora", busca/filtros, chips,
+modais, animação própria da lista de feedbacks (`animacaoFeedbacks.ts`), mocks e
+funcionalidades (salvamento, RPCs, aprovação).
+
+Provas: `src/components/__tests__/FeedbacksResumoOrdem.test.tsx` (ordem no DOM +
+índices da cascata na mesma sequência),
+`src/components/__tests__/FeedbacksAlinhamentoLateral.test.tsx` (deslocamento da
+coluna), `npm run verificar:layout` e `npm run verificar:tipografia`.
+
+### 2.9 Seletor de ciclo único (AUTORIZADA em 29/10/2026)
+
+Pedido explícito do usuário: **"estamos com 2 botões para ver ciclos isso deixa a
+informação redundante, deixe apenas o botão do topo que está ao lado de 'novo
+ciclo'"**.
+
+| Onde                                                               | Antes                                                                              | Depois                         |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------- | ------------------------------ |
+| `AvaliacaoPage` — chrome da área, ao lado de `Novo Ciclo` (`§2.4`) | seletor de ciclo (`h-11 … sm:w-[230px]`)                                           | **seletor de ciclo — o ÚNICO** |
+| `NineBoxFiltros` — barra de busca/filtros do Nine-Box              | 2º `Select` "Ciclo em visão" (`h-9 … sm:w-[200px]`, com a opção "Todos os ciclos") | **removido**                   |
+
+Os dois controles escreviam no MESMO estado (`cicloSelecionadoId` da página): o
+`NineBoxTab` só repassava `cicloId`/`onCicloId` para o `NineBoxFiltros`. Retirado
+o duplicado, a aba continua lendo o ciclo do seletor do topo — trocar o ciclo lá
+recalcula KPIs, banner "Foco agora", matriz e widgets, e o botão "Comparar
+ciclos" (que deriva o ciclo ANTERIOR da ordem cronológica) segue intacto.
+
+**Não alterado:** busca, selects de Departamento/Cargo, "Mais filtros", "Limpar
+filtros", botão "Comparar ciclos", KPIs, banner, matriz, coluna lateral, modais e
+a cascata de entrada (o `NineBoxFiltros` mantém o `indice`; só a composição
+interna da barra encolheu). Nenhuma consulta, RPC, mock ou regra de classificação
+foi tocada.
+
+Provas: `src/components/__tests__/NineBoxCicloUnico.test.tsx` (a barra de filtros
+tem exatamente dois `combobox` — Departamento e Cargo — e nenhum seletor de
+ciclo; "Comparar ciclos" continua lá e dispara o comparativo), typecheck, lint,
+`npm run verificar:layout` e `npm run verificar:tipografia`.
+
 ---
 
 ## 3. Como a proteção funciona (e seus limites)
@@ -201,29 +290,3 @@ Nenhuma destas foi alterada — são o motivo de a área continuar operando:
 - Consultas, hooks e `mesclar(mock, real)` da `AvaliacaoPage` (mocks continuam
   visíveis e **nunca** são gravados — a guarda de ID fictício `mock-*` segue);
 - Mocks/fixtures e flags de ambiente **inalterados**.
-
----
-
-## Nota de resgate (2026-11-16)
-
-Este baseline foi congelado na branch `muri` em 2026-10-21 e só chegou à `main`
-agora. Ao rodar o verificador contra a `main` atual, **118 das 121 âncoras
-visuais continuavam intactas** — o layout aprovado sobreviveu aos três meses de
-correções funcionais.
-
-As três que divergiram **não são regressão de layout**: são assinaturas que a
-`main` ampliou para ganhar funcionalidade. O baseline foi atualizado para o
-texto atual, preservando a intenção original de cada âncora:
-
-| arquivo                                     | âncora           | o que mudou na `main`                                                   |
-| ------------------------------------------- | ---------------- | ----------------------------------------------------------------------- |
-| `src/components/avaliacao/FeedbackCard.tsx` | `somente-edicao` | passou a oferecer a ação `ver` quando recebe `onVer`, mantendo `editar` |
-| `src/components/avaliacao/PdiTab.tsx`       | `componente`     | ganhou a prop `onExcluir` (excluir PDI)                                 |
-| `src/components/avaliacao/MetasOKRsTab.tsx` | `componente`     | ganhou a prop `onExcluir` (excluir meta/OKR)                            |
-
-O resultado acima foi obtido rodando `scripts/verificar-layout-protegido.mjs`
-da branch `muri` contra esta árvore, fora do repositório. **O script em si ainda
-não está na `main`**, e não há `verificar:layout` no `package.json`: por ora este
-baseline é inventário conferido, não proteção automatizada. Com o baseline neste
-estado, o verificador passa quando for trazido — e volta a reprovar se alguém
-alterar o contrato visual.

@@ -3,13 +3,19 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter,
-  DialogHeader, DialogTitle, DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FileDown, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { ACAO_GERAR_AEJ } from '@/components/ponto/acoesCabecalhoPonto';
 
 /**
  * Gera AEJ (Arquivo Eletrônico de Jornada — Portaria MTP 671/2021).
@@ -22,7 +28,11 @@ export function GerarAEJDialog() {
   const [inicio, setInicio] = useState('');
   const [fim, setFim] = useState('');
   const [resultado, setResultado] = useState<{
-    hash: string; bytes: number; marcacoes: number; colaboradores: number; sem_pis: number;
+    hash: string;
+    bytes: number;
+    marcacoes: number;
+    colaboradores: number;
+    sem_pis: number;
   } | null>(null);
 
   const handleGerar = async () => {
@@ -44,7 +54,9 @@ export function GerarAEJDialog() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       const nomeArq = `AEJ_${empresaAtual.id.slice(0, 8)}_${inicio}_${fim}.txt`;
-      a.href = url; a.download = nomeArq; a.click();
+      a.href = url;
+      a.download = nomeArq;
+      a.click();
       URL.revokeObjectURL(url);
 
       setResultado({
@@ -66,7 +78,7 @@ export function GerarAEJDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2">
+        <Button variant="outline" size="sm" className={ACAO_GERAR_AEJ}>
           <FileDown className="h-4 w-4" /> Gerar AEJ
         </Button>
       </DialogTrigger>
@@ -91,15 +103,25 @@ export function GerarAEJDialog() {
 
         {resultado && (
           <div className="rounded-md border border-border bg-muted/50 p-3 text-xs space-y-1">
-            <p><strong>Colaboradores:</strong> {resultado.colaboradores} (sem PIS: {resultado.sem_pis})</p>
-            <p><strong>Marcações:</strong> {resultado.marcacoes.toLocaleString('pt-BR')}</p>
-            <p><strong>Tamanho:</strong> {(resultado.bytes / 1024).toFixed(2)} KB</p>
-            <p className="break-all"><strong>SHA-256:</strong> <span className="font-mono">{resultado.hash}</span></p>
+            <p>
+              <strong>Colaboradores:</strong> {resultado.colaboradores} (sem PIS: {resultado.sem_pis})
+            </p>
+            <p>
+              <strong>Marcações:</strong> {resultado.marcacoes.toLocaleString('pt-BR')}
+            </p>
+            <p>
+              <strong>Tamanho:</strong> {(resultado.bytes / 1024).toFixed(2)} KB
+            </p>
+            <p className="break-all">
+              <strong>SHA-256:</strong> <span className="font-mono">{resultado.hash}</span>
+            </p>
           </div>
         )}
 
         <DialogFooter>
-          <Button variant="ghost" onClick={() => setOpen(false)} disabled={loading}>Fechar</Button>
+          <Button variant="ghost" onClick={() => setOpen(false)} disabled={loading}>
+            Fechar
+          </Button>
           <Button onClick={handleGerar} disabled={loading} className="gap-2">
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
             {loading ? 'Gerando...' : 'Gerar e baixar'}

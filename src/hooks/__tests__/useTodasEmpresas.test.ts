@@ -17,18 +17,8 @@ vi.mock('@/services/empresaService', () => ({
 
 import { useTodasEmpresas } from '../useTodasEmpresas';
 
-function makeCrudReturn(overrides: Record<string, unknown> = {}) {
-  return {
-    items: [],
-    isLoading: false,
-    isCreating: false,
-    isUpdating: false,
-    isDeleting: false,
-    criar: vi.fn(),
-    atualizar: vi.fn(),
-    excluir: vi.fn(),
-    ...overrides,
-  };
+function makeCrudReturn(overrides: Record<string, any> = {}) {
+  return { items: [], isLoading: false, isCreating: false, isUpdating: false, isDeleting: false, criar: vi.fn(), atualizar: vi.fn(), excluir: vi.fn(), ...overrides };
 }
 
 function wrapper({ children }: { children: React.ReactNode }) {
@@ -70,6 +60,8 @@ describe('useTodasEmpresas', () => {
 
   it('uses todas-empresas-list as queryKey', () => {
     renderHook(() => useTodasEmpresas(), { wrapper });
-    expect(mockUseGenericCrud).toHaveBeenCalledWith(expect.objectContaining({ queryKey: 'todas-empresas-list' }));
+    expect(mockUseGenericCrud).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: 'todas-empresas-list' })
+    );
   });
 });

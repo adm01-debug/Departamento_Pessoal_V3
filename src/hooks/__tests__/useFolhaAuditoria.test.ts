@@ -18,15 +18,15 @@ vi.mock('sonner', () => ({
 
 import { useFolhaAuditoria } from '../useFolhaAuditoria';
 
-function buildChains(selectData: unknown[] = []) {
+function buildChains(selectData: any[] = []) {
   const response = { data: selectData, error: null };
-  const chain = {
+  const chain: any = {
     select: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
     order: vi.fn().mockReturnThis(),
-    then: (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn),
-    catch: (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn),
-    finally: (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn),
+    then: (fn: any) => Promise.resolve(response).then(fn),
+    catch: (fn: any) => Promise.resolve(response).catch(fn),
+    finally: (fn: any) => Promise.resolve(response).finally(fn),
   };
   const singleFn = vi.fn().mockResolvedValue({ data: { id: 'a1' }, error: null });
   const insertSelectFn = vi.fn().mockReturnValue({ single: singleFn });

@@ -11,6 +11,7 @@ import { useSecureVisibility } from '@/hooks/useSecureVisibility';
 import { useSecurityMonitor } from '@/hooks/useSecurityMonitor';
 import { useStaggerCards } from '@/hooks/use-stagger-cards';
 
+import MeasureTestPage from '@/pages/__MeasureTestPage';
 // Core pages with optimized pre-loading
 import LoginPage from '@/pages/LoginPage';
 import DashboardPage from '@/pages/DashboardPage';
@@ -34,6 +35,12 @@ const RelatoriosPage = lazy(() => import('@/pages/RelatoriosPage'));
 const ESocialPage = lazy(() => import('@/pages/ESocialPage'));
 const ConfiguracoesPage = lazy(() => import('@/pages/ConfiguracoesPage'));
 const DesignSystemPage = lazy(() => import('@/pages/DesignSystemPage'));
+/**
+ * PRÉVIA LOCAL dos controles do feedback (Nine-Box) — declarada apenas em DEV.
+ * Fora de DEV o valor é `null` e o `import()` é eliminado do build, de modo que
+ * a prévia não existe (nem como rota, nem como chunk) em produção.
+ */
+const NineBoxPreviewPage = import.meta.env.DEV ? lazy(() => import('@/pages/NineBoxPreviewPage')) : null;
 const AdmissoesPage = lazy(() => import('@/pages/AdmissoesPage'));
 const AfastamentosPage = lazy(() => import('@/pages/AfastamentosPage'));
 const CargosPage = lazy(() => import('@/pages/CargosPage'));
@@ -51,7 +58,6 @@ const BackupPage = lazy(() => import('@/pages/BackupPage'));
 const OrganogramaPage = lazy(() => import('@/pages/OrganogramaPage'));
 const PortalPage = lazy(() => import('@/pages/PortalPage'));
 const AvaliacaoPage = lazy(() => import('@/pages/AvaliacaoPage'));
-const NineBoxPreviewPage = lazy(() => import('@/pages/NineBoxPreviewPage'));
 const TreinamentosPage = lazy(() => import('@/pages/TreinamentosPage'));
 const RecrutamentoPage = lazy(() => import('@/pages/RecrutamentoPage'));
 const ContratacaoPage = lazy(() => import('@/pages/ContratacaoPage'));
@@ -71,6 +77,7 @@ const DespesasPage = lazy(() => import('@/pages/DespesasPage'));
 const ControleAcessoPage = lazy(() => import('@/pages/ControleAcessoPage'));
 const LGPDPage = lazy(() => import('@/pages/LGPDPage'));
 const BancoHorasPage = lazy(() => import('@/pages/BancoHorasPage'));
+const EPIsPage = lazy(() => import('@/pages/EPIsPage'));
 const FaltasPage = lazy(() => import('@/pages/FaltasPage'));
 const MedidasDisciplinaresPage = lazy(() => import('@/pages/MedidasDisciplinaresPage'));
 const JornadasPage = lazy(() => import('@/pages/JornadasPage'));
@@ -95,7 +102,6 @@ const LotacoesPage = lazy(() => import('@/pages/LotacoesPage'));
 const AssistenteIAPage = lazy(() => import('@/pages/AssistenteIAPage'));
 const GeradorDocumentosPage = lazy(() => import('@/pages/GeradorDocumentosPage'));
 const SSTPage = lazy(() => import('@/pages/SSTPage'));
-const EPIsPage = lazy(() => import('@/pages/EPIsPage'));
 const CalculadoraRescisaoPage = lazy(() => import('@/pages/CalculadoraRescisaoPage'));
 const ImportacaoPage = lazy(() => import('@/pages/ImportacaoPage'));
 const DashboardExecutivoPage = lazy(() => import('@/pages/DashboardExecutivoPage'));
@@ -128,7 +134,7 @@ const ContratosGeradosPage = lazy(() => import('@/pages/ContratosGeradosPage'));
 
 function PageLoader() {
   return (
-    <div className="flex flex-col space-y-6 p-6 animate-in fade-in duration-500">
+    <div className="flex flex-col space-y-6 p-6 animate-in fade-in duration-slower">
       <div className="flex justify-between items-center mb-6">
         <div className="space-y-3">
           <Skeleton className="h-9 w-64 rounded-xl bg-muted/50" />
@@ -161,20 +167,20 @@ function PageLoader() {
   );
 }
 
-function RotaCarregada({ children }: { children: React.ReactNode }) {
-  // Chunk carregado: libera o guard de reload para que uma falha futura (outro
-  // deploy, outra rota) ainda consiga se auto-recuperar uma vez.
-  useEffect(() => clearChunkReloadGuard(), []);
+function LazyPageMounted({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    clearChunkReloadGuard();
+  }, []);
   return <>{children}</>;
 }
 
-function LazyPage({ Component }: { Component: React.LazyExoticComponent<() => React.ReactElement | null> }) {
+function LazyPage({ Component }: { Component: React.LazyExoticComponent<() => React.ReactElement> }) {
   return (
     <RouteErrorBoundary>
       <Suspense fallback={<PageLoader />}>
-        <RotaCarregada>
+        <LazyPageMounted>
           <Component />
-        </RotaCarregada>
+        </LazyPageMounted>
       </Suspense>
     </RouteErrorBoundary>
   );
@@ -184,27 +190,40 @@ export default function App() {
   useSessionTimeout();
   useSecureVisibility();
   useSecurityMonitor();
-  // Cascata de entrada dos Card. O CSS da `.animate-squash` ja usa `backwards`
-  // justamente para suportar `animation-delay` (src/index.css:652-667); sem este
-  // hook o delay nunca era escrito e todos os cards entravam juntos.
-  useStaggerCards(60);
+  useStaggerCards();
 
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/auth/callback" element={<AuthCallbackPage />} />
-      <Route
-        path="/ponto/kiosk"
-        element={
-          <ProtectedRoute>
-            <LazyPage Component={PontoKioskPage} />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/ponto/kiosk" element={<LazyPage Component={PontoKioskPage} />} />
       <Route path="/assinar-contrato/:token" element={<LazyPage Component={AssinarContratoPage} />} />
       <Route path="/verificar-contrato" element={<LazyPage Component={VerificarContratoPage} />} />
       <Route path="/verificar-contrato/:hash" element={<LazyPage Component={VerificarContratoPage} />} />
       <Route path="/ciencia-medida/:token" element={<LazyPage Component={CienciaMedidaPage} />} />
+      <Route path="/__measure-test" element={<MeasureTestPage />} />
+
+      {/* PRÉVIA LOCAL (SOMENTE DEV): controles do feedback do Nine-Box com dados
+          fictícios e serviço simulado. O `import.meta.env.DEV` é substituído por
+          `false` no build de produção, então a rota NÃO existe lá (e a própria
+          página também devolve `null` fora de DEV — dupla trava).
+          Renderizada com a mesma casca de `LazyPage` (RouteErrorBoundary →
+          Suspense → LazyPageMounted), montada aqui porque a página pode devolver
+          `null`, o que não casa com a assinatura `LazyExoticComponent`. */}
+      {import.meta.env.DEV && NineBoxPreviewPage && (
+        <Route
+          path="/dev/ninebox-preview"
+          element={
+            <RouteErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <LazyPageMounted>
+                  <NineBoxPreviewPage />
+                </LazyPageMounted>
+              </Suspense>
+            </RouteErrorBoundary>
+          }
+        />
+      )}
 
       <Route
         path="/"
@@ -231,10 +250,8 @@ export default function App() {
         <Route path="ferias" element={<LazyPage Component={FeriasPage} />} />
         <Route path="ferias/programacao" element={<LazyPage Component={FeriasProgramacaoPage} />} />
         <Route path="ponto" element={<LazyPage Component={PontoPage} />} />
-        <Route path="faltas" element={<LazyPage Component={FaltasPage} />} />
         <Route path="beneficios" element={<LazyPage Component={BeneficiosPage} />} />
         <Route path="beneficios/novo" element={<LazyPage Component={BeneficioFormPage} />} />
-        <Route path="beneficios/:id/editar" element={<LazyPage Component={BeneficioFormPage} />} />
 
         {/* Folha e Financeiro */}
         <Route path="folha" element={<LazyPage Component={FolhaPage} />} />
@@ -257,17 +274,14 @@ export default function App() {
         <Route path="departamentos" element={<LazyPage Component={DepartamentosPage} />} />
         <Route path="lotacoes" element={<LazyPage Component={LotacoesPage} />} />
         <Route path="locais-trabalho" element={<LazyPage Component={LocaisTrabalhoPage} />} />
-        <Route path="centros-custo" element={<LazyPage Component={CentrosCustoPage} />} />
         <Route path="times" element={<LazyPage Component={TimesPage} />} />
+        <Route path="centros-custo" element={<LazyPage Component={CentrosCustoPage} />} />
         <Route path="promo-brindes" element={<LazyPage Component={PromoBrindesPage} />} />
         <Route path="promo-brindes/vinculos" element={<LazyPage Component={VinculosPromoPage} />} />
         <Route path="organograma" element={<LazyPage Component={OrganogramaPage} />} />
 
         {/* Gestão e Performance */}
         <Route path="avaliacao" element={<LazyPage Component={AvaliacaoPage} />} />
-        {import.meta.env.DEV && NineBoxPreviewPage && (
-          <Route path="avaliacao/ninebox-preview" element={<LazyPage Component={NineBoxPreviewPage} />} />
-        )}
         <Route path="treinamentos" element={<LazyPage Component={TreinamentosPage} />} />
         <Route path="recrutamento" element={<LazyPage Component={RecrutamentoPage} />} />
         <Route path="onboarding" element={<LazyPage Component={OnboardingPage} />} />
@@ -280,14 +294,10 @@ export default function App() {
         <Route path="esocial" element={<LazyPage Component={ESocialPage} />} />
         <Route path="obrigacoes-fiscais" element={<LazyPage Component={ObrigacoesFiscaisPage} />} />
         <Route path="sst" element={<LazyPage Component={SSTPage} />} />
-        <Route path="epis" element={<LazyPage Component={EPIsPage} />} />
-        {/*
-          Primeira rota por PERMISSAO, nao por papel: a matriz
-          `public.permissions` concede `auditoria.read` a admin, gestor e rh,
-          e o `AdminRoute` bloquearia gestor e rh. Enquanto a matriz estiver
-          vazia o comportamento e IDENTICO ao de antes — admin entra pelo
-          atalho de admin e os demais veem "Acesso Restrito" (fail-closed).
-        */}
+        {/* Auditoria: NÃO é exclusividade de admin — a matriz `public.permissions`
+            concede `('admin'|'gestor'|'rh', 'auditoria', 'read')`, então esta rota
+            usa o guard POR PERMISSÃO (que preserva o MFA via `MfaGate`); quem não
+            tem a permissão continua vendo "Acesso Restrito". */}
         <Route
           path="auditoria"
           element={

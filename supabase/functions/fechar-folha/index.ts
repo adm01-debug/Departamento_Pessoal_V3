@@ -84,13 +84,28 @@ serve(async (req: Request): Promise<Response> => {
     // Rate limit — fechamento de folha é ação crítica: 5 req / min / usuário
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `fechar-folha:${userId}`, limit: 5, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
+    if (!rl.allowed) return rateLimitResponse(rl);
+
+    // 3.5) Idempotência — evita duplo-fechamento por double-click / retry de rede
+    const idemKey = extractIdempotencyKey(req, body);
+    const idem = await beginIdempotency(admin, {
+      endpoint: 'fechar-folha',
+      key: idemKey,
+      requestBody: body,
+      empresaId,
+      userId,
+    });
+    if (idem.replay) return idem.replay;
+    if (idem.conflict) return idem.conflict;
+
+
+
 
     // 4) Papel — fechar a folha é ato de RH/admin, não de qualquer pessoa da
     // empresa. O aninhamento anterior (`if !belongs { if !isAdmin 403 }`)
     // equivalia a `belongs || isAdmin`: bastava trabalhar aqui.
     {
-      const authz = await requireRh(admin, userId, empresaId, req);
+      const authz = await requireRh(admin, userId, empresaId);
       if (authz.denied) return authz.denied;
     }
 
@@ -104,11 +119,9 @@ serve(async (req: Request): Promise<Response> => {
 
     if (folhaErr) return createErrorResponse('Erro ao carregar folha', 500, 'FOLHA_LOAD_ERROR');
     if (!folha) return createErrorResponse('Folha não encontrada', 404, 'FOLHA_NOT_FOUND');
-    // Fechamento aceita 'aberta' (manual) e 'calculada' (pós calcular-folha):
-    // sem a segunda, toda folha calculada no servidor ficaria impossível de fechar.
-    if (folha.status !== 'aberta' && folha.status !== 'calculada') {
+    if (folha.status !== 'aberta') {
       return createErrorResponse(
-        `Folha não está aberta nem calculada (status atual: ${folha.status})`,
+        `Folha não está aberta (status atual: ${folha.status})`,
         409, 'FOLHA_NOT_OPEN',
       );
     }
@@ -137,20 +150,6 @@ serve(async (req: Request): Promise<Response> => {
 
     const { sum_proventos: sumProv, sum_descontos: sumDesc, sum_liquido: sumLiq, sum_fgts: sumFgts, holerites_count: count, itens_count: itensCount } = integrity;
 
-    // Claim only after every deterministic authorization/precondition check,
-    // immediately before the optimistic business mutation.
-    const idemKey = extractIdempotencyKey(req, body);
-    const idem = await beginIdempotency(admin, {
-      endpoint: 'fechar-folha',
-      key: idemKey,
-      requestBody: body,
-      empresaId,
-      userId,
-      request: req,
-    });
-    if (idem.replay) return idem.replay;
-    if (idem.conflict) return idem.conflict;
-
     // 7) Optimistic lock update
     const closedAt = new Date().toISOString();
     const { data: updated, error: updErr } = await admin
@@ -165,7 +164,7 @@ serve(async (req: Request): Promise<Response> => {
       })
       .eq('id', folhaId)
       .eq('version', folha.version)
-      .in('status', ['aberta', 'calculada'])
+      .eq('status', 'aberta')
       .select('id, version')
       .maybeSingle();
 
@@ -179,7 +178,7 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // 8) Warning não bloqueante: provisões mensais
-    const warnings: string[] = [];
+    let warnings: string[] = [];
     try {
       const { count: provCount } = await admin
         .from('provisoes_mensais')
@@ -196,7 +195,7 @@ serve(async (req: Request): Promise<Response> => {
       folhaId,
       empresaId,
       competencia: folha.competencia,
-      status_anterior: folha.status,
+      status_anterior: 'aberta',
       status_novo: 'fechada',
       version_anterior: folha.version,
       version_nova: updated.version,
@@ -214,8 +213,8 @@ serve(async (req: Request): Promise<Response> => {
     const { error: auditErr } = await admin.from('audit_log').insert({
       tabela: 'folhas_pagamento',
       registro_id: folhaId,
-      acao: 'PAYROLL_CLOSE',
-      dados_anteriores: { status: folha.status, version: folha.version },
+      acao: 'CLOSE',
+      dados_anteriores: { status: 'aberta', version: folha.version },
       dados_novos: { ...snapshot, audit_hash: auditHash },
       user_id: userId,
       user_email: userEmail || null,
@@ -223,7 +222,7 @@ serve(async (req: Request): Promise<Response> => {
     if (auditErr) {
       // Reverter fechamento para preservar consistência da trilha
       await admin.from('folhas_pagamento').update({
-        status: folha.status,
+        status: 'aberta',
         data_fechamento: null,
         fechada_por: null,
         version: folha.version,
@@ -247,3 +246,4 @@ serve(async (req: Request): Promise<Response> => {
     return createErrorResponse('Erro interno', 500, 'INTERNAL_ERROR');
   }
 });
+

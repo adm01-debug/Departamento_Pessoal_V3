@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useIsMobile } from '../use-mobile';
 
@@ -12,7 +12,7 @@ describe('useIsMobile', () => {
       writable: true,
       value: vi.fn().mockReturnValue({
         matches,
-        addEventListener: vi.fn((event: string, fn: (e: MediaQueryListEvent) => void) => listeners.push(fn)),
+        addEventListener: vi.fn((event: string, fn: any) => listeners.push(fn)),
         removeEventListener: vi.fn(),
       }),
     });

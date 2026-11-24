@@ -7,7 +7,7 @@
 //   BRIDGE_QUERY_TIMEOUT_MS=2000 deno run --allow-net --allow-env \
 //     supabase/functions/external-db-bridge/timeout.test.ts
 
-import { assertEquals, assert } from "https://deno.land/std@0.208.0/assert/mod.ts";
+import { assertEquals, assert } from "https://deno.land/std@0.224.0/assert/mod.ts";
 
 const BRIDGE_URL = Deno.env.get("BRIDGE_URL") || "http://localhost:54321/functions/v1/external-db-bridge";
 const SUPABASE_KEY = Deno.env.get("SUPABASE_ANON_KEY") || "test-key";
@@ -45,11 +45,7 @@ Deno.test({
   name: "[P1-027] payload > 256KB deve retornar 413 PAYLOAD_TOO_LARGE",
   ignore: !Deno.env.get("BRIDGE_URL"),
   async fn() {
-    const hugeData: {
-      action: string;
-      table: string;
-      filters: Array<{ column: string; op: string; value: string }>;
-    } = { action: "select", table: "colaboradores", filters: [] };
+    const hugeData = { action: "select", table: "colaboradores", filters: [] };
     // 270KB de lixo em filters[0].value
     hugeData.filters = [{ column: "id", op: "eq", value: "x".repeat(270 * 1024) }];
 

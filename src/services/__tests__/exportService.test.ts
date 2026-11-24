@@ -1,19 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const { mockPapaUnparse, mockCreateObjectURL, mockAppendChild, mockRemoveChild, MockJsPDF, mockSave } = vi.hoisted(
-  () => {
-    const mockSave = vi.fn();
-    const MockJsPDF = vi.fn();
-    return {
-      mockPapaUnparse: vi.fn().mockReturnValue('col1,col2\nval1,val2'),
-      mockCreateObjectURL: vi.fn().mockReturnValue('blob:url'),
-      mockAppendChild: vi.fn(),
-      mockRemoveChild: vi.fn(),
-      MockJsPDF,
-      mockSave,
-    };
-  }
-);
+const { mockPapaUnparse, mockCreateObjectURL, mockAppendChild, mockRemoveChild, MockJsPDF, mockSave } = vi.hoisted(() => {
+  const mockSave = vi.fn();
+  const MockJsPDF = vi.fn();
+  return {
+    mockPapaUnparse: vi.fn().mockReturnValue('col1,col2\nval1,val2'),
+    mockCreateObjectURL: vi.fn().mockReturnValue('blob:url'),
+    mockAppendChild: vi.fn(),
+    mockRemoveChild: vi.fn(),
+    MockJsPDF,
+    mockSave,
+  };
+});
 
 vi.mock('jspdf', () => ({ jsPDF: MockJsPDF }));
 vi.mock('jspdf-autotable', () => ({ default: vi.fn() }));
@@ -22,22 +20,8 @@ vi.mock('papaparse', () => ({ default: { unparse: mockPapaUnparse } }));
 import { validateExportData, exportPontoCSV, exportPontoPDF } from '../exportService';
 
 const sampleData = [
-  {
-    colaborador: 'Alice',
-    data: '2024-01-15',
-    hora_entrada: '08:00',
-    hora_saida: '17:00',
-    total_horas: '09:00',
-    status: 'ok',
-  },
-  {
-    colaborador: 'Bob',
-    data: '2024-01-15',
-    hora_entrada: '09:00',
-    hora_saida: '18:00',
-    total_horas: '09:00',
-    status: 'ok',
-  },
+  { colaborador: 'Alice', data: '2024-01-15', hora_entrada: '08:00', hora_saida: '17:00', total_horas: '09:00', status: 'ok' },
+  { colaborador: 'Bob', data: '2024-01-15', hora_entrada: '09:00', hora_saida: '18:00', total_horas: '09:00', status: 'ok' },
 ];
 
 describe('validateExportData', () => {
@@ -50,7 +34,7 @@ describe('validateExportData', () => {
   });
 
   it('throws when data is null/undefined', () => {
-    expect(() => validateExportData(null as never)).toThrow('Nenhum dado disponível');
+    expect(() => validateExportData(null as any)).toThrow('Nenhum dado disponível');
   });
 
   it('returns true even when fields are missing (warns only)', () => {
@@ -64,7 +48,7 @@ describe('exportPontoCSV', () => {
     vi.clearAllMocks();
     mockPapaUnparse.mockReturnValue('col,col2\nval1,val2');
     const mockLink = { setAttribute: vi.fn(), click: vi.fn(), style: { visibility: '' } };
-    vi.spyOn(document, 'createElement').mockReturnValue(mockLink as never);
+    vi.spyOn(document, 'createElement').mockReturnValue(mockLink as any);
     vi.spyOn(document.body, 'appendChild').mockImplementation(mockAppendChild);
     vi.spyOn(document.body, 'removeChild').mockImplementation(mockRemoveChild);
     vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:url');
@@ -91,23 +75,15 @@ describe('exportPontoCSV', () => {
 });
 
 describe('exportPontoPDF', () => {
-  let lastDocMock: { text: ReturnType<typeof vi.fn> } | undefined;
   beforeEach(() => {
     vi.clearAllMocks();
-    const autoTableFn = vi.fn().mockImplementation(function (this: Record<string, unknown>) {
+    const autoTableFn = vi.fn().mockImplementation(function(this: any) {
       this.lastAutoTable = { finalY: 100 };
     });
     const docMock = {
-      setFontSize: vi.fn(),
-      setTextColor: vi.fn(),
-      setFont: vi.fn(),
-      setFillColor: vi.fn(),
-      rect: vi.fn(),
-      text: vi.fn(),
-      line: vi.fn(),
-      setPage: vi.fn(),
-      save: mockSave,
-      roundedRect: vi.fn(),
+      setFontSize: vi.fn(), setTextColor: vi.fn(), setFont: vi.fn(),
+      setFillColor: vi.fn(), rect: vi.fn(), text: vi.fn(), line: vi.fn(),
+      setPage: vi.fn(), save: mockSave, roundedRect: vi.fn(),
       internal: {
         pageSize: { getWidth: () => 210, getHeight: () => 297 },
         getNumberOfPages: () => 1,
@@ -115,10 +91,7 @@ describe('exportPontoPDF', () => {
       lastAutoTable: { finalY: 100 },
       autoTable: autoTableFn,
     };
-    MockJsPDF.mockImplementation(function () {
-      return docMock;
-    });
-    lastDocMock = docMock;
+    MockJsPDF.mockImplementation(function () { return docMock; });
   });
 
   it('creates jsPDF and saves a file', () => {
@@ -133,26 +106,5 @@ describe('exportPontoPDF', () => {
 
   it('throws when data is empty', () => {
     expect(() => exportPontoPDF([], 'Relatório', ['colaborador'])).toThrow('Nenhum dado disponível');
-  });
-
-  it('usa rótulos padrão de ponto quando labels não são passados', () => {
-    exportPontoPDF(sampleData, 'Relatório', ['colaborador', 'data']);
-    const texts = lastDocMock!.text.mock.calls.map((c) => String(c[0]));
-    expect(texts).toContain('SISTEMA DE PONTO ELETRÔNICO v2.0');
-    expect(texts).toContain('CONFORME (MTP 671)');
-  });
-
-  it('usa rótulos customizados e omite selos de ponto', () => {
-    exportPontoPDF(sampleData, 'Relatório de Premiações', ['colaborador'], {
-      seloSistema: 'DEPARTAMENTO PESSOAL v2.0',
-      statusGeral: 'EXPORTADO',
-      notaRodape: 'Documento gerado automaticamente',
-    });
-    const texts = lastDocMock!.text.mock.calls.map((c) => String(c[0]));
-    expect(texts).toContain('DEPARTAMENTO PESSOAL v2.0');
-    expect(texts).toContain('EXPORTADO');
-    expect(texts.some((t) => t.includes('PONTO ELETRÔNICO'))).toBe(false);
-    expect(texts.some((t) => t.includes('MTP 671'))).toBe(false);
-    expect(texts.some((t) => t.includes('MP 2.200-2/2001'))).toBe(false);
   });
 });

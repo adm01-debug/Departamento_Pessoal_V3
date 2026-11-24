@@ -9,7 +9,6 @@ DROP POLICY IF EXISTS "Users can see their company cnab items" ON public.cnab_it
 DROP POLICY IF EXISTS "Empresas can view their own CNAB itens" ON public.cnab_itens;
 DROP POLICY IF EXISTS "Empresas can insert their own CNAB itens" ON public.cnab_itens;
 
-DROP POLICY IF EXISTS "cnab_itens_tenant_select" ON public.cnab_itens;
 CREATE POLICY "cnab_itens_tenant_select"
 ON public.cnab_itens FOR SELECT TO authenticated
 USING (
@@ -20,7 +19,6 @@ USING (
   )
 );
 
-DROP POLICY IF EXISTS "cnab_itens_tenant_insert" ON public.cnab_itens;
 CREATE POLICY "cnab_itens_tenant_insert"
 ON public.cnab_itens FOR INSERT TO authenticated
 WITH CHECK (
@@ -31,7 +29,6 @@ WITH CHECK (
   )
 );
 
-DROP POLICY IF EXISTS "cnab_itens_tenant_update" ON public.cnab_itens;
 CREATE POLICY "cnab_itens_tenant_update"
 ON public.cnab_itens FOR UPDATE TO authenticated
 USING (
@@ -49,7 +46,6 @@ WITH CHECK (
   )
 );
 
-DROP POLICY IF EXISTS "cnab_itens_tenant_delete" ON public.cnab_itens;
 CREATE POLICY "cnab_itens_tenant_delete"
 ON public.cnab_itens FOR DELETE TO authenticated
 USING (
@@ -64,7 +60,6 @@ USING (
 DROP POLICY IF EXISTS "Empresas can view their own PIX itens" ON public.pix_itens;
 DROP POLICY IF EXISTS "Empresas can insert their own PIX itens" ON public.pix_itens;
 
-DROP POLICY IF EXISTS "pix_itens_tenant_select" ON public.pix_itens;
 CREATE POLICY "pix_itens_tenant_select"
 ON public.pix_itens FOR SELECT TO authenticated
 USING (
@@ -75,7 +70,6 @@ USING (
   )
 );
 
-DROP POLICY IF EXISTS "pix_itens_tenant_insert" ON public.pix_itens;
 CREATE POLICY "pix_itens_tenant_insert"
 ON public.pix_itens FOR INSERT TO authenticated
 WITH CHECK (
@@ -86,7 +80,6 @@ WITH CHECK (
   )
 );
 
-DROP POLICY IF EXISTS "pix_itens_tenant_update" ON public.pix_itens;
 CREATE POLICY "pix_itens_tenant_update"
 ON public.pix_itens FOR UPDATE TO authenticated
 USING (
@@ -104,7 +97,6 @@ WITH CHECK (
   )
 );
 
-DROP POLICY IF EXISTS "pix_itens_tenant_delete" ON public.pix_itens;
 CREATE POLICY "pix_itens_tenant_delete"
 ON public.pix_itens FOR DELETE TO authenticated
 USING (

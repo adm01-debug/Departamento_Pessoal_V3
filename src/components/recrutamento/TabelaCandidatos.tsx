@@ -3,6 +3,7 @@ import { ArrowRight, Briefcase, Clock, Globe, Link2, MoreVertical, Search, Star,
 import { Button } from '@/components/ui/button';
 import { CascadeTableBody, CascadeTableRow } from '@/components/ui/cascade-table';
 import { Checkbox } from '@/components/ui/checkbox';
+import { CLASSE_LINHA_HOVER } from '@/components/ui/linha-tabela-hover';
 import { linhaTabelaVariants, linhaTabelaVariantsReduzido } from '@/components/ui/table-row-reveal';
 import { useMovimentoReduzido } from '@/lib/motionMode';
 import {
@@ -17,7 +18,7 @@ import { entradaCard } from '@/components/ui/entrada-cards';
 import { cn } from '@/lib/utils';
 import { formatCurrency, formatNumber } from '@/utils/format';
 import type { CandidaturaComRelacoes, VagaRow } from '@/types/recrutamento';
-import { ETAPAS, estiloAvatar, iniciaisDoNome, normalizarEtapa } from './pipelineEtapas';
+import { ETAPAS, estiloAvatar, iniciaisDoNome } from './pipelineEtapas';
 import { podeArrastarCandidatura } from './pipelineDragDrop';
 import { badgeEtapa, dadosVagaDaCandidatura, estiloOrigem, rotuloOrigem, ultimaAtividade } from './candidatosComum';
 
@@ -50,6 +51,29 @@ export interface TabelaCandidatosProps {
    */
   cascadeKey: string;
 }
+
+/**
+ * HOVER DA LINHA (desktop) — a MESMA régua do "Histórico de solicitações", de
+ * Solicitações de Hora Extra, porque a string vem da fonte única
+ * `ui/linha-tabela-hover.ts`: `--background` a 60% (o token mais escuro do
+ * sistema, abaixo de `--card`), 200 ms e apenas `background-color`. O efeito
+ * mora no `<tr>` — um único bloco de pintura cobre a LARGURA INTEIRA da linha,
+ * inclusive os vãos entre colunas, a área do "Ver perfil" e o menu de ações. As
+ * `<td>` seguem transparentes: nada de hover célula a célula, que abriria
+ * emendas de tonalidade. Nenhuma cor de texto, selo de etapa, badge ou ícone
+ * muda; nada de borda, sombra, escala ou `translate` — padding, altura da linha
+ * e alinhamento das colunas continuam exatamente iguais.
+ *
+ * LINHA SELECIONADA — a seleção múltipla tem indicador PRÓPRIO (o tint Lime de
+ * `bg-primary/[0.035]`, o mesmo de antes) e por isso não herda o hover
+ * azul-marinho: se herdasse, `hover:bg-*` venceria o `bg-*` da seleção e a
+ * linha "perderia" o indicador enquanto o mouse estivesse sobre ela. Em vez
+ * disso, dobra o próprio tint (`hover:bg-primary/[0.06]`), mais claro que
+ * `[0.035]` e inconfundível com o fundo escurecido das linhas não selecionadas:
+ * o hover continua respondendo em TODAS as linhas e os dois estados ficam
+ * distinguíveis.
+ */
+const CLASSE_LINHA_SELECIONADA = 'transition-colors duration-200 bg-primary/[0.035] hover:bg-primary/[0.06]';
 
 export function TabelaCandidatos({
   candidaturas,
@@ -126,8 +150,8 @@ export function TabelaCandidatos({
                 index={indice}
                 variants={variantesLinha}
                 className={cn(
-                  'border-b border-border/25 transition-colors last:border-0 hover:bg-primary/[0.025]',
-                  selecionados.has(cand.id) && 'bg-primary/[0.035]'
+                  'border-b border-border/25 last:border-0',
+                  selecionados.has(cand.id) ? CLASSE_LINHA_SELECIONADA : CLASSE_LINHA_HOVER
                 )}
               >
                 <td className="px-3 py-1.5 align-middle">
@@ -381,10 +405,7 @@ function AcoesCandidato({
 }) {
   const nome = cand.candidato?.nome?.trim() || 'candidato';
   const podeMover = podeArrastarCandidatura(cand.status);
-  // Compara pela etapa normalizada: com `teste_tecnico` no banco, o menu
-  // oferecia "Teste Técnico" para quem já está nessa etapa.
-  const etapaAtual = normalizarEtapa(cand.etapa);
-  const outrasEtapas = ETAPAS.filter((etapa) => etapa.id !== etapaAtual);
+  const outrasEtapas = ETAPAS.filter((etapa) => etapa.id !== cand.etapa);
   const temMenu = podeMover && outrasEtapas.length > 0;
 
   return (

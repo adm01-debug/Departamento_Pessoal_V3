@@ -16,9 +16,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { cachePublic, cachedFetch, getCacheStats } from '../_shared/cache.ts';
-import { getCorsHeaders, handlePreflight } from '../_shared/contract.ts';
-import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
-import { getClientIp } from '../_shared/clientIp.ts';
 
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
 
@@ -51,55 +48,20 @@ const COLUMNS_MAP: Record<DomainType, string> = {
   rubricas: 'codigo, descricao, tipo, natureza',
 };
 
-// Coluna de ordenação por tabela — faixas_irrf/faixas_inss não têm `codigo`.
-const ORDER_MAP: Record<DomainType, string> = {
-  cbo: 'codigo',
-  cnae: 'codigo',
-  irrf: 'id',
-  inss: 'id',
-  feriados: 'data',
-  rubricas: 'codigo',
-};
-
 serve(async (req) => {
   const url = new URL(req.url);
-  // `type` vem da querystring (GET) ou do body — o frontend chama via
-  // functions.invoke com `body: { type }`.
-  let type = url.searchParams.get('type')?.toLowerCase() as DomainType | null;
-  if (!type && req.method === 'POST') {
-    // Body só carrega {type} — leitura bounded: soma bytes reais e cancela acima
-    // de 1KB mesmo em chunked sem Content-Length (antes do rate-limit).
-    try {
-      const reader = req.body?.getReader();
-      if (reader) {
-        const decoder = new TextDecoder();
-        let bytes = 0;
-        let text = '';
-        for (;;) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          bytes += value.byteLength;
-          if (bytes > 1024) {
-            return new Response(JSON.stringify({ error: 'Payload muito grande' }), {
-              status: 413,
-              headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) },
-            });
-          }
-          text += decoder.decode(value, { stream: true });
-        }
-        const body = JSON.parse(text);
-        if (body && typeof body.type === 'string') {
-          type = body.type.toLowerCase() as DomainType;
-        }
-      }
-    } catch {
-      /* read interrompido ou JSON inválido — o 400 abaixo cobre */
-    }
-  }
+  const type = url.searchParams.get('type')?.toLowerCase() as DomainType | null;
 
-  // E-077: CORS via allowlist compartilhada (sem wildcard fixo)
-  const preflight = handlePreflight(req);
-  if (preflight) return preflight;
+  // CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response(null, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+      },
+    });
+  }
 
   // Validação de tipo
   if (!type || !SUPPORTED_TYPES.includes(type)) {
@@ -114,25 +76,12 @@ serve(async (req) => {
         headers: {
           'Content-Type': 'application/json',
           ...cachePublic(60),
-          ...getCorsHeaders(req),
         },
       }
     );
   }
 
   try {
-    // Endpoint público — throttle por IP (tabelas de domínio são estáticas;
-    // 120/min por IP é folgado para uso legítimo e barre scraping agressivo).
-    const rlAdmin = createClient(supabaseUrl, supabaseKey, {
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
-    const rl = await checkRateLimit(rlAdmin as never, {
-      key: `tabelas-dominio:${getClientIp(req)}`,
-      limit: 120,
-      windowSec: 60,
-    });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
-
     const cacheKey = `domain:${type}`;
     const table = TABLE_MAP[type];
     const columns = COLUMNS_MAP[type];
@@ -144,7 +93,7 @@ serve(async (req) => {
         const { data, error } = await supabase
           .from(table)
           .select(columns)
-          .order(ORDER_MAP[type], { ascending: true });
+          .order('codigo', { ascending: true });
 
         if (error) throw error;
         return data || [];
@@ -152,21 +101,8 @@ serve(async (req) => {
       CACHE_TTL_MS
     );
 
-    // Endpoint de stats para monitoramento — exige usuário autenticado
-    // (expõe internals do cache; o path público fica sem rate limit pesado
-    // mas o de stats é gated).
+    // Endpoint de stats para monitoramento
     if (url.searchParams.get('stats') === 'true') {
-      const authHeader = req.headers.get('Authorization') ?? '';
-      const token = authHeader.replace(/^Bearer\s+/i, '').trim();
-      const { data: authData, error: authErr } = token
-        ? await supabase.auth.getUser(token)
-        : { data: { user: null }, error: null };
-      if (authErr || !authData?.user) {
-        return new Response(JSON.stringify({ error: 'Autenticacao obrigatoria para stats' }), {
-          status: 401,
-          headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) },
-        });
-      }
       return new Response(
         JSON.stringify({
           data,
@@ -178,10 +114,7 @@ serve(async (req) => {
         {
           headers: {
             'Content-Type': 'application/json',
-            // no-store: resposta autenticada não pode ser replayada por cache
-            // compartilhado para um cliente sem token.
-            'Cache-Control': 'no-store',
-            ...getCorsHeaders(req),
+            ...cachePublic(60),
           },
         }
       );
@@ -197,9 +130,7 @@ serve(async (req) => {
       {
         headers: {
           'Content-Type': 'application/json',
-          ...getCorsHeaders(req),
           ...cachePublic(CACHE_TTL_MS / 1000),
-          ...getCorsHeaders(req),
         },
       }
     );

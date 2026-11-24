@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { useSystemHealth } from '../useSystemHealth';
 
 const mockFrom = vi.fn();
@@ -12,13 +12,13 @@ vi.mock('@/hooks/useEmpresas', () => ({
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    from: (...args: unknown[]) => mockFrom(...args),
+    from: (...args: any[]) => mockFrom(...args),
     auth: { getSession: () => mockGetSession() },
-    functions: { invoke: (...args: unknown[]) => mockInvoke(...args) },
+    functions: { invoke: (...args: any[]) => mockInvoke(...args) },
   },
 }));
 
-function makeFromChain(error: { message: string; code?: string } | null = null) {
+function makeFromChain(error: any = null) {
   return {
     select: () => ({
       limit: () => ({
@@ -52,7 +52,9 @@ describe('useSystemHealth', () => {
   });
 
   it('sets latency after health check', async () => {
-    vi.spyOn(performance, 'now').mockReturnValueOnce(0).mockReturnValueOnce(120);
+    vi.spyOn(performance, 'now')
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(120);
 
     const { result } = renderHook(() => useSystemHealth());
 
@@ -62,7 +64,9 @@ describe('useSystemHealth', () => {
   });
 
   it('stays online when ping succeeds with no session', async () => {
-    vi.spyOn(performance, 'now').mockReturnValueOnce(0).mockReturnValueOnce(100);
+    vi.spyOn(performance, 'now')
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(100);
 
     const { result } = renderHook(() => useSystemHealth());
 
@@ -93,7 +97,9 @@ describe('useSystemHealth', () => {
       data: { monitoring: { success_rate_pct: 98, avg_latency_ms: 80, recent_failures: 0 } },
       error: null,
     });
-    vi.spyOn(performance, 'now').mockReturnValueOnce(0).mockReturnValueOnce(100);
+    vi.spyOn(performance, 'now')
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(100);
 
     const { result } = renderHook(() => useSystemHealth());
 
@@ -112,7 +118,9 @@ describe('useSystemHealth', () => {
       data: { monitoring: { success_rate_pct: 80, avg_latency_ms: 100, recent_failures: 5 } },
       error: null,
     });
-    vi.spyOn(performance, 'now').mockReturnValueOnce(0).mockReturnValueOnce(100);
+    vi.spyOn(performance, 'now')
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(100);
 
     const { result } = renderHook(() => useSystemHealth());
 

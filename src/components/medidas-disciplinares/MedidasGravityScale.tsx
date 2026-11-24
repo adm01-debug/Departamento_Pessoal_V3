@@ -1,11 +1,11 @@
-import type { MedidaDisciplinarComColaborador } from '@/types/medidasDisciplinares';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
+import { BARRA_PROGRESSO_DURACAO_S } from '@/components/ui/progressMotion';
 import { Scale } from 'lucide-react';
 
 interface GravityScaleProps {
-  medidas: MedidaDisciplinarComColaborador[];
+  medidas: any[];
 }
 
 const levels = [
@@ -30,7 +30,7 @@ export function MedidasGravityScale({ medidas }: GravityScaleProps) {
         <TooltipProvider>
           <div className="space-y-3">
             {levels.map((level, i) => {
-              const count = medidas.filter((m) => m.tipo === level.tipo).length;
+              const count = medidas.filter((m: any) => m.tipo === level.tipo).length;
               const pct = Math.round((count / total) * 100);
               return (
                 <Tooltip key={level.tipo}>
@@ -38,16 +38,14 @@ export function MedidasGravityScale({ medidas }: GravityScaleProps) {
                     <div className="space-y-1 cursor-default">
                       <div className="flex justify-between text-xs font-body">
                         <span className="text-muted-foreground">{level.label}</span>
-                        <span className="font-medium">
-                          {count} ({pct}%)
-                        </span>
+                        <span className="font-medium">{count} ({pct}%)</span>
                       </div>
                       <div className="h-2 rounded-full bg-muted/50 overflow-hidden">
                         <motion.div
                           className={`h-full rounded-full ${level.color}`}
                           initial={{ width: 0 }}
                           animate={{ width: `${pct}%` }}
-                          transition={{ delay: 0.2 + i * 0.1, duration: 0.5, ease: 'easeOut' }}
+                          transition={{ delay: 0.2 + i * 0.1, duration: BARRA_PROGRESSO_DURACAO_S, ease: 'easeOut' }}
                         />
                       </div>
                     </div>
@@ -67,7 +65,9 @@ export function MedidasGravityScale({ medidas }: GravityScaleProps) {
               {levels.map((level, i) => (
                 <div key={level.tipo} className="flex items-center gap-1">
                   <div className={`h-3 flex-1 rounded-xs ${level.color} min-w-[40px]`} />
-                  {i < levels.length - 1 && <span className="text-[10px] text-muted-foreground/50">→</span>}
+                  {i < levels.length - 1 && (
+                    <span className="text-[10px] text-muted-foreground/50">→</span>
+                  )}
                 </div>
               ))}
             </div>

@@ -19,6 +19,7 @@ export default function EmpresasPage() {
     page,
     setPage,
     pageSize,
+    setPageSize,
     search,
     setSearch,
     refetch,
@@ -59,6 +60,7 @@ export default function EmpresasPage() {
       pageSize={pageSize}
       search={search}
       onPageChange={handlePageChange}
+      onPageSizeChange={setPageSize}
       onSearchChange={handleSearchChange}
       onRefetch={refetch}
       isRefreshing={isRefreshing}
@@ -72,7 +74,7 @@ export default function EmpresasPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.05 }}
         >
-          <Card className="group border border-border/30 hover:border-border/60 shadow-elevated hover:shadow-glow transition-all duration-300 rounded-2xl overflow-hidden bg-card">
+          <Card className="group border border-border/30 hover:border-border/60 shadow-elevated hover:shadow-glow transition-all duration-slow rounded-2xl overflow-hidden bg-card">
             <div className="h-[2px] bg-gradient-to-r from-primary/80 to-primary opacity-60 group-hover:opacity-100 transition-opacity" />
             <CardHeader className="flex flex-row items-center gap-4">
               <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/80 to-primary shadow-lg group-hover:scale-110 transition-transform">

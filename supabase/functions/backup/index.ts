@@ -16,6 +16,12 @@ const TABLES = [
   'asos', 'admissoes', 'cargos', 'departamentos', 'jornadas',
 ];
 
+function jsonError(status: number, code: string, message: string) {
+  return new Response(JSON.stringify({ success: false, error: message, code }), {
+    status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
+}
+
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
 
@@ -52,7 +58,7 @@ serve(async (req: Request): Promise<Response> => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(adminClient, { key: `backup:${userData.user.id}`, limit: 3, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     const { data: roles } = await adminClient
       .from('user_roles')
@@ -67,8 +73,7 @@ serve(async (req: Request): Promise<Response> => {
       });
     }
 
-    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
-    if (_pe) return _pe;
+    const { body: _pb } = await parseJsonBody(req);
     const { empresaId } = (_pb as Record<string, unknown>) ?? { empresaId: null };
     const results: Record<string, any> = {};
     let totalRecords = 0;
@@ -90,15 +95,13 @@ serve(async (req: Request): Promise<Response> => {
       }
     }
 
-    const { error: auditError } = await adminClient.from('audit_log').insert({
+    await adminClient.from('audit_log').insert({
       tabela: 'backup',
-      registro_id: crypto.randomUUID(),
-      acao: 'BACKUP_CREATED',
+      registro_id: 'system',
+      acao: 'BACKUP',
       user_id: userData.user.id,
-      empresa_id: typeof empresaId === 'string' ? empresaId : null,
-      dados_novos: { evento: 'BACKUP', tables: results, total: totalRecords, empresa_id: empresaId },
+      dados_novos: { tables: results, total: totalRecords, empresa_id: empresaId },
     });
-    if (auditError) throw auditError;
 
     return new Response(JSON.stringify({
       success: true,

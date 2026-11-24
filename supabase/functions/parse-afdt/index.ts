@@ -4,6 +4,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
 import { verifyCsrf } from '../_shared/csrf.ts';
+import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 
 function err(msg: string, status = 400, code = 'BAD_REQUEST') {
@@ -130,11 +131,12 @@ serve(async (req: Request): Promise<Response> => {
   const adminRL = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
   const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
   const rl = await checkRateLimit(adminRL, { key: `parse-afdt:${userId}`, limit: 10, windowSec: 60 });
-  if (!rl.allowed) return rateLimitResponse(rl, req);
+  if (!rl.allowed) return rateLimitResponse(rl);
 
+  let body: { conteudo?: string; nome_arquivo?: string; tipo?: string; empresa_id?: string };
   const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
   if (_pe) return _pe;
-  const body = _pb as { conteudo?: string; nome_arquivo?: string; tipo?: string; empresa_id?: string };
+  body = _pb as typeof body;
 
   const conteudo = String(body.conteudo ?? '');
   const nomeArquivo = String(body.nome_arquivo ?? 'arquivo.txt').slice(0, 255);

@@ -84,11 +84,12 @@ serve(async (req) => {
     if (claimsErr || !claimsData?.user?.id) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
     const userId = claimsData.user.id;
 
+    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    const raw = _pb;
+    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
-    if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
+    if (!parsed.success) return createValidationErrorResponse(parsed.error);
     const { action, format, empresaId, filters } = parsed.data;
 
     const admin = createClient(supabaseUrl, serviceKey, {
@@ -103,13 +104,13 @@ serve(async (req) => {
       return createErrorResponse('empresaId é obrigatório', 400, 'EMPRESA_REQUIRED');
     }
     if (empresaId) {
-      const authz = await requireRh(admin, userId, empresaId, req);
+      const authz = await requireRh(admin, userId, empresaId);
       if (authz.denied) return authz.denied;
     }
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `exportacao:${userId}`, limit: 10, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     if (action === 'colaboradores') {
       let q = admin.from('colaboradores')

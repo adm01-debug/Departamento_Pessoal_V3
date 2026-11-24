@@ -1,19 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useOnMount } from '@/hooks/useMountEffects';
-import {
-  Clock,
-  LogIn,
-  Coffee,
-  LogOut,
-  MapPin,
-  WifiOff,
-  RefreshCw,
-  Scan,
-  ShieldCheck,
-  CheckCircle2,
-  Sparkles,
-} from 'lucide-react';
+import { CheckCircle2, Clock, LogIn, Coffee, LogOut, MapPin, WifiOff, RefreshCw, Scan, ShieldCheck, Sparkles } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,10 +11,18 @@ import { avisoRecusaRelogio, pontoOfflineService } from '@/services/pontoOffline
 import { loggerService } from '@/services/loggerService';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
+import { cardVariants } from '@/components/dashboard/MetricCard';
+import { VERMELHO_BORDA, VERMELHO_FUNDO, VERMELHO_HOVER, VERMELHO_TEXTO } from './vermelhoVibrante';
+
+/** Situação real da jornada do dia, calculada pela página a partir do registro. */
+interface StatusJornada {
+  rotulo: string;
+  tom: 'success' | 'warning' | 'outline';
+}
+
 interface PontoClockRegisterProps {
   time: Date;
   loading: string | null;
@@ -34,19 +31,24 @@ interface PontoClockRegisterProps {
     tipo: 'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida',
     options?: { foto_biometria_url?: string | null; foto_base64?: string | null }
   ) => Promise<{ biometriaValida?: boolean } | undefined>;
+  /** Selo do cabeçalho — vem do estado real do dia, nunca é fixo. */
+  statusJornada?: StatusJornada;
+  /** Ultima batida do dia (`batidas_ponto`) - so apresentacao do card. */
   ultimoRegistro?: Tables<'batidas_ponto'>;
-  // configuracoes_ponto.exige_reconhecimento_facial — antes o switch da
-  // aba de Configurações não era consultado: a câmera abria sempre.
+  /**
+   * `configuracoes_ponto.exige_reconhecimento_facial`. Com `false` o registro e
+   * direto: a camera nunca abre (antes a flag era decorativa na tela).
+   */
   exigeBiometria?: boolean;
-  // D2: colaborador vinculado a relógio ativo não registra pelo app.
+  /** D2: colaborador com relogio ativo na unidade nao registra pelo app. */
   usaRelogio?: boolean;
 }
 
 const buttons = [
-  { tipo: 'entrada' as const, label: 'Entrada', icon: LogIn, gradient: 'from-primary to-primary-glow' },
-  { tipo: 'saida_almoco' as const, label: 'Saída Almoço', icon: Coffee, gradient: 'from-primary-glow to-primary' },
-  { tipo: 'retorno_almoco' as const, label: 'Retorno Almoço', icon: Coffee, gradient: 'from-primary to-primary-glow' },
-  { tipo: 'saida' as const, label: 'Saída', icon: LogOut, gradient: 'from-destructive to-destructive/70/70' },
+  { tipo: 'entrada' as const, label: 'Entrada', icon: LogIn, tom: 'primario' as const },
+  { tipo: 'saida_almoco' as const, label: 'Saída Almoço', icon: Coffee, tom: 'contorno' as const },
+  { tipo: 'retorno_almoco' as const, label: 'Retorno Almoço', icon: Coffee, tom: 'contorno' as const },
+  { tipo: 'saida' as const, label: 'Saída', icon: LogOut, tom: 'perigo' as const },
 ];
 
 export function PontoClockRegister({
@@ -54,6 +56,7 @@ export function PontoClockRegister({
   loading,
   geoStatus,
   onRegistrar,
+  statusJornada,
   ultimoRegistro,
   exigeBiometria = true,
   usaRelogio = false,
@@ -65,7 +68,9 @@ export function PontoClockRegister({
   const [scanProgress, setScanProgress] = useState(0);
   const [scanStage, setScanStage] = useState('');
   const [scanOutcome, setScanOutcome] = useState<'confirmado' | 'pendente' | null>(null);
-  const [, setSelectedTipo] = useState<'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida' | null>(null);
+  const [selectedTipo, setSelectedTipo] = useState<'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida' | null>(
+    null
+  );
   const [showConfetti, setShowConfetti] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -98,6 +103,10 @@ export function PontoClockRegister({
   });
 
   useEffect(() => {
+    setOfflineQueueSize(pontoOfflineService.getQueueSize());
+    if (navigator.onLine) {
+      handleSync();
+    }
     const interval = setInterval(() => {
       setOfflineQueueSize(pontoOfflineService.getQueueSize());
     }, 5000);
@@ -105,16 +114,16 @@ export function PontoClockRegister({
       clearInterval(interval);
       if (stream) stream.getTracks().forEach((track) => track.stop());
     };
-  }, [stream]);
+  }, [stream, handleSync]);
 
-  const startScan = async (tipo: 'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida') => {
+  const startScan = async (tipo: any) => {
     setSelectedTipo(tipo);
-    // Biometria opcional por empresa: sem a flag configurada, o registro é
-    // direto — a câmera nunca abre (antes o switch era decorativo, achado §6.4).
+    // Biometria opcional por empresa: sem `exige_reconhecimento_facial` o
+    // registro e direto - a camera nunca abre (antes a flag era decorativa).
     if (!exigeBiometria) {
       try {
         await onRegistrar(tipo);
-      } catch (e) {
+      } catch (e: unknown) {
         toast.error(safeErrorMessage(e, 'Erro ao registrar ponto.'));
       }
       return;
@@ -155,10 +164,7 @@ export function PontoClockRegister({
     }
   };
 
-  const captureAndFinalize = async (
-    tipo: 'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida',
-    mediaStream: MediaStream
-  ) => {
+  const captureAndFinalize = async (tipo: any, mediaStream: MediaStream) => {
     let fotoUrl: string | null = null;
     let fotoBase64: string | null = null;
     setScanStage('Capturando foto...');
@@ -178,23 +184,15 @@ export function PontoClockRegister({
       if (blob && user?.id && navigator.onLine) {
         setScanStage('Enviando foto...');
         setScanProgress(80);
-        const { data: colab } = await supabase
-          .from('colaboradores')
-          .select('id, empresa_id')
-          .eq('user_id', user.id)
-          .limit(1)
-          .maybeSingle();
-        if (!colab?.empresa_id) {
-          throw new Error('Colaborador ou empresa não identificados para o upload biométrico');
-        }
         // eslint-disable-next-line react-hooks/purity -- roda em handler assíncrono de captura de foto (ação do usuário), não em render
-        const fileName = `${colab.empresa_id}/${colab.id}/${Date.now()}.jpg`;
+        const fileName = `${user.id}/${Date.now()}.jpg`;
         const { error } = await supabase.storage.from('ponto-biometria').upload(fileName, blob);
 
         if (!error) {
-          // Bucket privado: persistimos o path, nunca uma URL pública ou
-          // assinada com expiração embutida no registro trabalhista.
-          fotoUrl = fileName;
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from('ponto-biometria').getPublicUrl(fileName);
+          fotoUrl = publicUrl;
         }
       }
     }
@@ -235,12 +233,12 @@ export function PontoClockRegister({
         .select('id, empresa_id')
         .eq('email', user.email!)
         .maybeSingle();
-      if (!colab?.empresa_id) throw new Error('Colaborador ou empresa não identificados localmente');
+      if (!colab) throw new Error('Colaborador não identificado localmente');
 
       const hashPayload = {
         tipo,
         colaborador_id: colab.id,
-        empresa_id: colab.empresa_id,
+        empresa_id: colab.empresa_id ?? '',
         timestamp: new Date().toISOString(),
         dispositivoId: navigator.userAgent,
         foto_base64: fotoBase64,
@@ -262,70 +260,96 @@ export function PontoClockRegister({
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}>
-      <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
-        <div className="h-[2px] bg-gradient-to-r from-primary/60 to-primary/90" />
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2.5 font-display">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/60 to-primary/90">
-              <Clock className="h-4 w-4 text-primary-foreground" />
-            </div>
-            Registrar Ponto
+    <motion.div custom={4} variants={cardVariants} initial="hidden" animate="visible" className="h-full">
+      <Card className="relative border border-border/40 shadow-xs rounded-xl overflow-hidden h-full flex flex-col">
+        <CardContent className="p-3 flex flex-1 flex-col gap-2.5">
+          {/* Cabeçalho: título + situação real da jornada (nunca um selo fixo). */}
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
+              <Clock className="h-3.5 w-3.5" />
+            </span>
+            <p className="min-w-0 flex-1 line-clamp-2 font-display text-[13px] font-semibold leading-tight">
+              Registro de Ponto
+            </p>
             {offlineQueueSize > 0 && (
-              <Badge
-                variant="outline"
-                className="ml-auto text-[10px] bg-warning/10 text-warning border-warning/20 animate-pulse"
-              >
-                <WifiOff className="h-3 w-3 mr-1" /> {offlineQueueSize} pendentes
+              <>
+                <Badge
+                  variant="outline"
+                  className="shrink-0 text-[10px] bg-warning/10 text-warning border-warning/20"
+                  title={`${offlineQueueSize} registros aguardando sincronização`}
+                >
+                  <WifiOff className="h-3 w-3 mr-1" /> {offlineQueueSize}
+                </Badge>
+                {navigator.onLine && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-5 w-5 shrink-0"
+                    onClick={handleSync}
+                    disabled={isSyncing}
+                    aria-label="Sincronizar registros offline"
+                  >
+                    <RefreshCw className={cn('h-3 w-3', isSyncing && 'animate-spin')} />
+                  </Button>
+                )}
+              </>
+            )}
+            {statusJornada && (
+              <Badge variant={statusJornada.tom} size="sm" className="shrink-0 font-body">
+                {statusJornada.rotulo}
               </Badge>
             )}
-            {offlineQueueSize > 0 && navigator.onLine && (
-              <Button variant="ghost" size="icon" className="h-6 w-6 ml-1" onClick={handleSync} disabled={isSyncing}>
-                <RefreshCw className={cn('h-3 w-3', isSyncing && 'animate-spin')} />
-              </Button>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-5xl font-display font-bold text-center mb-8 tabular-nums bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-            {time.toLocaleTimeString('pt-BR')}
           </div>
-          <p className="text-center text-sm text-muted-foreground font-body mb-4">
-            {time.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })}
-          </p>
+          {/* Relógio: elemento principal, centralizado no espaço que sobra entre
+              o cabeçalho e os botões — é ele quem absorve a diferença de altura
+              da linha (`flex-1` + `justify-center`), e não os botões nem o
+              rodapé, que precisam ficar compactos e próximos. */}
+          <div className="flex flex-1 flex-col items-center justify-center gap-1">
+            <div className="font-display text-[clamp(26px,2.2vw,30px)] font-semibold leading-none tabular-nums">
+              {time.toLocaleTimeString('pt-BR')}
+            </div>
+            <p className="text-[10px] text-muted-foreground font-body capitalize">
+              {time.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })}
+            </p>
+          </div>
+
+          {/* D2: com relogio ativo na unidade o app nao registra - os botoes
+              saem de cena e a regra e explicada no lugar deles. */}
           {usaRelogio ? (
             <p
               role="status"
-              className="rounded-xl border border-info/30 bg-info/10 p-4 text-center text-sm font-medium text-info"
+              className="rounded-lg border border-info/30 bg-info/10 p-3 text-center font-body text-[11px] font-medium text-info"
             >
               Seu ponto é registrado no relógio da unidade.
             </p>
           ) : (
-            <div className="grid grid-cols-2 gap-3">
-              {buttons.map(({ tipo, label, icon: Icon, gradient }) => (
-                <Button
-                  key={tipo}
-                  onClick={() => startScan(tipo)}
-                  disabled={loading !== null}
-                  className={cn(
-                    'h-12 rounded-xl bg-gradient-to-r text-primary-foreground hover:opacity-90 shadow-lg transition-all font-body font-medium',
-                    gradient
-                  )}
-                >
-                  {loading === tipo && geoStatus === 'capturing' ? (
-                    <>
-                      <MapPin className="h-4 w-4 mr-2 animate-bounce" />
-                      Capturando GPS...
-                    </>
-                  ) : (
-                    <>
-                      <Icon className="h-4 w-4 mr-2" />
-                      {loading === tipo ? 'Registrando...' : label}
-                    </>
-                  )}
-                </Button>
-              ))}
-            </div>
+            <div className="grid grid-cols-2 gap-2">
+            {buttons.map(({ tipo, label, icon: Icon, tom }) => (
+              <Button
+                key={tipo}
+                onClick={() => startScan(tipo)}
+                disabled={loading !== null}
+                variant={tom === 'primario' ? 'default' : 'outline'}
+                className={cn(
+                  'h-8 gap-1.5 rounded-lg px-2 font-body font-medium text-[11px] whitespace-nowrap',
+                  tom === 'primario' && 'shadow-xs',
+                  tom === 'perigo' && cn(VERMELHO_BORDA, VERMELHO_FUNDO, VERMELHO_TEXTO, VERMELHO_HOVER)
+                )}
+              >
+                {loading === tipo && geoStatus === 'capturing' ? (
+                  <>
+                    <MapPin className="h-3.5 w-3.5 shrink-0 animate-bounce" />
+                    Capturando GPS...
+                  </>
+                ) : (
+                  <>
+                    <Icon className="h-3.5 w-3.5 shrink-0" />
+                    {loading === tipo ? 'Registrando...' : label}
+                  </>
+                )}
+              </Button>
+            ))}
+          </div>
           )}
 
           <AnimatePresence>
@@ -358,8 +382,8 @@ export function PontoClockRegister({
                   </motion.div>
                   <Card className="bg-background/90 backdrop-blur-md border-primary/30 p-4 shadow-2xl flex flex-col items-center gap-2">
                     <Sparkles className="h-8 w-8 text-primary animate-bounce" />
-                    <p className="font-display font-bold text-primary">Ponto Confirmado!</p>
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
+                    <p className="font-display font-medium text-primary">Ponto Confirmado!</p>
+                    <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-widest">
                       +50 XP • Assiduidade
                     </p>
                   </Card>
@@ -368,37 +392,45 @@ export function PontoClockRegister({
             )}
           </AnimatePresence>
 
+          {/* Ultima batida do dia - apresentacao apenas (o dado vem da
+              pagina, que ja carrega o registro de hoje). */}
           {ultimoRegistro && (
-            <div className="mt-4 p-3 rounded-xl bg-muted/30 border border-border/20 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-full bg-success/20 text-success">
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                </div>
-                <div>
-                  <p className="text-[9px] uppercase font-bold text-muted-foreground">Último Registro</p>
-                  <p className="text-xs font-bold capitalize">
+            <div className="flex min-w-0 items-center justify-between rounded-lg border border-border/20 bg-muted/30 px-2.5 py-1.5">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-success/20 text-success">
+                  <CheckCircle2 className="h-3 w-3" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[9px] font-bold uppercase text-muted-foreground">Último Registro</p>
+                  <p className="truncate text-[11px] font-bold capitalize">
                     {ultimoRegistro.tipo.replace(/_/g, ' ')} às {ultimoRegistro.hora}
                   </p>
                 </div>
               </div>
-              <Badge variant="outline" className="text-[8px] bg-background">
+              <Badge variant="outline" className="shrink-0 text-[8px]">
                 HOJE
               </Badge>
             </div>
           )}
 
-          <p className="text-xs text-muted-foreground font-body text-center mt-3 flex items-center justify-center gap-1">
-            <MapPin className="h-3 w-3" />
-            {geoStatus === 'capturing'
-              ? 'Capturando localização...'
-              : geoStatus === 'success'
-                ? '✅ Localização capturada'
-                : geoStatus === 'error'
-                  ? '⚠️ GPS indisponível'
-                  : geoStatus === 'out_of_range'
-                    ? '📍 Fora do raio permitido'
-                    : 'Geolocalização Ativa (671/21)'}
-          </p>
+          {/* Rodapé: apenas o status real da geolocalização. O detalhamento das
+              marcações do dia vive na aba Espelho de Ponto — a ação "Ver
+              detalhes" foi removida daqui para o rodapé não competir com o
+              botão principal do card. */}
+          <div className="flex min-w-0 items-center gap-1 text-[10px] text-muted-foreground font-body">
+            <MapPin className="h-3 w-3 shrink-0" />
+            <span className="truncate">
+              {geoStatus === 'capturing'
+                ? 'Capturando localização...'
+                : geoStatus === 'success'
+                  ? 'Localização capturada'
+                  : geoStatus === 'error'
+                    ? 'GPS indisponível'
+                    : geoStatus === 'out_of_range'
+                      ? 'Fora do raio permitido'
+                      : 'Geolocalização ativa (671/21)'}
+            </span>
+          </div>
         </CardContent>
       </Card>
 
@@ -441,7 +473,7 @@ export function PontoClockRegister({
                   fill="transparent"
                   strokeDasharray={2 * Math.PI * 120}
                   strokeDashoffset={2 * Math.PI * 120 * (1 - scanProgress / 100)}
-                  className="text-primary-glow transition-all duration-300"
+                  className="text-primary-glow transition-all duration-slow"
                 />
               </svg>
             </div>

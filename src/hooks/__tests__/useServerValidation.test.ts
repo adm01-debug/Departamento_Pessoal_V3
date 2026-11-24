@@ -10,7 +10,7 @@ vi.mock('sonner', () => ({
 describe('useServerValidation', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(window, 'location', 'get').mockReturnValue({ href: '' } as never);
+    vi.spyOn(window, 'location', 'get').mockReturnValue({ href: '' } as any);
   });
 
   it('returns handleServerError function', () => {
@@ -86,7 +86,9 @@ describe('useServerValidation', () => {
     const handled = result.current.handleServerError({ status: 401 });
 
     expect(handled).toBe(true);
-    expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Sessão expirada'));
+    expect(toast.error).toHaveBeenCalledWith(
+      expect.stringContaining('Sessão expirada')
+    );
   });
 
   it('handles 403 status', () => {

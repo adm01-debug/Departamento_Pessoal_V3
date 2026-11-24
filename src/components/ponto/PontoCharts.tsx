@@ -5,18 +5,8 @@ import { TrendingUp, Clock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts';
 import { motion } from 'framer-motion';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  Cell,
-} from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
+import { TooltipGrafico } from '@/components/ui/tooltipGrafico';
 import { formatDateLocalISO } from '@/utils/dateLocal';
 
 export function PontoCharts() {
@@ -34,7 +24,7 @@ export function PontoCharts() {
       if (!colab) return [];
       const d = new Date();
       d.setDate(d.getDate() - 30);
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('registros_ponto')
         .select('data, atraso_minutos, horas_trabalhadas, entrada_1, entrada_esperada')
         .eq('colaborador_id', colab.id)
@@ -49,7 +39,7 @@ export function PontoCharts() {
   // Weekly trend data
   const weeklyTrend = useMemo(() => {
     const weeks: Record<string, { pontual: number; total: number }> = {};
-    registros30d.forEach((r) => {
+    registros30d.forEach((r: any) => {
       if (!r.entrada_1) return;
       const date = new Date(r.data + 'T12:00:00');
       const weekNum = Math.ceil(date.getDate() / 7);
@@ -67,9 +57,9 @@ export function PontoCharts() {
   // Check-in times data
   const checkInData = useMemo(() => {
     return registros30d
-      .filter((r) => r.entrada_1)
+      .filter((r: any) => r.entrada_1)
       .slice(-7)
-      .map((r) => {
+      .map((r: any) => {
         const date = new Date(r.data + 'T12:00:00');
         const [h, m] = (r.entrada_1 as string).split(':').map(Number);
         const timeInMin = h * 60 + (m || 0);
@@ -94,7 +84,6 @@ export function PontoCharts() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Weekly Trend */}
         <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
-          <div className="h-[2px] bg-gradient-to-r from-primary to-primary-glow" />
           <CardHeader>
             <CardTitle className="font-display flex items-center gap-2 text-base">
               <TrendingUp className="h-4 w-4 text-info" /> Tendência Semanal
@@ -107,8 +96,8 @@ export function PontoCharts() {
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis dataKey="week" tick={{ fontSize: 12 }} />
                   <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
-                  <Tooltip
-                    formatter={(value) => [`${value}%`, 'Taxa']}
+                  <TooltipGrafico
+                    formatter={(value: any) => [`${value}%`, 'Taxa']}
                     contentStyle={{
                       backgroundColor: 'hsl(var(--popover))',
                       border: '1px solid hsl(var(--border))',
@@ -130,7 +119,6 @@ export function PontoCharts() {
 
         {/* Check-in Times */}
         <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
-          <div className="h-[2px] bg-gradient-to-r from-primary/60 to-primary/90" />
           <CardHeader>
             <CardTitle className="font-display flex items-center gap-2 text-base">
               <Clock className="h-4 w-4 text-streak" /> Horários de Entrada
@@ -147,8 +135,8 @@ export function PontoCharts() {
                     tickFormatter={(v) => `${Math.floor(v / 60)}:${String(v % 60).padStart(2, '0')}`}
                     tick={{ fontSize: 10 }}
                   />
-                  <Tooltip
-                    formatter={(_, __, props) => [(props.payload as { displayTime?: string }).displayTime, 'Horário']}
+                  <TooltipGrafico
+                    formatter={(_: any, __: any, props: any) => [props.payload.displayTime, 'Horário']}
                     contentStyle={{
                       backgroundColor: 'hsl(var(--popover))',
                       border: '1px solid hsl(var(--border))',
@@ -156,7 +144,7 @@ export function PontoCharts() {
                     }}
                   />
                   <Bar dataKey="time" radius={[4, 4, 0, 0]}>
-                    {checkInData.map((entry, i) => (
+                    {checkInData.map((entry: any, i: number) => (
                       <Cell
                         key={`cell-${i}`}
                         fill={entry.isPunctual ? 'hsl(var(--success))' : 'hsl(var(--destructive))'}

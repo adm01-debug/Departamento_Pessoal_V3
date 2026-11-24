@@ -108,26 +108,22 @@ ALTER TABLE public.colaboradores ENABLE ROW LEVEL SECURITY;
 
 -- Create policies (idempotent)
 DO $$ BEGIN
-  DROP POLICY IF EXISTS "Authenticated users can view colaboradores" ON public.colaboradores;
-CREATE POLICY "Authenticated users can view colaboradores"
+  CREATE POLICY "Authenticated users can view colaboradores"
   ON public.colaboradores FOR SELECT TO authenticated USING (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-  DROP POLICY IF EXISTS "Authenticated users can insert colaboradores" ON public.colaboradores;
-CREATE POLICY "Authenticated users can insert colaboradores"
+  CREATE POLICY "Authenticated users can insert colaboradores"
   ON public.colaboradores FOR INSERT TO authenticated WITH CHECK (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-  DROP POLICY IF EXISTS "Authenticated users can update colaboradores" ON public.colaboradores;
-CREATE POLICY "Authenticated users can update colaboradores"
+  CREATE POLICY "Authenticated users can update colaboradores"
   ON public.colaboradores FOR UPDATE TO authenticated USING (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-  DROP POLICY IF EXISTS "Authenticated users can delete colaboradores" ON public.colaboradores;
-CREATE POLICY "Authenticated users can delete colaboradores"
+  CREATE POLICY "Authenticated users can delete colaboradores"
   ON public.colaboradores FOR DELETE TO authenticated USING (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -155,8 +151,7 @@ CREATE TABLE IF NOT EXISTS public.dependentes (
 ALTER TABLE public.dependentes ENABLE ROW LEVEL SECURITY;
 
 DO $$ BEGIN
-  DROP POLICY IF EXISTS "Authenticated users can manage dependentes" ON public.dependentes;
-CREATE POLICY "Authenticated users can manage dependentes"
+  CREATE POLICY "Authenticated users can manage dependentes"
   ON public.dependentes FOR ALL TO authenticated USING (true) WITH CHECK (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -178,8 +173,7 @@ CREATE TABLE IF NOT EXISTS public.historico_cargo (
 ALTER TABLE public.historico_cargo ENABLE ROW LEVEL SECURITY;
 
 DO $$ BEGIN
-  DROP POLICY IF EXISTS "Authenticated users can manage historico_cargo" ON public.historico_cargo;
-CREATE POLICY "Authenticated users can manage historico_cargo"
+  CREATE POLICY "Authenticated users can manage historico_cargo"
   ON public.historico_cargo FOR ALL TO authenticated USING (true) WITH CHECK (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -198,7 +192,6 @@ CREATE TABLE IF NOT EXISTS public.documentos_colaborador (
 ALTER TABLE public.documentos_colaborador ENABLE ROW LEVEL SECURITY;
 
 DO $$ BEGIN
-  DROP POLICY IF EXISTS "Authenticated users can manage documentos" ON public.documentos_colaborador;
-CREATE POLICY "Authenticated users can manage documentos"
+  CREATE POLICY "Authenticated users can manage documentos"
   ON public.documentos_colaborador FOR ALL TO authenticated USING (true) WITH CHECK (true);
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;

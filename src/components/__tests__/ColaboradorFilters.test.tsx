@@ -10,6 +10,16 @@ const DEFAULT_FILTERS = {
   cargo: 'all',
 };
 
+const DEPARTAMENTOS = [
+  { id: '1', nome: 'TI' },
+  { id: '2', nome: 'RH' },
+];
+
+const CARGOS = [
+  { id: '1', nome: 'Desenvolvedor' },
+  { id: '2', nome: 'Analista' },
+];
+
 describe('ColaboradorFilters', () => {
   it('renders search input', () => {
     render(
@@ -18,6 +28,8 @@ describe('ColaboradorFilters', () => {
         onStatusChange={vi.fn()}
         onDeptoChange={vi.fn()}
         onCargoChange={vi.fn()}
+        viewMode="tabela"
+        onViewModeChange={vi.fn()}
         currentFilters={DEFAULT_FILTERS}
       />
     );
@@ -33,6 +45,8 @@ describe('ColaboradorFilters', () => {
         onStatusChange={vi.fn()}
         onDeptoChange={vi.fn()}
         onCargoChange={vi.fn()}
+        viewMode="tabela"
+        onViewModeChange={vi.fn()}
         currentFilters={DEFAULT_FILTERS}
       />
     );
@@ -47,6 +61,8 @@ describe('ColaboradorFilters', () => {
         onStatusChange={vi.fn()}
         onDeptoChange={vi.fn()}
         onCargoChange={vi.fn()}
+        viewMode="tabela"
+        onViewModeChange={vi.fn()}
         currentFilters={{ ...DEFAULT_FILTERS, search: 'Maria' }}
       />
     );
@@ -60,10 +76,31 @@ describe('ColaboradorFilters', () => {
         onStatusChange={vi.fn()}
         onDeptoChange={vi.fn()}
         onCargoChange={vi.fn()}
+        viewMode="tabela"
+        onViewModeChange={vi.fn()}
         currentFilters={DEFAULT_FILTERS}
       />
     );
     // Should render without crashing
     expect(screen.getByPlaceholderText(/Buscar por nome/i)).toBeInTheDocument();
+  });
+
+  it('renders with the default status filter set to "all"', () => {
+    render(
+      <ColaboradorFilters
+        onSearchChange={vi.fn()}
+        onStatusChange={vi.fn()}
+        onDeptoChange={vi.fn()}
+        onCargoChange={vi.fn()}
+        viewMode="tabela"
+        onViewModeChange={vi.fn()}
+        currentFilters={DEFAULT_FILTERS}
+      />
+    );
+    // O Radix Select só monta o conteúdo do dropdown (SelectItem) em um
+    // portal quando aberto, então a lista de status válidos ('pendente' no
+    // lugar do antigo 'inativo') é coberta diretamente no código-fonte do
+    // componente e pelos testes de colaboradorService (filtro por status).
+    expect(screen.getByText('Todos os Status')).toBeInTheDocument();
   });
 });

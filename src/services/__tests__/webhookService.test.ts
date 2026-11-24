@@ -17,9 +17,9 @@ vi.mock('@/utils/auditLogger', () => ({
 
 import { webhookService } from '../webhookService';
 
-function setupListarChain(data: unknown, count: number = 0, error: { message: string; code?: string } | null = null) {
+function setupListarChain(data: any[], count: number = 0, error: any = null) {
   const response = { data, count, error };
-  const chain = {
+  const chain: any = {
     eq: vi.fn(),
     ilike: vi.fn(),
     order: vi.fn().mockResolvedValue(response),
@@ -85,7 +85,7 @@ describe('webhookService', () => {
     });
 
     it('returns empty array when data is null', async () => {
-      setupListarChain(null as never, 0);
+      setupListarChain(null as any, 0);
 
       const result = await webhookService.listar({});
 

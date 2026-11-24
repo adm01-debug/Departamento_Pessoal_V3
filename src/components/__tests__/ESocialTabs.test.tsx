@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -13,7 +12,7 @@ vi.mock('@/utils/format', () => ({
 }));
 
 vi.mock('@/components/ui/status-badge', () => ({
-  StatusBadge: ({ status }: { status?: string }) => <span>{status}</span>,
+  StatusBadge: ({ status }: any) => <span>{status}</span>,
 }));
 
 vi.mock('@/components/esocial/ESocialEventViewer', () => ({
@@ -21,20 +20,20 @@ vi.mock('@/components/esocial/ESocialEventViewer', () => ({
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: { children?: ReactNode }) => <>{children}</>,
-  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DialogTitle: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DialogTrigger: ({ children }: { children?: ReactNode }) => <>{children}</>,
-  DialogDescription: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  Dialog: ({ children }: any) => <>{children}</>,
+  DialogContent: ({ children }: any) => <div>{children}</div>,
+  DialogHeader: ({ children }: any) => <div>{children}</div>,
+  DialogTitle: ({ children }: any) => <div>{children}</div>,
+  DialogTrigger: ({ children }: any) => <>{children}</>,
+  DialogDescription: ({ children }: any) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/scroll-area', () => ({
-  ScrollArea: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  ScrollArea: ({ children }: any) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/radio-group', () => ({
-  RadioGroup: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  RadioGroup: ({ children }: any) => <div>{children}</div>,
   RadioGroupItem: () => <input type="radio" />,
 }));
 

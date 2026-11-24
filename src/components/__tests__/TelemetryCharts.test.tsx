@@ -1,15 +1,14 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('recharts', () => ({
-  ResponsiveContainer: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  BarChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
+  BarChart: ({ children }: any) => <div>{children}</div>,
   Bar: () => null,
-  AreaChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  AreaChart: ({ children }: any) => <div>{children}</div>,
   Area: () => null,
-  PieChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  Pie: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  PieChart: ({ children }: any) => <div>{children}</div>,
+  Pie: ({ children }: any) => <div>{children}</div>,
   Cell: () => null,
   XAxis: () => null,
   YAxis: () => null,
@@ -19,10 +18,10 @@ vi.mock('recharts', () => ({
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
+  Card: ({ children }: any) => <div>{children}</div>,
+  CardContent: ({ children }: any) => <div>{children}</div>,
+  CardHeader: ({ children }: any) => <div>{children}</div>,
+  CardTitle: ({ children }: any) => <h3>{children}</h3>,
 }));
 
 import { TelemetryCharts } from '../admin/telemetry/TelemetryCharts';

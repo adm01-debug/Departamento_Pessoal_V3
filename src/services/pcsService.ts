@@ -23,7 +23,6 @@ import {
   type PcsPontuacoes,
 } from '@/types/pcs';
 
-import { validateTablePayload } from '@/schemas/validate';
 /** Limite defensivo — nenhuma listagem do módulo deve varrer a tabela inteira. */
 const MAX_ROWS = 500;
 
@@ -41,11 +40,7 @@ export const pcsService = {
   },
 
   async criarPlano(payload: PcsPlanoInsert): Promise<PcsPlano> {
-    const { data, error } = await supabase
-      .from('pcs_planos')
-      .insert(validateTablePayload('pcs_planos', payload, 'pcsService:pcs_planos'))
-      .select()
-      .single();
+    const { data, error } = await supabase.from('pcs_planos').insert(payload).select().single();
     if (error) throw error;
     return data;
   },
@@ -53,9 +48,7 @@ export const pcsService = {
   async atualizarPlano(id: string, patch: PcsPlanoUpdate): Promise<void> {
     const { error } = await supabase
       .from('pcs_planos')
-      .update(
-        validateTablePayload('pcs_planos', { ...patch, updated_at: new Date().toISOString() }, 'pcsService:pcs_planos')
-      )
+      .update({ ...patch, updated_at: new Date().toISOString() })
       .eq('id', id);
     if (error) throw error;
   },
@@ -74,9 +67,7 @@ export const pcsService = {
 
   async criarFatores(fatores: PcsFatorInsert[]): Promise<void> {
     if (fatores.length === 0) return;
-    const { error } = await supabase
-      .from('pcs_fatores')
-      .insert(validateTablePayload('pcs_fatores', fatores, 'pcsService:pcs_fatores'));
+    const { error } = await supabase.from('pcs_fatores').insert(fatores);
     if (error) throw error;
   },
 
@@ -109,19 +100,15 @@ export const pcsService = {
     avaliadoPor?: string | null;
   }): Promise<void> {
     const { error } = await supabase.from('pcs_avaliacoes_cargo').upsert(
-      validateTablePayload(
-        'pcs_avaliacoes_cargo',
-        {
-          plano_id: params.planoId,
-          cargo_id: params.cargoId,
-          pontuacoes: params.pontuacoes,
-          justificativa: params.justificativa ?? null,
-          avaliado_por: params.avaliadoPor ?? null,
-          avaliado_em: new Date().toISOString(),
-        },
-        'pcsService:pcs_avaliacoes_cargo'
-      ),
-      { onConflict: 'plano_id,cargo_id' }
+      {
+        plano_id: params.planoId,
+        cargo_id: params.cargoId,
+        pontuacoes: params.pontuacoes,
+        justificativa: params.justificativa ?? null,
+        avaliado_por: params.avaliadoPor ?? null,
+        avaliado_em: new Date().toISOString(),
+      },
+      { onConflict: 'plano_id,cargo_id' },
     );
     if (error) throw error;
   },
@@ -155,6 +142,7 @@ export const pcsService = {
     return data ?? [];
   },
 
+
   // ------------------------------------------------------- equidade/impacto
   async enquadramento(planoId: string): Promise<PcsEnquadramentoRow[]> {
     const { data, error } = await supabase.rpc('pcs_enquadramento', { p_plano_id: planoId });
@@ -184,14 +172,16 @@ export const pcsService = {
   },
 
   async criarPesquisa(payload: PcsPesquisaSalarialInsert): Promise<void> {
-    const { error } = await supabase
-      .from('pcs_pesquisa_salarial')
-      .insert(validateTablePayload('pcs_pesquisa_salarial', payload, 'pcsService:pcs_pesquisa_salarial'));
+    const { error } = await supabase.from('pcs_pesquisa_salarial').insert(payload);
     if (error) throw error;
   },
 
   async excluirPesquisa(id: string, empresaId: string): Promise<void> {
-    const { error } = await supabase.from('pcs_pesquisa_salarial').delete().eq('id', id).eq('empresa_id', empresaId);
+    const { error } = await supabase
+      .from('pcs_pesquisa_salarial')
+      .delete()
+      .eq('id', id)
+      .eq('empresa_id', empresaId);
     if (error) throw error;
   },
 };

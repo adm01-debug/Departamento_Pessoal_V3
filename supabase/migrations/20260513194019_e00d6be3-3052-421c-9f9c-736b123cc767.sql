@@ -20,8 +20,7 @@ ALTER TABLE public.documentos_colaborador ENABLE ROW LEVEL SECURITY;
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Colaboradores podem ver seus próprios documentos') THEN
-        DROP POLICY IF EXISTS "Colaboradores podem ver seus próprios documentos" ON public.documentos_colaborador;
-CREATE POLICY "Colaboradores podem ver seus próprios documentos" 
+        CREATE POLICY "Colaboradores podem ver seus próprios documentos" 
         ON public.documentos_colaborador 
         FOR SELECT 
         USING (auth.uid() = colaborador_id);

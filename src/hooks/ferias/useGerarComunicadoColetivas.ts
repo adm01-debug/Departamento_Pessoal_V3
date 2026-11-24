@@ -57,7 +57,10 @@ export function useGerarComunicadoColetivas() {
       };
 
       // 2. Gera PDFs em memória
-      const [mte, sind] = await Promise.all([gerarComunicadoMTE(input), gerarComunicadoSindicato(input)]);
+      const [mte, sind] = await Promise.all([
+        gerarComunicadoMTE(input),
+        gerarComunicadoSindicato(input),
+      ]);
 
       // 3. Upload para bucket privado (path: {empresa_id}/{coletiva_id}/arquivo.pdf)
       const mtePath = `${empresaId}/${coletivaId}/${mte.filename}`;
@@ -81,7 +84,7 @@ export function useGerarComunicadoColetivas() {
       toast.success('Comunicados MTE e sindicato gerados e arquivados com sucesso');
       qc.invalidateQueries({ queryKey: ['ferias_coletivas'] });
     },
-    onError: (err) => {
+    onError: (err: any) => {
       toast.error(`Falha ao gerar comunicados: ${err.message ?? err}`);
     },
   });

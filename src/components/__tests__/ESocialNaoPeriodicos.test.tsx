@@ -1,25 +1,24 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  Card: ({ children }: any) => <div>{children}</div>,
+  CardContent: ({ children }: any) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
+  Badge: ({ children }: any) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children }: { children?: ReactNode }) => <label>{children}</label>,
+  Label: ({ children }: any) => <label>{children}</label>,
 }));
 
 vi.mock('@/utils/piiMask', () => ({
   maskCpfDisplay: vi.fn((cpf: string) => '***.' + (cpf || '').slice(-6)),
 }));
 
-vi.mock('@/lib/utils', () => ({ cn: (...args: unknown[]) => args.filter(Boolean).join(' ') }));
+vi.mock('@/lib/utils', () => ({ cn: (...args: any[]) => args.filter(Boolean).join(' ') }));
 
 import { S2200Admissao, S2230Afastamento } from '../esocial/NaoPeriodicos';
 

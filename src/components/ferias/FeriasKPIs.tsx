@@ -35,13 +35,13 @@ export function FeriasKPIs({ stats }: { stats: FeriasStats }) {
           >
             <Tooltip>
               <TooltipTrigger asChild>
-                <Card className="group border border-border/40 shadow-xs rounded-2xl hover:shadow-md hover:border-primary/20 transition-all duration-300 cursor-default overflow-hidden">
+                <Card className="group border border-border/40 shadow-xs rounded-2xl hover:shadow-md hover:border-primary/20 transition-all duration-slow cursor-default overflow-hidden">
                   <CardContent className="p-5 flex flex-col items-center text-center gap-3">
-                    <div className={cn("p-3 rounded-2xl transition-transform duration-300 group-hover:scale-110", bgColor)}>
+                    <div className={cn("p-3 rounded-2xl transition-transform duration-slow group-hover:scale-110", bgColor)}>
                       <Icon className={cn("h-5 w-5", color)} />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-2xl font-display font-bold tracking-tight">{stats[key as keyof FeriasStats]}</p>
+                      <p className="text-2xl font-display font-semibold tracking-tight">{stats[key as keyof FeriasStats]}</p>
                       <p className="text-[10px] text-muted-foreground font-display uppercase tracking-widest">{label}</p>
                     </div>
                   </CardContent>

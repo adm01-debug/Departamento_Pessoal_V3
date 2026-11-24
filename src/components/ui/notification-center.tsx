@@ -45,7 +45,7 @@ export function NotificationCenter() {
             <motion.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="absolute -top-0.5 -right-0.5 h-5 w-5 bg-destructive text-destructive-foreground rounded-full text-[10px] font-bold flex items-center justify-center ring-2 ring-card"
+              className="absolute -top-0.5 -right-0.5 h-5 w-5 bg-destructive text-destructive-foreground rounded-full text-[10px] font-medium flex items-center justify-center ring-2 ring-card"
             >
               {naoLidas > 9 ? '9+' : naoLidas}
             </motion.span>
@@ -58,7 +58,7 @@ export function NotificationCenter() {
           <div className="flex items-center gap-2">
             <h3 className="font-display font-semibold text-sm">Notificações</h3>
             {naoLidas > 0 && (
-              <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-bold">
+              <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-medium">
                 {naoLidas} novas
               </span>
             )}

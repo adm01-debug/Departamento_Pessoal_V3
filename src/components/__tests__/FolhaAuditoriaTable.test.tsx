@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -7,26 +6,24 @@ vi.mock('@/hooks/useFolhaAuditoria', () => ({
 }));
 
 vi.mock('@/components/ui/table', () => ({
-  Table: ({ children }: { children?: ReactNode }) => <table>{children}</table>,
-  TableHeader: ({ children }: { children?: ReactNode }) => <thead>{children}</thead>,
-  TableBody: ({ children }: { children?: ReactNode }) => <tbody>{children}</tbody>,
-  TableRow: ({ children }: { children?: ReactNode }) => <tr>{children}</tr>,
-  TableHead: ({ children }: { children?: ReactNode }) => <th>{children}</th>,
-  TableCell: ({ children, colSpan }: { children?: ReactNode; colSpan?: number }) => (
-    <td colSpan={colSpan}>{children}</td>
-  ),
+  Table: ({ children }: any) => <table>{children}</table>,
+  TableHeader: ({ children }: any) => <thead>{children}</thead>,
+  TableBody: ({ children }: any) => <tbody>{children}</tbody>,
+  TableRow: ({ children }: any) => <tr>{children}</tr>,
+  TableHead: ({ children }: any) => <th>{children}</th>,
+  TableCell: ({ children, colSpan }: any) => <td colSpan={colSpan}>{children}</td>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
+  Badge: ({ children }: any) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/input', () => ({
-  Input: (props: React.ComponentProps<'input'>) => <input {...props} />,
+  Input: (props: any) => <input {...props} />,
 }));
 
 vi.mock('@/components/ui/scroll-area', () => ({
-  ScrollArea: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  ScrollArea: ({ children }: any) => <div>{children}</div>,
 }));
 
 vi.mock('date-fns', () => ({ format: vi.fn(() => '24/07/2026 14:30') }));
@@ -76,14 +73,14 @@ describe('FolhaAuditoriaTable', () => {
 
   it('shows loading text when loading', async () => {
     const { useFolhaAuditoria } = await import('@/hooks/useFolhaAuditoria');
-    vi.mocked(useFolhaAuditoria).mockReturnValueOnce({ logs: [], isLoading: true } as never);
+    vi.mocked(useFolhaAuditoria).mockReturnValueOnce({ logs: [], isLoading: true } as any);
     render(<FolhaAuditoriaTable folhaId="f-001" />);
     expect(screen.getByText(/Carregando logs/i)).toBeInTheDocument();
   });
 
   it('renders log row when data provided', async () => {
     const { useFolhaAuditoria } = await import('@/hooks/useFolhaAuditoria');
-    vi.mocked(useFolhaAuditoria).mockReturnValueOnce({ logs: [MOCK_LOG], isLoading: false } as never);
+    vi.mocked(useFolhaAuditoria).mockReturnValueOnce({ logs: [MOCK_LOG], isLoading: false } as any);
     render(<FolhaAuditoriaTable folhaId="f-001" />);
     expect(screen.getByText('Item calculado com sucesso')).toBeInTheDocument();
   });

@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -30,17 +29,17 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DialogContent: ({ children }: { children?: ReactNode }) => <div role="dialog">{children}</div>,
-  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
-  DialogDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
-  DialogFooter: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DialogTrigger: ({ children }: { children?: ReactNode }) => children,
+  Dialog: ({ children }: any) => <div>{children}</div>,
+  DialogContent: ({ children }: any) => <div role="dialog">{children}</div>,
+  DialogHeader: ({ children }: any) => <div>{children}</div>,
+  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
+  DialogDescription: ({ children }: any) => <p>{children}</p>,
+  DialogFooter: ({ children }: any) => <div>{children}</div>,
+  DialogTrigger: ({ children }: any) => children,
 }));
 
 vi.mock('@/utils/safeError', () => ({
-  safeErrorMessage: vi.fn((e: unknown) => String(e)),
+  safeErrorMessage: vi.fn((e: any) => String(e)),
 }));
 
 import { DistribuirHoleritesButton } from '../folha/DistribuirHoleritesButton';

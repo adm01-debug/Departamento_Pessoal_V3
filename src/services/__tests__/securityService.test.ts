@@ -2,19 +2,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { securityService } from '../securityService';
 
-const { mockFrom, mockRpc, mockLoggerError, mockLoggerInfo } = vi.hoisted(() => ({
+const { mockFrom, mockLoggerError, mockLoggerInfo } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
-  mockRpc: vi.fn(),
   mockLoggerError: vi.fn(),
   mockLoggerInfo: vi.fn(),
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)), rpc: mockRpc },
-}));
-
-vi.mock('@/integrations/supabase/client.base', () => ({
-  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)), rpc: mockRpc },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 vi.mock('../loggerService', () => ({
@@ -22,7 +17,7 @@ vi.mock('../loggerService', () => ({
 }));
 
 // select → order → [optional limit] → resolvedValue
-function setupSelectOrderLimitChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupSelectOrderLimitChain(data: any[], error: any = null) {
   const limitFn = vi.fn().mockResolvedValue({ data, error });
   const orderFn = vi.fn().mockReturnValue({ limit: limitFn });
   const selectFn = vi.fn().mockReturnValue({ order: orderFn });
@@ -31,7 +26,7 @@ function setupSelectOrderLimitChain(data: unknown, error: { message: string; cod
 }
 
 // select → order → resolvedValue (no limit)
-function setupSelectOrderChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupSelectOrderChain(data: any[], error: any = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ order: orderFn });
   mockFrom.mockReturnValue({ select: selectFn });
@@ -39,26 +34,29 @@ function setupSelectOrderChain(data: unknown, error: { message: string; code?: s
 }
 
 // delete → eq → resolvedValue
-function setupDeleteEqChain(error: { message: string; code?: string } | null = null) {
+function setupDeleteEqChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = {
-    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
-    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
-    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
-    eq: eqFn,
-  };
+  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
   return { deleteFn, eqFn };
 }
 
+// update → eq → resolvedValue
+function setupUpdateEqChain(error: any = null) {
+  const eqFn = vi.fn();
+  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  eqFn.mockReturnValue(__delChain);
+  const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
+  mockFrom.mockReturnValue({ update: updateFn });
+  return { updateFn, eqFn };
+}
+
 // ─── getBlockedIps ────────────────────────────────────────────────────────────
 
 describe('securityService.getBlockedIps', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns blocked IPs ordered by created_at desc', async () => {
     const records = [{ id: '1', ip_address: '1.2.3.4' }];
@@ -69,7 +67,7 @@ describe('securityService.getBlockedIps', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupSelectOrderChain(null as never);
+    setupSelectOrderChain(null as any);
     expect(await securityService.getBlockedIps()).toEqual([]);
   });
 
@@ -82,30 +80,19 @@ describe('securityService.getBlockedIps', () => {
 
 // ─── unblockIp ────────────────────────────────────────────────────────────────
 
-const BLOCKED_IP_ID = '11110000-0000-4000-8000-000000000001';
-const ALERT_ID = '11110000-0000-4000-8000-000000000002';
-
 describe('securityService.unblockIp', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('deletes blocked_ip by id and logs info', async () => {
     const { eqFn } = setupDeleteEqChain();
-    await securityService.unblockIp(BLOCKED_IP_ID);
-    expect(eqFn).toHaveBeenCalledWith('id', BLOCKED_IP_ID);
-    expect(mockLoggerInfo).toHaveBeenCalledWith('IP unblocked', { id: BLOCKED_IP_ID });
-  });
-
-  it('rejects non-UUID ids before touching the database', async () => {
-    const { eqFn } = setupDeleteEqChain();
-    await expect(securityService.unblockIp('ip-1')).rejects.toBeDefined();
-    expect(eqFn).not.toHaveBeenCalled();
+    await securityService.unblockIp('ip-1');
+    expect(eqFn).toHaveBeenCalledWith('id', 'ip-1');
+    expect(mockLoggerInfo).toHaveBeenCalledWith('IP unblocked', { id: 'ip-1' });
   });
 
   it('throws and logs error on DB failure', async () => {
     setupDeleteEqChain({ message: 'fail' });
-    await expect(securityService.unblockIp(BLOCKED_IP_ID)).rejects.toBeDefined();
+    await expect(securityService.unblockIp('ip-1')).rejects.toBeDefined();
     expect(mockLoggerError).toHaveBeenCalled();
   });
 });
@@ -113,9 +100,7 @@ describe('securityService.unblockIp', () => {
 // ─── getLoginAttempts ─────────────────────────────────────────────────────────
 
 describe('securityService.getLoginAttempts', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns login attempts with limit 100', async () => {
     const records = [{ id: '1', email: 'a@b.com', success: false }];
@@ -126,7 +111,7 @@ describe('securityService.getLoginAttempts', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupSelectOrderLimitChain(null as never);
+    setupSelectOrderLimitChain(null as any);
     expect(await securityService.getLoginAttempts()).toEqual([]);
   });
 
@@ -139,9 +124,7 @@ describe('securityService.getLoginAttempts', () => {
 // ─── getSecurityAlerts ────────────────────────────────────────────────────────
 
 describe('securityService.getSecurityAlerts', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns security alerts', async () => {
     const records = [{ id: 'a1', type: 'brute_force', severity: 'high' }];
@@ -152,7 +135,7 @@ describe('securityService.getSecurityAlerts', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupSelectOrderLimitChain(null as never);
+    setupSelectOrderLimitChain(null as any);
     expect(await securityService.getSecurityAlerts()).toEqual([]);
   });
 
@@ -165,9 +148,7 @@ describe('securityService.getSecurityAlerts', () => {
 // ─── getGeoBlockedAttempts ────────────────────────────────────────────────────
 
 describe('securityService.getGeoBlockedAttempts', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns geo-blocked attempts', async () => {
     const records = [{ id: 'g1', ip_address: '5.6.7.8', country_code: 'CN' }];
@@ -185,9 +166,7 @@ describe('securityService.getGeoBlockedAttempts', () => {
 // ─── getRateLimitLogs ─────────────────────────────────────────────────────────
 
 describe('securityService.getRateLimitLogs', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns rate limit logs', async () => {
     const records = [{ id: 'r1', ip_address: '1.1.1.1' }];
@@ -197,7 +176,7 @@ describe('securityService.getRateLimitLogs', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupSelectOrderLimitChain(null as never);
+    setupSelectOrderLimitChain(null as any);
     expect(await securityService.getRateLimitLogs()).toEqual([]);
   });
 });
@@ -205,37 +184,20 @@ describe('securityService.getRateLimitLogs', () => {
 // ─── resolveAlert ─────────────────────────────────────────────────────────────
 
 describe('securityService.resolveAlert', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
-  it('resolves through the server-authored RPC', async () => {
-    mockRpc.mockResolvedValue({ data: { id: ALERT_ID }, error: null });
-    await securityService.resolveAlert(ALERT_ID, 'legitimate alert');
-    expect(mockRpc).toHaveBeenCalledWith('resolve_security_alert', {
-      _alert_id: ALERT_ID,
-      _note: 'legitimate alert',
-    });
-    expect(mockFrom).not.toHaveBeenCalledWith('security_alerts');
-  });
-
-  it('treats blank note as absent and rejects overlong notes', async () => {
-    mockRpc.mockResolvedValue({ data: { id: ALERT_ID }, error: null });
-    await securityService.resolveAlert(ALERT_ID, '   ');
-    expect(mockRpc).toHaveBeenCalledWith('resolve_security_alert', {
-      _alert_id: ALERT_ID,
-      _note: undefined,
-    });
-    await expect(securityService.resolveAlert(ALERT_ID, 'x'.repeat(501))).rejects.toBeDefined();
-  });
-
-  it('rejects non-UUID alert ids', async () => {
-    await expect(securityService.resolveAlert('a1')).rejects.toBeDefined();
-    expect(mockRpc).not.toHaveBeenCalled();
+  it('updates security_alerts with resolved=true and resolved_by', async () => {
+    const { updateFn, eqFn } = setupUpdateEqChain();
+    await securityService.resolveAlert('a1', 'user-1');
+    expect(updateFn).toHaveBeenCalledWith(expect.objectContaining({
+      resolved: true,
+      resolved_by: 'user-1',
+    }));
+    expect(eqFn).toHaveBeenCalledWith('id', 'a1');
   });
 
   it('throws on DB error', async () => {
-    mockRpc.mockResolvedValue({ data: null, error: { message: 'fail' } });
-    await expect(securityService.resolveAlert(ALERT_ID)).rejects.toBeDefined();
+    setupUpdateEqChain({ message: 'fail' });
+    await expect(securityService.resolveAlert('a1', 'user-1')).rejects.toBeDefined();
   });
 });

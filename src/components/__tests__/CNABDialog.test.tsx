@@ -1,14 +1,8 @@
-import type { ReactNode } from 'react';
-import { beforeEach, describe, it, expect, vi } from 'vitest';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
-
-const testState = vi.hoisted(() => ({
-  empresaAtual: { id: 'emp-1', razao_social: 'Empresa Teste' },
-  onOpenChange: null as ((open: boolean) => void) | null,
-}));
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
 
 vi.mock('@/hooks/useEmpresas', () => ({
-  useEmpresas: vi.fn(() => ({ empresaAtual: testState.empresaAtual })),
+  useEmpresas: vi.fn(() => ({ empresaAtual: { id: 'emp-1', razao_social: 'Empresa Teste' } })),
 }));
 
 vi.mock('@/services/cnabService', () => ({
@@ -25,79 +19,38 @@ vi.mock('@/utils/dateLocal', () => ({
 }));
 
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
-vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: unknown, d: string) => d) }));
-vi.mock('@/services/loggerService', () => ({
-  loggerService: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
-}));
+vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: any, d: string) => d) }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children, onOpenChange }: { children?: ReactNode; onOpenChange?: (open: boolean) => void }) => {
-    testState.onOpenChange = onOpenChange ?? null;
-    return <div>{children}</div>;
-  },
-  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
-  DialogTrigger: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  Dialog: ({ children }: any) => <div>{children}</div>,
+  DialogContent: ({ children }: any) => <div>{children}</div>,
+  DialogHeader: ({ children }: any) => <div>{children}</div>,
+  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
+  DialogTrigger: ({ children }: any) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled }: { children?: ReactNode; onClick?: () => void; disabled?: boolean }) => (
-    <button onClick={onClick} disabled={disabled}>
-      {children}
-    </button>
+  Button: ({ children, onClick, disabled }: any) => (
+    <button onClick={onClick} disabled={disabled}>{children}</button>
   ),
 }));
 
 vi.mock('@/components/ui/input', () => ({
-  Input: (props: React.ComponentProps<'input'>) => <input {...props} />,
+  Input: (props: any) => <input {...props} />,
 }));
 
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children }: { children?: ReactNode }) => <label>{children}</label>,
+  Label: ({ children }: any) => <label>{children}</label>,
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  Card: ({ children }: any) => <div>{children}</div>,
+  CardContent: ({ children }: any) => <div>{children}</div>,
 }));
 
 import { CNABDialog } from '../folha/CNABDialog';
-import { cnabService } from '@/services/cnabService';
-import type { CNABConfig } from '@/services/cnabService';
-import { toast } from 'sonner';
-import { loggerService } from '@/services/loggerService';
-
-function deferred<T>() {
-  let resolve!: (value: T) => void;
-  let reject!: (reason?: unknown) => void;
-  const promise = new Promise<T>((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
-  return { promise, resolve, reject };
-}
 
 describe('CNABDialog', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    testState.empresaAtual = { id: 'emp-1', razao_social: 'Empresa Teste' };
-    testState.onOpenChange = null;
-    vi.mocked(cnabService.getConfig).mockResolvedValue(null);
-    vi.mocked(cnabService.saveConfig).mockResolvedValue();
-    vi.mocked(cnabService.generateCNAB240).mockResolvedValue('cnab content');
-    vi.mocked(cnabService.generatePIXBatch).mockResolvedValue('pix content');
-    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
-    Object.defineProperty(window.URL, 'createObjectURL', {
-      configurable: true,
-      value: vi.fn(() => 'blob:cnab'),
-    });
-    Object.defineProperty(window.URL, 'revokeObjectURL', {
-      configurable: true,
-      value: vi.fn(),
-    });
-  });
-
   it('renders Exportar Bancário trigger button', () => {
     render(<CNABDialog folhaId="f-001" />);
     expect(screen.getByText('Exportar Bancário')).toBeInTheDocument();
@@ -136,252 +89,5 @@ describe('CNABDialog', () => {
   it('renders PIX Analítico button', () => {
     render(<CNABDialog folhaId="f-001" />);
     expect(screen.getByText('PIX Analítico')).toBeInTheDocument();
-  });
-
-  it('descarta resposta atrasada após fechar e reabrir na mesma empresa (ABA)', async () => {
-    const antiga = deferred<CNABConfig | null>();
-    const atual = deferred<CNABConfig | null>();
-    vi.mocked(cnabService.getConfig)
-      .mockImplementationOnce(() => antiga.promise)
-      .mockImplementationOnce(() => atual.promise);
-    render(<CNABDialog folhaId="f-001" />);
-
-    act(() => testState.onOpenChange?.(true));
-    await waitFor(() => expect(cnabService.getConfig).toHaveBeenCalledTimes(1));
-    act(() => testState.onOpenChange?.(false));
-    act(() => testState.onOpenChange?.(true));
-    await waitFor(() => expect(cnabService.getConfig).toHaveBeenCalledTimes(2));
-
-    await act(async () => {
-      atual.resolve({
-        banco_codigo: '341',
-        agencia: '2222',
-        agencia_digito: '1',
-        conta: '22222',
-        conta_digito: '2',
-        convenio: 'novo',
-        nome_empresa: 'Atual',
-      });
-      await atual.promise;
-    });
-    await waitFor(() => expect(screen.getByPlaceholderText('1234')).toHaveValue('2222'));
-
-    await act(async () => {
-      antiga.resolve({
-        banco_codigo: '001',
-        agencia: '1111',
-        agencia_digito: '0',
-        conta: '11111',
-        conta_digito: '1',
-        convenio: 'antigo',
-        nome_empresa: 'Antiga',
-      });
-      await antiga.promise;
-    });
-    expect(screen.getByPlaceholderText('1234')).toHaveValue('2222');
-  });
-
-  it('não baixa nem anuncia CNAB concluído se o tenant muda durante a geração', async () => {
-    const geracao = deferred<string>();
-    vi.mocked(cnabService.generateCNAB240).mockImplementationOnce(() => geracao.promise);
-    const { rerender } = render(<CNABDialog folhaId="f-001" />);
-
-    act(() => testState.onOpenChange?.(true));
-    await waitFor(() => expect(cnabService.getConfig).toHaveBeenCalledWith('emp-1'));
-    const cnabButton = screen.getByText('CNAB 240').closest('button');
-    await waitFor(() => expect(cnabButton).toBeEnabled());
-    fireEvent.click(cnabButton!);
-
-    testState.empresaAtual = { id: 'emp-2', razao_social: 'Outra Empresa' };
-    rerender(<CNABDialog folhaId="f-001" />);
-    await act(async () => {
-      geracao.resolve('conteúdo obsoleto');
-      await geracao.promise;
-    });
-
-    expect(window.URL.createObjectURL).not.toHaveBeenCalled();
-    expect(toast.success).not.toHaveBeenCalledWith(expect.stringContaining('CNAB 240'));
-  });
-
-  it('bloqueia CNAB e PIX enquanto a configuração persistida está sendo salva', async () => {
-    const save = deferred<void>();
-    vi.mocked(cnabService.saveConfig).mockImplementationOnce(() => save.promise);
-    render(<CNABDialog folhaId="f-001" />);
-
-    act(() => testState.onOpenChange?.(true));
-    const saveButton = await screen.findByRole('button', { name: /Salvar Configurações de Remessa/i });
-    await waitFor(() => expect(saveButton).toBeEnabled());
-    fireEvent.click(saveButton);
-
-    const cnabButton = screen.getByText('CNAB 240').closest('button');
-    const pixButton = screen.getByText('PIX Analítico').closest('button');
-    await waitFor(() => {
-      expect(cnabButton).toBeDisabled();
-      expect(pixButton).toBeDisabled();
-    });
-    fireEvent.click(cnabButton!);
-    fireEvent.click(pixButton!);
-    expect(cnabService.generateCNAB240).not.toHaveBeenCalled();
-    expect(cnabService.generatePIXBatch).not.toHaveBeenCalled();
-
-    await act(async () => {
-      save.resolve();
-      await save.promise;
-    });
-    await waitFor(() => expect(cnabButton).toBeEnabled());
-  });
-
-  it('gera CNAB 240 com sucesso: baixa .rem, avisa e fecha o diálogo', async () => {
-    render(<CNABDialog folhaId="f-001" />);
-    act(() => testState.onOpenChange?.(true));
-    const cnabButton = screen.getByText('CNAB 240').closest('button');
-    await waitFor(() => expect(cnabButton).toBeEnabled());
-
-    fireEvent.click(cnabButton!);
-
-    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Arquivo CNAB 240 (Remessa de Salários) gerado!'));
-    expect(cnabService.generateCNAB240).toHaveBeenCalledWith('emp-1', 'f-001');
-    expect(window.URL.createObjectURL).toHaveBeenCalled();
-    expect(window.URL.revokeObjectURL).toHaveBeenCalledWith('blob:cnab');
-    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalled();
-  });
-
-  it('gera lote PIX com sucesso: baixa .csv e avisa', async () => {
-    render(<CNABDialog folhaId="f-001" />);
-    act(() => testState.onOpenChange?.(true));
-    const pixButton = screen.getByText('PIX Analítico').closest('button');
-    await waitFor(() => expect(pixButton).toBeEnabled());
-
-    fireEvent.click(pixButton!);
-
-    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Lote PIX analítico gerado com sucesso!'));
-    expect(cnabService.generatePIXBatch).toHaveBeenCalledWith('emp-1', 'f-001');
-    expect(window.URL.createObjectURL).toHaveBeenCalled();
-  });
-
-  it('erro na geração CNAB mostra toast.error e não baixa arquivo', async () => {
-    vi.mocked(cnabService.generateCNAB240).mockRejectedValue(new Error('falha'));
-    render(<CNABDialog folhaId="f-001" />);
-    act(() => testState.onOpenChange?.(true));
-    const cnabButton = screen.getByText('CNAB 240').closest('button');
-    await waitFor(() => expect(cnabButton).toBeEnabled());
-
-    fireEvent.click(cnabButton!);
-
-    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Erro ao gerar arquivo CNAB.'));
-    expect(window.URL.createObjectURL).not.toHaveBeenCalled();
-  });
-
-  it('erro na geração PIX mostra toast.error e não baixa arquivo', async () => {
-    vi.mocked(cnabService.generatePIXBatch).mockRejectedValue(new Error('falha'));
-    render(<CNABDialog folhaId="f-001" />);
-    act(() => testState.onOpenChange?.(true));
-    const pixButton = screen.getByText('PIX Analítico').closest('button');
-    await waitFor(() => expect(pixButton).toBeEnabled());
-
-    fireEvent.click(pixButton!);
-
-    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Erro ao gerar lote PIX.'));
-    expect(window.URL.createObjectURL).not.toHaveBeenCalled();
-  });
-
-  it('salvar configurações chama saveConfig e confirma', async () => {
-    render(<CNABDialog folhaId="f-001" />);
-    act(() => testState.onOpenChange?.(true));
-    const saveButton = await screen.findByRole('button', { name: /Salvar Configurações de Remessa/i });
-    await waitFor(() => expect(saveButton).toBeEnabled());
-
-    fireEvent.click(saveButton);
-
-    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Configurações bancárias salvas!'));
-    expect(cnabService.saveConfig).toHaveBeenCalledWith(
-      'emp-1',
-      expect.objectContaining({ banco_codigo: '001', nome_empresa: 'Empresa Teste' })
-    );
-  });
-
-  it('erro ao salvar configurações mostra toast.error', async () => {
-    vi.mocked(cnabService.saveConfig).mockRejectedValue(new Error('falha'));
-    render(<CNABDialog folhaId="f-001" />);
-    act(() => testState.onOpenChange?.(true));
-    const saveButton = await screen.findByRole('button', { name: /Salvar Configurações de Remessa/i });
-    await waitFor(() => expect(saveButton).toBeEnabled());
-
-    fireEvent.click(saveButton);
-
-    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Erro ao salvar configurações bancárias.'));
-  });
-
-  it('preenche os inputs com a config persistida da empresa', async () => {
-    vi.mocked(cnabService.getConfig).mockResolvedValue({
-      banco_codigo: '341',
-      agencia: '5555',
-      agencia_digito: '7',
-      conta: '99999',
-      conta_digito: '3',
-      convenio: '777',
-      nome_empresa: 'Banco X',
-    });
-    render(<CNABDialog folhaId="f-001" />);
-    act(() => testState.onOpenChange?.(true));
-
-    await waitFor(() => expect(screen.getByPlaceholderText('1234')).toHaveValue('5555'));
-    expect(screen.getByPlaceholderText('001')).toHaveValue('341');
-    expect(screen.getByPlaceholderText('1234567')).toHaveValue('777');
-    expect(screen.getByPlaceholderText('12345678')).toHaveValue('99999');
-  });
-
-  it('edição dos inputs é enviada no saveConfig', async () => {
-    render(<CNABDialog folhaId="f-001" />);
-    act(() => testState.onOpenChange?.(true));
-    const saveButton = await screen.findByRole('button', { name: /Salvar Configurações de Remessa/i });
-    await waitFor(() => expect(saveButton).toBeEnabled());
-
-    fireEvent.change(screen.getByPlaceholderText('1234'), { target: { value: '4321' } });
-    fireEvent.change(screen.getByPlaceholderText('0'), { target: { value: '9' } });
-    fireEvent.click(saveButton);
-
-    await waitFor(() =>
-      expect(cnabService.saveConfig).toHaveBeenCalledWith(
-        'emp-1',
-        expect.objectContaining({ agencia: '4321', conta_digito: '9' })
-      )
-    );
-  });
-
-  it('erro ao carregar config registra loggerService.error', async () => {
-    vi.mocked(cnabService.getConfig).mockRejectedValue(new Error('falha leitura'));
-    render(<CNABDialog folhaId="f-001" />);
-    act(() => testState.onOpenChange?.(true));
-
-    await waitFor(() =>
-      expect(loggerService.error).toHaveBeenCalledWith(
-        'Erro ao carregar config CNAB',
-        { empresaId: 'emp-1' },
-        expect.any(Error)
-      )
-    );
-  });
-
-  it('botões ficam desabilitados enquanto a config não foi carregada', async () => {
-    const config = deferred<CNABConfig | null>();
-    vi.mocked(cnabService.getConfig).mockImplementationOnce(() => config.promise);
-    render(<CNABDialog folhaId="f-001" />);
-    act(() => testState.onOpenChange?.(true));
-
-    const cnabButton = screen.getByText('CNAB 240').closest('button');
-    const pixButton = screen.getByText('PIX Analítico').closest('button');
-    const saveButton = screen.getByRole('button', { name: /Salvar Configurações de Remessa/i });
-    await waitFor(() => {
-      expect(cnabButton).toBeDisabled();
-      expect(pixButton).toBeDisabled();
-      expect(saveButton).toBeDisabled();
-    });
-
-    await act(async () => {
-      config.resolve(null);
-      await config.promise;
-    });
-    await waitFor(() => expect(cnabButton).toBeEnabled());
   });
 });

@@ -5,24 +5,22 @@ import { usePWA } from '../usePWA';
 function mockMatchMedia(standaloneMatch: boolean) {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
-    value: vi
-      .fn()
-      .mockReturnValue({ matches: standaloneMatch, addEventListener: vi.fn(), removeEventListener: vi.fn() }),
+    value: vi.fn().mockReturnValue({ matches: standaloneMatch, addEventListener: vi.fn(), removeEventListener: vi.fn() }),
   });
 }
 
 function makeInstallPromptEvent() {
   const event = new Event('beforeinstallprompt', { cancelable: true });
-  Object.assign(event, { platforms: ['web'] });
-  Object.assign(event, { userChoice: Promise.resolve({ outcome: 'accepted', platform: 'web' }) });
-  Object.assign(event, { prompt: vi.fn().mockResolvedValue(undefined) });
+  (event as any).platforms = ['web'];
+  (event as any).userChoice = Promise.resolve({ outcome: 'accepted', platform: 'web' });
+  (event as any).prompt = vi.fn().mockResolvedValue(undefined);
   return event;
 }
 
 describe('usePWA', () => {
   beforeEach(() => {
     mockMatchMedia(false);
-    Object.assign(window.navigator, { standalone: undefined });
+    (window.navigator as any).standalone = undefined;
   });
 
   afterEach(() => {
@@ -42,7 +40,7 @@ describe('usePWA', () => {
   });
 
   it('detects navigator.standalone as installed (iOS)', () => {
-    Object.assign(window.navigator, { standalone: true });
+    (window.navigator as any).standalone = true;
     const { result } = renderHook(() => usePWA());
     expect(result.current.isInstalled).toBe(true);
   });
@@ -93,7 +91,7 @@ describe('usePWA', () => {
       await result.current.installApp();
     });
 
-    expect((promptEvent as unknown as { prompt: unknown }).prompt).toHaveBeenCalled();
+    expect((promptEvent as any).prompt).toHaveBeenCalled();
     expect(result.current.isInstallable).toBe(false);
   });
 

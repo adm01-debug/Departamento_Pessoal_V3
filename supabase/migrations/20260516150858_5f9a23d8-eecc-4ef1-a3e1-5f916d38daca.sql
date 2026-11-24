@@ -194,17 +194,14 @@ ALTER TABLE public.colaboradores ENABLE ROW LEVEL SECURITY;
 
 DO $$ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Profiles are viewable by own user') THEN
-        DROP POLICY IF EXISTS "Profiles are viewable by own user" ON public.profiles;
-CREATE POLICY "Profiles are viewable by own user" ON public.profiles FOR SELECT USING (auth.uid() = id);
+        CREATE POLICY "Profiles are viewable by own user" ON public.profiles FOR SELECT USING (auth.uid() = id);
     END IF;
     
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Admins can manage roles') THEN
-        DROP POLICY IF EXISTS "Admins can manage roles" ON public.user_roles;
-CREATE POLICY "Admins can manage roles" ON public.user_roles FOR ALL USING (public.has_role(auth.uid(), 'admin'));
+        CREATE POLICY "Admins can manage roles" ON public.user_roles FOR ALL USING (public.has_role(auth.uid(), 'admin'));
     END IF;
 
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Admins can manage employees') THEN
-        DROP POLICY IF EXISTS "Admins can manage employees" ON public.colaboradores;
-CREATE POLICY "Admins can manage employees" ON public.colaboradores FOR ALL USING (public.has_role(auth.uid(), 'admin'));
+        CREATE POLICY "Admins can manage employees" ON public.colaboradores FOR ALL USING (public.has_role(auth.uid(), 'admin'));
     END IF;
 END $$;

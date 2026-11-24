@@ -49,13 +49,11 @@ CREATE POLICY candidaturas_tenant_select ON public.candidaturas
   USING (EXISTS (SELECT 1 FROM public.vagas v
     WHERE v.id = candidaturas.vaga_id
       AND v.empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
-DROP POLICY IF EXISTS "candidaturas_tenant_insert" ON public.candidaturas;
 CREATE POLICY candidaturas_tenant_insert ON public.candidaturas
   FOR INSERT TO authenticated
   WITH CHECK (EXISTS (SELECT 1 FROM public.vagas v
     WHERE v.id = candidaturas.vaga_id
       AND v.empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
-DROP POLICY IF EXISTS "candidaturas_tenant_update" ON public.candidaturas;
 CREATE POLICY candidaturas_tenant_update ON public.candidaturas
   FOR UPDATE TO authenticated
   USING (EXISTS (SELECT 1 FROM public.vagas v
@@ -64,7 +62,6 @@ CREATE POLICY candidaturas_tenant_update ON public.candidaturas
   WITH CHECK (EXISTS (SELECT 1 FROM public.vagas v
     WHERE v.id = candidaturas.vaga_id
       AND v.empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
-DROP POLICY IF EXISTS "candidaturas_tenant_delete" ON public.candidaturas;
 CREATE POLICY candidaturas_tenant_delete ON public.candidaturas
   FOR DELETE TO authenticated
   USING (EXISTS (SELECT 1 FROM public.vagas v
@@ -122,14 +119,12 @@ CREATE POLICY recrutamento_anotacoes_tenant_select ON public.recrutamento_anotac
     public.candidatura_na_minha_empresa(candidatura_id)
     AND (privada IS NOT TRUE OR usuario_id = auth.uid() OR public.is_admin(auth.uid()))
   );
-DROP POLICY IF EXISTS "recrutamento_anotacoes_tenant_insert" ON public.recrutamento_anotacoes;
 CREATE POLICY recrutamento_anotacoes_tenant_insert ON public.recrutamento_anotacoes
   FOR INSERT TO authenticated
   WITH CHECK (
     public.candidatura_na_minha_empresa(candidatura_id)
     AND usuario_id = auth.uid()
   );
-DROP POLICY IF EXISTS "recrutamento_anotacoes_tenant_update" ON public.recrutamento_anotacoes;
 CREATE POLICY recrutamento_anotacoes_tenant_update ON public.recrutamento_anotacoes
   FOR UPDATE TO authenticated
   USING (
@@ -140,7 +135,6 @@ CREATE POLICY recrutamento_anotacoes_tenant_update ON public.recrutamento_anotac
     public.candidatura_na_minha_empresa(candidatura_id)
     AND (usuario_id = auth.uid() OR public.is_admin(auth.uid()))
   );
-DROP POLICY IF EXISTS "recrutamento_anotacoes_tenant_delete" ON public.recrutamento_anotacoes;
 CREATE POLICY recrutamento_anotacoes_tenant_delete ON public.recrutamento_anotacoes
   FOR DELETE TO authenticated
   USING (
@@ -159,15 +153,12 @@ DROP POLICY IF EXISTS recrutamento_entrevistas_tenant_delete ON public.recrutame
 
 CREATE POLICY recrutamento_entrevistas_tenant_select ON public.recrutamento_entrevistas
   FOR SELECT TO authenticated USING (public.candidatura_na_minha_empresa(candidatura_id));
-DROP POLICY IF EXISTS "recrutamento_entrevistas_tenant_insert" ON public.recrutamento_entrevistas;
 CREATE POLICY recrutamento_entrevistas_tenant_insert ON public.recrutamento_entrevistas
   FOR INSERT TO authenticated WITH CHECK (public.candidatura_na_minha_empresa(candidatura_id));
-DROP POLICY IF EXISTS "recrutamento_entrevistas_tenant_update" ON public.recrutamento_entrevistas;
 CREATE POLICY recrutamento_entrevistas_tenant_update ON public.recrutamento_entrevistas
   FOR UPDATE TO authenticated
   USING (public.candidatura_na_minha_empresa(candidatura_id))
   WITH CHECK (public.candidatura_na_minha_empresa(candidatura_id));
-DROP POLICY IF EXISTS "recrutamento_entrevistas_tenant_delete" ON public.recrutamento_entrevistas;
 CREATE POLICY recrutamento_entrevistas_tenant_delete ON public.recrutamento_entrevistas
   FOR DELETE TO authenticated USING (public.candidatura_na_minha_empresa(candidatura_id));
 
@@ -182,15 +173,12 @@ DROP POLICY IF EXISTS recrutamento_testes_tenant_delete ON public.recrutamento_t
 
 CREATE POLICY recrutamento_testes_tenant_select ON public.recrutamento_testes
   FOR SELECT TO authenticated USING (public.candidatura_na_minha_empresa(candidatura_id));
-DROP POLICY IF EXISTS "recrutamento_testes_tenant_insert" ON public.recrutamento_testes;
 CREATE POLICY recrutamento_testes_tenant_insert ON public.recrutamento_testes
   FOR INSERT TO authenticated WITH CHECK (public.candidatura_na_minha_empresa(candidatura_id));
-DROP POLICY IF EXISTS "recrutamento_testes_tenant_update" ON public.recrutamento_testes;
 CREATE POLICY recrutamento_testes_tenant_update ON public.recrutamento_testes
   FOR UPDATE TO authenticated
   USING (public.candidatura_na_minha_empresa(candidatura_id))
   WITH CHECK (public.candidatura_na_minha_empresa(candidatura_id));
-DROP POLICY IF EXISTS "recrutamento_testes_tenant_delete" ON public.recrutamento_testes;
 CREATE POLICY recrutamento_testes_tenant_delete ON public.recrutamento_testes
   FOR DELETE TO authenticated USING (public.candidatura_na_minha_empresa(candidatura_id));
 

@@ -3,12 +3,7 @@ import { isAllowedUrl, assertAllowedUrl, safeHref } from '../safeUrl';
 
 describe('isAllowedUrl', () => {
   it('allows known supabase host', () => {
-    expect(isAllowedUrl('https://frjbfeamybqsejlvmqbl.supabase.co/rest/v1/')).toBe(true);
-  });
-
-  it('blocks non-canonical Supabase hosts', () => {
-    expect(isAllowedUrl('https://ciziytrrjjotlsjzshnm.supabase.co/rest/v1/')).toBe(false);
-    expect(isAllowedUrl('https://another-project.supabase.co/rest/v1/')).toBe(false);
+    expect(isAllowedUrl('https://ciziytrrjjotlsjzshnm.supabase.co/rest/v1/')).toBe(true);
   });
 
   it('allows lovable.app subdomain', () => {

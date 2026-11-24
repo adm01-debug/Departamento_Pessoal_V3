@@ -11,10 +11,10 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Helper: build select → or → order → range chain for listar
-function setupListarChain(data: unknown, count: number, error: { message: string; code?: string } | null = null) {
+function setupListarChain(data: any[], count: number, error: any = null) {
   const rangeFn = vi.fn().mockResolvedValue({ data, count, error });
   const orderFn = vi.fn().mockReturnValue({ range: rangeFn });
-  const baseQuery = { order: orderFn };
+  const baseQuery: any = { order: orderFn };
   const orFn = vi.fn().mockReturnValue(baseQuery);
   Object.assign(baseQuery, { or: orFn });
   const selectFn = vi.fn().mockReturnValue(baseQuery);
@@ -25,9 +25,7 @@ function setupListarChain(data: unknown, count: number, error: { message: string
 // ─── empresaService.listar ────────────────────────────────────────────────────
 
 describe('empresaService.listar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns data and total from supabase', async () => {
     const records = [{ id: 'e1', razao_social: 'Empresa A' }];
@@ -38,7 +36,7 @@ describe('empresaService.listar', () => {
   });
 
   it('returns empty data with total 0 when supabase returns null', async () => {
-    setupListarChain(null as never, null as never);
+    setupListarChain(null as any, null as any);
     const result = await empresaService.listar();
     expect(result.data).toEqual([]);
     expect(result.total).toBe(0);
@@ -47,13 +45,15 @@ describe('empresaService.listar', () => {
   it('adds or() filter when search is provided', async () => {
     const { orFn } = setupListarChain([], 0);
     await empresaService.listar({ search: 'Promo' });
-    expect(orFn).toHaveBeenCalledWith(expect.stringContaining('ilike.%Promo%'));
+    expect(orFn).toHaveBeenCalledWith(
+      expect.stringContaining('ilike.%Promo%')
+    );
   });
 
   it('search filter includes razao_social, nome_fantasia, and cnpj', async () => {
     const { orFn } = setupListarChain([], 0);
     await empresaService.listar({ search: 'test' });
-    const orArg: string = vi.mocked(orFn).mock.calls[0][0];
+    const orArg: string = (orFn as any).mock.calls[0][0];
     expect(orArg).toContain('razao_social.ilike');
     expect(orArg).toContain('nome_fantasia.ilike');
     expect(orArg).toContain('cnpj.ilike');
@@ -98,9 +98,7 @@ describe('empresaService.listar', () => {
 // ─── empresaService.list (alias) ──────────────────────────────────────────────
 
 describe('empresaService.list', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('delegates to listar and returns the same result', async () => {
     const records = [{ id: 'e2', razao_social: 'Empresa B' }];

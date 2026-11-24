@@ -93,9 +93,12 @@ export function Header({ onMenuClick, user, className }: HeaderProps) {
         </div>
 
         <div className="flex items-center gap-1.5">
-          {/* Company badge in header (mobile-visible) */}
+          {/* Company badge in header (mobile-visible). `variant="header"`: em
+              telas estreitas o chip encolhe/trunca e a lista de empresas abre em
+              overlay, em vez de empurrar o conteúdo e gerar rolagem horizontal. */}
           <div className="lg:hidden">
             <EmpresaSelector
+              variant="header"
               collapsed={false}
               empresaAtual={empresaAtual}
               userEmpresas={userEmpresas}

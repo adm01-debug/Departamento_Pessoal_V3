@@ -16,16 +16,14 @@ vi.mock('@/integrations/supabase/client', () => ({
 // ─── bancoHorasService ────────────────────────────────────────────────────────
 
 describe('bancoHorasService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   // listarPorColaborador
   describe('listarPorColaborador', () => {
     // Mock encadeável: o serviço aplica .eq(colaborador_id).eq(empresa_id).order()
-    function setupList(data: unknown, error: { message: string; code?: string } | null = null) {
+    function setupList(data: any[], error: any = null) {
       const order = vi.fn().mockResolvedValue({ data, error });
-      const eq = vi.fn();
+      const eq: any = vi.fn();
       eq.mockReturnValue({ eq, order });
       const select = vi.fn().mockReturnValue({ eq });
       mockFrom.mockReturnValue({ select });
@@ -49,7 +47,7 @@ describe('bancoHorasService', () => {
     });
 
     it('returns empty array when data is null', async () => {
-      setupList(null as never);
+      setupList(null as any);
       const result = await bancoHorasService.listarPorColaborador('colab-1', EMPRESA_ID);
       expect(result).toEqual([]);
     });
@@ -60,14 +58,63 @@ describe('bancoHorasService', () => {
     });
   });
 
+  // listarDaEmpresa
+  describe('listarDaEmpresa', () => {
+    // Cadeia real do serviço: select → eq(empresa_id) → order(data) →
+    // order(created_at) → limit(). O mock precisa manter cada elo encadeável.
+    function setupEmpresa(data: any[] | null, error: any = null) {
+      const limit = vi.fn().mockResolvedValue({ data, error });
+      const orderCriacao = vi.fn().mockReturnValue({ limit });
+      const orderData = vi.fn().mockReturnValue({ order: orderCriacao });
+      const eq = vi.fn().mockReturnValue({ order: orderData });
+      const select = vi.fn().mockReturnValue({ eq });
+      mockFrom.mockReturnValue({ select });
+      return { select, eq, orderData, orderCriacao, limit };
+    }
+
+    it('traz o colaborador no join e isola por empresa', async () => {
+      const { select, eq } = setupEmpresa([]);
+      await bancoHorasService.listarDaEmpresa(EMPRESA_ID);
+
+      expect(mockFrom).toHaveBeenCalledWith('banco_horas');
+      expect(select).toHaveBeenCalledWith(
+        '*, colaborador:colaboradores(nome_completo, departamento, cargo, foto_url)'
+      );
+      expect(eq).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+    });
+
+    it('ordena por data e depois por created_at (mais recente primeiro)', async () => {
+      const { orderData, orderCriacao } = setupEmpresa([]);
+      await bancoHorasService.listarDaEmpresa(EMPRESA_ID);
+
+      expect(orderData).toHaveBeenCalledWith('data', { ascending: false });
+      expect(orderCriacao).toHaveBeenCalledWith('created_at', { ascending: false });
+    });
+
+    it('devolve vazio quando a consulta não traz linhas', async () => {
+      setupEmpresa(null);
+      await expect(bancoHorasService.listarDaEmpresa(EMPRESA_ID)).resolves.toEqual([]);
+    });
+
+    it('exige empresa_id (isolamento de tenant)', async () => {
+      setupEmpresa([]);
+      await expect(bancoHorasService.listarDaEmpresa('')).rejects.toThrow(/empresa_id/);
+    });
+
+    it('propaga o erro do banco', async () => {
+      setupEmpresa([], { message: 'DB error' });
+      await expect(bancoHorasService.listarDaEmpresa(EMPRESA_ID)).rejects.toBeDefined();
+    });
+  });
+
   // getSaldo
   describe('getSaldo', () => {
     // .eq() precisa ser encadeável E aguardável (tenant isolation usa 2 eq).
-    function setupSaldo(data: unknown | null, error: { message: string; code?: string } | null = null) {
-      const eq = vi.fn();
+    function setupSaldo(data: any[] | null, error: any = null) {
+      const eq: any = vi.fn();
       eq.mockImplementation(() => ({
         eq,
-        then: (resolve: (v?: unknown) => unknown) => Promise.resolve({ data, error }).then(resolve),
+        then: (resolve: (v: unknown) => unknown) => Promise.resolve({ data, error }).then(resolve),
       }));
       const select = vi.fn().mockReturnValue({ eq });
       mockFrom.mockReturnValue({ select });
@@ -150,7 +197,7 @@ describe('bancoHorasService', () => {
     it('handles PostgreSQL interval with day component (e.g. "1 day 02:00:00")', async () => {
       setupSaldo([
         { tipo: 'credito', horas: '1 day 02:00:00' }, // 26h
-        { tipo: 'debito', horas: '2:00:00' }, // 2h
+        { tipo: 'debito', horas: '2:00:00' },          // 2h
       ]);
       const saldo = await bancoHorasService.getSaldo('colab-1', EMPRESA_ID);
       expect(saldo).toBeCloseTo(24, 5); // 26 - 2
@@ -174,13 +221,7 @@ describe('bancoHorasService', () => {
   describe('registrar', () => {
     it('calls insert and returns data', async () => {
       const inserted = { id: 'bh-1', tipo: 'credito', horas: '08:00:00' };
-      const payload = {
-        tipo: 'credito',
-        horas: '08:00:00',
-        empresa_id: EMPRESA_ID,
-        colaborador_id: 'colab-1',
-        data: '2026-01-01',
-      };
+      const payload = { tipo: 'credito', horas: '08:00:00', empresa_id: EMPRESA_ID };
       const maybeSingle = vi.fn().mockResolvedValue({ data: inserted, error: null });
       const select = vi.fn().mockReturnValue({ maybeSingle });
       const insert = vi.fn().mockReturnValue({ select });
@@ -196,15 +237,7 @@ describe('bancoHorasService', () => {
       const select = vi.fn().mockReturnValue({ maybeSingle });
       const insert = vi.fn().mockReturnValue({ select });
       mockFrom.mockReturnValue({ insert });
-      await expect(
-        bancoHorasService.registrar({
-          empresa_id: EMPRESA_ID,
-          colaborador_id: 'colab-1',
-          data: '2026-01-01',
-          horas: '08:00:00',
-          tipo: 'credito',
-        })
-      ).rejects.toBeDefined();
+      await expect(bancoHorasService.registrar({ empresa_id: EMPRESA_ID })).rejects.toBeDefined();
     });
   });
 });
@@ -212,9 +245,7 @@ describe('bancoHorasService', () => {
 // ─── bancoHorasConfigService ─────────────────────────────────────────────────
 
 describe('bancoHorasConfigService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   describe('buscar', () => {
     it('queries banco_horas_config by empresa_id', async () => {
@@ -249,7 +280,7 @@ describe('bancoHorasConfigService', () => {
     it('calls UPDATE when config already exists for empresa_id', async () => {
       const existing = { id: 'cfg-1', empresa_id: 'emp-1' };
       const updateMaybeSingle = vi.fn().mockResolvedValue({ data: { ...existing, nome: 'updated' }, error: null });
-      const updateEq = vi.fn();
+      const updateEq: any = vi.fn();
       updateEq.mockReturnValue({ eq: updateEq, select: vi.fn().mockReturnValue({ maybeSingle: updateMaybeSingle }) });
       const update = vi.fn().mockReturnValue({ eq: updateEq });
 
@@ -264,8 +295,8 @@ describe('bancoHorasConfigService', () => {
         return callCount === 1 ? { select } : { update };
       });
 
-      await bancoHorasConfigService.salvar({ empresa_id: 'emp-1', acordo_tipo: 'mensal' });
-      expect(update).toHaveBeenCalledWith({ empresa_id: 'emp-1', acordo_tipo: 'mensal' });
+      await bancoHorasConfigService.salvar({ empresa_id: 'emp-1', periodo: 'mensal' });
+      expect(update).toHaveBeenCalledWith({ empresa_id: 'emp-1', periodo: 'mensal' });
       expect(updateEq).toHaveBeenCalledWith('id', existing.id);
     });
 
@@ -285,8 +316,8 @@ describe('bancoHorasConfigService', () => {
         return callCount === 1 ? { select } : { insert };
       });
 
-      const result = await bancoHorasConfigService.salvar({ empresa_id: 'emp-2', acordo_tipo: 'semanal' });
-      expect(insert).toHaveBeenCalledWith({ empresa_id: 'emp-2', acordo_tipo: 'semanal' });
+      const result = await bancoHorasConfigService.salvar({ empresa_id: 'emp-2', periodo: 'semanal' });
+      expect(insert).toHaveBeenCalledWith({ empresa_id: 'emp-2', periodo: 'semanal' });
       expect(result).toEqual(inserted);
     });
   });

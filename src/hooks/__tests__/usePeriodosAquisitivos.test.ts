@@ -11,14 +11,14 @@ vi.mock('@/integrations/supabase/client', () => ({
 
 import { usePeriodosAquisitivos } from '../usePeriodosAquisitivos';
 
-function buildChain(data: unknown = []) {
-  const chain: Record<string, unknown> = {};
+function buildChain(data: any[] = []) {
+  const chain: any = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).finally(fn);
+  chain.then = (fn: any) => Promise.resolve({ data, error: null }).then(fn);
+  chain.catch = (fn: any) => Promise.resolve({ data, error: null }).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve({ data, error: null }).finally(fn);
   mockFrom.mockReturnValue(chain);
   return chain;
 }

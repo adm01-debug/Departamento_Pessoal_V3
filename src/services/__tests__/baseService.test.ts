@@ -5,10 +5,9 @@ import { makeChain } from '@/test/chain';
 
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
-const { mockFrom, mockLoggerError, mockLoggerWarn } = vi.hoisted(() => ({
+const { mockFrom, mockLoggerError } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
   mockLoggerError: vi.fn(),
-  mockLoggerWarn: vi.fn(),
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -16,7 +15,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 vi.mock('../loggerService', () => ({
-  loggerService: { error: mockLoggerError, warn: mockLoggerWarn },
+  loggerService: { error: mockLoggerError },
 }));
 
 // Concrete subclass for testing
@@ -27,13 +26,13 @@ class TestService extends BaseService<{ id: string; nome: string }> {
 }
 
 // Helper: build a range → data/count/error chain for listar
-function setupListChain(data: unknown, count: number, error: { message: string; code?: string } | null = null) {
+function setupListChain(data: any[], count: number, error: any = null) {
   const rangeFn = vi.fn().mockResolvedValue({ data, count, error });
   const orderFn = vi.fn().mockReturnValue({ range: rangeFn });
   const eqFn = vi.fn();
   const ilikeFn = vi.fn();
 
-  const baseQuery = { order: orderFn, eq: eqFn, ilike: ilikeFn };
+  const baseQuery: any = { order: orderFn, eq: eqFn, ilike: ilikeFn };
   eqFn.mockReturnValue(baseQuery);
   ilikeFn.mockReturnValue(baseQuery);
 
@@ -43,7 +42,7 @@ function setupListChain(data: unknown, count: number, error: { message: string; 
 }
 
 // Helper: build maybeSingle chain
-function setupMaybeSingleChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupMaybeSingleChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ maybeSingle });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -55,9 +54,7 @@ function setupMaybeSingleChain(data: unknown, error: { message: string; code?: s
 
 describe('BaseService.listar', () => {
   const service = new TestService();
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns data and total from supabase', async () => {
     const records = [{ id: '1', nome: 'Alice' }];
@@ -68,7 +65,7 @@ describe('BaseService.listar', () => {
   });
 
   it('returns empty data with total 0 when supabase returns null', async () => {
-    setupListChain(null as never, null as never);
+    setupListChain(null as any, null as any);
     const result = await service.listar({ empresaId: 'emp-1' });
     expect(result.data).toEqual([]);
     expect(result.total).toBe(0);
@@ -97,30 +94,28 @@ describe('BaseService.listar', () => {
 
 describe('BaseService.buscarPorId', () => {
   const service = new TestService();
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('throws when id is empty string', async () => {
-    await expect(service.buscarPorId('', 'emp-1')).rejects.toThrow('ID é obrigatório');
+    await expect(service.buscarPorId('')).rejects.toThrow('ID é obrigatório');
   });
 
   it('returns data when found', async () => {
     const record = { id: '1', nome: 'Bob' };
     setupMaybeSingleChain(record);
-    const result = await service.buscarPorId('1', 'emp-1');
+    const result = await service.buscarPorId('1');
     expect(result).toEqual(record);
   });
 
   it('returns null when not found', async () => {
     setupMaybeSingleChain(null);
-    const result = await service.buscarPorId('unknown', 'emp-1');
+    const result = await service.buscarPorId('unknown');
     expect(result).toBeNull();
   });
 
   it('throws on DB error', async () => {
     setupMaybeSingleChain(null, { message: 'fail' });
-    await expect(service.buscarPorId('1', 'emp-1')).rejects.toBeDefined();
+    await expect(service.buscarPorId('1')).rejects.toBeDefined();
     expect(mockLoggerError).toHaveBeenCalled();
   });
 });
@@ -129,9 +124,7 @@ describe('BaseService.buscarPorId', () => {
 
 describe('BaseService.criar', () => {
   const service = new TestService();
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns the created record', async () => {
     const created = { id: 'new-1', nome: 'Carol' };
@@ -140,7 +133,7 @@ describe('BaseService.criar', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    const result = await service.criar({ nome: 'Carol' } as never);
+    const result = await service.criar({ nome: 'Carol' } as any);
     expect(insertFn).toHaveBeenCalledWith({ nome: 'Carol' });
     expect(result).toEqual(created);
   });
@@ -151,7 +144,7 @@ describe('BaseService.criar', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    await expect(service.criar({} as never)).rejects.toThrow();
+    await expect(service.criar({} as any)).rejects.toThrow();
   });
 
   it('throws and logs on DB error', async () => {
@@ -160,7 +153,7 @@ describe('BaseService.criar', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    await expect(service.criar({} as never)).rejects.toBeDefined();
+    await expect(service.criar({} as any)).rejects.toBeDefined();
     expect(mockLoggerError).toHaveBeenCalled();
   });
 });
@@ -169,9 +162,7 @@ describe('BaseService.criar', () => {
 
 describe('BaseService.excluir', () => {
   const service = new TestService();
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('calls delete with the given id', async () => {
     const chain = makeChain({ error: null });

@@ -9,12 +9,12 @@ import { cn } from '@/lib/utils';
  * ESTÃO LITERAIS ABAIXO" antes de editar.
  */
 export const DROPDOWN_MOTION = {
-  openDurationMs: 220,
-  closeDurationMs: 150,
-  itemDurationMs: 170,
-  staggerStepMs: 45,
-  delayChildrenMs: 20,
-  chevronDurationMs: 180,
+  openDurationMs: 280,
+  closeDurationMs: 220,
+  itemDurationMs: 220,
+  staggerStepMs: 55,
+  delayChildrenMs: 30,
+  chevronDurationMs: 220,
   /** Acima disso os itens continuam entrando, só param de ganhar mais atraso
    * — evita uma lista de 20-30 opções levar >1s pra terminar de aparecer. */
   maxStaggeredItems: 10,
@@ -23,7 +23,7 @@ export const DROPDOWN_MOTION = {
 /**
  * POR QUE OS NÚMEROS TAMBÉM ESTÃO LITERAIS ABAIXO (não interpolados a partir
  * de `DROPDOWN_MOTION`): as funções `overlay*AnimClasses` abaixo geram
- * classNames do Tailwind (`data-[state=open]:duration-[180ms]` etc). O JIT do
+ * classNames do Tailwind (`data-[state=open]:duration-[280ms]` etc). O JIT do
  * Tailwind escaneia o TEXTO LITERAL dos arquivos-fonte em build time — ele
  * não executa JS, então uma string montada via template literal
  * (`` `duration-[${DROPDOWN_MOTION.openDurationMs}ms]` ``) nunca apareceria
@@ -43,7 +43,7 @@ export const DROPDOWN_MOTION = {
  * o lado `closed` aqui evita a abertura ter DUAS animações concorrendo pela
  * mesma propriedade (proibido pelas instruções). Nunca sobrescreve o
  * `transform` inline que o Popper/Floating UI usa pra posicionar: é uma
- * `animation` CSS, que tem prioridade de cascata só durante os ~150ms em que
+ * `animation` CSS, que tem prioridade de cascata só durante os ~220ms em que
  * toca, devolvendo o controle pro Popper depois — não é uma
  * `transition`/classe estática competindo pela mesma propriedade o tempo
  * todo. `origin-*`/`slide-*` variam com `data-side` pra respeitar de que
@@ -66,8 +66,8 @@ export function overlayContentCloseOnlyAnimClasses(markerClass: string) {
     'data-[side=top]:data-[state=closed]:slide-out-to-bottom-2',
     'data-[side=right]:data-[state=closed]:slide-out-to-left-2',
     'data-[side=left]:data-[state=closed]:slide-out-to-right-2',
-    // 150ms == DROPDOWN_MOTION.closeDurationMs
-    'data-[state=closed]:duration-[150ms] ease-out'
+    // 220ms == DROPDOWN_MOTION.closeDurationMs
+    'data-[state=closed]:duration-[220ms] ease-out',
   );
 }
 
@@ -89,8 +89,8 @@ export function overlaySubmenuAnimClasses(markerClass: string) {
     'data-[side=right]:origin-left data-[side=left]:origin-right',
     'data-[side=right]:data-[state=closed]:slide-out-to-left-1 data-[side=right]:data-[state=open]:slide-in-from-left-1',
     'data-[side=left]:data-[state=closed]:slide-out-to-right-1 data-[side=left]:data-[state=open]:slide-in-from-right-1',
-    // 220ms/150ms == DROPDOWN_MOTION.{open,close}DurationMs
-    'data-[state=open]:duration-[220ms] data-[state=closed]:duration-[150ms] ease-out'
+    // 280ms/220ms == DROPDOWN_MOTION.{open,close}DurationMs
+    'data-[state=open]:duration-[280ms] data-[state=closed]:duration-[220ms] ease-out',
   );
 }
 
@@ -105,8 +105,8 @@ export function overlaySubmenuAnimClasses(markerClass: string) {
 export function overlayChevronAnimClasses(markerClass: string) {
   return cn(
     markerClass,
-    // 180ms == DROPDOWN_MOTION.chevronDurationMs
-    'transition-transform duration-[180ms] ease-out group-data-[state=open]:rotate-180'
+    // 220ms == DROPDOWN_MOTION.chevronDurationMs
+    'transition-transform duration-[220ms] ease-out group-data-[state=open]:rotate-180',
   );
 }
 
@@ -118,7 +118,7 @@ export function overlayChevronAnimClasses(markerClass: string) {
  */
 export const CHECK_INDICATOR_ANIM_CLASSES = cn(
   'data-[state=checked]:animate-in data-[state=checked]:fade-in-0 data-[state=checked]:zoom-in-[.8]',
-  'duration-[120ms] ease-out'
+  'duration-[200ms] ease-out',
 );
 
 // ---------------------------------------------------------------------------
@@ -168,20 +168,8 @@ export const dropdownContentVariants: Variants = {
       duration: DROPDOWN_MOTION.openDurationMs / 1000,
       ease: 'easeOut',
       when: 'beforeChildren',
-      // `staggerChildren` fica SÓ como fallback conservador (quando alguém
-      // sobrescreve o `transition` e troca o `delayChildren` por número).
       staggerChildren: DROPDOWN_MOTION.staggerStepMs / 1000,
-      // Atraso POR ÍNDICE com TETO (`maxStaggeredItems`): o Framer Motion v13
-      // aceita `(i, total)` em `delayChildren` e, quando é função, usa o
-      // retorno direto por filho (via `calcChildStagger`) em vez de aplicar
-      // `i × staggerChildren` — então este é o ÚNICO lugar que limita o
-      // atraso. Em lista grande de opções (ex.: select de colaboradores) o
-      // último item obedecia `i × 45ms` sem limite e levava ~9s pra aparecer;
-      // agora todo item além do teto entra junto, com o mesmo atraso do teto.
-      delayChildren: (index) =>
-        (DROPDOWN_MOTION.delayChildrenMs +
-          Math.min(index, DROPDOWN_MOTION.maxStaggeredItems - 1) * DROPDOWN_MOTION.staggerStepMs) /
-        1000,
+      delayChildren: DROPDOWN_MOTION.delayChildrenMs / 1000,
     },
   },
 };
@@ -194,10 +182,5 @@ export const dropdownItemVariants: Variants = {
 /** Mesma família, versão lateral pra submenu (Fase 14) — x em vez de y. */
 export const submenuContentVariants: Variants = {
   closed: { opacity: 0, scale: 0.98, x: -5 },
-  open: {
-    opacity: 1,
-    scale: 1,
-    x: 0,
-    transition: { duration: DROPDOWN_MOTION.openDurationMs / 1000, ease: 'easeOut' },
-  },
+  open: { opacity: 1, scale: 1, x: 0, transition: { duration: DROPDOWN_MOTION.openDurationMs / 1000, ease: 'easeOut' } },
 };

@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 // auditoria. A escrita direta em `audit_log` foi revogada por segurança —
 // eventos de auditoria agora passam por `registrar_auditoria`, que deriva o
 // autor de `auth.uid()` no servidor e valida o escopo de empresa.
-import { supabase as supabaseBase } from '@/integrations/supabase/client.base';
+import { supabase as supabaseBase } from '@/integrations/supabase/client';
 
 export function useDataAccessLog(
   recurso: string,
@@ -26,7 +26,7 @@ export function useDataAccessLog(
           p_dados_anteriores: null,
           p_dados_novos: { accessed_at: new Date().toISOString() },
           p_empresa_id: empresaId,
-        });
+        } as never);
 
         if (error && !cancelled && import.meta.env.DEV) {
           console.debug('[useDataAccessLog] registrar_auditoria falhou:', error.message);
