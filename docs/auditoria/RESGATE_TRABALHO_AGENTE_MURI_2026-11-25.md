@@ -89,6 +89,29 @@ Ficam fora também 14 assets de banco (`src/assets/banks/`) — o próprio `src/
 ### 6.3 Testes-especificação
 
 Dos 66 testes que ficaram fora, a maioria é a especificação das mudanças de 6.1/6.2 (ex.: régua global das barras em 1200 ms, entrada dos cards, placeholder do Login, pílula do `ColaboradorViewSwitcher`, ordem dos widgets, exports novos de `analyticsComum.ts`). Eles voltam junto com o arquivo que os destrava.
+### 6.4 Verificação de sobreposição com as branches de integração
+
+Método: `git ls-tree -r --name-only <ref> -- src`, menos os caminhos de `origin/main`, menos a união (`296a01873` ∪ #872). Medir por `git diff --diff-filter=A` (three-dot) **dá falso positivo** quando o merge-base da branch é anterior ao `main` atual — caminhos que já existem na main voltavam como "novos".
+
+| Ref                                             | Novos em `src/` | Exclusivos (fora do port e da #872)                       |
+| ----------------------------------------------- | --------------- | --------------------------------------------------------- |
+| `feat-integracao-muri-3way` (`fd7f3ccee`)       | 269             | **0**                                                     |
+| `chore-preserva-wip-medicao-muri` (`8ed98aaca`) | 276             | **1** — `src/components/__tests__/RewardsApprovalHub.test.tsx` |
+| `feat-resgata-ui-muri` (`fbc3dc010`)            | 284             | **0**                                                     |
+| `chore-preserva-stash-muri` (`22aef52b3`)       | 289             | **0**                                                     |
+| `feat-integracao-trabalho-muri` (`c1fc5a6cb`)   | 269             | **0**                                                     |
+
+O único exclusivo é um teste de `../premiacoes/RewardsApprovalHub` — componente que **nunca existiu** em nenhuma ref (conferido em `origin/main`, `296a01873` e `fd7f3ccee`). É teste órfão de um WIP que não chegou a ser escrito; fica preservado em `8ed98aaca` e não destrava nada.
+
+Os **arquivos modificados** dessas branches são a versão do Muri *atrás* da main e por isso não entram (seção 3). Verificado nesta rodada em dois arquivos centrais:
+
+- `src/components/RouteErrorBoundary.tsx` — a main tem `try/catch` em volta de `sessionStorage` (aba privada/storage bloqueado não quebra a rota); a versão das branches acessa `sessionStorage` direto.
+- `src/App.tsx` — a versão das branches reverte `useStaggerCards(60)` para `useStaggerCards()`, troca `duration-500` por `duration-slower` e renomeia `RotaCarregada`; as adições reais (`__MeasureTestPage`, prévia DEV do Nine-Box) são páginas de teste interno, já listadas na fila.
+
+### 6.5 Orçamento de bundle
+
+O resgate faz o Tailwind emitir +12 KB de utilitários (classes novas nos arquivos de UI vindos do port), o que reprovava `scripts/check-bundle-budget.mjs` (`css_total_kb = 362 > 350`). `scripts/.bundle-budget.json` passa a `css_total_kb: 362` — único ajuste de gate, com diff de uma linha; `js_total_kb`/`js_max_chunk_kb` ficam intactos (CI: 7.951 ≤ 7.960 e 970 ≤ 980).
+
 ## 7. Auditoria das refs remotas
 
 - `origin/pr/304` … `origin/pr/321` (9 refs): **todas as PRs estão `MERGED`**. O conteúdo está na main via _squash-merge_, por isso `git merge-base --is-ancestor` dá falso negativo. Provas por `git log origin/main --grep='(#N)'`: 304→`e8febd257`, 315→`57054a5ff`, 316→`231cdb74b`, 320→`a90a4feaf`, 321→`529a8d6c5`, 319→`e1a18efd7` (squash de #309+#313+#317+#319).
