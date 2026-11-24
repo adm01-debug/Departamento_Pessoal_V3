@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-24 00:32 UTC
+
+- **functions** alterado (2): `public._admissao_token_row(_token text)`, `public.get_admissao_por_token(_token text)`
+- **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_27`
+
 ## 2026-11-23 23:14 UTC
 
 - **functions** alterado (7): `public.audit_log_append_only()`, `public.dp_sync_empresa_from_colaborador()`, `public.enqueue_training_image_request()`, `public.get_user_empresas(_user_id uuid)`, `public.is_admin(_user_id uuid)`, `public.prevent_audit_log_modification()`, `public.tg_audit_log_enriquecer_feedback()`

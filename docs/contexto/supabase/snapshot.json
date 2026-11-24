@@ -90966,7 +90966,8 @@
             "public.admissao_assinar_contrato",
             "public.admissao_marcar_documentos",
             "public.admissao_registrar_documento",
-            "public.admissao_salvar_dados"
+            "public.admissao_salvar_dados",
+            "public.get_admissao_por_token"
           ],
           "triggers": [],
           "views": []
@@ -98505,10 +98506,10 @@
         },
         "comment": null,
         "config": [
-          "search_path=public"
+          "search_path=pg_catalog, public"
         ],
         "definition": null,
-        "definition_sha": "dd624b1282a8d542",
+        "definition_sha": "866a790b3ff18f9b",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -151457,6 +151458,11 @@
           "publication": "supabase_realtime_messages_publication",
           "schema": "realtime",
           "table": "messages_2026_11_26"
+        },
+        {
+          "publication": "supabase_realtime_messages_publication",
+          "schema": "realtime",
+          "table": "messages_2026_11_27"
         }
       ]
     },
